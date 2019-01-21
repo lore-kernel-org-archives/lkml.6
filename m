@@ -2,96 +2,114 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E9D9C2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:12:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B0CFC2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:12:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AE4221721
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:12:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="djS4PyXy"
+	by mail.kernel.org (Postfix) with ESMTP id 3797620879
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:12:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548079952;
+	bh=3hbxqiFH8RfdHD3hO5L8LeoR1Pl2xXVjflRV6jG/bD0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=HV4Y4ZolNhPm1bNZ6Huusc1uJFOAmROeWpPbDq8/CObXcGrFDsCF/HHkRZpUrnKnl
+	 Kd0EYwSYGLhtXIY9DPTO3ndEnOlioHYGyUr5hnVK3ie6+d9pf3+sn7fK/IpM/H46Q8
+	 wt0ZNIgEEfAX13S38cITxcES3Br41QBJUhD5F6pY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731540AbfAUOMZ (ORCPT
+        id S1731613AbfAUOMa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:12:25 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:44907 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729584AbfAUOMX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 09:12:23 -0500
-Received: by mail-pf1-f195.google.com with SMTP id u6so10184896pfh.11
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 06:12:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:date:from:to:cc:subject:mime-version:content-disposition
-         :user-agent;
-        bh=A0SfeOnkiJq6Qkdmztx66BFDv5wXET9MNgzTXvm4Fu8=;
-        b=djS4PyXyfscPPaB5UAWSiOLNZCOBzwzsPO2OzLhLpBUFWXp6He7wBHqPKD73slFsZm
-         kTWdZtmfZ4aoRbOdtuQVpVqnpebFHxhYU90CStIdBBSvOKtolmL7Z84uVcCPmgwkNprR
-         69Lj5tMEsl6hUY01yh2mR5rHXEUCSjWML9F7g86q2yvP8AfAulzkBGzWIvYu9NViTPTD
-         IGO1NKsBBC5wT3I5F5A3dUuwDCDA3jJfFdnxGOlji4/puUYlZ1kp4h2Kl9E8UXSx4Z5Y
-         DyfNPCQTqorRSmK/9Gul+quyN0QQcNGjBzrNuP8LgwJB4gt5w1IWNA6byl+lVXg8hpgY
-         qMKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:from:to:cc:subject:mime-version
-         :content-disposition:user-agent;
-        bh=A0SfeOnkiJq6Qkdmztx66BFDv5wXET9MNgzTXvm4Fu8=;
-        b=cm9ySKduCHRnwJk8KxGHq2Z/6wQpWWDxD4SC+3i5DijgClespFg3xfgzKjwVoX7KGH
-         2NjhFcbbjM3DIlO248knktJqceZ5nm9q8h2ZwPL8sgtTnxU3zjC+KJKwRbzl4gryHG+P
-         WeCDHk9P1Kf4RtkPBTgMRM5KHW6VLOiLG3FMU59NBfa03Htn0tAAuMiABAevofcSRvUT
-         djotBT8sDo1HaDk6E7gEPg/y229IgjjnVrXOIBoU2bMDhWZNq/mH3ifPl0buK4sq4rCI
-         TOfI1TXVn0hoctMFMZWo/Qqp3k9IKLTJNgeaS5i5y1Hu7b9sxFLpDnEf0R5GSKA2jFdL
-         wqZg==
-X-Gm-Message-State: AJcUukeRgE4uki92fMxN7OO12huqMWpitsjnZGHEq3nd7JuFY+AUysXh
-        1xwbQerXg9aWEjBcjgYbS08=
-X-Google-Smtp-Source: ALg8bN6hPgvz6C1s4UQBsVC+4ygSpvvid/8C1xNtBrlVDVPO74OCdB0yl7dLbTxzX3XRIcHcEY6moQ==
-X-Received: by 2002:a63:e950:: with SMTP id q16mr28375021pgj.138.1548079943017;
-        Mon, 21 Jan 2019 06:12:23 -0800 (PST)
-Received: from sabyasachi ([2409:4061:61f:bee8:59d9:12db:80a:c3ca])
-        by smtp.gmail.com with ESMTPSA id 7sm22401313pfm.8.2019.01.21.06.12.19
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 21 Jan 2019 06:12:21 -0800 (PST)
-Message-ID: <5c45d345.1c69fb81.d90ed.8e05@mx.google.com>
-X-Google-Original-Message-ID: <20190121141214.GA4205@sabyasachi.linux@gmail.com>
-Date:   Mon, 21 Jan 2019 19:42:14 +0530
-From:   Sabyasachi Gupta <sabyasachi.linux@gmail.com>
-To:     lftan@altera.com, akpm@linux-foundation.org
-Cc:     jrdr.linux@gmail.com, nios2-dev@lists.rocketboards.org,
-        linux-kernel@vger.kernel.org, brajeswar.linux@gmail.com
-Subject: [PATCH] mm: Remove duplicate header
+        Mon, 21 Jan 2019 09:12:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58092 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731566AbfAUOM2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 09:12:28 -0500
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05F74214D8;
+        Mon, 21 Jan 2019 14:12:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548079947;
+        bh=3hbxqiFH8RfdHD3hO5L8LeoR1Pl2xXVjflRV6jG/bD0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Tcmyc4+TjSwy35QbCNWIjjjiGQAQIZBPwPepsUquOPvEP+NnZB69HUrqP0Gq3YiY7
+         nME12X7OMnCf71qLZ0SgD5KS8237FKDDpCSLf4oIsNjrESu2VgdhmjAf42/+Y+RxPw
+         1QpIC0J8xqN9wVU9Cv6oBgjHm+p7Ww/EcmI7yX0o=
+Received: by mail-qt1-f182.google.com with SMTP id t33so23645664qtt.4;
+        Mon, 21 Jan 2019 06:12:26 -0800 (PST)
+X-Gm-Message-State: AJcUukezM283PpyNA5/2Wm2j0I59+HtXzDfezWj9Mx7KXmyhk30x+Oou
+        pb5MO/WnyBXFysJOCYxbtGfDmyFKNJ0w9t6g1g==
+X-Google-Smtp-Source: ALg8bN7FDJ+jtdO3a1NZ12t3LOfP9YZ4JPXCj68lCQWN19tNwa4BMSxIdtXyDseyu+yZ+Mo+DDU/3mX4p2Q/uyCf3hw=
+X-Received: by 2002:a0c:9e05:: with SMTP id p5mr25572780qve.246.1548079946201;
+ Mon, 21 Jan 2019 06:12:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <1547830371-22122-1-git-send-email-guoren@kernel.org> <1547830371-22122-2-git-send-email-guoren@kernel.org>
+In-Reply-To: <1547830371-22122-2-git-send-email-guoren@kernel.org>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 21 Jan 2019 08:12:15 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKjQK-qViMm55EiP5hXjfr04++5vBTAXCEa6yg9u1qCaQ@mail.gmail.com>
+Message-ID: <CAL_JsqKjQK-qViMm55EiP5hXjfr04++5vBTAXCEa6yg9u1qCaQ@mail.gmail.com>
+Subject: Re: [PATCH V2 2/2] dt-bindings: interrupt-controller: Update csky mpintc
+To:     guoren@kernel.org
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org, Guo Ren <ren_guo@c-sky.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove linux/ptrace.h which is included more than once
+On Fri, Jan 18, 2019 at 10:53 AM <guoren@kernel.org> wrote:
+>
+> From: Guo Ren <ren_guo@c-sky.com>
+>
+> Add trigger type and priority setting for csky,mpintc.
+>
+> Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+> ---
+>  .../bindings/interrupt-controller/csky,mpintc.txt  | 33 +++++++++++++++++++---
+>  1 file changed, 29 insertions(+), 4 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt b/Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt
+> index ab921f1..badbd38 100644
+> --- a/Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt
+> @@ -6,11 +6,18 @@ C-SKY Multi-processors Interrupt Controller is designed for ck807/ck810/ck860
+>  SMP soc, and it also could be used in non-SMP system.
+>
+>  Interrupt number definition:
+> -
+>    0-15  : software irq, and we use 15 as our IPI_IRQ.
+>   16-31  : private  irq, and we use 16 as the co-processor timer.
+>   31-1024: common irq for soc ip.
+>
+> +Interrupt triger mode:
+> + IRQ_TYPE_LEVEL_HIGH (default)
+> + IRQ_TYPE_LEVEL_LOW
+> + IRQ_TYPE_EDGE_RISING
+> + IRQ_TYPE_EDGE_FALLING
+> +
+> +Interrupt priority range: 0-255
+> +
+>  =============================
+>  intc node bindings definition
+>  =============================
+> @@ -26,15 +33,33 @@ intc node bindings definition
+>         - #interrupt-cells
+>                 Usage: required
+>                 Value type: <u32>
+> -               Definition: must be <1>
+> +               Definition: could be <1> or <2> or <3>
 
-Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
----
- arch/nios2/mm/fault.c | 1 -
- 1 file changed, 1 deletion(-)
+For a given controller, '#interrupt-cells' shouldn't really be
+variable. If there are different capabilities, then you should have
+different compatible strings.
 
-diff --git a/arch/nios2/mm/fault.c b/arch/nios2/mm/fault.c
-index 24fd84c..eb65f17 100644
---- a/arch/nios2/mm/fault.c
-+++ b/arch/nios2/mm/fault.c
-@@ -24,7 +24,6 @@
- #include <linux/mm.h>
- #include <linux/extable.h>
- #include <linux/uaccess.h>
--#include <linux/ptrace.h>
- 
- #include <asm/mmu_context.h>
- #include <asm/traps.h>
--- 
-2.7.4
-
+Rob
