@@ -3,30 +3,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38FF8C282DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:00:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4160C282E9
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:00:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12F9420823
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:00:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A731C214C6
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:00:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729410AbfAUIAS (ORCPT
+        id S1728085AbfAUIAg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 03:00:18 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:35666 "EHLO mx1.redhat.com"
+        Mon, 21 Jan 2019 03:00:36 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:49160 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728500AbfAUIAS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 03:00:18 -0500
+        id S1729417AbfAUIAf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 03:00:35 -0500
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 56F07750DA;
-        Mon, 21 Jan 2019 08:00:17 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id CCB077BDA5;
+        Mon, 21 Jan 2019 08:00:34 +0000 (UTC)
 Received: from xz-x1.nay.redhat.com (dhcp-14-116.nay.redhat.com [10.66.14.116])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 42FE4608C7;
-        Mon, 21 Jan 2019 08:00:10 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C8E53608C7;
+        Mon, 21 Jan 2019 08:00:17 +0000 (UTC)
 From:   Peter Xu <peterx@redhat.com>
 To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Cc:     Hugh Dickins <hughd@google.com>, Maya Gokhale <gokhale2@llnl.gov>,
@@ -43,91 +43,90 @@ Cc:     Hugh Dickins <hughd@google.com>, Maya Gokhale <gokhale2@llnl.gov>,
         Mel Gorman <mgorman@suse.de>,
         "Kirill A . Shutemov" <kirill@shutemov.name>,
         "Dr . David Alan Gilbert" <dgilbert@redhat.com>
-Subject: [PATCH RFC 21/24] khugepaged: skip collapse if uffd-wp detected
-Date:   Mon, 21 Jan 2019 15:57:19 +0800
-Message-Id: <20190121075722.7945-22-peterx@redhat.com>
+Subject: [PATCH RFC 22/24] userfaultfd: wp: UFFDIO_REGISTER_MODE_WP documentation update
+Date:   Mon, 21 Jan 2019 15:57:20 +0800
+Message-Id: <20190121075722.7945-23-peterx@redhat.com>
 In-Reply-To: <20190121075722.7945-1-peterx@redhat.com>
 References: <20190121075722.7945-1-peterx@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Mon, 21 Jan 2019 08:00:17 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Mon, 21 Jan 2019 08:00:35 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Don't collapse the huge PMD if there is any userfault write protected
-small PTEs.  The problem is that the write protection is in small page
-granularity and there's no way to keep all these write protection
-information if the small pages are going to be merged into a huge PMD.
+From: Martin Cracauer <cracauer@cons.org>
 
-The same thing needs to be considered for swap entries and migration
-entries.  So do the check as well disregarding khugepaged_max_ptes_swap.
+Adds documentation about the write protection support.
 
+Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
+[peterx: rewrite in rst format; fixups here and there]
 Signed-off-by: Peter Xu <peterx@redhat.com>
 ---
- include/trace/events/huge_memory.h |  1 +
- mm/khugepaged.c                    | 23 +++++++++++++++++++++++
- 2 files changed, 24 insertions(+)
+ Documentation/admin-guide/mm/userfaultfd.rst | 51 ++++++++++++++++++++
+ 1 file changed, 51 insertions(+)
 
-diff --git a/include/trace/events/huge_memory.h b/include/trace/events/huge_memory.h
-index dd4db334bd63..2d7bad9cb976 100644
---- a/include/trace/events/huge_memory.h
-+++ b/include/trace/events/huge_memory.h
-@@ -13,6 +13,7 @@
- 	EM( SCAN_PMD_NULL,		"pmd_null")			\
- 	EM( SCAN_EXCEED_NONE_PTE,	"exceed_none_pte")		\
- 	EM( SCAN_PTE_NON_PRESENT,	"pte_non_present")		\
-+	EM( SCAN_PTE_UFFD_WP,		"pte_uffd_wp")			\
- 	EM( SCAN_PAGE_RO,		"no_writable_page")		\
- 	EM( SCAN_LACK_REFERENCED_PAGE,	"lack_referenced_page")		\
- 	EM( SCAN_PAGE_NULL,		"page_null")			\
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index 8e2ff195ecb3..92f06e1c941e 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -29,6 +29,7 @@ enum scan_result {
- 	SCAN_PMD_NULL,
- 	SCAN_EXCEED_NONE_PTE,
- 	SCAN_PTE_NON_PRESENT,
-+	SCAN_PTE_UFFD_WP,
- 	SCAN_PAGE_RO,
- 	SCAN_LACK_REFERENCED_PAGE,
- 	SCAN_PAGE_NULL,
-@@ -1125,6 +1126,15 @@ static int khugepaged_scan_pmd(struct mm_struct *mm,
- 		pte_t pteval = *_pte;
- 		if (is_swap_pte(pteval)) {
- 			if (++unmapped <= khugepaged_max_ptes_swap) {
-+				/*
-+				 * Always be strict with uffd-wp
-+				 * enabled swap entries.  Please see
-+				 * comment below for pte_uffd_wp().
-+				 */
-+				if (pte_swp_uffd_wp(pteval)) {
-+					result = SCAN_PTE_UFFD_WP;
-+					goto out_unmap;
-+				}
- 				continue;
- 			} else {
- 				result = SCAN_EXCEED_SWAP_PTE;
-@@ -1144,6 +1154,19 @@ static int khugepaged_scan_pmd(struct mm_struct *mm,
- 			result = SCAN_PTE_NON_PRESENT;
- 			goto out_unmap;
- 		}
-+		if (pte_uffd_wp(pteval)) {
-+			/*
-+			 * Don't collapse the page if any of the small
-+			 * PTEs are armed with uffd write protection.
-+			 * Here we can also mark the new huge pmd as
-+			 * write protected if any of the small ones is
-+			 * marked but that could bring uknown
-+			 * userfault messages that falls outside of
-+			 * the registered range.  So, just be simple.
-+			 */
-+			result = SCAN_PTE_UFFD_WP;
-+			goto out_unmap;
-+		}
- 		if (pte_write(pteval))
- 			writable = true;
+diff --git a/Documentation/admin-guide/mm/userfaultfd.rst b/Documentation/admin-guide/mm/userfaultfd.rst
+index 5048cf661a8a..c30176e67900 100644
+--- a/Documentation/admin-guide/mm/userfaultfd.rst
++++ b/Documentation/admin-guide/mm/userfaultfd.rst
+@@ -108,6 +108,57 @@ UFFDIO_COPY. They're atomic as in guaranteeing that nothing can see an
+ half copied page since it'll keep userfaulting until the copy has
+ finished.
+ 
++Notes:
++
++- If you requested UFFDIO_REGISTER_MODE_MISSING when registering then
++  you must provide some kind of page in your thread after reading from
++  the uffd.  You must provide either UFFDIO_COPY or UFFDIO_ZEROPAGE.
++  The normal behavior of the OS automatically providing a zero page on
++  an annonymous mmaping is not in place.
++
++- None of the page-delivering ioctls default to the range that you
++  registered with.  You must fill in all fields for the appropriate
++  ioctl struct including the range.
++
++- You get the address of the access that triggered the missing page
++  event out of a struct uffd_msg that you read in the thread from the
++  uffd.  You can supply as many pages as you want with UFFDIO_COPY or
++  UFFDIO_ZEROPAGE.  Keep in mind that unless you used DONTWAKE then
++  the first of any of those IOCTLs wakes up the faulting thread.
++
++- Be sure to test for all errors including (pollfd[0].revents &
++  POLLERR).  This can happen, e.g. when ranges supplied were
++  incorrect.
++
++Write Protect Notifications
++---------------------------
++
++This is equivalent to (but faster than) using mprotect and a SIGSEGV
++signal handler.
++
++Firstly you need to register a range with UFFDIO_REGISTER_MODE_WP.
++Instead of using mprotect(2) you use ioctl(uffd, UFFDIO_WRITEPROTECT,
++struct *uffdio_writeprotect) while mode = UFFDIO_WRITEPROTECT_MODE_WP
++in the struct passed in.  The range does not default to and does not
++have to be identical to the range you registered with.  You can write
++protect as many ranges as you like (inside the registered range).
++Then, in the thread reading from uffd the struct will have
++msg.arg.pagefault.flags & UFFD_PAGEFAULT_FLAG_WP set. Now you send
++ioctl(uffd, UFFDIO_WRITEPROTECT, struct *uffdio_writeprotect) again
++while pagefault.mode does not have UFFDIO_WRITEPROTECT_MODE_WP set.
++This wakes up the thread which will continue to run with writes. This
++allows you to do the bookkeeping about the write in the uffd reading
++thread before the ioctl.
++
++If you registered with both UFFDIO_REGISTER_MODE_MISSING and
++UFFDIO_REGISTER_MODE_WP then you need to think about the sequence in
++which you supply a page and undo write protect.  Note that there is a
++difference between writes into a WP area and into a !WP area.  The
++former will have UFFD_PAGEFAULT_FLAG_WP set, the latter
++UFFD_PAGEFAULT_FLAG_WRITE.  The latter did not fail on protection but
++you still need to supply a page when UFFDIO_REGISTER_MODE_MISSING was
++used.
++
+ QEMU/KVM
+ ========
  
 -- 
 2.17.1
