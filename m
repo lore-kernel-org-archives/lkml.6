@@ -7,50 +7,46 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64EFDC2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:21:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19EA8C2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:21:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3533620879
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:21:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDE8B20879
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:21:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548080470;
-	bh=PUPjDHkMRwFFZcDn4vmCV/eZlDSo/+LL/PlRRpew5Co=;
+	s=default; t=1548080482;
+	bh=GUnkFqWrqxkDzPRvFYd5VBUdZNbsAAbKw4v0ccebPAc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=FcJFt2MaQ5aKog1IKaQrDcgyfWDGceW67pj4o2Y5TWvMLQ4UjE6g1/ZbUOuquB4/8
-	 e0GUUqpx50Cl4Y9e8WiEnncl7nn+0falmABhX+jzD906q/TNRJaDXl8Omcw0zyypyD
-	 HRYtia/75c1+WdB7r2nEQlFrRetP4VbOuFYVHD/Y=
+	b=BudmSxYpFr9eDICZoGp0su9U/+Xa2l+RBYVzzkTjc/7j/Tb22xrncmKwaj6ZYHm+D
+	 CgORgMf8xqG9koSrwwGWV9tClQ2bDhamNQG8VLueK3Q0/klf10KilhZApnmqh4HZTu
+	 spj5pVjcaZdCdPs3sVDDRAD+VEKs+tOHaGKLQvds=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730240AbfAUOVI (ORCPT
+        id S1729508AbfAUNrL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:21:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56560 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:47:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56242 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729556AbfAUNrS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:47:18 -0500
+        id S1729472AbfAUNrH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:47:07 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 59E1720861;
-        Mon, 21 Jan 2019 13:47:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB0FF2087F;
+        Mon, 21 Jan 2019 13:47:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078437;
-        bh=PUPjDHkMRwFFZcDn4vmCV/eZlDSo/+LL/PlRRpew5Co=;
+        s=default; t=1548078426;
+        bh=GUnkFqWrqxkDzPRvFYd5VBUdZNbsAAbKw4v0ccebPAc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OCgANgcnaBy0YFGtiKOq6/RzSErtuVUWP9LlTLds1DLFbLhPYyv3iioV4PUwRHY/X
-         acN8ys0eG1FgJXoqaieVey1IgBCtJqlNdt129WHmUjKQPHhsm9dafjG9EDIg13i8RI
-         FW52xtJOgscjGGo8n1ylC3T0C+ya5p3x18eJ+hdE=
+        b=RWShROT+jGDMmSXUMmI64owwQ2qvBmOJCnFAeqKJ7NZ4N2qDHC2SXnu6mV/beev0V
+         NVoqKaj+2hHXvJ91RioyKvAmdzsQUGgUUZGEE9RoAPNNcBjs7/oRsUycDfhsuBFtfo
+         pOu13zGIqoaCrQZuVwzeElT36xY1i+mjnLV7gHHE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ursula Braun <ubraun@linux.ibm.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        syzbot+0bf2e01269f1274b4b03@syzkaller.appspotmail.com,
-        syzbot+e3132895630f957306bc@syzkaller.appspotmail.com,
-        "David S. Miller" <davem@davemloft.net>,
-        syzbot+fbd1e5476e4c94c7b34e@syzkaller.appspotmail.com
-Subject: [PATCH 4.20 031/111] smc: move unhash as early as possible in smc_release()
-Date:   Mon, 21 Jan 2019 14:42:25 +0100
-Message-Id: <20190121122459.261048518@linuxfoundation.org>
+        stable@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.20 027/111] r8169: load Realtek PHY driver module before r8169
+Date:   Mon, 21 Jan 2019 14:42:21 +0100
+Message-Id: <20190121122458.787737579@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122455.819406896@linuxfoundation.org>
 References: <20190121122455.819406896@linuxfoundation.org>
@@ -69,46 +65,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Heiner Kallweit <hkallweit1@gmail.com>
 
-[ Upstream commit 26d92e951fe0a44ee4aec157cabb65a818cc8151 ]
+[ Upstream commit 11287b693d03830010356339e4ceddf47dee34fa ]
 
-In smc_release() we release smc->clcsock before unhash the smc
-sock, but a parallel smc_diag_dump() may be still reading
-smc->clcsock, therefore this could cause a use-after-free as
-reported by syzbot.
+This soft dependency works around an issue where sometimes the genphy
+driver is used instead of the dedicated PHY driver. The root cause of
+the issue isn't clear yet. People reported the unloading/re-loading
+module r8169 helps, and also configuring this soft dependency in
+the modprobe config files. Important just seems to be that the
+realtek module is loaded before r8169.
 
-Reported-and-tested-by: syzbot+fbd1e5476e4c94c7b34e@syzkaller.appspotmail.com
-Fixes: 51f1de79ad8e ("net/smc: replace sock_put worker by socket refcounting")
-Cc: Ursula Braun <ubraun@linux.ibm.com>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Reported-by: syzbot+0bf2e01269f1274b4b03@syzkaller.appspotmail.com
-Reported-by: syzbot+e3132895630f957306bc@syzkaller.appspotmail.com
+Once this has been applied preliminary fix 38af4b903210 ("net: phy:
+add workaround for issue where PHY driver doesn't bind to the device")
+will be removed.
+
+Fixes: f1e911d5d0df ("r8169: add basic phylib support")
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/smc/af_smc.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/realtek/r8169.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/smc/af_smc.c
-+++ b/net/smc/af_smc.c
-@@ -146,6 +146,9 @@ static int smc_release(struct socket *so
- 		sock_set_flag(sk, SOCK_DEAD);
- 		sk->sk_shutdown |= SHUTDOWN_MASK;
- 	}
-+
-+	sk->sk_prot->unhash(sk);
-+
- 	if (smc->clcsock) {
- 		if (smc->use_fallback && sk->sk_state == SMC_LISTEN) {
- 			/* wake up clcsock accept */
-@@ -170,7 +173,6 @@ static int smc_release(struct socket *so
- 		smc_conn_free(&smc->conn);
- 	release_sock(sk);
- 
--	sk->sk_prot->unhash(sk);
- 	sock_put(sk); /* final sock_put */
- out:
- 	return rc;
+--- a/drivers/net/ethernet/realtek/r8169.c
++++ b/drivers/net/ethernet/realtek/r8169.c
+@@ -714,6 +714,7 @@ module_param(use_dac, int, 0);
+ MODULE_PARM_DESC(use_dac, "Enable PCI DAC. Unsafe on 32 bit PCI slot.");
+ module_param_named(debug, debug.msg_enable, int, 0);
+ MODULE_PARM_DESC(debug, "Debug verbosity level (0=none, ..., 16=all)");
++MODULE_SOFTDEP("pre: realtek");
+ MODULE_LICENSE("GPL");
+ MODULE_FIRMWARE(FIRMWARE_8168D_1);
+ MODULE_FIRMWARE(FIRMWARE_8168D_2);
 
 
