@@ -2,130 +2,134 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9746C2F42E
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:38:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEA67C2F42E
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:39:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A7A120870
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:38:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEEB120879
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:39:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pDluzDTs"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CgC3MkoN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730197AbfAUPi0 (ORCPT
+        id S1730150AbfAUPjB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 10:38:26 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:40380 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728664AbfAUPiZ (ORCPT
+        Mon, 21 Jan 2019 10:39:01 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:45656 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728739AbfAUPjB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 10:38:25 -0500
-Received: by mail-lj1-f194.google.com with SMTP id n18-v6so17889502lji.7
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 07:38:24 -0800 (PST)
+        Mon, 21 Jan 2019 10:39:01 -0500
+Received: by mail-oi1-f196.google.com with SMTP id y1so14822234oie.12
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 07:39:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Iw55+vvuPeCgW86/mrVescTowc/XCVMNw57ySDbLNwM=;
-        b=pDluzDTsFqtGfOuYs2erpgiTvMl788DDnCQBjHOJJzFGApHLh5mSN+U3mut2FK5R7o
-         tXzOVRxNhldz1CCalMbFJ903YwFC4PN8DI4d10uN5V81d3zXG0/SbDGrJnzSSGI4J/lg
-         PdFXfdomZv6LZmvFyyrdRTqtto2/nKF8JeE14w1VvV8NSuGO5/z6Js2T7Czvh7AS49qs
-         CtJlSwZY13FeZevtRNnoJWJuJFUUpF5dZTmVpjbF9V9GRhTcuT88nMGz5gpTRO/4Oqe7
-         qMk89DTtngBRnxUHrFfNBcW8MZypW5b4bKL3n+8nKxC8O8fM5yDiN/Oj9JkBuOg7rIiE
-         lbTA==
+        bh=PhijNiNOCkGzMTLzeq4IQBBDViImJ39fHjaMWi0movs=;
+        b=CgC3MkoNtfXvAAdDnuEAASNWLtOxt6cvOTSXGOzcNKQtYsBCMLN65W8LA1PGc+nziR
+         xd4XYeYX88E7zYy1Gq6+Pp6aLHAUsooduif8kEK7IlloPrLNqC0zfKV4Y411/5NOcT3e
+         Eggi55sQK4BL7UE8bYi1lSnUUn3eGkmeUZtplfHVZD0YkE5TKz8jEYaAi8ReFHoieNT+
+         0VfV2B5F3uk1gp27f1UzhsIkpkZnzn3fMDwo4XCq0+W6yBWjQ/h6PJvS9Oc6OqLfAtH9
+         LG18H4RatFX56moHnrcXJZo/1Rbi3LVqgUtJL3wZFWiCMLkywqT1228sKbZnuobfBiUM
+         /NDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Iw55+vvuPeCgW86/mrVescTowc/XCVMNw57ySDbLNwM=;
-        b=al+3mLrPW77Xys4NN4xfJ5uOrcHKi9Tu8/O7zSCU7khxrjUqzqCmbwzp09hjqEXJ+u
-         q3BiA6OKPPyQl33InOh/Xj8x9Nf5T4IPWjOMPU38Q1g7xRZXbl414OSRTZw6DdnaoMjW
-         V/yIppb/r1TCDwj6tby6HJW29aJrPC4PiBToWNCv4Z5/Ma6MfVD3pNY9w5XR4/6CT7iV
-         yb4UjSIoFIBkF3nHIpbUae6jEcthmFQi+PH4fex2Ymh4mV85Q7V3bJxSupxFeiEIe8xJ
-         l5Ynh5HDFTZtiI8WQegDyfGatY4YQ7YUurXukcv/BFTuAbZCz6LMFl+7EToAsHDyEPDB
-         Hrbg==
-X-Gm-Message-State: AJcUukez3xsFTbSEvlt9rnYn9dHbg61HezFnXuiV4P0mpIvHPNCBm7KE
-        9qnenvlHYDNM3/ExNN7u2xMEK8bKeyg7E1/ozVjojkli
-X-Google-Smtp-Source: ALg8bN6vjvgBK/+v9ll+sRn+G8B/Y4uhqtyTxl6Ier5SF8B88KbFk0gF80JfFGOFGwM4MmLW4velA8mWt+67ekg3V/s=
-X-Received: by 2002:a2e:9b84:: with SMTP id z4-v6mr18238504lji.93.1548085103216;
- Mon, 21 Jan 2019 07:38:23 -0800 (PST)
+        bh=PhijNiNOCkGzMTLzeq4IQBBDViImJ39fHjaMWi0movs=;
+        b=W/DcIygBUkdpMTPwMLDujSDn7v9rfaM7/CZFh7HaHFU57xswqttzJnw05N5INA5mac
+         FIKrubAjGe5b6x7Gy1dzHlyRptWzEpP+lTSf37DT9tU2wMx+LXYwv3iZ64vtBIQ7oMb6
+         fPkkJI38pC+TVzuEExzZ74bnqzwLsadzkgBcbi8bwMVSGwxcZLdSmIaozhm2YPCMWsmn
+         27ZCf2lbsPR1WaIHOe+t0Y2SAXvlkI+D8lu1rvxlEJV1Cv9EIcpBNwZJ20+3kEeo54PZ
+         VSIOF3aadolQ183tk8tzQMsbbAJNrN31f4ENOSAacUebxvyy1HR5WgYvuMZ87JhvlSfw
+         QriA==
+X-Gm-Message-State: AJcUukdDQtIWrxKTusnrCDfsuUPcjmyLZE8iqVuRtbyzbJ3y1IGjCxMm
+        wR601kNU/YyeCs/UY1eFI1R+FWrQAV8bjUl3woY750QzqLJqmA==
+X-Google-Smtp-Source: ALg8bN5PcgAYujxX4nrJwoGgMFBUpNk4CyVqDTLBCuNpprCB1EItV4vRNe/WKUQh5B1Ikhsrw6zmCbxATHuEJf1ym6Q=
+X-Received: by 2002:aca:3c06:: with SMTP id j6mr5813488oia.126.1548085139791;
+ Mon, 21 Jan 2019 07:38:59 -0800 (PST)
 MIME-Version: 1.0
-References: <CAA85sZs98K62OE6er2ysBSJ2MQC=1xWapCw_tw458Z_K4BjMDA@mail.gmail.com>
- <20190121144657.GA27366@kroah.com> <CAA85sZum33M+1NRcfWkua+66CBTxM8ope+hoGASv6mR8NrwPTg@mail.gmail.com>
- <20190121151020.GB4717@kroah.com>
-In-Reply-To: <20190121151020.GB4717@kroah.com>
-From:   Ian Kumlien <ian.kumlien@gmail.com>
-Date:   Mon, 21 Jan 2019 16:38:11 +0100
-Message-ID: <CAA85sZtizu_uvHhevg_B1Ok7K=O_J=agAmG5ic7M=1by5BCurw@mail.gmail.com>
-Subject: Re: [PATCH 4.20 000/111] 4.20.4-stable review
-To:     David Miller <davem@davemloft.net>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>
+References: <CAG48ez06mDExELyTYN7MZQ3FjGcLx9ASc5HnxW8NQbfTAPX=Qg@mail.gmail.com>
+ <20190119091108.GF10836@kroah.com> <20190120095205.GB28267@kroah.com>
+In-Reply-To: <20190120095205.GB28267@kroah.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Mon, 21 Jan 2019 16:38:33 +0100
+Message-ID: <CAG48ez0=Mcgk15EWBfVw-X7gB2hMJFULRA_w429-uyPZotdqNA@mail.gmail.com>
+Subject: Re: [BUG] tiocsti() NULL dereference if ld->ops->receive_buf==NULL
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Jiri Slaby <jslaby@suse.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-serial@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David,
-
-could we have your blessing to add the following patch to -stable for 4.20.4:
-commit 41d1c8839e5f8cb781cc635f12791decee8271b7
-Author: Paolo Abeni <pabeni@redhat.com>
-Date:   Tue Jan 8 18:45:05 2019 +0100
-
-    net: clear skb->tstamp in bridge forwarding path
-
-    Matteo reported forwarding issues inside the linux bridge,
-    if the enslaved interfaces use the fq qdisc.
-
-    Similar to commit 8203e2d844d3 ("net: clear skb->tstamp in
-    forwarding paths"), we need to clear the tstamp field in
-    the bridge forwarding path.
-
-    Fixes: 80b14dee2bea ("net: Add a new socket option for a future
-transmit time.")
-    Fixes: fb420d5d91c1 ("tcp/fq: move back to CLOCK_MONOTONIC")
-    Reported-and-tested-by: Matteo Croce <mcroce@redhat.com>
-    Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-    Acked-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-    Acked-by: Roopa Prabhu <roopa@cumulusnetworks.com>
-    Reviewed-by: Eric Dumazet <edumazet@google.com>
-    Signed-off-by: David S. Miller <davem@davemloft.net>
----
-
-Also, do you keep your -stable queue somewhere where I can see it?
-It feels like I'm stepping on toes, adding overhead and such, which is
-not what i want...
-
-On Mon, Jan 21, 2019 at 4:10 PM Greg KH <gregkh@linuxfoundation.org> wrote:
-> On Mon, Jan 21, 2019 at 03:56:24PM +0100, Ian Kumlien wrote:
-> > On Mon, Jan 21, 2019 at 3:47 PM Greg KH <gregkh@linuxfoundation.org> wrote:
-> > > On Mon, Jan 21, 2019 at 03:44:24PM +0100, Ian Kumlien wrote:
-> > > > Hi,
-> > > >
-> > > > IMHO you are missing: 41d1c8839e5f8cb781cc635f12791decee8271b7
-> > > >
-> > > > Which should be marked for stable, it fixes:
-> > > > https://bugzilla.kernel.org/show_bug.cgi?id=202235
+On Sun, Jan 20, 2019 at 10:52 AM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Sat, Jan 19, 2019 at 10:11:08AM +0100, Greg Kroah-Hartman wrote:
+> > On Fri, Jan 18, 2019 at 08:09:07PM +0100, Jann Horn wrote:
+> > > Hi!
 > > >
-> > > The networking maintainer handles sending those patches to me.  It
-> > > wasn't part of the last set of patches, so perhaps it will be in the
-> > > next one?
+> > > When a line discipline doesn't have a ->receive_buf handler, tiocsti()
+> > > attempts to call a NULL pointer. Both tty_n_tracesink and
+> > > spk_ttyio_ldisc_ops don't have such a handler.
+> > >
+> > > To reproduce, build a kernel with CONFIG_SPEAKUP=y and
+> > > CONFIG_SPEAKUP_SYNTH_SOFT=y, set speakup.synth=soft in the kernel
+> > > command line, and run the following code as root:
 > >
-> > I thought it would be in the next one after it's in the rc but perhaps not...
+> > <snip>
 > >
-> > I suspected that it could have been a slip up, since:
-> > https://marc.info/?l=linux-netdev&m=154726015506044&w=2
-> >
-> > And i know that there are people waiting for it ;)
+> > Ugh, thanks for finding this.  I'll look at it later this afternoon...
 >
-> Well, ask David and if he says I can queue it up now, I'll be glad to do
-> so.
+> It looks to be a simple change.  We can't really "fail" this ioctl if
+> there's nothing wrong with the structure of the call, so we can just
+> quietly "eat" the character, given that the line discipline doesn't care
+> about it.
 >
-> thanks,
+> So, any objections to the patch below?
+
+No objection from me.
+
+(spk_ttyio_ldisc_ops has a receive_buf2 handler, but I don't know
+whether that should be invoked here or not.)
+
+> -----------------
 >
-> greg k-h
+> Subject: [PATCH] tty: Handle problem if line discipline does not have receive_buf
+>
+> Some tty line disciplines do not have a receive buf callback, so
+> properly check for that before calling it.  If they do not have this
+> callback, just eat the character quietly, as we can't fail this call.
+>
+> Reported-by: Jann Horn <jannh@google.com>
+> Cc: stable <stable@vger.kernel.org>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+>  drivers/tty/tty_io.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+> index 23c6fd238422..21ffcce16927 100644
+> --- a/drivers/tty/tty_io.c
+> +++ b/drivers/tty/tty_io.c
+> @@ -2189,7 +2189,8 @@ static int tiocsti(struct tty_struct *tty, char __user *p)
+>         ld = tty_ldisc_ref_wait(tty);
+>         if (!ld)
+>                 return -EIO;
+> -       ld->ops->receive_buf(tty, &ch, &mbz, 1);
+> +       if (ld->ops->receive_buf)
+> +               ld->ops->receive_buf(tty, &ch, &mbz, 1);
+>         tty_ldisc_deref(ld);
+>         return 0;
+>  }
+> --
+> 2.20.1
+>
