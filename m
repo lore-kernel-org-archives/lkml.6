@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8FDAC2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:09:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBEB9C2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:09:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A980720861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:09:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAB5C20861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:09:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079774;
-	bh=wR5w45Yb4/fud0h/RZD6NHFIn1QttTT1pZaqaUfQPDs=;
+	s=default; t=1548079786;
+	bh=xSF9+HA1JRgtCB2xF+UizB0wYyOyN4QXFLBUXwClE1M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=2fB3YmKhloEXGKQA6F+DrP4++/wrZPfxlc28/Xt3iTId+CZAE1qwDnP/QcewRPlP8
-	 YT0AVy6/8Q5zSSKXcpQcWa3skoaH1yca3cR/9RWzXxanYntIMi+M99uy5IgsAYkimD
-	 5Iv7EeG3gTkTShyO8VXkxJro5jd03csB170ggtWA=
+	b=kJVZDSd3gI9ZM8YEVdkEuLfjFASRuxT0wJc49bI0gq6sk0F08b2W7nm6ZjdfpbVJw
+	 fuNjDknfy60Kvz+C2PYR6tKrRcOrdL0X/JXnVLuGBQkze1M0V0alez4TFcEekaYyRA
+	 g/KevaRUcAv0C19gi7FWlxfNCLH449yHRBcczzEM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731709AbfAUOJc (ORCPT
+        id S1731031AbfAUNy7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:09:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39758 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:54:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39330 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730551AbfAUNzN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:55:13 -0500
+        id S1731608AbfAUNy5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:54:57 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6F5E520861;
-        Mon, 21 Jan 2019 13:55:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 80C1B2087F;
+        Mon, 21 Jan 2019 13:54:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078912;
-        bh=wR5w45Yb4/fud0h/RZD6NHFIn1QttTT1pZaqaUfQPDs=;
+        s=default; t=1548078896;
+        bh=xSF9+HA1JRgtCB2xF+UizB0wYyOyN4QXFLBUXwClE1M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DWOKMncHA38jq0HiaNOMCyL9cx4M7tvvwY2mCeLhJuTisQiBnqALz6dn6cUvyN5h3
-         9dtsvas5twS3xoEKLZcFHkPz5gbnLkbhJwPQigCZW1XC1RTOJepL6hqCSgVdw6nnXs
-         PqwXRaZ+eb5GufkAn7rulDm1iccgy3+aWPqna360=
+        b=No+Uxnh3xPecAgwo9bYb96/WBeaQy6peYQ0/W1SWDR4hM7Z+3JmmYBxqDrcTJWMNx
+         C2304/wiWiqGwaRZDL+xqL3BVVa1MoDrj89C6K6R7WCi8ylO0f5miSYUjyH62UYCm4
+         0WX1jV+NgXFO/Rzi9MYliirzao0VzlteSR6MFKPU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org
-Subject: [PATCH 4.9 27/51] mips: fix n32 compat_ipc_parse_version
-Date:   Mon, 21 Jan 2019 14:44:23 +0100
-Message-Id: <20190121122456.105302155@linuxfoundation.org>
+        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.9 21/51] btrfs: wait on ordered extents on abort cleanup
+Date:   Mon, 21 Jan 2019 14:44:17 +0100
+Message-Id: <20190121122455.494722901@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122453.700446926@linuxfoundation.org>
 References: <20190121122453.700446926@linuxfoundation.org>
@@ -65,41 +66,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Josef Bacik <josef@toxicpanda.com>
 
-commit 5a9372f751b5350e0ce3d2ee91832f1feae2c2e5 upstream.
+commit 74d5d229b1bf60f93bff244b2dfc0eb21ec32a07 upstream.
 
-While reading through the sysvipc implementation, I noticed that the n32
-semctl/shmctl/msgctl system calls behave differently based on whether
-o32 support is enabled or not: Without o32, the IPC_64 flag passed by
-user space is rejected but calls without that flag get IPC_64 behavior.
+If we flip read-only before we initiate writeback on all dirty pages for
+ordered extents we've created then we'll have ordered extents left over
+on umount, which results in all sorts of bad things happening.  Fix this
+by making sure we wait on ordered extents if we have to do the aborted
+transaction cleanup stuff.
 
-As far as I can tell, this was inadvertently changed by a cleanup patch
-but never noticed by anyone, possibly nobody has tried using sysvipc
-on n32 after linux-3.19.
+generic/475 can produce this warning:
 
-Change it back to the old behavior now.
+ [ 8531.177332] WARNING: CPU: 2 PID: 11997 at fs/btrfs/disk-io.c:3856 btrfs_free_fs_root+0x95/0xa0 [btrfs]
+ [ 8531.183282] CPU: 2 PID: 11997 Comm: umount Tainted: G        W 5.0.0-rc1-default+ #394
+ [ 8531.185164] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),BIOS rel-1.11.2-0-gf9626cc-prebuilt.qemu-project.org 04/01/2014
+ [ 8531.187851] RIP: 0010:btrfs_free_fs_root+0x95/0xa0 [btrfs]
+ [ 8531.193082] RSP: 0018:ffffb1ab86163d98 EFLAGS: 00010286
+ [ 8531.194198] RAX: ffff9f3449494d18 RBX: ffff9f34a2695000 RCX:0000000000000000
+ [ 8531.195629] RDX: 0000000000000002 RSI: 0000000000000001 RDI:0000000000000000
+ [ 8531.197315] RBP: ffff9f344e930000 R08: 0000000000000001 R09:0000000000000000
+ [ 8531.199095] R10: 0000000000000000 R11: ffff9f34494d4ff8 R12:ffffb1ab86163dc0
+ [ 8531.200870] R13: ffff9f344e9300b0 R14: ffffb1ab86163db8 R15:0000000000000000
+ [ 8531.202707] FS:  00007fc68e949fc0(0000) GS:ffff9f34bd800000(0000)knlGS:0000000000000000
+ [ 8531.204851] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ [ 8531.205942] CR2: 00007ffde8114dd8 CR3: 000000002dfbd000 CR4:00000000000006e0
+ [ 8531.207516] Call Trace:
+ [ 8531.208175]  btrfs_free_fs_roots+0xdb/0x170 [btrfs]
+ [ 8531.210209]  ? wait_for_completion+0x5b/0x190
+ [ 8531.211303]  close_ctree+0x157/0x350 [btrfs]
+ [ 8531.212412]  generic_shutdown_super+0x64/0x100
+ [ 8531.213485]  kill_anon_super+0x14/0x30
+ [ 8531.214430]  btrfs_kill_super+0x12/0xa0 [btrfs]
+ [ 8531.215539]  deactivate_locked_super+0x29/0x60
+ [ 8531.216633]  cleanup_mnt+0x3b/0x70
+ [ 8531.217497]  task_work_run+0x98/0xc0
+ [ 8531.218397]  exit_to_usermode_loop+0x83/0x90
+ [ 8531.219324]  do_syscall_64+0x15b/0x180
+ [ 8531.220192]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+ [ 8531.221286] RIP: 0033:0x7fc68e5e4d07
+ [ 8531.225621] RSP: 002b:00007ffde8116608 EFLAGS: 00000246 ORIG_RAX:00000000000000a6
+ [ 8531.227512] RAX: 0000000000000000 RBX: 00005580c2175970 RCX:00007fc68e5e4d07
+ [ 8531.229098] RDX: 0000000000000001 RSI: 0000000000000000 RDI:00005580c2175b80
+ [ 8531.230730] RBP: 0000000000000000 R08: 00005580c2175ba0 R09:00007ffde8114e80
+ [ 8531.232269] R10: 0000000000000000 R11: 0000000000000246 R12:00005580c2175b80
+ [ 8531.233839] R13: 00007fc68eac61c4 R14: 00005580c2175a68 R15:0000000000000000
 
-Fixes: 78aaf956ba3a ("MIPS: Compat: Fix build error if CONFIG_MIPS32_COMPAT but no compat ABI.")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: linux-mips@vger.kernel.org
-Cc: stable@vger.kernel.org # 3.19+
+Leaving a tree in the rb-tree:
+
+3853 void btrfs_free_fs_root(struct btrfs_root *root)
+3854 {
+3855         iput(root->ino_cache_inode);
+3856         WARN_ON(!RB_EMPTY_ROOT(&root->inode_tree));
+
+CC: stable@vger.kernel.org
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+[ add stacktrace ]
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+ fs/btrfs/disk-io.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -3135,6 +3135,7 @@ config MIPS32_O32
- config MIPS32_N32
- 	bool "Kernel support for n32 binaries"
- 	depends on 64BIT
-+	select ARCH_WANT_COMPAT_IPC_PARSE_VERSION
- 	select COMPAT
- 	select MIPS32_COMPAT
- 	select SYSVIPC_COMPAT if SYSVIPC
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -4193,6 +4193,14 @@ static void btrfs_destroy_all_ordered_ex
+ 		spin_lock(&fs_info->ordered_root_lock);
+ 	}
+ 	spin_unlock(&fs_info->ordered_root_lock);
++
++	/*
++	 * We need this here because if we've been flipped read-only we won't
++	 * get sync() from the umount, so we need to make sure any ordered
++	 * extents that haven't had their dirty pages IO start writeout yet
++	 * actually get run and error out properly.
++	 */
++	btrfs_wait_ordered_roots(fs_info, -1, 0, (u64)-1);
+ }
+ 
+ static int btrfs_destroy_delayed_refs(struct btrfs_transaction *trans,
 
 
