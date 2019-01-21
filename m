@@ -2,84 +2,92 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99AC0C2F3A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:20:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E8F7C2F3B9
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:20:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6130D2084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:20:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4023F2084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:20:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WxzoqaWo"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="rbdXZ/Km"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728775AbfAUNUD (ORCPT
+        id S1728865AbfAUNUO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:20:03 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:41470 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728314AbfAUNUD (ORCPT
+        Mon, 21 Jan 2019 08:20:14 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:50316 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728314AbfAUNUO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:20:03 -0500
-Received: by mail-lf1-f66.google.com with SMTP id c16so15463511lfj.8
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 05:20:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KlutyYu8Foj1+Lu/ha0RenldfaRM0X15+ku/9bdlSeU=;
-        b=WxzoqaWoRgiOaaVjvegzUqGuUqKr9Jwjyp3mvYkLOZcawXt2kA2VDXyh6TkTukVeyI
-         kkn1yHFopkd8AFvyZSoscIVWL4ig7e7uQsLd67SaWFaB1yIYaLrguHLRbta5XblAruMp
-         FyKWEp312ROXamvO4wSc+DXSQ9tD+qe1m6Zjg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KlutyYu8Foj1+Lu/ha0RenldfaRM0X15+ku/9bdlSeU=;
-        b=SFqMtkOO88Ige8oNgAcG7VYkMZnmozLdcgwGRFgxaiBfMtThq57iX5D7CObJEs20EL
-         P3GbUl/hAV0F22SiBXPsbkfzB3Eg0RaNevsT31bUPu0+xsfH5sPVFQpJ4g8Z1NVHRbQa
-         uJSuJ8oCwFJ3TzUSrdqEWPgSgM7YFIVOjPAgGgq1bix+mskswEn5X7U4uk35vkMuUhGE
-         eIzWBtexl4GQPs3fhN8g9yPnGdsRFUURitv7VGTCOkazN34gOB4unXwVUOcYHyi8v24r
-         SJXj1PJltD5p6qw0+Mt0lyZcdfyjEeoh7kf0qNqwChqgOFWbQ6dflNDHJFNu3a7jFZ24
-         WOQg==
-X-Gm-Message-State: AJcUukf2N/GrRF0rp0yEFW08yP8TATnGhCtze2MgXr+ANotgW9YO5aZx
-        be6UorXM7madS47FWVIHzub2XyYgvq/jlvXBgaXdADY5
-X-Google-Smtp-Source: ALg8bN7VwxG+SFQgO8Wzt9AFTSrlAySg1aDf+lHUgeQwYhD1MeIcW2yAZKvNOJP4RM4See++fQJswqpQ+PpS80cd3pI=
-X-Received: by 2002:a19:41c4:: with SMTP id o187mr9657008lfa.32.1548076801005;
- Mon, 21 Jan 2019 05:20:01 -0800 (PST)
+        Mon, 21 Jan 2019 08:20:14 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0LDJOqj196465;
+        Mon, 21 Jan 2019 13:20:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=6o0yPlT1lwAkGjTg/hifyvWqMRhV8PQmtYQu5qXlFt0=;
+ b=rbdXZ/Km5btZOxNA/CClRvC0wTDYbgYlZeOjwDTOPwBZo7tuQu3A0BJE5fesfRbVzEji
+ FVMfXN++62S2i4ZEUaGfLuyLBZNLRYG0hq9CJ6q6i9YDIWQTFTi7emiBOErElhmurhYe
+ OPxFnitYtEk/OZsfJpc5N+lXf6D31fOZkSJIGuiAul7yOnyTxFg9jF8oZhTPrrpC8/tP
+ IqDpX2EaL1o66RgqztOqSy9O5R/I5Q7et7o3kt3naFGcn7/6vIZi2169+/mqCFH/QMGA
+ 9yfHtltReBNX9u6WIezEXnXvhR4xP+GsgOOo0Eiu91EhmUIgbHrsf4u1rXeD4itVnHkv ow== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2130.oracle.com with ESMTP id 2q3sde6w3h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 21 Jan 2019 13:20:06 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0LDK6qw030082
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 21 Jan 2019 13:20:06 GMT
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x0LDK5cD022094;
+        Mon, 21 Jan 2019 13:20:05 GMT
+Received: from kadam (/197.157.0.41)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 21 Jan 2019 05:20:04 -0800
+Date:   Mon, 21 Jan 2019 16:19:42 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Ajay Kaher <akaher@vmware.com>
+Cc:     kys@microsoft.com, haiyangz@microsoft.com,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        devel@linuxdriverproject.org
+Subject: Re: [PATCH 1/3] PCI: hv: Allocate physically contiguous hypercall
+ params buffer
+Message-ID: <20190121131942.GH4482@kadam>
+References: <1547758038-5255-1-git-send-email-akaher@vmware.com>
+ <1547758038-5255-2-git-send-email-akaher@vmware.com>
 MIME-Version: 1.0
-References: <20190111162516.28197-1-poeschel@lemonage.de>
-In-Reply-To: <20190111162516.28197-1-poeschel@lemonage.de>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 21 Jan 2019 14:19:49 +0100
-Message-ID: <CACRpkdZFFu=wgHw0BqXUHiC5euGwWuYbr5bH60zDvFr+q394=w@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: mcp23s08: Allocate irq_chip dynamic
-To:     Lars Poeschel <poeschel@lemonage.de>
-Cc:     "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1547758038-5255-2-git-send-email-akaher@vmware.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9142 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=989
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901210105
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 4:16 PM Lars Poeschel <poeschel@lemonage.de> wrote:
+On Fri, Jan 18, 2019 at 02:17:16AM +0530, Ajay Kaher wrote:
+> hv_do_hypercall() assumes that we pass a segment from a physically
+> contiguous buffer.  A buffer allocated on the stack may not work if
+> CONFIG_VMAP_STACK=y is set.
+> 
+> Use kmalloc() to allocate this buffer.
+> 
 
-> Keeping the irq_chip definition static shares it with multiple instances
-> of the mcp23s08 gpiochip in the system. This is bad and now we get this
-> warning from gpiolib core:
->
-> "detected irqchip that is shared with multiple gpiochips: please fix the
-> driver."
->
-> Hence, move the irq_chip definition from being driver static into the
-> struct mcp23s08. So a unique irq_chip is used for each gpiochip
-> instance.
->
-> Signed-off-by: Lars Poeschel <poeschel@lemonage.de>
+Since you're going to need to resend this anyway, can you add in the
+commit message what this looks like from a user perspective?  Presumably
+it's an occasional crash?
 
-Patch applied.
+regards,
+dan carpenter
 
-Yours,
-Linus Walleij
