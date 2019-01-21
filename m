@@ -2,118 +2,161 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 520DDC2F421
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:36:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44005C2F421
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:36:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F4232085A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:36:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XpSNJvA3"
+	by mail.kernel.org (Postfix) with ESMTP id 1E5CD2085A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:36:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730708AbfAUPf7 (ORCPT
+        id S1730042AbfAUPgJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 10:35:59 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:44397 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730135AbfAUPf5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 10:35:57 -0500
-Received: by mail-vs1-f65.google.com with SMTP id u11so12813561vsp.11
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 07:35:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=P+QB4YZGEJLcPSkGnAhuoFe4nirgoy69vDlYb4K4aCQ=;
-        b=XpSNJvA31VORta233d9tgGET0O1mugOj/Wqy1IfVVwWc2D0CztIYeLjsxSlvWfANSy
-         UBLpu5A23chNkqlRpdscDVrMU6W2k6GiFcgKfhxsk6ayX4o7ndog6bD9iaGRkKedvSvD
-         rlkuBgbbXwPonhrkP/genyI4TflOVx55lhsY0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=P+QB4YZGEJLcPSkGnAhuoFe4nirgoy69vDlYb4K4aCQ=;
-        b=TEuj0a84srloORY6spqy+e1N2C4DB/qra5Q8kPqcaNIo9NEwuSB8kV15ziYk4pcfFn
-         wQxHV7/OfL6F14amRHtCeivOU4GUj0JnBBl55Rj4PC+qSNgdjh+a1ILu6dH7K+C02sXW
-         SAiy7nrlKGqzAzM5e68FMTsfWUmSSSA/gJgyJG4SCBNXfd3BOLIWgeYLL1aIrSU0+kCX
-         7AWS6RGtEw3f/8v/NEa8YFlUzyVmtYsCc1w2lh6t7LBx83uQ4DXDElGdDCm7e9d4F3mu
-         ZScbK+3+JQYHbvFIKXMZaxb6d8OsjZD8LWWEPvj/YpuMqLA5NLgh+HSHb76NyHsKmlid
-         iVfg==
-X-Gm-Message-State: AJcUukdpdwgepI2kaNDrHKKzPQ2ttCe+9RGUupmQAMxQu0KqchxYe9Ml
-        fbgKeAUGX2Lt6zdBkiq7AsvK2nci9550u6ZLApCKfw==
-X-Google-Smtp-Source: ALg8bN5OQXsJT5dEgvw62DKG1u22ChYvckx2arIxE/Ebl6FPE0U6WW29ZixVYyhbdYdMSOMFXP1AVmAkpT8CV8MOEyY=
-X-Received: by 2002:a67:e0d4:: with SMTP id m20mr12739834vsl.182.1548084956390;
- Mon, 21 Jan 2019 07:35:56 -0800 (PST)
-MIME-Version: 1.0
-References: <cover.1547481320.git.amit.kucheria@linaro.org>
- <168294311714f269b1050bcbf5d3324eae0808f2.1547481320.git.amit.kucheria@linaro.org>
- <1718046.8NPD0iV1Wv@aspire.rjw.lan>
-In-Reply-To: <1718046.8NPD0iV1Wv@aspire.rjw.lan>
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-Date:   Mon, 21 Jan 2019 21:05:45 +0530
-Message-ID: <CAHLCerOLXwdMmRci9wSr8+LjVf4m3CdLd85WWjd1Q3VriQy_MA@mail.gmail.com>
-Subject: Re: [PATCH v1 01/10] cpufreq: Add thermal_cooling_device pointer to
- struct cpufreq_policy
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Linux PM list <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 21 Jan 2019 10:36:09 -0500
+Received: from foss.arm.com ([217.140.101.70]:36534 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730242AbfAUPee (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 10:34:34 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 10738EBD;
+        Mon, 21 Jan 2019 07:34:34 -0800 (PST)
+Received: from e112298-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A7CBC3F5C1;
+        Mon, 21 Jan 2019 07:34:31 -0800 (PST)
+From:   Julien Thierry <julien.thierry@arm.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
+        joel@joelfernandes.org, marc.zyngier@arm.com,
+        christoffer.dall@arm.com, james.morse@arm.com,
+        catalin.marinas@arm.com, will.deacon@arm.com, mark.rutland@arm.com,
+        Julien Thierry <julien.thierry@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Marc Zyngier <Marc.Zyngier@arm.com>,
+        Christoffer Dall <Christoffer.Dall@arm.com>
+Subject: [PATCH v9 14/26] arm64: alternative: Allow alternative status checking per cpufeature
+Date:   Mon, 21 Jan 2019 15:33:33 +0000
+Message-Id: <1548084825-8803-15-git-send-email-julien.thierry@arm.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1548084825-8803-1-git-send-email-julien.thierry@arm.com>
+References: <1548084825-8803-1-git-send-email-julien.thierry@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 4:27 AM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->
-> On Monday, January 14, 2019 5:34:53 PM CET Amit Kucheria wrote:
-> > Several cpufreq drivers register themselves as thermal cooling devices.
-> > Adding a pointer to struct cpufreq_policy removes the need for them to
-> > store this pointer in a private data structure.
-> >
-> > We can then auto-register the cpufreq driver as a thermal cooling device
-> > from cpufreq core code.
-> >
-> > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> > ---
-> >  include/linux/cpufreq.h | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> >
-> > diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
-> > index c86d6d8bdfed..7d0cf54125fa 100644
-> > --- a/include/linux/cpufreq.h
-> > +++ b/include/linux/cpufreq.h
-> > @@ -95,6 +95,11 @@ struct cpufreq_policy {
-> >       struct cpufreq_frequency_table  *freq_table;
-> >       enum cpufreq_table_sorting freq_table_sorted;
-> >
-> > +#ifdef CONFIG_CPU_THERMAL
-> > +     /* Pointer to the cooling device if used for thermal mitigation */
-> > +     struct thermal_cooling_device *cooldev;
-> > +#endif
-> > +
->
-> Why here and not at the end of the struct?
+In preparation for the application of alternatives at different points
+during the boot process, provide the possibility to check whether
+alternatives for a feature of interest was already applied instead of
+having a global boolean for all alternatives.
 
-Fixed
+Make VHE enablement code check for the VHE feature instead of considering
+all alternatives.
 
-> >       struct list_head        policy_list;
-> >       struct kobject          kobj;
-> >       struct completion       kobj_unregister;
-> >
->
-> Also, I would suggest combining this one with patch [02/10].
+Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: Marc Zyngier <Marc.Zyngier@arm.com>
+Cc: Christoffer Dall <Christoffer.Dall@arm.com>
+---
+ arch/arm64/include/asm/alternative.h |  3 +--
+ arch/arm64/kernel/alternative.c      | 21 +++++++++++++++++----
+ arch/arm64/kernel/cpufeature.c       |  2 +-
+ 3 files changed, 19 insertions(+), 7 deletions(-)
 
-Will do.
+diff --git a/arch/arm64/include/asm/alternative.h b/arch/arm64/include/asm/alternative.h
+index 4b650ec..9806a23 100644
+--- a/arch/arm64/include/asm/alternative.h
++++ b/arch/arm64/include/asm/alternative.h
+@@ -14,8 +14,6 @@
+ #include <linux/stddef.h>
+ #include <linux/stringify.h>
+ 
+-extern int alternatives_applied;
+-
+ struct alt_instr {
+ 	s32 orig_offset;	/* offset to original instruction */
+ 	s32 alt_offset;		/* offset to replacement instruction */
+@@ -28,6 +26,7 @@ typedef void (*alternative_cb_t)(struct alt_instr *alt,
+ 				 __le32 *origptr, __le32 *updptr, int nr_inst);
+ 
+ void __init apply_alternatives_all(void);
++bool alternative_is_applied(u16 cpufeature);
+ 
+ #ifdef CONFIG_MODULES
+ void apply_alternatives_module(void *start, size_t length);
+diff --git a/arch/arm64/kernel/alternative.c b/arch/arm64/kernel/alternative.c
+index b5d6039..c947d22 100644
+--- a/arch/arm64/kernel/alternative.c
++++ b/arch/arm64/kernel/alternative.c
+@@ -32,13 +32,23 @@
+ #define ALT_ORIG_PTR(a)		__ALT_PTR(a, orig_offset)
+ #define ALT_REPL_PTR(a)		__ALT_PTR(a, alt_offset)
+ 
+-int alternatives_applied;
++static int all_alternatives_applied;
++
++static DECLARE_BITMAP(applied_alternatives, ARM64_NCAPS);
+ 
+ struct alt_region {
+ 	struct alt_instr *begin;
+ 	struct alt_instr *end;
+ };
+ 
++bool alternative_is_applied(u16 cpufeature)
++{
++	if (WARN_ON(cpufeature >= ARM64_NCAPS))
++		return false;
++
++	return test_bit(cpufeature, applied_alternatives);
++}
++
+ /*
+  * Check if the target PC is within an alternative block.
+  */
+@@ -192,6 +202,9 @@ static void __apply_alternatives(void *alt_region, bool is_module)
+ 		dsb(ish);
+ 		__flush_icache_all();
+ 		isb();
++
++		/* We applied all that was available */
++		bitmap_copy(applied_alternatives, cpu_hwcaps, ARM64_NCAPS);
+ 	}
+ }
+ 
+@@ -208,14 +221,14 @@ static int __apply_alternatives_multi_stop(void *unused)
+ 
+ 	/* We always have a CPU 0 at this point (__init) */
+ 	if (smp_processor_id()) {
+-		while (!READ_ONCE(alternatives_applied))
++		while (!READ_ONCE(all_alternatives_applied))
+ 			cpu_relax();
+ 		isb();
+ 	} else {
+-		BUG_ON(alternatives_applied);
++		BUG_ON(all_alternatives_applied);
+ 		__apply_alternatives(&region, false);
+ 		/* Barriers provided by the cache flushing */
+-		WRITE_ONCE(alternatives_applied, 1);
++		WRITE_ONCE(all_alternatives_applied, 1);
+ 	}
+ 
+ 	return 0;
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index 6f56e0a..d607ea3 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -1118,7 +1118,7 @@ static void cpu_copy_el2regs(const struct arm64_cpu_capabilities *__unused)
+ 	 * that, freshly-onlined CPUs will set tpidr_el2, so we don't need to
+ 	 * do anything here.
+ 	 */
+-	if (!alternatives_applied)
++	if (!alternative_is_applied(ARM64_HAS_VIRT_HOST_EXTN))
+ 		write_sysreg(read_sysreg(tpidr_el1), tpidr_el2);
+ }
+ #endif
+-- 
+1.9.1
 
-Thanks for the review.
