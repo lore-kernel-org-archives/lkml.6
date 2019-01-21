@@ -2,53 +2,51 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DF9FC2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:03:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CBE4C2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:03:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2B272089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:03:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3801D21019
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:03:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079393;
-	bh=qP43qtXwsck909hhTKuxfNbIGb7S5m9NguopOctAMd0=;
+	s=default; t=1548079398;
+	bh=rCbwB7vVAtEaRAzs8l7W6vU0J1n3cvQJ54V51eC9XqI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=s7UkEL82qrPC9tOHjAjHw1cgUXSQA6na99aeKi+hRFivi9oNQS+fCutC1PoZqyEmf
-	 N2v75rs2pSoON68vYcQ9FEr0IiX3a5A+zANJNw5kGj7Js7HF8qVsA40XkdgdfXVS41
-	 NGLgZySgHNZd51jE09mHCcikOre/3RcKhiotl9pM=
+	b=b/NzW/Q5l9fanNGtfSWAu/NsRDMbzNx8UfJNm8XbdE65hKC7/GpN7rABMrOn7fqTc
+	 jqBPtXASTYZ5ktxVl4f2squkqvbe6MNSopG1bOr4i+1KzuFuBDOHzS9iJ8Q6CydVri
+	 6eTxb+vbTKyKwwCuSlXm5i1LvpJTyRdPAsYA0wys=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732157AbfAUODL (ORCPT
+        id S1732943AbfAUODK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:03:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51000 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 09:03:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50952 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732471AbfAUODI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 09:03:08 -0500
+        id S1732919AbfAUODF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 09:03:05 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D9D32089F;
-        Mon, 21 Jan 2019 14:03:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E9BC22089F;
+        Mon, 21 Jan 2019 14:03:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548079387;
-        bh=qP43qtXwsck909hhTKuxfNbIGb7S5m9NguopOctAMd0=;
+        s=default; t=1548079384;
+        bh=rCbwB7vVAtEaRAzs8l7W6vU0J1n3cvQJ54V51eC9XqI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xEaPzGprX+4ckogdVXFOqi4hrONUycmTsRt787UQwb2OjMu7gdoIyp7lpq7FEodFS
-         N8sjaIZZV7ZokZma7FIKcit+6Zfz0/wFHTqlrardwoEnq6qWnZu8VViZXeXvRiLOdN
-         NCWhy4yb88TcsiVMFl+t1aOsCmwKjvPUxZ6ysDT4=
+        b=d+QKpdqh/deg1fZ3mAH+ckHnGZqymgfdPKq+ytS+FRZCc6XwzBlR78DcqodPk3tKC
+         LZxD9TN38JmMOsiVFd0JCYSAiamBwKsfkEoAFNCeJ+PXrmO6EahiQRCzGopWuu9i59
+         safW7eUXUo0ZUek2znm2KQUmT1ateLRFwQdNI8Qc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+d78b8a29241a195aefb8@syzkaller.appspotmail.com,
-        Ying Xue <ying.xue@windriver.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 77/99] tipc: fix uninit-value in tipc_nl_compat_link_set
-Date:   Mon, 21 Jan 2019 14:49:09 +0100
-Message-Id: <20190121134917.007715780@linuxfoundation.org>
+        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.19 86/99] loop: Push loop_ctl_mutex down into loop_clr_fd()
+Date:   Mon, 21 Jan 2019 14:49:18 +0100
+Message-Id: <20190121134917.434547729@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121134913.924726465@linuxfoundation.org>
 References: <20190121134913.924726465@linuxfoundation.org>
@@ -67,76 +65,135 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ying Xue <ying.xue@windriver.com>
+From: Jan Kara <jack@suse.cz>
 
-commit edf5ff04a45750ac8ce2435974f001dc9cfbf055 upstream.
+commit 7ccd0791d98531df7cd59e92d55e4f063d48a070 upstream.
 
-syzbot reports following splat:
+loop_clr_fd() has a weird locking convention that is expects
+loop_ctl_mutex held, releases it on success and keeps it on failure.
+Untangle the mess by moving locking of loop_ctl_mutex into
+loop_clr_fd().
 
-BUG: KMSAN: uninit-value in strlen+0x3b/0xa0 lib/string.c:486
-CPU: 1 PID: 9306 Comm: syz-executor172 Not tainted 4.20.0-rc7+ #2
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x173/0x1d0 lib/dump_stack.c:113
-  kmsan_report+0x12e/0x2a0 mm/kmsan/kmsan.c:613
-  __msan_warning+0x82/0xf0 mm/kmsan/kmsan_instr.c:313
-  strlen+0x3b/0xa0 lib/string.c:486
-  nla_put_string include/net/netlink.h:1154 [inline]
-  __tipc_nl_compat_link_set net/tipc/netlink_compat.c:708 [inline]
-  tipc_nl_compat_link_set+0x929/0x1220 net/tipc/netlink_compat.c:744
-  __tipc_nl_compat_doit net/tipc/netlink_compat.c:311 [inline]
-  tipc_nl_compat_doit+0x3aa/0xaf0 net/tipc/netlink_compat.c:344
-  tipc_nl_compat_handle net/tipc/netlink_compat.c:1107 [inline]
-  tipc_nl_compat_recv+0x14d7/0x2760 net/tipc/netlink_compat.c:1210
-  genl_family_rcv_msg net/netlink/genetlink.c:601 [inline]
-  genl_rcv_msg+0x185f/0x1a60 net/netlink/genetlink.c:626
-  netlink_rcv_skb+0x444/0x640 net/netlink/af_netlink.c:2477
-  genl_rcv+0x63/0x80 net/netlink/genetlink.c:637
-  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
-  netlink_unicast+0xf40/0x1020 net/netlink/af_netlink.c:1336
-  netlink_sendmsg+0x127f/0x1300 net/netlink/af_netlink.c:1917
-  sock_sendmsg_nosec net/socket.c:621 [inline]
-  sock_sendmsg net/socket.c:631 [inline]
-  ___sys_sendmsg+0xdb9/0x11b0 net/socket.c:2116
-  __sys_sendmsg net/socket.c:2154 [inline]
-  __do_sys_sendmsg net/socket.c:2163 [inline]
-  __se_sys_sendmsg+0x305/0x460 net/socket.c:2161
-  __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
-  do_syscall_64+0xbc/0xf0 arch/x86/entry/common.c:291
-  entry_SYSCALL_64_after_hwframe+0x63/0xe7
-
-The uninitialised access happened in
-    nla_put_string(skb, TIPC_NLA_LINK_NAME, lc->name)
-
-This is because lc->name string is not validated before it's used.
-
-Reported-by: syzbot+d78b8a29241a195aefb8@syzkaller.appspotmail.com
-Signed-off-by: Ying Xue <ying.xue@windriver.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/tipc/netlink_compat.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/block/loop.c |   49 +++++++++++++++++++++++++++++--------------------
+ 1 file changed, 29 insertions(+), 20 deletions(-)
 
---- a/net/tipc/netlink_compat.c
-+++ b/net/tipc/netlink_compat.c
-@@ -762,9 +762,14 @@ static int tipc_nl_compat_link_set(struc
- 	struct tipc_link_config *lc;
- 	struct tipc_bearer *bearer;
- 	struct tipc_media *media;
-+	int len;
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -1028,15 +1028,22 @@ loop_init_xfer(struct loop_device *lo, s
  
- 	lc = (struct tipc_link_config *)TLV_DATA(msg->req);
+ static int __loop_clr_fd(struct loop_device *lo)
+ {
+-	struct file *filp = lo->lo_backing_file;
++	struct file *filp = NULL;
+ 	gfp_t gfp = lo->old_gfp_mask;
+ 	struct block_device *bdev = lo->lo_device;
++	int err = 0;
  
-+	len = min_t(int, TLV_GET_DATA_LEN(msg->req), TIPC_MAX_LINK_NAME);
-+	if (!string_is_valid(lc->name, len))
-+		return -EINVAL;
+-	if (WARN_ON_ONCE(lo->lo_state != Lo_rundown))
+-		return -ENXIO;
++	mutex_lock(&loop_ctl_mutex);
++	if (WARN_ON_ONCE(lo->lo_state != Lo_rundown)) {
++		err = -ENXIO;
++		goto out_unlock;
++	}
+ 
+-	if (filp == NULL)
+-		return -EINVAL;
++	filp = lo->lo_backing_file;
++	if (filp == NULL) {
++		err = -EINVAL;
++		goto out_unlock;
++	}
+ 
+ 	/* freeze request queue during the transition */
+ 	blk_mq_freeze_queue(lo->lo_queue);
+@@ -1083,6 +1090,7 @@ static int __loop_clr_fd(struct loop_dev
+ 	if (!part_shift)
+ 		lo->lo_disk->flags |= GENHD_FL_NO_PART_SCAN;
+ 	loop_unprepare_queue(lo);
++out_unlock:
+ 	mutex_unlock(&loop_ctl_mutex);
+ 	/*
+ 	 * Need not hold loop_ctl_mutex to fput backing file.
+@@ -1090,14 +1098,22 @@ static int __loop_clr_fd(struct loop_dev
+ 	 * lock dependency possibility warning as fput can take
+ 	 * bd_mutex which is usually taken before loop_ctl_mutex.
+ 	 */
+-	fput(filp);
+-	return 0;
++	if (filp)
++		fput(filp);
++	return err;
+ }
+ 
+ static int loop_clr_fd(struct loop_device *lo)
+ {
+-	if (lo->lo_state != Lo_bound)
++	int err;
 +
- 	media = tipc_media_find(lc->name);
- 	if (media) {
- 		cmd->doit = &__tipc_nl_media_set;
++	err = mutex_lock_killable_nested(&loop_ctl_mutex, 1);
++	if (err)
++		return err;
++	if (lo->lo_state != Lo_bound) {
++		mutex_unlock(&loop_ctl_mutex);
+ 		return -ENXIO;
++	}
+ 	/*
+ 	 * If we've explicitly asked to tear down the loop device,
+ 	 * and it has an elevated reference count, set it for auto-teardown when
+@@ -1114,6 +1130,7 @@ static int loop_clr_fd(struct loop_devic
+ 		return 0;
+ 	}
+ 	lo->lo_state = Lo_rundown;
++	mutex_unlock(&loop_ctl_mutex);
+ 
+ 	return __loop_clr_fd(lo);
+ }
+@@ -1448,14 +1465,7 @@ static int lo_ioctl(struct block_device
+ 		mutex_unlock(&loop_ctl_mutex);
+ 		break;
+ 	case LOOP_CLR_FD:
+-		err = mutex_lock_killable_nested(&loop_ctl_mutex, 1);
+-		if (err)
+-			return err;
+-		/* loop_clr_fd would have unlocked loop_ctl_mutex on success */
+-		err = loop_clr_fd(lo);
+-		if (err)
+-			mutex_unlock(&loop_ctl_mutex);
+-		break;
++		return loop_clr_fd(lo);
+ 	case LOOP_SET_STATUS:
+ 		err = -EPERM;
+ 		if ((mode & FMODE_WRITE) || capable(CAP_SYS_ADMIN)) {
+@@ -1691,7 +1701,6 @@ out:
+ static void lo_release(struct gendisk *disk, fmode_t mode)
+ {
+ 	struct loop_device *lo;
+-	int err;
+ 
+ 	mutex_lock(&loop_ctl_mutex);
+ 	lo = disk->private_data;
+@@ -1702,13 +1711,13 @@ static void lo_release(struct gendisk *d
+ 		if (lo->lo_state != Lo_bound)
+ 			goto out_unlock;
+ 		lo->lo_state = Lo_rundown;
++		mutex_unlock(&loop_ctl_mutex);
+ 		/*
+ 		 * In autoclear mode, stop the loop thread
+ 		 * and remove configuration after last close.
+ 		 */
+-		err = __loop_clr_fd(lo);
+-		if (!err)
+-			return;
++		__loop_clr_fd(lo);
++		return;
+ 	} else if (lo->lo_state == Lo_bound) {
+ 		/*
+ 		 * Otherwise keep thread (if running) and config,
 
 
