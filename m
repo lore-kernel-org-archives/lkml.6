@@ -2,521 +2,73 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF6F6C282DE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:46:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6838DC282DE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:47:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A40420989
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:46:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=mena-vt-edu.20150623.gappssmtp.com header.i=@mena-vt-edu.20150623.gappssmtp.com header.b="zankkbHa"
+	by mail.kernel.org (Postfix) with ESMTP id 3EC872084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:47:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728372AbfAUHq4 (ORCPT
+        id S1728478AbfAUHrd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 02:46:56 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:39858 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726240AbfAUHqz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 02:46:55 -0500
-Received: by mail-wm1-f68.google.com with SMTP id y8so9694825wmi.4
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Jan 2019 23:46:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mena-vt-edu.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=FG9I5pcqQ6PBpmnFSV+YSdqpqF1gFPiVklkeK1UqFdY=;
-        b=zankkbHaqdHGoJFjC87tGlsiQRSC4DJuXnNPwZxmUsRW6xZwNY6eS0h+rqEFfUYzKZ
-         F6oZEwFH+j/FXhGE5Eq2cHQJ3c9fonjji/qHOSd63FCKpAJD+gpZ1F5wkKNv+PbdN1tD
-         kI8KgNbqbVsv+CYXgDlYnIjjtZUz1uZpTTQnFQj0a7qTDzjOCqcM5p4JiYnjEe599w1E
-         0oPp1YxAVOjYe+YdFRpUONFtv01J2U/+ijKyYVEC8Kx2CBNSHNVpsapmjmtw/MoVfMNg
-         qnQs0FKzJX3cu2W3cDTTwyUgDUgPllt1INKjYYrl/Q0rVkmnzo7MkwHOUxM+bm1rYNim
-         H8kQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=FG9I5pcqQ6PBpmnFSV+YSdqpqF1gFPiVklkeK1UqFdY=;
-        b=o+Bi2a9dD30vNPU7Dh/1otX3ylaD1GmZLDDZh2w56ne3I1Y8ifu06qkqqgeWmiMQwL
-         ekUrq72zpDRi+k9l8nwE4CgOSh6yaX6YFoQGvq7MNw7l6hog8zbGCW4aKTRd7ABUfUhM
-         14WFkkhSGzmbFiXSyaBzUApy2OEMd234oIvX9nG0PDvQJBVT6N9zBCyxKkUj76WugjQq
-         +BhH4B8IhqTPqsy2MJSFPCWTFLaWha+/+Mee0zAKd+EgVsroVawRFg8PWMU1UTxXYRjn
-         CbYnZOPRtxAoAoBk6LOqRO4t2G+qSgduCuLvHF2kmF4BQE3So1b/6/Qbx4I3tSSkCy6C
-         xZ2g==
-X-Gm-Message-State: AJcUukc167hFf7Gob8GnYZTqRyYEYpY8E/TdkhoR/CN96tnN0UJqAuM+
-        a6Y7PSocqmQnSduqo1kZc0DL+A==
-X-Google-Smtp-Source: ALg8bN7aQrlCDWjbF2HnN6Ed8pW95Eay2sLkhNpmE9H65vAHIdL1UDsem4gNkZRJJM1oY56Jg40w/w==
-X-Received: by 2002:a1c:c58d:: with SMTP id v135mr23505842wmf.88.1548027688429;
-        Sun, 20 Jan 2019 15:41:28 -0800 (PST)
-Received: from localhost.localdomain ([156.212.82.83])
-        by smtp.gmail.com with ESMTPSA id e9sm76576753wro.16.2019.01.20.15.41.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 20 Jan 2019 15:41:27 -0800 (PST)
-From:   Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
-To:     Paolo Bonzini <pbonzini@redhat.com>, rkrcmar@redhat.com,
-        Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        hpa@zytor.com, x86@kernel.org, kvm@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ahmedsoliman0x666@gmail.com, ovich00@gmail.com,
-        kernel-hardening@lists.openwall.com, nigel.edwards@hpe.com,
-        Boris Lukashev <blukashev@sempervictus.com>,
-        Igor Stoppa <igor.stoppa@gmail.com>
-Cc:     Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
-Subject: [RESEND PATCH V8 07/11] KVM: Add support for byte granular memory ROE
-Date:   Mon, 21 Jan 2019 01:39:36 +0200
-Message-Id: <20190120233940.15282-8-ahmedsoliman@mena.vt.edu>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20190120233940.15282-1-ahmedsoliman@mena.vt.edu>
-References: <20190120233940.15282-1-ahmedsoliman@mena.vt.edu>
+        Mon, 21 Jan 2019 02:47:33 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2280 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726240AbfAUHrd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 02:47:33 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 7977AD2FDF0DF61B7443;
+        Mon, 21 Jan 2019 15:47:29 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.408.0; Mon, 21 Jan 2019 15:47:22 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     Larry Finger <Larry.Finger@lwfinger.net>,
+        Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Straube <straube.linux@gmail.com>
+CC:     YueHaibing <yuehaibing@huawei.com>, <devel@driverdev.osuosl.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] staging: rtl8712: drop pointless static qualifier in r8712_efuse_pg_packet_write()
+Date:   Mon, 21 Jan 2019 07:53:13 +0000
+Message-ID: <1548057193-130411-1-git-send-email-yuehaibing@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch documents and implements ROE_MPROTECT_CHUNK, a part of ROE
-hypercall designed to protect regions of a memory page with byte
-granularity. This feature provides a key primitive to protect against
-attacks involving pages remapping.
+There is no need to have the 'intrepeat_times' variable static since new
+value always be assigned before use it.
 
-Signed-off-by: Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- include/linux/kvm_host.h      |  24 ++++
- include/uapi/linux/kvm_para.h |   1 +
- virt/kvm/kvm_main.c           |  24 +++-
- virt/kvm/roe.c                | 212 ++++++++++++++++++++++++++++++++--
- virt/kvm/roe_generic.h        |   6 +
- 5 files changed, 253 insertions(+), 14 deletions(-)
+ drivers/staging/rtl8712/rtl8712_efuse.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index a627c6e81a..9acf5f54ac 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -294,10 +294,34 @@ static inline int kvm_vcpu_exiting_guest_mode(struct kvm_vcpu *vcpu)
-  */
- #define KVM_MEM_MAX_NR_PAGES ((1UL << 31) - 1)
+diff --git a/drivers/staging/rtl8712/rtl8712_efuse.c b/drivers/staging/rtl8712/rtl8712_efuse.c
+index 8bc45ff..39eb743 100644
+--- a/drivers/staging/rtl8712/rtl8712_efuse.c
++++ b/drivers/staging/rtl8712/rtl8712_efuse.c
+@@ -358,7 +358,7 @@ u8 r8712_efuse_pg_packet_write(struct _adapter *padapter, const u8 offset,
+ 	u8 pg_header = 0;
+ 	u16 efuse_addr = 0, curr_size = 0;
+ 	u8 efuse_data, target_word_cnts = 0;
+-	static int repeat_times;
++	int repeat_times;
+ 	int sub_repeat;
+ 	u8 bResult = true;
  
-+/*
-+ * This structure is used to hold memory areas that are to be protected in a
-+ * memory frame with mixed page permissions.
-+ **/
-+struct protected_chunk {
-+	gpa_t gpa;
-+	u64 size;
-+	struct list_head list;
-+};
-+
-+static inline bool kvm_roe_range_overlap(struct protected_chunk *chunk,
-+		gpa_t gpa, int len) {
-+	/*
-+	 * https://stackoverflow.com/questions/325933/
-+	 * determine-whether-two-date-ranges-overlap
-+	 * Assuming that it works, that link ^ provides a solution that is
-+	 * better than anything I would ever come up with.
-+	 */
-+	return (gpa <= chunk->gpa + chunk->size - 1) &&
-+		(gpa + len - 1 >= chunk->gpa);
-+}
-+
- struct kvm_memory_slot {
- 	gfn_t base_gfn;
- 	unsigned long npages;
- 	unsigned long *roe_bitmap;
-+	unsigned long *partial_roe_bitmap;
-+	struct list_head *prot_list;
- 	unsigned long *dirty_bitmap;
- 	struct kvm_arch_memory_slot arch;
- 	unsigned long userspace_addr;
-diff --git a/include/uapi/linux/kvm_para.h b/include/uapi/linux/kvm_para.h
-index e6004e0750..4a84f974bc 100644
---- a/include/uapi/linux/kvm_para.h
-+++ b/include/uapi/linux/kvm_para.h
-@@ -33,6 +33,7 @@
- /* ROE Functionality parameters */
- #define ROE_VERSION			0
- #define ROE_MPROTECT			1
-+#define ROE_MPROTECT_CHUNK		2
- /*
-  * hypercalls use architecture specific
-  */
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 88b5fbcbb0..819033f475 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -1354,18 +1354,19 @@ static bool memslot_is_readonly(struct kvm_memory_slot *slot)
- 
- static bool gfn_is_readonly(struct kvm_memory_slot *slot, gfn_t gfn)
- {
--	return gfn_is_full_roe(slot, gfn) || memslot_is_readonly(slot);
-+	return gfn_is_full_roe(slot, gfn) ||
-+	       gfn_is_partial_roe(slot, gfn) ||
-+	       memslot_is_readonly(slot);
- }
- 
-+
- static unsigned long __gfn_to_hva_many(struct kvm_memory_slot *slot, gfn_t gfn,
- 				       gfn_t *nr_pages, bool write)
- {
- 	if (!slot || slot->flags & KVM_MEMSLOT_INVALID)
- 		return KVM_HVA_ERR_BAD;
--
- 	if (gfn_is_readonly(slot, gfn) && write)
- 		return KVM_HVA_ERR_RO_BAD;
--
- 	if (nr_pages)
- 		*nr_pages = slot->npages - (gfn - slot->base_gfn);
- 
-@@ -1927,14 +1928,29 @@ int kvm_vcpu_read_guest_atomic(struct kvm_vcpu *vcpu, gpa_t gpa,
- 	return __kvm_read_guest_atomic(slot, gfn, data, offset, len);
- }
- EXPORT_SYMBOL_GPL(kvm_vcpu_read_guest_atomic);
-+static u64 roe_gfn_to_hva(struct kvm_memory_slot *slot, gfn_t gfn, int offset,
-+		int len)
-+{
-+	u64 addr;
- 
-+	if (!slot)
-+		return KVM_HVA_ERR_RO_BAD;
-+	if (kvm_roe_check_range(slot, gfn, offset, len))
-+		return KVM_HVA_ERR_RO_BAD;
-+	if (memslot_is_readonly(slot))
-+		return KVM_HVA_ERR_RO_BAD;
-+	if (gfn_is_full_roe(slot, gfn))
-+		return KVM_HVA_ERR_RO_BAD;
-+	addr = __gfn_to_hva_many(slot, gfn, NULL, false);
-+	return addr;
-+}
- static int __kvm_write_guest_page(struct kvm_memory_slot *memslot, gfn_t gfn,
- 			          const void *data, int offset, int len)
- {
- 	int r;
- 	unsigned long addr;
- 
--	addr = gfn_to_hva_memslot(memslot, gfn);
-+	addr = roe_gfn_to_hva(memslot, gfn, offset, len);
- 	if (kvm_is_error_hva(addr))
- 		return -EFAULT;
- 	r = __copy_to_user((void __user *)addr + offset, data, len);
-diff --git a/virt/kvm/roe.c b/virt/kvm/roe.c
-index 33d3a4f507..4393a6a6a2 100644
---- a/virt/kvm/roe.c
-+++ b/virt/kvm/roe.c
-@@ -11,34 +11,89 @@
- #include <linux/kvm.h>
- #include <linux/kvm_para.h>
- #include <kvm/roe.h>
-+#include "roe_generic.h"
- 
- int kvm_roe_init(struct kvm_memory_slot *slot)
- {
- 	slot->roe_bitmap = kvzalloc(BITS_TO_LONGS(slot->npages) *
- 			sizeof(unsigned long), GFP_KERNEL);
- 	if (!slot->roe_bitmap)
--		return -ENOMEM;
-+		goto fail1;
-+	slot->partial_roe_bitmap = kvzalloc(BITS_TO_LONGS(slot->npages) *
-+			sizeof(unsigned long), GFP_KERNEL);
-+	if (!slot->partial_roe_bitmap)
-+		goto fail2;
-+	slot->prot_list = kvzalloc(sizeof(struct list_head), GFP_KERNEL);
-+	if (!slot->prot_list)
-+		goto fail3;
-+	INIT_LIST_HEAD(slot->prot_list);
- 	return 0;
-+fail3:
-+	kvfree(slot->partial_roe_bitmap);
-+fail2:
-+	kvfree(slot->roe_bitmap);
-+fail1:
-+	return -ENOMEM;
-+
-+}
-+
-+static bool kvm_roe_protected_range(struct kvm_memory_slot *slot, gpa_t gpa,
-+		int len)
-+{
-+	struct list_head *pos;
-+	struct protected_chunk *cur_chunk;
-+
-+	list_for_each(pos, slot->prot_list) {
-+		cur_chunk = list_entry(pos, struct protected_chunk, list);
-+		if (kvm_roe_range_overlap(cur_chunk, gpa, len))
-+			return true;
-+	}
-+	return false;
-+}
-+
-+bool kvm_roe_check_range(struct kvm_memory_slot *slot, gfn_t gfn, int offset,
-+		int len)
-+{
-+	gpa_t gpa = (gfn << PAGE_SHIFT) + offset;
- 
-+	if (!gfn_is_partial_roe(slot, gfn))
-+		return false;
-+	return kvm_roe_protected_range(slot, gpa, len);
- }
- 
-+
- void kvm_roe_free(struct kvm_memory_slot *slot)
- {
-+	struct protected_chunk *pos, *n;
-+	struct list_head *head = slot->prot_list;
-+
- 	kvfree(slot->roe_bitmap);
-+	kvfree(slot->partial_roe_bitmap);
-+	list_for_each_entry_safe(pos, n, head, list) {
-+		list_del(&pos->list);
-+		kvfree(pos);
-+	}
-+	kvfree(slot->prot_list);
- }
- 
- static void kvm_roe_protect_slot(struct kvm *kvm, struct kvm_memory_slot *slot,
--		gfn_t gfn, u64 npages)
-+		gfn_t gfn, u64 npages, bool partial)
- {
- 	int i;
-+	void *bitmap;
- 
-+	if (partial)
-+		bitmap = slot->partial_roe_bitmap;
-+	else
-+		bitmap = slot->roe_bitmap;
- 	for (i = gfn - slot->base_gfn; i < gfn + npages - slot->base_gfn; i++)
--		set_bit(i, slot->roe_bitmap);
-+		set_bit(i, bitmap);
- 	kvm_roe_arch_commit_protection(kvm, slot);
- }
- 
- 
--static int __kvm_roe_protect_range(struct kvm *kvm, gpa_t gpa, u64 npages)
-+static int __kvm_roe_protect_range(struct kvm *kvm, gpa_t gpa, u64 npages,
-+		bool partial)
- {
- 	struct kvm_memory_slot *slot;
- 	gfn_t gfn = gpa >> PAGE_SHIFT;
-@@ -54,12 +109,12 @@ static int __kvm_roe_protect_range(struct kvm *kvm, gpa_t gpa, u64 npages)
- 		if (gfn + npages > slot->base_gfn + slot->npages) {
- 			u64 _npages = slot->base_gfn + slot->npages - gfn;
- 
--			kvm_roe_protect_slot(kvm, slot, gfn, _npages);
-+			kvm_roe_protect_slot(kvm, slot, gfn, _npages, partial);
- 			gfn += _npages;
- 			count += _npages;
- 			npages -= _npages;
- 		} else {
--			kvm_roe_protect_slot(kvm, slot, gfn, npages);
-+			kvm_roe_protect_slot(kvm, slot, gfn, npages, partial);
- 			count += npages;
- 			npages = 0;
- 		}
-@@ -69,12 +124,13 @@ static int __kvm_roe_protect_range(struct kvm *kvm, gpa_t gpa, u64 npages)
- 	return count;
- }
- 
--static int kvm_roe_protect_range(struct kvm *kvm, gpa_t gpa, u64 npages)
-+static int kvm_roe_protect_range(struct kvm *kvm, gpa_t gpa, u64 npages,
-+		bool partial)
- {
- 	int r;
- 
- 	mutex_lock(&kvm->slots_lock);
--	r = __kvm_roe_protect_range(kvm, gpa, npages);
-+	r = __kvm_roe_protect_range(kvm, gpa, npages, partial);
- 	mutex_unlock(&kvm->slots_lock);
- 	return r;
- }
-@@ -103,7 +159,7 @@ static int kvm_roe_full_protect_range(struct kvm_vcpu *vcpu, u64 gva,
- 			continue;
- 		if (!access_ok(hva, 1 << PAGE_SHIFT))
- 			continue;
--		status =  kvm_roe_protect_range(vcpu->kvm, gpa, 1);
-+		status =  kvm_roe_protect_range(vcpu->kvm, gpa, 1, false);
- 		if (status > 0)
- 			count += status;
- 	}
-@@ -112,6 +168,139 @@ static int kvm_roe_full_protect_range(struct kvm_vcpu *vcpu, u64 gva,
- 	return count;
- }
- 
-+static int kvm_roe_insert_chunk_next(struct list_head *pos, u64 gpa, u64 size)
-+{
-+	struct protected_chunk *chunk;
-+
-+	chunk = kvzalloc(sizeof(struct protected_chunk), GFP_KERNEL);
-+	chunk->gpa = gpa;
-+	chunk->size = size;
-+	INIT_LIST_HEAD(&chunk->list);
-+	list_add(&chunk->list, pos);
-+	return size;
-+}
-+
-+static int kvm_roe_expand_chunk(struct protected_chunk *pos, u64 gpa, u64 size)
-+{
-+	u64 old_ptr = pos->gpa;
-+	u64 old_size = pos->size;
-+
-+	if (gpa < old_ptr)
-+		pos->gpa = gpa;
-+	if (gpa + size > old_ptr + old_size)
-+		pos->size = gpa + size - pos->gpa;
-+	return size;
-+}
-+
-+static bool kvm_roe_merge_chunks(struct protected_chunk *chunk)
-+{
-+	/*attempt merging 2 consecutive given the first one*/
-+	struct protected_chunk *next = list_next_entry(chunk, list);
-+
-+	if (!kvm_roe_range_overlap(chunk, next->gpa, next->size))
-+		return false;
-+	kvm_roe_expand_chunk(chunk, next->gpa, next->size);
-+	list_del(&next->list);
-+	kvfree(next);
-+	return true;
-+}
-+
-+static int __kvm_roe_insert_chunk(struct kvm_memory_slot *slot, u64 gpa,
-+		u64 size)
-+{
-+	/* kvm->slots_lock must be acquired*/
-+	struct protected_chunk *pos;
-+	struct list_head *head = slot->prot_list;
-+
-+	if (list_empty(head))
-+		return kvm_roe_insert_chunk_next(head, gpa, size);
-+	/*
-+	 * pos here will never get deleted maybe the next one will
-+	 * that is why list_for_each_entry_safe is completely unsafe
-+	 */
-+	list_for_each_entry(pos, head, list) {
-+		if (kvm_roe_range_overlap(pos, gpa, size)) {
-+			int ret = kvm_roe_expand_chunk(pos, gpa, size);
-+
-+			while (head != pos->list.next)
-+				if (!kvm_roe_merge_chunks(pos))
-+					break;
-+			return ret;
-+		}
-+		if (pos->gpa > gpa) {
-+			struct protected_chunk *prev;
-+
-+			prev = list_prev_entry(pos, list);
-+			return kvm_roe_insert_chunk_next(&prev->list, gpa,
-+					size);
-+		}
-+	}
-+	pos = list_last_entry(head, struct protected_chunk, list);
-+
-+	return kvm_roe_insert_chunk_next(&pos->list, gpa, size);
-+}
-+
-+static int kvm_roe_insert_chunk(struct kvm *kvm, u64 gpa, u64 size)
-+{
-+	struct kvm_memory_slot *slot;
-+	gfn_t gfn = gpa >> PAGE_SHIFT;
-+	int ret;
-+
-+	mutex_lock(&kvm->slots_lock);
-+	slot = gfn_to_memslot(kvm, gfn);
-+	ret = __kvm_roe_insert_chunk(slot, gpa, size);
-+	mutex_unlock(&kvm->slots_lock);
-+	return ret;
-+}
-+
-+static int kvm_roe_partial_page_protect(struct kvm_vcpu *vcpu, u64 gva,
-+		u64 size)
-+{
-+	gpa_t gpa = kvm_mmu_gva_to_gpa_system(vcpu, gva, NULL);
-+
-+	kvm_roe_protect_range(vcpu->kvm, gpa, 1, true);
-+	return kvm_roe_insert_chunk(vcpu->kvm, gpa, size);
-+}
-+
-+static int kvm_roe_partial_protect(struct kvm_vcpu *vcpu, u64 gva, u64 size)
-+{
-+	u64 gva_start = gva;
-+	u64 gva_end = gva+size;
-+	u64 gpn_start = gva_start >> PAGE_SHIFT;
-+	u64 gpn_end = gva_end >> PAGE_SHIFT;
-+	u64 _size;
-+	int count = 0;
-+	// We need to make sure that there will be no overflow or zero size
-+	if (gva_end <= gva_start)
-+		return -EINVAL;
-+
-+	// protect the partial page at the start
-+	if (gpn_end > gpn_start)
-+		_size = PAGE_SIZE - (gva_start & PAGE_MASK) + 1;
-+	else
-+		_size = size;
-+	size -= _size;
-+	count += kvm_roe_partial_page_protect(vcpu, gva_start, _size);
-+	// full protect in the middle pages
-+	if (gpn_end - gpn_start > 1) {
-+		int ret;
-+		u64 _gva = (gpn_start + 1) << PAGE_SHIFT;
-+		u64 npages = gpn_end - gpn_start - 1;
-+
-+		size -= npages << PAGE_SHIFT;
-+		ret = kvm_roe_full_protect_range(vcpu, _gva, npages);
-+		if (ret > 0)
-+			count += ret << PAGE_SHIFT;
-+	}
-+	// protect the partial page at the end
-+	if (size != 0)
-+		count += kvm_roe_partial_page_protect(vcpu,
-+				gpn_end << PAGE_SHIFT, size);
-+	if (count == 0)
-+		return -EINVAL;
-+	return count;
-+}
-+
- int kvm_roe(struct kvm_vcpu *vcpu, u64 a0, u64 a1, u64 a2, u64 a3)
- {
- 	int ret;
-@@ -123,11 +312,14 @@ int kvm_roe(struct kvm_vcpu *vcpu, u64 a0, u64 a1, u64 a2, u64 a3)
- 		return -KVM_ENOSYS;
- 	switch (a0) {
- 	case ROE_VERSION:
--		ret = 1; //current version
-+		ret = 2; //current version
- 		break;
- 	case ROE_MPROTECT:
- 		ret = kvm_roe_full_protect_range(vcpu, a1, a2);
- 		break;
-+	case ROE_MPROTECT_CHUNK:
-+		ret = kvm_roe_partial_protect(vcpu, a1, a2);
-+		break;
- 	default:
- 		ret = -EINVAL;
- 	}
-diff --git a/virt/kvm/roe_generic.h b/virt/kvm/roe_generic.h
-index 36e5b52c5b..ad121372f2 100644
---- a/virt/kvm/roe_generic.h
-+++ b/virt/kvm/roe_generic.h
-@@ -12,8 +12,14 @@
- 
- void kvm_roe_free(struct kvm_memory_slot *slot);
- int kvm_roe_init(struct kvm_memory_slot *slot);
-+bool kvm_roe_check_range(struct kvm_memory_slot *slot, gfn_t gfn, int offset,
-+		int len);
- static inline bool gfn_is_full_roe(struct kvm_memory_slot *slot, gfn_t gfn)
- {
- 	return test_bit(gfn - slot->base_gfn, slot->roe_bitmap);
- }
-+static inline bool gfn_is_partial_roe(struct kvm_memory_slot *slot, gfn_t gfn)
-+{
-+	return test_bit(gfn - slot->base_gfn, slot->partial_roe_bitmap);
-+}
- #endif
--- 
-2.19.2
+
+
+
+
 
