@@ -2,142 +2,313 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00559C282E9
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:12:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 095D9C282E9
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:12:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C258C2084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:12:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (4096-bit key) header.d=kolabnow.com header.i=@kolabnow.com header.b="RTEF1iCV"
+	by mail.kernel.org (Postfix) with ESMTP id C051020855
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:12:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728965AbfAUIMF (ORCPT
+        id S1728984AbfAUIMj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 03:12:05 -0500
-Received: from mx.kolabnow.com ([95.128.36.42]:48172 "EHLO mx.kolabnow.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727586AbfAUIMF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 03:12:05 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by ext-mx-out003.mykolab.com (Postfix) with ESMTP id 4BEBA4041C;
-        Mon, 21 Jan 2019 09:12:02 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kolabnow.com; h=
-        content-type:content-type:content-transfer-encoding:mime-version
-        :references:in-reply-to:message-id:date:date:subject:subject
-        :from:from:received:received:received; s=dkim20160331; t=
-        1548058321; x=1549872722; bh=rRK5zbJ2GLNb8GmKWoEV7fBC/nFW6gG75gs
-        gSol8LrM=; b=RTEF1iCVUubZ+3l+JoE3UtLwbnvY7+G8shNdyw9QBipJwUmNvh6
-        nTSbIQOdOgjSWxb60ywv9zSR8B6OgGgIjTOnWp+/bOPEoK/zo0PUdAwUr+3A51h3
-        zBfgKCmgVVLfKHEGMaECR9pSTTidLII93pmhcoxzc65iqeiuqKKK+9k5Cx9fDA1J
-        VmW46V1i7JSbJmCVxjAJZ1p8CuDCGqtIvaLLDgtPuT2VaYBkOP5m9mhXJoMnk1fQ
-        348SarHkPxABYeVZYy3Vu7A+MWXtB6B3IfenkQvkJNW2H8zVjkqAOS0Fn1jdS+ox
-        mSIS5ThIFUmb7a713aeQN0Z5LP6BpjqXmMRhHEjhKJI4j5uUhJ/aeWYqMIQzqGuv
-        i/P3Yp89Cunb2H8rVoJRQXZ6tZpc2L0WQ9cttWRrCD9RBovaxPTee3MvzgiHN+IK
-        t/q8MpkK9IgDzoNQAsZUJYvjC+BmRRndTcjBZd7/eCSJ8gjb8zDYrQRlqi+m80u9
-        TMZRpzNSNcd2uhsUnlGu9EvN9R29iOvMy6nsJSpNnGrE0lxxZZGZVV6oaGbbmGuB
-        T96CMCiNf+AQoxMSL7VL5w0HevEVFr+i+kh4HhRP2q4zRPPj1cUXfPhspj8nOaXW
-        MKIi/Hh8cqP/EoWC8w7628GOXahRDhpLlsJU0E8m/WzzvDvhjyM5SA5o=
-X-Virus-Scanned: amavisd-new at mykolab.com
-Received: from mx.kolabnow.com ([127.0.0.1])
-        by localhost (ext-mx-out003.mykolab.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id njzRGPxtKfs5; Mon, 21 Jan 2019 09:12:01 +0100 (CET)
-Received: from int-mx003.mykolab.com (unknown [10.9.13.3])
-        by ext-mx-out003.mykolab.com (Postfix) with ESMTPS id 4376B403EA;
-        Mon, 21 Jan 2019 09:12:01 +0100 (CET)
-Received: from ext-subm002.mykolab.com (unknown [10.9.6.2])
-        by int-mx003.mykolab.com (Postfix) with ESMTPS id EA53BA62;
-        Mon, 21 Jan 2019 09:12:00 +0100 (CET)
-From:   Federico Vaga <federico.vaga@vaga.pv.it>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] doc:it_IT: add translations in process/
-Date:   Mon, 21 Jan 2019 09:11:58 +0100
-Message-ID: <2146324.8BP4ZdZamE@pcbe13614>
-In-Reply-To: <20190120185617.44a7f275@lwn.net>
-References: <20190119221341.3622-1-federico.vaga@vaga.pv.it> <20190120185617.44a7f275@lwn.net>
+        Mon, 21 Jan 2019 03:12:39 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:6480 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727586AbfAUIMj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 03:12:39 -0500
+X-UUID: f9acef22d8db4c23a214033ce0dabd5c-20190121
+X-UUID: f9acef22d8db4c23a214033ce0dabd5c-20190121
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
+        (envelope-from <long.cheng@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1284884868; Mon, 21 Jan 2019 16:12:32 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by mtkmbs08n1.mediatek.inc
+ (172.21.101.55) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 21 Jan
+ 2019 16:12:30 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS32.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 21 Jan 2019 16:12:29 +0800
+Message-ID: <1548058349.3831.71.camel@mhfsdcap03>
+Subject: Re: [PATCH v9 1/2] dmaengine: 8250_mtk_dma: add MediaTek uart DMA
+ support
+From:   Long Cheng <long.cheng@mediatek.com>
+To:     Vinod Koul <vkoul@kernel.org>
+CC:     Randy Dunlap <rdunlap@infradead.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Sean Wang <sean.wang@kernel.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        YT Shen <yt.shen@mediatek.com>,
+        Zhenbao Liu <zhenbao.liu@mediatek.com>,
+        Long Cheng <long.cheng@mediatek.com>
+Date:   Mon, 21 Jan 2019 16:12:29 +0800
+In-Reply-To: <20190120052750.GN4635@vkoul-mobl>
+References: <1546395178-8880-1-git-send-email-long.cheng@mediatek.com>
+         <1546395178-8880-2-git-send-email-long.cheng@mediatek.com>
+         <20190104171953.GQ13372@vkoul-mobl.Dlink>
+         <1547116431.3831.43.camel@mhfsdcap03> <20190120052750.GN4635@vkoul-mobl>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, January 21, 2019 2:56:17 AM CET Jonathan Corbet wrote:
-> On Sat, 19 Jan 2019 23:13:41 +0100
->=20
-> Federico Vaga <federico.vaga@vaga.pv.it> wrote:
-> > This patch adds the Italian translation for the following documents
-> > in Documentation/process:
-> >=20
-> > - applying-patches
-> > - submit-checklist
-> > - submitting-drivers
-> > - changes
-> > - stable api nonsense
-> >=20
-> > Signed-off-by: Federico Vaga <federico.vaga@vaga.pv.it>
->=20
-> In general, this looks good.  One thing jumped at me, though...(OK, more
->=20
-> than one, but only one to fix):
-> > +Perl
-> > +----
-> > +
-> > +Per compilare il kernel vi servir=E0 perl 5 e i seguenti moduli
-> > ``Getopt::Long``, +``Getopt::Std``, ``File::Basename``, e ``File::Find`=
-`.
->=20
-> Didn't Rob Landley go though some considerable pain a while back to
-> eliminate Perl from the basic kernel build?  This, perhaps, should come o=
-ut
-> of the original.  (As long as it's still there, it makes sense to be in t=
-he
-> translation, of course).
+On Sun, 2019-01-20 at 10:57 +0530, Vinod Koul wrote:
+> On 10-01-19, 18:33, Long Cheng wrote:
+> > On Fri, 2019-01-04 at 22:49 +0530, Vinod Koul wrote:
+> > > On 02-01-19, 10:12, Long Cheng wrote:
+> > > > In DMA engine framework, add 8250 uart dma to support MediaTek uart.
+> > > > If MediaTek uart enabled(SERIAL_8250_MT6577), and want to improve
+> > > > the performance, can enable the function.
+> > > 
+> > > Is the DMA controller UART specific, can it work with other controllers
+> > > as well, if so you should get rid of uart name in patch
+> > 
+> > I don't know that it can work or not on other controller. but it's for
+> > MediaTek SOC
+> 
+> What I meant was that if can work with other controllers (users) apart
+> from UART, how about say audio, spi etc!!
+> 
 
-I can have a deeper look and try to fix the original document too
+it's just for UART APDMA. can't work on spi ...
 
->=20
-> > +Modifiche architetturali
-> > +------------------------
-> > +
-> > +DevFS =E8 stato reso obsoleto da udev
-> > +(http://www.kernel.org/pub/linux/utils/kernel/hotplug/)
-> > +
-> > +Il supporto per UID a 32-bit =E8 ora disponibile.  Divertitevi!
->=20
-> Speaking of stuff that should come out of the original...this is not
-> exactly news at this point...
+> > 
+> > > > +#define MTK_UART_APDMA_CHANNELS		(CONFIG_SERIAL_8250_NR_UARTS * 2)
+> > > 
+> > > Why are the channels not coming from DT?
+> > > 
+> > 
+> > i will using dma-requests install of it.
+> > 
+> > > > +
+> > > > +#define VFF_EN_B		BIT(0)
+> > > > +#define VFF_STOP_B		BIT(0)
+> > > > +#define VFF_FLUSH_B		BIT(0)
+> > > > +#define VFF_4G_SUPPORT_B	BIT(0)
+> > > > +#define VFF_RX_INT_EN0_B	BIT(0)	/*rx valid size >=  vff thre*/
+> > > > +#define VFF_RX_INT_EN1_B	BIT(1)
+> > > > +#define VFF_TX_INT_EN_B		BIT(0)	/*tx left size >= vff thre*/
+> > > 
+> > > space around /* space */ also run checkpatch to check for style errors
+> > > 
+> > 
+> > ok.
+> > 
+> > > > +static void mtk_uart_apdma_start_tx(struct mtk_chan *c)
+> > > > +{
+> > > > +	unsigned int len, send, left, wpt, d_wpt, tmp;
+> > > > +	int ret;
+> > > > +
+> > > > +	left = mtk_uart_apdma_read(c, VFF_LEFT_SIZE);
+> > > > +	if (!left) {
+> > > > +		mtk_uart_apdma_write(c, VFF_INT_EN, VFF_TX_INT_EN_B);
+> > > > +		return;
+> > > > +	}
+> > > > +
+> > > > +	/* Wait 1sec for flush,  can't sleep*/
+> > > > +	ret = readx_poll_timeout(readl, c->base + VFF_FLUSH, tmp,
+> > > > +			tmp != VFF_FLUSH_B, 0, 1000000);
+> > > > +	if (ret)
+> > > > +		dev_warn(c->vc.chan.device->dev, "tx: fail, debug=0x%x\n",
+> > > > +			mtk_uart_apdma_read(c, VFF_DEBUG_STATUS));
+> > > > +
+> > > > +	send = min_t(unsigned int, left, c->desc->avail_len);
+> > > > +	wpt = mtk_uart_apdma_read(c, VFF_WPT);
+> > > > +	len = mtk_uart_apdma_read(c, VFF_LEN);
+> > > > +
+> > > > +	d_wpt = wpt + send;
+> > > > +	if ((d_wpt & VFF_RING_SIZE) >= len) {
+> > > > +		d_wpt = d_wpt - len;
+> > > > +		d_wpt = d_wpt ^ VFF_RING_WRAP;
+> > > > +	}
+> > > > +	mtk_uart_apdma_write(c, VFF_WPT, d_wpt);
+> > > > +
+> > > > +	c->desc->avail_len -= send;
+> > > > +
+> > > > +	mtk_uart_apdma_write(c, VFF_INT_EN, VFF_TX_INT_EN_B);
+> > > > +	if (mtk_uart_apdma_read(c, VFF_FLUSH) == 0U)
+> > > > +		mtk_uart_apdma_write(c, VFF_FLUSH, VFF_FLUSH_B);
+> > > > +}
+> > > > +
+> > > > +static void mtk_uart_apdma_start_rx(struct mtk_chan *c)
+> > > > +{
+> > > > +	struct mtk_uart_apdma_desc *d = c->desc;
+> > > > +	unsigned int len, wg, rg, cnt;
+> > > > +
+> > > > +	if ((mtk_uart_apdma_read(c, VFF_VALID_SIZE) == 0U) ||
+> > > > +		!d || !vchan_next_desc(&c->vc))
+> > > > +		return;
+> > > > +
+> > > > +	len = mtk_uart_apdma_read(c, VFF_LEN);
+> > > > +	rg = mtk_uart_apdma_read(c, VFF_RPT);
+> > > > +	wg = mtk_uart_apdma_read(c, VFF_WPT);
+> > > > +	if ((rg ^ wg) & VFF_RING_WRAP)
+> > > > +		cnt = (wg & VFF_RING_SIZE) + len - (rg & VFF_RING_SIZE);
+> > > > +	else
+> > > > +		cnt = (wg & VFF_RING_SIZE) - (rg & VFF_RING_SIZE);
+> > > > +
+> > > > +	c->rx_status = cnt;
+> > > > +	mtk_uart_apdma_write(c, VFF_RPT, wg);
+> > > > +
+> > > > +	list_del(&d->vd.node);
+> > > > +	vchan_cookie_complete(&d->vd);
+> > > > +}
+> > > 
+> > > this looks odd, why do you have different rx and tx start routines?
+> > > 
+> > 
+> > Would you like explain it in more detail? thanks.
+> > In tx function, will wait the last data flush done. and the count the
+> > size that send.
+> > In Rx function, will count the size that receive.
+> > Any way, in rx / tx, need andle WPT or RPT.
+> > 
+> > > > +static int mtk_uart_apdma_alloc_chan_resources(struct dma_chan *chan)
+> > > > +{
+> > > > +	struct mtk_uart_apdmadev *mtkd = to_mtk_uart_apdma_dev(chan->device);
+> > > > +	struct mtk_chan *c = to_mtk_uart_apdma_chan(chan);
+> > > > +	u32 tmp;
+> > > > +	int ret;
+> > > > +
+> > > > +	pm_runtime_get_sync(mtkd->ddev.dev);
+> > > > +
+> > > > +	mtk_uart_apdma_write(c, VFF_ADDR, 0);
+> > > > +	mtk_uart_apdma_write(c, VFF_THRE, 0);
+> > > > +	mtk_uart_apdma_write(c, VFF_LEN, 0);
+> > > > +	mtk_uart_apdma_write(c, VFF_RST, VFF_WARM_RST_B);
+> > > > +
+> > > > +	ret = readx_poll_timeout(readl, c->base + VFF_EN, tmp,
+> > > > +			tmp == 0, 10, 100);
+> > > > +	if (ret) {
+> > > > +		dev_err(chan->device->dev, "dma reset: fail, timeout\n");
+> > > > +		return ret;
+> > > > +	}
+> > > 
+> > > register read does reset?
+> > > 
+> > 
+> > 'mtk_uart_apdma_write(c, VFF_RST, VFF_WARM_RST_B);' is reset. resd just
+> > poll reset done.
+> > 
+> > > > +
+> > > > +	if (!c->requested) {
+> > > > +		c->requested = true;
+> > > > +		ret = request_irq(mtkd->dma_irq[chan->chan_id],
+> > > > +				  mtk_uart_apdma_irq_handler, IRQF_TRIGGER_NONE,
+> > > > +				  KBUILD_MODNAME, chan);
+> > > 
+> > > why is the irq not requested in driver probe?
+> > > 
+> > 
+> > I have explained in below,
+> > http://lists.infradead.org/pipermail/linux-mediatek/2018-December/016418.html
+> > 
+> > > > +static enum dma_status mtk_uart_apdma_tx_status(struct dma_chan *chan,
+> > > > +					 dma_cookie_t cookie,
+> > > > +					 struct dma_tx_state *txstate)
+> > > > +{
+> > > > +	struct mtk_chan *c = to_mtk_uart_apdma_chan(chan);
+> > > > +	enum dma_status ret;
+> > > > +	unsigned long flags;
+> > > > +
+> > > > +	if (!txstate)
+> > > > +		return DMA_ERROR;
+> > > > +
+> > > > +	ret = dma_cookie_status(chan, cookie, txstate);
+> > > > +	spin_lock_irqsave(&c->vc.lock, flags);
+> > > > +	if (ret == DMA_IN_PROGRESS) {
+> > > > +		c->rx_status = mtk_uart_apdma_read(c, VFF_RPT) & VFF_RING_SIZE;
+> > > > +		dma_set_residue(txstate, c->rx_status);
+> > > > +	} else if (ret == DMA_COMPLETE && c->cfg.direction == DMA_DEV_TO_MEM) {
+> > > 
+> > > why set reside when it is complete? also reside can be null, that should
+> > > be checked as well
+> > > 
+> > In different status, set different reside.
+> 
+> Can you explain that..
+> 
 
-Well, generally speaking this document mix things from the past and the=20
-"present". Probably it requires a review.
-=20
-> Meanwhile, here is the thing that actually needs to be fixed:
-> > +Raiserfsprogs
-> > +-------------
-> > +
-> > +Il pacchetto raiserfsprogs dovrebbe essere usato con raiserfs-3.6.x
-> > (Linux
-> > +kernel 2.4.x).  Questo =E8 un pacchetto combinato che contiene versioni
-> > +funzionanti di ``mkreiserfs``, ``resize_reiserfs``, ``debugreiserfs`` e
-> > +``reiserfsck``.  Questi programmi funzionano sulle piattaforme i386 e
-> > alpha.
-> Even in Italian, I believe that 'Reiser" is spelled "Reiser"...
+RPT is different every time. When RX interrupt coming, update the
+rx_status and notify uart that there have data. One transfer is
+complete. Uart will call tx_status to get the length at the time of
+interruption. Other case, if want to get the tx_status, directly read
+register.
 
-oops, your are right. I will fix this and send a V2 patch. Then I will have=
- a=20
-look at the original document and try to update it
+> > 
+> > > > +static struct dma_async_tx_descriptor *mtk_uart_apdma_prep_slave_sg
+> > > > +	(struct dma_chan *chan, struct scatterlist *sgl,
+> > > > +	unsigned int sglen, enum dma_transfer_direction dir,
+> > > > +	unsigned long tx_flags, void *context)
+> > > > +{
+> > > > +	struct mtk_chan *c = to_mtk_uart_apdma_chan(chan);
+> > > > +	struct mtk_uart_apdma_desc *d;
+> > > > +
+> > > > +	if ((dir != DMA_DEV_TO_MEM) &&
+> > > > +		(dir != DMA_MEM_TO_DEV)) {
+> > > > +		dev_err(chan->device->dev, "bad direction\n");
+> > > > +		return NULL;
+> > > > +	}
+> > > 
+> > > we have a macro for this
+> > 
+> > Thanks for your suggestion. i will modify it.
+> > > 
+> > > > +
+> > > > +	/* Now allocate and setup the descriptor */
+> > > > +	d = kzalloc(sizeof(*d), GFP_ATOMIC);
+> > > > +	if (!d)
+> > > > +		return NULL;
+> > > > +
+> > > > +	/* sglen is 1 */
+> > > 
+> > > ?
 
-> Thanks,
->=20
-> jon
+dmaengine_prep_slave_single is called. the parameter 'sglen' is 1.
+Add annotation to indicate that the total length is sg_dma_len(sgl), no
+more.
 
+> > > 
+> > > > +static int mtk_uart_apdma_slave_config(struct dma_chan *chan,
+> > > > +				struct dma_slave_config *cfg)
+> > > > +{
+> > > > +	struct mtk_chan *c = to_mtk_uart_apdma_chan(chan);
+> > > > +	struct mtk_uart_apdmadev *mtkd =
+> > > > +				to_mtk_uart_apdma_dev(c->vc.chan.device);
+> > > > +
+> > > > +	c->cfg = *cfg;
+> > > > +
+> > > > +	if (cfg->direction == DMA_DEV_TO_MEM) {
+> > > 
+> > > fg->direction is deprecated, in fact I have removed all users recently,
+> > > please do not use this
+> > 
+> > You will remove 'direction' in 'struct dma_slave_config'? if remove, how
+> > do confirm direction?
+> 
+> Yes please use the direction argument in prep_xx calls
 
-=2D-=20
-=46ederico Vaga
-http://www.federicovaga.it/
+I had modified on v10. thanks.
 
 
