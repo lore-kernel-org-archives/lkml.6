@@ -2,102 +2,115 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7714C2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:24:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4F8DC2F3A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:25:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACBC12085A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:24:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76F442085A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:25:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728975AbfAUNYj (ORCPT
+        id S1728981AbfAUNZy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:24:39 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:53556 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728690AbfAUNYj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:24:39 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EB29681F0D;
-        Mon, 21 Jan 2019 13:24:38 +0000 (UTC)
-Received: from shalem.localdomain.com (unknown [10.36.118.22])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7B40360CBA;
-        Mon, 21 Jan 2019 13:24:37 +0000 (UTC)
-From:   Hans de Goede <hdegoede@redhat.com>
-To:     Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Corentin Chary <corentin.chary@gmail.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        acpi4asus-user@lists.sourceforge.net,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] platform/x86: asus-wmi: Allow loading on systems without the Asus Management GUID
-Date:   Mon, 21 Jan 2019 14:24:36 +0100
-Message-Id: <20190121132436.31825-1-hdegoede@redhat.com>
+        Mon, 21 Jan 2019 08:25:54 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33974 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728570AbfAUNZy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:25:54 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 563B980D;
+        Mon, 21 Jan 2019 05:25:53 -0800 (PST)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D03E73F614;
+        Mon, 21 Jan 2019 05:25:50 -0800 (PST)
+Subject: Re: [PATCH 0/3] iommu/arm-smmu: Add support to use Last level cache
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc:     Will Deacon <will.deacon@arm.com>, Joerg Roedel <joro@8bytes.org>,
+        "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        iommu@lists.linux-foundation.org, pdaly@codeaurora.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Jordan Crouse <jcrouse@codeaurora.org>, pratikp@codeaurora.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+References: <20190121055335.15430-1-vivek.gautam@codeaurora.org>
+ <CAKv+Gu8P-5hxZ8+OV_xSZteTvCLw-Sc-=KJM1i=3aWajcS9bUw@mail.gmail.com>
+ <CAFp+6iEp-bzMrZz8cFUciTFKm7TwAoLdYpsSTD73kDfCRh60bA@mail.gmail.com>
+ <CAKv+Gu9z_mGwdZYMKPfM_g2MZwrCF5=f4WAdn_R6wJ1A9xSZ_Q@mail.gmail.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <dbba5a8a-70c0-dd01-713c-081eb412e2d7@arm.com>
+Date:   Mon, 21 Jan 2019 13:25:49 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 21 Jan 2019 13:24:39 +0000 (UTC)
+In-Reply-To: <CAKv+Gu9z_mGwdZYMKPfM_g2MZwrCF5=f4WAdn_R6wJ1A9xSZ_Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-hid-asus depends on asus-wmi through the asus_wmi_evaluate_method. Before
-this commit asus-wmi and thus hid-asus could not be loaded on non Asus
-systems. This breaks using Asus bluetooth keyboards such as the Asus
-T100CHI keyboard with non Asus systems.
+On 21/01/2019 10:50, Ard Biesheuvel wrote:
+> On Mon, 21 Jan 2019 at 11:17, Vivek Gautam <vivek.gautam@codeaurora.org> wrote:
+>>
+>> Hi,
+>>
+>>
+>> On Mon, Jan 21, 2019 at 12:56 PM Ard Biesheuvel
+>> <ard.biesheuvel@linaro.org> wrote:
+>>>
+>>> On Mon, 21 Jan 2019 at 06:54, Vivek Gautam <vivek.gautam@codeaurora.org> wrote:
+>>>>
+>>>> Qualcomm SoCs have an additional level of cache called as
+>>>> System cache, aka. Last level cache (LLC). This cache sits right
+>>>> before the DDR, and is tightly coupled with the memory controller.
+>>>> The clients using this cache request their slices from this
+>>>> system cache, make it active, and can then start using it.
+>>>> For these clients with smmu, to start using the system cache for
+>>>> buffers and, related page tables [1], memory attributes need to be
+>>>> set accordingly. This series add the required support.
+>>>>
+>>>
+>>> Does this actually improve performance on reads from a device? The
+>>> non-cache coherent DMA routines perform an unconditional D-cache
+>>> invalidate by VA to the PoC before reading from the buffers filled by
+>>> the device, and I would expect the PoC to be defined as lying beyond
+>>> the LLC to still guarantee the architected behavior.
+>>
+>> We have seen performance improvements when running Manhattan
+>> GFXBench benchmarks.
+>>
+> 
+> Ah ok, that makes sense, since in that case, the data flow is mostly
+> to the device, not from the device.
+> 
+>> As for the PoC, from my knowledge on sdm845 the system cache, aka
+>> Last level cache (LLC) lies beyond the point of coherency.
+>> Non-cache coherent buffers will not be cached to system cache also, and
+>> no additional software cache maintenance ops are required for system cache.
+>> Pratik can add more if I am missing something.
+>>
+>> To take care of the memory attributes from DMA APIs side, we can add a
+>> DMA_ATTR definition to take care of any dma non-coherent APIs calls.
+>>
+> 
+> So does the device use the correct inner non-cacheable, outer
+> writeback cacheable attributes if the SMMU is in pass-through?
+> 
+> We have been looking into another use case where the fact that the
+> SMMU overrides memory attributes is causing issues (WC mappings used
+> by the radeon and amdgpu driver). So if the SMMU would honour the
+> existing attributes, would you still need the SMMU changes?
 
-This commit fixes this by allowing asus-wmi to load on systems without the
-Asus Management GUID.
+Even if we could force a stage 2 mapping with the weakest pagetable 
+attributes (such that combining would work), there would still need to 
+be a way to set the TCR attributes appropriately if this behaviour is 
+wanted for the SMMU's own table walks as well.
 
-This is save to do since all asus-wmi sub drivers use
-asus_wmi_register_driver which also checks for the GUID.
-
-This commit also improves the error messages in asus_wmi_register_driver
-to include "ASUS" in their description tom make them more clear. This is
-important since we now rely on those errors when loaded on systems without
-the Asus Management GUID.
-
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
- drivers/platform/x86/asus-wmi.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-index 37b5de541270..ee1fa93708ec 100644
---- a/drivers/platform/x86/asus-wmi.c
-+++ b/drivers/platform/x86/asus-wmi.c
-@@ -2265,12 +2265,12 @@ static int asus_wmi_probe(struct platform_device *pdev)
- 	int ret;
- 
- 	if (!wmi_has_guid(ASUS_WMI_MGMT_GUID)) {
--		pr_warn("Management GUID not found\n");
-+		pr_warn("ASUS Management GUID not found\n");
- 		return -ENODEV;
- 	}
- 
- 	if (wdrv->event_guid && !wmi_has_guid(wdrv->event_guid)) {
--		pr_warn("Event GUID not found\n");
-+		pr_warn("ASUS Event GUID not found\n");
- 		return -ENODEV;
- 	}
- 
-@@ -2320,11 +2320,6 @@ EXPORT_SYMBOL_GPL(asus_wmi_unregister_driver);
- 
- static int __init asus_wmi_init(void)
- {
--	if (!wmi_has_guid(ASUS_WMI_MGMT_GUID)) {
--		pr_info("Asus Management GUID not found\n");
--		return -ENODEV;
--	}
--
- 	pr_info("ASUS WMI generic driver loaded\n");
- 	return 0;
- }
--- 
-2.20.1
-
+Robin.
