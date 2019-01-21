@@ -2,143 +2,118 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 095B4C2F42E
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:35:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 520DDC2F421
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:36:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9E002085A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:35:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F4232085A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:36:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XpSNJvA3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730686AbfAUPfx (ORCPT
+        id S1730708AbfAUPf7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 10:35:53 -0500
-Received: from foss.arm.com ([217.140.101.70]:36574 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730135AbfAUPej (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 10:34:39 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BDE771688;
-        Mon, 21 Jan 2019 07:34:38 -0800 (PST)
-Received: from e112298-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7DD153F5C1;
-        Mon, 21 Jan 2019 07:34:36 -0800 (PST)
-From:   Julien Thierry <julien.thierry@arm.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
-        joel@joelfernandes.org, marc.zyngier@arm.com,
-        christoffer.dall@arm.com, james.morse@arm.com,
-        catalin.marinas@arm.com, will.deacon@arm.com, mark.rutland@arm.com,
-        Julien Thierry <julien.thierry@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>
-Subject: [PATCH v9 16/26] irqchip/gic-v3: Factor group0 detection into functions
-Date:   Mon, 21 Jan 2019 15:33:35 +0000
-Message-Id: <1548084825-8803-17-git-send-email-julien.thierry@arm.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1548084825-8803-1-git-send-email-julien.thierry@arm.com>
-References: <1548084825-8803-1-git-send-email-julien.thierry@arm.com>
+        Mon, 21 Jan 2019 10:35:59 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:44397 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730135AbfAUPf5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 10:35:57 -0500
+Received: by mail-vs1-f65.google.com with SMTP id u11so12813561vsp.11
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 07:35:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=P+QB4YZGEJLcPSkGnAhuoFe4nirgoy69vDlYb4K4aCQ=;
+        b=XpSNJvA31VORta233d9tgGET0O1mugOj/Wqy1IfVVwWc2D0CztIYeLjsxSlvWfANSy
+         UBLpu5A23chNkqlRpdscDVrMU6W2k6GiFcgKfhxsk6ayX4o7ndog6bD9iaGRkKedvSvD
+         rlkuBgbbXwPonhrkP/genyI4TflOVx55lhsY0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=P+QB4YZGEJLcPSkGnAhuoFe4nirgoy69vDlYb4K4aCQ=;
+        b=TEuj0a84srloORY6spqy+e1N2C4DB/qra5Q8kPqcaNIo9NEwuSB8kV15ziYk4pcfFn
+         wQxHV7/OfL6F14amRHtCeivOU4GUj0JnBBl55Rj4PC+qSNgdjh+a1ILu6dH7K+C02sXW
+         SAiy7nrlKGqzAzM5e68FMTsfWUmSSSA/gJgyJG4SCBNXfd3BOLIWgeYLL1aIrSU0+kCX
+         7AWS6RGtEw3f/8v/NEa8YFlUzyVmtYsCc1w2lh6t7LBx83uQ4DXDElGdDCm7e9d4F3mu
+         ZScbK+3+JQYHbvFIKXMZaxb6d8OsjZD8LWWEPvj/YpuMqLA5NLgh+HSHb76NyHsKmlid
+         iVfg==
+X-Gm-Message-State: AJcUukdpdwgepI2kaNDrHKKzPQ2ttCe+9RGUupmQAMxQu0KqchxYe9Ml
+        fbgKeAUGX2Lt6zdBkiq7AsvK2nci9550u6ZLApCKfw==
+X-Google-Smtp-Source: ALg8bN5OQXsJT5dEgvw62DKG1u22ChYvckx2arIxE/Ebl6FPE0U6WW29ZixVYyhbdYdMSOMFXP1AVmAkpT8CV8MOEyY=
+X-Received: by 2002:a67:e0d4:: with SMTP id m20mr12739834vsl.182.1548084956390;
+ Mon, 21 Jan 2019 07:35:56 -0800 (PST)
+MIME-Version: 1.0
+References: <cover.1547481320.git.amit.kucheria@linaro.org>
+ <168294311714f269b1050bcbf5d3324eae0808f2.1547481320.git.amit.kucheria@linaro.org>
+ <1718046.8NPD0iV1Wv@aspire.rjw.lan>
+In-Reply-To: <1718046.8NPD0iV1Wv@aspire.rjw.lan>
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+Date:   Mon, 21 Jan 2019 21:05:45 +0530
+Message-ID: <CAHLCerOLXwdMmRci9wSr8+LjVf4m3CdLd85WWjd1Q3VriQy_MA@mail.gmail.com>
+Subject: Re: [PATCH v1 01/10] cpufreq: Add thermal_cooling_device pointer to
+ struct cpufreq_policy
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The code to detect whether Linux has access to group0 interrupts can
-prove useful in other parts of the driver.
+On Thu, Jan 17, 2019 at 4:27 AM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+>
+> On Monday, January 14, 2019 5:34:53 PM CET Amit Kucheria wrote:
+> > Several cpufreq drivers register themselves as thermal cooling devices.
+> > Adding a pointer to struct cpufreq_policy removes the need for them to
+> > store this pointer in a private data structure.
+> >
+> > We can then auto-register the cpufreq driver as a thermal cooling device
+> > from cpufreq core code.
+> >
+> > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> > ---
+> >  include/linux/cpufreq.h | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> >
+> > diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
+> > index c86d6d8bdfed..7d0cf54125fa 100644
+> > --- a/include/linux/cpufreq.h
+> > +++ b/include/linux/cpufreq.h
+> > @@ -95,6 +95,11 @@ struct cpufreq_policy {
+> >       struct cpufreq_frequency_table  *freq_table;
+> >       enum cpufreq_table_sorting freq_table_sorted;
+> >
+> > +#ifdef CONFIG_CPU_THERMAL
+> > +     /* Pointer to the cooling device if used for thermal mitigation */
+> > +     struct thermal_cooling_device *cooldev;
+> > +#endif
+> > +
+>
+> Why here and not at the end of the struct?
 
-Provide a separate function to do this.
+Fixed
 
-Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Jason Cooper <jason@lakedaemon.net>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
----
- drivers/irqchip/irq-gic-v3.c | 55 +++++++++++++++++++++++++++++---------------
- 1 file changed, 36 insertions(+), 19 deletions(-)
+> >       struct list_head        policy_list;
+> >       struct kobject          kobj;
+> >       struct completion       kobj_unregister;
+> >
+>
+> Also, I would suggest combining this one with patch [02/10].
 
-diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index 8148a92..da547e0 100644
---- a/drivers/irqchip/irq-gic-v3.c
-+++ b/drivers/irqchip/irq-gic-v3.c
-@@ -400,6 +400,39 @@ static asmlinkage void __exception_irq_entry gic_handle_irq(struct pt_regs *regs
- 	}
- }
- 
-+static u32 gic_get_pribits(void)
-+{
-+	u32 pribits;
-+
-+	pribits = gic_read_ctlr();
-+	pribits &= ICC_CTLR_EL1_PRI_BITS_MASK;
-+	pribits >>= ICC_CTLR_EL1_PRI_BITS_SHIFT;
-+	pribits++;
-+
-+	return pribits;
-+}
-+
-+static bool gic_has_group0(void)
-+{
-+	u32 val;
-+
-+	/*
-+	 * Let's find out if Group0 is under control of EL3 or not by
-+	 * setting the highest possible, non-zero priority in PMR.
-+	 *
-+	 * If SCR_EL3.FIQ is set, the priority gets shifted down in
-+	 * order for the CPU interface to set bit 7, and keep the
-+	 * actual priority in the non-secure range. In the process, it
-+	 * looses the least significant bit and the actual priority
-+	 * becomes 0x80. Reading it back returns 0, indicating that
-+	 * we're don't have access to Group0.
-+	 */
-+	gic_write_pmr(BIT(8 - gic_get_pribits()));
-+	val = gic_read_pmr();
-+
-+	return val != 0;
-+}
-+
- static void __init gic_dist_init(void)
- {
- 	unsigned int i;
-@@ -541,7 +574,7 @@ static void gic_cpu_sys_reg_init(void)
- 	u64 mpidr = cpu_logical_map(cpu);
- 	u64 need_rss = MPIDR_RS(mpidr);
- 	bool group0;
--	u32 val, pribits;
-+	u32 pribits;
- 
- 	/*
- 	 * Need to check that the SRE bit has actually been set. If
-@@ -553,25 +586,9 @@ static void gic_cpu_sys_reg_init(void)
- 	if (!gic_enable_sre())
- 		pr_err("GIC: unable to set SRE (disabled at EL2), panic ahead\n");
- 
--	pribits = gic_read_ctlr();
--	pribits &= ICC_CTLR_EL1_PRI_BITS_MASK;
--	pribits >>= ICC_CTLR_EL1_PRI_BITS_SHIFT;
--	pribits++;
-+	pribits = gic_get_pribits();
- 
--	/*
--	 * Let's find out if Group0 is under control of EL3 or not by
--	 * setting the highest possible, non-zero priority in PMR.
--	 *
--	 * If SCR_EL3.FIQ is set, the priority gets shifted down in
--	 * order for the CPU interface to set bit 7, and keep the
--	 * actual priority in the non-secure range. In the process, it
--	 * looses the least significant bit and the actual priority
--	 * becomes 0x80. Reading it back returns 0, indicating that
--	 * we're don't have access to Group0.
--	 */
--	write_gicreg(BIT(8 - pribits), ICC_PMR_EL1);
--	val = read_gicreg(ICC_PMR_EL1);
--	group0 = val != 0;
-+	group0 = gic_has_group0();
- 
- 	/* Set priority mask register */
- 	write_gicreg(DEFAULT_PMR_VALUE, ICC_PMR_EL1);
--- 
-1.9.1
+Will do.
 
+Thanks for the review.
