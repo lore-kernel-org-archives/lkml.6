@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 807DAC2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:59:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CDDCC2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:59:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4695220879
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:59:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E0422084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:59:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079175;
-	bh=7L2rTermTa1VA0fCfzacfd3s0eqrU6jC59NinyyU5SQ=;
+	s=default; t=1548079179;
+	bh=HyVRXfzqX6iknBu7eD9xcnWra/ncYIlt5lqyuB2qvkM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=aRJn0u7ImZ964VdalsKAkBE/YAXUR2DIxntX/WzNDIY+eSVmXgepQn0nSuU+9fbAX
-	 liKzakZXX9sKdY+n99GS3TNTqVNJwnNRp6E+AUT1Wg0Xt8J1wj6xQVlRV8ZW+QTKuo
-	 JuiBfHM5/uYAyk12ZYMiOeJGsip4QemJpzbbiMoQ=
+	b=f39VgvTbfBcpthxAM7pEN14RzODPNl7mSrMgxuK7ZtlhboWuyuNZkQxzzZkT0MKeW
+	 ESOoVhvFd8oMUM9hfedKzSrY5MByKqonmmNBP4FQ7N7oQnFJq0pUMgb+yYh1qWWjYo
+	 n5AIo9sVCgm+msZMWZE9YeSb5IALB9hKZnSYYapo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732211AbfAUN7d (ORCPT
+        id S1732225AbfAUN7h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:59:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45532 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:59:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45612 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732198AbfAUN7a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:59:30 -0500
+        id S1732209AbfAUN7e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:59:34 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B3C42084C;
-        Mon, 21 Jan 2019 13:59:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB1B22084C;
+        Mon, 21 Jan 2019 13:59:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548079169;
-        bh=7L2rTermTa1VA0fCfzacfd3s0eqrU6jC59NinyyU5SQ=;
+        s=default; t=1548079173;
+        bh=HyVRXfzqX6iknBu7eD9xcnWra/ncYIlt5lqyuB2qvkM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZrfwSBmZYMjWH3bl+uiLrXDbjYs6SWv+7oeVGGwSB4b93tmTMh6iBez5y9T7mTCPO
-         WBn5RTzHBX04927HbXiTclKq5Z8IdrJtaqYAZCPMuF/iuiiTKPfsAGp4y5wStxezQZ
-         bxO8gHUNOSGFEwDg1JkTB/pbIJVOhxoh8TuQtbFs=
+        b=B61xQFPVI9CSRYKrDGcnToz6FdGK3dBLkJ7V7F1jT+G4D+6gXxuOHoZr5zwCvXbSA
+         kUVm2YH5KhlAQiNFhZA4y/5Ul+487EI912TUJCTIOn0yQPpfrLRZ5EZvhxXhQ18UIN
+         9V1goN90Kj/x4f0lztlDwhxarPnDn/VFuBgAQ4lM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gilad Ben-Yossef <gilad@benyossef.com>,
-        Eric Biggers <ebiggers@google.com>,
+        stable@vger.kernel.org, Aymen Sghaier <aymen.sghaier@nxp.com>,
+        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
+        Christoph Hellwig <hch@lst.de>,
         Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.19 31/99] crypto: sm3 - fix undefined shift by >= width of value
-Date:   Mon, 21 Jan 2019 14:48:23 +0100
-Message-Id: <20190121134915.082802140@linuxfoundation.org>
+Subject: [PATCH 4.19 32/99] crypto: caam - fix zero-length buffer DMA mapping
+Date:   Mon, 21 Jan 2019 14:48:24 +0100
+Message-Id: <20190121134915.117848891@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121134913.924726465@linuxfoundation.org>
 References: <20190121134913.924726465@linuxfoundation.org>
@@ -66,36 +67,93 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+From: Aymen Sghaier <aymen.sghaier@nxp.com>
 
-commit d45a90cb5d061fa7d411b974b950fe0b8bc5f265 upstream.
+commit 04e6d25c5bb244c1a37eb9fe0b604cc11a04e8c5 upstream.
 
-sm3_compress() calls rol32() with shift >= 32, which causes undefined
-behavior.  This is easily detected by enabling CONFIG_UBSAN.
+Recent changes - probably DMA API related (generic and/or arm64-specific) -
+exposed a case where driver maps a zero-length buffer:
+ahash_init()->ahash_update()->ahash_final() with a zero-length string to
+hash
 
-Explicitly AND with 31 to make the behavior well defined.
+kernel BUG at kernel/dma/swiotlb.c:475!
+Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 2 PID: 1823 Comm: cryptomgr_test Not tainted 4.20.0-rc1-00108-g00c9fe37a7f2 #1
+Hardware name: LS1046A RDB Board (DT)
+pstate: 80000005 (Nzcv daif -PAN -UAO)
+pc : swiotlb_tbl_map_single+0x170/0x2b8
+lr : swiotlb_map_page+0x134/0x1f8
+sp : ffff00000f79b8f0
+x29: ffff00000f79b8f0 x28: 0000000000000000
+x27: ffff0000093d0000 x26: 0000000000000000
+x25: 00000000001f3ffe x24: 0000000000200000
+x23: 0000000000000000 x22: 00000009f2c538c0
+x21: ffff800970aeb410 x20: 0000000000000001
+x19: ffff800970aeb410 x18: 0000000000000007
+x17: 000000000000000e x16: 0000000000000001
+x15: 0000000000000019 x14: c32cb8218a167fe8
+x13: ffffffff00000000 x12: ffff80097fdae348
+x11: 0000800976bca000 x10: 0000000000000010
+x9 : 0000000000000000 x8 : ffff0000091fd6c8
+x7 : 0000000000000000 x6 : 00000009f2c538bf
+x5 : 0000000000000000 x4 : 0000000000000001
+x3 : 0000000000000000 x2 : 00000009f2c538c0
+x1 : 00000000f9fff000 x0 : 0000000000000000
+Process cryptomgr_test (pid: 1823, stack limit = 0x(____ptrval____))
+Call trace:
+ swiotlb_tbl_map_single+0x170/0x2b8
+ swiotlb_map_page+0x134/0x1f8
+ ahash_final_no_ctx+0xc4/0x6cc
+ ahash_final+0x10/0x18
+ crypto_ahash_op+0x30/0x84
+ crypto_ahash_final+0x14/0x1c
+ __test_hash+0x574/0xe0c
+ test_hash+0x28/0x80
+ __alg_test_hash+0x84/0xd0
+ alg_test_hash+0x78/0x144
+ alg_test.part.30+0x12c/0x2b4
+ alg_test+0x3c/0x68
+ cryptomgr_test+0x44/0x4c
+ kthread+0xfc/0x128
+ ret_from_fork+0x10/0x18
+Code: d34bfc18 2a1a03f7 1a9f8694 35fff89a (d4210000)
 
-Fixes: 4f0fc1600edb ("crypto: sm3 - add OSCCA SM3 secure hash")
-Cc: <stable@vger.kernel.org> # v4.15+
-Cc: Gilad Ben-Yossef <gilad@benyossef.com>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Aymen Sghaier <aymen.sghaier@nxp.com>
+Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/sm3_generic.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/crypto/caam/caamhash.c |   15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
---- a/crypto/sm3_generic.c
-+++ b/crypto/sm3_generic.c
-@@ -100,7 +100,7 @@ static void sm3_compress(u32 *w, u32 *wt
+--- a/drivers/crypto/caam/caamhash.c
++++ b/drivers/crypto/caam/caamhash.c
+@@ -1131,13 +1131,16 @@ static int ahash_final_no_ctx(struct aha
  
- 	for (i = 0; i <= 63; i++) {
+ 	desc = edesc->hw_desc;
  
--		ss1 = rol32((rol32(a, 12) + e + rol32(t(i), i)), 7);
-+		ss1 = rol32((rol32(a, 12) + e + rol32(t(i), i & 31)), 7);
+-	state->buf_dma = dma_map_single(jrdev, buf, buflen, DMA_TO_DEVICE);
+-	if (dma_mapping_error(jrdev, state->buf_dma)) {
+-		dev_err(jrdev, "unable to map src\n");
+-		goto unmap;
+-	}
++	if (buflen) {
++		state->buf_dma = dma_map_single(jrdev, buf, buflen,
++						DMA_TO_DEVICE);
++		if (dma_mapping_error(jrdev, state->buf_dma)) {
++			dev_err(jrdev, "unable to map src\n");
++			goto unmap;
++		}
  
- 		ss2 = ss1 ^ rol32(a, 12);
+-	append_seq_in_ptr(desc, state->buf_dma, buflen, 0);
++		append_seq_in_ptr(desc, state->buf_dma, buflen, 0);
++	}
  
+ 	edesc->dst_dma = map_seq_out_ptr_result(desc, jrdev, req->result,
+ 						digestsize);
 
 
