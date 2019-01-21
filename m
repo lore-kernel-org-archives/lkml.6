@@ -2,94 +2,104 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.0 required=3.0 tests=DATE_IN_PAST_06_12,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D837AC31D63
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:28:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56F8AC282DE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:30:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A702520989
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:28:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="SrLNNxfs"
+	by mail.kernel.org (Postfix) with ESMTP id 2FF5E20989
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:30:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727966AbfAUH2Y (ORCPT
+        id S1727995AbfAUHaZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 02:28:24 -0500
-Received: from ozlabs.org ([203.11.71.1]:60347 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727743AbfAUH2Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 02:28:24 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43jXKm6Rw7z9sCr;
-        Mon, 21 Jan 2019 11:21:48 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1548030111;
-        bh=RhEk9XjfxFBisfuvW4E4ORAL/jvKLKR2fKDS6trssII=;
-        h=Date:From:To:Cc:Subject:From;
-        b=SrLNNxfshhnrPQfeLDGU91FIkm5aSoUIUh0CDYyycwuBBIfhM9qSXh8hKzTceZs7A
-         Mu8dmUFb/CcAKZXbGvdddbhrhBoGFFLP4OSAsiptLtfdx+DvPpfs1k2ROh71bPklkA
-         9o5xKygVv0AwbihcL6pSq/zmD9MKQcZVH8BpgJK/V9dWcVxkF9vmTHCglDtiNQ7p6e
-         fO887gWewClHNIoQl6Dk5LAMBUf1WlQBIor3vj+jRxZJ0yq8VhkS23QNh3j1MOxsXH
-         mac5g2pX70N9lFsFY329dyYCWhtg/tqk2SG46RSiLNTadTGLV9usYvz4I8nzbjtDdL
-         q+680o/wBX0KQ==
-Date:   Mon, 21 Jan 2019 11:21:48 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>
-Subject: linux-next: build warning after merge of the sound tree
-Message-ID: <20190121112148.591aa586@canb.auug.org.au>
+        Mon, 21 Jan 2019 02:30:25 -0500
+Received: from wes1-so2-b.wedos.net ([46.28.106.45]:39309 "EHLO
+        wes1-so2.wedos.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726630AbfAUHaY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 02:30:24 -0500
+Received: from localhost (ip4-46-39-182-135.cust.nbox.cz [46.39.182.135])
+        by wes1-so2.wedos.net (Postfix) with ESMTPSA id 43jjrG01NRztc;
+        Mon, 21 Jan 2019 08:30:21 +0100 (CET)
+Date:   Mon, 21 Jan 2019 08:30:20 +0100
+From:   Otto Sabart <ottosabart@seberm.com>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+Subject: Re: [PATCH v2 1/1] doc: networking: integrate scaling document into
+ doc tree
+Message-ID: <20190121073020.GA10146@personal>
+References: <cover.1547843156.git.ottosabart@seberm.com>
+ <3eddcfcf3916ef8e89230971359fc9b6bef35d20.1547843156.git.ottosabart@seberm.com>
+ <20190120191359.41e5de0c@lwn.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/i0=jcW/0wXIqaqa5k9yLkpH"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="PEIAKu/WMn1b1Hv9"
+Content-Disposition: inline
+In-Reply-To: <20190120191359.41e5de0c@lwn.net>
+X-PGP-Key: http://seberm.com/pubkey.asc
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/i0=jcW/0wXIqaqa5k9yLkpH
-Content-Type: text/plain; charset=US-ASCII
+
+--PEIAKu/WMn1b1Hv9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Takashi,
+On 20. Jan (Sunday) v 19:13:59 -0700 2019, Jonathan Corbet wrote:
+> On Fri, 18 Jan 2019 21:38:32 +0100
+> Otto Sabart <ottosabart@seberm.com> wrote:
+>=20
+> > Convert scaling document into reStructuredText and add reference to
+> > scaling document into main table of contents in network documentation.
+> >=20
+> > There are no semantic changes.
+> >=20
+> > There are no references to "scaling.txt" file. Whole kernel tree was
+> > checked using:
+> > $ grep -r "scaling\.txt"
+> >=20
+> > Signed-off-by: Otto Sabart <ottosabart@seberm.com>
+>=20
+> So this didn't apply cleanly to docs-next due to a conflict with
+> commit d96bedb2b248 ("doc: networking: add offload documents into main
+> index file") by one Otto Sabart.
 
-After merging the sound tree, today's linux-next build (arm
-multi_v7_defconfig) produced this warning:
+Yeah, .. I always just checked if it merges cleanly against the Linus's
+tree.
 
-sound/pci/hda/hda_codec.c: In function 'hda_codec_runtime_suspend':
-sound/pci/hda/hda_codec.c:2926:18: warning: unused variable 'pcm' [-Wunused=
--variable]
-  struct hda_pcm *pcm;
-                  ^~~
+> I've fixed that up, but in the future it will be helpful if you can be
+> sure that your patches are against the docs tree if you want me to
+> merge them.
 
-Introduced by commit
+Will do. Thank you Jon and sorry for the merge conflict.
 
-  17bc4815de58 ("ALSA: pci: Remove superfluous snd_pcm_suspend*() calls")
+Ota
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/i0=jcW/0wXIqaqa5k9yLkpH
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+--PEIAKu/WMn1b1Hv9
+Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxFEJwACgkQAVBC80lX
-0Gyk2Af/f91kbIth3V532/gGMTmJk6Pr49NM2M/AeyJrAB1ypLKoy3UaeGOs1VEy
-gbS8nH9nHSkha3jyJKdFG3ir+A7jLqzX/dKLLD+806UoaqFOa6OBM2nBj1QGI/Y4
-QBQKoD/gF6H9zuBXgW30X9tSIRp1/+twGZ4WsgsdSDfMPhqBGGts2+zesVpcAQFC
-HTSyed4tlthe6PbwbSAb/OpMQL8tnJ4BafzS5QxOicM+Q5xxlNvTdPOCbmrvV9ZI
-ctgGMjpJ3C+oLVKT9TtQHc8UJO4P03rl3ufmE8PepPJAAz43n+NByWwPcqhhTbN2
-YYiNm1Miq3DZX8r5AM/XpJjwb/4yLg==
-=6w2p
+iQIzBAEBCgAdFiEEb6VOpv2s03VHGoilgjuumfi+HjwFAlxFdQkACgkQgjuumfi+
+Hjy22BAAg5Dr+yuc8g/4NcxpMWe17kK6wxywsH75zTvAiKlKd82Qq3be8jF6KyvA
+4X0/DsiPl9CSEkEu0S7SNQ0cESwl3IH3mqRXcICUC2HSBmOPdqjftPZ0pj0LdBlm
+3FrlFgHHy+S3tkDPUfGbo24/W50JmYmWldtXR/3/RuuDtcx7PKz1Gcwx/FQ7Icq/
+nABm62EGgmODsZpzRSFb1NchbOpFWb1RbnRkEZI0uSJHI1GNbPhvxOnNNZnAdQ8Y
+ePd6K9IeTWMQ+lQef1WhDL+p8j2XgdnLpFQErTG3RQP4xTRLugFnSxYmyeTSg7nd
+vO6ZFa2WnlCoysEAb8paAi/cHGE+k13R6GPcYvtOWbjmkcXWjifSXwRN+rod5r+1
+C4JHbbjyJSTtHPvKc8clP15PTMELO92yHV7ar/2SjpaLBVGM6vvT4fyfQafZxuws
+ffSS6nt14rNKfaxFhyQIDH4Kzg7OCAIFtDrwNoaznP6gGwvLFLaW9KU2R0amH4+k
+Srkxudf7wyLE2AsTa69fjdRNtiuRyD1BlMvDr+J55MsCDZdIdM/eaPTBa7gsei02
+VMwUG3gpcHmVR4CSloYAU0dywQ0oFuqQCXsPMM+8S8PfGpfbEdRZZrD5+TP8bUfV
+m91ueO+0qZ2nJ7t38YWQLSf9wQ+4aS6Txn4btNtDkct2tGKmGNo=
+=mwlX
 -----END PGP SIGNATURE-----
 
---Sig_/i0=jcW/0wXIqaqa5k9yLkpH--
+--PEIAKu/WMn1b1Hv9--
