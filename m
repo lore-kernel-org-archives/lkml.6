@@ -6,47 +6,49 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67FF7C2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:16:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA459C2F3D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:16:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 398DA20861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:16:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88FB020861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:16:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548080164;
-	bh=aDmuTRdBaO+UXQJIudY8G39dCQLIA9VXDIF1IkCBaUQ=;
+	s=default; t=1548080168;
+	bh=ju+afPsOuxSnijuCMu33VV/RPBA1+HN3BAW2p80CuVE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Jvr+XRNr0rJapOd2/GWU7VI70mWkcDMbGuyBjounVNRcMncWK+PKonjtSluFuzwDB
-	 GVfJvyasohGMeDfhKqpsZgO7kDluX0PaAK5Vram9aAU58Nozrn7NmETi8N2ITmdAt9
-	 ktWf83AcIzZYxS5fuwRs+cP8TTOBPo321XHDA4no=
+	b=M3N1X0AtAm7tVaBrmUjAgtPqFOg9oSHoc95fqFD5M0qH9cnZjDodfgHiB1rB1H3zl
+	 J7NJh7dBY2bsW5v3wx3X1OffX/lioou84vTaIgJVUvG0YlwYiRTAtEMu7/Pg6B/WLi
+	 uQan91PppZJSUQt61ffM0hLkJNO0eOPFNopBcTyc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730761AbfAUNvW (ORCPT
+        id S1730748AbfAUNvU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:51:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34230 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:51:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34156 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729025AbfAUNvT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:51:19 -0500
+        id S1730135AbfAUNvQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:51:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C7D422063F;
-        Mon, 21 Jan 2019 13:51:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9597120861;
+        Mon, 21 Jan 2019 13:51:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078678;
-        bh=aDmuTRdBaO+UXQJIudY8G39dCQLIA9VXDIF1IkCBaUQ=;
+        s=default; t=1548078675;
+        bh=ju+afPsOuxSnijuCMu33VV/RPBA1+HN3BAW2p80CuVE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Rq1m1c1vApUswWZ30WHnQxCxzzIpqEcKCvgCxOk29PNJFLf9CpFQZlf4taWy6nLD4
-         xxaQkKPsWoVSnG5Fq6nBBZeVsTJ9Pu73HOzFKPIN+YzxQ8KG0Ra3+6siqNVmBXhtLo
-         xYK540u7fKV32Tcafy0omScXe0DN26L8mTLvKKVU=
+        b=KhvFkIXeEx0TmQ+AF+S6CllK1T9fD8btEnFiBq2cY5lYH7MIvyKRdLdwC94Ex97Oj
+         Frd+m3K+7vCJdqW0hruBTFE38/ORcN7CKBqtcwl9p2UwA7jfthw2q8Z3s2OwQQDs+w
+         p76FXD5tJt3ytsGtnudbe3no0Uw2vHKfUD5m/rU4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.20 093/111] block/loop: Dont grab "struct file" for vfs_getattr() operation.
-Date:   Mon, 21 Jan 2019 14:43:27 +0100
-Message-Id: <20190121122506.276273828@linuxfoundation.org>
+        syzbot+bca0dc46634781f08b38@syzkaller.appspotmail.com,
+        syzbot+6bdb590321a7ae40c1a6@syzkaller.appspotmail.com,
+        Ying Xue <ying.xue@windriver.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.20 092/111] tipc: fix uninit-value in tipc_nl_compat_doit
+Date:   Mon, 21 Jan 2019 14:43:26 +0100
+Message-Id: <20190121122506.154509616@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122455.819406896@linuxfoundation.org>
 References: <20190121122455.819406896@linuxfoundation.org>
@@ -65,54 +67,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Ying Xue <ying.xue@windriver.com>
 
-commit b1ab5fa309e6c49e4e06270ec67dd7b3e9971d04 upstream.
+commit 2753ca5d9009c180dbfd4c802c80983b4b6108d1 upstream.
 
-vfs_getattr() needs "struct path" rather than "struct file".
-Let's use path_get()/path_put() rather than get_file()/fput().
+BUG: KMSAN: uninit-value in tipc_nl_compat_doit+0x404/0xa10 net/tipc/netlink_compat.c:335
+CPU: 0 PID: 4514 Comm: syz-executor485 Not tainted 4.16.0+ #87
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:17 [inline]
+ dump_stack+0x185/0x1d0 lib/dump_stack.c:53
+ kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
+ __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:683
+ tipc_nl_compat_doit+0x404/0xa10 net/tipc/netlink_compat.c:335
+ tipc_nl_compat_recv+0x164b/0x2700 net/tipc/netlink_compat.c:1153
+ genl_family_rcv_msg net/netlink/genetlink.c:599 [inline]
+ genl_rcv_msg+0x1686/0x1810 net/netlink/genetlink.c:624
+ netlink_rcv_skb+0x378/0x600 net/netlink/af_netlink.c:2447
+ genl_rcv+0x63/0x80 net/netlink/genetlink.c:635
+ netlink_unicast_kernel net/netlink/af_netlink.c:1311 [inline]
+ netlink_unicast+0x166b/0x1740 net/netlink/af_netlink.c:1337
+ netlink_sendmsg+0x1048/0x1310 net/netlink/af_netlink.c:1900
+ sock_sendmsg_nosec net/socket.c:630 [inline]
+ sock_sendmsg net/socket.c:640 [inline]
+ ___sys_sendmsg+0xec0/0x1310 net/socket.c:2046
+ __sys_sendmsg net/socket.c:2080 [inline]
+ SYSC_sendmsg+0x2a3/0x3d0 net/socket.c:2091
+ SyS_sendmsg+0x54/0x80 net/socket.c:2087
+ do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+RIP: 0033:0x43fda9
+RSP: 002b:00007ffd0c184ba8 EFLAGS: 00000213 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fda9
+RDX: 0000000000000000 RSI: 0000000020023000 RDI: 0000000000000003
+RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
+R10: 00000000004002c8 R11: 0000000000000213 R12: 00000000004016d0
+R13: 0000000000401760 R14: 0000000000000000 R15: 0000000000000000
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Uninit was created at:
+ kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
+ kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:188
+ kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:314
+ kmsan_slab_alloc+0x11/0x20 mm/kmsan/kmsan.c:321
+ slab_post_alloc_hook mm/slab.h:445 [inline]
+ slab_alloc_node mm/slub.c:2737 [inline]
+ __kmalloc_node_track_caller+0xaed/0x11c0 mm/slub.c:4369
+ __kmalloc_reserve net/core/skbuff.c:138 [inline]
+ __alloc_skb+0x2cf/0x9f0 net/core/skbuff.c:206
+ alloc_skb include/linux/skbuff.h:984 [inline]
+ netlink_alloc_large_skb net/netlink/af_netlink.c:1183 [inline]
+ netlink_sendmsg+0x9a6/0x1310 net/netlink/af_netlink.c:1875
+ sock_sendmsg_nosec net/socket.c:630 [inline]
+ sock_sendmsg net/socket.c:640 [inline]
+ ___sys_sendmsg+0xec0/0x1310 net/socket.c:2046
+ __sys_sendmsg net/socket.c:2080 [inline]
+ SYSC_sendmsg+0x2a3/0x3d0 net/socket.c:2091
+ SyS_sendmsg+0x54/0x80 net/socket.c:2087
+ do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+
+In tipc_nl_compat_recv(), when the len variable returned by
+nlmsg_attrlen() is 0, the message is still treated as a valid one,
+which is obviously unresonable. When len is zero, it means the
+message not only doesn't contain any valid TLV payload, but also
+TLV header is not included. Under this stituation, tlv_type field
+in TLV header is still accessed in tipc_nl_compat_dumpit() or
+tipc_nl_compat_doit(), but the field space is obviously illegal.
+Of course, it is not initialized.
+
+Reported-by: syzbot+bca0dc46634781f08b38@syzkaller.appspotmail.com
+Reported-by: syzbot+6bdb590321a7ae40c1a6@syzkaller.appspotmail.com
+Signed-off-by: Ying Xue <ying.xue@windriver.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/block/loop.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ net/tipc/netlink_compat.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -1204,7 +1204,7 @@ loop_set_status(struct loop_device *lo,
- static int
- loop_get_status(struct loop_device *lo, struct loop_info64 *info)
- {
--	struct file *file;
-+	struct path path;
- 	struct kstat stat;
- 	int ret;
- 
-@@ -1229,16 +1229,16 @@ loop_get_status(struct loop_device *lo,
+--- a/net/tipc/netlink_compat.c
++++ b/net/tipc/netlink_compat.c
+@@ -1249,7 +1249,7 @@ static int tipc_nl_compat_recv(struct sk
  	}
  
- 	/* Drop lo_ctl_mutex while we call into the filesystem. */
--	file = get_file(lo->lo_backing_file);
-+	path = lo->lo_backing_file->f_path;
-+	path_get(&path);
- 	mutex_unlock(&lo->lo_ctl_mutex);
--	ret = vfs_getattr(&file->f_path, &stat, STATX_INO,
--			  AT_STATX_SYNC_AS_STAT);
-+	ret = vfs_getattr(&path, &stat, STATX_INO, AT_STATX_SYNC_AS_STAT);
- 	if (!ret) {
- 		info->lo_device = huge_encode_dev(stat.dev);
- 		info->lo_inode = stat.ino;
- 		info->lo_rdevice = huge_encode_dev(stat.rdev);
- 	}
--	fput(file);
-+	path_put(&path);
- 	return ret;
- }
- 
+ 	len = nlmsg_attrlen(req_nlh, GENL_HDRLEN + TIPC_GENL_HDRLEN);
+-	if (len && !TLV_OK(msg.req, len)) {
++	if (!len || !TLV_OK(msg.req, len)) {
+ 		msg.rep = tipc_get_err_tlv(TIPC_CFG_NOT_SUPPORTED);
+ 		err = -EOPNOTSUPP;
+ 		goto send;
 
 
