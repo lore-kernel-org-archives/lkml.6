@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8DD5C2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:19:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E03CC2F3D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:19:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86BB820989
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:19:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02E8620861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:19:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548080356;
-	bh=LuFmAiC5N0UnbUuVaLBNIfwD7mEdaeyPj80tFjd7c8c=;
+	s=default; t=1548080359;
+	bh=MMmzmmPWxXIo3J53OU5vIJeB6pVJ3BIo2wABNJUg+aE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XA5o1nAyqWcnQcqgwREsrUqcZhyAPaqiKVMEazLmThPOHKUHNRyRRuyixfGcLmm4w
-	 PBAAYgIIdVlyuvmvCZCttYLbk7h5dmUjjUF3otLMqKqd8vJpzOA6Anbhw9lLTsKr1D
-	 dEWEc4MSwlBqWTiYxM+hqoII1Cg6ScSn7SrHV1T8=
+	b=yk+LWiKfW/4OaAaq9DY+qkSQjnOcd8kTAezVVwApelbRGnpuWMxyg3i4kv1yo+cuH
+	 OegHBO5C9v2Jh5Lm7HbUBMo8xOJLOtRv0jzHS8i/HBvCGDnAxzD+mUXuEBVLQiBh2Y
+	 iXKl+fyW5e9oECa941nQrY75mXXN7SYQIa7O3D/s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730039AbfAUNsw (ORCPT
+        id S1730433AbfAUOTR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:48:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58920 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 09:19:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59068 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730017AbfAUNsr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:48:47 -0500
+        id S1730038AbfAUNsw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:48:52 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 29BA42063F;
-        Mon, 21 Jan 2019 13:48:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6FB7A2063F;
+        Mon, 21 Jan 2019 13:48:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078526;
-        bh=LuFmAiC5N0UnbUuVaLBNIfwD7mEdaeyPj80tFjd7c8c=;
+        s=default; t=1548078531;
+        bh=MMmzmmPWxXIo3J53OU5vIJeB6pVJ3BIo2wABNJUg+aE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TNJIYLpAzIDs0TmuMOxDbLBoljretuUaP5DJnBw52Vtx/96dFgas2eMKlqeE1U6df
-         quEUbcNbhsp0m+Sgry6kvQ9dKtIAWw8SUcGeBmRPrTafQhj3Mmpx1thrYHaNCgSp29
-         xtDJdlLNRDoSOkPkvrKqCJEHfn3F8GniCIju+xr4=
+        b=bAqwfTGNhRRhOwwe5R7SKWI23KcC7nibG/TZY3/D5DzaV38gjZQ/Z7CIs1/IwZ6i/
+         Qg2VHYEX6lPX41zEepQ+J5d1wiQygl/2V3PMj1DUq1kIOVtbhKiiHSoHfIaEzX9Gpc
+         4KXDwQO10CY17HpeciKjvqWccqRilAGF8OqajfdA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yue Hu <huyue2@yulong.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH 4.20 064/111] pstore/ram: Avoid allocation and leak of platform data
-Date:   Mon, 21 Jan 2019 14:42:58 +0100
-Message-Id: <20190121122503.436421257@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org
+Subject: [PATCH 4.20 048/111] mips: fix n32 compat_ipc_parse_version
+Date:   Mon, 21 Jan 2019 14:42:42 +0100
+Message-Id: <20190121122501.248885342@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122455.819406896@linuxfoundation.org>
 References: <20190121122455.819406896@linuxfoundation.org>
@@ -65,47 +64,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kees Cook <keescook@chromium.org>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 5631e8576a3caf606cdc375f97425a67983b420c upstream.
+commit 5a9372f751b5350e0ce3d2ee91832f1feae2c2e5 upstream.
 
-Yue Hu noticed that when parsing device tree the allocated platform data
-was never freed. Since it's not used beyond the function scope, this
-switches to using a stack variable instead.
+While reading through the sysvipc implementation, I noticed that the n32
+semctl/shmctl/msgctl system calls behave differently based on whether
+o32 support is enabled or not: Without o32, the IPC_64 flag passed by
+user space is rejected but calls without that flag get IPC_64 behavior.
 
-Reported-by: Yue Hu <huyue2@yulong.com>
-Fixes: 35da60941e44 ("pstore/ram: add Device Tree bindings")
-Cc: stable@vger.kernel.org
-Signed-off-by: Kees Cook <keescook@chromium.org>
+As far as I can tell, this was inadvertently changed by a cleanup patch
+but never noticed by anyone, possibly nobody has tried using sysvipc
+on n32 after linux-3.19.
+
+Change it back to the old behavior now.
+
+Fixes: 78aaf956ba3a ("MIPS: Compat: Fix build error if CONFIG_MIPS32_COMPAT but no compat ABI.")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: linux-mips@vger.kernel.org
+Cc: stable@vger.kernel.org # 3.19+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/pstore/ram.c |    9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ arch/mips/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/pstore/ram.c
-+++ b/fs/pstore/ram.c
-@@ -723,18 +723,15 @@ static int ramoops_probe(struct platform
- {
- 	struct device *dev = &pdev->dev;
- 	struct ramoops_platform_data *pdata = dev->platform_data;
-+	struct ramoops_platform_data pdata_local;
- 	struct ramoops_context *cxt = &oops_cxt;
- 	size_t dump_mem_sz;
- 	phys_addr_t paddr;
- 	int err = -EINVAL;
- 
- 	if (dev_of_node(dev) && !pdata) {
--		pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
--		if (!pdata) {
--			pr_err("cannot allocate platform data buffer\n");
--			err = -ENOMEM;
--			goto fail_out;
--		}
-+		pdata = &pdata_local;
-+		memset(pdata, 0, sizeof(*pdata));
- 
- 		err = ramoops_parse_dt(pdev, pdata);
- 		if (err < 0)
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -3184,6 +3184,7 @@ config MIPS32_O32
+ config MIPS32_N32
+ 	bool "Kernel support for n32 binaries"
+ 	depends on 64BIT
++	select ARCH_WANT_COMPAT_IPC_PARSE_VERSION
+ 	select COMPAT
+ 	select MIPS32_COMPAT
+ 	select SYSVIPC_COMPAT if SYSVIPC
 
 
