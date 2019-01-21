@@ -7,46 +7,48 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EE17C2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:50:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18485C2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:50:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14B0120879
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:50:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD9CF20861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:50:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078612;
-	bh=mnwKMLIhAkidMjnIn6SwuNM503zATsxKDchncSzlcTc=;
+	s=default; t=1548078616;
+	bh=w26qDjBSrIzbMUe8W2L2Kbxo4L6sTTWlFlFrSkzf6xc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vGrTUTOYjO2G6KeSO2TCKkrsH4nwwmbGrUXVt36BlslpFuJFBpjnptFajK9M98RWt
-	 bIrilBNduj05yOqldD0kAXt72a556IY4CjaBd3NIh+jUeHXu1YDg0w+0EfQ1DXYce3
-	 zKhkB1npEpHdTRK20M0u9WJJd2T087IkTWZH9pB4=
+	b=EfKlhzCw5zqknRVvdXfQBIcqfVSDtLxIA9nlSprI7VG74UsIyrqyeQcVvMvO9/0RM
+	 BoCgS7g5U8d5IYXGorHSml5MW5yfg/u/a9R882nWlghwM0i+Wj/a3k23es16t+014U
+	 3HLudea/6Wg0PivSmqSOJ0AVW2qXnLCMtf9UK86g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730486AbfAUNuK (ORCPT
+        id S1730501AbfAUNuP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:50:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60894 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:50:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60948 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729119AbfAUNuI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:50:08 -0500
+        id S1729119AbfAUNuM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:50:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5087220879;
-        Mon, 21 Jan 2019 13:50:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B6F972063F;
+        Mon, 21 Jan 2019 13:50:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078607;
-        bh=mnwKMLIhAkidMjnIn6SwuNM503zATsxKDchncSzlcTc=;
+        s=default; t=1548078611;
+        bh=w26qDjBSrIzbMUe8W2L2Kbxo4L6sTTWlFlFrSkzf6xc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YCGNZObIJyg4jbZWAlhVJsJQQG4KrYYuKEnbAzFw4inGKjZK57/eogGAisrdIpqFt
-         KHUn9gNpZIKWqd0OXcJmVqnAZULeBxZklWTQtxrcYrOnoMGwU/55hLxaCyoXnlQmT5
-         +m9x1OdkMGJ4L1TSXqnbyUChAi00x4SAVxExgBes=
+        b=hxjJbvekgRMjw4jW8JkMSfITG03GgO82Vf9iGdOwc/R21bBajtqNRXmQNEA2zZw5R
+         +PciqrCfUtM/BVS0rBeQ7sTEnFbxDIUHrC+xHHi9F5OkrUAycvVwZ8tTLHhM+lpCM7
+         maksjpiJjT3CKIjnVGrRnUk3ubwqiBkkDk9AXUpI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julia Lawall <Julia.Lawall@lip6.fr>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH 4.20 054/111] OF: properties: add missing of_node_put
-Date:   Mon, 21 Jan 2019 14:42:48 +0100
-Message-Id: <20190121122501.854040535@linuxfoundation.org>
+        stable@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH 4.20 055/111] mfd: tps6586x: Handle interrupts on suspend
+Date:   Mon, 21 Jan 2019 14:42:49 +0100
+Message-Id: <20190121122501.956477600@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122455.819406896@linuxfoundation.org>
 References: <20190121122455.819406896@linuxfoundation.org>
@@ -65,51 +67,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Jonathan Hunter <jonathanh@nvidia.com>
 
-commit 28b170e88bc0c7509e6724717c15cb4b5686026e upstream.
+commit ac4ca4b9f4623ba5e1ea7a582f286567c611e027 upstream.
 
-Add an of_node_put when the result of of_graph_get_remote_port_parent is
-not available.
+The tps6586x driver creates an irqchip that is used by its various child
+devices for managing interrupts. The tps6586x-rtc device is one of its
+children that uses the tps6586x irqchip. When using the tps6586x-rtc as
+a wake-up device from suspend, the following is seen:
 
-The semantic match that finds this problem is as follows
-(http://coccinelle.lip6.fr):
+ PM: Syncing filesystems ... done.
+ Freezing user space processes ... (elapsed 0.001 seconds) done.
+ OOM killer disabled.
+ Freezing remaining freezable tasks ... (elapsed 0.000 seconds) done.
+ Disabling non-boot CPUs ...
+ Entering suspend state LP1
+ Enabling non-boot CPUs ...
+ CPU1 is up
+ tps6586x 3-0034: failed to read interrupt status
+ tps6586x 3-0034: failed to read interrupt status
 
-// <smpl>
-@r exists@
-local idexpression e;
-expression x;
-@@
-e = of_graph_get_remote_port_parent(...);
-... when != x = e
-    when != true e == NULL
-    when != of_node_put(e)
-    when != of_fwnode_handle(e)
-(
-return e;
-|
-*return ...;
-)
-// </smpl>
+The reason why the tps6586x interrupt status cannot be read is because
+the tps6586x interrupt is not masked during suspend and when the
+tps6586x-rtc interrupt occurs, to wake-up the device, the interrupt is
+seen before the i2c controller has been resumed in order to read the
+tps6586x interrupt status.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+The tps6586x-rtc driver sets it's interrupt as a wake-up source during
+suspend, which gets propagated to the parent tps6586x interrupt.
+However, the tps6586x-rtc driver cannot disable it's interrupt during
+suspend otherwise we would never be woken up and so the tps6586x must
+disable it's interrupt instead.
+
+Prevent the tps6586x interrupt handler from executing on exiting suspend
+before the i2c controller has been resumed by disabling the tps6586x
+interrupt on entering suspend and re-enabling it on resuming from
+suspend.
+
 Cc: stable@vger.kernel.org
-Signed-off-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Tested-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/of/property.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/mfd/tps6586x.c |   24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
---- a/drivers/of/property.c
-+++ b/drivers/of/property.c
-@@ -806,6 +806,7 @@ struct device_node *of_graph_get_remote_
+--- a/drivers/mfd/tps6586x.c
++++ b/drivers/mfd/tps6586x.c
+@@ -592,6 +592,29 @@ static int tps6586x_i2c_remove(struct i2
+ 	return 0;
+ }
  
- 	if (!of_device_is_available(remote)) {
- 		pr_debug("not available for remote node\n");
-+		of_node_put(remote);
- 		return NULL;
- 	}
- 
++static int __maybe_unused tps6586x_i2c_suspend(struct device *dev)
++{
++	struct tps6586x *tps6586x = dev_get_drvdata(dev);
++
++	if (tps6586x->client->irq)
++		disable_irq(tps6586x->client->irq);
++
++	return 0;
++}
++
++static int __maybe_unused tps6586x_i2c_resume(struct device *dev)
++{
++	struct tps6586x *tps6586x = dev_get_drvdata(dev);
++
++	if (tps6586x->client->irq)
++		enable_irq(tps6586x->client->irq);
++
++	return 0;
++}
++
++static SIMPLE_DEV_PM_OPS(tps6586x_pm_ops, tps6586x_i2c_suspend,
++			 tps6586x_i2c_resume);
++
+ static const struct i2c_device_id tps6586x_id_table[] = {
+ 	{ "tps6586x", 0 },
+ 	{ },
+@@ -602,6 +625,7 @@ static struct i2c_driver tps6586x_driver
+ 	.driver	= {
+ 		.name	= "tps6586x",
+ 		.of_match_table = of_match_ptr(tps6586x_of_match),
++		.pm	= &tps6586x_pm_ops,
+ 	},
+ 	.probe		= tps6586x_i2c_probe,
+ 	.remove		= tps6586x_i2c_remove,
 
 
