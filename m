@@ -7,47 +7,50 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F10FAC2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:48:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D4C7C2F3C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:48:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B31C620861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:48:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C43320861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:48:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078499;
-	bh=fh0eCtUz7nItelLV7ZjgfQHjkNZpc5JB4muufkkOyk0=;
+	s=default; t=1548078501;
+	bh=XcZJe6GGySOEm4DXRdzjpkvyFiVHkqvRKjqzaSr629I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Fvhryn97ALNQb2dtnOJemgprxNuKIkXwbGl0kBSvl/lYvQEjCrtxBgAeOkKUqVTmp
-	 GzqxzYL3bO7fWdWIEDPYjATEvBUskeldP3hAi5yBYRoCDpCufjsI5bzJkzQHHoENZW
-	 fvcNbB6Ml+keHzAs0w3jcDMKC6S3gnlWHr+y8aqg=
+	b=Rcz/wyC56TtwuftINxG/jUJuLV6a1MwEc8jW+GWjR4hgHyZGkSJultcYtKn5OUE6B
+	 6jG2wpKFC+LLau70KGYNpQlVGWjxnXPpxFiWhvP04PDVs4KtEsqDJfLQv3NDrktUSv
+	 L55ln1mtx52gQPO4VBTiuFQJLh/5+4f1On4FUIAQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729885AbfAUNsS (ORCPT
+        id S1729907AbfAUNsU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:48:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57946 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:48:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58102 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729244AbfAUNsM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:48:12 -0500
+        id S1728875AbfAUNsR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:48:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E40420879;
-        Mon, 21 Jan 2019 13:48:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F385C20879;
+        Mon, 21 Jan 2019 13:48:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078490;
-        bh=fh0eCtUz7nItelLV7ZjgfQHjkNZpc5JB4muufkkOyk0=;
+        s=default; t=1548078496;
+        bh=XcZJe6GGySOEm4DXRdzjpkvyFiVHkqvRKjqzaSr629I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q0ZzZEphhptrnRzoRRMYY2+WCAOcL3rwoz3WSojimi2hy3hyju6G946wdPp4bu67y
-         7En20RTPvOnJGCJgNPFKg5fO29bEGWc7/Y4gR6oCVZfEj3BjGp+0EjnjaHQN4b29Ph
-         c/RMn0z8165AVC1jWfIeFBBUwi3aASTuh39zGWLI=
+        b=vEZnZYYUV5SbEnDTerYvqOBPRvLy/jVg4AabQTdt/LPs2CYkzXkNE8ZZNXDzgFoyf
+         5k5+Y/0n14vZdkSqxv+PPEJLwibEAQXvjcARM3aESmk537aGiwAH7UareRXB2fxRXa
+         nMzVJ4Gs3siHRA8H7+jpLL3MAwu2zwZULRWwH/Cs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shawn Bohrer <sbohrer@cloudflare.com>,
-        Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.20 012/111] netfilter: nf_conncount: speculative garbage collection on empty lists
-Date:   Mon, 21 Jan 2019 14:42:06 +0100
-Message-Id: <20190121122457.109032086@linuxfoundation.org>
+        stable@vger.kernel.org, Leonid Segal <leonid.s@variscite.com>,
+        Manabu Igusa <migusa@arrowjapan.com>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 4.20 014/111] mmc: sdhci-msm: Disable CDR function on TX
+Date:   Mon, 21 Jan 2019 14:42:08 +0100
+Message-Id: <20190121122457.292340327@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122455.819406896@linuxfoundation.org>
 References: <20190121122455.819406896@linuxfoundation.org>
@@ -66,198 +69,112 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pablo Neira Ayuso <pablo@netfilter.org>
+From: Loic Poulain <loic.poulain@linaro.org>
 
-commit c80f10bc973af2ace6b1414724eeff61eaa71837 upstream.
+commit a89e7bcb18081c611eb6cf50edd440fa4983a71a upstream.
 
-Instead of removing a empty list node that might be reintroduced soon
-thereafter, tentatively place the empty list node on the list passed to
-tree_nodes_free(), then re-check if the list is empty again before erasing
-it from the tree.
+The Clock Data Recovery (CDR) circuit allows to automatically adjust
+the RX sampling-point/phase for high frequency cards (SDR104, HS200...).
+CDR is automatically enabled during DLL configuration.
+However, according to the APQ8016 reference manual, this function
+must be disabled during TX and tuning phase in order to prevent any
+interferences during tuning challenges and unexpected phase alteration
+during TX transfers.
 
-[ Florian: rebase on top of pending nf_conncount fixes ]
+This patch enables/disables CDR according to the current transfer mode.
 
-Fixes: 5c789e131cbb9 ("netfilter: nf_conncount: Add list lock and gc worker, and RCU for init tree search")
-Reviewed-by: Shawn Bohrer <sbohrer@cloudflare.com>
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+This fixes sporadic write transfer issues observed with some SDR104 and
+HS200 cards.
+
+Inspired by sdhci-msm downstream patch:
+https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/432516/
+
+Reported-by: Leonid Segal <leonid.s@variscite.com>
+Reported-by: Manabu Igusa <migusa@arrowjapan.com>
+Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Acked-by: Georgi Djakov <georgi.djakov@linaro.org>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+[georgi: backport to v4.19+]
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- include/net/netfilter/nf_conntrack_count.h |    1 
- net/netfilter/nf_conncount.c               |   47 +++++++++--------------------
- 2 files changed, 15 insertions(+), 33 deletions(-)
+ drivers/mmc/host/sdhci-msm.c |   43 ++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 42 insertions(+), 1 deletion(-)
 
---- a/include/net/netfilter/nf_conntrack_count.h
-+++ b/include/net/netfilter/nf_conntrack_count.h
-@@ -9,7 +9,6 @@ struct nf_conncount_list {
- 	spinlock_t list_lock;
- 	struct list_head head;	/* connections with the same filtering key */
- 	unsigned int count;	/* length of list */
--	bool dead;
+--- a/drivers/mmc/host/sdhci-msm.c
++++ b/drivers/mmc/host/sdhci-msm.c
+@@ -258,6 +258,8 @@ struct sdhci_msm_host {
+ 	bool mci_removed;
+ 	const struct sdhci_msm_variant_ops *var_ops;
+ 	const struct sdhci_msm_offset *offset;
++	bool use_cdr;
++	u32 transfer_mode;
  };
  
- struct nf_conncount_data *nf_conncount_init(struct net *net, unsigned int family,
---- a/net/netfilter/nf_conncount.c
-+++ b/net/netfilter/nf_conncount.c
-@@ -81,27 +81,20 @@ static int key_diff(const u32 *a, const
- 	return memcmp(a, b, klen * sizeof(u32));
- }
- 
--static bool conn_free(struct nf_conncount_list *list,
-+static void conn_free(struct nf_conncount_list *list,
- 		      struct nf_conncount_tuple *conn)
- {
--	bool free_entry = false;
--
- 	lockdep_assert_held(&list->list_lock);
- 
- 	list->count--;
- 	list_del(&conn->node);
--	if (list->count == 0) {
--		list->dead = true;
--		free_entry = true;
--	}
- 
- 	kmem_cache_free(conncount_conn_cachep, conn);
--	return free_entry;
- }
- 
- static const struct nf_conntrack_tuple_hash *
- find_or_evict(struct net *net, struct nf_conncount_list *list,
--	      struct nf_conncount_tuple *conn, bool *free_entry)
-+	      struct nf_conncount_tuple *conn)
- {
- 	const struct nf_conntrack_tuple_hash *found;
- 	unsigned long a, b;
-@@ -121,7 +114,7 @@ find_or_evict(struct net *net, struct nf
- 	 */
- 	age = a - b;
- 	if (conn->cpu == cpu || age >= 2) {
--		*free_entry = conn_free(list, conn);
-+		conn_free(list, conn);
- 		return ERR_PTR(-ENOENT);
- 	}
- 
-@@ -137,14 +130,13 @@ static int __nf_conncount_add(struct net
- 	struct nf_conncount_tuple *conn, *conn_n;
- 	struct nf_conn *found_ct;
- 	unsigned int collect = 0;
--	bool free_entry = false;
- 
- 	/* check the saved connections */
- 	list_for_each_entry_safe(conn, conn_n, &list->head, node) {
- 		if (collect > CONNCOUNT_GC_MAX_NODES)
- 			break;
- 
--		found = find_or_evict(net, list, conn, &free_entry);
-+		found = find_or_evict(net, list, conn);
- 		if (IS_ERR(found)) {
- 			/* Not found, but might be about to be confirmed */
- 			if (PTR_ERR(found) == -EAGAIN) {
-@@ -221,7 +213,6 @@ void nf_conncount_list_init(struct nf_co
- 	spin_lock_init(&list->list_lock);
- 	INIT_LIST_HEAD(&list->head);
- 	list->count = 0;
--	list->dead = false;
- }
- EXPORT_SYMBOL_GPL(nf_conncount_list_init);
- 
-@@ -233,7 +224,6 @@ bool nf_conncount_gc_list(struct net *ne
- 	struct nf_conncount_tuple *conn, *conn_n;
- 	struct nf_conn *found_ct;
- 	unsigned int collected = 0;
--	bool free_entry = false;
- 	bool ret = false;
- 
- 	/* don't bother if other cpu is already doing GC */
-@@ -241,15 +231,10 @@ bool nf_conncount_gc_list(struct net *ne
- 		return false;
- 
- 	list_for_each_entry_safe(conn, conn_n, &list->head, node) {
--		found = find_or_evict(net, list, conn, &free_entry);
-+		found = find_or_evict(net, list, conn);
- 		if (IS_ERR(found)) {
--			if (PTR_ERR(found) == -ENOENT)  {
--				if (free_entry) {
--					spin_unlock(&list->list_lock);
--					return true;
--				}
-+			if (PTR_ERR(found) == -ENOENT)
- 				collected++;
--			}
- 			continue;
- 		}
- 
-@@ -260,10 +245,7 @@ bool nf_conncount_gc_list(struct net *ne
- 			 * closed already -> ditch it
- 			 */
- 			nf_ct_put(found_ct);
--			if (conn_free(list, conn)) {
--				spin_unlock(&list->list_lock);
--				return true;
--			}
-+			conn_free(list, conn);
- 			collected++;
- 			continue;
- 		}
-@@ -273,10 +255,8 @@ bool nf_conncount_gc_list(struct net *ne
- 			break;
- 	}
- 
--	if (!list->count) {
--		list->dead = true;
-+	if (!list->count)
- 		ret = true;
--	}
- 	spin_unlock(&list->list_lock);
- 
+ static const struct sdhci_msm_offset *sdhci_priv_msm_offset(struct sdhci_host *host)
+@@ -1025,6 +1027,26 @@ out:
  	return ret;
-@@ -291,6 +271,7 @@ static void __tree_nodes_free(struct rcu
- 	kmem_cache_free(conncount_rb_cachep, rbconn);
  }
  
-+/* caller must hold tree nf_conncount_locks[] lock */
- static void tree_nodes_free(struct rb_root *root,
- 			    struct nf_conncount_rb *gc_nodes[],
- 			    unsigned int gc_count)
-@@ -300,8 +281,10 @@ static void tree_nodes_free(struct rb_ro
- 	while (gc_count) {
- 		rbconn = gc_nodes[--gc_count];
- 		spin_lock(&rbconn->list.list_lock);
--		rb_erase(&rbconn->node, root);
--		call_rcu(&rbconn->rcu_head, __tree_nodes_free);
-+		if (!rbconn->list.count) {
-+			rb_erase(&rbconn->node, root);
-+			call_rcu(&rbconn->rcu_head, __tree_nodes_free);
-+		}
- 		spin_unlock(&rbconn->list.list_lock);
- 	}
- }
-@@ -318,7 +301,6 @@ insert_tree(struct net *net,
- 	    struct rb_root *root,
- 	    unsigned int hash,
- 	    const u32 *key,
--	    u8 keylen,
- 	    const struct nf_conntrack_tuple *tuple,
- 	    const struct nf_conntrack_zone *zone)
++static void sdhci_msm_set_cdr(struct sdhci_host *host, bool enable)
++{
++	const struct sdhci_msm_offset *msm_offset = sdhci_priv_msm_offset(host);
++	u32 config, oldconfig = readl_relaxed(host->ioaddr +
++					      msm_offset->core_dll_config);
++
++	config = oldconfig;
++	if (enable) {
++		config |= CORE_CDR_EN;
++		config &= ~CORE_CDR_EXT_EN;
++	} else {
++		config &= ~CORE_CDR_EN;
++		config |= CORE_CDR_EXT_EN;
++	}
++
++	if (config != oldconfig)
++		writel_relaxed(config, host->ioaddr +
++			       msm_offset->core_dll_config);
++}
++
+ static int sdhci_msm_execute_tuning(struct mmc_host *mmc, u32 opcode)
  {
-@@ -327,6 +309,7 @@ insert_tree(struct net *net,
- 	struct nf_conncount_rb *rbconn;
- 	struct nf_conncount_tuple *conn;
- 	unsigned int count = 0, gc_count = 0;
-+	u8 keylen = data->keylen;
- 	bool do_gc = true;
- 
- 	spin_lock_bh(&nf_conncount_locks[hash]);
-@@ -454,7 +437,7 @@ count_tree(struct net *net,
- 	if (!tuple)
+ 	struct sdhci_host *host = mmc_priv(mmc);
+@@ -1042,8 +1064,14 @@ static int sdhci_msm_execute_tuning(stru
+ 	if (host->clock <= CORE_FREQ_100MHZ ||
+ 	    !(ios.timing == MMC_TIMING_MMC_HS400 ||
+ 	    ios.timing == MMC_TIMING_MMC_HS200 ||
+-	    ios.timing == MMC_TIMING_UHS_SDR104))
++	    ios.timing == MMC_TIMING_UHS_SDR104)) {
++		msm_host->use_cdr = false;
++		sdhci_msm_set_cdr(host, false);
  		return 0;
++	}
++
++	/* Clock-Data-Recovery used to dynamically adjust RX sampling point */
++	msm_host->use_cdr = true;
  
--	return insert_tree(net, data, root, hash, key, keylen, tuple, zone);
-+	return insert_tree(net, data, root, hash, key, tuple, zone);
- }
+ 	/*
+ 	 * For HS400 tuning in HS200 timing requires:
+@@ -1525,6 +1553,19 @@ static int __sdhci_msm_check_write(struc
+ 	case SDHCI_POWER_CONTROL:
+ 		req_type = !val ? REQ_BUS_OFF : REQ_BUS_ON;
+ 		break;
++	case SDHCI_TRANSFER_MODE:
++		msm_host->transfer_mode = val;
++		break;
++	case SDHCI_COMMAND:
++		if (!msm_host->use_cdr)
++			break;
++		if ((msm_host->transfer_mode & SDHCI_TRNS_READ) &&
++		    SDHCI_GET_CMD(val) != MMC_SEND_TUNING_BLOCK_HS200 &&
++		    SDHCI_GET_CMD(val) != MMC_SEND_TUNING_BLOCK)
++			sdhci_msm_set_cdr(host, true);
++		else
++			sdhci_msm_set_cdr(host, false);
++		break;
+ 	}
  
- static void tree_gc_worker(struct work_struct *work)
+ 	if (req_type) {
 
 
