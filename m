@@ -7,50 +7,47 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C230C2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:57:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25B35C2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:57:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B1E82087F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:57:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED70520879
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:57:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079024;
-	bh=Ewe9QbfyG+Lq24Fb9cccT3hHP+2oZJbqCDgErkU0nxw=;
+	s=default; t=1548079029;
+	bh=FfH7sJJcjvBg/s9hb1q6gILAcYyBIl/JGM7qheNnK1I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=FiTusrfoC0Lfa40hPNE1c6NOZ5XpMQ/w29dN7yLTtEXQblJ/axCRdQWAHBT8Zjwqb
-	 pNNIxuv/5ASzt0hI8/XBM9qMMelP0j20H5hAVSmtVrvTprlRZ7hJdXAE54JILGTz7J
-	 DYuL1VIBqLmKuEj4hfL0SW233XaMJJN58jPm4BlQ=
+	b=DyQBGsvbn3FzK6nl7hHAjU3D8gTpR/w5jaQM7n/z0uPVqOMvIAY6QF4fpa1Qg1kGv
+	 xhTMAkuisqSaGjoNGggZdZHbA3LjqtFrBF6CzyS3v98Q/+JJfcnBT+jHrkBOC9cZQp
+	 fBFqoREy3DLqVYo4of36d5xHmxImjqjjkQbhMtAo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731770AbfAUN4l (ORCPT
+        id S1731992AbfAUN4k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:56:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40298 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:56:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41964 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731746AbfAUNze (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:55:34 -0500
+        id S1731957AbfAUN4g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:56:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E7C92087F;
-        Mon, 21 Jan 2019 13:55:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 945182084C;
+        Mon, 21 Jan 2019 13:56:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078933;
-        bh=Ewe9QbfyG+Lq24Fb9cccT3hHP+2oZJbqCDgErkU0nxw=;
+        s=default; t=1548078995;
+        bh=FfH7sJJcjvBg/s9hb1q6gILAcYyBIl/JGM7qheNnK1I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u7twAyYCtB5DAnXbs3M+1NEbMtXFJ8DpmepXBqo4Vwhqp7iAMRkrThVojahr89zJj
-         rhYHl8usWbtvnFQV1R14qySSLG3mgD/tZJdYpIOzpli6EVvM5Aaxhp2Csmk9bSyWMu
-         Mh6ThcI5iD5rqbcB5/OPLqarGU3dBjQT5PStXO08=
+        b=etKuTBRp/SwFLCZWtjMWjq7wGpcer4srLZGONq6BX902838PEOo7EfJjSsqxqbONS
+         +85fd+fq8IkmqF5hnacy9YlzdZv0DoVP2ARILxWNcdKH2eYoY9HH75XnpA8VqballJ
+         8FA7pUDePEZYFfJOMwDsTwO3TjAKix6Oa96+Y20E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Muyu Yu <ieatmuttonchuan@gmail.com>,
-        Marcus Meissner <meissner@suse.de>,
-        Michal Kubecek <mkubecek@suse.cz>,
-        Oliver Hartkopp <socketcan@hartkopp.net>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 05/51] can: gw: ensure DLC boundaries after CAN frame modification
-Date:   Mon, 21 Jan 2019 14:44:01 +0100
-Message-Id: <20190121122454.024021655@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+9933e4476f365f5d5a1b@syzkaller.appspotmail.com,
+        Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.9 39/51] blockdev: Fix livelocks on loop device
+Date:   Mon, 21 Jan 2019 14:44:35 +0100
+Message-Id: <20190121122457.524242671@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122453.700446926@linuxfoundation.org>
 References: <20190121122453.700446926@linuxfoundation.org>
@@ -69,91 +66,123 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Oliver Hartkopp <socketcan@hartkopp.net>
+From: Jan Kara <jack@suse.cz>
 
-commit 0aaa81377c5a01f686bcdb8c7a6929a7bf330c68 upstream.
+commit 04906b2f542c23626b0ef6219b808406f8dddbe9 upstream.
 
-Muyu Yu provided a POC where user root with CAP_NET_ADMIN can create a CAN
-frame modification rule that makes the data length code a higher value than
-the available CAN frame data size. In combination with a configured checksum
-calculation where the result is stored relatively to the end of the data
-(e.g. cgw_csum_xor_rel) the tail of the skb (e.g. frag_list pointer in
-skb_shared_info) can be rewritten which finally can cause a system crash.
+bd_set_size() updates also block device's block size. This is somewhat
+unexpected from its name and at this point, only blkdev_open() uses this
+functionality. Furthermore, this can result in changing block size under
+a filesystem mounted on a loop device which leads to livelocks inside
+__getblk_gfp() like:
 
-Michael Kubecek suggested to drop frames that have a DLC exceeding the
-available space after the modification process and provided a patch that can
-handle CAN FD frames too. Within this patch we also limit the length for the
-checksum calculations to the maximum of Classic CAN data length (8).
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 PID: 10863 Comm: syz-executor0 Not tainted 4.18.0-rc5+ #151
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google
+01/01/2011
+RIP: 0010:__sanitizer_cov_trace_pc+0x3f/0x50 kernel/kcov.c:106
+...
+Call Trace:
+ init_page_buffers+0x3e2/0x530 fs/buffer.c:904
+ grow_dev_page fs/buffer.c:947 [inline]
+ grow_buffers fs/buffer.c:1009 [inline]
+ __getblk_slow fs/buffer.c:1036 [inline]
+ __getblk_gfp+0x906/0xb10 fs/buffer.c:1313
+ __bread_gfp+0x2d/0x310 fs/buffer.c:1347
+ sb_bread include/linux/buffer_head.h:307 [inline]
+ fat12_ent_bread+0x14e/0x3d0 fs/fat/fatent.c:75
+ fat_ent_read_block fs/fat/fatent.c:441 [inline]
+ fat_alloc_clusters+0x8ce/0x16e0 fs/fat/fatent.c:489
+ fat_add_cluster+0x7a/0x150 fs/fat/inode.c:101
+ __fat_get_block fs/fat/inode.c:148 [inline]
+...
 
-CAN frames that are dropped by these additional checks are counted with the
-CGW_DELETED counter which indicates misconfigurations in can-gw rules.
+Trivial reproducer for the problem looks like:
 
-This fixes CVE-2019-3701.
+truncate -s 1G /tmp/image
+losetup /dev/loop0 /tmp/image
+mkfs.ext4 -b 1024 /dev/loop0
+mount -t ext4 /dev/loop0 /mnt
+losetup -c /dev/loop0
+l /mnt
 
-Reported-by: Muyu Yu <ieatmuttonchuan@gmail.com>
-Reported-by: Marcus Meissner <meissner@suse.de>
-Suggested-by: Michal Kubecek <mkubecek@suse.cz>
-Tested-by: Muyu Yu <ieatmuttonchuan@gmail.com>
-Tested-by: Oliver Hartkopp <socketcan@hartkopp.net>
-Signed-off-by: Oliver Hartkopp <socketcan@hartkopp.net>
-Cc: linux-stable <stable@vger.kernel.org> # >= v3.2
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fix the problem by moving initialization of a block device block size
+into a separate function and call it when needed.
+
+Thanks to Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> for help with
+debugging the problem.
+
+Reported-by: syzbot+9933e4476f365f5d5a1b@syzkaller.appspotmail.com
+Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/can/gw.c |   30 +++++++++++++++++++++++++++---
- 1 file changed, 27 insertions(+), 3 deletions(-)
+ fs/block_dev.c |   28 ++++++++++++++++++----------
+ 1 file changed, 18 insertions(+), 10 deletions(-)
 
---- a/net/can/gw.c
-+++ b/net/can/gw.c
-@@ -418,13 +418,29 @@ static void can_can_gw_rcv(struct sk_buf
- 	while (modidx < MAX_MODFUNCTIONS && gwj->mod.modfunc[modidx])
- 		(*gwj->mod.modfunc[modidx++])(cf, &gwj->mod);
- 
--	/* check for checksum updates when the CAN frame has been modified */
-+	/* Has the CAN frame been modified? */
- 	if (modidx) {
--		if (gwj->mod.csumfunc.crc8)
-+		/* get available space for the processed CAN frame type */
-+		int max_len = nskb->len - offsetof(struct can_frame, data);
-+
-+		/* dlc may have changed, make sure it fits to the CAN frame */
-+		if (cf->can_dlc > max_len)
-+			goto out_delete;
-+
-+		/* check for checksum updates in classic CAN length only */
-+		if (gwj->mod.csumfunc.crc8) {
-+			if (cf->can_dlc > 8)
-+				goto out_delete;
-+
- 			(*gwj->mod.csumfunc.crc8)(cf, &gwj->mod.csum.crc8);
-+		}
-+
-+		if (gwj->mod.csumfunc.xor) {
-+			if (cf->can_dlc > 8)
-+				goto out_delete;
- 
--		if (gwj->mod.csumfunc.xor)
- 			(*gwj->mod.csumfunc.xor)(cf, &gwj->mod.csum.xor);
-+		}
- 	}
- 
- 	/* clear the skb timestamp if not configured the other way */
-@@ -436,6 +452,14 @@ static void can_can_gw_rcv(struct sk_buf
- 		gwj->dropped_frames++;
- 	else
- 		gwj->handled_frames++;
-+
-+	return;
-+
-+ out_delete:
-+	/* delete frame due to misconfiguration */
-+	gwj->deleted_frames++;
-+	kfree_skb(nskb);
-+	return;
+--- a/fs/block_dev.c
++++ b/fs/block_dev.c
+@@ -114,6 +114,20 @@ void invalidate_bdev(struct block_device
  }
+ EXPORT_SYMBOL(invalidate_bdev);
  
- static inline int cgw_register_filter(struct cgw_job *gwj)
++static void set_init_blocksize(struct block_device *bdev)
++{
++	unsigned bsize = bdev_logical_block_size(bdev);
++	loff_t size = i_size_read(bdev->bd_inode);
++
++	while (bsize < PAGE_SIZE) {
++		if (size & bsize)
++			break;
++		bsize <<= 1;
++	}
++	bdev->bd_block_size = bsize;
++	bdev->bd_inode->i_blkbits = blksize_bits(bsize);
++}
++
+ int set_blocksize(struct block_device *bdev, int size)
+ {
+ 	/* Size must be a power of two, and between 512 and PAGE_SIZE */
+@@ -1209,18 +1223,9 @@ EXPORT_SYMBOL(check_disk_change);
+ 
+ void bd_set_size(struct block_device *bdev, loff_t size)
+ {
+-	unsigned bsize = bdev_logical_block_size(bdev);
+-
+ 	inode_lock(bdev->bd_inode);
+ 	i_size_write(bdev->bd_inode, size);
+ 	inode_unlock(bdev->bd_inode);
+-	while (bsize < PAGE_SIZE) {
+-		if (size & bsize)
+-			break;
+-		bsize <<= 1;
+-	}
+-	bdev->bd_block_size = bsize;
+-	bdev->bd_inode->i_blkbits = blksize_bits(bsize);
+ }
+ EXPORT_SYMBOL(bd_set_size);
+ 
+@@ -1297,8 +1302,10 @@ static int __blkdev_get(struct block_dev
+ 				}
+ 			}
+ 
+-			if (!ret)
++			if (!ret) {
+ 				bd_set_size(bdev,(loff_t)get_capacity(disk)<<9);
++				set_init_blocksize(bdev);
++			}
+ 
+ 			/*
+ 			 * If the device is invalidated, rescan partition
+@@ -1333,6 +1340,7 @@ static int __blkdev_get(struct block_dev
+ 				goto out_clear;
+ 			}
+ 			bd_set_size(bdev, (loff_t)bdev->bd_part->nr_sects << 9);
++			set_init_blocksize(bdev);
+ 		}
+ 	} else {
+ 		if (bdev->bd_contains == bdev) {
 
 
