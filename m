@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6AA6C2F3D0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:01:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1036C2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:02:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 969BA217D4
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:01:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFF31214D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:02:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079318;
-	bh=0TbYX5BhHKCLVFbvN6eIL+hLDBc0hCJF3VKBGMjvMdE=;
+	s=default; t=1548079321;
+	bh=Xj2hA8l76MUL2lu3JGc48D+uz2I4VUOLs2KZNcHR73U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QmC/y2kw/rAD8APfYdXs1fXCPeSQt78P9/lb7+Zmu9aVt5pdMzxAF3ps18/rr517U
-	 OHmWY3Sm+s8km/KyNyKtUjIq9OBZoe0d+J1piYiZcHfgvoI32gVqA7swP5CpauG0Qy
-	 k3X16UtLBdcbVjVuJf3hjCuRORUPniQPSNCoQHWU=
+	b=OYimyry6M4KH/RnsmT6iKlKVlTfVFdij5J0LdAkPXdu/yUqnuuuNXD/63vKENcwL9
+	 EeI108lFAnR5dDa0jQGFCseYz6831+h/99ciIXS1FzWY0wy707pMJb1qWIHyuaZbSs
+	 1efDfx/NN4w24cmLw6o8bywWOVQIGlHxiP0wQCDo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732718AbfAUOB5 (ORCPT
+        id S1732729AbfAUOB7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:01:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49050 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 09:01:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49200 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729683AbfAUOBv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 09:01:51 -0500
+        id S1732257AbfAUOB5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 09:01:57 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3662E214D8;
-        Mon, 21 Jan 2019 14:01:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED50F2089F;
+        Mon, 21 Jan 2019 14:01:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548079310;
-        bh=0TbYX5BhHKCLVFbvN6eIL+hLDBc0hCJF3VKBGMjvMdE=;
+        s=default; t=1548079316;
+        bh=Xj2hA8l76MUL2lu3JGc48D+uz2I4VUOLs2KZNcHR73U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nVfxCB98ZfeBhBdLTier1CUQEvIzaEKrAUvLOhFYmR0uyjxw8i3vL+gNdvAmwkXSf
-         dmRFbs/7e6oBEdqor3cPiVEpD9d6O+iww8YRlfaoLEzfBNMME3mjm5kBx1EaS4k4pY
-         jyL4kfTUgXTSRlv0rLKl0xZGBx/LKSX33bNC0TtE=
+        b=1XkWVzAU/rwG1cRMAuEWz6t4qCeHa6ED4Myf4zSMOnX731Cmzj09XBBPL0GLncZia
+         vxQzk4k6bUMhGebgjEmgvXcxI+WsHhdYKMLgRWT+SgEJoMZ5Z4Sz0mc5FsbCHji/Or
+         ONecLIqGKA241GiQTl2Ls6KsNZ/ZRe3q8C4zv5vA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stanley Chu <stanley.chu@mediatek.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.19 43/99] scsi: core: Synchronize request queue PM status only on successful resume
-Date:   Mon, 21 Jan 2019 14:48:35 +0100
-Message-Id: <20190121134915.612212061@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org
+Subject: [PATCH 4.19 45/99] mips: fix n32 compat_ipc_parse_version
+Date:   Mon, 21 Jan 2019 14:48:37 +0100
+Message-Id: <20190121134915.683413255@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121134913.924726465@linuxfoundation.org>
 References: <20190121134913.924726465@linuxfoundation.org>
@@ -65,97 +64,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stanley Chu <stanley.chu@mediatek.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 3f7e62bba0003f9c68f599f5997c4647ef5b4f4e upstream.
+commit 5a9372f751b5350e0ce3d2ee91832f1feae2c2e5 upstream.
 
-The commit 356fd2663cff ("scsi: Set request queue runtime PM status back to
-active on resume") fixed up the inconsistent RPM status between request
-queue and device. However changing request queue RPM status shall be done
-only on successful resume, otherwise status may be still inconsistent as
-below,
+While reading through the sysvipc implementation, I noticed that the n32
+semctl/shmctl/msgctl system calls behave differently based on whether
+o32 support is enabled or not: Without o32, the IPC_64 flag passed by
+user space is rejected but calls without that flag get IPC_64 behavior.
 
-Request queue: RPM_ACTIVE
-Device: RPM_SUSPENDED
+As far as I can tell, this was inadvertently changed by a cleanup patch
+but never noticed by anyone, possibly nobody has tried using sysvipc
+on n32 after linux-3.19.
 
-This ends up soft lockup because requests can be submitted to underlying
-devices but those devices and their required resource are not resumed.
+Change it back to the old behavior now.
 
-For example,
-
-After above inconsistent status happens, IO request can be submitted to UFS
-device driver but required resource (like clock) is not resumed yet thus
-lead to warning as below call stack,
-
-WARN_ON(hba->clk_gating.state != CLKS_ON);
-ufshcd_queuecommand
-scsi_dispatch_cmd
-scsi_request_fn
-__blk_run_queue
-cfq_insert_request
-__elv_add_request
-blk_flush_plug_list
-blk_finish_plug
-jbd2_journal_commit_transaction
-kjournald2
-
-We may see all behind IO requests hang because of no response from storage
-host or device and then soft lockup happens in system. In the end, system
-may crash in many ways.
-
-Fixes: 356fd2663cff (scsi: Set request queue runtime PM status back to active on resume)
-Cc: stable@vger.kernel.org
-Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: 78aaf956ba3a ("MIPS: Compat: Fix build error if CONFIG_MIPS32_COMPAT but no compat ABI.")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: linux-mips@vger.kernel.org
+Cc: stable@vger.kernel.org # 3.19+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/scsi_pm.c |   26 +++++++++++++++-----------
- 1 file changed, 15 insertions(+), 11 deletions(-)
+ arch/mips/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/scsi/scsi_pm.c
-+++ b/drivers/scsi/scsi_pm.c
-@@ -79,8 +79,22 @@ static int scsi_dev_type_resume(struct d
- 
- 	if (err == 0) {
- 		pm_runtime_disable(dev);
--		pm_runtime_set_active(dev);
-+		err = pm_runtime_set_active(dev);
- 		pm_runtime_enable(dev);
-+
-+		/*
-+		 * Forcibly set runtime PM status of request queue to "active"
-+		 * to make sure we can again get requests from the queue
-+		 * (see also blk_pm_peek_request()).
-+		 *
-+		 * The resume hook will correct runtime PM status of the disk.
-+		 */
-+		if (!err && scsi_is_sdev_device(dev)) {
-+			struct scsi_device *sdev = to_scsi_device(dev);
-+
-+			if (sdev->request_queue->dev)
-+				blk_set_runtime_active(sdev->request_queue);
-+		}
- 	}
- 
- 	return err;
-@@ -139,16 +153,6 @@ static int scsi_bus_resume_common(struct
- 	else
- 		fn = NULL;
- 
--	/*
--	 * Forcibly set runtime PM status of request queue to "active" to
--	 * make sure we can again get requests from the queue (see also
--	 * blk_pm_peek_request()).
--	 *
--	 * The resume hook will correct runtime PM status of the disk.
--	 */
--	if (scsi_is_sdev_device(dev) && pm_runtime_suspended(dev))
--		blk_set_runtime_active(to_scsi_device(dev)->request_queue);
--
- 	if (fn) {
- 		async_schedule_domain(fn, dev, &scsi_sd_pm_domain);
- 
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -3149,6 +3149,7 @@ config MIPS32_O32
+ config MIPS32_N32
+ 	bool "Kernel support for n32 binaries"
+ 	depends on 64BIT
++	select ARCH_WANT_COMPAT_IPC_PARSE_VERSION
+ 	select COMPAT
+ 	select MIPS32_COMPAT
+ 	select SYSVIPC_COMPAT if SYSVIPC
 
 
