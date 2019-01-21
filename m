@@ -7,46 +7,54 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A077C2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:56:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0284C2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:56:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29F4A20879
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:56:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90B3C2087F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:56:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078981;
-	bh=GSCxyao6A1PkZadgSNRq83ybpgG4yrWWQD99x9b2mKs=;
+	s=default; t=1548078986;
+	bh=HcO03V5QyUWVTYIbKw0WNW1Sih7BuIouyLSFX1EdGgc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=HuOkvk9BlEr5ZYnvJbsmOVJUR51K1UZ2D3E3ucVuNCGT4GqrmD/vq/lbd0OWmP4N4
-	 3+0kSIKZmxHvsLPEZliGQf9p1KihlxO/nok1Am0m5r0cW6Dzfcptqxe7HudsuYAOY6
-	 NQZlCl9+1r6dHM27TRFzCGuWTo0DsuBQ3pUUB+88=
+	b=0xY9UZtaOiiAjyJnmewszMciRhz3QMODzqTa+irdUA2m4cGImd2nCnq2gG3XwG8r+
+	 OxhZzDUQEdxzD6saKeeZJvXfz0VvJus1i5iLGs3NiMhhTsfIZiGCDDFuOMVJFYEnh0
+	 SOtXHJFurTjPrm3R3UPoB5kXWx/qjxkSetYv4358=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731902AbfAUN4S (ORCPT
+        id S1731926AbfAUN4Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:56:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41240 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:56:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41422 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731874AbfAUN4M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:56:12 -0500
+        id S1731874AbfAUN4U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:56:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C4AB420861;
-        Mon, 21 Jan 2019 13:56:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E2E1520861;
+        Mon, 21 Jan 2019 13:56:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078971;
-        bh=GSCxyao6A1PkZadgSNRq83ybpgG4yrWWQD99x9b2mKs=;
+        s=default; t=1548078979;
+        bh=HcO03V5QyUWVTYIbKw0WNW1Sih7BuIouyLSFX1EdGgc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lOvvjy/vLkgAKZiuIuhw56iuP6EiL3StrgOwHGiVjyx0Jr+JxPEtP5ScIUCqGsEaR
-         xf+e+MIQKykb+g2eV1QVBpSTS9tVXGJIIMwpOZH8YXLSvkJV8PrDjppt+s4uK3MK1B
-         Ct8FcpnNv5dIrZrqw9MZ4CjpZCtVqzEZxgVlS+KU=
+        b=CQ6i4tbn6eNouI2vJZZlRTP6z2bLwFmr2TA1MeGWavNe9Z7TVdUOtrbmBcvj5FpUK
+         8xodbszjyRFX0KPzTYpowpi5aCeWjH77uaV50rN80iWH6tfkE7qzBta2iB2ZTkcQAN
+         u8al23sNjlYvR8IlF0Jsio2flks0ze2bQmZrN7pw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.9 48/51] loop: Get rid of loop_index_mutex
-Date:   Mon, 21 Jan 2019 14:44:44 +0100
-Message-Id: <20190121122458.478713698@linuxfoundation.org>
+        stable@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
+        Liu Bo <bo.liu@linux.alibaba.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>,
+        Dave Chinner <david@fromorbit.com>,
+        Theodore Tso <tytso@mit.edu>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.9 51/51] mm, memcg: fix reclaim deadlock with writeback
+Date:   Mon, 21 Jan 2019 14:44:47 +0100
+Message-Id: <20190121122458.832467342@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122453.700446926@linuxfoundation.org>
 References: <20190121122453.700446926@linuxfoundation.org>
@@ -65,161 +73,146 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jan Kara <jack@suse.cz>
+From: Michal Hocko <mhocko@suse.com>
 
-commit 0a42e99b58a208839626465af194cfe640ef9493 upstream.
+commit 63f3655f950186752236bb88a22f8252c11ce394 upstream.
 
-Now that loop_ctl_mutex is global, just get rid of loop_index_mutex as
-there is no good reason to keep these two separate and it just
-complicates the locking.
+Liu Bo has experienced a deadlock between memcg (legacy) reclaim and the
+ext4 writeback
 
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+  task1:
+    wait_on_page_bit+0x82/0xa0
+    shrink_page_list+0x907/0x960
+    shrink_inactive_list+0x2c7/0x680
+    shrink_node_memcg+0x404/0x830
+    shrink_node+0xd8/0x300
+    do_try_to_free_pages+0x10d/0x330
+    try_to_free_mem_cgroup_pages+0xd5/0x1b0
+    try_charge+0x14d/0x720
+    memcg_kmem_charge_memcg+0x3c/0xa0
+    memcg_kmem_charge+0x7e/0xd0
+    __alloc_pages_nodemask+0x178/0x260
+    alloc_pages_current+0x95/0x140
+    pte_alloc_one+0x17/0x40
+    __pte_alloc+0x1e/0x110
+    alloc_set_pte+0x5fe/0xc20
+    do_fault+0x103/0x970
+    handle_mm_fault+0x61e/0xd10
+    __do_page_fault+0x252/0x4d0
+    do_page_fault+0x30/0x80
+    page_fault+0x28/0x30
+
+  task2:
+    __lock_page+0x86/0xa0
+    mpage_prepare_extent_to_map+0x2e7/0x310 [ext4]
+    ext4_writepages+0x479/0xd60
+    do_writepages+0x1e/0x30
+    __writeback_single_inode+0x45/0x320
+    writeback_sb_inodes+0x272/0x600
+    __writeback_inodes_wb+0x92/0xc0
+    wb_writeback+0x268/0x300
+    wb_workfn+0xb4/0x390
+    process_one_work+0x189/0x420
+    worker_thread+0x4e/0x4b0
+    kthread+0xe6/0x100
+    ret_from_fork+0x41/0x50
+
+He adds
+ "task1 is waiting for the PageWriteback bit of the page that task2 has
+  collected in mpd->io_submit->io_bio, and tasks2 is waiting for the
+  LOCKED bit the page which tasks1 has locked"
+
+More precisely task1 is handling a page fault and it has a page locked
+while it charges a new page table to a memcg.  That in turn hits a
+memory limit reclaim and the memcg reclaim for legacy controller is
+waiting on the writeback but that is never going to finish because the
+writeback itself is waiting for the page locked in the #PF path.  So
+this is essentially ABBA deadlock:
+
+                                        lock_page(A)
+                                        SetPageWriteback(A)
+                                        unlock_page(A)
+  lock_page(B)
+                                        lock_page(B)
+  pte_alloc_pne
+    shrink_page_list
+      wait_on_page_writeback(A)
+                                        SetPageWriteback(B)
+                                        unlock_page(B)
+
+                                        # flush A, B to clear the writeback
+
+This accumulating of more pages to flush is used by several filesystems
+to generate a more optimal IO patterns.
+
+Waiting for the writeback in legacy memcg controller is a workaround for
+pre-mature OOM killer invocations because there is no dirty IO
+throttling available for the controller.  There is no easy way around
+that unfortunately.  Therefore fix this specific issue by pre-allocating
+the page table outside of the page lock.  We have that handy
+infrastructure for that already so simply reuse the fault-around pattern
+which already does this.
+
+There are probably other hidden __GFP_ACCOUNT | GFP_KERNEL allocations
+from under a fs page locked but they should be really rare.  I am not
+aware of a better solution unfortunately.
+
+[akpm@linux-foundation.org: fix mm/memory.c:__do_fault()]
+[akpm@linux-foundation.org: coding-style fixes]
+[mhocko@kernel.org: enhance comment, per Johannes]
+  Link: http://lkml.kernel.org/r/20181214084948.GA5624@dhcp22.suse.cz
+Link: http://lkml.kernel.org/r/20181213092221.27270-1-mhocko@kernel.org
+Fixes: c3b94f44fcb0 ("memcg: further prevent OOM with too many dirty pages")
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+Reported-by: Liu Bo <bo.liu@linux.alibaba.com>
+Debugged-by: Liu Bo <bo.liu@linux.alibaba.com>
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+Reviewed-by: Liu Bo <bo.liu@linux.alibaba.com>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Dave Chinner <david@fromorbit.com>
+Cc: Theodore Ts'o <tytso@mit.edu>
+Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
+Cc: Shakeel Butt <shakeelb@google.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/block/loop.c |   39 ++++++++++++++++++++-------------------
- 1 file changed, 20 insertions(+), 19 deletions(-)
+ mm/memory.c |   22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -81,7 +81,6 @@
- #include <asm/uaccess.h>
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -2823,6 +2823,28 @@ static int __do_fault(struct fault_env *
+ 	struct vm_fault vmf;
+ 	int ret;
  
- static DEFINE_IDR(loop_index_idr);
--static DEFINE_MUTEX(loop_index_mutex);
- static DEFINE_MUTEX(loop_ctl_mutex);
- 
- static int max_part;
-@@ -1560,9 +1559,11 @@ static int lo_compat_ioctl(struct block_
- static int lo_open(struct block_device *bdev, fmode_t mode)
- {
- 	struct loop_device *lo;
--	int err = 0;
-+	int err;
- 
--	mutex_lock(&loop_index_mutex);
-+	err = mutex_lock_killable(&loop_ctl_mutex);
-+	if (err)
-+		return err;
- 	lo = bdev->bd_disk->private_data;
- 	if (!lo) {
- 		err = -ENXIO;
-@@ -1571,7 +1572,7 @@ static int lo_open(struct block_device *
- 
- 	atomic_inc(&lo->lo_refcnt);
- out:
--	mutex_unlock(&loop_index_mutex);
-+	mutex_unlock(&loop_ctl_mutex);
- 	return err;
- }
- 
-@@ -1580,12 +1581,11 @@ static void lo_release(struct gendisk *d
- 	struct loop_device *lo;
- 	int err;
- 
--	mutex_lock(&loop_index_mutex);
-+	mutex_lock(&loop_ctl_mutex);
- 	lo = disk->private_data;
- 	if (atomic_dec_return(&lo->lo_refcnt))
--		goto unlock_index;
-+		goto out_unlock;
- 
--	mutex_lock(&loop_ctl_mutex);
- 	if (lo->lo_flags & LO_FLAGS_AUTOCLEAR) {
- 		/*
- 		 * In autoclear mode, stop the loop thread
-@@ -1593,7 +1593,7 @@ static void lo_release(struct gendisk *d
- 		 */
- 		err = loop_clr_fd(lo);
- 		if (!err)
--			goto unlock_index;
-+			return;
- 	} else {
- 		/*
- 		 * Otherwise keep thread (if running) and config,
-@@ -1602,9 +1602,8 @@ static void lo_release(struct gendisk *d
- 		loop_flush(lo);
- 	}
- 
-+out_unlock:
- 	mutex_unlock(&loop_ctl_mutex);
--unlock_index:
--	mutex_unlock(&loop_index_mutex);
- }
- 
- static const struct block_device_operations lo_fops = {
-@@ -1890,7 +1889,7 @@ static struct kobject *loop_probe(dev_t
- 	struct kobject *kobj;
- 	int err;
- 
--	mutex_lock(&loop_index_mutex);
-+	mutex_lock(&loop_ctl_mutex);
- 	err = loop_lookup(&lo, MINOR(dev) >> part_shift);
- 	if (err < 0)
- 		err = loop_add(&lo, MINOR(dev) >> part_shift);
-@@ -1898,7 +1897,7 @@ static struct kobject *loop_probe(dev_t
- 		kobj = NULL;
- 	else
- 		kobj = get_disk(lo->lo_disk);
--	mutex_unlock(&loop_index_mutex);
-+	mutex_unlock(&loop_ctl_mutex);
- 
- 	*part = 0;
- 	return kobj;
-@@ -1908,9 +1907,13 @@ static long loop_control_ioctl(struct fi
- 			       unsigned long parm)
- {
- 	struct loop_device *lo;
--	int ret = -ENOSYS;
-+	int ret;
++	/*
++	 * Preallocate pte before we take page_lock because this might lead to
++	 * deadlocks for memcg reclaim which waits for pages under writeback:
++	 *				lock_page(A)
++	 *				SetPageWriteback(A)
++	 *				unlock_page(A)
++	 * lock_page(B)
++	 *				lock_page(B)
++	 * pte_alloc_pne
++	 *   shrink_page_list
++	 *     wait_on_page_writeback(A)
++	 *				SetPageWriteback(B)
++	 *				unlock_page(B)
++	 *				# flush A, B to clear the writeback
++	 */
++	if (pmd_none(*fe->pmd) && !fe->prealloc_pte) {
++		fe->prealloc_pte = pte_alloc_one(vma->vm_mm, fe->address);
++		if (!fe->prealloc_pte)
++			return VM_FAULT_OOM;
++		smp_wmb(); /* See comment in __pte_alloc() */
++	}
 +
-+	ret = mutex_lock_killable(&loop_ctl_mutex);
-+	if (ret)
-+		return ret;
- 
--	mutex_lock(&loop_index_mutex);
-+	ret = -ENOSYS;
- 	switch (cmd) {
- 	case LOOP_CTL_ADD:
- 		ret = loop_lookup(&lo, parm);
-@@ -1924,7 +1927,6 @@ static long loop_control_ioctl(struct fi
- 		ret = loop_lookup(&lo, parm);
- 		if (ret < 0)
- 			break;
--		mutex_lock(&loop_ctl_mutex);
- 		if (lo->lo_state != Lo_unbound) {
- 			ret = -EBUSY;
- 			mutex_unlock(&loop_ctl_mutex);
-@@ -1936,7 +1938,6 @@ static long loop_control_ioctl(struct fi
- 			break;
- 		}
- 		lo->lo_disk->private_data = NULL;
--		mutex_unlock(&loop_ctl_mutex);
- 		idr_remove(&loop_index_idr, lo->lo_number);
- 		loop_remove(lo);
- 		break;
-@@ -1946,7 +1947,7 @@ static long loop_control_ioctl(struct fi
- 			break;
- 		ret = loop_add(&lo, -1);
- 	}
--	mutex_unlock(&loop_index_mutex);
-+	mutex_unlock(&loop_ctl_mutex);
- 
- 	return ret;
- }
-@@ -2029,10 +2030,10 @@ static int __init loop_init(void)
- 				  THIS_MODULE, loop_probe, NULL, NULL);
- 
- 	/* pre-create number of devices given by config or max_loop */
--	mutex_lock(&loop_index_mutex);
-+	mutex_lock(&loop_ctl_mutex);
- 	for (i = 0; i < nr; i++)
- 		loop_add(&lo, i);
--	mutex_unlock(&loop_index_mutex);
-+	mutex_unlock(&loop_ctl_mutex);
- 
- 	printk(KERN_INFO "loop: module loaded\n");
- 	return 0;
+ 	vmf.virtual_address = (void __user *)(fe->address & PAGE_MASK);
+ 	vmf.pgoff = pgoff;
+ 	vmf.flags = fe->flags;
 
 
