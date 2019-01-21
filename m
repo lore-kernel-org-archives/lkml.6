@@ -2,114 +2,108 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BE71C7112F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:30:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D096C7113B
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:30:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51A692085A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:30:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC69F2084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:30:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nj5uH1Sh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728608AbfAUM36 (ORCPT
+        id S1728655AbfAUMaF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 07:29:58 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:51578 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728299AbfAUM36 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 07:29:58 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 485FF20898; Mon, 21 Jan 2019 13:29:55 +0100 (CET)
-Received: from bootlin.com (aaubervilliers-681-1-37-87.w90-88.abo.wanadoo.fr [90.88.156.87])
-        by mail.bootlin.com (Postfix) with ESMTPSA id D2F2B2077B;
-        Mon, 21 Jan 2019 13:29:44 +0100 (CET)
-Date:   Mon, 21 Jan 2019 13:29:45 +0100
-From:   Maxime Chevallier <maxime.chevallier@bootlin.com>
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Cc:     Andrew Lunn <andrew@lunn.ch>, davem@davemloft.net,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
-        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
-        mw@semihalf.com
-Subject: Re: [PATCH net-next 5/7] net: phy: marvell10g: Force reading of
- 2.5/5G PMA extended abilities
-Message-ID: <20190121132945.6e6dee23@bootlin.com>
-In-Reply-To: <20190121105206.mxxxosytk5qiysc2@e5254000004ec.dyn.armlinux.org.uk>
-References: <20190118152352.26417-1-maxime.chevallier@bootlin.com>
-        <20190118152352.26417-6-maxime.chevallier@bootlin.com>
-        <20190120190809.GB19714@lunn.ch>
-        <20190121113531.7a8b5b51@bootlin.com>
-        <20190121105206.mxxxosytk5qiysc2@e5254000004ec.dyn.armlinux.org.uk>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Mon, 21 Jan 2019 07:30:05 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:38827 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728299AbfAUMaE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 07:30:04 -0500
+Received: by mail-yw1-f66.google.com with SMTP id d190so7956829ywb.5;
+        Mon, 21 Jan 2019 04:30:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7m+KvIsLSKcpmR1P89YwAZS9iEqag+YvOiB6GUSKYq8=;
+        b=Nj5uH1Shx4LzFYzel1sUqEe9P7AkXujq9nvcr24mHaGriEbS5iE5G6qDZ2nRM2or2O
+         DgkcnGtPKta++gx4tlJiptEduKwFT5+kht/Qkq6TUkveGMoSGH2w0Dvdw6ybeRJv9yW2
+         Y3GqeAsmrHBx3zl3JFJA6m89dMcT9+JDbmqA9rMDr1XFvqYoEhosIQVgH2iKdePP1WRs
+         12+gBZCL51EL4mkM+GDACOnj15Vx/GYH+CmEDMMFACsUwQQ7Ldytu4HfxnvGcYfXKoSP
+         BJClM4ajlKXlfhHCsj2IVoG+wULvzMXIOdGicgcV+seGfYlJc7NFzC+zDp0UySa48l1U
+         XPJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7m+KvIsLSKcpmR1P89YwAZS9iEqag+YvOiB6GUSKYq8=;
+        b=fW3G4QoUm9FpllbdAGUFpzLSmgbF+Hz9pJ6loXioKBmdsRA6vqx9NLsCBdRsBhGs2L
+         U/FuM2EKQUSOIASygwwNmWHLwMTcuFv/uFYlN4dvenaNlGIbfHhx7mZXj75+znLcRcRy
+         EA3bQ7tqEXYPwhJKLVvqsHjZ9xtTfJ6UJkDEmaJXgk499ZwygixRDHBepRduos2bkFf4
+         eq0Jw26/o3RdVbmtdof+QO881gbQhptv4IfE50mWk4ANTieESeq6C40dFgiZt0z7+Uyo
+         pC5Cuy3u4GrWvGFtDyjtkLmMglmmBsBv+Qum2qf0ePivijKlHBDa/sJPQQLZjs9hXg1Z
+         Lrpw==
+X-Gm-Message-State: AJcUukdhnZNm3nRskAT7icS2kcPuRK0q7jlLcblh5y8eDxkRJoTVZful
+        xz4Cr/bmxmOcuqZld05LP+hjEVAz4EqmJPO4wsk=
+X-Google-Smtp-Source: ALg8bN78SwSqc2WMAF0CxkOu2UiYdFjFC+akKqhLKpcB6cY0iVUBLCEdgHVZ2fRq/Mdh1aBQIGRa4cLmirl+a1BeAKE=
+X-Received: by 2002:a81:54:: with SMTP id 81mr28519046ywa.404.1548073802792;
+ Mon, 21 Jan 2019 04:30:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <1545158873.4206.86.camel@linux.ibm.com> <20190117213421.ggasuc263dpqh46c@merlin>
+ <1548072003.3782.24.camel@linux.ibm.com>
+In-Reply-To: <1548072003.3782.24.camel@linux.ibm.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Mon, 21 Jan 2019 14:29:51 +0200
+Message-ID: <CAOQ4uxjNhNFfFidjzi-8ywQPi54LdzT=LxwdSaX+H-ERS6Qwog@mail.gmail.com>
+Subject: Re: [PATCH v2] ima: define ima_post_create_tmpfile() hook and add
+ missing call
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Goldwyn Rodrigues <rgoldwyn@suse.de>,
+        Ignaz Forster <iforster@suse.de>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Fabian Vogt <fvogt@suse.de>, Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Russell,
-
-On Mon, 21 Jan 2019 10:52:06 +0000
-Russell King - ARM Linux admin <linux@armlinux.org.uk> wrote:
-
->On Mon, Jan 21, 2019 at 11:35:31AM +0100, Maxime Chevallier wrote:
->> Hello Andrew,
->> 
->> On Sun, 20 Jan 2019 20:08:09 +0100
->> Andrew Lunn <andrew@lunn.ch> wrote:
->>   
->> >On Fri, Jan 18, 2019 at 04:23:50PM +0100, Maxime Chevallier wrote:  
->> >> As per 802.3bz, if bit 14 of (1.11) "PMA Extended Abilities" indicates
->> >> whether or not we should read register (1.21) "2.52/5G PMA Extended
->> >> Abilities", which contains information on the support of 2.5GBASET and
->> >> 5GBASET.
->> >> 
->> >> After testing on several variants of PHYS of this family, it appears
->> >> that bit 14 in (1.11) isn't always set when it should be.
->> >> 
->> >> PHYs 88X3310 (on MacchiatoBin) and 88E2010 do support 2.5G and 5GBASET,
->> >> but don't have 1.11.14 set. Their register 1.21 is filled with the
->> >> correct values, indicating 2.5G and 5G support.
->> >> 
->> >> PHYs 88X2110 do have their 1.11.14 bit set, as it should.    
->> >
->> >Hi Maxime
->> >
->> >Is there anything about this in any Errata?  
->> 
->> I haven't seen any Errata on that unfortunately.
->> 
->> I also thought about reading (1.4) "PMA/PMD Speed Ability", but the
->> 2.5G and 5G speeds are also reported as not being supported on the
->> 88X3310.  
+On Mon, Jan 21, 2019 at 2:00 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
 >
->It's entirely possible that the 3310 switches to different hardware
->blocks for 2.5G and 5G speeds, and reading _just_ the 1.4 register
->is not sufficient.
+> On Thu, 2019-01-17 at 15:34 -0600, Goldwyn Rodrigues wrote:
+> > On 13:47 18/12, Mimi Zohar wrote:
+> > > If tmpfiles can be made persistent, then newly created tmpfiles need to
+> > > be treated like any other new files in policy.
+> > >
+> > > This patch indicates which newly created tmpfiles are in policy, causing
+> > > the file hash to be calculated on __fput().
+> >
+> > Discussed in overlayfs, this would be better if we use this on inode
+> > and called from vfs_tmpfile() instead of do_tmpfile(). This will cover
+> > the overlayfs case which uses tmpfiles while performing copy_up().
+> > The patch is attached.
+> >
+> > Here is the updated patch which works for my cases.
+> > However, it is the the failure case after setting the IMA flags
+> > I am concerned about, though I don't think that should be as harmful.
+>
+> Right.  The new IMA hook allocates memory for storing the flags, which
+> needs to be cleaned up on failure.  For this reason, the IMA call is
+> deferred until after the transition from locally freeing memory on
+> failure to relying on __fput().  In "do_last", the call to IMA is
+> after "opened"; and in the original version of this patch the call to
+> IMA is after finish_open().
+>
 
-I agree with you but in that particular case, I think we are reading
-from the correct device. The datasheet itself says that we should be
-reading 1.4 and 1.11 as we expect, with 2.5G/5G support being set (these
-registers are read-only, and the datasheet's values aren't what we
-actually read).
+Not sure I understand the concern.
+The integrity context is associated with the inode and will be freed
+on destroy_inode() no matter which error path is taken.
+Am I missing something?
 
->The 88x3310 is multiple PHY devices in one package, with a CPU that
->manages the routing between each individual device.
-
-I also just checked register 3.4 "PCS Speed Ability", and 3.8 "PCS
-Status 2" which also contains informations on 2.5G/5G abilities, but
-there's the same issue here.
-
-Maxime
-
--- 
-Maxime Chevallier, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+Thanks,
+Amir.
