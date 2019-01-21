@@ -4,50 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27F91C2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:49:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3DFCC2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:49:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E046420861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:49:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95D852063F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:49:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078584;
-	bh=p43Xl9zZVgflAsYzopspiSbP7wFH1jtrdkZAX1eLFTc=;
+	s=default; t=1548078588;
+	bh=SJN25w3HsqRzrPH65O9lAHF421d1DuelZzA98gM/1tY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=FJFGk+KlFhsImIKvMkUgCKjWLakkhU8U3EsBVZpGydzPPxKIg3vbBIDnf9mRPsI29
-	 1waFso5h9e0kM6P1tqs91ncQxnm1umFnenTXVpGfJ7b709iEcU39xe/LSdSzZbTIEk
-	 /EEIz2VpN2mAR1w6TFxEGKrEcfwK/nWqrVTxfc2M=
+	b=FshkX0yslIx+A//zhpeJzw7cTf8p/rA6L3U4Y8QKkLSgfiVOraWkCj9bhxD9PnBpU
+	 ngc9DeakZA9v0YYRkTMRji42tgoWdIFt4bzF5N4xdZ9N+LpJ1hY7sglmn5DAXmL4PY
+	 3MlzjPQFrJ6hP+7EzfzQYfwSg/ztxeL0NaGtCyJA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729723AbfAUNtl (ORCPT
+        id S1730355AbfAUNtq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:49:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60284 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:49:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60332 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730294AbfAUNtg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:49:36 -0500
+        id S1730303AbfAUNtj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:49:39 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 710052063F;
-        Mon, 21 Jan 2019 13:49:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F2262063F;
+        Mon, 21 Jan 2019 13:49:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078575;
-        bh=p43Xl9zZVgflAsYzopspiSbP7wFH1jtrdkZAX1eLFTc=;
+        s=default; t=1548078578;
+        bh=SJN25w3HsqRzrPH65O9lAHF421d1DuelZzA98gM/1tY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kbM6WTZ7Z9R7duaMBz2DdFZq3K6OFWVGwO0zSOZn3o5HvSFjhNZfVRtppcfxgTZyi
-         2LU2YZpXidbEUQeu9pnmGCp3/39aJWfFJwvJPOOjRTfGqox4STEBzwmAvzOrOoUTiU
-         FSN7bi87z+F5QOaeDKs29ePI+7JUlZciujIn8FN4=
+        b=bIcZDt4OTau4/WinGB4zoCtmSp5cLmEAjl/UGC9YWu1KNgZgQPBn75m+pY+5asMxe
+         OTcW+3Z3/18p130S1n60MwwBAXxF8eoK0CgCfMi6hcoc8awkLgZrpJUmvBiSmL7TwP
+         +GH7j2xKNA8vm8DwgxfRfqEXVzUY64xPrMLRqXCM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+4b98281f2401ab849f4b@syzkaller.appspotmail.com,
-        "J. Bruce Fields" <bfields@redhat.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>
-Subject: [PATCH 4.20 079/111] sunrpc: handle ENOMEM in rpcb_getport_async
-Date:   Mon, 21 Jan 2019 14:43:13 +0100
-Message-Id: <20190121122505.061347362@linuxfoundation.org>
+        syzbot+7713f3aa67be76b1552c@syzkaller.appspotmail.com,
+        Shakeel Butt <shakeelb@google.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.20 080/111] netfilter: ebtables: account ebt_table_info to kmemcg
+Date:   Mon, 21 Jan 2019 14:43:14 +0100
+Message-Id: <20190121122505.159202303@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122455.819406896@linuxfoundation.org>
 References: <20190121122455.819406896@linuxfoundation.org>
@@ -66,44 +68,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: J. Bruce Fields <bfields@redhat.com>
+From: Shakeel Butt <shakeelb@google.com>
 
-commit 81c88b18de1f11f70c97f28ced8d642c00bb3955 upstream.
+commit e2c8d550a973bb34fc28bc8d0ec996f84562fb8a upstream.
 
-If we ignore the error we'll hit a null dereference a little later.
+The [ip,ip6,arp]_tables use x_tables_info internally and the underlying
+memory is already accounted to kmemcg. Do the same for ebtables. The
+syzbot, by using setsockopt(EBT_SO_SET_ENTRIES), was able to OOM the
+whole system from a restricted memcg, a potential DoS.
 
-Reported-by: syzbot+4b98281f2401ab849f4b@syzkaller.appspotmail.com
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+By accounting the ebt_table_info, the memory used for ebt_table_info can
+be contained within the memcg of the allocating process. However the
+lifetime of ebt_table_info is independent of the allocating process and
+is tied to the network namespace. So, the oom-killer will not be able to
+relieve the memory pressure due to ebt_table_info memory. The memory for
+ebt_table_info is allocated through vmalloc. Currently vmalloc does not
+handle the oom-killed allocating process correctly and one large
+allocation can bypass memcg limit enforcement. So, with this patch,
+at least the small allocations will be contained. For large allocations,
+we need to fix vmalloc.
+
+Reported-by: syzbot+7713f3aa67be76b1552c@syzkaller.appspotmail.com
+Signed-off-by: Shakeel Butt <shakeelb@google.com>
+Reviewed-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/sunrpc/rpcb_clnt.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ net/bridge/netfilter/ebtables.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/net/sunrpc/rpcb_clnt.c
-+++ b/net/sunrpc/rpcb_clnt.c
-@@ -771,6 +771,12 @@ void rpcb_getport_async(struct rpc_task
- 	case RPCBVERS_3:
- 		map->r_netid = xprt->address_strings[RPC_DISPLAY_NETID];
- 		map->r_addr = rpc_sockaddr2uaddr(sap, GFP_ATOMIC);
-+		if (!map->r_addr) {
-+			status = -ENOMEM;
-+			dprintk("RPC: %5u %s: no memory available\n",
-+				task->tk_pid, __func__);
-+			goto bailout_free_args;
-+		}
- 		map->r_owner = "";
- 		break;
- 	case RPCBVERS_2:
-@@ -793,6 +799,8 @@ void rpcb_getport_async(struct rpc_task
- 	rpc_put_task(child);
- 	return;
+--- a/net/bridge/netfilter/ebtables.c
++++ b/net/bridge/netfilter/ebtables.c
+@@ -1137,14 +1137,16 @@ static int do_replace(struct net *net, c
+ 	tmp.name[sizeof(tmp.name) - 1] = 0;
  
-+bailout_free_args:
-+	kfree(map);
- bailout_release_client:
- 	rpc_release_client(rpcb_clnt);
- bailout_nofree:
+ 	countersize = COUNTER_OFFSET(tmp.nentries) * nr_cpu_ids;
+-	newinfo = vmalloc(sizeof(*newinfo) + countersize);
++	newinfo = __vmalloc(sizeof(*newinfo) + countersize, GFP_KERNEL_ACCOUNT,
++			    PAGE_KERNEL);
+ 	if (!newinfo)
+ 		return -ENOMEM;
+ 
+ 	if (countersize)
+ 		memset(newinfo->counters, 0, countersize);
+ 
+-	newinfo->entries = vmalloc(tmp.entries_size);
++	newinfo->entries = __vmalloc(tmp.entries_size, GFP_KERNEL_ACCOUNT,
++				     PAGE_KERNEL);
+ 	if (!newinfo->entries) {
+ 		ret = -ENOMEM;
+ 		goto free_newinfo;
 
 
