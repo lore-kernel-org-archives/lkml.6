@@ -7,50 +7,46 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84416C2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:14:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10916C2F3D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:14:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5438720861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:14:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4B8920861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:14:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548080052;
-	bh=TTtwpAzxR1MSRKjvQRMQB4vT+lMVwmoHqMjhLJCI6B4=;
+	s=default; t=1548080060;
+	bh=7dnFrAS3IY5fzdRf7oBQhjre07KPuiEwT9RxlIn/nlA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Iz3LzhSjtJ2Mpu30McT0DIIHcEgYRg/oYrl4f928TDwGfGBiKvAOd8LGT3gNXSfCy
-	 6P/mWzXXBZb7YAhW0bWhLWwHv+hZti0SA8ueNgtFOCLeQhK2o1naFWaqdtVBJp8Gr6
-	 kQKno1cftzYXEcblthNM2UkD9vDuo3PSVy0RrEJg=
+	b=oKHXvg1HchxvEhale+GqrcRm3knLMasufT2W7NYHsxw4zn1xPAt0voZ8an1RZMqjU
+	 OWPNpfS5k/VIjE4g64TrLiMYHsSFYbN9zKgpmf26idmZL7/Jf9EzT9OqSrSvURfpXl
+	 EsyDDSXPab63GL3Uj8ZWLyJRSIovuALvfmFFRhFc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731088AbfAUNwh (ORCPT
+        id S1731040AbfAUNwX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:52:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35850 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:52:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35528 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730257AbfAUNwg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:52:36 -0500
+        id S1729006AbfAUNwU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:52:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7EB412087F;
-        Mon, 21 Jan 2019 13:52:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A9F820879;
+        Mon, 21 Jan 2019 13:52:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078755;
-        bh=TTtwpAzxR1MSRKjvQRMQB4vT+lMVwmoHqMjhLJCI6B4=;
+        s=default; t=1548078739;
+        bh=7dnFrAS3IY5fzdRf7oBQhjre07KPuiEwT9RxlIn/nlA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QxYvBaaw5E3Mm7/yU1fRVyb+6Su0U0nWRZkECc+PtpMicB59FpfW0lgi7fCAq7FNa
-         LDYCSO+mi5IAy2rTurhJq+DMY4+sqeoM/94LPO/UV6uoO6zyarQ/VhO2YW+MlZRUNm
-         USPhAM5w8VGeOwmUiJmWkO1H8UeARUfwHUaShq7M=
+        b=lzp/LMjSZZeh+CaaE50LPvT1KZJmMTUkcd/mFylPIAH57ETRHpUidoAeA6hlHoeT3
+         l16j1wCZnRhpu3zj8gAf1QEhMsXtco6GIUoQTzSGqxrchQi56dSaij5WahFvCbX2xB
+         ZBxE246D68whMHhXlopYQOi6mZ7ZFOrFUa9v5wME=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Muyu Yu <ieatmuttonchuan@gmail.com>,
-        Marcus Meissner <meissner@suse.de>,
-        Michal Kubecek <mkubecek@suse.cz>,
-        Oliver Hartkopp <socketcan@hartkopp.net>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 05/59] can: gw: ensure DLC boundaries after CAN frame modification
-Date:   Mon, 21 Jan 2019 14:43:30 +0100
-Message-Id: <20190121122457.082497022@linuxfoundation.org>
+        stable@vger.kernel.org, Ivan Mironov <mironov.ivan@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.14 26/59] scsi: sd: Fix cache_type_store()
+Date:   Mon, 21 Jan 2019 14:43:51 +0100
+Message-Id: <20190121122459.447291625@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122456.529172919@linuxfoundation.org>
 References: <20190121122456.529172919@linuxfoundation.org>
@@ -69,91 +65,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Oliver Hartkopp <socketcan@hartkopp.net>
+From: Ivan Mironov <mironov.ivan@gmail.com>
 
-commit 0aaa81377c5a01f686bcdb8c7a6929a7bf330c68 upstream.
+commit 44759979a49bfd2d20d789add7fa81a21eb1a4ab upstream.
 
-Muyu Yu provided a POC where user root with CAP_NET_ADMIN can create a CAN
-frame modification rule that makes the data length code a higher value than
-the available CAN frame data size. In combination with a configured checksum
-calculation where the result is stored relatively to the end of the data
-(e.g. cgw_csum_xor_rel) the tail of the skb (e.g. frag_list pointer in
-skb_shared_info) can be rewritten which finally can cause a system crash.
+Changing of caching mode via /sys/devices/.../scsi_disk/.../cache_type may
+fail if device responds to MODE SENSE command with DPOFUA flag set, and
+then checks this flag to be not set on MODE SELECT command.
 
-Michael Kubecek suggested to drop frames that have a DLC exceeding the
-available space after the modification process and provided a patch that can
-handle CAN FD frames too. Within this patch we also limit the length for the
-checksum calculations to the maximum of Classic CAN data length (8).
+In this scenario, when trying to change cache_type, write always fails:
 
-CAN frames that are dropped by these additional checks are counted with the
-CGW_DELETED counter which indicates misconfigurations in can-gw rules.
+	# echo "none" >cache_type
+	bash: echo: write error: Invalid argument
 
-This fixes CVE-2019-3701.
+And following appears in dmesg:
 
-Reported-by: Muyu Yu <ieatmuttonchuan@gmail.com>
-Reported-by: Marcus Meissner <meissner@suse.de>
-Suggested-by: Michal Kubecek <mkubecek@suse.cz>
-Tested-by: Muyu Yu <ieatmuttonchuan@gmail.com>
-Tested-by: Oliver Hartkopp <socketcan@hartkopp.net>
-Signed-off-by: Oliver Hartkopp <socketcan@hartkopp.net>
-Cc: linux-stable <stable@vger.kernel.org> # >= v3.2
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+	[13007.865745] sd 1:0:1:0: [sda] Sense Key : Illegal Request [current]
+	[13007.865753] sd 1:0:1:0: [sda] Add. Sense: Invalid field in parameter list
+
+>From SBC-4 r15, 6.5.1 "Mode pages overview", description of DEVICE-SPECIFIC
+PARAMETER field in the mode parameter header:
+	...
+	The write protect (WP) bit for mode data sent with a MODE SELECT
+	command shall be ignored by the device server.
+	...
+	The DPOFUA bit is reserved for mode data sent with a MODE SELECT
+	command.
+	...
+
+The remaining bits in the DEVICE-SPECIFIC PARAMETER byte are also reserved
+and shall be set to zero.
+
+[mkp: shuffled commentary to commit description]
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Ivan Mironov <mironov.ivan@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/can/gw.c |   30 +++++++++++++++++++++++++++---
- 1 file changed, 27 insertions(+), 3 deletions(-)
+ drivers/scsi/sd.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/net/can/gw.c
-+++ b/net/can/gw.c
-@@ -416,13 +416,29 @@ static void can_can_gw_rcv(struct sk_buf
- 	while (modidx < MAX_MODFUNCTIONS && gwj->mod.modfunc[modidx])
- 		(*gwj->mod.modfunc[modidx++])(cf, &gwj->mod);
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -206,6 +206,12 @@ cache_type_store(struct device *dev, str
+ 	sp = buffer_data[0] & 0x80 ? 1 : 0;
+ 	buffer_data[0] &= ~0x80;
  
--	/* check for checksum updates when the CAN frame has been modified */
-+	/* Has the CAN frame been modified? */
- 	if (modidx) {
--		if (gwj->mod.csumfunc.crc8)
-+		/* get available space for the processed CAN frame type */
-+		int max_len = nskb->len - offsetof(struct can_frame, data);
++	/*
++	 * Ensure WP, DPOFUA, and RESERVED fields are cleared in
++	 * received mode parameter buffer before doing MODE SELECT.
++	 */
++	data.device_specific = 0;
 +
-+		/* dlc may have changed, make sure it fits to the CAN frame */
-+		if (cf->can_dlc > max_len)
-+			goto out_delete;
-+
-+		/* check for checksum updates in classic CAN length only */
-+		if (gwj->mod.csumfunc.crc8) {
-+			if (cf->can_dlc > 8)
-+				goto out_delete;
-+
- 			(*gwj->mod.csumfunc.crc8)(cf, &gwj->mod.csum.crc8);
-+		}
-+
-+		if (gwj->mod.csumfunc.xor) {
-+			if (cf->can_dlc > 8)
-+				goto out_delete;
- 
--		if (gwj->mod.csumfunc.xor)
- 			(*gwj->mod.csumfunc.xor)(cf, &gwj->mod.csum.xor);
-+		}
- 	}
- 
- 	/* clear the skb timestamp if not configured the other way */
-@@ -434,6 +450,14 @@ static void can_can_gw_rcv(struct sk_buf
- 		gwj->dropped_frames++;
- 	else
- 		gwj->handled_frames++;
-+
-+	return;
-+
-+ out_delete:
-+	/* delete frame due to misconfiguration */
-+	gwj->deleted_frames++;
-+	kfree_skb(nskb);
-+	return;
- }
- 
- static inline int cgw_register_filter(struct net *net, struct cgw_job *gwj)
+ 	if (scsi_mode_select(sdp, 1, sp, 8, buffer_data, len, SD_TIMEOUT,
+ 			     SD_MAX_RETRIES, &data, &sshdr)) {
+ 		if (scsi_sense_valid(&sshdr))
 
 
