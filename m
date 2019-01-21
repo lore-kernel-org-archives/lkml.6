@@ -2,84 +2,103 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A796C7113B
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:21:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 054DDC7112F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:21:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17B2020663
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:21:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB3CF20663
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:21:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Q/17GSch";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Q/17GSch"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728171AbfAULVW (ORCPT
+        id S1728184AbfAULVy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 06:21:22 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:32994 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727287AbfAULVV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 06:21:21 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Mon, 21 Jan 2019 06:21:54 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:60902 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727665AbfAULVx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 06:21:53 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id B4B29601D3; Mon, 21 Jan 2019 11:21:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548069712;
+        bh=T8++vPUHn6c4bsjAj/Ep0gnptA8B7LmOie7YQz/GEFs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Q/17GSchUIMqfdFX2HtIcL+pYmCv1C4SxeESFnWrnSWnyD7Sp5Ceihv7Yt4mkUayi
+         qmwpAPei3FH4IA5zIT1g/vkNXtfdhR0XqNMGVh+nvu1jR/dHMxMVpbbEhY8pI0o5On
+         es8wutKF+OUAGiKW7veDZqPK6MrC9VlF+rpCPJuM=
+Received: from alokc-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4E30E7F410;
-        Mon, 21 Jan 2019 11:21:21 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.163])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 968FD6012D;
-        Mon, 21 Jan 2019 11:21:18 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Mon, 21 Jan 2019 12:21:21 +0100 (CET)
-Date:   Mon, 21 Jan 2019 12:21:17 +0100
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH 05/22] x86/fpu: Remove fpu->initialized usage in
- copy_fpstate_to_sigframe()
-Message-ID: <20190121112117.GA32538@redhat.com>
-References: <20190109114744.10936-1-bigeasy@linutronix.de>
- <20190109114744.10936-6-bigeasy@linutronix.de>
- <20190116193603.GK15409@zn.tnic>
- <20190116224037.xkfnevzkwrck5dtt@linutronix.de>
- <20190117122253.GC5023@zn.tnic>
- <20190118211401.4komqsnvuof7563p@linutronix.de>
- <33f0e144-1eec-b1a1-8858-58f20d5e477d@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <33f0e144-1eec-b1a1-8858-58f20d5e477d@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 21 Jan 2019 11:21:21 +0000 (UTC)
+        (Authenticated sender: alokc@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 00968601D3;
+        Mon, 21 Jan 2019 11:21:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548069712;
+        bh=T8++vPUHn6c4bsjAj/Ep0gnptA8B7LmOie7YQz/GEFs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Q/17GSchUIMqfdFX2HtIcL+pYmCv1C4SxeESFnWrnSWnyD7Sp5Ceihv7Yt4mkUayi
+         qmwpAPei3FH4IA5zIT1g/vkNXtfdhR0XqNMGVh+nvu1jR/dHMxMVpbbEhY8pI0o5On
+         es8wutKF+OUAGiKW7veDZqPK6MrC9VlF+rpCPJuM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 00968601D3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=alokc@codeaurora.org
+From:   Alok Chauhan <alokc@codeaurora.org>
+To:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     andy.gross@linaro.org, david.brown@linaro.org,
+        georgi.djakov@linaro.org, dianders@chromium.org,
+        swboyd@chromium.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, Alok Chauhan <alokc@codeaurora.org>
+Subject: [PATCH 0/6] Add interconnect support for GENI QUPs
+Date:   Mon, 21 Jan 2019 16:51:37 +0530
+Message-Id: <1548069703-26595-1-git-send-email-alokc@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/18, Dave Hansen wrote:
->
-> On 1/18/19 1:14 PM, Sebastian Andrzej Siewior wrote:
-> > The kernel saves task's FPU registers on user's signal stack before
-> > entering the signal handler. Can we avoid that and have in-kernel memory
-> > for that? Does someone rely on the FPU registers from the task in the
-> > signal handler?
->
-> This is part of our ABI for *sure*.  Inspecting that state is how
-> userspace makes sense of MPX or protection keys faults.  We even use
-> this in selftests/.
+This patch series contains following:
+* Add wrapper framework to support interconnect path from GENI QUPs.
+  This wrapper enabled and help individual SEs to put their BW request.
+  Adding this wrapper make sense because we don't want individual SEs
+  to request to interconnect driver separately and put individual bw
+  votes from QUP.
 
-Yes.
+  This wrapper framework does the following:
+  - Request for interconnect path handle
+  - Maintain record of individual SEs' avg/peak bw.
+  - Aggregated avg/peak bw based on how many SE's are active and put
+    single bw request from QUP
 
-And in any case I do not understand the idea to use the second in-kernel struct fpu.
-A signal handler can be interrupted by another signal, this will need to save/restore
-the FPU state again.
+* Interconnect wrapper API calling from I2C, SPI & Uart driver
+* dt binding in sdm845 soc for Interconnect path for GENI QUPs
+* dt binding documentation
 
-Oleg.
+
+Alok Chauhan (6):
+  dt-bindings: soc: qcom: Add interconnect binding for GENI QUP
+  soc: qcom: Add wrapper to support for Interconnect path
+  i2c: i2c-qcom-geni: Add interconnect support
+  spi: spi-geni-qcom: Add interconnect support
+  tty: serial: qcom_geni_serial: Add interconnect support
+  arm64: dts: sdm845: Add interconnect for GENI QUP
+
+ .../devicetree/bindings/soc/qcom/qcom,geni-se.txt  |  10 ++
+ arch/arm64/boot/dts/qcom/sdm845.dtsi               |  14 +++
+ drivers/i2c/busses/i2c-qcom-geni.c                 |  13 +++
+ drivers/soc/qcom/qcom-geni-se.c                    | 129 +++++++++++++++++++++
+ drivers/spi/spi-geni-qcom.c                        |  20 +++-
+ drivers/tty/serial/qcom_geni_serial.c              |  27 ++++-
+ include/linux/qcom-geni-se.h                       |  11 ++
+ 7 files changed, 222 insertions(+), 2 deletions(-)
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
