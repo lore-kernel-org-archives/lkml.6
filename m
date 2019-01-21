@@ -4,49 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80CF1C2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:57:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E1D8C2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:57:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45EB220879
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:57:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B2B42084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:57:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079065;
-	bh=PEZbxAxF70wLDRRdbL8eSeb1Js66nOX6kMR6/lqPAWs=;
+	s=default; t=1548079071;
+	bh=kJq0JNnnrqzA72nJOt4Y5k3EPr/o/TevIoDLeFVuSKM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=N1A9RfNbAjDbQtvF27kGlJofBWhUWm4kl2iTxuUHAELf7Fmj61+wqnT6ZFkyWvZqW
-	 TrEIJir6uf1L1ojpHtB897aIoH7LQtor5MOzivdH5ZJF4GIHZC3gSenLzBOkUL1IH9
-	 HhzoEk7swBVtYZbCh845qrzXZbnioBMR9s8HzGtI=
+	b=nCsalm0VLYE974IfD5RNj0p6Z0VCgRvQ0zI1IiOmiWwgyYLOFjlG+gmxqpjuIvSQX
+	 X0sraB3m2bnz6mWN0FnVUiC6uqlH0tezHITiX57iUMW+khv570cyzQeNBHoesrQ40S
+	 NWeIYDkZBjzjoa6TV6Ll7OvZICZM+I2Elwc07Pe4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731890AbfAUN4Q (ORCPT
+        id S1731651AbfAUN5s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:56:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41178 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:57:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731406AbfAUN4J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:56:09 -0500
+        id S1731880AbfAUN4O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:56:14 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 33F2120861;
-        Mon, 21 Jan 2019 13:56:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BEF6E2084C;
+        Mon, 21 Jan 2019 13:56:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078968;
-        bh=PEZbxAxF70wLDRRdbL8eSeb1Js66nOX6kMR6/lqPAWs=;
+        s=default; t=1548078974;
+        bh=kJq0JNnnrqzA72nJOt4Y5k3EPr/o/TevIoDLeFVuSKM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J1tinOwgmrd4JMJBqorne7c9y3VpMt8s7MnfsE/7rwYd6f1+q/4bD4D8l6DNez9T1
-         qX9rg6WHYcjuGs1Yb4N1LjBn9YujJDv0d2qqftuZkX2hlrqOEzZO4H7TbRKCVE0Gio
-         BGQraiFDc+404IdCkdjSUE0Ngn04xwOVqPyJV1wg=
+        b=SfkIyEeVyVvtRT7qRbBuvwnBMEFwLV+ZyjAiVOinP48hQAn4CiFsklbJphlQ6kB1I
+         UWHWWL+jZgxQqr7OiT/9Xfr2ommxpORUdk9WMUaR6Q5y79eA65gYuhkgiRoe+ui32E
+         NEysiZGH+ify8vEpv7EjS2QjW2VEznI8ORDCZ8lU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        stable@vger.kernel.org,
+        syzbot <syzbot+c0138741c2290fc5e63f@syzkaller.appspotmail.com>,
+        Ming Lei <ming.lei@redhat.com>, Jan Kara <jack@suse.cz>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
         Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.9 47/51] loop: Fold __loop_release into loop_release
-Date:   Mon, 21 Jan 2019 14:44:43 +0100
-Message-Id: <20190121122458.410898273@linuxfoundation.org>
+Subject: [PATCH 4.9 49/51] loop: Fix double mutex_unlock(&loop_ctl_mutex) in loop_control_ioctl()
+Date:   Mon, 21 Jan 2019 14:44:45 +0100
+Message-Id: <20190121122458.610915084@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122453.700446926@linuxfoundation.org>
 References: <20190121122453.700446926@linuxfoundation.org>
@@ -65,64 +68,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jan Kara <jack@suse.cz>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-commit 967d1dc144b50ad005e5eecdfadfbcfb399ffff6 upstream.
+commit 628bd85947091830a8c4872adfd5ed1d515a9cf2 upstream.
 
-__loop_release() has a single call site. Fold it there. This is
-currently not a huge win but it will make following replacement of
-loop_index_mutex more obvious.
+Commit 0a42e99b58a20883 ("loop: Get rid of loop_index_mutex") forgot to
+remove mutex_unlock(&loop_ctl_mutex) from loop_control_ioctl() when
+replacing loop_index_mutex with loop_ctl_mutex.
 
-Signed-off-by: Jan Kara <jack@suse.cz>
+Fixes: 0a42e99b58a20883 ("loop: Get rid of loop_index_mutex")
+Reported-by: syzbot <syzbot+c0138741c2290fc5e63f@syzkaller.appspotmail.com>
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/block/loop.c |   16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+ drivers/block/loop.c |    2 --
+ 1 file changed, 2 deletions(-)
 
 --- a/drivers/block/loop.c
 +++ b/drivers/block/loop.c
-@@ -1575,12 +1575,15 @@ out:
- 	return err;
- }
- 
--static void __lo_release(struct loop_device *lo)
-+static void lo_release(struct gendisk *disk, fmode_t mode)
- {
-+	struct loop_device *lo;
- 	int err;
- 
-+	mutex_lock(&loop_index_mutex);
-+	lo = disk->private_data;
- 	if (atomic_dec_return(&lo->lo_refcnt))
--		return;
-+		goto unlock_index;
- 
- 	mutex_lock(&loop_ctl_mutex);
- 	if (lo->lo_flags & LO_FLAGS_AUTOCLEAR) {
-@@ -1590,7 +1593,7 @@ static void __lo_release(struct loop_dev
- 		 */
- 		err = loop_clr_fd(lo);
- 		if (!err)
--			return;
-+			goto unlock_index;
- 	} else {
- 		/*
- 		 * Otherwise keep thread (if running) and config,
-@@ -1600,12 +1603,7 @@ static void __lo_release(struct loop_dev
- 	}
- 
- 	mutex_unlock(&loop_ctl_mutex);
--}
--
--static void lo_release(struct gendisk *disk, fmode_t mode)
--{
--	mutex_lock(&loop_index_mutex);
--	__lo_release(disk->private_data);
-+unlock_index:
- 	mutex_unlock(&loop_index_mutex);
- }
- 
+@@ -1929,12 +1929,10 @@ static long loop_control_ioctl(struct fi
+ 			break;
+ 		if (lo->lo_state != Lo_unbound) {
+ 			ret = -EBUSY;
+-			mutex_unlock(&loop_ctl_mutex);
+ 			break;
+ 		}
+ 		if (atomic_read(&lo->lo_refcnt) > 0) {
+ 			ret = -EBUSY;
+-			mutex_unlock(&loop_ctl_mutex);
+ 			break;
+ 		}
+ 		lo->lo_disk->private_data = NULL;
 
 
