@@ -2,203 +2,139 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67B7FC31680
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 18:17:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2032C31680
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 18:20:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3149B2085A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 18:17:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B47D22085A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 18:20:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="k9q2rpu+"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hm0rROjl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727562AbfAUSQ7 (ORCPT
+        id S1727785AbfAUSUO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 13:16:59 -0500
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:43437 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726125AbfAUSQ7 (ORCPT
+        Mon, 21 Jan 2019 13:20:14 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:35635 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726840AbfAUSUO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 13:16:59 -0500
-Received: by mail-yb1-f193.google.com with SMTP id e12so1372795ybn.10
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 10:16:58 -0800 (PST)
+        Mon, 21 Jan 2019 13:20:14 -0500
+Received: by mail-io1-f68.google.com with SMTP id f4so17131488ion.2
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 10:20:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yqWAy9Z9opyx6z4Tb1LRzCzNVLXkkyvInsVgcl7h00E=;
-        b=k9q2rpu+CziuO2sZ88V02gPiunwNegCSfruPvj/IYCJ36M5JJck244BbMFrmiw4aiD
-         nxGV/R3ewy7FYfAXBcHal1+++S8W4mXgkU2WONeNHdHOrFd5H0e5HLE0iFTzzTGreT0r
-         sxlJMiUcxhl2mV9ruX2UZm0CutfFY4hDrmBEZXqdSqjcDvpQLLEg98yyeQ0kFjHY43n7
-         XI7wjEBlbaY0a2gQTh5sKIV7c8ysw08A6nhbxmu5HjxHDpSyH7eRbjZmBKYnHZhworfQ
-         C0UNWIrLlDYoLHlevygU62R0Qm4pgI3uqdI4T5tbH32hG/ZVmshsUCy0iGFw1N9nMQaB
-         fzyg==
+         :cc:content-transfer-encoding;
+        bh=XJhOepUD6NaSayAfqLhlWuoQ/QOfSBGfPNnmKMxehZg=;
+        b=hm0rROjlNQsH4JlgreRAtYafeQOWAtKoXTVjMjrT2SrfdjWwsbs0/cM1Df/2551mCD
+         aB2NIwGh6PtkU4LJqNiUnC9ccd/MxSvVZmUe7p8qihObwBXmx5bizvR6D4nwZRxbSzcD
+         TRkcVrpj1W7hRzWFBQLCKatfPlpTT5EgcAThI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yqWAy9Z9opyx6z4Tb1LRzCzNVLXkkyvInsVgcl7h00E=;
-        b=N2Tq3491gxYb55EGbd0QTiR6p82btOZyZ+xdqe4K+Omg2KwWQvxLPKnAWm8hc53dBF
-         yx85V6pQyxsHEfSV/AZAeHoifwNr3Sxc0Duy9WuqCBRTwRsPP8Iol1wXovHGaDa8iQqO
-         28tcOadki/fcSQPw7bGrHgplYQRvnG5Ks6vE7xGkeGK4ss3yydYq2M6jboVeVM2SEQal
-         Ry0cJQFHhUKEWKJ3NCLXA2Ko6qrGNgRCtBflWTeV/mN0gT/AYttCY0tmXj/f7lCxjN0N
-         yRk/PnSV2E2eTWfoZY53bx8fy8N+i3dw16wwl7uQB6BD6l8a0BhH0eEtHNmzcarIx6CY
-         J7zg==
-X-Gm-Message-State: AJcUukclUTh+LJPiehnRoKyh/iBQ0H8ZD5cgVyd9QjBpZ4Rbgxj03MFz
-        zNH7G+EZsE4V0qErZBPH+3tai0vkcsDjsDlX0mptLw==
-X-Google-Smtp-Source: ALg8bN7Yd6u8G+XkZK/u9Y7F0bKJZN4uJSK6xVQ0zkB1uvEob12BxJRDrIjA2AQdImzqxPAoAz/5wSQF6buIeLq3EPQ=
-X-Received: by 2002:a25:6f8b:: with SMTP id k133mr6385877ybc.496.1548094617882;
- Mon, 21 Jan 2019 10:16:57 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=XJhOepUD6NaSayAfqLhlWuoQ/QOfSBGfPNnmKMxehZg=;
+        b=mBvEZjceh9pEGgLPCQHEKUynachCAyWFQpe0GFhu0wQTRtHH3Zl97ax/Rcb3cEHam8
+         DswkEQdth8E7wO3Jr/yNZmOHKgIv59iZqvCDsViRCTiOXL7Av2zNRWBU04RMs6jFiTQa
+         7H3y+JstmFM1UsUq9gP0AlP1b58z8XyCx6j3QMsA/Uei7bu4hdmwNAHvtOYxYreFf2GL
+         ROXPwSvbRNJiQeS8kkq5Z7dHDSsShFKu4B3DZWo3ih7kFcDiCfBOf13ipCCJCix6w8/a
+         PK1VHXxekEmVaYCxZCOptXo9POHH369eokfKrIr2QhT0mz2XfILcZdZ9mJTGcAjhIZ5q
+         62tw==
+X-Gm-Message-State: AJcUukdicN5qGGNjAKKCWHh62zdRCSLimwbZnvj1IWnEhxKcNb7D4Q1Z
+        9F0lTfqcpWVA1aXbJlahy6cwExrB0CKwms6lfQSfEA==
+X-Google-Smtp-Source: ALg8bN5ByDojMvNCkHvw+nhvxmX81xfCKgkECLG9m3o1l96NamrDv7X9AAf2gib9QfeBaMtuqMM1y6vwNZwwjFWF5UE=
+X-Received: by 2002:a6b:5d01:: with SMTP id r1mr16371109iob.170.1548094813483;
+ Mon, 21 Jan 2019 10:20:13 -0800 (PST)
 MIME-Version: 1.0
-References: <20190120215059.183552-1-shakeelb@google.com> <20190121091933.GL4087@dhcp22.suse.cz>
-In-Reply-To: <20190121091933.GL4087@dhcp22.suse.cz>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Mon, 21 Jan 2019 10:16:47 -0800
-Message-ID: <CALvZod7PaFzTkHmE2Vz06jrfWK3owo098+OUW55dfh1i=d39pA@mail.gmail.com>
-Subject: Re: [PATCH] mm, oom: remove 'prefer children over parent' heuristic
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Roman Gushchin <guro@fb.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
+References: <20190121100617.2311-1-ard.biesheuvel@linaro.org>
+ <20190121150734.GA30582@infradead.org> <CAKv+Gu-hR=uieOeg7QheA5yfAycUoi2vjZsDUvROKVjW4eUNqw@mail.gmail.com>
+ <20190121155908.GA8084@infradead.org> <CAKv+Gu8LzS9OgvVnzUT8BZWVgDmx4OfqNiPSf+8=riY_LByN-g@mail.gmail.com>
+ <20190121162238.GA17651@infradead.org> <CAKv+Gu-5V-UjP_YzZBCEsa+o_G6BRSVw2ZimYGNEfRGf-aRPNg@mail.gmail.com>
+ <59ccf85d-b99d-b5c8-ea87-66c2a892e197@daenzer.net> <CAKv+Gu8OkbHwY5UBxahpQpM_gKh2331pQ6o-4YyJdLurbFNHvw@mail.gmail.com>
+ <ccc775d3-3053-ab79-dac8-4feb28e8e690@daenzer.net>
+In-Reply-To: <ccc775d3-3053-ab79-dac8-4feb28e8e690@daenzer.net>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Mon, 21 Jan 2019 19:20:02 +0100
+Message-ID: <CAKv+Gu-9VKL5RjScbKss4YfH1Cb8WbXmzU_0UsStnoXJcML7Rg@mail.gmail.com>
+Subject: Re: [RFC PATCH] drm: disable WC optimization for cache coherent
+ devices on non-x86
+To:     =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel@daenzer.net>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        David Zhou <David1.Zhou@amd.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        David Airlie <airlied@linux.ie>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        amd-gfx@lists.freedesktop.org, Junwei Zhang <Jerry.Zhang@amd.com>,
+        Huang Rui <ray.huang@amd.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sean Paul <sean@poorly.run>,
+        Christian Koenig <christian.koenig@amd.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 1:19 AM Michal Hocko <mhocko@kernel.org> wrote:
+On Mon, 21 Jan 2019 at 19:04, Michel D=C3=A4nzer <michel@daenzer.net> wrote=
+:
 >
-> On Sun 20-01-19 13:50:59, Shakeel Butt wrote:
-> > >From the start of the git history of Linux, the kernel after selecting
-> > the worst process to be oom-killed, prefer to kill its child (if the
-> > child does not share mm with the parent). Later it was changed to prefer
-> > to kill a child who is worst. If the parent is still the worst then the
-> > parent will be killed.
+> On 2019-01-21 6:59 p.m., Ard Biesheuvel wrote:
+> > On Mon, 21 Jan 2019 at 18:55, Michel D=C3=A4nzer <michel@daenzer.net> w=
+rote:
+> >>
+> >> On 2019-01-21 5:30 p.m., Ard Biesheuvel wrote:
+> >>> On Mon, 21 Jan 2019 at 17:22, Christoph Hellwig <hch@infradead.org> w=
+rote:
+> >>>
+> >>>> Until that happens we should just change the driver ifdefs to defaul=
+t
+> >>>> the hacks to off and only enable them on setups where we 100%
+> >>>> positively know that they actually work.  And document that fact
+> >>>> in big fat comments.
+> >>>
+> >>> Well, as I mentioned in my commit log as well, if we default to off
+> >>> unless CONFIG_X86, we may break working setups on MIPS and Power wher=
+e
+> >>> the device is in fact non-cache coherent, and relies on this
+> >>> 'optimization' to get things working.
+> >>
+> >> FWIW, the amdgpu driver doesn't rely on non-snooped transfers for
+> >> correct basic operation (the scenario Christian brought up is a very
+> >> specialized use-case), so that shouldn't be an issue.
+> >>
 > >
-> > This heuristic assumes that the children did less work than their parent
-> > and by killing one of them, the work lost will be less. However this is
-> > very workload dependent. If there is a workload which can benefit from
-> > this heuristic, can use oom_score_adj to prefer children to be killed
-> > before the parent.
+> > The point is that this is only true for x86.
 > >
-> > The select_bad_process() has already selected the worst process in the
-> > system/memcg. There is no need to recheck the badness of its children
-> > and hoping to find a worse candidate. That's a lot of unneeded racy
-> > work. So, let's remove this whole heuristic.
+> > On other architectures, the use of non-cached mappings on the CPU side
+> > means that you /do/ rely on non-snooped transfers, since if those
+> > transfers turn out not to snoop inadvertently, the accesses are
+> > incoherent with the CPU's view of memory.
 >
-> Yes, I agree with this direction. Let's try it and see whether there is
-> anything really depending on the heuristic. I hope that is not the case
-> but at least we will hear about it and the reasoning behind.
+> The driver generally only uses non-cached mappings if
+> drm_arch/device_can_wc_memory returns true.
 >
-> I think the changelog should also mension that the heuristic is
-> dangerous because it make fork bomb like workloads to recover much later
-> because we constantly pick and kill processes which are not memory hogs.
->
-> > Signed-off-by: Shakeel Butt <shakeelb@google.com>
->
-> Appart from the nit in the printk output
-> Acked-by: Michal Hocko <mhocko@suse.com>
->
-> Also I would prefer s@p@victim@ because it makes the code more readable
->
-> I pressume you are going to send this along with the fix for the
-> use-after-free in one series.
->
-> Thanks.
 
-Yes, I will resend the series after incorporating the feedback.
+Indeed. And so we should take care to only return 'true' from that
+function if it is guaranteed that non-cached CPU mappings are coherent
+with the mappings used by the GPU, either because that is always the
+case (like on x86), or because we know that the platform in question
+implements NoSnoop correctly throughout the interconnect.
 
->
-> > ---
-> >  mm/oom_kill.c | 49 ++++---------------------------------------------
-> >  1 file changed, 4 insertions(+), 45 deletions(-)
-> >
-> > diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-> > index 1a007dae1e8f..6cee185dc147 100644
-> > --- a/mm/oom_kill.c
-> > +++ b/mm/oom_kill.c
-> > @@ -944,12 +944,7 @@ static int oom_kill_memcg_member(struct task_struct *task, void *unused)
-> >  static void oom_kill_process(struct oom_control *oc, const char *message)
-> >  {
-> >       struct task_struct *p = oc->chosen;
-> > -     unsigned int points = oc->chosen_points;
-> > -     struct task_struct *victim = p;
-> > -     struct task_struct *child;
-> > -     struct task_struct *t;
-> >       struct mem_cgroup *oom_group;
-> > -     unsigned int victim_points = 0;
-> >       static DEFINE_RATELIMIT_STATE(oom_rs, DEFAULT_RATELIMIT_INTERVAL,
-> >                                             DEFAULT_RATELIMIT_BURST);
-> >
-> > @@ -971,53 +966,17 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
-> >       if (__ratelimit(&oom_rs))
-> >               dump_header(oc, p);
-> >
-> > -     pr_err("%s: Kill process %d (%s) score %u or sacrifice child\n",
-> > -             message, task_pid_nr(p), p->comm, points);
-> > -
-> > -     /*
-> > -      * If any of p's children has a different mm and is eligible for kill,
-> > -      * the one with the highest oom_badness() score is sacrificed for its
-> > -      * parent.  This attempts to lose the minimal amount of work done while
-> > -      * still freeing memory.
-> > -      */
-> > -     read_lock(&tasklist_lock);
-> > -
-> > -     /*
-> > -      * The task 'p' might have already exited before reaching here. The
-> > -      * put_task_struct() will free task_struct 'p' while the loop still try
-> > -      * to access the field of 'p', so, get an extra reference.
-> > -      */
-> > -     get_task_struct(p);
-> > -     for_each_thread(p, t) {
-> > -             list_for_each_entry(child, &t->children, sibling) {
-> > -                     unsigned int child_points;
-> > -
-> > -                     if (process_shares_mm(child, p->mm))
-> > -                             continue;
-> > -                     /*
-> > -                      * oom_badness() returns 0 if the thread is unkillable
-> > -                      */
-> > -                     child_points = oom_badness(child,
-> > -                             oc->memcg, oc->nodemask, oc->totalpages);
-> > -                     if (child_points > victim_points) {
-> > -                             put_task_struct(victim);
-> > -                             victim = child;
-> > -                             victim_points = child_points;
-> > -                             get_task_struct(victim);
-> > -                     }
-> > -             }
-> > -     }
-> > -     put_task_struct(p);
-> > -     read_unlock(&tasklist_lock);
-> > +     pr_err("%s: Kill process %d (%s) score %lu or sacrifice child\n",
-> > +             message, task_pid_nr(p), p->comm, oc->chosen_points);
-> >
-> >       /*
-> >        * Do we need to kill the entire memory cgroup?
-> >        * Or even one of the ancestor memory cgroups?
-> >        * Check this out before killing the victim task.
-> >        */
-> > -     oom_group = mem_cgroup_get_oom_group(victim, oc->memcg);
-> > +     oom_group = mem_cgroup_get_oom_group(p, oc->memcg);
-> >
-> > -     __oom_kill_process(victim);
-> > +     __oom_kill_process(p);
-> >
-> >       /*
-> >        * If necessary, kill all tasks in the selected memory cgroup.
-> > --
-> > 2.20.1.321.g9e740568ce-goog
->
-> --
-> Michal Hocko
-> SUSE Labs
+What seems to be complicating matters is that in some cases, the
+device is non-cache coherent to begin with, so regardless of whether
+the NoSnoop attribute is used or not, those accesses will not snoop in
+the caches and be coherent with the non-cached mappings used by the
+CPU. So if we restrict this optimization [on non-X86] to platforms
+that are known to implement NoSnoop correctly, we may break platforms
+that are implicitly NoSnoop all the time.
