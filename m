@@ -2,406 +2,408 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BE6CC282E9
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:01:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12565C282E9
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:01:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 522C721738
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:01:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7FAE20823
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:01:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729551AbfAUIBF (ORCPT
+        id S1729513AbfAUIA7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 03:01:05 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:18863 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728835AbfAUIA7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 21 Jan 2019 03:00:59 -0500
-X-UUID: fbd35160de4640eab3e704ef3c281d48-20190121
-X-UUID: fbd35160de4640eab3e704ef3c281d48-20190121
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
-        (envelope-from <qii.wang@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 202876200; Mon, 21 Jan 2019 16:00:44 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 21 Jan 2019 16:00:43 +0800
-Received: from localhost.localdomain (10.17.3.153) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 21 Jan 2019 16:00:42 +0800
-From:   qii wang <qii.wang@mediatek.com>
-To:     <wsa@the-dreams.de>
-CC:     <linux-i2c@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, <leilk.liu@mediatek.com>,
-        <qii.wang@mediatek.com>, <ryder.lee@mediatek.com>,
-        <xinping.qian@mediatek.com>, <liguo.zhang@mediatek.com>
-Subject: [PATCH v3 6/6] i2c: mediatek: Add i2c support for MediaTek MT8183
-Date:   Mon, 21 Jan 2019 15:59:34 +0800
-Message-ID: <1548057574-8061-7-git-send-email-qii.wang@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1548057574-8061-1-git-send-email-qii.wang@mediatek.com>
-References: <1548057574-8061-1-git-send-email-qii.wang@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Received: from mx1.redhat.com ([209.132.183.28]:49798 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729495AbfAUIA5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 03:00:57 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 44BBC87649;
+        Mon, 21 Jan 2019 08:00:56 +0000 (UTC)
+Received: from xz-x1.nay.redhat.com (dhcp-14-116.nay.redhat.com [10.66.14.116])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F0258608E1;
+        Mon, 21 Jan 2019 08:00:44 +0000 (UTC)
+From:   Peter Xu <peterx@redhat.com>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc:     Hugh Dickins <hughd@google.com>, Maya Gokhale <gokhale2@llnl.gov>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, peterx@redhat.com,
+        Martin Cracauer <cracauer@cons.org>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Shaohua Li <shli@fb.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Pavel Emelyanov <xemul@parallels.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Marty McFadden <mcfadden8@llnl.gov>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
+Subject: [PATCH RFC 24/24] userfaultfd: selftests: add write-protect test
+Date:   Mon, 21 Jan 2019 15:57:22 +0800
+Message-Id: <20190121075722.7945-25-peterx@redhat.com>
+In-Reply-To: <20190121075722.7945-1-peterx@redhat.com>
+References: <20190121075722.7945-1-peterx@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Mon, 21 Jan 2019 08:00:56 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add i2c compatible for MT8183. Compare to 2712 i2c controller, MT8183 has
-different registers, offsets, clock, and share i3c controller.
+This patch adds uffd tests for write protection.
 
-Signed-off-by: qii wang <qii.wang@mediatek.com>
+Instead of introducing new tests for it, let's simply squashing uffd-wp
+tests into existing uffd-missing test cases.  Changes are:
+
+(1) Bouncing tests
+
+  We do the write-protection in two ways during the bouncing test:
+
+  - By using UFFDIO_COPY_MODE_WP when resolving MISSING pages: then
+    we'll make sure for each bounce process every single page will be
+    at least fault twice: once for MISSING, once for WP.
+
+  - By direct call UFFDIO_WRITEPROTECT on existing faulted memories:
+    To further torture the explicit page protection procedures of
+    uffd-wp, we split each bounce procedure into two halves (in the
+    background thread): the first half will be MISSING+WP for each
+    page as explained above.  After the first half, we write protect
+    the faulted region in the background thread to make sure at least
+    half of the pages will be write protected again which is the first
+    half to test the new UFFDIO_WRITEPROTECT call.  Then we continue
+    with the 2nd half, which will contain both MISSING and WP faulting
+    tests for the 2nd half and WP-only faults from the 1st half.
+
+(2) Event/Signal test
+
+  Mostly previous tests but will do MISSING+WP for each page.  For
+  sigbus-mode test we'll need to provide standalone path to handle the
+  write protection faults.
+
+For all tests, do statistics as well for uffd-wp pages.
+
+Signed-off-by: Peter Xu <peterx@redhat.com>
 ---
- drivers/i2c/busses/i2c-mt65xx.c |  127 ++++++++++++++++++++++++++++++++++++---
- 1 file changed, 120 insertions(+), 7 deletions(-)
+ tools/testing/selftests/vm/userfaultfd.c | 154 ++++++++++++++++++-----
+ 1 file changed, 126 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-mt65xx.c b/drivers/i2c/busses/i2c-mt65xx.c
-index 428ac99..19f0770 100644
---- a/drivers/i2c/busses/i2c-mt65xx.c
-+++ b/drivers/i2c/busses/i2c-mt65xx.c
-@@ -35,17 +35,21 @@
- #include <linux/slab.h>
+diff --git a/tools/testing/selftests/vm/userfaultfd.c b/tools/testing/selftests/vm/userfaultfd.c
+index e5d12c209e09..57b5ac02080a 100644
+--- a/tools/testing/selftests/vm/userfaultfd.c
++++ b/tools/testing/selftests/vm/userfaultfd.c
+@@ -56,6 +56,7 @@
+ #include <linux/userfaultfd.h>
+ #include <setjmp.h>
+ #include <stdbool.h>
++#include <assert.h>
  
- #define I2C_RS_TRANSFER			(1 << 4)
-+#define I2C_ARB_LOST			(1 << 3)
- #define I2C_HS_NACKERR			(1 << 2)
- #define I2C_ACKERR			(1 << 1)
- #define I2C_TRANSAC_COMP		(1 << 0)
- #define I2C_TRANSAC_START		(1 << 0)
- #define I2C_RS_MUL_CNFG			(1 << 15)
- #define I2C_RS_MUL_TRIG			(1 << 14)
-+#define I2C_HS_TIME_EN			(1 << 7)
- #define I2C_DCM_DISABLE			0x0000
- #define I2C_IO_CONFIG_OPEN_DRAIN	0x0003
- #define I2C_IO_CONFIG_PUSH_PULL		0x0000
- #define I2C_SOFT_RST			0x0001
- #define I2C_FIFO_ADDR_CLR		0x0001
-+#define I2C_FIFO_ADDR_CLRH		0x0002
-+#define I2C_HFIFO_DATA			0x8208
- #define I2C_DELAY_LEN			0x0002
- #define I2C_ST_START_CON		0x8001
- #define I2C_FS_START_CON		0x1800
-@@ -76,6 +80,8 @@
- #define I2C_CONTROL_DIR_CHANGE          (0x1 << 4)
- #define I2C_CONTROL_ACKERR_DET_EN       (0x1 << 5)
- #define I2C_CONTROL_TRANSFER_LEN_CHANGE (0x1 << 6)
-+#define I2C_CONTROL_DMAACK_EN           (0x1 << 8)
-+#define I2C_CONTROL_ASYNC_MODE          (0x1 << 9)
- #define I2C_CONTROL_WRAPPER             (0x1 << 0)
+ #include "../kselftest.h"
  
- #define I2C_DRV_NAME		"i2c-mt65xx"
-@@ -130,6 +136,15 @@ enum I2C_REGS_OFFSET {
- 	OFFSET_DEBUGCTRL,
- 	OFFSET_TRANSFER_LEN_AUX,
- 	OFFSET_CLOCK_DIV,
-+	/* MT8183 only regs */
-+	OFFSET_LTIMING,
-+	OFFSET_DATA_TIMING,
-+	OFFSET_MCU_INTR,
-+	OFFSET_HW_TIMEOUT,
-+	OFFSET_HFIFO_DATA,
-+	OFFSET_HFIFO_STAT,
-+	OFFSET_MULTI_DMA,
-+	OFFSET_ROLLBACK,
+@@ -78,6 +79,8 @@ static int test_type;
+ #define ALARM_INTERVAL_SECS 10
+ static volatile bool test_uffdio_copy_eexist = true;
+ static volatile bool test_uffdio_zeropage_eexist = true;
++/* Whether to test uffd write-protection */
++static bool test_uffdio_wp = false;
+ 
+ static bool map_shared;
+ static int huge_fd;
+@@ -92,6 +95,7 @@ pthread_attr_t attr;
+ struct uffd_stats {
+ 	int cpu;
+ 	unsigned long missing_faults;
++	unsigned long wp_faults;
  };
  
- static const u16 mt_i2c_regs_v1[] = {
-@@ -159,6 +174,39 @@ enum I2C_REGS_OFFSET {
- 	[OFFSET_CLOCK_DIV] = 0x70,
- };
- 
-+static const u16 mt_i2c_regs_v2[] = {
-+	[OFFSET_DATA_PORT] = 0x0,
-+	[OFFSET_SLAVE_ADDR] = 0x4,
-+	[OFFSET_INTR_MASK] = 0x8,
-+	[OFFSET_INTR_STAT] = 0xc,
-+	[OFFSET_CONTROL] = 0x10,
-+	[OFFSET_TRANSFER_LEN] = 0x14,
-+	[OFFSET_TRANSAC_LEN] = 0x18,
-+	[OFFSET_DELAY_LEN] = 0x1c,
-+	[OFFSET_TIMING] = 0x20,
-+	[OFFSET_START] = 0x24,
-+	[OFFSET_EXT_CONF] = 0x28,
-+	[OFFSET_LTIMING] = 0x2c,
-+	[OFFSET_HS] = 0x30,
-+	[OFFSET_IO_CONFIG] = 0x34,
-+	[OFFSET_FIFO_ADDR_CLR] = 0x38,
-+	[OFFSET_DATA_TIMING] = 0x3c,
-+	[OFFSET_MCU_INTR] = 0x40,
-+	[OFFSET_TRANSFER_LEN_AUX] = 0x44,
-+	[OFFSET_CLOCK_DIV] = 0x48,
-+	[OFFSET_HW_TIMEOUT] = 0x4c,
-+	[OFFSET_SOFTRESET] = 0x50,
-+	[OFFSET_HFIFO_DATA] = 0x70,
-+	[OFFSET_DEBUGSTAT] = 0xe0,
-+	[OFFSET_DEBUGCTRL] = 0xe8,
-+	[OFFSET_FIFO_STAT] = 0xf4,
-+	[OFFSET_FIFO_THRESH] = 0xf8,
-+	[OFFSET_HFIFO_STAT] = 0xfc,
-+	[OFFSET_DCM_EN] = 0xf88,
-+	[OFFSET_MULTI_DMA] = 0xf8c,
-+	[OFFSET_ROLLBACK] = 0xf98,
-+};
-+
- struct mtk_i2c_compatible {
- 	const struct i2c_adapter_quirks *quirks;
- 	const u16 *regs;
-@@ -168,6 +216,7 @@ struct mtk_i2c_compatible {
- 	unsigned char aux_len_reg: 1;
- 	unsigned char support_33bits: 1;
- 	unsigned char timing_adjust: 1;
-+	unsigned char dma_sync: 1;
- };
- 
- struct mtk_i2c {
-@@ -181,8 +230,10 @@ struct mtk_i2c {
- 	struct clk *clk_main;		/* main clock for i2c bus */
- 	struct clk *clk_dma;		/* DMA clock for i2c via DMA */
- 	struct clk *clk_pmic;		/* PMIC clock for i2c from PMIC */
-+	struct clk *clk_arb;		/* Arbitrator clock for i2c */
- 	bool have_pmic;			/* can use i2c pins from PMIC */
- 	bool use_push_pull;		/* IO config push-pull mode */
-+	bool share_i3c;			/* share i3c IP */
- 
- 	u16 irq_stat;			/* interrupt status */
- 	unsigned int clk_src_div;
-@@ -190,6 +241,7 @@ struct mtk_i2c {
- 	enum mtk_trans_op op;
- 	u16 timing_reg;
- 	u16 high_speed_reg;
-+	u16 ltiming_reg;
- 	unsigned char auto_restart;
- 	bool ignore_restart_irq;
- 	const struct mtk_i2c_compatible *dev_comp;
-@@ -216,6 +268,7 @@ struct mtk_i2c {
- 	.aux_len_reg = 1,
- 	.support_33bits = 1,
- 	.timing_adjust = 1,
-+	.dma_sync = 0,
- };
- 
- static const struct mtk_i2c_compatible mt6577_compat = {
-@@ -227,6 +280,7 @@ struct mtk_i2c {
- 	.aux_len_reg = 0,
- 	.support_33bits = 0,
- 	.timing_adjust = 0,
-+	.dma_sync = 0,
- };
- 
- static const struct mtk_i2c_compatible mt6589_compat = {
-@@ -238,6 +292,7 @@ struct mtk_i2c {
- 	.aux_len_reg = 0,
- 	.support_33bits = 0,
- 	.timing_adjust = 0,
-+	.dma_sync = 0,
- };
- 
- static const struct mtk_i2c_compatible mt7622_compat = {
-@@ -249,6 +304,7 @@ struct mtk_i2c {
- 	.aux_len_reg = 1,
- 	.support_33bits = 0,
- 	.timing_adjust = 0,
-+	.dma_sync = 0,
- };
- 
- static const struct mtk_i2c_compatible mt8173_compat = {
-@@ -259,6 +315,18 @@ struct mtk_i2c {
- 	.aux_len_reg = 1,
- 	.support_33bits = 1,
- 	.timing_adjust = 0,
-+	.dma_sync = 0,
-+};
-+
-+static const struct mtk_i2c_compatible mt8183_compat = {
-+	.regs = mt_i2c_regs_v2,
-+	.pmic_i2c = 0,
-+	.dcm = 0,
-+	.auto_restart = 1,
-+	.aux_len_reg = 1,
-+	.support_33bits = 1,
-+	.timing_adjust = 1,
-+	.dma_sync = 1,
- };
- 
- static const struct of_device_id mtk_i2c_of_match[] = {
-@@ -267,6 +335,7 @@ struct mtk_i2c {
- 	{ .compatible = "mediatek,mt6589-i2c", .data = &mt6589_compat },
- 	{ .compatible = "mediatek,mt7622-i2c", .data = &mt7622_compat },
- 	{ .compatible = "mediatek,mt8173-i2c", .data = &mt8173_compat },
-+	{ .compatible = "mediatek,mt8183-i2c", .data = &mt8183_compat },
- 	{}
- };
- MODULE_DEVICE_TABLE(of, mtk_i2c_of_match);
-@@ -299,8 +368,18 @@ static int mtk_i2c_clock_enable(struct mtk_i2c *i2c)
- 		if (ret)
- 			goto err_pmic;
+ /* pthread_mutex_t starts at page offset 0 */
+@@ -141,9 +145,29 @@ static void uffd_stats_reset(struct uffd_stats *uffd_stats,
+ 	for (i = 0; i < n_cpus; i++) {
+ 		uffd_stats[i].cpu = i;
+ 		uffd_stats[i].missing_faults = 0;
++		uffd_stats[i].wp_faults = 0;
  	}
+ }
+ 
++static void uffd_stats_report(struct uffd_stats *stats, int n_cpus)
++{
++	int i;
++	unsigned long long miss_total = 0, wp_total = 0;
 +
-+	if (i2c->clk_arb) {
-+		ret = clk_prepare_enable(i2c->clk_arb);
-+		if (ret)
-+			goto err_arb;
++	for (i = 0; i < n_cpus; i++) {
++		miss_total += stats[i].missing_faults;
++		wp_total += stats[i].wp_faults;
 +	}
 +
- 	return 0;
- 
-+err_arb:
-+	if (i2c->have_pmic)
-+		clk_disable_unprepare(i2c->clk_pmic);
- err_pmic:
- 	clk_disable_unprepare(i2c->clk_main);
- err_main:
-@@ -311,6 +390,9 @@ static int mtk_i2c_clock_enable(struct mtk_i2c *i2c)
- 
- static void mtk_i2c_clock_disable(struct mtk_i2c *i2c)
++	printf("userfaults: %llu missing (", miss_total);
++	for (i = 0; i < n_cpus; i++)
++		printf("%lu+", stats[i].missing_faults);
++	printf("\b), %llu wp (", wp_total);
++	for (i = 0; i < n_cpus; i++)
++		printf("%lu+", stats[i].wp_faults);
++	printf("\b)\n");
++}
++
+ static int anon_release_pages(char *rel_area)
  {
-+	if (i2c->clk_arb)
-+		clk_disable_unprepare(i2c->clk_arb);
-+
- 	if (i2c->have_pmic)
- 		clk_disable_unprepare(i2c->clk_pmic);
+ 	int ret = 0;
+@@ -264,19 +288,15 @@ struct uffd_test_ops {
+ 	void (*alias_mapping)(__u64 *start, size_t len, unsigned long offset);
+ };
  
-@@ -333,11 +415,19 @@ static void mtk_i2c_init_hw(struct mtk_i2c *i2c)
- 	if (i2c->dev_comp->dcm)
- 		mtk_i2c_writew(i2c, I2C_DCM_DISABLE, OFFSET_DCM_EN);
+-#define ANON_EXPECTED_IOCTLS		((1 << _UFFDIO_WAKE) | \
+-					 (1 << _UFFDIO_COPY) | \
+-					 (1 << _UFFDIO_ZEROPAGE))
+-
+ static struct uffd_test_ops anon_uffd_test_ops = {
+-	.expected_ioctls = ANON_EXPECTED_IOCTLS,
++	.expected_ioctls = UFFD_API_RANGE_IOCTLS,
+ 	.allocate_area	= anon_allocate_area,
+ 	.release_pages	= anon_release_pages,
+ 	.alias_mapping = noop_alias_mapping,
+ };
  
--	if (i2c->dev_comp->timing_adjust)
-+	if (i2c->dev_comp->timing_adjust && i2c->share_i3c) {
-+		mtk_i2c_writew(i2c, (I2C_DEFAULT_CLK_DIV - 1) |
-+				    (I2C_DEFAULT_CLK_DIV - 1) << 8,
-+				    OFFSET_CLOCK_DIV);
-+		i2c->high_speed_reg |= I2C_HS_TIME_EN;
-+	} else {
- 		mtk_i2c_writew(i2c, I2C_DEFAULT_CLK_DIV - 1, OFFSET_CLOCK_DIV);
-+	}
- 
- 	mtk_i2c_writew(i2c, i2c->timing_reg, OFFSET_TIMING);
- 	mtk_i2c_writew(i2c, i2c->high_speed_reg, OFFSET_HS);
-+	if (i2c->dev_comp->regs == mt_i2c_regs_v2)
-+		mtk_i2c_writew(i2c, i2c->ltiming_reg, OFFSET_LTIMING);
- 
- 	/* If use i2c pin from PMIC mt6397 side, need set PATH_DIR first */
- 	if (i2c->have_pmic)
-@@ -345,6 +435,9 @@ static void mtk_i2c_init_hw(struct mtk_i2c *i2c)
- 
- 	control_reg = I2C_CONTROL_ACKERR_DET_EN |
- 		      I2C_CONTROL_CLK_EXT_EN | I2C_CONTROL_DMA_EN;
-+	if (i2c->dev_comp->dma_sync)
-+		control_reg |= I2C_CONTROL_DMAACK_EN | I2C_CONTROL_ASYNC_MODE;
-+
- 	mtk_i2c_writew(i2c, control_reg, OFFSET_CONTROL);
- 	mtk_i2c_writew(i2c, I2C_DELAY_LEN, OFFSET_DELAY_LEN);
- 
-@@ -434,6 +527,8 @@ static int mtk_i2c_set_speed(struct mtk_i2c *i2c, unsigned int parent_clk)
- 	unsigned int clk_src;
- 	unsigned int step_cnt;
- 	unsigned int sample_cnt;
-+	unsigned int l_step_cnt;
-+	unsigned int l_sample_cnt;
- 	unsigned int target_speed;
- 	int ret;
- 
-@@ -443,11 +538,11 @@ static int mtk_i2c_set_speed(struct mtk_i2c *i2c, unsigned int parent_clk)
- 	if (target_speed > MAX_FS_MODE_SPEED) {
- 		/* Set master code speed register */
- 		ret = mtk_i2c_calculate_speed(i2c, clk_src, MAX_FS_MODE_SPEED,
--					      &step_cnt, &sample_cnt);
-+					      &l_step_cnt, &l_sample_cnt);
- 		if (ret < 0)
- 			return ret;
- 
--		i2c->timing_reg = (sample_cnt << 8) | step_cnt;
-+		i2c->timing_reg = (l_sample_cnt << 8) | l_step_cnt;
- 
- 		/* Set the high speed mode register */
- 		ret = mtk_i2c_calculate_speed(i2c, clk_src, target_speed,
-@@ -457,6 +552,8 @@ static int mtk_i2c_set_speed(struct mtk_i2c *i2c, unsigned int parent_clk)
- 
- 		i2c->high_speed_reg = I2C_TIME_DEFAULT_VALUE |
- 			(sample_cnt << 12) | (step_cnt << 8);
-+		i2c->ltiming_reg = (l_sample_cnt << 6) | l_step_cnt |
-+				   (sample_cnt << 12) | (step_cnt << 9);
- 	} else {
- 		ret = mtk_i2c_calculate_speed(i2c, clk_src, target_speed,
- 					      &step_cnt, &sample_cnt);
-@@ -467,6 +564,8 @@ static int mtk_i2c_set_speed(struct mtk_i2c *i2c, unsigned int parent_clk)
- 
- 		/* Disable the high speed transaction */
- 		i2c->high_speed_reg = I2C_TIME_CLR_VALUE;
-+
-+		i2c->ltiming_reg = (sample_cnt << 6) | step_cnt;
- 	}
- 
+ static struct uffd_test_ops shmem_uffd_test_ops = {
+-	.expected_ioctls = ANON_EXPECTED_IOCTLS,
++	.expected_ioctls = UFFD_API_RANGE_IOCTLS,
+ 	.allocate_area	= shmem_allocate_area,
+ 	.release_pages	= shmem_release_pages,
+ 	.alias_mapping = noop_alias_mapping,
+@@ -300,6 +320,21 @@ static int my_bcmp(char *str1, char *str2, size_t n)
  	return 0;
-@@ -483,6 +582,7 @@ static int mtk_i2c_do_transfer(struct mtk_i2c *i2c, struct i2c_msg *msgs,
- 	u16 addr_reg;
- 	u16 start_reg;
- 	u16 control_reg;
-+	u16 fifo_clr_reg = I2C_FIFO_ADDR_CLR;
- 	u16 restart_flag = 0;
- 	u32 reg_4g_mode;
- 	u8 *dma_rd_buf = NULL;
-@@ -519,13 +619,21 @@ static int mtk_i2c_do_transfer(struct mtk_i2c *i2c, struct i2c_msg *msgs,
+ }
  
- 	/* Clear interrupt status */
- 	mtk_i2c_writew(i2c, restart_flag | I2C_HS_NACKERR | I2C_ACKERR |
--	       I2C_TRANSAC_COMP, OFFSET_INTR_STAT);
-+			    I2C_ARB_LOST | I2C_TRANSAC_COMP,
-+			    OFFSET_INTR_STAT);
++static void wp_range(int ufd, __u64 start, __u64 len, bool wp)
++{
++	struct uffdio_writeprotect prms = { 0 };
 +
-+	if (i2c->share_i3c)
-+		fifo_clr_reg |= I2C_FIFO_ADDR_CLRH;
- 
--	mtk_i2c_writew(i2c, I2C_FIFO_ADDR_CLR, OFFSET_FIFO_ADDR_CLR);
-+	mtk_i2c_writew(i2c, fifo_clr_reg, OFFSET_FIFO_ADDR_CLR);
++	/* Write protection page faults */
++	prms.range.start = start;
++	prms.range.len = len;
++	/* Undo write-protect, do wakeup after that */
++	prms.mode = wp ? UFFDIO_WRITEPROTECT_MODE_WP : 0;
 +
-+	if ((i2c->speed_hz > MAX_FS_MODE_SPEED) && i2c->share_i3c)
-+		mtk_i2c_writew(i2c, I2C_HFIFO_DATA, OFFSET_HFIFO_DATA);
++	if (ioctl(ufd, UFFDIO_WRITEPROTECT, &prms))
++		fprintf(stderr, "clear WP failed for address 0x%Lx\n",
++			start), exit(1);
++}
++
+ static void *locking_thread(void *arg)
+ {
+ 	unsigned long cpu = (unsigned long) arg;
+@@ -438,7 +473,10 @@ static int __copy_page(int ufd, unsigned long offset, bool retry)
+ 	uffdio_copy.dst = (unsigned long) area_dst + offset;
+ 	uffdio_copy.src = (unsigned long) area_src + offset;
+ 	uffdio_copy.len = page_size;
+-	uffdio_copy.mode = 0;
++	if (test_uffdio_wp)
++		uffdio_copy.mode = UFFDIO_COPY_MODE_WP;
++	else
++		uffdio_copy.mode = 0;
+ 	uffdio_copy.copy = 0;
+ 	if (ioctl(ufd, UFFDIO_COPY, &uffdio_copy)) {
+ 		/* real retval in ufdio_copy.copy */
+@@ -495,15 +533,21 @@ static void uffd_handle_page_fault(struct uffd_msg *msg,
+ 		fprintf(stderr, "unexpected msg event %u\n",
+ 			msg->event), exit(1);
  
- 	/* Enable interrupt */
- 	mtk_i2c_writew(i2c, restart_flag | I2C_HS_NACKERR | I2C_ACKERR |
--	       I2C_TRANSAC_COMP, OFFSET_INTR_MASK);
-+			    I2C_ARB_LOST | I2C_TRANSAC_COMP,
-+			    OFFSET_INTR_MASK);
+-	if (bounces & BOUNCE_VERIFY &&
+-	    msg->arg.pagefault.flags & UFFD_PAGEFAULT_FLAG_WRITE)
+-		fprintf(stderr, "unexpected write fault\n"), exit(1);
++	if (msg->arg.pagefault.flags & UFFD_PAGEFAULT_FLAG_WP) {
++		wp_range(uffd, msg->arg.pagefault.address, page_size, false);
++		stats->wp_faults++;
++	} else {
++		/* Missing page faults */
++		if (bounces & BOUNCE_VERIFY &&
++		    msg->arg.pagefault.flags & UFFD_PAGEFAULT_FLAG_WRITE)
++			fprintf(stderr, "unexpected write fault\n"), exit(1);
  
- 	/* Set transfer and transaction len */
- 	if (i2c->op == I2C_MASTER_WRRD) {
-@@ -659,7 +767,7 @@ static int mtk_i2c_do_transfer(struct mtk_i2c *i2c, struct i2c_msg *msgs,
+-	offset = (char *)(unsigned long)msg->arg.pagefault.address - area_dst;
+-	offset &= ~(page_size-1);
++		offset = (char *)(unsigned long)msg->arg.pagefault.address - area_dst;
++		offset &= ~(page_size-1);
  
- 	/* Clear interrupt mask */
- 	mtk_i2c_writew(i2c, ~(restart_flag | I2C_HS_NACKERR | I2C_ACKERR |
--	       I2C_TRANSAC_COMP), OFFSET_INTR_MASK);
-+			    I2C_ARB_LOST | I2C_TRANSAC_COMP), OFFSET_INTR_MASK);
+-	if (copy_page(uffd, offset))
+-		stats->missing_faults++;
++		if (copy_page(uffd, offset))
++			stats->missing_faults++;
++	}
+ }
  
- 	if (i2c->op == I2C_MASTER_WR) {
- 		dma_unmap_single(i2c->dev, wpaddr,
-@@ -817,6 +925,7 @@ static int mtk_i2c_parse_dt(struct device_node *np, struct mtk_i2c *i2c)
- 	if (i2c->clk_src_div == 0)
- 		return -EINVAL;
+ static void *uffd_poll_thread(void *arg)
+@@ -589,11 +633,30 @@ static void *uffd_read_thread(void *arg)
+ static void *background_thread(void *arg)
+ {
+ 	unsigned long cpu = (unsigned long) arg;
+-	unsigned long page_nr;
++	unsigned long page_nr, start_nr, mid_nr, end_nr;
  
-+	i2c->share_i3c = of_property_read_bool(np, "mediatek,share-i3c");
- 	i2c->have_pmic = of_property_read_bool(np, "mediatek,have-pmic");
- 	i2c->use_push_pull =
- 		of_property_read_bool(np, "mediatek,use-push-pull");
-@@ -884,6 +993,10 @@ static int mtk_i2c_probe(struct platform_device *pdev)
- 		return PTR_ERR(i2c->clk_dma);
+-	for (page_nr = cpu * nr_pages_per_cpu;
+-	     page_nr < (cpu+1) * nr_pages_per_cpu;
+-	     page_nr++)
++	start_nr = cpu * nr_pages_per_cpu;
++	end_nr = (cpu+1) * nr_pages_per_cpu;
++	mid_nr = (start_nr + end_nr) / 2;
++
++	/* Copy the first half of the pages */
++	for (page_nr = start_nr; page_nr < mid_nr; page_nr++)
++		copy_page_retry(uffd, page_nr * page_size);
++
++	/*
++	 * If we need to test uffd-wp, set it up now.  Then we'll have
++	 * at least the first half of the pages mapped already which
++	 * can be write-protected for testing
++	 */
++	if (test_uffdio_wp)
++		wp_range(uffd, (unsigned long)area_dst + start_nr * page_size,
++			nr_pages_per_cpu * page_size, true);
++
++	/*
++	 * Continue the 2nd half of the page copying, handling write
++	 * protection faults if any
++	 */
++	for (page_nr = mid_nr; page_nr < end_nr; page_nr++)
+ 		copy_page_retry(uffd, page_nr * page_size);
+ 
+ 	return NULL;
+@@ -755,17 +818,31 @@ static int faulting_process(int signal_test)
  	}
  
-+	i2c->clk_arb = devm_clk_get(&pdev->dev, "arb");
-+	if (IS_ERR(i2c->clk_arb))
-+		i2c->clk_arb = NULL;
+ 	for (nr = 0; nr < split_nr_pages; nr++) {
++		int steps = 1;
++		unsigned long offset = nr * page_size;
 +
- 	clk = i2c->clk_main;
- 	if (i2c->have_pmic) {
- 		i2c->clk_pmic = devm_clk_get(&pdev->dev, "pmic");
+ 		if (signal_test) {
+ 			if (sigsetjmp(*sigbuf, 1) != 0) {
+-				if (nr == lastnr) {
++				if (steps == 1 && nr == lastnr) {
+ 					fprintf(stderr, "Signal repeated\n");
+ 					return 1;
+ 				}
+ 
+ 				lastnr = nr;
+ 				if (signal_test == 1) {
+-					if (copy_page(uffd, nr * page_size))
+-						signalled++;
++					if (steps == 1) {
++						/* This is a MISSING request */
++						steps++;
++						if (copy_page(uffd, offset))
++							signalled++;
++					} else {
++						/* This is a WP request */
++						assert(steps == 2);
++						wp_range(uffd,
++							 (__u64)area_dst +
++							 offset,
++							 page_size, false);
++					}
+ 				} else {
+ 					signalled++;
+ 					continue;
+@@ -778,8 +855,13 @@ static int faulting_process(int signal_test)
+ 			fprintf(stderr,
+ 				"nr %lu memory corruption %Lu %Lu\n",
+ 				nr, count,
+-				count_verify[nr]), exit(1);
+-		}
++				count_verify[nr]);
++	        }
++		/*
++		 * Trigger write protection if there is by writting
++		 * the same value back.
++		 */
++		*area_count(area_dst, nr) = count;
+ 	}
+ 
+ 	if (signal_test)
+@@ -801,6 +883,11 @@ static int faulting_process(int signal_test)
+ 				nr, count,
+ 				count_verify[nr]), exit(1);
+ 		}
++		/*
++		 * Trigger write protection if there is by writting
++		 * the same value back.
++		 */
++		*area_count(area_dst, nr) = count;
+ 	}
+ 
+ 	if (uffd_test_ops->release_pages(area_dst))
+@@ -949,6 +1036,8 @@ static int userfaultfd_events_test(void)
+ 	uffdio_register.range.start = (unsigned long) area_dst;
+ 	uffdio_register.range.len = nr_pages * page_size;
+ 	uffdio_register.mode = UFFDIO_REGISTER_MODE_MISSING;
++	if (test_uffdio_wp)
++		uffdio_register.mode |= UFFDIO_REGISTER_MODE_WP;
+ 	if (ioctl(uffd, UFFDIO_REGISTER, &uffdio_register))
+ 		fprintf(stderr, "register failure\n"), exit(1);
+ 
+@@ -979,7 +1068,8 @@ static int userfaultfd_events_test(void)
+ 		return 1;
+ 
+ 	close(uffd);
+-	printf("userfaults: %ld\n", stats.missing_faults);
++
++	uffd_stats_report(&stats, 1);
+ 
+ 	return stats.missing_faults != nr_pages;
+ }
+@@ -1009,6 +1099,8 @@ static int userfaultfd_sig_test(void)
+ 	uffdio_register.range.start = (unsigned long) area_dst;
+ 	uffdio_register.range.len = nr_pages * page_size;
+ 	uffdio_register.mode = UFFDIO_REGISTER_MODE_MISSING;
++	if (test_uffdio_wp)
++		uffdio_register.mode |= UFFDIO_REGISTER_MODE_WP;
+ 	if (ioctl(uffd, UFFDIO_REGISTER, &uffdio_register))
+ 		fprintf(stderr, "register failure\n"), exit(1);
+ 
+@@ -1141,6 +1233,8 @@ static int userfaultfd_stress(void)
+ 		uffdio_register.range.start = (unsigned long) area_dst;
+ 		uffdio_register.range.len = nr_pages * page_size;
+ 		uffdio_register.mode = UFFDIO_REGISTER_MODE_MISSING;
++		if (test_uffdio_wp)
++			uffdio_register.mode |= UFFDIO_REGISTER_MODE_WP;
+ 		if (ioctl(uffd, UFFDIO_REGISTER, &uffdio_register)) {
+ 			fprintf(stderr, "register failure\n");
+ 			return 1;
+@@ -1195,6 +1289,11 @@ static int userfaultfd_stress(void)
+ 		if (stress(uffd_stats))
+ 			return 1;
+ 
++		/* Clear all the write protections if there is any */
++		if (test_uffdio_wp)
++			wp_range(uffd, (unsigned long)area_dst,
++				 nr_pages * page_size, false);
++
+ 		/* unregister */
+ 		if (ioctl(uffd, UFFDIO_UNREGISTER, &uffdio_register.range)) {
+ 			fprintf(stderr, "unregister failure\n");
+@@ -1233,10 +1332,7 @@ static int userfaultfd_stress(void)
+ 		area_src_alias = area_dst_alias;
+ 		area_dst_alias = tmp_area;
+ 
+-		printf("userfaults:");
+-		for (cpu = 0; cpu < nr_cpus; cpu++)
+-			printf(" %lu", uffd_stats[cpu].missing_faults);
+-		printf("\n");
++		uffd_stats_report(uffd_stats, nr_cpus);
+ 	}
+ 
+ 	if (err)
+@@ -1276,6 +1372,8 @@ static void set_test_type(const char *type)
+ 	if (!strcmp(type, "anon")) {
+ 		test_type = TEST_ANON;
+ 		uffd_test_ops = &anon_uffd_test_ops;
++		/* Only enable write-protect test for anonymous test */
++		test_uffdio_wp = true;
+ 	} else if (!strcmp(type, "hugetlb")) {
+ 		test_type = TEST_HUGETLB;
+ 		uffd_test_ops = &hugetlb_uffd_test_ops;
 -- 
-1.7.9.5
+2.17.1
 
