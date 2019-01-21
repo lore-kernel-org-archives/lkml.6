@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66F06C2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:50:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EE17C2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:50:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29EF32063F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:50:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14B0120879
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:50:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078609;
-	bh=goEdTK1jOzgAjU86lNPAZ90KzQkMKGm9/vkyCm+5YNE=;
+	s=default; t=1548078612;
+	bh=mnwKMLIhAkidMjnIn6SwuNM503zATsxKDchncSzlcTc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wzPD55GjLwlHfkGAKPcDbfqn9IOKqb7prcb0HVc0fdClMsZsA6mhtfsup9lNojoI4
-	 aJRYPDr5Rwsc2hImVE/SYpOFA2tySLwvGr0I/7LKXnk7KLpKO0P/Yn+GMULy2lVDne
-	 yeCAHvGoibVWqDye07/obT8RtcvdbjAZZ954zPsE=
+	b=vGrTUTOYjO2G6KeSO2TCKkrsH4nwwmbGrUXVt36BlslpFuJFBpjnptFajK9M98RWt
+	 bIrilBNduj05yOqldD0kAXt72a556IY4CjaBd3NIh+jUeHXu1YDg0w+0EfQ1DXYce3
+	 zKhkB1npEpHdTRK20M0u9WJJd2T087IkTWZH9pB4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730466AbfAUNuH (ORCPT
+        id S1730486AbfAUNuK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:50:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60840 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:50:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60894 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729119AbfAUNuF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:50:05 -0500
+        id S1729119AbfAUNuI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:50:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A2FE62063F;
-        Mon, 21 Jan 2019 13:50:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5087220879;
+        Mon, 21 Jan 2019 13:50:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078605;
-        bh=goEdTK1jOzgAjU86lNPAZ90KzQkMKGm9/vkyCm+5YNE=;
+        s=default; t=1548078607;
+        bh=mnwKMLIhAkidMjnIn6SwuNM503zATsxKDchncSzlcTc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MuFJfvU3kvY3oAvBRlRS2RkmsDUnQA+qqTi9aSOgybB4wRyyHj82fwyP0hJZ9Izyh
-         NqRM8k1SU1uWRWWLvPV3x7zwD27tyO8qUbbn8kk8paOfD2BHpd0DR8Fl01bqGbujGK
-         1actNrerYLgH/QC0PK3W5Je+/U1Lg2/6oIUE7d44=
+        b=YCGNZObIJyg4jbZWAlhVJsJQQG4KrYYuKEnbAzFw4inGKjZK57/eogGAisrdIpqFt
+         KHUn9gNpZIKWqd0OXcJmVqnAZULeBxZklWTQtxrcYrOnoMGwU/55hLxaCyoXnlQmT5
+         +m9x1OdkMGJ4L1TSXqnbyUChAi00x4SAVxExgBes=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Julia Lawall <Julia.Lawall@lip6.fr>,
-        Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH 4.20 053/111] drm/rockchip: add missing of_node_put
-Date:   Mon, 21 Jan 2019 14:42:47 +0100
-Message-Id: <20190121122501.753575312@linuxfoundation.org>
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH 4.20 054/111] OF: properties: add missing of_node_put
+Date:   Mon, 21 Jan 2019 14:42:48 +0100
+Message-Id: <20190121122501.854040535@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122455.819406896@linuxfoundation.org>
 References: <20190121122455.819406896@linuxfoundation.org>
@@ -67,56 +67,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-commit a17ce9960b3628b9f546c454741a1cad551d5695 upstream.
+commit 28b170e88bc0c7509e6724717c15cb4b5686026e upstream.
 
-The device node iterators perform an of_node_get on each iteration, so a
-jump out of the loop requires an of_node_put.
+Add an of_node_put when the result of of_graph_get_remote_port_parent is
+not available.
 
-The semantic patch that fixes this problem is as follows
+The semantic match that finds this problem is as follows
 (http://coccinelle.lip6.fr):
 
 // <smpl>
+@r exists@
+local idexpression e;
+expression x;
 @@
-expression root,e;
-local idexpression child;
-iterator name for_each_child_of_node;
-@@
-
- for_each_child_of_node(root, child) {
-   ... when != of_node_put(child)
-       when != e = child
-+  of_node_put(child);
-?  break;
-   ...
-}
-... when != child
+e = of_graph_get_remote_port_parent(...);
+... when != x = e
+    when != true e == NULL
+    when != of_node_put(e)
+    when != of_fwnode_handle(e)
+(
+return e;
+|
+*return ...;
+)
 // </smpl>
 
-Fixes: 1f0f01515172 ("drm/rockchip: Add support for Rockchip Soc RGB output interface")
-Cc: stable@vger.kernel.org
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-[added fixes and cc-stable]
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Link: https://patchwork.freedesktop.org/patch/msgid/1547369264-24831-4-git-send-email-Julia.Lawall@lip6.fr
+Cc: stable@vger.kernel.org
+Signed-off-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/rockchip/rockchip_rgb.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/of/property.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/gpu/drm/rockchip/rockchip_rgb.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_rgb.c
-@@ -113,8 +113,10 @@ struct rockchip_rgb *rockchip_rgb_init(s
- 		child_count++;
- 		ret = drm_of_find_panel_or_bridge(dev->of_node, 0, endpoint_id,
- 						  &panel, &bridge);
--		if (!ret)
-+		if (!ret) {
-+			of_node_put(endpoint);
- 			break;
-+		}
+--- a/drivers/of/property.c
++++ b/drivers/of/property.c
+@@ -806,6 +806,7 @@ struct device_node *of_graph_get_remote_
+ 
+ 	if (!of_device_is_available(remote)) {
+ 		pr_debug("not available for remote node\n");
++		of_node_put(remote);
+ 		return NULL;
  	}
  
- 	of_node_put(port);
 
 
