@@ -2,150 +2,108 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DATE_IN_FUTURE_06_12,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E254C7112F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:02:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3C7BC7113B
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:05:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 455842085A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:02:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 821612085A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:05:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KKP0cstr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728012AbfAULCb (ORCPT
+        id S1727801AbfAULFC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 06:02:31 -0500
-Received: from mxhk.zte.com.cn ([63.217.80.70]:22818 "EHLO mxhk.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727430AbfAULCL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 06:02:11 -0500
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id CF07BE943CEBFC2B60F4;
-        Mon, 21 Jan 2019 19:02:09 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id x0LB1wgZ011604;
-        Mon, 21 Jan 2019 19:01:58 +0800 (GMT-8)
-        (envelope-from peng.hao2@zte.com.cn)
-Received: from localhost.localdomain.localdomain ([10.74.120.59])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019012119020641-23367784 ;
-          Mon, 21 Jan 2019 19:02:06 +0800 
-From:   Peng Hao <peng.hao2@zte.com.cn>
-To:     gregkh@linuxfoundation.org, arnd@arndb.de,
-        andy.shevchenko@gmail.com
-Cc:     linux-kernel@vger.kernel.org, Peng Hao <peng.hao2@zte.com.cn>
-Subject: [PATCH 6/6]  misc/pvpanic : add pvpanic pci driver
-Date:   Tue, 22 Jan 2019 03:25:11 +0800
-Message-Id: <1548098711-52497-6-git-send-email-peng.hao2@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1548098711-52497-1-git-send-email-peng.hao2@zte.com.cn>
-References: <1548098711-52497-1-git-send-email-peng.hao2@zte.com.cn>
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2019-01-21 19:02:06,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2019-01-21 19:01:58,
-        Serialize complete at 2019-01-21 19:01:58
-X-MAIL: mse01.zte.com.cn x0LB1wgZ011604
+        Mon, 21 Jan 2019 06:05:02 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:35413 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727561AbfAULFC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 06:05:02 -0500
+Received: by mail-pl1-f196.google.com with SMTP id p8so9690644plo.2;
+        Mon, 21 Jan 2019 03:05:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=WCHOqXUPBxcc/njV9Zup/96kkXc/malf/rb5mlqrS08=;
+        b=KKP0cstrsJIy4gQxNjAJV0UWLPfi253tyz1NvHMG8gxPh2sG92uFiTlcfQaHwvrs3e
+         eJKPZSweDN/mamQbDlz+6y+2yLXlGIWWtoIrTMmqA7vYWFho1sctx7cVDvEl9XpEk1eO
+         2lRgf9VT3zY15vdBi5ail4IjS2Hb0KJ/UiNFLtv0kL1dDGXMay5Wyp5yI5q1vObzZuCw
+         moY04ox4C7LxWr3++sY0Q+WV3Da8xxQMw5CFi1suDXhz/sFIoA9PoXwqE0qc0GXTFo3m
+         ELuoFeVNBFnxXrBJZ2ar9XhF9jeGVHlGtmbmS1Dls85s5AOhwDOT55abnuQW4KuVywFB
+         HT+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=WCHOqXUPBxcc/njV9Zup/96kkXc/malf/rb5mlqrS08=;
+        b=OsSjXcSWtvy9FqZQ5FzMup6dvSS/CbXPVJBma70UORlwrHyTYDPYkEJ1++/U/zsqsG
+         TrQr9J9pYwThIztAM0wbBUA9VRvklg0Recv1LKk40eduQmFt3dUSEWxjam0yCB8vo5vk
+         NimMw08Qq93DDapkFITsOnSU5lO8+WjJAeJB11+C3JulEfJtIj+NAcQcTk0+RySK1vkY
+         77RQpoVAO3+nTJ39WJk+rOLlY29pgCEWTLLQO+BK910vhvmUmYzLJOxtKl+wKqQBkK5D
+         zcl4GXeeIQZulGwxYnvmur3U1Za5SFw0NdvXg3ibM8nPjGB6gAnLi/U87Mrt2mebC+hd
+         Xm3Q==
+X-Gm-Message-State: AJcUukd0y+keCueyHd7qsizuz/xp1RCue3bu8Fgnmee2PYOKhJDQzHXB
+        Ztqus5f3OiS4je2FO/74TJr43HIaWc0=
+X-Google-Smtp-Source: ALg8bN6ro1jSb1ZU35OeJJd1Ufpx6lJRLrXWd7fTJliBmbHEjheB3KeOXopsttWb32WbULcY+85gIw==
+X-Received: by 2002:a17:902:4225:: with SMTP id g34mr30342276pld.152.1548068701883;
+        Mon, 21 Jan 2019 03:05:01 -0800 (PST)
+Received: from bhar12345-VirtualBox ([103.110.42.36])
+        by smtp.gmail.com with ESMTPSA id c9sm24543958pfc.92.2019.01.21.03.05.00
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 21 Jan 2019 03:05:01 -0800 (PST)
+Date:   Mon, 21 Jan 2019 16:34:55 +0530
+From:   Bharath Vedartham <linux.bhar@gmail.com>
+To:     stern@rowland.harvard.edu, gregkh@linuxfoundation.org
+Cc:     linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] USB: storage: karma: add whitespace after declarations
+Message-ID: <20190121110455.GA22710@bhar.linux>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add pvpanic pci driver to pvpanic driver framework.
+fixed the checkpatch.pl warning:
 
-Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+WARNING: Missing a blank line after declarations
+
+Added space after declarations to conform to coding style.
+
+Signed-off-by: Bharath Vedartham <linux.bhar@gmail.com>
 ---
- drivers/misc/pvpanic/Kconfig       |  5 ++++
- drivers/misc/pvpanic/Makefile      |  1 +
- drivers/misc/pvpanic/pvpanic-pci.c | 56 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 62 insertions(+)
- create mode 100644 drivers/misc/pvpanic/pvpanic-pci.c
+ drivers/usb/storage/karma.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/misc/pvpanic/Kconfig b/drivers/misc/pvpanic/Kconfig
-index 47f8709..46b6e05 100644
---- a/drivers/misc/pvpanic/Kconfig
-+++ b/drivers/misc/pvpanic/Kconfig
-@@ -17,4 +17,9 @@ config PVPANIC_OF
- 	tristate "pvpanic mmio driver"
- 	depends on OF
+diff --git a/drivers/usb/storage/karma.c b/drivers/usb/storage/karma.c
+index edcf2be..395cf8f 100644
+--- a/drivers/usb/storage/karma.c
++++ b/drivers/usb/storage/karma.c
+@@ -167,6 +167,7 @@ static int rio_karma_transport(struct scsi_cmnd *srb, struct us_data *us)
+ static void rio_karma_destructor(void *extra)
+ {
+ 	struct karma_data *data = (struct karma_data *) extra;
++
+ 	kfree(data->recv);
+ }
  
-+config PVPANIC_PCI
-+	tristate "pvpanic pci driver"
-+	depends on PCI
-+	default PVPANIC
+@@ -174,6 +175,7 @@ static int rio_karma_init(struct us_data *us)
+ {
+ 	int ret = 0;
+ 	struct karma_data *data = kzalloc(sizeof(struct karma_data), GFP_NOIO);
 +
- endif
-diff --git a/drivers/misc/pvpanic/Makefile b/drivers/misc/pvpanic/Makefile
-index 63ef0db..7c71f85 100644
---- a/drivers/misc/pvpanic/Makefile
-+++ b/drivers/misc/pvpanic/Makefile
-@@ -5,3 +5,4 @@
- obj-$(CONFIG_PVPANIC)            += pvpanic.o
- obj-$(CONFIG_PVPANIC_ACPI)	 += pvpanic-acpi.o
- obj-$(CONFIG_PVPANIC_OF)	 += pvpanic-of.o
-+obj-$(CONFIG_PVPANIC_PCI)	 += pvpanic-pci.o
-diff --git a/drivers/misc/pvpanic/pvpanic-pci.c b/drivers/misc/pvpanic/pvpanic-pci.c
-new file mode 100644
-index 0000000..b4f453b
---- /dev/null
-+++ b/drivers/misc/pvpanic/pvpanic-pci.c
-@@ -0,0 +1,56 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ *  pvpanic acpi driver.
-+ *
-+ *  Copyright (C) 2019 ZTE Ltd.
-+ *  Author: Peng Hao <peng.hao2@zte.com.cn>
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/pci.h>
-+#include <linux/types.h>
-+#include "pvpanic.h"
-+
-+#define PCI_VENDOR_ID_REDHAT             0x1b36
-+#define PCI_DEVICE_ID_REDHAT_PVPANIC     0x0101
-+
-+static const struct pci_device_id pvpanic_pci_id_tbl[]  = {
-+	{ PCI_DEVICE(PCI_VENDOR_ID_REDHAT, PCI_DEVICE_ID_REDHAT_PVPANIC),},
-+	{}
-+};
-+
-+static int pvpanic_pci_probe(struct pci_dev *pdev,
-+			     const struct pci_device_id *ent)
-+{
-+	int ret;
-+	struct resource res;
-+
-+	ret = pcim_enable_device(pdev);
-+	if (ret < 0)
-+		return ret;
-+
-+	memset(&res, 0, sizeof(res));
-+	res.start = pci_resource_start(pdev, 0);
-+	res.end = pci_resource_end(pdev, 0);
-+	res.flags = IORESOURCE_MEM;
-+	ret = pvpanic_add_device(&pdev->dev, &res);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static void pvpanic_pci_remove(struct pci_dev *pdev)
-+{
-+	pvpanic_remove_device();
-+}
-+
-+static struct pci_driver pvpanic_pci_driver = {
-+	.name =         "pvpanic-pci",
-+	.id_table =     pvpanic_pci_id_tbl,
-+	.probe =        pvpanic_pci_probe,
-+	.remove =       pvpanic_pci_remove,
-+};
-+
-+module_pci_driver(pvpanic_pci_driver);
+ 	if (!data)
+ 		goto out;
+ 
 -- 
-1.8.3.1
+2.7.4
 
