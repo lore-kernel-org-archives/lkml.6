@@ -2,139 +2,158 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D49B4C2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:09:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41019C2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:10:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE32020861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:09:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FBE520879
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:10:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548079800;
+	bh=3MxHe1Q5IJYd/UJnLvEyHU634wW25egGN0tUtudwVvs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=fo3ZvHNJ4GHAu30NuKPGVft4C7eCKDlGM8SvgnmJ4d9KTC88rrFIOs67GZ74Gr7in
+	 GQ+Mn/+PwCj0KhP8SShmXLOiV05Y8rxV5kQIqOXmUGHWOMcw+XwD/MI07AjhAdoopJ
+	 TDn9LD4fmYzZW2mXleioATE6xfeW/ywNcGPmipPQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731293AbfAUOJs (ORCPT
+        id S1731596AbfAUNyv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:09:48 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:38214 "EHLO mx1.redhat.com"
+        Mon, 21 Jan 2019 08:54:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39070 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731624AbfAUNy6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:54:58 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1731561AbfAUNyp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:54:45 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0B5E4D4E6F;
-        Mon, 21 Jan 2019 13:54:57 +0000 (UTC)
-Received: from redhat.com (ovpn-122-5.rdu2.redhat.com [10.10.122.5])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 249552CA75;
-        Mon, 21 Jan 2019 13:54:49 +0000 (UTC)
-Date:   Mon, 21 Jan 2019 08:54:46 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Peter Xu <peterx@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Hugh Dickins <hughd@google.com>,
-        Maya Gokhale <gokhale2@llnl.gov>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Martin Cracauer <cracauer@cons.org>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Shaohua Li <shli@fb.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Pavel Emelyanov <xemul@parallels.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Marty McFadden <mcfadden8@llnl.gov>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH RFC 13/24] mm: merge parameters for change_protection()
-Message-ID: <20190121135444.GC3344@redhat.com>
-References: <20190121075722.7945-1-peterx@redhat.com>
- <20190121075722.7945-14-peterx@redhat.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E60220879;
+        Mon, 21 Jan 2019 13:54:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548078884;
+        bh=3MxHe1Q5IJYd/UJnLvEyHU634wW25egGN0tUtudwVvs=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=RqPXQZX7etnsSQZGFPrA+6ojs3A5w3w30xXFyNPZhqO4ucm/KwsRAYf8pDtCaTV84
+         MYgTv4IIRCuhXdYYwz8T7aaNddPwz5f8ZLXiS0jxhOh4GgXDX9WUdBvccA5JyKtajM
+         RHELJ8I2YsX+5DB8YQ86qc1LLa7Cg2AB1aZ0oJPw=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Aymen Sghaier <aymen.sghaier@nxp.com>,
+        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.9 18/51] crypto: caam - fix zero-length buffer DMA mapping
+Date:   Mon, 21 Jan 2019 14:44:14 +0100
+Message-Id: <20190121122455.215207761@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190121122453.700446926@linuxfoundation.org>
+References: <20190121122453.700446926@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190121075722.7945-14-peterx@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Mon, 21 Jan 2019 13:54:57 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 03:57:11PM +0800, Peter Xu wrote:
-> change_protection() was used by either the NUMA or mprotect() code,
-> there's one parameter for each of the callers (dirty_accountable and
-> prot_numa).  Further, these parameters are passed along the calls:
-> 
->   - change_protection_range()
->   - change_p4d_range()
->   - change_pud_range()
->   - change_pmd_range()
->   - ...
-> 
-> Now we introduce a flag for change_protect() and all these helpers to
-> replace these parameters.  Then we can avoid passing multiple parameters
-> multiple times along the way.
-> 
-> More importantly, it'll greatly simplify the work if we want to
-> introduce any new parameters to change_protection().  In the follow up
-> patches, a new parameter for userfaultfd write protection will be
-> introduced.
-> 
-> No functional change at all.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-There is one change i could spot and also something that looks wrong.
+------------------
 
-> 
-> Signed-off-by: Peter Xu <peterx@redhat.com>
-> ---
+From: Aymen Sghaier <aymen.sghaier@nxp.com>
 
-[...]
+commit 04e6d25c5bb244c1a37eb9fe0b604cc11a04e8c5 upstream.
 
-> @@ -428,8 +431,7 @@ mprotect_fixup(struct vm_area_struct *vma, struct vm_area_struct **pprev,
->  	dirty_accountable = vma_wants_writenotify(vma, vma->vm_page_prot);
->  	vma_set_page_prot(vma);
->  
-> -	change_protection(vma, start, end, vma->vm_page_prot,
-> -			  dirty_accountable, 0);
-> +	change_protection(vma, start, end, vma->vm_page_prot, MM_CP_DIRTY_ACCT);
+Recent changes - probably DMA API related (generic and/or arm64-specific) -
+exposed a case where driver maps a zero-length buffer:
+ahash_init()->ahash_update()->ahash_final() with a zero-length string to
+hash
 
-Here you unconditionaly see the DIRTY_ACCT flag instead it should be
-something like:
+kernel BUG at kernel/dma/swiotlb.c:475!
+Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 2 PID: 1823 Comm: cryptomgr_test Not tainted 4.20.0-rc1-00108-g00c9fe37a7f2 #1
+Hardware name: LS1046A RDB Board (DT)
+pstate: 80000005 (Nzcv daif -PAN -UAO)
+pc : swiotlb_tbl_map_single+0x170/0x2b8
+lr : swiotlb_map_page+0x134/0x1f8
+sp : ffff00000f79b8f0
+x29: ffff00000f79b8f0 x28: 0000000000000000
+x27: ffff0000093d0000 x26: 0000000000000000
+x25: 00000000001f3ffe x24: 0000000000200000
+x23: 0000000000000000 x22: 00000009f2c538c0
+x21: ffff800970aeb410 x20: 0000000000000001
+x19: ffff800970aeb410 x18: 0000000000000007
+x17: 000000000000000e x16: 0000000000000001
+x15: 0000000000000019 x14: c32cb8218a167fe8
+x13: ffffffff00000000 x12: ffff80097fdae348
+x11: 0000800976bca000 x10: 0000000000000010
+x9 : 0000000000000000 x8 : ffff0000091fd6c8
+x7 : 0000000000000000 x6 : 00000009f2c538bf
+x5 : 0000000000000000 x4 : 0000000000000001
+x3 : 0000000000000000 x2 : 00000009f2c538c0
+x1 : 00000000f9fff000 x0 : 0000000000000000
+Process cryptomgr_test (pid: 1823, stack limit = 0x(____ptrval____))
+Call trace:
+ swiotlb_tbl_map_single+0x170/0x2b8
+ swiotlb_map_page+0x134/0x1f8
+ ahash_final_no_ctx+0xc4/0x6cc
+ ahash_final+0x10/0x18
+ crypto_ahash_op+0x30/0x84
+ crypto_ahash_final+0x14/0x1c
+ __test_hash+0x574/0xe0c
+ test_hash+0x28/0x80
+ __alg_test_hash+0x84/0xd0
+ alg_test_hash+0x78/0x144
+ alg_test.part.30+0x12c/0x2b4
+ alg_test+0x3c/0x68
+ cryptomgr_test+0x44/0x4c
+ kthread+0xfc/0x128
+ ret_from_fork+0x10/0x18
+Code: d34bfc18 2a1a03f7 1a9f8694 35fff89a (d4210000)
 
-    s/dirty_accountable/cp_flags
-    if (vma_wants_writenotify(vma, vma->vm_page_prot))
-        cp_flags = MM_CP_DIRTY_ACCT;
-    else
-        cp_flags = 0;
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Aymen Sghaier <aymen.sghaier@nxp.com>
+Signed-off-by: Horia GeantÄƒ <horia.geanta@nxp.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-    change_protection(vma, start, end, vma->vm_page_prot, cp_flags);
+---
+ drivers/crypto/caam/caamhash.c |   15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-Or any equivalent construct.
+--- a/drivers/crypto/caam/caamhash.c
++++ b/drivers/crypto/caam/caamhash.c
+@@ -1232,13 +1232,16 @@ static int ahash_final_no_ctx(struct aha
+ 
+ 	desc = edesc->hw_desc;
+ 
+-	state->buf_dma = dma_map_single(jrdev, buf, buflen, DMA_TO_DEVICE);
+-	if (dma_mapping_error(jrdev, state->buf_dma)) {
+-		dev_err(jrdev, "unable to map src\n");
+-		goto unmap;
+-	}
++	if (buflen) {
++		state->buf_dma = dma_map_single(jrdev, buf, buflen,
++						DMA_TO_DEVICE);
++		if (dma_mapping_error(jrdev, state->buf_dma)) {
++			dev_err(jrdev, "unable to map src\n");
++			goto unmap;
++		}
+ 
+-	append_seq_in_ptr(desc, state->buf_dma, buflen, 0);
++		append_seq_in_ptr(desc, state->buf_dma, buflen, 0);
++	}
+ 
+ 	edesc->dst_dma = map_seq_out_ptr_result(desc, jrdev, req->result,
+ 						digestsize);
 
->  	/*
->  	 * Private VM_LOCKED VMA becoming writable: trigger COW to avoid major
-> diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-> index 005291b9b62f..23d4bbd117ee 100644
-> --- a/mm/userfaultfd.c
-> +++ b/mm/userfaultfd.c
-> @@ -674,7 +674,7 @@ int mwriteprotect_range(struct mm_struct *dst_mm, unsigned long start,
->  		newprot = vm_get_page_prot(dst_vma->vm_flags);
->  
->  	change_protection(dst_vma, start, start + len, newprot,
-> -				!enable_wp, 0);
-> +			  enable_wp ? 0 : MM_CP_DIRTY_ACCT);
 
-We had a discussion in the past on that, i have not look at other
-patches but this seems wrong to me. MM_CP_DIRTY_ACCT is an
-optimization to keep a pte with write permission if it is dirty
-while my understanding is that you want to set write flag for pte
-unconditionaly.
-
-So maybe this patch that adds flag should be earlier in the serie
-so that you can add a flag to do that before introducing the UFD
-mwriteprotect_range() function.
-
-Cheers,
-Jérôme
