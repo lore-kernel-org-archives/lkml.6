@@ -2,140 +2,545 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C656C282DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:37:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 431A1C282DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:37:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C50F62085A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:37:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="CMgVxL5z"
+	by mail.kernel.org (Postfix) with ESMTP id 07EAD2085A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:37:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727770AbfAUJh0 (ORCPT
+        id S1727795AbfAUJhw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 04:37:26 -0500
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:38620 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726133AbfAUJh0 (ORCPT
+        Mon, 21 Jan 2019 04:37:52 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55732 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726133AbfAUJhv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 04:37:26 -0500
-X-IronPort-AV: E=Sophos;i="5.56,502,1539673200"; 
-   d="scan'208";a="22846784"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 21 Jan 2019 02:37:25 -0700
-Received: from NAM05-BY2-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.49) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Mon, 21 Jan 2019 02:37:25 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=b5D5mI93SZIikoPsQBmgC0+wDvabakb3w8/+y1cH8nU=;
- b=CMgVxL5zqtXqDE39XxLBlffNdXXrh8zQfZ1Fo9wlJxVtpdtuDLQmA8T4hhWEW08EAcfPnavFtWu1AitKsHVFnep+kp55uXAWO3P2UbaU78pqnFBVSo02yKLLYWvhHSvKItw+l1grUXwQ8PId8CDWFKPy5aUrqQsSRwe6TJeMk8o=
-Received: from BN6PR11MB1842.namprd11.prod.outlook.com (10.175.99.146) by
- BN6PR11MB0017.namprd11.prod.outlook.com (10.161.155.30) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1537.31; Mon, 21 Jan 2019 09:37:24 +0000
-Received: from BN6PR11MB1842.namprd11.prod.outlook.com
- ([fe80::79d8:b977:b90a:76fa]) by BN6PR11MB1842.namprd11.prod.outlook.com
- ([fe80::79d8:b977:b90a:76fa%4]) with mapi id 15.20.1537.031; Mon, 21 Jan 2019
- 09:37:24 +0000
-From:   <Tudor.Ambarus@microchip.com>
-To:     <purna.chandra.mandal@intel.com>, <f.blogs@napier.co.nz>,
-        <boris.brezillon@bootlin.com>
-CC:     <linux-kernel@vger.kernel.org>, <marek.vasut@gmail.com>,
-        <computersforpeace@gmail.com>, <richard@nod.at>,
-        <linux-mtd@lists.infradead.org>, <dwmw2@infradead.org>,
-        <vigneshr@ti.com>
-Subject: Re: [PATCH] mtd: spi-nor: cadence-quadspi: write upto 8-bytes data in
- STIG mode
-Thread-Topic: [PATCH] mtd: spi-nor: cadence-quadspi: write upto 8-bytes data
- in STIG mode
-Thread-Index: AQHUk1NWYhjGe5LUyEiH2UgF0if0A6W5sxuA
-Date:   Mon, 21 Jan 2019 09:37:24 +0000
-Message-ID: <c627314d-fdf6-7e69-7c54-03a513f563fc@microchip.com>
-References: <20181214021516.43609-1-purna.chandra.mandal@intel.com>
-In-Reply-To: <20181214021516.43609-1-purna.chandra.mandal@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1PR0502CA0028.eurprd05.prod.outlook.com
- (2603:10a6:803:1::41) To BN6PR11MB1842.namprd11.prod.outlook.com
- (2603:10b6:404:103::18)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Tudor.Ambarus@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [94.177.32.154]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN6PR11MB0017;6:1FnJ3r3ybtRJPFNNPYRzxPm8JIUHzLjfZKsjV+ZYPgfaVHu4ZSBMyUrMwo1ALXlugkokN9v0+3fH3cLi4IFm5JYkWlINOMgzaDmWVYooO8uY/JSWyZZcAtwauMxCEXQerBoXKyWcLfhY/jChgZ7hMgtFlMTlAGW+0h6sGqwPSOngQ8jPoQUnoLLJTtmAP9YB54GB3uTguFXjyVFJ41RlrNkynmxk7mVGBH+YWlDEhFfb2NEcv48hzte9zkrKLRHm0lg/aRieyxZIKBpXaMJeRWfuwIYyBMA/3aNwyrCVYB+DuK1zgsXiM/voorJ7LYaUywFuAdKxnvY0r/0DQPtXXy+TZNNhhWAmuDsNapDkOsuWw9BXBrXYTunDOrUJ9qbY3HL5RjBJqn9xNn2WXkPERoNl4PoqBDgX41Hj6mz2JZQTDBXuonGjEIPDtnBtIfZgCL5WbU6A5h4u5OT+z12azg==;5:gG8fjpK4YVnaV6I6RUgBjX9g2nRrpSZuJiXRvDh59yTaAowfUQGUd0EnLQzcNWS0ixDJsNfzrGdyBMs7U6865+Ioeh0UR1tuN5NIfkPa89r4POczvqkU21fx9Er8OBAOUoCcJo8WQ/Wnwdnh4xkR/TsYHRhUXKwJovkgq+It6xUvgAOJ1qeqKeXdEDzuiC+y/WOGlgF6Y/xFhgCMA70okg==;7:zKuMT937JpMExSLFVWe5bxcW3rLDDn1ApGecF+eY7/N2IrcCCy+kXivgwocoOobUYXRCoMwA1Dpve+KYcZep3EOK96HdS8nZZregEzNtT4XYDpavbRRPXp/FhAcFhZirGRoFwTi7s+EXm0rar/dq7g==
-x-ms-office365-filtering-correlation-id: 4487b4f6-eef3-49c7-3468-08d67f840c60
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:BN6PR11MB0017;
-x-ms-traffictypediagnostic: BN6PR11MB0017:
-x-microsoft-antispam-prvs: <BN6PR11MB0017DF1B48D1FC1A78BBBC63F09F0@BN6PR11MB0017.namprd11.prod.outlook.com>
-x-forefront-prvs: 0924C6A0D5
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(39860400002)(346002)(366004)(136003)(396003)(199004)(189003)(54906003)(31696002)(7416002)(36756003)(106356001)(99286004)(110136005)(86362001)(53936002)(316002)(97736004)(31686004)(72206003)(478600001)(6486002)(105586002)(8936002)(6512007)(229853002)(8676002)(2906002)(14454004)(6436002)(66066001)(68736007)(81156014)(81166006)(386003)(6506007)(102836004)(3846002)(76176011)(39060400002)(186003)(7736002)(305945005)(11346002)(26005)(2616005)(476003)(446003)(71190400001)(6246003)(4326008)(14444005)(71200400001)(6116002)(25786009)(52116002)(256004)(53546011)(486006);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR11MB0017;H:BN6PR11MB1842.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: DD0ZFCQ1CpITeeHdz9MfrKOio76LiVk36OBwTpQxEHaPhIP3Z1BtirvCDshx/SQb5pUn8V9kqamXRGaT5WhwNVo87b/EomfsZVL4iRTxriYQQeTeij6Dxd5b2rdfPMbv5FkkBTS1qJC+c11uknJuFjZy2gBRnM8nOoDMQb9JzS5qoXKhGGDKI9qTzF5VdSMJAVIPsSSZl7jZ1jT7jenN8Oa2vZh3ETLTKzDdF11+h6J73Ss/MXTingxdaUQd47hpH1pLTslFt7DN+Fg8PqWoCJ9jBBvnAyaR5+O9h6U16LgDapLhlnzbdJTcu6SSXr4fM1/kF6L8vVcnJKWshkfySwlMTMybnZeB0usxPeIgMGOWu9hgjLza88/trTdbtGHf4QbCbipZqsXFhh0gXlp12ST0ls/WASLKW8rYvZu47bg=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <6B1B585C65BC6A40853F1315AD1E0952@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Mon, 21 Jan 2019 04:37:51 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0L9YT8H092561
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 04:37:49 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2q58y4er4b-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 04:37:49 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Mon, 21 Jan 2019 09:37:47 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 21 Jan 2019 09:37:44 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0L9bhn457409720
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 21 Jan 2019 09:37:43 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0718C52059;
+        Mon, 21 Jan 2019 09:37:43 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.206.247])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id 8D0F752065;
+        Mon, 21 Jan 2019 09:37:42 +0000 (GMT)
+Date:   Mon, 21 Jan 2019 11:37:40 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Add kv_to_page()
+References: <20190121003944.GA26866@bombadil.infradead.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4487b4f6-eef3-49c7-3468-08d67f840c60
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jan 2019 09:37:21.9429
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR11MB0017
-X-OriginatorOrg: microchip.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190121003944.GA26866@bombadil.infradead.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19012109-0028-0000-0000-0000033BEC02
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19012109-0029-0000-0000-000023F92096
+Message-Id: <20190121093739.GA19725@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-21_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901210077
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIFB1cm5hLA0KDQpPbiAxMi8xNC8yMDE4IDA0OjE1IEFNLCBQdXJuYSBDaGFuZHJhIE1hbmRh
-bCB3cm90ZToNCj4gY2FkZW5jZS1xdWFkc3BpIGNvbnRyb2xsZXIgYWxsb3dzIHVwdG8gZWlnaHQg
-Ynl0ZXMgb2YgZGF0YSB0byBiZSB0cmFuc2ZlcnJlZA0KPiBpbiBzb2Z0d2FyZSBUcmlnZ2VyZWQg
-SW5zdHJ1Y3Rpb24gZ2VuZXJhdG9yIChTVElHKSBtb2RlIG9mIG9wZXJhdGlvbi4gTG93ZXINCj4g
-NCBieXRlcyBhcmUgd3JpdHRlbiB0aHJvdWdoIHdyaXRlZGF0YWxvd2VyIGFuZCB1cHBlciA0IGJ5
-dGVzIGJ5DQo+IHdyaXRlZGF0YXVwcGVyIHJlZ2lzdGVyLg0KDQpJcyB0aGlzIHN1cHBvcnRlZCBi
-eSBhbGwgdmVyc2lvbnMgb2YgdGhlIElQPw0KDQo+IA0KPiBUaGlzIHBhdGNoIGFsbG93cyBhbGwg
-dGhlIDggYnl0ZXMgdG8gYmUgd3JpdHRlbi4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IFB1cm5hIENo
-YW5kcmEgTWFuZGFsIDxwdXJuYS5jaGFuZHJhLm1hbmRhbEBpbnRlbC5jb20+DQo+IC0tLQ0KPiAN
-Cj4gIGRyaXZlcnMvbXRkL3NwaS1ub3IvY2FkZW5jZS1xdWFkc3BpLmMgfCA5ICsrKysrKystLQ0K
-PiAgMSBmaWxlIGNoYW5nZWQsIDcgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkNCj4gDQo+
-IGRpZmYgLS1naXQgYS9kcml2ZXJzL210ZC9zcGktbm9yL2NhZGVuY2UtcXVhZHNwaS5jIGIvZHJp
-dmVycy9tdGQvc3BpLW5vci9jYWRlbmNlLXF1YWRzcGkuYw0KPiBpbmRleCAwNGNlZGQzYTJiZjYu
-Ljk5MDkzNDM4N2ZlYSAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9tdGQvc3BpLW5vci9jYWRlbmNl
-LXF1YWRzcGkuYw0KPiArKysgYi9kcml2ZXJzL210ZC9zcGktbm9yL2NhZGVuY2UtcXVhZHNwaS5j
-DQo+IEBAIC00MjAsNyArNDIwLDcgQEAgc3RhdGljIGludCBjcXNwaV9jb21tYW5kX3dyaXRlKHN0
-cnVjdCBzcGlfbm9yICpub3IsIGNvbnN0IHU4IG9wY29kZSwNCj4gIAl1bnNpZ25lZCBpbnQgZGF0
-YTsNCg0KSSBrbm93IHRoYXQgdGhpcyBpcyBub3QgeW91ciBjaGFuZ2UsIGJ1dCBkYXRhIHNob3Vs
-ZCBiZSB1MzIgYW5kIG5vdCB1bnNpZ25lZA0KaW50LiByZWcgdG9vIC4uLiBwcm9iYWJseSBvbmUg
-c2hvdWxkIHN1Ym1pdCBhIHBhdGNoIHRvIGNoYW5nZSB0aGlzLCBJIHNlZSB0aGF0DQp0aGUgc2Ft
-ZSBlcnJvciBpcyBkb25lIGluIGNxc3BpX2NvbW1hbmRfcmVhZCgpLg0KDQo+ICAJaW50IHJldDsN
-Cj4gIA0KPiAtCWlmIChuX3R4ID4gNCB8fCAobl90eCAmJiAhdHhidWYpKSB7DQo+ICsJaWYgKG5f
-dHggPiBDUVNQSV9TVElHX0RBVEFfTEVOX01BWCB8fCAobl90eCAmJiAhdHhidWYpKSB7DQo+ICAJ
-CWRldl9lcnIobm9yLT5kZXYsDQo+ICAJCQkiSW52YWxpZCBpbnB1dCBhcmd1bWVudCwgY21kbGVu
-ICVkIHR4YnVmIDB4JXBcbiIsDQo+ICAJCQluX3R4LCB0eGJ1Zik7DQo+IEBAIC00MzUsOCArNDM1
-LDEzIEBAIHN0YXRpYyBpbnQgY3FzcGlfY29tbWFuZF93cml0ZShzdHJ1Y3Qgc3BpX25vciAqbm9y
-LCBjb25zdCB1OCBvcGNvZGUsDQo+ICAJCWRhdGEgPSAwOz4gIAkJbWVtY3B5KCZkYXRhLCB0eGJ1
-Ziwgbl90eCk7DQoNCllvdSBzaG91bGQgbGltaXQgd2hhdCBpcyBjb3BpZWQgaW4gZGF0YSwgc2lt
-aWxhciB0byB3aGF0IGlzIGRvbmUgaW4NCmNxc3BpX2NvbW1hbmRfcmVhZCgpOg0KDQp3cml0ZV9s
-ZW4gPSAobl90eCA+IDQpID8gNCA6IG5fdHg7DQptZW1jcHkoJmRhdGEsIHR4YnVmLCB3cml0ZV9s
-ZW4pOw0KdHhidWYgKz0gd3JpdGVfbGVuOw0KDQoNCg0KPiAgCQl3cml0ZWwoZGF0YSwgcmVnX2Jh
-c2UgKyBDUVNQSV9SRUdfQ01EV1JJVEVEQVRBTE9XRVIpOw0KPiAtCX0NCj4gIA0KPiArCQlpZiAo
-bl90eCA+IDQpIHsNCj4gKwkJCWRhdGEgPSAwOw0KYW5kIHRoZW46DQp3cml0ZV9sZW4gPSBuX3R4
-IC0gNDsNCm1lbWNweSgmZGF0YSwgdHhidWYsIHdyaXRlX2xlbik7DQoNCkNoZWVycywNCnRhDQoN
-Cj4gKwkJCW1lbWNweSgmZGF0YSwgdHhidWYgKyA0LCBuX3R4IC0gNCk7DQo+ICsJCQl3cml0ZWwo
-ZGF0YSwgcmVnX2Jhc2UgKyBDUVNQSV9SRUdfQ01EV1JJVEVEQVRBVVBQRVIpOw0KPiArCQl9DQo+
-ICsJfQ0KPiAgCXJldCA9IGNxc3BpX2V4ZWNfZmxhc2hfY21kKGNxc3BpLCByZWcpOw0KPiAgCXJl
-dHVybiByZXQ7DQo+ICB9DQo+IA0K
+On Sun, Jan 20, 2019 at 04:39:44PM -0800, Matthew Wilcox wrote:
+> 
+> We currently have 12 places in the kernel which call either
+> vmalloc_to_page() or virt_to_page() or even kmap_to_page() depending on
+> the type of memory passed to them.  This is clearly useful functionality
+> we should provide in the kernel core so add kv_to_page() and convert
+> these users.
+> 
+> Signed-off-by: Matthew Wilcox <willy@infradead.org>
+> 
+> ---
+>  drivers/fpga/fpga-mgr.c                  |    5 +----
+>  drivers/gpu/drm/ttm/ttm_page_alloc_dma.c |    5 +----
+>  drivers/md/bcache/util.c                 |    5 +----
+>  drivers/md/dm-writecache.c               |   17 ++---------------
+>  drivers/misc/mic/scif/scif_rma.c         |   26 ++++----------------------
+>  drivers/spi/spi.c                        |    5 +----
+>  drivers/uio/uio.c                        |    5 +----
+>  drivers/virt/vboxguest/vboxguest_utils.c |   10 +---------
+>  fs/xfs/xfs_buf.c                         |   13 +------------
+>  include/linux/mm.h                       |    2 ++
+>  mm/util.c                                |   12 ++++++++++++
+>  net/9p/trans_virtio.c                    |    5 +----
+>  net/ceph/crypto.c                        |    6 +-----
+>  net/packet/af_packet.c                   |   31 ++++++++++++-------------------
+>  14 files changed, 41 insertions(+), 106 deletions(-)
+> 
+> diff --git a/drivers/fpga/fpga-mgr.c b/drivers/fpga/fpga-mgr.c
+> index c3866816456a..a39b2461a3d1 100644
+> --- a/drivers/fpga/fpga-mgr.c
+> +++ b/drivers/fpga/fpga-mgr.c
+> @@ -275,10 +275,7 @@ static int fpga_mgr_buf_load(struct fpga_manager *mgr,
+> 
+>  	p = buf - offset_in_page(buf);
+>  	for (index = 0; index < nr_pages; index++) {
+> -		if (is_vmalloc_addr(p))
+> -			pages[index] = vmalloc_to_page(p);
+> -		else
+> -			pages[index] = kmap_to_page((void *)p);
+> +		pages[index] = kv_to_page(p);
+>  		if (!pages[index]) {
+>  			kfree(pages);
+>  			return -EFAULT;
+> diff --git a/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c b/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
+> index d594f7520b7b..46326de4d9fe 100644
+> --- a/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
+> +++ b/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
+> @@ -308,10 +308,7 @@ static struct dma_page *__ttm_dma_alloc_page(struct dma_pool *pool)
+>  	vaddr = dma_alloc_attrs(pool->dev, pool->size, &d_page->dma,
+>  				pool->gfp_flags, attrs);
+>  	if (vaddr) {
+> -		if (is_vmalloc_addr(vaddr))
+> -			d_page->p = vmalloc_to_page(vaddr);
+> -		else
+> -			d_page->p = virt_to_page(vaddr);
+> +		d_page->p = kv_to_page(vaddr);
+>  		d_page->vaddr = (unsigned long)vaddr;
+>  		if (pool->type & IS_HUGE)
+>  			d_page->vaddr |= VADDR_FLAG_HUGE_POOL;
+> diff --git a/drivers/md/bcache/util.c b/drivers/md/bcache/util.c
+> index 20eddeac1531..2609ba9f27b6 100644
+> --- a/drivers/md/bcache/util.c
+> +++ b/drivers/md/bcache/util.c
+> @@ -244,10 +244,7 @@ void bch_bio_map(struct bio *bio, void *base)
+>  start:		bv->bv_len	= min_t(size_t, PAGE_SIZE - bv->bv_offset,
+>  					size);
+>  		if (base) {
+> -			bv->bv_page = is_vmalloc_addr(base)
+> -				? vmalloc_to_page(base)
+> -				: virt_to_page(base);
+> -
+> +			bv->bv_page = kv_to_page(base);
+>  			base += bv->bv_len;
+>  		}
+> 
+> diff --git a/drivers/md/dm-writecache.c b/drivers/md/dm-writecache.c
+> index 2b8cee35e4d5..50ae919d66b9 100644
+> --- a/drivers/md/dm-writecache.c
+> +++ b/drivers/md/dm-writecache.c
+> @@ -318,19 +318,6 @@ static void persistent_memory_release(struct dm_writecache *wc)
+>  		vunmap(wc->memory_map - ((size_t)wc->start_sector << SECTOR_SHIFT));
+>  }
+> 
+> -static struct page *persistent_memory_page(void *addr)
+> -{
+> -	if (is_vmalloc_addr(addr))
+> -		return vmalloc_to_page(addr);
+> -	else
+> -		return virt_to_page(addr);
+> -}
+> -
+> -static unsigned persistent_memory_page_offset(void *addr)
+> -{
+> -	return (unsigned long)addr & (PAGE_SIZE - 1);
+> -}
+> -
+>  static void persistent_memory_flush_cache(void *ptr, size_t size)
+>  {
+>  	if (is_vmalloc_addr(ptr))
+> @@ -1439,8 +1426,8 @@ static bool wc_add_block(struct writeback_struct *wb, struct wc_entry *e, gfp_t
+>  	void *address = memory_data(wc, e);
+> 
+>  	persistent_memory_flush_cache(address, block_size);
+> -	return bio_add_page(&wb->bio, persistent_memory_page(address),
+> -			    block_size, persistent_memory_page_offset(address)) != 0;
+> +	return bio_add_page(&wb->bio, kv_to_page(address), block_size,
+> +			offset_in_page(address)) != 0;
+
+This would be less eye hurting with 
+
+	struct page *page = kv_to_page(address);
+	unsigned offset = offset_in_page(address);
+
+defined.
+
+>  }
+> 
+>  struct writeback_list {
+> diff --git a/drivers/misc/mic/scif/scif_rma.c b/drivers/misc/mic/scif/scif_rma.c
+> index 749321eb91ae..ee38b346985c 100644
+> --- a/drivers/misc/mic/scif/scif_rma.c
+> +++ b/drivers/misc/mic/scif/scif_rma.c
+> @@ -370,7 +370,6 @@ static int scif_create_remote_lookup(struct scif_dev *remote_dev,
+>  {
+>  	int i, j, err = 0;
+>  	int nr_pages = window->nr_pages;
+> -	bool vmalloc_dma_phys, vmalloc_num_pages;
+> 
+>  	might_sleep();
+>  	/* Map window */
+> @@ -403,23 +402,14 @@ static int scif_create_remote_lookup(struct scif_dev *remote_dev,
+>  		goto error_window;
+>  	}
+> 
+> -	vmalloc_dma_phys = is_vmalloc_addr(&window->dma_addr[0]);
+> -	vmalloc_num_pages = is_vmalloc_addr(&window->num_pages[0]);
+> -
+>  	/* Now map each of the pages containing physical addresses */
+>  	for (i = 0, j = 0; i < nr_pages; i += SCIF_NR_ADDR_IN_PAGE, j++) {
+>  		err = scif_map_page(&window->dma_addr_lookup.lookup[j],
+> -				    vmalloc_dma_phys ?
+> -				    vmalloc_to_page(&window->dma_addr[i]) :
+> -				    virt_to_page(&window->dma_addr[i]),
+> -				    remote_dev);
+> +				kv_to_page(&window->dma_addr[i]), remote_dev);
+>  		if (err)
+>  			goto error_window;
+>  		err = scif_map_page(&window->num_pages_lookup.lookup[j],
+> -				    vmalloc_num_pages ?
+> -				    vmalloc_to_page(&window->num_pages[i]) :
+> -				    virt_to_page(&window->num_pages[i]),
+> -				    remote_dev);
+> +				kv_to_page(&window->num_pages[i]), remote_dev);
+
+I'd add a temporary variable here.
+
+>  		if (err)
+>  			goto error_window;
+>  	}
+> @@ -1327,7 +1317,6 @@ int __scif_pin_pages(void *addr, size_t len, int *out_prot,
+>  {
+>  	struct scif_pinned_pages *pinned_pages;
+>  	int nr_pages, err = 0, i;
+> -	bool vmalloc_addr = false;
+>  	bool try_upgrade = false;
+>  	int prot = *out_prot;
+>  	int ulimit = 0;
+> @@ -1358,16 +1347,9 @@ int __scif_pin_pages(void *addr, size_t len, int *out_prot,
+>  		return -ENOMEM;
+> 
+>  	if (map_flags & SCIF_MAP_KERNEL) {
+> -		if (is_vmalloc_addr(addr))
+> -			vmalloc_addr = true;
+> -
+>  		for (i = 0; i < nr_pages; i++) {
+> -			if (vmalloc_addr)
+> -				pinned_pages->pages[i] =
+> -					vmalloc_to_page(addr + (i * PAGE_SIZE));
+> -			else
+> -				pinned_pages->pages[i] =
+> -					virt_to_page(addr + (i * PAGE_SIZE));
+> +			pinned_pages->pages[i] =
+> +				kv_to_page(addr + (i * PAGE_SIZE));
+>  		}
+>  		pinned_pages->nr_pages = nr_pages;
+>  		pinned_pages->map_flags = SCIF_MAP_KERNEL;
+> diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+> index 9a7def7c3237..1382cc18e7db 100644
+> --- a/drivers/spi/spi.c
+> +++ b/drivers/spi/spi.c
+> @@ -833,10 +833,7 @@ int spi_map_buf(struct spi_controller *ctlr, struct device *dev,
+>  			min = min_t(size_t, desc_len,
+>  				    min_t(size_t, len,
+>  					  PAGE_SIZE - offset_in_page(buf)));
+> -			if (vmalloced_buf)
+> -				vm_page = vmalloc_to_page(buf);
+> -			else
+> -				vm_page = kmap_to_page(buf);
+> +			vm_page = kv_to_page(buf);
+>  			if (!vm_page) {
+>  				sg_free_table(sgt);
+>  				return -ENOMEM;
+> diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c
+> index 131342280b46..6de5ffa506c0 100644
+> --- a/drivers/uio/uio.c
+> +++ b/drivers/uio/uio.c
+> @@ -692,10 +692,7 @@ static vm_fault_t uio_vma_fault(struct vm_fault *vmf)
+>  	offset = (vmf->pgoff - mi) << PAGE_SHIFT;
+> 
+>  	addr = (void *)(unsigned long)idev->info->mem[mi].addr + offset;
+> -	if (idev->info->mem[mi].memtype == UIO_MEM_LOGICAL)
+> -		page = virt_to_page(addr);
+> -	else
+> -		page = vmalloc_to_page(addr);
+> +	page = kv_to_page(addr);
+>  	get_page(page);
+>  	vmf->page = page;
+> 
+> diff --git a/drivers/virt/vboxguest/vboxguest_utils.c b/drivers/virt/vboxguest/vboxguest_utils.c
+> index bf4474214b4d..4999b17210c9 100644
+> --- a/drivers/virt/vboxguest/vboxguest_utils.c
+> +++ b/drivers/virt/vboxguest/vboxguest_utils.c
+> @@ -326,8 +326,6 @@ static void hgcm_call_init_linaddr(struct vmmdev_hgcm_call *call,
+>  	enum vmmdev_hgcm_function_parameter_type type, u32 *off_extra)
+>  {
+>  	struct vmmdev_hgcm_pagelist *dst_pg_lst;
+> -	struct page *page;
+> -	bool is_vmalloc;
+>  	u32 i, page_count;
+> 
+>  	dst_parm->type = type;
+> @@ -340,7 +338,6 @@ static void hgcm_call_init_linaddr(struct vmmdev_hgcm_call *call,
+> 
+>  	dst_pg_lst = (void *)call + *off_extra;
+>  	page_count = hgcm_call_buf_size_in_pages(buf, len);
+> -	is_vmalloc = is_vmalloc_addr(buf);
+> 
+>  	dst_parm->type = VMMDEV_HGCM_PARM_TYPE_PAGELIST;
+>  	dst_parm->u.page_list.size = len;
+> @@ -350,12 +347,7 @@ static void hgcm_call_init_linaddr(struct vmmdev_hgcm_call *call,
+>  	dst_pg_lst->page_count = page_count;
+> 
+>  	for (i = 0; i < page_count; i++) {
+> -		if (is_vmalloc)
+> -			page = vmalloc_to_page(buf);
+> -		else
+> -			page = virt_to_page(buf);
+> -
+> -		dst_pg_lst->pages[i] = page_to_phys(page);
+> +		dst_pg_lst->pages[i] = page_to_phys(kv_to_page(buf));
+>  		buf += PAGE_SIZE;
+>  	}
+> 
+> diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
+> index b21ea2ba768d..b84ecd2a012d 100644
+> --- a/fs/xfs/xfs_buf.c
+> +++ b/fs/xfs/xfs_buf.c
+> @@ -922,17 +922,6 @@ xfs_buf_set_empty(
+>  	bp->b_maps[0].bm_len = bp->b_length;
+>  }
+> 
+> -static inline struct page *
+> -mem_to_page(
+> -	void			*addr)
+> -{
+> -	if ((!is_vmalloc_addr(addr))) {
+> -		return virt_to_page(addr);
+> -	} else {
+> -		return vmalloc_to_page(addr);
+> -	}
+> -}
+> -
+>  int
+>  xfs_buf_associate_memory(
+>  	xfs_buf_t		*bp,
+> @@ -965,7 +954,7 @@ xfs_buf_associate_memory(
+>  	bp->b_offset = offset;
+> 
+>  	for (i = 0; i < bp->b_page_count; i++) {
+> -		bp->b_pages[i] = mem_to_page((void *)pageaddr);
+> +		bp->b_pages[i] = kv_to_page((void *)pageaddr);
+>  		pageaddr += PAGE_SIZE;
+>  	}
+> 
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index c6a5aabc7f85..5056fe66f259 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -691,6 +691,8 @@ static inline struct page *virt_to_head_page(const void *x)
+>  	return compound_head(page);
+>  }
+> 
+> +struct page *kv_to_page(const void *addr);
+> +
+>  void __put_page(struct page *page);
+> 
+>  void put_pages_list(struct list_head *pages);
+> diff --git a/mm/util.c b/mm/util.c
+> index 4df23d64aac7..a7ddfbe04a15 100644
+> --- a/mm/util.c
+> +++ b/mm/util.c
+> @@ -446,6 +446,18 @@ void kvfree(const void *addr)
+>  }
+>  EXPORT_SYMBOL(kvfree);
+> 
+> +/**
+> + * kv_to_page() - Return the struct page for a virtual address
+> + * @addr: Virtual address
+
+I know adding 'Return:' here is redundant, but without it there will be
+warning in 'make V=1 htmldocs'.
+
+> + */
+> +struct page *kv_to_page(const void *addr)
+> +{
+> +	if (is_vmalloc_addr(addr))
+> +		return vmalloc_to_page(addr);
+> +	return kmap_to_page((void *)addr);
+> +}
+> +EXPORT_SYMBOL(kv_to_page);
+> +
+>  static inline void *__page_rmapping(struct page *page)
+>  {
+>  	unsigned long mapping;
+> diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
+> index b1d39cabf125..2afdf6f3418b 100644
+> --- a/net/9p/trans_virtio.c
+> +++ b/net/9p/trans_virtio.c
+> @@ -377,10 +377,7 @@ static int p9_get_mapped_pages(struct virtio_chan *chan,
+>  		*need_drop = 0;
+>  		p -= (*offs = offset_in_page(p));
+>  		for (index = 0; index < nr_pages; index++) {
+> -			if (is_vmalloc_addr(p))
+> -				(*pages)[index] = vmalloc_to_page(p);
+> -			else
+> -				(*pages)[index] = kmap_to_page(p);
+> +			(*pages)[index] = kv_to_page(p);
+>  			p += PAGE_SIZE;
+>  		}
+>  		return len;
+> diff --git a/net/ceph/crypto.c b/net/ceph/crypto.c
+> index 5d6724cee38f..4e13e88dd38c 100644
+> --- a/net/ceph/crypto.c
+> +++ b/net/ceph/crypto.c
+> @@ -191,11 +191,7 @@ static int setup_sgtable(struct sg_table *sgt, struct scatterlist *prealloc_sg,
+>  		struct page *page;
+>  		unsigned int len = min(chunk_len - off, buf_len);
+> 
+> -		if (is_vmalloc)
+> -			page = vmalloc_to_page(buf);
+> -		else
+> -			page = virt_to_page(buf);
+> -
+> +		page = kv_to_page(buf);
+>  		sg_set_page(sg, page, len, off);
+> 
+>  		off = 0;
+> diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+> index a74650e98f42..c87ea1c09882 100644
+> --- a/net/packet/af_packet.c
+> +++ b/net/packet/af_packet.c
+> @@ -359,13 +359,6 @@ static void unregister_prot_hook(struct sock *sk, bool sync)
+>  		__unregister_prot_hook(sk, sync);
+>  }
+> 
+> -static inline struct page * __pure pgv_to_page(void *addr)
+> -{
+> -	if (is_vmalloc_addr(addr))
+> -		return vmalloc_to_page(addr);
+> -	return virt_to_page(addr);
+> -}
+> -
+>  static void __packet_set_status(struct packet_sock *po, void *frame, int status)
+>  {
+>  	union tpacket_uhdr h;
+> @@ -374,15 +367,15 @@ static void __packet_set_status(struct packet_sock *po, void *frame, int status)
+>  	switch (po->tp_version) {
+>  	case TPACKET_V1:
+>  		h.h1->tp_status = status;
+> -		flush_dcache_page(pgv_to_page(&h.h1->tp_status));
+> +		flush_dcache_page(kv_to_page(&h.h1->tp_status));
+>  		break;
+>  	case TPACKET_V2:
+>  		h.h2->tp_status = status;
+> -		flush_dcache_page(pgv_to_page(&h.h2->tp_status));
+> +		flush_dcache_page(kv_to_page(&h.h2->tp_status));
+>  		break;
+>  	case TPACKET_V3:
+>  		h.h3->tp_status = status;
+> -		flush_dcache_page(pgv_to_page(&h.h3->tp_status));
+> +		flush_dcache_page(kv_to_page(&h.h3->tp_status));
+>  		break;
+>  	default:
+>  		WARN(1, "TPACKET version not supported.\n");
+> @@ -401,13 +394,13 @@ static int __packet_get_status(struct packet_sock *po, void *frame)
+>  	h.raw = frame;
+>  	switch (po->tp_version) {
+>  	case TPACKET_V1:
+> -		flush_dcache_page(pgv_to_page(&h.h1->tp_status));
+> +		flush_dcache_page(kv_to_page(&h.h1->tp_status));
+>  		return h.h1->tp_status;
+>  	case TPACKET_V2:
+> -		flush_dcache_page(pgv_to_page(&h.h2->tp_status));
+> +		flush_dcache_page(kv_to_page(&h.h2->tp_status));
+>  		return h.h2->tp_status;
+>  	case TPACKET_V3:
+> -		flush_dcache_page(pgv_to_page(&h.h3->tp_status));
+> +		flush_dcache_page(kv_to_page(&h.h3->tp_status));
+>  		return h.h3->tp_status;
+>  	default:
+>  		WARN(1, "TPACKET version not supported.\n");
+> @@ -462,7 +455,7 @@ static __u32 __packet_set_timestamp(struct packet_sock *po, void *frame,
+>  	}
+> 
+>  	/* one flush is safe, as both fields always lie on the same cacheline */
+> -	flush_dcache_page(pgv_to_page(&h.h1->tp_sec));
+> +	flush_dcache_page(kv_to_page(&h.h1->tp_sec));
+>  	smp_wmb();
+> 
+>  	return ts_status;
+> @@ -728,7 +721,7 @@ static void prb_flush_block(struct tpacket_kbdq_core *pkc1,
+> 
+>  	end = (u8 *)PAGE_ALIGN((unsigned long)pkc1->pkblk_end);
+>  	for (; start < end; start += PAGE_SIZE)
+> -		flush_dcache_page(pgv_to_page(start));
+> +		flush_dcache_page(kv_to_page(start));
+> 
+>  	smp_wmb();
+>  #endif
+> @@ -741,7 +734,7 @@ static void prb_flush_block(struct tpacket_kbdq_core *pkc1,
+> 
+>  #if ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE == 1
+>  	start = (u8 *)pbd1;
+> -	flush_dcache_page(pgv_to_page(start));
+> +	flush_dcache_page(kv_to_page(start));
+> 
+>  	smp_wmb();
+>  #endif
+> @@ -2352,7 +2345,7 @@ static int tpacket_rcv(struct sk_buff *skb, struct net_device *dev,
+>  					macoff + snaplen);
+> 
+>  		for (start = h.raw; start < end; start += PAGE_SIZE)
+> -			flush_dcache_page(pgv_to_page(start));
+> +			flush_dcache_page(kv_to_page(start));
+>  	}
+>  	smp_wmb();
+>  #endif
+> @@ -2508,7 +2501,7 @@ static int tpacket_fill_skb(struct packet_sock *po, struct sk_buff *skb,
+>  			return -EFAULT;
+>  		}
+> 
+> -		page = pgv_to_page(data);
+> +		page = kv_to_page(data);
+>  		data += len;
+>  		flush_dcache_page(page);
+>  		get_page(page);
+> @@ -4423,7 +4416,7 @@ static int packet_mmap(struct file *file, struct socket *sock,
+>  			int pg_num;
+> 
+>  			for (pg_num = 0; pg_num < rb->pg_vec_pages; pg_num++) {
+> -				page = pgv_to_page(kaddr);
+> +				page = kv_to_page(kaddr);
+>  				err = vm_insert_page(vma, start, page);
+>  				if (unlikely(err))
+>  					goto out;
+> 
+
+-- 
+Sincerely yours,
+Mike.
+
