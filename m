@@ -7,46 +7,49 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC38AC2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:50:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B28EDC2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:50:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B997220879
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:50:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8330F2063F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:50:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078624;
-	bh=hyXqKx7g0AZxMhbu5m9cyNRjFasu+C8dDe6dQLa8CjM=;
+	s=default; t=1548078627;
+	bh=r1FLOFQhRI/aygtqGHDUNq3zvQXzf5uKQwwA8LDAFrM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=D4NuXBmkyI1vPGPwplamshvycDI1lFoX3JNDg3RtQtGD+bhQnNbEAm3ZZaNbjglw9
-	 knmH0RxLr75pMyGTAPUxo0QVKpP7eU8LgXe6iBic1rkRxWkQO59ZMO7wuseAv68ohL
-	 rUz/pdI8cQWwRXaqBXk9nlMVQY8ulnBbubECQfnI=
+	b=BPXw6YcflbS2yEV7XLTmSrGqsMGd4usIYmWMxhxDfleEgSEcnY7jsZaf9DReSq15m
+	 uMdYfgb9QiTubSuKoafHz23QhoixmmGfipPuKx7FCgcnJHiVW8nlBNJwrKtsY43922
+	 /w0q6xHU4PWYV6QrsCIopiAqT8m/iJ3lR97q8kek=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730526AbfAUNuW (ORCPT
+        id S1730546AbfAUNu0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:50:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32880 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:50:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32810 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730520AbfAUNuU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:50:20 -0500
+        id S1730502AbfAUNuR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:50:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 084D12063F;
-        Mon, 21 Jan 2019 13:50:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A3592063F;
+        Mon, 21 Jan 2019 13:50:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078619;
-        bh=hyXqKx7g0AZxMhbu5m9cyNRjFasu+C8dDe6dQLa8CjM=;
+        s=default; t=1548078616;
+        bh=r1FLOFQhRI/aygtqGHDUNq3zvQXzf5uKQwwA8LDAFrM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AYEc2ugtaLHPw0MbT20qV/qlKYEkbSbfcKtx12duEUf53Dmh0TUQCkHLERqnH9Gl+
-         XHfUk+Dy33h3PTt2j1TJ0qORgYghV2jMCHu4n0dd/TGQnX2/8c0bM076+Zb2CLAPK4
-         rVixj1Xee/WSO8ZPTOUL5xQIwCe9cbxaKwIRnECA=
+        b=z3GtTN9O1nvkFjGRK50RvH//9fOt0xgQb7+nEb6knURN4aiFMk082fkQ9wRuOU/Jm
+         jwFYnN4Vh5ynM1+SDOwr7MAl2kxKTnBu3kvW9lAEqShHDQxXBneO4XhWylSUWm7XoQ
+         II/v56P4mKHo4ZflwpvafC3zjX6MuBoGPPj+/aA8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.20 096/111] loop: Get rid of loop_index_mutex
-Date:   Mon, 21 Jan 2019 14:43:30 +0100
-Message-Id: <20190121122506.497422699@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+8951a3065ee7fd6d6e23@syzkaller.appspotmail.com,
+        syzbot+75e6e042c5bbf691fc82@syzkaller.appspotmail.com,
+        Ying Xue <ying.xue@windriver.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.20 087/111] tipc: fix uninit-value in in tipc_conn_rcv_sub
+Date:   Mon, 21 Jan 2019 14:43:21 +0100
+Message-Id: <20190121122505.604781574@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122455.819406896@linuxfoundation.org>
 References: <20190121122455.819406896@linuxfoundation.org>
@@ -65,163 +68,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jan Kara <jack@suse.cz>
+From: Ying Xue <ying.xue@windriver.com>
 
-commit 0a42e99b58a208839626465af194cfe640ef9493 upstream.
+commit a88289f4ddee4165d5f796bd99e09eec3133c16b upstream.
 
-Now that loop_ctl_mutex is global, just get rid of loop_index_mutex as
-there is no good reason to keep these two separate and it just
-complicates the locking.
+syzbot reported:
 
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+BUG: KMSAN: uninit-value in tipc_conn_rcv_sub+0x184/0x950 net/tipc/topsrv.c:373
+CPU: 0 PID: 66 Comm: kworker/u4:4 Not tainted 4.17.0-rc3+ #88
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: tipc_rcv tipc_conn_recv_work
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x185/0x1d0 lib/dump_stack.c:113
+ kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
+ __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:683
+ tipc_conn_rcv_sub+0x184/0x950 net/tipc/topsrv.c:373
+ tipc_conn_rcv_from_sock net/tipc/topsrv.c:409 [inline]
+ tipc_conn_recv_work+0x3cd/0x560 net/tipc/topsrv.c:424
+ process_one_work+0x12c6/0x1f60 kernel/workqueue.c:2145
+ worker_thread+0x113c/0x24f0 kernel/workqueue.c:2279
+ kthread+0x539/0x720 kernel/kthread.c:239
+ ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:412
+
+Local variable description: ----s.i@tipc_conn_recv_work
+Variable was created at:
+ tipc_conn_recv_work+0x65/0x560 net/tipc/topsrv.c:419
+ process_one_work+0x12c6/0x1f60 kernel/workqueue.c:2145
+
+In tipc_conn_rcv_from_sock(), it always supposes the length of message
+received from sock_recvmsg() is not smaller than the size of struct
+tipc_subscr. However, this assumption is false. Especially when the
+length of received message is shorter than struct tipc_subscr size,
+we will end up touching uninitialized fields in tipc_conn_rcv_sub().
+
+Reported-by: syzbot+8951a3065ee7fd6d6e23@syzkaller.appspotmail.com
+Reported-by: syzbot+75e6e042c5bbf691fc82@syzkaller.appspotmail.com
+Signed-off-by: Ying Xue <ying.xue@windriver.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/block/loop.c |   41 ++++++++++++++++++++---------------------
- 1 file changed, 20 insertions(+), 21 deletions(-)
+ net/tipc/topsrv.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -83,7 +83,6 @@
- #include <linux/uaccess.h>
- 
- static DEFINE_IDR(loop_index_idr);
--static DEFINE_MUTEX(loop_index_mutex);
- static DEFINE_MUTEX(loop_ctl_mutex);
- 
- static int max_part;
-@@ -1626,9 +1625,11 @@ static int lo_compat_ioctl(struct block_
- static int lo_open(struct block_device *bdev, fmode_t mode)
- {
- 	struct loop_device *lo;
--	int err = 0;
-+	int err;
- 
--	mutex_lock(&loop_index_mutex);
-+	err = mutex_lock_killable(&loop_ctl_mutex);
-+	if (err)
-+		return err;
- 	lo = bdev->bd_disk->private_data;
- 	if (!lo) {
- 		err = -ENXIO;
-@@ -1637,7 +1638,7 @@ static int lo_open(struct block_device *
- 
- 	atomic_inc(&lo->lo_refcnt);
- out:
--	mutex_unlock(&loop_index_mutex);
-+	mutex_unlock(&loop_ctl_mutex);
- 	return err;
- }
- 
-@@ -1646,12 +1647,11 @@ static void lo_release(struct gendisk *d
- 	struct loop_device *lo;
- 	int err;
- 
--	mutex_lock(&loop_index_mutex);
-+	mutex_lock(&loop_ctl_mutex);
- 	lo = disk->private_data;
- 	if (atomic_dec_return(&lo->lo_refcnt))
--		goto unlock_index;
-+		goto out_unlock;
- 
--	mutex_lock(&loop_ctl_mutex);
- 	if (lo->lo_flags & LO_FLAGS_AUTOCLEAR) {
- 		/*
- 		 * In autoclear mode, stop the loop thread
-@@ -1659,7 +1659,7 @@ static void lo_release(struct gendisk *d
- 		 */
- 		err = loop_clr_fd(lo);
- 		if (!err)
--			goto unlock_index;
-+			return;
- 	} else if (lo->lo_state == Lo_bound) {
- 		/*
- 		 * Otherwise keep thread (if running) and config,
-@@ -1669,9 +1669,8 @@ static void lo_release(struct gendisk *d
- 		blk_mq_unfreeze_queue(lo->lo_queue);
- 	}
- 
-+out_unlock:
- 	mutex_unlock(&loop_ctl_mutex);
--unlock_index:
--	mutex_unlock(&loop_index_mutex);
- }
- 
- static const struct block_device_operations lo_fops = {
-@@ -1972,7 +1971,7 @@ static struct kobject *loop_probe(dev_t
- 	struct kobject *kobj;
- 	int err;
- 
--	mutex_lock(&loop_index_mutex);
-+	mutex_lock(&loop_ctl_mutex);
- 	err = loop_lookup(&lo, MINOR(dev) >> part_shift);
- 	if (err < 0)
- 		err = loop_add(&lo, MINOR(dev) >> part_shift);
-@@ -1980,7 +1979,7 @@ static struct kobject *loop_probe(dev_t
- 		kobj = NULL;
- 	else
- 		kobj = get_disk_and_module(lo->lo_disk);
--	mutex_unlock(&loop_index_mutex);
-+	mutex_unlock(&loop_ctl_mutex);
- 
- 	*part = 0;
- 	return kobj;
-@@ -1990,9 +1989,13 @@ static long loop_control_ioctl(struct fi
- 			       unsigned long parm)
- {
- 	struct loop_device *lo;
--	int ret = -ENOSYS;
-+	int ret;
- 
--	mutex_lock(&loop_index_mutex);
-+	ret = mutex_lock_killable(&loop_ctl_mutex);
-+	if (ret)
-+		return ret;
-+
-+	ret = -ENOSYS;
- 	switch (cmd) {
- 	case LOOP_CTL_ADD:
- 		ret = loop_lookup(&lo, parm);
-@@ -2006,9 +2009,6 @@ static long loop_control_ioctl(struct fi
- 		ret = loop_lookup(&lo, parm);
- 		if (ret < 0)
- 			break;
--		ret = mutex_lock_killable(&loop_ctl_mutex);
--		if (ret)
--			break;
- 		if (lo->lo_state != Lo_unbound) {
- 			ret = -EBUSY;
- 			mutex_unlock(&loop_ctl_mutex);
-@@ -2020,7 +2020,6 @@ static long loop_control_ioctl(struct fi
- 			break;
- 		}
- 		lo->lo_disk->private_data = NULL;
--		mutex_unlock(&loop_ctl_mutex);
- 		idr_remove(&loop_index_idr, lo->lo_number);
- 		loop_remove(lo);
- 		break;
-@@ -2030,7 +2029,7 @@ static long loop_control_ioctl(struct fi
- 			break;
- 		ret = loop_add(&lo, -1);
- 	}
--	mutex_unlock(&loop_index_mutex);
-+	mutex_unlock(&loop_ctl_mutex);
- 
- 	return ret;
- }
-@@ -2114,10 +2113,10 @@ static int __init loop_init(void)
- 				  THIS_MODULE, loop_probe, NULL, NULL);
- 
- 	/* pre-create number of devices given by config or max_loop */
--	mutex_lock(&loop_index_mutex);
-+	mutex_lock(&loop_ctl_mutex);
- 	for (i = 0; i < nr; i++)
- 		loop_add(&lo, i);
--	mutex_unlock(&loop_index_mutex);
-+	mutex_unlock(&loop_ctl_mutex);
- 
- 	printk(KERN_INFO "loop: module loaded\n");
- 	return 0;
+--- a/net/tipc/topsrv.c
++++ b/net/tipc/topsrv.c
+@@ -398,7 +398,7 @@ static int tipc_conn_rcv_from_sock(struc
+ 	ret = sock_recvmsg(con->sock, &msg, MSG_DONTWAIT);
+ 	if (ret == -EWOULDBLOCK)
+ 		return -EWOULDBLOCK;
+-	if (ret > 0) {
++	if (ret == sizeof(s)) {
+ 		read_lock_bh(&sk->sk_callback_lock);
+ 		ret = tipc_conn_rcv_sub(srv, con, &s);
+ 		read_unlock_bh(&sk->sk_callback_lock);
 
 
