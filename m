@@ -2,73 +2,158 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB049C282DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:43:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9607BC282F6
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:43:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77A512085A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:43:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D5512085A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:43:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728216AbfAUJnO (ORCPT
+        id S1728261AbfAUJnX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 04:43:14 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:42566 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726872AbfAUJnO (ORCPT
+        Mon, 21 Jan 2019 04:43:23 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:46261 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726872AbfAUJnX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 04:43:14 -0500
-Received: by mail-vs1-f66.google.com with SMTP id b74so12202932vsd.9
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 01:43:14 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+Skmu5Z6yA9sgcznz2ghAIJAQTvGtod5T3O8dh/83B0=;
-        b=tzFbZzrgzs9vdrFjcMrT6vjl6qvJGgIgqo9LpUsDDaT5mF97frIM5WsA32/xhKgCbx
-         eCFZruVBARhxDBKDQ7y00ujS3ld7d0AQE9L7P8wWa1BdweaoSi/TeAXRo0pUbBilHvle
-         Y9jedK/3SFbsYKIo5LdLAuuUoz8RRfKx0s/XiXgrJD1nQD0jb+C2PIGDhWXyvt/9ikxI
-         iIMJZc6EE+VQAwL2mPXU4MhmKpsphIDLkdsCHAamotbbypp5MEXXGz5UgyglYy+sV8PO
-         huv47CCBRqQmeEu5uypwt+CYzs9HIeVmvWi0+A7+zD6tE7biG5I919R3o/mqPPUEfrv6
-         3F7A==
-X-Gm-Message-State: AJcUukf9Yrq1bJgO8Fw4qCOyZFU6Vvd/U5lEcIv+qNPgkRchBpbKCzyQ
-        eAXYYXlkr3US1O0/2t8dgLpuwg9MevUGKUps1H4v9Gmj
-X-Google-Smtp-Source: ALg8bN56rTcr+WiaEMAdVW7oqaQtaAuYNJ2o2FtXe6+ZLKsldZGjDaSo0mA3ZzEZyxgGzweD34yfjXwuil8TycCKPUA=
-X-Received: by 2002:a67:b60d:: with SMTP id d13mr12254382vsm.152.1548063793574;
- Mon, 21 Jan 2019 01:43:13 -0800 (PST)
+        Mon, 21 Jan 2019 04:43:23 -0500
+X-IronPort-AV: E=Sophos;i="5.56,502,1539619200"; 
+   d="scan'208";a="52487551"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 21 Jan 2019 17:43:20 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id B585A4C47E9E;
+        Mon, 21 Jan 2019 17:43:19 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.56) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Mon, 21 Jan 2019 17:43:24 +0800
+Date:   Mon, 21 Jan 2019 17:42:14 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     Borislav Petkov <bp@alien8.de>
+CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
+        <keescook@chromium.org>, <bhe@redhat.com>, <msys.mizuma@gmail.com>,
+        <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
+Subject: Re: [PATCH v15 5/6] x86/boot: Parse SRAT address from RSDP and store
+ immovable memory
+Message-ID: <20190121094214.GC15754@localhost.localdomain>
+References: <20190107032243.25324-1-fanc.fnst@cn.fujitsu.com>
+ <20190107032243.25324-6-fanc.fnst@cn.fujitsu.com>
+ <20190116110158.GC15409@zn.tnic>
+ <20190121093348.GB15754@localhost.localdomain>
 MIME-Version: 1.0
-References: <20190107093037.14952-1-geert@linux-m68k.org>
-In-Reply-To: <20190107093037.14952-1-geert@linux-m68k.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 21 Jan 2019 10:43:01 +0100
-Message-ID: <CAMuHMdWHDe=tVE5p8MecA9gNTVm+ecYUsmLZqAH-o9PRT3exzg@mail.gmail.com>
-Subject: Re: [PATCH] m68k/defconfig: Drop NET_VENDOR_<FOO>=n
-To:     linux-m68k <linux-m68k@lists.linux-m68k.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20190121093348.GB15754@localhost.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: B585A4C47E9E.AEE49
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 7, 2019 at 10:30 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> Enabling NET_VENDOR_* Kconfig options does not directly affect the
-> kernel, so there is no need to explicitly disable them.
-> The individual network drivers under them are still disabled.
+On Mon, Jan 21, 2019 at 05:33:48PM +0800, Chao Fan wrote:
+>On Wed, Jan 16, 2019 at 12:01:58PM +0100, Borislav Petkov wrote:
+>>On Mon, Jan 07, 2019 at 11:22:42AM +0800, Chao Fan wrote:
+>[...]
+>>> +
+>>> +/* Determine RSDP, based on acpi_os_get_root_pointer(). */
+>>> +static acpi_physical_address get_rsdp_addr(void)
+>>> +{
+>>> +	acpi_physical_address pa;
+>>> +
+>>> +	pa = get_acpi_rsdp();
+>>> +
+>>> +	if (!pa)
+>>> +		pa = efi_get_rsdp_addr();
+>>> +
+>>> +	if (!pa)
+>>> +		pa = bios_get_rsdp_addr();
+>>> +
+>>> +	return pa;
+>>> +}
 >
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+>Hi Boris,
+>
+>Talking in Kairui's thread may mislead you, let me clarify:
+>I mean I am going to change get_rsdp_addr(). Since I see ACPI code:
+>
+>>acpi_physical_address __init acpi_os_get_root_pointer(void)
+>>{
+>>        acpi_physical_address pa;
+>>
+>>#ifdef CONFIG_KEXEC
+>>        if (acpi_rsdp)
+>>                return acpi_rsdp;
+>>#endif
+>>        pa = acpi_arch_get_root_pointer();
+>>        if (pa)
+>>                return pa;
+>
+>So we need to parse boot_params->acpi_rsdp_addr also between KEXEC and
+>EFI:
+>
+>static acpi_physical_address get_rsdp_addr(void)
+>{
+>        acpi_physical_address pa;
+>
+>        pa = get_acpi_rsdp();
+>
+>        if (!pa)
+>/* This line will be added in next version.*/
+>                pa = boot_params->acpi_rsdp_addr;
+>
+>        if (!pa)
+>                pa = efi_get_rsdp_addr();
+>
+>        if (!pa)
+>                pa = bios_get_rsdp_addr();
+>
+>/* If no acpi_rsdp_addr found in boot_params, fill in it here. */
+>
+>        return pa;
+>}
 
-Thanks, applied and queued for v5.1.
+Or I clear this function as:
+static acpi_physical_address get_rsdp_addr(void)
+{
+        acpi_physical_address pa;
 
-Gr{oetje,eeting}s,
+        pa = get_acpi_rsdp();
 
-                        Geert
+        if (!pa)
+                pa = boot_params->acpi_rsdp_addr;
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+        if (!pa)
+                pa = efi_get_rsdp_addr();
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+        if (!pa)
+                pa = bios_get_rsdp_addr();
+
+        if (pa && !boot_params->acpi_rsdp_addr)
+                boot_params->acpi_rsdp_addr = pa;
+
+        return pa;
+}
+
+This version may look better, it does not need a bool.
+
+Thanks,
+Chao Fan
+
+>
+>Then you said I shall fill the boot_params->acpi_rsdp_addr, so in my
+>understanding, if there is no acpi_rsdp_addr found in boot_params,
+>we can parse RSDP by EFI/BIOS then fill it, other wise if it's found
+>int boot_params, we need't to fill it.
+>
+>Thanks,
+>Chao Fan
+
+
