@@ -7,64 +7,66 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 709B8C7113B
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:01:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA701C67875
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:01:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BB6C2085A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:01:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B17920870
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:01:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="P1yVJr1Q"
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="TtViGTvw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727554AbfAULBc (ORCPT
+        id S1727665AbfAULBe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 06:01:32 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:39007 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726811AbfAULBb (ORCPT
+        Mon, 21 Jan 2019 06:01:34 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:43196 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727140AbfAULBc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 06:01:31 -0500
-Received: by mail-ed1-f67.google.com with SMTP id b14so16216325edt.6
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 03:01:30 -0800 (PST)
+        Mon, 21 Jan 2019 06:01:32 -0500
+Received: by mail-ed1-f68.google.com with SMTP id f9so16203544eds.10
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 03:01:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=brauner.io; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=6F0jPoHpy95MVgtjW7lO9ldsjOWbZkfccZykrw9HgUI=;
-        b=P1yVJr1Q9CoJ9O/YtacINo7iCtYKw93mM8osdGir4f7+ZU0HiSflyhskkWx6JjCQo0
-         Ei6DROh0HRHfoAjmnn9gVxquMJKabang+CPWsTKPgZUUYA2PX4UXyyx8dU9xdIJwYD4+
-         qm7UfNKOrGECdPl5E+RQXqiU/cbbr5JVkIwW1pDh4G5YujCgeYDKSOgjXoLgzBrA1ZIQ
-         63Hqi6SnLk0vxHY8p5k6IbitKH1xZDu2SFM+7LmH6osojauPHlcf/T14yId09CFHEwRM
-         jfkyvoSw7m2VoJO+X5tKxkeqQ+vVS1bMxf2YFV29EQSHxHFhkKICXJXTWrsM0T/vc63o
-         4SFg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=QZ2CPjy7IlGoDls62PJ6M9VTltf7smGdYPcjaWrBAIo=;
+        b=TtViGTvw1+UU0dO+tt7jCRlpRmZzVUopfnASFA/T6DNlZJbPNjrKIouCY8DTtj5xDS
+         KH2GLEMezROXyGPMM9NPJr6zQlKHKuPo9AIkg/n6Fvmzgc4dVr/vM5RIjc0hS+QKZDCw
+         s8tg0iHarkA70VXKiWCbSKPzFDi9b7PWfwpzZY5asAil6MClCKPuzB6qxF2j3BWhyEaH
+         0lTSXIiR2YVajAPZQuWTVxHm+SANITabZytrqVXLj3s7y4ql8NNROAEI2evVuzutm9Jv
+         hpYwy3jGV0jHRiwKBkTizDSmHfdNKMqQWjRAgnRyUSO7i4C079AlM7sD4ns3jqhDYRRY
+         Wgag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=6F0jPoHpy95MVgtjW7lO9ldsjOWbZkfccZykrw9HgUI=;
-        b=VEASiEZpc2B9UpE0BmVF/dYhSF2CR7uM1cTBkV9rzz2oMziq+/LXyv58sT6G97+HQ1
-         JKCYt4zFipJmvKEp636o6xBt8TU7M3ilfuIOcSRQydHm0LNgJEhUKVwFcY5YIXgKZFWA
-         wFYvc6LiV/ZwHb41KHdt2bEgQlBxGkhyK26+rIu+DG7UfWYwiUf1s8MolLa5kSEGciAM
-         g4reabsOjq/B5t11+rP37tuV45QB1NsnQtkS2gMNVGcHB+FHa55AALOMmW+n98nVX28a
-         iN4U1LtaZpcYpcHzv5yeCxnCwuH1bXzTDWWl9QV6pNEImeLO4L0PNT0R2rSqh/e2MoeA
-         u2ug==
-X-Gm-Message-State: AJcUukftI657ksnJ+SLkjgFmlSAU/VQ6ntMvLElfGJ9uUilu4bdKKZGn
-        zXieqPlrBRBdvdFm5fdWsqSSvA==
-X-Google-Smtp-Source: ALg8bN5gUB5PDSF2RY508d9YuoMC93hs8orAI4jQqzVAt3N7MfUCjTUGayV2pDN55+RVLslTVC5CaQ==
-X-Received: by 2002:a50:8bb5:: with SMTP id m50mr25978833edm.211.1548068489827;
-        Mon, 21 Jan 2019 03:01:29 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=QZ2CPjy7IlGoDls62PJ6M9VTltf7smGdYPcjaWrBAIo=;
+        b=gEiPHEzO9g++5aYIGH5Pn7hFepG6cjdCa5I1iOFfHophg92686nGZ74A/mBw4Gqfgq
+         SMcQXPGylTCtHegRUNzjiIfWmv7y0YArLyqMJFuhj/4t/Zgora4gLA5XblBrGFpHZ+Vd
+         o4zI70nTJZWt7045MTzQTkHE+xtuauZ7Fhw5ze1xzi1gH1lscNZvpeAxGZwExQ7rcjWE
+         RVatMH9HEyhHZR2oi2l6KVw8tOjH/72Y/mAJB2vpAtPZ47gSzrXDnUwJW/K0QuSbY9r5
+         g6cNKPJp+lW3Y3bDKR5ybMpKmeuw3kJf5jWcIf9xK1XjiI4m3J1jAbun4r249SQrmDMY
+         RDrQ==
+X-Gm-Message-State: AJcUukeH2/+favV0dBv76afkJpMe2sn3uZRPbBxUke8mv5MdU+K6c4MF
+        4Tubc30f4wwLSYHTmZ0ohRtL+A==
+X-Google-Smtp-Source: ALg8bN7GdkWbsl6yptlQKhorGkub5cmlRxkobu3Y732Sd9FCClvzbLCMk5gJ3pWCmS+Umc73ceg5nw==
+X-Received: by 2002:a17:906:b297:: with SMTP id q23-v6mr23691352ejz.147.1548068490775;
+        Mon, 21 Jan 2019 03:01:30 -0800 (PST)
 Received: from localhost.localdomain ([2a02:8109:b6bf:f9e4:9473:6b39:afaf:14d4])
-        by smtp.gmail.com with ESMTPSA id t24sm8970080edb.7.2019.01.21.03.01.28
+        by smtp.gmail.com with ESMTPSA id t24sm8970080edb.7.2019.01.21.03.01.29
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 21 Jan 2019 03:01:29 -0800 (PST)
+        Mon, 21 Jan 2019 03:01:30 -0800 (PST)
 From:   Christian Brauner <christian@brauner.io>
 To:     gregkh@linuxfoundation.org, tkjos@android.com,
         devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     tkjos@google.com, Christian Brauner <christian@brauner.io>
-Subject: [PATCH 1/2] binderfs: use correct include guards in header
-Date:   Mon, 21 Jan 2019 12:01:19 +0100
-Message-Id: <20190121110120.27003-1-christian@brauner.io>
+Subject: [PATCH 2/2] binderfs: use __u32 for device numbers
+Date:   Mon, 21 Jan 2019 12:01:20 +0100
+Message-Id: <20190121110120.27003-2-christian@brauner.io>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190121110120.27003-1-christian@brauner.io>
+References: <20190121110120.27003-1-christian@brauner.io>
 MIME-Version: 1.0
 X-Patchwork-Bot: notify
 Content-Transfer-Encoding: 8bit
@@ -73,36 +75,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When we switched over from binder_ctl.h to binderfs.h we forgot to change
-the include guards. It's minor but it's obviously correct.
+We allow more then 255 binderfs binder devices to be created since there
+are workloads that require more than that. If we use __u8 we'll overflow
+after 255. So let's use a __u32.
+Note that there's no released kernel with binderfs out there so this is
+not a regression.
 
 Signed-off-by: Christian Brauner <christian@brauner.io>
 ---
- include/uapi/linux/android/binderfs.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ include/uapi/linux/android/binderfs.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/include/uapi/linux/android/binderfs.h b/include/uapi/linux/android/binderfs.h
-index 65b2efd1a0a5..b41628b77120 100644
+index b41628b77120..87410477aea9 100644
 --- a/include/uapi/linux/android/binderfs.h
 +++ b/include/uapi/linux/android/binderfs.h
-@@ -4,8 +4,8 @@
-  *
+@@ -22,8 +22,8 @@
   */
+ struct binderfs_device {
+ 	char name[BINDERFS_MAX_NAME + 1];
+-	__u8 major;
+-	__u8 minor;
++	__u32 major;
++	__u32 minor;
+ };
  
--#ifndef _UAPI_LINUX_BINDER_CTL_H
--#define _UAPI_LINUX_BINDER_CTL_H
-+#ifndef _UAPI_LINUX_BINDERFS_H
-+#define _UAPI_LINUX_BINDERFS_H
- 
- #include <linux/android/binder.h>
- #include <linux/types.h>
-@@ -31,5 +31,5 @@ struct binderfs_device {
-  */
- #define BINDER_CTL_ADD _IOWR('b', 1, struct binderfs_device)
- 
--#endif /* _UAPI_LINUX_BINDER_CTL_H */
-+#endif /* _UAPI_LINUX_BINDERFS_H */
- 
+ /**
 -- 
 2.19.1
 
