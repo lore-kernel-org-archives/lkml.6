@@ -2,116 +2,130 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7C3CC2F421
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:54:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02302C2F441
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:54:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F60E20823
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:54:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C94CB20823
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:54:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730618AbfAUPyM (ORCPT
+        id S1730656AbfAUPyR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 10:54:12 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:37744 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729712AbfAUPyM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 10:54:12 -0500
-Received: by mail-qt1-f196.google.com with SMTP id t33so24014788qtt.4;
-        Mon, 21 Jan 2019 07:54:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BolUHUemdSZNYDTaUCTkJTDa+hu/AMvXO0Ph+5Tguds=;
-        b=nS+rQk60Pq3WTGnlnXrqoLS0+adnBxu+vaPyTDGw31/e1kQLgdZXehQwEdlhJTeQVa
-         xdboAjvUexCZuLr5t7sah5rP/yJ0tAbjlTMZHdYf7ijAe+q6J8PY1UeC4z6kmsKmW1SE
-         GMDFcvmyRvRQI1fhTuCtf1GUY+ek9zqP4wZsxW+07JjI2VOT1hl9srgY57Fie1nlrMfo
-         ZGzdVPojp976Yd9qhRJ083YGNhW6lfaepETKxJpwLOyaBVQI1JZF96x74ZnxGOZKgBkP
-         O7aCWJUGLy/BWYgL+MRXh42P26gZ3uUVyA29CLgjbDrcQIO2/B2UCjyT8+vo6J/fL2eV
-         Jjcg==
-X-Gm-Message-State: AJcUukf3EAoiaWy4+UB/OebO2kdmt8ArxlVmQyRNOuy6wlSUZysAifwF
-        9pq1YuLiO3LN8TXEn2vvKgmCKbz37mYuL92SBVw=
-X-Google-Smtp-Source: ALg8bN4xhZ8yHvW/KbKdBj9RO2PeHmyu5vnU6SbfaaKJj41epoElZRzRk0KzYbg3nXv6YWZzWm/df9KJulT854RZ60g=
-X-Received: by 2002:ac8:7451:: with SMTP id h17mr26877541qtr.319.1548086050519;
- Mon, 21 Jan 2019 07:54:10 -0800 (PST)
+        Mon, 21 Jan 2019 10:54:17 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37792 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729712AbfAUPyO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 10:54:14 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 58F37EBD;
+        Mon, 21 Jan 2019 07:54:13 -0800 (PST)
+Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 65D343F5C1;
+        Mon, 21 Jan 2019 07:54:10 -0800 (PST)
+Date:   Mon, 21 Jan 2019 15:54:07 +0000
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v6 04/16] sched/core: uclamp: Add CPU's clamp buckets
+ refcounting
+Message-ID: <20190121155407.gv4cxpg2njqmdlj5@e110439-lin>
+References: <20190115101513.2822-1-patrick.bellasi@arm.com>
+ <20190115101513.2822-5-patrick.bellasi@arm.com>
+ <20190121151717.GK27931@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-References: <1546530025-26014-1-git-send-email-firoz.khan@linaro.org> <20190119235650.GC26876@brain-police>
-In-Reply-To: <20190119235650.GC26876@brain-police>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 21 Jan 2019 16:53:54 +0100
-Message-ID: <CAK8P3a1kiS7oF=eKLqPs6kKTYE1uTjhz++edH_J-tCUmXY2PNQ@mail.gmail.com>
-Subject: Re: [PATCH 0/3] arm64: system call table generation for asm-generic
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Firoz Khan <firoz.khan@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190121151717.GK27931@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-n Sun, Jan 20, 2019 at 12:57 AM Will Deacon <will.deacon@arm.com> wrote:
->
-> On Thu, Jan 03, 2019 at 09:10:22PM +0530, Firoz Khan wrote:
-> > This will be an automated scripts to provide easy support
-> > for add/modify/delete the system call entry by add in
-> > respective *.tbl file.
-> >
-> > System call table generation support for asm-generic is
-> > provide for arm64 architecture which will use the common
-> > scripts resides in scripts directory and use syscall.tbl
-> > syscall_arm32.tbl files as inputs. This implementation
-> > will replace asm-generic/unistd.h.
-> >
-> > This patch depends on:
-> >  https://lore.kernel.org/lkml/1546439331-18646-1-git-send-email-firoz.khan@linaro.org/
-> >  https://lore.kernel.org/lkml/1546520681-24453-1-git-send-email-firoz.khan@linaro.org/
->
-> I'm having a hard time understanding what the benefit of this series is,
-> given that we only support EABI compat tasks. When adding a new compat
-> system call, you can't just blindly hook it up without checking whether it
-> needs a wrapper to deal with any type conversion etc, so really we're just
-> replacing one table with another as far as I can tell. What am I missing?
+On 21-Jan 16:17, Peter Zijlstra wrote:
+> On Tue, Jan 15, 2019 at 10:15:01AM +0000, Patrick Bellasi wrote:
+> > +#ifdef CONFIG_UCLAMP_TASK
+> 
+> > +struct uclamp_bucket {
+> > +	unsigned long value : bits_per(SCHED_CAPACITY_SCALE);
+> > +	unsigned long tasks : BITS_PER_LONG - bits_per(SCHED_CAPACITY_SCALE);
+> > +};
+> 
+> > +struct uclamp_cpu {
+> > +	unsigned int value;
+> 
+> 	/* 4 byte hole */
+> 
+> > +	struct uclamp_bucket bucket[UCLAMP_BUCKETS];
+> > +};
+> 
+> With the default of 5, this UCLAMP_BUCKETS := 6, so struct uclamp_cpu
+> ends up being 7 'unsigned long's, or 56 bytes on 64bit (with a 4 byte
+> hole).
 
-The point that is missing in the description above is that all unistd.h
-and syscall.S files are now being generated from a .tbl file, across
-all architectures. This was already done on arm32, x86 and s390
-before 4.20, but is now done on all architectures that don't use
-the uapi/asm-generic/unistd.h header, and the arm32 compat version for
-arm64.
+Yes, that's dimensioned and configured to fit into a single cache line
+for all the possible 5 (by default) clamp values of a clamp index
+(i.e. min or max util).
 
-The newly added file has the same format as all other tables, and
-will be easier to synchronize with the arm32 version, which has
-almost the same contents (arm32 has oabi support, arm64 has
-compat support).
+> 
+> > +#endif /* CONFIG_UCLAMP_TASK */
+> > +
+> >  /*
+> >   * This is the main, per-CPU runqueue data structure.
+> >   *
+> > @@ -835,6 +879,11 @@ struct rq {
+> >  	unsigned long		nr_load_updates;
+> >  	u64			nr_switches;
+> >  
+> > +#ifdef CONFIG_UCLAMP_TASK
+> > +	/* Utilization clamp values based on CPU's RUNNABLE tasks */
+> > +	struct uclamp_cpu	uclamp[UCLAMP_CNT] ____cacheline_aligned;
+> 
+> Which makes this 112 bytes with 8 bytes in 2 holes, which is short of 2
+> 64 byte cachelines.
 
-> I also really don't think we should be generating the 32-bit UAPI headers
-> from the 64-bit compat system call support (if that's what you're trying to
-> do -- make headers_check fails with your patches applied). arch/arm/ is the
-> canonical place for the 32-bit UAPI, and we're just implementing that.
+Right, we have 2 cache lines where:
+- the first $L tracks 5 different util_min values
+- the second $L tracks 5 different util_max values
 
-I think you just misread what Firoz was trying to say here: The
-arm64 uapi/asm/unistd.h file is now being generated from the
-generic syscall.tbl file, while the compat asm/unistd32.h file is not
-part of the UAPI. In both cases though, the data from the old files
-is being replaced with data in the more compact and (hopefully)
-more readable format.
+> Is that the best layout?
 
+It changed few times and that's what I found more reasonable for both
+for fitting the default configuration and also for code readability.
+Notice that we access RQ and SE clamp values with the same patter,
+for example:
 
-    Arnd
+   {rq|p}->uclamp[clamp_idx].value
+
+Are you worried about the holes or something else specific ?
+
+> > +#endif
+> > +
+> >  	struct cfs_rq		cfs;
+> >  	struct rt_rq		rt;
+> >  	struct dl_rq		dl;
+> > -- 
+> > 2.19.2
+> > 
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
