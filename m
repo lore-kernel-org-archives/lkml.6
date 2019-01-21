@@ -2,161 +2,111 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CDA9C282DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 10:51:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B03F6C282F6
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 10:52:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACBFA2085A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 10:51:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53D1A2085A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 10:52:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="NZ5N+ZGS"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="np8gI06k"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727766AbfAUKvc (ORCPT
+        id S1727791AbfAUKwS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 05:51:32 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:41661 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727014AbfAUKvb (ORCPT
+        Mon, 21 Jan 2019 05:52:18 -0500
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:46524 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727014AbfAUKwR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 05:51:31 -0500
-Received: by mail-ed1-f66.google.com with SMTP id a20so16188971edc.8
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 02:51:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mJMHBdkQexsknFUastnGo4BYttKPi0+5BH/HVX9RkGY=;
-        b=NZ5N+ZGSC/G8G33gWeqDEKiuQjE8QtuINx4uVZ0vbFp1Njnq8Ah6M6CtxoA4yK0n5+
-         vmhsLlb53r4PCAInYa6f0Or2U74th9Io4hwOIEVo3StaVpqH2PedJV5FtVTmfgw9p1rt
-         mOq1iaYIm/8oZu1A4Yl7pMdB2BzxmLc9P7WM8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mJMHBdkQexsknFUastnGo4BYttKPi0+5BH/HVX9RkGY=;
-        b=kDGgVLkHWC3lrvlaRMvuONuJyXd89tEeKQz5sByTNEKcWhNWq0SmOU7+nQHpBnJj1v
-         3jf1MLCJ/Kvb7+RRsu3nEhaCgnrjD0M431+HiVNhhghpMBBBgHMeFQWDn/cGeXHzVCkE
-         h+AdkFDLeY1glz788sk4VwkV+pQFpTmbDMXpibdT6Fp2cl+8PYrLZI0poJ4vyi1ta2El
-         0NhX912WJHCPLMO5LDw6lXnNdN8gXyf6WtL+7HtfvaVoPonYF75Pz0egaCTug6se7teX
-         Tyy22tsuO91WTXazahj3T6kudebJd8zS80grdW0n+qTcx35o7fc4XRZimb/Zu0CURzHf
-         Xieg==
-X-Gm-Message-State: AJcUukeDVmdXED/Gug/pDqdcDWTFV/mnxRmoYZUjrwJf3t1gWoO27hk+
-        tegg+VfTG4iXrrOjCKjX74IA71h5IuYVsQ==
-X-Google-Smtp-Source: ALg8bN6x3r34yCrpN1wxbawe0ARl11Xm4E919i+UuR/h+jQNM6aIf4JcBWvtsyEmm6c5IBAleyWoWQ==
-X-Received: by 2002:a05:6402:8d2:: with SMTP id d18mr26863573edz.119.1548067889188;
-        Mon, 21 Jan 2019 02:51:29 -0800 (PST)
-Received: from andrea (85.100.broadband17.iol.cz. [109.80.100.85])
-        by smtp.gmail.com with ESMTPSA id n16-v6sm4781867eja.6.2019.01.21.02.51.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 21 Jan 2019 02:51:28 -0800 (PST)
-Date:   Mon, 21 Jan 2019 11:51:21 +0100
-From:   Andrea Parri <andrea.parri@amarulasolutions.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH] sched: Use READ_ONCE()/WRITE_ONCE() in
- task_cpu()/__set_task_cpu()
-Message-ID: <20190121104707.GA5883@andrea>
-References: <20190116184218.13757-1-andrea.parri@amarulasolutions.com>
+        Mon, 21 Jan 2019 05:52:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=bHl6u5CSoO8WLLMUhKDWOpKdoQzA9HnxTdbysIoV06w=; b=np8gI06kfhZ5DUVAtPKhd4E23
+        yO+WCGg+TBIw1Nq6GweH8VBun8qehtcT/RwpooyhqcW6r7x/bwehbrugS3ufkj419u2N+a7dzC9Qd
+        0toGnyKlSdZXzzXoQoZT7DokWtd87KVl47RZ8t6lTLPtMWKYafAl6pPz/GrnvlwDjyO7A=;
+Received: from e5254000004ec.dyn.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:49384 helo=shell.armlinux.org.uk)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1glXBX-0002zt-6C; Mon, 21 Jan 2019 10:52:07 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.89)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1glXBW-0000oX-GB; Mon, 21 Jan 2019 10:52:06 +0000
+Date:   Mon, 21 Jan 2019 10:52:06 +0000
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>, davem@davemloft.net,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
+        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
+        mw@semihalf.com
+Subject: Re: [PATCH net-next 5/7] net: phy: marvell10g: Force reading of
+ 2.5/5G PMA extended abilities
+Message-ID: <20190121105206.mxxxosytk5qiysc2@e5254000004ec.dyn.armlinux.org.uk>
+References: <20190118152352.26417-1-maxime.chevallier@bootlin.com>
+ <20190118152352.26417-6-maxime.chevallier@bootlin.com>
+ <20190120190809.GB19714@lunn.ch>
+ <20190121113531.7a8b5b51@bootlin.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190116184218.13757-1-andrea.parri@amarulasolutions.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190121113531.7a8b5b51@bootlin.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 07:42:18PM +0100, Andrea Parri wrote:
-> The smp_wmb() in move_queued_task() (c.f., __set_task_cpu()) pairs with
-> the composition of the dependency and the ACQUIRE in task_rq_lock():
+On Mon, Jan 21, 2019 at 11:35:31AM +0100, Maxime Chevallier wrote:
+> Hello Andrew,
 > 
-> 	move_queued_task()		task_rq_lock()
+> On Sun, 20 Jan 2019 20:08:09 +0100
+> Andrew Lunn <andrew@lunn.ch> wrote:
 > 
-> 	[S] ->on_rq = MIGRATING		[L] rq = task_rq()
-> 	WMB (__set_task_cpu())		ACQUIRE (rq->lock);
-> 	[S] ->cpu = new_cpu		[L] ->on_rq
+> >On Fri, Jan 18, 2019 at 04:23:50PM +0100, Maxime Chevallier wrote:
+> >> As per 802.3bz, if bit 14 of (1.11) "PMA Extended Abilities" indicates
+> >> whether or not we should read register (1.21) "2.52/5G PMA Extended
+> >> Abilities", which contains information on the support of 2.5GBASET and
+> >> 5GBASET.
+> >> 
+> >> After testing on several variants of PHYS of this family, it appears
+> >> that bit 14 in (1.11) isn't always set when it should be.
+> >> 
+> >> PHYs 88X3310 (on MacchiatoBin) and 88E2010 do support 2.5G and 5GBASET,
+> >> but don't have 1.11.14 set. Their register 1.21 is filled with the
+> >> correct values, indicating 2.5G and 5G support.
+> >> 
+> >> PHYs 88X2110 do have their 1.11.14 bit set, as it should.  
+> >
+> >Hi Maxime
+> >
+> >Is there anything about this in any Errata?
 > 
-> where "[L] rq = task_rq()" is ordered before "ACQUIRE (rq->lock)" by an
-> address dependency and, in turn, "ACQUIRE (rq->lock)" is ordered before
-> "[L] ->on_rq" by the ACQUIRE itself.
+> I haven't seen any Errata on that unfortunately.
 > 
-> Use READ_ONCE() to load ->cpu in task_rq() (c.f., task_cpu()) to honour
-> this address dependency between loads; also, mark the store to ->cpu in
-> __set_task_cpu() by using WRITE_ONCE() in order to tell the compiler to
-> not mess/tear this (synchronizing) memory access.
+> I also thought about reading (1.4) "PMA/PMD Speed Ability", but the
+> 2.5G and 5G speeds are also reported as not being supported on the
+> 88X3310.
 
-In the light of the recent discussion about the integration of plain
-accesses in the LKMM (c.f., e.g., [1] and discussion thereof), I was
-considering even further changes to this in order to "reinforce" the
-above smp_wmb().  Here's two approaches (one of):
+It's entirely possible that the 3310 switches to different hardware
+blocks for 2.5G and 5G speeds, and reading _just_ the 1.4 register
+is not sufficient.
 
- 1) replace this smp_wmb()+WRITE_ONCE() with an smp_store_release();
+The 88x3310 is multiple PHY devices in one package, with a CPU that
+manages the routing between each individual device.
 
- 2) or keep this smp_wmb()+WRITE_ONCE(), but use {WRITE,READ}_ONCE()
-    also for the accesses to ->on_rq.
-
-What do you think?  (maybe I'm just being too paranoid?)
-
-Adding Will to the Cc:  ((1) should be "painless" for x86, not sure
-about arm64...)
-
-  Andrea
-
-[1] http://lkml.kernel.org/r/20190118155638.GA24442@andrea
-
-
-> 
-> Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: "Paul E. McKenney" <paulmck@linux.ibm.com>
-> Cc: Alan Stern <stern@rowland.harvard.edu>
-> ---
->  include/linux/sched.h | 4 ++--
->  kernel/sched/sched.h  | 4 ++--
->  2 files changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index 224666226e87b..2bb02c9635bd8 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -1753,9 +1753,9 @@ static __always_inline bool need_resched(void)
->  static inline unsigned int task_cpu(const struct task_struct *p)
->  {
->  #ifdef CONFIG_THREAD_INFO_IN_TASK
-> -	return p->cpu;
-> +	return READ_ONCE(p->cpu);
->  #else
-> -	return task_thread_info(p)->cpu;
-> +	return READ_ONCE(task_thread_info(p)->cpu);
->  #endif
->  }
->  
-> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> index d04530bf251fe..270a3333589d2 100644
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -1460,9 +1460,9 @@ static inline void __set_task_cpu(struct task_struct *p, unsigned int cpu)
->  	 */
->  	smp_wmb();
->  #ifdef CONFIG_THREAD_INFO_IN_TASK
-> -	p->cpu = cpu;
-> +	WRITE_ONCE(p->cpu, cpu);
->  #else
-> -	task_thread_info(p)->cpu = cpu;
-> +	WRITE_ONCE(task_thread_info(p)->cpu, cpu);
->  #endif
->  	p->wake_cpu = cpu;
->  #endif
-> -- 
-> 2.17.1
-> 
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
