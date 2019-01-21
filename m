@@ -2,105 +2,98 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4B1CC2F3D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:37:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CA57C2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:37:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7C0820879
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:37:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C9E320879
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:37:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548081437;
+	bh=Y/g2iDkfkIrQOfww0ByuoTOYvkPpUMrXjww2OJLERa0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=KvN4iqI1G4/ZVv25smgyQ4n3ByA51n447ItcYlVnG+q4UPExggDAxnJIy6McU9J4p
+	 z+cbX0G4d3lFa4oGJtNQBkofzPTgv+7EC8lQNyNkm0HJGRWPLAWGxAx14RU6Vfpj/I
+	 3BkSbnHSkpdHvMvigVnhZ2j4JZnxbgf8Tfo5gnG4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729329AbfAUOhL (ORCPT
+        id S1729375AbfAUOhQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:37:11 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35586 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729185AbfAUOhK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 09:37:10 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DB3C2EBD;
-        Mon, 21 Jan 2019 06:37:09 -0800 (PST)
-Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.113])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E66563F5C1;
-        Mon, 21 Jan 2019 06:37:06 -0800 (PST)
-Date:   Mon, 21 Jan 2019 14:37:04 +0000
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Robin Murphy <robin.murphy@arm.com>,
-        Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sri Krishna chowdary <schowdary@nvidia.com>,
-        Qian Cai <cai@lca.pw>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: kmemleak panic
-Message-ID: <20190121143704.GE29504@arrakis.emea.arm.com>
-References: <f6fbf528-8213-e3b8-6990-9fcf9dec04d6@free.fr>
- <20190118143434.GE118707@arrakis.emea.arm.com>
- <b7629ecf-757c-f8b5-df83-ba83d7036b2f@free.fr>
- <20190119132832.GA29881@MBP.local>
- <6579db26-10ac-3fbf-1998-5b937a38f202@free.fr>
- <d4facdc2-0581-929f-caa2-b9efa9bd8f97@arm.com>
- <CAL_JsqKFT8J6g02gxeBiTfBb_XHhp2-ZNB6DgaLPK85kNZGRig@mail.gmail.com>
+        Mon, 21 Jan 2019 09:37:16 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:45744 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729185AbfAUOhM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 09:37:12 -0500
+Received: by mail-ot1-f66.google.com with SMTP id 32so20652321ota.12;
+        Mon, 21 Jan 2019 06:37:12 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=yCZE0qmHTsavb3lVKD5eIngzqW5FGtladyA6/TKyrl0=;
+        b=Wn9d1KfPaN4rT/o+ISxVyt/Hvx4vcrlizOe2ivntof2oIwE1Jix3oVGxN4HcWS054j
+         iS0jGGKEzR1d0syBVuYZnQzUwOmAPr97BbitzaWvdOr7LpQ16DawbiVotX2O+jb5ttj2
+         q1Cv5oLdAouDQoMgklKDnLHugHjxGDwm5PfsFGmK5pG5UaCDrYtuFxylOTLJ6kt7Ak9I
+         ojk4m+4nk63q1vVDcxmAgi2ECqU0mNT74POzGanJz7wadThc/mizcqKM/UZ1TT0IEfnb
+         UvuXDmw9oifZ+I2JS0eRGwSvnd+8XoxlelTw3E/pk1H/6NvM8W5epJ3WeTIvKF7VzS2A
+         PvcQ==
+X-Gm-Message-State: AJcUukdsk83+QEBKlpre6BEqgrcqLrGhkUxA8rKupeDSXd2MnYPffNnT
+        c20ukpHJukQBQZBftTeFVg==
+X-Google-Smtp-Source: ALg8bN70Q4ksOHrrmPpNmJxNmO3jRYxHaViWwUELu9sncCjtnH94eEs9zdYbjYPjPBO5KUeNXVTrgw==
+X-Received: by 2002:a9d:77d4:: with SMTP id w20mr19070332otl.196.1548081431955;
+        Mon, 21 Jan 2019 06:37:11 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id y25sm5426170otk.50.2019.01.21.06.37.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 21 Jan 2019 06:37:11 -0800 (PST)
+Date:   Mon, 21 Jan 2019 08:37:10 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Xiaowei Bao <xiaowei.bao@nxp.com>
+Cc:     bhelgaas@google.com, mark.rutland@arm.com, shawnguo@kernel.org,
+        leoyang.li@nxp.com, kishon@ti.com, lorenzo.pieralisi@arm.com,
+        arnd@arndb.de, gregkh@linuxfoundation.org, minghuan.Lian@nxp.com,
+        mingkai.hu@nxp.com, roy.zang@nxp.com, kstewart@linuxfoundation.org,
+        cyrille.pitchen@free-electrons.com, pombredanne@nexb.com,
+        shawn.lin@rock-chips.com, niklas.cassel@axis.com,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCHv5 1/4] dt-bindings: add DT binding for the layerscape
+ PCIe controller with EP mode
+Message-ID: <20190121143710.GA10941@bogus>
+References: <20190121094500.10657-1-xiaowei.bao@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAL_JsqKFT8J6g02gxeBiTfBb_XHhp2-ZNB6DgaLPK85kNZGRig@mail.gmail.com>
+In-Reply-To: <20190121094500.10657-1-xiaowei.bao@nxp.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 07:35:11AM -0600, Rob Herring wrote:
-> On Mon, Jan 21, 2019 at 6:19 AM Robin Murphy <robin.murphy@arm.com> wrote:
-> >
-> > On 21/01/2019 11:57, Marc Gonzalez wrote:
-> > [...]
-> > > # echo dump=0xffffffc021e00000 > /sys/kernel/debug/kmemleak
-> > > kmemleak: Object 0xffffffc021e00000 (size 2097152):
-> > > kmemleak:   comm "swapper/0", pid 0, jiffies 4294892296
-> > > kmemleak:   min_count = 0
-> > > kmemleak:   count = 0
-> > > kmemleak:   flags = 0x1
-> > > kmemleak:   checksum = 0
-> > > kmemleak:   backtrace:
-> > >       kmemleak_alloc_phys+0x48/0x60
-> > >       memblock_alloc_range_nid+0x8c/0xa4
-> > >       memblock_alloc_base_nid+0x4c/0x60
-> > >       __memblock_alloc_base+0x3c/0x4c
-> > >       early_init_dt_alloc_reserved_memory_arch+0x54/0xa4
-> > >       fdt_init_reserved_mem+0x308/0x3ec
-> > >       early_init_fdt_scan_reserved_mem+0x88/0xb0
-> > >       arm64_memblock_init+0x1dc/0x254
-> > >       setup_arch+0x1c8/0x4ec
-> > >       start_kernel+0x84/0x44c
-> > >       0xffffffffffffffff
-> >
-> > OK, so via the __va(phys) call in kmemleak_alloc_phys(), you end up with
-> > the linear map address of a no-map reservation, which unsurprisingly
-> > turns out not to be mapped. Is there a way to tell kmemleak that it
-> > can't scan within a particular object?
+On Mon, Jan 21, 2019 at 05:44:57PM +0800, Xiaowei Bao wrote:
+> Add the documentation for the Device Tree binding for the layerscape PCIe
+> controller with EP mode.
 > 
-> There was this patch posted[1]. I never got a reply, so it hasn't been applied.
+> Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
+> Reviewed-by: Minghuan Lian <minghuan.lian@nxp.com>
+> Reviewed-by: Zhiqiang Hou <zhiqiang.hou@nxp.com>
+> ---
+> v2:
+>  - Add the SoC specific compatibles.
+> v3:
+>  - modify the commit message.
+> v4:
+>  - no change.
+> v5:
+>  - no change.
+
+Still missing my R-by tag from v3.
+
 > 
-> https://patchwork.ozlabs.org/patch/995367/
-
-Thanks Rob, I wasn't aware of this patch (or I just missed it at the
-time).
-
-I wonder whether kmemleak should simply remove ranges passed to
-memblock_remove(), or at least mark them as no-scan.
-
--- 
-Catalin
+>  .../devicetree/bindings/pci/layerscape-pci.txt     |    3 +++
+>  1 files changed, 3 insertions(+), 0 deletions(-)
