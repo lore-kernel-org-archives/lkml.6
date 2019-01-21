@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FDADC2F3D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:17:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 333F1C2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:17:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF89720861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:17:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE0ED20861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:17:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548080241;
-	bh=g6is9RFcHxvF47aQaIxniW5bvOaCpvC91ndU+T811qo=;
+	s=default; t=1548080248;
+	bh=rQ52SiUuWveGlIPwuinXdvw5ymcAcYzZDlXEZKm/Swk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0oo4+G/sL2G3n9CaZxn0ZFhunL13Fi4lqMP9ZB44GlxaXnnrxZ3Ybh9BMx5LiU/mE
-	 6L+/XkZWV28ha7ihfLDb/sRrLoGz/9t6NpWsOgrNhdQy6Q5DCYCYFOI4PK0W7vQi0G
-	 hhgGIEM4Kv60Gzkk0MWWtBp5bNSIoS81k9KQ3ndE=
+	b=FgbxNVNQrK+0LV+6YIfnkXYfQOEtx0d59FMt9ciJKPQCnUmnQuFTq6oAzh7UfclzU
+	 WWbpe3nRgypbrT4VHFY3sGT0TkE+Nxqph/UQ+Omq7ihAaN5/1l7GlbiR7zEZX6mLsV
+	 vl49EsSPI2RfXjpz6VemUY4hATKmpOom4UfovkCU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730561AbfAUNu3 (ORCPT
+        id S1730815AbfAUOR0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:50:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32954 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 09:17:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33028 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729897AbfAUNuZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:50:25 -0500
+        id S1730537AbfAUNu0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:50:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4B07F2063F;
-        Mon, 21 Jan 2019 13:50:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EBB5720861;
+        Mon, 21 Jan 2019 13:50:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078622;
-        bh=g6is9RFcHxvF47aQaIxniW5bvOaCpvC91ndU+T811qo=;
+        s=default; t=1548078625;
+        bh=rQ52SiUuWveGlIPwuinXdvw5ymcAcYzZDlXEZKm/Swk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tPHQo8miTomKBczG09L3icf0rCr1Wrk/rx9qR/xudVZerJC0AyqdTGotkcLGSyOAW
-         zGDIBecfWG0ZS3NhS1B29ERwSpgfyAUZL/hId3PBzq6My16n8sS7H2zYQxzYXMIlbR
-         3Jmet4jv26aCUWNBah8FbI1aiQfiEwTyQ72hOqsc=
+        b=CPFAUY9UIRkeBamO9t6d+zux+FdOEWPRo2UbQt8Evrkx4jjuP70VCOY5glghL1t7T
+         3NpNm7pTR3poB3e3BIEfmHtc40LWQtqlh98dQHu3eziTnzjQ9cch6B3wvpyRLy1jSC
+         mVd+KZKeuCHRloQUVa/V8CSElD/9ma8wI9GfZDGs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
         Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.20 097/111] loop: Push lo_ctl_mutex down into individual ioctls
-Date:   Mon, 21 Jan 2019 14:43:31 +0100
-Message-Id: <20190121122506.544697790@linuxfoundation.org>
+Subject: [PATCH 4.20 098/111] loop: Split setting of lo_state from loop_clr_fd
+Date:   Mon, 21 Jan 2019 14:43:32 +0100
+Message-Id: <20190121122506.583613147@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122455.819406896@linuxfoundation.org>
 References: <20190121122455.819406896@linuxfoundation.org>
@@ -67,157 +67,119 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jan Kara <jack@suse.cz>
 
-commit a13165441d58b216adbd50252a9cc829d78a6bce upstream.
+commit a2505b799a496b7b84d9a4a14ec870ff9e42e11b upstream.
 
-Push acquisition of lo_ctl_mutex down into individual ioctl handling
-branches. This is a preparatory step for pushing the lock down into
-individual ioctl handling functions so that they can release the lock as
-they need it. We also factor out some simple ioctl handlers that will
-not need any special handling to reduce unnecessary code duplication.
+Move setting of lo_state to Lo_rundown out into the callers. That will
+allow us to unlock loop_ctl_mutex while the loop device is protected
+from other changes by its special state.
 
 Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/block/loop.c |   88 ++++++++++++++++++++++++++++++++++++---------------
- 1 file changed, 63 insertions(+), 25 deletions(-)
+ drivers/block/loop.c |   52 ++++++++++++++++++++++++++++++---------------------
+ 1 file changed, 31 insertions(+), 21 deletions(-)
 
 --- a/drivers/block/loop.c
 +++ b/drivers/block/loop.c
-@@ -1393,70 +1393,108 @@ static int loop_set_block_size(struct lo
+@@ -975,7 +975,7 @@ static int loop_set_fd(struct loop_devic
+ 		loop_reread_partitions(lo, bdev);
+ 
+ 	/* Grab the block_device to prevent its destruction after we
+-	 * put /dev/loopXX inode. Later in loop_clr_fd() we bdput(bdev).
++	 * put /dev/loopXX inode. Later in __loop_clr_fd() we bdput(bdev).
+ 	 */
+ 	bdgrab(bdev);
  	return 0;
- }
- 
--static int lo_ioctl(struct block_device *bdev, fmode_t mode,
--	unsigned int cmd, unsigned long arg)
-+static int lo_simple_ioctl(struct loop_device *lo, unsigned int cmd,
-+			   unsigned long arg)
- {
--	struct loop_device *lo = bdev->bd_disk->private_data;
- 	int err;
- 
- 	err = mutex_lock_killable_nested(&loop_ctl_mutex, 1);
- 	if (err)
--		goto out_unlocked;
-+		return err;
-+	switch (cmd) {
-+	case LOOP_SET_CAPACITY:
-+		err = loop_set_capacity(lo);
-+		break;
-+	case LOOP_SET_DIRECT_IO:
-+		err = loop_set_dio(lo, arg);
-+		break;
-+	case LOOP_SET_BLOCK_SIZE:
-+		err = loop_set_block_size(lo, arg);
-+		break;
-+	default:
-+		err = lo->ioctl ? lo->ioctl(lo, cmd, arg) : -EINVAL;
-+	}
-+	mutex_unlock(&loop_ctl_mutex);
-+	return err;
-+}
-+
-+static int lo_ioctl(struct block_device *bdev, fmode_t mode,
-+	unsigned int cmd, unsigned long arg)
-+{
-+	struct loop_device *lo = bdev->bd_disk->private_data;
-+	int err;
- 
- 	switch (cmd) {
- 	case LOOP_SET_FD:
-+		err = mutex_lock_killable_nested(&loop_ctl_mutex, 1);
-+		if (err)
-+			return err;
- 		err = loop_set_fd(lo, mode, bdev, arg);
-+		mutex_unlock(&loop_ctl_mutex);
- 		break;
- 	case LOOP_CHANGE_FD:
-+		err = mutex_lock_killable_nested(&loop_ctl_mutex, 1);
-+		if (err)
-+			return err;
- 		err = loop_change_fd(lo, bdev, arg);
-+		mutex_unlock(&loop_ctl_mutex);
- 		break;
- 	case LOOP_CLR_FD:
-+		err = mutex_lock_killable_nested(&loop_ctl_mutex, 1);
-+		if (err)
-+			return err;
- 		/* loop_clr_fd would have unlocked loop_ctl_mutex on success */
- 		err = loop_clr_fd(lo);
--		if (!err)
--			goto out_unlocked;
-+		if (err)
-+			mutex_unlock(&loop_ctl_mutex);
- 		break;
- 	case LOOP_SET_STATUS:
- 		err = -EPERM;
--		if ((mode & FMODE_WRITE) || capable(CAP_SYS_ADMIN))
-+		if ((mode & FMODE_WRITE) || capable(CAP_SYS_ADMIN)) {
-+			err = mutex_lock_killable_nested(&loop_ctl_mutex, 1);
-+			if (err)
-+				return err;
- 			err = loop_set_status_old(lo,
- 					(struct loop_info __user *)arg);
-+			mutex_unlock(&loop_ctl_mutex);
-+		}
- 		break;
- 	case LOOP_GET_STATUS:
-+		err = mutex_lock_killable_nested(&loop_ctl_mutex, 1);
-+		if (err)
-+			return err;
- 		err = loop_get_status_old(lo, (struct loop_info __user *) arg);
- 		/* loop_get_status() unlocks loop_ctl_mutex */
--		goto out_unlocked;
-+		break;
- 	case LOOP_SET_STATUS64:
- 		err = -EPERM;
--		if ((mode & FMODE_WRITE) || capable(CAP_SYS_ADMIN))
-+		if ((mode & FMODE_WRITE) || capable(CAP_SYS_ADMIN)) {
-+			err = mutex_lock_killable_nested(&loop_ctl_mutex, 1);
-+			if (err)
-+				return err;
- 			err = loop_set_status64(lo,
- 					(struct loop_info64 __user *) arg);
-+			mutex_unlock(&loop_ctl_mutex);
-+		}
- 		break;
- 	case LOOP_GET_STATUS64:
-+		err = mutex_lock_killable_nested(&loop_ctl_mutex, 1);
-+		if (err)
-+			return err;
- 		err = loop_get_status64(lo, (struct loop_info64 __user *) arg);
- 		/* loop_get_status() unlocks loop_ctl_mutex */
--		goto out_unlocked;
--	case LOOP_SET_CAPACITY:
--		err = -EPERM;
--		if ((mode & FMODE_WRITE) || capable(CAP_SYS_ADMIN))
--			err = loop_set_capacity(lo);
- 		break;
-+	case LOOP_SET_CAPACITY:
- 	case LOOP_SET_DIRECT_IO:
--		err = -EPERM;
--		if ((mode & FMODE_WRITE) || capable(CAP_SYS_ADMIN))
--			err = loop_set_dio(lo, arg);
--		break;
- 	case LOOP_SET_BLOCK_SIZE:
--		err = -EPERM;
--		if ((mode & FMODE_WRITE) || capable(CAP_SYS_ADMIN))
--			err = loop_set_block_size(lo, arg);
--		break;
-+		if (!(mode & FMODE_WRITE) && !capable(CAP_SYS_ADMIN))
-+			return -EPERM;
-+		/* Fall through */
- 	default:
--		err = lo->ioctl ? lo->ioctl(lo, cmd, arg) : -EINVAL;
-+		err = lo_simple_ioctl(lo, cmd, arg);
-+		break;
- 	}
--	mutex_unlock(&loop_ctl_mutex);
- 
--out_unlocked:
+@@ -1025,31 +1025,15 @@ loop_init_xfer(struct loop_device *lo, s
  	return err;
  }
  
+-static int loop_clr_fd(struct loop_device *lo)
++static int __loop_clr_fd(struct loop_device *lo)
+ {
+ 	struct file *filp = lo->lo_backing_file;
+ 	gfp_t gfp = lo->old_gfp_mask;
+ 	struct block_device *bdev = lo->lo_device;
+ 
+-	if (lo->lo_state != Lo_bound)
++	if (WARN_ON_ONCE(lo->lo_state != Lo_rundown))
+ 		return -ENXIO;
+ 
+-	/*
+-	 * If we've explicitly asked to tear down the loop device,
+-	 * and it has an elevated reference count, set it for auto-teardown when
+-	 * the last reference goes away. This stops $!~#$@ udev from
+-	 * preventing teardown because it decided that it needs to run blkid on
+-	 * the loopback device whenever they appear. xfstests is notorious for
+-	 * failing tests because blkid via udev races with a losetup
+-	 * <dev>/do something like mkfs/losetup -d <dev> causing the losetup -d
+-	 * command to fail with EBUSY.
+-	 */
+-	if (atomic_read(&lo->lo_refcnt) > 1) {
+-		lo->lo_flags |= LO_FLAGS_AUTOCLEAR;
+-		mutex_unlock(&loop_ctl_mutex);
+-		return 0;
+-	}
+-
+ 	if (filp == NULL)
+ 		return -EINVAL;
+ 
+@@ -1057,7 +1041,6 @@ static int loop_clr_fd(struct loop_devic
+ 	blk_mq_freeze_queue(lo->lo_queue);
+ 
+ 	spin_lock_irq(&lo->lo_lock);
+-	lo->lo_state = Lo_rundown;
+ 	lo->lo_backing_file = NULL;
+ 	spin_unlock_irq(&lo->lo_lock);
+ 
+@@ -1110,6 +1093,30 @@ static int loop_clr_fd(struct loop_devic
+ 	return 0;
+ }
+ 
++static int loop_clr_fd(struct loop_device *lo)
++{
++	if (lo->lo_state != Lo_bound)
++		return -ENXIO;
++	/*
++	 * If we've explicitly asked to tear down the loop device,
++	 * and it has an elevated reference count, set it for auto-teardown when
++	 * the last reference goes away. This stops $!~#$@ udev from
++	 * preventing teardown because it decided that it needs to run blkid on
++	 * the loopback device whenever they appear. xfstests is notorious for
++	 * failing tests because blkid via udev races with a losetup
++	 * <dev>/do something like mkfs/losetup -d <dev> causing the losetup -d
++	 * command to fail with EBUSY.
++	 */
++	if (atomic_read(&lo->lo_refcnt) > 1) {
++		lo->lo_flags |= LO_FLAGS_AUTOCLEAR;
++		mutex_unlock(&loop_ctl_mutex);
++		return 0;
++	}
++	lo->lo_state = Lo_rundown;
++
++	return __loop_clr_fd(lo);
++}
++
+ static int
+ loop_set_status(struct loop_device *lo, const struct loop_info64 *info)
+ {
+@@ -1691,11 +1698,14 @@ static void lo_release(struct gendisk *d
+ 		goto out_unlock;
+ 
+ 	if (lo->lo_flags & LO_FLAGS_AUTOCLEAR) {
++		if (lo->lo_state != Lo_bound)
++			goto out_unlock;
++		lo->lo_state = Lo_rundown;
+ 		/*
+ 		 * In autoclear mode, stop the loop thread
+ 		 * and remove configuration after last close.
+ 		 */
+-		err = loop_clr_fd(lo);
++		err = __loop_clr_fd(lo);
+ 		if (!err)
+ 			return;
+ 	} else if (lo->lo_state == Lo_bound) {
 
 
