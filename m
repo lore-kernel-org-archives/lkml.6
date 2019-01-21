@@ -2,146 +2,1111 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9C00C282DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:38:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C11DAC282E2
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:39:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DEC520855
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:38:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E1D420855
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:39:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Dro0GWz9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Un6j219f"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728843AbfAUHis (ORCPT
+        id S1728855AbfAUHjN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 02:38:48 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:10546 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728543AbfAUHir (ORCPT
+        Mon, 21 Jan 2019 02:39:13 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:45210 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728069AbfAUHjN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 02:38:47 -0500
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20190121014202epoutp021ed19bd9116d7b956af0be6f9e71e513~7uY_DECaB2119921199epoutp024
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 01:42:02 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20190121014202epoutp021ed19bd9116d7b956af0be6f9e71e513~7uY_DECaB2119921199epoutp024
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1548034923;
-        bh=fbtpDjs7tFi0tVH3fN2ayJ+HRVYRGC2jIbzOXZpY9BI=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=Dro0GWz9jwP9SeUQlh2PgOJKbjztL/VuKm+kLP89cOR9r6aBAhi67zglWXaXsPj1d
-         qZQNxt2fRz7y+LZJs+DDXQ8sdJ4HGa3KVpJj3nPiJ9p8WxNCS18ajzIDfXyafLMm4f
-         7YPLWT6ZLoypAAEBVcT9kwkEcyQIQhXyiDTuYe0A=
-Received: from epsmges1p2.samsung.com (unknown [182.195.40.157]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20190121014201epcas1p4d0e07dca300f77a87a646a8741b5432a~7uY8f174N2878228782epcas1p4N;
-        Mon, 21 Jan 2019 01:42:01 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        DA.AB.04173.963254C5; Mon, 21 Jan 2019 10:42:01 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20190121014200epcas1p1aef2348cc44f7cb742a3c3105868ade5~7uY8DNVaX2758927589epcas1p19;
-        Mon, 21 Jan 2019 01:42:00 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190121014200epsmtrp2c1896ee9994a814e3a1a4507db0312c7~7uY8CSmZ30873508735epsmtrp2Z;
-        Mon, 21 Jan 2019 01:42:00 +0000 (GMT)
-X-AuditID: b6c32a36-5d9ff7000000104d-af-5c452369b41a
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        0F.10.03971.863254C5; Mon, 21 Jan 2019 10:42:00 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190121014200epsmtip17d4e325cb9fb7554230a9884eb73c359~7uY73rnm80894708947epsmtip1-;
-        Mon, 21 Jan 2019 01:42:00 +0000 (GMT)
-Subject: Re: [PATCH 3/3] PM / devfreq: fix mem leak in devfreq_add_device()
-To:     Yangtao Li <tiny.windzz@gmail.com>, myungjoo.ham@samsung.com,
-        kyungmin.park@samsung.com, linux-pm@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <0ae2e104-4ff0-888a-c6ce-12b40a76e14d@samsung.com>
-Date:   Mon, 21 Jan 2019 10:42:00 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.2.1
+        Mon, 21 Jan 2019 02:39:13 -0500
+Received: by mail-pl1-f196.google.com with SMTP id a14so9378355plm.12;
+        Sun, 20 Jan 2019 23:39:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ZvSGSic5oDZIujbGeu2Iz6PGgWjrJRGKpRYm/oUUvys=;
+        b=Un6j219fJy0Zk2l4xWj9DUNWiDLX4dlbPEumUt68KEdoutnrft2tfEY9DOZHZdU6+o
+         8i8nYqmzMMa2qA5Fv0fibyVJm2k36XVfdqDlK3DjXaKlU3PlpgCg6EXZVHd/l1S//oML
+         kunz7G20kIWq3MRQyskyxick5nZKMH0HKH5INU2t+HCx0PaFLfMOa976Wycj1BKHLf+5
+         IiBiHWcTM+ovoNWEsnpppW9YMM5BPemPWOzn0n17ckhh3uiKUCAdq6ox0+q26wyIAeNA
+         oKju6B0WDRkOeR3f7UiPonO7Fzwb7h882TO5ZxD+z2HmgrSxJYoeq3SWBdnZiaOCFl7W
+         IftQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ZvSGSic5oDZIujbGeu2Iz6PGgWjrJRGKpRYm/oUUvys=;
+        b=Tfwmw6mhqwDxyxuv8E8NP/xVKbsDEFIAJZ3Tba3syuv3L+fYiPRVCnmiq3OvIDXIXs
+         UJaUw3u+jitTOMeRJwGLjAoCi3xbsSpGN7VPWkodpv9cIAa3fz49UIEHj1Iey9/r0pE4
+         gC0cljDssff0j32eKMNrFpZAlfWTQ32y3dVsDPqSnny6zM79+3N7Cg0EuIVlR+Wo7HsA
+         2gzjfMHBa0lZIKll2lhTw6tG3xVrLcEMMOlObLGdiS0hlCmhp8YoCbzkhp6mgRq/aPa1
+         YM0sXIOSajPiZ81oGhOYTOnIf5GOPkJiO/9jmWG4jWjZ9He2SXiMTAFjRVKWQJsWVjEa
+         pdrw==
+X-Gm-Message-State: AJcUukc+ehD3OgYhgde7KgqACqiyoPeKxrnC2xHGfBcL6Cu8yZWMR0oU
+        My6+dJ4qqWUSMzWr/AmFFegULUYFwSU=
+X-Google-Smtp-Source: ALg8bN5NjZmamxthmDZsxL4RalBwDEKq2zjCMiWrTl3+SJOz7x5Ki3dLQ1oAEcaU2rxJ0iICYhxJfQ==
+X-Received: by 2002:a17:902:3143:: with SMTP id w61mr29484967plb.253.1548052761900;
+        Sun, 20 Jan 2019 22:39:21 -0800 (PST)
+Received: from bobby.localdomain ([2601:1c0:5501:37e2::7dc4])
+        by smtp.gmail.com with ESMTPSA id d68sm16658740pfa.64.2019.01.20.22.39.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 20 Jan 2019 22:39:21 -0800 (PST)
+Date:   Sun, 20 Jan 2019 22:39:14 -0800
+From:   Robert Eshleman <bobbyeshleman@gmail.com>
+To:     Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Robert Eshleman <bobbyeshleman@gmail.com>
+Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: light: add driver support for MAX44009
+Message-ID: <20190121063508.GA21651@bobby.localdomain>
+References: <20190117065623.12169-1-bobbyeshleman@gmail.com>
+ <20190119185319.4b20b939@archlinux>
+ <alpine.DEB.2.21.1901192006390.30192@vps.pmeerw.net>
 MIME-Version: 1.0
-In-Reply-To: <20190119160454.23151-3-tiny.windzz@gmail.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAJsWRmVeSWpSXmKPExsWy7bCmrm6msmuMwfcJghZnm96wW1zeNYfN
-        4nPvEUaL240r2Czm/p7A5sDqsXPWXXaPvi2rGD0+b5ILYI7KtslITUxJLVJIzUvOT8nMS7dV
-        8g6Od443NTMw1DW0tDBXUshLzE21VXLxCdB1y8wBWqmkUJaYUwoUCkgsLlbSt7Mpyi8tSVXI
-        yC8usVVKLUjJKbAs0CtOzC0uzUvXS87PtTI0MDAyBSpMyM44sGApS0Ere8XJ9ReYGxivsnYx
-        cnJICJhIzJl0jq2LkYtDSGAHo8Txjq1sIAkhgU+MEo+WaUIkvjFK3Dp8iAmm49ujV0wQRXsZ
-        JT7N8YUoes8ocWPBCmaQhLCAt8TNzZ2MILaIQLnEjD1nwNYxCyhI/Lq3CcxmE9CS2P/iBtg2
-        fgFFias/HoPV8wrYSTzduxYsziKgKrFsdhNYXFQgQqLj/mo2iBpBiZMzn7CA2JwC1hLNF95C
-        zReXuPVkPhOELS/RvHU2M8hxEgKX2SSW7tzIDvGBi8S+XZuhvhGWeHV8C1RcSuLzu71sEHa1
-        xMqTR9ggmjsYJbbsvwANMGOJ/UsnAzVzAG3QlFi/Sx9iGZ/Eu689rCBhCQFeiY42IYhqZYnL
-        D+5CrZKUWNzeCTXeQ+LsmxuMExgVZyF5ZxaSF2YheWEWwrIFjCyrGMVSC4pz01OLDQuMkCN7
-        EyM4NWqZ7WBcdM7nEKMAB6MSD++Pey4xQqyJZcWVuYcYJTiYlUR4M447xwjxpiRWVqUW5ccX
-        leakFh9iNAWG9kRmKdHkfGDaziuJNzQ1MjY2tjAxNDM1NFQS513vANQkkJ5YkpqdmlqQWgTT
-        x8TBKdXA2H/0a1GPh7n1/aOFT+t4pgYsnZTy8WHk1Hv133cHvLZQ+SR/zulW8L8Qx0jf3e9e
-        /DQX8Kt25Gqbeu7wC07VF8352rMeJzrJr5kSe807N/dBY6b+XQV2myU35m/PSjP6Z9ikxG5n
-        46ganzmLW6VnedKyg7KfV1mYrVfyu/lZoMFxQstizpwcJZbijERDLeai4kQA45+HzaMDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrNLMWRmVeSWpSXmKPExsWy7bCSnG6GsmuMwaxn2hZnm96wW1zeNYfN
-        4nPvEUaL240r2Czm/p7A5sDqsXPWXXaPvi2rGD0+b5ILYI7isklJzcksSy3St0vgyjiwYClL
-        QSt7xcn1F5gbGK+ydjFyckgImEh8e/SKqYuRi0NIYDejxLetF5kgEpIS0y4eZe5i5ACyhSUO
-        Hy4GCQsJvGWUWLpQDMQWFvCWuLm5kxHEFhEolzj//BLYTGYBBYlf9zaxQszczyhxYMk3NpAE
-        m4CWxP4XN8BsfgFFias/HoM18wrYSTzduxYsziKgKrFsdhNYXFQgQuLsy3VQNYISJ2c+YQGx
-        OQWsJZovvIVapi7xZ94lZghbXOLWk/lMELa8RPPW2cwTGIVnIWmfhaRlFpKWWUhaFjCyrGKU
-        TC0ozk3PLTYsMMxLLdcrTswtLs1L10vOz93ECI4SLc0djJeXxB9iFOBgVOLh/XHPJUaINbGs
-        uDL3EKMEB7OSCG/GcecYId6UxMqq1KL8+KLSnNTiQ4zSHCxK4rxP845FCgmkJ5akZqemFqQW
-        wWSZODilGhhTTPl19XarlsQ/3LdBdtNH5oQE9TML7u4vXSjPni+cP38Sa3f0q9o6ywNdb9Pe
-        Ll12PPEx61/9ukXrhBn6hR423hIou1DVWn9g9k6ROUcsJXn27nRvZd3yMk7PbovsQuG5i33O
-        d2z7nCF87nRR8YXCyq2SSQ2ndh98ft40sm7XD0ZhpusJcVuUWIozEg21mIuKEwHwjsIxjgIA
-        AA==
-X-CMS-MailID: 20190121014200epcas1p1aef2348cc44f7cb742a3c3105868ade5
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20190119183020epcas1p4c0ce7cf4c2ed02da5d6ffb7bbadfd8b8
-References: <20190119160454.23151-1-tiny.windzz@gmail.com>
-        <CGME20190119183020epcas1p4c0ce7cf4c2ed02da5d6ffb7bbadfd8b8@epcas1p4.samsung.com>
-        <20190119160454.23151-3-tiny.windzz@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1901192006390.30192@vps.pmeerw.net>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Sat, Jan 19, 2019 at 08:41:46PM +0100, Peter Meerwald-Stadler wrote:
 
-On 19. 1. 20. 오전 1:04, Yangtao Li wrote:
-> 'devfreq' is malloced in devfreq_add_device() and should be freed in
-> the error handling cases, otherwise it will cause memory leak.
+Hey Jonathon and Peter,
+
+First, thank you for the constructive and in-depth feedback.
+
+I have a question below regarding a section of code that will need to
+be protected against a race condition if future features are added.
+
+Mostly this email is just an ack that I've started working on the
+changes.
+
+Thanks again,
+Robert
+
+> On Sat, 19 Jan 2019, Jonathan Cameron wrote:
 > 
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> ---
->  drivers/devfreq/devfreq.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> some more comments from my side below...
 > 
-> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-> index 923889229a0b..fe6c157cb7e0 100644
-> --- a/drivers/devfreq/devfreq.c
-> +++ b/drivers/devfreq/devfreq.c
-> @@ -651,7 +651,7 @@ struct devfreq *devfreq_add_device(struct device *dev,
->  		mutex_unlock(&devfreq->lock);
->  		err = set_freq_table(devfreq);
->  		if (err < 0)
-> -			goto err_out;
-> +			goto err_dev;
->  		mutex_lock(&devfreq->lock);
->  	}
->  
+> > On Wed, 16 Jan 2019 22:56:23 -0800
+> > Robert Eshleman <bobbyeshleman@gmail.com> wrote:
+> > 
+> > Hi Robert,
+> > 
+> > Note I review drivers backwards, so comments may make more sense that
+> > way around.
+> > 
+> > > The MAX44009 is a low-power ambient light sensor from Maxim Integrated.
+> > > It differs from the MAX44000 in that it doesn't have proximity sensing and that
+> > > it requires far less current (1 micro-amp vs 5 micro-amps). The register
+> > > mapping and feature set between the two are different enough to require a new
+> > > driver for the MAX44009.
+> > > 
+> > > Developed and tested with a BeagleBone Black and UDOO Neo (i.MX6SX)
+> > > 
+> > > Supported features:
+> > > 
+> > > * Rising and falling illuminance threshold
+> > >   events
+> > 
+> > Not really on this one.  You support using them as a trigger, which
+> > is not how threshold events should be handled in IIO. Please
+> > report them as events.   This device doesn't seem  to have
+> > a trigger that can be used in general, so you shouldn't provide
+> > one.
+> > 
+> > Userspace can use the event to decide to do a read if it wants to
+> > follow the classic move the thresholds so as to detect big
+> > 'changes' in light intensity.
+> > 
+> > Various other comments inline.  Quite a bit of style cleanup
+> > needed as well, please check the kernel docs for coding style
+> > https://www.kernel.org/doc/Documentation/process/coding-style.rst
+> > 
+> > Also take a look at other IIO drivers for the bits that are
+> > noted in there as varying across the kernel.
+> > 
+> > Whilst there is quite a bit to work on in here yet, great to see
+> > support for this new part! Looking forward to v2.
+> > 
+> > Jonathan
+> > 
+
+After seeing your notes and looking closer at how userspace leverages
+triggers, I can see now how it does not make sense to let this device
+supply one.  It is, as you mentioned, events that are the right fit
+for this device.
+
+> > > 
+> > > * Illuminance triggered buffers
+> > > 
+> > > * Integration time
+> > > 
+> > > https://datasheets.maximintegrated.com/en/ds/MAX44009.pdf
+> > > 
+> > > Signed-off-by: Robert Eshleman <bobbyeshleman@gmail.com>
+> > 
+> > > ---
+> > >  .../bindings/iio/light/max44009.txt           |  25 +
+> > >  drivers/iio/light/Kconfig                     |  13 +
+> > >  drivers/iio/light/Makefile                    |   1 +
+> > >  drivers/iio/light/max44009.c                  | 696 ++++++++++++++++++
+> > >  4 files changed, 735 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/iio/light/max44009.txt
+> > >  create mode 100644 drivers/iio/light/max44009.c
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/iio/light/max44009.txt b/Documentation/devicetree/bindings/iio/light/max44009.txt
+> > > new file mode 100644
+> > > index 000000000000..220c2808dca1
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/iio/light/max44009.txt
+> > > @@ -0,0 +1,25 @@
+> > > +* MAX44009 Ambient Light Sensor
+> > > +
+> > > +Required properties:
+> > > +
+> > > +- compatible: should be "maxim,max44009"
+> > > +- reg: the I2C address of the device (default is <0x4a>)
+> > > +
+> > > +Optional properties:
+> > > +
+> > > +- interrupts : interrupt mapping for GPIO IRQ. Should be configured with
+> 
+> the space before the colon hurts my eyes
+> 
+> > > +  IRQ_TYPE_EDGE_FALLING.
+> > > +
+> > > +Refer to interrupt-controller/interrupts.txt for generic interrupt client
+> > > +node bindings.
+> > > +
+> > > +Example:
+> > > +
+> > > +max44009: max44009@4a {
+> > > +	compatible = "maxim,max44009";
+> > > +	reg = <0x4a>;
+> > > +
+> > > +	interrupt-parent = <&gpio1>;
+> > > +	interrupts = <17 IRQ_TYPE_EDGE_FALLING>;
+> > > +};
+> > > +
+> > > diff --git a/drivers/iio/light/Kconfig b/drivers/iio/light/Kconfig
+> > > index 36f458433480..cda544f1047d 100644
+> > > --- a/drivers/iio/light/Kconfig
+> > > +++ b/drivers/iio/light/Kconfig
+> > > @@ -299,6 +299,19 @@ config MAX44000
+> > >  	 To compile this driver as a module, choose M here:
+> > >  	 the module will be called max44000.
+> > >  
+> > > +config MAX44009
+> > > +	tristate "MAX44009 Ambient Light Sensor"
+> > > +	depends on I2C
+> > > +	select IIO_BUFFER
+> > > +	select IIO_TRIGGERED_BUFFER
+> > > +	select IIO_TRIGGERED_EVENT
+> > > +	help
+> > > +	 Say Y here if you want to build support for Maxim Integrated's
+> > > +	 MAX44009 ambient light sensor device.
+> > > +
+> > > +	 To compile this driver as a module, choose M here:
+> > > +	 the module will be called max44009.
+> > > +
+> > >  config OPT3001
+> > >  	tristate "Texas Instruments OPT3001 Light Sensor"
+> > >  	depends on I2C
+> > > diff --git a/drivers/iio/light/Makefile b/drivers/iio/light/Makefile
+> > > index 286bf3975372..e40794fbb435 100644
+> > > --- a/drivers/iio/light/Makefile
+> > > +++ b/drivers/iio/light/Makefile
+> > > @@ -28,6 +28,7 @@ obj-$(CONFIG_SENSORS_LM3533)	+= lm3533-als.o
+> > >  obj-$(CONFIG_LTR501)		+= ltr501.o
+> > >  obj-$(CONFIG_LV0104CS)		+= lv0104cs.o
+> > >  obj-$(CONFIG_MAX44000)		+= max44000.o
+> > > +obj-$(CONFIG_MAX44009)		+= max44009.o
+> > >  obj-$(CONFIG_OPT3001)		+= opt3001.o
+> > >  obj-$(CONFIG_PA12203001)	+= pa12203001.o
+> > >  obj-$(CONFIG_RPR0521)		+= rpr0521.o
+> > > diff --git a/drivers/iio/light/max44009.c b/drivers/iio/light/max44009.c
+> > > new file mode 100644
+> > > index 000000000000..e15aa8eeb2f6
+> > > --- /dev/null
+> > > +++ b/drivers/iio/light/max44009.c
+> > > @@ -0,0 +1,696 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +/*
+> > > + * max44009.c - Support for MAX44009 Ambient Light Sensor
+> > > + *
+> > > + * Copyright (c) 2019 Robert Eshleman <bobbyeshleman@gmail.com>
+> > > + *
+> > > + * This program is free software; you can redistribute it and/or modify
+> > > + * it under the terms of the GNU General Public License version 2 as
+> > > + * published by the Free Software Foundation.
+> > If you have SPDX, no need to have a license statement.
+> > > + *
+> > > + *
+> > > + * Datasheet: https://datasheets.maximintegrated.com/en/ds/MAX44009.pdf
+> > > + *
+> > > + * TODO: Support continuous mode and processed event value (IIO_EV_INFO_VALUE)
+> > > + *
+> > > + * Default I2C address: 0x4a
+> > > + *
+> > No point in this blank line.
+> > 
+> > > + */
+> > > +
+> > > +#include <linux/bits.h>
+> > > +#include <linux/i2c.h>
+> > > +#include <linux/iio/buffer.h>
+> > > +#include <linux/iio/events.h>
+> > > +#include <linux/iio/iio.h>
+> > > +#include <linux/iio/sysfs.h>
+> > > +#include <linux/iio/trigger.h>
+> > > +#include <linux/iio/trigger_consumer.h>
+> > > +#include <linux/iio/triggered_buffer.h>
+> > > +#include <linux/init.h>
+> > > +#include <linux/interrupt.h>
+> > > +#include <linux/kernel.h>
+> > > +#include <linux/module.h>
+> > > +#include <linux/regmap.h>
+> > > +#include <linux/util_macros.h>
+> > > +
+> > > +#define MAX44009_DRV_NAME "max44009"
+> > > +#define MAX44009_IRQ_NAME "max44009_event"
+> > 
+> > Unless used more than once, no point in defines like this.  Just put
+> > the string inline.
+> > 
+> > > +
+> > > +/* Registers in datasheet order */
+> > > +#define MAX44009_REG_STATUS 0x0
+> > > +#define MAX44009_REG_ENABLE 0x1
+> > > +#define MAX44009_REG_CFG 0x2
+> > > +#define MAX44009_REG_LUX_HI 0x3
+> > > +#define MAX44009_REG_LUX_LO 0x4
+> > > +#define MAX44009_REG_UPPER_THR 0x5
+> > > +#define MAX44009_REG_LOWER_THR 0x6
+> > > +#define MAX44009_REG_THR_TIMER 0x7
+> > > +
+> > > +#define MAX44009_INT_TIME_MASK (BIT(2) | BIT(1) | BIT(0))
+> > 
+> > GENMASK
+> > 
+> > > +#define MAX44009_INT_TIME_SHIFT (0)
+> 
+> shift 0 needed?
+> 
+> > > +
+> > > +#define MAX44009_MANUAL_MODE_MASK BIT(6)
+> > > +
+> > > +/* The maxmimum raw rising threshold for the max44009 */
+> 
+> maximum
+> 
+> > > +#define MAX44009_MAXIMUM_THRESHOLD 8355840
+> > > +
+> > > +#define MAX44009_HI_NIBBLE(reg) (((reg) >> 4) & 0xf)
+> > > +#define MAX44009_LO_NIBBLE(reg) ((reg) & 0xf)
+> > > +
+> > > +#define MAX44009_EXP_MASK 0xf00
+> > > +#define MAX44009_EXP_RSHIFT 8
+> > > +#define MAX44009_LUX_EXP(reg)	                                              \
+> > > +	(1 << (((reg) & MAX44009_EXP_MASK) >> MAX44009_EXP_RSHIFT))
+> > > +#define MAX44009_LUX_MANT(reg) ((reg) & 0xff)
+> > > +
+> > > +#define MAX44009_LUX(reg) (MAX44009_LUX_EXP(reg) * MAX44009_LUX_MANT(reg))
+> > 
+> > These are complex enough that a few small functions with documentation
+> > would be better than macros.
+> > 
+> > > +
+> > > +#define MAX44009_THRESH_MANT(reg) ((MAX44009_LO_NIBBLE(reg) << 4) + 15)
+> > > +#define MAX44009_THRESHOLD(reg)                                                \
+> > > +	((1 << MAX44009_HI_NIBBLE(reg)) * MAX44009_THRESH_MANT(reg))
+> > > +
+> > 
+> > > +static const u32 max44009_int_time_ns_array[] = {
+> > > +	800000000,
+> > > +	400000000,
+> > > +	200000000,
+> > > +	100000000,
+> > > +	50000000, /* Manual mode only */
+> > > +	25000000, /* Manual mode only */
+> > > +	12500000, /* Manual mode only */
+> > > +	6250000,  /* Manual mode only */
+> > > +};
+> > > +
+> > > +static const char max44009_int_time_str[] =
+> > > +	"0.8 "
+> > > +	"0.4 "
+> > > +	"0.2 "
+> > > +	"0.1 "
+> > > +	"0.05 "
+> > > +	"0.025 "
+> > > +	"0.0125 "
+> > > +	"0.00625";
+> > > +
+> > > +static const u8 max44009_scale_avail_ulux_array[] = {45};
+> > > +static const char max44009_scale_avail_str[] = "0.045";
+> > 
+> > If there is only one value, don't provide the avail stuff
+> > and just put the value in directly where used.
+> 
+> CHAN_INFO_SCALE is not exposed but should be to express the 0.045 
+> multiplier
 > 
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Got it, totally makes sense.
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+> > > +
+> > > +struct max44009_data {
+> > > +	struct i2c_client *client;
+> > > +	struct iio_trigger *trigger;
+> > > +	struct mutex lock;
+> > > +	int64_t timestamp;
+> > > +};
+> > > +
+> > > +static const struct iio_event_spec max44009_event_spec[] = {
+> > > +	{
+> > > +		.type = IIO_EV_TYPE_THRESH,
+> > > +		.dir = IIO_EV_DIR_RISING,
+> > > +		.mask_separate = BIT(IIO_EV_INFO_VALUE) |
+> > > +				 BIT(IIO_EV_INFO_ENABLE),
+> > > +	},
+> > > +	{
+> > > +		.type = IIO_EV_TYPE_THRESH,
+> > > +		.dir = IIO_EV_DIR_FALLING,
+> > > +		.mask_separate = BIT(IIO_EV_INFO_VALUE) |
+> > > +				 BIT(IIO_EV_INFO_ENABLE),
+> > > +	},
+> > > +};
+> > > +
+> > > +static const struct iio_chan_spec max44009_channels[] = {
+> > > +	{
+> > > +		.type = IIO_LIGHT,
+> > > +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+> > > +		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_INT_TIME),
+> > > +		.scan_index = 0,
+> > > +		.scan_type = {
+> > > +				.sign = 'u',
+> > > +				.realbits = 24,
+> > > +				.storagebits = 32,
+> > > +			},
+> > > +		.event_spec = max44009_event_spec,
+> > > +		.num_event_specs = ARRAY_SIZE(max44009_event_spec),
+> > > +	},
+> > > +	IIO_CHAN_SOFT_TIMESTAMP(1),
+> > > +};
+> > > +
+> > > +static int max44009_read_reg(struct max44009_data *data, char reg)
+> > > +{
+> > > +	struct i2c_client *client = data->client;
+> > > +	int ret;
+> > > +
+> > > +	mutex_lock(&data->lock);
+> > > +	ret = i2c_smbus_read_byte_data(client, reg);
+> > > +	if (ret < 0) {
+> > 
+> > Same as below.
+> > 
+> > > +		dev_err(&client->dev,
+> > > +			"failed to read reg 0x%0x, err: %d\n", reg, ret);
+> > > +		goto err;
+> > > +	}
+> > > +
+> > > +err:
+> > > +	mutex_unlock(&data->lock);
+> > > +	return ret;
+> > > +}
+> > > +
+> > > +static int max44009_write_reg(struct max44009_data *data, char reg, char buf)
+> > > +{
+> > > +	struct i2c_client *client = data->client;
+> > > +	int ret;
+> > > +
+> > > +	mutex_lock(&data->lock);
+> > 
+> > What is this mutex protecting?
+> > 
+> > > +	ret = i2c_smbus_write_byte_data(client, reg, buf);
+> > > +	if (ret < 0) {
+> > 
+> > returns 0 on success.  So do
+> > if (ret) as it'll prove simpler to follow for handling later.
+> > 
+> > > +		dev_err(&client->dev,
+> > > +			"failed to write reg 0x%0x, err: %d\n",
+> > > +			reg, ret);
+> > > +		goto err;
+> > > +	}
+> > > +
+> > > +err:
+> > > +	mutex_unlock(&data->lock);
+> > > +	return ret;
+> > > +}
+> > > +
+> > > +static int max44009_read_int_time(struct max44009_data *data)
+> > > +{
+> > > +	int ret = max44009_read_reg(data, MAX44009_REG_CFG);
+> > > +
+> > > +	if (ret < 0) {
+> > > +		return ret;
+> > > +	}
+> > > +
+> > > +	return max44009_int_time_ns_array[ret & MAX44009_INT_TIME_MASK];
+> > > +}
+> > > +
+> > > +static int max44009_write_raw(struct iio_dev *indio_dev,
+> > > +			      struct iio_chan_spec const *chan, int val,
+> > > +			      int val2, long mask)
+> > > +{
+> > > +	struct max44009_data *data = iio_priv(indio_dev);
+> > > +	int ret, int_time;
+> > > +	s64 ns;
+> > > +
+> > > +	if (mask == IIO_CHAN_INFO_INT_TIME && chan->type == IIO_LIGHT) {
+> > > +		ns = val * NSEC_PER_SEC + val2;
+> > > +		int_time = find_closest_descending(
+> > > +				ns,
+> > > +				max44009_int_time_ns_array,
+> > > +				ARRAY_SIZE(max44009_int_time_ns_array));
+> > > +
+> 
+> a mutex might make sense here to protect the read/write combo
+> 
+
+This device supports other configuration, via MAX44009_REG_CFG, that
+is not yet supported by this driver.  If those configurations are
+supported in the future, then there will be a race condition that
+leads to a failure to update the register with both configurations
+(the most recent write will win). Currently, this is the only section
+that modifies this register with a read/update/write. Should this be
+future-proofed now (with a mutex), or deferred to when/if those
+features are supported in the future?
+
+As an aside, my current revision of this driver removed the
+unnecessary mutex locks, which led to not needing a mutex at all.
+
+> > > +		ret = max44009_read_reg(data, MAX44009_REG_CFG);
+> > > +		if (ret < 0)
+> > > +			return ret;
+> > > +
+> > > +		ret &= ~MAX44009_INT_TIME_MASK;
+> > > +		ret |= (int_time << MAX44009_INT_TIME_SHIFT);
+> > > +		ret |= MAX44009_MANUAL_MODE_MASK;
+> > > +
+> > > +		return max44009_write_reg(data, MAX44009_REG_CFG, ret);
+> > > +	}
+> > > +	return -EINVAL;
+> > > +}
+> > > +
+> > > +static int max44009_write_raw_get_fmt(struct iio_dev *indio_dev,
+> > > +				      struct iio_chan_spec const *chan,
+> > > +				      long mask)
+> > > +{
+> > > +	if (mask == IIO_CHAN_INFO_INT_TIME && chan->type == IIO_LIGHT) {
+> > 
+> > Make sure to get rid of all the brackets where kernel style doesn't have them.
+> > Basically any single statements if or else blocks (or simiilar).
+> > 
+> > > +		return IIO_VAL_INT_PLUS_NANO;
+> > > +	} else {
+> > 
+> > You don't have any others...
+> > 
+> > > +		return IIO_VAL_INT;
+> > > +	}
+> > > +}
+> > > +
+> > > +#define READ_LUX_XFER_LEN (4)
+> 
+> MAX44009_ prefix please, no need for ()
+> 
+> > > +
+> > > +static int max44009_read_lux_raw(struct max44009_data *data)
+> > > +{
+> > > +	int ret;
+> > > +	struct i2c_msg xfer[READ_LUX_XFER_LEN];
+> > > +	u8 luxhireg[1] = {MAX44009_REG_LUX_HI};
+> > > +	u8 luxloreg[1] = {MAX44009_REG_LUX_LO};
+> 
+> a simple u8 would work as well, no array
+> 
+> > > +	u8 lo = 0;
+> > > +	u8 hi = 0;
+> > > +	u16 reg = 0;
+> > > +
+> > > +	xfer[0].addr = data->client->addr;
+> > > +	xfer[0].flags = 0;
+> > > +	xfer[0].len = 1;
+> 
+> sizeof(luxhireg)?
+> 
+> > > +	xfer[0].buf = luxhireg;
+> > > +
+> > > +	xfer[1].addr = data->client->addr;
+> > > +	xfer[1].flags = I2C_M_RD;
+> > > +	xfer[1].len = 1;
+> 
+> sizeof(&hi)?
+> 
+
+Got it.  I'll use sizeof() in v2 (also changing this assignment to be
+the more idiomatic style seen in other IIO drivers for arrays of
+structs).
+
+> > > +	xfer[1].buf = &hi;
+> > > +
+> > > +	xfer[2].addr = data->client->addr;
+> > > +	xfer[2].flags = 0;
+> > > +	xfer[2].len = 1;
+> > > +	xfer[2].buf = luxloreg;
+> > > +
+> > > +	xfer[3].addr = data->client->addr;
+> > > +	xfer[3].flags = I2C_M_RD;
+> > > +	xfer[3].len = 1;
+> > > +	xfer[3].buf = &lo;
+> > > +
+> > > +	/*
+> > > +	 * Use i2c_transfer instead of smbus read because i2c_transfer
+> > > +	 * does NOT use a stop bit between address write and data read.
+> > > +	 * Using a stop bit causes disjoint upper/lower byte reads and
+> > > +	 * reduces accuracy
+> > > +	 */
+> > > +	mutex_lock(&data->lock);
+> 
+> mutex needed?
+> 
+> > > +	ret = i2c_transfer(data->client->adapter, xfer, READ_LUX_XFER_LEN);
+> > > +	mutex_unlock(&data->lock);
+> > > +	if (ret != READ_LUX_XFER_LEN) {
+> > > +		return -EIO;
+> > > +	}
+> > > +
+> > > +	reg = (((u16)hi) << 4) | (lo & 0xf);
+> > 
+> > > +
+> > > +	return MAX44009_LUX(reg);
+> > > +}
+> > > +
+> > > +static int max44009_read_raw(struct iio_dev *indio_dev,
+> > > +			     struct iio_chan_spec const *chan, int *val,
+> > > +			     int *val2, long mask)
+> > > +{
+> > > +	struct max44009_data *data = iio_priv(indio_dev);
+> > > +	int ret;
+> > > +
+> > > +	switch (mask) {
+> > > +	case IIO_CHAN_INFO_RAW: {
+> > > +		switch (chan->type) {
+> > > +		case IIO_LIGHT: {
+> > > +			ret = max44009_read_lux_raw(data);
+> > > +			if (ret < 0) {
+> > > +				return ret;
+> > > +			}
+> > > +			*val = ret;
+> > > +			*val2 = 0;
+> > > +			return IIO_VAL_INT;
+> > > +		}
+> > > +		default:
+> > > +			return -EINVAL;
+> > > +		}
+> > > +		break;
+> > > +	}
+> > > +
+> > > +	case IIO_CHAN_INFO_INT_TIME: {
+> > > +		ret = max44009_read_int_time(data);
+> > > +		if (ret < 0) {
+> > > +			return ret;
+> > > +		}
+> > > +
+> > > +		*val2 = ret;
+> > > +		*val = 0;
+> > > +		return IIO_VAL_INT_PLUS_NANO;
+> > > +	}
+> > > +
+> > > +	default:
+> > > +		return -EINVAL;
+> > > +	}
+> > > +}
+> > > +
+> > > +static IIO_CONST_ATTR(illuminance_scale_available, max44009_scale_avail_str);
+> 
+> channels do not have CHAN_INFO_SCALE, so why expose scale_available?
+> 
+> > > +static IIO_CONST_ATTR(illuminance_integration_time_available,
+> > > +		      max44009_int_time_str);
+> 
+> 
+> > > +
+> > > +static struct attribute *max44009_attributes[] = {
+> > > +	&iio_const_attr_illuminance_integration_time_available.dev_attr.attr,
+> > > +	&iio_const_attr_illuminance_scale_available.dev_attr.attr, NULL
+> > > +};
+> > > +
+> > > +static const struct attribute_group max44009_attribute_group = {
+> > > +	.attrs = max44009_attributes,
+> > > +};
+> > > +
+> > > +static int max44009_thresh_byte_from_int(int thresh)
+> > > +{
+> > > +	int mantissa, exp;
+> > > +
+> > > +	if (thresh < 0 || thresh > MAX44009_MAXIMUM_THRESHOLD) {
+> > > +		return -EINVAL;
+> > > +	}
+> > > +
+> > > +	for (mantissa = thresh, exp = 0; mantissa > 0xff; exp++) {
+> > > +		mantissa >>= 1;
+> > > +	}
+> > > +
+> > > +	mantissa >>= 4;
+> > > +	mantissa &= 0xf;
+> > > +	exp <<= 4;
+> > > +
+> > > +	return exp | mantissa;
+> > > +}
+> > > +
+> > > +static int max44009_get_thr_reg(enum iio_event_direction dir)
+> > > +{
+> > > +	switch (dir) {
+> > > +	case IIO_EV_DIR_RISING:
+> > > +		return MAX44009_REG_UPPER_THR;
+> > > +	case IIO_EV_DIR_FALLING:
+> > > +		return MAX44009_REG_LOWER_THR;
+> > > +	default:
+> > > +		return -EINVAL;
+> > > +	}
+> > > +}
+> > > +
+> > > +static int max44009_write_thresh(struct iio_dev *indio_dev,
+> > > +				 enum iio_event_direction dir, int val)
+> > > +{
+> > > +	struct max44009_data *data = iio_priv(indio_dev);
+> > > +	int thresh;
+> > > +	int reg;
+> > > +
+> > > +	reg = max44009_get_thr_reg(dir);
+> > > +	if (reg < 0) {
+> > > +		return reg;
+> > > +	}
+> > > +
+> > > +	thresh = max44009_thresh_byte_from_int(val);
+> > > +	if (thresh < 0) {
+> > > +		return thresh;
+> > > +	}
+> > > +
+> > > +	return max44009_write_reg(data, reg, thresh);
+> > > +}
+> > > +
+> > > +static int max44009_write_event_value(struct iio_dev *indio_dev,
+> > > +				      const struct iio_chan_spec *chan,
+> > > +				      enum iio_event_type type,
+> > > +				      enum iio_event_direction dir,
+> > > +				      enum iio_event_info info,
+> > > +				      int val, int val2)
+> > > +{
+> > > +	if (info != IIO_EV_INFO_VALUE || chan->type != IIO_LIGHT || val2 != 0) {
+> > > +		return -EINVAL;
+> > > +	}
+> > > +
+> > > +	return max44009_write_thresh(indio_dev, dir, val);
+> > > +}
+> > > +
+> > > +static int max44009_read_event_value(struct iio_dev *indio_dev,
+> > > +				     const struct iio_chan_spec *chan,
+> > > +				     enum iio_event_type type,
+> > > +				     enum iio_event_direction dir,
+> > > +				     enum iio_event_info info,
+> > > +				     int *val, int *val2)
+> > > +{
+> > > +	int thresh, reg;
+> > > +	struct max44009_data *data = iio_priv(indio_dev);
+> > > +
+> > > +	if (chan->type != IIO_LIGHT || type != IIO_EV_TYPE_THRESH) {
+> > > +		return -EINVAL;
+> > > +	}
+> > > +
+> > > +	reg = max44009_get_thr_reg(dir);
+> > > +	if (reg < 0) {
+> > > +		return reg;
+> > > +	}
+> > > +
+> > > +	thresh = max44009_read_reg(data, reg);
+> > > +	if (thresh < 0) {
+> > > +		return thresh;
+> > > +	}
+> > > +
+> > > +	*val = MAX44009_THRESHOLD(thresh);
+> > > +
+> > > +	return IIO_VAL_INT;
+> > > +}
+> > > +
+> > > +static int max44009_write_event_config(struct iio_dev *indio_dev,
+> > > +				       const struct iio_chan_spec *chan,
+> > > +				       enum iio_event_type type,
+> > > +				       enum iio_event_direction dir,
+> > > +				       int state)
+> > > +{
+> > > +	struct max44009_data *data = iio_priv(indio_dev);
+> > > +	int ret;
+> > > +
+> > > +	if (chan->type != IIO_LIGHT || type != IIO_EV_TYPE_THRESH) {
+> > > +		return -EINVAL;
+> > > +	}
+> > > +
+> > > +	ret = max44009_write_reg(data, MAX44009_REG_ENABLE, state);
+> > > +	if (ret < 0) {
+> > > +		return ret;
+> > > +	}
+> > > +
+> > > +	/*
+> > > +	 * Set device to trigger interrupt immediately upon exceeding
+> > > +	 * the threshold limit
+> > > +	 */
+> > > +	ret = max44009_write_reg(data, MAX44009_REG_THR_TIMER, 0);
+> > > +	if (ret < 0) {
+> > > +		return ret;
+> > > +	}
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static int max44009_read_event_config(struct iio_dev *indio_dev,
+> > > +				      const struct iio_chan_spec *chan,
+> > > +				      enum iio_event_type type,
+> > > +				      enum iio_event_direction dir)
+> > > +{
+> > > +	struct max44009_data *data = iio_priv(indio_dev);
+> > > +	int ret;
+> > > +
+> > > +	if (chan->type != IIO_LIGHT || type != IIO_EV_TYPE_THRESH) {
+> > > +		return -EINVAL;
+> > > +	}
+> > > +
+> > > +	ret = max44009_read_reg(data, MAX44009_REG_ENABLE);
+> > > +	if (ret < 0) {
+> > > +		return ret;
+> > > +	}
+> > > +
+> > > +	return ret;
+> > > +}
+> > We have lots of event config, but they are actually controlling the
+> > trigger.  The device doesn't generate any iio events at all that I can see.
+> > 
+> > > +
+> > > +static const struct iio_info max44009_info = {
+> > > +	.read_raw = max44009_read_raw,
+> > > +	.write_raw = max44009_write_raw,
+> > > +	.write_raw_get_fmt = max44009_write_raw_get_fmt,
+> > > +	.read_event_value = max44009_read_event_value,
+> > > +	.read_event_config = max44009_read_event_config,
+> > > +	.write_event_value = max44009_write_event_value,
+> > > +	.write_event_config = max44009_write_event_config,
+> > > +	.attrs = &max44009_attribute_group,
+> > > +};
+> > > +
+> > > +static int max44009_set_trigger_state(struct iio_trigger *trigger,
+> > > +				      bool enable)
+> > > +{
+> > > +	struct iio_dev *indio_dev = iio_trigger_get_drvdata(trigger);
+> > > +	struct max44009_data *data = iio_priv(indio_dev);
+> > > +	int ret;
+> > > +
+> > > +	ret = max44009_write_reg(data, MAX44009_REG_ENABLE, enable);
+> > > +	if (ret < 0) {
+> > > +		return ret;
+> > > +	}
+> > > +
+> > > +	ret = max44009_write_reg(data, MAX44009_REG_THR_TIMER, 0);
+> > > +	if (ret < 0) {
+> > As suggested above, write_reg should clearly only return 0 or negative.
+> > you can just do
+> > return max440..
+> > 
+> > > +		return ret;
+> > > +	}
+> > > +
+> > > +	return ret;
+> > > +}
+> > > +
+> > > +static const struct iio_trigger_ops max44009_trigger_ops = {
+> > > +	.set_trigger_state = max44009_set_trigger_state,
+> > > +};
+> > > +
+> > > +static irqreturn_t max44009_trigger_handler(int irq, void *p)
+> > > +{
+> > > +	struct iio_dev *indio_dev = p;
+> > > +	struct max44009_data *data = iio_priv(indio_dev);
+> > > +	int lux, upper, lower;
+> > > +	int ret;
+> > > +	enum iio_event_direction direction;
+> > > +
+> > > +	/* 32-bit for lux and 64-bit for timestamp */
+> > > +	u32 buf[3] = {0};
+> > 
+> > Except the timestamp needs to be 64 bit aligned so this isn't big enough.
+> > All elements in IIO buffers are 'naturally' aligned. so 32 bit is
+> > aligned to 32 bits, 64 to 64 bits.
+> > 
+> > > +
+> > > +	ret = max44009_read_reg(data, MAX44009_REG_STATUS);
+> > > +	if (ret <= 0) {
+> > > +		goto err;
+> > > +	}
+> > > +
+> > > +	ret = max44009_read_reg(data, MAX44009_REG_ENABLE);
+> > > +	if (ret <= 0) {
+> > > +		goto err;
+> > > +	}
+> > 
+> > If these reads are necessary, then add comments on why.
+> > 
+> > > +
+> > > +	/* Clear interrupt by disabling interrupt (see datasheet) */
+> > > +	ret = max44009_write_reg(data, MAX44009_REG_ENABLE, 0);
+> > > +	if (ret < 0) {
+> > > +		goto err;
+> > > +	}
+> > > +
+> > > +	lux = max44009_read_lux_raw(data);
+> > > +	if (lux < 0) {
+> > > +		goto err;
+> > > +	}
+> > > +
+> > > +	upper = max44009_read_reg(data, MAX44009_REG_UPPER_THR);
+> > > +	if (upper < 0) {
+> > > +		goto err;
+> > > +	}
+> > > +	upper = MAX44009_THRESHOLD(upper);
+> > > +
+> > > +	lower = max44009_read_reg(data, MAX44009_REG_LOWER_THR);
+> > > +	if (lower < 0) {
+> > > +		goto err;
+> > > +	}
+> > > +	lower = MAX44009_THRESHOLD(lower);
+> > > +
+> > > +	/* If lux is NOT out-of-bounds then the interrupt was not triggered
+> > > +	 * by this device
+> > Multiline comment syntax in IIO (and most of the kernel) is
+> > /*
+> >  * If...
+> >  */
+> > 
+> > Do we support shared interrupt lines?  Doesn't look like it, which means
+> > it 'probably was' generate by this device, but we don't know why because the value
+> > has changed.
+> > 
+> > Returning IRQ_NONE is a bad idea unless we are pretty sure it is a spurious
+> > interrupt, or we have a shared interrupt line.  It will ultimately result
+> > in your interrupt being disable by the kernel and all activity breaking.
+> > 
+> > There is also a perfectly good register to tell use if we generated the interrupt.
+> > Read that one and use that, not this racey approach.
+> > 
+
+That is very good to know how IRQ_NONE is handled in this context.
+After revisiting this function and better understanding events,
+it became clear that this function could basically be reduced down
+to a read of the status register and a call to iio_push_event.
+
+> > > +	 */
+> > > +	if (lux < upper && lux > lower) {
+> > > +		goto err;
+> > > +	}
+> > > +
+> > > +	/* Get event for correct thresh direction */
+> > > +	if (lux >= upper) {
+> > > +		direction = IIO_EV_DIR_RISING;
+> > > +	} else if (lux <= lower) {
+> > > +		direction = IIO_EV_DIR_FALLING;
+> > > +	} else {
+> > > +		goto err;
+> > > +	}
+> > > +
+> > > +	buf[0] = lux;
+> > > +	iio_push_to_buffers_with_timestamp(indio_dev, &buf, data->timestamp);
+> > > +	iio_trigger_notify_done(data->trigger);
+> > > +
+> > > +	iio_push_event(indio_dev,
+> > > +		       IIO_UNMOD_EVENT_CODE(IIO_LIGHT, 0,
+> > > +					    IIO_EV_TYPE_THRESH, direction),
+> > > +		       data->timestamp);
+> > > +
+> > > +	ret = max44009_write_reg(data, MAX44009_REG_ENABLE, 1);
+> > > +	if (ret < 0) {
+> > > +		goto err;
+> > > +	}
+> > > +
+> > > +	return IRQ_HANDLED;
+> > > +
+> > > +err:
+> > > +	/* Re-enable interrupt */
+> > > +	max44009_write_reg(data, MAX44009_REG_ENABLE, 1);
+> > > +	return IRQ_NONE;
+> > > +}
+> > > +
+> > > +static irqreturn_t max44009_irq_handler(int irq, void *p)
+> > > +{
+> > > +	struct iio_dev *indio_dev = p;
+> > > +	struct max44009_data *data = iio_priv(indio_dev);
+> > > +
+> > > +	data->timestamp = iio_get_time_ns(indio_dev);
+> > 
+> > We have a standard core function to do this..
+> > iio_pollfunc_store_time.
+> > 
+> > There 'might' be a reason to do it differently depending
+> > on whether you really need it to be that good if you
+> > can't identify whether it is your interrupt until the
+> > interrupt thread.
+> > 
+> > 
+> > > +	return IRQ_WAKE_THREAD;
+> > > +}
+> > > +
+> > > +static int max44009_probe(struct i2c_client *client,
+> > > +			  const struct i2c_device_id *id)
+> > > +{
+> > > +	struct max44009_data *data;
+> > > +	struct iio_dev *indio_dev;
+> > > +	int ret;
+> > > +
+> > > +	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*data));
+> > > +	if (!indio_dev) {
+> > > +		return -ENOMEM;
+> > > +	}
+> > > +	data = iio_priv(indio_dev);
+> > > +	i2c_set_clientdata(client, indio_dev);
+> > > +	data->client = client;
+> > > +	indio_dev->dev.parent = &client->dev;
+> > > +	indio_dev->info = &max44009_info;
+> > > +	indio_dev->modes = INDIO_DIRECT_MODE;
+> > > +	indio_dev->name = MAX44009_DRV_NAME;
+> > > +	indio_dev->channels = max44009_channels;
+> > > +	indio_dev->num_channels = ARRAY_SIZE(max44009_channels);
+> > > +	mutex_init(&data->lock);
+> > > +
+> > > +	/* Clear stale interrupt bit */
+> > > +	ret = max44009_read_reg(data, MAX44009_REG_STATUS);
+> > > +	if (ret < 0) {
+> > > +		goto err;
+> > > +	}
+> > > +
+> > > +	if (client->irq > 0) {
+> > > +		ret = devm_request_threaded_irq(&client->dev, client->irq,
+> > > +						max44009_irq_handler,
+> > 
+> > This is wrong. The interrupt handler should call the iio_trigger_poll functions
+> > to cause the trigger handlers for all attached devices to be called.
+> > 
+> > If for some reason the trigger is only suitable for use by this device
+> > then things get more blurred, but if not, the interrupt handler itself
+> > should establish that the interrupt is the data ready signal and call
+> > iio_trigger_poll.  If it is in a thread, call iio_trigger_poll_chained.
+> > 
+> > The interrupt should be cleared (if it hasn't naturally happened for
+> > some other reason, in the trigger try_reenable callback.
+> > 
+> > 
+> > > +						max44009_trigger_handler,
+> > > +						IRQF_TRIGGER_FALLING |
+> > > +						IRQF_ONESHOT,
+> > > +						MAX44009_IRQ_NAME, indio_dev);
+> > > +		if (ret < 0) {
+> > > +			goto err;
+> > > +		}
+> > > +
+> > > +		ret = devm_iio_triggered_buffer_setup(&client->dev, indio_dev,
+> > > +						      max44009_irq_handler,
+> > > +						      max44009_trigger_handler,
+> > > +						      NULL);
+> > > +		if (ret < 0) {
+> > 
+> > It's going to change anyway (see below) but note kernel style is no
+> > brackets when only one item in an block like this.
+> > 
+> > > +			goto err;
+> > > +		}
+> > > +
+> > > +		data->trigger = devm_iio_trigger_alloc(indio_dev->dev.parent,
+> > > +						       "%s-dev%d",
+> > > +						       indio_dev->name,
+> > > +						       indio_dev->id);
+> > > +		if (!data->trigger) {
+> > > +			ret = -ENOMEM;
+> > > +			goto err;
+> > > +		}
+> > > +		data->trigger->dev.parent = indio_dev->dev.parent;
+> > > +		data->trigger->ops = &max44009_trigger_ops;
+> > > +		iio_trigger_set_drvdata(data->trigger, indio_dev);
+> > > +
+> > > +		ret = devm_iio_trigger_register(&client->dev, data->trigger);
+> > > +		if (ret < 0) {
+> > > +			goto err;
+> > > +		}
+> > > +	}
+> > > +
+> > > +	ret = devm_iio_device_register(&client->dev, indio_dev);
+> > > +	if (ret < 0) {
+> > > +		goto err;
+> > 
+> > Without the mutex destroy these all just become return ret;
+> > 
+> > > +	}
+> > > +
+> > > +	return 0;
+> > > +err:
+> > > +	mutex_destroy(&data->lock);
+> > 
+> > mutex destroy is only really useful for lock debugging.  Given we don't
+> > leave anything behind here anyway, it just makes the flow more complex
+> > for no gain.  We very rarely bother with it as a result.
+> > 
+> > > +	return ret;
+> > > +}
+> > > +
+> > > +static const struct i2c_device_id max44009_id[] = {
+> > > +	{ "max44009", 0 },
+> > > +	{ }
+> > > +};
+> > > +MODULE_DEVICE_TABLE(i2c, max44009_id);
+> > > +
+> > > +static struct i2c_driver max44009_driver = {
+> > > +	.driver = {
+> > > +		.name = MAX44009_DRV_NAME,
+> > > +	},
+> > > +	.probe = max44009_probe,
+> > > +	.id_table = max44009_id,
+> > > +};
+> > > +module_i2c_driver(max44009_driver);
+> > > +
+> > > +static const struct of_device_id max44009_of_match[] = {
+> > > +	{ .compatible = "maxim,max44009" },
+> > > +	{ }
+> > > +};
+> > > +MODULE_DEVICE_TABLE(of, max44009_of_match);
+> > > +
+> > > +MODULE_AUTHOR("Robert Eshleman <bobbyeshleman@gmail.com>");
+> > > +MODULE_LICENSE("GPL v2");
+> > > +MODULE_VERSION("1.0.0");
+> > Please drop.  MODULE_VERSION provides very little useful info
+> > and tends to lead to people assuming it does.
+> > 
+> > Userspace has no obligation to ever look at it and we can't
+> > break userspace that doesn't so it doesn't provide any value.
+> > 
+> > > +MODULE_DESCRIPTION("MAX44009 ambient light sensor driver");
+> > 
+> 
+> -- 
+> 
+> Peter Meerwald-Stadler
+> Mobile: +43 664 24 44 418
