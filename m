@@ -7,59 +7,60 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CAB1C7113B
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:22:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D959FA3729
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:22:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E4F720663
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:22:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF6AC20861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:22:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="i1C9FTzE";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="YUjJIC90"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="n1/DfoTh";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="lVBm0ASt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728389AbfAULWU (ORCPT
+        id S1728421AbfAULWY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 06:22:20 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:33190 "EHLO
+        Mon, 21 Jan 2019 06:22:24 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:33286 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728345AbfAULWS (ORCPT
+        with ESMTP id S1728345AbfAULWX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 06:22:18 -0500
+        Mon, 21 Jan 2019 06:22:23 -0500
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 2072B608CD; Mon, 21 Jan 2019 11:22:15 +0000 (UTC)
+        id 9D75D6087D; Mon, 21 Jan 2019 11:22:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548069737;
-        bh=vD5MTXyLS/qkTnSNYHFn5UkX/UYasOxBeZwiEyrO4hM=;
+        s=default; t=1548069741;
+        bh=t+7VFsYr21LVGhDoaiu71aEFa4FmA54Z0rNp7gXcbag=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i1C9FTzE3IWmWs1kivPPDE3tcdNuMhj+iR5wAh82umzdKLOMYAvOLpfd5Db6mCDT6
-         HMTmk5tyvjnCmRZwFmxlqrOlRH3o5BAtKjtWCPX1mbtR+RNv+GiDqoqMOaH4csMUf4
-         y4Ovwg0oJKrFfzdNvqVxMcQmJMKoIU3815IK9Fys=
+        b=n1/DfoThHT8yXQE3gjA6/LwedhEl2CtYGZkGqor8uca8Ykxp51nvhmu8Ta1JfRrlE
+         0BiYLloneIEVS8DL9p3HuBfYiAgQ+dnF1CA4VlHsqD8CdbryBJJnvH2x6AkxHIgRD9
+         IzZ5QBeAkAliYuCwzGqf4fxBpv8RwyFmIiXiOaHU=
 Received: from alokc-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: alokc@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2F44A608CB;
-        Mon, 21 Jan 2019 11:22:09 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 03AB260878;
+        Mon, 21 Jan 2019 11:22:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548069734;
-        bh=vD5MTXyLS/qkTnSNYHFn5UkX/UYasOxBeZwiEyrO4hM=;
+        s=default; t=1548069739;
+        bh=t+7VFsYr21LVGhDoaiu71aEFa4FmA54Z0rNp7gXcbag=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YUjJIC90BwZzYqFJzmuwiRHdv1Bt7bBDHqlWqSU0ZAU+7ebQpQwsg9u0oaiL7mSEU
-         jd2KfQnsyiCNYllABmTOxyEUKlbIcDAgvRVLZmHIFXMQQp2OuLQYLlaJWIdJDcnSUA
-         6W9IXJCOPcSpZHcQjgDgNSbIIyA98fR8GH9+2qWM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2F44A608CB
+        b=lVBm0AStbNvVQOmcgpcrIm3raYTuYQpSw44pM4TCdLla5VE+/9LvuJxnQOzG+bJDQ
+         RF4+NedVieVrOvVj/h41KHFhwZkbC1Lg17wkmpV0M4peNDApoa0L7MpskTC5kng3o/
+         IBt2tUzEfb5bSsTU23WaxjTVanteYPuz1gVxaZdc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 03AB260878
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=alokc@codeaurora.org
 From:   Alok Chauhan <alokc@codeaurora.org>
 To:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     andy.gross@linaro.org, david.brown@linaro.org,
         georgi.djakov@linaro.org, dianders@chromium.org,
         swboyd@chromium.org, bjorn.andersson@linaro.org,
         Alok Chauhan <alokc@codeaurora.org>
-Subject: [PATCH 4/6] spi: spi-geni-qcom: Add interconnect support
-Date:   Mon, 21 Jan 2019 16:51:41 +0530
-Message-Id: <1548069703-26595-5-git-send-email-alokc@codeaurora.org>
+Subject: [PATCH 5/6] tty: serial: qcom_geni_serial: Add interconnect support
+Date:   Mon, 21 Jan 2019 16:51:42 +0530
+Message-Id: <1548069703-26595-6-git-send-email-alokc@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1548069703-26595-1-git-send-email-alokc@codeaurora.org>
 References: <1548069703-26595-1-git-send-email-alokc@codeaurora.org>
@@ -68,65 +69,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Get the interconnect paths for SPI based Serial Engine device
-and vote accordingly based on maximum supported SPI frequency.
+Get the interconnect paths for Uart based Serial Engine device
+and vote accordingly based on maximum supported Uart frequency.
 
 Signed-off-by: Alok Chauhan <alokc@codeaurora.org>
 ---
- drivers/spi/spi-geni-qcom.c | 20 +++++++++++++++++++-
- 1 file changed, 19 insertions(+), 1 deletion(-)
+ drivers/tty/serial/qcom_geni_serial.c | 27 ++++++++++++++++++++++++++-
+ 1 file changed, 26 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi-geni-qcom.c b/drivers/spi/spi-geni-qcom.c
-index fdb7cb88..7bbbe9d 100644
---- a/drivers/spi/spi-geni-qcom.c
-+++ b/drivers/spi/spi-geni-qcom.c
-@@ -12,6 +12,7 @@
- #include <linux/qcom-geni-se.h>
- #include <linux/spi/spi.h>
- #include <linux/spinlock.h>
+diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
+index a72d6d9..e2ea499 100644
+--- a/drivers/tty/serial/qcom_geni_serial.c
++++ b/drivers/tty/serial/qcom_geni_serial.c
+@@ -19,6 +19,7 @@
+ #include <linux/slab.h>
+ #include <linux/tty.h>
+ #include <linux/tty_flip.h>
 +#include <linux/interconnect.h>
  
- /* SPI SE specific registers and respective register fields */
- #define SE_SPI_CPHA		0x224
-@@ -589,6 +590,15 @@ static int spi_geni_probe(struct platform_device *pdev)
- 	spin_lock_init(&mas->lock);
- 	pm_runtime_enable(&pdev->dev);
+ /* UART specific GENI registers */
+ #define SE_UART_LOOPBACK_CFG		0x22c
+@@ -1348,6 +1349,22 @@ static int qcom_geni_serial_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
  
 +	/* Set the bus quota to a reasonable value */
-+	mas->se.avg_bw = Bps_to_icc(2500);
-+	mas->se.peak_bw = Bps_to_icc(200000000);
-+	ret = geni_interconnect_init(&mas->se);
++	port->se.avg_bw = console ? Bps_to_icc(1000) : Bps_to_icc(2500);
++	port->se.peak_bw = Bps_to_icc(76800000);
++	ret = geni_interconnect_init(&port->se);
 +	if (ret) {
 +		dev_err(&pdev->dev, "interconnect_init failed %d\n", ret);
 +		return ret;
 +	}
 +
- 	ret = spi_geni_init(mas);
- 	if (ret)
- 		goto spi_geni_probe_runtime_disable;
-@@ -628,8 +638,15 @@ static int __maybe_unused spi_geni_runtime_suspend(struct device *dev)
++	/*
++	 * Vote for interconnect path early. This has to move as part of
++	 * Runtime PM APIs when implemented for better control betwen
++	 * console and non-console usecases
++	 */
++	geni_icc_update_bw(&port->se, true);
++
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (!res)
+ 		return -EINVAL;
+@@ -1385,8 +1402,15 @@ static int __maybe_unused qcom_geni_serial_sys_suspend(struct device *dev)
  {
- 	struct spi_master *spi = dev_get_drvdata(dev);
- 	struct spi_geni_master *mas = spi_master_get_devdata(spi);
+ 	struct qcom_geni_serial_port *port = dev_get_drvdata(dev);
+ 	struct uart_port *uport = &port->uport;
 +	int ret;
- 
--	return geni_se_resources_off(&mas->se);
-+	ret = geni_se_resources_off(&mas->se);
++
++	ret = uart_suspend_port(uport->private_data, uport);
 +	if (ret)
 +		return ret;
 +
-+	geni_icc_update_bw(&mas->se, false);
-+
++	geni_icc_update_bw(&port->se, false);
+ 
+-	return uart_suspend_port(uport->private_data, uport);
 +	return 0;
  }
  
- static int __maybe_unused spi_geni_runtime_resume(struct device *dev)
-@@ -637,6 +654,7 @@ static int __maybe_unused spi_geni_runtime_resume(struct device *dev)
- 	struct spi_master *spi = dev_get_drvdata(dev);
- 	struct spi_geni_master *mas = spi_master_get_devdata(spi);
+ static int __maybe_unused qcom_geni_serial_sys_resume(struct device *dev)
+@@ -1394,6 +1418,7 @@ static int __maybe_unused qcom_geni_serial_sys_resume(struct device *dev)
+ 	struct qcom_geni_serial_port *port = dev_get_drvdata(dev);
+ 	struct uart_port *uport = &port->uport;
  
-+	geni_icc_update_bw(&mas->se, true);
- 	return geni_se_resources_on(&mas->se);
++	geni_icc_update_bw(&port->se, true);
+ 	return uart_resume_port(uport->private_data, uport);
  }
  
 -- 
