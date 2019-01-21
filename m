@@ -2,164 +2,198 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F080BC7112F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:20:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4340FC7113B
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:20:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C54BA20861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:20:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0859920861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:20:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WyHbwJoZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727940AbfAULUD (ORCPT
+        id S1727926AbfAULUd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 06:20:03 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:52037 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727679AbfAULUC (ORCPT
+        Mon, 21 Jan 2019 06:20:33 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:39072 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727287AbfAULUc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 06:20:02 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0LBJFWv2493075
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 21 Jan 2019 03:19:15 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0LBJFv42493072;
-        Mon, 21 Jan 2019 03:19:15 -0800
-Date:   Mon, 21 Jan 2019 03:19:15 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Andrew Murray <tipbot@zytor.com>
-Message-ID: <tip-cafa780e7b012453d0155c3da3488b877a2fd133@git.kernel.org>
-Cc:     mingo@kernel.org, acme@kernel.org, torvalds@linux-foundation.org,
-        mattst88@gmail.com, mpe@ellerman.id.au, shawnguo@kernel.org,
-        ink@jurassic.park.msu.ru, peterz@infradead.org, hpa@zytor.com,
-        will.deacon@arm.com, andrew.murray@arm.com, linux@armlinux.org.uk,
-        linux-kernel@vger.kernel.org, paulus@samba.org,
-        benh@kernel.crashing.org, tglx@linutronix.de, mark.rutland@arm.com,
-        bp@alien8.de, s.hauer@pengutronix.de, rth@twiddle.net
-Reply-To: peterz@infradead.org, will.deacon@arm.com, hpa@zytor.com,
-          mingo@kernel.org, torvalds@linux-foundation.org, acme@kernel.org,
-          mpe@ellerman.id.au, mattst88@gmail.com, ink@jurassic.park.msu.ru,
-          shawnguo@kernel.org, benh@kernel.crashing.org,
-          tglx@linutronix.de, bp@alien8.de, mark.rutland@arm.com,
-          rth@twiddle.net, s.hauer@pengutronix.de, andrew.murray@arm.com,
-          paulus@samba.org, linux@armlinux.org.uk,
-          linux-kernel@vger.kernel.org
-In-Reply-To: <1547128414-50693-7-git-send-email-andrew.murray@arm.com>
-References: <1547128414-50693-7-git-send-email-andrew.murray@arm.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf/core, arch/arm: Use PERF_PMU_CAP_NO_EXCLUDE
- for exclusion incapable PMUs
-Git-Commit-ID: cafa780e7b012453d0155c3da3488b877a2fd133
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 21 Jan 2019 06:20:32 -0500
+Received: by mail-wm1-f68.google.com with SMTP id y8so10324851wmi.4;
+        Mon, 21 Jan 2019 03:20:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=O0Y1XJ+0xnuvSlAHla8rWWZZRIYWEJRmnWlUlMTmyI4=;
+        b=WyHbwJoZVxO6pDTUxINZ6UHzAOONrXs1mhjvBlQST4yb4YhWsUHlasUe52dxf/VSFb
+         OdoSHhWj4B3u3TstYfTIFALayk9OTt7/0f2EQAlAIUgYHUrrwFnAMIU3aCZ2b4nFZ64M
+         uv1gtJw3XuIu1t3XlutSZcKpO6L1I0sAZIWvmGpmWlUx7WUAHRB6d1Sm2+qtv/chT0sj
+         GYrYKkbRsqEQC490ef4gC1CSZRM1oJ9Xlf2+HxWbctJG5YsXBA8yRsGmkzlUYLynf/O3
+         02RTFXt6HKBASPI/nhFYaWkmbsYlZ52ecbqKSHt0nZFtT9v6h22KdJu5HECBla7tqLTm
+         jWNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=O0Y1XJ+0xnuvSlAHla8rWWZZRIYWEJRmnWlUlMTmyI4=;
+        b=Ts9aH7b0DXcxZWeobWmUaEJayIH9vO/BJ157kVhpyg/k94y7ZYhb2NxcOptEzGVfm+
+         5nslhZgjfiFxr/Hg3swfU8ENMTFjEjln7trQyQS7ww+eIT7LaEQhlZJXdJ77Plbfyhri
+         rJ+xuaweYU0vfh/x1dTGNgbUmPWQNxPUN0oiXlcb8U9/We3w8bzqWaq105fZg545bP+N
+         v2i7tPOCUSNuPfmfQ3J6BHpHaKIey+umQBhDlEERubIy9awyoBnoDQgb54liR7kM3ct/
+         iN+BR9w4Ys5WNiY714w9RF7wPlNF/tEg+jtiWrYf2gNLkBOvl1w723di0Mg0xMcyKHVp
+         oWVw==
+X-Gm-Message-State: AJcUukfBbEa8qbKFgsgbQYDwUIQcGMRjTockJ+usbMERJL4nUWfhRX0v
+        BLPZHbWx436tQvZ0+pUrNss=
+X-Google-Smtp-Source: ALg8bN4sPiue9kGGFEkEIJRmMcE+sT/aAECrKBjZOmV9VvI+j9RBigmTIoREZfQM85EyxoY0RGbaIQ==
+X-Received: by 2002:a1c:1902:: with SMTP id 2mr8529880wmz.150.1548069629901;
+        Mon, 21 Jan 2019 03:20:29 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id u204sm79202993wmu.30.2019.01.21.03.20.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 21 Jan 2019 03:20:28 -0800 (PST)
+Date:   Mon, 21 Jan 2019 12:20:27 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Yash Shah <yash.shah@sifive.com>
+Cc:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Palmer Dabbelt <palmer@sifive.com>, linux-pwm@vger.kernel.org,
+        linux-riscv@lists.infradead.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Sachin Ghadi <sachin.ghadi@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>
+Subject: Re: [PATCH 1/2] pwm: sifive: Add DT documentation for SiFive PWM
+ Controller
+Message-ID: <20190121112027.GH16756@ulmo>
+References: <1547194964-16718-1-git-send-email-yash.shah@sifive.com>
+ <1547194964-16718-2-git-send-email-yash.shah@sifive.com>
+ <20190115201149.ghddnf27s5kqephc@pengutronix.de>
+ <CAJ2_jOGPpwsn=+OU3QcHtGYJ3MFYh9azdALSeWz3-WPXL9vHnw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="CNfT9TXqV7nd4cfk"
 Content-Disposition: inline
+In-Reply-To: <CAJ2_jOGPpwsn=+OU3QcHtGYJ3MFYh9azdALSeWz3-WPXL9vHnw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  cafa780e7b012453d0155c3da3488b877a2fd133
-Gitweb:     https://git.kernel.org/tip/cafa780e7b012453d0155c3da3488b877a2fd133
-Author:     Andrew Murray <andrew.murray@arm.com>
-AuthorDate: Thu, 10 Jan 2019 13:53:28 +0000
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 21 Jan 2019 11:01:23 +0100
 
-perf/core, arch/arm: Use PERF_PMU_CAP_NO_EXCLUDE for exclusion incapable PMUs
+--CNfT9TXqV7nd4cfk
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-For drivers that do not support context exclusion let's advertise the
-PERF_PMU_CAP_NO_EXCLUDE capability. This ensures that perf will
-prevent us from handling events where any exclusion flags are set.
-Let's also remove the now unnecessary check for exclusion flags.
+On Wed, Jan 16, 2019 at 02:51:31PM +0530, Yash Shah wrote:
+> On Wed, Jan 16, 2019 at 1:41 AM Uwe Kleine-K=C3=B6nig
+> <u.kleine-koenig@pengutronix.de> wrote:
+> >
+> > Hello,
+> >
+> > this is v3, right? It is helpful to point this out to ease reviewing.
+>=20
+> Yes, it is v3. Will take care of this in v4.
+>=20
+> >
+> > On Fri, Jan 11, 2019 at 01:52:43PM +0530, Yash Shah wrote:
+> > > DT documentation for PWM controller added with updated compatible
+> > > string.
+> >
+> > Not sure what was updated here. But assuming this is compared to v2 this
+> > is not a helpful info in the commit log.
+>=20
+> Ok, will remove the 'updated compatible string' part.
+>=20
+> >
+> > > Signed-off-by: Wesley W. Terpstra <wesley@sifive.com>
+> > > [Atish: Compatible string update]
+> > > Signed-off-by: Atish Patra <atish.patra@wdc.com>
+> > > Signed-off-by: Yash Shah <yash.shah@sifive.com>
+> > > ---
+> > >  .../devicetree/bindings/pwm/pwm-sifive.txt         | 37 ++++++++++++=
+++++++++++
+> > >  1 file changed, 37 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/pwm/pwm-sifive.=
+txt
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/pwm/pwm-sifive.txt b/D=
+ocumentation/devicetree/bindings/pwm/pwm-sifive.txt
+> > > new file mode 100644
+> > > index 0000000..e0fc22a
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/pwm/pwm-sifive.txt
+> > > @@ -0,0 +1,37 @@
+> > > +SiFive PWM controller
+> > > +
+> > > +Unlike most other PWM controllers, the SiFive PWM controller current=
+ly only
+> > > +supports one period for all channels in the PWM. This is set globall=
+y in DTS.
+> > > +The period also has significant restrictions on the values it can ac=
+hieve,
+> > > +which the driver rounds to the nearest achievable frequency.
+> > > +
+> > > +Required properties:
+> > > +- compatible: Please refer to sifive-blocks-ip-versioning.txt
+> >
+> > While the description was too verbose in v2, this is too short. You
+> > should at least mention something like "sifive,pwmX" and
+> > "sifive,$cpuname-pwm" (or how ever that scheme works).
+>=20
+> Will mention the above.
+>=20
+> >
+> > > +- reg: physical base address and length of the controller's registers
+> > > +- clocks: Should contain a clock identifier for the PWM's parent clo=
+ck.
+> > > +- #pwm-cells: Should be 2.
+> > > +  The first cell is the PWM channel number
+> > > +  The second cell is the PWM polarity
+> >
+> > I'd drop these two lines and refer to bindings/pwm/pwm.txt instead.
+>=20
+> Will be done.
 
-Signed-off-by: Andrew Murray <andrew.murray@arm.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Shawn Guo <shawnguo@kernel.org>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Matt Turner <mattst88@gmail.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Richard Henderson <rth@twiddle.net>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linuxppc-dev@lists.ozlabs.org
-Cc: robin.murphy@arm.com
-Cc: suzuki.poulose@arm.com
-Link: https://lkml.kernel.org/r/1547128414-50693-7-git-send-email-andrew.murray@arm.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/arm/mach-imx/mmdc.c     | 9 ++-------
- arch/arm/mm/cache-l2x0-pmu.c | 9 +--------
- 2 files changed, 3 insertions(+), 15 deletions(-)
+I don't think you can do that. You're omitting the second cell
+representing the period, so this is different from the standard binding
+and therefore needs to be explicit.
 
-diff --git a/arch/arm/mach-imx/mmdc.c b/arch/arm/mach-imx/mmdc.c
-index e49e06834516..fce4b426c379 100644
---- a/arch/arm/mach-imx/mmdc.c
-+++ b/arch/arm/mach-imx/mmdc.c
-@@ -294,13 +294,7 @@ static int mmdc_pmu_event_init(struct perf_event *event)
- 		return -EOPNOTSUPP;
- 	}
- 
--	if (event->attr.exclude_user		||
--			event->attr.exclude_kernel	||
--			event->attr.exclude_hv		||
--			event->attr.exclude_idle	||
--			event->attr.exclude_host	||
--			event->attr.exclude_guest	||
--			event->attr.sample_period)
-+	if (event->attr.sample_period)
- 		return -EINVAL;
- 
- 	if (cfg < 0 || cfg >= MMDC_NUM_COUNTERS)
-@@ -456,6 +450,7 @@ static int mmdc_pmu_init(struct mmdc_pmu *pmu_mmdc,
- 			.start          = mmdc_pmu_event_start,
- 			.stop           = mmdc_pmu_event_stop,
- 			.read           = mmdc_pmu_event_update,
-+			.capabilities	= PERF_PMU_CAP_NO_EXCLUDE,
- 		},
- 		.mmdc_base = mmdc_base,
- 		.dev = dev,
-diff --git a/arch/arm/mm/cache-l2x0-pmu.c b/arch/arm/mm/cache-l2x0-pmu.c
-index afe5b4c7b164..99bcd074916a 100644
---- a/arch/arm/mm/cache-l2x0-pmu.c
-+++ b/arch/arm/mm/cache-l2x0-pmu.c
-@@ -314,14 +314,6 @@ static int l2x0_pmu_event_init(struct perf_event *event)
- 	    event->attach_state & PERF_ATTACH_TASK)
- 		return -EINVAL;
- 
--	if (event->attr.exclude_user   ||
--	    event->attr.exclude_kernel ||
--	    event->attr.exclude_hv     ||
--	    event->attr.exclude_idle   ||
--	    event->attr.exclude_host   ||
--	    event->attr.exclude_guest)
--		return -EINVAL;
--
- 	if (event->cpu < 0)
- 		return -EINVAL;
- 
-@@ -544,6 +536,7 @@ static __init int l2x0_pmu_init(void)
- 		.del = l2x0_pmu_event_del,
- 		.event_init = l2x0_pmu_event_init,
- 		.attr_groups = l2x0_pmu_attr_groups,
-+		.capabilities = PERF_PMU_CAP_NO_EXCLUDE,
- 	};
- 
- 	l2x0_pmu_reset();
+That said, given the rest of the discussion in the other threads, maybe
+it no longer makes sense to set the period on the whole block, but
+rather just note in the binding that all PWMs need to run at the same
+period. If the driver already refuses to apply incompatible periods,
+your users are going to notice that they've got the DT wrong.
+
+This would have the advantage that you can use the standard bindings.
+
+Thierry
+
+--CNfT9TXqV7nd4cfk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxFqvgACgkQ3SOs138+
+s6HkDw/9G/+2aipEoQrz+7s6f9UOqF7LrWscQSYjZU3i8G/nYxfxiTDpwarQYIZt
+Ceycjf6nt8x4bCAN76myAY8O/399OfKy/4s6EfFoIg77g5FVuhxWi0teEkn8cwo/
+SvzQypcgPO40uwU7sD5gYzKv8BL2DbV/v8gHq1MZYsw6F5P6hnpk3y1dRn9udrUw
+nL4qI1NR75zXBm6t+e5n3CBc6A/fBRo5juU1a4zJlxZIqbWz8Hw2MpeHZ/i22N7m
+MaepSUgGGS/Bk4qa3Jy4Qg82sHjSf1GYMBQnPTlSdA+Araw7xtpxGtFRJA92q4xk
+I8UEVbB7vfxqyKbcYcExzQIxnSNniRK64VQqiKq80NMVY3O/QA3gRa9aK/tQDSrG
+eJvpydF29+oGW2lncgxLZPT2mwTdtW10QyvjLnXqqlA8jlzhbsKUs5e8gVF65i94
+buG1R3zI9ngJ3LkkAUHFHiYZU9B0AxuZoz6X3IQlGcbInTC+lc3hB6jeNapMw5yL
+4pl6vUvxKQCauM7h5XpGlOVyZfBMV/4R6wRW1dEGhRusog1zIQTbQahwix1J06Kp
+N0ZbLtJ/4NJ+XSBNrFzLpM0JVKmJZdRBadJ2da6wbDmCRuULwC3rTS96rG9hEwQK
+kEV573LtxIY4rXw/zsD4wTrT02eM+TOl9NtC4EQVYl7ImIn9JhI=
+=ysK7
+-----END PGP SIGNATURE-----
+
+--CNfT9TXqV7nd4cfk--
