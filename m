@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F09C4C2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:56:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AA51C2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:56:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C065B2087F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:56:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AE2A2087F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:56:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079007;
-	bh=NE2DN20tuV4Spv9SNNBhi3nKpFMqyUqDqtT1I3OK74s=;
+	s=default; t=1548079015;
+	bh=E2qShN04BfcfO3jBKRJrOdNdR4V0GX7dH+5hMemG9tE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LQvLSIbXSAkWADL5prOiCQGOL45oFXfW5YG1Vu39KOL3ayDoSzyMtfTAFEMYCHHG8
-	 QwhJm/CB+2omeJlQupidvZjbSO7bDH2mOqNJV8c7vMnZA5/HUtA4lc/KF6Xg89QqI2
-	 8gq/tN2oh+WQyUT7LhQrScKk5ByHsS5O5KTQrMto=
+	b=Gier78GkBYYTkDAbf3koQLAu0SL9vs8++YB0LqWum+4Dpk4HJmNmjfQCktSdVy9Ss
+	 4O3zUYsomHrsSDMFUyjoNGPNmTEgaBfQ1ZznNA8ch9oTLnWbJ4axRNxJ6SZAmBaOtt
+	 7iIkyfmQuKYfiLkR8UxWfI3Y2/kQkck7KR7tiAPs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730858AbfAUN4q (ORCPT
+        id S1731780AbfAUN4m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:56:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42140 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:56:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40382 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730505AbfAUN4o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:56:44 -0500
+        id S1731753AbfAUNzi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:55:38 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C0022087F;
-        Mon, 21 Jan 2019 13:56:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BEE1E2084C;
+        Mon, 21 Jan 2019 13:55:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548079003;
-        bh=NE2DN20tuV4Spv9SNNBhi3nKpFMqyUqDqtT1I3OK74s=;
+        s=default; t=1548078937;
+        bh=E2qShN04BfcfO3jBKRJrOdNdR4V0GX7dH+5hMemG9tE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DkrI990+m8r1f93SKhfLe2ffJb7yOCHw5m560s+4Ju/RZqKTId5W7Fyaj7QSsXhHi
-         n0LmLbZzoaF2ALlsbW8B7hUV7UUSw9SuCoTPOEYs9T4BNm2t9KeUYfz5yUY6+IjQ7o
-         fcFPGCRmJ7lbbChadVBzC47yysdHL9hqyuL6BViU=
+        b=SAr6u/q1m9ggyTFHhJjnIiZZRM8NoqX6F+0MmvnYle+0KRYJIk8k+HAR0HmPoLRjL
+         6y/hS2fOHRO3l9bKJ5Vl4dj0vIgI5GYXJKbYckfXItcd4038YdBUa/pNND62g28zfl
+         Gr9FJB0IiWqlAcRDRzzVcyAnYZ6v70wBnzMXxVrE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        syzbot+53d5b2df0d9744411e2e@syzkaller.appspotmail.com,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.9 32/51] media: vivid: fix error handling of kthread_run
-Date:   Mon, 21 Jan 2019 14:44:28 +0100
-Message-Id: <20190121122456.707494327@linuxfoundation.org>
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.9 06/51] Revert "f2fs: do not recover from previous remained wrong dnodes"
+Date:   Mon, 21 Jan 2019 14:44:02 +0100
+Message-Id: <20190121122454.081401886@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122453.700446926@linuxfoundation.org>
 References: <20190121122453.700446926@linuxfoundation.org>
@@ -66,57 +66,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+From: Chao Yu <yuchao0@huawei.com>
 
-commit 701f49bc028edb19ffccd101997dd84f0d71e279 upstream.
+commit d47b8715953ad0cf82bb0a9d30d7b11d83bc9c11 upstream.
 
-kthread_run returns an error pointer, but elsewhere in the code
-dev->kthread_vid_cap/out is checked against NULL.
+i_times of inode will be set with current system time which can be
+configured through 'date', so it's not safe to judge dnode block as
+garbage data or unchanged inode depend on i_times.
 
-If kthread_run returns an error, then set the pointer to NULL.
+Now, we have used enhanced 'cp_ver + cp' crc method to verify valid
+dnode block, so I expect recoverying invalid dnode is almost not
+possible.
 
-I chose this method over changing all kthread_vid_cap/out tests
-elsewhere since this is more robust.
+This reverts commit 807b1e1c8e08452948495b1a9985ab46d329e5c2.
 
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Reported-by: syzbot+53d5b2df0d9744411e2e@syzkaller.appspotmail.com
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/platform/vivid/vivid-kthread-cap.c |    5 ++++-
- drivers/media/platform/vivid/vivid-kthread-out.c |    5 ++++-
- 2 files changed, 8 insertions(+), 2 deletions(-)
+ fs/f2fs/recovery.c |   31 +------------------------------
+ 1 file changed, 1 insertion(+), 30 deletions(-)
 
---- a/drivers/media/platform/vivid/vivid-kthread-cap.c
-+++ b/drivers/media/platform/vivid/vivid-kthread-cap.c
-@@ -877,8 +877,11 @@ int vivid_start_generating_vid_cap(struc
- 			"%s-vid-cap", dev->v4l2_dev.name);
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -196,32 +196,6 @@ static void recover_inode(struct inode *
+ 			ino_of_node(page), name);
+ }
  
- 	if (IS_ERR(dev->kthread_vid_cap)) {
-+		int err = PTR_ERR(dev->kthread_vid_cap);
-+
-+		dev->kthread_vid_cap = NULL;
- 		v4l2_err(&dev->v4l2_dev, "kernel_thread() failed\n");
--		return PTR_ERR(dev->kthread_vid_cap);
-+		return err;
- 	}
- 	*pstreaming = true;
- 	vivid_grab_controls(dev, true);
---- a/drivers/media/platform/vivid/vivid-kthread-out.c
-+++ b/drivers/media/platform/vivid/vivid-kthread-out.c
-@@ -248,8 +248,11 @@ int vivid_start_generating_vid_out(struc
- 			"%s-vid-out", dev->v4l2_dev.name);
+-static bool is_same_inode(struct inode *inode, struct page *ipage)
+-{
+-	struct f2fs_inode *ri = F2FS_INODE(ipage);
+-	struct timespec disk;
+-
+-	if (!IS_INODE(ipage))
+-		return true;
+-
+-	disk.tv_sec = le64_to_cpu(ri->i_ctime);
+-	disk.tv_nsec = le32_to_cpu(ri->i_ctime_nsec);
+-	if (timespec_compare(&inode->i_ctime, &disk) > 0)
+-		return false;
+-
+-	disk.tv_sec = le64_to_cpu(ri->i_atime);
+-	disk.tv_nsec = le32_to_cpu(ri->i_atime_nsec);
+-	if (timespec_compare(&inode->i_atime, &disk) > 0)
+-		return false;
+-
+-	disk.tv_sec = le64_to_cpu(ri->i_mtime);
+-	disk.tv_nsec = le32_to_cpu(ri->i_mtime_nsec);
+-	if (timespec_compare(&inode->i_mtime, &disk) > 0)
+-		return false;
+-
+-	return true;
+-}
+-
+ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head)
+ {
+ 	struct curseg_info *curseg;
+@@ -248,10 +222,7 @@ static int find_fsync_dnodes(struct f2fs
+ 			goto next;
  
- 	if (IS_ERR(dev->kthread_vid_out)) {
-+		int err = PTR_ERR(dev->kthread_vid_out);
-+
-+		dev->kthread_vid_out = NULL;
- 		v4l2_err(&dev->v4l2_dev, "kernel_thread() failed\n");
--		return PTR_ERR(dev->kthread_vid_out);
-+		return err;
- 	}
- 	*pstreaming = true;
- 	vivid_grab_controls(dev, true);
+ 		entry = get_fsync_inode(head, ino_of_node(page));
+-		if (entry) {
+-			if (!is_same_inode(entry->inode, page))
+-				goto next;
+-		} else {
++		if (!entry) {
+ 			if (IS_INODE(page) && is_dent_dnode(page)) {
+ 				err = recover_inode_page(sbi, page);
+ 				if (err)
 
 
