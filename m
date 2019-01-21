@@ -2,127 +2,208 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D981AC282F6
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 10:44:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC363C282F6
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 10:45:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A929520663
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 10:44:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CI93w7LU"
+	by mail.kernel.org (Postfix) with ESMTP id B39CC20861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 10:45:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727785AbfAUKoh (ORCPT
+        id S1727491AbfAUKpv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 05:44:37 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:37186 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726794AbfAUKog (ORCPT
+        Mon, 21 Jan 2019 05:45:51 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44902 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726670AbfAUKpu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 05:44:36 -0500
-Received: by mail-wm1-f65.google.com with SMTP id g67so10223850wmd.2;
-        Mon, 21 Jan 2019 02:44:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=TZ2nfzaXTQg2/YaeEm8B1mA7KuZc99ueFVrb0O9D7A4=;
-        b=CI93w7LUajbajOfNeo2M8amS7S7TzsEXloz1cUjHSpnAdDr2XtMGa4cle4ejYPNHVO
-         m+FlN8vg+FwTaKSUmKbSYV3dVX1HNCr4BYPT1RBtF/cApZSwph7FdOh1GXTp/FDtZYU2
-         7Rej25BvlmeWZDG5YKPEBMXjObwNS7BIHTEi5xq2rPPw7dXjp57dQN9X+A+yErZRERvB
-         EW6eAxsWxnP++qjfveml0Ah7RtlH/6FikERpfN0DNU8UBeC9Z7K1/r4hsC8HdMQzE6zU
-         ddQdWPb5h8BuqTKBQ++OtXAmKPnrqXdlNl9ITURNLj+cg+ttxiHaEtH18xl4DnOzDoOC
-         l99A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TZ2nfzaXTQg2/YaeEm8B1mA7KuZc99ueFVrb0O9D7A4=;
-        b=meg6ip8EnWm38rwAe/pxkGUkZBBsV1uSHBaV5uQq9rkgRdBUOykNGpL0sgUmMjExkS
-         ZxGQbUutZCgpqoCplwSHpJ1p6cbxLHplPJTN85MuBVE7ynS2WPzKYMj3VFpbrkwZma58
-         AwoG5hvtMVeRabaBc8b0PxXd6y5LpG0IHFaTGkF6Jj6IQ5M8bSprgrsLC6uvu34W3ck+
-         8YN+nn/to8vVgMgWJg/1oNPQxWIJJvBM83iJUuVUOZOVxCJ1qospkrtAUwz8JZBZEGWz
-         k6s++0LurvU51qkqGpCukm2D/YOcGwP+PFqv7MhUPF2G1lJoGq9zbmZ0N/Q8DxL1Dcl3
-         qg1g==
-X-Gm-Message-State: AJcUukexO7jvgfBvACFVv2M4ENvdnF5PTOKEfH0ZkiL9gZroov6sPNNL
-        NPe71aF4nniHNWez29DVdJA=
-X-Google-Smtp-Source: ALg8bN6aL/nr/pExjVT7BOZHjPySfzEETOHCxpYkLrHOtTvm4M4On4TX5nysm3kTGe1KwafUYaLS+A==
-X-Received: by 2002:a1c:d082:: with SMTP id h124mr22772765wmg.21.1548067474293;
-        Mon, 21 Jan 2019 02:44:34 -0800 (PST)
-Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
-        by smtp.gmail.com with ESMTPSA id r77sm64300179wmd.22.2019.01.21.02.44.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 21 Jan 2019 02:44:33 -0800 (PST)
-Date:   Mon, 21 Jan 2019 11:44:32 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, mperttunen@nvidia.com,
-        chunyan.zhang@unisoc.com, jonathanh@nvidia.com,
-        adrian.hunter@intel.com, ulf.hansson@linaro.org, anrao@nvidia.com,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
-Subject: Re: [PATCH V9 3/3] mmc: tegra: HW Command Queue Support for Tegra
- SDMMC
-Message-ID: <20190121104432.GE16756@ulmo>
-References: <1547579032-18314-1-git-send-email-skomatineni@nvidia.com>
- <1547579032-18314-3-git-send-email-skomatineni@nvidia.com>
+        Mon, 21 Jan 2019 05:45:50 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0LAhVOd053635
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 05:45:49 -0500
+Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2q5chm86fj-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 05:45:49 -0500
+Received: from localhost
+        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <s1seetee@linux.vnet.ibm.com>;
+        Mon, 21 Jan 2019 10:45:48 -0000
+Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
+        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 21 Jan 2019 10:45:44 -0000
+Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
+        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0LAjhQQ12386534
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 21 Jan 2019 10:45:43 GMT
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AAFD96A057;
+        Mon, 21 Jan 2019 10:45:43 +0000 (GMT)
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 27E3F6A05A;
+        Mon, 21 Jan 2019 10:45:41 +0000 (GMT)
+Received: from oc1548405160.ibm.com (unknown [9.124.31.87])
+        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Mon, 21 Jan 2019 10:45:40 +0000 (GMT)
+Subject: Re: [PATCH v2] perf scripts python: Add Python 3 support to
+ exported-sql-viewer.py
+To:     Tony Jones <tonyj@suse.de>, peterz@infradead.org, mingo@redhat.com,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org, linux-kernel@vger.kernel.org
+References: <1547718344-27382-1-git-send-email-s1seetee@linux.vnet.ibm.com>
+ <1547718344-27382-3-git-send-email-s1seetee@linux.vnet.ibm.com>
+ <f086e4fb-0bbf-9e21-25e2-708b092f1636@suse.de>
+From:   seeteena <s1seetee@linux.vnet.ibm.com>
+Date:   Mon, 21 Jan 2019 16:15:39 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="cPi+lWm09sJ+d57q"
-Content-Disposition: inline
-In-Reply-To: <1547579032-18314-3-git-send-email-skomatineni@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <f086e4fb-0bbf-9e21-25e2-708b092f1636@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 19012110-0012-0000-0000-000016FDE72D
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010445; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000275; SDB=6.01149620; UDB=6.00599033; IPR=6.00929945;
+ MB=3.00025220; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-21 10:45:47
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19012110-0013-0000-0000-000055E74FFB
+Message-Id: <4ce6c071-231e-7682-609e-dfc1d1d1e305@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-21_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901210086
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---cPi+lWm09sJ+d57q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jan 15, 2019 at 11:03:52AM -0800, Sowjanya Komatineni wrote:
-> This patch adds HW Command Queue for supported Tegra SDMMC
-> controllers.
->=20
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  drivers/mmc/host/Kconfig       |   1 +
->  drivers/mmc/host/sdhci-tegra.c | 117 +++++++++++++++++++++++++++++++++++=
-++++--
->  drivers/mmc/host/sdhci.c       |   9 +++-
->  drivers/mmc/host/sdhci.h       |   2 +
->  4 files changed, 124 insertions(+), 5 deletions(-)
+On 01/19/2019 06:15 AM, Tony Jones wrote:
+> On 1/17/19 1:45 AM, Seeteena Thoufeek wrote:
+>
+>> +if sys.version_info[0] < 3:
+>> +    import cPickle
+>> +else:
+>> +    import _pickle as cPickle
+> Do you really need this?
+>
+> pickle is already in Python2.
+>
+> Also, did you test these changes on Python3?
+>
+> I think you'll find you also need the following hunk otherwise you're running into Unicode diffs on Py3.
+>
+> @@ -2590,8 +2590,8 @@ def Main():
+>
+>          is_sqlite3 = False
+>          try:
+> -               f = open(dbname)
+> -               if f.read(15) == "SQLite format 3":
+> +               f = open(dbname, "rb")
+> +               if f.read(15) == b'SQLite format 3':
+>                          is_sqlite3 = True
+>                  f.close()
+>          except:
+>
+> Plus you need to handle the conversion of "print >> sys.stderr"
 
-Looks good to me. It might be worth splitting off the SDHCI core changes
-into a separate patch, but that's for Adrian and Ulf to decide. From a
-Tegra point of view:
+Thanks Tony. added changes to handle the conversion of "print >> 
+sys.stderr" in export-to-postgresql.py and export-to-sqlite.py file as 
+well.  revised patch posted.
+>
+> Attached is my version (against tip):
+>
+> --- a/tools/perf/scripts/python/exported-sql-viewer.py
+> +++ b/tools/perf/scripts/python/exported-sql-viewer.py
+> @@ -91,7 +91,7 @@ import sys
+>   import weakref
+>   import threading
+>   import string
+> -import cPickle
+> +import pickle
+>   import re
+>   import os
+>   from PySide.QtCore import *
+> @@ -1559,7 +1559,7 @@ class SQLTableDialogDataItem():
+>   					return str(lower_id)
+>
+>   	def ConvertRelativeTime(self, val):
+> -		print "val ", val
+> +		print("val ", val)
+>   		mult = 1
+>   		suffix = val[-2:]
+>   		if suffix == "ms":
+> @@ -1581,29 +1581,29 @@ class SQLTableDialogDataItem():
+>   		return str(val)
+>
+>   	def ConvertTimeRange(self, vrange):
+> -		print "vrange ", vrange
+> +		print("vrange ", vrange)
+>   		if vrange[0] == "":
+>   			vrange[0] = str(self.first_time)
+>   		if vrange[1] == "":
+>   			vrange[1] = str(self.last_time)
+>   		vrange[0] = self.ConvertRelativeTime(vrange[0])
+>   		vrange[1] = self.ConvertRelativeTime(vrange[1])
+> -		print "vrange2 ", vrange
+> +		print("vrange2 ", vrange)
+>   		if not self.IsNumber(vrange[0]) or not self.IsNumber(vrange[1]):
+>   			return False
+> -		print "ok1"
+> +		print("ok1")
+>   		beg_range = max(int(vrange[0]), self.first_time)
+>   		end_range = min(int(vrange[1]), self.last_time)
+>   		if beg_range > self.last_time or end_range < self.first_time:
+>   			return False
+> -		print "ok2"
+> +		print("ok2")
+>   		vrange[0] = self.BinarySearchTime(0, self.last_id, beg_range, True)
+>   		vrange[1] = self.BinarySearchTime(1, self.last_id + 1, end_range, False)
+> -		print "vrange3 ", vrange
+> +		print("vrange3 ", vrange)
+>   		return True
+>
+>   	def AddTimeRange(self, value, ranges):
+> -		print "value ", value
+> +		print("value ", value)
+>   		n = value.count("-")
+>   		if n == 1:
+>   			pass
+> @@ -2577,7 +2577,7 @@ class DBRef():
+>
+>   def Main():
+>   	if (len(sys.argv) < 2):
+> -		print >> sys.stderr, "Usage is: exported-sql-viewer.py {<database name> | --help-only}"
+> +		sys.stderr.write("Usage is: exported-sql-viewer.py {<database name> | --help-only}\n");
+>   		raise Exception("Too few arguments")
+>
+>   	dbname = sys.argv[1]
+> @@ -2590,8 +2590,8 @@ def Main():
+>
+>   	is_sqlite3 = False
+>   	try:
+> -		f = open(dbname)
+> -		if f.read(15) == "SQLite format 3":
+> +		f = open(dbname, "rb")
+> +		if f.read(15) == b'SQLite format 3':
+>   			is_sqlite3 = True
+>   		f.close()
+>   	except:
+>
+>
+>
+>
+>
 
-Acked-by: Thierry Reding <treding@nvidia.com>
 
---cPi+lWm09sJ+d57q
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxFopAACgkQ3SOs138+
-s6Hxlg/9HITuwlKXqMJqQliyTbhELbKNJkPdJdBo4IDdYP3JLJIP4MmJfWsmEem2
-vAvMWal7V7J+IOq9sTrwcGXhglYiqnIoD51RPZdfO252/8jF4yxd/M+GNLKkaxAF
-EDQD6Jes6D7PQO2ff20Tu9Prhjy/YTfvEo2RhtGlhn59bSgYoD3RWyFgMv6bjZWX
-Zs6zoTcXisWfqb4iHvLgFWptqi++EpCv09TouNxQpb1BSjJye5EztlPbqp0aWc3a
-NfAog1bce3JeEfwgzrMVrjS7UHYtaxJxuW1ttSFvOkMy9I/Uf8oUcMpVaf6lYHNe
-/dGpgJkqAzXtnvskDJOxYdV6BizdTI8EdEg73E2CZEHjqUz9VjZUn6Fy8t0KUgqH
-+1VpMAnqNGvkrNFfBnbnjVDasT7V8dobsOpEZBvzfK4tUubpnyRhPV4+lW6YsS+x
-IlSWMH/c1UaieE7tVAIQsDWP4KcSJzgBilRkqH/vFU+IF5w+EbNM0jfx2DtMASnh
-EINeheFHdNtEivfOq1ohKUQNo7gT1XOfZCQvIGKZzVia41DIQKoOUnOdI/Iwi0JO
-LvDwSE66C4gRYx4gwP7bKUJ3V8x8cS+dxJL2BEcBNszWkrt0mx6ojc47OXf+kRRU
-ndD4n3+C15ewPbiwHfWA9mUFJwnPEI3RbzyB0SRYue0izYIQihU=
-=vgaz
------END PGP SIGNATURE-----
-
---cPi+lWm09sJ+d57q--
