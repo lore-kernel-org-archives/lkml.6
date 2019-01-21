@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10916C2F3D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:14:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B258FC2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:14:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4B8920861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:14:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EC5C20861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:14:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548080060;
-	bh=7dnFrAS3IY5fzdRf7oBQhjre07KPuiEwT9RxlIn/nlA=;
+	s=default; t=1548080064;
+	bh=7MgpDpnbk8mBX7RU8dM4dLw8dmb6IQ1onFm4RZeML+Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=oKHXvg1HchxvEhale+GqrcRm3knLMasufT2W7NYHsxw4zn1xPAt0voZ8an1RZMqjU
-	 OWPNpfS5k/VIjE4g64TrLiMYHsSFYbN9zKgpmf26idmZL7/Jf9EzT9OqSrSvURfpXl
-	 EsyDDSXPab63GL3Uj8ZWLyJRSIovuALvfmFFRhFc=
+	b=pF8RHmN377Hryyw2hJ3FlGnNgr7+rqy8/hX8Xyzo6P3dltbscLuEC/ACtTlYzyW0F
+	 eNCFvSeaoyOAAwqAHLeKFAFseZM0aug2NOg/T5oihkiYc3oyIKIHgUR+nqOnr+8mLW
+	 2xEteajolyrB7C5ox7NN4wFrqUQdgYN0J+7yf8rA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731040AbfAUNwX (ORCPT
+        id S1731025AbfAUNwW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:52:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35528 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:52:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35454 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729006AbfAUNwU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:52:20 -0500
+        id S1731012AbfAUNwS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:52:18 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A9F820879;
-        Mon, 21 Jan 2019 13:52:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 68D332063F;
+        Mon, 21 Jan 2019 13:52:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078739;
-        bh=7dnFrAS3IY5fzdRf7oBQhjre07KPuiEwT9RxlIn/nlA=;
+        s=default; t=1548078736;
+        bh=7MgpDpnbk8mBX7RU8dM4dLw8dmb6IQ1onFm4RZeML+Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lzp/LMjSZZeh+CaaE50LPvT1KZJmMTUkcd/mFylPIAH57ETRHpUidoAeA6hlHoeT3
-         l16j1wCZnRhpu3zj8gAf1QEhMsXtco6GIUoQTzSGqxrchQi56dSaij5WahFvCbX2xB
-         ZBxE246D68whMHhXlopYQOi6mZ7ZFOrFUa9v5wME=
+        b=XMs/YNOuEJ6fxmLxpLAHti+b8Qy/JkX/e3P7IPQ8qpoE2Jhq9rHkr55jsjFcmYR9D
+         VJSRazPx1TO5rsxbLL2NuYNsCPxyLfFYgoK5VEuk5AZd+PGoFgLC2EWskAykInAduo
+         ldrOrem6JojNVsvn+HJdZxf/VRFtGTyZEiQrDIFM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ivan Mironov <mironov.ivan@gmail.com>,
+        stable@vger.kernel.org, Stanley Chu <stanley.chu@mediatek.com>,
+        Bart Van Assche <bvanassche@acm.org>,
         "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 26/59] scsi: sd: Fix cache_type_store()
-Date:   Mon, 21 Jan 2019 14:43:51 +0100
-Message-Id: <20190121122459.447291625@linuxfoundation.org>
+Subject: [PATCH 4.14 25/59] scsi: core: Synchronize request queue PM status only on successful resume
+Date:   Mon, 21 Jan 2019 14:43:50 +0100
+Message-Id: <20190121122459.343827450@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122456.529172919@linuxfoundation.org>
 References: <20190121122456.529172919@linuxfoundation.org>
@@ -65,62 +66,97 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ivan Mironov <mironov.ivan@gmail.com>
+From: Stanley Chu <stanley.chu@mediatek.com>
 
-commit 44759979a49bfd2d20d789add7fa81a21eb1a4ab upstream.
+commit 3f7e62bba0003f9c68f599f5997c4647ef5b4f4e upstream.
 
-Changing of caching mode via /sys/devices/.../scsi_disk/.../cache_type may
-fail if device responds to MODE SENSE command with DPOFUA flag set, and
-then checks this flag to be not set on MODE SELECT command.
+The commit 356fd2663cff ("scsi: Set request queue runtime PM status back to
+active on resume") fixed up the inconsistent RPM status between request
+queue and device. However changing request queue RPM status shall be done
+only on successful resume, otherwise status may be still inconsistent as
+below,
 
-In this scenario, when trying to change cache_type, write always fails:
+Request queue: RPM_ACTIVE
+Device: RPM_SUSPENDED
 
-	# echo "none" >cache_type
-	bash: echo: write error: Invalid argument
+This ends up soft lockup because requests can be submitted to underlying
+devices but those devices and their required resource are not resumed.
 
-And following appears in dmesg:
+For example,
 
-	[13007.865745] sd 1:0:1:0: [sda] Sense Key : Illegal Request [current]
-	[13007.865753] sd 1:0:1:0: [sda] Add. Sense: Invalid field in parameter list
+After above inconsistent status happens, IO request can be submitted to UFS
+device driver but required resource (like clock) is not resumed yet thus
+lead to warning as below call stack,
 
->From SBC-4 r15, 6.5.1 "Mode pages overview", description of DEVICE-SPECIFIC
-PARAMETER field in the mode parameter header:
-	...
-	The write protect (WP) bit for mode data sent with a MODE SELECT
-	command shall be ignored by the device server.
-	...
-	The DPOFUA bit is reserved for mode data sent with a MODE SELECT
-	command.
-	...
+WARN_ON(hba->clk_gating.state != CLKS_ON);
+ufshcd_queuecommand
+scsi_dispatch_cmd
+scsi_request_fn
+__blk_run_queue
+cfq_insert_request
+__elv_add_request
+blk_flush_plug_list
+blk_finish_plug
+jbd2_journal_commit_transaction
+kjournald2
 
-The remaining bits in the DEVICE-SPECIFIC PARAMETER byte are also reserved
-and shall be set to zero.
+We may see all behind IO requests hang because of no response from storage
+host or device and then soft lockup happens in system. In the end, system
+may crash in many ways.
 
-[mkp: shuffled commentary to commit description]
-
+Fixes: 356fd2663cff (scsi: Set request queue runtime PM status back to active on resume)
 Cc: stable@vger.kernel.org
-Signed-off-by: Ivan Mironov <mironov.ivan@gmail.com>
+Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/sd.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/scsi/scsi_pm.c |   26 +++++++++++++++-----------
+ 1 file changed, 15 insertions(+), 11 deletions(-)
 
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -206,6 +206,12 @@ cache_type_store(struct device *dev, str
- 	sp = buffer_data[0] & 0x80 ? 1 : 0;
- 	buffer_data[0] &= ~0x80;
+--- a/drivers/scsi/scsi_pm.c
++++ b/drivers/scsi/scsi_pm.c
+@@ -79,8 +79,22 @@ static int scsi_dev_type_resume(struct d
  
-+	/*
-+	 * Ensure WP, DPOFUA, and RESERVED fields are cleared in
-+	 * received mode parameter buffer before doing MODE SELECT.
-+	 */
-+	data.device_specific = 0;
+ 	if (err == 0) {
+ 		pm_runtime_disable(dev);
+-		pm_runtime_set_active(dev);
++		err = pm_runtime_set_active(dev);
+ 		pm_runtime_enable(dev);
 +
- 	if (scsi_mode_select(sdp, 1, sp, 8, buffer_data, len, SD_TIMEOUT,
- 			     SD_MAX_RETRIES, &data, &sshdr)) {
- 		if (scsi_sense_valid(&sshdr))
++		/*
++		 * Forcibly set runtime PM status of request queue to "active"
++		 * to make sure we can again get requests from the queue
++		 * (see also blk_pm_peek_request()).
++		 *
++		 * The resume hook will correct runtime PM status of the disk.
++		 */
++		if (!err && scsi_is_sdev_device(dev)) {
++			struct scsi_device *sdev = to_scsi_device(dev);
++
++			if (sdev->request_queue->dev)
++				blk_set_runtime_active(sdev->request_queue);
++		}
+ 	}
+ 
+ 	return err;
+@@ -139,16 +153,6 @@ static int scsi_bus_resume_common(struct
+ 	else
+ 		fn = NULL;
+ 
+-	/*
+-	 * Forcibly set runtime PM status of request queue to "active" to
+-	 * make sure we can again get requests from the queue (see also
+-	 * blk_pm_peek_request()).
+-	 *
+-	 * The resume hook will correct runtime PM status of the disk.
+-	 */
+-	if (scsi_is_sdev_device(dev) && pm_runtime_suspended(dev))
+-		blk_set_runtime_active(to_scsi_device(dev)->request_queue);
+-
+ 	if (fn) {
+ 		async_schedule_domain(fn, dev, &scsi_sd_pm_domain);
+ 
 
 
