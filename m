@@ -2,131 +2,143 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 900CDC2F42E
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:35:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 095B4C2F42E
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:35:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EA6B2085A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:35:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="iYoirHZ1"
+	by mail.kernel.org (Postfix) with ESMTP id C9E002085A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:35:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730673AbfAUPfq (ORCPT
+        id S1730686AbfAUPfx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 10:35:46 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:16064 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730399AbfAUPeo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 10:34:44 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c45e6710000>; Mon, 21 Jan 2019 07:34:09 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 21 Jan 2019 07:34:43 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 21 Jan 2019 07:34:43 -0800
-Received: from localhost (10.124.1.5) by HQMAIL101.nvidia.com (172.20.187.10)
- with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 21 Jan 2019 15:34:42
- +0000
-Date:   Mon, 21 Jan 2019 16:34:40 +0100
-From:   Thierry Reding <treding@nvidia.com>
-To:     Robin Murphy <robin.murphy@arm.com>
-CC:     <iommu@lists.linux-foundation.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <m.szyprowski@samsung.com>,
-        <hch@lst.de>, <rmk+kernel@armlinux.org.uk>, <bskeggs@redhat.com>,
-        <tjakobi@math.uni-bielefeld.de>, <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH] ARM: dma-mapping: Clear DMA ops on teardown
-Message-ID: <20190121153439.GA21078@ulmo>
-References: <2f5833b7639543d614095cd3f5ab0dc0274e26d6.1548081277.git.robin.murphy@arm.com>
-MIME-Version: 1.0
-In-Reply-To: <2f5833b7639543d614095cd3f5ab0dc0274e26d6.1548081277.git.robin.murphy@arm.com>
-X-NVConfidentiality: public
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="gBBFr7Ir9EOA20Yy"
-Content-Disposition: inline
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1548084849; bh=10LZ1mtxpIfqj+R9CVQkhdg+32AqVCTSZIVyHC9oUxM=;
-        h=X-PGP-Universal:Date:From:To:CC:Subject:Message-ID:References:
-         MIME-Version:In-Reply-To:X-NVConfidentiality:User-Agent:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:
-         Content-Disposition;
-        b=iYoirHZ1CuEkXMqTPnnak45ZTCLsmEUxDlyYGhn1yGZ0qkxZCzc2EIGWEnDqNmlnI
-         tXY+dzsLO769NT4XOfzo8Bx3097ShU5u1ti6kHD0qJQeJYUQV7iylcJF4qRH17+4Zw
-         q2i+kRu0nbL7KpRZpGPNYWqFRRb4OjVErhhROB33df1i+h9IGbkXN26cHK76bOMDDk
-         d+1MrtFG62YusvLz1ZWa0mocChM2j+RIAiCrwvYvhDuDZK9weoNUjukFj7jjzJHzX3
-         fRS31qblheD6TqbKq0xXVuPswizofLV9bOYjYaoOg9Wlj0SoLYHFAhPLusoIs02TuA
-         A6sVW8WxEGO5Q==
+        Mon, 21 Jan 2019 10:35:53 -0500
+Received: from foss.arm.com ([217.140.101.70]:36574 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730135AbfAUPej (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 10:34:39 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BDE771688;
+        Mon, 21 Jan 2019 07:34:38 -0800 (PST)
+Received: from e112298-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7DD153F5C1;
+        Mon, 21 Jan 2019 07:34:36 -0800 (PST)
+From:   Julien Thierry <julien.thierry@arm.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
+        joel@joelfernandes.org, marc.zyngier@arm.com,
+        christoffer.dall@arm.com, james.morse@arm.com,
+        catalin.marinas@arm.com, will.deacon@arm.com, mark.rutland@arm.com,
+        Julien Thierry <julien.thierry@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>
+Subject: [PATCH v9 16/26] irqchip/gic-v3: Factor group0 detection into functions
+Date:   Mon, 21 Jan 2019 15:33:35 +0000
+Message-Id: <1548084825-8803-17-git-send-email-julien.thierry@arm.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1548084825-8803-1-git-send-email-julien.thierry@arm.com>
+References: <1548084825-8803-1-git-send-email-julien.thierry@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---gBBFr7Ir9EOA20Yy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The code to detect whether Linux has access to group0 interrupts can
+prove useful in other parts of the driver.
 
-On Mon, Jan 21, 2019 at 02:52:16PM +0000, Robin Murphy wrote:
-> Installing the appropriate non-IOMMU DMA ops in arm_iommu_detch_device()
-> serves the case where IOMMU-aware drivers choose to control their own
-> mapping but still make DMA API calls, however it also affects the case
-> when the arch code itself tears down the mapping upon driver unbinding,
-> where the ops now get left in place and can inhibit arch_setup_dma_ops()
-> on subsequent re-probe attempts.
->=20
-> Fix the latter case by making sure that arch_teardown_dma_ops() cleans
-> up whenever the ops were automatically installed by its counterpart.
->=20
-> Reported-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Fixes: 1874619a7df4 "ARM: dma-mapping: Set proper DMA ops in arm_iommu_de=
-tach_device()"
-> Tested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
-> ---
->=20
-> Sorry for the delay - there was a giant email infrastructure cock-up just
-> at the point I wanted to go back through my archive and double-check the
-> discussion around the original commit...
->=20
-> Robin.
->=20
->  arch/arm/mm/dma-mapping.c | 2 ++
->  1 file changed, 2 insertions(+)
+Provide a separate function to do this.
 
-I had also tested your draft on Tegra last week and this looks
-identical, so:
+Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+---
+ drivers/irqchip/irq-gic-v3.c | 55 +++++++++++++++++++++++++++++---------------
+ 1 file changed, 36 insertions(+), 19 deletions(-)
 
-Tested-by: Thierry Reding <treding@nvidia.com>
+diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+index 8148a92..da547e0 100644
+--- a/drivers/irqchip/irq-gic-v3.c
++++ b/drivers/irqchip/irq-gic-v3.c
+@@ -400,6 +400,39 @@ static asmlinkage void __exception_irq_entry gic_handle_irq(struct pt_regs *regs
+ 	}
+ }
+ 
++static u32 gic_get_pribits(void)
++{
++	u32 pribits;
++
++	pribits = gic_read_ctlr();
++	pribits &= ICC_CTLR_EL1_PRI_BITS_MASK;
++	pribits >>= ICC_CTLR_EL1_PRI_BITS_SHIFT;
++	pribits++;
++
++	return pribits;
++}
++
++static bool gic_has_group0(void)
++{
++	u32 val;
++
++	/*
++	 * Let's find out if Group0 is under control of EL3 or not by
++	 * setting the highest possible, non-zero priority in PMR.
++	 *
++	 * If SCR_EL3.FIQ is set, the priority gets shifted down in
++	 * order for the CPU interface to set bit 7, and keep the
++	 * actual priority in the non-secure range. In the process, it
++	 * looses the least significant bit and the actual priority
++	 * becomes 0x80. Reading it back returns 0, indicating that
++	 * we're don't have access to Group0.
++	 */
++	gic_write_pmr(BIT(8 - gic_get_pribits()));
++	val = gic_read_pmr();
++
++	return val != 0;
++}
++
+ static void __init gic_dist_init(void)
+ {
+ 	unsigned int i;
+@@ -541,7 +574,7 @@ static void gic_cpu_sys_reg_init(void)
+ 	u64 mpidr = cpu_logical_map(cpu);
+ 	u64 need_rss = MPIDR_RS(mpidr);
+ 	bool group0;
+-	u32 val, pribits;
++	u32 pribits;
+ 
+ 	/*
+ 	 * Need to check that the SRE bit has actually been set. If
+@@ -553,25 +586,9 @@ static void gic_cpu_sys_reg_init(void)
+ 	if (!gic_enable_sre())
+ 		pr_err("GIC: unable to set SRE (disabled at EL2), panic ahead\n");
+ 
+-	pribits = gic_read_ctlr();
+-	pribits &= ICC_CTLR_EL1_PRI_BITS_MASK;
+-	pribits >>= ICC_CTLR_EL1_PRI_BITS_SHIFT;
+-	pribits++;
++	pribits = gic_get_pribits();
+ 
+-	/*
+-	 * Let's find out if Group0 is under control of EL3 or not by
+-	 * setting the highest possible, non-zero priority in PMR.
+-	 *
+-	 * If SCR_EL3.FIQ is set, the priority gets shifted down in
+-	 * order for the CPU interface to set bit 7, and keep the
+-	 * actual priority in the non-secure range. In the process, it
+-	 * looses the least significant bit and the actual priority
+-	 * becomes 0x80. Reading it back returns 0, indicating that
+-	 * we're don't have access to Group0.
+-	 */
+-	write_gicreg(BIT(8 - pribits), ICC_PMR_EL1);
+-	val = read_gicreg(ICC_PMR_EL1);
+-	group0 = val != 0;
++	group0 = gic_has_group0();
+ 
+ 	/* Set priority mask register */
+ 	write_gicreg(DEFAULT_PMR_VALUE, ICC_PMR_EL1);
+-- 
+1.9.1
 
---gBBFr7Ir9EOA20Yy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxF5osACgkQ3SOs138+
-s6Hu1w/+PREMHDE0jWgKBN3n9eINXN6aliHOhCeWQxco5/iJjCSeCofcMvFzuKx2
-p8nZ8OfIMZvj4AatYeryqn7bPLSQiRfwVtC8qOfERTv7z+8m4F+o4rPSKmr0/1qI
-rSqpTFY4exsTlp7Lp7DHsg2sbd0Av6UvgiNJSLpTLai0loCYfPuF+lvbdlw/x6wC
-CNa6SBE+rI/u+QRNY1jRPkgEMovOnsvkKY4bf7+v3elI3X7bZhObqyNLnTLkNpYL
-w01hvCpxpo4vrX12kTDzuhOxxnKF1md/QrlviZWl/K6CI5L/UqlP1ttSj3p5INna
-nGQ4Zjr+ykq1enUBHlLwkfVGD7mV//BaVxvIyMtKtWewJ3YoQbPhrcWCAg1pqjJ7
-C9ksb5Njf7vOyF5KPGdcyePUIVw7NaIytAQrRE3ww7iuZg78fBs7oxjdzyK4D6G5
-+2DcaumIx18jwD44wP8g6z0foo1GgN6IitWoAcH/UhVX9ID/eMl5KNxHogW1N2bW
-GJDagpZCD09vxmKBcYFctXGbL3RoLKS4+mVu93vjPNhRs813nXAPMC5E+NZcI6vZ
-l7CYkq3/V6af54QGr7/0K87mIT6dIjkOCVYNjH4ZHPLjJolBZ8iS5636DyDoldk0
-SlUgLWwfZ80fcqNh19syiJRaVIpW2CahirFJilXtoFd2cvDOLPM=
-=LcGP
------END PGP SIGNATURE-----
-
---gBBFr7Ir9EOA20Yy--
