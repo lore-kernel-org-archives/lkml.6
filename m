@@ -2,118 +2,198 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 172BAC282F6
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 10:05:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14E6DC282F6
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 10:06:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E56F920663
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 10:05:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C519520663
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 10:06:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CU1pgPwd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727934AbfAUKFC (ORCPT
+        id S1727280AbfAUKGY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 05:05:02 -0500
-Received: from mx2.suse.de ([195.135.220.15]:45888 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726523AbfAUKFC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 05:05:02 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 3DEBBAF09;
-        Mon, 21 Jan 2019 10:05:00 +0000 (UTC)
-Subject: Re: [PATCH v3 1/2] dt-bindings: Add vendor prefix for Catalyst
- Semiconductor
-To:     Martyn Welch <martyn.welch@collabora.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        devicetree@vger.kernel.org, Christian Hemp <c.hemp@phytec.de>,
-        =?UTF-8?Q?Stefan_Riedm=c3=bcller?= <s.riedmueller@phytec.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        linux-arm-kernel@lists.infradead.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Rob Herring <robh@kernel.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Thierry Reding <treding@nvidia.com>,
-        linux-kernel@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
-        Johan Hovold <johan@kernel.org>
-References: <20190121095705.27452-1-martyn.welch@collabora.com>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
- 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
-Organization: SUSE Linux GmbH
-Message-ID: <20cb30af-72ea-3f9c-a172-0403326c6b84@suse.de>
-Date:   Mon, 21 Jan 2019 11:04:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <20190121095705.27452-1-martyn.welch@collabora.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Mon, 21 Jan 2019 05:06:24 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:41688 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726040AbfAUKGX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 05:06:23 -0500
+Received: by mail-wr1-f68.google.com with SMTP id x10so22522717wrs.8
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 02:06:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=ywAKA7XPaADxrBcsFMk+tbkoWLax4ZTEel24lBBuNN4=;
+        b=CU1pgPwdJuBHiqIkLzqPe3O5BRFdhqNL8zM5PR0fDMSAOkMednRyPq5b/5Amwrhp36
+         Iqe5iuZo6CAn77BXugWM0s5p2Y9tSZQkKVc1ZRQgxL0T93Puxwf3XPkYJ3bHbNa/DBDE
+         oEotYZRM4hs6LvE56qEz3YWK0QqqswLR1+wYU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ywAKA7XPaADxrBcsFMk+tbkoWLax4ZTEel24lBBuNN4=;
+        b=GjsQcFWYY3Yti2B8vzTqbzOVNEk2o1dAAmdH/H6XGmstkkG4XGGAml6+g498cMTOua
+         h1x8OMfEdRpGunp5x/pe2q8ACxqPUMw5XYaaPdzPEjSobnTbpveD/okdxJ9/EJ92Wq8d
+         GCdbA5OF9bcAbWbG18/Y1AW225olAQO92iwIs7Kupt7ch0oOD+Wy8CKKS5hcKtI5onqY
+         hVus4/dOXQkGMweFCSDQzxI+BEebi8bgDK6Tx14zfaFygZvRIGTh2D0UMOdch0jJKchs
+         F0D/IgQw1NCsliCQ2aNfBMXWGxX2VpE3pYY2en1I5n+9uP8SS/Z4DxnLHWHPzznVzXkD
+         qA2Q==
+X-Gm-Message-State: AJcUukc4e8rcHn7Fa2znP/ZCimwd9R2w28DNB/DZQo3ChfGACCCKKH40
+        z6fjbN6TaYNO5uEZ1CqKo7Z9Mm8850Ct6w==
+X-Google-Smtp-Source: ALg8bN4T35PTJmcoWBiZz43SdGIQsaQWsyH81wjzgvRlM2FU6AmVs9duzGMsQsXUR8oVF8GpbavgMw==
+X-Received: by 2002:a5d:6a42:: with SMTP id t2mr29375533wrw.50.1548065181082;
+        Mon, 21 Jan 2019 02:06:21 -0800 (PST)
+Received: from dogfood.home ([2a01:cb1d:112:6f00:789e:cc70:7004:686b])
+        by smtp.gmail.com with ESMTPSA id f22sm4541857wmj.26.2019.01.21.02.06.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 21 Jan 2019 02:06:20 -0800 (PST)
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        David Zhou <David1.Zhou@amd.com>,
+        Huang Rui <ray.huang@amd.com>,
+        Junwei Zhang <Jerry.Zhang@amd.com>,
+        Michel Daenzer <michel.daenzer@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [RFC PATCH] drm: disable WC optimization for cache coherent devices on non-x86
+Date:   Mon, 21 Jan 2019 11:06:17 +0100
+Message-Id: <20190121100617.2311-1-ard.biesheuvel@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 21.01.19 um 10:57 schrieb Martyn Welch:
-> Add vendor prefix "catalyst" for Catalyst Semiconductor which is
-> already in use but undocumented.
-> 
-> Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
+Currently, the DRM code assumes that PCI devices are always cache
+coherent for DMA, and that this can be selectively overridden for
+some buffers using non-cached mappings on the CPU side and PCIe
+NoSnoop transactions on the bus side.
 
-Reviewed-by: Andreas Färber <afaerber@suse.de>
+Whether the NoSnoop part is implemented correctly is highly platform
+specific. Whether it /matters/ if NoSnoop is implemented correctly or
+not is architecture specific: on x86, such transactions are coherent
+with the CPU whether the NoSnoop attribute is honored or not. On other
+architectures, it depends on whether such transactions may allocate in
+caches that are non-coherent with the CPU's uncached mappings.
 
-Thanks,
-Andreas
+Bottom line is that we should not rely on this optimization to work
+correctly for cache coherent devices in the general case. On the
+other hand, disabling this optimization for non-coherent devices
+is likely to cause breakage as well, since the driver will assume
+cache coherent PCIe if this optimization is turned off.
 
+So rename drm_arch_can_wc_memory() to drm_device_can_wc_memory(), and
+pass the drm_device pointer into it so we can base the return value
+on whether the device is cache coherent or not if not running on
+X86.
+
+Cc: Christian Koenig <christian.koenig@amd.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>
+Cc: David Zhou <David1.Zhou@amd.com>
+Cc: Huang Rui <ray.huang@amd.com>
+Cc: Junwei Zhang <Jerry.Zhang@amd.com>
+Cc: Michel Daenzer <michel.daenzer@amd.com>
+Cc: David Airlie <airlied@linux.ie>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Sean Paul <sean@poorly.run>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Will Deacon <will.deacon@arm.com>
+Reported-by: Carsten Haitzler <Carsten.Haitzler@arm.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+---
+This is a followup to '[RFC PATCH] drm/ttm: force cached mappings for system
+RAM on ARM'
+
+https://lore.kernel.org/linux-arm-kernel/20190110072841.3283-1-ard.biesheuvel@linaro.org/
+
+Without t
+ drivers/gpu/drm/amd/amdgpu/amdgpu_object.c |  2 +-
+ drivers/gpu/drm/radeon/radeon_object.c     |  2 +-
+ include/drm/drm_cache.h                    | 19 +++++++++++--------
+ 3 files changed, 13 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
+index 728e15e5d68a..777fa251838f 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
+@@ -480,7 +480,7 @@ static int amdgpu_bo_do_create(struct amdgpu_device *adev,
+ 	/* For architectures that don't support WC memory,
+ 	 * mask out the WC flag from the BO
+ 	 */
+-	if (!drm_arch_can_wc_memory())
++	if (!drm_device_can_wc_memory(adev->ddev))
+ 		bo->flags &= ~AMDGPU_GEM_CREATE_CPU_GTT_USWC;
+ #endif
+ 
+diff --git a/drivers/gpu/drm/radeon/radeon_object.c b/drivers/gpu/drm/radeon/radeon_object.c
+index 833e909706a9..610889bf6ab5 100644
+--- a/drivers/gpu/drm/radeon/radeon_object.c
++++ b/drivers/gpu/drm/radeon/radeon_object.c
+@@ -249,7 +249,7 @@ int radeon_bo_create(struct radeon_device *rdev,
+ 	/* For architectures that don't support WC memory,
+ 	 * mask out the WC flag from the BO
+ 	 */
+-	if (!drm_arch_can_wc_memory())
++	if (!drm_device_can_wc_memory(rdev->ddev))
+ 		bo->flags &= ~RADEON_GEM_GTT_WC;
+ #endif
+ 
+diff --git a/include/drm/drm_cache.h b/include/drm/drm_cache.h
+index bfe1639df02d..ced63b1207a3 100644
+--- a/include/drm/drm_cache.h
++++ b/include/drm/drm_cache.h
+@@ -33,6 +33,8 @@
+ #ifndef _DRM_CACHE_H_
+ #define _DRM_CACHE_H_
+ 
++#include <drm/drm_device.h>
++#include <linux/dma-noncoherent.h>
+ #include <linux/scatterlist.h>
+ 
+ void drm_clflush_pages(struct page *pages[], unsigned long num_pages);
+@@ -41,15 +43,16 @@ void drm_clflush_virt_range(void *addr, unsigned long length);
+ u64 drm_get_max_iomem(void);
+ 
+ 
+-static inline bool drm_arch_can_wc_memory(void)
++static inline bool drm_device_can_wc_memory(struct drm_device *ddev)
+ {
+-#if defined(CONFIG_PPC) && !defined(CONFIG_NOT_COHERENT_CACHE)
+-	return false;
+-#elif defined(CONFIG_MIPS) && defined(CONFIG_CPU_LOONGSON3)
+-	return false;
+-#else
+-	return true;
+-#endif
++	if (IS_ENABLED(CONFIG_PPC))
++		return IS_ENABLED(CONFIG_NOT_COHERENT_CACHE);
++	else if (IS_ENABLED(CONFIG_MIPS))
++		return !IS_ENABLED(CONFIG_CPU_LOONGSON3);
++	else if (IS_ENABLED(CONFIG_X86))
++		return true;
++
++	return !dev_is_dma_coherent(ddev->dev);
+ }
+ 
+ #endif
 -- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+2.17.1
+
