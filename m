@@ -2,94 +2,164 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8866C282DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:05:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5182AC282DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:05:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 777E32084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:05:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nUk0nlUQ"
+	by mail.kernel.org (Postfix) with ESMTP id 2A0DD214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:05:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729811AbfAUIFj (ORCPT
+        id S1729834AbfAUIFo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 03:05:39 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:34911 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729336AbfAUIFg (ORCPT
+        Mon, 21 Jan 2019 03:05:44 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49570 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729416AbfAUIFi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 03:05:36 -0500
-Received: by mail-pf1-f193.google.com with SMTP id z9so9772687pfi.2;
-        Mon, 21 Jan 2019 00:05:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=WgEsgGcp3+eolPgDUpIcJ3Mj29Uglkush+HiUCCyvXI=;
-        b=nUk0nlUQlznj3wf/1qw0J3Y8jT9RU0fgXOKEnzailUeIBhn87vhvPad70vbB7shJH0
-         Kcf4pj7BXyNRMMMhwD8/lKt5AxWScIGW3K6+iWHg9E/aRJ6zkdTmvkVUibTaGTN4D/7v
-         XTFt2RT4EYhjwsBWbQcLKJLngDH1MhcBw3oKvTAtp1U8QOA7U/endrpxqtZrPj6jbhSf
-         F9MU4i8im9PxqMRTpFfjad82guWoD0dUNeGoOkneENgstO3kPJax7QvUg41G2IX4NHHC
-         BJMOgTlJGmocBz/T/mAR64VSswCPQt1eyhPEEnbKBdTGXHmmt9hAR9w3s2+IYlwFwtcX
-         j1eQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=WgEsgGcp3+eolPgDUpIcJ3Mj29Uglkush+HiUCCyvXI=;
-        b=FjVmeVr8Rf9rnk+03hT6gJUia0MBsbNYCk/gkBqPT/bOG3kYAEDlGrAmxVvbew83Pg
-         T46fteD74TbrWuoSf8q0SAn9QtyMiSOKA0bdU5opj10RWxLC+HCnlJquUwSxFkYwENMa
-         Kovjcjpoqg3zOCtm52cGFOoIxZeg7gWGQqzO/ahsyJffquYNd40Xtf1aL7pZFlpOgJqR
-         XmepecL30HNxCPWMfhjpnyxG6dRWyA1XEjBvGDxipfGk+0akQWLAhiqGpQZWK+byENbu
-         0rHwzej3PHUSTPx4LOjURIUgfQMxs0Bahl0iq+FxfBU4+XkqaiSO91sBt7G85PFT+EVN
-         zy/g==
-X-Gm-Message-State: AJcUukdjmHmS2xUqYyU4w77xymVG7Jd4vMNaODRjN9lA24WZzMarI/cw
-        NjK8U/yVaY+ZAObmNlkf6A1u7549BiE=
-X-Google-Smtp-Source: ALg8bN7+LIGl7TaApfRvZDiaBbQFEnmcRWcNXyTIxwHZshKypc+uCjVP8oyCK7WkbLx3ODe8glICOw==
-X-Received: by 2002:a63:ce08:: with SMTP id y8mr26156376pgf.388.1548035389972;
-        Sun, 20 Jan 2019 17:49:49 -0800 (PST)
-Received: from localhost.localdomain ([103.232.108.130])
-        by smtp.gmail.com with ESMTPSA id o4sm26438963pgs.12.2019.01.20.17.49.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 20 Jan 2019 17:49:49 -0800 (PST)
-From:   Deepa Dinamani <deepa.kernel@gmail.com>
-To:     dmitry.torokhov@gmail.com
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        arnd@arndb.de, davem@davemloft.net, y2038@lists.linaro.org
-Subject: [PATCH] input: Fix the CONFIG_SPARC64 mixup
-Date:   Sun, 20 Jan 2019 17:49:14 -0800
-Message-Id: <20190121014914.2328-1-deepa.kernel@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 21 Jan 2019 03:05:38 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0L83rTU038729
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 03:05:37 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2q58e74mrb-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 03:05:36 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Mon, 21 Jan 2019 08:05:33 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 21 Jan 2019 08:05:21 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0L85KoI57868376
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 21 Jan 2019 08:05:20 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F1D53A4053;
+        Mon, 21 Jan 2019 08:05:19 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1988AA4057;
+        Mon, 21 Jan 2019 08:05:15 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.207.125])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Mon, 21 Jan 2019 08:05:14 +0000 (GMT)
+Received: by rapoport-lnx (sSMTP sendmail emulation); Mon, 21 Jan 2019 10:05:14 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     linux-mm@kvack.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dennis Zhou <dennis@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greentime Hu <green.hu@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guan Xuetao <gxt@pku.edu.cn>, Guo Ren <guoren@kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Mark Salter <msalter@redhat.com>,
+        Matt Turner <mattst88@gmail.com>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Simek <monstr@monstr.eu>,
+        Paul Burton <paul.burton@mips.com>,
+        Petr Mladek <pmladek@suse.com>, Rich Felker <dalias@libc.org>,
+        Richard Weinberger <richard@nod.at>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Stafford Horne <shorne@gmail.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        devicetree@vger.kernel.org, kasan-dev@googlegroups.com,
+        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-c6x-dev@linux-c6x.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-um@lists.infradead.org, linux-usb@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, linuxppc-dev@lists.ozlabs.org,
+        openrisc@lists.librecores.org, sparclinux@vger.kernel.org,
+        uclinux-h8-devel@lists.sourceforge.jp, x86@kernel.org,
+        xen-devel@lists.xenproject.org, Mike Rapoport <rppt@linux.ibm.com>
+Subject: [PATCH v2 11/21] memblock: make memblock_find_in_range_node() and choose_memblock_flags() static
+Date:   Mon, 21 Jan 2019 10:03:58 +0200
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1548057848-15136-1-git-send-email-rppt@linux.ibm.com>
+References: <1548057848-15136-1-git-send-email-rppt@linux.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 19012108-0028-0000-0000-0000033BE182
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19012108-0029-0000-0000-000023F91593
+Message-Id: <1548057848-15136-12-git-send-email-rppt@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-21_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=705 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901210066
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Arnd Bergmann pointed out that CONFIG_* cannot be used
-in a uapi header. Override with an equivalent conditional.
+These functions are not used outside memblock. Make them static.
 
-Fixes: 2e746942ebac ("Input: input_event - provide override for sparc64")
-Fixes: 152194fe9c3f ("Input: extend usable life of event timestamps to 2106 on 32 bit systems")
-Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
+Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
 ---
- include/uapi/linux/input.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/memblock.h | 4 ----
+ mm/memblock.c            | 4 ++--
+ 2 files changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/include/uapi/linux/input.h b/include/uapi/linux/input.h
-index ffab958bc512..f056b2a00d5c 100644
---- a/include/uapi/linux/input.h
-+++ b/include/uapi/linux/input.h
-@@ -32,7 +32,7 @@ struct input_event {
- #define input_event_usec time.tv_usec
- #else
- 	__kernel_ulong_t __sec;
--#ifdef CONFIG_SPARC64
-+#if defined(__sparc__) && defined(__arch64__)
- 	unsigned int __usec;
- #else
- 	__kernel_ulong_t __usec;
+diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+index cf4cd9c..f5a83a1 100644
+--- a/include/linux/memblock.h
++++ b/include/linux/memblock.h
+@@ -111,9 +111,6 @@ void memblock_discard(void);
+ #define memblock_dbg(fmt, ...) \
+ 	if (memblock_debug) printk(KERN_INFO pr_fmt(fmt), ##__VA_ARGS__)
+ 
+-phys_addr_t memblock_find_in_range_node(phys_addr_t size, phys_addr_t align,
+-					phys_addr_t start, phys_addr_t end,
+-					int nid, enum memblock_flags flags);
+ phys_addr_t memblock_find_in_range(phys_addr_t start, phys_addr_t end,
+ 				   phys_addr_t size, phys_addr_t align);
+ void memblock_allow_resize(void);
+@@ -130,7 +127,6 @@ int memblock_clear_hotplug(phys_addr_t base, phys_addr_t size);
+ int memblock_mark_mirror(phys_addr_t base, phys_addr_t size);
+ int memblock_mark_nomap(phys_addr_t base, phys_addr_t size);
+ int memblock_clear_nomap(phys_addr_t base, phys_addr_t size);
+-enum memblock_flags choose_memblock_flags(void);
+ 
+ unsigned long memblock_free_all(void);
+ void reset_node_managed_pages(pg_data_t *pgdat);
+diff --git a/mm/memblock.c b/mm/memblock.c
+index 739f769..03b3929 100644
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@ -125,7 +125,7 @@ static int memblock_can_resize __initdata_memblock;
+ static int memblock_memory_in_slab __initdata_memblock = 0;
+ static int memblock_reserved_in_slab __initdata_memblock = 0;
+ 
+-enum memblock_flags __init_memblock choose_memblock_flags(void)
++static enum memblock_flags __init_memblock choose_memblock_flags(void)
+ {
+ 	return system_has_some_mirror ? MEMBLOCK_MIRROR : MEMBLOCK_NONE;
+ }
+@@ -254,7 +254,7 @@ __memblock_find_range_top_down(phys_addr_t start, phys_addr_t end,
+  * Return:
+  * Found address on success, 0 on failure.
+  */
+-phys_addr_t __init_memblock memblock_find_in_range_node(phys_addr_t size,
++static phys_addr_t __init_memblock memblock_find_in_range_node(phys_addr_t size,
+ 					phys_addr_t align, phys_addr_t start,
+ 					phys_addr_t end, int nid,
+ 					enum memblock_flags flags)
 -- 
-2.17.1
+2.7.4
 
