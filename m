@@ -2,112 +2,392 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80357C31681
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 17:07:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C907DC31681
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 17:07:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5975320879
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 17:07:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D9E220879
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 17:07:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="OQk3VLM1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727835AbfAURHs (ORCPT
+        id S1727879AbfAURHv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 12:07:48 -0500
-Received: from muru.com ([72.249.23.125]:34414 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726738AbfAURHs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 12:07:48 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 5AAB180C0;
-        Mon, 21 Jan 2019 17:07:54 +0000 (UTC)
-Date:   Mon, 21 Jan 2019 09:07:43 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Tero Kristo <t-kristo@ti.com>
-Cc:     Andreas Kemnade <andreas@kemnade.info>, mturquette@baylibre.com,
-        sboyd@kernel.org, linux-omap@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bcousson@baylibre.com, paul@pwsan.com, letux-kernel@openphoenux.org
-Subject: Re: [PATCH v3 3/3] arm: omap_hwmod disable ick autoidling when a
- hwmod requires that
-Message-ID: <20190121170743.GB5544@atomide.com>
-References: <20190116220429.9136-1-andreas@kemnade.info>
- <20190116220429.9136-4-andreas@kemnade.info>
- <20190118154807.GV5544@atomide.com>
- <20190118181827.7163bee4@aktux>
- <20190118183630.GX5544@atomide.com>
- <20190118203832.3be7975e@aktux>
- <20190118194536.GY5544@atomide.com>
- <ed0928fc-add1-1f37-c907-89bf5133fc00@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ed0928fc-add1-1f37-c907-89bf5133fc00@ti.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+        Mon, 21 Jan 2019 12:07:51 -0500
+Received: from smtprelay.synopsys.com ([198.182.47.9]:40104 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726738AbfAURHt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 12:07:49 -0500
+Received: from mailhost.synopsys.com (unknown [10.13.135.209])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay.synopsys.com (Postfix) with ESMTPS id 61C2624E242F;
+        Mon, 21 Jan 2019 09:07:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1548090469; bh=wgCaEckMElasPKD4VyDhABnxeni1hmr6lEkS4L6AwKI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=OQk3VLM1bBlRUuQmkAzMq4YHE6GWn35CxrnW1K0/I48V7svs9cKDhUfW21cWFyJ2w
+         OupK8CX/iNr32WXzGCyIOj3fbnW4u/NzUb1tAAdRKwZtJz3x2LLgVWOBojpKFFHYsp
+         KWa6ETQoC8QQkORd9ArMae1IDwWYtlm0hwN9fcpwFWGhi9n/A2/tpgWm0cKK23SJ1F
+         qigIgJOS7NAL4+HVZkJFoVsGCGdtIJ4xEKgQuk0nSBi1qMrrycgqdXPegXZbJ7sSX3
+         4hxQMqLVc2lgxrW2/who57TMe+gD3eLH1T2xG3SZhuZAnna3f1JnrWkKMUGTdHmJxJ
+         A3VBa/5H3ICUA==
+Received: from paltsev-e7480.internal.synopsys.com (paltsev-e7480.internal.synopsys.com [10.121.8.81])
+        by mailhost.synopsys.com (Postfix) with ESMTP id D6525A0076;
+        Mon, 21 Jan 2019 17:07:47 +0000 (UTC)
+From:   Eugeniy Paltsev <eugeniy.paltsev@synopsys.com>
+To:     linux-snps-arc@lists.infradead.org,
+        Vineet Gupta <vineet.gupta1@synopsys.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexey Brodkin <alexey.brodkin@synopsys.com>,
+        Eugeniy Paltsev <eugeniy.paltsev@synopsys.com>
+Subject: [PATCH] ARC: prevent showing irrelevant exception info in signal message
+Date:   Mon, 21 Jan 2019 20:07:35 +0300
+Message-Id: <20190121170735.5511-1-Eugeniy.Paltsev@synopsys.com>
+X-Mailer: git-send-email 2.14.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Tero Kristo <t-kristo@ti.com> [190121 07:13]:
-> On 18/01/2019 21:45, Tony Lindgren wrote:
-> > * Andreas Kemnade <andreas@kemnade.info> [190118 19:39]:
-> > > Hi,
-> > > 
-> > > On Fri, 18 Jan 2019 10:36:30 -0800
-> > > Tony Lindgren <tony@atomide.com> wrote:
-> > > 
-> > > [...]
-> > > > til the next workaround.
-> > > > 
-> > > > > That flags also causes the iclk being enabled/disabled
-> > > > > manually.
-> > > > 
-> > > > Yes but SWSUP_IDLE for the interface clock to me currently
-> > > > just means:
-> > > > 
-> > > > "manually enable and disable ocp interface clock"
-> > > > 
-> > > well, if we want to manually disable it and not automatically,
-> > > we have to disable autoidle or it will be automatically disabled.
-> > > 
-> > > Disabling it manually when it is already auto-disabled (by autoidle) is
-> > > just practically a no-op towards the clock.
-> > 
-> > OK I buy that :) It should be probably added to the patch
-> > description to make it clear what it changes.
-> > 
-> > Tero, any comments on this change?
-> 
-> Well, seeing the flag is pretty much only used for a handful of hwmods
-> nowadays, it should be fine. OMAP3 PM should be tested with this change
-> though, as there are couple of hwmods impacted on that platform. I wonder
-> what happens to cpuidle when display is active...
+We process signals in the end of syscall/exception handler.
+If the signal is fatal we print register's content using
+show_regs function. show_regs() also prints information about
+last exception happened.
 
-OK so that's a good test case. AFAIK, we should have DSS idle
-and have the SoC hit at least core retention with DSI command mode
-displays. I don't know if this patch would block DSS autoidle then
-or not.. I'm guessing 80% chance that we still need DSS hit runtime
-suspend to enter SoC idle states meaning this patch would not
-affect it :)
+In case of multicore system we can catch the situation when we
+will print wrong information about exception. See the example:
+______________________________
+CPU-0: started to handle page fault
+CPU-1: sent signal to process, which is executed on CPU-0
+CPU-0: ended page fault handle. Started to process signal before
+       returnig to userspace. Process signal, which is send from
+       CPU-0. As th signal is fatal we call show_regs().
+       show_regs() will show information about last exception
+       which is *page fault* (instead of "trap" which is used for
+       signals and happened on CPU-0)
 
-> > > > and with your changes it becomes:
-> > > > 
-> > > > "manually enable and disable ocp interface clock and block
-> > > >   autoidle while in use".
-> > > > 
-> > > > So aren't we now changing the way things behave in general
-> > > > for SWSUP_IDLE?
-> > > > 
-> > > Yes, we are, so proper testing is needed. But If I read those comments
-> > > it was always intended this way but not fully implemented because it
-> > > appeared to be more work like needing a usecounter (which my patchset
-> > > also adds) for that autoidle flag.
-> > 
-> > OK yeah the use count seems necessary. I'll test here
-> > with my PM use cases.
+So we will get message like this:
+   # ./waitpid02
+  potentially unexpected fatal signal 8.
+  Path: /home/waitpid02
+  CPU: 0 PID: 100 Comm: waitpid02 Not tainted 4.10.0-rc4 #2
+  task: 9f11c200 task.stack: 9f3ae000
 
-Regards,
+  [ECR   ]: 0x00050200 => Invalid Write @ 0x00000000 by insn @ 0x000123ec
+  [EFA   ]: 0x00000000
+  [BLINK ]: 0x123ea
+  [ERET  ]: 0x123ec
+    @off 0x123ec in [/home/waitpid02]
+    VMA: 0x00010000 to 0x00016000
+  [STAT32]: 0x80080882 : IE U
+  BTA: 0x000123ea  SP: 0x5ffd3db0  FP: 0x00000000
+  LPS: 0x20031684 LPE: 0x2003169a LPC: 0x00000006
+  [-----other-info-----]
 
-Tony
+This message is confusing because it show information about page fault
+( [ECR   ]: 0x00050200 => Invalid Write ) which is absolutely irrelevant
+to signal.
+
+This situation was reproduced with waitpid02 LTP test.
+_____________________________
+
+So remove printing information about exceptions from show_regs()
+to avoid confusing messages. Print information about exceptions
+only in required places instead of show_regs()
+
+Now we don't print information about exceptions if signal is simply
+send by another userspace app. So in case of waitpid02 we will print
+next message:
+_____________________________
+   # ./waitpid02
+  potentially unexpected fatal signal 8.
+  Path: /root/waitpid02
+  CPU: 2 PID: 105 Comm: waitpid02 Not tainted 4.18.0-rc8-00002-gde0f6d6aeb53-dirty #17
+  [ECR   ]: 0x00050100
+  [EFA   ]: 0x00000000
+  [BLINK ]: 0x20001486
+  [-----other-info-----]
+_____________________________
+
+This patch fix
+STAR 9001146055: waitpid02: Invalid Write @ 0x00000000 by insn @ 0x000123ec
+
+NOTE:
+To be more clear I give examples of different faults (signal-based,
+userspace/kernelspace exception-based) with different values of
+"/proc/sys/kernel/print-fatal-signals" option.
+
+0) NULL pointer access from user space, print-fatal-signals == 1:
+------------>8---------------
+ # ./arc_hell
+Exception: arc_hell[103]: at 0x2003a35c [off 0x2e35c in /lib/libuClibc-1.0.18.so, VMA: 2000c000:20072000]
+  ECR: 0x00050100 => Invalid Read @ 0x00000000 by insn @ 0x2003a35c
+potentially unexpected fatal signal 11.
+Path: /root/arc_hell
+CPU: 1 PID: 103 Comm: arc_hell Not tainted 4.18.0-rc8-00002-gde0f6d6aeb53-dirty #17
+[ECR   ]: 0x00050100
+[EFA   ]: 0x00000000
+[BLINK ]: 0x20039ef8
+[ERET  ]: 0x2003a35c
+[STAT32]: 0x80080882 : IE U
+BTA: 0x2003a358  SP: 0x5fa27dc4  FP: 0x5fa27de8
+LPS: 0x2003a628 LPE: 0x2003a62c LPC: 0x00000000
+r00: 0x00000000 r01: 0x200740b0 r02: 0x00000001
+r03: 0x00000007 r04: 0x80808080 r05: 0x2f2f2f2f
+r06: 0x7c7a2f43 r07: 0x00000000 r08: 0x1a131100
+r09: 0x2008b1e0 r10: 0x20003a5c r11: 0x20004038
+r12: 0x20039ef8 r13: 0x200740b0 r14: 0x00000000
+r15: 0x200740b0 r16: 0x00000000 r17: 0x0007d468
+r18: 0x0009313a r19: 0x00000000 r20: 0x0009c22c
+r21: 0x0009c23c r22: 0x0009ab64 r23: 0x00000000
+r24: 0x0009dfc5 r25: 0x20004b70
+
+Segmentation fault
+------------>8---------------
+
+1) NULL pointer access from user space, print-fatal-signals == 0:
+------------>8---------------
+ # ./arc_hell
+Exception: arc_hell[107]: at 0x2003a35c [off 0x2e35c in /lib/libuClibc-1.0.18.so, VMA: 2000c000:20072000]
+  ECR: 0x00050100 => Invalid Read @ 0x00000000 by insn @ 0x2003a35c
+Segmentation fault
+------------>8---------------
+
+2) Process killed by signal (waitpid02 test), print-fatal-signals == 1:
+------------>8---------------
+ # ./waitpid02
+potentially unexpected fatal signal 8.
+Path: /root/waitpid02
+CPU: 2 PID: 105 Comm: waitpid02 Not tainted 4.18.0-rc8-00002-gde0f6d6aeb53-dirty #17
+[ECR   ]: 0x00050100
+[EFA   ]: 0x00000000
+[BLINK ]: 0x20001486
+[ERET  ]: 0x2000146c
+[STAT32]: 0x80080082 : IE U
+BTA: 0x20000fc4  SP: 0x5fa21d64  FP: 0x00000000
+LPS: 0x200524a0 LPE: 0x200524b6 LPC: 0x00000006
+r00: 0x2000c0dc r01: 0x00000018 r02: 0x0001159a
+r03: 0x00000001 r04: 0x00000000 r05: 0x00000045
+r06: 0x0000004e r07: 0x01010101 r08: 0x000000dc
+r09: 0x200a31e0 r10: 0x20003a5c r11: 0x20004038
+r12: 0x20001486 r13: 0x20004174 r14: 0x07ca2bc0
+r15: 0x20004078 r16: 0x00000000 r17: 0x20004038
+r18: 0x00000001 r19: 0x00000000 r20: 0x0001159a
+r21: 0x00000001 r22: 0x00000000 r23: 0x00000004
+r24: 0x2000d1fc r25: 0x20004cd0
+------------>8---------------
+
+3) Process killed by signal (waitpid02 test), print-fatal-signals == 0:
+------------>8---------------
+ # ./waitpid02
+------------>8---------------
+
+4) NULL pointer access from kernel space, regardless print-fatal-signals
+value:
+------------>8---------------
+Oops
+Exception: at stmmac_dvr_probe+0x40/0x7e0:
+  ECR: 0x00050200 => Invalid Write @ 0x00000000 by insn @ 0x90575254
+Path: (null)
+CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.18.0-rc8-00002-gde0f6d6aeb53-dirty #11
+[EFA   ]: 0x00000000
+[BLINK ]: stmmac_dvr_probe+0x2a/0x7e0
+[ERET  ]: stmmac_dvr_probe+0x40/0x7e0
+[STAT32]: 0x80080402 : IE K
+BTA: 0x9057523e  SP: 0xbf02be40  FP: 0x00000000
+LPS: 0x9073dbcc LPE: 0x9073dbe0 LPC: 0x00000000
+r00: 0xbf1f0000 r01: 0x00000000 r02: 0x00000008
+r03: 0x00000000 r04: 0x00000064 r05: 0x00000000
+r06: 0x00000003 r07: 0x00000004 r08: 0x01010101
+r09: 0x00000031 r10: 0xbf1f0006 r11: 0x00000000
+r12: 0x9057523e
+
+Stack Trace:
+  stmmac_dvr_probe+0x40/0x7e0
+  dwmac_generic_probe+0x50/0xbc
+  platform_drv_probe+0x26/0x5c
+  really_probe+0x3b0/0x464
+  __driver_attach+0xd4/0xd8
+  bus_for_each_dev+0x3a/0x70
+  bus_add_driver+0x12a/0x18c
+  driver_register+0x56/0xe8
+  do_one_initcall+0x2e/0x118
+  kernel_init_freeable+0x102/0x194
+------------>8---------------
+
+Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+---
+Changes v3->v4:
+ * Rebase onto last ARC changes.
+
+Changes v2->v3:
+ * Don't show exception message if the corresponding signal is
+   handled by application (inspired by x86 implementation)
+ * Rebase onto v4.19-rc8
+
+Changes v1->v2:
+ * Change format of message about exception.
+
+ arch/arc/include/asm/bug.h     |  1 +
+ arch/arc/kernel/traps.c        |  3 +++
+ arch/arc/kernel/troubleshoot.c | 46 ++++++++++++++++++++++++++++++++----------
+ arch/arc/mm/fault.c            |  9 +++++++++
+ 4 files changed, 48 insertions(+), 11 deletions(-)
+
+diff --git a/arch/arc/include/asm/bug.h b/arch/arc/include/asm/bug.h
+index 21ec82466d62..b68f7f82f2d8 100644
+--- a/arch/arc/include/asm/bug.h
++++ b/arch/arc/include/asm/bug.h
+@@ -16,6 +16,7 @@
+ struct task_struct;
+ 
+ void show_regs(struct pt_regs *regs);
++void show_exception_mesg(struct pt_regs *regs);
+ void show_stacktrace(struct task_struct *tsk, struct pt_regs *regs);
+ void show_kernel_fault_diag(const char *str, struct pt_regs *regs,
+ 			    unsigned long address);
+diff --git a/arch/arc/kernel/traps.c b/arch/arc/kernel/traps.c
+index a7fcbc0d3943..b94b13120bff 100644
+--- a/arch/arc/kernel/traps.c
++++ b/arch/arc/kernel/traps.c
+@@ -50,6 +50,9 @@ unhandled_exception(const char *str, struct pt_regs *regs,
+ 
+ 		tsk->thread.fault_address = (__force unsigned int)addr;
+ 
++		if (unhandled_signal(tsk, signo))
++			show_exception_mesg(regs);
++
+ 		force_sig_fault(signo, si_code, addr, tsk);
+ 
+ 	} else {
+diff --git a/arch/arc/kernel/troubleshoot.c b/arch/arc/kernel/troubleshoot.c
+index 215f515442e0..64e9867a1a65 100644
+--- a/arch/arc/kernel/troubleshoot.c
++++ b/arch/arc/kernel/troubleshoot.c
+@@ -106,13 +106,13 @@ static void show_faulting_vma(unsigned long address)
+ 			if (IS_ERR(nm))
+ 				nm = "?";
+ 		}
+-		pr_info("    @off 0x%lx in [%s]\n"
+-			"    VMA: 0x%08lx to 0x%08lx\n",
++
++		pr_cont("[off 0x%lx in %s, VMA: %08lx:%08lx] ",
+ 			vma->vm_start < TASK_UNMAPPED_BASE ?
+ 				address : address - vma->vm_start,
+ 			nm, vma->vm_start, vma->vm_end);
+ 	} else
+-		pr_info("    @No matching VMA found\n");
++		pr_cont("[No matching VMA found] ");
+ 
+ 	up_read(&active_mm->mmap_sem);
+ }
+@@ -122,7 +122,7 @@ static void show_ecr_verbose(struct pt_regs *regs)
+ 	unsigned int vec, cause_code;
+ 	unsigned long address;
+ 
+-	pr_info("\n[ECR   ]: 0x%08lx => ", regs->event);
++	pr_cont("\n  ECR: 0x%08lx => ", regs->event);
+ 
+ 	/* For Data fault, this is data address not instruction addr */
+ 	address = current->thread.fault_address;
+@@ -170,10 +170,37 @@ static void show_ecr_verbose(struct pt_regs *regs)
+ 	}
+ }
+ 
++static inline void show_exception_mesg_u(struct pt_regs *regs)
++{
++	struct task_struct *tsk = current;
++
++	pr_info("Exception: %s[%d]: at %pS ",
++		tsk->comm, task_pid_nr(tsk), (void *)regs->ret);
++
++	show_faulting_vma(regs->ret);
++
++	show_ecr_verbose(regs);
++}
++
++static inline void show_exception_mesg_k(struct pt_regs *regs)
++{
++	pr_info("Exception: at %pS:", (void *)regs->ret);
++
++	show_ecr_verbose(regs);
++}
++
+ /************************************************************************
+  *  API called by rest of kernel
+  ***********************************************************************/
+ 
++void show_exception_mesg(struct pt_regs *regs)
++{
++	if (user_mode(regs))
++		show_exception_mesg_u(regs);
++	else
++		show_exception_mesg_k(regs);
++}
++
+ void show_regs(struct pt_regs *regs)
+ {
+ 	struct task_struct *tsk = current;
+@@ -188,15 +215,10 @@ void show_regs(struct pt_regs *regs)
+ 	print_task_path_n_nm(tsk);
+ 	show_regs_print_info(KERN_INFO);
+ 
+-	show_ecr_verbose(regs);
+-
+-	pr_info("[EFA   ]: 0x%08lx\n[BLINK ]: %pS\n[ERET  ]: %pS\n",
+-		current->thread.fault_address,
++	pr_info("[ECR   ]: 0x%08lx\n[EFA   ]: 0x%08lx\n[BLINK ]: %pS\n[ERET  ]: %pS\n",
++		regs->event, current->thread.fault_address,
+ 		(void *)regs->blink, (void *)regs->ret);
+ 
+-	if (user_mode(regs))
+-		show_faulting_vma(regs->ret); /* faulting code, not data */
+-
+ 	pr_info("[STAT32]: 0x%08lx", regs->status32);
+ 
+ #define STS_BIT(r, bit)	r->status32 & STATUS_##bit##_MASK ? #bit" " : ""
+@@ -239,6 +261,8 @@ void show_kernel_fault_diag(const char *str, struct pt_regs *regs,
+ 	/* Show fault description */
+ 	pr_info("\n%s\n", str);
+ 
++	show_exception_mesg(regs);
++
+ 	/* Caller and Callee regs */
+ 	show_regs(regs);
+ 
+diff --git a/arch/arc/mm/fault.c b/arch/arc/mm/fault.c
+index 8df1638259f3..e44b64107adb 100644
+--- a/arch/arc/mm/fault.c
++++ b/arch/arc/mm/fault.c
+@@ -202,7 +202,12 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
+ 	/* User mode accesses just cause a SIGSEGV */
+ 	if (user_mode(regs)) {
+ 		tsk->thread.fault_address = address;
++
++		if (unhandled_signal(tsk, SIGSEGV))
++			show_exception_mesg(regs);
++
+ 		force_sig_fault(SIGSEGV, si_code, (void __user *)address, tsk);
++
+ 		return;
+ 	}
+ 
+@@ -237,5 +242,9 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
+ 		goto no_context;
+ 
+ 	tsk->thread.fault_address = address;
++
++	if (unhandled_signal(tsk, SIGBUS))
++		show_exception_mesg(regs);
++
+ 	force_sig_fault(SIGBUS, BUS_ADRERR, (void __user *)address, tsk);
+ }
+-- 
+2.14.5
+
