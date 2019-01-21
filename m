@@ -2,106 +2,81 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E1D8C2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:57:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E185BC2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:57:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B2B42084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:57:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079071;
-	bh=kJq0JNnnrqzA72nJOt4Y5k3EPr/o/TevIoDLeFVuSKM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=nCsalm0VLYE974IfD5RNj0p6Z0VCgRvQ0zI1IiOmiWwgyYLOFjlG+gmxqpjuIvSQX
-	 X0sraB3m2bnz6mWN0FnVUiC6uqlH0tezHITiX57iUMW+khv570cyzQeNBHoesrQ40S
-	 NWeIYDkZBjzjoa6TV6Ll7OvZICZM+I2Elwc07Pe4=
+	by mail.kernel.org (Postfix) with ESMTP id A7AB32084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:57:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XoALnmII"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731651AbfAUN5s (ORCPT
+        id S1731724AbfAUN5w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:57:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41320 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731880AbfAUN4O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:56:14 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BEF6E2084C;
-        Mon, 21 Jan 2019 13:56:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078974;
-        bh=kJq0JNnnrqzA72nJOt4Y5k3EPr/o/TevIoDLeFVuSKM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SfkIyEeVyVvtRT7qRbBuvwnBMEFwLV+ZyjAiVOinP48hQAn4CiFsklbJphlQ6kB1I
-         UWHWWL+jZgxQqr7OiT/9Xfr2ommxpORUdk9WMUaR6Q5y79eA65gYuhkgiRoe+ui32E
-         NEysiZGH+ify8vEpv7EjS2QjW2VEznI8ORDCZ8lU=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot <syzbot+c0138741c2290fc5e63f@syzkaller.appspotmail.com>,
-        Ming Lei <ming.lei@redhat.com>, Jan Kara <jack@suse.cz>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.9 49/51] loop: Fix double mutex_unlock(&loop_ctl_mutex) in loop_control_ioctl()
-Date:   Mon, 21 Jan 2019 14:44:45 +0100
-Message-Id: <20190121122458.610915084@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190121122453.700446926@linuxfoundation.org>
-References: <20190121122453.700446926@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Mon, 21 Jan 2019 08:57:52 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:35584 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731538AbfAUN5t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:57:49 -0500
+Received: by mail-lf1-f67.google.com with SMTP id e26so15566796lfc.2
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 05:57:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=doSyHQLOS4rWfmx54arJENuXimoCMFHCJpGs26MCLlY=;
+        b=XoALnmIIS53acMM5HwwGzVRTxgam9ePjKCTfq8l+WgxukQ3BfkhxKRicS7uJqEb0EL
+         7cDms21gv6ZDV9XZHmV+p5uurCAdpFgpOx76q5FAxanbnH4FOqk+mbhUGNQIKAmO4h7a
+         Zu90CnqGl350svXygiUFw/pqLJ1f1bGSIv8f8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=doSyHQLOS4rWfmx54arJENuXimoCMFHCJpGs26MCLlY=;
+        b=M9jO49MK2NeBj+Dy9eMBHspvxwQI6yusCTPKemh/R4fSXgMO9FFWKFG3Lk0e5h6J5W
+         rAaCSUCRioGF7SkWenCvvgZ2Xyddx6qraRsL1iTfz2I7SuHnSNM4rL4NzuwrPBYCYsgW
+         EMuYyCGfYe6Fqa9RGYkDzwyGMGB/M5sR9xIkw43VS4ptZITMXxzBCNVeoIKBZbPeUOeK
+         oRMqIlyixfXum5Urh1e2qc6HIRnkVAUD3ImIt46tmCq60C/METEWBZYOG5GNZ7nbbGeK
+         LQSeHJWTeBv04RVeEyEvPDdpP5JOteSJ6qvwPIATMVrkL6i77s5WjEc1J0H86ghtZgTU
+         gHEg==
+X-Gm-Message-State: AJcUukc1fU+DQaBnNGqE0iJH/DIjzFtE4URyaOk5Mqdu9iothdLeFHCg
+        Xh61TZt6b5FupINNQgTiNhl0myLpsoRLcM+IzkCXJw==
+X-Google-Smtp-Source: ALg8bN78kiRX3YmNQt0pCKV36IdbbzCbUwOVDqFSwNv42EDKQfTTyNG6tUS4K3pSQe/1bCUwWJ0BD97TqhrZZDRl1is=
+X-Received: by 2002:a19:4849:: with SMTP id v70mr17907232lfa.62.1548079066808;
+ Mon, 21 Jan 2019 05:57:46 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20190118033229.22553-1-jiwei.sun@windriver.com>
+In-Reply-To: <20190118033229.22553-1-jiwei.sun@windriver.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 21 Jan 2019 14:57:35 +0100
+Message-ID: <CACRpkdaX5O6j85L83KyMN3dxjkzrgSdhMRm5BwFb58fdMdA2+w@mail.gmail.com>
+Subject: Re: [PATCH]spi: pl022: add a message state STATE_TIMEOUT for timeout transfer
+To:     Jiwei Sun <jiwei.sun@windriver.com>
+Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Mark Brown <broonie@kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+On Fri, Jan 18, 2019 at 4:33 AM Jiwei Sun <jiwei.sun@windriver.com> wrote:
 
-------------------
+> When transfer timeout, give -EAGAIN to the message's status, and it can
+> make the spi device driver choose repeated transimation or not. And if
+> transfer timeout, output some useful information for tracing the issue.
+>
+> Signed-off-by: Jiwei Sun <jiwei.sun@windriver.com>
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+This looks very good and helpful!
 
-commit 628bd85947091830a8c4872adfd5ed1d515a9cf2 upstream.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Commit 0a42e99b58a20883 ("loop: Get rid of loop_index_mutex") forgot to
-remove mutex_unlock(&loop_ctl_mutex) from loop_control_ioctl() when
-replacing loop_index_mutex with loop_ctl_mutex.
-
-Fixes: 0a42e99b58a20883 ("loop: Get rid of loop_index_mutex")
-Reported-by: syzbot <syzbot+c0138741c2290fc5e63f@syzkaller.appspotmail.com>
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/block/loop.c |    2 --
- 1 file changed, 2 deletions(-)
-
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -1929,12 +1929,10 @@ static long loop_control_ioctl(struct fi
- 			break;
- 		if (lo->lo_state != Lo_unbound) {
- 			ret = -EBUSY;
--			mutex_unlock(&loop_ctl_mutex);
- 			break;
- 		}
- 		if (atomic_read(&lo->lo_refcnt) > 0) {
- 			ret = -EBUSY;
--			mutex_unlock(&loop_ctl_mutex);
- 			break;
- 		}
- 		lo->lo_disk->private_data = NULL;
-
-
+Yours,
+Linus Walleij
