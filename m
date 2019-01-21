@@ -6,47 +6,48 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 986EFC2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:51:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48DC4C2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:51:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6589D2063F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:51:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FA682089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:51:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078715;
-	bh=npXX+ILnVMUd5A6LTfyDNIx5kViwu5akOR/Cb2CZ9Bc=;
+	s=default; t=1548078718;
+	bh=CMkJGSzgAuYWHp/ngkisxg1cJbL0FV1njC4Yqk1i7z8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ghkQY/5+V50EBbqzjMrycANpDh16B2hzdNi8kd+sr3rYnfLa/Bqz/rfk8FjhZ0UjG
-	 1hvj4dkL197YLzmUvjuLFYo78jx97OtlZ2dpM/TP7waCUBkrUbH8o0O5IPlolaRet/
-	 u6yTgSIZ7/9GMmU1mfIU2YEwuvjACOTVnQYFcEqs=
+	b=v/3BKh13qG5EpwhFygBc0g8/qfU6fxnUUEecwrsMaYwkeX4Fa6V7dTOebToraIxAb
+	 6FOV+BHl4pOZsRFGNf3fl/sMWZXfxusSp2PofEuGcpTagi/3jQLOFySpGNaIySeQur
+	 qnSZK/kI+HJOvfp+jVvLk8dd4cRnmuf5ktE/TxOQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730477AbfAUNvx (ORCPT
+        id S1730932AbfAUNv4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:51:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34876 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:51:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728907AbfAUNvu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:51:50 -0500
+        id S1730894AbfAUNvw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:51:52 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ECE3820879;
-        Mon, 21 Jan 2019 13:51:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7689E2063F;
+        Mon, 21 Jan 2019 13:51:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078709;
-        bh=npXX+ILnVMUd5A6LTfyDNIx5kViwu5akOR/Cb2CZ9Bc=;
+        s=default; t=1548078711;
+        bh=CMkJGSzgAuYWHp/ngkisxg1cJbL0FV1njC4Yqk1i7z8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L5gSiX9cY/fVSL2dW3tsIyaYbbLCAYMDMxEfsBgOv7UqlY4Th8pnBInTDE3eEQaIu
-         1oSpd6sIceUOUi1v65wSd+hfmbTFXQDumRG3fcxZ57DU+EPihqaLvcmoPB+b8HffOg
-         6wN03AtTZwIE7Qwl9IlSw9EsClYQeYuCe/FbIHpw=
+        b=AFCd7C3UIU9T3xMlMVpa2YP5PQQlibUsZz23F13vJF3S8SGh2UjQiLHDpOrZt4kGZ
+         PakS0nAErkTkV6BCGoAovt4yPVUgyXVsVqexLXu9uijtoQDrVRiDPOZg9Jye/7JO61
+         xz41CResy3k17dOjeJZwafCVnJyOH2sOrmG0SE5M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
+        Eric Dumazet <edumazet@google.com>,
         Willem de Bruijn <willemb@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 16/59] bonding: update nest level on unlink
-Date:   Mon, 21 Jan 2019 14:43:41 +0100
-Message-Id: <20190121122458.337178985@linuxfoundation.org>
+Subject: [PATCH 4.14 17/59] ip: on queued skb use skb_header_pointer instead of pskb_may_pull
+Date:   Mon, 21 Jan 2019 14:43:42 +0100
+Message-Id: <20190121122458.449032083@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122456.529172919@linuxfoundation.org>
 References: <20190121122456.529172919@linuxfoundation.org>
@@ -67,90 +68,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Willem de Bruijn <willemb@google.com>
 
-[ Upstream commit 001e465f09a18857443489a57e74314a3368c805 ]
+[ Upstream commit 4a06fa67c4da20148803525151845276cdb995c1 ]
 
-A network device stack with multiple layers of bonding devices can
-trigger a false positive lockdep warning. Adding lockdep nest levels
-fixes this. Update the level on both enslave and unlink, to avoid the
-following series of events ..
+Commit 2efd4fca703a ("ip: in cmsg IP(V6)_ORIGDSTADDR call
+pskb_may_pull") avoided a read beyond the end of the skb linear
+segment by calling pskb_may_pull.
 
-    ip netns add test
-    ip netns exec test bash
-    ip link set dev lo addr 00:11:22:33:44:55
-    ip link set dev lo down
+That function can trigger a BUG_ON in pskb_expand_head if the skb is
+shared, which it is when when peeking. It can also return ENOMEM.
 
-    ip link add dev bond1 type bond
-    ip link add dev bond2 type bond
+Avoid both by switching to safer skb_header_pointer.
 
-    ip link set dev lo master bond1
-    ip link set dev bond1 master bond2
-
-    ip link set dev bond1 nomaster
-    ip link set dev bond2 master bond1
-
-.. from still generating a splat:
-
-    [  193.652127] ======================================================
-    [  193.658231] WARNING: possible circular locking dependency detected
-    [  193.664350] 4.20.0 #8 Not tainted
-    [  193.668310] ------------------------------------------------------
-    [  193.674417] ip/15577 is trying to acquire lock:
-    [  193.678897] 00000000a40e3b69 (&(&bond->stats_lock)->rlock#3/3){+.+.}, at: bond_get_stats+0x58/0x290
-    [  193.687851]
-    	       but task is already holding lock:
-    [  193.693625] 00000000807b9d9f (&(&bond->stats_lock)->rlock#2/2){+.+.}, at: bond_get_stats+0x58/0x290
-
-    [..]
-
-    [  193.851092]        lock_acquire+0xa7/0x190
-    [  193.855138]        _raw_spin_lock_nested+0x2d/0x40
-    [  193.859878]        bond_get_stats+0x58/0x290
-    [  193.864093]        dev_get_stats+0x5a/0xc0
-    [  193.868140]        bond_get_stats+0x105/0x290
-    [  193.872444]        dev_get_stats+0x5a/0xc0
-    [  193.876493]        rtnl_fill_stats+0x40/0x130
-    [  193.880797]        rtnl_fill_ifinfo+0x6c5/0xdc0
-    [  193.885271]        rtmsg_ifinfo_build_skb+0x86/0xe0
-    [  193.890091]        rtnetlink_event+0x5b/0xa0
-    [  193.894320]        raw_notifier_call_chain+0x43/0x60
-    [  193.899225]        netdev_change_features+0x50/0xa0
-    [  193.904044]        bond_compute_features.isra.46+0x1ab/0x270
-    [  193.909640]        bond_enslave+0x141d/0x15b0
-    [  193.913946]        do_set_master+0x89/0xa0
-    [  193.918016]        do_setlink+0x37c/0xda0
-    [  193.921980]        __rtnl_newlink+0x499/0x890
-    [  193.926281]        rtnl_newlink+0x48/0x70
-    [  193.930238]        rtnetlink_rcv_msg+0x171/0x4b0
-    [  193.934801]        netlink_rcv_skb+0xd1/0x110
-    [  193.939103]        rtnetlink_rcv+0x15/0x20
-    [  193.943151]        netlink_unicast+0x3b5/0x520
-    [  193.947544]        netlink_sendmsg+0x2fd/0x3f0
-    [  193.951942]        sock_sendmsg+0x38/0x50
-    [  193.955899]        ___sys_sendmsg+0x2ba/0x2d0
-    [  193.960205]        __x64_sys_sendmsg+0xad/0x100
-    [  193.964687]        do_syscall_64+0x5a/0x460
-    [  193.968823]        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Fixes: 7e2556e40026 ("bonding: avoid lockdep confusion in bond_get_stats()")
+Fixes: 2efd4fca703a ("ip: in cmsg IP(V6)_ORIGDSTADDR call pskb_may_pull")
 Reported-by: syzbot <syzkaller@googlegroups.com>
+Suggested-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: Willem de Bruijn <willemb@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/bonding/bond_main.c |    3 +++
- 1 file changed, 3 insertions(+)
+ net/ipv4/ip_sockglue.c |   12 +++++-------
+ net/ipv6/datagram.c    |   10 ++++------
+ 2 files changed, 9 insertions(+), 13 deletions(-)
 
---- a/drivers/net/bonding/bond_main.c
-+++ b/drivers/net/bonding/bond_main.c
-@@ -1928,6 +1928,9 @@ static int __bond_release_one(struct net
- 	if (!bond_has_slaves(bond)) {
- 		bond_set_carrier(bond);
- 		eth_hw_addr_random(bond_dev);
-+		bond->nest_level = SINGLE_DEPTH_NESTING;
-+	} else {
-+		bond->nest_level = dev_get_nest_level(bond_dev) + 1;
- 	}
+--- a/net/ipv4/ip_sockglue.c
++++ b/net/ipv4/ip_sockglue.c
+@@ -146,19 +146,17 @@ static void ip_cmsg_recv_security(struct
  
- 	unblock_netpoll_tx();
+ static void ip_cmsg_recv_dstaddr(struct msghdr *msg, struct sk_buff *skb)
+ {
++	__be16 _ports[2], *ports;
+ 	struct sockaddr_in sin;
+-	__be16 *ports;
+-	int end;
+-
+-	end = skb_transport_offset(skb) + 4;
+-	if (end > 0 && !pskb_may_pull(skb, end))
+-		return;
+ 
+ 	/* All current transport protocols have the port numbers in the
+ 	 * first four bytes of the transport header and this function is
+ 	 * written with this assumption in mind.
+ 	 */
+-	ports = (__be16 *)skb_transport_header(skb);
++	ports = skb_header_pointer(skb, skb_transport_offset(skb),
++				   sizeof(_ports), &_ports);
++	if (!ports)
++		return;
+ 
+ 	sin.sin_family = AF_INET;
+ 	sin.sin_addr.s_addr = ip_hdr(skb)->daddr;
+--- a/net/ipv6/datagram.c
++++ b/net/ipv6/datagram.c
+@@ -709,17 +709,15 @@ void ip6_datagram_recv_specific_ctl(stru
+ 	}
+ 	if (np->rxopt.bits.rxorigdstaddr) {
+ 		struct sockaddr_in6 sin6;
+-		__be16 *ports;
+-		int end;
++		__be16 _ports[2], *ports;
+ 
+-		end = skb_transport_offset(skb) + 4;
+-		if (end <= 0 || pskb_may_pull(skb, end)) {
++		ports = skb_header_pointer(skb, skb_transport_offset(skb),
++					   sizeof(_ports), &_ports);
++		if (ports) {
+ 			/* All current transport protocols have the port numbers in the
+ 			 * first four bytes of the transport header and this function is
+ 			 * written with this assumption in mind.
+ 			 */
+-			ports = (__be16 *)skb_transport_header(skb);
+-
+ 			sin6.sin6_family = AF_INET6;
+ 			sin6.sin6_addr = ipv6_hdr(skb)->daddr;
+ 			sin6.sin6_port = ports[1];
 
 
