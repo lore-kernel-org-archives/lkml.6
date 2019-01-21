@@ -4,46 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.0 required=3.0
 	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95FEAC7113B
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:36:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77AF6C7112F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:37:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65FF120663
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:36:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E69D2085A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:37:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728444AbfAULf6 (ORCPT
+        id S1728311AbfAULhS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 06:35:58 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:43921 "EHLO
+        Mon, 21 Jan 2019 06:37:18 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:59593 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727720AbfAULf6 (ORCPT
+        with ESMTP id S1727679AbfAULhR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 06:35:58 -0500
+        Mon, 21 Jan 2019 06:37:17 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0LBZihQ2497308
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0LBb1It2497585
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 21 Jan 2019 03:35:44 -0800
+        Mon, 21 Jan 2019 03:37:01 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0LBZiZ82497305;
-        Mon, 21 Jan 2019 03:35:44 -0800
-Date:   Mon, 21 Jan 2019 03:35:44 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0LBb1Ph2497582;
+        Mon, 21 Jan 2019 03:37:01 -0800
+Date:   Mon, 21 Jan 2019 03:37:01 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Quentin Perret <tipbot@zytor.com>
-Message-ID: <tip-85ff0ec647a3bdfda7fc4ae567f529c141721eb1@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
-        tglx@linutronix.de, torvalds@linux-foundation.org,
-        mingo@kernel.org, quentin.perret@arm.com, hpa@zytor.com
-Reply-To: quentin.perret@arm.com, hpa@zytor.com, mingo@kernel.org,
-          peterz@infradead.org, torvalds@linux-foundation.org,
-          tglx@linutronix.de, linux-kernel@vger.kernel.org
-In-Reply-To: <20181203095628.11858-11-quentin.perret@arm.com>
-References: <20181203095628.11858-11-quentin.perret@arm.com>
+From:   tip-bot for Peter Zijlstra <tipbot@zytor.com>
+Message-ID: <tip-b733c2d2f2810ec8556d2d711d1b95f491bd7697@git.kernel.org>
+Cc:     torvalds@linux-foundation.org, hpa@zytor.com, tglx@linutronix.de,
+        efault@gmx.de, bigeasy@linutronix.de,
+        tom.putzeys@be.atlascopco.com, peterz@infradead.org,
+        mingo@kernel.org, linux-kernel@vger.kernel.org
+Reply-To: peterz@infradead.org, tom.putzeys@be.atlascopco.com,
+          bigeasy@linutronix.de, linux-kernel@vger.kernel.org,
+          mingo@kernel.org, hpa@zytor.com, torvalds@linux-foundation.org,
+          efault@gmx.de, tglx@linutronix.de
+In-Reply-To: <20190107125231.GE14122@hirez.programming.kicks-ass.net>
+References: <20190107125231.GE14122@hirez.programming.kicks-ass.net>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/topology: Introduce a sysctl for Energy
- Aware Scheduling
-Git-Commit-ID: 85ff0ec647a3bdfda7fc4ae567f529c141721eb1
+Subject: [tip:sched/core] sched/fair: Robustify CFS-bandwidth timer locking
+Git-Commit-ID: b733c2d2f2810ec8556d2d711d1b95f491bd7697
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -57,175 +58,152 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  85ff0ec647a3bdfda7fc4ae567f529c141721eb1
-Gitweb:     https://git.kernel.org/tip/85ff0ec647a3bdfda7fc4ae567f529c141721eb1
-Author:     Quentin Perret <quentin.perret@arm.com>
-AuthorDate: Mon, 3 Dec 2018 09:56:23 +0000
+Commit-ID:  b733c2d2f2810ec8556d2d711d1b95f491bd7697
+Gitweb:     https://git.kernel.org/tip/b733c2d2f2810ec8556d2d711d1b95f491bd7697
+Author:     Peter Zijlstra <peterz@infradead.org>
+AuthorDate: Mon, 7 Jan 2019 13:52:31 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 21 Jan 2019 11:27:53 +0100
+CommitDate: Mon, 21 Jan 2019 11:27:55 +0100
 
-sched/topology: Introduce a sysctl for Energy Aware Scheduling
+sched/fair: Robustify CFS-bandwidth timer locking
 
-In its current state, Energy Aware Scheduling (EAS) starts automatically
-on asymmetric platforms having an Energy Model (EM). However, there are
-users who want to have an EM (for thermal management for example), but
-don't want EAS with it.
+Traditionally hrtimer callbacks were run with IRQs disabled, but with
+the introduction of HRTIMER_MODE_SOFT it is possible they run from
+SoftIRQ context, which does _NOT_ have IRQs disabled.
 
-In order to let users disable EAS explicitly, introduce a new sysctl
-called 'sched_energy_aware'. It is enabled by default so that EAS can
-start automatically on platforms where it makes sense. Flipping it to 0
-rebuilds the scheduling domains and disables EAS.
+Allow for the CFS bandwidth timers (period_timer and slack_timer) to
+be ran from SoftIRQ context; this entails removing the assumption that
+IRQs are already disabled from the locking.
 
-Signed-off-by: Quentin Perret <quentin.perret@arm.com>
+While mainline doesn't strictly need this, -RT forces all timers not
+explicitly marked with MODE_HARD into MODE_SOFT and trips over this.
+And marking these timers as MODE_HARD doesn't make sense as they're
+not required for RT operation and can potentially be quite expensive.
+
+Reported-by: Tom Putzeys <tom.putzeys@be.atlascopco.com>
+Tested-by: Mike Galbraith <efault@gmx.de>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: adharmap@codeaurora.org
-Cc: chris.redpath@arm.com
-Cc: currojerez@riseup.net
-Cc: dietmar.eggemann@arm.com
-Cc: edubezval@gmail.com
-Cc: gregkh@linuxfoundation.org
-Cc: javi.merino@kernel.org
-Cc: joel@joelfernandes.org
-Cc: juri.lelli@redhat.com
-Cc: morten.rasmussen@arm.com
-Cc: patrick.bellasi@arm.com
-Cc: pkondeti@codeaurora.org
-Cc: rjw@rjwysocki.net
-Cc: skannan@codeaurora.org
-Cc: smuckle@google.com
-Cc: srinivas.pandruvada@linux.intel.com
-Cc: thara.gopinath@linaro.org
-Cc: tkjos@google.com
-Cc: valentin.schneider@arm.com
-Cc: vincent.guittot@linaro.org
-Cc: viresh.kumar@linaro.org
-Link: https://lkml.kernel.org/r/20181203095628.11858-11-quentin.perret@arm.com
+Link: https://lkml.kernel.org/r/20190107125231.GE14122@hirez.programming.kicks-ass.net
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- Documentation/sysctl/kernel.txt | 12 ++++++++++++
- include/linux/sched/sysctl.h    |  7 +++++++
- kernel/sched/topology.c         | 29 +++++++++++++++++++++++++++++
- kernel/sysctl.c                 | 11 +++++++++++
- 4 files changed, 59 insertions(+)
+ kernel/sched/fair.c | 30 ++++++++++++++++--------------
+ 1 file changed, 16 insertions(+), 14 deletions(-)
 
-diff --git a/Documentation/sysctl/kernel.txt b/Documentation/sysctl/kernel.txt
-index c0527d8a468a..379063e58326 100644
---- a/Documentation/sysctl/kernel.txt
-+++ b/Documentation/sysctl/kernel.txt
-@@ -79,6 +79,7 @@ show up in /proc/sys/kernel:
- - reboot-cmd                  [ SPARC only ]
- - rtsig-max
- - rtsig-nr
-+- sched_energy_aware
- - seccomp/                    ==> Documentation/userspace-api/seccomp_filter.rst
- - sem
- - sem_next_id		      [ sysv ipc ]
-@@ -890,6 +891,17 @@ rtsig-nr shows the number of RT signals currently queued.
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 385725eb3bd6..90c7a7bf45d3 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -4565,7 +4565,7 @@ static u64 distribute_cfs_runtime(struct cfs_bandwidth *cfs_b,
+ 		struct rq *rq = rq_of(cfs_rq);
+ 		struct rq_flags rf;
  
- ==============================================================
+-		rq_lock(rq, &rf);
++		rq_lock_irqsave(rq, &rf);
+ 		if (!cfs_rq_throttled(cfs_rq))
+ 			goto next;
  
-+sched_energy_aware:
-+
-+Enables/disables Energy Aware Scheduling (EAS). EAS starts
-+automatically on platforms where it can run (that is,
-+platforms with asymmetric CPU topologies and having an Energy
-+Model available). If your platform happens to meet the
-+requirements for EAS but you do not want to use it, change
-+this value to 0.
-+
-+==============================================================
-+
- sched_schedstats:
+@@ -4582,7 +4582,7 @@ static u64 distribute_cfs_runtime(struct cfs_bandwidth *cfs_b,
+ 			unthrottle_cfs_rq(cfs_rq);
  
- Enables/disables scheduler statistics. Enabling this feature
-diff --git a/include/linux/sched/sysctl.h b/include/linux/sched/sysctl.h
-index a9c32daeb9d8..99ce6d728df7 100644
---- a/include/linux/sched/sysctl.h
-+++ b/include/linux/sched/sysctl.h
-@@ -83,4 +83,11 @@ extern int sysctl_schedstats(struct ctl_table *table, int write,
- 				 void __user *buffer, size_t *lenp,
- 				 loff_t *ppos);
+ next:
+-		rq_unlock(rq, &rf);
++		rq_unlock_irqrestore(rq, &rf);
  
-+#if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
-+extern unsigned int sysctl_sched_energy_aware;
-+extern int sched_energy_aware_handler(struct ctl_table *table, int write,
-+				 void __user *buffer, size_t *lenp,
-+				 loff_t *ppos);
-+#endif
-+
- #endif /* _LINUX_SCHED_SYSCTL_H */
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 3f35ba1d8fde..50c3fc316c54 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -203,9 +203,35 @@ sd_parent_degenerate(struct sched_domain *sd, struct sched_domain *parent)
- 
- DEFINE_STATIC_KEY_FALSE(sched_energy_present);
- #if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
-+unsigned int sysctl_sched_energy_aware = 1;
- DEFINE_MUTEX(sched_energy_mutex);
- bool sched_energy_update;
- 
-+#ifdef CONFIG_PROC_SYSCTL
-+int sched_energy_aware_handler(struct ctl_table *table, int write,
-+			 void __user *buffer, size_t *lenp, loff_t *ppos)
-+{
-+	int ret, state;
-+
-+	if (write && !capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
-+	if (!ret && write) {
-+		state = static_branch_unlikely(&sched_energy_present);
-+		if (state != sysctl_sched_energy_aware) {
-+			mutex_lock(&sched_energy_mutex);
-+			sched_energy_update = 1;
-+			rebuild_sched_domains();
-+			sched_energy_update = 0;
-+			mutex_unlock(&sched_energy_mutex);
-+		}
-+	}
-+
-+	return ret;
-+}
-+#endif
-+
- static void free_pd(struct perf_domain *pd)
+ 		if (!remaining)
+ 			break;
+@@ -4598,7 +4598,7 @@ next:
+  * period the timer is deactivated until scheduling resumes; cfs_b->idle is
+  * used to track this state.
+  */
+-static int do_sched_cfs_period_timer(struct cfs_bandwidth *cfs_b, int overrun)
++static int do_sched_cfs_period_timer(struct cfs_bandwidth *cfs_b, int overrun, unsigned long flags)
  {
- 	struct perf_domain *tmp;
-@@ -322,6 +348,9 @@ static bool build_perf_domains(const struct cpumask *cpu_map)
- 	struct cpufreq_policy *policy;
- 	struct cpufreq_governor *gov;
+ 	u64 runtime, runtime_expires;
+ 	int throttled;
+@@ -4640,11 +4640,11 @@ static int do_sched_cfs_period_timer(struct cfs_bandwidth *cfs_b, int overrun)
+ 	while (throttled && cfs_b->runtime > 0 && !cfs_b->distribute_running) {
+ 		runtime = cfs_b->runtime;
+ 		cfs_b->distribute_running = 1;
+-		raw_spin_unlock(&cfs_b->lock);
++		raw_spin_unlock_irqrestore(&cfs_b->lock, flags);
+ 		/* we can't nest cfs_b->lock while distributing bandwidth */
+ 		runtime = distribute_cfs_runtime(cfs_b, runtime,
+ 						 runtime_expires);
+-		raw_spin_lock(&cfs_b->lock);
++		raw_spin_lock_irqsave(&cfs_b->lock, flags);
  
-+	if (!sysctl_sched_energy_aware)
-+		goto free;
-+
- 	/* EAS is enabled for asymmetric CPU capacity topologies. */
- 	if (!per_cpu(sd_asym_cpucapacity, cpu)) {
- 		if (sched_debug()) {
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index ba4d9e85feb8..987ae08147bf 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -467,6 +467,17 @@ static struct ctl_table kern_table[] = {
- 		.extra1		= &one,
- 	},
- #endif
-+#if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
-+	{
-+		.procname	= "sched_energy_aware",
-+		.data		= &sysctl_sched_energy_aware,
-+		.maxlen		= sizeof(unsigned int),
-+		.mode		= 0644,
-+		.proc_handler	= sched_energy_aware_handler,
-+		.extra1		= &zero,
-+		.extra2		= &one,
-+	},
-+#endif
- #ifdef CONFIG_PROVE_LOCKING
- 	{
- 		.procname	= "prove_locking",
+ 		cfs_b->distribute_running = 0;
+ 		throttled = !list_empty(&cfs_b->throttled_cfs_rq);
+@@ -4753,17 +4753,18 @@ static __always_inline void return_cfs_rq_runtime(struct cfs_rq *cfs_rq)
+ static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
+ {
+ 	u64 runtime = 0, slice = sched_cfs_bandwidth_slice();
++	unsigned long flags;
+ 	u64 expires;
+ 
+ 	/* confirm we're still not at a refresh boundary */
+-	raw_spin_lock(&cfs_b->lock);
++	raw_spin_lock_irqsave(&cfs_b->lock, flags);
+ 	if (cfs_b->distribute_running) {
+-		raw_spin_unlock(&cfs_b->lock);
++		raw_spin_unlock_irqrestore(&cfs_b->lock, flags);
+ 		return;
+ 	}
+ 
+ 	if (runtime_refresh_within(cfs_b, min_bandwidth_expiration)) {
+-		raw_spin_unlock(&cfs_b->lock);
++		raw_spin_unlock_irqrestore(&cfs_b->lock, flags);
+ 		return;
+ 	}
+ 
+@@ -4774,18 +4775,18 @@ static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
+ 	if (runtime)
+ 		cfs_b->distribute_running = 1;
+ 
+-	raw_spin_unlock(&cfs_b->lock);
++	raw_spin_unlock_irqrestore(&cfs_b->lock, flags);
+ 
+ 	if (!runtime)
+ 		return;
+ 
+ 	runtime = distribute_cfs_runtime(cfs_b, runtime, expires);
+ 
+-	raw_spin_lock(&cfs_b->lock);
++	raw_spin_lock_irqsave(&cfs_b->lock, flags);
+ 	if (expires == cfs_b->runtime_expires)
+ 		lsub_positive(&cfs_b->runtime, runtime);
+ 	cfs_b->distribute_running = 0;
+-	raw_spin_unlock(&cfs_b->lock);
++	raw_spin_unlock_irqrestore(&cfs_b->lock, flags);
+ }
+ 
+ /*
+@@ -4863,20 +4864,21 @@ static enum hrtimer_restart sched_cfs_period_timer(struct hrtimer *timer)
+ {
+ 	struct cfs_bandwidth *cfs_b =
+ 		container_of(timer, struct cfs_bandwidth, period_timer);
++	unsigned long flags;
+ 	int overrun;
+ 	int idle = 0;
+ 
+-	raw_spin_lock(&cfs_b->lock);
++	raw_spin_lock_irqsave(&cfs_b->lock, flags);
+ 	for (;;) {
+ 		overrun = hrtimer_forward_now(timer, cfs_b->period);
+ 		if (!overrun)
+ 			break;
+ 
+-		idle = do_sched_cfs_period_timer(cfs_b, overrun);
++		idle = do_sched_cfs_period_timer(cfs_b, overrun, flags);
+ 	}
+ 	if (idle)
+ 		cfs_b->period_active = 0;
+-	raw_spin_unlock(&cfs_b->lock);
++	raw_spin_unlock_irqrestore(&cfs_b->lock, flags);
+ 
+ 	return idle ? HRTIMER_NORESTART : HRTIMER_RESTART;
+ }
