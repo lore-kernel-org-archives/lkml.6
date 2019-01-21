@@ -2,103 +2,117 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C943C31681
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 17:54:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 656EBC31681
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 17:55:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D33762089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 17:54:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548093252;
-	bh=eOMvu0knnvPv0f9IvTGNYKgLheXop2KNtO/DGvAWrzY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=h18/Q8DxF8BusK+hmfotdR4gZFfo1cGDSQldLx8pFjfYW1e07qEY688zoZRCjSM5e
-	 NiP2XSssznPE4jBnT5GWOcknDgZWcz+Wje+6IEKatFegFh/2JCQs9IDXu4nPUlFIMI
-	 o1t0wEbIne+xbnfrv/NB+vSl4PVoXuXjoJREt1D8=
+	by mail.kernel.org (Postfix) with ESMTP id 413ED2084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 17:55:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727591AbfAURyL (ORCPT
+        id S1727159AbfAURzR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 12:54:11 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33230 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725908AbfAURyK (ORCPT
+        Mon, 21 Jan 2019 12:55:17 -0500
+Received: from mail.netline.ch ([148.251.143.178]:36623 "EHLO
+        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726003AbfAURzR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 12:54:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=b0YdZEjNcEJcf0vvt15V/8G7iQ/I4lH7BQ5pPuVFCwc=; b=Hv8N+ybOpnPbhHPOEhngLh0ak
-        sSihL9TrIznkb2uw/qwyvw5Y3eBPJIt8OiXbc0G0ypfzw0vtn7BQrj2SKv+7kOIkZAWA0VI9/923h
-        7fWVf4oRZRYaftK1dV6crcAlWbYyUS8wbNbQmrM1s2qeSohjGxwD1+xbML1OEVAsdGGpo=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gldlq-0004un-Ew; Mon, 21 Jan 2019 17:54:02 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id CF42D1127D00; Mon, 21 Jan 2019 17:54:01 +0000 (GMT)
-Date:   Mon, 21 Jan 2019 17:54:01 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Cheng-yi Chiang <cychiang@chromium.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        alsa-devel@alsa-project.org, Dylan Reid <dgreid@chromium.org>,
-        tzungbi@chromium.org, Rohit kumar <rohitkr@codeaurora.org>,
-        Guenter Roeck <groeck@chromium.org>
-Subject: Re: [PATCH v4 2/2] ASoC: cros_ec_codec: Add codec driver for Cros EC
-Message-ID: <20190121175401.GE12679@sirena.org.uk>
-References: <20190119113332.249720-1-cychiang@chromium.org>
- <20190119113332.249720-2-cychiang@chromium.org>
- <CAFv8NwKctsH5cKUQxgfQNg3V2Y=-o5LFZC0b+jwLC=_nNumbig@mail.gmail.com>
+        Mon, 21 Jan 2019 12:55:17 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by netline-mail3.netline.ch (Postfix) with ESMTP id 9FB932A6055;
+        Mon, 21 Jan 2019 18:55:13 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
+Received: from netline-mail3.netline.ch ([127.0.0.1])
+        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id oDS3HFlYredT; Mon, 21 Jan 2019 18:55:13 +0100 (CET)
+Received: from thor (39.1.199.178.dynamic.wline.res.cust.swisscom.ch [178.199.1.39])
+        by netline-mail3.netline.ch (Postfix) with ESMTPSA id DFE7B2A6054;
+        Mon, 21 Jan 2019 18:55:10 +0100 (CET)
+Received: from [::1]
+        by thor with esmtp (Exim 4.92-RC4)
+        (envelope-from <michel@daenzer.net>)
+        id 1gldmv-0002S7-83; Mon, 21 Jan 2019 18:55:09 +0100
+Subject: Re: [RFC PATCH] drm: disable WC optimization for cache coherent
+ devices on non-x86
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        David Zhou <David1.Zhou@amd.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        David Airlie <airlied@linux.ie>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Michel Daenzer <michel.daenzer@amd.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        amd-gfx@lists.freedesktop.org, Junwei Zhang <Jerry.Zhang@amd.com>,
+        Huang Rui <ray.huang@amd.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sean Paul <sean@poorly.run>,
+        Christian Koenig <christian.koenig@amd.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+References: <20190121100617.2311-1-ard.biesheuvel@linaro.org>
+ <20190121150734.GA30582@infradead.org>
+ <CAKv+Gu-hR=uieOeg7QheA5yfAycUoi2vjZsDUvROKVjW4eUNqw@mail.gmail.com>
+ <20190121155908.GA8084@infradead.org>
+ <CAKv+Gu8LzS9OgvVnzUT8BZWVgDmx4OfqNiPSf+8=riY_LByN-g@mail.gmail.com>
+ <20190121162238.GA17651@infradead.org>
+ <CAKv+Gu-5V-UjP_YzZBCEsa+o_G6BRSVw2ZimYGNEfRGf-aRPNg@mail.gmail.com>
+From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
+Openpgp: preference=signencrypt
+Autocrypt: addr=michel@daenzer.net; prefer-encrypt=mutual; keydata=
+ mQGiBDsehS8RBACbsIQEX31aYSIuEKxEnEX82ezMR8z3LG8ktv1KjyNErUX9Pt7AUC7W3W0b
+ LUhu8Le8S2va6hi7GfSAifl0ih3k6Bv1Itzgnd+7ZmSrvCN8yGJaHNQfAevAuEboIb+MaVHo
+ 9EMJj4ikOcRZCmQWw7evu/D9uQdtkCnRY9iJiAGxbwCguBHtpoGMxDOINCr5UU6qt+m4O+UD
+ /355ohBBzzyh49lTj0kTFKr0Ozd20G2FbcqHgfFL1dc1MPyigej2gLga2osu2QY0ObvAGkOu
+ WBi3LTY8Zs8uqFGDC4ZAwMPoFy3yzu3ne6T7d/68rJil0QcdQjzzHi6ekqHuhst4a+/+D23h
+ Za8MJBEcdOhRhsaDVGAJSFEQB1qLBACOs0xN+XblejO35gsDSVVk8s+FUUw3TSWJBfZa3Imp
+ V2U2tBO4qck+wqbHNfdnU/crrsHahjzBjvk8Up7VoY8oT+z03sal2vXEonS279xN2B92Tttr
+ AgwosujguFO/7tvzymWC76rDEwue8TsADE11ErjwaBTs8ZXfnN/uAANgPLQjTWljaGVsIERh
+ ZW56ZXIgPG1pY2hlbEBkYWVuemVyLm5ldD6IXgQTEQIAHgUCQFXxJgIbAwYLCQgHAwIDFQID
+ AxYCAQIeAQIXgAAKCRBaga+OatuyAIrPAJ9ykonXI3oQcX83N2qzCEStLNW47gCeLWm/QiPY
+ jqtGUnnSbyuTQfIySkK5AQ0EOx6FRRAEAJZkcvklPwJCgNiw37p0GShKmFGGqf/a3xZZEpjI
+ qNxzshFRFneZze4f5LhzbX1/vIm5+ZXsEWympJfZzyCmYPw86QcFxyZflkAxHx9LeD+89Elx
+ bw6wT0CcLvSv8ROfU1m8YhGbV6g2zWyLD0/naQGVb8e4FhVKGNY2EEbHgFBrAAMGA/0VktFO
+ CxFBdzLQ17RCTwCJ3xpyP4qsLJH0yCoA26rH2zE2RzByhrTFTYZzbFEid3ddGiHOBEL+bO+2
+ GNtfiYKmbTkj1tMZJ8L6huKONaVrASFzLvZa2dlc2zja9ZSksKmge5BOTKWgbyepEc5qxSju
+ YsYrX5xfLgTZC5abhhztpYhGBBgRAgAGBQI7HoVFAAoJEFqBr45q27IAlscAn2Ufk2d6/3p4
+ Cuyz/NX7KpL2dQ8WAJ9UD5JEakhfofed8PSqOM7jOO3LCA==
+Message-ID: <59ccf85d-b99d-b5c8-ea87-66c2a892e197@daenzer.net>
+Date:   Mon, 21 Jan 2019 18:55:08 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="SNIs70sCzqvszXB4"
-Content-Disposition: inline
-In-Reply-To: <CAFv8NwKctsH5cKUQxgfQNg3V2Y=-o5LFZC0b+jwLC=_nNumbig@mail.gmail.com>
-X-Cookie: Body by Nautilus, Brain by Mattel.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAKv+Gu-5V-UjP_YzZBCEsa+o_G6BRSVw2ZimYGNEfRGf-aRPNg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2019-01-21 5:30 p.m., Ard Biesheuvel wrote:
+> On Mon, 21 Jan 2019 at 17:22, Christoph Hellwig <hch@infradead.org> wrote:
+> 
+>> Until that happens we should just change the driver ifdefs to default
+>> the hacks to off and only enable them on setups where we 100%
+>> positively know that they actually work.  And document that fact
+>> in big fat comments.
+> 
+> Well, as I mentioned in my commit log as well, if we default to off
+> unless CONFIG_X86, we may break working setups on MIPS and Power where
+> the device is in fact non-cache coherent, and relies on this
+> 'optimization' to get things working.
 
---SNIs70sCzqvszXB4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+FWIW, the amdgpu driver doesn't rely on non-snooped transfers for
+correct basic operation (the scenario Christian brought up is a very
+specialized use-case), so that shouldn't be an issue.
 
-On Sat, Jan 19, 2019 at 07:39:19PM +0800, Cheng-yi Chiang wrote:
-> Hi Mark,
->=20
-> Sorry, I forgot to mention that the patch for EC command definition
-> has been already merged in upstream, but not in Mark's for-next tree
-> yet.
->=20
-> c1f3375be60c mfd: cros_ec: Add commands to control codec
->=20
-> This is needed.
 
-Right, I can't really apply these without that in my tree.  Lee did say
-he might send a signed tag for it but I don't think he did that yet.  :(
-
---SNIs70sCzqvszXB4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxGBzkACgkQJNaLcl1U
-h9BkBQf8CJRuj7HS3nyjj55S+Kz9PWSkYvzubXXVTxF0oWuL1mqOR08qLOjFnfYz
-A0SltdTdhiQqhR1UJ/1K3ToRkUn6brv2mPVpR57tibkzuj6D4x84AxUMb5CnDt8E
-j7la7Xir1epVNF+gh5OVMJJAeBUsnDgiyewmUUWYQBxiQbsHxVr5fn8dX8M0uzP8
-nvXiGwaIUn/bOVwDJ0tp2iGZzOVHRbi2Z9eOsUDpnqrCJsdOOOWaTQOnCWTt3XJM
-1yQp56Z2pPnn3vSpWPDjGLT7RKFBxEm9YnHUyiDZihGrUhRx1QKFVwmcunuNXBjD
-KntIAJgPDDirprGX2YVvYdCkj1Hu/Q==
-=aWoR
------END PGP SIGNATURE-----
-
---SNIs70sCzqvszXB4--
+-- 
+Earthling Michel Dänzer               |               http://www.amd.com
+Libre software enthusiast             |             Mesa and X developer
