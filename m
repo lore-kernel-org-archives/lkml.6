@@ -2,185 +2,579 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C32DFC2F420
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:38:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DB2AC2F421
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:39:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B1542084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:38:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D3862084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:39:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="V0JbKZy9"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="YHMCamiP";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UUo29AEc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729500AbfAUOiv (ORCPT
+        id S1729526AbfAUOjy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:38:51 -0500
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:12715 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729174AbfAUOiv (ORCPT
+        Mon, 21 Jan 2019 09:39:54 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:33700 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729252AbfAUOjy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 09:38:51 -0500
-X-IronPort-AV: E=Sophos;i="5.56,503,1539673200"; 
-   d="scan'208";a="25760302"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 21 Jan 2019 07:38:50 -0700
-Received: from NAM01-BN3-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.107) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Mon, 21 Jan 2019 07:38:49 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9P5fzxLdAxFCcIQmqkZrgpoN8vDnKPCQuB1hGhe4c74=;
- b=V0JbKZy9jo0xbTNTPJCyrABZ/6Yjm1jwNUG84nPe6fY44AX+thrNYb8KhMMbMGSy0Gf9mXB98lIqVt0QOCHPxHLNYvPHIehvuVsRRypNbzF7YyoY6w0PQHizHNzX9+FPYEXCTpiGq5kxFVezaGe3W4RF0hROIcF5AeOT7FbciHg=
-Received: from DM5PR11MB1257.namprd11.prod.outlook.com (10.168.108.11) by
- DM5PR11MB1417.namprd11.prod.outlook.com (10.168.104.19) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1537.29; Mon, 21 Jan 2019 14:38:47 +0000
-Received: from DM5PR11MB1257.namprd11.prod.outlook.com
- ([fe80::3437:d1a8:fda4:a881]) by DM5PR11MB1257.namprd11.prod.outlook.com
- ([fe80::3437:d1a8:fda4:a881%2]) with mapi id 15.20.1537.031; Mon, 21 Jan 2019
- 14:38:47 +0000
-From:   <Codrin.Ciubotariu@microchip.com>
-To:     <vkoul@kernel.org>
-CC:     <Ludovic.Desroches@microchip.com>, <dmaengine@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] dmaengine: at_xdmac: Fix wrongfull report of a channel as
- in use
-Thread-Topic: [PATCH] dmaengine: at_xdmac: Fix wrongfull report of a channel
- as in use
-Thread-Index: AQHUrn8vO/Ym+tRt40+WbUu3tf2aBaW4AseAgAHOTIA=
-Date:   Mon, 21 Jan 2019 14:38:47 +0000
-Message-ID: <450ee975-a603-cf89-0000-13156c1cb5e8@microchip.com>
-References: <20190117160957.13175-1-codrin.ciubotariu@microchip.com>
- <20190120110417.GS4635@vkoul-mobl>
-In-Reply-To: <20190120110417.GS4635@vkoul-mobl>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: LO2P265CA0392.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:f::20) To DM5PR11MB1257.namprd11.prod.outlook.com
- (2603:10b6:3:14::11)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Codrin.Ciubotariu@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [94.177.32.154]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR11MB1417;6:XCjIrZu/FB0d5vNr9bb+r2fwjNGZWDpxqI2o8BIWRUpdACVriKrUTvS7CX90loP+2AaXSGCvWl6EfMjnPcAtNo0EFYct7CJEel/Z+7JUYx3Bqxb38Wj4RBNAE/MnLs8s3vyfQDlalDyhAnRg54SOBND0Eb8a+nhP5cACRWUyevh93LukSFHHfFgwW2eV7rhlD3QxF5iGmrGHhyxgNYjD1U/I0zj+WB7Df3TiKz9FOO9spkGAzlG+qwJbcdY6x3F18M1OJNj5IVtbwiZCk7Fxb+RzJfcyv/QnggDvbST67NPvgWqCARdWbxS8s+EYETEqKbecjxFnbLynihg2itVklqDq1OCF8xH35bAwaQgRXROD7Ax9gEs0ww8arCa606htgRLTBVV6pTVEnqrG25e5Iw6n2LmiOmh5akHJRgowAz31wkECWIjb2xmU9MpNChiib4R/H9lXCvzbvLf64SsOfA==;5:G7MU/lBmUrtbk/wtbYvRbdHGCP/t87MwL564UHSWt9Cm/ci6CcQCQue1Fnn2dT+E/JyrsEAQBTU0y8cS7SEz2eAwpQViMXR110KFpw8I18eDgcFps7os2D/huFtjBJtLREtiKhqX8nriBt1P1AI52e8k9tZlaQETmyTpLgRbcK1eN1SDmC256Thgoei/awCOLow7OL+2+0XGECApi65CJQ==;7:Mo4Uq/lSwbLGaJoM+MXPA43cm7img+7FOixCCK0hjv5h8fIELC8UMTbaX3q9owRoSuf5dKX/pYl3a2MrQiupp51ytBPAZ9dzSlwcuOGdFB18jwgCN7VuNPihnZ0BXVoxosPn2j/GyxNYwFLqqO6QgA==
-x-ms-office365-filtering-correlation-id: 0f7dd48f-1916-4818-56df-08d67fae26cd
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600109)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DM5PR11MB1417;
-x-ms-traffictypediagnostic: DM5PR11MB1417:
-x-microsoft-antispam-prvs: <DM5PR11MB1417710CFBCD5E577136550FE79F0@DM5PR11MB1417.namprd11.prod.outlook.com>
-x-forefront-prvs: 0924C6A0D5
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(376002)(39860400002)(136003)(366004)(346002)(199004)(189003)(478600001)(81156014)(31686004)(81166006)(105586002)(8936002)(106356001)(2906002)(6116002)(3846002)(8676002)(14454004)(36756003)(229853002)(99286004)(4326008)(72206003)(6916009)(68736007)(6486002)(71190400001)(71200400001)(6436002)(53936002)(6512007)(316002)(52116002)(486006)(6246003)(476003)(7736002)(2616005)(54906003)(6506007)(25786009)(305945005)(97736004)(446003)(11346002)(26005)(53546011)(31696002)(186003)(102836004)(14444005)(256004)(386003)(66066001)(76176011)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR11MB1417;H:DM5PR11MB1257.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: ALw61F+njE7MRWx9p93yOLngOmD0eEZNjVUNl7K9kzkyY/BCjdPER339cfUVhJEFiNrqsrvmXKOrXV5rHDwHVJV+IbhSdfhD5+Oovhgh/ClIMyuX1D5oV60CgD0/WtaBeGPX6NuFeUu4d43onBBbR/lBYGWxHm+mw2Dmv690cTjiX3LLbw2Y48iKjHV1d64Sx5vRb+xxPdKVGrup9De8Pkx7V+JYLDe6rD9teilyN/cvGGnCrwU+jZwph/Z2ue2g/757TI1NEbjOsDIri3VjwaOhLks5zWxDV4RjDQHPjztXYtql0qZK7IFj+K3qwuXGm7W349W7jmectszRABqeoCfOm5m34QYlL5tVf+1RDwnbGW1Bmho2zsVDc5zxJjtPxq1uV+rhJMMExFzsi/vzifVGtqSbSqSqUHaiZ6yzgZA=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <CBDC3F9482FDA943AA6B6ADE473DF109@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Mon, 21 Jan 2019 09:39:54 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 300476085C; Mon, 21 Jan 2019 14:39:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548081592;
+        bh=F5yfJobhMiotUdt+eOs5BCh6Pod8yNqbXBu15zO7dSY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=YHMCamiPrT8wJQb6HdHIy9bEw/+guAwexq3gZBQYRupfMdpyuzvBRwVN+8yytJtiS
+         MpM+zxoo1YPGP+fQUSfTKG6i+cpM8P7utGyj4SUEAOtwrA0cDzZlnD2UK4xnc2Dy8N
+         7JRyHul8h2nJPYTsYN3VaDW4E/YCpIen+mg4xo/c=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 1FEDC607C6;
+        Mon, 21 Jan 2019 14:39:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548081589;
+        bh=F5yfJobhMiotUdt+eOs5BCh6Pod8yNqbXBu15zO7dSY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=UUo29AEc6wDeQDX94+F71Ow8jnHvKMDN1FUfEQHZzlvsyjV+YzUU3JXOo7xuujYuj
+         lBgSDFbeKEnyTADW88Ft9SMVIBMiGq+UPll0v2DBYPjK9wmE14x7R6/zNy3vbBpezv
+         DPpEmPmsZK/VMihbol7PeP6jd/oPbxDpqJKRbhog=
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0f7dd48f-1916-4818-56df-08d67fae26cd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jan 2019 14:38:45.8407
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR11MB1417
-X-OriginatorOrg: microchip.com
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 21 Jan 2019 20:09:49 +0530
+From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
+To:     Marcel Holtmann <marcel@holtmann.org>
+Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bluez mailing list <linux-bluetooth@vger.kernel.org>,
+        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [RFC,v2] Bluetooth: hci_qca: Collect controller memory dump
+ during SSR
+In-Reply-To: <E763DD7D-CC97-4594-87A8-86480616F08C@holtmann.org>
+References: <20181228130411.23007-1-bgodavar@codeaurora.org>
+ <8B1A4B0A-BFC3-44EC-A75F-D87DBA64625B@holtmann.org>
+ <25b5db1596c46f41e883bd9fd971392b@codeaurora.org>
+ <7FE05B13-885C-4454-8168-75411AF8F5C2@holtmann.org>
+ <95e5932be1a189ac2dae78c7b690dd03@codeaurora.org>
+ <E763DD7D-CC97-4594-87A8-86480616F08C@holtmann.org>
+Message-ID: <fa15134608944498d9f5bc7950b98cde@codeaurora.org>
+X-Sender: bgodavar@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMjAuMDEuMjAxOSAxMzowNCwgVmlub2QgS291bCB3cm90ZToNCj4gSGkgQ29kcmluLA0KPiAN
-Cj4gT24gMTctMDEtMTksIDE2OjEwLCBDb2RyaW4uQ2l1Ym90YXJpdUBtaWNyb2NoaXAuY29tIHdy
-b3RlOg0KPj4gRnJvbTogQ29kcmluIENpdWJvdGFyaXUgPGNvZHJpbi5jaXVib3Rhcml1QG1pY3Jv
-Y2hpcC5jb20+DQo+Pg0KPj4gYXRjaGFuLT5zdGF0dXMgaXMgdXNlZCBmb3IgdHdvIHRoaW5nczoN
-Cj4+ICAgLSBwYXNzIGNoYW5uZWwgaW50ZXJydXB0cyBzdGF0dXMgZnJvbSBpbnRlcnJ1cHQgaGFu
-ZGxlciB0byB0YXNrbGV0Ow0KPj4gICAtIGNoYW5uZWwgaW5mb3JtYXRpb24gbGlrZSB3aGV0aGVy
-IGl0IGlzIGN5Y2xpYyBvciBwYXVzZWQ7DQo+Pg0KPj4gU2luY2UgdGhlc2Ugb3BlcmF0aW9ucyBo
-YXZlIG5vdGhpbmcgaW4gY29tbW9uLCB0aGlzIHBhdGNoIGFkZHMgYQ0KPj4gZGlmZmVyZW50IHN0
-cnVjdCBtZW1iZXIgdG8ga2VlcCB0aGUgaW50ZXJydXB0cyBzdGF0dXMuDQo+Pg0KPj4gRml4ZXMg
-YSBidWcgaW4gd2hpY2ggYSBjaGFubmVsIGlzIHdyb25nZnVsbHkgcmVwb3J0ZWQgYXMgaW4gdXNl
-IHdoZW4NCj4+IHRyeWluZyB0byBvYnRhaW4gYSBuZXcgZGVzY3JpcHRpb3IgZm9yIGEgcHJldmlv
-dXNseSB1c2VkIGN5Y2xpYyBjaGFubmVsLg0KPiANCj4gVGhpcyBsb29rcyByZWFzb25hYmxlIGJ1
-dCBhbSB1bmFibGUgdG8gc2VlIGhvdyB0aGUgYnVnIGlzIGZpeGVkLiBQZXJoYXBzDQo+IHdvdWxk
-IGJlIGdyZWF0IHRvIHNwbGl0IHRoZSBidWcgcGFydCAod2hpY2ggY2FuIGdvIHRvIGZpeGVzKSBh
-bmQgcmVtb3ZlDQo+IHRoZSByZXVzZSBvZiB2YXJpYWJsZSBhcyBhIHN1YnNlcXVlbnQgcGF0Y2gu
-Lg0KDQpIaSBWaW5vZCwNCg0KVGhpcyBwYXRjaCBpcyB0aGUgZml4LCBzaW5jZSBpdCBtb3ZlcyB0
-aGUgb3BlcmF0aW9ucyBvbiBhdGNoYW4tPnN0YXR1cywgDQppbiB3aGljaCB0aGUgaW50ZXJydXB0
-IHN0YXR1cyByZWdpc3RlciBpcyBzYXZlZCwgdG8gYSBkaWZmZXJlbnQgbWVtYmVyIA0KKGlycV9z
-dGF0dXMpLiBUaGUgQVRfWERNQUNfQ0hBTl9JU19DWUNMSUMgYW5kIEFUX1hETUFDX0NIQU5fSVNf
-UEFVU0VEIA0KYml0cyBoYXZlIG5vdGhpbmcgaW4gY29tbW9uIHdpdGggdGhlIGludGVycnVwdCBz
-dGF0dXMgcmVnaXN0ZXIuDQoNClRoZSBidWcgcmVwcm9kdWNlcyB3aGVuIGEgZGV2aWNlX3Rlcm1p
-bmF0ZV9hbGwoKSBpcyBjYWxsZWQsIA0KKEFUX1hETUFDX0NIQU5fSVNfQ1lDTElDIGNsZWFyZWQg
-b24gYXRjaGFuLT5zdGF0dXMpIGFuZCB0aGVuIGEgbGF0ZSBFbmQgDQpvZiBCbG9jayBpbnRlcnJ1
-cHQgYXJyaXZlcyAoQVRfWERNQUNfQ0lTX0JJUyksIHdoaWNoIHNldHMgYml0IDAgb2YgDQphdGNo
-YW4tPnN0YXR1cy4gQml0IDAgaXMgYWxzbyB1c2VkIGZvciBBVF9YRE1BQ19DSEFOX0lTX0NZQ0xJ
-Qywgc28gd2hlbiANCmEgbmV3IGRlc2NyaXB0b3IgZm9yIGEgY3ljbGljIHRyYW5zZmVyIGlzIGNy
-ZWF0ZWQsIHRoZSBkcml2ZXIgcmVwb3J0cyANCnRoZSBjaGFubmVsIGFzIGluIHVzZToNCg0KaWYg
-KHRlc3RfYW5kX3NldF9iaXQoQVRfWERNQUNfQ0hBTl9JU19DWUNMSUMsICZhdGNoYW4tPnN0YXR1
-cykpIHsNCglkZXZfZXJyKGNoYW4yZGV2KGNoYW4pLCAiY2hhbm5lbCBjdXJyZW50bHkgdXNlZFxu
-Iik7DQoJcmV0dXJuIE5VTEw7DQp9DQoNCkkgY2FuIHNlbmQgdjIgaWYgeW91IGNvbnNpZGVyIHRo
-ZSBjb21taXQgbWVzc2FnZSBtaXNsZWFkaW5nLg0KDQpCZXN0IHJlZ2FyZHMsDQpDb2RyaW4NCg0K
-PiANCj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBDb2RyaW4gQ2l1Ym90YXJpdSA8Y29kcmluLmNpdWJv
-dGFyaXVAbWljcm9jaGlwLmNvbT4NCj4+IC0tLQ0KPj4gICBkcml2ZXJzL2RtYS9hdF94ZG1hYy5j
-IHwgMTkgKysrKysrKysrKy0tLS0tLS0tLQ0KPj4gICAxIGZpbGUgY2hhbmdlZCwgMTAgaW5zZXJ0
-aW9ucygrKSwgOSBkZWxldGlvbnMoLSkNCj4+DQo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9kbWEv
-YXRfeGRtYWMuYyBiL2RyaXZlcnMvZG1hL2F0X3hkbWFjLmMNCj4+IGluZGV4IDRlNTU3Njg0Zjc5
-Mi4uZmU2OWRjY2ZhMGMwIDEwMDY0NA0KPj4gLS0tIGEvZHJpdmVycy9kbWEvYXRfeGRtYWMuYw0K
-Pj4gKysrIGIvZHJpdmVycy9kbWEvYXRfeGRtYWMuYw0KPj4gQEAgLTIwMyw2ICsyMDMsNyBAQCBz
-dHJ1Y3QgYXRfeGRtYWNfY2hhbiB7DQo+PiAgIAl1MzIJCQkJc2F2ZV9jaW07DQo+PiAgIAl1MzIJ
-CQkJc2F2ZV9jbmRhOw0KPj4gICAJdTMyCQkJCXNhdmVfY25kYzsNCj4+ICsJdTMyCQkJCWlycV9z
-dGF0dXM7DQo+PiAgIAl1bnNpZ25lZCBsb25nCQkJc3RhdHVzOw0KPj4gICAJc3RydWN0IHRhc2ts
-ZXRfc3RydWN0CQl0YXNrbGV0Ow0KPj4gICAJc3RydWN0IGRtYV9zbGF2ZV9jb25maWcJCXNjb25m
-aWc7DQo+PiBAQCAtMTU4MCw4ICsxNTgxLDggQEAgc3RhdGljIHZvaWQgYXRfeGRtYWNfdGFza2xl
-dCh1bnNpZ25lZCBsb25nIGRhdGEpDQo+PiAgIAlzdHJ1Y3QgYXRfeGRtYWNfZGVzYwkqZGVzYzsN
-Cj4+ICAgCXUzMgkJCWVycm9yX21hc2s7DQo+PiAgIA0KPj4gLQlkZXZfZGJnKGNoYW4yZGV2KCZh
-dGNoYW4tPmNoYW4pLCAiJXM6IHN0YXR1cz0weCUwOGx4XG4iLA0KPj4gLQkJIF9fZnVuY19fLCBh
-dGNoYW4tPnN0YXR1cyk7DQo+PiArCWRldl9kYmcoY2hhbjJkZXYoJmF0Y2hhbi0+Y2hhbiksICIl
-czogc3RhdHVzPTB4JTA4eFxuIiwNCj4+ICsJCV9fZnVuY19fLCBhdGNoYW4tPmlycV9zdGF0dXMp
-Ow0KPj4gICANCj4+ICAgCWVycm9yX21hc2sgPSBBVF9YRE1BQ19DSVNfUkJFSVMNCj4+ICAgCQkg
-ICAgIHwgQVRfWERNQUNfQ0lTX1dCRUlTDQo+PiBAQCAtMTU4OSwxNSArMTU5MCwxNSBAQCBzdGF0
-aWMgdm9pZCBhdF94ZG1hY190YXNrbGV0KHVuc2lnbmVkIGxvbmcgZGF0YSkNCj4+ICAgDQo+PiAg
-IAlpZiAoYXRfeGRtYWNfY2hhbl9pc19jeWNsaWMoYXRjaGFuKSkgew0KPj4gICAJCWF0X3hkbWFj
-X2hhbmRsZV9jeWNsaWMoYXRjaGFuKTsNCj4+IC0JfSBlbHNlIGlmICgoYXRjaGFuLT5zdGF0dXMg
-JiBBVF9YRE1BQ19DSVNfTElTKQ0KPj4gLQkJICAgfHwgKGF0Y2hhbi0+c3RhdHVzICYgZXJyb3Jf
-bWFzaykpIHsNCj4+ICsJfSBlbHNlIGlmICgoYXRjaGFuLT5pcnFfc3RhdHVzICYgQVRfWERNQUNf
-Q0lTX0xJUykNCj4+ICsJCSAgIHx8IChhdGNoYW4tPmlycV9zdGF0dXMgJiBlcnJvcl9tYXNrKSkg
-ew0KPj4gICAJCXN0cnVjdCBkbWFfYXN5bmNfdHhfZGVzY3JpcHRvciAgKnR4ZDsNCj4+ICAgDQo+
-PiAtCQlpZiAoYXRjaGFuLT5zdGF0dXMgJiBBVF9YRE1BQ19DSVNfUkJFSVMpDQo+PiArCQlpZiAo
-YXRjaGFuLT5pcnFfc3RhdHVzICYgQVRfWERNQUNfQ0lTX1JCRUlTKQ0KPj4gICAJCQlkZXZfZXJy
-KGNoYW4yZGV2KCZhdGNoYW4tPmNoYW4pLCAicmVhZCBidXMgZXJyb3IhISEiKTsNCj4+IC0JCWlm
-IChhdGNoYW4tPnN0YXR1cyAmIEFUX1hETUFDX0NJU19XQkVJUykNCj4+ICsJCWlmIChhdGNoYW4t
-PmlycV9zdGF0dXMgJiBBVF9YRE1BQ19DSVNfV0JFSVMpDQo+PiAgIAkJCWRldl9lcnIoY2hhbjJk
-ZXYoJmF0Y2hhbi0+Y2hhbiksICJ3cml0ZSBidXMgZXJyb3IhISEiKTsNCj4+IC0JCWlmIChhdGNo
-YW4tPnN0YXR1cyAmIEFUX1hETUFDX0NJU19ST0lTKQ0KPj4gKwkJaWYgKGF0Y2hhbi0+aXJxX3N0
-YXR1cyAmIEFUX1hETUFDX0NJU19ST0lTKQ0KPj4gICAJCQlkZXZfZXJyKGNoYW4yZGV2KCZhdGNo
-YW4tPmNoYW4pLCAicmVxdWVzdCBvdmVyZmxvdyBlcnJvciEhISIpOw0KPj4gICANCj4+ICAgCQlz
-cGluX2xvY2soJmF0Y2hhbi0+bG9jayk7DQo+PiBAQCAtMTY1Miw3ICsxNjUzLDcgQEAgc3RhdGlj
-IGlycXJldHVybl90IGF0X3hkbWFjX2ludGVycnVwdChpbnQgaXJxLCB2b2lkICpkZXZfaWQpDQo+
-PiAgIAkJCWF0Y2hhbiA9ICZhdHhkbWFjLT5jaGFuW2ldOw0KPj4gICAJCQljaGFuX2ltciA9IGF0
-X3hkbWFjX2NoYW5fcmVhZChhdGNoYW4sIEFUX1hETUFDX0NJTSk7DQo+PiAgIAkJCWNoYW5fc3Rh
-dHVzID0gYXRfeGRtYWNfY2hhbl9yZWFkKGF0Y2hhbiwgQVRfWERNQUNfQ0lTKTsNCj4+IC0JCQlh
-dGNoYW4tPnN0YXR1cyA9IGNoYW5fc3RhdHVzICYgY2hhbl9pbXI7DQo+PiArCQkJYXRjaGFuLT5p
-cnFfc3RhdHVzID0gY2hhbl9zdGF0dXMgJiBjaGFuX2ltcjsNCj4+ICAgCQkJZGV2X3ZkYmcoYXR4
-ZG1hYy0+ZG1hLmRldiwNCj4+ICAgCQkJCSAiJXM6IGNoYW4lZDogaW1yPTB4JXgsIHN0YXR1cz0w
-eCV4XG4iLA0KPj4gICAJCQkJIF9fZnVuY19fLCBpLCBjaGFuX2ltciwgY2hhbl9zdGF0dXMpOw0K
-Pj4gQEAgLTE2NjYsNyArMTY2Nyw3IEBAIHN0YXRpYyBpcnFyZXR1cm5fdCBhdF94ZG1hY19pbnRl
-cnJ1cHQoaW50IGlycSwgdm9pZCAqZGV2X2lkKQ0KPj4gICAJCQkJIGF0X3hkbWFjX2NoYW5fcmVh
-ZChhdGNoYW4sIEFUX1hETUFDX0NEQSksDQo+PiAgIAkJCQkgYXRfeGRtYWNfY2hhbl9yZWFkKGF0
-Y2hhbiwgQVRfWERNQUNfQ1VCQykpOw0KPj4gICANCj4+IC0JCQlpZiAoYXRjaGFuLT5zdGF0dXMg
-JiAoQVRfWERNQUNfQ0lTX1JCRUlTIHwgQVRfWERNQUNfQ0lTX1dCRUlTKSkNCj4+ICsJCQlpZiAo
-YXRjaGFuLT5pcnFfc3RhdHVzICYgKEFUX1hETUFDX0NJU19SQkVJUyB8IEFUX1hETUFDX0NJU19X
-QkVJUykpDQo+PiAgIAkJCQlhdF94ZG1hY193cml0ZShhdHhkbWFjLCBBVF9YRE1BQ19HRCwgYXRj
-aGFuLT5tYXNrKTsNCj4+ICAgDQo+PiAgIAkJCXRhc2tsZXRfc2NoZWR1bGUoJmF0Y2hhbi0+dGFz
-a2xldCk7DQo+PiAtLSANCj4+IDIuMTcuMQ0KPiANCg0K
+Hi Marcel,
+
+On 2019-01-18 14:24, Marcel Holtmann wrote:
+> Hi Balakrishna,
+> 
+>>>>>> We will collect the ramdump of BT controller when hardware error 
+>>>>>> event
+>>>>>> received before rebooting the HCI layer. Before restarting a 
+>>>>>> subsystem
+>>>>>> or a process running on a subsystem, it is often required to 
+>>>>>> request
+>>>>>> either a subsystem or a process to perform proper cache dump and
+>>>>>> software failure reason into a memory buffer which application
+>>>>>> processor can retrieve afterwards. SW developers can often provide
+>>>>>> initial investigation by looking into that debugging information.
+>>>>>> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+>>>>>> ---
+>>>>>> changes v2:
+>>>>>> * entirely an newer approach handling with an work queue.
+>>>>>> ---
+>>>>>> drivers/bluetooth/hci_qca.c | 289 
+>>>>>> ++++++++++++++++++++++++++++++++++--
+>>>>>> 1 file changed, 278 insertions(+), 11 deletions(-)
+>>>>>> diff --git a/drivers/bluetooth/hci_qca.c 
+>>>>>> b/drivers/bluetooth/hci_qca.c
+>>>>>> index f036c8f98ea3..62b768bc32ec 100644
+>>>>>> --- a/drivers/bluetooth/hci_qca.c
+>>>>>> +++ b/drivers/bluetooth/hci_qca.c
+>>>>>> @@ -32,6 +32,7 @@
+>>>>>> #include <linux/clk.h>
+>>>>>> #include <linux/debugfs.h>
+>>>>>> #include <linux/delay.h>
+>>>>>> +#include <linux/devcoredump.h>
+>>>>>> #include <linux/device.h>
+>>>>>> #include <linux/gpio/consumer.h>
+>>>>>> #include <linux/mod_devicetable.h>
+>>>>> don't we have some crashdump core facility that could be utilized 
+>>>>> here?
+>>>> [Bala]: no i don't think so. that is reason calling devcoredump.h
+>>> what is wrong with using devcoredump.h?
+>> 
+>> [Bala]: using the  devcoredump.h
+>> 
+>>>>>> @@ -57,9 +58,10 @@
+>>>>>> /* Controller states */
+>>>>>> #define STATE_IN_BAND_SLEEP_ENABLED	1
+>>>>>> -#define IBS_WAKE_RETRANS_TIMEOUT_MS	100
+>>>>>> +#define	IBS_WAKE_RETRANS_TIMEOUT_MS	100
+>>>>>> #define IBS_TX_IDLE_TIMEOUT_MS		2000
+>>>>>> -#define BAUDRATE_SETTLE_TIMEOUT_MS	300
+>>>>>> +#define	BAUDRATE_SETTLE_TIMEOUT_MS	300
+>>>>>> +#define MEMDUMP_COLLECTION_TIMEOUT_MS	8000
+>>>>>> /* susclk rate */
+>>>>>> #define SUSCLK_RATE_32KHZ	32768
+>>>>>> @@ -67,6 +69,13 @@
+>>>>>> /* Controller debug log header */
+>>>>>> #define QCA_DEBUG_HANDLE	0x2EDC
+>>>>>> +/* Controller dump header */
+>>>>>> +#define QCA_SSR_DUMP_HANDLE		0x0108
+>>>>>> +#define QCA_DUMP_PACKET_SIZE		255
+>>>>>> +#define QCA_LAST_SEQUENCE_NUM		0xFFFF
+>>>>>> +#define QCA_CRASHBYTE_PACKET_LEN	1100
+>>>>>> +#define QCA_MEMDUMP_BYTE		0xFB
+>>>>>> +
+>>>>>> /* HCI_IBS transmit side sleep protocol states */
+>>>>>> enum tx_ibs_states {
+>>>>>> 	HCI_IBS_TX_ASLEEP,
+>>>>>> @@ -89,12 +98,41 @@ enum hci_ibs_clock_state_vote {
+>>>>>> 	HCI_IBS_RX_VOTE_CLOCK_OFF,
+>>>>>> };
+>>>>>> +/* Controller memory dump states */
+>>>>>> +enum qca_memdump_states {
+>>>>>> +	QCA_MEMDUMP_IDLE,
+>>>>>> +	QCA_MEMDUMP_COLLECTING,
+>>>>>> +	QCA_MEMDUMP_COLLECTED,
+>>>>>> +	QCA_MEMDUMP_TIMEOUT,
+>>>>>> +};
+>>>>>> +
+>>>>>> +struct qca_memdump_data {
+>>>>>> +	char *memdump_buf_head;
+>>>>>> +	char *memdump_buf_tail;
+>>>>>> +	u32 current_seq_no;
+>>>>>> +	u32 received_dump;
+>>>>>> +};
+>>>>>> +
+>>>>>> +struct qca_memdump_event_hdr {
+>>>>>> +	__u8    evt;
+>>>>>> +	__u8    plen;
+>>>>>> +	__u16   opcode;
+>>>>>> +	__u16   seq_no;
+>>>>>> +	__u8    reserved;
+>>>>>> +} __packed;
+>>>>>> +
+>>>>>> +
+>>>>>> +struct qca_dump_size {
+>>>>>> +	u32 dump_size;
+>>>>>> +} __packed;
+>>>>>> +
+>>>>>> struct qca_data {
+>>>>>> 	struct hci_uart *hu;
+>>>>>> 	struct sk_buff *rx_skb;
+>>>>>> 	struct sk_buff_head txq;
+>>>>>> -	struct sk_buff_head tx_wait_q;	/* HCI_IBS wait queue	*/
+>>>>>> -	spinlock_t hci_ibs_lock;	/* HCI_IBS state lock	*/
+>>>>>> +	struct sk_buff_head tx_wait_q;		/* HCI_IBS wait queue	*/
+>>>>>> +	struct sk_buff_head rx_memdump_q;	/* Memdump wait queue	*/
+>>>>>> +	spinlock_t hci_ibs_lock;		/* HCI_IBS state lock	*/
+>>>>>> 	u8 tx_ibs_state;	/* HCI_IBS transmit side power state*/
+>>>>>> 	u8 rx_ibs_state;	/* HCI_IBS receive side power state */
+>>>>>> 	bool tx_vote;		/* Clock must be on for TX */
+>>>>>> @@ -103,12 +141,17 @@ struct qca_data {
+>>>>>> 	u32 tx_idle_delay;
+>>>>>> 	struct timer_list wake_retrans_timer;
+>>>>>> 	u32 wake_retrans;
+>>>>>> +	struct timer_list memdump_timer;
+>>>>>> +	u32 memdump_delay;
+>>>>>> 	struct workqueue_struct *workqueue;
+>>>>>> 	struct work_struct ws_awake_rx;
+>>>>>> 	struct work_struct ws_awake_device;
+>>>>>> 	struct work_struct ws_rx_vote_off;
+>>>>>> 	struct work_struct ws_tx_vote_off;
+>>>>>> +	struct work_struct ctrl_memdump_evt;
+>>>>>> +	struct qca_memdump_data *qca_memdump;
+>>>>>> 	unsigned long flags;
+>>>>>> +	enum qca_memdump_states memdump_state;
+>>>>>> 	/* For debugging purpose */
+>>>>>> 	u64 ibs_sent_wacks;
+>>>>>> @@ -173,6 +216,7 @@ struct qca_serdev {
+>>>>>> static int qca_power_setup(struct hci_uart *hu, bool on);
+>>>>>> static void qca_power_shutdown(struct hci_uart *hu);
+>>>>>> static int qca_power_off(struct hci_dev *hdev);
+>>>>>> +static void qca_controller_memdump(struct work_struct *work);
+>>>>>> static void __serial_clock_on(struct tty_struct *tty)
+>>>>>> {
+>>>>>> @@ -446,6 +490,21 @@ static void 
+>>>>>> hci_ibs_wake_retrans_timeout(struct timer_list *t)
+>>>>>> 		hci_uart_tx_wakeup(hu);
+>>>>>> }
+>>>>>> +static void hci_memdump_timeout(struct timer_list *t)
+>>>>>> +{
+>>>>>> +	struct qca_data *qca = from_timer(qca, t, tx_idle_timer);
+>>>>>> +	struct hci_uart *hu = qca->hu;
+>>>>>> +	struct qca_memdump_data *qca_memdump = qca->qca_memdump;
+>>>>>> +	char *memdump_buf = qca_memdump->memdump_buf_tail;
+>>>>>> +
+>>>>>> +	bt_dev_err(hu->hdev, "clearing allocated memory due to memdump 
+>>>>>> timeout");
+>>>>>> +	kfree(memdump_buf);
+>>>>>> +	kfree(qca_memdump);
+>>>>>> +	qca->memdump_state = QCA_MEMDUMP_TIMEOUT;
+>>>>>> +	del_timer(&qca->memdump_timer);
+>>>>>> +	cancel_work_sync(&qca->ctrl_memdump_evt);
+>>>>>> +}
+>>>>>> +
+>>>>>> /* Initialize protocol */
+>>>>>> static int qca_open(struct hci_uart *hu)
+>>>>>> {
+>>>>>> @@ -461,6 +520,7 @@ static int qca_open(struct hci_uart *hu)
+>>>>>> 	skb_queue_head_init(&qca->txq);
+>>>>>> 	skb_queue_head_init(&qca->tx_wait_q);
+>>>>>> +	skb_queue_head_init(&qca->rx_memdump_q);
+>>>>>> 	spin_lock_init(&qca->hci_ibs_lock);
+>>>>>> 	qca->workqueue = alloc_ordered_workqueue("qca_wq", 0);
+>>>>>> 	if (!qca->workqueue) {
+>>>>>> @@ -473,6 +533,7 @@ static int qca_open(struct hci_uart *hu)
+>>>>>> 	INIT_WORK(&qca->ws_awake_device, qca_wq_awake_device);
+>>>>>> 	INIT_WORK(&qca->ws_rx_vote_off, qca_wq_serial_rx_clock_vote_off);
+>>>>>> 	INIT_WORK(&qca->ws_tx_vote_off, qca_wq_serial_tx_clock_vote_off);
+>>>>>> +	INIT_WORK(&qca->ctrl_memdump_evt, qca_controller_memdump);
+>>>>>> 	qca->hu = hu;
+>>>>>> @@ -500,7 +561,7 @@ static int qca_open(struct hci_uart *hu)
+>>>>>> 	qca->tx_votes_off = 0;
+>>>>>> 	qca->rx_votes_on = 0;
+>>>>>> 	qca->rx_votes_off = 0;
+>>>>>> -
+>>>>>> +	qca->memdump_state = QCA_MEMDUMP_IDLE;
+>>>>>> 	hu->priv = qca;
+>>>>>> 	if (hu->serdev) {
+>>>>>> @@ -528,6 +589,9 @@ static int qca_open(struct hci_uart *hu)
+>>>>>> 	timer_setup(&qca->tx_idle_timer, hci_ibs_tx_idle_timeout, 0);
+>>>>>> 	qca->tx_idle_delay = IBS_TX_IDLE_TIMEOUT_MS;
+>>>>>> +	timer_setup(&qca->memdump_timer, hci_memdump_timeout, 0);
+>>>>>> +	qca->memdump_delay = MEMDUMP_COLLECTION_TIMEOUT_MS;
+>>>>>> +
+>>>>>> 	BT_DBG("HCI_UART_QCA open, tx_idle_delay=%u, wake_retrans=%u",
+>>>>>> 	       qca->tx_idle_delay, qca->wake_retrans);
+>>>>>> @@ -605,8 +669,10 @@ static int qca_close(struct hci_uart *hu)
+>>>>>> 	skb_queue_purge(&qca->tx_wait_q);
+>>>>>> 	skb_queue_purge(&qca->txq);
+>>>>>> +	skb_queue_purge(&qca->rx_memdump_q);
+>>>>>> 	del_timer(&qca->tx_idle_timer);
+>>>>>> 	del_timer(&qca->wake_retrans_timer);
+>>>>>> +	del_timer(&qca->memdump_timer);
+>>>>>> 	destroy_workqueue(qca->workqueue);
+>>>>>> 	qca->hu = NULL;
+>>>>>> @@ -866,6 +932,141 @@ static int qca_recv_acl_data(struct hci_dev 
+>>>>>> *hdev, struct sk_buff *skb)
+>>>>>> 	return hci_recv_frame(hdev, skb);
+>>>>>> }
+>>>>>> +static void qca_controller_memdump(struct work_struct *work)
+>>>>>> +{
+>>>>>> +	struct qca_data *qca = container_of(work, struct qca_data,
+>>>>>> +					    ctrl_memdump_evt);
+>>>>>> +	struct hci_uart *hu = qca->hu;
+>>>>>> +	struct sk_buff *skb;
+>>>>>> +	struct qca_memdump_event_hdr *cmd_hdr;
+>>>>>> +	struct qca_memdump_data *qca_memdump = qca->qca_memdump;
+>>>>>> +	struct qca_dump_size *dump;
+>>>>>> +	char *memdump_buf;
+>>>>>> +	char nullBuff[QCA_DUMP_PACKET_SIZE] = { 0 };
+>>>>>> +	u16 opcode, seq_no;
+>>>>>> +	u32 dump_size;
+>>>>>> +
+>>>>>> +	while ((skb = skb_dequeue(&qca->rx_memdump_q))) {
+>>>>>> +
+>>>>>> +		if (!qca_memdump) {
+>>>>>> +			qca_memdump = kzalloc(sizeof(struct qca_memdump_data),
+>>>>>> +					      GFP_ATOMIC);
+>>>>>> +			if (!qca_memdump)
+>>>>>> +				return;
+>>>>>> +
+>>>>>> +			qca->qca_memdump = qca_memdump;
+>>>>>> +		}
+>>>>>> +
+>>>>>> +		qca->memdump_state = QCA_MEMDUMP_COLLECTING;
+>>>>>> +		cmd_hdr = (void *) skb->data;
+>>>>>> +		opcode = __le16_to_cpu(cmd_hdr->opcode);
+>>>>>> +		seq_no = __le16_to_cpu(cmd_hdr->seq_no);
+>>>>>> +		skb_pull(skb, sizeof(struct qca_memdump_event_hdr));
+>>>>>> +
+>>>>>> +		if (!seq_no) {
+>>>>>> +
+>>>>>> +			/* This is the first frame of memdump packet from
+>>>>>> +			 * the controller, Disable IBS to recevie dump
+>>>>>> +			 * with out any interruption, ideally time required for
+>>>>>> +			 * the controller to send the dump is 8 seconds. let us
+>>>>>> +			 * start timer to handle this asynchronous activity.
+>>>>>> +			 */
+>>>>>> +			clear_bit(STATE_IN_BAND_SLEEP_ENABLED, &qca->flags);
+>>>>>> +
+>>>>>> +			dump = (void *) skb->data;
+>>>>>> +			dump_size = __le32_to_cpu(dump->dump_size);
+>>>>>> +			if (!(dump_size)) {
+>>>>>> +				bt_dev_err(hu->hdev, "QCA invalid memdump size");
+>>>>>> +				kfree_skb(skb);
+>>>>>> +				return;
+>>>>>> +			}
+>>>>>> +
+>>>>>> +			bt_dev_info(hu->hdev, "QCA: collecting memdump started"
+>>>>>> +				     "of size:%u", dump_size);
+>>>>>> +			mod_timer(&qca->memdump_timer, (jiffies +
+>>>>>> +				  msecs_to_jiffies(qca->memdump_delay)));
+>>>>>> +
+>>>>>> +			skb_pull(skb, sizeof(dump_size));
+>>>>>> +			memdump_buf = vmalloc(dump_size);
+>>>>>> +			qca_memdump->memdump_buf_head = memdump_buf;
+>>>>>> +			qca_memdump->memdump_buf_tail = memdump_buf;
+>>>>>> +		}
+>>>>>> +
+>>>>>> +		memdump_buf = qca_memdump->memdump_buf_tail;
+>>>>>> +
+>>>>>> +		/* If sequence no 0 is missed then there is no point in
+>>>>>> +		 * accepting the other sequences.
+>>>>>> +		 */
+>>>>>> +		if (!memdump_buf) {
+>>>>>> +			bt_dev_err(hu->hdev, "QCA: Discarding other packets");
+>>>>>> +			kfree(qca_memdump);
+>>>>>> +			kfree_skb(skb);
+>>>>>> +			qca->qca_memdump = NULL;
+>>>>>> +			return;
+>>>>>> +		}
+>>>>>> +
+>>>>>> +		/* There could be chance of missing some packets from
+>>>>>> +		 * the controller. In such cases let us store the dummy
+>>>>>> +		 * packets in the buffer.
+>>>>>> +		 */
+>>>>>> +		while ((seq_no > qca_memdump->current_seq_no + 1) &&
+>>>>>> +			seq_no != QCA_LAST_SEQUENCE_NUM) {
+>>>>>> +			bt_dev_err(hu->hdev, "QCA controller missed packet:%d",
+>>>>>> +				   qca_memdump->current_seq_no);
+>>>>>> +			memcpy(memdump_buf, nullBuff, QCA_DUMP_PACKET_SIZE);
+>>>>>> +			memdump_buf = memdump_buf + QCA_DUMP_PACKET_SIZE;
+>>>>>> +			qca_memdump->received_dump += QCA_DUMP_PACKET_SIZE;
+>>>>>> +			qca_memdump->current_seq_no++;
+>>>>>> +		}
+>>>>>> +
+>>>>>> +		memcpy(memdump_buf, (unsigned char *) skb->data, skb->len);
+>>>>>> +		memdump_buf = memdump_buf + skb->len;
+>>>>>> +		qca_memdump->memdump_buf_tail = memdump_buf;
+>>>>>> +		qca_memdump->current_seq_no = seq_no + 1;
+>>>>>> +		qca_memdump->received_dump += skb->len;
+>>>>>> +		qca->qca_memdump = qca_memdump;
+>>>>>> +		kfree_skb(skb);
+>>>>>> +		if (seq_no == QCA_LAST_SEQUENCE_NUM) {
+>>>>>> +			bt_dev_info(hu->hdev, "QCA writing crash dump of size %d 
+>>>>>> bytes",
+>>>>>> +				   qca_memdump->received_dump);
+>>>>>> +			memdump_buf = qca_memdump->memdump_buf_head;
+>>>>>> +			dev_coredumpv(&hu->serdev->dev, memdump_buf,
+>>>>>> +				      qca_memdump->received_dump, GFP_KERNEL);
+>>>>>> +			// Revisit for free(memdump) if needed.
+>>>>>> +			del_timer(&qca->memdump_timer);
+>>>>>> +			kfree(qca->qca_memdump);
+>>>>>> +			qca->qca_memdump = NULL;
+>>>>>> +			qca->memdump_state = QCA_MEMDUMP_COLLECTED;
+>>>>>> +		}
+>>>>>> +	}
+>>>>>> +
+>>>>>> +}
+>>>>>> +
+>>>>>> +int qca_controller_memdump_event(struct hci_dev *hdev, struct 
+>>>>>> sk_buff *skb)
+>>>>>> +{
+>>>>>> +	struct hci_uart *hu = hci_get_drvdata(hdev);
+>>>>>> +	struct qca_data *qca = hu->priv;
+>>>>>> +
+>>>>>> +	skb_queue_tail(&qca->rx_memdump_q, skb);
+>>>>>> +	queue_work(qca->workqueue, &qca->ctrl_memdump_evt);
+>>>>>> +
+>>>>>> +	return 0;
+>>>>>> +}
+>>>>>> +
+>>>>>> +static int qca_recv_event_data(struct hci_dev *hdev, struct 
+>>>>>> sk_buff *skb)
+>>>>>> +{
+>>>>>> +	/* We receive chip memory dump as an event packet, With a 
+>>>>>> dedicated
+>>>>>> +	 * handler followed by a hardware error event. When this event 
+>>>>>> is
+>>>>>> +	 * received we store dump into a file before closing hci. This
+>>>>>> +	 * dump will help in triaging the issues.
+>>>>>> +	 */
+>>>>>> +	if ((skb->data[0] == HCI_VENDOR_PKT) &&
+>>>>>> +	    (get_unaligned_be16((skb->data) + 2) == 
+>>>>>> QCA_SSR_DUMP_HANDLE))
+>>>>> The (skb->data) is pointless, just do skb->data.
+>>>> [Bala]: will update.
+>>>>>> +		return qca_controller_memdump_event(hdev, skb);
+>>>>>> +
+>>>>>> +	return hci_recv_frame(hdev, skb);
+>>>>>> +}
+>>>>>> +
+>>>>>> #define QCA_IBS_SLEEP_IND_EVENT \
+>>>>>> 	.type = HCI_IBS_SLEEP_IND, \
+>>>>>> 	.hlen = 0, \
+>>>>>> @@ -888,12 +1089,12 @@ static int qca_recv_acl_data(struct hci_dev 
+>>>>>> *hdev, struct sk_buff *skb)
+>>>>>> 	.maxlen = HCI_MAX_IBS_SIZE
+>>>>>> static const struct h4_recv_pkt qca_recv_pkts[] = {
+>>>>>> -	{ H4_RECV_ACL,             .recv = qca_recv_acl_data },
+>>>>>> -	{ H4_RECV_SCO,             .recv = hci_recv_frame    },
+>>>>>> -	{ H4_RECV_EVENT,           .recv = hci_recv_frame    },
+>>>>>> -	{ QCA_IBS_WAKE_IND_EVENT,  .recv = qca_ibs_wake_ind  },
+>>>>>> -	{ QCA_IBS_WAKE_ACK_EVENT,  .recv = qca_ibs_wake_ack  },
+>>>>>> -	{ QCA_IBS_SLEEP_IND_EVENT, .recv = qca_ibs_sleep_ind },
+>>>>>> +	{ H4_RECV_ACL,             .recv = qca_recv_acl_data	},
+>>>>>> +	{ H4_RECV_SCO,             .recv = hci_recv_frame	},
+>>>>>> +	{ H4_RECV_EVENT,           .recv = qca_recv_event_data	},
+>>>>> call it qca_recv_event and don't realign the whole table.
+>>>> [Bala]: will update.
+>>>>>> +	{ QCA_IBS_WAKE_IND_EVENT,  .recv = qca_ibs_wake_ind	},
+>>>>>> +	{ QCA_IBS_WAKE_ACK_EVENT,  .recv = qca_ibs_wake_ack	},
+>>>>>> +	{ QCA_IBS_SLEEP_IND_EVENT, .recv = qca_ibs_sleep_ind	},
+>>>>>> };
+>>>>>> static int qca_recv(struct hci_uart *hu, const void *data, int 
+>>>>>> count)
+>>>>>> @@ -1114,6 +1315,68 @@ static int qca_set_speed(struct hci_uart 
+>>>>>> *hu, enum qca_speed_type speed_type)
+>>>>>> 	return 0;
+>>>>>> }
+>>>>>> +static int qca_send_crashbuffer(struct hci_uart *hu)
+>>>>>> +{
+>>>>>> +	struct qca_data *qca = hu->priv;
+>>>>>> +	struct sk_buff *skb;
+>>>>>> +	unsigned char buf[QCA_CRASHBYTE_PACKET_LEN];
+>>>>>> +
+>>>>>> +	bt_dev_dbg(hu->hdev, "sending soc crash buffer to controller");
+>>>>>> +
+>>>>>> +	/* We forcefully crash the controller, by sending 0xfb byte for
+>>>>>> +	 * 1024 times. We also might have chance of losing data, To be
+>>>>>> +	 * on safer side we send 1100 bytes to the SoC.
+>>>>>> +	 */
+>>>>>> +	memset(buf, QCA_MEMDUMP_BYTE, QCA_CRASHBYTE_PACKET_LEN);
+>>>>>> +
+>>>>>> +	skb = bt_skb_alloc(QCA_CRASHBYTE_PACKET_LEN, GFP_KERNEL);
+>>>>>> +	if (!skb) {
+>>>>>> +		bt_dev_err(hu->hdev, "Failed to allocate memory for skb 
+>>>>>> packet");
+>>>>>> +		return -ENOMEM;
+>>>>>> +	}
+>>>>>> +
+>>>>>> +	skb_put_data(skb, buf, QCA_CRASHBYTE_PACKET_LEN);
+>>>>>> +	hci_skb_pkt_type(skb) = HCI_COMMAND_PKT;
+>>>>>> +
+>>>>>> +	skb_queue_tail(&qca->txq, skb);
+>>>>>> +	hci_uart_tx_wakeup(hu);
+>>>>>> +
+>>>>>> +	return 0;
+>>>>>> +}
+>>>>>> +
+>>>>>> +static void qca_hw_error(struct hci_dev *hdev, u8 code)
+>>>>>> +{
+>>>>>> +	struct hci_uart *hu = hci_get_drvdata(hdev);
+>>>>>> +	struct qca_data *qca = hu->priv;
+>>>>>> +
+>>>>>> +	bt_dev_info(hdev, "mem_dump_status: %d", qca->memdump_state);
+>>>>>> +
+>>>>>> +	if (qca->memdump_state == QCA_MEMDUMP_IDLE) {
+>>>>>> +		/* If hardware error event received for other than QCA
+>>>>>> +		 * soc memory dump event, then we need to crash the SOC
+>>>>>> +		 * and wait here for 8 seconds to get the dump packets.
+>>>>>> +		 * This will block main thread to be on hold until we
+>>>>>> +		 * collect dump.
+>>>>>> +		 */
+>>>>>> +		mod_timer(&qca->memdump_timer,
+>>>>>> +			  (jiffies + msecs_to_jiffies(qca->memdump_delay)));
+>>>>> Why a timer that then ends up in interrupt context?
+>>>> [Bala]: some times we only receive hardware error from the chip, so 
+>>>> we are sending an special buffer to request the
+>>>>       chip for memory dump. we are using an timer to check whether 
+>>>> the data memdump is collected. if the timer
+>>>>       over flows we are cleaning up all the assigned memory and 
+>>>> unblock the main thread,
+>>>>       in short this timer is a watch dog timer for the memory dump 
+>>>> collection.
+>>> I saw that you used a bunch of timers actually. My question is why 
+>>> are
+>>> these not delayed_wq instead? I wonder if we really want to keep 
+>>> using
+>>> timers and handling interrupt context locking if we could move
+>>> everything to wq instead.
+>> 
+>> [Bala]: Let me brief you the requirement.
+>>       This patch is used to collect the memory dump received from the 
+>> chip and store it into a file.
+>>       We receive chip memory dump in two cases
+>>        1. When chip goes into the bad state it sends the dump followed 
+>> by and hardware error event.
+>>        2. Some time when we send some garbage or un recognized command 
+>> to chip.
+>>           it will respond with a hardware error event. So we send an 
+>> 0xfb bytes to the chip requesting it to send the memory dump.
+>> 
+>> In both cases, chip will go into the bad state once it sends the dump. 
+>> so we need to turn OFF and ON chip and perform the init procedure.
+>> So keeping the above cases in the view, we register an handle for 
+>> hardware error event. So that in both the cases hw error routine will 
+>> execute.
+>> 
+>> As the dump as some specific headers we will queue the received data 
+>> into work queue.
+>> We are blocking the main thread until the total dump is stored into 
+>> the file.
+>> Here is the answer for the question, yes we check the status of the 
+>> work queue but for handling case 2 we require timers.
+>> But let us assume the wq is taking more time than expected. Then we 
+>> also need a timer.
+>> we are using timer so that we will not block the main thread 
+>> indefinitely.
+>> They are some cases where when we request a memory dump, after some 
+>> packet sent by the chip.
+>> it may go into a bad state where it will not pump the remaining dump, 
+>> so we are using a timer to unblock the main thread.
+>> so during timeout, we are restarting the flags to unblock the main 
+>> thread.
+>> 
+>> 
+>>>>>> +		qca_send_crashbuffer(hu);
+>>>>>> +
+>>>>>> +		while (qca->memdump_state != QCA_MEMDUMP_COLLECTED &&
+>>>>>> +			qca->memdump_state != QCA_MEMDUMP_TIMEOUT)
+>>>>>> +			;
+>>>>> What is this? Busy loop? I rather not do that.
+>>>> [Bala]: this busy required to collected the dump from the chip 
+>>>> before we close an reopen the hci.
+>>>>       >> +	} else if (qca->memdump_state == QCA_MEMDUMP_COLLECTING) 
+>>>> {
+>>> Why not use some wakeup handling here. I am really against any kind 
+>>> of
+>>> busy loops in a driver.
+>> [Bala]: this busy loop is require. pls refer my comments to the above 
+>> query.
+>>        this will help in mainly in case 2, where we will block the 
+>> main thread until we have dump collected.
+>> 
+>>        let us assume that we received an hardware error event, hw 
+>> error routine we execute which sends an
+>>        special byte to the chip requesting for memory dump. it starts 
+>> sending the dump, but we move forward and turn off the
+>>        chip so we will miss the dump. so here the busy loop is to wait 
+>> until we have dump.
+>>        but the we are not waiting indefinitely we have timer to 
+>> unblock them.
+> 
+> I do not see how any of this is correct. Can you not use some wakeup
+> helper like everybody else does. I also do not see how these two
+> threads are correctly protected. It looks really hackish to me.
+> 
+> Regards
+> 
+> Marcel
+
+Ok sure, will check and update accordingly in the incremental patch.
+
+-- 
+Regards
+Balakrishna.
