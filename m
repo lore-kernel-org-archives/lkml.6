@@ -2,161 +2,89 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E24C1C31680
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 17:08:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA503C31681
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 17:09:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B46D620989
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 17:08:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97E9420879
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 17:09:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548090554;
+	bh=23+qyf9uShTaxcn569y60O6rItm+sWWw4RnTgSNoD9w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=YZFP7maaeswmS3fNqN4kb1oANv/6WdYeImlnYqrDCeFTsjk61HMQ1aaw3uC0NkeTt
+	 WaCPOIjIH5bnQ7odJxpHUx2OJe5QuhEm+W7OzUmqnPmVDTtT3MW8tMEA+jvI7DfNSQ
+	 2FL9+B9cryD05a9NTGoSGEskdBEWck7JqwPQWxdA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727502AbfAURIl (ORCPT
+        id S1727358AbfAURJM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 12:08:41 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:36755 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726068AbfAURIj (ORCPT
+        Mon, 21 Jan 2019 12:09:12 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:33048 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726068AbfAURJL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 12:08:39 -0500
-Received: by mail-qt1-f194.google.com with SMTP id t13so24320894qtn.3;
-        Mon, 21 Jan 2019 09:08:37 -0800 (PST)
+        Mon, 21 Jan 2019 12:09:11 -0500
+Received: by mail-ot1-f66.google.com with SMTP id i20so21192614otl.0;
+        Mon, 21 Jan 2019 09:09:11 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=A3BFzNbMjDWWnmVRt1tolWRl8m0peBLC2YUEivt95tQ=;
-        b=LuC+BFBFDarHHTq/4HS7If4XzMJzl5Y96wDGxXA1zsJNjtZAiNRzDaRR8ekZiU8LSE
-         QS3kbyCHfwi/mEWiu2LUgLynFpULg4hk/VI8GjIyoQc3hiLdUC0mxTuOLNpJk0aIb/us
-         whY4+48NwO5sQvnEu5DtJS/OV8l4kGR9MebOjji6uSM8tTn/O2M2cIVb2eadFHNKl5N/
-         vwXby02Fm1U6clyrSazy4WnOUEC7yf3uvOlcBc4XOtijAFoXHTwy+p1TPgMjMpafSKbN
-         bfIJlT5MvCwer3jn/oSWX+uclP7ajJpDeEiS2m3MINXRcpZnt58jj8U7cB+cAD8LQ5ON
-         +l6Q==
-X-Gm-Message-State: AJcUukefvxqZugOhEo7ulSLLc2wICtmh/ul1Bl+K6SeOLIEpQg7woe5D
-        UNmyX2J2gzymAZ3Rvr8FiLsmqLvrid8jdqb2TsA=
-X-Google-Smtp-Source: ALg8bN7/DN0rP0JOEiYkuJ24jXW/SvkEYHpGox4RlM5iK+eeluX/kG/Kn+zKF5Ngogsr1NCH9MXedHfaxCnYfxa1vgY=
-X-Received: by 2002:ac8:1d12:: with SMTP id d18mr27232408qtl.343.1548090517294;
- Mon, 21 Jan 2019 09:08:37 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=vxe1DFDMhLD+4kqrUQTKR+OGErAZITvYwBYiudjM6vI=;
+        b=eM2IZrEJn0NgnyMsToAJ0B4to9K9QvfpcAIOs7JJcmeuFzb24379wzRncrW6V2+/Nt
+         ha4ZqFdCIiILx/obT4sKWavq1JHZ2lfiun2orv97RWIr3BTQpAmJLr4bNnQTUTjh9PBX
+         6FurOioia39A0rmL7EJ7pqXyg9DD0ilyApjMfnOo2hivKncZuEsJsj42i8MsIbYjb9a3
+         LqDei428tKg4wWB/X8I+6PngwKqQL5yNvxrVDo+wUr2gw7jZ5ftxP7FdrM/Eo6UhIdjU
+         ppbSlpgPAg2CitMX6tK/OZKiTcEG/kaX2Yp98m9Ta3JpXI9gRrbm7+tkwaI7b7AAEvnq
+         QnZA==
+X-Gm-Message-State: AJcUuke+XdpTWODtmZVvCg2XvvStitiom17DiW5ZVuOaSEnpV9XUo4cM
+        6adIjQTl2Y2IBAlGNWoH7w==
+X-Google-Smtp-Source: ALg8bN70UicKRfjEbeAmBk3kNr0Bl1UzyYzhbpkChDu+hQDdebX0i1p813vFb8bGrLNVb7yXvHNCjQ==
+X-Received: by 2002:a9d:620f:: with SMTP id g15mr18845099otj.296.1548090551140;
+        Mon, 21 Jan 2019 09:09:11 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id l6sm5754831otk.51.2019.01.21.09.09.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 21 Jan 2019 09:09:10 -0800 (PST)
+Date:   Mon, 21 Jan 2019 11:09:09 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Loys Ollivier <lollivier@baylibre.com>
+Cc:     devicetree@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        Loys Ollivier <lollivier@baylibre.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: Re: [PATCH v2 1/4] dt-bindings: Add vendor prefix for "GlobalTop
+ Technology, Inc."
+Message-ID: <20190121170909.GA928@bogus>
+References: <1547744074-28308-1-git-send-email-lollivier@baylibre.com>
+ <1547744074-28308-2-git-send-email-lollivier@baylibre.com>
 MIME-Version: 1.0
-References: <20190118161835.2259170-1-arnd@arndb.de> <20190118161835.2259170-30-arnd@arndb.de>
- <CALCETrXqM5mhvwreN5y-9K99h1j9rs9MAVK-cNLC54s1fdHA6w@mail.gmail.com>
- <CAK8P3a0V+xboaGAF2nqrYtpjXXA7y0LcvCKi4ngLTus1D_XZBA@mail.gmail.com>
- <CALCETrWPj6dHEyo=AELoVjXGsiwuSpRp17x3CEWBHvp7i3cy+Q@mail.gmail.com>
- <20190119142852.cntdihah4mpa3lgx@e5254000004ec.dyn.armlinux.org.uk> <CAMuHMdXzQNEEDjWrmTph8Krovj1g2WhnBUaM=FvKB+J2fZqctA@mail.gmail.com>
-In-Reply-To: <CAMuHMdXzQNEEDjWrmTph8Krovj1g2WhnBUaM=FvKB+J2fZqctA@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 21 Jan 2019 18:08:20 +0100
-Message-ID: <CAK8P3a04UC2dHVqx1gHXJQzsDw446h1ghLEuRe0xmUyJgrOktw@mail.gmail.com>
-Subject: Re: [PATCH v2 29/29] y2038: add 64-bit time_t syscalls to all 32-bit architectures
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Russell King - ARM Linux admin <linux@armlinux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Matt Turner <mattst88@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Michal Simek <monstr@monstr.eu>,
-        Paul Burton <paul.burton@mips.com>,
-        Helge Deller <deller@gmx.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Rich Felker <dalias@libc.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Firoz Khan <firoz.khan@linaro.org>,
-        alpha <linux-alpha@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        linux-mips@vger.kernel.org,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1547744074-28308-2-git-send-email-lollivier@baylibre.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 9:19 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> On Sat, Jan 19, 2019 at 3:29 PM Russell King - ARM Linux admin
-> <linux@armlinux.org.uk> wrote:
-> > On Fri, Jan 18, 2019 at 11:53:25AM -0800, Andy Lutomirski wrote:
-> > > On Fri, Jan 18, 2019 at 11:33 AM Arnd Bergmann <arnd@arndb.de> wrote:
-> > > > On Fri, Jan 18, 2019 at 7:50 PM Andy Lutomirski <luto@kernel.org> wrote:
-> > >
-> > > Can we perhaps just start the consistent numbers above 547 or maybe
-> > > block out 512..547 in the new regime?
-> >
-> > I don't think you gain much with that kind of scheme - it won't take
-> > very long before an architecture misses having a syscall added, and
-> > then someone else adds their own.  Been there with ARM - I was keeping
-> > the syscall table in the same order as x86 for new syscalls, but now
->
-> Same for m68k, and probably other architectures.
->
-> > that others have been adding syscalls to the table since I converted
-> > ARM to the tabular form, that's now gone out the window.
-> >
-> > So, I think it's completely pointless to do what you're suggesting.
-> > We'll just end up with a big hole in the middle of the syscall table
-> > and then revert back to random numbering of syscalls thereafter again.
->
-> I believe the plan is to add future syscalls for all architectures in a
-> single commit, to keep everything in sync.
+On Thu, 17 Jan 2019 17:54:31 +0100, Loys Ollivier wrote:
+> Add globaltop vendor definition.
+> 
+> Signed-off-by: Loys Ollivier <lollivier@baylibre.com>
+> ---
+> 
+> v2: Alphabetical order
+> 
+>  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-Yes, that is the idea. This was not realistic before, since each one
-of the old architectures had its own way of describing the system call
-tables, and many needed a different set of quirks.
-
-Since (almost) everything is now converted to the syscall.tbl format,
-we have removed all obsolete architectures, and a lot of the quirks
-(x32, spu, s390-31) won't matter as much in the future, I think it is
-now possible to do it.
-
-We could even extend scripts/checksyscalls.sh to warn if a new
-syscall above 423 is not added to all 16 tables at the same time.
-
-> Regardless, I'm wondering what to do with the holes marked "room for
-> arch specific calls".
-> When is a syscall really arch-specific, and can it be added there, and
-> when does it turn out (later) that it isn't, breaking the
-> synchronization again?
-
-We've had a bit of that already, with cacheflush(), which exists on
-a couple of architectures, including some that use the first
-'arch specific' slot (244) of the asm-generic table. I think this
-will be rare enough that we can figure out a solution when we
-get there.
-
-> The pkey syscalls may be a bad example, as AFAIU they can be implemented
-> on some architectures, but not on some others.  Still, I had skipped them
-> when adding new syscalls to m68k.
->
-> Perhaps we should get rid of the notion of "arch-specific syscalls", and
-> reserve a slot everywhere anyway?
-
-I don't mind calling the hole something else if that helps. Out of
-principle I would already assume that anything we add for x86
-or the generic table should be added everywhere, but we can
-make it broader than that.
-
-      Arnd
+Reviewed-by: Rob Herring <robh@kernel.org>
