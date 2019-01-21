@@ -3,48 +3,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 328B8C282DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:56:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75740C282F6
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:56:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A9132084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:56:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D42F20989
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:56:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729801AbfAUI4E (ORCPT
+        id S1729832AbfAUI4L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 03:56:04 -0500
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:43884 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729417AbfAUI4C (ORCPT
+        Mon, 21 Jan 2019 03:56:11 -0500
+Received: from mail-vk1-f196.google.com ([209.85.221.196]:45360 "EHLO
+        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729453AbfAUI4I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 03:56:02 -0500
-Received: by mail-ua1-f65.google.com with SMTP id z11so6652689uaa.10;
-        Mon, 21 Jan 2019 00:56:01 -0800 (PST)
+        Mon, 21 Jan 2019 03:56:08 -0500
+Received: by mail-vk1-f196.google.com with SMTP id n126so4399264vke.12;
+        Mon, 21 Jan 2019 00:56:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=OJScdj9p18oAEvTl9TNP9AzhiR3NeXZIyKQOy3xgTy8=;
-        b=sm7UdR7+OQ0Ar8QgmbYdCAoxsTemEPC5AumhUeqc5KyfmeXT2Yy8MSYfhqRJghQOmW
-         Q6YsuPhRMVRJBFtDUMRbdBgQ4XazTDkS9OXtKs31zpaS4sFcziyKkp/DPdXPRq9TlGQJ
-         zL+z/qUXY/8XaSAf0s6EEKjo+iWv9kV8px2D0ikIntk2lZ2ISMej19JuPXf4yXZgOL/F
-         z5c1tNnU8YE+rS33LuXuAL4Zaaoc/BYLBP/cWsmKWH2c7wiLVn3gZg/pySrCSmEm3i4s
-         CbyGL0N+MTObVHBhNX8IqhmdRha7czFHOzdKQhOJKeQHLJAEBK14TME8FK0/yNO03L9q
-         szPQ==
-X-Gm-Message-State: AJcUukcB7/BZDJF49J99W58563FwdAMzDDfH4CcqxS+EMngNwU3FnnWF
-        Z9waKt1LyOLZ0Qji99YCX5eTzHrUuD65YYNM53c=
-X-Google-Smtp-Source: ALg8bN4uFN3zWGMaGcasO6usU7NqldPno3Vg0buANjUHshxvHAfNTtSuQ7VautHVX5df0UK1s1iotaDgJP2GFGxetwA=
-X-Received: by 2002:ab0:7251:: with SMTP id d17mr11840905uap.0.1548060960356;
- Mon, 21 Jan 2019 00:56:00 -0800 (PST)
+        bh=gLrYKlt9uEOKQ1cE1SYqGP7NKGJFXbmsibHGAlXJ1DU=;
+        b=EGbg5LxLvqFZXyVWTDAx+JEm9TWdp9Z7ykRnVdrjeldYIXHdO4YfYkvu+gVEwbP1sb
+         zD67khm0odjFJf6EA55cAVYX3BoC/k+8x/ncyXCXx+VuVICHQCJoihovyWsD4wp3omx8
+         6lORpn6LHvZW42x0TOWjpwavhRqhjOceJ2UKdR+pTutIpU57QFHo5/lcKPuQXDoDaW+u
+         iyn9OjPF/EHAB4Zs4RjMswLl3bhQvj+xJl/koRdopRzpmt+JTdvgjJy86ZSEwMH/KeOX
+         s9ziGNjVn9FpsR4BRD1r+/F615wLimS3je0nYduKCRIu1sHrSNVwVM2cyD2cTl2jZg0w
+         0txA==
+X-Gm-Message-State: AJcUukdV3LdlMT0C+f/8QkSegpPTg11TeA/cnzspvB9KmeItgxHM1aD0
+        g4OFBB928G8unYTHsUw05TtJeBySFJmvjXtTPeI=
+X-Google-Smtp-Source: ALg8bN5R6CEumLcKYOaOWStjx70fqdpomEnfD9DlaS7FowZKUavKdibSfH3EtWzzo/dYGOX0R4ge8qzEaMO9bSioAb0=
+X-Received: by 2002:a1f:91cb:: with SMTP id t194mr11136395vkd.74.1548060966184;
+ Mon, 21 Jan 2019 00:56:06 -0800 (PST)
 MIME-Version: 1.0
-References: <20190118161835.2259170-1-arnd@arndb.de> <20190118161835.2259170-15-arnd@arndb.de>
-In-Reply-To: <20190118161835.2259170-15-arnd@arndb.de>
+References: <20190118161835.2259170-1-arnd@arndb.de> <20190118161835.2259170-14-arnd@arndb.de>
+In-Reply-To: <20190118161835.2259170-14-arnd@arndb.de>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 21 Jan 2019 09:55:48 +0100
-Message-ID: <CAMuHMdWaJyNqUeq4qu3AgU0fYrQdZ_zbo0DFFiM97Y5HESYYnA@mail.gmail.com>
-Subject: Re: [PATCH v2 14/29] arch: add pkey and rseq syscall numbers everywhere
+Date:   Mon, 21 Jan 2019 09:55:53 +0100
+Message-ID: <CAMuHMdVyz_PgGEHWnnALwT1fQyY1EWOTT=T6Ax=PVTWzG8=R_g@mail.gmail.com>
+Subject: Re: [PATCH v2 13/29] arch: add split IPC system calls where needed
 To:     Arnd Bergmann <arnd@arndb.de>
 Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
         Linux API <linux-api@vger.kernel.org>,
@@ -94,38 +94,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Fri, Jan 18, 2019 at 5:20 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> Most architectures define system call numbers for the rseq and pkey system
-> calls, even when they don't support the features, and perhaps never will.
+> The IPC system call handling is highly inconsistent across architectures,
+> some use sys_ipc, some use separate calls, and some use both.  We also
+> have some architectures that require passing IPC_64 in the flags, and
+> others that set it implicitly.
 >
-> Only a few architectures are missing these, so just define them anyway
-> for consistency. If we decide to add them later to one of these, the
-> system call numbers won't get out of sync then.
+> For the additon of a y2083 safe semtimedop() system call, I chose to only
+> support the separate entry points, but that requires first supporting
+> the regular ones with their own syscall numbers.
+>
+> The IPC_64 is now implied by the new semctl/shmctl/msgctl system
+> calls even on the architectures that require passing it with the ipc()
+> multiplexer.
+>
+> I'm not adding the new semtimedop() or semop() on 32-bit architectures,
+> those will get implemented using the new semtimedop_time64() version
+> that gets added along with the other time64 calls.
+> Three 64-bit architectures (powerpc, s390 and sparc) get semtimedop().
 >
 > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
->  arch/m68k/kernel/syscalls/syscall.tbl   | 4 ++++
+>  arch/m68k/kernel/syscalls/syscall.tbl     | 11 +++++++++++
 
-> --- a/arch/m68k/kernel/syscalls/syscall.tbl
-> +++ b/arch/m68k/kernel/syscalls/syscall.tbl
-> @@ -388,6 +388,10 @@
->  378    common  pwritev2                        sys_pwritev2
->  379    common  statx                           sys_statx
->  380    common  seccomp                         sys_seccomp
-> +381    common  pkey_alloc                      sys_pkey_alloc
-> +382    common  pkey_free                       sys_pkey_free
-> +383    common  pkey_mprotect                   sys_pkey_mprotect
-> +384    common  rseq                            sys_rseq
-
-Note that all architectures that already define pkey syscalls, list
-pkey_mprotect
-first.
-
-Regardless, for m68k:
+For m68k:
 Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
-
->  # room for arch specific calls
->  393    common  semget                          sys_semget
->  394    common  semctl                          sys_semctl
 
 Gr{oetje,eeting}s,
 
