@@ -2,198 +2,277 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4340FC7113B
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:20:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72059C7113B
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:20:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0859920861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:20:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WyHbwJoZ"
+	by mail.kernel.org (Postfix) with ESMTP id 4248420861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:20:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727926AbfAULUd (ORCPT
+        id S1728001AbfAULUm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 06:20:33 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:39072 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727287AbfAULUc (ORCPT
+        Mon, 21 Jan 2019 06:20:42 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:36627 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727287AbfAULUl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 06:20:32 -0500
-Received: by mail-wm1-f68.google.com with SMTP id y8so10324851wmi.4;
-        Mon, 21 Jan 2019 03:20:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=O0Y1XJ+0xnuvSlAHla8rWWZZRIYWEJRmnWlUlMTmyI4=;
-        b=WyHbwJoZVxO6pDTUxINZ6UHzAOONrXs1mhjvBlQST4yb4YhWsUHlasUe52dxf/VSFb
-         OdoSHhWj4B3u3TstYfTIFALayk9OTt7/0f2EQAlAIUgYHUrrwFnAMIU3aCZ2b4nFZ64M
-         uv1gtJw3XuIu1t3XlutSZcKpO6L1I0sAZIWvmGpmWlUx7WUAHRB6d1Sm2+qtv/chT0sj
-         GYrYKkbRsqEQC490ef4gC1CSZRM1oJ9Xlf2+HxWbctJG5YsXBA8yRsGmkzlUYLynf/O3
-         02RTFXt6HKBASPI/nhFYaWkmbsYlZ52ecbqKSHt0nZFtT9v6h22KdJu5HECBla7tqLTm
-         jWNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=O0Y1XJ+0xnuvSlAHla8rWWZZRIYWEJRmnWlUlMTmyI4=;
-        b=Ts9aH7b0DXcxZWeobWmUaEJayIH9vO/BJ157kVhpyg/k94y7ZYhb2NxcOptEzGVfm+
-         5nslhZgjfiFxr/Hg3swfU8ENMTFjEjln7trQyQS7ww+eIT7LaEQhlZJXdJ77Plbfyhri
-         rJ+xuaweYU0vfh/x1dTGNgbUmPWQNxPUN0oiXlcb8U9/We3w8bzqWaq105fZg545bP+N
-         v2i7tPOCUSNuPfmfQ3J6BHpHaKIey+umQBhDlEERubIy9awyoBnoDQgb54liR7kM3ct/
-         iN+BR9w4Ys5WNiY714w9RF7wPlNF/tEg+jtiWrYf2gNLkBOvl1w723di0Mg0xMcyKHVp
-         oWVw==
-X-Gm-Message-State: AJcUukfBbEa8qbKFgsgbQYDwUIQcGMRjTockJ+usbMERJL4nUWfhRX0v
-        BLPZHbWx436tQvZ0+pUrNss=
-X-Google-Smtp-Source: ALg8bN4sPiue9kGGFEkEIJRmMcE+sT/aAECrKBjZOmV9VvI+j9RBigmTIoREZfQM85EyxoY0RGbaIQ==
-X-Received: by 2002:a1c:1902:: with SMTP id 2mr8529880wmz.150.1548069629901;
-        Mon, 21 Jan 2019 03:20:29 -0800 (PST)
-Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
-        by smtp.gmail.com with ESMTPSA id u204sm79202993wmu.30.2019.01.21.03.20.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 21 Jan 2019 03:20:28 -0800 (PST)
-Date:   Mon, 21 Jan 2019 12:20:27 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Yash Shah <yash.shah@sifive.com>
-Cc:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Palmer Dabbelt <palmer@sifive.com>, linux-pwm@vger.kernel.org,
-        linux-riscv@lists.infradead.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Sachin Ghadi <sachin.ghadi@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>
-Subject: Re: [PATCH 1/2] pwm: sifive: Add DT documentation for SiFive PWM
- Controller
-Message-ID: <20190121112027.GH16756@ulmo>
-References: <1547194964-16718-1-git-send-email-yash.shah@sifive.com>
- <1547194964-16718-2-git-send-email-yash.shah@sifive.com>
- <20190115201149.ghddnf27s5kqephc@pengutronix.de>
- <CAJ2_jOGPpwsn=+OU3QcHtGYJ3MFYh9azdALSeWz3-WPXL9vHnw@mail.gmail.com>
+        Mon, 21 Jan 2019 06:20:41 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0LBJrmD2493119
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Mon, 21 Jan 2019 03:19:53 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0LBJrBw2493116;
+        Mon, 21 Jan 2019 03:19:53 -0800
+Date:   Mon, 21 Jan 2019 03:19:53 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Andrew Murray <tipbot@zytor.com>
+Message-ID: <tip-306563985819ed2af9df0a26ae368ed12cf28f41@git.kernel.org>
+Cc:     mingo@kernel.org, shawnguo@kernel.org, benh@kernel.crashing.org,
+        mattst88@gmail.com, tglx@linutronix.de, acme@kernel.org,
+        linux-kernel@vger.kernel.org, linux@armlinux.org.uk,
+        andrew.murray@arm.com, peterz@infradead.org, bp@alien8.de,
+        paulus@samba.org, ink@jurassic.park.msu.ru, s.hauer@pengutronix.de,
+        will.deacon@arm.com, rth@twiddle.net, hpa@zytor.com,
+        torvalds@linux-foundation.org, mark.rutland@arm.com,
+        mpe@ellerman.id.au
+Reply-To: paulus@samba.org, ink@jurassic.park.msu.ru, bp@alien8.de,
+          peterz@infradead.org, andrew.murray@arm.com,
+          mark.rutland@arm.com, mpe@ellerman.id.au,
+          torvalds@linux-foundation.org, rth@twiddle.net, hpa@zytor.com,
+          will.deacon@arm.com, s.hauer@pengutronix.de, tglx@linutronix.de,
+          acme@kernel.org, mattst88@gmail.com, shawnguo@kernel.org,
+          benh@kernel.crashing.org, mingo@kernel.org,
+          linux@armlinux.org.uk, linux-kernel@vger.kernel.org
+In-Reply-To: <1547128414-50693-8-git-send-email-andrew.murray@arm.com>
+References: <1547128414-50693-8-git-send-email-andrew.murray@arm.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] For drivers that do not support context exclusion
+ let's advertise the PERF_PMU_CAP_NO_EXCLUDE capability. This ensures that
+ perf will prevent us from handling events where any exclusion flags are
+ set. Let's also remove the now unnecessary check for exclusion flags.
+Git-Commit-ID: 306563985819ed2af9df0a26ae368ed12cf28f41
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="CNfT9TXqV7nd4cfk"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <CAJ2_jOGPpwsn=+OU3QcHtGYJ3MFYh9azdALSeWz3-WPXL9vHnw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  306563985819ed2af9df0a26ae368ed12cf28f41
+Gitweb:     https://git.kernel.org/tip/306563985819ed2af9df0a26ae368ed12cf28f41
+Author:     Andrew Murray <andrew.murray@arm.com>
+AuthorDate: Thu, 10 Jan 2019 13:53:29 +0000
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 21 Jan 2019 11:01:24 +0100
 
---CNfT9TXqV7nd4cfk
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+For drivers that do not support context exclusion let's advertise the PERF_PMU_CAP_NO_EXCLUDE capability. This ensures that perf will prevent us from handling events where any exclusion flags are set. Let's also remove the now unnecessary check for exclusion flags.
 
-On Wed, Jan 16, 2019 at 02:51:31PM +0530, Yash Shah wrote:
-> On Wed, Jan 16, 2019 at 1:41 AM Uwe Kleine-K=C3=B6nig
-> <u.kleine-koenig@pengutronix.de> wrote:
-> >
-> > Hello,
-> >
-> > this is v3, right? It is helpful to point this out to ease reviewing.
->=20
-> Yes, it is v3. Will take care of this in v4.
->=20
-> >
-> > On Fri, Jan 11, 2019 at 01:52:43PM +0530, Yash Shah wrote:
-> > > DT documentation for PWM controller added with updated compatible
-> > > string.
-> >
-> > Not sure what was updated here. But assuming this is compared to v2 this
-> > is not a helpful info in the commit log.
->=20
-> Ok, will remove the 'updated compatible string' part.
->=20
-> >
-> > > Signed-off-by: Wesley W. Terpstra <wesley@sifive.com>
-> > > [Atish: Compatible string update]
-> > > Signed-off-by: Atish Patra <atish.patra@wdc.com>
-> > > Signed-off-by: Yash Shah <yash.shah@sifive.com>
-> > > ---
-> > >  .../devicetree/bindings/pwm/pwm-sifive.txt         | 37 ++++++++++++=
-++++++++++
-> > >  1 file changed, 37 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/pwm/pwm-sifive.=
-txt
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/pwm/pwm-sifive.txt b/D=
-ocumentation/devicetree/bindings/pwm/pwm-sifive.txt
-> > > new file mode 100644
-> > > index 0000000..e0fc22a
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/pwm/pwm-sifive.txt
-> > > @@ -0,0 +1,37 @@
-> > > +SiFive PWM controller
-> > > +
-> > > +Unlike most other PWM controllers, the SiFive PWM controller current=
-ly only
-> > > +supports one period for all channels in the PWM. This is set globall=
-y in DTS.
-> > > +The period also has significant restrictions on the values it can ac=
-hieve,
-> > > +which the driver rounds to the nearest achievable frequency.
-> > > +
-> > > +Required properties:
-> > > +- compatible: Please refer to sifive-blocks-ip-versioning.txt
-> >
-> > While the description was too verbose in v2, this is too short. You
-> > should at least mention something like "sifive,pwmX" and
-> > "sifive,$cpuname-pwm" (or how ever that scheme works).
->=20
-> Will mention the above.
->=20
-> >
-> > > +- reg: physical base address and length of the controller's registers
-> > > +- clocks: Should contain a clock identifier for the PWM's parent clo=
-ck.
-> > > +- #pwm-cells: Should be 2.
-> > > +  The first cell is the PWM channel number
-> > > +  The second cell is the PWM polarity
-> >
-> > I'd drop these two lines and refer to bindings/pwm/pwm.txt instead.
->=20
-> Will be done.
+Signed-off-by: Andrew Murray <andrew.murray@arm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Will Deacon <will.deacon@arm.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Matt Turner <mattst88@gmail.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Richard Henderson <rth@twiddle.net>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: robin.murphy@arm.com
+Cc: suzuki.poulose@arm.com
+Link: https://lkml.kernel.org/r/1547128414-50693-8-git-send-email-andrew.murray@arm.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ drivers/perf/arm-cci.c                        | 10 +---------
+ drivers/perf/arm-ccn.c                        |  6 ++----
+ drivers/perf/arm_dsu_pmu.c                    |  9 ++-------
+ drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c |  1 +
+ drivers/perf/hisilicon/hisi_uncore_hha_pmu.c  |  1 +
+ drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c  |  1 +
+ drivers/perf/hisilicon/hisi_uncore_pmu.c      |  9 ---------
+ drivers/perf/thunderx2_pmu.c                  | 10 +---------
+ 8 files changed, 9 insertions(+), 38 deletions(-)
 
-I don't think you can do that. You're omitting the second cell
-representing the period, so this is different from the standard binding
-and therefore needs to be explicit.
-
-That said, given the rest of the discussion in the other threads, maybe
-it no longer makes sense to set the period on the whole block, but
-rather just note in the binding that all PWMs need to run at the same
-period. If the driver already refuses to apply incompatible periods,
-your users are going to notice that they've got the DT wrong.
-
-This would have the advantage that you can use the standard bindings.
-
-Thierry
-
---CNfT9TXqV7nd4cfk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxFqvgACgkQ3SOs138+
-s6HkDw/9G/+2aipEoQrz+7s6f9UOqF7LrWscQSYjZU3i8G/nYxfxiTDpwarQYIZt
-Ceycjf6nt8x4bCAN76myAY8O/399OfKy/4s6EfFoIg77g5FVuhxWi0teEkn8cwo/
-SvzQypcgPO40uwU7sD5gYzKv8BL2DbV/v8gHq1MZYsw6F5P6hnpk3y1dRn9udrUw
-nL4qI1NR75zXBm6t+e5n3CBc6A/fBRo5juU1a4zJlxZIqbWz8Hw2MpeHZ/i22N7m
-MaepSUgGGS/Bk4qa3Jy4Qg82sHjSf1GYMBQnPTlSdA+Araw7xtpxGtFRJA92q4xk
-I8UEVbB7vfxqyKbcYcExzQIxnSNniRK64VQqiKq80NMVY3O/QA3gRa9aK/tQDSrG
-eJvpydF29+oGW2lncgxLZPT2mwTdtW10QyvjLnXqqlA8jlzhbsKUs5e8gVF65i94
-buG1R3zI9ngJ3LkkAUHFHiYZU9B0AxuZoz6X3IQlGcbInTC+lc3hB6jeNapMw5yL
-4pl6vUvxKQCauM7h5XpGlOVyZfBMV/4R6wRW1dEGhRusog1zIQTbQahwix1J06Kp
-N0ZbLtJ/4NJ+XSBNrFzLpM0JVKmJZdRBadJ2da6wbDmCRuULwC3rTS96rG9hEwQK
-kEV573LtxIY4rXw/zsD4wTrT02eM+TOl9NtC4EQVYl7ImIn9JhI=
-=ysK7
------END PGP SIGNATURE-----
-
---CNfT9TXqV7nd4cfk--
+diff --git a/drivers/perf/arm-cci.c b/drivers/perf/arm-cci.c
+index 1bfeb160c5b1..bfd03e023308 100644
+--- a/drivers/perf/arm-cci.c
++++ b/drivers/perf/arm-cci.c
+@@ -1327,15 +1327,6 @@ static int cci_pmu_event_init(struct perf_event *event)
+ 	if (is_sampling_event(event) || event->attach_state & PERF_ATTACH_TASK)
+ 		return -EOPNOTSUPP;
+ 
+-	/* We have no filtering of any kind */
+-	if (event->attr.exclude_user	||
+-	    event->attr.exclude_kernel	||
+-	    event->attr.exclude_hv	||
+-	    event->attr.exclude_idle	||
+-	    event->attr.exclude_host	||
+-	    event->attr.exclude_guest)
+-		return -EINVAL;
+-
+ 	/*
+ 	 * Following the example set by other "uncore" PMUs, we accept any CPU
+ 	 * and rewrite its affinity dynamically rather than having perf core
+@@ -1433,6 +1424,7 @@ static int cci_pmu_init(struct cci_pmu *cci_pmu, struct platform_device *pdev)
+ 		.stop		= cci_pmu_stop,
+ 		.read		= pmu_read,
+ 		.attr_groups	= pmu_attr_groups,
++		.capabilities	= PERF_PMU_CAP_NO_EXCLUDE,
+ 	};
+ 
+ 	cci_pmu->plat_device = pdev;
+diff --git a/drivers/perf/arm-ccn.c b/drivers/perf/arm-ccn.c
+index 7dd850e02f19..2ae76026e947 100644
+--- a/drivers/perf/arm-ccn.c
++++ b/drivers/perf/arm-ccn.c
+@@ -741,10 +741,7 @@ static int arm_ccn_pmu_event_init(struct perf_event *event)
+ 		return -EOPNOTSUPP;
+ 	}
+ 
+-	if (has_branch_stack(event) || event->attr.exclude_user ||
+-			event->attr.exclude_kernel || event->attr.exclude_hv ||
+-			event->attr.exclude_idle || event->attr.exclude_host ||
+-			event->attr.exclude_guest) {
++	if (has_branch_stack(event)) {
+ 		dev_dbg(ccn->dev, "Can't exclude execution levels!\n");
+ 		return -EINVAL;
+ 	}
+@@ -1290,6 +1287,7 @@ static int arm_ccn_pmu_init(struct arm_ccn *ccn)
+ 		.read = arm_ccn_pmu_event_read,
+ 		.pmu_enable = arm_ccn_pmu_enable,
+ 		.pmu_disable = arm_ccn_pmu_disable,
++		.capabilities = PERF_PMU_CAP_NO_EXCLUDE,
+ 	};
+ 
+ 	/* No overflow interrupt? Have to use a timer instead. */
+diff --git a/drivers/perf/arm_dsu_pmu.c b/drivers/perf/arm_dsu_pmu.c
+index 660cb8ac886a..5851de56bbd0 100644
+--- a/drivers/perf/arm_dsu_pmu.c
++++ b/drivers/perf/arm_dsu_pmu.c
+@@ -562,13 +562,7 @@ static int dsu_pmu_event_init(struct perf_event *event)
+ 		return -EINVAL;
+ 	}
+ 
+-	if (has_branch_stack(event) ||
+-	    event->attr.exclude_user ||
+-	    event->attr.exclude_kernel ||
+-	    event->attr.exclude_hv ||
+-	    event->attr.exclude_idle ||
+-	    event->attr.exclude_host ||
+-	    event->attr.exclude_guest) {
++	if (has_branch_stack(event)) {
+ 		dev_dbg(dsu_pmu->pmu.dev, "Can't support filtering\n");
+ 		return -EINVAL;
+ 	}
+@@ -735,6 +729,7 @@ static int dsu_pmu_device_probe(struct platform_device *pdev)
+ 		.read		= dsu_pmu_read,
+ 
+ 		.attr_groups	= dsu_pmu_attr_groups,
++		.capabilities	= PERF_PMU_CAP_NO_EXCLUDE,
+ 	};
+ 
+ 	rc = perf_pmu_register(&dsu_pmu->pmu, name, -1);
+diff --git a/drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c b/drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c
+index 69372e2bc93c..0eba947c2ee9 100644
+--- a/drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c
++++ b/drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c
+@@ -396,6 +396,7 @@ static int hisi_ddrc_pmu_probe(struct platform_device *pdev)
+ 		.stop		= hisi_uncore_pmu_stop,
+ 		.read		= hisi_uncore_pmu_read,
+ 		.attr_groups	= hisi_ddrc_pmu_attr_groups,
++		.capabilities	= PERF_PMU_CAP_NO_EXCLUDE,
+ 	};
+ 
+ 	ret = perf_pmu_register(&ddrc_pmu->pmu, name, -1);
+diff --git a/drivers/perf/hisilicon/hisi_uncore_hha_pmu.c b/drivers/perf/hisilicon/hisi_uncore_hha_pmu.c
+index 443906e0aff3..2553a844ebf6 100644
+--- a/drivers/perf/hisilicon/hisi_uncore_hha_pmu.c
++++ b/drivers/perf/hisilicon/hisi_uncore_hha_pmu.c
+@@ -407,6 +407,7 @@ static int hisi_hha_pmu_probe(struct platform_device *pdev)
+ 		.stop		= hisi_uncore_pmu_stop,
+ 		.read		= hisi_uncore_pmu_read,
+ 		.attr_groups	= hisi_hha_pmu_attr_groups,
++		.capabilities	= PERF_PMU_CAP_NO_EXCLUDE,
+ 	};
+ 
+ 	ret = perf_pmu_register(&hha_pmu->pmu, name, -1);
+diff --git a/drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c b/drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c
+index 0bde5d919b2e..cf1cc34f402a 100644
+--- a/drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c
++++ b/drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c
+@@ -397,6 +397,7 @@ static int hisi_l3c_pmu_probe(struct platform_device *pdev)
+ 		.stop		= hisi_uncore_pmu_stop,
+ 		.read		= hisi_uncore_pmu_read,
+ 		.attr_groups	= hisi_l3c_pmu_attr_groups,
++		.capabilities	= PERF_PMU_CAP_NO_EXCLUDE,
+ 	};
+ 
+ 	ret = perf_pmu_register(&l3c_pmu->pmu, name, -1);
+diff --git a/drivers/perf/hisilicon/hisi_uncore_pmu.c b/drivers/perf/hisilicon/hisi_uncore_pmu.c
+index 9efd2413240c..f028cbc3443c 100644
+--- a/drivers/perf/hisilicon/hisi_uncore_pmu.c
++++ b/drivers/perf/hisilicon/hisi_uncore_pmu.c
+@@ -142,15 +142,6 @@ int hisi_uncore_pmu_event_init(struct perf_event *event)
+ 	if (is_sampling_event(event) || event->attach_state & PERF_ATTACH_TASK)
+ 		return -EOPNOTSUPP;
+ 
+-	/* counters do not have these bits */
+-	if (event->attr.exclude_user	||
+-	    event->attr.exclude_kernel	||
+-	    event->attr.exclude_host	||
+-	    event->attr.exclude_guest	||
+-	    event->attr.exclude_hv	||
+-	    event->attr.exclude_idle)
+-		return -EINVAL;
+-
+ 	/*
+ 	 *  The uncore counters not specific to any CPU, so cannot
+ 	 *  support per-task
+diff --git a/drivers/perf/thunderx2_pmu.c b/drivers/perf/thunderx2_pmu.c
+index c9a1701d3e54..43d76c85da56 100644
+--- a/drivers/perf/thunderx2_pmu.c
++++ b/drivers/perf/thunderx2_pmu.c
+@@ -424,15 +424,6 @@ static int tx2_uncore_event_init(struct perf_event *event)
+ 	if (is_sampling_event(event) || event->attach_state & PERF_ATTACH_TASK)
+ 		return -EINVAL;
+ 
+-	/* We have no filtering of any kind */
+-	if (event->attr.exclude_user	||
+-	    event->attr.exclude_kernel	||
+-	    event->attr.exclude_hv	||
+-	    event->attr.exclude_idle	||
+-	    event->attr.exclude_host	||
+-	    event->attr.exclude_guest)
+-		return -EINVAL;
+-
+ 	if (event->cpu < 0)
+ 		return -EINVAL;
+ 
+@@ -572,6 +563,7 @@ static int tx2_uncore_pmu_register(
+ 		.start		= tx2_uncore_event_start,
+ 		.stop		= tx2_uncore_event_stop,
+ 		.read		= tx2_uncore_event_read,
++		.capabilities	= PERF_PMU_CAP_NO_EXCLUDE,
+ 	};
+ 
+ 	tx2_pmu->pmu.name = devm_kasprintf(dev, GFP_KERNEL,
