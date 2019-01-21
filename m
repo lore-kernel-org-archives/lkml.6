@@ -2,53 +2,52 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7FF4C2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:54:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 907F8C2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:54:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7419C20861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:54:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 583232084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:54:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078864;
-	bh=QZ0bQ4DabjyfwiiNrNAdPx/LJhQJ9khLEKNXEK63jL4=;
+	s=default; t=1548078868;
+	bh=zr8QCgpzy186UIZYDLDepMRvbDcmqAmkBDV9a9q+qzg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=k87cNu6NlYJJMlzDGfBbvocOcmqU915n7nQBHSEbXt+yzrdzpUgberUPwVA6UzAF0
-	 hKaqXheytvwoWfQp17TMwk0DO5pa17q9u89nysNF/jJKrrY2EDjv76EtvkmP7iYwMm
-	 D5JaC+l5FkLerovDQGohuiJkpLN2JjFeMT6FTPr4=
+	b=nfuL0RwU6w6hjmpWSUkpBFgfHgm30vhtPmboZq+farwaWGJaGq6LwCdGFLprmpVNh
+	 +SL+bBh2U7xqOdgNVzrgjjWBCf+qgMFP4RCrBreaBKvWGBp54Ozmp+oawGBw4oqK5I
+	 JjjA0nGYepWeYd0HcrqxUg6JohRlMDgQ01W3Azx4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731481AbfAUNyW (ORCPT
+        id S1729954AbfAUNy0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:54:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38452 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:54:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731047AbfAUNyU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:54:20 -0500
+        id S1730870AbfAUNyY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:54:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E2BE521019;
-        Mon, 21 Jan 2019 13:54:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 241B72084C;
+        Mon, 21 Jan 2019 13:54:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078859;
-        bh=QZ0bQ4DabjyfwiiNrNAdPx/LJhQJ9khLEKNXEK63jL4=;
+        s=default; t=1548078863;
+        bh=zr8QCgpzy186UIZYDLDepMRvbDcmqAmkBDV9a9q+qzg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dn0XpUiKJ/lnh2ml6bpFkanSqUHga8yrXDTy+JzW4cXOlznQSnpnWlmGNwByxzx+b
-         Mn1fhLhPaWmK0r45kHmEJOAR5Znp3UKqtiFeqM7CIpR3Q06AHSNJufAzCoWwyttM4v
-         YyGLPyoRXlJSQ4Ifn8+AasGmuok3c6/imPzMHmCM=
+        b=zhx9FOyQd2sr3c5xMv/6zdCRQ20vaK6TFbP28YVODqsp/i3si1xsJJUk4y2cvWedt
+         Y7DF+erTcyst/KIrRdtSandole3ZH4RxbHoIDf6WXbWJNeNEabM0RU4VoDGzH/B1jd
+         SBKM5nGIoFOn/iBrc/fdsZvCHOA1EVjco7hO/+FI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        kernel test robot <rong.a.chen@intel.com>,
-        Dmitry Safonov <dima@arista.com>
-Subject: [PATCH 4.9 01/51] tty/ldsem: Wake up readers after timed out down_write()
-Date:   Mon, 21 Jan 2019 14:43:57 +0100
-Message-Id: <20190121122453.777085254@linuxfoundation.org>
+        stable@vger.kernel.org, Varun Prakash <varun@chelsio.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 10/51] scsi: target: iscsi: cxgbit: fix csk leak
+Date:   Mon, 21 Jan 2019 14:44:06 +0100
+Message-Id: <20190121122454.377779668@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122453.700446926@linuxfoundation.org>
 References: <20190121122453.700446926@linuxfoundation.org>
@@ -67,58 +66,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dmitry Safonov <dima@arista.com>
+[ Upstream commit ed076c55b359cc9982ca8b065bcc01675f7365f6 ]
 
-commit 231f8fd0cca078bd4396dd7e380db813ac5736e2 upstream.
+In case of arp failure call cxgbit_put_csk() to free csk.
 
-ldsem_down_read() will sleep if there is pending writer in the queue.
-If the writer times out, readers in the queue should be woken up,
-otherwise they may miss a chance to acquire the semaphore until the last
-active reader will do ldsem_up_read().
-
-There was a couple of reports where there was one active reader and
-other readers soft locked up:
-  Showing all locks held in the system:
-  2 locks held by khungtaskd/17:
-   #0:  (rcu_read_lock){......}, at: watchdog+0x124/0x6d1
-   #1:  (tasklist_lock){.+.+..}, at: debug_show_all_locks+0x72/0x2d3
-  2 locks held by askfirst/123:
-   #0:  (&tty->ldisc_sem){.+.+.+}, at: ldsem_down_read+0x46/0x58
-   #1:  (&ldata->atomic_read_lock){+.+...}, at: n_tty_read+0x115/0xbe4
-
-Prevent readers wait for active readers to release ldisc semaphore.
-
-Link: lkml.kernel.org/r/20171121132855.ajdv4k6swzhvktl6@wfg-t540p.sh.intel.com
-Link: lkml.kernel.org/r/20180907045041.GF1110@shao2-debian
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: stable@vger.kernel.org
-Reported-by: kernel test robot <rong.a.chen@intel.com>
-Signed-off-by: Dmitry Safonov <dima@arista.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Varun Prakash <varun@chelsio.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/tty_ldsem.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/target/iscsi/cxgbit/cxgbit_cm.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/tty/tty_ldsem.c
-+++ b/drivers/tty/tty_ldsem.c
-@@ -307,6 +307,16 @@ down_write_failed(struct ld_semaphore *s
- 	if (!locked)
- 		ldsem_atomic_update(-LDSEM_WAIT_BIAS, sem);
- 	list_del(&waiter.list);
-+
-+	/*
-+	 * In case of timeout, wake up every reader who gave the right of way
-+	 * to writer. Prevent separation readers into two groups:
-+	 * one that helds semaphore and another that sleeps.
-+	 * (in case of no contention with a writer)
-+	 */
-+	if (!locked && list_empty(&sem->write_wait))
-+		__ldsem_wake_readers(sem);
-+
- 	raw_spin_unlock_irq(&sem->wait_lock);
+diff --git a/drivers/target/iscsi/cxgbit/cxgbit_cm.c b/drivers/target/iscsi/cxgbit/cxgbit_cm.c
+index 2fb1bf1a26c5..8652475e01d0 100644
+--- a/drivers/target/iscsi/cxgbit/cxgbit_cm.c
++++ b/drivers/target/iscsi/cxgbit/cxgbit_cm.c
+@@ -631,8 +631,11 @@ static void cxgbit_send_halfclose(struct cxgbit_sock *csk)
  
- 	__set_task_state(tsk, TASK_RUNNING);
+ static void cxgbit_arp_failure_discard(void *handle, struct sk_buff *skb)
+ {
++	struct cxgbit_sock *csk = handle;
++
+ 	pr_debug("%s cxgbit_device %p\n", __func__, handle);
+ 	kfree_skb(skb);
++	cxgbit_put_csk(csk);
+ }
+ 
+ static void cxgbit_abort_arp_failure(void *handle, struct sk_buff *skb)
+@@ -1136,7 +1139,7 @@ cxgbit_pass_accept_rpl(struct cxgbit_sock *csk, struct cpl_pass_accept_req *req)
+ 	rpl5->opt0 = cpu_to_be64(opt0);
+ 	rpl5->opt2 = cpu_to_be32(opt2);
+ 	set_wr_txq(skb, CPL_PRIORITY_SETUP, csk->ctrlq_idx);
+-	t4_set_arp_err_handler(skb, NULL, cxgbit_arp_failure_discard);
++	t4_set_arp_err_handler(skb, csk, cxgbit_arp_failure_discard);
+ 	cxgbit_l2t_send(csk->com.cdev, skb, csk->l2t);
+ }
+ 
+-- 
+2.19.1
+
 
 
