@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EC2FC2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:05:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D059DC2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:05:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2324C20989
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:05:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A13792089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:05:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079517;
-	bh=o6beDz6+dBB9OIbijO6dxkui/wioAJh0dV1nCeif7Rc=;
+	s=default; t=1548079531;
+	bh=qO4hrlfJeRROVq4QeOaayvUXPtCNXiyUW+7J75zUQdw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=eBimIPY9t4TwwwwtFHnt/a69r93Zfn9CCvJzKheBZOl11fAFPLyspkesrugvrfMdM
-	 AuZnddCDuB9Q0mK328A09nwp6ASAb6haIqP60d7ip9hCGbnhCbLDwfTzmyALG4RXGq
-	 lxnPdgDnI0IRL/wgfIvdWMgYcpuJG831X5TLU4SM=
+	b=YmxoZnyqHVQODzKVbWIW3MJbj9c6ZiFWH/zLflLqrsDahePogodLobat/gHMQ2TLF
+	 7VHbInpEizHF5sei4kKrHnR8uHgjc4yeGHy3wiG4tap2QqZJdc7UWu0FdVSqUNfgWk
+	 0Dx/k83Kh8bxHv2qvW3oD9vWvGInCss04e4qIdrc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732642AbfAUOB1 (ORCPT
+        id S1732586AbfAUOBL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:01:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48386 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 09:01:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48062 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732154AbfAUOBW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 09:01:22 -0500
+        id S1732545AbfAUOBI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 09:01:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD60C2089F;
-        Mon, 21 Jan 2019 14:01:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E2162084C;
+        Mon, 21 Jan 2019 14:01:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548079281;
-        bh=o6beDz6+dBB9OIbijO6dxkui/wioAJh0dV1nCeif7Rc=;
+        s=default; t=1548079267;
+        bh=qO4hrlfJeRROVq4QeOaayvUXPtCNXiyUW+7J75zUQdw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xlfbIryRfB+lZ5QNfRMJYQ4GDPPPfOTkTaecRlRYvVcuv9kK6b7dN8Vz89N8V4d54
-         UEvKUSLvxuVHnBeJWMDtNXXVC1R040gTTa94WajYcWKEnI4NxgU0+4SfG1UC6aRgHk
-         Ad5vW0eYN5e59L2gRaFHBmm5LGvKBH+EJEJ9lcHQ=
+        b=HyAaGz4V8s9q6qAgfpu+BGkZM+SSPUgdyZOGxWgF5+6Y6IPY8Lnr3emLgTvciLfdt
+         NERWEuesskyTtsocus4v1UlO1wEYMUZTL4G5m0dp1EN3x3BnoEZcKwMzXK2jbrQfqO
+         yKVM7rV9MIAcuyn1NnSFiQh7m6FJXHe+vNzXfP3w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+7713f3aa67be76b1552c@syzkaller.appspotmail.com,
-        Shakeel Butt <shakeelb@google.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.19 69/99] netfilter: ebtables: account ebt_table_info to kmemcg
-Date:   Mon, 21 Jan 2019 14:49:01 +0100
-Message-Id: <20190121134916.606265438@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Piotr Sawicki <p.sawicki2@partner.samsung.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 65/99] ipv6: make icmp6_send() robust against null skb->dev
+Date:   Mon, 21 Jan 2019 14:48:57 +0100
+Message-Id: <20190121134916.434406493@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121134913.924726465@linuxfoundation.org>
 References: <20190121134913.924726465@linuxfoundation.org>
@@ -68,56 +68,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Shakeel Butt <shakeelb@google.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit e2c8d550a973bb34fc28bc8d0ec996f84562fb8a upstream.
+commit 8d933670452107e41165bea70a30dffbd281bef1 upstream.
 
-The [ip,ip6,arp]_tables use x_tables_info internally and the underlying
-memory is already accounted to kmemcg. Do the same for ebtables. The
-syzbot, by using setsockopt(EBT_SO_SET_ENTRIES), was able to OOM the
-whole system from a restricted memcg, a potential DoS.
+syzbot was able to crash one host with the following stack trace :
 
-By accounting the ebt_table_info, the memory used for ebt_table_info can
-be contained within the memcg of the allocating process. However the
-lifetime of ebt_table_info is independent of the allocating process and
-is tied to the network namespace. So, the oom-killer will not be able to
-relieve the memory pressure due to ebt_table_info memory. The memory for
-ebt_table_info is allocated through vmalloc. Currently vmalloc does not
-handle the oom-killed allocating process correctly and one large
-allocation can bypass memcg limit enforcement. So, with this patch,
-at least the small allocations will be contained. For large allocations,
-we need to fix vmalloc.
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 8625 Comm: syz-executor4 Not tainted 4.20.0+ #8
+RIP: 0010:dev_net include/linux/netdevice.h:2169 [inline]
+RIP: 0010:icmp6_send+0x116/0x2d30 net/ipv6/icmp.c:426
+ icmpv6_send
+ smack_socket_sock_rcv_skb
+ security_sock_rcv_skb
+ sk_filter_trim_cap
+ __sk_receive_skb
+ dccp_v6_do_rcv
+ release_sock
 
-Reported-by: syzbot+7713f3aa67be76b1552c@syzkaller.appspotmail.com
-Signed-off-by: Shakeel Butt <shakeelb@google.com>
-Reviewed-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+This is because a RX packet found socket owned by user and
+was stored into socket backlog. Before leaving RCU protected section,
+skb->dev was cleared in __sk_receive_skb(). When socket backlog
+was finally handled at release_sock() time, skb was fed to
+smack_socket_sock_rcv_skb() then icmp6_send()
+
+We could fix the bug in smack_socket_sock_rcv_skb(), or simply
+make icmp6_send() more robust against such possibility.
+
+In the future we might provide to icmp6_send() the net pointer
+instead of infering it.
+
+Fixes: d66a8acbda92 ("Smack: Inform peer that IPv6 traffic has been blocked")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: Piotr Sawicki <p.sawicki2@partner.samsung.com>
+Cc: Casey Schaufler <casey@schaufler-ca.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/bridge/netfilter/ebtables.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ net/ipv6/icmp.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/net/bridge/netfilter/ebtables.c
-+++ b/net/bridge/netfilter/ebtables.c
-@@ -1137,14 +1137,16 @@ static int do_replace(struct net *net, c
- 	tmp.name[sizeof(tmp.name) - 1] = 0;
+--- a/net/ipv6/icmp.c
++++ b/net/ipv6/icmp.c
+@@ -421,10 +421,10 @@ static int icmp6_iif(const struct sk_buf
+ static void icmp6_send(struct sk_buff *skb, u8 type, u8 code, __u32 info,
+ 		       const struct in6_addr *force_saddr)
+ {
+-	struct net *net = dev_net(skb->dev);
+ 	struct inet6_dev *idev = NULL;
+ 	struct ipv6hdr *hdr = ipv6_hdr(skb);
+ 	struct sock *sk;
++	struct net *net;
+ 	struct ipv6_pinfo *np;
+ 	const struct in6_addr *saddr = NULL;
+ 	struct dst_entry *dst;
+@@ -435,12 +435,16 @@ static void icmp6_send(struct sk_buff *s
+ 	int iif = 0;
+ 	int addr_type = 0;
+ 	int len;
+-	u32 mark = IP6_REPLY_MARK(net, skb->mark);
++	u32 mark;
  
- 	countersize = COUNTER_OFFSET(tmp.nentries) * nr_cpu_ids;
--	newinfo = vmalloc(sizeof(*newinfo) + countersize);
-+	newinfo = __vmalloc(sizeof(*newinfo) + countersize, GFP_KERNEL_ACCOUNT,
-+			    PAGE_KERNEL);
- 	if (!newinfo)
- 		return -ENOMEM;
+ 	if ((u8 *)hdr < skb->head ||
+ 	    (skb_network_header(skb) + sizeof(*hdr)) > skb_tail_pointer(skb))
+ 		return;
  
- 	if (countersize)
- 		memset(newinfo->counters, 0, countersize);
- 
--	newinfo->entries = vmalloc(tmp.entries_size);
-+	newinfo->entries = __vmalloc(tmp.entries_size, GFP_KERNEL_ACCOUNT,
-+				     PAGE_KERNEL);
- 	if (!newinfo->entries) {
- 		ret = -ENOMEM;
- 		goto free_newinfo;
++	if (!skb->dev)
++		return;
++	net = dev_net(skb->dev);
++	mark = IP6_REPLY_MARK(net, skb->mark);
+ 	/*
+ 	 *	Make sure we respect the rules
+ 	 *	i.e. RFC 1885 2.4(e)
 
 
