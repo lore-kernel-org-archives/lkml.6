@@ -2,117 +2,170 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68EABC7112F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:19:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 789E4C7112F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:19:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44CD92084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:19:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DF3B2084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:19:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="QHbt5jbL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728444AbfAUMTr (ORCPT
+        id S1728523AbfAUMT4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 07:19:47 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41380 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728318AbfAUMTl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 07:19:41 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0LCJJ6w106298
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 07:19:39 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2q5chmcah9-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 07:19:39 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
-        Mon, 21 Jan 2019 12:19:36 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 21 Jan 2019 12:19:27 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0LCJQuZ60817412
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 21 Jan 2019 12:19:26 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 528CF5204F;
-        Mon, 21 Jan 2019 12:19:26 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.95])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id 4C7C552051;
-        Mon, 21 Jan 2019 12:19:25 +0000 (GMT)
-Date:   Mon, 21 Jan 2019 13:19:24 +0100
-From:   Heiko Carstens <heiko.carstens@de.ibm.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     y2038@lists.linaro.org, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        mattst88@gmail.com, linux@armlinux.org.uk, catalin.marinas@arm.com,
-        will.deacon@arm.com, tony.luck@intel.com, fenghua.yu@intel.com,
-        geert@linux-m68k.org, monstr@monstr.eu, paul.burton@mips.com,
-        deller@gmx.de, benh@kernel.crashing.org, mpe@ellerman.id.au,
-        schwidefsky@de.ibm.com, dalias@libc.org, davem@davemloft.net,
-        luto@kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com, x86@kernel.org, jcmvbkbc@gmail.com,
-        akpm@linux-foundation.org, deepa.kernel@gmail.com,
-        ebiederm@xmission.com, firoz.khan@linaro.org,
-        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 29/29] y2038: add 64-bit time_t syscalls to all 32-bit
- architectures
-References: <20190118161835.2259170-1-arnd@arndb.de>
- <20190118161835.2259170-30-arnd@arndb.de>
+        Mon, 21 Jan 2019 07:19:56 -0500
+Received: from mail-eopbgr20060.outbound.protection.outlook.com ([40.107.2.60]:61600
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727971AbfAUMTz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 07:19:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector1-arm-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=48xiolcjYioWRo/c20hoHtKvA19tH89CwFz1/aPxvRY=;
+ b=QHbt5jbL1TaB9aO+Y3jIXm1447T2NJF6ZPxcCGLyMEOdpM5HiImhscK96X1s13c0HUIOxFgYHf/G32kSJcQZ8bLJhxoOwyIHLD2iib1MbOQtLkVsAziB+TmJwj9/b9EOAqi0KIxC+8lWU1JM2sIrD4xsUFeb1INbzqNQDoKFcGc=
+Received: from AM0PR08MB3025.eurprd08.prod.outlook.com (52.134.93.10) by
+ AM0PR08MB3364.eurprd08.prod.outlook.com (20.177.109.76) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1537.29; Mon, 21 Jan 2019 12:19:08 +0000
+Received: from AM0PR08MB3025.eurprd08.prod.outlook.com
+ ([fe80::6cf2:41c2:1a33:9b18]) by AM0PR08MB3025.eurprd08.prod.outlook.com
+ ([fe80::6cf2:41c2:1a33:9b18%2]) with mapi id 15.20.1537.031; Mon, 21 Jan 2019
+ 12:19:08 +0000
+From:   Brian Starkey <Brian.Starkey@arm.com>
+To:     Liam Mark <lmark@codeaurora.org>
+CC:     "labbott@redhat.com" <labbott@redhat.com>,
+        "sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "tkjos@android.com" <tkjos@android.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "afd@ti.com" <afd@ti.com>,
+        "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
+        "arve@android.com" <arve@android.com>,
+        "joel@joelfernandes.org" <joel@joelfernandes.org>,
+        "maco@android.com" <maco@android.com>,
+        "christian@brauner.io" <christian@brauner.io>, nd <nd@arm.com>
+Subject: Re: [PATCH 4/4] staging: android: ion: Support for mapping with dma
+ mapping attributes
+Thread-Topic: [PATCH 4/4] staging: android: ion: Support for mapping with dma
+ mapping attributes
+Thread-Index: AQHUsYOCfRfOk8fxG0a4t6CoqOChVA==
+Date:   Mon, 21 Jan 2019 12:19:08 +0000
+Message-ID: <20190121121907.f3dxhpdavklgb46c@DESKTOP-E1NTVVP.localdomain>
+References: <1547836667-13695-1-git-send-email-lmark@codeaurora.org>
+ <1547836667-13695-5-git-send-email-lmark@codeaurora.org>
+In-Reply-To: <1547836667-13695-5-git-send-email-lmark@codeaurora.org>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: NeoMutt/20180716-849-147d51-dirty
+x-originating-ip: [217.140.106.49]
+x-clientproxiedby: CWLP265CA0241.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:401:25::13) To AM0PR08MB3025.eurprd08.prod.outlook.com
+ (2603:10a6:208:5c::10)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Brian.Starkey@arm.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR08MB3364;6:Z4eOk2FWq4zYd2Cc+Q1e8Sjs8t8tJFHeH73xSZlb8RbBKcas1qF5bWlZElZlTm7DGYMSMkGB07JfjqsX6ckq51QBPDx18cPPoQ58PNp4aQ4uNwIj6IuYVxOdi1xyxLxdaxt+l/IYcc08rgoQxyq/DZpCvpmUaWDkOZoy5GaHtVGdV37IpgmnFDY1hd9oBXiQQoQFswvVPl9k+PWzan2leg1fp4yzaqbWtW8PknJStn5vm2+XN06Ef5st4kx9KVzeZMhb6G3JcNRkLjJk+p1oIRgQdXFo368raH+37cikIr+IEVOmr+mXbqq8SPYHfvhmVkn9vT3pJSNAJbE8e3QMNrdU0aXuuwZfnevVwHkAMSTUEgISqmZ9A0fFdSwsO+NnGTLFPSbYY36orXPJIo74l6oixYLVqY63yp9/id2qvEv/Woa1yQG2YRL15gF4nMD81e3NQ0dkzq68UspD91M+WA==;5:FLCbZSDcaQUJ8AUeXcqpOZxZ2RavSKZAST/SahvM0DDGAS+z5P5wIeB4A123CPZ1aJ1Ej+unIrxG4jKmnuAZgyf/oq4DFOIn2EoC28z5N7GCemZOeur4MGHv+5nPEzXsAxqbl+bwxgGn5zRtQIHJa1K1G/CEWmZ+4Lpk3K8+J+38Rg0LEEOb2ceBIn+3tC3zBp0dUTz6R9a4v7gcCvDstg==;7:n3VLWRDr97V5f+j5qeYG+LvF0A3sZyaswQc+suEEMV6PXLQ7dLuupKG2N3p8MXVIfvWXr0w1mhSj0lDO0HELhzPRbbpanmB6EMUJyBewkNiuY/5GayXur8o1SMmqH4Pe4o/Iu29KoIH+5j5o6C3yZg==
+x-ms-office365-filtering-correlation-id: e4597cb1-cabd-4c1e-43fc-08d67f9aa49f
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR08MB3364;
+x-ms-traffictypediagnostic: AM0PR08MB3364:
+nodisclaimer: True
+x-microsoft-antispam-prvs: <AM0PR08MB33640A0F0F9940315B53818DF09F0@AM0PR08MB3364.eurprd08.prod.outlook.com>
+x-forefront-prvs: 0924C6A0D5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(136003)(366004)(39860400002)(396003)(189003)(199004)(7416002)(106356001)(58126008)(102836004)(386003)(33896004)(52116002)(316002)(66066001)(97736004)(6306002)(99286004)(8676002)(76176011)(6512007)(9686003)(68736007)(305945005)(7736002)(14454004)(2906002)(54906003)(6506007)(105586002)(966005)(478600001)(6916009)(229853002)(72206003)(3846002)(6116002)(6436002)(6486002)(5024004)(476003)(86362001)(486006)(44832011)(26005)(81156014)(11346002)(1076003)(8936002)(71200400001)(71190400001)(25786009)(6246003)(4326008)(81166006)(446003)(256004)(14444005)(186003)(53936002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR08MB3364;H:AM0PR08MB3025.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: gR+K+rNRh67KKO0+HbqBo2i/kGHndJ1KfXfjqe24iBmP/RXNuGfGie7x4cV1RmyC4QgI2nuX/5yjPKiOnSKep5o+9oA4vfi7MNoCxN/YaYDGZBIrH7vXioP+Sni3pH/jVsOSCYsrT/SdVNXl4sRaQ6MjFuvzjV+OY+brB2wt8F/c4YAzkeBTrNWDl9lJJlC3ul4mh928k12joIz4DcHTsk6U2MdZWAU+SzKYz+/FZVI/Ju16X7xuQqRFfrIcxRc1BeZ1ToFVl/HqsOHwesjCdDnhEZP7NjJf5Oz/CDRyEBSIJpuZsTIn1MhfzxI374UTdHjdeaIv9TTWoGOr0KSPKfBLXJBc5UOBAfq/Vk+gh7EYg/BxLllxlGpDNLL74TtyppkjzVf065mz+EuyglNAs/yMZrJB2f8MecDwZNK8aM0=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <227BB9D72BD0A34FABCC480893BC74DA@eurprd08.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <20190118161835.2259170-30-arnd@arndb.de>
-X-TM-AS-GCONF: 00
-x-cbid: 19012112-0016-0000-0000-000002484921
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012112-0017-0000-0000-000032A279F9
-Message-Id: <20190121121923.GF4020@osiris>
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8bit
-Content-Disposition: inline
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-21_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=517 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901210097
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e4597cb1-cabd-4c1e-43fc-08d67f9aa49f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jan 2019 12:19:07.9502
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR08MB3364
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 05:18:35PM +0100, Arnd Bergmann wrote:
-> This adds 21 new system calls on each ABI that has 32-bit time_t
-> today. All of these have the exact same semantics as their existing
-> counterparts, and the new ones all have macro names that end in 'time64'
-> for clarification.
-> 
-> This gets us to the point of being able to safely use a C library
-> that has 64-bit time_t in user space. There are still a couple of
-> loose ends to tie up in various areas of the code, but this is the
-> big one, and should be entirely uncontroversial at this point.
-> 
-> In particular, there are four system calls (getitimer, setitimer,
-> waitid, and getrusage) that don't have a 64-bit counterpart yet,
-> but these can all be safely implemented in the C library by wrapping
-> around the existing system calls because the 32-bit time_t they
-> pass only counts elapsed time, not time since the epoch. They
-> will be dealt with later.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Hi Liam,
+
+On Fri, Jan 18, 2019 at 10:37:47AM -0800, Liam Mark wrote:
+> Add support for configuring dma mapping attributes when mapping
+> and unmapping memory through dma_buf_map_attachment and
+> dma_buf_unmap_attachment.
+>=20
+> For example this will allow ION clients to skip cache maintenance, by
+> using DMA_ATTR_SKIP_CPU_SYNC, for buffers which are clean and haven't bee=
+n
+> accessed by the CPU.
+
+How can a client know that the buffer won't be accessed by the CPU in
+the future though?
+
+I don't think we can push this decision to clients, because they are
+lacking information about what else is going on with the buffer. It
+needs to be done by the exporter, IMO.
+
+Thanks,
+-Brian
+
+>=20
+> Signed-off-by: Liam Mark <lmark@codeaurora.org>
 > ---
->  arch/s390/kernel/syscalls/syscall.tbl       | 20 +++++++++
-
-For the s390 bits:
-Acked-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-
+>  drivers/staging/android/ion/ion.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/=
+ion/ion.c
+> index 1fe633a7fdba..0aae845b20ba 100644
+> --- a/drivers/staging/android/ion/ion.c
+> +++ b/drivers/staging/android/ion/ion.c
+> @@ -268,8 +268,8 @@ static struct sg_table *ion_map_dma_buf(struct dma_bu=
+f_attachment *attachment,
+>  	table =3D a->table;
+> =20
+>  	mutex_lock(&buffer->lock);
+> -	if (!dma_map_sg(attachment->dev, table->sgl, table->nents,
+> -			direction)) {
+> +	if (!dma_map_sg_attrs(attachment->dev, table->sgl, table->nents,
+> +			      direction, attachment->dma_map_attrs)) {
+>  		mutex_unlock(&buffer->lock);
+>  		return ERR_PTR(-ENOMEM);
+>  	}
+> @@ -287,7 +287,8 @@ static void ion_unmap_dma_buf(struct dma_buf_attachme=
+nt *attachment,
+>  	struct ion_buffer *buffer =3D attachment->dmabuf->priv;
+> =20
+>  	mutex_lock(&buffer->lock);
+> -	dma_unmap_sg(attachment->dev, table->sgl, table->nents, direction);
+> +	dma_unmap_sg_attrs(attachment->dev, table->sgl, table->nents, direction=
+,
+> +			   attachment->dma_map_attrs);
+>  	a->dma_mapped =3D false;
+>  	mutex_unlock(&buffer->lock);
+>  }
+> --=20
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,=20
+> a Linux Foundation Collaborative Project
+>=20
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
