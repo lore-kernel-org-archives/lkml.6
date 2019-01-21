@@ -2,98 +2,151 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44E03C37121
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 20:23:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFB52C37134
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 20:24:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0234520844
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 20:23:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8164A20844
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 20:24:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="Ay0TVwke"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="finSJ1MZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728011AbfAUUXf (ORCPT
+        id S1728129AbfAUUYZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 15:23:35 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:53717 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726575AbfAUUXd (ORCPT
+        Mon, 21 Jan 2019 15:24:25 -0500
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:46087 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727338AbfAUUYY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 15:23:33 -0500
-Received: by mail-wm1-f67.google.com with SMTP id d15so12054480wmb.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 12:23:31 -0800 (PST)
+        Mon, 21 Jan 2019 15:24:24 -0500
+Received: by mail-ua1-f66.google.com with SMTP id v24so7306245uap.13
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 12:24:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=rnfi6FhOzAfyBxqYRd6zljSxPBFdBOX6GJFmQN4hMhU=;
-        b=Ay0TVwke7xtwJhAzANL3INYkZ7/yq2ix7aOJ5INJjDsGn8KfH18JOzHkafqaw1ZRSB
-         /l8T5Xe2ZEOiTeACvCQrYo8R/i5vrcN0Q+ihvPsbfu2T3Yilf4ccD57jrnIHheTKjS2D
-         kMxAhlYxo/WHDbSDt9e8YBMx3cDOgVM4vcerUKkE5wQXJUNW6ptgmFwR5+7NSzorV7Rh
-         3vr9Ix5dVaGouRe2RPvLBQgPnIYslpLK4p/tNO4fUG1XEpFu6DV4Lg/KPNx3ByTrGW1l
-         WBwEZPW1WvA+RbPPWzuYiGfO62o2kwLk4DVX62eHElaR16Jm1yZWMIGIAkv+lVpdnFrT
-         L6CQ==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qipEnN/z0dbSkPyeoMeYCi9POoQUdns81Zz8WAtYNEk=;
+        b=finSJ1MZyXpyTrR9FJFmvOzPS0SECNtBnajZptI1gbIsqJ7Ir+CZqy85IR/yArG01G
+         Q9R3YIdWwEH0iIrG+3Br8t8jg2V874hRFpHrVAXN5fF5ST6GaBW9Uv9i/TpGpxIMkMcq
+         qJl4j4bPbvlRg/D/kyfne8uGJVNxvt2Nk41w0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rnfi6FhOzAfyBxqYRd6zljSxPBFdBOX6GJFmQN4hMhU=;
-        b=U1c8hyshKvZpIbN4Hkqk9hfUNnMRYmeuh1j1MWVLdsieU3/nifkGaZLcDhMrsJ6T9i
-         Xy3s1+ut1H+zYpRAUdlpqLlw7qsBlPphnKS4D7UxaCrAlb+RSBM4pOpf0SF+rXcLmCXu
-         azosyFXU0MGo5TIOUSp3m35IkkrGEWBl+U1T9glT+8ewN/Gc3WqcrtI1B8D36SJEslNq
-         aoJgJwUDFEueCtY8ewjYN4KAZh0uzp4BDk49IBq+AvJDhvr2WHlujOlY6f56iFtvs2g7
-         VK/Wd4EDsvvsX4xqg4P9MKAAtxnK0CACFUszzWBCHcyz5QHffyGuPUhwGidodf1MQGz9
-         XSsA==
-X-Gm-Message-State: AJcUukdaIQSqI6UYm8bhNPjqacbpfdWbsVzpwrb25cKbxNFByhW6lDcu
-        pqN905nbztwj+ERizeO37xFnvA==
-X-Google-Smtp-Source: ALg8bN6otZVk7Ia5C2oYRefCZ07cY1dejrVEEVSjpSh6bnHuTz0DiwdqdJMQvzAKdUNs3CeSN/JmTQ==
-X-Received: by 2002:a1c:b10a:: with SMTP id a10mr783797wmf.148.1548102211189;
-        Mon, 21 Jan 2019 12:23:31 -0800 (PST)
-Received: from brauner.io (p200300EA6F1466E194736B39AFAF14D4.dip0.t-ipconnect.de. [2003:ea:6f14:66e1:9473:6b39:afaf:14d4])
-        by smtp.gmail.com with ESMTPSA id c1sm40828045wmb.14.2019.01.21.12.23.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 21 Jan 2019 12:23:30 -0800 (PST)
-Date:   Mon, 21 Jan 2019 21:23:29 +0100
-From:   Christian Brauner <christian@brauner.io>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: Re: linux-next: manual merge of the pidfd tree with the y2038 tree
-Message-ID: <20190121202328.rgrv54lybilsvitu@brauner.io>
-References: <20190121143951.68956db3@canb.auug.org.au>
- <CAK8P3a0Yth+f8AANE6g8c_zE0Zt1CvCdzMDFK=pr8eNqmrBV0Q@mail.gmail.com>
- <20190121191306.ifga5aw5atu2vvb7@brauner.io>
- <CAK8P3a2CkXJ=giXQgxEcQAeH1Wt8jKc_P+YTOLJpUPVKYU8m9g@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qipEnN/z0dbSkPyeoMeYCi9POoQUdns81Zz8WAtYNEk=;
+        b=Y9WATddUq7JU7+yF2nNMDzUx+BbF4fRw5ZqibswAncevQrPrN018hsitOIcCUjFL/A
+         g/VGmz/tcfMBE62DRC8dqc0mhVnuSRslsk25u6GmpxQGO/uTAipJ2TL55vZYOEUwaYwN
+         ODtVRCuF1IfTnCMlposZuDU4AwgMSLvBuWm+CFRg9u4JrkCgLrBpWbu8zfo0JQ+VE1Ku
+         2sBmR5dT94OhhW0PHwmyEoBIwQOlxqiqhn3VQWhmcO7iey8t+TbMEPo6iVVr2k7W5H/x
+         PFBt3/ldrqASlmvzAuiPtstrGIU6cOa6QenH+o8935TQUsXLUy4uvbR+Dfniy20JBwdc
+         TjsA==
+X-Gm-Message-State: AJcUuke12fXku/pI2Lm9fABiO8Ww6fOjKSpfvMsPXJKGaNKRlxMVjWFM
+        fteSz42LStpVWUc2WynEYSbMo/6xJpQ=
+X-Google-Smtp-Source: ALg8bN4eGxQrHSFiARsDeK2/bgsDL5Dtk9sMS9ubX41fHcV4p5IdCo1Nb3a95BwtWHHemh1ox4b87Q==
+X-Received: by 2002:ab0:694f:: with SMTP id c15mr11023314uas.43.1548102262395;
+        Mon, 21 Jan 2019 12:24:22 -0800 (PST)
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
+        by smtp.gmail.com with ESMTPSA id w65sm27342482vsc.16.2019.01.21.12.24.21
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 21 Jan 2019 12:24:21 -0800 (PST)
+Received: by mail-vs1-f43.google.com with SMTP id x1so13347915vsc.10
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 12:24:21 -0800 (PST)
+X-Received: by 2002:a67:e199:: with SMTP id e25mr12926582vsl.188.1548102260847;
+ Mon, 21 Jan 2019 12:24:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a2CkXJ=giXQgxEcQAeH1Wt8jKc_P+YTOLJpUPVKYU8m9g@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+References: <001a113f711ae2110c055f45acb8@google.com> <20171212220647.GJ185376@gmail.com>
+ <CAGXu5jLcuE-h9V04fTtoSfz9mZdVeH1zfJOpRncK2NZkv2gsnQ@mail.gmail.com>
+ <CACT4Y+aeSz05wDyStT75OFFi_aTyxbfzz7Z6jJ6FJsLNN3Pdtg@mail.gmail.com> <d1e2488f-a969-30d4-5023-6fa85a4e3833@I-love.SAKURA.ne.jp>
+In-Reply-To: <d1e2488f-a969-30d4-5023-6fa85a4e3833@I-love.SAKURA.ne.jp>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 22 Jan 2019 09:24:07 +1300
+X-Gmail-Original-Message-ID: <CAGXu5jL0JhcDt4u32c-60hYY_k-8u=42NHyz9bt3wNuTkmjOfQ@mail.gmail.com>
+Message-ID: <CAGXu5jL0JhcDt4u32c-60hYY_k-8u=42NHyz9bt3wNuTkmjOfQ@mail.gmail.com>
+Subject: Re: [PATCH] fs: Allow opening only regular files during execve().
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Eric Biggers <ebiggers3@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        syzbot 
+        <bot+e93a80c1bb7c5c56e522461c149f8bf55eab1b2b@syzkaller.appspotmail.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 09:15:27PM +0100, Arnd Bergmann wrote:
-> On Mon, Jan 21, 2019 at 8:13 PM Christian Brauner <christian@brauner.io> wrote:
-> > On Mon, Jan 21, 2019 at 06:16:22PM +0100, Arnd Bergmann wrote:
-> > > On Mon, Jan 21, 2019 at 4:40 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > I plan on sending the pidfd branch with the new pidfd_send_signal()
-> > syscall for the 5.1 window. Should we somehow coordinate so that our
-> > branches don't conflict? Any suggestions?
-> 
-> A conflict can't be avoided, but if you pick system call number 427
-> for pidfd_send_signal, and Jens picks numbers 424 through 426 for
+On Mon, Jan 21, 2019 at 11:15 PM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+>
+> On Tue, Dec 12, 2017 at 2:06 PM, Eric Biggers <ebiggers3@gmail.com> wrote:
+> > I'm not sure what the fix will be.  Maybe the proc handlers should take a
+> > different lock instead of cred_guard_mutex.  Or perhaps execve should check that
+> > the file is a regular file before it attempts to open it.
+>
+> We can easily distinguish open() from execve() and open() from others. ;-)
+>
+> From a8c559566f743eeec31c3cf5bab7a90b1ff7f78b Mon Sep 17 00:00:00 2001
+> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Date: Mon, 21 Jan 2019 13:55:11 +0900
+> Subject: [PATCH] fs: Allow opening only regular files during execve().
+>
+> syzbot is hitting lockdep warning [1] due to trying to open a fifo during
+> an execve() operation. But we don't need to open non regular files during
+> an execve() operation, for all files which we will need are the executable
+> file itself, the interpreter program, and libraries like ld-linux.so.2
+> required by the executable file or the interpreter program.
+>
+> Since the manpage for execve(2) says that execve() returns EACCES when
+> the file or a script interpreter is not a regular file, and we set
+> current->in_execve flag during an execve() operation, let's bail out
+> when current thread tried to open a non regular file during an execve()
+> operation.
+>
+> [1] https://syzkaller.appspot.com/bug?id=b5095bfec44ec84213bac54742a82483aad578ce
+>
+> Reported-by: syzbot <syzbot+e93a80c1bb7c5c56e522461c149f8bf55eab1b2b@syzkaller.appspotmail.com>
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-That sounds good to me. Since it's only one syscall for the pidfd branch
-is there anything that speaks against me using 424? Given that the other
-patchset has 4 new syscalls. :)
-Jens, any objections?
+I like it!
 
-Christian
+Acked-by: Kees Cook <keescook@chromium.org>
+
+-Kees
+
+> ---
+>  fs/open.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/fs/open.c b/fs/open.c
+> index 0285ce7dbd51..b2e7b04ade46 100644
+> --- a/fs/open.c
+> +++ b/fs/open.c
+> @@ -733,6 +733,12 @@ static int do_dentry_open(struct file *f,
+>                 return 0;
+>         }
+>
+> +       /* The file or a script interpreter has to be a regular file. */
+> +       if (unlikely(current->in_execve && !S_ISREG(inode->i_mode))) {
+> +               error = -EACCES;
+> +               goto cleanup_file;
+> +       }
+> +
+>         if (f->f_mode & FMODE_WRITE && !special_file(inode->i_mode)) {
+>                 error = get_write_access(inode);
+>                 if (unlikely(error))
+> --
+> 2.17.1
+
+
+
+-- 
+Kees Cook
