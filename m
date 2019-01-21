@@ -1,183 +1,165 @@
-Return-Path: <SRS0=5EgK=P4=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49712C26640
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 19:32:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BB02C31D63
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:11:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16B94214C6
-	for <linux-kernel@archiver.kernel.org>; Sun, 20 Jan 2019 19:32:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548012769;
-	bh=nQwCkG5S3HR3N+XfEj/sCac0GzqLSCgETUGQfjbxiBk=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=O2Zwxnke53yOLciVbSd/2LilMIftsbLPqf/GZRPuiuIDCUEEMSSVIa+8mW50IDAGd
-	 9aYO9MSP1P9SuwH+/1AoGXOFyM+Xmz3nfQKnMBSlzLW8BT9Hl/sx3bjCiUJv1OOziO
-	 IrVRacJ37+NNwALVQ10d/nhlm1K/asCyr8ZS+B0I=
+	by mail.kernel.org (Postfix) with ESMTP id 58531217F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:11:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="BZDt5m8Z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727766AbfATTcr (ORCPT
+        id S1726192AbfAUHLB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 20 Jan 2019 14:32:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59200 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727208AbfATTcq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 20 Jan 2019 14:32:46 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EDE9620861;
-        Sun, 20 Jan 2019 19:32:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548012765;
-        bh=nQwCkG5S3HR3N+XfEj/sCac0GzqLSCgETUGQfjbxiBk=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=lDTLcYOVporlLih6/lqDljTarhaIPaqwjubX1W7/nOznv59nyfBkK/kmSiquTNm9n
-         gqnIepsUoK537L1wzWZk2/dRjy1OZVaDWb1eKbqZE2QrbrOn+TfSNRjR0KSVTjnhgZ
-         S0HgOieh6V7wI2fHCgc5LJzEcQ22gmF5TtgYy//Q=
-Subject: Re: [PATCH v9 4/4] sound/usb: Use Media Controller API to share media
- resources
-To:     Hans Verkuil <hverkuil@xs4all.nl>, mchehab@kernel.org,
-        perex@perex.cz, tiwai@suse.com
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org, shuah <shuah@kernel.org>
-References: <cover.1545154777.git.shuah@kernel.org>
- <2fb40852e4035b2a58010ce7416448918f12804f.1545154778.git.shuah@kernel.org>
- <b2fddc47-94c6-b7b3-8304-55905a3e278d@xs4all.nl>
- <ee9b4161-eeb8-340f-7b39-93d0bc5fe1bd@kernel.org>
- <8593299c-b80f-d1d3-9a03-d56fb1573f60@kernel.org>
- <7719a35c-c65e-977e-88b8-693d55e88723@xs4all.nl>
-From:   shuah <shuah@kernel.org>
-Message-ID: <b28a5db5-c172-f8bf-5877-7041f39a9a38@kernel.org>
-Date:   Sun, 20 Jan 2019 12:32:44 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <7719a35c-c65e-977e-88b8-693d55e88723@xs4all.nl>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 21 Jan 2019 02:11:01 -0500
+Received: from condef-06.nifty.com ([202.248.20.71]:33850 "EHLO
+        condef-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725871AbfAUHLA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 02:11:00 -0500
+Received: from conuserg-07.nifty.com ([10.126.8.70])by condef-06.nifty.com with ESMTP id x0L6XASA002631
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 15:33:10 +0900
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-07.nifty.com with ESMTP id x0L6WCPC003098;
+        Mon, 21 Jan 2019 15:32:13 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com x0L6WCPC003098
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1548052333;
+        bh=qrh/ZcVeEBRczMZx/DNnPsCU/3ppDsvTOZXlUv3uS90=;
+        h=From:To:Cc:Subject:Date:From;
+        b=BZDt5m8ZX+oGTcNyNLj6dly8ZyqgwpbvGocWGu5X8myzZosRQGKmXE5hp+6CFcyKG
+         sjovxM/VtDF+Pqe3U4dDOQ7JDYm/cKuuoLElr4hb36/B3w2Rn1avvFPB8jesJzrEbU
+         enEuwao6qwfXcErDo18UjbMFYRaCQVQQ8yHVsb7S4yIkJ5RvcRFRKg5fj6oKNoVnVg
+         2CXMYsZuKTCMMJlBJRKFqZTlXMZj/2bW8AmABLpwuui0EwyEa5DsEbiYZLVPu7iVAf
+         xTWhyFyiTdx6DANV8NzwxZHAnnK+4VVG5qwIk+TjPcfA3SNu275K658A7MzyNA7xqT
+         j/BgSva9Sjv+w==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-mtd@lists.infradead.org,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Boris Brezillon <bbrezillon@kernel.org>
+Subject: [PATCH v2] mtd: rawnand: remove ->legacy.erase and single_erase()
+Date:   Mon, 21 Jan 2019 15:32:07 +0900
+Message-Id: <1548052327-26483-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/19/19 3:30 AM, Hans Verkuil wrote:
-> On 01/19/2019 02:03 AM, shuah wrote:
->> On 1/18/19 2:54 PM, shuah wrote:
->>> On 1/18/19 1:36 AM, Hans Verkuil wrote:
->>>> On 12/18/18 6:59 PM, shuah@kernel.org wrote:
->>>>> From: Shuah Khan <shuah@kernel.org>
->>>>>
->>>>> Media Device Allocator API to allows multiple drivers share a media
->>>>> device.
->>>>> This API solves a very common use-case for media devices where one
->>>>> physical
->>>>> device (an USB stick) provides both audio and video. When such media
->>>>> device
->>>>> exposes a standard USB Audio class, a proprietary Video class, two or
->>>>> more
->>>>> independent drivers will share a single physical USB bridge. In such
->>>>> cases,
->>>>> it is necessary to coordinate access to the shared resource.
->>>>>
->>>>> Using this API, drivers can allocate a media device with the shared
->>>>> struct
->>>>> device as the key. Once the media device is allocated by a driver, other
->>>>> drivers can get a reference to it. The media device is released when all
->>>>> the references are released.
->>>>>
->>>>> Change the ALSA driver to use the Media Controller API to share media
->>>>> resources with DVB, and V4L2 drivers on a AU0828 media device.
->>>>>
->>>>> The Media Controller specific initialization is done after sound card is
->>>>> registered. ALSA creates Media interface and entity function graph nodes
->>>>> for Control, Mixer, PCM Playback, and PCM Capture devices.
->>>>>
->>>>> snd_usb_hw_params() will call Media Controller enable source handler
->>>>> interface to request the media resource. If resource request is granted,
->>>>> it will release it from snd_usb_hw_free(). If resource is busy,
->>>>> -EBUSY is
->>>>> returned.
->>>>>
->>>>> Media specific cleanup is done in usb_audio_disconnect().
->>>>>
->>>>> Signed-off-by: Shuah Khan <shuah@kernel.org>
->>>>> ---
->>>>>    sound/usb/Kconfig        |   4 +
->>>>>    sound/usb/Makefile       |   2 +
->>>>>    sound/usb/card.c         |  14 ++
->>>>>    sound/usb/card.h         |   3 +
->>>>>    sound/usb/media.c        | 321 +++++++++++++++++++++++++++++++++++++++
->>>>>    sound/usb/media.h        |  74 +++++++++
->>>>>    sound/usb/mixer.h        |   3 +
->>>>>    sound/usb/pcm.c          |  29 +++-
->>>>>    sound/usb/quirks-table.h |   1 +
->>>>>    sound/usb/stream.c       |   2 +
->>>>>    sound/usb/usbaudio.h     |   6 +
->>>>>    11 files changed, 455 insertions(+), 4 deletions(-)
->>>>>    create mode 100644 sound/usb/media.c
->>>>>    create mode 100644 sound/usb/media.h
->>>>>
->>>>
->>>> <snip>
->>>>
->>>>> +int snd_media_device_create(struct snd_usb_audio *chip,
->>>>> +            struct usb_interface *iface)
->>>>> +{
->>>>> +    struct media_device *mdev;
->>>>> +    struct usb_device *usbdev = interface_to_usbdev(iface);
->>>>> +    int ret;
->>>>> +
->>>>> +    /* usb-audio driver is probed for each usb interface, and
->>>>> +     * there are multiple interfaces per device. Avoid calling
->>>>> +     * media_device_usb_allocate() each time usb_audio_probe()
->>>>> +     * is called. Do it only once.
->>>>> +     */
->>>>> +    if (chip->media_dev)
->>>>> +        goto snd_mixer_init;
->>>>> +
->>>>> +    mdev = media_device_usb_allocate(usbdev, KBUILD_MODNAME);
->>>>> +    if (!mdev)
->>>>> +        return -ENOMEM;
->>>>> +
->>>>> +    if (!media_devnode_is_registered(mdev->devnode)) {
->>>>
->>>> It looks like you missed my comment for v8:
->>>>
->>>> "You should first configure the media device before registering it."
->>>>
->>>> In other words, first create the media entities, and only then do you
->>>> register the media device. Otherwise it will come up without any alsa
->>>> entities, which are then added. So an application that immediately
->>>> opens the media device upon creation will see a topology that is still
->>>> in flux.
->>>
->>> Yes. You are right. I saw your comment and thought I got it addressed.
->>> I will fix it. I have the logic correct in au0828, but not here.
->>>
->>
->> One thing to mention here is some ALSA entities get created dynamically
->> during PCM open when stream is initialized. This happens after media
->> device is registered. These get deleted when pcm close happens. There is
->> no way to avoid creating entities after media device register.
-> 
-> That's OK. We're missing some infrastructure (media events) to inform the
-> application about topology changes.
-> 
-> But when registering the media device for the first time it is good practice
-> to do that after creating all the entities that you can.
-> 
+Now that the last user of this hook, denali.c, stopped using it,
+we can remove the erase hook from nand_legacy.
 
-Great. We have the same understanding. I think at least one mixer
-controller entries can be created prior to registering the media
-device. I am working on v10 to do that. Sorry I misread init sequence
-in this patch the flow the first time around for v9.
+I squashed single_erase() because only the difference between
+single_erase() and nand_erase_op() is the number of bit shifts.
 
-thanks,
--- Shuah
+The status/ret conversion in nand_erase_nand() is unneeded since
+commit eb94555e9e97 ("mtd: nand: use usual return values for the
+->erase() hook"). Cleaned it up now.
 
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+This depends on the denali patch:
+http://patchwork.ozlabs.org/patch/1028264/
+
+
+Changes in v2:
+  - I noticed the masking by chip->pagemask is still needed
+
+ drivers/mtd/nand/raw/nand_base.c | 31 ++++---------------------------
+ include/linux/mtd/rawnand.h      |  2 --
+ 2 files changed, 4 insertions(+), 29 deletions(-)
+
+diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
+index cca4b24..7ea3f10 100644
+--- a/drivers/mtd/nand/raw/nand_base.c
++++ b/drivers/mtd/nand/raw/nand_base.c
+@@ -4155,23 +4155,6 @@ static int nand_write_oob(struct mtd_info *mtd, loff_t to,
+ }
+ 
+ /**
+- * single_erase - [GENERIC] NAND standard block erase command function
+- * @chip: NAND chip object
+- * @page: the page address of the block which will be erased
+- *
+- * Standard erase command for NAND chips. Returns NAND status.
+- */
+-static int single_erase(struct nand_chip *chip, int page)
+-{
+-	unsigned int eraseblock;
+-
+-	/* Send commands to erase a block */
+-	eraseblock = page >> (chip->phys_erase_shift - chip->page_shift);
+-
+-	return nand_erase_op(chip, eraseblock);
+-}
+-
+-/**
+  * nand_erase - [MTD Interface] erase block(s)
+  * @mtd: MTD device structure
+  * @instr: erase instruction
+@@ -4194,7 +4177,7 @@ static int nand_erase(struct mtd_info *mtd, struct erase_info *instr)
+ int nand_erase_nand(struct nand_chip *chip, struct erase_info *instr,
+ 		    int allowbbt)
+ {
+-	int page, status, pages_per_block, ret, chipnr;
++	int page, pages_per_block, ret, chipnr;
+ 	loff_t len;
+ 
+ 	pr_debug("%s: start = 0x%012llx, len = %llu\n",
+@@ -4246,17 +4229,11 @@ int nand_erase_nand(struct nand_chip *chip, struct erase_info *instr,
+ 		    (page + pages_per_block))
+ 			chip->pagebuf = -1;
+ 
+-		if (chip->legacy.erase)
+-			status = chip->legacy.erase(chip,
+-						    page & chip->pagemask);
+-		else
+-			status = single_erase(chip, page & chip->pagemask);
+-
+-		/* See if block erase succeeded */
+-		if (status) {
++		ret = nand_erase_op(chip, (page & chip->pagemask) >>
++				    (chip->phys_erase_shift - chip->page_shift));
++		if (ret) {
+ 			pr_debug("%s: failed erase, page 0x%08x\n",
+ 					__func__, page);
+-			ret = -EIO;
+ 			instr->fail_addr =
+ 				((loff_t)page << chip->page_shift);
+ 			goto erase_exit;
+diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
+index 33e240a..5e37534 100644
+--- a/include/linux/mtd/rawnand.h
++++ b/include/linux/mtd/rawnand.h
+@@ -936,7 +936,6 @@ static inline void nand_controller_init(struct nand_controller *nfc)
+  * @waitfunc: hardware specific function for wait on ready.
+  * @block_bad: check if a block is bad, using OOB markers
+  * @block_markbad: mark a block bad
+- * @erase: erase function
+  * @set_features: set the NAND chip features
+  * @get_features: get the NAND chip features
+  * @chip_delay: chip dependent delay for transferring data from array to read
+@@ -962,7 +961,6 @@ struct nand_legacy {
+ 	int (*waitfunc)(struct nand_chip *chip);
+ 	int (*block_bad)(struct nand_chip *chip, loff_t ofs);
+ 	int (*block_markbad)(struct nand_chip *chip, loff_t ofs);
+-	int (*erase)(struct nand_chip *chip, int page);
+ 	int (*set_features)(struct nand_chip *chip, int feature_addr,
+ 			    u8 *subfeature_para);
+ 	int (*get_features)(struct nand_chip *chip, int feature_addr,
+-- 
+2.7.4
 
