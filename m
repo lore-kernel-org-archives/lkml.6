@@ -2,145 +2,139 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 013D8C31681
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 17:39:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6647C31681
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 17:41:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB43C21019
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 17:39:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E6412089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 17:41:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="TvTjAyCy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727899AbfAURjm convert rfc822-to-8bit (ORCPT
+        id S1727971AbfAURlM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 12:39:42 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:42425 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726020AbfAURjl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 12:39:41 -0500
-Received: by mail-ed1-f67.google.com with SMTP id y20so17191485edw.9;
-        Mon, 21 Jan 2019 09:39:40 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=wtKWupWOVAPiWJSuxk5cYsPaqbkthRI/t7KdeUs+oa8=;
-        b=XDhtFIa2qxgrIut7wWplXZVF4Mt6EpxKkwD2JNpvM+c/m7EhZVZjFYeOzm5LgO01hu
-         5pzB3NuOYNJVwS5GGA0p4D4b7v+/dP7VluhnBWdlV3CrJ1+w4Xoe+xxo4afjGrWJXjhF
-         cPlL2IcG85AghRWXRic4WSID51QOUueVobYxfkGyCp/vXJ6MxvXH6+0jmAXnL39iPt1g
-         Dbrqssp6Eg1qmab8AqJIdHLDDwZgVwtlB/zy/z+Bh/0LS7BoOFLEKXwtEEvMMiNk/9Z9
-         wu5qq+XV/4iBJufz57E60svydqjm2QYaIBqzXIS49pr9K/Ni0dVzux5O09/vIVWiGoQ2
-         lgjQ==
-X-Gm-Message-State: AJcUukcxyLyiE1UqvtAdhpPsUvIqSkpfWWnqx9KqimYpVLj0j7sG6cMr
-        f9v4Fuyfw0blX+P7lvLl1iJU9kIaPuI=
-X-Google-Smtp-Source: ALg8bN5OuVTn/PWWAWOv3eCzLmCuiHr/639rAACq/EuAZrYA8tmi/1wdCfxCOQaX07oVTadOeLCoVg==
-X-Received: by 2002:a50:c017:: with SMTP id r23mr28348991edb.278.1548092379076;
-        Mon, 21 Jan 2019 09:39:39 -0800 (PST)
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com. [209.85.128.51])
-        by smtp.gmail.com with ESMTPSA id z2sm9380740edd.4.2019.01.21.09.39.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 21 Jan 2019 09:39:38 -0800 (PST)
-Received: by mail-wm1-f51.google.com with SMTP id y139so11559529wmc.5;
-        Mon, 21 Jan 2019 09:39:38 -0800 (PST)
-X-Received: by 2002:a1c:2382:: with SMTP id j124mr367501wmj.14.1548092378363;
- Mon, 21 Jan 2019 09:39:38 -0800 (PST)
+        Mon, 21 Jan 2019 12:41:12 -0500
+Received: from mail-eopbgr810105.outbound.protection.outlook.com ([40.107.81.105]:63994
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726020AbfAURlM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 12:41:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=A50WbKhjDtu2p+6NUqQLuyv7ZFG0Rd+Fwj77A0tmMwc=;
+ b=TvTjAyCybiqVMN57UEUJuz+S7RxXKvaxs7q8DWPzN2p5/9Tc3LoJAO4sTQlHDGinnvwsl8W5SOWBs/lRRhwq6WgWCTHzo+XKJJeBIAwua0ho61DmMoY7V5kJgBLJJKULaMFynhaz5bOFFpmQHjep07HV3k0ULf1akeQX6VMfZes=
+Received: from MWHPR2201MB1277.namprd22.prod.outlook.com (10.174.162.17) by
+ MWHPR2201MB1342.namprd22.prod.outlook.com (10.174.162.145) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1537.27; Mon, 21 Jan 2019 17:41:08 +0000
+Received: from MWHPR2201MB1277.namprd22.prod.outlook.com
+ ([fe80::595e:ffcc:435b:9110]) by MWHPR2201MB1277.namprd22.prod.outlook.com
+ ([fe80::595e:ffcc:435b:9110%4]) with mapi id 15.20.1537.031; Mon, 21 Jan 2019
+ 17:41:08 +0000
+From:   Paul Burton <paul.burton@mips.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+CC:     "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] MIPS: remove meaningless generic-(CONFIG_GENERIC_CSUM) +=
+ checksum.h
+Thread-Topic: [PATCH] MIPS: remove meaningless generic-(CONFIG_GENERIC_CSUM)
+ += checksum.h
+Thread-Index: AQHUsTPzBeyheRw78kmwimq8c2pb3KW5/pAA
+Date:   Mon, 21 Jan 2019 17:41:08 +0000
+Message-ID: <20190121174106.6tgokdtlo5f72hdx@pburton-laptop>
+References: <1548038929-11814-1-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1548038929-11814-1-git-send-email-yamada.masahiro@socionext.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: BYAPR07CA0002.namprd07.prod.outlook.com
+ (2603:10b6:a02:bc::15) To MWHPR2201MB1277.namprd22.prod.outlook.com
+ (2603:10b6:301:24::17)
+user-agent: NeoMutt/20180716
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=pburton@wavecomp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [67.207.99.198]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR2201MB1342;6:pddHqMQYfkotPQa/XgwIENhzho08FaMKGw7l8WlcEYQR4Fh4Y5RF73fGvTii6lRRW5lZAXpnZSkbAnalz9WeNmBUsJiKDgvuhrU65TRyqBtSx742pAvImlKFN5c/nohkMMQAEPFiM9Szhrzslo23KCCGt8pvjFrfyEEytAEvYa0uuqqelCFzZwaLUFq+shfw/JDP7la9ciQwlCgZ+j4LB6E0AE95yvyW9NZXCAp1I6P4iqitzGqqNKc+L3nXTj0VIRru1+IafkQgzaq/gHf1eXB7lf2rlc2Ll3HCJt6jhn0zibW1xXzWscr5Yu7VbXPs6aF/Z8Ayph0tc0vARowXf8w2Y9EB/DLefY138S5OdarW4YLxXVtfbk56svjPcm5Or+4fVaDlnzxeIq0cWAl+iHk2IoTTDe2bp/OO0B8vLSggQqljLXJqqhWiGvxuBU8AArKP4e1CfRQdA+22rLkpWg==;5:izu7K7LSsvMftFHBgF6W7x0XhItnpoq2Dewg91avVXH7zaoGWr1yrwzU+nMYm57qDLxlvsb+9KiIN8uv6ZSvPH1v9JOPcvK5svRLn8cPTYaJLZMses+TK39S8eU3rOHydp2YryANJM5jkK44aJ5KiqmA03w/9a0hmJxnBC1zdWQhHBSZfzHRmYkdhk7iI7o2JhdJIv6XORT8v4iH8J/cFA==;7:sPsNqZLw+lGjMKQrR8mhrId9TWrkMvKhB9UlZJSnXc6iAekZp92xbmnjFJqe47JRRn+oQubcvW81L2/34vFaANh1WjIU8dMiCphGLOBpJ5KOfo62WFmuDI/MWYuySQTeYZ3XRRNsacS9R7LQSjUDeQ==
+x-ms-office365-filtering-correlation-id: e34ef511-84db-4871-b80f-08d67fc79ff7
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR2201MB1342;
+x-ms-traffictypediagnostic: MWHPR2201MB1342:
+x-microsoft-antispam-prvs: <MWHPR2201MB1342AD5A1C0682FD2288CE67C19F0@MWHPR2201MB1342.namprd22.prod.outlook.com>
+x-forefront-prvs: 0924C6A0D5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(396003)(376002)(346002)(366004)(136003)(39840400004)(199004)(189003)(66066001)(106356001)(71200400001)(6916009)(71190400001)(7736002)(305945005)(81156014)(81166006)(97736004)(229853002)(8676002)(6486002)(476003)(68736007)(6436002)(42882007)(8936002)(105586002)(14454004)(256004)(99286004)(6512007)(9686003)(2906002)(11346002)(486006)(386003)(6506007)(446003)(33896004)(33716001)(4326008)(44832011)(54906003)(53936002)(76176011)(102836004)(186003)(316002)(478600001)(6116002)(3846002)(26005)(1076003)(58126008)(6246003)(52116002)(25786009)(41533002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1342;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: wavecomp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: gklPA3ML3GTGnJ5tEFbfObIupij/yI3HYeaAXrDp+uQxSNkIgjoYdyyamaKG5EA6QPNK+Cp6a4Tht7AsIq2p4NhgYItxoz7pe2KdbfhML5kJWcD7hEpuC4nOil/oHHYlhk5m8YL1wdJq93rNz6cIpqmeSmtRUrN4rRYklEtsnLNaoaiRzNq+zeiJvrDgCxpTgaOaa+7uDcBVv0PLiusMfGgUCq4GXOmuuSFiIB8AFAPaOOxnUsqLtuIlcBKYOMSQ7m35XSO/LIm2Myt25kMIs5XSCU78/04c9Cg7HQDENUR2MIPGQ2JOv24aL4PzT8PeZBqjauHMtuHJRMPEWGidDuCrKUbNTu02Ui56Xq0F73RNnnDO1WUEArGXhBq2WU9tjzHsZnALOm+DaCPhGbbiC9RmDd0o3nNZS3/JUH10ce4=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <8A4B56CD14441446ACD2BC76E5F8EE43@namprd22.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20190111173015.12119-1-jernej.skrabec@siol.net>
- <20190121095014.b6iq5dubfi7x2pi4@flea> <CAGb2v66d0wM8Yt2uS4MMhU6PP02h8CKwKjinasO6jtZ4ue1CAQ@mail.gmail.com>
- <3128239.8RYQUhiYef@jernej-laptop>
-In-Reply-To: <3128239.8RYQUhiYef@jernej-laptop>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Tue, 22 Jan 2019 01:39:26 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65t6kO9HfSTuXZsBu6Pyc+mueLq-5tsYsw9vxwg5o=v4A@mail.gmail.com>
-Message-ID: <CAGb2v65t6kO9HfSTuXZsBu6Pyc+mueLq-5tsYsw9vxwg5o=v4A@mail.gmail.com>
-Subject: Re: [PATCH 1/3] media: dt: bindings: sunxi-ir: Add A64 compatible
-To:     =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+X-OriginatorOrg: mips.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e34ef511-84db-4871-b80f-08d67fc79ff7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jan 2019 17:41:07.7984
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1342
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 1:33 AM Jernej Škrabec <jernej.skrabec@siol.net> wrote:
->
-> Dne ponedeljek, 21. januar 2019 ob 10:57:57 CET je Chen-Yu Tsai napisal(a):
-> > On Mon, Jan 21, 2019 at 5:50 PM Maxime Ripard <maxime.ripard@bootlin.com>
-> wrote:
-> > > Hi,
-> > >
-> > > I'm a bit late to the party, sorry for that.
-> > >
-> > > On Sat, Jan 12, 2019 at 09:56:11AM +0800, Chen-Yu Tsai wrote:
-> > > > On Sat, Jan 12, 2019 at 1:30 AM Jernej Skrabec <jernej.skrabec@siol.net>
-> wrote:
-> > > > > A64 IR is compatible with A13, so add A64 compatible with A13 as a
-> > > > > fallback.
-> > > >
-> > > > We ask people to add the SoC-specific compatible as a contigency,
-> > > > in case things turn out to be not so "compatible".
-> > > >
-> > > > To be consistent with all the other SoCs and other peripherals,
-> > > > unless you already spotted a "compatible" difference in the
-> > > > hardware, i.e. the hardware isn't completely the same, this
-> > > > patch isn't needed. On the other hand, if you did, please mention
-> > > > the differences in the commit log.
-> > >
-> > > Even if we don't spot things, since we have the stable DT now, if we
-> > > ever had that compatible in the DT from day 1, it's much easier to
-> > > deal with.
-> > >
-> > > I'd really like to have that pattern for all the IPs even if we didn't
-> > > spot any issue, since we can't really say that the datasheet are
-> > > complete, and one can always make a mistake and overlook something.
-> > >
-> > > I'm fine with this version, and can apply it as is if we all agree.
-> >
-> > I'm OK with having the fallback compatible. I'm just pointing out
-> > that there are and will be a whole bunch of them, and we don't need
-> > to document all of them unless we are actually doing something to
-> > support them.
->
-> If you don't document them, checkpatch will complain. But if you can live with
-> this warning, that's fine by me.
->
-> >
-> > On the other hand, the compatible string situation for IR needs a
-> > bit of cleaning up at the moment. Right now we have sun4i-a10 and
-> > sun5i-a13. As Jernej pointed out, the A13's register definition is
-> > different from A64 (or any other SoCs later than sun6i). So we need
-> > someone with an A10s/A13 device that has IR to test it and see if
-> > the driver or the manual is wrong, and we'd likely add a compatible
-> > for the A20.
-> >
-> > Also, the earlier SoCs (A10/sun5i/A20) have IR TX capability. This
-> > was lost in A31, and also all of sun8i / sun50i. So we're going to
-> > need to add an A31 compatible that all later platforms would need
-> > to switch to.
-> >
->
-> H6 has IR TX peripheral too, but it's different IP block...
->
-> Do you want me to switch all A31 and newer to different compatible in this
-> series? I can do this, but I haven't any A13 device to test if this is really
-> needed. Or you can argue that this is needed anyway due to missing TX
-> capability.
+Hi Masahiro,
 
-The lack of TX capability does necessitate switching to an A31 compatible.
-So yes, please switch. Lets leave the A10s/A13 alone for now, unless
-someone complains. I think this was done from inception, so if it was
-broken, someone should've complained a long time ago. I just want to
-be sure where the error is, and put in a comment explaining it. However
-I don't have the hardware either.
+On Mon, Jan 21, 2019 at 11:48:49AM +0900, Masahiro Yamada wrote:
+> This line is weird in multiple ways.
+>=20
+> (CONFIG_GENERIC_CSUM) might be a typo of $(CONFIG_GENERIC_CSUM).
+>=20
+> Even if you add '$' to it, $(CONFIG_GENERIC_CSUM) is never evaluated
+> to 'y' because scripts/Makefile.asm-generic does not include
+> include/config/auto.conf. So, the asm-generic wrapper of checksum.h
+> is never generated.
+>=20
+> Even if you manage to generate it, it is never included by anyone
+> because MIPS has the checkin header with the same file name:
+>=20
+>   arch/mips/include/asm/checksum.h
+>=20
+> As you see in the top Makefile, the checkin headers are included before
+> generated ones.
+>=20
+>   LINUXINCLUDE    :=3D \
+>                   -I$(srctree)/arch/$(SRCARCH)/include \
+>                   -I$(objtree)/arch/$(SRCARCH)/include/generated \
+>                   ...
+>=20
+> Commit 4e0748f5beb9 ("MIPS: Use generic checksum functions for MIPS R6")
+> already added the asm-generic fallback code in the checkin header:
+>=20
+>   #ifdef CONFIG_GENERIC_CSUM
+>   #include <asm/generic/checksum.h>
+>   #else
+>     ...
+>   #endif
+>=20
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-ChenYu
+Good catch. Would you prefer to take this through your kbuild tree or
+that I take it through the MIPS tree?
+
+If the former:
+
+    Acked-by: Paul Burton <paul.burton@mips.com>
+
+Thanks,
+    Paul
