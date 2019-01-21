@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 965DCC2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:58:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 987F8C2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:58:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 663B620879
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:58:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 684BB2087F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:58:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079113;
-	bh=l8fnXtEYXez60iOfa/EYcN0Hhpgl4hB77+xHHkD8qfQ=;
+	s=default; t=1548079117;
+	bh=5l1D5xLFLBvso1o2iWeKQZozz0ozdxdXxxTpQo7nlz8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=g+bRJ9KjZjUoGgrG5dRpuPMwEqd6jDktxHUEP4WkV6JppjAqEGkJNCfxOswZo59D5
-	 bORvXl3pH5HpHiF0MlsegkSqmml4ZyTFYX7oW4FjBFN6HwGfujrswve8I/S5apqgqO
-	 mdfIP4+IS2KSVXSVvu0dfl16PZnxEc19WhRyP8Z0=
+	b=XhVSZiNdtTfm+dRMYktOkXA/XCyi0ULL79vfVt29U3hmyPUrKkJqg4VeFqO0rsb8i
+	 6bMG8WL58xt4+WDT7CEDufpEnQyeUPMatXxwp6CHkPY01uBfzGFAs9XrD8uP9qBlNG
+	 R7aH1eiXeG0Ox0hkWmR4fJFaapHSmN8VZzbDc+Ww=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731957AbfAUN6b (ORCPT
+        id S1732025AbfAUN6f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:58:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43955 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:58:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44060 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731842AbfAUN62 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:58:28 -0500
+        id S1731822AbfAUN6c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:58:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 90B762084C;
-        Mon, 21 Jan 2019 13:58:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D69F82084C;
+        Mon, 21 Jan 2019 13:58:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548079107;
-        bh=l8fnXtEYXez60iOfa/EYcN0Hhpgl4hB77+xHHkD8qfQ=;
+        s=default; t=1548079112;
+        bh=5l1D5xLFLBvso1o2iWeKQZozz0ozdxdXxxTpQo7nlz8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RWuehetkiXsgze+FpSQ33yYHMnkaMYptJpshKUHuWOUVu4rz+Jg/Qj+l0pa26mPpB
-         rr+zE/p64wgjuG1c4OfJXDAPQQ3HALZk4W7OjVkW3c7ac+YimyVJdl6omNUeN9UYbP
-         mN1JjaAZIXM2I4fcLLvzltw389+G2Ver+aezbBSg=
+        b=y9Kg65GJuljtE/lFSdzvDpaYTP2v2Lr3XEIxR1WqAhT3Qo84gLZiQk4+pTgIPkv48
+         WzCwL/ddqRpC42hZbR8C1DYZevIiqlYcAK3Sz77DYz5nTl7MI5LZMhV+b1hXQscDGq
+         chTRIfx8NHZoCYibCMQ4x7B8MlkNjf9gjluZroAs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Shawn Bohrer <sbohrer@cloudflare.com>,
         Florian Westphal <fw@strlen.de>,
         Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.19 11/99] netfilter: nf_conncount: move all list iterations under spinlock
-Date:   Mon, 21 Jan 2019 14:48:03 +0100
-Message-Id: <20190121134914.352297721@linuxfoundation.org>
+Subject: [PATCH 4.19 13/99] netfilter: nf_conncount: fix argument order to find_next_bit
+Date:   Mon, 21 Jan 2019 14:48:05 +0100
+Message-Id: <20190121134914.421023706@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121134913.924726465@linuxfoundation.org>
 References: <20190121134913.924726465@linuxfoundation.org>
@@ -66,18 +66,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pablo Neira Ayuso <pablo@netfilter.org>
+From: Florian Westphal <fw@strlen.de>
 
-commit 2f971a8f425545da52ca0e6bee81f5b1ea0ccc5f upstream.
+commit a007232066f6839d6f256bab21e825d968f1a163 upstream.
 
-Two CPUs may race to remove a connection from the list, the existing
-conn->dead will result in a use-after-free. Use the per-list spinlock to
-protect list iterations.
-
-As all accesses to the list now happen while holding the per-list lock,
-we no longer need to delay free operations with rcu.
-
-Joint work with Florian.
+Size and 'next bit' were swapped, this bug could cause worker to
+reschedule itself even if system was idle.
 
 Fixes: 5c789e131cbb9 ("netfilter: nf_conncount: Add list lock and gc worker, and RCU for init tree search")
 Reviewed-by: Shawn Bohrer <sbohrer@cloudflare.com>
@@ -86,135 +80,19 @@ Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/nf_conncount.c |   46 ++++++++++++++++++-------------------------
- 1 file changed, 20 insertions(+), 26 deletions(-)
+ net/netfilter/nf_conncount.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 --- a/net/netfilter/nf_conncount.c
 +++ b/net/netfilter/nf_conncount.c
-@@ -43,8 +43,6 @@ struct nf_conncount_tuple {
- 	struct nf_conntrack_zone	zone;
- 	int				cpu;
- 	u32				jiffies32;
--	bool				dead;
--	struct rcu_head			rcu_head;
- };
+@@ -488,7 +488,7 @@ next:
+ 	clear_bit(tree, data->pending_trees);
  
- struct nf_conncount_rb {
-@@ -83,36 +81,21 @@ static int key_diff(const u32 *a, const
- 	return memcmp(a, b, klen * sizeof(u32));
- }
+ 	next_tree = (tree + 1) % CONNCOUNT_SLOTS;
+-	next_tree = find_next_bit(data->pending_trees, next_tree, CONNCOUNT_SLOTS);
++	next_tree = find_next_bit(data->pending_trees, CONNCOUNT_SLOTS, next_tree);
  
--static void __conn_free(struct rcu_head *h)
--{
--	struct nf_conncount_tuple *conn;
--
--	conn = container_of(h, struct nf_conncount_tuple, rcu_head);
--	kmem_cache_free(conncount_conn_cachep, conn);
--}
--
- static bool conn_free(struct nf_conncount_list *list,
- 		      struct nf_conncount_tuple *conn)
- {
- 	bool free_entry = false;
- 
--	spin_lock_bh(&list->list_lock);
--
--	if (conn->dead) {
--		spin_unlock_bh(&list->list_lock);
--		return free_entry;
--	}
-+	lockdep_assert_held(&list->list_lock);
- 
- 	list->count--;
--	conn->dead = true;
--	list_del_rcu(&conn->node);
-+	list_del(&conn->node);
- 	if (list->count == 0) {
- 		list->dead = true;
- 		free_entry = true;
- 	}
- 
--	spin_unlock_bh(&list->list_lock);
--	call_rcu(&conn->rcu_head, __conn_free);
-+	kmem_cache_free(conncount_conn_cachep, conn);
- 	return free_entry;
- }
- 
-@@ -242,7 +225,7 @@ void nf_conncount_list_init(struct nf_co
- }
- EXPORT_SYMBOL_GPL(nf_conncount_list_init);
- 
--/* Return true if the list is empty */
-+/* Return true if the list is empty. Must be called with BH disabled. */
- bool nf_conncount_gc_list(struct net *net,
- 			  struct nf_conncount_list *list)
- {
-@@ -253,12 +236,18 @@ bool nf_conncount_gc_list(struct net *ne
- 	bool free_entry = false;
- 	bool ret = false;
- 
-+	/* don't bother if other cpu is already doing GC */
-+	if (!spin_trylock(&list->list_lock))
-+		return false;
-+
- 	list_for_each_entry_safe(conn, conn_n, &list->head, node) {
- 		found = find_or_evict(net, list, conn, &free_entry);
- 		if (IS_ERR(found)) {
- 			if (PTR_ERR(found) == -ENOENT)  {
--				if (free_entry)
-+				if (free_entry) {
-+					spin_unlock(&list->list_lock);
- 					return true;
-+				}
- 				collected++;
- 			}
- 			continue;
-@@ -271,23 +260,24 @@ bool nf_conncount_gc_list(struct net *ne
- 			 * closed already -> ditch it
- 			 */
- 			nf_ct_put(found_ct);
--			if (conn_free(list, conn))
-+			if (conn_free(list, conn)) {
-+				spin_unlock(&list->list_lock);
- 				return true;
-+			}
- 			collected++;
- 			continue;
- 		}
- 
- 		nf_ct_put(found_ct);
- 		if (collected > CONNCOUNT_GC_MAX_NODES)
--			return false;
-+			break;
- 	}
- 
--	spin_lock_bh(&list->list_lock);
- 	if (!list->count) {
- 		list->dead = true;
- 		ret = true;
- 	}
--	spin_unlock_bh(&list->list_lock);
-+	spin_unlock(&list->list_lock);
- 
- 	return ret;
- }
-@@ -478,6 +468,7 @@ static void tree_gc_worker(struct work_s
- 	tree = data->gc_tree % CONNCOUNT_SLOTS;
- 	root = &data->root[tree];
- 
-+	local_bh_disable();
- 	rcu_read_lock();
- 	for (node = rb_first(root); node != NULL; node = rb_next(node)) {
- 		rbconn = rb_entry(node, struct nf_conncount_rb, node);
-@@ -485,6 +476,9 @@ static void tree_gc_worker(struct work_s
- 			gc_count++;
- 	}
- 	rcu_read_unlock();
-+	local_bh_enable();
-+
-+	cond_resched();
- 
- 	spin_lock_bh(&nf_conncount_locks[tree]);
- 	if (gc_count < ARRAY_SIZE(gc_nodes))
+ 	if (next_tree < CONNCOUNT_SLOTS) {
+ 		data->gc_tree = next_tree;
 
 
