@@ -2,113 +2,203 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43A45C282E6
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:50:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E897C282E6
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:51:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 061A42084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:50:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=astier-eu.20150623.gappssmtp.com header.i=@astier-eu.20150623.gappssmtp.com header.b="C2ThJSJ8"
+	by mail.kernel.org (Postfix) with ESMTP id 04AA02084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:51:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728670AbfAUHua (ORCPT
+        id S1728915AbfAUHve (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 02:50:30 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35072 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728274AbfAUHu3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 02:50:29 -0500
-Received: by mail-wr1-f68.google.com with SMTP id 96so22101900wrb.2
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Jan 2019 23:50:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=astier-eu.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ND1NftFWyS/tgyoYicMUwFG6MNxVNmzE2sPX5uNe/6Q=;
-        b=C2ThJSJ81dbZfpDfsNByFI99nf552Hp5LXkf8DF9hhMOcTGz3PCvYvUtg0IS/RcT2u
-         J4gp24ehtOe3X6WWR65v3fbkroWNa+c8vT9+odNTJ2JX0ahmly3cvvgJzHqwk39+tPnR
-         r2QXypJCd0//T1QPPBpCZJhnLCIQoVMg7L7G+RD9cGhZzJN61u93L+BYZOVxM56ZvANE
-         o2rx/ulwFyjQCv3U1n+aKysaTdBzsYnLe8B13RGF797YS7MWs6oJBXiADeCxi0Mucngy
-         YpLlovOIGwO9wYXKG+g54kz3SmM9KzWKJ+NHVeM7ibrlM1FnFriwc+eYsMkoHb9a7riU
-         nVIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ND1NftFWyS/tgyoYicMUwFG6MNxVNmzE2sPX5uNe/6Q=;
-        b=K+vKFIqI2nkzGlt5jxI4EwQFtkg03LSZ55wWA7YbH9VSB4FkS5uJ1t1RvUWyf47SS0
-         1dJ2xubd9jXT+mhL7xubQmFoHaWCUGFg46MgF6YGRAHAhtLLuCkLmINOHPf+EWno6bEm
-         TWCy2oce2Kfy/4auya6Tnu2h4/XZiQ3vqQGaZWjt2YSJUumWZLouNev3BHUcgujWkIAn
-         7HT9hoWXWO5DJi2CMNn8V/aSG0upa5AupSNI2Hnw1YI2pEarmXDd22rgW9/ohF+mkV1q
-         d3ogwAo9Xhqe5JCRK/hv3H1jETCL6GJM+F1KKlZKZWgLtgdlFkYNeSecCsSCnsAH2Fwm
-         qbVA==
-X-Gm-Message-State: AJcUukeGJZmvCEYBFthwWCH/wCSd1J3KOQ2SoOhPEOv6SY1Ettijgo7z
-        YBoQfhZGvgDqH8TMxDm2KlQJLUgdSdrmkg==
-X-Google-Smtp-Source: ALg8bN7dHLaQBmLcK6XXGIGffyD37cpz259MES2qb4oYe0nWxor+OcxjVthC1jmDAUv3558RFSGbEg==
-X-Received: by 2002:adf:e3d0:: with SMTP id k16mr26481275wrm.223.1548022902884;
-        Sun, 20 Jan 2019 14:21:42 -0800 (PST)
-Received: from jaya.lan ([2a01:e34:ef92:b70:7ee9:d3ff:fef0:777c])
-        by smtp.gmail.com with ESMTPSA id y13sm51950902wme.2.2019.01.20.14.21.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 20 Jan 2019 14:21:42 -0800 (PST)
-Date:   Sun, 20 Jan 2019 23:21:40 +0100
-From:   Anisse Astier <anisse@astier.eu>
-To:     Phil Elwell <phil@raspberrypi.org>
-Cc:     Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dominic Braun <inf.braun@fau.de>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
+        Mon, 21 Jan 2019 02:51:34 -0500
+Received: from mga03.intel.com ([134.134.136.65]:43657 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728223AbfAUHvd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 02:51:33 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jan 2019 23:51:33 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,502,1539673200"; 
+   d="scan'208";a="136376927"
+Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.37])
+  by fmsmga002.fm.intel.com with ESMTP; 20 Jan 2019 23:51:31 -0800
+Date:   Mon, 21 Jan 2019 15:51:02 +0800
+From:   Wei Yang <richardw.yang@linux.intel.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     linux-nvdimm@lists.01.org,
+        Wei Yang <richardw.yang@linux.intel.com>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: vchiq: Fix local event signalling
-Message-ID: <20190120222140.GA6626@jaya.lan>
-References: <1547206493-105303-1-git-send-email-phil@raspberrypi.org>
+Subject: Re: [PATCH] libnvdimm: Clarify nd_pfn_init() flow
+Message-ID: <20190121075102.GA3758@richard>
+Reply-To: Wei Yang <richardw.yang@linux.intel.com>
+References: <154785884329.2202034.3295476681016958230.stgit@dwillia2-desk3.amr.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1547206493-105303-1-git-send-email-phil@raspberrypi.org>
+In-Reply-To: <154785884329.2202034.3295476681016958230.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Phil,
-
-On Fri, Jan 11, 2019 at 11:34:53AM +0000, Phil Elwell wrote:
-> Prior to the recent event reworking (see Fixes), thread synchronisation
-> was implemented using completions, the worker thread being woken with
-> a call to complete(). The replacement uses waitqueues, which are more
-> like condition variables in that the waiting thread is only woken if
-> the condition is true.
+On Fri, Jan 18, 2019 at 04:47:23PM -0800, Dan Williams wrote:
+>In recent days, 2 engineers, including the original author of
+>nd_pfn_init(), overlooked the internal call to nd_pfn_validate() and the
+>implications to memory allocation.
+>
+>Clarify this situation to help anyone that reads through this code in
+>the future.
+>
+>Reported-by: Wei Yang <richardw.yang@linux.intel.com>
+>Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+>---
+> drivers/nvdimm/btt_devs.c |    5 +++++
+> drivers/nvdimm/dax_devs.c |    5 +++++
+> drivers/nvdimm/pfn_devs.c |   21 +++++++++++++++++++++
+> 3 files changed, 31 insertions(+)
+>
+>diff --git a/drivers/nvdimm/btt_devs.c b/drivers/nvdimm/btt_devs.c
+>index 795ad4ff35ca..e0a6f2491e57 100644
+>--- a/drivers/nvdimm/btt_devs.c
+>+++ b/drivers/nvdimm/btt_devs.c
+>@@ -354,6 +354,11 @@ int nd_btt_probe(struct device *dev, struct nd_namespace_common *ndns)
+> 		put_device(btt_dev);
+> 	}
 > 
-> When the VPU signals the ARM, it first sets the event's fired flag to
-> indicate which event is being signalled, but the places in the
-> ARM-side code where the worker thread is being woken -
-> remote_event_signal_local via request_poll - did not do so as it
-> wasn't previously necessary, and since the armed flag was being
-> cleared this lead to a deadlock.
-
-This fixes an issue I've had on linux 5.0-pre to 5.0-rc2+: the
-bcm2835-audio driver would block on close, and then nothing would work
-until the process was killed. Sample log:
-
-bcm2835_audio bcm2835_audio: failed to close VCHI service connection (status=1)
-
+>+	/*
+>+	 * Successful probe indicates to the caller that an nd_btt
+>+	 * personality device has been registered and the caller can
+>+	 * fail the probe of the baseline namespace device.
+>+	 */
+> 	return rc;
+> }
+> EXPORT_SYMBOL(nd_btt_probe);
+>diff --git a/drivers/nvdimm/dax_devs.c b/drivers/nvdimm/dax_devs.c
+>index 0453f49dc708..65010d955fa7 100644
+>--- a/drivers/nvdimm/dax_devs.c
+>+++ b/drivers/nvdimm/dax_devs.c
+>@@ -136,6 +136,11 @@ int nd_dax_probe(struct device *dev, struct nd_namespace_common *ndns)
+> 	} else
+> 		__nd_device_register(dax_dev);
 > 
-> Fixes: 852b2876a8a8 ("staging: vchiq: rework remove_event handling")
-> Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+>+	/*
+>+	 * Successful probe indicates to the caller that a device-dax
+>+	 * personality device has been registered and the caller can
+>+	 * fail the probe of the baseline namespace device.
+>+	 */
+> 	return rc;
+> }
+> EXPORT_SYMBOL(nd_dax_probe);
+>diff --git a/drivers/nvdimm/pfn_devs.c b/drivers/nvdimm/pfn_devs.c
+>index 6f22272e8d80..a8783b5a76ba 100644
+>--- a/drivers/nvdimm/pfn_devs.c
+>+++ b/drivers/nvdimm/pfn_devs.c
+>@@ -576,6 +576,11 @@ int nd_pfn_probe(struct device *dev, struct nd_namespace_common *ndns)
+> 	} else
+> 		__nd_device_register(pfn_dev);
+> 
+>+	/*
+>+	 * Successful probe indicates to the caller that an nd_pfn
+>+	 * personality device has been registered and the caller can
+>+	 * fail the probe of the baseline namespace device.
+>+	 */
+> 	return rc;
+> }
+> EXPORT_SYMBOL(nd_pfn_probe);
+>@@ -706,6 +711,22 @@ static int nd_pfn_init(struct nd_pfn *nd_pfn)
+> 		sig = DAX_SIG;
+> 	else
+> 		sig = PFN_SIG;
+>+
+>+	/*
+>+	 * Check for an existing 'pfn' superblock before writing a new
+>+	 * one. The intended flow is that on the first probe of an
+>+	 * nd_{pfn,dax} device the superblock is calculated and written
+>+	 * to the namespace. In this case nd_pfn_validate() returns
+>+	 * -ENODEV because no valid superblock exists currently.
+>+	 *
+>+	 * On subsequent probes nd_pfn_validate() will find a valid
+>+	 * superblock and return 0.
+>+	 *
+>+	 * If an assumption of the superblock has been violated, like a
+>+	 * change to the physical alignment of the namespace,
+>+	 * nd_pfn_validate() will return an error other than -ENODEV to
+>+	 * fail probing.
+>+	 */
 
-Tested-by: Anisse Astier <anisse@astier.eu>
+Let me reply in this thread. Sorry for my poor understand, I don't get it
+clearly now.
 
+To be honest, the structure is a little bit complicated, if my understanding
+is not correct, please forgive my poor understand.
 
-Regards,
+Below is a code flow. To simply analysis, I setup kernel parameter memmap to
+emulate, and configure one namespace to mode devdax. So that we would have the
+same root for code flow.
 
-Anisse
+Let's start with nd_region_driver:
+
+    nd_region_probe
+        nd_region_register_namespaces
+	    create_namespaces
+	nd_region->btt_seed = nd_btt_create(nd_region);
+	nd_region->pfn_seed = nd_pfn_create(nd_region);
+	nd_region->dax_seed = nd_dax_create(nd_region);
+
+After this, there are 4 devices created:
+
+	namespace0.0, btt0.0, pfn0.0, dax0.0
+
+And there are two drivers related to these devices. The relationship between
+devices and drivers are:
+
+	nd_pmem_driver: namespace0.0, btt0.0, pfn0.0
+	dax_pmem_driver: dax0.0
+
+Only the probe function on namespace0.0 succeed. Even others get -ENODEV,
+those devices themself is not released.
+
+Then let's look at the probe on namespace0.0:
+
+    nd_pmem_probe
+        nd_btt_probe
+	nd_pfn_probe
+	nd_dax_probe
+
+When namespace is configured as devdax, only nd_dax_probe do some real work.
+
+Then I see some different behavior as your description.
+
+    * nd_dax_probe->nd_pfn_validate() return 0 instead of -ENODEV.
+    * so device dax0.1 is created
+    * dax_pmem_probe is called on dax0.1 and nd_pfn_validate() return 0 too
+
+This means pfn_sb is created twice in following functions:
+
+    * nd_dax_probe
+    * dax_pmem_probe
+
+Also, I have one confusion about your saying: two probes.
+
+If the two probes are:
+
+    * for dax%d.%d: 1. nd_dax_probe 2. dax_pmem_probe   
+    * for pfn%d.%d: 1. nd_pfn_probe 2. nd_pmem_probe    
+
+Then, if the first probe fails, the device itself would be destroyed. How the
+second probe do its job?
+
+> 	rc = nd_pfn_validate(nd_pfn, sig);
+> 	if (rc != -ENODEV)
+> 		return rc;
+
+-- 
+Wei Yang
+Help you, Help me
