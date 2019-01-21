@@ -4,48 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5E7FC2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:59:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56873C2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:59:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4F542087F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:59:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 155AE2087F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:59:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079189;
-	bh=Mm88hfEJpYcrrSj2XJyXXmeo6WJMLVszw9DcGIMu9Os=;
+	s=default; t=1548079197;
+	bh=H6KFt6UNrIGRlJdg2MxuXbBiwraLmZidl0ZtQ7xp/zQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0wChQe1Z5/nSMK57NSyDFETi5rnXT98UuqtAacJIJhJdxuT3R9B20jxFBaNKnxfmY
-	 gIvkusW/QknKlgITXjnGHkysb1L+RYOzHz345uZjOug4HCWHdoWOQ++wTzgk0yRn2x
-	 5DHVsZBN0MH86pm4wTkBwg/76F1ZNJLWHh8SgNNs=
+	b=Vo9wTxIjq+o4PvhJAoFqTSqpKEpg5qZ8dJixFwqh7sw9S3V1vPVHWQX+7+f8GrB8e
+	 Y9j2pY418DPwkUp66zq98+3JPAmKIBJ2GIKPwJnwnTfQHhSN0tzUqq0A8KddKQygSc
+	 mn6vmgJWYC2CaOiaqIHcFAr38ue3rS1uDjHDepGQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732263AbfAUN7r (ORCPT
+        id S1732284AbfAUN7z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:59:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45860 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:59:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46090 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732229AbfAUN7n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:59:43 -0500
+        id S1731411AbfAUN7v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:59:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 232692084C;
-        Mon, 21 Jan 2019 13:59:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3B76C2087F;
+        Mon, 21 Jan 2019 13:59:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548079181;
-        bh=Mm88hfEJpYcrrSj2XJyXXmeo6WJMLVszw9DcGIMu9Os=;
+        s=default; t=1548079190;
+        bh=H6KFt6UNrIGRlJdg2MxuXbBiwraLmZidl0ZtQ7xp/zQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Flu1NDprTuFxDIuMP8uj0ByLDSBW6bzWe90K7BRLyC3yKCa5w8FEI8N/nRZg/82dm
-         QyXMk6TqBDVq3yxLNCbAqstFsVpy1Bf8eH+3RJbnbU41n3Am9UV4sDwF4ljOD1xBSi
-         ZArQsmcWEmng2SQVfsPTVLFkJaEWJKyftn+RtD1A=
+        b=nLiaUHKQd9s4ji0NTd3/TwmlygyijXsa3LkUFZb5Z2xnYK6lUJTNOBPxuDi4NSBer
+         NfZnUoi9L9MMz5p6p4emyyNFck7fKksgJhBkDmSVY8q8+2CgBXykhioMXWDIgHcET1
+         0rprMha7KbqpAOr9Y/hLHEzgELT1vXeXwBDyHQzc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.19 35/99] crypto: bcm - convert to use crypto_authenc_extractkeys()
-Date:   Mon, 21 Jan 2019 14:48:27 +0100
-Message-Id: <20190121134915.232570600@linuxfoundation.org>
+        stable@vger.kernel.org, Muyu Yu <ieatmuttonchuan@gmail.com>,
+        Marcus Meissner <meissner@suse.de>,
+        Michal Kubecek <mkubecek@suse.cz>,
+        Oliver Hartkopp <socketcan@hartkopp.net>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 05/99] can: gw: ensure DLC boundaries after CAN frame modification
+Date:   Mon, 21 Jan 2019 14:47:57 +0100
+Message-Id: <20190121134914.120817570@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121134913.924726465@linuxfoundation.org>
 References: <20190121134913.924726465@linuxfoundation.org>
@@ -64,122 +69,91 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+From: Oliver Hartkopp <socketcan@hartkopp.net>
 
-commit ab57b33525c3221afaebd391458fa0cbcd56903d upstream.
+commit 0aaa81377c5a01f686bcdb8c7a6929a7bf330c68 upstream.
 
-Convert the bcm crypto driver to use crypto_authenc_extractkeys() so
-that it picks up the fix for broken validation of rtattr::rta_len.
+Muyu Yu provided a POC where user root with CAP_NET_ADMIN can create a CAN
+frame modification rule that makes the data length code a higher value than
+the available CAN frame data size. In combination with a configured checksum
+calculation where the result is stored relatively to the end of the data
+(e.g. cgw_csum_xor_rel) the tail of the skb (e.g. frag_list pointer in
+skb_shared_info) can be rewritten which finally can cause a system crash.
 
-This also fixes the DES weak key check to actually be done on the right
-key. (It was checking the authentication key, not the encryption key...)
+Michael Kubecek suggested to drop frames that have a DLC exceeding the
+available space after the modification process and provided a patch that can
+handle CAN FD frames too. Within this patch we also limit the length for the
+checksum calculations to the maximum of Classic CAN data length (8).
 
-Fixes: 9d12ba86f818 ("crypto: brcm - Add Broadcom SPU driver")
-Cc: <stable@vger.kernel.org> # v4.11+
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+CAN frames that are dropped by these additional checks are counted with the
+CGW_DELETED counter which indicates misconfigurations in can-gw rules.
+
+This fixes CVE-2019-3701.
+
+Reported-by: Muyu Yu <ieatmuttonchuan@gmail.com>
+Reported-by: Marcus Meissner <meissner@suse.de>
+Suggested-by: Michal Kubecek <mkubecek@suse.cz>
+Tested-by: Muyu Yu <ieatmuttonchuan@gmail.com>
+Tested-by: Oliver Hartkopp <socketcan@hartkopp.net>
+Signed-off-by: Oliver Hartkopp <socketcan@hartkopp.net>
+Cc: linux-stable <stable@vger.kernel.org> # >= v3.2
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/Kconfig      |    1 +
- drivers/crypto/bcm/cipher.c |   44 +++++++++++++-------------------------------
- 2 files changed, 14 insertions(+), 31 deletions(-)
+ net/can/gw.c |   30 +++++++++++++++++++++++++++---
+ 1 file changed, 27 insertions(+), 3 deletions(-)
 
---- a/drivers/crypto/Kconfig
-+++ b/drivers/crypto/Kconfig
-@@ -681,6 +681,7 @@ config CRYPTO_DEV_BCM_SPU
- 	depends on ARCH_BCM_IPROC
- 	depends on MAILBOX
- 	default m
-+	select CRYPTO_AUTHENC
- 	select CRYPTO_DES
- 	select CRYPTO_MD5
- 	select CRYPTO_SHA1
---- a/drivers/crypto/bcm/cipher.c
-+++ b/drivers/crypto/bcm/cipher.c
-@@ -2845,44 +2845,28 @@ static int aead_authenc_setkey(struct cr
- 	struct spu_hw *spu = &iproc_priv.spu;
- 	struct iproc_ctx_s *ctx = crypto_aead_ctx(cipher);
- 	struct crypto_tfm *tfm = crypto_aead_tfm(cipher);
--	struct rtattr *rta = (void *)key;
--	struct crypto_authenc_key_param *param;
--	const u8 *origkey = key;
--	const unsigned int origkeylen = keylen;
--
--	int ret = 0;
-+	struct crypto_authenc_keys keys;
-+	int ret;
+--- a/net/can/gw.c
++++ b/net/can/gw.c
+@@ -416,13 +416,29 @@ static void can_can_gw_rcv(struct sk_buf
+ 	while (modidx < MAX_MODFUNCTIONS && gwj->mod.modfunc[modidx])
+ 		(*gwj->mod.modfunc[modidx++])(cf, &gwj->mod);
  
- 	flow_log("%s() aead:%p key:%p keylen:%u\n", __func__, cipher, key,
- 		 keylen);
- 	flow_dump("  key: ", key, keylen);
+-	/* check for checksum updates when the CAN frame has been modified */
++	/* Has the CAN frame been modified? */
+ 	if (modidx) {
+-		if (gwj->mod.csumfunc.crc8)
++		/* get available space for the processed CAN frame type */
++		int max_len = nskb->len - offsetof(struct can_frame, data);
++
++		/* dlc may have changed, make sure it fits to the CAN frame */
++		if (cf->can_dlc > max_len)
++			goto out_delete;
++
++		/* check for checksum updates in classic CAN length only */
++		if (gwj->mod.csumfunc.crc8) {
++			if (cf->can_dlc > 8)
++				goto out_delete;
++
+ 			(*gwj->mod.csumfunc.crc8)(cf, &gwj->mod.csum.crc8);
++		}
++
++		if (gwj->mod.csumfunc.xor) {
++			if (cf->can_dlc > 8)
++				goto out_delete;
  
--	if (!RTA_OK(rta, keylen))
--		goto badkey;
--	if (rta->rta_type != CRYPTO_AUTHENC_KEYA_PARAM)
-+	ret = crypto_authenc_extractkeys(&keys, key, keylen);
-+	if (ret)
- 		goto badkey;
--	if (RTA_PAYLOAD(rta) < sizeof(*param))
--		goto badkey;
--
--	param = RTA_DATA(rta);
--	ctx->enckeylen = be32_to_cpu(param->enckeylen);
+-		if (gwj->mod.csumfunc.xor)
+ 			(*gwj->mod.csumfunc.xor)(cf, &gwj->mod.csum.xor);
++		}
+ 	}
  
--	key += RTA_ALIGN(rta->rta_len);
--	keylen -= RTA_ALIGN(rta->rta_len);
--
--	if (keylen < ctx->enckeylen)
--		goto badkey;
--	if (ctx->enckeylen > MAX_KEY_SIZE)
-+	if (keys.enckeylen > MAX_KEY_SIZE ||
-+	    keys.authkeylen > MAX_KEY_SIZE)
- 		goto badkey;
+ 	/* clear the skb timestamp if not configured the other way */
+@@ -434,6 +450,14 @@ static void can_can_gw_rcv(struct sk_buf
+ 		gwj->dropped_frames++;
+ 	else
+ 		gwj->handled_frames++;
++
++	return;
++
++ out_delete:
++	/* delete frame due to misconfiguration */
++	gwj->deleted_frames++;
++	kfree_skb(nskb);
++	return;
+ }
  
--	ctx->authkeylen = keylen - ctx->enckeylen;
--
--	if (ctx->authkeylen > MAX_KEY_SIZE)
--		goto badkey;
-+	ctx->enckeylen = keys.enckeylen;
-+	ctx->authkeylen = keys.authkeylen;
- 
--	memcpy(ctx->enckey, key + ctx->authkeylen, ctx->enckeylen);
-+	memcpy(ctx->enckey, keys.enckey, keys.enckeylen);
- 	/* May end up padding auth key. So make sure it's zeroed. */
- 	memset(ctx->authkey, 0, sizeof(ctx->authkey));
--	memcpy(ctx->authkey, key, ctx->authkeylen);
-+	memcpy(ctx->authkey, keys.authkey, keys.authkeylen);
- 
- 	switch (ctx->alg->cipher_info.alg) {
- 	case CIPHER_ALG_DES:
-@@ -2890,7 +2874,7 @@ static int aead_authenc_setkey(struct cr
- 			u32 tmp[DES_EXPKEY_WORDS];
- 			u32 flags = CRYPTO_TFM_RES_WEAK_KEY;
- 
--			if (des_ekey(tmp, key) == 0) {
-+			if (des_ekey(tmp, keys.enckey) == 0) {
- 				if (crypto_aead_get_flags(cipher) &
- 				    CRYPTO_TFM_REQ_WEAK_KEY) {
- 					crypto_aead_set_flags(cipher, flags);
-@@ -2905,7 +2889,7 @@ static int aead_authenc_setkey(struct cr
- 		break;
- 	case CIPHER_ALG_3DES:
- 		if (ctx->enckeylen == (DES_KEY_SIZE * 3)) {
--			const u32 *K = (const u32 *)key;
-+			const u32 *K = (const u32 *)keys.enckey;
- 			u32 flags = CRYPTO_TFM_RES_BAD_KEY_SCHED;
- 
- 			if (!((K[0] ^ K[2]) | (K[1] ^ K[3])) ||
-@@ -2956,9 +2940,7 @@ static int aead_authenc_setkey(struct cr
- 		ctx->fallback_cipher->base.crt_flags &= ~CRYPTO_TFM_REQ_MASK;
- 		ctx->fallback_cipher->base.crt_flags |=
- 		    tfm->crt_flags & CRYPTO_TFM_REQ_MASK;
--		ret =
--		    crypto_aead_setkey(ctx->fallback_cipher, origkey,
--				       origkeylen);
-+		ret = crypto_aead_setkey(ctx->fallback_cipher, key, keylen);
- 		if (ret) {
- 			flow_log("  fallback setkey() returned:%d\n", ret);
- 			tfm->crt_flags &= ~CRYPTO_TFM_RES_MASK;
+ static inline int cgw_register_filter(struct net *net, struct cgw_job *gwj)
 
 
