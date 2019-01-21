@@ -6,198 +6,68 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56AE3C282DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:05:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 042A6C282DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:05:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24B2C2084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:05:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D240F20823
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:05:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729884AbfAUIFx (ORCPT
+        id S1729146AbfAUIF5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 03:05:53 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49362 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729389AbfAUIFu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 03:05:50 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0L84J8P080369
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 03:05:49 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2q57sc5yq3-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 03:05:49 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Mon, 21 Jan 2019 08:05:45 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 21 Jan 2019 08:05:33 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0L85WDa57737362
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 21 Jan 2019 08:05:32 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6E13D52052;
-        Mon, 21 Jan 2019 08:05:32 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.207.125])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id 9446052051;
-        Mon, 21 Jan 2019 08:05:27 +0000 (GMT)
-Received: by rapoport-lnx (sSMTP sendmail emulation); Mon, 21 Jan 2019 10:05:25 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     linux-mm@kvack.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dennis Zhou <dennis@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greentime Hu <green.hu@gmail.com>,
+        Mon, 21 Jan 2019 03:05:57 -0500
+Received: from inva021.nxp.com ([92.121.34.21]:51336 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729882AbfAUIFy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 03:05:54 -0500
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 93BE8200428;
+        Mon, 21 Jan 2019 04:18:41 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 7432420039F;
+        Mon, 21 Jan 2019 04:18:36 +0100 (CET)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id E432C402DA;
+        Mon, 21 Jan 2019 11:18:29 +0800 (SGT)
+From:   Yinbo Zhu <yinbo.zhu@nxp.com>
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     yinbo.zhu@nxp.com, xiaobo.xie@nxp.com, jerry.huang@nxp.com,
+        ran.wang_1@nxp.com,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Guan Xuetao <gxt@pku.edu.cn>, Guo Ren <guoren@kernel.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Mark Salter <msalter@redhat.com>,
-        Matt Turner <mattst88@gmail.com>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Simek <monstr@monstr.eu>,
-        Paul Burton <paul.burton@mips.com>,
-        Petr Mladek <pmladek@suse.com>, Rich Felker <dalias@libc.org>,
-        Richard Weinberger <richard@nod.at>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Stafford Horne <shorne@gmail.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        devicetree@vger.kernel.org, kasan-dev@googlegroups.com,
-        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-c6x-dev@linux-c6x.org, linux-ia64@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-        linux-um@lists.infradead.org, linux-usb@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, linuxppc-dev@lists.ozlabs.org,
-        openrisc@lists.librecores.org, sparclinux@vger.kernel.org,
-        uclinux-h8-devel@lists.sourceforge.jp, x86@kernel.org,
-        xen-devel@lists.xenproject.org, Mike Rapoport <rppt@linux.ibm.com>
-Subject: [PATCH v2 13/21] arch: don't memset(0) memory returned by memblock_alloc()
-Date:   Mon, 21 Jan 2019 10:04:00 +0200
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1548057848-15136-1-git-send-email-rppt@linux.ibm.com>
-References: <1548057848-15136-1-git-send-email-rppt@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19012108-0020-0000-0000-000003092EB6
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012108-0021-0000-0000-0000215A5BFF
-Message-Id: <1548057848-15136-14-git-send-email-rppt@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-21_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901210066
+        Ramneek Mehresh <ramneek.mehresh@freescale.com>,
+        Nikhil Badola <nikhil.badola@freescale.com>,
+        Suresh Gupta <suresh.gupta@freescale.com>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v1 5/6] usb: linux/fsl_device: Add platform member has_fsl_erratum_14
+Date:   Mon, 21 Jan 2019 11:13:03 +0800
+Message-Id: <20190121031304.31161-5-yinbo.zhu@nxp.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20190121031304.31161-1-yinbo.zhu@nxp.com>
+References: <20190121031304.31161-1-yinbo.zhu@nxp.com>
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-memblock_alloc() already clears the allocated memory, no point in doing it
-twice.
+This patch is to add member has_fsl_erratum_14 in platform data
 
-Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org> # m68k
+Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
 ---
- arch/c6x/mm/init.c          | 1 -
- arch/h8300/mm/init.c        | 1 -
- arch/ia64/kernel/mca.c      | 2 --
- arch/m68k/mm/mcfmmu.c       | 1 -
- arch/microblaze/mm/init.c   | 6 ++----
- arch/sparc/kernel/prom_32.c | 2 --
- 6 files changed, 2 insertions(+), 11 deletions(-)
+ include/linux/fsl_devices.h |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-diff --git a/arch/c6x/mm/init.c b/arch/c6x/mm/init.c
-index af5ada0..e83c046 100644
---- a/arch/c6x/mm/init.c
-+++ b/arch/c6x/mm/init.c
-@@ -40,7 +40,6 @@ void __init paging_init(void)
+diff --git a/include/linux/fsl_devices.h b/include/linux/fsl_devices.h
+index 7ea53c8..5c21a3a 100644
+--- a/include/linux/fsl_devices.h
++++ b/include/linux/fsl_devices.h
+@@ -102,6 +102,7 @@ struct fsl_usb2_platform_data {
+ 	unsigned        has_fsl_erratum_a005275:1;
+ 	unsigned	has_fsl_erratum_a005697:1;
+ 	unsigned	has_fsl_erratum_a006918:1;
++	unsigned	has_fsl_erratum_14:1;
+ 	unsigned        check_phy_clk_valid:1;
  
- 	empty_zero_page      = (unsigned long) memblock_alloc(PAGE_SIZE,
- 							      PAGE_SIZE);
--	memset((void *)empty_zero_page, 0, PAGE_SIZE);
- 
- 	/*
- 	 * Set up user data space
-diff --git a/arch/h8300/mm/init.c b/arch/h8300/mm/init.c
-index 6519252..a157890 100644
---- a/arch/h8300/mm/init.c
-+++ b/arch/h8300/mm/init.c
-@@ -68,7 +68,6 @@ void __init paging_init(void)
- 	 * to a couple of allocated pages.
- 	 */
- 	empty_zero_page = (unsigned long)memblock_alloc(PAGE_SIZE, PAGE_SIZE);
--	memset((void *)empty_zero_page, 0, PAGE_SIZE);
- 
- 	/*
- 	 * Set up SFC/DFC registers (user data space).
-diff --git a/arch/ia64/kernel/mca.c b/arch/ia64/kernel/mca.c
-index 74d148b..370bc34 100644
---- a/arch/ia64/kernel/mca.c
-+++ b/arch/ia64/kernel/mca.c
-@@ -400,8 +400,6 @@ ia64_log_init(int sal_info_type)
- 
- 	// set up OS data structures to hold error info
- 	IA64_LOG_ALLOCATE(sal_info_type, max_size);
--	memset(IA64_LOG_CURR_BUFFER(sal_info_type), 0, max_size);
--	memset(IA64_LOG_NEXT_BUFFER(sal_info_type), 0, max_size);
- }
- 
- /*
-diff --git a/arch/m68k/mm/mcfmmu.c b/arch/m68k/mm/mcfmmu.c
-index 0de4999..492f953 100644
---- a/arch/m68k/mm/mcfmmu.c
-+++ b/arch/m68k/mm/mcfmmu.c
-@@ -44,7 +44,6 @@ void __init paging_init(void)
- 	int i;
- 
- 	empty_zero_page = (void *) memblock_alloc(PAGE_SIZE, PAGE_SIZE);
--	memset((void *) empty_zero_page, 0, PAGE_SIZE);
- 
- 	pg_dir = swapper_pg_dir;
- 	memset(swapper_pg_dir, 0, sizeof(swapper_pg_dir));
-diff --git a/arch/microblaze/mm/init.c b/arch/microblaze/mm/init.c
-index 44f4b89..bd1cd4b 100644
---- a/arch/microblaze/mm/init.c
-+++ b/arch/microblaze/mm/init.c
-@@ -376,10 +376,8 @@ void * __ref zalloc_maybe_bootmem(size_t size, gfp_t mask)
- 
- 	if (mem_init_done)
- 		p = kzalloc(size, mask);
--	else {
-+	else
- 		p = memblock_alloc(size, SMP_CACHE_BYTES);
--		if (p)
--			memset(p, 0, size);
--	}
-+
- 	return p;
- }
-diff --git a/arch/sparc/kernel/prom_32.c b/arch/sparc/kernel/prom_32.c
-index 38940af..e7126ca 100644
---- a/arch/sparc/kernel/prom_32.c
-+++ b/arch/sparc/kernel/prom_32.c
-@@ -33,8 +33,6 @@ void * __init prom_early_alloc(unsigned long size)
- 	void *ret;
- 
- 	ret = memblock_alloc(size, SMP_CACHE_BYTES);
--	if (ret != NULL)
--		memset(ret, 0, size);
- 
- 	prom_early_allocated += size;
- 
+ 	/* register save area for suspend/resume */
 -- 
-2.7.4
+1.7.1
 
