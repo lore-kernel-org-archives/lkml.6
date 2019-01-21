@@ -2,70 +2,58 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F171CC7113B
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:09:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E944C7112F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:11:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C462D20855
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:09:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42A8820879
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:11:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728394AbfAUMJC (ORCPT
+        id S1728299AbfAUMLC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 07:09:02 -0500
-Received: from foss.arm.com ([217.140.101.70]:60706 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727971AbfAUMJC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 07:09:02 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4ECEC80D;
-        Mon, 21 Jan 2019 04:09:02 -0800 (PST)
-Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1B0D53F5C1;
-        Mon, 21 Jan 2019 04:09:00 -0800 (PST)
-From:   James Morse <james.morse@arm.com>
-Subject: Re: [PATCH v2 3/4] arm64: kprobes: Move exception_text check in
- blacklist
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Pratyush Anand <panand@redhat.com>,
-        "David A . Long" <dave.long@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <154753341900.31541.8135985235882849464.stgit@devbox>
- <154753350520.31541.11995657762766497151.stgit@devbox>
-Message-ID: <47b290e9-0dcc-d9cd-3a7d-f6a4c4c3ca60@arm.com>
-Date:   Mon, 21 Jan 2019 12:08:59 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 21 Jan 2019 07:11:02 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40234 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728024AbfAUMLC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 07:11:02 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 52223AB87;
+        Mon, 21 Jan 2019 12:11:00 +0000 (UTC)
+Date:   Mon, 21 Jan 2019 13:10:59 +0100 (CET)
+From:   Miroslav Benes <mbenes@suse.cz>
+To:     Petr Mladek <pmladek@suse.com>
+cc:     Jiri Kosina <jikos@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] livepatch: Introduce klp_for_each_patch macro
+In-Reply-To: <20190116161720.796-2-pmladek@suse.com>
+Message-ID: <alpine.LSU.2.21.1901211310400.31573@pobox.suse.cz>
+References: <20190116161720.796-1-pmladek@suse.com> <20190116161720.796-2-pmladek@suse.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <154753350520.31541.11995657762766497151.stgit@devbox>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed, 16 Jan 2019, Petr Mladek wrote:
 
-On 15/01/2019 06:25, Masami Hiramatsu wrote:
-> Move exception/irqentry text address check in blacklist,
-> since those are symbol based rejection.
+> There are already macros to iterate over struct klp_func and klp_object.
 > 
-> If we prohibit probing on the symbols in exception_text,
-> those should be blacklisted.
+> Add also klp_for_each_patch(). But make it internal because also
+> klp_patches list is internal.
+> 
+> Suggested-by: Josh Poimboeuf <jpoimboe@redhat.com>
+> Signed-off-by: Petr Mladek <pmladek@suse.com>
 
-We need to blacklist this as its where do_debug_exception() lives, which kprobes
-depends on for single-stepping.
+Acked-by: Miroslav Benes <mbenes@suse.cz>
 
-Reviewed-by: James Morse <james.morse@arm.com>
-
-
-Thanks!
-
-James
+M
