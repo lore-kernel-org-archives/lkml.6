@@ -2,139 +2,108 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CB79C2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:55:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 272EBC2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:55:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B90520879
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:55:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078917;
-	bh=9I9ztFaZvWJ8z5bZJgfCc3rrSjbhzUNwxiRRezrmmic=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Dk5DxFfsZ+hpKJaIAnHud5rngbuWATG2u8Ifejy+rkWGfZRCbDbw99TztVZ6TIBj/
-	 h63LpRtiJ179rkgb/4JemZZH7KfvSN4k8AfCMaLtofOQFJjiviqeKP23i9ovBOyTcq
-	 xaQiM12Pgu9P4zL+EI0zIGkA2+0AhsnNkmMk03Qc=
+	by mail.kernel.org (Postfix) with ESMTP id 0075820861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:55:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731692AbfAUNzP (ORCPT
+        id S1731706AbfAUNzU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:55:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39712 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:55:20 -0500
+Received: from smtp3-g21.free.fr ([212.27.42.3]:3095 "EHLO smtp3-g21.free.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731679AbfAUNzL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:55:11 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D136321019;
-        Mon, 21 Jan 2019 13:55:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078910;
-        bh=9I9ztFaZvWJ8z5bZJgfCc3rrSjbhzUNwxiRRezrmmic=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O3fkNeNRLjDliRE3k7tw0/hT3SADrIpZplgGiX+tIfBr9jTbRDgIwhhbekbg5kbmY
-         t8kThbEwVdxyo9OYYIXuCGZSbI++iJeGEzRaN1N6JTzqAIR3xzageqUNxuNRjUafSu
-         Vaq1obc1odD5al33diWFuBqzZTsSXZ54+iLEQEyA=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
-        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.9 26/51] crypto: talitos - fix ablkcipher for CONFIG_VMAP_STACK
-Date:   Mon, 21 Jan 2019 14:44:22 +0100
-Message-Id: <20190121122455.987598042@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190121122453.700446926@linuxfoundation.org>
-References: <20190121122453.700446926@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        id S1730998AbfAUNzO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:55:14 -0500
+Received: from [192.168.108.68] (unknown [213.36.7.13])
+        (Authenticated sender: marc.w.gonzalez)
+        by smtp3-g21.free.fr (Postfix) with ESMTPSA id D7C4913F8B6;
+        Mon, 21 Jan 2019 14:54:27 +0100 (CET)
+Subject: Re: kmemleak panic
+To:     Rob Herring <robh+dt@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Sachin Nikam <snikam@nvidia.com>, Prateek <prpatel@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Ralph Campbell <rcampbell@nvidia.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Qian Cai <cai@lca.pw>, LKML <linux-kernel@vger.kernel.org>,
+        Vinayak Menon <vinmenon@codeaurora.org>
+References: <f6fbf528-8213-e3b8-6990-9fcf9dec04d6@free.fr>
+ <20190118143434.GE118707@arrakis.emea.arm.com>
+ <b7629ecf-757c-f8b5-df83-ba83d7036b2f@free.fr>
+ <20190119132832.GA29881@MBP.local>
+ <6579db26-10ac-3fbf-1998-5b937a38f202@free.fr>
+ <d4facdc2-0581-929f-caa2-b9efa9bd8f97@arm.com>
+ <CAL_JsqKFT8J6g02gxeBiTfBb_XHhp2-ZNB6DgaLPK85kNZGRig@mail.gmail.com>
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+Message-ID: <96070098-7f05-7eb8-2c5c-9c9da1a45e4a@free.fr>
+Date:   Mon, 21 Jan 2019 14:54:27 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAL_JsqKFT8J6g02gxeBiTfBb_XHhp2-ZNB6DgaLPK85kNZGRig@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+On 21/01/2019 14:35, Rob Herring wrote:
 
-------------------
+> On Mon, Jan 21, 2019 at 6:19 AM Robin Murphy wrote:
+>>
+>> On 21/01/2019 11:57, Marc Gonzalez wrote:
+>> [...]
+>>> # echo dump=0xffffffc021e00000 > /sys/kernel/debug/kmemleak
+>>> kmemleak: Object 0xffffffc021e00000 (size 2097152):
+>>> kmemleak:   comm "swapper/0", pid 0, jiffies 4294892296
+>>> kmemleak:   min_count = 0
+>>> kmemleak:   count = 0
+>>> kmemleak:   flags = 0x1
+>>> kmemleak:   checksum = 0
+>>> kmemleak:   backtrace:
+>>>       kmemleak_alloc_phys+0x48/0x60
+>>>       memblock_alloc_range_nid+0x8c/0xa4
+>>>       memblock_alloc_base_nid+0x4c/0x60
+>>>       __memblock_alloc_base+0x3c/0x4c
+>>>       early_init_dt_alloc_reserved_memory_arch+0x54/0xa4
+>>>       fdt_init_reserved_mem+0x308/0x3ec
+>>>       early_init_fdt_scan_reserved_mem+0x88/0xb0
+>>>       arm64_memblock_init+0x1dc/0x254
+>>>       setup_arch+0x1c8/0x4ec
+>>>       start_kernel+0x84/0x44c
+>>>       0xffffffffffffffff
+>>
+>> OK, so via the __va(phys) call in kmemleak_alloc_phys(), you end up with
+>> the linear map address of a no-map reservation, which unsurprisingly
+>> turns out not to be mapped. Is there a way to tell kmemleak that it
+>> can't scan within a particular object?
+> 
+> There was this patch posted[1]. I never got a reply, so it hasn't been applied.
+> 
+> Rob
+> 
+> https://patchwork.ozlabs.org/patch/995367/
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+It is worth noting that the author's email address appears to be dead.
+<schowdary@nvidia.com>: host hqemgate08.nvidia.com[216.228.121.117] said:
+550 #5.1.0 Address rejected. (in reply to RCPT TO command)
 
-commit 1bea445b0a022ee126ca328b3705cd4df18ebc14 upstream.
-
-[    2.364486] WARNING: CPU: 0 PID: 60 at ./arch/powerpc/include/asm/io.h:837 dma_nommu_map_page+0x44/0xd4
-[    2.373579] CPU: 0 PID: 60 Comm: cryptomgr_test Tainted: G        W         4.20.0-rc5-00560-g6bfb52e23a00-dirty #531
-[    2.384740] NIP:  c000c540 LR: c000c584 CTR: 00000000
-[    2.389743] REGS: c95abab0 TRAP: 0700   Tainted: G        W          (4.20.0-rc5-00560-g6bfb52e23a00-dirty)
-[    2.400042] MSR:  00029032 <EE,ME,IR,DR,RI>  CR: 24042204  XER: 00000000
-[    2.406669]
-[    2.406669] GPR00: c02f2244 c95abb60 c6262990 c95abd80 0000256a 00000001 00000001 00000001
-[    2.406669] GPR08: 00000000 00002000 00000010 00000010 24042202 00000000 00000100 c95abd88
-[    2.406669] GPR16: 00000000 c05569d4 00000001 00000010 c95abc88 c0615664 00000004 00000000
-[    2.406669] GPR24: 00000010 c95abc88 c95abc88 00000000 c61ae210 c7ff6d40 c61ae210 00003d68
-[    2.441559] NIP [c000c540] dma_nommu_map_page+0x44/0xd4
-[    2.446720] LR [c000c584] dma_nommu_map_page+0x88/0xd4
-[    2.451762] Call Trace:
-[    2.454195] [c95abb60] [82000808] 0x82000808 (unreliable)
-[    2.459572] [c95abb80] [c02f2244] talitos_edesc_alloc+0xbc/0x3c8
-[    2.465493] [c95abbb0] [c02f2600] ablkcipher_edesc_alloc+0x4c/0x5c
-[    2.471606] [c95abbd0] [c02f4ed0] ablkcipher_encrypt+0x20/0x64
-[    2.477389] [c95abbe0] [c02023b0] __test_skcipher+0x4bc/0xa08
-[    2.483049] [c95abe00] [c0204b60] test_skcipher+0x2c/0xcc
-[    2.488385] [c95abe20] [c0204c48] alg_test_skcipher+0x48/0xbc
-[    2.494064] [c95abe40] [c0205cec] alg_test+0x164/0x2e8
-[    2.499142] [c95abf00] [c0200dec] cryptomgr_test+0x48/0x50
-[    2.504558] [c95abf10] [c0039ff4] kthread+0xe4/0x110
-[    2.509471] [c95abf40] [c000e1d0] ret_from_kernel_thread+0x14/0x1c
-[    2.515532] Instruction dump:
-[    2.518468] 7c7e1b78 7c9d2378 7cbf2b78 41820054 3d20c076 8089c200 3d20c076 7c84e850
-[    2.526127] 8129c204 7c842e70 7f844840 419c0008 <0fe00000> 2f9e0000 54847022 7c84fa14
-[    2.533960] ---[ end trace bf78d94af73fe3b8 ]---
-[    2.539123] talitos ff020000.crypto: master data transfer error
-[    2.544775] talitos ff020000.crypto: TEA error: ISR 0x20000000_00000040
-[    2.551625] alg: skcipher: encryption failed on test 1 for ecb-aes-talitos: ret=22
-
-IV cannot be on stack when CONFIG_VMAP_STACK is selected because the stack
-cannot be DMA mapped anymore.
-
-This patch copies the IV into the extended descriptor.
-
-Fixes: 4de9d0b547b9 ("crypto: talitos - Add ablkcipher algorithms")
-Cc: stable@vger.kernel.org
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Reviewed-by: Horia Geantă <horia.geanta@nxp.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/crypto/talitos.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
---- a/drivers/crypto/talitos.c
-+++ b/drivers/crypto/talitos.c
-@@ -1398,12 +1398,15 @@ static struct talitos_edesc *talitos_ede
- 		dma_len = 0;
- 		alloc_len += icv_stashing ? authsize : 0;
- 	}
-+	alloc_len += ivsize;
- 
- 	edesc = kmalloc(alloc_len, GFP_DMA | flags);
- 	if (!edesc)
- 		return ERR_PTR(-ENOMEM);
--	if (ivsize)
-+	if (ivsize) {
-+		iv = memcpy(((u8 *)edesc) + alloc_len - ivsize, iv, ivsize);
- 		iv_dma = dma_map_single(dev, iv, ivsize, DMA_TO_DEVICE);
-+	}
- 
- 	edesc->src_nents = src_nents;
- 	edesc->dst_nents = dst_nents;
-
-
+Adding a few nvidia devs for comment.
