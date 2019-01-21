@@ -2,148 +2,190 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF3C9C2F42E
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:15:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4ADBC2F42E
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:17:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DB8620823
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:15:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69B9120879
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:17:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VlA7vQH7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729914AbfAUPPW (ORCPT
+        id S1729920AbfAUPRO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 10:15:22 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36108 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728981AbfAUPPU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 10:15:20 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8C6D6EBD;
-        Mon, 21 Jan 2019 07:15:19 -0800 (PST)
-Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7DCE53F5C1;
-        Mon, 21 Jan 2019 07:15:17 -0800 (PST)
-Subject: Re: [PATCH 0/3] iommu/arm-smmu: Add support to use Last level cache
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
-        pdaly@codeaurora.org,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Jordan Crouse <jcrouse@codeaurora.org>, pratikp@codeaurora.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-References: <20190121055335.15430-1-vivek.gautam@codeaurora.org>
- <CAKv+Gu8P-5hxZ8+OV_xSZteTvCLw-Sc-=KJM1i=3aWajcS9bUw@mail.gmail.com>
- <CAFp+6iEp-bzMrZz8cFUciTFKm7TwAoLdYpsSTD73kDfCRh60bA@mail.gmail.com>
- <CAKv+Gu9z_mGwdZYMKPfM_g2MZwrCF5=f4WAdn_R6wJ1A9xSZ_Q@mail.gmail.com>
- <dbba5a8a-70c0-dd01-713c-081eb412e2d7@arm.com>
- <CAKv+Gu8K5f0va9q4FYk9x1puoOTDjZ0c25qokm2izSVAwd1gmQ@mail.gmail.com>
- <964779d6-c676-3379-bf1e-cde0dd82d63d@arm.com>
- <CAKv+Gu_Oz-QEFnq9KiOBHQrC8o+0ykkEZBm0vCWfYDfFB8QTcQ@mail.gmail.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <55213eaf-d90d-0f2f-9f01-5e964e087d3f@arm.com>
-Date:   Mon, 21 Jan 2019 15:15:15 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 21 Jan 2019 10:17:14 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:52302 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729778AbfAUPRN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 10:17:13 -0500
+Received: by mail-it1-f194.google.com with SMTP id g76so16812796itg.2
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 07:17:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=0LAxNscqLDNGxd0m1s6+2GJU2qc+4bB2djDBpm8YmLg=;
+        b=VlA7vQH7o+aP9hebMP59nf0yu3QwIUeHmxbrOKBjHjGysuyR6hodieHib7uPesF2vG
+         imp8jMteV0rikgkFQ6hq+yu/UJ55nJShhDEBnegY43MOR4Iy5G3lptvxNhCmjUJ1o5oP
+         SLtLNA1ghiGvQ/80jn/1bv0LtHtwfqZAwC5g0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=0LAxNscqLDNGxd0m1s6+2GJU2qc+4bB2djDBpm8YmLg=;
+        b=AoX/SgcIalCy/utkiqa7GDsexqDmoFAoedvqpGjq4P38yei7zd/oZcRrEnXknKJgVZ
+         FTszL+h/7stFwv6itK6RASA0tN8HLsXPFzPKe3la2zf1ohqLNzsW7nZqWRX42rj07Iyv
+         x0F4r+pd34UFj2JmqiTy6Xsmj9OshrnkS0NhYgGoKrlt/SL+uCckobqKD2JpszDW87cO
+         7ivDEsrUkvA1jxu/xh4QJLdMDGyhZs0AhVusEfRQTEe7Q5/C7UTd2jAAJxPiOtBPXBsw
+         cHh0bYhKux5BxqpcJilnzX0lxKPvCrxgnSS6mdLABxZ8P1QyHqQltSajJCsnlFcy2mqO
+         nhzQ==
+X-Gm-Message-State: AJcUukdXYWQzX1MpHKi9cwLTR3FZDlWMfAbl1nnLOgF3DGOhfCdz4e2q
+        c2I332R2AuIj1z4tJx3uDi/ECVueGyFejKbuX630qA==
+X-Google-Smtp-Source: ALg8bN6eaYJ1vYOu5ToMA89/qmiTfEuxtwczkiVdTxhGQ1EFFs9FasKl79cwtJGKY5e7NoPGJjtWWxTze7HOqpTlzx0=
+X-Received: by 2002:a02:98d2:: with SMTP id c18mr16380882jak.11.1548083831473;
+ Mon, 21 Jan 2019 07:17:11 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAKv+Gu_Oz-QEFnq9KiOBHQrC8o+0ykkEZBm0vCWfYDfFB8QTcQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <1545388436-7489-1-git-send-email-vincent.guittot@linaro.org>
+ <1545388436-7489-4-git-send-email-vincent.guittot@linaro.org>
+ <20190117221628.GA21979@roeck-us.net> <20190118104215.GA13168@linaro.org>
+ <CAKfTPtD9fu06sw8=MvjwfQfJoQHb0kT3un9=kdw+WZj+rbVUZg@mail.gmail.com>
+ <CAJZ5v0gFpK3Kqyf=RM+160A3RAQYPs3c3EgxmNH7ZceEaujEUw@mail.gmail.com> <9ff86048-fca5-11b9-174c-f0a9338dd231@roeck-us.net>
+In-Reply-To: <9ff86048-fca5-11b9-174c-f0a9338dd231@roeck-us.net>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Mon, 21 Jan 2019 16:17:00 +0100
+Message-ID: <CAKfTPtA_xfTt9KUAR+P=XAhXXyTdQn5ASm8GRcgnYxFFZT5ADg@mail.gmail.com>
+Subject: Re: [PATCH v5 3/3] PM/runtime:Replace jiffies based accounting with
+ ktime based accounting
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        rodrigo.vivi@intel.com, David Airlie <airlied@linux.ie>,
+        "Intel graphics driver community testing & development" 
+        <intel-gfx@lists.freedesktop.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/01/2019 14:24, Ard Biesheuvel wrote:
-> On Mon, 21 Jan 2019 at 14:56, Robin Murphy <robin.murphy@arm.com> wrote:
->>
->> On 21/01/2019 13:36, Ard Biesheuvel wrote:
->>> On Mon, 21 Jan 2019 at 14:25, Robin Murphy <robin.murphy@arm.com> wrote:
->>>>
->>>> On 21/01/2019 10:50, Ard Biesheuvel wrote:
->>>>> On Mon, 21 Jan 2019 at 11:17, Vivek Gautam <vivek.gautam@codeaurora.org> wrote:
->>>>>>
->>>>>> Hi,
->>>>>>
->>>>>>
->>>>>> On Mon, Jan 21, 2019 at 12:56 PM Ard Biesheuvel
->>>>>> <ard.biesheuvel@linaro.org> wrote:
->>>>>>>
->>>>>>> On Mon, 21 Jan 2019 at 06:54, Vivek Gautam <vivek.gautam@codeaurora.org> wrote:
->>>>>>>>
->>>>>>>> Qualcomm SoCs have an additional level of cache called as
->>>>>>>> System cache, aka. Last level cache (LLC). This cache sits right
->>>>>>>> before the DDR, and is tightly coupled with the memory controller.
->>>>>>>> The clients using this cache request their slices from this
->>>>>>>> system cache, make it active, and can then start using it.
->>>>>>>> For these clients with smmu, to start using the system cache for
->>>>>>>> buffers and, related page tables [1], memory attributes need to be
->>>>>>>> set accordingly. This series add the required support.
->>>>>>>>
->>>>>>>
->>>>>>> Does this actually improve performance on reads from a device? The
->>>>>>> non-cache coherent DMA routines perform an unconditional D-cache
->>>>>>> invalidate by VA to the PoC before reading from the buffers filled by
->>>>>>> the device, and I would expect the PoC to be defined as lying beyond
->>>>>>> the LLC to still guarantee the architected behavior.
->>>>>>
->>>>>> We have seen performance improvements when running Manhattan
->>>>>> GFXBench benchmarks.
->>>>>>
->>>>>
->>>>> Ah ok, that makes sense, since in that case, the data flow is mostly
->>>>> to the device, not from the device.
->>>>>
->>>>>> As for the PoC, from my knowledge on sdm845 the system cache, aka
->>>>>> Last level cache (LLC) lies beyond the point of coherency.
->>>>>> Non-cache coherent buffers will not be cached to system cache also, and
->>>>>> no additional software cache maintenance ops are required for system cache.
->>>>>> Pratik can add more if I am missing something.
->>>>>>
->>>>>> To take care of the memory attributes from DMA APIs side, we can add a
->>>>>> DMA_ATTR definition to take care of any dma non-coherent APIs calls.
->>>>>>
->>>>>
->>>>> So does the device use the correct inner non-cacheable, outer
->>>>> writeback cacheable attributes if the SMMU is in pass-through?
->>>>>
->>>>> We have been looking into another use case where the fact that the
->>>>> SMMU overrides memory attributes is causing issues (WC mappings used
->>>>> by the radeon and amdgpu driver). So if the SMMU would honour the
->>>>> existing attributes, would you still need the SMMU changes?
->>>>
->>>> Even if we could force a stage 2 mapping with the weakest pagetable
->>>> attributes (such that combining would work), there would still need to
->>>> be a way to set the TCR attributes appropriately if this behaviour is
->>>> wanted for the SMMU's own table walks as well.
->>>>
->>>
->>> Isn't that just a matter of implementing support for SMMUs that lack
->>> the 'dma-coherent' attribute?
->>
->> Not quite - in general they need INC-ONC attributes in case there
->> actually is something in the architectural outer-cacheable domain.
-> 
-> But is it a problem to use INC-ONC attributes for the SMMU PTW on this
-> chip? AIUI, the reason for the SMMU changes is to avoid the
-> performance hit of snooping, which is more expensive than cache
-> maintenance of SMMU page tables. So are you saying the by-VA cache
-> maintenance is not relayed to this system cache, resulting in page
-> table updates to be invisible to masters using INC-ONC attributes?
+On Fri, 18 Jan 2019 at 13:08, Guenter Roeck <linux@roeck-us.net> wrote:
+>
+> On 1/18/19 3:05 AM, Rafael J. Wysocki wrote:
+> > On Fri, Jan 18, 2019 at 11:53 AM Vincent Guittot
+> > <vincent.guittot@linaro.org> wrote:
+> >>
+> >> On Fri, 18 Jan 2019 at 11:42, Vincent Guittot
+> >> <vincent.guittot@linaro.org> wrote:
+> >>>
+> >>> Hi Guenter,
+> >>>
+> >>> Le Thursday 17 Jan 2019 =C3=A0 14:16:28 (-0800), Guenter Roeck a =C3=
+=A9crit :
+> >>>> On Fri, Dec 21, 2018 at 11:33:56AM +0100, Vincent Guittot wrote:
+> >>>>> From: Thara Gopinath <thara.gopinath@linaro.org>
+> >>>>>
+> >>>>> This patch replaces jiffies based accounting for runtime_active_tim=
+e
+> >>>>> and runtime_suspended_time with ktime base accounting. This makes t=
+he
+> >>>>> runtime debug counters inline with genpd and other pm subsytems whi=
+ch
+> >>>>> uses ktime based accounting.
+> >>>>>
+> >>>>> timekeeping is initialized before pm_runtime_init() so ktime_get() =
+will
+> >>>>> be ready before first call. In fact, timekeeping_init() is called e=
+arly
+> >>>>> in start_kernel() which is way before driver_init() (and that's whe=
+n
+> >>>>> devices can start to be initialized) called from rest_init() via
+> >>>>> kernel_init_freeable() and do_basic_setup().
+> >>>>>
+> >>>> This is not (always) correct. My qemu "collie" boot test fails with =
+this
+> >>>> patch applied. Reverting the patch fixes the problem. Bisect log att=
+ached.
+> >>>>
+> >>>
+> >>> Can you try the patch below ?
+> >>> ktime_get_mono_fast_ns() has the advantage of being init with dummy c=
+lock so
+> >>> it can be used at early_init.
+> >>
+> >> Another possibility would be delay the init of the gpiochip
+> >
+> > Well, right.
+> >
+> > Initializing devices before timekeeping doesn't feel particularly
+> > robust from the design perspective.
+> >
+> > How exactly does that happen?
+> >
+>
+> With an added 'initialized' flag and backtrace into the timekeeping code,
+> with the change suggested earlier applied:
+>
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 0 at kernel/time/timekeeping.c:453 ktime_get_mono_fa=
+st_ns+0x114/0x12c
+> Timekeeping not initialized
+> CPU: 0 PID: 0 Comm: swapper Not tainted 5.0.0-rc2-next-20190117-dirty #2
+> Hardware name: Sharp-Collie
+> Backtrace:
+> [<c000dce8>] (dump_backtrace) from [<c000df78>] (show_stack+0x18/0x1c)
+>   r7:00000009 r6:00000000 r5:c065ba90 r4:c06d3e54
+> [<c000df60>] (show_stack) from [<c0588930>] (dump_stack+0x20/0x28)
+> [<c0588910>] (dump_stack) from [<c0018ae8>] (__warn+0xcc/0xf4)
+> [<c0018a1c>] (__warn) from [<c0018b5c>] (warn_slowpath_fmt+0x4c/0x6c)
+>   r8:df407b08 r7:00000000 r6:c0c01550 r5:c065bad8 r4:c06dd028
+> [<c0018b14>] (warn_slowpath_fmt) from [<c0069e2c>] (ktime_get_mono_fast_n=
+s+0x114/0x12c)
+>   r3:00000000 r2:c065bad8
+>   r5:00000000 r4:df407b08
+> [<c0069d18>] (ktime_get_mono_fast_ns) from [<c03c7810>] (pm_runtime_init+=
+0x38/0xb8)
+>   r9:c06c9a5c r8:df407b08 r7:00000000 r6:c0c01550 r5:00000000 r4:df407b08
+> [<c03c77d8>] (pm_runtime_init) from [<c03b6a34>] (device_initialize+0xb0/=
+0xec)
+>   r7:00000000 r6:c0c01550 r5:00000000 r4:df407b08
+> [<c03b6984>] (device_initialize) from [<c0366d30>] (gpiochip_add_data_wit=
+h_key+0x9c/0x884)
+>   r7:00000000 r6:c06fca34 r5:00000000 r4:00000000
+> [<c0366c94>] (gpiochip_add_data_with_key) from [<c06b9708>] (sa1100_init_=
+gpio+0x40/0x98)
+>   r10:dfffcd60 r9:c06c9a5c r8:c06dd020 r7:c06dd028 r6:ffffffff r5:0000000=
+0
+>   r4:c06fca34
+> [<c06b96c8>] (sa1100_init_gpio) from [<c06ae58c>] (sa1100_init_irq+0x2c/0=
+x3c)
+>   r7:c06dd028 r6:ffffffff r5:c0713300 r4:c06e1070
+> [<c06ae560>] (sa1100_init_irq) from [<c06aab1c>] (init_IRQ+0x20/0x28)
+>   r5:c0713300 r4:00000000
+> [<c06aaafc>] (init_IRQ) from [<c06a7cd0>] (start_kernel+0x254/0x4cc)
+> [<c06a7a7c>] (start_kernel) from [<00000000>] (  (null))
+>   r10:0000717f r9:6901b119 r8:c0000100 r7:00000092 r6:0000313d r5:0000005=
+3
+>   r4:c06a7330
+> ---[ end trace 91e1bd00dd7cce32 ]---
 
-I only have a relatively vague impression of how this Qcom interconnect 
-actually behaves, but AIUI the outer attribute has no correctness impact 
-(it's effectively mismatched between CPU and devices already), only some 
-degree of latency improvement which is effectively the opposite of 
-no-snoop, in allowing certain non-coherent device traffic to still 
-allocate in the LLC. I'm assuming that if that latency matters for the 
-device accesses themselves, it might also matter for the associated 
-table walks depending on the TLB miss rate.
+Does it means that only the pm_runtime_init is done before
+timekeeping_init() but no update_pm_runtime_accounting() ?
+In this case, we can keep using ktime=C3=A7get in
+update_pm_runtime_accounting() and find a solution to deal with
+early_call of pm_runtime_init()
 
-Robin.
+Vincent
+>
+> Guenter
