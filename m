@@ -2,52 +2,52 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE508C2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:49:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A70DC2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:49:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A25B920861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:49:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECAD82089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:49:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078557;
-	bh=xW458HcEI/Zl/3TwaQYve/Wx1f82B97w7IjRfZDtDQ8=;
+	s=default; t=1548078560;
+	bh=AOFLQmNjhgTd3EkdbaVo/e8C0hOdcmjO9dafYUswsAA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=cXf0FWLbs3KMCFI1+5JFr0yXJTFdlxPzTXvOUZXi/lW5ZSwYrWXUQZozFu2r5j0HF
-	 I0OmOcX4A9MRx9E6XySYrf2R3jClCQD39CgHmOtsvXraNpyX16vIbDq9uKShkVgfrw
-	 p047ASzkutthlWnxMiLJ5MO47vPhfBuUITFzTlkE=
+	b=KTTbcW/OjwtCbl9ckgSL5Z4iTMy0yS7gKHWOQqv77a2RSXCumESMvDfsYbbJ+5jnw
+	 BNuicILCJBcibm1tdvZM0r6XwYIsWDARdojmQ7EsMtumCF2h+w33PROmw7OMT1fy+h
+	 iY2gIGwCYcSmFxZi1F+XuIc319Bv99wMD7Ahr1NM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730166AbfAUNtQ (ORCPT
+        id S1730184AbfAUNtS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:49:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59630 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:49:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59730 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729576AbfAUNtN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:49:13 -0500
+        id S1730159AbfAUNtP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:49:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0629D2087F;
-        Mon, 21 Jan 2019 13:49:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9AA5420879;
+        Mon, 21 Jan 2019 13:49:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078552;
-        bh=xW458HcEI/Zl/3TwaQYve/Wx1f82B97w7IjRfZDtDQ8=;
+        s=default; t=1548078555;
+        bh=AOFLQmNjhgTd3EkdbaVo/e8C0hOdcmjO9dafYUswsAA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HDw/p8owY6rRyhhdSVunmJifU2HffAJVhAGwWEs0N+4dvqLjxrrUI9VZSWI2g7jkg
-         hYcHBypg2f6LgykkrPTpjJH92rMihQ7ub5/XGDJOP4jQJluTOr3XsjMaBa2aBjfQH+
-         GbeQyjUtWHpJJWckYaLnaL4+1eTBv/0hkJMgflmI=
+        b=RVKWxTF+wCdnJXGgjACHGw8NuKLpBCRbo3ISU7P+SRWvHnESaZ3WXbjIAn71Qm3xp
+         3ZQPwt1BRh7tzauAuShzKs7vE5ZPoZyWJsD0gE5tCRdQywnr99I7rQ5jZmPRQNNrz9
+         Ti7aLvfs6fvOLlWrPZ5n0Ta8raTWsL50Oae4dE9g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vlad Tsyrklevich <vlad@tsyrklevich.net>,
-        Kees Cook <keescook@chromium.org>, security@kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 4.20 072/111] omap2fb: Fix stack memory disclosure
-Date:   Mon, 21 Jan 2019 14:43:06 +0100
-Message-Id: <20190121122504.399319161@linuxfoundation.org>
+        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        syzbot+53d5b2df0d9744411e2e@syzkaller.appspotmail.com,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.20 073/111] media: vivid: fix error handling of kthread_run
+Date:   Mon, 21 Jan 2019 14:43:07 +0100
+Message-Id: <20190121122504.492565486@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122455.819406896@linuxfoundation.org>
 References: <20190121122455.819406896@linuxfoundation.org>
@@ -66,41 +66,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vlad Tsyrklevich <vlad@tsyrklevich.net>
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 
-commit a01421e4484327fe44f8e126793ed5a48a221e24 upstream.
+commit 701f49bc028edb19ffccd101997dd84f0d71e279 upstream.
 
-Using [1] for static analysis I found that the OMAPFB_QUERY_PLANE,
-OMAPFB_GET_COLOR_KEY, OMAPFB_GET_DISPLAY_INFO, and OMAPFB_GET_VRAM_INFO
-cases could all leak uninitialized stack memory--either due to
-uninitialized padding or 'reserved' fields.
+kthread_run returns an error pointer, but elsewhere in the code
+dev->kthread_vid_cap/out is checked against NULL.
 
-Fix them by clearing the shared union used to store copied out data.
+If kthread_run returns an error, then set the pointer to NULL.
 
-[1] https://github.com/vlad902/kernel-uninitialized-memory-checker
+I chose this method over changing all kthread_vid_cap/out tests
+elsewhere since this is more robust.
 
-Signed-off-by: Vlad Tsyrklevich <vlad@tsyrklevich.net>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Fixes: b39a982ddecf ("OMAP: DSS2: omapfb driver")
-Cc: security@kernel.org
-[b.zolnierkie: prefix patch subject with "omap2fb: "]
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Reported-by: syzbot+53d5b2df0d9744411e2e@syzkaller.appspotmail.com
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/video/fbdev/omap2/omapfb/omapfb-ioctl.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/media/platform/vivid/vivid-kthread-cap.c |    5 ++++-
+ drivers/media/platform/vivid/vivid-kthread-out.c |    5 ++++-
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
---- a/drivers/video/fbdev/omap2/omapfb/omapfb-ioctl.c
-+++ b/drivers/video/fbdev/omap2/omapfb/omapfb-ioctl.c
-@@ -609,6 +609,8 @@ int omapfb_ioctl(struct fb_info *fbi, un
+--- a/drivers/media/platform/vivid/vivid-kthread-cap.c
++++ b/drivers/media/platform/vivid/vivid-kthread-cap.c
+@@ -873,8 +873,11 @@ int vivid_start_generating_vid_cap(struc
+ 			"%s-vid-cap", dev->v4l2_dev.name);
  
- 	int r = 0;
- 
-+	memset(&p, 0, sizeof(p));
+ 	if (IS_ERR(dev->kthread_vid_cap)) {
++		int err = PTR_ERR(dev->kthread_vid_cap);
 +
- 	switch (cmd) {
- 	case OMAPFB_SYNC_GFX:
- 		DBG("ioctl SYNC_GFX\n");
++		dev->kthread_vid_cap = NULL;
+ 		v4l2_err(&dev->v4l2_dev, "kernel_thread() failed\n");
+-		return PTR_ERR(dev->kthread_vid_cap);
++		return err;
+ 	}
+ 	*pstreaming = true;
+ 	vivid_grab_controls(dev, true);
+--- a/drivers/media/platform/vivid/vivid-kthread-out.c
++++ b/drivers/media/platform/vivid/vivid-kthread-out.c
+@@ -244,8 +244,11 @@ int vivid_start_generating_vid_out(struc
+ 			"%s-vid-out", dev->v4l2_dev.name);
+ 
+ 	if (IS_ERR(dev->kthread_vid_out)) {
++		int err = PTR_ERR(dev->kthread_vid_out);
++
++		dev->kthread_vid_out = NULL;
+ 		v4l2_err(&dev->v4l2_dev, "kernel_thread() failed\n");
+-		return PTR_ERR(dev->kthread_vid_out);
++		return err;
+ 	}
+ 	*pstreaming = true;
+ 	vivid_grab_controls(dev, true);
 
 
