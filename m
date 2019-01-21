@@ -2,115 +2,148 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BF1DC31681
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 17:59:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AFFDC31681
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 17:59:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C5C62089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 17:59:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WMRhZXc0"
+	by mail.kernel.org (Postfix) with ESMTP id 0E3F12089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 17:59:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726847AbfAUR7W (ORCPT
+        id S1727338AbfAUR7r convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 12:59:22 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:51544 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725908AbfAUR7W (ORCPT
+        Mon, 21 Jan 2019 12:59:47 -0500
+Received: from mailoutvs57.siol.net ([185.57.226.248]:35178 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725908AbfAUR7r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 12:59:22 -0500
-Received: by mail-it1-f195.google.com with SMTP id w18so17608426ite.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 09:59:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=GIkKZS9024nvngV6e2KIorYK3XJmAI8zh9FUlk87wCM=;
-        b=WMRhZXc0UjFFWdsPF5yVyvY4vVSav9F0z0zPtSiW7IOPv9kh5948WERCDs5DGh3hMk
-         lm1Labs/Qzygsebmyx+r5zGHAfVxPKJQv7rPRLbDKlvdtl7Sy/xUwFJF9C6M2ePKqBFn
-         6aDTC8AZztniu4pmAMtevm9JLMXa+7Aq30OX4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=GIkKZS9024nvngV6e2KIorYK3XJmAI8zh9FUlk87wCM=;
-        b=MSx2hRp9/03JJtQyNp29xC0waN5WzAbd0Pix045sXKDH9fk2VjmsMMfkoU0SSh8dX+
-         k7VDqe713yxv8w9/MX8GrWTD1iNlq/QnOUq1kD2JWMM2H4ISqTxic1EV6KEyue8lpL9q
-         Ye1yNN+1BNCEUcVOd1wwL5TudI9BUh0cMjv1zjMZanZ6meIRKwjxcItwsR3gnrnRHj3+
-         SzfKnWvkCJV0SYxao/LZwywRRdhYIui9ZMUfLfyqWiMtnCaRvHbFjZbWQK/kPg6Aw5vV
-         SSfhePTAL1vniR09N/AwFiXVnyY/dR6kXSP+IA7uQxgahwhqtl8qtBoKigFPYZrd6+8q
-         oxgg==
-X-Gm-Message-State: AJcUukdXcxHZ24wG6RoXnjnyzLnVYOUCxKi/oT4zNYlfYbdHvXkH9qpU
-        3xv3v5YcN+MP3QKJb0Gmn0i6d2k1fVBg8Sytjlf0xw==
-X-Google-Smtp-Source: ALg8bN5/MqM7BpuFo7CWNk6ZT0kxRzlT1oWjjnVQX37laAUT7VGktD1Giho0GQi7FYskMQsT0Kk2rKQ0kQG7DqZhdI0=
-X-Received: by 2002:a24:710:: with SMTP id f16mr220842itf.121.1548093561061;
- Mon, 21 Jan 2019 09:59:21 -0800 (PST)
+        Mon, 21 Jan 2019 12:59:47 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTP id 9D51B5208D6;
+        Mon, 21 Jan 2019 18:59:42 +0100 (CET)
+X-Virus-Scanned: amavisd-new at psrvmta10.zcs-production.pri
+Received: from mail.siol.net ([127.0.0.1])
+        by localhost (psrvmta10.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id YWnJiO7hhOen; Mon, 21 Jan 2019 18:59:42 +0100 (CET)
+Received: from mail.siol.net (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTPS id 1C4065208D5;
+        Mon, 21 Jan 2019 18:59:42 +0100 (CET)
+Received: from jernej-laptop.localnet (cpe1-8-82.cable.triera.net [213.161.8.82])
+        (Authenticated sender: 031275009)
+        by mail.siol.net (Postfix) with ESMTPA id 7C424520265;
+        Mon, 21 Jan 2019 18:59:41 +0100 (CET)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH 1/3] media: dt: bindings: sunxi-ir: Add A64 compatible
+Date:   Mon, 21 Jan 2019 18:59:41 +0100
+Message-ID: <11138144.2AFLRTQIGB@jernej-laptop>
+In-Reply-To: <CAGb2v65t6kO9HfSTuXZsBu6Pyc+mueLq-5tsYsw9vxwg5o=v4A@mail.gmail.com>
+References: <20190111173015.12119-1-jernej.skrabec@siol.net> <3128239.8RYQUhiYef@jernej-laptop> <CAGb2v65t6kO9HfSTuXZsBu6Pyc+mueLq-5tsYsw9vxwg5o=v4A@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190121100617.2311-1-ard.biesheuvel@linaro.org>
- <20190121150734.GA30582@infradead.org> <CAKv+Gu-hR=uieOeg7QheA5yfAycUoi2vjZsDUvROKVjW4eUNqw@mail.gmail.com>
- <20190121155908.GA8084@infradead.org> <CAKv+Gu8LzS9OgvVnzUT8BZWVgDmx4OfqNiPSf+8=riY_LByN-g@mail.gmail.com>
- <20190121162238.GA17651@infradead.org> <CAKv+Gu-5V-UjP_YzZBCEsa+o_G6BRSVw2ZimYGNEfRGf-aRPNg@mail.gmail.com>
- <59ccf85d-b99d-b5c8-ea87-66c2a892e197@daenzer.net>
-In-Reply-To: <59ccf85d-b99d-b5c8-ea87-66c2a892e197@daenzer.net>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Mon, 21 Jan 2019 18:59:10 +0100
-Message-ID: <CAKv+Gu8OkbHwY5UBxahpQpM_gKh2331pQ6o-4YyJdLurbFNHvw@mail.gmail.com>
-Subject: Re: [RFC PATCH] drm: disable WC optimization for cache coherent
- devices on non-x86
-To:     =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel@daenzer.net>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        David Zhou <David1.Zhou@amd.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Michel Daenzer <michel.daenzer@amd.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        amd-gfx@lists.freedesktop.org, Junwei Zhang <Jerry.Zhang@amd.com>,
-        Huang Rui <ray.huang@amd.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sean Paul <sean@poorly.run>,
-        Christian Koenig <christian.koenig@amd.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Transfer-Encoding: 8BIT
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 21 Jan 2019 at 18:55, Michel D=C3=A4nzer <michel@daenzer.net> wrote=
-:
->
-> On 2019-01-21 5:30 p.m., Ard Biesheuvel wrote:
-> > On Mon, 21 Jan 2019 at 17:22, Christoph Hellwig <hch@infradead.org> wro=
-te:
-> >
-> >> Until that happens we should just change the driver ifdefs to default
-> >> the hacks to off and only enable them on setups where we 100%
-> >> positively know that they actually work.  And document that fact
-> >> in big fat comments.
-> >
-> > Well, as I mentioned in my commit log as well, if we default to off
-> > unless CONFIG_X86, we may break working setups on MIPS and Power where
-> > the device is in fact non-cache coherent, and relies on this
-> > 'optimization' to get things working.
->
-> FWIW, the amdgpu driver doesn't rely on non-snooped transfers for
-> correct basic operation (the scenario Christian brought up is a very
-> specialized use-case), so that shouldn't be an issue.
->
+Dne ponedeljek, 21. januar 2019 ob 18:39:26 CET je Chen-Yu Tsai napisal(a):
+> On Tue, Jan 22, 2019 at 1:33 AM Jernej Škrabec <jernej.skrabec@siol.net> 
+wrote:
+> > Dne ponedeljek, 21. januar 2019 ob 10:57:57 CET je Chen-Yu Tsai 
+napisal(a):
+> > > On Mon, Jan 21, 2019 at 5:50 PM Maxime Ripard
+> > > <maxime.ripard@bootlin.com>
+> > 
+> > wrote:
+> > > > Hi,
+> > > > 
+> > > > I'm a bit late to the party, sorry for that.
+> > > > 
+> > > > On Sat, Jan 12, 2019 at 09:56:11AM +0800, Chen-Yu Tsai wrote:
+> > > > > On Sat, Jan 12, 2019 at 1:30 AM Jernej Skrabec
+> > > > > <jernej.skrabec@siol.net>
+> > 
+> > wrote:
+> > > > > > A64 IR is compatible with A13, so add A64 compatible with A13 as a
+> > > > > > fallback.
+> > > > > 
+> > > > > We ask people to add the SoC-specific compatible as a contigency,
+> > > > > in case things turn out to be not so "compatible".
+> > > > > 
+> > > > > To be consistent with all the other SoCs and other peripherals,
+> > > > > unless you already spotted a "compatible" difference in the
+> > > > > hardware, i.e. the hardware isn't completely the same, this
+> > > > > patch isn't needed. On the other hand, if you did, please mention
+> > > > > the differences in the commit log.
+> > > > 
+> > > > Even if we don't spot things, since we have the stable DT now, if we
+> > > > ever had that compatible in the DT from day 1, it's much easier to
+> > > > deal with.
+> > > > 
+> > > > I'd really like to have that pattern for all the IPs even if we didn't
+> > > > spot any issue, since we can't really say that the datasheet are
+> > > > complete, and one can always make a mistake and overlook something.
+> > > > 
+> > > > I'm fine with this version, and can apply it as is if we all agree.
+> > > 
+> > > I'm OK with having the fallback compatible. I'm just pointing out
+> > > that there are and will be a whole bunch of them, and we don't need
+> > > to document all of them unless we are actually doing something to
+> > > support them.
+> > 
+> > If you don't document them, checkpatch will complain. But if you can live
+> > with this warning, that's fine by me.
+> > 
+> > > On the other hand, the compatible string situation for IR needs a
+> > > bit of cleaning up at the moment. Right now we have sun4i-a10 and
+> > > sun5i-a13. As Jernej pointed out, the A13's register definition is
+> > > different from A64 (or any other SoCs later than sun6i). So we need
+> > > someone with an A10s/A13 device that has IR to test it and see if
+> > > the driver or the manual is wrong, and we'd likely add a compatible
+> > > for the A20.
+> > > 
+> > > Also, the earlier SoCs (A10/sun5i/A20) have IR TX capability. This
+> > > was lost in A31, and also all of sun8i / sun50i. So we're going to
+> > > need to add an A31 compatible that all later platforms would need
+> > > to switch to.
+> > 
+> > H6 has IR TX peripheral too, but it's different IP block...
+> > 
+> > Do you want me to switch all A31 and newer to different compatible in this
+> > series? I can do this, but I haven't any A13 device to test if this is
+> > really needed. Or you can argue that this is needed anyway due to missing
+> > TX capability.
+> 
+> The lack of TX capability does necessitate switching to an A31 compatible.
+> So yes, please switch. Lets leave the A10s/A13 alone for now, unless
+> someone complains. I think this was done from inception, so if it was
+> broken, someone should've complained a long time ago. I just want to
+> be sure where the error is, and put in a comment explaining it. However
+> I don't have the hardware either.
 
-The point is that this is only true for x86.
+How do you want me to split patches? I propose following:
+1. one patch to add all compatibles to DT binding documentation
+2. one patch to add A31 compatible to driver
+3. one patch for all 32 bit SoCs DT changes
+4. one patch to add A64 compatible
+5. one patch to enable OrangePi Win IR node
 
-On other architectures, the use of non-cached mappings on the CPU side
-means that you /do/ rely on non-snooped transfers, since if those
-transfers turn out not to snoop inadvertently, the accesses are
-incoherent with the CPU's view of memory.
+I don't think it's sensible to have multiple patches (one per SoC) for step 1 
+and 3.
+
+Best regards,
+Jernej
+
+
