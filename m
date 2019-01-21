@@ -2,422 +2,226 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53AF9C282F6
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:30:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24CD7C282F6
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:31:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F91220989
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:30:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD82920989
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:30:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="aDJE+ypp"
+	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="hIytj5Bo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727817AbfAUJaY (ORCPT
+        id S1727862AbfAUJa6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 04:30:24 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:39860 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727178AbfAUJaX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 04:30:23 -0500
-Received: by mail-pg1-f194.google.com with SMTP id w6so9220122pgl.6
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 01:30:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=uKLCQxwqa8Js3kK/DxuzRxhuNhuhV7512lhQqbniQjs=;
-        b=aDJE+yppROVooI4t69NTdkyGKbRb/k2yEaxVPv3cHM69UZn8DDD2oqCK7Fmc/LVm/O
-         WAf+8U/zk1xrfBDmRRRYo5IFXDk/SfjtzyOzMaXXOkfAafrd+pAkYRhefNMeAqhPQ2RU
-         QUSYH2zUeqFQNPr2j+idEVGAskM7vM4hSrBp8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=uKLCQxwqa8Js3kK/DxuzRxhuNhuhV7512lhQqbniQjs=;
-        b=Pd0k87kPKBD4HGTZcUsnOGosSiLbB0gUkp4AR9jrdPg+BhwMFJs945EqoJsZhV8pg0
-         TSfuIu37z7R/m0iKdwsryebNj2VnRt1L4HnbFkhhQN97taEEpqRB9C19+mJBgjq1rtlj
-         dTSgwmc9qO0lwjMpWCDYiNzDZb8xKhSBo7+p27HKboAO1C1UBvDEB3UnuGWUjHql3rvS
-         8D+016lZpFmTjW3ai0BtT2mIB/1dpytQ196oLOfmCH8vXF1UYASvHLWV8ZNY3O0y1tat
-         exkoo90tDCw5VokQWX7MQ9kP89JF8l36HEjjAs0gxTfGQ9WhGc2GTxmmqrH+L9SdrgMW
-         ndpA==
-X-Gm-Message-State: AJcUukfy4B8ZBsqRc24zD2BhZNkM84X5Yv0a7ikWevqpvSHcEP4xULTk
-        LsTBy8tar/7GYdJKKLwjo1rTiA==
-X-Google-Smtp-Source: ALg8bN4HDuKhyj2oq7C1Nm0eJydTl78emKAO4BAfJJJ7W4piGaIUIGyoQxI4Gzp/zZpkOn87ioQuDg==
-X-Received: by 2002:a65:584e:: with SMTP id s14mr27462624pgr.142.1548063021763;
-        Mon, 21 Jan 2019 01:30:21 -0800 (PST)
-Received: from localhost.localdomain ([117.252.65.115])
-        by smtp.gmail.com with ESMTPSA id h9sm16182777pgd.53.2019.01.21.01.30.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 21 Jan 2019 01:30:21 -0800 (PST)
-From:   Sumit Garg <sumit.garg@linaro.org>
-To:     jens.wiklander@linaro.org, herbert@gondor.apana.org.au
-Cc:     linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mpm@selenic.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, arnd@arndb.de, gregkh@linuxfoundation.org,
-        daniel.thompson@linaro.org, ard.biesheuvel@linaro.org,
-        bhsharma@redhat.com, tee-dev@lists.linaro.org,
-        Sumit Garg <sumit.garg@linaro.org>
-Subject: [PATCH v4 4/4] hwrng: add OP-TEE based rng driver
-Date:   Mon, 21 Jan 2019 14:59:19 +0530
-Message-Id: <1548062959-31860-5-git-send-email-sumit.garg@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1548062959-31860-1-git-send-email-sumit.garg@linaro.org>
-References: <1548062959-31860-1-git-send-email-sumit.garg@linaro.org>
+        Mon, 21 Jan 2019 04:30:58 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:59092 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726418AbfAUJa5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 04:30:57 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43jmWF1zRMz9v3wl;
+        Mon, 21 Jan 2019 10:30:49 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=hIytj5Bo; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id leApUuGXDrxc; Mon, 21 Jan 2019 10:30:49 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43jmWF0jPhz9v3wk;
+        Mon, 21 Jan 2019 10:30:49 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1548063049; bh=UbgCdASS/NfnsXEzoq8G1ErQtI53lUSLqab2fWj7UAo=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=hIytj5BoDVU2x1+2codn6GYRz8mWvvdsfj9OtfwoKjwojmb5OC+ECg1zDeuXUihGs
+         LLK8zAaCAA/+fCTVZDXLyZjXOIiZgtDOw8iI90/+JyXeTj2YFGzxIwMPDYuSVQWy6W
+         EqFMQfTEe3h/05prhaU8pvsT5Kz2BReX37G5cyU4=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 74C098B79C;
+        Mon, 21 Jan 2019 10:30:55 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id Gh0IDk4Yupl9; Mon, 21 Jan 2019 10:30:55 +0100 (CET)
+Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.2])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 322708B799;
+        Mon, 21 Jan 2019 10:30:55 +0100 (CET)
+Subject: Re: [PATCH v3 3/3] powerpc/32: Add KASAN support
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Alexander Potapenko <glider@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        Linux-MM <linux-mm@kvack.org>
+References: <cover.1547289808.git.christophe.leroy@c-s.fr>
+ <935f9f83393affb5d55323b126468ecb90373b88.1547289808.git.christophe.leroy@c-s.fr>
+ <e4b343fa-702b-294f-7741-bb85ed877cdf@virtuozzo.com>
+ <8d433501-a5a7-8e3b-03f7-ccdd0f8622e1@c-s.fr>
+ <CACT4Y+Z+UbN1rjHr3T5rgHpCJUknupPvEPw0SHs1-qjWBDhm3Q@mail.gmail.com>
+ <d2f85bee-c551-ec9d-1a13-6d3364788cc1@c-s.fr>
+ <CACT4Y+Y9H8LhpODFk6TE00kZWCU_V2QK1CStWxBt4EnWpLuCcQ@mail.gmail.com>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <b05f9674-daee-bbc6-0ee0-58d056a4f321@c-s.fr>
+Date:   Mon, 21 Jan 2019 10:30:55 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <CACT4Y+Y9H8LhpODFk6TE00kZWCU_V2QK1CStWxBt4EnWpLuCcQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On ARM SoC's with TrustZone enabled, peripherals like entropy sources
-might not be accessible to normal world (linux in this case) and rather
-accessible to secure world (OP-TEE in this case) only. So this driver
-aims to provides a generic interface to OP-TEE based random number
-generator service.
 
-This driver registers on TEE bus to interact with OP-TEE based rng
-device/service.
 
-Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
----
- MAINTAINERS                        |   5 +
- drivers/char/hw_random/Kconfig     |  15 ++
- drivers/char/hw_random/Makefile    |   1 +
- drivers/char/hw_random/optee-rng.c | 272 +++++++++++++++++++++++++++++++++++++
- 4 files changed, 293 insertions(+)
- create mode 100644 drivers/char/hw_random/optee-rng.c
+Le 21/01/2019 à 10:24, Dmitry Vyukov a écrit :
+> On Mon, Jan 21, 2019 at 9:37 AM Christophe Leroy
+> <christophe.leroy@c-s.fr> wrote:
+>>
+>>
+>>
+>> Le 21/01/2019 à 09:30, Dmitry Vyukov a écrit :
+>>> On Mon, Jan 21, 2019 at 8:17 AM Christophe Leroy
+>>> <christophe.leroy@c-s.fr> wrote:
+>>>>
+>>>>
+>>>>
+>>>> Le 15/01/2019 à 18:23, Andrey Ryabinin a écrit :
+>>>>>
+>>>>>
+>>>>> On 1/12/19 2:16 PM, Christophe Leroy wrote:
+>>>>>
+>>>>>> +KASAN_SANITIZE_early_32.o := n
+>>>>>> +KASAN_SANITIZE_cputable.o := n
+>>>>>> +KASAN_SANITIZE_prom_init.o := n
+>>>>>> +
+>>>>>
+>>>>> Usually it's also good idea to disable branch profiling - define DISABLE_BRANCH_PROFILING
+>>>>> either in top of these files or via Makefile. Branch profiling redefines if() statement and calls
+>>>>> instrumented ftrace_likely_update in every if().
+>>>>>
+>>>>>
+>>>>>
+>>>>>> diff --git a/arch/powerpc/mm/kasan_init.c b/arch/powerpc/mm/kasan_init.c
+>>>>>> new file mode 100644
+>>>>>> index 000000000000..3edc9c2d2f3e
+>>>>>
+>>>>>> +void __init kasan_init(void)
+>>>>>> +{
+>>>>>> +    struct memblock_region *reg;
+>>>>>> +
+>>>>>> +    for_each_memblock(memory, reg)
+>>>>>> +            kasan_init_region(reg);
+>>>>>> +
+>>>>>> +    pr_info("KASAN init done\n");
+>>>>>
+>>>>> Without "init_task.kasan_depth = 0;" kasan will not repot bugs.
+>>>>>
+>>>>> There is test_kasan module. Make sure that it produce reports.
+>>>>>
+>>>>
+>>>> Thanks for the review.
+>>>>
+>>>> Now I get the following very early in boot, what does that mean ?
+>>>
+>>> This looks like an instrumented memset call before kasan shadow is
+>>> mapped, or kasan shadow is not zeros. Does this happen before or after
+>>> mapping of kasan_early_shadow_page?
+>>
+>> This is after the mapping of kasan_early_shadow_page.
+>>
+>>> This version seems to miss what x86 code has to clear the early shadow:
+>>>
+>>> /*
+>>> * kasan_early_shadow_page has been used as early shadow memory, thus
+>>> * it may contain some garbage. Now we can clear and write protect it,
+>>> * since after the TLB flush no one should write to it.
+>>> */
+>>> memset(kasan_early_shadow_page, 0, PAGE_SIZE);
+>>
+>> In the early part, kasan_early_shadow_page is mapped read-only so I
+>> assumed this reset of its content was unneccessary.
+>>
+>> I'll try with it.
+>>
+>> Christophe
+> 
+> As far as I understand machine memory contains garbage after boot, and
+> that page needs to be all 0's so we need to explicitly memset it.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 32d44447..502733c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11260,6 +11260,11 @@ M:	Jens Wiklander <jens.wiklander@linaro.org>
- S:	Maintained
- F:	drivers/tee/optee/
- 
-+OP-TEE RANDOM NUMBER GENERATOR (RNG) DRIVER
-+M:	Sumit Garg <sumit.garg@linaro.org>
-+S:	Maintained
-+F:	drivers/char/hw_random/optee-rng.c
-+
- OPA-VNIC DRIVER
- M:	Dennis Dalessandro <dennis.dalessandro@intel.com>
- M:	Niranjana Vishwanathapura <niranjana.vishwanathapura@intel.com>
-diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
-index dac895d..25a7d8f 100644
---- a/drivers/char/hw_random/Kconfig
-+++ b/drivers/char/hw_random/Kconfig
-@@ -424,6 +424,21 @@ config HW_RANDOM_EXYNOS
- 	  will be called exynos-trng.
- 
- 	  If unsure, say Y.
-+
-+config HW_RANDOM_OPTEE
-+	tristate "OP-TEE based Random Number Generator support"
-+	depends on OPTEE
-+	default HW_RANDOM
-+	help
-+	  This  driver provides support for OP-TEE based Random Number
-+	  Generator on ARM SoCs where hardware entropy sources are not
-+	  accessible to normal world (Linux).
-+
-+	  To compile this driver as a module, choose M here: the module
-+	  will be called optee-rng.
-+
-+	  If unsure, say Y.
-+
- endif # HW_RANDOM
- 
- config UML_RANDOM
-diff --git a/drivers/char/hw_random/Makefile b/drivers/char/hw_random/Makefile
-index e35ec3c..7c9ef4a 100644
---- a/drivers/char/hw_random/Makefile
-+++ b/drivers/char/hw_random/Makefile
-@@ -38,3 +38,4 @@ obj-$(CONFIG_HW_RANDOM_CAVIUM) += cavium-rng.o cavium-rng-vf.o
- obj-$(CONFIG_HW_RANDOM_MTK)	+= mtk-rng.o
- obj-$(CONFIG_HW_RANDOM_S390) += s390-trng.o
- obj-$(CONFIG_HW_RANDOM_KEYSTONE) += ks-sa-rng.o
-+obj-$(CONFIG_HW_RANDOM_OPTEE) += optee-rng.o
-diff --git a/drivers/char/hw_random/optee-rng.c b/drivers/char/hw_random/optee-rng.c
-new file mode 100644
-index 0000000..6ac862a
---- /dev/null
-+++ b/drivers/char/hw_random/optee-rng.c
-@@ -0,0 +1,272 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2018-2019 Linaro Ltd.
-+ */
-+
-+#include <linux/delay.h>
-+#include <linux/of.h>
-+#include <linux/hw_random.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/slab.h>
-+#include <linux/tee_drv.h>
-+#include <linux/uuid.h>
-+
-+#define DRIVER_NAME "optee-rng"
-+
-+#define TEE_ERROR_HEALTH_TEST_FAIL	0x00000001
-+
-+/*
-+ * TA_CMD_GET_ENTROPY - Get Entropy from RNG
-+ *
-+ * param[0] (inout memref) - Entropy buffer memory reference
-+ * param[1] unused
-+ * param[2] unused
-+ * param[3] unused
-+ *
-+ * Result:
-+ * TEE_SUCCESS - Invoke command success
-+ * TEE_ERROR_BAD_PARAMETERS - Incorrect input param
-+ * TEE_ERROR_NOT_SUPPORTED - Requested entropy size greater than size of pool
-+ * TEE_ERROR_HEALTH_TEST_FAIL - Continuous health testing failed
-+ */
-+#define TA_CMD_GET_ENTROPY		0x0
-+
-+/*
-+ * TA_CMD_GET_RNG_INFO - Get RNG information
-+ *
-+ * param[0] (out value) - value.a: RNG data-rate in bytes per second
-+ *                        value.b: Quality/Entropy per 1024 bit of data
-+ * param[1] unused
-+ * param[2] unused
-+ * param[3] unused
-+ *
-+ * Result:
-+ * TEE_SUCCESS - Invoke command success
-+ * TEE_ERROR_BAD_PARAMETERS - Incorrect input param
-+ */
-+#define TA_CMD_GET_RNG_INFO		0x1
-+
-+#define MAX_ENTROPY_REQ_SZ		(4 * 1024)
-+
-+static struct tee_context *ctx;
-+static struct tee_shm *entropy_shm_pool;
-+static u32 ta_rng_data_rate;
-+static u32 ta_rng_session_id;
-+
-+static size_t get_optee_rng_data(void *buf, size_t req_size)
-+{
-+	u32 ret = 0;
-+	u8 *rng_data = NULL;
-+	size_t rng_size = 0;
-+	struct tee_ioctl_invoke_arg inv_arg = {0};
-+	struct tee_param param[4] = {0};
-+
-+	/* Invoke TA_CMD_GET_ENTROPY function of Trusted App */
-+	inv_arg.func = TA_CMD_GET_ENTROPY;
-+	inv_arg.session = ta_rng_session_id;
-+	inv_arg.num_params = 4;
-+
-+	/* Fill invoke cmd params */
-+	param[0].attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INOUT;
-+	param[0].u.memref.shm = entropy_shm_pool;
-+	param[0].u.memref.size = req_size;
-+	param[0].u.memref.shm_offs = 0;
-+
-+	ret = tee_client_invoke_func(ctx, &inv_arg, param);
-+	if ((ret < 0) || (inv_arg.ret != 0)) {
-+		pr_err("TA_CMD_GET_ENTROPY invoke function error: %x\n",
-+		       inv_arg.ret);
-+		return 0;
-+	}
-+
-+	rng_data = tee_shm_get_va(entropy_shm_pool, 0);
-+	if (IS_ERR(rng_data)) {
-+		pr_err("tee_shm_get_va failed\n");
-+		return 0;
-+	}
-+
-+	rng_size = param[0].u.memref.size;
-+	memcpy(buf, rng_data, rng_size);
-+
-+	return rng_size;
-+}
-+
-+static int optee_rng_read(struct hwrng *rng, void *buf, size_t max, bool wait)
-+{
-+	u8 *data = buf;
-+	size_t read = 0, rng_size = 0;
-+	int timeout = 1;
-+
-+	if (max > MAX_ENTROPY_REQ_SZ)
-+		max = MAX_ENTROPY_REQ_SZ;
-+
-+	while (read == 0) {
-+		rng_size = get_optee_rng_data(data, (max - read));
-+
-+		data += rng_size;
-+		read += rng_size;
-+
-+		if (wait) {
-+			if (timeout-- == 0)
-+				return read;
-+			msleep((1000 * (max - read)) / ta_rng_data_rate);
-+		} else {
-+			return read;
-+		}
-+	}
-+
-+	return read;
-+}
-+
-+static int optee_rng_init(struct hwrng *rng)
-+{
-+	entropy_shm_pool = tee_shm_alloc(ctx, MAX_ENTROPY_REQ_SZ,
-+					 TEE_SHM_MAPPED | TEE_SHM_DMA_BUF);
-+	if (IS_ERR(entropy_shm_pool)) {
-+		pr_err("tee_shm_alloc failed\n");
-+		return PTR_ERR(entropy_shm_pool);
-+	}
-+
-+	return 0;
-+}
-+
-+static void optee_rng_cleanup(struct hwrng *rng)
-+{
-+	tee_shm_free(entropy_shm_pool);
-+}
-+
-+static struct hwrng optee_rng = {
-+	.name		= DRIVER_NAME,
-+	.init		= optee_rng_init,
-+	.cleanup	= optee_rng_cleanup,
-+	.read		= optee_rng_read,
-+};
-+
-+static int get_optee_rng_info(struct device *dev)
-+{
-+	u32 ret = 0;
-+	struct tee_ioctl_invoke_arg inv_arg = {0};
-+	struct tee_param param[4] = {0};
-+
-+	/* Invoke TA_CMD_GET_RNG_INFO function of Trusted App */
-+	inv_arg.func = TA_CMD_GET_RNG_INFO;
-+	inv_arg.session = ta_rng_session_id;
-+	inv_arg.num_params = 4;
-+
-+	/* Fill invoke cmd params */
-+	param[0].attr = TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_OUTPUT;
-+
-+	ret = tee_client_invoke_func(ctx, &inv_arg, param);
-+	if ((ret < 0) || (inv_arg.ret != 0)) {
-+		dev_err(dev, "TA_CMD_GET_RNG_INFO invoke func error: %x\n",
-+			inv_arg.ret);
-+		return -EINVAL;
-+	}
-+
-+	ta_rng_data_rate = param[0].u.value.a;
-+	optee_rng.quality = param[0].u.value.b;
-+
-+	return 0;
-+}
-+
-+static int optee_ctx_match(struct tee_ioctl_version_data *ver, const void *data)
-+{
-+	if (ver->impl_id == TEE_IMPL_ID_OPTEE)
-+		return 1;
-+	else
-+		return 0;
-+}
-+
-+static int optee_rng_probe(struct device *dev)
-+{
-+	struct tee_client_device *rng_device = to_tee_client_device(dev);
-+	int ret = 0, err = -ENODEV;
-+	struct tee_ioctl_open_session_arg sess_arg = {0};
-+
-+	/* Open context with TEE driver */
-+	ctx = tee_client_open_context(NULL, optee_ctx_match, NULL, NULL);
-+	if (IS_ERR(ctx))
-+		return -ENODEV;
-+
-+	/* Open session with hwrng Trusted App */
-+	memcpy(sess_arg.uuid, rng_device->id.b, TEE_IOCTL_UUID_LEN);
-+	sess_arg.clnt_login = TEE_IOCTL_LOGIN_PUBLIC;
-+	sess_arg.num_params = 0;
-+
-+	ret = tee_client_open_session(ctx, &sess_arg, NULL);
-+	if ((ret < 0) || (sess_arg.ret != 0)) {
-+		dev_err(dev, "tee_client_open_session failed, error: %x\n",
-+			sess_arg.ret);
-+		err = -EINVAL;
-+		goto out_ctx;
-+	}
-+	ta_rng_session_id = sess_arg.session;
-+
-+	err = get_optee_rng_info(dev);
-+	if (err)
-+		goto out_sess;
-+
-+	err = hwrng_register(&optee_rng);
-+	if (err) {
-+		dev_err(dev, "hwrng registration failed (%d)\n", err);
-+		goto out_sess;
-+	}
-+
-+	return 0;
-+
-+out_sess:
-+	tee_client_close_session(ctx, ta_rng_session_id);
-+out_ctx:
-+	tee_client_close_context(ctx);
-+
-+	return err;
-+}
-+
-+static int optee_rng_remove(struct device *dev)
-+{
-+	hwrng_unregister(&optee_rng);
-+	tee_client_close_session(ctx, ta_rng_session_id);
-+	tee_client_close_context(ctx);
-+
-+	return 0;
-+}
-+
-+const tee_client_device_id optee_rng_id_table[] = {
-+	UUID_INIT(0xab7a617c, 0xb8e7, 0x4d8f,
-+		   0x83, 0x01, 0xd0, 0x9b, 0x61, 0x03, 0x6b, 0x64),
-+	{}
-+};
-+
-+static struct tee_client_driver optee_rng_driver = {
-+	.id_table	= optee_rng_id_table,
-+	.driver		= {
-+		.name		= DRIVER_NAME,
-+		.bus		= &tee_bus_type,
-+		.probe		= optee_rng_probe,
-+		.remove		= optee_rng_remove,
-+	},
-+};
-+
-+static int __init optee_rng_mod_init(void)
-+{
-+	int rc;
-+
-+	rc = driver_register(&optee_rng_driver.driver);
-+	if (rc)
-+		pr_warn("driver registration failed, err: %d", rc);
-+
-+	return rc;
-+}
-+
-+static void __exit optee_rng_mod_exit(void)
-+{
-+	driver_unregister(&optee_rng_driver.driver);
-+}
-+
-+module_init(optee_rng_mod_init);
-+module_exit(optee_rng_mod_exit);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Sumit Garg <sumit.garg@linaro.org>");
-+MODULE_DESCRIPTION("OP-TEE based random number generator driver");
--- 
-2.7.4
+That page is in BSS so it is zeroed before kasan_early_init().
 
+Though as expected, that memset() doesn't fix the issue.
+
+Indeed the problem is in kasan_init() : memblock_phys_alloc() doesn't 
+zeroize the allocated memory. I changed it to memblock_alloc() and now 
+it works.
+
+Thanks for your help,
+Christophe
+
+
+> 
+> 
+>>>> [    0.000000] KASAN init done
+>>>> [    0.000000]
+>>>> ==================================================================
+>>>> [    0.000000] BUG: KASAN: unknown-crash in memblock_alloc_try_nid+0xd8/0xf0
+>>>> [    0.000000] Write of size 68 at addr c7ff5a90 by task swapper/0
+>>>> [    0.000000]
+>>>> [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted
+>>>> 5.0.0-rc2-s3k-dev-00559-g88aa407c4bce #772
+>>>> [    0.000000] Call Trace:
+>>>> [    0.000000] [c094ded0] [c016c7e4]
+>>>> print_address_description+0x1a0/0x2b8 (unreliable)
+>>>> [    0.000000] [c094df00] [c016caa0] kasan_report+0xe4/0x168
+>>>> [    0.000000] [c094df40] [c016b464] memset+0x2c/0x4c
+>>>> [    0.000000] [c094df60] [c08731f0] memblock_alloc_try_nid+0xd8/0xf0
+>>>> [    0.000000] [c094df90] [c0861f20] mmu_context_init+0x58/0xa0
+>>>> [    0.000000] [c094dfb0] [c085ca70] start_kernel+0x54/0x400
+>>>> [    0.000000] [c094dff0] [c0002258] start_here+0x44/0x9c
+>>>> [    0.000000]
+>>>> [    0.000000]
+>>>> [    0.000000] Memory state around the buggy address:
+>>>> [    0.000000]  c7ff5980: e2 a1 87 81 bd d4 a5 b5 f8 8d 89 e7 72 bc 20 24
+>>>> [    0.000000]  c7ff5a00: e7 b9 c1 c7 17 e9 b4 bd a4 d0 e7 a0 11 15 a5 b5
+>>>> [    0.000000] >c7ff5a80: b5 e1 83 a5 2d 65 31 3f f3 e5 a7 ef 34 b5 69 b5
+>>>> [    0.000000]                  ^
+>>>> [    0.000000]  c7ff5b00: 21 a5 c1 c1 b4 bf 2d e5 e5 c3 f5 91 e3 b8 a1 34
+>>>> [    0.000000]  c7ff5b80: ad ef 23 87 3d a6 ad b5 c3 c3 80 b7 ac b1 1f 37
+>>>> [    0.000000]
+>>>> ==================================================================
+>>>> [    0.000000] Disabling lock debugging due to kernel taint
+>>>> [    0.000000] MMU: Allocated 76 bytes of context maps for 16 contexts
+>>>> [    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 8176
+>>>> [    0.000000] Kernel command line: console=ttyCPM0,115200N8
+>>>> ip=192.168.2.7:192.168.2.2::255.0.0.0:vgoip:eth0:off kgdboc=ttyCPM0
+>>>> [    0.000000] Dentry cache hash table entries: 16384 (order: 2, 65536
+>>>> bytes)
+>>>> [    0.000000] Inode-cache hash table entries: 8192 (order: 1, 32768 bytes)
+>>>> [    0.000000] Memory: 99904K/131072K available (7376K kernel code, 528K
+>>>> rwdata, 1168K rodata, 576K init, 4623K bss, 31168K reserved, 0K
+>>>> cma-reserved)
+>>>> [    0.000000] Kernel virtual memory layout:
+>>>> [    0.000000]   * 0xffefc000..0xffffc000  : fixmap
+>>>> [    0.000000]   * 0xf7c00000..0xffc00000  : kasan shadow mem
+>>>> [    0.000000]   * 0xf7a00000..0xf7c00000  : consistent mem
+>>>> [    0.000000]   * 0xf7a00000..0xf7a00000  : early ioremap
+>>>> [    0.000000]   * 0xc9000000..0xf7a00000  : vmalloc & ioremap
+>>>>
+>>>>
+>>>> Christophe
