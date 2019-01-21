@@ -2,104 +2,69 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37A38C282E9
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:09:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 480F5C282DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:09:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 048A520823
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:09:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="C4glJbX5"
+	by mail.kernel.org (Postfix) with ESMTP id 221A920823
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:09:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729460AbfAUIJP (ORCPT
+        id S1728833AbfAUIJz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 03:09:15 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:41541 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728398AbfAUIJO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 03:09:14 -0500
-Received: by mail-pl1-f194.google.com with SMTP id u6so9419231plm.8
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 00:09:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=I6FVRA4XSxZpmaxpsnd+V/mR5be0y9wtt8PvTBdO5UM=;
-        b=C4glJbX5OSlpAr2CZvYAtmHh/yUu7K0U4rcvUgCvbmjx7VkwLmhnvEr9hl5su9Fg/S
-         TSFUaOM2Ls3y/LBb/OlaaDkGpU4JVSUcKKF8+V2kxNzlZ0NSTZWaCspbbEpQ1sXJkDx/
-         H4QH2MwnHqdZQVAcgeu9GyvtNCWYV42wKDW9w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=I6FVRA4XSxZpmaxpsnd+V/mR5be0y9wtt8PvTBdO5UM=;
-        b=FnmDObrFlTf12mS9/UWnKkczuzYh+P4LQIkYQYcxkHZfMFjh1UmxdSoYIu9Ho62lwE
-         da+PIjHVwQBNhTjO/qif5sRmyCDMhZvSlqKnQ/CkhUb5zZiCoHTBvuqo58YFx2fn6Or8
-         axx8nfwBwGoqbbATsKSTMyODJz8y7rjRQikq/nE3EJB0ewNgVMrz39o5Lu84UUXRNTGk
-         uo0p/w1HlgSLYya8bnI3qR3PBcaHeZQMU44HnnbKoBLZJnceE0/MARFi+Lbc6AQh/BRH
-         d7PJlIB4ikDlkZ9QVDoGdp1tugRccoP76GUBpIRUVXSw1lmmnb2QZtPNfE77J7JO6TWx
-         5HkQ==
-X-Gm-Message-State: AJcUukcwqsBy9wGyTQWlaI3nb5nbicr3npgiQCeTpv8F57OkgqCK6ngI
-        /YIoP0waof7P+VxUsqrTLdMTn+3Czx4=
-X-Google-Smtp-Source: ALg8bN4iq8HQIpcGz4T9WyZ5bd7dviYh+TUmymP+Gm1zQ0HEBHQ6WEu+tCtR2O4Ed/7KeuHmBN9ujQ==
-X-Received: by 2002:a17:902:5982:: with SMTP id p2mr27433295pli.39.1548022858558;
-        Sun, 20 Jan 2019 14:20:58 -0800 (PST)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id z13sm26665781pgf.84.2019.01.20.14.20.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 20 Jan 2019 14:20:57 -0800 (PST)
-Date:   Sun, 20 Jan 2019 14:20:56 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Kugan Vivekanandarajah <kugan.vivekanandarajah@linaro.org>
-Subject: [GIT PULL] gcc-plugin fixes for v5.0-rc4
-Message-ID: <20190120222056.GA35153@beast>
+        Mon, 21 Jan 2019 03:09:55 -0500
+Received: from ms.lwn.net ([45.79.88.28]:33080 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727586AbfAUIJy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 03:09:54 -0500
+Received: from localhost.localdomain (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id ADD90ACC;
+        Mon, 21 Jan 2019 02:14:03 +0000 (UTC)
+Date:   Sun, 20 Jan 2019 19:13:59 -0700
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Otto Sabart <ottosabart@seberm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+Subject: Re: [PATCH v2 1/1] doc: networking: integrate scaling document into
+ doc tree
+Message-ID: <20190120191359.41e5de0c@lwn.net>
+In-Reply-To: <3eddcfcf3916ef8e89230971359fc9b6bef35d20.1547843156.git.ottosabart@seberm.com>
+References: <cover.1547843156.git.ottosabart@seberm.com>
+        <3eddcfcf3916ef8e89230971359fc9b6bef35d20.1547843156.git.ottosabart@seberm.com>
+Organization: LWN.net
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Fri, 18 Jan 2019 21:38:32 +0100
+Otto Sabart <ottosabart@seberm.com> wrote:
 
-Please pull these gcc-plugin fixes for v5.0-rc4.
+> Convert scaling document into reStructuredText and add reference to
+> scaling document into main table of contents in network documentation.
+> 
+> There are no semantic changes.
+> 
+> There are no references to "scaling.txt" file. Whole kernel tree was
+> checked using:
+> $ grep -r "scaling\.txt"
+> 
+> Signed-off-by: Otto Sabart <ottosabart@seberm.com>
 
-Thanks!
+So this didn't apply cleanly to docs-next due to a conflict with
+commit d96bedb2b248 ("doc: networking: add offload documents into main
+index file") by one Otto Sabart.  I've fixed that up, but in the future
+it will be helpful if you can be sure that your patches are against the
+docs tree if you want me to merge them.
 
--Kees
+Thanks,
 
-The following changes since commit 1c7fc5cbc33980acd13d668f1c8f0313d6ae9fd8:
-
-  Linux 5.0-rc2 (2019-01-14 10:41:12 +1200)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/gcc-plugins-v5.0-rc4
-
-for you to fetch changes up to 2c88c742d011707b55da7b54b06a030c6f57233f:
-
-  gcc-plugins: arm_ssp_per_task_plugin: fix for GCC 9+ (2019-01-20 14:06:40 -0800)
-
-----------------------------------------------------------------
-Bug fixes for gcc-plugins
-
-- Fix ARM per-task stack protector plugin under GCC 9 (Ard Biesheuvel)
-
-----------------------------------------------------------------
-Ard Biesheuvel (2):
-      gcc-plugins: arm_ssp_per_task_plugin: sign extend the SP mask
-      gcc-plugins: arm_ssp_per_task_plugin: fix for GCC 9+
-
- scripts/gcc-plugins/arm_ssp_per_task_plugin.c | 23 +++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
-
--- 
-Kees Cook
+jon
