@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EA01C2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:58:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 965DCC2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:58:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A8642084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:58:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 663B620879
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:58:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079110;
-	bh=lCTB/djO8Ce0PBN7OAB1lk/LLSkjJKM5Yahyo1PD5w8=;
+	s=default; t=1548079113;
+	bh=l8fnXtEYXez60iOfa/EYcN0Hhpgl4hB77+xHHkD8qfQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=W16kFUk6Q87vPOx/lLMGA+yMBp+WpYx7jzu7aPSvbZrQ5sEp4DwSVXmnI4z6sTXnX
-	 VSQE94kMQUjFeVBWWZx5GaA0+eZOKP+WLPxhru3/F1zrQfUTjl7fkQhfS0TQQVVEW/
-	 9VUtDm2VrxQau9M3qcmsEw02SyzyKx62sMBm5SQ8=
+	b=g+bRJ9KjZjUoGgrG5dRpuPMwEqd6jDktxHUEP4WkV6JppjAqEGkJNCfxOswZo59D5
+	 bORvXl3pH5HpHiF0MlsegkSqmml4ZyTFYX7oW4FjBFN6HwGfujrswve8I/S5apqgqO
+	 mdfIP4+IS2KSVXSVvu0dfl16PZnxEc19WhRyP8Z0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731891AbfAUN62 (ORCPT
+        id S1731957AbfAUN6b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:58:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43872 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:58:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43955 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731830AbfAUN6Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:58:25 -0500
+        id S1731842AbfAUN62 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:58:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E372120879;
-        Mon, 21 Jan 2019 13:58:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 90B762084C;
+        Mon, 21 Jan 2019 13:58:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548079104;
-        bh=lCTB/djO8Ce0PBN7OAB1lk/LLSkjJKM5Yahyo1PD5w8=;
+        s=default; t=1548079107;
+        bh=l8fnXtEYXez60iOfa/EYcN0Hhpgl4hB77+xHHkD8qfQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZKbduLcVB1uKzZIPZ/r4P2udQTSprI7Q3GYYCDKA0ynr81++1n3klTUaDPS6MFObl
-         CXcJav5dYkjpS605PCJumEXL0AlLTIQJdJXlMvYMfuwbUeNRNGopPF+zgy767AliqE
-         8kue9ycC4Afw1sxjc0sbrDAnDBRd+nIRD0bvrXlQ=
+        b=RWuehetkiXsgze+FpSQ33yYHMnkaMYptJpshKUHuWOUVu4rz+Jg/Qj+l0pa26mPpB
+         rr+zE/p64wgjuG1c4OfJXDAPQQ3HALZk4W7OjVkW3c7ac+YimyVJdl6omNUeN9UYbP
+         mN1JjaAZIXM2I4fcLLvzltw389+G2Ver+aezbBSg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Shawn Bohrer <sbohrer@cloudflare.com>,
         Florian Westphal <fw@strlen.de>,
         Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.19 10/99] netfilter: nf_conncount: merge lookup and add functions
-Date:   Mon, 21 Jan 2019 14:48:02 +0100
-Message-Id: <20190121134914.312610834@linuxfoundation.org>
+Subject: [PATCH 4.19 11/99] netfilter: nf_conncount: move all list iterations under spinlock
+Date:   Mon, 21 Jan 2019 14:48:03 +0100
+Message-Id: <20190121134914.352297721@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121134913.924726465@linuxfoundation.org>
 References: <20190121134913.924726465@linuxfoundation.org>
@@ -66,359 +66,155 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: Pablo Neira Ayuso <pablo@netfilter.org>
 
-commit df4a902509766897f7371fdfa4c3bf8bc321b55d upstream.
+commit 2f971a8f425545da52ca0e6bee81f5b1ea0ccc5f upstream.
 
-'lookup' is always followed by 'add'.
-Merge both and make the list-walk part of nf_conncount_add().
+Two CPUs may race to remove a connection from the list, the existing
+conn->dead will result in a use-after-free. Use the per-list spinlock to
+protect list iterations.
 
-This also avoids one unneeded unlock/re-lock pair.
+As all accesses to the list now happen while holding the per-list lock,
+we no longer need to delay free operations with rcu.
 
-Extra care needs to be taken in count_tree, as we only hold rcu
-read lock, i.e. we can only insert to an existing tree node after
-acquiring its lock and making sure it has a nonzero count.
+Joint work with Florian.
 
-As a zero count should be rare, just fall back to insert_tree()
-(which acquires tree lock).
-
-This issue and its solution were pointed out by Shawn Bohrer
-during patch review.
-
+Fixes: 5c789e131cbb9 ("netfilter: nf_conncount: Add list lock and gc worker, and RCU for init tree search")
 Reviewed-by: Shawn Bohrer <sbohrer@cloudflare.com>
 Signed-off-by: Florian Westphal <fw@strlen.de>
 Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/net/netfilter/nf_conntrack_count.h |   18 ---
- net/netfilter/nf_conncount.c               |  146 +++++++++++++----------------
- net/netfilter/nft_connlimit.c              |   14 --
- 3 files changed, 72 insertions(+), 106 deletions(-)
+ net/netfilter/nf_conncount.c |   46 ++++++++++++++++++-------------------------
+ 1 file changed, 20 insertions(+), 26 deletions(-)
 
---- a/include/net/netfilter/nf_conntrack_count.h
-+++ b/include/net/netfilter/nf_conntrack_count.h
-@@ -5,12 +5,6 @@
- 
- struct nf_conncount_data;
- 
--enum nf_conncount_list_add {
--	NF_CONNCOUNT_ADDED, 	/* list add was ok */
--	NF_CONNCOUNT_ERR,	/* -ENOMEM, must drop skb */
--	NF_CONNCOUNT_SKIP,	/* list is already reclaimed by gc */
--};
--
- struct nf_conncount_list {
- 	spinlock_t list_lock;
- 	struct list_head head;	/* connections with the same filtering key */
-@@ -29,18 +23,12 @@ unsigned int nf_conncount_count(struct n
- 				const struct nf_conntrack_tuple *tuple,
- 				const struct nf_conntrack_zone *zone);
- 
--void nf_conncount_lookup(struct net *net, struct nf_conncount_list *list,
--			 const struct nf_conntrack_tuple *tuple,
--			 const struct nf_conntrack_zone *zone,
--			 bool *addit);
-+int nf_conncount_add(struct net *net, struct nf_conncount_list *list,
-+		     const struct nf_conntrack_tuple *tuple,
-+		     const struct nf_conntrack_zone *zone);
- 
- void nf_conncount_list_init(struct nf_conncount_list *list);
- 
--enum nf_conncount_list_add
--nf_conncount_add(struct nf_conncount_list *list,
--		 const struct nf_conntrack_tuple *tuple,
--		 const struct nf_conntrack_zone *zone);
--
- bool nf_conncount_gc_list(struct net *net,
- 			  struct nf_conncount_list *list);
- 
 --- a/net/netfilter/nf_conncount.c
 +++ b/net/netfilter/nf_conncount.c
-@@ -83,38 +83,6 @@ static int key_diff(const u32 *a, const
+@@ -43,8 +43,6 @@ struct nf_conncount_tuple {
+ 	struct nf_conntrack_zone	zone;
+ 	int				cpu;
+ 	u32				jiffies32;
+-	bool				dead;
+-	struct rcu_head			rcu_head;
+ };
+ 
+ struct nf_conncount_rb {
+@@ -83,36 +81,21 @@ static int key_diff(const u32 *a, const
  	return memcmp(a, b, klen * sizeof(u32));
  }
  
--enum nf_conncount_list_add
--nf_conncount_add(struct nf_conncount_list *list,
--		 const struct nf_conntrack_tuple *tuple,
--		 const struct nf_conntrack_zone *zone)
+-static void __conn_free(struct rcu_head *h)
 -{
 -	struct nf_conncount_tuple *conn;
 -
--	if (WARN_ON_ONCE(list->count > INT_MAX))
--		return NF_CONNCOUNT_ERR;
--
--	conn = kmem_cache_alloc(conncount_conn_cachep, GFP_ATOMIC);
--	if (conn == NULL)
--		return NF_CONNCOUNT_ERR;
--
--	conn->tuple = *tuple;
--	conn->zone = *zone;
--	conn->cpu = raw_smp_processor_id();
--	conn->jiffies32 = (u32)jiffies;
--	conn->dead = false;
--	spin_lock_bh(&list->list_lock);
--	if (list->dead == true) {
--		kmem_cache_free(conncount_conn_cachep, conn);
--		spin_unlock_bh(&list->list_lock);
--		return NF_CONNCOUNT_SKIP;
--	}
--	list_add_tail(&conn->node, &list->head);
--	list->count++;
--	spin_unlock_bh(&list->list_lock);
--	return NF_CONNCOUNT_ADDED;
+-	conn = container_of(h, struct nf_conncount_tuple, rcu_head);
+-	kmem_cache_free(conncount_conn_cachep, conn);
 -}
--EXPORT_SYMBOL_GPL(nf_conncount_add);
 -
- static void __conn_free(struct rcu_head *h)
+ static bool conn_free(struct nf_conncount_list *list,
+ 		      struct nf_conncount_tuple *conn)
  {
- 	struct nf_conncount_tuple *conn;
-@@ -177,11 +145,10 @@ find_or_evict(struct net *net, struct nf
- 	return ERR_PTR(-EAGAIN);
- }
- 
--void nf_conncount_lookup(struct net *net,
--			 struct nf_conncount_list *list,
--			 const struct nf_conntrack_tuple *tuple,
--			 const struct nf_conntrack_zone *zone,
--			 bool *addit)
-+static int __nf_conncount_add(struct net *net,
-+			      struct nf_conncount_list *list,
-+			      const struct nf_conntrack_tuple *tuple,
-+			      const struct nf_conntrack_zone *zone)
- {
- 	const struct nf_conntrack_tuple_hash *found;
- 	struct nf_conncount_tuple *conn, *conn_n;
-@@ -189,9 +156,6 @@ void nf_conncount_lookup(struct net *net
- 	unsigned int collect = 0;
  	bool free_entry = false;
  
--	/* best effort only */
--	*addit = tuple ? true : false;
+-	spin_lock_bh(&list->list_lock);
 -
- 	/* check the saved connections */
+-	if (conn->dead) {
+-		spin_unlock_bh(&list->list_lock);
+-		return free_entry;
+-	}
++	lockdep_assert_held(&list->list_lock);
+ 
+ 	list->count--;
+-	conn->dead = true;
+-	list_del_rcu(&conn->node);
++	list_del(&conn->node);
+ 	if (list->count == 0) {
+ 		list->dead = true;
+ 		free_entry = true;
+ 	}
+ 
+-	spin_unlock_bh(&list->list_lock);
+-	call_rcu(&conn->rcu_head, __conn_free);
++	kmem_cache_free(conncount_conn_cachep, conn);
+ 	return free_entry;
+ }
+ 
+@@ -242,7 +225,7 @@ void nf_conncount_list_init(struct nf_co
+ }
+ EXPORT_SYMBOL_GPL(nf_conncount_list_init);
+ 
+-/* Return true if the list is empty */
++/* Return true if the list is empty. Must be called with BH disabled. */
+ bool nf_conncount_gc_list(struct net *net,
+ 			  struct nf_conncount_list *list)
+ {
+@@ -253,12 +236,18 @@ bool nf_conncount_gc_list(struct net *ne
+ 	bool free_entry = false;
+ 	bool ret = false;
+ 
++	/* don't bother if other cpu is already doing GC */
++	if (!spin_trylock(&list->list_lock))
++		return false;
++
  	list_for_each_entry_safe(conn, conn_n, &list->head, node) {
- 		if (collect > CONNCOUNT_GC_MAX_NODES)
-@@ -201,21 +165,19 @@ void nf_conncount_lookup(struct net *net
+ 		found = find_or_evict(net, list, conn, &free_entry);
  		if (IS_ERR(found)) {
- 			/* Not found, but might be about to be confirmed */
- 			if (PTR_ERR(found) == -EAGAIN) {
--				if (!tuple)
--					continue;
--
- 				if (nf_ct_tuple_equal(&conn->tuple, tuple) &&
- 				    nf_ct_zone_id(&conn->zone, conn->zone.dir) ==
- 				    nf_ct_zone_id(zone, zone->dir))
--					*addit = false;
--			} else if (PTR_ERR(found) == -ENOENT)
-+					return 0; /* already exists */
-+			} else {
- 				collect++;
+ 			if (PTR_ERR(found) == -ENOENT)  {
+-				if (free_entry)
++				if (free_entry) {
++					spin_unlock(&list->list_lock);
+ 					return true;
++				}
+ 				collected++;
+ 			}
+ 			continue;
+@@ -271,23 +260,24 @@ bool nf_conncount_gc_list(struct net *ne
+ 			 * closed already -> ditch it
+ 			 */
+ 			nf_ct_put(found_ct);
+-			if (conn_free(list, conn))
++			if (conn_free(list, conn)) {
++				spin_unlock(&list->list_lock);
+ 				return true;
 +			}
+ 			collected++;
  			continue;
  		}
  
- 		found_ct = nf_ct_tuplehash_to_ctrack(found);
- 
--		if (tuple && nf_ct_tuple_equal(&conn->tuple, tuple) &&
-+		if (nf_ct_tuple_equal(&conn->tuple, tuple) &&
- 		    nf_ct_zone_equal(found_ct, zone, zone->dir)) {
- 			/*
- 			 * We should not see tuples twice unless someone hooks
-@@ -223,7 +185,8 @@ void nf_conncount_lookup(struct net *net
- 			 *
- 			 * Attempt to avoid a re-add in this case.
- 			 */
--			*addit = false;
-+			nf_ct_put(found_ct);
-+			return 0;
- 		} else if (already_closed(found_ct)) {
- 			/*
- 			 * we do not care about connections which are
-@@ -237,8 +200,38 @@ void nf_conncount_lookup(struct net *net
- 
  		nf_ct_put(found_ct);
+ 		if (collected > CONNCOUNT_GC_MAX_NODES)
+-			return false;
++			break;
  	}
-+
-+	if (WARN_ON_ONCE(list->count > INT_MAX))
-+		return -EOVERFLOW;
-+
-+	conn = kmem_cache_alloc(conncount_conn_cachep, GFP_ATOMIC);
-+	if (conn == NULL)
-+		return -ENOMEM;
-+
-+	conn->tuple = *tuple;
-+	conn->zone = *zone;
-+	conn->cpu = raw_smp_processor_id();
-+	conn->jiffies32 = (u32)jiffies;
-+	list_add_tail(&conn->node, &list->head);
-+	list->count++;
-+	return 0;
-+}
-+
-+int nf_conncount_add(struct net *net,
-+		     struct nf_conncount_list *list,
-+		     const struct nf_conntrack_tuple *tuple,
-+		     const struct nf_conntrack_zone *zone)
-+{
-+	int ret;
-+
-+	/* check the saved connections */
-+	spin_lock_bh(&list->list_lock);
-+	ret = __nf_conncount_add(net, list, tuple, zone);
-+	spin_unlock_bh(&list->list_lock);
-+
-+	return ret;
+ 
+-	spin_lock_bh(&list->list_lock);
+ 	if (!list->count) {
+ 		list->dead = true;
+ 		ret = true;
+ 	}
+-	spin_unlock_bh(&list->list_lock);
++	spin_unlock(&list->list_lock);
+ 
+ 	return ret;
  }
--EXPORT_SYMBOL_GPL(nf_conncount_lookup);
-+EXPORT_SYMBOL_GPL(nf_conncount_add);
+@@ -478,6 +468,7 @@ static void tree_gc_worker(struct work_s
+ 	tree = data->gc_tree % CONNCOUNT_SLOTS;
+ 	root = &data->root[tree];
  
- void nf_conncount_list_init(struct nf_conncount_list *list)
- {
-@@ -339,13 +332,11 @@ insert_tree(struct net *net,
- 	    const struct nf_conntrack_tuple *tuple,
- 	    const struct nf_conntrack_zone *zone)
- {
--	enum nf_conncount_list_add ret;
- 	struct nf_conncount_rb *gc_nodes[CONNCOUNT_GC_MAX_NODES];
- 	struct rb_node **rbnode, *parent;
- 	struct nf_conncount_rb *rbconn;
- 	struct nf_conncount_tuple *conn;
- 	unsigned int count = 0, gc_count = 0;
--	bool node_found = false;
- 	bool do_gc = true;
- 
- 	spin_lock_bh(&nf_conncount_locks[hash]);
-@@ -363,20 +354,15 @@ restart:
- 		} else if (diff > 0) {
- 			rbnode = &((*rbnode)->rb_right);
- 		} else {
--			/* unlikely: other cpu added node already */
--			node_found = true;
--			ret = nf_conncount_add(&rbconn->list, tuple, zone);
--			if (ret == NF_CONNCOUNT_ERR) {
-+			int ret;
++	local_bh_disable();
+ 	rcu_read_lock();
+ 	for (node = rb_first(root); node != NULL; node = rb_next(node)) {
+ 		rbconn = rb_entry(node, struct nf_conncount_rb, node);
+@@ -485,6 +476,9 @@ static void tree_gc_worker(struct work_s
+ 			gc_count++;
+ 	}
+ 	rcu_read_unlock();
++	local_bh_enable();
 +
-+			ret = nf_conncount_add(net, &rbconn->list, tuple, zone);
-+			if (ret)
- 				count = 0; /* hotdrop */
--			} else if (ret == NF_CONNCOUNT_ADDED) {
-+			else
- 				count = rbconn->list.count;
--			} else {
--				/* NF_CONNCOUNT_SKIP, rbconn is already
--				 * reclaimed by gc, insert a new tree node
--				 */
--				node_found = false;
--			}
--			break;
-+			tree_nodes_free(root, gc_nodes, gc_count);
-+			goto out_unlock;
- 		}
++	cond_resched();
  
- 		if (gc_count >= ARRAY_SIZE(gc_nodes))
-@@ -394,9 +380,6 @@ restart:
- 		goto restart;
- 	}
- 
--	if (node_found)
--		goto out_unlock;
--
- 	/* expected case: match, insert new node */
- 	rbconn = kmem_cache_alloc(conncount_rb_cachep, GFP_ATOMIC);
- 	if (rbconn == NULL)
-@@ -431,7 +414,6 @@ count_tree(struct net *net,
- 	   const struct nf_conntrack_tuple *tuple,
- 	   const struct nf_conntrack_zone *zone)
- {
--	enum nf_conncount_list_add ret;
- 	struct rb_root *root;
- 	struct rb_node *parent;
- 	struct nf_conncount_rb *rbconn;
-@@ -444,7 +426,6 @@ count_tree(struct net *net,
- 	parent = rcu_dereference_raw(root->rb_node);
- 	while (parent) {
- 		int diff;
--		bool addit;
- 
- 		rbconn = rb_entry(parent, struct nf_conncount_rb, node);
- 
-@@ -454,24 +435,29 @@ count_tree(struct net *net,
- 		} else if (diff > 0) {
- 			parent = rcu_dereference_raw(parent->rb_right);
- 		} else {
--			/* same source network -> be counted! */
--			nf_conncount_lookup(net, &rbconn->list, tuple, zone,
--					    &addit);
-+			int ret;
- 
--			if (!addit)
-+			if (!tuple) {
-+				nf_conncount_gc_list(net, &rbconn->list);
- 				return rbconn->list.count;
-+			}
- 
--			ret = nf_conncount_add(&rbconn->list, tuple, zone);
--			if (ret == NF_CONNCOUNT_ERR) {
--				return 0; /* hotdrop */
--			} else if (ret == NF_CONNCOUNT_ADDED) {
--				return rbconn->list.count;
--			} else {
--				/* NF_CONNCOUNT_SKIP, rbconn is already
--				 * reclaimed by gc, insert a new tree node
--				 */
-+			spin_lock_bh(&rbconn->list.list_lock);
-+			/* Node might be about to be free'd.
-+			 * We need to defer to insert_tree() in this case.
-+			 */
-+			if (rbconn->list.count == 0) {
-+				spin_unlock_bh(&rbconn->list.list_lock);
- 				break;
- 			}
-+
-+			/* same source network -> be counted! */
-+			ret = __nf_conncount_add(net, &rbconn->list, tuple, zone);
-+			spin_unlock_bh(&rbconn->list.list_lock);
-+			if (ret)
-+				return 0; /* hotdrop */
-+			else
-+				return rbconn->list.count;
- 		}
- 	}
- 
---- a/net/netfilter/nft_connlimit.c
-+++ b/net/netfilter/nft_connlimit.c
-@@ -30,7 +30,6 @@ static inline void nft_connlimit_do_eval
- 	enum ip_conntrack_info ctinfo;
- 	const struct nf_conn *ct;
- 	unsigned int count;
--	bool addit;
- 
- 	tuple_ptr = &tuple;
- 
-@@ -44,19 +43,12 @@ static inline void nft_connlimit_do_eval
- 		return;
- 	}
- 
--	nf_conncount_lookup(nft_net(pkt), &priv->list, tuple_ptr, zone,
--			    &addit);
--	count = priv->list.count;
--
--	if (!addit)
--		goto out;
--
--	if (nf_conncount_add(&priv->list, tuple_ptr, zone) == NF_CONNCOUNT_ERR) {
-+	if (nf_conncount_add(nft_net(pkt), &priv->list, tuple_ptr, zone)) {
- 		regs->verdict.code = NF_DROP;
- 		return;
- 	}
--	count++;
--out:
-+
-+	count = priv->list.count;
- 
- 	if ((count > priv->limit) ^ priv->invert) {
- 		regs->verdict.code = NFT_BREAK;
+ 	spin_lock_bh(&nf_conncount_locks[tree]);
+ 	if (gc_count < ARRAY_SIZE(gc_nodes))
 
 
