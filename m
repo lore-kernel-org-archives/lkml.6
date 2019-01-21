@@ -7,51 +7,48 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B28EC2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:53:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8EE7C2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:53:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 555CB2089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:53:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9EBE20989
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:53:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078780;
-	bh=49B9kZ8784qSxfoxckcyREZYnVG3H2dZ6FYw1ksB2i0=;
+	s=default; t=1548078784;
+	bh=AdZfAEwdIVd/QMRAFRptIaANFclKt2nQPWjih9y2g3M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KUu/h6Z3j5Bbc1xYLYdQQqwY7brqFArC5hsPZgLmnodSvMnIPaFJsbiQtWJnWFtx8
-	 1pVEWY+C78V+ZRQjfeRmiO9FYIxDbNfyW1BEZTVkYqemapJ52NP90B+GknVnKDV+BC
-	 w0P8PwqzqYY2HDRxxo6TCImaCUauZzolE/lCtmzg=
+	b=ZpvuJhYgYs66/sL0BhkfvWcT+Qz8pH18BqczMFiwzf3o19uDhJWfGgmIIWGxPkQcw
+	 6U1XJxizBDR96UqREVrIUgdKJN9UhJHYYidcabFuo5MieBY6gfbDYOmjsrat3XK4Ad
+	 +j884qAq2hs/kuMijJkvoIOi0QbdS8i8dnmHsFbo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729999AbfAUNw6 (ORCPT
+        id S1731194AbfAUNxC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:52:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36290 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:53:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730650AbfAUNwz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:52:55 -0500
+        id S1731169AbfAUNw6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:52:58 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B3FA2087F;
-        Mon, 21 Jan 2019 13:52:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D2F0A2089F;
+        Mon, 21 Jan 2019 13:52:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078774;
-        bh=49B9kZ8784qSxfoxckcyREZYnVG3H2dZ6FYw1ksB2i0=;
+        s=default; t=1548078777;
+        bh=AdZfAEwdIVd/QMRAFRptIaANFclKt2nQPWjih9y2g3M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KySHKzea01VSvnNgVBBBMsx5gl/W/mkaB8glehPehv32xM2iGeYTWQ34pnDPhRDPY
-         Paa1kQfB2ciiopE6bG5jQpl6i0grJsegwXuoGmsf1dmYVAafqNaicgYlsqS6h/Xd8a
-         cJDHeNAZsBsIwUcCDWcxwjjqje+UV5v2yqaIeFYw=
+        b=KYEsTVTPxlJ+GSlIzhFltZhFcdbUlZarG77qoSqPsd//a6tevimLatZkLAHot/Uw3
+         G8jkcxBAfRodP2ueMapEzdk4KQqjkn/jS+NEkcpYey/TKZuqNGXhhjLrNSEj2+lshg
+         46pQtiX3FP4E1km7TBkfNpmV4roJNxrxLJkWio1I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.com>,
-        Jiri Slaby <jslaby@suse.cz>,
-        syzbot+3aa9784721dfb90e984d@syzkaller.appspotmail.com,
-        Mark Rutland <mark.rutland@arm.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Dmitry Safonov <dima@arista.com>,
-        Tycho Andersen <tycho@tycho.ws>
-Subject: [PATCH 4.14 02/59] tty: Hold tty_ldisc_lock() during tty_reopen()
-Date:   Mon, 21 Jan 2019 14:43:27 +0100
-Message-Id: <20190121122456.758306744@linuxfoundation.org>
+        stable@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH 4.14 32/59] mfd: tps6586x: Handle interrupts on suspend
+Date:   Mon, 21 Jan 2019 14:43:57 +0100
+Message-Id: <20190121122500.161999586@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122456.529172919@linuxfoundation.org>
 References: <20190121122456.529172919@linuxfoundation.org>
@@ -70,71 +67,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dmitry Safonov <dima@arista.com>
+From: Jonathan Hunter <jonathanh@nvidia.com>
 
-commit 83d817f41070c48bc3eb7ec18e43000a548fca5c upstream.
+commit ac4ca4b9f4623ba5e1ea7a582f286567c611e027 upstream.
 
-tty_ldisc_reinit() doesn't race with neither tty_ldisc_hangup()
-nor set_ldisc() nor tty_ldisc_release() as they use tty lock.
-But it races with anyone who expects line discipline to be the same
-after hoding read semaphore in tty_ldisc_ref().
+The tps6586x driver creates an irqchip that is used by its various child
+devices for managing interrupts. The tps6586x-rtc device is one of its
+children that uses the tps6586x irqchip. When using the tps6586x-rtc as
+a wake-up device from suspend, the following is seen:
 
-We've seen the following crash on v4.9.108 stable:
+ PM: Syncing filesystems ... done.
+ Freezing user space processes ... (elapsed 0.001 seconds) done.
+ OOM killer disabled.
+ Freezing remaining freezable tasks ... (elapsed 0.000 seconds) done.
+ Disabling non-boot CPUs ...
+ Entering suspend state LP1
+ Enabling non-boot CPUs ...
+ CPU1 is up
+ tps6586x 3-0034: failed to read interrupt status
+ tps6586x 3-0034: failed to read interrupt status
 
-BUG: unable to handle kernel paging request at 0000000000002260
-IP: [..] n_tty_receive_buf_common+0x5f/0x86d
-Workqueue: events_unbound flush_to_ldisc
-Call Trace:
- [..] n_tty_receive_buf2
- [..] tty_ldisc_receive_buf
- [..] flush_to_ldisc
- [..] process_one_work
- [..] worker_thread
- [..] kthread
- [..] ret_from_fork
+The reason why the tps6586x interrupt status cannot be read is because
+the tps6586x interrupt is not masked during suspend and when the
+tps6586x-rtc interrupt occurs, to wake-up the device, the interrupt is
+seen before the i2c controller has been resumed in order to read the
+tps6586x interrupt status.
 
-tty_ldisc_reinit() should be called with ldisc_sem hold for writing,
-which will protect any reader against line discipline changes.
+The tps6586x-rtc driver sets it's interrupt as a wake-up source during
+suspend, which gets propagated to the parent tps6586x interrupt.
+However, the tps6586x-rtc driver cannot disable it's interrupt during
+suspend otherwise we would never be woken up and so the tps6586x must
+disable it's interrupt instead.
 
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: stable@vger.kernel.org # b027e2298bd5 ("tty: fix data race between tty_init_dev and flush of buf")
-Reviewed-by: Jiri Slaby <jslaby@suse.cz>
-Reported-by: syzbot+3aa9784721dfb90e984d@syzkaller.appspotmail.com
-Tested-by: Mark Rutland <mark.rutland@arm.com>
-Tested-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Signed-off-by: Dmitry Safonov <dima@arista.com>
-Tested-by: Tycho Andersen <tycho@tycho.ws>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Prevent the tps6586x interrupt handler from executing on exiting suspend
+before the i2c controller has been resumed by disabling the tps6586x
+interrupt on entering suspend and re-enabling it on resuming from
+suspend.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Tested-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/tty_io.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/mfd/tps6586x.c |   24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -1266,15 +1266,20 @@ static int tty_reopen(struct tty_struct
- 	if (test_bit(TTY_EXCLUSIVE, &tty->flags) && !capable(CAP_SYS_ADMIN))
- 		return -EBUSY;
- 
--	tty->count++;
-+	retval = tty_ldisc_lock(tty, 5 * HZ);
-+	if (retval)
-+		return retval;
- 
-+	tty->count++;
- 	if (tty->ldisc)
--		return 0;
-+		goto out_unlock;
- 
- 	retval = tty_ldisc_reinit(tty, tty->termios.c_line);
- 	if (retval)
- 		tty->count--;
- 
-+out_unlock:
-+	tty_ldisc_unlock(tty);
- 	return retval;
+--- a/drivers/mfd/tps6586x.c
++++ b/drivers/mfd/tps6586x.c
+@@ -594,6 +594,29 @@ static int tps6586x_i2c_remove(struct i2
+ 	return 0;
  }
  
++static int __maybe_unused tps6586x_i2c_suspend(struct device *dev)
++{
++	struct tps6586x *tps6586x = dev_get_drvdata(dev);
++
++	if (tps6586x->client->irq)
++		disable_irq(tps6586x->client->irq);
++
++	return 0;
++}
++
++static int __maybe_unused tps6586x_i2c_resume(struct device *dev)
++{
++	struct tps6586x *tps6586x = dev_get_drvdata(dev);
++
++	if (tps6586x->client->irq)
++		enable_irq(tps6586x->client->irq);
++
++	return 0;
++}
++
++static SIMPLE_DEV_PM_OPS(tps6586x_pm_ops, tps6586x_i2c_suspend,
++			 tps6586x_i2c_resume);
++
+ static const struct i2c_device_id tps6586x_id_table[] = {
+ 	{ "tps6586x", 0 },
+ 	{ },
+@@ -604,6 +627,7 @@ static struct i2c_driver tps6586x_driver
+ 	.driver	= {
+ 		.name	= "tps6586x",
+ 		.of_match_table = of_match_ptr(tps6586x_of_match),
++		.pm	= &tps6586x_pm_ops,
+ 	},
+ 	.probe		= tps6586x_i2c_probe,
+ 	.remove		= tps6586x_i2c_remove,
 
 
