@@ -6,53 +6,50 @@ X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E4C9C37120
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 23:58:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA514C37120
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 23:58:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 399C220870
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 23:58:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D289217F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 23:58:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548115110;
-	bh=YxpMiCrGG4FUGvT7xPmFlQoEvp8u9dj+zlJJN2w5smk=;
+	s=default; t=1548115116;
+	bh=j/PAF6u0ZpaX4ZtE5/lypJadSsn/tifka7AswhKp/Lo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1ohsiJvTLgfCmUUOakKVDayD4Hy1NFAkTgKgSzPtBFjqwmntY3nKcFeFBdzns5hwf
-	 ofi85mLOiz4liUbVO1vC5gzwNTwNEihgMHs2Dh5UOOEwaU23cMnNvoBbrQk+MAu8pD
-	 v+ar2T79WEdZ4cxvFwmfPBib7ekv50+W4lavRuNI=
+	b=zqgaBSEq3awEnCA2UoTSyez+M3dp+IGbBz8xbGt3l/E49npX77YP7nlyjKspAqZ4B
+	 I8WsUeQY71MYuZ8qhwf6h05VPgtXAYTxkH6NkoSjywqdxb4f/O3HIa7tQtL5jcNIMV
+	 /BXhi+9y9RWyykAecUsYu/BcFVZoodPYZu0O9EBI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726967AbfAUX62 (ORCPT
+        id S1727009AbfAUX6f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 18:58:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58818 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 18:58:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58902 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725948AbfAUX61 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 18:58:27 -0500
+        id S1725948AbfAUX6c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 18:58:32 -0500
 Received: from quaco.ghostprotocols.net (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3778A21736;
-        Mon, 21 Jan 2019 23:58:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1CA42217D8;
+        Mon, 21 Jan 2019 23:58:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548115105;
-        bh=YxpMiCrGG4FUGvT7xPmFlQoEvp8u9dj+zlJJN2w5smk=;
+        s=default; t=1548115110;
+        bh=j/PAF6u0ZpaX4ZtE5/lypJadSsn/tifka7AswhKp/Lo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vwGgPL2WH3cCXaEfNVcaH+OiLTE1Pd8cYVGkee90OWz3t6WTdYFid0C1zFrriqZbE
-         fa8Vd07mrbQsBiJ3Y4YxyPV+WLMUxQomE7O2dEOCBP5xWp9HoP8k78p58BAA0ZC03M
-         jBld9fV9b+l088mYMAP70sgupkQWeiVREK4cJUyw=
+        b=XJB7q0pm7jmLqg4pvrbyWYu7lKA81AmbgOGT7NmNc/xBhmNwEDgH8T3G/2VMlGxVP
+         GlKYhqe1XjpnO8nq/N9KwlCqOwFTnOXsqQ6uz1lQF6CW6EVDsW4J6TtokdNcXj1prh
+         7WnbjeH1ya5gO/m3CEcNhnjQHsorXlft/5QRV+W8=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, Song Liu <songliubraving@fb.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jamal Hadi Salim <jhs@mojatatu.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>
-Subject: [PATCH 13/24] perf: Make perf_event_output() propagate the output() return
-Date:   Mon, 21 Jan 2019 20:56:55 -0300
-Message-Id: <20190121235706.20005-14-acme@kernel.org>
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>, kernel-team@fb.com,
+        netdev@vger.kernel.org
+Subject: [PATCH 14/24] perf, bpf: Introduce PERF_RECORD_KSYMBOL
+Date:   Mon, 21 Jan 2019 20:56:56 -0300
+Message-Id: <20190121235706.20005-15-acme@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121235706.20005-1-acme@kernel.org>
 References: <20190121235706.20005-1-acme@kernel.org>
@@ -63,188 +60,254 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Song Liu <songliubraving@fb.com>
 
-For the original mode of operation it isn't needed, since we report back
-errors via PERF_RECORD_LOST records in the ring buffer, but for use in
-bpf_perf_event_output() it is convenient to return the errors, basically
--ENOSPC.
+For better performance analysis of dynamically JITed and loaded kernel
+functions, such as BPF programs, this patch introduces
+PERF_RECORD_KSYMBOL, a new perf_event_type that exposes kernel symbol
+register/unregister information to user space.
 
-Currently bpf_perf_event_output() returns an error indication, the last
-thing it does, which is to push it to the ring buffer is that can fail
-and if so, this failure won't be reported back to its users, fix it.
+The following data structure is used for PERF_RECORD_KSYMBOL.
 
-Reported-by: Jamal Hadi Salim <jhs@mojatatu.com>
-Tested-by: Jamal Hadi Salim <jhs@mojatatu.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+    /*
+     * struct {
+     *      struct perf_event_header        header;
+     *      u64                             addr;
+     *      u32                             len;
+     *      u16                             ksym_type;
+     *      u16                             flags;
+     *      char                            name[];
+     *      struct sample_id                sample_id;
+     * };
+     */
+
+Signed-off-by: Song Liu <songliubraving@fb.com>
+Reviewed-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Acked-by: Peter Zijlstra <peterz@infradead.org>
+Cc: Alexei Starovoitov <ast@kernel.org>
 Cc: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/r/20190118150938.GN5823@kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: kernel-team@fb.com
+Cc: netdev@vger.kernel.org
+Link: http://lkml.kernel.org/r/20190117161521.1341602-2-songliubraving@fb.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- include/linux/perf_event.h                       |  6 +++---
- kernel/events/core.c                             | 11 +++++++----
- kernel/trace/bpf_trace.c                         |  3 +--
- tools/perf/examples/bpf/augmented_raw_syscalls.c |  4 ++--
- tools/perf/examples/bpf/augmented_syscalls.c     | 14 +++++++-------
- tools/perf/examples/bpf/etcsnoop.c               | 10 +++++-----
- 6 files changed, 25 insertions(+), 23 deletions(-)
+ include/linux/perf_event.h      |  8 +++
+ include/uapi/linux/perf_event.h | 26 ++++++++-
+ kernel/events/core.c            | 98 ++++++++++++++++++++++++++++++++-
+ 3 files changed, 130 insertions(+), 2 deletions(-)
 
 diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index f8ec36197718..4eb88065a9b5 100644
+index 4eb88065a9b5..136fe0495374 100644
 --- a/include/linux/perf_event.h
 +++ b/include/linux/perf_event.h
-@@ -978,9 +978,9 @@ extern void perf_event_output_forward(struct perf_event *event,
- extern void perf_event_output_backward(struct perf_event *event,
- 				       struct perf_sample_data *data,
- 				       struct pt_regs *regs);
--extern void perf_event_output(struct perf_event *event,
--			      struct perf_sample_data *data,
--			      struct pt_regs *regs);
-+extern int perf_event_output(struct perf_event *event,
-+			     struct perf_sample_data *data,
-+			     struct pt_regs *regs);
+@@ -1122,6 +1122,10 @@ static inline void perf_event_task_sched_out(struct task_struct *prev,
+ }
  
- static inline bool
- is_default_overflow_handler(struct perf_event *event)
+ extern void perf_event_mmap(struct vm_area_struct *vma);
++
++extern void perf_event_ksymbol(u16 ksym_type, u64 addr, u32 len,
++			       bool unregister, const char *sym);
++
+ extern struct perf_guest_info_callbacks *perf_guest_cbs;
+ extern int perf_register_guest_info_callbacks(struct perf_guest_info_callbacks *callbacks);
+ extern int perf_unregister_guest_info_callbacks(struct perf_guest_info_callbacks *callbacks);
+@@ -1342,6 +1346,10 @@ static inline int perf_unregister_guest_info_callbacks
+ (struct perf_guest_info_callbacks *callbacks)				{ return 0; }
+ 
+ static inline void perf_event_mmap(struct vm_area_struct *vma)		{ }
++
++typedef int (perf_ksymbol_get_name_f)(char *name, int name_len, void *data);
++static inline void perf_event_ksymbol(u16 ksym_type, u64 addr, u32 len,
++				      bool unregister, const char *sym)	{ }
+ static inline void perf_event_exec(void)				{ }
+ static inline void perf_event_comm(struct task_struct *tsk, bool exec)	{ }
+ static inline void perf_event_namespaces(struct task_struct *tsk)	{ }
+diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+index ea19b5d491bf..1dee5c8f166b 100644
+--- a/include/uapi/linux/perf_event.h
++++ b/include/uapi/linux/perf_event.h
+@@ -372,7 +372,8 @@ struct perf_event_attr {
+ 				context_switch :  1, /* context switch data */
+ 				write_backward :  1, /* Write ring buffer from end to beginning */
+ 				namespaces     :  1, /* include namespaces data */
+-				__reserved_1   : 35;
++				ksymbol        :  1, /* include ksymbol events */
++				__reserved_1   : 34;
+ 
+ 	union {
+ 		__u32		wakeup_events;	  /* wakeup every n events */
+@@ -963,9 +964,32 @@ enum perf_event_type {
+ 	 */
+ 	PERF_RECORD_NAMESPACES			= 16,
+ 
++	/*
++	 * Record ksymbol register/unregister events:
++	 *
++	 * struct {
++	 *	struct perf_event_header	header;
++	 *	u64				addr;
++	 *	u32				len;
++	 *	u16				ksym_type;
++	 *	u16				flags;
++	 *	char				name[];
++	 *	struct sample_id		sample_id;
++	 * };
++	 */
++	PERF_RECORD_KSYMBOL			= 17,
++
+ 	PERF_RECORD_MAX,			/* non-ABI */
+ };
+ 
++enum perf_record_ksymbol_type {
++	PERF_RECORD_KSYMBOL_TYPE_UNKNOWN	= 0,
++	PERF_RECORD_KSYMBOL_TYPE_BPF		= 1,
++	PERF_RECORD_KSYMBOL_TYPE_MAX		/* non-ABI */
++};
++
++#define PERF_RECORD_KSYMBOL_FLAGS_UNREGISTER	(1 << 0)
++
+ #define PERF_MAX_STACK_DEPTH		127
+ #define PERF_MAX_CONTEXTS_PER_STACK	  8
+ 
 diff --git a/kernel/events/core.c b/kernel/events/core.c
-index fbe59b793b36..bc525cd1615c 100644
+index bc525cd1615c..e04ab5f325cf 100644
 --- a/kernel/events/core.c
 +++ b/kernel/events/core.c
-@@ -6489,7 +6489,7 @@ void perf_prepare_sample(struct perf_event_header *header,
- 		data->phys_addr = perf_virt_to_phys(data->addr);
+@@ -385,6 +385,7 @@ static atomic_t nr_namespaces_events __read_mostly;
+ static atomic_t nr_task_events __read_mostly;
+ static atomic_t nr_freq_events __read_mostly;
+ static atomic_t nr_switch_events __read_mostly;
++static atomic_t nr_ksymbol_events __read_mostly;
+ 
+ static LIST_HEAD(pmus);
+ static DEFINE_MUTEX(pmus_lock);
+@@ -4235,7 +4236,7 @@ static bool is_sb_event(struct perf_event *event)
+ 
+ 	if (attr->mmap || attr->mmap_data || attr->mmap2 ||
+ 	    attr->comm || attr->comm_exec ||
+-	    attr->task ||
++	    attr->task || attr->ksymbol ||
+ 	    attr->context_switch)
+ 		return true;
+ 	return false;
+@@ -4305,6 +4306,8 @@ static void unaccount_event(struct perf_event *event)
+ 		dec = true;
+ 	if (has_branch_stack(event))
+ 		dec = true;
++	if (event->attr.ksymbol)
++		atomic_dec(&nr_ksymbol_events);
+ 
+ 	if (dec) {
+ 		if (!atomic_add_unless(&perf_sched_count, -1, 1))
+@@ -7653,6 +7656,97 @@ static void perf_log_throttle(struct perf_event *event, int enable)
+ 	perf_output_end(&handle);
  }
  
--static __always_inline void
-+static __always_inline int
- __perf_event_output(struct perf_event *event,
- 		    struct perf_sample_data *data,
- 		    struct pt_regs *regs,
-@@ -6499,13 +6499,15 @@ __perf_event_output(struct perf_event *event,
++/*
++ * ksymbol register/unregister tracking
++ */
++
++struct perf_ksymbol_event {
++	const char	*name;
++	int		name_len;
++	struct {
++		struct perf_event_header        header;
++		u64				addr;
++		u32				len;
++		u16				ksym_type;
++		u16				flags;
++	} event_id;
++};
++
++static int perf_event_ksymbol_match(struct perf_event *event)
++{
++	return event->attr.ksymbol;
++}
++
++static void perf_event_ksymbol_output(struct perf_event *event, void *data)
++{
++	struct perf_ksymbol_event *ksymbol_event = data;
++	struct perf_output_handle handle;
++	struct perf_sample_data sample;
++	int ret;
++
++	if (!perf_event_ksymbol_match(event))
++		return;
++
++	perf_event_header__init_id(&ksymbol_event->event_id.header,
++				   &sample, event);
++	ret = perf_output_begin(&handle, event,
++				ksymbol_event->event_id.header.size);
++	if (ret)
++		return;
++
++	perf_output_put(&handle, ksymbol_event->event_id);
++	__output_copy(&handle, ksymbol_event->name, ksymbol_event->name_len);
++	perf_event__output_id_sample(event, &handle, &sample);
++
++	perf_output_end(&handle);
++}
++
++void perf_event_ksymbol(u16 ksym_type, u64 addr, u32 len, bool unregister,
++			const char *sym)
++{
++	struct perf_ksymbol_event ksymbol_event;
++	char name[KSYM_NAME_LEN];
++	u16 flags = 0;
++	int name_len;
++
++	if (!atomic_read(&nr_ksymbol_events))
++		return;
++
++	if (ksym_type >= PERF_RECORD_KSYMBOL_TYPE_MAX ||
++	    ksym_type == PERF_RECORD_KSYMBOL_TYPE_UNKNOWN)
++		goto err;
++
++	strlcpy(name, sym, KSYM_NAME_LEN);
++	name_len = strlen(name) + 1;
++	while (!IS_ALIGNED(name_len, sizeof(u64)))
++		name[name_len++] = '\0';
++	BUILD_BUG_ON(KSYM_NAME_LEN % sizeof(u64));
++
++	if (unregister)
++		flags |= PERF_RECORD_KSYMBOL_FLAGS_UNREGISTER;
++
++	ksymbol_event = (struct perf_ksymbol_event){
++		.name = name,
++		.name_len = name_len,
++		.event_id = {
++			.header = {
++				.type = PERF_RECORD_KSYMBOL,
++				.size = sizeof(ksymbol_event.event_id) +
++					name_len,
++			},
++			.addr = addr,
++			.len = len,
++			.ksym_type = ksym_type,
++			.flags = flags,
++		},
++	};
++
++	perf_iterate_sb(perf_event_ksymbol_output, &ksymbol_event, NULL);
++	return;
++err:
++	WARN_ONCE(1, "%s: Invalid KSYMBOL type 0x%x\n", __func__, ksym_type);
++}
++
+ void perf_event_itrace_started(struct perf_event *event)
  {
- 	struct perf_output_handle handle;
- 	struct perf_event_header header;
-+	int err;
+ 	event->attach_state |= PERF_ATTACH_ITRACE;
+@@ -9912,6 +10006,8 @@ static void account_event(struct perf_event *event)
+ 		inc = true;
+ 	if (is_cgroup_event(event))
+ 		inc = true;
++	if (event->attr.ksymbol)
++		atomic_inc(&nr_ksymbol_events);
  
- 	/* protect the callchain buffers */
- 	rcu_read_lock();
- 
- 	perf_prepare_sample(&header, data, event, regs);
- 
--	if (output_begin(&handle, event, header.size))
-+	err = output_begin(&handle, event, header.size);
-+	if (err)
- 		goto exit;
- 
- 	perf_output_sample(&handle, &header, data, event);
-@@ -6514,6 +6516,7 @@ __perf_event_output(struct perf_event *event,
- 
- exit:
- 	rcu_read_unlock();
-+	return err;
- }
- 
- void
-@@ -6532,12 +6535,12 @@ perf_event_output_backward(struct perf_event *event,
- 	__perf_event_output(event, data, regs, perf_output_begin_backward);
- }
- 
--void
-+int
- perf_event_output(struct perf_event *event,
- 		  struct perf_sample_data *data,
- 		  struct pt_regs *regs)
- {
--	__perf_event_output(event, data, regs, perf_output_begin);
-+	return __perf_event_output(event, data, regs, perf_output_begin);
- }
- 
- /*
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index 8b068adb9da1..088c2032ceaf 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -431,8 +431,7 @@ __bpf_perf_event_output(struct pt_regs *regs, struct bpf_map *map,
- 	if (unlikely(event->oncpu != cpu))
- 		return -EOPNOTSUPP;
- 
--	perf_event_output(event, sd, regs);
--	return 0;
-+	return perf_event_output(event, sd, regs);
- }
- 
- BPF_CALL_5(bpf_perf_event_output, struct pt_regs *, regs, struct bpf_map *, map,
-diff --git a/tools/perf/examples/bpf/augmented_raw_syscalls.c b/tools/perf/examples/bpf/augmented_raw_syscalls.c
-index 53c233370fae..9e9d4c66e53c 100644
---- a/tools/perf/examples/bpf/augmented_raw_syscalls.c
-+++ b/tools/perf/examples/bpf/augmented_raw_syscalls.c
-@@ -141,8 +141,8 @@ int sys_enter(struct syscall_enter_args *args)
- 		len = sizeof(augmented_args.args);
- 	}
- 
--	perf_event_output(args, &__augmented_syscalls__, BPF_F_CURRENT_CPU, &augmented_args, len);
--	return 0;
-+	/* If perf_event_output fails, return non-zero so that it gets recorded unaugmented */
-+	return perf_event_output(args, &__augmented_syscalls__, BPF_F_CURRENT_CPU, &augmented_args, len);
- }
- 
- SEC("raw_syscalls:sys_exit")
-diff --git a/tools/perf/examples/bpf/augmented_syscalls.c b/tools/perf/examples/bpf/augmented_syscalls.c
-index 2ae44813ef2d..b7dba114e36c 100644
---- a/tools/perf/examples/bpf/augmented_syscalls.c
-+++ b/tools/perf/examples/bpf/augmented_syscalls.c
-@@ -55,9 +55,9 @@ int syscall_enter(syscall)(struct syscall_enter_##syscall##_args *args)				\
- 		len -= sizeof(augmented_args.filename.value) - augmented_args.filename.size;	\
- 		len &= sizeof(augmented_args.filename.value) - 1;				\
- 	}											\
--	perf_event_output(args, &__augmented_syscalls__, BPF_F_CURRENT_CPU, 			\
--			  &augmented_args, len);						\
--	return 0;										\
-+	/* If perf_event_output fails, return non-zero so that it gets recorded unaugmented */	\
-+	return perf_event_output(args, &__augmented_syscalls__, BPF_F_CURRENT_CPU, 		\
-+				 &augmented_args, len);						\
- }												\
- int syscall_exit(syscall)(struct syscall_exit_args *args)					\
- {												\
-@@ -125,10 +125,10 @@ int syscall_enter(syscall)(struct syscall_enter_##syscall##_args *args)				\
- /*		addrlen = augmented_args.args.addrlen;				     */		\
- /*										     */		\
- 	probe_read(&augmented_args.addr, addrlen, args->addr_ptr); 				\
--	perf_event_output(args, &__augmented_syscalls__, BPF_F_CURRENT_CPU, 			\
--			  &augmented_args, 							\
--			  sizeof(augmented_args) - sizeof(augmented_args.addr) + addrlen);	\
--	return 0;										\
-+	/* If perf_event_output fails, return non-zero so that it gets recorded unaugmented */	\
-+	return perf_event_output(args, &__augmented_syscalls__, BPF_F_CURRENT_CPU, 		\
-+				 &augmented_args, 						\
-+				sizeof(augmented_args) - sizeof(augmented_args.addr) + addrlen);\
- }												\
- int syscall_exit(syscall)(struct syscall_exit_args *args)					\
- {												\
-diff --git a/tools/perf/examples/bpf/etcsnoop.c b/tools/perf/examples/bpf/etcsnoop.c
-index b59e8812ee8c..550e69c2e8d1 100644
---- a/tools/perf/examples/bpf/etcsnoop.c
-+++ b/tools/perf/examples/bpf/etcsnoop.c
-@@ -49,11 +49,11 @@ int syscall_enter(syscall)(struct syscall_enter_##syscall##_args *args)				\
- 						      args->filename_ptr); 			\
- 	if (__builtin_memcmp(augmented_args.filename.value, etc, 4) != 0)			\
- 		return 0;									\
--	perf_event_output(args, &__augmented_syscalls__, BPF_F_CURRENT_CPU, 			\
--			  &augmented_args, 							\
--			  (sizeof(augmented_args) - sizeof(augmented_args.filename.value) +	\
--			   augmented_args.filename.size));					\
--	return 0;										\
-+	/* If perf_event_output fails, return non-zero so that it gets recorded unaugmented */	\
-+	return perf_event_output(args, &__augmented_syscalls__, BPF_F_CURRENT_CPU, 		\
-+				 &augmented_args,						\
-+				 (sizeof(augmented_args) - sizeof(augmented_args.filename.value) + \
-+				 augmented_args.filename.size));				\
- }
- 
- struct syscall_enter_openat_args {
+ 	if (inc) {
+ 		/*
 -- 
 2.20.1
 
