@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55AA3C2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:01:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E69FC2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:01:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D20921721
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:01:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BACC2089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:01:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079290;
-	bh=yAKoL5eAz2mlQIAi9vT90JGukgQQt8cOoRZxEtNWkII=;
+	s=default; t=1548079294;
+	bh=Ipa1bCBlV1JZQqjfHk5wS3yVDDxUYDSzqVlzbf88n4g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CqhnkaOxjtCmIn9BrG+hWKQyAQRZSw5jrvGifqIqAvO+QBNqYtPv8toMamy2W9Um0
-	 brCseFgXtre6+pdisVTJEZxdEEe3v9cW8ncjIeHeKLheiXLo5mRyMRMq7R3SuPUFzv
-	 44f49UIqIOFxdk/8oY/GVKFaCtIgz+s4g0OYZegY=
+	b=N4V031cfE0v1hgKBVIko8p5I3zABvVqYX1AcWCwPt0kGXys/jyD8TzUfpS6PWIfSr
+	 0LgwTYrendgkCkKwxoGQ0LyYHTyTrJAxfD/BbehFTL1DDR6l6B3UDPRpRE4LzCEzqm
+	 795cVmWaB1bmKhAq6gmBYmjZX/5NajpkWDyn/Xqg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731042AbfAUOB2 (ORCPT
+        id S1732653AbfAUOBd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:01:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48460 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 09:01:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48594 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729524AbfAUOBZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 09:01:25 -0500
+        id S1729579AbfAUOBb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 09:01:31 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F244321019;
-        Mon, 21 Jan 2019 14:01:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D1C8B21019;
+        Mon, 21 Jan 2019 14:01:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548079284;
-        bh=yAKoL5eAz2mlQIAi9vT90JGukgQQt8cOoRZxEtNWkII=;
+        s=default; t=1548079290;
+        bh=Ipa1bCBlV1JZQqjfHk5wS3yVDDxUYDSzqVlzbf88n4g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cNRC6/7mc8drxdPdsJwhFXhyZ1fVZhrin8NxViZgC8rYy1FlwOHp7JlCm0mRf6bXo
-         RuUnTgj4W6YvX5iSqqEP2rPeSOpPbQqQAYHod61AaWeKFu1y6EYXfT5c3eDH47d2PZ
-         Dso5xzKSlZPZdwyW+RXPhXdhuCKHkyrFZDBcrB10=
+        b=MyDVR0HKS1KpfEtmDLYxeXIs1TFpPCYdk4Q/49qO1oI3/wmLeYLNIvZii5XON6Czi
+         OCtQj3rm5qh+Dk90y+zE4JXrk/eGsjxj6ElAGkQX4URjpuwnS6iP9ezPvBhpUBNYnD
+         6zhA906K2VMkI8RskK01tSidO2Jj8hn6MtqipJ5c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Yufen Yu <yuyufen@huawei.com>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.19 70/99] block: use rcu_work instead of call_rcu to avoid sleep in softirq
-Date:   Mon, 21 Jan 2019 14:49:02 +0100
-Message-Id: <20190121134916.649485289@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+9933e4476f365f5d5a1b@syzkaller.appspotmail.com,
+        Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.19 72/99] blockdev: Fix livelocks on loop device
+Date:   Mon, 21 Jan 2019 14:49:04 +0100
+Message-Id: <20190121134916.736211742@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121134913.924726465@linuxfoundation.org>
 References: <20190121134913.924726465@linuxfoundation.org>
@@ -65,115 +66,123 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yufen Yu <yuyufen@huawei.com>
+From: Jan Kara <jack@suse.cz>
 
-commit 94a2c3a32b62e868dc1e3d854326745a7f1b8c7a upstream.
+commit 04906b2f542c23626b0ef6219b808406f8dddbe9 upstream.
 
-We recently got a stack by syzkaller like this:
+bd_set_size() updates also block device's block size. This is somewhat
+unexpected from its name and at this point, only blkdev_open() uses this
+functionality. Furthermore, this can result in changing block size under
+a filesystem mounted on a loop device which leads to livelocks inside
+__getblk_gfp() like:
 
-BUG: sleeping function called from invalid context at mm/slab.h:361
-in_atomic(): 1, irqs_disabled(): 0, pid: 6644, name: blkid
-INFO: lockdep is turned off.
-CPU: 1 PID: 6644 Comm: blkid Not tainted 4.4.163-514.55.6.9.x86_64+ #76
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
- 0000000000000000 5ba6a6b879e50c00 ffff8801f6b07b10 ffffffff81cb2194
- 0000000041b58ab3 ffffffff833c7745 ffffffff81cb2080 5ba6a6b879e50c00
- 0000000000000000 0000000000000001 0000000000000004 0000000000000000
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 PID: 10863 Comm: syz-executor0 Not tainted 4.18.0-rc5+ #151
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google
+01/01/2011
+RIP: 0010:__sanitizer_cov_trace_pc+0x3f/0x50 kernel/kcov.c:106
+...
 Call Trace:
- <IRQ>  [<ffffffff81cb2194>] __dump_stack lib/dump_stack.c:15 [inline]
- <IRQ>  [<ffffffff81cb2194>] dump_stack+0x114/0x1a0 lib/dump_stack.c:51
- [<ffffffff8129a981>] ___might_sleep+0x291/0x490 kernel/sched/core.c:7675
- [<ffffffff8129ac33>] __might_sleep+0xb3/0x270 kernel/sched/core.c:7637
- [<ffffffff81794c13>] slab_pre_alloc_hook mm/slab.h:361 [inline]
- [<ffffffff81794c13>] slab_alloc_node mm/slub.c:2610 [inline]
- [<ffffffff81794c13>] slab_alloc mm/slub.c:2692 [inline]
- [<ffffffff81794c13>] kmem_cache_alloc_trace+0x2c3/0x5c0 mm/slub.c:2709
- [<ffffffff81cbe9a7>] kmalloc include/linux/slab.h:479 [inline]
- [<ffffffff81cbe9a7>] kzalloc include/linux/slab.h:623 [inline]
- [<ffffffff81cbe9a7>] kobject_uevent_env+0x2c7/0x1150 lib/kobject_uevent.c:227
- [<ffffffff81cbf84f>] kobject_uevent+0x1f/0x30 lib/kobject_uevent.c:374
- [<ffffffff81cbb5b9>] kobject_cleanup lib/kobject.c:633 [inline]
- [<ffffffff81cbb5b9>] kobject_release+0x229/0x440 lib/kobject.c:675
- [<ffffffff81cbb0a2>] kref_sub include/linux/kref.h:73 [inline]
- [<ffffffff81cbb0a2>] kref_put include/linux/kref.h:98 [inline]
- [<ffffffff81cbb0a2>] kobject_put+0x72/0xd0 lib/kobject.c:692
- [<ffffffff8216f095>] put_device+0x25/0x30 drivers/base/core.c:1237
- [<ffffffff81c4cc34>] delete_partition_rcu_cb+0x1d4/0x2f0 block/partition-generic.c:232
- [<ffffffff813c08bc>] __rcu_reclaim kernel/rcu/rcu.h:118 [inline]
- [<ffffffff813c08bc>] rcu_do_batch kernel/rcu/tree.c:2705 [inline]
- [<ffffffff813c08bc>] invoke_rcu_callbacks kernel/rcu/tree.c:2973 [inline]
- [<ffffffff813c08bc>] __rcu_process_callbacks kernel/rcu/tree.c:2940 [inline]
- [<ffffffff813c08bc>] rcu_process_callbacks+0x59c/0x1c70 kernel/rcu/tree.c:2957
- [<ffffffff8120f509>] __do_softirq+0x299/0xe20 kernel/softirq.c:273
- [<ffffffff81210496>] invoke_softirq kernel/softirq.c:350 [inline]
- [<ffffffff81210496>] irq_exit+0x216/0x2c0 kernel/softirq.c:391
- [<ffffffff82c2cd7b>] exiting_irq arch/x86/include/asm/apic.h:652 [inline]
- [<ffffffff82c2cd7b>] smp_apic_timer_interrupt+0x8b/0xc0 arch/x86/kernel/apic/apic.c:926
- [<ffffffff82c2bc25>] apic_timer_interrupt+0xa5/0xb0 arch/x86/entry/entry_64.S:746
- <EOI>  [<ffffffff814cbf40>] ? audit_kill_trees+0x180/0x180
- [<ffffffff8187d2f7>] fd_install+0x57/0x80 fs/file.c:626
- [<ffffffff8180989e>] do_sys_open+0x45e/0x550 fs/open.c:1043
- [<ffffffff818099c2>] SYSC_open fs/open.c:1055 [inline]
- [<ffffffff818099c2>] SyS_open+0x32/0x40 fs/open.c:1050
- [<ffffffff82c299e1>] entry_SYSCALL_64_fastpath+0x1e/0x9a
+ init_page_buffers+0x3e2/0x530 fs/buffer.c:904
+ grow_dev_page fs/buffer.c:947 [inline]
+ grow_buffers fs/buffer.c:1009 [inline]
+ __getblk_slow fs/buffer.c:1036 [inline]
+ __getblk_gfp+0x906/0xb10 fs/buffer.c:1313
+ __bread_gfp+0x2d/0x310 fs/buffer.c:1347
+ sb_bread include/linux/buffer_head.h:307 [inline]
+ fat12_ent_bread+0x14e/0x3d0 fs/fat/fatent.c:75
+ fat_ent_read_block fs/fat/fatent.c:441 [inline]
+ fat_alloc_clusters+0x8ce/0x16e0 fs/fat/fatent.c:489
+ fat_add_cluster+0x7a/0x150 fs/fat/inode.c:101
+ __fat_get_block fs/fat/inode.c:148 [inline]
+...
 
-In softirq context, we call rcu callback function delete_partition_rcu_cb(),
-which may allocate memory by kzalloc with GFP_KERNEL flag. If the
-allocation cannot be satisfied, it may sleep. However, That is not allowed
-in softirq contex.
+Trivial reproducer for the problem looks like:
 
-Although we found this problem on linux 4.4, the latest kernel version
-seems to have this problem as well. And it is very similar to the
-previous one:
-	https://lkml.org/lkml/2018/7/9/391
+truncate -s 1G /tmp/image
+losetup /dev/loop0 /tmp/image
+mkfs.ext4 -b 1024 /dev/loop0
+mount -t ext4 /dev/loop0 /mnt
+losetup -c /dev/loop0
+l /mnt
 
-Fix it by using RCU workqueue, which allows sleep.
+Fix the problem by moving initialization of a block device block size
+into a separate function and call it when needed.
 
-Reviewed-by: Paul E. McKenney <paulmck@linux.ibm.com>
-Signed-off-by: Yufen Yu <yuyufen@huawei.com>
+Thanks to Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> for help with
+debugging the problem.
+
+Reported-by: syzbot+9933e4476f365f5d5a1b@syzkaller.appspotmail.com
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- block/partition-generic.c |    8 +++++---
- include/linux/genhd.h     |    2 +-
- 2 files changed, 6 insertions(+), 4 deletions(-)
+ fs/block_dev.c |   28 ++++++++++++++++++----------
+ 1 file changed, 18 insertions(+), 10 deletions(-)
 
---- a/block/partition-generic.c
-+++ b/block/partition-generic.c
-@@ -249,9 +249,10 @@ struct device_type part_type = {
- 	.uevent		= part_uevent,
- };
- 
--static void delete_partition_rcu_cb(struct rcu_head *head)
-+static void delete_partition_work_fn(struct work_struct *work)
- {
--	struct hd_struct *part = container_of(head, struct hd_struct, rcu_head);
-+	struct hd_struct *part = container_of(to_rcu_work(work), struct hd_struct,
-+					rcu_work);
- 
- 	part->start_sect = 0;
- 	part->nr_sects = 0;
-@@ -262,7 +263,8 @@ static void delete_partition_rcu_cb(stru
- void __delete_partition(struct percpu_ref *ref)
- {
- 	struct hd_struct *part = container_of(ref, struct hd_struct, ref);
--	call_rcu(&part->rcu_head, delete_partition_rcu_cb);
-+	INIT_RCU_WORK(&part->rcu_work, delete_partition_work_fn);
-+	queue_rcu_work(system_wq, &part->rcu_work);
+--- a/fs/block_dev.c
++++ b/fs/block_dev.c
+@@ -104,6 +104,20 @@ void invalidate_bdev(struct block_device
  }
+ EXPORT_SYMBOL(invalidate_bdev);
  
- /*
---- a/include/linux/genhd.h
-+++ b/include/linux/genhd.h
-@@ -129,7 +129,7 @@ struct hd_struct {
- 	struct disk_stats dkstats;
- #endif
- 	struct percpu_ref ref;
--	struct rcu_head rcu_head;
-+	struct rcu_work rcu_work;
- };
++static void set_init_blocksize(struct block_device *bdev)
++{
++	unsigned bsize = bdev_logical_block_size(bdev);
++	loff_t size = i_size_read(bdev->bd_inode);
++
++	while (bsize < PAGE_SIZE) {
++		if (size & bsize)
++			break;
++		bsize <<= 1;
++	}
++	bdev->bd_block_size = bsize;
++	bdev->bd_inode->i_blkbits = blksize_bits(bsize);
++}
++
+ int set_blocksize(struct block_device *bdev, int size)
+ {
+ 	/* Size must be a power of two, and between 512 and PAGE_SIZE */
+@@ -1408,18 +1422,9 @@ EXPORT_SYMBOL(check_disk_change);
  
- #define GENHD_FL_REMOVABLE			1
+ void bd_set_size(struct block_device *bdev, loff_t size)
+ {
+-	unsigned bsize = bdev_logical_block_size(bdev);
+-
+ 	inode_lock(bdev->bd_inode);
+ 	i_size_write(bdev->bd_inode, size);
+ 	inode_unlock(bdev->bd_inode);
+-	while (bsize < PAGE_SIZE) {
+-		if (size & bsize)
+-			break;
+-		bsize <<= 1;
+-	}
+-	bdev->bd_block_size = bsize;
+-	bdev->bd_inode->i_blkbits = blksize_bits(bsize);
+ }
+ EXPORT_SYMBOL(bd_set_size);
+ 
+@@ -1496,8 +1501,10 @@ static int __blkdev_get(struct block_dev
+ 				}
+ 			}
+ 
+-			if (!ret)
++			if (!ret) {
+ 				bd_set_size(bdev,(loff_t)get_capacity(disk)<<9);
++				set_init_blocksize(bdev);
++			}
+ 
+ 			/*
+ 			 * If the device is invalidated, rescan partition
+@@ -1532,6 +1539,7 @@ static int __blkdev_get(struct block_dev
+ 				goto out_clear;
+ 			}
+ 			bd_set_size(bdev, (loff_t)bdev->bd_part->nr_sects << 9);
++			set_init_blocksize(bdev);
+ 		}
+ 
+ 		if (bdev->bd_bdi == &noop_backing_dev_info)
 
 
