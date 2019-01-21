@@ -2,53 +2,52 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D03C2C2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:00:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF86AC2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:01:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9532820879
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:00:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 713A520879
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:01:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079257;
-	bh=LxAnSu5JQkl2P6hyBMpzA9aKkSNd5wdm9ojqCVl6YvM=;
+	s=default; t=1548079261;
+	bh=JWXmuhCDxw37MIaA8KyjHxpUPPNh1Ae30qmtVMqdMR0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yENPwo/MVJxMJ1ZrH2hQ9YZ6BFUN5rrV/nvxC3zesa2FQwgx7LmM6UHCLKdO1MO8x
-	 nwQLhf4PfhY9h9I5mSBm85e1Dw1AAK/PURmGZAjtRc4ZyUDEq5YGmyAt2b+Uh4O2cD
-	 v9k/4bna5BeR+HaRGe1MvW8edsvGFdJwVNGFEozI=
+	b=MP4kFqktzRl5YSpIV0YULuf0YvapCXSdC1+wc1obPb7Tyh+yGWfo9a+lt7tEGt5A3
+	 0QhGGI8x7ATqrX+9YnWxBdoDaUtZkbgGL+lJBCJlf0ZWoJKtKi2DnR/z1Y/nXJJU6a
+	 k7/eOWYSTZCPqxdEkjIfKDLoL7hjYTTViWII8s5o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732540AbfAUOAz (ORCPT
+        id S1732551AbfAUOA7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:00:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47712 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 09:00:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47784 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732517AbfAUOAx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 09:00:53 -0500
+        id S1732542AbfAUOA4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 09:00:56 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EEC1320879;
-        Mon, 21 Jan 2019 14:00:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 929202087F;
+        Mon, 21 Jan 2019 14:00:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548079252;
-        bh=LxAnSu5JQkl2P6hyBMpzA9aKkSNd5wdm9ojqCVl6YvM=;
+        s=default; t=1548079255;
+        bh=JWXmuhCDxw37MIaA8KyjHxpUPPNh1Ae30qmtVMqdMR0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jGY87RW6TvOQt9QFDgQ7xnYiZAjblt7JCxGGz6Yal3DB+JJdDBF2Qb7YRATbi2MmN
-         mP0twj6TdonJcyR6m1Mb1g7AFLcvfkdJxWwA0s7fPVrWH+kLzpv2Y0Pp8Id125R6Pn
-         mC3+JtNnJpNyj+pugdoKi8hAYcmJAbTcnZfwxIh4=
+        b=cZOcRHrAwWmsdJxgb+7f3uH/rcXjWN4qKQAPnt53ER3ZFOPjktf6A4d0h7uBkL4fG
+         UjOuVWzCT2wJ3Yl/v2kRKqakSLk4rspxVu1AQqQOw0YB5/tj4ldXcBrQ5xkcovOR68
+         PTc82rYJlGtKLjymmfNoaSpiHIx5lUEN7THZriVY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Florian La Roche <Florian.LaRoche@googlemail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.19 60/99] fix int_sqrt64() for very large numbers
-Date:   Mon, 21 Jan 2019 14:48:52 +0100
-Message-Id: <20190121134916.252080272@linuxfoundation.org>
+        stable@vger.kernel.org, Vlad Tsyrklevich <vlad@tsyrklevich.net>,
+        Kees Cook <keescook@chromium.org>, security@kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 4.19 61/99] omap2fb: Fix stack memory disclosure
+Date:   Mon, 21 Jan 2019 14:48:53 +0100
+Message-Id: <20190121134916.291371113@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121134913.924726465@linuxfoundation.org>
 References: <20190121134913.924726465@linuxfoundation.org>
@@ -67,43 +66,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian La Roche <florian.laroche@googlemail.com>
+From: Vlad Tsyrklevich <vlad@tsyrklevich.net>
 
-commit fbfaf851902cd9293f392f3a1735e0543016d530 upstream.
+commit a01421e4484327fe44f8e126793ed5a48a221e24 upstream.
 
-If an input number x for int_sqrt64() has the highest bit set, then
-fls64(x) is 64.  (1UL << 64) is an overflow and breaks the algorithm.
+Using [1] for static analysis I found that the OMAPFB_QUERY_PLANE,
+OMAPFB_GET_COLOR_KEY, OMAPFB_GET_DISPLAY_INFO, and OMAPFB_GET_VRAM_INFO
+cases could all leak uninitialized stack memory--either due to
+uninitialized padding or 'reserved' fields.
 
-Subtracting 1 is a better guess for the initial value of m anyway and
-that's what also done in int_sqrt() implicitly [*].
+Fix them by clearing the shared union used to store copied out data.
 
-[*] Note how int_sqrt() uses __fls() with two underscores, which already
-    returns the proper raw bit number.
+[1] https://github.com/vlad902/kernel-uninitialized-memory-checker
 
-    In contrast, int_sqrt64() used fls64(), and that returns bit numbers
-    illogically starting at 1, because of error handling for the "no
-    bits set" case. Will points out that he bug probably is due to a
-    copy-and-paste error from the regular int_sqrt() case.
-
-Signed-off-by: Florian La Roche <Florian.LaRoche@googlemail.com>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Vlad Tsyrklevich <vlad@tsyrklevich.net>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Fixes: b39a982ddecf ("OMAP: DSS2: omapfb driver")
+Cc: security@kernel.org
+[b.zolnierkie: prefix patch subject with "omap2fb: "]
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- lib/int_sqrt.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/video/fbdev/omap2/omapfb/omapfb-ioctl.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/lib/int_sqrt.c
-+++ b/lib/int_sqrt.c
-@@ -52,7 +52,7 @@ u32 int_sqrt64(u64 x)
- 	if (x <= ULONG_MAX)
- 		return int_sqrt((unsigned long) x);
+--- a/drivers/video/fbdev/omap2/omapfb/omapfb-ioctl.c
++++ b/drivers/video/fbdev/omap2/omapfb/omapfb-ioctl.c
+@@ -609,6 +609,8 @@ int omapfb_ioctl(struct fb_info *fbi, un
  
--	m = 1ULL << (fls64(x) & ~1ULL);
-+	m = 1ULL << ((fls64(x) - 1) & ~1ULL);
- 	while (m != 0) {
- 		b = y + m;
- 		y >>= 1;
+ 	int r = 0;
+ 
++	memset(&p, 0, sizeof(p));
++
+ 	switch (cmd) {
+ 	case OMAPFB_SYNC_GFX:
+ 		DBG("ioctl SYNC_GFX\n");
 
 
