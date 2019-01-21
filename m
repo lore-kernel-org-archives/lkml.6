@@ -2,266 +2,151 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BC24C31680
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 18:14:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC845C31681
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 18:15:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1876E21019
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 18:14:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B11AE2085A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 18:15:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=emutex.onmicrosoft.com header.i=@emutex.onmicrosoft.com header.b="L+xW5vkY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s132RB/F"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727679AbfAUSOt (ORCPT
+        id S1727726AbfAUSPF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 13:14:49 -0500
-Received: from mail-eopbgr40128.outbound.protection.outlook.com ([40.107.4.128]:53205
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726197AbfAUSOs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 13:14:48 -0500
+        Mon, 21 Jan 2019 13:15:05 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:34621 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726837AbfAUSPF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 13:15:05 -0500
+Received: by mail-qt1-f193.google.com with SMTP id r14so24636042qtp.1;
+        Mon, 21 Jan 2019 10:15:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=emutex.onmicrosoft.com; s=selector1-emutex-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=C96wl+eGe8Yg7iHBpbJU/5BwKllAZqBeToLEDJba3nU=;
- b=L+xW5vkYnCOkScK4+6tWhg/S5EOrEapsJ7MIT03ftwrQClYA5zCYZXZZ6qXhC+dMaOLzOFC4PKDrOyoM3Egs7oxghSU57x3l5vPKT/XET0DApUZWliQU5HftC3e2dcUXVkAbagSlwAKCmIB2wAHo6EVY0HHaO/UtFK6BSCufoss=
-Received: from HE1P190MB0012.EURP190.PROD.OUTLOOK.COM (10.172.129.137) by
- HE1P190MB0475.EURP190.PROD.OUTLOOK.COM (10.160.73.156) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1537.29; Mon, 21 Jan 2019 18:14:40 +0000
-Received: from HE1P190MB0012.EURP190.PROD.OUTLOOK.COM
- ([fe80::141d:69c5:28c9:d3d7]) by HE1P190MB0012.EURP190.PROD.OUTLOOK.COM
- ([fe80::141d:69c5:28c9:d3d7%10]) with mapi id 15.20.1537.031; Mon, 21 Jan
- 2019 18:14:40 +0000
-From:   Dan O'Donovan <dan.odonovan@emutex.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        Carlos Iglesias <carlos.iglesias@emutex.com>,
-        Eric Anholt <eric@anholt.net>
-Subject: Re: [PATCH v2 3/3] pinctrl: upboard: Add UP2 pinctrl and gpio driver
-Thread-Topic: [PATCH v2 3/3] pinctrl: upboard: Add UP2 pinctrl and gpio driver
-Thread-Index: AQHUsbUrPCgT3zSsS0ucpnwwtCDIDg==
-Date:   Mon, 21 Jan 2019 18:14:40 +0000
-Message-ID: <63abcb0f-9362-401e-fd0a-46cab06840ed@emutex.com>
-References: <CACRpkdaLTFFDbW9VY3DmaJ4R5ceXFJK0W_dSi7jbqi3Bz4FXkg () mail !
- gmail ! com>
-In-Reply-To: <CACRpkdaLTFFDbW9VY3DmaJ4R5ceXFJK0W_dSi7jbqi3Bz4FXkg () mail !
- gmail ! com>
-Accept-Language: en-IE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: LO2P265CA0340.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:d::16) To HE1P190MB0012.EURP190.PROD.OUTLOOK.COM
- (2603:10a6:3:c9::9)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=dan.odonovan@emutex.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [87.198.177.202]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HE1P190MB0475;6:r/LS3l59UIuUNnVN4grrAgp7shaTaj6m5apyKKrD96nxSLz1gKwfBDD+60I+fhc36CYzmyQZtd86LJOk5rjG24CYzd3Gfe5GTahIRqrkSaZXo9Q2RMUjs+GVxudRSY6bGuGKR6LGjK87lLELcAZqEBq5RJyEG19FdtECSgH6RhcKYv7vT2N91HKbMWmmGv+pwkjeUj+nquIav6cc7iAbOuFQicQs5l44eOgKR+4/lDv/qpS0hs2pva3VG6bNCxaUL+y1XWhpy/S4zuqLcSmEr4J3FqYbbnlfmixgvcMIqj29r2CSCSqvkRFT4Yoi0vk3wKfPYLOtLV1luanx0vKlG7VTIIDoV5e4fZtCXVN0TO4HPjL4J/qzVMv37ockI2t2RzlbiDrjEtpXENCS1q9WAbeWEio7bGFucl+MHz8DQ7sPZngRwfDaDe3n3XfI6HkSATivj2ImE5c+KSpmo8daPA==;5:0R0Jgi0pI4o621BEMWocAbcMQOYHgKF1XFd4lImuhQ8J3u31qg5zJRFh5g/kY+8PC3CD6Vv3JKCRMGm4ubgVvY9h47DMHHbTl6YcJ3m+rWjtH9b7unwLsrYyErge3csH5ZSgJ2X/aOTX+r8DMBfdPkLe8hUt03+9NiGzKxnvonV87WCKuH4WTBVjqYVPfNHduQIXo7SL3Czff7Sinuf6/Q==;7:LZzUI9vx+CmrU5xAuSu95vshd/ydP4HP2TuRCOcKIAovuh0wMIHSgNAsDz6AR7ulkS9BpvSTMcu38gkqqlPv1p6vH7e8KShJeAxammFfJJpI1oxTgePGrCKG5BY+dajuFlgTxEJLjGNvFEI6IRd/mg==
-x-ms-office365-filtering-correlation-id: 186e5344-1c6b-48d3-4ee7-08d67fcc4f75
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:HE1P190MB0475;
-x-ms-traffictypediagnostic: HE1P190MB0475:
-x-microsoft-antispam-prvs: <HE1P190MB0475BC29F8F0EC4287E4AB6EF89F0@HE1P190MB0475.EURP190.PROD.OUTLOOK.COM>
-x-forefront-prvs: 0924C6A0D5
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(366004)(376002)(39830400003)(396003)(346002)(199004)(189003)(102836004)(2906002)(81156014)(81166006)(97736004)(7416002)(36756003)(26005)(66066001)(7736002)(6116002)(3846002)(71190400001)(71200400001)(186003)(4326008)(99286004)(105586002)(305945005)(476003)(53546011)(386003)(6506007)(486006)(6436002)(2616005)(14444005)(8676002)(256004)(6486002)(25786009)(446003)(6916009)(6246003)(229853002)(316002)(11346002)(106356001)(8936002)(31696002)(39060400002)(478600001)(52116002)(11926002)(6306002)(53936002)(54906003)(76176011)(966005)(14454004)(6512007)(31686004)(68736007)(86362001);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1P190MB0475;H:HE1P190MB0012.EURP190.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: emutex.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: P9bE/msQKBuea/FMgnIHkB7firFfwk72CHAMPEYEFxZJvatJrRq+1HxaqInqfxOBmSbuPO3zHjSjv7Z7b07J4+BeYwbokXGiBHu2C5kJ7dGskzabewLocEmDvsX2LHwu305UbxVxRHBi2zK3/HYWLDFym+QPUSynmqkA2ufz8zNzUI5G5s31oH9hGHuEjOH3GXz6RQB4YQWTp2puZsYXytNQfAa0EAIxL/OgbcPM7DA+usz+Dj3tvaJkMUaJB/d41v/cNGD1PlfPaE6a2sHvDVcIPQtNEMJMNZcE7sAmrQdKAojfY9StzQALwK7VIUuC5B8DMSyfQvVypmAKSt3PjJDeNuhCPQSocYS/bp7PmBu/36p5EMn1Cn4kmkGy8Jg4S2f0/NP4j/9T4GDqA/XIZpwVrj8r4pyf+i94jasVmoI=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <422C11DD0D67A445B2EFE01C61A9BD2C@EURP190.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: base64
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vZAuiNZOcMyYu4Sr6tDNzcip58OVo6bIWWJZixreFaw=;
+        b=s132RB/FSU4PBSxxGhzRXYz+ytpgZ69csEnMyTanTUASC52t4n9CtLFI1y1VEG7AHv
+         X+/aWAG3yu0pYVpszYqDR025ArstkJxhMdezmuCrdcJwVaD/P8YOa5/H1SKWYd1mkZCI
+         RfJRA6jeuf4ZSz4+oN84QqU78CejxuJBxusS1BtyahXto0yHivehQkCipPA4EbqmM9GV
+         PEfTOeluAnlqihZnNX9F4jVq1Rz0+gJsdQcdpsW2Ht+A5MjkdkxrqU6b7lgnXC4bFOF1
+         Q3YcXc7e/+HsWlplBjN/Rd3sxYTIJ8PoYfqMBx6APs1ey0sKvkgqSSdrwUfC6xplVc/J
+         Yobw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vZAuiNZOcMyYu4Sr6tDNzcip58OVo6bIWWJZixreFaw=;
+        b=nCrtUN0rqkGg7Y6PHt/8lRvkRYlOEjblMc69vea2d0oBcj2UbFiITbqWG5rIgZVie0
+         UD6/Ee01debYXCkAlxSz5V0fhAMYGUtkPRM4OwO7ZYeumyVssTI60QRcRwGNSUANb5ly
+         dyScytDcYfBePLpbKIzE3Wb0rH1tOjhU9PZINqLHxbBwilwudTaQxAqp752ctPSnx0MT
+         H28YI0PUK84gECHd6h5Z0KXf+OtOZFunK7eRMBBbdyPfyoJRI8kCyuLOhmOoUSitPP4c
+         J+cSDz7ooL+23MIyedF+0IgA/6EABwxUxinzFGe2qdIf3qLF9jV6eMXu5hOlSF2ZIPei
+         qoBw==
+X-Gm-Message-State: AJcUukcYNCeQ7rGITPA/3khWICQaP3ZEkV4UJHJViHAB6Kr48lL7Ao4O
+        lkVb8kO/pHA2u9fsAL090Ns1IhBLK1bWdXXa07w=
+X-Google-Smtp-Source: ALg8bN7hhaC0sB0UZUyo+O1HCXNv7sbRv+S79lTDx049xWpyJfsmnNckToTeL/Ls6G+bkRIMzitL8vud/mY3UipKDU4=
+X-Received: by 2002:ac8:2585:: with SMTP id e5mr28015263qte.233.1548094503563;
+ Mon, 21 Jan 2019 10:15:03 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: emutex.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 186e5344-1c6b-48d3-4ee7-08d67fcc4f75
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jan 2019 18:14:39.4651
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84cc844b-5c53-4da1-99da-34ef4089ea8e
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1P190MB0475
+References: <20190119113332.249720-1-cychiang@chromium.org>
+In-Reply-To: <20190119113332.249720-1-cychiang@chromium.org>
+From:   Enric Balletbo Serra <eballetbo@gmail.com>
+Date:   Mon, 21 Jan 2019 19:14:52 +0100
+Message-ID: <CAFqH_50BKXftn_4p4dK59g3Zv5LvZYVF92weN4OW87muqE_iUQ@mail.gmail.com>
+Subject: Re: [alsa-devel] [PATCH v4 1/2] ASoC: Documentation: Add google, cros-ec-codec
+To:     Cheng-Yi Chiang <cychiang@chromium.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        alsa-devel@alsa-project.org, tzungbi@chromium.org,
+        Mark Brown <broonie@kernel.org>,
+        Rohit kumar <rohitkr@codeaurora.org>,
+        Guenter Roeck <groeck@chromium.org>, dgreid@chromium.org,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgTGludXMNCg0KTWFueSB0aGFua3MgZm9yIHlvdXIgZmVlZGJhY2sgYmVsb3csIGFuZCBzb3Jy
-eSB0aGF0IEknbSBvbmx5IGdldHRpbmcgdG8gZm9sbG93IHVwIG9uIHRoaXMgbm93LsKgIEkndmUg
-YWRkZWQgc29tZSBpbml0aWFsIHJlc3BvbnNlcyBpbmxpbmUgYmVsb3cuDQoNCk9uIDEwLzIyLzE4
-IDEwOjA3IEFNLCBMaW51cyBXYWxsZWlqIHdyb3RlOg0KPiBPbiBGcmksIE9jdCAxOSwgMjAxOCBh
-dCA3OjE2IFBNIERhbiBPJ0Rvbm92YW4gPGRhbkBlbXV0ZXguY29tPiB3cm90ZToNCj4NCj4+IEZy
-b206IEphdmllciBBcnRlYWdhIDxqYXZpZXJAZW11dGV4LmNvbT4NCj4+DQo+PiBUaGUgVVAyIGJv
-YXJkIGZlYXR1cmVzIGEgUmFzcGJlcnJ5IFBpIGNvbXBhdGlibGUgcGluIGhlYWRlciAoSEFUKSBh
-bmQgYQ0KPj4gYm9hcmQtc3BlY2lmaWMgZXhwYW5zaW9uIGNvbm5lY3RvciAoRVhIQVQpLg0KPiBX
-aGljaCBtYWtlcyBtZSB3YW50IHRvIGhhdmUgRXJpYyBBbmhvbHQncyByZXZpZXcgb24gdGhpcyBw
-YXRjaA0KPiBzbyBhcyB0byBzZWN1cmUgYmFzaWMgaW50ZXJvcGVyYWJpbGl0eSB3aXRoIHRoYXQg
-aGVhZGVyLg0KU3VyZS7CoCBJJ3ZlIGFkZGVkIEVyaWMgdG8gdGhlIENDIGxpc3Qgbm93Lg0KPg0K
-Pj4gQm90aCBleHBvc2UgYXNzb3J0ZWQNCj4+IGZ1bmN0aW9ucyBmcm9tIGVpdGhlciB0aGUgU29D
-IChzdWNoIGFzIEdQSU8sIEkyQywgU1BJLCBVQVJULi4uKSBvciBvdGhlcg0KPj4gb24tYm9hcmQg
-ZGV2aWNlcyAoQURDLCBGUEdBIElQIGJsb2Nrcy4uLikuDQo+IE9LDQo+IExvb2sgYXQgaG93IFJQ
-aSBkZWZpbmUgbmFtZXMgZm9yIHRoZWlyIEdQSU8gbGluZXMgaW4gdGhlDQo+IERUUyBmaWxlOg0K
-PiBodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC90b3J2YWxk
-cy9saW51eC5naXQvdHJlZS9hcmNoL2FybS9ib290L2R0cy9iY20yODM1LXJwaS1iLmR0cw0KPg0K
-PiBQbGVhc2UgZm9sbG93IHRoaXMgcGF0dGVybiB3aXRoIHlvdXIgcGF0Y2guDQo+DQo+IEFzIHlv
-dSBwcm9iYWJseSBkbyBub3QgaGF2ZSBkZXZpY2UgdHJlZSBvciBhbnl0aGluZyBzaW1pbGFyDQo+
-IGZvciBBQ1BJIHRvIG5hbWUgdGhlIGxpbmVzIChjb3JyZWN0IG1lIGlmIEknbSB3cm9uZykNCj4g
-eW91IGNhbiB1c2UgdGhlIC5uYW1lcyBhcnJheSBpbiBzdHJ1Y3QgZ3Bpb19jaGlwIGZvcg0KPiBo
-YXJkY29kaW5nIHRoZSBwcm9wZXIgbGluZSBuYW1lcy4NCj4NCj4gbHNncGlvIHNob3VsZCBnaXZl
-IHRoZSBzYW1lIGxpbmUgbmFtZXMgYXMgaXQgZG9lcyBvbg0KPiB0aGUgY29ycmVzcG9uZGluZyBS
-UGkgaGVhZGVyIElNTy4NClRoZSBVUCBib2FyZCBlbXVsYXRlcyB0aGUgc2FtZSBiYXNpYyBwaW4g
-bGF5b3V0IGFzIHRoZSBSUGkgYW5kLCB3aGVyZSBwb3NzaWJsZSwgcHJvdmlkZXMgc2ltaWxhciBm
-dW5jdGlvbnMgKGUuZy4gSTJDLCBTUEkpIGluIGFkZGl0aW9uIHRvIEdQSU8sIGJ1dCBpdCBpcyBu
-b3QgMTAwJSBjb21wYXRpYmxlLsKgIEFzIHN1Y2gsIHNvbWUgb2YgdGhlIFJQaSBwaW4gbmFtZXMg
-KGUuZy4gU0RfREEqKSB3b3VsZCBub3Qgbm9ybWFsbHkgbWFrZSBzZW5zZSBmb3IgdGhlIFVQIGJv
-YXJkIGFuZCBkb24ndCBtYXRjaCB0aGUgbmFtZXMgdXNlZCBvbiB0aGUgVVAgYm9hcmQgZGF0YXNo
-ZWV0LsKgIEhvd2V2ZXIsIGlmIGl0cyByZWNvbW1lbmRlZCB0byBhZGhlcmUgdG8gdGhlIFJQaSBu
-YW1lcyBhbnl3YXkgdG8gYWlkIGFwcGxpY2F0aW9uIHBvcnRhYmlsaXR5LCBJIGNhbiBjZXJ0YWlu
-bHkgbG9vayBhdCBhZGRpbmcgdGhhdC4NCj4NCj4+ICtjb25maWcgUElOQ1RSTF9VUEJPQVJEDQo+
-PiArICAgICAgIHRyaXN0YXRlICJVUCBTcXVhcmVkIHBpbmN0cmwgYW5kIEdQSU8gZHJpdmVyIg0K
-Pj4gKyAgICAgICBkZXBlbmRzIG9uIEFDUEkNCj4+ICsgICAgICAgZGVwZW5kcyBvbiBNRkRfVVBC
-T0FSRA0KPj4gKyAgICAgICBzZWxlY3QgUElOTVVYDQo+IHNlbGVjdCBHUElPTElCDQo+DQo+IGFz
-IHlvdSdyZSB1c2luZyBpdC4NCldpbGwgZG8NCj4NCj4+ICtzdGF0aWMgaW50IHVwYm9hcmRfZ2V0
-X2Z1bmN0aW9uc19jb3VudChzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYpDQo+PiArew0KPj4g
-KyAgICAgICByZXR1cm4gMDsNCj4+ICt9DQo+PiArDQo+PiArc3RhdGljIGludCB1cGJvYXJkX2dl
-dF9mdW5jdGlvbl9ncm91cHMoc3RydWN0IHBpbmN0cmxfZGV2ICpwY3RsZGV2LA0KPj4gKyAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgdW5zaWduZWQgaW50IHNlbGVjdG9yLA0K
-Pj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgY29uc3QgY2hhciAqIGNv
-bnN0ICoqZ3JvdXBzLA0KPj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-dW5zaWduZWQgaW50ICpudW1fZ3JvdXBzKQ0KPj4gK3sNCj4+ICsgICAgICAgKmdyb3VwcyA9IE5V
-TEw7DQo+PiArICAgICAgICpudW1fZ3JvdXBzID0gMDsNCj4+ICsgICAgICAgcmV0dXJuIDA7DQo+
-PiArfQ0KPj4gKw0KPj4gK3N0YXRpYyBjb25zdCBjaGFyICp1cGJvYXJkX2dldF9mdW5jdGlvbl9u
-YW1lKHN0cnVjdCBwaW5jdHJsX2RldiAqcGN0bGRldiwNCj4+ICsgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgIHVuc2lnbmVkIGludCBzZWxlY3RvcikNCj4+ICt7DQo+
-PiArICAgICAgIHJldHVybiBOVUxMOw0KPj4gK30NCj4+ICsNCj4+ICtzdGF0aWMgaW50IHVwYm9h
-cmRfc2V0X211eChzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYsIHVuc2lnbmVkIGludCBmdW5j
-dGlvbiwNCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgIHVuc2lnbmVkIGludCBncm91cCkN
-Cj4+ICt7DQo+PiArICAgICAgIHJldHVybiAwOw0KPj4gK30NCj4gVGhpcyBqdXN0IGxvb2tzIHdl
-aXJkLg0KPg0KPiBUaGVyZSBzZWVtcyB0byBiZSBjb2RlIHRvIGRpc2FibGUgcGlucyBhbmQgdHVy
-biB0aGVtIGludG8NCj4gR1BJT3MgaW4gdXBib2FyZF9ncGlvX3JlcXVlc3RfZW5hYmxlKCkgYnV0
-IG5vIHdheSB0bw0KPiBzd2l0Y2ggdGhlbSBiYWNrIHRvIHRoZSBvcmlnaW5hbCBmdW5jdGlvbiwg
-aXMgdGhhdCBob3cgaXQgd29ya3M/DQo+DQo+IEkgZ3Vlc3MgaXQgaXMgZmluZSBpZiB0aGF0IGlz
-IGhvdyBpdCdzIHN1cHBvc2VkIHRvIGJlIHVzZWQuIEJ1dA0KPiB3b24ndCBzb21lIGdydW1weSB1
-c2VycyBjb21lIGFyb3VuZCBhbmQgY29tcGxhaW4gYWJvdXQNCj4gdGhpcyBvbmUgZGF5Pw0KPg0K
-PiBXZSBjYW4gZml4IGl0IHdoZW4gaXQgaGFwcGVucyB0aG91Z2guDQpUaGF0IGlzIGNvcnJlY3Qu
-wqAgVGhlIEJJT1MgbWF5IGNvbmZpZ3VyZSBhIGRlZmF1bHQgcGluIGZ1bmN0aW9uIGFuZCBkaXJl
-Y3Rpb24gKGUuZy4gU1BJIE1PU0kpIGF0IGJvb3QsIGFuZCB0aGlzIGRyaXZlciBhaW1zIHRvIGFs
-bG93IHRoZSB1c2VyIHRvIHN1YnNlcXVlbnRseSBzd2l0Y2ggdGhlIHBpbiB0byBHUElPIG1vZGUg
-YW5kIGNoYW5nZSBpdHMgZGlyZWN0aW9uL3N0YXRlIGF0IHJ1bi10aW1lLsKgIEkgdGhpbmsgSSBu
-ZWVkIHRvIGV4cGxhaW4gbW9yZSBhYm91dCB0aGUgaGFyZHdhcmUgYXJjaGl0ZWN0dXJlLCBzbyBp
-dHMgYmVzdCB0byBza2lwIGRvd24gdG8gc2VlIG15IHJlc3BvbnNlIHRvIHlvdXIgY29tbWVudCBh
-dCB0aGUgZW5kIGJlbG93Lg0KPg0KPj4gK3N0YXRpYyBpbnQgdXBib2FyZF9ncGlvX3JlcXVlc3Qo
-c3RydWN0IGdwaW9fY2hpcCAqZ2MsIHVuc2lnbmVkIGludCBvZmZzZXQpDQo+PiArew0KPj4gKyAg
-ICAgICBzdHJ1Y3QgdXBib2FyZF9waW5jdHJsICpwY3RybCA9DQo+PiArICAgICAgICAgICAgICAg
-Y29udGFpbmVyX29mKGdjLCBzdHJ1Y3QgdXBib2FyZF9waW5jdHJsLCBjaGlwKTsNCj4+ICsgICAg
-ICAgc3RydWN0IGdwaW9fZGVzYyAqZGVzYzsNCj4+ICsgICAgICAgaW50IHJldDsNCj4+ICsNCj4+
-ICsgICAgICAgcmV0ID0gcGluY3RybF9ncGlvX3JlcXVlc3QoZ2MtPmJhc2UgKyBvZmZzZXQpOw0K
-Pj4gKyAgICAgICBpZiAocmV0KQ0KPj4gKyAgICAgICAgICAgICAgIHJldHVybiByZXQ7DQo+PiAr
-DQo+PiArICAgICAgIGRlc2MgPSBkZXZtX2dwaW9kX2dldF9pbmRleChnYy0+cGFyZW50LCAiZXh0
-ZXJuYWwiLCBvZmZzZXQsIEdQSU9EX0FTSVMpOw0KPj4gKyAgICAgICBpZiAoSVNfRVJSKGRlc2Mp
-KQ0KPj4gKyAgICAgICAgICAgICAgIHJldHVybiBQVFJfRVJSKGRlc2MpOw0KPiBObyBwbGVhc2Ug
-ZG9uJ3QgZG8gdGhpcy4gVGhlIGNvbnN1bWVycyBzaG91bGQgcmVxdWVzdA0KPiB0aGUgZ3Bpbywg
-bm90IHRoZSBkcml2ZXIuDQo+DQo+PiArc3RhdGljIHZvaWQgdXBib2FyZF9ncGlvX2ZyZWUoc3Ry
-dWN0IGdwaW9fY2hpcCAqZ2MsIHVuc2lnbmVkIGludCBvZmZzZXQpDQo+PiArew0KPj4gKyAgICAg
-ICBzdHJ1Y3QgdXBib2FyZF9waW5jdHJsICpwY3RybCA9DQo+PiArICAgICAgICAgICAgICAgY29u
-dGFpbmVyX29mKGdjLCBzdHJ1Y3QgdXBib2FyZF9waW5jdHJsLCBjaGlwKTsNCj4+ICsNCj4+ICsg
-ICAgICAgaWYgKG9mZnNldCArIDEgPiBwY3RybC0+bnNvY19ncGlvcyB8fCAhcGN0cmwtPnNvY19n
-cGlvc1tvZmZzZXRdKQ0KPj4gKyAgICAgICAgICAgICAgIHJldHVybjsNCj4+ICsNCj4+ICsgICAg
-ICAgZGV2bV9ncGlvZF9wdXQoZ2MtPnBhcmVudCwgcGN0cmwtPnNvY19ncGlvc1tvZmZzZXRdKTsN
-Cj4gRGl0by4NCj4NCj4+ICtzdGF0aWMgaW50IHVwYm9hcmRfZ3Bpb19nZXRfZGlyZWN0aW9uKHN0
-cnVjdCBncGlvX2NoaXAgKmdjLCB1bnNpZ25lZCBpbnQgb2Zmc2V0KQ0KPj4gK3sNCj4+ICsgICAg
-ICAgc3RydWN0IGdwaW9fZGVzYyAqZGVzYyA9IHVwYm9hcmRfb2Zmc2V0X3RvX3NvY19ncGlvKGdj
-LCBvZmZzZXQpOw0KPj4gKw0KPj4gKyAgICAgICBpZiAoSVNfRVJSKGRlc2MpKQ0KPj4gKyAgICAg
-ICAgICAgICAgIHJldHVybiBQVFJfRVJSKGRlc2MpOw0KPj4gKw0KPj4gKyAgICAgICByZXR1cm4g
-Z3Bpb2RfZ2V0X2RpcmVjdGlvbihkZXNjKTsNCj4+ICt9DQo+IFRoaXMgaXMganVzdCBjb25mdXNp
-bmcgbWUgZXZlbiBtb3JlLi4uDQo+DQo+IElmIHlvdSBuZWVkIHBpbmN0cmxfZ3Bpb19nZXRfZGly
-ZWN0aW9uKCkgdGhlbiBpdCBzaG91bGQgYmUNCj4gYWRkZWQgdG8gdGhlIEFQSSBpbiA8bGludXgv
-cGluY3RybC9jb25zdW1lci5oPi4NCj4NCj4+ICtzdGF0aWMgaW50IHVwYm9hcmRfZ3Bpb19kaXJl
-Y3Rpb25fb3V0cHV0KHN0cnVjdCBncGlvX2NoaXAgKmdjLA0KPj4gKyAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICB1bnNpZ25lZCBpbnQgb2Zmc2V0LCBpbnQgdmFsdWUpDQo+
-PiArew0KPj4gKyAgICAgICBzdHJ1Y3QgZ3Bpb19kZXNjICpkZXNjID0gdXBib2FyZF9vZmZzZXRf
-dG9fc29jX2dwaW8oZ2MsIG9mZnNldCk7DQo+PiArICAgICAgIGludCByZXQ7DQo+PiArDQo+PiAr
-ICAgICAgIGlmIChJU19FUlIoZGVzYykpDQo+PiArICAgICAgICAgICAgICAgcmV0dXJuIFBUUl9F
-UlIoZGVzYyk7DQo+PiArDQo+PiArICAgICAgIHJldCA9IHBpbmN0cmxfZ3Bpb19kaXJlY3Rpb25f
-b3V0cHV0KGdjLT5iYXNlICsgb2Zmc2V0KTsNCj4+ICsgICAgICAgaWYgKHJldCkNCj4+ICsgICAg
-ICAgICAgICAgICByZXR1cm4gcmV0Ow0KPj4gKw0KPj4gKyAgICAgICByZXR1cm4gZ3Bpb2RfZGly
-ZWN0aW9uX291dHB1dChkZXNjLCB2YWx1ZSk7DQo+IE5vIHRoaXMgbG9va3MgY29uZnVzaW5nIHRv
-by4NCj4NCj4+ICtzdGF0aWMgaW50IHVwYm9hcmRfZ3Bpb19nZXRfdmFsdWUoc3RydWN0IGdwaW9f
-Y2hpcCAqZ2MsIHVuc2lnbmVkIGludCBvZmZzZXQpDQo+PiArew0KPj4gKyAgICAgICBzdHJ1Y3Qg
-Z3Bpb19kZXNjICpkZXNjID0gdXBib2FyZF9vZmZzZXRfdG9fc29jX2dwaW8oZ2MsIG9mZnNldCk7
-DQo+PiArDQo+PiArICAgICAgIGlmIChJU19FUlIoZGVzYykpDQo+PiArICAgICAgICAgICAgICAg
-cmV0dXJuIFBUUl9FUlIoZGVzYyk7DQo+PiArDQo+PiArICAgICAgIHJldHVybiBncGlvZF9nZXRf
-dmFsdWUoZGVzYyk7DQo+IEkgZG9uJ3QgZ2V0IHRoaXMgbWFza2luZyBvbmUgR1BJTyBjaGlwIGJl
-aGluZCBhbm90aGVyIEdQSU8gY2hpcC4NCj4gSXQgbG9va3MgcmVhbGx5IHdlaXJkLg0KPg0KPiBX
-aGF0IHdlIHVzdWFsbHkgaGF2ZSBpcyBhIEdQSU8gY2hpcCBpbiBmcm9udCBvZiBhIHBpbiBjb250
-cm9sbGVyDQo+IHV0aWxpemluZw0KPiBleHRlcm4gaW50IHBpbmN0cmxfZ3Bpb19yZXF1ZXN0KHVu
-c2lnbmVkIGdwaW8pOw0KPiBleHRlcm4gdm9pZCBwaW5jdHJsX2dwaW9fZnJlZSh1bnNpZ25lZCBn
-cGlvKTsNCj4gZXh0ZXJuIGludCBwaW5jdHJsX2dwaW9fZGlyZWN0aW9uX2lucHV0KHVuc2lnbmVk
-IGdwaW8pOw0KPiBleHRlcm4gaW50IHBpbmN0cmxfZ3Bpb19kaXJlY3Rpb25fb3V0cHV0KHVuc2ln
-bmVkIGdwaW8pOw0KPiBleHRlcm4gaW50IHBpbmN0cmxfZ3Bpb19zZXRfY29uZmlnKHVuc2lnbmVk
-IGdwaW8sIHVuc2lnbmVkIGxvbmcgY29uZmlnKTsNCj4NCj4gdGhlc2UgdGhpbmdzIGZvciB0aGUg
-R1BJTyBjaGlwIHRvIHRhbGsgdG8gdGhlIHBpbiBjb250cm9sDQo+IGJhY2stZW5kLg0KPg0KPiBU
-aGlzIGRyaXZlciBzZWVtcyB0byB1c2UgYSBHUElPIGNoaXAgaW4gZnJvbnQgb2YgYQ0KPiBHUElP
-IGNoaXAgYW5kIGEgcGluIGNvbnRyb2xsZXIgdG9vIChvciBzb21ldGhpbmcgbGlrZQ0KPiB0aGF0
-KSBhbmQgdGhhdCBtYWtlcyBtZSB2ZXJ5IHVuZWFzeS4NCj4NCj4gSSBuZWVkIGEgY2xlYXIgcGlj
-dHVyZSBvZiB0aGUgaW50ZXJuYWwgYXJjaGl0ZWN0dXIgb2YNCj4gdGhlIEdQSU8gcGFydHMgb2Yg
-dGhpcyBkcml2ZXIsIHdoeSB0aGUgR1BJTyBhY2Nlc3NvcnMNCj4gYXJlIGNhbGxpbmcgYmFjayBp
-bnRvIHRoZSBHUElPIGxheWVyIGV0Yy4gSXQgbG9va3MgdmVyeQ0KPiB1bm9ydGhvZG94IHRvIG1l
-LCBhbmQgSSBnZXQgdmVyeSBjb25mdXNlZC4NCj4NCj4gWW91cnMuDQo+IExpbnVzIFdhbGxlaWoN
-Cg0KWW91J3JlIHJpZ2h0LCB0aGUgYXJjaGl0ZWN0dXJlIGhlcmUgaXMgY2VydGFpbmx5IHVuY29u
-dmVudGlvbmFsLsKgIEknbGwgc3RhcnQgYnkgY2xhcmlmeWluZyBzb21lIGhhcmR3YXJlIGRlc2ln
-biBkZXRhaWxzLg0KDQpJZiB0aGUgR1BJTyBzaWduYWxzIGZyb20gdGhlIEFwb2xsbyBMYWtlIFNv
-QyBvbiB0aGlzIFVQIFNxdWFyZWQgYm9hcmQgd2VyZSBjb25uZWN0ZWQgZGlyZWN0bHkgdG8gdGhl
-IGV4dGVybmFsIFJQaS1saWtlIHBpbiBoZWFkZXIsIHRoaXMgZHJpdmVyIHdvdWxkbid0IGV4aXN0
-LsKgIEJ1dCB0aGUgU29DIHNpZ25hbHMgYXJlIDEuOFYgYW5kIHRoZSBwaW4gaGVhZGVyIG5lZWRz
-IHRvIHN1cHBvcnQgMy4zViwgc28gYW4gRlBHQSBoYXMgYmVlbiB1c2VkIHRvIHByb3ZpZGUgdm9s
-dGFnZSBsZXZlbCBzaGlmdGluZyBhbmQgYnVmZmVyaW5nIGJldHdlZW4gdGhlIFNvQyBhbmQgdGhl
-IHBpbiBoZWFkZXIuwqAgVGhlIGNvcnJlY3QgaW5wdXQvb3V0cHV0IGRpcmVjdGlvbiBmb3IgZWFj
-aCBJL08gc2lnbmFsIG5lZWRzIHRvIGJlIGNvbmZpZ3VyZWQgb24gdGhlIEZQR0EsIGFuZCBzb21l
-IG9mIHRoZSBJL08gc2lnbmFscyBuZWVkIHRvIGJlIHN3aXRjaGVkIGRlcGVuZGluZyBvbiB0aGUg
-ZnVuY3Rpb24gcmVxdWlyZWQuwqAgU28gaXQgY2FuIGJlIHNhaWQgdGhhdCB0aGUgRlBHQSBpcyBw
-cm92aWRpbmcgc29tZSBwaW4gY29udHJvbCBmdW5jdGlvbmFsaXR5IG91dHNpZGUgb2YgdGhlIFNv
-QywgYW5kIG5lZWRzIHRvIGJlIGNvbmZpZ3VyZWQgaW4gdGFuZGVtIHdpdGggdGhlIHBpbnMgb24g
-dGhlIFNvQyBpdHNlbGYuwqAgRS5nLiBpZiBhIEdQSU8gcGluIG9uIHRoZSBTb0MgaXMgc3dpdGNo
-ZWQgZnJvbSBpbnB1dCB0byBvdXRwdXQgbW9kZSwgdGhpcyBjb25maWd1cmF0aW9uIG5lZWRzIHRv
-IGJlIGVjaG9lZCBvbiB0aGUgRlBHQSBhcyB3ZWxsLg0KDQrCoMKgwqDCoMKgwqDCoCArLS0tLS0t
-LS0tLS0tLS0rwqDCoMKgICstLS0tLS0tLSvCoMKgwqAgKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0rDQrCoMKgwqDCoMKgwqDCoCB8wqAgU29DICgxLjhWKcKgIHwtLS0tfMKgIEZQR0HC
-oCB8LS0tLXwgNDAtcGluIFJQaS1saWtlIGhlYWRlciAoMy4zVikgfA0KwqDCoMKgwqDCoMKgwqAg
-Ky0tLS0tLS0tLS0tLS0tK8KgwqDCoCArLS0tLS0tLS0rwqDCoMKgICstLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tKw0KDQooVGhlIEZQR0EgcHJvdmlkZXMgc29tZSBvdGhlciBmdW5jdGlv
-bnMgYXMgd2VsbCAoZS5nLiBMRUQgY29udHJvbCkgYnV0IHRoaXMgcGFydGljdWxhciBkcml2ZXIg
-aXMgZm9jdXNlZCBvbmx5IG9uIHRoZSBHUElPIHBpbiBjb250cm9sIGFzcGVjdCkNCg0KT24gb25l
-IGhhbmQsIGl0IGNvdWxkIGJlIHZpZXdlZCBhcyBhIHNlY29uZC1sZXZlbCBwaW4gY29udHJvbGxl
-ciB0byBiZSBzeW5jaHJvbmlzZWQgd2l0aCB0aGUgZmlyc3QtbGV2ZWwgR1BJTyBwaW4gY29udHJv
-bGxlciBvbiB0aGUgU29DLg0KDQpPbiB0aGUgb3RoZXIgaGFuZCwgaXQgY291bGQgYmUgdmlld2Vk
-IGFzIGEgc2VwYXJhdGUgZXh0ZXJuYWwgR1BJTyBjb250cm9sbGVyLsKgIEJ1dCB1bmxpa2UsIHNh
-eSBhIHR5cGljYWwgR1BJTyBjb250cm9sbGVyIGNvbm5lY3RlZCB2aWEgSTJDIG9yIFNQSSB3aGVy
-ZSB0aGUgc3RhdGUgb2YgZWFjaCBvZiBpdHMgZXh0ZXJuYWwgSS9PIHNpZ25hbHMgaXMgY29udHJv
-bGxlZCBieSBhIGJpdCBpbiBhIHJlZ2lzdGVyLCB0aGUgZXh0ZXJuYWwgSS9PIHNpZ25hbCBzdGF0
-ZXMgaGVyZSBhcmUgZWFjaCBjb250cm9sbGVkIHVzaW5nIGRlZGljYXRlZCBHUElPIHNpZ25hbHMg
-b24gdGhlIFNvQy4NCg0KQWZ0ZXIgc29tZSBpbnRlcm5hbCBkZWJhdGUsIHRoZSAybmQgYXBwcm9h
-Y2ggYWJvdmUgd2FzIGNob3NlbiBhcyBpdCBzZWVtZWQgdG8gZml0IG1vcmUgZWFzaWx5IHdpdGhp
-biB0aGUgZXhpc3RpbmcgZ3Bpby9waW5jdHJsIGRyaXZlciBmcmFtZXdvcmsgaW4gTGludXguwqAg
-U28gdGhpcyBpcyB3aHkgdGhpcyBpcyBwcmVzZW50ZWQgYXMgYSBHUElPIGNoaXAgZHJpdmVyIHRo
-YXQgaXMgcHJvdmlkaW5nIDI4ICJleHRlcm5hbCIgR1BJTyBzaWduYWxzIGFuZCwgaW4gdHVybiwg
-aXMgY29uc3VtaW5nIGEgc2V0IG9mIDI4ICJpbnRlcm5hbCIgR1BJTyByZXNvdXJjZXMgb24gdGhl
-IFNvQy7CoCBFYWNoIEdQSU8gb24gdGhpcyBleHRlcm5hbCBHUElPIGNvbnRyb2xsZXIgaXMgY29u
-bmVjdGVkIHRvIGEgZGVkaWNhdGVkIFNvQyBHUElPLsKgIFNvLCB3aGVuIGEgdXNlciB0aGUgbW9k
-ZS9kaXJlY3Rpb24gb2YgYSBwaW4gb24gdGhlIGV4dGVybmFsIGhlYWRlciwgdGhpcyBkcml2ZXIg
-d2lsbCBlbnN1cmUgdGhhdCB0aGUgRlBHQSBhbmQgdGhlIGludGVybmFsIFNvQyBncGlvIGFuZCBw
-aW5jdHJsIGVsZW1lbnRzIGFyZSBhbGwgcmVjb25maWd1cmVkIHRvZ2V0aGVyLg0KDQpJJ2QgYmUg
-ZGVsaWdodGVkIHRvIGdldCB5b3VyIHRob3VnaHRzIG9uIGhvdyB5b3Ugd291bGQgcHJlZmVyIHRv
-IHNlZSB0aGlzIGltcGxlbWVudGVkLg0KDQoNCg==
++ devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org> and
+Mark Rutland <mark.rutland@arm.com>
+
+Missatge de Cheng-Yi Chiang <cychiang@chromium.org> del dia ds., 19 de
+gen. 2019 a les 12:34:
+>
+> Add documentation for Chrome EC codec driver.
+>
+> Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
+> ---
+>  Change in v4:
+>  - Add a property max-dmic-gain so we can configure maximum gain on dmic.
+>  - Add Guenter to the reviewer list.
+>
+>  .../bindings/sound/google,cros-ec-codec.txt   | 26 +++++++++++++++++++
+>  MAINTAINERS                                   |  7 +++++
+>  2 files changed, 33 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/sound/google,cros-ec-codec.txt
+>
+> diff --git a/Documentation/devicetree/bindings/sound/google,cros-ec-codec.txt b/Documentation/devicetree/bindings/sound/google,cros-ec-codec.txt
+> new file mode 100644
+> index 000000000000..1084f7f22eea
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/google,cros-ec-codec.txt
+> @@ -0,0 +1,26 @@
+> +* Audio codec controlled by ChromeOS EC
+> +
+> +Google's ChromeOS EC codec is a digital mic codec provided by the
+> +Embedded Controller (EC) and is controlled via a host-command interface.
+> +
+> +An EC codec node should only be found as a sub-node of the EC node (see
+> +Documentation/devicetree/bindings/mfd/cros-ec.txt).
+> +
+> +Required properties:
+> +- compatible: Must contain "google,cros-ec-codec"
+> +- #sound-dai-cells: Should be 1. The cell specifies number of DAIs.
+> +- max-dmic-gain: A number for maximum gain in dB on digital microphone.
+> +
+> +Example:
+> +
+> +cros-ec@0 {
+> +       compatible = "google,cros-ec-spi";
+> +
+> +       ...
+> +
+> +       cros_ec_codec: ec-codec {
+> +               compatible = "google,cros-ec-codec";
+> +               #sound-dai-cells = <1>;
+> +               max-dmic-gain = <43>;
+> +       };
+> +};
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 4d04cebb4a71..a5678e4041e9 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -3688,6 +3688,13 @@ N:       cros_ec
+>  N:     cros-ec
+>  F:     drivers/power/supply/cros_usbpd-charger.c
+>
+> +CHROMEOS EC CODEC DRIVER
+> +M:     Cheng-Yi Chiang <cychiang@chromium.org>
+> +S:     Maintained
+> +R:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> +R:     Guenter Roeck <groeck@chromium.org>
+> +F:     Documentation/devicetree/bindings/sound/google,cros-ec-codec.txt
+> +
+>  CIRRUS LOGIC AUDIO CODEC DRIVERS
+>  M:     Brian Austin <brian.austin@cirrus.com>
+>  M:     Paul Handrigan <Paul.Handrigan@cirrus.com>
+> --
+> 2.20.1.321.g9e740568ce-goog
+>
+> _______________________________________________
+> Alsa-devel mailing list
+> Alsa-devel@alsa-project.org
+> http://mailman.alsa-project.org/mailman/listinfo/alsa-devel
