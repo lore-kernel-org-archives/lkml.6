@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1904C2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:47:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06EC8C2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:47:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B924220879
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:47:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C16BA20861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:47:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078423;
-	bh=w0y6iVNnqG8dvFbope+PyfHmutH6HUEgmpCn2F/1Xis=;
+	s=default; t=1548078426;
+	bh=ImFiMYj0fcd+RGwM3EExbDyhA2+6NEI8WCiKJD0cdF4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=N/QBQS+vTIE2SfGa7X3kdzPd/RbEcMLOqKjyDpzdNHKRcMEoteFCUwZlt9iN2msy1
-	 ul1kiiZUwUa6LyJAkaveAQ3RSnthCJ1kU+eoI1hOgJpdAwsvvUD08G+C1hxuDT9ql9
-	 XG3/ZnOAVbSHNMLKc+apqXEbc+dDET3reWBHDO3U=
+	b=XgEGbW2a9xkqwLsGxSCI2hpwplFYPPRGRn4A4IndSm4D9+2UM4tOAUOHoedKhusiN
+	 ahHMSqN5fUeNr6z4muKuiJ+8DezFjVpMOkgbkaW+Bqc/kffakf4+1HE+ygfWVq3aUF
+	 hbNsEt42p1HoUYZFERjPFMW5dA+M+KWG9YIb7KuA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729447AbfAUNrC (ORCPT
+        id S1729077AbfAUNrF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:47:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55970 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:47:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56104 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729396AbfAUNqz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:46:55 -0500
+        id S1729433AbfAUNrB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:47:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1AE4220861;
-        Mon, 21 Jan 2019 13:46:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D8D9820870;
+        Mon, 21 Jan 2019 13:46:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078414;
-        bh=w0y6iVNnqG8dvFbope+PyfHmutH6HUEgmpCn2F/1Xis=;
+        s=default; t=1548078420;
+        bh=ImFiMYj0fcd+RGwM3EExbDyhA2+6NEI8WCiKJD0cdF4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0h6sRviy12AqO3YBl16mKzBH5fkyL3sGTirSf3HPymcLxy+i3NmzBdwHKA9YHZjmW
-         SVWuz1h6NEPRwABgchouxqpJ3siSJuLr90ju/jRrbbGyUlw9l+HpbQYnC1sq7G0K/c
-         0pXBw1C9qXzc+ImsxWk8tFwUplM5JK2IxrBywxKE=
+        b=Qs8wU+v/G03W5cmc8pkpqPfZqSwwovUEBuguPQtg05iS+dDMdCmDbSrLns+LuoTd/
+         Cuphtb51leoFvcOCL/Hfwx5MzD9k7ih8VA+jQ+Is4p95Bu+wQE5MiZh4VqqEea9WpJ
+         bD50hX+mkDguqJzaCYnorB7mJXmHvKt+WwdqYqI4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Timotej Lazar <timotej.lazar@araneo.si>,
-        Florian Fainelli <f.fainelli@gmail.com>,
+        stable@vger.kernel.org,
+        Bryan Whitehead <Bryan.Whitehead@microchip.com>,
+        Andrew Lunn <andrew@lunn.ch>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.20 024/111] net: phy: meson-gxl: Use the genphy_soft_reset callback
-Date:   Mon, 21 Jan 2019 14:42:18 +0100
-Message-Id: <20190121122458.431356230@linuxfoundation.org>
+Subject: [PATCH 4.20 025/111] lan743x: Remove phy_read from link status change function
+Date:   Mon, 21 Jan 2019 14:42:19 +0100
+Message-Id: <20190121122458.553463859@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122455.819406896@linuxfoundation.org>
 References: <20190121122455.819406896@linuxfoundation.org>
@@ -66,32 +67,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Timotej Lazar <timotej.lazar@araneo.si>
+From: Bryan Whitehead <Bryan.Whitehead@microchip.com>
 
-[ Upstream commit f2f98c1d7fa81e25a5cf910edc9db4d3c6f36c1b ]
+[ Upstream commit a0071840d2040ea1b27e5a008182b09b88defc15 ]
 
-Since the referenced commit, Ethernet fails to come up at boot on the
-board meson-gxl-s905x-libretech-cc. Fix this by re-enabling the
-genphy_soft_reset callback for the Amlogic Meson GXL PHY driver.
+It has been noticed that some phys do not have the registers
+required by the previous implementation.
 
-Fixes: 6e2d85ec0559 ("net: phy: Stop with excessive soft reset")
-Signed-off-by: Timotej Lazar <timotej.lazar@araneo.si>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+To fix this, instead of using phy_read, the required information
+is extracted from the phy_device structure.
+
+fixes: 23f0703c125b ("lan743x: Add main source files for new lan743x driver")
+Signed-off-by: Bryan Whitehead <Bryan.Whitehead@microchip.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/meson-gxl.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/microchip/lan743x_main.c |   11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
---- a/drivers/net/phy/meson-gxl.c
-+++ b/drivers/net/phy/meson-gxl.c
-@@ -233,6 +233,7 @@ static struct phy_driver meson_gxl_phy[]
- 		.name		= "Meson GXL Internal PHY",
- 		.features	= PHY_BASIC_FEATURES,
- 		.flags		= PHY_IS_INTERNAL | PHY_HAS_INTERRUPT,
-+		.soft_reset     = genphy_soft_reset,
- 		.config_init	= meson_gxl_config_init,
- 		.aneg_done      = genphy_aneg_done,
- 		.read_status	= meson_gxl_read_status,
+--- a/drivers/net/ethernet/microchip/lan743x_main.c
++++ b/drivers/net/ethernet/microchip/lan743x_main.c
+@@ -962,13 +962,10 @@ static void lan743x_phy_link_status_chan
+ 
+ 		memset(&ksettings, 0, sizeof(ksettings));
+ 		phy_ethtool_get_link_ksettings(netdev, &ksettings);
+-		local_advertisement = phy_read(phydev, MII_ADVERTISE);
+-		if (local_advertisement < 0)
+-			return;
+-
+-		remote_advertisement = phy_read(phydev, MII_LPA);
+-		if (remote_advertisement < 0)
+-			return;
++		local_advertisement =
++			ethtool_adv_to_mii_adv_t(phydev->advertising);
++		remote_advertisement =
++			ethtool_adv_to_mii_adv_t(phydev->lp_advertising);
+ 
+ 		lan743x_phy_update_flowcontrol(adapter,
+ 					       ksettings.base.duplex,
 
 
