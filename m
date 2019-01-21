@@ -2,56 +2,52 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 678D7C2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:52:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EE0AC2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:52:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F5082087F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:52:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2A5D2089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:52:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078769;
-	bh=Ed/kZ/Ja50aRv6IIqtTR9SCFlA7rF7doPLuiu1kubEY=;
+	s=default; t=1548078774;
+	bh=mXlC5/HWjncmI7sJhwv2x+Fnr00Ra6PS8VNpkOmlLXo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wWq9+vryEFi6yNk7ee2w3v9RPRZcsVWXG9KJUBCAtIUXVQgGB92UfR73hSCKwbkuK
-	 FcKm4IA38abBKQ+VTrrsiNz9OMy78liquGy6fClmF2eL8SdEP0x2q72jyhiR/d3YA/
-	 I+VG5AQ5lQIsiuoGqytBU9CFnuNumazAsNsagBMg=
+	b=Vh/ie/3mI5C9dYphYwaTFPMOqfPR0VKjdYXXsqRagIm65jXnj0Ll/E8rH6L6LX/XT
+	 si0TZShy4imzA/lGW2mgCcHcJqM4CLbGRxIgraHTyEW5j6GBciWe7j0SB1KgJjyWHD
+	 rmabyx9bN0HVrML+umYocovfXOPWC8EY4jLyg8Hw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731140AbfAUNwr (ORCPT
+        id S1731151AbfAUNwv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:52:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36026 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:52:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36144 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731117AbfAUNwo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:52:44 -0500
+        id S1729758AbfAUNwt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:52:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B4D7F2084C;
-        Mon, 21 Jan 2019 13:52:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6863D20861;
+        Mon, 21 Jan 2019 13:52:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078763;
-        bh=Ed/kZ/Ja50aRv6IIqtTR9SCFlA7rF7doPLuiu1kubEY=;
+        s=default; t=1548078768;
+        bh=mXlC5/HWjncmI7sJhwv2x+Fnr00Ra6PS8VNpkOmlLXo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=inH3GreeazALLZM2Jy0A1vi3EOCA0xl3QhxevYd40dN89NzoTtrONn9m7edUlMasz
-         oWfjIVpn9k6Y9/PbUqpslZbKfMirvj2PNuGvfdC5eowwg+TGX0VrJaMeeTsiMDho6Q
-         VCQ/+Z2BLq342mq1gR6JJbmwDn3wPkbQONNVXkO4=
+        b=WRN+jsj/gJn0/07FXj6QhV+TMACHkszi7YrgXiS/DxHu5tnITfjKVuLjWXjA8uENk
+         Uf7viTCEVSkkCsiLGzHW7eRmBCPJcRjBZTIH5oAD5Lyo0VXcGWaKVlZ8XkVbV5UmZE
+         /SmnH8KPoifRHvtZb1OdL9ZDb+xCfMjeNSB45ys4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xunlei Pang <xlpang@linux.alibaba.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Alakesh Haloi <alakeshh@amazon.com>,
-        Ben Segall <bsegall@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 08/59] sched/fair: Fix bandwidth timer clock drift condition
-Date:   Mon, 21 Jan 2019 14:43:33 +0100
-Message-Id: <20190121122457.405562328@linuxfoundation.org>
+        stable@vger.kernel.org, Varun Prakash <varun@chelsio.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 10/59] scsi: target: iscsi: cxgbit: fix csk leak
+Date:   Mon, 21 Jan 2019 14:43:35 +0100
+Message-Id: <20190121122457.648263811@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122456.529172919@linuxfoundation.org>
 References: <20190121122456.529172919@linuxfoundation.org>
@@ -70,139 +66,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xunlei Pang <xlpang@linux.alibaba.com>
+[ Upstream commit ed076c55b359cc9982ca8b065bcc01675f7365f6 ]
 
-commit 512ac999d2755d2b7109e996a76b6fb8b888631d upstream.
+In case of arp failure call cxgbit_put_csk() to free csk.
 
-I noticed that cgroup task groups constantly get throttled even
-if they have low CPU usage, this causes some jitters on the response
-time to some of our business containers when enabling CPU quotas.
-
-It's very simple to reproduce:
-
-  mkdir /sys/fs/cgroup/cpu/test
-  cd /sys/fs/cgroup/cpu/test
-  echo 100000 > cpu.cfs_quota_us
-  echo $$ > tasks
-
-then repeat:
-
-  cat cpu.stat | grep nr_throttled  # nr_throttled will increase steadily
-
-After some analysis, we found that cfs_rq::runtime_remaining will
-be cleared by expire_cfs_rq_runtime() due to two equal but stale
-"cfs_{b|q}->runtime_expires" after period timer is re-armed.
-
-The current condition to judge clock drift in expire_cfs_rq_runtime()
-is wrong, the two runtime_expires are actually the same when clock
-drift happens, so this condtion can never hit. The orginal design was
-correctly done by this commit:
-
-  a9cf55b28610 ("sched: Expire invalid runtime")
-
-... but was changed to be the current implementation due to its locking bug.
-
-This patch introduces another way, it adds a new field in both structures
-cfs_rq and cfs_bandwidth to record the expiration update sequence, and
-uses them to figure out if clock drift happens (true if they are equal).
-
-Signed-off-by: Xunlei Pang <xlpang@linux.alibaba.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-[alakeshh: backport: Fixed merge conflicts:
- - sched.h: Fix the indentation and order in which the variables are
-   declared to match with coding style of the existing code in 4.14
-   Struct members of same type were declared in separate lines in
-   upstream patch which has been changed back to having multiple
-   members of same type in the same line.
-   e.g. int a; int b; ->  int a, b; ]
-Signed-off-by: Alakesh Haloi <alakeshh@amazon.com>
-Reviewed-by: Ben Segall <bsegall@google.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: <stable@vger.kernel.org> # 4.14.x
-Fixes: 51f2176d74ac ("sched/fair: Fix unlocked reads of some cfs_b->quota/period")
-Link: http://lkml.kernel.org/r/20180620101834.24455-1-xlpang@linux.alibaba.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Varun Prakash <varun@chelsio.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/sched/fair.c  |   14 ++++++++------
- kernel/sched/sched.h |    4 +++-
- 2 files changed, 11 insertions(+), 7 deletions(-)
+ drivers/target/iscsi/cxgbit/cxgbit_cm.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -4087,6 +4087,7 @@ void __refill_cfs_bandwidth_runtime(stru
- 	now = sched_clock_cpu(smp_processor_id());
- 	cfs_b->runtime = cfs_b->quota;
- 	cfs_b->runtime_expires = now + ktime_to_ns(cfs_b->period);
-+	cfs_b->expires_seq++;
+diff --git a/drivers/target/iscsi/cxgbit/cxgbit_cm.c b/drivers/target/iscsi/cxgbit/cxgbit_cm.c
+index d4fa41be80f9..0c00bb27c9c5 100644
+--- a/drivers/target/iscsi/cxgbit/cxgbit_cm.c
++++ b/drivers/target/iscsi/cxgbit/cxgbit_cm.c
+@@ -631,8 +631,11 @@ static void cxgbit_send_halfclose(struct cxgbit_sock *csk)
+ 
+ static void cxgbit_arp_failure_discard(void *handle, struct sk_buff *skb)
+ {
++	struct cxgbit_sock *csk = handle;
++
+ 	pr_debug("%s cxgbit_device %p\n", __func__, handle);
+ 	kfree_skb(skb);
++	cxgbit_put_csk(csk);
  }
  
- static inline struct cfs_bandwidth *tg_cfs_bandwidth(struct task_group *tg)
-@@ -4109,6 +4110,7 @@ static int assign_cfs_rq_runtime(struct
- 	struct task_group *tg = cfs_rq->tg;
- 	struct cfs_bandwidth *cfs_b = tg_cfs_bandwidth(tg);
- 	u64 amount = 0, min_amount, expires;
-+	int expires_seq;
- 
- 	/* note: this is a positive sum as runtime_remaining <= 0 */
- 	min_amount = sched_cfs_bandwidth_slice() - cfs_rq->runtime_remaining;
-@@ -4125,6 +4127,7 @@ static int assign_cfs_rq_runtime(struct
- 			cfs_b->idle = 0;
- 		}
- 	}
-+	expires_seq = cfs_b->expires_seq;
- 	expires = cfs_b->runtime_expires;
- 	raw_spin_unlock(&cfs_b->lock);
- 
-@@ -4134,8 +4137,10 @@ static int assign_cfs_rq_runtime(struct
- 	 * spread between our sched_clock and the one on which runtime was
- 	 * issued.
- 	 */
--	if ((s64)(expires - cfs_rq->runtime_expires) > 0)
-+	if (cfs_rq->expires_seq != expires_seq) {
-+		cfs_rq->expires_seq = expires_seq;
- 		cfs_rq->runtime_expires = expires;
-+	}
- 
- 	return cfs_rq->runtime_remaining > 0;
+ static void cxgbit_abort_arp_failure(void *handle, struct sk_buff *skb)
+@@ -1147,7 +1150,7 @@ cxgbit_pass_accept_rpl(struct cxgbit_sock *csk, struct cpl_pass_accept_req *req)
+ 	rpl5->opt0 = cpu_to_be64(opt0);
+ 	rpl5->opt2 = cpu_to_be32(opt2);
+ 	set_wr_txq(skb, CPL_PRIORITY_SETUP, csk->ctrlq_idx);
+-	t4_set_arp_err_handler(skb, NULL, cxgbit_arp_failure_discard);
++	t4_set_arp_err_handler(skb, csk, cxgbit_arp_failure_discard);
+ 	cxgbit_l2t_send(csk->com.cdev, skb, csk->l2t);
  }
-@@ -4161,12 +4166,9 @@ static void expire_cfs_rq_runtime(struct
- 	 * has not truly expired.
- 	 *
- 	 * Fortunately we can check determine whether this the case by checking
--	 * whether the global deadline has advanced. It is valid to compare
--	 * cfs_b->runtime_expires without any locks since we only care about
--	 * exact equality, so a partial write will still work.
-+	 * whether the global deadline(cfs_b->expires_seq) has advanced.
- 	 */
--
--	if (cfs_rq->runtime_expires != cfs_b->runtime_expires) {
-+	if (cfs_rq->expires_seq == cfs_b->expires_seq) {
- 		/* extend local deadline, drift is bounded above by 2 ticks */
- 		cfs_rq->runtime_expires += TICK_NSEC;
- 	} else {
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -281,8 +281,9 @@ struct cfs_bandwidth {
- 	u64 quota, runtime;
- 	s64 hierarchical_quota;
- 	u64 runtime_expires;
-+	int expires_seq;
  
--	int idle, period_active;
-+	short idle, period_active;
- 	struct hrtimer period_timer, slack_timer;
- 	struct list_head throttled_cfs_rq;
- 
-@@ -488,6 +489,7 @@ struct cfs_rq {
- 
- #ifdef CONFIG_CFS_BANDWIDTH
- 	int runtime_enabled;
-+	int expires_seq;
- 	u64 runtime_expires;
- 	s64 runtime_remaining;
- 
+-- 
+2.19.1
+
 
 
