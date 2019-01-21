@@ -2,194 +2,165 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3A1AC2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:05:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8723AC2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:06:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B092A20989
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:05:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A8442089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:06:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548079566;
+	bh=xbP39+Mo/tUk9J/75B97hD8CP3d+rwbk8M5cJw+4de4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=cpnl3udilSU24a66euzJgjJ8Ke/zxPfYfsCrLueeZ2FKuzLvQ4K+BBBNDIS4J6u/m
+	 daPMohlDyuHy2xP3NGaV6DXYR9WxS8No0sYNmviRw3xcRfLuuEjiSbpJk8ktd6hzLZ
+	 5hL8qhVKQyincdkNZLd/nok4O2iKMkw7n/s24v14=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730607AbfAUOF4 (ORCPT
+        id S1732047AbfAUOAo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:05:56 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:5857 "EHLO mx1.redhat.com"
+        Mon, 21 Jan 2019 09:00:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47394 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729659AbfAUOFz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 09:05:55 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1731804AbfAUOAl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 09:00:41 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2076F80F98;
-        Mon, 21 Jan 2019 14:05:54 +0000 (UTC)
-Received: from redhat.com (ovpn-122-5.rdu2.redhat.com [10.10.122.5])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id CE6156873A;
-        Mon, 21 Jan 2019 14:05:38 +0000 (UTC)
-Date:   Mon, 21 Jan 2019 09:05:35 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Peter Xu <peterx@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Hugh Dickins <hughd@google.com>,
-        Maya Gokhale <gokhale2@llnl.gov>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Martin Cracauer <cracauer@cons.org>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Shaohua Li <shli@fb.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Pavel Emelyanov <xemul@parallels.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Marty McFadden <mcfadden8@llnl.gov>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Rik van Riel <riel@redhat.com>
-Subject: Re: [PATCH RFC 06/24] userfaultfd: wp: support write protection for
- userfault vma range
-Message-ID: <20190121140535.GD3344@redhat.com>
-References: <20190121075722.7945-1-peterx@redhat.com>
- <20190121075722.7945-7-peterx@redhat.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 0170B2089F;
+        Mon, 21 Jan 2019 14:00:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548079240;
+        bh=xbP39+Mo/tUk9J/75B97hD8CP3d+rwbk8M5cJw+4de4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=1yyd/vfNCyubHY4oFJ7v0mN50HAvEKlD9qQ8nniBPsrozoPD4AQEmnx2m/1bQ7n3M
+         b8TN51c/idhnM2nRfAmoh7rUFYwg2k3KbIUEdQsyV7N+G9TOXtm/RILyMC4fWTnCOE
+         ULHposZ8l+JPDmBH2ETJNUp4am6Q/7mpHPhp9fRk=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Hans van Kranenburg <hans.van.kranenburg@mendix.com>,
+        Juergen Gross <jgross@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Subject: [PATCH 4.19 39/99] xen: Fix x86 sched_clock() interface for xen
+Date:   Mon, 21 Jan 2019 14:48:31 +0100
+Message-Id: <20190121134915.380237965@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190121134913.924726465@linuxfoundation.org>
+References: <20190121134913.924726465@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190121075722.7945-7-peterx@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 21 Jan 2019 14:05:54 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 03:57:04PM +0800, Peter Xu wrote:
-> From: Shaohua Li <shli@fb.com>
-> 
-> Add API to enable/disable writeprotect a vma range. Unlike mprotect,
-> this doesn't split/merge vmas.
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-AFAICT it does not do that.
+------------------
 
-> 
-> Cc: Andrea Arcangeli <aarcange@redhat.com>
-> Cc: Pavel Emelyanov <xemul@parallels.com>
-> Cc: Rik van Riel <riel@redhat.com>
-> Cc: Kirill A. Shutemov <kirill@shutemov.name>
-> Cc: Mel Gorman <mgorman@suse.de>
-> Cc: Hugh Dickins <hughd@google.com>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Signed-off-by: Shaohua Li <shli@fb.com>
-> Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
-> Signed-off-by: Peter Xu <peterx@redhat.com>
-> ---
->  include/linux/userfaultfd_k.h |  2 ++
->  mm/userfaultfd.c              | 52 +++++++++++++++++++++++++++++++++++
->  2 files changed, 54 insertions(+)
-> 
-> diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
-> index 38f748e7186e..e82f3156f4e9 100644
-> --- a/include/linux/userfaultfd_k.h
-> +++ b/include/linux/userfaultfd_k.h
-> @@ -37,6 +37,8 @@ extern ssize_t mfill_zeropage(struct mm_struct *dst_mm,
->  			      unsigned long dst_start,
->  			      unsigned long len,
->  			      bool *mmap_changing);
-> +extern int mwriteprotect_range(struct mm_struct *dst_mm,
-> +		unsigned long start, unsigned long len, bool enable_wp);
->  
->  /* mm helpers */
->  static inline bool is_mergeable_vm_userfaultfd_ctx(struct vm_area_struct *vma,
-> diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-> index 458acda96f20..c38903f501c7 100644
-> --- a/mm/userfaultfd.c
-> +++ b/mm/userfaultfd.c
-> @@ -615,3 +615,55 @@ ssize_t mfill_zeropage(struct mm_struct *dst_mm, unsigned long start,
->  {
->  	return __mcopy_atomic(dst_mm, start, 0, len, true, mmap_changing);
->  }
-> +
-> +int mwriteprotect_range(struct mm_struct *dst_mm, unsigned long start,
-> +	unsigned long len, bool enable_wp)
-> +{
-> +	struct vm_area_struct *dst_vma;
-> +	pgprot_t newprot;
-> +	int err;
-> +
-> +	/*
-> +	 * Sanitize the command parameters:
-> +	 */
-> +	BUG_ON(start & ~PAGE_MASK);
-> +	BUG_ON(len & ~PAGE_MASK);
-> +
-> +	/* Does the address range wrap, or is the span zero-sized? */
-> +	BUG_ON(start + len <= start);
-> +
-> +	down_read(&dst_mm->mmap_sem);
-> +
-> +	/*
-> +	 * Make sure the vma is not shared, that the dst range is
-> +	 * both valid and fully within a single existing vma.
-> +	 */
-> +	err = -EINVAL;
-> +	dst_vma = find_vma(dst_mm, start);
-> +	if (!dst_vma || (dst_vma->vm_flags & VM_SHARED))
-> +		goto out_unlock;
-> +	if (start < dst_vma->vm_start ||
-> +	    start + len > dst_vma->vm_end)
-> +		goto out_unlock;
-> +
-> +	if (!dst_vma->vm_userfaultfd_ctx.ctx)
-> +		goto out_unlock;
-> +	if (!userfaultfd_wp(dst_vma))
-> +		goto out_unlock;
-> +
-> +	if (!vma_is_anonymous(dst_vma))
-> +		goto out_unlock;
-> +
-> +	if (enable_wp)
-> +		newprot = vm_get_page_prot(dst_vma->vm_flags & ~(VM_WRITE));
-> +	else
-> +		newprot = vm_get_page_prot(dst_vma->vm_flags);
-> +
-> +	change_protection(dst_vma, start, start + len, newprot,
-> +				!enable_wp, 0);
+From: Juergen Gross <jgross@suse.com>
 
-So setting dirty_accountable bring us to that code in mprotect.c:
+commit 867cefb4cb1012f42cada1c7d1f35ac8dd276071 upstream.
 
-    if (dirty_accountable && pte_dirty(ptent) &&
-            (pte_soft_dirty(ptent) ||
-             !(vma->vm_flags & VM_SOFTDIRTY))) {
-        ptent = pte_mkwrite(ptent);
-    }
+Commit f94c8d11699759 ("sched/clock, x86/tsc: Rework the x86 'unstable'
+sched_clock() interface") broke Xen guest time handling across
+migration:
 
-My understanding is that you want to set write flag when enable_wp
-is false and you want to set the write flag unconditionaly, right ?
+[  187.249951] Freezing user space processes ... (elapsed 0.001 seconds) done.
+[  187.251137] OOM killer disabled.
+[  187.251137] Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
+[  187.252299] suspending xenstore...
+[  187.266987] xen:grant_table: Grant tables using version 1 layout
+[18446743811.706476] OOM killer enabled.
+[18446743811.706478] Restarting tasks ... done.
+[18446743811.720505] Setting capacity to 16777216
 
-If so then you should really move the change_protection() flags
-patch before this patch and add a flag for setting pte write flags.
+Fix that by setting xen_sched_clock_offset at resume time to ensure a
+monotonic clock value.
 
-Otherwise the above is broken at it will only set the write flag
-for pte that were dirty and i am guessing so far you always were
-lucky because pte were all dirty (change_protection will preserve
-dirtyness) when you write protected them.
+[boris: replaced pr_info() with pr_info_once() in xen_callback_vector()
+ to avoid printing with incorrect timestamp during resume (as we
+ haven't re-adjusted the clock yet)]
 
-So i believe the above is broken or at very least unclear if what
-you really want is to only set write flag to pte that have the
-dirty flag set.
+Fixes: f94c8d11699759 ("sched/clock, x86/tsc: Rework the x86 'unstable' sched_clock() interface")
+Cc: <stable@vger.kernel.org> # 4.11
+Reported-by: Hans van Kranenburg <hans.van.kranenburg@mendix.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Tested-by: Hans van Kranenburg <hans.van.kranenburg@mendix.com>
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ arch/x86/xen/time.c              |   12 +++++++++---
+ drivers/xen/events/events_base.c |    2 +-
+ 2 files changed, 10 insertions(+), 4 deletions(-)
+
+--- a/arch/x86/xen/time.c
++++ b/arch/x86/xen/time.c
+@@ -361,8 +361,6 @@ void xen_timer_resume(void)
+ {
+ 	int cpu;
+ 
+-	pvclock_resume();
+-
+ 	if (xen_clockevent != &xen_vcpuop_clockevent)
+ 		return;
+ 
+@@ -379,12 +377,15 @@ static const struct pv_time_ops xen_time
+ };
+ 
+ static struct pvclock_vsyscall_time_info *xen_clock __read_mostly;
++static u64 xen_clock_value_saved;
+ 
+ void xen_save_time_memory_area(void)
+ {
+ 	struct vcpu_register_time_memory_area t;
+ 	int ret;
+ 
++	xen_clock_value_saved = xen_clocksource_read() - xen_sched_clock_offset;
++
+ 	if (!xen_clock)
+ 		return;
+ 
+@@ -404,7 +405,7 @@ void xen_restore_time_memory_area(void)
+ 	int ret;
+ 
+ 	if (!xen_clock)
+-		return;
++		goto out;
+ 
+ 	t.addr.v = &xen_clock->pvti;
+ 
+@@ -421,6 +422,11 @@ void xen_restore_time_memory_area(void)
+ 	if (ret != 0)
+ 		pr_notice("Cannot restore secondary vcpu_time_info (err %d)",
+ 			  ret);
++
++out:
++	/* Need pvclock_resume() before using xen_clocksource_read(). */
++	pvclock_resume();
++	xen_sched_clock_offset = xen_clocksource_read() - xen_clock_value_saved;
+ }
+ 
+ static void xen_setup_vsyscall_time_info(void)
+--- a/drivers/xen/events/events_base.c
++++ b/drivers/xen/events/events_base.c
+@@ -1650,7 +1650,7 @@ void xen_callback_vector(void)
+ 			xen_have_vector_callback = 0;
+ 			return;
+ 		}
+-		pr_info("Xen HVM callback vector for event delivery is enabled\n");
++		pr_info_once("Xen HVM callback vector for event delivery is enabled\n");
+ 		alloc_intr_gate(HYPERVISOR_CALLBACK_VECTOR,
+ 				xen_hvm_callback_vector);
+ 	}
 
 
-Cheers,
-Jérôme
-
-
-> +
-> +	err = 0;
-> +out_unlock:
-> +	up_read(&dst_mm->mmap_sem);
-> +	return err;
-> +}
-> -- 
-> 2.17.1
-> 
