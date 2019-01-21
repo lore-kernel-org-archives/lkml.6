@@ -2,88 +2,134 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EE0EC3713C
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 22:46:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23757C3712F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 22:47:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D514B21721
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 22:46:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548110814;
-	bh=3STcscJkZGmrz7FDbINGEJj+ZxfiXaoOgm/HCiQc7o8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=sxgAsvWl7ChidMuqeKZjS3ncbKXJNkEK9Udbekdx8CW22aU/TpcF8HC3eEWhqNAk8
-	 aWuni5Zw7Y/3I7bUXGxrMTJ+5mu6edAk0UkMpcItxFns9RAD663EFNnbUUp9qyMYsL
-	 OAxULrpDilCYokD+1IzCsAKLVW2xPXOoY33LY170=
+	by mail.kernel.org (Postfix) with ESMTP id EE1A12089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 22:47:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728156AbfAUWqx (ORCPT
+        id S1728187AbfAUWrb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 17:46:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38862 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 17:47:31 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:50168 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726244AbfAUWqu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 17:46:50 -0500
-Received: from sinanubuntu1604.mkjiurmyylmellclgttazegk5f.bx.internal.cloudapp.net (unknown [40.117.83.110])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        id S1726244AbfAUWrb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 17:47:31 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1DA6E21019;
-        Mon, 21 Jan 2019 22:46:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548110809;
-        bh=3STcscJkZGmrz7FDbINGEJj+ZxfiXaoOgm/HCiQc7o8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=t2/gMZVuDLpW6jTCSXZi55CZwnXkMBYKo7M0LGYIp/vJCU8CTUpHAhL/zDUGT3suj
-         OFgCR+sg0ZIItKR/av/w2OY+izb2w8sqTcgrTsfB3+2D+s5379F+hEeAHzi+vTaAkZ
-         9qvLcp1zy2/FQx27e75rfr7qQBHUHOIUMBZH9kSg=
-From:   Sinan Kaya <okaya@kernel.org>
-To:     linux-next@vger.kernel.org
-Cc:     linux-acpi@vger.kernel.org, Sinan Kaya <okaya@kernel.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        platform-driver-x86@vger.kernel.org (open list:X86 PLATFORM DRIVERS),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [for next][PATCH 2/2] platform/x86: Fix unmet dependency warning for SAMSUNG_Q10
-Date:   Mon, 21 Jan 2019 22:46:44 +0000
-Message-Id: <20190121224644.26903-2-okaya@kernel.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20190121224644.26903-1-okaya@kernel.org>
-References: <20190121224644.26903-1-okaya@kernel.org>
+        by mx1.redhat.com (Postfix) with ESMTPS id 1E86A7F6B3;
+        Mon, 21 Jan 2019 22:47:31 +0000 (UTC)
+Received: from redhat.com (dhcp-17-208.bos.redhat.com [10.18.17.208])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 331695DD91;
+        Mon, 21 Jan 2019 22:47:30 +0000 (UTC)
+Date:   Mon, 21 Jan 2019 17:47:28 -0500
+From:   Joe Lawrence <joe.lawrence@redhat.com>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Jason Baron <jbaron@akamai.com>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] livepatch: Module coming and going callbacks can
+ proceed all listed patches
+Message-ID: <20190121224728.GC8766@redhat.com>
+References: <20190116161720.796-1-pmladek@suse.com>
+ <20190116161720.796-4-pmladek@suse.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190116161720.796-4-pmladek@suse.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 21 Jan 2019 22:47:31 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add BACKLIGHT_LCD_SUPPORT for SAMSUNG_Q10 to fix the
-warning: unmet direct dependencies detected for BACKLIGHT_CLASS_DEVICE.
+On Wed, Jan 16, 2019 at 05:17:19PM +0100, Petr Mladek wrote:
+> Livepatches can not longer get enabled and disabled repeatedly.
 
-SAMSUNG_Q10 selects BACKLIGHT_LCD_SUPPORT but BACKLIGHT_LCD_SUPPORT
-depends on BACKLIGHT_LCD_SUPPORT.
+nit: s/not longer/no longer/g
 
-Copy this dependency into SAMSUNG_Q10.
+> The list klp_patches contains only enabled patches and eventually
+> the patch in transition.
+> 
+> The module coming and going callbacks do not longer need to
+> check for these state. They have to proceed all listed patches.
 
-Signed-off-by: Sinan Kaya <okaya@kernel.org>
----
- drivers/platform/x86/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+nit: suggestion to modify "proceed all" to "proceed with" or "execute
+all".  Same suggestion for the subject line.  (I keep reading it as
+"precede all" and I'm wondering if there is some kind of ordering
+change.)
+   
+> 
+> Suggested-by: Josh Poimboeuf <jpoimboe@redhat.com>
+> Signed-off-by: Petr Mladek <pmladek@suse.com>
+> ---
+>  kernel/livepatch/core.c | 26 ++++++--------------------
+>  1 file changed, 6 insertions(+), 20 deletions(-)
+> 
+> diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
+> index b716a6289204..684766d306ad 100644
+> --- a/kernel/livepatch/core.c
+> +++ b/kernel/livepatch/core.c
+> @@ -1141,21 +1141,14 @@ static void klp_cleanup_module_patches_limited(struct module *mod,
+>  			if (!klp_is_module(obj) || strcmp(obj->name, mod->name))
+>  				continue;
+>  
+> -			/*
+> -			 * Only unpatch the module if the patch is enabled or
+> -			 * is in transition.
+> -			 */
+> -			if (patch->enabled || patch == klp_transition_patch) {
+> -
+> -				if (patch != klp_transition_patch)
+> -					klp_pre_unpatch_callback(obj);
+> +			if (patch != klp_transition_patch)
+> +				klp_pre_unpatch_callback(obj);
+>  
+> -				pr_notice("reverting patch '%s' on unloading module '%s'\n",
+> -					  patch->mod->name, obj->mod->name);
+> -				klp_unpatch_object(obj);
+> +			pr_notice("reverting patch '%s' on unloading module '%s'\n",
+> +				  patch->mod->name, obj->mod->name);
+> +			klp_unpatch_object(obj);
+>  
+> -				klp_post_unpatch_callback(obj);
+> -			}
+> +			klp_post_unpatch_callback(obj);
+>  
+>  			klp_free_object_loaded(obj);
+>  			break;
+> @@ -1194,13 +1187,6 @@ int klp_module_coming(struct module *mod)
+>  				goto err;
+>  			}
+>  
+> -			/*
+> -			 * Only patch the module if the patch is enabled or is
+> -			 * in transition.
+> -			 */
+> -			if (!patch->enabled && patch != klp_transition_patch)
+> -				break;
+> -
+>  			pr_notice("applying patch '%s' to loading module '%s'\n",
+>  				  patch->mod->name, obj->mod->name);
+>  
+> -- 
+> 2.13.7
+> 
 
-diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index b84c2c5b6684..129e37c296a7 100644
---- a/drivers/platform/x86/Kconfig
-+++ b/drivers/platform/x86/Kconfig
-@@ -1127,7 +1127,7 @@ config INTEL_OAKTRAIL
- 
- config SAMSUNG_Q10
- 	tristate "Samsung Q10 Extras"
--	depends on ACPI
-+	depends on ACPI && BACKLIGHT_LCD_SUPPORT
- 	select BACKLIGHT_CLASS_DEVICE
- 	---help---
- 	  This driver provides support for backlight control on Samsung Q10
--- 
-2.19.0
+Any simplication to the callback code is welcome!  Thanks for cleaning
+this one up.
 
+With a few commit msg nits,
+Acked-by: Joe Lawrence <joe.lawrence@redhat.com>
+
+-- Joe
