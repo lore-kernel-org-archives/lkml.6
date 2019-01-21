@@ -2,180 +2,124 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEA87C2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:11:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0155C2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:11:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3D9620861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:11:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079890;
-	bh=NrChH/OuX5N8p/su29ldpjRcrpWXGzEthysgfq5qeLI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wguiD2pvfeP7VFSg6sWsAwh+q1YunWt/1hph7nJ6rIg+hvMpLeIRXBi2fDIwhN8rz
-	 27mzs/XOpZxHpsPkUWptjvjqyH9g6tr3liYRnRL5zDAafApxsEL2szUkmsujEvbp11
-	 +Y1iryFa2HbfdeaTUKtiwr/02j4ITe0EdYKKLVYw=
+	by mail.kernel.org (Postfix) with ESMTP id 79D3A20861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:11:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731444AbfAUNyP (ORCPT
+        id S1731104AbfAUOLg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:54:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38322 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 09:11:36 -0500
+Received: from mga06.intel.com ([134.134.136.31]:47949 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729753AbfAUNyO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:54:14 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 67A272089F;
-        Mon, 21 Jan 2019 13:54:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078853;
-        bh=NrChH/OuX5N8p/su29ldpjRcrpWXGzEthysgfq5qeLI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y4wYN4EMdEVni3kmGNsHSKTh8ofC6eLpnFeY7ezdaLI8rRpqi0hJas95UzEn0aZqI
-         btOYb3DP5exUD46bIrDmnOHpuRAEllZZ5pWxlk0k4LCLN/8l9A+ibig6BWKnMvCqPv
-         orf+LsZ6CwXiK+YL1+H4QOL7eIjJIBarfqvyFmsI=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+        id S1729764AbfAUOLf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 09:11:35 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jan 2019 06:11:34 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,503,1539673200"; 
+   d="scan'208";a="127675435"
+Received: from mylly.fi.intel.com (HELO mylly.fi.intel.com.) ([10.237.72.159])
+  by orsmga002.jf.intel.com with ESMTP; 21 Jan 2019 06:11:31 -0800
+From:   Jarkko Nikula <jarkko.nikula@linux.intel.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Subject: [PATCH 4.14 40/59] bpf: in __bpf_redirect_no_mac pull mac only if present
-Date:   Mon, 21 Jan 2019 14:44:05 +0100
-Message-Id: <20190121122501.229289478@linuxfoundation.org>
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Rajmohan Mani <rajmohan.mani@intel.com>,
+        linux-i2c@vger.kernel.org,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Stable <stable@vger.kernel.org>
+Subject: [PATCH] mfd: Fix I2C_DESIGNWARE_PLATFORM dependencies
+Date:   Mon, 21 Jan 2019 16:11:28 +0200
+Message-Id: <20190121141128.5283-1-jarkko.nikula@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190121122456.529172919@linuxfoundation.org>
-References: <20190121122456.529172919@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+INTEL_SOC_PMIC, INTEL_SOC_PMIC_CHTWC and MFD_TPS68470 select the
+I2C_DESIGNWARE_PLATFORM without its dependencies making it possible to see
+warning and build error like below:
 
-------------------
+WARNING: unmet direct dependencies detected for I2C_DESIGNWARE_PLATFORM
+  Depends on [n]: I2C [=y] && HAS_IOMEM [=y] && (ACPI [=y] && COMMON_CLK [=n] || !ACPI [=y])
+  Selected by [y]:
+  - MFD_TPS68470 [=y] && HAS_IOMEM [=y] && ACPI [=y] && I2C [=y]=y
 
-From: Willem de Bruijn <willemb@google.com>
+/usr/bin/ld: drivers/i2c/busses/i2c-designware-platdrv.o: in function `dw_i2c_plat_resume':
+i2c-designware-platdrv.c:(.text+0x62): undefined reference to `i2c_dw_prepare_clk'
+/usr/bin/ld: drivers/i2c/busses/i2c-designware-platdrv.o: in function `dw_i2c_plat_suspend':
+i2c-designware-platdrv.c:(.text+0x9a): undefined reference to `i2c_dw_prepare_clk'
+/usr/bin/ld: drivers/i2c/busses/i2c-designware-platdrv.o: in function `dw_i2c_plat_probe':
+i2c-designware-platdrv.c:(.text+0x41c): undefined reference to `i2c_dw_prepare_clk'
+/usr/bin/ld: i2c-designware-platdrv.c:(.text+0x438): undefined reference to `i2c_dw_read_comp_param'
+/usr/bin/ld: i2c-designware-platdrv.c:(.text+0x545): undefined reference to `i2c_dw_probe'
+/usr/bin/ld: i2c-designware-platdrv.c:(.text+0x727): undefined reference to `i2c_dw_probe_slave'
 
-commit e7c87bd6cc4ec7b0ac1ed0a88a58f8206c577488 upstream.
+Fix this by making above options to depend on I2C_DESIGNWARE_PLATFORM
+being built-in. I2C_DESIGNWARE_PLATFORM is a visible symbol with
+dependencies so in general the select should be avoided.
 
-Syzkaller was able to construct a packet of negative length by
-redirecting from bpf_prog_test_run_skb with BPF_PROG_TYPE_LWT_XMIT:
-
-    BUG: KASAN: slab-out-of-bounds in memcpy include/linux/string.h:345 [inline]
-    BUG: KASAN: slab-out-of-bounds in skb_copy_from_linear_data include/linux/skbuff.h:3421 [inline]
-    BUG: KASAN: slab-out-of-bounds in __pskb_copy_fclone+0x2dd/0xeb0 net/core/skbuff.c:1395
-    Read of size 4294967282 at addr ffff8801d798009c by task syz-executor2/12942
-
-    kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
-    check_memory_region_inline mm/kasan/kasan.c:260 [inline]
-    check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
-    memcpy+0x23/0x50 mm/kasan/kasan.c:302
-    memcpy include/linux/string.h:345 [inline]
-    skb_copy_from_linear_data include/linux/skbuff.h:3421 [inline]
-    __pskb_copy_fclone+0x2dd/0xeb0 net/core/skbuff.c:1395
-    __pskb_copy include/linux/skbuff.h:1053 [inline]
-    pskb_copy include/linux/skbuff.h:2904 [inline]
-    skb_realloc_headroom+0xe7/0x120 net/core/skbuff.c:1539
-    ipip6_tunnel_xmit net/ipv6/sit.c:965 [inline]
-    sit_tunnel_xmit+0xe1b/0x30d0 net/ipv6/sit.c:1029
-    __netdev_start_xmit include/linux/netdevice.h:4325 [inline]
-    netdev_start_xmit include/linux/netdevice.h:4334 [inline]
-    xmit_one net/core/dev.c:3219 [inline]
-    dev_hard_start_xmit+0x295/0xc90 net/core/dev.c:3235
-    __dev_queue_xmit+0x2f0d/0x3950 net/core/dev.c:3805
-    dev_queue_xmit+0x17/0x20 net/core/dev.c:3838
-    __bpf_tx_skb net/core/filter.c:2016 [inline]
-    __bpf_redirect_common net/core/filter.c:2054 [inline]
-    __bpf_redirect+0x5cf/0xb20 net/core/filter.c:2061
-    ____bpf_clone_redirect net/core/filter.c:2094 [inline]
-    bpf_clone_redirect+0x2f6/0x490 net/core/filter.c:2066
-    bpf_prog_41f2bcae09cd4ac3+0xb25/0x1000
-
-The generated test constructs a packet with mac header, network
-header, skb->data pointing to network header and skb->len 0.
-
-Redirecting to a sit0 through __bpf_redirect_no_mac pulls the
-mac length, even though skb->data already is at skb->network_header.
-bpf_prog_test_run_skb has already pulled it as LWT_XMIT !is_l2.
-
-Update the offset calculation to pull only if skb->data differs
-from skb->network_header, which is not true in this case.
-
-The test itself can be run only from commit 1cf1cae963c2 ("bpf:
-introduce BPF_PROG_TEST_RUN command"), but the same type of packets
-with skb at network header could already be built from lwt xmit hooks,
-so this fix is more relevant to that commit.
-
-Also set the mac header on redirect from LWT_XMIT, as even after this
-change to __bpf_redirect_no_mac that field is expected to be set, but
-is not yet in ip_finish_output2.
-
-Fixes: 3a0af8fd61f9 ("bpf: BPF for lightweight tunnel infrastructure")
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: Willem de Bruijn <willemb@google.com>
-Acked-by: Martin KaFai Lau <kafai@fb.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Fixes: acebcff9eda8 ("mfd: intel_soc_pmic: Select designware i2c-bus driver")
+Fixes: de85d79f4aab ("mfd: Add Cherry Trail Whiskey Cove PMIC driver")
+Fixes: 9bbf6a15ce19 ("mfd: Add support for TPS68470 device")
+Cc: Stable <stable@vger.kernel.org> # v4.14+
+Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
 ---
- net/core/filter.c  |   21 +++++++++++----------
- net/core/lwt_bpf.c |    1 +
- 2 files changed, 12 insertions(+), 10 deletions(-)
+ drivers/mfd/Kconfig | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/net/core/filter.c
-+++ b/net/core/filter.c
-@@ -1714,18 +1714,19 @@ static inline int __bpf_tx_skb(struct ne
- static int __bpf_redirect_no_mac(struct sk_buff *skb, struct net_device *dev,
- 				 u32 flags)
- {
--	/* skb->mac_len is not set on normal egress */
--	unsigned int mlen = skb->network_header - skb->mac_header;
-+	unsigned int mlen = skb_network_offset(skb);
- 
--	__skb_pull(skb, mlen);
-+	if (mlen) {
-+		__skb_pull(skb, mlen);
- 
--	/* At ingress, the mac header has already been pulled once.
--	 * At egress, skb_pospull_rcsum has to be done in case that
--	 * the skb is originated from ingress (i.e. a forwarded skb)
--	 * to ensure that rcsum starts at net header.
--	 */
--	if (!skb_at_tc_ingress(skb))
--		skb_postpull_rcsum(skb, skb_mac_header(skb), mlen);
-+		/* At ingress, the mac header has already been pulled once.
-+		 * At egress, skb_pospull_rcsum has to be done in case that
-+		 * the skb is originated from ingress (i.e. a forwarded skb)
-+		 * to ensure that rcsum starts at net header.
-+		 */
-+		if (!skb_at_tc_ingress(skb))
-+			skb_postpull_rcsum(skb, skb_mac_header(skb), mlen);
-+	}
- 	skb_pop_mac_header(skb);
- 	skb_reset_mac_len(skb);
- 	return flags & BPF_F_INGRESS ?
---- a/net/core/lwt_bpf.c
-+++ b/net/core/lwt_bpf.c
-@@ -65,6 +65,7 @@ static int run_lwt_bpf(struct sk_buff *s
- 				     lwt->name ? : "<unknown>");
- 			ret = BPF_OK;
- 		} else {
-+			skb_reset_mac_header(skb);
- 			ret = skb_do_redirect(skb);
- 			if (ret == 0)
- 				ret = BPF_REDIRECT;
-
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index f461460a2aeb..6a84a8ecd4a9 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -519,10 +519,10 @@ config INTEL_SOC_PMIC
+ 	bool "Support for Crystal Cove PMIC"
+ 	depends on ACPI && HAS_IOMEM && I2C=y && GPIOLIB && COMMON_CLK
+ 	depends on X86 || COMPILE_TEST
++	depends on I2C_DESIGNWARE_PLATFORM=y
+ 	select MFD_CORE
+ 	select REGMAP_I2C
+ 	select REGMAP_IRQ
+-	select I2C_DESIGNWARE_PLATFORM
+ 	help
+ 	  Select this option to enable support for Crystal Cove PMIC
+ 	  on some Intel SoC systems. The PMIC provides ADC, GPIO,
+@@ -548,10 +548,10 @@ config INTEL_SOC_PMIC_CHTWC
+ 	bool "Support for Intel Cherry Trail Whiskey Cove PMIC"
+ 	depends on ACPI && HAS_IOMEM && I2C=y && COMMON_CLK
+ 	depends on X86 || COMPILE_TEST
++	depends on I2C_DESIGNWARE_PLATFORM=y
+ 	select MFD_CORE
+ 	select REGMAP_I2C
+ 	select REGMAP_IRQ
+-	select I2C_DESIGNWARE_PLATFORM
+ 	help
+ 	  Select this option to enable support for the Intel Cherry Trail
+ 	  Whiskey Cove PMIC found on some Intel Cherry Trail systems.
+@@ -1420,9 +1420,9 @@ config MFD_TPS65217
+ config MFD_TPS68470
+ 	bool "TI TPS68470 Power Management / LED chips"
+ 	depends on ACPI && I2C=y
++	depends on I2C_DESIGNWARE_PLATFORM=y
+ 	select MFD_CORE
+ 	select REGMAP_I2C
+-	select I2C_DESIGNWARE_PLATFORM
+ 	help
+ 	  If you say yes here you get support for the TPS68470 series of
+ 	  Power Management / LED chips.
+-- 
+2.20.1
 
