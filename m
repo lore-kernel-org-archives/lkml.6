@@ -4,50 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BF29C2F3D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:16:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18788C2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:16:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C6D520861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:16:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD6C720861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:16:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548080193;
-	bh=Olh24lSmbpboACdBoccdEI5nkyM/WX2WDFa53NyXu0w=;
+	s=default; t=1548080203;
+	bh=7tbCnHWATkhPa98WT36bcE6R+wjoeH0VqDR+kE3Ya5g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PsuyCovIj1rl4iiQdB6p1fHJnyoDu7p3o+Fa0WSUXDmz6fgW6sPCTA6qlfDNmsprc
-	 5rFTWKm+ULiYMU2nKRFXRTxGYV4s5pQvGCtKZyhDlwyfNKj0ewz3UlmokqbEt77j4k
-	 zDiyHYxRiB8TUUoUbsQNyCDjD/u37NtyJwLernIs=
+	b=hCWkwh+4r5Ui5VL/J93m45tlAaKvYjqoVV2bkVr9epZGCXX97iCmYbuw1q0uo9axG
+	 fAHgm2MMr+GFw4c215gy/0IcfBMB0V30HVEvvhAGZzPHoVzB55I1ctVq9i9zTLaK8u
+	 LZTclXLniAIw5j1zGltptC8e5GiNwj6tLqXY0qUE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729075AbfAUOQc (ORCPT
+        id S1730953AbfAUOQm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:16:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33858 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 09:16:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33816 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730699AbfAUNvC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:51:02 -0500
+        id S1729313AbfAUNu7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:50:59 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E91AA20861;
-        Mon, 21 Jan 2019 13:51:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 634592063F;
+        Mon, 21 Jan 2019 13:50:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078661;
-        bh=Olh24lSmbpboACdBoccdEI5nkyM/WX2WDFa53NyXu0w=;
+        s=default; t=1548078658;
+        bh=7tbCnHWATkhPa98WT36bcE6R+wjoeH0VqDR+kE3Ya5g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NC+BWWnHN8zz0myypMt4eSkKg5h+fWk15LfBjJsmqgLub0bnXloIRvkQDHxKgf9uB
-         /b8tNaTeG6mJQeRcxdbDiui773/98uBFAe9c4hbyAaBo5+ANEb+QZPMXJvzev6Nbqk
-         ewDkJVBlgOhQX/AYJ9XHZoT/MV4CSll2e2Z5WUz0=
+        b=CjJWC1qu4NfKxjPZ1c9PM/QvOMWbgeNR/jRmZ4Wz/IGbTZzlNVunMpNNz2wxtvch1
+         YTGYQc2IO7NCfW02oSUkIhEtX2B+ewBIAUKXU6S6Bwy7mUsmdjEix/yOmYf9f6iKXz
+         1EJuth3f1Y/StA63AHTSadJy5EXwWYKAzD2PWmKI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        linux-block@vger.kernel.org, Martijn Coenen <maco@google.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 4.20 110/111] loop: drop caches if offset or block_size are changed
-Date:   Mon, 21 Jan 2019 14:43:44 +0100
-Message-Id: <20190121122507.121365260@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot <syzbot+c0138741c2290fc5e63f@syzkaller.appspotmail.com>,
+        Ming Lei <ming.lei@redhat.com>, Jan Kara <jack@suse.cz>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.20 109/111] loop: Fix double mutex_unlock(&loop_ctl_mutex) in loop_control_ioctl()
+Date:   Mon, 21 Jan 2019 14:43:43 +0100
+Message-Id: <20190121122507.074297753@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122455.819406896@linuxfoundation.org>
 References: <20190121122455.819406896@linuxfoundation.org>
@@ -66,101 +68,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-commit 5db470e229e22b7eda6e23b5566e532c96fb5bc3 upstream.
+commit 628bd85947091830a8c4872adfd5ed1d515a9cf2 upstream.
 
-If we don't drop caches used in old offset or block_size, we can get old data
-from new offset/block_size, which gives unexpected data to user.
+Commit 0a42e99b58a20883 ("loop: Get rid of loop_index_mutex") forgot to
+remove mutex_unlock(&loop_ctl_mutex) from loop_control_ioctl() when
+replacing loop_index_mutex with loop_ctl_mutex.
 
-For example, Martijn found a loopback bug in the below scenario.
-1) LOOP_SET_FD loads first two pages on loop file
-2) LOOP_SET_STATUS64 changes the offset on the loop file
-3) mount is failed due to the cached pages having wrong superblock
-
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org
-Reported-by: Martijn Coenen <maco@google.com>
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Fixes: 0a42e99b58a20883 ("loop: Get rid of loop_index_mutex")
+Reported-by: syzbot <syzbot+c0138741c2290fc5e63f@syzkaller.appspotmail.com>
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/block/loop.c |   35 +++++++++++++++++++++++++++++++++--
- 1 file changed, 33 insertions(+), 2 deletions(-)
+ drivers/block/loop.c |    2 --
+ 1 file changed, 2 deletions(-)
 
 --- a/drivers/block/loop.c
 +++ b/drivers/block/loop.c
-@@ -1190,6 +1190,12 @@ loop_set_status(struct loop_device *lo,
- 		goto out_unlock;
- 	}
- 
-+	if (lo->lo_offset != info->lo_offset ||
-+	    lo->lo_sizelimit != info->lo_sizelimit) {
-+		sync_blockdev(lo->lo_device);
-+		kill_bdev(lo->lo_device);
-+	}
-+
- 	/* I/O need to be drained during transfer transition */
- 	blk_mq_freeze_queue(lo->lo_queue);
- 
-@@ -1218,6 +1224,14 @@ loop_set_status(struct loop_device *lo,
- 
- 	if (lo->lo_offset != info->lo_offset ||
- 	    lo->lo_sizelimit != info->lo_sizelimit) {
-+		/* kill_bdev should have truncated all the pages */
-+		if (lo->lo_device->bd_inode->i_mapping->nrpages) {
-+			err = -EAGAIN;
-+			pr_warn("%s: loop%d (%s) has still dirty pages (nrpages=%lu)\n",
-+				__func__, lo->lo_number, lo->lo_file_name,
-+				lo->lo_device->bd_inode->i_mapping->nrpages);
-+			goto out_unfreeze;
-+		}
- 		if (figure_loop_size(lo, info->lo_offset, info->lo_sizelimit)) {
- 			err = -EFBIG;
- 			goto out_unfreeze;
-@@ -1443,22 +1457,39 @@ static int loop_set_dio(struct loop_devi
- 
- static int loop_set_block_size(struct loop_device *lo, unsigned long arg)
- {
-+	int err = 0;
-+
- 	if (lo->lo_state != Lo_bound)
- 		return -ENXIO;
- 
- 	if (arg < 512 || arg > PAGE_SIZE || !is_power_of_2(arg))
- 		return -EINVAL;
- 
-+	if (lo->lo_queue->limits.logical_block_size != arg) {
-+		sync_blockdev(lo->lo_device);
-+		kill_bdev(lo->lo_device);
-+	}
-+
- 	blk_mq_freeze_queue(lo->lo_queue);
- 
-+	/* kill_bdev should have truncated all the pages */
-+	if (lo->lo_queue->limits.logical_block_size != arg &&
-+			lo->lo_device->bd_inode->i_mapping->nrpages) {
-+		err = -EAGAIN;
-+		pr_warn("%s: loop%d (%s) has still dirty pages (nrpages=%lu)\n",
-+			__func__, lo->lo_number, lo->lo_file_name,
-+			lo->lo_device->bd_inode->i_mapping->nrpages);
-+		goto out_unfreeze;
-+	}
-+
- 	blk_queue_logical_block_size(lo->lo_queue, arg);
- 	blk_queue_physical_block_size(lo->lo_queue, arg);
- 	blk_queue_io_min(lo->lo_queue, arg);
- 	loop_update_dio(lo);
--
-+out_unfreeze:
- 	blk_mq_unfreeze_queue(lo->lo_queue);
- 
--	return 0;
-+	return err;
- }
- 
- static int lo_simple_ioctl(struct loop_device *lo, unsigned int cmd,
+@@ -2074,12 +2074,10 @@ static long loop_control_ioctl(struct fi
+ 			break;
+ 		if (lo->lo_state != Lo_unbound) {
+ 			ret = -EBUSY;
+-			mutex_unlock(&loop_ctl_mutex);
+ 			break;
+ 		}
+ 		if (atomic_read(&lo->lo_refcnt) > 0) {
+ 			ret = -EBUSY;
+-			mutex_unlock(&loop_ctl_mutex);
+ 			break;
+ 		}
+ 		lo->lo_disk->private_data = NULL;
 
 
