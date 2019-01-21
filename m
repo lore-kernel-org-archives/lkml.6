@@ -2,136 +2,492 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BAB3C282DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:31:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CACA7C282DE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:31:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 367A020989
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:31:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CDBB20989
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:31:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mc4G7Wwz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728184AbfAUHbD (ORCPT
+        id S1728345AbfAUHbI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 02:31:03 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:33198 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726912AbfAUHbD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 02:31:03 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CE28585A07;
-        Sun, 20 Jan 2019 22:01:24 +0000 (UTC)
-Received: from krava (ovpn-204-22.brq.redhat.com [10.40.204.22])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 94BD81048124;
-        Sun, 20 Jan 2019 22:01:22 +0000 (UTC)
-Date:   Sun, 20 Jan 2019 23:01:21 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Tony Jones <tonyj@suse.de>
-Cc:     linux-perf-users@vger.kernel.org, acme@kernel.org,
-        Jin Yao <yao.jin@linux.intel.com>, ak@linux.intel.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf script: fix crash when processing recorded stat data
-Message-ID: <20190120220121.GE8591@krava>
-References: <20190120191414.12925-1-tonyj@suse.de>
+        Mon, 21 Jan 2019 02:31:08 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:35005 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726630AbfAUHbI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 02:31:08 -0500
+Received: by mail-ed1-f66.google.com with SMTP id x30so15784109edx.2
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Jan 2019 23:31:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KPeU/MCwa7SmVlT9tAygRWQl2LrOTEv66GWtCYLfqOw=;
+        b=mc4G7WwzW63xfw5TzwpkfmLGwFvf8ehDpYcaLr2jblt1mpkDiysZc6e8FKjyI1sb6a
+         t/Fc9bV/3Rt4lf5GUVPiyVneL5Coi1I9vM20HVcw6joQirXb2aRdPozQmYZ9MNPaJy2t
+         EjQ/ldgXpB+VBkZyJBnH7yZDATRAln5Ruo9qY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KPeU/MCwa7SmVlT9tAygRWQl2LrOTEv66GWtCYLfqOw=;
+        b=NU59I9dOy8/A+KlxmlM1Moe3H1/fJ3bwNoznfkzdplzTKOvXnGsb1l84kly8iYbLxS
+         trejfuIb2P/qCDjLbcl4nvaB2tMacsCVklVSuhaz73UTbw5v2J780wtcwxnNud61qeSJ
+         p3NZbQxDbLIdqzGk+zSSuJMnHaP1Ny6H2OHJlDqdiZuBmUJXQb3+wYVHE/PBEC9RiAll
+         ri29CQ4vpTSiUCLvJSCwiHWYuxVhywtugQ6miuGcicSLB/y1z5Edqi079AqpLNhXL0Y8
+         ENnVkTUcGxa0B7RdSVK1Ul298kxjVP51ocNyoRwdRQsgtbDVZTq3XUtmnnoJYHwImttZ
+         2+xw==
+X-Gm-Message-State: AJcUukfbNRd2OSBg33oBt6rv5T3MO+AuAOAzWLLtxGgHTK5gaDkAMNrF
+        w0v7m/J18FpBTcrUSqSWaw9Bue4iDVtR2OT6PFodRw==
+X-Google-Smtp-Source: ALg8bN6n9RGyMa3ErxbXoB5M0kQbV9ERbSdx0iv2fAt0JLbatNs1pUKQgcN1qjJ/yynpkBegUfYCw1cyusSG/pZ3mg0=
+X-Received: by 2002:a17:906:1604:: with SMTP id m4-v6mr23680653ejd.167.1548054243416;
+ Sun, 20 Jan 2019 23:04:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190120191414.12925-1-tonyj@suse.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Sun, 20 Jan 2019 22:01:24 +0000 (UTC)
+References: <20190108052606.59426-1-pihsun@chromium.org> <20190108052606.59426-4-pihsun@chromium.org>
+ <CANMq1KBeKNvLOHvisPnaO-MZYtG3UQ3OWMAJVyNG0YshMF3WMA@mail.gmail.com>
+In-Reply-To: <CANMq1KBeKNvLOHvisPnaO-MZYtG3UQ3OWMAJVyNG0YshMF3WMA@mail.gmail.com>
+From:   Peter Shih <pihsun@chromium.org>
+Date:   Mon, 21 Jan 2019 15:03:52 +0800
+Message-ID: <CANdKZ0fXXJOOUYte+2VsE_pxU4q3D+THri7NW+m65mfZJxPzjw@mail.gmail.com>
+Subject: Re: [RFC v2 3/6] remoteproc: move IPI interface into separate file.
+To:     Nicolas Boichat <drinkcat@chromium.org>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
+        <linux-remoteproc@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jan 20, 2019 at 11:14:14AM -0800, Tony Jones wrote:
-> While updating Perf to work with Python3 and Python2 I noticed that the 
-> stat-cpi script was dumping core.
-> 
-> $ perf  stat -e cycles,instructions record -o /tmp/perf.data /bin/false
-> 
->  Performance counter stats for '/bin/false':
-> 
->            802,148      cycles
-> 
->            604,622      instructions                                                       802,148      cycles
->            604,622      instructions
-> 
->        0.001445842 seconds time elapsed
-> 
-> $ perf script -i /tmp/perf.data -s scripts/python/stat-cpi.py
-> Segmentation fault (core dumped)
-> ...
-> ...
->     rblist=rblist@entry=0xb2a200 <rt_stat>,
->     new_entry=new_entry@entry=0x7ffcb755c310) at util/rblist.c:33
->     ctx=<optimized out>, type=<optimized out>, create=<optimized out>,
->     cpu=<optimized out>, evsel=<optimized out>) at util/stat-shadow.c:118
->     ctx=<optimized out>, type=<optimized out>, st=<optimized out>)
->     at util/stat-shadow.c:196
->     count=count@entry=727442, cpu=cpu@entry=0, st=0xb2a200 <rt_stat>)
->     at util/stat-shadow.c:239
->     config=config@entry=0xafeb40 <stat_config>,
->     counter=counter@entry=0x133c6e0) at util/stat.c:372
-> ...
-> ...
-> 
-> The issue is that since 1fcd03946b52 perf_stat__update_shadow_stats now calls
-> update_runtime_stat passing rt_stat rather than calling update_stats but
-> perf_stat__init_shadow_stats has never been called to initialize rt_stat in
-> the script path processing recorded stat data.
-> 
-> Since I can't see any reason why perf_stat__init_shadow_stats() is presently
-> initialized like it is in builtin-script.c::perf_sample__fprint_metric()
-> [4bd1bef8bba2f] I'm proposing it instead be initialized once in __cmd_script
-> 
-> Fixes: 1fcd03946b52 ("perf stat: Update per-thread shadow stats")
-> Signed-off-by: Tony Jones <tonyj@suse.de>
-> ---
->  tools/perf/builtin-script.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
-> 
-> diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-> index d079f36d342d..9a6dd86e606f 100644
-> --- a/tools/perf/builtin-script.c
-> +++ b/tools/perf/builtin-script.c
-> @@ -1681,13 +1681,8 @@ static void perf_sample__fprint_metric(struct perf_script *script,
->  		.force_header = false,
->  	};
->  	struct perf_evsel *ev2;
-> -	static bool init;
->  	u64 val;
->  
-> -	if (!init) {
-> -		perf_stat__init_shadow_stats();
-> -		init = true;
-> -	}
+On Sat, Jan 19, 2019 at 5:04 AM Nicolas Boichat <drinkcat@chromium.org> wrote:
+>
+> Hi,
+>
+> On Mon, Jan 7, 2019 at 9:26 PM Pi-Hsun Shih <pihsun@chromium.org> wrote:
+> >
+> > Move the IPI interface into a separate file mtk_scp_ipi.c, so the things
+> > that use the interface only can depend on the module only.
+> >
+> > Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
+> > ---
+> > Changes from v1:
+> >  - Resolved conflict because of change in Patch 2.
+> > ---
+> >  drivers/remoteproc/Makefile      |   2 +-
+> >  drivers/remoteproc/mtk_common.h  |  73 +++++++++++++++
+> >  drivers/remoteproc/mtk_scp.c     | 154 +------------------------------
+>
+> The fact that you remove a bunch of stuff from mtk_scp.c makes me
+> think that we should probably reorganize the patches. The series here
+> shows the history of how we developed this, but for upstreaming
+> purpose, we want independent, small-ish patches.
+>
+> Maybe 2/6 should contain just basic mtk_scp code with no IPI. 3/6 IPI
+> only, and _maybe_ 4/6 rpmsg should be folded into 3/6?
+>
+> Thanks,
+>
 
-well, there's no need to use shadow stats until stat
-data is processed.. but it's actually just a static
-initialization, so there's no need for late init
+I think it's hard to have mtk_scp code without IPI, since the
+initialization itself depends on IPI.
 
-Reviewed-by: Jiri Olsa <jolsa@kernel.org>
+I'll fold 3/6 into 2/6 in v3.
 
-thanks,
-jirka
-
->  	if (!evsel->stats)
->  		perf_evlist__alloc_stats(script->session->evlist, false);
->  	if (evsel_script(evsel->leader)->gnum++ == 0)
-> @@ -2359,6 +2354,8 @@ static int __cmd_script(struct perf_script *script)
->  
->  	signal(SIGINT, sig_handler);
->  
-> +	perf_stat__init_shadow_stats();
-> +
->  	/* override event processing functions */
->  	if (script->show_task_events) {
->  		script->tool.comm = process_comm_event;
-> -- 
-> 2.18.0
-> 
+> >  drivers/remoteproc/mtk_scp_ipi.c | 108 ++++++++++++++++++++++
+> >  4 files changed, 183 insertions(+), 154 deletions(-)
+> >  create mode 100644 drivers/remoteproc/mtk_common.h
+> >  create mode 100644 drivers/remoteproc/mtk_scp_ipi.c
+> >
+> > diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+> > index 98e3498dbbe0e2..16b3e5e7a81c8e 100644
+> > --- a/drivers/remoteproc/Makefile
+> > +++ b/drivers/remoteproc/Makefile
+> > @@ -10,7 +10,7 @@ remoteproc-y                          += remoteproc_sysfs.o
+> >  remoteproc-y                           += remoteproc_virtio.o
+> >  remoteproc-y                           += remoteproc_elf_loader.o
+> >  obj-$(CONFIG_IMX_REMOTEPROC)           += imx_rproc.o
+> > -obj-$(CONFIG_MTK_SCP)                  += mtk_scp.o
+> > +obj-$(CONFIG_MTK_SCP)                  += mtk_scp.o mtk_scp_ipi.o
+> >  obj-$(CONFIG_OMAP_REMOTEPROC)          += omap_remoteproc.o
+> >  obj-$(CONFIG_WKUP_M3_RPROC)            += wkup_m3_rproc.o
+> >  obj-$(CONFIG_DA8XX_REMOTEPROC)         += da8xx_remoteproc.o
+> > diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
+> > new file mode 100644
+> > index 00000000000000..e97287a4eb25cc
+> > --- /dev/null
+> > +++ b/drivers/remoteproc/mtk_common.h
+> > @@ -0,0 +1,73 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +//
+> > +// Copyright (c) 2018 MediaTek Inc.
+> > +
+> > +#ifndef __RPROC_MTK_COMMON_H
+> > +#define __RPROC_MTK_COMMON_H
+> > +
+> > +#include <linux/interrupt.h>
+> > +#include <linux/kernel.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/remoteproc.h>
+> > +
+> > +#define MT8183_SW_RSTN                 0x0
+> > +#define MT8183_SW_RSTN_BIT             BIT(0)
+> > +#define MT8183_SCP_TO_HOST             0x1C
+> > +#define MT8183_SCP_IPC_INT_BIT         BIT(0)
+> > +#define MT8183_SCP_WDT_INT_BIT         BIT(8)
+> > +#define MT8183_HOST_TO_SCP             0x28
+> > +#define MT8183_HOST_IPC_INT_BIT                BIT(0)
+> > +#define MT8183_SCP_SRAM_PDN            0x402C
+> > +
+> > +#define SCP_FW_VER_LEN         32
+> > +
+> > +struct scp_run {
+> > +       u32 signaled;
+> > +       s8 fw_ver[SCP_FW_VER_LEN];
+> > +       u32 dec_capability;
+> > +       u32 enc_capability;
+> > +       wait_queue_head_t wq;
+> > +};
+> > +
+> > +struct scp_ipi_desc {
+> > +       scp_ipi_handler_t handler;
+> > +       const char *name;
+> > +       void *priv;
+> > +};
+> > +
+> > +struct mtk_scp {
+> > +       struct device *dev;
+> > +       struct rproc *rproc;
+> > +       struct clk *clk;
+> > +       void __iomem *reg_base;
+> > +       void __iomem *sram_base;
+> > +       size_t sram_size;
+> > +
+> > +       struct share_obj *recv_buf;
+> > +       struct share_obj *send_buf;
+> > +       struct scp_run run;
+> > +       struct mutex scp_mutex; /* for protecting mtk_scp data structure */
+> > +       struct scp_ipi_desc ipi_desc[SCP_IPI_MAX];
+> > +       bool ipi_id_ack[SCP_IPI_MAX];
+> > +       wait_queue_head_t ack_wq;
+> > +
+> > +       void __iomem *cpu_addr;
+> > +       phys_addr_t phys_addr;
+> > +       size_t dram_size;
+> > +};
+> > +
+> > +/**
+> > + * struct share_obj - SRAM buffer shared with
+> > + *                   AP and SCP
+> > + *
+> > + * @id:                IPI id
+> > + * @len:       share buffer length
+> > + * @share_buf: share buffer data
+> > + */
+> > +struct share_obj {
+> > +       s32 id;
+> > +       u32 len;
+> > +       u8 share_buf[288];
+> > +};
+> > +
+> > +#endif
+> > diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+> > index 6e2e17a227d018..3e84c696523436 100644
+> > --- a/drivers/remoteproc/mtk_scp.c
+> > +++ b/drivers/remoteproc/mtk_scp.c
+> > @@ -13,163 +13,11 @@
+> >  #include <linux/platform_device.h>
+> >  #include <linux/remoteproc.h>
+> >
+> > +#include "mtk_common.h"
+> >  #include "remoteproc_internal.h"
+> >
+> > -#define MT8183_SW_RSTN                 0x0
+> > -#define MT8183_SW_RSTN_BIT             BIT(0)
+> > -#define MT8183_SCP_TO_HOST             0x1C
+> > -#define MT8183_SCP_IPC_INT_BIT         BIT(0)
+> > -#define MT8183_SCP_WDT_INT_BIT         BIT(8)
+> > -#define MT8183_HOST_TO_SCP             0x28
+> > -#define MT8183_HOST_IPC_INT_BIT                BIT(0)
+> > -#define MT8183_SCP_SRAM_PDN            0x402C
+> > -
+> > -#define SCP_FW_VER_LEN         32
+> > -
+> >  #define MAX_CODE_SIZE 0x500000
+> >
+> > -struct scp_run {
+> > -       u32 signaled;
+> > -       s8 fw_ver[SCP_FW_VER_LEN];
+> > -       u32 dec_capability;
+> > -       u32 enc_capability;
+> > -       wait_queue_head_t wq;
+> > -};
+> > -
+> > -struct scp_ipi_desc {
+> > -       scp_ipi_handler_t handler;
+> > -       const char *name;
+> > -       void *priv;
+> > -};
+> > -
+> > -struct mtk_scp {
+> > -       struct device *dev;
+> > -       struct rproc *rproc;
+> > -       struct clk *clk;
+> > -       void __iomem *reg_base;
+> > -       void __iomem *sram_base;
+> > -       size_t sram_size;
+> > -
+> > -       struct share_obj *recv_buf;
+> > -       struct share_obj *send_buf;
+> > -       struct scp_run run;
+> > -       struct mutex scp_mutex; /* for protecting mtk_scp data structure */
+> > -       struct scp_ipi_desc ipi_desc[SCP_IPI_MAX];
+> > -       bool ipi_id_ack[SCP_IPI_MAX];
+> > -       wait_queue_head_t ack_wq;
+> > -
+> > -       void __iomem *cpu_addr;
+> > -       phys_addr_t phys_addr;
+> > -       size_t dram_size;
+> > -};
+> > -
+> > -/**
+> > - * struct share_obj - SRAM buffer shared with
+> > - *                   AP and SCP
+> > - *
+> > - * @id:                IPI id
+> > - * @len:       share buffer length
+> > - * @share_buf: share buffer data
+> > - */
+> > -struct share_obj {
+> > -       s32 id;
+> > -       u32 len;
+> > -       u8 share_buf[288];
+> > -};
+> > -
+> > -int scp_ipi_register(struct platform_device *pdev,
+> > -                    enum scp_ipi_id id,
+> > -                    scp_ipi_handler_t handler,
+> > -                    const char *name,
+> > -                    void *priv)
+> > -{
+> > -       struct mtk_scp *scp = platform_get_drvdata(pdev);
+> > -       struct scp_ipi_desc *ipi_desc;
+> > -
+> > -       if (!scp) {
+> > -               dev_err(&pdev->dev, "scp device is not ready\n");
+> > -               return -EPROBE_DEFER;
+> > -       }
+> > -
+> > -       if (WARN(id < 0 ||  id >= SCP_IPI_MAX || handler == NULL,
+> > -           "register scp ipi id %d with invalid arguments\n", id))
+> > -               return -EINVAL;
+> > -
+> > -       ipi_desc = scp->ipi_desc;
+> > -       ipi_desc[id].name = name;
+> > -       ipi_desc[id].handler = handler;
+> > -       ipi_desc[id].priv = priv;
+> > -
+> > -       return 0;
+> > -}
+> > -EXPORT_SYMBOL_GPL(scp_ipi_register);
+> > -
+> > -int scp_ipi_send(struct platform_device *pdev,
+> > -                enum scp_ipi_id id,
+> > -                void *buf,
+> > -                unsigned int len,
+> > -                unsigned int wait)
+> > -{
+> > -       struct mtk_scp *scp = platform_get_drvdata(pdev);
+> > -       struct share_obj *send_obj = scp->send_buf;
+> > -       unsigned long timeout;
+> > -       int ret;
+> > -
+> > -       if (WARN(id <= SCP_IPI_INIT || id >= SCP_IPI_MAX ||
+> > -           len > sizeof(send_obj->share_buf) || !buf,
+> > -           "failed to send ipi message\n"))
+> > -               return -EINVAL;
+> > -
+> > -       ret = clk_prepare_enable(scp->clk);
+> > -       if (ret) {
+> > -               dev_err(scp->dev, "failed to enable clock\n");
+> > -               return ret;
+> > -       }
+> > -
+> > -       mutex_lock(&scp->scp_mutex);
+> > -
+> > -        /* Wait until SCP receives the last command */
+> > -       timeout = jiffies + msecs_to_jiffies(2000);
+> > -       do {
+> > -               if (time_after(jiffies, timeout)) {
+> > -                       dev_err(scp->dev, "scp_ipi_send: IPI timeout!\n");
+> > -                       ret = -EIO;
+> > -                       mutex_unlock(&scp->scp_mutex);
+> > -                       goto clock_disable;
+> > -               }
+> > -       } while (readl(scp->reg_base + MT8183_HOST_TO_SCP));
+> > -
+> > -       memcpy(send_obj->share_buf, buf, len);
+> > -       send_obj->len = len;
+> > -       send_obj->id = id;
+> > -
+> > -       scp->ipi_id_ack[id] = false;
+> > -       /* send the command to SCP */
+> > -       writel(MT8183_HOST_IPC_INT_BIT, scp->reg_base + MT8183_HOST_TO_SCP);
+> > -
+> > -       mutex_unlock(&scp->scp_mutex);
+> > -
+> > -       if (wait) {
+> > -               /* wait for SCP's ACK */
+> > -               timeout = msecs_to_jiffies(wait);
+> > -               ret = wait_event_timeout(scp->ack_wq,
+> > -                                        scp->ipi_id_ack[id],
+> > -                                        timeout);
+> > -               scp->ipi_id_ack[id] = false;
+> > -               if (WARN(!ret,
+> > -                        "scp ipi %d ack time out !", id))
+> > -                       ret = -EIO;
+> > -               else
+> > -                       ret = 0;
+> > -       }
+> > -
+> > -clock_disable:
+> > -       clk_disable_unprepare(scp->clk);
+> > -
+> > -       return ret;
+> > -}
+> > -EXPORT_SYMBOL_GPL(scp_ipi_send);
+> > -
+> >  struct platform_device *scp_get_plat_device(struct platform_device *pdev)
+> >  {
+> >         struct device *dev = &pdev->dev;
+> > diff --git a/drivers/remoteproc/mtk_scp_ipi.c b/drivers/remoteproc/mtk_scp_ipi.c
+> > new file mode 100644
+> > index 00000000000000..3aa18a387056d3
+> > --- /dev/null
+> > +++ b/drivers/remoteproc/mtk_scp_ipi.c
+> > @@ -0,0 +1,108 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +//
+> > +// Copyright (c) 2018 MediaTek Inc.
+> > +
+> > +#include <linux/clk.h>
+> > +#include <linux/err.h>
+> > +#include <linux/kernel.h>
+> > +#include <linux/module.h>
+> > +#include <linux/platform_data/mtk_scp.h>
+> > +#include <linux/platform_device.h>
+> > +
+> > +#include "mtk_common.h"
+> > +
+> > +int scp_ipi_register(struct platform_device *pdev,
+> > +                    enum scp_ipi_id id,
+> > +                    scp_ipi_handler_t handler,
+> > +                    const char *name,
+> > +                    void *priv)
+> > +{
+> > +       struct mtk_scp *scp = platform_get_drvdata(pdev);
+> > +       struct scp_ipi_desc *ipi_desc;
+> > +
+> > +       if (!scp) {
+> > +               dev_err(&pdev->dev, "scp device is not ready\n");
+> > +               return -EPROBE_DEFER;
+> > +       }
+> > +
+> > +       if (WARN(id < 0 ||  id >= SCP_IPI_MAX || handler == NULL,
+> > +           "register scp ipi id %d with invalid arguments\n", id))
+> > +               return -EINVAL;
+> > +
+> > +       ipi_desc = scp->ipi_desc;
+> > +       ipi_desc[id].name = name;
+> > +       ipi_desc[id].handler = handler;
+> > +       ipi_desc[id].priv = priv;
+> > +
+> > +       return 0;
+> > +}
+> > +EXPORT_SYMBOL_GPL(scp_ipi_register);
+> > +
+> > +int scp_ipi_send(struct platform_device *pdev,
+> > +                enum scp_ipi_id id,
+> > +                void *buf,
+> > +                unsigned int len,
+> > +                unsigned int wait)
+> > +{
+> > +       struct mtk_scp *scp = platform_get_drvdata(pdev);
+> > +       struct share_obj *send_obj = scp->send_buf;
+> > +       unsigned long timeout;
+> > +       int ret;
+> > +
+> > +       if (WARN(id <= SCP_IPI_INIT || id >= SCP_IPI_MAX ||
+> > +           len > sizeof(send_obj->share_buf) || !buf,
+> > +           "failed to send ipi message\n"))
+> > +               return -EINVAL;
+> > +
+> > +       ret = clk_prepare_enable(scp->clk);
+> > +       if (ret) {
+> > +               dev_err(scp->dev, "failed to enable clock\n");
+> > +               return ret;
+> > +       }
+> > +
+> > +       mutex_lock(&scp->scp_mutex);
+> > +
+> > +        /* Wait until SCP receives the last command */
+> > +       timeout = jiffies + msecs_to_jiffies(2000);
+> > +       do {
+> > +               if (time_after(jiffies, timeout)) {
+> > +                       dev_err(scp->dev, "scp_ipi_send: IPI timeout!\n");
+> > +                       ret = -EIO;
+> > +                       mutex_unlock(&scp->scp_mutex);
+> > +                       goto clock_disable;
+> > +               }
+> > +       } while (readl(scp->reg_base + MT8183_HOST_TO_SCP));
+> > +
+> > +       memcpy(send_obj->share_buf, buf, len);
+> > +       send_obj->len = len;
+> > +       send_obj->id = id;
+> > +
+> > +       scp->ipi_id_ack[id] = false;
+> > +       /* send the command to SCP */
+> > +       writel(MT8183_HOST_IPC_INT_BIT, scp->reg_base + MT8183_HOST_TO_SCP);
+> > +
+> > +       mutex_unlock(&scp->scp_mutex);
+> > +
+> > +       if (wait) {
+> > +               /* wait for SCP's ACK */
+> > +               timeout = msecs_to_jiffies(wait);
+> > +               ret = wait_event_timeout(scp->ack_wq,
+> > +                                        scp->ipi_id_ack[id],
+> > +                                        timeout);
+> > +               scp->ipi_id_ack[id] = false;
+> > +               if (WARN(!ret,
+> > +                        "scp ipi %d ack time out !", id))
+> > +                       ret = -EIO;
+> > +               else
+> > +                       ret = 0;
+> > +       }
+> > +
+> > +clock_disable:
+> > +       clk_disable_unprepare(scp->clk);
+> > +
+> > +       return ret;
+> > +}
+> > +EXPORT_SYMBOL_GPL(scp_ipi_send);
+> > +
+> > +MODULE_LICENSE("GPL v2");
+> > +MODULE_DESCRIPTION("MediaTek scp IPI interface");
+> > --
+> > 2.20.1.97.g81188d93c3-goog
+> >
