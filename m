@@ -2,83 +2,117 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5E3FC2F420
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:52:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 590AEC2F420
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:55:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 851CF20861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:52:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2921B20879
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:55:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548082537;
+	bh=jDw5ROZDgCpNfHjGbyRcEW8lrmPIwlxOCU8ON5jZtvY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=g/0F28WM70X55Um/+XAHpObSV10rzuPFXjTrA+q8all8P0EqQyO8+U7nueDLElGwZ
+	 mtS8ybbHXYbdUcAqlisikjeJYqijMrWRCwn7R5qUfoUfQaE7TmlDWfzNAx1nUWcA7A
+	 EGnY8dUNzYXgvD4PZep/NXMSR1OAS59nv/9F3UFA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729517AbfAUOwY (ORCPT
+        id S1729658AbfAUOzf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:52:24 -0500
-Received: from foss.arm.com ([217.140.101.70]:35810 "EHLO foss.arm.com"
+        Mon, 21 Jan 2019 09:55:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56266 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729072AbfAUOwY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 09:52:24 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E438DEBD;
-        Mon, 21 Jan 2019 06:52:23 -0800 (PST)
-Received: from e110467-lin.cambridge.arm.com (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 21C913F5C1;
-        Mon, 21 Jan 2019 06:52:21 -0800 (PST)
-From:   Robin Murphy <robin.murphy@arm.com>
-To:     iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     m.szyprowski@samsung.com, hch@lst.de, treding@nvidia.com,
-        rmk+kernel@armlinux.org.uk, bskeggs@redhat.com,
-        tjakobi@math.uni-bielefeld.de, b.zolnierkie@samsung.com
-Subject: [PATCH] ARM: dma-mapping: Clear DMA ops on teardown
-Date:   Mon, 21 Jan 2019 14:52:16 +0000
-Message-Id: <2f5833b7639543d614095cd3f5ab0dc0274e26d6.1548081277.git.robin.murphy@arm.com>
-X-Mailer: git-send-email 2.20.1.dirty
+        id S1729350AbfAUOze (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 09:55:34 -0500
+Received: from guoren-Inspiron-7460 (23.83.240.247.16clouds.com [23.83.240.247])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 36EA220861;
+        Mon, 21 Jan 2019 14:55:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548082533;
+        bh=jDw5ROZDgCpNfHjGbyRcEW8lrmPIwlxOCU8ON5jZtvY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Q3C3EZrbffoLz8SfEWy1K+1cYl8BCPiWrJ4SdLxxM9SeCEhhb3QeYuDC+K4ZqRXRI
+         uugfiM6v/gNGcTcY8WMru81RXU7ZIuxlIp+0ydzcMyGyDibqIhCHEk2Sf/97pzPuzx
+         1NA2eAnnMCEt8q9G9XPiNFE5t02w/BmTaVpH5vCM=
+Date:   Mon, 21 Jan 2019 22:55:24 +0800
+From:   Guo Ren <guoren@kernel.org>
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org, Guo Ren <ren_guo@c-sky.com>
+Subject: Re: [PATCH V2 2/2] dt-bindings: interrupt-controller: Update csky
+ mpintc
+Message-ID: <20190121145524.GA5283@guoren-Inspiron-7460>
+References: <1547830371-22122-1-git-send-email-guoren@kernel.org>
+ <1547830371-22122-2-git-send-email-guoren@kernel.org>
+ <CAL_JsqKjQK-qViMm55EiP5hXjfr04++5vBTAXCEa6yg9u1qCaQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAL_JsqKjQK-qViMm55EiP5hXjfr04++5vBTAXCEa6yg9u1qCaQ@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Installing the appropriate non-IOMMU DMA ops in arm_iommu_detch_device()
-serves the case where IOMMU-aware drivers choose to control their own
-mapping but still make DMA API calls, however it also affects the case
-when the arch code itself tears down the mapping upon driver unbinding,
-where the ops now get left in place and can inhibit arch_setup_dma_ops()
-on subsequent re-probe attempts.
+On Mon, Jan 21, 2019 at 08:12:15AM -0600, Rob Herring wrote:
+> On Fri, Jan 18, 2019 at 10:53 AM <guoren@kernel.org> wrote:
+> >
+> > From: Guo Ren <ren_guo@c-sky.com>
+> >
+> > Add trigger type and priority setting for csky,mpintc.
+> >
+> > Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+> > ---
+> >  .../bindings/interrupt-controller/csky,mpintc.txt  | 33 +++++++++++++++++++---
+> >  1 file changed, 29 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt b/Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt
+> > index ab921f1..badbd38 100644
+> > --- a/Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt
+> > +++ b/Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt
+> > @@ -6,11 +6,18 @@ C-SKY Multi-processors Interrupt Controller is designed for ck807/ck810/ck860
+> >  SMP soc, and it also could be used in non-SMP system.
+> >
+> >  Interrupt number definition:
+> > -
+> >    0-15  : software irq, and we use 15 as our IPI_IRQ.
+> >   16-31  : private  irq, and we use 16 as the co-processor timer.
+> >   31-1024: common irq for soc ip.
+> >
+> > +Interrupt triger mode:
+> > + IRQ_TYPE_LEVEL_HIGH (default)
+> > + IRQ_TYPE_LEVEL_LOW
+> > + IRQ_TYPE_EDGE_RISING
+> > + IRQ_TYPE_EDGE_FALLING
+> > +
+> > +Interrupt priority range: 0-255
+> > +
+> >  =============================
+> >  intc node bindings definition
+> >  =============================
+> > @@ -26,15 +33,33 @@ intc node bindings definition
+> >         - #interrupt-cells
+> >                 Usage: required
+> >                 Value type: <u32>
+> > -               Definition: must be <1>
+> > +               Definition: could be <1> or <2> or <3>
+> 
+> For a given controller, '#interrupt-cells' shouldn't really be
+> variable. If there are different capabilities, then you should have
+> different compatible strings.
+Ok, I'll Define it to <3>, see my next version of patch.
 
-Fix the latter case by making sure that arch_teardown_dma_ops() cleans
-up whenever the ops were automatically installed by its counterpart.
+<irqnum trigger_type priority>
 
-Reported-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Fixes: 1874619a7df4 "ARM: dma-mapping: Set proper DMA ops in arm_iommu_detach_device()"
-Tested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
----
-
-Sorry for the delay - there was a giant email infrastructure cock-up just
-at the point I wanted to go back through my archive and double-check the
-discussion around the original commit...
-
-Robin.
-
- arch/arm/mm/dma-mapping.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-index f1e2922e447c..1e3e08a1c456 100644
---- a/arch/arm/mm/dma-mapping.c
-+++ b/arch/arm/mm/dma-mapping.c
-@@ -2390,4 +2390,6 @@ void arch_teardown_dma_ops(struct device *dev)
- 		return;
- 
- 	arm_teardown_iommu_dma_ops(dev);
-+	/* Let arch_setup_dma_ops() start again from scratch upon re-probe */
-+	set_dma_ops(dev, NULL);
- }
--- 
-2.20.1.dirty
-
+Best Regards
+ Guo Ren
