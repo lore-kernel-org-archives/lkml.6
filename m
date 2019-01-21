@@ -2,304 +2,129 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F4D0C31D63
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:22:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C9BC31D63
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:23:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 625DA20823
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:22:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E59320823
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:23:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=c0d3.blue header.i=@c0d3.blue header.b="js944n+W"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="eH+5DAAZ";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="nCus+WXg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728239AbfAUHWd (ORCPT
+        id S1728296AbfAUHXF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 02:22:33 -0500
-Received: from mail.aperture-lab.de ([138.201.29.205]:41870 "EHLO
-        mail.aperture-lab.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726133AbfAUHWO (ORCPT
+        Mon, 21 Jan 2019 02:23:05 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:53374 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727634AbfAUHXE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 02:22:14 -0500
-From:   =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c0d3.blue; s=2018;
-        t=1548052011; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=/Ug0rn2mSzhSVcrGieA3FkgIo5XxIlnOYm88mAmvaqM=;
-        b=js944n+WqMhWr/dEynGrcjg1419CNANvn0M5QcxQuV7Kdfh+5wG04dwZf3/C5Pe5z4K6Ua
-        LoKa42tvW9kcYQbq4R0T3Oy10B6u0rsJq2SCt2GAGCf7V20M1927gP46z6iFWNb1a781Ld
-        /uIjcnAzu/EZAmYGuNLVSmSbFd2McDVw8J7skCBiLDvKYd5QKECzI2bS8kiqwf3S7afZ4w
-        11CLpxMJU0jNGjyTpIwrRx/QWDZJAbUZEUIbtLSMSQi0sQZd949e9MhCG3zUs5EyEl714H
-        JgP5D7cCpVnvAlKlLOP5TFnHsQSjBy1DSpoI8DdcdYLjtHg4SiPBbusoceq85A==
-To:     netdev@vger.kernel.org
-Cc:     Roopa Prabhu <roopa@cumulusnetworks.com>,
-        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        bridge@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
-Subject: [PATCH net-next v2 2/4] bridge: simplify ip_mc_check_igmp() and ipv6_mc_check_mld() internals
-Date:   Mon, 21 Jan 2019 07:26:26 +0100
-Message-Id: <20190121062628.2710-3-linus.luessing@c0d3.blue>
-In-Reply-To: <20190121062628.2710-1-linus.luessing@c0d3.blue>
-References: <20190121062628.2710-1-linus.luessing@c0d3.blue>
+        Mon, 21 Jan 2019 02:23:04 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 16D6460878; Mon, 21 Jan 2019 06:05:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548050744;
+        bh=Y1F7ZjV/FsFNJuYd4G9AXKgIC9hZcdkYWSwP8ggf6OM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=eH+5DAAZa80tNpDhIJ3O21BXzbQJOc9B2oMUBHQY/OWVO58ph2En4p7dwJzGn7bEJ
+         t2YiieGxpdGKwisBehn8go0wzSOEuZH59BWZwCjBg/hLA8eXbESr1N8PI/JEND8KtR
+         +zXRe1DfaGPVjuaad23/9yP3y7z8zR3UDmweXsB0=
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4F4006083E;
+        Mon, 21 Jan 2019 06:05:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548050743;
+        bh=Y1F7ZjV/FsFNJuYd4G9AXKgIC9hZcdkYWSwP8ggf6OM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=nCus+WXg4sXwWN/Xeb7jzLA9onnM5nP/4M4GXsSk6O+xtqSYUgWA3dauiwEo5JyN1
+         xXv52V2epWfJbTdOe6MJk1ShzC3Fk4ztNehq46w1+UZxiVYbQk7CxI3aCYm/r3azsf
+         nX4rJuEW0XGNoW78gvegkb64VxEgHtx/nXlQOKww=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4F4006083E
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+Received: by mail-ed1-f45.google.com with SMTP id h50so15622554ede.5;
+        Sun, 20 Jan 2019 22:05:43 -0800 (PST)
+X-Gm-Message-State: AJcUukfrlbhJiW4R8rVzROTlZXHfhSGYNYW+jO/8cRyHa4+PUBxL22PM
+        ykpmm62krdNbJKCFTOMD15+DT4ZefHIh7cTdF/8=
+X-Google-Smtp-Source: ALg8bN7LNUtLnTrd7kArGVwS+vwLRfDV4avJP1pnXk0N11jxNBQaviTjHq1g9w/OE8hG5oKE5XuhkpO37dZUbxs8XdE=
+X-Received: by 2002:aa7:c0d0:: with SMTP id j16mr25116444edp.173.1548050741904;
+ Sun, 20 Jan 2019 22:05:41 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=c0d3.blue;
-        s=2018; t=1548052011; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=/Ug0rn2mSzhSVcrGieA3FkgIo5XxIlnOYm88mAmvaqM=;
-        b=PJ/OgstX7EDqF36fuqchB9RaVHuUOvJZXd1XqLaoiNssxNMTfYPH811oZv//ykf27NAvcU
-        uk8dCvZ3lQ+vuJ9eB61j+XJ6TKk8mrU8taAhlu69uihXqV0o5rZgXObzfGA2BkMkLAcZIm
-        dqn3kJhHgYV+kX/3SmmwI0khC00+I4gF5A+oWljjgj8WpLc+xGvhbCYi56LUuro1G3zoGd
-        Soz7uwfeieKCvZRhjJlt4PMG9DwICAA1QC0vl7hVv7ojpZxv+UJSn/lZCmz82geArwxnPr
-        HjUkL3jgyfvuwPNSopx3ruvWNunS2/iZY8vaw999+fRc8TdllYjCph32I4+zsA==
-ARC-Seal: i=1; s=2018; d=c0d3.blue; t=1548052011; a=rsa-sha256; cv=none;
-        b=rwlzPaHSIRkyfob3LFULwu3MHk2LGUCOPofY24V2WqGk7aYAKGiqN2OssmkU+QTRgGN4+z
-        fEmvVlbzJjHOqEgts5L2+1oBw+/29wn94/RjejqAbNhzaVaA8YtU5FW1ueHPj5uEr1cf/4
-        E3BWHISQb7bTduOUB/kNo1pRUtcNYe4HHfLwoROqDB9B/3ofQQzist1Ldo0qbt5tPWff5q
-        yu8kFennwA/u4z54ZiTwh27p8rQjT8gRJZDGaO63Mc6bR4JJjY0i4IPw93HbJd+TxfmHgp
-        ovsG89fb+aYQollQBt7wYBFnmZMwpn63Yt0Qf/EmCCdnoh670CpqnyQxCn/3Pg==
-ARC-Authentication-Results: i=1;
-        ORIGINATING;
-        auth=pass smtp.auth=linus.luessing@c0d3.blue smtp.mailfrom=linus.luessing@c0d3.blue
-Authentication-Results: ORIGINATING;
-        auth=pass smtp.auth=linus.luessing@c0d3.blue smtp.mailfrom=linus.luessing@c0d3.blue
+References: <20190117092718.1396-1-vivek.gautam@codeaurora.org>
+ <20190117092718.1396-3-vivek.gautam@codeaurora.org> <20190120000117.GH26876@brain-police>
+In-Reply-To: <20190120000117.GH26876@brain-police>
+From:   Vivek Gautam <vivek.gautam@codeaurora.org>
+Date:   Mon, 21 Jan 2019 11:35:30 +0530
+X-Gmail-Original-Message-ID: <CAFp+6iFh26JgBUx1jkm4EHNY1vs93Uz2qngxP27D0f7dcpX2GQ@mail.gmail.com>
+Message-ID: <CAFp+6iFh26JgBUx1jkm4EHNY1vs93Uz2qngxP27D0f7dcpX2GQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] iommu/arm-smmu: Add support for non-coherent page
+ table mappings
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With this patch the internal use of the skb_trimmed is reduced to
-the ICMPv6/IGMP checksum verification. And for the length checks
-the newly introduced helper functions are used instead of calculating
-and checking with skb->len directly.
+Hi Will,
 
-These changes should hopefully make it easier to verify that length
-checks are performed properly.
 
-Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
----
- net/ipv4/igmp.c        | 51 ++++++++++++++++++-----------------------
- net/ipv6/mcast_snoop.c | 62 ++++++++++++++++++++++++--------------------------
- 2 files changed, 52 insertions(+), 61 deletions(-)
+On Sun, Jan 20, 2019 at 5:31 AM Will Deacon <will.deacon@arm.com> wrote:
+>
+> On Thu, Jan 17, 2019 at 02:57:18PM +0530, Vivek Gautam wrote:
+> > Adding a device tree option for arm smmu to enable non-cacheable
+> > memory for page tables.
+> > We already enable a smmu feature for coherent walk based on
+> > whether the smmu device is dma-coherent or not. Have an option
+> > to enable non-cacheable page table memory to force set it for
+> > particular smmu devices.
+>
+> Hmm, I must be missing something here. What is the difference between this
+> new property, and simply omitting dma-coherent on the SMMU?
 
-diff --git a/net/ipv4/igmp.c b/net/ipv4/igmp.c
-index b1f6d93282d7..a40e48ded10d 100644
---- a/net/ipv4/igmp.c
-+++ b/net/ipv4/igmp.c
-@@ -1493,22 +1493,22 @@ static int ip_mc_check_igmp_reportv3(struct sk_buff *skb)
- 
- 	len += sizeof(struct igmpv3_report);
- 
--	return pskb_may_pull(skb, len) ? 0 : -EINVAL;
-+	return ip_mc_may_pull(skb, len) ? 0 : -EINVAL;
- }
- 
- static int ip_mc_check_igmp_query(struct sk_buff *skb)
- {
--	unsigned int len = skb_transport_offset(skb);
--
--	len += sizeof(struct igmphdr);
--	if (skb->len < len)
--		return -EINVAL;
-+	unsigned int transport_len = ip_transport_len(skb);
-+	unsigned int len;
- 
- 	/* IGMPv{1,2}? */
--	if (skb->len != len) {
-+	if (transport_len != sizeof(struct igmphdr)) {
- 		/* or IGMPv3? */
--		len += sizeof(struct igmpv3_query) - sizeof(struct igmphdr);
--		if (skb->len < len || !pskb_may_pull(skb, len))
-+		if (transport_len < sizeof(struct igmpv3_query))
-+			return -EINVAL;
-+
-+		len = skb_transport_offset(skb) + sizeof(struct igmpv3_query);
-+		if (!ip_mc_may_pull(skb, len))
- 			return -EINVAL;
- 	}
- 
-@@ -1544,35 +1544,24 @@ static inline __sum16 ip_mc_validate_checksum(struct sk_buff *skb)
- 	return skb_checksum_simple_validate(skb);
- }
- 
--static int __ip_mc_check_igmp(struct sk_buff *skb)
--
-+static int ip_mc_check_igmp_csum(struct sk_buff *skb)
- {
--	struct sk_buff *skb_chk;
--	unsigned int transport_len;
- 	unsigned int len = skb_transport_offset(skb) + sizeof(struct igmphdr);
--	int ret = -EINVAL;
-+	unsigned int transport_len = ip_transport_len(skb);
-+	struct sk_buff *skb_chk;
- 
--	transport_len = ntohs(ip_hdr(skb)->tot_len) - ip_hdrlen(skb);
-+	if (!ip_mc_may_pull(skb, len))
-+		return -EINVAL;
- 
- 	skb_chk = skb_checksum_trimmed(skb, transport_len,
- 				       ip_mc_validate_checksum);
- 	if (!skb_chk)
--		goto err;
-+		return -EINVAL;
- 
--	if (!pskb_may_pull(skb_chk, len))
--		goto err;
--
--	ret = ip_mc_check_igmp_msg(skb_chk);
--	if (ret)
--		goto err;
--
--	ret = 0;
--
--err:
--	if (skb_chk && skb_chk != skb)
-+	if (skb_chk != skb)
- 		kfree_skb(skb_chk);
- 
--	return ret;
-+	return 0;
- }
- 
- /**
-@@ -1600,7 +1589,11 @@ int ip_mc_check_igmp(struct sk_buff *skb)
- 	if (ip_hdr(skb)->protocol != IPPROTO_IGMP)
- 		return -ENOMSG;
- 
--	return __ip_mc_check_igmp(skb);
-+	ret = ip_mc_check_igmp_csum(skb);
-+	if (ret < 0)
-+		return ret;
-+
-+	return ip_mc_check_igmp_msg(skb);
- }
- EXPORT_SYMBOL(ip_mc_check_igmp);
- 
-diff --git a/net/ipv6/mcast_snoop.c b/net/ipv6/mcast_snoop.c
-index 1a917dc80d5e..a72ddfc40eb3 100644
---- a/net/ipv6/mcast_snoop.c
-+++ b/net/ipv6/mcast_snoop.c
-@@ -77,27 +77,27 @@ static int ipv6_mc_check_mld_reportv2(struct sk_buff *skb)
- 
- 	len += sizeof(struct mld2_report);
- 
--	return pskb_may_pull(skb, len) ? 0 : -EINVAL;
-+	return ipv6_mc_may_pull(skb, len) ? 0 : -EINVAL;
- }
- 
- static int ipv6_mc_check_mld_query(struct sk_buff *skb)
- {
-+	unsigned int transport_len = ipv6_transport_len(skb);
- 	struct mld_msg *mld;
--	unsigned int len = skb_transport_offset(skb);
-+	unsigned int len;
- 
- 	/* RFC2710+RFC3810 (MLDv1+MLDv2) require link-local source addresses */
- 	if (!(ipv6_addr_type(&ipv6_hdr(skb)->saddr) & IPV6_ADDR_LINKLOCAL))
- 		return -EINVAL;
- 
--	len += sizeof(struct mld_msg);
--	if (skb->len < len)
--		return -EINVAL;
--
- 	/* MLDv1? */
--	if (skb->len != len) {
-+	if (transport_len != sizeof(struct mld_msg)) {
- 		/* or MLDv2? */
--		len += sizeof(struct mld2_query) - sizeof(struct mld_msg);
--		if (skb->len < len || !pskb_may_pull(skb, len))
-+		if (transport_len < sizeof(struct mld2_query))
-+			return -EINVAL;
-+
-+		len = skb_transport_offset(skb) + sizeof(struct mld2_query);
-+		if (!ipv6_mc_may_pull(skb, len))
- 			return -EINVAL;
- 	}
- 
-@@ -115,7 +115,13 @@ static int ipv6_mc_check_mld_query(struct sk_buff *skb)
- 
- static int ipv6_mc_check_mld_msg(struct sk_buff *skb)
- {
--	struct mld_msg *mld = (struct mld_msg *)skb_transport_header(skb);
-+	unsigned int len = skb_transport_offset(skb) + sizeof(struct mld_msg);
-+	struct mld_msg *mld;
-+
-+	if (!ipv6_mc_may_pull(skb, len))
-+		return -EINVAL;
-+
-+	mld = (struct mld_msg *)skb_transport_header(skb);
- 
- 	switch (mld->mld_type) {
- 	case ICMPV6_MGM_REDUCTION:
-@@ -136,36 +142,24 @@ static inline __sum16 ipv6_mc_validate_checksum(struct sk_buff *skb)
- 	return skb_checksum_validate(skb, IPPROTO_ICMPV6, ip6_compute_pseudo);
- }
- 
--static int __ipv6_mc_check_mld(struct sk_buff *skb)
--
-+static int ipv6_mc_check_icmpv6(struct sk_buff *skb)
- {
--	struct sk_buff *skb_chk = NULL;
--	unsigned int transport_len;
--	unsigned int len = skb_transport_offset(skb) + sizeof(struct mld_msg);
--	int ret = -EINVAL;
-+	unsigned int len = skb_transport_offset(skb) + sizeof(struct icmp6hdr);
-+	unsigned int transport_len = ipv6_transport_len(skb);
-+	struct sk_buff *skb_chk;
- 
--	transport_len = ntohs(ipv6_hdr(skb)->payload_len);
--	transport_len -= skb_transport_offset(skb) - sizeof(struct ipv6hdr);
-+	if (!ipv6_mc_may_pull(skb, len))
-+		return -EINVAL;
- 
- 	skb_chk = skb_checksum_trimmed(skb, transport_len,
- 				       ipv6_mc_validate_checksum);
- 	if (!skb_chk)
--		goto err;
-+		return -EINVAL;
- 
--	if (!pskb_may_pull(skb_chk, len))
--		goto err;
--
--	ret = ipv6_mc_check_mld_msg(skb_chk);
--	if (ret)
--		goto err;
--
--	ret = 0;
--
--err:
--	if (skb_chk && skb_chk != skb)
-+	if (skb_chk != skb)
- 		kfree_skb(skb_chk);
- 
--	return ret;
-+	return 0;
- }
- 
- /**
-@@ -195,6 +189,10 @@ int ipv6_mc_check_mld(struct sk_buff *skb)
- 	if (ret < 0)
- 		return ret;
- 
--	return __ipv6_mc_check_mld(skb);
-+	ret = ipv6_mc_check_icmpv6(skb);
-+	if (ret < 0)
-+		return ret;
-+
-+	return ipv6_mc_check_mld_msg(skb);
- }
- EXPORT_SYMBOL(ipv6_mc_check_mld);
--- 
-2.11.0
+So, this is what I understood from the email thread for Last level
+cache support -
+Robin pointed to the fact that we may need to add support for setting
+non-cacheable
+mappings in the TCR.
+Currently, we don't do that for SMMUs that omit dma-coherent.
+We rely on the interconnect to handle the configuration set in TCR,
+and let interconnect
+ignore the cacheability if it can't support.
 
+Moreover, Robin suggested that we should take care of SMMUs, for which
+removing snoop latency on walks by making mappings as non-cacheable
+outweighs the cost of cache maintenance on PTE updates.
+
+So, this change adds another property to do this non-cacheable mappings
+explicitly. As I pointed, omitting 'dma-coherent', and corresponding
+IO_PGTABLE_QUIRK_NO_DMA' does takes care of few things.
+
+Should we handle the TCR settings too with this quirk?
+
+Regards
+Vivek
+>
+> Will
+> _______________________________________________
+> iommu mailing list
+> iommu@lists.linux-foundation.org
+> https://lists.linuxfoundation.org/mailman/listinfo/iommu
+
+
+
+--
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
