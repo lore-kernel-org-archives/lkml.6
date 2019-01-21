@@ -6,47 +6,53 @@ X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 263DCC37125
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 23:20:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59653C37121
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 23:20:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4AD120870
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 23:20:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BEC820870
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 23:20:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548112804;
-	bh=m1tquJenc8u2eB/s5oWBXrMEonoBRdLWAm/ApZ0NiV0=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=vs4fJWqtAGX5Fe6dyQE+jQNaDErTAMtguuP3iQurScNDE5n9wVk+dqoyRNLImL3Jm
-	 Z9P9DMeoAHq6wGghbHdHjgumjxjPAVvV+wN/orHkkmk30tBCCmystBtMtdSME3XmKo
-	 8vWDUW/VX2UsLD0cER+eF+eH2TCrX/MNDhirFAHI=
+	s=default; t=1548112808;
+	bh=3kufgmztrELjwW9JtGeq77yjk/C52ZMulQj9Y7Ulgho=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=hIOxB4+c1fJexMHyfsbhbLNAt/ljLeo66eo0OLDkNJYihMOa4Es9YzsDq0+r+eF5/
+	 6CfBWnn5ybL/SlpsLUh9DI8lMksCoJxMs4shAWJ56IbGcR7CAJdD3DoBjBmmDEC/p0
+	 xTviSHHmNoVp3ho2IyPYoPjyYdjnI9laRIBIMcTI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728011AbfAUXUC (ORCPT
+        id S1728162AbfAUXUG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 18:20:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59358 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 18:20:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59370 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727012AbfAUXUB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 18:20:01 -0500
+        id S1727012AbfAUXUD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 18:20:03 -0500
 Received: from sinanubuntu1604.mkjiurmyylmellclgttazegk5f.bx.internal.cloudapp.net (unknown [40.117.83.110])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C7C1E20870;
-        Mon, 21 Jan 2019 23:20:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A964721019;
+        Mon, 21 Jan 2019 23:20:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548112801;
-        bh=m1tquJenc8u2eB/s5oWBXrMEonoBRdLWAm/ApZ0NiV0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=SDyAvwltZ5/5K55H2sKemi/A9WroY7yJPPB+38JpA3vhd+Ik2x9oWm0Q7YdDtKafg
-         VLWPnf6cO+8nfix+1aB31MtPH0fkt0uvk5U0qkRt6wRk328xEb19cw0CGI2KChkLOn
-         TTLstBy+TpKVsagyQ57yFMolE8rMa7oGfcjzA370=
+        s=default; t=1548112802;
+        bh=3kufgmztrELjwW9JtGeq77yjk/C52ZMulQj9Y7Ulgho=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=gePac9im+of31CSYKkfk70y1qBZbzHB/Dq1WUo9BC+dUd8Zniqtj/PEvCSNavDD+H
+         YXAvuhjZn/3U+hi0112EiQtZr15OUb8QBSy4qLLX8ymOqYR1X0Be/WDtYuwETHcJHP
+         hrzn6h8TdmvMhjmxbsndh3iNLgXfuPc4HYtosfJE=
 From:   Sinan Kaya <okaya@kernel.org>
 To:     linux-next@vger.kernel.org
 Cc:     linux-acpi@vger.kernel.org, Sinan Kaya <okaya@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [for next][PATCH 1/2] mfd: Fix unmet dependency warning for MFD_TPS68470
-Date:   Mon, 21 Jan 2019 23:19:57 +0000
-Message-Id: <20190121231958.28255-1-okaya@kernel.org>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
+        linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND
+        64-BIT))
+Subject: [for next][PATCH 2/2] x86/Kconfig: Select PCI_LOCKLESS_CONFIG if PCI is enabled
+Date:   Mon, 21 Jan 2019 23:19:58 +0000
+Message-Id: <20190121231958.28255-2-okaya@kernel.org>
 X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20190121231958.28255-1-okaya@kernel.org>
+References: <20190121231958.28255-1-okaya@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -59,38 +65,30 @@ CONFIG_PCI set")' dependencies on CONFIG_PCI that previously were
 satisfied implicitly through dependencies on CONFIG_ACPI have to be
 specified directly.
 
-WARNING: unmet direct dependencies detected for I2C_DESIGNWARE_PLATFORM
-  Depends on [n]: I2C [=y] && HAS_IOMEM [=y] && (ACPI [=y] && COMMON_CLK [=n] || !ACPI [=y])
-  Selected by [y]:
-  - MFD_TPS68470 [=y] && HAS_IOMEM [=y] && ACPI [=y] && I2C [=y]=y
+PCI_LOCKLESS_CONFIG depends on PCI but this dependency has not been
+mentioned in the Kconfig.
 
-MFD_TPS68470 is an ACPI only device and selects I2C_DESIGNWARE_PLATFORM.
-I2C_DESIGNWARE_PLATFORM does not have any configuration today for ACPI
-support without CONFIG_PCI set.
-
-For sake of a quick fix this introduces a new mandatory dependency to the
-driver which may survive without it. Otherwise we need to revisit the
-driver architecture to address this properly.
+Add an explicit dependency here.
 
 Fixes: 5d32a66541c46 ("PCI/ACPI: Allow ACPI to be built without CONFIG_PCI set")
 Signed-off-by: Sinan Kaya <okaya@kernel.org>
 ---
- drivers/mfd/Kconfig | 2 +-
+ arch/x86/Kconfig | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index f461460a2aeb..76f9909cf396 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -1419,7 +1419,7 @@ config MFD_TPS65217
- 
- config MFD_TPS68470
- 	bool "TI TPS68470 Power Management / LED chips"
--	depends on ACPI && I2C=y
-+	depends on ACPI && PCI && I2C=y
- 	select MFD_CORE
- 	select REGMAP_I2C
- 	select I2C_DESIGNWARE_PLATFORM
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 568f339595ed..0519da6f8ee4 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -199,7 +199,7 @@ config X86
+ 	select IRQ_FORCED_THREADING
+ 	select NEED_SG_DMA_LENGTH
+ 	select PCI_DOMAINS			if PCI
+-	select PCI_LOCKLESS_CONFIG
++	select PCI_LOCKLESS_CONFIG		if PCI
+ 	select PERF_EVENTS
+ 	select RTC_LIB
+ 	select RTC_MC146818_LIB
 -- 
 2.19.0
 
