@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09B22C2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:02:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68B35C2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:02:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD1292089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:02:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31620214D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:02:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079330;
-	bh=+fZfGilqJL4+hZp51QePJDsxJTSNuNTS8sscElUh0ew=;
+	s=default; t=1548079334;
+	bh=ZReTjr6kTqBirdiOpkcm+zUYXyvU7b5V4kegbnWt47Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Srqgh4+yrfRtMv7ukoklC2GiHKyi7tJ0OjRToIJz3yJxJ8n1Ld0R6bWI8udtASRA+
-	 NmD5nBdCICeNnEImof1gFS6lUgvxWpS6bvUVNlZCKf2LAFc2/Sk4A+xXCv+mzYcuCy
-	 p4/Q71XueQcWPnYI7jmL93ED8OfL24X/fOME8t/k=
+	b=ngWXgAJY5MlfYZMbdTczzVn590nAzOLWsur4Aj7ToBoqA1BerVJg8bxvzrECb5XCj
+	 FnEsxwm38tUJPcEBI17Be36WHxoOys39JIflYvYr/DEhCenoCpsVBfGZJQrEuC7Q4G
+	 4Tt141Y0QqWSMmYJmS4grt6tPbSrx6bjiKknaJG4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732231AbfAUOCJ (ORCPT
+        id S1732087AbfAUOCN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:02:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49390 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 09:02:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49494 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731883AbfAUOCD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 09:02:03 -0500
+        id S1731670AbfAUOCH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 09:02:07 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC76521736;
-        Mon, 21 Jan 2019 14:02:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C47B2089F;
+        Mon, 21 Jan 2019 14:02:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548079322;
-        bh=+fZfGilqJL4+hZp51QePJDsxJTSNuNTS8sscElUh0ew=;
+        s=default; t=1548079326;
+        bh=ZReTjr6kTqBirdiOpkcm+zUYXyvU7b5V4kegbnWt47Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vLG1zUVCfT1vNWgm4E7oDNmFXxmdaskox0Zqy7BPtF9aulQT+esOhj/TF8NA3CnXf
-         +ZhT1Hv9gXPTC1Wc27VasLc7FJxA8m/9dt1QZd3vi1MWmJXfbBk6sdoTexst+5azD7
-         37xIREYJ+EJvkqJomLgQO3xsg9ce8nAbM2kOc4S0=
+        b=Oxaq9hxlIHB/9/M7e8UFRbEy53UjZwrDkfgqAtTotxtJx9KXBFoIUR4Qepov0NKdN
+         MBhBdhqfTilIDm1RvIc+V5vTUlxc03oJoQQF46IIfdpA/GrWg3HbEqkc2uwnQkV738
+         EbsJUyKJWiebIwvDEo37ECRzwxewWkbSufBsxXAc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
-        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.19 37/99] crypto: talitos - reorder code in talitos_edesc_alloc()
-Date:   Mon, 21 Jan 2019 14:48:29 +0100
-Message-Id: <20190121134915.304297217@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+06e771a754829716a327@syzkaller.appspotmail.com,
+        Ying Xue <ying.xue@windriver.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 78/99] tipc: fix uninit-value in tipc_nl_compat_name_table_dump
+Date:   Mon, 21 Jan 2019 14:49:10 +0100
+Message-Id: <20190121134917.056251289@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121134913.924726465@linuxfoundation.org>
 References: <20190121134913.924726465@linuxfoundation.org>
@@ -66,94 +67,100 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Ying Xue <ying.xue@windriver.com>
 
-commit c56c2e173773097a248fd3bace91ac8f6fc5386d upstream.
+commit 974cb0e3e7c963ced06c4e32c5b2884173fa5e01 upstream.
 
-This patch moves the mapping of IV after the kmalloc(). This
-avoids having to unmap in case kmalloc() fails.
+syzbot reported:
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Reviewed-by: Horia Geantă <horia.geanta@nxp.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+BUG: KMSAN: uninit-value in __arch_swab32 arch/x86/include/uapi/asm/swab.h:10 [inline]
+BUG: KMSAN: uninit-value in __fswab32 include/uapi/linux/swab.h:59 [inline]
+BUG: KMSAN: uninit-value in tipc_nl_compat_name_table_dump+0x4a8/0xba0 net/tipc/netlink_compat.c:826
+CPU: 0 PID: 6290 Comm: syz-executor848 Not tainted 4.19.0-rc8+ #70
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x306/0x460 lib/dump_stack.c:113
+ kmsan_report+0x1a2/0x2e0 mm/kmsan/kmsan.c:917
+ __msan_warning+0x7c/0xe0 mm/kmsan/kmsan_instr.c:500
+ __arch_swab32 arch/x86/include/uapi/asm/swab.h:10 [inline]
+ __fswab32 include/uapi/linux/swab.h:59 [inline]
+ tipc_nl_compat_name_table_dump+0x4a8/0xba0 net/tipc/netlink_compat.c:826
+ __tipc_nl_compat_dumpit+0x59e/0xdb0 net/tipc/netlink_compat.c:205
+ tipc_nl_compat_dumpit+0x63a/0x820 net/tipc/netlink_compat.c:270
+ tipc_nl_compat_handle net/tipc/netlink_compat.c:1151 [inline]
+ tipc_nl_compat_recv+0x1402/0x2760 net/tipc/netlink_compat.c:1210
+ genl_family_rcv_msg net/netlink/genetlink.c:601 [inline]
+ genl_rcv_msg+0x185c/0x1a20 net/netlink/genetlink.c:626
+ netlink_rcv_skb+0x394/0x640 net/netlink/af_netlink.c:2454
+ genl_rcv+0x63/0x80 net/netlink/genetlink.c:637
+ netlink_unicast_kernel net/netlink/af_netlink.c:1317 [inline]
+ netlink_unicast+0x166d/0x1720 net/netlink/af_netlink.c:1343
+ netlink_sendmsg+0x1391/0x1420 net/netlink/af_netlink.c:1908
+ sock_sendmsg_nosec net/socket.c:621 [inline]
+ sock_sendmsg net/socket.c:631 [inline]
+ ___sys_sendmsg+0xe47/0x1200 net/socket.c:2116
+ __sys_sendmsg net/socket.c:2154 [inline]
+ __do_sys_sendmsg net/socket.c:2163 [inline]
+ __se_sys_sendmsg+0x307/0x460 net/socket.c:2161
+ __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
+ do_syscall_64+0xbe/0x100 arch/x86/entry/common.c:291
+ entry_SYSCALL_64_after_hwframe+0x63/0xe7
+RIP: 0033:0x440179
+Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffecec49318 EFLAGS: 00000213 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440179
+RDX: 0000000000000000 RSI: 0000000020000100 RDI: 0000000000000003
+RBP: 00000000006ca018 R08: 0000000000000000 R09: 00000000004002c8
+R10: 0000000000000000 R11: 0000000000000213 R12: 0000000000401a00
+R13: 0000000000401a90 R14: 0000000000000000 R15: 0000000000000000
+
+Uninit was created at:
+ kmsan_save_stack_with_flags mm/kmsan/kmsan.c:255 [inline]
+ kmsan_internal_poison_shadow+0xc8/0x1d0 mm/kmsan/kmsan.c:180
+ kmsan_kmalloc+0xa4/0x120 mm/kmsan/kmsan_hooks.c:104
+ kmsan_slab_alloc+0x10/0x20 mm/kmsan/kmsan_hooks.c:113
+ slab_post_alloc_hook mm/slab.h:446 [inline]
+ slab_alloc_node mm/slub.c:2727 [inline]
+ __kmalloc_node_track_caller+0xb43/0x1400 mm/slub.c:4360
+ __kmalloc_reserve net/core/skbuff.c:138 [inline]
+ __alloc_skb+0x422/0xe90 net/core/skbuff.c:206
+ alloc_skb include/linux/skbuff.h:996 [inline]
+ netlink_alloc_large_skb net/netlink/af_netlink.c:1189 [inline]
+ netlink_sendmsg+0xcaf/0x1420 net/netlink/af_netlink.c:1883
+ sock_sendmsg_nosec net/socket.c:621 [inline]
+ sock_sendmsg net/socket.c:631 [inline]
+ ___sys_sendmsg+0xe47/0x1200 net/socket.c:2116
+ __sys_sendmsg net/socket.c:2154 [inline]
+ __do_sys_sendmsg net/socket.c:2163 [inline]
+ __se_sys_sendmsg+0x307/0x460 net/socket.c:2161
+ __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
+ do_syscall_64+0xbe/0x100 arch/x86/entry/common.c:291
+ entry_SYSCALL_64_after_hwframe+0x63/0xe7
+
+We cannot take for granted the thing that the length of data contained
+in TLV is longer than the size of struct tipc_name_table_query in
+tipc_nl_compat_name_table_dump().
+
+Reported-by: syzbot+06e771a754829716a327@syzkaller.appspotmail.com
+Signed-off-by: Ying Xue <ying.xue@windriver.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/talitos.c |   25 +++++++------------------
- 1 file changed, 7 insertions(+), 18 deletions(-)
+ net/tipc/netlink_compat.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/crypto/talitos.c
-+++ b/drivers/crypto/talitos.c
-@@ -1361,23 +1361,18 @@ static struct talitos_edesc *talitos_ede
- 	struct talitos_private *priv = dev_get_drvdata(dev);
- 	bool is_sec1 = has_ftr_sec1(priv);
- 	int max_len = is_sec1 ? TALITOS1_MAX_DATA_LEN : TALITOS2_MAX_DATA_LEN;
--	void *err;
+--- a/net/tipc/netlink_compat.c
++++ b/net/tipc/netlink_compat.c
+@@ -824,6 +824,8 @@ static int tipc_nl_compat_name_table_dum
+ 	};
  
- 	if (cryptlen + authsize > max_len) {
- 		dev_err(dev, "length exceeds h/w max limit\n");
- 		return ERR_PTR(-EINVAL);
- 	}
+ 	ntq = (struct tipc_name_table_query *)TLV_DATA(msg->req);
++	if (TLV_GET_DATA_LEN(msg->req) < sizeof(struct tipc_name_table_query))
++		return -EINVAL;
  
--	if (ivsize)
--		iv_dma = dma_map_single(dev, iv, ivsize, DMA_TO_DEVICE);
--
- 	if (!dst || dst == src) {
- 		src_len = assoclen + cryptlen + authsize;
- 		src_nents = sg_nents_for_len(src, src_len);
- 		if (src_nents < 0) {
- 			dev_err(dev, "Invalid number of src SG.\n");
--			err = ERR_PTR(-EINVAL);
--			goto error_sg;
-+			return ERR_PTR(-EINVAL);
- 		}
- 		src_nents = (src_nents == 1) ? 0 : src_nents;
- 		dst_nents = dst ? src_nents : 0;
-@@ -1387,16 +1382,14 @@ static struct talitos_edesc *talitos_ede
- 		src_nents = sg_nents_for_len(src, src_len);
- 		if (src_nents < 0) {
- 			dev_err(dev, "Invalid number of src SG.\n");
--			err = ERR_PTR(-EINVAL);
--			goto error_sg;
-+			return ERR_PTR(-EINVAL);
- 		}
- 		src_nents = (src_nents == 1) ? 0 : src_nents;
- 		dst_len = assoclen + cryptlen + (encrypt ? authsize : 0);
- 		dst_nents = sg_nents_for_len(dst, dst_len);
- 		if (dst_nents < 0) {
- 			dev_err(dev, "Invalid number of dst SG.\n");
--			err = ERR_PTR(-EINVAL);
--			goto error_sg;
-+			return ERR_PTR(-EINVAL);
- 		}
- 		dst_nents = (dst_nents == 1) ? 0 : dst_nents;
- 	}
-@@ -1425,10 +1418,10 @@ static struct talitos_edesc *talitos_ede
- 		alloc_len += sizeof(struct talitos_desc);
+ 	depth = ntohl(ntq->depth);
  
- 	edesc = kmalloc(alloc_len, GFP_DMA | flags);
--	if (!edesc) {
--		err = ERR_PTR(-ENOMEM);
--		goto error_sg;
--	}
-+	if (!edesc)
-+		return ERR_PTR(-ENOMEM);
-+	if (ivsize)
-+		iv_dma = dma_map_single(dev, iv, ivsize, DMA_TO_DEVICE);
- 	memset(&edesc->desc, 0, sizeof(edesc->desc));
- 
- 	edesc->src_nents = src_nents;
-@@ -1445,10 +1438,6 @@ static struct talitos_edesc *talitos_ede
- 						     DMA_BIDIRECTIONAL);
- 	}
- 	return edesc;
--error_sg:
--	if (iv_dma)
--		dma_unmap_single(dev, iv_dma, ivsize, DMA_TO_DEVICE);
--	return err;
- }
- 
- static struct talitos_edesc *aead_edesc_alloc(struct aead_request *areq, u8 *iv,
 
 
