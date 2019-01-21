@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EE44C37120
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 23:57:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2619C37120
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 23:57:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D75D20870
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 23:57:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85EFA21736
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 23:57:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548115059;
-	bh=zaHz+IQxBrrO/EQ5yjnaQ7+gwAPGFUR7Z+TN/WbNmsI=;
+	s=default; t=1548115066;
+	bh=S2+YmnxV1HVsxSMkCWS6ek/eotInBhdRANXTU16HwCU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=GSa30HQCP2FFaOArCWfom3TYsrwKUI06P5pi3IWcAfLW1nh2c0QSdmAbz9Cepa+9+
-	 VXnNiRZbT5547nB2ZWl+Jed7LuXoOFYElm44Ym0od6zJC5D0q135yh5Jy1fUfe54bc
-	 wwb/TYX/WTFbKIw3a3+kxG1vuhwWtUAXBTTX2bu4=
+	b=Uocbqbmt8jnICkO2yLlB+8w4rPvWk2N1BBP46ssxoAGf6JKNGe/A/qsDjVayMWHSP
+	 FGq7D+dBasQIkFYXd7Z0DkweG2HaaSwhKvAQua1U7wMkC/ctck+fE/PgclnoL21+Ju
+	 jhidQgzEGfGcYAGG1C79sL0k04cwwIAnSHnYVOBI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726385AbfAUX5h (ORCPT
+        id S1726523AbfAUX5p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 18:57:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58068 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 18:57:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58154 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726307AbfAUX5h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 18:57:37 -0500
+        id S1726411AbfAUX5m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 18:57:42 -0500
 Received: from quaco.ghostprotocols.net (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1297C21736;
-        Mon, 21 Jan 2019 23:57:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F1EED217D8;
+        Mon, 21 Jan 2019 23:57:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548115056;
-        bh=zaHz+IQxBrrO/EQ5yjnaQ7+gwAPGFUR7Z+TN/WbNmsI=;
+        s=default; t=1548115061;
+        bh=S2+YmnxV1HVsxSMkCWS6ek/eotInBhdRANXTU16HwCU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fn2nSGnCb7umHrpHH7dshaeJGVxq8AspqxVvCl9LD/cNtIbV9SAgbi/v2rEwZ4QiO
-         vCwIODjRBpvbvd1FQicrCd/6WqEwtmykMvqygLW2JuqvYkvC87I+RzIYE2pmv7yaEu
-         0AnWNZgUK/YEws50LyVPmYZc0C97yQwafEPOL91Q=
+        b=2JBJlFNPfQ/aQZ9iMyr7ASTotIIq5CtXpKZD+tA1yTeMH8YwTxdineTllq+PElebU
+         XlDWuev8CI6PHLdZT9wGqc7CWuDR0RcmPU4BsAy5EGeMQyiPjthLryOownU5ikRj5t
+         pDZki5ZIgdNbEoVqQRSbv20z1UuSmXZtZOcV3NSM=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -46,9 +46,9 @@ Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 03/24] perf session: Get rid of file_size variable
-Date:   Mon, 21 Jan 2019 20:56:45 -0300
-Message-Id: <20190121235706.20005-4-acme@kernel.org>
+Subject: [PATCH 04/24] perf session: Add reader object
+Date:   Mon, 21 Jan 2019 20:56:46 -0300
+Message-Id: <20190121235706.20005-5-acme@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121235706.20005-1-acme@kernel.org>
 References: <20190121235706.20005-1-acme@kernel.org>
@@ -61,62 +61,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jiri Olsa <jolsa@kernel.org>
 
-It's not needed and removing it makes the code a little simpler for the
-upcoming changes.
-
-It's safe to replace file_size with data_size, because the
-perf_data__size() value is never smaller than data_offset + data_size.
+Add a session private reader object to encapsulate the reading of the
+event data block. Starting with a 'fd' field.
 
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 Acked-by: Namhyung Kim <namhyung@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20190110101301.6196-3-jolsa@kernel.org
+Link: http://lkml.kernel.org/r/20190110101301.6196-4-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/session.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+ tools/perf/util/session.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
 diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index ad14192db811..c8c2069fb01e 100644
+index c8c2069fb01e..06379cc87f59 100644
 --- a/tools/perf/util/session.c
 +++ b/tools/perf/util/session.c
-@@ -1825,7 +1825,6 @@ static int __perf_session__process_events(struct perf_session *session)
+@@ -1820,11 +1820,17 @@ fetch_mmaped_event(struct perf_session *session,
+ #define NUM_MMAPS 128
+ #endif
+ 
++struct reader {
++	int	fd;
++};
++
+ static int __perf_session__process_events(struct perf_session *session)
+ {
++	struct reader rd = {
++		.fd		= perf_data__fd(session->data),
++	};
  	struct ordered_events *oe = &session->ordered_events;
  	struct perf_tool *tool = session->tool;
- 	int fd = perf_data__fd(session->data);
--	u64 file_size = perf_data__size(session->data);
+-	int fd = perf_data__fd(session->data);
  	u64 data_offset = session->header.data_offset;
  	u64 data_size = session->header.data_size;
  	u64 head, page_offset, file_offset, file_pos, size;
-@@ -1845,14 +1844,13 @@ static int __perf_session__process_events(struct perf_session *session)
- 	if (data_size == 0)
- 		goto out;
- 
--	if (data_offset + data_size < file_size)
--		file_size = data_offset + data_size;
-+	ui_progress__init_size(&prog, data_size, "Processing events...");
- 
--	ui_progress__init_size(&prog, file_size, "Processing events...");
-+	data_size += data_offset;
- 
- 	mmap_size = MMAP_SIZE;
--	if (mmap_size > file_size) {
--		mmap_size = file_size;
-+	if (mmap_size > data_size) {
-+		mmap_size = data_size;
- 		session->one_mmap = true;
+@@ -1864,7 +1870,7 @@ static int __perf_session__process_events(struct perf_session *session)
+ 		mmap_flags = MAP_PRIVATE;
  	}
- 
-@@ -1917,7 +1915,7 @@ static int __perf_session__process_events(struct perf_session *session)
- 	if (session_done())
- 		goto out;
- 
--	if (file_pos < file_size)
-+	if (file_pos < data_size)
- 		goto more;
- 
- out:
+ remap:
+-	buf = mmap(NULL, mmap_size, mmap_prot, mmap_flags, fd,
++	buf = mmap(NULL, mmap_size, mmap_prot, mmap_flags, rd.fd,
+ 		   file_offset);
+ 	if (buf == MAP_FAILED) {
+ 		pr_err("failed to mmap file\n");
 -- 
 2.20.1
 
