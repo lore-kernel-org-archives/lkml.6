@@ -2,143 +2,88 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BADBC2F441
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:47:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7472AC2F421
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:47:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CB6F21726
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:47:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="coDADYUv"
+	by mail.kernel.org (Postfix) with ESMTP id 3E97B20879
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:47:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548085636;
+	bh=VwomZMXEQHNNEVJw7R83oDTqrKSTWbrersmV/HcvOEA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=NCEkAGsZ6pX04SZ19RnfY4IbILBL3oqAbbfabC3+wh3DtQ9CAis8TjNw7RXEu4Zbs
+	 VfrXFMMIhTmaH48HZh42yISFGyaFOkayJ5DaaxeOeomYw8JX4qoo6LghivzafLvwZZ
+	 bgD7Y/nqq8CHF2Y+/Fe6uhUFJD4TwDU+JTiyNVOE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730843AbfAUPrG (ORCPT
+        id S1730859AbfAUPrO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 10:47:06 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:53360 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730640AbfAUPqS (ORCPT
+        Mon, 21 Jan 2019 10:47:14 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:34740 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730544AbfAUPrM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 10:46:18 -0500
-Received: by mail-wm1-f68.google.com with SMTP id d15so11247483wmb.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 07:46:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=lmDIKADatw1oUeQ5UHUMSZddpdBoEMSbYiY1RQRpnEA=;
-        b=coDADYUvLFZRTbz5rB1pf5MJLNgJCkEzFO1jTwKFqWh1GA28dam5wmRCxancPw/Dp5
-         GBdQkQrAkjKtJD2n5CdsmDgUylwyEBdk1BLAYCT9osd1UtM1DuYR0OzrrXAN9OAwQKBw
-         MKy9m0aUUc1OTPR9tPiYejvzgnMQUEydRVX1Q=
+        Mon, 21 Jan 2019 10:47:12 -0500
+Received: by mail-oi1-f194.google.com with SMTP id r62so14913877oie.1;
+        Mon, 21 Jan 2019 07:47:11 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=lmDIKADatw1oUeQ5UHUMSZddpdBoEMSbYiY1RQRpnEA=;
-        b=dVKMrAMN6HzY+h5pHf49JIJAPIxEe8HoLkn0IzfuSSSitgqROq3pSJa+h8sfOjLugn
-         KWKHiEKNoUtJJN6RTykYB0PBBdEC7ZF2hKARR3Lv5sj87Rt4Dro9MWVH/CgU8MDHY/SB
-         jKtqiz/uS7DAHOTa94APy4IzPx7KdIJaHksXP6qok4xskZkSP3Ll6h7igF3syTvkG0mL
-         vBu9oRx2i/MKDxpcGMemmEZG8A7+PlljHhOCr+VLOkcGJt06H4sRooTDcgb/excZj31J
-         SAkO3ZsTlvpoUzcwiqkoPh6hgJulp7K+/zsFTAI9dyxO1k6i38MJIe/bs7KUlD6zompF
-         T9NQ==
-X-Gm-Message-State: AJcUukc0rm4ljLe/LBUDE3aN9sCvoefeIQ9uptzetHvIb+2x3lyEXYal
-        +gcu+kerDVwBPlKU0H+z6+H+JrnWu1g=
-X-Google-Smtp-Source: ALg8bN6KrMDLiPVFWulMBQxmdUdOwj5FwgY6rBQBghows4GKT0uTTyxiEruIFbnYJGQhzQfvpFkoKg==
-X-Received: by 2002:a1c:2e43:: with SMTP id u64mr25885532wmu.52.1548085575943;
-        Mon, 21 Jan 2019 07:46:15 -0800 (PST)
-Received: from localhost ([49.248.61.1])
-        by smtp.gmail.com with ESMTPSA id a18sm115239503wrp.13.2019.01.21.07.46.14
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=v5Cag2bb1igmx1hitA5tXhWs1KMAnmvIryUl8ESliuY=;
+        b=cEa+uI9kWoV2tF0XbETnqgUlbBiRutVElczo9BLJuzB1xu36hJJDvOiwX4Aq+8hyjw
+         tNZF1xgRYUhy9LPYgoT1fWvvvkXel1UJORvw5Aw8exz5cMDmjWLottktySnWa9wb+dci
+         z/rHJh6KboD/cf3TFZZRGWBBTKhb7DIxG+bNbzguIKvS0y2aiglNwXSgYH/iE3+n+8ja
+         hOCGM0Z8s/hjBn4JF6k+HVl/3vxbXGdCCPePg7O8GC88StNiv8NxAbjvD+VEMn5hpvbU
+         TvhouWLqToxnshYO4nQ16FOBiAvxBbtZM8L3yUVo6ex9UnaT2ShpBWN1HgPF/D6OZRZj
+         hTGA==
+X-Gm-Message-State: AJcUukeZ+VnkUzZTr4I9QqBefVPCaAbEgRyANU4hNE/4F24Kx+Njaj5C
+        RhTW6tx8h6KSuImr20wG1Q==
+X-Google-Smtp-Source: ALg8bN56MBiQdIRF1ImH0EjENgrD0JFR079S5Qr81gZVBfJlAcbU1SH+5Cessza7vQjhuWACNVTdkQ==
+X-Received: by 2002:aca:88a:: with SMTP id 132mr6117440oii.224.1548085631296;
+        Mon, 21 Jan 2019 07:47:11 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id z7sm5933640otm.63.2019.01.21.07.47.10
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 21 Jan 2019 07:46:15 -0800 (PST)
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, viresh.kumar@linaro.org,
-        edubezval@gmail.com, swboyd@chromium.org, dianders@chromium.org,
-        mka@chromium.org, Sudeep Holla <sudeep.holla@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Wei Yongjun <weiyongjun1@huawei.com>,
-        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
-Subject: [PATCH v2 9/9] cpufreq: scpi: Use auto-registration of thermal cooling device
-Date:   Mon, 21 Jan 2019 21:10:34 +0530
-Message-Id: <95506c9919bee528838016dd2c857ebb28e19152.1548084260.git.amit.kucheria@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1548084260.git.amit.kucheria@linaro.org>
-References: <cover.1548084260.git.amit.kucheria@linaro.org>
-In-Reply-To: <cover.1548084260.git.amit.kucheria@linaro.org>
-References: <cover.1548084260.git.amit.kucheria@linaro.org>
+        Mon, 21 Jan 2019 07:47:10 -0800 (PST)
+Date:   Mon, 21 Jan 2019 09:47:10 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Nava kishore Manne <nava.manne@xilinx.com>
+Cc:     mark.rutland@arm.com, michals@xilinx.com, RAJANV@xilinx.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, JOLLYS@xilinx.com,
+        chinnikishore369@gmail.com, robh+dt@kernel.org,
+        Nava kishore Manne <nava.manne@xilinx.com>
+Subject: Re: [PATCH v3 5/6] dt-bindings: nvmem: Add bindings for ZynqMP nvmem
+ driver
+Message-ID: <20190121154710.GA31999@bogus>
+References: <20190121173835.21173-1-nava.manne@xilinx.com>
+ <20190121173835.21173-6-nava.manne@xilinx.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190121173835.21173-6-nava.manne@xilinx.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the CPUFREQ_AUTO_REGISTER_COOLING_DEV flag to allow cpufreq core to
-automatically register as a thermal cooling device.
+On Mon, 21 Jan 2019 23:08:34 +0530, Nava kishore Manne wrote:
+> Add documentation to describe Xilinx ZynqMP nvmem driver
+> bindings.
+> 
+> Signed-off-by: Nava kishore Manne <nava.manne@xilinx.com>
+> ---
+> Changes for v3:
+> 		-Added nvmem node as child of FW. Since nvmem driver is a provider.
+>   
+>  .../bindings/nvmem/xlnx,zynqmp-nvmem.txt      | 47 +++++++++++++++++++
+>  1 file changed, 47 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/nvmem/xlnx,zynqmp-nvmem.txt
+> 
 
-This allows removal of boiler plate code from the driver.
-
-Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-Acked-by: Sudeep Holla <sudeep.holla@arm.com>
----
- drivers/cpufreq/scpi-cpufreq.c | 14 ++------------
- 1 file changed, 2 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/cpufreq/scpi-cpufreq.c b/drivers/cpufreq/scpi-cpufreq.c
-index 99449738faa4..82420e8e5f0d 100644
---- a/drivers/cpufreq/scpi-cpufreq.c
-+++ b/drivers/cpufreq/scpi-cpufreq.c
-@@ -22,7 +22,6 @@
- #include <linux/cpu.h>
- #include <linux/cpufreq.h>
- #include <linux/cpumask.h>
--#include <linux/cpu_cooling.h>
- #include <linux/export.h>
- #include <linux/module.h>
- #include <linux/of_platform.h>
-@@ -34,7 +33,6 @@
- struct scpi_data {
- 	struct clk *clk;
- 	struct device *cpu_dev;
--	struct thermal_cooling_device *cdev;
- };
- 
- static struct scpi_ops *scpi_ops;
-@@ -186,7 +184,6 @@ static int scpi_cpufreq_exit(struct cpufreq_policy *policy)
- {
- 	struct scpi_data *priv = policy->driver_data;
- 
--	cpufreq_cooling_unregister(priv->cdev);
- 	clk_put(priv->clk);
- 	dev_pm_opp_free_cpufreq_table(priv->cpu_dev, &policy->freq_table);
- 	kfree(priv);
-@@ -195,23 +192,16 @@ static int scpi_cpufreq_exit(struct cpufreq_policy *policy)
- 	return 0;
- }
- 
--static void scpi_cpufreq_ready(struct cpufreq_policy *policy)
--{
--	struct scpi_data *priv = policy->driver_data;
--
--	priv->cdev = of_cpufreq_cooling_register(policy);
--}
--
- static struct cpufreq_driver scpi_cpufreq_driver = {
- 	.name	= "scpi-cpufreq",
- 	.flags	= CPUFREQ_STICKY | CPUFREQ_HAVE_GOVERNOR_PER_POLICY |
--		  CPUFREQ_NEED_INITIAL_FREQ_CHECK,
-+		  CPUFREQ_NEED_INITIAL_FREQ_CHECK |
-+		  CPUFREQ_AUTO_REGISTER_COOLING_DEV,
- 	.verify	= cpufreq_generic_frequency_table_verify,
- 	.attr	= cpufreq_generic_attr,
- 	.get	= scpi_cpufreq_get_rate,
- 	.init	= scpi_cpufreq_init,
- 	.exit	= scpi_cpufreq_exit,
--	.ready	= scpi_cpufreq_ready,
- 	.target_index	= scpi_cpufreq_set_target,
- };
- 
--- 
-2.17.1
-
+Reviewed-by: Rob Herring <robh@kernel.org>
