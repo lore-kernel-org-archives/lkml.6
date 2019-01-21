@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22D0DC2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:00:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7A42C2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:00:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5BBD20879
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:00:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A62C32084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:00:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079242;
-	bh=WFgOjWOoojWBy/l0tVKW/1nvzCPiR7k25e4VaQT8SOc=;
+	s=default; t=1548079247;
+	bh=duIVYhmo903MEFQOba9T6gjkEdZ3HgNXS3iXyJ4d+Z8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DvMbwOig1hfjR3vo31z9D09J7Yu9bLhsy993we88iP0N96gxDioba3Qj7iV+22rXq
-	 0J0NhGdBRLlQd+ypgj/GPX4ZpMlpjfN3OJw3abu7JHhLWcBrMpqfr8dqR0GqRoyzSC
-	 p+5Z20sCHDrcgDBIUoseCstSSWKA3MOfyv4rWxh8=
+	b=mPTSgVpVLPy8tO2jZMxOsOa0RLkjnCKcDk0A+htT0AS34cXGQwVnDg8/WU66SJLai
+	 R6mlRWfGBsBXSJ6bwbjQotOCWen0yuvCZKN0fKuO/6ph1expM4xz6NxAvse0ApnvS9
+	 BZmKVKtFov0jCS65UBON06AyvjD0CuMKjwTMnh2A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732491AbfAUOAj (ORCPT
+        id S1732495AbfAUOAq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:00:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47228 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 09:00:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47478 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731942AbfAUOAf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 09:00:35 -0500
+        id S1732036AbfAUOAo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 09:00:44 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0946420879;
-        Mon, 21 Jan 2019 14:00:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1733A2084C;
+        Mon, 21 Jan 2019 14:00:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548079234;
-        bh=WFgOjWOoojWBy/l0tVKW/1nvzCPiR7k25e4VaQT8SOc=;
+        s=default; t=1548079243;
+        bh=duIVYhmo903MEFQOba9T6gjkEdZ3HgNXS3iXyJ4d+Z8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YJSamXN9v1Rn3UCxWGo9CTP05BtLJTSb2gsNl9LzdZmacy1SAQl9ruEqTN88KyoUn
-         QL+lkaaD3kcL0nKRQ7MFIUlznnR0Kb2dA0MM/fxyoiSZrXrA4NiGR6ewzpoy6toKbN
-         Twoeyq/0j5vr31wooRAPHlop4ZYHJ3NCVwHkuHQk=
+        b=0YOkvfBfhcHRY90a689im6/8BkV5dDX3kaTDq0/ytVjQNYZtYytav19PitXw8yNzQ
+         g5K6zpQdkp8Usslw9/hn/YkCuYLBLvog252H0ZrNNf3e4jwZ49mggobgi2Gc5QB7+W
+         NkkHqcA9K2svKpyRTKSeSH2XlOR0ZimsmANBcXus=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
-        Johan Hovold <johan@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 55/99] net: dsa: realtek-smi: fix OF child-node lookup
-Date:   Mon, 21 Jan 2019 14:48:47 +0100
-Message-Id: <20190121134916.070292567@linuxfoundation.org>
+        stable@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4.19 57/99] arm64: kaslr: ensure randomized quantities are clean to the PoC
+Date:   Mon, 21 Jan 2019 14:48:49 +0100
+Message-Id: <20190121134916.144690270@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121134913.924726465@linuxfoundation.org>
 References: <20190121134913.924726465@linuxfoundation.org>
@@ -65,76 +66,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-commit 3f1bb6abdf19cfa89860b3bc9e7f31b44b6a0ba1 upstream.
+commit 1598ecda7b239e9232dda032bfddeed9d89fab6c upstream.
 
-Use the new of_get_compatible_child() helper to look up child nodes to
-avoid ever matching non-child nodes elsewhere in the tree.
+kaslr_early_init() is called with the kernel mapped at its
+link time offset, and if it returns with a non-zero offset,
+the kernel is unmapped and remapped again at the randomized
+offset.
 
-Also fix up the related struct device_node leaks.
+During its execution, kaslr_early_init() also randomizes the
+base of the module region and of the linear mapping of DRAM,
+and sets two variables accordingly. However, since these
+variables are assigned with the caches on, they may get lost
+during the cache maintenance that occurs when unmapping and
+remapping the kernel, so ensure that these values are cleaned
+to the PoC.
 
-Fixes: d8652956cf37 ("net: dsa: realtek-smi: Add Realtek SMI driver")
-Cc: stable <stable@vger.kernel.org>     # 4.19: 36156f9241cb0
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+Fixes: f80fb3a3d508 ("arm64: add support for kernel ASLR")
+Cc: <stable@vger.kernel.org> # v4.6+
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/dsa/realtek-smi.c |   18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+ arch/arm64/kernel/kaslr.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/net/dsa/realtek-smi.c
-+++ b/drivers/net/dsa/realtek-smi.c
-@@ -347,16 +347,17 @@ int realtek_smi_setup_mdio(struct realte
- 	struct device_node *mdio_np;
- 	int ret;
+--- a/arch/arm64/kernel/kaslr.c
++++ b/arch/arm64/kernel/kaslr.c
+@@ -14,6 +14,7 @@
+ #include <linux/sched.h>
+ #include <linux/types.h>
  
--	mdio_np = of_find_compatible_node(smi->dev->of_node, NULL,
--					  "realtek,smi-mdio");
-+	mdio_np = of_get_compatible_child(smi->dev->of_node, "realtek,smi-mdio");
- 	if (!mdio_np) {
- 		dev_err(smi->dev, "no MDIO bus node\n");
- 		return -ENODEV;
- 	}
- 
- 	smi->slave_mii_bus = devm_mdiobus_alloc(smi->dev);
--	if (!smi->slave_mii_bus)
--		return -ENOMEM;
-+	if (!smi->slave_mii_bus) {
-+		ret = -ENOMEM;
-+		goto err_put_node;
-+	}
- 	smi->slave_mii_bus->priv = smi;
- 	smi->slave_mii_bus->name = "SMI slave MII";
- 	smi->slave_mii_bus->read = realtek_smi_mdio_read;
-@@ -371,10 +372,15 @@ int realtek_smi_setup_mdio(struct realte
- 	if (ret) {
- 		dev_err(smi->dev, "unable to register MDIO bus %s\n",
- 			smi->slave_mii_bus->id);
--		of_node_put(mdio_np);
-+		goto err_put_node;
- 	}
- 
- 	return 0;
-+
-+err_put_node:
-+	of_node_put(mdio_np);
-+
-+	return ret;
++#include <asm/cacheflush.h>
+ #include <asm/fixmap.h>
+ #include <asm/kernel-pgtable.h>
+ #include <asm/memory.h>
+@@ -43,7 +44,7 @@ static __init u64 get_kaslr_seed(void *f
+ 	return ret;
  }
  
- static int realtek_smi_probe(struct platform_device *pdev)
-@@ -457,6 +463,8 @@ static int realtek_smi_remove(struct pla
- 	struct realtek_smi *smi = dev_get_drvdata(&pdev->dev);
+-static __init const u8 *get_cmdline(void *fdt)
++static __init const u8 *kaslr_get_cmdline(void *fdt)
+ {
+ 	static __initconst const u8 default_cmdline[] = CONFIG_CMDLINE;
  
- 	dsa_unregister_switch(smi->ds);
-+	if (smi->slave_mii_bus)
-+		of_node_put(smi->slave_mii_bus->dev.of_node);
- 	gpiod_set_value(smi->reset, 1);
+@@ -109,7 +110,7 @@ u64 __init kaslr_early_init(u64 dt_phys)
+ 	 * Check if 'nokaslr' appears on the command line, and
+ 	 * return 0 if that is the case.
+ 	 */
+-	cmdline = get_cmdline(fdt);
++	cmdline = kaslr_get_cmdline(fdt);
+ 	str = strstr(cmdline, "nokaslr");
+ 	if (str == cmdline || (str > cmdline && *(str - 1) == ' '))
+ 		return 0;
+@@ -169,5 +170,8 @@ u64 __init kaslr_early_init(u64 dt_phys)
+ 	module_alloc_base += (module_range * (seed & ((1 << 21) - 1))) >> 21;
+ 	module_alloc_base &= PAGE_MASK;
  
- 	return 0;
++	__flush_dcache_area(&module_alloc_base, sizeof(module_alloc_base));
++	__flush_dcache_area(&memstart_offset_seed, sizeof(memstart_offset_seed));
++
+ 	return offset;
+ }
 
 
