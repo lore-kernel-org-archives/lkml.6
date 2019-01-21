@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 900E5C2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:50:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F09CC2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:50:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F9F620861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:50:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E33072063F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:50:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078643;
-	bh=cWAHJ05vuz4OWCW29l6Z/ycY/dv/xqMBSlt64tWbwCw=;
+	s=default; t=1548078649;
+	bh=DnN6pPw8GWy+0sl/cX74ssCqKGNKyvbkxfzSwdV+sdk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vHznAoQFmnqa+LUPzUmGOVlLQKMGbRvIkWXDezHUlFvxITQ5n7b0AEa4cINqTZ0dW
-	 geKkLRyTMY4QYvmKRf7qioo+fXkveZAACX1dPaE4GZgr0eAbfbls41g3dO0ca1krVR
-	 z/RE9JF7fdy7VmMg0+8NGor+mttbTopZchL8Lp4I=
+	b=CPhm/qmG4GmGkq1BP1jyWhbvToGPP0eBaRqIgqOuHWdD4miRx+0Tlop30n/HKEZcF
+	 qJq6VQl+zDs+4hzTiLGCezu+XdeBeGAVWmpDH8KWdEXXIq2J14/Uy7KWRaJV0Pftp2
+	 UdReTmwkd/0tFgl3nXRoqFNmVom6Zze3EfxA00aQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730615AbfAUNul (ORCPT
+        id S1730627AbfAUNur (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:50:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33374 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:50:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33424 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730598AbfAUNuk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:50:40 -0500
+        id S1730598AbfAUNun (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:50:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F7422063F;
-        Mon, 21 Jan 2019 13:50:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BFCED2063F;
+        Mon, 21 Jan 2019 13:50:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078639;
-        bh=cWAHJ05vuz4OWCW29l6Z/ycY/dv/xqMBSlt64tWbwCw=;
+        s=default; t=1548078642;
+        bh=DnN6pPw8GWy+0sl/cX74ssCqKGNKyvbkxfzSwdV+sdk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qO2E3QbQeNTZRXdO+u88J2ljjD16UJY1NCVOmnG94PFOIfPN+/eUJ/gYPLIPrCPcA
-         5EgTbgvxEvjwtNQLSBNe58F2KLMHiW9iUjVvK2QMboLxJ64dT0kqUU0EedSdLEbV+8
-         uDpO/0TklbqFB2vOBLI2f76c4A1cVFTsVHX6fUxw=
+        b=CZTDEfM811UgD3nWFx6KvTyPafgJvzYftZi6utSVRcv9GLNO8ZngMJSnypFcoVCIv
+         +G7pZALQNgNv9mZnF59rnh14lqE5etGH9Airh+Nl8cxOlboAc4vGNBZc7inlkpJLvt
+         xpCJC9Lu1u7yyN6EZoYSO/FFhb74EJl08si8P0H8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
         Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.20 103/111] loop: Push loop_ctl_mutex down to loop_change_fd()
-Date:   Mon, 21 Jan 2019 14:43:37 +0100
-Message-Id: <20190121122506.772689771@linuxfoundation.org>
+Subject: [PATCH 4.20 104/111] loop: Move special partition reread handling in loop_clr_fd()
+Date:   Mon, 21 Jan 2019 14:43:38 +0100
+Message-Id: <20190121122506.834318752@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122455.819406896@linuxfoundation.org>
 References: <20190121122455.819406896@linuxfoundation.org>
@@ -67,76 +67,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jan Kara <jack@suse.cz>
 
-commit c371077000f4138ee3c15fbed50101ff24bdc91d upstream.
+commit d57f3374ba4817f7c8d26fae8a13d20ac8d31b92 upstream.
 
-Push loop_ctl_mutex down to loop_change_fd(). We will need this to be
-able to call loop_reread_partitions() without loop_ctl_mutex.
+The call of __blkdev_reread_part() from loop_reread_partition() happens
+only when we need to invalidate partitions from loop_release(). Thus
+move a detection for this into loop_clr_fd() and simplify
+loop_reread_partition().
+
+This makes loop_reread_partition() safe to use without loop_ctl_mutex
+because we use only lo->lo_number and lo->lo_file_name in case of error
+for reporting purposes (thus possibly reporting outdate information is
+not a big deal) and we are safe from 'lo' going away under us by
+elevated lo->lo_refcnt.
 
 Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/block/loop.c |   22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ drivers/block/loop.c |   33 +++++++++++++++++++--------------
+ 1 file changed, 19 insertions(+), 14 deletions(-)
 
 --- a/drivers/block/loop.c
 +++ b/drivers/block/loop.c
-@@ -691,19 +691,22 @@ static int loop_change_fd(struct loop_de
- 	struct file	*file, *old_file;
- 	int		error;
+@@ -630,18 +630,7 @@ static void loop_reread_partitions(struc
+ {
+ 	int rc;
  
-+	error = mutex_lock_killable_nested(&loop_ctl_mutex, 1);
-+	if (error)
-+		return error;
- 	error = -ENXIO;
- 	if (lo->lo_state != Lo_bound)
--		goto out;
-+		goto out_unlock;
+-	/*
+-	 * bd_mutex has been held already in release path, so don't
+-	 * acquire it if this function is called in such case.
+-	 *
+-	 * If the reread partition isn't from release path, lo_refcnt
+-	 * must be at least one and it can only become zero when the
+-	 * current holder is released.
+-	 */
+-	if (!atomic_read(&lo->lo_refcnt))
+-		rc = __blkdev_reread_part(bdev);
+-	else
+-		rc = blkdev_reread_part(bdev);
++	rc = blkdev_reread_part(bdev);
+ 	if (rc)
+ 		pr_warn("%s: partition scan of loop%d (%s) failed (rc=%d)\n",
+ 			__func__, lo->lo_number, lo->lo_file_name, rc);
+@@ -1095,8 +1084,24 @@ static int __loop_clr_fd(struct loop_dev
+ 	module_put(THIS_MODULE);
+ 	blk_mq_unfreeze_queue(lo->lo_queue);
  
- 	/* the loop device has to be read-only */
- 	error = -EINVAL;
- 	if (!(lo->lo_flags & LO_FLAGS_READ_ONLY))
--		goto out;
-+		goto out_unlock;
- 
- 	error = -EBADF;
- 	file = fget(arg);
- 	if (!file)
--		goto out;
-+		goto out_unlock;
- 
- 	error = loop_validate_file(file, bdev);
- 	if (error)
-@@ -730,11 +733,13 @@ static int loop_change_fd(struct loop_de
- 	fput(old_file);
- 	if (lo->lo_flags & LO_FLAGS_PARTSCAN)
- 		loop_reread_partitions(lo, bdev);
-+	mutex_unlock(&loop_ctl_mutex);
- 	return 0;
- 
-- out_putf:
-+out_putf:
- 	fput(file);
-- out:
-+out_unlock:
-+	mutex_unlock(&loop_ctl_mutex);
- 	return error;
- }
- 
-@@ -1469,12 +1474,7 @@ static int lo_ioctl(struct block_device
- 	case LOOP_SET_FD:
- 		return loop_set_fd(lo, mode, bdev, arg);
- 	case LOOP_CHANGE_FD:
--		err = mutex_lock_killable_nested(&loop_ctl_mutex, 1);
--		if (err)
--			return err;
--		err = loop_change_fd(lo, bdev, arg);
--		mutex_unlock(&loop_ctl_mutex);
--		break;
-+		return loop_change_fd(lo, bdev, arg);
- 	case LOOP_CLR_FD:
- 		return loop_clr_fd(lo);
- 	case LOOP_SET_STATUS:
+-	if (lo->lo_flags & LO_FLAGS_PARTSCAN && bdev)
+-		loop_reread_partitions(lo, bdev);
++	if (lo->lo_flags & LO_FLAGS_PARTSCAN && bdev) {
++		/*
++		 * bd_mutex has been held already in release path, so don't
++		 * acquire it if this function is called in such case.
++		 *
++		 * If the reread partition isn't from release path, lo_refcnt
++		 * must be at least one and it can only become zero when the
++		 * current holder is released.
++		 */
++		if (!atomic_read(&lo->lo_refcnt))
++			err = __blkdev_reread_part(bdev);
++		else
++			err = blkdev_reread_part(bdev);
++		pr_warn("%s: partition scan of loop%d failed (rc=%d)\n",
++			__func__, lo->lo_number, err);
++		/* Device is gone, no point in returning error */
++		err = 0;
++	}
+ 	lo->lo_flags = 0;
+ 	if (!part_shift)
+ 		lo->lo_disk->flags |= GENHD_FL_NO_PART_SCAN;
 
 
