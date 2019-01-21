@@ -7,46 +7,48 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2536AC2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:48:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD019C2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:48:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E923620879
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:48:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8BD392087F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:48:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548078525;
-	bh=BrIJf3qDF4kvvKWYTwgIa4kBQO+ZIRVqJLgyNXOsCPs=;
+	s=default; t=1548078529;
+	bh=LAajhNqo+nIivN7JQLUtHC3LmcTIcX7EXQq3zWGyQzg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0DjVlmqWMeFeB+EzDEcf9gBMNQWwiEcpZ8ahMk6wMLfGq6LiiSQi2nztjK7MiotLP
-	 +U+RwM83q3/FIGKjtVBoeQjxDVC0ROOgQkkXvTlfO5uqNd2kWVwtQuSvbwqgZS6fW+
-	 2UvMCpwsfIuvok+zwdMPBmOmWSlt3mEv5hM9JG+M=
+	b=rL6NJIVqctJFQ0PSY6gxskkyKqXYGHGLQ0AwXyfQ6C8nChrYqofoTK1B7c8EtaYoG
+	 ka14kbqCEh0zODm3wAmxKgpuKDE+UIwkfb7b1TRHmkgSoebgtYK0b595/p7MkoQi/U
+	 uJGOZ4eOlhVbmDJhnBwrMN5GIkH1wLeByJ//d+s0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730008AbfAUNsn (ORCPT
+        id S1729437AbfAUNss (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:48:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58706 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:48:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58778 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729397AbfAUNsj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:48:39 -0500
+        id S1730003AbfAUNsm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:48:42 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D23820861;
-        Mon, 21 Jan 2019 13:48:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CA5A02063F;
+        Mon, 21 Jan 2019 13:48:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078518;
-        bh=BrIJf3qDF4kvvKWYTwgIa4kBQO+ZIRVqJLgyNXOsCPs=;
+        s=default; t=1548078521;
+        bh=LAajhNqo+nIivN7JQLUtHC3LmcTIcX7EXQq3zWGyQzg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FV4pDzlJ1wFusqGdNfJOu0TyDZAnA1a26Choth5dYs5CcZ/G4ElNpgNR0Qu9v7sBr
-         CMVUMQoiOHqtk7drhbehpZ0nhAC/w5OxcZy+RqNYvx/yjFNAl5OVYIHAjRbUGTnbX7
-         xESJs4S0vGpT3Vin5xeoo8Fyg5CusVowxVj+3AHY=
+        b=viGwfblDx14FYJlFPBRHvLZzu1FC9MxbU6nsvOuEV3ySSJto0jN4PSw/o6k9+U655
+         C5xENlcFzmraXTfA2Z8dFd0Fgp3plmIn6WllbWIs6UPnN7oynf39Gqz8vj4eKmU8d9
+         HKJLgNXp6LRc6xAvqOkS/I+LS2IRRgnkeRiXYY/o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH 4.20 061/111] kbuild: fix single target build for external module
-Date:   Mon, 21 Jan 2019 14:42:55 +0100
-Message-Id: <20190121122502.851674683@linuxfoundation.org>
+        stable@vger.kernel.org, Samuel Holland <samuel@sholland.org>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH 4.20 062/111] kbuild: mark prepare0 as PHONY to fix external module build
+Date:   Mon, 21 Jan 2019 14:42:56 +0100
+Message-Id: <20190121122503.046066608@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122455.819406896@linuxfoundation.org>
 References: <20190121122455.819406896@linuxfoundation.org>
@@ -67,79 +69,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-commit e07db28eea38ed4e332b3a89f3995c86b713cb5b upstream.
+commit e00d8880481497474792d28c14479a9fb6752046 upstream.
 
-Building a single target in an external module fails due to missing
-.tmp_versions directory.
+Commit c3ff2a5193fa ("powerpc/32: add stack protector support")
+caused kernel panic on PowerPC when an external module is used with
+CONFIG_STACKPROTECTOR because the 'prepare' target was not executed
+for the external module build.
 
-For example,
+Commit e07db28eea38 ("kbuild: fix single target build for external
+module") turned it into a build error because the 'prepare' target is
+now executed but the 'prepare0' target is missing for the external
+module build.
 
-  $ make -C /lib/modules/$(uname -r)/build M=$PWD foo.o
+External module on arm/arm64 with CONFIG_STACKPROTECTOR_PER_TASK is
+also broken in the same way.
 
-will fail in the following way:
+Move 'PHONY += prepare0' to the common place. GNU Make is fine with
+missing rule for phony targets. I also removed the comment which is
+wrong irrespective of this commit.
 
-  CC [M]  /home/masahiro/foo/foo.o
-/bin/sh: 1: cannot create /home/masahiro/foo/.tmp_versions/foo.mod: Directory nonexistent
+I minimize the change so it can be easily backported to 4.20.x
 
-This is because $(cmd_crmodverdir) is executed only before building
-/, %/, %.ko single targets of external modules. Create .tmp_versions
-in the 'prepare' target.
+To fix v4.20, please backport e07db28eea38 ("kbuild: fix single target
+build for external module"), and then this commit.
 
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=201891
+Fixes: e07db28eea38 ("kbuild: fix single target build for external module")
+Fixes: c3ff2a5193fa ("powerpc/32: add stack protector support")
+Fixes: 189af4657186 ("ARM: smp: add support for per-task stack canaries")
+Fixes: 0a1213fa7432 ("arm64: enable per-task stack canaries")
+Cc: linux-stable <stable@vger.kernel.org> # v4.20
+Reported-by: Samuel Holland <samuel@sholland.org>
+Reported-by: Alexey Kardashevskiy <aik@ozlabs.ru>
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Tested-by: Alexey Kardashevskiy <aik@ozlabs.ru>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Makefile |   11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ Makefile |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 --- a/Makefile
 +++ b/Makefile
-@@ -1545,9 +1545,6 @@ else # KBUILD_EXTMOD
+@@ -967,6 +967,7 @@ ifdef CONFIG_STACK_VALIDATION
+   endif
+ endif
  
- # We are always building modules
- KBUILD_MODULES := 1
--PHONY += crmodverdir
--crmodverdir:
--	$(cmd_crmodverdir)
++PHONY += prepare0
  
- PHONY += $(objtree)/Module.symvers
- $(objtree)/Module.symvers:
-@@ -1559,7 +1556,7 @@ $(objtree)/Module.symvers:
+ ifeq ($(KBUILD_EXTMOD),)
+ core-y		+= kernel/ certs/ mm/ fs/ ipc/ security/ crypto/ block/
+@@ -1075,8 +1076,7 @@ scripts: scripts_basic scripts_dtc asm-g
+ # archprepare is used in arch Makefiles and when processed asm symlink,
+ # version.h and scripts_basic is processed / created.
  
- module-dirs := $(addprefix _module_,$(KBUILD_EXTMOD))
- PHONY += $(module-dirs) modules
--$(module-dirs): crmodverdir $(objtree)/Module.symvers
-+$(module-dirs): prepare $(objtree)/Module.symvers
- 	$(Q)$(MAKE) $(build)=$(patsubst _module_%,%,$@)
+-# Listed in dependency order
+-PHONY += prepare archprepare prepare0 prepare1 prepare2 prepare3
++PHONY += prepare archprepare prepare1 prepare2 prepare3
  
- modules: $(module-dirs)
-@@ -1600,7 +1597,8 @@ help:
- 
- # Dummies...
- PHONY += prepare scripts
--prepare: ;
-+prepare:
-+	$(cmd_crmodverdir)
- scripts: ;
- endif # KBUILD_EXTMOD
- 
-@@ -1724,17 +1722,14 @@ endif
- 
- # Modules
- /: prepare scripts FORCE
--	$(cmd_crmodverdir)
- 	$(Q)$(MAKE) KBUILD_MODULES=$(if $(CONFIG_MODULES),1) \
- 	$(build)=$(build-dir)
- # Make sure the latest headers are built for Documentation
- Documentation/ samples/: headers_install
- %/: prepare scripts FORCE
--	$(cmd_crmodverdir)
- 	$(Q)$(MAKE) KBUILD_MODULES=$(if $(CONFIG_MODULES),1) \
- 	$(build)=$(build-dir)
- %.ko: prepare scripts FORCE
--	$(cmd_crmodverdir)
- 	$(Q)$(MAKE) KBUILD_MODULES=$(if $(CONFIG_MODULES),1)   \
- 	$(build)=$(build-dir) $(@:.ko=.o)
- 	$(Q)$(MAKE) -f $(srctree)/scripts/Makefile.modpost
+ # prepare3 is used to check if we are building in a separate output directory,
+ # and if so do:
 
 
