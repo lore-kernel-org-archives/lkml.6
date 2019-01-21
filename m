@@ -2,113 +2,73 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD122C282E9
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:14:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87D44C282DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:14:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FFAC2085A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:14:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=mena-vt-edu.20150623.gappssmtp.com header.i=@mena-vt-edu.20150623.gappssmtp.com header.b="lcJa/9Go"
+	by mail.kernel.org (Postfix) with ESMTP id 6056E20855
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:14:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729341AbfAUIOL (ORCPT
+        id S1728489AbfAUIOy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 03:14:11 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:37000 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727980AbfAUIOK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 03:14:10 -0500
-Received: by mail-wm1-f68.google.com with SMTP id g67so9768999wmd.2
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 00:14:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mena-vt-edu.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ibxTSM7aAfMxp0mh34e5XoCF9bu27Z34+6gCZTrPT34=;
-        b=lcJa/9GoZ/Y6WfC0bylBfI5oCVTUbuuQaazcglM7FxSXk53oJ3EwA7gQ6DK+WxiFMb
-         Tlrgwvc736fHcfg+YAswmtczDWnSSBMIcGSSXYg6i0MRH/ZIX2y9cpGSxmZ+J63hsT4/
-         QTQXtg0gQ8OgWOCw2BrEXgDSkegRbpVoC0R+6nlx8MG5HL4zfx/R+JZ6gMYPKE+l1tLJ
-         AXI8c4Qwl9aiXZE+hXoOGirioCNsW/YzcD/4+02Q9kHE3d1EMNxtT20zPoj7Mcuv0039
-         pK40Sk4UGAAo1eF1IXEqWJ3/lN+mYFSzRQBsmUcXjgxuNNvUwayW8QCEFaj6ijFFXHa+
-         HtKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ibxTSM7aAfMxp0mh34e5XoCF9bu27Z34+6gCZTrPT34=;
-        b=mzBWBrlJiMWZI69ljN+B9NllugdO+tmVuDf7lWCddzj4QVF3U75aecfJ6TtxbXZ3ST
-         Z42v5FVp7lHclebi/gzwN8FqSc71NaknDT+OSdGaoFwO3dIUdYOCGPXieyRp4H+VpLn+
-         USBQ1QZIE+VK1pH73wDW/98omEagamFmY0MNR0E1yZ2Oq8rRtscwguKLd7yuEqhO6D4d
-         kM9qUyORT7GKoXCBop3z4g5bUnBEoMIeAotBsn2cJoR7/1TDYmZvr2IFQPNRnkXvcuYB
-         IFf+3NdTy6JMOaxLCW+k//MKi+5Gvo+sIHSdYSPdQprU0HkUmdwJF1NniKUBoZY0cJ3W
-         t8+Q==
-X-Gm-Message-State: AJcUukdKdoyC3I2CXgwIsomYhfClYHYWv5o8zGkXLr6/Nu4oXKntLdyV
-        frIhcNX1lW2aH2YyrIvNEiSNM9cg5Bc=
-X-Google-Smtp-Source: ALg8bN6p9RWZDpkENLmzoXwCtF9v6nAyN1W721G5G6yv2ozcu7srm3C8FwlQtG+MKjShLdYSf4N48A==
-X-Received: by 2002:a1c:9a4c:: with SMTP id c73mr23491864wme.35.1548027691743;
-        Sun, 20 Jan 2019 15:41:31 -0800 (PST)
-Received: from localhost.localdomain ([156.212.82.83])
-        by smtp.gmail.com with ESMTPSA id e9sm76576753wro.16.2019.01.20.15.41.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 20 Jan 2019 15:41:31 -0800 (PST)
-From:   Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
-To:     Paolo Bonzini <pbonzini@redhat.com>, rkrcmar@redhat.com,
-        Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        hpa@zytor.com, x86@kernel.org, kvm@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ahmedsoliman0x666@gmail.com, ovich00@gmail.com,
-        kernel-hardening@lists.openwall.com, nigel.edwards@hpe.com,
-        Boris Lukashev <blukashev@sempervictus.com>,
-        Igor Stoppa <igor.stoppa@gmail.com>
-Cc:     Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
-Subject: [RESEND PATCH V8 08/11] KVM: X86: Port ROE_MPROTECT_CHUNK to x86
-Date:   Mon, 21 Jan 2019 01:39:37 +0200
-Message-Id: <20190120233940.15282-9-ahmedsoliman@mena.vt.edu>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20190120233940.15282-1-ahmedsoliman@mena.vt.edu>
-References: <20190120233940.15282-1-ahmedsoliman@mena.vt.edu>
+        Mon, 21 Jan 2019 03:14:54 -0500
+Received: from ms.lwn.net ([45.79.88.28]:33112 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727479AbfAUIOy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 03:14:54 -0500
+Received: from localhost.localdomain (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id 0096BAB9;
+        Mon, 21 Jan 2019 02:18:12 +0000 (UTC)
+Date:   Sun, 20 Jan 2019 19:18:08 -0700
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Corentin Labbe <clabbe@baylibre.com>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Documentation: DMA-API: fix two typos
+Message-ID: <20190120191808.3570ca8f@lwn.net>
+In-Reply-To: <1547818702-40035-1-git-send-email-clabbe@baylibre.com>
+References: <1547818702-40035-1-git-send-email-clabbe@baylibre.com>
+Organization: LWN.net
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Apply d->memslot->partial_roe_bitmap to shadow page table entries
-too.
+On Fri, 18 Jan 2019 13:38:22 +0000
+Corentin Labbe <clabbe@baylibre.com> wrote:
 
-Signed-off-by: Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
----
- arch/x86/kvm/roe.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+> This patch fixes two typos, a missing "e" and dma-api/driver_filter was
+> incorrectly typed dma-api/driver-filter.
+> 
+> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
 
-diff --git a/arch/x86/kvm/roe.c b/arch/x86/kvm/roe.c
-index f787106be8..700f69823b 100644
---- a/arch/x86/kvm/roe.c
-+++ b/arch/x86/kvm/roe.c
-@@ -25,11 +25,14 @@ static bool __rmap_write_protect_roe(struct kvm *kvm,
- 	struct rmap_iterator iter;
- 	bool prot;
- 	bool flush = false;
-+	void *full_bmp =  memslot->roe_bitmap;
-+	void *part_bmp = memslot->partial_roe_bitmap;
- 
- 	for_each_rmap_spte(rmap_head, &iter, sptep) {
- 		int idx = spte_to_gfn(sptep) - memslot->base_gfn;
- 
--		prot = !test_bit(idx, memslot->roe_bitmap) && pt_protect;
-+		prot = !(test_bit(idx, full_bmp) || test_bit(idx, part_bmp));
-+		prot = prot && pt_protect;
- 		flush |= spte_write_protect(sptep, prot);
- 	}
- 	return flush;
--- 
-2.19.2
+So I've applied this, but...
 
+>  Documentation/DMA-API.txt | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/DMA-API.txt b/Documentation/DMA-API.txt
+> index 78114ee63057..bd009f3069f8 100644
+> --- a/Documentation/DMA-API.txt
+> +++ b/Documentation/DMA-API.txt
+> @@ -531,7 +531,7 @@ that simply cannot make consistent memory.
+>  		       dma_addr_t dma_handle, unsigned long attrs)
+>  
+>  Free memory allocated by the dma_alloc_attrs().  All parameters common
+> -parameters must identical to those otherwise passed to dma_fre_coherent,
+> +parameters must identical to those otherwise passed to dma_free_coherent,
+
+That sentence clearly needs a lot more help than just an extra "e"; I
+took the liberty of fixing it up on the way in.
+
+Thanks,
+
+jon
