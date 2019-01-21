@@ -7,222 +7,150 @@ X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F5E0C282DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:55:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4563CC282F6
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:56:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43D7D2084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:55:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF65E2084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:56:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="wL5m/Oyg"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="l8qKDjEa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728152AbfAUJzJ (ORCPT
+        id S1728001AbfAUJ4v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 04:55:09 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:51472 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727240AbfAUJzJ (ORCPT
+        Mon, 21 Jan 2019 04:56:51 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:47379 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726523AbfAUJ4u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 04:55:09 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0L9t668020126;
-        Mon, 21 Jan 2019 03:55:06 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1548064506;
-        bh=V22rgboLW80Cn2cGzd7ZKw3/rGoAEGZdc3f2GUjIuhw=;
-        h=Subject:To:References:CC:From:Date:In-Reply-To;
-        b=wL5m/Oyg61nIT34Dm+DaFaSMBlprW37JlW6NoliMrh2FZxCkN7HugEjxvH8w+7nOh
-         LgSaIvfC1lX4Z2PpjyHE92qdLIQhO2rpiVIbDIpKEscA5JtfDIwfTpnWzFQVJMvKk8
-         EQxvdWXozyUlgOS6jpWb5RatZY2Cle08J55jeCGU=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0L9t6Dj028182
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 21 Jan 2019 03:55:06 -0600
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 21
- Jan 2019 03:55:06 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 21 Jan 2019 03:55:06 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0L9t4KH000777;
-        Mon, 21 Jan 2019 03:55:05 -0600
-Subject: Re: [PATCH 2/3] dt-bindings: phy: ti: Add dt binding documentation
- for SERDES in AM654x SoC
-To:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>
-References: <20190121064813.18444-1-kishon@ti.com>
- <20190121064813.18444-3-kishon@ti.com>
-CC:     Sekhar Nori <nsekhar@ti.com>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-From:   Roger Quadros <rogerq@ti.com>
-Message-ID: <5C4596F8.7030009@ti.com>
-Date:   Mon, 21 Jan 2019 11:55:04 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.6.0
+        Mon, 21 Jan 2019 04:56:50 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190121095649euoutp02006acdb6ef520f2631bd3a4abf70d702~71I9tEVrz2880828808euoutp02w
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 09:56:49 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190121095649euoutp02006acdb6ef520f2631bd3a4abf70d702~71I9tEVrz2880828808euoutp02w
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1548064609;
+        bh=gAeUY3NdYAY5YJdeVEXrL6jG4LkqBcVSY6RfdqMMW2I=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=l8qKDjEayk4Yr96K0AIbmfDa9VTITkcdCTGQlDcKXX60DuNJdZ17TvafQWUYP9Ilq
+         ndE8+R34w5dtWXoTAJ8IBa2OMB/yezOUarOqXi5kJDoFF+sCiGeTO2Nn7YRRkCVkRZ
+         gTsWuiV2txg9hB122N0szzRNwrXaCyDNVInzWp1U=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190121095648eucas1p21816af0a6ea41aacdbf4f447f0fa64db~71I9Cz1wK2631826318eucas1p2A;
+        Mon, 21 Jan 2019 09:56:48 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id BA.B3.04806.067954C5; Mon, 21
+        Jan 2019 09:56:48 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190121095647eucas1p2c01e40031159e1f5399f5074ad8635c5~71I8I9rCU2510325103eucas1p2r;
+        Mon, 21 Jan 2019 09:56:47 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190121095647eusmtrp10ed828af62112af5ec11f98d3d996d25~71I76gjmF1832718327eusmtrp15;
+        Mon, 21 Jan 2019 09:56:47 +0000 (GMT)
+X-AuditID: cbfec7f5-367ff700000012c6-6e-5c4597609a25
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id D7.E5.04284.F57954C5; Mon, 21
+        Jan 2019 09:56:47 +0000 (GMT)
+Received: from [106.116.147.30] (unknown [106.116.147.30]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190121095646eusmtip157d9fe7677eac156ad0e380c24bd119d~71I7ZUW5y0133101331eusmtip1b;
+        Mon, 21 Jan 2019 09:56:46 +0000 (GMT)
+Subject: Re: [PATCH] usb: dwc3: exynos: Fix error handling of
+ clk_prepare_enable
+To:     Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Felipe Balbi <balbi@kernel.org>
+Cc:     Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ldv-project@linuxtesting.org
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <abc0f943-1d34-cc44-dc65-0428d6188354@samsung.com>
+Date:   Mon, 21 Jan 2019 10:56:46 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+        Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190121064813.18444-3-kishon@ti.com>
+In-Reply-To: <1547846257-19970-1-git-send-email-khoroshilov@ispras.ru>
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRju2znbzmbHvh01XyoURnaDTM3ggNENrUEQaQWZo1p20MjN2Lzk
+        BTJiVlOwe9taVJIplrbmJbutWuUpitTUMCkVtD+uqaRWRlmdnSz/Pd/7PM/7vA98FMHUSedQ
+        +wxZnNGgy1DLlGRj88TrpbvPJ2ijHlyfzTYXD8jZsn4vwTbV3pGzLS1OOVtZYiFZV/9bKdt+
+        1yFjrS1uCVt+zUysUWisk2eRxlV9XKZ57/0p1dRdPaQZdYVtlu5QrtzLZezL4YzLVu1Wpj/q
+        tJEHOhQHJ+rvSYvQkNyCFBTgWPhkvUdYkJJicBUCX8Okn2DwGAK+b5tIjCL4dew5MeXwVPBy
+        kahEMGGrkYiOYQTOMZWAg3ASvDPbkICDcSJM9DYiwUDgIQTFtZ3+TTIcDRafRSZgGq+CseFe
+        /yISR8A5c/OfBIoKwVowtytFiQpe2AZIASvweqhwXvTLCRwOt30OQsSh0D1wSSJkAXbLoYr/
+        SYpXx8No+00k4iAY5Ov/9p8HL0+XkqLhCIKjVrtcfJQiaHA0yURVHDzh26TCRQReDDfvLhPH
+        a6HG2S8RxoADocunEo8IhFON5wlxTMOxYkZULwA7X/sv9nHrG+IEUtunVbNPq2OfVsf+P/cy
+        IqtRKJdt0qdxpuUGLjfSpNObsg1pkamZehf685VeTvLjTcj9Y48HYQqpZ9LfeuK1jFSXY8rT
+        exBQhDqY9m5I0DL0Xl1ePmfM3GXMzuBMHjSXItWhdMGMvhQGp+myuP0cd4AzTrESSjGnCD3N
+        m5XvKwz7wnSsI1LDV8ds3RL7fWfg/PFNlSMVM+MT8UlnyEP3D7c72ZO68GTU19Tmj8m9ddvb
+        Fl2oDxssKNm4gsdxSWULy1UpZ+CDN9Ehb3LfHu76nMtERmuf9QVga8StVvroYE/Jq3zzufuq
+        G4dHXBti6LIr47bwx92Fu5gANWlK10UvIYwm3W+ItTtqRgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGIsWRmVeSWpSXmKPExsVy+t/xu7rx011jDFa9ELM41vaE3aL/8Wtm
+        ix3rdrJbnD+/gd1ieXcXi8Wmx9dYLS7vmsNmMeP8PiaLRctamR04PWb8m8rosWlVJ5vHndd/
+        WT02L6n3+LxJLoA1Ss+mKL+0JFUhI7+4xFYp2tDCSM/Q0kLPyMRSz9DYPNbKyFRJ384mJTUn
+        syy1SN8uQS/jwNWZLAVXOCt+btnN2sD4jr2LkZNDQsBE4tDS40A2F4eQwFJGibv79rNAJGQk
+        Tk5rYIWwhSX+XOtigyh6yyjx5s5TsG5hgSCJm60zGUFsEYFAifmvboDFmQXeMUrMuyEFYgsJ
+        zGSUuPe5GsRmEzCU6HoLMoiTg1fATuLL+/tMIDaLgKrEtNZjYL2iAjESs570sUPUCEqcnPkE
+        7CBOATeJpRvmMkHMV5f4M+8SM4QtL7H97RwoW1zi1pP5TBMYhWYhaZ+FpGUWkpZZSFoWMLKs
+        YhRJLS3OTc8tNtQrTswtLs1L10vOz93ECIzDbcd+bt7BeGlj8CFGAQ5GJR7eH/dcYoRYE8uK
+        K3MPMUpwMCuJ8L52d40R4k1JrKxKLcqPLyrNSS0+xGgK9NxEZinR5HxgisgriTc0NTS3sDQ0
+        NzY3NrNQEuc9b1AZJSSQnliSmp2aWpBaBNPHxMEp1cAoOV0nQ17l69ztzRElMok8Jz47yqlF
+        2C9R2sctx3n/8a0liUssn0obv9t5VYhDPMPX6XFTU4BfmlO5zaZ5Cmm2PJ7hd8716R241Oxk
+        2vnhvVU3V7/bq6yn8o93fF2Q+seK57/MhAqv7VMd+rz8TLJdwz/xfY/WNJLtm+me9G77K+lD
+        UwP+lymxFGckGmoxFxUnAgDuHpbp2QIAAA==
+X-CMS-MailID: 20190121095647eucas1p2c01e40031159e1f5399f5074ad8635c5
+X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-RootMTR: 20190118211823epcas1p32d11bff9f7822eb48c0387c85a94da70
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190118211823epcas1p32d11bff9f7822eb48c0387c85a94da70
+References: <CGME20190118211823epcas1p32d11bff9f7822eb48c0387c85a94da70@epcas1p3.samsung.com>
+        <1547846257-19970-1-git-send-email-khoroshilov@ispras.ru>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kishon,
+Hi Alexey,
 
-On 21/01/19 08:48, Kishon Vijay Abraham I wrote:
-> AM654x has two SERDES instances. Each instance has three input clocks
-> (left input, externel reference clock and right input) and two output
-> clocks (left output and right output) in addition to a PLL mux clock
-> which the SERDES uses for Clock Multiplier Unit (CMU refclock).
-> The PLL mux clock can select from one of the three input clocks.
-> The right output can select between left input and external reference
-> clock while the left output can select between the right input and
-> external reference clock.
-> 
-> The left and right input reference clock of SERDES0 and SERDES1
-> respectively are connected to the SoC clock. In the case of two lane
-> SERDES personality card, the left input of SERDES1 is connected to
-> the right output of SERDES0 in a chained fashion.
-> 
-> See section "Reference Clock Distribution" of AM65x Sitara Processors
-> TRM (SPRUID7 – April 2018) for more details.
-> 
-> Add dt-binding documentation in order to represent all these different
-> configurations in device tree.
-> 
-> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+On 2019-01-18 22:17, Alexey Khoroshilov wrote:
+> If clk_prepare_enable() fails in dwc3_exynos_probe(),
+> exynos->clks[0] is left undisabled because of usage
+> preincrement in while condition.
+>
+> Found by Linux Driver Verification project (linuxtesting.org).
+>
+> Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+> Fixes: 9f2168367a0a ("usb: dwc3: exynos: Rework clock handling and prepare for new variants")
+
+My fault. There is also a similar issue dwc3_exynos_resume(), so please
+fix it too if possible.
+
 > ---
->  .../devicetree/bindings/phy/ti-phy.txt        | 77 +++++++++++++++++++
->  include/dt-bindings/phy/phy-am654-serdes.h    | 13 ++++
->  2 files changed, 90 insertions(+)
->  create mode 100644 include/dt-bindings/phy/phy-am654-serdes.h
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/ti-phy.txt b/Documentation/devicetree/bindings/phy/ti-phy.txt
-> index 57dfda8a7a1d..fc2fff6b2c37 100644
-> --- a/Documentation/devicetree/bindings/phy/ti-phy.txt
-> +++ b/Documentation/devicetree/bindings/phy/ti-phy.txt
-> @@ -132,3 +132,80 @@ sata_phy: phy@4a096000 {
->  	syscon-pllreset = <&scm_conf 0x3fc>;
->  	#phy-cells = <0>;
->  };
-> +
-> +
-> +TI AM654 SERDES
-> +
-> +Required properties:
-> + - compatible: Should be "ti,phy-am654-serdes"
-> + - reg : Address and length of the register set for the device.
-> + - reg-names: Should be "serdes" which corresponds to the register space
-> +	populated in "reg".
-> + - #phy-cells: determine the number of cells that should be given in the
-> +	phandle while referencing this phy. Should be "2". The 1st cell
-> +	corresponds to the phy type (should be one of the types specified in
-> +	include/dt-bindings/phy/phy.h) and the 2nd cell should be the serdes
-> +	lane function.
-> +	If SERDES0 is referenced 2nd cell should be:
-> +		0 - USB3
-> +		1 - PCIe0 Lane0
-> +		2 - ICSS2 SGMII Lane0
-> +	If SERDES1 is referenced 2nd cell should be:
-> +		0 - PCIe1 Lane0
-> +		1 - PCIe0 Lane1
-> +		2 - ICSS2 SGMII Lane1
+>  drivers/usb/dwc3/dwc3-exynos.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
+> index cb7fcd7c0ad8..e7f6cff27b9a 100644
+> --- a/drivers/usb/dwc3/dwc3-exynos.c
+> +++ b/drivers/usb/dwc3/dwc3-exynos.c
+> @@ -78,7 +78,7 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
+>  	for (i = 0; i < exynos->num_clks; i++) {
+>  		ret = clk_prepare_enable(exynos->clks[i]);
+>  		if (ret) {
+> -			while (--i > 0)
+> +			while (i-- > 0)
+>  				clk_disable_unprepare(exynos->clks[i]);
+>  			return ret;
+>  		}
 
-Can we have a way to change default lane at probe time without having any user dependencies.
-
-e.g. To work in USB2.0 mode I don't want SERDES0 to be in lane 0 (which is SoC default).
-But at the same time the application might not be using PCIe or SGMII, so there is no
-PHY user to change the lane to 1 or 2.
-
-A DT property to allow selection of a default lane at probe time would help.
-
-
-> + - clocks: List of clock-specifiers representing the input to the SERDES.
-> +	Should have 3 items representing the left input clock, external
-> +	reference clock and right input clock in that order.
-> + - clock-output-names: List of clock names for each of the clock outputs of
-> +	SERDES. Should have 3 items for CMU reference clock,
-> +	left output clock and right output clock in that order.
-> + - assigned-clocks: As defined in
-> +	Documentation/devicetree/bindings/clock/clock-bindings.txt
-> + - assigned-clock-parents: As defined in
-> +	Documentation/devicetree/bindings/clock/clock-bindings.txt
-> + - #clock-cells: Should be <1> to choose between the 3 output clocks.
-> +	Defined in Documentation/devicetree/bindings/clock/clock-bindings.txt
-> +
-> +   The following macros are defined in dt-bindings/phy/phy-am654-serdes.h
-> +   for selecting the correct reference clock. This can be used while
-> +   specifying the clocks created by SERDES.
-> +	=> AM654_SERDES_CMU_REFCLK
-> +	=> AM654_SERDES_LO_REFCLK
-> +	=> AM654_SERDES_RO_REFCLK
-> +
-> + - mux-controls: phandle to the multiplexer
-> +
-> +Example:
-> +
-> +Example for SERDES0 is given below. It has 3 clock inputs;
-> +left input reference clock as indicated by <&k3_clks 153 4>, external
-> +reference clock as indicated by <&k3_clks 153 1> and right input
-> +reference clock as indicated by <&serdes1 AM654_SERDES_LO_REFCLK>. (The
-> +right input of SERDES0 is connected to the left output of SERDES1).
-> +
-> +SERDES0 registers 3 clock outputs as indicated in clock-output-names. The
-> +first refers to the CMU reference clock, second refers to the left output
-> +reference clock and the third refers to the right output reference clock.
-> +
-> +The assigned-clocks and assigned-clock-parents is used here to set the
-> +parent of left input reference clock to MAINHSDIV_CLKOUT4 and parent of
-> +CMU reference clock to left input reference clock.
-> +
-> +serdes0: serdes@900000 {
-> +	compatible = "ti,phy-am654-serdes";
-> +	reg = <0x0 0x900000 0x0 0x2000>;
-> +	reg-names = "serdes";
-> +	#phy-cells = <2>;
-> +	power-domains = <&k3_pds 153>;
-> +	clocks = <&k3_clks 153 4>, <&k3_clks 153 1>,
-> +			<&serdes1 AM654_SERDES_LO_REFCLK>;
-> +	clock-output-names = "serdes0_cmu_refclk", "serdes0_lo_refclk",
-> +				"serdes0_ro_refclk";
-> +	assigned-clocks = <&k3_clks 153 4>, <&serdes0 AM654_SERDES_CMU_REFCLK>;
-> +	assigned-clock-parents = <&k3_clks 153 8>, <&k3_clks 153 4>;
-> +	ti,serdes-clk = <&serdes0_clk>;
-> +	mux-controls = <&serdes_mux 0>;
-> +	#clock-cells = <1>;
-> +	status = "disabled";
-
-We don't keep status "disabled" for AM6. All nodes are enabled by default.
-
-> +};
-> diff --git a/include/dt-bindings/phy/phy-am654-serdes.h b/include/dt-bindings/phy/phy-am654-serdes.h
-> new file mode 100644
-> index 000000000000..e8d901729ed9
-> --- /dev/null
-> +++ b/include/dt-bindings/phy/phy-am654-serdes.h
-> @@ -0,0 +1,13 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * This header provides constants for AM654 SERDES.
-> + */
-> +
-> +#ifndef _DT_BINDINGS_AM654_SERDES
-> +#define _DT_BINDINGS_AM654_SERDES
-> +
-> +#define AM654_SERDES_CMU_REFCLK	0
-> +#define AM654_SERDES_LO_REFCLK	1
-> +#define AM654_SERDES_RO_REFCLK	2
-> +
-> +#endif /* _DT_BINDINGS_AM654_SERDES */
-> 
-
-cheers,
--roger
-
+Best regards
 -- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
