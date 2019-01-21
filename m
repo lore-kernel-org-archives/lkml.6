@@ -2,151 +2,143 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFB52C37134
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 20:24:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEE65C37120
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 20:24:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8164A20844
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 20:24:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5F9B20844
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 20:24:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="finSJ1MZ"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="vvydNmFy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728129AbfAUUYZ (ORCPT
+        id S1728219AbfAUUYa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 15:24:25 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:46087 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727338AbfAUUYY (ORCPT
+        Mon, 21 Jan 2019 15:24:30 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:41754 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727384AbfAUUYY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 21 Jan 2019 15:24:24 -0500
-Received: by mail-ua1-f66.google.com with SMTP id v24so7306245uap.13
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 12:24:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qipEnN/z0dbSkPyeoMeYCi9POoQUdns81Zz8WAtYNEk=;
-        b=finSJ1MZyXpyTrR9FJFmvOzPS0SECNtBnajZptI1gbIsqJ7Ir+CZqy85IR/yArG01G
-         Q9R3YIdWwEH0iIrG+3Br8t8jg2V874hRFpHrVAXN5fF5ST6GaBW9Uv9i/TpGpxIMkMcq
-         qJl4j4bPbvlRg/D/kyfne8uGJVNxvt2Nk41w0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qipEnN/z0dbSkPyeoMeYCi9POoQUdns81Zz8WAtYNEk=;
-        b=Y9WATddUq7JU7+yF2nNMDzUx+BbF4fRw5ZqibswAncevQrPrN018hsitOIcCUjFL/A
-         g/VGmz/tcfMBE62DRC8dqc0mhVnuSRslsk25u6GmpxQGO/uTAipJ2TL55vZYOEUwaYwN
-         ODtVRCuF1IfTnCMlposZuDU4AwgMSLvBuWm+CFRg9u4JrkCgLrBpWbu8zfo0JQ+VE1Ku
-         2sBmR5dT94OhhW0PHwmyEoBIwQOlxqiqhn3VQWhmcO7iey8t+TbMEPo6iVVr2k7W5H/x
-         PFBt3/ldrqASlmvzAuiPtstrGIU6cOa6QenH+o8935TQUsXLUy4uvbR+Dfniy20JBwdc
-         TjsA==
-X-Gm-Message-State: AJcUuke12fXku/pI2Lm9fABiO8Ww6fOjKSpfvMsPXJKGaNKRlxMVjWFM
-        fteSz42LStpVWUc2WynEYSbMo/6xJpQ=
-X-Google-Smtp-Source: ALg8bN4eGxQrHSFiARsDeK2/bgsDL5Dtk9sMS9ubX41fHcV4p5IdCo1Nb3a95BwtWHHemh1ox4b87Q==
-X-Received: by 2002:ab0:694f:: with SMTP id c15mr11023314uas.43.1548102262395;
-        Mon, 21 Jan 2019 12:24:22 -0800 (PST)
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
-        by smtp.gmail.com with ESMTPSA id w65sm27342482vsc.16.2019.01.21.12.24.21
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 21 Jan 2019 12:24:21 -0800 (PST)
-Received: by mail-vs1-f43.google.com with SMTP id x1so13347915vsc.10
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 12:24:21 -0800 (PST)
-X-Received: by 2002:a67:e199:: with SMTP id e25mr12926582vsl.188.1548102260847;
- Mon, 21 Jan 2019 12:24:20 -0800 (PST)
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0LKOAIV085156;
+        Mon, 21 Jan 2019 14:24:10 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1548102250;
+        bh=Y6clMbjs3UAgpjX9jOCJO8phMjQgQnd5LACs21ik7GU=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=vvydNmFyrRd12Md7aIjUXK8g/ROpNmVPNct39mNHQ295drwdIuCLd4/+agvoT28/a
+         YA3OztcA0KIyRYQz4UGDfcm117xUD8kZUAasZCs2C72gQKrbgUKlIl7oCG8rdcTKkJ
+         SDv5el2ZQ0akZNlBtdrpIP1YVfqM2Civ8vS5mAyQ=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0LKOA45041379
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 21 Jan 2019 14:24:10 -0600
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 21
+ Jan 2019 14:24:10 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Mon, 21 Jan 2019 14:24:10 -0600
+Received: from [172.22.66.82] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0LKO9Lb029285;
+        Mon, 21 Jan 2019 14:24:09 -0600
+Subject: Re: [PATCH 3/4] dma-buf: add support for mapping with dma mapping
+ attributes
+To:     Liam Mark <lmark@codeaurora.org>
+CC:     Christoph Hellwig <hch@infradead.org>,
+        Laura Abbott <labbott@redhat.com>, <sumit.semwal@linaro.org>,
+        <arve@android.com>, <tkjos@android.com>, <maco@android.com>,
+        <joel@joelfernandes.org>, <christian@brauner.io>,
+        <devel@driverdev.osuosl.org>, <dri-devel@lists.freedesktop.org>,
+        <linaro-mm-sig@lists.linaro.org>, <linux-kernel@vger.kernel.org>,
+        <john.stultz@linaro.org>
+References: <1547836667-13695-1-git-send-email-lmark@codeaurora.org>
+ <1547836667-13695-4-git-send-email-lmark@codeaurora.org>
+ <20190119102527.GA17723@infradead.org>
+ <7ae73c39-9049-bcf6-775f-b0817ba0ec5f@redhat.com>
+ <20190121083046.GD12420@infradead.org>
+ <alpine.DEB.2.10.1901211142560.9631@lmark-linux.qualcomm.com>
+ <0ed7875f-15e9-184f-5b99-9a53df7c8d14@ti.com>
+ <alpine.DEB.2.10.1901211214570.11004@lmark-linux.qualcomm.com>
+From:   "Andrew F. Davis" <afd@ti.com>
+Message-ID: <4925c9db-fc73-1ccb-1766-ef68d014d55a@ti.com>
+Date:   Mon, 21 Jan 2019 14:24:09 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <001a113f711ae2110c055f45acb8@google.com> <20171212220647.GJ185376@gmail.com>
- <CAGXu5jLcuE-h9V04fTtoSfz9mZdVeH1zfJOpRncK2NZkv2gsnQ@mail.gmail.com>
- <CACT4Y+aeSz05wDyStT75OFFi_aTyxbfzz7Z6jJ6FJsLNN3Pdtg@mail.gmail.com> <d1e2488f-a969-30d4-5023-6fa85a4e3833@I-love.SAKURA.ne.jp>
-In-Reply-To: <d1e2488f-a969-30d4-5023-6fa85a4e3833@I-love.SAKURA.ne.jp>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 22 Jan 2019 09:24:07 +1300
-X-Gmail-Original-Message-ID: <CAGXu5jL0JhcDt4u32c-60hYY_k-8u=42NHyz9bt3wNuTkmjOfQ@mail.gmail.com>
-Message-ID: <CAGXu5jL0JhcDt4u32c-60hYY_k-8u=42NHyz9bt3wNuTkmjOfQ@mail.gmail.com>
-Subject: Re: [PATCH] fs: Allow opening only regular files during execve().
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Eric Biggers <ebiggers3@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        syzbot 
-        <bot+e93a80c1bb7c5c56e522461c149f8bf55eab1b2b@syzkaller.appspotmail.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <alpine.DEB.2.10.1901211214570.11004@lmark-linux.qualcomm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 11:15 PM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
->
-> On Tue, Dec 12, 2017 at 2:06 PM, Eric Biggers <ebiggers3@gmail.com> wrote:
-> > I'm not sure what the fix will be.  Maybe the proc handlers should take a
-> > different lock instead of cred_guard_mutex.  Or perhaps execve should check that
-> > the file is a regular file before it attempts to open it.
->
-> We can easily distinguish open() from execve() and open() from others. ;-)
->
-> From a8c559566f743eeec31c3cf5bab7a90b1ff7f78b Mon Sep 17 00:00:00 2001
-> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Date: Mon, 21 Jan 2019 13:55:11 +0900
-> Subject: [PATCH] fs: Allow opening only regular files during execve().
->
-> syzbot is hitting lockdep warning [1] due to trying to open a fifo during
-> an execve() operation. But we don't need to open non regular files during
-> an execve() operation, for all files which we will need are the executable
-> file itself, the interpreter program, and libraries like ld-linux.so.2
-> required by the executable file or the interpreter program.
->
-> Since the manpage for execve(2) says that execve() returns EACCES when
-> the file or a script interpreter is not a regular file, and we set
-> current->in_execve flag during an execve() operation, let's bail out
-> when current thread tried to open a non regular file during an execve()
-> operation.
->
-> [1] https://syzkaller.appspot.com/bug?id=b5095bfec44ec84213bac54742a82483aad578ce
->
-> Reported-by: syzbot <syzbot+e93a80c1bb7c5c56e522461c149f8bf55eab1b2b@syzkaller.appspotmail.com>
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+On 1/21/19 2:20 PM, Liam Mark wrote:
+> On Mon, 21 Jan 2019, Andrew F. Davis wrote:
+> 
+>> On 1/21/19 1:44 PM, Liam Mark wrote:
+>>> On Mon, 21 Jan 2019, Christoph Hellwig wrote:
+>>>
+>>>> On Sat, Jan 19, 2019 at 08:50:41AM -0800, Laura Abbott wrote:
+>>>>>> And who is going to decide which ones to pass?  And who documents
+>>>>>> which ones are safe?
+>>>>>>
+>>>>>> I'd much rather have explicit, well documented dma-buf flags that
+>>>>>> might get translated to the DMA API flags, which are not error checked,
+>>>>>> not very well documented and way to easy to get wrong.
+>>>>>>
+>>>>>
+>>>>> I'm not sure having flags in dma-buf really solves anything
+>>>>> given drivers can use the attributes directly with dma_map
+>>>>> anyway, which is what we're looking to do. The intention
+>>>>> is for the driver creating the dma_buf attachment to have
+>>>>> the knowledge of which flags to use.
+>>>>
+>>>> Well, there are very few flags that you can simply use for all calls of
+>>>> dma_map*.  And given how badly these flags are defined I just don't want
+>>>> people to add more places where they indirectly use these flags, as
+>>>> it will be more than enough work to clean up the current mess.
+>>>>
+>>>> What flag(s) do you want to pass this way, btw?  Maybe that is where
+>>>> the problem is.
+>>>>
+>>>
+>>> The main use case is for allowing clients to pass in 
+>>> DMA_ATTR_SKIP_CPU_SYNC in order to skip the default cache maintenance 
+>>> which happens in dma_buf_map_attachment and dma_buf_unmap_attachment. In 
+>>> ION the buffers aren't usually accessed from the CPU so this allows 
+>>> clients to often avoid doing unnecessary cache maintenance.
+>>>
+>>
+>> How can a client know that no CPU access has occurred that needs to be
+>> flushed out?
+>>
+> 
+> I have left this to clients, but if they own the buffer they can have the 
+> knowledge as to whether CPU access is needed in that use case (example for 
+> post-processing).
+> 
+> For example with the previous version of ION we left all decisions of 
+> whether cache maintenance was required up to the client, they would use 
+> the ION cache maintenance IOCTL to force cache maintenance only when it 
+> was required.
+> In these cases almost all of the access was being done by the device and 
+> in the rare cases CPU access was required clients would initiate the 
+> required cache maintenance before and after the CPU access.
+> 
 
-I like it!
+I think we have different definitions of "client", I'm talking about the
+DMA-BUF client (the importer), that is who can set this flag. It seems
+you mean the userspace application, which has no control over this flag.
 
-Acked-by: Kees Cook <keescook@chromium.org>
-
--Kees
-
-> ---
->  fs/open.c | 6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/fs/open.c b/fs/open.c
-> index 0285ce7dbd51..b2e7b04ade46 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -733,6 +733,12 @@ static int do_dentry_open(struct file *f,
->                 return 0;
->         }
->
-> +       /* The file or a script interpreter has to be a regular file. */
-> +       if (unlikely(current->in_execve && !S_ISREG(inode->i_mode))) {
-> +               error = -EACCES;
-> +               goto cleanup_file;
-> +       }
-> +
->         if (f->f_mode & FMODE_WRITE && !special_file(inode->i_mode)) {
->                 error = get_write_access(inode);
->                 if (unlikely(error))
-> --
-> 2.17.1
-
-
-
--- 
-Kees Cook
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
