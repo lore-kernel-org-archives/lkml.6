@@ -2,211 +2,321 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.3 required=3.0 tests=DATE_IN_PAST_06_12,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,PLING_QUERY,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F18EC31D63
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:19:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F437C31D64
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:19:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36A4A20823
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:19:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1729F2084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:19:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PUKS9ULT"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KBNxFH2+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727041AbfAUHTH (ORCPT
+        id S1728448AbfAUHTI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 02:19:07 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:33688 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727169AbfAUHTF (ORCPT
+        Mon, 21 Jan 2019 02:19:08 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:46981 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728404AbfAUHTF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 21 Jan 2019 02:19:05 -0500
-Received: by mail-wr1-f66.google.com with SMTP id c14so22029945wrr.0;
-        Sun, 20 Jan 2019 23:19:03 -0800 (PST)
+Received: by mail-pl1-f194.google.com with SMTP id t13so9352186ply.13
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Jan 2019 23:19:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mk/j+BSGz6dVS/plPYQdwoqk6n0f8DCpTutXyR8+Se8=;
-        b=PUKS9ULTj9Cn+GS5fK3qe9ldH0HCraiycg3dkxWAWculsLrZM7TwO8EmFZTlSp9UaM
-         GvP98Vb0cWSSlnWhgBxY7SUo/n+xedChEGgC5Po29jh05/jD+Y/x7+3L9A9aKShP1i7O
-         54IloxpunpCWj5Q1luj3wx0OeZZOZ7lYWKyJFyGiXytLFiA3mTnarPQFoaCdhb5nhigp
-         /6dbhM4dDnENIrF5KtXAJDRL0DJMYDcMAVWV/Sm6XROC5prEiQrw/QR2sQQDvWhEl2L0
-         Yl0id3K0helfI47eRBC9dHmEjs+HNt2/f7Ypz+ZTBwBMwxyBBGcnKb5KFrUgVxM4hbsj
-         rK1g==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=QYGFEnvjFQAMrjPLkNAED/R+KCNaZk6NFcNF4N4LDfM=;
+        b=KBNxFH2+rGwGuyq7CY8tHConLp8G/PYkA/vYf/PpzxXKcG80ygDlA57J2Ty0zetMZy
+         iCe/BaxZqlUCuwA+QVLDS+KPIfrQ6muBLnifJmK2PTgpVYjhrWaX5LbwgptCF/9/mTrb
+         BL8EA06sPhEbWAFfoTVhrR7aH4StvK/fj5BdA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mk/j+BSGz6dVS/plPYQdwoqk6n0f8DCpTutXyR8+Se8=;
-        b=Nh8/AXTRkaXnHxlvxlkupBkHIFiLBH8p5+SA5VxeC7Jt12UvYIk6sX8mgy4NmtxfC/
-         qpburC/X6rd9xveG4kdZ0R/WPXn3q5EchR3an4pi/v2AYXxRiJ1+aC+ns7gxjxzi4oMo
-         5/Sf816cFx4HyOjyNkmrGwwpIQAqSgSnIRkP3fTTW/Ozn+QQ16bZNMRrqWWMYF+XWTfX
-         oTKwOiRhARLCJmkyPBM/XpLSUXv+fmGsp4P5gfugFn4dJ3xUCoT4zRZm18HmWgiiNddX
-         UuSX5YuRE9TlTEiSAIESEYZMYG4alRPYwK58vfA67ZDOFxGbP/9zllf6BZ4/fp6EE+uF
-         TXaQ==
-X-Gm-Message-State: AJcUukdM5A9ItKHvyDyA/AVz3wU7WK5E/BPM4G2N7osLpsbRWNiJre07
-        CDRn6zsATLSC+W/ychaOeSriTPoaqufLguSOKSsZHE7P9Ow=
-X-Google-Smtp-Source: ALg8bN6PdBwtacBzoDQdeuTqywBEpzdAjrcVZeexxXSqiwvArC5mELXxPORIN/mZumWwPYMUmEgwRqGVDThaXr2Q0bQ=
-X-Received: by 2002:a5d:61c4:: with SMTP id q4mr24395580wrv.308.1548030204348;
- Sun, 20 Jan 2019 16:23:24 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=QYGFEnvjFQAMrjPLkNAED/R+KCNaZk6NFcNF4N4LDfM=;
+        b=Aeff+Bs8rigWtuPT8WHSVLr+dhR1ClYrOOSg4L5GjTWxxTCss+Y6x7Oe0LvQyW9KaX
+         N9bZfPwqhg6htvgOr71M95jHPmmn2hds5Hj1OUuqZ1xE7TUU9H58ihIirEO60zedXueX
+         lwOIb1SVs8054R3IrEGn9wRUEsGtdizvKMQv0cLmla5cpeXUrvvY+hK079RoQTA550bi
+         e08euFmhANcKl6mzCow4kvYYWEKDnYKOv66FkBn3mi2hC02JtT5yrABu4jUlNj+Ey2n8
+         NISR8SlxKWYViKsESYpGUn6JUp4TTFzGWKoZhlCHmupSu+vqj9Ggt7CReqV7LGLATgFr
+         PJ8A==
+X-Gm-Message-State: AJcUukcI9031SAv8GP4V8HW4WmNh00Bj4J+csHG3oM3b3QKEkzI8mfr9
+        D/TPzGp1OMzK180o069pKKGE5g==
+X-Google-Smtp-Source: ALg8bN7NBB9TzsbQ9tgnF6MMNFTVi/bRwwREXz+NLHA9nMKUrzNF3jJTy7KeOFGpg4Nh1OgjKiWIOg==
+X-Received: by 2002:a17:902:fa2:: with SMTP id 31mr29215773plz.75.1548055144635;
+        Sun, 20 Jan 2019 23:19:04 -0800 (PST)
+Received: from pihsun-z840.tpe.corp.google.com ([2401:fa00:1:10:7889:7a43:f899:134c])
+        by smtp.googlemail.com with ESMTPSA id v15sm14941843pfn.94.2019.01.20.23.19.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 20 Jan 2019 23:19:04 -0800 (PST)
+From:   Pi-Hsun Shih <pihsun@chromium.org>
+Cc:     Pi-Hsun Shih <pihsun@chromium.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Enric Balletbo Serra <eballetbo@gmail.com>,
+        Guenter Roeck <groeck@chromium.org>,
+        Benson Leung <bleung@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [RFC v3 4/5] mfd: add EC host command support using rpmsg.
+Date:   Mon, 21 Jan 2019 15:18:32 +0800
+Message-Id: <20190121071833.43443-5-pihsun@chromium.org>
+X-Mailer: git-send-email 2.20.1.321.g9e740568ce-goog
+In-Reply-To: <20190121071833.43443-1-pihsun@chromium.org>
+References: <20190121071833.43443-1-pihsun@chromium.org>
 MIME-Version: 1.0
-References: <CAKcZhuW-ozJp-MVU3gw=uhuSc9+HTMVJza8QRUL3TaRrbqjJew@mail.gmail.com>
- <CACT4Y+aJADsj37Y8jPAV7PASqKm_L-iJ=MDv68yPUO0TFvhdRg@mail.gmail.com>
- <CACT4Y+ZxgzdbCeFquYmKThfiTGg3pZhn90X_Fk3yRXGYfepU4Q@mail.gmail.com> <CAKcZhuWE_2+D_AP_U0XZP-bjb=8Eec1Ku3KD8qO8K0zDGo98Ow@mail.gmail.com>
-In-Reply-To: <CAKcZhuWE_2+D_AP_U0XZP-bjb=8Eec1Ku3KD8qO8K0zDGo98Ow@mail.gmail.com>
-From:   Zenghui Yu <zenghuiyu96@gmail.com>
-Date:   Mon, 21 Jan 2019 08:23:12 +0800
-Message-ID: <CAKcZhuUh7jqLnRwfROcryEGHvUNqGhz751uPP54yg3WcwYCWwQ@mail.gmail.com>
-Subject: Re: [RESEND BUG REPORT] System hung! Due to ftrace or KASAN?
-To:     Dmitry Vyukov <dvyukov@google.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        linux-trace-devel@vger.kernel.org,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        "open list:KERNEL BUILD + fi..." <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        aryabinin@virtuozzo.com, akpm@linux-foundation.org,
-        torvalds@linux-foundation.org, cl@linux.com, mark.rutland@arm.com,
-        will.deacon@arm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 2:28 AM Zenghui Yu <zenghuiyu96@gmail.com> wrote:
->
-> On Sun, Jan 20, 2019 at 12:45 AM Dmitry Vyukov <dvyukov@google.com> wrote:
-> >
-> > On Sat, Jan 19, 2019 at 5:37 PM Dmitry Vyukov <dvyukov@google.com> wrote:
-> > >
-> > > On Fri, Jan 18, 2019 at 6:45 PM Zenghui Yu <zenghuiyu96@gmail.com> wrote:
-> > > >
-> > > > Hi, All!
-> > > >
-> > > > I compiled the latest kernel and installed it on my old laptop (Hardware name:
-> > > > Hewlett-Packard HP ProBook 440 G2/2247, BIOS M74 Ver. 01.02 06/17/2014).  But
-> > > > when I tried to enable function tracer via debugfs, the system went _hung_!
-> > > > Compared with the last kernel compiling process, the only change I have made
-> > > > is that I enabled KASAN configuration this time.
-> > > >
-> > > > Reproducing this issue is simple as below:
-> > > >
-> > > >         0. `uname -a` shows:
-> > > >                 Linux ubuntuu 5.0.0-rc2+ #9 SMP Fri Jan 18 03:04:01 CST 2019
-> > > >                 x86_64 x86_64 x86_64 GNU/Linux
-> > > >
-> > > >         1. `make menuconfig` to enable KASAN configuration:
-> > > >                 Kernel hacking ---> Memory Debugging --->
-> > > >                 KASAN: runtime memory debugger
-> > > >
-> > > >            compile, install, reboot, then `dmesg | grep kasan` shows:
-> > > >                 [    0.342882] kasan: KernelAddressSanitizer initialized
-> > > >
-> > > >         2. enable function tracer
-> > > >                 `echo function > /sys/kernel/debug/tracing/current_tracer`
-> > > >            (then my poor laptop was locked and didn't respond to me ...)
-> > > >
-> > > > What's more, enabling function graph tracer will suffer from the same problem.
-> > > > I have no idea about what wrong thing had happened inside kernel --
-> > > > about ftrace,
-> > > > or about KASAN?  So I report it to you and waiting for your solution!
-> > > >
-> > > > I have provided my *.config* file as attachment for those who're interested in
-> > > > this issue.  But sorry for that I can't provide any useful call trace
-> > > > because the
-> > > > system went down so quickly.
-> > > >
-> > > > P.S. I'm a newcomer for KASAN. If any mis-configuration or
-> > > > mis-understand, please
-> > > > fix me up and let me know :).
-> > >
-> > > Hi Zenghui,
-> > >
-> > > I've tried to reproduce this, but kernel crashes during boot with this
-> > > config for me.
-> > > I am commit 2339e91d0e6609e17943a0ab3c3c8c4044760c05, the config is
-> > > basically yours but updated for newer compiler and with builtin
-> > > modules:
-> > > https://gist.githubusercontent.com/dvyukov/9af234617749aa4eada67ba8c2e4f46c/raw/d0e09ddf255962313a82bb552c3fc0d832fa6844/gistfile1.txt
-> >
-> > I've commented out the warning locally for now and can reproduce the
-> > hang. You need this commit, it fixes the hang:
-> > https://groups.google.com/forum/#!topic/kasan-dev/g8A8PLKCyoE
->
-> Thanks Dmitry! I'll try to test this commit tomorrow.
+Add EC host command support through rpmsg.
 
-And this commit really works fine to me! Thanks Dmitry again!
+Cc: Enric Balletbo Serra <eballetbo@gmail.com>
+Cc: Guenter Roeck <groeck@chromium.org>
+Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
+---
+Changes from v2:
+ - Wait for ipi ack instead of depends on the behavior in mtk-rpmsg.
 
+Changes from v1:
+ - Code format fix based on feedback for cros_ec_rpmsg.c.
+ - Extract feature detection for SCP into separate patch (Patch 6).
+---
+ drivers/platform/chrome/Kconfig         |   8 +
+ drivers/platform/chrome/Makefile        |   1 +
+ drivers/platform/chrome/cros_ec_rpmsg.c | 186 ++++++++++++++++++++++++
+ 3 files changed, 195 insertions(+)
+ create mode 100644 drivers/platform/chrome/cros_ec_rpmsg.c
 
-Zenghui
+diff --git a/drivers/platform/chrome/Kconfig b/drivers/platform/chrome/Kconfig
+index 16b1615958aa2d..e3f63f3d67711b 100644
+--- a/drivers/platform/chrome/Kconfig
++++ b/drivers/platform/chrome/Kconfig
+@@ -72,6 +72,14 @@ config CROS_EC_SPI
+ 	  response time cannot be guaranteed, we support ignoring
+ 	  'pre-amble' bytes before the response actually starts.
+ 
++config CROS_EC_RPMSG
++	tristate "ChromeOS Embedded Controller (rpmsg)"
++	depends on MFD_CROS_EC && RPMSG && OF
++	help
++	  If you say Y here, you get support for talking to the ChromeOS EC
++	  through rpmsg. This uses a simple byte-level protocol with a
++	  checksum.
++
+ config CROS_EC_LPC
+         tristate "ChromeOS Embedded Controller (LPC)"
+         depends on MFD_CROS_EC && ACPI && (X86 || COMPILE_TEST)
+diff --git a/drivers/platform/chrome/Makefile b/drivers/platform/chrome/Makefile
+index cd591bf872bbe9..3e3190af2b50f4 100644
+--- a/drivers/platform/chrome/Makefile
++++ b/drivers/platform/chrome/Makefile
+@@ -8,6 +8,7 @@ cros_ec_ctl-objs			:= cros_ec_sysfs.o cros_ec_lightbar.o \
+ obj-$(CONFIG_CROS_EC_CTL)		+= cros_ec_ctl.o
+ obj-$(CONFIG_CROS_EC_I2C)		+= cros_ec_i2c.o
+ obj-$(CONFIG_CROS_EC_SPI)		+= cros_ec_spi.o
++obj-$(CONFIG_CROS_EC_RPMSG)		+= cros_ec_rpmsg.o
+ cros_ec_lpcs-objs			:= cros_ec_lpc.o cros_ec_lpc_reg.o
+ cros_ec_lpcs-$(CONFIG_CROS_EC_LPC_MEC)	+= cros_ec_lpc_mec.o
+ obj-$(CONFIG_CROS_EC_LPC)		+= cros_ec_lpcs.o
+diff --git a/drivers/platform/chrome/cros_ec_rpmsg.c b/drivers/platform/chrome/cros_ec_rpmsg.c
+new file mode 100644
+index 00000000000000..5354e56b362a0f
+--- /dev/null
++++ b/drivers/platform/chrome/cros_ec_rpmsg.c
+@@ -0,0 +1,186 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// Copyright 2018 Google LLC.
++
++#include <linux/delay.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/mfd/cros_ec.h>
++#include <linux/mfd/cros_ec_commands.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/rpmsg.h>
++#include <linux/slab.h>
++
++#define EC_MSG_TIMEOUT_MS 200
++
++struct cros_ec_rpmsg {
++	struct rpmsg_device *rpdev;
++
++	wait_queue_head_t xfer_ack_wq;
++	bool xfer_acked;
++};
++
++/**
++ * cros_ec_cmd_xfer_rpmsg - Transfer a message over rpmsg and receive the reply
++ *
++ * This is only used for old EC proto version, and is not supported for this
++ * driver.
++ *
++ * @ec_dev: ChromeOS EC device
++ * @ec_msg: Message to transfer
++ */
++static int cros_ec_cmd_xfer_rpmsg(struct cros_ec_device *ec_dev,
++				  struct cros_ec_command *ec_msg)
++{
++	return -EINVAL;
++}
++
++/**
++ * cros_ec_pkt_xfer_rpmsg - Transfer a packet over rpmsg and receive the reply
++ *
++ * @ec_dev: ChromeOS EC device
++ * @ec_msg: Message to transfer
++ */
++static int cros_ec_pkt_xfer_rpmsg(struct cros_ec_device *ec_dev,
++				  struct cros_ec_command *ec_msg)
++{
++	struct ec_host_response *response;
++	struct cros_ec_rpmsg *ec_rpmsg = ec_dev->priv;
++	struct rpmsg_device *rpdev = ec_rpmsg->rpdev;
++	int len;
++	u8 sum;
++	int ret;
++	int i;
++	unsigned long timeout;
++
++	ec_msg->result = 0;
++	len = cros_ec_prepare_tx(ec_dev, ec_msg);
++	dev_dbg(ec_dev->dev, "prepared, len=%d\n", len);
++
++	ec_rpmsg->xfer_acked = false;
++	ret = rpmsg_send(rpdev->ept, ec_dev->dout, len);
++	if (ret) {
++		dev_err(ec_dev->dev, "rpmsg send failed\n");
++		return ret;
++	}
++
++	timeout = msecs_to_jiffies(EC_MSG_TIMEOUT_MS);
++	ret = wait_event_timeout(ec_rpmsg->xfer_ack_wq, ec_rpmsg->xfer_acked,
++				 timeout);
++	if (!ret) {
++		dev_err(ec_dev->dev, "rpmsg send timeout\n");
++		return -EIO;
++	}
++
++	/* check response error code */
++	response = (struct ec_host_response *)ec_dev->din;
++	ec_msg->result = response->result;
++
++	ret = cros_ec_check_result(ec_dev, ec_msg);
++	if (ret)
++		goto exit;
++
++	if (response->data_len > ec_msg->insize) {
++		dev_err(ec_dev->dev, "packet too long (%d bytes, expected %d)",
++			response->data_len, ec_msg->insize);
++		ret = -EMSGSIZE;
++		goto exit;
++	}
++
++	/* copy response packet payload and compute checksum */
++	memcpy(ec_msg->data, ec_dev->din + sizeof(*response),
++	       response->data_len);
++
++	sum = 0;
++	for (i = 0; i < sizeof(*response) + response->data_len; i++)
++		sum += ec_dev->din[i];
++
++	if (sum) {
++		dev_err(ec_dev->dev, "bad packet checksum, calculated %x\n",
++			sum);
++		ret = -EBADMSG;
++		goto exit;
++	}
++
++	ret = response->data_len;
++exit:
++	if (ec_msg->command == EC_CMD_REBOOT_EC)
++		msleep(EC_REBOOT_DELAY_MS);
++
++	return ret;
++}
++
++static int cros_ec_rpmsg_callback(struct rpmsg_device *rpdev, void *data,
++				  int len, void *priv, u32 src)
++{
++	struct cros_ec_device *ec_dev = dev_get_drvdata(&rpdev->dev);
++	struct cros_ec_rpmsg *ec_rpmsg = ec_dev->priv;
++
++	if (len > ec_dev->din_size) {
++		dev_warn(ec_dev->dev,
++			 "ipi received length %d > din_size, truncating", len);
++		len = ec_dev->din_size;
++	}
++
++	memcpy(ec_dev->din, data, len);
++	ec_rpmsg->xfer_acked = true;
++	wake_up(&ec_rpmsg->xfer_ack_wq);
++
++	return 0;
++}
++
++static int cros_ec_rpmsg_probe(struct rpmsg_device *rpdev)
++{
++	struct device *dev = &rpdev->dev;
++	struct cros_ec_device *ec_dev;
++	struct cros_ec_rpmsg *ec_rpmsg;
++	int ret;
++
++	ec_dev = devm_kzalloc(dev, sizeof(*ec_dev), GFP_KERNEL);
++	if (!ec_dev)
++		return -ENOMEM;
++
++	ec_rpmsg = devm_kzalloc(dev, sizeof(*ec_rpmsg), GFP_KERNEL);
++	if (!ec_rpmsg)
++		return -ENOMEM;
++
++	ec_dev->dev = dev;
++	ec_dev->priv = ec_rpmsg;
++	ec_dev->cmd_xfer = cros_ec_cmd_xfer_rpmsg;
++	ec_dev->pkt_xfer = cros_ec_pkt_xfer_rpmsg;
++	ec_dev->phys_name = dev_name(&rpdev->dev);
++	ec_dev->din_size = sizeof(struct ec_host_response) +
++			   sizeof(struct ec_response_get_protocol_info);
++	ec_dev->dout_size = sizeof(struct ec_host_request);
++	dev_set_drvdata(dev, ec_dev);
++
++	ec_rpmsg->rpdev = rpdev;
++	init_waitqueue_head(&ec_rpmsg->xfer_ack_wq);
++
++	ret = cros_ec_register(ec_dev);
++	if (ret) {
++		dev_err(dev, "cannot register EC\n");
++		return ret;
++	}
++
++	return 0;
++}
++
++static const struct rpmsg_device_id cros_ec_rpmsg_device_id[] = {
++	{ .name = "cros-ec-rpmsg", },
++	{ }
++};
++MODULE_DEVICE_TABLE(rpmsg, cros_ec_rpmsg_device_id);
++
++static struct rpmsg_driver cros_ec_driver_rpmsg = {
++	.drv.name       = KBUILD_MODNAME,
++	.id_table       = cros_ec_rpmsg_device_id,
++	.probe		= cros_ec_rpmsg_probe,
++	.callback	= cros_ec_rpmsg_callback,
++};
++
++module_rpmsg_driver(cros_ec_driver_rpmsg);
++
++MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("ChromeOS EC multi function device (rpmsg)");
+-- 
+2.20.1.321.g9e740568ce-goog
 
->
-> BTW, I have bisect-ed and tested for this issue today. Finally it turned out
-> that
->         bffa986c6f80e39d9903015fc7d0d99a66bbf559 is the first bad commit.
-> So I'm wondering if anywhere need to be fixed in commit bffa986c6f80 ("kasan:
-> move common generic and tag-based code to common.c").
->
->
-> Thanks!
-> Zenghui
->
-> >
-> > > TITLE: WARNING in note_page
-> > > MAINTAINERS: [dave.hansen@linux.intel.com luto@kernel.org
-> > > peterz@infradead.org tglx@linutronix.de mingo@redhat.com bp@alien8.de
-> > > hpa@zytor.com x86@kernel.org linux-kernel@vger.kernel.org]
-> > >
-> > > ------------[ cut here ]------------
-> > > x86/mm: Found insecure W+X mapping at address native_usergs_sysret64+0x0/0x10
-> > > WARNING: CPU: 3 PID: 1 at arch/x86/mm/dump_pagetables.c:263 note_wx
-> > > arch/x86/mm/dump_pagetables.c:262 [inline]
-> > > WARNING: CPU: 3 PID: 1 at arch/x86/mm/dump_pagetables.c:263
-> > > note_page+0x800/0xaf0 arch/x86/mm/dump_pagetables.c:302
-> > > Kernel panic - not syncing: panic_on_warn set ...
-> > > CPU: 3 PID: 1 Comm: swapper/0 Not tainted 5.0.0-rc2+ #16
-> > > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-> > > Call Trace:
-> > >  __dump_stack lib/dump_stack.c:77 [inline]
-> > >  dump_stack+0x7b/0xb5 lib/dump_stack.c:113
-> > >  panic+0x18e/0x351 kernel/panic.c:214
-> > >  __warn+0x13c/0x140 kernel/panic.c:571
-> > >  report_bug+0xd7/0x140 lib/bug.c:186
-> > >  fixup_bug.part.11+0x2d/0x60 arch/x86/kernel/traps.c:178
-> > >  fixup_bug arch/x86/include/asm/paravirt.h:776 [inline]
-> > >  do_error_trap+0xb6/0xc0 arch/x86/kernel/traps.c:271
-> > >  do_invalid_op+0x3b/0x50 arch/x86/kernel/traps.c:290
-> > >  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
-> > > RIP: 0010:note_wx arch/x86/mm/dump_pagetables.c:262 [inline]
-> > > RIP: 0010:note_page+0x800/0xaf0 arch/x86/mm/dump_pagetables.c:302
-> > > Code: 4d 32 00 4c 89 7b 28 48 c7 43 30 00 00 00 00 e9 46 fc ff ff 4c
-> > > 89 ee 48 c7 c7 a0 35 c5 ae c6 05 02 81 1e 02 01 e8 50 93 01 00 <0f> 0b
-> > > 48 8b 7d 90 e8 75 4c 32 00 48 8b 43 20 48 89 45 c8 e9 72 f9
-> > > RSP: 0000:ffff88805d5c7d18 EFLAGS: 00010286
-> > > RAX: 0000000000000000 RBX: ffff88805d5c7e58 RCX: ffffffffae7f11db
-> > > RDX: 0000000000000001 RSI: 0000000000000004 RDI: 0000000000000246
-> > > RBP: ffff88805d5c7da0 R08: ffffed100bab8f5c R09: ffffed100bab8f5c
-> > > R10: 0000000000000002 R11: ffffed100bab8f5c R12: 0000000000000000
-> > > R13: ffffffffae800000 R14: 0000000000000004 R15: 0000000000000000
-> > >  walk_pmd_level arch/x86/mm/dump_pagetables.c:428 [inline]
-> > >  walk_pud_level arch/x86/mm/dump_pagetables.c:459 [inline]
-> > >  walk_p4d_level arch/x86/mm/dump_pagetables.c:484 [inline]
-> > >  ptdump_walk_pgd_level_core+0x566/0x6e0 arch/x86/mm/dump_pagetables.c:552
-> > >  ptdump_walk_user_pgd_level_checkwx+0x4e/0x50 arch/x86/mm/dump_pagetables.c:600
-> > >  pti_finalize+0x27/0xaf arch/x86/mm/pti.c:682
-> > >  kernel_init+0x3e/0x130 init/main.c:1066
-> > >  ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:352
-> > > Kernel Offset: 0x2c800000 from 0xffffffff81000000 (relocation range:
-> > > 0xffffffff80000000-0xffffffffbfffffff)
-> > > Rebooting in 86400 seconds..
