@@ -2,113 +2,95 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39AEAC2F421
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:36:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02C11C2F421
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:36:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F31522085A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:36:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C11712085A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:36:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="ILLKqWAS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DIqmRo9H"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730719AbfAUPgO (ORCPT
+        id S1730198AbfAUPgY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 10:36:14 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:33190 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730242AbfAUPgM (ORCPT
+        Mon, 21 Jan 2019 10:36:24 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:34527 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730231AbfAUPee (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 10:36:12 -0500
-Received: by mail-wm1-f65.google.com with SMTP id r24so6430512wmh.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 07:36:11 -0800 (PST)
+        Mon, 21 Jan 2019 10:34:34 -0500
+Received: by mail-pf1-f193.google.com with SMTP id h3so10306182pfg.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 07:34:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=gsIWm4YAdMzHSFkBaQakNMAM/i+/75SJ59wg5CyuTfI=;
-        b=ILLKqWASQ9GcKR2KmgabCHMcn46Kt5Fqhi2/syIf+dzthSJObEKL8UGqxkPZNRKvKj
-         xJ+vc2PTmx9jVMhHNB/8a9ICOlw4Q2MyNWfzlhvwGjgzyMbXoe6g9A0elSruMdLlQy3f
-         IShfp9EepVvSyyqsZgp5Y3t6Gb8zWX5nahtgjwtXRho/ygMcvQ66iPBiwiJ+jm9nVOJn
-         FaQGesxObRFiUQ3phpy8r16CXDSrtucmxK3/laDVdj+CzKK8JheB667GFHA7TUudQRSl
-         EVYESiK+Jk4954Pum4iM6qAr04VR/9d1PyJ0UFV48nSW4tMaFHxxPQbuZJVZX/+4fAWB
-         YcIw==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=3La3nh4cjwvbMwHUC1cRjF+OA89huuotgfLD2qZLwAw=;
+        b=DIqmRo9Huo5kG+Z98giREbRYAMIUnZT2vE3A7xv7TTDmq2ZiRCGdlkh+FwhMIgS3UQ
+         cRlALKtPkAlxewKSR439P5Xmk2K203PQUINRveZnXMuXIuwavfIaMgd2YUDrEAvVItTM
+         uqY7ajONUETjlXBYOpj+e/S4eTeuKjQFg+xiiUX4uRWzbs15VSAKOxzQdoINeDfuRtx1
+         Lkk8FMuNj4qcFHM7e939JvSPha5uT/PX0xxWjBebtBtUvRkm2VOBPDkVXg+6oFbkT5UO
+         L4efZrVauwn2QzMtalxvbOBDGtkPZWvbRsiSi6ozrJep5E3Xnrf5Nf8KTiJoXDK/jnla
+         SeTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=gsIWm4YAdMzHSFkBaQakNMAM/i+/75SJ59wg5CyuTfI=;
-        b=dkYGjU/rMAv/Ko9QWz4CUQzoc8Uwk6eDp0ovzs4o2kOfQPx196czVlJfOL7Gvse/v0
-         DjWTRB4aaUc6Og2bSwO/IOKL4sMPNXfAeiAhEt+wzzux9+opUlYTs5RrG88dJWlRndZa
-         HF063aOSqyRdw4wY5HNpD6NyZYTExujaPQp57th4/b6LXShx/A9oDVlDGtkmig4BuyQf
-         8b9KNpseoUAgRbMAOXlSXiycdWbedoDGcQRBLCRKXrwhphyDRLQ+JY1k40nj6Gu9rUtL
-         14VKj/dMoUcZcr/vlOwBfWy439ktyVT1DFLP5QmlnHM2tAkB1ejgVWpYtmQbulqFIOz2
-         Ps2w==
-X-Gm-Message-State: AJcUukdMQ70tbtIXyjb6wptF/v9XDW95DtReUcxx21PjbPDKOqKOkmWF
-        LRDr5+k5DyCuqK3vKPw5OOOrD2I1IHE=
-X-Google-Smtp-Source: ALg8bN4287u8JGodm32UPUcS7IXUrJK558ctFhFfap4xkwzei3zdL2VvgHfNTD0/Yf9x8Fs+Q5yHyw==
-X-Received: by 2002:a1c:6e06:: with SMTP id j6mr26187811wmc.3.1548084970525;
-        Mon, 21 Jan 2019 07:36:10 -0800 (PST)
-Received: from boomer.lan (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
-        by smtp.gmail.com with ESMTPSA id e27sm108804445wra.67.2019.01.21.07.36.09
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=3La3nh4cjwvbMwHUC1cRjF+OA89huuotgfLD2qZLwAw=;
+        b=K6xLRweb0ii1Rek6YUWZ5BENOBxnSscXspieUcuqdl5E3PDrym5PDqe0rn886oKZc+
+         CmNY0Jk22jZgoxna1Q4Kz7t8FOHLhIAj+RVDpE3nLx6+dvYAmwzVR3xsvl7MroYNoWxM
+         9KzwudQ29Le5dtRi1CBa9hVqbyuci3AeGiTWgvK16DtJwgtyBDiDtdaUNM3LrDHe5TCm
+         +umUjGt/DZEspVOXxd1HEDs8l7JqzT2VNQigl/xWOFmzO98xLhGsh+M/yT18A8grLIxk
+         21WwyXKzhZQMvoDWGFT7XfDhzAMWvIL364WJW/W5k4dyDD0k8Hh1uLPkxkf+9sixxEB9
+         UvzQ==
+X-Gm-Message-State: AJcUukcQHjuq/V8dOZQwaYTbO2l+Mfr4ptHuQVwy/iI5KLlgbM5AZ0ZG
+        +VTvS2jec8aCXOLYMYFv/Vs=
+X-Google-Smtp-Source: ALg8bN4vzHkoGRS3IBqHnXOrBs8QXZhH9D3iLp3dOkt1tolS70IbeaO63IDlAgo1Sz3Pja/MXnZABg==
+X-Received: by 2002:a63:b4c:: with SMTP id a12mr29026601pgl.131.1548084873500;
+        Mon, 21 Jan 2019 07:34:33 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id d16sm15512081pgj.21.2019.01.21.07.34.32
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 21 Jan 2019 07:36:09 -0800 (PST)
-Message-ID: <a434c3b1c55a1b5a1485adc29cfe26b45131a936.camel@baylibre.com>
-Subject: Re: [PATCH 0/3] pinctrl: meson: g12a fixes
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Mon, 21 Jan 2019 16:36:08 +0100
-In-Reply-To: <CACRpkdb7pje9mrgOQoiWTRxGQC8xsOvJ9a8PCguM807unPtpCg@mail.gmail.com>
-References: <20190117102315.1833-1-jbrunet@baylibre.com>
-         <CACRpkdb7pje9mrgOQoiWTRxGQC8xsOvJ9a8PCguM807unPtpCg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 21 Jan 2019 07:34:32 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     john.stultz@linaro.org, tglx@linutronix.de, sboyd@kernel.org
+Cc:     linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] clocksource: decrement reference count when device_register() fail
+Date:   Mon, 21 Jan 2019 10:34:31 -0500
+Message-Id: <20190121153431.24789-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-01-21 at 14:53 +0100, Linus Walleij wrote:
-> On Thu, Jan 17, 2019 at 11:23 AM Jerome Brunet <jbrunet@baylibre.com> wrote:
-> 
-> > This patchset fixes the initial pinctrl support added for th g12a SoC
-> > family, which is mainly around the register regions claimed by the
-> > driver.
-> > 
-> > Linus, would it possible for you to provide a tag with these changes to
-> > Kevin ?
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/log/?h=ib-meson-fixes
-> 
-> > ATM, we can only use the devices for which the pinmux is already set by
-> > the bootloader. Enabling the broken pinctrl driver could cause regressions
-> > in kernelCI. Having a tag, would allow us to start using pinctrl on this
-> > SoC in this cycle, w/o regression. It would be nice :)
-> 
-> When you say "this cycle" do you mean I should target fixes (v5.0-rcN)
-> or next (v5.1) with these patches?
+device_register() may fail, use put_device() giving up the refconut
+to avoid refcount leak.
 
-I was referring to the 5.1 release but it is a good question, I did not really
-think about 5.0.
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ kernel/time/clocksource.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Those changes are mainly fixes, so guess it could go in the 5.0 but support
-for this SoC is still in its early stages, so either way is fine by me. 
-
-Whatever is simpler for you I guess ;)
-
-> 
-> Yours,
-> Linus Walleij
-
+diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
+index 3bcc19ceb073..0a830fedc7ef 100644
+--- a/kernel/time/clocksource.c
++++ b/kernel/time/clocksource.c
+@@ -1183,8 +1183,11 @@ static int __init init_clocksource_sysfs(void)
+ {
+ 	int error = subsys_system_register(&clocksource_subsys, NULL);
+ 
+-	if (!error)
++	if (!error) {
+ 		error = device_register(&device_clocksource);
++		if (error)
++			put_device(&device_clocksource);
++	}
+ 
+ 	return error;
+ }
+-- 
+2.17.0
 
