@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C710C2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:01:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 318E3C2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:01:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E41A721721
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:01:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F16B521726
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:01:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079309;
-	bh=dTlIgfC6m7/qHosgWKzdHCMAXFR0O5p+n3PyDpSJdrI=;
+	s=default; t=1548079312;
+	bh=J3+/mxExVyG0bIpU+dwc77WxkvXabZdR+4h7UwNMfTM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Y7MXKm+UgI/DehOkh4Y9KiDCISBIbcnAoZ30dkbYUwKk8LS6l/A6kkVMDwK4fHxEB
-	 47TD/oKoaQKV10qOVYw5IvAay1cqTPwx1lkw2kaDkKEcg5HEo1mVpl7HZXxCGPP9Ka
-	 hchFabYlm/9nCFIl3gRdfIh4m9Qh4IwMTjf5HSkE=
+	b=xF8/L0ikg82pmGa2LPNNevSbrE9cAJmHbABDN2lDgd8Ihyf0QKf3rtZiOtDvBUwm9
+	 zBBFAsGYwQiEUjnsFgTZ3xSCtpY2oat5JWF/C4CeHxx7v04Lhbu11wTro9OanClAB3
+	 o5MGvgeLL6O+UuD/m20JdLLP7gN/zuB5hw5vjn/g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732686AbfAUOBr (ORCPT
+        id S1732697AbfAUOBt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:01:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48882 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 09:01:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48924 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731833AbfAUOBn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 09:01:43 -0500
+        id S1729683AbfAUOBr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 09:01:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C1252089F;
-        Mon, 21 Jan 2019 14:01:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EECE52089F;
+        Mon, 21 Jan 2019 14:01:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548079302;
-        bh=dTlIgfC6m7/qHosgWKzdHCMAXFR0O5p+n3PyDpSJdrI=;
+        s=default; t=1548079305;
+        bh=J3+/mxExVyG0bIpU+dwc77WxkvXabZdR+4h7UwNMfTM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LQ+hKvnjVRK/0npdC4g+zRDUqiJ1zRlPWSs03Q50LDRQKiCFbB+lfzLFQeh0eHsKf
-         yimFubrUbObpJFLJdDkIcTJ6KDaes+8kTv3vHWdV/DqCJi8aiWd/TAHYj2b6ZF5MKt
-         grT43/EDmeyUmsctK7yejybv/cwwpeM3U9434ZH8=
+        b=NOkzKyGRX7HQoTwGjT2dfihr/TB/R4raWECy8zTDh/5ZDW5xnyRQhZdvZGuo4beYe
+         AoK/WTmMunGXUmciW/XCt5QSUOlrsIYVlT77TEIWiCarE3NLq/dDPwaWgsZt1fmrgE
+         aT7sDH7gKn0O8nzo6y+066BFwd6qBYazW8QyhVhE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+b33d5cae0efd35dbfe77@syzkaller.appspotmail.com,
-        Ying Xue <ying.xue@windriver.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 76/99] tipc: fix uninit-value in tipc_nl_compat_bearer_enable
-Date:   Mon, 21 Jan 2019 14:49:08 +0100
-Message-Id: <20190121134916.965330614@linuxfoundation.org>
+        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.19 41/99] btrfs: wait on ordered extents on abort cleanup
+Date:   Mon, 21 Jan 2019 14:48:33 +0100
+Message-Id: <20190121134915.480864801@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121134913.924726465@linuxfoundation.org>
 References: <20190121134913.924726465@linuxfoundation.org>
@@ -66,189 +66,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ying Xue <ying.xue@windriver.com>
+From: Josef Bacik <josef@toxicpanda.com>
 
-commit 0762216c0ad2a2fccd63890648eca491f2c83d9a upstream.
+commit 74d5d229b1bf60f93bff244b2dfc0eb21ec32a07 upstream.
 
-syzbot reported:
+If we flip read-only before we initiate writeback on all dirty pages for
+ordered extents we've created then we'll have ordered extents left over
+on umount, which results in all sorts of bad things happening.  Fix this
+by making sure we wait on ordered extents if we have to do the aborted
+transaction cleanup stuff.
 
-BUG: KMSAN: uninit-value in strlen+0x3b/0xa0 lib/string.c:484
-CPU: 1 PID: 6371 Comm: syz-executor652 Not tainted 4.19.0-rc8+ #70
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x306/0x460 lib/dump_stack.c:113
- kmsan_report+0x1a2/0x2e0 mm/kmsan/kmsan.c:917
- __msan_warning+0x7c/0xe0 mm/kmsan/kmsan_instr.c:500
- strlen+0x3b/0xa0 lib/string.c:484
- nla_put_string include/net/netlink.h:1011 [inline]
- tipc_nl_compat_bearer_enable+0x238/0x7b0 net/tipc/netlink_compat.c:389
- __tipc_nl_compat_doit net/tipc/netlink_compat.c:311 [inline]
- tipc_nl_compat_doit+0x39f/0xae0 net/tipc/netlink_compat.c:344
- tipc_nl_compat_recv+0x147c/0x2760 net/tipc/netlink_compat.c:1107
- genl_family_rcv_msg net/netlink/genetlink.c:601 [inline]
- genl_rcv_msg+0x185c/0x1a20 net/netlink/genetlink.c:626
- netlink_rcv_skb+0x394/0x640 net/netlink/af_netlink.c:2454
- genl_rcv+0x63/0x80 net/netlink/genetlink.c:637
- netlink_unicast_kernel net/netlink/af_netlink.c:1317 [inline]
- netlink_unicast+0x166d/0x1720 net/netlink/af_netlink.c:1343
- netlink_sendmsg+0x1391/0x1420 net/netlink/af_netlink.c:1908
- sock_sendmsg_nosec net/socket.c:621 [inline]
- sock_sendmsg net/socket.c:631 [inline]
- ___sys_sendmsg+0xe47/0x1200 net/socket.c:2116
- __sys_sendmsg net/socket.c:2154 [inline]
- __do_sys_sendmsg net/socket.c:2163 [inline]
- __se_sys_sendmsg+0x307/0x460 net/socket.c:2161
- __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
- do_syscall_64+0xbe/0x100 arch/x86/entry/common.c:291
- entry_SYSCALL_64_after_hwframe+0x63/0xe7
-RIP: 0033:0x440179
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fffef7beee8 EFLAGS: 00000213 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440179
-RDX: 0000000000000000 RSI: 0000000020000100 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 0000000000000000 R09: 00000000004002c8
-R10: 0000000000000000 R11: 0000000000000213 R12: 0000000000401a00
-R13: 0000000000401a90 R14: 0000000000000000 R15: 0000000000000000
+generic/475 can produce this warning:
 
-Uninit was created at:
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:255 [inline]
- kmsan_internal_poison_shadow+0xc8/0x1d0 mm/kmsan/kmsan.c:180
- kmsan_kmalloc+0xa4/0x120 mm/kmsan/kmsan_hooks.c:104
- kmsan_slab_alloc+0x10/0x20 mm/kmsan/kmsan_hooks.c:113
- slab_post_alloc_hook mm/slab.h:446 [inline]
- slab_alloc_node mm/slub.c:2727 [inline]
- __kmalloc_node_track_caller+0xb43/0x1400 mm/slub.c:4360
- __kmalloc_reserve net/core/skbuff.c:138 [inline]
- __alloc_skb+0x422/0xe90 net/core/skbuff.c:206
- alloc_skb include/linux/skbuff.h:996 [inline]
- netlink_alloc_large_skb net/netlink/af_netlink.c:1189 [inline]
- netlink_sendmsg+0xcaf/0x1420 net/netlink/af_netlink.c:1883
- sock_sendmsg_nosec net/socket.c:621 [inline]
- sock_sendmsg net/socket.c:631 [inline]
- ___sys_sendmsg+0xe47/0x1200 net/socket.c:2116
- __sys_sendmsg net/socket.c:2154 [inline]
- __do_sys_sendmsg net/socket.c:2163 [inline]
- __se_sys_sendmsg+0x307/0x460 net/socket.c:2161
- __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
- do_syscall_64+0xbe/0x100 arch/x86/entry/common.c:291
- entry_SYSCALL_64_after_hwframe+0x63/0xe7
+ [ 8531.177332] WARNING: CPU: 2 PID: 11997 at fs/btrfs/disk-io.c:3856 btrfs_free_fs_root+0x95/0xa0 [btrfs]
+ [ 8531.183282] CPU: 2 PID: 11997 Comm: umount Tainted: G        W 5.0.0-rc1-default+ #394
+ [ 8531.185164] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),BIOS rel-1.11.2-0-gf9626cc-prebuilt.qemu-project.org 04/01/2014
+ [ 8531.187851] RIP: 0010:btrfs_free_fs_root+0x95/0xa0 [btrfs]
+ [ 8531.193082] RSP: 0018:ffffb1ab86163d98 EFLAGS: 00010286
+ [ 8531.194198] RAX: ffff9f3449494d18 RBX: ffff9f34a2695000 RCX:0000000000000000
+ [ 8531.195629] RDX: 0000000000000002 RSI: 0000000000000001 RDI:0000000000000000
+ [ 8531.197315] RBP: ffff9f344e930000 R08: 0000000000000001 R09:0000000000000000
+ [ 8531.199095] R10: 0000000000000000 R11: ffff9f34494d4ff8 R12:ffffb1ab86163dc0
+ [ 8531.200870] R13: ffff9f344e9300b0 R14: ffffb1ab86163db8 R15:0000000000000000
+ [ 8531.202707] FS:  00007fc68e949fc0(0000) GS:ffff9f34bd800000(0000)knlGS:0000000000000000
+ [ 8531.204851] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ [ 8531.205942] CR2: 00007ffde8114dd8 CR3: 000000002dfbd000 CR4:00000000000006e0
+ [ 8531.207516] Call Trace:
+ [ 8531.208175]  btrfs_free_fs_roots+0xdb/0x170 [btrfs]
+ [ 8531.210209]  ? wait_for_completion+0x5b/0x190
+ [ 8531.211303]  close_ctree+0x157/0x350 [btrfs]
+ [ 8531.212412]  generic_shutdown_super+0x64/0x100
+ [ 8531.213485]  kill_anon_super+0x14/0x30
+ [ 8531.214430]  btrfs_kill_super+0x12/0xa0 [btrfs]
+ [ 8531.215539]  deactivate_locked_super+0x29/0x60
+ [ 8531.216633]  cleanup_mnt+0x3b/0x70
+ [ 8531.217497]  task_work_run+0x98/0xc0
+ [ 8531.218397]  exit_to_usermode_loop+0x83/0x90
+ [ 8531.219324]  do_syscall_64+0x15b/0x180
+ [ 8531.220192]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+ [ 8531.221286] RIP: 0033:0x7fc68e5e4d07
+ [ 8531.225621] RSP: 002b:00007ffde8116608 EFLAGS: 00000246 ORIG_RAX:00000000000000a6
+ [ 8531.227512] RAX: 0000000000000000 RBX: 00005580c2175970 RCX:00007fc68e5e4d07
+ [ 8531.229098] RDX: 0000000000000001 RSI: 0000000000000000 RDI:00005580c2175b80
+ [ 8531.230730] RBP: 0000000000000000 R08: 00005580c2175ba0 R09:00007ffde8114e80
+ [ 8531.232269] R10: 0000000000000000 R11: 0000000000000246 R12:00005580c2175b80
+ [ 8531.233839] R13: 00007fc68eac61c4 R14: 00005580c2175a68 R15:0000000000000000
 
-The root cause is that we don't validate whether bear name is a valid
-string in tipc_nl_compat_bearer_enable().
+Leaving a tree in the rb-tree:
 
-Meanwhile, we also fix the same issue in the following functions:
-tipc_nl_compat_bearer_disable()
-tipc_nl_compat_link_stat_dump()
-tipc_nl_compat_media_set()
-tipc_nl_compat_bearer_set()
+3853 void btrfs_free_fs_root(struct btrfs_root *root)
+3854 {
+3855         iput(root->ino_cache_inode);
+3856         WARN_ON(!RB_EMPTY_ROOT(&root->inode_tree));
 
-Reported-by: syzbot+b33d5cae0efd35dbfe77@syzkaller.appspotmail.com
-Signed-off-by: Ying Xue <ying.xue@windriver.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+CC: stable@vger.kernel.org
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+[ add stacktrace ]
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/tipc/netlink_compat.c |   26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ fs/btrfs/disk-io.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/net/tipc/netlink_compat.c
-+++ b/net/tipc/netlink_compat.c
-@@ -389,6 +389,7 @@ static int tipc_nl_compat_bearer_enable(
- 	struct nlattr *prop;
- 	struct nlattr *bearer;
- 	struct tipc_bearer_config *b;
-+	int len;
- 
- 	b = (struct tipc_bearer_config *)TLV_DATA(msg->req);
- 
-@@ -396,6 +397,10 @@ static int tipc_nl_compat_bearer_enable(
- 	if (!bearer)
- 		return -EMSGSIZE;
- 
-+	len = min_t(int, TLV_GET_DATA_LEN(msg->req), TIPC_MAX_BEARER_NAME);
-+	if (!string_is_valid(b->name, len))
-+		return -EINVAL;
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -4155,6 +4155,14 @@ static void btrfs_destroy_all_ordered_ex
+ 		spin_lock(&fs_info->ordered_root_lock);
+ 	}
+ 	spin_unlock(&fs_info->ordered_root_lock);
 +
- 	if (nla_put_string(skb, TIPC_NLA_BEARER_NAME, b->name))
- 		return -EMSGSIZE;
++	/*
++	 * We need this here because if we've been flipped read-only we won't
++	 * get sync() from the umount, so we need to make sure any ordered
++	 * extents that haven't had their dirty pages IO start writeout yet
++	 * actually get run and error out properly.
++	 */
++	btrfs_wait_ordered_roots(fs_info, U64_MAX, 0, (u64)-1);
+ }
  
-@@ -421,6 +426,7 @@ static int tipc_nl_compat_bearer_disable
- {
- 	char *name;
- 	struct nlattr *bearer;
-+	int len;
- 
- 	name = (char *)TLV_DATA(msg->req);
- 
-@@ -428,6 +434,10 @@ static int tipc_nl_compat_bearer_disable
- 	if (!bearer)
- 		return -EMSGSIZE;
- 
-+	len = min_t(int, TLV_GET_DATA_LEN(msg->req), TIPC_MAX_BEARER_NAME);
-+	if (!string_is_valid(name, len))
-+		return -EINVAL;
-+
- 	if (nla_put_string(skb, TIPC_NLA_BEARER_NAME, name))
- 		return -EMSGSIZE;
- 
-@@ -488,6 +498,7 @@ static int tipc_nl_compat_link_stat_dump
- 	struct nlattr *prop[TIPC_NLA_PROP_MAX + 1];
- 	struct nlattr *stats[TIPC_NLA_STATS_MAX + 1];
- 	int err;
-+	int len;
- 
- 	if (!attrs[TIPC_NLA_LINK])
- 		return -EINVAL;
-@@ -514,6 +525,11 @@ static int tipc_nl_compat_link_stat_dump
- 		return err;
- 
- 	name = (char *)TLV_DATA(msg->req);
-+
-+	len = min_t(int, TLV_GET_DATA_LEN(msg->req), TIPC_MAX_LINK_NAME);
-+	if (!string_is_valid(name, len))
-+		return -EINVAL;
-+
- 	if (strcmp(name, nla_data(link[TIPC_NLA_LINK_NAME])) != 0)
- 		return 0;
- 
-@@ -654,6 +670,7 @@ static int tipc_nl_compat_media_set(stru
- 	struct nlattr *prop;
- 	struct nlattr *media;
- 	struct tipc_link_config *lc;
-+	int len;
- 
- 	lc = (struct tipc_link_config *)TLV_DATA(msg->req);
- 
-@@ -661,6 +678,10 @@ static int tipc_nl_compat_media_set(stru
- 	if (!media)
- 		return -EMSGSIZE;
- 
-+	len = min_t(int, TLV_GET_DATA_LEN(msg->req), TIPC_MAX_MEDIA_NAME);
-+	if (!string_is_valid(lc->name, len))
-+		return -EINVAL;
-+
- 	if (nla_put_string(skb, TIPC_NLA_MEDIA_NAME, lc->name))
- 		return -EMSGSIZE;
- 
-@@ -681,6 +702,7 @@ static int tipc_nl_compat_bearer_set(str
- 	struct nlattr *prop;
- 	struct nlattr *bearer;
- 	struct tipc_link_config *lc;
-+	int len;
- 
- 	lc = (struct tipc_link_config *)TLV_DATA(msg->req);
- 
-@@ -688,6 +710,10 @@ static int tipc_nl_compat_bearer_set(str
- 	if (!bearer)
- 		return -EMSGSIZE;
- 
-+	len = min_t(int, TLV_GET_DATA_LEN(msg->req), TIPC_MAX_MEDIA_NAME);
-+	if (!string_is_valid(lc->name, len))
-+		return -EINVAL;
-+
- 	if (nla_put_string(skb, TIPC_NLA_BEARER_NAME, lc->name))
- 		return -EMSGSIZE;
- 
+ static int btrfs_destroy_delayed_refs(struct btrfs_transaction *trans,
 
 
