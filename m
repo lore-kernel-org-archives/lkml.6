@@ -2,111 +2,134 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3C5BC282DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:43:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2268C282DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:43:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CECD20861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:43:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C41120861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:43:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729619AbfAUInO (ORCPT
+        id S1729551AbfAUInt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 03:43:14 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:42945 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729051AbfAUInN (ORCPT
+        Mon, 21 Jan 2019 03:43:49 -0500
+Received: from mxout012.mail.hostpoint.ch ([217.26.49.172]:10718 "EHLO
+        mxout012.mail.hostpoint.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728933AbfAUIns (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 03:43:13 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1glVAd-0002pF-AB; Mon, 21 Jan 2019 09:43:03 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1glVAb-0000NW-Tw; Mon, 21 Jan 2019 09:43:01 +0100
-Date:   Mon, 21 Jan 2019 09:43:01 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     Ryder Lee <ryder.lee@mediatek.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sean Wang <sean.wang@kernel.org>,
-        Weijie Gao <weijie.gao@mediatek.com>,
-        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v1 2/5] dt-bindings: pwm: add a property
- "mediatek,num-pwms"
-Message-ID: <20190121084301.s5cx27sbywu2yr3m@pengutronix.de>
-References: <de316385a84e079d3b23891e61c959094b9fa7e5.1547781007.git.ryder.lee@mediatek.com>
- <7e1de17a43f2cde73aecd2773e2b3a5fdfd294f3.1547781007.git.ryder.lee@mediatek.com>
- <7d387d2a-74f0-c6c7-aa2d-cf9b87579682@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7d387d2a-74f0-c6c7-aa2d-cf9b87579682@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Mon, 21 Jan 2019 03:43:48 -0500
+Received: from [10.0.2.46] (helo=asmtp013.mail.hostpoint.ch)
+        by mxout012.mail.hostpoint.ch with esmtp (Exim 4.91 (FreeBSD))
+        (envelope-from <dev@pschenker.ch>)
+        id 1glVBG-0005L3-Hg; Mon, 21 Jan 2019 09:43:42 +0100
+Received: from [46.140.72.82] (helo=philippe-pc.toradex.int)
+        by asmtp013.mail.hostpoint.ch with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.91 (FreeBSD))
+        (envelope-from <dev@pschenker.ch>)
+        id 1glVBG-0006Iv-Cx; Mon, 21 Jan 2019 09:43:42 +0100
+X-Authenticated-Sender-Id: dev@pschenker.ch
+Message-ID: <cf6bf50028fd17a623f93d8d6114af3e9b54c610.camel@pschenker.ch>
+Subject: Re: [PATCH] ARM: dts: imx6*-apalis/-colibri: mark I2C recovery
+ GPIOs as open drain
+From:   Philippe Schenker <dev@pschenker.ch>
+Reply-To: dev@pschenker.ch
+To:     Stefan Agner <stefan@agner.ch>, shawnguo@kernel.org,
+        s.hauer@pengutronix.de
+Cc:     max.krummenacher@toradex.com, marcel.ziswiler@toradex.com,
+        kernel@pengutronix.de, fabio.estevam@nxp.com, linux-imx@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date:   Mon, 21 Jan 2019 09:43:41 +0100
+In-Reply-To: <20190118133113.19484-1-stefan@agner.ch>
+References: <20190118133113.19484-1-stefan@agner.ch>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.4 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 09:44:49AM +0100, Matthias Brugger wrote:
+On Fri, 2019-01-18 at 14:31 +0100, Stefan Agner wrote:
+> Since commit d2d0ad2aec4a ("i2c: imx: use open drain for recovery
+> GPIO") GPIO lib expects this GPIO to be configured as open drain.
+> Make sure we define this GPIO as open drain in the device tree.
+> This gets rid of the following warning:
+>   gpio-81 (scl): enforced open drain please flag it properly in DT/ACPI
+> DSDT/board file
 > 
+> Note that currently the i.MX pinctrl driver does not support
+> enabling open drain directly, so this patch has no effect in
+> practice. Open drain is enabled by the fixed pinmux entry.
 > 
-> On 18/01/2019 04:24, Ryder Lee wrote:
-> > This adds a property "mediatek,num-pwms" in example so that we could
-> > set the number of PWM channels via device tree.
-> > 
-> > Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
-> > Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
-> > ---
-> > Changes since v1: add a Reviewed-by tag.
-> > ---
-> >  Documentation/devicetree/bindings/pwm/pwm-mediatek.txt | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/pwm/pwm-mediatek.txt b/Documentation/devicetree/bindings/pwm/pwm-mediatek.txt
-> > index 991728c..f9e2d1f 100644
-> > --- a/Documentation/devicetree/bindings/pwm/pwm-mediatek.txt
-> > +++ b/Documentation/devicetree/bindings/pwm/pwm-mediatek.txt
-> > @@ -20,6 +20,7 @@ Required properties:
-> >   - pinctrl-names: Must contain a "default" entry.
-> >   - pinctrl-0: One property must exist for each entry in pinctrl-names.
-> >     See pinctrl/pinctrl-bindings.txt for details of the property values.
-> > + - mediatek,num-pwms: the number of PWM channels.
-> >  
-> >  Example:
-> >  	pwm0: pwm@11006000 {
-> > @@ -37,4 +38,5 @@ Example:
-> >  			      "pwm3", "pwm4", "pwm5";
-> >  		pinctrl-names = "default";
-> >  		pinctrl-0 = <&pwm0_pins>;
-> > +		mediatek,num-pwms = <5>;
-> >  	};
-> > 
-> 
-> Wasn't there a comment in the last version to use num-pwms instead of
-> mediatek,num-pwms?
-> 
-> Uwe I think you requested that.
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
 
-I think it is sensible, but it needs Thierry's blessing. Unfortunately
-he seems busy with other stuff and getting feedback from him needs
-patience.
+Reviewed-by: Philippe Schenker <philippe.schenker@toradex.com>
 
-Best regards
-Uwe
+> ---
+>  arch/arm/boot/dts/imx6qdl-apalis.dtsi  | 4 ++--
+>  arch/arm/boot/dts/imx6qdl-colibri.dtsi | 4 ++--
+>  arch/arm/boot/dts/imx6ull-colibri.dtsi | 8 ++++----
+>  3 files changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/imx6qdl-apalis.dtsi
+> b/arch/arm/boot/dts/imx6qdl-apalis.dtsi
+> index cf66f9ececbd..2d0ed199ed20 100644
+> --- a/arch/arm/boot/dts/imx6qdl-apalis.dtsi
+> +++ b/arch/arm/boot/dts/imx6qdl-apalis.dtsi
+> @@ -429,8 +429,8 @@
+>  	pinctrl-names = "default", "recovery";
+>  	pinctrl-0 = <&pinctrl_i2c3>;
+>  	pinctrl-1 = <&pinctrl_i2c3_recovery>;
+> -	scl-gpios = <&gpio3 17 GPIO_ACTIVE_HIGH>;
+> -	sda-gpios = <&gpio3 18 GPIO_ACTIVE_HIGH>;
+> +	scl-gpios = <&gpio3 17 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+> +	sda-gpios = <&gpio3 18 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+>  	status = "disabled";
+>  };
+>  
+> diff --git a/arch/arm/boot/dts/imx6qdl-colibri.dtsi
+> b/arch/arm/boot/dts/imx6qdl-colibri.dtsi
+> index 87e15e7cb32b..8a27c2a05678 100644
+> --- a/arch/arm/boot/dts/imx6qdl-colibri.dtsi
+> +++ b/arch/arm/boot/dts/imx6qdl-colibri.dtsi
+> @@ -298,8 +298,8 @@
+>  	pinctrl-names = "default", "recovery";
+>  	pinctrl-0 = <&pinctrl_i2c3>;
+>  	pinctrl-1 = <&pinctrl_i2c3_recovery>;
+> -	scl-gpios = <&gpio1 3 GPIO_ACTIVE_HIGH>;
+> -	sda-gpios = <&gpio1 6 GPIO_ACTIVE_HIGH>;
+> +	scl-gpios = <&gpio1 3 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+> +	sda-gpios = <&gpio1 6 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+>  	status = "disabled";
+>  };
+>  
+> diff --git a/arch/arm/boot/dts/imx6ull-colibri.dtsi
+> b/arch/arm/boot/dts/imx6ull-colibri.dtsi
+> index 6c63a7384611..9ad1da159768 100644
+> --- a/arch/arm/boot/dts/imx6ull-colibri.dtsi
+> +++ b/arch/arm/boot/dts/imx6ull-colibri.dtsi
+> @@ -94,16 +94,16 @@
+>  	pinctrl-names = "default", "gpio";
+>  	pinctrl-0 = <&pinctrl_i2c1>;
+>  	pinctrl-1 = <&pinctrl_i2c1_gpio>;
+> -	sda-gpios = <&gpio1 29 GPIO_ACTIVE_LOW>;
+> -	scl-gpios = <&gpio1 28 GPIO_ACTIVE_LOW>;
+> +	sda-gpios = <&gpio1 29 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+> +	scl-gpios = <&gpio1 28 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+>  };
+>  
+>  &i2c2 {
+>  	pinctrl-names = "default", "gpio";
+>  	pinctrl-0 = <&pinctrl_i2c2>;
+>  	pinctrl-1 = <&pinctrl_i2c2_gpio>;
+> -	sda-gpios = <&gpio1 31 GPIO_ACTIVE_LOW>;
+> -	scl-gpios = <&gpio1 30 GPIO_ACTIVE_LOW>;
+> +	sda-gpios = <&gpio1 31 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+> +	scl-gpios = <&gpio1 30 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+>  	status = "okay";
+>  
+>  	ad7879@2c {
 
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
