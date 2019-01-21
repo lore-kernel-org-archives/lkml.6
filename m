@@ -2,78 +2,110 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79E54C3712F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 21:30:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7282C37120
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 21:32:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38A1020861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 21:30:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B328020861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 21:32:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MRFxsVSt"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="f8VnGwAg";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="e5/IXKBM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728014AbfAUVac (ORCPT
+        id S1728058AbfAUVcM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 16:30:32 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:55174 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727605AbfAUVac (ORCPT
+        Mon, 21 Jan 2019 16:32:12 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:58082 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727422AbfAUVcL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 16:30:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=IDcb7s4cNraG/2a1cXf3u05xgct90adkEl26XoaC8RY=; b=MRFxsVStKsekj4UYcs0XPLSpx
-        bSj7Ak2pDhMBrwVMo5FXRWO6rvWvKdTuzFTNnhR4ez40SnpfDuY0jmU5zztKhBVfjtWbVvEiYY4g0
-        RUvOgGtt8ZPjtJrVSkgvJOKe9En8oXFp4OlIiES6R8cAfSeigME/YYLvFChNqYD+Y4r2YytEdTYqT
-        XpB0UxG1qjvpQrWER4N5v6SfzqTz1jx1IPMjiorDIQoDewUH4bJli/Cc6S2q8OQOWoPnOx3Xd2ryt
-        g5Q6MJeT1NBICzaN5m+6TwRfV2aMMPUY4hQVFLz2YkDJ/lA+aQJnhQNwa/aJc9rRaubLqfegpLzAX
-        ArZ+TudDQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1glh9I-0000Ls-Lu; Mon, 21 Jan 2019 21:30:28 +0000
-Date:   Mon, 21 Jan 2019 13:30:28 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Liam Mark <lmark@codeaurora.org>
-Cc:     "Andrew F. Davis" <afd@ti.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Laura Abbott <labbott@redhat.com>, sumit.semwal@linaro.org,
-        arve@android.com, tkjos@android.com, maco@android.com,
-        joel@joelfernandes.org, christian@brauner.io,
-        devel@driverdev.osuosl.org, dri-devel@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
-        john.stultz@linaro.org
-Subject: Re: [PATCH 3/4] dma-buf: add support for mapping with dma mapping
- attributes
-Message-ID: <20190121213028.GB28620@infradead.org>
-References: <1547836667-13695-1-git-send-email-lmark@codeaurora.org>
- <1547836667-13695-4-git-send-email-lmark@codeaurora.org>
- <20190119102527.GA17723@infradead.org>
- <7ae73c39-9049-bcf6-775f-b0817ba0ec5f@redhat.com>
- <20190121083046.GD12420@infradead.org>
- <alpine.DEB.2.10.1901211142560.9631@lmark-linux.qualcomm.com>
- <0ed7875f-15e9-184f-5b99-9a53df7c8d14@ti.com>
- <alpine.DEB.2.10.1901211214570.11004@lmark-linux.qualcomm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.10.1901211214570.11004@lmark-linux.qualcomm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Mon, 21 Jan 2019 16:32:11 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 5161B6030B; Mon, 21 Jan 2019 21:32:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548106330;
+        bh=rTDLfJXvnIphivyiUbh3E7kf7sQx3Ok+2W16bskYasQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=f8VnGwAg/kQXIV0DBvPnB8AuP9Vn9GG1ZB59sKhr4+q0Hq7obIpUPQmwpaSfFVoNG
+         tCszpUHi6lhO3n8GsZLx2aXbH7ZgERxZxZCR2YSbTi9zk73k0SBUuM56Ymzgc9yGEX
+         C2NjwS9ZRvTfFHdy8PA2o2rkOOUMjCArxa5xJS0s=
+Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 919776030B;
+        Mon, 21 Jan 2019 21:32:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548106329;
+        bh=rTDLfJXvnIphivyiUbh3E7kf7sQx3Ok+2W16bskYasQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=e5/IXKBMqviXwNYjvBYvBSzUFuskJq/DRB/aaIJedk+vg5AI6n2Cpr4yk4LzHkl10
+         B6mnuNEts+VqEnTP8ZPSNuvdszloH1gNxgvj61MXharaK8l/pQjUV/F0a8BVCEuyRw
+         cQWc54bRmiWc5L4eisxhemVhfL7Gwutwgz9vHT1o=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 919776030B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+Cc:     bjorn.andersson@linaro.org, andy.gross@linaro.org,
+        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        gregkh@linuxfoundation.org, balbi@kernel.org,
+        linux-usb@vger.kernel.org, Jeffrey Hugo <jhugo@codeaurora.org>
+Subject: [PATCH v3 0/6] MSM8998 basic USB support
+Date:   Mon, 21 Jan 2019 14:31:47 -0700
+Message-Id: <1548106307-4762-1-git-send-email-jhugo@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 12:20:42PM -0800, Liam Mark wrote:
-> I have left this to clients, but if they own the buffer they can have the 
-> knowledge as to whether CPU access is needed in that use case (example for 
-> post-processing).
+This series provides basic USB support for MSM8998.  Currently missing is
+wiring up the Type-C detection logic so that the controller can correctly
+switch between host and peripheral modes.  Work to implement that is
+ongoing, and expected to appear soon in followup patches.  Also missing is
+Display Port (DP) support which apparently is different from sdm845 and
+needs additional investigation.
 
-That is an API design which the user is more likely to get wrong than
-right and thus does not pass the smell test.
+v3:
+-Dropped accepted phy changes
+-Changed DT node labels per discussion with Bjorn
+-Made DT reg property addresses fill width
+-Added Bjorn's reviewed-by
+
+v2:
+-Fixed typo in QUSB2 bindings changes
+-Split out bindings changes
+-Fixed dual lane support in QMP to reflect Doug's updates
+-Dropped the clock fixes which were accepted
+
+Jeffrey Hugo (6):
+  clk: qcom: Add missing freq for usb30_master_clk on 8998
+  clk: qcom: Skip halt checks on gcc_usb3_phy_pipe_clk for 8998
+  phy: qcom-qusb2: Add QUSB2 PHY support for msm8998
+  phy: qcom-qmp: Add QMP V3 USB3 PHY support for msm8998
+  usb: dwc3: qcom: Add support for MSM8998
+  arm64: dts: qcom: msm8998: Add USB-related nodes
+
+ .../devicetree/bindings/phy/qcom-qmp-phy.txt       |   5 +
+ .../devicetree/bindings/phy/qcom-qusb2-phy.txt     |   1 +
+ .../devicetree/bindings/usb/qcom,dwc3.txt          |   1 +
+ arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi          |  22 ++++
+ arch/arm64/boot/dts/qcom/msm8998.dtsi              |  90 +++++++++++++
+ drivers/clk/qcom/gcc-msm8998.c                     |   3 +-
+ drivers/phy/qualcomm/phy-qcom-qmp.c                | 142 +++++++++++++++++++++
+ drivers/phy/qualcomm/phy-qcom-qmp.h                |   4 +
+ drivers/phy/qualcomm/phy-qcom-qusb2.c              |  41 ++++++
+ drivers/usb/dwc3/dwc3-qcom.c                       |   1 +
+ 10 files changed, 309 insertions(+), 1 deletion(-)
+
+-- 
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
 
