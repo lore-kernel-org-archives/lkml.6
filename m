@@ -2,106 +2,145 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10434C282DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:27:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B227C282F6
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:29:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D002120989
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:27:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EECDB20989
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:29:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="W6zc69Ak"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bm2OnHA3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727572AbfAUJ1F (ORCPT
+        id S1727619AbfAUJ3z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 04:27:05 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:3275 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726418AbfAUJ1E (ORCPT
+        Mon, 21 Jan 2019 04:29:55 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:44076 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726418AbfAUJ3z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 04:27:04 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c4590570000>; Mon, 21 Jan 2019 01:26:47 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 21 Jan 2019 01:27:03 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 21 Jan 2019 01:27:03 -0800
-Received: from [10.19.225.182] (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 21 Jan
- 2019 09:27:01 +0000
-Subject: Re: [PATCH v1 00/12] Add some functionalities for Tegra soctherm
-To:     <thierry.reding@gmail.com>, <daniel.lezcano@linaro.org>,
-        <edubezval@gmail.com>, <linux-tegra@vger.kernel.org>
-CC:     <rui.zhang@intel.com>, <srikars@nvidia.com>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <1545118484-23641-1-git-send-email-wni@nvidia.com>
- <1545118484-23641-2-git-send-email-wni@nvidia.com>
-From:   Wei Ni <wni@nvidia.com>
-Message-ID: <ce989feb-e179-98d1-59d4-e7619ceff26a@nvidia.com>
-Date:   Mon, 21 Jan 2019 17:26:57 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <1545118484-23641-2-git-send-email-wni@nvidia.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1548062807; bh=9Ed1taDw9K8vdKI5A5qjdPsrC5D5SPJ/1srptDqHpNw=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=W6zc69Ak49/8Ng7XJyKAXbZLIOydM9NdHybRvP7mKnhmDaZYfYAOaqQkjI1Nt7/W0
-         Dz+nyJlK+mxSk+M9ELzTW/S9xC8nhxvzBH6u6KvbVs9/wmtSxN4VdLnne0iVEg0za+
-         vz5Rx55WQv69f0kgI3s/F4K0a0Mw2LYeowKmIpTkF+7E3AG7Qinrva4ywdTJyOFXEg
-         GbC2vfa7BL3k8B3Xozh+KEf86/0RNDKq1PVKvcVDZl5lRblPUB1gQJ3Eydfc6E3L0f
-         A9ncBM05M73QGtXsP1P8i3DtodPEicxKsk+t4P+cbCWiKUqENYc9pvTfwZNGBWRGdm
-         bWegwOvV8eDgA==
+        Mon, 21 Jan 2019 04:29:55 -0500
+Received: by mail-pf1-f196.google.com with SMTP id u6so9852667pfh.11
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 01:29:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=ezNTvp94HxKfIHnuTDGydgVtNdYFJn6q8Xf3NcPa2u4=;
+        b=bm2OnHA3iMTFUED27Q3idWBXeh8Qos+EktXabpmpTUs33p0wICYqztSSpUPVGyn0ni
+         fDlRIj+cxLoUVBl4ZguBFkQEaPWF0mHhmsGdi06pcOpCffcMKdcTcYwJQVohdak7YV47
+         yqbCYv0KazcwxOlJYINw0M6QPfJTT/Fd5Yveg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ezNTvp94HxKfIHnuTDGydgVtNdYFJn6q8Xf3NcPa2u4=;
+        b=ZxI9yH14+JklCjIjVQLwL8cWD1cW3AMFoeeBl6/1ePwTb2B4EB+7sPTtuMqUQfEMnO
+         l/J40SznIXKMmfOIvNFCXKDKyIZbYOA+RXKaSo2J/kPrLWBGAMpUGSZn55ULiNHjpn0k
+         eIz0ZZoUbJDffl916GW7lgoRd8tMLg+OgGpJVomS+nMoyNhikTHVZWAQR0nWqoSxiJ6U
+         Hq1cggtaV+8XvxIUdVuhf10eeCIMUrCmAK0mTz8FL6IDx9jWqVfRlxl9nq0k7LIdM3my
+         ByGnbjlC+/p6/2gdojtq3Cxfl7Z24ZOk2o1JRLK+I0mmB1KYKKPlvr/Pk5O69xz+wtsl
+         qptg==
+X-Gm-Message-State: AJcUukeRIM2vpbS+QIn58e4OWBDdrO6732DwTWiilNfgSV+YctTPAISG
+        NflcXdeR6+OyMuSvV9BHXXIHLQ==
+X-Google-Smtp-Source: ALg8bN5F+t/mRV0Mf1/foRV3v0b5kBnK/KF97jtxYUW6VhpyWS2UD2SuHvsQdpJXPIgAQ/y4pBi8CQ==
+X-Received: by 2002:a63:5026:: with SMTP id e38mr27560627pgb.123.1548062993927;
+        Mon, 21 Jan 2019 01:29:53 -0800 (PST)
+Received: from localhost.localdomain ([117.252.65.115])
+        by smtp.gmail.com with ESMTPSA id h9sm16182777pgd.53.2019.01.21.01.29.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 21 Jan 2019 01:29:53 -0800 (PST)
+From:   Sumit Garg <sumit.garg@linaro.org>
+To:     jens.wiklander@linaro.org, herbert@gondor.apana.org.au
+Cc:     linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mpm@selenic.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, arnd@arndb.de, gregkh@linuxfoundation.org,
+        daniel.thompson@linaro.org, ard.biesheuvel@linaro.org,
+        bhsharma@redhat.com, tee-dev@lists.linaro.org,
+        Sumit Garg <sumit.garg@linaro.org>
+Subject: [PATCH v4 0/4] Introduce TEE bus driver framework
+Date:   Mon, 21 Jan 2019 14:59:15 +0530
+Message-Id: <1548062959-31860-1-git-send-email-sumit.garg@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eduardo,
-Could you please take a look this serial?
+This series introduces a generic TEE bus driver concept for TEE based
+kernel drivers which would like to communicate with TEE based devices/
+services.
 
-Thanks.
-Wei.
+Patch #1 adds TEE bus concept where devices/services are identified via
+Universally Unique Identifier (UUID) and drivers register a table of
+device UUIDs which they can support. This concept also allows for device
+enumeration to be specific to corresponding TEE implementation like
+OP-TEE etc.
 
-On 18/12/2018 3:34 PM, Wei Ni wrote:
-> Move the hw/sw shutdown patches into this serial. There already have
-> some discussion for it in https://lkml.org/lkml/2018/12/7/225.
-> Support GPU HW throttle, thermal IRQ, set_trips(), EDP IRQ and OC
-> hw throttle.
-> 
-> Wei Ni (12):
->   of: Add bindings of thermtrip for Tegra soctherm
->   thermal: tegra: support hw and sw shutdown
->   arm64: dts: tegra210: set thermtrip
->   of: Add bindings of gpu hw throttle for Tegra soctherm
->   thermal: tegra: add support for gpu hw-throttle
->   arm64: dts: tegra210: set gpu hw throttle level
->   thermal: tegra: add support for thermal IRQ
->   thermal: tegra: add set_trips functionality
->   thermal: tegra: add support for EDP IRQ
->   arm64: dts: tegra210: set EDP interrupt line
->   of: Add bindings of OC hw throttle for Tegra soctherm
->   thermal: tegra: enable OC hw throttle
-> 
->  .../bindings/thermal/nvidia,tegra124-soctherm.txt  |  63 +-
->  arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  20 +-
->  drivers/thermal/tegra/soctherm.c                   | 959 +++++++++++++++++++--
->  drivers/thermal/tegra/soctherm.h                   |  16 +
->  drivers/thermal/tegra/tegra124-soctherm.c          |   7 +-
->  drivers/thermal/tegra/tegra132-soctherm.c          |   7 +-
->  drivers/thermal/tegra/tegra210-soctherm.c          |  15 +-
->  include/dt-bindings/thermal/tegra124-soctherm.h    |  22 +-
->  8 files changed, 1033 insertions(+), 76 deletions(-)
-> 
+Patch #2 adds supp_nowait flag for non-blocking requests arising via
+TEE internal client interface.
+
+Patch #3 adds TEE bus device enumeration support for OP-TEE. OP-TEE
+provides a pseudo TA to enumerate TAs which can act as devices/services
+for TEE bus.
+
+Patch #4 adds OP-TEE based hwrng driver which act as TEE bus driver.
+On ARM SoC's with TrustZone enabled, peripherals like entropy sources
+might not be accessible to normal world (linux in this case) and rather
+accessible to secure world (OP-TEE in this case) only. So this driver
+aims to provides a generic interface to OP-TEE based random number
+generator service.
+
+Example case is Developerbox based on Socionext's Synquacer SoC [1]
+which provides 7 thermal sensors accessible from secure world only which
+could be used as entropy sources (thermal/measurement noise).
+
+[1] https://www.96boards.org/product/developerbox/
+
+Changes in v4:
+
+1. Use typedef instead of single member tee_client_device_id struct.
+2. Incorporate TEE bus nitpicks.
+
+Changes in v3:
+
+1. Fixed bus error path in Patch #1.
+2. Reversed order of Patch #2 and #3.
+3. Fixed miscellaneous syntax comments and memory leak.
+4. Added comments in Patch #2 for supp_nowait flag.
+
+Changes in v2:
+
+Based on review comments, the scope of this series has increased as
+follows:
+
+1. Added TEE bus driver framework.
+2. Added OP-TEE based device enumeration.
+3. Register optee-rng driver as TEE bus driver.
+4. Removed DT dependency for optee-rng device UUID.
+5. Added supp_nowait flag.
+
+Sumit Garg (4):
+  tee: add bus driver framework for TEE based devices
+  tee: add supp_nowait flag in tee_context struct
+  tee: optee: add TEE bus device enumeration support
+  hwrng: add OP-TEE based rng driver
+
+ MAINTAINERS                        |   5 +
+ drivers/char/hw_random/Kconfig     |  15 ++
+ drivers/char/hw_random/Makefile    |   1 +
+ drivers/char/hw_random/optee-rng.c | 272 +++++++++++++++++++++++++++++++++++++
+ drivers/tee/optee/Makefile         |   1 +
+ drivers/tee/optee/core.c           |   4 +
+ drivers/tee/optee/device.c         | 153 +++++++++++++++++++++
+ drivers/tee/optee/optee_private.h  |   3 +
+ drivers/tee/optee/supp.c           |  10 +-
+ drivers/tee/tee_core.c             |  58 +++++++-
+ include/linux/tee_drv.h            |  43 +++++-
+ 11 files changed, 559 insertions(+), 6 deletions(-)
+ create mode 100644 drivers/char/hw_random/optee-rng.c
+ create mode 100644 drivers/tee/optee/device.c
+
+-- 
+2.7.4
+
