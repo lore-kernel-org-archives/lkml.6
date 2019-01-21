@@ -2,161 +2,230 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B258FC2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:14:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 934A2C2F3D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:14:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EC5C20861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:14:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548080064;
-	bh=7MgpDpnbk8mBX7RU8dM4dLw8dmb6IQ1onFm4RZeML+Y=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=pF8RHmN377Hryyw2hJ3FlGnNgr7+rqy8/hX8Xyzo6P3dltbscLuEC/ACtTlYzyW0F
-	 eNCFvSeaoyOAAwqAHLeKFAFseZM0aug2NOg/T5oihkiYc3oyIKIHgUR+nqOnr+8mLW
-	 2xEteajolyrB7C5ox7NN4wFrqUQdgYN0J+7yf8rA=
+	by mail.kernel.org (Postfix) with ESMTP id 6121320861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:14:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731025AbfAUNwW (ORCPT
+        id S1730475AbfAUOOa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:52:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35454 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731012AbfAUNwS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:52:18 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 68D332063F;
-        Mon, 21 Jan 2019 13:52:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078736;
-        bh=7MgpDpnbk8mBX7RU8dM4dLw8dmb6IQ1onFm4RZeML+Y=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XMs/YNOuEJ6fxmLxpLAHti+b8Qy/JkX/e3P7IPQ8qpoE2Jhq9rHkr55jsjFcmYR9D
-         VJSRazPx1TO5rsxbLL2NuYNsCPxyLfFYgoK5VEuk5AZd+PGoFgLC2EWskAykInAduo
-         ldrOrem6JojNVsvn+HJdZxf/VRFtGTyZEiQrDIFM=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stanley Chu <stanley.chu@mediatek.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 25/59] scsi: core: Synchronize request queue PM status only on successful resume
-Date:   Mon, 21 Jan 2019 14:43:50 +0100
-Message-Id: <20190121122459.343827450@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190121122456.529172919@linuxfoundation.org>
-References: <20190121122456.529172919@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Mon, 21 Jan 2019 09:14:30 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:38705 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731001AbfAUNwN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:52:13 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0LDprfb2542808
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Mon, 21 Jan 2019 05:51:53 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0LDprbk2542805;
+        Mon, 21 Jan 2019 05:51:53 -0800
+Date:   Mon, 21 Jan 2019 05:51:53 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Quentin Perret <tipbot@zytor.com>
+Message-ID: <tip-570139c80d73a5aa60c2500163378412b3836fc9@git.kernel.org>
+Cc:     quentin.perret@arm.com, tglx@linutronix.de,
+        torvalds@linux-foundation.org, hpa@zytor.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, peterz@infradead.org
+Reply-To: linux-kernel@vger.kernel.org, mingo@kernel.org,
+          peterz@infradead.org, tglx@linutronix.de, quentin.perret@arm.com,
+          hpa@zytor.com, torvalds@linux-foundation.org
+In-Reply-To: <20181203095628.11858-11-quentin.perret@arm.com>
+References: <20181203095628.11858-11-quentin.perret@arm.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:sched/core] sched/topology: Introduce a sysctl for Energy
+ Aware Scheduling
+Git-Commit-ID: 570139c80d73a5aa60c2500163378412b3836fc9
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+Commit-ID:  570139c80d73a5aa60c2500163378412b3836fc9
+Gitweb:     https://git.kernel.org/tip/570139c80d73a5aa60c2500163378412b3836fc9
+Author:     Quentin Perret <quentin.perret@arm.com>
+AuthorDate: Mon, 3 Dec 2018 09:56:23 +0000
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 21 Jan 2019 14:40:28 +0100
 
-------------------
+sched/topology: Introduce a sysctl for Energy Aware Scheduling
 
-From: Stanley Chu <stanley.chu@mediatek.com>
+In its current state, Energy Aware Scheduling (EAS) starts automatically
+on asymmetric platforms having an Energy Model (EM). However, there are
+users who want to have an EM (for thermal management for example), but
+don't want EAS with it.
 
-commit 3f7e62bba0003f9c68f599f5997c4647ef5b4f4e upstream.
+In order to let users disable EAS explicitly, introduce a new sysctl
+called 'sched_energy_aware'. It is enabled by default so that EAS can
+start automatically on platforms where it makes sense. Flipping it to 0
+rebuilds the scheduling domains and disables EAS.
 
-The commit 356fd2663cff ("scsi: Set request queue runtime PM status back to
-active on resume") fixed up the inconsistent RPM status between request
-queue and device. However changing request queue RPM status shall be done
-only on successful resume, otherwise status may be still inconsistent as
-below,
-
-Request queue: RPM_ACTIVE
-Device: RPM_SUSPENDED
-
-This ends up soft lockup because requests can be submitted to underlying
-devices but those devices and their required resource are not resumed.
-
-For example,
-
-After above inconsistent status happens, IO request can be submitted to UFS
-device driver but required resource (like clock) is not resumed yet thus
-lead to warning as below call stack,
-
-WARN_ON(hba->clk_gating.state != CLKS_ON);
-ufshcd_queuecommand
-scsi_dispatch_cmd
-scsi_request_fn
-__blk_run_queue
-cfq_insert_request
-__elv_add_request
-blk_flush_plug_list
-blk_finish_plug
-jbd2_journal_commit_transaction
-kjournald2
-
-We may see all behind IO requests hang because of no response from storage
-host or device and then soft lockup happens in system. In the end, system
-may crash in many ways.
-
-Fixes: 356fd2663cff (scsi: Set request queue runtime PM status back to active on resume)
-Cc: stable@vger.kernel.org
-Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Quentin Perret <quentin.perret@arm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: adharmap@codeaurora.org
+Cc: chris.redpath@arm.com
+Cc: currojerez@riseup.net
+Cc: dietmar.eggemann@arm.com
+Cc: edubezval@gmail.com
+Cc: gregkh@linuxfoundation.org
+Cc: javi.merino@kernel.org
+Cc: joel@joelfernandes.org
+Cc: juri.lelli@redhat.com
+Cc: morten.rasmussen@arm.com
+Cc: patrick.bellasi@arm.com
+Cc: pkondeti@codeaurora.org
+Cc: rjw@rjwysocki.net
+Cc: skannan@codeaurora.org
+Cc: smuckle@google.com
+Cc: srinivas.pandruvada@linux.intel.com
+Cc: thara.gopinath@linaro.org
+Cc: tkjos@google.com
+Cc: valentin.schneider@arm.com
+Cc: vincent.guittot@linaro.org
+Cc: viresh.kumar@linaro.org
+Link: https://lkml.kernel.org/r/20181203095628.11858-11-quentin.perret@arm.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- drivers/scsi/scsi_pm.c |   26 +++++++++++++++-----------
- 1 file changed, 15 insertions(+), 11 deletions(-)
+ Documentation/sysctl/kernel.txt | 12 ++++++++++++
+ include/linux/sched/sysctl.h    |  7 +++++++
+ kernel/sched/topology.c         | 29 +++++++++++++++++++++++++++++
+ kernel/sysctl.c                 | 11 +++++++++++
+ 4 files changed, 59 insertions(+)
 
---- a/drivers/scsi/scsi_pm.c
-+++ b/drivers/scsi/scsi_pm.c
-@@ -79,8 +79,22 @@ static int scsi_dev_type_resume(struct d
+diff --git a/Documentation/sysctl/kernel.txt b/Documentation/sysctl/kernel.txt
+index c0527d8a468a..379063e58326 100644
+--- a/Documentation/sysctl/kernel.txt
++++ b/Documentation/sysctl/kernel.txt
+@@ -79,6 +79,7 @@ show up in /proc/sys/kernel:
+ - reboot-cmd                  [ SPARC only ]
+ - rtsig-max
+ - rtsig-nr
++- sched_energy_aware
+ - seccomp/                    ==> Documentation/userspace-api/seccomp_filter.rst
+ - sem
+ - sem_next_id		      [ sysv ipc ]
+@@ -890,6 +891,17 @@ rtsig-nr shows the number of RT signals currently queued.
  
- 	if (err == 0) {
- 		pm_runtime_disable(dev);
--		pm_runtime_set_active(dev);
-+		err = pm_runtime_set_active(dev);
- 		pm_runtime_enable(dev);
+ ==============================================================
+ 
++sched_energy_aware:
 +
-+		/*
-+		 * Forcibly set runtime PM status of request queue to "active"
-+		 * to make sure we can again get requests from the queue
-+		 * (see also blk_pm_peek_request()).
-+		 *
-+		 * The resume hook will correct runtime PM status of the disk.
-+		 */
-+		if (!err && scsi_is_sdev_device(dev)) {
-+			struct scsi_device *sdev = to_scsi_device(dev);
++Enables/disables Energy Aware Scheduling (EAS). EAS starts
++automatically on platforms where it can run (that is,
++platforms with asymmetric CPU topologies and having an Energy
++Model available). If your platform happens to meet the
++requirements for EAS but you do not want to use it, change
++this value to 0.
 +
-+			if (sdev->request_queue->dev)
-+				blk_set_runtime_active(sdev->request_queue);
++==============================================================
++
+ sched_schedstats:
+ 
+ Enables/disables scheduler statistics. Enabling this feature
+diff --git a/include/linux/sched/sysctl.h b/include/linux/sched/sysctl.h
+index a9c32daeb9d8..99ce6d728df7 100644
+--- a/include/linux/sched/sysctl.h
++++ b/include/linux/sched/sysctl.h
+@@ -83,4 +83,11 @@ extern int sysctl_schedstats(struct ctl_table *table, int write,
+ 				 void __user *buffer, size_t *lenp,
+ 				 loff_t *ppos);
+ 
++#if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
++extern unsigned int sysctl_sched_energy_aware;
++extern int sched_energy_aware_handler(struct ctl_table *table, int write,
++				 void __user *buffer, size_t *lenp,
++				 loff_t *ppos);
++#endif
++
+ #endif /* _LINUX_SCHED_SYSCTL_H */
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index 3f35ba1d8fde..50c3fc316c54 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -203,9 +203,35 @@ sd_parent_degenerate(struct sched_domain *sd, struct sched_domain *parent)
+ 
+ DEFINE_STATIC_KEY_FALSE(sched_energy_present);
+ #if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
++unsigned int sysctl_sched_energy_aware = 1;
+ DEFINE_MUTEX(sched_energy_mutex);
+ bool sched_energy_update;
+ 
++#ifdef CONFIG_PROC_SYSCTL
++int sched_energy_aware_handler(struct ctl_table *table, int write,
++			 void __user *buffer, size_t *lenp, loff_t *ppos)
++{
++	int ret, state;
++
++	if (write && !capable(CAP_SYS_ADMIN))
++		return -EPERM;
++
++	ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
++	if (!ret && write) {
++		state = static_branch_unlikely(&sched_energy_present);
++		if (state != sysctl_sched_energy_aware) {
++			mutex_lock(&sched_energy_mutex);
++			sched_energy_update = 1;
++			rebuild_sched_domains();
++			sched_energy_update = 0;
++			mutex_unlock(&sched_energy_mutex);
 +		}
- 	}
++	}
++
++	return ret;
++}
++#endif
++
+ static void free_pd(struct perf_domain *pd)
+ {
+ 	struct perf_domain *tmp;
+@@ -322,6 +348,9 @@ static bool build_perf_domains(const struct cpumask *cpu_map)
+ 	struct cpufreq_policy *policy;
+ 	struct cpufreq_governor *gov;
  
- 	return err;
-@@ -139,16 +153,6 @@ static int scsi_bus_resume_common(struct
- 	else
- 		fn = NULL;
- 
--	/*
--	 * Forcibly set runtime PM status of request queue to "active" to
--	 * make sure we can again get requests from the queue (see also
--	 * blk_pm_peek_request()).
--	 *
--	 * The resume hook will correct runtime PM status of the disk.
--	 */
--	if (scsi_is_sdev_device(dev) && pm_runtime_suspended(dev))
--		blk_set_runtime_active(to_scsi_device(dev)->request_queue);
--
- 	if (fn) {
- 		async_schedule_domain(fn, dev, &scsi_sd_pm_domain);
- 
-
-
++	if (!sysctl_sched_energy_aware)
++		goto free;
++
+ 	/* EAS is enabled for asymmetric CPU capacity topologies. */
+ 	if (!per_cpu(sd_asym_cpucapacity, cpu)) {
+ 		if (sched_debug()) {
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index ba4d9e85feb8..987ae08147bf 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -467,6 +467,17 @@ static struct ctl_table kern_table[] = {
+ 		.extra1		= &one,
+ 	},
+ #endif
++#if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
++	{
++		.procname	= "sched_energy_aware",
++		.data		= &sysctl_sched_energy_aware,
++		.maxlen		= sizeof(unsigned int),
++		.mode		= 0644,
++		.proc_handler	= sched_energy_aware_handler,
++		.extra1		= &zero,
++		.extra2		= &one,
++	},
++#endif
+ #ifdef CONFIG_PROVE_LOCKING
+ 	{
+ 		.procname	= "prove_locking",
