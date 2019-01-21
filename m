@@ -4,49 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1FC6C2F3D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:21:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64EFDC2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:21:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3B9D20861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:21:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3533620879
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:21:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548080461;
-	bh=My+9r6ZEgIo77rbGS3FpXGVqF4v40PAREVKK1r1T+1Q=;
+	s=default; t=1548080470;
+	bh=PUPjDHkMRwFFZcDn4vmCV/eZlDSo/+LL/PlRRpew5Co=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Fg2ldOShMv3rH8ZGZ3tNC5NVOw711EHv5wuxQcVoo05OQzaOo0Wl7enyZ2aUjOD+T
-	 POL/GJ25BEllTIM/UykjI7h5fQQuOPna086bAPROUveQyZLDRzwfylKfitZ0zih0wg
-	 T5Lhp4O/i80Oi9+/P14xZwYdVAX1k6qUOSFgwnGU=
+	b=FcJFt2MaQ5aKog1IKaQrDcgyfWDGceW67pj4o2Y5TWvMLQ4UjE6g1/ZbUOuquB4/8
+	 e0GUUqpx50Cl4Y9e8WiEnncl7nn+0falmABhX+jzD906q/TNRJaDXl8Omcw0zyypyD
+	 HRYtia/75c1+WdB7r2nEQlFrRetP4VbOuFYVHD/Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730173AbfAUOVA (ORCPT
+        id S1730240AbfAUOVI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:21:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56780 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 09:21:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56560 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728975AbfAUNr0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:47:26 -0500
+        id S1729556AbfAUNrS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:47:18 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 08CCB2089F;
-        Mon, 21 Jan 2019 13:47:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 59E1720861;
+        Mon, 21 Jan 2019 13:47:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078445;
-        bh=My+9r6ZEgIo77rbGS3FpXGVqF4v40PAREVKK1r1T+1Q=;
+        s=default; t=1548078437;
+        bh=PUPjDHkMRwFFZcDn4vmCV/eZlDSo/+LL/PlRRpew5Co=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jCDaT8DLLIDKe3nnvbukRQMokN2pvoZnfLtWOmxKn8iqeTvdQOHC/9s2W2lrYr47+
-         T5BWv1pNuZ6z2ok/3+1BnCxaaO8xy0ilTL0z5o3mDw0dIXBCja+FZo2D7d+W9AsO4v
-         1Am6VJ2Pm2ubGI6EQTNskJwp6H2GNT0rCoZ8PkOQ=
+        b=OCgANgcnaBy0YFGtiKOq6/RzSErtuVUWP9LlTLds1DLFbLhPYyv3iioV4PUwRHY/X
+         acN8ys0eG1FgJXoqaieVey1IgBCtJqlNdt129WHmUjKQPHhsm9dafjG9EDIg13i8RI
+         FW52xtJOgscjGGo8n1ylC3T0C+ya5p3x18eJ+hdE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Harsh Jain <harsh@chelsio.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.20 034/111] crypto: authencesn - Avoid twice completion call in decrypt path
-Date:   Mon, 21 Jan 2019 14:42:28 +0100
-Message-Id: <20190121122459.653520580@linuxfoundation.org>
+        stable@vger.kernel.org, Ursula Braun <ubraun@linux.ibm.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        syzbot+0bf2e01269f1274b4b03@syzkaller.appspotmail.com,
+        syzbot+e3132895630f957306bc@syzkaller.appspotmail.com,
+        "David S. Miller" <davem@davemloft.net>,
+        syzbot+fbd1e5476e4c94c7b34e@syzkaller.appspotmail.com
+Subject: [PATCH 4.20 031/111] smc: move unhash as early as possible in smc_release()
+Date:   Mon, 21 Jan 2019 14:42:25 +0100
+Message-Id: <20190121122459.261048518@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122455.819406896@linuxfoundation.org>
 References: <20190121122455.819406896@linuxfoundation.org>
@@ -65,67 +69,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Harsh Jain <harsh@chelsio.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-commit a7773363624b034ab198c738661253d20a8055c2 upstream.
+[ Upstream commit 26d92e951fe0a44ee4aec157cabb65a818cc8151 ]
 
-Authencesn template in decrypt path unconditionally calls aead_request_complete
-after ahash_verify which leads to following kernel panic in after decryption.
+In smc_release() we release smc->clcsock before unhash the smc
+sock, but a parallel smc_diag_dump() may be still reading
+smc->clcsock, therefore this could cause a use-after-free as
+reported by syzbot.
 
-[  338.539800] BUG: unable to handle kernel NULL pointer dereference at 0000000000000004
-[  338.548372] PGD 0 P4D 0
-[  338.551157] Oops: 0000 [#1] SMP PTI
-[  338.554919] CPU: 0 PID: 0 Comm: swapper/0 Kdump: loaded Tainted: G        W I       4.19.7+ #13
-[  338.564431] Hardware name: Supermicro X8ST3/X8ST3, BIOS 2.0        07/29/10
-[  338.572212] RIP: 0010:esp_input_done2+0x350/0x410 [esp4]
-[  338.578030] Code: ff 0f b6 68 10 48 8b 83 c8 00 00 00 e9 8e fe ff ff 8b 04 25 04 00 00 00 83 e8 01 48 98 48 8b 3c c5 10 00 00 00 e9 f7 fd ff ff <8b> 04 25 04 00 00 00 83 e8 01 48 98 4c 8b 24 c5 10 00 00 00 e9 3b
-[  338.598547] RSP: 0018:ffff911c97803c00 EFLAGS: 00010246
-[  338.604268] RAX: 0000000000000002 RBX: ffff911c4469ee00 RCX: 0000000000000000
-[  338.612090] RDX: 0000000000000000 RSI: 0000000000000130 RDI: ffff911b87c20400
-[  338.619874] RBP: 0000000000000000 R08: ffff911b87c20498 R09: 000000000000000a
-[  338.627610] R10: 0000000000000001 R11: 0000000000000004 R12: 0000000000000000
-[  338.635402] R13: ffff911c89590000 R14: ffff911c91730000 R15: 0000000000000000
-[  338.643234] FS:  0000000000000000(0000) GS:ffff911c97800000(0000) knlGS:0000000000000000
-[  338.652047] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  338.658299] CR2: 0000000000000004 CR3: 00000001ec20a000 CR4: 00000000000006f0
-[  338.666382] Call Trace:
-[  338.669051]  <IRQ>
-[  338.671254]  esp_input_done+0x12/0x20 [esp4]
-[  338.675922]  chcr_handle_resp+0x3b5/0x790 [chcr]
-[  338.680949]  cpl_fw6_pld_handler+0x37/0x60 [chcr]
-[  338.686080]  chcr_uld_rx_handler+0x22/0x50 [chcr]
-[  338.691233]  uldrx_handler+0x8c/0xc0 [cxgb4]
-[  338.695923]  process_responses+0x2f0/0x5d0 [cxgb4]
-[  338.701177]  ? bitmap_find_next_zero_area_off+0x3a/0x90
-[  338.706882]  ? matrix_alloc_area.constprop.7+0x60/0x90
-[  338.712517]  ? apic_update_irq_cfg+0x82/0xf0
-[  338.717177]  napi_rx_handler+0x14/0xe0 [cxgb4]
-[  338.722015]  net_rx_action+0x2aa/0x3e0
-[  338.726136]  __do_softirq+0xcb/0x280
-[  338.730054]  irq_exit+0xde/0xf0
-[  338.733504]  do_IRQ+0x54/0xd0
-[  338.736745]  common_interrupt+0xf/0xf
-
-Fixes: 104880a6b470 ("crypto: authencesn - Convert to new AEAD...")
-Signed-off-by: Harsh Jain <harsh@chelsio.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Reported-and-tested-by: syzbot+fbd1e5476e4c94c7b34e@syzkaller.appspotmail.com
+Fixes: 51f1de79ad8e ("net/smc: replace sock_put worker by socket refcounting")
+Cc: Ursula Braun <ubraun@linux.ibm.com>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Reported-by: syzbot+0bf2e01269f1274b4b03@syzkaller.appspotmail.com
+Reported-by: syzbot+e3132895630f957306bc@syzkaller.appspotmail.com
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- crypto/authencesn.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/smc/af_smc.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/crypto/authencesn.c
-+++ b/crypto/authencesn.c
-@@ -279,7 +279,7 @@ static void authenc_esn_verify_ahash_don
- 	struct aead_request *req = areq->data;
+--- a/net/smc/af_smc.c
++++ b/net/smc/af_smc.c
+@@ -146,6 +146,9 @@ static int smc_release(struct socket *so
+ 		sock_set_flag(sk, SOCK_DEAD);
+ 		sk->sk_shutdown |= SHUTDOWN_MASK;
+ 	}
++
++	sk->sk_prot->unhash(sk);
++
+ 	if (smc->clcsock) {
+ 		if (smc->use_fallback && sk->sk_state == SMC_LISTEN) {
+ 			/* wake up clcsock accept */
+@@ -170,7 +173,6 @@ static int smc_release(struct socket *so
+ 		smc_conn_free(&smc->conn);
+ 	release_sock(sk);
  
- 	err = err ?: crypto_authenc_esn_decrypt_tail(req, 0);
--	aead_request_complete(req, err);
-+	authenc_esn_request_complete(req, err);
- }
- 
- static int crypto_authenc_esn_decrypt(struct aead_request *req)
+-	sk->sk_prot->unhash(sk);
+ 	sock_put(sk); /* final sock_put */
+ out:
+ 	return rc;
 
 
