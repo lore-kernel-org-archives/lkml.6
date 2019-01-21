@@ -4,56 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 504EBC2F3D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:18:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E126BC2F3D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:18:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15B3920861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:18:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B17FF20861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:18:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548080309;
-	bh=9OPBJRMHtMAZ2AEq59NtEzk8JJRBCGkultQqq4wz9DE=;
+	s=default; t=1548080321;
+	bh=glmkLuowO4r7MilHL/ar7HO/aQye/g1hqeylnZ401zM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=eQzPLAVyJGk9n1j3uorH8CvrX3w+qsW1Q525OdhUjNh1W+ehE3OffJVhMjJijmbX/
-	 BgNBD+h9HhxCq24bbRfybzlc3ZJh13RbYDGFDG3X9lwjbMcP+KaxpDE4hcqHG4yQYO
-	 SDfd6guOnTWktzadCTn0GwPnEf7nONMkBZZ+j8Hk=
+	b=X7+o7WNtOqEcfpfgGAGTyqN+vOlPCyyk/4TJooIgo2OW2N9rymZyZcB6epeF7kJI6
+	 VRHb2HA5WEtBgsuKkD84nFtLzgzwrFaRmsm4XumT14257luDlcZHqiVu3pA0giN608
+	 feWPyvDhcUodLqGbmP6t+IYEvz0Yd1XMQO1o3w7g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730662AbfAUOS2 (ORCPT
+        id S1730637AbfAUOSk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:18:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60456 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 09:18:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60060 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729712AbfAUNtp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:49:45 -0500
+        id S1730235AbfAUNt2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:49:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E846220879;
-        Mon, 21 Jan 2019 13:49:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 57B192087F;
+        Mon, 21 Jan 2019 13:49:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548078584;
-        bh=9OPBJRMHtMAZ2AEq59NtEzk8JJRBCGkultQqq4wz9DE=;
+        s=default; t=1548078566;
+        bh=glmkLuowO4r7MilHL/ar7HO/aQye/g1hqeylnZ401zM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D/M8gqAXqB+Lck2eDpUoCQAY6PioRmE1i12+h02Wge4/vZvTMgs+6B2a5T0BF+2Ny
-         8VOOR2SP3M+zaR7+2i3wSEupXhprY0mWaaPo01tJ+NIpWsYozEDTjZJyqgg9F8vTe4
-         a76yBAdhE2K6cRPbjLn6/4j84IHSPHeBCE5CVqDM=
+        b=sy/JxgmlacMuDxBxEpWL/BI5qlOIYk0NgHRpcIoouyBpzWBukDCfzns5uh/m6IG9D
+         yas2Pt5os9+LQJ8DoWWJz2PlSKu1y0IR/LuP35lbA2zWN75F0VczKxkf/vomQJs0KT
+         xi5H43qBNATe37SoLTK0VNoUbB0HHo8W27ZJ9Ktc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+eb6e5365f23c02517dda@syzkaller.appspotmail.com,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Haneen Mohammed <hamohammed.sa@gmail.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-        Gustavo Padovan <gustavo.padovan@collabora.com>,
-        Eric Anholt <eric@anholt.net>
-Subject: [PATCH 4.20 082/111] drm/vkms: Fix plane duplicate_state
-Date:   Mon, 21 Jan 2019 14:43:16 +0100
-Message-Id: <20190121122505.295469164@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Piotr Sawicki <p.sawicki2@partner.samsung.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.20 076/111] ipv6: make icmp6_send() robust against null skb->dev
+Date:   Mon, 21 Jan 2019 14:43:10 +0100
+Message-Id: <20190121122504.802512921@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121122455.819406896@linuxfoundation.org>
 References: <20190121122455.819406896@linuxfoundation.org>
@@ -72,45 +68,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 7cdf33ab02e01300e7e6289acbac9cd8759f8712 upstream.
+commit 8d933670452107e41165bea70a30dffbd281bef1 upstream.
 
-We need to handle allocation failures and bail out. While at it, tune
-the allocation failures down to debug level.
+syzbot was able to crash one host with the following stack trace :
 
-syzbot injected an allocation failure and then hit this WARN_ON.
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 8625 Comm: syz-executor4 Not tainted 4.20.0+ #8
+RIP: 0010:dev_net include/linux/netdevice.h:2169 [inline]
+RIP: 0010:icmp6_send+0x116/0x2d30 net/ipv6/icmp.c:426
+ icmpv6_send
+ smack_socket_sock_rcv_skb
+ security_sock_rcv_skb
+ sk_filter_trim_cap
+ __sk_receive_skb
+ dccp_v6_do_rcv
+ release_sock
 
-Reported-by: syzbot+eb6e5365f23c02517dda@syzkaller.appspotmail.com
-Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-Cc: Haneen Mohammed <hamohammed.sa@gmail.com>
-Cc: Sean Paul <seanpaul@chromium.org>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Cc: Gustavo Padovan <gustavo.padovan@collabora.com>
-Reviewed-by: Eric Anholt <eric@anholt.net>
-Link: https://patchwork.freedesktop.org/patch/msgid/20181128101033.4840-1-daniel.vetter@ffwll.ch
+This is because a RX packet found socket owned by user and
+was stored into socket backlog. Before leaving RCU protected section,
+skb->dev was cleared in __sk_receive_skb(). When socket backlog
+was finally handled at release_sock() time, skb was fed to
+smack_socket_sock_rcv_skb() then icmp6_send()
+
+We could fix the bug in smack_socket_sock_rcv_skb(), or simply
+make icmp6_send() more robust against such possibility.
+
+In the future we might provide to icmp6_send() the net pointer
+instead of infering it.
+
+Fixes: d66a8acbda92 ("Smack: Inform peer that IPv6 traffic has been blocked")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: Piotr Sawicki <p.sawicki2@partner.samsung.com>
+Cc: Casey Schaufler <casey@schaufler-ca.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/vkms/vkms_plane.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ net/ipv6/icmp.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/vkms/vkms_plane.c
-+++ b/drivers/gpu/drm/vkms/vkms_plane.c
-@@ -23,8 +23,11 @@ vkms_plane_duplicate_state(struct drm_pl
- 		return NULL;
+--- a/net/ipv6/icmp.c
++++ b/net/ipv6/icmp.c
+@@ -421,10 +421,10 @@ static int icmp6_iif(const struct sk_buf
+ static void icmp6_send(struct sk_buff *skb, u8 type, u8 code, __u32 info,
+ 		       const struct in6_addr *force_saddr)
+ {
+-	struct net *net = dev_net(skb->dev);
+ 	struct inet6_dev *idev = NULL;
+ 	struct ipv6hdr *hdr = ipv6_hdr(skb);
+ 	struct sock *sk;
++	struct net *net;
+ 	struct ipv6_pinfo *np;
+ 	const struct in6_addr *saddr = NULL;
+ 	struct dst_entry *dst;
+@@ -435,12 +435,16 @@ static void icmp6_send(struct sk_buff *s
+ 	int iif = 0;
+ 	int addr_type = 0;
+ 	int len;
+-	u32 mark = IP6_REPLY_MARK(net, skb->mark);
++	u32 mark;
  
- 	crc_data = kzalloc(sizeof(*crc_data), GFP_KERNEL);
--	if (WARN_ON(!crc_data))
--		DRM_INFO("Couldn't allocate crc_data");
-+	if (!crc_data) {
-+		DRM_DEBUG_KMS("Couldn't allocate crc_data\n");
-+		kfree(vkms_state);
-+		return NULL;
-+	}
+ 	if ((u8 *)hdr < skb->head ||
+ 	    (skb_network_header(skb) + sizeof(*hdr)) > skb_tail_pointer(skb))
+ 		return;
  
- 	vkms_state->crc_data = crc_data;
- 
++	if (!skb->dev)
++		return;
++	net = dev_net(skb->dev);
++	mark = IP6_REPLY_MARK(net, skb->mark);
+ 	/*
+ 	 *	Make sure we respect the rules
+ 	 *	i.e. RFC 1885 2.4(e)
 
 
