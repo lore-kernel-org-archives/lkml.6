@@ -2,137 +2,84 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DD2EC282DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:37:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD8D2C282DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:37:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8B5620823
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:37:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="j+9z3S7N";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="aev3SLg8"
+	by mail.kernel.org (Postfix) with ESMTP id B7B8D214C6
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:37:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729468AbfAUIhN (ORCPT
+        id S1729586AbfAUIh3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 03:37:13 -0500
-Received: from new3-smtp.messagingengine.com ([66.111.4.229]:53625 "EHLO
-        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728554AbfAUIhN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 03:37:13 -0500
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailnew.nyi.internal (Postfix) with ESMTP id AE25FEBCB;
-        Mon, 21 Jan 2019 03:37:11 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Mon, 21 Jan 2019 03:37:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=UsUDKS0VLOaPJ1WqKup0wCUAmbF
-        1fVqOmxzArmFQsdc=; b=j+9z3S7NQ8UUcW1qEZPXoCzu1R36ww7Nb6cyEnp+Lod
-        WsA1oKerh4W0pdOqMmnboNvF+VSzquZXCh0/lahsQfR+TcRphGMad8tmCKQxAMbK
-        uJDEjDG4qjJ9txXQgOwRKpslaR5HHIaJ/EHfIHQDTL+XnczA2XvXyztDremXhcv3
-        bc4TE6kmwsQrLftHx45Y2dc2dBUedVC/43hI78STb2UOriJqV8eqbCkvk0udbx0Q
-        e1110G4UNw++fatxYSED7isCK+G58zzz2gNxoch7oUpjebRQK2pf8DYyYK6n0ZTG
-        VCBmRPAhFIgbTBpfOascOxKKSDB2JSFORHcuW3I3/mA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=UsUDKS
-        0VLOaPJ1WqKup0wCUAmbF1fVqOmxzArmFQsdc=; b=aev3SLg830YkWVPa75/Kf1
-        tW36RE32UdH8+gr+FzrOw/dCU3uE9AtKiR6sXBRdbnBhYingeOwz6GNoILwPFEk5
-        HwYCioJdPhplZziYWbO2Sn8SZqvJanrYrwkd6B6c9KKegmKrNtRnuLU53E+P7nmr
-        G+8ZtY9BvWd/JmxGgSJgKGCVg3d3AY9J8R5QZwC+zyRkFrJ4G1vs/ZaZ4oNFxGaW
-        ZS5eFKNkk81NWqvHqdlwZssUFxaYlOPPBOKEUqECWWekeErpz87BD/Cl7UYfJpYU
-        gq5mGWg1B6oGHHaBjpUVjAZP20ofUtU8FBXKF63QVGMRn1CkN91JcdfK4IqoXNWw
-        ==
-X-ME-Sender: <xms:toRFXPRV0IVcT9Feyfy1PEkR8grAEwIIhFT1gk07K47DJsAimybbhA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledrheehgdduvdegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfquhhtnecuuegrihhlohhuthemucef
-    tddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftd
-    dtmdenucfjughrpeffhffvuffkfhggtggujggfsehttdertddtredvnecuhfhrohhmpefi
-    rhgvghcumffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucfkphepkeefrdekiedrke
-    elrddutdejnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtgho
-    mhenucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:toRFXL45UUDsxTKrCzeQ_1suwXM8pM6GoyG0yS7SVCed3dvtJ9MOvw>
-    <xmx:toRFXLPwS-7tN-vv_rj0ycDtSbYmquZR9lYa2LuUNK_aoCC1prsrEQ>
-    <xmx:toRFXJ8-LRJILXo-E4Pdz6lL5vuegbCRvalq3A7Rvzy3m0LolHlDHg>
-    <xmx:t4RFXE0sZ1CKM8Zil3ZeGoxjwIAb2u5XWYIWpsPCwl43Z3NtBj3t0g>
-Received: from localhost (5356596b.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 4E9D6E4667;
-        Mon, 21 Jan 2019 03:37:10 -0500 (EST)
-Date:   Mon, 21 Jan 2019 09:37:08 +0100
-From:   Greg KH <greg@kroah.com>
-To:     Federico Vaga <federico.vaga@vaga.pv.it>
-Cc:     Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] doc:process: remove note from 'stable api nonsense'
-Message-ID: <20190121083708.GA6462@kroah.com>
-References: <20190118215804.3340-1-federico.vaga@vaga.pv.it>
- <20190120184338.01cd4ef9@lwn.net>
- <53383524.y9DmdCAcNX@pcbe13614>
+        Mon, 21 Jan 2019 03:37:29 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:48948 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728554AbfAUIh2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 03:37:28 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 04013C0CB58F;
+        Mon, 21 Jan 2019 08:37:28 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-22.pek2.redhat.com [10.72.8.22])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D93897C810;
+        Mon, 21 Jan 2019 08:37:16 +0000 (UTC)
+Date:   Mon, 21 Jan 2019 16:37:12 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Theodore Ts'o <tytso@mit.edu>, Omar Sandoval <osandov@fb.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        linux-ext4@vger.kernel.org, Coly Li <colyli@suse.de>,
+        linux-bcache@vger.kernel.org, Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
+Subject: Re: [PATCH V14 00/18] block: support multi-page bvec
+Message-ID: <20190121083711.GA29495@ming.t460p>
+References: <20190121081805.32727-1-ming.lei@redhat.com>
+ <20190121082246.GA18305@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <53383524.y9DmdCAcNX@pcbe13614>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <20190121082246.GA18305@lst.de>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 21 Jan 2019 08:37:28 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 09:14:00AM +0100, Federico Vaga wrote:
-> On Monday, January 21, 2019 2:43:38 AM CET Jonathan Corbet wrote:
-> > On Fri, 18 Jan 2019 22:58:04 +0100
-> > 
-> > Federico Vaga <federico.vaga@vaga.pv.it> wrote:
-> > > The link referred by the note can't be retrieved: this patch just
-> > > remove that old note.
-> > > 
-> > > Signed-off-by: Federico Vaga <federico.vaga@vaga.pv.it>
-> > > ---
-> > > 
-> > >  Documentation/process/stable-api-nonsense.rst | 3 +--
-> > >  1 file changed, 1 insertion(+), 2 deletions(-)
-> > > 
-> > > diff --git a/Documentation/process/stable-api-nonsense.rst
-> > > b/Documentation/process/stable-api-nonsense.rst index
-> > > 24f5aeecee91..57d95a49c096 100644
-> > > --- a/Documentation/process/stable-api-nonsense.rst
-> > > +++ b/Documentation/process/stable-api-nonsense.rst
-> > > @@ -171,8 +171,7 @@ is also a rough job.
-> > > 
-> > >  Simple, get your kernel driver into the main kernel tree (remember we
-> > >  are talking about GPL released drivers here, if your code doesn't fall
-> > > 
-> > > -under this category, good luck, you are on your own here, you leech
-> > > -<insert link to leech comment from Andrew and Linus here>.)  If your
-> > > +under this category, good luck, you are on your own here, you leech).  If
-> > > your> 
-> > >  driver is in the tree, and a kernel interface changes, it will be fixed
-> > >  up by the person who did the kernel change in the first place.  This
-> > >  ensures that your driver is always buildable, and works over time, with
-> > 
-> > I've applied this.  I do wonder if the "you leech" should maybe come out
-> > too, though.  I don't think that parasitic worms are a protected class
-> > under the CoC, but they might still suffer emotionally from being
-> > compared to the purveyors of proprietary modules...
+On Mon, Jan 21, 2019 at 09:22:46AM +0100, Christoph Hellwig wrote:
+> On Mon, Jan 21, 2019 at 04:17:47PM +0800, Ming Lei wrote:
+> > V14:
+> > 	- drop patch(patch 4 in V13) for renaming bvec helpers, as suggested by Jens
+> > 	- use mp_bvec_* as multi-page bvec helper name
 > 
-> I agree, do you want me to change the patch?
+> WTF?  Where is this coming from?  mp is just a nightmare of a name,
+> and I also didn't see any comments like that.
 
-I would leave it as-is for now please.  When this was written, there was
-a lot of discussion about closed source modules, and how the companies
-that created them were leeches on our development community.  No one
-disagreed with that statement, and a number of companies privately
-agreed with us.
+You should see the recent discussion in which Jens doesn't agree on
+renaming bvec helper name, so the previous patch of 'block: rename bvec helpers'
+has to be dropped, and we have to find a new name for multi-page bvec
+helpers.
 
-That still has not changed.
+Jens mentioned we can do the rename in next release after the whole
+patchset is merged first, then I think mp_bvec_* should be fine since
+its life time is short.
 
-So I would like to see this remain.
+Or do you other suggestion?
 
-thanks,
-
-greg k-h
+Thanks,
+Ming
