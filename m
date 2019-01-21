@@ -7,48 +7,49 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4060C2F3BE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1482C2F3A0
 	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:00:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 944892087F
+	by mail.kernel.org (Postfix) with ESMTP id C0C0F21736
 	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:00:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=default; t=1548079239;
-	bh=TN3YDjrqdDm4fw1/QMUkMKZfebz/rOIWBgKgRcUnfh4=;
+	bh=Hyr52HWY0REzzh2+QQXDQIv1HKaTxOMzkxqCjelinuM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=mRMWoSfE7eAzueoupe+xKDdkpTonhNHLtB7en+u6E4uxJ/M4rCmbqE3/Peneb0DNA
-	 lY2Wr5cWENID9lysl542qlDLveNwnDHMTbMNKw4gjfMgGt5SyJgO2pFMDR+j6USPAA
-	 qJM6lNx3PzlW85fs3dXSXZyzmG8f+KaGyfijElBE=
+	b=1mYGxyZN7/pshwNPlLDFyWhX26Hf1OOP0nbauDjN3NdO3MypE5lQS6XiWZlhjmMqe
+	 Aclb5tMvpS6GxWobhwHY0mUhvk7u6PPLf/1t5TIPhBDQXtMIVAqOhMKFNPeKlZTeTc
+	 rqdE7vrBBa0TzftMhXNdHmpb2U3TXFmW0ypVDEX8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732413AbfAUOAg (ORCPT
+        id S1732432AbfAUOAh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:00:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47140 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 09:00:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47082 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731985AbfAUOAc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 09:00:32 -0500
+        id S1732377AbfAUOA3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 09:00:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5C1F62084C;
-        Mon, 21 Jan 2019 14:00:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 30D752084C;
+        Mon, 21 Jan 2019 14:00:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548079231;
-        bh=TN3YDjrqdDm4fw1/QMUkMKZfebz/rOIWBgKgRcUnfh4=;
+        s=default; t=1548079228;
+        bh=Hyr52HWY0REzzh2+QQXDQIv1HKaTxOMzkxqCjelinuM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0rTZ2izqEDmwuDZVQ9OIdVkMQUoErZ7kdjyHNssIK8c5wses2Mp+dydc0LtyRybJw
-         i/ILMM1ez6F8b9cDfeSxY1hON2A3+i1JI7k3D3mZ5U9or1AAhEApi735n5OdXwRhN7
-         GRMV8pXJHG1DGDp2ZWVNUsCKAYIHwSRcXQWu9qbM=
+        b=qC8qYOGRxiiXuJJvjwPhw9lIt/StVwS814N3JTQI6Go34HLqk0F9uJkOzmITwjsum
+         d6fsW6/1B2cGQRPS9IXHIbpBfZ5y1I0Eyz9FkBMPHC+Xj25VlA1R+re1UUN5/nog0D
+         ed44Afg75QQMlcAPXE75g3WTIaEmB7flpuTCR/KM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH 4.19 54/99] kbuild: Disable LD_DEAD_CODE_DATA_ELIMINATION with ftrace & GCC <= 4.7
-Date:   Mon, 21 Jan 2019 14:48:46 +0100
-Message-Id: <20190121134916.034105521@linuxfoundation.org>
+        stable@vger.kernel.org, Ruishuang Wang <ruishuangw@vmware.com>,
+        Bryan Tan <bryantan@vmware.com>,
+        Vishnu Dasa <vdasa@vmware.com>,
+        Adit Ranadive <aditr@vmware.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.19 53/99] RDMA/vmw_pvrdma: Return the correct opcode when creating WR
+Date:   Mon, 21 Jan 2019 14:48:45 +0100
+Message-Id: <20190121134915.994367264@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121134913.924726465@linuxfoundation.org>
 References: <20190121134913.924726465@linuxfoundation.org>
@@ -67,51 +68,97 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paul Burton <paul.burton@mips.com>
+From: Adit Ranadive <aditr@vmware.com>
 
-commit 16fd20aa98080c2fa666dc384036ec08c80af710 upstream.
+commit 6325e01b6cdf4636b721cf7259c1616e3cf28ce2 upstream.
 
-When building using GCC 4.7 or older, -ffunction-sections & the -pg flag
-used by ftrace are incompatible. This causes warnings or build failures
-(where -Werror applies) such as the following:
+Since the IB_WR_REG_MR opcode value changed, let's set the PVRDMA device
+opcodes explicitly.
 
-  arch/mips/generic/init.c:
-    error: -ffunction-sections disabled; it makes profiling impossible
-
-This used to be taken into account by the ordering of calls to cc-option
-from within the top-level Makefile, which was introduced by commit
-90ad4052e85c ("kbuild: avoid conflict between -ffunction-sections and
--pg on gcc-4.7"). Unfortunately this was broken when the
-CONFIG_LD_DEAD_CODE_DATA_ELIMINATION cc-option check was moved to
-Kconfig in commit e85d1d65cd8a ("kbuild: test dead code/data elimination
-support in Kconfig"), because the flags used by this check no longer
-include -pg.
-
-Fix this by not allowing CONFIG_LD_DEAD_CODE_DATA_ELIMINATION to be
-enabled at the same time as ftrace/CONFIG_FUNCTION_TRACER when building
-using GCC 4.7 or older.
-
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Fixes: e85d1d65cd8a ("kbuild: test dead code/data elimination support in Kconfig")
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Nicholas Piggin <npiggin@gmail.com>
-Cc: stable@vger.kernel.org # v4.19+
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Reported-by: Ruishuang Wang <ruishuangw@vmware.com>
+Fixes: 9a59739bd01f ("IB/rxe: Revise the ib_wr_opcode enum")
+Cc: stable@vger.kernel.org
+Reviewed-by: Bryan Tan <bryantan@vmware.com>
+Reviewed-by: Ruishuang Wang <ruishuangw@vmware.com>
+Reviewed-by: Vishnu Dasa <vdasa@vmware.com>
+Signed-off-by: Adit Ranadive <aditr@vmware.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- init/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/infiniband/hw/vmw_pvrdma/pvrdma.h    |   35 ++++++++++++++++++++++++++-
+ drivers/infiniband/hw/vmw_pvrdma/pvrdma_qp.c |    6 ++++
+ include/uapi/rdma/vmw_pvrdma-abi.h           |    1 
+ 3 files changed, 41 insertions(+), 1 deletion(-)
 
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1102,6 +1102,7 @@ config LD_DEAD_CODE_DATA_ELIMINATION
- 	bool "Dead code and data elimination (EXPERIMENTAL)"
- 	depends on HAVE_LD_DEAD_CODE_DATA_ELIMINATION
- 	depends on EXPERT
-+	depends on !(FUNCTION_TRACER && CC_IS_GCC && GCC_VERSION < 40800)
- 	depends on $(cc-option,-ffunction-sections -fdata-sections)
- 	depends on $(ld-option,--gc-sections)
- 	help
+--- a/drivers/infiniband/hw/vmw_pvrdma/pvrdma.h
++++ b/drivers/infiniband/hw/vmw_pvrdma/pvrdma.h
+@@ -427,7 +427,40 @@ static inline enum ib_qp_state pvrdma_qp
+ 
+ static inline enum pvrdma_wr_opcode ib_wr_opcode_to_pvrdma(enum ib_wr_opcode op)
+ {
+-	return (enum pvrdma_wr_opcode)op;
++	switch (op) {
++	case IB_WR_RDMA_WRITE:
++		return PVRDMA_WR_RDMA_WRITE;
++	case IB_WR_RDMA_WRITE_WITH_IMM:
++		return PVRDMA_WR_RDMA_WRITE_WITH_IMM;
++	case IB_WR_SEND:
++		return PVRDMA_WR_SEND;
++	case IB_WR_SEND_WITH_IMM:
++		return PVRDMA_WR_SEND_WITH_IMM;
++	case IB_WR_RDMA_READ:
++		return PVRDMA_WR_RDMA_READ;
++	case IB_WR_ATOMIC_CMP_AND_SWP:
++		return PVRDMA_WR_ATOMIC_CMP_AND_SWP;
++	case IB_WR_ATOMIC_FETCH_AND_ADD:
++		return PVRDMA_WR_ATOMIC_FETCH_AND_ADD;
++	case IB_WR_LSO:
++		return PVRDMA_WR_LSO;
++	case IB_WR_SEND_WITH_INV:
++		return PVRDMA_WR_SEND_WITH_INV;
++	case IB_WR_RDMA_READ_WITH_INV:
++		return PVRDMA_WR_RDMA_READ_WITH_INV;
++	case IB_WR_LOCAL_INV:
++		return PVRDMA_WR_LOCAL_INV;
++	case IB_WR_REG_MR:
++		return PVRDMA_WR_FAST_REG_MR;
++	case IB_WR_MASKED_ATOMIC_CMP_AND_SWP:
++		return PVRDMA_WR_MASKED_ATOMIC_CMP_AND_SWP;
++	case IB_WR_MASKED_ATOMIC_FETCH_AND_ADD:
++		return PVRDMA_WR_MASKED_ATOMIC_FETCH_AND_ADD;
++	case IB_WR_REG_SIG_MR:
++		return PVRDMA_WR_REG_SIG_MR;
++	default:
++		return PVRDMA_WR_ERROR;
++	}
+ }
+ 
+ static inline enum ib_wc_status pvrdma_wc_status_to_ib(
+--- a/drivers/infiniband/hw/vmw_pvrdma/pvrdma_qp.c
++++ b/drivers/infiniband/hw/vmw_pvrdma/pvrdma_qp.c
+@@ -721,6 +721,12 @@ int pvrdma_post_send(struct ib_qp *ibqp,
+ 		    wr->opcode == IB_WR_RDMA_WRITE_WITH_IMM)
+ 			wqe_hdr->ex.imm_data = wr->ex.imm_data;
+ 
++		if (unlikely(wqe_hdr->opcode == PVRDMA_WR_ERROR)) {
++			*bad_wr = wr;
++			ret = -EINVAL;
++			goto out;
++		}
++
+ 		switch (qp->ibqp.qp_type) {
+ 		case IB_QPT_GSI:
+ 		case IB_QPT_UD:
+--- a/include/uapi/rdma/vmw_pvrdma-abi.h
++++ b/include/uapi/rdma/vmw_pvrdma-abi.h
+@@ -78,6 +78,7 @@ enum pvrdma_wr_opcode {
+ 	PVRDMA_WR_MASKED_ATOMIC_FETCH_AND_ADD,
+ 	PVRDMA_WR_BIND_MW,
+ 	PVRDMA_WR_REG_SIG_MR,
++	PVRDMA_WR_ERROR,
+ };
+ 
+ enum pvrdma_wc_status {
 
 
