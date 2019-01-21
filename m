@@ -6,61 +6,63 @@ X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C40ADC3712F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 22:00:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BD1FC3712F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 22:00:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E2D821019
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 22:00:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A36221019
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 22:00:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548108006;
-	bh=21ieOg3u8BhvK6L9Cm8i4lvccV+4vpE4wlN64sZfoTk=;
+	s=default; t=1548108009;
+	bh=iz8SoDZ0gO4fcAZDUxYBFjX6ak0VMVOX+gZkVCGVpcw=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=GliVyDLtuAI9C6lTUsy8ej9v5SpKk311o20c1VYPlildADd3INPkfw3IsN01k9/VW
-	 cikHVCZFOOEYQY+99VW53V7GhxBf8A9D8TvkMcwwWGMs+85h5+u6ki2weM84Y92IbV
-	 tWxqLGz+PmKcjkt7/vOxXsvfmbg7dOdu/Rk15QD8=
+	b=YqItbmiAosI2VYW8GFCv9oTArjcmZk208woxFpDx3XYXwU3C4zCoKOouphIDpqYp7
+	 uzP4kgBCNExfqmyrMD+y5OIdGqhXd+idhTwsyWC83gRgCJFSdQieMQWpcFki43p+xn
+	 Veu3nJE5LA+QNJpMBzZppXc31Yxvv6/ho64pdclQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727989AbfAUWAE (ORCPT
+        id S1728068AbfAUWAI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 17:00:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41016 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 17:00:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41036 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726694AbfAUWAE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727153AbfAUWAE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 21 Jan 2019 17:00:04 -0500
-Subject: Re: [GIT] Networking
+Subject: Re: [GIT PULL] gcc-plugin fixes for v5.0-rc4
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548108003;
-        bh=21ieOg3u8BhvK6L9Cm8i4lvccV+4vpE4wlN64sZfoTk=;
+        s=default; t=1548108004;
+        bh=iz8SoDZ0gO4fcAZDUxYBFjX6ak0VMVOX+gZkVCGVpcw=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=Qz/COhstM0XsXSDQKwrkUxpbyCbPVnXky2m7wp9DZXJu93PxQ6yh1swb23kIvmuoH
-         zmennj7Jf5kBX5/CIQsnYp55yGEkXe8d6bacXWKDiARyHVeOl7bAAvmGCa6neutWvl
-         6EvOFYsG0AXEUIzUeJJxC2KWyPZtlRFhIoA178sQ=
+        b=Yrj0S7xcFH+7zfD5ZyUszYdLHqIhGrHiHL/I18mdYpdEx97by4Zx6ZkzsvqZsRXVo
+         tVXU99uqlQwWZGnjVFDF+dCjX6I93hGDtxQeoVi1U6uXMNw7GwUvnLkHNmwkzOC5dK
+         R+pfkyZ+98hQp6NXaAt+VPo0nQgcBOU9joLn0/9E=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190120.140904.1469008705040899269.davem@davemloft.net>
-References: <20190120.140904.1469008705040899269.davem@davemloft.net>
+In-Reply-To: <20190120222056.GA35153@beast>
+References: <20190120222056.GA35153@beast>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190120.140904.1469008705040899269.davem@davemloft.net>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/davem/net
- master
-X-PR-Tracked-Commit-Id: 6436408e814b81046f4595245c1f9bc4409e945c
+X-PR-Tracked-Message-Id: <20190120222056.GA35153@beast>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git
+ tags/gcc-plugins-v5.0-rc4
+X-PR-Tracked-Commit-Id: 2c88c742d011707b55da7b54b06a030c6f57233f
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 7d0ae236ed13d7645fb73b85e7c95deee46c4656
-Message-Id: <154810800371.17432.17933534197531404622.pr-tracker-bot@kernel.org>
-Date:   Mon, 21 Jan 2019 22:00:03 +0000
-To:     David Miller <davem@davemloft.net>
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+X-PR-Merge-Commit-Id: dbcfc961939394152cbcf3f17144ff3df359f216
+Message-Id: <154810800420.17432.12031507919177748402.pr-tracker-bot@kernel.org>
+Date:   Mon, 21 Jan 2019 22:00:04 +0000
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Kugan Vivekanandarajah <kugan.vivekanandarajah@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sun, 20 Jan 2019 14:09:04 -0800 (PST):
+The pull request you sent on Sun, 20 Jan 2019 14:20:56 -0800:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/davem/net master
+> https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/gcc-plugins-v5.0-rc4
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/7d0ae236ed13d7645fb73b85e7c95deee46c4656
+https://git.kernel.org/torvalds/c/dbcfc961939394152cbcf3f17144ff3df359f216
 
 Thank you!
 
