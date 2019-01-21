@@ -2,160 +2,153 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D56F8C2F420
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:02:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CCADC2F420
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:05:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A00B820879
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:02:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0138720870
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:05:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UicRo+Ne"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="0wIRjC58"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729801AbfAUPCD (ORCPT
+        id S1729814AbfAUPFV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 10:02:03 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:49054 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729599AbfAUPCC (ORCPT
+        Mon, 21 Jan 2019 10:05:21 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:51382 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729132AbfAUPFV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 10:02:02 -0500
+        Mon, 21 Jan 2019 10:05:21 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=FC3mnLsBxmVjz4DKYeKxXEHSuQXi5QXrH9YPAQjX6/Q=; b=UicRo+NesdR2gZZirMQyHG/rl
-        GvAO0cP++AxFuM9U5fq6y/EUEem2PcXh+M21sz0etZ5SVwP3uvtA9MqDLgxCLuS7V8MhnGHSt47Sb
-        1aGygM2iTAtN1LpeoJD6vyCayeFPD58FNiW6+lGPG8guGhLoSFbrC3tAnl5euH7qOw0F+egG6Jg6c
-        WGirIBSPeRrsCg3/sYOPGszEnF11SLdNclh/SB3GMxUphOlp/HMkPEBblQxjSr55zQ2E3mNg7Sk24
-        GfUopUDxUs+Fr06oy6oJKY4rSM62RtQD5Nsl+v4kVgtikGg06msPz53ArM1sRQVmyL7CepEi1TZof
-        OE7Vyt9YQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1glb5M-0007ua-E2; Mon, 21 Jan 2019 15:02:00 +0000
-Date:   Mon, 21 Jan 2019 07:02:00 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Mike Rapoport <rppt@linux.ibm.com>
-Cc:     Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Add kv_to_page()
-Message-ID: <20190121150200.GA14806@infradead.org>
-References: <20190121003944.GA26866@bombadil.infradead.org>
- <20190121093739.GA19725@rapoport-lnx>
+         bh=MNFBIieM3i2G4zqwyYznhY3OnxSJLoY9SIW6yDsqk9c=; b=0wIRjC58qLrf0DRTzzEaDGQCL
+        +7pFxhqJv7TXayeQZdqxh+Cira/5EsLB4TYvsGjVF0SntgbhQzS9UTj7bKyUNMwXk30OsSMRpLPsy
+        KCdzYSS0FR9rEiSr84JbVB+i513aSMALND03XVcwFaD29gU0+fKY2aBSgJj/tMnRXfhPTq9anoFgM
+        4KBmd5nYeAX0fqnAMNlOOSyKaIXsBlFrSKIaGld1MzeEqdzQI2oqwHBTp8YOcIntEwb+3vBY9L/TN
+        oN4AtEaCbjaMQnexXaWs0bqnYT8wgKY5KShy521WVIIlF7irKfqhlaq+ea6kAI5emKdRESFpnr4ly
+        QGay6XtvA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1glb8P-0006KU-LB; Mon, 21 Jan 2019 15:05:09 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 48D402846D164; Mon, 21 Jan 2019 16:05:07 +0100 (CET)
+Date:   Mon, 21 Jan 2019 16:05:07 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v6 03/16] sched/core: uclamp: Map TASK's clamp values
+ into CPU's clamp buckets
+Message-ID: <20190121150507.GJ27931@hirez.programming.kicks-ass.net>
+References: <20190115101513.2822-1-patrick.bellasi@arm.com>
+ <20190115101513.2822-4-patrick.bellasi@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190121093739.GA19725@rapoport-lnx>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20190115101513.2822-4-patrick.bellasi@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > diff --git a/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c b/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
-> > index d594f7520b7b..46326de4d9fe 100644
-> > --- a/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
-> > +++ b/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
-> > @@ -308,10 +308,7 @@ static struct dma_page *__ttm_dma_alloc_page(struct dma_pool *pool)
-> >  	vaddr = dma_alloc_attrs(pool->dev, pool->size, &d_page->dma,
-> >  				pool->gfp_flags, attrs);
-> >  	if (vaddr) {
-> > -		if (is_vmalloc_addr(vaddr))
-> > -			d_page->p = vmalloc_to_page(vaddr);
-> > -		else
-> > -			d_page->p = virt_to_page(vaddr);
-> > +		d_page->p = kv_to_page(vaddr);
-> >  		d_page->vaddr = (unsigned long)vaddr;
+On Tue, Jan 15, 2019 at 10:15:00AM +0000, Patrick Bellasi wrote:
+> +static inline unsigned int uclamp_bucket_value(unsigned int clamp_value)
+> +{
+> +#define UCLAMP_BUCKET_DELTA (SCHED_CAPACITY_SCALE / CONFIG_UCLAMP_BUCKETS_COUNT)
+> +#define UCLAMP_BUCKET_UPPER (UCLAMP_BUCKET_DELTA * CONFIG_UCLAMP_BUCKETS_COUNT)
+> +
+> +	if (clamp_value >= UCLAMP_BUCKET_UPPER)
+> +		return SCHED_CAPACITY_SCALE;
+> +
+> +	return UCLAMP_BUCKET_DELTA * (clamp_value / UCLAMP_BUCKET_DELTA);
+> +}
 
-This code doesn't need cosmetic cleanup but a real fix.  Calling
-either vmalloc_to_page OR virt_to_page on the return value of
-dma_alloc_* is not allowed, an will break for many of the
-implementations.
+> +static void uclamp_bucket_inc(struct uclamp_se *uc_se, unsigned int clamp_id,
+> +			      unsigned int clamp_value)
+> +{
+> +	union uclamp_map *uc_maps = &uclamp_maps[clamp_id][0];
+> +	unsigned int prev_bucket_id = uc_se->bucket_id;
+> +	union uclamp_map uc_map_old, uc_map_new;
+> +	unsigned int free_bucket_id;
+> +	unsigned int bucket_value;
+> +	unsigned int bucket_id;
+> +
+> +	bucket_value = uclamp_bucket_value(clamp_value);
 
-> > +++ b/drivers/md/bcache/util.c
-> > @@ -244,10 +244,7 @@ void bch_bio_map(struct bio *bio, void *base)
-> >  start:		bv->bv_len	= min_t(size_t, PAGE_SIZE - bv->bv_offset,
-> >  					size);
-> >  		if (base) {
-> > -			bv->bv_page = is_vmalloc_addr(base)
-> > -				? vmalloc_to_page(base)
-> > -				: virt_to_page(base);
-> > -
-> > +			bv->bv_page = kv_to_page(base);
-> >  			base += bv->bv_len;
-> >  		}
+Aahh!!
 
-This one also is broken, although not quite as badly.  Anyone using
-vmalloc-like memory for bios need to call invalidate_kernel_vmap_range /
-flush_kernel_vmap_range to maintain cache coherency for VIVT caches.
+So why don't you do:
 
-It seems this odd bcache API just makes it way to easy to miss that.
+	bucket_id = clamp_value / UCLAMP_BUCKET_DELTA;
+	bucket_value = bucket_id * UCLAMP_BUCKET_DELTA;
 
-> > @@ -403,23 +402,14 @@ static int scif_create_remote_lookup(struct scif_dev *remote_dev,
-> >  		goto error_window;
-> >  	}
-> > 
-> > -	vmalloc_dma_phys = is_vmalloc_addr(&window->dma_addr[0]);
-> > -	vmalloc_num_pages = is_vmalloc_addr(&window->num_pages[0]);
-> > -
-> >  	/* Now map each of the pages containing physical addresses */
-> >  	for (i = 0, j = 0; i < nr_pages; i += SCIF_NR_ADDR_IN_PAGE, j++) {
-> >  		err = scif_map_page(&window->dma_addr_lookup.lookup[j],
-> > -				    vmalloc_dma_phys ?
-> > -				    vmalloc_to_page(&window->dma_addr[i]) :
-> > -				    virt_to_page(&window->dma_addr[i]),
-> > -				    remote_dev);
-> > +				kv_to_page(&window->dma_addr[i]), remote_dev);
+> +	do {
+> +		/* Find the bucket_id of an already mapped clamp bucket... */
+> +		free_bucket_id = UCLAMP_BUCKETS;
+> +		for (bucket_id = 0; bucket_id < UCLAMP_BUCKETS; ++bucket_id) {
+> +			uc_map_old.data = atomic_long_read(&uc_maps[bucket_id].adata);
+> +			if (free_bucket_id == UCLAMP_BUCKETS && !uc_map_old.se_count)
+> +				free_bucket_id = bucket_id;
+> +			if (uc_map_old.value == bucket_value)
+> +				break;
+> +		}
+> +
+> +		/* ... or allocate a new clamp bucket */
+> +		if (bucket_id >= UCLAMP_BUCKETS) {
+> +			/*
+> +			 * A valid clamp bucket must always be available.
+> +			 * If we cannot find one: refcounting is broken and we
+> +			 * warn once. The sched_entity will be tracked in the
+> +			 * fast-path using its previous clamp bucket, or not
+> +			 * tracked at all if not yet mapped (i.e. it's new).
+> +			 */
+> +			if (unlikely(free_bucket_id == UCLAMP_BUCKETS)) {
+> +				SCHED_WARN_ON(free_bucket_id == UCLAMP_BUCKETS);
+> +				return;
+> +			}
+> +			bucket_id = free_bucket_id;
+> +			uc_map_old.data = atomic_long_read(&uc_maps[bucket_id].adata);
+> +		}
 
-Similar issue here.  We can't just DMA map pages returned from
-vmalloc_to_page without very explicit cache maintainance.
+And then skip all this?
 
-> >  		pinned_pages->map_flags = SCIF_MAP_KERNEL;
-> > diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-> > index 9a7def7c3237..1382cc18e7db 100644
-> > --- a/drivers/spi/spi.c
-> > +++ b/drivers/spi/spi.c
-> > @@ -833,10 +833,7 @@ int spi_map_buf(struct spi_controller *ctlr, struct device *dev,
-> >  			min = min_t(size_t, desc_len,
-> >  				    min_t(size_t, len,
-> >  					  PAGE_SIZE - offset_in_page(buf)));
-> > -			if (vmalloced_buf)
-> > -				vm_page = vmalloc_to_page(buf);
-> > -			else
-> > -				vm_page = kmap_to_page(buf);
-> > +			vm_page = kv_to_page(buf);
-
-Same issue here again :(
-
-> > diff --git a/net/ceph/crypto.c b/net/ceph/crypto.c
-> > index 5d6724cee38f..4e13e88dd38c 100644
-> > --- a/net/ceph/crypto.c
-> > +++ b/net/ceph/crypto.c
-> > @@ -191,11 +191,7 @@ static int setup_sgtable(struct sg_table *sgt, struct scatterlist *prealloc_sg,
-> >  		struct page *page;
-> >  		unsigned int len = min(chunk_len - off, buf_len);
-> > 
-> > -		if (is_vmalloc)
-> > -			page = vmalloc_to_page(buf);
-> > -		else
-> > -			page = virt_to_page(buf);
-> > -
-> > +		page = kv_to_page(buf);
-> >  		sg_set_page(sg, page, len, off);
-
-Another issue of the same kind.
-
-> > 
-> > -static inline struct page * __pure pgv_to_page(void *addr)
-> > -{
-> > -	if (is_vmalloc_addr(addr))
-> > -		return vmalloc_to_page(addr);
-> > -	return virt_to_page(addr);
-> > -}
-
-This one plays really odd flush_dcache_page games, which looks like
-a workaround for the above proper APIs.
+> +
+> +		uc_map_new.se_count = uc_map_old.se_count + 1;
+> +		uc_map_new.value = bucket_value;
+> +
+> +	} while (!atomic_long_try_cmpxchg(&uc_maps[bucket_id].adata,
+> +					  &uc_map_old.data, uc_map_new.data));
+> +
+> +	uc_se->value = clamp_value;
+> +	uc_se->bucket_id = bucket_id;
+> +
+> +	if (uc_se->mapped)
+> +		uclamp_bucket_dec(clamp_id, prev_bucket_id);
+> +
+> +	/*
+> +	 * Task's sched_entity are refcounted in the fast-path only when they
+> +	 * have got a valid clamp_bucket assigned.
+> +	 */
+> +	uc_se->mapped = true;
+> +}
