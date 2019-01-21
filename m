@@ -4,51 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CDDCC2F3BE
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:59:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5E7FC2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:59:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E0422084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:59:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4F542087F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 13:59:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079179;
-	bh=HyVRXfzqX6iknBu7eD9xcnWra/ncYIlt5lqyuB2qvkM=;
+	s=default; t=1548079189;
+	bh=Mm88hfEJpYcrrSj2XJyXXmeo6WJMLVszw9DcGIMu9Os=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=f39VgvTbfBcpthxAM7pEN14RzODPNl7mSrMgxuK7ZtlhboWuyuNZkQxzzZkT0MKeW
-	 ESOoVhvFd8oMUM9hfedKzSrY5MByKqonmmNBP4FQ7N7oQnFJq0pUMgb+yYh1qWWjYo
-	 n5AIo9sVCgm+msZMWZE9YeSb5IALB9hKZnSYYapo=
+	b=0wChQe1Z5/nSMK57NSyDFETi5rnXT98UuqtAacJIJhJdxuT3R9B20jxFBaNKnxfmY
+	 gIvkusW/QknKlgITXjnGHkysb1L+RYOzHz345uZjOug4HCWHdoWOQ++wTzgk0yRn2x
+	 5DHVsZBN0MH86pm4wTkBwg/76F1ZNJLWHh8SgNNs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732225AbfAUN7h (ORCPT
+        id S1732263AbfAUN7r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:59:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45612 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 08:59:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45860 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732209AbfAUN7e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:59:34 -0500
+        id S1732229AbfAUN7n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 08:59:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB1B22084C;
-        Mon, 21 Jan 2019 13:59:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 232692084C;
+        Mon, 21 Jan 2019 13:59:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548079173;
-        bh=HyVRXfzqX6iknBu7eD9xcnWra/ncYIlt5lqyuB2qvkM=;
+        s=default; t=1548079181;
+        bh=Mm88hfEJpYcrrSj2XJyXXmeo6WJMLVszw9DcGIMu9Os=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B61xQFPVI9CSRYKrDGcnToz6FdGK3dBLkJ7V7F1jT+G4D+6gXxuOHoZr5zwCvXbSA
-         kUVm2YH5KhlAQiNFhZA4y/5Ul+487EI912TUJCTIOn0yQPpfrLRZ5EZvhxXhQ18UIN
-         9V1goN90Kj/x4f0lztlDwhxarPnDn/VFuBgAQ4lM=
+        b=Flu1NDprTuFxDIuMP8uj0ByLDSBW6bzWe90K7BRLyC3yKCa5w8FEI8N/nRZg/82dm
+         QyXMk6TqBDVq3yxLNCbAqstFsVpy1Bf8eH+3RJbnbU41n3Am9UV4sDwF4ljOD1xBSi
+         ZArQsmcWEmng2SQVfsPTVLFkJaEWJKyftn+RtD1A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aymen Sghaier <aymen.sghaier@nxp.com>,
-        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-        Christoph Hellwig <hch@lst.de>,
+        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
         Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.19 32/99] crypto: caam - fix zero-length buffer DMA mapping
-Date:   Mon, 21 Jan 2019 14:48:24 +0100
-Message-Id: <20190121134915.117848891@linuxfoundation.org>
+Subject: [PATCH 4.19 35/99] crypto: bcm - convert to use crypto_authenc_extractkeys()
+Date:   Mon, 21 Jan 2019 14:48:27 +0100
+Message-Id: <20190121134915.232570600@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121134913.924726465@linuxfoundation.org>
 References: <20190121134913.924726465@linuxfoundation.org>
@@ -67,93 +64,122 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Aymen Sghaier <aymen.sghaier@nxp.com>
+From: Eric Biggers <ebiggers@google.com>
 
-commit 04e6d25c5bb244c1a37eb9fe0b604cc11a04e8c5 upstream.
+commit ab57b33525c3221afaebd391458fa0cbcd56903d upstream.
 
-Recent changes - probably DMA API related (generic and/or arm64-specific) -
-exposed a case where driver maps a zero-length buffer:
-ahash_init()->ahash_update()->ahash_final() with a zero-length string to
-hash
+Convert the bcm crypto driver to use crypto_authenc_extractkeys() so
+that it picks up the fix for broken validation of rtattr::rta_len.
 
-kernel BUG at kernel/dma/swiotlb.c:475!
-Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 2 PID: 1823 Comm: cryptomgr_test Not tainted 4.20.0-rc1-00108-g00c9fe37a7f2 #1
-Hardware name: LS1046A RDB Board (DT)
-pstate: 80000005 (Nzcv daif -PAN -UAO)
-pc : swiotlb_tbl_map_single+0x170/0x2b8
-lr : swiotlb_map_page+0x134/0x1f8
-sp : ffff00000f79b8f0
-x29: ffff00000f79b8f0 x28: 0000000000000000
-x27: ffff0000093d0000 x26: 0000000000000000
-x25: 00000000001f3ffe x24: 0000000000200000
-x23: 0000000000000000 x22: 00000009f2c538c0
-x21: ffff800970aeb410 x20: 0000000000000001
-x19: ffff800970aeb410 x18: 0000000000000007
-x17: 000000000000000e x16: 0000000000000001
-x15: 0000000000000019 x14: c32cb8218a167fe8
-x13: ffffffff00000000 x12: ffff80097fdae348
-x11: 0000800976bca000 x10: 0000000000000010
-x9 : 0000000000000000 x8 : ffff0000091fd6c8
-x7 : 0000000000000000 x6 : 00000009f2c538bf
-x5 : 0000000000000000 x4 : 0000000000000001
-x3 : 0000000000000000 x2 : 00000009f2c538c0
-x1 : 00000000f9fff000 x0 : 0000000000000000
-Process cryptomgr_test (pid: 1823, stack limit = 0x(____ptrval____))
-Call trace:
- swiotlb_tbl_map_single+0x170/0x2b8
- swiotlb_map_page+0x134/0x1f8
- ahash_final_no_ctx+0xc4/0x6cc
- ahash_final+0x10/0x18
- crypto_ahash_op+0x30/0x84
- crypto_ahash_final+0x14/0x1c
- __test_hash+0x574/0xe0c
- test_hash+0x28/0x80
- __alg_test_hash+0x84/0xd0
- alg_test_hash+0x78/0x144
- alg_test.part.30+0x12c/0x2b4
- alg_test+0x3c/0x68
- cryptomgr_test+0x44/0x4c
- kthread+0xfc/0x128
- ret_from_fork+0x10/0x18
-Code: d34bfc18 2a1a03f7 1a9f8694 35fff89a (d4210000)
+This also fixes the DES weak key check to actually be done on the right
+key. (It was checking the authentication key, not the encryption key...)
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Aymen Sghaier <aymen.sghaier@nxp.com>
-Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Fixes: 9d12ba86f818 ("crypto: brcm - Add Broadcom SPU driver")
+Cc: <stable@vger.kernel.org> # v4.11+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/caam/caamhash.c |   15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ drivers/crypto/Kconfig      |    1 +
+ drivers/crypto/bcm/cipher.c |   44 +++++++++++++-------------------------------
+ 2 files changed, 14 insertions(+), 31 deletions(-)
 
---- a/drivers/crypto/caam/caamhash.c
-+++ b/drivers/crypto/caam/caamhash.c
-@@ -1131,13 +1131,16 @@ static int ahash_final_no_ctx(struct aha
+--- a/drivers/crypto/Kconfig
++++ b/drivers/crypto/Kconfig
+@@ -681,6 +681,7 @@ config CRYPTO_DEV_BCM_SPU
+ 	depends on ARCH_BCM_IPROC
+ 	depends on MAILBOX
+ 	default m
++	select CRYPTO_AUTHENC
+ 	select CRYPTO_DES
+ 	select CRYPTO_MD5
+ 	select CRYPTO_SHA1
+--- a/drivers/crypto/bcm/cipher.c
++++ b/drivers/crypto/bcm/cipher.c
+@@ -2845,44 +2845,28 @@ static int aead_authenc_setkey(struct cr
+ 	struct spu_hw *spu = &iproc_priv.spu;
+ 	struct iproc_ctx_s *ctx = crypto_aead_ctx(cipher);
+ 	struct crypto_tfm *tfm = crypto_aead_tfm(cipher);
+-	struct rtattr *rta = (void *)key;
+-	struct crypto_authenc_key_param *param;
+-	const u8 *origkey = key;
+-	const unsigned int origkeylen = keylen;
+-
+-	int ret = 0;
++	struct crypto_authenc_keys keys;
++	int ret;
  
- 	desc = edesc->hw_desc;
+ 	flow_log("%s() aead:%p key:%p keylen:%u\n", __func__, cipher, key,
+ 		 keylen);
+ 	flow_dump("  key: ", key, keylen);
  
--	state->buf_dma = dma_map_single(jrdev, buf, buflen, DMA_TO_DEVICE);
--	if (dma_mapping_error(jrdev, state->buf_dma)) {
--		dev_err(jrdev, "unable to map src\n");
--		goto unmap;
--	}
-+	if (buflen) {
-+		state->buf_dma = dma_map_single(jrdev, buf, buflen,
-+						DMA_TO_DEVICE);
-+		if (dma_mapping_error(jrdev, state->buf_dma)) {
-+			dev_err(jrdev, "unable to map src\n");
-+			goto unmap;
-+		}
+-	if (!RTA_OK(rta, keylen))
+-		goto badkey;
+-	if (rta->rta_type != CRYPTO_AUTHENC_KEYA_PARAM)
++	ret = crypto_authenc_extractkeys(&keys, key, keylen);
++	if (ret)
+ 		goto badkey;
+-	if (RTA_PAYLOAD(rta) < sizeof(*param))
+-		goto badkey;
+-
+-	param = RTA_DATA(rta);
+-	ctx->enckeylen = be32_to_cpu(param->enckeylen);
  
--	append_seq_in_ptr(desc, state->buf_dma, buflen, 0);
-+		append_seq_in_ptr(desc, state->buf_dma, buflen, 0);
-+	}
+-	key += RTA_ALIGN(rta->rta_len);
+-	keylen -= RTA_ALIGN(rta->rta_len);
+-
+-	if (keylen < ctx->enckeylen)
+-		goto badkey;
+-	if (ctx->enckeylen > MAX_KEY_SIZE)
++	if (keys.enckeylen > MAX_KEY_SIZE ||
++	    keys.authkeylen > MAX_KEY_SIZE)
+ 		goto badkey;
  
- 	edesc->dst_dma = map_seq_out_ptr_result(desc, jrdev, req->result,
- 						digestsize);
+-	ctx->authkeylen = keylen - ctx->enckeylen;
+-
+-	if (ctx->authkeylen > MAX_KEY_SIZE)
+-		goto badkey;
++	ctx->enckeylen = keys.enckeylen;
++	ctx->authkeylen = keys.authkeylen;
+ 
+-	memcpy(ctx->enckey, key + ctx->authkeylen, ctx->enckeylen);
++	memcpy(ctx->enckey, keys.enckey, keys.enckeylen);
+ 	/* May end up padding auth key. So make sure it's zeroed. */
+ 	memset(ctx->authkey, 0, sizeof(ctx->authkey));
+-	memcpy(ctx->authkey, key, ctx->authkeylen);
++	memcpy(ctx->authkey, keys.authkey, keys.authkeylen);
+ 
+ 	switch (ctx->alg->cipher_info.alg) {
+ 	case CIPHER_ALG_DES:
+@@ -2890,7 +2874,7 @@ static int aead_authenc_setkey(struct cr
+ 			u32 tmp[DES_EXPKEY_WORDS];
+ 			u32 flags = CRYPTO_TFM_RES_WEAK_KEY;
+ 
+-			if (des_ekey(tmp, key) == 0) {
++			if (des_ekey(tmp, keys.enckey) == 0) {
+ 				if (crypto_aead_get_flags(cipher) &
+ 				    CRYPTO_TFM_REQ_WEAK_KEY) {
+ 					crypto_aead_set_flags(cipher, flags);
+@@ -2905,7 +2889,7 @@ static int aead_authenc_setkey(struct cr
+ 		break;
+ 	case CIPHER_ALG_3DES:
+ 		if (ctx->enckeylen == (DES_KEY_SIZE * 3)) {
+-			const u32 *K = (const u32 *)key;
++			const u32 *K = (const u32 *)keys.enckey;
+ 			u32 flags = CRYPTO_TFM_RES_BAD_KEY_SCHED;
+ 
+ 			if (!((K[0] ^ K[2]) | (K[1] ^ K[3])) ||
+@@ -2956,9 +2940,7 @@ static int aead_authenc_setkey(struct cr
+ 		ctx->fallback_cipher->base.crt_flags &= ~CRYPTO_TFM_REQ_MASK;
+ 		ctx->fallback_cipher->base.crt_flags |=
+ 		    tfm->crt_flags & CRYPTO_TFM_REQ_MASK;
+-		ret =
+-		    crypto_aead_setkey(ctx->fallback_cipher, origkey,
+-				       origkeylen);
++		ret = crypto_aead_setkey(ctx->fallback_cipher, key, keylen);
+ 		if (ret) {
+ 			flow_log("  fallback setkey() returned:%d\n", ret);
+ 			tfm->crt_flags &= ~CRYPTO_TFM_RES_MASK;
 
 
