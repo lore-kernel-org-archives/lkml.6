@@ -2,127 +2,116 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9235FC31D63
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:14:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2605C31D63
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:16:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6068220880
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:14:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548054870;
-	bh=fV0ZHnBBoUSR8Lxw1I1aOYw0uiIT1Rz7RZHXZ/S1dQQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ijRSTjX5yZkwhIFPZe3mQO7P7AHpE3KUH+PjG1FjFirz7HITCSNAPvWfl/P7OQ3pp
-	 yA97qCcJmcp9MBzG+s1XALFU4CmGgHJSZd9Q7NxHKEH3Z5so6IS5WXVd9rPb+83N/b
-	 NdHFWADClyaLdL/NMe51ape0z+TTJ4l59s8mOckU=
+	by mail.kernel.org (Postfix) with ESMTP id 74A5F20880
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:16:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728340AbfAUHO3 (ORCPT
+        id S1727479AbfAUHQV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 02:14:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38080 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727041AbfAUHM6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 02:12:58 -0500
-Received: from earth.universe (unknown [194.136.232.109])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 94D0621738;
-        Mon, 21 Jan 2019 00:06:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548029191;
-        bh=fV0ZHnBBoUSR8Lxw1I1aOYw0uiIT1Rz7RZHXZ/S1dQQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CE8XMPVDDhWBrZWIy69Z1TMLqmMhW4s/xk3MzUWpTLhsZcrFs+WELE5SVEcX+pJXJ
-         SmXjNLEnBk13DCzQFGMNTfbuKy0efFngdtB2t+XD6dsDEz6k5WB45v7/B/tRoX9ixN
-         ULLNrxl+E479Oc+LH4VQ0LJnAS8BfLrwI44TTq/Y=
-Received: by earth.universe (Postfix, from userid 1000)
-        id 3BFCE3C08E7; Sun, 20 Jan 2019 22:38:53 +0100 (CET)
-Date:   Sun, 20 Jan 2019 22:38:53 +0100
-From:   Sebastian Reichel <sre@kernel.org>
-To:     Kangjie Lu <kjlu@umn.edu>
-Cc:     pakki001@umn.edu, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] power: twl4030: fix a missing check of return value
-Message-ID: <20190120213853.5yh6hiw3ccfgtbmo@earth.universe>
-References: <20181220195124.29467-1-kjlu@umn.edu>
+        Mon, 21 Jan 2019 02:16:21 -0500
+Received: from mail-sh.amlogic.com ([58.32.228.43]:14187 "EHLO
+        mail-sh.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726112AbfAUHQV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 02:16:21 -0500
+Received: from [10.18.29.210] (10.18.29.210) by mail-sh.amlogic.com
+ (10.18.11.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1591.10; Mon, 21 Jan
+ 2019 12:18:18 +0800
+Subject: Re: [PATCH] MAINTAINERS: Add entry for Amlogic NAND controller driver
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+CC:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        <linux-mtd@lists.infradead.org>,
+        Liang Yang <liang.yang@amlogic.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Rob Herring <robh@kernel.org>, Jian Hu <jian.hu@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <1547917355-13179-1-git-send-email-jianxin.pan@amlogic.com>
+ <20190120160605.33689354@xps13>
+From:   Jianxin Pan <jianxin.pan@amlogic.com>
+Message-ID: <3f098e44-9d9b-3d0a-3e19-5913077aeb07@amlogic.com>
+Date:   Mon, 21 Jan 2019 12:18:18 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="pxnevxnfaejqw6t7"
-Content-Disposition: inline
-In-Reply-To: <20181220195124.29467-1-kjlu@umn.edu>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190120160605.33689354@xps13>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.18.29.210]
+X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh.amlogic.com
+ (10.18.11.5)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Miquel,
 
---pxnevxnfaejqw6t7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2019/1/20 23:06, Miquel Raynal wrote:
+> Hi Jianxin,
+> 
+> Jianxin Pan <jianxin.pan@amlogic.com> wrote on Sun, 20 Jan 2019
+> 01:02:35 +0800:
+> 
+>> Add entry for Amlogic NAND controller driver and its bindings[0].
+>>
+>> [0] https://lore.kernel.org/lkml/1547566684-57472-1-git-send-email-jianxin.pan@amlogic.com/
+>>
+>> Signed-off-by: Liang Yang <liang.yang@amlogic.com>
+>> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
+> 
+> If you are the author of the patch your Signed-off-by should come first.
+OK.
+> 
+> Also, why is Liang the Maintainer? Why not you?
+> 
+Yangliang is Amlogic maintainer for NAND controller. And all patches about amlogic NAND controller are from him.
+>> ---
+>>  MAINTAINERS | 7 +++++++
+>>  1 file changed, 7 insertions(+)
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 0abecc5..7d976a1 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -9628,6 +9628,13 @@ F:	drivers/media/platform/meson/ao-cec.c
+>>  F:	Documentation/devicetree/bindings/media/meson-ao-cec.txt
+>>  T:	git git://linuxtv.org/media_tree.git
+>>  
+>> +MESON NAND CONTROLLER DRIVER FOR AMLOGIC SOCS
+>> +M:	Liang Yang <liang.yang@amlogic.com>
+>> +L:	linux-mtd@lists.infradead.org
+>> +S:	Maintained
+>> +F:	drivers/mtd/nand/raw/meson_*
+>> +F:	Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt
+>> +
+>>  MICROBLAZE ARCHITECTURE
+>>  M:	Michal Simek <monstr@monstr.eu>
+>>  W:	http://www.monstr.eu/fdt/
+> 
+> Thanks,
+> Miquèl
+> 
+> .
+> 
 
-Hi,
-
-On Thu, Dec 20, 2018 at 01:51:24PM -0600, Kangjie Lu wrote:
-> If twl4030_bci_read() fails, the read data in "s" is incorrect,
-> which is however used in the following execution. The fix checks
-> the return value of twl4030_bci_read() and returns an error code
-> upstream upon the failure of twl4030_bci_read().
->=20
-> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-> ---
-
-Thanks, queued to power-supply-next.
-
--- Sebastian
-
->  drivers/power/supply/twl4030_charger.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/power/supply/twl4030_charger.c b/drivers/power/suppl=
-y/twl4030_charger.c
-> index 0e202d4273fb..4299873a1118 100644
-> --- a/drivers/power/supply/twl4030_charger.c
-> +++ b/drivers/power/supply/twl4030_charger.c
-> @@ -809,7 +809,9 @@ static int twl4030_bci_get_property(struct power_supp=
-ly *psy,
->  		is_charging =3D state & TWL4030_MSTATEC_AC;
->  	if (!is_charging) {
->  		u8 s;
-> -		twl4030_bci_read(TWL4030_BCIMDEN, &s);
-> +		ret =3D twl4030_bci_read(TWL4030_BCIMDEN, &s);
-> +		if (ret < 0)
-> +			return ret;
->  		if (psy->desc->type =3D=3D POWER_SUPPLY_TYPE_USB)
->  			is_charging =3D s & 1;
->  		else
-> --=20
-> 2.17.1
->=20
-
---pxnevxnfaejqw6t7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlxE6m0ACgkQ2O7X88g7
-+po4vA//bmq+OXH+sKw1H5E3jTUh60l+43qwHxHu6UGCyTr1SQ4PHcB/nyqxTA3s
-5XzRj5AT96xlBEBfT2ItxeFzSO1XWUa1ji/zi4pwmc5gCzICu0J4+Fbs9VsmPMtA
-JT+oRXTnD6DXzS03Q3A6SBYBfe07s4VL7k5MH/7jqNJQ/AvfVAsAaxVHxWCnUV1W
-8dDlp+CFhuIR+Joi1uCPuL2Kibz+9tufQJvGX/ahdHRlUuLTXzyaSWFTpJn0WV7H
-HkrfvaVdaP9OCU3n4D0XQQJ+nMbeAmUgqnxTQXZ3vTOPhk0S//zDUFo9CmwBXyHx
-BCZ4mbTbLRwYjHQZH+G/DS+qj0+YxWH6G5VA9Nbemqwvs5xyHeRXxWmjqUbPlSeE
-pW9y5TUfGtbUSLnZ6fAskH9727sysIlSp9oaXgvw5QqRXoDykF3ISjRvgMZDTjvx
-h3EPsKKaj2CKMUMjJ/p7ipSHaqkoqcWWyG0l8nC3g4hAmNUuWluZYsO5CTmUVXCI
-Yo6h7gNv6XYrlagvJTbvDCZyNqzd51dPFs+SQWDY0x4amxr99Vjk6n/ZCd/cYwy9
-nqb+NrXT0Bx0k6Qa+TOAecRjuFwDVGmNqZZcb7Xbu13VfUVC/KT01bMYWVUosiAP
-GFZOpqv9/W+7nnrVAsDzJJfPlfAz692gIlULduPK9plsbpuNgko=
-=Cdng
------END PGP SIGNATURE-----
-
---pxnevxnfaejqw6t7--
