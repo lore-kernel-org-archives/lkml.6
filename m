@@ -2,210 +2,203 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ECC3C282DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:37:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7121C282F6
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:37:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CADA620823
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:37:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88E1D214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:37:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="S7qfM0qN"
+	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="PP8Cnnd7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729650AbfAUIhf (ORCPT
+        id S1729671AbfAUIhj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 03:37:35 -0500
-Received: from plaes.org ([188.166.43.21]:37212 "EHLO plaes.org"
+        Mon, 21 Jan 2019 03:37:39 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:63893 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729609AbfAUIhe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 03:37:34 -0500
-Received: from plaes.org (localhost [127.0.0.1])
-        by plaes.org (Postfix) with ESMTPSA id CD2414051B;
-        Mon, 21 Jan 2019 08:37:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=plaes.org; s=mail;
-        t=1548059850; bh=hPQe2gPH6rJt0CyTe8yEvSNI60mv385W9FfrcGigiXE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=S7qfM0qNindD1mlhLbe80n50yJzIvLbZoyMkYmcCme8Ar+xdoNScVhsJRZqcTsXQP
-         DMz6f7wfAXXNYDF8fWIgvtnzH1+sqm0isiVYTQORX3gvbBJqyufkQO3yJj2HtNWeIx
-         CIWW6DoIQrBnoOZnmEW8mTVrDfojq620CKxFjY07g8ymHSiR3ekO4FNp0wuwkA09eg
-         +6rVRp8FlJabmHwLYkJAZgWefpi/g2oo5tsnGo4HIGhVaGcls4mHcAXfYbOkN+pPMT
-         D3ZXt6fUDIfQWLZC+oovT42vQojec1tuMd7TpzQoEuT9MMNzj723vvajsIBeXYpY1E
-         ENGWec9zQAiAg==
-Date:   Mon, 21 Jan 2019 08:37:29 +0000
-From:   Priit Laes <plaes@plaes.org>
-To:     Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>
-Cc:     maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, airlied@linux.ie,
-        architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [linux-sunxi] [PATCH v3 02/28] clk: sunxi-ng: Adjust MP clock
- parent rate when allowed
-Message-ID: <20190121083729.7qsmj7drxvmnjoye@plaes.org>
-References: <20181104182705.18047-1-jernej.skrabec@siol.net>
- <11550554.k1qAFTnke5@jernej-laptop>
- <20190117072402.ognqxsxewjg3kyyg@plaes.org>
- <3212171.R3YZLKKLtu@jernej-laptop>
+        id S1729654AbfAUIhi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 03:37:38 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43jlKj5Cg5z9v3wN;
+        Mon, 21 Jan 2019 09:37:29 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=PP8Cnnd7; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id S2muWeUT1ur7; Mon, 21 Jan 2019 09:37:29 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43jlKj3sr6z9v3wM;
+        Mon, 21 Jan 2019 09:37:29 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1548059849; bh=mOz+SF4vHcoXej60wSp2Oxa4TkiSpvVlnnGpg2LPLR8=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=PP8Cnnd7A1qFz/7PftVGJR/Gejs0QLQ5DXHlU/026lMLfGY4JWtED4MtDYs78l0Vn
+         q129cuRKtM1IVTehbGwVB2lX8kCI3vP/2z6u09VeTR+9bsyTJSff+FH/DrJ9bH6fJi
+         qwJhi2fuNvRqiVbwpXJPb7ZCviqB7Gz4882G6YqQ=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id D7BF18B799;
+        Mon, 21 Jan 2019 09:37:35 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id mwTxzbdOtdoM; Mon, 21 Jan 2019 09:37:35 +0100 (CET)
+Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.2])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 9ACEA8B79B;
+        Mon, 21 Jan 2019 09:37:35 +0100 (CET)
+Subject: Re: [PATCH v3 3/3] powerpc/32: Add KASAN support
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Alexander Potapenko <glider@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        Linux-MM <linux-mm@kvack.org>
+References: <cover.1547289808.git.christophe.leroy@c-s.fr>
+ <935f9f83393affb5d55323b126468ecb90373b88.1547289808.git.christophe.leroy@c-s.fr>
+ <e4b343fa-702b-294f-7741-bb85ed877cdf@virtuozzo.com>
+ <8d433501-a5a7-8e3b-03f7-ccdd0f8622e1@c-s.fr>
+ <CACT4Y+Z+UbN1rjHr3T5rgHpCJUknupPvEPw0SHs1-qjWBDhm3Q@mail.gmail.com>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <d2f85bee-c551-ec9d-1a13-6d3364788cc1@c-s.fr>
+Date:   Mon, 21 Jan 2019 09:37:35 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <CACT4Y+Z+UbN1rjHr3T5rgHpCJUknupPvEPw0SHs1-qjWBDhm3Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <3212171.R3YZLKKLtu@jernej-laptop>
-User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 10:51:10PM +0100, Jernej Škrabec wrote:
-> Dne četrtek, 17. januar 2019 ob 08:24:02 CET je Priit Laes napisal(a):
-> > On Wed, Jan 16, 2019 at 06:00:32PM +0100, Jernej Škrabec wrote:
-> > > Dne sreda, 16. januar 2019 ob 13:09:58 CET je Priit Laes napisal(a):
-> > > > On Thu, Jan 10, 2019 at 06:10:59PM +0100, Jernej Škrabec wrote:
-> > > > > Dne četrtek, 10. januar 2019 ob 10:15:48 CET je Priit Laes napisal(a):
-> > > > > > On Sun, Nov 04, 2018 at 07:26:39PM +0100, Jernej Skrabec wrote:
-> > > > > > > Currently MP clocks don't consider adjusting parent rate even if
-> > > > > > > they
-> > > > > > > are allowed to do so. Such behaviour considerably lowers amount of
-> > > > > > > possible rates, which is very inconvenient when such clock is used
-> > > > > > > for
-> > > > > > > pixel clock, for example.
-> > > > > > > 
-> > > > > > > In order to improve the situation, adjusting parent rate is
-> > > > > > > considered
-> > > > > > > when allowed.
-> > > > > > > 
-> > > > > > > This code is inspired by clk_divider_bestdiv() function, which
-> > > > > > > does
-> > > > > > > basically the same thing for different clock type.
-> > > > > > 
-> > > > > > This patch seems to break the eMMC support on Olinuxino-Lime2-eMMC
-> > > > > > boards:
-> > > > > > 
-> > > > > > EXT4-fs (mmcblk1p4): INFO: recovery required on readonly filesystem
-> > > > > > EXT4-fs (mmcblk1p4): write access will be enabled during recovery
-> > > > > > sunxi-mmc 1c11000.mmc: data error, sending stop command
-> > > > > > sunxi-mmc 1c11000.mmc: send stop command failed
-> > > > > 
-> > > > > I'm not familiar with A20. What is interesting is that emmc clocks
-> > > > > don't
-> > > > > have CLK_SET_RATE_PARENT flag set, so you shouldn't see any
-> > > > > difference.
-> > > > > 
-> > > > > Can you post content of clk_summary with and without this patch?
-> > > > 
-> > > > In both cases I booted from FEL with rootfs on sdcard and tried to mount
-> > > > partition from eMMC to /mnt. With your patch, last step it fails.
-> > > > 
-> > > > pre-patch working:
-> > > > pll-ddr-other[768MHz] -> mmc2[512MHz]. (For some reason ahb-mmc2 is
-> > > > off?)
-> > > > 
-> > > > post-patch not working:
-> > > > pll-periph[600MHz] ->  mmc2[500Mhz], (ahb-mmc2 is enabled)
-> > > > 
-> > > > Also, attached the logs.
-> > > 
-> > > Thanks. Just one more request. Can you enable debug messages in mmc
-> > > driver?
-> > > I'm interested in output of this line:
-> > > 
-> > > dev_dbg(mmc_dev(mmc), "setting clk to %d, rounded %ld\n",
-> > > 
-> > > 		clock, rate);
-> > 
-> > 1c11000 is eMMC:
-> > [snip]
-> > [    1.961644] sunxi-mmc 1c11000.mmc: setting clk to 400000, rounded 400000
-> > [    2.004091] sunxi-mmc 1c11000.mmc: setting clk to 400000, rounded 400000
-> > [    2.020296] sunxi-mmc 1c11000.mmc: setting clk to 400000, rounded 400000
-> > [    2.039917] sunxi-mmc 1c11000.mmc: setting clk to 400000, rounded 400000
-> > [    2.047847] sunxi-mmc 1c11000.mmc: setting clk to 400000, rounded 400000
-> > [    2.055053] sunxi-mmc 1c11000.mmc: setting clk to 400000, rounded 400000
-> > [    2.065256] sunxi-mmc 1c11000.mmc: setting clk to 400000, rounded 400000
-> > [    2.092351] sunxi-mmc 1c11000.mmc: setting clk to 400000, rounded 400000
-> > [    2.168725] sunxi-mmc 1c11000.mmc: setting clk to 400000, rounded 400000
-> > [    2.189403] sunxi-mmc 1c11000.mmc: setting clk to 52000000, rounded
-> > 52000000 [    2.203340] sunxi-mmc 1c11000.mmc: setting clk to 52000000,
-> > rounded 52000000 [    2.211412] sunxi-mmc 1c11000.mmc: setting clk to
-> > 52000000, rounded 52000000 [    4.967865] sunxi-mmc 1c11000.mmc: setting
-> > clk to 52000000, rounded 52000000 [    8.755345] sunxi-mmc 1c11000.mmc:
-> > setting clk to 52000000, rounded 52000000 [    9.082510] sunxi-mmc
-> > 1c11000.mmc: setting clk to 52000000, rounded 52000000
-> > 
-> > Here I tried to mount partition from eMMC...
-> > 
-> > [   72.167311] sunxi-mmc 1c11000.mmc: setting clk to 52000000, rounded
-> > 52000000 [   72.269629] sunxi-mmc 1c11000.mmc: data error, sending stop
-> > command [   73.268999] sunxi-mmc 1c11000.mmc: send stop command failed
-> > [/snip]
-> > 
-> > And clock tree:
-> > [snip]
-> > pll-periph-base                3        3        0  1200000000          0   
-> >  0  50000 pll-periph                  6        6        0   600000000      
-> >    0     0  50000 mmc2                     3        3        0    50000000 
-> >         0     0  50000 mmc2_sample           1        1        0   
-> > 50000000          0   120  50000 mmc2_output           1        1        0 
-> >   50000000          0    60  50000 ahb                     18       18     
-> >   0   300000000          0     0  50000 ahb-mmc2              1        1   
-> >     0   300000000          0     0  50000 [/snip]
-> > 
-> > 
-> > And without patch:
-> > [snip]
-> > [    2.003341] sunxi-mmc 1c11000.mmc: XXX: setting clk to 400000, rounded
-> > 400000 [    2.019479] sunxi-mmc 1c11000.mmc: XXX: setting clk to 400000,
-> > rounded 400000 [    2.039144] sunxi-mmc 1c11000.mmc: XXX: setting clk to
-> > 400000, rounded 400000 [    2.047129] sunxi-mmc 1c11000.mmc: XXX: setting
-> > clk to 400000, rounded 400000 [    2.054324] sunxi-mmc 1c11000.mmc: XXX:
-> > setting clk to 400000, rounded 400000 [    2.064481] sunxi-mmc 1c11000.mmc:
-> > XXX: setting clk to 400000, rounded 400000 [    2.091624] sunxi-mmc
-> > 1c11000.mmc: XXX: setting clk to 400000, rounded 400000 [    2.168067]
-> > sunxi-mmc 1c11000.mmc: XXX: setting clk to 400000, rounded 400000 [   
-> > 2.188239] sunxi-mmc 1c11000.mmc: XXX: setting clk to 52000000, rounded
-> > 51200000 [    2.202779] sunxi-mmc 1c11000.mmc: XXX: setting clk to
-> > 52000000, rounded 51200000 [    2.210817] sunxi-mmc 1c11000.mmc: XXX:
-> > setting clk to 52000000, rounded 51200000 [    5.103358] sunxi-mmc
-> > 1c11000.mmc: XXX: setting clk to 52000000, rounded 51200000 [    8.950237]
-> > sunxi-mmc 1c11000.mmc: XXX: setting clk to 52000000, rounded 51200000 [   
-> > 9.376201] sunxi-mmc 1c11000.mmc: XXX: setting clk to 52000000, rounded
-> > 51200000 [  113.618387] sunxi-mmc 1c11000.mmc: XXX: setting clk to
-> > 52000000, rounded 51200000 [  113.707979] EXT4-fs (mmcblk1p4): recovery
-> > complete
-> > [  113.728162] EXT4-fs (mmcblk1p4): mounted filesystem with ordered data
-> > mode. Opts: (null) [/snip]
-> > 
-> > And clock tree:
-> > [snip]
-> > pll-ddr-base                   2        2        0   768000000          0   
-> >  0  50000 pll-ddr-other               1        1        0   768000000      
-> >    0     0  50000 mmc2                     0        0        0    51200000 
-> >         0     0  50000 mmc2_sample           0        0        0   
-> > 51200000          0   120  50000 mmc2_output           0        0        0 
-> >   51200000          0    72  50000 [/snip]
-> > 
-> 
-> It seems to me that clock rate is set properly. It's even better than before 
-> since there is no error between wanted and real clock. I bet that if you call 
-> clk_get_rate() directly behind clk_set_rate() in mmc driver, you'll get 
-> correct value.
-> 
-> However, it seems that at some point some other peripheral changes it's parent 
-> clock rate, which inadvertely changes emmc2 clock rate too. The only possible 
-> clock which could interfere is sata. Can you disable driver in you kernel 
-> config and try again?
 
-OK, tried following things in succession, but SATA disabling does not work:
 
-a) Marked all ahci stuff in devicetree as disabled
-b) Disable CONFIG_AHCI_SUNXI in kernel
-c) Even disabled SATA stuff in u-boot
+Le 21/01/2019 à 09:30, Dmitry Vyukov a écrit :
+> On Mon, Jan 21, 2019 at 8:17 AM Christophe Leroy
+> <christophe.leroy@c-s.fr> wrote:
+>>
+>>
+>>
+>> Le 15/01/2019 à 18:23, Andrey Ryabinin a écrit :
+>>>
+>>>
+>>> On 1/12/19 2:16 PM, Christophe Leroy wrote:
+>>>
+>>>> +KASAN_SANITIZE_early_32.o := n
+>>>> +KASAN_SANITIZE_cputable.o := n
+>>>> +KASAN_SANITIZE_prom_init.o := n
+>>>> +
+>>>
+>>> Usually it's also good idea to disable branch profiling - define DISABLE_BRANCH_PROFILING
+>>> either in top of these files or via Makefile. Branch profiling redefines if() statement and calls
+>>> instrumented ftrace_likely_update in every if().
+>>>
+>>>
+>>>
+>>>> diff --git a/arch/powerpc/mm/kasan_init.c b/arch/powerpc/mm/kasan_init.c
+>>>> new file mode 100644
+>>>> index 000000000000..3edc9c2d2f3e
+>>>
+>>>> +void __init kasan_init(void)
+>>>> +{
+>>>> +    struct memblock_region *reg;
+>>>> +
+>>>> +    for_each_memblock(memory, reg)
+>>>> +            kasan_init_region(reg);
+>>>> +
+>>>> +    pr_info("KASAN init done\n");
+>>>
+>>> Without "init_task.kasan_depth = 0;" kasan will not repot bugs.
+>>>
+>>> There is test_kasan module. Make sure that it produce reports.
+>>>
+>>
+>> Thanks for the review.
+>>
+>> Now I get the following very early in boot, what does that mean ?
+> 
+> This looks like an instrumented memset call before kasan shadow is
+> mapped, or kasan shadow is not zeros. Does this happen before or after
+> mapping of kasan_early_shadow_page?
+
+This is after the mapping of kasan_early_shadow_page.
+
+> This version seems to miss what x86 code has to clear the early shadow:
+> 
+> /*
+> * kasan_early_shadow_page has been used as early shadow memory, thus
+> * it may contain some garbage. Now we can clear and write protect it,
+> * since after the TLB flush no one should write to it.
+> */
+> memset(kasan_early_shadow_page, 0, PAGE_SIZE);
+
+In the early part, kasan_early_shadow_page is mapped read-only so I 
+assumed this reset of its content was unneccessary.
+
+I'll try with it.
+
+Christophe
 
 > 
-> Best regards,
-> Jernej
+> 
+>> [    0.000000] KASAN init done
+>> [    0.000000]
+>> ==================================================================
+>> [    0.000000] BUG: KASAN: unknown-crash in memblock_alloc_try_nid+0xd8/0xf0
+>> [    0.000000] Write of size 68 at addr c7ff5a90 by task swapper/0
+>> [    0.000000]
+>> [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted
+>> 5.0.0-rc2-s3k-dev-00559-g88aa407c4bce #772
+>> [    0.000000] Call Trace:
+>> [    0.000000] [c094ded0] [c016c7e4]
+>> print_address_description+0x1a0/0x2b8 (unreliable)
+>> [    0.000000] [c094df00] [c016caa0] kasan_report+0xe4/0x168
+>> [    0.000000] [c094df40] [c016b464] memset+0x2c/0x4c
+>> [    0.000000] [c094df60] [c08731f0] memblock_alloc_try_nid+0xd8/0xf0
+>> [    0.000000] [c094df90] [c0861f20] mmu_context_init+0x58/0xa0
+>> [    0.000000] [c094dfb0] [c085ca70] start_kernel+0x54/0x400
+>> [    0.000000] [c094dff0] [c0002258] start_here+0x44/0x9c
+>> [    0.000000]
+>> [    0.000000]
+>> [    0.000000] Memory state around the buggy address:
+>> [    0.000000]  c7ff5980: e2 a1 87 81 bd d4 a5 b5 f8 8d 89 e7 72 bc 20 24
+>> [    0.000000]  c7ff5a00: e7 b9 c1 c7 17 e9 b4 bd a4 d0 e7 a0 11 15 a5 b5
+>> [    0.000000] >c7ff5a80: b5 e1 83 a5 2d 65 31 3f f3 e5 a7 ef 34 b5 69 b5
+>> [    0.000000]                  ^
+>> [    0.000000]  c7ff5b00: 21 a5 c1 c1 b4 bf 2d e5 e5 c3 f5 91 e3 b8 a1 34
+>> [    0.000000]  c7ff5b80: ad ef 23 87 3d a6 ad b5 c3 c3 80 b7 ac b1 1f 37
+>> [    0.000000]
+>> ==================================================================
+>> [    0.000000] Disabling lock debugging due to kernel taint
+>> [    0.000000] MMU: Allocated 76 bytes of context maps for 16 contexts
+>> [    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 8176
+>> [    0.000000] Kernel command line: console=ttyCPM0,115200N8
+>> ip=192.168.2.7:192.168.2.2::255.0.0.0:vgoip:eth0:off kgdboc=ttyCPM0
+>> [    0.000000] Dentry cache hash table entries: 16384 (order: 2, 65536
+>> bytes)
+>> [    0.000000] Inode-cache hash table entries: 8192 (order: 1, 32768 bytes)
+>> [    0.000000] Memory: 99904K/131072K available (7376K kernel code, 528K
+>> rwdata, 1168K rodata, 576K init, 4623K bss, 31168K reserved, 0K
+>> cma-reserved)
+>> [    0.000000] Kernel virtual memory layout:
+>> [    0.000000]   * 0xffefc000..0xffffc000  : fixmap
+>> [    0.000000]   * 0xf7c00000..0xffc00000  : kasan shadow mem
+>> [    0.000000]   * 0xf7a00000..0xf7c00000  : consistent mem
+>> [    0.000000]   * 0xf7a00000..0xf7a00000  : early ioremap
+>> [    0.000000]   * 0xc9000000..0xf7a00000  : vmalloc & ioremap
+>>
+>>
+>> Christophe
