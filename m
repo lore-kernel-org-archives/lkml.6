@@ -6,33 +6,42 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1CF7C282DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:04:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A8F4C282E9
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:05:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C68E22084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:04:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3AC4E20823
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:05:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729637AbfAUIE5 (ORCPT
+        id S1729681AbfAUIE7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 03:04:57 -0500
-Received: from ms.lwn.net ([45.79.88.28]:33066 "EHLO ms.lwn.net"
+        Mon, 21 Jan 2019 03:04:59 -0500
+Received: from ms.lwn.net ([45.79.88.28]:33064 "EHLO ms.lwn.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729630AbfAUIEy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729601AbfAUIEy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 21 Jan 2019 03:04:54 -0500
 Received: from localhost.localdomain (localhost [127.0.0.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 444D8AB8;
-        Mon, 21 Jan 2019 02:06:04 +0000 (UTC)
-Date:   Sun, 20 Jan 2019 19:05:58 -0700
+        by ms.lwn.net (Postfix) with ESMTPSA id C4742AAB;
+        Mon, 21 Jan 2019 02:08:04 +0000 (UTC)
+Date:   Sun, 20 Jan 2019 19:08:00 -0700
 From:   Jonathan Corbet <corbet@lwn.net>
-To:     Federico Vaga <federico.vaga@vaga.pv.it>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] doc:process: add missing internal link in
- stable-kernel-rules
-Message-ID: <20190120190558.0bb2de73@lwn.net>
-In-Reply-To: <20190120111629.31681-1-federico.vaga@vaga.pv.it>
-References: <20190120111629.31681-1-federico.vaga@vaga.pv.it>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Joe Perches <joe@perches.com>, Gal Pressman <galpress@amazon.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Stephen Warren <swarren@wwwdotorg.org>,
+        Tariq Toukan <tariqt@mellanox.com>, xavier.huwei@huawei.com,
+        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        Doug Ledford <dledford@redhat.com>,
+        Stephen Warren <swarren@nvidia.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5] coding-style: Clarify the expectations around bool
+Message-ID: <20190120190800.64814cd4@lwn.net>
+In-Reply-To: <20190118225047.GH4759@ziepe.ca>
+References: <20190118225047.GH4759@ziepe.ca>
 Organization: LWN.net
 X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
@@ -43,14 +52,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 20 Jan 2019 12:16:29 +0100
-Federico Vaga <federico.vaga@vaga.pv.it> wrote:
+On Fri, 18 Jan 2019 15:50:47 -0700
+Jason Gunthorpe <jgg@ziepe.ca> wrote:
 
-> Keep consistent the document. In the document, option references
-> are always linked, except for the one I fixed with this patch
+> There has been some confusion since checkpatch started warning about bool
+> use in structures, and people have been avoiding using it.
 > 
-> Signed-off-by: Federico Vaga <federico.vaga@vaga.pv.it>
+> Many people feel there is still a legitimate place for bool in structures,
+> so provide some guidance on bool usage derived from the entire thread that
+> spawned the checkpatch warning.
+> 
+> Link: https://lkml.kernel.org/r/CA+55aFwVZk1OfB9T2v014PTAKFhtVan_Zj2dOjnCy3x6E4UJfA@mail.gmail.com
+> Signed-off-by: Joe Perches <joe@perches.com>
+> Acked-by: Joe Perches <joe@perches.com>
+> Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+> Acked-by: Jani Nikula <jani.nikula@intel.com>
+> Reviewed-by: Joey Pabalinas <joeypabalinas@gmail.com>
+> Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 
-Applied, thanks.
+So this seems ready; I've applied it.  
+
+Thanks,
 
 jon
