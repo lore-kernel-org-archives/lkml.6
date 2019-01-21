@@ -2,114 +2,145 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C649CC282E9
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:07:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53F2BC282E9
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:07:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C53A214C6
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:07:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28CEB2084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 08:07:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729801AbfAUIHX (ORCPT
+        id S1728970AbfAUIHO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 03:07:23 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:44023 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729451AbfAUIHU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 03:07:20 -0500
-Received: by mail-vs1-f68.google.com with SMTP id x1so12071456vsc.10;
-        Mon, 21 Jan 2019 00:07:18 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qXLD08ZhNbo1NMvbOHKMcfHtw8oqcgdcNXRBleZ02HU=;
-        b=H+LGhgOOKEsvHBTmtxJTCjBPdBxhSsqMIv6GQDdtUurtQufHr6umgi9leWNhrSfzQ5
-         A7R8L89ey7zHpgAtQT4PDW9nyoGSg8HiovsxXNFP3T5rzdxhEUHmGW21u3tlrXSCw9rm
-         6Mq9WwvjH2I91010gfnz9OFy2jXkva1UJd1en4J9hCWa9UTaYtAZCVM1AXQodeW8iUm9
-         tF+4b/kWXwt8k++K0YTSSVe4rKJkL1up1BtpB2F1ltCJGwP7LEMhOHsPoTUplXQSsyWt
-         ju3FVCsEbaprqzHEyGUVh6ZCmy9xJm9GgklPZXUn1OXDkm02GZbEdJmFrbYv1EcTmVxL
-         9j2g==
-X-Gm-Message-State: AJcUukc1Lh0h+OVKwwX1YFeMvrpxPbiLx6zG1nsfczZacKCVlEz47njn
-        uuIwGicH8FjWdTzHlZpLpSaH8hoi3El0R2qtIKU=
-X-Google-Smtp-Source: ALg8bN7PAkoiEcltbZZ90okuIHKeh3Hd7zrjUBYlI94Ofq6l4zsWCDbU0HLun3Hy0/S9rRYk7ybtuk0MjXCtnpQGbIE=
-X-Received: by 2002:a67:f43:: with SMTP id 64mr11912894vsp.166.1548058038054;
- Mon, 21 Jan 2019 00:07:18 -0800 (PST)
-MIME-Version: 1.0
-References: <20190118161835.2259170-1-arnd@arndb.de> <20190118161835.2259170-27-arnd@arndb.de>
-In-Reply-To: <20190118161835.2259170-27-arnd@arndb.de>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 21 Jan 2019 09:07:06 +0100
-Message-ID: <CAMuHMdU1tNA74QRKhcuJ-LkRi4HBynZoQ0hd-MVZtY4+oh6OUA@mail.gmail.com>
-Subject: Re: [PATCH v2 26/29] y2038: use time32 syscall names on 32-bit
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Matt Turner <mattst88@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Michal Simek <monstr@monstr.eu>,
-        Paul Burton <paul.burton@mips.com>,
-        Helge Deller <deller@gmx.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Rich Felker <dalias@libc.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Firoz Khan <firoz.khan@linaro.org>,
-        alpha <linux-alpha@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        linux-mips@vger.kernel.org,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 21 Jan 2019 03:07:14 -0500
+Received: from inva021.nxp.com ([92.121.34.21]:51350 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729883AbfAUIFy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 03:05:54 -0500
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 11F0E2000D4;
+        Mon, 21 Jan 2019 04:18:39 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 86D39200064;
+        Mon, 21 Jan 2019 04:18:33 +0100 (CET)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 89D81402D9;
+        Mon, 21 Jan 2019 11:18:26 +0800 (SGT)
+From:   Yinbo Zhu <yinbo.zhu@nxp.com>
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     yinbo.zhu@nxp.com, xiaobo.xie@nxp.com, jerry.huang@nxp.com,
+        ran.wang_1@nxp.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ramneek Mehresh <ramneek.mehresh@freescale.com>,
+        Nikhil Badola <nikhil.badola@freescale.com>,
+        Suresh Gupta <suresh.gupta@freescale.com>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Suresh Gupta <B42813@freescale.com>
+Subject: [PATCH v1 2/6] usb: phy: Workaround for USB erratum-A005728
+Date:   Mon, 21 Jan 2019 11:13:00 +0800
+Message-Id: <20190121031304.31161-2-yinbo.zhu@nxp.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20190121031304.31161-1-yinbo.zhu@nxp.com>
+References: <20190121031304.31161-1-yinbo.zhu@nxp.com>
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
+From: Suresh Gupta <B42813@freescale.com>
 
-On Fri, Jan 18, 2019 at 5:21 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> This is the big flip, where all 32-bit architectures set COMPAT_32BIT_TIME
-> abd use the _time32 system calls from the former compat layer instead
+PHY_CLK_VALID bit for UTMI PHY in USBDR does not set even
+if PHY is providing valid clock. Workaround for this
+involves resetting of PHY and check PHY_CLK_VALID bit
+multiple times. If PHY_CLK_VALID bit is still not set even
+after 5 retries, it would be safe to deaclare that PHY
+clock is not available.
+This erratum is applicable for USBDR less then ver 2.4.
 
-and
+Signed-off-by: Suresh Gupta <B42813@freescale.com>
+Signed-off-by: yinbo.zhu <yinbo.zhu@nxp.com>
+---
+ drivers/usb/host/ehci-fsl.c |   37 ++++++++++++++++++++++++++-----------
+ drivers/usb/host/ehci-fsl.h |    3 +++
+ 2 files changed, 29 insertions(+), 11 deletions(-)
 
-> of the system calls that take __kernel_timespec and similar arguments.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/usb/host/ehci-fsl.c b/drivers/usb/host/ehci-fsl.c
+index 71c4661..a28ec1e 100644
+--- a/drivers/usb/host/ehci-fsl.c
++++ b/drivers/usb/host/ehci-fsl.c
+@@ -176,6 +176,17 @@ static int fsl_ehci_drv_probe(struct platform_device *pdev)
+ 	return retval;
+ }
+ 
++static bool usb_phy_clk_valid(struct usb_hcd *hcd)
++{
++	void __iomem *non_ehci = hcd->regs;
++	bool ret = true;
++
++	if (!(in_be32(non_ehci + FSL_SOC_USB_CTRL) & PHY_CLK_VALID))
++		ret = false;
++
++	return ret;
++}
++
+ static int ehci_fsl_setup_phy(struct usb_hcd *hcd,
+ 			       enum fsl_usb2_phy_modes phy_mode,
+ 			       unsigned int port_offset)
+@@ -214,6 +225,16 @@ static int ehci_fsl_setup_phy(struct usb_hcd *hcd,
+ 		/* fall through */
+ 	case FSL_USB2_PHY_UTMI:
+ 	case FSL_USB2_PHY_UTMI_DUAL:
++		/* PHY_CLK_VALID bit is de-featured from all controller
++		 * versions below 2.4 and is to be checked only for
++		 * internal UTMI phy
++		 */
++		if (pdata->controller_ver > FSL_USB_VER_2_4 &&
++			pdata->have_sysif_regs && !usb_phy_clk_valid(hcd)) {
++			pr_err("fsl-ehci: USB PHY clock invalid\n");
++			return -EINVAL;
++		}
++
+ 		if (pdata->have_sysif_regs && pdata->controller_ver) {
+ 			/* controller version 1.6 or above */
+ 			clrsetbits_be32(non_ehci + FSL_SOC_USB_CTRL,
+@@ -232,17 +253,11 @@ static int ehci_fsl_setup_phy(struct usb_hcd *hcd,
+ 		break;
+ 	}
+ 
+-	/*
+-	 * check PHY_CLK_VALID to determine phy clock presence before writing
+-	 * to portsc
+-	 */
+-	if (pdata->check_phy_clk_valid) {
+-		if (!(ioread32be(non_ehci + FSL_SOC_USB_CTRL) &
+-		    PHY_CLK_VALID)) {
+-			dev_warn(hcd->self.controller,
+-				 "USB PHY clock invalid\n");
+-			return -EINVAL;
+-		}
++	if (pdata->have_sysif_regs &&
++		pdata->controller_ver > FSL_USB_VER_1_6 &&
++		!usb_phy_clk_valid(hcd)) {
++		dev_warn(hcd->self.controller, "USB PHY clock invalid\n");
++		return -EINVAL;
+ 	}
+ 
+ 	ehci_writel(ehci, portsc, &ehci->regs->port_status[port_offset]);
+diff --git a/drivers/usb/host/ehci-fsl.h b/drivers/usb/host/ehci-fsl.h
+index cbc4220..9d18c6e 100644
+--- a/drivers/usb/host/ehci-fsl.h
++++ b/drivers/usb/host/ehci-fsl.h
+@@ -50,4 +50,7 @@
+ #define UTMI_PHY_EN             (1<<9)
+ #define ULPI_PHY_CLK_SEL        (1<<10)
+ #define PHY_CLK_VALID		(1<<17)
++
++/* Retry count for checking UTMI PHY CLK validity */
++#define UTMI_PHY_CLK_VALID_CHK_RETRY 5
+ #endif				/* _EHCI_FSL_H */
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+1.7.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
