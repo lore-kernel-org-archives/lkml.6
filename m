@@ -2,247 +2,116 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 251A2C31D63
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:23:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6531EC31D63
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:23:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E710020823
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:23:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08B1520823
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 07:23:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dJ8utWdy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728347AbfAUHXd (ORCPT
+        id S1728374AbfAUHXr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 02:23:33 -0500
-Received: from shell.v3.sk ([90.176.6.54]:49544 "EHLO shell.v3.sk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728222AbfAUHXd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 02:23:33 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id E8824CAE29;
-        Mon, 21 Jan 2019 07:03:56 +0100 (CET)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 5IVA6vgqZbOq; Mon, 21 Jan 2019 07:03:53 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 07B01CAE2A;
-        Mon, 21 Jan 2019 07:03:53 +0100 (CET)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id xZYBKZF4kRF2; Mon, 21 Jan 2019 07:03:52 +0100 (CET)
-Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id D1218CAE29;
-        Mon, 21 Jan 2019 07:03:51 +0100 (CET)
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Russell King <linux@armlinux.org.uk>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH] drm/armada: add mmp2 support
-Date:   Mon, 21 Jan 2019 07:03:49 +0100
-Message-Id: <20190121060349.549797-1-lkundrak@v3.sk>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+        Mon, 21 Jan 2019 02:23:47 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:51786 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727868AbfAUHXq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 02:23:46 -0500
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20190121012358epoutp0323462fd38b9b32698e0af494ebf618ae~7uJL6LKNR2070220702epoutp03d
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 01:23:58 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20190121012358epoutp0323462fd38b9b32698e0af494ebf618ae~7uJL6LKNR2070220702epoutp03d
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1548033838;
+        bh=wUoKP7HmrawMJwkdmht0fjJJqjkQkO/cE4wFGiifKIY=;
+        h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+        b=dJ8utWdyx6XXyCK0Hh61z4s8Zq3AXfQ7fpL7YKeRmYs+aVfLUP68noG8HZFisT0Km
+         whLQz7sX0QlbwS33gpqhWPLBZeld/2V+07c3zd4lZ5BSV4Y2UES2XJwIZSMod55bBF
+         rRAMHe+pAZpLPxDjDsxBJgxLF0dB2qJC3Ag/dIEc=
+Received: from epsmges1p2.samsung.com (unknown [182.195.40.156]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20190121012356epcas1p34d8e33353906f0165ba937858212656a~7uJKK98351948319483epcas1p3e;
+        Mon, 21 Jan 2019 01:23:56 +0000 (GMT)
+X-AuditID: b6c32a36-5c1ff7000000104d-c9-5c451f27b186
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        91.B3.04173.72F154C5; Mon, 21 Jan 2019 10:23:51 +0900 (KST)
+Mime-Version: 1.0
+Subject: RE: [PATCH 3/3] PM / devfreq: fix mem leak in devfreq_add_device()
+Reply-To: myungjoo.ham@samsung.com
+From:   MyungJoo Ham <myungjoo.ham@samsung.com>
+To:     "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        Yangtao Li <tiny.windzz@gmail.com>
+CC:     Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <20190119160454.23151-3-tiny.windzz@gmail.com>
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20190121012351epcms1p59b810ea2b6ebdaf80a85fbe17b60d1bf@epcms1p5>
+Date:   Mon, 21 Jan 2019 10:23:51 +0900
+X-CMS-MailID: 20190121012351epcms1p59b810ea2b6ebdaf80a85fbe17b60d1bf
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrKKsWRmVeSWpSXmKPExsWy7bCmvq66vGuMwb3vahbXvzxntTjb9Ibd
+        4vKuOWwWn3uPMFrM/T2BzYHVY+esu+wefVtWMXp83iQXwByVbZORmpiSWqSQmpecn5KZl26r
+        5B0c7xxvamZgqGtoaWGupJCXmJtqq+TiE6DrlpkDtFJJoSwxpxQoFJBYXKykb2dTlF9akqqQ
+        kV9cYquUWpCSU2BZoFecmFtcmpeul5yfa2VoYGBkClSYkJ1xoLmLvaCJreLAR5UGxibWLkZO
+        DgkBE4kVb96zdTFycQgJ7GCU2NK/lqmLkYODV0BQ4u8OYZAaYQFviZbfk5hBbCEBJYmGm/uY
+        IeL6Eh0PtjGC2GwCuhJbN9xlAbFFBOIlPp0+ATaTWWAao8THWXsYIZbxSsxof8oCYUtLbF++
+        FSzOKWAt0XzhLdRBohI3V79lh7HfH5sP1Ssi0XrvLDOELSjx4OduRpg5M6b8h5pZLfGo5yIz
+        yGIJgRZGiVUztzFBJPQlzsw9yQZi8wr4Srz4eABsEIuAqsSUu1ehhrpInL94AGwQs4C8xPa3
+        c5hBAcEsoCmxfpc+RJhP4t3XHlaYX3bMewI1Xk3i0O4lUDfLSJyevhBqpIfE6kWvGSGBu5lR
+        YmNTJ+sERvlZiPCdhWTbLIRtCxiZVzGKpRYU56anFhsWGCHH6CZGcJLTMtvBuOiczyFGAQ5G
+        JR7eH/dcYoRYE8uKK3MPMUpwMCuJ8GYcd44R4k1JrKxKLcqPLyrNSS0+xGgK9PREZinR5Hxg
+        As4riTc0NTI2NrYwMTQzNTRUEudd7wDUJJCeWJKanZpakFoE08fEwSnVwFhu/m/3beHk/ac+
+        nX4kl3SqadYxX8uOy9nbWtlPtPPttpBYId97+pfEseJYlVtHhSyOZs0VFcz3n+0fv2/auilc
+        T7qfTyjpPH/9E+8d3xrbtidmYRuXvNuyICA5XlqqjH/Sub+FCxflSdziuXZMm3HH/LLEmZuP
+        ilow7PR3vhf45aCb3xKrGAUlluKMREMt5qLiRABdrDTQiAMAAA==
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190119183505epcas1p15efda0795b3c94601bcb2f442ab15232
+References: <20190119160454.23151-3-tiny.windzz@gmail.com>
+        <20190119160454.23151-1-tiny.windzz@gmail.com>
+        <CGME20190119183505epcas1p15efda0795b3c94601bcb2f442ab15232@epcms1p5>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Heavily based on the Armada 510 (Dove) support. Like with 510 support, th=
-is
-also just supports a single source clock -- the "Display 1" clock as
-generated by the APMU. This one was chosen because the OLPC XO 1.75 lapto=
-p
-uses it for its internal panel.
+>'devfreq' is malloced in devfreq_add_device() and should be freed in
+>the error handling cases, otherwise it will cause memory leak.
+>
+>Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 
-If anyone uses this to drive a MIPI or HDMI encoder, they may want to
-extend this to choose a different source for the pixel clock -- it should
-be a reasonably straightforward thing to do.
+Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
 
-The data sheet is not available, but James Cameron of OLPC kindly
-provided some details about the LCD_SCLK_DIV register.
 
-Link: https://lists.freedesktop.org/archives/dri-devel/2018-December/2010=
-21.html
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
----
- drivers/gpu/drm/armada/Makefile      |  1 +
- drivers/gpu/drm/armada/armada_610.c  | 93 ++++++++++++++++++++++++++++
- drivers/gpu/drm/armada/armada_crtc.c |  4 ++
- drivers/gpu/drm/armada/armada_drm.h  |  1 +
- drivers/gpu/drm/armada/armada_hw.h   | 10 +++
- 5 files changed, 109 insertions(+)
- create mode 100644 drivers/gpu/drm/armada/armada_610.c
-
-diff --git a/drivers/gpu/drm/armada/Makefile b/drivers/gpu/drm/armada/Mak=
-efile
-index 9bc3c3213724..5bbf86324cda 100644
---- a/drivers/gpu/drm/armada/Makefile
-+++ b/drivers/gpu/drm/armada/Makefile
-@@ -2,6 +2,7 @@
- armada-y	:=3D armada_crtc.o armada_drv.o armada_fb.o armada_fbdev.o \
- 		   armada_gem.o armada_overlay.o armada_plane.o armada_trace.o
- armada-y	+=3D armada_510.o
-+armada-y	+=3D armada_610.o
- armada-$(CONFIG_DEBUG_FS) +=3D armada_debugfs.o
-=20
- obj-$(CONFIG_DRM_ARMADA) :=3D armada.o
-diff --git a/drivers/gpu/drm/armada/armada_610.c b/drivers/gpu/drm/armada=
-/armada_610.c
-new file mode 100644
-index 000000000000..278b204038ea
---- /dev/null
-+++ b/drivers/gpu/drm/armada/armada_610.c
-@@ -0,0 +1,93 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2012 Russell King
-+ * Copyright (C) 2018,2019 Lubomir Rintel
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * Armada MMP2 variant support
-+ */
-+#include <linux/clk.h>
-+#include <drm/drm_modes.h>
-+#include <drm/drm_crtc.h>
-+#include "armada_crtc.h"
-+#include "armada_drm.h"
-+#include "armada_hw.h"
-+
-+static int armada610_crtc_init(struct armada_crtc *dcrtc, struct device =
-*dev)
-+{
-+	struct clk *clk;
-+
-+	clk =3D devm_clk_get(dev, "disp0");
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk) =3D=3D -ENOENT ? -EPROBE_DEFER : PTR_ERR(clk);
-+
-+	dcrtc->extclk[0] =3D clk;
-+
-+	return 0;
-+}
-+
-+/*
-+ * This gets called with sclk =3D NULL to test whether the mode is
-+ * supportable, and again with sclk !=3D NULL to set the clocks up for
-+ * that.  The former can return an error, but the latter is expected
-+ * not to.
-+ */
-+static int armada610_crtc_compute_clock(struct armada_crtc *dcrtc,
-+	const struct drm_display_mode *mode, uint32_t *sclk)
-+{
-+	struct clk *clk =3D dcrtc->extclk[0];
-+	uint32_t ret, rate, ref, div;
-+
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	rate =3D mode->clock * 1000;
-+	ref =3D clk_get_rate(clk);
-+	div =3D DIV_ROUND_UP(ref, rate);
-+
-+	if (div < 2)
-+		return -EINVAL;
-+
-+	if (dcrtc->clk !=3D clk) {
-+		ret =3D clk_prepare_enable(clk);
-+		if (ret)
-+			return ret;
-+		dcrtc->clk =3D clk;
-+	}
-+
-+	if (sclk) {
-+		*sclk =3D 0x00001000; /* No idea */
-+		*sclk |=3D 1 << 8; /* MIPI clock bypass */
-+		*sclk |=3D SCLK_610_DISP0;
-+		*sclk |=3D div;
-+	}
-+
-+	return 0;
-+}
-+
-+static void armada610_crtc_disable(struct armada_crtc *dcrtc)
-+{
-+	if (!IS_ERR(dcrtc->clk)) {
-+		clk_disable_unprepare(dcrtc->clk);
-+		dcrtc->clk =3D ERR_PTR(-EINVAL);
-+	}
-+}
-+
-+static void armada610_crtc_enable(struct armada_crtc *dcrtc,
-+	const struct drm_display_mode *mode)
-+{
-+	if (IS_ERR(dcrtc->clk)) {
-+		dcrtc->clk =3D dcrtc->extclk[0];
-+		WARN_ON(clk_prepare_enable(dcrtc->clk));
-+	}
-+}
-+
-+const struct armada_variant armada610_ops =3D {
-+	.init =3D armada610_crtc_init,
-+	.compute_clock =3D armada610_crtc_compute_clock,
-+	.disable =3D armada610_crtc_disable,
-+	.enable =3D armada610_crtc_enable,
-+};
-diff --git a/drivers/gpu/drm/armada/armada_crtc.c b/drivers/gpu/drm/armad=
-a/armada_crtc.c
-index da9360688b55..927be8898eb7 100644
---- a/drivers/gpu/drm/armada/armada_crtc.c
-+++ b/drivers/gpu/drm/armada/armada_crtc.c
-@@ -884,6 +884,10 @@ static const struct of_device_id armada_lcd_of_match=
-[] =3D {
- 		.compatible	=3D "marvell,dove-lcd",
- 		.data		=3D &armada510_ops,
- 	},
-+	{
-+		.compatible	=3D "marvell,mmp2-lcd",
-+		.data		=3D &armada610_ops,
-+	},
- 	{}
- };
- MODULE_DEVICE_TABLE(of, armada_lcd_of_match);
-diff --git a/drivers/gpu/drm/armada/armada_drm.h b/drivers/gpu/drm/armada=
-/armada_drm.h
-index f09083ff15d3..7cbcf33d0304 100644
---- a/drivers/gpu/drm/armada/armada_drm.h
-+++ b/drivers/gpu/drm/armada/armada_drm.h
-@@ -52,6 +52,7 @@ struct armada_variant {
-=20
- /* Variant ops */
- extern const struct armada_variant armada510_ops;
-+extern const struct armada_variant armada610_ops;
-=20
- struct armada_private {
- 	struct drm_device	drm;
-diff --git a/drivers/gpu/drm/armada/armada_hw.h b/drivers/gpu/drm/armada/=
-armada_hw.h
-index 277580b36758..df2ff77b9c07 100644
---- a/drivers/gpu/drm/armada/armada_hw.h
-+++ b/drivers/gpu/drm/armada/armada_hw.h
-@@ -205,6 +205,16 @@ enum {
- 	SCLK_510_FRAC_DIV_MASK	=3D 0xfff << 16,
- 	SCLK_510_INT_DIV_MASK	=3D 0xffff << 0,
-=20
-+	/* Armada 610 */
-+	SCLK_610_AXI		=3D 0x0 << 30,
-+	SCLK_610_DISP0		=3D 0x1 << 30,	/* LCD Display 1 */
-+	SCLK_610_DISP1		=3D 0x2 << 30,	/* LCD Display 2 */
-+	SCLK_610_PLL		=3D 0x3 << 30,	/* HDMI PLL clock */
-+	SCLK_610_PANEL_CLK_DIS	=3D 0x1 << 28,	/* 1 =3D panel clock disabled */
-+	SCLK_610_FRAC_DIV_MASK	=3D 0xfff << 16,
-+	SCLK_610_MIPI_DIV_MASK	=3D 0xf << 8,	/* 0 =3D off, 1 =3D bypass, ... */
-+	SCLK_610_INT_DIV_MASK	=3D 0xff << 0,
-+
- 	/* Armada 16x */
- 	SCLK_16X_AHB		=3D 0x0 << 28,
- 	SCLK_16X_PCLK		=3D 0x1 << 28,
---=20
-2.20.1
-
+>---
+> drivers/devfreq/devfreq.c | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+>diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+>index 923889229a0b..fe6c157cb7e0 100644
+>--- a/drivers/devfreq/devfreq.c
+>+++ b/drivers/devfreq/devfreq.c
+>@@ -651,7 +651,7 @@ struct devfreq *devfreq_add_device(struct device *dev,
+> 		mutex_unlock(&devfreq->lock);
+> 		err = set_freq_table(devfreq);
+> 		if (err < 0)
+>-			goto err_out;
+>+			goto err_dev;
+> 		mutex_lock(&devfreq->lock);
+> 	}
+> 
