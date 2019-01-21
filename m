@@ -2,121 +2,152 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2FB1C37121
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 19:49:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68037C37121
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 19:56:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 708C520844
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 19:49:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NQaOFYKx"
+	by mail.kernel.org (Postfix) with ESMTP id 3CC3A20861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 19:56:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727882AbfAUTt5 (ORCPT
+        id S1727993AbfAUT4g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 14:49:57 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:36154 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727491AbfAUTt5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 14:49:57 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0LJndfc054241;
-        Mon, 21 Jan 2019 13:49:39 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1548100179;
-        bh=C+d+ZKaLiZHnLPVy1szyOgfs14mPIqd/KGRlebgOn10=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=NQaOFYKx/YuRxm2K9hYvyzeXEygb8I34A3YwDe+9I/E6BjQ9pea84GMiVxsoluqHH
-         ZECf/AVSEpfrCreNeIU3+M7JHiwB0muiKzmnr5LdFNAz6fmTP/0mG+SCfurL3XsKfI
-         epQdeugifkKhY6Yxs3JpweiVhtHyfljkWqFgEr24=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0LJndL9077089
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 21 Jan 2019 13:49:39 -0600
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 21
- Jan 2019 13:49:38 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 21 Jan 2019 13:49:38 -0600
-Received: from [172.22.66.82] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0LJnb44021841;
-        Mon, 21 Jan 2019 13:49:38 -0600
-Subject: Re: [PATCH 3/4] dma-buf: add support for mapping with dma mapping
- attributes
-To:     Liam Mark <lmark@codeaurora.org>,
-        Christoph Hellwig <hch@infradead.org>
-CC:     Laura Abbott <labbott@redhat.com>, <sumit.semwal@linaro.org>,
-        <arve@android.com>, <tkjos@android.com>, <maco@android.com>,
-        <joel@joelfernandes.org>, <christian@brauner.io>,
-        <devel@driverdev.osuosl.org>, <dri-devel@lists.freedesktop.org>,
-        <linaro-mm-sig@lists.linaro.org>, <linux-kernel@vger.kernel.org>,
-        <john.stultz@linaro.org>
-References: <1547836667-13695-1-git-send-email-lmark@codeaurora.org>
- <1547836667-13695-4-git-send-email-lmark@codeaurora.org>
- <20190119102527.GA17723@infradead.org>
- <7ae73c39-9049-bcf6-775f-b0817ba0ec5f@redhat.com>
- <20190121083046.GD12420@infradead.org>
- <alpine.DEB.2.10.1901211142560.9631@lmark-linux.qualcomm.com>
-From:   "Andrew F. Davis" <afd@ti.com>
-Message-ID: <0ed7875f-15e9-184f-5b99-9a53df7c8d14@ti.com>
-Date:   Mon, 21 Jan 2019 13:49:37 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 21 Jan 2019 14:56:36 -0500
+Received: from muru.com ([72.249.23.125]:34540 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727699AbfAUT4g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 14:56:36 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id DEEDB80C0;
+        Mon, 21 Jan 2019 19:56:41 +0000 (UTC)
+Date:   Mon, 21 Jan 2019 11:56:31 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Andreas Kemnade <andreas@kemnade.info>
+Cc:     Tero Kristo <t-kristo@ti.com>, mturquette@baylibre.com,
+        sboyd@kernel.org, linux-omap@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bcousson@baylibre.com, paul@pwsan.com,
+        letux-kernel@openphoenux.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Sebastian Reichel <sre@kernel.org>
+Subject: Re: [PATCH v3 3/3] arm: omap_hwmod disable ick autoidling when a
+ hwmod requires that
+Message-ID: <20190121195631.GG5544@atomide.com>
+References: <20190116220429.9136-1-andreas@kemnade.info>
+ <20190116220429.9136-4-andreas@kemnade.info>
+ <20190118154807.GV5544@atomide.com>
+ <20190118181827.7163bee4@aktux>
+ <20190118183630.GX5544@atomide.com>
+ <20190118203832.3be7975e@aktux>
+ <20190118194536.GY5544@atomide.com>
+ <ed0928fc-add1-1f37-c907-89bf5133fc00@ti.com>
+ <20190121170743.GB5544@atomide.com>
+ <20190121185344.7cff9641@aktux>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.10.1901211142560.9631@lmark-linux.qualcomm.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190121185344.7cff9641@aktux>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/21/19 1:44 PM, Liam Mark wrote:
-> On Mon, 21 Jan 2019, Christoph Hellwig wrote:
+* Andreas Kemnade <andreas@kemnade.info> [190121 17:54]:
+> Hi,
 > 
->> On Sat, Jan 19, 2019 at 08:50:41AM -0800, Laura Abbott wrote:
->>>> And who is going to decide which ones to pass?  And who documents
->>>> which ones are safe?
->>>>
->>>> I'd much rather have explicit, well documented dma-buf flags that
->>>> might get translated to the DMA API flags, which are not error checked,
->>>> not very well documented and way to easy to get wrong.
->>>>
->>>
->>> I'm not sure having flags in dma-buf really solves anything
->>> given drivers can use the attributes directly with dma_map
->>> anyway, which is what we're looking to do. The intention
->>> is for the driver creating the dma_buf attachment to have
->>> the knowledge of which flags to use.
->>
->> Well, there are very few flags that you can simply use for all calls of
->> dma_map*.  And given how badly these flags are defined I just don't want
->> people to add more places where they indirectly use these flags, as
->> it will be more than enough work to clean up the current mess.
->>
->> What flag(s) do you want to pass this way, btw?  Maybe that is where
->> the problem is.
->>
+> On Mon, 21 Jan 2019 09:07:43 -0800
+> Tony Lindgren <tony@atomide.com> wrote:
 > 
-> The main use case is for allowing clients to pass in 
-> DMA_ATTR_SKIP_CPU_SYNC in order to skip the default cache maintenance 
-> which happens in dma_buf_map_attachment and dma_buf_unmap_attachment. In 
-> ION the buffers aren't usually accessed from the CPU so this allows 
-> clients to often avoid doing unnecessary cache maintenance.
-> 
+> > * Tero Kristo <t-kristo@ti.com> [190121 07:13]:
+> > > On 18/01/2019 21:45, Tony Lindgren wrote:  
+> > > > * Andreas Kemnade <andreas@kemnade.info> [190118 19:39]:  
+> > > > > Hi,
+> > > > > 
+> > > > > On Fri, 18 Jan 2019 10:36:30 -0800
+> > > > > Tony Lindgren <tony@atomide.com> wrote:
+> > > > > 
+> > > > > [...]  
+> > > > > > til the next workaround.
+> > > > > >   
+> > > > > > > That flags also causes the iclk being enabled/disabled
+> > > > > > > manually.  
+> > > > > > 
+> > > > > > Yes but SWSUP_IDLE for the interface clock to me currently
+> > > > > > just means:
+> > > > > > 
+> > > > > > "manually enable and disable ocp interface clock"
+> > > > > >   
+> > > > > well, if we want to manually disable it and not automatically,
+> > > > > we have to disable autoidle or it will be automatically disabled.
+> > > > > 
+> > > > > Disabling it manually when it is already auto-disabled (by autoidle) is
+> > > > > just practically a no-op towards the clock.  
+> > > > 
+> > > > OK I buy that :) It should be probably added to the patch
+> > > > description to make it clear what it changes.
+> > > > 
+> > > > Tero, any comments on this change?  
+> > > 
+> > > Well, seeing the flag is pretty much only used for a handful of hwmods
+> > > nowadays, it should be fine. OMAP3 PM should be tested with this change
+> > > though, as there are couple of hwmods impacted on that platform. I wonder
+> > > what happens to cpuidle when display is active...  
+> > 
+> > OK so that's a good test case. AFAIK, we should have DSS idle
+> > and have the SoC hit at least core retention with DSI command mode
+> > displays. I don't know if this patch would block DSS autoidle then
+> > or not.. I'm guessing 80% chance that we still need DSS hit runtime
+> > suspend to enter SoC idle states meaning this patch would not
+> > affect it :)
+> > 
+> So this is a call to Nokia N950 owners?
 
-How can a client know that no CPU access has occurred that needs to be
-flushed out?
+Well sort of.. But the LCD command mode patches are still pending.
+I've added Aaro and Sebastian to Cc in case they have it testable.
 
-> 
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-> 
+> Unfortunately, I do not have one. I have seen on non-command-mode
+> displays that dss goes to idle when display is blanked.
+
+OK. And I did a brief test on droid4 with the pending DSI
+command mode patches by sprinkling some OCPIF_SWSUP_IDLE
+to DSS and DSI with the hack below (that is not needed for
+normal use). Things idle just fine for me when LCD is on
+and I can see the SoC hit core retention the same way as
+without the test patch below.
+
+So as far as I'm concerned, these patches are good to go
+and I'll go ack the patches.
+
+Thanks,
+
+Tony
+
+8< --------------------
+--- a/arch/arm/mach-omap2/omap_hwmod_44xx_data.c
++++ b/arch/arm/mach-omap2/omap_hwmod_44xx_data.c
+@@ -3424,6 +3424,7 @@ static struct omap_hwmod_ocp_if omap44xx_l3_main_2__dss = {
+ 	.slave		= &omap44xx_dss_hwmod,
+ 	.clk		= "l3_div_ck",
+ 	.user		= OCP_USER_SDMA,
++	.flags		= OCPIF_SWSUP_IDLE,
+ };
+ 
+ /* l4_per -> dss */
+@@ -3472,6 +3473,7 @@ static struct omap_hwmod_ocp_if omap44xx_l3_main_2__dss_dsi2 = {
+ 	.slave		= &omap44xx_dss_dsi2_hwmod,
+ 	.clk		= "l3_div_ck",
+ 	.user		= OCP_USER_SDMA,
++	.flags		= OCPIF_SWSUP_IDLE,
+ };
+ 
+ /* l4_per -> dss_dsi2 */
+@@ -3480,6 +3482,7 @@ static struct omap_hwmod_ocp_if omap44xx_l4_per__dss_dsi2 = {
+ 	.slave		= &omap44xx_dss_dsi2_hwmod,
+ 	.clk		= "l4_div_ck",
+ 	.user		= OCP_USER_MPU,
++	.flags		= OCPIF_SWSUP_IDLE,
+ };
+ 
+ /* l3_main_2 -> dss_hdmi */
