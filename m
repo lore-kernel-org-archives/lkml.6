@@ -2,114 +2,193 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2C97C2F421
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:34:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DC8DC2F42E
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:34:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA55D20879
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:34:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="oug2GetC"
+	by mail.kernel.org (Postfix) with ESMTP id 58A552085A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:34:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730534AbfAUPew (ORCPT
+        id S1730559AbfAUPez (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 10:34:52 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:42091 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730440AbfAUPer (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 10:34:47 -0500
-Received: by mail-ed1-f65.google.com with SMTP id y20so16876361edw.9
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 07:34:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=KlyrB5n5ya2HRdFoSG/ZicyJjS++CBBS44KKM+5uUG4=;
-        b=oug2GetC1HER1Wuh3Dc28fvOQtTvAbMGpPHPCtqqe9lokfFVxRPh68RXS9qfvvj8ek
-         kyhPUajIgaEAadEZBxOOOGPyTET4TIlzGxXmGOMXAQgPVZ9qO3SomuwcfJY9d0a5zGHb
-         ZbjXMBcAmRIQSijOOA19ElKDEkgMpJ/m2v62g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KlyrB5n5ya2HRdFoSG/ZicyJjS++CBBS44KKM+5uUG4=;
-        b=eajQfNDPCjkXJLFR/ThpzQeTSvD/1M5Mbhl1DreogSE9/DJRmhpDDvy+6F5ZhYV4j1
-         tbfpjClVTRilfogqVEy7ZOLlLTEkzNVZjJ2IrrkTuIEbgaCURZRLH1CJ2HiBDGYANhHe
-         Ido5ubm4IVm19ZNkXeSlid3cu8RfA11nauhlMSMUGyzciW5hJH5aEf8FR8Cb1DkicyE9
-         s/brH1SgJ3wOYeTuZLcAbiPuFlxhdV5lY7vQCgVr+hX+WZ1JmRA/RC57TWSdewSDZTPl
-         IWAb4v3dT0wMOIgNB7ka+BsghN7Ggq07dayfdmFH7oVehwyMS0137Ls7HQvIWUyVKQmk
-         /VOA==
-X-Gm-Message-State: AJcUukdbDloU4aFqrfYOMyr0k1+BMYGSfnV5jQw3ByJsTMMNCOP2IX+q
-        KJvrYvhQLJ37zmNdIQ2Y5hvm/d6yA0cDPg==
-X-Google-Smtp-Source: ALg8bN5v94yCkk5D/zG6BiZnkiNjGlpPkfemtMIIITebGnm1HUUjYIBtb1NKxWEwEAT2JS0IZ5cMAQ==
-X-Received: by 2002:a50:afa3:: with SMTP id h32mr27223730edd.150.1548084885349;
-        Mon, 21 Jan 2019 07:34:45 -0800 (PST)
-Received: from andrea (85.100.broadband17.iol.cz. [109.80.100.85])
-        by smtp.gmail.com with ESMTPSA id a27sm9661964eda.65.2019.01.21.07.34.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 21 Jan 2019 07:34:44 -0800 (PST)
-Date:   Mon, 21 Jan 2019 16:34:39 +0100
-From:   Andrea Parri <andrea.parri@amarulasolutions.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH] sched: Use READ_ONCE()/WRITE_ONCE() in
- task_cpu()/__set_task_cpu()
-Message-ID: <20190121153439.GA12623@andrea>
-References: <20190116184218.13757-1-andrea.parri@amarulasolutions.com>
- <20190121104707.GA5883@andrea>
- <20190121122526.GA13777@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190121122526.GA13777@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Mon, 21 Jan 2019 10:34:55 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36660 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730440AbfAUPex (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 10:34:53 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3DBBD1684;
+        Mon, 21 Jan 2019 07:34:53 -0800 (PST)
+Received: from e112298-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 063593F5C1;
+        Mon, 21 Jan 2019 07:34:50 -0800 (PST)
+From:   Julien Thierry <julien.thierry@arm.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
+        joel@joelfernandes.org, marc.zyngier@arm.com,
+        christoffer.dall@arm.com, james.morse@arm.com,
+        catalin.marinas@arm.com, will.deacon@arm.com, mark.rutland@arm.com,
+        Julien Thierry <julien.thierry@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>
+Subject: [PATCH v9 22/26] irqchip/gic-v3: Allow interrupts to be set as pseudo-NMI
+Date:   Mon, 21 Jan 2019 15:33:41 +0000
+Message-Id: <1548084825-8803-23-git-send-email-julien.thierry@arm.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1548084825-8803-1-git-send-email-julien.thierry@arm.com>
+References: <1548084825-8803-1-git-send-email-julien.thierry@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 01:25:26PM +0100, Peter Zijlstra wrote:
-> On Mon, Jan 21, 2019 at 11:51:21AM +0100, Andrea Parri wrote:
-> > On Wed, Jan 16, 2019 at 07:42:18PM +0100, Andrea Parri wrote:
-> > > The smp_wmb() in move_queued_task() (c.f., __set_task_cpu()) pairs with
-> > > the composition of the dependency and the ACQUIRE in task_rq_lock():
-> > > 
-> > > 	move_queued_task()		task_rq_lock()
-> > > 
-> > > 	[S] ->on_rq = MIGRATING		[L] rq = task_rq()
-> > > 	WMB (__set_task_cpu())		ACQUIRE (rq->lock);
-> > > 	[S] ->cpu = new_cpu		[L] ->on_rq
-> > > 
-> > > where "[L] rq = task_rq()" is ordered before "ACQUIRE (rq->lock)" by an
-> > > address dependency and, in turn, "ACQUIRE (rq->lock)" is ordered before
-> > > "[L] ->on_rq" by the ACQUIRE itself.
-> > > 
-> > > Use READ_ONCE() to load ->cpu in task_rq() (c.f., task_cpu()) to honour
-> > > this address dependency between loads; also, mark the store to ->cpu in
-> > > __set_task_cpu() by using WRITE_ONCE() in order to tell the compiler to
-> > > not mess/tear this (synchronizing) memory access.
-> > 
-> > In the light of the recent discussion about the integration of plain
-> > accesses in the LKMM (c.f., e.g., [1] and discussion thereof), I was
-> > considering even further changes to this in order to "reinforce" the
-> > above smp_wmb().  Here's two approaches (one of):
-> > 
-> >  1) replace this smp_wmb()+WRITE_ONCE() with an smp_store_release();
-> > 
-> >  2) or keep this smp_wmb()+WRITE_ONCE(), but use {WRITE,READ}_ONCE()
-> >     also for the accesses to ->on_rq.
-> 
-> That should be the least painful I think. Note that we never store a
-> value larger than a single byte in that word, so tearing shouldn't be a
-> problem, but yes, that makes it all neat and tidy.
+Implement NMI callbacks for GICv3 irqchip. Install NMI safe handlers
+when setting up interrupt line as NMI.
 
-Thank you for the suggestion; I'll send the revisited patch shortly.
+Only SPIs and PPIs are allowed to be set up as NMI.
 
-  Andrea
+Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+---
+ drivers/irqchip/irq-gic-v3.c | 84 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 84 insertions(+)
+
+diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+index 4df1e94..447d8ab 100644
+--- a/drivers/irqchip/irq-gic-v3.c
++++ b/drivers/irqchip/irq-gic-v3.c
+@@ -27,6 +27,7 @@
+ #include <linux/of_address.h>
+ #include <linux/of_irq.h>
+ #include <linux/percpu.h>
++#include <linux/refcount.h>
+ #include <linux/slab.h>
+ 
+ #include <linux/irqchip.h>
+@@ -93,6 +94,9 @@ struct gic_chip_data {
+  */
+ static DEFINE_STATIC_KEY_FALSE(supports_pseudo_nmis);
+ 
++/* ppi_nmi_refs[n] == number of cpus having ppi[n + 16] set as NMI */
++static refcount_t ppi_nmi_refs[16];
++
+ static struct gic_kvm_info gic_v3_kvm_info;
+ static DEFINE_PER_CPU(bool, has_rss);
+ 
+@@ -320,6 +324,72 @@ static int gic_irq_get_irqchip_state(struct irq_data *d,
+ 	return 0;
+ }
+ 
++static int gic_irq_nmi_setup(struct irq_data *d)
++{
++	struct irq_desc *desc = irq_to_desc(d->irq);
++
++	if (!gic_supports_nmi())
++		return -EINVAL;
++
++	if (gic_peek_irq(d, GICD_ISENABLER)) {
++		pr_err("Cannot set NMI property of enabled IRQ %u\n", d->irq);
++		return -EINVAL;
++	}
++
++	/*
++	 * A secondary irq_chip should be in charge of LPI request,
++	 * it should not be possible to get there
++	 */
++	if (WARN_ON(gic_irq(d) >= 8192))
++		return -EINVAL;
++
++	/* desc lock should already be held */
++	if (gic_irq(d) < 32) {
++		/* Setting up PPI as NMI, only switch handler for first NMI */
++		if (!refcount_inc_not_zero(&ppi_nmi_refs[gic_irq(d) - 16])) {
++			refcount_set(&ppi_nmi_refs[gic_irq(d) - 16], 1);
++			desc->handle_irq = handle_percpu_devid_fasteoi_nmi;
++		}
++	} else {
++		desc->handle_irq = handle_fasteoi_nmi;
++	}
++
++	gic_set_irq_prio(gic_irq(d), gic_dist_base(d), GICD_INT_NMI_PRI);
++
++	return 0;
++}
++
++static void gic_irq_nmi_teardown(struct irq_data *d)
++{
++	struct irq_desc *desc = irq_to_desc(d->irq);
++
++	if (WARN_ON(!gic_supports_nmi()))
++		return;
++
++	if (gic_peek_irq(d, GICD_ISENABLER)) {
++		pr_err("Cannot set NMI property of enabled IRQ %u\n", d->irq);
++		return;
++	}
++
++	/*
++	 * A secondary irq_chip should be in charge of LPI request,
++	 * it should not be possible to get there
++	 */
++	if (WARN_ON(gic_irq(d) >= 8192))
++		return;
++
++	/* desc lock should already be held */
++	if (gic_irq(d) < 32) {
++		/* Tearing down NMI, only switch handler for last NMI */
++		if (refcount_dec_and_test(&ppi_nmi_refs[gic_irq(d) - 16]))
++			desc->handle_irq = handle_percpu_devid_irq;
++	} else {
++		desc->handle_irq = handle_fasteoi_irq;
++	}
++
++	gic_set_irq_prio(gic_irq(d), gic_dist_base(d), GICD_INT_DEF_PRI);
++}
++
+ static void gic_eoi_irq(struct irq_data *d)
+ {
+ 	gic_write_eoir(gic_irq(d));
+@@ -958,6 +1028,8 @@ static inline void gic_cpu_pm_init(void) { }
+ 	.irq_set_affinity	= gic_set_affinity,
+ 	.irq_get_irqchip_state	= gic_irq_get_irqchip_state,
+ 	.irq_set_irqchip_state	= gic_irq_set_irqchip_state,
++	.irq_nmi_setup		= gic_irq_nmi_setup,
++	.irq_nmi_teardown	= gic_irq_nmi_teardown,
+ 	.flags			= IRQCHIP_SET_TYPE_MASKED |
+ 				  IRQCHIP_SKIP_SET_WAKE |
+ 				  IRQCHIP_MASK_ON_SUSPEND,
+@@ -973,6 +1045,8 @@ static inline void gic_cpu_pm_init(void) { }
+ 	.irq_get_irqchip_state	= gic_irq_get_irqchip_state,
+ 	.irq_set_irqchip_state	= gic_irq_set_irqchip_state,
+ 	.irq_set_vcpu_affinity	= gic_irq_set_vcpu_affinity,
++	.irq_nmi_setup		= gic_irq_nmi_setup,
++	.irq_nmi_teardown	= gic_irq_nmi_teardown,
+ 	.flags			= IRQCHIP_SET_TYPE_MASKED |
+ 				  IRQCHIP_SKIP_SET_WAKE |
+ 				  IRQCHIP_MASK_ON_SUSPEND,
+@@ -1176,7 +1250,17 @@ static bool gic_enable_quirk_msm8996(void *data)
+ 
+ static void gic_enable_nmi_support(void)
+ {
++	int i;
++
++	for (i = 0; i < 16; i++)
++		refcount_set(&ppi_nmi_refs[i], 0);
++
+ 	static_branch_enable(&supports_pseudo_nmis);
++
++	if (static_branch_likely(&supports_deactivate_key))
++		gic_eoimode1_chip.flags |= IRQCHIP_SUPPORTS_NMI;
++	else
++		gic_chip.flags |= IRQCHIP_SUPPORTS_NMI;
+ }
+ 
+ static int __init gic_init_bases(void __iomem *dist_base,
+-- 
+1.9.1
+
