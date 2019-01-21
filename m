@@ -2,87 +2,128 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D10EDC2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:35:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27C4AC2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:37:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3C402084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:35:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="YbF08HI0"
+	by mail.kernel.org (Postfix) with ESMTP id 00C0C2085A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 12:37:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728812AbfAUMfz (ORCPT
+        id S1728499AbfAUMha (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 07:35:55 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:52630 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728482AbfAUMfz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 07:35:55 -0500
-Received: from zn.tnic (p200300EC2BC62500F05176FA1988078F.dip0.t-ipconnect.de [IPv6:2003:ec:2bc6:2500:f051:76fa:1988:78f])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0F7A41EC01B6;
-        Mon, 21 Jan 2019 13:35:54 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1548074154;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=OH7068UjNLaDVdbXaEadsucY5RgY9iubhx9+i+m+7JU=;
-        b=YbF08HI0BA3/dSqyiek75P6u9oV2CGpSKWke3j4jhNq6Qc65I0bHiHOQeSan1Rh44CUKiY
-        oNKKADBjYffYdTKYhQfdIJQalHgKFlrjlpBshZSZi3MnDLIub7ZlpqY2JWkt0Rx0Knl8VG
-        4d4NifPjkgtDGdIwu9VlGkoqZEJ6Ztc=
-Date:   Mon, 21 Jan 2019 13:35:47 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     mchehab@kernel.org, ruizhao@microsoft.com,
-        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kernel@microsoft.com, will.deacon@arm.com, okaya@kernel.org
-Subject: Re: [PATCH] EDAC, dmc520:: add DMC520 EDAC driver
-Message-ID: <20190121123547.GF29166@zn.tnic>
-References: <20190118162324.17123-1-sashal@kernel.org>
+        Mon, 21 Jan 2019 07:37:30 -0500
+Received: from mail-a05.ithnet.com ([217.64.83.100]:34966 "EHLO
+        mail-a05.ithnet.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728163AbfAUMh3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 07:37:29 -0500
+X-Greylist: delayed 401 seconds by postgrey-1.27 at vger.kernel.org; Mon, 21 Jan 2019 07:37:29 EST
+Received: (qmail 11876 invoked by uid 0); 21 Jan 2019 12:30:47 -0000
+Received: from skraw@ithnet.com by mail-a05 
+ (Processed in 2.635684 secs); 21 Jan 2019 12:30:47 -0000
+X-Virus-Status: No
+X-ExecutableContent: No
+Received: from unknown (HELO ithnet.com) (217.64.64.14)
+  by mail-a05.ithnet.com with ESMTPS (ECDHE-RSA-AES256-GCM-SHA384 encrypted); 21 Jan 2019 12:30:45 -0000
+X-Sender-Authentication: SMTP AUTH verified <skraw@ithnet.com>
+Date:   Mon, 21 Jan 2019 13:30:44 +0100
+From:   Stephan von Krawczynski <skraw@ithnet.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Rene Schickbauer <cavac@cavac.at>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        "Hutter, Tony" <hutter2@llnl.gov>,
+        Marc Dionne <marc.c.dionne@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>
+Subject: Re: x86/fpu: Don't export __kernel_fpu_{begin,end}()
+Message-ID: <20190121133044.28b6194b@ithnet.com>
+In-Reply-To: <20190115134221.GB30742@kroah.com>
+References: <git-mailbomb-linux-master-12209993e98c5fa1855c467f22a24e3d5b8be205@kernel.org>
+        <CAB9dFdsZb-sZixeOzrt8F50h1pnUK2W2Cxx8+xjhgd0=6xs7iw@mail.gmail.com>
+        <20190109111951.5zvnj7ls6jv56p2u@linutronix.de>
+        <20190109165235.GA8151@kroah.com>
+        <20190109170935.e6b6rwzpk6dlruu4@linutronix.de>
+        <20190110131132.GC20217@kroah.com>
+        <ba74ed88-06d0-5063-799f-c9c6ddbc7da0@llnl.gov>
+        <20190110180752.f4cnunadzzkev24m@linutronix.de>
+        <20190110182413.GA6932@kroah.com>
+        <46a97264-9586-ef67-73a0-9af1c4d34f25@cavac.at>
+        <20190115134221.GB30742@kroah.com>
+Organization: ith Kommunikationstechnik GmbH
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190118162324.17123-1-sashal@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 11:23:24AM -0500, Sasha Levin wrote:
-> From: Rui Zhao <ruizhao@microsoft.com>
+On Tue, 15 Jan 2019 14:42:21 +0100
+Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+
+> On Tue, Jan 15, 2019 at 02:01:48PM +0100, Rene Schickbauer wrote:
+> > To be frank, your argument, which boils down to "GPL is the only correct
+> > open source license", makes me ashamed to have been advocating people
+> > switching to Linux. This is exactly the kind of argument that made me
+> > switch away from closed source operating systems like Windows, only then
+> > it was Steve Ballmer using it against open source.  
 > 
-> New driver supports DRAM error detection and correction on DMC520
-> controller.
+> What?
+> 
+> No, my argument is, "If you want to interact directly with Linux kernel
+> code in kernel-space, then you have to abide by it's license, which is
+> GPLv2".  That's it.  If you wish to use open source code by another
+> license, wonderful, I'm not telling you what you can, and can not do,
+> but please, do not violate the license of the code I contributed under
+> GPLv2.
+> 
+> ZFS could be the best filesystem ever to grace this planet, that's
+> fantastic, but given that the creators of that code placed it under a
+> license that was specifically designed to not be compatible with Linux
+> to prevent it from ever being used on Linux, well, you can see why I
+> really don't care about it.  Why would I?
+> 
+> Those copyright owners (well license owner at this point in time) could
+> fix this all tomorrow if they wanted to.  But they do not, so _THEY_ are
+> the people you should be upset at.  Not at the Linux kernel developers
+> who are giving you a kernel on which to use on your systems, for free,
+> under the GPLv2.  Our position has always been very clear and upfront.
+> And really, so has the ZFS license creators.  So why is anyone upset
+> about all of this?  Nothing new has changed here with the license of
+> anything.
+> 
+> best of luck!
+> 
+> greg k-h
 
-That's this thing, right?
+Hi Greg,
 
-https://developer.arm.com/products/system-ip/memory-controllers/corelink-dmc-520
-
-> Validated on actual hardware:
-
-Which is what exactly?
-
-This looks like a driver for the memory controller IP and that could get
-integrated in other platforms so I'd prefer if this driver was called
-<your_platform>_edac and the DMC520 was a generic piece of functionality
-like the FSL memory controller IP:
-
-mpc85xx_edac_mod-y                      := fsl_ddr_edac.o mpc85xx_edac.o
-obj-$(CONFIG_EDAC_MPC85XX)              += mpc85xx_edac_mod.o
-
-layerscape_edac_mod-y                   := fsl_ddr_edac.o layerscape_edac.o
-obj-$(CONFIG_EDAC_LAYERSCAPE)           += layerscape_edac_mod.o
-
-Thx.
-
+I'd say this is in fact more a moral question than a technical or legal issue.
+The true background is the simple question what the project (i.e. linux) is in
+fact all about, is it about helping people with lower skills or is it about
+ruling people. A company (more or less every company) is more about ruling,
+its aim is to move people into buying and using its products. Me (and quite
+surely Rene at least) think that the linux _community_ is more about helping
+others and hopefully less about legal and technical ruling.
+So your argument "go to the company XYZ and blame them" isn't really
+targetting in the right direction - as long as you see linux still as a
+community thing and not as a cash-cow company-alike. Maybe it would be a lot
+better to think about why there are people using ZFS and not some GPLed fs
+instead. Me too being a ZFS user I can tell you the simple fact that there is
+no GPL fs with equal features and stability (eh BTRFS). In fact quite some of
+us would probably use HAMMER2 (thanks Matt) instead if sure that it equals ZFS
+in terms of stability, still not BTRFS. So all you promote currently is the fs
+deficit linux actually still has (and had for years, or say decades). I doubt
+that this is/was helping the linux community a lot...
+Sure maintainers have to rule sometimes, but it only makes sense if you are
+able to present a working equal alternative. If you have none (and in this case
+you have no alternative to offer) you will only push people away from the
+community and that's probably not the right path for a community maintainer.
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Only my 2ct,
+Stephan
