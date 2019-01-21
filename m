@@ -4,48 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D656AC2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:06:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2FFDC2F3A0
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:06:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4A2A2089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:06:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B620B2089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:06:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079576;
-	bh=wHo3zoN7egvUHjiHU/hvBuDLBBi+4sI0GAgwo9ji/HE=;
+	s=default; t=1548079603;
+	bh=bH7m0xXyEh4jBRVdJ50knXNSm5tafn4UecEOSK3lRfE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=D/NcVU+Ome40G2PbHVmdsIksbriAY4xrexwbgJ7B9ZwixxWcxhsCjQH+BuED0t+kz
-	 k/DFIbkh43T3o5xkmKhypWPIxncdB5IsHiugvtvQtsoIIrOh3gzr5y0KbQfYU1IE5n
-	 qUTGXVqzhXnFm6XC/ztjB2zIak7dqfm/94x4w8aw=
+	b=xzEJkarysRyyFrht4Fq3ZjLv+v5mOeeNSDf3tLgeKwjR+6LkqZZTxToyGOlPDVtc1
+	 iktHheYJrk2CGi7XZicmVnW7tRcxGNSxWcqeH14hs4A1RgGaL4gOG0Wke1SfEhkqCt
+	 BKq36ybHHeaTw9XUUUjgiZOd3evvZtdxzSBsEuR0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731234AbfAUOGO (ORCPT
+        id S1732350AbfAUOAS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:06:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47296 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 09:00:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46718 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732446AbfAUOAi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 09:00:38 -0500
+        id S1732339AbfAUOAP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 09:00:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A9762084C;
-        Mon, 21 Jan 2019 14:00:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E69512084C;
+        Mon, 21 Jan 2019 14:00:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548079237;
-        bh=wHo3zoN7egvUHjiHU/hvBuDLBBi+4sI0GAgwo9ji/HE=;
+        s=default; t=1548079214;
+        bh=bH7m0xXyEh4jBRVdJ50knXNSm5tafn4UecEOSK3lRfE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BBmdgofa4L2l69iftTIEuhsG9kMI1cLlH8H9SEoJ6AOrsJQBrNyoyeb+/ixHWeSH7
-         cUAskDvs4RRFiyTrPH45YKfdj6UGnJJdoVa2URDLtvZPkFkrs2zZspi3tnr1bMe+sV
-         aDYpv5wptVzYgh94tIhkTOSTShy2780KD/59h9hk=
+        b=FFbMfr1TnTSpa3SStHCK0t1+yFyJc+JtlvK104pon+ISKrdCwPe64h7Ej1MGTDSe6
+         vejC5L+B9AW3Gy7irXNl0H+QxpjAVopO7KbulIdgQzhmOy2/8aHIyQBE8mUaDpAEnh
+         7X4NJ/nP+UxGmjs9JngYLd67tppLecBMQ2zOktJc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yue Hu <huyue2@yulong.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH 4.19 56/99] pstore/ram: Avoid allocation and leak of platform data
-Date:   Mon, 21 Jan 2019 14:48:48 +0100
-Message-Id: <20190121134916.107440276@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Monroy, Rodrigo Axel" <rodrigo.axel.monroy@intel.com>,
+        "Orrala Contreras, Alfredo" <alfredo.orrala.contreras@intel.com>,
+        Hang Yuan <hang.yuan@intel.com>,
+        Zhenyu Wang <zhenyuw@linux.intel.com>
+Subject: [PATCH 4.19 48/99] drm/i915/gvt: Fix mmap range check
+Date:   Mon, 21 Jan 2019 14:48:40 +0100
+Message-Id: <20190121134915.802139323@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121134913.924726465@linuxfoundation.org>
 References: <20190121134913.924726465@linuxfoundation.org>
@@ -64,47 +68,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kees Cook <keescook@chromium.org>
+From: Zhenyu Wang <zhenyuw@linux.intel.com>
 
-commit 5631e8576a3caf606cdc375f97425a67983b420c upstream.
+commit 51b00d8509dc69c98740da2ad07308b630d3eb7d upstream.
 
-Yue Hu noticed that when parsing device tree the allocated platform data
-was never freed. Since it's not used beyond the function scope, this
-switches to using a stack variable instead.
+This is to fix missed mmap range check on vGPU bar2 region
+and only allow to map vGPU allocated GMADDR range, which means
+user space should support sparse mmap to get proper offset for
+mmap vGPU aperture. And this takes care of actual pgoff in mmap
+request as original code always does from beginning of vGPU
+aperture.
 
-Reported-by: Yue Hu <huyue2@yulong.com>
-Fixes: 35da60941e44 ("pstore/ram: add Device Tree bindings")
-Cc: stable@vger.kernel.org
-Signed-off-by: Kees Cook <keescook@chromium.org>
+Fixes: 659643f7d814 ("drm/i915/gvt/kvmgt: add vfio/mdev support to KVMGT")
+Cc: "Monroy, Rodrigo Axel" <rodrigo.axel.monroy@intel.com>
+Cc: "Orrala Contreras, Alfredo" <alfredo.orrala.contreras@intel.com>
+Cc: stable@vger.kernel.org # v4.10+
+Reviewed-by: Hang Yuan <hang.yuan@intel.com>
+Signed-off-by: Zhenyu Wang <zhenyuw@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/pstore/ram.c |    9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/i915/gvt/kvmgt.c |   14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
---- a/fs/pstore/ram.c
-+++ b/fs/pstore/ram.c
-@@ -713,18 +713,15 @@ static int ramoops_probe(struct platform
+--- a/drivers/gpu/drm/i915/gvt/kvmgt.c
++++ b/drivers/gpu/drm/i915/gvt/kvmgt.c
+@@ -996,7 +996,7 @@ static int intel_vgpu_mmap(struct mdev_d
  {
- 	struct device *dev = &pdev->dev;
- 	struct ramoops_platform_data *pdata = dev->platform_data;
-+	struct ramoops_platform_data pdata_local;
- 	struct ramoops_context *cxt = &oops_cxt;
- 	size_t dump_mem_sz;
- 	phys_addr_t paddr;
- 	int err = -EINVAL;
+ 	unsigned int index;
+ 	u64 virtaddr;
+-	unsigned long req_size, pgoff = 0;
++	unsigned long req_size, pgoff, req_start;
+ 	pgprot_t pg_prot;
+ 	struct intel_vgpu *vgpu = mdev_get_drvdata(mdev);
  
- 	if (dev_of_node(dev) && !pdata) {
--		pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
--		if (!pdata) {
--			pr_err("cannot allocate platform data buffer\n");
--			err = -ENOMEM;
--			goto fail_out;
--		}
-+		pdata = &pdata_local;
-+		memset(pdata, 0, sizeof(*pdata));
+@@ -1014,7 +1014,17 @@ static int intel_vgpu_mmap(struct mdev_d
+ 	pg_prot = vma->vm_page_prot;
+ 	virtaddr = vma->vm_start;
+ 	req_size = vma->vm_end - vma->vm_start;
+-	pgoff = vgpu_aperture_pa_base(vgpu) >> PAGE_SHIFT;
++	pgoff = vma->vm_pgoff &
++		((1U << (VFIO_PCI_OFFSET_SHIFT - PAGE_SHIFT)) - 1);
++	req_start = pgoff << PAGE_SHIFT;
++
++	if (!intel_vgpu_in_aperture(vgpu, req_start))
++		return -EINVAL;
++	if (req_start + req_size >
++	    vgpu_aperture_offset(vgpu) + vgpu_aperture_sz(vgpu))
++		return -EINVAL;
++
++	pgoff = (gvt_aperture_pa_base(vgpu->gvt) >> PAGE_SHIFT) + pgoff;
  
- 		err = ramoops_parse_dt(pdev, pdata);
- 		if (err < 0)
+ 	return remap_pfn_range(vma, virtaddr, pgoff, req_size, pg_prot);
+ }
 
 
