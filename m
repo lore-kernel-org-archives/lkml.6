@@ -2,154 +2,145 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57907C7112F
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:10:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FA70C7113B
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:11:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 320F520861
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:10:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB6C820861
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 11:11:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548069070;
+	bh=vDfunosYLLFTyphuadEAlngFKRHIg6gQOH0o3RCfFQU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=ZGKfv4iv03IShU2yATYuxeMd6+nbDOBotkBZVmkmQNo8bAnVQyWupkeMQUETXDtvD
+	 UcGHKu3frSzDeiG6iF6FH+n9CXy50Dh9U8aNNhsPkGQCaFHggllMbsHgUkTS2Sa2T7
+	 opXvLOes3oBuEbBPcX1jLyOHiNgSbRx+HmAIOk/E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727745AbfAULKw (ORCPT
+        id S1727806AbfAULLI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 06:10:52 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49652 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727556AbfAULKw (ORCPT
+        Mon, 21 Jan 2019 06:11:08 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:44304 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727152AbfAULLH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 06:10:52 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0LB0c9l119721
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 06:10:51 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2q5bnxuyh6-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 06:10:50 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Mon, 21 Jan 2019 11:10:48 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 21 Jan 2019 11:10:44 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0LBAhYe6881720
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 21 Jan 2019 11:10:43 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 471B6AE0BD;
-        Mon, 21 Jan 2019 11:10:43 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A9E01AE09E;
-        Mon, 21 Jan 2019 11:10:41 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.206.247])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Mon, 21 Jan 2019 11:10:41 +0000 (GMT)
-Date:   Mon, 21 Jan 2019 13:10:39 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Peter Xu <peterx@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Hugh Dickins <hughd@google.com>,
-        Maya Gokhale <gokhale2@llnl.gov>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Martin Cracauer <cracauer@cons.org>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Shaohua Li <shli@fb.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Pavel Emelyanov <xemul@parallels.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Marty McFadden <mcfadden8@llnl.gov>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH RFC 20/24] userfaultfd: wp: don't wake up when doing
- write protect
-References: <20190121075722.7945-1-peterx@redhat.com>
- <20190121075722.7945-21-peterx@redhat.com>
+        Mon, 21 Jan 2019 06:11:07 -0500
+Received: by mail-oi1-f194.google.com with SMTP id m6so14199488oig.11;
+        Mon, 21 Jan 2019 03:11:07 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UgkXNJd0C0ZM9MvUZG64DZtph2N/0Vkjw1NOHgSchfg=;
+        b=eN3xGo82zsN3O4NqYdvRWxItEuElTQh0gr//VI0bUf+qKWKd5d3XPnxPpQFfVG2/4G
+         OnceXdpgbabPUb0vxapSWyn1L8zw17+GVr8SeYUUxKRxTS0+vj82q/z0GrIQ024xG27q
+         fDM+wu+2nYCmAtwCsP2URwKf1zEpHJmQTAmMH4bvQ4Jd4zIMXMXkaTz2kp5RbWPa5d+Q
+         s/+6jRVefqTSA4yXppIGFQJSpPx7IFhiV7ZaFZQtHqNmjp2ij3KYug+jQxrQPbze24Kk
+         ppy7TD/5KT3DQyg/XG1wW2CoIDIJQrCKyWp9zzUeg3V1zxwwqVjTkxV6JQX2pLZsK9sY
+         tEDQ==
+X-Gm-Message-State: AJcUukeJ8nut7Vp6Eb4lC00g2eZJvZSMSReaShtRwBdtZwzthJ+Xg8GF
+        KxR24QjpUCWfuycET9Jzz6VlvekDrba1iUnplb8=
+X-Google-Smtp-Source: ALg8bN54KWCUUZ2MQb8AsBcxCP9MmZAYxmcJ1rzldAULNGgOhfiD++WtU1WJgPPeEoe7ilYCLjj0NhmqOEg0DbFT1PU=
+X-Received: by 2002:aca:368a:: with SMTP id d132mr5591473oia.193.1548069066819;
+ Mon, 21 Jan 2019 03:11:06 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190121075722.7945-21-peterx@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 19012111-0020-0000-0000-000003094414
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012111-0021-0000-0000-0000215A72A5
-Message-Id: <20190121111039.GB26461@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-21_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=864 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901210088
+References: <cover.1547197612.git.viresh.kumar@linaro.org> <CAJZ5v0gs3FnCgFS8rg7vwCeATJKfR+mfMVrpkTbM237XVhpDJQ@mail.gmail.com>
+ <20190117131631.GA14385@localhost.localdomain> <CAJZ5v0jFqXGf_G2v1VNXSxyiDzgeFY8OKUFu2tQ8Wso3dBS+_w@mail.gmail.com>
+ <20190118123900.GJ14385@localhost.localdomain>
+In-Reply-To: <20190118123900.GJ14385@localhost.localdomain>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Mon, 21 Jan 2019 12:10:55 +0100
+Message-ID: <CAJZ5v0gtjq9Nh0WHbMzY+3Z3o5NWiWhP=QEXxzjVe3ta32z7=Q@mail.gmail.com>
+Subject: Re: [PATCH 0/3] drivers: Frequency constraint infrastructure
+To:     Juri Lelli <juri.lelli@gmail.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Rafael Wysocki <rjw@rjwysocki.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 03:57:18PM +0800, Peter Xu wrote:
-> It does not make sense to try to wake up any waiting thread when we're
-> write-protecting a memory region.  Only wake up when resolving a write
-> protected page fault.
+On Fri, Jan 18, 2019 at 1:39 PM Juri Lelli <juri.lelli@gmail.com> wrote:
+>
+> On 17/01/19 15:55, Rafael J. Wysocki wrote:
+> > On Thu, Jan 17, 2019 at 2:16 PM Juri Lelli <juri.lelli@gmail.com> wrote:
+> > >
+> > > On 11/01/19 10:47, Rafael J. Wysocki wrote:
+> > > > On Fri, Jan 11, 2019 at 10:18 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> > > > >
+> > > > > Hi,
+> > > > >
+> > > > > This commit introduces the frequency constraint infrastructure, which
+> > > > > provides a generic interface for parts of the kernel to constraint the
+> > > > > working frequency range of a device.
+> > > > >
+> > > > > The primary users of this are the cpufreq and devfreq frameworks. The
+> > > > > cpufreq framework already implements such constraints with help of
+> > > > > notifier chains (for thermal and other constraints) and some local code
+> > > > > (for user-space constraints). The devfreq framework developers have also
+> > > > > shown interest [1] in such a framework, which may use it at a later
+> > > > > point of time.
+> > > > >
+> > > > > The idea here is to provide a generic interface and get rid of the
+> > > > > notifier based mechanism.
+> > > > >
+> > > > > Only one constraint is added for now for the cpufreq framework and the
+> > > > > rest will follow after this stuff is merged.
+> > > > >
+> > > > > Matthias Kaehlcke was involved in the preparation of the first draft of
+> > > > > this work and so I have added him as Co-author to the first patch.
+> > > > > Thanks Matthias.
+> > > > >
+> > > > > FWIW, This doesn't have anything to do with the boot-constraints
+> > > > > framework [2] I was trying to upstream earlier :)
+> > > >
+> > > > This is quite a bit of code to review, so it will take some time.
+> > > >
+> > > > One immediate observation is that it seems to do quite a bit of what
+> > > > is done in the PM QoS framework, so maybe there is an opportunity for
+> > > > some consolidation in there.
+> > >
+> > > Right, had the same impression. :-)
+> > >
+> > > I was also wondering how this new framework is dealing with
+> > > constraints/request imposed/generated by the scheduler and related
+> > > interfaces (thinking about schedutil and Patrick's util_clamp).
+> >
+> > My understanding is that it is orthogonal to them, like adding extra
+> > constraints on top of them etc.
+>
+> Mmm, ok. But, if that is indeed the case, I now wonder why and how
+> existing (or hopefully to be added soon) interfaces are not sufficient.
+> I'm not against this proposal, just trying to understand if this might
+> create unwanted, hard to manage, overlap.
 
-Probably it would be better to make it default to wake up only when
-requested explicitly?
-Then we can simply disallow _DONTWAKE for uffd_wp and only use
-UFFDIO_WRITEPROTECT_MODE_WP as possible mode.
- 
-> Signed-off-by: Peter Xu <peterx@redhat.com>
-> ---
->  fs/userfaultfd.c | 13 ++++++++-----
->  1 file changed, 8 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-> index 455b87c0596f..e54ab6076e13 100644
-> --- a/fs/userfaultfd.c
-> +++ b/fs/userfaultfd.c
-> @@ -1771,6 +1771,7 @@ static int userfaultfd_writeprotect(struct userfaultfd_ctx *ctx,
->  	struct uffdio_writeprotect uffdio_wp;
->  	struct uffdio_writeprotect __user *user_uffdio_wp;
->  	struct userfaultfd_wake_range range;
-> +	bool mode_wp, mode_dontwake;
-> 
->  	user_uffdio_wp = (struct uffdio_writeprotect __user *) arg;
-> 
-> @@ -1786,17 +1787,19 @@ static int userfaultfd_writeprotect(struct userfaultfd_ctx *ctx,
->  	if (uffdio_wp.mode & ~(UFFDIO_WRITEPROTECT_MODE_DONTWAKE |
->  			       UFFDIO_WRITEPROTECT_MODE_WP))
->  		return -EINVAL;
-> -	if ((uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_WP) &&
-> -	     (uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_DONTWAKE))
-> +
-> +	mode_wp = uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_WP;
-> +	mode_dontwake = uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_DONTWAKE;
-> +
-> +	if (mode_wp && mode_dontwake)
->  		return -EINVAL;
-> 
->  	ret = mwriteprotect_range(ctx->mm, uffdio_wp.range.start,
-> -				  uffdio_wp.range.len, uffdio_wp.mode &
-> -				  UFFDIO_WRITEPROTECT_MODE_WP);
-> +				  uffdio_wp.range.len, mode_wp);
->  	if (ret)
->  		return ret;
-> 
-> -	if (!(uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_DONTWAKE)) {
-> +	if (!mode_wp && !mode_dontwake) {
->  		range.start = uffdio_wp.range.start;
->  		range.len = uffdio_wp.range.len;
->  		wake_userfault(ctx, &range);
-> -- 
-> 2.17.1
-> 
+That is a valid concern IMO.  Especially the utilization clamping and
+the interconnect framework seem to approach the same problem space
+from different directions.
 
--- 
-Sincerely yours,
-Mike.
+For cpufreq this work can be regarded as a replacement for notifiers
+which are a bandaid of sorts and it would be good to get rid of them.
+They are mostly used for thermal management and I guess that devfreq
+users also may want to reduce frequency for thermal reasons and I'd
+rather not add notifiers to that framework for this purpose.
 
+However, as stated previously, this resembles the PM QoS framework
+quite a bit to me and whatever thermal entity, say, sets these
+constraints, it should not work against schedutil and similar.  In
+some situations setting a max frequency limit to control thermals is
+not the most efficient way to go as it effectively turns into
+throttling and makes performance go south.  For example, it may cause
+things to run at the limit frequency all the time which may be too
+slow and it may be more efficient to allow higher frequencies to be
+used, but instead control how much of the time they can be used.  So
+we need to be careful here.
