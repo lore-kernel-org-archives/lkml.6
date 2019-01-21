@@ -6,51 +6,49 @@ X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38CA4C37122
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 23:57:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0121C37122
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 23:57:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEC3E20870
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 23:57:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B30D920870
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 23:57:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548115050;
-	bh=Y/ovFAMA4QvyDDtvkcE8+azy367eUnjWXkNHEOiSnzY=;
+	s=default; t=1548115054;
+	bh=IZPzVY7+Qin5MUdQgyPC1iWYB5R2HdmssooYil9El+k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LZPgX5nM9fn1lRNNhK1YL8w24Jk57rsW0FwbI177q1z7vN/dVbUxJTgipFq1Jdj8Z
-	 BsNjNmq7YBf/P/6IOSBUz23jMt9rXLjRQOJyDwscTgzgVu0IbUL2+4pTS+CbjcLgfn
-	 i/7RNrrLC+/mEydraxK004ShHjbsxXV168U/FGNg=
+	b=AxkG3+t9lWeRfEGYxD8LjIRc3NWNqvLwyQePrDeUZz3mayEul4QxJPGYQ/6Q6kQcH
+	 h9+QFWKCuObr1cvl9NIIwaVuY1VpL3eepm87vBaf4H7bVver3/+XA9odpzCW8HN2pu
+	 pBXaLL56ojPbA6RDUsz/3stlxV6/9FFgzJGGLKGI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726165AbfAUX52 (ORCPT
+        id S1726300AbfAUX5d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 18:57:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57880 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 18:57:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725941AbfAUX5Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 18:57:25 -0500
+        id S1725941AbfAUX5a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 18:57:30 -0500
 Received: from quaco.ghostprotocols.net (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C17BF21736;
-        Mon, 21 Jan 2019 23:57:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A843217F4;
+        Mon, 21 Jan 2019 23:57:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548115044;
-        bh=Y/ovFAMA4QvyDDtvkcE8+azy367eUnjWXkNHEOiSnzY=;
+        s=default; t=1548115050;
+        bh=IZPzVY7+Qin5MUdQgyPC1iWYB5R2HdmssooYil9El+k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UX5IhG4ip8xk3L+Yf+92dFmDLbwUVuKdZkv9qvkGAQY0Q7POR//Zvvu3bmPQfnys0
-         fvNBgX8igtQcQsiPGWtGz4Op1Z5pmw2RMN+shWvGNuYE30P6CnygdMUekmajnRENhV
-         okvxEELkqyg9SIRrl2eYbeQBnzTMJ/5mS2FTkxd8=
+        b=xB6vrk3XhuC36TsenadeNh6MKePaysr+r66o/05RrjHVebp7/uLQ4A/pRbG/rt8dk
+         hPgTwislpehEJptLnyoYBZv7g0Fnx8NCGi5j4+Y/6YoMzijqpRKbLrozkzLxBsllbw
+         0LVL88pmeTTCdLprgzZddf7Fk9H+6iHt62Wz8Q5U=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        linux-perf-users@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH 01/24] perf tools: Replace automatic const char[] variables by statics
-Date:   Mon, 21 Jan 2019 20:56:43 -0300
-Message-Id: <20190121235706.20005-2-acme@kernel.org>
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 02/24] perf session: Rearrange perf_session__process_events function
+Date:   Mon, 21 Jan 2019 20:56:44 -0300
+Message-Id: <20190121235706.20005-3-acme@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121235706.20005-1-acme@kernel.org>
 References: <20190121235706.20005-1-acme@kernel.org>
@@ -61,180 +59,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+From: Jiri Olsa <jolsa@kernel.org>
 
-An automatic const char[] variable gets initialized at runtime, just
-like any other automatic variable. For long strings, that uses a lot of
-stack and wastes time building the string; e.g. for the "No %s
-allocation events..." case one has:
+To reduce function arguments and the code.
 
-  444516:       48 b8 4e 6f 20 25 73 20 61 6c   movabs $0x6c61207325206f4e,%rax # "No %s al"
-  ...
-  444674:       48 89 45 80                     mov    %rax,-0x80(%rbp)
-  444678:       48 b8 6c 6f 63 61 74 69 6f 6e   movabs $0x6e6f697461636f6c,%rax # "location"
-  444682:       48 89 45 88                     mov    %rax,-0x78(%rbp)
-  444686:       48 b8 20 65 76 65 6e 74 73 20   movabs $0x2073746e65766520,%rax # " events "
-  444690:       66 44 89 55 c4                  mov    %r10w,-0x3c(%rbp)
-  444695:       48 89 45 90                     mov    %rax,-0x70(%rbp)
-  444699:       48 b8 66 6f 75 6e 64 2e 20 20   movabs $0x20202e646e756f66,%rax
-
-Make them all static so that the compiler just references objects in .rodata.
-
-Committer testing:
-
-Ok, using dwarves's codiff tool:
-
-    $ codiff --functions /tmp/perf.before ~/bin/perf
-  builtin-sched.c:
-    cmd_sched                 |  -48
-   1 function changed, 48 bytes removed, diff: -48
-
-  builtin-report.c:
-    cmd_report                |  -32
-   1 function changed, 32 bytes removed, diff: -32
-
-  builtin-kmem.c:
-    cmd_kmem                  |  -64
-    build_alloc_func_list     |  -50
-   2 functions changed, 114 bytes removed, diff: -114
-
-  builtin-c2c.c:
-    perf_c2c__report          | -390
-   1 function changed, 390 bytes removed, diff: -390
-
-  ui/browsers/header.c:
-    tui__header_window        | -104
-   1 function changed, 104 bytes removed, diff: -104
-
-  /home/acme/bin/perf:
-   9 functions changed, 688 bytes removed, diff: -688
-
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Acked-by: Namhyung Kim <namhyung@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20181102230624.20064-1-linux@rasmusvillemoes.dk
+Link: http://lkml.kernel.org/r/20190110101301.6196-2-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-c2c.c        | 4 ++--
- tools/perf/builtin-kmem.c       | 4 ++--
- tools/perf/builtin-report.c     | 6 +++---
- tools/perf/builtin-sched.c      | 2 +-
- tools/perf/ui/browsers/header.c | 2 +-
- tools/perf/ui/browsers/hists.c  | 4 ++--
- 6 files changed, 11 insertions(+), 11 deletions(-)
+ tools/perf/util/session.c | 20 +++++++-------------
+ 1 file changed, 7 insertions(+), 13 deletions(-)
 
-diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
-index d340d2e42776..f2863496dede 100644
---- a/tools/perf/builtin-c2c.c
-+++ b/tools/perf/builtin-c2c.c
-@@ -2343,7 +2343,7 @@ static int perf_c2c__browse_cacheline(struct hist_entry *he)
- 	struct c2c_cacheline_browser *cl_browser;
- 	struct hist_browser *browser;
- 	int key = -1;
--	const char help[] =
-+	static const char help[] =
- 	" ENTER         Toggle callchains (if present) \n"
- 	" n             Toggle Node details info \n"
- 	" s             Toggle full length of symbol and source line columns \n"
-@@ -2424,7 +2424,7 @@ static int perf_c2c__hists_browse(struct hists *hists)
+diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
+index 5456c84c7dd1..ad14192db811 100644
+--- a/tools/perf/util/session.c
++++ b/tools/perf/util/session.c
+@@ -1820,13 +1820,14 @@ fetch_mmaped_event(struct perf_session *session,
+ #define NUM_MMAPS 128
+ #endif
+ 
+-static int __perf_session__process_events(struct perf_session *session,
+-					  u64 data_offset, u64 data_size,
+-					  u64 file_size)
++static int __perf_session__process_events(struct perf_session *session)
  {
- 	struct hist_browser *browser;
- 	int key = -1;
--	const char help[] =
-+	static const char help[] =
- 	" d             Display cacheline details \n"
- 	" ENTER         Toggle callchains (if present) \n"
- 	" q             Quit \n";
-diff --git a/tools/perf/builtin-kmem.c b/tools/perf/builtin-kmem.c
-index b63bca4b0c2a..088705c167bf 100644
---- a/tools/perf/builtin-kmem.c
-+++ b/tools/perf/builtin-kmem.c
-@@ -334,7 +334,7 @@ static int build_alloc_func_list(void)
- 	struct alloc_func *func;
- 	struct machine *machine = &kmem_session->machines.host;
- 	regex_t alloc_func_regex;
--	const char pattern[] = "^_?_?(alloc|get_free|get_zeroed)_pages?";
-+	static const char pattern[] = "^_?_?(alloc|get_free|get_zeroed)_pages?";
+ 	struct ordered_events *oe = &session->ordered_events;
+ 	struct perf_tool *tool = session->tool;
+ 	int fd = perf_data__fd(session->data);
++	u64 file_size = perf_data__size(session->data);
++	u64 data_offset = session->header.data_offset;
++	u64 data_size = session->header.data_size;
+ 	u64 head, page_offset, file_offset, file_pos, size;
+ 	int err, mmap_prot, mmap_flags, map_idx = 0;
+ 	size_t	mmap_size;
+@@ -1944,20 +1945,13 @@ static int __perf_session__process_events(struct perf_session *session,
  
- 	ret = regcomp(&alloc_func_regex, pattern, REG_EXTENDED);
- 	if (ret) {
-@@ -1924,7 +1924,7 @@ int cmd_kmem(int argc, const char **argv)
- 		NULL
- 	};
- 	struct perf_session *session;
--	const char errmsg[] = "No %s allocation events found.  Have you run 'perf kmem record --%s'?\n";
-+	static const char errmsg[] = "No %s allocation events found.  Have you run 'perf kmem record --%s'?\n";
- 	int ret = perf_config(kmem_config, NULL);
- 
- 	if (ret)
-diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
-index 4958095be4fc..794a0de5ac1d 100644
---- a/tools/perf/builtin-report.c
-+++ b/tools/perf/builtin-report.c
-@@ -956,9 +956,9 @@ int cmd_report(int argc, const char **argv)
- 	int branch_mode = -1;
- 	bool branch_call_mode = false;
- #define CALLCHAIN_DEFAULT_OPT  "graph,0.5,caller,function,percent"
--	const char report_callchain_help[] = "Display call graph (stack chain/backtrace):\n\n"
--					     CALLCHAIN_REPORT_HELP
--					     "\n\t\t\t\tDefault: " CALLCHAIN_DEFAULT_OPT;
-+	static const char report_callchain_help[] = "Display call graph (stack chain/backtrace):\n\n"
-+						    CALLCHAIN_REPORT_HELP
-+						    "\n\t\t\t\tDefault: " CALLCHAIN_DEFAULT_OPT;
- 	char callchain_default_opt[] = CALLCHAIN_DEFAULT_OPT;
- 	const char * const report_usage[] = {
- 		"perf report [<options>]",
-diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
-index cbf39dab19c1..2e0f0c65964a 100644
---- a/tools/perf/builtin-sched.c
-+++ b/tools/perf/builtin-sched.c
-@@ -3336,7 +3336,7 @@ static int __cmd_record(int argc, const char **argv)
- 
- int cmd_sched(int argc, const char **argv)
+ int perf_session__process_events(struct perf_session *session)
  {
--	const char default_sort_order[] = "avg, max, switch, runtime";
-+	static const char default_sort_order[] = "avg, max, switch, runtime";
- 	struct perf_sched sched = {
- 		.tool = {
- 			.sample		 = perf_sched__process_tracepoint_sample,
-diff --git a/tools/perf/ui/browsers/header.c b/tools/perf/ui/browsers/header.c
-index d75492189acb..5aeb663dd184 100644
---- a/tools/perf/ui/browsers/header.c
-+++ b/tools/perf/ui/browsers/header.c
-@@ -35,7 +35,7 @@ static int list_menu__run(struct ui_browser *menu)
- {
- 	int key;
- 	unsigned long offset;
--	const char help[] =
-+	static const char help[] =
- 	"h/?/F1        Show this window\n"
- 	"UP/DOWN/PGUP\n"
- 	"PGDN/SPACE\n"
-diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
-index ffac1d54a3d4..b32f505a7608 100644
---- a/tools/perf/ui/browsers/hists.c
-+++ b/tools/perf/ui/browsers/hists.c
-@@ -2748,7 +2748,7 @@ static int perf_evsel__hists_browse(struct perf_evsel *evsel, int nr_events,
- 	"S             Zoom into current Processor Socket\n"		\
+-	u64 size = perf_data__size(session->data);
+-	int err;
+-
+ 	if (perf_session__register_idle_thread(session) < 0)
+ 		return -ENOMEM;
  
- 	/* help messages are sorted by lexical order of the hotkey */
--	const char report_help[] = HIST_BROWSER_HELP_COMMON
-+	static const char report_help[] = HIST_BROWSER_HELP_COMMON
- 	"i             Show header information\n"
- 	"P             Print histograms to perf.hist.N\n"
- 	"r             Run available scripts\n"
-@@ -2756,7 +2756,7 @@ static int perf_evsel__hists_browse(struct perf_evsel *evsel, int nr_events,
- 	"t             Zoom into current Thread\n"
- 	"V             Verbose (DSO names in callchains, etc)\n"
- 	"/             Filter symbol by name";
--	const char top_help[] = HIST_BROWSER_HELP_COMMON
-+	static const char top_help[] = HIST_BROWSER_HELP_COMMON
- 	"P             Print histograms to perf.hist.N\n"
- 	"t             Zoom into current Thread\n"
- 	"V             Verbose (DSO names in callchains, etc)\n"
+-	if (!perf_data__is_pipe(session->data))
+-		err = __perf_session__process_events(session,
+-						     session->header.data_offset,
+-						     session->header.data_size, size);
+-	else
+-		err = __perf_session__process_pipe_events(session);
++	if (perf_data__is_pipe(session->data))
++		return __perf_session__process_pipe_events(session);
+ 
+-	return err;
++	return __perf_session__process_events(session);
+ }
+ 
+ bool perf_session__has_traces(struct perf_session *session, const char *msg)
 -- 
 2.20.1
 
