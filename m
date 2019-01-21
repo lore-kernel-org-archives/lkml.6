@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAAD6C2F3A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:01:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DB32C2F3BE
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:01:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9FB221726
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:01:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0EE1121726
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 14:01:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548079275;
-	bh=WuTaU9eVdZFP9pjF3TqSMaanf/a+dJ3PcVScrjuN0t4=;
+	s=default; t=1548079278;
+	bh=ifxP1m7e5A/l8QwWH495QB2mBnz4J/aLxQJQMK5nzM0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=F7Yms74w2+ctta2Mko2f0iMcRYe1+gikC7Yc5wLjeBhWZZ+YI/ZrajPzVv7ueduf3
-	 Px7qH4cpjKkEsnvNh2WdQ4yQeuuQwm5QOhoz/WdUHrVc7tbkAZ6jlGolQJYBMrT73Z
-	 S8VReYcobt7Mya3GNc71QedIgxoW7sSi/jZ6Tvn8=
+	b=bO1WO2fl2Og1KFZ/otwBidNkvvdjSQHRRK8iUFXtGmjEZnAu1i54I2vaMLrxyMwGq
+	 Jzk/R9y09V1wPgtPiULK6OUqGHqm64/c7nFCnnG6Y5TasClo/pJ5qag+u3p0RuLkFC
+	 tb2zKVOI1rzI8VBgBVQeFwi2WxkprmBNzwEfSt2Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732597AbfAUOBN (ORCPT
+        id S1732609AbfAUOBR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:01:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48142 "EHLO mail.kernel.org"
+        Mon, 21 Jan 2019 09:01:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48198 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732581AbfAUOBK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 09:01:10 -0500
+        id S1732131AbfAUOBO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 09:01:14 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 500162087F;
-        Mon, 21 Jan 2019 14:01:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 59322214D8;
+        Mon, 21 Jan 2019 14:01:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548079269;
-        bh=WuTaU9eVdZFP9pjF3TqSMaanf/a+dJ3PcVScrjuN0t4=;
+        s=default; t=1548079272;
+        bh=ifxP1m7e5A/l8QwWH495QB2mBnz4J/aLxQJQMK5nzM0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Rzx1heIHy6vQA3TwOHH3+/EG28nwez69oX9pCjCWOmF56GYNpiBa2JzHUNZf4fmsN
-         rJMqBUqQIMuzpQf51kzW4I+1XJzjzxXJ134QYpx36ic3al2/Yf5d5nzmCBXERwXAPN
-         zuucQt49wKTdLURGLfkX2ZSJArOAWP8czXk5Hd7Q=
+        b=jl5ZbzvHS7Fv6fnmhPQA5OgykzIeG/ye3FyyTrzFMvCuKPNDSnlciD2YlFSyJ8eCB
+         T2DxfPIV7PKueGCV83hDzttko5kGbUnoOb8Jq5qAJlY7OYqLw7l++yQ4Cfi9tYbfcn
+         sy1nyha8D45+VHHrHYLV2OKFxNsP6wPZq9QL0hlo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <james.morris@microsoft.com>,
-        syzbot+69ca07954461f189e808@syzkaller.appspotmail.com
-Subject: [PATCH 4.19 66/99] LSM: Check for NULL cred-security on free
-Date:   Mon, 21 Jan 2019 14:48:58 +0100
-Message-Id: <20190121134916.470893606@linuxfoundation.org>
+        stable@vger.kernel.org, Chris Mason <clm@fb.com>,
+        ethanlien <ethanlien@synology.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.19 40/99] Revert "btrfs: balance dirty metadata pages in btrfs_finish_ordered_io"
+Date:   Mon, 21 Jan 2019 14:48:32 +0100
+Message-Id: <20190121134915.423786941@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190121134913.924726465@linuxfoundation.org>
 References: <20190121134913.924726465@linuxfoundation.org>
@@ -67,40 +66,97 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: James Morris <james.morris@microsoft.com>
+From: David Sterba <dsterba@suse.com>
 
-commit a5795fd38ee8194451ba3f281f075301a3696ce2 upstream.
+commit 77b7aad195099e7c6da11e94b7fa6ef5e6fb0025 upstream.
 
-From: Casey Schaufler <casey@schaufler-ca.com>
+This reverts commit e73e81b6d0114d4a303205a952ab2e87c44bd279.
 
-Check that the cred security blob has been set before trying
-to clean it up. There is a case during credential initialization
-that could result in this.
+This patch causes a few problems:
 
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-Acked-by: John Johansen <john.johansen@canonical.com>
-Signed-off-by: James Morris <james.morris@microsoft.com>
-Reported-by: syzbot+69ca07954461f189e808@syzkaller.appspotmail.com
+- adds latency to btrfs_finish_ordered_io
+- as btrfs_finish_ordered_io is used for free space cache, generating
+  more work from btrfs_btree_balance_dirty_nodelay could end up in the
+  same workque, effectively deadlocking
+
+12260 kworker/u96:16+btrfs-freespace-write D
+[<0>] balance_dirty_pages+0x6e6/0x7ad
+[<0>] balance_dirty_pages_ratelimited+0x6bb/0xa90
+[<0>] btrfs_finish_ordered_io+0x3da/0x770
+[<0>] normal_work_helper+0x1c5/0x5a0
+[<0>] process_one_work+0x1ee/0x5a0
+[<0>] worker_thread+0x46/0x3d0
+[<0>] kthread+0xf5/0x130
+[<0>] ret_from_fork+0x24/0x30
+[<0>] 0xffffffffffffffff
+
+Transaction commit will wait on the freespace cache:
+
+838 btrfs-transacti D
+[<0>] btrfs_start_ordered_extent+0x154/0x1e0
+[<0>] btrfs_wait_ordered_range+0xbd/0x110
+[<0>] __btrfs_wait_cache_io+0x49/0x1a0
+[<0>] btrfs_write_dirty_block_groups+0x10b/0x3b0
+[<0>] commit_cowonly_roots+0x215/0x2b0
+[<0>] btrfs_commit_transaction+0x37e/0x910
+[<0>] transaction_kthread+0x14d/0x180
+[<0>] kthread+0xf5/0x130
+[<0>] ret_from_fork+0x24/0x30
+[<0>] 0xffffffffffffffff
+
+And then writepages ends up waiting on transaction commit:
+
+9520 kworker/u96:13+flush-btrfs-1 D
+[<0>] wait_current_trans+0xac/0xe0
+[<0>] start_transaction+0x21b/0x4b0
+[<0>] cow_file_range_inline+0x10b/0x6b0
+[<0>] cow_file_range.isra.69+0x329/0x4a0
+[<0>] run_delalloc_range+0x105/0x3c0
+[<0>] writepage_delalloc+0x119/0x180
+[<0>] __extent_writepage+0x10c/0x390
+[<0>] extent_write_cache_pages+0x26f/0x3d0
+[<0>] extent_writepages+0x4f/0x80
+[<0>] do_writepages+0x17/0x60
+[<0>] __writeback_single_inode+0x59/0x690
+[<0>] writeback_sb_inodes+0x291/0x4e0
+[<0>] __writeback_inodes_wb+0x87/0xb0
+[<0>] wb_writeback+0x3bb/0x500
+[<0>] wb_workfn+0x40d/0x610
+[<0>] process_one_work+0x1ee/0x5a0
+[<0>] worker_thread+0x1e0/0x3d0
+[<0>] kthread+0xf5/0x130
+[<0>] ret_from_fork+0x24/0x30
+[<0>] 0xffffffffffffffff
+
+Eventually, we have every process in the system waiting on
+balance_dirty_pages(), and nobody is able to make progress on page
+writeback.
+
+The original patch tried to fix an OOM condition, that happened on 4.4 but no
+success reproducing that on later kernels (4.19 and 4.20). This is more likely
+a problem in OOM itself.
+
+Link: https://lore.kernel.org/linux-btrfs/20180528054821.9092-1-ethanlien@synology.com/
+Reported-by: Chris Mason <clm@fb.com>
+CC: stable@vger.kernel.org # 4.18+
+CC: ethanlien <ethanlien@synology.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- security/security.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ fs/btrfs/inode.c |    3 ---
+ 1 file changed, 3 deletions(-)
 
---- a/security/security.c
-+++ b/security/security.c
-@@ -1003,6 +1003,13 @@ int security_cred_alloc_blank(struct cre
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -3151,9 +3151,6 @@ out:
+ 	/* once for the tree */
+ 	btrfs_put_ordered_extent(ordered_extent);
  
- void security_cred_free(struct cred *cred)
- {
-+	/*
-+	 * There is a failure case in prepare_creds() that
-+	 * may result in a call here with ->security being NULL.
-+	 */
-+	if (unlikely(cred->security == NULL))
-+		return;
-+
- 	call_void_hook(cred_free, cred);
+-	/* Try to release some metadata so we don't get an OOM but don't wait */
+-	btrfs_btree_balance_dirty_nodelay(fs_info);
+-
+ 	return ret;
  }
  
 
