@@ -2,319 +2,201 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	PLING_QUERY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE041C282DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:35:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F793C676F3
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:36:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C9D820989
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:35:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C84552085A
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 09:36:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aaoze4rE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727747AbfAUJfD (ORCPT
+        id S1727735AbfAUJgi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 04:35:03 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:4954 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726133AbfAUJfD (ORCPT
+        Mon, 21 Jan 2019 04:36:38 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:55460 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726133AbfAUJgh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 04:35:03 -0500
-X-IronPort-AV: E=Sophos;i="5.56,502,1539619200"; 
-   d="scan'208";a="52487020"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 21 Jan 2019 17:34:58 +0800
-Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id 1CEB94C47E99;
-        Mon, 21 Jan 2019 17:34:56 +0800 (CST)
-Received: from localhost.localdomain (10.167.225.56) by
- G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Mon, 21 Jan 2019 17:35:01 +0800
-Date:   Mon, 21 Jan 2019 17:33:48 +0800
-From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     Borislav Petkov <bp@alien8.de>
-CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
-        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
-        <keescook@chromium.org>, <bhe@redhat.com>, <msys.mizuma@gmail.com>,
-        <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH v15 5/6] x86/boot: Parse SRAT address from RSDP and store
- immovable memory
-Message-ID: <20190121093348.GB15754@localhost.localdomain>
-References: <20190107032243.25324-1-fanc.fnst@cn.fujitsu.com>
- <20190107032243.25324-6-fanc.fnst@cn.fujitsu.com>
- <20190116110158.GC15409@zn.tnic>
+        Mon, 21 Jan 2019 04:36:37 -0500
+Received: by mail-it1-f194.google.com with SMTP id m62so15557566ith.5
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 01:36:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fAmOInfY/0IXt7DFkOG91Lmwl8V9D4q8vKhMCXJg2RQ=;
+        b=aaoze4rEPm3o+48Eud1o5nm7Ew/Y4Ekvnb9jzm3lrVxuPMazzx/Rgm1JjnroBQiBlI
+         l9FUKS0nB46XwksRUMKdsf2EwLavhMTAlz0x1RhbYOo35A978GXLQDI+vlMjeERtdQre
+         cJnF0r9gGXPYwy3UDVJW41LFxL6Dp0cBTcHEt+AACB21CNR/0I1pxOVFBM7cU2NBPhnR
+         K9b69bsKS7NFrse6h5VeUpn8rHFROEY/5PzSXoVwYsCO6i3GjPzg5LmaO0axtlYcWM+E
+         BOfU+/XLC3sLMz+7vnN6FaH1cx8IGb++2nE+8bbqCDRyStwsas7+WkUTSxw3pxi0Bryz
+         md+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fAmOInfY/0IXt7DFkOG91Lmwl8V9D4q8vKhMCXJg2RQ=;
+        b=Rc2oYntpfKnrdHTW41lxm5MjV4WEx6gyp0SJt8aGExlwy7jm1u4UcmddLw1CsTn64L
+         J2JVH6vBq8NrsEw08NO6NIJ9P5zY64am6SmxEKxr14yyIfF+i0N17ZzfyPRhR+S0EF9r
+         5j+WFotSV9W7dMcjzJMYfjqOkGIp5Sy0RcDG2zGiyavjW1ZOfEXZ2nz5SDnhpPi1AFwK
+         d3H2NlQJIEVxmnmu3PBUpUASl5gAQW1BZRG5QtKdc/87UxCfg+gEW9fxLaUuP7QkoIHM
+         f/Ra5kHOAJdLz+JoIuUm/H7XhnV1Lur7+AIpIs9lQUf8qmrPt2aThgqBX7NibetsuxOZ
+         BjWA==
+X-Gm-Message-State: AJcUukfgJhmSSwmm4upYCrko4jxJcy8howrR2+GG1g9f/LIfRbX/4Jyd
+        UKzIlw4ngeJAHXoLPlhEdCz9dBK3wY3loA/Spylp4Q==
+X-Google-Smtp-Source: ALg8bN4WhlvzUa+qjL+i1tou/wtsG3gHy7JddYF7C0zi1zFkWyumTLQw9kSyWqyqV9F/z/nJV4npQ3Lo8aJ7eWen9gI=
+X-Received: by 2002:a02:ac8c:: with SMTP id x12mr15539430jan.72.1548063396364;
+ Mon, 21 Jan 2019 01:36:36 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20190116110158.GC15409@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: 1CEB94C47E99.AE6FB
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+References: <CAKcZhuW-ozJp-MVU3gw=uhuSc9+HTMVJza8QRUL3TaRrbqjJew@mail.gmail.com>
+ <CACT4Y+aJADsj37Y8jPAV7PASqKm_L-iJ=MDv68yPUO0TFvhdRg@mail.gmail.com>
+ <CACT4Y+ZxgzdbCeFquYmKThfiTGg3pZhn90X_Fk3yRXGYfepU4Q@mail.gmail.com> <CAKcZhuWE_2+D_AP_U0XZP-bjb=8Eec1Ku3KD8qO8K0zDGo98Ow@mail.gmail.com>
+In-Reply-To: <CAKcZhuWE_2+D_AP_U0XZP-bjb=8Eec1Ku3KD8qO8K0zDGo98Ow@mail.gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 21 Jan 2019 10:36:25 +0100
+Message-ID: <CACT4Y+Ye+0bBV5sB1F3wVbCC1guyA=RdsRnYHgrar=AhftGtQA@mail.gmail.com>
+Subject: Re: [RESEND BUG REPORT] System hung! Due to ftrace or KASAN?
+To:     Zenghui Yu <zenghuiyu96@gmail.com>
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-trace-devel@vger.kernel.org,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        "open list:KERNEL BUILD + fi..." <linux-kbuild@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Christoph Lameter <cl@linux.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 12:01:58PM +0100, Borislav Petkov wrote:
->On Mon, Jan 07, 2019 at 11:22:42AM +0800, Chao Fan wrote:
-[...]
->> +
->> +/* Determine RSDP, based on acpi_os_get_root_pointer(). */
->> +static acpi_physical_address get_rsdp_addr(void)
->> +{
->> +	acpi_physical_address pa;
->> +
->> +	pa = get_acpi_rsdp();
->> +
->> +	if (!pa)
->> +		pa = efi_get_rsdp_addr();
->> +
->> +	if (!pa)
->> +		pa = bios_get_rsdp_addr();
->> +
->> +	return pa;
->> +}
-
-Hi Boris,
-
-Talking in Kairui's thread may mislead you, let me clarify:
-I mean I am going to change get_rsdp_addr(). Since I see ACPI code:
-
->acpi_physical_address __init acpi_os_get_root_pointer(void)
->{
->        acpi_physical_address pa;
+On Sun, Jan 20, 2019 at 7:29 PM Zenghui Yu <zenghuiyu96@gmail.com> wrote:
+> > > > Hi, All!
+> > > >
+> > > > I compiled the latest kernel and installed it on my old laptop (Hardware name:
+> > > > Hewlett-Packard HP ProBook 440 G2/2247, BIOS M74 Ver. 01.02 06/17/2014).  But
+> > > > when I tried to enable function tracer via debugfs, the system went _hung_!
+> > > > Compared with the last kernel compiling process, the only change I have made
+> > > > is that I enabled KASAN configuration this time.
+> > > >
+> > > > Reproducing this issue is simple as below:
+> > > >
+> > > >         0. `uname -a` shows:
+> > > >                 Linux ubuntuu 5.0.0-rc2+ #9 SMP Fri Jan 18 03:04:01 CST 2019
+> > > >                 x86_64 x86_64 x86_64 GNU/Linux
+> > > >
+> > > >         1. `make menuconfig` to enable KASAN configuration:
+> > > >                 Kernel hacking ---> Memory Debugging --->
+> > > >                 KASAN: runtime memory debugger
+> > > >
+> > > >            compile, install, reboot, then `dmesg | grep kasan` shows:
+> > > >                 [    0.342882] kasan: KernelAddressSanitizer initialized
+> > > >
+> > > >         2. enable function tracer
+> > > >                 `echo function > /sys/kernel/debug/tracing/current_tracer`
+> > > >            (then my poor laptop was locked and didn't respond to me ...)
+> > > >
+> > > > What's more, enabling function graph tracer will suffer from the same problem.
+> > > > I have no idea about what wrong thing had happened inside kernel --
+> > > > about ftrace,
+> > > > or about KASAN?  So I report it to you and waiting for your solution!
+> > > >
+> > > > I have provided my *.config* file as attachment for those who're interested in
+> > > > this issue.  But sorry for that I can't provide any useful call trace
+> > > > because the
+> > > > system went down so quickly.
+> > > >
+> > > > P.S. I'm a newcomer for KASAN. If any mis-configuration or
+> > > > mis-understand, please
+> > > > fix me up and let me know :).
+> > >
+> > > Hi Zenghui,
+> > >
+> > > I've tried to reproduce this, but kernel crashes during boot with this
+> > > config for me.
+> > > I am commit 2339e91d0e6609e17943a0ab3c3c8c4044760c05, the config is
+> > > basically yours but updated for newer compiler and with builtin
+> > > modules:
+> > > https://gist.githubusercontent.com/dvyukov/9af234617749aa4eada67ba8c2e4f46c/raw/d0e09ddf255962313a82bb552c3fc0d832fa6844/gistfile1.txt
+> >
+> > I've commented out the warning locally for now and can reproduce the
+> > hang. You need this commit, it fixes the hang:
+> > https://groups.google.com/forum/#!topic/kasan-dev/g8A8PLKCyoE
 >
->#ifdef CONFIG_KEXEC
->        if (acpi_rsdp)
->                return acpi_rsdp;
->#endif
->        pa = acpi_arch_get_root_pointer();
->        if (pa)
->                return pa;
+> Thanks Dmitry! I'll try to test this commit tomorrow.
+>
+> BTW, I have bisect-ed and tested for this issue today. Finally it turned out
+> that
+>         bffa986c6f80e39d9903015fc7d0d99a66bbf559 is the first bad commit.
+> So I'm wondering if anywhere need to be fixed in commit bffa986c6f80 ("kasan:
+> move common generic and tag-based code to common.c").
 
-So we need to parse boot_params->acpi_rsdp_addr also between KEXEC and
-EFI:
+Thanks for bisecting. I think we have understanding of what happens
+here and it's exactly this that needs to be fixed:
+https://groups.google.com/d/msg/kasan-dev/g8A8PLKCyoE/vXnirYEnCAAJ
+And this commit already fixes it.
 
-static acpi_physical_address get_rsdp_addr(void)
-{
-        acpi_physical_address pa;
-
-        pa = get_acpi_rsdp();
-
-        if (!pa)
-/* This line will be added in next version.*/
-                pa = boot_params->acpi_rsdp_addr;
-
-        if (!pa)
-                pa = efi_get_rsdp_addr();
-
-        if (!pa)
-                pa = bios_get_rsdp_addr();
-
-/* If no acpi_rsdp_addr found in boot_params, fill in it here. */
-
-        return pa;
-}
-
-Then you said I shall fill the boot_params->acpi_rsdp_addr, so in my
-understanding, if there is no acpi_rsdp_addr found in boot_params,
-we can parse RSDP by EFI/BIOS then fill it, other wise if it's found
-int boot_params, we need't to fill it.
-
-Thanks,
-Chao Fan
-
-
->> +
->> +/* Compute SRAT address from RSDP. */
->> +static struct acpi_table_header *get_acpi_srat_table(void)
->> +{
->> +	acpi_physical_address acpi_table;
->> +	acpi_physical_address root_table;
->> +	struct acpi_table_header *header;
->> +	struct acpi_table_rsdp *rsdp;
->> +	u32 num_entries;
->> +	char arg[10];
->> +	u8 *entry;
->> +	u32 size;
->> +	u32 len;
->> +
->> +	rsdp = (struct acpi_table_rsdp *)(long)get_rsdp_addr();
->> +	if (!rsdp)
->> +		return NULL;
->> +
->> +	/* Get RSDT or XSDT from RSDP. */
->> +	if (!(cmdline_find_option("acpi", arg, sizeof(arg)) == 4 &&
->> +	    !strncmp(arg, "rsdt", 4)) &&
->> +	    rsdp->xsdt_physical_address &&
->> +	    rsdp->revision > 1) {
->> +		root_table = rsdp->xsdt_physical_address;
->> +		size = ACPI_XSDT_ENTRY_SIZE;
->> +	} else {
->> +		root_table = rsdp->rsdt_physical_address;
->> +		size = ACPI_RSDT_ENTRY_SIZE;
->> +	}
->> +
->> +	/* Get ACPI root table from RSDT or XSDT.*/
->
->This comment is wrong here - should be above.
->
->> +	if (!root_table)
->> +		return NULL;
->
-><---- newline here.
->
->> +	header = (struct acpi_table_header *)(long)root_table;
->> +
->> +	len = header->length;
->> +	if (len < sizeof(struct acpi_table_header) + size)
->> +		return NULL;
->> +
->> +	num_entries = (u32)((len - sizeof(struct acpi_table_header)) / size);
->> +	entry = ACPI_ADD_PTR(u8, header, sizeof(struct acpi_table_header));
->> +
->> +	while (num_entries--) {
->> +		u64 address64;
->> +
->> +		if (size == ACPI_RSDT_ENTRY_SIZE)
->> +			acpi_table =  *ACPI_CAST_PTR(u32, entry);
->> +		else {
->> +			address64 = *(u64 *)entry;
->> +			acpi_table = address64;
->
->The same thing as in the previous patch - get rid of address64.
->
->> +		}
->> +
->> +		if (acpi_table) {
->> +			header = (struct acpi_table_header *)(long)acpi_table;
->> +
->> +			if (ACPI_COMPARE_NAME(header->signature, ACPI_SIG_SRAT))
->> +				return header;
->> +		}
->> +		entry += size;
->> +	}
->> +	return NULL;
->> +}
->> +
->> +/*
->> + * According to ACPI table, filter the immovable memory regions
->> + * and store them in immovable_mem[].
->> + */
->> +void get_immovable_mem(void)
->> +{
->> +	struct acpi_table_header *table_header;
->> +	struct acpi_subtable_header *table;
->> +	struct acpi_srat_mem_affinity *ma;
->> +	char arg[MAX_ACPI_ARG_LENGTH];
->> +	unsigned long table_end;
->> +	int i = 0;
->> +
->> +	if (cmdline_find_option("acpi", arg, sizeof(arg)) == 3 &&
->> +	    !strncmp(arg, "off", 3))
->> +		return;
->> +
->> +	table_header = get_acpi_srat_table();
->> +	if (!table_header)
->> +		return;
->> +
->> +	table_end = (unsigned long)table_header + table_header->length;
->> +	table = (struct acpi_subtable_header *)
->> +		((unsigned long)table_header + sizeof(struct acpi_table_srat));
->> +
->> +	while (((unsigned long)table) +
->> +		       sizeof(struct acpi_subtable_header) < table_end) {
->> +		if (table->type == ACPI_SRAT_TYPE_MEMORY_AFFINITY) {
->> +			ma = (struct acpi_srat_mem_affinity *)table;
->> +			if (!(ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE)) {
->> +				immovable_mem[i].start = ma->base_address;
->> +				immovable_mem[i].size = ma->length;
->> +				i++;
->> +			}
->> +
->> +			if (i >= MAX_NUMNODES*2) {
->> +				debug_putstr("Too many immovable memory regions, aborting.\n");
->> +				return;
->> +			}
->> +		}
->> +		table = (struct acpi_subtable_header *)
->> +			((unsigned long)table + table->length);
->
->That's a lot of unnecessary casting AFAICT. You can return an unsigned
->long from get_acpi_srat_table() and get rid of all that casting here.
->
->
->> +	}
->> +	num_immovable_mem = i;
->> +}
->> diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
->> index 9ed9709d9947..b251572e77af 100644
->> --- a/arch/x86/boot/compressed/kaslr.c
->> +++ b/arch/x86/boot/compressed/kaslr.c
->> @@ -87,10 +87,6 @@ static unsigned long get_boot_seed(void)
->>  #define KASLR_COMPRESSED_BOOT
->>  #include "../../lib/kaslr.c"
->>  
->> -struct mem_vector {
->> -	unsigned long long start;
->> -	unsigned long long size;
->> -};
->>  
->>  /* Only supporting at most 4 unusable memmap regions with kaslr */
->>  #define MAX_MEMMAP_REGIONS	4
->> diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed/misc.h
->> index a1d5918765f3..b49748366a5b 100644
->> --- a/arch/x86/boot/compressed/misc.h
->> +++ b/arch/x86/boot/compressed/misc.h
->> @@ -77,6 +77,11 @@ void choose_random_location(unsigned long input,
->>  			    unsigned long *output,
->>  			    unsigned long output_size,
->>  			    unsigned long *virt_addr);
->> +struct mem_vector {
->> +	unsigned long long start;
->> +	unsigned long long size;
->> +};
->> +
->>  /* cpuflags.c */
->>  bool has_cpuflag(int flag);
->>  #else
->> @@ -116,3 +121,17 @@ static inline void console_init(void)
->>  void set_sev_encryption_mask(void);
->>  
->>  #endif
->> +
->> +/* acpi.c */
->> +#ifdef CONFIG_RANDOMIZE_BASE
->> +/* Amount of immovable memory regions */
->> +int num_immovable_mem;
->> +#endif
->> +
->> +#ifdef CONFIG_EARLY_SRAT_PARSE
->> +void get_immovable_mem(void);
->> +#else
->> +static void get_immovable_mem(void)
->> +{
->> +}
->
->Put those on a single line:
->
->static void get_immovable_mem(void) {}
->
->> +#endif
->> -- 
->> 2.20.1
->> 
->> 
->> 
->
->-- 
->Regards/Gruss,
->    Boris.
->
->Good mailing practices for 400: avoid top-posting and trim the reply.
->
->
-
-
+> > > TITLE: WARNING in note_page
+> > > MAINTAINERS: [dave.hansen@linux.intel.com luto@kernel.org
+> > > peterz@infradead.org tglx@linutronix.de mingo@redhat.com bp@alien8.de
+> > > hpa@zytor.com x86@kernel.org linux-kernel@vger.kernel.org]
+> > >
+> > > ------------[ cut here ]------------
+> > > x86/mm: Found insecure W+X mapping at address native_usergs_sysret64+0x0/0x10
+> > > WARNING: CPU: 3 PID: 1 at arch/x86/mm/dump_pagetables.c:263 note_wx
+> > > arch/x86/mm/dump_pagetables.c:262 [inline]
+> > > WARNING: CPU: 3 PID: 1 at arch/x86/mm/dump_pagetables.c:263
+> > > note_page+0x800/0xaf0 arch/x86/mm/dump_pagetables.c:302
+> > > Kernel panic - not syncing: panic_on_warn set ...
+> > > CPU: 3 PID: 1 Comm: swapper/0 Not tainted 5.0.0-rc2+ #16
+> > > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+> > > Call Trace:
+> > >  __dump_stack lib/dump_stack.c:77 [inline]
+> > >  dump_stack+0x7b/0xb5 lib/dump_stack.c:113
+> > >  panic+0x18e/0x351 kernel/panic.c:214
+> > >  __warn+0x13c/0x140 kernel/panic.c:571
+> > >  report_bug+0xd7/0x140 lib/bug.c:186
+> > >  fixup_bug.part.11+0x2d/0x60 arch/x86/kernel/traps.c:178
+> > >  fixup_bug arch/x86/include/asm/paravirt.h:776 [inline]
+> > >  do_error_trap+0xb6/0xc0 arch/x86/kernel/traps.c:271
+> > >  do_invalid_op+0x3b/0x50 arch/x86/kernel/traps.c:290
+> > >  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
+> > > RIP: 0010:note_wx arch/x86/mm/dump_pagetables.c:262 [inline]
+> > > RIP: 0010:note_page+0x800/0xaf0 arch/x86/mm/dump_pagetables.c:302
+> > > Code: 4d 32 00 4c 89 7b 28 48 c7 43 30 00 00 00 00 e9 46 fc ff ff 4c
+> > > 89 ee 48 c7 c7 a0 35 c5 ae c6 05 02 81 1e 02 01 e8 50 93 01 00 <0f> 0b
+> > > 48 8b 7d 90 e8 75 4c 32 00 48 8b 43 20 48 89 45 c8 e9 72 f9
+> > > RSP: 0000:ffff88805d5c7d18 EFLAGS: 00010286
+> > > RAX: 0000000000000000 RBX: ffff88805d5c7e58 RCX: ffffffffae7f11db
+> > > RDX: 0000000000000001 RSI: 0000000000000004 RDI: 0000000000000246
+> > > RBP: ffff88805d5c7da0 R08: ffffed100bab8f5c R09: ffffed100bab8f5c
+> > > R10: 0000000000000002 R11: ffffed100bab8f5c R12: 0000000000000000
+> > > R13: ffffffffae800000 R14: 0000000000000004 R15: 0000000000000000
+> > >  walk_pmd_level arch/x86/mm/dump_pagetables.c:428 [inline]
+> > >  walk_pud_level arch/x86/mm/dump_pagetables.c:459 [inline]
+> > >  walk_p4d_level arch/x86/mm/dump_pagetables.c:484 [inline]
+> > >  ptdump_walk_pgd_level_core+0x566/0x6e0 arch/x86/mm/dump_pagetables.c:552
+> > >  ptdump_walk_user_pgd_level_checkwx+0x4e/0x50 arch/x86/mm/dump_pagetables.c:600
+> > >  pti_finalize+0x27/0xaf arch/x86/mm/pti.c:682
+> > >  kernel_init+0x3e/0x130 init/main.c:1066
+> > >  ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:352
+> > > Kernel Offset: 0x2c800000 from 0xffffffff81000000 (relocation range:
+> > > 0xffffffff80000000-0xffffffffbfffffff)
+> > > Rebooting in 86400 seconds..
