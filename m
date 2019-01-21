@@ -2,275 +2,141 @@ Return-Path: <SRS0=RWde=P5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A9DBC2F421
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:45:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BED5C2F421
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:45:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3A5C20870
-	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:45:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D057D20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 21 Jan 2019 15:45:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AcvAN8R9"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="aa1WM//w"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730455AbfAUPp3 (ORCPT
+        id S1730487AbfAUPpf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 10:45:29 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:54351 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729220AbfAUPp2 (ORCPT
+        Mon, 21 Jan 2019 10:45:35 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:38070 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730457AbfAUPpe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 10:45:28 -0500
-Received: by mail-it1-f195.google.com with SMTP id i145so16946176ita.4
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 07:45:27 -0800 (PST)
+        Mon, 21 Jan 2019 10:45:34 -0500
+Received: by mail-wm1-f67.google.com with SMTP id m22so11310796wml.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 07:45:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PNev0wZfyiJbw9twBFu1eNBJ+MQBNRFBHLHo5P3/wg0=;
-        b=AcvAN8R9pXmhmF2NHjENm5C1IUSukp4VLxp7wXQr5rYwfg2g6yxuuBftzbEYmlcE34
-         IPLd74rKiWQL9gC6b1OC3qv4/fBazIxnJqCagMJRKtKbUuqZ5MTMf+gV0EG1CYOkSD2c
-         I7cycJqjAxJrcgGhEFCPq7tc37PhaxLwar2WE=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :in-reply-to:references;
+        bh=T0qbmuuRPxDVtPya/S7z9HnIzaHUQLSLFndkXz9dAlg=;
+        b=aa1WM//wBsKs9dqORTa7wBVQcRD4lPDGGwYTXHzgbzFvML2quBZsRMMuo53RsRAM7e
+         DiiUzMoO3bspcol3RGnucuMb6t6TwiXWcuWil28ria+MDGNnKBx/gSJ646n2h6FTcFdD
+         2je3WG+tkpjMfbQt6bnWmcQgL7zT+j/XbcSsQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PNev0wZfyiJbw9twBFu1eNBJ+MQBNRFBHLHo5P3/wg0=;
-        b=FKYQa6euKWDbkneYWxBXx9r9j2nEw0qFXzUTnVZqKcm7nNLGG7ONRVY5kxzPLTOgr9
-         sCKlXhbeAFn6/75s27X/GzNt+PsbxDx+vGr8Vc3hXelTjOtcehNg1+G/qjbnNdChKIs2
-         XODS85Xq6hekX5F7ZHQqBz40Fryq7aOiXucOzxUW/0yMNqI6Y2HkGsvY73dDyEQFDCXG
-         /Y4j6+EHi0HMwYxUGOo3xzaddep+TnuDOK6Fc2CPMHP2nOq4hDN03pLSF8JHfSg1SJzZ
-         GEm3M+yrNvVn+rgwqfw+MxymAf6rAcqOc2HDn5POTejWoQAURmCXeevJoLEihk34IGYZ
-         T7XQ==
-X-Gm-Message-State: AJcUukc3foTlHLe4K6S3Rj+SaFyOFzbCJg2LmCgbMvD/aTsz1kcyiCIt
-        RsW9uERbNoKE+JdeJDNB9OOUn5K0SjK0fHBOgCEhpQ==
-X-Google-Smtp-Source: ALg8bN5V7q/JMjKZCK+nCc1rPamgJ+wMgtJeybNndDN35rV75DiidvVxBFSWloy3iTsbMnfWMVxTwsQz1xYmC78zrB8=
-X-Received: by 2002:a05:660c:4b:: with SMTP id p11mr17686402itk.71.1548085527208;
- Mon, 21 Jan 2019 07:45:27 -0800 (PST)
-MIME-Version: 1.0
-References: <1548084825-8803-1-git-send-email-julien.thierry@arm.com> <1548084825-8803-13-git-send-email-julien.thierry@arm.com>
-In-Reply-To: <1548084825-8803-13-git-send-email-julien.thierry@arm.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Mon, 21 Jan 2019 16:45:15 +0100
-Message-ID: <CAKv+Gu-m2KcbDNsM1AJZHOKrJkE5Ki=xX8qqUvFnDc=87-4OsA@mail.gmail.com>
-Subject: Re: [PATCH v9 12/26] arm64: irqflags: Use ICC_PMR_EL1 for interrupt masking
-To:     Julien Thierry <julien.thierry@arm.com>
-Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Oleg Nesterov <oleg@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:in-reply-to:references;
+        bh=T0qbmuuRPxDVtPya/S7z9HnIzaHUQLSLFndkXz9dAlg=;
+        b=frr8hLtiyNSc1u+0pGjKiJmMkg/9Ldhr/XfEcndkBur2sAIOJiDSWN8TXAOdfB6Biw
+         WSbcgBjRzM5WF/yYVqjnOWzierlt/RJX5f6fuDzXI/EXO1ZJ6fXM5kztgoKQH1uceB2D
+         ufq+AmWLKT9mgH/kMTVlvLDPyfIppohak/rzmtCmb6eTM3bP4WtDG8RE3uUB+B/AAIgr
+         3oaPxAGqgEBl3IWavkpme0nJMCWAL4vmd2xBbELP8FFgk3HXKRXtDXaK8Wa56oeiMZex
+         Z0A5287ngZ0K5jqqTCoNOlBo3gN4gqwkSCqS7ZXVnQa4MiMGSplldMlHRGpEwxJ2Vd3K
+         CLXA==
+X-Gm-Message-State: AJcUukcGip2yEZf1lI+wGntF0VyCLi0qm7WHVBnTc0Ds+m6WBpIow0Hn
+        6e5xxQpf5iqikLKmGDlo0p0sUwr8y7U=
+X-Google-Smtp-Source: ALg8bN5P48cDJjMRerOQyQk5HIhb9YaBIsRRdEJCEnmgrT3OZRldN3mYQXgjGdrFigSKwW7N5qJYLg==
+X-Received: by 2002:a1c:87cc:: with SMTP id j195mr24943011wmd.2.1548085531754;
+        Mon, 21 Jan 2019 07:45:31 -0800 (PST)
+Received: from localhost ([49.248.61.1])
+        by smtp.gmail.com with ESMTPSA id l14sm191132944wrp.55.2019.01.21.07.45.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 21 Jan 2019 07:45:31 -0800 (PST)
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-arm-msm@vger.kernel.org, viresh.kumar@linaro.org,
+        edubezval@gmail.com, swboyd@chromium.org, dianders@chromium.org,
+        mka@chromium.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Markus Elfring <elfring@users.sourceforge.net>,
+        linux-pm@vger.kernel.org
+Subject: [PATCH v2 7/9] cpufreq: qoriq: Use auto-registration of thermal cooling device
+Date:   Mon, 21 Jan 2019 21:10:32 +0530
+Message-Id: <1c0f7a96c926e313569e0baf10d6d730f7ee1b23.1548084260.git.amit.kucheria@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <cover.1548084260.git.amit.kucheria@linaro.org>
+References: <cover.1548084260.git.amit.kucheria@linaro.org>
+In-Reply-To: <cover.1548084260.git.amit.kucheria@linaro.org>
+References: <cover.1548084260.git.amit.kucheria@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 21 Jan 2019 at 16:34, Julien Thierry <julien.thierry@arm.com> wrote:
->
-> Instead disabling interrupts by setting the PSR.I bit, use a priority
-> higher than the one used for interrupts to mask them via PMR.
->
-> When using PMR to disable interrupts, the value of PMR will be used
-> instead of PSR.[DAIF] for the irqflags.
->
-> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-> Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> Cc: Oleg Nesterov <oleg@redhat.com>
-> ---
->  arch/arm64/include/asm/efi.h      |   6 +++
->  arch/arm64/include/asm/irqflags.h | 104 ++++++++++++++++++++++++++++----------
->  2 files changed, 82 insertions(+), 28 deletions(-)
->
-> diff --git a/arch/arm64/include/asm/efi.h b/arch/arm64/include/asm/efi.h
-> index 7ed3208..3db6772 100644
-> --- a/arch/arm64/include/asm/efi.h
-> +++ b/arch/arm64/include/asm/efi.h
-> @@ -44,6 +44,12 @@
->
->  #define ARCH_EFI_IRQ_FLAGS_MASK (PSR_D_BIT | PSR_A_BIT | PSR_I_BIT | PSR_F_BIT)
->
-> +#define arch_efi_save_flags(state_flags)               \
-> +       ((void)((state_flags) = read_sysreg(daif)))
-> +
-> +#define arch_efi_restore_flags(state_flags)    write_sysreg(state_flags, daif)
-> +
-> +
->  /* arch specific definitions used by the stub code */
->
->  /*
+Use the CPUFREQ_AUTO_REGISTER_COOLING_DEV flag to allow cpufreq core to
+automatically register as a thermal cooling device.
 
-For the EFI changes
+This allows removal of boiler plate code from the driver.
 
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+---
+ drivers/cpufreq/qoriq-cpufreq.c | 15 ++-------------
+ 1 file changed, 2 insertions(+), 13 deletions(-)
 
-although it deserves a comment as to why it is unaffected by
-ARM64_HAS_IRQ_PRIO_MASKING
+diff --git a/drivers/cpufreq/qoriq-cpufreq.c b/drivers/cpufreq/qoriq-cpufreq.c
+index 3d773f64b4df..b206e6cb55f0 100644
+--- a/drivers/cpufreq/qoriq-cpufreq.c
++++ b/drivers/cpufreq/qoriq-cpufreq.c
+@@ -13,7 +13,6 @@
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/cpufreq.h>
+-#include <linux/cpu_cooling.h>
+ #include <linux/errno.h>
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+@@ -31,7 +30,6 @@
+ struct cpu_data {
+ 	struct clk **pclk;
+ 	struct cpufreq_frequency_table *table;
+-	struct thermal_cooling_device *cdev;
+ };
+ 
+ /*
+@@ -239,7 +237,6 @@ static int qoriq_cpufreq_cpu_exit(struct cpufreq_policy *policy)
+ {
+ 	struct cpu_data *data = policy->driver_data;
+ 
+-	cpufreq_cooling_unregister(data->cdev);
+ 	kfree(data->pclk);
+ 	kfree(data->table);
+ 	kfree(data);
+@@ -258,23 +255,15 @@ static int qoriq_cpufreq_target(struct cpufreq_policy *policy,
+ 	return clk_set_parent(policy->clk, parent);
+ }
+ 
+-
+-static void qoriq_cpufreq_ready(struct cpufreq_policy *policy)
+-{
+-	struct cpu_data *cpud = policy->driver_data;
+-
+-	cpud->cdev = of_cpufreq_cooling_register(policy);
+-}
+-
+ static struct cpufreq_driver qoriq_cpufreq_driver = {
+ 	.name		= "qoriq_cpufreq",
+-	.flags		= CPUFREQ_CONST_LOOPS,
++	.flags		= CPUFREQ_CONST_LOOPS |
++			  CPUFREQ_AUTO_REGISTER_COOLING_DEV,
+ 	.init		= qoriq_cpufreq_cpu_init,
+ 	.exit		= qoriq_cpufreq_cpu_exit,
+ 	.verify		= cpufreq_generic_frequency_table_verify,
+ 	.target_index	= qoriq_cpufreq_target,
+ 	.get		= cpufreq_generic_get,
+-	.ready		= qoriq_cpufreq_ready,
+ 	.attr		= cpufreq_generic_attr,
+ };
+ 
+-- 
+2.17.1
 
-
-> diff --git a/arch/arm64/include/asm/irqflags.h b/arch/arm64/include/asm/irqflags.h
-> index 24692ed..7e82a92 100644
-> --- a/arch/arm64/include/asm/irqflags.h
-> +++ b/arch/arm64/include/asm/irqflags.h
-> @@ -18,7 +18,9 @@
->
->  #ifdef __KERNEL__
->
-> +#include <asm/alternative.h>
->  #include <asm/ptrace.h>
-> +#include <asm/sysreg.h>
->
->  /*
->   * Aarch64 has flags for masking: Debug, Asynchronous (serror), Interrupts and
-> @@ -36,33 +38,31 @@
->  /*
->   * CPU interrupt mask handling.
->   */
-> -static inline unsigned long arch_local_irq_save(void)
-> -{
-> -       unsigned long flags;
-> -       asm volatile(
-> -               "mrs    %0, daif                // arch_local_irq_save\n"
-> -               "msr    daifset, #2"
-> -               : "=r" (flags)
-> -               :
-> -               : "memory");
-> -       return flags;
-> -}
-> -
->  static inline void arch_local_irq_enable(void)
->  {
-> -       asm volatile(
-> -               "msr    daifclr, #2             // arch_local_irq_enable"
-> -               :
-> +       unsigned long unmasked = GIC_PRIO_IRQON;
-> +
-> +       asm volatile(ALTERNATIVE(
-> +               "msr    daifclr, #2             // arch_local_irq_enable\n"
-> +               "nop",
-> +               "msr_s  " __stringify(SYS_ICC_PMR_EL1) ",%0\n"
-> +               "dsb    sy",
-> +               ARM64_HAS_IRQ_PRIO_MASKING)
->                 :
-> +               : "r" (unmasked)
->                 : "memory");
->  }
->
->  static inline void arch_local_irq_disable(void)
->  {
-> -       asm volatile(
-> -               "msr    daifset, #2             // arch_local_irq_disable"
-> -               :
-> +       unsigned long masked = GIC_PRIO_IRQOFF;
-> +
-> +       asm volatile(ALTERNATIVE(
-> +               "msr    daifset, #2             // arch_local_irq_disable",
-> +               "msr_s  " __stringify(SYS_ICC_PMR_EL1) ", %0",
-> +               ARM64_HAS_IRQ_PRIO_MASKING)
->                 :
-> +               : "r" (masked)
->                 : "memory");
->  }
->
-> @@ -71,12 +71,44 @@ static inline void arch_local_irq_disable(void)
->   */
->  static inline unsigned long arch_local_save_flags(void)
->  {
-> +       unsigned long daif_bits;
->         unsigned long flags;
-> -       asm volatile(
-> -               "mrs    %0, daif                // arch_local_save_flags"
-> -               : "=r" (flags)
-> -               :
-> +
-> +       daif_bits = read_sysreg(daif);
-> +
-> +       /*
-> +        * The asm is logically equivalent to:
-> +        *
-> +        * if (system_uses_irq_prio_masking())
-> +        *      flags = (daif_bits & PSR_I_BIT) ?
-> +        *                      GIC_PRIO_IRQOFF :
-> +        *                      read_sysreg_s(SYS_ICC_PMR_EL1);
-> +        * else
-> +        *      flags = daif_bits;
-> +        */
-> +       asm volatile(ALTERNATIVE(
-> +                       "mov    %0, %1\n"
-> +                       "nop\n"
-> +                       "nop",
-> +                       "mrs_s  %0, " __stringify(SYS_ICC_PMR_EL1) "\n"
-> +                       "ands   %1, %1, " __stringify(PSR_I_BIT) "\n"
-> +                       "csel   %0, %0, %2, eq",
-> +                       ARM64_HAS_IRQ_PRIO_MASKING)
-> +               : "=&r" (flags), "+r" (daif_bits)
-> +               : "r" (GIC_PRIO_IRQOFF)
->                 : "memory");
-> +
-> +       return flags;
-> +}
-> +
-> +static inline unsigned long arch_local_irq_save(void)
-> +{
-> +       unsigned long flags;
-> +
-> +       flags = arch_local_save_flags();
-> +
-> +       arch_local_irq_disable();
-> +
->         return flags;
->  }
->
-> @@ -85,16 +117,32 @@ static inline unsigned long arch_local_save_flags(void)
->   */
->  static inline void arch_local_irq_restore(unsigned long flags)
->  {
-> -       asm volatile(
-> -               "msr    daif, %0                // arch_local_irq_restore"
-> -       :
-> -       : "r" (flags)
-> -       : "memory");
-> +       asm volatile(ALTERNATIVE(
-> +                       "msr    daif, %0\n"
-> +                       "nop",
-> +                       "msr_s  " __stringify(SYS_ICC_PMR_EL1) ", %0\n"
-> +                       "dsb    sy",
-> +                       ARM64_HAS_IRQ_PRIO_MASKING)
-> +               : "+r" (flags)
-> +               :
-> +               : "memory");
->  }
->
->  static inline int arch_irqs_disabled_flags(unsigned long flags)
->  {
-> -       return flags & PSR_I_BIT;
-> +       int res;
-> +
-> +       asm volatile(ALTERNATIVE(
-> +                       "and    %w0, %w1, #" __stringify(PSR_I_BIT) "\n"
-> +                       "nop",
-> +                       "cmp    %w1, #" __stringify(GIC_PRIO_IRQOFF) "\n"
-> +                       "cset   %w0, ls",
-> +                       ARM64_HAS_IRQ_PRIO_MASKING)
-> +               : "=&r" (res)
-> +               : "r" ((int) flags)
-> +               : "memory");
-> +
-> +       return res;
->  }
->  #endif
->  #endif
-> --
-> 1.9.1
->
