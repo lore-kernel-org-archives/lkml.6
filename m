@@ -2,95 +2,181 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69098C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:42:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 900CAC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:43:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3766E21019
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:42:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6783921019
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:43:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728935AbfAVOmW (ORCPT
+        id S1728920AbfAVOnf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 09:42:22 -0500
-Received: from foss.arm.com ([217.140.101.70]:54672 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728817AbfAVOmW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 09:42:22 -0500
+        Tue, 22 Jan 2019 09:43:35 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54728 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728712AbfAVOnf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 09:43:35 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A2268A78;
-        Tue, 22 Jan 2019 06:42:21 -0800 (PST)
-Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8788B3F589;
-        Tue, 22 Jan 2019 06:42:20 -0800 (PST)
-Subject: Re: [PATCH] arm64 memory accesses may cause undefined fault on
- Fujitsu-A64FX
-To:     "Zhang, Lei" <zhang.lei@jp.fujitsu.com>
-Cc:     'Mark Rutland' <mark.rutland@arm.com>,
-        "'catalin.marinas@arm.com'" <catalin.marinas@arm.com>,
-        "'will.deacon@arm.com'" <will.deacon@arm.com>,
-        "'linux-arm-kernel@lists.infradead.org'" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>
-References: <8898674D84E3B24BA3A2D289B872026A6A29FA8F@G01JPEXMBKW03>
- <20190118141758.GC12256@lakrids.cambridge.arm.com>
- <8898674D84E3B24BA3A2D289B872026A6A2A2F44@G01JPEXMBKW03>
-From:   James Morse <james.morse@arm.com>
-Message-ID: <d8a8107c-cd31-2517-79df-2ebfbbedb7da@arm.com>
-Date:   Tue, 22 Jan 2019 14:42:18 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2D50BA78;
+        Tue, 22 Jan 2019 06:43:35 -0800 (PST)
+Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3835C3F589;
+        Tue, 22 Jan 2019 06:43:32 -0800 (PST)
+Date:   Tue, 22 Jan 2019 14:43:29 +0000
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v6 07/16] sched/core: uclamp: Add system default clamps
+Message-ID: <20190122144329.ziimv6fejwvky7yb@e110439-lin>
+References: <20190115101513.2822-1-patrick.bellasi@arm.com>
+ <20190115101513.2822-8-patrick.bellasi@arm.com>
+ <20190122135644.GP27931@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <8898674D84E3B24BA3A2D289B872026A6A2A2F44@G01JPEXMBKW03>
-Content-Type: text/plain; charset=iso-2022-jp
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190122135644.GP27931@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 22-Jan 14:56, Peter Zijlstra wrote:
+> On Tue, Jan 15, 2019 at 10:15:04AM +0000, Patrick Bellasi wrote:
+> 
+> > diff --git a/include/linux/sched.h b/include/linux/sched.h
+> > index 84294925d006..c8f391d1cdc5 100644
+> > --- a/include/linux/sched.h
+> > +++ b/include/linux/sched.h
+> > @@ -625,6 +625,11 @@ struct uclamp_se {
+> >  	unsigned int bucket_id		: bits_per(UCLAMP_BUCKETS);
+> >  	unsigned int mapped		: 1;
+> >  	unsigned int active		: 1;
+> > +	/* Clamp bucket and value actually used by a RUNNABLE task */
+> > +	struct {
+> > +		unsigned int value	: bits_per(SCHED_CAPACITY_SCALE);
+> > +		unsigned int bucket_id	: bits_per(UCLAMP_BUCKETS);
+> > +	} effective;
+> 
+> I am confuzled by this thing..  so uclamp_se already has a value,bucket,
+> which per the prior code is the effective one.
+> 
+> Now; I think I see why you want another value; you need the second to
+> store the original value for when the system limits change and we must
+> re-evaluate.
 
-On 22/01/2019 02:05, Zhang, Lei wrote:
-> Mark Rutland wrote:
->> * How often does this fault occur?
-> In my test, this fault occurs once every several times
-> in the OS boot sequence, and after the completion of OS boot,
-> this fault have never occurred.
-> In my opinion, this fault rarely occurs
-> after the completion of OS boot.
+Yes, that's one reason, the other one being to properly support
+CGroup when we add them in the following patches.
 
-Can you share anything about why this is? You mention a hardware-condition
-that is reset at exception entry....
+Effective will always track the value/bucket in which the task has
+been refcounted at enqueue time and it depends on the aggregated
+value.
 
+> So why are you not adding something like:
+> 
+> 	unsigned int orig_value : bits_per(SCHED_CAPACITY_SCALE);
 
->> I'm a bit surprised by the single retry. Is there any guarantee that a
->> thread will eventually stop delivering this fault code?
+Would say that can be enough if we decide to ditch the mapping and use
+a linear mapping. In that case the value will always be enough to find
+in which bucket a task has been accounted.
 
-> I guarantee that a thread will stop delivering this 
-> fault code by the this patch.
-> The hardware condition which cause this fault is 
-> reset at exception entry, therefore execution of at 
-> least one instruction is guaranteed by this single retry.
+> > +unsigned int sysctl_sched_uclamp_util_min;
+> 
+> > +unsigned int sysctl_sched_uclamp_util_max = SCHED_CAPACITY_SCALE;
+> 
+> > +static inline void
+> > +uclamp_effective_get(struct task_struct *p, unsigned int clamp_id,
+> > +		     unsigned int *clamp_value, unsigned int *bucket_id)
+> > +{
+> > +	/* Task specific clamp value */
+> > +	*clamp_value = p->uclamp[clamp_id].value;
+> > +	*bucket_id = p->uclamp[clamp_id].bucket_id;
+> > +
+> > +	/* System default restriction */
+> > +	if (unlikely(*clamp_value < uclamp_default[UCLAMP_MIN].value ||
+> > +		     *clamp_value > uclamp_default[UCLAMP_MAX].value)) {
+> > +		/* Keep it simple: unconditionally enforce system defaults */
+> > +		*clamp_value = uclamp_default[clamp_id].value;
+> > +		*bucket_id = uclamp_default[clamp_id].bucket_id;
+> > +	}
+> > +}
+> 
+> That would then turn into something like:
+> 
+> 	unsigned int high = READ_ONCE(sysctl_sched_uclamp_util_max);
+> 	unsigned int low  = READ_ONCE(sysctl_sched_uclamp_util_min);
+> 
+> 	uclamp_se->orig_value = value;
+> 	uclamp_se->value = clamp(value, low, high);
+> 
+> And then determine bucket_id based on value.
 
-... so its possible to take this fault during kernel_entry when we've taken an irq?
+Right... if I ditch the mapping that should work.
 
-This will overwrite the ELR and SPSR, (and possibly the FAR and ESR), meaning we've
- lost that information and can't return to the point in the kernel that took the
-irq.
+ 
+> > +int sched_uclamp_handler(struct ctl_table *table, int write,
+> > +			 void __user *buffer, size_t *lenp,
+> > +			 loff_t *ppos)
+> > +{
+> > +	int old_min, old_max;
+> > +	int result = 0;
+> > +
+> > +	mutex_lock(&uclamp_mutex);
+> > +
+> > +	old_min = sysctl_sched_uclamp_util_min;
+> > +	old_max = sysctl_sched_uclamp_util_max;
+> > +
+> > +	result = proc_dointvec(table, write, buffer, lenp, ppos);
+> > +	if (result)
+> > +		goto undo;
+> > +	if (!write)
+> > +		goto done;
+> > +
+> > +	if (sysctl_sched_uclamp_util_min > sysctl_sched_uclamp_util_max ||
+> > +	    sysctl_sched_uclamp_util_max > SCHED_CAPACITY_SCALE) {
+> > +		result = -EINVAL;
+> > +		goto undo;
+> > +	}
+> > +
+> > +	if (old_min != sysctl_sched_uclamp_util_min) {
+> > +		uclamp_bucket_inc(NULL, &uclamp_default[UCLAMP_MIN],
+> > +				  UCLAMP_MIN, sysctl_sched_uclamp_util_min);
+> > +	}
+> > +	if (old_max != sysctl_sched_uclamp_util_max) {
+> > +		uclamp_bucket_inc(NULL, &uclamp_default[UCLAMP_MAX],
+> > +				  UCLAMP_MAX, sysctl_sched_uclamp_util_max);
+> > +	}
+> 
+> Should you not update all tasks?
 
-If we try, we might end up spinning through the irq handler, as the ELR might
-now point
-to el1_irq's kernel_entry.
+That's true, but that's also an expensive operation, that's why now
+I'm doing only lazy updates at next enqueue time.
 
-We can spot we took an exception from the entry text ... but all we can do then
-is panic().
-I'm not sure its worth working around this if its just a matter of time before this
-happens. (you mention its less likely after boot, it would be good to know why...)
+Do you think that could be acceptable?
 
+Perhaps I can sanity check all the CPU to ensure that they all have a
+current clamp value within the new enforced range. This kind-of
+anticipate the idea to have an in-kernel API which has higher priority
+and allows to set clamp values across all the CPUs...
 
-Thanks,
+-- 
+#include <best/regards.h>
 
-James
+Patrick Bellasi
