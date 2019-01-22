@@ -7,133 +7,95 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61078C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:35:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CCC2C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:36:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C93C20879
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:35:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 718A220879
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:36:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728201AbfAVLfp (ORCPT
+        id S1728238AbfAVLgB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 06:35:45 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:44409 "EHLO
+        Tue, 22 Jan 2019 06:36:01 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:34929 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727663AbfAVLfp (ORCPT
+        with ESMTP id S1727777AbfAVLgB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 06:35:45 -0500
+        Tue, 22 Jan 2019 06:36:01 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0MBYZki2929511
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0MBZrTp2929670
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 22 Jan 2019 03:34:35 -0800
+        Tue, 22 Jan 2019 03:35:54 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0MBYZtf2929508;
-        Tue, 22 Jan 2019 03:34:35 -0800
-Date:   Tue, 22 Jan 2019 03:34:35 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0MBZrws2929667;
+        Tue, 22 Jan 2019 03:35:53 -0800
+Date:   Tue, 22 Jan 2019 03:35:53 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Andi Kleen <tipbot@zytor.com>
-Message-ID: <tip-96167167b6e17b25c0e05ecc31119b73baeab094@git.kernel.org>
-Cc:     jolsa@kernel.org, linux-kernel@vger.kernel.org, acme@redhat.com,
-        ak@linux.intel.com, mingo@kernel.org, hpa@zytor.com,
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-5q50q9w458yawgxf9ez54jbp@git.kernel.org>
+Cc:     ehabkost@redhat.com, thiago.macieira@intel.com, jolsa@kernel.org,
+        hpa@zytor.com, linux-kernel@vger.kernel.org, acme@redhat.com,
+        adrian.hunter@intel.com, namhyung@kernel.org, mingo@kernel.org,
         tglx@linutronix.de
-Reply-To: acme@redhat.com, mingo@kernel.org, ak@linux.intel.com,
-          hpa@zytor.com, tglx@linutronix.de, jolsa@kernel.org,
-          linux-kernel@vger.kernel.org
-In-Reply-To: <20190117194834.21940-1-andi@firstfloor.org>
-References: <20190117194834.21940-1-andi@firstfloor.org>
+Reply-To: namhyung@kernel.org, adrian.hunter@intel.com, mingo@kernel.org,
+          tglx@linutronix.de, ehabkost@redhat.com,
+          linux-kernel@vger.kernel.org, hpa@zytor.com, jolsa@kernel.org,
+          thiago.macieira@intel.com, acme@redhat.com
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf script: Fix crash with printing mixed trace
- point and other events
-Git-Commit-ID: 96167167b6e17b25c0e05ecc31119b73baeab094
+Subject: [tip:perf/urgent] perf python: Remove -fstack-clash-protection when
+ building with some clang versions
+Git-Commit-ID: 94ec1eb711db69be1414b56b3160b816e86a5c5b
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
  these emails
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Message-ID: <20190122113553.dquq9_Oje21AuRQWNnBx4kP8t5cBAr6U-39vGxdoU1Y@z>
 
-Commit-ID:  96167167b6e17b25c0e05ecc31119b73baeab094
-Gitweb:     https://git.kernel.org/tip/96167167b6e17b25c0e05ecc31119b73baeab094
-Author:     Andi Kleen <ak@linux.intel.com>
-AuthorDate: Thu, 17 Jan 2019 11:48:34 -0800
+Commit-ID:  94ec1eb711db69be1414b56b3160b816e86a5c5b
+Gitweb:     https://git.kernel.org/tip/94ec1eb711db69be1414b56b3160b816e86a5c5b
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Fri, 18 Jan 2019 11:34:15 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Fri, 18 Jan 2019 09:53:07 -0300
+CommitDate: Fri, 18 Jan 2019 11:38:09 -0300
 
-perf script: Fix crash with printing mixed trace point and other events
+perf python: Remove -fstack-clash-protection when building with some clang versions
 
-'perf script' crashes currently when printing mixed trace points and
-other events because the trace format does not handle events without
-trace meta data. Add a simple check to avoid that.
+These options are not present in some (all?) clang versions, so when we
+build for a distro that has a gcc new enough to have these options and
+that the distro python build config settings use them but clang doesn't
+support, b00m.
 
-  % cat > test.c
-  main()
-  {
-      printf("Hello world\n");
-  }
-  ^D
-  % gcc -g -o test test.c
-  % sudo perf probe -x test 'test.c:3'
-  % perf record -e '{cpu/cpu-cycles,period=10000/,probe_test:main}:S' ./test
-  % perf script
-  <segfault>
+This is the case with fedora rawhide (now gearing towards f30), so check
+if clang has the  and remove the missing ones from CFLAGS.
 
-Committer testing:
-
-Before:
-
-  # perf probe -x /lib64/libc-2.28.so malloc
-  Added new event:
-    probe_libc:malloc    (on malloc in /usr/lib64/libc-2.28.so)
-
-  You can now use it in all perf tools, such as:
-
-	perf record -e probe_libc:malloc -aR sleep 1
-
-  # perf probe -l
-  probe_libc:malloc    (on __libc_malloc@malloc/malloc.c in /usr/lib64/libc-2.28.so)
-  # perf record -e '{cpu/cpu-cycles,period=10000/,probe_libc:*}:S' sleep 1
-  [ perf record: Woken up 1 times to write data ]
-  [ perf record: Captured and wrote 0.023 MB perf.data (40 samples) ]
-  # perf script
-  Segmentation fault (core dumped)
-  ^C
-  #
-
-After:
-
-  # perf script | head -6
-     sleep 2888 94796.944981: 16198 cpu/cpu-cycles,period=10000/: ffffffff925dc04f get_random_u32+0x1f (/lib/modules/5.0.0-rc2+/build/vmlinux)
-     sleep 2888 [-01] 94796.944981: probe_libc:malloc:
-     sleep 2888 94796.944983:  4713 cpu/cpu-cycles,period=10000/: ffffffff922763af change_protection+0xcf (/lib/modules/5.0.0-rc2+/build/vmlinux)
-     sleep 2888 [-01] 94796.944983: probe_libc:malloc:
-     sleep 2888 94796.944986:  9934 cpu/cpu-cycles,period=10000/: ffffffff922777e0 move_page_tables+0x0 (/lib/modules/5.0.0-rc2+/build/vmlinux)
-     sleep 2888 [-01] 94796.944986: probe_libc:malloc:
-  #
-
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Link: http://lkml.kernel.org/r/20190117194834.21940-1-andi@firstfloor.org
+Cc: Eduardo Habkost <ehabkost@redhat.com>
+Cc: Thiago Macieira <thiago.macieira@intel.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: https://lkml.kernel.org/n/tip-5q50q9w458yawgxf9ez54jbp@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-script.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/util/setup.py | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index d079f36d342d..357906ed1898 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -1794,7 +1794,7 @@ static void process_event(struct perf_script *script,
- 		return;
- 	}
+diff --git a/tools/perf/util/setup.py b/tools/perf/util/setup.py
+index 63f758c655d5..64d1f36dee99 100644
+--- a/tools/perf/util/setup.py
++++ b/tools/perf/util/setup.py
+@@ -17,6 +17,8 @@ if cc == "clang":
+             vars[var] = sub("-mcet", "", vars[var])
+         if not clang_has_option("-fcf-protection"):
+             vars[var] = sub("-fcf-protection", "", vars[var])
++        if not clang_has_option("-fstack-clash-protection"):
++            vars[var] = sub("-fstack-clash-protection", "", vars[var])
  
--	if (PRINT_FIELD(TRACE)) {
-+	if (PRINT_FIELD(TRACE) && sample->raw_data) {
- 		event_format__fprintf(evsel->tp_format, sample->cpu,
- 				      sample->raw_data, sample->raw_size, fp);
- 	}
+ from distutils.core import setup, Extension
+ 
