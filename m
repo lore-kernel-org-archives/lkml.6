@@ -2,151 +2,187 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 702C7C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:54:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0CC4C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:55:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36CF5218D0
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:54:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5126218D0
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:55:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mpwTgCut";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Ba6I72zX"
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="YXkEDndV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727911AbfAVJyL (ORCPT
+        id S1727956AbfAVJza (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 04:54:11 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:38554 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726872AbfAVJyL (ORCPT
+        Tue, 22 Jan 2019 04:55:30 -0500
+Received: from esa4.microchip.iphmx.com ([68.232.154.123]:24662 "EHLO
+        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726872AbfAVJza (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 04:54:11 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id BE9E46028D; Tue, 22 Jan 2019 09:54:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548150849;
-        bh=SyiJy+n3OjaRZU0Dq1HEyr9W5DkvfpG1GSYIMqVC6nA=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=mpwTgCutBnjacpiVgyYCPEgguNL3qInkCjnHXJsIS3eGnzFbUYV+wPhkvyqwOXjd7
-         lqBC/1WCex9Km/f1QMo8i2dqWtiH/wpdkT548RYcnF59BOR6yK5Tl97oHYkOVIHBWa
-         ylDvH4IqAF1AxM1oYqDq8OZ4yI0N1YQZU4VTvID4=
-Received: from [10.79.128.187] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rnayak@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id AAD456028D;
-        Tue, 22 Jan 2019 09:54:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548150848;
-        bh=SyiJy+n3OjaRZU0Dq1HEyr9W5DkvfpG1GSYIMqVC6nA=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Ba6I72zXLtlz7Tm02b93Prq/kvAEGbm3p/axuml0u0numqVHEEXkN8UDZUvj1VtH4
-         hS72MYYUXzFgq3FIjxx1jon7MVwV1mhOnCvF5bN8gqdTkiyVAf4mj3C3FmsHroFg5t
-         FjaWrbSo7El4sZodNCi8kDgvCMup/rcTDF39Kmmo=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AAD456028D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
-Subject: Re: [PATCH] soc: qcom: update config dependencies for QCOM_RPMPD
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Stephen Boyd <swboyd@chromium.org>, andy.gross@linaro.org,
-        david.brown@linaro.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-References: <20190118044801.7312-1-rnayak@codeaurora.org>
- <154783318835.169631.6614930101893188915@swboyd.mtv.corp.google.com>
- <df735d42-d208-62c7-ddbc-87ea314c36d1@codeaurora.org>
- <25f46403-e78e-271b-c4d0-13b4623846b3@roeck-us.net>
-From:   Rajendra Nayak <rnayak@codeaurora.org>
-Message-ID: <864348fb-3d06-7b4b-cc82-17c96b7ce219@codeaurora.org>
-Date:   Tue, 22 Jan 2019 15:24:04 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <25f46403-e78e-271b-c4d0-13b4623846b3@roeck-us.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Tue, 22 Jan 2019 04:55:30 -0500
+X-IronPort-AV: E=Sophos;i="5.56,505,1539673200"; 
+   d="scan'208";a="25338478"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 22 Jan 2019 02:55:29 -0700
+Received: from NAM03-DM3-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.108) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Tue, 22 Jan 2019 02:55:29 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eqEnAOZ2ImtyV7baUyoXcEzoxCxy3RPum7DteOE5EkY=;
+ b=YXkEDndVRrL2+xo0uxeTFDu/Ke4R9ek8PcFfzwQWnv6Rdn9kerQ6hlpd8CdbcR/Uq8NGjfS7dTvUXuZLlcC15fog/EZ1nS792Z7YbR0UQLuJ8Xhk+ZmV8IsOcXscdsjmi4el80MA19mr6s4N1Dnqy4LF4oTS8Mkj5E+HH+59Pks=
+Received: from BN6PR11MB1842.namprd11.prod.outlook.com (10.175.99.146) by
+ BN6PR11MB1844.namprd11.prod.outlook.com (10.175.99.148) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1537.27; Tue, 22 Jan 2019 09:55:26 +0000
+Received: from BN6PR11MB1842.namprd11.prod.outlook.com
+ ([fe80::79d8:b977:b90a:76fa]) by BN6PR11MB1842.namprd11.prod.outlook.com
+ ([fe80::79d8:b977:b90a:76fa%4]) with mapi id 15.20.1537.031; Tue, 22 Jan 2019
+ 09:55:26 +0000
+From:   <Tudor.Ambarus@microchip.com>
+To:     <vigneshr@ti.com>, <bbrezillon@kernel.org>
+CC:     <marek.vasut@gmail.com>, <robh+dt@kernel.org>,
+        <linux-mtd@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 2/2] mtd: spi-nor: cadence-quadspi: Add support for
+ Octal SPI controller
+Thread-Topic: [PATCH v4 2/2] mtd: spi-nor: cadence-quadspi: Add support for
+ Octal SPI controller
+Thread-Index: AQHUsh2R/uQutu3u40+Y5WM8izS7+KW7DO+A
+Date:   Tue, 22 Jan 2019 09:55:26 +0000
+Message-ID: <c2be17a4-4725-e68b-f6f7-1ce78fd80e14@microchip.com>
+References: <20190122064137.17114-1-vigneshr@ti.com>
+ <20190122064137.17114-3-vigneshr@ti.com>
+In-Reply-To: <20190122064137.17114-3-vigneshr@ti.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1PR07CA0192.eurprd07.prod.outlook.com
+ (2603:10a6:802:3f::16) To BN6PR11MB1842.namprd11.prod.outlook.com
+ (2603:10b6:404:103::18)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Tudor.Ambarus@microchip.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [94.177.32.154]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN6PR11MB1844;6:LNK44m/3+Ny78+jlcrT2CgOKLpC9v5bTtAExf3n2Zay+REIHQD3UdmBjupLnz1kCbTNlKL4j5yfO3zbhH9WRC4dK4IWyUKaZ4XzQ/I3VEjDLEZXZtkUVQXUkY21DQS5J7GQWZGHsfeu6SZXWV5jkBOCROiCOTtkiDuMPR0SGYM1iAuoe7HBBYLgY/opahioIfwHR5iEgNJtWpHb6cdrzbYi0+8cRW8wqPS/m7SstKGVgwQ7UtqG4bnczTCr8JbJorF50aH8rUICEH4b0YBVgl9ZpQN/h5iHTzhS4tyDopdoOuey/26QKk8WfI6VvjqTXnUfaQYBU1TrRpn/XbJFSiNMZ7EX2Cg7X228TwmrIFyJ8fMAVfIEvlko3oAW1LH1gTOJT4UeKvQCHOdvKJEFRYvmf3ow7ZuIIWNQ44MDmvgq6vJRvMXy7BNGiYWfl5Yk2mRzfgrsT8orFUR5jIE96TA==;5:wMZU75JZr0xo6fUzckGkgY9NGCsBWufRAwwqPVv9OccnXDM338VGVzvciFv2UnIOeaqbCgVn4RpaHvvcSehssmHro0NGsgfVH2aEpRzxR4BiM77D4t8woiu9PwS2FTqWye/PIoQh+UCSuksQykZtdGfrKKwBY9ZviMZh809sYfYxvPTrlQ5UlRjX3Pb3cHXe7LCTopoe5KXgE95dWDkYyA==;7:Dw100dTCMIpknta7AKefQS4yIORl6HQNs3Elsy2eAgpwVIHXotzne4dN7Dqevx9T8X1q+9rPBKvQkvw+z204Tt7u/Y4uECkSPDH4fHF1l1tYVbeN6i4OgyQwnwne82EFUgv0cg65+k4+fY8QOKppWA==
+x-ms-office365-filtering-correlation-id: 99cc6cfc-8608-45c1-0287-08d6804fbbde
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:BN6PR11MB1844;
+x-ms-traffictypediagnostic: BN6PR11MB1844:
+x-microsoft-antispam-prvs: <BN6PR11MB18442847A661F4151E5C5C17F0980@BN6PR11MB1844.namprd11.prod.outlook.com>
+x-forefront-prvs: 0925081676
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(396003)(39860400002)(136003)(376002)(366004)(189003)(199004)(39060400002)(31686004)(106356001)(6246003)(25786009)(6512007)(4326008)(72206003)(53936002)(478600001)(6486002)(105586002)(6436002)(14454004)(68736007)(36756003)(229853002)(97736004)(53546011)(66066001)(6506007)(86362001)(102836004)(31696002)(7736002)(2906002)(3846002)(446003)(386003)(186003)(76176011)(305945005)(71190400001)(316002)(110136005)(8676002)(99286004)(8936002)(54906003)(71200400001)(256004)(26005)(52116002)(14444005)(81156014)(81166006)(11346002)(6116002)(476003)(2616005)(486006);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR11MB1844;H:BN6PR11MB1842.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 4oOLaNaGMhRbRCv/kl+wA9/CqDV6dopesnRUf1wMTPgv+yDQs4caksMmC+f+JxrtJGpi+v7Sgy0MinQC8gEENhLcOpUKKZwQ2yZ1bn0T7UuOlUWssn3ELHhLj2j8YIPoS71nhGReh0KCAc1Vw5cWuDNyAIcu1JaP3d0OlvKS+HfqPhbjBY+Wg7GgjlKLTe+LBtBDzjmhOTnZ50wE6/xyc3uJTNQKT6Tj5OmGcTJ2oSPWA9JriIB4P266wka+KEn4ig25eCCtNUT8iLJmwZur59HFMIP8FqPAPFk3zzV4gi2CSKVn6Z5hf/mZO657/snS1Z4P3eYYQKRt1jd9eIKrwf/Z2FCwkSaZWi2UO/RhmDsvxNAOXsE4EG001MBoNQHwgS7wtQvDLFhOrWl0t7BxO5j/fIGkpZ9I5DYjqxS7PVM=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <CB74544DBD439C4585655E1B01B82001@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 99cc6cfc-8608-45c1-0287-08d6804fbbde
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jan 2019 09:55:24.2318
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR11MB1844
+X-OriginatorOrg: microchip.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding Viresh and Ulf to this thread,
-
-On 1/22/2019 10:38 AM, Guenter Roeck wrote:
-> On 1/21/19 6:30 PM, Rajendra Nayak wrote:
->>
->>
->> On 1/18/2019 11:09 PM, Stephen Boyd wrote:
->>> Quoting Rajendra Nayak (2019-01-17 20:48:01)
->>>>   drivers/soc/qcom/Kconfig | 2 +-
->>>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
->>>> index a5d5167c3f16..1ee298f6bf17 100644
->>>> --- a/drivers/soc/qcom/Kconfig
->>>> +++ b/drivers/soc/qcom/Kconfig
->>>> @@ -109,7 +109,7 @@ config QCOM_RPMHPD
->>>>   config QCOM_RPMPD
->>>>          bool "Qualcomm RPM Power domain driver"
->>>
->>> Just curious, does it need to be bool for some reason?
->>
->> Here's the link to the discussion around it on the v3 patchset of this series
->> https://lkml.org/lkml/2018/6/12/111
->>
-> 
-> I think you were missing the implication of "if possible", the implication
-> being that the driver can now not be used in a multi-platform image, and that
-> having a bool driver depend on tristate drivers doesn't make much if any sense.
-
-Fair enough, I hadn't thought about the implications with multi platform builds,
-I guess it makes sense to have these drivers as tristate then.
-
-I was doing some quick testing by adding the calls to of_genpd_remove_last() as
-suggested by Ulf for cleaning up the genpd registrations, and I run into this
-backtrace when the driver re-probes followed by a remove
-
-[   59.204525] kobject ((____ptrval____)): tried to init an initialized object, something is seriously wr.
-[   59.214262] CPU: 3 PID: 1600 Comm: sh Not tainted 5.0.0-rc1-00012-g0513915837c5-dirty #32
-[   59.222500] Hardware name: Qualcomm Technologies, Inc. SDM845 MTP (DT)
-[   59.229081] Call trace:
-[   59.231574]  dump_backtrace+0x0/0x148
-[   59.235276]  show_stack+0x14/0x20
-[   59.238631]  dump_stack+0x8c/0xac
-[   59.241980]  kobject_init+0x8c/0xa0
-[   59.245506]  device_initialize+0x34/0xc8
-[   59.249474]  pm_genpd_init+0x170/0x260
-[   59.253261]  rpmhpd_probe+0x194/0x2b0
-[   59.256966]  platform_drv_probe+0x4c/0xa8
-[   59.261011]  really_probe+0x1e4/0x2c8
-[   59.264711]  driver_probe_device+0x58/0x10
-[   59.268927]  bind_store+0xdc/0x178
-[   59.272356]  drv_attr_store+0x20/0x30
-[   59.276061]  sysfs_kf_write+0x48/0x58
-[   59.279760]  kernfs_fop_write+0xcc/0x1c8
-[   59.283728]  __vfs_write+0x34/0x170
-[   59.287245]  vfs_write+0xa8/0x1b8
-[   59.290592]  ksys_write+0x5c/0xc8
-[   59.293941]  __arm64_sys_write+0x14/0x20
-[   59.297897]  el0_svc_common+0xb4/0x118
-[   59.301676]  el0_svc_handler+0x2c/0x80
-[   59.305455]  el0_svc+0x8/0xc
-
-Viresh/Ulf, looks like we need some cleanup of whats done by device_initialize()
-in pm_genpd_init() to happen as part of the pm_genpd_remove()?
-
-> 
-> The argument in the exchange is odd - one can not remove any driver as long
-> there are client drivers / devices attached to it. This is true for all
-> drivers, not just for this one, and handled quite nicely by the driver core.
-> Just run "lsmod" and try to remove a driver with any attached users.
-> 
-> Guenter
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+DQoNCk9uIDAxLzIyLzIwMTkgMDg6NDEgQU0sIFZpZ25lc2ggUiB3cm90ZToNCj4gQ2FkZW5jZSBP
+U1BJIGNvbnRyb2xsZXIgSVAgc3VwcG9ydHMgT2N0YWwgSU8gKHg4IElPIGxpbmVzKSwNCj4gSXQg
+YWxzbyBoYXMgYW4gaW50ZWdyYXRlZCBQSFkuIElQIHJlZ2lzdGVyIGxheW91dCBpcyB2ZXJ5DQo+
+IHNpbWlsYXIgdG8gZXhpc3RpbmcgUVNQSSBJUCBleGNlcHQgZm9yIGFkZGl0aW9uYWwgYml0cyB0
+byBzdXBwb3J0IE9jdGFsDQo+IGFuZCBPY3RhbCBERFIgbW9kZS4gVGhlcmVmb3JlLCBleHRlbmQg
+Y3VycmVudCBkcml2ZXIgdG8gc3VwcG9ydCBPY3RhbA0KPiBtb2RlLiBPbmx5IE9jdGFsIFNEUiBy
+ZWFkICgxLTEtOCltb2RlIGlzIHN1cHBvcnRlZCBmb3Igbm93Lg0KPiANCj4gVGVzdGVkIHdpdGgg
+bXQzNXh1NTEyYWJhIE9jdGFsIGZsYXNoIG9uIFRJJ3MgQU02NTQgRVZNLg0KPiANCj4gU2lnbmVk
+LW9mZi1ieTogVmlnbmVzaCBSIDx2aWduZXNockB0aS5jb20+DQo+IC0tLQ0KPiANCj4gdjQ6IEZp
+eCBjb21tZW50cyBieSBUdWRvciBvbiB2Mw0KPiB2MzogTm8gY2hhbmdlcw0KPiB2MjogRGVjbGFy
+ZSBPY3RhbCBtb2RlIGNhcGFiaWxpdHkgYmFzZWQgb24gY29tcGF0aWJsZS4NCj4gDQo+ICBkcml2
+ZXJzL210ZC9zcGktbm9yL2NhZGVuY2UtcXVhZHNwaS5jIHwgNTMgKysrKysrKysrKysrKysrKysr
+KysrLS0tLS0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgNDEgaW5zZXJ0aW9ucygrKSwgMTIgZGVsZXRp
+b25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tdGQvc3BpLW5vci9jYWRlbmNlLXF1
+YWRzcGkuYyBiL2RyaXZlcnMvbXRkL3NwaS1ub3IvY2FkZW5jZS1xdWFkc3BpLmMNCj4gaW5kZXgg
+MDRjZWRkM2EyYmY2Li4yMDkxYWRkYzQ1YTMgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbXRkL3Nw
+aS1ub3IvY2FkZW5jZS1xdWFkc3BpLmMNCj4gKysrIGIvZHJpdmVycy9tdGQvc3BpLW5vci9jYWRl
+bmNlLXF1YWRzcGkuYw0KPiBAQCAtNDQsNiArNDQsMTIgQEANCj4gIC8qIFF1aXJrcyAqLw0KPiAg
+I2RlZmluZSBDUVNQSV9ORUVEU19XUl9ERUxBWQkJQklUKDApDQo+ICANCj4gKy8qIENhcGFiaWxp
+dGllcyBtYXNrICovDQo+ICsjZGVmaW5lIGNxc3BpX2Jhc2VfaHdjYXBzX21hc2sJCQkJCVwNCj4g
+KwkoU05PUl9IV0NBUFNfUkVBRCB8IFNOT1JfSFdDQVBTX1JFQURfRkFTVCB8CQlcDQo+ICsJU05P
+Ul9IV0NBUFNfUkVBRF8xXzFfMiB8IFNOT1JfSFdDQVBTX1JFQURfMV8xXzQgfAlcDQo+ICsJU05P
+Ul9IV0NBUFNfUFApDQo+ICsNCj4gIHN0cnVjdCBjcXNwaV9zdDsNCj4gIA0KPiAgc3RydWN0IGNx
+c3BpX2ZsYXNoX3BkYXRhIHsNCj4gQEAgLTkzLDYgKzk5LDExIEBAIHN0cnVjdCBjcXNwaV9zdCB7
+DQo+ICAJc3RydWN0IGNxc3BpX2ZsYXNoX3BkYXRhIGZfcGRhdGFbQ1FTUElfTUFYX0NISVBTRUxF
+Q1RdOw0KPiAgfTsNCj4gIA0KPiArc3RydWN0IGNxc3BpX2RyaXZlcl9wbGF0ZGF0YSB7DQo+ICsJ
+dTMyIGh3Y2Fwc19tYXNrOw0KPiArCXU4IHF1aXJrczsNCj4gK307DQo+ICsNCj4gIC8qIE9wZXJh
+dGlvbiB0aW1lb3V0IHZhbHVlICovDQo+ICAjZGVmaW5lIENRU1BJX1RJTUVPVVRfTVMJCQk1MDAN
+Cj4gICNkZWZpbmUgQ1FTUElfUkVBRF9USU1FT1VUX01TCQkJMTANCj4gQEAgLTEwMSw2ICsxMTIs
+NyBAQCBzdHJ1Y3QgY3FzcGlfc3Qgew0KPiAgI2RlZmluZSBDUVNQSV9JTlNUX1RZUEVfU0lOR0xF
+CQkJMA0KPiAgI2RlZmluZSBDUVNQSV9JTlNUX1RZUEVfRFVBTAkJCTENCj4gICNkZWZpbmUgQ1FT
+UElfSU5TVF9UWVBFX1FVQUQJCQkyDQo+ICsjZGVmaW5lIENRU1BJX0lOU1RfVFlQRV9PQ1RBTAkJ
+CTMNCj4gIA0KPiAgI2RlZmluZSBDUVNQSV9EVU1NWV9DTEtTX1BFUl9CWVRFCQk4DQo+ICAjZGVm
+aW5lIENRU1BJX0RVTU1ZX0JZVEVTX01BWAkJCTQNCj4gQEAgLTkxMSw2ICs5MjMsOSBAQCBzdGF0
+aWMgaW50IGNxc3BpX3NldF9wcm90b2NvbChzdHJ1Y3Qgc3BpX25vciAqbm9yLCBjb25zdCBpbnQg
+cmVhZCkNCj4gIAkJY2FzZSBTTk9SX1BST1RPXzFfMV80Og0KPiAgCQkJZl9wZGF0YS0+ZGF0YV93
+aWR0aCA9IENRU1BJX0lOU1RfVFlQRV9RVUFEOw0KPiAgCQkJYnJlYWs7DQo+ICsJCWNhc2UgU05P
+Ul9QUk9UT18xXzFfODoNCj4gKwkJCWZfcGRhdGEtPmRhdGFfd2lkdGggPSBDUVNQSV9JTlNUX1RZ
+UEVfT0NUQUw7DQo+ICsJCQlicmVhazsNCj4gIAkJZGVmYXVsdDoNCj4gIAkJCXJldHVybiAtRUlO
+VkFMOw0KPiAgCQl9DQo+IEBAIC0xMjEzLDIxICsxMjI4LDIyIEBAIHN0YXRpYyB2b2lkIGNxc3Bp
+X3JlcXVlc3RfbW1hcF9kbWEoc3RydWN0IGNxc3BpX3N0ICpjcXNwaSkNCj4gIA0KPiAgc3RhdGlj
+IGludCBjcXNwaV9zZXR1cF9mbGFzaChzdHJ1Y3QgY3FzcGlfc3QgKmNxc3BpLCBzdHJ1Y3QgZGV2
+aWNlX25vZGUgKm5wKQ0KPiAgew0KPiAtCWNvbnN0IHN0cnVjdCBzcGlfbm9yX2h3Y2FwcyBod2Nh
+cHMgPSB7DQo+IC0JCS5tYXNrID0gU05PUl9IV0NBUFNfUkVBRCB8DQo+IC0JCQlTTk9SX0hXQ0FQ
+U19SRUFEX0ZBU1QgfA0KPiAtCQkJU05PUl9IV0NBUFNfUkVBRF8xXzFfMiB8DQo+IC0JCQlTTk9S
+X0hXQ0FQU19SRUFEXzFfMV80IHwNCj4gLQkJCVNOT1JfSFdDQVBTX1BQLA0KPiAtCX07DQo+ICAJ
+c3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldiA9IGNxc3BpLT5wZGV2Ow0KPiAgCXN0cnVjdCBk
+ZXZpY2UgKmRldiA9ICZwZGV2LT5kZXY7DQo+ICsJY29uc3Qgc3RydWN0IGNxc3BpX2RyaXZlcl9w
+bGF0ZGF0YSAqZGRhdGE7DQo+ICsJc3RydWN0IHNwaV9ub3JfaHdjYXBzIGh3Y2FwczsNCj4gIAlz
+dHJ1Y3QgY3FzcGlfZmxhc2hfcGRhdGEgKmZfcGRhdGE7DQo+ICAJc3RydWN0IHNwaV9ub3IgKm5v
+cjsNCj4gIAlzdHJ1Y3QgbXRkX2luZm8gKm10ZDsNCj4gIAl1bnNpZ25lZCBpbnQgY3M7DQo+ICAJ
+aW50IGksIHJldDsNCj4gIA0KPiArCWRkYXRhID0gb2ZfZGV2aWNlX2dldF9tYXRjaF9kYXRhKGRl
+dik7DQo+ICsJaWYgKCFkZGF0YSkNCj4gKwkJaHdjYXBzLm1hc2sgPSBjcXNwaV9iYXNlX2h3Y2Fw
+c19tYXNrOw0KDQpOaWNlIQ0KDQpSZXZpZXdlZC1ieTogVHVkb3IgQW1iYXJ1cyA8dHVkb3IuYW1i
+YXJ1c0BtaWNyb2NoaXAuY29tPg0KDQo+ICsJZWxzZQ0KPiArCQlod2NhcHMubWFzayA9IGRkYXRh
+LT5od2NhcHNfbWFzazsNCj4gKw0KPiAgCS8qIEdldCBmbGFzaCBkZXZpY2UgZGF0YSAqLw0KPiAg
+CWZvcl9lYWNoX2F2YWlsYWJsZV9jaGlsZF9vZl9ub2RlKGRldi0+b2Zfbm9kZSwgbnApIHsNCj4g
+IAkJcmV0ID0gb2ZfcHJvcGVydHlfcmVhZF91MzIobnAsICJyZWciLCAmY3MpOw0KPiBAQCAtMTMx
+MCw3ICsxMzI2LDcgQEAgc3RhdGljIGludCBjcXNwaV9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2
+aWNlICpwZGV2KQ0KPiAgCXN0cnVjdCBjcXNwaV9zdCAqY3FzcGk7DQo+ICAJc3RydWN0IHJlc291
+cmNlICpyZXM7DQo+ICAJc3RydWN0IHJlc291cmNlICpyZXNfYWhiOw0KPiAtCXVuc2lnbmVkIGxv
+bmcgZGF0YTsNCj4gKwljb25zdCBzdHJ1Y3QgY3FzcGlfZHJpdmVyX3BsYXRkYXRhICpkZGF0YTsN
+Cj4gIAlpbnQgcmV0Ow0KPiAgCWludCBpcnE7DQo+ICANCj4gQEAgLTEzNzcsOCArMTM5Myw4IEBA
+IHN0YXRpYyBpbnQgY3FzcGlfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikNCj4g
+IAl9DQo+ICANCj4gIAljcXNwaS0+bWFzdGVyX3JlZl9jbGtfaHogPSBjbGtfZ2V0X3JhdGUoY3Fz
+cGktPmNsayk7DQo+IC0JZGF0YSAgPSAodW5zaWduZWQgbG9uZylvZl9kZXZpY2VfZ2V0X21hdGNo
+X2RhdGEoZGV2KTsNCj4gLQlpZiAoZGF0YSAmIENRU1BJX05FRURTX1dSX0RFTEFZKQ0KPiArCWRk
+YXRhICA9IG9mX2RldmljZV9nZXRfbWF0Y2hfZGF0YShkZXYpOw0KPiArCWlmIChkZGF0YSAmJiAo
+ZGRhdGEtPnF1aXJrcyAmIENRU1BJX05FRURTX1dSX0RFTEFZKSkNCj4gIAkJY3FzcGktPndyX2Rl
+bGF5ID0gNSAqIERJVl9ST1VORF9VUChOU0VDX1BFUl9TRUMsDQo+ICAJCQkJCQkgICBjcXNwaS0+
+bWFzdGVyX3JlZl9jbGtfaHopOw0KPiAgDQo+IEBAIC0xNDYwLDE0ICsxNDc2LDI3IEBAIHN0YXRp
+YyBjb25zdCBzdHJ1Y3QgZGV2X3BtX29wcyBjcXNwaV9fZGV2X3BtX29wcyA9IHsNCj4gICNkZWZp
+bmUgQ1FTUElfREVWX1BNX09QUwlOVUxMDQo+ICAjZW5kaWYNCj4gIA0KPiArc3RhdGljIGNvbnN0
+IHN0cnVjdCBjcXNwaV9kcml2ZXJfcGxhdGRhdGEgazJnX3FzcGkgPSB7DQo+ICsJLmh3Y2Fwc19t
+YXNrID0gY3FzcGlfYmFzZV9od2NhcHNfbWFzaywNCj4gKwkucXVpcmtzID0gQ1FTUElfTkVFRFNf
+V1JfREVMQVksDQo+ICt9Ow0KPiArDQo+ICtzdGF0aWMgY29uc3Qgc3RydWN0IGNxc3BpX2RyaXZl
+cl9wbGF0ZGF0YSBhbTY1NF9vc3BpID0gew0KPiArCS5od2NhcHNfbWFzayA9IGNxc3BpX2Jhc2Vf
+aHdjYXBzX21hc2sgfCBTTk9SX0hXQ0FQU19SRUFEXzFfMV84LA0KPiArCS5xdWlya3MgPSBDUVNQ
+SV9ORUVEU19XUl9ERUxBWSwNCj4gK307DQo+ICsNCj4gIHN0YXRpYyBjb25zdCBzdHJ1Y3Qgb2Zf
+ZGV2aWNlX2lkIGNxc3BpX2R0X2lkc1tdID0gew0KPiAgCXsNCj4gIAkJLmNvbXBhdGlibGUgPSAi
+Y2Rucyxxc3BpLW5vciIsDQo+IC0JCS5kYXRhID0gKHZvaWQgKikwLA0KPiAgCX0sDQo+ICAJew0K
+PiAgCQkuY29tcGF0aWJsZSA9ICJ0aSxrMmctcXNwaSIsDQo+IC0JCS5kYXRhID0gKHZvaWQgKilD
+UVNQSV9ORUVEU19XUl9ERUxBWSwNCj4gKwkJLmRhdGEgPSAmazJnX3FzcGksDQo+ICsJfSwNCj4g
+Kwl7DQo+ICsJCS5jb21wYXRpYmxlID0gInRpLGFtNjU0LW9zcGkiLA0KPiArCQkuZGF0YSA9ICZh
+bTY1NF9vc3BpLA0KPiAgCX0sDQo+ICAJeyAvKiBlbmQgb2YgdGFibGUgKi8gfQ0KPiAgfTsNCj4g
+DQo=
