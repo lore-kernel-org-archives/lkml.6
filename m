@@ -2,287 +2,247 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EC9DC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:00:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA4EFC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:02:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC642205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:00:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7588A20870
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:02:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=poorly.run header.i=@poorly.run header.b="FVUqR9WU"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SwXPTXce"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726214AbfAVTAv (ORCPT
+        id S1726411AbfAVTCT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 14:00:51 -0500
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:44177 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726021AbfAVTAu (ORCPT
+        Tue, 22 Jan 2019 14:02:19 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:34588 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726143AbfAVTCT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 14:00:50 -0500
-Received: by mail-yb1-f194.google.com with SMTP id k189so3774992yba.11
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 11:00:50 -0800 (PST)
+        Tue, 22 Jan 2019 14:02:19 -0500
+Received: by mail-pf1-f195.google.com with SMTP id h3so12227496pfg.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 11:02:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=poorly.run; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3pzoLwjFOyfjRocTpsTdcEC8dm9cThmAzyf5ba6P5go=;
-        b=FVUqR9WU+5cxA4Cj1qbohuj35y71lm2RPi4ziKJ3cHEfawVXPnORNudmF95T5wso5b
-         s1ugGiCw24HTqJs8XAsXhWBaO0sXZy0DAXDyAaXy/rl9jm461T3vpE6vzC/JBMsloooT
-         thlKdrbniEt5iBg077kp0phEP1TkYqQJ8l/gA3vvXSVMnprPqT7xSyFe9mTuhHQvOCJD
-         rc4pSbCChmYOHuqHzKtWKirnxSiBppRsKt6VZGsDaaJlZuI52tZqokoYtul8SZmRo2Qm
-         Vy43JpLQ0MpIoQqDNg95FvgKDgekHTHU0e3/NvoNbqc9bj4jYjzhXONGkI8KqIspbI9L
-         L6CQ==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=PkqxUXjTLADjZMxeF8I5ld6pkxlurpzsvRpzU0lAhq4=;
+        b=SwXPTXceVb1O69PtsWZuVzPscMSEm8wrgDOGjTf+PRXJwmGopp4zrxIJQKhdmCJJQh
+         oP0qhz17RxEk+eb5EH4myebBOX8pX0mmX8+OOaVDEBNAuSAUBJ8r1M0r9XDEvbrzLVfj
+         yo8pxYbH0Wy7AHID9JKEJ4/LgE7WEV15oF1hQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3pzoLwjFOyfjRocTpsTdcEC8dm9cThmAzyf5ba6P5go=;
-        b=cm7kSjBankEDGfm5wgKv3iqUYcGwESL+Pg7++ZWhKIpTVTCQDnHJfE7q133Az3vMDy
-         XmRHhZKH1C1j7fkWByk19P2dseXljEK84UiCpdlwYg1uScj4jotFowMrYlxYK/GzaaIp
-         k4MIWLi5UwX80LrxyXtuM8z/Y31EkUPMGrtQR00beSUonIr6RwEpTe6GIDS2/YkS/rcK
-         7Gu26cVfXqoRpyqo5ipYJ0eSwcNiuK1jpOPgJzpbTZFjcokPfQVogzMZyUdlHEMNngvN
-         QapRrFqoMbpynnTP8HPtlNzBWKyFnS4Ta49dFsf5m9MezbSpOeLmwGtEIaZcrQFFQgWi
-         DveA==
-X-Gm-Message-State: AJcUuke/u7UZc8wKKHU2sFqFO1dlgq9tuIfCCc4HpSPxjH9UvUkOIoqT
-        G7bKpxrW5/pXCLcvf854GiFwyA==
-X-Google-Smtp-Source: ALg8bN6p5o+DuUY9uoXi6x8fNB4G39HcbV0m9ZQe1CPCFqo6x2zmkKo/r9TCUEa39ME0gEKmlz9Iiw==
-X-Received: by 2002:a25:416:: with SMTP id 22mr21611257ybe.334.1548183649418;
-        Tue, 22 Jan 2019 11:00:49 -0800 (PST)
-Received: from localhost ([2620:0:1013:11:89c6:2139:5435:371d])
-        by smtp.gmail.com with ESMTPSA id e124sm6841220ywf.17.2019.01.22.11.00.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 22 Jan 2019 11:00:48 -0800 (PST)
-Date:   Tue, 22 Jan 2019 14:00:48 -0500
-From:   Sean Paul <sean@poorly.run>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Rob Clark <robdclark@gmail.com>, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        Sean Paul <seanpaul@chromium.org>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        Jayant Shekhar <jshekhar@codeaurora.org>,
-        Rajesh Yadav <ryadav@codeaurora.org>,
-        Jeykumar Sankaran <jsanka@codeaurora.org>
-Subject: Re: [PATCH] drm/msm/dpu: Convert to a chained irq chip
-Message-ID: <20190122190048.GE114153@art_vandelay>
-References: <20190103190602.92612-1-swboyd@chromium.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190103190602.92612-1-swboyd@chromium.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=PkqxUXjTLADjZMxeF8I5ld6pkxlurpzsvRpzU0lAhq4=;
+        b=F04ECoHXcfBBTO6xKZkTSLTy8cnzQDg2SppIHkZayCGQ4mjHBsABYnW3YVznSZqq4l
+         quMLjK8MIllriUM9FI3K9jZGp5MxFGY4L0EtGi9lvbgMezXBrnDcTnCy3jKcM2KJB1vs
+         SHWiUX0YxQIchOLWAemoRreFHxylBSbyk/6ln5MSnzy+RBrlN/qCfoGmeOykBVuWsAxL
+         glnUM+ZoT89YJ50FkrOzTITZGxrdjOpZYAF9RWZB5eDn0Uc8rtL1ZpRTJ2lImN7F6yfN
+         1mNzGXFxKR7pcNPhB1lUuI/OvwWkJcJNqUKAinn/wQ05e4hoeUQiNi0thoZYkZCsQS8u
+         LuIQ==
+X-Gm-Message-State: AJcUukfPBLVUnqgG3KulLcGIKJ6otmUWe+pmnQf2giWDJ7faELRJFdEq
+        /Avgj4jHpbNFJIXTHdGk73YPmw==
+X-Google-Smtp-Source: ALg8bN4mDXL362xFXAwKV9PSGwanDDrSmMHLhtIiuFQl4hJA7J/e00E/uQibpqe4b+6fx+BciN5y4w==
+X-Received: by 2002:a63:30c8:: with SMTP id w191mr34098245pgw.120.1548183737970;
+        Tue, 22 Jan 2019 11:02:17 -0800 (PST)
+Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id z62sm24598296pfi.4.2019.01.22.11.02.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 22 Jan 2019 11:02:17 -0800 (PST)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: [PATCH] regulator: qcom-smd: Batch up requests for disabled regulators
+Date:   Tue, 22 Jan 2019 11:01:47 -0800
+Message-Id: <20190122190147.26735-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 03, 2019 at 11:06:02AM -0800, Stephen Boyd wrote:
-> Devices that make up DPU, i.e. graphics card, request their interrupts
-> from this "virtual" interrupt chip. The interrupt chip builds upon a GIC
-> SPI interrupt that raises high when any of the interrupts in the DPU's
-> irq status register are triggered. From the kernel's perspective this is
-> a chained irq chip, so requesting a flow handler for the GIC SPI and
-> then calling generic IRQ handling code from that irq handler is not
-> completely proper. It's better to convert this to a chained irq so that
-> the GIC SPI irq doesn't appear in /proc/interrupts, can't have CPU
-> affinity changed, and won't be accounted for with irq stats. Doing this
-> also silences a recursive lockdep warning because we can specify a
-> different lock class for the chained interrupts, silencing a warning
-> that is easy to see with 'threadirqs' on the kernel commandline.
-> 
->  WARNING: inconsistent lock state
->  4.19.10 #76 Tainted: G        W
->  --------------------------------
->  inconsistent {IN-HARDIRQ-W} -> {HARDIRQ-ON-W} usage.
->  irq/40-dpu_mdss/203 [HC0[0]:SC0[2]:HE1:SE0] takes:
->  0000000053ea9021 (&irq_desc_lock_class){?.-.}, at: handle_level_irq+0x34/0x26c
->  {IN-HARDIRQ-W} state was registered at:
->    lock_acquire+0x244/0x360
->    _raw_spin_lock+0x64/0xa0
->    handle_fasteoi_irq+0x54/0x2ec
->    generic_handle_irq+0x44/0x5c
->    __handle_domain_irq+0x9c/0x11c
->    gic_handle_irq+0x208/0x260
->    el1_irq+0xb4/0x130
->    arch_cpu_idle+0x178/0x3cc
->    default_idle_call+0x3c/0x54
->    do_idle+0x1a8/0x3dc
->    cpu_startup_entry+0x24/0x28
->    rest_init+0x240/0x270
->    start_kernel+0x5a8/0x6bc
->  irq event stamp: 18
->  hardirqs last  enabled at (17): [<ffffff9042385e80>] _raw_spin_unlock_irq+0x40/0xc0
->  hardirqs last disabled at (16): [<ffffff904237a1f4>] __schedule+0x20c/0x1bbc
->  softirqs last  enabled at (0): [<ffffff9040f318d0>] copy_process+0xb50/0x3964
->  softirqs last disabled at (18): [<ffffff9041036364>] local_bh_disable+0x8/0x20
-> 
->  other info that might help us debug this:
->   Possible unsafe locking scenario:
-> 
->         CPU0
->         ----
->    lock(&irq_desc_lock_class);
->    <Interrupt>
->      lock(&irq_desc_lock_class);
-> 
->   *** DEADLOCK ***
-> 
->  no locks held by irq/40-dpu_mdss/203.
-> 
->  stack backtrace:
->  CPU: 0 PID: 203 Comm: irq/40-dpu_mdss Tainted: G        W         4.19.10 #76
->  Call trace:
->   dump_backtrace+0x0/0x2f8
->   show_stack+0x20/0x2c
->   __dump_stack+0x20/0x28
->   dump_stack+0xcc/0x10c
->   mark_lock+0xbe0/0xe24
->   __lock_acquire+0x4cc/0x2708
->   lock_acquire+0x244/0x360
->   _raw_spin_lock+0x64/0xa0
->   handle_level_irq+0x34/0x26c
->   generic_handle_irq+0x44/0x5c
->   dpu_mdss_irq+0x64/0xec
->   irq_forced_thread_fn+0x58/0x9c
->   irq_thread+0x120/0x1dc
->   kthread+0x248/0x260
->   ret_from_fork+0x10/0x18
->  ------------[ cut here ]------------
->  irq 169 handler irq_default_primary_handler+0x0/0x18 enabled interrupts
-> 
-> Cc: Sean Paul <seanpaul@chromium.org>
-> Cc: Jordan Crouse <jcrouse@codeaurora.org>
-> Cc: Jayant Shekhar <jshekhar@codeaurora.org>
-> Cc: Rajesh Yadav <ryadav@codeaurora.org>
-> Cc: Jeykumar Sankaran <jsanka@codeaurora.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+In some scenarios the early stages of the boot chain has configured
+regulators to be in a required state, but the later stages has skipped
+to inform the RPM about it's requirements.
 
-LGTM, applied to dpu-staging.
+But as the SMD RPM regulators are being initialized voltage change
+requests will be issued to align the voltage with the valid ranges. The
+RPM aggregates all parameters for the specific regulator, the voltage
+will be adjusted and the "enabled" state will be "off" - and the
+regulator is turned off.
 
-Thanks,
+This patch addresses this problem by caching the requested enable state,
+voltage and load and send the parameters in a batch, depending on the
+enable state - effectively delaying the voltage request for disabled
+regulators.
 
-Sean
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/regulator/qcom_smd-regulator.c | 104 ++++++++++++++++---------
+ 1 file changed, 69 insertions(+), 35 deletions(-)
 
-> ---
-> 
->  drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c | 36 ++++++++++++++----------
->  1 file changed, 21 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c
-> index cb307a2abf06..7316b4ab1b85 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c
-> @@ -23,11 +23,14 @@ struct dpu_mdss {
->  	struct dpu_irq_controller irq_controller;
->  };
->  
-> -static irqreturn_t dpu_mdss_irq(int irq, void *arg)
-> +static void dpu_mdss_irq(struct irq_desc *desc)
->  {
-> -	struct dpu_mdss *dpu_mdss = arg;
-> +	struct dpu_mdss *dpu_mdss = irq_desc_get_handler_data(desc);
-> +	struct irq_chip *chip = irq_desc_get_chip(desc);
->  	u32 interrupts;
->  
-> +	chained_irq_enter(chip, desc);
-> +
->  	interrupts = readl_relaxed(dpu_mdss->mmio + HW_INTR_STATUS);
->  
->  	while (interrupts) {
-> @@ -39,20 +42,20 @@ static irqreturn_t dpu_mdss_irq(int irq, void *arg)
->  					   hwirq);
->  		if (mapping == 0) {
->  			DRM_ERROR("couldn't find irq mapping for %lu\n", hwirq);
-> -			return IRQ_NONE;
-> +			break;
->  		}
->  
->  		rc = generic_handle_irq(mapping);
->  		if (rc < 0) {
->  			DRM_ERROR("handle irq fail: irq=%lu mapping=%u rc=%d\n",
->  				  hwirq, mapping, rc);
-> -			return IRQ_NONE;
-> +			break;
->  		}
->  
->  		interrupts &= ~(1 << hwirq);
->  	}
->  
-> -	return IRQ_HANDLED;
-> +	chained_irq_exit(chip, desc);
->  }
->  
->  static void dpu_mdss_irq_mask(struct irq_data *irqd)
-> @@ -83,16 +86,16 @@ static struct irq_chip dpu_mdss_irq_chip = {
->  	.irq_unmask = dpu_mdss_irq_unmask,
->  };
->  
-> +static struct lock_class_key dpu_mdss_lock_key, dpu_mdss_request_key;
-> +
->  static int dpu_mdss_irqdomain_map(struct irq_domain *domain,
->  		unsigned int irq, irq_hw_number_t hwirq)
->  {
->  	struct dpu_mdss *dpu_mdss = domain->host_data;
-> -	int ret;
->  
-> +	irq_set_lockdep_class(irq, &dpu_mdss_lock_key, &dpu_mdss_request_key);
->  	irq_set_chip_and_handler(irq, &dpu_mdss_irq_chip, handle_level_irq);
-> -	ret = irq_set_chip_data(irq, dpu_mdss);
-> -
-> -	return ret;
-> +	return irq_set_chip_data(irq, dpu_mdss);
->  }
->  
->  static const struct irq_domain_ops dpu_mdss_irqdomain_ops = {
-> @@ -159,11 +162,13 @@ static void dpu_mdss_destroy(struct drm_device *dev)
->  	struct msm_drm_private *priv = dev->dev_private;
->  	struct dpu_mdss *dpu_mdss = to_dpu_mdss(priv->mdss);
->  	struct dss_module_power *mp = &dpu_mdss->mp;
-> +	int irq;
->  
->  	pm_runtime_suspend(dev->dev);
->  	pm_runtime_disable(dev->dev);
->  	_dpu_mdss_irq_domain_fini(dpu_mdss);
-> -	free_irq(platform_get_irq(pdev, 0), dpu_mdss);
-> +	irq = platform_get_irq(pdev, 0);
-> +	irq_set_chained_handler_and_data(irq, NULL, NULL);
->  	msm_dss_put_clk(mp->clk_config, mp->num_clk);
->  	devm_kfree(&pdev->dev, mp->clk_config);
->  
-> @@ -187,6 +192,7 @@ int dpu_mdss_init(struct drm_device *dev)
->  	struct dpu_mdss *dpu_mdss;
->  	struct dss_module_power *mp;
->  	int ret = 0;
-> +	int irq;
->  
->  	dpu_mdss = devm_kzalloc(dev->dev, sizeof(*dpu_mdss), GFP_KERNEL);
->  	if (!dpu_mdss)
-> @@ -219,12 +225,12 @@ int dpu_mdss_init(struct drm_device *dev)
->  	if (ret)
->  		goto irq_domain_error;
->  
-> -	ret = request_irq(platform_get_irq(pdev, 0),
-> -			dpu_mdss_irq, 0, "dpu_mdss_isr", dpu_mdss);
-> -	if (ret) {
-> -		DPU_ERROR("failed to init irq: %d\n", ret);
-> +	irq = platform_get_irq(pdev, 0);
-> +	if (irq < 0)
->  		goto irq_error;
-> -	}
-> +
-> +	irq_set_chained_handler_and_data(irq, dpu_mdss_irq,
-> +					 dpu_mdss);
->  
->  	pm_runtime_enable(dev->dev);
->  
-> -- 
-> Sent by a computer through tubes
-> 
-
+diff --git a/drivers/regulator/qcom_smd-regulator.c b/drivers/regulator/qcom_smd-regulator.c
+index f5bca77d67c1..dfdc67da5cec 100644
+--- a/drivers/regulator/qcom_smd-regulator.c
++++ b/drivers/regulator/qcom_smd-regulator.c
+@@ -31,6 +31,11 @@ struct qcom_rpm_reg {
+ 
+ 	int is_enabled;
+ 	int uV;
++	u32 load;
++
++	unsigned int enabled_updated:1;
++	unsigned int uv_updated:1;
++	unsigned int load_updated:1;
+ };
+ 
+ struct rpm_regulator_req {
+@@ -43,30 +48,59 @@ struct rpm_regulator_req {
+ #define RPM_KEY_UV	0x00007675 /* "uv" */
+ #define RPM_KEY_MA	0x0000616d /* "ma" */
+ 
+-static int rpm_reg_write_active(struct qcom_rpm_reg *vreg,
+-				struct rpm_regulator_req *req,
+-				size_t size)
++static int rpm_reg_write_active(struct qcom_rpm_reg *vreg)
+ {
+-	return qcom_rpm_smd_write(vreg->rpm,
+-				  QCOM_SMD_RPM_ACTIVE_STATE,
+-				  vreg->type,
+-				  vreg->id,
+-				  req, size);
++	struct rpm_regulator_req req[3];
++	int reqlen = 0;
++	int ret;
++
++	if (vreg->enabled_updated) {
++		req[reqlen].key = cpu_to_le32(RPM_KEY_SWEN);
++		req[reqlen].nbytes = cpu_to_le32(sizeof(u32));
++		req[reqlen].value = cpu_to_le32(vreg->is_enabled);
++		reqlen++;
++	}
++
++	if (vreg->uv_updated && vreg->is_enabled) {
++		req[reqlen].key = cpu_to_le32(RPM_KEY_UV);
++		req[reqlen].nbytes = cpu_to_le32(sizeof(u32));
++		req[reqlen].value = cpu_to_le32(vreg->uV);
++		reqlen++;
++	}
++
++	if (vreg->load_updated && vreg->is_enabled) {
++		req[reqlen].key = cpu_to_le32(RPM_KEY_MA);
++		req[reqlen].nbytes = cpu_to_le32(sizeof(u32));
++		req[reqlen].value = cpu_to_le32(vreg->load / 1000);
++		reqlen++;
++	}
++
++	if (!reqlen)
++		return 0;
++
++	ret = qcom_rpm_smd_write(vreg->rpm, QCOM_SMD_RPM_ACTIVE_STATE,
++				 vreg->type, vreg->id,
++				 req, sizeof(req[0]) * reqlen);
++	if (!ret) {
++		vreg->enabled_updated = 0;
++		vreg->uv_updated = 0;
++		vreg->load_updated = 0;
++	}
++
++	return ret;
+ }
+ 
+ static int rpm_reg_enable(struct regulator_dev *rdev)
+ {
+ 	struct qcom_rpm_reg *vreg = rdev_get_drvdata(rdev);
+-	struct rpm_regulator_req req;
+ 	int ret;
+ 
+-	req.key = cpu_to_le32(RPM_KEY_SWEN);
+-	req.nbytes = cpu_to_le32(sizeof(u32));
+-	req.value = cpu_to_le32(1);
++	vreg->is_enabled = 1;
++	vreg->enabled_updated = 1;
+ 
+-	ret = rpm_reg_write_active(vreg, &req, sizeof(req));
+-	if (!ret)
+-		vreg->is_enabled = 1;
++	ret = rpm_reg_write_active(vreg);
++	if (ret)
++		vreg->is_enabled = 0;
+ 
+ 	return ret;
+ }
+@@ -81,16 +115,14 @@ static int rpm_reg_is_enabled(struct regulator_dev *rdev)
+ static int rpm_reg_disable(struct regulator_dev *rdev)
+ {
+ 	struct qcom_rpm_reg *vreg = rdev_get_drvdata(rdev);
+-	struct rpm_regulator_req req;
+ 	int ret;
+ 
+-	req.key = cpu_to_le32(RPM_KEY_SWEN);
+-	req.nbytes = cpu_to_le32(sizeof(u32));
+-	req.value = 0;
++	vreg->is_enabled = 0;
++	vreg->enabled_updated = 1;
+ 
+-	ret = rpm_reg_write_active(vreg, &req, sizeof(req));
+-	if (!ret)
+-		vreg->is_enabled = 0;
++	ret = rpm_reg_write_active(vreg);
++	if (ret)
++		vreg->is_enabled = 1;
+ 
+ 	return ret;
+ }
+@@ -108,16 +140,15 @@ static int rpm_reg_set_voltage(struct regulator_dev *rdev,
+ 			       unsigned *selector)
+ {
+ 	struct qcom_rpm_reg *vreg = rdev_get_drvdata(rdev);
+-	struct rpm_regulator_req req;
+-	int ret = 0;
++	int ret;
++	int old_uV = vreg->uV;
+ 
+-	req.key = cpu_to_le32(RPM_KEY_UV);
+-	req.nbytes = cpu_to_le32(sizeof(u32));
+-	req.value = cpu_to_le32(min_uV);
++	vreg->uV = min_uV;
++	vreg->uv_updated = 1;
+ 
+-	ret = rpm_reg_write_active(vreg, &req, sizeof(req));
+-	if (!ret)
+-		vreg->uV = min_uV;
++	ret = rpm_reg_write_active(vreg);
++	if (ret)
++		vreg->uV = old_uV;
+ 
+ 	return ret;
+ }
+@@ -125,13 +156,16 @@ static int rpm_reg_set_voltage(struct regulator_dev *rdev,
+ static int rpm_reg_set_load(struct regulator_dev *rdev, int load_uA)
+ {
+ 	struct qcom_rpm_reg *vreg = rdev_get_drvdata(rdev);
+-	struct rpm_regulator_req req;
++	u32 old_load = vreg->load;
++	int ret;
+ 
+-	req.key = cpu_to_le32(RPM_KEY_MA);
+-	req.nbytes = cpu_to_le32(sizeof(u32));
+-	req.value = cpu_to_le32(load_uA / 1000);
++	vreg->load = load_uA;
++	vreg->load_updated = 1;
++	ret = rpm_reg_write_active(vreg);
++	if (ret)
++		vreg->load = old_load;
+ 
+-	return rpm_reg_write_active(vreg, &req, sizeof(req));
++	return ret;
+ }
+ 
+ static const struct regulator_ops rpm_smps_ldo_ops = {
 -- 
-Sean Paul, Software Engineer, Google / Chromium OS
+2.18.0
+
