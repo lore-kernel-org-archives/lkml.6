@@ -2,100 +2,176 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CCC2C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:36:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D29C7C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:36:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 718A220879
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:36:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F5BD20879
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:36:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728238AbfAVLgB (ORCPT
+        id S1728270AbfAVLgH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 06:36:01 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:34929 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727777AbfAVLgB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 06:36:01 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0MBZrTp2929670
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 22 Jan 2019 03:35:54 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0MBZrws2929667;
-        Tue, 22 Jan 2019 03:35:53 -0800
-Date:   Tue, 22 Jan 2019 03:35:53 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-5q50q9w458yawgxf9ez54jbp@git.kernel.org>
-Cc:     ehabkost@redhat.com, thiago.macieira@intel.com, jolsa@kernel.org,
-        hpa@zytor.com, linux-kernel@vger.kernel.org, acme@redhat.com,
-        adrian.hunter@intel.com, namhyung@kernel.org, mingo@kernel.org,
-        tglx@linutronix.de
-Reply-To: namhyung@kernel.org, adrian.hunter@intel.com, mingo@kernel.org,
-          tglx@linutronix.de, ehabkost@redhat.com,
-          linux-kernel@vger.kernel.org, hpa@zytor.com, jolsa@kernel.org,
-          thiago.macieira@intel.com, acme@redhat.com
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf python: Remove -fstack-clash-protection when
- building with some clang versions
-Git-Commit-ID: 94ec1eb711db69be1414b56b3160b816e86a5c5b
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 22 Jan 2019 06:36:07 -0500
+Received: from mx.socionext.com ([202.248.49.38]:47427 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727777AbfAVLgH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 06:36:07 -0500
+Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
+  by mx.socionext.com with ESMTP; 22 Jan 2019 20:36:04 +0900
+Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
+        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id C70D360062;
+        Tue, 22 Jan 2019 20:36:04 +0900 (JST)
+Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Tue, 22 Jan 2019 20:36:04 +0900
+Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
+        by kinkan.css.socionext.com (Postfix) with ESMTP id 880281A04E1;
+        Tue, 22 Jan 2019 20:36:04 +0900 (JST)
+Received: from [127.0.0.1] (unknown [10.213.119.83])
+        by yuzu.css.socionext.com (Postfix) with ESMTP id 6552F1210BF;
+        Tue, 22 Jan 2019 20:36:04 +0900 (JST)
+Subject: Re: [PATCH 02/14] dt-bindings: soc: milbeaut: Add Milbeaut trampoline
+ description
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Jiri Slaby <jslaby@suse.com>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>
+References: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com>
+ <1542589274-13878-3-git-send-email-sugaya.taichi@socionext.com>
+ <154337047410.88331.9696178601340675631@swboyd.mtv.corp.google.com>
+ <c746a3de-a9e3-9f25-ecb9-703ceb7e62d0@socionext.com>
+ <154356579701.88331.5043467509900444879@swboyd.mtv.corp.google.com>
+ <f5917f71-f15b-a92d-649c-e3f5f5f10698@socionext.com>
+ <CAL_Jsq+dnKht3TwCh1qB1H4pYFhQJmSN0nAayU+=PJLAvq0bbQ@mail.gmail.com>
+ <90b00858-6e9e-8f7c-f6d4-b35e5daa6eee@socionext.com>
+ <CAL_JsqJ=FRfzVFiOJ0wvoV5iZV+Gx3ft9pGyhb-GoKnOAQgPtQ@mail.gmail.com>
+From:   "Sugaya, Taichi" <sugaya.taichi@socionext.com>
+Message-ID: <daa5f00a-1d9c-69b0-ed2d-8ff6a64251cc@socionext.com>
+Date:   Tue, 22 Jan 2019 20:36:03 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
+In-Reply-To: <CAL_JsqJ=FRfzVFiOJ0wvoV5iZV+Gx3ft9pGyhb-GoKnOAQgPtQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Message-ID: <20190122113553.dquq9_Oje21AuRQWNnBx4kP8t5cBAr6U-39vGxdoU1Y@z>
 
-Commit-ID:  94ec1eb711db69be1414b56b3160b816e86a5c5b
-Gitweb:     https://git.kernel.org/tip/94ec1eb711db69be1414b56b3160b816e86a5c5b
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Fri, 18 Jan 2019 11:34:15 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Fri, 18 Jan 2019 11:38:09 -0300
+Hi
 
-perf python: Remove -fstack-clash-protection when building with some clang versions
+On 2018/12/04 22:32, Rob Herring wrote:
+> On Tue, Dec 4, 2018 at 5:30 AM Sugaya, Taichi
+> <sugaya.taichi@socionext.com> wrote:
+>>
+>> Hi
+>>
+>> On 2018/12/04 0:49, Rob Herring wrote:
+>>> On Mon, Dec 3, 2018 at 1:42 AM Sugaya, Taichi
+>>> <sugaya.taichi@socionext.com> wrote:
+>>>>
+>>>> Hi,
+>>>>
+>>>> On 2018/11/30 17:16, Stephen Boyd wrote:
+>>>>> Quoting Sugaya, Taichi (2018-11-29 04:24:51)
+>>>>>> On 2018/11/28 11:01, Stephen Boyd wrote:
+>>>>>>> Quoting Sugaya Taichi (2018-11-18 17:01:07)
+>>>>>>>>      create mode 100644 Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
+>>>>>>>>
+>>>>>>>> diff --git a/Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt b/Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
+>>>>>>>> new file mode 100644
+>>>>>>>> index 0000000..f5d906c
+>>>>>>>> --- /dev/null
+>>>>>>>> +++ b/Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
+>>>>>>>> @@ -0,0 +1,12 @@
+>>>>>>>> +Socionext M10V SMP trampoline driver binding
+>>>>>>>> +
+>>>>>>>> +This is a driver to wait for sub-cores while boot process.
+>>>>>>>> +
+>>>>>>>> +- compatible: should be "socionext,smp-trampoline"
+>>>>>>>> +- reg: should be <0x4C000100 0x100>
+>>>>>>>> +
+>>>>>>>> +EXAMPLE
+>>>>>>>> +       trampoline: trampoline@0x4C000100 {
+>>>>>>> Drop the 0x part of unit addresses.
+>>>>>>
+>>>>>> Okay.
+>>>>>>
+>>>>>>
+>>>>>>>> +               compatible = "socionext,smp-trampoline";
+>>>>>>>> +               reg = <0x4C000100 0x100>;
+>>>>>>> Looks like a software construct, which we wouldn't want to put into DT
+>>>>>>> this way. DT doesn't describe drivers.
+>>>>>> We would like to use this node only getting the address of the
+>>>>>> trampoline area
+>>>>>> in which sub-cores wait.  (They have finished to go to this area in previous
+>>>>>> bootloader process.)
+>>>>>
+>>>>> Is this area part of memory, or a special SRAM? If it's part of memory,
+>>>>> I would expect this node to be under the reserved-memory node and
+>>>>> pointed to by some other node that uses this region. Could even be the
+>>>>> CPU nodes.
+>>>>
+>>>> Yes, 0x4C000100 is a part of memory under the reserved-memory node. So
+>>>> we would like to use the SRAM ( allocated 0x00000000 ) area instead.
+>>>> BTW, sorry, the trampoline address of this example is simply wrong.  We
+>>>> were going to use a part of the SRAM from the beginning.
+>>>>
+>>>>>
+>>>>>>
+>>>>>> So should we embed the constant value in source codes instead of getting
+>>>>>> from
+>>>>>> DT because the address is constant at the moment? Or is there other
+>>>>>> approach?
+>>>>>>
+>>>>>
+>>>>> If it's constant then that also works. Why does it need to come from DT
+>>>>> at all then?
+>>>>
+>>>> We think it is not good to embed constant value in driver codes and do
+>>>> not have another way...
+>>>> Are there better ways?
+>>>
+>>> If this is just memory, can you use the standard spin-table binding in
+>>> the DT spec? There are some requirements like 64-bit values even on
+>>> 32-bit machines (though this gets violated).
+>>
+>> The spin-table seems to be used on only 64-bit arch. Have it ever worked
+>> on 32-bit machine?
+> 
+> Yes.
+> 
+>> And I would like not to use it because avoid violation.
+> 
+> The issue now that I remember is cpu-release-addr is defined to always
+> be a 64-bit value while some platforms made it a 32-bit value.
+> 'cpu-release-addr' is also used for some other enable-methods.
 
-These options are not present in some (all?) clang versions, so when we
-build for a distro that has a gcc new enough to have these options and
-that the distro python build config settings use them but clang doesn't
-support, b00m.
+I have a question about the spin-table.
+The code "smp_spin_table.c" is only in "arch/arm64/kernel" directory so 
+can not be compiled in arm-v7 arch. That means the spin-table can not be 
+used arm-v7 arch..? , or is there the way to compile the code in arm-v7 
+arch?
 
-This is the case with fedora rawhide (now gearing towards f30), so check
-if clang has the  and remove the missing ones from CFLAGS.
+Thanks,
+Sugaya Taichi
 
-Cc: Eduardo Habkost <ehabkost@redhat.com>
-Cc: Thiago Macieira <thiago.macieira@intel.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-5q50q9w458yawgxf9ez54jbp@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/setup.py | 2 ++
- 1 file changed, 2 insertions(+)
+> 
+> Rob
+> 
 
-diff --git a/tools/perf/util/setup.py b/tools/perf/util/setup.py
-index 63f758c655d5..64d1f36dee99 100644
---- a/tools/perf/util/setup.py
-+++ b/tools/perf/util/setup.py
-@@ -17,6 +17,8 @@ if cc == "clang":
-             vars[var] = sub("-mcet", "", vars[var])
-         if not clang_has_option("-fcf-protection"):
-             vars[var] = sub("-fcf-protection", "", vars[var])
-+        if not clang_has_option("-fstack-clash-protection"):
-+            vars[var] = sub("-fstack-clash-protection", "", vars[var])
- 
- from distutils.core import setup, Extension
- 
