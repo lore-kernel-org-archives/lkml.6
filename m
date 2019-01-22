@@ -2,113 +2,287 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CAC1C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:59:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EC9DC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:00:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DC9220856
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:58:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC642205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:00:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AcYx1BvD"
+	dkim=pass (2048-bit key) header.d=poorly.run header.i=@poorly.run header.b="FVUqR9WU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726814AbfAVS66 (ORCPT
+        id S1726214AbfAVTAv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 13:58:58 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:40058 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726302AbfAVS6y (ORCPT
+        Tue, 22 Jan 2019 14:00:51 -0500
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:44177 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726021AbfAVTAu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 13:58:54 -0500
-Received: by mail-pg1-f195.google.com with SMTP id z10so11467340pgp.7
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 10:58:53 -0800 (PST)
+        Tue, 22 Jan 2019 14:00:50 -0500
+Received: by mail-yb1-f194.google.com with SMTP id k189so3774992yba.11
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 11:00:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:to:in-reply-to:user-agent
-         :references:subject:from:message-id:cc:date;
-        bh=7n996eizIHOZB8ObkrUMaDzi4+lB9X87FLco778lNQo=;
-        b=AcYx1BvDdMXNDcb0MwDOi0eAbYuwQ+v//FUPCT6JRYaR1RldCQk2Ax0N88obUwax8r
-         U6fFcbd1fkuNoWqxLNSyxqi8wf23iBYwLladnWqZxxY/8BQ1zPZM4sUxpEakecDAnKVr
-         gzecddzicBmlJYRQ6bVP60A85qJXUgz46jhQU=
+        d=poorly.run; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=3pzoLwjFOyfjRocTpsTdcEC8dm9cThmAzyf5ba6P5go=;
+        b=FVUqR9WU+5cxA4Cj1qbohuj35y71lm2RPi4ziKJ3cHEfawVXPnORNudmF95T5wso5b
+         s1ugGiCw24HTqJs8XAsXhWBaO0sXZy0DAXDyAaXy/rl9jm461T3vpE6vzC/JBMsloooT
+         thlKdrbniEt5iBg077kp0phEP1TkYqQJ8l/gA3vvXSVMnprPqT7xSyFe9mTuhHQvOCJD
+         rc4pSbCChmYOHuqHzKtWKirnxSiBppRsKt6VZGsDaaJlZuI52tZqokoYtul8SZmRo2Qm
+         Vy43JpLQ0MpIoQqDNg95FvgKDgekHTHU0e3/NvoNbqc9bj4jYjzhXONGkI8KqIspbI9L
+         L6CQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:to
-         :in-reply-to:user-agent:references:subject:from:message-id:cc:date;
-        bh=7n996eizIHOZB8ObkrUMaDzi4+lB9X87FLco778lNQo=;
-        b=IZI4gHTLwhankCrpIapxDQ6er4Evot/pVISmoIZXLjyA++QPtSSeRUPCLWCNGSSxNk
-         J7V28h7XnNFBOOVRevxHalbLVZKPdAP0xfbgLEZpu8OfB9O5V56C9MY9u8g6a7rS/aPq
-         7zSWaoPsVpo/7ITfQ1gv4+s5N5ShoMTjz4l/05dEsuA9hAIEYfL60FlRriJ8kTbdfIgz
-         vSIQfXzzQBU7KNl50WBXdcrRumx71rGzClkb7T+0ZJxPLLHFWntNniOZq+5iU04vB+wY
-         Tw2+KVQJhBM+CJcXjpgE7IiI06LH6OhuC+njU1dTfo4psOrvw22dhkJ1jMBffWLubJU1
-         YiLQ==
-X-Gm-Message-State: AJcUukc3EKgoflZoo3J93rI7b/QV8o3XBWMyxUQWAfnzE1GEW7kuONxW
-        ynXjAP0KAzkCJq3Lc/SCNUR+QQ==
-X-Google-Smtp-Source: ALg8bN5ttFVZQXDeQh4FN9DFG4mw8l6cWhO5GDyQgOfw9uoUCmCyOp4iOjjBmrIIeMbZ3QRn6gShUg==
-X-Received: by 2002:a63:104d:: with SMTP id 13mr33282463pgq.303.1548183532817;
-        Tue, 22 Jan 2019 10:58:52 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id n70sm26850366pfi.185.2019.01.22.10.58.52
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3pzoLwjFOyfjRocTpsTdcEC8dm9cThmAzyf5ba6P5go=;
+        b=cm7kSjBankEDGfm5wgKv3iqUYcGwESL+Pg7++ZWhKIpTVTCQDnHJfE7q133Az3vMDy
+         XmRHhZKH1C1j7fkWByk19P2dseXljEK84UiCpdlwYg1uScj4jotFowMrYlxYK/GzaaIp
+         k4MIWLi5UwX80LrxyXtuM8z/Y31EkUPMGrtQR00beSUonIr6RwEpTe6GIDS2/YkS/rcK
+         7Gu26cVfXqoRpyqo5ipYJ0eSwcNiuK1jpOPgJzpbTZFjcokPfQVogzMZyUdlHEMNngvN
+         QapRrFqoMbpynnTP8HPtlNzBWKyFnS4Ta49dFsf5m9MezbSpOeLmwGtEIaZcrQFFQgWi
+         DveA==
+X-Gm-Message-State: AJcUuke/u7UZc8wKKHU2sFqFO1dlgq9tuIfCCc4HpSPxjH9UvUkOIoqT
+        G7bKpxrW5/pXCLcvf854GiFwyA==
+X-Google-Smtp-Source: ALg8bN6p5o+DuUY9uoXi6x8fNB4G39HcbV0m9ZQe1CPCFqo6x2zmkKo/r9TCUEa39ME0gEKmlz9Iiw==
+X-Received: by 2002:a25:416:: with SMTP id 22mr21611257ybe.334.1548183649418;
+        Tue, 22 Jan 2019 11:00:49 -0800 (PST)
+Received: from localhost ([2620:0:1013:11:89c6:2139:5435:371d])
+        by smtp.gmail.com with ESMTPSA id e124sm6841220ywf.17.2019.01.22.11.00.48
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 22 Jan 2019 10:58:52 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 22 Jan 2019 11:00:48 -0800 (PST)
+Date:   Tue, 22 Jan 2019 14:00:48 -0500
+From:   Sean Paul <sean@poorly.run>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Rob Clark <robdclark@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        Sean Paul <seanpaul@chromium.org>,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        Jayant Shekhar <jshekhar@codeaurora.org>,
+        Rajesh Yadav <ryadav@codeaurora.org>,
+        Jeykumar Sankaran <jsanka@codeaurora.org>
+Subject: Re: [PATCH] drm/msm/dpu: Convert to a chained irq chip
+Message-ID: <20190122190048.GE114153@art_vandelay>
+References: <20190103190602.92612-1-swboyd@chromium.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Andy Gross <andy.gross@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Sibi Sankar <sibis@codeaurora.org>
-In-Reply-To: <20190122055112.30943-2-bjorn.andersson@linaro.org>
-User-Agent: alot/0.8
-References: <20190122055112.30943-1-bjorn.andersson@linaro.org> <20190122055112.30943-2-bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v3 01/10] arm64: dts: qcom: sdm845: Update PIL region memory map
-From:   Stephen Boyd <swboyd@chromium.org>
-Message-ID: <154818353130.20280.17905705223316470797@swboyd.mtv.corp.google.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 22 Jan 2019 10:58:51 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190103190602.92612-1-swboyd@chromium.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Bjorn Andersson (2019-01-21 21:51:03)
-> @@ -103,10 +138,30 @@
->                         no-map;
->                 };
-> =20
-> +               venus_mem: memory@95800000 {
-> +                       reg =3D <0 0x95800000 0 0x500000>;
-> +                       no-map;
-> +               };
-> +
-> +               cdsp_mem: memory@95d00000 {
-> +                       reg =3D <0 0x95d00000 0 0x800000>;
-> +                       no-map;
-> +               };
-> +
->                 mba_region: memory@96500000 {
->                         reg =3D <0 0x96500000 0 0x200000>;
->                         no-map;
->                 };
-> +
-> +               slpi_mem: memory@96700000 {
-> +                       reg =3D <0 0x96700000 0 0x1400000>;
-> +                       no-map;
-> +               };
-> +
-> +               spss_mem: memory@97b00000 {
-> +                       reg =3D <0 0x97b00000 0 0x100000>;
-> +                       no-map;
-> +               };
->         };
-> =20
+On Thu, Jan 03, 2019 at 11:06:02AM -0800, Stephen Boyd wrote:
+> Devices that make up DPU, i.e. graphics card, request their interrupts
+> from this "virtual" interrupt chip. The interrupt chip builds upon a GIC
+> SPI interrupt that raises high when any of the interrupts in the DPU's
+> irq status register are triggered. From the kernel's perspective this is
+> a chained irq chip, so requesting a flow handler for the GIC SPI and
+> then calling generic IRQ handling code from that irq handler is not
+> completely proper. It's better to convert this to a chained irq so that
+> the GIC SPI irq doesn't appear in /proc/interrupts, can't have CPU
+> affinity changed, and won't be accounted for with irq stats. Doing this
+> also silences a recursive lockdep warning because we can specify a
+> different lock class for the chained interrupts, silencing a warning
+> that is easy to see with 'threadirqs' on the kernel commandline.
+> 
+>  WARNING: inconsistent lock state
+>  4.19.10 #76 Tainted: G        W
+>  --------------------------------
+>  inconsistent {IN-HARDIRQ-W} -> {HARDIRQ-ON-W} usage.
+>  irq/40-dpu_mdss/203 [HC0[0]:SC0[2]:HE1:SE0] takes:
+>  0000000053ea9021 (&irq_desc_lock_class){?.-.}, at: handle_level_irq+0x34/0x26c
+>  {IN-HARDIRQ-W} state was registered at:
+>    lock_acquire+0x244/0x360
+>    _raw_spin_lock+0x64/0xa0
+>    handle_fasteoi_irq+0x54/0x2ec
+>    generic_handle_irq+0x44/0x5c
+>    __handle_domain_irq+0x9c/0x11c
+>    gic_handle_irq+0x208/0x260
+>    el1_irq+0xb4/0x130
+>    arch_cpu_idle+0x178/0x3cc
+>    default_idle_call+0x3c/0x54
+>    do_idle+0x1a8/0x3dc
+>    cpu_startup_entry+0x24/0x28
+>    rest_init+0x240/0x270
+>    start_kernel+0x5a8/0x6bc
+>  irq event stamp: 18
+>  hardirqs last  enabled at (17): [<ffffff9042385e80>] _raw_spin_unlock_irq+0x40/0xc0
+>  hardirqs last disabled at (16): [<ffffff904237a1f4>] __schedule+0x20c/0x1bbc
+>  softirqs last  enabled at (0): [<ffffff9040f318d0>] copy_process+0xb50/0x3964
+>  softirqs last disabled at (18): [<ffffff9041036364>] local_bh_disable+0x8/0x20
+> 
+>  other info that might help us debug this:
+>   Possible unsafe locking scenario:
+> 
+>         CPU0
+>         ----
+>    lock(&irq_desc_lock_class);
+>    <Interrupt>
+>      lock(&irq_desc_lock_class);
+> 
+>   *** DEADLOCK ***
+> 
+>  no locks held by irq/40-dpu_mdss/203.
+> 
+>  stack backtrace:
+>  CPU: 0 PID: 203 Comm: irq/40-dpu_mdss Tainted: G        W         4.19.10 #76
+>  Call trace:
+>   dump_backtrace+0x0/0x2f8
+>   show_stack+0x20/0x2c
+>   __dump_stack+0x20/0x28
+>   dump_stack+0xcc/0x10c
+>   mark_lock+0xbe0/0xe24
+>   __lock_acquire+0x4cc/0x2708
+>   lock_acquire+0x244/0x360
+>   _raw_spin_lock+0x64/0xa0
+>   handle_level_irq+0x34/0x26c
+>   generic_handle_irq+0x44/0x5c
+>   dpu_mdss_irq+0x64/0xec
+>   irq_forced_thread_fn+0x58/0x9c
+>   irq_thread+0x120/0x1dc
+>   kthread+0x248/0x260
+>   ret_from_fork+0x10/0x18
+>  ------------[ cut here ]------------
+>  irq 169 handler irq_default_primary_handler+0x0/0x18 enabled interrupts
+> 
+> Cc: Sean Paul <seanpaul@chromium.org>
+> Cc: Jordan Crouse <jcrouse@codeaurora.org>
+> Cc: Jayant Shekhar <jshekhar@codeaurora.org>
+> Cc: Rajesh Yadav <ryadav@codeaurora.org>
+> Cc: Jeykumar Sankaran <jsanka@codeaurora.org>
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 
-What's the plan if certain configurations don't use all these carveouts?
-Can we mark the reservation nodes as status =3D "disabled", or the reverse
-and mark them as status =3D "ok" in all boards, and then reclaim the
-memory for peripherals we don't care to use?
+LGTM, applied to dpu-staging.
 
+Thanks,
+
+Sean
+
+> ---
+> 
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c | 36 ++++++++++++++----------
+>  1 file changed, 21 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c
+> index cb307a2abf06..7316b4ab1b85 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c
+> @@ -23,11 +23,14 @@ struct dpu_mdss {
+>  	struct dpu_irq_controller irq_controller;
+>  };
+>  
+> -static irqreturn_t dpu_mdss_irq(int irq, void *arg)
+> +static void dpu_mdss_irq(struct irq_desc *desc)
+>  {
+> -	struct dpu_mdss *dpu_mdss = arg;
+> +	struct dpu_mdss *dpu_mdss = irq_desc_get_handler_data(desc);
+> +	struct irq_chip *chip = irq_desc_get_chip(desc);
+>  	u32 interrupts;
+>  
+> +	chained_irq_enter(chip, desc);
+> +
+>  	interrupts = readl_relaxed(dpu_mdss->mmio + HW_INTR_STATUS);
+>  
+>  	while (interrupts) {
+> @@ -39,20 +42,20 @@ static irqreturn_t dpu_mdss_irq(int irq, void *arg)
+>  					   hwirq);
+>  		if (mapping == 0) {
+>  			DRM_ERROR("couldn't find irq mapping for %lu\n", hwirq);
+> -			return IRQ_NONE;
+> +			break;
+>  		}
+>  
+>  		rc = generic_handle_irq(mapping);
+>  		if (rc < 0) {
+>  			DRM_ERROR("handle irq fail: irq=%lu mapping=%u rc=%d\n",
+>  				  hwirq, mapping, rc);
+> -			return IRQ_NONE;
+> +			break;
+>  		}
+>  
+>  		interrupts &= ~(1 << hwirq);
+>  	}
+>  
+> -	return IRQ_HANDLED;
+> +	chained_irq_exit(chip, desc);
+>  }
+>  
+>  static void dpu_mdss_irq_mask(struct irq_data *irqd)
+> @@ -83,16 +86,16 @@ static struct irq_chip dpu_mdss_irq_chip = {
+>  	.irq_unmask = dpu_mdss_irq_unmask,
+>  };
+>  
+> +static struct lock_class_key dpu_mdss_lock_key, dpu_mdss_request_key;
+> +
+>  static int dpu_mdss_irqdomain_map(struct irq_domain *domain,
+>  		unsigned int irq, irq_hw_number_t hwirq)
+>  {
+>  	struct dpu_mdss *dpu_mdss = domain->host_data;
+> -	int ret;
+>  
+> +	irq_set_lockdep_class(irq, &dpu_mdss_lock_key, &dpu_mdss_request_key);
+>  	irq_set_chip_and_handler(irq, &dpu_mdss_irq_chip, handle_level_irq);
+> -	ret = irq_set_chip_data(irq, dpu_mdss);
+> -
+> -	return ret;
+> +	return irq_set_chip_data(irq, dpu_mdss);
+>  }
+>  
+>  static const struct irq_domain_ops dpu_mdss_irqdomain_ops = {
+> @@ -159,11 +162,13 @@ static void dpu_mdss_destroy(struct drm_device *dev)
+>  	struct msm_drm_private *priv = dev->dev_private;
+>  	struct dpu_mdss *dpu_mdss = to_dpu_mdss(priv->mdss);
+>  	struct dss_module_power *mp = &dpu_mdss->mp;
+> +	int irq;
+>  
+>  	pm_runtime_suspend(dev->dev);
+>  	pm_runtime_disable(dev->dev);
+>  	_dpu_mdss_irq_domain_fini(dpu_mdss);
+> -	free_irq(platform_get_irq(pdev, 0), dpu_mdss);
+> +	irq = platform_get_irq(pdev, 0);
+> +	irq_set_chained_handler_and_data(irq, NULL, NULL);
+>  	msm_dss_put_clk(mp->clk_config, mp->num_clk);
+>  	devm_kfree(&pdev->dev, mp->clk_config);
+>  
+> @@ -187,6 +192,7 @@ int dpu_mdss_init(struct drm_device *dev)
+>  	struct dpu_mdss *dpu_mdss;
+>  	struct dss_module_power *mp;
+>  	int ret = 0;
+> +	int irq;
+>  
+>  	dpu_mdss = devm_kzalloc(dev->dev, sizeof(*dpu_mdss), GFP_KERNEL);
+>  	if (!dpu_mdss)
+> @@ -219,12 +225,12 @@ int dpu_mdss_init(struct drm_device *dev)
+>  	if (ret)
+>  		goto irq_domain_error;
+>  
+> -	ret = request_irq(platform_get_irq(pdev, 0),
+> -			dpu_mdss_irq, 0, "dpu_mdss_isr", dpu_mdss);
+> -	if (ret) {
+> -		DPU_ERROR("failed to init irq: %d\n", ret);
+> +	irq = platform_get_irq(pdev, 0);
+> +	if (irq < 0)
+>  		goto irq_error;
+> -	}
+> +
+> +	irq_set_chained_handler_and_data(irq, dpu_mdss_irq,
+> +					 dpu_mdss);
+>  
+>  	pm_runtime_enable(dev->dev);
+>  
+> -- 
+> Sent by a computer through tubes
+> 
+
+-- 
+Sean Paul, Software Engineer, Google / Chromium OS
