@@ -7,255 +7,168 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9557AC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 21:53:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00FE2C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 21:53:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49B7820866
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 21:53:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C571020866
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 21:53:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="bpG16L4S"
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="ZhKs/0Wh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726905AbfAVVxQ (ORCPT
+        id S1726931AbfAVVx3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 16:53:16 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35808 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726832AbfAVVxQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 16:53:16 -0500
-Received: by mail-wr1-f66.google.com with SMTP id 96so109204wrb.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 13:53:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=OwmuQJG4J84U89kSAZNwKuCo+PTAbgAaqzPSmSChnAc=;
-        b=bpG16L4SOLYvpuRIPx8dRRKcd+z03KHJ2Pz4pISAmhhR3bcMFUcFDDeC+Svt5Ju4Bn
-         MrUAE8mqpheCD1h/RL7C+73N+9g+pTqGgpbs0zKmleo5jj5go1XvYwkOBzlKG6DXVeyl
-         e7uYpLpkP+EIdR7HYUrjV65FY2s404anwGQzQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OwmuQJG4J84U89kSAZNwKuCo+PTAbgAaqzPSmSChnAc=;
-        b=o9ilbknaT1FuqFSuUe2+9YJxsGabF1HKmDO6EEkDj3jBbxXmXQK8NcaSgdCcMxpV9O
-         KXsBbaZo8xyHy9yNHA3YWFPvL+2EMfLbq5qHJPwPu4T2KQJ8taMDcluo4D0lAQC+yGi4
-         n+w8k5Hadq25/3us/oc2j8N8Tbl15setoSAvs2Yece30b1Qu+r/804e1xO1UPL6jNxT4
-         YMSHjgHGR/KLaiFRJXXtjuudHuNQc+uy5Rg0QdXkPvGcWG7khSurKjSv2CKmjnQKPcP+
-         4nFF8KxKEr4qvyLbIHbyHEHAXhbvxUlUluZycm2e76FmwEz6Jr3B90HESUq85QnUT/yq
-         c2Cg==
-X-Gm-Message-State: AJcUukcfX/GsxLCWOMFQoBc2HqYAERBjLFXd+Z/wzulmD4NL49ryAHKC
-        s40VaLocGg0flvzsLlU3LrRIiA==
-X-Google-Smtp-Source: ALg8bN7Gzq9C4cKv6LWzGLOmVLD9nUDbjCr0xcb66f/IfNtht8pTXjzVPnI+NP96jvPIS2TVIFVXrQ==
-X-Received: by 2002:adf:ee89:: with SMTP id b9mr35964284wro.246.1548193993781;
-        Tue, 22 Jan 2019 13:53:13 -0800 (PST)
-Received: from localhost ([2620:0:1004:1100:cca9:fccc:8667:9bdc])
-        by smtp.gmail.com with ESMTPSA id c65sm54802277wma.24.2019.01.22.13.53.12
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 22 Jan 2019 13:53:13 -0800 (PST)
-Date:   Tue, 22 Jan 2019 16:53:11 -0500
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Viktor Rosendahl <Viktor.Rosendahl@bmw.de>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] preemptirq_delay_test: Add the burst feature and a
- sysfs trigger
-Message-ID: <20190122215311.GA200493@google.com>
-References: <1548074113-16599-1-git-send-email-Viktor.Rosendahl@bmw.de>
- <1548074113-16599-3-git-send-email-Viktor.Rosendahl@bmw.de>
+        Tue, 22 Jan 2019 16:53:29 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:33580 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726832AbfAVVx3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 16:53:29 -0500
+Received: from zn.tnic (p200300EC2BCBD90048119EF4C35B6C28.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:d900:4811:9ef4:c35b:6c28])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id AF0891EC06FB;
+        Tue, 22 Jan 2019 22:53:27 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1548194007;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=4e+Ea5IRFH+/ga0tTL4h2CD+dObJHkLC4yNrwwRN04I=;
+        b=ZhKs/0Wh0sIRHz+dUb7S7px9/WX5BgxfoUZRFEROt+zRTIvjZbkTAuNKHPOdWwYnxCQcVn
+        XVAwNn00/rxgOIwIZkej0TZGzxfTA3DJHQj5rzk76sjCqmvqEgfUVCzHjeCCWe8kE/IcBD
+        lF8Jp++Ul2LO01xEoDQR5MnU7KB9j2o=
+Date:   Tue, 22 Jan 2019 22:53:26 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Pu Wen <puwen@hygon.cn>
+Subject: Re: [PATCH 1/6] x86: mce: no need to check return value of
+ debugfs_create functions
+Message-ID: <20190122215326.GM26587@zn.tnic>
+References: <20190122143542.8816-1-gregkh@linuxfoundation.org>
+ <20190122143542.8816-2-gregkh@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1548074113-16599-3-git-send-email-Viktor.Rosendahl@bmw.de>
+In-Reply-To: <20190122143542.8816-2-gregkh@linuxfoundation.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Viktor,
-
-Could you CC me on the other patches as well, next time? I am quite
-interested and recently have worked on the latency tracer.
-
-Some comments below:
-
-On Mon, Jan 21, 2019 at 02:35:11PM +0200, Viktor Rosendahl wrote:
-> This burst feature enables the user to generate a burst of
-> preempt/irqsoff latencies. This makes it possible to test whether we
-> are able to detect latencies that systematically occur very close to
-> each other.
+On Tue, Jan 22, 2019 at 03:35:37PM +0100, Greg Kroah-Hartman wrote:
+> When calling debugfs functions, there is no need to ever check the
+> return value.  The function can work or not, but the code logic should
+> never do something different based on this.
 > 
-> In addition, there is a sysfs trigger, so that it's not necessary to
-> reload the module to repeat the test. The trigger will appear as
-> /sys/kernel/preemptirq_delay_test/trigger in sysfs.
-> 
-> Signed-off-by: Viktor Rosendahl <Viktor.Rosendahl@bmw.de>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: <x86@kernel.org>
+> Cc: Tony Luck <tony.luck@intel.com>
+> Cc: Vishal Verma <vishal.l.verma@intel.com>
+> Cc: Pu Wen <puwen@hygon.cn>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 > ---
->  kernel/trace/preemptirq_delay_test.c | 139 +++++++++++++++++++++++----
->  1 file changed, 120 insertions(+), 19 deletions(-)
+>  arch/x86/kernel/cpu/mce/core.c     | 15 ++++---------
+>  arch/x86/kernel/cpu/mce/inject.c   | 34 +++++-------------------------
+>  arch/x86/kernel/cpu/mce/severity.c | 14 +++---------
+>  3 files changed, 12 insertions(+), 51 deletions(-)
 > 
-> diff --git a/kernel/trace/preemptirq_delay_test.c b/kernel/trace/preemptirq_delay_test.c
-> index d8765c952fab..1fc3cdbdd293 100644
-> --- a/kernel/trace/preemptirq_delay_test.c
-> +++ b/kernel/trace/preemptirq_delay_test.c
-> @@ -3,6 +3,7 @@
->   * Preempt / IRQ disable delay thread to test latency tracers
->   *
->   * Copyright (C) 2018 Joel Fernandes (Google) <joel@joelfernandes.org>
-> + * Copyright (C) 2018 BMW Car IT GmbH
->   */
+> diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
+> index 672c7225cb1b..1f13f9032a8a 100644
+> --- a/arch/x86/kernel/cpu/mce/core.c
+> +++ b/arch/x86/kernel/cpu/mce/core.c
+> @@ -2457,22 +2457,15 @@ static int fake_panic_set(void *data, u64 val)
+>  DEFINE_SIMPLE_ATTRIBUTE(fake_panic_fops, fake_panic_get,
+>  			fake_panic_set, "%llu\n");
 >  
->  #include <linux/trace_clock.h>
-> @@ -10,18 +11,23 @@
->  #include <linux/interrupt.h>
->  #include <linux/irq.h>
->  #include <linux/kernel.h>
-> +#include <linux/kobject.h>
->  #include <linux/kthread.h>
->  #include <linux/module.h>
->  #include <linux/printk.h>
->  #include <linux/string.h>
-> +#include <linux/sysfs.h>
->  
->  static ulong delay = 100;
-> -static char test_mode[10] = "irq";
-> +static char test_mode[12] = "irq";
-> +static uint burst_size = 1;
->  
-> -module_param_named(delay, delay, ulong, S_IRUGO);
-> -module_param_string(test_mode, test_mode, 10, S_IRUGO);
-> -MODULE_PARM_DESC(delay, "Period in microseconds (100 uS default)");
-> -MODULE_PARM_DESC(test_mode, "Mode of the test such as preempt or irq (default irq)");
-> +module_param_named(delay, delay, ulong, 0444);
-> +module_param_string(test_mode, test_mode, 12, 0444);
-> +module_param_named(burst_size, burst_size, uint, 0444);
-> +MODULE_PARM_DESC(delay, "Period in microseconds (100 us default)");
-> +MODULE_PARM_DESC(test_mode, "Mode of the test such as preempt, irq, or alternate (default irq)");
-> +MODULE_PARM_DESC(burst_size, "The size of a burst (default 1)");
-
-Where are we bounds checking the burst_size here? It seems like a high
-burst_size can overflow your array of functions.
-
->  
->  static void busy_wait(ulong time)
+> -static int __init mcheck_debugfs_init(void)
+> +static void __init mcheck_debugfs_init(void)
 >  {
-> @@ -34,37 +40,132 @@ static void busy_wait(ulong time)
->  	} while ((end - start) < (time * 1000));
->  }
+> -	struct dentry *dmce, *ffake_panic;
+> +	struct dentry *dmce;
 >  
-> -static int preemptirq_delay_run(void *data)
-> +static __always_inline void irqoff_test(void)
+>  	dmce = mce_get_debugfs_dir();
+> -	if (!dmce)
+> -		return -ENOMEM;
+> -	ffake_panic = debugfs_create_file("fake_panic", 0444, dmce, NULL,
+> -					  &fake_panic_fops);
+> -	if (!ffake_panic)
+> -		return -ENOMEM;
+> -
+> -	return 0;
+> +	debugfs_create_file("fake_panic", 0444, dmce, NULL, &fake_panic_fops);
+
+Right, for that I don't care if it fails or not...
+
+>  #else
+> -static int __init mcheck_debugfs_init(void) { return -EINVAL; }
+> +static void __init mcheck_debugfs_init(void) { }
+>  #endif
+>  
+>  DEFINE_STATIC_KEY_FALSE(mcsafe_key);
+> diff --git a/arch/x86/kernel/cpu/mce/inject.c b/arch/x86/kernel/cpu/mce/inject.c
+> index 8492ef7d9015..0f5b6c57ffde 100644
+> --- a/arch/x86/kernel/cpu/mce/inject.c
+> +++ b/arch/x86/kernel/cpu/mce/inject.c
+> @@ -648,7 +648,6 @@ static const struct file_operations readme_fops = {
+>  
+>  static struct dfs_node {
+>  	char *name;
+> -	struct dentry *d;
+>  	const struct file_operations *fops;
+>  	umode_t perm;
+>  } dfs_fls[] = {
+> @@ -662,7 +661,7 @@ static struct dfs_node {
+>  	{ .name = "README",	.fops = &readme_fops, .perm = S_IRUSR | S_IRGRP | S_IROTH },
+>  };
+>  
+> -static int __init debugfs_init(void)
+> +static void __init debugfs_init(void)
 >  {
->  	unsigned long flags;
-> +	local_irq_save(flags);
-> +	busy_wait(delay);
-> +	local_irq_restore(flags);
-> +}
-> +
-> +static __always_inline void preemptoff_test(void)
-> +{
-> +	preempt_disable();
-> +	busy_wait(delay);
-> +	preempt_enable();
-> +}
+>  	unsigned int i;
+>  	u64 cap;
+> @@ -671,30 +670,11 @@ static int __init debugfs_init(void)
+>  	n_banks = cap & MCG_BANKCNT_MASK;
 >  
-> -	if (!strcmp(test_mode, "irq")) {
-> -		local_irq_save(flags);
-> -		busy_wait(delay);
-> -		local_irq_restore(flags);
-> -	} else if (!strcmp(test_mode, "preempt")) {
-> -		preempt_disable();
-> -		busy_wait(delay);
-> -		preempt_enable();
-> +static void execute_preemptirqtest(int idx)
-> +{
-> +	if (!strcmp(test_mode, "irq"))
-> +		irqoff_test();
-> +	else if (!strcmp(test_mode, "preempt"))
-> +		preemptoff_test();
-> +	else if (!strcmp(test_mode, "alternate")) {
-> +		if (idx % 2 == 0)
-> +			irqoff_test();
-> +		else
-> +			preemptoff_test();
->  	}
-> +}
-> +
-> +#define DECLARE_TESTFN(POSTFIX)				\
-> +	static void preemptirqtest_##POSTFIX(int idx)	\
-> +	{						\
-> +		execute_preemptirqtest(idx);		\
-> +	}						\
-> +
-> +DECLARE_TESTFN(0)
-> +DECLARE_TESTFN(1)
-> +DECLARE_TESTFN(2)
-> +DECLARE_TESTFN(3)
-> +DECLARE_TESTFN(4)
-> +DECLARE_TESTFN(5)
-> +DECLARE_TESTFN(6)
-> +DECLARE_TESTFN(7)
-> +DECLARE_TESTFN(8)
-> +DECLARE_TESTFN(9)
-
-You really only need 2 functions here, since the odd and even suffixed
-functions are identical.
-
-> +static void (*testfuncs[])(int)  = {
-> +	preemptirqtest_0,
-> +	preemptirqtest_1,
-> +	preemptirqtest_2,
-> +	preemptirqtest_3,
-> +	preemptirqtest_4,
-> +	preemptirqtest_5,
-> +	preemptirqtest_6,
-> +	preemptirqtest_7,
-> +	preemptirqtest_8,
-> +	preemptirqtest_9,
-> +};
-
-And then just have an array of 2 functions. Or nuke the array.
-
-> +#define NR_TEST_FUNCS ARRAY_SIZE(testfuncs)
-> +
-> +static int preemptirq_delay_run(void *data)
-> +{
-> +
-> +	int i;
-> +
-> +	for (i = 0; i < burst_size; i++)
-> +		(testfuncs[i % NR_TEST_FUNCS])(i);
->  	return 0;
->  }
+>  	dfs_inj = debugfs_create_dir("mce-inject", NULL);
+> -	if (!dfs_inj)
+> -		return -EINVAL;
+> -
+> -	for (i = 0; i < ARRAY_SIZE(dfs_fls); i++) {
+> -		dfs_fls[i].d = debugfs_create_file(dfs_fls[i].name,
+> -						    dfs_fls[i].perm,
+> -						    dfs_inj,
+> -						    &i_mce,
+> -						    dfs_fls[i].fops);
+> -
+> -		if (!dfs_fls[i].d)
+> -			goto err_dfs_add;
+> -	}
+> -
+> -	return 0;
 >  
-> -static int __init preemptirq_delay_init(void)
-> +static struct task_struct *preemptirq_start_test(void)
->  {
->  	char task_name[50];
-> -	struct task_struct *test_task;
->  
->  	snprintf(task_name, sizeof(task_name), "%s_test", test_mode);
-> +	return kthread_run(preemptirq_delay_run, NULL, task_name);
-> +}
-> +
-> +
-> +static ssize_t trigger_store(struct kobject *kobj, struct kobj_attribute *attr,
-> +			 const char *buf, size_t count)
-> +{
-> +	preemptirq_start_test();
-> +	return count;
-> +}
+> -err_dfs_add:
+> -	while (i-- > 0)
+> -		debugfs_remove(dfs_fls[i].d);
+> +	for (i = 0; i < ARRAY_SIZE(dfs_fls); i++)
+> +		debugfs_create_file(dfs_fls[i].name, dfs_fls[i].perm, dfs_inj,
+> +				    &i_mce, dfs_fls[i].fops);
 
-I honestly feel a sysfs trigger file is pointless. Why can't the module be
-reloaded? Note also that module parameters can be changed after the module
-has been loaded. Perhaps that can be used as a trigger? So if the test_mode
-is changed, then the test is re-run.
+... but that matters: if any of those debugfs files cannot be created
+for whatever reason, that injector module is useless because I can't
+inject MCEs properly.
 
-However, if Steve prefers the sysfs trigger file, then I am Ok with that.
+I mean, I like the simplification but ...
 
-thanks,
+-- 
+Regards/Gruss,
+    Boris.
 
- - Joel
-
+Good mailing practices for 400: avoid top-posting and trim the reply.
