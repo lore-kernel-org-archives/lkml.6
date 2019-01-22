@@ -2,79 +2,81 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E88EEC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:25:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3034DC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:25:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B666621019
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:25:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uBoJaR1Y"
+	by mail.kernel.org (Postfix) with ESMTP id F33D721019
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:25:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728504AbfAVNZA (ORCPT
+        id S1728466AbfAVNZx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 08:25:00 -0500
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:46030 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728354AbfAVNY7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 08:24:59 -0500
-Received: by mail-yw1-f66.google.com with SMTP id d190so9347983ywd.12;
-        Tue, 22 Jan 2019 05:24:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=RdIJ6TN6RQjyee0EPj8EQ0qkbwpPQH+q7CWrQNKOLRQ=;
-        b=uBoJaR1YCt5paHLFcOQmDRasEzkiZiaLXJWT3FtYXSP4HOuEAVwZnWHcA3SofSrQQQ
-         7gQ6I5PdaKAUmmwdmZ20Brx74zSda4TouGtJKyW9spQAfoSTWREVzVy1SYrDYQ/383YQ
-         pTDAt0QpX6aWKNsShlICLtJQM15K6N36mrJoFQMvu0SCfYl6cuQmRrloiCpcxgsWfdYx
-         O0ckuE53EcJb5W39ec1pRFrYbI5MJFza6Sw9EsjIax5IYIIafLH0ofaauuZ4OMBTQiH8
-         ngXB0UGuVgx+ui/QHnRy05YFER81nLftenk3a3L/C3IpBfXaoGh6mRxZahYdXmjaC1El
-         zaqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=RdIJ6TN6RQjyee0EPj8EQ0qkbwpPQH+q7CWrQNKOLRQ=;
-        b=cxSSBeyrf2JypzmZH4gfK99SthGW13crzx8r1idvjs51DS7KY72LJ7aoPv6OIr6ISv
-         tv16R1p/pY1mPUH2QKCj2joJS9NwIgLqHSAdi81reCB0Rtzo8Al7/gvfZId5NhokxQXJ
-         IRqdo7byXnAX//gt+ZqExAMWfCs7/RHbuU5RKbdTytoE4oW7CQVfJrRLtd88BaJttEcI
-         OUK6JbWTRd1IOuf+S+c3JOVNADkNEZHePVm2SC0ohQVBgQIDTuJZKo8Nm8lNz4W8dRN3
-         NC5J2xb1dlGHifCH47xKpPr+sCXyItnPcdElYDSbe9OfYhir4VBGOrb8xJFK8EPf+i9N
-         +00Q==
-X-Gm-Message-State: AJcUukdRyh3FWG+gRx6l1PGLkYGz4nLCec+dPqq5w/dNTL+wadGyECv/
-        G8u4Gi6ciLM5J/brDy7/Qm02GgyUm8uLsED6nxDmk/ha
-X-Google-Smtp-Source: ALg8bN6+B+hkgpx6qAN8b6JsKTZkqJw3x+8Dg23tsBzhtCKqZEx3j4zjp+nYIOrhqr4a16i4CY78npKbsflTx1Qt/Nw=
-X-Received: by 2002:a0d:db97:: with SMTP id d145mr32269454ywe.487.1548163498220;
- Tue, 22 Jan 2019 05:24:58 -0800 (PST)
+        Tue, 22 Jan 2019 08:25:53 -0500
+Received: from 8bytes.org ([81.169.241.247]:58826 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727936AbfAVNZx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 08:25:53 -0500
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 1C2AE53D; Tue, 22 Jan 2019 14:25:52 +0100 (CET)
+Date:   Tue, 22 Jan 2019 14:25:51 +0100
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        Corentin Labbe <clabbe@baylibre.com>, m.szyprowski@samsung.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dma-debug: add dumping facility via debugfs
+Message-ID: <20190122132551.GC32526@8bytes.org>
+References: <1547646265-9414-1-git-send-email-clabbe@baylibre.com>
+ <2f43688f-9c08-a9c4-6175-caa3d2e40261@arm.com>
+ <20190118113543.GA9481@lst.de>
 MIME-Version: 1.0
-From:   Fuqian Huang <huangfq.daxian@gmail.com>
-Date:   Tue, 22 Jan 2019 21:25:33 +0800
-Message-ID: <CABXRUiRP8fHvGkO3T9AOFV=prVUACiCm2frbAEnG2v6UhrTw0A@mail.gmail.com>
-Subject: Potential info leak: Kernel pointer leak?
-To:     linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190118113543.GA9481@lst.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, recently I came across some code and it seems to be able to leak
-kernel address?
-Is the following code cause info leak in the Linux kernel?
-The callback function address is printed to debugfs.
-The local user could know the kernel object address, and is able to
-bypass kASLR.
-linux-4.14.90
-drivers/dma/qcom/hidma_dbg.c:46
-function - hidma_ll_chstats
+On Fri, Jan 18, 2019 at 12:35:43PM +0100, Christoph Hellwig wrote:
+> On Wed, Jan 16, 2019 at 06:10:13PM +0000, Robin Murphy wrote:
+> > It's a shame that this is pretty much a duplication of 
+> > debug_dma_dump_mappings(), but there seems no straightforward way to define 
+> > one in terms of the other :/
+> 
+> We could always play some macro magic, but I think that is worse than
+> duplicating a little bit of functionality.
 
-The hidma_ll_chstats function in drivers/dma/qcom/hidma_dbg.c in the
-Linux kernel 4.14.90 allows local users to obtain sensitive address
-information by reading "callback=" lines in a debugfs file.
+I havn't checked in detail, can seq_buf be used somehow to write a
+function that fits both cases?
 
-Similar to CVE-2018-7754
+> Btw, the dev argument to debug_dma_dump_mappings is always NULL and
+> could be removed..
+
+This function was also written as a debug-helper for driver developers.
+As such it might not make it into the final driver, but the developer
+might want to use it to dump the mappings for her device only. So I'd
+like to keep the parameter, even when it is always NULL for in-kernel
+uses.
+
+> > (although given that we'd rather not have that weird external interface 
+> > anyway, maybe "now you can use debugfs instead" might be justification 
+> > enough for cleaning it up...)
+> 
+> One argument against that is the system might be in a shape where you
+> can't easily read a file when it is in that shape.  The argument for
+> that is that in many systems the full list of mappings might overwhelm
+> the kernel log.
+
+For driver developers a file is easier to use, but in case of an
+unusable system one can at least easily read out parts of the
+dma-mappings from a crash-dump if it is in the kernel-log. So I think
+it makes sense to have both.
+
+Regards,
+
+	Joerg
