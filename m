@@ -2,96 +2,99 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E709CC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 21:17:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF6AEC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 21:18:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B57E420870
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 21:17:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="b9RUv9+X"
+	by mail.kernel.org (Postfix) with ESMTP id 8A32520870
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 21:18:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726627AbfAVVRV (ORCPT
+        id S1726821AbfAVVS3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 16:17:21 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:37686 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726208AbfAVVRU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 16:17:20 -0500
-Received: by mail-oi1-f196.google.com with SMTP id y23so18691037oia.4
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 13:17:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=w7mtXbsWp8Z+SG/+jvBYOCM7iks1Q7na3wi37/monz8=;
-        b=b9RUv9+XW/D2QxJEr8BcaEii+bD5yXPYG85nvwB8C3lDcsnTDbLHcNItGM+dSDdMXi
-         B69/XpSCQ3JRoZiit5HRbwHmMipzYhlCI+q18/mYV0FrqnVXLVt75LMGx8DNyFaT9MCL
-         yxMCOaLCatDK5LqhzQBxiBnQ4+YRWkcN4PsuY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=w7mtXbsWp8Z+SG/+jvBYOCM7iks1Q7na3wi37/monz8=;
-        b=WFqonaCIPUCwi63kCmFvzgw10PCUHdv18BUQO8d+ZSNDjDzV0BWkBpzmDfV21r5b1i
-         GmmNclDhMsSEU4OJUZ4EkDFpi2ToSkbnZjWdS7nbll3xgp5RIoqPybevDYkALl9wOsh6
-         5zW80QTP0Ross35Z0IOMpbXI8buRqEf/E657N4p4Q4dDA3wPHvp8+O2ro78ZduBhe6ud
-         gLh6/dYzxVsvkIwA104Jb/Iqra2U5ahwcQ97crmevGZ0D1EMNLtHxAGiuqxOQjzM+8GN
-         0NAQlE8EoWjOnTmh0iTL5qDjAGoQ/Vfo5z2nXxhgbEP+OmNWUcL3o4FsxsMcO7c5+Hcb
-         wT6Q==
-X-Gm-Message-State: AJcUukcbewNHyKIv0tOR1QeWdx6qjjMX0MDpzAoeIghy9PewJSleMF1/
-        ttFey36GH1r6TLF9g2sw5B8sqriHEYw=
-X-Google-Smtp-Source: ALg8bN42srJacRaaJABBUXM1A573YZF1C2i2x+HqCmdGVRtA+FVRlJIqPie6W2aVqt0iz0w3hcpQyg==
-X-Received: by 2002:aca:eccb:: with SMTP id k194mr8904426oih.104.1548191840015;
-        Tue, 22 Jan 2019 13:17:20 -0800 (PST)
-Received: from localhost (107-207-74-175.lightspeed.austtx.sbcglobal.net. [107.207.74.175])
-        by smtp.gmail.com with ESMTPSA id v3sm11595446oib.57.2019.01.22.13.17.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Jan 2019 13:17:19 -0800 (PST)
-Date:   Tue, 22 Jan 2019 15:17:15 -0600
-From:   Andy Gross <andy.gross@linaro.org>
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        marc.w.gonzalez@free.fr,
-        Bjorn Andersson <bjorn.andersson@linaro.org>, kvalo@adurom.com,
-        joe@perches.com
-Subject: Re: [PATCH v3 1/1] MAINTAINERS: update list of qcom drivers
-Message-ID: <20190122211715.GC30582@hector.attlocal.net>
-References: <cover.1547494994.git.amit.kucheria@linaro.org>
- <3f8a0c7a8701446abe02f1e35d412d72d9c1f0f3.1547494994.git.amit.kucheria@linaro.org>
- <CAHLCerMLYec-jf151xPbNB0RxT+wvJ87nGY3_4jwS7rQwt+hCg@mail.gmail.com>
+        Tue, 22 Jan 2019 16:18:29 -0500
+Received: from mleia.com ([178.79.152.223]:58436 "EHLO mail.mleia.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726143AbfAVVS2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 16:18:28 -0500
+Received: from mail.mleia.com (localhost [127.0.0.1])
+        by mail.mleia.com (Postfix) with ESMTP id 329A543803A;
+        Tue, 22 Jan 2019 21:18:27 +0000 (GMT)
+From:   Vladimir Zapolskiy <vz@mleia.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Laurent Meunier <laurent.meunier@st.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Russell King <linux@arm.linux.org.uk>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>
+Subject: [PATCH v2 1/2] pinctrl: remove pinctrl/machine.h inclusion from pinctrl/pinconf.h
+Date:   Tue, 22 Jan 2019 23:18:21 +0200
+Message-Id: <20190122211822.7016-2-vz@mleia.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190122211822.7016-1-vz@mleia.com>
+References: <20190122211822.7016-1-vz@mleia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHLCerMLYec-jf151xPbNB0RxT+wvJ87nGY3_4jwS7rQwt+hCg@mail.gmail.com>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+Content-Transfer-Encoding: 8bit
+X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-49551924 
+X-CRM114-CacheID: sfid-20190122_211827_226530_5F9F1459 
+X-CRM114-Status: GOOD (  12.94  )
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 01:58:41PM +0530, Amit Kucheria wrote:
-> On Tue, Jan 15, 2019 at 1:16 AM Amit Kucheria <amit.kucheria@linaro.org> wrote:
-> >
-> > Several drivers didn't have a specific maintainer (other than the
-> > subsystem maintainer). Add some generic regex patterns to capture most
-> > qcom drivers in the list of supported drivers. For the rest, add
-> > explicit filenames.
-> >
-> > Sort the entries, while we're at it.
-> >
-> > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> 
-> Hi Andy,
-> 
-> Do you need another revision of this or is this good enough?
+The change adds explicit inclusion of linux/pinctrl/machine.h header
+to the only needed pinctrl-madera-core.c file, and therefore inclusion
+of pinctrl/machine.h header from pinctrl/pinconf.h can be removed.
 
-This looks ok for now.
+The change is preparatory to a follow-up reversal of commit f07512e615dd
+("pinctrl/pinconfig: add debug interface").
 
-Andy
+Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+Cc: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: Richard Fitzgerald <rf@opensource.cirrus.com>
+---
+Changes from v1 to v2:
+* new change to mitigate a compile time warning caused by a removal of
+  implicit header inclusion, the issue was reported against v1 change.
+
+This change might be percepted as a bit awkward, but I leave a room to
+extend it to other drivers, if it becomes needed. However apparently
+only pinctrl/cirrus/pinctrl-madera-core.c misses explicit inclusion of
+linux/pinctrl/machine.h header.
+
+ drivers/pinctrl/cirrus/pinctrl-madera-core.c | 1 +
+ include/linux/pinctrl/pinconf.h              | 2 --
+ 2 files changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/pinctrl/cirrus/pinctrl-madera-core.c b/drivers/pinctrl/cirrus/pinctrl-madera-core.c
+index a5dda832024a..7c9694593f79 100644
+--- a/drivers/pinctrl/cirrus/pinctrl-madera-core.c
++++ b/drivers/pinctrl/cirrus/pinctrl-madera-core.c
+@@ -14,6 +14,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ #include <linux/slab.h>
++#include <linux/pinctrl/machine.h>
+ #include <linux/pinctrl/pinctrl.h>
+ #include <linux/pinctrl/pinmux.h>
+ #include <linux/pinctrl/pinconf.h>
+diff --git a/include/linux/pinctrl/pinconf.h b/include/linux/pinctrl/pinconf.h
+index 8dd85d302b90..109468d9d849 100644
+--- a/include/linux/pinctrl/pinconf.h
++++ b/include/linux/pinctrl/pinconf.h
+@@ -14,8 +14,6 @@
+ 
+ #ifdef CONFIG_PINCONF
+ 
+-#include <linux/pinctrl/machine.h>
+-
+ struct pinctrl_dev;
+ struct seq_file;
+ 
+-- 
+2.20.1
+
