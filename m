@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD6D4C282C5
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:42:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FDB5C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:42:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A81982085A
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:42:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2766320823
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:42:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729438AbfAVQkI (ORCPT
+        id S1729037AbfAVQmJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 11:40:08 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:58498 "EHLO huawei.com"
+        Tue, 22 Jan 2019 11:42:09 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:58500 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728798AbfAVQkI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729103AbfAVQkI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 22 Jan 2019 11:40:08 -0500
 Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 12C772E77810A95C6FFB;
+        by Forcepoint Email with ESMTP id 0E6A6FF94CE67D49A913;
         Wed, 23 Jan 2019 00:40:05 +0800 (CST)
 Received: from SZA150611058.china.huawei.com (10.45.54.154) by
  DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.408.0; Wed, 23 Jan 2019 00:39:56 +0800
+ 14.3.408.0; Wed, 23 Jan 2019 00:39:57 +0800
 From:   Huazhong Tan <tanhuazhong@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <huangdaode@hisilicon.com>, <yisen.zhuang@huawei.com>,
         <salil.mehta@huawei.com>, <linuxarm@huawei.com>,
-        Jian Shen <shenjian15@huawei.com>,
+        Yunsheng Lin <linyunsheng@huawei.com>,
         Peng Li <lipeng321@huawei.com>,
         Huazhong Tan <tanhuazhong@huawei.com>
-Subject: [PATCH net-next 03/12] net: hns3: refactor the statistics updating for netdev
-Date:   Wed, 23 Jan 2019 00:39:31 +0800
-Message-ID: <20190122163940.7876-4-tanhuazhong@huawei.com>
+Subject: [PATCH net-next 05/12] net: hns3: fix for shaper not setting when TC num changes
+Date:   Wed, 23 Jan 2019 00:39:33 +0800
+Message-ID: <20190122163940.7876-6-tanhuazhong@huawei.com>
 X-Mailer: git-send-email 2.20.1.windows.1
 In-Reply-To: <20190122163940.7876-1-tanhuazhong@huawei.com>
 References: <20190122163940.7876-1-tanhuazhong@huawei.com>
@@ -49,139 +49,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jian Shen <shenjian15@huawei.com>
+From: Yunsheng Lin <linyunsheng@huawei.com>
 
-In origin codes, there are some statistics item are got from mac, which
-also include the packets statistics of VF. It is unreasonable. This
-patch fixes it by counting them in the rx/tx processing flow.
+Shaper setting does not change currently, when TC num changes,
+which may cause shaper parameter not setting problem.
 
-Signed-off-by: Jian Shen <shenjian15@huawei.com>
+This patch fixes it by setting the shaper parameter when TC num
+changes.
+
+Fixes: cacde272dd00 ("net: hns3: Add hclge_dcb module for the support of DCB feature")
+Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
 ---
- .../net/ethernet/hisilicon/hns3/hns3_enet.c   | 27 ++++++++++++++-----
- .../hisilicon/hns3/hns3pf/hclge_main.c        | 25 -----------------
- 2 files changed, 20 insertions(+), 32 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c | 6 +-----
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c  | 6 +++---
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h  | 3 +--
+ 3 files changed, 5 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index f1ab2e4ca49e..2b4199fe0e57 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -1399,7 +1399,12 @@ static void hns3_nic_get_stats64(struct net_device *netdev,
- 	int queue_num = priv->ae_handle->kinfo.num_tqps;
- 	struct hnae3_handle *handle = priv->ae_handle;
- 	struct hns3_enet_ring *ring;
-+	u64 rx_length_errors = 0;
-+	u64 rx_crc_errors = 0;
-+	u64 rx_multicast = 0;
- 	unsigned int start;
-+	u64 tx_errors = 0;
-+	u64 rx_errors = 0;
- 	unsigned int idx;
- 	u64 tx_bytes = 0;
- 	u64 rx_bytes = 0;
-@@ -1422,6 +1427,8 @@ static void hns3_nic_get_stats64(struct net_device *netdev,
- 			tx_pkts += ring->stats.tx_pkts;
- 			tx_drop += ring->stats.tx_busy;
- 			tx_drop += ring->stats.sw_err_cnt;
-+			tx_errors += ring->stats.tx_busy;
-+			tx_errors += ring->stats.sw_err_cnt;
- 		} while (u64_stats_fetch_retry_irq(&ring->syncp, start));
- 
- 		/* fetch the rx stats */
-@@ -1433,6 +1440,12 @@ static void hns3_nic_get_stats64(struct net_device *netdev,
- 			rx_drop += ring->stats.non_vld_descs;
- 			rx_drop += ring->stats.err_pkt_len;
- 			rx_drop += ring->stats.l2_err;
-+			rx_errors += ring->stats.non_vld_descs;
-+			rx_errors += ring->stats.l2_err;
-+			rx_crc_errors += ring->stats.l2_err;
-+			rx_crc_errors += ring->stats.l3l4_csum_err;
-+			rx_multicast += ring->stats.rx_multicast;
-+			rx_length_errors += ring->stats.err_pkt_len;
- 		} while (u64_stats_fetch_retry_irq(&ring->syncp, start));
- 	}
- 
-@@ -1441,15 +1454,15 @@ static void hns3_nic_get_stats64(struct net_device *netdev,
- 	stats->rx_bytes = rx_bytes;
- 	stats->rx_packets = rx_pkts;
- 
--	stats->rx_errors = netdev->stats.rx_errors;
--	stats->multicast = netdev->stats.multicast;
--	stats->rx_length_errors = netdev->stats.rx_length_errors;
--	stats->rx_crc_errors = netdev->stats.rx_crc_errors;
-+	stats->rx_errors = rx_errors;
-+	stats->multicast = rx_multicast;
-+	stats->rx_length_errors = rx_length_errors;
-+	stats->rx_crc_errors = rx_crc_errors;
- 	stats->rx_missed_errors = netdev->stats.rx_missed_errors;
- 
--	stats->tx_errors = netdev->stats.tx_errors;
--	stats->rx_dropped = rx_drop + netdev->stats.rx_dropped;
--	stats->tx_dropped = tx_drop + netdev->stats.tx_dropped;
-+	stats->tx_errors = tx_errors;
-+	stats->rx_dropped = rx_drop;
-+	stats->tx_dropped = tx_drop;
- 	stats->collisions = netdev->stats.collisions;
- 	stats->rx_over_errors = netdev->stats.rx_over_errors;
- 	stats->rx_frame_errors = netdev->stats.rx_frame_errors;
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 35fb0c54b986..bf0931c6764f 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -461,26 +461,6 @@ static u8 *hclge_comm_get_strings(u32 stringset,
- 	return (u8 *)buff;
- }
- 
--static void hclge_update_netstat(struct hclge_hw_stats *hw_stats,
--				 struct net_device_stats *net_stats)
--{
--	net_stats->tx_dropped = 0;
--	net_stats->rx_errors = hw_stats->mac_stats.mac_rx_oversize_pkt_num;
--	net_stats->rx_errors += hw_stats->mac_stats.mac_rx_undersize_pkt_num;
--	net_stats->rx_errors += hw_stats->mac_stats.mac_rx_fcs_err_pkt_num;
--
--	net_stats->multicast = hw_stats->mac_stats.mac_tx_multi_pkt_num;
--	net_stats->multicast += hw_stats->mac_stats.mac_rx_multi_pkt_num;
--
--	net_stats->rx_crc_errors = hw_stats->mac_stats.mac_rx_fcs_err_pkt_num;
--	net_stats->rx_length_errors =
--		hw_stats->mac_stats.mac_rx_undersize_pkt_num;
--	net_stats->rx_length_errors +=
--		hw_stats->mac_stats.mac_rx_oversize_pkt_num;
--	net_stats->rx_over_errors =
--		hw_stats->mac_stats.mac_rx_oversize_pkt_num;
--}
--
- static void hclge_update_stats_for_all(struct hclge_dev *hdev)
- {
- 	struct hnae3_handle *handle;
-@@ -500,8 +480,6 @@ static void hclge_update_stats_for_all(struct hclge_dev *hdev)
- 	if (status)
- 		dev_err(&hdev->pdev->dev,
- 			"Update MAC stats fail, status = %d.\n", status);
--
--	hclge_update_netstat(&hdev->hw_stats, &handle->kinfo.netdev->stats);
- }
- 
- static void hclge_update_stats(struct hnae3_handle *handle,
-@@ -509,7 +487,6 @@ static void hclge_update_stats(struct hnae3_handle *handle,
- {
- 	struct hclge_vport *vport = hclge_get_vport(handle);
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
+index 4ec0b9cd15ae..5f7ac63707b8 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
+@@ -162,11 +162,7 @@ static int hclge_map_update(struct hnae3_handle *h)
  	struct hclge_dev *hdev = vport->back;
--	struct hclge_hw_stats *hw_stats = &hdev->hw_stats;
- 	int status;
+ 	int ret;
  
- 	if (test_and_set_bit(HCLGE_STATE_STATISTICS_UPDATING, &hdev->state))
-@@ -527,8 +504,6 @@ static void hclge_update_stats(struct hnae3_handle *handle,
- 			"Update TQPS stats fail, status = %d.\n",
- 			status);
- 
--	hclge_update_netstat(hw_stats, net_stats);
+-	ret = hclge_tm_map_cfg(hdev);
+-	if (ret)
+-		return ret;
 -
- 	clear_bit(HCLGE_STATE_STATISTICS_UPDATING, &hdev->state);
+-	ret = hclge_tm_schd_mode_hw(hdev);
++	ret = hclge_tm_schd_setup_hw(hdev);
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
+index fb8596a3e5e4..d057c9f03175 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
+@@ -1005,7 +1005,7 @@ static int hclge_tm_pri_dwrr_cfg(struct hclge_dev *hdev)
+ 	return 0;
  }
  
+-int hclge_tm_map_cfg(struct hclge_dev *hdev)
++static int hclge_tm_map_cfg(struct hclge_dev *hdev)
+ {
+ 	int ret;
+ 
+@@ -1120,7 +1120,7 @@ static int hclge_tm_lvl34_schd_mode_cfg(struct hclge_dev *hdev)
+ 	return 0;
+ }
+ 
+-int hclge_tm_schd_mode_hw(struct hclge_dev *hdev)
++static int hclge_tm_schd_mode_hw(struct hclge_dev *hdev)
+ {
+ 	int ret;
+ 
+@@ -1131,7 +1131,7 @@ int hclge_tm_schd_mode_hw(struct hclge_dev *hdev)
+ 	return hclge_tm_lvl34_schd_mode_cfg(hdev);
+ }
+ 
+-static int hclge_tm_schd_setup_hw(struct hclge_dev *hdev)
++int hclge_tm_schd_setup_hw(struct hclge_dev *hdev)
+ {
+ 	int ret;
+ 
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
+index 898163c4d400..ef3f93b70c22 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
+@@ -144,11 +144,10 @@ struct hclge_port_shapping_cmd {
+ int hclge_tm_schd_init(struct hclge_dev *hdev);
+ int hclge_tm_vport_map_update(struct hclge_dev *hdev);
+ int hclge_pause_setup_hw(struct hclge_dev *hdev);
+-int hclge_tm_schd_mode_hw(struct hclge_dev *hdev);
++int hclge_tm_schd_setup_hw(struct hclge_dev *hdev);
+ void hclge_tm_prio_tc_info_update(struct hclge_dev *hdev, u8 *prio_tc);
+ void hclge_tm_schd_info_update(struct hclge_dev *hdev, u8 num_tc);
+ int hclge_tm_dwrr_cfg(struct hclge_dev *hdev);
+-int hclge_tm_map_cfg(struct hclge_dev *hdev);
+ int hclge_tm_init_hw(struct hclge_dev *hdev);
+ int hclge_mac_pause_en_cfg(struct hclge_dev *hdev, bool tx, bool rx);
+ int hclge_pause_addr_cfg(struct hclge_dev *hdev, const u8 *mac_addr);
 -- 
 2.20.1
 
