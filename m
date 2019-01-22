@@ -7,61 +7,62 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80F65C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 06:34:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB8D4C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 06:34:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EC5321721
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 06:34:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C6FA21721
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 06:34:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="JLl4MQTk";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Dkyc32QO"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Q+kZdPXC";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MPaax8FU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727222AbfAVGer (ORCPT
+        id S1727263AbfAVGe4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 01:34:47 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:39872 "EHLO
+        Tue, 22 Jan 2019 01:34:56 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:40082 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726174AbfAVGeq (ORCPT
+        with ESMTP id S1726174AbfAVGez (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 01:34:46 -0500
+        Tue, 22 Jan 2019 01:34:55 -0500
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 6802B6098A; Tue, 22 Jan 2019 06:34:38 +0000 (UTC)
+        id 952AD609C2; Tue, 22 Jan 2019 06:34:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548138884;
-        bh=t+7VFsYr21LVGhDoaiu71aEFa4FmA54Z0rNp7gXcbag=;
+        s=default; t=1548138894;
+        bh=S8aScYlnfgWymwIvByECwepxe4iUwcdgQAKgKCgjJQM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JLl4MQTk3A2hxFYrMUMoECnaUQPMbMKbVawcMUsknj94Uug2lD1Iw6hTRwHg0V+93
-         mwKNBqdJg8+3PHqxQzQFR5/Am69Z8nFfmpIeY2GJKyArti6rcVPt8REZv8qdMa/8SY
-         F7YuGfa+ryUbtPHp8bJpkEUxcizBUJzv4Ucj+AUg=
+        b=Q+kZdPXCylPwKWxyBmQgEOu7DSiV9xGIWlwe/xydB5CsdS+V71hlzvhwNIztwNm+i
+         c22LfCJSUgWTIVvgrECBALCpG0jaqGeO8epOjubqVY31677nEDtN8c3j+ZWTlUFXJi
+         8+ZbVayT3kcNv+3hWsMDCHD8NARPkB06YPeamrhs=
 Received: from alokc-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: alokc@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id BE6E76095F;
-        Tue, 22 Jan 2019 06:34:32 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 417C260989;
+        Tue, 22 Jan 2019 06:34:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548138877;
-        bh=t+7VFsYr21LVGhDoaiu71aEFa4FmA54Z0rNp7gXcbag=;
+        s=default; t=1548138883;
+        bh=S8aScYlnfgWymwIvByECwepxe4iUwcdgQAKgKCgjJQM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Dkyc32QO63cJ9YXD7K4kbfLq8G6r4jmH2qSsiMXhF/Wd83Z2UFc1MV1N5vcJ6mYnT
-         n8quJGFPCLUTJjspFfnkkQqB3lpvoKyVXLDgBSubYE97uUeVcnbxb4jyfIqnB+n6NE
-         AgX5drNrcMcxiKpLMwEwQq8QbjLaS5yaCkRDMtao=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BE6E76095F
+        b=MPaax8FUMn27QMcJbJOjv4irw6jE3VYadpeV6BWQd2KGQ2GBOf5fLd9VpEOvmJMUQ
+         3sbRV0rHFGzStxU2bS8Dq1tSAoYMKaiUU3YaDoGTVX9ZKUIxqgW8mpCbIeTi+qIm6F
+         G06bSaukc9ERYKAS07mJNRC3CgKPg29CkPbks154=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 417C260989
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=alokc@codeaurora.org
 From:   Alok Chauhan <alokc@codeaurora.org>
 To:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
         linux-spi@vger.kernel.org, linux-serial@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Cc:     andy.gross@linaro.org, david.brown@linaro.org,
-        georgi.djakov@linaro.org, dianders@chromium.org,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     georgi.djakov@linaro.org, dianders@chromium.org,
         swboyd@chromium.org, bjorn.andersson@linaro.org,
         Alok Chauhan <alokc@codeaurora.org>
-Subject: [PATCH 5/6] tty: serial: qcom_geni_serial: Add interconnect support
-Date:   Tue, 22 Jan 2019 12:03:35 +0530
-Message-Id: <1548138816-1149-6-git-send-email-alokc@codeaurora.org>
+Subject: [PATCH 6/6] arm64: dts: sdm845: Add interconnect for GENI QUP
+Date:   Tue, 22 Jan 2019 12:03:36 +0530
+Message-Id: <1548138816-1149-7-git-send-email-alokc@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1548138816-1149-1-git-send-email-alokc@codeaurora.org>
 References: <1548138816-1149-1-git-send-email-alokc@codeaurora.org>
@@ -70,74 +71,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Get the interconnect paths for Uart based Serial Engine device
-and vote accordingly based on maximum supported Uart frequency.
+Add interconnect ports for GENI QUPs to set bus
+capabilities.
 
 Signed-off-by: Alok Chauhan <alokc@codeaurora.org>
 ---
- drivers/tty/serial/qcom_geni_serial.c | 27 ++++++++++++++++++++++++++-
- 1 file changed, 26 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/qcom/sdm845.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
-index a72d6d9..e2ea499 100644
---- a/drivers/tty/serial/qcom_geni_serial.c
-+++ b/drivers/tty/serial/qcom_geni_serial.c
-@@ -19,6 +19,7 @@
- #include <linux/slab.h>
- #include <linux/tty.h>
- #include <linux/tty_flip.h>
-+#include <linux/interconnect.h>
- 
- /* UART specific GENI registers */
- #define SE_UART_LOOPBACK_CFG		0x22c
-@@ -1348,6 +1349,22 @@ static int qcom_geni_serial_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
-+	/* Set the bus quota to a reasonable value */
-+	port->se.avg_bw = console ? Bps_to_icc(1000) : Bps_to_icc(2500);
-+	port->se.peak_bw = Bps_to_icc(76800000);
-+	ret = geni_interconnect_init(&port->se);
-+	if (ret) {
-+		dev_err(&pdev->dev, "interconnect_init failed %d\n", ret);
-+		return ret;
-+	}
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index c27cbd3..fb0a8a7 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -374,6 +374,13 @@
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
 +
-+	/*
-+	 * Vote for interconnect path early. This has to move as part of
-+	 * Runtime PM APIs when implemented for better control betwen
-+	 * console and non-console usecases
-+	 */
-+	geni_icc_update_bw(&port->se, true);
++			interconnects = <&rsc_hlos MASTER_BLSP_1
++					&rsc_hlos SLAVE_EBI1>,
++					<&rsc_hlos MASTER_APPSS_PROC
++					&rsc_hlos SLAVE_BLSP_1>;
++			interconnect-names = "qup-memory", "qup-config";
 +
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (!res)
- 		return -EINVAL;
-@@ -1385,8 +1402,15 @@ static int __maybe_unused qcom_geni_serial_sys_suspend(struct device *dev)
- {
- 	struct qcom_geni_serial_port *port = dev_get_drvdata(dev);
- 	struct uart_port *uport = &port->uport;
-+	int ret;
+ 			status = "disabled";
+ 
+ 			i2c0: i2c@880000 {
+@@ -682,6 +689,13 @@
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
 +
-+	ret = uart_suspend_port(uport->private_data, uport);
-+	if (ret)
-+		return ret;
++			interconnects = <&rsc_hlos MASTER_BLSP_2
++					&rsc_hlos SLAVE_EBI1>,
++					<&rsc_hlos MASTER_APPSS_PROC
++					&rsc_hlos SLAVE_BLSP_2>;
++			interconnect-names = "qup-memory", "qup-config";
 +
-+	geni_icc_update_bw(&port->se, false);
+ 			status = "disabled";
  
--	return uart_suspend_port(uport->private_data, uport);
-+	return 0;
- }
- 
- static int __maybe_unused qcom_geni_serial_sys_resume(struct device *dev)
-@@ -1394,6 +1418,7 @@ static int __maybe_unused qcom_geni_serial_sys_resume(struct device *dev)
- 	struct qcom_geni_serial_port *port = dev_get_drvdata(dev);
- 	struct uart_port *uport = &port->uport;
- 
-+	geni_icc_update_bw(&port->se, true);
- 	return uart_resume_port(uport->private_data, uport);
- }
- 
+ 			i2c8: i2c@a80000 {
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
