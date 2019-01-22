@@ -2,177 +2,132 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C05C0C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:10:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA0D0C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:11:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96425217D6
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:10:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 794ED21726
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:11:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=poorly.run header.i=@poorly.run header.b="R0AcGvk0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726444AbfAVUKn (ORCPT
+        id S1726556AbfAVULg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 15:10:43 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59898 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725862AbfAVUKm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 15:10:42 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C6DA6EBD;
-        Tue, 22 Jan 2019 12:10:41 -0800 (PST)
-Received: from [10.37.10.44] (unknown [10.37.10.44])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9BA943F589;
-        Tue, 22 Jan 2019 12:10:37 -0800 (PST)
-Subject: Re: [PATCHv4 1/4] arm64: dts: qcom: sdm845: Add Coresight support
-To:     saiprakash.ranjan@codeaurora.org, robh+dt@kernel.org,
-        mathieu.poirier@linaro.org, leo.yan@linaro.org,
-        alexander.shishkin@linux.intel.com, andy.gross@linaro.org,
-        david.brown@linaro.org, vivek.gautam@codeaurora.org,
-        dianders@chromium.org, sboyd@kernel.org,
-        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
-        mark.rutland@arm.com
-Cc:     rnayak@codeaurora.org, sibis@codeaurora.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, john.horley@arm.com
-References: <cover.1548133311.git.saiprakash.ranjan@codeaurora.org>
- <ad16cfb9b6f5efb85149458d5f5a1abf43fa027c.1548133311.git.saiprakash.ranjan@codeaurora.org>
- <1bd39862-0725-70ce-6535-fdb59569f683@arm.com>
- <75ed74af-6946-b86d-092e-42dc16e55308@codeaurora.org>
- <91a90daa-9e14-2d2e-e633-2ddfdc0955bf@arm.com>
- <3906faf1-abbd-9c28-ad55-ed3800f06352@codeaurora.org>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <c03b63bf-aca8-ea46-70ad-ee4558f0319e@arm.com>
-Date:   Tue, 22 Jan 2019 20:12:27 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 22 Jan 2019 15:11:36 -0500
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:41715 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725862AbfAVULf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 15:11:35 -0500
+Received: by mail-yb1-f195.google.com with SMTP id j10so9102880ybj.8
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 12:11:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=poorly.run; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Cd/Kll3hrf2nv3O8WApmpzdWK/2k6tmrKzhbGksoZB8=;
+        b=R0AcGvk07fM2T8w7VFPbN+e+0Een55XaVTxsFDEjZaTjqwGMKPa/4yezvvS/4hDPGZ
+         cBV3GYqpRwrhAMPLJnFoRqa2Llf71KSoqWG27UPEkm0ukpfRRA6IkS9xgMFyo44LnxBG
+         82Ca1A2JDXxvCdPgsLYCm03JekgFcX7utFtQGZ175VzszYXrs9aVphHdaPjNX12PCZXS
+         OkpjQBzxBO0J70JbEfpFH41sJN1vp3BySPNHxxiCbCvlyujzUdeRgl7x+f2r74ZIgk5o
+         dI8SM3lvn5PPpzeF89+DmPazLJO9l4nsPJKmuyC2ZACh95oifKYFRJfs9pp3kccZSgRo
+         V2lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Cd/Kll3hrf2nv3O8WApmpzdWK/2k6tmrKzhbGksoZB8=;
+        b=X9buzuBi65ys/Lxqa1eylCxWZl+bpPoESDrLiich8oVJdZ8ajb4PWPBnwlgS7pMM1L
+         D+9rqoUJboQQ80qJcmalujWEhIEULsbiWzsmQSrUq9r/GWdL6Nq0ivkR9PT5j/ckf+MP
+         OIB//Tzq1BhZvvLcuGeLBTAljlAFPrHek6IOI0iJCkat2vaq2iA84tJhivoqyc+pGWdC
+         YbI0zSW89pvzX49tvHtbJJmmdS0ECZ0nAtgWDC+vOVOJ0HVZuYuVYEeoA/5rPQIZ6xnu
+         d8N7kOqA9TfSIhPFzgV4xecr+Td+CEAo+tmFfBlvm4z0Pq/cG53aSGiMM1M2gEHnCPNy
+         JB3A==
+X-Gm-Message-State: AJcUukd0sgVFOHNVew/mYCEgGuMJCyYrqKzMXGEI0lVWRyCOuKe3yJl3
+        AIAmuoI5ltIZiOut7e1+3kJ2xA==
+X-Google-Smtp-Source: ALg8bN4GwUmuxGTFvb5szYgCGHysFA3fC1P4ceyPFY83naf13mA7tPbaCGkLCHL4zWzOAMruAkeDOA==
+X-Received: by 2002:a25:3d07:: with SMTP id k7mr7508060yba.404.1548187893562;
+        Tue, 22 Jan 2019 12:11:33 -0800 (PST)
+Received: from localhost ([2620:0:1013:11:89c6:2139:5435:371d])
+        by smtp.gmail.com with ESMTPSA id b11sm7470129ywb.0.2019.01.22.12.11.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 22 Jan 2019 12:11:32 -0800 (PST)
+Date:   Tue, 22 Jan 2019 15:11:32 -0500
+From:   Sean Paul <sean@poorly.run>
+To:     Jayant Shekhar <jshekhar@codeaurora.org>
+Cc:     dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, abhinavk@codeaurora.org,
+        robdclark@gmail.com, nganji@codeaurora.org, seanpaul@chromium.org,
+        hoegsberg@chromium.org, jsanka@codeaurora.org,
+        chandanu@codeaurora.org
+Subject: Re: [Freedreno] [v1] drm/msm/dpu: Remove unused enum and comment
+ from dpu mdss
+Message-ID: <20190122201132.GJ114153@art_vandelay>
+References: <1545159233-21580-1-git-send-email-jshekhar@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <3906faf1-abbd-9c28-ad55-ed3800f06352@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1545159233-21580-1-git-send-email-jshekhar@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sai,
-
-On 01/22/2019 04:48 PM, Sai Prakash Ranjan wrote:
-> Hi Suzuki,
+On Wed, Dec 19, 2018 at 12:23:53AM +0530, Jayant Shekhar wrote:
+> Remove enum dpu_iommu_domain from dpu mdss as its unused.
 > 
-> On 1/22/2019 9:38 PM, Suzuki K Poulose wrote:
->>
->> By inconsistent, I meant the registers provides values which are not
->> the same on two different CPUs of the *same type*. And it is expected
->> that two different CPU/ETM implementations will have different PIDs.
->>
+> Remove unnecessary comment for variable which is already
+> removed.
 > 
-> SDM845 has 4 Kryo 385 Gold (ARM A75) + 4 Kryo 385 Silver (ARM A55),
-> so the PID values should be same for 4 ETMs atleast. But here one
-> pid value(001bb803) is same for 6 ETMs and other one for 2
-> ETMs(001bb802) which seems odd and hence the doubt if these pids
-> are even valid ones.
+> Signed-off-by: Jayant Shekhar <jshekhar@codeaurora.org>
 
-Have you checked other SoCs with A55 for the ETM PID ? The drivers
-usually only care about PID0[7-0], PID1[7-0], PID2[3-0] and ignores
-the other fields that may change over revisions of the core. So, in your
-case the ETM ID could be treated as 0xbb802 and 0xbb803.
+Applied to dpu-staging, thanks!
 
+Sean
+
+> ---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h | 7 -------
+>  1 file changed, 7 deletions(-)
 > 
->>>
->>> Below are the PIDs read for SDM845:
->>>
->>> [    5.996448] resname=etm@7040000 pid=001bb803
->>> [    6.052891] resname=etm@7140000 pid=001bb803
->>>
->>> <snip> .. (Same pid=001bb803 for etm@7240000 to etm@7540000 but differs
->>> for other 2 cpus as shown below)
-
-So thats 4 CPUs with 0x1bb803.
-
->>>
->>> [    6.266687] resname=etm@7640000 pid=001bb802
->>> [    6.329171] resname=etm@7740000 pid=001bb802
->>>
-
-
->>> This is the case for MSM8996 also as shown below where PID
->>> value is not correct and has to be hardcoded.
->>
->> They differ because they are two different types of CPU cores (and 
->> thus different ETM PIDs). What does the Register descriptions say for
->> the Cores ?
->>
->> To me it looks like there are two different types of Qualcomm
->> Cores with their respective ETMs which are missing in the ETM4x
->> driver and we are trying to "make the ETM" work by faking it as
->> something else, which is not nice. I would rather prefer
->> to add the appropriate masks and the expected value for these
->> two different ETM implementations and be done with it, instead
->> of faking it in all the DTs where these cores appear.
->>
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
+> index 68c54d2..1ab8d4a 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
+> @@ -258,12 +258,6 @@ enum dpu_vbif {
+>  	VBIF_NRT = VBIF_1
+>  };
+>  
+> -enum dpu_iommu_domain {
+> -	DPU_IOMMU_DOMAIN_UNSECURE,
+> -	DPU_IOMMU_DOMAIN_SECURE,
+> -	DPU_IOMMU_DOMAIN_MAX
+> -};
+> -
+>  /**
+>   * DPU HW,Component order color map
+>   */
+> @@ -358,7 +352,6 @@ enum dpu_3d_blend_mode {
+>   * @alpha_enable: whether the format has an alpha channel
+>   * @num_planes: number of planes (including meta data planes)
+>   * @fetch_mode: linear, tiled, or ubwc hw fetch behavior
+> - * @is_yuv: is format a yuv variant
+>   * @flag: usage bit flags
+>   * @tile_width: format tile width
+>   * @tile_height: format tile height
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
 > 
-> ETM4x driver does not have entries for A55 and A75. Could you please
-> let me know the PIDs for these CPUs so that we can compare?
+> _______________________________________________
+> Freedreno mailing list
+> Freedreno@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/freedreno
 
-FWIW, here is the PID list:
-
-A75: 0xB_BD_0A
-A55: 0xB_BD_05
-
-Btw, I am not sure if the ETM has been changed/tuned for the Cores in
-SDM845. Please could you get this clarified internally within your
-organisation ?
-
-> 
->>>
->>> For MSM8996:
->>>
->>> resname=etm@3b40000 pid=102f0205
->>
->> I don't know what CPUs the MSM8996 have. If they don't have A53, you
->> must add the actual PIDs to the table once and for all.
->>
-> 
-> But again, this PID is some invalid value. And does not correspond
-> to any of the ARM CPU cores and would be MSM8996 specific.
-> MSM8996 has 2+2 Kryo cores which are not ARM derivative as SDM845
-> if I am right.
-
-As long as the JEP106 coding standard is followed and is indicated in
-the appropriate fields (PIDR2[3]), we should be fine. In the case above:
-PID of the ETM is 0xf0205, implies JEP106 code[6:0] of the designer is 
-0x70 and ETM part number is : 0x205, which makes sense to me.
-
-> 
->>>
->>>>> +        etm@7040000 {
->>>>> +            compatible = "arm,coresight-etm4x", "arm,primecell";
->>>>> +            arm,primecell-periphid = <0x000bb95d> > + reg = <0 
->>>>> 0x07040000 0 0x1000>;
->>>>> +
->>>>> +            cpu = <&CPU0>;
->>>>> +
->>>>
->>>> You seem to be specifying the PID of A53 ETM all over, while at least
->>>> one of your cores is ETMv4.2 (from the other patch) and A53 is not
->>>> ETMv4.2. As above, it would be good to add the PID to the table.
->>>>
->>>
->>> As explained in above comment, PID values read are not correct. 
->>> Please let me know if I am not clear.
->>
->> There is no measure for "correctness" here. If the ETM exposes different
->> PID than what you expect from the TRM, then we could think of overriding
->> it. Otherwise please add the PIDs to the table.
->>
-> 
-> This is exactly the case, ETM PID registers are exposing some invalid
-> value and hence we override in DT.
-
-It would be good to have this clarified. I will check with the internal
-teams here for any details.
-
-Thanks
-Suzuki
+-- 
+Sean Paul, Software Engineer, Google / Chromium OS
