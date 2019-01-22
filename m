@@ -2,96 +2,147 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92BDBC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 07:42:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3057C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 07:44:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B46920854
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 07:42:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A45920854
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 07:44:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="oIIzS7rM"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="y5SmZsIS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727301AbfAVHmK (ORCPT
+        id S1727323AbfAVHos (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 02:42:10 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:44718 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726423AbfAVHmJ (ORCPT
+        Tue, 22 Jan 2019 02:44:48 -0500
+Received: from conuserg-12.nifty.com ([210.131.2.79]:61632 "EHLO
+        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726423AbfAVHor (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 02:42:09 -0500
-Received: by mail-wr1-f68.google.com with SMTP id z5so26047680wrt.11
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 23:42:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=3q+zgz6TINUxYhFX1orF5+LYZH6pS39Bhg/MHhk1L1o=;
-        b=oIIzS7rMWpoMElcWe0PrZB2F4IUehKPk3t2bLeUHfJFqwbH4j1IlQfz4mORdU53e/T
-         GRPmx+oHjQGPmvInitOfthq0mKScUFy+Vw9lDH65laQxCplcUT3wTlUTBAEoFahMtCeu
-         PTzrhaOmRdoLbc3VCDFn+yO790V8VcJcDnzZ0PP4FEzVbvfA9kHPbJKVuSLMJYr7JvZn
-         W4RO2YzXHwViW2H2yRIz5KgE7+lMdLipknPjhcNPzlX6sl481RCBf0oveUTjVEi0RhyB
-         7QDl+iM0gUJlp6gFTxA2lr26trRIA1wstVKbYTcvj8sdmQc5VJC3CRqzypUTlDDylitw
-         jntg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=3q+zgz6TINUxYhFX1orF5+LYZH6pS39Bhg/MHhk1L1o=;
-        b=I0XXBUKCQ5UDswzcliX9BdZQMfwjGC27Fw77CfTBulw693pcHJCUusyQCX1tFERbZ7
-         0w3L/uWv2bsCZ7YL/J066w19k+085A/S3jG7UUWQUDb4XSmMZs0xXz/Li66VcTk3TUaY
-         F/p9W6kEq98sA24Hf6PmIppTEUU8HMsYHX60xM9NFd9zMH7xCiNSAS0jeb79jpZ2xTyk
-         w11W/UYhIKTLM2mcqrf8UepJH1KJq5i2iesKFPV465hOd16eeoUl/cGNZUViypSDNDwW
-         gDGuiUsw5kCqQLj83RJLHPugSxSObD/Sq6dWJ05GPlpY+Mt+MxZ2jGUDnRDKtif2L8Gk
-         hZOg==
-X-Gm-Message-State: AJcUuke/bELGZCbqDV4Roi2sWf1SufTBj9Bd4LfvJLwS5PDWD9NHbUCr
-        kKzroIM6NJP9AGoefXNU+bRlJQ==
-X-Google-Smtp-Source: ALg8bN4B/ztsU9j5CtXhKggmiW6wHQvc8WNFHrUXJarGtzUhan47tiOp+uFAv3G/aBbYul59ySIscA==
-X-Received: by 2002:adf:e5d0:: with SMTP id a16mr31211145wrn.89.1548142927945;
-        Mon, 21 Jan 2019 23:42:07 -0800 (PST)
-Received: from localhost.localdomain ([51.15.160.169])
-        by smtp.googlemail.com with ESMTPSA id t199sm36969294wmt.1.2019.01.21.23.42.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 21 Jan 2019 23:42:07 -0800 (PST)
-From:   Corentin Labbe <clabbe@baylibre.com>
-To:     benh@kernel.crashing.org, mark.rutland@arm.com, mpe@ellerman.id.au,
-        paulus@samba.org, robh+dt@kernel.org
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, Corentin Labbe <clabbe@baylibre.com>
-Subject: [PATCH v2] powerpc: build virtex dtb
-Date:   Tue, 22 Jan 2019 07:42:00 +0000
-Message-Id: <1548142920-11219-1-git-send-email-clabbe@baylibre.com>
+        Tue, 22 Jan 2019 02:44:47 -0500
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-12.nifty.com with ESMTP id x0M7h55W025355;
+        Tue, 22 Jan 2019 16:43:08 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com x0M7h55W025355
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1548142988;
+        bh=hSF0u/EvB47CoB40nefIbVyNFXS6grvYzPOkYHR2Q+E=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=y5SmZsISzZLplMiSomjH9Yjc2eOX/fPfxjdr1RHgDWnCSgeR/iGTM0Q5hIWq79/Zr
+         yyYY688gcSbKs16em+zc8mMhTSX4U8gY1vgHDqOdGP80S0n5iFNteoOhiMr24ks6Ca
+         NXrfVdo5yZM7un63VqukLWhq+GNKUSTXd2k4CFDlaIKoenI6ZG+5hNC9ZiAQNVrtgW
+         7v3bvb52wzFWiMOXISOwheYHZo63gOqtYM3Quy2AtBppNyLLeg65mE/qJT6Ul4u6tn
+         OjasLIE9PR0+B/WFS33c5DmhqeG+xRnjEJfJLdw2m7DbV0pCd4P6eW8puYJyeAsXMi
+         KLIrAa7JN6Y5Q==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-mtd@lists.infradead.org,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Boris Brezillon <bbrezillon@kernel.org>
+Subject: [PATCH 2/2] mtd: rawnand: use unnamed union in struct nand_op_parser_pattern_elem
+Date:   Tue, 22 Jan 2019 16:42:55 +0900
+Message-Id: <1548142975-14219-3-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1548142975-14219-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1548142975-14219-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I wanted to test the virtex440-ml507 qemu machine and found that the dtb
-for it was not builded.
-All powerpc DTB are only built when CONFIG_OF_ALL_DTBS is set which depend on
-COMPILE_TEST.
+Although drivers do not directly get access to the private data of
+instruction patterns, let's use unnamed union field to be consistent
+with nand_op_instr.
 
-This patchs adds build of virtex dtbs depending on
-CONFIG_XILINX_VIRTEX440_GENERIC_BOARD option.
-
-Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
-Changes since v1:
-- squashed the two dtb into one make line
- arch/powerpc/boot/dts/Makefile | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/arch/powerpc/boot/dts/Makefile b/arch/powerpc/boot/dts/Makefile
-index fb335d05aae8..1cbc0e4ce857 100644
---- a/arch/powerpc/boot/dts/Makefile
-+++ b/arch/powerpc/boot/dts/Makefile
-@@ -4,3 +4,4 @@ subdir-y += fsl
+ drivers/mtd/nand/raw/nand_base.c | 12 ++++++------
+ include/linux/mtd/rawnand.h      |  8 ++++----
+ 2 files changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
+index 3b620cd..d29de69 100644
+--- a/drivers/mtd/nand/raw/nand_base.c
++++ b/drivers/mtd/nand/raw/nand_base.c
+@@ -1995,24 +1995,24 @@ nand_op_parser_must_split_instr(const struct nand_op_parser_pattern_elem *pat,
+ {
+ 	switch (pat->type) {
+ 	case NAND_OP_ADDR_INSTR:
+-		if (!pat->ctx.addr.maxcycles)
++		if (!pat->addr.maxcycles)
+ 			break;
  
- dtstree		:= $(srctree)/$(src)
- dtb-$(CONFIG_OF_ALL_DTBS) := $(patsubst $(dtstree)/%.dts,%.dtb, $(wildcard $(dtstree)/*.dts))
-+dtb-$(CONFIG_XILINX_VIRTEX440_GENERIC_BOARD) += virtex440-ml507.dtb virtex440-ml510.dtb
+ 		if (instr->addr.naddrs - *start_offset >
+-		    pat->ctx.addr.maxcycles) {
+-			*start_offset += pat->ctx.addr.maxcycles;
++		    pat->addr.maxcycles) {
++			*start_offset += pat->addr.maxcycles;
+ 			return true;
+ 		}
+ 		break;
+ 
+ 	case NAND_OP_DATA_IN_INSTR:
+ 	case NAND_OP_DATA_OUT_INSTR:
+-		if (!pat->ctx.data.maxlen)
++		if (!pat->data.maxlen)
+ 			break;
+ 
+ 		if (instr->data.len - *start_offset >
+-		    pat->ctx.data.maxlen) {
+-			*start_offset += pat->ctx.data.maxlen;
++		    pat->data.maxlen) {
++			*start_offset += pat->data.maxlen;
+ 			return true;
+ 		}
+ 		break;
+diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
+index b606ed3..7abb605 100644
+--- a/include/linux/mtd/rawnand.h
++++ b/include/linux/mtd/rawnand.h
+@@ -741,7 +741,7 @@ struct nand_op_parser_pattern_elem {
+ 	union {
+ 		struct nand_op_parser_addr_constraints addr;
+ 		struct nand_op_parser_data_constraints data;
+-	} ctx;
++	};
+ };
+ 
+ #define NAND_OP_PARSER_PAT_CMD_ELEM(_opt)			\
+@@ -754,21 +754,21 @@ struct nand_op_parser_pattern_elem {
+ 	{							\
+ 		.type = NAND_OP_ADDR_INSTR,			\
+ 		.optional = _opt,				\
+-		.ctx.addr.maxcycles = _maxcycles,		\
++		.addr.maxcycles = _maxcycles,			\
+ 	}
+ 
+ #define NAND_OP_PARSER_PAT_DATA_IN_ELEM(_opt, _maxlen)		\
+ 	{							\
+ 		.type = NAND_OP_DATA_IN_INSTR,			\
+ 		.optional = _opt,				\
+-		.ctx.data.maxlen = _maxlen,			\
++		.data.maxlen = _maxlen,				\
+ 	}
+ 
+ #define NAND_OP_PARSER_PAT_DATA_OUT_ELEM(_opt, _maxlen)		\
+ 	{							\
+ 		.type = NAND_OP_DATA_OUT_INSTR,			\
+ 		.optional = _opt,				\
+-		.ctx.data.maxlen = _maxlen,			\
++		.data.maxlen = _maxlen,				\
+ 	}
+ 
+ #define NAND_OP_PARSER_PAT_WAITRDY_ELEM(_opt)			\
 -- 
-2.19.2
+2.7.4
 
