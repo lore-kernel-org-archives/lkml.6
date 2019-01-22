@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A3A9C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:24:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80BF4C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:24:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 588A3218D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:24:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50AD3218DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:24:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548149094;
-	bh=pkOI/H7W1wMnCfOjPyihp+vGTd0TKHnCGrd+N94Ka98=;
+	s=default; t=1548149099;
+	bh=QXPAkgMHZkQNBVp1VLTRTqu8UgNRjOdkWgyJv2fmUsc=;
 	h=Subject:To:From:Date:List-ID:From;
-	b=fLkC51tneBJKjmKIMGvFnVBt0zYnOR1F6NLzDyDqZOKDAMy5Vul3fVBgI3/J5GDaG
-	 O4X3WYfEOskLc9Q62uzyYikspAUWl+/fWOFRTgw+qUePWd/cJ3f0J2/ED/MwVak08l
-	 EhnGhss6We0cQsy5HVtruYJsA1R2avO4wHeawzfo=
+	b=xPNhrqNqoD7tSFcvJXsBcDkBj/sFEa3zfYJcYGiQCv2qGDIJta7JsZr6AKUScf0J8
+	 9EESR+hggJK/RmpoQmVhiMDBLRELS1NI+Xsk2JPG4hXY7nwzQT72+0+BnGLWUZ4wqE
+	 TU+HJQGhvxICGNtqLQwToYZXHIW3fxbOBKRxHKQ0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728016AbfAVJYw (ORCPT
+        id S1728036AbfAVJY5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 04:24:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48464 "EHLO mail.kernel.org"
+        Tue, 22 Jan 2019 04:24:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48630 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727974AbfAVJYs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 04:24:48 -0500
+        id S1727762AbfAVJY4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 04:24:56 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D7D33218DE;
-        Tue, 22 Jan 2019 09:24:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 33107218D9;
+        Tue, 22 Jan 2019 09:24:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548149087;
-        bh=pkOI/H7W1wMnCfOjPyihp+vGTd0TKHnCGrd+N94Ka98=;
+        s=default; t=1548149095;
+        bh=QXPAkgMHZkQNBVp1VLTRTqu8UgNRjOdkWgyJv2fmUsc=;
         h=Subject:To:From:Date:From;
-        b=O1s5Wj1Zurth3RR86dsrHa7ZlE3E4CzH+124+NwcYmPe0qHMS+0kzwopV3yUNFPQ0
-         jJPvqTs9f4nR8kvI4ZHDvv0CwXhw2mbQWO+Oa/dlClB3RVzqQgHE5xJIcO5V+fJONq
-         Ve5OxT+6BY0Pem8qaHFas9JQP9GCuh76gLScTx+0=
-Subject: patch "tools/firmware/ihex2fw: Simplify next record offset calculation" added to driver-core-testing
+        b=PSkBiFUDzq6gNkzOR0YjpU7Gu50cpeWX+Yedjv6LLNp49gEOqIyioE8Iizzn+ojTv
+         nQzob//5rA/BJeKyuDUiuvo4mr26P5hYohYHq2PLNB7EnjHWiFNw2E8Z+Phw3vJDIT
+         gA/KxqOzYsSp6TnBosEGT40ArmvQcycExQmFT7pU=
+Subject: patch "tools/firmware/ihex2fw: Replace explicit alignment with ALIGN" added to driver-core-testing
 To:     andrew.smirnov@gmail.com, akpm@linux-foundation.org,
         cphealy@gmail.com, dwmw2@infradead.org, gregkh@linuxfoundation.org,
         kyle@kernel.org, linux-kernel@vger.kernel.org,
         yamada.masahiro@socionext.com
 From:   <gregkh@linuxfoundation.org>
-Date:   Tue, 22 Jan 2019 10:24:41 +0100
-Message-ID: <154814908160235@kroah.com>
+Date:   Tue, 22 Jan 2019 10:24:42 +0100
+Message-ID: <1548149082157142@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ANSI_X3.4-1968
 Content-Transfer-Encoding: 8bit
@@ -58,7 +58,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 This is a note to let you know that I've just added the patch titled
 
-    tools/firmware/ihex2fw: Simplify next record offset calculation
+    tools/firmware/ihex2fw: Replace explicit alignment with ALIGN
 
 to my driver-core git tree which can be found at
     git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git
@@ -73,24 +73,15 @@ after it passes testing, and the merge window is open.
 If you have any questions about this process, please let me know.
 
 
-From 2ef8179bb7a6817de3fc9407ab55aa357f2d1e4d Mon Sep 17 00:00:00 2001
+From 925f8d4aad5ca1bf18987a3cdcb0e176bddddcf1 Mon Sep 17 00:00:00 2001
 From: Andrey Smirnov <andrew.smirnov@gmail.com>
-Date: Thu, 20 Dec 2018 23:28:40 -0800
-Subject: tools/firmware/ihex2fw: Simplify next record offset calculation
+Date: Thu, 20 Dec 2018 23:28:41 -0800
+Subject: tools/firmware/ihex2fw: Replace explicit alignment with ALIGN
 
-We can convert original expression for 'writelen" to use ALIGN as
-follows:
-
-    (p->len + 9) & ~3 => (p->len + 6 + 3) & ~3 => ALIGN(p->len + 6, 4)
-
-Now, subsituting "p->len + 6" with "p->len + sizeof(p->addr) +
-sizeof(p->len)" we end up with the same expression as used by kernel
-couterpart in linux/ihex.h:
-
-    ALIGN(p->len + sizeof(p->addr) + sizeof(p->len), 4)
-
-That is a full size of the record, aligned to 4 bytes. No functional
-change intended.
+(X + 3) & ~3 is the same as ALIGN(X, 4), so replace all of the
+instances of the formwer in the code with the latter. While at it,
+introduce a helper variable 'record_size' to avoid duplicating length
+calculatin code. No functional change intended.
 
 Cc: Chris Healy <cphealy@gmail.com>
 Cc: Kyle McMartin <kyle@kernel.org>
@@ -102,44 +93,37 @@ Cc: linux-kernel <linux-kernel@vger.kernel.org>
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/firmware/ihex2fw.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ tools/firmware/ihex2fw.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/tools/firmware/ihex2fw.c b/tools/firmware/ihex2fw.c
-index b58dd061e978..e081cef730d8 100644
+index e081cef730d8..8925b60e51f5 100644
 --- a/tools/firmware/ihex2fw.c
 +++ b/tools/firmware/ihex2fw.c
-@@ -24,6 +24,10 @@
- #include <getopt.h>
- 
- 
-+#define __ALIGN_KERNEL_MASK(x, mask)	(((x) + (mask)) & ~(mask))
-+#define __ALIGN_KERNEL(x, a)		__ALIGN_KERNEL_MASK(x, (typeof(x))(a) - 1)
-+#define ALIGN(x, a)			__ALIGN_KERNEL((x), (a))
-+
- struct ihex_binrec {
- 	struct ihex_binrec *next; /* not part of the real data structure */
-         uint32_t addr;
-@@ -259,13 +263,18 @@ static void file_record(struct ihex_binrec *record)
- 	*p = record;
- }
- 
-+static uint16_t ihex_binrec_size(struct ihex_binrec *p)
-+{
-+	return p->len + sizeof(p->addr) + sizeof(p->len);
-+}
-+
- static int output_records(int outfd)
+@@ -135,6 +135,7 @@ int main(int argc, char **argv)
+ static int process_ihex(uint8_t *data, ssize_t size)
  {
- 	unsigned char zeroes[6] = {0, 0, 0, 0, 0, 0};
- 	struct ihex_binrec *p = records;
+ 	struct ihex_binrec *record;
++	size_t record_size;
+ 	uint32_t offset = 0;
+ 	uint32_t data32;
+ 	uint8_t type, crc = 0, crcbyte = 0;
+@@ -161,12 +162,13 @@ static int process_ihex(uint8_t *data, ssize_t size)
+ 		len <<= 8;
+ 		len += hex(data + i, &crc); i += 2;
+ 	}
+-	record = malloc((sizeof (*record) + len + 3) & ~3);
++	record_size = ALIGN(sizeof(*record) + len, 4);
++	record = malloc(record_size);
+ 	if (!record) {
+ 		fprintf(stderr, "out of memory for records\n");
+ 		return -ENOMEM;
+ 	}
+-	memset(record, 0, (sizeof(*record) + len + 3) & ~3);
++	memset(record, 0, record_size);
+ 	record->len = len;
  
- 	while (p) {
--		uint16_t writelen = (p->len + 9) & ~3;
-+		uint16_t writelen = ALIGN(ihex_binrec_size(p), 4);
- 
- 		p->addr = htonl(p->addr);
- 		p->len = htons(p->len);
+ 	/* now check if we have enough data to read everything */
 -- 
 2.20.1
 
