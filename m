@@ -2,43 +2,43 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F367C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:41:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC873C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:41:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D0CA20855
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:41:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94C6820855
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:41:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548168095;
-	bh=8BjUBVZCmrAANyhj3BZe6P8VfjTGGURJDzipiOghw9Q=;
+	s=default; t=1548168099;
+	bh=2rmGDbNBH5/CgNPKDpWNXtKTH4HHX/G4IW9TDzzgGyE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=17cgvJU0Lcr6D2XPJoQQyCbeiSo7P64F3LLOLjkNSh+vw1E4F8q98G/LkntUZrPs5
-	 tBRxqh3pkbZwg2ej4T6OQNg5+XkDejqjlqtJGzsEScY4/hOFdBnbFnUejo2kY1P44E
-	 TX4V1NQnASEn0CB6PreKvdtsoEaDLnUbCFnWFgaM=
+	b=Jx+ObM/cmTsDsAaUSa8Oyav/jLY/222hOXPNiVtq2JZTNj3PAyo3SpKHT08HtxtW3
+	 XiqKiUSbj2s1PDDIMKlh6FAlEjYluD/IYUmen7jzCy859ueYbq7N3zGCRU8VOpQNoC
+	 /lYROF1yvy9p7e9ycbC5M1jErCAHaSZa8QQUaGwo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728892AbfAVOld (ORCPT
+        id S1728808AbfAVOlh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 09:41:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53360 "EHLO mail.kernel.org"
+        Tue, 22 Jan 2019 09:41:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53436 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728318AbfAVOlb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 09:41:31 -0500
+        id S1728865AbfAVOle (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 09:41:34 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1438621721;
-        Tue, 22 Jan 2019 14:41:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8706721726;
+        Tue, 22 Jan 2019 14:41:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548168090;
-        bh=8BjUBVZCmrAANyhj3BZe6P8VfjTGGURJDzipiOghw9Q=;
+        s=default; t=1548168093;
+        bh=2rmGDbNBH5/CgNPKDpWNXtKTH4HHX/G4IW9TDzzgGyE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jjA1JZCXKIIzmIlK9iATEw2pkvtdWfFyrg8yAp+kgKzJvqrN7hM3ca6BwXzTDXHKI
-         a3Mn3P2wv99+NRlMTtvqPpUL45tDwysnbj/6W/WW7PHhqKbycILLDk4f22Fs+sLtSc
-         bDw4HkWPE4/qKXQrwfeckH4qUKmF68NxAmPC6zbM=
+        b=y4R6ZdqH4OIMvuO7z1or3zb3XXTVumm17TBMgneiIksWziTj8hEe7lOFOjwoCTc3E
+         xgUf9h5mZU5N8XBSmEaBkYni3VOwpyr1Y0sX0TgUZc8PgjrRznLHn+aOIoNH1MQQJ3
+         RnxL5OXNXPDTpUhG1x/iu/n5Up5DzqPerX52Kszg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     Catalin Marinas <catalin.marinas@arm.com>,
         Kevin Hilman <khilman@kernel.org>,
@@ -46,12 +46,12 @@ To:     Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>
 Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jinbum Park <jinb.park7@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Laura Abbott <labbott@redhat.com>
-Subject: [PATCH 2/4] arm: dump: no need to check return value of debugfs_create functions
-Date:   Tue, 22 Jan 2019 15:41:12 +0100
-Message-Id: <20190122144114.9816-3-gregkh@linuxfoundation.org>
+        Paul Walmsley <paul@pwsan.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
+Subject: [PATCH 3/4] arm: omap1: no need to check return value of debugfs_create functions
+Date:   Tue, 22 Jan 2019 15:41:13 +0100
+Message-Id: <20190122144114.9816-4-gregkh@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190122144114.9816-1-gregkh@linuxfoundation.org>
 References: <20190122144114.9816-1-gregkh@linuxfoundation.org>
@@ -66,71 +66,138 @@ When calling debugfs functions, there is no need to ever check the
 return value.  The function can work or not, but the code logic should
 never do something different based on this.
 
+Cc: Paul Walmsley <paul@pwsan.com>
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
+Cc: Tony Lindgren <tony@atomide.com>
 Cc: Russell King <linux@armlinux.org.uk>
-Cc: Jinbum Park <jinb.park7@gmail.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Laura Abbott <labbott@redhat.com>
+Cc: Kevin Hilman <khilman@kernel.org>
+Cc: linux-omap@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/include/asm/ptdump.h | 9 +++------
- arch/arm/mm/dump.c            | 4 ++--
- arch/arm/mm/ptdump_debugfs.c  | 8 ++------
- 3 files changed, 7 insertions(+), 14 deletions(-)
+ arch/arm/mach-omap1/clock.c | 63 +++++++------------------------------
+ arch/arm/mach-omap1/pm.c    |  7 ++---
+ 2 files changed, 14 insertions(+), 56 deletions(-)
 
-diff --git a/arch/arm/include/asm/ptdump.h b/arch/arm/include/asm/ptdump.h
-index 3ebf9718288d..0c2d3d0d4cc6 100644
---- a/arch/arm/include/asm/ptdump.h
-+++ b/arch/arm/include/asm/ptdump.h
-@@ -21,13 +21,10 @@ struct ptdump_info {
+diff --git a/arch/arm/mach-omap1/clock.c b/arch/arm/mach-omap1/clock.c
+index c8c6fe88b2d6..3d7ab2bcf46c 100644
+--- a/arch/arm/mach-omap1/clock.c
++++ b/arch/arm/mach-omap1/clock.c
+@@ -990,84 +990,45 @@ static int debug_clock_show(struct seq_file *s, void *unused)
  
- void ptdump_walk_pgd(struct seq_file *s, struct ptdump_info *info);
- #ifdef CONFIG_ARM_PTDUMP_DEBUGFS
--int ptdump_debugfs_register(struct ptdump_info *info, const char *name);
-+void ptdump_debugfs_register(struct ptdump_info *info, const char *name);
- #else
--static inline int ptdump_debugfs_register(struct ptdump_info *info,
--					const char *name)
--{
+ DEFINE_SHOW_ATTRIBUTE(debug_clock);
+ 
+-static int clk_debugfs_register_one(struct clk *c)
++static void clk_debugfs_register_one(struct clk *c)
+ {
+-	int err;
+ 	struct dentry *d;
+ 	struct clk *pa = c->parent;
+ 
+ 	d = debugfs_create_dir(c->name, pa ? pa->dent : clk_debugfs_root);
+-	if (!d)
+-		return -ENOMEM;
+ 	c->dent = d;
+ 
+-	d = debugfs_create_u8("usecount", S_IRUGO, c->dent, &c->usecount);
+-	if (!d) {
+-		err = -ENOMEM;
+-		goto err_out;
+-	}
+-	d = debugfs_create_ulong("rate", S_IRUGO, c->dent, &c->rate);
+-	if (!d) {
+-		err = -ENOMEM;
+-		goto err_out;
+-	}
+-	d = debugfs_create_x8("flags", S_IRUGO, c->dent, &c->flags);
+-	if (!d) {
+-		err = -ENOMEM;
+-		goto err_out;
+-	}
 -	return 0;
--}
-+static inline void ptdump_debugfs_register(struct ptdump_info *info,
-+					   const char *name) { }
- #endif /* CONFIG_ARM_PTDUMP_DEBUGFS */
- 
- void ptdump_check_wx(void);
-diff --git a/arch/arm/mm/dump.c b/arch/arm/mm/dump.c
-index 084779c5c893..eb385a500ed0 100644
---- a/arch/arm/mm/dump.c
-+++ b/arch/arm/mm/dump.c
-@@ -450,7 +450,7 @@ void ptdump_check_wx(void)
- static int ptdump_init(void)
- {
- 	ptdump_initialize();
--	return ptdump_debugfs_register(&kernel_ptdump_info,
--					"kernel_page_tables");
-+	ptdump_debugfs_register(&kernel_ptdump_info, "kernel_page_tables");
-+	return 0;
- }
- __initcall(ptdump_init);
-diff --git a/arch/arm/mm/ptdump_debugfs.c b/arch/arm/mm/ptdump_debugfs.c
-index be8d87be4b93..598b636615a2 100644
---- a/arch/arm/mm/ptdump_debugfs.c
-+++ b/arch/arm/mm/ptdump_debugfs.c
-@@ -24,11 +24,7 @@ static const struct file_operations ptdump_fops = {
- 	.release	= single_release,
- };
- 
--int ptdump_debugfs_register(struct ptdump_info *info, const char *name)
-+void ptdump_debugfs_register(struct ptdump_info *info, const char *name)
- {
--	struct dentry *pe;
 -
--	pe = debugfs_create_file(name, 0400, NULL, info, &ptdump_fops);
--	return pe ? 0 : -ENOMEM;
--
-+	debugfs_create_file(name, 0400, NULL, info, &ptdump_fops);
+-err_out:
+-	debugfs_remove_recursive(c->dent);
+-	return err;
++	debugfs_create_u8("usecount", S_IRUGO, c->dent, &c->usecount);
++	debugfs_create_ulong("rate", S_IRUGO, c->dent, &c->rate);
++	debugfs_create_x8("flags", S_IRUGO, c->dent, &c->flags);
  }
+ 
+-static int clk_debugfs_register(struct clk *c)
++static void clk_debugfs_register(struct clk *c)
+ {
+ 	int err;
+ 	struct clk *pa = c->parent;
+ 
+-	if (pa && !pa->dent) {
+-		err = clk_debugfs_register(pa);
+-		if (err)
+-			return err;
+-	}
++	if (pa && !pa->dent)
++		clk_debugfs_register(pa);
+ 
+-	if (!c->dent) {
+-		err = clk_debugfs_register_one(c);
+-		if (err)
+-			return err;
+-	}
+-	return 0;
++	if (!c->dent)
++		clk_debugfs_register_one(c);
+ }
+ 
+ static int __init clk_debugfs_init(void)
+ {
+ 	struct clk *c;
+ 	struct dentry *d;
+-	int err;
+ 
+ 	d = debugfs_create_dir("clock", NULL);
+-	if (!d)
+-		return -ENOMEM;
+ 	clk_debugfs_root = d;
+ 
+-	list_for_each_entry(c, &clocks, node) {
+-		err = clk_debugfs_register(c);
+-		if (err)
+-			goto err_out;
+-	}
++	list_for_each_entry(c, &clocks, node)
++		clk_debugfs_register(c);
+ 
+-	d = debugfs_create_file("summary", S_IRUGO,
+-		d, NULL, &debug_clock_fops);
+-	if (!d)
+-		return -ENOMEM;
++	debugfs_create_file("summary", S_IRUGO, d, NULL, &debug_clock_fops);
+ 
+ 	return 0;
+-err_out:
+-	debugfs_remove_recursive(clk_debugfs_root);
+-	return err;
+ }
+ late_initcall(clk_debugfs_init);
+ 
+diff --git a/arch/arm/mach-omap1/pm.c b/arch/arm/mach-omap1/pm.c
+index 998075d3ef86..d068958d6f8a 100644
+--- a/arch/arm/mach-omap1/pm.c
++++ b/arch/arm/mach-omap1/pm.c
+@@ -539,11 +539,8 @@ static void omap_pm_init_debugfs(void)
+ 	struct dentry *d;
+ 
+ 	d = debugfs_create_dir("pm_debug", NULL);
+-	if (!d)
+-		return;
+-
+-	(void) debugfs_create_file("omap_pm", S_IWUSR | S_IRUGO,
+-					d, NULL, &omap_pm_debug_fops);
++	debugfs_create_file("omap_pm", S_IWUSR | S_IRUGO, d, NULL,
++			    &omap_pm_debug_fops);
+ }
+ 
+ #endif /* CONFIG_DEBUG_FS */
 -- 
 2.20.1
 
