@@ -2,113 +2,218 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4955FC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 07:09:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9984BC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 07:10:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1862520854
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 07:09:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kJhuLPZh"
+	by mail.kernel.org (Postfix) with ESMTP id 6026320870
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 07:10:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548141008;
+	bh=ONxvKsRJZ3ftkN9Wpqn7v/0lEharAm5PlVPUM8Ih9sg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ghMPghadHJN7C9utKUuegTnfV1odj2j2FKOAIt5zuwCoZNbZ3ES/U7rQBj4pS9vjj
+	 +4CwQ6NQb9S2I7RuK2jX6W94PWN5NmtG+v0PHzMBsxJcODC2HVScfUGqmfRHguwN4r
+	 zEc/HID0feSipw+gCUpYShwzLv9ATzwc3RlwRbko=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727286AbfAVHJk (ORCPT
+        id S1727310AbfAVHKH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 02:09:40 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:38405 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727009AbfAVHJk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 02:09:40 -0500
-Received: by mail-pf1-f195.google.com with SMTP id q1so11311893pfi.5
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 23:09:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=oCVppQxmkZXSCO8DambkFCmORWpSe6DSUbLfn9f7gcU=;
-        b=kJhuLPZhNYRktgvR8yDaVXOyiBae7j/vKLEnacYTouYXhPCuBPbNzGTnavVo/GEfX7
-         SVD/+bv4xCPytnQyfQspFtZsVf686Q75D61mRYcU6lkAXN5CYnqqeswO7J++P+oOd6HO
-         0QoQmclcsv7qsHR+nQ6z8BSj3w8Mg0OCY1KWA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=oCVppQxmkZXSCO8DambkFCmORWpSe6DSUbLfn9f7gcU=;
-        b=XV5lQpRBN4saKDp50Aj0Qpf6pbUzsIK8JKwJWYagQE1eS5T8rtF89A9CY+AwExAdt8
-         F3CPhy7vqJmXU/DtYDQ2Fvrm3tXRtXI/SPO0pJg61j51X3lHakSHRCrV/ar17h7bUEX4
-         u7i/Kc6Nf0rHqRQXLKDrAbWZZ8XY+NdYjNRov68sybbVtY5hRunCqh8hOa0yjPjDfPZY
-         Nu2gTr2rAdVeZEiA8UfVgwG6g7Tc01Kx2sE1jyylQ7bV/av8lm1pwX7dgjoHGHZfVWBX
-         7RD2rjJx03nBvTsebgVcMwom6yyEqAQFBQtwtrQ5caBVneYAw3pezfrRAW9328AD6+Jr
-         3Jyw==
-X-Gm-Message-State: AJcUukdn8t6f4+0n8l5zvNkh9En5SeSOoyG1VTt086Td1DIErafKRol+
-        7PXfUatNpN+jhj2TpbTcl15gfg==
-X-Google-Smtp-Source: ALg8bN7kkmek6seVLK2nptpBQ/XDB6StfCbIA4g9k2PEUgV0czE8vCk8I96aPZ0PIDcbv/ysGjd05A==
-X-Received: by 2002:a62:9913:: with SMTP id d19mr32395257pfe.107.1548140978910;
-        Mon, 21 Jan 2019 23:09:38 -0800 (PST)
-Received: from localhost ([122.172.102.63])
-        by smtp.gmail.com with ESMTPSA id z9sm36786541pfd.99.2019.01.21.23.09.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 21 Jan 2019 23:09:38 -0800 (PST)
-Date:   Tue, 22 Jan 2019 12:39:36 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Rafael Wysocki <rjw@rjwysocki.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>, linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] drivers: base: Add frequency constraint
- infrastructure
-Message-ID: <20190122070936.jsjvivzplfpdweck@vireshk-i7>
-References: <cover.1547197612.git.viresh.kumar@linaro.org>
- <f3980beb6f2c02427d892a4bc4a04989544a3952.1547197612.git.viresh.kumar@linaro.org>
- <20190118010305.GX261387@google.com>
- <20190118100234.kq37hc4ldujqvvrb@vireshk-i7>
- <20190118224534.GC261387@google.com>
+        Tue, 22 Jan 2019 02:10:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50702 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726998AbfAVHKG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 02:10:06 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D344C20854;
+        Tue, 22 Jan 2019 07:10:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548141005;
+        bh=ONxvKsRJZ3ftkN9Wpqn7v/0lEharAm5PlVPUM8Ih9sg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=F0okYTXhbkHWT2q7hh/VlrY3uR0W714XmFNa20Yi/L9BxrkJ8BsecAr+S38oFuHe+
+         TrSbjFOHFBvNP4wtbVN57P2y5w8CBBN82Z0XYOfzWbs0ktafIEaaXLISEqc1T0T9PR
+         l/pjYQZ4+1cfGECTEWTBe4So0HKWclt1pgZD2dQM=
+Date:   Tue, 22 Jan 2019 08:10:03 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc:     Lei Chen <chenl.lei@gmail.com>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, tglx@linutronix.de
+Subject: Re: /proc/<pid>/status: incorrect format breaks userland tool
+Message-ID: <20190122071003.GA5582@kroah.com>
+References: <CAB5AJuWz2NgwixCDh3hr4uv8qECfE2m0q49E_5GfecTnGPuXuQ@mail.gmail.com>
+ <20190122053108.GA14185@char.us.oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190118224534.GC261387@google.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <20190122053108.GA14185@char.us.oracle.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18-01-19, 14:45, Matthias Kaehlcke wrote:
-> On Fri, Jan 18, 2019 at 03:32:34PM +0530, Viresh Kumar wrote:
-> > On 17-01-19, 17:03, Matthias Kaehlcke wrote:
-> > > On Fri, Jan 11, 2019 at 02:48:34PM +0530, Viresh Kumar wrote:
-> > > > +static void fcs_update(struct freq_constraints *fcs, struct freq_pair *freq,
-> > > > +		       enum fc_event event)
-> > > > +{
-> > > > +	mutex_lock(&fcs->lock);
-> > > > +
-> > > > +	if (_fcs_update(fcs, freq, event)) {
-> > > > +		if (fcs->callback)
-> > > > +			schedule_work(&fcs->work);
-> > > 
-> > > IIUC the constraints aren't applied until the callback is executed. I
-> > > wonder if a dedicated workqueue should be used instead of the system
-> > > one, to avoid longer delays from other kernel entities that might
-> > > 'misbehave'. Especially for thermal constraints we want a quick
-> > > response.
-> > 
-> > I thought the system workqueue should be fast enough, it contains
-> > multiple threads which can all run in parallel and service this work.
+On Tue, Jan 22, 2019 at 12:31:08AM -0500, Konrad Rzeszutek Wilk wrote:
+> On Tue, Jan 22, 2019 at 11:29:16AM +0800, Lei Chen wrote:
+> > Hi Konrad,
 > 
-> Ok, I was still stuck at the old one thread per CPU model, where a
-> slow work would block other items in the same workqueue until it
-> finishes execution. After reading a bit through
-> Documentation/core-api/workqueue.rst I agree that a system workqueue
-> is probably fast enough. It might be warranted though to use
-> system_highpri_wq here.
+> Hi,
+> 
+> CC-ing stable,Greg,and LKML. Pls see attached and inline patch and explanation
+> at bottom.
+> 
+> > I'm running kernel 4.4.153. When running iotop, I got such failure:
+> >  # iotop -P
+> > Traceback (most recent call last):
+> >   File "/sbin/iotop", line 17, in <module>
+> >     main()
+> >   File "/usr/lib/python2.7/site-packages/iotop/ui.py", line 620, in main
+> >     main_loop()
+> >   File "/usr/lib/python2.7/site-packages/iotop/ui.py", line 610, in <lambda>
+> >     main_loop = lambda: run_iotop(options)
+> >   File "/usr/lib/python2.7/site-packages/iotop/ui.py", line 508, in
+> > run_iotop
+> >     return curses.wrapper(run_iotop_window, options)
+> >   File "/usr/lib/python2.7/curses/wrapper.py", line 43, in wrapper
+> >     return func(stdscr, *args, **kwds)
+> >   File "/usr/lib/python2.7/site-packages/iotop/ui.py", line 501, in
+> > run_iotop_window
+> >     ui.run()
+> >   File "/usr/lib/python2.7/site-packages/iotop/ui.py", line 155, in run
+> >     self.process_list.duration)
+> >   File "/usr/lib/python2.7/site-packages/iotop/ui.py", line 434, in
+> > refresh_display
+> >     lines = self.get_data()
+> >   File "/usr/lib/python2.7/site-packages/iotop/ui.py", line 415, in get_data
+> >     return list(map(format, processes))
+> >   File "/usr/lib/python2.7/site-packages/iotop/ui.py", line 388, in format
+> >     cmdline = p.get_cmdline()
+> >   File "/usr/lib/python2.7/site-packages/iotop/data.py", line 292, in
+> > get_cmdline
+> >     proc_status = parse_proc_pid_status(self.pid)
+> >   File "/usr/lib/python2.7/site-packages/iotop/data.py", line 196, in
+> > parse_proc_pid_status
+> >     key, value = line.split(':\t', 1)
+> > ValueError: need more than 1 value to unpack
+> > 
+> > Having a little further debug, I found this error is caused by the
+> > unexpected blank line in /proc/<pid>/status file, like below:
+> > 
+> > CapBnd: 0000003fffffffff
+> > CapAmb: 0000000000000000
+> > 
+> > Speculation_Store_Bypass:       vulnerable
+> > Cpus_allowed:   ff
+> > 
+> > Checking the git history, I see you touched the line "seq_printf(m,
+> > "\nSpeculation_Store_Bypass:\t");". Do you think this additional blank line
+> > is caused by the leading "\n" of "Speculation_Store_Bypass"?
+> 
+> That is correct.
+> It looks that the backport missed the change. The v4.4 has:
+> 
+> static inline void task_seccomp(struct seq_file *m, struct task_struct *p)         
+> {                                                                                  
+> #ifdef CONFIG_SECCOMP                                                              
+>         seq_printf(m, "Seccomp:\t%d\n", p->seccomp.mode);                          
+> #endif                                                                             
+>         seq_printf(m, "\nSpeculation_Store_Bypass:\t");      
+> 
+> Upstream has:
+> 
+> tatic inline void task_seccomp(struct seq_file *m, struct task_struct *p)         
+> {                                                                                  
+>         seq_put_decimal_ull(m, "NoNewPrivs:\t", task_no_new_privs(p));             
+> #ifdef CONFIG_SECCOMP                                                              
+>         seq_put_decimal_ull(m, "\nSeccomp:\t", p->seccomp.mode);                   
+> #endif                                                                             
+>         seq_printf(m, "\nSpeculation_Store_Bypass:\t");                         
+> 
+> The af884cd4a5ae6 is the one that removed the '\n' from the end and put it in the
+> front of 'Seccomp '.
+> 
+> Greg, I am not sure how one would fix this in a stable tree. But the fix is simple
+> (hadn't tested it..)
+> 
+> >From 9e1909f29e1162f2fba190dbab88d1bbcaf0365d Mon Sep 17 00:00:00 2001
+> From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+> Date: Tue, 22 Jan 2019 00:27:55 -0500
+> Subject: [PATCH] Fix: proc: Use underscores for SSBD in 'status'
+> 
+> Upstream af884cd4a5ae6 (not backported) added a '\n' in front
+> of 'Seccomp' but we have the old format with '\n' at the end.
+> This causes mayhem with 'Speculation_Store_Bypass' adding an extra
+> newline breaking tools.
+> 
+> Reported-by:Lei Chen <chenl.lei@gmail.com>
+> CC: stable@vger.kernel.org
+> Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+> ---
+>  fs/proc/array.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/proc/array.c b/fs/proc/array.c
+> index cb71cbae606d..60cbaa821164 100644
+> --- a/fs/proc/array.c
+> +++ b/fs/proc/array.c
+> @@ -333,7 +333,7 @@ static inline void task_seccomp(struct seq_file *m, struct task_struct *p)
+>  #ifdef CONFIG_SECCOMP
+>  	seq_printf(m, "Seccomp:\t%d\n", p->seccomp.mode);
+>  #endif
+> -	seq_printf(m, "\nSpeculation_Store_Bypass:\t");
+> +	seq_printf(m, "Speculation_Store_Bypass:\t");
+>  	switch (arch_prctl_spec_ctrl_get(p, PR_SPEC_STORE_BYPASS)) {
+>  	case -EINVAL:
+>  		seq_printf(m, "unknown");
+> -- 
+> 2.13.4
+> 
+> 
+> > 
+> > Thanks,
+> > Lei Chen
 
-Is this really that high priority stuff ? I am not sure.
+> >From 9e1909f29e1162f2fba190dbab88d1bbcaf0365d Mon Sep 17 00:00:00 2001
+> From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+> Date: Tue, 22 Jan 2019 00:27:55 -0500
+> Subject: [PATCH] Fix: proc: Use underscores for SSBD in 'status'
+> 
+> Upstream af884cd4a5ae6 (not backported) added a '\n' in front
+> of 'Seccomp' but we have the old format with '\n' at the end.
+> This causes mayhem with 'Speculation_Store_Bypass' adding an extra
+> newline breaking tools.
+> 
+> Reported-by:Lei Chen <chenl.lei@gmail.com>
+> CC: stable@vger.kernel.org
+> Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+> ---
+>  fs/proc/array.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/proc/array.c b/fs/proc/array.c
+> index cb71cbae606d..60cbaa821164 100644
+> --- a/fs/proc/array.c
+> +++ b/fs/proc/array.c
+> @@ -333,7 +333,7 @@ static inline void task_seccomp(struct seq_file *m, struct task_struct *p)
+>  #ifdef CONFIG_SECCOMP
+>  	seq_printf(m, "Seccomp:\t%d\n", p->seccomp.mode);
+>  #endif
+> -	seq_printf(m, "\nSpeculation_Store_Bypass:\t");
+> +	seq_printf(m, "Speculation_Store_Bypass:\t");
+>  	switch (arch_prctl_spec_ctrl_get(p, PR_SPEC_STORE_BYPASS)) {
+>  	case -EINVAL:
+>  		seq_printf(m, "unknown");
 
--- 
-viresh
+
+This is already in the latest 4.9-rc release and in the 4.4.y stable
+queue, as others reported it last week, so it will be fixed in the next
+releases of those trees.
+
+thanks,
+
+greg k-h
