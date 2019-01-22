@@ -2,142 +2,122 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87BD4C282CA
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 04:18:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0CE8C282C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 04:22:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55D0721721
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 04:18:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1F9720855
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 04:22:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QAHz9ViX"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="I92I6Oav"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726932AbfAVERt (ORCPT
+        id S1726919AbfAVEWA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 23:17:49 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:39161 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726853AbfAVERt (ORCPT
+        Mon, 21 Jan 2019 23:22:00 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:33650 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726865AbfAVEV7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 23:17:49 -0500
-Received: by mail-it1-f195.google.com with SMTP id a6so18352087itl.4
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 20:17:48 -0800 (PST)
+        Mon, 21 Jan 2019 23:21:59 -0500
+Received: by mail-pl1-f194.google.com with SMTP id z23so10816279plo.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 20:21:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mNCiLSCOs3HIOeMuRVgReUCd+ne31UPnW0KZgc5m+zA=;
-        b=QAHz9ViXtFffS1ULvCTtubzPehSRnYyYPPoHXhvVBgqhIPiQxlN67iGbs9/m9fptlW
-         mbftemqKpCPpb84j8a3fXCUhA0Nnqu73NSxtd+5KItm+8aaLI1FRIvXOIudxnEgFWbBF
-         BhuTTuQQk8dO+BCA12SMxl+9K4k7vgKF4R4xk=
+        h=from:to:cc:subject:date:message-id;
+        bh=YXvkxSWI9j7PH0XLfIk7l4OYwr3HALayuS+GuaRQtDA=;
+        b=I92I6OavRkseVq6UgzadkRcCAFJqwXyWpfd7gTHODjdJrmBQVQUO63UcisumFR9v3L
+         F6rJxjJWYvT8gu7mndjRGueKI4Y99rWws7RDuxSXJQqM/2xkBPh5j/X8v4isn2V1Dk9l
+         /pq6R2tNo/Big+HUyDxtEhQapDUfBedfiBQmg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mNCiLSCOs3HIOeMuRVgReUCd+ne31UPnW0KZgc5m+zA=;
-        b=mQ5WUEb+uCinruT+UiEJ5UmYNHJs1TaRCNrEBj7I9iUsrDHSTtkpx72XD14V67Yhev
-         /Zz14BOS8ES/rwgUG8Cxvcp2pCqD5+7/mgdIDjWZi2v2XhWVeKnsv+433Sst/EsfSMHK
-         nnNrjI2WhKT0VUskjp+LJXxoTfKLzLdaCPsIKLfm7zGak0y6TMOMrjPfHKgBLUkChWkW
-         b1Ls9lVSnTSbuKpb1wskKX2PSkI0mrRzRh4xj0/Jz9Jvz98UhuRtnZpQeC49MpLyenVC
-         0vGHM9+h/UOKNmUo+QTA5SH4aYmKSsFA3vEMHtOpC8ae3QLmsJMvQm15T1G55isz8g0l
-         BsZw==
-X-Gm-Message-State: AJcUukd9EDcoMiIagaS9fekwje32d5JAip2fUfIcaZInOr7/g6OJFzHO
-        cBX0APwtkvNFbaZ4aMwV4YBddXh5oC9e1cqdsCLrZA==
-X-Google-Smtp-Source: ALg8bN5GlXzkDXSzuQpWtdpGUbIFc+urhwgY4mQj32A/c4P4ZfZKF6yRF0pHgpLttOBuPMH4biJBmbF2qhFL+K+RKlg=
-X-Received: by 2002:a24:f14d:: with SMTP id q13mr1180269iti.166.1548130667985;
- Mon, 21 Jan 2019 20:17:47 -0800 (PST)
-MIME-Version: 1.0
-References: <1546530025-26014-1-git-send-email-firoz.khan@linaro.org>
- <20190119235650.GC26876@brain-police> <CAK8P3a1kiS7oF=eKLqPs6kKTYE1uTjhz++edH_J-tCUmXY2PNQ@mail.gmail.com>
-In-Reply-To: <CAK8P3a1kiS7oF=eKLqPs6kKTYE1uTjhz++edH_J-tCUmXY2PNQ@mail.gmail.com>
-From:   Firoz Khan <firoz.khan@linaro.org>
-Date:   Tue, 22 Jan 2019 09:47:36 +0530
-Message-ID: <CALxhOngnGKk==Cj+3EM1LkBK4FYRXNu4JxVg-d=3uttVcLwqQw@mail.gmail.com>
-Subject: Re: [PATCH 0/3] arm64: system call table generation for asm-generic
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=YXvkxSWI9j7PH0XLfIk7l4OYwr3HALayuS+GuaRQtDA=;
+        b=THa74dpf9ygUfjXHcu6L0Pa0vThASzWlzSNjPlTDmrSjDygMaTBJjGcr2yeus6ygBL
+         Vfj6o1xaaztorOysjTDS5y03tHSOBjvH/sP+vm5Imzbt02DFhI4vplIsZKin6hQlC4+V
+         eQBoJ26QUyRu4TNPMlJxf637BSLx8N1fzHVuNDRIf1hyv/cCTJibDBXdPwiKheLAOXJ/
+         Xhe3bb3rCUB7ntiEoEX8EzpU3K5jJ6wvdwsnlUx2WJxiIPQUWFI7RLig54LNZ++eUqWn
+         YoBNGvjPsH0AsVKVqCyPpgT/tsQHRENHfAwFyyITsdFNRls5cqpfz6UZX3ubiX7wUNuA
+         Tk7w==
+X-Gm-Message-State: AJcUukc5H5jhVAaZok8IrBdiOIZ4a4otVFBwEz3BNL1xqq8OvU5wcxG2
+        BYces30hF2w3q4lvuiOO1Wyo
+X-Google-Smtp-Source: ALg8bN7j+tSgVz4MKoqY8moyFNHw2w5gs9ueo65QTBhc3v9SH5i3Yx8KDr0ZahVXcKftDS2Dc5PTiw==
+X-Received: by 2002:a17:902:4:: with SMTP id 4mr32930147pla.20.1548130918456;
+        Mon, 21 Jan 2019 20:21:58 -0800 (PST)
+Received: from localhost.localdomain ([2405:204:7344:8fd1:3551:e475:9265:ab6d])
+        by smtp.gmail.com with ESMTPSA id q199sm25083953pfc.97.2019.01.21.20.21.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 21 Jan 2019 20:21:57 -0800 (PST)
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     shawnguo@kernel.org, leoyang.li@nxp.com, robh+dt@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, a.tropschug@ebs-systart.com,
+        m.bittner@ebs-systart.com, amit.kucheria@linaro.org,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v3 0/5] Add Oxalis board support
+Date:   Tue, 22 Jan 2019 09:51:42 +0530
+Message-Id: <20190122042147.5424-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd, Will,
+Hello,
 
-thanks for the email.
+This patchset adds Oxalis board support. This board is one of the
+96Boards Enterprise Edition platform from EBS-SYSTART GmbH. Below are some
+of the key features of this board:
 
-I'm want to abandon this patch series. Will post new patch series for
-system call
-table generation support for asm-generic and some other stuff together by end of
-this week or early next week.
+* SoC: NXP Layerscape LS1012A
+* RAM: 1GB DDR3L
+* PMU: NXP VR5100
+* Storage: 64MByte SPI Flash for bootloader and RCW, MicroSD Card, SATA
+* Connectivity: 2x Ethernet
+* USB: 2x USB3.0
 
-Thanks
-Firoz
+More information about this board can be found in 96Boards product
+page: https://www.96boards.org/product/oxalis/
 
-On Mon, 21 Jan 2019 at 21:24, Arnd Bergmann <arnd@arndb.de> wrote:
->
-> n Sun, Jan 20, 2019 at 12:57 AM Will Deacon <will.deacon@arm.com> wrote:
-> >
-> > On Thu, Jan 03, 2019 at 09:10:22PM +0530, Firoz Khan wrote:
-> > > This will be an automated scripts to provide easy support
-> > > for add/modify/delete the system call entry by add in
-> > > respective *.tbl file.
-> > >
-> > > System call table generation support for asm-generic is
-> > > provide for arm64 architecture which will use the common
-> > > scripts resides in scripts directory and use syscall.tbl
-> > > syscall_arm32.tbl files as inputs. This implementation
-> > > will replace asm-generic/unistd.h.
-> > >
-> > > This patch depends on:
-> > >  https://lore.kernel.org/lkml/1546439331-18646-1-git-send-email-firoz.khan@linaro.org/
-> > >  https://lore.kernel.org/lkml/1546520681-24453-1-git-send-email-firoz.khan@linaro.org/
-> >
-> > I'm having a hard time understanding what the benefit of this series is,
-> > given that we only support EABI compat tasks. When adding a new compat
-> > system call, you can't just blindly hook it up without checking whether it
-> > needs a wrapper to deal with any type conversion etc, so really we're just
-> > replacing one table with another as far as I can tell. What am I missing?
->
-> The point that is missing in the description above is that all unistd.h
-> and syscall.S files are now being generated from a .tbl file, across
-> all architectures. This was already done on arm32, x86 and s390
-> before 4.20, but is now done on all architectures that don't use
-> the uapi/asm-generic/unistd.h header, and the arm32 compat version for
-> arm64.
->
-> The newly added file has the same format as all other tables, and
-> will be easier to synchronize with the arm32 version, which has
-> almost the same contents (arm32 has oabi support, arm64 has
-> compat support).
->
-> > I also really don't think we should be generating the 32-bit UAPI headers
-> > from the 64-bit compat system call support (if that's what you're trying to
-> > do -- make headers_check fails with your patches applied). arch/arm/ is the
-> > canonical place for the 32-bit UAPI, and we're just implementing that.
->
-> I think you just misread what Firoz was trying to say here: The
-> arm64 uapi/asm/unistd.h file is now being generated from the
-> generic syscall.tbl file, while the compat asm/unistd32.h file is not
-> part of the UAPI. In both cases though, the data from the old files
-> is being replaced with data in the more compact and (hopefully)
-> more readable format.
->
->
->     Arnd
+Ethernet and SPI flash are not supported yet!
+
+Thanks,
+Mani
+
+Changes in v3:
+
+* Fixed LS1012A and LS1021A bindings
+* Added missing devicetree compatibles for LS1021A based boards
+* Added Rob's Reviewed-by tag for Vendor prefix patch
+
+Changes in v2:
+
+As per Rob's review:
+
+* Adopted the Oxalis board binding to JSON format.
+* Sorted the EBS-SYSTART vendor prefix alphabetically.
+* Used the generic node name for audio codec.
+
+Manivannan Sadhasivam (5):
+  dt-bindings: arm: fsl: Fix bindings for LS1012A and LS1021A based
+    boards
+  ARM: dts: Add devicetree compatibles for LS1021A based boards
+  dt-bindings: vendor-prefixes: Add EBS-SYSTART GmbH Vendor Prefix
+  dt-bindings: arm: fsl: Add devicetree binding for Oxalis
+  arm64: dts: freescale: Add devicetree for Oxalis
+
+ .../devicetree/bindings/arm/fsl.yaml          | 11 ++-
+ .../devicetree/bindings/vendor-prefixes.txt   |  1 +
+ arch/arm/boot/dts/ls1021a-moxa-uc-8410a.dts   |  1 +
+ arch/arm/boot/dts/ls1021a-qds.dts             |  1 +
+ arch/arm/boot/dts/ls1021a-twr.dts             |  1 +
+ arch/arm64/boot/dts/freescale/Makefile        |  1 +
+ .../boot/dts/freescale/fsl-ls1012a-oxalis.dts | 96 +++++++++++++++++++
+ 7 files changed, 111 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm64/boot/dts/freescale/fsl-ls1012a-oxalis.dts
+
+-- 
+2.17.1
+
