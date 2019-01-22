@@ -2,214 +2,265 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C480C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:59:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43E29C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:02:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B046217F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:59:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548187184;
-	bh=jH7AH4owR95tO4IEbKdAkLeziPUKi8UODE0gkFkCess=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:List-ID:From;
-	b=J/7SepwtgaegCutgjZP2IWkpK3dXT0cJn0ET5iA/G/SgkP1XfRqMDJnCg6IQ9//Ca
-	 EFvjyAtYUAOVwjjiwR2xKlfPGXsFiPKyjsrZClGmUuPDiLr5c2xJ2mKnhHtby/nWSs
-	 yAAplm/HgV6BC6uNVoOLnDm1eO6MFRFgn4CQ5Ye4=
+	by mail.kernel.org (Postfix) with ESMTP id EE49A21726
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:02:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="MC0lZrWE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726220AbfAVT7m (ORCPT
+        id S1726218AbfAVUCY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 14:59:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36156 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725972AbfAVT7m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 14:59:42 -0500
-Received: from localhost (c-67-164-102-47.hsd1.ca.comcast.net [67.164.102.47])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0401321726;
-        Tue, 22 Jan 2019 19:59:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548187180;
-        bh=jH7AH4owR95tO4IEbKdAkLeziPUKi8UODE0gkFkCess=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=d5R61jVHBCVGVCnWA/qh2NRQDzaXkREwWN1Kmdsb6tjajyBkQg7k75KQ+3R614ZqC
-         HWYfsjzhTarI1SesCZq14MquDSZABXVhoQTFEllbQv2e2UuTFLitono92/BbzhS6q/
-         Sg2n8fs/bq1MgLdcLn+WZUq4MGym9lZyuvC1kRgA=
-Date:   Tue, 22 Jan 2019 11:59:31 -0800 (PST)
-From:   Stefano Stabellini <sstabellini@kernel.org>
-X-X-Sender: sstabellini@sstabellini-ThinkPad-X260
-To:     Peng Fan <peng.fan@nxp.com>
-cc:     "mst@redhat.com" <mst@redhat.com>,
-        "jasowang@redhat.com" <jasowang@redhat.com>,
-        "sstabellini@kernel.org" <sstabellini@kernel.org>,
-        "hch@infradead.org" <hch@infradead.org>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>, luto@kernel.org,
-        jgross@suse.com, boris.ostrovsky@oracle.com
-Subject: Re: [Xen-devel] [RFC] virtio_ring: check dma_mem for xen_domain
-In-Reply-To: <20190121050056.14325-1-peng.fan@nxp.com>
-Message-ID: <alpine.DEB.2.10.1901221113410.17936@sstabellini-ThinkPad-X260>
-References: <20190121050056.14325-1-peng.fan@nxp.com>
-User-Agent: Alpine 2.10 (DEB 1266 2009-07-14)
+        Tue, 22 Jan 2019 15:02:24 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:4623 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726059AbfAVUCX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 15:02:23 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c4776b50000>; Tue, 22 Jan 2019 12:01:58 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 22 Jan 2019 12:02:21 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 22 Jan 2019 12:02:21 -0800
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL104.nvidia.com
+ (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 22 Jan
+ 2019 20:02:21 +0000
+Received: from HQMAIL108.nvidia.com (172.18.146.13) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 22 Jan
+ 2019 20:02:21 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL108.nvidia.com
+ (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Tue, 22 Jan 2019 20:02:21 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.52]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5c4776cd0000>; Tue, 22 Jan 2019 12:02:21 -0800
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <mkarthik@nvidia.com>, <smohammed@nvidia.com>, <talho@nvidia.com>
+CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-i2c@vger.kernel.org>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH V3] i2c: tegra: Add Bus Clear Master Support
+Date:   Tue, 22 Jan 2019 12:02:18 -0800
+Message-ID: <1548187338-6807-1-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1548187318; bh=8Q9O90DFWUm3/6fBPSzOVoSXtJdH0AIUyx9DIiLaOhs=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=MC0lZrWEBscwFDOrzQ+D7/hz35VE/Vf1ySNurmjiA+G6Dj1ibfZr5w0FjYgRYqqR4
+         XG8Mn67ksb70/JNci1lhY2LiNHxwjDLEJYPaU4p6B9+wvh+bMIkp/UnSs6tSlJBT4h
+         rWw0snJU2eb14dQjAMzfF0YFNhDxM4m/sKVDheCnyet9Ie+pDh/qEoiZqdyK5cdzcF
+         vDtp5A1Lxcl/W1SghN2L+ct0opJV31dvcfIByazFmfT6FgyKmmjtO7IJRWuwFlwLKf
+         1tUylICxkKF8aR6UAgNVEvT0VDRtFu8EGf5IJRiOvEOxhH0NSXLUQnBFPUgPmChRgr
+         GZwahm9oCCfdg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 21 Jan 2019, Peng Fan wrote:
-> on i.MX8QM, M4_1 is communicating with DomU using rpmsg with a fixed
-> address as the dma mem buffer which is predefined.
-> 
-> Without this patch, the flow is:
-> vring_map_one_sg -> vring_use_dma_api
->                  -> dma_map_page
-> 		       -> __swiotlb_map_page
-> 		                ->swiotlb_map_page
-> 				->__dma_map_area(phys_to_virt(dma_to_phys(dev, dev_addr)), size, dir);
-> However we are using per device dma area for rpmsg, phys_to_virt
-> could not return a correct virtual address for virtual address in
-> vmalloc area. Then kernel panic.
-> 
-> With this patch, vring_use_dma_api will return false, and
-> vring_map_one_sg will return sg_phys(sg) which is the correct phys
-> address in the predefined memory region.
-> vring_map_one_sg -> vring_use_dma_api
->                  -> sg_phys(sg)
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/virtio/virtio_ring.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> index cd7e755484e3..8993d7cb3592 100644
-> --- a/drivers/virtio/virtio_ring.c
-> +++ b/drivers/virtio/virtio_ring.c
-> @@ -248,6 +248,8 @@ static inline bool virtqueue_use_indirect(struct virtqueue *_vq,
->  
->  static bool vring_use_dma_api(struct virtio_device *vdev)
->  {
-> +	struct device *dma_dev = vdev->dev.parent;
-> +
->  	if (!virtio_has_iommu_quirk(vdev))
->  		return true;
->  
-> @@ -260,7 +262,7 @@ static bool vring_use_dma_api(struct virtio_device *vdev)
->  	 * the DMA API if we're a Xen guest, which at least allows
->  	 * all of the sensible Xen configurations to work correctly.
->  	 */
-> -	if (xen_domain())
-> +	if (xen_domain() && !dma_dev->dma_mem)
->  		return true;
->  
->  	return false;
+Bus clear feature of tegra i2c controller helps to recover from
+bus hang when i2c master loses the bus arbitration due to the
+slave device holding SDA LOW continuously for some unknown reasons.
 
-I can see you spotted a real issue, but this is not the right fix. We
-just need something a bit more flexible than xen_domain(): there are
-many kinds of Xen domains on different architectures, we basically want
-to enable this (return true from vring_use_dma_api) only when the xen
-swiotlb is meant to be used. Does the appended patch fix the issue you
-have?
+Per I2C specification, the device that held the bus LOW should
+release it within 9 clock pulses.
 
+During bus clear operation, Tegra I2C controller sends 9 clock
+pulses and terminates the transaction with STOP condition.
+Upon successful bus clear operation, bus goes to idle state and
+driver retries the transaction.
+
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
+ [V3]: Updated comments and commit message to be clear on the change
+ [V2]: Same as V1 rebased to 5.0-rc1
 
-xen: introduce xen_vring_use_dma
+ drivers/i2c/busses/i2c-tegra.c | 70 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 70 insertions(+)
 
-From: Stefano Stabellini <stefanos@xilinx.com>
-
-Export xen_swiotlb on arm and arm64.
-
-Use xen_swiotlb to determine when vring should use dma APIs to map the
-ring: when xen_swiotlb is enabled the dma API is required. When it is
-disabled, it is not required.
-
-Reported-by: Peng Fan <peng.fan@nxp.com>
-Signed-off-by: Stefano Stabellini <stefanos@xilinx.com>
-
-diff --git a/arch/arm/include/asm/xen/swiotlb-xen.h b/arch/arm/include/asm/xen/swiotlb-xen.h
-new file mode 100644
-index 0000000..455ade5
---- /dev/null
-+++ b/arch/arm/include/asm/xen/swiotlb-xen.h
-@@ -0,0 +1 @@
-+#include <xen/arm/swiotlb-xen.h>
-diff --git a/arch/arm/xen/mm.c b/arch/arm/xen/mm.c
-index cb44aa2..8592863 100644
---- a/arch/arm/xen/mm.c
-+++ b/arch/arm/xen/mm.c
-@@ -21,6 +21,8 @@
- #include <asm/xen/hypercall.h>
- #include <asm/xen/interface.h>
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index e417ebf7628c..b1b920b4a203 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -54,6 +54,7 @@
+ #define I2C_FIFO_STATUS_RX_SHIFT		0
+ #define I2C_INT_MASK				0x064
+ #define I2C_INT_STATUS				0x068
++#define I2C_INT_BUS_CLR_DONE			BIT(11)
+ #define I2C_INT_PACKET_XFER_COMPLETE		BIT(7)
+ #define I2C_INT_ALL_PACKETS_XFER_COMPLETE	BIT(6)
+ #define I2C_INT_TX_FIFO_OVERFLOW		BIT(5)
+@@ -96,6 +97,15 @@
+ #define I2C_HEADER_MASTER_ADDR_SHIFT		12
+ #define I2C_HEADER_SLAVE_ADDR_SHIFT		1
  
-+int xen_swiotlb __read_mostly;
++#define I2C_BUS_CLEAR_CNFG			0x084
++#define I2C_BC_SCLK_THRESHOLD			9
++#define I2C_BC_SCLK_THRESHOLD_SHIFT		16
++#define I2C_BC_STOP_COND			BIT(2)
++#define I2C_BC_TERMINATE			BIT(1)
++#define I2C_BC_ENABLE				BIT(0)
++#define I2C_BUS_CLEAR_STATUS			0x088
++#define I2C_BC_STATUS				BIT(0)
 +
- unsigned long xen_get_swiotlb_free_pages(unsigned int order)
- {
- 	struct memblock_region *reg;
-@@ -189,6 +191,7 @@ int __init xen_mm_init(void)
- 	struct gnttab_cache_flush cflush;
- 	if (!xen_initial_domain())
- 		return 0;
-+	xen_swiotlb = 1;
- 	xen_swiotlb_init(1, false);
- 	xen_dma_ops = &xen_swiotlb_dma_ops;
+ #define I2C_CONFIG_LOAD				0x08C
+ #define I2C_MSTR_CONFIG_LOAD			BIT(0)
+ #define I2C_SLV_CONFIG_LOAD			BIT(1)
+@@ -155,6 +165,8 @@ enum msg_end_type {
+  * @has_mst_fifo: The I2C controller contains the new MST FIFO interface that
+  *		provides additional features and allows for longer messages to
+  *		be transferred in one go.
++ * @supports_bus_clear: Bus Clear support to recover from bus hang during
++ *		SDA stuck low from device for some unknown reasons.
+  */
+ struct tegra_i2c_hw_feature {
+ 	bool has_continue_xfer_support;
+@@ -167,6 +179,7 @@ struct tegra_i2c_hw_feature {
+ 	bool has_multi_master_mode;
+ 	bool has_slcg_override_reg;
+ 	bool has_mst_fifo;
++	bool supports_bus_clear;
+ };
  
-diff --git a/arch/arm64/include/asm/xen/swiotlb-xen.h b/arch/arm64/include/asm/xen/swiotlb-xen.h
-new file mode 100644
-index 0000000..455ade5
---- /dev/null
-+++ b/arch/arm64/include/asm/xen/swiotlb-xen.h
-@@ -0,0 +1 @@
-+#include <xen/arm/swiotlb-xen.h>
-diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-index cd7e755..bf8badc 100644
---- a/drivers/virtio/virtio_ring.c
-+++ b/drivers/virtio/virtio_ring.c
-@@ -260,7 +260,7 @@ static bool vring_use_dma_api(struct virtio_device *vdev)
- 	 * the DMA API if we're a Xen guest, which at least allows
- 	 * all of the sensible Xen configurations to work correctly.
- 	 */
--	if (xen_domain())
-+	if (xen_vring_use_dma())
- 		return true;
+ /**
+@@ -639,6 +652,12 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
+ 			i2c_dev->msg_err |= I2C_ERR_ARBITRATION_LOST;
+ 		goto err;
+ 	}
++	/*
++	 * I2C transfer is terminated during the bus clear so skip
++	 * processing the other interrupts.
++	 */
++	if (i2c_dev->hw->supports_bus_clear && (status & I2C_INT_BUS_CLR_DONE))
++		goto err;
  
- 	return false;
-diff --git a/include/xen/arm/swiotlb-xen.h b/include/xen/arm/swiotlb-xen.h
-new file mode 100644
-index 0000000..2aac7c4
---- /dev/null
-+++ b/include/xen/arm/swiotlb-xen.h
-@@ -0,0 +1,10 @@
-+#ifndef _ASM_ARM_XEN_SWIOTLB_XEN_H
-+#define _ASM_ARM_XEN_SWIOTLB_XEN_H
-+
-+#ifdef CONFIG_SWIOTLB_XEN
-+extern int xen_swiotlb;
-+#else
-+#define xen_swiotlb (0)
-+#endif
-+
-+#endif
-diff --git a/include/xen/xen.h b/include/xen/xen.h
-index 0e21567..74a536d 100644
---- a/include/xen/xen.h
-+++ b/include/xen/xen.h
-@@ -46,4 +46,10 @@ enum xen_domain_type {
- bool xen_biovec_phys_mergeable(const struct bio_vec *vec1,
- 		const struct bio_vec *vec2);
+ 	if (i2c_dev->msg_read && (status & I2C_INT_RX_FIFO_DATA_REQ)) {
+ 		if (i2c_dev->msg_buf_remaining)
+@@ -668,6 +687,8 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
+ 	tegra_i2c_mask_irq(i2c_dev, I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST |
+ 		I2C_INT_PACKET_XFER_COMPLETE | I2C_INT_TX_FIFO_DATA_REQ |
+ 		I2C_INT_RX_FIFO_DATA_REQ);
++	if (i2c_dev->hw->supports_bus_clear)
++		tegra_i2c_mask_irq(i2c_dev, I2C_INT_BUS_CLR_DONE);
+ 	i2c_writel(i2c_dev, status, I2C_INT_STATUS);
+ 	if (i2c_dev->is_dvc)
+ 		dvc_writel(i2c_dev, DVC_STATUS_I2C_DONE_INTR, DVC_STATUS);
+@@ -678,6 +699,43 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
+ 	return IRQ_HANDLED;
+ }
  
-+#include <asm/xen/swiotlb-xen.h>
-+static inline int xen_vring_use_dma(void)
++static int tegra_i2c_issue_bus_clear(struct tegra_i2c_dev *i2c_dev)
 +{
-+	return !!xen_swiotlb;
++	int err;
++	unsigned long time_left;
++	u32 reg;
++
++	if (i2c_dev->hw->supports_bus_clear) {
++		reinit_completion(&i2c_dev->msg_complete);
++		reg = (I2C_BC_SCLK_THRESHOLD << I2C_BC_SCLK_THRESHOLD_SHIFT) |
++		      I2C_BC_STOP_COND | I2C_BC_TERMINATE;
++		i2c_writel(i2c_dev, reg, I2C_BUS_CLEAR_CNFG);
++		if (i2c_dev->hw->has_config_load_reg) {
++			err = tegra_i2c_wait_for_config_load(i2c_dev);
++			if (err)
++				return err;
++		}
++		reg |= I2C_BC_ENABLE;
++		i2c_writel(i2c_dev, reg, I2C_BUS_CLEAR_CNFG);
++		tegra_i2c_unmask_irq(i2c_dev, I2C_INT_BUS_CLR_DONE);
++
++		time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
++							TEGRA_I2C_TIMEOUT);
++		if (time_left == 0) {
++			dev_err(i2c_dev->dev, "timed out for bus clear\n");
++			return -ETIMEDOUT;
++		}
++		reg = i2c_readl(i2c_dev, I2C_BUS_CLEAR_STATUS);
++		if (!(reg & I2C_BC_STATUS)) {
++			dev_err(i2c_dev->dev,
++				"Un-recovered arbitration lost\n");
++			return -EIO;
++		}
++	}
++
++	return -EAGAIN;
 +}
 +
- #endif	/* _XEN_XEN_H */
+ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 	struct i2c_msg *msg, enum msg_end_type end_state)
+ {
+@@ -759,6 +817,12 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 		return 0;
+ 
+ 	tegra_i2c_init(i2c_dev);
++	/* start recovery upon arbitration loss in single master mode */
++	if (i2c_dev->msg_err == I2C_ERR_ARBITRATION_LOST) {
++		if (!i2c_dev->is_multimaster_mode)
++			return tegra_i2c_issue_bus_clear(i2c_dev);
++		return -EAGAIN;
++	}
+ 	if (i2c_dev->msg_err == I2C_ERR_NO_ACK) {
+ 		if (msg->flags & I2C_M_IGNORE_NAK)
+ 			return 0;
+@@ -848,6 +912,7 @@ static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
+ 	.has_multi_master_mode = false,
+ 	.has_slcg_override_reg = false,
+ 	.has_mst_fifo = false,
++	.supports_bus_clear = false,
+ };
+ 
+ static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
+@@ -861,6 +926,7 @@ static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
+ 	.has_multi_master_mode = false,
+ 	.has_slcg_override_reg = false,
+ 	.has_mst_fifo = false,
++	.supports_bus_clear = false,
+ };
+ 
+ static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
+@@ -874,6 +940,7 @@ static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
+ 	.has_multi_master_mode = false,
+ 	.has_slcg_override_reg = false,
+ 	.has_mst_fifo = false,
++	.supports_bus_clear = true,
+ };
+ 
+ static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
+@@ -887,6 +954,7 @@ static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
+ 	.has_multi_master_mode = false,
+ 	.has_slcg_override_reg = true,
+ 	.has_mst_fifo = false,
++	.supports_bus_clear = true,
+ };
+ 
+ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
+@@ -900,6 +968,7 @@ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
+ 	.has_multi_master_mode = true,
+ 	.has_slcg_override_reg = true,
+ 	.has_mst_fifo = false,
++	.supports_bus_clear = true,
+ };
+ 
+ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
+@@ -913,6 +982,7 @@ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
+ 	.has_multi_master_mode = true,
+ 	.has_slcg_override_reg = true,
+ 	.has_mst_fifo = true,
++	.supports_bus_clear = true,
+ };
+ 
+ /* Match table for of_platform binding */
+-- 
+2.7.4
+
