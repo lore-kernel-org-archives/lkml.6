@@ -2,378 +2,126 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDAE6C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:41:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EED39C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:41:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84469217F9
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:41:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kVhBdQDa"
+	by mail.kernel.org (Postfix) with ESMTP id C6F17217F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:41:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729069AbfAVPlK (ORCPT
+        id S1729107AbfAVPlg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 10:41:10 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:40613 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728633AbfAVPlJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 10:41:09 -0500
-Received: by mail-io1-f67.google.com with SMTP id k2so19437826iog.7
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 07:41:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Iww05DtpPCfZVuQhgUK2rWgTUNdJQwf04Y2zWh03EKA=;
-        b=kVhBdQDaSCx2Xbj/4i5Lf+Ev7/rYLZkgUWRGAlj5Gov4jBVM1GgYDDZk8T7wYA5bQ+
-         1FZPNpxBKdtYM70r3VVbmatQq9Gk11Qv+N0P5bxDAB/+NuIo2ihH22m6QaMtLWnXTEP1
-         KtF4dtJTBFXPoEUrjRhqd4VIoTU8uwyf/dnkdjHTygNnj4mzYNo5pvxF2ld3uG5sPeYm
-         37LgC8J5biHXnUDnv+wsqMN4NjABBW2RHC5vRZiCaqXmExnLn3zolQrFWGL947Paqs3F
-         Q5uAzd11QKU3yFSQdKZR+IsK6KyYbQ9WNVElJ7R9wYlLpOGqerQDlKEwGyem2XQ2gTRa
-         hCbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Iww05DtpPCfZVuQhgUK2rWgTUNdJQwf04Y2zWh03EKA=;
-        b=U+jVnQMS7CTtD+SebWs4pjR09V46VXU5IFYrD61k8Uj4gObuiduxbNWfOg+pTTWxnE
-         w//7otpCli3xcjx7eraYKowGxe7W6qdUm8s2dAyzTGEPnq/pQeIGB8xFOexD2tJpE+vu
-         1XaVylLl9mPZ63yjRLF8SbPHtolksFFDLLa7YN02rJHoL2HPjJzEdHy7jFiQUZr04Lia
-         czCCYQcc3IUqLl9lngscgdlfZDr0iaoX/KdHhPa8JGsNE5sjw58sHs9hNXSHn6Unz/4z
-         mpSHfwCHrUcic23p1sQ1Nn/eWq7bJf8J3NnuesHdPGf6UefV9l4pLg1vLLqzityi8HrA
-         TGIg==
-X-Gm-Message-State: AJcUukfkVi/FNgjgOVvY/xAKrYOVXoxoeO55zu2UHjNzcy1UvDwcr8N4
-        X3/CbRey5MzBySI9wxyZWoZJlltDB+eevDW+TJ3Vlg==
-X-Google-Smtp-Source: ALg8bN5Bs87vqfgS3Mdy0senBwDiIhZZcEUHHu1R6JPyPol85JsXeWhSeA2zSKzn79Ae5omYwXhLAu9mK195p/0St9k=
-X-Received: by 2002:a6b:fa01:: with SMTP id p1mr17817487ioh.271.1548171668354;
- Tue, 22 Jan 2019 07:41:08 -0800 (PST)
-MIME-Version: 1.0
-References: <0000000000004024240573137822@google.com> <20180810161848.GB16533@bombadil.infradead.org>
- <CACT4Y+bEsav4r82z5rE1b0rH==VpU7FEK7DzuqTu3AV+w0Ve9g@mail.gmail.com> <20190122153414.GB191275@google.com>
-In-Reply-To: <20190122153414.GB191275@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Tue, 22 Jan 2019 16:40:57 +0100
-Message-ID: <CACT4Y+ZP9VOjJc3U0d2iNWc_dCC=hQtK+dGYv-Z9=0cGoMmAyw@mail.gmail.com>
-Subject: Re: possible deadlock in shmem_fallocate (2)
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        syzbot <syzbot+4b8b031b89e6b96c4b2e@syzkaller.appspotmail.com>,
-        Hugh Dickins <hughd@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Yisheng Xie <xieyisheng1@huawei.com>,
+        Tue, 22 Jan 2019 10:41:36 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56216 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728580AbfAVPlg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 10:41:36 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4EE1BA78;
+        Tue, 22 Jan 2019 07:41:35 -0800 (PST)
+Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5AB013F589;
+        Tue, 22 Jan 2019 07:41:32 -0800 (PST)
+Date:   Tue, 22 Jan 2019 15:41:29 +0000
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
         Todd Kjos <tkjos@google.com>,
-        Arve Hjonnevag <arve@android.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Content-Type: text/plain; charset="UTF-8"
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v6 07/16] sched/core: uclamp: Add system default clamps
+Message-ID: <20190122154129.mxnpgaoxnccbjbch@e110439-lin>
+References: <20190115101513.2822-1-patrick.bellasi@arm.com>
+ <20190115101513.2822-8-patrick.bellasi@arm.com>
+ <20190122135644.GP27931@hirez.programming.kicks-ass.net>
+ <20190122144329.ziimv6fejwvky7yb@e110439-lin>
+ <20190122151317.GH13777@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190122151317.GH13777@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 4:34 PM Joel Fernandes <joel@joelfernandes.org> wrote:
->
-> On Tue, Jan 22, 2019 at 02:59:29PM +0100, Dmitry Vyukov wrote:
-> > On Fri, Aug 10, 2018 at 6:18 PM Matthew Wilcox <willy@infradead.org> wrote:
-> > >
-> > >
-> > > This is another ashmem lockdep splat.  Forwarding to the appropriate ashmem
-> > > people.
-> >
-> >
-> > Let's test Tetsuo's patch
-> >
-> > #syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-> > master
->
-> Just to clarify, the following patch only went in, in September:
-> mm: shmem.c: Correctly annotate new inodes for lockdep
+On 22-Jan 16:13, Peter Zijlstra wrote:
+> On Tue, Jan 22, 2019 at 02:43:29PM +0000, Patrick Bellasi wrote:
+> > On 22-Jan 14:56, Peter Zijlstra wrote:
+> > > On Tue, Jan 15, 2019 at 10:15:04AM +0000, Patrick Bellasi wrote:
+> > > 
+> > > > diff --git a/include/linux/sched.h b/include/linux/sched.h
+> > > > index 84294925d006..c8f391d1cdc5 100644
+> > > > --- a/include/linux/sched.h
+> > > > +++ b/include/linux/sched.h
+> > > > @@ -625,6 +625,11 @@ struct uclamp_se {
+> > > >  	unsigned int bucket_id		: bits_per(UCLAMP_BUCKETS);
+> > > >  	unsigned int mapped		: 1;
+> > > >  	unsigned int active		: 1;
+> > > > +	/* Clamp bucket and value actually used by a RUNNABLE task */
+> > > > +	struct {
+> > > > +		unsigned int value	: bits_per(SCHED_CAPACITY_SCALE);
+> > > > +		unsigned int bucket_id	: bits_per(UCLAMP_BUCKETS);
+> > > > +	} effective;
+> > > 
+> > > I am confuzled by this thing..  so uclamp_se already has a value,bucket,
+> > > which per the prior code is the effective one.
+> > > 
+> > > Now; I think I see why you want another value; you need the second to
+> > > store the original value for when the system limits change and we must
+> > > re-evaluate.
+> > 
+> > Yes, that's one reason, the other one being to properly support
+> > CGroup when we add them in the following patches.
+> > 
+> > Effective will always track the value/bucket in which the task has
+> > been refcounted at enqueue time and it depends on the aggregated
+> > value.
+> 
+> > > Should you not update all tasks?
+> > 
+> > That's true, but that's also an expensive operation, that's why now
+> > I'm doing only lazy updates at next enqueue time.
+> 
+> Aaah, so you refcount on the original value, which allows you to skip
+> fixing up all tasks. I missed that bit.
 
-Is it supposed to fix this bug? This bug still happens: last time 5 hours ago:
+Right, effective is always tracking the bucket we refcounted at
+enqueue time.
 
-https://syzkaller.appspot.com/bug?extid=4b8b031b89e6b96c4b2e
+We can still argue that, the moment we change a clamp, a task should
+be updated without waiting for a dequeue/enqueue cycle.
 
+IMO, that could be a limitation only for tasks which never sleep, but
+that's a very special case.
 
-> thanks,
->
->  - Joel
->
->
-> > > On Fri, Aug 10, 2018 at 04:59:02AM -0700, syzbot wrote:
-> > > > Hello,
-> > > >
-> > > > syzbot found the following crash on:
-> > > >
-> > > > HEAD commit:    4110b42356f3 Add linux-next specific files for 20180810
-> > > > git tree:       linux-next
-> > > > console output: https://syzkaller.appspot.com/x/log.txt?x=1411d6e2400000
-> > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=1d80606e3795a4f5
-> > > > dashboard link: https://syzkaller.appspot.com/bug?extid=4b8b031b89e6b96c4b2e
-> > > > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> > > > syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=175052f8400000
-> > > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11873622400000
-> > > >
-> > > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > > > Reported-by: syzbot+4b8b031b89e6b96c4b2e@syzkaller.appspotmail.com
-> > > >
-> > > > random: sshd: uninitialized urandom read (32 bytes read)
-> > > > random: sshd: uninitialized urandom read (32 bytes read)
-> > > > random: sshd: uninitialized urandom read (32 bytes read)
-> > > >
-> > > > ======================================================
-> > > > WARNING: possible circular locking dependency detected
-> > > > 4.18.0-rc8-next-20180810+ #36 Not tainted
-> > > > ------------------------------------------------------
-> > > > syz-executor900/4483 is trying to acquire lock:
-> > > > 00000000d2bfc8fe (&sb->s_type->i_mutex_key#9){++++}, at: inode_lock
-> > > > include/linux/fs.h:765 [inline]
-> > > > 00000000d2bfc8fe (&sb->s_type->i_mutex_key#9){++++}, at:
-> > > > shmem_fallocate+0x18b/0x12e0 mm/shmem.c:2602
-> > > >
-> > > > but task is already holding lock:
-> > > > 0000000025208078 (ashmem_mutex){+.+.}, at: ashmem_shrink_scan+0xb4/0x630
-> > > > drivers/staging/android/ashmem.c:448
-> > > >
-> > > > which lock already depends on the new lock.
-> > > >
-> > > >
-> > > > the existing dependency chain (in reverse order) is:
-> > > >
-> > > > -> #2 (ashmem_mutex){+.+.}:
-> > > >        __mutex_lock_common kernel/locking/mutex.c:925 [inline]
-> > > >        __mutex_lock+0x171/0x1700 kernel/locking/mutex.c:1073
-> > > >        mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1088
-> > > >        ashmem_mmap+0x55/0x520 drivers/staging/android/ashmem.c:361
-> > > >        call_mmap include/linux/fs.h:1844 [inline]
-> > > >        mmap_region+0xf27/0x1c50 mm/mmap.c:1762
-> > > >        do_mmap+0xa10/0x1220 mm/mmap.c:1535
-> > > >        do_mmap_pgoff include/linux/mm.h:2298 [inline]
-> > > >        vm_mmap_pgoff+0x213/0x2c0 mm/util.c:357
-> > > >        ksys_mmap_pgoff+0x4da/0x660 mm/mmap.c:1585
-> > > >        __do_sys_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
-> > > >        __se_sys_mmap arch/x86/kernel/sys_x86_64.c:91 [inline]
-> > > >        __x64_sys_mmap+0xe9/0x1b0 arch/x86/kernel/sys_x86_64.c:91
-> > > >        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-> > > >        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> > > >
-> > > > -> #1 (&mm->mmap_sem){++++}:
-> > > >        __might_fault+0x155/0x1e0 mm/memory.c:4568
-> > > >        _copy_to_user+0x30/0x110 lib/usercopy.c:25
-> > > >        copy_to_user include/linux/uaccess.h:155 [inline]
-> > > >        filldir+0x1ea/0x3a0 fs/readdir.c:196
-> > > >        dir_emit_dot include/linux/fs.h:3464 [inline]
-> > > >        dir_emit_dots include/linux/fs.h:3475 [inline]
-> > > >        dcache_readdir+0x13a/0x620 fs/libfs.c:193
-> > > >        iterate_dir+0x48b/0x5d0 fs/readdir.c:51
-> > > >        __do_sys_getdents fs/readdir.c:231 [inline]
-> > > >        __se_sys_getdents fs/readdir.c:212 [inline]
-> > > >        __x64_sys_getdents+0x29f/0x510 fs/readdir.c:212
-> > > >        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-> > > >        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> > > >
-> > > > -> #0 (&sb->s_type->i_mutex_key#9){++++}:
-> > > >        lock_acquire+0x1e4/0x540 kernel/locking/lockdep.c:3924
-> > > >        down_write+0x8f/0x130 kernel/locking/rwsem.c:70
-> > > >        inode_lock include/linux/fs.h:765 [inline]
-> > > >        shmem_fallocate+0x18b/0x12e0 mm/shmem.c:2602
-> > > >        ashmem_shrink_scan+0x236/0x630 drivers/staging/android/ashmem.c:455
-> > > >        ashmem_ioctl+0x3ae/0x13a0 drivers/staging/android/ashmem.c:797
-> > > >        vfs_ioctl fs/ioctl.c:46 [inline]
-> > > >        file_ioctl fs/ioctl.c:501 [inline]
-> > > >        do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
-> > > >        ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
-> > > >        __do_sys_ioctl fs/ioctl.c:709 [inline]
-> > > >        __se_sys_ioctl fs/ioctl.c:707 [inline]
-> > > >        __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
-> > > >        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-> > > >        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> > > >
-> > > > other info that might help us debug this:
-> > > >
-> > > > Chain exists of:
-> > > >   &sb->s_type->i_mutex_key#9 --> &mm->mmap_sem --> ashmem_mutex
-> > > >
-> > > >  Possible unsafe locking scenario:
-> > > >
-> > > >        CPU0                    CPU1
-> > > >        ----                    ----
-> > > >   lock(ashmem_mutex);
-> > > >                                lock(&mm->mmap_sem);
-> > > >                                lock(ashmem_mutex);
-> > > >   lock(&sb->s_type->i_mutex_key#9);
-> > > >
-> > > >  *** DEADLOCK ***
-> > > >
-> > > > 1 lock held by syz-executor900/4483:
-> > > >  #0: 0000000025208078 (ashmem_mutex){+.+.}, at:
-> > > > ashmem_shrink_scan+0xb4/0x630 drivers/staging/android/ashmem.c:448
-> > > >
-> > > > stack backtrace:
-> > > > CPU: 1 PID: 4483 Comm: syz-executor900 Not tainted 4.18.0-rc8-next-20180810+
-> > > > #36
-> > > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> > > > Google 01/01/2011
-> > > > Call Trace:
-> > > >  __dump_stack lib/dump_stack.c:77 [inline]
-> > > >  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
-> > > >  print_circular_bug.isra.37.cold.58+0x1bd/0x27d
-> > > > kernel/locking/lockdep.c:1227
-> > > >  check_prev_add kernel/locking/lockdep.c:1867 [inline]
-> > > >  check_prevs_add kernel/locking/lockdep.c:1980 [inline]
-> > > >  validate_chain kernel/locking/lockdep.c:2421 [inline]
-> > > >  __lock_acquire+0x3449/0x5020 kernel/locking/lockdep.c:3435
-> > > >  lock_acquire+0x1e4/0x540 kernel/locking/lockdep.c:3924
-> > > >  down_write+0x8f/0x130 kernel/locking/rwsem.c:70
-> > > >  inode_lock include/linux/fs.h:765 [inline]
-> > > >  shmem_fallocate+0x18b/0x12e0 mm/shmem.c:2602
-> > > >  ashmem_shrink_scan+0x236/0x630 drivers/staging/android/ashmem.c:455
-> > > >  ashmem_ioctl+0x3ae/0x13a0 drivers/staging/android/ashmem.c:797
-> > > >  vfs_ioctl fs/ioctl.c:46 [inline]
-> > > >  file_ioctl fs/ioctl.c:501 [inline]
-> > > >  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
-> > > >  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
-> > > >  __do_sys_ioctl fs/ioctl.c:709 [inline]
-> > > >  __se_sys_ioctl fs/ioctl.c:707 [inline]
-> > > >  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
-> > > >  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-> > > >  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> > > > RIP: 0033:0x440099
-> > > > Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7
-> > > > 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff
-> > > > 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-> > > > RSP: 002b:00007fff3613dbf8 EFLAGS: 00000217 ORIG_RAX: 0000000000000010
-> > > > RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440099
-> > > > RDX: 00000
-> > > >
-> > > >
-> > > > ---
-> > > > This bug is generated by a bot. It may contain errors.
-> > > > See https://goo.gl/tpsmEJ for more information about syzbot.
-> > > > syzbot engineers can be reached at syzkaller@googlegroups.com.
-> > > >
-> > > > syzbot will keep track of this bug report. See:
-> > > > https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> > > > syzbot.
-> > > > syzbot can test patches for this bug, for details see:
-> > > > https://goo.gl/tpsmEJ#testing-patches
-> > > >
-> > >
-> > > --
-> > > You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> > > To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> > > To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/20180810161848.GB16533%40bombadil.infradead.org.
-> > > For more options, visit https://groups.google.com/d/optout.
->
-> > diff --git a/drivers/staging/android/ashmem.c b/drivers/staging/android/ashmem.c
-> > index 90a8a9f1ac7d..1a890c43a10a 100644
-> > --- a/drivers/staging/android/ashmem.c
-> > +++ b/drivers/staging/android/ashmem.c
-> > @@ -75,6 +75,17 @@ struct ashmem_range {
-> >  /* LRU list of unpinned pages, protected by ashmem_mutex */
-> >  static LIST_HEAD(ashmem_lru_list);
-> >
-> > +static struct workqueue_struct *ashmem_wq;
-> > +static atomic_t ashmem_shrink_inflight = ATOMIC_INIT(0);
-> > +static DECLARE_WAIT_QUEUE_HEAD(ashmem_shrink_wait);
-> > +
-> > +struct ashmem_shrink_work {
-> > +     struct work_struct work;
-> > +     struct file *file;
-> > +     loff_t start;
-> > +     loff_t end;
-> > +};
-> > +
-> >  /*
-> >   * long lru_count - The count of pages on our LRU list.
-> >   *
-> > @@ -292,6 +303,7 @@ static ssize_t ashmem_read_iter(struct kiocb *iocb, struct iov_iter *iter)
-> >       int ret = 0;
-> >
-> >       mutex_lock(&ashmem_mutex);
-> > +     wait_event(ashmem_shrink_wait, !atomic_read(&ashmem_shrink_inflight));
-> >
-> >       /* If size is not set, or set to 0, always return EOF. */
-> >       if (asma->size == 0)
-> > @@ -359,6 +371,7 @@ static int ashmem_mmap(struct file *file, struct vm_area_struct *vma)
-> >       int ret = 0;
-> >
-> >       mutex_lock(&ashmem_mutex);
-> > +     wait_event(ashmem_shrink_wait, !atomic_read(&ashmem_shrink_inflight));
-> >
-> >       /* user needs to SET_SIZE before mapping */
-> >       if (!asma->size) {
-> > @@ -421,6 +434,19 @@ static int ashmem_mmap(struct file *file, struct vm_area_struct *vma)
-> >       return ret;
-> >  }
-> >
-> > +static void ashmem_shrink_worker(struct work_struct *work)
-> > +{
-> > +     struct ashmem_shrink_work *w = container_of(work, typeof(*w), work);
-> > +
-> > +     w->file->f_op->fallocate(w->file,
-> > +                              FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
-> > +                              w->start, w->end - w->start);
-> > +     fput(w->file);
-> > +     kfree(w);
-> > +     if (atomic_dec_and_test(&ashmem_shrink_inflight))
-> > +             wake_up_all(&ashmem_shrink_wait);
-> > +}
-> > +
-> >  /*
-> >   * ashmem_shrink - our cache shrinker, called from mm/vmscan.c
-> >   *
-> > @@ -449,12 +475,18 @@ ashmem_shrink_scan(struct shrinker *shrink, struct shrink_control *sc)
-> >               return -1;
-> >
-> >       list_for_each_entry_safe(range, next, &ashmem_lru_list, lru) {
-> > -             loff_t start = range->pgstart * PAGE_SIZE;
-> > -             loff_t end = (range->pgend + 1) * PAGE_SIZE;
-> > +             struct ashmem_shrink_work *w = kzalloc(sizeof(*w), GFP_ATOMIC);
-> > +
-> > +             if (!w)
-> > +                     break;
-> > +             INIT_WORK(&w->work, ashmem_shrink_worker);
-> > +             w->file = range->asma->file;
-> > +             get_file(w->file);
-> > +             w->start = range->pgstart * PAGE_SIZE;
-> > +             w->end = (range->pgend + 1) * PAGE_SIZE;
-> > +             atomic_inc(&ashmem_shrink_inflight);
-> > +             queue_work(ashmem_wq, &w->work);
-> >
-> > -             range->asma->file->f_op->fallocate(range->asma->file,
-> > -                             FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
-> > -                             start, end - start);
-> >               range->purged = ASHMEM_WAS_PURGED;
-> >               lru_del(range);
-> >
-> > @@ -713,6 +745,7 @@ static int ashmem_pin_unpin(struct ashmem_area *asma, unsigned long cmd,
-> >               return -EFAULT;
-> >
-> >       mutex_lock(&ashmem_mutex);
-> > +     wait_event(ashmem_shrink_wait, !atomic_read(&ashmem_shrink_inflight));
-> >
-> >       if (!asma->file)
-> >               goto out_unlock;
-> > @@ -883,8 +916,15 @@ static int __init ashmem_init(void)
-> >               goto out_free2;
-> >       }
-> >
-> > +     ashmem_wq = alloc_workqueue("ashmem_wq", WQ_MEM_RECLAIM, 0);
-> > +     if (!ashmem_wq) {
-> > +             pr_err("failed to create workqueue\n");
-> > +             goto out_demisc;
-> > +     }
-> > +
-> >       ret = register_shrinker(&ashmem_shrinker);
-> >       if (ret) {
-> > +             destroy_workqueue(ashmem_wq);
-> >               pr_err("failed to register shrinker!\n");
-> >               goto out_demisc;
-> >       }
->
+Instead, as you'll see, in the cgroup integration we force update all
+RUNNABLE tasks. Although that's expensive, since we are in the domain
+of the "delegation model" and "containers resources control", there
+it's probably more worth to pay than here.
+
+> > Do you think that could be acceptable?
+> 
+> Think so, it's a sysctl poke, 'nobody' ever does that.
+
+Cool, so... I'll keep lazy update for system default.
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
