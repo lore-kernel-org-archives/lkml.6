@@ -2,119 +2,85 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED4F6C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:06:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3A91C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:08:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5AC82084C
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:06:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B82A820879
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:08:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548144497;
+	bh=Tx1VyRaTE7bypEWdfSczzyr6fSDtoLb1NlyG9736/cU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=pFy6Qb9xAsEycB7enEvHMwtIqadWJe6crTrCNMrQF30JVWfG0XrXx1bBzXZlNG0Qn
+	 yCI6tsC6awa3W0Tr8ZDbg1D2imDRt/TW4TI3PzsfICF1L+x96+uvIaOp9H6XPaUCb/
+	 0WuwYqldwyjd88YuQtAbc5D8yZ5ZEYZgOM3fu604=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727550AbfAVIGk (ORCPT
+        id S1727565AbfAVIIQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 03:06:40 -0500
-Received: from mx2.suse.de ([195.135.220.15]:48832 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727219AbfAVIGk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 03:06:40 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2B2C8AC3A;
-        Tue, 22 Jan 2019 08:06:39 +0000 (UTC)
-From:   Juergen Gross <jgross@suse.com>
-To:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        x86@kernel.org, linux-mm@kvack.org
-Cc:     boris.ostrovsky@oracle.com, sstabellini@kernel.org, hpa@zytor.com,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        Juergen Gross <jgross@suse.com>
-Subject: [PATCH 1/2] x86: respect memory size limiting via mem= parameter
-Date:   Tue, 22 Jan 2019 09:06:27 +0100
-Message-Id: <20190122080628.7238-2-jgross@suse.com>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20190122080628.7238-1-jgross@suse.com>
-References: <20190122080628.7238-1-jgross@suse.com>
+        Tue, 22 Jan 2019 03:08:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59938 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727374AbfAVIIP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 03:08:15 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF52C2084C;
+        Tue, 22 Jan 2019 08:08:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548144495;
+        bh=Tx1VyRaTE7bypEWdfSczzyr6fSDtoLb1NlyG9736/cU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HPfCagNJvRzUUtHeDQE7HDC0dt1muUr7mGjjTtN1LUj2MHMWtL5Rs5Kc1XUYxZ31R
+         negMbaTNJ1kgxnGOhfn4jmEaEKOe34y8zvE4Wc46EQlVEiiJGAs9V1G+5YeC1Se5/i
+         bnyzj68GE1skZrd1wCmcTWzG7xUEWTFr3IF9D7NY=
+Date:   Tue, 22 Jan 2019 09:08:13 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Yinbo Zhu <yinbo.zhu@nxp.com>
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Xiaobo Xie <xiaobo.xie@nxp.com>,
+        Jerry Huang <jerry.huang@nxp.com>,
+        Ran Wang <ran.wang_1@nxp.com>,
+        Ramneek Mehresh <ramneek.mehresh@freescale.com>,
+        Nikhil Badola <nikhil.badola@freescale.com>,
+        Suresh Gupta <suresh.gupta@freescale.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/6] usb: fsl: Set USB_EN bit to select ULPI phy
+Message-ID: <20190122080813.GA21793@kroah.com>
+References: <20190121102601.4735-1-yinbo.zhu@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190121102601.4735-1-yinbo.zhu@nxp.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When limiting memory size via kernel parameter "mem=" this should be
-respected even in case of memory made accessible via a PCI card.
+On Mon, Jan 21, 2019 at 10:25:00AM +0000, Yinbo Zhu wrote:
+> From: Nikhil Badola <nikhil.badola@freescale.com>
+> 
+> Set USB_EN bit to select ULPI phy for USB controller version 2.5
+> 
+> Signed-off-by: Nikhil Badola <nikhil.badola@freescale.com>
+> Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
+> ---
+> Change in v2:
+> 		replace Yinbo.Zhu with Yinbo Zhu 
+> 
+>  drivers/usb/host/ehci-fsl.c |    6 ++++++
+>  1 files changed, 6 insertions(+), 0 deletions(-)
 
-Today this kind of memory won't be made usable in initial memory
-setup as the memory won't be visible in E820 map, but it might be
-added when adding PCI devices due to corresponding ACPI table entries.
+This patch doesn't apply against my usb-next branch, what did you
+generate it against?
 
-Not respecting "mem=" can be corrected by adding a global max_mem_size
-variable set by parse_memopt() which will result in rejecting adding
-memory areas resulting in a memory size above the allowed limit.
+thanks,
 
-Signed-off-by: Juergen Gross <jgross@suse.com>
----
- arch/x86/kernel/e820.c         | 5 +++++
- include/linux/memory_hotplug.h | 2 ++
- mm/memory_hotplug.c            | 6 ++++++
- 3 files changed, 13 insertions(+)
-
-diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
-index 50895c2f937d..e67513e2cbbb 100644
---- a/arch/x86/kernel/e820.c
-+++ b/arch/x86/kernel/e820.c
-@@ -14,6 +14,7 @@
- #include <linux/acpi.h>
- #include <linux/firmware-map.h>
- #include <linux/sort.h>
-+#include <linux/memory_hotplug.h>
- 
- #include <asm/e820/api.h>
- #include <asm/setup.h>
-@@ -881,6 +882,10 @@ static int __init parse_memopt(char *p)
- 
- 	e820__range_remove(mem_size, ULLONG_MAX - mem_size, E820_TYPE_RAM, 1);
- 
-+#ifdef CONFIG_MEMORY_HOTPLUG
-+	max_mem_size = mem_size;
-+#endif
-+
- 	return 0;
- }
- early_param("mem", parse_memopt);
-diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
-index 07da5c6c5ba0..fb6bd0022d41 100644
---- a/include/linux/memory_hotplug.h
-+++ b/include/linux/memory_hotplug.h
-@@ -98,6 +98,8 @@ extern void __online_page_free(struct page *page);
- 
- extern int try_online_node(int nid);
- 
-+extern u64 max_mem_size;
-+
- extern bool memhp_auto_online;
- /* If movable_node boot option specified */
- extern bool movable_node_enabled;
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index b9a667d36c55..7fc2a87110a3 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -96,10 +96,16 @@ void mem_hotplug_done(void)
- 	cpus_read_unlock();
- }
- 
-+u64 max_mem_size = -1;
-+
- /* add this memory to iomem resource */
- static struct resource *register_memory_resource(u64 start, u64 size)
- {
- 	struct resource *res, *conflict;
-+
-+	if (start + size > max_mem_size)
-+		return ERR_PTR(-E2BIG);
-+
- 	res = kzalloc(sizeof(struct resource), GFP_KERNEL);
- 	if (!res)
- 		return ERR_PTR(-ENOMEM);
--- 
-2.16.4
-
+greg k-h
