@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1E05C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:41:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5298C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:41:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE85B21726
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:41:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65D7321726
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:41:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727327AbfAVXlL (ORCPT
+        id S1727360AbfAVXlV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 18:41:11 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:47948 "EHLO huawei.com"
+        Tue, 22 Jan 2019 18:41:21 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:60038 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727011AbfAVXkK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726329AbfAVXkK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 22 Jan 2019 18:40:10 -0500
 Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 34D946D9EC39E9FDDC19;
+        by Forcepoint Email with ESMTP id 08603E8678FC08227F38;
         Wed, 23 Jan 2019 07:40:08 +0800 (CST)
 Received: from SZA150611058.china.huawei.com (10.45.143.16) by
  DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
- 14.3.408.0; Wed, 23 Jan 2019 07:40:02 +0800
+ 14.3.408.0; Wed, 23 Jan 2019 07:40:00 +0800
 From:   Huazhong Tan <tanhuazhong@huawei.com>
 To:     <davem@davemloft.net>, <eric.dumazet@gmail.com>
 CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <huangdaode@hisilicon.com>, <yisen.zhuang@huawei.com>,
         <salil.mehta@huawei.com>, <linuxarm@huawei.com>,
-        Yunsheng Lin <linyunsheng@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        Huazhong Tan <tanhuazhong@huawei.com>
-Subject: [PATCH V2 net-next 09/12] net: hns3: do not return GE PFC setting err when initializing
-Date:   Wed, 23 Jan 2019 07:39:35 +0800
-Message-ID: <20190122233938.7188-10-tanhuazhong@huawei.com>
+        Huazhong Tan <tanhuazhong@huawei.com>,
+        Peng Li <lipeng321@huawei.com>
+Subject: [PATCH V2 net-next 06/12] net: hns3: fix bug of ethtool_ops.get_channels for VF
+Date:   Wed, 23 Jan 2019 07:39:32 +0800
+Message-ID: <20190122233938.7188-7-tanhuazhong@huawei.com>
 X-Mailer: git-send-email 2.20.1.windows.1
 In-Reply-To: <20190122233938.7188-1-tanhuazhong@huawei.com>
 References: <20190122233938.7188-1-tanhuazhong@huawei.com>
@@ -49,144 +48,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yunsheng Lin <linyunsheng@huawei.com>
+The current code returns the number of all queues that can be used and
+the number of queues that have been allocated, which is incorrect.
+What should be returned is the number of queues allocated for each enabled
+TC and the number of queues that can be allocated.
 
-GE MAC does not support PFC, when driver is initializing and MAC
-is in GE Mode, ignore the fw not supported error, otherwise
-initialization will fail.
+This patch fixes it.
 
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
+Fixes: 849e46077689 ("net: hns3: add ethtool_ops.get_channels support for VF")
 Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
 ---
- .../hisilicon/hns3/hns3pf/hclge_dcb.c         |  6 +++---
- .../hisilicon/hns3/hns3pf/hclge_main.c        |  2 +-
- .../ethernet/hisilicon/hns3/hns3pf/hclge_tm.c | 19 ++++++++++++-------
- .../ethernet/hisilicon/hns3/hns3pf/hclge_tm.h |  4 ++--
- 4 files changed, 18 insertions(+), 13 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
-index 5f7ac63707b8..7db491086fea 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
-@@ -166,7 +166,7 @@ static int hclge_map_update(struct hnae3_handle *h)
- 	if (ret)
- 		return ret;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
+index 989f08377d58..24b54083b5f9 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
+@@ -2466,7 +2466,8 @@ static u32 hclgevf_get_max_channels(struct hclgevf_dev *hdev)
+ 	struct hnae3_handle *nic = &hdev->nic;
+ 	struct hnae3_knic_private_info *kinfo = &nic->kinfo;
  
--	ret = hclge_pause_setup_hw(hdev);
-+	ret = hclge_pause_setup_hw(hdev, false);
- 	if (ret)
- 		return ret;
- 
-@@ -313,7 +313,7 @@ static int hclge_ieee_setpfc(struct hnae3_handle *h, struct ieee_pfc *pfc)
- 
- 	hdev->tm_info.hw_pfc_map = pfc_map;
- 
--	return hclge_pause_setup_hw(hdev);
-+	return hclge_pause_setup_hw(hdev, false);
+-	return min_t(u32, hdev->rss_size_max * kinfo->num_tc, hdev->num_tqps);
++	return min_t(u32, hdev->rss_size_max,
++		     hdev->num_tqps / kinfo->num_tc);
  }
  
- /* DCBX configuration */
-@@ -361,7 +361,7 @@ static int hclge_setup_tc(struct hnae3_handle *h, u8 tc, u8 *prio_tc)
- 	hclge_tm_schd_info_update(hdev, tc);
- 	hclge_tm_prio_tc_info_update(hdev, prio_tc);
- 
--	ret = hclge_tm_init_hw(hdev);
-+	ret = hclge_tm_init_hw(hdev, false);
- 	if (ret)
- 		return ret;
- 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 3ba8de93bc3d..6fb3144eb79d 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -7428,7 +7428,7 @@ static int hclge_reset_ae_dev(struct hnae3_ae_dev *ae_dev)
- 		return ret;
- 	}
- 
--	ret = hclge_tm_init_hw(hdev);
-+	ret = hclge_tm_init_hw(hdev, true);
- 	if (ret) {
- 		dev_err(&pdev->dev, "tm init hw fail, ret =%d\n", ret);
- 		return ret;
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-index d057c9f03175..44316602c2fc 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-@@ -1255,7 +1255,7 @@ static int hclge_tm_bp_setup(struct hclge_dev *hdev)
- 	return ret;
+ /**
+@@ -2487,7 +2488,7 @@ static void hclgevf_get_channels(struct hnae3_handle *handle,
+ 	ch->max_combined = hclgevf_get_max_channels(hdev);
+ 	ch->other_count = 0;
+ 	ch->max_other = 0;
+-	ch->combined_count = hdev->num_tqps;
++	ch->combined_count = handle->kinfo.rss_size;
  }
  
--int hclge_pause_setup_hw(struct hclge_dev *hdev)
-+int hclge_pause_setup_hw(struct hclge_dev *hdev, bool init)
- {
- 	int ret;
- 
-@@ -1271,10 +1271,15 @@ int hclge_pause_setup_hw(struct hclge_dev *hdev)
- 	if (!hnae3_dev_dcb_supported(hdev))
- 		return 0;
- 
--	/* When MAC is GE Mode, hdev does not support pfc setting */
-+	/* GE MAC does not support PFC, when driver is initializing and MAC
-+	 * is in GE Mode, ignore the error here, otherwise initialization
-+	 * will fail.
-+	 */
- 	ret = hclge_pfc_setup_hw(hdev);
--	if (ret)
--		dev_warn(&hdev->pdev->dev, "set pfc pause failed:%d\n", ret);
-+	if (init && ret == -EOPNOTSUPP)
-+		dev_warn(&hdev->pdev->dev, "GE MAC does not support pfc\n");
-+	else
-+		return ret;
- 
- 	return hclge_tm_bp_setup(hdev);
- }
-@@ -1314,7 +1319,7 @@ void hclge_tm_schd_info_update(struct hclge_dev *hdev, u8 num_tc)
- 	hclge_tm_schd_info_init(hdev);
- }
- 
--int hclge_tm_init_hw(struct hclge_dev *hdev)
-+int hclge_tm_init_hw(struct hclge_dev *hdev, bool init)
- {
- 	int ret;
- 
-@@ -1326,7 +1331,7 @@ int hclge_tm_init_hw(struct hclge_dev *hdev)
- 	if (ret)
- 		return ret;
- 
--	ret = hclge_pause_setup_hw(hdev);
-+	ret = hclge_pause_setup_hw(hdev, init);
- 	if (ret)
- 		return ret;
- 
-@@ -1345,7 +1350,7 @@ int hclge_tm_schd_init(struct hclge_dev *hdev)
- 	if (ret)
- 		return ret;
- 
--	return hclge_tm_init_hw(hdev);
-+	return hclge_tm_init_hw(hdev, true);
- }
- 
- int hclge_tm_vport_map_update(struct hclge_dev *hdev)
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
-index ef3f93b70c22..f60e540c7a62 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
-@@ -143,12 +143,12 @@ struct hclge_port_shapping_cmd {
- 
- int hclge_tm_schd_init(struct hclge_dev *hdev);
- int hclge_tm_vport_map_update(struct hclge_dev *hdev);
--int hclge_pause_setup_hw(struct hclge_dev *hdev);
-+int hclge_pause_setup_hw(struct hclge_dev *hdev, bool init);
- int hclge_tm_schd_setup_hw(struct hclge_dev *hdev);
- void hclge_tm_prio_tc_info_update(struct hclge_dev *hdev, u8 *prio_tc);
- void hclge_tm_schd_info_update(struct hclge_dev *hdev, u8 num_tc);
- int hclge_tm_dwrr_cfg(struct hclge_dev *hdev);
--int hclge_tm_init_hw(struct hclge_dev *hdev);
-+int hclge_tm_init_hw(struct hclge_dev *hdev, bool init);
- int hclge_mac_pause_en_cfg(struct hclge_dev *hdev, bool tx, bool rx);
- int hclge_pause_addr_cfg(struct hclge_dev *hdev, const u8 *mac_addr);
- int hclge_pfc_rx_stats_get(struct hclge_dev *hdev, u64 *stats);
+ static void hclgevf_get_tqps_and_rss_info(struct hnae3_handle *handle,
 -- 
 2.20.1
 
