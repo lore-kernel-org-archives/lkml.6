@@ -2,171 +2,75 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93A4FC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:48:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DA35C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:49:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6075421019
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:48:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="O2N0aNf5";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UTO6FxKs"
+	by mail.kernel.org (Postfix) with ESMTP id ECBF321019
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:49:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729399AbfAVQsp (ORCPT
+        id S1729441AbfAVQtU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 11:48:45 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:48336 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729103AbfAVQsp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 11:48:45 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id D34F460854; Tue, 22 Jan 2019 16:48:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548175723;
-        bh=eP2k8C/TWcMco/1C7Pz9d07P0ZKYfLgyo4TtCUaWb3o=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=O2N0aNf59MRngS49WBCvadWzxu+57ZmDEQOx4wXf8ttQel1I08KMEOS8lk5AAXjxN
-         /9SgML3St6z0f9Z5JDDvjR+/cGJjUjv7SPvzgPoK0NaAUXmCvami6DLo+A/ZTUYJRa
-         UyNY+Enh4vnTHMYeh1mTq8sqQmIdwD4I0CCuFOEk=
-Received: from [192.168.1.100] (unknown [157.49.207.12])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 158736024C;
-        Tue, 22 Jan 2019 16:48:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548175722;
-        bh=eP2k8C/TWcMco/1C7Pz9d07P0ZKYfLgyo4TtCUaWb3o=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=UTO6FxKssWDy7V5uPfYO6e0XTr3b8t3R3PB7G38CYMIW5+nzFFD2X0juqhfRgpCQm
-         Dg3fZH01y2hmywiut0kmLGh8WO8y/osiWx+sNjZ/8OeVi/QsQ0co4DS2HccCpe4T1h
-         +hbWeCf+kwIlyKsBHFmP+ynGnFdgLvKrcZxlyv9o=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 158736024C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
-Subject: Re: [PATCHv4 1/4] arm64: dts: qcom: sdm845: Add Coresight support
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>, robh+dt@kernel.org,
-        mathieu.poirier@linaro.org, leo.yan@linaro.org,
-        alexander.shishkin@linux.intel.com, andy.gross@linaro.org,
-        david.brown@linaro.org, vivek.gautam@codeaurora.org,
-        dianders@chromium.org, sboyd@kernel.org,
-        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
-        mark.rutland@arm.com
-Cc:     rnayak@codeaurora.org, sibis@codeaurora.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-References: <cover.1548133311.git.saiprakash.ranjan@codeaurora.org>
- <ad16cfb9b6f5efb85149458d5f5a1abf43fa027c.1548133311.git.saiprakash.ranjan@codeaurora.org>
- <1bd39862-0725-70ce-6535-fdb59569f683@arm.com>
- <75ed74af-6946-b86d-092e-42dc16e55308@codeaurora.org>
- <91a90daa-9e14-2d2e-e633-2ddfdc0955bf@arm.com>
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Message-ID: <3906faf1-abbd-9c28-ad55-ed3800f06352@codeaurora.org>
-Date:   Tue, 22 Jan 2019 22:18:31 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 22 Jan 2019 11:49:20 -0500
+Received: from 8bytes.org ([81.169.241.247]:58874 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729417AbfAVQtT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 11:49:19 -0500
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 0F1021FC; Tue, 22 Jan 2019 17:49:17 +0100 (CET)
+Date:   Tue, 22 Jan 2019 17:49:16 +0100
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Frank Wunderlich <frank-w@public-files.de>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Ryder Lee <ryder.lee@mediatek.com>
+Subject: Re: [BUG] "access dev->iommu_fwspec" cause crash on BPI-R2
+Message-ID: <20190122164916.r343pqa2dtopzrxo@8bytes.org>
+References: <trinity-76e7f2ce-27ce-4f3b-809f-7da9a35e5210-1548173349245@3c-app-gmx-bs21>
 MIME-Version: 1.0
-In-Reply-To: <91a90daa-9e14-2d2e-e633-2ddfdc0955bf@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <trinity-76e7f2ce-27ce-4f3b-809f-7da9a35e5210-1548173349245@3c-app-gmx-bs21>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Suzuki,
+Hi Frank,
 
-On 1/22/2019 9:38 PM, Suzuki K Poulose wrote:
-> 
-> By inconsistent, I meant the registers provides values which are not
-> the same on two different CPUs of the *same type*. And it is expected
-> that two different CPU/ETM implementations will have different PIDs.
-> 
+thanks for the report!
 
-SDM845 has 4 Kryo 385 Gold (ARM A75) + 4 Kryo 385 Silver (ARM A55),
-so the PID values should be same for 4 ETMs atleast. But here one
-pid value(001bb803) is same for 6 ETMs and other one for 2
-ETMs(001bb802) which seems odd and hence the doubt if these pids
-are even valid ones.
+On Tue, Jan 22, 2019 at 05:09:09PM +0100, Frank Wunderlich wrote:
+> Hi,
+> 
+> the following Patch breaks hdmi (at least) on Bananapi R2 (mt7623):
+> 
+> a9bf2eec5a6fc01a0a5250eaf0bf61dfd382a78a "iommu/mediatek: Use helper functions to access dev->iommu_fwspec"
 
->>
->> Below are the PIDs read for SDM845:
->>
->> [    5.996448] resname=etm@7040000 pid=001bb803
->> [    6.052891] resname=etm@7140000 pid=001bb803
->>
->> <snip> .. (Same pid=001bb803 for etm@7240000 to etm@7540000 but differs
->> for other 2 cpus as shown below)
->>
->> [    6.266687] resname=etm@7640000 pid=001bb802
->> [    6.329171] resname=etm@7740000 pid=001bb802
->>
->> This is the case for MSM8996 also as shown below where PID
->> value is not correct and has to be hardcoded.
-> 
-> They differ because they are two different types of CPU cores (and thus 
-> different ETM PIDs). What does the Register descriptions say for
-> the Cores ?
-> 
-> To me it looks like there are two different types of Qualcomm
-> Cores with their respective ETMs which are missing in the ETM4x
-> driver and we are trying to "make the ETM" work by faking it as
-> something else, which is not nice. I would rather prefer
-> to add the appropriate masks and the expected value for these
-> two different ETM implementations and be done with it, instead
-> of faking it in all the DTs where these cores appear.
-> 
-
-ETM4x driver does not have entries for A55 and A75. Could you please
-let me know the PIDs for these CPUs so that we can compare?
-
->>
->> For MSM8996:
->>
->> resname=etm@3b40000 pid=102f0205
-> 
-> I don't know what CPUs the MSM8996 have. If they don't have A53, you
-> must add the actual PIDs to the table once and for all.
-> 
-
-But again, this PID is some invalid value. And does not correspond
-to any of the ARM CPU cores and would be MSM8996 specific.
-MSM8996 has 2+2 Kryo cores which are not ARM derivative as SDM845
-if I am right.
-
->>
->>>> +        etm@7040000 {
->>>> +            compatible = "arm,coresight-etm4x", "arm,primecell";
->>>> +            arm,primecell-periphid = <0x000bb95d> > +            
->>>> reg = <0 0x07040000 0 0x1000>;
->>>> +
->>>> +            cpu = <&CPU0>;
->>>> +
->>>
->>> You seem to be specifying the PID of A53 ETM all over, while at least
->>> one of your cores is ETMv4.2 (from the other patch) and A53 is not
->>> ETMv4.2. As above, it would be good to add the PID to the table.
->>>
->>
->> As explained in above comment, PID values read are not correct. Please 
->> let me know if I am not clear.
-> 
-> There is no measure for "correctness" here. If the ETM exposes different
-> PID than what you expect from the TRM, then we could think of overriding
-> it. Otherwise please add the PIDs to the table.
-> 
-
-This is exactly the case, ETM PID registers are exposing some invalid
-value and hence we override in DT.
+Does the attached diff fix the issue for you?
 
 Thanks,
-Sai
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+	Joerg
+
+diff --git a/drivers/iommu/mtk_iommu_v1.c b/drivers/iommu/mtk_iommu_v1.c
+index 6ede4286b835..f60bdb85c4c0 100644
+--- a/drivers/iommu/mtk_iommu_v1.c
++++ b/drivers/iommu/mtk_iommu_v1.c
+@@ -442,6 +442,10 @@ static int mtk_iommu_add_device(struct device *dev)
+ 		iommu_spec.args_count = count;
+ 
+ 		mtk_iommu_create_mapping(dev, &iommu_spec);
++
++		/* dev->iommu_fwspec might have changed */
++		fwspec = dev_iommu_fwspec_get(dev);
++
+ 		of_node_put(iommu_spec.np);
+ 	}
+ 
