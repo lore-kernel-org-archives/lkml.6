@@ -2,122 +2,251 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19275C282C0
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 02:58:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F141EC282C0
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 02:58:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC0312085A
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 02:58:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7A1E2085A
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 02:58:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="H7jiZuvN"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GuOxT22n"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726866AbfAVC6k (ORCPT
+        id S1726919AbfAVC6o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 21:58:40 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:34113 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725901AbfAVC6j (ORCPT
+        Mon, 21 Jan 2019 21:58:44 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:46812 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725901AbfAVC6m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 21:58:39 -0500
-Received: by mail-pl1-f194.google.com with SMTP id w4so10719295plz.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 18:58:39 -0800 (PST)
+        Mon, 21 Jan 2019 21:58:42 -0500
+Received: by mail-vs1-f66.google.com with SMTP id n10so13827932vso.13
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 18:58:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=a5JfqlRB8d08NKHQ+Y2k/1n98WJrQMCzg/lSbr2I8jw=;
-        b=H7jiZuvNlmrsmsLRVoiGjfJl6Uks7DwBqHRkA187HLSisqMf9WsYOxOF4pBMWDH2KG
-         +8XImc0RJEpceRF7rASvUOUd/KBej57Vx7xmzuwdssHhseilOyhOWC97enmx39eLMPE4
-         Wr/LkQ/uuK0uByOophBICWTp1SWGSqVNXrM8BSViYcCPZaEq9x/nTfWJt1KS9zexzJxf
-         ZDJKGFDGuHwxR5evZT65ktGkYoXYKiU+Z+nkcqN1iPsipzK807UVNPlohnla1UL1OStY
-         p3NKSlhVTCRPuX5aa4jykNDWxQVVeVYflUbNcqaMQiDflNEcZ/lBtAnl9zTMHdOoLODo
-         TNVw==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=W219i2I5y58zAtgJhaqEJeizGX8EjqFydPJu1ke2UJ4=;
+        b=GuOxT22nT5aykyGdEF0pVEilKawR3pRD0ggqgKUDAAFW9DccxAZzqIE+wc+wpbo/cp
+         C26MBVhQ9yLMDUvgeP/pcpeOAWVgMTDygY8VVn+4PK/kpazg+74YQO6nG4HypkkYtZua
+         UXewW83HwjzXzwt2K58DKxqkrfJ5RmKxS3Yo0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=a5JfqlRB8d08NKHQ+Y2k/1n98WJrQMCzg/lSbr2I8jw=;
-        b=d/0jD4P4oahGJiDYc3vZEeaVjnqywSodziQIzscyljGdMx/V4jvsJ51N6BDlwcBWyV
-         o7JdI/DMsNAzDWUNZkpOXMZq511ZlcA2isUfA/UntF5kBPyBgfbTroUfZjYuQ+zJXDQt
-         dPF6cI1sbWfvRoqvaMOzZT5FI2qgkRKgofT5nOjFmohNQyG1gfa/OSTy5pbizcupcU0t
-         A0L42ZiI3rNJ502oufDxEePXUcEJWoc8WeUmf6EPjJeSK1Ouv8fXsZ0di1AfWKq0ECIA
-         2BxBNT+0IgIaF1H84bymwT7wCJID/gBZ/KFOCF7xvNXdmcdkgdJxcgaw2LEk3Q0H3TKh
-         +bbg==
-X-Gm-Message-State: AJcUukcfbvmH4a9iJEGAbsLQ77b0DM+WOSa5Lj5Ugc8OQSxk+hFFHfoF
-        AUR1r2KbsvIkyy+jtTWSq2PLgoV8k8Q=
-X-Google-Smtp-Source: ALg8bN4wyPYsjMkaKjzfjXGhOOAvMtYPcKW1KeikiTh+2ogPqrLu4Suavr2RXc+e7+ekyacT8eBF+A==
-X-Received: by 2002:a17:902:1008:: with SMTP id b8mr31402866pla.252.1548125918903;
-        Mon, 21 Jan 2019 18:58:38 -0800 (PST)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id v191sm33180592pgb.77.2019.01.21.18.58.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 21 Jan 2019 18:58:37 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1glmGq-0004YG-T5; Mon, 21 Jan 2019 19:58:36 -0700
-Date:   Mon, 21 Jan 2019 19:58:36 -0700
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Getting weird TPM error after rebasing my tree to
- security/next-general
-Message-ID: <20190122025836.GH25163@ziepe.ca>
-References: <20190118142559.GA4080@linux.intel.com>
- <1547849358.2794.90.camel@HansenPartnership.com>
- <20190120160413.GB30478@linux.intel.com>
- <20190122010218.GA26713@linux.intel.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=W219i2I5y58zAtgJhaqEJeizGX8EjqFydPJu1ke2UJ4=;
+        b=J2fNwHQICnAovW4MtQQBDm+f6OL2m33zHxNtXodK4rrhk0VA7UY4GGh4puwE+Y0836
+         50bPUk2UH6ETj1omzVgx66+zEPyHnQRQO0EFByVHx6YIpXgz2v6yanOnMrtU+RbUCgoB
+         hI/JrZQ4b3bZsZ+dxNFmBn1F6eWJezci+q/ubLubg8C6Cz7H7Ydv5+5KjlVTZU4GOAkl
+         yTflvsbyWITlBDmus8NZbPvb4Idmy1AsPHr99FTpQhA86Ox5nN3sPlVTMLEfoj1etkvo
+         vc9zWvwPEQSnsGe/4mYQYpKKz9g9xSV7FOopI41rf4/q+C0qG/w7EAr7pglbUNd0oheZ
+         z6BA==
+X-Gm-Message-State: AJcUukdoIqtKHpFy83V1PREkKkDxByd3lf4PWaWxWQRdYx+GiUoSI9un
+        Nov58G2r2VPpe6t+dGKyTocoC8Mk01s=
+X-Google-Smtp-Source: ALg8bN5XzfsXqbGQ15VPNUpgVswjP2TnOGJPJN8udCnML5cxp3BKh8yQcicPFmbKiKp5Cv7lx4L2/Q==
+X-Received: by 2002:a67:cb9b:: with SMTP id h27mr12969008vsl.227.1548125920732;
+        Mon, 21 Jan 2019 18:58:40 -0800 (PST)
+Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com. [209.85.222.50])
+        by smtp.gmail.com with ESMTPSA id x132sm4046062vsc.34.2019.01.21.18.58.39
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 21 Jan 2019 18:58:39 -0800 (PST)
+Received: by mail-ua1-f50.google.com with SMTP id d2so7608342ual.2
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 18:58:39 -0800 (PST)
+X-Received: by 2002:ab0:740a:: with SMTP id r10mr10219363uap.14.1548125918814;
+ Mon, 21 Jan 2019 18:58:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190122010218.GA26713@linux.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <5c4673dd.1c69fb81.b0b12.0b35SMTPIN_ADDED_BROKEN@mx.google.com>
+ <CAGXu5jKs5Hzfaho0Bg7rJCLa7XJPzBOnBXMUNHPj2jjgOBD=8Q@mail.gmail.com> <5c468452.1c69fb81.7c308.b2aaSMTPIN_ADDED_BROKEN@mx.google.com>
+In-Reply-To: <5c468452.1c69fb81.7c308.b2aaSMTPIN_ADDED_BROKEN@mx.google.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 22 Jan 2019 15:58:27 +1300
+X-Gmail-Original-Message-ID: <CAGXu5jL32Uh4bMh6Xxac3fV2nzGUyG7_ARcuT9+HBqraQhD03Q@mail.gmail.com>
+Message-ID: <CAGXu5jL32Uh4bMh6Xxac3fV2nzGUyG7_ARcuT9+HBqraQhD03Q@mail.gmail.com>
+Subject: Re: [PATCH] pstore/ram: Replace dummy_data heap memory with stack memory
+To:     Yue Hu <huyue2@yulong.com>
+Cc:     Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 03:02:18AM +0200, Jarkko Sakkinen wrote:
-> On Sun, Jan 20, 2019 at 06:04:13PM +0200, Jarkko Sakkinen wrote:
-> > On Fri, Jan 18, 2019 at 02:09:18PM -0800, James Bottomley wrote:
-> > > On Fri, 2019-01-18 at 16:25 +0200, Jarkko Sakkinen wrote:
-> > > > I get this on a Geminilake NUC after rebasing my maintainer trees:
-> > > > 
-> > > > tpm tpm0: A TPM error (-1) occurred attempting the self test
-> > > > 
-> > > > I checked the latest commit ID from drivers/char/tpm to make sure
-> > > > that I did not put anything broken to my last PR [1]. It works
-> > > > without issues.
-> > > > 
-> > > > In addition [2] gives me an empty diff.
-> > > > 
-> > > > Something outside of the TPM driver must have happened that breaks
-> > > > the driver. Any ideas?
-> > > > 
-> > > > [1] commit 9488585b21bef0df1217e510c7134905d1d376a7
-> > > > [2] git diff 9488585b21bef0df1217e510c7134905d1d376a7 master
-> > > > drivers/char/tpm/
-> > > 
-> > > I'm afraid you're going to have to bisect to find the offending in-
-> > > kernel commit, which is going to be painful since it seems to depend on
-> > > physical hardware.  My first instinct is that we're getting a zero
-> > > length read somewhere, but I still can't see anything in the merge
-> > > window that would cause that behaviour.
-> > 
-> > Yeah, I've started to bisect it (still 9 rounds to go).
-> 
-> Fails on commit 170d13ca3a2fdaaa0283399247631b76b441cca2. Still works on
-> preceding commit a959dc88f9c8900296ccf13e2f3e1cbc555a8917.
+On Tue, Jan 22, 2019 at 3:47 PM Yue Hu <huyue2@yulong.com> wrote:
+>
+> On Tue, 22 Jan 2019 14:53:01 +1300
+> Kees Cook <keescook@chromium.org> wrote:
+>
+> > On Tue, Jan 22, 2019 at 2:37 PM Yue Hu <huyue2@yulong.com> wrote:
+> > >
+> > > From e37cbd4d22eae55c034536817b22d429ba0ae27a Mon Sep 17 00:00:00
+> > > 2001 From: Yue Hu <huyue2@yulong.com>
+> > > Date: Mon, 21 Jan 2019 18:20:41 +0800
+> > > Subject: [PATCH] pstore/ram: Replace dummy_data heap memory with
+> > > stack memory
+> > >
+> > > In ramoops_register_dummy() dummy_data is allocated via kzalloc()
+> > > then it will always occupy the heap space after register platform
+> > > device via platform_device_register_data(), but it will not be
+> > > used any more. So let's free it for system usage, replace it with
+> > > stack memory is better due to small size.
+> >
+> > That's not true: dummy_data is registered with
+> > platform_device_register_data() which stores the pointer. (And is used
+> > in ramoops_probe().) When the probe runs, the stack frame will be
+> > gone.
+>
+> hi Kees,
+>
+> Yes, platform_device_register_data() will store the pointer to
+> platform_data, however the store process is using memory copy(kmemdup)
+> internelly as below:
+>
+> ```c
+> int platform_device_add_data(struct platform_device *pdev, const void
+> *data, size_t size)
+> {
+>         void *d = NULL;
+>
+>         if (data) {
+>                 d = kmemdup(data, size, GFP_KERNEL);
+>                 if (!d)
+>                         return -ENOMEM;
+>         }
+>
+>         kfree(pdev->dev.platform_data);
+>         pdev->dev.platform_data = d;
+>         return 0;
+> }
+> ```
 
-This changes the IO access pattern in memcpy_to/fromio.. Presumably
-CRB HW doesn't like the new 4 byte move? Swap each one in crb to
-memcpy to confirm..
+Ah! Yes, you're totally right. I misread
+platform_device_register_resndata() and didn't dig far enough. :)
 
-If the HW requires particular access patterns you can't use
-memcpy_to/fromio
+I'll get this added to the series. Thanks!
 
-Jason
+-Kees
+
+>
+> so no need to keep the memory for the parameter of platform specific
+> data passed in platform_device_register_data().
+>
+> When using the change, probe is successful and it's working fine by
+> test.
+>
+> >
+> > That said, it would be possible to move the stack allocation into
+> > ramoops_init() instead, since the frame will still be available during
+> > the call to platform_driver_register() which will call
+> > ramoops_probe(). If you made that change, then we could drop the
+> > ramoops_unregister_dummy() call, and rename ramoops_register_dummy()
+> > into ramoops_populate_dummy() or something.
+> >
+> > But even in this case, you'd need to remove the platform data after
+> > the probe just to make sure the stack pointer didn't stick around.
+> >
+> > -Kees
+> >
+> > >
+> > > Signed-off-by: Yue Hu <huyue2@yulong.com>
+> > > ---
+> > >  fs/pstore/ram.c | 34 +++++++++++++---------------------
+> > >  1 file changed, 13 insertions(+), 21 deletions(-)
+> > >
+> > > diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
+> > > index 96f7d32..8db1f7f 100644
+> > > --- a/fs/pstore/ram.c
+> > > +++ b/fs/pstore/ram.c
+> > > @@ -110,7 +110,6 @@ struct ramoops_context {
+> > >  };
+> > >
+> > >  static struct platform_device *dummy;
+> > > -static struct ramoops_platform_data *dummy_data;
+> > >
+> > >  static int ramoops_pstore_open(struct pstore_info *psi)
+> > >  {
+> > > @@ -896,13 +895,12 @@ static inline void
+> > > ramoops_unregister_dummy(void) {
+> > >         platform_device_unregister(dummy);
+> > >         dummy = NULL;
+> > > -
+> > > -       kfree(dummy_data);
+> > > -       dummy_data = NULL;
+> > >  }
+> > >
+> > >  static void __init ramoops_register_dummy(void)
+> > >  {
+> > > +       struct ramoops_platform_data pdata;
+> > > +
+> > >         /*
+> > >          * Prepare a dummy platform data structure to carry the
+> > > module
+> > >          * parameters. If mem_size isn't set, then there are no
+> > > module @@ -913,30 +911,24 @@ static void __init
+> > > ramoops_register_dummy(void)
+> > >
+> > >         pr_info("using module parameters\n");
+> > >
+> > > -       dummy_data = kzalloc(sizeof(*dummy_data), GFP_KERNEL);
+> > > -       if (!dummy_data) {
+> > > -               pr_info("could not allocate pdata\n");
+> > > -               return;
+> > > -       }
+> > > -
+> > > -       dummy_data->mem_size = mem_size;
+> > > -       dummy_data->mem_address = mem_address;
+> > > -       dummy_data->mem_type = mem_type;
+> > > -       dummy_data->record_size = record_size;
+> > > -       dummy_data->console_size = ramoops_console_size;
+> > > -       dummy_data->ftrace_size = ramoops_ftrace_size;
+> > > -       dummy_data->pmsg_size = ramoops_pmsg_size;
+> > > -       dummy_data->dump_oops = dump_oops;
+> > > -       dummy_data->flags = RAMOOPS_FLAG_FTRACE_PER_CPU;
+> > > +       pdata.mem_size = mem_size;
+> > > +       pdata.mem_address = mem_address;
+> > > +       pdata.mem_type = mem_type;
+> > > +       pdata.record_size = record_size;
+> > > +       pdata.console_size = ramoops_console_size;
+> > > +       pdata.ftrace_size = ramoops_ftrace_size;
+> > > +       pdata.pmsg_size = ramoops_pmsg_size;
+> > > +       pdata.dump_oops = dump_oops;
+> > > +       pdata.flags = RAMOOPS_FLAG_FTRACE_PER_CPU;
+> > >
+> > >         /*
+> > >          * For backwards compatibility ramoops.ecc=1 means 16 bytes
+> > > ECC
+> > >          * (using 1 byte for ECC isn't much of use anyway).
+> > >          */
+> > > -       dummy_data->ecc_info.ecc_size = ramoops_ecc == 1 ? 16 :
+> > > ramoops_ecc;
+> > > +       pdata.ecc_info.ecc_size = ramoops_ecc == 1 ? 16 :
+> > > ramoops_ecc;
+> > >
+> > >         dummy = platform_device_register_data(NULL, "ramoops", -1,
+> > > -                       dummy_data, sizeof(struct
+> > > ramoops_platform_data));
+> > > +                       &pdata, sizeof(struct
+> > > ramoops_platform_data)); if (IS_ERR(dummy)) {
+> > >                 pr_info("could not create platform device: %ld\n",
+> > >                         PTR_ERR(dummy));
+> > > --
+> > > 1.9.1
+> > >
+> > >
+> > >
+> > >
+> >
+> >
+>
+>
+>
+
+
+-- 
+Kees Cook
