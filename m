@@ -2,196 +2,159 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CC23C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:11:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DA90C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:11:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DF1320870
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:11:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="YdNC/PeT"
+	by mail.kernel.org (Postfix) with ESMTP id 011A420870
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:11:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728285AbfAVLL3 (ORCPT
+        id S1728300AbfAVLLe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 06:11:29 -0500
-Received: from mail-eopbgr40085.outbound.protection.outlook.com ([40.107.4.85]:54205
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727883AbfAVLL2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 06:11:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector1-arm-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hDf5sprw13r42LZUBrHvTBKyI4a/XRowtsq/dDIv/9k=;
- b=YdNC/PeTUAS+hw3Gh7WwilPJQVDNBU6pMYt1+NO9U04W6nTPfV0TemstfAVG0MS6zK4G0DCZuqit9fJj5ovz3du9UZmhl5a+hD+UkHxWM3P8IfEcIeNO5QCmraBekC/9jjr40FSqkIStqvok44A6NmzF7ZvyG83OhdVwet1mOgY=
-Received: from DB6PR0801MB1990.eurprd08.prod.outlook.com (10.168.81.21) by
- DB6PR0801MB1286.eurprd08.prod.outlook.com (10.168.11.16) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1558.16; Tue, 22 Jan 2019 11:11:25 +0000
-Received: from DB6PR0801MB1990.eurprd08.prod.outlook.com
- ([fe80::b9be:3d28:78a2:6e33]) by DB6PR0801MB1990.eurprd08.prod.outlook.com
- ([fe80::b9be:3d28:78a2:6e33%2]) with mapi id 15.20.1537.031; Tue, 22 Jan 2019
- 11:11:25 +0000
-From:   "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
-To:     Liviu Dudau <Liviu.Dudau@arm.com>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        Brian Starkey <Brian.Starkey@arm.com>
-CC:     "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
-        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
-        "thomas Sun (Arm Technology China)" <thomas.Sun@arm.com>,
-        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
-        Ayan Halder <Ayan.Halder@arm.com>,
-        "Tiannan Zhu (Arm Technology China)" <Tiannan.Zhu@arm.com>,
-        "Jin Gao (Arm Technology China)" <Jin.Gao@arm.com>,
-        "Yiqi Kang (Arm Technology China)" <Yiqi.Kang@arm.com>,
-        nd <nd@arm.com>, "malidp@foss.arm.com" <malidp@foss.arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
-Subject: [PATCH v2 07/11] drm/komeda: Add komeda_crtc_vblank_enable/disable
-Thread-Topic: [PATCH v2 07/11] drm/komeda: Add
- komeda_crtc_vblank_enable/disable
-Thread-Index: AQHUskM2Offx3k/8a0u5t7UUjoQMeg==
-Date:   Tue, 22 Jan 2019 11:11:25 +0000
-Message-ID: <20190122110932.5138-8-james.qian.wang@arm.com>
-References: <20190122110932.5138-1-james.qian.wang@arm.com>
-In-Reply-To: <20190122110932.5138-1-james.qian.wang@arm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [113.29.88.7]
-x-clientproxiedby: SYAPR01CA0034.ausprd01.prod.outlook.com (2603:10c6:1:1::22)
- To DB6PR0801MB1990.eurprd08.prod.outlook.com (2603:10a6:4:6c::21)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=james.qian.wang@arm.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.17.1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB6PR0801MB1286;6:Bm0NWMcuLxBv9+INUtBGMcytb3Bc9HX4B63keAFidizqME35oqLJ46JGDDPdgG0glfv6DVjr6AN0h2NzlQ+YRdsXWjqcze4l3jg+AoLgSpAM5xhRP1yu+ycikAYbz8Zi+r09FXgrKKddaUuD5jqNgmfDk6oyRWgyPnFB02FO4jXpN79gJ/JEbXy0ZZC1kQHi2tHk9onqxbbtDxV+4ppmuRY8hbClDWfc+K5dwGRGt+q5M9LTz+AgSGUAC9PlqYo3BC0U+wseakf6ToKfMzn9yvFfqdx/tU8j3Ub6bBxdy2H0dLTNOhPRpgFiX2IqNjn7ofmNZ/60nCkODtZa5khxDcBndWdqQ0iBNqIMw2cnx7ZX3/Ax0q3HGZcMob9jOyRRl0s4QIyGiB9ejtYT4D7fdCVJt+SsrZ4y+n+ap8LRzPGjYr1/6nwmK8pcA5zHW5kuCF7fln1F2oeq0jgScQf4Zg==;5:+iIZ1R3TdL72OIUVvJxIFs/hWEx7DyIxct9T9FIPoW1FOpZRN2XNbRkVN+0TKzn89rPKHuNF3HwY++XQIU+041fpxP+76AQrqYloIW4A+ZO4Xku50aPxuGnVUcpOebBbW+edlltmi+/bhKgvniOBwK7w/LJ5ML0FWPwLUQQ9SrvjKfD7oDzSqPlQ0NjGHunayTUbiB7Ybz2DU1hrPo1pKw==;7:noJt5FlEdL4i/7BW1YzrJ/ApAdgpV/TiXOVYU0dqKASPiegQHCyOmhaSLZFSlyKikoLhCXSaggRUI4O3gQumvrKPgNTyIEStFb2pfSbi65Fv9kykhvqIacQT4dKV2taXKrjH5RTNWLzlfqVKkQPkwA==
-x-ms-office365-filtering-correlation-id: ae322f7a-d31d-4227-785b-08d6805a58e5
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB6PR0801MB1286;
-x-ms-traffictypediagnostic: DB6PR0801MB1286:
-nodisclaimer: True
-x-microsoft-antispam-prvs: <DB6PR0801MB12860476C2F6F840A228ED74B3980@DB6PR0801MB1286.eurprd08.prod.outlook.com>
-x-forefront-prvs: 0925081676
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(39860400002)(376002)(346002)(366004)(199004)(189003)(2906002)(25786009)(86362001)(36756003)(6116002)(3846002)(4326008)(6636002)(6486002)(103116003)(66066001)(105586002)(106356001)(6512007)(2501003)(53936002)(97736004)(6436002)(446003)(68736007)(81166006)(476003)(50226002)(8676002)(71200400001)(71190400001)(316002)(6506007)(52116002)(81156014)(486006)(11346002)(110136005)(54906003)(99286004)(305945005)(102836004)(14454004)(7736002)(26005)(76176011)(386003)(55236004)(1076003)(8936002)(478600001)(2616005)(186003)(256004);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR0801MB1286;H:DB6PR0801MB1990.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: arm.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: oBEG/kp07WWIeWvZYDHiIXLd3biMnn10K+8v36LJr7YkdZLMKSGBwh36nUwkNPyIpZUOpV+wUTfOcIXJuF63XXOaV56Evwb8Fx0GW6zPywVkcdje4OQ0VVMWGzkVcTjHOQ4Q1JAgxCbR+d5ZcC0FxVNdFXQB79Oa0jmEXvIUjCKkFeW4kAvflCifBQA5sqzZztRz5tx5OoZ1lY9GUnBTcJrrQb1OruFtVWfDDTzbspwuXDVhziDu8ltxMLrUB3o+cI+GWgKda3ocuf73ErDUd2/9aoa7NR98sQmRxKDjbiLN84/dpKCq4IQzDa874zwG9iuAU0ezovsRLQnGCv5Y4/ik93Z96CZ91kV4jeSIZlXl2Uu1bo1KxcJ5a1faxe0XE6PZAJrRrxCdMXKH8leZozCPzggNT7XOwcitmNouViQ=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 22 Jan 2019 06:11:34 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:60274 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728287AbfAVLLb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 06:11:31 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id C523620898; Tue, 22 Jan 2019 12:11:28 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-37-87.w90-88.abo.wanadoo.fr [90.88.156.87])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 8BD4B209EF;
+        Tue, 22 Jan 2019 12:11:18 +0100 (CET)
+Date:   Tue, 22 Jan 2019 12:11:18 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-amarula@amarulasolutions.com
+Subject: Re: [PATCH v5 07/17] drm/sun4i: sun6i_mipi_dsi: Refactor vertical
+ video start delay
+Message-ID: <20190122111118.db7bqppop4basxd7@flea>
+References: <CAMty3ZB5F5jD9iJT1soXSA5HtQOf5W9rKO9nCdGFUfVo0hpO4Q@mail.gmail.com>
+ <20190107141158.zaimizk4rlqa6xli@flea>
+ <CAMty3ZBb8byOwh=_W83Ta0Dse1qkoqccOeaBEY9oHPaxDxe9QA@mail.gmail.com>
+ <20190108085829.clianbtjovu3oieq@flea>
+ <CAMty3ZC9OQtwT-iH=S1LhHsBPc_jFKGAnCYYeR9nuKuDWSKLQw@mail.gmail.com>
+ <20190112164319.whr7gwvl4oux5svz@flea>
+ <CAMty3ZD8X9KmHjUtAo-+Y83a2j8NF3DjM9Yr3LPMxOvQ8kOV7g@mail.gmail.com>
+ <20190116191756.ajzzaga43srk77dk@flea>
+ <CAMty3ZCw8itG=nizA5E218HT5kg=-xDzLmShF51vRh4ENYKuBA@mail.gmail.com>
+ <CAMty3ZDbTgo3EY12VC0X_XuaRobQXvHx=Y6-_sgSWxDm1ZXbHQ@mail.gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ae322f7a-d31d-4227-785b-08d6805a58e5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jan 2019 11:11:16.5567
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0801MB1286
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="oera4ykxkq52d37u"
+Content-Disposition: inline
+In-Reply-To: <CAMty3ZDbTgo3EY12VC0X_XuaRobQXvHx=Y6-_sgSWxDm1ZXbHQ@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
 
-Add a new komeda_dev_func->on_off_vblank to enable/disable HW vblank event
+--oera4ykxkq52d37u
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: James Qian Wang (Arm Technology China) <james.qian.wang@arm.=
-com>
----
- .../gpu/drm/arm/display/komeda/d71/d71_dev.c  | 10 ++++++++++
- .../gpu/drm/arm/display/komeda/komeda_crtc.c  | 19 +++++++++++++++++++
- .../gpu/drm/arm/display/komeda/komeda_dev.h   |  3 +++
- 3 files changed, 32 insertions(+)
+On Fri, Jan 18, 2019 at 09:14:19PM +0530, Jagan Teki wrote:
+> On Thu, Jan 17, 2019 at 10:02 AM Jagan Teki <jagan@amarulasolutions.com> =
+wrote:
+> >
+> > On Thu, Jan 17, 2019 at 12:48 AM Maxime Ripard
+> > <maxime.ripard@bootlin.com> wrote:
+> > >
+> > > On Sun, Jan 13, 2019 at 01:07:41AM +0530, Jagan Teki wrote:
+> > > > > > > > > Again, I cannot help you without the datasheet for the pa=
+nels you're
+> > > > > > > > > trying to submit.
+> > > > > > > >
+> > > > > > > > The panel bound with Sitronix ST7701 IC
+> > > > > > > > http://www.startek-lcd.com/res/starteklcd/pdres/201705/2017=
+0512144242904.pdf
+> > > > > > >
+> > > > > > > It's the controller, not the panel
+> > > > > >
+> > > > > > As I said before, the datasheet of that panel doesn't have any
+> > > > > > information except electrical characteristics and used IC which=
+ is
+> > > > > > ST7701.
+> > > > > >
+> > > > > > I have one more panel, which is from Bananapi, S070WV20-CT16 IC=
+N621
+> > > > > > please find the attachment for the same.
+> > > > > >
+> > > > > > Here is some more details of the same.
+> > > > > >
+> > > > > > https://github.com/yesnoandor/x300/blob/master/kernel/arch/arm/=
+boot/dts/erobbing/x300/x300.dtsi#L81
+> > > > > > https://github.com/wxzed/Raspberry_5MIPI_Display/blob/master/I2=
+C_Slave/USER/main.c#L15
+> > > > > >
+> > > > > > https://github.com/eliot-shao/qcom/blob/master/icn6211_cxn0102/=
+kernel/drivers/video/msm/mdss/mdss_i2c_interface.c#L152
+> > > > > > matches timings for
+> > > > > > https://github.com/eliot-shao/qcom/blob/master/icn6211_cxn0102/=
+kernel/arch/arm/boot/dts/qcom/dsi-mipi-2-rgb_1280p_video.dtsi#L20
+> > > > > >
+> > > > > > https://github.com/zestroly/micromat/blob/master/test/raspberry=
+/ICN6211.cpp#L169
+> > > > >
+> > > > > Where did you get the timings from then?
+> > > >
+> > > > You mean drm_mode timings, the same panel with RGB available in
+> > > > panel-simple[1], and dsi driver in Mailing list[2] and actual DSI
+> > > > sequence commands from BSP[3]
+> > > >
+> > > > [1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next=
+=2Egit/commit/drivers/gpu/drm/panel/panel-simple.c?id=3D7ad8b41cd8f5c284264=
+6d01cdd576663caee04a7
+> > > > [2] https://patchwork.kernel.org/patch/10680331/
+> > > > [3] https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-s=
+unxi/drivers/video/sunxi/disp2/disp/lcd/S070WV20_MIPI_RGB.c
+> > >
+> > > So you had no reliable source for the timings then? How do you know if
+> > > all your patches that are timing related are right then?
+> >
+> > I don't understand your point, or may be I confused with many links
+> > that I attached in previous mail.
+> >
+> > 1. Patch for same panel timings are already in Mainline that was
+> > tested on one of the board. [1]
+> > 2. Driver from AW, released bsp from BPI-M64-bsp [3]
+> >
+> > Do you think the above two points are not valid sources?
+>=20
+> fyi, the panel datasheet attached in above mail has timing information.
 
-diff --git a/drivers/gpu/drm/arm/display/komeda/d71/d71_dev.c b/drivers/gpu=
-/drm/arm/display/komeda/d71/d71_dev.c
-index 2fb29aea9f69..f517ab0ceae9 100644
---- a/drivers/gpu/drm/arm/display/komeda/d71/d71_dev.c
-+++ b/drivers/gpu/drm/arm/display/komeda/d71/d71_dev.c
-@@ -241,6 +241,15 @@ static int d71_disable_irq(struct komeda_dev *mdev)
- 	return 0;
- }
-=20
-+static void d71_on_off_vblank(struct komeda_dev *mdev, int master_pipe, bo=
-ol on)
-+{
-+	struct d71_dev *d71 =3D mdev->chip_data;
-+	struct d71_pipeline *pipe =3D d71->pipes[master_pipe];
-+
-+	malidp_write32_mask(pipe->dou_addr, BLK_IRQ_MASK,
-+			    DOU_IRQ_PL0, on ? DOU_IRQ_PL0 : 0);
-+}
-+
- static int to_d71_opmode(int core_mode)
- {
- 	switch (core_mode) {
-@@ -498,6 +507,7 @@ static struct komeda_dev_funcs d71_chip_funcs =3D {
- 	.irq_handler	=3D d71_irq_handler,
- 	.enable_irq	=3D d71_enable_irq,
- 	.disable_irq	=3D d71_disable_irq,
-+	.on_off_vblank	=3D d71_on_off_vblank,
- 	.change_opmode	=3D d71_change_opmode,
- 	.flush		=3D d71_flush,
- };
-diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c b/drivers/gpu=
-/drm/arm/display/komeda/komeda_crtc.c
-index 9b370e1232e2..e19ba9468d31 100644
---- a/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
-+++ b/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
-@@ -347,7 +347,26 @@ struct drm_crtc_helper_funcs komeda_crtc_helper_funcs =
-=3D {
- 	.mode_fixup	=3D komeda_crtc_mode_fixup,
- };
-=20
-+static int komeda_crtc_vblank_enable(struct drm_crtc *crtc)
-+{
-+	struct komeda_dev *mdev =3D crtc->dev->dev_private;
-+	struct komeda_crtc *kcrtc =3D to_kcrtc(crtc);
-+
-+	mdev->funcs->on_off_vblank(mdev, kcrtc->master->id, true);
-+	return 0;
-+}
-+
-+static void komeda_crtc_vblank_disable(struct drm_crtc *crtc)
-+{
-+	struct komeda_dev *mdev =3D crtc->dev->dev_private;
-+	struct komeda_crtc *kcrtc =3D to_kcrtc(crtc);
-+
-+	mdev->funcs->on_off_vblank(mdev, kcrtc->master->id, false);
-+}
-+
- static const struct drm_crtc_funcs komeda_crtc_funcs =3D {
-+	.enable_vblank		=3D komeda_crtc_vblank_enable,
-+	.disable_vblank		=3D komeda_crtc_vblank_disable,
- };
-=20
- int komeda_kms_setup_crtcs(struct komeda_kms_dev *kms,
-diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_dev.h b/drivers/gpu/=
-drm/arm/display/komeda/komeda_dev.h
-index 1ad1f6e49854..8acd25afb3e9 100644
---- a/drivers/gpu/drm/arm/display/komeda/komeda_dev.h
-+++ b/drivers/gpu/drm/arm/display/komeda/komeda_dev.h
-@@ -103,6 +103,9 @@ struct komeda_dev_funcs {
- 	int (*enable_irq)(struct komeda_dev *mdev);
- 	/** @disable_irq: disable irq */
- 	int (*disable_irq)(struct komeda_dev *mdev);
-+	/** @on_off_vblank: notify HW to on/off vblank */
-+	void (*on_off_vblank)(struct komeda_dev *mdev,
-+			      int master_pipe, bool on);
-=20
- 	/** @dump_register: Optional, dump registers to seq_file */
- 	void (*dump_register)(struct komeda_dev *mdev, struct seq_file *seq);
+Do you have a page number?
+
+maxime
+
 --=20
-2.17.1
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
+--oera4ykxkq52d37u
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXEb6VgAKCRDj7w1vZxhR
+xaTvAPsGr3brO/jlKau1sYSNQdFdKyoye0rN4g7XHa07ekr5SAEA7/vQZfcIbZcp
+bvZbr5Fk+7XL7QJoaHUKbUuS4zoKngI=
+=WAzD
+-----END PGP SIGNATURE-----
+
+--oera4ykxkq52d37u--
