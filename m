@@ -2,146 +2,176 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 696A5C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:53:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1376DC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:53:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30F3D20844
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:53:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ui1d49Ds"
+	by mail.kernel.org (Postfix) with ESMTP id E286F20870
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:53:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727734AbfAVKxi (ORCPT
+        id S1727828AbfAVKx4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 05:53:38 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:33070 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727048AbfAVKxi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 05:53:38 -0500
-Received: by mail-wm1-f65.google.com with SMTP id r24so8263931wmh.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 02:53:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=NnQIyDGoOvvLQyT3SOkwKzSCHWkztHfCr+VWK1pMgUM=;
-        b=Ui1d49Dsvt6j1/x9JbmxE7/pRmDOuhot9VgNrZ6fTCdIrwi3Bvl8TU7fZjMTl0fVob
-         LkqqoivCQ/kUk5U7t3z1urLA5twFbzmbMgJ1PKrRNfezCr4SgBPNXb043xTsFU5tPSKe
-         8z0NcKhGlnclhzTJXNhhsC4IDTOv2NXUj8M80=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=NnQIyDGoOvvLQyT3SOkwKzSCHWkztHfCr+VWK1pMgUM=;
-        b=YsQ9IIf1JoXsDs67JbGHsPmALG2CKsQvV7bxZKx7y9YkJK/+hh4YV3hUzh9MAg3F8m
-         U4S1YjUMDIO6R7g0oHQ7DQFVafbs3/UpJ02caO4ZMzXhwa85MYbfge27S0C+ds4a7LA2
-         5Uv/CuFhTGQMgndzO5QcG6eLeWhQ/rVB/Otwug0E+FY9YT0rBNC/dJtWxYld/xsZNpss
-         sjpyOIQlonrXX6lpNXnZz1dfVt45rFjZJP38jUTRURTaWXy8bUeFDHjgJkeS4gZH6ujX
-         +RyH/qy59A1GdBukRPoq4Yzn9BOyoK6J/unaD2QmVzHKapJQ2btLcb7CoT/NZepHXxNA
-         p/xA==
-X-Gm-Message-State: AJcUuke+Nnr7v6tP5XryLqJADbiy2BENy4t3334rZIsw5h/guQu/j9g0
-        xSla0GJDsVF9Qkz3ThavVrsRRA==
-X-Google-Smtp-Source: ALg8bN7dvonm0PH7Vc4asoeSvp0QkrgFfxJUnADkO8FK56Hf7mS+vAPIYdmZPLZehzS0CGLDZZjlOw==
-X-Received: by 2002:a1c:1a8a:: with SMTP id a132mr3273922wma.109.1548154416363;
-        Tue, 22 Jan 2019 02:53:36 -0800 (PST)
-Received: from localhost.localdomain ([37.157.136.206])
-        by smtp.gmail.com with ESMTPSA id b18sm74256820wrr.43.2019.01.22.02.53.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Jan 2019 02:53:35 -0800 (PST)
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-To:     linux-media@vger.kernel.org
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Nicolas Dufresne <nicolas@ndufresne.ca>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH v2] venus: enc: fix enum_frameintervals
-Date:   Tue, 22 Jan 2019 12:53:22 +0200
-Message-Id: <20190122105322.22096-1-stanimir.varbanov@linaro.org>
-X-Mailer: git-send-email 2.17.1
+        Tue, 22 Jan 2019 05:53:56 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50732 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727663AbfAVKxz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 05:53:55 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3FC60A78;
+        Tue, 22 Jan 2019 02:53:55 -0800 (PST)
+Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4C04B3F6A8;
+        Tue, 22 Jan 2019 02:53:52 -0800 (PST)
+Date:   Tue, 22 Jan 2019 10:53:49 +0000
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v6 04/16] sched/core: uclamp: Add CPU's clamp buckets
+ refcounting
+Message-ID: <20190122105349.d6fhx3y6nb24t7zd@e110439-lin>
+References: <20190115101513.2822-1-patrick.bellasi@arm.com>
+ <20190115101513.2822-5-patrick.bellasi@arm.com>
+ <20190121151717.GK27931@hirez.programming.kicks-ass.net>
+ <20190121155407.gv4cxpg2njqmdlj5@e110439-lin>
+ <20190122100342.GO27931@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190122100342.GO27931@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This ixes an issue when setting the encoder framerate because of
-missing precision. Now the frameinterval type is changed to
-TYPE_CONTINUOUS and step = 1. Also the math is changed when
-framerate property is called - the firmware side expects that
-the framerate one is 1 << 16 units.
+On 22-Jan 11:03, Peter Zijlstra wrote:
+> On Mon, Jan 21, 2019 at 03:54:07PM +0000, Patrick Bellasi wrote:
+> > On 21-Jan 16:17, Peter Zijlstra wrote:
+> > > On Tue, Jan 15, 2019 at 10:15:01AM +0000, Patrick Bellasi wrote:
+> > > > +#ifdef CONFIG_UCLAMP_TASK
+> > > 
+> > > > +struct uclamp_bucket {
+> > > > +	unsigned long value : bits_per(SCHED_CAPACITY_SCALE);
+> > > > +	unsigned long tasks : BITS_PER_LONG - bits_per(SCHED_CAPACITY_SCALE);
+> > > > +};
+> > > 
+> > > > +struct uclamp_cpu {
+> > > > +	unsigned int value;
+> > > 
+> > > 	/* 4 byte hole */
+> > > 
+> > > > +	struct uclamp_bucket bucket[UCLAMP_BUCKETS];
+> > > > +};
+> > > 
+> > > With the default of 5, this UCLAMP_BUCKETS := 6, so struct uclamp_cpu
+> > > ends up being 7 'unsigned long's, or 56 bytes on 64bit (with a 4 byte
+> > > hole).
+> > 
+> > Yes, that's dimensioned and configured to fit into a single cache line
+> > for all the possible 5 (by default) clamp values of a clamp index
+> > (i.e. min or max util).
+> 
+> And I suppose you picked 5 because 20% is a 'nice' number? whereas
+> 16./666/% is a bit odd?
 
-Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
----
-v2: replace DIV_ROUND_UP with do_div and make roundup manually
+Yes, UCLAMP_BUCKETS:=6 gives me 5 20% buckets:
 
- drivers/media/platform/qcom/venus/venc.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+ 0-19%, 20-39%, 40-59%, 60-79%, 80-99%
+ 
+plus a 100% bucket to track the max boosted tasks.
 
-diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
-index 32cff294582f..99c94b155b46 100644
---- a/drivers/media/platform/qcom/venus/venc.c
-+++ b/drivers/media/platform/qcom/venus/venc.c
-@@ -31,6 +31,7 @@
- #include "venc.h"
- 
- #define NUM_B_FRAMES_MAX	4
-+#define FRAMERATE_FACTOR	(1 << 16)
- 
- /*
-  * Three resons to keep MPLANE formats (despite that the number of planes
-@@ -581,7 +582,7 @@ static int venc_enum_frameintervals(struct file *file, void *fh,
- 	struct venus_inst *inst = to_inst(file);
- 	const struct venus_format *fmt;
- 
--	fival->type = V4L2_FRMIVAL_TYPE_STEPWISE;
-+	fival->type = V4L2_FRMIVAL_TYPE_CONTINUOUS;
- 
- 	fmt = find_format(inst, fival->pixel_format,
- 			  V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE);
-@@ -604,12 +605,12 @@ static int venc_enum_frameintervals(struct file *file, void *fh,
- 	    fival->height < frame_height_min(inst))
- 		return -EINVAL;
- 
--	fival->stepwise.min.numerator = 1;
-+	fival->stepwise.min.numerator = FRAMERATE_FACTOR;
- 	fival->stepwise.min.denominator = frate_max(inst);
--	fival->stepwise.max.numerator = 1;
-+	fival->stepwise.max.numerator = FRAMERATE_FACTOR;
- 	fival->stepwise.max.denominator = frate_min(inst);
- 	fival->stepwise.step.numerator = 1;
--	fival->stepwise.step.denominator = frate_max(inst);
-+	fival->stepwise.step.denominator = 1;
- 
- 	return 0;
- }
-@@ -654,6 +655,7 @@ static int venc_set_properties(struct venus_inst *inst)
- 	struct hfi_quantization quant;
- 	struct hfi_quantization_range quant_range;
- 	u32 ptype, rate_control, bitrate, profile = 0, level = 0;
-+	u64 framerate;
- 	int ret;
- 
- 	ret = venus_helper_set_work_mode(inst, VIDC_WORK_MODE_2);
-@@ -664,9 +666,16 @@ static int venc_set_properties(struct venus_inst *inst)
- 	if (ret)
- 		return ret;
- 
-+	framerate = inst->timeperframe.denominator * FRAMERATE_FACTOR;
-+	/* next line is to round up */
-+	framerate += inst->timeperframe.numerator - 1;
-+	do_div(framerate, inst->timeperframe.numerator);
-+
- 	ptype = HFI_PROPERTY_CONFIG_FRAME_RATE;
- 	frate.buffer_type = HFI_BUFFER_OUTPUT;
--	frate.framerate = inst->fps * (1 << 16);
-+	frate.framerate = framerate;
-+	if (frate.framerate > frate_max(inst))
-+		frate.framerate = frate_max(inst);
- 
- 	ret = hfi_session_set_property(inst, ptype, &frate);
- 	if (ret)
+Does that makes sense ?
+
+> > > > +#endif /* CONFIG_UCLAMP_TASK */
+> > > > +
+> > > >  /*
+> > > >   * This is the main, per-CPU runqueue data structure.
+> > > >   *
+> > > > @@ -835,6 +879,11 @@ struct rq {
+> > > >  	unsigned long		nr_load_updates;
+> > > >  	u64			nr_switches;
+> > > >  
+> > > > +#ifdef CONFIG_UCLAMP_TASK
+> > > > +	/* Utilization clamp values based on CPU's RUNNABLE tasks */
+> > > > +	struct uclamp_cpu	uclamp[UCLAMP_CNT] ____cacheline_aligned;
+> > > 
+> > > Which makes this 112 bytes with 8 bytes in 2 holes, which is short of 2
+> > > 64 byte cachelines.
+> > 
+> > Right, we have 2 cache lines where:
+> > - the first $L tracks 5 different util_min values
+> > - the second $L tracks 5 different util_max values
+> 
+> Well, not quite so, if you want that you should put
+> ____cacheline_aligned on struct uclamp_cpu. Such that the individual
+> array entries are each aligned, the above only alignes the whole array,
+> so the second uclamp_cpu is spread over both lines.
+
+That's true... I was considering more important to save space if we
+have a buckets number which can fit in let say 3 cache lines.
+... but if you prefer the other way around I'll move it.
+
+> But I think this is actually better, since you have to scan both
+> min/max anyway, and allowing one the straddle a line you have to touch
+> anyway, allows for using less lines in total.
+
+Right.
+
+> Consider for example the case where UCLAMP_BUCKETS=8, then each
+> uclamp_cpu would be 9 words or 72 bytes. If you force align the member,
+> then you end up with 4 lines, whereas now it would be 3.
+
+Exactly :)
+
+> > > Is that the best layout?
+> > 
+> > It changed few times and that's what I found more reasonable for both
+> > for fitting the default configuration and also for code readability.
+> > Notice that we access RQ and SE clamp values with the same patter,
+> > for example:
+> > 
+> >    {rq|p}->uclamp[clamp_idx].value
+> > 
+> > Are you worried about the holes or something else specific ?
+> 
+> Not sure; just mostly asking if this was by design or by accident.
+> 
+> One thing I did wonder though; since bucket[0] is counting the tasks
+> that are unconstrained and it's bucket value is basically fixed (0 /
+> 1024), can't we abuse that value field to store uclamp_cpu::value ?
+
+Mmm... should be possible, just worried about adding special cases
+which can make the code even more complex of what it's not already.
+
+.... moreover, if we ditch the mapping, the 1024 will be indexed at
+the top of the array... so...
+
+> OTOH, doing that might make the code really ugly with all them:
+> 
+>   if (!bucket_id)
+> 
+> exceptions all over the place.
+
+Exactly... I should read all your comments before replying :)
+
 -- 
-2.17.1
+#include <best/regards.h>
 
+Patrick Bellasi
