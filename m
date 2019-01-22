@@ -2,114 +2,88 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FA07C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:15:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AE0CC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:15:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 343512085A
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:15:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED57E2085A
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:15:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727495AbfAVKPl (ORCPT
+        id S1727766AbfAVKP5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 05:15:41 -0500
-Received: from mail.aixigo.de ([5.145.142.10]:44037 "EHLO mail.aixigo.de"
+        Tue, 22 Jan 2019 05:15:57 -0500
+Received: from mga17.intel.com ([192.55.52.151]:62344 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726231AbfAVKPl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 05:15:41 -0500
-Received: from srvvm01.ac.aixigo.de (mail.ac.aixigo.de [172.19.96.11])
-        by gate5a.ac.aixigo.de (OpenSMTPD) with ESMTPS id e39b2d14 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO)
-        for <linux-kernel@vger.kernel.org>;
-        Tue, 22 Jan 2019 11:15:40 +0100 (CET)
-Received: from dpcl082.ac.aixigo.de (dpcl082.ac.aixigo.de [172.19.97.128])
-        by srvvm01.ac.aixigo.de (8.15.2/8.15.2/Debian-8) with ESMTP id x0MAFdGa379349;
-        Tue, 22 Jan 2019 11:15:39 +0100
-Subject: Re: 4.20.1: BUG: unable to handle kernel paging request at
- 0000100000000008
-From:   Harald Dunkel <harald.dunkel@aixigo.de>
-To:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <fd58236d-a939-ec7b-b666-706f6853c49d@aixigo.de>
-Message-ID: <4b1cdcac-e6ec-09ca-558a-1ff391f13e52@aixigo.de>
-Date:   Tue, 22 Jan 2019 11:15:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <fd58236d-a939-ec7b-b666-706f6853c49d@aixigo.de>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.101.1 at srvvm01.ac.aixigo.de
-X-Virus-Status: Clean
+        id S1726231AbfAVKP5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 05:15:57 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jan 2019 02:15:07 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,505,1539673200"; 
+   d="scan'208";a="110060785"
+Received: from cmicsa-mobl1.ti.intel.com ([10.252.18.12])
+  by orsmga006.jf.intel.com with ESMTP; 22 Jan 2019 02:15:04 -0800
+Message-ID: <ef50896ee3ecc895c72a9fbdedca65ac6433fef2.camel@intel.com>
+Subject: Re: [for next][PATCH] iwlwifi: Fix unmet dependency error for
+ IWLWIFI_LEDS
+From:   Luciano Coelho <luciano.coelho@intel.com>
+To:     Sinan Kaya <okaya@kernel.org>, linux-next@vger.kernel.org
+Cc:     Johannes Berg <johannes.berg@intel.com>,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Intel Linux Wireless <linuxwifi@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        "open list:INTEL WIRELESS WIFI LINK (iwlwifi)" 
+        <linux-wireless@vger.kernel.org>,
+        "open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Date:   Tue, 22 Jan 2019 12:15:03 +0200
+In-Reply-To: <20190121233102.13705-1-okaya@kernel.org>
+References: <20190121233102.13705-1-okaya@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.3-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Is this the wrong list to report this problem? I haven't found a
-"mem" mailing list on vger.
+On Mon, 2019-01-21 at 23:31 +0000, Sinan Kaya wrote:
+> There is an unresolved dependency as follows:
+> 
+> IWLWIFI_LEDS selects MAC80211_LEDS.
+> MAC80211_LEDS depends on MAC80211.
+> 
+> It is possible to choose MAC80211_LEDS (y) but not choose MAC80211
+> (n)
+> 
+> WARNING: unmet direct dependencies detected for MAC80211_LEDS
+>   Depends on [n]: NET [=y] && WIRELESS [=y] && MAC80211 [=n] &&
+> LEDS_CLASS [=y]
+>   Selected by [y]:
+>   - IWLWIFI_LEDS [=y] && NETDEVICES [=y] && WLAN [=y] &&
+> WLAN_VENDOR_INTEL [=y] && IWLWIFI [=y] && (LEDS_CLASS [=y]=y ||
+> LEDS_CLASS [=y]=IWLWIFI [=y])
+> 
+> Move the MAC80211 dependency into IWLWIFI_LEDS so that we avoid this
+> configuration.
+> 
+> Signed-off-by: Sinan Kaya <okaya@kernel.org>
+> ---
 
-Regards
-Harri
--------------------------------------------------------------------------
-On 1/14/19 2:01 PM, Harald Dunkel wrote:
-> Hi folks,
-> 
-> my server stumbled over this last night:
-> 
-> Jan 13 19:03:15 sylvester kernel: [272280.820190] BUG: unable to handle kernel paging request at 0000100000000008
-> Jan 13 19:03:15 sylvester kernel: [272280.820198] PGD 0 P4D 0
-> Jan 13 19:03:15 sylvester kernel: [272280.820203] Oops: 0000 [#1] PREEMPT SMP PTI
-> Jan 13 19:03:15 sylvester kernel: [272280.820207] CPU: 3 PID: 46 Comm: kswapd0 Not tainted 4.20.1-raw #1
-> Jan 13 19:03:15 sylvester kernel: [272280.820211] Hardware name:  /DH67CF, BIOS BLH6710H.86A.0125.2011.0705.1517 07/05/2011
-> Jan 13 19:03:15 sylvester kernel: [272280.820219] RIP: 0010:find_get_entries+0xed/0x240
-> Jan 13 19:03:15 sylvester kernel: [272280.820223] Code: 4e 4e 00 48 89 c2 48 85 d2 0f 84 91 00 00 00 48 81 fa 02 04 00 00 0f 84 a3 00 00 00 48 81 fa 06 04 00 00 74 ca f6
-> Jan 13 19:03:15 sylvester kernel: [272280.820230] RSP: 0018:ffffc90000fdb9c8 EFLAGS: 00010246
-> Jan 13 19:03:15 sylvester kernel: [272280.820234] RAX: 0000100000000000 RBX: 000000000000000f RCX: 0000000000000000
-> Jan 13 19:03:15 sylvester kernel: [272280.820238] RDX: 0000100000000000 RSI: 0000000000000680 RDI: ffffffffffffffc0
-> Jan 13 19:03:15 sylvester kernel: [272280.820242] RBP: 0000000000000002 R08: ffff8880a98b7d80 R09: 0000000000000000
-> Jan 13 19:03:15 sylvester kernel: [272280.820246] R10: 000000000000004b R11: ffffc90000fdb9c8 R12: ffffffffffffffff
-> Jan 13 19:03:15 sylvester kernel: [272280.820250] R13: ffffc90000fdbae0 R14: ffffc90000fdba60 R15: 0000000000000000
-> Jan 13 19:03:15 sylvester kernel: [272280.820255] FS:  0000000000000000(0000) GS:ffff888217980000(0000) knlGS:0000000000000000
-> Jan 13 19:03:15 sylvester kernel: [272280.820259] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> Jan 13 19:03:15 sylvester kernel: [272280.820263] CR2: 0000100000000008 CR3: 000000000200a003 CR4: 00000000000606e0
-> Jan 13 19:03:15 sylvester kernel: [272280.820268] Call Trace:
-> Jan 13 19:03:15 sylvester kernel: [272280.820276]  pagevec_lookup_entries+0x15/0x20
-> Jan 13 19:03:15 sylvester kernel: [272280.820280]  truncate_inode_pages_range+0xc5/0x810
-> Jan 13 19:03:15 sylvester kernel: [272280.820289]  ? ___cache_free+0x2c/0x2f0
-> Jan 13 19:03:15 sylvester kernel: [272280.820296]  ? jbd2_journal_release_jbd_inode+0x105/0x130 [jbd2]
-> Jan 13 19:03:15 sylvester kernel: [272280.820301]  ? iput+0x1e9/0x210
-> Jan 13 19:03:15 sylvester kernel: [272280.820305]  ? __inode_wait_for_writeback+0x7a/0xe0
-> Jan 13 19:03:15 sylvester kernel: [272280.820319]  ext4_evict_inode+0x52/0x5d0 [ext4]
-> Jan 13 19:03:15 sylvester kernel: [272280.820325]  evict+0xbf/0x190
-> Jan 13 19:03:15 sylvester kernel: [272280.820328]  dispose_list+0x30/0x40
-> Jan 13 19:03:15 sylvester kernel: [272280.820332]  prune_icache_sb+0x4d/0x70
-> Jan 13 19:03:15 sylvester kernel: [272280.820337]  super_cache_scan+0x121/0x1a0
-> Jan 13 19:03:15 sylvester kernel: [272280.820342]  do_shrink_slab+0x136/0x2d0
-> Jan 13 19:03:15 sylvester kernel: [272280.820346]  shrink_slab+0x22a/0x290
-> Jan 13 19:03:15 sylvester kernel: [272280.820351]  ? __mod_node_page_state+0x64/0xa0
-> Jan 13 19:03:15 sylvester kernel: [272280.820354]  shrink_node+0xe1/0x450
-> Jan 13 19:03:15 sylvester kernel: [272280.820358]  kswapd+0x3f9/0x740
-> Jan 13 19:03:15 sylvester kernel: [272280.820362]  ? mem_cgroup_shrink_node+0x1b0/0x1b0
-> Jan 13 19:03:15 sylvester kernel: [272280.820367]  kthread+0x111/0x130
-> Jan 13 19:03:15 sylvester kernel: [272280.820371]  ? kthread_create_worker_on_cpu+0x60/0x60
-> Jan 13 19:03:15 sylvester kernel: [272280.820376]  ret_from_fork+0x35/0x40
-> Jan 13 19:03:15 sylvester kernel: [272280.820380] Modules linked in: cpuid fuse btrfs xor zstd_compress raid6_pq zstd_decompress xxhash ufs hfsplus ntfs vfat msdos fat j
-> Jan 13 19:03:15 sylvester kernel: [272280.820423]  scsi_mod mfd_core usbcore e1000e
-> Jan 13 19:03:15 sylvester kernel: [272280.820452] CR2: 0000100000000008
-> Jan 13 19:03:15 sylvester kernel: [272280.820456] ---[ end trace b383b200f5d976a9 ]---
-> Jan 13 19:03:15 sylvester kernel: [272280.820461] RIP: 0010:find_get_entries+0xed/0x240
-> Jan 13 19:03:15 sylvester kernel: [272280.820465] Code: 4e 4e 00 48 89 c2 48 85 d2 0f 84 91 00 00 00 48 81 fa 02 04 00 00 0f 84 a3 00 00 00 48 81 fa 06 04 00 00 74 ca f6
-> Jan 13 19:03:15 sylvester kernel: [272280.820472] RSP: 0018:ffffc90000fdb9c8 EFLAGS: 00010246
-> 
-> 
-> I have opened https://bugzilla.kernel.org/show_bug.cgi?id=202257, providing
-> kernel.log and config file.
-> 
-> Is there anything else I could do to help tracking down this problem?
-> 
-> 
-> Regards
-> Harri
-> 
+Thanks for your patch! But we already have another patch to fix this
+issued queued for 5.0-rc4 (it's currently in wireless-drivers.git):
+
+https://patchwork.kernel.org/patch/10762079/
+
+--
+Cheers,
+Luca.
 
