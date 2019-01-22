@@ -2,152 +2,121 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3676BC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:05:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0144C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:05:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00C9C20854
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:05:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jxRLfJeW"
+	by mail.kernel.org (Postfix) with ESMTP id A775F20854
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:05:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727573AbfAVJFE (ORCPT
+        id S1727609AbfAVJFf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 04:05:04 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:50422 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727299AbfAVJFE (ORCPT
+        Tue, 22 Jan 2019 04:05:35 -0500
+Received: from mgwym01.jp.fujitsu.com ([211.128.242.40]:48799 "EHLO
+        mgwym01.jp.fujitsu.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727036AbfAVJFe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 04:05:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=nEOchColTM/3kdo5tv9rkLbmsX1DYi0ROeJ5vx0DwLg=; b=jxRLfJeWQs5cm40aTmQ/pQ/hp
-        A9UCxHRXRilBxmDkUNQHugVDyVf1zK29MnFohA7uTF7TP2uCdIOEmb27zp/qBhotGSCl1NjkRESpi
-        EA7tWbyJ40puJ3KiCQfeyrmmx0A81bBoEX/9h2sebtOmqpHpr3KXH85aqYlM3/R58vngiTD+7+do3
-        8+pppJHz1TqhVqCjgOiQwpVBfyzcXkjoprbBc8uCEsGLYaK5JdWOuWDLTjo40QiNF1ueMzL35NN1w
-        JxqTJKvj1XjnAOWh1hsiKZEltEWJnxBQ2e5fyhe61BPu+xTsz08XoTslaw9xeULGH4CNkWVm8fBB8
-        jTjP/LfKw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1glrzO-0000oN-65; Tue, 22 Jan 2019 09:04:58 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 84E4B20D15814; Tue, 22 Jan 2019 10:04:56 +0100 (CET)
-Date:   Tue, 22 Jan 2019 10:04:56 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Kees Cook <keescook@chromium.org>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] kcov: convert kcov.refcount to refcount_t
-Message-ID: <20190122090456.GE13777@hirez.programming.kicks-ass.net>
-References: <20190121131816.GC17749@hirez.programming.kicks-ass.net>
- <Pine.LNX.4.44L0.1901211103000.24162-100000@netrider.rowland.org>
+        Tue, 22 Jan 2019 04:05:34 -0500
+X-Greylist: delayed 667 seconds by postgrey-1.27 at vger.kernel.org; Tue, 22 Jan 2019 04:05:34 EST
+Received: from yt-mxauth.gw.nic.fujitsu.com (unknown [192.168.229.68]) by mgwym01.jp.fujitsu.com with smtp
+         id 42dd_ef38_fa7a404b_621d_48a5_a09c_3940e63890ae;
+        Tue, 22 Jan 2019 17:54:24 +0900
+Received: from g01jpfmpwkw01.exch.g01.fujitsu.local (g01jpfmpwkw01.exch.g01.fujitsu.local [10.0.193.38])
+        by yt-mxauth.gw.nic.fujitsu.com (Postfix) with ESMTP id A96AAAC00E2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 17:54:23 +0900 (JST)
+Received: from G01JPEXCHKW14.g01.fujitsu.local (G01JPEXCHKW14.g01.fujitsu.local [10.0.194.53])
+        by g01jpfmpwkw01.exch.g01.fujitsu.local (Postfix) with ESMTP id C8A126925C1;
+        Tue, 22 Jan 2019 17:54:22 +0900 (JST)
+Received: from G01JPEXMBKW03.g01.fujitsu.local ([10.0.194.67]) by
+ g01jpexchkw14 ([10.0.194.53]) with mapi id 14.03.0415.000; Tue, 22 Jan 2019
+ 17:54:22 +0900
+From:   "Zhang, Lei" <zhang.lei@jp.fujitsu.com>
+To:     'Mark Rutland' <mark.rutland@arm.com>,
+        "'catalin.marinas@arm.com'" <catalin.marinas@arm.com>,
+        "'will.deacon@arm.com'" <will.deacon@arm.com>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
+        "'linux-arm-kernel@lists.infradead.org'" 
+        <linux-arm-kernel@lists.infradead.org>
+CC:     "Zhang, Lei" <zhang.lei@jp.fujitsu.com>
+Subject: [PATCH v2 0/1] arm64: Add workaround for Fujitsu A64FX erratum
+ 010001
+Thread-Topic: [PATCH v2 0/1] arm64: Add workaround for Fujitsu A64FX erratum
+ 010001
+Thread-Index: AdSyLOgvncWewEHxSDCVdyamf7TefQ==
+Date:   Tue, 22 Jan 2019 08:54:21 +0000
+Message-ID: <8898674D84E3B24BA3A2D289B872026A6A2A32D6@G01JPEXMBKW03>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-securitypolicycheck: OK by SHieldMailChecker v2.2.3
+x-shieldmailcheckerpolicyversion: FJ-ISEC-20140219
+x-originating-ip: [10.18.70.198]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1901211103000.24162-100000@netrider.rowland.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SecurityPolicyCheck-GC: OK by FENCE-Mail
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 11:05:03AM -0500, Alan Stern wrote:
-> On Mon, 21 Jan 2019, Peter Zijlstra wrote:
-
-> > Any additional ordering; like the one you have above; are not strictly
-> > required for the proper functioning of the refcount. Rather, you rely on
-> > additional ordering and will need to provide this explicitly:
-> > 
-> > 
-> > 	if (refcount_dec_and_text(&x->rc)) {
-> > 		/*
-> > 		 * Comment that explains what we order against....
-> > 		 */
-> > 		smp_mb__after_atomic();
-> > 		BUG_ON(!x->done*);
-> > 		free(x);
-> > 	}
-> > 
-> > 
-> > Also; these patches explicitly mention that refcount_t is weaker,
-> > specifically to make people aware of this difference.
-> > 
-> > A full smp_mb() (or two) would also be much more expensive on a number
-> > of platforms and in the vast majority of the cases it is not required.
-> 
-> How about adding smp_rmb() into refcount_dec_and_test()?  That would
-> give acq+rel semantics, which seems to be what people will expect.  And
-> it wouldn't be nearly as expensive as a full smp_mb().
-
-Yes, that's a very good suggestion.
-
-I suppose we can add smp_acquire__after_ctrl_dep() on the true branch.
-Then it reall does become rel_acq.
-
-A wee something like so (I couldn't find an arm64 refcount, even though
-I have distinct memories of talk about it).
-
-This isn't compiled, and obviously needs comment/documentation updates
-to go along with it.
-
----
- arch/x86/include/asm/refcount.h | 9 ++++++++-
- lib/refcount.c                  | 7 ++++++-
- 2 files changed, 14 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/include/asm/refcount.h b/arch/x86/include/asm/refcount.h
-index dbaed55c1c24..6f7a1eb345b4 100644
---- a/arch/x86/include/asm/refcount.h
-+++ b/arch/x86/include/asm/refcount.h
-@@ -74,9 +74,16 @@ bool refcount_sub_and_test(unsigned int i, refcount_t *r)
- 
- static __always_inline __must_check bool refcount_dec_and_test(refcount_t *r)
- {
--	return GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl",
-+	bool ret = GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl",
- 					REFCOUNT_CHECK_LT_ZERO,
- 					r->refs.counter, e, "cx");
-+
-+	if (ret) {
-+		smp_acquire__after_ctrl_dep();
-+		return true;
-+	}
-+
-+	return false;
- }
- 
- static __always_inline __must_check
-diff --git a/lib/refcount.c b/lib/refcount.c
-index ebcf8cd49e05..8276ad349d48 100644
---- a/lib/refcount.c
-+++ b/lib/refcount.c
-@@ -190,7 +190,12 @@ bool refcount_sub_and_test_checked(unsigned int i, refcount_t *r)
- 
- 	} while (!atomic_try_cmpxchg_release(&r->refs, &val, new));
- 
--	return !new;
-+	if (!new) {
-+		smp_acquire__after_ctrl_dep();
-+		return true;
-+	}
-+
-+	return false;
- }
- EXPORT_SYMBOL(refcount_sub_and_test_checked);
- 
+T24gc29tZSB2YXJpYW50cyBvZiB0aGUgRnVqaXRzdS1BNjRGWCBjb3JlcyB2
+ZXIoMS4wLCAxLjEpLA0KIG1lbW9yeSBhY2Nlc3NlcyBtYXkgY2F1c2UgdW5k
+ZWZpbmVkIGZhdWx0IChEYXRhIGFib3J0LCBERlNDPTBiMTExMTExKS4NClRo
+aXMgcHJvYmxlbSB3aWxsIGJlIGZpeGVkIGJ5IG5leHQgdmVyc2lvbiBvZiBG
+dWppdHN1LUE2NEZYLg0KSSB3b3VsZCBsaWtlIHRvIHBvc3QgYSB3b3JrYXJv
+dW5kIHRvIGF2b2lkIHRoaXMgcHJvYmxlbSBvbiBleGlzdGluZyB2ZXJzaW9u
+Lg0KVGhlIHdvcmthcm91bmQgaXMgdG8gcmVwbGFjZSB0aGUgZmF1bHQgaGFu
+ZGxlciBmb3IgRGF0YSBhYm9ydA0KREZTQz0wYjExMTExMSB3aXRoIGEgbmV3
+IG9uZSB0byBpZ25vcmUgdGhpcyB1bmRlZmluZWQgZmF1bHQsIA0Kd2hpY2gg
+d2lsbCBvbmx5IGFmZmVjdCB0aGUgRnVqaXRzdS1BNjRGWC4NCg0KVGhlIGRl
+dGFpbCBmb3IgdGhpcyBwcm9ibGVtLg0KPiAqIFVuZGVyIHdoYXQgY29uZGl0
+aW9ucyBjYW4gdGhlIGZhdWx0IG9jY3VyPyBlLmcuIGlzIHRoaXMgaW4gcGxh
+Y2Ugb2YNCj4gICBzb21lIG90aGVyIGZhdWx0LCBvciBjb21wbGV0ZWx5IHNw
+dXJpb3VzPw0KVGhpcyBmYXVsdCBjYW4gb2NjdXIgY29tcGxldGVseSBzcHVy
+aW91cyB1bmRlciBhIA0Kc3BlY2lmaWMgaGFyZHdhcmUgY29uZGl0aW9uIGFu
+ZCBpbnN0cnVjdGlvbnMgb3JkZXIuDQogDQo+ICogRG9lcyB0aGlzIG9ubHkg
+b2NjdXIgZm9yIGRhdGEgYWJvcnQ/IGkuZS4gbm90IGluc3RydWN0aW9uIGFi
+b3J0cz8NClllcy4gVGhpcyBmYXVsdCBvbmx5IG9jY3VycyBmb3IgZGF0YSBh
+Ym9ydC4NCg0KPiAqIEhvdyBvZnRlbiBkb2VzIHRoaXMgZmF1bHQgb2NjdXI/
+DQpJbiBteSB0ZXN0LCB0aGlzIGZhdWx0IG9jY3VycyBvbmNlIGV2ZXJ5IHNl
+dmVyYWwgdGltZXMgDQppbiB0aGUgT1MgYm9vdCBzZXF1ZW5jZSwgYW5kIGFm
+dGVyIHRoZSBjb21wbGV0aW9uIG9mIE9TIGJvb3QsIA0KdGhpcyBmYXVsdCBo
+YXZlIG5ldmVyIG9jY3VycmVkLg0KSW4gbXkgb3BpbmlvbiwgdGhpcyBmYXVs
+dCByYXJlbHkgb2NjdXJzIGFmdGVyIHRoZSBjb21wbGV0aW9uIG9mIE9TIGJv
+b3QuDQoNCj4gKiBEb2VzIHRoaXMgb25seSBhcHBseSB0byBTdGFnZS0xLCBv
+ciBjYW4gdGhlIHNhbWUgZmF1bHRzIGJlIHRha2VuIGF0DQo+ICAgU3RhZ2Ut
+Mj8NClRoaXMgZmF1bHQgY2FuIGJlIHRha2VuIG9ubHkgYXQgU3RhZ2UtMS4N
+Cg0KPiBJJ20gYSBiaXQgc3VycHJpc2VkIGJ5IHRoZSBzaW5nbGUgcmV0cnku
+IElzIHRoZXJlIGFueSBndWFyYW50ZWUgdGhhdCBhIA0KPiB0aHJlYWQgd2ls
+bCBldmVudHVhbGx5IHN0b3AgZGVsaXZlcmluZyB0aGlzIGZhdWx0IGNvZGU/
+DQpJIGd1YXJhbnRlZSB0aGF0IGEgdGhyZWFkIHdpbGwgc3RvcCBkZWxpdmVy
+aW5nIHRoaXMgZmF1bHQgY29kZSBieSB0aGUgdGhpcyBwYXRjaC4NClRoZSBo
+YXJkd2FyZSBjb25kaXRpb24gd2hpY2ggY2F1c2UgdGhpcyBmYXVsdCBpcyBy
+ZXNldCBhdCBleGNlcHRpb24gZW50cnksIA0KdGhlcmVmb3JlIGV4ZWN1dGlv
+biBvZiBhdCBsZWFzdCBvbmUgaW5zdHJ1Y3Rpb24gaXMgDQpndWFyYW50ZWVk
+IGJ5IHRoaXMgc2luZ2xlIHJldHJ5Lg0KDQpDaGFuZ2VzIHNpbmNlIFt2MV0N
+CkFzIE1hcmsncyByZXZpZXc6DQoNCiAqIEFkb3B0ZWQgZXJyYXRhIGZyYW1l
+d29yay4NCg0KSSBoYXZlIGNvbmZpcm1lZCBhcyBmb2xsb3dpbmdzOg0KICog
+RnVqaXRzdSBBNjRGWCAtIFRoZSBwcm9ibGVtIGRvZXNuJ3QgaGFwcGVuLg0K
+ICogUUVNVSAgICAgICAgICAtIE5vIHByb2JsZW1zIHRvIGJvb3QuDQoNCkkg
+ZnVsbHkgYXBwcmVjaWF0ZSB0aGF0IGlmIHNvbWVvbmUgY2FuIHRlc3QgdGhp
+cyBwYXRjaCBvbiBkaWZmZXJlbnQgY2hpcHMgDQp0byB2ZXJpdHkgbm8gaGFy
+bWZ1bCBlZmZlY3Qgb24gb3RoZXIgY2hpcHMuDQoNCklmIHRoZXJlIGlzIG5v
+IHByb2JsZW0gb24gb3RoZXIgY2hpcHMsIHBsZWFzZSBtZXJnZSB0aGlzIHBh
+dGNoLg0KDQpUaGUgcGF0Y2ggYmFzZWQgb24gbGludXgtNS4wLXJjMi4NCg0K
+WmhhbmcgTGVpICgxKToNCiAgYXJtNjQ6IEFkZCB3b3JrYXJvdW5kIGZvciBG
+dWppdHN1IEE2NEZYIGVycmF0dW0gMDEwMDAxLg0KDQogRG9jdW1lbnRhdGlv
+bi9hcm02NC9zaWxpY29uLWVycmF0YS50eHQgfCAgMSArDQogYXJjaC9hcm02
+NC9LY29uZmlnICAgICAgICAgICAgICAgICAgICAgfCAxMyArKysrKysrKysr
+KysrDQogYXJjaC9hcm02NC9pbmNsdWRlL2FzbS9jcHVjYXBzLmggICAgICAg
+fCAgMyArKy0NCiBhcmNoL2FybTY0L2luY2x1ZGUvYXNtL2NwdXR5cGUuaCAg
+ICAgICB8ICA0ICsrKysNCiBhcmNoL2FybTY0L2tlcm5lbC9jcHVfZXJyYXRh
+LmMgICAgICAgICB8ICA4ICsrKysrKysrDQogYXJjaC9hcm02NC9tbS9mYXVs
+dC5jICAgICAgICAgICAgICAgICAgfCAyNCArKysrKysrKysrKysrKysrKysr
+KysrKy0NCiA2IGZpbGVzIGNoYW5nZWQsIDUxIGluc2VydGlvbnMoKyksIDIg
+ZGVsZXRpb25zKC0pDQoNCi0tIA0KMS44LjMuMQ0K
