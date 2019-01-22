@@ -2,134 +2,118 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5C2FC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 06:42:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1F08C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 06:43:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B77120861
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 06:42:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D9A320861
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 06:43:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HMXBbatg"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cmY6FkHc";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="laiPv48w"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727057AbfAVGmv (ORCPT
+        id S1727078AbfAVGnb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 01:42:51 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:36121 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726127AbfAVGmu (ORCPT
+        Tue, 22 Jan 2019 01:43:31 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:50846 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726127AbfAVGna (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 01:42:50 -0500
-Received: by mail-it1-f193.google.com with SMTP id c9so18696196itj.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 22:42:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ndWGJy7fWM7SEDYQT9UtimesU13A7WSjjIXUhm+p4kw=;
-        b=HMXBbatgpTHWNYlUjPDxEbtCJN2vqrNWbWG5lSa+uPssbhwYP+3zlxGkV6kN0FQ4Mr
-         t3uM4tILFgVhtzFna1nVaZGdb+XWtEiMQZn3sv3/OD1061pOZXvhL7dO3DmVtbyhAaB4
-         YSgxiKaytlowdZ7+YBW0i549c083TaPHaUQdYKMLWGVp6aVm+09K5QrBCIBT1sbNfE5k
-         MdTYTqRnSxr8ZV47Exf+kFJg15QEVI0dYOwk24MM8BAvMCacnkll1qL0C3O7R6myzyYr
-         R0zfiMQFBdWRiIloPjbBmXsHhbw4jM7n9ZrDbOmIwPNUjPp1eAwn4Xtl6GmAY9HNwA+G
-         BQ6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ndWGJy7fWM7SEDYQT9UtimesU13A7WSjjIXUhm+p4kw=;
-        b=JleJB/T1KC9Kbg+AHOErG5KhRtcjk4R36EgCh3SX9b+75PhVtr/VXjGWxGKNLupbbX
-         WRyjR70OyboUTdN0G4CDBlNltHXOHQsPcezPrBjISsW9JXhKd5PfFlaI6DIK3hk5+BVw
-         ITGe/UsRRCmq0jN5p9unmm5QE7tb5xV85nkta6igQaBZWpXKEK9ysDE2OAGvRn/cXQpn
-         jF/vDsV+LfXT8LVlBWlJE9HOKK56mS/4Z5SPx0FDTf9YJFtnbAfNf2Zg5uHO0KsT4l4H
-         anHpDqdiiQB4irMJ27iItTPwJ4G0e57maLx+yI/H6kAG3IUlcu2/H1w+JElyi0Y94S2w
-         Badg==
-X-Gm-Message-State: AJcUukdK2zqRV6TjmzTtlq0ZmU2oIM3mI5OUErvhKt+amNzyyuHlVX3A
-        8MXz/sQNgriqrG9Mnco/oa8=
-X-Google-Smtp-Source: AHgI3IY/96UkGbISUQlpqK/6PZQUqusK7crG8gGfiXuIIk2DAlbnu/REs/ViJ1Ps75fA3Zdy1eyU5Q==
-X-Received: by 2002:a24:e302:: with SMTP id d2mr1432723ith.155.1548139369635;
-        Mon, 21 Jan 2019 22:42:49 -0800 (PST)
-Received: from ubu-Virtual-Machine (66-188-57-61.dhcp.bycy.mi.charter.com. [66.188.57.61])
-        by smtp.gmail.com with ESMTPSA id t7sm5790313iom.27.2019.01.21.22.42.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 21 Jan 2019 22:42:49 -0800 (PST)
-Date:   Tue, 22 Jan 2019 01:42:46 -0500
-From:   Kimberly Brown <kimbrownkd@gmail.com>
-To:     Dexuan Cui <decui@microsoft.com>
-Cc:     Michael Kelley <mikelley@microsoft.com>,
-        Long Li <longli@microsoft.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] Drivers: hv: vmbus: Add mutex lock to channel show
- functions
-Message-ID: <20190122064246.GA28613@ubu-Virtual-Machine>
-References: <20190122020759.GA4054@ubu-Virtual-Machine>
- <PU1P153MB0169EB8CFC0A69407A8AE2C2BF980@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+        Tue, 22 Jan 2019 01:43:30 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id B2194608CD; Tue, 22 Jan 2019 06:43:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548139409;
+        bh=9i79PqIDU3zI548RYDaZ460Wrk5M+XFzLzr1uScN/eE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=cmY6FkHc44ChReVYED8NfR0xzCOKrRCChLnF+9L/n04O0b3QAGvviChXnpgedBN7d
+         T0pxxqaEzGwXEA2nPTPO5r4DzCnvyjUCKFlG49Lm5ikEq3O9v9lJCeaM++O4ZwAVga
+         CyjTRuI4B/ofnRETq20tJlQJkc5z4FdMixxWLjho=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id B5AFA608CD;
+        Tue, 22 Jan 2019 06:43:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548139407;
+        bh=9i79PqIDU3zI548RYDaZ460Wrk5M+XFzLzr1uScN/eE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=laiPv48wETHrrote88pFE8XxsVki3RAGdeq8eUJy39Wq7Hz7eJucmVwScQU0+hFQr
+         pdjTq2hsK02uZk0pnN1l481hgYYVW/TCln///0IS0ukPd2v2wsZMucbUQl3ThNpqMh
+         0amBjtpMnmDJFyaH9UGxme6JoQqK2+Q4b9zAz0BY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PU1P153MB0169EB8CFC0A69407A8AE2C2BF980@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 22 Jan 2019 12:13:26 +0530
+From:   alokc@codeaurora.org
+To:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org
+Cc:     georgi.djakov@linaro.org, dianders@chromium.org,
+        swboyd@chromium.org, bjorn.andersson@linaro.org
+Subject: Re: [PATCH 1/6] dt-bindings: soc: qcom: Add interconnect binding for
+ GENI QUP
+In-Reply-To: <1548069703-26595-2-git-send-email-alokc@codeaurora.org>
+References: <1548069703-26595-1-git-send-email-alokc@codeaurora.org>
+ <1548069703-26595-2-git-send-email-alokc@codeaurora.org>
+Message-ID: <91aa93df80b560ea86520a4773b67d51@codeaurora.org>
+X-Sender: alokc@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 03:46:48AM +0000, Dexuan Cui wrote:
-> > From: Kimberly Brown <kimbrownkd@gmail.com>
-> > Sent: Monday, January 21, 2019 6:08 PM
-> > Subject: [PATCH] Drivers: hv: vmbus: Add mutex lock to channel show functions
-> > 
-> > The channel level "_show" functions are vulnerable to race conditions.
-> > Add a mutex lock and unlock around the call to the channel level "_show"
-> > functions in vmbus_chan_attr_show().
-> > 
-> > This problem was discussed here:
-> > https://lkml.org/lkml/2018/10/18/830
-> > 
-> > --- a/drivers/hv/vmbus_drv.c
-> > +++ b/drivers/hv/vmbus_drv.c
-> > @@ -1414,6 +1414,7 @@ static ssize_t vmbus_chan_attr_show(struct kobject
-> > *kobj,
-> >  		= container_of(attr, struct vmbus_chan_attribute, attr);
-> >  	const struct vmbus_channel *chan
-> >  		= container_of(kobj, struct vmbus_channel, kobj);
-> > +	ssize_t ret;
-> > 
-> >  	if (!attribute->show)
-> >  		return -EIO;
-> > @@ -1421,7 +1422,10 @@ static ssize_t vmbus_chan_attr_show(struct
-> > kobject *kobj,
-> >  	if (chan->state != CHANNEL_OPENED_STATE)
-> >  		return -EINVAL;
-> > 
-> > -	return attribute->show(chan, buf);
-> > +	mutex_lock(&vmbus_connection.channel_mutex);
-> > +	ret = attribute->show(chan, buf);
-> > +	mutex_unlock(&vmbus_connection.channel_mutex);
-> > +	return ret;
-> >  }
-> 
-> It looks this patch is already able to fix the original issue:
-> 6712cc9c2211 ("vmbus: don't return values for uninitalized channels"),
-> as chan->state can't be CHANNEL_OPENED_STATE when
-> channel->ringbuffer_page is not set up yet, or has been freed.
-> 
-> Thanks,
-> -- Dexuan
+Please don't review this patch. I've resend patches after adding all the 
+mailing list.
+Sorry for inconvenience.
 
-I think that patch 6712cc9c2211 fixes the problem when the channel is
-not set up yet, but it doesn't fix the problem when the channel is being
-closed. The channel could be freed after the check that "chan->state" is
-CHANNEL_OPENED_STATE, while the "attribute->show()" function is running.
+On 2019-01-21 16:51, Alok Chauhan wrote:
+> Add documentation for the interconnect and interconnect-names bindings
+> for the GENI QUP as detailed by bindings/interconnect/interconnect.txt.
+> 
+> Signed-off-by: Alok Chauhan <alokc@codeaurora.org>
+> ---
+>  Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt | 10 
+> ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git
+> a/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt
+> b/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt
+> index dab7ca9..44d7e02 100644
+> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt
+> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt
+> @@ -17,6 +17,12 @@ Required properties if child node exists:
+>  - #address-cells: 	Must be <1> for Serial Engine Address
+>  - #size-cells: 		Must be <1> for Serial Engine Address Size
+>  - ranges: 		Must be present
+> +- interconnects:	phandle to a interconnect provider. Please refer
+> +			../interconnect/interconnect.txt for details.
+> +			Must be 2 paths corresponding to 2 AXI ports.
+> +- interconnect-names:	Port names to differentiate between the
+> +			2 interconnect paths defined with interconnect
+> +			specifier.
+> 
+>  Properties for children:
+> 
+> @@ -67,6 +73,10 @@ Example:
+>  		#size-cells = <1>;
+>  		ranges;
+> 
+> +		interconnects = <&qnoc 11 &qnoc 512>,
+> +				<&qnoc 0 &qnoc 543>;
+> +		interconnect-names = "qup-memory", "qup-config";
+> +
+>  		i2c0: i2c@a94000 {
+>  			compatible = "qcom,geni-i2c";
+>  			reg = <0xa94000 0x4000>;
 
-Actually, there should be checks that "chan" is not null and that
-"chan->state" is CHANNEL_OPENED_STATE within the locked section. I'll
-need to fix that.
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
+Forum,a Linux Foundation Collaborative Project
