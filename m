@@ -2,204 +2,377 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E65FEC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:05:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEDA0C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:06:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B502E20854
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:05:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F6CE20854
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:06:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EGjaf8ZK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727657AbfAVJFx (ORCPT
+        id S1727686AbfAVJGC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 04:05:53 -0500
-Received: from mgwym03.jp.fujitsu.com ([211.128.242.42]:24620 "EHLO
-        mgwym03.jp.fujitsu.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727487AbfAVJFw (ORCPT
+        Tue, 22 Jan 2019 04:06:02 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:36164 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727487AbfAVJGB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 04:05:52 -0500
-Received: from yt-mxoi2.gw.nic.fujitsu.com (unknown [192.168.229.69]) by mgwym03.jp.fujitsu.com with smtp
-         id 23b2_2507_e32c7881_87c8_48e3_a9f1_aad11f0fd010;
-        Tue, 22 Jan 2019 17:54:35 +0900
-Received: from g01jpfmpwkw03.exch.g01.fujitsu.local (g01jpfmpwkw03.exch.g01.fujitsu.local [10.0.193.57])
-        by yt-mxoi2.gw.nic.fujitsu.com (Postfix) with ESMTP id C78C1AC0104
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 17:54:34 +0900 (JST)
-Received: from G01JPEXCHKW18.g01.fujitsu.local (G01JPEXCHKW18.g01.fujitsu.local [10.0.194.57])
-        by g01jpfmpwkw03.exch.g01.fujitsu.local (Postfix) with ESMTP id 062EDBD66B0;
-        Tue, 22 Jan 2019 17:54:34 +0900 (JST)
-Received: from G01JPEXMBKW03.g01.fujitsu.local ([10.0.194.67]) by
- g01jpexchkw18 ([10.0.194.57]) with mapi id 14.03.0415.000; Tue, 22 Jan 2019
- 17:54:33 +0900
-From:   "Zhang, Lei" <zhang.lei@jp.fujitsu.com>
-To:     'Mark Rutland' <mark.rutland@arm.com>,
-        "'catalin.marinas@arm.com'" <catalin.marinas@arm.com>,
-        "'linux-arm-kernel@lists.infradead.org'" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "'will.deacon@arm.com'" <will.deacon@arm.com>,
-        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>
-CC:     "Zhang, Lei" <zhang.lei@jp.fujitsu.com>
-Subject: [PATCH v2 1/1] arm64: Add workaround for Fujitsu A64FX erratum
- 010001
-Thread-Topic: [PATCH v2 1/1] arm64: Add workaround for Fujitsu A64FX erratum
- 010001
-Thread-Index: AdSyLRrS1IDcSdJoRF6WCq7/B3VdwA==
-Date:   Tue, 22 Jan 2019 08:54:33 +0000
-Message-ID: <8898674D84E3B24BA3A2D289B872026A6A2A32EB@G01JPEXMBKW03>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-securitypolicycheck: OK by SHieldMailChecker v2.2.3
-x-shieldmailcheckerpolicyversion: FJ-ISEC-20140219
-x-originating-ip: [10.18.70.198]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Tue, 22 Jan 2019 04:06:01 -0500
+Received: by mail-qt1-f193.google.com with SMTP id t13so26746360qtn.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 01:06:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CHgTGvDQNLneHl1sLVz/iOlBo3Y3FfgIUDXXLo/M9gc=;
+        b=EGjaf8ZKaj1A32LkJOTIEQ1p1u8U44kik2dunwdFxDbcHBgUm9BHjv5Sf00RBNe9HE
+         JNtnv6sctBuRKWlSO7/rmgRBzzJy0NIKBW2th8HEDZT1aWthPVaVM6E6d4xuvheE+W5+
+         j4j6RNQ9kq/GaGYzmM8JYtfhZ/Y7QMY9sbu+HXSNWhAUA8dkCLPNUzIEsCAt8+5BN5am
+         pXDD9I5ygBv14QYKB2fFFfVksYqBfTCoaCQAi631pip8Kn9hrakngmg2jQQNpNUiIus9
+         FPmVRcw5cIfzQQE7SHoLbGSJd8P192ZjB1AyiPWG5o9oWvZ86pP8V1PTJcIKVWYOfm4C
+         ONww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CHgTGvDQNLneHl1sLVz/iOlBo3Y3FfgIUDXXLo/M9gc=;
+        b=Mh9z09lko2FiXQzHMyx9CnHGN3rf/iCiz/fvphXG9QjV6xYVHbUpU7SNg4OhBaF6D1
+         pJSfy9NQ6OsnsnqHqTM0dY9kt0ZOrjx3Wp+YGD7RFgFtSV0S/03cXDaXkMgDRYMaOy/Y
+         Y7Oxwhw8vkqE3mbxl/YDmWh7V+S3zGAyrbWvz75XoqdB6FPm3njVnPfaQ2F9jENxjFA9
+         QLJoZmUyXwW7nbSBZ3nDXcU+lk9E/YKIKxEs6onCFjO8M7qdMrT0ixzMMfJAUMonggD6
+         5bN6NkPep2rt1lpg+Fz27sTBA/AM9pXPjZXHeMmU5XByYu5JXjopojnV6E6tXt1B5nPO
+         5TBw==
+X-Gm-Message-State: AJcUukfGcFlCkvEoZxQjwTjx3j8X9/ziznPn1quGSXNhLpJJAetRfPs3
+        eAUoC2wJ2NoxrTArQea9HxeffoWG72bADIBQLvU=
+X-Google-Smtp-Source: ALg8bN7kD5l0SXurfgg8qBnYP3/Ta3Muohy6EZDNJ4VeNnJs+HcbSqOUHDpOWDp8qM4dJUPoEnBi9dQGO9z3+gekWPI=
+X-Received: by 2002:a0c:a8e3:: with SMTP id h35mr28201215qvc.92.1548147960017;
+ Tue, 22 Jan 2019 01:06:00 -0800 (PST)
 MIME-Version: 1.0
-X-SecurityPolicyCheck-GC: OK by FENCE-Mail
-X-TM-AS-MML: disable
+References: <20190119001422.48186-1-ncrews@chromium.org> <20190119001422.48186-2-ncrews@chromium.org>
+In-Reply-To: <20190119001422.48186-2-ncrews@chromium.org>
+From:   Enric Balletbo Serra <eballetbo@gmail.com>
+Date:   Tue, 22 Jan 2019 10:05:48 +0100
+Message-ID: <CAFqH_52qMBjtFLL6dOs4K4P-bMidERzBZaXFrLLyaBWQkLW_Mg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/9] platform/chrome: Remove cros_ec dependency in lpc_mec
+To:     Nick Crews <ncrews@chromium.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Simon Glass <sjg@chromium.org>,
+        Daniel Kurtz <djkurtz@google.com>, dlaurie@chromium.org,
+        Duncan Laurie <dlaurie@google.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Benson Leung <bleung@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gc29tZSB2YXJpYW50cyBvZiB0aGUgRnVqaXRzdS1BNjRGWCBjb3JlcyB2
-ZXIoMS4wLCAxLjEpLA0KbWVtb3J5IGFjY2Vzc2VzIG1heSBjYXVzZSB1bmRl
-ZmluZWQgZmF1bHQgKERhdGEgYWJvcnQsDQpERlNDPTBiMTExMTExKSBkdWUg
-dG8gdGhlIENQVSBFcnJhdGEgKEZ1aml0c3UgIzAxMDAwMSkuDQoNClRoaXMg
-cGF0Y2ggaW50cm9kdWNlcyB0aGUgd29ya2Fyb3VuZCB0byB0aGUgcHJvYmxl
-bS4NClRoZSB3b3JrYXJvdW5kIGlzIHRvIGNoYW5nZSB0aGUgZmF1bHQgaGFu
-ZGxlciBmb3IgRGF0YSBhYm9ydA0KREZTQz0wYjExMTExMSB0byBpZ25vcmUg
-dGhpcyB1bmRlZmluZWQgZmF1bHQsIHdoaWNoIHdpbGwgb25seQ0KYWZmZWN0
-IHRoZSBGdWppdHN1LUE2NEZYLg0KDQpTaWduZWQtb2ZmLWJ5OiBMZWkgWmhh
-bmcgPHpoYW5nLmxlaUBqcC5mdWppdHN1LmNvbT4NClRlc3RlZC1ieTogTGVp
-IFpoYW5nIDx6aGFuZy5sZWlAanAuZnVqaXRzdS5jb20+DQotLS0NCiBEb2N1
-bWVudGF0aW9uL2FybTY0L3NpbGljb24tZXJyYXRhLnR4dCB8ICAxICsNCiBh
-cmNoL2FybTY0L0tjb25maWcgICAgICAgICAgICAgICAgICAgICB8IDEzICsr
-KysrKysrKysrKysNCiBhcmNoL2FybTY0L2luY2x1ZGUvYXNtL2NwdWNhcHMu
-aCAgICAgICB8ICAzICsrLQ0KIGFyY2gvYXJtNjQvaW5jbHVkZS9hc20vY3B1
-dHlwZS5oICAgICAgIHwgIDQgKysrKw0KIGFyY2gvYXJtNjQva2VybmVsL2Nw
-dV9lcnJhdGEuYyAgICAgICAgIHwgIDggKysrKysrKysNCiBhcmNoL2FybTY0
-L21tL2ZhdWx0LmMgICAgICAgICAgICAgICAgICB8IDI0ICsrKysrKysrKysr
-KysrKysrKysrKysrLQ0KIDYgZmlsZXMgY2hhbmdlZCwgNTEgaW5zZXJ0aW9u
-cygrKSwgMiBkZWxldGlvbnMoLSkNCg0KZGlmZiAtLWdpdCBhL0RvY3VtZW50
-YXRpb24vYXJtNjQvc2lsaWNvbi1lcnJhdGEudHh0IGIvRG9jdW1lbnRhdGlv
-bi9hcm02NC9zaWxpY29uLWVycmF0YS50eHQNCmluZGV4IDFmMDlkMDQuLjI2
-ZDY0ZTkgMTAwNjQ0DQotLS0gYS9Eb2N1bWVudGF0aW9uL2FybTY0L3NpbGlj
-b24tZXJyYXRhLnR4dA0KKysrIGIvRG9jdW1lbnRhdGlvbi9hcm02NC9zaWxp
-Y29uLWVycmF0YS50eHQNCkBAIC04MCwzICs4MCw0IEBAIHN0YWJsZSBrZXJu
-ZWxzLg0KIHwgUXVhbGNvbW0gVGVjaC4gfCBGYWxrb3IgdjEgICAgICAgfCBF
-MTAwOSAgICAgICAgICAgfCBRQ09NX0ZBTEtPUl9FUlJBVFVNXzEwMDkgICAg
-fA0KIHwgUXVhbGNvbW0gVGVjaC4gfCBRREYyNDAwIElUUyAgICAgfCBFMDA2
-NSAgICAgICAgICAgfCBRQ09NX1FERjI0MDBfRVJSQVRVTV8wMDY1ICAgfA0K
-IHwgUXVhbGNvbW0gVGVjaC4gfCBGYWxrb3IgdnsxLDJ9ICAgfCBFMTA0MSAg
-ICAgICAgICAgfCBRQ09NX0ZBTEtPUl9FUlJBVFVNXzEwNDEgICAgfA0KK3wg
-RnVqaXRzdSAgICAgICAgfCBBNjRGWCAgICAgICAgICAgfCBFIzAxMDAwMSAg
-ICAgICAgfCBGVUpJVFNVX0VSUkFUVU1fMDEwMDAxICAgICAgfA0KZGlmZiAt
-LWdpdCBhL2FyY2gvYXJtNjQvS2NvbmZpZyBiL2FyY2gvYXJtNjQvS2NvbmZp
-Zw0KaW5kZXggYTQxNjhkMy4uOWMwOWIyYiAxMDA2NDQNCi0tLSBhL2FyY2gv
-YXJtNjQvS2NvbmZpZw0KKysrIGIvYXJjaC9hcm02NC9LY29uZmlnDQpAQCAt
-NjQzLDYgKzY0MywxOSBAQCBjb25maWcgUUNPTV9GQUxLT1JfRVJSQVRVTV9F
-MTA0MQ0KIA0KIAkgIElmIHVuc3VyZSwgc2F5IFkuDQogDQorY29uZmlnIEZV
-SklUU1VfRVJSQVRVTV8wMTAwMDENCisJYm9vbCAiRnVqaXRzdS1BNjRGWCBl
-cnJhdHVtIEUjMDEwMDAxOiBVbmRlZmluZWQgZmF1bHQgbWF5IG9jY3VyIHdy
-b25nbHkiDQorCWRlZmF1bHQgeQ0KKwloZWxwDQorCSAgVGhpcyBvcHRpb24g
-YWRkcyB3b3JrYXJvdW5kIGZvciBGdWppdHN1LUE2NEZYIGVycmF0dW0gRSMw
-MTAwMDEuDQorCSAgT24gc29tZSB2YXJpYW50cyBvZiB0aGUgRnVqaXRzdS1B
-NjRGWCBjb3JlcyB2ZXIoMS4wLCAxLjEpLCBtZW1vcnkgYWNjZXNzZXMNCisJ
-ICBtYXkgY2F1c2UgdW5kZWZpbmVkIGZhdWx0IChEYXRhIGFib3J0LCBERlND
-PTBiMTExMTExKS4NCisJICBUaGUgd29ya2Fyb3VuZCBpcyB0byByZXBsYWNl
-IHRoZSBmYXVsdCBoYW5kbGVyIGZvciBEYXRhIGFib3J0IERGU0M9MGIxMTEx
-MTENCisJICB3aXRoIGEgbmV3IG9uZSB0byBpZ25vcmUgdGhpcyB1bmRlZmlu
-ZWQgZmF1bHQsIHdoaWNoIHdpbGwgb25seSBhZmZlY3QNCisJICB0aGUgRnVq
-aXRzdS1BNjRGWC4NCisNCisJICBJZiB1bnN1cmUsIHNheSBZLg0KKw0KIGVu
-ZG1lbnUNCiANCiANCmRpZmYgLS1naXQgYS9hcmNoL2FybTY0L2luY2x1ZGUv
-YXNtL2NwdWNhcHMuaCBiL2FyY2gvYXJtNjQvaW5jbHVkZS9hc20vY3B1Y2Fw
-cy5oDQppbmRleCA4MmU5MDk5Li4zYTBiMzc1IDEwMDY0NA0KLS0tIGEvYXJj
-aC9hcm02NC9pbmNsdWRlL2FzbS9jcHVjYXBzLmgNCisrKyBiL2FyY2gvYXJt
-NjQvaW5jbHVkZS9hc20vY3B1Y2Fwcy5oDQpAQCAtNjAsNyArNjAsOCBAQA0K
-ICNkZWZpbmUgQVJNNjRfSEFTX0FERFJFU1NfQVVUSF9JTVBfREVGCQkzOQ0K
-ICNkZWZpbmUgQVJNNjRfSEFTX0dFTkVSSUNfQVVUSF9BUkNICQk0MA0KICNk
-ZWZpbmUgQVJNNjRfSEFTX0dFTkVSSUNfQVVUSF9JTVBfREVGCQk0MQ0KKyNk
-ZWZpbmUgQVJNNjRfV09SS0FST1VORF9GVUpJVFNVX0E2NEZYXzAxMDAwMDEg
-NDINCiANCi0jZGVmaW5lIEFSTTY0X05DQVBTCQkJCTQyDQorI2RlZmluZSBB
-Uk02NF9OQ0FQUwkJCQk0Mw0KIA0KICNlbmRpZiAvKiBfX0FTTV9DUFVDQVBT
-X0ggKi8NCmRpZmYgLS1naXQgYS9hcmNoL2FybTY0L2luY2x1ZGUvYXNtL2Nw
-dXR5cGUuaCBiL2FyY2gvYXJtNjQvaW5jbHVkZS9hc20vY3B1dHlwZS5oDQpp
-bmRleCA5NTFlZDFhLi43MDIwM2Y5IDEwMDY0NA0KLS0tIGEvYXJjaC9hcm02
-NC9pbmNsdWRlL2FzbS9jcHV0eXBlLmgNCisrKyBiL2FyY2gvYXJtNjQvaW5j
-bHVkZS9hc20vY3B1dHlwZS5oDQpAQCAtNzYsNiArNzYsNyBAQA0KICNkZWZp
-bmUgQVJNX0NQVV9JTVBfQlJDTQkJMHg0Mg0KICNkZWZpbmUgQVJNX0NQVV9J
-TVBfUUNPTQkJMHg1MQ0KICNkZWZpbmUgQVJNX0NQVV9JTVBfTlZJRElBCQkw
-eDRFDQorI2RlZmluZSBBUk1fQ1BVX0lNUF9GVUpJVFNVCQkweDQ2DQogDQog
-I2RlZmluZSBBUk1fQ1BVX1BBUlRfQUVNX1Y4CQkweEQwRg0KICNkZWZpbmUg
-QVJNX0NQVV9QQVJUX0ZPVU5EQVRJT04JCTB4RDAwDQpAQCAtMTA0LDYgKzEw
-NSw4IEBADQogI2RlZmluZSBOVklESUFfQ1BVX1BBUlRfREVOVkVSCQkweDAw
-Mw0KICNkZWZpbmUgTlZJRElBX0NQVV9QQVJUX0NBUk1FTAkJMHgwMDQNCiAN
-CisjZGVmaW5lIEZVSklUU1VfQ1BVX1BBUlRfQTY0RlgJCTB4MDAxDQorDQog
-I2RlZmluZSBNSURSX0NPUlRFWF9BNTMgTUlEUl9DUFVfTU9ERUwoQVJNX0NQ
-VV9JTVBfQVJNLCBBUk1fQ1BVX1BBUlRfQ09SVEVYX0E1MykNCiAjZGVmaW5l
-IE1JRFJfQ09SVEVYX0E1NyBNSURSX0NQVV9NT0RFTChBUk1fQ1BVX0lNUF9B
-Uk0sIEFSTV9DUFVfUEFSVF9DT1JURVhfQTU3KQ0KICNkZWZpbmUgTUlEUl9D
-T1JURVhfQTcyIE1JRFJfQ1BVX01PREVMKEFSTV9DUFVfSU1QX0FSTSwgQVJN
-X0NQVV9QQVJUX0NPUlRFWF9BNzIpDQpAQCAtMTIyLDYgKzEyNSw3IEBADQog
-I2RlZmluZSBNSURSX1FDT01fS1JZTyBNSURSX0NQVV9NT0RFTChBUk1fQ1BV
-X0lNUF9RQ09NLCBRQ09NX0NQVV9QQVJUX0tSWU8pDQogI2RlZmluZSBNSURS
-X05WSURJQV9ERU5WRVIgTUlEUl9DUFVfTU9ERUwoQVJNX0NQVV9JTVBfTlZJ
-RElBLCBOVklESUFfQ1BVX1BBUlRfREVOVkVSKQ0KICNkZWZpbmUgTUlEUl9O
-VklESUFfQ0FSTUVMIE1JRFJfQ1BVX01PREVMKEFSTV9DUFVfSU1QX05WSURJ
-QSwgTlZJRElBX0NQVV9QQVJUX0NBUk1FTCkNCisjZGVmaW5lIE1JRFJfRlVK
-SVRTVV9BNjRGWCBNSURSX0NQVV9NT0RFTChBUk1fQ1BVX0lNUF9GVUpJVFNV
-LCBGVUpJVFNVX0NQVV9QQVJUX0E2NEZYKQ0KIA0KICNpZm5kZWYgX19BU1NF
-TUJMWV9fDQogDQpkaWZmIC0tZ2l0IGEvYXJjaC9hcm02NC9rZXJuZWwvY3B1
-X2VycmF0YS5jIGIvYXJjaC9hcm02NC9rZXJuZWwvY3B1X2VycmF0YS5jDQpp
-bmRleCA5OTUwYmIwLi5mYzA3MzdmIDEwMDY0NA0KLS0tIGEvYXJjaC9hcm02
-NC9rZXJuZWwvY3B1X2VycmF0YS5jDQorKysgYi9hcmNoL2FybTY0L2tlcm5l
-bC9jcHVfZXJyYXRhLmMNCkBAIC03MzksNiArNzM5LDE0IEBAIHN0YXRpYyBi
-b29sIGhhc19zc2JkX21pdGlnYXRpb24oY29uc3Qgc3RydWN0IGFybTY0X2Nw
-dV9jYXBhYmlsaXRpZXMgKmVudHJ5LA0KIAkJRVJSQVRBX01JRFJfUkFOR0Uo
-TUlEUl9DT1JURVhfQTc2LCAwLCAwLCAyLCAwKSwNCiAJfSwNCiAjZW5kaWYN
-CisjaWZkZWYgQ09ORklHX0ZVSklUU1VfRVJSQVRVTV8wMTAwMDENCisJew0K
-KwkJLmRlc2MgPSAiRnVqaXRzdSBlcnJhdHVtIDAxMDAwMSIsDQorCQkuY2Fw
-YWJpbGl0eSA9IEFSTTY0X1dPUktBUk9VTkRfRlVKSVRTVV9BNjRGWF8wMTAw
-MDAxLA0KKwkJRVJSQVRBX01JRFJfUkFOR0UoTUlEUl9GVUpJVFNVX0E2NEZY
-LCAwLCAwLCAxLCAwKSwNCisJfSwNCisjZW5kaWYNCisNCiAJew0KIAl9DQog
-fTsNCmRpZmYgLS1naXQgYS9hcmNoL2FybTY0L21tL2ZhdWx0LmMgYi9hcmNo
-L2FybTY0L21tL2ZhdWx0LmMNCmluZGV4IGVmYjdiMmMuLjM3ZTRmMTggMTAw
-NjQ0DQotLS0gYS9hcmNoL2FybTY0L21tL2ZhdWx0LmMNCisrKyBiL2FyY2gv
-YXJtNjQvbW0vZmF1bHQuYw0KQEAgLTY2Niw2ICs2NjYsMjggQEAgc3RhdGlj
-IGludCBkb19zZWEodW5zaWduZWQgbG9uZyBhZGRyLCB1bnNpZ25lZCBpbnQg
-ZXNyLCBzdHJ1Y3QgcHRfcmVncyAqcmVncykNCiAJcmV0dXJuIDA7DQogfQ0K
-IA0KK3N0YXRpYyBpbnQgZG9fYmFkX3Vua25vd25fNjModW5zaWduZWQgbG9u
-ZyBhZGRyLCB1bnNpZ25lZCBpbnQgZXNyLCBzdHJ1Y3QgcHRfcmVncyAqcmVn
-cykNCit7DQorCS8qDQorCSAqIE9uIHNvbWUgdmFyaWFudHMgb2YgdGhlIEZ1
-aml0c3UtQTY0RlggY29yZXMgdmVyKDEuMCwgMS4xKSwNCisJICogbWVtb3J5
-IGFjY2Vzc2VzIG1heSBzcHVyaW91c2x5IHRyaWdnZXIgZGF0YSBhYm9ydHMg
-d2l0aA0KKwkgKiBERlNDPTBiMTExMTExLg0KKwkgKi8NCisJaWYgKElTX0VO
-QUJMRUQoQ09ORklHX0ZVSklUU1VfRVJSQVRVTV8wMTAwMDEpKSB7DQorCQlp
-ZiAoY3B1c19oYXZlX2NhcChBUk02NF9XT1JLQVJPVU5EX0ZVSklUU1VfQTY0
-RlhfMDEwMDAwMSkpIHsNCisJCQlyZXR1cm4gMDsNCisJCX0gZWxzZSB7IC8q
-IGNwdSBjYXBhYmlsaXRpZXMgbWF5YmUgbm90IHJlYWR5Ki8NCisJCQl1bnNp
-Z25lZCBpbnQgY3VycmVudF9jcHVfbWlkciA9IHJlYWRfY3B1aWRfaWQoKTsN
-CisJCQljb25zdCBzdHJ1Y3QgbWlkcl9yYW5nZSBmdWppdHN1X2E2NGZ4X21p
-ZHJfcmFuZ2UgPSB7DQorCQkJCU1JRFJfRlVKSVRTVV9BNjRGWCwgTUlEUl9D
-UFVfVkFSX1JFVigwLCAwKSwgTUlEUl9DUFVfVkFSX1JFVigxLCAwKQ0KKwkJ
-CX07DQorCQkJaWYgKGlzX21pZHJfaW5fcmFuZ2UoY3VycmVudF9jcHVfbWlk
-ciwgJmZ1aml0c3VfYTY0ZnhfbWlkcl9yYW5nZSkgPT0gVFJVRSkNCisJCQkJ
-cmV0dXJuIDA7DQorCQl9DQorCX0NCisJcmV0dXJuIGRvX2JhZChhZGRyLCBl
-c3IsIHJlZ3MpOw0KK30NCisNCiBzdGF0aWMgY29uc3Qgc3RydWN0IGZhdWx0
-X2luZm8gZmF1bHRfaW5mb1tdID0gew0KIAl7IGRvX2JhZCwJCVNJR0tJTEws
-IFNJX0tFUk5FTCwJInR0YnIgYWRkcmVzcyBzaXplIGZhdWx0Igl9LA0KIAl7
-IGRvX2JhZCwJCVNJR0tJTEwsIFNJX0tFUk5FTCwJImxldmVsIDEgYWRkcmVz
-cyBzaXplIGZhdWx0Igl9LA0KQEAgLTczMCw3ICs3NTIsNyBAQCBzdGF0aWMg
-aW50IGRvX3NlYSh1bnNpZ25lZCBsb25nIGFkZHIsIHVuc2lnbmVkIGludCBl
-c3IsIHN0cnVjdCBwdF9yZWdzICpyZWdzKQ0KIAl7IGRvX2JhZCwJCVNJR0tJ
-TEwsIFNJX0tFUk5FTCwJInVua25vd24gNjAiCQkJfSwNCiAJeyBkb19iYWQs
-CQlTSUdLSUxMLCBTSV9LRVJORUwsCSJzZWN0aW9uIGRvbWFpbiBmYXVsdCIJ
-CX0sDQogCXsgZG9fYmFkLAkJU0lHS0lMTCwgU0lfS0VSTkVMLAkicGFnZSBk
-b21haW4gZmF1bHQiCQl9LA0KLQl7IGRvX2JhZCwJCVNJR0tJTEwsIFNJX0tF
-Uk5FTCwJInVua25vd24gNjMiCQkJfSwNCisJeyBkb19iYWRfdW5rbm93bl82
-MywJU0lHS0lMTCwgU0lfS0VSTkVMLAkidW5rbm93biA2MyIJCQl9LA0KIH07
-DQogDQogaW50IGhhbmRsZV9ndWVzdF9zZWEocGh5c19hZGRyX3QgYWRkciwg
-dW5zaWduZWQgaW50IGVzcikNCi0tIA0KMS44LjMuMQ0K
+Missatge de Nick Crews <ncrews@chromium.org> del dia ds., 19 de gen.
+2019 a les 1:17:
+>
+> From: Duncan Laurie <dlaurie@google.com>
+>
+> In order to allow this code to be re-used, remove the dependency
+> on the rest of the cros_ec code from the cros_ec_lpc_mec functions.
+>
+> Instead of using a hardcoded register base address of 0x800 have
+> this be passed in to cros_ec_lpc_mec_init().  The existing cros_ec
+> use case now passes in the 0x800 base address this way.
+>
+> There are some error checks that happen in cros_ec_lpc_mec_in_range()
+> that probably shouldn't be there, as they are checking kernel-space
+> callers and not user-space input. However, we'll just do the refactor in
+> this patch, and in a future patch might remove this error checking and
+> fix all the instances of code that calls this.
+>
+> There's a similar problem in cros_ec_lpc_read_bytes(), where we return a
+> checksum, but on error just return 0. This should probably be changed so
+> that it returns int, but we don't want to have to mess with all the
+> calling code for this fix. Maybe we'll come back through later and fix
+> this.
+>
+> Signed-off-by: Duncan Laurie <dlaurie@google.com>
+> Signed-off-by: Nick Crews <ncrews@chromium.org>
+> ---
+>
+> Changes in v3:
+> - Change <= to >= in mec_in_range()
+> - Add " - EC_HOST_CMD_REGION0" to offset arg for io_bytes_mec()
+>
+> Changes in v2:
+> - Fixed kernel-doc comments
+> - Fixed include of linux/mfd/cros_ec_lpc_mec.h
+> - cros_ec_lpc_mec_in_range() returns -EINVAL on error
+> - Added parens around macro variables
+>
+>  drivers/platform/chrome/cros_ec_lpc_mec.c | 52 +++++++++++++++++++----
+>  drivers/platform/chrome/cros_ec_lpc_mec.h | 43 ++++++++++---------
+>  drivers/platform/chrome/cros_ec_lpc_reg.c | 47 +++++++-------------
+>  3 files changed, 83 insertions(+), 59 deletions(-)
+>
+
+For my own reference:
+  Acked-for-chrome-platform-by: Enric Balletbo i Serra
+<enric.balletbo@collabora.com>
+
+> diff --git a/drivers/platform/chrome/cros_ec_lpc_mec.c b/drivers/platform/chrome/cros_ec_lpc_mec.c
+> index c4edfa83e493..782e238a8d4e 100644
+> --- a/drivers/platform/chrome/cros_ec_lpc_mec.c
+> +++ b/drivers/platform/chrome/cros_ec_lpc_mec.c
+> @@ -23,7 +23,6 @@
+>
+>  #include <linux/delay.h>
+>  #include <linux/io.h>
+> -#include <linux/mfd/cros_ec_commands.h>
+>  #include <linux/mutex.h>
+>  #include <linux/types.h>
+>
+> @@ -34,6 +33,7 @@
+>   * EC mutex because memmap data may be accessed without it being held.
+>   */
+>  static struct mutex io_mutex;
+> +static u16 mec_emi_base, mec_emi_end;
+>
+>  /*
+>   * cros_ec_lpc_mec_emi_write_address
+> @@ -46,10 +46,37 @@ static struct mutex io_mutex;
+>  static void cros_ec_lpc_mec_emi_write_address(u16 addr,
+>                         enum cros_ec_lpc_mec_emi_access_mode access_type)
+>  {
+> -       /* Address relative to start of EMI range */
+> -       addr -= MEC_EMI_RANGE_START;
+> -       outb((addr & 0xfc) | access_type, MEC_EMI_EC_ADDRESS_B0);
+> -       outb((addr >> 8) & 0x7f, MEC_EMI_EC_ADDRESS_B1);
+> +       outb((addr & 0xfc) | access_type, MEC_EMI_EC_ADDRESS_B0(mec_emi_base));
+> +       outb((addr >> 8) & 0x7f, MEC_EMI_EC_ADDRESS_B1(mec_emi_base));
+> +}
+> +
+> +/**
+> + * cros_ec_lpc_mec_in_range() - Determine if addresses are in MEC EMI range.
+> + *
+> + * @offset: Address offset
+> + * @length: Number of bytes to check
+> + *
+> + * Return: 1 if in range, 0 if not, and -EINVAL on failure
+> + *         such as the mec range not being initialized
+> + */
+> +int cros_ec_lpc_mec_in_range(unsigned int offset, unsigned int length)
+> +{
+> +       if (length == 0)
+> +               return -EINVAL;
+> +
+> +       if (WARN_ON(mec_emi_base == 0 || mec_emi_end == 0))
+> +               return -EINVAL;
+> +
+> +       if (offset >= mec_emi_base && offset < mec_emi_end) {
+> +               if (WARN_ON(offset + length - 1 >= mec_emi_end))
+> +                       return -EINVAL;
+> +               return 1;
+> +       }
+> +
+> +       if (WARN_ON(offset + length > mec_emi_base && offset < mec_emi_end))
+> +               return -EINVAL;
+> +
+> +       return 0;
+>  }
+>
+>  /*
+> @@ -71,6 +98,11 @@ u8 cros_ec_lpc_io_bytes_mec(enum cros_ec_lpc_mec_io_type io_type,
+>         u8 sum = 0;
+>         enum cros_ec_lpc_mec_emi_access_mode access, new_access;
+>
+> +       /* Return checksum of 0 if window is not initialized */
+> +       WARN_ON(mec_emi_base == 0 || mec_emi_end == 0);
+> +       if (mec_emi_base == 0 || mec_emi_end == 0)
+> +               return 0;
+> +
+>         /*
+>          * Long access cannot be used on misaligned data since reading B0 loads
+>          * the data register and writing B3 flushes.
+> @@ -86,9 +118,9 @@ u8 cros_ec_lpc_io_bytes_mec(enum cros_ec_lpc_mec_io_type io_type,
+>         cros_ec_lpc_mec_emi_write_address(offset, access);
+>
+>         /* Skip bytes in case of misaligned offset */
+> -       io_addr = MEC_EMI_EC_DATA_B0 + (offset & 0x3);
+> +       io_addr = MEC_EMI_EC_DATA_B0(mec_emi_base) + (offset & 0x3);
+>         while (i < length) {
+> -               while (io_addr <= MEC_EMI_EC_DATA_B3) {
+> +               while (io_addr <= MEC_EMI_EC_DATA_B3(mec_emi_base)) {
+>                         if (io_type == MEC_IO_READ)
+>                                 buf[i] = inb(io_addr++);
+>                         else
+> @@ -118,7 +150,7 @@ u8 cros_ec_lpc_io_bytes_mec(enum cros_ec_lpc_mec_io_type io_type,
+>                 }
+>
+>                 /* Access [B0, B3] on each loop pass */
+> -               io_addr = MEC_EMI_EC_DATA_B0;
+> +               io_addr = MEC_EMI_EC_DATA_B0(mec_emi_base);
+>         }
+>
+>  done:
+> @@ -128,9 +160,11 @@ u8 cros_ec_lpc_io_bytes_mec(enum cros_ec_lpc_mec_io_type io_type,
+>  }
+>  EXPORT_SYMBOL(cros_ec_lpc_io_bytes_mec);
+>
+> -void cros_ec_lpc_mec_init(void)
+> +void cros_ec_lpc_mec_init(unsigned int base, unsigned int end)
+>  {
+>         mutex_init(&io_mutex);
+> +       mec_emi_base = base;
+> +       mec_emi_end = end;
+>  }
+>  EXPORT_SYMBOL(cros_ec_lpc_mec_init);
+>
+> diff --git a/drivers/platform/chrome/cros_ec_lpc_mec.h b/drivers/platform/chrome/cros_ec_lpc_mec.h
+> index 105068c0e919..896fffd174b3 100644
+> --- a/drivers/platform/chrome/cros_ec_lpc_mec.h
+> +++ b/drivers/platform/chrome/cros_ec_lpc_mec.h
+> @@ -24,8 +24,6 @@
+>  #ifndef __CROS_EC_LPC_MEC_H
+>  #define __CROS_EC_LPC_MEC_H
+>
+> -#include <linux/mfd/cros_ec_commands.h>
+> -
+>  enum cros_ec_lpc_mec_emi_access_mode {
+>         /* 8-bit access */
+>         ACCESS_TYPE_BYTE = 0x0,
+> @@ -45,27 +43,23 @@ enum cros_ec_lpc_mec_io_type {
+>         MEC_IO_WRITE,
+>  };
+>
+> -/* Access IO ranges 0x800 thru 0x9ff using EMI interface instead of LPC */
+> -#define MEC_EMI_RANGE_START EC_HOST_CMD_REGION0
+> -#define MEC_EMI_RANGE_END   (EC_LPC_ADDR_MEMMAP + EC_MEMMAP_SIZE)
+> -
+>  /* EMI registers are relative to base */
+> -#define MEC_EMI_BASE 0x800
+> -#define MEC_EMI_HOST_TO_EC (MEC_EMI_BASE + 0)
+> -#define MEC_EMI_EC_TO_HOST (MEC_EMI_BASE + 1)
+> -#define MEC_EMI_EC_ADDRESS_B0 (MEC_EMI_BASE + 2)
+> -#define MEC_EMI_EC_ADDRESS_B1 (MEC_EMI_BASE + 3)
+> -#define MEC_EMI_EC_DATA_B0 (MEC_EMI_BASE + 4)
+> -#define MEC_EMI_EC_DATA_B1 (MEC_EMI_BASE + 5)
+> -#define MEC_EMI_EC_DATA_B2 (MEC_EMI_BASE + 6)
+> -#define MEC_EMI_EC_DATA_B3 (MEC_EMI_BASE + 7)
+> +#define MEC_EMI_HOST_TO_EC(MEC_EMI_BASE)       ((MEC_EMI_BASE) + 0)
+> +#define MEC_EMI_EC_TO_HOST(MEC_EMI_BASE)       ((MEC_EMI_BASE) + 1)
+> +#define MEC_EMI_EC_ADDRESS_B0(MEC_EMI_BASE)    ((MEC_EMI_BASE) + 2)
+> +#define MEC_EMI_EC_ADDRESS_B1(MEC_EMI_BASE)    ((MEC_EMI_BASE) + 3)
+> +#define MEC_EMI_EC_DATA_B0(MEC_EMI_BASE)       ((MEC_EMI_BASE) + 4)
+> +#define MEC_EMI_EC_DATA_B1(MEC_EMI_BASE)       ((MEC_EMI_BASE) + 5)
+> +#define MEC_EMI_EC_DATA_B2(MEC_EMI_BASE)       ((MEC_EMI_BASE) + 6)
+> +#define MEC_EMI_EC_DATA_B3(MEC_EMI_BASE)       ((MEC_EMI_BASE) + 7)
+>
+> -/*
+> - * cros_ec_lpc_mec_init
+> +/**
+> + * cros_ec_lpc_mec_init() - Initialize MEC I/O.
+>   *
+> - * Initialize MEC I/O.
+> + * @base: MEC EMI Base address
+> + * @end: MEC EMI End address
+>   */
+> -void cros_ec_lpc_mec_init(void);
+> +void cros_ec_lpc_mec_init(unsigned int base, unsigned int end);
+>
+>  /*
+>   * cros_ec_lpc_mec_destroy
+> @@ -74,6 +68,17 @@ void cros_ec_lpc_mec_init(void);
+>   */
+>  void cros_ec_lpc_mec_destroy(void);
+>
+> +/**
+> + * cros_ec_lpc_mec_in_range() - Determine if addresses are in MEC EMI range.
+> + *
+> + * @offset: Address offset
+> + * @length: Number of bytes to check
+> + *
+> + * Return: 1 if in range, 0 if not, and -EINVAL on failure
+> + *         such as the mec range not being initialized
+> + */
+> +int cros_ec_lpc_mec_in_range(unsigned int offset, unsigned int length);
+> +
+>  /**
+>   * cros_ec_lpc_io_bytes_mec - Read / write bytes to MEC EMI port
+>   *
+> diff --git a/drivers/platform/chrome/cros_ec_lpc_reg.c b/drivers/platform/chrome/cros_ec_lpc_reg.c
+> index fc23d535c404..1d9f3b7ffb3e 100644
+> --- a/drivers/platform/chrome/cros_ec_lpc_reg.c
+> +++ b/drivers/platform/chrome/cros_ec_lpc_reg.c
+> @@ -59,51 +59,36 @@ static u8 lpc_write_bytes(unsigned int offset, unsigned int length, u8 *msg)
+>
+>  u8 cros_ec_lpc_read_bytes(unsigned int offset, unsigned int length, u8 *dest)
+>  {
+> -       if (length == 0)
+> -               return 0;
+> -
+> -       /* Access desired range through EMI interface */
+> -       if (offset >= MEC_EMI_RANGE_START && offset <= MEC_EMI_RANGE_END) {
+> -               /* Ensure we don't straddle EMI region */
+> -               if (WARN_ON(offset + length - 1 > MEC_EMI_RANGE_END))
+> -                       return 0;
+> +       int in_range = cros_ec_lpc_mec_in_range(offset, length);
+>
+> -               return cros_ec_lpc_io_bytes_mec(MEC_IO_READ, offset, length,
+> -                                               dest);
+> -       }
+> -
+> -       if (WARN_ON(offset + length > MEC_EMI_RANGE_START &&
+> -                   offset < MEC_EMI_RANGE_START))
+> +       if (in_range < 0)
+>                 return 0;
+>
+> -       return lpc_read_bytes(offset, length, dest);
+> +       return in_range ?
+> +               cros_ec_lpc_io_bytes_mec(MEC_IO_READ,
+> +                                        offset - EC_HOST_CMD_REGION0,
+> +                                        length, dest) :
+> +               lpc_read_bytes(offset, length, dest);
+>  }
+>
+>  u8 cros_ec_lpc_write_bytes(unsigned int offset, unsigned int length, u8 *msg)
+>  {
+> -       if (length == 0)
+> -               return 0;
+> -
+> -       /* Access desired range through EMI interface */
+> -       if (offset >= MEC_EMI_RANGE_START && offset <= MEC_EMI_RANGE_END) {
+> -               /* Ensure we don't straddle EMI region */
+> -               if (WARN_ON(offset + length - 1 > MEC_EMI_RANGE_END))
+> -                       return 0;
+> +       int in_range = cros_ec_lpc_mec_in_range(offset, length);
+>
+> -               return cros_ec_lpc_io_bytes_mec(MEC_IO_WRITE, offset, length,
+> -                                               msg);
+> -       }
+> -
+> -       if (WARN_ON(offset + length > MEC_EMI_RANGE_START &&
+> -                   offset < MEC_EMI_RANGE_START))
+> +       if (in_range < 0)
+>                 return 0;
+>
+> -       return lpc_write_bytes(offset, length, msg);
+> +       return in_range ?
+> +               cros_ec_lpc_io_bytes_mec(MEC_IO_WRITE,
+> +                                        offset - EC_HOST_CMD_REGION0,
+> +                                        length, msg) :
+> +               lpc_write_bytes(offset, length, msg);
+>  }
+>
+>  void cros_ec_lpc_reg_init(void)
+>  {
+> -       cros_ec_lpc_mec_init();
+> +       cros_ec_lpc_mec_init(EC_HOST_CMD_REGION0,
+> +                            EC_LPC_ADDR_MEMMAP + EC_MEMMAP_SIZE);
+>  }
+>
+>  void cros_ec_lpc_reg_destroy(void)
+> --
+> 2.20.1.321.g9e740568ce-goog
+>
