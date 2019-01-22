@@ -2,228 +2,108 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CED1C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:53:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D8F3C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:55:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B18821019
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:53:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="N8wAOKtQ"
+	by mail.kernel.org (Postfix) with ESMTP id 72BDF21721
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:55:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728758AbfAVOx5 (ORCPT
+        id S1729018AbfAVOz1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 09:53:57 -0500
-Received: from mail.kmu-office.ch ([178.209.48.109]:57582 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728318AbfAVOx4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 09:53:56 -0500
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 94FC05C0072;
-        Tue, 22 Jan 2019 15:53:53 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1548168833;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=1z2bV6/Thu1aItV5gieud7p2JyjfefOn3QNcQrHKpXg=;
-        b=N8wAOKtQapwQ13+w67WKMdap9XzOrlfNZLDp1KQwijxh3La2l7CUfVVxhPUadEtVnYN1pG
-        ARPiVqIFKgLyw9OtW7VG32gkOSBEQsR7Cik+XkM75H+BpJh4GZ/Wqhth0KmqCyjh6FM+YT
-        NhqyMJ54nr2Ta6lvfLkYvy/nCB3lpcQ=
+        Tue, 22 Jan 2019 09:55:27 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55206 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728915AbfAVOz1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 09:55:27 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 67EE4A78;
+        Tue, 22 Jan 2019 06:55:26 -0800 (PST)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0FFCE3F589;
+        Tue, 22 Jan 2019 06:55:24 -0800 (PST)
+Date:   Tue, 22 Jan 2019 14:55:22 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        chenwandun <chenwandun@huawei.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "Wangkefeng (Kevin)" <wangkefeng.wang@huawei.com>,
+        anshuman.khandual@arm.com
+Subject: Re: [Qestion] Softlockup when send IPI to other CPUs
+Message-ID: <20190122145522.GC52887@lakrids.cambridge.arm.com>
+References: <95C141B25E7AB14BA042DCCC556C0E6501620A47@dggeml529-mbx.china.huawei.com>
+ <20190119235825.GG26876@brain-police>
+ <20190121142127.GD29504@arrakis.emea.arm.com>
+ <20190122054400.GB6445@brain-police>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 22 Jan 2019 15:53:53 +0100
-From:   Stefan Agner <stefan@agner.ch>
-To:     Philippe Schenker <dev@pschenker.ch>
-Cc:     shawnguo@kernel.org, s.hauer@pengutronix.de,
-        thierry.reding@gmail.com, linux-tegra@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, marcel.ziswiler@toradex.com,
-        max.krummenacher@toradex.com,
-        Philippe Schenker <philippe.schenker@toradex.com>,
-        devicetree@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH 2/2] ARM: dts: Add stmpe-adc DT node to Toradex T30
- modules
-In-Reply-To: <20190122132135.5012-3-dev@pschenker.ch>
-References: <20190122132135.5012-1-dev@pschenker.ch>
- <20190122132135.5012-3-dev@pschenker.ch>
-Message-ID: <34495b73d56dd3dcd7ef9df99d665fb4@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190122054400.GB6445@brain-police>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22.01.2019 14:21, Philippe Schenker wrote:
-> From: Philippe Schenker <philippe.schenker@toradex.com>
-> 
-> Add the stmpe-adc DT node as found on Toradex T30 modules
-> 
-> Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
+Hi Will,
 
-Reviewed-by: Stefan Agner <stefan@agner.ch>
+On Tue, Jan 22, 2019 at 05:44:02AM +0000, Will Deacon wrote:
+> On Mon, Jan 21, 2019 at 02:21:28PM +0000, Catalin Marinas wrote:
+> > On Sat, Jan 19, 2019 at 11:58:27PM +0000, Will Deacon wrote:
+> > > On Thu, Jan 17, 2019 at 07:42:44AM +0000, chenwandun wrote:
+> > > > Recently, I do some tests on linux-4.19 and hit a softlockup issue.
+> > > > 
+> > > > I find some CPUs get the spinlock in the __split_huge_pmd function and
+> > > > then send IPI to other CPUs, waiting the response, while several CPUs
+> > > > enter the __split_huge_pmd function, want to get the spinlock, but always
+> > > > in queued_spin_lock_slowpath,
+> > > > 
+> > > > Because long time no response to the IPI, that results in a softlockup.
+> > > > 
+> > > > As to sending IPI, it was in the patch
+> > > > 3b8c9f1cdfc506e94e992ae66b68bbe416f89610.  The patch is mean to send IPI
+> > > > to each CPU after invalidating the I-cache for kernel mappings.  In this
+> > > > case, after modify pmd, it sends IPI to other CPUS to sync memory
+> > > > mappings.
+> > > > 
+> > > > No stable test case to repeat the result, it is hard to repeat the test procedure.
+> > > > 
+> > > > The environment is arm64, 64 CPUs. Except for idle CPU, there are 6 kind
+> > > > of callstacks in total.
+> > > 
+> > > This looks like another lockup that would be solved if we deferred our
+> > > I-cache invalidation when mapping user-executable pages, and instead
+> > > performed the invalidation off the back of a UXN permission fault, where we
+> > > could avoid holding any locks.
+> > 
+> > Looking back at commit 3b8c9f1cdfc5 ("arm64: IPI each CPU after
+> > invalidating the I-cache for kernel mappings"), the text implies that it
+> > should only do this for kernel mappings. I don't think we need this for
+> > user mappings. We have a few scenarios where we invoke set_pte_at() with
+> > exec permission:
+> 
+> Yes, I think you're right. I got confused because in this case we are
+> invalidating lines written by the kernel, but actually it's not about who
+> writes the data, but about whether or not the page table is being changed.
 
-> 
-> ---
-> 
->  arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi | 22 ++++++++++++++--------
->  arch/arm/boot/dts/tegra30-apalis.dtsi      | 22 ++++++++++++++--------
->  arch/arm/boot/dts/tegra30-colibri.dtsi     | 22 ++++++++++++++--------
->  3 files changed, 42 insertions(+), 24 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
-> b/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
-> index 02f8126481a2..8b7a827d604d 100644
-> --- a/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
-> +++ b/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
-> @@ -994,11 +994,17 @@
->  			id = <0>;
->  			blocks = <0x5>;
->  			irq-trigger = <0x1>;
-> +			/* 3.25 MHz ADC clock speed */
-> +			st,adc-freq = <1>;
-> +			/* 12-bit ADC */
-> +			st,mod-12b = <1>;
-> +			/* internal ADC reference */
-> +			st,ref-sel = <0>;
-> +			/* ADC converstion time: 80 clocks */
-> +			st,sample-time = <4>;
->  
->  			stmpe_touchscreen {
->  				compatible = "st,stmpe-ts";
-> -				/* 3.25 MHz ADC clock speed */
-> -				st,adc-freq = <1>;
->  				/* 8 sample average control */
->  				st,ave-ctrl = <3>;
->  				/* 7 length fractional part in z */
-> @@ -1008,17 +1014,17 @@
->  				 * current limit value
->  				 */
->  				st,i-drive = <1>;
-> -				/* 12-bit ADC */
-> -				st,mod-12b = <1>;
-> -				/* internal ADC reference */
-> -				st,ref-sel = <0>;
-> -				/* ADC converstion time: 80 clocks */
-> -				st,sample-time = <4>;
->  				/* 1 ms panel driver settling time */
->  				st,settling = <3>;
->  				/* 5 ms touch detect interrupt delay */
->  				st,touch-det-delay = <5>;
->  			};
-> +
-> +			stmpe_adc {
-> +				compatible = "st,stmpe-adc";
-> +				/* forbid to use ADC channels 3-0 (touch) */
-> +				st,norequest-mask = <0x0F>;
-> +			};
->  		};
->  
->  		/*
-> diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi
-> b/arch/arm/boot/dts/tegra30-apalis.dtsi
-> index 7f112f192fe9..c18f6f61d764 100644
-> --- a/arch/arm/boot/dts/tegra30-apalis.dtsi
-> +++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-> @@ -976,11 +976,17 @@
->  			id = <0>;
->  			blocks = <0x5>;
->  			irq-trigger = <0x1>;
-> +			/* 3.25 MHz ADC clock speed */
-> +			st,adc-freq = <1>;
-> +			/* 12-bit ADC */
-> +			st,mod-12b = <1>;
-> +			/* internal ADC reference */
-> +			st,ref-sel = <0>;
-> +			/* ADC converstion time: 80 clocks */
-> +			st,sample-time = <4>;
->  
->  			stmpe_touchscreen {
->  				compatible = "st,stmpe-ts";
-> -				/* 3.25 MHz ADC clock speed */
-> -				st,adc-freq = <1>;
->  				/* 8 sample average control */
->  				st,ave-ctrl = <3>;
->  				/* 7 length fractional part in z */
-> @@ -990,17 +996,17 @@
->  				 * current limit value
->  				 */
->  				st,i-drive = <1>;
-> -				/* 12-bit ADC */
-> -				st,mod-12b = <1>;
-> -				/* internal ADC reference */
-> -				st,ref-sel = <0>;
-> -				/* ADC converstion time: 80 clocks */
-> -				st,sample-time = <4>;
->  				/* 1 ms panel driver settling time */
->  				st,settling = <3>;
->  				/* 5 ms touch detect interrupt delay */
->  				st,touch-det-delay = <5>;
->  			};
-> +
-> +			stmpe_adc {
-> +				compatible = "st,stmpe-adc";
-> +				/* forbid to use ADC channels 3-0 (touch) */
-> +				st,norequest-mask = <0x0F>;
-> +			};
->  		};
->  
->  		/*
-> diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi
-> b/arch/arm/boot/dts/tegra30-colibri.dtsi
-> index 35af03ca9e90..3c421a5cfbc2 100644
-> --- a/arch/arm/boot/dts/tegra30-colibri.dtsi
-> +++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
-> @@ -845,11 +845,17 @@
->  			id = <0>;
->  			blocks = <0x5>;
->  			irq-trigger = <0x1>;
-> +			/* 3.25 MHz ADC clock speed */
-> +			st,adc-freq = <1>;
-> +			/* 12-bit ADC */
-> +			st,mod-12b = <1>;
-> +			/* internal ADC reference */
-> +			st,ref-sel = <0>;
-> +			/* ADC converstion time: 80 clocks */
-> +			st,sample-time = <4>;
->  
->  			stmpe_touchscreen {
->  				compatible = "st,stmpe-ts";
-> -				/* 3.25 MHz ADC clock speed */
-> -				st,adc-freq = <1>;
->  				/* 8 sample average control */
->  				st,ave-ctrl = <3>;
->  				/* 7 length fractional part in z */
-> @@ -859,17 +865,17 @@
->  				 * current limit value
->  				 */
->  				st,i-drive = <1>;
-> -				/* 12-bit ADC */
-> -				st,mod-12b = <1>;
-> -				/* internal ADC reference */
-> -				st,ref-sel = <0>;
-> -				/* ADC converstion time: 80 clocks */
-> -				st,sample-time = <4>;
->  				/* 1 ms panel driver settling time */
->  				st,settling = <3>;
->  				/* 5 ms touch detect interrupt delay */
->  				st,touch-det-delay = <5>;
->  			};
-> +
-> +			stmpe_adc {
-> +				compatible = "st,stmpe-adc";
-> +				/* forbid to use ADC channels 3-0 (touch) */
-> +				st,norequest-mask = <0x0F>;
-> +			};
->  		};
->  
->  		/*
+IIUC we may have a userspace problem analagous to the kernel modules
+problem, if userspace uses dlopen/dlclose to dynamically load/unload
+shared objects.
+
+If userspace unloads an object, then loads another, the new object might
+get placed at the same VA. A PE could have started speculating
+instructions from the old object, and IIUC the TLB invalidation and
+I-cache maintenance don't cause those instructions be re-fetched from
+the I-cache unless there's a context synchronization event.
+
+Do we require the use of membarrier when loading or unloading objects?
+If so, when does that happen relative to the unmap or map?
+
+Thanks,
+Mark.
