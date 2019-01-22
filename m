@@ -2,229 +2,220 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CF45C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:25:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D7CFC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:25:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5858D217D6
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:25:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13C33217D6
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:25:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548170716;
+	bh=rC35aJkPnD1oaQK7PPAqzOSVqzzi5/Vxkd8otbY99vY=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=J0NRg1P7BdkFzHsnQ0kdJjM4AzpME0cie2BRIkqAYSN5/N8IRMKYOWAZZHNf4Kr1a
+	 V+E7Fq+dKSC2cFU/ASFgDxFn6t0u0KPpqY2z4yGDEg/Z5CnesbLsC34cEAc4cd/LMT
+	 jhyOir3v/VHNejinB+HMYfpDp9Z1YHcCgHixHboU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729658AbfAVPZG (ORCPT
+        id S1730006AbfAVPYF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 10:25:06 -0500
-Received: from mx2.suse.de ([195.135.220.15]:60938 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729247AbfAVPZD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 10:25:03 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 3CED0B017;
-        Tue, 22 Jan 2019 15:25:00 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 4938C1E3FD6; Tue, 22 Jan 2019 16:24:59 +0100 (CET)
-Date:   Tue, 22 Jan 2019 16:24:59 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     Jan Kara <jack@suse.cz>, John Hubbard <jhubbard@nvidia.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
-        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
-        rcampbell@nvidia.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-Message-ID: <20190122152459.GG13149@quack2.suse.cz>
-References: <294bdcfa-5bf9-9c09-9d43-875e8375e264@nvidia.com>
- <20190112024625.GB5059@redhat.com>
- <b6f4ed36-fc8d-1f9b-8c74-b12f61d496ae@nvidia.com>
- <20190114145447.GJ13316@quack2.suse.cz>
- <20190114172124.GA3702@redhat.com>
- <20190115080759.GC29524@quack2.suse.cz>
- <20190116113819.GD26069@quack2.suse.cz>
- <20190116130813.GA3617@redhat.com>
- <20190117093047.GB9378@quack2.suse.cz>
- <20190117151759.GA3550@redhat.com>
+        Tue, 22 Jan 2019 10:24:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37616 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729954AbfAVPYD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 10:24:03 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1553620855;
+        Tue, 22 Jan 2019 15:24:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548170642;
+        bh=rC35aJkPnD1oaQK7PPAqzOSVqzzi5/Vxkd8otbY99vY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=CTTD/Ch/3pEVFcsl6nrRxmIn7hHxS9ghFLcSJyKMMhBIPQS37CDCaN8FimvFeHtxl
+         JsAcjznUTGbUjHRWRoH69KzG5hXkmHjPWNTdel9MMfQpDn214dxf3FgF3TRr2npnti
+         saHyZljpxqe9+VOPCYxfwqnxrRSRK0PWI83NBy6Y=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        cluster-devel@redhat.com
+Subject: [PATCH] gfs: no need to check return value of debugfs_create functions
+Date:   Tue, 22 Jan 2019 16:21:51 +0100
+Message-Id: <20190122152151.16139-52-gregkh@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190117151759.GA3550@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 17-01-19 10:17:59, Jerome Glisse wrote:
-> On Thu, Jan 17, 2019 at 10:30:47AM +0100, Jan Kara wrote:
-> > On Wed 16-01-19 08:08:14, Jerome Glisse wrote:
-> > > On Wed, Jan 16, 2019 at 12:38:19PM +0100, Jan Kara wrote:
-> > > > On Tue 15-01-19 09:07:59, Jan Kara wrote:
-> > > > > Agreed. So with page lock it would actually look like:
-> > > > > 
-> > > > > get_page_pin()
-> > > > > 	lock_page(page);
-> > > > > 	wait_for_stable_page();
-> > > > > 	atomic_add(&page->_refcount, PAGE_PIN_BIAS);
-> > > > > 	unlock_page(page);
-> > > > > 
-> > > > > And if we perform page_pinned() check under page lock, then if
-> > > > > page_pinned() returned false, we are sure page is not and will not be
-> > > > > pinned until we drop the page lock (and also until page writeback is
-> > > > > completed if needed).
-> > > > 
-> > > > After some more though, why do we even need wait_for_stable_page() and
-> > > > lock_page() in get_page_pin()?
-> > > > 
-> > > > During writepage page_mkclean() will write protect all page tables. So
-> > > > there can be no new writeable GUP pins until we unlock the page as all such
-> > > > GUPs will have to first go through fault and ->page_mkwrite() handler. And
-> > > > that will wait on page lock and do wait_for_stable_page() for us anyway.
-> > > > Am I just confused?
-> > > 
-> > > Yeah with page lock it should synchronize on the pte but you still
-> > > need to check for writeback iirc the page is unlocked after file
-> > > system has queue up the write and thus the page can be unlock with
-> > > write back pending (and PageWriteback() == trye) and i am not sure
-> > > that in that states we can safely let anyone write to that page. I
-> > > am assuming that in some case the block device also expect stable
-> > > page content (RAID stuff).
-> > > 
-> > > So the PageWriteback() test is not only for racing page_mkclean()/
-> > > test_set_page_writeback() and GUP but also for pending write back.
-> > 
-> > But this is prevented by wait_for_stable_page() that is already present in
-> > ->page_mkwrite() handlers. Look:
-> > 
-> > ->writepage()
-> >   /* Page is locked here */
-> >   clear_page_dirty_for_io(page)
-> >     page_mkclean(page)
-> >       -> page tables get writeprotected
-> >     /* The following line will be added by our patches */
-> >     if (page_pinned(page)) -> bounce
-> >     TestClearPageDirty(page)
-> >   set_page_writeback(page);
-> >   unlock_page(page);
-> >   ...submit_io...
-> > 
-> > IRQ
-> >   - IO completion
-> >   end_page_writeback()
-> > 
-> > So if GUP happens before page_mkclean() writeprotects corresponding PTE
-> > (and these two actions are synchronized on the PTE lock), page_pinned()
-> > will see the increment and report the page as pinned.
-> > 
-> > If GUP happens after page_mkclean() writeprotects corresponding PTE, it
-> > will fault:
-> >   handle_mm_fault()
-> >     do_wp_page()
-> >       wp_page_shared()
-> >         do_page_mkwrite()
-> >           ->page_mkwrite() - that is block_page_mkwrite() or
-> > 	    iomap_page_mkwrite() or whatever filesystem provides
-> > 	  lock_page(page)
-> >           ... prepare page ...
-> > 	  wait_for_stable_page(page) -> this blocks until IO completes
-> > 	    if someone cares about pages not being modified while under IO.
-> 
-> The case i am worried is GUP see pte with write flag set but has not
-> lock the page yet (GUP is get pte first, then pte to page then lock
-> page), then it locks the page but the lock page can make it wait for a
-> racing page_mkclean()...write back that have not yet write protected
-> the pte the GUP just read. So by the time GUP has the page locked the
-> pte it read might no longer have the write flag set. Hence why you need
-> to also check for write back after taking the page lock. Alternatively
-> you could recheck the pte after a successful try_lock on the page.
+When calling debugfs functions, there is no need to ever check the
+return value.  The function can work or not, but the code logic should
+never do something different based on this.
 
-This isn't really possible. GUP does:
+There is no need to save the dentries for the debugfs files, so drop
+those variables to save a bit of space and make the code simpler.
 
-get_user_pages()
-...
-  follow_page_mask()
-  ...
-    follow_page_pte()
-      ptep = pte_offset_map_lock()
-      check permissions and page sanity
-      if (flags & FOLL_GET)
-        get_page(page); -> this would become
-	  atomic_add(&page->_refcount, PAGE_PIN_BIAS);
-      pte_unmap_unlock(ptep, ptl);
+Cc: Bob Peterson <rpeterso@redhat.com>
+Cc: Andreas Gruenbacher <agruenba@redhat.com>
+Cc: cluster-devel@redhat.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ fs/gfs2/glock.c  | 70 ++++++++++--------------------------------------
+ fs/gfs2/glock.h  |  4 +--
+ fs/gfs2/incore.h |  3 ---
+ fs/gfs2/main.c   |  6 +----
+ 4 files changed, 17 insertions(+), 66 deletions(-)
 
-page_mkclean() on the other hand grabs the same pte lock to change the pte
-to write-protected. So after page_mkclean() has modified the PTE we are
-racing on for access, we are sure to either see increased _refcount or get
-page fault from GUP.
-
-If we see increased _refcount, we bounce the page and are fine. If GUP
-faults, we will wait for page lock (so wait until page is prepared for IO
-and has PageWriteback set) while handling the fault, then enter
-->page_mkwrite, which will do wait_for_stable_page() -> wait for
-outstanding writeback to complete.
-
-So I still conclude - no need for page lock in the GUP path at all AFAICT.
-In fact we rely on the very same page fault vs page writeback synchronization
-for normal user faults as well. And normal user mmap access is even nastier
-than GUP access because the CPU reads page tables without taking PTE lock.
-
-> > > > That actually touches on another question I wanted to get opinions on. GUP
-> > > > can be for read and GUP can be for write (that is one of GUP flags).
-> > > > Filesystems with page cache generally have issues only with GUP for write
-> > > > as it can currently corrupt data, unexpectedly dirty page etc.. DAX & memory
-> > > > hotplug have issues with both (DAX cannot truncate page pinned in any way,
-> > > > memory hotplug will just loop in kernel until the page gets unpinned). So
-> > > > we probably want to track both types of GUP pins and page-cache based
-> > > > filesystems will take the hit even if they don't have to for read-pins?
-> > > 
-> > > Yes the distinction between read and write would be nice. With the map
-> > > count solution you can only increment the mapcount for GUP(write=true).
-> > 
-> > Well, but if we track only pins for write, DAX or memory hotplug will not
-> > be able to use this mechanism. So at this point I'm more leaning towards
-> > tracking all pins. It will cost some performance needlessly for read pins
-> > and filesystems using page cache when bouncing such pages but it's not like
-> > writeback of pinned pages is some performance critical operation... But I
-> > wanted to spell this out so that people are aware of this.
-> 
-> No they would know for regular pin, it is just as page migrate code. If
-> the refcount + (extra_ref_by_the_code_checking) > mapcount then you know
-> someone has extra reference on your page.
-> 
-> Those extra references are either some regular fs event taking place (some
-> code doing find_get_page for instance) or a GUP reference (wether it is a
-> write pin or a read pin).
-> 
-> So the only issue is false positive, ie thinking the page is under GUP
-> while it has just elevated refcount because of some other regular fs/mm
-> event. To minimize false positive for a more accurate pin test (write or
-> read) you can enforce few thing:
-> 
->     1 - first page lock
->     2 - then freeze the page with expected counted
-> 
-> With that it should minimize false positive. In the end even with the bias
-> case you can also have false positive.
-
-So this is basically what the code is currently doing. And for DAX it works
-well since the page is being truncated and so essentially nobody is
-touching it. But for hotplug it doesn't work quite well - hotplug would
-like to return EBUSY to userspace when the page is pinned but retry if the
-page reference is just transient.
-
-								Honza
+diff --git a/fs/gfs2/glock.c b/fs/gfs2/glock.c
+index b92740edc416..f66773c71bcd 100644
+--- a/fs/gfs2/glock.c
++++ b/fs/gfs2/glock.c
+@@ -2131,71 +2131,29 @@ static const struct file_operations gfs2_sbstats_fops = {
+ 	.release = seq_release,
+ };
+ 
+-int gfs2_create_debugfs_file(struct gfs2_sbd *sdp)
+-{
+-	struct dentry *dent;
+-
+-	dent = debugfs_create_dir(sdp->sd_table_name, gfs2_root);
+-	if (IS_ERR_OR_NULL(dent))
+-		goto fail;
+-	sdp->debugfs_dir = dent;
+-
+-	dent = debugfs_create_file("glocks",
+-				   S_IFREG | S_IRUGO,
+-				   sdp->debugfs_dir, sdp,
+-				   &gfs2_glocks_fops);
+-	if (IS_ERR_OR_NULL(dent))
+-		goto fail;
+-	sdp->debugfs_dentry_glocks = dent;
+-
+-	dent = debugfs_create_file("glstats",
+-				   S_IFREG | S_IRUGO,
+-				   sdp->debugfs_dir, sdp,
+-				   &gfs2_glstats_fops);
+-	if (IS_ERR_OR_NULL(dent))
+-		goto fail;
+-	sdp->debugfs_dentry_glstats = dent;
+-
+-	dent = debugfs_create_file("sbstats",
+-				   S_IFREG | S_IRUGO,
+-				   sdp->debugfs_dir, sdp,
+-				   &gfs2_sbstats_fops);
+-	if (IS_ERR_OR_NULL(dent))
+-		goto fail;
+-	sdp->debugfs_dentry_sbstats = dent;
++void gfs2_create_debugfs_file(struct gfs2_sbd *sdp)
++{
++	sdp->debugfs_dir = debugfs_create_dir(sdp->sd_table_name, gfs2_root);
+ 
+-	return 0;
+-fail:
+-	gfs2_delete_debugfs_file(sdp);
+-	return dent ? PTR_ERR(dent) : -ENOMEM;
++	debugfs_create_file("glocks", S_IFREG | S_IRUGO, sdp->debugfs_dir, sdp,
++			    &gfs2_glocks_fops);
++
++	debugfs_create_file("glstats", S_IFREG | S_IRUGO, sdp->debugfs_dir, sdp,
++			    &gfs2_glstats_fops);
++
++	debugfs_create_file("sbstats", S_IFREG | S_IRUGO, sdp->debugfs_dir, sdp,
++			    &gfs2_sbstats_fops);
+ }
+ 
+ void gfs2_delete_debugfs_file(struct gfs2_sbd *sdp)
+ {
+-	if (sdp->debugfs_dir) {
+-		if (sdp->debugfs_dentry_glocks) {
+-			debugfs_remove(sdp->debugfs_dentry_glocks);
+-			sdp->debugfs_dentry_glocks = NULL;
+-		}
+-		if (sdp->debugfs_dentry_glstats) {
+-			debugfs_remove(sdp->debugfs_dentry_glstats);
+-			sdp->debugfs_dentry_glstats = NULL;
+-		}
+-		if (sdp->debugfs_dentry_sbstats) {
+-			debugfs_remove(sdp->debugfs_dentry_sbstats);
+-			sdp->debugfs_dentry_sbstats = NULL;
+-		}
+-		debugfs_remove(sdp->debugfs_dir);
+-		sdp->debugfs_dir = NULL;
+-	}
++	debugfs_remove_recursive(sdp->debugfs_dir);
++	sdp->debugfs_dir = NULL;
+ }
+ 
+-int gfs2_register_debugfs(void)
++void gfs2_register_debugfs(void)
+ {
+ 	gfs2_root = debugfs_create_dir("gfs2", NULL);
+-	if (IS_ERR(gfs2_root))
+-		return PTR_ERR(gfs2_root);
+-	return gfs2_root ? 0 : -ENOMEM;
+ }
+ 
+ void gfs2_unregister_debugfs(void)
+diff --git a/fs/gfs2/glock.h b/fs/gfs2/glock.h
+index 8949bf28b249..936b3295839c 100644
+--- a/fs/gfs2/glock.h
++++ b/fs/gfs2/glock.h
+@@ -243,9 +243,9 @@ extern void gfs2_glock_free(struct gfs2_glock *gl);
+ extern int __init gfs2_glock_init(void);
+ extern void gfs2_glock_exit(void);
+ 
+-extern int gfs2_create_debugfs_file(struct gfs2_sbd *sdp);
++extern void gfs2_create_debugfs_file(struct gfs2_sbd *sdp);
+ extern void gfs2_delete_debugfs_file(struct gfs2_sbd *sdp);
+-extern int gfs2_register_debugfs(void);
++extern void gfs2_register_debugfs(void);
+ extern void gfs2_unregister_debugfs(void);
+ 
+ extern const struct lm_lockops gfs2_dlm_ops;
+diff --git a/fs/gfs2/incore.h b/fs/gfs2/incore.h
+index e10e0b0a7cd5..cdf07b408f54 100644
+--- a/fs/gfs2/incore.h
++++ b/fs/gfs2/incore.h
+@@ -853,9 +853,6 @@ struct gfs2_sbd {
+ 
+ 	unsigned long sd_last_warning;
+ 	struct dentry *debugfs_dir;    /* debugfs directory */
+-	struct dentry *debugfs_dentry_glocks;
+-	struct dentry *debugfs_dentry_glstats;
+-	struct dentry *debugfs_dentry_sbstats;
+ };
+ 
+ static inline void gfs2_glstats_inc(struct gfs2_glock *gl, int which)
+diff --git a/fs/gfs2/main.c b/fs/gfs2/main.c
+index c7603063f861..136484ef35d3 100644
+--- a/fs/gfs2/main.c
++++ b/fs/gfs2/main.c
+@@ -178,16 +178,12 @@ static int __init init_gfs2_fs(void)
+ 	if (!gfs2_page_pool)
+ 		goto fail_mempool;
+ 
+-	error = gfs2_register_debugfs();
+-	if (error)
+-		goto fail_debugfs;
++	gfs2_register_debugfs();
+ 
+ 	pr_info("GFS2 installed\n");
+ 
+ 	return 0;
+ 
+-fail_debugfs:
+-	mempool_destroy(gfs2_page_pool);
+ fail_mempool:
+ 	destroy_workqueue(gfs2_freeze_wq);
+ fail_wq3:
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.20.1
+
