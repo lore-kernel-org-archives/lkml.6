@@ -2,116 +2,120 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DB66C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:05:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16153C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:05:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B8A020879
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:05:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548155110;
-	bh=uZR+IWYW8Dd1HTz2HCl6kqsJLCVnzrNXpRRlOFITwGY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=uy/TB9/AfZZAsSlTtbH4dHY+ztHcMVLxHw/JHPP5m06KfKblHu9qEEuwDlFXRm23s
-	 co075i20whxOU7aaNVJ6zWsYTXA1abrlC4key4bCsu4asUhRc++Y5lcqOYjbtGmOVZ
-	 XkhZwiWcxgQnfpKPPqn+Hl4xASPsosj9ff5PkeGA=
+	by mail.kernel.org (Postfix) with ESMTP id E5C9F20879
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:05:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727971AbfAVLFI (ORCPT
+        id S1728045AbfAVLFY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 06:05:08 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:39637 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727048AbfAVLFH (ORCPT
+        Tue, 22 Jan 2019 06:05:24 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:58817 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727898AbfAVLFY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 06:05:07 -0500
-Received: by mail-oi1-f193.google.com with SMTP id i6so17041536oia.6;
-        Tue, 22 Jan 2019 03:05:07 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uZR+IWYW8Dd1HTz2HCl6kqsJLCVnzrNXpRRlOFITwGY=;
-        b=PXENb38le1UVVzIq4J3s7qtOkwMPbDOrOMoMcFbYkTQQdHSUTcPB2nGpQeX105MMSL
-         Wjohs9eNgxKE8xiqgSr0c7jrfUmryMJ8DE87qjQRyptXMImbpkWTMgRYD75HEJ5bUnsM
-         xgzoJL6kAdU7+Sg/eegLp0u+Mnf7FRYM0EAGc41aJSApA+ldD3A7WxmWm3vdYOgtzSrR
-         4G3sB8bM+oWr+l9hhqAi2PJpVqCkn5TaVO3SR1p7PsRVsiHzn/k0y9l3X1NQ4LU7E9LM
-         VrWFc+eTyVui7bc/6Q2vo/22mUXJ8zWlIl3wlit6slKBG0xI7vj+9jRPD6YSHz2Etq5C
-         r37g==
-X-Gm-Message-State: AJcUukefX611ssrl2+VUYgpwdtAz69D21ayA870uXDw9FQLd7Uj745YP
-        s4/kYHBeNoGVVmkJwo7sZ2pyE+goowYc2/OjBHc=
-X-Google-Smtp-Source: ALg8bN5XM/9ximTJlIeETfn+nWn5sZGbNquli9yHETbjiY2ZhmeZG+BeVe8gGNbj1uwMo0/S0IpG8/XTkCwR8QyhnNY=
-X-Received: by 2002:aca:368a:: with SMTP id d132mr8341218oia.193.1548155106761;
- Tue, 22 Jan 2019 03:05:06 -0800 (PST)
-MIME-Version: 1.0
-References: <20190115101513.2822-1-patrick.bellasi@arm.com>
- <20190115101513.2822-9-patrick.bellasi@arm.com> <3006911.57lVBuUGX3@aspire.rjw.lan>
- <20190122110205.lpk6o2jdfe3mttjr@e110439-lin>
-In-Reply-To: <20190122110205.lpk6o2jdfe3mttjr@e110439-lin>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 22 Jan 2019 12:04:54 +0100
-Message-ID: <CAJZ5v0j2NQY_gKJOAy=rP5_1Dk9TODKNhW0vuvsynTN3BUmYaQ@mail.gmail.com>
-Subject: Re: [PATCH v6 08/16] sched/cpufreq: uclamp: Add utilization clamping
- for FAIR tasks
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
+        Tue, 22 Jan 2019 06:05:24 -0500
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1gltrt-0007S5-D8; Tue, 22 Jan 2019 12:05:21 +0100
+Message-ID: <1548155121.2465.22.camel@pengutronix.de>
+Subject: Re: [PATCH 1/4] dt-binding: irq: imx-irqsteer: use irq number per
+ channel instead of group number
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Aisheng Dong <aisheng.dong@nxp.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>
+Date:   Tue, 22 Jan 2019 12:05:21 +0100
+In-Reply-To: <AM0PR04MB421189505D3F196A82DEF19A80980@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <1547797668-30342-1-git-send-email-aisheng.dong@nxp.com>
+         <1547797668-30342-2-git-send-email-aisheng.dong@nxp.com>
+         <1547801291.2626.3.camel@pengutronix.de>
+         <45c7e5b6-26bb-81b1-093b-96312a1788ec@arm.com>
+         <AM0PR04MB42114D5B25B23C0D7FFF95BA809C0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+         <ef6eb38d-8e74-a55d-6d78-516d81fa957f@arm.com>
+         <AM0PR04MB421189505D3F196A82DEF19A80980@AM0PR04MB4211.eurprd04.prod.outlook.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 12:02 PM Patrick Bellasi
-<patrick.bellasi@arm.com> wrote:
->
-> On 22-Jan 11:37, Rafael J. Wysocki wrote:
-> > On Tuesday, January 15, 2019 11:15:05 AM CET Patrick Bellasi wrote:
+Am Dienstag, den 22.01.2019, 10:56 +0000 schrieb Aisheng Dong:
+> > > > From: Marc Zyngier [mailto:marc.zyngier@arm.com]
+> > Sent: Friday, January 18, 2019 6:12 PM
+> 
+> [...]
+> > > > > > > > From: Marc Zyngier [mailto:marc.zyngier@arm.com]
+> > > > Sent: Friday, January 18, 2019 5:39 PM On 18/01/2019 08:48, Lucas
+> > > > Stach wrote:
+> > > > > Am Freitag, den 18.01.2019, 07:53 +0000 schrieb Aisheng Dong:
+> > > > > > Not all 64 interrupts may be used in one group. e.g. most irqsteer
+> > > > > > in imx8qxp and imx8qm subsystems supports only 32 interrupts.
+> > > > > > 
+> > > > > > As the IP integration parameters are Channel number and interrupts
+> > > > > > number, let's use fsl,irqs-per-chan to represents how many
+> > > > > > interrupts supported by this irqsteer channel.
+> > > > > 
+> > > > > Sorry, but total NACK. I've got to great lengths with dumping the
+> > > > > actually implemented register layout on i.MX8M and AFAICS the IRQs
+> > > > > are always managed in groups of 64 IRQs, even if less than that are
+> > > > > connected as input IRQs. This is what the actually present register
+> > > > > set on i.MX8M tells us.
+> > > > 
+> > > > Also, I'd really like the DT bindings not to change at every release.
+> > > > So whatever change (if any) has to be done for this driver to support
+> > > > existing HW, please make sure that the DT bindings are kept as stable as
+> > 
+> > possible.
+> > > > 
+> > > 
+> > > Sorry I should clarify it a bit.
+> > > There's still no users in Devicetree.
+> > > So I guess we can update it, right? Or not?
+> > 
+> > What do you mean by no users? This driver is in 5.0, and I assume people are
+> > using it one way or another. Not having a platform in the kernel tree is pretty
+> > much irrelevant, as the kernel tree is not a canonical repository of existing
+> > platforms.
+> > 
+> 
+> I understand the concern.
+> Theoretically yes, but it's very unlikely that there's already an out of tree users
+> wants to use it for a long term as we're still at the very initial stage.
+> 
+> And the most important reason is that current using actually is wrong.
+> We can also choose to mark it as 'depreciated' and keep the backward compatibility in driver,
+> but I'm not sure whether it's worthy to do it as we may add a lot ugly code in driver
+> benefits no users.
+> 
+> Ideas?
 
-[cut]
+I'm all for doing a breaking DT change now. The binding is
+significantly different from the downstream one anyways and I'm not
+aware of any upstream users that wouldn't be able to cope with a change
+at this point.
 
-> >
-> > IMO it would be better to combine this patch with the next one.
->
-> Main reason was to better document in the changelog what we do for the
-> two different classes...
->
-> > At least some things in it I was about to ask about would go away
-> > then. :-)
->
-> ... but if it creates confusion I can certainly merge them.
->
-> Or maybe clarify better in this patch what's not clear: may I ask what
-> were your questions ?
->
-> > Besides, I don't really see a reason for the split here.
->
-> Was mainly to make the changes required for RT more self-contained.
->
-> For that class only, not for FAIR, we have additional code in the
-> following patch which add uclamp_default_perf which are system
-> defaults used to track/account tasks requesting the maximum frequency.
->
-> Again, I can either better clarify the above patch or just merge the
-> two together: what do you prefer ?
+I want to reach a conclusion on the discussion about how the HW
+actually works and is configured in reply to Patch 4/4 first.
 
-Merge the two together, please.
+Regards,
+Lucas
