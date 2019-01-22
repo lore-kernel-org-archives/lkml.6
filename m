@@ -2,195 +2,165 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FF8AC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:55:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BBE0C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:56:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10E1820684
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:55:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C18520684
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:56:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iByubt0Y"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="o/TtZkm3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728702AbfAVNzZ (ORCPT
+        id S1728607AbfAVN46 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 08:55:25 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:44250 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728539AbfAVNzZ (ORCPT
+        Tue, 22 Jan 2019 08:56:58 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:60388 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728529AbfAVN45 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 08:55:25 -0500
-Received: by mail-io1-f65.google.com with SMTP id r200so19103368iod.11
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 05:55:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=va/webB65xAQkHXqaHqTjHSAjNDLESnhLUArsDNowQQ=;
-        b=iByubt0YbEMmC4ppjgC9ANZeBGsR4BavV8L/2iNC6MyZe+L66+TPQalc2P2SPSGash
-         XJj5pf/CJ+xLVEdDlARRU9RTmZX+w8xKPJGEQwMVZ+Tr1DJhmUhaD43xOvi9+AaWTdS2
-         iXxGmkF68bx3/5py9Z+hCoiCJ6Zlv24sChnZ0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=va/webB65xAQkHXqaHqTjHSAjNDLESnhLUArsDNowQQ=;
-        b=PVDi5BVDcD0g1sU8OiprL7L+B2LO+6nN8oI2hdso3W93CIqzZywAu5AeEN+4YBUPrg
-         ZZbp2kH1kth36syrmU617BmZ7ozv206nAw1NjfRTxogvcF87CrvYz5m5IfJ3Lx3/F98Y
-         m4bmCkJ8Epnxe2x/KSygjSQLDzibnaPZhMwEQr8FDV9pZnj7rqP13KdEqjSWbBViu+sd
-         Mg1DSDg+tlWgbl1WVVoCMQFD0PlSDE1gAnXquSNKQDsrBGsUZrIwmGtNhKvt+BxaYsvK
-         e9KrpUj4uslB5WLEdtNWZWFmb7loEkLX2dYsaEAbrrzEWGRWyKI0qXU/bdcaprmnRSWF
-         cWRw==
-X-Gm-Message-State: AJcUukdu5DXj1Tsxc5SeST8QB2oQVJIMlkRUTkRW/aKdFpKpbG9KlPuI
-        sMy1LqgoaG/TVd5SJzD5ST1S32HIQJzsqoFE4BtwhQ==
-X-Google-Smtp-Source: ALg8bN4CUfmaQUvoD7ZDD41LIBAEW2D3uGNjzrxf/RVj5hl6IUC2vYme9V0ycJE2uU/6U9Q9Q/WBwVCQpIGfJsSbYXs=
-X-Received: by 2002:a5e:c206:: with SMTP id v6mr19964688iop.60.1548165323852;
- Tue, 22 Jan 2019 05:55:23 -0800 (PST)
+        Tue, 22 Jan 2019 08:56:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=/yGAsqBQmq+378K3Ed7uGS+TjYfgRXBZD5L47WVukvY=; b=o/TtZkm3dr+ThaWKQ2MKXniZ/
+        KJnSsK4snnd1r5dUNjTBoIfIVlMuzlf6usPlCCvKilz0MWzPbVl7HVTvVwOZYWVYKw10ZOkKV3xwg
+        4B9XUg01CPPipJjK/Ah8865TK+YRWW9Lq8gqDSIcSehz+hyX1m/Z/MfeadkABp7U7HRc/hBgsV+qO
+        cDsEuEAUfvgidb3eEnTvPysOVKXRkOahpl85BDIMyARJjgJeIbBVkFr0ljJJ+tsZLNlaCazNvbB7U
+        99/qGuySnvTGb+NgkYRrbFY4D805uhjBVgimNJz4YStRDqqCjKOtwG0qEKiabgxAk7vs0ISKq0gyO
+        xHV4FrFNA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1glwXm-00024M-Td; Tue, 22 Jan 2019 13:56:47 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 4B5462042CFC2; Tue, 22 Jan 2019 14:56:44 +0100 (CET)
+Date:   Tue, 22 Jan 2019 14:56:44 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v6 07/16] sched/core: uclamp: Add system default clamps
+Message-ID: <20190122135644.GP27931@hirez.programming.kicks-ass.net>
+References: <20190115101513.2822-1-patrick.bellasi@arm.com>
+ <20190115101513.2822-8-patrick.bellasi@arm.com>
 MIME-Version: 1.0
-References: <20190118163736.6A99268CEB@newverein.lst.de> <20190118163908.E338E68D93@newverein.lst.de>
- <bdcbdda9-d9e8-20e5-429e-35473ade56cc@arm.com> <20190122132832.GB16778@lst.de>
-In-Reply-To: <20190122132832.GB16778@lst.de>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Tue, 22 Jan 2019 14:55:12 +0100
-Message-ID: <CAKv+Gu_sk-jbT3BfTVt1jdx5tR3KCGYzU63T8bv+TYy0Oizy+g@mail.gmail.com>
-Subject: Re: [PATCH v7 2/3] arm64: implement ftrace with regs
-To:     Torsten Duwe <duwe@lst.de>
-Cc:     Julien Thierry <julien.thierry@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Amit Daniel Kachhap <amit.kachhap@arm.com>,
-        "Singh, Balbir" <bsingharora@gmail.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        live-patching@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190115101513.2822-8-patrick.bellasi@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 22 Jan 2019 at 14:28, Torsten Duwe <duwe@lst.de> wrote:
->
-> On Tue, Jan 22, 2019 at 10:18:17AM +0000, Julien Thierry wrote:
-> > Hi Torsten,
-> >
-> > A few suggestions below.
-> >
-> > > +#ifdef CONFIG_DYNAMIC_FTRACE_WITH_REGS
-> > > +#define ARCH_SUPPORTS_FTRACE_OPS 1
-> > > +#define REC_IP_BRANCH_OFFSET AARCH64_INSN_SIZE
-> > > +/* All we need is some magic value. Simply use "_mCount:" */
-> >
-> > Nit: Should the casing be "_mcount" ?
->
-> No! The string makes it clear what it's supposed to be and the peculiar
-> casing makes it unique and leaves no doubt were it came from. So whenever
-> you see this register value in a crash dump you don't have to wonder about
-> weird linkage errors, as it surely did not originate from a symtab.
->
+On Tue, Jan 15, 2019 at 10:15:04AM +0000, Patrick Bellasi wrote:
 
-In that case, do you need to deal with endianness here?
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index 84294925d006..c8f391d1cdc5 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -625,6 +625,11 @@ struct uclamp_se {
+>  	unsigned int bucket_id		: bits_per(UCLAMP_BUCKETS);
+>  	unsigned int mapped		: 1;
+>  	unsigned int active		: 1;
+> +	/* Clamp bucket and value actually used by a RUNNABLE task */
+> +	struct {
+> +		unsigned int value	: bits_per(SCHED_CAPACITY_SCALE);
+> +		unsigned int bucket_id	: bits_per(UCLAMP_BUCKETS);
+> +	} effective;
 
-> > > +#define MCOUNT_ADDR                (0x5f6d436f756e743a)
-> > > +#else
-> > > +#define REC_IP_BRANCH_OFFSET 0
-> > > +#define MCOUNT_ADDR                ((unsigned long)_mcount)
-> > > +#endif
-> > > +
-> > >  #ifndef __ASSEMBLY__
-> > >  #include <linux/compat.h>
-> > >
-> > > --- a/arch/arm64/kernel/entry-ftrace.S
-> > > +++ b/arch/arm64/kernel/entry-ftrace.S
-> > > @@ -10,6 +10,7 @@
-> > >   */
-> > >
-> > >  #include <linux/linkage.h>
-> > > +#include <asm/asm-offsets.h>
-> > >  #include <asm/assembler.h>
-> > >  #include <asm/ftrace.h>
-> > >  #include <asm/insn.h>
-> ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> > > +
-> > > +ENTRY(ftrace_common)
-> > > +
-> > > +   mov     x3, sp          /* pt_regs are @sp */
-> > > +   ldr_l   x2, function_trace_op, x0
-> > > +   mov     x1, x9          /* parent IP */
-> > > +   sub     x0, lr, #8      /* function entry == IP */
-> >
-> > The #8 is because we go back two instructions right? Can we use
-> > #(AARCH64_INSN_SIZE * 2) instead?
->
-> Hmm, <asm/insn.h> was already included, so why not. (same below)
->
-> > > +#ifdef CONFIG_DYNAMIC_FTRACE_WITH_REGS
-> > > +int ftrace_modify_call(struct dyn_ftrace *rec, unsigned long old_addr,
-> > > +                   unsigned long addr)
-> > > +{
-> > > +   unsigned long pc = rec->ip + REC_IP_BRANCH_OFFSET;
-> > > +   u32 old, new;
-> > > +
-> > > +   old = aarch64_insn_gen_branch_imm(pc, old_addr, true);
-> > > +   new = aarch64_insn_gen_branch_imm(pc, addr, true);
-> >
-> > The last argument of aarch64_insn_gen_branch_imm() is an enum, not a
-> > boolean.
-> >
-> > You should use AARCH64_INSN_BRANCH_LINK here which happens to be equal to 1.
->
-> That's what you get when you keep copying code...
-> Good catch, thanks!
->
-> > > +    *  initially; the NOPs are already there. So instead,
-> > > +    *  put the LR saver there ahead of time, in order to avoid
-> > > +    *  any race condition over patching 2 instructions.
-> > > +    */
-> > > +   if (IS_ENABLED(CONFIG_DYNAMIC_FTRACE_WITH_REGS) &&
-> > > +           addr == MCOUNT_ADDR) {
-> >
-> > This works, however it feels a bit weird since core code asked to
-> > generate a NOP but not only we don't generate it but we put another
-> > instruction instead.
->
-> It's not the first time weird x86 sets the standards and all others
-> need workarounds. But here it just came handy to abuse this call :-)
->
-> > I think it would be useful to state that the replacement of mcount calls
-> > by nops is only ever done once at system initialization.
-> >
-> > Or maybe have a intermediate function:
-> >
-> > static int ftrace_setup_patchable_entry(unsigned long addr)
-> > {
-> >       u32 old, new;
-> >
-> >       old = aarch64_insn_gen_nop();
-> >       new = MOV_X9_X30;
-> >       pc -= REC_IP_BRANCH_OFFSET;
-> >       return ftrace_modify_code(pc, old, new, validate);
-> > }
-> >
-> >       [...]
-> >
-> >       if (IS_ENABLED(CONFIG_DYNAMIC_FTRACE_WITH_REGS) &&
-> >               addr == MCOUNT_ADDR)
-> >               return ftrace_setup_patchable_entry(pc);
-> >
-> >
-> > This way it clearly show that this is a setup/init corner case.
->
-> I'll definitely consider this.
->
-> Thanks for the input,
->
->         Torsten
->
->
+I am confuzled by this thing..  so uclamp_se already has a value,bucket,
+which per the prior code is the effective one.
+
+Now; I think I see why you want another value; you need the second to
+store the original value for when the system limits change and we must
+re-evaluate.
+
+So why are you not adding something like:
+
+	unsigned int orig_value : bits_per(SCHED_CAPACITY_SCALE);
+
+> +unsigned int sysctl_sched_uclamp_util_min;
+
+> +unsigned int sysctl_sched_uclamp_util_max = SCHED_CAPACITY_SCALE;
+
+> +static inline void
+> +uclamp_effective_get(struct task_struct *p, unsigned int clamp_id,
+> +		     unsigned int *clamp_value, unsigned int *bucket_id)
+> +{
+> +	/* Task specific clamp value */
+> +	*clamp_value = p->uclamp[clamp_id].value;
+> +	*bucket_id = p->uclamp[clamp_id].bucket_id;
+> +
+> +	/* System default restriction */
+> +	if (unlikely(*clamp_value < uclamp_default[UCLAMP_MIN].value ||
+> +		     *clamp_value > uclamp_default[UCLAMP_MAX].value)) {
+> +		/* Keep it simple: unconditionally enforce system defaults */
+> +		*clamp_value = uclamp_default[clamp_id].value;
+> +		*bucket_id = uclamp_default[clamp_id].bucket_id;
+> +	}
+> +}
+
+That would then turn into something like:
+
+	unsigned int high = READ_ONCE(sysctl_sched_uclamp_util_max);
+	unsigned int low  = READ_ONCE(sysctl_sched_uclamp_util_min);
+
+	uclamp_se->orig_value = value;
+	uclamp_se->value = clamp(value, low, high);
+
+And then determine bucket_id based on value.
+
+> +int sched_uclamp_handler(struct ctl_table *table, int write,
+> +			 void __user *buffer, size_t *lenp,
+> +			 loff_t *ppos)
+> +{
+> +	int old_min, old_max;
+> +	int result = 0;
+> +
+> +	mutex_lock(&uclamp_mutex);
+> +
+> +	old_min = sysctl_sched_uclamp_util_min;
+> +	old_max = sysctl_sched_uclamp_util_max;
+> +
+> +	result = proc_dointvec(table, write, buffer, lenp, ppos);
+> +	if (result)
+> +		goto undo;
+> +	if (!write)
+> +		goto done;
+> +
+> +	if (sysctl_sched_uclamp_util_min > sysctl_sched_uclamp_util_max ||
+> +	    sysctl_sched_uclamp_util_max > SCHED_CAPACITY_SCALE) {
+> +		result = -EINVAL;
+> +		goto undo;
+> +	}
+> +
+> +	if (old_min != sysctl_sched_uclamp_util_min) {
+> +		uclamp_bucket_inc(NULL, &uclamp_default[UCLAMP_MIN],
+> +				  UCLAMP_MIN, sysctl_sched_uclamp_util_min);
+> +	}
+> +	if (old_max != sysctl_sched_uclamp_util_max) {
+> +		uclamp_bucket_inc(NULL, &uclamp_default[UCLAMP_MAX],
+> +				  UCLAMP_MAX, sysctl_sched_uclamp_util_max);
+> +	}
+
+Should you not update all tasks?
+
