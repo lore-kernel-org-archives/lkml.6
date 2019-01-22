@@ -2,149 +2,138 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FBC5C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:45:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2315FC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:48:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DD6921721
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:45:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548164723;
-	bh=5/j3u3sZlwdpjGBXUtougPs3U/DWZfx6ioM/i2tKqpE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=iNrzMXPaNSA7KyCTGDuJN96INMDLUuJTZqJ+7hMbX9kykq+nnzZDtV8Yt1O9qbM/y
-	 9Rmj10M0RaCE/dPDP2hnz80Pm6/O4DyuaIDoOHZyhnsDo6yfNAK/hLWJP39Vts8fAu
-	 YNpW6uLhTQ0TAs9el3ciBPpWNvdi8LmXCmHdaO9c=
+	by mail.kernel.org (Postfix) with ESMTP id 5ABAD20879
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:48:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="sS6FCqmW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728660AbfAVNpV (ORCPT
+        id S1728537AbfAVNsH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 08:45:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35098 "EHLO mail.kernel.org"
+        Tue, 22 Jan 2019 08:48:07 -0500
+Received: from cock.li ([185.100.85.212]:50436 "EHLO cock.li"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728463AbfAVNpU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 08:45:20 -0500
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E889B217D6;
-        Tue, 22 Jan 2019 13:45:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548164719;
-        bh=5/j3u3sZlwdpjGBXUtougPs3U/DWZfx6ioM/i2tKqpE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=h75TWyvJ6pAqKCETd70uYMwTRU8oQ/JAjyStfqw8CZpPckhG5uaK81PxttYNBydca
-         arhW1h4dFLQ8CnkSrHNZ/Cc0yjisfmnNFtfJST8ZySOp1kVGpTMRezP1AfoOgR64Nb
-         zI3mAaCMjmG2tPIjgZrZuy10n466ZSSkr5lBFkdk=
-Received: by mail-qt1-f169.google.com with SMTP id y20so27496863qtm.13;
-        Tue, 22 Jan 2019 05:45:18 -0800 (PST)
-X-Gm-Message-State: AJcUukc0PZ2BFLHU/VqDVXJWXxYzLkJS8UdjrTZiP2S/hFjabvdIeAdK
-        JYwBf2pyEGwUZ4EDk4k/cAO4Omsk9cbB+2bwog==
-X-Google-Smtp-Source: ALg8bN5ypl8yXAikTeuLoh0sHZnMN6oz9ieY1pXeYTX/2WutPM6pTyREueVZVCJLmxssjI2I0fA0YDh5jPHUlPFb8f0=
-X-Received: by 2002:aed:29a6:: with SMTP id o35mr30262023qtd.257.1548164718107;
- Tue, 22 Jan 2019 05:45:18 -0800 (PST)
+        id S1728463AbfAVNsH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 08:48:07 -0500
 MIME-Version: 1.0
-References: <20190116064820.20007-1-ran.wang_1@nxp.com> <20190116064820.20007-2-ran.wang_1@nxp.com>
- <20190122010310.GA5165@bogus> <AM5PR0402MB286524243DB67DA15AE4EA42F1980@AM5PR0402MB2865.eurprd04.prod.outlook.com>
-In-Reply-To: <AM5PR0402MB286524243DB67DA15AE4EA42F1980@AM5PR0402MB2865.eurprd04.prod.outlook.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 22 Jan 2019 07:45:07 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+SULX5Y2C1Br+3reUHQ+1xJ=oZbuRBP+QJsEWeRgnuPg@mail.gmail.com>
-Message-ID: <CAL_Jsq+SULX5Y2C1Br+3reUHQ+1xJ=oZbuRBP+QJsEWeRgnuPg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] usb: dwc3: Add avoiding vbus glitch happen during
- xhci reset
-To:     Ran Wang <ran.wang_1@nxp.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
+        t=1548164884; bh=qEe90IUm6+Bd6IXL/YWzX3ayRknawBL0c2/ak0eJIcc=;
+        h=Date:From:To:Subject:From;
+        b=sS6FCqmWy/rqdTJKE/SzMbrCWul7v7ME7FvSl8SJNCIlZEXNP4QXnqCyzv+uvl7u0
+         06AwvnfWdR3tes2rZy2rRPkch4NDipA3BguOvI0BT398GvcOvkfWDofQ3M4aG9Lsoz
+         1huLdfr6yDdRUKHIydxeYizDWAy4O7UrFYY7qYBPFEY8K4gqmvYqS63rzLQ1s/pt8Y
+         W2TpGD9CheEXHbO9pjaHn6/BMinP4Ty5WUjubHyPnUaBXx10rfYYJ0y+s9k31ZiZXs
+         ijZvAhrOSvj36OitBvfssWNbHqzfabngYbdJTUCJ8fCNJMYGTpYbTiIRSXuLqW7sQ9
+         7FxHDFWtr7KZQ==
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 22 Jan 2019 13:48:03 +0000
+From:   sicevar@redchan.it
+To:     linux-kernel@vger.kernel.org
+Subject: GPL revocation (GPC-Slots 2): Alex "Skud" Bayley,  Leigh Honeywell
+Message-ID: <8523020ca6a3da1f324087e201bb368f@redchan.it>
+X-Sender: sicevar@redchan.it
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 8:38 PM Ran Wang <ran.wang_1@nxp.com> wrote:
->
-> Hi Rob,
->
-> On January 22, 2019 09:03, Rob Herring wrote:
-> >
-> > On Wed, Jan 16, 2019 at 06:48:06AM +0000, Ran Wang wrote:
-> > > When DWC3 is set to host mode by programming register DWC3_GCTL,
-> > VUBS
-> >
-> > s/VUBS/VBUS/
->
-> Yes, will fix it in next version.
->
-> > > (or its control signal) will on immediately on related Root Hub ports.
-> >
-> > /will on/will turn on/
->
-> Got it. Thanks.
->
-> > > Then the VUBS will be de-asserted for a little while during xhci reset
-> > > (conducted by xhci driver) for a little while and back to normal.
-> > >
-> > > This VBUS glitch might cause some USB devices emuration fail if kernel
-> > > boot with them connected. One SW workaround which can fix this is to
-> > > program all PORTSC[PP] to 0 to turn off VBUS immediately after setting
-> > > host mode in DWC3 driver(per signal measurement result, it will be too
-> > > late to do it in xhci-plat.c or xhci.c).
-> > >
-> > > Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
-> > > ---
-> > >  Documentation/devicetree/bindings/usb/dwc3.txt |    3 +++
-> > >  1 files changed, 3 insertions(+), 0 deletions(-)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/usb/dwc3.txt
-> > > b/Documentation/devicetree/bindings/usb/dwc3.txt
-> > > index 8e5265e..dadb530 100644
-> > > --- a/Documentation/devicetree/bindings/usb/dwc3.txt
-> > > +++ b/Documentation/devicetree/bindings/usb/dwc3.txt
-> > > @@ -106,6 +106,9 @@ Optional properties:
-> > >                     When just one value, which means INCRX burst
-> > mode enabled. When
-> > >                     more than one value, which means undefined length
-> > INCR burst type
-> > >                     enabled. The values can be 1, 4, 8, 16, 32, 64, 128
-> > and 256.
-> > > + - snps,avoid-vbus-glitch-when-set-host: Power off all Root Hub ports
-> > immediately
-> > > +                   after setting host mode to avoid vbus (negative)
-> > glitch happen in later
-> > > +                   xhci reset. And the vbus will back to 5V automatically
-> > when reset done.
-> >
-> > Can't you imply this from the compatible string. You should have an SoC
-> > specific compatible.
->
-> Sorry, not quite get your point here? Actually I have discussed with Soc design guys
-> and Felipe, it seems to be DWC3 native behavior rather than SoC specific issue.
-> https://lkml.org/lkml/2018/11/23/387
-> https://lkml.org/lkml/2018/12/12/140
->
-> I think there could be 2 reasons why we got no report for a long time till now:
-> 1. Most USB devices are not so sensitive to this VBUS glitch, they would works fine.
-> 2. A proper VBUS pump circuit design can successfully filter this glitch out. I have
-> confirmed this with scope, which means some platforms might resolve issue in
-> this way already (some might not, of cause).
->
-> > Does this even need to be conditional? What would be the harm in doing
-> > this unconditionally for all DWC3 hosts?
->
-> From the logic level, I don't see a harm to DWC3 hosts if unconditionally apply this.
-> However, since this is not a only solution (can fix it in HW way), I prefer to let it
-> controlled by property in DTS node for those questionable board already existing
-> in market.
+Quote:
 
-Okay, sounds fine.
+"
+> Then you should have used them.
+Not necessary, the language used in the press release identifies them 
+easily.
 
-I would shorten the name a bit: snps,host-vbus-glitches
+> should
+As if I somehow can't just rescind using their names either.
 
-Rob
+License to use/modify/etc the GPC Slots 2 code is hereby terminated for. 
+Alex "Skud" Bayley, and Leigh Honeywell.
+(Note: this termination is not to be construed as a lifting of the 
+previously issued termination regarding the "Geek Feminism collective", 
+this termination is an addendum)
+
+--MikeeUSA-- (electronic signature :D )
+
+>> 1019403
+Their response is irrelevant.
+"
+
+Discussions with author of program involved:
+http://8ch.net/tech/res/1013409.html
+http://8ch.net/tech/res/1017824.html
+http://8ch.net/tech/res/1018729.html
+------------------------
+
+https://slashdot.org/submission/9087542/author-recinds-gpl
+
+------------------------
+p46 "As long as the project continues to honor the terms of the licenses 
+under which it recieved contributions, the licenses continue in effect. 
+There is one important caveat: Even a perpetual license can be revoked. 
+See the discussion of bare licenses and contracts in Chapter 4"
+--Lawrence Rosen
+
+p56 "A third problem with bare licenses is that they may be revocable by 
+the licensor. Specifically, /a license not coupled with an interest may 
+be revoked./ The term /interest/ in this context usually means the 
+payment of some royalty or license fee, but there are other more 
+complicated ways to satisfy the interest requirement. For example, a 
+licensee can demonstrate that he or she has paid some consideration-a 
+contract law term not found in copyright or patent law-in order to avoid 
+revocation. Or a licensee may claim that he or she relied on the 
+software licensed under an open source license and now is dependent upon 
+that software, but this contract law concept, called promissory 
+estoppel, is both difficult to prove and unreliable in court tests. (The 
+concepts of /consideration/ and /promissory estoppel/ are explained more 
+fully in the next section.) Unless the courts allow us to apply these 
+contract law principles to a license, we are faced with a bare license 
+that is revocable.
+--Lawrence Rosen
+
+p278 "Notice that in a copyright dispute over a bare license, the 
+plaintiff will almost certainly be the copyright owner. If a licensee 
+were foolish enough to sue to enforce the terms and conditions of the 
+license, the licensor can simply revoke the bare license, thus ending 
+the dispute. Remeber that a bare license in the absence of an interest 
+is revocable."
+--Lawrence Rosen
+
+Lawrence Rosen - Open Source Licensing - Sofware Freedom and 
+Intellectual property Law
+
+
+
+p65 "Of all the licenses descibed in this book, only the GPL makes the 
+explicity point that it wants nothing of /acceptance/ of 
+/consideration/:
+...
+The GPL authors intend that it not be treated as a contract. I will say 
+much more about this license and these two provisions in Chapter 6. For 
+now, I simply point out that the GPL licensors are in essentially the 
+same situation as other open source licensors who cannot prove offer, 
+acceptance, or consideration. There is no contract."
+--Lawrence Rosen
+
+------------------------
+> David McGowan, Professor of Law, University of Minnesota Law School:
+
+> "Termination of rights
+
+> [...] The most plausible assumption is that a developer who releases 
+> code under the GPL may terminate GPL rights, probably at will.
+
+> [...] My point is not that termination is a great risk, it is that it 
+> is not recognized as a risk even though it is probably relevant to 
+> commercial end-users, accustomed to having contractual rights they can 
+> enforce themselves.
+
