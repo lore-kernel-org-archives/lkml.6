@@ -2,151 +2,1124 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0DBFC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:03:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDE5AC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:04:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCD4E20879
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:03:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E16A20879
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:04:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="AT9LbDgN";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OoJvQnwP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="InzckP1K"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729055AbfAVPDD (ORCPT
+        id S1729010AbfAVPEH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 10:03:03 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:40796 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728353AbfAVPDD (ORCPT
+        Tue, 22 Jan 2019 10:04:07 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:42138 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728687AbfAVPEG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 10:03:03 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A54556074E; Tue, 22 Jan 2019 15:03:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548169381;
-        bh=6pR4WJEX9BrwhrjL8sF/7l6ind7XQnrqoNa0E6QRTgs=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=AT9LbDgNy92/MdUH9cS6pNida/us1FGZcsyiBTSnBa5PmaZ9WVlTGXkSb5vVbw7k4
-         MM1N+yJDQta21jc0EK/bzEAylq2DJ6mkKNmL+a6HMWMdrfXYHYbnO9/jH2iUKBvOHm
-         T3CFZsS2XnpC/3OCS+sFueEQIXWfC1vCpAUVVedU=
-Received: from [192.168.1.100] (unknown [157.49.207.12])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 656FA6044E;
-        Tue, 22 Jan 2019 15:02:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548169380;
-        bh=6pR4WJEX9BrwhrjL8sF/7l6ind7XQnrqoNa0E6QRTgs=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=OoJvQnwPOCRW+AYRzCS10erMp1zqlgtu0wE7+N6EWQETZyPjlLHbOV4pQ8EKvPq0m
-         VyUPbNbJdg4cLSx+GcJlXWvrf/WzJEa5zPE5Zrq/8mEWpqzk6jELf7KuUHf+pkAAd0
-         pXX7wBRClhNRlH9MAM+KCxWyzDrXZLhtsNCk5eWg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 656FA6044E
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
-Subject: Re: [PATCHv4 1/4] arm64: dts: qcom: sdm845: Add Coresight support
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>, robh+dt@kernel.org,
-        mathieu.poirier@linaro.org, leo.yan@linaro.org,
-        alexander.shishkin@linux.intel.com, andy.gross@linaro.org,
-        david.brown@linaro.org, vivek.gautam@codeaurora.org,
-        dianders@chromium.org, sboyd@kernel.org,
-        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
-        mark.rutland@arm.com
-Cc:     rnayak@codeaurora.org, sibis@codeaurora.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-References: <cover.1548133311.git.saiprakash.ranjan@codeaurora.org>
- <ad16cfb9b6f5efb85149458d5f5a1abf43fa027c.1548133311.git.saiprakash.ranjan@codeaurora.org>
- <1bd39862-0725-70ce-6535-fdb59569f683@arm.com>
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Message-ID: <75ed74af-6946-b86d-092e-42dc16e55308@codeaurora.org>
-Date:   Tue, 22 Jan 2019 20:32:51 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 22 Jan 2019 10:04:06 -0500
+Received: by mail-qk1-f195.google.com with SMTP id 68so14355110qke.9
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 07:04:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uELdlL+RMh/lhRJ6EWAkBB741dhRoRpVPdN17hDDtUM=;
+        b=InzckP1KVP7A42GnW4eWkmFWZuHLkJ7Xab9Df+pVI/VxQIoKO6PdC8g8oHR32F9dBW
+         qhQ0D4UUaZA7Ky5WTErgBMHWI2F9ia+gG2AA3wOUWrusxxRXe7kIz0LE/AiZjBk6xGxr
+         XPCOmEvTBQ9tNkZKK35XrFZ/JB+iWpRmveB4HZi7ObG8gF4P9JqlbG4eCt4hdB4v+CeG
+         G1TmR1MrWVSJXB8jqvYNv3VCDrzKuIEQnK3Q52a6t2KAfTE/ab5NJUrpVwWBQ6EmhhY4
+         aKG8wAij04xRwyq3FflRnglENZahfTdCdSL1itDqEeX0BA9sVosRZrFh6Q5Y9PKPNKVu
+         dI9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uELdlL+RMh/lhRJ6EWAkBB741dhRoRpVPdN17hDDtUM=;
+        b=ND0tvD/r93W429n9C4eC/vSdyhXvTsd1LOsB/DS6hqCaEaIUVYgLLhU/aUJ6kNN6+G
+         FAo2uLP9t66+q41d4c8rspTAHNll7AFqZoATwCvZajYdeEaiv2PQ+Pp2X9LRRU+ppDfy
+         uNn5VKhjZFjLKh2RPMPhpha3Xlj802M9zfqoOdA1VaMwdnFK6+0zX47WMmW6XYfpx/v2
+         YAkn1CVAY8i9p0pwnVBG22VnIw71eroHr6Wbj/3W4BtKMRtB+fMyrObyzDPeQIlY3AkH
+         S6X+02n7rJ8XvRX3HMDf6ql/rpN86bsZo9n1yRVRnUT0+DIhVU0qfBlt+HIkMt/R60G6
+         xydg==
+X-Gm-Message-State: AJcUukeeUeBciOi86YJqrFjlodenuTed5u+D+N9mGRslg13P9rV5ValQ
+        C0HVQYp7T+LAUu7qRRZhaNwnfGXAGvjOQuzcpMo=
+X-Google-Smtp-Source: ALg8bN62ilBdPVa+Lvp5PoXUYB7SDWPJzXRsup4w20CKY5MgtffPZIoIUaQ4yMSC10lXIldknKuIHf5EEV3DQJqLKZQ=
+X-Received: by 2002:a37:cf9b:: with SMTP id v27mr27934719qkl.160.1548169443890;
+ Tue, 22 Jan 2019 07:04:03 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1bd39862-0725-70ce-6535-fdb59569f683@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190119001422.48186-1-ncrews@chromium.org> <20190119001422.48186-9-ncrews@chromium.org>
+In-Reply-To: <20190119001422.48186-9-ncrews@chromium.org>
+From:   Enric Balletbo Serra <eballetbo@gmail.com>
+Date:   Tue, 22 Jan 2019 16:03:52 +0100
+Message-ID: <CAFqH_51J2iNajVu1UfHnKfutU=Vfbyy9W8fA1cy-1+7aP2nN7w@mail.gmail.com>
+Subject: Re: [PATCH v3 8/9] platform/chrome: Add peakshift and adv_batt_charging
+To:     Nick Crews <ncrews@chromium.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Simon Glass <sjg@chromium.org>,
+        Daniel Kurtz <djkurtz@google.com>, dlaurie@chromium.org,
+        Nick Crews <ncrews@google.com>,
+        Duncan Laurie <dlaurie@google.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Benson Leung <bleung@chromium.org>,
+        Sebastian Reichel <sre@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Suzuki,
+Hi Nick,
 
-Thanks for looking into this. Please find my response inline.
+I'd like to have some feedback from power-supply subsystem if it's possible,
+so adding Sebastian. Don't forget to add him for the next versions.
 
-On 1/22/2019 7:30 PM, Suzuki K Poulose wrote:
-> Hi Sai,
-> 
-> On 01/22/2019 01:37 PM, Sai Prakash Ranjan wrote:
->> Add coresight components found on Qualcomm SDM845 SoC.
->>
->> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
->>
-> 
-> Sorry, but I hadn't noticed the PID override strings below. Please
-> find the question.
+Missatge de Nick Crews <ncrews@chromium.org> del dia ds., 19 de gen.
+2019 a les 1:15:
 >
-[..]
-
->> +        /*
->> +         * On QCOM SDM845, we bypass the normal AMBA bus discovery
->> +         * method by forcing the peripheral ID because of the wrong
->> +         * value read from ETM PID registers.
->> +         */
-> 
-> What is the value read back from the ETM PIDx registers ? Do they
-> provide inconsistent or incompatible value w.r.t the ETM/Coresight
-> architecture ? If it is an unsupported CPU with proper values,
-> you must add them to the table in etm4x driver.
-> 
-
-The values read from ETM PIDx registers are actually inconsistent
-and is different for some ETMs.
-
-Below are the PIDs read for SDM845:
-
-[    5.996448] resname=etm@7040000 pid=001bb803
-[    6.052891] resname=etm@7140000 pid=001bb803
-
-<snip> .. (Same pid=001bb803 for etm@7240000 to etm@7540000 but differs
-for other 2 cpus as shown below)
-
-[    6.266687] resname=etm@7640000 pid=001bb802
-[    6.329171] resname=etm@7740000 pid=001bb802
-
-This is the case for MSM8996 also as shown below where PID
-value is not correct and has to be hardcoded.
-
-For MSM8996:
-
-resname=etm@3b40000 pid=102f0205
-
->> +        etm@7040000 {
->> +            compatible = "arm,coresight-etm4x", "arm,primecell";
->> +            arm,primecell-periphid = <0x000bb95d> > +            reg 
->> = <0 0x07040000 0 0x1000>;
->> +
->> +            cpu = <&CPU0>;
->> +
-> 
-> You seem to be specifying the PID of A53 ETM all over, while at least
-> one of your cores is ETMv4.2 (from the other patch) and A53 is not
-> ETMv4.2. As above, it would be good to add the PID to the table.
-> 
-
-As explained in above comment, PID values read are not correct. Please 
-let me know if I am not clear.
-
-Thanks,
-Sai
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+> From: Nick Crews <ncrews@google.com>
+>
+> Create "peakshift" and "advanced_battery_charging" directories
+> within the "properties" directory, and create the relevant
+> attributes within these. These properties have to do with
+> configuring some of the advanced power management options that
+> prolong battery health and reduce energy use at peak hours
+> of the day.
+>
+> Scheduling events uses a 24 hour clock, and only supports time
+> intervals of 15 minutes. For example, to set
+> advanced_battery_charging to start at 4:15pm and to last for
+> 6 hours and 45 minutes, you would use the argument "16 15 6 45".
+>
+> > cd /sys/bus/platform/devices/GOOG000C\:00
+> > cat properties/peakshift/peakshift_battery_threshold
+> > 015
+> [means 15 percent]
+> > cat properties/peakshift/peakshift_monday
+> 16 00 20 30 00 00
+> [starts at 4:00 pm, ends at 8:30, charging resumes at midnight]
+> > echo "16 00 20 31 00 00" > properties/peakshift/peakshift_monday
+> -bash: echo: write error: Invalid argument
+> > dmesg | tail -n1
+> [40.34534] wilco_ec GOOG00C:00: minutes must be at the quarter hour
+> > echo "16 0 20 45 0 0" > properties/peakshift/peakshift_monday
+> > cat properties/peakshift/peakshift_monday
+> 16 00 20 45 00 00
+>
+> Signed-off-by: Nick Crews <ncrews@google.com>
+> Signed-off-by: Nick Crews <ncrews@chromium.org>
+> ---
+>
+> Changes in v3:
+> - rm some useless references to internal docs from documentation
+>
+> Changes in v2:
+> - rm license boiler plate
+> - rm "wilco_ec_adv_power - " prefix from docstring
+> - Add documentation
+> - make format strings in read() and store() functions static
+>
+>  .../ABI/testing/sysfs-platform-wilco-ec       |  88 +++
+>  drivers/platform/chrome/wilco_ec/Makefile     |   3 +-
+>  drivers/platform/chrome/wilco_ec/adv_power.c  | 544 ++++++++++++++++++
+>  drivers/platform/chrome/wilco_ec/adv_power.h  | 183 ++++++
+>  drivers/platform/chrome/wilco_ec/sysfs.c      | 104 ++++
+>  5 files changed, 921 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/platform/chrome/wilco_ec/adv_power.c
+>  create mode 100644 drivers/platform/chrome/wilco_ec/adv_power.h
+>
+> diff --git a/Documentation/ABI/testing/sysfs-platform-wilco-ec b/Documentation/ABI/testing/sysfs-platform-wilco-ec
+> index aadb29a17a47..bac3340c9d90 100644
+> --- a/Documentation/ABI/testing/sysfs-platform-wilco-ec
+> +++ b/Documentation/ABI/testing/sysfs-platform-wilco-ec
+> @@ -106,3 +106,91 @@ Description:
+>
+>                 Input should be parseable by kstrtobool().
+>                 Output will be either "0\n" or "1\n".
+> +
+> +What:          /sys/bus/platform/devices/GOOG000C\:00/properties/peakshift/<day of week>
+> +Date:          January 2019
+> +KernelVersion: 4.19
+> +Description:
+> +               For each weekday a start and end time to run in Peak Shift mode
+> +               can be set. During these times the system will run from the
+> +               battery even if the AC is attached as long as the battery stays
+> +               above the threshold specified. After the end time specified the
+> +               system will run from AC if attached but will not charge the
+> +               battery. The system will again function normally using AC and
+> +               recharging the battery after the specified Charge Start time.
+> +
+> +               The input buffer must have the format "start_hr start_min end_hr
+> +               end_min charge_start_hr charge_start_min" The hour fields must
+> +               be in the range [0-23], and the minutes must be one of (0, 15,
+> +               30, 45). The string must be parseable by sscanf() using the
+> +               format string "%d %d %d %d %d %d". An example valid input is
+> +               "6 15   009 45 23 0", which corresponds to 6:15, 9:45, and 23:00
+> +
+> +               The output buffer will be filled with the format "start_hr
+> +               start_min end_hr end_min charge_start_hr charge_start_min" The
+> +               hour fields will be in the range [0-23], and the minutes will be
+> +               one of (0, 15, 30, 45). Each number will be zero padded to two
+> +               characters. An example output is "06 15 09 45 23 00", which
+> +               corresponds to 6:15, 9:45, and 23:00
+> +
+> +What:          /sys/bus/platform/devices/GOOG000C\:00/properties/peakshift/enable
+> +Date:          January 2019
+> +KernelVersion: 4.19
+> +Description:
+> +               Enable/disable the peakshift power management policy.
+> +
+> +               Input should be parseable by kstrtobool().
+> +               Output will be either "0\n" or "1\n".
+> +
+> +What:          /sys/bus/platform/devices/GOOG000C\:00/properties/peakshift/battery_threshold
+> +Date:          January 2019
+> +KernelVersion: 4.19
+> +Description:
+> +               Read/write the battery percentage threshold for which the
+> +               peakshift policy is used. The valid range is [15, 50].
+> +
+> +               Input should be parseable to range [15,50] by kstrtou8().
+> +               Output will be two-digit ascii number in range [15, 50].
+> +
+> +What:          /sys/bus/platform/devices/GOOG000C\:00/properties/advanced_battery_charging/<day of week>
+> +Date:          January 2019
+> +KernelVersion: 4.19
+> +Description:
+> +               Advanced Charging Mode allows the user to maximize the battery
+> +               health. In Advanced Charging Mode the system will use standard
+> +               charging algorithm and other techniques during non-work hours to
+> +               maximize battery health. During work hours, an express charge is
+> +               used. This express charge allows the battery to be charged
+> +               faster; therefore, the battery is at full charge sooner. For
+> +               each day the time in which the system will be most heavily used
+> +               is specified by the start time and the duration.
+> +
+> +               The input buffer must have the format "start_hr start_min
+> +               duration_hr duration_min" The hour fields must be in the range
+> +               [0-23], and the minutes must be one of (0, 15, 30, 45). The
+> +               string must be parseable by sscanf() using the format string
+> +               "%d %d %d %d %d %d". An example valid input is "0006 15  23 45",
+> +               which corresponds to a start time of 6:15 and a duration of
+> +               23:45.
+> +
+> +               The output buffer will be filled with the format "start_hr
+> +               start_min duration_hr duration_min" The hour fields will be in
+> +               the range [0-23], and the minutes will be one of (0, 15, 30,
+> +               45). Each number will be zero padded to two characters. An
+> +               example output is "06 15 23 45", which corresponds to a start
+> +               time of 6:15 and a duration of 23:45
+> +
+> +What:          /sys/bus/platform/devices/GOOG000C\:00/properties/advanced_battery_charging/enable
+> +Date:          January 2019
+> +KernelVersion: 4.19
+> +Description:
+> +               Enable/disable the Advanced Battery Charging policy.
+> +
+> +               Input should be parseable by kstrtobool().
+> +               Output will be either "0\n" or "1\n".
+> +
+> +What:          /sys/bus/platform/devices/GOOG000C\:00/telemetry
+> +Date:          January 2019
+> +KernelVersion: 4.19
+> +Description:
+> +               Send and receive opaque binary telemetry data to/from the EC.
+> diff --git a/drivers/platform/chrome/wilco_ec/Makefile b/drivers/platform/chrome/wilco_ec/Makefile
+> index a271ef497b39..23378d9469a8 100644
+> --- a/drivers/platform/chrome/wilco_ec/Makefile
+> +++ b/drivers/platform/chrome/wilco_ec/Makefile
+> @@ -1,5 +1,6 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>
+>  wilco_ec-objs                          := core.o mailbox.o debugfs.o sysfs.o \
+> -                                          legacy.o event.o properties.o
+> +                                          legacy.o event.o properties.o \
+> +                                          adv_power.o
+>  obj-$(CONFIG_WILCO_EC)                 += wilco_ec.o
+> diff --git a/drivers/platform/chrome/wilco_ec/adv_power.c b/drivers/platform/chrome/wilco_ec/adv_power.c
+> new file mode 100644
+> index 000000000000..a26920235294
+> --- /dev/null
+> +++ b/drivers/platform/chrome/wilco_ec/adv_power.c
+> @@ -0,0 +1,544 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * peakshift and adv_batt_charging config of Wilco EC
+> + *
+> + * Copyright 2018 Google LLC
+> + *
+> + * Peakshift:
+> + * For each weekday a start and end time to run in Peak Shift mode can be set.
+> + * During these times the system will run from the battery even if the AC is
+> + * attached as long as the battery stays above the threshold specified.
+> + * After the end time specified the system will run from AC if attached but
+> + * will not charge the battery. The system will again function normally using AC
+> + * and recharging the battery after the specified Charge Start time.
+> + *
+> + * Advanced Charging Mode:
+> + * Advanced Charging Mode allows the user to maximize the battery health.
+> + * In Advanced Charging Mode the system will use standard charging algorithm and
+> + * other techniques during non-work hours to maximize battery health.
+> + * During work hours, an express charge is used. This express charge allows the
+> + * battery to be charged faster; therefore, the battery is at
+> + * full charge sooner. For each day the time in which the system will be most
+> + * heavily used is specified by the start time and the duration.
+> + * Please read the Common UEFI BIOS Behavioral Specification and
+> + * BatMan 2 BIOS_EC Specification for more details about this feature.
+> + */
+> +
+> +#include <linux/kobject.h>
+> +#include <linux/device.h>
+> +#include <linux/platform_data/wilco-ec.h>
+> +
+> +#include "adv_power.h"
+> +#include "properties.h"
+> +#include "util.h"
+> +
+> +struct adv_batt_charging_data {
+> +       int duration_hours;
+> +       int duration_minutes;
+> +       int start_hours;
+> +       int start_minutes;
+> +};
+> +
+> +struct peakshift_data {
+> +       int start_hours;
+> +       int start_minutes;
+> +       int end_hours;
+> +       int end_minutes;
+> +       int charge_start_hours;
+> +       int charge_start_minutes;
+> +};
+> +
+> +/**
+> + * struct time_bcd_format - spec for binary coded decimal time format
+> + * @hour_position: how many bits left within the byte is the hour
+> + * @minute_position: how many bits left within the byte is the minute
+> + *
+> + * Date and hour information is passed to/from the EC using packed bytes,
+> + * where each byte represents an hour and a minute that some event occurs.
+> + * The minute field always happens at quarter-hour intervals, so either
+> + * 0, 15, 20, or 45. This allows this info to be packed within 2 bits.
+> + * Along with the 5 bits of hour info [0-23], this gives us 7 used bits
+> + * within each packed byte. The annoying thing is that the PEAKSHIFT and
+> + * ADVANCED_BATTERY_CHARGING properties pack these 7 bits differently,
+> + * hence this struct.
+> + */
+> +struct time_bcd_format {
+> +       u8 hour_position;
+> +       u8 minute_position;
+> +};
+> +
+> +const struct time_bcd_format PEAKSHIFT_BCD_FORMAT = {
+> +                            // bit[0] is unused
+> +       .hour_position = 1,  // bits[1:7]
+> +       .minute_position = 6 // bits[6:8]
+> +};
+> +
+> +const struct time_bcd_format ADV_BATT_CHARGING_BCD_FORMAT = {
+> +       .minute_position = 0, // bits[0:2]
+> +       .hour_position = 2    // bits[2:7]
+> +                             // bit[7] is unused
+> +};
+> +
+> +/**
+> + * struct peakshift_payload - The formatted peakshift time sent/received by EC.
+> + * @start_time: packed byte of hour and minute info
+> + * @end_time: packed byte of hour and minute info
+> + * @charge_start_time: packed byte of hour and minute info
+> + * @RESERVED: an unused padding byte
+> + */
+> +struct peakshift_payload {
+> +       u8 start_time;
+> +       u8 end_time;
+> +       u8 charge_start_time;
+> +       u8 RESERVED;
+> +} __packed;
+> +
+> +struct adv_batt_charging_payload {
+> +       u16 RESERVED;
+> +       u8 duration_time;
+> +       u8 start_time;
+> +} __packed;
+> +
+> +/**
+> + * extract_quarter_hour() - Convert from literal minutes to quarter hour.
+> + * @minutes: Literal minutes value. Needs to be one of {0, 15, 30, 45}
+> + *
+> + * Return one of {0, 1, 2, 3} for each of {0, 15, 30, 45}, or -EINVAL on error.
+> + */
+> +static int extract_quarter_hour(int minutes)
+> +{
+> +       if ((minutes < 0) || (minutes > 45) || minutes % 15)
+> +               return -EINVAL;
+> +       return minutes / 15;
+> +}
+> +
+> +static int check_adv_batt_charging_data(struct device *dev,
+> +                                       struct adv_batt_charging_data *data)
+> +{
+> +       if (data->start_hours < 0 || data->start_hours > 23) {
+> +               dev_err(dev, "start_hours must be in [0-23], got %d",
+> +                       data->start_hours);
+> +               return -EINVAL;
+> +       }
+> +       if (data->duration_hours < 0 || data->duration_hours > 23) {
+> +               dev_err(dev, "duration_hours must be in [0-23], got %d",
+> +                       data->duration_hours);
+> +               return -EINVAL;
+> +       }
+> +       if (data->start_minutes < 0 || data->start_minutes > 59) {
+> +               dev_err(dev, "start_minutes must be in [0-59], got %d",
+> +                       data->start_minutes);
+> +               return -EINVAL;
+> +       }
+> +       if (data->duration_minutes < 0 || data->duration_minutes > 59) {
+> +               dev_err(dev, "duration_minutes must be in [0-59], got %d",
+> +                       data->duration_minutes);
+> +               return -EINVAL;
+> +       }
+> +       return 0;
+> +}
+> +
+> +static int check_peakshift_data(struct device *dev, struct peakshift_data *data)
+> +{
+> +       if (data->start_hours < 0 || data->start_hours > 23) {
+> +               dev_err(dev, "start_hours must be in [0-23], got %d",
+> +                       data->start_hours);
+> +               return -EINVAL;
+> +       }
+> +       if (data->end_hours < 0 || data->end_hours > 23) {
+> +               dev_err(dev, "end_hours must be in [0-23], got %d",
+> +                       data->end_hours);
+> +               return -EINVAL;
+> +       }
+> +       if (data->charge_start_hours < 0 || data->charge_start_hours > 23) {
+> +               dev_err(dev, "charge_start_hours must be in [0-23], got %d",
+> +                       data->charge_start_hours);
+> +               return -EINVAL;
+> +       }
+> +       if (data->start_minutes < 0 || data->start_minutes > 59) {
+> +               dev_err(dev, "start_minutes must be in [0-59], got %d",
+> +                       data->start_minutes);
+> +               return -EINVAL;
+> +       }
+> +       if (data->end_minutes < 0 || data->end_minutes > 59) {
+> +               dev_err(dev, "end_minutes must be in [0-59], got %d",
+> +                       data->end_minutes);
+> +               return -EINVAL;
+> +       }
+> +       if (data->charge_start_minutes < 0 || data->charge_start_minutes > 59) {
+> +               dev_err(dev, "charge_start_minutes must be in [0-59], got %d",
+> +                       data->charge_start_minutes);
+> +               return -EINVAL;
+> +       }
+> +       return 0;
+> +}
+> +
+> +/**
+> + * pack_field() - Pack hour and minute info into a byte.
+> + *
+> + * @fmt: The format for how to place the info within the byte
+> + * @hours: In range [0-23]
+> + * @quarter_hour: In range [0-3], representing :00, :15, :30, and :45
+> + *
+> + * Return the packed byte.
+> + */
+> +static u8 pack_field(struct time_bcd_format fmt, int hours, int quarter_hour)
+> +{
+> +       int result = 0;
+> +
+> +       result |= hours << fmt.hour_position;
+> +       result |= quarter_hour << fmt.minute_position;
+> +       return (u8) result;
+> +}
+> +
+> +/**
+> + * unpack_field() - Extract hour and minute info from a byte.
+> + *
+> + * @fmt: The format for how to place the info within the byte
+> + * @field: Byte which contains the packed info
+> + * @hours: The value to be filled, in [0, 24]
+> + * @quarter_hour: to be filled in range [0-3], meaning :00, :15, :30, and :45
+> + */
+> +static void unpack_field(struct time_bcd_format fmt, u8 field, int *hours,
+> +                        int *quarter_hour)
+> +{
+> +       *hours =        (field >> fmt.hour_position)   & 0x1f; // 00011111
+> +       *quarter_hour = (field >> fmt.minute_position) & 0x03; // 00000011
+> +}
+> +
+> +static void pack_adv_batt_charging(struct adv_batt_charging_data *data,
+> +                    struct adv_batt_charging_payload *payload)
+> +{
+> +       payload->start_time = pack_field(ADV_BATT_CHARGING_BCD_FORMAT,
+> +                                        data->start_hours,
+> +                                        data->start_minutes);
+> +       payload->duration_time = pack_field(ADV_BATT_CHARGING_BCD_FORMAT,
+> +                                      data->duration_hours,
+> +                                      data->duration_minutes);
+> +}
+> +
+> +static void unpack_adv_batt_charging(struct adv_batt_charging_data *data,
+> +                      struct adv_batt_charging_payload *payload)
+> +{
+> +       unpack_field(ADV_BATT_CHARGING_BCD_FORMAT, payload->start_time,
+> +                    &(data->start_hours),
+> +                    &(data->start_minutes));
+> +       unpack_field(ADV_BATT_CHARGING_BCD_FORMAT, payload->duration_time,
+> +                    &(data->duration_hours),
+> +                    &(data->duration_minutes));
+> +}
+> +
+> +static void pack_peakshift(struct peakshift_data *data,
+> +                          struct peakshift_payload *payload)
+> +{
+> +       payload->start_time = pack_field(PEAKSHIFT_BCD_FORMAT,
+> +                                        data->start_hours,
+> +                                        data->start_minutes);
+> +       payload->end_time = pack_field(PEAKSHIFT_BCD_FORMAT,
+> +                                      data->end_hours,
+> +                                      data->end_minutes);
+> +       payload->charge_start_time = pack_field(PEAKSHIFT_BCD_FORMAT,
+> +                                               data->charge_start_hours,
+> +                                               data->charge_start_minutes);
+> +}
+> +
+> +static void unpack_peakshift(struct peakshift_data *data,
+> +                            struct peakshift_payload *payload)
+> +{
+> +       unpack_field(PEAKSHIFT_BCD_FORMAT, payload->start_time,
+> +                    &(data->start_hours),
+> +                    &(data->start_minutes));
+> +       unpack_field(PEAKSHIFT_BCD_FORMAT, payload->end_time,
+> +                    &(data->end_hours),
+> +                    &(data->end_minutes));
+> +       unpack_field(PEAKSHIFT_BCD_FORMAT, payload->charge_start_time,
+> +                    &(data->charge_start_hours),
+> +                    &(data->charge_start_minutes));
+> +}
+> +
+> +ssize_t wilco_ec_peakshift_show(struct kobject *kobj,
+> +                               struct kobj_attribute *attr, char *buf)
+> +{
+> +       struct property_attribute *prop_attr;
+> +       struct device *dev;
+> +       struct wilco_ec_device *ec;
+> +       struct peakshift_payload payload;
+> +       struct peakshift_data data;
+> +       static const char FORMAT[] = "%02d %02d %02d %02d %02d %02d\n";
+> +       const int OUT_LENGTH = 18; //six 2-char nums, 5 spaces, 1 newline
+> +       int ret;
+> +
+> +       if (OUT_LENGTH + 1 > PAGE_SIZE)
+> +               return -ENOBUFS; //no buffer space for message + null
+> +
+> +       prop_attr = container_of(attr, struct property_attribute, kobj_attr);
+> +       dev = device_from_kobject(kobj);
+> +       ec = dev_get_drvdata(dev);
+> +
+> +       /* get the raw payload of data from the EC */
+> +       ret = wilco_ec_get_property(ec, prop_attr->pid, sizeof(payload),
+> +                                   (u8 *) &payload);
+> +       if (ret < 0) {
+> +               dev_err(dev, "error in wilco_ec_mailbox()");
+> +               return ret;
+> +       }
+> +
+> +       /* unpack raw bytes, and convert quarter-hour to literal minute */
+> +       unpack_peakshift(&data, &payload);
+> +       data.start_minutes *= 15;
+> +       data.end_minutes *= 15;
+> +       data.charge_start_minutes *= 15;
+> +
+> +       /* Check that the EC returns good data */
+> +       ret = check_peakshift_data(dev, &data);
+> +       if (ret < 0) {
+> +               dev_err(dev, "EC returned out of range minutes or hours");
+> +               return -EBADMSG;
+> +       }
+> +
+> +       /* Print the numbers to the string */
+> +       ret = scnprintf(buf, OUT_LENGTH+1, FORMAT,
+> +                       data.start_hours,
+> +                       data.start_minutes,
+> +                       data.end_hours,
+> +                       data.end_minutes,
+> +                       data.charge_start_hours,
+> +                       data.charge_start_minutes);
+> +       if (ret != OUT_LENGTH) {
+> +               dev_err(dev, "expected to write %d chars, wrote %d", OUT_LENGTH,
+> +                       ret);
+> +               return -EIO;
+> +       }
+> +
+> +       return OUT_LENGTH;
+> +}
+> +
+> +ssize_t wilco_ec_peakshift_store(struct kobject *kobj,
+> +                                struct kobj_attribute *attr, const char *buf,
+> +                                size_t count)
+> +{
+> +       struct property_attribute *prop_attr;
+> +       struct device *dev;
+> +       struct wilco_ec_device *ec;
+> +       struct peakshift_data data;
+> +       struct peakshift_payload payload;
+> +       static const char FORMAT[] = "%d %d %d %d %d %d";
+> +       int ret;
+> +
+> +       prop_attr = container_of(attr, struct property_attribute, kobj_attr);
+> +       dev = device_from_kobject(kobj);
+> +       ec = dev_get_drvdata(dev);
+> +
+> +       /* Extract our 6 numbers from the input string */
+> +       ret = sscanf(buf, FORMAT,
+> +                    &data.start_hours,
+> +                    &data.start_minutes,
+> +                    &data.end_hours,
+> +                    &data.end_minutes,
+> +                    &data.charge_start_hours,
+> +                    &data.charge_start_minutes);
+> +       if (ret != 6) {
+> +               dev_err(dev, "unable to parse '%s' into 6 integers", buf);
+> +               return -EINVAL;
+> +       }
+> +
+> +       /* Ensure the integers we parsed are valid */
+> +       ret = check_peakshift_data(dev, &data);
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       /* Convert the literal minutes to which quarter hour they represent */
+> +       data.start_minutes = extract_quarter_hour(data.start_minutes);
+> +       if (data.start_minutes < 0)
+> +               goto bad_minutes;
+> +       data.end_minutes = extract_quarter_hour(data.end_minutes);
+> +       if (data.end_minutes < 0)
+> +               goto bad_minutes;
+> +       data.charge_start_minutes = extract_quarter_hour(
+> +                                               data.charge_start_minutes);
+> +       if (data.charge_start_minutes < 0)
+> +               goto bad_minutes;
+> +
+> +       /* Create the raw byte payload and send it off */
+> +       pack_peakshift(&data, &payload);
+> +       wilco_ec_set_property(ec, OP_SET, prop_attr->pid, sizeof(payload),
+> +                             (u8 *) &payload);
+> +
+> +       return count;
+> +
+> +bad_minutes:
+> +       dev_err(dev, "minutes must be at the quarter hour");
+> +       return -EINVAL;
+> +}
+> +
+> +ssize_t wilco_ec_peakshift_batt_thresh_show(struct kobject *kobj,
+> +                                           struct kobj_attribute *attr,
+> +                                           char *buf)
+> +{
+> +       struct device *dev;
+> +       struct wilco_ec_device *ec;
+> +       static const char FORMAT[] = "%02d\n";
+> +       size_t RESULT_LENGTH = 3; /* 2-char number and newline */
+> +       u8 percent;
+> +       int ret;
+> +
+> +       dev = device_from_kobject(kobj);
+> +       ec = dev_get_drvdata(dev);
+> +
+> +       ret = wilco_ec_get_property(ec, PID_PEAKSHIFT_BATTERY_THRESHOLD, 1,
+> +                                   &percent);
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       if (percent < 15 || percent > 50) {
+> +               dev_err(ec->dev, "expected 15 < percentage < 50, got %d",
+> +                       percent);
+> +               return -EBADMSG;
+> +       }
+> +
+> +       scnprintf(buf, RESULT_LENGTH+1, FORMAT, percent);
+> +
+> +       return RESULT_LENGTH;
+> +}
+> +
+> +ssize_t wilco_ec_peakshift_batt_thresh_store(struct kobject *kobj,
+> +                                            struct kobj_attribute *attr,
+> +                                            const char *buf, size_t count)
+> +{
+> +       struct device *dev;
+> +       struct wilco_ec_device *ec;
+> +       u8 DECIMAL_BASE = 10;
+> +       u8 percent;
+> +       int ret;
+> +
+> +       dev = device_from_kobject(kobj);
+> +       ec = dev_get_drvdata(dev);
+> +
+> +
+> +       ret = kstrtou8(buf, DECIMAL_BASE, &percent);
+> +       if (ret) {
+> +               dev_err(dev, "unable to parse '%s' to u8", buf);
+> +               return ret;
+> +       }
+> +
+> +       if (percent < 15 || percent > 50) {
+> +               dev_err(dev, "require 15 < batt_thresh_percent < 50, got %d",
+> +                       percent);
+> +               return -EINVAL;
+> +       }
+> +
+> +       ret = wilco_ec_set_property(ec, OP_SET, PID_PEAKSHIFT_BATTERY_THRESHOLD,
+> +                                   1, &percent);
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       return count;
+> +}
+> +
+> +ssize_t wilco_ec_abc_show(struct kobject *kobj, struct kobj_attribute *attr,
+> +                         char *buf)
+> +{
+> +       struct property_attribute *prop_attr;
+> +       struct device *dev;
+> +       struct wilco_ec_device *ec;
+> +       struct adv_batt_charging_payload payload;
+> +       struct adv_batt_charging_data data;
+> +       static const char FORMAT[] = "%02d %02d %02d %02d\n";
+> +       const int OUT_LENGTH = 12; //four 2-char nums, 3 spaces, 1 newline
+> +       int ret;
+> +
+> +       prop_attr = container_of(attr, struct property_attribute, kobj_attr);
+> +       dev = device_from_kobject(kobj);
+> +       ec = dev_get_drvdata(dev);
+> +
+> +
+> +       if (OUT_LENGTH + 1 > PAGE_SIZE)
+> +               return -ENOBUFS; //no buffer space for message + null
+> +
+> +       /* get the raw payload of data from the EC */
+> +       ret = wilco_ec_get_property(ec, prop_attr->pid, sizeof(payload),
+> +                                   (u8 *) &payload);
+> +       if (ret < 0) {
+> +               dev_err(dev, "error in wilco_ec_mailbox()");
+> +               return ret;
+> +       }
+> +
+> +       /* unpack raw bytes, and convert quarter-hour to literal minute */
+> +       unpack_adv_batt_charging(&data, &payload);
+> +       data.start_minutes *= 15;
+> +       data.duration_minutes *= 15;
+> +
+> +       // /* Is this needed? can we assume the EC returns good data? */
+> +       // EC is returning 00 00 27 30. Was this modified, or is EC weird
+> +       // out of the box?
+> +       ret = check_adv_batt_charging_data(dev, &data);
+> +       if (ret < 0) {
+> +               dev_err(dev, "EC returned out of range minutes or hours");
+> +               return -EBADMSG;
+> +       }
+> +
+> +       /* Print the numbers to the string */
+> +       ret = scnprintf(buf, OUT_LENGTH+1, FORMAT,
+> +                       data.start_hours,
+> +                       data.start_minutes,
+> +                       data.duration_hours,
+> +                       data.duration_minutes);
+> +       if (ret != OUT_LENGTH) {
+> +               dev_err(dev, "expected to write %d chars, wrote %d", OUT_LENGTH,
+> +                       ret);
+> +               return -EIO;
+> +       }
+> +
+> +       return OUT_LENGTH;
+> +}
+> +
+> +ssize_t wilco_ec_abc_store(struct kobject *kobj, struct kobj_attribute *attr,
+> +                          const char *buf, size_t count)
+> +{
+> +       struct property_attribute *prop_attr;
+> +       struct device *dev;
+> +       struct wilco_ec_device *ec;
+> +       struct adv_batt_charging_data data;
+> +       struct adv_batt_charging_payload payload;
+> +       static const char FORMAT[] = "%d %d %d %d";
+> +       int ret;
+> +
+> +       prop_attr = container_of(attr, struct property_attribute, kobj_attr);
+> +       dev = device_from_kobject(kobj);
+> +       ec = dev_get_drvdata(dev);
+> +
+> +       /* Extract our 4 numbers from the input string */
+> +       ret = sscanf(buf, FORMAT,
+> +                    &data.start_hours,
+> +                    &data.start_minutes,
+> +                    &data.duration_hours,
+> +                    &data.duration_minutes);
+> +       if (ret != 4) {
+> +               dev_err(dev, "unable to parse '%s' into 4 integers", buf);
+> +               return -EINVAL;
+> +       }
+> +
+> +       /* Ensure the integers we parsed are valid */
+> +       ret = check_adv_batt_charging_data(dev, &data);
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       /* Convert the literal minutes to which quarter hour they represent */
+> +       data.start_minutes = extract_quarter_hour(data.start_minutes);
+> +       if (data.start_minutes < 0)
+> +               goto bad_minutes;
+> +       data.duration_minutes = extract_quarter_hour(data.duration_minutes);
+> +       if (data.duration_minutes < 0)
+> +               goto bad_minutes;
+> +
+> +       /* Create the raw byte payload and send it off */
+> +       pack_adv_batt_charging(&data, &payload);
+> +       wilco_ec_set_property(ec, OP_SET, prop_attr->pid, sizeof(payload),
+> +                             (u8 *) &payload);
+> +
+> +       return count;
+> +
+> +bad_minutes:
+> +       dev_err(dev, "minutes must be at the quarter hour");
+> +       return -EINVAL;
+> +}
+> diff --git a/drivers/platform/chrome/wilco_ec/adv_power.h b/drivers/platform/chrome/wilco_ec/adv_power.h
+> new file mode 100644
+> index 000000000000..6fd64c6dac8f
+> --- /dev/null
+> +++ b/drivers/platform/chrome/wilco_ec/adv_power.h
+> @@ -0,0 +1,183 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * peakshift and adv_batt_charging config of Wilco EC
+> + *
+> + * Copyright 2018 Google LLC
+> + *
+> + * Peakshift:
+> + * For each weekday a start and end time to run in Peak Shift mode can be set.
+> + * During these times the system will run from the battery even if the AC is
+> + * attached as long as the battery stays above the threshold specified.
+> + * After the end time specified the system will run from AC if attached but
+> + * will not charge the battery. The system will again function normally using AC
+> + * and recharging the battery after the specified Charge Start time.
+> + *
+> + * Advanced Charging Mode:
+> + * Advanced Charging Mode allows the user to maximize the battery health.
+> + * In Advanced Charging Mode the system will use standard charging algorithm and
+> + * other techniques during non-work hours to maximize battery health.
+> + * During work hours, an express charge is used. This express charge allows the
+> + * battery to be charged faster; therefore, the battery is at
+> + * full charge sooner. For each day the time in which the system will be most
+> + * heavily used is specified by the start time and the duration.
+> + * Please read the Common UEFI BIOS Behavioral Specification and
+> + * BatMan 2 BIOS_EC Specification for more details about this feature.
+> + */
+> +
+> +#ifndef WILCO_EC_ADV_POWER_H
+> +#define WILCO_EC_ADV_POWER_H
+> +
+> +#include <linux/kobject.h>
+> +#include <linux/platform_data/wilco-ec.h>
+> +#include <linux/sysfs.h>
+> +
+> +#include "util.h"
+> +#include "properties.h"
+> +
+> +#define PID_PEAKSHIFT                          0x0412
+> +#define PID_PEAKSHIFT_BATTERY_THRESHOLD                0x04EB
+> +#define PID_PEAKSHIFT_SUNDAY_HOURS             0x04F5
+> +#define PID_PEAKSHIFT_MONDAY_HOURS             0x04F6
+> +#define PID_PEAKSHIFT_TUESDAY_HOURS            0x04F7
+> +#define PID_PEAKSHIFT_WEDNESDAY_HOURS          0x04F8
+> +#define PID_PEAKSHIFT_THURSDAY_HOURS           0x04F9
+> +#define PID_PEAKSHIFT_FRIDAY_HOURS             0x04Fa
+> +#define PID_PEAKSHIFT_SATURDAY_HOURS           0x04Fb
+> +
+> +#define PID_ABC_MODE                           0x04ed
+> +#define PID_ABC_SUNDAY_HOURS                   0x04F5
+> +#define PID_ABC_MONDAY_HOURS                   0x04F6
+> +#define PID_ABC_TUESDAY_HOURS                  0x04F7
+> +#define PID_ABC_WEDNESDAY_HOURS                        0x04F8
+> +#define PID_ABC_THURSDAY_HOURS                 0x04F9
+> +#define PID_ABC_FRIDAY_HOURS                   0x04FA
+> +#define PID_ABC_SATURDAY_HOURS                 0x04FB
+> +
+> +/**
+> + * wilco_ec_peakshift_show() - Retrieves times stored for the peakshift policy.
+> + * @kobj: kobject representing the directory this attribute is in
+> + * @attr: Attribute stored within the proper property_attribute
+> + * @buf: Output buffer to fill with the result
+> + *
+> + * The output buffer will be filled with the format
+> + * "start_hr start_min end_hr end_min charge_start_hr charge_start_min"
+> + * The hour fields will be in the range [0-23], and the minutes will be
+> + * one of (0, 15, 30, 45). Each number will be zero padded to two characters.
+> + *
+> + * An example output is "06 15 09 45 23 00",
+> + * which corresponds to 6:15, 9:45, and 23:00
+> + *
+> + * Return the length of the output buffer, or negative error code on failure.
+> + */
+> +ssize_t wilco_ec_peakshift_show(struct kobject *kobj,
+> +                               struct kobj_attribute *attr, char *buf);
+> +
+> +/**
+> + * wilco_ec_peakshift_store() - Saves times for the peakshift policy.
+> + * @kobj: kobject representing the directory this attribute is in
+> + * @attr: Attribute stored within the proper property_attribute
+> + * @buf: Raw input buffer
+> + * @count: Number of bytes in input buffer
+> + *
+> + * The input buffer must have the format
+> + * "start_hr start_min end_hr end_min charge_start_hr charge_start_min"
+> + * The hour fields must be in the range [0-23], and the minutes must be
+> + * one of (0, 15, 30, 45). The string must be parseable by sscanf() using the
+> + * format string "%d %d %d %d %d %d".
+> + *
+> + * An example valid input is "6 15     009 45 23 0",
+> + * which corresponds to 6:15, 9:45, and 23:00
+> + *
+> + * Return number of bytes consumed from input, negative error code on failure.
+> + */
+> +ssize_t wilco_ec_peakshift_store(struct kobject *kobj,
+> +                                struct kobj_attribute *attr, const char *buf,
+> +                                size_t count);
+> +
+> +/**
+> + * peakshift_battery_show() - Retrieve batt percentage at which peakshift stops
+> + * @kobj: kobject representing the directory this attribute is in
+> + * @attr: Attribute stored within the proper property_attribute
+> + * @buf: Output buffer to fill with the result
+> + *
+> + * Result will be a 2 character integer representing the
+> + * battery percentage at which peakshift stops. Will be in range [15, 50].
+> + *
+> + * Return the length of the output buffer, or negative error code on failure.
+> + */
+> +ssize_t wilco_ec_peakshift_batt_thresh_show(struct kobject *kobj,
+> +                                           struct kobj_attribute *attr,
+> +                                           char *buf);
+> +
+> +/**
+> + * peakshift_battery_store() - Save batt percentage at which peakshift stops
+> + * @kobj: kobject representing the directory this attribute is in
+> + * @attr: Attribute stored within the proper property_attribute
+> + * @buf: Input buffer, should be parseable to range [15,50] by kstrtou8()
+> + * @count: Number of bytes in input buffer
+> + *
+> + * Return number of bytes consumed from input, negative error code on failure.
+> + */
+> +ssize_t wilco_ec_peakshift_batt_thresh_store(struct kobject *kobj,
+> +                                            struct kobj_attribute *attr,
+> +                                            const char *buf, size_t count);
+> +
+> +/**
+> + * wilco_ec_abc_show() - Retrieve times for Advanced Battery Charging
+> + * @kobj: kobject representing the directory this attribute is in
+> + * @attr: Attribute stored within the proper property_attribute
+> + * @buf: Output buffer to fill with the result
+> + *
+> + * The output buffer will be filled with the format
+> + * "start_hr start_min duration_hr duration_min"
+> + * The hour fields will be in the range [0-23], and the minutes will be
+> + * one of (0, 15, 30, 45). Each number will be zero padded to two characters.
+> + *
+> + * An example output is "06 15 23 45",
+> + * which corresponds to a start time of 6:15 and a duration of 23:45
+> + *
+> + * Return the length of the output buffer, or negative error code on failure.
+> + */
+> +ssize_t wilco_ec_abc_show(struct kobject *kobj, struct kobj_attribute *attr,
+> +                         char *buf);
+> +
+> +/**
+> + * wilco_ec_abc_store() - Save times for Advanced Battery Charging
+> + * @kobj: kobject representing the directory this attribute is in
+> + * @attr: Attribute stored within the proper property_attribute
+> + * @buf: The raw input buffer
+> + * @count: Number of bytes in input buffer
+> + *
+> + * The input buffer must have the format
+> + * "start_hr start_min duration_hr duration_min"
+> + * The hour fields must be in the range [0-23], and the minutes must be
+> + * one of (0, 15, 30, 45). The string must be parseable by sscanf() using the
+> + * format string "%d %d %d %d %d %d".
+> + *
+> + * An example valid input is "0006 15     23 45",
+> + * which corresponds to a start time of 6:15 and a duration of 23:45
+> + *
+> + * Return number of bytes consumed, or negative error code on failure.
+> + */
+> +ssize_t wilco_ec_abc_store(struct kobject *kobj, struct kobj_attribute *attr,
+> +                          const char *buf, size_t count);
+> +
+> +#define PEAKSHIFT_KOBJ_ATTR(_name)                                     \
+> +__ATTR(_name, 0644, wilco_ec_peakshift_show, wilco_ec_peakshift_store)
+> +
+> +#define PEAKSHIFT_ATTRIBUTE(_var, _name, _pid)                         \
+> +struct property_attribute _var = {                                     \
+> +       .kobj_attr = PEAKSHIFT_KOBJ_ATTR(_name),                        \
+> +       .pid = _pid,                                                    \
+> +}
+> +
+> +#define ABC_KOBJ_ATTR(_name)                                           \
+> +__ATTR(_name, 0644, wilco_ec_abc_show, wilco_ec_abc_store)
+> +
+> +#define ABC_ATTRIBUTE(_var, _name, _pid)                               \
+> +struct property_attribute _var = {                                     \
+> +       .kobj_attr = ABC_KOBJ_ATTR(_name),                              \
+> +       .pid = _pid,                                                    \
+> +}
+> +
+> +#endif /* WILCO_EC_ADV_POWER_H */
+> diff --git a/drivers/platform/chrome/wilco_ec/sysfs.c b/drivers/platform/chrome/wilco_ec/sysfs.c
+> index ca2156b7e08e..83de0daef265 100644
+> --- a/drivers/platform/chrome/wilco_ec/sysfs.c
+> +++ b/drivers/platform/chrome/wilco_ec/sysfs.c
+> @@ -16,6 +16,7 @@
+>
+>  #include "legacy.h"
+>  #include "properties.h"
+> +#include "adv_power.h"
+>
+>  #define WILCO_EC_ATTR_RO(_name)                                                \
+>  __ATTR(_name, 0444, wilco_ec_##_name##_show, NULL)
+> @@ -81,6 +82,67 @@ struct attribute *wilco_ec_property_attrs[] = {
+>  ATTRIBUTE_GROUPS(wilco_ec_property);
+>  struct kobject *prop_dir_kobj;
+>
+> +/* Make peakshift attrs, which live inside GOOG000C:00/properties/peakshift */
+> +struct kobj_attribute kobj_attr_peakshift_battery_threshold =
+> +       __ATTR(battery_threshold, 0644, wilco_ec_peakshift_batt_thresh_show,
+> +              wilco_ec_peakshift_batt_thresh_store);
+> +BOOLEAN_PROPERTY_RW_ATTRIBUTE(OP_SET, prop_attr_peakshift, enable,
+> +                             PID_PEAKSHIFT);
+> +PEAKSHIFT_ATTRIBUTE(prop_attr_peakshift_sunday, sunday,
+> +                   PID_PEAKSHIFT_SUNDAY_HOURS);
+> +PEAKSHIFT_ATTRIBUTE(prop_attr_peakshift_monday, monday,
+> +                   PID_PEAKSHIFT_MONDAY_HOURS);
+> +PEAKSHIFT_ATTRIBUTE(prop_attr_peakshift_tuesday, tuesday,
+> +                   PID_PEAKSHIFT_TUESDAY_HOURS);
+> +PEAKSHIFT_ATTRIBUTE(prop_attr_peakshift_wednesday, wednesday,
+> +                   PID_PEAKSHIFT_WEDNESDAY_HOURS);
+> +PEAKSHIFT_ATTRIBUTE(prop_attr_peakshift_thursday, thursday,
+> +                   PID_PEAKSHIFT_THURSDAY_HOURS);
+> +PEAKSHIFT_ATTRIBUTE(prop_attr_peakshift_friday, friday,
+> +                   PID_PEAKSHIFT_FRIDAY_HOURS);
+> +PEAKSHIFT_ATTRIBUTE(prop_attr_peakshift_saturday, saturday,
+> +                   PID_PEAKSHIFT_SATURDAY_HOURS);
+> +struct attribute *wilco_ec_peakshift_attrs[] = {
+> +       &kobj_attr_peakshift_battery_threshold.attr,
+> +       &prop_attr_peakshift.kobj_attr.attr,
+> +       &prop_attr_peakshift_sunday.kobj_attr.attr,
+> +       &prop_attr_peakshift_monday.kobj_attr.attr,
+> +       &prop_attr_peakshift_tuesday.kobj_attr.attr,
+> +       &prop_attr_peakshift_wednesday.kobj_attr.attr,
+> +       &prop_attr_peakshift_thursday.kobj_attr.attr,
+> +       &prop_attr_peakshift_friday.kobj_attr.attr,
+> +       &prop_attr_peakshift_saturday.kobj_attr.attr,
+> +       NULL
+> +};
+> +ATTRIBUTE_GROUPS(wilco_ec_peakshift);
+> +struct kobject *peakshift_dir_kobj;
+> +
+> +/**
+> + * Make peakshift attrs, which live inside
+> + * GOOG000C:00/properties/advanced_battery_charging
+> + */
+> +BOOLEAN_PROPERTY_RW_ATTRIBUTE(OP_SET, prop_attr_abc, enable, PID_ABC_MODE);
+> +ABC_ATTRIBUTE(prop_attr_abc_sunday, sunday, PID_ABC_SUNDAY_HOURS);
+> +ABC_ATTRIBUTE(prop_attr_abc_monday, monday, PID_ABC_MONDAY_HOURS);
+> +ABC_ATTRIBUTE(prop_attr_abc_tuesday, tuesday, PID_ABC_TUESDAY_HOURS);
+> +ABC_ATTRIBUTE(prop_attr_abc_wednesday, wednesday, PID_ABC_WEDNESDAY_HOURS);
+> +ABC_ATTRIBUTE(prop_attr_abc_thursday, thursday, PID_ABC_THURSDAY_HOURS);
+> +ABC_ATTRIBUTE(prop_attr_abc_friday, friday, PID_ABC_FRIDAY_HOURS);
+> +ABC_ATTRIBUTE(prop_attr_abc_saturday, saturday, PID_ABC_SATURDAY_HOURS);
+> +struct attribute *wilco_ec_adv_batt_charging_attrs[] = {
+> +       &prop_attr_abc.kobj_attr.attr,
+> +       &prop_attr_abc_sunday.kobj_attr.attr,
+> +       &prop_attr_abc_monday.kobj_attr.attr,
+> +       &prop_attr_abc_tuesday.kobj_attr.attr,
+> +       &prop_attr_abc_wednesday.kobj_attr.attr,
+> +       &prop_attr_abc_thursday.kobj_attr.attr,
+> +       &prop_attr_abc_friday.kobj_attr.attr,
+> +       &prop_attr_abc_saturday.kobj_attr.attr,
+> +       NULL
+> +};
+> +ATTRIBUTE_GROUPS(wilco_ec_adv_batt_charging);
+> +struct kobject *adv_batt_charging_dir_kobj;
+> +
+>  /**
+>   * wilco_ec_sysfs_init() - Initialize the sysfs directories and attributes
+>   * @dev: The device representing the EC
+> @@ -112,9 +174,46 @@ int wilco_ec_sysfs_init(struct wilco_ec_device *ec)
+>         if (ret)
+>                 goto rm_properties_dir;
+>
+> +       /* add directory for adv batt charging into the properties directory */
+> +       adv_batt_charging_dir_kobj = kobject_create_and_add(
+> +                                       "advanced_battery_charging",
+> +                                       prop_dir_kobj);
+> +       if (!adv_batt_charging_dir_kobj) {
+> +               ret = -ENOMEM;
+> +               goto rm_properties_attrs;
+> +       }
+> +
+> +       /* add the adv batt charging attributes into the abc directory */
+> +       ret = sysfs_create_groups(adv_batt_charging_dir_kobj,
+> +                                 wilco_ec_adv_batt_charging_groups);
+> +       if (ret)
+> +               goto rm_abc_dir;
+> +
+> +       /* add the directory for peakshift into the properties directory */
+> +       peakshift_dir_kobj = kobject_create_and_add("peakshift", prop_dir_kobj);
+> +       if (!peakshift_dir_kobj) {
+> +               ret = -ENOMEM;
+> +               goto rm_abc_attrs;
+> +       }
+> +
+> +       /* add the peakshift attributes into the peakshift directory */
+> +       ret = sysfs_create_groups(peakshift_dir_kobj,
+> +                                 wilco_ec_peakshift_groups);
+> +       if (ret)
+> +               goto rm_peakshift_dir;
+> +
+>         return 0;
+>
+>  /* Go upwards through the directory structure, cleaning up */
+> +rm_peakshift_dir:
+> +       kobject_put(peakshift_dir_kobj);
+> +rm_abc_attrs:
+> +       sysfs_remove_groups(adv_batt_charging_dir_kobj,
+> +                           wilco_ec_adv_batt_charging_groups);
+> +rm_abc_dir:
+> +       kobject_put(adv_batt_charging_dir_kobj);
+> +rm_properties_attrs:
+> +       sysfs_remove_groups(prop_dir_kobj, wilco_ec_property_groups);
+>  rm_properties_dir:
+>         kobject_put(prop_dir_kobj);
+>  rm_toplevel_attrs:
+> @@ -128,6 +227,11 @@ void wilco_ec_sysfs_remove(struct wilco_ec_device *ec)
+>         struct device *dev = ec->dev;
+>
+>         /* go upwards through the directory structure */
+> +       sysfs_remove_groups(peakshift_dir_kobj, wilco_ec_peakshift_groups);
+> +       kobject_put(peakshift_dir_kobj);
+> +       sysfs_remove_groups(adv_batt_charging_dir_kobj,
+> +                           wilco_ec_adv_batt_charging_groups);
+> +       kobject_put(adv_batt_charging_dir_kobj);
+>         sysfs_remove_groups(prop_dir_kobj, wilco_ec_property_groups);
+>         kobject_put(prop_dir_kobj);
+>         sysfs_remove_groups(&dev->kobj, wilco_ec_toplevel_groups);
+> --
+> 2.20.1.321.g9e740568ce-goog
+>
