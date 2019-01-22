@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36B4EC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:12:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26BAEC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:12:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AE7721019
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:12:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9311217F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:12:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iYX1E+Qk"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BXYfPlRL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726863AbfAVSMA (ORCPT
+        id S1726881AbfAVSMB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 13:12:00 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:32870 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726827AbfAVSL5 (ORCPT
+        Tue, 22 Jan 2019 13:12:01 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:39883 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726814AbfAVSL4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 13:11:57 -0500
-Received: by mail-pl1-f193.google.com with SMTP id z23so11875101plo.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 10:11:57 -0800 (PST)
+        Tue, 22 Jan 2019 13:11:56 -0500
+Received: by mail-pl1-f196.google.com with SMTP id 101so11852040pld.6
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 10:11:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=W+tcSbssL1cjoomd1/kZjJ7IjRwzQZIgCHeNiM3a0+8=;
-        b=iYX1E+QkQtS+reozDRSNxJxAJ9t+crCH5YtMtbQ4hKqfNhGWIE6Oajd4RJIpXCTU2N
-         JUI21kO42yJuv8h2ZyR1KtgfDrWQ88ir7AC0UbLF8NrzgjWKi715QVxMIgYfHMtgGM7x
-         AdrigTyORi+AoTL5gf8Mvab/tfhrRU0HH3y6Y=
+        bh=L7eckfF2Zrk2L2hw3XycylNkNnZH54URJARS3kpuRe8=;
+        b=BXYfPlRL/9ULQcWr54dC4Mv2z/oOD8AjTw4ZdXGJQ1iEcfPruZ0t2Ee5oxI2xeqkKQ
+         zZuB9nQGg/x3AhZO/WvtTANu86lPvz3/+BEeNFID5LoCybqLtWt0rGH6WMxNgJ+x+iqp
+         f/Q3rrcN9wAp5j9rzoUfwSKYkgFALFWt9zIgc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=W+tcSbssL1cjoomd1/kZjJ7IjRwzQZIgCHeNiM3a0+8=;
-        b=LT+S33qDBZX9vV8ASzvNRCKqFpuyXihmM2TvnN2W+zxd/MF7yy2cWZYQlxaow8Pzd9
-         HvcA8PPsBc2B/aBqk7ZGKGkuylqzwUueiMLZLNvQqZK3zHK9UhIHJAndJjW4sUhL73AW
-         4vz69Wxcpfx4SQ3veQE6fNP3varuF4AN5YSDVZTcm/VyJd6zDpUqGYCs74qsWKWLRk/p
-         orpEVJSEdIwMHEbGHYF4UfZq5Y8HCcagLxlfnI6Cd3FsYZsQXv159VpYzIq2QVEuZTdD
-         UB5+cJR9nB9l8DnLULYfGn4w9gsDMuUnyr8KCU6cGGgvappwkxol2/PQ6iQl/ioGcoWN
-         PhyA==
-X-Gm-Message-State: AJcUukcKrNgkpUlRLBn0x9tcbrh9k0V5mGS60Z0JLipSll7GtcaDhMvW
-        yp6yzKq8vPT3iE1Iwa6qUk2UNA==
-X-Google-Smtp-Source: ALg8bN6wxbGghhBavhc66500P1ObbbqDRCBN30ofvJI9xoWIhRiusoSZPhokath8yZI+3sutAiZi6w==
-X-Received: by 2002:a17:902:2862:: with SMTP id e89mr35764673plb.158.1548180717330;
-        Tue, 22 Jan 2019 10:11:57 -0800 (PST)
+        bh=L7eckfF2Zrk2L2hw3XycylNkNnZH54URJARS3kpuRe8=;
+        b=sR/l8+D16rvwjkWQlb8uxUijApHSx3IyVVkRog4LH1XWkYD2RxpimJ91jhVFeUt2IJ
+         K/OXRnWtf1NVEk1Nh12QSrOHpfxLETi7oX9AicDmKe3Au1+eyxBLaLpFd5FPrMyZOKI5
+         UOk2LykWsizQmLqPdGmBhJwyAgCjSxLEeelTtbzIMYOrppGT5NNDsnJJWu77RU96PUlL
+         5m2A1r7m5tBvjsqeLaoSX6sX+jgf4CUMBN/0RrEbUtSDFc1r2mg6b9wsEri9crfR2QO/
+         QDCy+DHjAsvWQtq5Q/EydLImBZZ9WtJdL5hux69kUjuhB+dIpGsNpgKnKLBoCWyMRZig
+         FfJA==
+X-Gm-Message-State: AJcUukd2HuqU39Lt+E5TMstVrkgLtz4ErSd1rU3/75xiTyWWQpqWzGL2
+        kxDog9WREaoflh4yxiZDGcx59w==
+X-Google-Smtp-Source: ALg8bN50K9CCQUy91XGFFBkpnYXAI21ijsQ/W0uSghpC2CpGuirb++J5orUtFwY/BMG+xSDj49+OJg==
+X-Received: by 2002:a17:902:f091:: with SMTP id go17mr35959173plb.235.1548180715665;
+        Tue, 22 Jan 2019 10:11:55 -0800 (PST)
 Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id a18sm23489919pgj.30.2019.01.22.10.11.55
+        by smtp.gmail.com with ESMTPSA id a18sm23489919pgj.30.2019.01.22.10.11.54
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Jan 2019 10:11:56 -0800 (PST)
+        Tue, 22 Jan 2019 10:11:55 -0800 (PST)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     acme@kernel.org, peterz@infradead.org
 Cc:     gregkh@linuxfoundation.org, mingo@redhat.com, tglx@linutronix.de,
@@ -61,9 +61,9 @@ Cc:     gregkh@linuxfoundation.org, mingo@redhat.com, tglx@linutronix.de,
         adrian.hunter@intel.com, ast@kernel.org, hpa@zytor.com,
         linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, suzuki.poulose@arm.com
-Subject: [PATCH v2 6/7] perf tools: Removing CoreSight set_drv_config() API
-Date:   Tue, 22 Jan 2019 11:11:43 -0700
-Message-Id: <20190122181144.26645-7-mathieu.poirier@linaro.org>
+Subject: [PATCH v2 5/7] perf tools: Use event attributes to send sink information to kernel
+Date:   Tue, 22 Jan 2019 11:11:42 -0700
+Message-Id: <20190122181144.26645-6-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190122181144.26645-1-mathieu.poirier@linaro.org>
 References: <20190122181144.26645-1-mathieu.poirier@linaro.org>
@@ -72,120 +72,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that event's config2 attribute is used to communicate sink selection
-to the kernel, remove the old set_drv_config() implementation since it
-is no longer needed.
+The communication of sink information for a trace session doesn't work when
+more than one CPU is involved in the scenario due to the static nature of
+sysfs.  As such communicate the sink information to each event by using the
+perf_event::attr:config2 attribute.  The information sent to the kernel is
+an hash of the sink's name, which is unique in a system.
 
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- tools/perf/arch/arm/util/cs-etm.c | 54 -------------------------------
- tools/perf/arch/arm/util/cs-etm.h |  3 --
- tools/perf/arch/arm/util/pmu.c    |  2 --
- 3 files changed, 59 deletions(-)
+ tools/perf/arch/arm/util/cs-etm.c | 40 +++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
 diff --git a/tools/perf/arch/arm/util/cs-etm.c b/tools/perf/arch/arm/util/cs-etm.c
-index 4aa6193dcb50..9a4a8153e4c2 100644
+index 2f595cd73da6..4aa6193dcb50 100644
 --- a/tools/perf/arch/arm/util/cs-etm.c
 +++ b/tools/perf/arch/arm/util/cs-etm.c
-@@ -26,9 +26,6 @@
+@@ -22,6 +22,7 @@
+ #include "../../util/thread_map.h"
+ #include "../../util/cs-etm.h"
+ 
++#include <errno.h>
  #include <stdlib.h>
  #include <sys/stat.h>
  
--#define ENABLE_SINK_MAX	128
--#define CS_BUS_DEVICE_PATH "/bus/coresight/devices/"
--
- struct cs_etm_recording {
- 	struct auxtrace_record	itr;
- 	struct perf_pmu		*cs_etm_pmu;
-@@ -638,54 +635,3 @@ struct auxtrace_record *cs_etm_record_init(int *err)
- out:
- 	return NULL;
+@@ -60,10 +61,45 @@ static int cs_etm_parse_snapshot_options(struct auxtrace_record *itr,
+ 	return 0;
  }
--
--static FILE *cs_device__open_file(const char *name)
--{
--	struct stat st;
--	char path[PATH_MAX];
--	const char *sysfs;
--
--	sysfs = sysfs__mountpoint();
--	if (!sysfs)
--		return NULL;
--
--	snprintf(path, PATH_MAX,
--		 "%s" CS_BUS_DEVICE_PATH "%s", sysfs, name);
--
--	if (stat(path, &st) < 0)
--		return NULL;
--
--	return fopen(path, "w");
--
--}
--
--static int __printf(2, 3) cs_device__print_file(const char *name, const char *fmt, ...)
--{
--	va_list args;
--	FILE *file;
--	int ret = -EINVAL;
--
--	va_start(args, fmt);
--	file = cs_device__open_file(name);
--	if (file) {
--		ret = vfprintf(file, fmt, args);
--		fclose(file);
--	}
--	va_end(args);
--	return ret;
--}
--
--int cs_etm_set_drv_config(struct perf_evsel_config_term *term)
--{
--	int ret;
--	char enable_sink[ENABLE_SINK_MAX];
--
--	snprintf(enable_sink, ENABLE_SINK_MAX, "%s/%s",
--		 term->val.drv_cfg, "enable_sink");
--
--	ret = cs_device__print_file(enable_sink, "%d", 1);
--	if (ret < 0)
--		return ret;
--
--	return 0;
--}
-diff --git a/tools/perf/arch/arm/util/cs-etm.h b/tools/perf/arch/arm/util/cs-etm.h
-index 1a12e64f5127..a3354bda4fe8 100644
---- a/tools/perf/arch/arm/util/cs-etm.h
-+++ b/tools/perf/arch/arm/util/cs-etm.h
-@@ -7,9 +7,6 @@
- #ifndef INCLUDE__PERF_CS_ETM_H__
- #define INCLUDE__PERF_CS_ETM_H__
  
--#include "../../util/evsel.h"
--
- struct auxtrace_record *cs_etm_record_init(int *err);
--int cs_etm_set_drv_config(struct perf_evsel_config_term *term);
++static int cs_etm_set_sink_attr(struct perf_pmu *pmu,
++				struct perf_evsel *evsel)
++{
++	char msg[BUFSIZ], path[PATH_MAX], *sink;
++	struct perf_evsel_config_term *term;
++	int ret = -EINVAL;
++	u32 hash;
++
++	list_for_each_entry(term, &evsel->config_terms, list) {
++		if (term->type != PERF_EVSEL__CONFIG_TERM_DRV_CFG)
++			continue;
++
++		sink = term->val.drv_cfg;
++		snprintf(path, PATH_MAX, "sinks/%s", sink);
++
++		ret = perf_pmu__scan_file(pmu, path, "%x", &hash);
++		if (ret != 1) {
++			pr_err("failed to set sink \"%s\" on event %s with %d (%s)\n",
++			       sink, perf_evsel__name(evsel), errno,
++			       str_error_r(errno, msg, sizeof(msg)));
++			return ret;
++		}
++
++		evsel->attr.config2 = (u64)hash;
++		return 0;
++	}
++
++	/*
++	 * No sink was provided on the command line - for _now_ treat
++	 * this as an error.
++	 */
++	return ret;
++}
++
+ static int cs_etm_recording_options(struct auxtrace_record *itr,
+ 				    struct perf_evlist *evlist,
+ 				    struct record_opts *opts)
+ {
++	int ret;
+ 	struct cs_etm_recording *ptr =
+ 				container_of(itr, struct cs_etm_recording, itr);
+ 	struct perf_pmu *cs_etm_pmu = ptr->cs_etm_pmu;
+@@ -92,6 +128,10 @@ static int cs_etm_recording_options(struct auxtrace_record *itr,
+ 	if (!cs_etm_evsel)
+ 		return 0;
  
- #endif
-diff --git a/tools/perf/arch/arm/util/pmu.c b/tools/perf/arch/arm/util/pmu.c
-index e047571e6080..e4619f2fe7ce 100644
---- a/tools/perf/arch/arm/util/pmu.c
-+++ b/tools/perf/arch/arm/util/pmu.c
-@@ -8,7 +8,6 @@
- #include <linux/coresight-pmu.h>
- #include <linux/perf_event.h>
- 
--#include "cs-etm.h"
- #include "arm-spe.h"
- #include "../../util/pmu.h"
- 
-@@ -19,7 +18,6 @@ struct perf_event_attr
- 	if (!strcmp(pmu->name, CORESIGHT_ETM_PMU_NAME)) {
- 		/* add ETM default config here */
- 		pmu->selectable = true;
--		pmu->set_drv_config = cs_etm_set_drv_config;
- #if defined(__aarch64__)
- 	} else if (strstarts(pmu->name, ARM_SPE_PMU_NAME)) {
- 		return arm_spe_pmu_default_config(pmu);
++	ret = cs_etm_set_sink_attr(cs_etm_pmu, cs_etm_evsel);
++	if (ret)
++		return ret;
++
+ 	if (opts->use_clockid) {
+ 		pr_err("Cannot use clockid (-k option) with %s\n",
+ 		       CORESIGHT_ETM_PMU_NAME);
 -- 
 2.17.1
 
