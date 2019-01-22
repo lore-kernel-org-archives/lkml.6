@@ -2,122 +2,206 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52766C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 21:18:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 279F5C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 21:26:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BD8820870
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 21:18:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB82F20870
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 21:26:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OC7zf1jt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726963AbfAVVSy (ORCPT
+        id S1726678AbfAVV0G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 16:18:54 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49522 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726948AbfAVVSy (ORCPT
+        Tue, 22 Jan 2019 16:26:06 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:46109 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726175AbfAVV0F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 16:18:54 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0MLIrxU042111
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 16:18:53 -0500
-Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2q682cexke-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 16:18:52 -0500
-Received: from localhost
-        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Tue, 22 Jan 2019 21:18:44 -0000
-Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
-        by e36.co.us.ibm.com (192.168.1.136) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 22 Jan 2019 21:18:38 -0000
-Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0MLIbFY18940068
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 22 Jan 2019 21:18:37 GMT
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 87D1CBE058;
-        Tue, 22 Jan 2019 21:18:37 +0000 (GMT)
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 49DC5BE053;
-        Tue, 22 Jan 2019 21:18:33 +0000 (GMT)
-Received: from morokweng.localdomain.com (unknown [9.85.185.73])
-        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue, 22 Jan 2019 21:18:32 +0000 (GMT)
-From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     x86@kernel.org
-Cc:     kvm@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Ram Pai <linuxram@us.ibm.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Subject: [PATCH 2/2] x86/kvmclock: set_memory_decrypted() takes number of pages
-Date:   Tue, 22 Jan 2019 19:17:58 -0200
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <20190122211758.8317-1-bauerman@linux.ibm.com>
-References: <20190122211758.8317-1-bauerman@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19012221-0020-0000-0000-00000EAFA7B1
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010457; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000275; SDB=6.01150302; UDB=6.00599446; IPR=6.00930634;
- MB=3.00025244; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-22 21:18:42
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012221-0021-0000-0000-00006484B392
-Message-Id: <20190122211758.8317-2-bauerman@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-22_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=38 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=917 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901220160
+        Tue, 22 Jan 2019 16:26:05 -0500
+Received: by mail-vs1-f65.google.com with SMTP id n10so15641938vso.13
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 13:26:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6w26hlfgDNTXLsZw2YsSMtNTh3vRrWi44Y9MhG0Qq8E=;
+        b=OC7zf1jtjIVfypEI9AvpeWGEVfy8on+CLx+ZXe6SI8weZuMJ/AljD6BVMNiev9kHcR
+         xgZj1DxIWIyWYvA0gUS+3AqUOhCpm1oIgAmJrYKvBmq+S5yTWsyucR881uKlPP8+x1KU
+         QQS8WTizSkupdOG7OhLuEwQDrKNLzhbLeZLNA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6w26hlfgDNTXLsZw2YsSMtNTh3vRrWi44Y9MhG0Qq8E=;
+        b=iNx1rW2ZwSGTY3BC6vcC4LJSneAm2JRC2hp7d/TgOeXWp1FqU1jjktZtdhBXotPzCh
+         Uh2MF1/9k13zqr2hDxYu2WJBxfIdDwx5J47ReJMYIQOGHmT44GhvIMBhq57vLv1VFpie
+         mm+ERZ2NlYYJYPenZvigpn/g4T2gh4X57j7DKQHC+Llnb4RSZ2afEmSra5wytybvs7d4
+         4K7fuBBPVy40ycT7ZmFZQSSMnCe+x86ub0gE7ShffAWbcA81OBjRu/xEDx159vMQvtMo
+         zb6jCbZkerbk5uzBApcyOTZWkIpi9D8CCuGIJkObqiv6/C3L5Zd0vtEpKTSmZCTbH2ks
+         t17w==
+X-Gm-Message-State: AJcUukeRiAgHlNS/8nSwAZ2CxM3BI6X3reOieBti7L82m+tR1R2P7fCk
+        dskQU2RjJQr07nQwzwk2XRXbFQrDpqw=
+X-Google-Smtp-Source: ALg8bN4oCIWiJesgI2j/rS2AT/kLVbXSEtxMLjXNDLQKyyUSs0bcWIBc3TxflusxL71npAROjkIMSg==
+X-Received: by 2002:a67:a8da:: with SMTP id h87mr15673882vsi.143.1548192364063;
+        Tue, 22 Jan 2019 13:26:04 -0800 (PST)
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
+        by smtp.gmail.com with ESMTPSA id a137sm19930310vsd.24.2019.01.22.13.26.03
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 22 Jan 2019 13:26:03 -0800 (PST)
+Received: by mail-ua1-f54.google.com with SMTP id z24so8596490ual.8
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 13:26:03 -0800 (PST)
+X-Received: by 2002:ab0:60a3:: with SMTP id f3mr14285167uam.9.1548191885777;
+ Tue, 22 Jan 2019 13:18:05 -0800 (PST)
+MIME-Version: 1.0
+References: <20181220173026.3857-1-jcrouse@codeaurora.org> <20181220173026.3857-2-jcrouse@codeaurora.org>
+ <CAD=FV=WjLB8TV80cMef9ZqYn7h3szJ6x67_6pL9FnM1Q+8i_2A@mail.gmail.com>
+ <CAF6AEGtjHWTSSaeMuGsL7+2bSsBBHWV3TVf8m2ru40d+wKeeMA@mail.gmail.com> <0a260759-be37-bf8f-6e1b-b24406c8eeca@linaro.org>
+In-Reply-To: <0a260759-be37-bf8f-6e1b-b24406c8eeca@linaro.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Tue, 22 Jan 2019 13:17:53 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=WdpXTt=3cK+8N0htkBuF5=5haA2n+4b_9QGtMOWm455w@mail.gmail.com>
+Message-ID: <CAD=FV=WdpXTt=3cK+8N0htkBuF5=5haA2n+4b_9QGtMOWm455w@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] drm/msm/a6xx: Add support for an interconnect path
+To:     Georgi Djakov <georgi.djakov@linaro.org>,
+        Rob Clark <robdclark@gmail.com>
+Cc:     Jordan Crouse <jcrouse@codeaurora.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Kees Cook <keescook@chromium.org>,
+        Sharat Masetty <smasetty@codeaurora.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Airlie <airlied@linux.ie>,
+        Johan Hovold <johan@kernel.org>,
+        Colin Ian King <colin.king@canonical.com>,
+        Evan Green <evgreen@chromium.org>,
+        Sean Paul <seanpaul@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ram Pai <linuxram@us.ibm.com>
+Hi,
 
-set_memory_decrypted() expects the number of PAGE_SIZE pages to decrypt.
-kvmclock_init_mem() instead passes number of bytes. This decrypts a huge
-number of pages resulting in data corruption.
+On Mon, Jan 21, 2019 at 9:13 AM Georgi Djakov <georgi.djakov@linaro.org> wrote:
+>
+> Hi Rob,
+>
+> On 1/18/19 21:16, Rob Clark wrote:
+> > On Fri, Jan 18, 2019 at 1:06 PM Doug Anderson <dianders@chromium.org> wrote:
+> >>
+> >> Hi,
+> >>
+> >> On Thu, Dec 20, 2018 at 9:30 AM Jordan Crouse <jcrouse@codeaurora.org> wrote:
+> >>>
+> >>> Try to get the interconnect path for the GPU and vote for the maximum
+> >>> bandwidth to support all frequencies. This is needed for performance.
+> >>> Later we will want to scale the bandwidth based on the frequency to
+> >>> also optimize for power but that will require some device tree
+> >>> infrastructure that does not yet exist.
+> >>>
+> >>> v5: Remove hardcoded interconnect name and just use the default
+> >>
+> >> nit: ${SUBJECT} says v3, but this is v5.
+> >>
+> >> I'll put in my usual plug for considering "patman" to help post
+> >> patches.  Even though it lives in the u-boot git repo it's still a gem
+> >> for kernel work.
+> >> <http://git.denx.de/?p=u-boot.git;a=blob;f=tools/patman/README>
+> >>
+> >>
+> >>> @@ -85,6 +89,12 @@ static void __a6xx_gmu_set_freq(struct a6xx_gmu *gmu, int index)
+> >>>                 dev_err(gmu->dev, "GMU set GPU frequency error: %d\n", ret);
+> >>>
+> >>>         gmu->freq = gmu->gpu_freqs[index];
+> >>> +
+> >>> +       /*
+> >>> +        * Eventually we will want to scale the path vote with the frequency but
+> >>> +        * for now leave it at max so that the performance is nominal.
+> >>> +        */
+> >>> +       icc_set(gpu->icc_path, 0, MBps_to_icc(7216));
+> >>
+> >> You'll need to change icc_set() here to icc_set_bw() to match v13, AKA:
+> >>
+> >> - https://patchwork.kernel.org/patch/10766335/
+> >> - https://lkml.kernel.org/r/20190116161103.6937-2-georgi.djakov@linaro.org
+> >>
+> >>
+> >>> @@ -695,6 +707,9 @@ int a6xx_gmu_resume(struct a6xx_gpu *a6xx_gpu)
+> >>>         if (ret)
+> >>>                 goto out;
+> >>>
+> >>> +       /* Set the bus quota to a reasonable value for boot */
+> >>> +       icc_set(gpu->icc_path, 0, MBps_to_icc(3072));
+> >>
+> >> This will also need to change to icc_set_bw()
+> >>
+> >>
+> >>> @@ -781,6 +798,9 @@ int a6xx_gmu_stop(struct a6xx_gpu *a6xx_gpu)
+> >>>         /* Tell RPMh to power off the GPU */
+> >>>         a6xx_rpmh_stop(gmu);
+> >>>
+> >>> +       /* Remove the bus vote */
+> >>> +       icc_set(gpu->icc_path, 0, 0);
+> >>
+> >> This will also need to change to icc_set_bw()
+> >>
+> >>
+> >> I have the same questions for this series that I had in response to
+> >> the email ("[v5 2/3] drm/msm/dpu: Integrate interconnect API in MDSS")
+> >> <https://lkml.kernel.org/r/CAD=FV=XUeMTGH+CDwGs3PfK4igdQrCbwucw7_2ViBc4i7grvxg@mail.gmail.com>
+> >>
+> >>
+> >> Copy / pasting here (with minor name changes) so folks don't have to
+> >> follow links / search email.
+> >>
+> >> ==
+> >>
+> >> I'm curious what the plan is for landing this series.   Rob / Gerogi:
+> >> do you have any preference?  Options I'd imagine:
+> >>
+> >> A) Wait until interconnect lands (in 5.1?) and land this through
+> >> msm-next in the version after (5.2?)
+> >>
+> >> B) Georgi provides an immutable branch for interconnect when his lands
+> >> (assuming he's landing via pull request) and that gets pulled into the
+> >> the relevant drm tree.
+> >>
+> >> C) Rob Acks this series and indicates that it should go in through
+> >> Gerogi's tree (probably only works if Georgi plans to send a pull
+> >> request).  If we're going this route then (IIUC) we'd want to land
+> >> this in Gerogi's tree sooner rather than later so it can get some bake
+> >> time?  NOTE: as per my prior reply, I believe Rob has already Acked
+> >> this patch.
+> >>
+> >
+> > I'm ok to ack and have it land via Georgi's tree, if Georgi wants to
+> > do that.  Or otherwise, I could maybe coordinate w/ airlied to send a
+> > 2nd late msm-next pr including the gpu and display interconnect
+> > patches.
+>
+> I'm fine either way. But it would be nice if both patches (this one and
+> the dt-bindings go together. The v6 of this patch applies cleanly to my
+> tree, but the next one (2/3) with the dt-bindings doesn't.
 
-Fixed it.
+Ah, right.  You need to be based upon commit 85437cddf4e5
+("dt-bindings: drm/msm/a6xx: Document GMU and update GPU bindings")
+from Rob Clark's msm-next AKA
+<git://people.freedesktop.org/~robclark/linux>
 
-[ bauermann: Slightly reworded commit message and added Fixes: tag. ]
-Fixes: 6a1cac56f41f ("x86/kvm: Use __bss_decrypted attribute in shared variables")
-Signed-off-by: Ram Pai <linuxram@us.ibm.com>
-Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
----
- arch/x86/kernel/kvmclock.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+...so I guess the easiest is to have the bindings could go through Rob
+Clark's tree and the code through you tree if that's what people want
+to do?
 
-Note: Found by code inspection. I don't have a way to test.
-
-diff --git a/arch/x86/kernel/kvmclock.c b/arch/x86/kernel/kvmclock.c
-index e811d4d1c824..b5c867dd2c8d 100644
---- a/arch/x86/kernel/kvmclock.c
-+++ b/arch/x86/kernel/kvmclock.c
-@@ -251,8 +251,7 @@ static void __init kvmclock_init_mem(void)
- 	 * be mapped decrypted.
- 	 */
- 	if (sev_active()) {
--		r = set_memory_decrypted((unsigned long) hvclock_mem,
--					 1UL << order);
-+		r = set_memory_decrypted((unsigned long) hvclock_mem, 1);
- 		if (r) {
- 			__free_pages(p, order);
- 			hvclock_mem = NULL;
-
+-Doug
