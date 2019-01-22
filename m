@@ -2,87 +2,154 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69288C282C5
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:01:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 528E5C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:01:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 445D821019
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:01:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CCB921721
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:01:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728720AbfAVOA7 (ORCPT
+        id S1728732AbfAVOBV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 09:00:59 -0500
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:52611 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728456AbfAVOA7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 09:00:59 -0500
-X-UUID: e9e7cb0fec0040e39a01568ffad66853-20190122
-X-UUID: e9e7cb0fec0040e39a01568ffad66853-20190122
-Received: from mtkcas34.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
-        (envelope-from <ryder.lee@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1434461444; Tue, 22 Jan 2019 22:00:49 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- MTKMBS31N1.mediatek.inc (172.27.4.69) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 22 Jan 2019 22:00:48 +0800
-Received: from [172.21.77.33] (172.21.77.33) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 22 Jan 2019 22:00:48 +0800
-Message-ID: <1548165648.2429.13.camel@mtkswgap22>
-Subject: Re: [PATCH v1] pinctrl: mediatek: improve Kconfig dependencies
-From:   Ryder Lee <ryder.lee@mediatek.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-CC:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Sean Wang <sean.wang@kernel.org>,
-        Weijie Gao =?UTF-8?Q?=28=E9=AB=98=E6=83=9F=E6=9D=B0=29?= 
-        <Weijie.Gao@mediatek.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        <stable@vger.kernel.org>
-Date:   Tue, 22 Jan 2019 22:00:48 +0800
-In-Reply-To: <CACRpkdZMgnj2S8xPPFm3PnDGrqTerOwWcS-+Uruy1uLH24HRLg@mail.gmail.com>
-References: <e4eb66dec2901016e01767932461c5d560762f66.1544666839.git.ryder.lee@mediatek.com>
-         <CACRpkdZMgnj2S8xPPFm3PnDGrqTerOwWcS-+Uruy1uLH24HRLg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Tue, 22 Jan 2019 09:01:21 -0500
+Received: from foss.arm.com ([217.140.101.70]:53964 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728456AbfAVOBV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 09:01:21 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 98593EBD;
+        Tue, 22 Jan 2019 06:01:20 -0800 (PST)
+Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A045B3F614;
+        Tue, 22 Jan 2019 06:01:17 -0800 (PST)
+Date:   Tue, 22 Jan 2019 14:01:15 +0000
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v6 05/16] sched/core: uclamp: Update CPU's refcount on
+ clamp changes
+Message-ID: <20190122140115.twtx646vewm757ca@e110439-lin>
+References: <20190115101513.2822-1-patrick.bellasi@arm.com>
+ <20190115101513.2822-6-patrick.bellasi@arm.com>
+ <20190121153308.GL27931@hirez.programming.kicks-ass.net>
+ <20190121154412.fak2t2iquj3aixtu@e110439-lin>
+ <20190122093704.GM27931@hirez.programming.kicks-ass.net>
+ <20190122104305.6vjx37muqsxm536t@e110439-lin>
+ <20190122132817.GG13777@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190122132817.GG13777@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CC: stable@vger.kernel.org
-
-On Fri, 2018-12-21 at 18:17 +0800, Linus Walleij wrote:
-> On Thu, Dec 13, 2018 at 3:28 AM Ryder Lee <ryder.lee@mediatek.com> wrote:
+On 22-Jan 14:28, Peter Zijlstra wrote:
+> On Tue, Jan 22, 2019 at 10:43:05AM +0000, Patrick Bellasi wrote:
+> > On 22-Jan 10:37, Peter Zijlstra wrote:
 > 
-> > Remove prompts to make all pinctrl cores to non-visible symbols and
-> > make sure the target SoCs would be coupled with the corresponding
-> > cores.
-> >
-> > Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+> > > Sure, I get that. What I don't get is why you're adding that (2) here.
+> > > Like said, __sched_setscheduler() already does a dequeue/enqueue under
+> > > rq->lock, which should already take care of that.
+> > 
+> > Oh, ok... got it what you mean now.
+> > 
+> > With:
+> > 
+> >    [PATCH v6 01/16] sched/core: Allow sched_setattr() to use the current policy
+> >    <20190115101513.2822-2-patrick.bellasi@arm.com>
+> > 
+> > we can call __sched_setscheduler() with:
+> > 
+> >    attr->sched_flags & SCHED_FLAG_KEEP_POLICY
+> > 
+> > whenever we want just to change the clamp values of a task without
+> > changing its class. Thus, we can end up returning from
+> > __sched_setscheduler() without doing an actual dequeue/enqueue.
 > 
-> Patch applied with ACK and Tested-by.
-> 
-> Yours,
-> Linus Walleij
+> I don't see that happening.. when KEEP_POLICY we set attr.sched_policy =
+> SETPARAM_POLICY. That is then checked again in __setscheduler_param(),
+> which is in the middle of that dequeue/enqueue.
 
-I forgot to add stable-kernel into CC list.
-This patch should be applied to stable-rc linux-4.20.y.
+Yes, I think I've forgot a check before we actually dequeue the task.
 
-Sorry for the inconvenience. 
-Ryder
+The current code does:
 
+---8<---
+   SYSCALL_DEFINE3(sched_setattr)
 
+        // A) request to keep the same policy
+        if (attr.sched_flags & SCHED_FLAG_KEEP_POLICY)
+            attr.sched_policy = SETPARAM_POLICY;
 
+        sched_setattr()
+            // B) actually enforce the same policy
+            if (policy < 0)
+                policy = oldpolicy = p->policy;
 
+            // C) tune the clamp values
+            if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP)
+                retval = __setscheduler_uclamp(p, attr);
+
+            // D) tune attributes if policy is the same
+            if (unlikely(policy == p->policy))
+                if (fair_policy(policy) && attr->sched_nice != task_nice(p))
+                    goto change;
+                if (rt_policy(policy) && attr->sched_priority != p->rt_priority)
+                    goto change;
+                if (dl_policy(policy) && dl_param_changed(p, attr))
+                    goto change;
+                return 0;
+        change:
+
+            // E) dequeue/enqueue task
+---8<---
+
+So, probably in D) I've missed a check on SCHED_FLAG_KEEP_POLICY to
+enforce a return in that case...
+
+> Also, and this might be 'broken', SETPARAM_POLICY _does_ reset all the
+> other attributes, it only preserves policy, but it will (re)set nice
+> level for example (see that same function).
+
+Mmm... right... my bad! :/
+
+> So maybe we want to introduce another (few?) FLAG_KEEP flag(s) that
+> preserve the other bits; I'm thinking at least KEEP_PARAM and KEEP_UTIL
+> or something.
+
+Yes, I would say we have two options:
+
+ 1) SCHED_FLAG_KEEP_POLICY enforces all the scheduling class specific
+    attributes, but cross class attributes (e.g. uclamp)
+
+ 2) add SCHED_KEEP_NICE, SCHED_KEEP_PRIO, and SCED_KEEP_PARAMS
+    and use them in the if conditions in D)
+
+In both cases the goal should be to return from code block D).
+
+What do you prefer?
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
