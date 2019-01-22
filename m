@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8F7CC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:40:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DD10C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:40:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB8BA217D6
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:40:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2921421726
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:40:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727250AbfAVXkb (ORCPT
+        id S1727216AbfAVXk3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 18:40:31 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:60086 "EHLO huawei.com"
+        Tue, 22 Jan 2019 18:40:29 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2291 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727065AbfAVXkM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 18:40:12 -0500
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 1FF80EE8FE9F53748186;
-        Wed, 23 Jan 2019 07:40:08 +0800 (CST)
+        id S1726207AbfAVXkP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 18:40:15 -0500
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 1539E6B6CAF9E1A9F65F;
+        Wed, 23 Jan 2019 07:40:13 +0800 (CST)
 Received: from SZA150611058.china.huawei.com (10.45.143.16) by
  DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
- 14.3.408.0; Wed, 23 Jan 2019 07:39:58 +0800
+ 14.3.408.0; Wed, 23 Jan 2019 07:40:03 +0800
 From:   Huazhong Tan <tanhuazhong@huawei.com>
 To:     <davem@davemloft.net>, <eric.dumazet@gmail.com>
 CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <huangdaode@hisilicon.com>, <yisen.zhuang@huawei.com>,
         <salil.mehta@huawei.com>, <linuxarm@huawei.com>,
-        Jian Shen <shenjian15@huawei.com>,
+        liuzhongzhu <liuzhongzhu@huawei.com>,
         Peng Li <lipeng321@huawei.com>,
         Huazhong Tan <tanhuazhong@huawei.com>
-Subject: [PATCH V2 net-next 03/12] net: hns3: refactor the statistics updating for netdev
-Date:   Wed, 23 Jan 2019 07:39:29 +0800
-Message-ID: <20190122233938.7188-4-tanhuazhong@huawei.com>
+Subject: [PATCH V2 net-next 11/12] net: hns3: add statistics for PFC frames and MAC control frames
+Date:   Wed, 23 Jan 2019 07:39:37 +0800
+Message-ID: <20190122233938.7188-12-tanhuazhong@huawei.com>
 X-Mailer: git-send-email 2.20.1.windows.1
 In-Reply-To: <20190122233938.7188-1-tanhuazhong@huawei.com>
 References: <20190122233938.7188-1-tanhuazhong@huawei.com>
@@ -49,139 +49,233 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jian Shen <shenjian15@huawei.com>
+From: liuzhongzhu <liuzhongzhu@huawei.com>
 
-In origin codes, there are some statistics item are got from mac, which
-also include the packets statistics of VF. It is unreasonable. This
-patch fixes it by counting them in the rx/tx processing flow.
+In the old firmware version, statistics acquisition of
+PFC frames and MAC control frames is not supported.
+Add command retrieves statistics for PFC frames and
+MAC control frames from the firmware.
 
-Signed-off-by: Jian Shen <shenjian15@huawei.com>
+Signed-off-by: liuzhongzhu <liuzhongzhu@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
 ---
- .../net/ethernet/hisilicon/hns3/hns3_enet.c   | 27 ++++++++++++++-----
- .../hisilicon/hns3/hns3pf/hclge_main.c        | 25 -----------------
- 2 files changed, 20 insertions(+), 32 deletions(-)
+ .../hisilicon/hns3/hns3pf/hclge_cmd.c         | 10 +-
+ .../hisilicon/hns3/hns3pf/hclge_cmd.h         |  2 +
+ .../hisilicon/hns3/hns3pf/hclge_main.c        | 97 ++++++++++++++++++-
+ .../hisilicon/hns3/hns3pf/hclge_main.h        |  7 ++
+ 4 files changed, 109 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index 2ec3759961f1..1f15864fb8db 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -1399,7 +1399,12 @@ static void hns3_nic_get_stats64(struct net_device *netdev,
- 	int queue_num = priv->ae_handle->kinfo.num_tqps;
- 	struct hnae3_handle *handle = priv->ae_handle;
- 	struct hns3_enet_ring *ring;
-+	u64 rx_length_errors = 0;
-+	u64 rx_crc_errors = 0;
-+	u64 rx_multicast = 0;
- 	unsigned int start;
-+	u64 tx_errors = 0;
-+	u64 rx_errors = 0;
- 	unsigned int idx;
- 	u64 tx_bytes = 0;
- 	u64 rx_bytes = 0;
-@@ -1422,6 +1427,8 @@ static void hns3_nic_get_stats64(struct net_device *netdev,
- 			tx_pkts += ring->stats.tx_pkts;
- 			tx_drop += ring->stats.tx_busy;
- 			tx_drop += ring->stats.sw_err_cnt;
-+			tx_errors += ring->stats.tx_busy;
-+			tx_errors += ring->stats.sw_err_cnt;
- 		} while (u64_stats_fetch_retry_irq(&ring->syncp, start));
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
+index b0ee070884eb..81dbe1b6abb0 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
+@@ -170,8 +170,12 @@ static bool hclge_is_special_opcode(u16 opcode)
+ 	/* these commands have several descriptors,
+ 	 * and use the first one to save opcode and return value
+ 	 */
+-	u16 spec_opcode[3] = {HCLGE_OPC_STATS_64_BIT,
+-		HCLGE_OPC_STATS_32_BIT, HCLGE_OPC_STATS_MAC};
++	u16 spec_opcode[] = {HCLGE_OPC_STATS_64_BIT,
++			     HCLGE_OPC_STATS_32_BIT,
++			     HCLGE_OPC_STATS_MAC,
++			     HCLGE_OPC_STATS_MAC_ALL,
++			     HCLGE_OPC_QUERY_32_BIT_REG,
++			     HCLGE_OPC_QUERY_64_BIT_REG};
+ 	int i;
  
- 		/* fetch the rx stats */
-@@ -1433,6 +1440,12 @@ static void hns3_nic_get_stats64(struct net_device *netdev,
- 			rx_drop += ring->stats.non_vld_descs;
- 			rx_drop += ring->stats.err_pkt_len;
- 			rx_drop += ring->stats.l2_err;
-+			rx_errors += ring->stats.non_vld_descs;
-+			rx_errors += ring->stats.l2_err;
-+			rx_crc_errors += ring->stats.l2_err;
-+			rx_crc_errors += ring->stats.l3l4_csum_err;
-+			rx_multicast += ring->stats.rx_multicast;
-+			rx_length_errors += ring->stats.err_pkt_len;
- 		} while (u64_stats_fetch_retry_irq(&ring->syncp, start));
- 	}
+ 	for (i = 0; i < ARRAY_SIZE(spec_opcode); i++) {
+@@ -259,6 +263,8 @@ int hclge_cmd_send(struct hclge_hw *hw, struct hclge_desc *desc, int num)
  
-@@ -1441,15 +1454,15 @@ static void hns3_nic_get_stats64(struct net_device *netdev,
- 	stats->rx_bytes = rx_bytes;
- 	stats->rx_packets = rx_pkts;
+ 			if (desc_ret == HCLGE_CMD_EXEC_SUCCESS)
+ 				retval = 0;
++			else if (desc_ret == HCLGE_CMD_NO_AUTH)
++				retval = -EPERM;
+ 			else if (desc_ret == HCLGE_CMD_NOT_SUPPORTED)
+ 				retval = -EOPNOTSUPP;
+ 			else
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
+index 9f07279513b7..e26a25128693 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
+@@ -82,6 +82,8 @@ enum hclge_opcode_type {
+ 	HCLGE_OPC_STATS_64_BIT		= 0x0030,
+ 	HCLGE_OPC_STATS_32_BIT		= 0x0031,
+ 	HCLGE_OPC_STATS_MAC		= 0x0032,
++	HCLGE_OPC_QUERY_MAC_REG_NUM	= 0x0033,
++	HCLGE_OPC_STATS_MAC_ALL		= 0x0034,
  
--	stats->rx_errors = netdev->stats.rx_errors;
--	stats->multicast = netdev->stats.multicast;
--	stats->rx_length_errors = netdev->stats.rx_length_errors;
--	stats->rx_crc_errors = netdev->stats.rx_crc_errors;
-+	stats->rx_errors = rx_errors;
-+	stats->multicast = rx_multicast;
-+	stats->rx_length_errors = rx_length_errors;
-+	stats->rx_crc_errors = rx_crc_errors;
- 	stats->rx_missed_errors = netdev->stats.rx_missed_errors;
- 
--	stats->tx_errors = netdev->stats.tx_errors;
--	stats->rx_dropped = rx_drop + netdev->stats.rx_dropped;
--	stats->tx_dropped = tx_drop + netdev->stats.tx_dropped;
-+	stats->tx_errors = tx_errors;
-+	stats->rx_dropped = rx_drop;
-+	stats->tx_dropped = tx_drop;
- 	stats->collisions = netdev->stats.collisions;
- 	stats->rx_over_errors = netdev->stats.rx_over_errors;
- 	stats->rx_frame_errors = netdev->stats.rx_frame_errors;
+ 	HCLGE_OPC_QUERY_REG_NUM		= 0x0040,
+ 	HCLGE_OPC_QUERY_32_BIT_REG	= 0x0041,
 diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 35fb0c54b986..bf0931c6764f 100644
+index 6fb3144eb79d..64b1589e549f 100644
 --- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
 +++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -461,26 +461,6 @@ static u8 *hclge_comm_get_strings(u32 stringset,
- 	return (u8 *)buff;
- }
+@@ -118,6 +118,12 @@ static const struct hclge_comm_stats_str g_mac_stats_string[] = {
+ 		HCLGE_MAC_STATS_FIELD_OFF(mac_tx_mac_pause_num)},
+ 	{"mac_rx_mac_pause_num",
+ 		HCLGE_MAC_STATS_FIELD_OFF(mac_rx_mac_pause_num)},
++	{"mac_tx_control_pkt_num",
++		HCLGE_MAC_STATS_FIELD_OFF(mac_tx_ctrl_pkt_num)},
++	{"mac_rx_control_pkt_num",
++		HCLGE_MAC_STATS_FIELD_OFF(mac_rx_ctrl_pkt_num)},
++	{"mac_tx_pfc_pkt_num",
++		HCLGE_MAC_STATS_FIELD_OFF(mac_tx_pfc_pause_pkt_num)},
+ 	{"mac_tx_pfc_pri0_pkt_num",
+ 		HCLGE_MAC_STATS_FIELD_OFF(mac_tx_pfc_pri0_pkt_num)},
+ 	{"mac_tx_pfc_pri1_pkt_num",
+@@ -134,6 +140,8 @@ static const struct hclge_comm_stats_str g_mac_stats_string[] = {
+ 		HCLGE_MAC_STATS_FIELD_OFF(mac_tx_pfc_pri6_pkt_num)},
+ 	{"mac_tx_pfc_pri7_pkt_num",
+ 		HCLGE_MAC_STATS_FIELD_OFF(mac_tx_pfc_pri7_pkt_num)},
++	{"mac_rx_pfc_pkt_num",
++		HCLGE_MAC_STATS_FIELD_OFF(mac_rx_pfc_pause_pkt_num)},
+ 	{"mac_rx_pfc_pri0_pkt_num",
+ 		HCLGE_MAC_STATS_FIELD_OFF(mac_rx_pfc_pri0_pkt_num)},
+ 	{"mac_rx_pfc_pri1_pkt_num",
+@@ -287,10 +295,9 @@ static const struct hclge_mac_mgr_tbl_entry_cmd hclge_mgr_table[] = {
+ 	},
+ };
  
--static void hclge_update_netstat(struct hclge_hw_stats *hw_stats,
--				 struct net_device_stats *net_stats)
--{
--	net_stats->tx_dropped = 0;
--	net_stats->rx_errors = hw_stats->mac_stats.mac_rx_oversize_pkt_num;
--	net_stats->rx_errors += hw_stats->mac_stats.mac_rx_undersize_pkt_num;
--	net_stats->rx_errors += hw_stats->mac_stats.mac_rx_fcs_err_pkt_num;
--
--	net_stats->multicast = hw_stats->mac_stats.mac_tx_multi_pkt_num;
--	net_stats->multicast += hw_stats->mac_stats.mac_rx_multi_pkt_num;
--
--	net_stats->rx_crc_errors = hw_stats->mac_stats.mac_rx_fcs_err_pkt_num;
--	net_stats->rx_length_errors =
--		hw_stats->mac_stats.mac_rx_undersize_pkt_num;
--	net_stats->rx_length_errors +=
--		hw_stats->mac_stats.mac_rx_oversize_pkt_num;
--	net_stats->rx_over_errors =
--		hw_stats->mac_stats.mac_rx_oversize_pkt_num;
--}
--
- static void hclge_update_stats_for_all(struct hclge_dev *hdev)
+-static int hclge_mac_update_stats(struct hclge_dev *hdev)
++static int hclge_mac_update_stats_defective(struct hclge_dev *hdev)
  {
- 	struct hnae3_handle *handle;
-@@ -500,8 +480,6 @@ static void hclge_update_stats_for_all(struct hclge_dev *hdev)
- 	if (status)
- 		dev_err(&hdev->pdev->dev,
- 			"Update MAC stats fail, status = %d.\n", status);
--
--	hclge_update_netstat(&hdev->hw_stats, &handle->kinfo.netdev->stats);
+ #define HCLGE_MAC_CMD_NUM 21
+-#define HCLGE_RTN_DATA_NUM 4
+ 
+ 	u64 *data = (u64 *)(&hdev->hw_stats.mac_stats);
+ 	struct hclge_desc desc[HCLGE_MAC_CMD_NUM];
+@@ -308,22 +315,102 @@ static int hclge_mac_update_stats(struct hclge_dev *hdev)
+ 	}
+ 
+ 	for (i = 0; i < HCLGE_MAC_CMD_NUM; i++) {
++		/* for special opcode 0032, only the first desc has the head */
+ 		if (unlikely(i == 0)) {
+ 			desc_data = (__le64 *)(&desc[i].data[0]);
+-			n = HCLGE_RTN_DATA_NUM - 2;
++			n = HCLGE_RD_FIRST_STATS_NUM;
+ 		} else {
+ 			desc_data = (__le64 *)(&desc[i]);
+-			n = HCLGE_RTN_DATA_NUM;
++			n = HCLGE_RD_OTHER_STATS_NUM;
+ 		}
++
++		for (k = 0; k < n; k++) {
++			*data += le64_to_cpu(*desc_data);
++			data++;
++			desc_data++;
++		}
++	}
++
++	return 0;
++}
++
++static int hclge_mac_update_stats_complete(struct hclge_dev *hdev, u32 desc_num)
++{
++	u64 *data = (u64 *)(&hdev->hw_stats.mac_stats);
++	struct hclge_desc *desc;
++	__le64 *desc_data;
++	u16 i, k, n;
++	int ret;
++
++	desc = kcalloc(desc_num, sizeof(struct hclge_desc), GFP_KERNEL);
++	hclge_cmd_setup_basic_desc(&desc[0], HCLGE_OPC_STATS_MAC_ALL, true);
++	ret = hclge_cmd_send(&hdev->hw, desc, desc_num);
++	if (ret) {
++		kfree(desc);
++		return ret;
++	}
++
++	for (i = 0; i < desc_num; i++) {
++		/* for special opcode 0034, only the first desc has the head */
++		if (i == 0) {
++			desc_data = (__le64 *)(&desc[i].data[0]);
++			n = HCLGE_RD_FIRST_STATS_NUM;
++		} else {
++			desc_data = (__le64 *)(&desc[i]);
++			n = HCLGE_RD_OTHER_STATS_NUM;
++		}
++
+ 		for (k = 0; k < n; k++) {
+-			*data++ += le64_to_cpu(*desc_data);
++			*data += le64_to_cpu(*desc_data);
++			data++;
+ 			desc_data++;
+ 		}
+ 	}
+ 
++	kfree(desc);
++
+ 	return 0;
  }
  
- static void hclge_update_stats(struct hnae3_handle *handle,
-@@ -509,7 +487,6 @@ static void hclge_update_stats(struct hnae3_handle *handle,
++static int hclge_mac_query_reg_num(struct hclge_dev *hdev, u32 *desc_num)
++{
++	struct hclge_desc desc;
++	__le32 *desc_data;
++	u32 reg_num;
++	int ret;
++
++	hclge_cmd_setup_basic_desc(&desc, HCLGE_OPC_QUERY_MAC_REG_NUM, true);
++	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
++	if (ret)
++		return ret;
++
++	desc_data = (__le32 *)(&desc.data[0]);
++	reg_num = le32_to_cpu(*desc_data);
++
++	*desc_num = 1 + ((reg_num - 3) >> 2) +
++		    (u32)(((reg_num - 3) & 0x3) ? 1 : 0);
++
++	return 0;
++}
++
++static int hclge_mac_update_stats(struct hclge_dev *hdev)
++{
++	u32 desc_num;
++	int ret;
++
++	ret = hclge_mac_query_reg_num(hdev, &desc_num);
++
++	/* The firmware supports the new statistics acquisition method */
++	if (!ret)
++		ret = hclge_mac_update_stats_complete(hdev, desc_num);
++	else if (ret == -EOPNOTSUPP)
++		ret = hclge_mac_update_stats_defective(hdev);
++	else
++		dev_err(&hdev->pdev->dev, "query mac reg num fail!\n");
++
++	return ret;
++}
++
+ static int hclge_tqps_update_stats(struct hnae3_handle *handle)
  {
- 	struct hclge_vport *vport = hclge_get_vport(handle);
- 	struct hclge_dev *hdev = vport->back;
--	struct hclge_hw_stats *hw_stats = &hdev->hw_stats;
- 	int status;
+ 	struct hnae3_knic_private_info *kinfo = &handle->kinfo;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+index 279ed2d83cb8..b5a38fc1af91 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+@@ -16,6 +16,9 @@
  
- 	if (test_and_set_bit(HCLGE_STATE_STATISTICS_UPDATING, &hdev->state))
-@@ -527,8 +504,6 @@ static void hclge_update_stats(struct hnae3_handle *handle,
- 			"Update TQPS stats fail, status = %d.\n",
- 			status);
+ #define HCLGE_MAX_PF_NUM		8
  
--	hclge_update_netstat(hw_stats, net_stats);
--
- 	clear_bit(HCLGE_STATE_STATISTICS_UPDATING, &hdev->state);
- }
++#define HCLGE_RD_FIRST_STATS_NUM        2
++#define HCLGE_RD_OTHER_STATS_NUM        4
++
+ #define HCLGE_INVALID_VPORT 0xffff
  
+ #define HCLGE_PF_CFG_BLOCK_SIZE		32
+@@ -415,6 +418,10 @@ struct hclge_mac_stats {
+ 	u64 mac_rx_fcs_err_pkt_num;
+ 	u64 mac_rx_send_app_good_pkt_num;
+ 	u64 mac_rx_send_app_bad_pkt_num;
++	u64 mac_tx_pfc_pause_pkt_num;
++	u64 mac_rx_pfc_pause_pkt_num;
++	u64 mac_tx_ctrl_pkt_num;
++	u64 mac_rx_ctrl_pkt_num;
+ };
+ 
+ #define HCLGE_STATS_TIMER_INTERVAL	(60 * 5)
 -- 
 2.20.1
 
