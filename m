@@ -2,143 +2,189 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AAADC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:41:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D20FC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:44:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F98F21726
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:41:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548182513;
-	bh=8bDLhtpjqtcPwLHO7MLpXhYHnIxJfSLZ5TPp6p5Oo+0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=aELY0b8GSNuF7Kb1ITLPTyjwLubUKxDeP6FwGQgohwsxxEOug7ns5saKqZyXqLSzL
-	 g+RAGjCy5XztpuTvT+77hPEZ+MWr4ceyqe9BnYBpIQ1OCXee6m6gl6SgK8HMt3TPxe
-	 fBK6Aervd7jL5OsTRHk17x9Y96wLhbqhSNEaLKl0=
+	by mail.kernel.org (Postfix) with ESMTP id 1125A21019
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:44:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727119AbfAVSlv (ORCPT
+        id S1726096AbfAVSom (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 13:41:51 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45726 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725988AbfAVSlv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 13:41:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=W1s/pmqV5vhs0LtDo8Cq1aKgFIwXi/634gbbLgxxFRo=; b=RCZF/cp04KttuN7DhWHEUn6Nl
-        88fiXIvmRKnHbQ1KRMZFMXHxTQGQ4n5VFLfTqWWRV2G+LB4rFhZVEpxTbe0XTUCSaNVOhRUljDaiZ
-        VudTLXY+ZHxLrwfekQHfYoQIdD9noprF5r9QIDVQdBgnGuml3GXjlh3Cx0onTaEz+ioOU=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gm0za-00076A-RM; Tue, 22 Jan 2019 18:41:46 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 0B1951127A85; Tue, 22 Jan 2019 18:41:46 +0000 (GMT)
-Date:   Tue, 22 Jan 2019 18:41:46 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     robh+dt@kernel.org, lgirdwood@gmail.com, bgoswami@codeaurora.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        vkoul@kernel.org, alsa-devel@alsa-project.org
-Subject: Re: [PATCH v5 2/8] ASoC: wcd9335: add support to wcd9335 codec
-Message-ID: <20190122184146.GF7579@sirena.org.uk>
-References: <20190110150616.2332-1-srinivas.kandagatla@linaro.org>
- <20190110150616.2332-3-srinivas.kandagatla@linaro.org>
+        Tue, 22 Jan 2019 13:44:42 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58918 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725958AbfAVSom (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 13:44:42 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B0139EBD;
+        Tue, 22 Jan 2019 10:44:41 -0800 (PST)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9E94C3F5C1;
+        Tue, 22 Jan 2019 10:44:40 -0800 (PST)
+Subject: Re: [PATCH] dma: debug: no need to check return value of
+ debugfs_create functions
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        iommu@lists.linux-foundation.org,
+        Corentin Labbe <clabbe@baylibre.com>
+References: <20190122152151.16139-39-gregkh@linuxfoundation.org>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <2b974ef1-4336-8187-cbc5-ba2a14691837@arm.com>
+Date:   Tue, 22 Jan 2019 18:44:38 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="2hMgfIw2X+zgXrFs"
-Content-Disposition: inline
-In-Reply-To: <20190110150616.2332-3-srinivas.kandagatla@linaro.org>
-X-Cookie: Truckers welcome.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190122152151.16139-39-gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Greg,
 
---2hMgfIw2X+zgXrFs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 22/01/2019 15:21, Greg Kroah-Hartman wrote:
+> When calling debugfs functions, there is no need to ever check the
+> return value.  The function can work or not, but the code logic should
+> never do something different based on this.
+> 
+> Also delete the variables for the file dentries for the debugfs entries
+> as they are never used at all once they are created.
 
-On Thu, Jan 10, 2019 at 03:06:10PM +0000, Srinivas Kandagatla wrote:
+Modulo one nit below, I certainly approve of the cleanup :)
 
-This all looks good apart from a couple of small things that should be
-easy to fix:
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
 
-> diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
-> index 62bdb7e333b8..1c4904940621 100644
-> --- a/sound/soc/codecs/Kconfig
-> +++ b/sound/soc/codecs/Kconfig
-> @@ -1100,6 +1100,12 @@ config SND_SOC_UDA1380
->          tristate
->  	depends on I2C
-> =20
-> +config SND_SOC_WCD9335
-> +	tristate "WCD9335 Codec"
-> +	depends on SLIMBUS
-> +	select REGMAP_SLIMBUS
-> +        tristate
-> +
->  config SND_SOC_WL1273
->  	tristate
-> =20
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> Cc: Robin Murphy <robin.murphy@arm.com>
+> Cc: iommu@lists.linux-foundation.org
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+>   kernel/dma/debug.c | 81 ++++++----------------------------------------
+>   1 file changed, 10 insertions(+), 71 deletions(-)
+> 
+> diff --git a/kernel/dma/debug.c b/kernel/dma/debug.c
+> index 23cf5361bcf1..2f5fc8b9d39f 100644
+> --- a/kernel/dma/debug.c
+> +++ b/kernel/dma/debug.c
+> @@ -136,14 +136,6 @@ static u32 nr_prealloc_entries = PREALLOC_DMA_DEBUG_ENTRIES;
+>   
+>   /* debugfs dentry's for the stuff above */
+>   static struct dentry *dma_debug_dent        __read_mostly;
 
-You should add this to SND_SOC_ALL_CODECS.
+Does this actually need to be at file scope, or could it be punted to a 
+local in dma_debug_fs_init() while we're here?
 
-> +static irqreturn_t wcd9335_slimbus_irq(int irq, void *data)
-> +{
-> +	struct wcd9335_codec *wcd =3D data;
-> +	unsigned long status =3D 0;
-> +	int i, j, port_id;
-> +	unsigned int val, int_val =3D 0;
-> +	bool tx;
-> +	unsigned short reg =3D 0;
-> +
-> +	for (i =3D WCD9335_SLIM_PGD_PORT_INT_STATUS_RX_0, j =3D 0;
-> +	     i <=3D WCD9335_SLIM_PGD_PORT_INT_STATUS_TX_1; i++, j++) {
-> +		regmap_read(wcd->if_regmap, i, &val);
-> +		status |=3D ((u32)val << (8 * j));
-> +	}
-> +
-> +	for_each_set_bit(j, &status, 32) {
-> +		tx =3D (j >=3D 16 ? true : false);
-> +		port_id =3D (tx ? j - 16 : j);
+Robin.
 
-=2E..
-
-> +	return IRQ_HANDLED;
-> +}
-
-This will report that it handled the interrupt unconditionally, this
-means that if the interrupt fires in error or there's some bug the
-interrupt will never be acknowledged (it looks like the chip requires
-acks?) but the interrupt core won't be able to notice and handle the
-problem as effectively as it could've done.  It's better to report
-IRQ_NONE if nothing as handled so that the core can do error handling.
-
---2hMgfIw2X+zgXrFs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxHY+kACgkQJNaLcl1U
-h9CzfAf+OswX/S78qZTnvpZvhvVLvWu85Z4ncjctQIVF4XxsKHLMkRXl+Im9ZYff
-48+Ol00x2bc8SCf6+5Lph6yaCV8bcSnbjSCnBgcwj2xuKrRWFkClL9A2oUKrzv7L
-HCv2C2IB8QG7BiAOaEHjZFlKEk5jL+o/RCKrJsdl4gb8hafUEgbs91bd1LcnZh7v
-aN94GltoAgV7Rb3pWMkIyBnLJnusEBZBKACPZ5993SRMGtOK0BDV9s61ENOYpDJg
-agLlLCOaFMAB5QaB272lchyc84017fc1b0x3WIphY0q3MnV3hGsk0unLSc+qv/Ew
-+jULVBImyVna0PDWOAXsG8GeVh1CAw==
-=CcPS
------END PGP SIGNATURE-----
-
---2hMgfIw2X+zgXrFs--
+> -static struct dentry *global_disable_dent   __read_mostly;
+> -static struct dentry *error_count_dent      __read_mostly;
+> -static struct dentry *show_all_errors_dent  __read_mostly;
+> -static struct dentry *show_num_errors_dent  __read_mostly;
+> -static struct dentry *num_free_entries_dent __read_mostly;
+> -static struct dentry *min_free_entries_dent __read_mostly;
+> -static struct dentry *nr_total_entries_dent __read_mostly;
+> -static struct dentry *filter_dent           __read_mostly;
+>   
+>   /* per-driver filter related state */
+>   
+> @@ -840,66 +832,18 @@ static const struct file_operations filter_fops = {
+>   	.llseek = default_llseek,
+>   };
+>   
+> -static int dma_debug_fs_init(void)
+> +static void dma_debug_fs_init(void)
+>   {
+>   	dma_debug_dent = debugfs_create_dir("dma-api", NULL);
+> -	if (!dma_debug_dent) {
+> -		pr_err("can not create debugfs directory\n");
+> -		return -ENOMEM;
+> -	}
+> -
+> -	global_disable_dent = debugfs_create_bool("disabled", 0444,
+> -			dma_debug_dent,
+> -			&global_disable);
+> -	if (!global_disable_dent)
+> -		goto out_err;
+> -
+> -	error_count_dent = debugfs_create_u32("error_count", 0444,
+> -			dma_debug_dent, &error_count);
+> -	if (!error_count_dent)
+> -		goto out_err;
+> -
+> -	show_all_errors_dent = debugfs_create_u32("all_errors", 0644,
+> -			dma_debug_dent,
+> -			&show_all_errors);
+> -	if (!show_all_errors_dent)
+> -		goto out_err;
+> -
+> -	show_num_errors_dent = debugfs_create_u32("num_errors", 0644,
+> -			dma_debug_dent,
+> -			&show_num_errors);
+> -	if (!show_num_errors_dent)
+> -		goto out_err;
+> -
+> -	num_free_entries_dent = debugfs_create_u32("num_free_entries", 0444,
+> -			dma_debug_dent,
+> -			&num_free_entries);
+> -	if (!num_free_entries_dent)
+> -		goto out_err;
+> -
+> -	min_free_entries_dent = debugfs_create_u32("min_free_entries", 0444,
+> -			dma_debug_dent,
+> -			&min_free_entries);
+> -	if (!min_free_entries_dent)
+> -		goto out_err;
+> -
+> -	nr_total_entries_dent = debugfs_create_u32("nr_total_entries", 0444,
+> -			dma_debug_dent,
+> -			&nr_total_entries);
+> -	if (!nr_total_entries_dent)
+> -		goto out_err;
+> -
+> -	filter_dent = debugfs_create_file("driver_filter", 0644,
+> -					  dma_debug_dent, NULL, &filter_fops);
+> -	if (!filter_dent)
+> -		goto out_err;
+> -
+> -	return 0;
+>   
+> -out_err:
+> -	debugfs_remove_recursive(dma_debug_dent);
+> -
+> -	return -ENOMEM;
+> +	debugfs_create_bool("disabled", 0444, dma_debug_dent, &global_disable);
+> +	debugfs_create_u32("error_count", 0444, dma_debug_dent, &error_count);
+> +	debugfs_create_u32("all_errors", 0644, dma_debug_dent, &show_all_errors);
+> +	debugfs_create_u32("num_errors", 0644, dma_debug_dent, &show_num_errors);
+> +	debugfs_create_u32("num_free_entries", 0444, dma_debug_dent, &num_free_entries);
+> +	debugfs_create_u32("min_free_entries", 0444, dma_debug_dent, &min_free_entries);
+> +	debugfs_create_u32("nr_total_entries", 0444, dma_debug_dent, &nr_total_entries);
+> +	debugfs_create_file("driver_filter", 0644, dma_debug_dent, NULL, &filter_fops);
+>   }
+>   
+>   static int device_dma_allocations(struct device *dev, struct dma_debug_entry **out_entry)
+> @@ -985,12 +929,7 @@ static int dma_debug_init(void)
+>   		spin_lock_init(&dma_entry_hash[i].lock);
+>   	}
+>   
+> -	if (dma_debug_fs_init() != 0) {
+> -		pr_err("error creating debugfs entries - disabling\n");
+> -		global_disable = true;
+> -
+> -		return 0;
+> -	}
+> +	dma_debug_fs_init();
+>   
+>   	nr_pages = DIV_ROUND_UP(nr_prealloc_entries, DMA_DEBUG_DYNAMIC_ENTRIES);
+>   	for (i = 0; i < nr_pages; ++i)
+> 
