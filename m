@@ -2,334 +2,285 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29D13C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:53:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83232C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:54:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0D0D21721
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:53:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48C4A20684
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:54:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728678AbfAVNxU (ORCPT
+        id S1728616AbfAVNyA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 08:53:20 -0500
-Received: from skedge03.snt-world.com ([91.208.41.68]:34868 "EHLO
-        skedge03.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728608AbfAVNxT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 08:53:19 -0500
-Received: from sntmail12r.snt-is.com (unknown [10.203.32.182])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Tue, 22 Jan 2019 08:54:00 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:57860 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728491AbfAVNyA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 08:54:00 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by skedge03.snt-world.com (Postfix) with ESMTPS id 7FC3467A654;
-        Tue, 22 Jan 2019 14:53:13 +0100 (CET)
-Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail12r.snt-is.com
- (10.203.32.182) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Tue, 22 Jan
- 2019 14:53:12 +0100
-Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
- sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%5]) with mapi id
- 15.01.1466.003; Tue, 22 Jan 2019 14:53:12 +0100
-From:   Schrempf Frieder <frieder.schrempf@kontron.de>
-To:     Boris Brezillon <bbrezillon@kernel.org>
-CC:     "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        "richard@nod.at" <richard@nod.at>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        "Marek Vasut" <marek.vasut@gmail.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/4] mtd: nand: Always store info about bad block
- markers in chip struct
-Thread-Topic: [PATCH v2 1/4] mtd: nand: Always store info about bad block
- markers in chip struct
-Thread-Index: AQHUskTm6DqU1kaQw0qHrl/l4xwfWKW7NMGAgAAJkYA=
-Date:   Tue, 22 Jan 2019 13:53:12 +0000
-Message-ID: <cc01effd-e9cd-161c-8db2-99c475c34e68@kontron.de>
-References: <20190122112258.20042-1-frieder.schrempf@kontron.de>
- <20190122112258.20042-2-frieder.schrempf@kontron.de>
- <20190122141857.53329d61@bbrezillon>
-In-Reply-To: <20190122141857.53329d61@bbrezillon>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.25.9.43]
-x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <55911A02988BD645AB0D81CFD7A31846@snt-world.com>
-Content-Transfer-Encoding: base64
+        by mx1.redhat.com (Postfix) with ESMTPS id 17DA2C05D3ED;
+        Tue, 22 Jan 2019 13:53:59 +0000 (UTC)
+Received: from redhat.com (ovpn-123-48.rdu2.redhat.com [10.10.123.48])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 771BC26341;
+        Tue, 22 Jan 2019 13:53:56 +0000 (UTC)
+Date:   Tue, 22 Jan 2019 08:53:56 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     xuyandong <xuyandong2@huawei.com>
+Cc:     Bjorn Helgaas <helgaas@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Yinghai Lu <yinghai@kernel.org>,
+        Jesse Barnes <jbarnes@virtuousgeek.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Ofer Hayut <ofer@lightbitslabs.com>,
+        Roy Shterman <roys@lightbitslabs.com>,
+        Keith Busch <keith.busch@intel.com>,
+        "Wangzhou (B)" <wangzhou1@hisilicon.com>
+Subject: Re: [PATCH v3] PCI: avoid bridge feature re-probing on hotplug
+Message-ID: <20190122085336-mutt-send-email-mst@kernel.org>
+References: <20181218004455.20186-1-mst@redhat.com>
+ <20190119201259.GA87988@google.com>
+ <7CECC2DFC21538489F72729DF5EFB4D909EC77D4@dggemm501-mbs.china.huawei.com>
 MIME-Version: 1.0
-X-SnT-MailScanner-Information: Please contact the ISP for more information
-X-SnT-MailScanner-ID: 7FC3467A654.A23B3
-X-SnT-MailScanner: Found to be clean
-X-SnT-MailScanner-SpamCheck: 
-X-SnT-MailScanner-From: frieder.schrempf@kontron.de
-X-SnT-MailScanner-To: bbrezillon@kernel.org, boris.brezillon@bootlin.com,
-        computersforpeace@gmail.com, dwmw2@infradead.org,
-        kyungmin.park@samsung.com, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, marek.vasut@gmail.com,
-        miquel.raynal@bootlin.com, richard@nod.at
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7CECC2DFC21538489F72729DF5EFB4D909EC77D4@dggemm501-mbs.china.huawei.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Tue, 22 Jan 2019 13:53:59 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMjIuMDEuMTkgMTQ6MTgsIEJvcmlzIEJyZXppbGxvbiB3cm90ZToNCj4gT24gVHVlLCAyMiBK
-YW4gMjAxOSAxMToyMzoyOSArMDAwMA0KPiBTY2hyZW1wZiBGcmllZGVyIDxmcmllZGVyLnNjaHJl
-bXBmQGtvbnRyb24uZGU+IHdyb3RlOg0KPiANCj4+IEZyb206IEZyaWVkZXIgU2NocmVtcGYgPGZy
-aWVkZXIuc2NocmVtcGZAa29udHJvbi5kZT4NCj4+DQo+PiBUaGUgaW5mb3JtYXRpb24gYWJvdXQg
-d2hlcmUgdGhlIG1hbnVmYWN0dXJlciBwdXRzIHRoZSBiYWQgYmxvY2sNCj4+IG1hcmtlcnMgaW5z
-aWRlIHRoZSBiYWQgYmxvY2sgYW5kIGluIHRoZSBPT0IgZGF0YSBpcyBzdG9yZWQgaW4NCj4+IGRp
-ZmZlcmVudCBwbGFjZXMuIExldCdzIG1vdmUgdGhpcyBpbmZvcm1hdGlvbiB0byBuYW5kX2NoaXAu
-b3B0aW9ucw0KPj4gYW5kIG5hbmRfY2hpcC5iYWRibG9ja3Bvcy4NCj4+DQo+PiBBcyB0aGlzIGNo
-aXAtc3BlY2lmaWMgaW5mb3JtYXRpb24gaXMgbm90IGRpcmVjdGx5IHJlbGF0ZWQgdG8gdGhlDQo+
-PiBiYWQgYmxvY2sgdGFibGUgKEJCVCkgYW5kIHRvIG1ha2UgdGhlbSBtb3JlIGZsZXhpYmxlLCB3
-ZSBhbHNvIHJlbmFtZQ0KPj4gdGhlIGZsYWdzIGFuZCBjcmVhdGUgc2VwYXJhdGUgZmxhZ3MgZm9y
-IHN0b3JpbmcgdGhlIEJCTSBpbiB0aGUgZmlyc3QNCj4+IGFuZCB0aGUgc2Vjb25kIHBhZ2UgaW5z
-dGVhZCBvZiB0aGUgY29tYmluZWQgZmxhZy4NCj4gDQo+IFRoZSBzZXBhcmF0aW9uIGZvciBmaXJz
-dCBhbmQgc2Vjb25kIHBhZ2UgZmxhZ3Mgc2hvdWxkIElNTyBiZSBkb25lIGluIGENCj4gc2VwYXJh
-dGUgcGF0Y2guIExvb2tzIGdvb2Qgb3RoZXJ3aXNlLg0KDQpPaywgSSBjYW4gc3BsaXQgaXQgdXAg
-aW4gdGhlIG5leHQgdmVyc2lvbi4NCg0KPiANCj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBGcmllZGVy
-LlNjaHJlbXBmIDxmcmllZGVyLnNjaHJlbXBmQGtvbnRyb24uZGU+DQo+PiAtLS0NCj4+ICAgZHJp
-dmVycy9tdGQvbmFuZC9vbmVuYW5kL29uZW5hbmRfYmFzZS5jIHwgIDIgKy0NCj4+ICAgZHJpdmVy
-cy9tdGQvbmFuZC9vbmVuYW5kL29uZW5hbmRfYmJ0LmMgIHwgIDIgKy0NCj4+ICAgZHJpdmVycy9t
-dGQvbmFuZC9yYXcvbmFuZF9hbWQuYyAgICAgICAgIHwgIDIgKy0NCj4+ICAgZHJpdmVycy9tdGQv
-bmFuZC9yYXcvbmFuZF9iYXNlLmMgICAgICAgIHwgMTQgKysrKysrKystLS0tLS0NCj4+ICAgZHJp
-dmVycy9tdGQvbmFuZC9yYXcvbmFuZF9iYnQuYyAgICAgICAgIHwgIDUgKysrLS0NCj4+ICAgZHJp
-dmVycy9tdGQvbmFuZC9yYXcvbmFuZF9lc210LmMgICAgICAgIHwgIDIgKy0NCj4+ICAgZHJpdmVy
-cy9tdGQvbmFuZC9yYXcvbmFuZF9oeW5peC5jICAgICAgIHwgIDQgKystLQ0KPj4gICBkcml2ZXJz
-L210ZC9uYW5kL3Jhdy9uYW5kX21hY3Jvbml4LmMgICAgfCAgMiArLQ0KPj4gICBkcml2ZXJzL210
-ZC9uYW5kL3Jhdy9uYW5kX21pY3Jvbi5jICAgICAgfCAgMiArLQ0KPj4gICBkcml2ZXJzL210ZC9u
-YW5kL3Jhdy9uYW5kX3NhbXN1bmcuYyAgICAgfCAgNCArKy0tDQo+PiAgIGRyaXZlcnMvbXRkL25h
-bmQvcmF3L25hbmRfdG9zaGliYS5jICAgICB8ICAyICstDQo+PiAgIGRyaXZlcnMvbXRkL25hbmQv
-cmF3L3NoX2ZsY3RsLmMgICAgICAgICB8ICA0ICsrLS0NCj4+ICAgaW5jbHVkZS9saW51eC9tdGQv
-YmJtLmggICAgICAgICAgICAgICAgIHwgMTQgKy0tLS0tLS0tLS0tLS0NCj4+ICAgaW5jbHVkZS9s
-aW51eC9tdGQvcmF3bmFuZC5oICAgICAgICAgICAgIHwgMTYgKysrKysrKysrKysrKysrKw0KPj4g
-ICAxNCBmaWxlcyBjaGFuZ2VkLCA0MSBpbnNlcnRpb25zKCspLCAzNCBkZWxldGlvbnMoLSkNCj4+
-DQo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tdGQvbmFuZC9vbmVuYW5kL29uZW5hbmRfYmFzZS5j
-IGIvZHJpdmVycy9tdGQvbmFuZC9vbmVuYW5kL29uZW5hbmRfYmFzZS5jDQo+PiBpbmRleCA0Y2E0
-YjE5NGU3ZDcuLmQ2NzAxYjhmMDMxZiAxMDA2NDQNCj4+IC0tLSBhL2RyaXZlcnMvbXRkL25hbmQv
-b25lbmFuZC9vbmVuYW5kX2Jhc2UuYw0KPj4gKysrIGIvZHJpdmVycy9tdGQvbmFuZC9vbmVuYW5k
-L29uZW5hbmRfYmFzZS5jDQo+PiBAQCAtMjQ1OCw3ICsyNDU4LDcgQEAgc3RhdGljIGludCBvbmVu
-YW5kX2RlZmF1bHRfYmxvY2tfbWFya2JhZChzdHJ1Y3QgbXRkX2luZm8gKm10ZCwgbG9mZl90IG9m
-cykNCj4+ICAgICAgICAgICAgICAgICAgIGJibS0+YmJ0W2Jsb2NrID4+IDJdIHw9IDB4MDEgPDwg
-KChibG9jayAmIDB4MDMpIDw8IDEpOw0KPj4gICANCj4+ICAgICAgICAgICAvKiBXZSB3cml0ZSB0
-d28gYnl0ZXMsIHNvIHdlIGRvbid0IGhhdmUgdG8gbWVzcyB3aXRoIDE2LWJpdCBhY2Nlc3MgKi8N
-Cj4+IC0gICAgICAgIG9mcyArPSBtdGQtPm9vYnNpemUgKyAoYmJtLT5iYWRibG9ja3BvcyAmIH4w
-eDAxKTsNCj4+ICsgICAgICAgIG9mcyArPSBtdGQtPm9vYnNpemUgKyAodGhpcy0+YmFkYmxvY2tw
-b3MgJiB+MHgwMSk7DQo+PiAgIAkvKiBGSVhNRSA6IFdoYXQgdG8gZG8gd2hlbiBtYXJraW5nIFNM
-QyBibG9jayBpbiBwYXJ0aXRpb24NCj4+ICAgCSAqIAkgICB3aXRoIE1MQyBlcmFzZXNpemU/IEZv
-ciBub3csIGl0IGlzIG5vdCBhZHZpc2FibGUgdG8NCj4+ICAgCSAqCSAgIGNyZWF0ZSBwYXJ0aXRp
-b25zIGNvbnRhaW5pbmcgYm90aCBTTEMgYW5kIE1MQyByZWdpb25zLg0KPj4gZGlmZiAtLWdpdCBh
-L2RyaXZlcnMvbXRkL25hbmQvb25lbmFuZC9vbmVuYW5kX2JidC5jIGIvZHJpdmVycy9tdGQvbmFu
-ZC9vbmVuYW5kL29uZW5hbmRfYmJ0LmMNCj4+IGluZGV4IGRkZTIwNDg3OTM3ZC4uODgwYjBhYmQz
-NmM4IDEwMDY0NA0KPj4gLS0tIGEvZHJpdmVycy9tdGQvbmFuZC9vbmVuYW5kL29uZW5hbmRfYmJ0
-LmMNCj4+ICsrKyBiL2RyaXZlcnMvbXRkL25hbmQvb25lbmFuZC9vbmVuYW5kX2JidC5jDQo+PiBA
-QCAtMTkxLDcgKzE5MSw3IEBAIHN0YXRpYyBpbnQgb25lbmFuZF9zY2FuX2JidChzdHJ1Y3QgbXRk
-X2luZm8gKm10ZCwgc3RydWN0IG5hbmRfYmJ0X2Rlc2NyICpiZCkNCj4+ICAgCQlyZXR1cm4gLUVO
-T01FTTsNCj4+ICAgDQo+PiAgIAkvKiBTZXQgdGhlIGJhZCBibG9jayBwb3NpdGlvbiAqLw0KPj4g
-LQliYm0tPmJhZGJsb2NrcG9zID0gT05FTkFORF9CQURCTE9DS19QT1M7DQo+PiArCXRoaXMtPmJh
-ZGJsb2NrcG9zID0gTkFORF9CQk1fUE9TX09ORU5BTkQ7DQo+PiAgIA0KPj4gICAJLyogU2V0IGVy
-YXNlIHNoaWZ0ICovDQo+PiAgIAliYm0tPmJidF9lcmFzZV9zaGlmdCA9IHRoaXMtPmVyYXNlX3No
-aWZ0Ow0KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbXRkL25hbmQvcmF3L25hbmRfYW1kLmMgYi9k
-cml2ZXJzL210ZC9uYW5kL3Jhdy9uYW5kX2FtZC5jDQo+PiBpbmRleCA4OTBjNWI0M2UwM2MuLjYy
-MDJjYmY3ZWU4ZCAxMDA2NDQNCj4+IC0tLSBhL2RyaXZlcnMvbXRkL25hbmQvcmF3L25hbmRfYW1k
-LmMNCj4+ICsrKyBiL2RyaXZlcnMvbXRkL25hbmQvcmF3L25hbmRfYW1kLmMNCj4+IEBAIC00MCw3
-ICs0MCw3IEBAIHN0YXRpYyB2b2lkIGFtZF9uYW5kX2RlY29kZV9pZChzdHJ1Y3QgbmFuZF9jaGlw
-ICpjaGlwKQ0KPj4gICBzdGF0aWMgaW50IGFtZF9uYW5kX2luaXQoc3RydWN0IG5hbmRfY2hpcCAq
-Y2hpcCkNCj4+ICAgew0KPj4gICAJaWYgKG5hbmRfaXNfc2xjKGNoaXApKQ0KPj4gLQkJY2hpcC0+
-YmJ0X29wdGlvbnMgfD0gTkFORF9CQlRfU0NBTjJORFBBR0U7DQo+PiArCQljaGlwLT5vcHRpb25z
-IHw9IE5BTkRfQkJNX0ZJUlNUUEFHRSB8IE5BTkRfQkJNX1NFQ09ORFBBR0U7DQo+PiAgIA0KPj4g
-ICAJcmV0dXJuIDA7DQo+PiAgIH0NCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL210ZC9uYW5kL3Jh
-dy9uYW5kX2Jhc2UuYyBiL2RyaXZlcnMvbXRkL25hbmQvcmF3L25hbmRfYmFzZS5jDQo+PiBpbmRl
-eCBjY2E0YjI0ZDJmZmEuLjllZjdiODZjZGM0MiAxMDA2NDQNCj4+IC0tLSBhL2RyaXZlcnMvbXRk
-L25hbmQvcmF3L25hbmRfYmFzZS5jDQo+PiArKysgYi9kcml2ZXJzL210ZC9uYW5kL3Jhdy9uYW5k
-X2Jhc2UuYw0KPj4gQEAgLTI5OCwxMSArMjk4LDEyIEBAIHN0YXRpYyBpbnQgbmFuZF9ibG9ja19i
-YWQoc3RydWN0IG5hbmRfY2hpcCAqY2hpcCwgbG9mZl90IG9mcykNCj4+ICAgCWludCBwYWdlLCBw
-YWdlX2VuZCwgcmVzOw0KPj4gICAJdTggYmFkOw0KPj4gICANCj4+IC0JaWYgKGNoaXAtPmJidF9v
-cHRpb25zICYgTkFORF9CQlRfU0NBTkxBU1RQQUdFKQ0KPj4gKwlpZiAoY2hpcC0+b3B0aW9ucyAm
-IE5BTkRfQkJNX0xBU1RQQUdFKQ0KPj4gICAJCW9mcyArPSBtdGQtPmVyYXNlc2l6ZSAtIG10ZC0+
-d3JpdGVzaXplOw0KPj4gICANCj4+ICAgCXBhZ2UgPSAoaW50KShvZnMgPj4gY2hpcC0+cGFnZV9z
-aGlmdCkgJiBjaGlwLT5wYWdlbWFzazsNCj4+IC0JcGFnZV9lbmQgPSBwYWdlICsgKGNoaXAtPmJi
-dF9vcHRpb25zICYgTkFORF9CQlRfU0NBTjJORFBBR0UgPyAyIDogMSk7DQo+PiArCXBhZ2VfZW5k
-ID0gcGFnZSArICgoKGNoaXAtPm9wdGlvbnMgJiBOQU5EX0JCTV9GSVJTVFBBR0UpICYmDQo+PiAr
-CQkJICAgIChjaGlwLT5vcHRpb25zICYgTkFORF9CQk1fU0VDT05EUEFHRSkpID8gMiA6IDEpOw0K
-Pj4gICANCj4+ICAgCWZvciAoOyBwYWdlIDwgcGFnZV9lbmQ7IHBhZ2UrKykgew0KPj4gICAJCXJl
-cyA9IGNoaXAtPmVjYy5yZWFkX29vYihjaGlwLCBwYWdlKTsNCj4+IEBAIC01NDEsNyArNTQyLDcg
-QEAgc3RhdGljIGludCBuYW5kX2RlZmF1bHRfYmxvY2tfbWFya2JhZChzdHJ1Y3QgbmFuZF9jaGlw
-ICpjaGlwLCBsb2ZmX3Qgb2ZzKQ0KPj4gICAJb3BzLm1vZGUgPSBNVERfT1BTX1BMQUNFX09PQjsN
-Cj4+ICAgDQo+PiAgIAkvKiBXcml0ZSB0byBmaXJzdC9sYXN0IHBhZ2UocykgaWYgbmVjZXNzYXJ5
-ICovDQo+PiAtCWlmIChjaGlwLT5iYnRfb3B0aW9ucyAmIE5BTkRfQkJUX1NDQU5MQVNUUEFHRSkN
-Cj4+ICsJaWYgKGNoaXAtPm9wdGlvbnMgJiBOQU5EX0JCTV9MQVNUUEFHRSkNCj4+ICAgCQlvZnMg
-Kz0gbXRkLT5lcmFzZXNpemUgLSBtdGQtPndyaXRlc2l6ZTsNCj4+ICAgCWRvIHsNCj4+ICAgCQly
-ZXMgPSBuYW5kX2RvX3dyaXRlX29vYihjaGlwLCBvZnMsICZvcHMpOw0KPj4gQEAgLTU1MCw3ICs1
-NTEsOCBAQCBzdGF0aWMgaW50IG5hbmRfZGVmYXVsdF9ibG9ja19tYXJrYmFkKHN0cnVjdCBuYW5k
-X2NoaXAgKmNoaXAsIGxvZmZfdCBvZnMpDQo+PiAgIA0KPj4gICAJCWkrKzsNCj4+ICAgCQlvZnMg
-Kz0gbXRkLT53cml0ZXNpemU7DQo+PiAtCX0gd2hpbGUgKChjaGlwLT5iYnRfb3B0aW9ucyAmIE5B
-TkRfQkJUX1NDQU4yTkRQQUdFKSAmJiBpIDwgMik7DQo+PiArCX0gd2hpbGUgKChjaGlwLT5vcHRp
-b25zICYgTkFORF9CQk1fRklSU1RQQUdFKSAmJg0KPj4gKwkJIChjaGlwLT5vcHRpb25zICYgTkFO
-RF9CQk1fU0VDT05EUEFHRSkgJiYgaSA8IDIpOw0KPj4gICANCj4+ICAgCXJldHVybiByZXQ7DQo+
-PiAgIH0NCj4+IEBAIC00NTc2LDkgKzQ1NzgsOSBAQCBzdGF0aWMgdm9pZCBuYW5kX2RlY29kZV9i
-Ym1fb3B0aW9ucyhzdHJ1Y3QgbmFuZF9jaGlwICpjaGlwKQ0KPj4gICANCj4+ICAgCS8qIFNldCB0
-aGUgYmFkIGJsb2NrIHBvc2l0aW9uICovDQo+PiAgIAlpZiAobXRkLT53cml0ZXNpemUgPiA1MTIg
-fHwgKGNoaXAtPm9wdGlvbnMgJiBOQU5EX0JVU1dJRFRIXzE2KSkNCj4+IC0JCWNoaXAtPmJhZGJs
-b2NrcG9zID0gTkFORF9MQVJHRV9CQURCTE9DS19QT1M7DQo+PiArCQljaGlwLT5iYWRibG9ja3Bv
-cyA9IE5BTkRfQkJNX1BPU19MQVJHRTsNCj4+ICAgCWVsc2UNCj4+IC0JCWNoaXAtPmJhZGJsb2Nr
-cG9zID0gTkFORF9TTUFMTF9CQURCTE9DS19QT1M7DQo+PiArCQljaGlwLT5iYWRibG9ja3BvcyA9
-IE5BTkRfQkJNX1BPU19TTUFMTDsNCj4+ICAgfQ0KPj4gICANCj4+ICAgc3RhdGljIGlubGluZSBi
-b29sIGlzX2Z1bGxfaWRfbmFuZChzdHJ1Y3QgbmFuZF9mbGFzaF9kZXYgKnR5cGUpDQo+PiBkaWZm
-IC0tZ2l0IGEvZHJpdmVycy9tdGQvbmFuZC9yYXcvbmFuZF9iYnQuYyBiL2RyaXZlcnMvbXRkL25h
-bmQvcmF3L25hbmRfYmJ0LmMNCj4+IGluZGV4IDFiNzIyZmU5MjEzYy4uYzA5NWMwNGQ1NjZkIDEw
-MDY0NA0KPj4gLS0tIGEvZHJpdmVycy9tdGQvbmFuZC9yYXcvbmFuZF9iYnQuYw0KPj4gKysrIGIv
-ZHJpdmVycy9tdGQvbmFuZC9yYXcvbmFuZF9iYnQuYw0KPj4gQEAgLTQ2Niw3ICs0NjYsOCBAQCBz
-dGF0aWMgaW50IGNyZWF0ZV9iYnQoc3RydWN0IG5hbmRfY2hpcCAqdGhpcywgdWludDhfdCAqYnVm
-LA0KPj4gICANCj4+ICAgCXByX2luZm8oIlNjYW5uaW5nIGRldmljZSBmb3IgYmFkIGJsb2Nrc1xu
-Iik7DQo+PiAgIA0KPj4gLQlpZiAoYmQtPm9wdGlvbnMgJiBOQU5EX0JCVF9TQ0FOMk5EUEFHRSkN
-Cj4+ICsJaWYgKCh0aGlzLT5vcHRpb25zICYgTkFORF9CQk1fRklSU1RQQUdFKSAmJg0KPj4gKwkg
-ICAgKHRoaXMtPm9wdGlvbnMgJiBOQU5EX0JCTV9TRUNPTkRQQUdFKSkNCj4+ICAgCQludW1wYWdl
-cyA9IDI7DQo+PiAgIAllbHNlDQo+PiAgIAkJbnVtcGFnZXMgPSAxOw0KPj4gQEAgLTQ4Nyw3ICs0
-ODgsNyBAQCBzdGF0aWMgaW50IGNyZWF0ZV9iYnQoc3RydWN0IG5hbmRfY2hpcCAqdGhpcywgdWlu
-dDhfdCAqYnVmLA0KPj4gICAJCWZyb20gPSAobG9mZl90KXN0YXJ0YmxvY2sgPDwgdGhpcy0+YmJ0
-X2VyYXNlX3NoaWZ0Ow0KPj4gICAJfQ0KPj4gICANCj4+IC0JaWYgKHRoaXMtPmJidF9vcHRpb25z
-ICYgTkFORF9CQlRfU0NBTkxBU1RQQUdFKQ0KPj4gKwlpZiAodGhpcy0+YmJ0X29wdGlvbnMgJiBO
-QU5EX0JCTV9MQVNUUEFHRSkNCj4+ICAgCQlmcm9tICs9IG10ZC0+ZXJhc2VzaXplIC0gKG10ZC0+
-d3JpdGVzaXplICogbnVtcGFnZXMpOw0KPj4gICANCj4+ICAgCWZvciAoaSA9IHN0YXJ0YmxvY2s7
-IGkgPCBudW1ibG9ja3M7IGkrKykgew0KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbXRkL25hbmQv
-cmF3L25hbmRfZXNtdC5jIGIvZHJpdmVycy9tdGQvbmFuZC9yYXcvbmFuZF9lc210LmMNCj4+IGlu
-ZGV4IDk2ZjAzOWE4M2JjOC4uOTlhODA5Mjk2OWE3IDEwMDY0NA0KPj4gLS0tIGEvZHJpdmVycy9t
-dGQvbmFuZC9yYXcvbmFuZF9lc210LmMNCj4+ICsrKyBiL2RyaXZlcnMvbXRkL25hbmQvcmF3L25h
-bmRfZXNtdC5jDQo+PiBAQCAtMzYsNyArMzYsNyBAQCBzdGF0aWMgdm9pZCBlc210X25hbmRfZGVj
-b2RlX2lkKHN0cnVjdCBuYW5kX2NoaXAgKmNoaXApDQo+PiAgIHN0YXRpYyBpbnQgZXNtdF9uYW5k
-X2luaXQoc3RydWN0IG5hbmRfY2hpcCAqY2hpcCkNCj4+ICAgew0KPj4gICAJaWYgKG5hbmRfaXNf
-c2xjKGNoaXApKQ0KPj4gLQkJY2hpcC0+YmJ0X29wdGlvbnMgfD0gTkFORF9CQlRfU0NBTjJORFBB
-R0U7DQo+PiArCQljaGlwLT5vcHRpb25zIHw9IE5BTkRfQkJNX0ZJUlNUUEFHRSB8IE5BTkRfQkJN
-X1NFQ09ORFBBR0U7DQo+PiAgIA0KPj4gICAJcmV0dXJuIDA7DQo+PiAgIH0NCj4+IGRpZmYgLS1n
-aXQgYS9kcml2ZXJzL210ZC9uYW5kL3Jhdy9uYW5kX2h5bml4LmMgYi9kcml2ZXJzL210ZC9uYW5k
-L3Jhdy9uYW5kX2h5bml4LmMNCj4+IGluZGV4IDM0M2Y0NzczNjJkMS4uZTY4NWQ3MGMxNjE4IDEw
-MDY0NA0KPj4gLS0tIGEvZHJpdmVycy9tdGQvbmFuZC9yYXcvbmFuZF9oeW5peC5jDQo+PiArKysg
-Yi9kcml2ZXJzL210ZC9uYW5kL3Jhdy9uYW5kX2h5bml4LmMNCj4+IEBAIC02NzIsOSArNjcyLDkg
-QEAgc3RhdGljIGludCBoeW5peF9uYW5kX2luaXQoc3RydWN0IG5hbmRfY2hpcCAqY2hpcCkNCj4+
-ICAgCWludCByZXQ7DQo+PiAgIA0KPj4gICAJaWYgKCFuYW5kX2lzX3NsYyhjaGlwKSkNCj4+IC0J
-CWNoaXAtPmJidF9vcHRpb25zIHw9IE5BTkRfQkJUX1NDQU5MQVNUUEFHRTsNCj4+ICsJCWNoaXAt
-Pm9wdGlvbnMgfD0gTkFORF9CQk1fTEFTVFBBR0U7DQo+PiAgIAllbHNlDQo+PiAtCQljaGlwLT5i
-YnRfb3B0aW9ucyB8PSBOQU5EX0JCVF9TQ0FOMk5EUEFHRTsNCj4+ICsJCWNoaXAtPm9wdGlvbnMg
-fD0gTkFORF9CQk1fRklSU1RQQUdFIHwgTkFORF9CQk1fU0VDT05EUEFHRTsNCj4+ICAgDQo+PiAg
-IAloeW5peCA9IGt6YWxsb2Moc2l6ZW9mKCpoeW5peCksIEdGUF9LRVJORUwpOw0KPj4gICAJaWYg
-KCFoeW5peCkNCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL210ZC9uYW5kL3Jhdy9uYW5kX21hY3Jv
-bml4LmMgYi9kcml2ZXJzL210ZC9uYW5kL3Jhdy9uYW5kX21hY3Jvbml4LmMNCj4+IGluZGV4IDQ3
-ZDhjZGE1NDdjZi4uZTI4N2U3MTM0N2M1IDEwMDY0NA0KPj4gLS0tIGEvZHJpdmVycy9tdGQvbmFu
-ZC9yYXcvbmFuZF9tYWNyb25peC5jDQo+PiArKysgYi9kcml2ZXJzL210ZC9uYW5kL3Jhdy9uYW5k
-X21hY3Jvbml4LmMNCj4+IEBAIC02Miw3ICs2Miw3IEBAIHN0YXRpYyB2b2lkIG1hY3Jvbml4X25h
-bmRfZml4X2Jyb2tlbl9nZXRfdGltaW5ncyhzdHJ1Y3QgbmFuZF9jaGlwICpjaGlwKQ0KPj4gICBz
-dGF0aWMgaW50IG1hY3Jvbml4X25hbmRfaW5pdChzdHJ1Y3QgbmFuZF9jaGlwICpjaGlwKQ0KPj4g
-ICB7DQo+PiAgIAlpZiAobmFuZF9pc19zbGMoY2hpcCkpDQo+PiAtCQljaGlwLT5iYnRfb3B0aW9u
-cyB8PSBOQU5EX0JCVF9TQ0FOMk5EUEFHRTsNCj4+ICsJCWNoaXAtPm9wdGlvbnMgfD0gTkFORF9C
-Qk1fRklSU1RQQUdFIHwgTkFORF9CQk1fU0VDT05EUEFHRTsNCj4+ICAgDQo+PiAgIAltYWNyb25p
-eF9uYW5kX2ZpeF9icm9rZW5fZ2V0X3RpbWluZ3MoY2hpcCk7DQo+PiAgIA0KPj4gZGlmZiAtLWdp
-dCBhL2RyaXZlcnMvbXRkL25hbmQvcmF3L25hbmRfbWljcm9uLmMgYi9kcml2ZXJzL210ZC9uYW5k
-L3Jhdy9uYW5kX21pY3Jvbi5jDQo+PiBpbmRleCBiODVlMWMxM2I3OWUuLmNhODBlMDk3ODNjNyAx
-MDA2NDQNCj4+IC0tLSBhL2RyaXZlcnMvbXRkL25hbmQvcmF3L25hbmRfbWljcm9uLmMNCj4+ICsr
-KyBiL2RyaXZlcnMvbXRkL25hbmQvcmF3L25hbmRfbWljcm9uLmMNCj4+IEBAIC00NDgsNyArNDQ4
-LDcgQEAgc3RhdGljIGludCBtaWNyb25fbmFuZF9pbml0KHN0cnVjdCBuYW5kX2NoaXAgKmNoaXAp
-DQo+PiAgIAkJZ290byBlcnJfZnJlZV9tYW51Zl9kYXRhOw0KPj4gICANCj4+ICAgCWlmIChtdGQt
-PndyaXRlc2l6ZSA9PSAyMDQ4KQ0KPj4gLQkJY2hpcC0+YmJ0X29wdGlvbnMgfD0gTkFORF9CQlRf
-U0NBTjJORFBBR0U7DQo+PiArCQljaGlwLT5vcHRpb25zIHw9IE5BTkRfQkJNX0ZJUlNUUEFHRSB8
-IE5BTkRfQkJNX1NFQ09ORFBBR0U7DQo+PiAgIA0KPj4gICAJb25kaWUgPSBtaWNyb25fc3VwcG9y
-dHNfb25fZGllX2VjYyhjaGlwKTsNCj4+ICAgDQo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tdGQv
-bmFuZC9yYXcvbmFuZF9zYW1zdW5nLmMgYi9kcml2ZXJzL210ZC9uYW5kL3Jhdy9uYW5kX3NhbXN1
-bmcuYw0KPj4gaW5kZXggZTQ2ZDRjNDkyYWQ4Li5hY2U1MDUyMmRkMTkgMTAwNjQ0DQo+PiAtLS0g
-YS9kcml2ZXJzL210ZC9uYW5kL3Jhdy9uYW5kX3NhbXN1bmcuYw0KPj4gKysrIGIvZHJpdmVycy9t
-dGQvbmFuZC9yYXcvbmFuZF9zYW1zdW5nLmMNCj4+IEBAIC0xMjEsOSArMTIxLDkgQEAgc3RhdGlj
-IGludCBzYW1zdW5nX25hbmRfaW5pdChzdHJ1Y3QgbmFuZF9jaGlwICpjaGlwKQ0KPj4gICAJCWNo
-aXAtPm9wdGlvbnMgfD0gTkFORF9TQU1TVU5HX0xQX09QVElPTlM7DQo+PiAgIA0KPj4gICAJaWYg
-KCFuYW5kX2lzX3NsYyhjaGlwKSkNCj4+IC0JCWNoaXAtPmJidF9vcHRpb25zIHw9IE5BTkRfQkJU
-X1NDQU5MQVNUUEFHRTsNCj4+ICsJCWNoaXAtPm9wdGlvbnMgfD0gTkFORF9CQk1fTEFTVFBBR0U7
-DQo+PiAgIAllbHNlDQo+PiAtCQljaGlwLT5iYnRfb3B0aW9ucyB8PSBOQU5EX0JCVF9TQ0FOMk5E
-UEFHRTsNCj4+ICsJCWNoaXAtPm9wdGlvbnMgfD0gTkFORF9CQk1fRklSU1RQQUdFIHwgTkFORF9C
-Qk1fU0VDT05EUEFHRTsNCj4+ICAgDQo+PiAgIAlyZXR1cm4gMDsNCj4+ICAgfQ0KPj4gZGlmZiAt
-LWdpdCBhL2RyaXZlcnMvbXRkL25hbmQvcmF3L25hbmRfdG9zaGliYS5jIGIvZHJpdmVycy9tdGQv
-bmFuZC9yYXcvbmFuZF90b3NoaWJhLmMNCj4+IGluZGV4IGQwNjgxNjNiNjRiMy4uMDAzMWU2NzI3
-MTkzIDEwMDY0NA0KPj4gLS0tIGEvZHJpdmVycy9tdGQvbmFuZC9yYXcvbmFuZF90b3NoaWJhLmMN
-Cj4+ICsrKyBiL2RyaXZlcnMvbXRkL25hbmQvcmF3L25hbmRfdG9zaGliYS5jDQo+PiBAQCAtMTQ3
-LDcgKzE0Nyw3IEBAIHN0YXRpYyB2b2lkIHRvc2hpYmFfbmFuZF9kZWNvZGVfaWQoc3RydWN0IG5h
-bmRfY2hpcCAqY2hpcCkNCj4+ICAgc3RhdGljIGludCB0b3NoaWJhX25hbmRfaW5pdChzdHJ1Y3Qg
-bmFuZF9jaGlwICpjaGlwKQ0KPj4gICB7DQo+PiAgIAlpZiAobmFuZF9pc19zbGMoY2hpcCkpDQo+
-PiAtCQljaGlwLT5iYnRfb3B0aW9ucyB8PSBOQU5EX0JCVF9TQ0FOMk5EUEFHRTsNCj4+ICsJCWNo
-aXAtPm9wdGlvbnMgfD0gTkFORF9CQk1fRklSU1RQQUdFIHwgTkFORF9CQk1fU0VDT05EUEFHRTsN
-Cj4+ICAgDQo+PiAgIAkvKiBDaGVjayB0aGF0IGNoaXAgaXMgQkVOQU5EIGFuZCBFQ0MgbW9kZSBp
-cyBvbi1kaWUgKi8NCj4+ICAgCWlmIChuYW5kX2lzX3NsYyhjaGlwKSAmJiBjaGlwLT5lY2MubW9k
-ZSA9PSBOQU5EX0VDQ19PTl9ESUUgJiYNCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL210ZC9uYW5k
-L3Jhdy9zaF9mbGN0bC5jIGIvZHJpdmVycy9tdGQvbmFuZC9yYXcvc2hfZmxjdGwuYw0KPj4gaW5k
-ZXggY2Y2YjFiZTFjZjljLi45NzFkOWFmZDU1ZTUgMTAwNjQ0DQo+PiAtLS0gYS9kcml2ZXJzL210
-ZC9uYW5kL3Jhdy9zaF9mbGN0bC5jDQo+PiArKysgYi9kcml2ZXJzL210ZC9uYW5kL3Jhdy9zaF9m
-bGN0bC5jDQo+PiBAQCAtMTAxLDE0ICsxMDEsMTIgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBtdGRf
-b29ibGF5b3V0X29wcyBmbGN0bF80c2VjY19vb2JfbGFyZ2VwYWdlX29wcyA9IHsNCj4+ICAgc3Rh
-dGljIHVpbnQ4X3Qgc2Nhbl9mZl9wYXR0ZXJuW10gPSB7IDB4ZmYsIDB4ZmYgfTsNCj4+ICAgDQo+
-PiAgIHN0YXRpYyBzdHJ1Y3QgbmFuZF9iYnRfZGVzY3IgZmxjdGxfNHNlY2Nfc21hbGxwYWdlID0g
-ew0KPj4gLQkub3B0aW9ucyA9IE5BTkRfQkJUX1NDQU4yTkRQQUdFLA0KPj4gICAJLm9mZnMgPSAx
-MSwNCj4+ICAgCS5sZW4gPSAxLA0KPj4gICAJLnBhdHRlcm4gPSBzY2FuX2ZmX3BhdHRlcm4sDQo+
-PiAgIH07DQo+PiAgIA0KPj4gICBzdGF0aWMgc3RydWN0IG5hbmRfYmJ0X2Rlc2NyIGZsY3RsXzRz
-ZWNjX2xhcmdlcGFnZSA9IHsNCj4+IC0JLm9wdGlvbnMgPSBOQU5EX0JCVF9TQ0FOMk5EUEFHRSwN
-Cj4+ICAgCS5vZmZzID0gMCwNCj4+ICAgCS5sZW4gPSAyLA0KPj4gICAJLnBhdHRlcm4gPSBzY2Fu
-X2ZmX3BhdHRlcm4sDQo+PiBAQCAtMTE3OCw2ICsxMTc2LDggQEAgc3RhdGljIGludCBmbGN0bF9w
-cm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQ0KPj4gICAJaWYgKHBkYXRhLT5mbGNt
-bmNyX3ZhbCAmIFNFTF8xNkJJVCkNCj4+ICAgCQluYW5kLT5vcHRpb25zIHw9IE5BTkRfQlVTV0lE
-VEhfMTY7DQo+PiAgIA0KPj4gKwluYW5kLT5vcHRpb25zIHw9IE5BTkRfQkJNX0ZJUlNUUEFHRSB8
-IE5BTkRfQkJNX1NFQ09ORFBBR0U7DQo+PiArDQo+PiAgIAlwbV9ydW50aW1lX2VuYWJsZSgmcGRl
-di0+ZGV2KTsNCj4+ICAgCXBtX3J1bnRpbWVfcmVzdW1lKCZwZGV2LT5kZXYpOw0KPj4gICANCj4+
-IGRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L210ZC9iYm0uaCBiL2luY2x1ZGUvbGludXgvbXRk
-L2JibS5oDQo+PiBpbmRleCAzMTAyYmQ3NTRkMTguLjAxMGJjNTU0NGM1NCAxMDA2NDQNCj4+IC0t
-LSBhL2luY2x1ZGUvbGludXgvbXRkL2JibS5oDQo+PiArKysgYi9pbmNsdWRlL2xpbnV4L210ZC9i
-Ym0uaA0KPj4gQEAgLTkzLDEwICs5Myw3IEBAIHN0cnVjdCBuYW5kX2JidF9kZXNjciB7DQo+PiAg
-ICNkZWZpbmUgTkFORF9CQlRfV1JJVEUJCTB4MDAwMDIwMDANCj4+ICAgLyogUmVhZCBhbmQgd3Jp
-dGUgYmFjayBibG9jayBjb250ZW50cyB3aGVuIHdyaXRpbmcgYmJ0ICovDQo+PiAgICNkZWZpbmUg
-TkFORF9CQlRfU0FWRUNPTlRFTlQJMHgwMDAwNDAwMA0KPj4gLS8qIFNlYXJjaCBnb29kIC8gYmFk
-IHBhdHRlcm4gb24gdGhlIGZpcnN0IGFuZCB0aGUgc2Vjb25kIHBhZ2UgKi8NCj4+IC0jZGVmaW5l
-IE5BTkRfQkJUX1NDQU4yTkRQQUdFCTB4MDAwMDgwMDANCj4+IC0vKiBTZWFyY2ggZ29vZCAvIGJh
-ZCBwYXR0ZXJuIG9uIHRoZSBsYXN0IHBhZ2Ugb2YgdGhlIGVyYXNlYmxvY2sgKi8NCj4+IC0jZGVm
-aW5lIE5BTkRfQkJUX1NDQU5MQVNUUEFHRQkweDAwMDEwMDAwDQo+PiArDQo+PiAgIC8qDQo+PiAg
-ICAqIFVzZSBhIGZsYXNoIGJhc2VkIGJhZCBibG9jayB0YWJsZS4gQnkgZGVmYXVsdCwgT09CIGlk
-ZW50aWZpZXIgaXMgc2F2ZWQgaW4NCj4+ICAgICogT09CIGFyZWEuIFRoaXMgb3B0aW9uIGlzIHBh
-c3NlZCB0byB0aGUgZGVmYXVsdCBiYWQgYmxvY2sgdGFibGUgZnVuY3Rpb24uDQo+PiBAQCAtMTIz
-LDEzICsxMjAsNiBAQCBzdHJ1Y3QgbmFuZF9iYnRfZGVzY3Igew0KPj4gICAvKiBUaGUgbWF4aW11
-bSBudW1iZXIgb2YgYmxvY2tzIHRvIHNjYW4gZm9yIGEgYmJ0ICovDQo+PiAgICNkZWZpbmUgTkFO
-RF9CQlRfU0NBTl9NQVhCTE9DS1MJNA0KPj4gICANCj4+IC0vKg0KPj4gLSAqIENvbnN0YW50cyBm
-b3Igb29iIGNvbmZpZ3VyYXRpb24NCj4+IC0gKi8NCj4+IC0jZGVmaW5lIE5BTkRfU01BTExfQkFE
-QkxPQ0tfUE9TCQk1DQo+PiAtI2RlZmluZSBOQU5EX0xBUkdFX0JBREJMT0NLX1BPUwkJMA0KPj4g
-LSNkZWZpbmUgT05FTkFORF9CQURCTE9DS19QT1MJCTANCj4+IC0NCj4+ICAgLyoNCj4+ICAgICog
-QmFkIGJsb2NrIHNjYW5uaW5nIGVycm9ycw0KPj4gICAgKi8NCj4+IEBAIC0xNDAsNyArMTMwLDYg
-QEAgc3RydWN0IG5hbmRfYmJ0X2Rlc2NyIHsNCj4+ICAgLyoqDQo+PiAgICAqIHN0cnVjdCBiYm1f
-aW5mbyAtIFtHRU5FUklDXSBCYWQgQmxvY2sgVGFibGUgZGF0YSBzdHJ1Y3R1cmUNCj4+ICAgICog
-QGJidF9lcmFzZV9zaGlmdDoJW0lOVEVSTl0gbnVtYmVyIG9mIGFkZHJlc3MgYml0cyBpbiBhIGJi
-dCBlbnRyeQ0KPj4gLSAqIEBiYWRibG9ja3BvczoJW0lOVEVSTl0gcG9zaXRpb24gb2YgdGhlIGJh
-ZCBibG9jayBtYXJrZXIgaW4gdGhlIG9vYiBhcmVhDQo+PiAgICAqIEBvcHRpb25zOgkJb3B0aW9u
-cyBmb3IgdGhpcyBkZXNjcmlwdG9yDQo+PiAgICAqIEBiYnQ6CQlbSU5URVJOXSBiYWQgYmxvY2sg
-dGFibGUgcG9pbnRlcg0KPj4gICAgKiBAaXNiYWRfYmJ0OgkJZnVuY3Rpb24gdG8gZGV0ZXJtaW5l
-IGlmIGEgYmxvY2sgaXMgYmFkDQo+PiBAQCAtMTUwLDcgKzEzOSw2IEBAIHN0cnVjdCBuYW5kX2Ji
-dF9kZXNjciB7DQo+PiAgICAqLw0KPj4gICBzdHJ1Y3QgYmJtX2luZm8gew0KPj4gICAJaW50IGJi
-dF9lcmFzZV9zaGlmdDsNCj4+IC0JaW50IGJhZGJsb2NrcG9zOw0KPj4gICAJaW50IG9wdGlvbnM7
-DQo+PiAgIA0KPj4gICAJdWludDhfdCAqYmJ0Ow0KPj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGlu
-dXgvbXRkL3Jhd25hbmQuaCBiL2luY2x1ZGUvbGludXgvbXRkL3Jhd25hbmQuaA0KPj4gaW5kZXgg
-MzNlMjQwYWNkYzZkLi44MGJkM2RhMDZiZWMgMTAwNjQ0DQo+PiAtLS0gYS9pbmNsdWRlL2xpbnV4
-L210ZC9yYXduYW5kLmgNCj4+ICsrKyBiL2luY2x1ZGUvbGludXgvbXRkL3Jhd25hbmQuaA0KPj4g
-QEAgLTE2OSw2ICsxNjksMjIgQEAgZW51bSBuYW5kX2VjY19hbGdvIHsNCj4+ICAgLyogTWFjcm9z
-IHRvIGlkZW50aWZ5IHRoZSBhYm92ZSAqLw0KPj4gICAjZGVmaW5lIE5BTkRfSEFTX1NVQlBBR0Vf
-UkVBRChjaGlwKSAoKGNoaXAtPm9wdGlvbnMgJiBOQU5EX1NVQlBBR0VfUkVBRCkpDQo+PiAgIA0K
-Pj4gKy8qDQo+PiArICogVGhlcmUgYXJlIGRpZmZlcmVudCBwbGFjZXMgd2hlcmUgdGhlIG1hbnVm
-YWN0dXJlciBzdG9yZXMgdGhlIGZhY3RvcnkgYmFkDQo+PiArICogYmxvY2sgbWFya2Vycy4NCj4+
-ICsgKg0KPj4gKyAqIFBvc2l0aW9uIHdpdGhpbiB0aGUgYmxvY2s6IEVhY2ggb2YgdGhlc2UgcGFn
-ZXMgbmVlZHMgdG8gYmUgY2hlY2tlZCBmb3IgYQ0KPj4gKyAqIGJhZCBibG9jayBtYXJraW5nIHBh
-dHRlcm4uDQo+PiArICovDQo+PiArI2RlZmluZSBOQU5EX0JCTV9GSVJTVFBBR0UJCTB4MDAwMDgw
-MDANCj4+ICsjZGVmaW5lIE5BTkRfQkJNX1NFQ09ORFBBR0UJCTB4MDAwMTAwMDANCj4+ICsjZGVm
-aW5lIE5BTkRfQkJNX0xBU1RQQUdFCQkweDAwMDIwMDAwDQo+PiArDQo+PiArLyogUG9zaXRpb24g
-d2l0aGluIHRoZSBPT0IgZGF0YSBvZiB0aGUgcGFnZSAqLw0KPj4gKyNkZWZpbmUgTkFORF9CQk1f
-UE9TX1NNQUxMCQk1DQo+PiArI2RlZmluZSBOQU5EX0JCTV9QT1NfTEFSR0UJCTANCj4+ICsjZGVm
-aW5lIE5BTkRfQkJNX1BPU19PTkVOQU5ECQkwDQo+PiArDQo+PiAgIC8qIE5vbiBjaGlwIHJlbGF0
-ZWQgb3B0aW9ucyAqLw0KPj4gICAvKiBUaGlzIG9wdGlvbiBza2lwcyB0aGUgYmJ0IHNjYW4gZHVy
-aW5nIGluaXRpYWxpemF0aW9uLiAqLw0KPj4gICAjZGVmaW5lIE5BTkRfU0tJUF9CQlRTQ0FOCTB4
-MDAwMTAwMDANCj4g
+Thanks a lot for the testing!
+I'll play with it today hopefully.
+
+On Tue, Jan 22, 2019 at 05:31:10AM +0000, xuyandong wrote:
+> Hi Bjorn and Michael
+> 
+> After trying to reproduce the problem for a whole day, the bug did not show up
+> any more. So I think the new patch does solve this problem.
+> 
+> > -----Original Message-----
+> > From: Bjorn Helgaas [mailto:helgaas@kernel.org]
+> > Sent: Sunday, January 20, 2019 4:13 AM
+> > To: Michael S. Tsirkin <mst@redhat.com>
+> > Cc: linux-kernel@vger.kernel.org; xuyandong <xuyandong2@huawei.com>;
+> > Yinghai Lu <yinghai@kernel.org>; Jesse Barnes <jbarnes@virtuousgeek.org>;
+> > linux-pci@vger.kernel.org; Sagi Grimberg <sagi@grimberg.me>; Ofer Hayut
+> > <ofer@lightbitslabs.com>; Roy Shterman <roys@lightbitslabs.com>; Keith
+> > Busch <keith.busch@intel.com>; Wangzhou (B) <wangzhou1@hisilicon.com>
+> > Subject: [PATCH v3] PCI: avoid bridge feature re-probing on hotplug
+> > 
+> > I gave up trying to reproduce the problem and test this patch with qemu; can
+> > you guys (Michael and Xu (sorry if I mangled your name)) give this a try?
+> > 
+> > I cc'd a few other people who have noticed this issue in the past, so just FYI for
+> > them.
+> > 
+> > Bjorn
+> > 
+> > 
+> > commit dd21b922db366ba069291b6fef2a8ce6768756a2
+> > Author: Bjorn Helgaas <bhelgaas@google.com>
+> > Date:   Sat Jan 19 11:35:04 2019 -0600
+> > 
+> >     PCI: Probe bridge window attributes once at enumeration-time
+> > 
+> >     pci_bridge_check_ranges() determines whether a bridge supports the
+> > optional
+> >     I/O and prefetchable memory windows and sets the flag bits in the bridge
+> >     resources.  This could be done once during enumeration except that the
+> >     resource allocation code completely clears the flag bits, e.g., in the
+> >     pci_assign_unassigned_bridge_resources() path.
+> > 
+> >     The problem was that in some cases pci_bridge_check_ranges() *changes*
+> > the
+> >     window registers to determine whether they're writable, and this may break
+> >     concurrent accesses to devices behind the bridge.
+> > 
+> >     Add a new pci_read_bridge_windows() to determine whether a bridge
+> > supports
+> >     the optional windows, call it once during enumeration, remember the
+> >     results, and change pci_bridge_check_ranges() to set the flag bits based on
+> >     those remembered results.
+> > 
+> >     Link: https://lore.kernel.org/linux-pci/1506151482-113560-1-git-send-email-
+> > wangzhou1@hisilicon.com
+> >     Link: https://lists.gnu.org/archive/html/qemu-devel/2018-12/msg02082.html
+> >     Reported-by: xuyandong <xuyandong2@huawei.com>
+> >     Cc: Sagi Grimberg <sagi@grimberg.me>
+> >     Cc: Ofer Hayut <ofer@lightbitslabs.com>
+> >     Cc: Roy Shterman <roys@lightbitslabs.com>
+> >     Cc: Keith Busch <keith.busch@intel.com>
+> >     Cc: Zhou Wang <wangzhou1@hisilicon.com>
+> > 
+> > diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c index
+> > 257b9f6f2ebb..2ef8b954c65a 100644
+> > --- a/drivers/pci/probe.c
+> > +++ b/drivers/pci/probe.c
+> > @@ -348,6 +348,57 @@ static void pci_read_bases(struct pci_dev *dev,
+> > unsigned int howmany, int rom)
+> >  	}
+> >  }
+> > 
+> > +static void pci_read_bridge_windows(struct pci_dev *bridge) {
+> > +	u16 io;
+> > +	u32 pmem, tmp;
+> > +
+> > +	pci_read_config_word(bridge, PCI_IO_BASE, &io);
+> > +	if (!io) {
+> > +		pci_write_config_word(bridge, PCI_IO_BASE, 0xe0f0);
+> > +		pci_read_config_word(bridge, PCI_IO_BASE, &io);
+> > +		pci_write_config_word(bridge, PCI_IO_BASE, 0x0);
+> > +	}
+> > +	if (io)
+> > +		bridge->io_window = 1;
+> > +
+> > +	/*
+> > +	 * DECchip 21050 pass 2 errata: the bridge may miss an address
+> > +	 * disconnect boundary by one PCI data phase.  Workaround: do not
+> > +	 * use prefetching on this device.
+> > +	 */
+> > +	if (bridge->vendor == PCI_VENDOR_ID_DEC && bridge->device ==
+> > 0x0001)
+> > +		return;
+> > +
+> > +	pci_read_config_dword(bridge, PCI_PREF_MEMORY_BASE, &pmem);
+> > +	if (!pmem) {
+> > +		pci_write_config_dword(bridge, PCI_PREF_MEMORY_BASE,
+> > +					       0xffe0fff0);
+> > +		pci_read_config_dword(bridge, PCI_PREF_MEMORY_BASE,
+> > &pmem);
+> > +		pci_write_config_dword(bridge, PCI_PREF_MEMORY_BASE,
+> > 0x0);
+> > +	}
+> > +	if (!pmem)
+> > +		return;
+> > +
+> > +	bridge->pref_window = 1;
+> > +
+> > +	if ((pmem & PCI_PREF_RANGE_TYPE_MASK) ==
+> > PCI_PREF_RANGE_TYPE_64) {
+> > +
+> > +		/*
+> > +		 * Bridge claims to have a 64-bit prefetchable memory
+> > +		 * window; verify that the upper bits are actually
+> > +		 * writable.
+> > +		 */
+> > +		pci_read_config_dword(bridge, PCI_PREF_BASE_UPPER32,
+> > &pmem);
+> > +		pci_write_config_dword(bridge, PCI_PREF_BASE_UPPER32,
+> > +				       0xffffffff);
+> > +		pci_read_config_dword(bridge, PCI_PREF_BASE_UPPER32,
+> > &tmp);
+> > +		pci_write_config_dword(bridge, PCI_PREF_BASE_UPPER32,
+> > pmem);
+> > +		if (tmp)
+> > +			bridge->pref_64_window = 1;
+> > +	}
+> > +}
+> > +
+> >  static void pci_read_bridge_io(struct pci_bus *child)  {
+> >  	struct pci_dev *dev = child->self;
+> > @@ -1739,6 +1790,7 @@ int pci_setup_device(struct pci_dev *dev)
+> >  		pci_read_irq(dev);
+> >  		dev->transparent = ((dev->class & 0xff) == 1);
+> >  		pci_read_bases(dev, 2, PCI_ROM_ADDRESS1);
+> > +		pci_read_bridge_windows(dev);
+> >  		set_pcie_hotplug_bridge(dev);
+> >  		pos = pci_find_capability(dev, PCI_CAP_ID_SSVID);
+> >  		if (pos) {
+> > diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c index
+> > ed960436df5e..1941bb0a6c13 100644
+> > --- a/drivers/pci/setup-bus.c
+> > +++ b/drivers/pci/setup-bus.c
+> > @@ -735,58 +735,21 @@ int pci_claim_bridge_resource(struct pci_dev
+> > *bridge, int i)
+> >     base/limit registers must be read-only and read as 0. */  static void
+> > pci_bridge_check_ranges(struct pci_bus *bus)  {
+> > -	u16 io;
+> > -	u32 pmem;
+> >  	struct pci_dev *bridge = bus->self;
+> > -	struct resource *b_res;
+> > +	struct resource *b_res = &bridge->resource[PCI_BRIDGE_RESOURCES];
+> > 
+> > -	b_res = &bridge->resource[PCI_BRIDGE_RESOURCES];
+> >  	b_res[1].flags |= IORESOURCE_MEM;
+> > 
+> > -	pci_read_config_word(bridge, PCI_IO_BASE, &io);
+> > -	if (!io) {
+> > -		pci_write_config_word(bridge, PCI_IO_BASE, 0xe0f0);
+> > -		pci_read_config_word(bridge, PCI_IO_BASE, &io);
+> > -		pci_write_config_word(bridge, PCI_IO_BASE, 0x0);
+> > -	}
+> > -	if (io)
+> > +	if (bridge->io_window)
+> >  		b_res[0].flags |= IORESOURCE_IO;
+> > 
+> > -	/*  DECchip 21050 pass 2 errata: the bridge may miss an address
+> > -	    disconnect boundary by one PCI data phase.
+> > -	    Workaround: do not use prefetching on this device. */
+> > -	if (bridge->vendor == PCI_VENDOR_ID_DEC && bridge->device ==
+> > 0x0001)
+> > -		return;
+> > -
+> > -	pci_read_config_dword(bridge, PCI_PREF_MEMORY_BASE, &pmem);
+> > -	if (!pmem) {
+> > -		pci_write_config_dword(bridge, PCI_PREF_MEMORY_BASE,
+> > -					       0xffe0fff0);
+> > -		pci_read_config_dword(bridge, PCI_PREF_MEMORY_BASE,
+> > &pmem);
+> > -		pci_write_config_dword(bridge, PCI_PREF_MEMORY_BASE,
+> > 0x0);
+> > -	}
+> > -	if (pmem) {
+> > +	if (bridge->pref_window) {
+> >  		b_res[2].flags |= IORESOURCE_MEM |
+> > IORESOURCE_PREFETCH;
+> > -		if ((pmem & PCI_PREF_RANGE_TYPE_MASK) ==
+> > -		    PCI_PREF_RANGE_TYPE_64) {
+> > +		if (bridge->pref_64_window) {
+> >  			b_res[2].flags |= IORESOURCE_MEM_64;
+> >  			b_res[2].flags |= PCI_PREF_RANGE_TYPE_64;
+> >  		}
+> >  	}
+> > -
+> > -	/* double check if bridge does support 64 bit pref */
+> > -	if (b_res[2].flags & IORESOURCE_MEM_64) {
+> > -		u32 mem_base_hi, tmp;
+> > -		pci_read_config_dword(bridge, PCI_PREF_BASE_UPPER32,
+> > -					 &mem_base_hi);
+> > -		pci_write_config_dword(bridge, PCI_PREF_BASE_UPPER32,
+> > -					       0xffffffff);
+> > -		pci_read_config_dword(bridge, PCI_PREF_BASE_UPPER32,
+> > &tmp);
+> > -		if (!tmp)
+> > -			b_res[2].flags &= ~IORESOURCE_MEM_64;
+> > -		pci_write_config_dword(bridge, PCI_PREF_BASE_UPPER32,
+> > -				       mem_base_hi);
+> > -	}
+> >  }
+> > 
+> >  /* Helper function for sizing routines: find first available diff --git
+> > a/include/linux/pci.h b/include/linux/pci.h index 65f1d8c2f082..40b327b814aa
+> > 100644
+> > --- a/include/linux/pci.h
+> > +++ b/include/linux/pci.h
+> > @@ -373,6 +373,9 @@ struct pci_dev {
+> >  	bool		match_driver;		/* Skip attaching driver */
+> > 
+> >  	unsigned int	transparent:1;		/* Subtractive decode bridge
+> > */
+> > +	unsigned int	io_window:1;		/* Bridge has I/O window */
+> > +	unsigned int	pref_window:1;		/* Bridge has pref mem
+> > window */
+> > +	unsigned int	pref_64_window:1;	/* Pref mem window is 64-bit
+> > */
+> >  	unsigned int	multifunction:1;	/* Multi-function device */
+> > 
+> >  	unsigned int	is_busmaster:1;		/* Is busmaster */
