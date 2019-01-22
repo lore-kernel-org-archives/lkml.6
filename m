@@ -2,100 +2,130 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02F1BC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:11:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE571C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:11:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C80D8217D6
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:11:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548180684;
-	bh=07BT94PjfSwHjHkOK6jP2+s0ZoNMUfPgwtDOGNvNqhM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=pS6mR802AEY9An21M2iTr3hQreJ4aubd4iPCo0ZTSXSBIg2wrkz8b3zCuBS35mECJ
-	 l+gR1NaGpxp20LKQvXYY/WKci+feDfeiY1nGW6NG7cKznZepK0ovME+/tdT3A6voUQ
-	 q/+2j/87tRLcxqawiHxDVxKJE706ikv9YHZeO9hI=
+	by mail.kernel.org (Postfix) with ESMTP id 7FBEA21019
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:11:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EmSVJ3tX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726175AbfAVSLW (ORCPT
+        id S1726268AbfAVSLs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 13:11:22 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:42900 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725913AbfAVSLW (ORCPT
+        Tue, 22 Jan 2019 13:11:48 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:40559 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725913AbfAVSLs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 13:11:22 -0500
-Received: by mail-lj1-f195.google.com with SMTP id l15-v6so21467564lja.9;
-        Tue, 22 Jan 2019 10:11:20 -0800 (PST)
+        Tue, 22 Jan 2019 13:11:48 -0500
+Received: by mail-pf1-f194.google.com with SMTP id i12so12138684pfo.7
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 10:11:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=1fSj0al6b5p/fuO8Ttc0sOxMG/zIPvqM89wtR7MI5cE=;
+        b=EmSVJ3tXchTy4Cb+5I0JIS6FzteJVLymsc7Hvm3uW7lYGbX36Jg/+LhpItLWP2KZIZ
+         2SNlGVc5JqWt66IlT358eZSKAKj05G/Il0bn3nVaQNEq6PsJC1rnmY2uDILo0wbZyesF
+         7A70SBB6vCyx5P9loDLSaljOqkUFWRobSNPO8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=NQVMLyCFOy3go4BoYjSl9tje+NfiN9Ko+F5BtP4Xtdw=;
-        b=dEQdvgLvUKiFXWOZ7io5z3w4syjTHtV9gOtzLNycn7SxfJCKLq8H80rqkmZEEE8r81
-         FdfQDE6gxyMNBRsRtmy4twsFaMT6t2H6Y76WP3a/i8zLEpMKk/owsUUbloP8gTY/vess
-         lmBUzCPVCqLcsbJ0p90E8IUA/sfd+7ku1uwDN6iTTWwIUqhxd1CAlbHXhN2t4EU8XBXY
-         ZRvrNalE1KySFrOQTAf4nLdBYcGnOXgeisywn4+GJtxLhuZmTMrnHpnGJboFSpWRXo8r
-         4B30jmdL5pdk0koQ5hr5+ob2/fnjDebj6J9s2wJHz1U/eQyUfpRFcaCjNo8dUoNRuCfj
-         OKlQ==
-X-Gm-Message-State: AJcUukfQS+7mDZJCJlgtU6lZyJtKrfpr6YwmogMQQ8n6W8a3Xk31zp8V
-        /MLm2jJEQE9+G3zFTUK0uWM=
-X-Google-Smtp-Source: ALg8bN45Vqupndc69F5bWq4ubGoHVWX7QCakgCNc2U6w/YQq6tyDbBXAFhdmz0mbB+bWC5vWLUspMg==
-X-Received: by 2002:a2e:1bc5:: with SMTP id c66-v6mr21047507ljf.96.1548180679969;
-        Tue, 22 Jan 2019 10:11:19 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id 1-v6sm108823lju.61.2019.01.22.10.11.18
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=1fSj0al6b5p/fuO8Ttc0sOxMG/zIPvqM89wtR7MI5cE=;
+        b=p67w4+pnfUsy8Fm2EZjHfUIRWerWhXXVdEj+0xZrukrG6PyOoR7wWe9FhobCLaf2zn
+         1SyEcEthV119goXMOgvDbJhNWRVXxNtHOV0rL3qxxgYO4X6zSh3l44JzVJ14UfpcpVqY
+         O8Co589wjqtNLkXJHaUdDTgMKwOgdheV+pyAaD6pR8RV1wn+gtL9dSB38F+RLa45YRpw
+         Qtynk47zahMtCImNYJyBCMhhg307omSgqkpzRheTROM33I/ryLza0N8L+9VY59r7wYNN
+         ARtXe0J4gWofCKwkxmxdsLYD3kmHvI24hQ/RayA70KddbISjM4n3+UeYWlKqxUowjoEF
+         sPpQ==
+X-Gm-Message-State: AJcUukcEmiOXw1dCxiOgocMWFprCB3USs5UthyVh8uQLovNonarbpoOU
+        R4m/VOO2rAeuVtdAMHATRKML0w==
+X-Google-Smtp-Source: ALg8bN5K/I9VMx03fEQTJB2qUFipw60oVI7IVLbTpB2RtPwhq7cDj16EeESYWdcZhrfjZMyuN4GDUg==
+X-Received: by 2002:a63:680a:: with SMTP id d10mr33146762pgc.396.1548180707266;
+        Tue, 22 Jan 2019 10:11:47 -0800 (PST)
+Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id a18sm23489919pgj.30.2019.01.22.10.11.45
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Jan 2019 10:11:19 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1gm0W3-0004wc-Q8; Tue, 22 Jan 2019 19:11:15 +0100
-Date:   Tue, 22 Jan 2019 19:11:15 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Andreas Kemnade <andreas@kemnade.info>
-Cc:     letux-kernel@openphoenux.org, johan@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 6/6] dt-bindings: gnss: add lna-supply property
-Message-ID: <20190122181115.GT3691@localhost>
-References: <20190116211812.6337-1-andreas@kemnade.info>
- <20190116211812.6337-7-andreas@kemnade.info>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190116211812.6337-7-andreas@kemnade.info>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+        Tue, 22 Jan 2019 10:11:46 -0800 (PST)
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     acme@kernel.org, peterz@infradead.org
+Cc:     gregkh@linuxfoundation.org, mingo@redhat.com, tglx@linutronix.de,
+        alexander.shishkin@linux.intel.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, will.deacon@arm.com,
+        mark.rutland@arm.com, jolsa@redhat.com, namhyung@kernel.org,
+        adrian.hunter@intel.com, ast@kernel.org, hpa@zytor.com,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, suzuki.poulose@arm.com
+Subject: [PATCH v2 0/7] perf: Communicate sink via event::attr:config2
+Date:   Tue, 22 Jan 2019 11:11:37 -0700
+Message-Id: <20190122181144.26645-1-mathieu.poirier@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 10:18:12PM +0100, Andreas Kemnade wrote:
-> Add lna-supply property.
-> 
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> ---
-> Changes in v3:
-> - moved to gnss.txt
-> 
->  Documentation/devicetree/bindings/gnss/gnss.txt | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/gnss/gnss.txt b/Documentation/devicetree/bindings/gnss/gnss.txt
-> index f1e4a2ff47c5..e31bc225957d 100644
-> --- a/Documentation/devicetree/bindings/gnss/gnss.txt
-> +++ b/Documentation/devicetree/bindings/gnss/gnss.txt
-> @@ -17,6 +17,7 @@ Required properties:
->  		  represents
->  
->  Optional properties:
-> +- lna-supply	: Separate supply for a LNA
+This is the second revision of a patchset allowing multiple sources to select
+the same sink for a session which is a prerequisite for the support of CoreSight
+CPU-wide trace scenarios.
 
-s/a/an/
+The sink ID is communicated to the kernel by way of the event's configuration
+attribute (event::attr:config2).  The ID itself is an hash of the sink's name,
+something that is readily available and doesn't require the addition of a new
+information field in the coresight_device structure.
 
->  - enable-gpios	: GPIO used to enable the device
->  - timepulse-gpios	: Time pulse GPIO
+With this set the mechanic to communicate sink selection to the kernel via
+sysfs is no longer needed and removed.
 
-Johan
+Applies cleanly and tested on 5.0-rc3.
+
+Thanks,
+Mathieu
+
+Changes for V2:
+* Addressed memory leak in etm_perf_add_symlink_sink()
+* Keep track of device attribute for future removal.
+* Added PMU attribure for config2.
+* Fixed email address signature.
+
+Mathieu Poirier (7):
+  perf/aux: Make perf_event accessible to setup_aux()
+  coresight: perf: Add "sinks" group to PMU directory
+  coresight: Use event attributes for sink selection
+  perf pmu: Moving EVENT_SOURCE_DEVICE_PATH to PMU header file
+  perf tools: Use event attributes to send sink information to kernel
+  perf tools: Removing CoreSight set_drv_config() API
+  perf tools: Remove PMU::set_drv_config API
+
+ arch/s390/kernel/perf_cpum_sf.c               |   6 +-
+ arch/x86/events/intel/bts.c                   |   4 +-
+ arch/x86/events/intel/pt.c                    |   5 +-
+ .../hwtracing/coresight/coresight-etm-perf.c  | 106 +++++++++++++++---
+ .../hwtracing/coresight/coresight-etm-perf.h  |   6 +-
+ drivers/hwtracing/coresight/coresight-priv.h  |   1 +
+ drivers/hwtracing/coresight/coresight.c       |  57 ++++++++++
+ drivers/perf/arm_spe_pmu.c                    |   6 +-
+ include/linux/coresight.h                     |   7 +-
+ include/linux/perf_event.h                    |   2 +-
+ kernel/events/ring_buffer.c                   |   2 +-
+ tools/perf/arch/arm/util/cs-etm.c             |  94 +++++++---------
+ tools/perf/arch/arm/util/cs-etm.h             |   3 -
+ tools/perf/arch/arm/util/pmu.c                |   2 -
+ tools/perf/builtin-record.c                   |  10 --
+ tools/perf/builtin-stat.c                     |   9 --
+ tools/perf/builtin-top.c                      |  13 ---
+ tools/perf/util/Build                         |   1 -
+ tools/perf/util/drv_configs.c                 |  78 -------------
+ tools/perf/util/drv_configs.h                 |  26 -----
+ tools/perf/util/pmu.c                         |   2 -
+ tools/perf/util/pmu.h                         |   2 +-
+ 22 files changed, 214 insertions(+), 228 deletions(-)
+ delete mode 100644 tools/perf/util/drv_configs.c
+ delete mode 100644 tools/perf/util/drv_configs.h
+
+-- 
+2.17.1
+
