@@ -2,186 +2,143 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9A7DC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:39:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87077C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:40:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DB6120879
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:39:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4951120879
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:40:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="mQkMDEZb"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="N6BsXSPR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728192AbfAVLjs (ORCPT
+        id S1728255AbfAVLkZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 06:39:48 -0500
-Received: from mail-eopbgr30048.outbound.protection.outlook.com ([40.107.3.48]:42283
+        Tue, 22 Jan 2019 06:40:25 -0500
+Received: from mail-eopbgr30048.outbound.protection.outlook.com ([40.107.3.48]:63968
         "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727919AbfAVLjs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 06:39:48 -0500
+        id S1727755AbfAVLkY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 06:40:24 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9pqWzl3N9/GM0Sql2by3rZ+a70w97Pn8kSBq5IHPntw=;
- b=mQkMDEZb5/9dkXrSycNlIm19Xnl8j60CMyaHMOV4tspDKzAFZqVavk1U1XSeXFOaIrv5q8ac+y3eX45s3tosXhZyHIv0FQcTLI+nVwdWGg8vw98uSyKCkFsZcnhc+GimxAs+qeNHveETXXAPeMiNeXXhvzCprQlirhOsoR6W004=
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
- AM0PR04MB4371.eurprd04.prod.outlook.com (52.135.148.13) with Microsoft SMTP
+ bh=sE+lRYzy+iZjoT+44DvbSFnYeKLKJo45RC3pukq9gns=;
+ b=N6BsXSPRyX5NNmjXArLs11waxRn6+eMrUwo7vxJutGtpnggOngkq5Tw5DvtpyxRN6kCd9e2cB5xrFqyeYzkvAdMDa+pRaSQHm9BWWzDt86GMH8OoVPUfgsjUkrdqn0yR85LQyYFNJUcB+2mWin1sKzZcK+HVSZIEZbHju325QEI=
+Received: from VI1PR04MB4704.eurprd04.prod.outlook.com (20.177.48.157) by
+ VI1PR04MB1679.eurprd04.prod.outlook.com (10.164.85.17) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1537.29; Tue, 22 Jan 2019 11:39:44 +0000
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::c4d2:7dfd:4576:bdd5]) by AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::c4d2:7dfd:4576:bdd5%5]) with mapi id 15.20.1558.016; Tue, 22 Jan 2019
- 11:39:44 +0000
-From:   Aisheng Dong <aisheng.dong@nxp.com>
-To:     Anders Roxell <anders.roxell@linaro.org>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "stefan@agner.ch" <stefan@agner.ch>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>
-CC:     "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v3] pinctrl: freescale: fix link errors
-Thread-Topic: [PATCH v3] pinctrl: freescale: fix link errors
-Thread-Index: AQHUsi3KP1/c1Ky7Lk2wYrTC4Trbk6W7J6wg
-Date:   Tue, 22 Jan 2019 11:39:44 +0000
-Message-ID: <AM0PR04MB4211497532B3B84759C3F7D880980@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <20190122083735.13286-1-anders.roxell@linaro.org>
-In-Reply-To: <20190122083735.13286-1-anders.roxell@linaro.org>
-Accept-Language: zh-CN, en-US
+ 15.20.1537.29; Tue, 22 Jan 2019 11:39:39 +0000
+Received: from VI1PR04MB4704.eurprd04.prod.outlook.com
+ ([fe80::e58a:8812:d380:2080]) by VI1PR04MB4704.eurprd04.prod.outlook.com
+ ([fe80::e58a:8812:d380:2080%2]) with mapi id 15.20.1537.031; Tue, 22 Jan 2019
+ 11:39:39 +0000
+From:   Viorel Suman <viorel.suman@nxp.com>
+To:     "robh@kernel.org" <robh@kernel.org>,
+        "nicoleotsuka@gmail.com" <nicoleotsuka@gmail.com>
+CC:     dl-linux-imx <linux-imx@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Cosmin Samoila <cosmin.samoila@nxp.com>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "timur@kernel.org" <timur@kernel.org>,
+        "viorel.suman@gmail.com" <viorel.suman@gmail.com>,
+        "Xiubo.Lee@gmail.com" <Xiubo.Lee@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "tiwai@suse.com" <tiwai@suse.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "S.j. Wang" <shengjiu.wang@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        "perex@perex.cz" <perex@perex.cz>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>
+Subject: Re: [PATCH v3 0/4] Add NXP AUDMIX device and machine drivers
+Thread-Topic: [PATCH v3 0/4] Add NXP AUDMIX device and machine drivers
+Thread-Index: AQHUrmKoQmEVxQazyE68ciNiNCuyvqWzo60AgAFfkwCAAG0MAIAEbXuAgAFTwwA=
+Date:   Tue, 22 Jan 2019 11:39:39 +0000
+Message-ID: <1548157178.13051.19.camel@nxp.com>
+References: <1547729177-14317-1-git-send-email-viorel.suman@nxp.com>
+         <20190117161804.GA5760@bogus> <1547817384.11482.33.camel@nxp.com>
+         <20190118194642.GA11798@Asurada-Nvidia.nvidia.com>
+         <20190121152335.GA12284@bogus>
+In-Reply-To: <20190121152335.GA12284@bogus>
+Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=aisheng.dong@nxp.com; 
-x-originating-ip: [119.31.174.66]
+ smtp.mailfrom=viorel.suman@nxp.com; 
+x-originating-ip: [95.76.156.53]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB4371;6:b0aX6LF4fOfyvQRHuLnuV7kajg+1KkZbaD3BZtFpoHoet21a1g+HawL1G2azfIWuKcM/lafL/BYWVA8OMTjUw5/e2cKtRUlZt9dLPJHBSzYchDdwVWE8CFsIBTQjJlUygofEcdjgdAZcl1XpAhideE05eP+pIu2w7Xvwe5tSE++qU/IDiKO3z9sI5qDoGOXk9HY2utAuI6feDDCRaoSQv5I6wykmrlx5+LGSGl+PhHYk9lXbSoZsp6LwtDyLQUrEKEv3VNoD0pSJNxfwmXDIwV0iK3CI2ff08rYlJT6MYL2jRONKSR7dfS/DV0gsqNuT41TFeI0TWm+cbK++b4p/oJ+N6a/LtvAzQ29zA+olfbzQttkSBVNAnHZBNy2y5vYzeqQA4VP2adkuhvRwRWl2IW+3Qlj0lJPRuBcw7/VHSUUc1e1PFk35dbM2JC8iwozOjS4NSLbOostEOzjo7Qpc/A==;5:+BILYwNl3eaa5eL4eWhVszW9UTKhAcWEP+b2IYcufiWwhhNVKifJ9Jrm5XEtX8R/w6DuQhODULe2tCOIa/OoTPqn3YTUWo+yon6ZKKvFei+EeJHPQ1g5D4ZISt4+sRn58DzpSphAvFfVj+MalNvn+IHX753tiRrQ2G8JepOvG64o+eaTRr9TcLV34+YPMcFpEQLdvxmWtitYaJ3kOAqdWA==;7:fz8zFSh3giZcXaOyPg83/PmbadKAiczWxwh4iYZ/58TTfcGm0N6XvPqf1Ijuoj2CneIGJhiaCjVdJyn+wjCbgMHbagt43hA6bG4eCIzZcuuUTGXMcI/ObuuxaEMeP3KKkS0CXhBAcE74s3u8lZYjBw==
+x-microsoft-exchange-diagnostics: 1;VI1PR04MB1679;6:fJqcMOtwW+Hay/XMc/h/J4FJ2libK2XOfzuE81OUR65K3Eq4bWe/xmetA/gORnJyZpfBeRV3oeal5SbDGfUlDzqzGzf4eemQZFvy7ZVBbCznSQH3HtyPjCY+btyo9DUCSvk/Kl3y7E1A3OEtqLiLhXjOccXS/uyrWia3bjZL4FhIqJye0T4uYKCSqDJLDpB77beUwtsQd5mss6C9sVWAweasI2PUQLJtng2xGnByh6tU3mHebnj4cjVRNsuV6QTiKNhAGf2EgkMhmHgppBW1f02bdX22S2VlAad9/6Ddo41sPueHefTUDybGrDw3FgQ9G2XCRgxO9mU9fJQ47TvmKpTfGxCPY0YPg3kh/OtGtMe8DIxM1v+nBj3JaHLcFRHQgl7KzMXzOKR8w5SIxDrhs1grlGWpai+yDkF4v1w8tFzWUqbFu9a3deqd0Nbp4ReZm4vA8zq3VRso5lbnsj5XpA==;5:qXuLI8ndoEtofpDPKQTNuP7BY/Dj3PaonFgqWfgN/R//IXqyQu6GxCbzj4S+9PzKHBYzjUCe+XLg09ZltUG86TA/sGNniwpgVyAH5k/QPOeEi4E7Ikv2+W9ac3WIYm0wSQ6AFiHpNFDAGcTgIzmjcUImZZBt7/0Py7ZcSyjFJwkQQwoynGuyUTcm0eI6XqA179PpjGaACkWe1ik3W0TZ6w==;7:dRF1OIDVkNgUR5VbxzRHjqWV0BWsbSAQDv/fRLe5XWe+YJWgxFviIfpjvaJeGMXGte/7e1EhntwHLsy/tQBZWqc9zq99WZH7SZJ+Np4tFjDC6OKFE8Mq/CIGMjncjFgRolt3Qcec76DgAVSoh2kJXg==
 x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 2955000c-b677-472b-b8ea-08d6805e4e35
+x-ms-office365-filtering-correlation-id: 68ff5208-42be-4c74-af2f-08d6805e4b06
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600109)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4371;
-x-ms-traffictypediagnostic: AM0PR04MB4371:
-x-microsoft-antispam-prvs: <AM0PR04MB4371A846CD4FA3F15FDD489F80980@AM0PR04MB4371.eurprd04.prod.outlook.com>
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600109)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB1679;
+x-ms-traffictypediagnostic: VI1PR04MB1679:
+x-microsoft-antispam-prvs: <VI1PR04MB1679F6A10D5E0CCFCA094C6E92980@VI1PR04MB1679.eurprd04.prod.outlook.com>
 x-forefront-prvs: 0925081676
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(346002)(136003)(396003)(376002)(39860400002)(199004)(189003)(7736002)(2906002)(71190400001)(6246003)(71200400001)(305945005)(110136005)(74316002)(316002)(54906003)(55016002)(68736007)(11346002)(8936002)(9686003)(446003)(53936002)(2201001)(86362001)(97736004)(14454004)(6116002)(3846002)(486006)(99286004)(106356001)(33656002)(105586002)(25786009)(44832011)(478600001)(2501003)(14444005)(7696005)(76176011)(256004)(81156014)(26005)(66066001)(8676002)(6436002)(229853002)(102836004)(53546011)(6506007)(39060400002)(186003)(81166006)(4326008)(476003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4371;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(366004)(346002)(376002)(39860400002)(51444003)(199004)(189003)(6436002)(478600001)(229853002)(26005)(186003)(86362001)(44832011)(4326008)(68736007)(71200400001)(71190400001)(6116002)(3846002)(6486002)(446003)(76176011)(6506007)(39060400002)(6246003)(25786009)(102836004)(14454004)(476003)(2616005)(53936002)(11346002)(6512007)(486006)(2501003)(36756003)(54906003)(93886005)(305945005)(316002)(2906002)(110136005)(8936002)(81156014)(81166006)(256004)(103116003)(99286004)(66066001)(105586002)(106356001)(217873002)(7416002)(97736004)(7736002)(8676002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB1679;H:VI1PR04MB4704.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: qGeF8TnhqvJ0TEixLM06Rm2KTkBYynCy98nkoHZ4FjGn1lBOdTTNOL+Bv/RJUWAIFh7vDEV9fnfM0r6ysr/EEifJ4fAT44VdQtbj8F5G3yYn3LDMe3BnZtfGYc5gbp714LRh5OmorknUycgNRGqofMyWHMLUu2oB/RMxjqeMXT+alnCtDKn2iAV+8gJLyKo5mPI2KuUDNVpCwWdQ1Zz8kFmHIrBQ1i4Px/udQvcaps3ZEF9W9cLlX6aOEL3kfM97ILdip0Up2wWg8rQWd8lEQwq8jcysevuw/27sNeEMMGSCJDUxU60Jejdn/GK5KGhh82wzL5f4dUfK7Z/I2y2SvPoyTRHZ6uBlaKpBB0D2lECCHw4PpLONqjQQqj0/E/TWB22tlEDIg1IYEXV1ujvn04rkjj2JGNFzZRJRUVKo5ik=
+x-microsoft-antispam-message-info: LoXgicwgGAIsBxx4kPH0GEP8gsBTRM9hlTkLX0Y2sEsJR+/RwVVBqhm7C7x+PVy7+jFgcjlHT6rZtDcKdxtNhUIWON3BhFB1qSjj1vtzR5XMNHhCJN0O3quk2SrBkudhNtvU8jzsC2InQbL1Yf4vWfIzWcQhXlkGBu2XqaFqrxZJJkPDpTlARECG8xcEfDwgqiC9sOC0LW1wHcM5auztezSVM1LqTEvqVfIHXY8KOIYCGn1Bh5KdgKjtfU342IzodZ2fsHFZ4csIbWSq4XTnHA6UvyUsyG7Ah6dT2RdaQ/vxfPjlnYROHy3Op1ZFpGBLRwfDIYyZjKNwo34if3PBgRQ2TxiFm+wGjAs/Mxl5PWSJ5mBXrDsuxk/BmIxvXjlyPztcBtfEIYrd+BcYptTV+Y21+ML+GfRCUrgPE8lkwZ0=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <105BF5F48250E64DBF5FAE64C9C627EE@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2955000c-b677-472b-b8ea-08d6805e4e35
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jan 2019 11:39:44.6047
+X-MS-Exchange-CrossTenant-Network-Message-Id: 68ff5208-42be-4c74-af2f-08d6805e4b06
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jan 2019 11:39:39.2108
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4371
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB1679
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: Anders Roxell [mailto:anders.roxell@linaro.org]
-> Sent: Tuesday, January 22, 2019 4:38 PM
->=20
-> Subject: [PATCH v3] pinctrl: freescale: fix link errors
-
-Please change to:
-pinctrl: imx: fix scu link errors
-
-> Fix link errors when PINCTRL_IMX_SCU, PINCTRL_IMX8QM or
-> PINCTRL_IMXBQXP is enabled as a module and the dependent module is
-> built-in.
-
-Non of them can be built as module.
-I think the problem is that the dependent module IMX_SCU is not build in, r=
-ight?
-So you need update the commit message.
-
->=20
-> ld: drivers/pinctrl/freescale/pinctrl-scu.o: in function `imx_pinctrl_sc_=
-ipc_init':
-> pinctrl-scu.c:(.text+0x10): undefined reference to `imx_scu_get_handle'
-> ld: pinctrl-scu.c:(.text+0x10): relocation truncated to fit: R_AARCH64_CA=
-LL26
-> against undefined symbol `imx_scu_get_handle'
-> ld: drivers/pinctrl/freescale/pinctrl-scu.o: in function `imx_pinconf_get=
-_scu':
-> pinctrl-scu.c:(.text+0xa0): undefined reference to `imx_scu_call_rpc'
-> ld: pinctrl-scu.c:(.text+0xa0): relocation truncated to fit: R_AARCH64_CA=
-LL26
-> against undefined symbol `imx_scu_call_rpc'
-> ld: drivers/pinctrl/freescale/pinctrl-scu.o: in function `imx_pinconf_set=
-_scu':
-> pinctrl-scu.c:(.text+0x1b4): undefined reference to `imx_scu_call_rpc'
-> ld: pinctrl-scu.c:(.text+0x1b4): relocation truncated to fit: R_AARCH64_C=
-ALL26
-> against undefined symbol `imx_scu_call_rpc'
-> ld: drivers/pinctrl/freescale/pinctrl-imx8qxp.o: in function
-> `imx8qxp_pinctrl_probe':
-> pinctrl-imx8qxp.c:(.text+0x28): undefined reference to `imx_pinctrl_probe=
-'
-> ld: pinctrl-imx8qxp.c:(.text+0x28): relocation truncated to fit:
-> R_AARCH64_CALL26 against undefined symbol `imx_pinctrl_probe'
->=20
-> Rework so that PINCTRL_IMX_SCU and the config's that 'select
-> PINCTRL_IMX_SCU' depends on IMX_SCU=3Dy.
-
-Update here as well
-
->=20
-> Suggested-by: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-> ---
->  drivers/pinctrl/freescale/Kconfig | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/pinctrl/freescale/Kconfig b/drivers/pinctrl/freescal=
-e/Kconfig
-> index b318c24b61be..af141dd2331d 100644
-> --- a/drivers/pinctrl/freescale/Kconfig
-> +++ b/drivers/pinctrl/freescale/Kconfig
-> @@ -7,7 +7,7 @@ config PINCTRL_IMX
->=20
->  config PINCTRL_IMX_SCU
->  	bool
-> -	depends on IMX_SCU
-> +	depends on IMX_SCU=3Dy
-
-You don't need =3Dy here.
-
-Otherwise, you can add my tag when you resent.
-Acked-by: Dong Aisheng <aisheng.dong@nxp.com>
-
-Regards
-Dong Aisheng
-
->  	select PINCTRL_IMX
->=20
->  config PINCTRL_IMX1_CORE
-> @@ -131,14 +131,14 @@ config PINCTRL_IMX8MQ
->=20
->  config PINCTRL_IMX8QM
->  	bool "IMX8QM pinctrl driver"
-> -	depends on ARCH_MXC && ARM64
-> +	depends on IMX_SCU && ARCH_MXC && ARM64
->  	select PINCTRL_IMX_SCU
->  	help
->  	  Say Y here to enable the imx8qm pinctrl driver
->=20
->  config PINCTRL_IMX8QXP
->  	bool "IMX8QXP pinctrl driver"
-> -	depends on ARCH_MXC && ARM64
-> +	depends on IMX_SCU && ARCH_MXC && ARM64
->  	select PINCTRL_IMX_SCU
->  	help
->  	  Say Y here to enable the imx8qxp pinctrl driver
-> --
-> 2.19.2
-
+SGkgUm9iLA0KDQpPbiBMdSwgMjAxOS0wMS0yMSBhdCAwOToyMyAtMDYwMCwgUm9iIEhlcnJpbmcg
+d3JvdGU6DQo+IE9uIEZyaSwgSmFuIDE4LCAyMDE5IGF0IDExOjQ2OjQyQU0gLTA4MDAsIE5pY29s
+aW4gQ2hlbiB3cm90ZToNCj4gPiANCj4gPiBPbiBGcmksIEphbiAxOCwgMjAxOSBhdCAwMToxNjoy
+NFBNICswMDAwLCBWaW9yZWwgU3VtYW4gd3JvdGU6DQo+ID4gPiANCj4gPiA+ID4gDQo+ID4gPiA+
+ID4gDQo+ID4gPiA+ID4gMS4gTW92ZWQgImRhaXMiIG5vZGUgZnJvbSBtYWNoaW5lIGRyaXZlciBE
+VFMgbm9kZSB0byBkZXZpY2UNCj4gPiA+ID4gPiBkcml2ZXINCj4gPiA+ID4gPiBEVFMgbm9kZQ0K
+PiA+ID4gPiA+IMKgIGFzIHN1Z2dlc3RlZCBieSBSb2IuDQo+ID4gPiA+IFRoYXQgd2FzIG5vdCB3
+aGF0IEkgc3VnZ2VzdGVkLiBZb3Ugc3RpbGwgaGF2ZSBhIHZpcnR1YWwgbm9kZQ0KPiA+ID4gPiB3
+aGljaA0KPiA+ID4gPiBsb29rcyB0byBtZSB0byBiZSB1bm5lY2Vzc2FyeS4NCj4gPiA+IFRvIG1l
+IHJlbW92aW5nIHZpcnR1YWwgbm9kZSBpbXBsaWVzIHRoYXQgQVVETUlYIG1hY2hpbmUgZHJpdmVy
+DQo+ID4gPiAoaW14LQ0KPiA+ID4gYXVkbWl4LmMgKyB2aXJ0dWFsIG5vZGUpIHNoYWxsIGJlIHJl
+bW92ZWQgYW5kIG1hY2hpbmUgZHJpdmVyIGNvZGUNCj4gPiA+IG1lcmdlZCBpbnRvIGRldmljZSBk
+cml2ZXIgKGZzbF9hdWRtaXguYyArIGRldmljZSBub2RlKSAtIHBsZWFzZQ0KPiA+ID4gbGV0IG1l
+DQo+ID4gPiBrbm93IGlmIG15IHVuZGVyc3RhbmRpbmcgaXMgd3JvbmcuDQo+ID4gV2UgY291bGQg
+dXNlIGEgbm9uLURUIGNvbmZpZ3VyYXRpb24gcmlnaHQ/IEZyb20gdGhlIGRyaXZlciBsb2dpYywN
+Cj4gPiBEVCBqdXN0IHJlZ2lzdGVycyBhIGRldmljZSBjb3JyZXNwb25kaW5nIHRvIHRoZSBtYWNo
+aW5lIGRyaXZlciBzbw0KPiA+IHRoYXQgaXQgY2FuIHByb2JlKCkuIFdlIGNvdWxkIHJlZ2lzdGVy
+IG9uZSBpbiBmc2xfYXVkbWl4IGluc3RlYWQuDQo+ID4gUGxlYXNlIHJlZmVyIHRvIGhvdyBmc2xf
+c3NpIHJlZ2lzdGVycyB0aGUgc291bmQgY2FyZCBkZXZpY2UuIFRoZQ0KPiA+IG1hY2hpbmUgZHJp
+dmVyIGNhbiBnZXQgYXVkbWl4X25wIGZyb20gdGhlIHBhcmVudCBkZXZpY2UgcG9pbnRlciwNCj4g
+PiBhbmQgSSB0aGluayB0aGF0J3MgYWxsIHlvdSBuZWVkLg0KPiBZZXMuDQoNClRoYW5rIHlvdSwg
+c2VudCBWNCB3aGljaCBpbXBsZW1lbnRzIHRoZSBhcHByb2FjaCBzdWdnZXN0ZWQgYnkgTmljb2xp
+bi4NCg0KPiANCj4gPiANCj4gPiBPciBtYXliZSBzb21lb25lIGVsc2Ugd291bGQgcHJvdmlkZSBh
+IGJldHRlciB3YXkuIEJ1dCBpdCdkIHdvcmsuDQo+IE9yIHRoZSBtYWNoaW5lIGRyaXZlciBjb3Vs
+ZCBjcmVhdGUgdGhlIGF1ZG1peCBkZXZpY2UuIFRoYXQgcHJvYmFibHnCoA0KPiBtYWtlcyBsZXNz
+IHNlbnNlLCBidXQgZWl0aGVyIHdheSB0aGVyZSBkb2Vzbid0IGhhdmUgdG8gYmUgYSAxLTHCoA0K
+PiBjb3JyZXNwb25kZW5jZSBvZiBEVCBub2RlcyBhbmQgKHBsYXRmb3JtKSBkZXZpY2VzLg0KPiAN
+Cj4gSSdtIG5vdCBhbiBBU29DIGV4cGVydCwgYnV0IHdoeSBjYW4ndCB0aGUgbWFjaGluZSBkcml2
+ZXIganVzdCBjb250cm9sDQo+IHRoZSBhdWRtaXggZGlyZWN0bHkgKHdpdGggREFJcyBhcyBzZXBh
+cmF0ZSBkcml2ZXJzKT8gSXMgdGhlIGF1ZG1peA0KPiBldmVyIGdvaW5nIHRvIGEgYmUgYSBjb21w
+b25lbnQgZm9yIGEgZGlmZmVyZW50IG1hY2hpbmUgZHJpdmVyPw0KPiANCj4gUm9iDQoNCkN1cnJl
+bnRseSBJJ20gbm90IGF3YXJlIG9mIGFueSBpbmZvcm1hdGlvbiB3aXRoIHJlZ2FyZCB0byBpZiBh
+dWRtaXggaXMNCmV2ZXIgZ29pbmcgdG8gd29yayB3aXRoIG90aGVyIERBSXMgdGhhbiBTQUkuIEhv
+d2VydmVyIGZyb20gYXVkbWl4IElQDQpibG9jayBpbnRlZ3JhdGlvbiBwZXJzcGVjdGl2ZSB0aGUg
+b25seSByZXF1aXJlbWVudCBpcyB0aGF0IHRoZSBpbnB1dA0KREFJIG11c3QgYmUgY29ubmVjdGVk
+IHRvIGF1ZG1peCBvdmVyIEkyUyBidXMsIHBvc3NpYmxlIERBSSBvcHRpb25zIGFyZQ0KU0FJLCBF
+U0FJLCBldGMgLSBJIHRoaW5rIHRoZSBhcHByb2FjaCB0byBtaXggYm90aCBkZXZpY2UgYW5kIG1h
+Y2hpbmUNCmRyaXZlcnMgaW50byBhIHNpbmdsZSBlbnRpdHkgaXMgbm90IHRoZSBiZXN0IHdheSB0
+byBnby4NCg0KL1Zpb3JlbA==
