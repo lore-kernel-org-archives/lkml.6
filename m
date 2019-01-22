@@ -2,116 +2,96 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB8D4C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 06:34:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F9A2C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 06:39:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C6FA21721
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 06:34:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Q+kZdPXC";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MPaax8FU"
+	by mail.kernel.org (Postfix) with ESMTP id 6DFC5205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 06:39:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727263AbfAVGe4 (ORCPT
+        id S1727023AbfAVGjO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 01:34:56 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:40082 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726174AbfAVGez (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 01:34:55 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 952AD609C2; Tue, 22 Jan 2019 06:34:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548138894;
-        bh=S8aScYlnfgWymwIvByECwepxe4iUwcdgQAKgKCgjJQM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q+kZdPXCylPwKWxyBmQgEOu7DSiV9xGIWlwe/xydB5CsdS+V71hlzvhwNIztwNm+i
-         c22LfCJSUgWTIVvgrECBALCpG0jaqGeO8epOjubqVY31677nEDtN8c3j+ZWTlUFXJi
-         8+ZbVayT3kcNv+3hWsMDCHD8NARPkB06YPeamrhs=
-Received: from alokc-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: alokc@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 417C260989;
-        Tue, 22 Jan 2019 06:34:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548138883;
-        bh=S8aScYlnfgWymwIvByECwepxe4iUwcdgQAKgKCgjJQM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MPaax8FUMn27QMcJbJOjv4irw6jE3VYadpeV6BWQd2KGQ2GBOf5fLd9VpEOvmJMUQ
-         3sbRV0rHFGzStxU2bS8Dq1tSAoYMKaiUU3YaDoGTVX9ZKUIxqgW8mpCbIeTi+qIm6F
-         G06bSaukc9ERYKAS07mJNRC3CgKPg29CkPbks154=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 417C260989
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=alokc@codeaurora.org
-From:   Alok Chauhan <alokc@codeaurora.org>
-To:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-serial@vger.kernel.org,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     georgi.djakov@linaro.org, dianders@chromium.org,
-        swboyd@chromium.org, bjorn.andersson@linaro.org,
-        Alok Chauhan <alokc@codeaurora.org>
-Subject: [PATCH 6/6] arm64: dts: sdm845: Add interconnect for GENI QUP
-Date:   Tue, 22 Jan 2019 12:03:36 +0530
-Message-Id: <1548138816-1149-7-git-send-email-alokc@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1548138816-1149-1-git-send-email-alokc@codeaurora.org>
-References: <1548138816-1149-1-git-send-email-alokc@codeaurora.org>
+        Tue, 22 Jan 2019 01:39:14 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:49406 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726174AbfAVGjO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 01:39:14 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C13111A01FD;
+        Tue, 22 Jan 2019 07:39:11 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 375CC1A00A7;
+        Tue, 22 Jan 2019 07:39:02 +0100 (CET)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 73486402A6;
+        Tue, 22 Jan 2019 14:38:50 +0800 (SGT)
+From:   Xiaowei Bao <xiaowei.bao@nxp.com>
+To:     bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        shawnguo@kernel.org, leoyang.li@nxp.com, kishon@ti.com,
+        lorenzo.pieralisi@arm.com, arnd@arndb.de,
+        gregkh@linuxfoundation.org, minghuan.Lian@nxp.com,
+        mingkai.hu@nxp.com, roy.zang@nxp.com, kstewart@linuxfoundation.org,
+        cyrille.pitchen@free-electrons.com, pombredanne@nexb.com,
+        shawn.lin@rock-chips.com, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org
+Cc:     Xiaowei Bao <xiaowei.bao@nxp.com>
+Subject: [PATCHv6 1/4] dt-bindings: add DT binding for the layerscape PCIe controller with EP mode
+Date:   Tue, 22 Jan 2019 14:33:25 +0800
+Message-Id: <20190122063328.25228-1-xiaowei.bao@nxp.com>
+X-Mailer: git-send-email 2.14.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add interconnect ports for GENI QUPs to set bus
-capabilities.
+Add the documentation for the Device Tree binding for the layerscape PCIe
+controller with EP mode.
 
-Signed-off-by: Alok Chauhan <alokc@codeaurora.org>
+Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
+Reviewed-by: Minghuan Lian <minghuan.lian@nxp.com>
+Reviewed-by: Zhiqiang Hou <zhiqiang.hou@nxp.com>
+Reviewed-by: Rob Herring <robh+dt@kernel.org>
 ---
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+v2:
+ - Add the SoC specific compatibles.
+v3:
+ - modify the commit message.
+v4:
+ - no change.
+v5:
+ - no change.
+v6:
+ - no change.
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index c27cbd3..fb0a8a7 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -374,6 +374,13 @@
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			ranges;
-+
-+			interconnects = <&rsc_hlos MASTER_BLSP_1
-+					&rsc_hlos SLAVE_EBI1>,
-+					<&rsc_hlos MASTER_APPSS_PROC
-+					&rsc_hlos SLAVE_BLSP_1>;
-+			interconnect-names = "qup-memory", "qup-config";
-+
- 			status = "disabled";
+ .../devicetree/bindings/pci/layerscape-pci.txt     |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/pci/layerscape-pci.txt b/Documentation/devicetree/bindings/pci/layerscape-pci.txt
+index 9b2b8d6..e20ceaa 100644
+--- a/Documentation/devicetree/bindings/pci/layerscape-pci.txt
++++ b/Documentation/devicetree/bindings/pci/layerscape-pci.txt
+@@ -13,6 +13,7 @@ information.
  
- 			i2c0: i2c@880000 {
-@@ -682,6 +689,13 @@
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			ranges;
-+
-+			interconnects = <&rsc_hlos MASTER_BLSP_2
-+					&rsc_hlos SLAVE_EBI1>,
-+					<&rsc_hlos MASTER_APPSS_PROC
-+					&rsc_hlos SLAVE_BLSP_2>;
-+			interconnect-names = "qup-memory", "qup-config";
-+
- 			status = "disabled";
- 
- 			i2c8: i2c@a80000 {
+ Required properties:
+ - compatible: should contain the platform identifier such as:
++  RC mode:
+         "fsl,ls1021a-pcie"
+         "fsl,ls2080a-pcie", "fsl,ls2085a-pcie"
+         "fsl,ls2088a-pcie"
+@@ -20,6 +21,8 @@ Required properties:
+         "fsl,ls1046a-pcie"
+         "fsl,ls1043a-pcie"
+         "fsl,ls1012a-pcie"
++  EP mode:
++	"fsl,ls1046a-pcie-ep", "fsl,ls-pcie-ep"
+ - reg: base addresses and lengths of the PCIe controller register blocks.
+ - interrupts: A list of interrupt outputs of the controller. Must contain an
+   entry for each entry in the interrupt-names property.
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.7.1
 
