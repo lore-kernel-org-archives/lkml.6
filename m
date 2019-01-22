@@ -2,88 +2,116 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48B92C282C5
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:40:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 994A9C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:40:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17B9B20870
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:40:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="YFRpSOcd"
+	by mail.kernel.org (Postfix) with ESMTP id 6937720870
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:40:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548164443;
+	bh=esbp9yipemWFMphPhojg5duibYbaUh0JWxIadTVP0vY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=0Dq5Ar9n6GdQhPul2r1UMpT497wcP0KkG3Ct9pwb6WANh4pqH0pg1UGJJWheh0E4/
+	 8IP7NzEPVfvAic2GDtxN7xi1eZBX4xYVecC02VEkpUSNEe/5WE3i89BTO4aUTnjvmp
+	 vHooQRB0Asy6R4ETHAU61B+ehT8cAPYhNp8jDJ1c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728541AbfAVNkX (ORCPT
+        id S1728622AbfAVNkl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 08:40:23 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:40712 "EHLO mail.skyhub.de"
+        Tue, 22 Jan 2019 08:40:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728394AbfAVNkX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 08:40:23 -0500
-Received: from zn.tnic (p200300EC2BCBD900846DD624DCCF3A9E.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:d900:846d:d624:dccf:3a9e])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728416AbfAVNkl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 08:40:41 -0500
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 00F1B1EC072C;
-        Tue, 22 Jan 2019 14:40:20 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1548164421;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=PyM7CbA0hfWFqe8nBcyRd5MK+VJCiClt78A1zbWGC+s=;
-        b=YFRpSOcdIbVVUv1tNvvtSlMnk/BsTDwjAurWXuBj9HSKqPOlsqt1tRdVebO0v2rcXx7Ghn
-        8F+nnZsRUv5s40ANj0j4ck6XEPU6GDlnf+3YNww69i91UkfZ5YzSBH2lH+2+VcEEklSnnU
-        CEgaHKAILdy+ZfsCmkTsocWiT+eOxZA=
-Date:   Tue, 22 Jan 2019 14:40:15 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Dave Hansen <dave.hansen@intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH 05/22] x86/fpu: Remove fpu->initialized usage in
- copy_fpstate_to_sigframe()
-Message-ID: <20190122134015.GI26587@zn.tnic>
-References: <20190109114744.10936-1-bigeasy@linutronix.de>
- <20190109114744.10936-6-bigeasy@linutronix.de>
- <20190116193603.GK15409@zn.tnic>
- <20190116224037.xkfnevzkwrck5dtt@linutronix.de>
- <20190117122253.GC5023@zn.tnic>
- <20190118211401.4komqsnvuof7563p@linutronix.de>
- <33f0e144-1eec-b1a1-8858-58f20d5e477d@intel.com>
- <20190121112117.GA32538@redhat.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 1A89920870;
+        Tue, 22 Jan 2019 13:40:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548164440;
+        bh=esbp9yipemWFMphPhojg5duibYbaUh0JWxIadTVP0vY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=NPH9i+oUre4ZzBzURZisLcgijhVu68l0fyNbD1HBoOYXzIBIM2F8oi+ISdjS3rZcO
+         6kNGyXcHK7ABrzq6aKJxQrBU3B1MsVYRyWgN+9WM02/EavoUThA3n7Uhcw0eC3uOCD
+         7FIeWBPZzEaDam+sNvgHhyMenn0uW6ompduZsIb0=
+Received: by mail-qt1-f181.google.com with SMTP id d19so27513354qtq.9;
+        Tue, 22 Jan 2019 05:40:40 -0800 (PST)
+X-Gm-Message-State: AJcUukfoeiFn27tegQjGaLd69qBeb/+l8YRpriMAL899LnmbzSynP0FY
+        0zprlP+mWgNP2leS07dPtlw+UmQivktfEH+XNw==
+X-Google-Smtp-Source: ALg8bN6VWQGgEZg/m39bTZGl5i9AbykXudTG4rdsmuBKNFX7AihzzCAkCGIaaG+cZcAC9tqIVmkzewOr+lMujKnbjoI=
+X-Received: by 2002:ac8:2d2b:: with SMTP id n40mr30157262qta.38.1548164439355;
+ Tue, 22 Jan 2019 05:40:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190121112117.GA32538@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <cover.1547629763.git.nicolas.ferre@microchip.com>
+ <ed46005be5beff6efc47d40cea304185efa2bcc0.1547629763.git.nicolas.ferre@microchip.com>
+ <20190122010733.GA21139@bogus> <24a53365-1a8c-51cd-dcd4-db4a69d5256a@microchip.com>
+In-Reply-To: <24a53365-1a8c-51cd-dcd4-db4a69d5256a@microchip.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 22 Jan 2019 07:40:26 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLb3W=UG5VRFheGd2CfS+8rb5pJpHmHNq2bb1zrR3mEwA@mail.gmail.com>
+Message-ID: <CAL_JsqLb3W=UG5VRFheGd2CfS+8rb5pJpHmHNq2bb1zrR3mEwA@mail.gmail.com>
+Subject: Re: [PATCH 2/8] dt-bindings: arm: atmel: add new sam9x60 reset
+ controller binding
+To:     Nicolas Ferre <Nicolas.Ferre@microchip.com>
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <Ludovic.Desroches@microchip.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 12:21:17PM +0100, Oleg Nesterov wrote:
-> And in any case I do not understand the idea to use the second
-> in-kernel struct fpu. A signal handler can be interrupted by another
-> signal, this will need to save/restore the FPU state again.
+On Tue, Jan 22, 2019 at 3:00 AM <Nicolas.Ferre@microchip.com> wrote:
+>
+> Hi Rob,
+>
+> On 22/01/2019 at 02:07, Rob Herring wrote:
+> > On Wed, Jan 16, 2019 at 10:57:38AM +0100, Nicolas Ferre wrote:
+> >> Update the Reset Controller's binding to add new SoC compatibility string.
+> >>
+> >> Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+> >> ---
+> >>   Documentation/devicetree/bindings/arm/atmel-sysregs.txt | 1 +
+> >>   1 file changed, 1 insertion(+)
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/arm/atmel-sysregs.txt b/Documentation/devicetree/bindings/arm/atmel-sysregs.txt
+> >> index 36952cc39993..badce6ef3ab3 100644
+> >> --- a/Documentation/devicetree/bindings/arm/atmel-sysregs.txt
+> >> +++ b/Documentation/devicetree/bindings/arm/atmel-sysregs.txt
+> >> @@ -22,6 +22,7 @@ Its subnodes can be:
+> >>   RSTC Reset Controller required properties:
+> >>   - compatible: Should be "atmel,<chip>-rstc".
+> >>     <chip> can be "at91sam9260", "at91sam9g45", "sama5d3" or "samx7"
+> >> +  it also can be "microchip,sam9x60-rstc"
+> >
+> > How is this related to at91sam9260-rstc?
+>
+> at91sam9260 and sam9x60 are completely different products (they share
+> the same core though...). I know the naming could be misleading but it
+> is like it is...
+>
+> > The 'x' is a wildcard? We generally avoid wildcards.
+>
+> Here, the 'x' is definitively not a wildcard nor a kind of "family"
+> name, it's included in the (upcoming) single product's name.
+>
+> I hope it clarifies.
 
-Well, we were just speculating whether doing that would simplify the
-code around get_sigframe() et al. But if that is an ABI, then we can't
-really touch it.
+Yes, thanks.
 
-Btw, where is that whole ABI deal about saving FPU regs on the user
-signal stack documented?
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Reviewed-by: Rob Herring <robh@kernel.org>
