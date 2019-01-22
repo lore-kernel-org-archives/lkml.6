@@ -2,91 +2,121 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C09D2C37124
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 00:12:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3A65C37122
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 00:19:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 854EC2089F
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 00:12:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89A13217D4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 00:19:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548115923;
-	bh=DATvTix7nY2O37RxalDYKONsbRm3+nECmUfZrf3VXZQ=;
+	s=default; t=1548116364;
+	bh=lN3AhrWOK1+g7P2zBNux+Cd4POCtJyJpbZgLuC0hTN0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=tucUNjvt8WPiSgRIbWu8boB0HsfPoraw707UpzMHHJNVPNEipgZu5UgwWzfcCm8q/
-	 17DsJ4ycg07+iolEEtybbv2Z4UlStK090GE4rp3mQb0ULoJPRHeXX9WVSV4RP9874r
-	 q4BDHDVvDMI4LQh5B1ZO3XUn5E6YFJMwUG9mdqqY=
+	b=c1BbCdwgaRXVme9ic0zXxJagxQJG7DbR48yf117hMD4VVaWNeY+saBrq4MNm0NZUN
+	 5isArwU/6PcvgB+ii7F7kC3GaZBe8zPwGEltKbHxnLrZD5ZGNN1//iWqllQUjCBLWc
+	 LiT3/SbHCcxAaeAkMDg+uASzMjBB5WGwwMDSGXRc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726228AbfAVAMC (ORCPT
+        id S1726115AbfAVATU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 19:12:02 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:34408 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725962AbfAVAMB (ORCPT
+        Mon, 21 Jan 2019 19:19:20 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:37985 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725941AbfAVATU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 19:12:01 -0500
-Received: by mail-ot1-f65.google.com with SMTP id t5so17080557otk.1;
-        Mon, 21 Jan 2019 16:12:01 -0800 (PST)
+        Mon, 21 Jan 2019 19:19:20 -0500
+Received: by mail-ot1-f67.google.com with SMTP id e12so22121564otl.5;
+        Mon, 21 Jan 2019 16:19:19 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=uwOnljoybqlcghtAFqmFtkneMxMmhHr1OEvzcqjbGAk=;
-        b=dZqiXUUpu4aSQjZgXN5U8ZTsEZcML035th0eFM12KFI+bSqsKnj1vcljX/mW4E9QC1
-         8abVivofAVytw87bRv/Uhmg6+Sgj0N4KiDPFz87lCGmNaBaXglqkz8jt05SU5n2FbXOp
-         GAp24Jb5j3dK6hrGyvcOua/Fz7gBdxsYReglGZXCTFgtVy51jMVcldPDNyhFliUwkaXB
-         VdQy2boo+7IfHeO0FwapLnQf/LjtQVqLhkhAVX+oCC9V1hvgT2oPgNc9tzckPQS5dHHD
-         JpiEKW+tjqDVP06JeBlfdpbMJORVF9H8F48cHh+Y3L9BRTrHC6nDvbsvg5fUGVhRJe8a
-         q5wQ==
-X-Gm-Message-State: AJcUukekW8j+u+k81h02fUdISMMTh9vR/vW85c7mnY5ov7cckgXnkK40
-        OWAOMZYT50EXnCZKXYzVGg==
-X-Google-Smtp-Source: ALg8bN5H1PCxu670A3uwImAFIF2xJ4Mo7y/5L8kYwqUli9tq3XaNcu70xLbw2xn8mQ+k4FsJ6Qau2w==
-X-Received: by 2002:a9d:4c8b:: with SMTP id m11mr19629696otf.111.1548115920842;
-        Mon, 21 Jan 2019 16:12:00 -0800 (PST)
+        bh=5uCyXnnGfFbiQg6fSTWCRBCQgl6eqCHGAfdzWE9E2OY=;
+        b=cZhGsUtVQpwpset7L6PLRoXBz0J9Q6sSX8uPBplCOsuM5hffEqrHl6+TLE1r4gNJbZ
+         ucwiX7Qfz+euXEN7brW8iNFkTQYO+aXzVSu6P5GvM6Jv1Mv3r4A4DzKhS38oLdNg4kpT
+         f6T/GVrRv5gR58JEVchy47XVn5UhVXXAv2K//FDtUaTZLPdxe+bRwanvl6ujFsIbVwpa
+         iIvXqBmqwtwhCBIs6ohZ7AAZvVCW05u3omCYYL6ptIWQKdDVz+nWwzP8imCVQhFbJcTC
+         l/u5PkfoQVIdkT4Gdsojqww3o4e7y/l9rKqoGcUTZ/0rgNGpQ7u99SLM06b6qSMn9dp9
+         c6lg==
+X-Gm-Message-State: AJcUukdVH4n2R9u1FTT9c+f9BYV1yMBZS6jvZ7F7KsiD+5ZPb3YayBWJ
+        x7qQaOArdmQlvtKQHuhuLw==
+X-Google-Smtp-Source: ALg8bN5tGyQfgsz8Qibh5c9U/V1vKGStMgN7eNkGmxtb8BiQO+UrRmQ9ow9YayylM9E6/Hs3EDyNIA==
+X-Received: by 2002:a9d:77d4:: with SMTP id w20mr20274216otl.196.1548116359080;
+        Mon, 21 Jan 2019 16:19:19 -0800 (PST)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id y25sm5981283otk.50.2019.01.21.16.12.00
+        by smtp.gmail.com with ESMTPSA id l20sm6204181otp.47.2019.01.21.16.19.18
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 21 Jan 2019 16:12:00 -0800 (PST)
-Date:   Mon, 21 Jan 2019 18:11:59 -0600
+        Mon, 21 Jan 2019 16:19:18 -0800 (PST)
+Date:   Mon, 21 Jan 2019 18:19:17 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Oleksij Rempel <o.rempel@pengutronix.de>
-Cc:     Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>, Felix Fietkau <nbd@nbd.name>,
-        John Crispin <john@phrozen.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v1 06/11] MIPS: ath79: export switch MDIO reference clock
-Message-ID: <20190122001159.GA29831@bogus>
-References: <20190111142240.10908-1-o.rempel@pengutronix.de>
- <20190111142240.10908-7-o.rempel@pengutronix.de>
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH 1/3] media: dt: bindings: sunxi-ir: Add A64 compatible
+Message-ID: <20190122001917.GA31407@bogus>
+References: <20190111173015.12119-1-jernej.skrabec@siol.net>
+ <20190111173015.12119-2-jernej.skrabec@siol.net>
+ <CAGb2v66DiqK9sL-hQev4Wy08d9T7f1Yc2DFWJ0gYOnqChJyBRw@mail.gmail.com>
+ <20190121095014.b6iq5dubfi7x2pi4@flea>
+ <CAGb2v66d0wM8Yt2uS4MMhU6PP02h8CKwKjinasO6jtZ4ue1CAQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190111142240.10908-7-o.rempel@pengutronix.de>
+In-Reply-To: <CAGb2v66d0wM8Yt2uS4MMhU6PP02h8CKwKjinasO6jtZ4ue1CAQ@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 03:22:35PM +0100, Oleksij Rempel wrote:
-> From: Felix Fietkau <nbd@nbd.name>
+On Mon, Jan 21, 2019 at 05:57:57PM +0800, Chen-Yu Tsai wrote:
+> On Mon, Jan 21, 2019 at 5:50 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> >
+> > Hi,
+> >
+> > I'm a bit late to the party, sorry for that.
+> >
+> > On Sat, Jan 12, 2019 at 09:56:11AM +0800, Chen-Yu Tsai wrote:
+> > > On Sat, Jan 12, 2019 at 1:30 AM Jernej Skrabec <jernej.skrabec@siol.net> wrote:
+> > > >
+> > > > A64 IR is compatible with A13, so add A64 compatible with A13 as a
+> > > > fallback.
+> > >
+> > > We ask people to add the SoC-specific compatible as a contigency,
+> > > in case things turn out to be not so "compatible".
+> > >
+> > > To be consistent with all the other SoCs and other peripherals,
+> > > unless you already spotted a "compatible" difference in the
+> > > hardware, i.e. the hardware isn't completely the same, this
+> > > patch isn't needed. On the other hand, if you did, please mention
+> > > the differences in the commit log.
+> >
+> > Even if we don't spot things, since we have the stable DT now, if we
+> > ever had that compatible in the DT from day 1, it's much easier to
+> > deal with.
+> >
+> > I'd really like to have that pattern for all the IPs even if we didn't
+> > spot any issue, since we can't really say that the datasheet are
+> > complete, and one can always make a mistake and overlook something.
+> >
+> > I'm fine with this version, and can apply it as is if we all agree.
 > 
-> On AR934x, the MDIO reference clock can be configured to a fixed 100 MHz
-> clock. If that feature is not used, it defaults to the main reference
-> clock, like on all other SoC.
-> 
-> Signed-off-by: Felix Fietkau <nbd@nbd.name>
-> Signed-off-by: John Crispin <john@phrozen.org>
-> ---
->  arch/mips/ath79/clock.c               | 8 ++++++++
+> I'm OK with having the fallback compatible. I'm just pointing out
+> that there are and will be a whole bunch of them, and we don't need
+> to document all of them unless we are actually doing something to
+> support them.
 
->  include/dt-bindings/clock/ath79-clk.h | 3 ++-
+Yes, you do. Otherwise, how will we validate what is and isn't a valid 
+set of compatible strings? It's not required yet, but bindings are 
+moving to json-schema.
 
-Acked-by: Rob Herring <robh@kernel.org>
-
->  2 files changed, 10 insertions(+), 1 deletion(-)
+Rob
