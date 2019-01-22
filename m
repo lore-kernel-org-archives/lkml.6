@@ -2,259 +2,210 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D96D0C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:32:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC062C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:33:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9483E21019
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:32:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="DYpfu0JD"
+	by mail.kernel.org (Postfix) with ESMTP id 9AAA321019
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:33:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728726AbfAVPcY (ORCPT
+        id S1728776AbfAVPdV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 10:32:24 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:38488 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728580AbfAVPcY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 10:32:24 -0500
-Received: by mail-qk1-f195.google.com with SMTP id m17so6988776qki.5
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 07:32:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=/fyipIllhCYij0+mgYcSprr3P3Cu0+j2IGNq3dx9N5w=;
-        b=DYpfu0JDdTbigiHXUzGKX6UxgPq9V87234WJwDT662gZdp0XIqmelW0hwhX8HxgH4T
-         79Ds4UAUD5IxUOM0n8cW7kfUZnqI31qMhncVp8KijZgwvlZYGIAro0ilh3fUm4QIpRik
-         ZOZ96C2R8EyzFYEcyZ9+Ka0W9z50mFC2Xplis=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/fyipIllhCYij0+mgYcSprr3P3Cu0+j2IGNq3dx9N5w=;
-        b=ZdDQc6E92dfQk2aOyVLVJMavnpu4C6YggWi49b1IRdmirgfHKnecDINDbbPr+H5FBV
-         ntTqVJ92sY71/ceL2D7UxDxSj8irktPAZt5WepD62fS3REPlkTF0wYEYX1jrAP49nnNN
-         h12GYJMfv+NrrNHAbDnO2h0+0yOG1Tt5txeGyeA6bj3V1dJN7KLMsoHuGiIc8gtU8xWC
-         wruqmppVJqRJ2IcZBnWmIesRrvwKmozOZTTh0kmkqtOZqScw9y7RLp9Ud6SaPfsy9cjP
-         umczWqaS9MBIAQkuo9xQDUAIYAakDP1zMai41Aai3wFFEiHBzU6/qDkWJv8kRw+SzffN
-         E8kg==
-X-Gm-Message-State: AJcUukc444kSabufs16jna8JOCz/Hm7RD4GjxZtQy+H6GHLUK+h5wIjV
-        wYYkJElERvZ7/khykVCYI+xoVg==
-X-Google-Smtp-Source: ALg8bN4ylzwr9dGQl2vhVXGiSTCtPXX4T6HAercQ2qEiygvqL1iBZe0CUmKYyBjA1XumzIp4rm4vUg==
-X-Received: by 2002:a37:5d06:: with SMTP id r6mr28719288qkb.229.1548171142462;
-        Tue, 22 Jan 2019 07:32:22 -0800 (PST)
-Received: from localhost ([2620:0:1004:1100:cca9:fccc:8667:9bdc])
-        by smtp.gmail.com with ESMTPSA id v57sm73797530qtv.80.2019.01.22.07.32.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 22 Jan 2019 07:32:20 -0800 (PST)
-Date:   Tue, 22 Jan 2019 10:32:20 -0500
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Tue, 22 Jan 2019 10:33:21 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56096 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728601AbfAVPdV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 10:33:21 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A981CA78;
+        Tue, 22 Jan 2019 07:33:20 -0800 (PST)
+Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B59BC3F589;
+        Tue, 22 Jan 2019 07:33:17 -0800 (PST)
+Date:   Tue, 22 Jan 2019 15:33:15 +0000
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
         Todd Kjos <tkjos@google.com>,
-        syzbot+a76129f18c89f3e2ddd4@syzkaller.appspotmail.com,
-        ak@linux.intel.com, Johannes Weiner <hannes@cmpxchg.org>,
-        jack@suse.cz, jrdr.linux@gmail.com,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        mawilcox@microsoft.com, mgorman@techsingularity.net,
-        syzkaller-bugs@googlegroups.com,
-        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: possible deadlock in __do_page_fault
-Message-ID: <20190122153220.GA191275@google.com>
-References: <000000000000f7a28e057653dc6e@google.com>
- <20180920141058.4ed467594761e073606eafe2@linux-foundation.org>
- <CAHRSSEzX5HOUEQ6DgEF76OLGrwS1isWMdtvneBLOEEnwoMxVrA@mail.gmail.com>
- <CAEXW_YSot+3AMQ=jmDRowmqoOmQmujp9r8Dh18KJJN1EDmyHOw@mail.gmail.com>
- <20180921162110.e22d09a9e281d194db3c8359@linux-foundation.org>
- <4b0a5f8c-2be2-db38-a70d-8d497cb67665@I-love.SAKURA.ne.jp>
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v6 05/16] sched/core: uclamp: Update CPU's refcount on
+ clamp changes
+Message-ID: <20190122153315.dhjl67sgpu74hmqv@e110439-lin>
+References: <20190115101513.2822-1-patrick.bellasi@arm.com>
+ <20190115101513.2822-6-patrick.bellasi@arm.com>
+ <20190121153308.GL27931@hirez.programming.kicks-ass.net>
+ <20190121154412.fak2t2iquj3aixtu@e110439-lin>
+ <20190122093704.GM27931@hirez.programming.kicks-ass.net>
+ <20190122104305.6vjx37muqsxm536t@e110439-lin>
+ <20190122132817.GG13777@hirez.programming.kicks-ass.net>
+ <20190122140115.twtx646vewm757ca@e110439-lin>
+ <20190122145742.GQ27931@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4b0a5f8c-2be2-db38-a70d-8d497cb67665@I-love.SAKURA.ne.jp>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190122145742.GQ27931@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 07:02:35PM +0900, Tetsuo Handa wrote:
-> On 2018/09/22 8:21, Andrew Morton wrote:
-> > On Thu, 20 Sep 2018 19:33:15 -0400 Joel Fernandes <joel@joelfernandes.org> wrote:
+On 22-Jan 15:57, Peter Zijlstra wrote:
+> On Tue, Jan 22, 2019 at 02:01:15PM +0000, Patrick Bellasi wrote:
+> > On 22-Jan 14:28, Peter Zijlstra wrote:
+> > > On Tue, Jan 22, 2019 at 10:43:05AM +0000, Patrick Bellasi wrote:
+> > > > On 22-Jan 10:37, Peter Zijlstra wrote:
+> > > 
+> > > > > Sure, I get that. What I don't get is why you're adding that (2) here.
+> > > > > Like said, __sched_setscheduler() already does a dequeue/enqueue under
+> > > > > rq->lock, which should already take care of that.
+> > > > 
+> > > > Oh, ok... got it what you mean now.
+> > > > 
+> > > > With:
+> > > > 
+> > > >    [PATCH v6 01/16] sched/core: Allow sched_setattr() to use the current policy
+> > > >    <20190115101513.2822-2-patrick.bellasi@arm.com>
+> > > > 
+> > > > we can call __sched_setscheduler() with:
+> > > > 
+> > > >    attr->sched_flags & SCHED_FLAG_KEEP_POLICY
+> > > > 
+> > > > whenever we want just to change the clamp values of a task without
+> > > > changing its class. Thus, we can end up returning from
+> > > > __sched_setscheduler() without doing an actual dequeue/enqueue.
+> > > 
+> > > I don't see that happening.. when KEEP_POLICY we set attr.sched_policy =
+> > > SETPARAM_POLICY. That is then checked again in __setscheduler_param(),
+> > > which is in the middle of that dequeue/enqueue.
 > > 
-> >> On Thu, Sep 20, 2018 at 5:12 PM Todd Kjos <tkjos@google.com> wrote:
-> >>>
-> >>> +Joel Fernandes
-> >>>
-> >>> On Thu, Sep 20, 2018 at 2:11 PM Andrew Morton <akpm@linux-foundation.org> wrote:
-> >>>>
-> >>>>
-> >>>> Thanks.  Let's cc the ashmem folks.
-> >>>>
-> >>
-> >> This should be fixed by https://patchwork.kernel.org/patch/10572477/
-> >>
-> >> It has Neil Brown's Reviewed-by but looks like didn't yet appear in
-> >> anyone's tree, could Greg take this patch?
+> > Yes, I think I've forgot a check before we actually dequeue the task.
 > > 
-> > All is well.  That went into mainline yesterday, with a cc:stable.
+> > The current code does:
 > > 
+> > ---8<---
+> >    SYSCALL_DEFINE3(sched_setattr)
+> > 
+> >         // A) request to keep the same policy
+> >         if (attr.sched_flags & SCHED_FLAG_KEEP_POLICY)
+> >             attr.sched_policy = SETPARAM_POLICY;
+> > 
+> >         sched_setattr()
+> >             // B) actually enforce the same policy
+> >             if (policy < 0)
+> >                 policy = oldpolicy = p->policy;
+> > 
+> >             // C) tune the clamp values
+> >             if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP)
+> >                 retval = __setscheduler_uclamp(p, attr);
+> > 
+> >             // D) tune attributes if policy is the same
+> >             if (unlikely(policy == p->policy))
+> >                 if (fair_policy(policy) && attr->sched_nice != task_nice(p))
+> >                     goto change;
+> >                 if (rt_policy(policy) && attr->sched_priority != p->rt_priority)
+> >                     goto change;
+> >                 if (dl_policy(policy) && dl_param_changed(p, attr))
+> >                     goto change;
 > 
-> This problem was not fixed at all.
-
-Why do you say so, are you able to reproduce the issue? If so, could you
-share the splat?
-
-Many splats involve issues to do with the inode lock class being the same for
-files and directories, the above patch does fix those issues.
-
-> Why do we need to call fallocate() synchronously with ashmem_mutex held?
-> Why can't we call fallocate() asynchronously from WQ_MEM_RECLAIM workqueue
-> context so that we can call fallocate() with ashmem_mutex not held?
+> 		  if (util_changed)
+> 		      goto change;
 > 
-> I don't know how ashmem works, but as far as I can guess, offloading is
-> possible as long as other operations which depend on the completion of
-> fallocate() operation (e.g. read()/mmap(), querying/changing pinned status)
-> wait for completion of asynchronous fallocate() operation (like a draft
-> patch shown below is doing).
-
-This adds a bit of complexity, I am worried if it will introduce more
-bugs especially because ashmem is going away in the long term, in favor of
-memfd - and if its worth adding more complexity / maintenance burden to it.
-
-I am wondering if we can do this synchronously, without using a workqueue.
-All you would need is a temporary list of areas to punch. In
-ashmem_shrink_scan, you would create this list under mutex and then once you
-release the mutex, you can go through this list and do the fallocate followed
-by the wake up of waiters on the wait queue, right? If you can do it this
-way, then it would be better IMO.
-
-side note: these sort of splats are exactly the reason we're moving to memfd,
-since the wrapper design of ashmem is prone to deadlocks. We fixed a lot of
-deadlocks though but still.
-
-thanks,
-
- - Joel
-
-
-> ---
->  drivers/staging/android/ashmem.c | 50 ++++++++++++++++++++++++++++----
->  1 file changed, 45 insertions(+), 5 deletions(-)
+> ?
 > 
-> diff --git a/drivers/staging/android/ashmem.c b/drivers/staging/android/ashmem.c
-> index 90a8a9f1ac7d..1a890c43a10a 100644
-> --- a/drivers/staging/android/ashmem.c
-> +++ b/drivers/staging/android/ashmem.c
-> @@ -75,6 +75,17 @@ struct ashmem_range {
->  /* LRU list of unpinned pages, protected by ashmem_mutex */
->  static LIST_HEAD(ashmem_lru_list);
->  
-> +static struct workqueue_struct *ashmem_wq;
-> +static atomic_t ashmem_shrink_inflight = ATOMIC_INIT(0);
-> +static DECLARE_WAIT_QUEUE_HEAD(ashmem_shrink_wait);
-> +
-> +struct ashmem_shrink_work {
-> +	struct work_struct work;
-> +	struct file *file;
-> +	loff_t start;
-> +	loff_t end;
-> +};
-> +
->  /*
->   * long lru_count - The count of pages on our LRU list.
->   *
-> @@ -292,6 +303,7 @@ static ssize_t ashmem_read_iter(struct kiocb *iocb, struct iov_iter *iter)
->  	int ret = 0;
->  
->  	mutex_lock(&ashmem_mutex);
-> +	wait_event(ashmem_shrink_wait, !atomic_read(&ashmem_shrink_inflight));
->  
->  	/* If size is not set, or set to 0, always return EOF. */
->  	if (asma->size == 0)
-> @@ -359,6 +371,7 @@ static int ashmem_mmap(struct file *file, struct vm_area_struct *vma)
->  	int ret = 0;
->  
->  	mutex_lock(&ashmem_mutex);
-> +	wait_event(ashmem_shrink_wait, !atomic_read(&ashmem_shrink_inflight));
->  
->  	/* user needs to SET_SIZE before mapping */
->  	if (!asma->size) {
-> @@ -421,6 +434,19 @@ static int ashmem_mmap(struct file *file, struct vm_area_struct *vma)
->  	return ret;
->  }
->  
-> +static void ashmem_shrink_worker(struct work_struct *work)
-> +{
-> +	struct ashmem_shrink_work *w = container_of(work, typeof(*w), work);
-> +
-> +	w->file->f_op->fallocate(w->file,
-> +				 FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
-> +				 w->start, w->end - w->start);
-> +	fput(w->file);
-> +	kfree(w);
-> +	if (atomic_dec_and_test(&ashmem_shrink_inflight))
-> +		wake_up_all(&ashmem_shrink_wait);
-> +}
-> +
->  /*
->   * ashmem_shrink - our cache shrinker, called from mm/vmscan.c
->   *
-> @@ -449,12 +475,18 @@ ashmem_shrink_scan(struct shrinker *shrink, struct shrink_control *sc)
->  		return -1;
->  
->  	list_for_each_entry_safe(range, next, &ashmem_lru_list, lru) {
-> -		loff_t start = range->pgstart * PAGE_SIZE;
-> -		loff_t end = (range->pgend + 1) * PAGE_SIZE;
-> +		struct ashmem_shrink_work *w = kzalloc(sizeof(*w), GFP_ATOMIC);
-> +
-> +		if (!w)
-> +			break;
-> +		INIT_WORK(&w->work, ashmem_shrink_worker);
-> +		w->file = range->asma->file;
-> +		get_file(w->file);
-> +		w->start = range->pgstart * PAGE_SIZE;
-> +		w->end = (range->pgend + 1) * PAGE_SIZE;
-> +		atomic_inc(&ashmem_shrink_inflight);
-> +		queue_work(ashmem_wq, &w->work);
->  
-> -		range->asma->file->f_op->fallocate(range->asma->file,
-> -				FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
-> -				start, end - start);
->  		range->purged = ASHMEM_WAS_PURGED;
->  		lru_del(range);
->  
-> @@ -713,6 +745,7 @@ static int ashmem_pin_unpin(struct ashmem_area *asma, unsigned long cmd,
->  		return -EFAULT;
->  
->  	mutex_lock(&ashmem_mutex);
-> +	wait_event(ashmem_shrink_wait, !atomic_read(&ashmem_shrink_inflight));
->  
->  	if (!asma->file)
->  		goto out_unlock;
-> @@ -883,8 +916,15 @@ static int __init ashmem_init(void)
->  		goto out_free2;
->  	}
->  
-> +	ashmem_wq = alloc_workqueue("ashmem_wq", WQ_MEM_RECLAIM, 0);
-> +	if (!ashmem_wq) {
-> +		pr_err("failed to create workqueue\n");
-> +		goto out_demisc;
-> +	}
-> +
->  	ret = register_shrinker(&ashmem_shrinker);
->  	if (ret) {
-> +		destroy_workqueue(ashmem_wq);
->  		pr_err("failed to register shrinker!\n");
->  		goto out_demisc;
->  	}
-> -- 
-> 2.17.1
+> >                 return 0;
+> >         change:
+> > 
+> >             // E) dequeue/enqueue task
+> > ---8<---
+> > 
+> > So, probably in D) I've missed a check on SCHED_FLAG_KEEP_POLICY to
+> > enforce a return in that case...
+> > 
+> > > Also, and this might be 'broken', SETPARAM_POLICY _does_ reset all the
+> > > other attributes, it only preserves policy, but it will (re)set nice
+> > > level for example (see that same function).
+> > 
+> > Mmm... right... my bad! :/
+> > 
+> > > So maybe we want to introduce another (few?) FLAG_KEEP flag(s) that
+> > > preserve the other bits; I'm thinking at least KEEP_PARAM and KEEP_UTIL
+> > > or something.
+> > 
+> > Yes, I would say we have two options:
+> > 
+> >  1) SCHED_FLAG_KEEP_POLICY enforces all the scheduling class specific
+> >     attributes, but cross class attributes (e.g. uclamp)
+> >
+> >  2) add SCHED_KEEP_NICE, SCHED_KEEP_PRIO, and SCED_KEEP_PARAMS
+> >     and use them in the if conditions in D)
+> 
+> So the current KEEP_POLICY basically provides sched_setparam(), and
+
+But it's not exposed user-space.
+
+> given we have that as a syscall, that is supposedly a useful
+> functionality.
+
+For uclamp is definitively useful to change clamps without the need to
+read beforehand the current policy params and use them in a following
+set syscall... which is racy pattern.
+
+> Also, NICE/PRIO/DL* is all the same thing and depends on the policy,
+> KEEP_PARAM should cover the lot
+
+Right, that makes sense.
+
+> And I suppose the UTIL_CLAMP is !KEEP_UTIL; we could go either way
+> around with that flag.
+
+What about getting rid of the racy case above by exposing userspace
+only the new UTIL_CLAMP and, on:
+
+  sched_setscheduler(flags: UTIL_CLAMP)
+
+we enforce the other two flags from the syscall:
+
+---8<---
+        SYSCALL_DEFINE3(sched_setattr)
+            if (attr.sched_flags & SCHED_FLAG_KEEP_POLICY) {
+                attr.sched_policy = SETPARAM_POLICY;
+                attr.sched_flags |= (KEEP_POLICY|KEEP_PARAMS);
+            }
+---8<---
+
+This will not make possible to change class and set flags in one go,
+but honestly that's likely a very limited use-case, isn't it ?
+
+> > In both cases the goal should be to return from code block D).
+> 
+> I don't think so; we really do want to 'goto change' for util changes
+> too I think. Why duplicate part of that logic?
+
+But that will force a dequeue/enqueue... isn't too much overhead just
+to change a clamp value? Perhaps we can also end up with some wired
+side-effects like the task being preempted ?
+
+Consider also that the uclamp_task_update_active() added by this patch
+not only has lower overhead but it will be use also by cgroups where
+we want to force update all the tasks on a cgroup's clamp change.
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
