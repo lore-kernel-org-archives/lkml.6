@@ -2,181 +2,113 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A200C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:58:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CAC1C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:59:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56FCB205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:58:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DC9220856
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:58:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="I4nqVpcq"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AcYx1BvD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726678AbfAVS6y (ORCPT
+        id S1726814AbfAVS66 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 13:58:54 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:38667 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726268AbfAVS6x (ORCPT
+        Tue, 22 Jan 2019 13:58:58 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:40058 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726302AbfAVS6y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 13:58:53 -0500
-Received: by mail-pf1-f193.google.com with SMTP id q1so12208515pfi.5
+        Tue, 22 Jan 2019 13:58:54 -0500
+Received: by mail-pg1-f195.google.com with SMTP id z10so11467340pgp.7
         for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 10:58:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
-         :content-transfer-encoding;
-        bh=tBqlp10k4es8Fb0UZkrFAqNQyoizapiAG5ZARQOAZm8=;
-        b=I4nqVpcqKpHwkjR7JfZnx6HxdJM0yqbLUXlR+F+/5wrZzng6pjHw9ibguUdpMNK+t1
-         YC4rX/jcnydlpbGittwhDYy/+HkFBL4VRqLL7C06FYGBmPRDFNYAtc2KUNisqeT9T/ai
-         9vIzJEq6mVWCurujXok3TSETcLPs9tzdqkSMZaC3D35UDK48tofbQPpj0gyUNU6oPA34
-         lnU0GDb1SYwqt1ID1tCjHkyrnhjluiw2wUGBemSrHfF/FF6lS30BIWdE0eu8pV+R63FX
-         PJc3kfC9roo30ZjQ4Lp/I5InCASXAUwiEjKfTAaXW+msdrvfUCNJNwn7K+UxbxobrPTz
-         15eA==
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:to:in-reply-to:user-agent
+         :references:subject:from:message-id:cc:date;
+        bh=7n996eizIHOZB8ObkrUMaDzi4+lB9X87FLco778lNQo=;
+        b=AcYx1BvDdMXNDcb0MwDOi0eAbYuwQ+v//FUPCT6JRYaR1RldCQk2Ax0N88obUwax8r
+         U6fFcbd1fkuNoWqxLNSyxqi8wf23iBYwLladnWqZxxY/8BQ1zPZM4sUxpEakecDAnKVr
+         gzecddzicBmlJYRQ6bVP60A85qJXUgz46jhQU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=tBqlp10k4es8Fb0UZkrFAqNQyoizapiAG5ZARQOAZm8=;
-        b=GaPqN9OAcNX0C12AlFQgsSACRvTuUn7XJulE+6yfwSQnKu5h0P5LhifL3OMmu8PFpN
-         iVNsZ1vH6K+n6mP2SXVG+Bk+H/pXH1kXMuetnomwuZ751BG6ecJ++ZLQ1SNMpkXZ4d31
-         Uelv74sGG2Jy4V4Zg7WgjufPJGYcYLH3ElVtxyiH9DVpnYMIAl4c7Vaoix1tuwwZAFeJ
-         qjOqvx5MP5Us7AR61Tlr6qvNx4dnkAjRPebMTwafrGeLxN8sCEerM/abk8rfipbmK5Jf
-         vanFF2Tqe44T5HTEhwSLL3GsnE4njw2QVjPQb33kNqye1GN5dpzspA9zpVZA1lEBXtgK
-         oIAg==
-X-Gm-Message-State: AJcUukdOGIY1ERP5sDC7sW8ZnaPiNwG1XgkoMEKNmhqFRNsha7xU9r0P
-        CA3nXdG7KSpsHy5DOa/6pvXaDXnHZTc=
-X-Google-Smtp-Source: ALg8bN4GzYF0lR0u2zs/IIY/Z4fgzNmeu+63hMTEJxdA9BBdNYFI8ENW8oiIh1cBhA13U0TllyauBw==
-X-Received: by 2002:a63:451a:: with SMTP id s26mr20467919pga.150.1548183532468;
+        h=x-gm-message-state:mime-version:content-transfer-encoding:to
+         :in-reply-to:user-agent:references:subject:from:message-id:cc:date;
+        bh=7n996eizIHOZB8ObkrUMaDzi4+lB9X87FLco778lNQo=;
+        b=IZI4gHTLwhankCrpIapxDQ6er4Evot/pVISmoIZXLjyA++QPtSSeRUPCLWCNGSSxNk
+         J7V28h7XnNFBOOVRevxHalbLVZKPdAP0xfbgLEZpu8OfB9O5V56C9MY9u8g6a7rS/aPq
+         7zSWaoPsVpo/7ITfQ1gv4+s5N5ShoMTjz4l/05dEsuA9hAIEYfL60FlRriJ8kTbdfIgz
+         vSIQfXzzQBU7KNl50WBXdcrRumx71rGzClkb7T+0ZJxPLLHFWntNniOZq+5iU04vB+wY
+         Tw2+KVQJhBM+CJcXjpgE7IiI06LH6OhuC+njU1dTfo4psOrvw22dhkJ1jMBffWLubJU1
+         YiLQ==
+X-Gm-Message-State: AJcUukc3EKgoflZoo3J93rI7b/QV8o3XBWMyxUQWAfnzE1GEW7kuONxW
+        ynXjAP0KAzkCJq3Lc/SCNUR+QQ==
+X-Google-Smtp-Source: ALg8bN5ttFVZQXDeQh4FN9DFG4mw8l6cWhO5GDyQgOfw9uoUCmCyOp4iOjjBmrIIeMbZ3QRn6gShUg==
+X-Received: by 2002:a63:104d:: with SMTP id 13mr33282463pgq.303.1548183532817;
         Tue, 22 Jan 2019 10:58:52 -0800 (PST)
-Received: from localhost ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id n68sm25949284pfb.62.2019.01.22.10.58.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Jan 2019 10:58:51 -0800 (PST)
-Date:   Tue, 22 Jan 2019 10:58:51 -0800 (PST)
-X-Google-Original-Date: Tue, 22 Jan 2019 10:58:30 PST (-0800)
-Subject:     Re: [PATCH] RISC-V: Add _TIF_NEED_RESCHED check for kernel thread when CONFIG_PREEMPT=y
-In-Reply-To: <20190103054555.GA30904@roeck-us.net>
-CC:     vincentc@andestech.com, aou@eecs.berkeley.edu,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:     linux@roeck-us.net
-Message-ID: <mhng-fd3c9beb-34ce-40c5-92ce-0a7d76d877aa@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id n70sm26850366pfi.185.2019.01.22.10.58.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 22 Jan 2019 10:58:52 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+To:     Andy Gross <andy.gross@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Sibi Sankar <sibis@codeaurora.org>
+In-Reply-To: <20190122055112.30943-2-bjorn.andersson@linaro.org>
+User-Agent: alot/0.8
+References: <20190122055112.30943-1-bjorn.andersson@linaro.org> <20190122055112.30943-2-bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v3 01/10] arm64: dts: qcom: sdm845: Update PIL region memory map
+From:   Stephen Boyd <swboyd@chromium.org>
+Message-ID: <154818353130.20280.17905705223316470797@swboyd.mtv.corp.google.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 22 Jan 2019 10:58:51 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 02 Jan 2019 21:45:55 PST (-0800), linux@roeck-us.net wrote:
-> On Thu, Jan 03, 2019 at 11:32:33AM +0800, Vincent Chen wrote:
->> The cond_resched() can be used to yield the CPU resource if
->> CONFIG_PREEMPT is not defined. Otherwise, cond_resched() is a dummy
->> function. In order to avoid kernel thread occupying entire CPU,
->> when CONFIG_PREEMPT=y, the kernel thread needs to follow the
->> rescheduling mechanism like a user thread.
->>
->> Signed-off-by: Vincent Chen <vincentc@andestech.com>
->
-> This patch seems to do the trick. I no longer see a problem with
-> CONFIG_PREEMPT=y and the various lock torture tests enabled, as
-> previously reported.
->
-> Nice catch and fix.
->
-> Tested-by: Guenter Roeck <linux@roeck-us.net>
->
-> Guenter
->
->> ---
->>  arch/riscv/kernel/asm-offsets.c |    1 +
->>  arch/riscv/kernel/entry.S       |   18 +++++++++++++++++-
->>  2 files changed, 18 insertions(+), 1 deletions(-)
->>
->> diff --git a/arch/riscv/kernel/asm-offsets.c b/arch/riscv/kernel/asm-offsets.c
->> index 6a92a2f..dac9834 100644
->> --- a/arch/riscv/kernel/asm-offsets.c
->> +++ b/arch/riscv/kernel/asm-offsets.c
->> @@ -39,6 +39,7 @@ void asm_offsets(void)
->>  	OFFSET(TASK_STACK, task_struct, stack);
->>  	OFFSET(TASK_TI, task_struct, thread_info);
->>  	OFFSET(TASK_TI_FLAGS, task_struct, thread_info.flags);
->> +	OFFSET(TASK_TI_PREEMPT_COUNT, task_struct, thread_info.preempt_count);
->>  	OFFSET(TASK_TI_KERNEL_SP, task_struct, thread_info.kernel_sp);
->>  	OFFSET(TASK_TI_USER_SP, task_struct, thread_info.user_sp);
->>  	OFFSET(TASK_TI_CPU, task_struct, thread_info.cpu);
->> diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
->> index 13d4826..728b72d 100644
->> --- a/arch/riscv/kernel/entry.S
->> +++ b/arch/riscv/kernel/entry.S
->> @@ -144,6 +144,10 @@ _save_context:
->>  	REG_L x2,  PT_SP(sp)
->>  	.endm
->>
->> +#if !IS_ENABLED(CONFIG_PREEMPT)
->> +#define resume_kernel restore_all
->> +#endif
->> +
+Quoting Bjorn Andersson (2019-01-21 21:51:03)
+> @@ -103,10 +138,30 @@
+>                         no-map;
+>                 };
+> =20
+> +               venus_mem: memory@95800000 {
+> +                       reg =3D <0 0x95800000 0 0x500000>;
+> +                       no-map;
+> +               };
+> +
+> +               cdsp_mem: memory@95d00000 {
+> +                       reg =3D <0 0x95d00000 0 0x800000>;
+> +                       no-map;
+> +               };
+> +
+>                 mba_region: memory@96500000 {
+>                         reg =3D <0 0x96500000 0 0x200000>;
+>                         no-map;
+>                 };
+> +
+> +               slpi_mem: memory@96700000 {
+> +                       reg =3D <0 0x96700000 0 0x1400000>;
+> +                       no-map;
+> +               };
+> +
+> +               spss_mem: memory@97b00000 {
+> +                       reg =3D <0 0x97b00000 0 0x100000>;
+> +                       no-map;
+> +               };
+>         };
+> =20
 
-I don't like preprocessor stuff if we can avoid it, are you OK if I squash in 
-the following diff:
+What's the plan if certain configurations don't use all these carveouts?
+Can we mark the reservation nodes as status =3D "disabled", or the reverse
+and mark them as status =3D "ok" in all boards, and then reclaim the
+memory for peripherals we don't care to use?
 
-    diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
-    index cfbad2f689c3..fd9b57c8b4ce 100644
-    --- a/arch/riscv/kernel/entry.S
-    +++ b/arch/riscv/kernel/entry.S
-    @@ -145,7 +145,7 @@ _save_context:
-     	.endm
-    
-     #if !IS_ENABLED(CONFIG_PREEMPT)
-    -#define resume_kernel restore_all
-    +.set resume_kernel, restore_all
-     #endif
-    
-     ENTRY(handle_exception)
-
-I think that should do the same thing, but at link time instead of in the 
-preprocessor -- that makes it a bit less likely to bit us in the future.
-
->>  ENTRY(handle_exception)
->>  	SAVE_ALL
->>
->> @@ -228,7 +232,7 @@ ret_from_exception:
->>  	REG_L s0, PT_SSTATUS(sp)
->>  	csrc sstatus, SR_SIE
->>  	andi s0, s0, SR_SPP
->> -	bnez s0, restore_all
->> +	bnez s0, resume_kernel
->>
->>  resume_userspace:
->>  	/* Interrupts must be disabled here so flags are checked atomically */
->> @@ -250,6 +254,18 @@ restore_all:
->>  	RESTORE_ALL
->>  	sret
->>
->> +#if IS_ENABLED(CONFIG_PREEMPT)
->> +resume_kernel:
->> +	REG_L s0, TASK_TI_PREEMPT_COUNT(tp)
->> +	bnez s0, restore_all
->> +need_resched:
->> +	REG_L s0, TASK_TI_FLAGS(tp)
->> +	andi s0, s0, _TIF_NEED_RESCHED
->> +	beqz s0, restore_all
->> +	call preempt_schedule_irq
->> +	j need_resched
->> +#endif
->> +
->>  work_pending:
->>  	/* Enter slow path for supplementary processing */
->>  	la ra, ret_from_exception
-
-I'm just going to assume you're OK with the squash and drop this into my plans 
-for the next RC, let me know if that's not OK.
-
-Thanks for fixing this!
