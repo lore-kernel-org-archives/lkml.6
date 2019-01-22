@@ -2,131 +2,182 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5BAEC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:20:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70969C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:23:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9292E20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:20:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 336AF20870
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:23:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OesFrvNz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726919AbfAVXUC (ORCPT
+        id S1726866AbfAVXXD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 18:20:02 -0500
-Received: from szxga03-in.huawei.com ([45.249.212.189]:2078 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726546AbfAVXUB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 18:20:01 -0500
-Received: from DGGEMM403-HUB.china.huawei.com (unknown [172.30.72.57])
-        by Forcepoint Email with ESMTP id 8254F375E08DEB2AA6E0;
-        Wed, 23 Jan 2019 07:19:57 +0800 (CST)
-Received: from DGGEMM511-MBX.china.huawei.com ([169.254.1.243]) by
- DGGEMM403-HUB.china.huawei.com ([10.3.20.211]) with mapi id 14.03.0415.000;
- Wed, 23 Jan 2019 07:19:47 +0800
-From:   tanhuazhong <tanhuazhong@huawei.com>
-To:     Eric Dumazet <eric.dumazet@gmail.com>,
-        "davem@davemloft.net" <davem@davemloft.net>
-CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        huangdaode <huangdaode@hisilicon.com>,
-        "Zhuangyuzeng (Yisen)" <yisen.zhuang@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        Linuxarm <linuxarm@huawei.com>,
-        "shenjian (K)" <shenjian15@huawei.com>,
-        "lipeng (Y)" <lipeng321@huawei.com>
-Subject: RE: [PATCH net-next 02/12] net: hns3: add rx multicast packets
- statistic
-Thread-Topic: [PATCH net-next 02/12] net: hns3: add rx multicast packets
- statistic
-Thread-Index: AQHUsnEhsTdwcY252Eei7W4riB8KPaW7GJ6AgADUSxA=
-Date:   Tue, 22 Jan 2019 23:19:46 +0000
-Message-ID: <71BFC6CB37D69B45A6C87FB2E31733AC01CEBC1C@dggemm511-mbx.china.huawei.com>
-References: <20190122163940.7876-1-tanhuazhong@huawei.com>
- <20190122163940.7876-3-tanhuazhong@huawei.com>
- <c915dbd7-8a04-9b38-bb5f-a3e8340ce6a2@gmail.com>
-In-Reply-To: <c915dbd7-8a04-9b38-bb5f-a3e8340ce6a2@gmail.com>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.45.143.16]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Tue, 22 Jan 2019 18:23:03 -0500
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:36812 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726765AbfAVXXD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 18:23:03 -0500
+Received: by mail-ua1-f67.google.com with SMTP id j3so108768uap.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 15:23:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EpXWdqvCkEPWa6yAUiNF/XWYwIM8qsTQoY3KGOXsen0=;
+        b=OesFrvNz3hNtpWMRMyd2qHuPWNXfed0smM4b4u9SdyeH4XYud4eGfRs5UJK9JZ4mZg
+         y4f0NWsbM29zXGUQvIhxWFN3i0iOKFwbAYKgYEyecbb0VJvsgoC6n3ARxFJKSWBAPDI4
+         q2CGJPiNtlg/YRMU4dYa4p7ujIEnhi5DdyCso=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EpXWdqvCkEPWa6yAUiNF/XWYwIM8qsTQoY3KGOXsen0=;
+        b=Vv6JBBaEorvEtyso0EFYGyC5lxr/Ztf8tZlVDMq0m+cMvHNDQwBnklMSdQkPQS4mYh
+         bJnDjsawbqpezSTjdO28fWi5x9gHJzQAae8EhWgWWLSxll/WiJp5adFpCm6pYbxIjh7B
+         DySt7kd7Kb7y41u0XfNCDN/whsTI0N2YTD4cJdz47NN7+a1ltRgOSEDIm6TE+Q5EJxmH
+         WSsxIwvK7HfHf5hkCm1aare+rOiHgktvXYp+bFsVS6VsV6qY7BPnnCtvXcJjjDXHvwgM
+         0TYHW6OWcoAI2ylnDz6+ZeA/HUmdnRhIOJ7guj5H3276tpCJ9Juq+qgMZfo1gcRSQfd/
+         jHTA==
+X-Gm-Message-State: AJcUukcQpGizJ0BtG8Pz1anlCgYNt2Oe0DzhXeMXWivqjk/CvyqycDD2
+        JwhuRdG5mqZ8Vte/Vv2c2ImiAv4SLHo=
+X-Google-Smtp-Source: ALg8bN74y6oF5i8rdSaPEc3UqdvDHsvfyqs1m7q0k8mBDB5OhluIRMrXOrBQ8rE27X3gwpBN+1hKzg==
+X-Received: by 2002:ab0:30b5:: with SMTP id b21mr5921905uam.69.1548199381432;
+        Tue, 22 Jan 2019 15:23:01 -0800 (PST)
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com. [209.85.217.46])
+        by smtp.gmail.com with ESMTPSA id e67sm25267903vsd.32.2019.01.22.15.22.57
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 22 Jan 2019 15:22:58 -0800 (PST)
+Received: by mail-vs1-f46.google.com with SMTP id n13so198600vsk.4
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 15:22:57 -0800 (PST)
+X-Received: by 2002:a67:848a:: with SMTP id g132mr14558030vsd.222.1548199377420;
+ Tue, 22 Jan 2019 15:22:57 -0800 (PST)
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+References: <20190121131816.GC17749@hirez.programming.kicks-ass.net>
+ <Pine.LNX.4.44L0.1901211103000.24162-100000@netrider.rowland.org> <20190122090456.GE13777@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190122090456.GE13777@hirez.programming.kicks-ass.net>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 23 Jan 2019 12:22:44 +1300
+X-Gmail-Original-Message-ID: <CAGXu5jKHo4CZWAnn4Wvg=MV=xaf3j4mBvxggBHuZETTkMOxkOA@mail.gmail.com>
+Message-ID: <CAGXu5jKHo4CZWAnn4Wvg=MV=xaf3j4mBvxggBHuZETTkMOxkOA@mail.gmail.com>
+Subject: Re: [PATCH] kcov: convert kcov.refcount to refcount_t
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQpGcm9tOiBFcmljIER1bWF6ZXQgW21haWx0
-bzplcmljLmR1bWF6ZXRAZ21haWwuY29tXSANClNlbnQ6IFdlZG5lc2RheSwgSmFudWFyeSAyMywg
-MjAxOSAyOjM5IEFNDQpUbzogdGFuaHVhemhvbmcgPHRhbmh1YXpob25nQGh1YXdlaS5jb20+OyBk
-YXZlbUBkYXZlbWxvZnQubmV0DQpDYzogbmV0ZGV2QHZnZXIua2VybmVsLm9yZzsgbGludXgta2Vy
-bmVsQHZnZXIua2VybmVsLm9yZzsgaHVhbmdkYW9kZSA8aHVhbmdkYW9kZUBoaXNpbGljb24uY29t
-PjsgWmh1YW5neXV6ZW5nIChZaXNlbikgPHlpc2VuLnpodWFuZ0BodWF3ZWkuY29tPjsgU2FsaWwg
-TWVodGEgPHNhbGlsLm1laHRhQGh1YXdlaS5jb20+OyBMaW51eGFybSA8bGludXhhcm1AaHVhd2Vp
-LmNvbT47IHNoZW5qaWFuIChLKSA8c2hlbmppYW4xNUBodWF3ZWkuY29tPjsgbGlwZW5nIChZKSA8
-bGlwZW5nMzIxQGh1YXdlaS5jb20+DQpTdWJqZWN0OiBSZTogW1BBVENIIG5ldC1uZXh0IDAyLzEy
-XSBuZXQ6IGhuczM6IGFkZCByeCBtdWx0aWNhc3QgcGFja2V0cyBzdGF0aXN0aWMNCg0KDQoNCk9u
-IDAxLzIyLzIwMTkgMDg6MzkgQU0sIEh1YXpob25nIFRhbiB3cm90ZToNCj4gRnJvbTogSmlhbiBT
-aGVuIDxzaGVuamlhbjE1QGh1YXdlaS5jb20+DQo+IA0KPiBUaGlzIHBhdGNoIGFkZHMgcnggbXVs
-dGljYXN0IHBhY2tldHMgc3RhdGlzdGljIGZvciBlYWNoIHJpbmcuDQo+IA0KPiBTaWduZWQtb2Zm
-LWJ5OiBKaWFuIFNoZW4gPHNoZW5qaWFuMTVAaHVhd2VpLmNvbT4NCj4gU2lnbmVkLW9mZi1ieTog
-UGVuZyBMaSA8bGlwZW5nMzIxQGh1YXdlaS5jb20+DQo+IFNpZ25lZC1vZmYtYnk6IEh1YXpob25n
-IFRhbiA8dGFuaHVhemhvbmdAaHVhd2VpLmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJzL25ldC9ldGhl
-cm5ldC9oaXNpbGljb24vaG5zMy9obnMzX2VuZXQuYyAgICB8IDkgKysrKysrKysrDQo+ICBkcml2
-ZXJzL25ldC9ldGhlcm5ldC9oaXNpbGljb24vaG5zMy9obnMzX2VuZXQuaCAgICB8IDggKysrKysr
-KysNCj4gIGRyaXZlcnMvbmV0L2V0aGVybmV0L2hpc2lsaWNvbi9obnMzL2huczNfZXRodG9vbC5j
-IHwgMSArDQo+ICAzIGZpbGVzIGNoYW5nZWQsIDE4IGluc2VydGlvbnMoKykNCj4gDQo+IGRpZmYg
-LS1naXQgYS9kcml2ZXJzL25ldC9ldGhlcm5ldC9oaXNpbGljb24vaG5zMy9obnMzX2VuZXQuYyBi
-L2RyaXZlcnMvbmV0L2V0aGVybmV0L2hpc2lsaWNvbi9obnMzL2huczNfZW5ldC5jDQo+IGluZGV4
-IDlkZDg5NDkzODFiYy4uZjFhYjJlNGNhNDllIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL25ldC9l
-dGhlcm5ldC9oaXNpbGljb24vaG5zMy9obnMzX2VuZXQuYw0KPiArKysgYi9kcml2ZXJzL25ldC9l
-dGhlcm5ldC9oaXNpbGljb24vaG5zMy9obnMzX2VuZXQuYw0KPiBAQCAtMjU3Miw2ICsyNTcyLDcg
-QEAgc3RhdGljIGludCBobnMzX2hhbmRsZV9yeF9iZChzdHJ1Y3QgaG5zM19lbmV0X3JpbmcgKnJp
-bmcsDQo+ICAJCQkgICAgIHN0cnVjdCBza19idWZmICoqb3V0X3NrYikNCj4gIHsNCj4gIAlzdHJ1
-Y3QgbmV0X2RldmljZSAqbmV0ZGV2ID0gcmluZy0+dHFwLT5oYW5kbGUtPmtpbmZvLm5ldGRldjsN
-Cj4gKwllbnVtIGhuczNfcGt0X2wydF90eXBlIGwyX2ZyYW1lX3R5cGU7DQo+ICAJc3RydWN0IHNr
-X2J1ZmYgKnNrYiA9IHJpbmctPnNrYjsNCj4gIAlzdHJ1Y3QgaG5zM19kZXNjX2NiICpkZXNjX2Ni
-Ow0KPiAgCXN0cnVjdCBobnMzX2Rlc2MgKmRlc2M7DQo+IEBAIC0yNjgwLDYgKzI2ODEsMTQgQEAg
-c3RhdGljIGludCBobnMzX2hhbmRsZV9yeF9iZChzdHJ1Y3QgaG5zM19lbmV0X3JpbmcgKnJpbmcs
-DQo+ICAJCXJldHVybiAtRUZBVUxUOw0KPiAgCX0NCj4gIA0KPiArCWwyX2ZyYW1lX3R5cGUgPSBo
-bmFlM19nZXRfZmllbGQobDIzNGluZm8sIEhOUzNfUlhEX0RNQUNfTSwNCj4gKwkJCQkJSE5TM19S
-WERfRE1BQ19TKTsNCj4gKwlpZiAobDJfZnJhbWVfdHlwZSA9PSBITlMzX0wyX1RZUEVfTVVMVElD
-QVNUKSB7DQo+ICsJCXU2NF9zdGF0c191cGRhdGVfYmVnaW4oJnJpbmctPnN5bmNwKTsNCj4gKwkJ
-cmluZy0+c3RhdHMucnhfbXVsdGljYXN0Kys7DQo+ICsJCXU2NF9zdGF0c191cGRhdGVfZW5kKCZy
-aW5nLT5zeW5jcCk7DQo+ICsJfQ0KPiArDQo+ICAJdTY0X3N0YXRzX3VwZGF0ZV9iZWdpbigmcmlu
-Zy0+c3luY3ApOw0KDQoNClRoaXMgaXMgYSBiaXQgc3Vib3B0aW1hbCB0byBjYWxsIHU2NF9zdGF0
-c191cGRhdGVfYmVnaW4oKSB0d2ljZS4NCg0KWW91IGNvdWxkIHJld3JpdGUgdGhlIHRoaW5nIHRv
-IGJlIDoNCg0KICAgICAgICB1NjRfc3RhdHNfdXBkYXRlX2JlZ2luKCZyaW5nLT5zeW5jcCk7DQog
-ICAgICAgIGlmIChsMl9mcmFtZV90eXBlID09IEhOUzNfTDJfVFlQRV9NVUxUSUNBU1QpDQogICAg
-ICAgICAgICAgcmluZy0+c3RhdHMucnhfbXVsdGljYXN0Kys7DQogICAgICAgICAgIA0KCXJpbmct
-PnN0YXRzLnJ4X3BrdHMrKzsNCgkuLi4NCg0KT2ssIHRoYW5rcy4NCg0KPiAgCXJpbmctPnN0YXRz
-LnJ4X3BrdHMrKzsNCj4gIAlyaW5nLT5zdGF0cy5yeF9ieXRlcyArPSBza2ItPmxlbjsNCj4gZGlm
-ZiAtLWdpdCBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L2hpc2lsaWNvbi9obnMzL2huczNfZW5ldC5o
-IGIvZHJpdmVycy9uZXQvZXRoZXJuZXQvaGlzaWxpY29uL2huczMvaG5zM19lbmV0LmgNCj4gaW5k
-ZXggZjU5YWI3Mzg3YjFmLi5mM2QyNDg2MjZhYjMgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbmV0
-L2V0aGVybmV0L2hpc2lsaWNvbi9obnMzL2huczNfZW5ldC5oDQo+ICsrKyBiL2RyaXZlcnMvbmV0
-L2V0aGVybmV0L2hpc2lsaWNvbi9obnMzL2huczNfZW5ldC5oDQo+IEBAIC0yMDIsNiArMjAyLDEz
-IEBAIGVudW0gaG5zM19uaWNfc3RhdGUgew0KPiAgDQo+ICAjZGVmaW5lIEhOUzNfUklOR19FTl9C
-CQkJCTANCj4gIA0KPiArZW51bSBobnMzX3BrdF9sMnRfdHlwZSB7DQo+ICsJSE5TM19MMl9UWVBF
-X1VOSUNBU1QsDQo+ICsJSE5TM19MMl9UWVBFX01VTFRJQ0FTVCwNCj4gKwlITlMzX0wyX1RZUEVf
-QlJPQURDQVNULA0KPiArCUhOUzNfTDJfVFlQRV9JTlZBTElELA0KPiArfTsNCj4gKw0KPiAgZW51
-bSBobnMzX3BrdF9sM3RfdHlwZSB7DQo+ICAJSE5TM19MM1RfTk9ORSwNCj4gIAlITlMzX0wzVF9J
-UFY2LA0KPiBAQCAtMzc2LDYgKzM4Myw3IEBAIHN0cnVjdCByaW5nX3N0YXRzIHsNCj4gIAkJCXU2
-NCBlcnJfYmRfbnVtOw0KPiAgCQkJdTY0IGwyX2VycjsNCj4gIAkJCXU2NCBsM2w0X2NzdW1fZXJy
-Ow0KPiArCQkJdTY0IHJ4X211bHRpY2FzdDsNCj4gIAkJfTsNCj4gIAl9Ow0KPiAgfTsNCj4gZGlm
-ZiAtLWdpdCBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L2hpc2lsaWNvbi9obnMzL2huczNfZXRodG9v
-bC5jIGIvZHJpdmVycy9uZXQvZXRoZXJuZXQvaGlzaWxpY29uL2huczMvaG5zM19ldGh0b29sLmMN
-Cj4gaW5kZXggZTY3OGI2OTM5ZGEzLi5hYmI3ODY5NmQ3Y2UgMTAwNjQ0DQo+IC0tLSBhL2RyaXZl
-cnMvbmV0L2V0aGVybmV0L2hpc2lsaWNvbi9obnMzL2huczNfZXRodG9vbC5jDQo+ICsrKyBiL2Ry
-aXZlcnMvbmV0L2V0aGVybmV0L2hpc2lsaWNvbi9obnMzL2huczNfZXRodG9vbC5jDQo+IEBAIC00
-Nyw2ICs0Nyw3IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgaG5zM19zdGF0cyBobnMzX3J4cV9zdGF0
-c1tdID0gew0KPiAgCUhOUzNfVFFQX1NUQVQoImVycl9iZF9udW0iLCBlcnJfYmRfbnVtKSwNCj4g
-IAlITlMzX1RRUF9TVEFUKCJsMl9lcnIiLCBsMl9lcnIpLA0KPiAgCUhOUzNfVFFQX1NUQVQoImwz
-bDRfY3N1bV9lcnIiLCBsM2w0X2NzdW1fZXJyKSwNCj4gKwlITlMzX1RRUF9TVEFUKCJtdWx0aWNh
-c3QiLCByeF9tdWx0aWNhc3QpLA0KPiAgfTsNCj4gIA0KPiAgI2RlZmluZSBITlMzX1JYUV9TVEFU
-U19DT1VOVCBBUlJBWV9TSVpFKGhuczNfcnhxX3N0YXRzKQ0KPiANCg==
+On Tue, Jan 22, 2019 at 10:05 PM Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Mon, Jan 21, 2019 at 11:05:03AM -0500, Alan Stern wrote:
+> > On Mon, 21 Jan 2019, Peter Zijlstra wrote:
+>
+> > > Any additional ordering; like the one you have above; are not strictly
+> > > required for the proper functioning of the refcount. Rather, you rely on
+> > > additional ordering and will need to provide this explicitly:
+> > >
+> > >
+> > >     if (refcount_dec_and_text(&x->rc)) {
+> > >             /*
+> > >              * Comment that explains what we order against....
+> > >              */
+> > >             smp_mb__after_atomic();
+> > >             BUG_ON(!x->done*);
+> > >             free(x);
+> > >     }
+> > >
+> > >
+> > > Also; these patches explicitly mention that refcount_t is weaker,
+> > > specifically to make people aware of this difference.
+> > >
+> > > A full smp_mb() (or two) would also be much more expensive on a number
+> > > of platforms and in the vast majority of the cases it is not required.
+> >
+> > How about adding smp_rmb() into refcount_dec_and_test()?  That would
+> > give acq+rel semantics, which seems to be what people will expect.  And
+> > it wouldn't be nearly as expensive as a full smp_mb().
+>
+> Yes, that's a very good suggestion.
+>
+> I suppose we can add smp_acquire__after_ctrl_dep() on the true branch.
+> Then it reall does become rel_acq.
+>
+> A wee something like so (I couldn't find an arm64 refcount, even though
+> I have distinct memories of talk about it).
+
+In the end, arm and arm64 chose to use REFCOUNT_FULL unconditionally,
+so there's no arch-specific implementation.
+
+> This isn't compiled, and obviously needs comment/documentation updates
+> to go along with it.
+
+Elena, can you do the doc updates?
+
+>
+> ---
+>  arch/x86/include/asm/refcount.h | 9 ++++++++-
+>  lib/refcount.c                  | 7 ++++++-
+>  2 files changed, 14 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/x86/include/asm/refcount.h b/arch/x86/include/asm/refcount.h
+> index dbaed55c1c24..6f7a1eb345b4 100644
+> --- a/arch/x86/include/asm/refcount.h
+> +++ b/arch/x86/include/asm/refcount.h
+> @@ -74,9 +74,16 @@ bool refcount_sub_and_test(unsigned int i, refcount_t *r)
+>
+>  static __always_inline __must_check bool refcount_dec_and_test(refcount_t *r)
+>  {
+> -       return GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl",
+> +       bool ret = GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl",
+>                                         REFCOUNT_CHECK_LT_ZERO,
+>                                         r->refs.counter, e, "cx");
+> +
+> +       if (ret) {
+> +               smp_acquire__after_ctrl_dep();
+> +               return true;
+> +       }
+> +
+> +       return false;
+>  }
+>
+>  static __always_inline __must_check
+> diff --git a/lib/refcount.c b/lib/refcount.c
+> index ebcf8cd49e05..8276ad349d48 100644
+> --- a/lib/refcount.c
+> +++ b/lib/refcount.c
+> @@ -190,7 +190,12 @@ bool refcount_sub_and_test_checked(unsigned int i, refcount_t *r)
+>
+>         } while (!atomic_try_cmpxchg_release(&r->refs, &val, new));
+>
+> -       return !new;
+> +       if (!new) {
+> +               smp_acquire__after_ctrl_dep();
+> +               return true;
+> +       }
+> +
+> +       return false;
+>  }
+>  EXPORT_SYMBOL(refcount_sub_and_test_checked);
+>
+
+Thanks for this!
+
+-- 
+Kees Cook
