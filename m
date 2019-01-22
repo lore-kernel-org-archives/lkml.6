@@ -4,38 +4,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A0A3C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:11:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E25DC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:11:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42A7320870
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:11:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0249C20870
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:11:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="GaOJ16IV"
+	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="jKkqOeHp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728311AbfAVLLn (ORCPT
+        id S1728319AbfAVLLs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 06:11:43 -0500
-Received: from mail-eopbgr70072.outbound.protection.outlook.com ([40.107.7.72]:49312
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        Tue, 22 Jan 2019 06:11:48 -0500
+Received: from mail-eopbgr40068.outbound.protection.outlook.com ([40.107.4.68]:41571
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727701AbfAVLLn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 06:11:43 -0500
+        id S1727701AbfAVLLr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 06:11:47 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
  s=selector1-arm-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JXoCa3BKJehQOVZ6C3DavPm1yK5k9bQrAGZlsGwgUL0=;
- b=GaOJ16IVhdpZyxvHzmSFr07QymsQBUYytMqabdC6riSoTEXbtx5O60VyTD8Rh/B5cadaJ/OtNEyjhlLFx7TRacnzkDzRPMWJ0BOLdozTx3x/IxNx7ELwkeynq4IGdGkQNwEMmtr1wQAE/WzvQSs45yV/1el1boVvCdBGSV1FI0k=
+ bh=nKC+jfmViIgRrAWjx5Sh8JJDiFnry80xEeHCDVJzMXk=;
+ b=jKkqOeHpuQzn9dEulddoRhm4oJ38dwynlOYNGtpzXaR7DnQlWbhDvDR3LVLLQBtYLoOQFdeOepfsfgZQPAi2bBOqsoZTib6Zn/vA8P6M82rN4jWuNbazIkHDe9ZLcCO9/LJ5LskqIgbzOJIH/XAjAv2S4FiAZ3Lg1dMw5gjrICk=
 Received: from DB6PR0801MB1990.eurprd08.prod.outlook.com (10.168.81.21) by
- DB6PR0801MB2085.eurprd08.prod.outlook.com (10.168.86.142) with Microsoft SMTP
+ DB6PR0801MB1286.eurprd08.prod.outlook.com (10.168.11.16) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1537.26; Tue, 22 Jan 2019 11:11:35 +0000
+ 15.20.1558.16; Tue, 22 Jan 2019 11:11:44 +0000
 Received: from DB6PR0801MB1990.eurprd08.prod.outlook.com
  ([fe80::b9be:3d28:78a2:6e33]) by DB6PR0801MB1990.eurprd08.prod.outlook.com
  ([fe80::b9be:3d28:78a2:6e33%2]) with mapi id 15.20.1537.031; Tue, 22 Jan 2019
- 11:11:35 +0000
+ 11:11:44 +0000
 From:   "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
 To:     Liviu Dudau <Liviu.Dudau@arm.com>,
         "airlied@linux.ie" <airlied@linux.ie>,
@@ -52,11 +52,11 @@ CC:     "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
         "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
-Subject: [PATCH v2 08/11] drm/komeda: Add komeda_crtc_funcs
-Thread-Topic: [PATCH v2 08/11] drm/komeda: Add komeda_crtc_funcs
-Thread-Index: AQHUskM8rTJckBFvX02tgR37OXQTZg==
-Date:   Tue, 22 Jan 2019 11:11:35 +0000
-Message-ID: <20190122110932.5138-9-james.qian.wang@arm.com>
+Subject: [PATCH v2 09/11] drm/komeda: Add komeda_kms_check
+Thread-Topic: [PATCH v2 09/11] drm/komeda: Add komeda_kms_check
+Thread-Index: AQHUskNCu8FeIJKzIEuJggezM8JI7g==
+Date:   Tue, 22 Jan 2019 11:11:44 +0000
+Message-ID: <20190122110932.5138-10-james.qian.wang@arm.com>
 References: <20190122110932.5138-1-james.qian.wang@arm.com>
 In-Reply-To: <20190122110932.5138-1-james.qian.wang@arm.com>
 Accept-Language: en-US
@@ -71,31 +71,31 @@ authentication-results: spf=none (sender IP is )
 x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.17.1
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB6PR0801MB2085;6:oFZ1dUbJTXue6o3dgjYSQHBaIQu6HpA2miKDuV6cwepbPorGTtFXFJ2IMSLBnpStRWDlRgEOhN7Oq7VwQmE5Q1oTwZhrrbFf2Vvo+P87aEI5FXbBwVHORaLSkkr01i8Czd8aSLa8eh05ZMgsmWp913AyNwKwGoCUOhT27XaIjHeI2uG4tFaiNWL89iTlP49pKfOq4qeoyx6PfwoAK4TJIzaw6DmfZUsUNFKtKUDMoYqq5QNfWpYH2aKFpIFfWobcIWFW0XjmRwR+MvgEJAycOyzAWPsqIsRwAF4YEiTOTcaSxKIywldr9jNfbTmhRfWNGgiaAl+Ct/vl8LRpCjPnrDvvqMZsGXJT7qEV2KtBcxzGMmItHk8wi+4MQwExXlV5O201rY/yUxRThMcP1RnFmzh6TIe6fy+LvKR91Qv2eLXOeZi7Oxxw0IxKRAlf3BoggWxS0+qGn+hJMECiJVIXYg==;5:R2e/OnwQjxhlmFu5R9CBs8G61UCW7zUkAaCtUCT6KJCGIHVKPNta3G5fVUTjyrHTlZPNVuxNqtOoeo0jIvmm0sbQkZ1G4XG5vERIMagaKoEoXPOi2AEpu3Kwc41O40mrrYhMbirUiBTlO3Q9b5SmRO2TodaEUCj7D7hUSQT6X+JnU9QMer+CbUNWA+j9QizZNm+c7vu8BAReRd/kHUeqBA==;7:vAwUUJ0Nw3DDnBddePiUg3WYNl/X29tZJtaL78xLKmrVpWVH02z/DMISH6TeJnrOyqCwD3UP5K27kC5T5CVC2BWVsktjB+ejfVPT2ZEQkOjrrB/RRIkQYpFYOL3Mt7mNNlYzayBlR0H7imicVsUEAw==
-x-ms-office365-filtering-correlation-id: 96b0ed87-77db-4c9b-37fa-08d6805a5e96
+x-microsoft-exchange-diagnostics: 1;DB6PR0801MB1286;6:qriucuHmFFLBjlPbX4sTxjyMp+wjN6NPXXyhe5Ugwl9zDh1Gh/MV2V3pTpTR+utmEWLAbkDwAAhkY3qrDChT7Pa329I1z1bvg/V8bgkEN9ZgjJm1MqrmEtJxD6BNt/faLo+w1f9UjSnpRd0AbqCB8El6C6KL1wMK53SxWHM+DInbpnJ7t0+VuQt2ANKvwBpx68+AnsSGzpTlb0OJA5lROoq+R+tqlfkE+VxbJxsHnTkCp811G64JDcALNedClqS0lJRUl8n3N1qFZXO/e7Y3CoGMuiMjzEl86Cl1H9FJdAcdZEpFj1x+YHhgCRxe5EfIuMBxqArkQg//A6TuEQBe6PY+nZO+AgjUhcGWv9+Jx/kCE71G/ET6jm4kHYy4BFbdYjVmRezprEqEfMqmipr2Q512hiojARhEXFn/dXMVaZMVvnUDbpG9GyRV9qTnEjBV5YerHmXWS6WaU3SQSgsd2g==;5:CAe710MQRQo0uo1/VkyI11e6N0L7hzbpNvbzXYMfAZJ3M7NPAiUZvd4MAgBC+SQO3JVRRtyI3QbwAHAEEFUi2KJIKH34xLEVIGm91KaS7igBqfGvg/L+Da7WwGFyGPIPCmXyrui2PKgZgPF7DKT4hPWWoYHwzOrTu7JcXpu6oMkMSkAQy1VI3b2aBkXC1Ci8L2IxQyRr8S+S8vFj/RDO2A==;7:JXHElrvdqB2voOc0h5QrFofcp9dIRkSnvXgI4FgEkWHShyx+h983CT60RTNFisgLU0X0OBiThxp0+Iahti2UGfgM1wzdN+8qXRZhVF3P0//cKxH7KtcW8GBto7oGraB05UwkLERN43wGWSzwRTgJtA==
+x-ms-office365-filtering-correlation-id: 4df326bb-4176-47e7-bb02-08d6805a646a
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB6PR0801MB2085;
-x-ms-traffictypediagnostic: DB6PR0801MB2085:
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB6PR0801MB1286;
+x-ms-traffictypediagnostic: DB6PR0801MB1286:
 nodisclaimer: True
-x-microsoft-antispam-prvs: <DB6PR0801MB2085E0BE80F1E3C3D0A5D062B3980@DB6PR0801MB2085.eurprd08.prod.outlook.com>
+x-microsoft-antispam-prvs: <DB6PR0801MB1286FBCD59F06C241113D37FB3980@DB6PR0801MB1286.eurprd08.prod.outlook.com>
 x-forefront-prvs: 0925081676
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(346002)(376002)(366004)(396003)(136003)(189003)(199004)(316002)(110136005)(11346002)(71200400001)(99286004)(6512007)(53936002)(36756003)(2501003)(4326008)(25786009)(26005)(478600001)(71190400001)(446003)(476003)(2616005)(486006)(54906003)(186003)(1076003)(68736007)(86362001)(2906002)(6486002)(52116002)(6436002)(103116003)(6506007)(6116002)(97736004)(386003)(14454004)(102836004)(55236004)(105586002)(305945005)(7736002)(76176011)(106356001)(81156014)(81166006)(6636002)(66066001)(50226002)(8676002)(256004)(3846002)(8936002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR0801MB2085;H:DB6PR0801MB1990.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(39860400002)(376002)(346002)(366004)(199004)(189003)(2906002)(25786009)(86362001)(36756003)(6116002)(3846002)(4326008)(6636002)(6486002)(103116003)(66066001)(105586002)(106356001)(6512007)(2501003)(53936002)(97736004)(6436002)(446003)(68736007)(81166006)(476003)(50226002)(8676002)(71200400001)(71190400001)(316002)(6506007)(52116002)(81156014)(486006)(11346002)(110136005)(54906003)(99286004)(305945005)(102836004)(14454004)(7736002)(26005)(76176011)(386003)(55236004)(1076003)(8936002)(478600001)(2616005)(186003)(14444005)(256004);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR0801MB1286;H:DB6PR0801MB1990.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: arm.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: xYZF+AHm1PcjBHuH0w3VSuN0A3jT7C8UpLDcjN6jgPZ0PMdAVW+XhnxUkA/0AJcF3vkRH0udIbguXyTvp02CLg5dQt5JKRwAFTt3upPkEjmzysjdJgwOWtJqwb7EbzmJzXO/cX8MyeEvvdIYK210dfggXA5njyOfVUrAIpX4wDad4m/1TrDDYT07Vd9TKgKNXfkG/vujzDCuaQo46J3HmRGcFs0GxXAfBNMyORs0vF7+vrjrgVK2AZpj2duuAy15relTrYD75WZ+kRIjkqigTW9V3uUKWsahgn0AwgXMlA9QYjS+qyjJioBZpK4JH8gu9AP4UTSQsR4zgCVFHpp+9jqceuc7ABfYlLu8+J0FigluHKlolZlpLkM1xfnr/nNHwTP30jFJnYRqtcj2a5erm1TXO35E9oKFI5ArRT9U0Js=
+x-microsoft-antispam-message-info: goUE2/FR2OPzqzI7C/9alId14UPKNF2AQD1YDLJBGO89l7PmNl7P+cJL5Xl3ethTiZ6SXDnmK5MxK794MNO78sM70doxCVjHXkeS87XqSAdp7LM05+IaW1FzEsrmSwbM5lJ0STjOGSPUr81jcpkeJk/uknzE5M+eOUrTBD0s1QrvKUyiEfzBHXeqWv+W6PPcftwx3nGRCPa4pmICwIAOndA7Ox7ZFCxf2niRE8fqNCRQ+pPGGHikkrj4Aa7Pg29dhb2tzJosvQVJkHZJ/8IItS6sF8PiQjOyJiRwDycTejqrSiJe+R20L/y/FQiPJ2J6hD5NBHi50Pzjoo89p0AVonRtBLLIog2bmPsK6lRXYoZCxkgJkSZTYzwznL46rn0Ew8b4wohCqz3+0NZQolMDp1F9su9UrQWzNiLoRvckMV8=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 96b0ed87-77db-4c9b-37fa-08d6805a5e96
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jan 2019 11:11:25.9005
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4df326bb-4176-47e7-bb02-08d6805a646a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jan 2019 11:11:35.8694
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0801MB2085
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0801MB1286
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -103,86 +103,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
 
-Added functions:
--  komeda_crtc_reset
--  komeda_crtc_vblank_enable
--  komeda_crtc_vblank_disable
+Implement komeda_kms_check to add all affected_planes (even unchanged) to
+drm_atomic_state. since komeda need to re-calculate the resources
+assumption in every commit.
+
+v2: Rebase
 
 Signed-off-by: James Qian Wang (Arm Technology China) <james.qian.wang@arm.=
 com>
 ---
- .../gpu/drm/arm/display/komeda/komeda_crtc.c  | 48 +++++++++++++++++++
- 1 file changed, 48 insertions(+)
+ .../gpu/drm/arm/display/komeda/komeda_kms.c   | 30 ++++++++++++++++++-
+ 1 file changed, 29 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c b/drivers/gpu=
-/drm/arm/display/komeda/komeda_crtc.c
-index e19ba9468d31..7adda663b956 100644
---- a/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
-+++ b/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
-@@ -347,6 +347,47 @@ struct drm_crtc_helper_funcs komeda_crtc_helper_funcs =
-=3D {
- 	.mode_fixup	=3D komeda_crtc_mode_fixup,
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_kms.c b/drivers/gpu/=
+drm/arm/display/komeda/komeda_kms.c
+index 7d7fb5013464..337e6fddead0 100644
+--- a/drivers/gpu/drm/arm/display/komeda/komeda_kms.c
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_kms.c
+@@ -95,9 +95,37 @@ static const struct drm_mode_config_helper_funcs komeda_=
+mode_config_helpers =3D {
+ 	.atomic_commit_tail =3D komeda_kms_commit_tail,
  };
 =20
-+static void komeda_crtc_reset(struct drm_crtc *crtc)
++static int komeda_kms_check(struct drm_device *dev,
++			    struct drm_atomic_state *state)
 +{
-+	struct komeda_crtc_state *state;
++	struct drm_crtc *crtc;
++	struct drm_crtc_state *old_crtc_st, *new_crtc_st;
++	int i, err;
 +
-+	if (crtc->state)
-+		__drm_atomic_helper_crtc_destroy_state(crtc->state);
++	err =3D drm_atomic_helper_check_modeset(dev, state);
++	if (err)
++		return err;
 +
-+	kfree(to_kcrtc_st(crtc->state));
-+	crtc->state =3D NULL;
-+
-+	state =3D kzalloc(sizeof(*state), GFP_KERNEL);
-+	if (state) {
-+		crtc->state =3D &state->base;
-+		crtc->state->crtc =3D crtc;
++	/* komeda need to re-calculate resource assumption in every commit
++	 * so need to add all affected_planes (even unchanged) to
++	 * drm_atomic_state.
++	 */
++	for_each_oldnew_crtc_in_state(state, crtc, old_crtc_st, new_crtc_st, i) {
++		err =3D drm_atomic_add_affected_planes(state, crtc);
++		if (err)
++			return err;
 +	}
++
++	err =3D drm_atomic_helper_check_planes(dev, state);
++	if (err)
++		return err;
++
++	return 0;
 +}
 +
-+static struct drm_crtc_state *
-+komeda_crtc_atomic_duplicate_state(struct drm_crtc *crtc)
-+{
-+	struct komeda_crtc_state *old =3D to_kcrtc_st(crtc->state);
-+	struct komeda_crtc_state *new;
-+
-+	new =3D kzalloc(sizeof(*new), GFP_KERNEL);
-+	if (!new)
-+		return NULL;
-+
-+	__drm_atomic_helper_crtc_duplicate_state(crtc, &new->base);
-+
-+	new->affected_pipes =3D old->active_pipes;
-+
-+	return &new->base;
-+}
-+
-+static void komeda_crtc_atomic_destroy_state(struct drm_crtc *crtc,
-+					     struct drm_crtc_state *state)
-+{
-+	__drm_atomic_helper_crtc_destroy_state(state);
-+	kfree(to_kcrtc_st(state));
-+}
-+
- static int komeda_crtc_vblank_enable(struct drm_crtc *crtc)
- {
- 	struct komeda_dev *mdev =3D crtc->dev->dev_private;
-@@ -365,6 +406,13 @@ static void komeda_crtc_vblank_disable(struct drm_crtc=
- *crtc)
- }
-=20
- static const struct drm_crtc_funcs komeda_crtc_funcs =3D {
-+	.gamma_set		=3D drm_atomic_helper_legacy_gamma_set,
-+	.destroy		=3D drm_crtc_cleanup,
-+	.set_config		=3D drm_atomic_helper_set_config,
-+	.page_flip		=3D drm_atomic_helper_page_flip,
-+	.reset			=3D komeda_crtc_reset,
-+	.atomic_duplicate_state	=3D komeda_crtc_atomic_duplicate_state,
-+	.atomic_destroy_state	=3D komeda_crtc_atomic_destroy_state,
- 	.enable_vblank		=3D komeda_crtc_vblank_enable,
- 	.disable_vblank		=3D komeda_crtc_vblank_disable,
+ static const struct drm_mode_config_funcs komeda_mode_config_funcs =3D {
+ 	.fb_create		=3D komeda_fb_create,
+-	.atomic_check		=3D drm_atomic_helper_check,
++	.atomic_check		=3D komeda_kms_check,
+ 	.atomic_commit		=3D drm_atomic_helper_commit,
  };
+=20
 --=20
 2.17.1
 
