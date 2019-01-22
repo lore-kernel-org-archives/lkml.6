@@ -2,170 +2,102 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95AA0C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 21:26:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 945A7C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 21:28:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A02B20870
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 21:26:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nnYtZQKI"
+	by mail.kernel.org (Postfix) with ESMTP id 63C7A21726
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 21:28:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726818AbfAVV0L (ORCPT
+        id S1726821AbfAVV2L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 16:26:11 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:35299 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726175AbfAVV0L (ORCPT
+        Tue, 22 Jan 2019 16:28:11 -0500
+Received: from gateway22.websitewelcome.com ([192.185.46.229]:46234 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725971AbfAVV2L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 16:26:11 -0500
-Received: by mail-vs1-f65.google.com with SMTP id e7so20844vsc.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 13:26:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qA73U3orqts/aQvhT/E9hNnoUEIPSLYn2QJd+UKDOHA=;
-        b=nnYtZQKIEw2X+lcZ7kxyFOE1X6P+2PGFEMJ/kFQKu+qPYt5cDrw9QYFujLbhzq/H5N
-         ixJpF8CVtwbN/n/fiVb5Z68y7iUVBapOuCjDbmz5NxPlOY9/Dxgm8BLLv/R+h1XC5cNL
-         cEjSCkCGm6EnG0T8KY3vRbxOOQ3ncK9o1HsJw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qA73U3orqts/aQvhT/E9hNnoUEIPSLYn2QJd+UKDOHA=;
-        b=r8/8ATjvK03aA4FArazjzGyHH5jKfHJG/kfIvZVUsP1FiOZk19tL2gOuxZQ7nRtokr
-         lceCLxsNPjBpicvrZ8l5sgYXYZ4sa2d/7Vklsd15b/BQbGHT4B56eBCxVbNh5lr5VtZZ
-         Cmi90q3XzxGdTqRNJ4nOqSw/xYYOBzh9wKn5dAm17LqVIalc0WNwRq7VMWegN5qoDvxE
-         UpFFC1r/lhFPYHlO/t0gnBvJC5dpzIHcbHYEzjXkBc/DP6WnEex9rmJlWseyyxWetsm5
-         aa2tzUR7LJXutjIHoCsHVJqIRpKFCu4WYPlCxvEPldVJwCloKLPb0UMP6sHboU9Iujvx
-         0CNw==
-X-Gm-Message-State: AJcUukdF/KT9fzFEuL19jod/qjm6pPsNqYHhddVEwR6ei7nMDdoeYP3B
-        DlXVOEtz6qE0aWuJX1O2Y29OS4OvZP8=
-X-Google-Smtp-Source: ALg8bN5KvUPBMf0RKtYnSCSoj8OndNafK4spRV9aQoJmmwBHUJGuq9sETIUDAJ1ZPn6vChhHgS3wzw==
-X-Received: by 2002:a67:f114:: with SMTP id n20mr15264217vsk.90.1548192369684;
-        Tue, 22 Jan 2019 13:26:09 -0800 (PST)
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
-        by smtp.gmail.com with ESMTPSA id n206sm72042605vkn.36.2019.01.22.13.26.07
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Jan 2019 13:26:08 -0800 (PST)
-Received: by mail-vs1-f53.google.com with SMTP id n13so13104vsk.4
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 13:26:07 -0800 (PST)
-X-Received: by 2002:a67:2c13:: with SMTP id s19mr14586369vss.172.1548192366962;
- Tue, 22 Jan 2019 13:26:06 -0800 (PST)
+        Tue, 22 Jan 2019 16:28:11 -0500
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id 2271A443F
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 15:28:10 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id m3acgvTLm90onm3acgMxdK; Tue, 22 Jan 2019 15:28:10 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=35152 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gm3ab-002LL4-H7; Tue, 22 Jan 2019 15:28:09 -0600
+Date:   Tue, 22 Jan 2019 15:28:08 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] usb: gadget: udc: net2272: Fix bitwise and boolean operations
+Message-ID: <20190122212808.GA27011@embeddedor>
 MIME-Version: 1.0
-References: <20190122144114.9816-1-gregkh@linuxfoundation.org> <20190122144114.9816-3-gregkh@linuxfoundation.org>
-In-Reply-To: <20190122144114.9816-3-gregkh@linuxfoundation.org>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 23 Jan 2019 10:25:53 +1300
-X-Gmail-Original-Message-ID: <CAGXu5jJPyKwM3E=-pnRBJ0NCb4kMB7EtLdS-+5khE76qnEhcdQ@mail.gmail.com>
-Message-ID: <CAGXu5jJPyKwM3E=-pnRBJ0NCb4kMB7EtLdS-+5khE76qnEhcdQ@mail.gmail.com>
-Subject: Re: [PATCH 2/4] arm: dump: no need to check return value of
- debugfs_create functions
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Will Deacon <will.deacon@arm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Jinbum Park <jinb.park7@gmail.com>,
-        Laura Abbott <labbott@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1gm3ab-002LL4-H7
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.130.205]:35152
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 3:41 AM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> When calling debugfs functions, there is no need to ever check the
-> return value.  The function can work or not, but the code logic should
-> never do something different based on this.
->
-> Cc: Russell King <linux@armlinux.org.uk>
-> Cc: Jinbum Park <jinb.park7@gmail.com>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Laura Abbott <labbott@redhat.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+(!x & y) strikes again.
 
-Do you mean that it bubbles up to an initcall, and the return value is
-meaningless there? This seems fine to me...
+Fix bitwise and boolean operations by enclosing the expression:
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+	intcsr & (1 << NET2272_PCI_IRQ)
 
--Kees
+in parentheses, before applying the boolean operator '!'.
 
-> ---
->  arch/arm/include/asm/ptdump.h | 9 +++------
->  arch/arm/mm/dump.c            | 4 ++--
->  arch/arm/mm/ptdump_debugfs.c  | 8 ++------
->  3 files changed, 7 insertions(+), 14 deletions(-)
->
-> diff --git a/arch/arm/include/asm/ptdump.h b/arch/arm/include/asm/ptdump.h
-> index 3ebf9718288d..0c2d3d0d4cc6 100644
-> --- a/arch/arm/include/asm/ptdump.h
-> +++ b/arch/arm/include/asm/ptdump.h
-> @@ -21,13 +21,10 @@ struct ptdump_info {
->
->  void ptdump_walk_pgd(struct seq_file *s, struct ptdump_info *info);
->  #ifdef CONFIG_ARM_PTDUMP_DEBUGFS
-> -int ptdump_debugfs_register(struct ptdump_info *info, const char *name);
-> +void ptdump_debugfs_register(struct ptdump_info *info, const char *name);
->  #else
-> -static inline int ptdump_debugfs_register(struct ptdump_info *info,
-> -                                       const char *name)
-> -{
-> -       return 0;
-> -}
-> +static inline void ptdump_debugfs_register(struct ptdump_info *info,
-> +                                          const char *name) { }
->  #endif /* CONFIG_ARM_PTDUMP_DEBUGFS */
->
->  void ptdump_check_wx(void);
-> diff --git a/arch/arm/mm/dump.c b/arch/arm/mm/dump.c
-> index 084779c5c893..eb385a500ed0 100644
-> --- a/arch/arm/mm/dump.c
-> +++ b/arch/arm/mm/dump.c
-> @@ -450,7 +450,7 @@ void ptdump_check_wx(void)
->  static int ptdump_init(void)
->  {
->         ptdump_initialize();
-> -       return ptdump_debugfs_register(&kernel_ptdump_info,
-> -                                       "kernel_page_tables");
-> +       ptdump_debugfs_register(&kernel_ptdump_info, "kernel_page_tables");
-> +       return 0;
->  }
->  __initcall(ptdump_init);
-> diff --git a/arch/arm/mm/ptdump_debugfs.c b/arch/arm/mm/ptdump_debugfs.c
-> index be8d87be4b93..598b636615a2 100644
-> --- a/arch/arm/mm/ptdump_debugfs.c
-> +++ b/arch/arm/mm/ptdump_debugfs.c
-> @@ -24,11 +24,7 @@ static const struct file_operations ptdump_fops = {
->         .release        = single_release,
->  };
->
-> -int ptdump_debugfs_register(struct ptdump_info *info, const char *name)
-> +void ptdump_debugfs_register(struct ptdump_info *info, const char *name)
->  {
-> -       struct dentry *pe;
-> -
-> -       pe = debugfs_create_file(name, 0400, NULL, info, &ptdump_fops);
-> -       return pe ? 0 : -ENOMEM;
-> -
-> +       debugfs_create_file(name, 0400, NULL, info, &ptdump_fops);
->  }
-> --
-> 2.20.1
->
+Notice that this code has been there since 2011. So, it would
+be helpful if someone can double-check this.
 
+This issue was detected with the help of Coccinelle.
 
+Fixes: ceb80363b2ec ("USB: net2272: driver for PLX NET2272 USB device controller")
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/usb/gadget/udc/net2272.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/usb/gadget/udc/net2272.c b/drivers/usb/gadget/udc/net2272.c
+index 660878a19505..b77f3126580e 100644
+--- a/drivers/usb/gadget/udc/net2272.c
++++ b/drivers/usb/gadget/udc/net2272.c
+@@ -2083,7 +2083,7 @@ static irqreturn_t net2272_irq(int irq, void *_dev)
+ #if defined(PLX_PCI_RDK2)
+ 	/* see if PCI int for us by checking irqstat */
+ 	intcsr = readl(dev->rdk2.fpga_base_addr + RDK2_IRQSTAT);
+-	if (!intcsr & (1 << NET2272_PCI_IRQ)) {
++	if (!(intcsr & (1 << NET2272_PCI_IRQ))) {
+ 		spin_unlock(&dev->lock);
+ 		return IRQ_NONE;
+ 	}
 -- 
-Kees Cook
+2.20.1
+
