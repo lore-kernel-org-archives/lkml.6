@@ -2,128 +2,123 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DC56C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:46:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69B51C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:47:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D1A121019
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:46:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="Sf9O6DWT"
+	by mail.kernel.org (Postfix) with ESMTP id 372CC217D6
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:47:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548182843;
+	bh=B0qFCitpNOkldy2prRrLmaRakaVyE82MIc/M0eFZCzQ=;
+	h=To:In-Reply-To:References:Subject:From:Cc:Date:List-ID:From;
+	b=DByAwQRyb1uJkMJkShg0rbt+PRr2APfMZWBaRXeVwnYHrC5kPwLtBCGOalWtGXG1v
+	 VriPzKQfwyxAB5N3gwi+vfRXMzCMmz+emBRV1owDwxwol/1hQ7ntM9CD/DgZTm0KV4
+	 aFZMO9DoPyG0mctH+XGSl/Lv5NB7aY6dt4sGgTms=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726798AbfAVSqn (ORCPT
+        id S1726329AbfAVSrV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 13:46:43 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:42350 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726143AbfAVSql (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 13:46:41 -0500
-Received: by mail-qt1-f194.google.com with SMTP id d19so28770033qtq.9
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 10:46:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=K+cGlAPlqOoUkydwycvdrIyVVK2twhWUQCCP+F0nY5g=;
-        b=Sf9O6DWTBxyq0uyIQrHGw20l+KF8SLChDm62U4eYAR14HlCBX3slB0s8/9c9pHkITY
-         S977kjUs1BkvWJEUKv0PWIZMuCsc52Wpzer4ObFEQ5Pv0gEUmgtu5YGQtRaKzQulPdxU
-         MCWu9KgVt5Z5zi9chIMzpCROkm+TlI9R41Ce9Q8kio12mBKDBekYXqp2Uv5sji3S7mey
-         j8mmK6Eh3rUPOfM6xSsghXxa31Ss2eK4bKuZeZMIIh6ItSZjPj6xyQGBLsbTNhscYPJ7
-         wHoB1bILbqDF1ArdN1JyQXlq0ehpj8W8PzzwrExw5k+TEh/spznL21/QicxPvPmXmWGw
-         2sWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=K+cGlAPlqOoUkydwycvdrIyVVK2twhWUQCCP+F0nY5g=;
-        b=hA6jhvC38bCABRUTGfOo5U58nZ09viomN9mkYGkZeu9k+pp0sXkXbLZwzJ+qIUobn4
-         apaIb3RaBHIOrvL0aZoHahyKfTcYKIiXmPTG/Y8KLh8rEDp/GWdtq0F/rL4sbud7a4kA
-         E7fq4x53BDgkK58X3Ibt0nxI+YXGj6X555PKg6YpnfwttvPNw1L0rHAX6ez7Kqi6UzwU
-         5VnAbqvWhHG5irtSbadIp40TVCqGg4+B0n9evnOb7NOXKCLo0LZzJW5Wy4RI/pr6mgR1
-         +8Su4Wg9N4fLOYawIyE0MSv5sjGY/aWUS8bTFsTbGkAAJiS565akeFheNDEukYpH0vKF
-         p8wQ==
-X-Gm-Message-State: AJcUukchsF2jj2azxtX2LscFBfSXkMpinEXfHNEvvbY6YLW+c4w//VDE
-        TvCk7ehbr5VKvu2OLHf/f3INug==
-X-Google-Smtp-Source: ALg8bN4PHmfpYEQKbfrFlE763VSIsxHdEwy6HdGrSfm48R8Sm4zRMRj0mq+fR4QFR5W/Ri8UjI2kcQ==
-X-Received: by 2002:a0c:90a6:: with SMTP id p35mr30364014qvp.125.1548182800591;
-        Tue, 22 Jan 2019 10:46:40 -0800 (PST)
-Received: from ovpn-120-54.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id z18sm35579537qkz.96.2019.01.22.10.46.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Jan 2019 10:46:40 -0800 (PST)
-Subject: Re: [PATCH] backing-dev: no need to check return value of
- debugfs_create functions
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, Michal Hocko <mhocko@suse.com>,
-        linux-mm@kvack.org
-References: <20190122152151.16139-8-gregkh@linuxfoundation.org>
- <20190122160759.mx3h7gjc23zmrvxc@linutronix.de>
- <20190122162503.GB22548@kroah.com>
- <20190122171908.c7geuvluezkjp3s7@linutronix.de>
- <20190122183348.GA31271@kroah.com>
-From:   Qian Cai <cai@lca.pw>
-Message-ID: <86349002-49d7-7053-b26f-51309e320a04@lca.pw>
-Date:   Tue, 22 Jan 2019 13:46:38 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.3.3
+        Tue, 22 Jan 2019 13:47:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33716 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726028AbfAVSrV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 13:47:21 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B35921019;
+        Tue, 22 Jan 2019 18:47:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548182840;
+        bh=B0qFCitpNOkldy2prRrLmaRakaVyE82MIc/M0eFZCzQ=;
+        h=To:In-Reply-To:References:Subject:From:Cc:Date:From;
+        b=FwQLCWkwXzubKhS4PZNrR9G+gxv+hmKTkZFPL9xxfnwn83x67JDOVbyRrTmZZTmI3
+         tlZ5x5xomXdNDndus56H9qwDnbBaSZWmf/xvf9mKE+7bsWzMiTN1Ferur04x1hVAxJ
+         9FldOyjbNgZfXWXCc+lUaCyLaoDYaggOsHOz2x7U=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20190122183348.GA31271@kroah.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+To:     Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+In-Reply-To: <e55df608-7058-63b9-b449-982d32e08759@linaro.org>
+User-Agent: alot/0.8
+References: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org> <1545039990-19984-9-git-send-email-jorge.ramirez-ortiz@linaro.org> <20190117063312.GE25498@builder> <9abbe59b-433c-4e30-1e4d-b5eed3afc695@linaro.org> <20190117100807.pmew5iqisdcc63eq@vireshk-i7> <e55df608-7058-63b9-b449-982d32e08759@linaro.org>
+Subject: Re: [PATCH 08/13] clk: qcom: hfpll: CLK_IGNORE_UNUSED
+From:   Stephen Boyd <sboyd@kernel.org>
+Message-ID: <154818283956.20280.2895221927807522124@swboyd.mtv.corp.google.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>, robh+dt@kernel.org,
+        mark.rutland@arm.com, andy.gross@linaro.org,
+        david.brown@linaro.org, will.deacon@arm.com,
+        mturquette@baylibre.com, jassisinghbrar@gmail.com,
+        vkoul@kernel.org, niklas.cassel@linaro.org, sibis@codeaurora.org,
+        georgi.djakov@linaro.org, arnd@arndb.de,
+        horms+renesas@verge.net.au, heiko@sntech.de,
+        enric.balletbo@collabora.com, jagan@amarulasolutions.com,
+        olof@lixom.net, amit.kucheria@linaro.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Date:   Tue, 22 Jan 2019 10:47:19 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Quoting Jorge Ramirez (2019-01-17 02:46:21)
+> On 1/17/19 11:08, Viresh Kumar wrote:
+> > On 17-01-19, 09:38, Jorge Ramirez wrote:
+> >> COMMON_CLK_DISABLED_UNUSED relies on the enable_count reference counter
+> >> to disable the clocks that were enabled by the firwmare and not by the
+> >> drivers.
+> >>
+> >> the cpufreq driver does not enable the cpu clock.
+> >>
+> >> so when clk_change_rate is called, the enable_count counter is not
+> >> incremented and therefore it just remains null since this was enabled =
+by
+> >> the firmware.
+> >>
+> >> I tried doing:
+> >>
+> >> diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt=
+.c
+> >> index e58bfcb..5a9f83e 100644
+> >> --- a/drivers/cpufreq/cpufreq-dt.c
+> >> +++ b/drivers/cpufreq/cpufreq-dt.c
+> >> @@ -124,6 +124,10 @@ static int resources_available(void)
+> >>                 return ret;
+> >>         }
+> >>
+> >> + ret =3D clk_prepare_enable(cpu_clk);
+> >> + if (ret)
+> >> +         return ret;
+> >> +
+> >>         clk_put(cpu_clk);
+> >>
+> >>         name =3D find_supply_name(cpu_dev);
+> >>
+> >>
+> >> and that removed the need for CLK_IGNORE_UNUSED. But I am not sure of
+> >> the system wide consequences of that change to cpufreq.
+> >=20
+> > If the cpufreq driver enables it then it should disable it on exit as
+> > well, right ? And in that case if you unload your driver's module, you
+> > will hang the system as the clock will get disabled :)
+>=20
+> ah, of course, sorry was over-thinking this thing :)
+>=20
+> >=20
+> > Every other platform must either be marking it with CLK_IGNORE_UNUSED
+> > or they must be doing clk_enable from somewhere, maybe the CPU online
+> > path, not sure though.
+> >=20
+>=20
+> since this clock is enabled by the firmware, it seems to me that using
+> CLK_IGNORE_UNUSED remains the best option.
+>=20
 
+What do you do about CPUs being offlined? Presumably when the CPU is
+gone the system doesn't need to keep the clk enabled anymore.
 
-On 1/22/19 1:33 PM, Greg Kroah-Hartman wrote:
-> On Tue, Jan 22, 2019 at 06:19:08PM +0100, Sebastian Andrzej Siewior wrote:
->> On 2019-01-22 17:25:03 [+0100], Greg Kroah-Hartman wrote:
->>>>>  }
->>>>>  
->>>>>  static void bdi_debug_unregister(struct backing_dev_info *bdi)
->>>>>  {
->>>>> -	debugfs_remove(bdi->debug_stats);
->>>>> -	debugfs_remove(bdi->debug_dir);
->>>>> +	debugfs_remove_recursive(bdi->debug_dir);
->>>>
->>>> this won't remove it.
->>>
->>> Which is fine, you don't care.
->>
->> but if you cat the stats file then it will dereference the bdi struct
->> which has been free(), right?
-> 
-> Maybe, I don't know, your code is long gone, it doesn't matter :)
-> 
->>> But step back, how could that original call be NULL?  That only happens
->>> if you pass it a bad parent dentry (which you didn't), or the system is
->>> totally out of memory (in which case you don't care as everything else
->>> is on fire).
->>
->> debugfs_get_inode() could do -ENOMEM and then the directory creation
->> fails with NULL.
-> 
-> And if that happens, your system has worse problems :)
-
-Well, there are cases that people are running longevity testing on debug kernels
-that including OOM and reading all files in sysfs test cases.
-
-Admittedly, the situation right now is not all that healthy as many things are
-unable to survive in a low-memory situation, i.e., kmemleak, dma-api debug etc
-could just disable themselves.
-
-That's been said, it certainly not necessary to make the situation worse by
-triggering a NULL pointer dereferencing or KASAN use-after-free warnings because
-of those patches.
