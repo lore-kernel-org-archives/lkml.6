@@ -2,137 +2,186 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3531C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 12:24:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 619D4C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 12:27:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9A1C20879
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 12:24:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EB9C20870
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 12:27:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="Ywpn1+5t"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="YQhyKidI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728329AbfAVMYY (ORCPT
+        id S1728277AbfAVM1S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 07:24:24 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:38364 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728007AbfAVMYX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 07:24:23 -0500
-Received: by mail-ed1-f68.google.com with SMTP id h50so19134993ede.5
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 04:24:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=WDzuFUHSX6vXpT7QnZl7MicYAODMAFUnE9JqCVZVK2M=;
-        b=Ywpn1+5tslgR4BwDyp0KFHkNXzN3iZtiBGxXggTpMFgqexw7qUZHYhaLt0orI9UPqw
-         CxoTZjmD/lleppdlvobHaJjMjANdFz/C3ocKDBv/bmhCo89C3yzUfEmp6AU7NB0yYRYD
-         lPLiCrHn8gpEazKg0AZGiFInowooLA/8n6O/xrTNVqUi5YE/RD+xscFK73YRmcFqv34h
-         uehuf1knj+f+/zdIoAu27QORdwCaEgyKv6P49godK2yqObzU0SgJBdZWEnhmnck3xq7h
-         IxVhVoHYiqghIMLAoNE1jW0+H4W3vrfGjj7DIiNcLla48bGyE6T++/nGFqZ02B5PYgLk
-         9k8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=WDzuFUHSX6vXpT7QnZl7MicYAODMAFUnE9JqCVZVK2M=;
-        b=g8El2pIMmjkliiDTeNBLlJU42vBjbL3Gg7GfHGtLpm/LoOGtS5ZpzWJhtqh8k4Tst9
-         IXK45z0MZ7jP+PogVFsYs8R5+1TVUq+yAvCUzCtbB3WDS1bWlsYapdI3ih6dCkopc57V
-         9q8E4sh15UC2UlAkHtVaG82JzDxpV5ZYdbpkCfL0w3pQey2dpv886NnyrE9Q/Fyai5p9
-         7hWWP9UrPX5kMtnd6B+zJN+Zb8y1pd/tLYuh2apD8xNzi72DtKmQSJEmOwE0/NFk6wFc
-         ZPUWpwysgK/6LuFil+gPWQ5MxxTY9lHyAhvO/1WkUGtayl1waRhwM1LSsVpUAbuoPzvk
-         XZVg==
-X-Gm-Message-State: AJcUukdb3V+Gnute+c+IvxNc5DTqKf0KJ60Y/08byQmkh5RCqid0dISv
-        y7t4RYPD0HjPlilhs3x6o0sRLQ==
-X-Google-Smtp-Source: ALg8bN4HvNVKedZN3qrX/7fNxTQiC31fEGL5vD3Gqzj5qgh9FX/E2eKGoO+ttcL6YR71aeSyln5BTQ==
-X-Received: by 2002:a17:906:4d2:: with SMTP id g18-v6mr28047891eja.182.1548159861880;
-        Tue, 22 Jan 2019 04:24:21 -0800 (PST)
-Received: from brauner.io ([2a02:8109:b6bf:f9e4:9473:6b39:afaf:14d4])
-        by smtp.gmail.com with ESMTPSA id v43sm9932126edc.18.2019.01.22.04.24.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 22 Jan 2019 04:24:21 -0800 (PST)
-Date:   Tue, 22 Jan 2019 13:24:20 +0100
-From:   Christian Brauner <christian@brauner.io>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the pidfd tree with the y2038 tree
-Message-ID: <20190122122419.b7lmm4j25w5cbmcx@brauner.io>
-References: <20190121202328.rgrv54lybilsvitu@brauner.io>
- <da262bd9-1de0-eabb-ee44-e0ee152d15bb@kernel.dk>
- <20190121224811.gbvg22vg4kgg4kbs@brauner.io>
- <CAK8P3a0ej9NcJM8wXNPbcGUyOUZYX+VLoDFdbenW3s3114oQZw@mail.gmail.com>
- <20190122093146.kmckcgdbvo2e7v3c@brauner.io>
- <20190122103009.vu2a67kviqhcb3cn@brauner.io>
- <CAK8P3a0EW6ZSMoo6FsRQ=XvyhJe50SR7YtpCtuHcPr=JO3fCtA@mail.gmail.com>
- <20190122105747.6gxvghn7n5dxa65w@brauner.io>
- <CAK8P3a0HJX6+1vks=ZCqNymLwWFS+Wt5PPuYnLedpMo=aVSwKA@mail.gmail.com>
- <20190122114656.joasjhlpwo3vy7hg@brauner.io>
+        Tue, 22 Jan 2019 07:27:18 -0500
+Received: from mail-eopbgr40053.outbound.protection.outlook.com ([40.107.4.53]:18880
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728007AbfAVM1S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 07:27:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zS5evjuSODvoc1pVgY2FjDOE0o+fUBX/EujMcsaGncA=;
+ b=YQhyKidI+2q6iyKn0Rq3ZK4Yv1nu32QcmysiiND6hIvz0oA2iRWOIWj203u19nEmMFuyfcP8k20R6QyXYlXJWIWn9BZCAgJPphhD1ucfzaU6/vbtTKUTSa65jLN/J3j74ES369mX3Bk/I29bZdf/ALTdEmZpn178HOhmkk6H+JM=
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
+ AM0PR04MB4227.eurprd04.prod.outlook.com (52.134.126.25) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1537.25; Tue, 22 Jan 2019 12:27:12 +0000
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::c4d2:7dfd:4576:bdd5]) by AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::c4d2:7dfd:4576:bdd5%5]) with mapi id 15.20.1558.016; Tue, 22 Jan 2019
+ 12:27:12 +0000
+From:   Aisheng Dong <aisheng.dong@nxp.com>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>
+Subject: RE: [PATCH 1/1] irqchip: gpcv2: make config option visible
+Thread-Topic: [PATCH 1/1] irqchip: gpcv2: make config option visible
+Thread-Index: AQHUrwExKd8SdkCETUqu4TDod0IgjqW0vfmAgAAJiQCAAAZKgIAGVosggAAMJICAAAg90A==
+Date:   Tue, 22 Jan 2019 12:27:12 +0000
+Message-ID: <AM0PR04MB421134C538A0235C0595AD2580980@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <1547796918-29790-1-git-send-email-aisheng.dong@nxp.com>
+        <25cd3e29-e365-f0d4-65a3-b3af69acd9cd@arm.com>
+        <AM0PR04MB421158B2E042D623792A296E809C0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+        <77ecfcfa-16fe-a3e2-3d6b-90cdf999b316@arm.com>
+        <AM0PR04MB4211ACC01F82236A7A34944780980@AM0PR04MB4211.eurprd04.prod.outlook.com>
+ <867eewapjy.wl-marc.zyngier@arm.com>
+In-Reply-To: <867eewapjy.wl-marc.zyngier@arm.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=aisheng.dong@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB4227;6:I5ApTKBFrtf9+IhHZdngRvcHjqzGCfqB3LBPvbc6YYFrbp6HwDBsmpK1FiLzcjaIWJJ8nT75UuG25wWuYet0ANkuWy2VQcCdzKeliofH1EK2o53bt/7LeCWF4TVlAwJADXhi9v061RPsEsCb7ejC4Yy/GLOn3f4JPlLdkFicpfEdJ2AFofMa3VCkNMDXcNSBwD0IlWAWBQgXIrg3Bmo4QoaR5URrFA+z0vCKuMj5cauReHO7UuBav1U8fwthILYDUfl0w8PmBn1rzUIzFYrG3xPz2gU8wCBj5EU5l/oBszvUks3UqgPMcs8tBGv/YqspSv0rNWL4rmVfUvm8Vxxpd/Ox5berojfmm3lRolpWERBvLvsCPqpGWXBGZSArU27DjkjOILol0mb5nCf4WwTD2jQr0oZJoRN8TbWH67shKZg97EQchXMxXYc+zj3HJBlrZnPOLM0S/WNKQNHOl2aLHA==;5:ExfLuZVVDdh9aAjxIe2IcQlkOQ052G8zKjRhc0v9BdJyXifl3suPvLLYtLDlxymT3KsdGOjU+V6FjYSiSKFQVUMZ7uT0kdeSx5JDNJcpxe/cgFQ1uZQFpUYD2tOydZTSvYOLzpnXOehdy8cyEtk6zj/kvv4KV1EoMjRWaNxuZkbW4FWmFEcBgh47UbQriMVRMlmcZ5JmZMVIwP00/vaAXQ==;7:PvmG8VXdL9LsLGFsK6/9Rqp+45mjzBszuzbuYs+3g3XeSj64EStMr9axICfCxBms8wawvTHq5iJz7CI2DcneyP3hHoE56AWBOCKAMTbji2ovVYsV3PuWojGZKAwpokqR9iWHo7dKmkMILI82chbzcQ==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: fbabd3d2-895b-467e-b591-08d68064efdf
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4227;
+x-ms-traffictypediagnostic: AM0PR04MB4227:
+x-microsoft-antispam-prvs: <AM0PR04MB4227D33760C118F7B2C2475A80980@AM0PR04MB4227.eurprd04.prod.outlook.com>
+x-forefront-prvs: 0925081676
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(346002)(136003)(366004)(39860400002)(376002)(189003)(199004)(51914003)(71190400001)(71200400001)(476003)(99286004)(8936002)(486006)(44832011)(106356001)(478600001)(6246003)(446003)(11346002)(105586002)(305945005)(97736004)(53936002)(2906002)(7736002)(9686003)(25786009)(186003)(93886005)(55016002)(102836004)(68736007)(6506007)(6116002)(3846002)(26005)(7696005)(14454004)(74316002)(66066001)(81156014)(81166006)(39060400002)(86362001)(6916009)(256004)(33656002)(6436002)(4326008)(54906003)(8676002)(316002)(76176011)(229853002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4227;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: z4RKL3SFjEZJ5L4g98NSu6LA0THns+HlKmFucul/uIdJT/ur1MH2A8dHsP2+o83h+LXeAQ7kVJ7gaPEVzQZCqcHHRy5HbkkgGeA3tPo369UJJa7+zks8C66ingpF+qYiVXLmxVWlhN38dNX4eTuFj/LD3r35dFVhWyZxj0PgJgnYT0izEgWAJLs34M9OUIEKd8CXW7OwEUN44+NRnMzjhXyQUbtg3UN/m8gwLbK+Oexwgbmyn51slnWyPwroNV9gxao0m7pHupTcXiVEJVbPZpL6UGngx27NKRf8w+3huEAA/ghWB6didQLhM2RVOaJdRy7Yo6blLUhK6kuomhOi2o8AVzTpf4Og4/eHyyVEZXxGoThE76U6/B1mMDXSKCT2ORGvsPeC9qiHDIdzjXK/JeP0UYxlaOnleNEtlI9mvVs=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190122114656.joasjhlpwo3vy7hg@brauner.io>
-User-Agent: NeoMutt/20180716
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fbabd3d2-895b-467e-b591-08d68064efdf
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jan 2019 12:27:12.8163
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4227
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 12:46:56PM +0100, Christian Brauner wrote:
-> On Tue, Jan 22, 2019 at 12:42:44PM +0100, Arnd Bergmann wrote:
-> > On Tue, Jan 22, 2019 at 11:57 AM Christian Brauner <christian@brauner.io> wrote:
-> > > On Tue, Jan 22, 2019 at 11:48:12AM +0100, Arnd Bergmann wrote:
-> > 
-> > > > Do you mean the asm-generic uapi header? In my current series, I do that:
+> From: Marc Zyngier [mailto:marc.zyngier@arm.com]
+> Sent: Tuesday, January 22, 2019 7:40 PM
+> On Tue, 22 Jan 2019 11:04:48 +0000,
+> Aisheng Dong <aisheng.dong@nxp.com> wrote:
+> >
+> >
+> >
+> > > From: Marc Zyngier [mailto:marc.zyngier@arm.com]
+> > > Sent: Friday, January 18, 2019 6:10 PM
+> > [...]
+> > > >>>
+> > > >>>  config IMX_GPCV2
+> > > >>> -	bool
+> > > >>> +	bool "i.MX GPCv2 IRQ chip"
+> > > >>> +	depends on ARCH_MXC || (COMPILE_TEST && OF)
+> > > >>>  	select IRQ_DOMAIN
+> > > >>>  	help
+> > > >>>  	  Enables the wakeup IRQs for IMX platforms with GPCv2 block
+> > > >>>
+> > > >>
+> > > >> How does it help exactly? It is pretty difficult for a user to
+> > > >> know exactly what they need. I'd rather see it selected by
+> > > >> ARCH_MXC, which makes it
+> > > >
+> > > > ARM64 SoC maintainers suggest not add more driver specific options
+> > > > except an Generic ARCH option.
+> > > >
+> > > > As GPCv2 is also used in MX8MQ. So we may select it in armv8 defcon=
+fig.
+> > > > If this option is invisible, we can't select it.
 > > >
-> > > Yes. My idea was to only change pidfd_send_signal's entry to 424 and
-> > > leave the other ones untouched:
+> > > And conversely, users have no idea of what letter soup they have to
+> > > select to make their HW work properly. Selecting the driver when the
+> > > platform is supposed to be supported is the right way to solve this
+> problem.
 > > >
-> > >  #
-> > >  # x32-specific system call numbers start at 512 to avoid cache impact
-> > > diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-> > > index b77538af7aca..4d86d0787d99 100644
-> > > --- a/include/uapi/asm-generic/unistd.h
-> > > +++ b/include/uapi/asm-generic/unistd.h
-> > > @@ -740,7 +740,7 @@ __SC_COMP(__NR_io_pgetevents, sys_io_pgetevents, compat_sys_io_pgetevents)
-> > >  __SYSCALL(__NR_rseq, sys_rseq)
-> > >  #define __NR_kexec_file_load 294
-> > >  __SYSCALL(__NR_kexec_file_load,     sys_kexec_file_load)
-> > > -#define __NR_pidfd_send_signal 295
-> > > +#define __NR_pidfd_send_signal 424
-> > >  __SYSCALL(__NR_pidfd_send_signal, sys_pidfd_send_signal)
-> > >
-> > > and also leave
-> > 
-> > Yes, that looks good.
-> > 
-> > > #undef __NR_syscalls
-> > > #define __NR_syscalls 296
-> > >
-> > > Does that work to avoid the merge conflict or do you need something
-> > > more?
-> > 
-> > You need to change __NR_syscalls to 425 as well. This will
-> > clearly create a conflict, but then the resolution will be to pick
-> > the correct (a.k.a. highest) number, rather than remembering
-> > to update it manually.
-> 
-> Hm, ok. Wasn't sure if that would confuse people.
-> 
-> Ok, when I sent my PR I will make a note in the PR that this branch is
-> aligned to create only minimal conflicts with your y2038 branch. The
-> patch carries your ack already so this should be good.
+> >
+> > I think the problem is that we have no platform specific CONFIGs for ar=
+m v8
+> platforms.
+> > We have only one CONFIG_ARCH_MXC for all MX8 SoCs, e.g. mx8qxp,
+> mx8mq...
+> > Only MX8MQ needs to use GPCv2. Selecting GPCv2 under ARCH_MXC means
+> > users have no chance to disable it for mx8qxp which does not need it.
+>=20
+> And where is the problem to select this on platforms that do not strictly
+> require it? Code bloat?
 
-Arnd, in case you care to take a look
-https://git.kernel.org/pub/scm/linux/kernel/git/brauner/linux.git/log/?h=for-next
+I think it's not a big problem.
 
-Thanks!
-Christian
+>=20
+> If you want fine grained selection for people dealing with a single SoC, =
+make it
+> depend on CONFIG_EXPERT. Don't force this on unsuspecting users who expec=
+t
+> their HW to just work.
+>=20
+
+Seems not too necessary
+
+> Something like:
+>=20
+> config IMX_GPCV2
+>        	bool "i.MX GPCv2 IRQ chip" if EXPERT
+> 	def_bool ARCH_MXC
+> 	select IRQ_DOMAIN
+> 	help
+> 	  Enables the wakeup IRQs for IMX platforms with GPCv2 block
+>=20
+> >
+> > We probably could introduce SOC option under drivers/soc/ to do the
+> > default configs selection. But we've already handled all other driver
+> > selections in defconfig e.g. firmware, clk, pinctrl, power domain and e=
+tc.
+> > Not sure whether GPCv2 should be an exception.
+>=20
+> I think something like the above should be the rule. Configuration featur=
+e
+> creep is not helping anyone.
+
+Got it, thanks for the suggestion.
+
+Regards
+Dong Aisheng
+
+>=20
+> 	M.
+>=20
+> --
+> Jazz is not dead, it just smell funny.
