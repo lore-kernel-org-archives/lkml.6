@@ -2,85 +2,138 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3A91C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:08:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72A2EC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:08:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B82A820879
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:08:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548144497;
-	bh=Tx1VyRaTE7bypEWdfSczzyr6fSDtoLb1NlyG9736/cU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=pFy6Qb9xAsEycB7enEvHMwtIqadWJe6crTrCNMrQF30JVWfG0XrXx1bBzXZlNG0Qn
-	 yCI6tsC6awa3W0Tr8ZDbg1D2imDRt/TW4TI3PzsfICF1L+x96+uvIaOp9H6XPaUCb/
-	 0WuwYqldwyjd88YuQtAbc5D8yZ5ZEYZgOM3fu604=
+	by mail.kernel.org (Postfix) with ESMTP id 49D8820870
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:08:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727565AbfAVIIQ (ORCPT
+        id S1727593AbfAVIIn convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 03:08:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59938 "EHLO mail.kernel.org"
+        Tue, 22 Jan 2019 03:08:43 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:54475 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727374AbfAVIIP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 03:08:15 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CF52C2084C;
-        Tue, 22 Jan 2019 08:08:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548144495;
-        bh=Tx1VyRaTE7bypEWdfSczzyr6fSDtoLb1NlyG9736/cU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HPfCagNJvRzUUtHeDQE7HDC0dt1muUr7mGjjTtN1LUj2MHMWtL5Rs5Kc1XUYxZ31R
-         negMbaTNJ1kgxnGOhfn4jmEaEKOe34y8zvE4Wc46EQlVEiiJGAs9V1G+5YeC1Se5/i
-         bnyzj68GE1skZrd1wCmcTWzG7xUEWTFr3IF9D7NY=
-Date:   Tue, 22 Jan 2019 09:08:13 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Yinbo Zhu <yinbo.zhu@nxp.com>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Xiaobo Xie <xiaobo.xie@nxp.com>,
-        Jerry Huang <jerry.huang@nxp.com>,
-        Ran Wang <ran.wang_1@nxp.com>,
-        Ramneek Mehresh <ramneek.mehresh@freescale.com>,
-        Nikhil Badola <nikhil.badola@freescale.com>,
-        Suresh Gupta <suresh.gupta@freescale.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/6] usb: fsl: Set USB_EN bit to select ULPI phy
-Message-ID: <20190122080813.GA21793@kroah.com>
-References: <20190121102601.4735-1-yinbo.zhu@nxp.com>
+        id S1727374AbfAVIIn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 03:08:43 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 8D411209EF; Tue, 22 Jan 2019 09:08:40 +0100 (CET)
+Received: from xps13 (aaubervilliers-681-1-37-87.w90-88.abo.wanadoo.fr [90.88.156.87])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 1B575206DC;
+        Tue, 22 Jan 2019 09:08:30 +0100 (CET)
+Date:   Tue, 22 Jan 2019 09:08:30 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Lucas Stach <dev@lynxeye.de>, Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Stefan Agner <stefan@agner.ch>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        linux-tegra@vger.kernel.org,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH 2/2] mtd: rawnand: use unnamed union in struct
+ nand_op_parser_pattern_elem
+Message-ID: <20190122090830.118eb6be@xps13>
+In-Reply-To: <CAK7LNAQvD03By1PQJ8KZG-UqX+NVQcL6JU-5a-2ZVVovdgBpEQ@mail.gmail.com>
+References: <1548142975-14219-1-git-send-email-yamada.masahiro@socionext.com>
+        <1548142975-14219-3-git-send-email-yamada.masahiro@socionext.com>
+        <20190122084944.420fcd4a@xps13>
+        <CAK7LNAQvD03By1PQJ8KZG-UqX+NVQcL6JU-5a-2ZVVovdgBpEQ@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190121102601.4735-1-yinbo.zhu@nxp.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 10:25:00AM +0000, Yinbo Zhu wrote:
-> From: Nikhil Badola <nikhil.badola@freescale.com>
-> 
-> Set USB_EN bit to select ULPI phy for USB controller version 2.5
-> 
-> Signed-off-by: Nikhil Badola <nikhil.badola@freescale.com>
-> Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
-> ---
-> Change in v2:
-> 		replace Yinbo.Zhu with Yinbo Zhu 
-> 
->  drivers/usb/host/ehci-fsl.c |    6 ++++++
->  1 files changed, 6 insertions(+), 0 deletions(-)
+Hi Masahiro,
 
-This patch doesn't apply against my usb-next branch, what did you
-generate it against?
+Masahiro Yamada <yamada.masahiro@socionext.com> wrote on Tue, 22 Jan
+2019 17:00:54 +0900:
 
-thanks,
+> On Tue, Jan 22, 2019 at 4:50 PM Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+> >
+> > Hi Masahiro,
+> >
+> > Masahiro Yamada <yamada.masahiro@socionext.com> wrote on Tue, 22 Jan
+> > 2019 16:42:55 +0900:
+> >  
+> > > Although drivers do not directly get access to the private data of
+> > > instruction patterns, let's use unnamed union field to be consistent
+> > > with nand_op_instr.
+> > >  
+> >
+> > Actually this is how we wrote it the first time. Then we got robots
+> > reporting that anonymous unions where not allowed with older (still
+> > supported) GCC versions and I had to do this:
+> >
+> >
+> > commit c1a72e2dbb4abb90bd408480d7c48ba40cb799ce
+> > Author: Miquel Raynal <miquel.raynal@free-electrons.com>
+> > Date:   Fri Jan 19 19:11:27 2018 +0100
+> >
+> >     mtd: nand: Fix build issues due to an anonymous union
+> >
+> >     GCC-4.4.4 raises errors when assigning a parameter in an anonymous
+> >     union, leading to this kind of failure:
+> >
+> >     drivers/mtd/nand/marvell_nand.c:1936:
+> >         warning: missing braces around initializer
+> >         warning: (near initialization for '(anonymous)[1].<anonymous>')
+> >         error: unknown field 'data' specified in initializer
+> >         error: unknown field 'addr' specified in initializer
+> >
+> >     Work around the situation by naming these unions.
+> >
+> >     Fixes: 8878b126df76 ("mtd: nand: add ->exec_op() implementation")
+> >     Reported-by: Andrew Morton <akpm@linux-foundation.org>
+> >     Signed-off-by: Miquel Raynal <miquel.raynal@free-electrons.com>
+> >     Tested-by: Andrew Morton <akpm@linux-foundation.org>
+> >     Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> >  
+> 
+> 
+> Hmm, how come Andrew's compiler was fine with the following?
+> 
+> struct nand_flash_dev {
+>         char *name;
+>         union {
+>                 struct {
+>                         uint8_t mfr_id;
+>                         uint8_t dev_id;
+>                 };
+>                 uint8_t id[NAND_MAX_ID_LEN];
+>         };
+>         unsigned int pagesize;
+>         ...
+> };
+> 
 
-greg k-h
+It is probably not :)
+
+> 
+> 
+> The current minimum version is GCC 4.6
+> (commit cafa0010cd51fb7)
+> but I am not sure if this restriction is remaining.
+> 
+
+That's right, can you please test if this limitation is still
+ongoing wit GCC 4.6?
+
+
+Thanks,
+Miquèl
