@@ -2,164 +2,111 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57E89C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:28:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CEEDC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:28:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3241520855
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:28:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D755A20855
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:28:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hRlytScT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728449AbfAVN2e (ORCPT
+        id S1728497AbfAVN2i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 08:28:34 -0500
-Received: from verein.lst.de ([213.95.11.211]:36451 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727936AbfAVN2e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 08:28:34 -0500
-Received: by newverein.lst.de (Postfix, from userid 2005)
-        id 782DA6FA7F; Tue, 22 Jan 2019 14:28:32 +0100 (CET)
-Date:   Tue, 22 Jan 2019 14:28:32 +0100
-From:   Torsten Duwe <duwe@lst.de>
-To:     Julien Thierry <julien.thierry@arm.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Amit Daniel Kachhap <amit.kachhap@arm.com>,
-        "Singh, Balbir" <bsingharora@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        live-patching@vger.kernel.org
-Subject: Re: [PATCH v7 2/3] arm64: implement ftrace with regs
-Message-ID: <20190122132832.GB16778@lst.de>
-References: <20190118163736.6A99268CEB@newverein.lst.de> <20190118163908.E338E68D93@newverein.lst.de> <bdcbdda9-d9e8-20e5-429e-35473ade56cc@arm.com>
+        Tue, 22 Jan 2019 08:28:38 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:60102 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727936AbfAVN2h (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 08:28:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=oaCtCQ6kT+by/muHzdDYBJDKqa8IRmfEauxvMMTSVZk=; b=hRlytScTE44qPk9wpY/NS5oJx
+        d/uSvL+++Xynwf9V61OYBDeoG5zitCKJpc9imtTFLA1Rbdg/ckocKlJsUpMvVtFj95KsuifrTj6wL
+        tah3begys5mED55FbfbIZOS6yWL3f6DP9UwKDr23NJa48SxU1NDDVQ9xPJapmDN0y6XJSZHxWg7qt
+        pdwjnN7zol6zcYtw39P2tq262gxqv6JHYcvRB/Gj/jsc+ARJxnNLrE68Cjao08pyfRh+CfB5YL+92
+        i3K/qvdIaSKS5VR4JGhrF8jMpFkb50/3ApPKNRdh9gka9NRKlUjRDyu/kHcsJMiRFsD4ihFFWwpZm
+        e2qKEZI8w==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1glw6G-0001i0-37; Tue, 22 Jan 2019 13:28:20 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 3B1F82042CFC3; Tue, 22 Jan 2019 14:28:17 +0100 (CET)
+Date:   Tue, 22 Jan 2019 14:28:17 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v6 05/16] sched/core: uclamp: Update CPU's refcount on
+ clamp changes
+Message-ID: <20190122132817.GG13777@hirez.programming.kicks-ass.net>
+References: <20190115101513.2822-1-patrick.bellasi@arm.com>
+ <20190115101513.2822-6-patrick.bellasi@arm.com>
+ <20190121153308.GL27931@hirez.programming.kicks-ass.net>
+ <20190121154412.fak2t2iquj3aixtu@e110439-lin>
+ <20190122093704.GM27931@hirez.programming.kicks-ass.net>
+ <20190122104305.6vjx37muqsxm536t@e110439-lin>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bdcbdda9-d9e8-20e5-429e-35473ade56cc@arm.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20190122104305.6vjx37muqsxm536t@e110439-lin>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 10:18:17AM +0000, Julien Thierry wrote:
-> Hi Torsten,
-> 
-> A few suggestions below.
-> 
-> > +#ifdef CONFIG_DYNAMIC_FTRACE_WITH_REGS
-> > +#define ARCH_SUPPORTS_FTRACE_OPS 1
-> > +#define REC_IP_BRANCH_OFFSET AARCH64_INSN_SIZE
-> > +/* All we need is some magic value. Simply use "_mCount:" */
-> 
-> Nit: Should the casing be "_mcount" ?
+On Tue, Jan 22, 2019 at 10:43:05AM +0000, Patrick Bellasi wrote:
+> On 22-Jan 10:37, Peter Zijlstra wrote:
 
-No! The string makes it clear what it's supposed to be and the peculiar
-casing makes it unique and leaves no doubt were it came from. So whenever
-you see this register value in a crash dump you don't have to wonder about
-weird linkage errors, as it surely did not originate from a symtab.
-
-> > +#define MCOUNT_ADDR		(0x5f6d436f756e743a)
-> > +#else
-> > +#define REC_IP_BRANCH_OFFSET 0
-> > +#define MCOUNT_ADDR		((unsigned long)_mcount)
-> > +#endif
-> > +
-> >  #ifndef __ASSEMBLY__
-> >  #include <linux/compat.h>
-> >  
-> > --- a/arch/arm64/kernel/entry-ftrace.S
-> > +++ b/arch/arm64/kernel/entry-ftrace.S
-> > @@ -10,6 +10,7 @@
-> >   */
-> >  
-> >  #include <linux/linkage.h>
-> > +#include <asm/asm-offsets.h>
-> >  #include <asm/assembler.h>
-> >  #include <asm/ftrace.h>
-> >  #include <asm/insn.h>
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> > +
-> > +ENTRY(ftrace_common)
-> > +
-> > +	mov	x3, sp		/* pt_regs are @sp */
-> > +	ldr_l	x2, function_trace_op, x0
-> > +	mov	x1, x9		/* parent IP */
-> > +	sub	x0, lr, #8	/* function entry == IP */
+> > Sure, I get that. What I don't get is why you're adding that (2) here.
+> > Like said, __sched_setscheduler() already does a dequeue/enqueue under
+> > rq->lock, which should already take care of that.
 > 
-> The #8 is because we go back two instructions right? Can we use
-> #(AARCH64_INSN_SIZE * 2) instead?
-
-Hmm, <asm/insn.h> was already included, so why not. (same below)
-
-> > +#ifdef CONFIG_DYNAMIC_FTRACE_WITH_REGS
-> > +int ftrace_modify_call(struct dyn_ftrace *rec, unsigned long old_addr,
-> > +			unsigned long addr)
-> > +{
-> > +	unsigned long pc = rec->ip + REC_IP_BRANCH_OFFSET;
-> > +	u32 old, new;
-> > +
-> > +	old = aarch64_insn_gen_branch_imm(pc, old_addr, true);
-> > +	new = aarch64_insn_gen_branch_imm(pc, addr, true);
+> Oh, ok... got it what you mean now.
 > 
-> The last argument of aarch64_insn_gen_branch_imm() is an enum, not a
-> boolean.
+> With:
 > 
-> You should use AARCH64_INSN_BRANCH_LINK here which happens to be equal to 1.
+>    [PATCH v6 01/16] sched/core: Allow sched_setattr() to use the current policy
+>    <20190115101513.2822-2-patrick.bellasi@arm.com>
+> 
+> we can call __sched_setscheduler() with:
+> 
+>    attr->sched_flags & SCHED_FLAG_KEEP_POLICY
+> 
+> whenever we want just to change the clamp values of a task without
+> changing its class. Thus, we can end up returning from
+> __sched_setscheduler() without doing an actual dequeue/enqueue.
 
-That's what you get when you keep copying code...
-Good catch, thanks!
+I don't see that happening.. when KEEP_POLICY we set attr.sched_policy =
+SETPARAM_POLICY. That is then checked again in __setscheduler_param(),
+which is in the middle of that dequeue/enqueue.
 
-> > +	 *  initially; the NOPs are already there. So instead,
-> > +	 *  put the LR saver there ahead of time, in order to avoid
-> > +	 *  any race condition over patching 2 instructions.
-> > +	 */
-> > +	if (IS_ENABLED(CONFIG_DYNAMIC_FTRACE_WITH_REGS) &&
-> > +		addr == MCOUNT_ADDR) {
-> 
-> This works, however it feels a bit weird since core code asked to
-> generate a NOP but not only we don't generate it but we put another
-> instruction instead.
+Also, and this might be 'broken', SETPARAM_POLICY _does_ reset all the
+other attributes, it only preserves policy, but it will (re)set nice
+level for example (see that same function).
 
-It's not the first time weird x86 sets the standards and all others
-need workarounds. But here it just came handy to abuse this call :-)
-
-> I think it would be useful to state that the replacement of mcount calls
-> by nops is only ever done once at system initialization.
-> 
-> Or maybe have a intermediate function:
-> 
-> static int ftrace_setup_patchable_entry(unsigned long addr)
-> {
->   	u32 old, new;
-> 
-> 	old = aarch64_insn_gen_nop();
-> 	new = MOV_X9_X30;
-> 	pc -= REC_IP_BRANCH_OFFSET;
-> 	return ftrace_modify_code(pc, old, new, validate);
-> }
-> 
-> 	[...]
-> 
-> 	if (IS_ENABLED(CONFIG_DYNAMIC_FTRACE_WITH_REGS) &&
-> 		addr == MCOUNT_ADDR)
-> 		return ftrace_setup_patchable_entry(pc);
-> 
-> 
-> This way it clearly show that this is a setup/init corner case.
-
-I'll definitely consider this.
-
-Thanks for the input,
-
-	Torsten
-
+So maybe we want to introduce another (few?) FLAG_KEEP flag(s) that
+preserve the other bits; I'm thinking at least KEEP_PARAM and KEEP_UTIL
+or something.
 
