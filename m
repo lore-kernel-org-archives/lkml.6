@@ -2,153 +2,159 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA80BC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 12:42:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD99DC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 12:44:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91BCB21721
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 12:42:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548160936;
-	bh=dp15uKwqwdlEj1uUFXimVhvyYY5t4Ul7E+PFaOKJkoA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=lVqNlHPTHR25BtLsKzhshHeUiH6v6SQgXTH7wX6VsDMDx82qw/c5M2KDNzqCvwJoS
-	 VzCBWEwzPCg41sasPJ9Hm7kuB9GjaYLnQKbPws/mX8uULUGdVl8hvpHhZiNA7j1m3S
-	 yTJ8nN1POezGKE6hQ1860dEl7TKSalw8XMerOxSQ=
+	by mail.kernel.org (Postfix) with ESMTP id 96B2220855
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 12:44:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728412AbfAVMmO (ORCPT
+        id S1728397AbfAVMoj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 07:42:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35006 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728215AbfAVMmO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 07:42:14 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C3AD420855;
-        Tue, 22 Jan 2019 12:42:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548160932;
-        bh=dp15uKwqwdlEj1uUFXimVhvyYY5t4Ul7E+PFaOKJkoA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=v06nkiHyaPeoIMyTCPKrOe0E3suQWdz5XaVnRvgqHQqejAIhdf1LusImEJb/HeY7r
-         dEIcS4FE27SVcYh5S78YKMW6b0xUIrzkB8W6uFtCT7wpldEVi5WDF7c6LcWKgKKtQm
-         HrV03GJ4xaJ4AYHMoirEP7Y/w7o5tYO/Lwsczmas=
-Date:   Tue, 22 Jan 2019 13:42:04 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Georgi Djakov <georgi.djakov@linaro.org>
-Cc:     andy.gross@linaro.org, olof@lixom.net, arnd@arndb.de,
-        rjw@rjwysocki.net, robh+dt@kernel.org, mturquette@baylibre.com,
-        khilman@baylibre.com, vincent.guittot@linaro.org,
-        skannan@codeaurora.org, bjorn.andersson@linaro.org,
-        amit.kucheria@linaro.org, seansw@qti.qualcomm.com,
-        daidavid1@codeaurora.org, evgreen@chromium.org,
-        dianders@chromium.org, abailon@baylibre.com,
-        maxime.ripard@bootlin.com, thierry.reding@gmail.com,
-        ksitaraman@nvidia.com, sanjayc@nvidia.com,
-        henryc.chen@mediatek.com, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v13 0/8] Introduce on-chip interconnect API
-Message-ID: <20190122124204.GA26969@kroah.com>
-References: <20190116161103.6937-1-georgi.djakov@linaro.org>
+        Tue, 22 Jan 2019 07:44:39 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2287 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728215AbfAVMoj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 07:44:39 -0500
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 1F737E65A215CA40E838;
+        Tue, 22 Jan 2019 20:44:37 +0800 (CST)
+Received: from [127.0.0.1] (10.177.31.55) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.408.0; Tue, 22 Jan 2019
+ 20:44:29 +0800
+Subject: Re: [RFC] irq-gic-v3-its: fix occasional VLPI drop
+To:     Marc Zyngier <marc.zyngier@arm.com>
+References: <1548071508-11846-1-git-send-email-guoheyi@huawei.com>
+ <86fttl9fxh.wl-marc.zyngier@arm.com>
+CC:     <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        <wanghaibin.wang@huawei.com>
+From:   Heyi Guo <guoheyi@huawei.com>
+Message-ID: <b9392bee-7e54-749c-04d9-5e7fee3a6203@huawei.com>
+Date:   Tue, 22 Jan 2019 20:44:18 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190116161103.6937-1-georgi.djakov@linaro.org>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <86fttl9fxh.wl-marc.zyngier@arm.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.31.55]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 06:10:55PM +0200, Georgi Djakov wrote:
-> Modern SoCs have multiple processors and various dedicated cores (video, gpu,
-> graphics, modem). These cores are talking to each other and can generate a
-> lot of data flowing through the on-chip interconnects. These interconnect
-> buses could form different topologies such as crossbar, point to point buses,
-> hierarchical buses or use the network-on-chip concept.
-> 
-> These buses have been sized usually to handle use cases with high data
-> throughput but it is not necessary all the time and consume a lot of power.
-> Furthermore, the priority between masters can vary depending on the running
-> use case like video playback or CPU intensive tasks.
-> 
-> Having an API to control the requirement of the system in terms of bandwidth
-> and QoS, so we can adapt the interconnect configuration to match those by
-> scaling the frequencies, setting link priority and tuning QoS parameters.
-> This configuration can be a static, one-time operation done at boot for some
-> platforms or a dynamic set of operations that happen at run-time.
-> 
-> This patchset introduce a new API to get the requirement and configure the
-> interconnect buses across the entire chipset to fit with the current demand.
-> The API is NOT for changing the performance of the endpoint devices, but only
-> the interconnect path in between them.
-> 
-> The API is using a consumer/provider-based model, where the providers are
-> the interconnect buses and the consumers could be various drivers.
-> The consumers request interconnect resources (path) to an endpoint and set
-> the desired constraints on this data flow path. The provider(s) receive
-> requests from consumers and aggregate these requests for all master-slave
-> pairs on that path. Then the providers configure each participating in the
-> topology node according to the requested data flow path, physical links and
-> constraints. The topology could be complicated and multi-tiered and is SoC
-> specific.
-> 
-> Below is a simplified diagram of a real-world SoC topology. The interconnect
-> providers are the NoCs.
-> 
-> +----------------+    +----------------+
-> | HW Accelerator |--->|      M NoC     |<---------------+
-> +----------------+    +----------------+                |
->                         |      |                    +------------+
->  +-----+  +-------------+      V       +------+     |            |
->  | DDR |  |                +--------+  | PCIe |     |            |
->  +-----+  |                | Slaves |  +------+     |            |
->    ^ ^    |                +--------+     |         |   C NoC    |
->    | |    V                               V         |            |
-> +------------------+   +------------------------+   |            |   +-----+
-> |                  |-->|                        |-->|            |-->| CPU |
-> |                  |-->|                        |<--|            |   +-----+
-> |     Mem NoC      |   |         S NoC          |   +------------+
-> |                  |<--|                        |---------+    |
-> |                  |<--|                        |<------+ |    |   +--------+
-> +------------------+   +------------------------+       | |    +-->| Slaves |
->   ^  ^    ^    ^          ^                             | |        +--------+
->   |  |    |    |          |                             | V
-> +------+  |  +-----+   +-----+  +---------+   +----------------+   +--------+
-> | CPUs |  |  | GPU |   | DSP |  | Masters |-->|       P NoC    |-->| Slaves |
-> +------+  |  +-----+   +-----+  +---------+   +----------------+   +--------+
->           |
->       +-------+
->       | Modem |
->       +-------+
-> 
-> It's important to note that the interconnect API, in contrast with devfreq,
-> is allowing drivers to express their needs in advance and be proactive.
-> Devfreq is using a reactive approach (e.g. monitor performance counters and
-> reconfigure bandwidth when the bottleneck had already occurred), which is
-> suboptimal and might not work well. The interconnect API is designed to
-> deal with multi-tiered bus topologies and aggregating constraints provided
-> by drivers, while the devfreq is more oriented towards a device like GPU
-> or CPU, that controls the power/performance of itself and not other devices.
-> 
-> Some examples of how interconnect API is used by consumers:
-> https://lkml.org/lkml/2018/12/20/811
-> https://lkml.org/lkml/2019/1/9/740
-> https://lkml.org/lkml/2018/10/11/499
-> https://lkml.org/lkml/2018/9/20/986
-> 
-> Platform drivers for different SoCs are available:
-> https://lkml.org/lkml/2018/11/17/368
-> https://lkml.org/lkml/2018/8/10/380
+Hi Marc,
 
-All now queued up, thanks.
+Thanks for your feedback. Please see my comments below.
 
-greg k-h
+
+On 2019/1/22 17:53, Marc Zyngier wrote:
+> Hi Heyi,
+>
+> On Mon, 21 Jan 2019 11:51:48 +0000,
+> Heyi Guo <guoheyi@huawei.com> wrote:
+>> Every VLPI will temporarily be mapped to the first CPU in system
+>> (normally CPU0) and then moved to the real scheduled CPU later. There
+>> is a time window so a VLPI may be sent to CPU0 instead of the real
+>> scheduled vCPU, in a multi-CPU virtual machine. However, CPU0 may have
+>> not been scheduled as a virtual CPU after system boots up, so the
+>> value of GICR_VPROPBASER still be the reset value. According to GIC
+>> spec, the reset value of IDbits in GICR_VPROPBASER is architecturally
+>> UNKNOWN, and the GIC will behave as if all virtual LPIs are out of
+>> range if it is less than 0b1101. On our platform the GICR will simply
+>> drop the incoming VLPI, which results in interrupt missing in Guest.
+> OK, it took me some time to page this horror back in. So let's see if
+> I can sum-up the issue correctly:
+Sorry for not explaining the whole thing clearly...
+
+>
+> - When a VM gets created, all the vPEs are mapped to CPU0's
+>    redistributor.
+Not exactly on VM geting created, but when the passthru PCI device driver in Guest tries to enable MSI interrupts. The specific code is in its_map_vm().
+>
+> - If a device starts emitting VLPIs targeting a vPE that has not run
+>    yet, these VLPIs are forwarded to CPU0's redistributor.
+>
+> - If CPU0 has itself never run any vPE, its GICR_PROPBASER is not
+>    initialised, meaning that the IDbits field may contain a value that
+>    makes the redistributor drop the interrupt on the floor.
+Yes.
+>
+> Is that a correct assessment of the issue you're seeing? If so, I
+> think you have a very good point here, and this looks like a hole in
+> the driver.
+>
+> Comments below:
+>
+>> As no code will clear GICR_VPROPBASER at runtime, we can safely
+>> initialize the IDbits field at boot time for each CPU to get rid of
+>> this issue.
+>>
+>> Signed-off-by: Heyi Guo <guoheyi@huawei.com>
+>> Signed-off-by: Heyi Guo <heyi.guo@linaro.org>
+>> ---
+>>   drivers/irqchip/irq-gic-v3-its.c | 14 ++++++++++++++
+>>   1 file changed, 14 insertions(+)
+>>
+>> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+>> index db20e99..6116215 100644
+>> --- a/drivers/irqchip/irq-gic-v3-its.c
+>> +++ b/drivers/irqchip/irq-gic-v3-its.c
+>> @@ -2144,6 +2144,20 @@ static void its_cpu_init_lpis(void)
+>>   	val |= GICR_CTLR_ENABLE_LPIS;
+>>   	writel_relaxed(val, rbase + GICR_CTLR);
+>>   
+>> +	/*
+>> +	 * Temporary workaround for vlpi drop on Hi1620.
+> Why is this specific to this implementation? Isn't this an issue that
+> affects every GICv4 implementations?
+This was an internal patch and I forgot to modify the comment before sending out, either not 100% sure that it is the common behavior of GICv4 to drop VLPI if IDbits is not correctly configured.
+I can change it in V2.
+
+>
+>> +	 * IDbits must be set before any VLPI is sent to this CPU, or else the
+>> +	 * VLPI will be considered as out of range and dropped.
+>> +	 */
+>> +	if (gic_rdists->has_vlpis) {
+>> +		void __iomem *vlpi_base = gic_data_rdist_vlpi_base();
+>> +
+>> +		val = (LPI_NRBITS - 1) & GICR_VPROPBASER_IDBITS_MASK;
+>> +		pr_info("GICv4: CPU%d: Init IDbits to 0x%llx for GICR_VPROPBASER\n",
+>> +			smp_processor_id(), val);
+> I don't think this pr_info is useful to a normal user, as it is only
+> debug information. I'm actually minded to demote a bunch of the GICv3
+> prints to pr_debug.
+OK.
+>> +		gits_write_vpropbaser(val, vlpi_base + GICR_VPROPBASER);
+>> +	}
+>> +
+> I think we need to clear GICR_VPENDBASER.Valid too (you can probably
+> reuse part of its_vpe_deschedule for that), so that we don't get into
+> a bizarre situation where CPU0's redistributor has some ancient
+> programming left in, and could start corrupting memory.
+I can do that for safety. But is it possible of corrupting memory? Even if GICR_VPENDBASER.Valid==1, I don't think it is possible that GICR_VPENDBASER.Physical_Address equals to VPT_addr, so kernel should consider vPE is not sheculed on CPU0 and only memory pointed by VPT_addr will be modified. Please let me know if I'm wrong :)
+>
+>>   	/* Make sure the GIC has seen the above */
+>>   	dsb(sy);
+>>   out:
+>> -- 
+>> 1.8.3.1
+>>
+> Can you please respin this quickly with the above changes?
+Sure.
+
+Thanks,
+Heyi
+>
+> Thanks,
+>
+> 	M.
+>
+
+
