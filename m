@@ -2,87 +2,80 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EC5CC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:40:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1FA2C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:40:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FD73217F9
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:40:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E625217F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:40:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548171616;
-	bh=PB1fL6KDrsRkxRlHOBh1qd7oAZp1sKgLa+t0c/mqbJQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=R3Yvs8F1IjMCgFIOHS32MgcBQgGMNe8/NmECqJu1aBYFaGdSZHQol/mtXXH7Q//3F
-	 JMGUENFmhUoDKzPHkI1EPff7H4gxC5kalk1z2/6DX0D0lS0ZTStrlvQDj/ycgbuCls
-	 +HoFW9E2ulzYOcI1O9af6XsUHZwDlShYA0Yfslc4=
+	s=default; t=1548171624;
+	bh=nfH17g7hT3C9Ra5eF47HzQCPANsjsPbzv8xOYv+KqBo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=JMDYHdF5bAIDQ94+pZmM5lFqiyh/z7ODeIYgWMjnO35e+XtsiSvN5NxW8aBc2Y6Oi
+	 dy2QSauEBd0wBsE8xFb0DsWOpVjMY7qJaz4Lwoc83QgETQooF5ciw9evVk8p26QZ8o
+	 yQyQh6l94oZ92wkGI8rCUjGCjND+JLRFgXPY99ks=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728815AbfAVPkO (ORCPT
+        id S1729024AbfAVPkW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 10:40:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51434 "EHLO mail.kernel.org"
+        Tue, 22 Jan 2019 10:40:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51650 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728601AbfAVPkN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 10:40:13 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728891AbfAVPkW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 10:40:22 -0500
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C4AF7217F4;
-        Tue, 22 Jan 2019 15:40:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6C8F121841;
+        Tue, 22 Jan 2019 15:40:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548171613;
-        bh=PB1fL6KDrsRkxRlHOBh1qd7oAZp1sKgLa+t0c/mqbJQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=w1T5iSIHOGgr46GjUuwe1iCsYenwzxuhPtyMR8ux+cQ4tVo3KIiPIBB0rgQ1nr/ra
-         42o+qEZySXukmF7sGY0G6QIV/XJjLKzvxgRKUtfhnNG/tf3mWiBJ3PfFIEUr74ISaG
-         MKCv8wBZ6uZxlwqLewXYdVPPUmkXUHpl8ZHCXXrs=
-Date:   Tue, 22 Jan 2019 16:40:10 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, Tony Luck <tony.luck@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
-Subject: Re: [PATCH] acpi: no need to check return value of debugfs_create
- functions
-Message-ID: <20190122154010.GA19652@kroah.com>
-References: <20190122152151.16139-4-gregkh@linuxfoundation.org>
- <CAJZ5v0jWvk+07vUx4=KOzw4mkz7yYjmoS+Uy8qixqmpW3o2mig@mail.gmail.com>
+        s=default; t=1548171621;
+        bh=nfH17g7hT3C9Ra5eF47HzQCPANsjsPbzv8xOYv+KqBo=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=xPxKI8GeYoUaoGPJS3u2g5+oEGdE3U6OOyO+lmIoj4NP7nFS0eM7XPULZE47ilHC6
+         px9+cGL8jU69J5pohvwtL3GlrsVuQ3MOtw8j3j7lif3EuxdzzsEZGs5SsM2GtwajOd
+         a/31jOZ44VSVzqY2PdN330A17ma744Vh1n2FRO2U=
+Received: by mail-qt1-f170.google.com with SMTP id r14so28127566qtp.1;
+        Tue, 22 Jan 2019 07:40:21 -0800 (PST)
+X-Gm-Message-State: AJcUukeqLWFdX0D0ayWTOgW/ndUhz9j+JRhX84L7MmYIfOO90MVA1hIa
+        /o5yZ4UYvw1tf2C3qq47eZXEww8pVsC8x9jy3g==
+X-Google-Smtp-Source: ALg8bN6mlA+b5xNplGq7vMORmB9fivFFLm4qa0hifKph63t1Dja4m93gpfYxV1gsvx4LRwoSNfuWGx3VGQQqBOLziuY=
+X-Received: by 2002:ac8:2d2b:: with SMTP id n40mr30661287qta.38.1548171620633;
+ Tue, 22 Jan 2019 07:40:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0jWvk+07vUx4=KOzw4mkz7yYjmoS+Uy8qixqmpW3o2mig@mail.gmail.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+References: <20190122042147.5424-1-manivannan.sadhasivam@linaro.org> <20190122042147.5424-2-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20190122042147.5424-2-manivannan.sadhasivam@linaro.org>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 22 Jan 2019 09:40:08 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJR6s-EPJdvvyY=v=0RRUzee2NBXyssgeY1-YYK-C4q3g@mail.gmail.com>
+Message-ID: <CAL_JsqJR6s-EPJdvvyY=v=0RRUzee2NBXyssgeY1-YYK-C4q3g@mail.gmail.com>
+Subject: Re: [PATCH v3 1/5] dt-bindings: arm: fsl: Fix bindings for LS1012A
+ and LS1021A based boards
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     Shawn Guo <shawnguo@kernel.org>, Yang-Leo Li <leoyang.li@nxp.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        a.tropschug@ebs-systart.com, m.bittner@ebs-systart.com,
+        Amit Kucheria <amit.kucheria@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 04:28:42PM +0100, Rafael J. Wysocki wrote:
-> On Tue, Jan 22, 2019 at 4:27 PM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > When calling debugfs functions, there is no need to ever check the
-> > return value.  The function can work or not, but the code logic should
-> > never do something different based on this.
-> >
-> > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> > Cc: Len Brown <lenb@kernel.org>
-> > Cc: Tony Luck <tony.luck@intel.com>
-> > Cc: Borislav Petkov <bp@alien8.de>
-> > Cc: Yangtao Li <tiny.windzz@gmail.com>
-> > Cc: linux-acpi@vger.kernel.org
-> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> 
-> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> Or do you want me to take this?
+On Mon, Jan 21, 2019 at 10:22 PM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
+>
+> Fix devicetree bindings for Freescale LS1012A and LS1021A SoC based boards.
+>
+> Fixes: a1a38e1f4d1d ("dt-bindings: arm: Convert FSL board/soc bindings to json-schema")
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/arm/fsl.yaml | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
 
-It's up to you, I can take it, or you can, either is fine with me :)
-
-greg k-h
+Reviewed-by: Rob Herring <robh@kernel.org>
