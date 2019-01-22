@@ -2,120 +2,183 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6FD8C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:48:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69456C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:53:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83EB221726
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:48:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548190112;
-	bh=/XvGFU6QBSeUrZkfs0UomTtvYGR47cxPWqpY36biYSM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=tryjLXjzHMQbRmdRD4PcPoJqNphkah7coVtArX7cLt+PVLr+HhSzW2tRaax0Su3uj
-	 UCFUxOsCDWeDxB9Zlit4sH5GRWkyn9Hl+wOkFgAA/WmlvuBU4DDc2PkNhY/f6JMBrf
-	 CJhjzi6PcUlFhNw54wvwgZ23TEmLwW/7O2vRYEAU=
+	by mail.kernel.org (Postfix) with ESMTP id 330C621726
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:53:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Q9WOOGSe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726683AbfAVUsb (ORCPT
+        id S1726418AbfAVUxt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 15:48:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32984 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725862AbfAVUsb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 15:48:31 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0115521726;
-        Tue, 22 Jan 2019 20:48:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548190110;
-        bh=/XvGFU6QBSeUrZkfs0UomTtvYGR47cxPWqpY36biYSM=;
+        Tue, 22 Jan 2019 15:53:49 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:55386 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726143AbfAVUxt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 15:53:49 -0500
+Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 93780575;
+        Tue, 22 Jan 2019 21:53:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1548190426;
+        bh=QGo0DUwfA7Z7zXNfbOwkABnYildWi/mItLvCeCe0cno=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SmLkpQlwJmEyiwBArRPO+LMzG93T37FWJ4PNE8ja9iU3U3QGHW9NMPOf72Jl0N8kM
-         whiSnXZXP2bB8vessiRxMAc4AKlG+8kbI0jdKEMFusAyQe5i3tB2hvmRucvIWHUyT/
-         pehSEzRNzPCBQp3BHOFFI6XR91c6mjkaj4BSuJPA=
-Date:   Tue, 22 Jan 2019 21:48:28 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Christian Borntraeger <borntraeger@de.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org
-Subject: Re: [PATCH] kvm: no need to check return value of debugfs_create
- functions
-Message-ID: <20190122204828.GA30805@kroah.com>
-References: <20190122152151.16139-51-gregkh@linuxfoundation.org>
- <69eee5dd-5893-c93a-a9df-036f02dfbc1c@de.ibm.com>
+        b=Q9WOOGSeNjlxOuYfwtkGyQ4eKz7hOohudvxuo/7LU94kiu8wu1tblvzqLS/y9q+aX
+         3HNQOF8OYyNGrV01H6OXZM5ER7jHSSD4817gDgF0VnINagMJfoy70enXF0SzmsmRnX
+         pL52gM8nyWZ7LOQtnUlcIeipo8FKecpis03sWwcU=
+Date:   Tue, 22 Jan 2019 22:53:45 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Peter Rosin <peda@axentia.se>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v3 1/5] dt-bindings: display: bridge: fork out
+ ti,ds90c185 from lvds-transmitter
+Message-ID: <20190122205345.GF3264@pendragon.ideasonboard.com>
+References: <20181229070649.21308-1-peda@axentia.se>
+ <20181229070649.21308-2-peda@axentia.se>
+ <20190111144904.GA5052@bogus>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <69eee5dd-5893-c93a-a9df-036f02dfbc1c@de.ibm.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <20190111144904.GA5052@bogus>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 09:39:24PM +0100, Christian Borntraeger wrote:
-> 
-> 
-> On 22.01.2019 16:21, Greg Kroah-Hartman wrote:
-> > When calling debugfs functions, there is no need to ever check the
-> > return value.  The function can work or not, but the code logic should
-> > never do something different based on this.
+Hello,
+
+On Fri, Jan 11, 2019 at 08:49:04AM -0600, Rob Herring wrote:
+> On Sat, Dec 29, 2018 at 07:07:19AM +0000, Peter Rosin wrote:
+> > DS90C185 has a shutdown pin which does not fit in the lvds-transmitter
+> > binding, which is meant to be generic.
 > > 
-> > Cc: Paolo Bonzini <pbonzini@redhat.com>
-> > Cc: "Radim Krčmář" <rkrcmar@redhat.com>
-> > Cc: kvm@vger.kernel.org
-> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > The sister chip DS90C187 is similar to DS90C185, describe it here as well.
+> > 
+> > Signed-off-by: Peter Rosin <peda@axentia.se>
 > > ---
-> >  virt/kvm/kvm_main.c | 4 +---
-> >  1 file changed, 1 insertion(+), 3 deletions(-)
+> >  .../bindings/display/bridge/lvds-transmitter.txt   |  8 +---
+> >  .../bindings/display/bridge/ti,ds90c185.txt        | 55 ++++++++++++++++++++++
+> >  2 files changed, 56 insertions(+), 7 deletions(-)
+> >  create mode 100644 Documentation/devicetree/bindings/display/bridge/ti,ds90c185.txt
 > > 
-> > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> > index 5ecea812cb6a..4f96450ecdfc 100644
-> > --- a/virt/kvm/kvm_main.c
-> > +++ b/virt/kvm/kvm_main.c
-> > @@ -2528,9 +2528,7 @@ static int kvm_create_vcpu_debugfs(struct kvm_vcpu *vcpu)
-> > 
-> >  	snprintf(dir_name, sizeof(dir_name), "vcpu%d", vcpu->vcpu_id);
-> >  	vcpu->debugfs_dentry = debugfs_create_dir(dir_name,
-> > -								vcpu->kvm->debugfs_dentry);
-> > -	if (!vcpu->debugfs_dentry)
-> > -		return -ENOMEM;
-> > +						  vcpu->kvm->debugfs_dentry);
-> > 
-> >  	ret = kvm_arch_create_vcpu_debugfs(vcpu);
-> >  	if (ret < 0) {
-> > 
+> > diff --git a/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt b/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt
+> > index 50220190c203..fd39ad34c383 100644
+> > --- a/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt
+> > +++ b/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt
+> > @@ -22,13 +22,7 @@ among others.
+> >  
+> >  Required properties:
+> >  
+> > -- compatible: Must be one or more of the following
+> > -  - "ti,ds90c185" for the TI DS90C185 FPD-Link Serializer
+> > -  - "lvds-encoder" for a generic LVDS encoder device
+> > -
+> > -  When compatible with the generic version, nodes must list the
+> > -  device-specific version corresponding to the device first
+> > -  followed by the generic version.
 > 
-> 
-> The interesting part of these debugfs entries is that they export an interface that is used
-> by the kvm_stat tool. (and all distributions that I checked have debugfs enabled).
-> 
-> I think it is pretty unlikely that things will fail, but the question is: do we want to reject
-> VM creation if that VM cannot be observed by instrumentation or not? No idea.
+> I think you should keep something here. I'd reword it to say any encoder 
+> with additional properties must have a device specific compatible in 
+> addition.
 
-No you should not as any other part of the kernel can randomly create
-the same debugfs files and keep your code from being able to create
-them :)
+I was going to mention this too. Maybe
 
-> This also brings the question: shall we move these counters out of debugfs into something else?
+- compatible: Shall contain a device-specific compatible string follow
+  by "lvds-encoder".
 
-If you have code that relies on debugfs, yes, you need to move that out
-of debugfs because more and more systems are trying to disable it due to
-the obvious problems with it (i.e. leaking tons of debugging
-information).
+That's stronger than Rob's suggestion, as I don't think we should allow
+omitting the device-specific compatible string in any case to make sure
+we can preserve backward compatibility in the future.
 
-debugfs is for DEBUG information, not for "statistics about how my VM is
-working".  That sounds like something you need to rely on, so debugfs is
-not the place for it.
+> > +- compatible: Must be "lvds-encoder"
+> >  
+> >  Required nodes:
+> >  
+> > diff --git a/Documentation/devicetree/bindings/display/bridge/ti,ds90c185.txt b/Documentation/devicetree/bindings/display/bridge/ti,ds90c185.txt
+> > new file mode 100644
+> > index 000000000000..e575f996959a
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/display/bridge/ti,ds90c185.txt
+> > @@ -0,0 +1,55 @@
+> > +Texas Instruments FPD-Link (LVDS) Serializer
+> > +--------------------------------------------
+> > +
+> > +The DS90C185 and DS90C187 are low-power serializers for portable
+> > +battery-powered applications that reduces the size of the RGB
+> > +interface between the host GPU and the display.
+> > +
+> > +Required properties:
+> > +
+> > +- compatible: Should be
+> > +  "ti,ds90c185", "lvds-encoder"  for the TI DS90C185 FPD-Link Serializer
+> > +  "ti,ds90c187", "lvds-encoder"  for the TI DS90C187 FPD-Link Serializer
 
-thanks,
+s/  for/ for/
 
-greg k-h
+With these fixed,
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> > +
+> > +Optional properties:
+> > +
+> > +- powerdown-gpios: Power down control GPIO (the PDB pin, active-low)
+> > +
+> > +Required nodes:
+> > +
+> > +The devices have two video ports. Their connections are modeled using the OF
+> > +graph bindings specified in Documentation/devicetree/bindings/graph.txt.
+> > +
+> > +- Video port 0 for parallel input
+> > +- Video port 1 for LVDS output
+> > +
+> > +
+> > +Example
+> > +-------
+> > +
+> > +lvds-encoder {
+> > +	compatible = "ti,ds90c185", "lvds-encoder";
+> > +
+> > +	powerdown-gpios = <&gpio 17 GPIO_ACTIVE_LOW>;
+> > +
+> > +	ports {
+> > +		#address-cells = <1>;
+> > +		#size-cells = <0>;
+> > +
+> > +		port@0 {
+> > +			reg = <0>;
+> > +
+> > +			lvds_enc_in: endpoint {
+> > +				remote-endpoint = <&lcdc_out_rgb>;
+> > +			};
+> > +		};
+> > +
+> > +		port@1 {
+> > +			reg = <1>;
+> > +
+> > +			lvds_enc_out: endpoint {
+> > +				remote-endpoint = <&lvds_panel_in>;
+> > +			};
+> > +		};
+> > +	};
+> > +};
+
+-- 
+Regards,
+
+Laurent Pinchart
