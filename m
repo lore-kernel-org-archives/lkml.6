@@ -2,122 +2,107 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0CE8C282C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 04:22:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B2A9C282C8
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 04:22:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1F9720855
+	by mail.kernel.org (Postfix) with ESMTP id EE3EA21721
 	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 04:22:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="I92I6Oav"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ICkeb7HR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726919AbfAVEWA (ORCPT
+        id S1726958AbfAVEWF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 23:22:00 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:33650 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726865AbfAVEV7 (ORCPT
+        Mon, 21 Jan 2019 23:22:05 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:44686 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726865AbfAVEWF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 23:21:59 -0500
-Received: by mail-pl1-f194.google.com with SMTP id z23so10816279plo.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 20:21:59 -0800 (PST)
+        Mon, 21 Jan 2019 23:22:05 -0500
+Received: by mail-pl1-f196.google.com with SMTP id e11so10792718plt.11
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 20:22:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=YXvkxSWI9j7PH0XLfIk7l4OYwr3HALayuS+GuaRQtDA=;
-        b=I92I6OavRkseVq6UgzadkRcCAFJqwXyWpfd7gTHODjdJrmBQVQUO63UcisumFR9v3L
-         F6rJxjJWYvT8gu7mndjRGueKI4Y99rWws7RDuxSXJQqM/2xkBPh5j/X8v4isn2V1Dk9l
-         /pq6R2tNo/Big+HUyDxtEhQapDUfBedfiBQmg=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=qh9OH2ewndXqi7LmYpIulU5BfBE/yUMVvx34aUuKYu0=;
+        b=ICkeb7HRNIH9VLfwNSH+e9HuXwGT5x7DgnnfjwxgUJrUM17uD5HgT73ahqxLOeGTHu
+         FLJhMxTvCnvZ510Ay3ZCHeXKDuJSGqcJWBpmLDnc7woc9NR0FUbO9DvlvMFu6UG15fl1
+         XcLpLTRg3AQVGIpgn6ZWXYRnrKm9GJZF7q16E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=YXvkxSWI9j7PH0XLfIk7l4OYwr3HALayuS+GuaRQtDA=;
-        b=THa74dpf9ygUfjXHcu6L0Pa0vThASzWlzSNjPlTDmrSjDygMaTBJjGcr2yeus6ygBL
-         Vfj6o1xaaztorOysjTDS5y03tHSOBjvH/sP+vm5Imzbt02DFhI4vplIsZKin6hQlC4+V
-         eQBoJ26QUyRu4TNPMlJxf637BSLx8N1fzHVuNDRIf1hyv/cCTJibDBXdPwiKheLAOXJ/
-         Xhe3bb3rCUB7ntiEoEX8EzpU3K5jJ6wvdwsnlUx2WJxiIPQUWFI7RLig54LNZ++eUqWn
-         YoBNGvjPsH0AsVKVqCyPpgT/tsQHRENHfAwFyyITsdFNRls5cqpfz6UZX3ubiX7wUNuA
-         Tk7w==
-X-Gm-Message-State: AJcUukc5H5jhVAaZok8IrBdiOIZ4a4otVFBwEz3BNL1xqq8OvU5wcxG2
-        BYces30hF2w3q4lvuiOO1Wyo
-X-Google-Smtp-Source: ALg8bN7j+tSgVz4MKoqY8moyFNHw2w5gs9ueo65QTBhc3v9SH5i3Yx8KDr0ZahVXcKftDS2Dc5PTiw==
-X-Received: by 2002:a17:902:4:: with SMTP id 4mr32930147pla.20.1548130918456;
-        Mon, 21 Jan 2019 20:21:58 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=qh9OH2ewndXqi7LmYpIulU5BfBE/yUMVvx34aUuKYu0=;
+        b=VNHCQMih6dKrid/lE2ejrzcZkCh5SL4mMy1kNi7LKADRfc+Cl5W425WnvHndsPqQeK
+         GuLfhvHnzmcavevpK8SvISHPxo6hCLiwcKF/AOJKN4mzMgEAgSEk0S+vo3YX+f3I3ck4
+         CFOMGjJWpL5efiOR/fe8560oiQkEx5zeBeJxR6IOfqe0J6RoIlixqjskvPRBv9lyPJpZ
+         phHLZNArtLw7Wx1N9LMwu4+5y0fwfsk4qhNDbud73o7skhVksZEv6sLJRvRTliIZiO5v
+         pM82vOnjFgS+KTYjO1UCUUCtFlzTTCZXNbnlfSbPQ0vDxYU5sg+9AJdCD1mvqFQ9uzq6
+         jjYw==
+X-Gm-Message-State: AJcUukeKrrFrveUE8hmtnJqDCUXlUgB3P+uLcRcpdaSm6MSN9WjdduEH
+        jcG+g+lMpgfEqZCrjPcGEBGQBpGKOw==
+X-Google-Smtp-Source: ALg8bN6+W9kfH9ubBJQ+oNWmtl6QwFd+5/vhMV/fvcYNf3EekCAbeAmIvchON8qbdu0113MEFRwU2g==
+X-Received: by 2002:a17:902:850c:: with SMTP id bj12mr32192473plb.46.1548130924334;
+        Mon, 21 Jan 2019 20:22:04 -0800 (PST)
 Received: from localhost.localdomain ([2405:204:7344:8fd1:3551:e475:9265:ab6d])
-        by smtp.gmail.com with ESMTPSA id q199sm25083953pfc.97.2019.01.21.20.21.52
+        by smtp.gmail.com with ESMTPSA id q199sm25083953pfc.97.2019.01.21.20.21.58
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 21 Jan 2019 20:21:57 -0800 (PST)
+        Mon, 21 Jan 2019 20:22:03 -0800 (PST)
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     shawnguo@kernel.org, leoyang.li@nxp.com, robh+dt@kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, a.tropschug@ebs-systart.com,
         m.bittner@ebs-systart.com, amit.kucheria@linaro.org,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v3 0/5] Add Oxalis board support
-Date:   Tue, 22 Jan 2019 09:51:42 +0530
-Message-Id: <20190122042147.5424-1-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v3 1/5] dt-bindings: arm: fsl: Fix bindings for LS1012A and LS1021A based boards
+Date:   Tue, 22 Jan 2019 09:51:43 +0530
+Message-Id: <20190122042147.5424-2-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190122042147.5424-1-manivannan.sadhasivam@linaro.org>
+References: <20190122042147.5424-1-manivannan.sadhasivam@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Fix devicetree bindings for Freescale LS1012A and LS1021A SoC based boards.
 
-This patchset adds Oxalis board support. This board is one of the
-96Boards Enterprise Edition platform from EBS-SYSTART GmbH. Below are some
-of the key features of this board:
+Fixes: a1a38e1f4d1d ("dt-bindings: arm: Convert FSL board/soc bindings to json-schema")
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ Documentation/devicetree/bindings/arm/fsl.yaml | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-* SoC: NXP Layerscape LS1012A
-* RAM: 1GB DDR3L
-* PMU: NXP VR5100
-* Storage: 64MByte SPI Flash for bootloader and RCW, MicroSD Card, SATA
-* Connectivity: 2x Ethernet
-* USB: 2x USB3.0
-
-More information about this board can be found in 96Boards product
-page: https://www.96boards.org/product/oxalis/
-
-Ethernet and SPI flash are not supported yet!
-
-Thanks,
-Mani
-
-Changes in v3:
-
-* Fixed LS1012A and LS1021A bindings
-* Added missing devicetree compatibles for LS1021A based boards
-* Added Rob's Reviewed-by tag for Vendor prefix patch
-
-Changes in v2:
-
-As per Rob's review:
-
-* Adopted the Oxalis board binding to JSON format.
-* Sorted the EBS-SYSTART vendor prefix alphabetically.
-* Used the generic node name for audio codec.
-
-Manivannan Sadhasivam (5):
-  dt-bindings: arm: fsl: Fix bindings for LS1012A and LS1021A based
-    boards
-  ARM: dts: Add devicetree compatibles for LS1021A based boards
-  dt-bindings: vendor-prefixes: Add EBS-SYSTART GmbH Vendor Prefix
-  dt-bindings: arm: fsl: Add devicetree binding for Oxalis
-  arm64: dts: freescale: Add devicetree for Oxalis
-
- .../devicetree/bindings/arm/fsl.yaml          | 11 ++-
- .../devicetree/bindings/vendor-prefixes.txt   |  1 +
- arch/arm/boot/dts/ls1021a-moxa-uc-8410a.dts   |  1 +
- arch/arm/boot/dts/ls1021a-qds.dts             |  1 +
- arch/arm/boot/dts/ls1021a-twr.dts             |  1 +
- arch/arm64/boot/dts/freescale/Makefile        |  1 +
- .../boot/dts/freescale/fsl-ls1012a-oxalis.dts | 96 +++++++++++++++++++
- 7 files changed, 111 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm64/boot/dts/freescale/fsl-ls1012a-oxalis.dts
-
+diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
+index d34fe0749199..20fb61006f2b 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.yaml
++++ b/Documentation/devicetree/bindings/arm/fsl.yaml
+@@ -173,12 +173,20 @@ properties:
+               - fsl,vf610
+               - fsl,vf610m4
+ 
+-      - description: LS1021A based Boards
++      - description: LS1012A based Boards
+         items:
+           - enum:
+               - fsl,ls1012a-rdb
+               - fsl,ls1012a-frdm
+               - fsl,ls1012a-qds
++          - const: fsl,ls1012a
++
++      - description: LS1021A based Boards
++        items:
++          - enum:
++              - fsl,ls1021a-moxa-uc-8410a
++              - fsl,ls1021a-qds
++              - fsl,ls1021a-twr
+           - const: fsl,ls1021a
+ 
+       - description: LS1043A based Boards
 -- 
 2.17.1
 
