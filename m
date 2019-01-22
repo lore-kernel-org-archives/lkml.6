@@ -2,97 +2,100 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8555C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:06:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D8AEC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:06:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7941B2084C
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:06:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 587872084C
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:06:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727524AbfAVIGA (ORCPT
+        id S1727572AbfAVIGl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 03:06:00 -0500
-Received: from lb2-smtp-cloud7.xs4all.net ([194.109.24.28]:48553 "EHLO
-        lb2-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727165AbfAVIGA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 03:06:00 -0500
-Received: from [192.168.2.10] ([212.251.195.8])
-        by smtp-cloud7.xs4all.net with ESMTPA
-        id lr4EgkddxBDyIlr4HgSm6x; Tue, 22 Jan 2019 09:05:58 +0100
-Subject: Re: [PATCH v2] media: docs-rst: Document m2m stateless video decoder
- interface
-To:     Alexandre Courbot <acourbot@chromium.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Pawel Osciak <posciak@chromium.org>,
-        linux-media@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
-References: <20190122062616.164838-1-acourbot@chromium.org>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <9c6ceddc-62c4-e4e7-9e27-b8213d8adb42@xs4all.nl>
-Date:   Tue, 22 Jan 2019 09:05:54 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
-MIME-Version: 1.0
-In-Reply-To: <20190122062616.164838-1-acourbot@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfFN+05/CpeswRCtOqgbdRuEGa0RoMps27PYWJR/qbFL/iKmLbs9yf3s6RjDuqLMTbtM7j5TBbVk3H7Mh+KhJav4/oiXyC+WPLF21V+dGZGbZsM5a7owb
- M0kvjJ8eE8jAVCY9837x9knCK3R7LsnTlY4DruHzt2AmGLfZ88GtYJPQzv1IIv+5YRLeRLG384l0TSKeq5FzhZv6feWkBHRCJ+ffrWTQ+plm2vyU7Ztkadmg
- 3kbRXskBMbOXVu/DUu8e2q7zBCJDaeLIOdAfGLrT3J4mvwf+PN/Lxiprapl9K20x++Vu9g3zPfKT+0ZpcBG7OwyMShTeuHyYvfmjE3mqf9dqwxFEhlX+GOFb
- sWRFP8bcxVJGmQ4BHY/cRlMi6yrvSrGX9DZPld8VDwt7n18N3L4/lEGeeB3ys6/IRge0YG7f
+        Tue, 22 Jan 2019 03:06:41 -0500
+Received: from mx2.suse.de ([195.135.220.15]:48834 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727498AbfAVIGk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 03:06:40 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 2B335AC91;
+        Tue, 22 Jan 2019 08:06:39 +0000 (UTC)
+From:   Juergen Gross <jgross@suse.com>
+To:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        x86@kernel.org, linux-mm@kvack.org
+Cc:     boris.ostrovsky@oracle.com, sstabellini@kernel.org, hpa@zytor.com,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        Juergen Gross <jgross@suse.com>
+Subject: [PATCH 2/2] x86/xen: dont add memory above max allowed allocation
+Date:   Tue, 22 Jan 2019 09:06:28 +0100
+Message-Id: <20190122080628.7238-3-jgross@suse.com>
+X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20190122080628.7238-1-jgross@suse.com>
+References: <20190122080628.7238-1-jgross@suse.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/22/2019 07:26 AM, Alexandre Courbot wrote:
-> Documents the protocol that user-space should follow when
-> communicating with stateless video decoders.
-> 
-> The stateless video decoding API makes use of the new request and tags
-> APIs. While it has been implemented with the Cedrus driver so far, it
-> should probably still be considered staging for a short while.
-> 
-> Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
-> ---
-> Changes since v1:
-> 
-> * Use timestamps instead of tags to reference frames,
-> * Applied Paul's suggestions to not require one frame worth of data per OUTPUT
->   buffer
-> 
-> One of the effects of requiring sub-frame units to be submitted per request is
-> that the stateless decoders are not exactly "stateless" anymore: if a frame is
-> made of several slices, then the decoder must keep track of the buffer in which
-> the current frame is being decoded between requests, and all the slices for the
-> current frame must be submitted before we can consider decoding the next one.
-> 
-> Also if we decide to force clients to submit one slice per request, then doesn't
-> some of the H.264 controls need to change? For instance, in the current v2
-> there is still a v4l2_ctrl_h264_decode_param::num_slices member. It is used in
-> Chromium to specify the number of slices given to the
-> V4L2_CID_MPEG_VIDEO_H264_SLICE_PARAMS control, but is apparently ignored by the
-> Cedrus driver. Maxime, can you comment on this?
-> 
->  Documentation/media/uapi/v4l/dev-codec.rst    |   5 +
->  .../media/uapi/v4l/dev-stateless-decoder.rst  | 378 ++++++++++++++++++
->  2 files changed, 383 insertions(+)
->  create mode 100644 Documentation/media/uapi/v4l/dev-stateless-decoder.rst
-> 
+Don't allow memory to be added above the allowed maximum allocation
+limit set by Xen.
 
-Thank you! I have uploaded a version of the V4L2 spec with this and the two older
-stateful codec patches applied:
+Trying to do so would result in cases like the following:
 
-https://hverkuil.home.xs4all.nl/codec-api/uapi/v4l/dev-codec.html
+[  584.559652] ------------[ cut here ]------------
+[  584.564897] WARNING: CPU: 2 PID: 1 at ../arch/x86/xen/multicalls.c:129 xen_alloc_pte+0x1c7/0x390()
+[  584.575151] Modules linked in:
+[  584.578643] Supported: Yes
+[  584.581750] CPU: 2 PID: 1 Comm: swapper/0 Not tainted 4.4.120-92.70-default #1
+[  584.590000] Hardware name: Cisco Systems Inc UCSC-C460-M4/UCSC-C460-M4, BIOS C460M4.4.0.1b.0.0629181419 06/29/2018
+[  584.601862]  0000000000000000 ffffffff813175a0 0000000000000000 ffffffff8184777c
+[  584.610200]  ffffffff8107f4e1 ffff880487eb7000 ffff8801862b79c0 ffff88048608d290
+[  584.618537]  0000000000487eb7 ffffea0000000201 ffffffff81009de7 ffffffff81068561
+[  584.626876] Call Trace:
+[  584.629699]  [<ffffffff81019ad9>] dump_trace+0x59/0x340
+[  584.635645]  [<ffffffff81019eaa>] show_stack_log_lvl+0xea/0x170
+[  584.642391]  [<ffffffff8101ac51>] show_stack+0x21/0x40
+[  584.648238]  [<ffffffff813175a0>] dump_stack+0x5c/0x7c
+[  584.654085]  [<ffffffff8107f4e1>] warn_slowpath_common+0x81/0xb0
+[  584.660932]  [<ffffffff81009de7>] xen_alloc_pte+0x1c7/0x390
+[  584.667289]  [<ffffffff810647f0>] pmd_populate_kernel.constprop.6+0x40/0x80
+[  584.675241]  [<ffffffff815ecfe8>] phys_pmd_init+0x210/0x255
+[  584.681587]  [<ffffffff815ed207>] phys_pud_init+0x1da/0x247
+[  584.687931]  [<ffffffff815edb3b>] kernel_physical_mapping_init+0xf5/0x1d4
+[  584.695682]  [<ffffffff815e9bdd>] init_memory_mapping+0x18d/0x380
+[  584.702631]  [<ffffffff81064699>] arch_add_memory+0x59/0xf0
 
-Regards,
+Signed-off-by: Juergen Gross <jgross@suse.com>
+---
+ arch/x86/xen/setup.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-	Hans
+diff --git a/arch/x86/xen/setup.c b/arch/x86/xen/setup.c
+index d5f303c0e656..5929a6ba5c25 100644
+--- a/arch/x86/xen/setup.c
++++ b/arch/x86/xen/setup.c
+@@ -12,6 +12,7 @@
+ #include <linux/memblock.h>
+ #include <linux/cpuidle.h>
+ #include <linux/cpufreq.h>
++#include <linux/memory_hotplug.h>
+ 
+ #include <asm/elf.h>
+ #include <asm/vdso.h>
+@@ -785,6 +786,10 @@ char * __init xen_memory_setup(void)
+ 	/* How many extra pages do we need due to remapping? */
+ 	max_pages += xen_foreach_remap_area(max_pfn, xen_count_remap_pages);
+ 
++#ifdef CONFIG_MEMORY_HOTPLUG
++	max_mem_size = PFN_PHYS(max_pages);
++#endif
++
+ 	if (max_pages > max_pfn)
+ 		extra_pages += max_pages - max_pfn;
+ 
+-- 
+2.16.4
+
