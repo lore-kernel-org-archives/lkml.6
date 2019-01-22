@@ -2,166 +2,137 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB032C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:26:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3783AC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:26:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B02BB217D6
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:26:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="d02JLUi/"
+	by mail.kernel.org (Postfix) with ESMTP id 035D5217D6
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:26:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729901AbfAVP0S (ORCPT
+        id S1730052AbfAVP0X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 10:26:18 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:49956 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729387AbfAVP0M (ORCPT
+        Tue, 22 Jan 2019 10:26:23 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:42738 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729158AbfAVP0R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 10:26:12 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190122152610euoutp01ae122cec70ebc4e6d3a9d01190307cc9~8NRz-Xkiz0952809528euoutp01X
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 15:26:10 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190122152610euoutp01ae122cec70ebc4e6d3a9d01190307cc9~8NRz-Xkiz0952809528euoutp01X
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1548170770;
-        bh=XhXEUQE5xAKbwygfA7Rdfb9KqEGaRFuvNk9iE5BJLeQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d02JLUi/7SY+ki+lRCcSToGkr87xVapJusChBZjFwT7vv3UMyxDFO7+axUWuyEjMk
-         8ZCzeRyt16jQcHV2XsdbQSujhfiE1G/QdL4Q8lZoD7PkdUg10m+0aJXUDcBmvd+Yf0
-         p/edVB8hT8A9WNcgIGcs5xJ8z6wApWspJzQjdbyc=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190122152609eucas1p1be2c43da974544abc829e9d5f9aa37ef~8NRzRT7uj0417804178eucas1p1D;
-        Tue, 22 Jan 2019 15:26:09 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 06.F0.04806.116374C5; Tue, 22
-        Jan 2019 15:26:09 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20190122152608eucas1p27cff7b53eb3bb23447ef7ba2b3f69671~8NRyhJlmc1355913559eucas1p2b;
-        Tue, 22 Jan 2019 15:26:08 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190122152608eusmtrp20261dd303d1b385f6046d7859c7a4e03~8NRySmTs10539205392eusmtrp2V;
-        Tue, 22 Jan 2019 15:26:08 +0000 (GMT)
-X-AuditID: cbfec7f5-367ff700000012c6-1a-5c4736118956
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id FD.FF.04128.016374C5; Tue, 22
-        Jan 2019 15:26:08 +0000 (GMT)
-Received: from AMDC3218.DIGITAL.local (unknown [106.120.51.18]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20190122152608eusmtip21d8df1e7e36aaccbdea35ed588611300~8NRxyhDUY0551405514eusmtip2y;
-        Tue, 22 Jan 2019 15:26:08 +0000 (GMT)
-From:   Kamil Konieczny <k.konieczny@partner.samsung.com>
-To:     k.konieczny@partner.samsung.com
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v1 2/3] dt-bindings: crypto: document Exynos5433 SlimSSS
-Date:   Tue, 22 Jan 2019 16:25:52 +0100
-Message-Id: <20190122152553.1537-3-k.konieczny@partner.samsung.com>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20190122152553.1537-1-k.konieczny@partner.samsung.com>
+        Tue, 22 Jan 2019 10:26:17 -0500
+Received: by mail-wr1-f65.google.com with SMTP id q18so27783401wrx.9;
+        Tue, 22 Jan 2019 07:26:16 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=CCp9upUIarVk3fVLsHz4QDegPcOwIOYW21pseveaDEk=;
+        b=uJcQ4A0P7/NCH/K1EX7mmkDzIatj1LUvHLRQj6G1e8bjoRMDNiWR4ULg1xqkqg+6Kz
+         Bjgs8UrbPvPveBcKsVwDP36tKJQHgxafwNjzJtHfykli2EL97loBp2nYUnvSazt5yq9O
+         HrYysucnKhH9tjbnrqcU03DJpa6r7/Mke3/zBtnFwrBHEYpTJmz5vM4+zjTMeCG0kx9t
+         QHB/fJ8WFz+TyHrcaao+kkFtchX6W/anBex1w62W4gYuBz3+WMWAUKZaR3i7ZTP7ahAp
+         38ISrAlwymBjmWydRd8WWXXv09vYYKORSr6jsPYItitWtSRXq45zZuiTSC1k1eaXTr6P
+         1eNw==
+X-Gm-Message-State: AJcUukc+b9NrKaGxT0mYzf9gB2cjO6vAhG6By0b79PWsna2cJDfeypuT
+        Zf56h9VoWIctE51lDPMHvfOtRC+g
+X-Google-Smtp-Source: ALg8bN6kQLiLsbsvRtLA2wxTPwZrI3KGNnWkBi6YXJ8XczqYF154jAJbFRNIld0EEMYdnShW7Q/Yig==
+X-Received: by 2002:adf:ed92:: with SMTP id c18mr34205975wro.194.1548170775430;
+        Tue, 22 Jan 2019 07:26:15 -0800 (PST)
+Received: from ?IPv6:2a0b:e7c0:0:107::70f? ([2a0b:e7c0:0:107::70f])
+        by smtp.gmail.com with ESMTPSA id v6sm76596430wrd.88.2019.01.22.07.26.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 22 Jan 2019 07:26:14 -0800 (PST)
+Subject: Re: [PATCH 1/4] tty: sisusb_con, convert addr macros to functions
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     thomas@winischhofer.net, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190122151202.18152-1-jslaby@suse.cz>
+ <20190122152322.GA17676@kroah.com>
+From:   Jiri Slaby <jslaby@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jslaby@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <15c671db-581d-7155-ea40-40d239069cb4@suse.cz>
+Date:   Tue, 22 Jan 2019 16:26:12 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRjuO2fbOZvOjnPki1nRwh8VZmHUiSIKtQ6ioFAkZdS0g0rbtB2v
-        9SeYt2aIJGl5TUO0ecuhs1yK2UhTc9nFkkotS7qgRlqmVrbjUfLf8z0XnueFj8QVVrEHGaOL
-        Z/U6tUYlkYksD2f7vF13HQ7f3v7Ok264Vi+mi+ypIrrU1iems7540tltC4i2228T9PDQLEY/
-        aymS0LW2twRd8bIfo9NabcQBJ6ampAYxjbcGMcbS7sWYTZckzP2JexiT3WhCzJR5fQhxXLbv
-        DKuJSWT1PvtPy6Kvmt6huK7VyYaer6KLaN7ZiKQkUDvBUFaLGZGMVFBVCKxFDWJeUFDTCIps
-        CYIwhaBsvEq0nCg0ZEkEoRLBSOlHJDwciSHTC8S7JNRueN/ci/FYSW2C3KF8nDfhVCYO47ZC
-        ghfcKAYel5fgPBZRXpCbOroYkFN+YDZP4ELdBsirNi7yUsof7N0mseBxhUfXPyxOwh0eQ1Ph
-        YgFQFgJsM61LW/2hubtiCbvBl85GQsCesHC3FBNwElibxgghnIqgOLd8SdgLDzr7HW2ko2Ez
-        1Lf4CPRBaPtzk+BpoFzg1birsMEFrlj4I3laDpnpCsHtDSULvWIBrwXjQt0SZsCUly3OQRsL
-        VlxTsOKagv+9NxBuQu5sAqeNYjlfHZu0jVNruQRd1LbIWK0ZOb5Uz9/OH3dQ2++IDkSRSOUs
-        J/sCwhVidSKXou1AQOIqpTyg/1C4Qn5GnXKe1cee0idoWK4DrSVFKnf5hVUjJxRUlDqePcuy
-        cax+WcVIqcdFVJuxx+iXbM9+apNaua29PcM1R46tm/z56VcoasooCNMawk6l18uMz++qAufS
-        8n2eKPHKIKgeKDHXfc4Jr3O77HuBjByIXDM5P/d65OSYpetvBBYy7OQSKMqfCRp945Vr2Bvq
-        la6s/a76qT8XljlfHPxtkCzVHEXG+mmf2OJgq0rERat3bMH1nPof6ZApLk4DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFIsWRmVeSWpSXmKPExsVy+t/xe7oCZu4xBm9Wa1lsnLGe1WLO+RYW
-        i/lHzrFadL+Ssejb95/R4vz5DewW9+/9ZLK4vGsOm8XaI3fZLZZev8hk0br3CLsDt8eaeWsY
-        PbasvMnkse2AqsemVZ1sHgff7WHy6NuyitHj8ya5APYoPZui/NKSVIWM/OISW6VoQwsjPUNL
-        Cz0jE0s9Q2PzWCsjUyV9O5uU1JzMstQifbsEvYypqx4yFpzgr2g+/ZqlgfE3TxcjJ4eEgInE
-        7OZuti5GLg4hgaWMEq2/3zBDJKQlGk+vZoKwhSX+XOuCKvrEKDHt+SU2kASbgLnEo+1nwIpE
-        BJQlJt+bzgxSxCwwgVmibckaRpCEsICHxNlF88CmsgioSkxueQzWwCvgLLFp0zuobfIS01Z3
-        gcU5BVwkzp9axQpiCwHVPJ4whxWiXlDi5MwnLCA2M1B989bZzBMYBWYhSc1CklrAyLSKUSS1
-        tDg3PbfYSK84Mbe4NC9dLzk/dxMjMJ62Hfu5ZQdj17vgQ4wCHIxKPLwJF1xjhFgTy4orcw8x
-        SnAwK4nwul50ixHiTUmsrEotyo8vKs1JLT7EaAr0xERmKdHkfGCs55XEG5oamltYGpobmxub
-        WSiJ8543qIwSEkhPLEnNTk0tSC2C6WPi4JRqYLSabK253Mjl8g9/may4WzKlYe9sUxximN0r
-        Kt1jt6xk9O/NeLo83kjKdJuxq7WCKJdTe12L48RPyT6cZ+JENSorjJ3Ftgc3Fs61SwmyDvw6
-        z7Ve+Hxd1W8rkX1Z8v4HX89X6fney2Az1XCdz6xfCY73nhTezv1lyXSdJ5zBj11n5fYPBfFK
-        LMUZiYZazEXFiQD+1HEkvQIAAA==
-X-CMS-MailID: 20190122152608eucas1p27cff7b53eb3bb23447ef7ba2b3f69671
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190122152608eucas1p27cff7b53eb3bb23447ef7ba2b3f69671
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190122152608eucas1p27cff7b53eb3bb23447ef7ba2b3f69671
-References: <20190122152553.1537-1-k.konieczny@partner.samsung.com>
-        <CGME20190122152608eucas1p27cff7b53eb3bb23447ef7ba2b3f69671@eucas1p2.samsung.com>
+In-Reply-To: <20190122152322.GA17676@kroah.com>
+Content-Type: text/plain; charset=iso-8859-2
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document DT bindings for crypto Samsung Exynos5433 SlimSSS (Slim Security
-SubSystem) IP.
+On 22. 01. 19, 16:23, Greg KH wrote:
+> On Tue, Jan 22, 2019 at 04:11:59PM +0100, Jiri Slaby wrote:
+>> Convert SISUSB_VADDR and SISUSB_HADDR to inline functions. Now, there
+>> are no more hidden accesses to local variables (vc_data and
+>> sisusb_usb_data).
+>>
+>> sisusb_haddr returns unsigned long from now on, not u16 *, as ulong is
+>> what every caller expects -- we can remove some casts.
+>>
+>> Call sites were aligned to be readable too.
+>>
+>> Use sisusb_haddr on 4 more places in sisusbcon_blank and
+>> sisusbcon_scroll. It was open coded there with [x, y] being [0, 0].
+>>
+>> Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+>> ---
+>>  drivers/usb/misc/sisusbvga/sisusb_con.c | 78 ++++++++++++-------------
+>>  1 file changed, 39 insertions(+), 39 deletions(-)
+> 
+> Subject says "tty", yet this is the USB driver.  typo?
 
-Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
----
- .../devicetree/bindings/crypto/samsung-sss.txt      | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+Originally, I had these as a part of various tty cleanups and the tty
+remained there. I will wait for some feedback, if any and drop them in
+v2.
 
-diff --git a/Documentation/devicetree/bindings/crypto/samsung-sss.txt b/Documentation/devicetree/bindings/crypto/samsung-sss.txt
-index 7a5ca56683cc..75718f86fe50 100644
---- a/Documentation/devicetree/bindings/crypto/samsung-sss.txt
-+++ b/Documentation/devicetree/bindings/crypto/samsung-sss.txt
-@@ -1,4 +1,4 @@
--Samsung SoC SSS (Security SubSystem) module
-+Samsung SoC SSS (Security SubSystem) and SlimSSS module
- 
- The SSS module in S5PV210 SoC supports the following:
- -- Feeder (FeedCtrl)
-@@ -15,6 +15,11 @@ supports the following also:
- -- True Random Number Generator (TRNG)
- -- Secure Key Manager
- 
-+The SlimSSS module in Exynos5 (Exynos5433) supports:
-+-- Feeder (FeedCtrl)
-+-- Advanced Encryption Standard (AES)
-+-- SHA-1/SHA-256/HMAC (SHA-1/SHA-256)
-+
- Required properties:
- 
- - compatible : Should contain entries for this and backward compatible
-@@ -22,11 +27,13 @@ Required properties:
-   - "samsung,s5pv210-secss" for S5PV210 SoC.
-   - "samsung,exynos4210-secss" for Exynos4210, Exynos4212, Exynos4412, Exynos5250,
- 		Exynos5260 and Exynos5420 SoCs.
-+  - "samsung,exynos5433-slim-sss" for Exynos542x and Exynos5433 SoCs.
- - reg : Offset and length of the register set for the module
- - interrupts : interrupt specifiers of SSS module interrupts (one feed
- 		control interrupt).
- 
- - clocks : list of clock phandle and specifier pairs for all clocks  listed in
- 		clock-names property.
--- clock-names : list of device clock input names; should contain one entry
--		"secss".
-+- clock-names : list of device clock input names; should contain "pclk" and
-+		"aclk" for slim-sss in Exynos5433, and one entry "secss" for
-+		other compatibles.
+thanks,
 -- 
-2.20.0
-
+js
+suse labs
