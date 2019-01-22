@@ -2,153 +2,96 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08362C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:55:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D733C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:56:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCFE3217D6
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:55:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC79D217D6
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:56:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="LcevONuv"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="YM5eenqy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726749AbfAVUzu (ORCPT
+        id S1726792AbfAVU4J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 15:55:50 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:55534 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726632AbfAVUzt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 15:55:49 -0500
-Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 89B00575;
-        Tue, 22 Jan 2019 21:55:47 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1548190547;
-        bh=bGDAsoUre/I1SrQbWolGK7zOF4Po2t/ixbKoSqBCS54=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LcevONuv92s+8me0dd4ZhF2K7O+VdprlRn7Z5Mekl6ckHISh+L2MeRxcDMkhgMa4D
-         GHxEq9eOI1RkbKfzX/WVxFdo1JuSrlyolAPAn0E4Bql0yET0H6GIVao5S/giHe9QNC
-         Cp80RQQfqy0O5oF0//oZnNH7GiO+lFbZS78txN1M=
-Date:   Tue, 22 Jan 2019 22:55:47 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Peter Rosin <peda@axentia.se>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v3 4/5] drm/bridge: lvds-encoder: add dev helper variable
- in .probe()
-Message-ID: <20190122205547.GH3264@pendragon.ideasonboard.com>
-References: <20181229070649.21308-1-peda@axentia.se>
- <20181229070649.21308-5-peda@axentia.se>
+        Tue, 22 Jan 2019 15:56:09 -0500
+Received: from ozlabs.org ([203.11.71.1]:47375 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726752AbfAVU4I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 15:56:08 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43kggT66kSz9s4s;
+        Wed, 23 Jan 2019 07:56:05 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1548190566;
+        bh=+x2rjpEuiulvwPf4V/AGHLyLoqC/pWRmYi7tyoauAyw=;
+        h=Date:From:To:Cc:Subject:From;
+        b=YM5eenqyL3pfgHBWpA7JCmoO0oIs84FAxPVX+b8o/BK29NUouW9beVu6/mKAwmF+Y
+         MgIZohInmOtAi9xAFx4+2fPTho2qoHkkzUYl7rf7V2NtwkrmIq2girk6Yl4P9b8l89
+         EJBEyeAoXuG+9+Wk5cQAihlODF96FOyDiHxL+MNAbqLAQa6cGbb5m/bNMZ/kpiWaPC
+         eEp+tJ2MQkVyyJju1EPpCM2248j6bb4UDqVTKACdfGmYSczI9X2QZSpE4s4l5gTEZ7
+         2d9dF1zLx01kQWl4Mq7eTqgkg94ukKvCW/oHfAtm8fhEPh3ChQBjcW4Qf4kjJFrTEa
+         WZOLuk+nxDL/w==
+Date:   Wed, 23 Jan 2019 07:56:05 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Simon Horman <horms@verge.net.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: linux-next: Fixes tag needs some work in the renesas tree
+Message-ID: <20190123075605.116ddbd0@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181229070649.21308-5-peda@axentia.se>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/YGyIxYLgTJF6YbZ7JO3Zxhz"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
+--Sig_/YGyIxYLgTJF6YbZ7JO3Zxhz
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thank you for the patch.
+Hi all,
 
-On Sat, Dec 29, 2018 at 07:07:37AM +0000, Peter Rosin wrote:
-> Make the code easier to read and modify.
-> 
-> Signed-off-by: Peter Rosin <peda@axentia.se>
+In commit
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+  8d6e2bbaeceb ("arm64: dts: renesas: r8a774a1: Fix hsusb reg size")
 
-> ---
->  drivers/gpu/drm/bridge/lvds-encoder.c | 19 +++++++++----------
->  1 file changed, 9 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/lvds-encoder.c b/drivers/gpu/drm/bridge/lvds-encoder.c
-> index 75b0d3f6e4de..f6770e83d49d 100644
-> --- a/drivers/gpu/drm/bridge/lvds-encoder.c
-> +++ b/drivers/gpu/drm/bridge/lvds-encoder.c
-> @@ -34,48 +34,47 @@ static struct drm_bridge_funcs funcs = {
->  
->  static int lvds_encoder_probe(struct platform_device *pdev)
->  {
-> +	struct device *dev = &pdev->dev;
->  	struct device_node *port;
->  	struct device_node *endpoint;
->  	struct device_node *panel_node;
->  	struct drm_panel *panel;
->  	struct lvds_encoder *lvds_encoder;
->  
-> -	lvds_encoder = devm_kzalloc(&pdev->dev, sizeof(*lvds_encoder),
-> -				    GFP_KERNEL);
-> +	lvds_encoder = devm_kzalloc(dev, sizeof(*lvds_encoder), GFP_KERNEL);
->  	if (!lvds_encoder)
->  		return -ENOMEM;
->  
->  	/* Locate the panel DT node. */
-> -	port = of_graph_get_port_by_id(pdev->dev.of_node, 1);
-> +	port = of_graph_get_port_by_id(dev->of_node, 1);
->  	if (!port) {
-> -		dev_dbg(&pdev->dev, "port 1 not found\n");
-> +		dev_dbg(dev, "port 1 not found\n");
->  		return -ENXIO;
->  	}
->  
->  	endpoint = of_get_child_by_name(port, "endpoint");
->  	of_node_put(port);
->  	if (!endpoint) {
-> -		dev_dbg(&pdev->dev, "no endpoint for port 1\n");
-> +		dev_dbg(dev, "no endpoint for port 1\n");
->  		return -ENXIO;
->  	}
->  
->  	panel_node = of_graph_get_remote_port_parent(endpoint);
->  	of_node_put(endpoint);
->  	if (!panel_node) {
-> -		dev_dbg(&pdev->dev, "no remote endpoint for port 1\n");
-> +		dev_dbg(dev, "no remote endpoint for port 1\n");
->  		return -ENXIO;
->  	}
->  
->  	panel = of_drm_find_panel(panel_node);
->  	of_node_put(panel_node);
->  	if (!panel) {
-> -		dev_dbg(&pdev->dev, "panel not found, deferring probe\n");
-> +		dev_dbg(dev, "panel not found, deferring probe\n");
->  		return -EPROBE_DEFER;
->  	}
->  
->  	lvds_encoder->panel_bridge =
-> -		devm_drm_panel_bridge_add(&pdev->dev,
-> -					  panel, DRM_MODE_CONNECTOR_LVDS);
-> +		devm_drm_panel_bridge_add(dev, panel, DRM_MODE_CONNECTOR_LVDS);
->  	if (IS_ERR(lvds_encoder->panel_bridge))
->  		return PTR_ERR(lvds_encoder->panel_bridge);
->  
-> @@ -83,7 +82,7 @@ static int lvds_encoder_probe(struct platform_device *pdev)
->  	 * but we need a bridge attached to our of_node for our user
->  	 * to look up.
->  	 */
-> -	lvds_encoder->bridge.of_node = pdev->dev.of_node;
-> +	lvds_encoder->bridge.of_node = dev->of_node;
->  	lvds_encoder->bridge.funcs = &funcs;
->  	drm_bridge_add(&lvds_encoder->bridge);
->  
-> -- 
-> 2.11.0
-> 
+Fixes tag
 
--- 
-Regards,
+  Fixes: ed898d4fc19d ("arm64: dts: renesas: r8a774a1: Add USB-DMAC and
 
-Laurent Pinchart
+has these problem(s):
+
+  - Subject has leading but no trailing parentheses
+  - Subject has leading but no trailing quotes
+
+Please don't split Fixes tags across 2 lines.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/YGyIxYLgTJF6YbZ7JO3Zxhz
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxHg2UACgkQAVBC80lX
+0Gwkxgf/ZCI/KU8klbgL6sKakQ50tMiJOqh3vRQCJUZ6fLKDXWJW7sHRyXx2wx9R
++pki+C9w2Rs6zRy3ZaSmeb7NzNiz8GamCw5cXsgYII/uYM7lPkSz63dWPCI0mzLf
++IVapC1mjMF2iIXJ9ekFO/ltb2PyY9S6pX9OvmWOGwP0mlHpRiOEy0fAty9SVDjm
+aroLfa7gurTeQQd8lYPX+3dJ4GzGJwiG5rpKoqtOU3RHkow0LVa/T+n23sn4xBcF
+1hwdbuckMP3l37g/GzjRy39hLzTX4B4r+mfTLR1eqi4rGac4gTeZVNvA+nVSLu9K
+Xz51EJ4umBC0TZ2MZC5YbqYS+ibqQw==
+=+QQm
+-----END PGP SIGNATURE-----
+
+--Sig_/YGyIxYLgTJF6YbZ7JO3Zxhz--
