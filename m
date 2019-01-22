@@ -2,125 +2,123 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B74BAC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:39:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 976EEC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:39:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83A2121726
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:39:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 648B421726
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:39:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K1ihnbeC"
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="R8sGZjXm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726945AbfAVXjL (ORCPT
+        id S1726964AbfAVXjO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 18:39:11 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:33655 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726913AbfAVXjI (ORCPT
+        Tue, 22 Jan 2019 18:39:14 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:33225 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726934AbfAVXjL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 18:39:08 -0500
-Received: by mail-lf1-f65.google.com with SMTP id i26so248387lfc.0;
-        Tue, 22 Jan 2019 15:39:06 -0800 (PST)
+        Tue, 22 Jan 2019 18:39:11 -0500
+Received: by mail-it1-f196.google.com with SMTP id m8so10855044itk.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 15:39:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
+        d=android.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=a5VYBgL9jX0969Xk+NDIlqX03ARn4bupWy69/ku4CBw=;
-        b=K1ihnbeC28J27CVlPTA7MAf3H0eRq8hEH1d0gML1kYum7jZfC1uK0PGHKgYHMO6yFE
-         HFyORfqvasFdAcGOTuEMhpBsFkA1rYJv8zcx8iaaEuHJF6y3F9MF+5btAmwljVE5360C
-         FPyr+aB6WOD4H7Z3GqSyD5aNCQA5AlwhbKvAj09YMTxI7CKRLtljyuX9/oUgZh5lrbuQ
-         qLqw2Sqw+SjVMfwmCnAuRc3IlLj+W8ofvu8GaPDFKtRdVt3UfX6v0NaDM/ZqN5s6dO/+
-         nBmURTsp1QY/8htyeVgHt/yMoYdGCvEBKmrXL0yntbSE13jN61P6sCtWCgCKCBTJ+ciz
-         MRNg==
+        bh=iNLqZdvEm5CxeKT6RdyYcEltmMyKybFyRQUZBsiBNFA=;
+        b=R8sGZjXmfr0NKQLuiqdaFQyNglBl7T9PIc9fo4phgxtQj4LBR3SbSgchzkbSHR9hwG
+         Mh3yGz/0T/cJ9q/LBab1VxKb48oPDsMBW7CVCho4/qBsbSKMoJWlJSURQx9sAO6n6wDN
+         fZ4v9J+/zdsqe5UwdxPWnvprOA6ilaiVevTWWCwBhdbKHfBGODvNj+xW76yq/nd3Sqan
+         QGu33VHwKYYlj9atubT10ceRmn5gww4KfdcNgFgP1heLXWoH1o+Os15aEkipiTtYI9A7
+         kX2EzMLLCjQmIkEBKanq5JfAL1r7JbqCwMK45MCMFHy0IPw5PtSP+5i8/y/KVMVHDhIA
+         xEBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=a5VYBgL9jX0969Xk+NDIlqX03ARn4bupWy69/ku4CBw=;
-        b=lqsZetfa08zXHoQ6SWWHunk6NEy/A687yzugH5Z3xZ0hVkPBXjevBxYdzK6mAEcvIG
-         y2SvJLHwCI/oZutQovY0nn6nwiClkLtQI14U8leH9Rghg3A24aj0Nbs25SJwEU2zQQuQ
-         Y0OgHc/uvEPDaOCx1JG1UIQltqyAGj356+MR/Ejv3W6uOBCSTkXq+mTYjW0ueM1H8KCz
-         yuIK9ZEIuh4QGOb60F8pgRal0Cyg9BsMAOY3+XLmHLqIdF+8E2nDana7c20nMB6a0W3P
-         n1G33+FMHqANSmK87GVBTiC1UpNsmDkFfJUrckC9yGjw22Cgwsk+Ty5tQg3JTFd7iyRT
-         DTHg==
-X-Gm-Message-State: AJcUukfZSJHOokbO1/MjXYVFp9ycL4xJAifcwBU1rAeEL5EoV30SL/Bg
-        BOBXdcKtw+gxysCptnPwZPs=
-X-Google-Smtp-Source: ALg8bN5sEo+iMMwPKRyOVkx4yA1qPad5sylseTdj8se9Y5LniZfOJ53L0ZjtqZdg8RUXiqwOnj4abQ==
-X-Received: by 2002:a19:6514:: with SMTP id z20mr21325115lfb.31.1548200346083;
-        Tue, 22 Jan 2019 15:39:06 -0800 (PST)
-Received: from dimatab (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
-        by smtp.gmail.com with ESMTPSA id e14-v6sm214913ljl.43.2019.01.22.15.39.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 22 Jan 2019 15:39:05 -0800 (PST)
-Date:   Wed, 23 Jan 2019 02:39:02 +0300
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>,
-        "Shardar Mohammed" <smohammed@nvidia.com>,
-        Timo Alho <talho@nvidia.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-Subject: Re: [PATCH V3] i2c: tegra: Add Bus Clear Master Support
-Message-ID: <20190123023902.4bbf5c5c@dimatab>
-In-Reply-To: <BYAPR12MB33986390C45475180381713FC2980@BYAPR12MB3398.namprd12.prod.outlook.com>
-References: <1548187338-6807-1-git-send-email-skomatineni@nvidia.com>
-        <5405e9aa-d974-ca9d-dec1-32f8631a045d@gmail.com>
-        <BYAPR12MB33984356AE1E279C7E0E880CC2980@BYAPR12MB3398.namprd12.prod.outlook.com>
-        <20190123014042.6d64ee29@dimatab>
-        <BYAPR12MB33986390C45475180381713FC2980@BYAPR12MB3398.namprd12.prod.outlook.com>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; arm-unknown-linux-gnueabihf)
+        bh=iNLqZdvEm5CxeKT6RdyYcEltmMyKybFyRQUZBsiBNFA=;
+        b=mbzKJcdwHuXCZdYbzVHH/j8osztIoNVPabZyarCnHsK/PhgGeTIvaOiqMD0c/k9TOL
+         OFox/QXktZXECoaVQU3UPPn4uhUW8zlLsYB3ShSoMNyAA3xRPXtsQUKtz2ny9N3CMvUh
+         bGzffmk1BQCPHitih2XJQpiNp9EDiK4fAHW0+cpLS4iZ1T0xvuazmOXw7ZDvIctErGxN
+         xqLpKN+bWAjWLiq9uq2wvFCMJpixgR7LNYi1d9UPUXZaSbJJbbOQaz7DZ2FBEvVzikXq
+         m5GJeS0iilmZM88wqZVf1uKGrV9BC2+6E87RYobdg2uA5jp+cnvl/ePAeyZHMuQA4LDr
+         DUXA==
+X-Gm-Message-State: AHQUAubmwsDVQBj9w0z86qSfgJBiGRx2xcbLyp98Q7q+oUE6QFHlJttP
+        1j5HvDxrywrB2osqKyqYMBtPMQ==
+X-Google-Smtp-Source: AHgI3IbAi83tNb4xc7JVndkEmo1tPl98/gEs0c2kVZE8TlA6cwE3qDP54BIeqfQ1VKSH8sY3ngO35Q==
+X-Received: by 2002:a24:c456:: with SMTP id v83mr374543itf.44.1548200350277;
+        Tue, 22 Jan 2019 15:39:10 -0800 (PST)
+Received: from trong0.mtv.corp.google.com ([2620:0:1000:1601:c43f:8c1b:f6ef:3dce])
+        by smtp.gmail.com with ESMTPSA id g186sm8058823ite.39.2019.01.22.15.39.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 22 Jan 2019 15:39:09 -0800 (PST)
+From:   Tri Vo <trong@android.com>
+To:     oberpar@linux.ibm.com
+Cc:     ghackmann@android.com, ndesaulniers@google.com,
+        linux-kernel@vger.kernel.org, kernel-team@android.com,
+        yamada.masahiro@socionext.com, Tri Vo <trong@android.com>
+Subject: [PATCH v3 3/3] gcov: docs: add a note on GCC vs Clang differences
+Date:   Tue, 22 Jan 2019 15:37:49 -0800
+Message-Id: <20190122233749.42220-4-trong@android.com>
+X-Mailer: git-send-email 2.20.1.321.g9e740568ce-goog
+In-Reply-To: <20190122233749.42220-1-trong@android.com>
+References: <20190122233749.42220-1-trong@android.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=D0=92 Tue, 22 Jan 2019 23:26:08 +0000
-Sowjanya Komatineni <skomatineni@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+Document some things of note to gcov users:
+1. GCC gcov and Clang llvm-cov tools are not compatible.
+2. The use of GCC vs Clang is transparent at build-time.
 
-> >> >> +	if (i2c_dev->msg_err =3D=3D I2C_ERR_ARBITRATION_LOST) {
-> >> >> +		if (!i2c_dev->is_multimaster_mode)
-> >> >> +			return
-> >> >> tegra_i2c_issue_bus_clear(i2c_dev);
-> >> >> +		return -EAGAIN; =20
-> >> >
-> >> >This changes the returned errno from -EIO to -EAGAIN for the=20
-> >> >supports_bus_clear=3Dfalse case, is it okay and intentional?
-> >> >   =20
-> >>=20
-> >> Yes EAGAIN is intentional to allow for transfer retry.
-> >> During single master mode, ARBITRATION LOST notification happens
-> >> when 1. I2C Master sees the bus is occupied by some other device
-> >> when a transfer is initiated 2. I2C Master lost the bus during
-> >> arbitration incase if slave device pulls SDA line low continuously
-> >> for some unknown reason If arbitration lost is due to cause 1,
-> >> retry helps to continue with transfer once bus is released by the
-> >> slave and it just added delay in communication due to bus release
-> >> delay by slave. In case of 2nd cause, retry never succeeds in
-> >> cases where bus clear is not supported. =20
-> >
-> >It's unclear whether the "never succeeds retry" may fail with the
-> >EAGAIN, causing an endless retry-loop. Could you please clarify this
-> >moment? =20
->=20
-> during master transmit mode, on arbitration lost and if master
-> doesn=E2=80=99t support bus clear to recover then transfer will return
-> EAGAIN. I2c core base driver performs retries if return code from
-> i2c_transfer is EAGAIN up to specified retries in i2c adapter and
-> returns the ret code from the last retry. Retry is not endless as i2c
-> core base performs retry only up to specified adapter retries.
-> Following return code from documentation
-> https://www.kernel.org/doc/Documentation/i2c/fault-codes
->=20
->=20
+Signed-off-by: Tri Vo <trong@android.com>
+---
+ Documentation/dev-tools/gcov.rst | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
 
-Good, thanks for the clarification.
+diff --git a/Documentation/dev-tools/gcov.rst b/Documentation/dev-tools/gcov.rst
+index 69a7d90c320a..46aae52a41d0 100644
+--- a/Documentation/dev-tools/gcov.rst
++++ b/Documentation/dev-tools/gcov.rst
+@@ -34,10 +34,6 @@ Configure the kernel with::
+         CONFIG_DEBUG_FS=y
+         CONFIG_GCOV_KERNEL=y
+ 
+-select the gcc's gcov format, default is autodetect based on gcc version::
+-
+-        CONFIG_GCOV_FORMAT_AUTODETECT=y
+-
+ and to get coverage data for the entire kernel::
+ 
+         CONFIG_GCOV_PROFILE_ALL=y
+@@ -169,6 +165,20 @@ b) gcov is run on the BUILD machine
+       [user@build] gcov -o /tmp/coverage/tmp/out/init main.c
+ 
+ 
++Note on compilers
++-----------------
++
++GCC and LLVM gcov tools are not necessarily compatible. Use gcov_ to work with
++GCC-generated .gcno and .gcda files, and use llvm-cov_ for Clang.
++
++.. _gcov: http://gcc.gnu.org/onlinedocs/gcc/Gcov.html
++.. _llvm-cov: https://llvm.org/docs/CommandGuide/llvm-cov.html
++
++Build differences between GCC and Clang gcov are handled by Kconfig. It
++automatically selects the appropriate gcov format depending on the detected
++toolchain.
++
++
+ Troubleshooting
+ ---------------
+ 
+-- 
+2.20.1.321.g9e740568ce-goog
+
