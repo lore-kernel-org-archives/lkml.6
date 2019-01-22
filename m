@@ -2,109 +2,144 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C05ACC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:47:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D03F6C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:47:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 895FA2084C
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:47:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C8022084C
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:47:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="flU6YnWo"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="uM6MvBg2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727456AbfAVIrj (ORCPT
+        id S1727522AbfAVIry (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 03:47:39 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:32967 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727150AbfAVIri (ORCPT
+        Tue, 22 Jan 2019 03:47:54 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:38089 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727462AbfAVIrx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 03:47:38 -0500
-Received: by mail-pf1-f194.google.com with SMTP id c123so11458254pfb.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 00:47:38 -0800 (PST)
+        Tue, 22 Jan 2019 03:47:53 -0500
+Received: by mail-wm1-f67.google.com with SMTP id m22so13354054wml.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 00:47:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=iqSfxFIJf8+REimT2g05eRx+fSmVQJywEXO+ftuEp3Y=;
-        b=flU6YnWoqIRu4K0LO6pUn8kWAe5SavCsrJR7VU4sH0ZGAH+tO6j55c4LxPPOtv9qqy
-         /yfnH+Rs8D7bnY4Ynqgg/KQ7rsAp96TL5/rxwPn9CkIiwQO/6C7wMZ+nnrkTosw1+7jy
-         3dq9b/jdDFec7dbESwB/IrFylv9hjxjhunCAU=
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=references:user-agent:from:to:cc:subject:in-reply-to:date
+         :message-id:mime-version;
+        bh=kZr0fYXLTDuQhA7Idwn8AXJc8cbOUQt42CeU5kkGDzM=;
+        b=uM6MvBg20Qq29jwM8GsPMKR9cmQ2IwbVjzJWQRJbIKtfHk/YMlI/y9l2jhdRxNrUqC
+         W8DULMM40djroBFBgxiSzwKtAEHM3HMJC3JaL45AS3w2xxCzGUv3A0oifxCuWiLK2Lmv
+         Rvq1fZlE4RVqfoKaWZSXhGUa8dkkSF1pNCxqqf/S4UrRR+XJPeSXF3ydYKeZFbNLph85
+         cUMAIK23+V846EyJbzly4lQp24CGWg94vAIqxxM9qSZUqGLkiBdpXyblmiQnwdRXgNwl
+         WhZ1vvWDD8hZ3zhq1Xn2kHiR1ojSw3FvHROCgcNMjoRBKCToJG6N9tB/J2FynqZWpg8o
+         crtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=iqSfxFIJf8+REimT2g05eRx+fSmVQJywEXO+ftuEp3Y=;
-        b=POzzp/TJrGnjiVVy1PLoYwm+/PNG4Easmi4Ma7Dbo4Bv85v2fVcIy5x0HKEshumx38
-         32rdX8bguG8BriiiJ7XWtLhoJy2LwMCrBBFW0u5RtivrJCK7eMJtgtS8NRgJSnKnqHNi
-         jhEd93GrAum8wjb+W3fWGWaZPcBJNjf01oTsj7UelYE9W9XP2lCOv90gxpK/fKPs6v2x
-         wqdW12keGVtFjzSUW6Mki0zkKxB5JwmvDb1nHEGBX+Xi/29GcxQrlv0MtM+UwzxsA1cf
-         nJs8dRWIJh9MVMFJWpKMX8NYvRDMmlm0Hwuk9ItYn1Htrlx1WUULotiWplhruv7YHF60
-         16pA==
-X-Gm-Message-State: AJcUukcK1W+4zX6qfaBdDEHLc7ZXK0l7EgLPkqJ+N5Vq/3MDPb2aifWo
-        T67lrzqxMH7ugye678XY15V2Bw==
-X-Google-Smtp-Source: ALg8bN7l5+531/BgcdJTR2yJsNro+gsXA+30SQF5G0/ZJqDs7GAnLlrTHhuHm5XJnKtzzYn2edqlTw==
-X-Received: by 2002:a62:1c0a:: with SMTP id c10mr32632105pfc.213.1548146858017;
-        Tue, 22 Jan 2019 00:47:38 -0800 (PST)
-Received: from ubt.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id d18sm21045683pfj.47.2019.01.22.00.47.32
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:date:message-id:mime-version;
+        bh=kZr0fYXLTDuQhA7Idwn8AXJc8cbOUQt42CeU5kkGDzM=;
+        b=JfxHaAjpCsH6JtWclg7MmzsSElFdVKrLwuHvmg8pcMEsEjOlFHCngZ7zgSa8iPwtz7
+         JSUSySeIdkLXcRj/HvamQ5nJd2o+upY4D737m4+Q8Oq3AEs94DoB1xO/0SmnND5o1m6Y
+         UEWHvP3QydmFbG3S89G+3VYpn4yfhIu5p3qHLs5FT9Qn4oOeoNY1pjn4duk8ZXtk3wWG
+         iv/xQfE1lKob1LUPK9M22LsNts6btuC5DykjOX4c0w/ER3FyViNoIktTgM8FxgibYyJK
+         UVP3QUDh5FDtUg7gfyRmVMLliiM4z3UlJgRrvzZCg3XhBVaSHsXo5kuIWj8TRnEvMY9Z
+         qgKg==
+X-Gm-Message-State: AJcUukcDJOg1jNj/Xw49GmqvxAkHUUoXggoZ24ojcOYtBA83a7YvsoIH
+        PQU/36xIWyOLC1XgipZTZejqAg==
+X-Google-Smtp-Source: ALg8bN4hP9cUm8TfDSALBx3GgvgF7ZFeOYtqq7C86ZxIP4jA64gAuD4khKmkql26XdrLqVWmVWmNRA==
+X-Received: by 2002:a1c:13d1:: with SMTP id 200mr2654672wmt.4.1548146870859;
+        Tue, 22 Jan 2019 00:47:50 -0800 (PST)
+Received: from localhost (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id f191sm9370369wmg.12.2019.01.22.00.47.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Jan 2019 00:47:37 -0800 (PST)
-From:   Chunyan Zhang <zhang.chunyan@linaro.org>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Faiz Abbas <faiz_abbas@ti.com>
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH] dt-bindings: sdhci-omap: Add properties for using external dma
-Date:   Tue, 22 Jan 2019 16:47:06 +0800
-Message-Id: <20190122084706.11522-1-zhang.chunyan@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190121232057.GA30919@bogus>
-References: <20190121232057.GA30919@bogus>
+        Tue, 22 Jan 2019 00:47:50 -0800 (PST)
+References: <1547744074-28308-1-git-send-email-lollivier@baylibre.com> <1547744074-28308-3-git-send-email-lollivier@baylibre.com> <20190121171019.GA2903@bogus> <86imyhapl9.fsf@baylibre.com> <CAGp9LzpgZDEdKFH4ZLqxtO60unxXRJoXNsGugNT=oojHDMp+3g@mail.gmail.com>
+User-agent: mu4e 1.0; emacs 25.3.2
+From:   Loys Ollivier <lollivier@baylibre.com>
+To:     Sean Wang <sean.wang@kernel.org>
+Cc:     Loys Ollivier <lollivier@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Johan Hovold <johan@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 2/4] dt-bindings: gnss: add mediatek binding
+In-reply-to: <CAGp9LzpgZDEdKFH4ZLqxtO60unxXRJoXNsGugNT=oojHDMp+3g@mail.gmail.com>
+Date:   Tue, 22 Jan 2019 09:47:48 +0100
+Message-ID: <86imyh13kb.fsf@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-sdhci-omap can support both external dma controller via dmaengine
-framework as well as ADMA which standard SD host controller
-provides.
 
-Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
----
- Documentation/devicetree/bindings/mmc/sdhci-omap.txt | 7 +++++++
- 1 file changed, 7 insertions(+)
+On Mon 21 Jan 2019 at 18:44, Sean Wang wrote:
 
-diff --git a/Documentation/devicetree/bindings/mmc/sdhci-omap.txt b/Documentation/devicetree/bindings/mmc/sdhci-omap.txt
-index 72c4dec7e1db..4485dbceb373 100644
---- a/Documentation/devicetree/bindings/mmc/sdhci-omap.txt
-+++ b/Documentation/devicetree/bindings/mmc/sdhci-omap.txt
-@@ -14,6 +14,11 @@ Required properties:
- 		 "ddr_1_8v-rev11", "ddr_1_8v" or "ddr_3_3v", "hs200_1_8v-rev11",
- 		 "hs200_1_8v",
- - pinctrl-<n> : Pinctrl states as described in bindings/pinctrl/pinctrl-bindings.txt
-+- dmas:		List of DMA specifiers with the controller specific format as described
-+		in the generic DMA client binding. A tx and rx specifier is required.
-+- dma-names:	List of DMA request names. These strings correspond 1:1 with the
-+		DMA specifiers listed in dmas. The string naming is to be "tx"
-+		and "rx" for TX and RX DMA requests, respectively.
- 
- Example:
- 	mmc1: mmc@4809c000 {
-@@ -22,4 +27,6 @@ Example:
- 		ti,hwmods = "mmc1";
- 		bus-width = <4>;
- 		vmmc-supply = <&vmmc>; /* phandle to regulator node */
-+		dmas = <&sdma 61 &sdma 62>;
-+		dma-names = "tx", "rx";
- 	};
+> On Mon, Jan 21, 2019 at 9:29 AM Loys Ollivier <lollivier@baylibre.com> 
+> wrote:
+>>
+>>
+>> On Mon 21 Jan 2019 at 17:10, Rob Herring wrote:
+>>
+>> > On Thu, 17 Jan 2019 17:54:32 +0100, Loys Ollivier wrote:
+>> >> Add binding for Mediatek-based GNSS receivers.
+>> >>
+>> >> Signed-off-by: Loys Ollivier <lollivier@baylibre.com>
+>> >> ---
+>> >>
+>> >> v2:
+>> >> Renamed bindings from Globaltop/gtop to Mediatek/mtk.
+>> >> Moved current-speed as an optional propertie.
+>> >> Removed the status line in the example.
+>> >> Added "mediatek,mt3339" compatible.
+>> >>
+>> >>  .../devicetree/bindings/gnss/mediatek.txt          | 39
+>> >>  ++++++++++++++++++++++
+>> >>  1 file changed, 39 insertions(+)
+>> >>  create mode 100644 Documentation/devicetree/bindings/gnss/mediatek.txt
+>> >>
+>> >
+>> > Reviewed-by: Rob Herring <robh@kernel.org>
+>>
+>> Thanks Rob,
+>> If there are no objections by others, I'll stop sending these two patch
+>> (1/4 and 2/4) and reference any new patch serie for 3 and 4 as depending
+>> on those two.
+>>
+>
+> Hi Loys,
+>
+> Thanks for adding the first GPS device driver. It's really nice to see
+> more device drivers added to upstream support.
+>
+Hi Sean,
+
+Glad to know you're supporting this initiative.
+
+> Do you mind send the series again with Cc linux-mediatek@lists.infradead.org 
+> ?
+>
+The series already has linux-mediatek@lists.infradead.org in Cc. Does it
+need a resend ?
+
+> Sean
+>
+>> --
+>> -L
+>>
+>> _______________________________________________
+>> Linux-mediatek mailing list
+>> Linux-mediatek@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-mediatek
+
+
 -- 
-2.17.1
-
+-L
