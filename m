@@ -2,174 +2,80 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A483C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:27:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05D71C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:27:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 682FF21019
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:27:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548170846;
-	bh=Tz1YeAbVLwTmc/DeRS5sKPM1MCatSL6DfQQ4kWQo4C8=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=YpwnHGHEVg1TJDE8hJmmOCcEOmMG7vrFTrLovSuCzAY4ElZ9lDSV/1LWvtGnqPCvL
-	 hqPQu48USKOL/QfnDOad17Pem7PKXJ6Q6/7uGaXyilTiVEi4pg1Jbb22OATZNQR+9m
-	 6ua1bReGysI+rMnrC/m+zGfWoVHFUvpK9U2gS05E=
+	by mail.kernel.org (Postfix) with ESMTP id CB24221019
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:27:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730028AbfAVP1Y (ORCPT
+        id S1729682AbfAVPWr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 10:27:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35216 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729708AbfAVPWv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 10:22:51 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A678C20879;
-        Tue, 22 Jan 2019 15:22:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548170570;
-        bh=Tz1YeAbVLwTmc/DeRS5sKPM1MCatSL6DfQQ4kWQo4C8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Vi7hIkuRN6aEIbAHABQPFxItQKuCdT8wTtjfPC1bWGxyHiZSYFS5mxzt6pkovWa5c
-         dqZDEX7L5tDtfY+unzp1jFxl2koZu3mBYWqxpRVeMGbkFAJVT9SCR1kFAVEFu8Zvio
-         MAJ+tDVl5bnd9ZtPvTX5tSDHf4A9OpEsT0rTKnII=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Tony Lindgren <tony@atomide.com>,
-        linux-wireless@vger.kernel.org
-Subject: [PATCH] ti: wl1251: no need to check return value of debugfs_create functions
-Date:   Tue, 22 Jan 2019 16:21:25 +0100
-Message-Id: <20190122152151.16139-26-gregkh@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
+        Tue, 22 Jan 2019 10:22:47 -0500
+Received: from mx2.suse.de ([195.135.220.15]:60304 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729648AbfAVPWq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 10:22:46 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 32428B04E;
+        Tue, 22 Jan 2019 15:22:45 +0000 (UTC)
+Date:   Tue, 22 Jan 2019 07:22:38 -0800
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org,
+        Davidlohr Bueso <dbueso@suse.de>
+Subject: Re: [PATCH 6/7] perf hist: Use cached rbtrees
+Message-ID: <20190122152238.rbm6pxg7muasa5mv@linux-r8p5>
+References: <20181206191819.30182-1-dave@stgolabs.net>
+ <20181206191819.30182-7-dave@stgolabs.net>
+ <20190122135901.GE14973@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20190122135901.GE14973@kernel.org>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When calling debugfs functions, there is no need to ever check the
-return value.  The function can work or not, but the code logic should
-never do something different based on this.
+On Tue, 22 Jan 2019, Arnaldo Carvalho de Melo wrote:
 
-Cc: Kalle Valo <kvalo@codeaurora.org>
-Cc: Tony Lindgren <tony@atomide.com>
-Cc: linux-wireless@vger.kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/wireless/ti/wl1251/debugfs.c | 59 ++----------------------
- 1 file changed, 5 insertions(+), 54 deletions(-)
+>Em Thu, Dec 06, 2018 at 11:18:18AM -0800, Davidlohr Bueso escreveu:
+>> At the cost of an extra pointer, we can avoid the O(logN) cost
+>> of finding the first element in the tree (smallest node), which
+>> is something heavily required for histograms. Specifically, the
+>> following are converted to rb_root_cached, and users accordingly:
+>>
+>> hist::entries_in_array
+>> hist::entries_in
+>> hist::entries
+>> hist::entries_collapsed
+>> hist_entry::hroot_in
+>> hist_entry::hroot_out
+>
+>  CC       /tmp/build/perf/util/hist.o
+>ui/browsers/hists.c: In function ???hierarchy_set_folding???:
+>ui/browsers/hists.c:511:21: error: passing argument 1 of ???rb_first??? from incompatible pointer type [-Werror=incompatible-pointer-types]
+>  for (nd = rb_first(&he->hroot_out); nd; nd = rb_next(nd)) {
+>                     ^~~~~~~~~~~~~~
+>In file included from ui/browsers/hists.c:8:
+>/home/acme/git/perf/tools/include/linux/rbtree.h:83:24: note: expected ???const struct rb_root *??? but argument is of type ???struct rb_root_cached *???
+> extern struct rb_node *rb_first(const struct rb_root *);
+>                        ^~~~~~~~
+>ui/browsers/hists.c: In function ???__hist_browser__set_folding???:
+>ui/browsers/hists.c:569:16: error: passing argument 1 of ???rb_first??? from incompatible pointer type [-Werror=incompatible-pointer-types]
+>  nd = rb_first(&browser->hists->entries);
+>                ^~~~~~~~~~~~~~~~~~~~~~~~
+>
+>So I added this on top, please check:
 
-diff --git a/drivers/net/wireless/ti/wl1251/debugfs.c b/drivers/net/wireless/ti/wl1251/debugfs.c
-index 448da1f8c22f..c99b23aaa70e 100644
---- a/drivers/net/wireless/ti/wl1251/debugfs.c
-+++ b/drivers/net/wireless/ti/wl1251/debugfs.c
-@@ -54,11 +54,6 @@ static const struct file_operations name## _ops = {			\
- #define DEBUGFS_ADD(name, parent)					\
- 	wl->debugfs.name = debugfs_create_file(#name, 0400, parent,	\
- 					       wl, &name## _ops);	\
--	if (IS_ERR(wl->debugfs.name)) {					\
--		ret = PTR_ERR(wl->debugfs.name);			\
--		wl->debugfs.name = NULL;				\
--		goto out;						\
--	}
- 
- #define DEBUGFS_DEL(name)						\
- 	do {								\
-@@ -354,10 +349,8 @@ static void wl1251_debugfs_delete_files(struct wl1251 *wl)
- 	DEBUGFS_DEL(excessive_retries);
- }
- 
--static int wl1251_debugfs_add_files(struct wl1251 *wl)
-+static void wl1251_debugfs_add_files(struct wl1251 *wl)
- {
--	int ret = 0;
--
- 	DEBUGFS_FWSTATS_ADD(tx, internal_desc_overflow);
- 
- 	DEBUGFS_FWSTATS_ADD(rx, out_of_mem);
-@@ -453,12 +446,6 @@ static int wl1251_debugfs_add_files(struct wl1251 *wl)
- 	DEBUGFS_ADD(tx_queue_status, wl->debugfs.rootdir);
- 	DEBUGFS_ADD(retry_count, wl->debugfs.rootdir);
- 	DEBUGFS_ADD(excessive_retries, wl->debugfs.rootdir);
--
--out:
--	if (ret < 0)
--		wl1251_debugfs_delete_files(wl);
--
--	return ret;
- }
- 
- void wl1251_debugfs_reset(struct wl1251 *wl)
-@@ -471,56 +458,20 @@ void wl1251_debugfs_reset(struct wl1251 *wl)
- 
- int wl1251_debugfs_init(struct wl1251 *wl)
- {
--	int ret;
-+	wl->stats.fw_stats = kzalloc(sizeof(*wl->stats.fw_stats), GFP_KERNEL);
-+	if (!wl->stats.fw_stats)
-+		return -ENOMEM;
- 
- 	wl->debugfs.rootdir = debugfs_create_dir(KBUILD_MODNAME, NULL);
- 
--	if (IS_ERR(wl->debugfs.rootdir)) {
--		ret = PTR_ERR(wl->debugfs.rootdir);
--		wl->debugfs.rootdir = NULL;
--		goto err;
--	}
--
- 	wl->debugfs.fw_statistics = debugfs_create_dir("fw-statistics",
- 						       wl->debugfs.rootdir);
- 
--	if (IS_ERR(wl->debugfs.fw_statistics)) {
--		ret = PTR_ERR(wl->debugfs.fw_statistics);
--		wl->debugfs.fw_statistics = NULL;
--		goto err_root;
--	}
--
--	wl->stats.fw_stats = kzalloc(sizeof(*wl->stats.fw_stats),
--				      GFP_KERNEL);
--
--	if (!wl->stats.fw_stats) {
--		ret = -ENOMEM;
--		goto err_fw;
--	}
--
- 	wl->stats.fw_stats_update = jiffies;
- 
--	ret = wl1251_debugfs_add_files(wl);
--
--	if (ret < 0)
--		goto err_file;
-+	wl1251_debugfs_add_files(wl);
- 
- 	return 0;
--
--err_file:
--	kfree(wl->stats.fw_stats);
--	wl->stats.fw_stats = NULL;
--
--err_fw:
--	debugfs_remove(wl->debugfs.fw_statistics);
--	wl->debugfs.fw_statistics = NULL;
--
--err_root:
--	debugfs_remove(wl->debugfs.rootdir);
--	wl->debugfs.rootdir = NULL;
--
--err:
--	return ret;
- }
- 
- void wl1251_debugfs_exit(struct wl1251 *wl)
--- 
-2.20.1
+Looks good thanks (sorry I thought I had tested all this -- even ran perf
+several times :/)
 
+Thanks,
+Davidlohr
