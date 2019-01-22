@@ -2,132 +2,139 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0196C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:50:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E328C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:51:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E45E20684
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:50:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UJe9CTzC"
+	by mail.kernel.org (Postfix) with ESMTP id 3AFA720684
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:51:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548201099;
+	bh=jRtKrT4Fr7OvfKk4AgXDaAaRHxzbmYtL0pFNCei9/wk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=JX/2Wf/V9IgGQWUI5QC0PfFyAcbRcQoW3kXwfdzctWLQg78fMnLq5EeogNZwyIxad
+	 Rvb35bSk3HjCxZ5CJJMhrlPP9eEvbJ+JACvrQVpAMzZH+/xrf/verUP1jFlcl8hw0+
+	 BfrndCOUAhIZoOG/wYZGM8148+7bilvWRbxjdCwE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726931AbfAVXu3 (ORCPT
+        id S1727016AbfAVXvi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 18:50:29 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:39686 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726175AbfAVXu2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 18:50:28 -0500
-Received: by mail-pf1-f195.google.com with SMTP id r136so179602pfc.6
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 15:50:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Vg2FrSNYL5mUAqLEkhsXCahwMmPNuVyImKcCd137yqM=;
-        b=UJe9CTzCSptgIyMFGLe6xVXTT98jzAXyHYiDEv+IG0hX8o+AYuxRyUqW7dTd7NkEB9
-         S1e9N8ey2Hjqpdv2Rf4p7csCZAHvQvgMjRRH1ZxfSZIxn1b/OHrY9aflWrwJ/gvu1GGq
-         4rLvXrDKdk5zLYl6zMAyp0mqpRP1DOMxPaI4jvLMqYMj6qB0oAfZsu5v2DIoPMHNslSi
-         nnXM2azX41MXEsqbgrNEVXzV35Nyo96f2U991oNAAR69sRXQKyHZWhXqCT6A84J4MHJb
-         jQY+o3pfsyqOqGY35pP8P5CuT8PzbR3JtrtITI/C6dolzwshAPPaLT8151c/ytz3lM9p
-         tw4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Vg2FrSNYL5mUAqLEkhsXCahwMmPNuVyImKcCd137yqM=;
-        b=I5cEPIq9ErEKA5DLi77uyJ0nScjiHsrT9fmzMVgLoMkFb24LORKyXMTgFITBElHxY/
-         HVjYVtX/fF4ywDxd2t+fFTOL4ap8u9jQ50t0uWWj1oNfeZAkPj27tLT08Cp35lXjprXQ
-         1qWwkpwcEE+ie4cFqXnn9I8Isi+qG732E+EHeBI1rTcs+yAJX/nQ1yS/tQR4aqY5m3BF
-         l5DzQZ54V5Ps5TPG5ByAO6L+SwgY28blpJogsZ14ksd8wJbesQpreDILW/axIbpRTobX
-         wHXPeEIR9TVAVKMRyCBggIozInLf3XFfzUGOLV9VMa2fEg/ye5BcP1q6YxvIOktoRJL8
-         niMg==
-X-Gm-Message-State: AJcUukfjgMtMaDG90Dza4u46U8TIZYTm9hf8qT0+2DMU6K9fzvhMl4JK
-        DSZukE/QZvEfFG9zo9WekmwzviEadXYc46YxSphylQ==
-X-Google-Smtp-Source: ALg8bN4/m1RpY9sTYjZaUT2/A0wEqclaPgKw7MRtgdmiceR18YTotMTYx+hsIwA1HTQE4N/ttDOmiMiny5aClavit8Y=
-X-Received: by 2002:a63:a064:: with SMTP id u36mr34153634pgn.145.1548201027235;
- Tue, 22 Jan 2019 15:50:27 -0800 (PST)
+        Tue, 22 Jan 2019 18:51:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54228 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726175AbfAVXvh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 18:51:37 -0500
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7BB0A20684;
+        Tue, 22 Jan 2019 23:51:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548201095;
+        bh=jRtKrT4Fr7OvfKk4AgXDaAaRHxzbmYtL0pFNCei9/wk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=g0uW0n1vQBxtxOP9LF8OZsVXNphbuE9MT570h0I4Gn1NiFTb4hRg1xkJD+AY4H3dK
+         6/5aDn7XqVNi4Yzx9BTWtOMsDe7nGPEMxJlVxIJ1AKhBwJ0Qs3owm5C6QniSUapTiF
+         xZ0fOy8UEmywsnHE8KVoC04yc8ILSZ9jpuwZabDM=
+Date:   Tue, 22 Jan 2019 17:51:34 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc:     rjw@rjwysocki.net, lenb@kernel.org, jeffrey.t.kirsher@intel.com,
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI / ACPI: Don't clear pme_poll on device that has
+ unreliable ACPI wake
+Message-ID: <20190122235134.GE14636@google.com>
+References: <20190122064544.27426-1-kai.heng.feng@canonical.com>
 MIME-Version: 1.0
-References: <20190122233749.42220-1-trong@android.com> <20190122233749.42220-4-trong@android.com>
-In-Reply-To: <20190122233749.42220-4-trong@android.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Tue, 22 Jan 2019 15:50:16 -0800
-Message-ID: <CAKwvOdkACNJhHtPWG5VXR3o7S9RfHiBqkb4x=RnjF2y3ixnQGg@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] gcov: docs: add a note on GCC vs Clang differences
-To:     Tri Vo <trong@android.com>
-Cc:     Peter Oberparleiter <oberpar@linux.ibm.com>,
-        Greg Hackmann <ghackmann@android.com>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-team@android.com,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190122064544.27426-1-kai.heng.feng@canonical.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 3:39 PM Tri Vo <trong@android.com> wrote:
->
-> Document some things of note to gcov users:
-> 1. GCC gcov and Clang llvm-cov tools are not compatible.
-> 2. The use of GCC vs Clang is transparent at build-time.
->
-> Signed-off-by: Tri Vo <trong@android.com>
+On Tue, Jan 22, 2019 at 02:45:44PM +0800, Kai-Heng Feng wrote:
+> There are some e1000e devices can only be woken up from D3 one time, by
+> plugging ethernet cable. Subsequent cable plugging does set PME bit
+> correctly, but it still doesn't get woken up.
+> 
+> Since e1000e connects to the root complex directly, we rely on ACPI to
+> wake it up. In this case, the GPE from _PRW only works once and stops
+> working after that.
+> 
+> So introduce a new PCI quirk, to avoid clearing pme_poll flag for buggy
+> platform firmwares that have unreliable GPE wake.
 
-Thanks for adding this note (I made the mistake myself when testing
-out these patches that the coverage format is slightly different).
-And good find removing the documentation on the now obsolete config.
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+This quirk applies to all 0x15bb (E1000_DEV_ID_PCH_CNP_I219_LM7) and
+0x15bd (E1000_DEV_ID_PCH_CNP_I219_LM6) devices.  The e1000e driver
+claims about a zillion different device IDs.
 
+I would be surprised if these two devices are defective but all the
+others work correctly.  Could it be that there is a problem with the
+wiring on this particular motherboard or with the ACPI _PRW methods
+(or the way Linux interprets them) in this firmware?
+
+Would you mind attaching a complete dmesg log and "sudo lspci -vvv"
+output to the bugzilla, please?
+
+> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
 > ---
->  Documentation/dev-tools/gcov.rst | 18 ++++++++++++++----
->  1 file changed, 14 insertions(+), 4 deletions(-)
->
-> diff --git a/Documentation/dev-tools/gcov.rst b/Documentation/dev-tools/gcov.rst
-> index 69a7d90c320a..46aae52a41d0 100644
-> --- a/Documentation/dev-tools/gcov.rst
-> +++ b/Documentation/dev-tools/gcov.rst
-> @@ -34,10 +34,6 @@ Configure the kernel with::
->          CONFIG_DEBUG_FS=y
->          CONFIG_GCOV_KERNEL=y
->
-> -select the gcc's gcov format, default is autodetect based on gcc version::
-> -
-> -        CONFIG_GCOV_FORMAT_AUTODETECT=y
-> -
->  and to get coverage data for the entire kernel::
->
->          CONFIG_GCOV_PROFILE_ALL=y
-> @@ -169,6 +165,20 @@ b) gcov is run on the BUILD machine
->        [user@build] gcov -o /tmp/coverage/tmp/out/init main.c
->
->
-> +Note on compilers
-> +-----------------
+>  drivers/pci/pci-acpi.c | 2 +-
+>  drivers/pci/quirks.c   | 8 ++++++++
+>  include/linux/pci.h    | 1 +
+>  3 files changed, 10 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
+> index e1949f7efd9c..184e2fc8a294 100644
+> --- a/drivers/pci/pci-acpi.c
+> +++ b/drivers/pci/pci-acpi.c
+> @@ -430,7 +430,7 @@ static void pci_acpi_wake_dev(struct acpi_device_wakeup_context *context)
+>  
+>  	pci_dev = to_pci_dev(context->dev);
+>  
+> -	if (pci_dev->pme_poll)
+> +	if (pci_dev->pme_poll && !pci_dev->unreliable_acpi_wake)
+>  		pci_dev->pme_poll = false;
+>  
+>  	if (pci_dev->current_state == PCI_D3cold) {
+> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+> index b0a413f3f7ca..ed4863496fa8 100644
+> --- a/drivers/pci/quirks.c
+> +++ b/drivers/pci/quirks.c
+> @@ -4948,6 +4948,14 @@ DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_AMD, PCI_ANY_ID,
+>  DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_NVIDIA, PCI_ANY_ID,
+>  			      PCI_CLASS_MULTIMEDIA_HD_AUDIO, 8, quirk_gpu_hda);
+>  
+> +static void quirk_unreliable_acpi_wake(struct pci_dev *pdev)
+> +{
+> +	pci_info(pdev, "ACPI Wake unreliable, always poll PME\n");
+> +	pdev->unreliable_acpi_wake = 1;
+> +}
+> +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x15bb, quirk_unreliable_acpi_wake);
+> +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x15bd, quirk_unreliable_acpi_wake);
 > +
-> +GCC and LLVM gcov tools are not necessarily compatible. Use gcov_ to work with
-> +GCC-generated .gcno and .gcda files, and use llvm-cov_ for Clang.
-> +
-> +.. _gcov: http://gcc.gnu.org/onlinedocs/gcc/Gcov.html
-> +.. _llvm-cov: https://llvm.org/docs/CommandGuide/llvm-cov.html
-> +
-> +Build differences between GCC and Clang gcov are handled by Kconfig. It
-> +automatically selects the appropriate gcov format depending on the detected
-> +toolchain.
-> +
-> +
->  Troubleshooting
->  ---------------
->
-> --
-> 2.20.1.321.g9e740568ce-goog
->
-
-
--- 
-Thanks,
-~Nick Desaulniers
+>  /*
+>   * Some IDT switches incorrectly flag an ACS Source Validation error on
+>   * completions for config read requests even though PCIe r4.0, sec
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index 65f1d8c2f082..d22065c1576f 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -331,6 +331,7 @@ struct pci_dev {
+>  	unsigned int	pme_support:5;	/* Bitmask of states from which PME#
+>  					   can be generated */
+>  	unsigned int	pme_poll:1;	/* Poll device's PME status bit */
+> +	unsigned int	unreliable_acpi_wake:1;	/* ACPI Wake doesn't always work */
+>  	unsigned int	d1_support:1;	/* Low power state D1 is supported */
+>  	unsigned int	d2_support:1;	/* Low power state D2 is supported */
+>  	unsigned int	no_d1d2:1;	/* D1 and D2 are forbidden */
+> -- 
+> 2.17.1
+> 
