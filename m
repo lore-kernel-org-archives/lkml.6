@@ -2,92 +2,87 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DATE_IN_PAST_12_24,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 960ABC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:04:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FE83C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:06:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65E4621852
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:04:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548252291;
-	bh=kDSBGLX2PNkg7XL0kjBL+5Zw95l+yMEWrrVlCxIEM5g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=iufE0vmg3Uutm/REhs1asbV8gxDoHzaRMyXIChUz64CvuXLDj+t+s319yI5adNSuI
-	 DlpRvC2i9bg0LVDkw/1sQvtVy/r3ZHz54rZl/ydl1eNCC7gy+8C+iQyo72vogfn5nc
-	 OoLCRDAztzYL1+iy5V06sg9N3H5AIb18Qv8733ys=
+	by mail.kernel.org (Postfix) with ESMTP id 389632184D
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:06:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726359AbfAWOEt (ORCPT
+        id S1726744AbfAWOGY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 09:04:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38482 "EHLO mail.kernel.org"
+        Wed, 23 Jan 2019 09:06:24 -0500
+Received: from mga17.intel.com ([192.55.52.151]:53944 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726122AbfAWOEt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 09:04:49 -0500
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F05A2184D;
-        Wed, 23 Jan 2019 14:04:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548252288;
-        bh=kDSBGLX2PNkg7XL0kjBL+5Zw95l+yMEWrrVlCxIEM5g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=llr4S6SFcci6gFBfEnHx+5CMT0LAoeOeuGus/QYnf8nWjlJfOR0RG8Uqru+n80KTJ
-         uVKPQ2pa9ZzyTOzNZMJ0FWaFse26G2Xh0PaxdzRhwpM3xoC4MmWizAyYKaAYtAWnxj
-         6wqIyJDxIMjrVXBc/Y6UZ82LyVtyf6UTswn64JtQ=
-Date:   Wed, 23 Jan 2019 09:04:47 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        devel@driverdev.osuosl.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 4.20 056/117] media: cedrus: don't initialize
- pointers with zero
-Message-ID: <20190123140447.GK202535@sasha-vm>
-References: <20190108192628.121270-1-sashal@kernel.org>
- <20190108192628.121270-56-sashal@kernel.org>
- <20190109084854.GA1743@kadam>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20190109084854.GA1743@kadam>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1726236AbfAWOGY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 09:06:24 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jan 2019 06:06:23 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,511,1539673200"; 
+   d="scan'208";a="140622222"
+Received: from local-michael-cet-test.sh.intel.com ([10.239.159.128])
+  by fmsmga001.fm.intel.com with ESMTP; 23 Jan 2019 06:06:21 -0800
+From:   Yang Weijiang <weijiang.yang@intel.com>
+To:     pbonzini@redhat.com, rkrcmar@redhat.com,
+        sean.j.christopherson@intel.com, jmattson@google.com,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org, mst@redhat.com,
+        yu-cheng.yu@intel.com, yi.z.zhang@intel.com, hjl.tools@gmail.com
+Cc:     weijiang.yang@intel.com
+Subject: [PATCH v2 0/7] This patch-set is to enable Guest CET support
+Date:   Wed, 23 Jan 2019 04:59:02 +0800
+Message-Id: <20190122205909.24165-1-weijiang.yang@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 11:48:54AM +0300, Dan Carpenter wrote:
->This is a pure cleanup patch, it doesn't affect runtime.
->
->On Tue, Jan 08, 2019 at 02:25:24PM -0500, Sasha Levin wrote:
->> From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
->>
->> [ Upstream commit e4d7b113fdccde1acf8638c5879f2a450d492303 ]
->>
->> A common mistake is to assume that initializing a var with:
->> 	struct foo f = { 0 };
->>
->> Would initialize a zeroed struct. Actually, what this does is
->> to initialize the first element of the struct to zero.
->>
->> According to C99 Standard 6.7.8.21:
->>
->>     "If there are fewer initializers in a brace-enclosed
->>      list than there are elements or members of an aggregate,
->>      or fewer characters in a string literal used to initialize
->>      an array of known size than there are elements in the array,
->>      the remainder of the aggregate shall be initialized implicitly
->>      the same as objects that have static storage duration."
->
->Static storage is initialized to zero so this is fine.  It's just
->that Sparse complains if you mix NULL and zero.
+Control-flow Enforcement Technology (CET) provides protection against
+return/jump-oriented programming (ROP) attacks. To make kvm Guest OS own
+the capability, this patch-set is required. It enables CET related CPUID
+report, xsaves/xrstors, vmx entry configuration etc. for Guest OS.
 
-I'll drop it, thank you.
+PATCH 1    : Define CET VMCS fields and bits.
+PATCH 2/3  : Report CET feature support in CPUID.
+PATCH 4    : Fix xsaves size calculation issue.
+PATCH 5    : Pass through CET MSRs to Guest.
+PATCH 6    : Set Guest CET state auto loading bit.
+PATCH 7    : Enable CET xsaves bits support in XSS.
 
---
-Thanks,
-Sasha
+Changelog:
+ v2:
+ - Re-ordered patch sequence, combined one patch.
+ - Added more description for CET related VMCS fields.
+ - Added Host CET capability check while enabling Guest CET loading bit.
+ - Added Host CET capability check while reporting Guest CPUID(EAX=7,
+   EXC=0).
+ - Modified code in reporting Guest CPUID(EAX=D,ECX>=1), make it clearer.
+ - Added Host and Guest XSS mask check while setting bits for Guest XSS.
+
+
+Yang Weijiang (7):
+  KVM:VMX: Define CET VMCS fields and bits
+  KVM:CPUID: Define CET CPUID bits and CR4.CET master enable bit.
+  KVM:CPUID: Add CPUID support for CET xsaves component query.
+  KVM:CPUID: Fix xsaves area size calculation for CPUID.(EAX=0xD,ECX=1).
+  KVM:VMX: Pass through host CET related MSRs to Guest.
+  KVM:VMX: Load Guest CET via VMCS when CET is enabled in Guest
+  KVM:X86: Enable MSR_IA32_XSS bit 11 and 12 for CET xsaves/xrstors.
+
+ arch/x86/include/asm/kvm_host.h |  3 +-
+ arch/x86/include/asm/vmx.h      |  8 ++++
+ arch/x86/kvm/cpuid.c            | 67 ++++++++++++++++++++++++---------
+ arch/x86/kvm/vmx.c              | 60 +++++++++++++++++++++++++++--
+ arch/x86/kvm/x86.c              |  4 ++
+ arch/x86/kvm/x86.h              |  4 ++
+ 6 files changed, 125 insertions(+), 21 deletions(-)
+
+-- 
+2.17.1
+
