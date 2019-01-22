@@ -2,402 +2,241 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF32FC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:15:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C20CC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:17:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9197E20854
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:15:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="mLuins3B"
+	by mail.kernel.org (Postfix) with ESMTP id D582A20854
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:17:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726885AbfAVSPK (ORCPT
+        id S1726813AbfAVSRe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 13:15:10 -0500
-Received: from alln-iport-4.cisco.com ([173.37.142.91]:56061 "EHLO
-        alln-iport-4.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726832AbfAVSPH (ORCPT
+        Tue, 22 Jan 2019 13:17:34 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:38218 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726008AbfAVSRd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 13:15:07 -0500
-X-Greylist: delayed 573 seconds by postgrey-1.27 at vger.kernel.org; Tue, 22 Jan 2019 13:15:06 EST
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=cisco.com; i=@cisco.com; l=10059; q=dns/txt;
-  s=iport; t=1548180906; x=1549390506;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=VVLUtUTfuG7rr8+82upZObDyjdmmuhELBaZ97CzohQk=;
-  b=mLuins3B3ZXaUBxMD0tEpuYTOGouvCFecgWEQi5tkmSl1cLrej3NUtwu
-   KjJZyXF75yQ01NJjtcElgtiQIyPNar4x3073Q9mXcnUsctWVyWxUWuDxr
-   HvjEcPawJp5vVbGvwRN/fd8ahn/G/i3qXuUWay1qjOX7GjtvzSQlqvunt
-   M=;
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A0ADAADpWkdc/40NJK1jGQEBAQEBAQE?=
- =?us-ascii?q?BAQEBAQcBAQEBAQGBUQQBAQEBAQsBggNmgQInCowRi2yCDZgBgXsLAQEfhE0?=
- =?us-ascii?q?Cgm0iNAkNAQMBAQIBAQJtHAyFSgEBAQEDJxM/DAQCAQgRBAEBHxAyHQgCBAE?=
- =?us-ascii?q?NBQiDG4IBrjEziiqMQReBQD+BEYMSimECiVsKhiWBWJA+CQKHIopvIII0j2A?=
- =?us-ascii?q?tiVeQcgIRFIEnHziBVnAVgycJgh4XE4QriWBBMYl4gR8BAQ?=
-X-IronPort-AV: E=Sophos;i="5.56,507,1539648000"; 
-   d="scan'208";a="229600963"
-Received: from alln-core-8.cisco.com ([173.36.13.141])
-  by alln-iport-4.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jan 2019 18:05:31 +0000
-Received: from XCH-ALN-015.cisco.com (xch-aln-015.cisco.com [173.36.7.25])
-        by alln-core-8.cisco.com (8.15.2/8.15.2) with ESMTPS id x0MI5V6e006796
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=FAIL);
-        Tue, 22 Jan 2019 18:05:31 GMT
-Received: from xch-rcd-012.cisco.com (173.37.102.22) by XCH-ALN-015.cisco.com
- (173.36.7.25) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 22 Jan
- 2019 12:05:31 -0600
-Received: from xch-rcd-012.cisco.com ([173.37.102.22]) by
- XCH-RCD-012.cisco.com ([173.37.102.22]) with mapi id 15.00.1395.000; Tue, 22
- Jan 2019 12:05:31 -0600
-From:   "Satish Kharat (satishkh)" <satishkh@cisco.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Martin Petersen <martin.petersen@oracle.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "Sesidhar Baddela (sebaddel)" <sebaddel@cisco.com>,
-        "Karan Tilak Kumar (kartilak)" <kartilak@cisco.com>
-Subject: RE: [PATCH 3/7] scsi: fnic: no need to check return value of
- debugfs_create functions
-Thread-Topic: [PATCH 3/7] scsi: fnic: no need to check return value of
- debugfs_create functions
-Thread-Index: AQHUsmR5/nkdgIvf/U6JwZrlfe277aW7k81g
-Date:   Tue, 22 Jan 2019 18:05:30 +0000
-Message-ID: <a001f340b2f94667bcc2870244cfccd7@XCH-RCD-012.cisco.com>
-References: <20190122150906.12470-1-gregkh@linuxfoundation.org>
- <20190122150906.12470-4-gregkh@linuxfoundation.org>
-In-Reply-To: <20190122150906.12470-4-gregkh@linuxfoundation.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.157.132.77]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 22 Jan 2019 13:17:33 -0500
+Received: by mail-lf1-f65.google.com with SMTP id a8so18811807lfk.5;
+        Tue, 22 Jan 2019 10:17:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=rcmy8kGquP69dUpbMBzNh31+Q1f8E6BcCqqAfeXP10M=;
+        b=ckZzKF/GYf13KMyUc5UKEmYpc7f7bXKLe5GXOKObMmFhzKMbboKGG7KtCqezSH6FVs
+         S/K8fb/VFpaFjJjK4REgAXCl6ROuRhS7BhslPZ6tEb9Z42hiFCiKG0ZTu0BssFXEqVjN
+         KPmmwWQCGfz9IYpdvoeWlJzogvKhGmGf1kMuQIYB6Gv4hTpnxqKAVTXEbPSejoRarvzr
+         xhttG040K4FX7BJ0t5t/ZkbhNP97hQ1g+eGaBIXtm+mZQH9HuSm4JYDb4KxMzDjRHlHo
+         ZtzztcUU1RYB69ZHg83mYKIRhWCw5VaZIY/u+brHxwSvBFfT3MT0qytAYaeHuHCGFbhx
+         IXqg==
+X-Gm-Message-State: AJcUukcZ4ArHGPuYUu/xjYcWLFjnp8PopP01wqpREJkMe6ddaW7D1iXv
+        lEg0SfT7hFqCCAJbQecd5vE=
+X-Google-Smtp-Source: ALg8bN5Rj3cgDpw30T2mSxN/u0CKaefBKWn/evi/C6+2LDMOlAPoxo/WdbfD7FkS0vhi0eW8hrInMg==
+X-Received: by 2002:a19:4e59:: with SMTP id c86mr22516424lfb.132.1548181049715;
+        Tue, 22 Jan 2019 10:17:29 -0800 (PST)
+Received: from localhost.localdomain (82-203-157-3.bb.dnainternet.fi. [82.203.157.3])
+        by smtp.gmail.com with ESMTPSA id f1sm115417lfm.22.2019.01.22.10.17.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 22 Jan 2019 10:17:29 -0800 (PST)
+Date:   Tue, 22 Jan 2019 20:03:09 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     mazziesaccount@gmail.com, lee.jones@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, lgirdwood@gmail.com, broonie@kernel.org,
+        gregkh@linuxfoundation.org, rafael@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        sre@kernel.org, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+        heikki.haikola@fi.rohmeurope.com
+Subject: Re: [RFC PATCH v1 13/13] watchdog: bd70528: Initial support for ROHM
+ BD70528 watchdog block
+Message-ID: <20190122180309.GD2559@localhost.localdomain>
+References: <cover.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
+ <ec70833179d1953dbc91e01901b79d3319ff013d.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
+ <20190122154750.GB1705@roeck-us.net>
+ <20190122171023.GC2559@localhost.localdomain>
+ <20190122174056.GB4964@roeck-us.net>
 MIME-Version: 1.0
-X-Outbound-SMTP-Client: 173.36.7.25, xch-aln-015.cisco.com
-X-Outbound-Node: alln-core-8.cisco.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190122174056.GB4964@roeck-us.net>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Looks good to me.
-Acked-by: Satish Kharat <satishkh@cisco.com>
+On Tue, Jan 22, 2019 at 09:40:56AM -0800, Guenter Roeck wrote:
+> On Tue, Jan 22, 2019 at 07:10:23PM +0200, Matti Vaittinen wrote:
+> > On Tue, Jan 22, 2019 at 07:47:50AM -0800, Guenter Roeck wrote:
+> > > On Tue, Jan 22, 2019 at 11:48:36AM +0200, Matti Vaittinen wrote:
+> > > > Initial support for watchdog block included in ROHM BD70528
+> > > > power management IC.
+> > > > 
+> > > > Configurations for low power states are still to be checked.
+> > > > 
+> > > > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> > > > ---
+> > > >  drivers/watchdog/Kconfig       |  12 +++
+> > > >  drivers/watchdog/Makefile      |   1 +
+> > > >  drivers/watchdog/bd70528_wdt.c | 161 +++++++++++++++++++++++++++++++++++++++++
+> > > >  3 files changed, 174 insertions(+)
+> > > >  create mode 100644 drivers/watchdog/bd70528_wdt.c
+> > > > 
+> > > > diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+> > > > index 57f017d74a97..f30e3a3e886e 100644
+> > > > --- a/drivers/watchdog/Kconfig
+> > > > +++ b/drivers/watchdog/Kconfig
+> > > > @@ -90,6 +90,18 @@ config SOFT_WATCHDOG_PRETIMEOUT
+> > > >  	  watchdog. Be aware that governors might affect the watchdog because it
+> > > >  	  is purely software, e.g. the panic governor will stall it!
+> > > >  
+> > > > +config BD70528_WATCHDOG
+> > > > +	tristate "ROHM BD70528 PMIC Watchdog"
+> > > > +	depends on MFD_ROHM_BD70528
+> > > > +	select WATCHDOG_CORE
+> > > > +	help
+> > > > +	  Support for the watchdog in the ROHM BD70528 PMIC. Watchdog trigger
+> > > > +	  cause system reset.
+> > > > +
+> > > > +	  Say Y here to include support for the ROHM BD70528 watchdog.
+> > > > +	  Alternatively say M to compile the driver as a module,
+> > > > +	  which will be called bd70528_wdt.
+> > > > +
+> > > >  config DA9052_WATCHDOG
+> > > >  	tristate "Dialog DA9052 Watchdog"
+> > > >  	depends on PMIC_DA9052 || COMPILE_TEST
+> > > > diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
+> > > > index a0917ef28e07..1ce87a3b1172 100644
+> > > > --- a/drivers/watchdog/Makefile
+> > > > +++ b/drivers/watchdog/Makefile
+> > > > @@ -204,6 +204,7 @@ obj-$(CONFIG_WATCHDOG_SUN4V)		+= sun4v_wdt.o
+> > > >  obj-$(CONFIG_XEN_WDT) += xen_wdt.o
+> > > >  
+> > > >  # Architecture Independent
+> > > > +obj-$(CONFIG_BD70528_WATCHDOG) += bd70528_wdt.o
+> > > >  obj-$(CONFIG_DA9052_WATCHDOG) += da9052_wdt.o
+> > > >  obj-$(CONFIG_DA9055_WATCHDOG) += da9055_wdt.o
+> > > >  obj-$(CONFIG_DA9062_WATCHDOG) += da9062_wdt.o
+> > > > diff --git a/drivers/watchdog/bd70528_wdt.c b/drivers/watchdog/bd70528_wdt.c
+> > > > new file mode 100644
+> > > > index 000000000000..e9a32566f595
+> > > > --- /dev/null
+> > > > +++ b/drivers/watchdog/bd70528_wdt.c
+> > > > @@ -0,0 +1,161 @@
+> > > > +// SPDX-License-Identifier: GPL-2.0
+> > > > +// Copyright (C) 2018 ROHM Semiconductors
+> > > > +// ROHM BD70528MWV watchdog driver
+> > > > +
+> > > > +#include <linux/bcd.h>
+> > > > +#include <linux/kernel.h>
+> > > > +#include <linux/mfd/rohm-bd70528.h>
+> > > > +#include <linux/module.h>
+> > > > +#include <linux/of.h>
+> > > > +#include <linux/platform_device.h>
+> > > > +#include <linux/regmap.h>
+> > > > +#include <linux/watchdog.h>
+> > > > +
+> > > > +static int bd70528_wdt_set(struct bd70528 *bd70528, int enable)
+> > > > +{
+> > > > +	int ret;
+> > > > +
+> > > > +	if (bd70528->rtc_timer_lock)
+> > > > +		mutex_lock(bd70528->rtc_timer_lock);
+> > > 
+> > > This looks awkward. I don't think the if() is necessary.
+> > 
+> > Right. Now when only bd70528 MFD driver uses this WDT this if is not
+> > required.
+> > 
+> That doesn't warrant the conditional. It just bloats the code.
+> If there is only one user, the mutex will always be acquired.
 
+Yep. What I meant was that the only possible parent is bd70528 MFD
+driver which always initializes the mutex pointer. So pointer should be
+always set. I can imagine some other ROHM PMIC having almost identical
+watchdog block - in which case we might want to re-use this WDT driver
+with this PMIC. And if this PMIC has no RTC, then we may not need this
+mutex. But this is all speculation and I will remove check - or see how
+this changes when I see what to do with the driver's private data.
 
-Satish Kharat
-TECHNICAL LEADER.ENGINEERING
-satishkh@cisco.com
+> > > > +static const struct watchdog_info bd70528_wdt_info = {
+> > > > +	.identity = "bd70528-wdt",
+> > > > +	.options = WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING | WDIOF_MAGICCLOSE,
+> > > > +};
+> > > > +
+> > > > +static const struct watchdog_ops bd70528_wdt_ops = {
+> > > > +	.start		= bd70528_wdt_start,
+> > > > +	.stop		= bd70528_wdt_stop,
+> > > > +	/*
+> > > > +	 *  bd70528 WDT ping is same as enable. Eg, writing 'enable' to enabled
+> > > > +	 * WDT will restart the timeout
+> > > > +	 */
+> > > Unnecessary comment.
+> > > 
+> > 
+> > Ok. I will remove the comment if this is obvious to others. For me it
+> > was not obvious. I was first writing a separate ping and start functions
+> > untill I realized that it is the same operation. But this was my first
+> > WDT driver so I don't know if this is a normal for all WDTs.
+> > 
+> It is documented as part of the API.
+I'd better read the documentation then. Thanks for pointing this out.
+I'll remove the comment.
 
------Original Message-----
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>=20
-Sent: Tuesday, January 22, 2019 7:09 AM
-To: James Bottomley <jejb@linux.ibm.com>; Martin Petersen <martin.petersen@=
-oracle.com>
-Cc: linux-kernel@vger.kernel.org; linux-scsi@vger.kernel.org; Greg Kroah-Ha=
-rtman <gregkh@linuxfoundation.org>; Satish Kharat (satishkh) <satishkh@cisc=
-o.com>; Sesidhar Baddela (sebaddel) <sebaddel@cisco.com>; Karan Tilak Kumar=
- (kartilak) <kartilak@cisco.com>
-Subject: [PATCH 3/7] scsi: fnic: no need to check return value of debugfs_c=
-reate functions
+> > > > +static int bd70528_wdt_probe(struct platform_device *pdev)
+> > > > +{
+> > > > +	struct bd70528 *tmp;
+> > > > +	struct bd70528 *bd70528;
+> > > > +	int ret;
+> > > > +
+> > > > +	tmp = dev_get_drvdata(pdev->dev.parent);
+> > > > +	if (!tmp) {
+> > > > +		dev_err(&pdev->dev, "No MFD driver data\n");
+> > > > +		return -EINVAL;
+> > > > +	}
+> > > > +	bd70528 = devm_kzalloc(&pdev->dev, sizeof(*bd70528), GFP_KERNEL);
+> > > > +	if (!bd70528)
+> > > > +		return -ENOMEM;
+> > > > +
+> > > > +	*bd70528 = *tmp;
+> > > > +	bd70528->chip.dev = &pdev->dev;
+> > > 
+> > > This is wrong.
+> > > You should not copy the parent's driver data but have local driver
+> > > data as needed which then points to the parent's driver data if
+> > > needed. I assume this is why the mutex is a pointer, but that
+> > > just shows that the whole approach is wrong.
+> > 
+> > Mutex is a pointer because we want to use same mutex from WDT and RTC.
+> > We can sure point to parent data but then we still need our own dev
+> > pointer. So we can have a struct with pointer to parent data and dev
+> > pointer - but I'm not at all sure it is any clearer.
+> 
+> As I said, that is wrong. To say it in plaintext, I won't accept
+> the driver if it copies the parent's driver data. The driver should
+> have and use its own driver data, and only maintain a pointer to
+> its parent's driver data. And most definitely you don't want to
+> copy and use any device data structure from the parent.
 
-When calling debugfs functions, there is no need to ever check the return v=
-alue.  The function can work or not, but the code logic should never do som=
-ething different based on this.
+Allright. At the moment the WDT driver only needs regmap pointer from
+parent. I'm not sure if it will later need DT or "chip type" - but I
+will change this.
 
-Cc: Satish Kharat <satishkh@cisco.com>
-Cc: Sesidhar Baddela <sebaddel@cisco.com>
-Cc: Karan Tilak Kumar <kartilak@cisco.com>
-Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/scsi/fnic/fnic_debugfs.c | 88 ++------------------------------
- drivers/scsi/fnic/fnic_main.c    |  7 +--
- drivers/scsi/fnic/fnic_stats.h   |  2 +-
- drivers/scsi/fnic/fnic_trace.c   | 17 ++----
- drivers/scsi/fnic/fnic_trace.h   |  4 +-
- 5 files changed, 10 insertions(+), 108 deletions(-)
+Br,
+	Matti Vaittinen
 
-diff --git a/drivers/scsi/fnic/fnic_debugfs.c b/drivers/scsi/fnic/fnic_debu=
-gfs.c
-index 139fffa3658a..21991c99db7c 100644
---- a/drivers/scsi/fnic/fnic_debugfs.c
-+++ b/drivers/scsi/fnic/fnic_debugfs.c
-@@ -54,23 +54,9 @@ int fnic_debugfs_init(void)  {
- 	int rc =3D -1;
- 	fnic_trace_debugfs_root =3D debugfs_create_dir("fnic", NULL);
--	if (!fnic_trace_debugfs_root) {
--		printk(KERN_DEBUG "Cannot create debugfs root\n");
--		return rc;
--	}
--
--	if (!fnic_trace_debugfs_root) {
--		printk(KERN_DEBUG
--			"fnic root directory doesn't exist in debugfs\n");
--		return rc;
--	}
-=20
- 	fnic_stats_debugfs_root =3D debugfs_create_dir("statistics",
- 						fnic_trace_debugfs_root);
--	if (!fnic_stats_debugfs_root) {
--		printk(KERN_DEBUG "Cannot create Statistics directory\n");
--		return rc;
--	}
-=20
- 	/* Allocate memory to structure */
- 	fc_trc_flag =3D (struct fc_trace_flag_type *) @@ -356,39 +342,19 @@ stati=
-c const struct file_operations fnic_trace_debugfs_fops =3D {
-  * it will also create file trace_enable to control enable/disable of
-  * trace logging into trace buffer.
-  */
--int fnic_trace_debugfs_init(void)
-+void fnic_trace_debugfs_init(void)
- {
--	int rc =3D -1;
--	if (!fnic_trace_debugfs_root) {
--		printk(KERN_DEBUG
--			"FNIC Debugfs root directory doesn't exist\n");
--		return rc;
--	}
- 	fnic_trace_enable =3D debugfs_create_file("tracing_enable",
- 					S_IFREG|S_IRUGO|S_IWUSR,
- 					fnic_trace_debugfs_root,
- 					&(fc_trc_flag->fnic_trace),
- 					&fnic_trace_ctrl_fops);
-=20
--	if (!fnic_trace_enable) {
--		printk(KERN_DEBUG
--			"Cannot create trace_enable file under debugfs\n");
--		return rc;
--	}
--
- 	fnic_trace_debugfs_file =3D debugfs_create_file("trace",
- 					S_IFREG|S_IRUGO|S_IWUSR,
- 					fnic_trace_debugfs_root,
- 					&(fc_trc_flag->fnic_trace),
- 					&fnic_trace_debugfs_fops);
--
--	if (!fnic_trace_debugfs_file) {
--		printk(KERN_DEBUG
--			"Cannot create trace file under debugfs\n");
--		return rc;
--	}
--	rc =3D 0;
--	return rc;
- }
-=20
- /*
-@@ -419,37 +385,20 @@ void fnic_trace_debugfs_terminate(void)
-  * trace logging into trace buffer.
-  */
-=20
--int fnic_fc_trace_debugfs_init(void)
-+void fnic_fc_trace_debugfs_init(void)
- {
--	int rc =3D -1;
--
--	if (!fnic_trace_debugfs_root) {
--		pr_err("fnic:Debugfs root directory doesn't exist\n");
--		return rc;
--	}
--
- 	fnic_fc_trace_enable =3D debugfs_create_file("fc_trace_enable",
- 					S_IFREG|S_IRUGO|S_IWUSR,
- 					fnic_trace_debugfs_root,
- 					&(fc_trc_flag->fc_trace),
- 					&fnic_trace_ctrl_fops);
-=20
--	if (!fnic_fc_trace_enable) {
--		pr_err("fnic: Failed create fc_trace_enable file\n");
--		return rc;
--	}
--
- 	fnic_fc_trace_clear =3D debugfs_create_file("fc_trace_clear",
- 					S_IFREG|S_IRUGO|S_IWUSR,
- 					fnic_trace_debugfs_root,
- 					&(fc_trc_flag->fc_clear),
- 					&fnic_trace_ctrl_fops);
-=20
--	if (!fnic_fc_trace_clear) {
--		pr_err("fnic: Failed to create fc_trace_enable file\n");
--		return rc;
--	}
--
- 	fnic_fc_rdata_trace_debugfs_file =3D
- 		debugfs_create_file("fc_trace_rdata",
- 				    S_IFREG|S_IRUGO|S_IWUSR,
-@@ -457,24 +406,12 @@ int fnic_fc_trace_debugfs_init(void)
- 				    &(fc_trc_flag->fc_normal_file),
- 				    &fnic_trace_debugfs_fops);
-=20
--	if (!fnic_fc_rdata_trace_debugfs_file) {
--		pr_err("fnic: Failed create fc_rdata_trace file\n");
--		return rc;
--	}
--
- 	fnic_fc_trace_debugfs_file =3D
- 		debugfs_create_file("fc_trace",
- 				    S_IFREG|S_IRUGO|S_IWUSR,
- 				    fnic_trace_debugfs_root,
- 				    &(fc_trc_flag->fc_row_file),
- 				    &fnic_trace_debugfs_fops);
--
--	if (!fnic_fc_trace_debugfs_file) {
--		pr_err("fnic: Failed to create fc_trace file\n");
--		return rc;
--	}
--	rc =3D 0;
--	return rc;
- }
-=20
- /*
-@@ -757,45 +694,26 @@ static const struct file_operations fnic_reset_debugf=
-s_fops =3D {
-  * It will create file stats and reset_stats under statistics/host# direct=
-ory
-  * to log per fnic stats.
-  */
--int fnic_stats_debugfs_init(struct fnic *fnic)
-+void fnic_stats_debugfs_init(struct fnic *fnic)
- {
--	int rc =3D -1;
- 	char name[16];
-=20
- 	snprintf(name, sizeof(name), "host%d", fnic->lport->host->host_no);
-=20
--	if (!fnic_stats_debugfs_root) {
--		printk(KERN_DEBUG "fnic_stats root doesn't exist\n");
--		return rc;
--	}
- 	fnic->fnic_stats_debugfs_host =3D debugfs_create_dir(name,
- 						fnic_stats_debugfs_root);
--	if (!fnic->fnic_stats_debugfs_host) {
--		printk(KERN_DEBUG "Cannot create host directory\n");
--		return rc;
--	}
-=20
- 	fnic->fnic_stats_debugfs_file =3D debugfs_create_file("stats",
- 						S_IFREG|S_IRUGO|S_IWUSR,
- 						fnic->fnic_stats_debugfs_host,
- 						fnic,
- 						&fnic_stats_debugfs_fops);
--	if (!fnic->fnic_stats_debugfs_file) {
--		printk(KERN_DEBUG "Cannot create host stats file\n");
--		return rc;
--	}
-=20
- 	fnic->fnic_reset_debugfs_file =3D debugfs_create_file("reset_stats",
- 						S_IFREG|S_IRUGO|S_IWUSR,
- 						fnic->fnic_stats_debugfs_host,
- 						fnic,
- 						&fnic_reset_debugfs_fops);
--	if (!fnic->fnic_reset_debugfs_file) {
--		printk(KERN_DEBUG "Cannot create host stats file\n");
--		return rc;
--	}
--	rc =3D 0;
--	return rc;
- }
-=20
- /*
-diff --git a/drivers/scsi/fnic/fnic_main.c b/drivers/scsi/fnic/fnic_main.c =
-index 5b3534b0deda..cc8f7c82e2ba 100644
---- a/drivers/scsi/fnic/fnic_main.c
-+++ b/drivers/scsi/fnic/fnic_main.c
-@@ -578,12 +578,7 @@ static int fnic_probe(struct pci_dev *pdev, const stru=
-ct pci_device_id *ent)
-=20
- 	host->transportt =3D fnic_fc_transport;
-=20
--	err =3D fnic_stats_debugfs_init(fnic);
--	if (err) {
--		shost_printk(KERN_ERR, fnic->lport->host,
--				"Failed to initialize debugfs for stats\n");
--		fnic_stats_debugfs_remove(fnic);
--	}
-+	fnic_stats_debugfs_init(fnic);
-=20
- 	/* Setup PCI resources */
- 	pci_set_drvdata(pdev, fnic);
-diff --git a/drivers/scsi/fnic/fnic_stats.h b/drivers/scsi/fnic/fnic_stats.=
-h index 9daa6ada6fa0..09c3f864c1cf 100644
---- a/drivers/scsi/fnic/fnic_stats.h
-+++ b/drivers/scsi/fnic/fnic_stats.h
-@@ -134,6 +134,6 @@ struct stats_debug_info {  };
-=20
- int fnic_get_stats_data(struct stats_debug_info *, struct fnic_stats *); -=
-int fnic_stats_debugfs_init(struct fnic *);
-+void fnic_stats_debugfs_init(struct fnic *);
- void fnic_stats_debugfs_remove(struct fnic *);  #endif /* _FNIC_STATS_H_ *=
-/ diff --git a/drivers/scsi/fnic/fnic_trace.c b/drivers/scsi/fnic/fnic_trac=
-e.c index bf0fd2aeb92e..c08eda9ef086 100644
---- a/drivers/scsi/fnic/fnic_trace.c
-+++ b/drivers/scsi/fnic/fnic_trace.c
-@@ -503,15 +503,10 @@ int fnic_trace_buf_init(void)
- 		fnic_trace_entries.page_offset[i] =3D fnic_buf_head;
- 		fnic_buf_head +=3D FNIC_ENTRY_SIZE_BYTES;
- 	}
--	err =3D fnic_trace_debugfs_init();
--	if (err < 0) {
--		pr_err("fnic: Failed to initialize debugfs for tracing\n");
--		goto err_fnic_trace_debugfs_init;
--	}
-+	fnic_trace_debugfs_init();
- 	pr_info("fnic: Successfully Initialized Trace Buffer\n");
- 	return err;
--err_fnic_trace_debugfs_init:
--	fnic_trace_free();
-+
- err_fnic_trace_buf_init:
- 	return err;
- }
-@@ -596,16 +591,10 @@ int fnic_fc_trace_init(void)
- 		fc_trace_entries.page_offset[i] =3D fc_trace_buf_head;
- 		fc_trace_buf_head +=3D FC_TRC_SIZE_BYTES;
- 	}
--	err =3D fnic_fc_trace_debugfs_init();
--	if (err < 0) {
--		pr_err("fnic: Failed to initialize FC_CTLR tracing.\n");
--		goto err_fnic_fc_ctlr_trace_debugfs_init;
--	}
-+	fnic_fc_trace_debugfs_init();
- 	pr_info("fnic: Successfully Initialized FC_CTLR Trace Buffer\n");
- 	return err;
-=20
--err_fnic_fc_ctlr_trace_debugfs_init:
--	fnic_fc_trace_free();
- err_fnic_fc_ctlr_trace_buf_init:
- 	return err;
- }
-diff --git a/drivers/scsi/fnic/fnic_trace.h b/drivers/scsi/fnic/fnic_trace.=
-h index e375d0c2eaaf..8aa55c1e2025 100644
---- a/drivers/scsi/fnic/fnic_trace.h
-+++ b/drivers/scsi/fnic/fnic_trace.h
-@@ -111,7 +111,7 @@ int fnic_trace_buf_init(void);  void fnic_trace_free(vo=
-id);  int fnic_debugfs_init(void);  void fnic_debugfs_terminate(void); -int=
- fnic_trace_debugfs_init(void);
-+void fnic_trace_debugfs_init(void);
- void fnic_trace_debugfs_terminate(void);
-=20
- /* Fnic FC CTLR Trace releated function */ @@ -123,7 +123,7 @@ int fnic_fc=
-_trace_get_data(fnic_dbgfs_t *fnic_dbgfs_prt, u8 rdata_flag);  void copy_an=
-d_format_trace_data(struct fc_trace_hdr *tdata,
- 				fnic_dbgfs_t *fnic_dbgfs_prt,
- 				int *len, u8 rdata_flag);
--int fnic_fc_trace_debugfs_init(void);
-+void fnic_fc_trace_debugfs_init(void);
- void fnic_fc_trace_debugfs_terminate(void);
-=20
- #endif
---
-2.20.1
+-- 
+Matti Vaittinen
+ROHM Semiconductors
 
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
