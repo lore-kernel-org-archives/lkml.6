@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F372C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:09:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED731C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:09:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D315120879
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:09:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3D7120879
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:09:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548169781;
-	bh=WLQwn8ifWH9LBps1DAAf8nxz/jyI09snSY9z5Yapczs=;
+	s=default; t=1548169792;
+	bh=T/4wqXFPMGbTlBiMa7bOcw0yjzp9WL78NGTBlnd3q2c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=AJm3yg4GqID+0gm91eHY6CbNsslCary69K9UEXXQO8BJSuwOS2iPh4/cj/kg7/vjs
-	 KW9k6DvekcZKN18P5L5AU6FSWL+T4q0MgWHpn/0dtlbqGPQLWBVouWeWLaWm0WhOZU
-	 T/O2/sIU5jYfnBrnTsOMiTM4TvVys596XNSwlOQQ=
+	b=yp8bbRPC83SaZSzWu+RTwuCByLPbOByQo7DhqVcsfQu42YHIczbOD/mFj2ryCm234
+	 mnIf+TBNYY6UJfMbhjLFbFBriImg/tb6U7sBDLUN4T2KHfl1+uuBt0EiHgfbnUkBB7
+	 AhaR8+G4g3RPFbhdin9RkGEtrYSUfgX2A+H1LysY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729211AbfAVPJl (ORCPT
+        id S1729122AbfAVPJa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 10:09:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49046 "EHLO mail.kernel.org"
+        Tue, 22 Jan 2019 10:09:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48794 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729155AbfAVPJh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 10:09:37 -0500
+        id S1728687AbfAVPJ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 10:09:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 380C420879;
-        Tue, 22 Jan 2019 15:09:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4CD5621726;
+        Tue, 22 Jan 2019 15:09:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548169776;
-        bh=WLQwn8ifWH9LBps1DAAf8nxz/jyI09snSY9z5Yapczs=;
+        s=default; t=1548169767;
+        bh=T/4wqXFPMGbTlBiMa7bOcw0yjzp9WL78NGTBlnd3q2c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZmbmzoxDKYCddNzsjXIfKlXmqekQ4ekAXBwXaNWH95RglhqqA02MrFE5SSxIA8s5K
-         sIiNrjh3UwRu3N+5peZWvmvfxglruuKWtfiRhszck0D3kitaS0xaiRjtl0hC+fr0RM
-         U7MxmZYoUsvYrNfeFCUAL48SigSEhGDPw7W9tGxs=
+        b=dHaKroUJo2/iC5DPhvsf85pbViFRFZl5f3lMjyXtNHsfEN5yUQnyxRDHAoOIVVhXk
+         3udfaxh1Y5ynI8CouNVLt5qYyr3u+eJtPOZgdJFpKQ/IqHWwBEKosIqW+ZMAhLuPwt
+         k4eGBc5Xmj4SoqsWncdFmv6uYpHGm35yLn/+9sbA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     James Bottomley <jejb@linux.ibm.com>,
         Martin Petersen <martin.petersen@oracle.com>
 Cc:     linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        qla2xxx-upstream@qlogic.com
-Subject: [PATCH 7/7] scsi: qla2xxx: no need to check return value of debugfs_create functions
-Date:   Tue, 22 Jan 2019 16:09:06 +0100
-Message-Id: <20190122150906.12470-8-gregkh@linuxfoundation.org>
+        Karan Tilak Kumar <kartilak@cisco.com>,
+        Sesidhar Baddela <sebaddel@cisco.com>
+Subject: [PATCH 4/7] scsi: snic: no need to check return value of debugfs_create functions
+Date:   Tue, 22 Jan 2019 16:09:03 +0100
+Message-Id: <20190122150906.12470-5-gregkh@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190122150906.12470-1-gregkh@linuxfoundation.org>
 References: <20190122150906.12470-1-gregkh@linuxfoundation.org>
@@ -62,97 +63,282 @@ When calling debugfs functions, there is no need to ever check the
 return value.  The function can work or not, but the code logic should
 never do something different based on this.
 
-Cc: qla2xxx-upstream@qlogic.com
+Cc: Karan Tilak Kumar <kartilak@cisco.com>
+Cc: Sesidhar Baddela <sebaddel@cisco.com>
 Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>
 Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
 Cc: linux-scsi@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/qla2xxx/qla_dfs.c | 43 +---------------------------------
- 1 file changed, 1 insertion(+), 42 deletions(-)
+ drivers/scsi/snic/snic_debugfs.c | 133 ++++++-------------------------
+ drivers/scsi/snic/snic_main.c    |  14 +---
+ drivers/scsi/snic/snic_stats.h   |   2 +-
+ drivers/scsi/snic/snic_trc.c     |  12 +--
+ drivers/scsi/snic/snic_trc.h     |   4 +-
+ 5 files changed, 32 insertions(+), 133 deletions(-)
 
-diff --git a/drivers/scsi/qla2xxx/qla_dfs.c b/drivers/scsi/qla2xxx/qla_dfs.c
-index 0b190082aa8d..ead17288e2a7 100644
---- a/drivers/scsi/qla2xxx/qla_dfs.c
-+++ b/drivers/scsi/qla2xxx/qla_dfs.c
-@@ -446,11 +446,6 @@ qla2x00_dfs_setup(scsi_qla_host_t *vha)
- 
- 	atomic_set(&qla2x00_dfs_root_count, 0);
- 	qla2x00_dfs_root = debugfs_create_dir(QLA2XXX_DRIVER_NAME, NULL);
--	if (!qla2x00_dfs_root) {
--		ql_log(ql_log_warn, vha, 0x00f7,
--		    "Unable to create debugfs root directory.\n");
--		goto out;
+diff --git a/drivers/scsi/snic/snic_debugfs.c b/drivers/scsi/snic/snic_debugfs.c
+index 0abe17c1a73b..2b349365592f 100644
+--- a/drivers/scsi/snic/snic_debugfs.c
++++ b/drivers/scsi/snic/snic_debugfs.c
+@@ -30,33 +30,13 @@
+  * fnic directory and statistics directory for trace buffer and
+  * stats logging
+  */
+-
+-int
+-snic_debugfs_init(void)
++void snic_debugfs_init(void)
+ {
+-	int rc = -1;
+-	struct dentry *de = NULL;
+-
+-	de = debugfs_create_dir("snic", NULL);
+-	if (!de) {
+-		SNIC_DBG("Cannot create debugfs root\n");
+-
+-		return rc;
 -	}
+-	snic_glob->trc_root = de;
+-
+-	de = debugfs_create_dir("statistics", snic_glob->trc_root);
+-	if (!de) {
+-		SNIC_DBG("Cannot create Statistics directory\n");
++	snic_glob->trc_root = debugfs_create_dir("snic", NULL);
  
- create_dir:
- 	if (ha->dfs_dir)
-@@ -458,64 +453,28 @@ qla2x00_dfs_setup(scsi_qla_host_t *vha)
- 
- 	mutex_init(&ha->fce_mutex);
- 	ha->dfs_dir = debugfs_create_dir(vha->host_str, qla2x00_dfs_root);
--	if (!ha->dfs_dir) {
--		ql_log(ql_log_warn, vha, 0x00f8,
--		    "Unable to create debugfs ha directory.\n");
--		goto out;
+-		return rc;
 -	}
+-	snic_glob->stats_root = de;
+-
+-	rc = 0;
+-
+-	return rc;
+-} /* end of snic_debugfs_init */
++	snic_glob->stats_root = debugfs_create_dir("statistics",
++						   snic_glob->trc_root);
++}
  
- 	atomic_inc(&qla2x00_dfs_root_count);
+ /*
+  * snic_debugfs_term - Tear down debugfs intrastructure
+@@ -391,56 +371,23 @@ static const struct file_operations snic_reset_stats_fops = {
+  * It will create file stats and reset_stats under statistics/host# directory
+  * to log per snic stats
+  */
+-int
+-snic_stats_debugfs_init(struct snic *snic)
++void snic_stats_debugfs_init(struct snic *snic)
+ {
+-	int rc = -1;
+ 	char name[16];
+-	struct dentry *de = NULL;
  
- create_nodes:
- 	ha->dfs_fw_resource_cnt = debugfs_create_file("fw_resource_count",
- 	    S_IRUSR, ha->dfs_dir, vha, &dfs_fw_resource_cnt_ops);
--	if (!ha->dfs_fw_resource_cnt) {
--		ql_log(ql_log_warn, vha, 0x00fd,
--		    "Unable to create debugFS fw_resource_count node.\n");
--		goto out;
+ 	snprintf(name, sizeof(name), "host%d", snic->shost->host_no);
+-	if (!snic_glob->stats_root) {
+-		SNIC_DBG("snic_stats root doesn't exist\n");
+-
+-		return rc;
 -	}
- 
- 	ha->dfs_tgt_counters = debugfs_create_file("tgt_counters", S_IRUSR,
- 	    ha->dfs_dir, vha, &dfs_tgt_counters_ops);
--	if (!ha->dfs_tgt_counters) {
--		ql_log(ql_log_warn, vha, 0xd301,
--		    "Unable to create debugFS tgt_counters node.\n");
--		goto out;
+-
+-	de = debugfs_create_dir(name, snic_glob->stats_root);
+-	if (!de) {
+-		SNIC_DBG("Cannot create host directory\n");
+-
+-		return rc;
 -	}
- 
- 	ha->tgt.dfs_tgt_port_database = debugfs_create_file("tgt_port_database",
- 	    S_IRUSR,  ha->dfs_dir, vha, &dfs_tgt_port_database_ops);
--	if (!ha->tgt.dfs_tgt_port_database) {
--		ql_log(ql_log_warn, vha, 0xd03f,
--		    "Unable to create debugFS tgt_port_database node.\n");
--		goto out;
+-	snic->stats_host = de;
+-
+-	de = debugfs_create_file("stats",
+-				S_IFREG|S_IRUGO,
+-				snic->stats_host,
+-				snic,
+-				&snic_stats_fops);
+-	if (!de) {
+-		SNIC_DBG("Cannot create host's stats file\n");
+-
+-		return rc;
 -	}
+-	snic->stats_file = de;
+-
+-	de = debugfs_create_file("reset_stats",
+-				S_IFREG|S_IRUGO|S_IWUSR,
+-				snic->stats_host,
+-				snic,
+-				&snic_reset_stats_fops);
  
- 	ha->dfs_fce = debugfs_create_file("fce", S_IRUSR, ha->dfs_dir, vha,
- 	    &dfs_fce_ops);
--	if (!ha->dfs_fce) {
--		ql_log(ql_log_warn, vha, 0x00f9,
--		    "Unable to create debugfs fce node.\n");
--		goto out;
--	}
+-	if (!de) {
+-		SNIC_DBG("Cannot create host's reset_stats file\n");
++	snic->stats_host = debugfs_create_dir(name, snic_glob->stats_root);
  
- 	ha->tgt.dfs_tgt_sess = debugfs_create_file("tgt_sess",
- 		S_IRUSR, ha->dfs_dir, vha, &dfs_tgt_sess_ops);
--	if (!ha->tgt.dfs_tgt_sess) {
--		ql_log(ql_log_warn, vha, 0xd040,
--		    "Unable to create debugFS tgt_sess node.\n");
--		goto out;
+-		return rc;
 -	}
+-	snic->reset_stats_file = de;
+-	rc = 0;
++	snic->stats_file = debugfs_create_file("stats", S_IFREG|S_IRUGO,
++					       snic->stats_host, snic,
++					       &snic_stats_fops);
  
--	if (IS_QLA27XX(ha) || IS_QLA83XX(ha)) {
-+	if (IS_QLA27XX(ha) || IS_QLA83XX(ha))
- 		ha->tgt.dfs_naqp = debugfs_create_file("naqp",
- 		    0400, ha->dfs_dir, vha, &dfs_naqp_ops);
--		if (!ha->tgt.dfs_naqp) {
--			ql_log(ql_log_warn, vha, 0xd011,
--			    "Unable to create debugFS naqp node.\n");
--			goto out;
--		}
+-	return rc;
+-} /* end of snic_stats_debugfs_init */
++	snic->reset_stats_file = debugfs_create_file("reset_stats",
++						     S_IFREG|S_IRUGO|S_IWUSR,
++						     snic->stats_host, snic,
++						     &snic_reset_stats_fops);
++}
+ 
+ /*
+  * snic_stats_debugfs_remove - Tear down debugfs infrastructure of stats
+@@ -517,46 +464,18 @@ static const struct file_operations snic_trc_fops = {
+  * snic_trc_debugfs_init : creates trace/tracing_enable files for trace
+  * under debugfs
+  */
+-int
+-snic_trc_debugfs_init(void)
++void snic_trc_debugfs_init(void)
+ {
+-	struct dentry *de = NULL;
+-	int ret = -1;
+-
+-	if (!snic_glob->trc_root) {
+-		SNIC_ERR("Debugfs root directory for snic doesn't exist.\n");
+-
+-		return ret;
 -	}
- out:
- 	return 0;
- }
+-
+-	de = debugfs_create_bool("tracing_enable",
+-				 S_IFREG | S_IRUGO | S_IWUSR,
+-				 snic_glob->trc_root,
+-				 &snic_glob->trc.enable);
+-
+-	if (!de) {
+-		SNIC_ERR("Can't create trace_enable file.\n");
+-
+-		return ret;
+-	}
+-	snic_glob->trc.trc_enable = de;
+-
+-	de = debugfs_create_file("trace",
+-				 S_IFREG | S_IRUGO | S_IWUSR,
+-				 snic_glob->trc_root,
+-				 NULL,
+-				 &snic_trc_fops);
+-
+-	if (!de) {
+-		SNIC_ERR("Cannot create trace file.\n");
+-
+-		return ret;
+-	}
+-	snic_glob->trc.trc_file = de;
+-	ret = 0;
+-
+-	return ret;
+-} /* end of snic_trc_debugfs_init */
++	snic_glob->trc.trc_enable = debugfs_create_bool("tracing_enable",
++							S_IFREG | S_IRUGO | S_IWUSR,
++							snic_glob->trc_root,
++							&snic_glob->trc.enable);
++
++	snic_glob->trc.trc_file = debugfs_create_file("trace",
++						      S_IFREG | S_IRUGO | S_IWUSR,
++						      snic_glob->trc_root, NULL,
++						      &snic_trc_fops);
++}
+ 
+ /*
+  * snic_trc_debugfs_term : cleans up the files created for trace under debugfs
+diff --git a/drivers/scsi/snic/snic_main.c b/drivers/scsi/snic/snic_main.c
+index 5e824fd6047a..14f4ce665e58 100644
+--- a/drivers/scsi/snic/snic_main.c
++++ b/drivers/scsi/snic/snic_main.c
+@@ -397,12 +397,7 @@ snic_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 		       PCI_SLOT(pdev->devfn), PCI_FUNC(pdev->devfn));
+ #ifdef CONFIG_SCSI_SNIC_DEBUG_FS
+ 	/* Per snic debugfs init */
+-	ret = snic_stats_debugfs_init(snic);
+-	if (ret) {
+-		SNIC_HOST_ERR(snic->shost,
+-			      "Failed to initialize debugfs stats\n");
+-		snic_stats_debugfs_remove(snic);
+-	}
++	snic_stats_debugfs_init(snic);
+ #endif
+ 
+ 	/* Setup PCI Resources */
+@@ -850,12 +845,7 @@ snic_global_data_init(void)
+ #ifdef CONFIG_SCSI_SNIC_DEBUG_FS
+ 	/* Debugfs related Initialization */
+ 	/* Create debugfs entries for snic */
+-	ret = snic_debugfs_init();
+-	if (ret < 0) {
+-		SNIC_ERR("Failed to create sysfs dir for tracing and stats.\n");
+-		snic_debugfs_term();
+-		/* continue even if it fails */
+-	}
++	snic_debugfs_init();
+ 
+ 	/* Trace related Initialization */
+ 	/* Allocate memory for trace buffer */
+diff --git a/drivers/scsi/snic/snic_stats.h b/drivers/scsi/snic/snic_stats.h
+index fd1066b1cad5..faf0cb601954 100644
+--- a/drivers/scsi/snic/snic_stats.h
++++ b/drivers/scsi/snic/snic_stats.h
+@@ -99,7 +99,7 @@ struct snic_stats {
+ 	atomic64_t io_cmpl_skip;
+ };
+ 
+-int snic_stats_debugfs_init(struct snic *);
++void snic_stats_debugfs_init(struct snic *);
+ void snic_stats_debugfs_remove(struct snic *);
+ 
+ /* Auxillary function to update active IO counter */
+diff --git a/drivers/scsi/snic/snic_trc.c b/drivers/scsi/snic/snic_trc.c
+index 458eaba24c78..f23fe2f88438 100644
+--- a/drivers/scsi/snic/snic_trc.c
++++ b/drivers/scsi/snic/snic_trc.c
+@@ -138,12 +138,7 @@ snic_trc_init(void)
+ 	trc->buf = (struct snic_trc_data *) tbuf;
+ 	spin_lock_init(&trc->lock);
+ 
+-	ret = snic_trc_debugfs_init();
+-	if (ret) {
+-		SNIC_ERR("Failed to create Debugfs Files.\n");
+-
+-		goto error;
+-	}
++	snic_trc_debugfs_init();
+ 
+ 	trc->max_idx = (tbuf_sz / SNIC_TRC_ENTRY_SZ);
+ 	trc->rd_idx = trc->wr_idx = 0;
+@@ -152,11 +147,6 @@ snic_trc_init(void)
+ 		  tbuf_sz / PAGE_SIZE);
+ 	ret = 0;
+ 
+-	return ret;
+-
+-error:
+-	snic_trc_free();
+-
+ 	return ret;
+ } /* end of snic_trc_init */
+ 
+diff --git a/drivers/scsi/snic/snic_trc.h b/drivers/scsi/snic/snic_trc.h
+index b37f8867bfde..87dcc7457d15 100644
+--- a/drivers/scsi/snic/snic_trc.h
++++ b/drivers/scsi/snic/snic_trc.h
+@@ -53,12 +53,12 @@ struct snic_trc {
+ 
+ int snic_trc_init(void);
+ void snic_trc_free(void);
+-int snic_trc_debugfs_init(void);
++void snic_trc_debugfs_init(void);
+ void snic_trc_debugfs_term(void);
+ struct snic_trc_data *snic_get_trc_buf(void);
+ int snic_get_trc_data(char *buf, int buf_sz);
+ 
+-int snic_debugfs_init(void);
++void snic_debugfs_init(void);
+ void snic_debugfs_term(void);
+ 
+ static inline void
 -- 
 2.20.1
 
