@@ -4,52 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F4141C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:22:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F3DBC282C5
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:22:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C28A120879
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:22:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0EEA4217D4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:22:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548170526;
-	bh=uu9nOUkYkUHRSVgVtQxih4MFE2sCqDu4q79zDKWCcME=;
+	s=default; t=1548170530;
+	bh=nR1J8d5LtNfO/mqoIHCKhucG3tVtxmXGKdRWuUFm+yk=;
 	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=Hmfwu7XlCG+JqDxaKQEzXeY5PlQQwNRgeCf2mPUiGB08fEUQqzkK1g1cVv28jY21a
-	 VMATJLvUa6YBq3MN1vPg5T+VMr4WTuqZvhtqvs8Ka4bkNcEGgVQffhXy9YfbSB9Xlp
-	 yoW6qKb2olRHP+8oj+8CIZFHppssCeF0lPQiF4+Y=
+	b=bP20anU7IoQU6OkOJhYFJQ5Qh9AC7qSDpMIn/PMLrGmLCeySN2GC+wcEqSLRYi/6G
+	 yEpsbK+7FSXajwz8ciPF+f4is/LeOUevLW7fWseybPY8B54HdbENxR9wmN7rZUbg+C
+	 04euHQxk2B3A1YGZt4g8y0xKVEZchipvO1bwaHqs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729477AbfAVPWF (ORCPT
+        id S1729486AbfAVPWI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 10:22:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33888 "EHLO mail.kernel.org"
+        Tue, 22 Jan 2019 10:22:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33958 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729218AbfAVPWD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 10:22:03 -0500
+        id S1728836AbfAVPWG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 10:22:06 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7FDB120879;
-        Tue, 22 Jan 2019 15:22:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E7C9217D4;
+        Tue, 22 Jan 2019 15:22:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548170523;
-        bh=uu9nOUkYkUHRSVgVtQxih4MFE2sCqDu4q79zDKWCcME=;
+        s=default; t=1548170525;
+        bh=nR1J8d5LtNfO/mqoIHCKhucG3tVtxmXGKdRWuUFm+yk=;
         h=From:To:Cc:Subject:Date:From;
-        b=Q758FMofF3STP9a6CmwoKA//0kNzCTYdAc0vNDlFWhRoJx+j9fXWTSeGzisC5qSBV
-         iGgkki/dRGVU0+UU2O5prcagLmrvZf65vr3qyXZ1zCwae8KQAaUydzTu/WSVS++Hg/
-         a2bCUPKXCGHBCEJalwQLA91drqozxdGbarzKbp6M=
+        b=CaWmaZnsDgZzY7IvRRAVYw3uqaqOl8RPjW+JbSy3FFfAnxXTxh7xfnGx6m9v6aUH0
+         XdWfo3e8zH1Y/JY7fhHM7F+jHn7xfX/9SGv+Z73VpWIhXoR05UAuQYdRmGTVli9Ob6
+         i9CzYkhceLnUN3MFyNi7VxE/wLInctXTNFH87e6M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Sebastian Ott <sebott@linux.ibm.com>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        linux-s390@vger.kernel.org
-Subject: [PATCH] s390: pci: no need to check return value of debugfs_create functions
-Date:   Tue, 22 Jan 2019 16:21:01 +0100
-Message-Id: <20190122152151.16139-2-gregkh@linuxfoundation.org>
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>, linux-mm@kvack.org
+Subject: [PATCH] hwpoison-inject: no need to check return value of debugfs_create functions
+Date:   Tue, 22 Jan 2019 16:21:10 +0100
+Message-Id: <20190122152151.16139-11-gregkh@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -62,59 +58,103 @@ When calling debugfs functions, there is no need to ever check the
 return value.  The function can work or not, but the code logic should
 never do something different based on this.
 
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Sebastian Ott <sebott@linux.ibm.com>
-Cc: Gerald Schaefer <gerald.schaefer@de.ibm.com>
-Cc: linux-s390@vger.kernel.org
+Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc: linux-mm@kvack.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/s390/include/asm/pci.h |  1 -
- arch/s390/pci/pci_debug.c   | 15 ++++-----------
- 2 files changed, 4 insertions(+), 12 deletions(-)
+ mm/hwpoison-inject.c | 67 +++++++++++++++-----------------------------
+ 1 file changed, 22 insertions(+), 45 deletions(-)
 
-diff --git a/arch/s390/include/asm/pci.h b/arch/s390/include/asm/pci.h
-index 10fe982f2b4b..4e0efebc56a9 100644
---- a/arch/s390/include/asm/pci.h
-+++ b/arch/s390/include/asm/pci.h
-@@ -148,7 +148,6 @@ struct zpci_dev {
- 	enum pci_bus_speed max_bus_speed;
+diff --git a/mm/hwpoison-inject.c b/mm/hwpoison-inject.c
+index b6ac70616c32..36662d0097d5 100644
+--- a/mm/hwpoison-inject.c
++++ b/mm/hwpoison-inject.c
+@@ -76,63 +76,40 @@ static void pfn_inject_exit(void)
  
- 	struct dentry	*debugfs_dev;
--	struct dentry	*debugfs_perf;
- 
- 	struct s390_domain *s390_domain; /* s390 IOMMU domain data */
- };
-diff --git a/arch/s390/pci/pci_debug.c b/arch/s390/pci/pci_debug.c
-index 04388a254ffb..6b48ca7760a7 100644
---- a/arch/s390/pci/pci_debug.c
-+++ b/arch/s390/pci/pci_debug.c
-@@ -172,21 +172,14 @@ static const struct file_operations debugfs_pci_perf_fops = {
- void zpci_debug_init_device(struct zpci_dev *zdev, const char *name)
+ static int pfn_inject_init(void)
  {
- 	zdev->debugfs_dev = debugfs_create_dir(name, debugfs_root);
--	if (IS_ERR(zdev->debugfs_dev))
--		zdev->debugfs_dev = NULL;
+-	struct dentry *dentry;
 -
--	zdev->debugfs_perf = debugfs_create_file("statistics",
--				S_IFREG | S_IRUGO | S_IWUSR,
--				zdev->debugfs_dev, zdev,
--				&debugfs_pci_perf_fops);
--	if (IS_ERR(zdev->debugfs_perf))
--		zdev->debugfs_perf = NULL;
+ 	hwpoison_dir = debugfs_create_dir("hwpoison", NULL);
+-	if (hwpoison_dir == NULL)
+-		return -ENOMEM;
+ 
+ 	/*
+ 	 * Note that the below poison/unpoison interfaces do not involve
+ 	 * hardware status change, hence do not require hardware support.
+ 	 * They are mainly for testing hwpoison in software level.
+ 	 */
+-	dentry = debugfs_create_file("corrupt-pfn", 0200, hwpoison_dir,
+-					  NULL, &hwpoison_fops);
+-	if (!dentry)
+-		goto fail;
+-
+-	dentry = debugfs_create_file("unpoison-pfn", 0200, hwpoison_dir,
+-				     NULL, &unpoison_fops);
+-	if (!dentry)
+-		goto fail;
+-
+-	dentry = debugfs_create_u32("corrupt-filter-enable", 0600,
+-				    hwpoison_dir, &hwpoison_filter_enable);
+-	if (!dentry)
+-		goto fail;
+-
+-	dentry = debugfs_create_u32("corrupt-filter-dev-major", 0600,
+-				    hwpoison_dir, &hwpoison_filter_dev_major);
+-	if (!dentry)
+-		goto fail;
+-
+-	dentry = debugfs_create_u32("corrupt-filter-dev-minor", 0600,
+-				    hwpoison_dir, &hwpoison_filter_dev_minor);
+-	if (!dentry)
+-		goto fail;
+-
+-	dentry = debugfs_create_u64("corrupt-filter-flags-mask", 0600,
+-				    hwpoison_dir, &hwpoison_filter_flags_mask);
+-	if (!dentry)
+-		goto fail;
+-
+-	dentry = debugfs_create_u64("corrupt-filter-flags-value", 0600,
+-				    hwpoison_dir, &hwpoison_filter_flags_value);
+-	if (!dentry)
+-		goto fail;
++	debugfs_create_file("corrupt-pfn", 0200, hwpoison_dir, NULL,
++			    &hwpoison_fops);
 +
-+	debugfs_create_file("statistics", S_IFREG | S_IRUGO | S_IWUSR,
-+			    zdev->debugfs_dev, zdev, &debugfs_pci_perf_fops);
++	debugfs_create_file("unpoison-pfn", 0200, hwpoison_dir, NULL,
++			    &unpoison_fops);
++
++	debugfs_create_u32("corrupt-filter-enable", 0600, hwpoison_dir,
++			   &hwpoison_filter_enable);
++
++	debugfs_create_u32("corrupt-filter-dev-major", 0600, hwpoison_dir,
++			   &hwpoison_filter_dev_major);
++
++	debugfs_create_u32("corrupt-filter-dev-minor", 0600, hwpoison_dir,
++			   &hwpoison_filter_dev_minor);
++
++	debugfs_create_u64("corrupt-filter-flags-mask", 0600, hwpoison_dir,
++			   &hwpoison_filter_flags_mask);
++
++	debugfs_create_u64("corrupt-filter-flags-value", 0600, hwpoison_dir,
++			   &hwpoison_filter_flags_value);
+ 
+ #ifdef CONFIG_MEMCG
+-	dentry = debugfs_create_u64("corrupt-filter-memcg", 0600,
+-				    hwpoison_dir, &hwpoison_filter_memcg);
+-	if (!dentry)
+-		goto fail;
++	debugfs_create_u64("corrupt-filter-memcg", 0600, hwpoison_dir,
++			   &hwpoison_filter_memcg);
+ #endif
+ 
+ 	return 0;
+-fail:
+-	pfn_inject_exit();
+-	return -ENOMEM;
  }
  
- void zpci_debug_exit_device(struct zpci_dev *zdev)
- {
--	debugfs_remove(zdev->debugfs_perf);
--	debugfs_remove(zdev->debugfs_dev);
-+	debugfs_remove_recursive(zdev->debugfs_dev);
- }
- 
- int __init zpci_debug_init(void)
+ module_init(pfn_inject_init);
 -- 
 2.20.1
 
