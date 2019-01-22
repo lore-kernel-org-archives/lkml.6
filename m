@@ -2,111 +2,80 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21E8AC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:03:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1D06C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:03:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F147120870
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:03:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B5F620854
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:03:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727563AbfAVJCw (ORCPT
+        id S1727683AbfAVJDP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 04:02:52 -0500
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:39387 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726953AbfAVJCw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 04:02:52 -0500
-X-UUID: 4c350a30182046a19632d816d85fa704-20190122
-X-UUID: 4c350a30182046a19632d816d85fa704-20190122
-Received: from mtkcas34.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
-        (envelope-from <jitao.shi@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 871938170; Tue, 22 Jan 2019 17:02:47 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS33N1.mediatek.inc
- (172.27.4.75) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 22 Jan
- 2019 17:02:46 +0800
-Received: from mszsdaap41.mediatek.inc (10.16.6.141) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 22 Jan 2019 17:02:44 +0800
-From:   Jitao Shi <jitao.shi@mediatek.com>
-To:     Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>, <linux-pwm@vger.kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC:     Jitao Shi <jitao.shi@mediatek.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Ajay Kumar <ajaykumar.rs@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Rahul Sharma <rahul.sharma@samsung.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Vincent Palatin <vpalatin@chromium.org>,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Russell King <rmk+kernel@arm.linux.org.uk>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
-        <cawa.cheng@mediatek.com>, <bibby.hsieh@mediatek.com>,
-        <ck.hu@mediatek.com>, <stonea168@163.com>
-Subject: [PATCH V2] pwm: Add MediaTek MT8183 display PWM driver support
-Date:   Tue, 22 Jan 2019 17:02:43 +0800
-Message-ID: <20190122090243.27304-1-jitao.shi@mediatek.com>
-X-Mailer: git-send-email 2.12.5
+        Tue, 22 Jan 2019 04:03:15 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:55845 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727299AbfAVJDP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 04:03:15 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id B67D820898; Tue, 22 Jan 2019 10:03:12 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-37-87.w90-88.abo.wanadoo.fr [90.88.156.87])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 8E185206A7;
+        Tue, 22 Jan 2019 10:03:12 +0100 (CET)
+Date:   Tue, 22 Jan 2019 10:03:13 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH] clk: sunxi-ng: v3s: Fix TCON reset de-assert bit
+Message-ID: <20190122090313.5sjyezx2yubsvjum@flea>
+References: <20190122081619.27653-1-paul.kocialkowski@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ag3fctmm5qik2mkh"
+Content-Disposition: inline
+In-Reply-To: <20190122081619.27653-1-paul.kocialkowski@bootlin.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the mtk_pwm_data struction to define different registers
-and add MT8183 specific register operations, such as MT8183
-doesn't have commit register, needs to disable double buffer
-before writing register, and needs to select commit mode
-and use PWM_PERIOD/PWM_HIGH_WIDTH.
 
-Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
----
- drivers/pwm/pwm-mtk-disp.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+--ag3fctmm5qik2mkh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/pwm/pwm-mtk-disp.c b/drivers/pwm/pwm-mtk-disp.c
-index 893940d45f0d..15803c71fe80 100644
---- a/drivers/pwm/pwm-mtk-disp.c
-+++ b/drivers/pwm/pwm-mtk-disp.c
-@@ -277,10 +277,21 @@ static const struct mtk_pwm_data mt8173_pwm_data = {
- 	.commit_mask = 0x1,
- };
- 
-+static const struct mtk_pwm_data mt8183_pwm_data = {
-+	.enable_mask = BIT(0),
-+	.con0 = 0x18,
-+	.con0_sel = 0x0,
-+	.con1 = 0x1c,
-+	.has_commit = false,
-+	.bls_debug = 0x80,
-+	.bls_debug_mask = 0x3,
-+};
-+
- static const struct of_device_id mtk_disp_pwm_of_match[] = {
- 	{ .compatible = "mediatek,mt2701-disp-pwm", .data = &mt2701_pwm_data},
- 	{ .compatible = "mediatek,mt6595-disp-pwm", .data = &mt8173_pwm_data},
- 	{ .compatible = "mediatek,mt8173-disp-pwm", .data = &mt8173_pwm_data},
-+	{ .compatible = "mediatek,mt8183-disp-pwm", .data = &mt8183_pwm_data},
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, mtk_disp_pwm_of_match);
--- 
-2.12.5
+On Tue, Jan 22, 2019 at 09:16:19AM +0100, Paul Kocialkowski wrote:
+> According to the datasheet and the reference code from Allwinner, the
+> bit used to de-assert the TCON reset is bit 4, not bit 3.
+>=20
+> Fix it in the V3s CCU driver.
+>=20
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 
+Applied, thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--ag3fctmm5qik2mkh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXEbcUQAKCRDj7w1vZxhR
+xfQoAQDRqBXX3BmLCDZaKMqjb6/7gsj94y2EkbDlMdRyfQNNLgD/fTVKKG3sPefj
+FEaCH7Md8zJncyIOsfQT1EncjXNntgg=
+=kKxt
+-----END PGP SIGNATURE-----
+
+--ag3fctmm5qik2mkh--
