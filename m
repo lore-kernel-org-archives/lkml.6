@@ -2,95 +2,290 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA951C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:44:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E64DC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:46:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EC59217D4
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:44:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548175487;
-	bh=xPLBzMh2LtYJZLvZiCE2o6w8ak6475CYj7aZJqy76+Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=C46IB1PViTVIq2TmtKfvUwmUV/bIK96oVETiVQzBCOeRmU7ld1CNFelW2kCksTSOL
-	 xuU/sfNWG7dFwzH6px3d/3uHAbI7Fk3s0n036bcffIrgyEtnJuM3tnC0k2fKlVXu7b
-	 CdWGLv6pcAJZx+q3IFuM2odzp4OE4IZCb7n6NNkY=
+	by mail.kernel.org (Postfix) with ESMTP id 6063E21019
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:46:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729582AbfAVQoq (ORCPT
+        id S1729374AbfAVQqV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 11:44:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34644 "EHLO mail.kernel.org"
+        Tue, 22 Jan 2019 11:46:21 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:49884 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729336AbfAVQoq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 11:44:46 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1729031AbfAVQqV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 11:46:21 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B4CA821019;
-        Tue, 22 Jan 2019 16:44:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548175485;
-        bh=xPLBzMh2LtYJZLvZiCE2o6w8ak6475CYj7aZJqy76+Y=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=L2nNA1sAMlwUQfv93fkmOjH/0vDpuWo2oEZb7+gdlBPINKVYPibz58oWd1zXXHbHP
-         +arRXQz+yR8Rh7zDC1Zd+fqdat6c4aqNMIjZwu3rWZfHh7VTlNj1MHLNiSnmzWd2BM
-         wov9YjiDPmoWoFvdGn9+6sqlUVRZ4wr4kORU9878=
-Date:   Tue, 22 Jan 2019 17:44:42 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        lkft-triage@lists.linaro.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        linux- stable <stable@vger.kernel.org>,
+        by mx1.redhat.com (Postfix) with ESMTPS id CA4EEC0587DA;
+        Tue, 22 Jan 2019 16:46:19 +0000 (UTC)
+Received: from redhat.com (ovpn-125-220.rdu2.redhat.com [10.10.125.220])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id AC0E86B631;
+        Tue, 22 Jan 2019 16:46:16 +0000 (UTC)
+Date:   Tue, 22 Jan 2019 11:46:13 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     John Hubbard <jhubbard@nvidia.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        John Hubbard <john.hubbard@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH 4.20 000/111] 4.20.4-stable review
-Message-ID: <20190122164442.GB24734@kroah.com>
-References: <20190121122455.819406896@linuxfoundation.org>
- <CA+G9fYvnXwTyD4+O10vr-26rX2eW2RWB=8v2W2N7nBCFozm+Fg@mail.gmail.com>
+        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
+        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
+        rcampbell@nvidia.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+Message-ID: <20190122164613.GA3188@redhat.com>
+References: <20190112024625.GB5059@redhat.com>
+ <b6f4ed36-fc8d-1f9b-8c74-b12f61d496ae@nvidia.com>
+ <20190114145447.GJ13316@quack2.suse.cz>
+ <20190114172124.GA3702@redhat.com>
+ <20190115080759.GC29524@quack2.suse.cz>
+ <20190116113819.GD26069@quack2.suse.cz>
+ <20190116130813.GA3617@redhat.com>
+ <20190117093047.GB9378@quack2.suse.cz>
+ <20190117151759.GA3550@redhat.com>
+ <20190122152459.GG13149@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+G9fYvnXwTyD4+O10vr-26rX2eW2RWB=8v2W2N7nBCFozm+Fg@mail.gmail.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <20190122152459.GG13149@quack2.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Tue, 22 Jan 2019 16:46:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 07:03:28PM +0530, Naresh Kamboju wrote:
-> On Mon, 21 Jan 2019 at 19:16, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > This is the start of the stable review cycle for the 4.20.4 release.
-> > There are 111 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Wed Jan 23 12:23:56 UTC 2019.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.20.4-rc1.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.20.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
-> >
+On Tue, Jan 22, 2019 at 04:24:59PM +0100, Jan Kara wrote:
+> On Thu 17-01-19 10:17:59, Jerome Glisse wrote:
+> > On Thu, Jan 17, 2019 at 10:30:47AM +0100, Jan Kara wrote:
+> > > On Wed 16-01-19 08:08:14, Jerome Glisse wrote:
+> > > > On Wed, Jan 16, 2019 at 12:38:19PM +0100, Jan Kara wrote:
+> > > > > On Tue 15-01-19 09:07:59, Jan Kara wrote:
+> > > > > > Agreed. So with page lock it would actually look like:
+> > > > > > 
+> > > > > > get_page_pin()
+> > > > > > 	lock_page(page);
+> > > > > > 	wait_for_stable_page();
+> > > > > > 	atomic_add(&page->_refcount, PAGE_PIN_BIAS);
+> > > > > > 	unlock_page(page);
+> > > > > > 
+> > > > > > And if we perform page_pinned() check under page lock, then if
+> > > > > > page_pinned() returned false, we are sure page is not and will not be
+> > > > > > pinned until we drop the page lock (and also until page writeback is
+> > > > > > completed if needed).
+> > > > > 
+> > > > > After some more though, why do we even need wait_for_stable_page() and
+> > > > > lock_page() in get_page_pin()?
+> > > > > 
+> > > > > During writepage page_mkclean() will write protect all page tables. So
+> > > > > there can be no new writeable GUP pins until we unlock the page as all such
+> > > > > GUPs will have to first go through fault and ->page_mkwrite() handler. And
+> > > > > that will wait on page lock and do wait_for_stable_page() for us anyway.
+> > > > > Am I just confused?
+> > > > 
+> > > > Yeah with page lock it should synchronize on the pte but you still
+> > > > need to check for writeback iirc the page is unlocked after file
+> > > > system has queue up the write and thus the page can be unlock with
+> > > > write back pending (and PageWriteback() == trye) and i am not sure
+> > > > that in that states we can safely let anyone write to that page. I
+> > > > am assuming that in some case the block device also expect stable
+> > > > page content (RAID stuff).
+> > > > 
+> > > > So the PageWriteback() test is not only for racing page_mkclean()/
+> > > > test_set_page_writeback() and GUP but also for pending write back.
+> > > 
+> > > But this is prevented by wait_for_stable_page() that is already present in
+> > > ->page_mkwrite() handlers. Look:
+> > > 
+> > > ->writepage()
+> > >   /* Page is locked here */
+> > >   clear_page_dirty_for_io(page)
+> > >     page_mkclean(page)
+> > >       -> page tables get writeprotected
+> > >     /* The following line will be added by our patches */
+> > >     if (page_pinned(page)) -> bounce
+> > >     TestClearPageDirty(page)
+> > >   set_page_writeback(page);
+> > >   unlock_page(page);
+> > >   ...submit_io...
+> > > 
+> > > IRQ
+> > >   - IO completion
+> > >   end_page_writeback()
+> > > 
+> > > So if GUP happens before page_mkclean() writeprotects corresponding PTE
+> > > (and these two actions are synchronized on the PTE lock), page_pinned()
+> > > will see the increment and report the page as pinned.
+> > > 
+> > > If GUP happens after page_mkclean() writeprotects corresponding PTE, it
+> > > will fault:
+> > >   handle_mm_fault()
+> > >     do_wp_page()
+> > >       wp_page_shared()
+> > >         do_page_mkwrite()
+> > >           ->page_mkwrite() - that is block_page_mkwrite() or
+> > > 	    iomap_page_mkwrite() or whatever filesystem provides
+> > > 	  lock_page(page)
+> > >           ... prepare page ...
+> > > 	  wait_for_stable_page(page) -> this blocks until IO completes
+> > > 	    if someone cares about pages not being modified while under IO.
+> > 
+> > The case i am worried is GUP see pte with write flag set but has not
+> > lock the page yet (GUP is get pte first, then pte to page then lock
+> > page), then it locks the page but the lock page can make it wait for a
+> > racing page_mkclean()...write back that have not yet write protected
+> > the pte the GUP just read. So by the time GUP has the page locked the
+> > pte it read might no longer have the write flag set. Hence why you need
+> > to also check for write back after taking the page lock. Alternatively
+> > you could recheck the pte after a successful try_lock on the page.
 > 
-> Results from Linaroâ€™s test farm.
-> No regressions on arm64, arm, x86_64, and i386.
+> This isn't really possible. GUP does:
+> 
+> get_user_pages()
+> ...
+>   follow_page_mask()
+>   ...
+>     follow_page_pte()
+>       ptep = pte_offset_map_lock()
+>       check permissions and page sanity
+>       if (flags & FOLL_GET)
+>         get_page(page); -> this would become
+> 	  atomic_add(&page->_refcount, PAGE_PIN_BIAS);
+>       pte_unmap_unlock(ptep, ptl);
+> 
+> page_mkclean() on the other hand grabs the same pte lock to change the pte
+> to write-protected. So after page_mkclean() has modified the PTE we are
+> racing on for access, we are sure to either see increased _refcount or get
+> page fault from GUP.
+> 
+> If we see increased _refcount, we bounce the page and are fine. If GUP
+> faults, we will wait for page lock (so wait until page is prepared for IO
+> and has PageWriteback set) while handling the fault, then enter
+> ->page_mkwrite, which will do wait_for_stable_page() -> wait for
+> outstanding writeback to complete.
+> 
+> So I still conclude - no need for page lock in the GUP path at all AFAICT.
+> In fact we rely on the very same page fault vs page writeback synchronization
+> for normal user faults as well. And normal user mmap access is even nastier
+> than GUP access because the CPU reads page tables without taking PTE lock.
 
-Thanks for testing all of these and letting me know.
+For the "slow" GUP path you are right you do not need a lock as the
+page table lock give you the ordering. For the GUP fast path you
+would either need the lock or the memory barrier with the test for
+page write back.
 
-greg k-h
+Maybe an easier thing is to convert GUP fast to try to take the page
+table lock if it fails taking the page table lock then we fall back
+to slow GUP path. Otherwise then we have the same garantee as the slow
+path.
+
+The issue is that i am not sure if the page table directory page and
+it's associated spinlock can go in bad state if the directory is being
+freed (like a racing munmap). This would need to be check. A scheme
+that might protect against that is to take the above lock of each level
+before going down one level. Once you are down one level you can unlock
+the above level. So at any point in time GUP fast holds the lock to a
+current and valid directory and thus no one could race to remove it.
+
+    GUP_fast()
+      gup_pgd_range()
+        if (p4d_try_map_lock()) {
+          gup_p4d_range()
+          if (pud_try_map_lock()) {
+            p4d_unlock();
+            gup_pud_range();
+              if (pmd_try_map_lock()) {
+                pud_unlock();
+                gup_pmd_range();
+                  if (pte_try_map_lock()) {
+                    pmd_unlock();
+                    // Do gup
+                  }
+             }
+          }
+       }
+
+Maybe this is worse than taking the mmap_sem and checking for vma.
+
+
+> > > > > That actually touches on another question I wanted to get opinions on. GUP
+> > > > > can be for read and GUP can be for write (that is one of GUP flags).
+> > > > > Filesystems with page cache generally have issues only with GUP for write
+> > > > > as it can currently corrupt data, unexpectedly dirty page etc.. DAX & memory
+> > > > > hotplug have issues with both (DAX cannot truncate page pinned in any way,
+> > > > > memory hotplug will just loop in kernel until the page gets unpinned). So
+> > > > > we probably want to track both types of GUP pins and page-cache based
+> > > > > filesystems will take the hit even if they don't have to for read-pins?
+> > > > 
+> > > > Yes the distinction between read and write would be nice. With the map
+> > > > count solution you can only increment the mapcount for GUP(write=true).
+> > > 
+> > > Well, but if we track only pins for write, DAX or memory hotplug will not
+> > > be able to use this mechanism. So at this point I'm more leaning towards
+> > > tracking all pins. It will cost some performance needlessly for read pins
+> > > and filesystems using page cache when bouncing such pages but it's not like
+> > > writeback of pinned pages is some performance critical operation... But I
+> > > wanted to spell this out so that people are aware of this.
+> > 
+> > No they would know for regular pin, it is just as page migrate code. If
+> > the refcount + (extra_ref_by_the_code_checking) > mapcount then you know
+> > someone has extra reference on your page.
+> > 
+> > Those extra references are either some regular fs event taking place (some
+> > code doing find_get_page for instance) or a GUP reference (wether it is a
+> > write pin or a read pin).
+> > 
+> > So the only issue is false positive, ie thinking the page is under GUP
+> > while it has just elevated refcount because of some other regular fs/mm
+> > event. To minimize false positive for a more accurate pin test (write or
+> > read) you can enforce few thing:
+> > 
+> >     1 - first page lock
+> >     2 - then freeze the page with expected counted
+> > 
+> > With that it should minimize false positive. In the end even with the bias
+> > case you can also have false positive.
+> 
+> So this is basically what the code is currently doing. And for DAX it works
+> well since the page is being truncated and so essentially nobody is
+> touching it. But for hotplug it doesn't work quite well - hotplug would
+> like to return EBUSY to userspace when the page is pinned but retry if the
+> page reference is just transient.
+
+I do not think there is anyway around transient refcount other
+than periodicaly check. Maybe hot unplug (i am assuming we are
+talking about unplug here) can set the reserved page flag and
+we can change the page get ref to never inc refcount for page
+with reserved flag. I see that they have been cleanup on going
+around reserved page so it might or might not be possible.
+
+Also it would mean that get_page() could now fail and we would
+need to update all path that do that to handle this case. Then
+you know that if the freeze fails it must be because of read
+GUP (no transient refcount can happen).
+
+Or another way is to record page refcount at time t and then
+compare it at time t+timeout and if it matches then consider the
+refcount to be from a GUP read and not a transient refcount,
+this should at very least drasticly reduce the likely hood of
+a false GUP positive because of a transient refcount inc.
+
+Cheers,
+Jérôme
