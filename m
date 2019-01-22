@@ -4,41 +4,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78B27C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:22:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0928CC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:22:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4913320879
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:22:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C88E9217D6
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:22:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548170561;
-	bh=yDF6uYI7JuPh/gtYRkd9uGrw8g/KMx5XSdM602NkI2o=;
+	s=default; t=1548170565;
+	bh=HS4aXKQmebGrdsMiif7Y1nQunYRDgADCZwklnp4H9cY=;
 	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=b55aWGY5GZLCf6V99E3cgPCgGT4bd4FYe1hSXYRluXg+4FOh317gVp+nt2/DMK+iW
-	 uSeDIALo6AGZkgJitZumqmDBaDdGy/KbO6WbsjKHIoNHQgbhFDE6G+9YeMYPnlewRO
-	 p7d+BmUEnNzuUSthP/wLEsq7Y6xL0rAdn0UXNlOY=
+	b=hDxTXv251TaaZdBfoc6bEeqIDIgpWPKOIqjPDcWwCPBgo7Q+j1OIlZF6leubGjkL1
+	 spZFjwf8rfg1EbT4y3YubEGkHQ8w5M6kf9rAHZwVlkrg918rbjysI32q2tMDzPPpQK
+	 kn23PxvlP1f+1n8Ws6nvEFJFGHMCE9tfht9scpzc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729649AbfAVPWj (ORCPT
+        id S1729663AbfAVPWn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 10:22:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34824 "EHLO mail.kernel.org"
+        Tue, 22 Jan 2019 10:22:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34926 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729597AbfAVPWh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 10:22:37 -0500
+        id S1729648AbfAVPWk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 10:22:40 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6705420879;
-        Tue, 22 Jan 2019 15:22:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 19412217D4;
+        Tue, 22 Jan 2019 15:22:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548170556;
-        bh=yDF6uYI7JuPh/gtYRkd9uGrw8g/KMx5XSdM602NkI2o=;
+        s=default; t=1548170559;
+        bh=HS4aXKQmebGrdsMiif7Y1nQunYRDgADCZwklnp4H9cY=;
         h=From:To:Cc:Subject:Date:From;
-        b=i0xzBL2RXNLUh0cmsUfyOboVZrSHyOmDksJEeSj8hFNf9OkVt1H25KslA/M5DaW7G
-         T1dAyVfqImvsSh++j2o21B092lHviJlYZXQDf4VCK25O5kdzckylxS8Ye3W/0ipcO7
-         xErQl/u4cxquldyiT4kckCjsFjXzXSAO6JWPrL1Y=
+        b=eFU1icmhN+Mfb3d3Di2rrcOpwNjlR3+2bVWhhHNDQThA/UfgOS1BYbIhsmPSOg8be
+         4WDVtL41d2/FPapQSRKTqqfGIuO5tWT7TXHjO2zlbi3Zni2Y/qMXEF+1XjFdhrtaGr
+         7qBFgE08W87iStFbWVn9lyKeEolfv+7ZaFY/18Jk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -48,9 +48,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Intel Linux Wireless <linuxwifi@intel.com>,
         Kalle Valo <kvalo@codeaurora.org>,
         linux-wireless@vger.kernel.org
-Subject: [PATCH] iwlwifi: pcie: no need to check return value of debugfs_create functions
-Date:   Tue, 22 Jan 2019 16:21:20 +0100
-Message-Id: <20190122152151.16139-21-gregkh@linuxfoundation.org>
+Subject: [PATCH] iwlwifi: fw: no need to check return value of debugfs_create functions
+Date:   Tue, 22 Jan 2019 16:21:21 +0100
+Message-Id: <20190122152151.16139-22-gregkh@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -71,91 +71,64 @@ Cc: Kalle Valo <kvalo@codeaurora.org>
 Cc: linux-wireless@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/intel/iwlwifi/pcie/drv.c      |  6 +-----
- drivers/net/wireless/intel/iwlwifi/pcie/internal.h |  7 ++-----
- drivers/net/wireless/intel/iwlwifi/pcie/trans.c    | 12 +++---------
- 3 files changed, 6 insertions(+), 19 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/fw/debugfs.c | 11 +++--------
+ drivers/net/wireless/intel/iwlwifi/fw/debugfs.h |  9 +++------
+ 2 files changed, 6 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/drv.c b/drivers/net/wireless/intel/iwlwifi/pcie/drv.c
-index 353581ccc01e..61e9be5068f5 100644
---- a/drivers/net/wireless/intel/iwlwifi/pcie/drv.c
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/drv.c
-@@ -971,9 +971,7 @@ static int iwl_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	}
+diff --git a/drivers/net/wireless/intel/iwlwifi/fw/debugfs.c b/drivers/net/wireless/intel/iwlwifi/fw/debugfs.c
+index 3e120dd47305..c1aa4360736b 100644
+--- a/drivers/net/wireless/intel/iwlwifi/fw/debugfs.c
++++ b/drivers/net/wireless/intel/iwlwifi/fw/debugfs.c
+@@ -173,9 +173,8 @@ static const struct file_operations iwl_dbgfs_##name##_ops = {		\
+ 	_FWRT_DEBUGFS_READ_WRITE_FILE_OPS(name, bufsz, struct iwl_fw_runtime)
  
- 	/* register transport layer debugfs here */
--	ret = iwl_trans_pcie_dbgfs_register(iwl_trans);
--	if (ret)
--		goto out_free_drv;
-+	iwl_trans_pcie_dbgfs_register(iwl_trans);
+ #define FWRT_DEBUGFS_ADD_FILE_ALIAS(alias, name, parent, mode) do {	\
+-	if (!debugfs_create_file(alias, mode, parent, fwrt,		\
+-				 &iwl_dbgfs_##name##_ops))		\
+-		goto err;						\
++	debugfs_create_file(alias, mode, parent, fwrt,			\
++			    &iwl_dbgfs_##name##_ops);			\
+ 	} while (0)
+ #define FWRT_DEBUGFS_ADD_FILE(name, parent, mode) \
+ 	FWRT_DEBUGFS_ADD_FILE_ALIAS(#name, name, parent, mode)
+@@ -321,14 +320,10 @@ static ssize_t iwl_dbgfs_send_hcmd_write(struct iwl_fw_runtime *fwrt, char *buf,
  
- 	/* if RTPM is in use, enable it in our device */
- 	if (iwl_trans->runtime_pm_mode != IWL_PLAT_PM_MODE_DISABLED) {
-@@ -1002,8 +1000,6 @@ static int iwl_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ FWRT_DEBUGFS_WRITE_FILE_OPS(send_hcmd, 512);
  
- 	return 0;
- 
--out_free_drv:
--	iwl_drv_stop(iwl_trans->drv);
- out_free_trans:
- 	iwl_trans_pcie_free(iwl_trans);
- 	return ret;
-diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/internal.h b/drivers/net/wireless/intel/iwlwifi/pcie/internal.h
-index d6fc6ce73e0a..2d3a8578a50d 100644
---- a/drivers/net/wireless/intel/iwlwifi/pcie/internal.h
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/internal.h
-@@ -1018,12 +1018,9 @@ void iwl_trans_pcie_rf_kill(struct iwl_trans *trans, bool state);
- void iwl_trans_pcie_dump_regs(struct iwl_trans *trans);
+-int iwl_fwrt_dbgfs_register(struct iwl_fw_runtime *fwrt,
++void iwl_fwrt_dbgfs_register(struct iwl_fw_runtime *fwrt,
+ 			    struct dentry *dbgfs_dir)
+ {
+ 	INIT_DELAYED_WORK(&fwrt->timestamp.wk, iwl_fw_timestamp_marker_wk);
+ 	FWRT_DEBUGFS_ADD_FILE(timestamp_marker, dbgfs_dir, 0200);
+ 	FWRT_DEBUGFS_ADD_FILE(send_hcmd, dbgfs_dir, 0200);
+-	return 0;
+-err:
+-	IWL_ERR(fwrt, "Can't create the fwrt debugfs directory\n");
+-	return -ENOMEM;
+ }
+diff --git a/drivers/net/wireless/intel/iwlwifi/fw/debugfs.h b/drivers/net/wireless/intel/iwlwifi/fw/debugfs.h
+index 88255035e8ef..fde40ff88451 100644
+--- a/drivers/net/wireless/intel/iwlwifi/fw/debugfs.h
++++ b/drivers/net/wireless/intel/iwlwifi/fw/debugfs.h
+@@ -63,14 +63,11 @@
+ #include "runtime.h"
  
  #ifdef CONFIG_IWLWIFI_DEBUGFS
--int iwl_trans_pcie_dbgfs_register(struct iwl_trans *trans);
-+void iwl_trans_pcie_dbgfs_register(struct iwl_trans *trans);
+-int iwl_fwrt_dbgfs_register(struct iwl_fw_runtime *fwrt,
++void iwl_fwrt_dbgfs_register(struct iwl_fw_runtime *fwrt,
+ 			    struct dentry *dbgfs_dir);
+ 
  #else
--static inline int iwl_trans_pcie_dbgfs_register(struct iwl_trans *trans)
+-static inline int iwl_fwrt_dbgfs_register(struct iwl_fw_runtime *fwrt,
+-					  struct dentry *dbgfs_dir)
 -{
 -	return 0;
 -}
-+static inline void iwl_trans_pcie_dbgfs_register(struct iwl_trans *trans) { }
- #endif
++static inline void iwl_fwrt_dbgfs_register(struct iwl_fw_runtime *fwrt,
++					   struct dentry *dbgfs_dir) { }
  
- int iwl_pci_fw_exit_d0i3(struct iwl_trans *trans);
-diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-index f97aea5ffc44..89e58e43ed03 100644
---- a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-@@ -2464,9 +2464,8 @@ void iwl_pcie_dump_csr(struct iwl_trans *trans)
- #ifdef CONFIG_IWLWIFI_DEBUGFS
- /* create and remove of files */
- #define DEBUGFS_ADD_FILE(name, parent, mode) do {			\
--	if (!debugfs_create_file(#name, mode, parent, trans,		\
--				 &iwl_dbgfs_##name##_ops))		\
--		goto err;						\
-+	debugfs_create_file(#name, mode, parent, trans,			\
-+			    &iwl_dbgfs_##name##_ops);			\
- } while (0)
- 
- /* file operation */
-@@ -2869,7 +2868,7 @@ static const struct file_operations iwl_dbgfs_monitor_data_ops = {
- };
- 
- /* Create the debugfs files and directories */
--int iwl_trans_pcie_dbgfs_register(struct iwl_trans *trans)
-+void iwl_trans_pcie_dbgfs_register(struct iwl_trans *trans)
- {
- 	struct dentry *dir = trans->dbgfs_dir;
- 
-@@ -2880,11 +2879,6 @@ int iwl_trans_pcie_dbgfs_register(struct iwl_trans *trans)
- 	DEBUGFS_ADD_FILE(fh_reg, dir, 0400);
- 	DEBUGFS_ADD_FILE(rfkill, dir, 0600);
- 	DEBUGFS_ADD_FILE(monitor_data, dir, 0400);
--	return 0;
--
--err:
--	IWL_ERR(trans, "failed to create the trans debugfs entry\n");
--	return -ENOMEM;
- }
- 
- static void iwl_trans_pcie_debugfs_cleanup(struct iwl_trans *trans)
+ #endif /* CONFIG_IWLWIFI_DEBUGFS */
 -- 
 2.20.1
 
