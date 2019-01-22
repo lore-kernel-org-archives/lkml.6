@@ -2,88 +2,100 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7997EC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:44:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ACB2C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:44:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5197A20879
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:44:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CED0220879
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:44:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HJhMfuVs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728634AbfAVNoX (ORCPT
+        id S1728656AbfAVNoq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 08:44:23 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:35011 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728439AbfAVNoX (ORCPT
+        Tue, 22 Jan 2019 08:44:46 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:33191 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728463AbfAVNop (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 08:44:23 -0500
-Received: by mail-qk1-f195.google.com with SMTP id w204so14247676qka.2;
-        Tue, 22 Jan 2019 05:44:22 -0800 (PST)
+        Tue, 22 Jan 2019 08:44:45 -0500
+Received: by mail-pg1-f194.google.com with SMTP id z11so11112911pgu.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 05:44:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/rEntjk/fJ4oHEuNF9JD18gQfFuD3y2ZK8grEV6Gy5c=;
+        b=HJhMfuVss5GLAQGWPmKSfbbRV5EoMZ5ATQ24HNwhz2uGfuGylPYFBqPebqi4ODD9A7
+         pwzV8QB3hK355lcPGo5py4t95syqxJ3VJ3fj5d3lWKRXLGcVYIwfEdslWW4PKreiaLAu
+         qxpGsCV9/LNpKrEs++eGWCDZfwI48QdY+EqmVjKLAvUbY7A5CcTDiF03muRtXzCj+wlA
+         1lgExy/RvmJtJD+7P5xxEYtC1N6cxFn5h9sM22de+b//3ZpCbUEWkdPj7aXXTbWnyYA/
+         MXz91mnDHruAl9Eu0pJnHXuh845XEZ+dD8434b10wAhdE/XXcYJ4750X62HaA75SoLlO
+         obHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UuEXWhlhqX926SR0M3TZz6vQubLniE2vzFF0sfzqh8s=;
-        b=Oqb1pud+xWTv8wurHovZ0ec6hWh3VI+BaAj7XlowB/YswQ8uIjPp6s1sCUodQW5Os4
-         AWp1NEtWB7VRAf/5qV3zHIocZ3nMYBOrB4TvugASDnw2lxPJfjjpIVgBbQPozZJeFTBR
-         iMy8yQkturG0DH77ntZsQl356rTmMiF/NoZSODTVvEOCKeodxxTDt2ZmOrFPTH8gexFS
-         ztF1Q+rexE88Frsmy3LxsuSSs3cynz7H10Z6z7qpWndP81FiVydX/xIn3aYsWncMC5BM
-         hgPyoduC6yQr3vuaB4QFB34g1xBmBgXAZgZLIbdVyg4rDAXR1bZs863mTKp7rqflbIcj
-         aubQ==
-X-Gm-Message-State: AJcUukfJDAQaQZihc3kpp44BRA36HL9rcD2Jp69M5U6Xm3nQumc9bM6C
-        86iGkxqsLQOZtzYBYBM8T4pdONEqy2A/I22ReXOfg7C0
-X-Google-Smtp-Source: ALg8bN5IDUy8z9QDGNXJ7vrwZpFf1hBaT5fW3pDaPSInJ/0PHjITn91loHis1GoqO6uTryFfYzGd6vNDP9wi+jmu0jM=
-X-Received: by 2002:a37:324a:: with SMTP id y71mr28516365qky.291.1548164661704;
- Tue, 22 Jan 2019 05:44:21 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/rEntjk/fJ4oHEuNF9JD18gQfFuD3y2ZK8grEV6Gy5c=;
+        b=EglhsEhoZrErUoB+vbAE0I3dAdXDNMgZMzskomXrt9PvdE38us8gSzh5u7S4EKdWMO
+         peO6BGK+VZZ2cbJfZa3AkbcMyJgbbcjPgxw1Q2rguRaUZ45xYRZdhKXIJYUHUOgAROzK
+         SdXaMX9ra+eIKH8ujV8KwfkLRMrxl3cWzqvAVYeecUlP7aDm/ceF+fixbIfvBMIFayoO
+         PUbklZfERKQMvHam9npFYQOO/Brcui2aQwCpy+x79X/PqzxfRyxJKufy1bnI0N2HlhlZ
+         0HOaW5NenAvPl8/EZzh0iNqxLG22ZD4B0M+xb4us6P2zeQm/ZlS6hnylEkARfIOZqwBX
+         wqHw==
+X-Gm-Message-State: AJcUukcxKv49ENQtTGI7LmzCcbS8PA87t19Q7tv7IU0oEhz90NQREyGB
+        FZ6kS9bus1xryonYZ5sNjEs=
+X-Google-Smtp-Source: ALg8bN4LWOFDdWjmflb5HjDGvmgH2jJgPDSS87cHJYTpvxbJ3f75ssHR3rEV7Qiw0pKemhJPYTTHEA==
+X-Received: by 2002:a63:7d06:: with SMTP id y6mr31719543pgc.171.1548164685211;
+        Tue, 22 Jan 2019 05:44:45 -0800 (PST)
+Received: from hydra-Latitude-E5440.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id h185sm22474067pfg.143.2019.01.22.05.44.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 22 Jan 2019 05:44:44 -0800 (PST)
+From:   parna.naveenkumar@gmail.com
+To:     arnd@arndb.de, gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org,
+        Naveen Kumar Parna <parna.naveenkumar@gmail.com>
+Subject: [PATCH 2/2] mbcs: add .owner to mbcs struct file_operations
+Date:   Tue, 22 Jan 2019 19:14:02 +0530
+Message-Id: <20190122134402.26653-1-parna.naveenkumar@gmail.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-References: <20190121202328.rgrv54lybilsvitu@brauner.io> <da262bd9-1de0-eabb-ee44-e0ee152d15bb@kernel.dk>
- <20190121224811.gbvg22vg4kgg4kbs@brauner.io> <CAK8P3a0ej9NcJM8wXNPbcGUyOUZYX+VLoDFdbenW3s3114oQZw@mail.gmail.com>
- <20190122093146.kmckcgdbvo2e7v3c@brauner.io> <20190122103009.vu2a67kviqhcb3cn@brauner.io>
- <CAK8P3a0EW6ZSMoo6FsRQ=XvyhJe50SR7YtpCtuHcPr=JO3fCtA@mail.gmail.com>
- <20190122105747.6gxvghn7n5dxa65w@brauner.io> <CAK8P3a0HJX6+1vks=ZCqNymLwWFS+Wt5PPuYnLedpMo=aVSwKA@mail.gmail.com>
- <20190122114656.joasjhlpwo3vy7hg@brauner.io> <20190122122419.b7lmm4j25w5cbmcx@brauner.io>
-In-Reply-To: <20190122122419.b7lmm4j25w5cbmcx@brauner.io>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 22 Jan 2019 14:44:04 +0100
-Message-ID: <CAK8P3a0pzdGHO_CNt26rx0wn38YJrpux9Xtz_dvZWkCw6gDj1w@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the pidfd tree with the y2038 tree
-To:     Christian Brauner <christian@brauner.io>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 1:24 PM Christian Brauner <christian@brauner.io> wrote:
-> On Tue, Jan 22, 2019 at 12:46:56PM +0100, Christian Brauner wrote:
-> > On Tue, Jan 22, 2019 at 12:42:44PM +0100, Arnd Bergmann wrote:
-> > >
-> > > You need to change __NR_syscalls to 425 as well. This will
-> > > clearly create a conflict, but then the resolution will be to pick
-> > > the correct (a.k.a. highest) number, rather than remembering
-> > > to update it manually.
-> >
-> > Hm, ok. Wasn't sure if that would confuse people.
-> >
-> > Ok, when I sent my PR I will make a note in the PR that this branch is
-> > aligned to create only minimal conflicts with your y2038 branch. The
-> > patch carries your ack already so this should be good.
+From: Naveen Kumar Parna <parna.naveenkumar@gmail.com>
 
-My point was just that __NR_syscalls has to be one more than the highest
-syscall number, otherwise we get a build failure on architectures that
-create an array of __NR_syscalls entries.
+Without ".owner = THIS_MODULE" it is possible to crash the kernel
+by unloading the mbcs module while someone works with the file.
+Fix this by initializing the ‘struct file_operations' ->owner with
+THIS_MODULE.
 
-> Arnd, in case you care to take a look
-> https://git.kernel.org/pub/scm/linux/kernel/git/brauner/linux.git/log/?h=for-next
+Signed-off-by: Naveen Kumar Parna <parna.naveenkumar@gmail.com>
+---
+ drivers/char/mbcs.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Looks good to me.
+diff --git a/drivers/char/mbcs.c b/drivers/char/mbcs.c
+index 8c9216a0f62e..0a31b60bee7b 100644
+--- a/drivers/char/mbcs.c
++++ b/drivers/char/mbcs.c
+@@ -50,6 +50,7 @@ static LIST_HEAD(soft_list);
+  * file operations
+  */
+ static const struct file_operations mbcs_ops = {
++	.owner = THIS_MODULE,
+ 	.open = mbcs_open,
+ 	.llseek = mbcs_sram_llseek,
+ 	.read = mbcs_sram_read,
+-- 
+2.17.1
 
-      Arnd
