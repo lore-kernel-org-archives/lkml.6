@@ -2,154 +2,75 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C89AC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:45:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5458FC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:46:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA9FE20861
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:45:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="G98Pd24z"
+	by mail.kernel.org (Postfix) with ESMTP id 2F56021019
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:46:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728873AbfAVOp3 (ORCPT
+        id S1728888AbfAVOqE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 09:45:29 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44332 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728757AbfAVOp3 (ORCPT
+        Tue, 22 Jan 2019 09:46:04 -0500
+Received: from mail-it1-f197.google.com ([209.85.166.197]:44943 "EHLO
+        mail-it1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728736AbfAVOqE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 09:45:29 -0500
-Received: by mail-wr1-f65.google.com with SMTP id z5so27600207wrt.11
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 06:45:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=luzdU/Upa/y35VkDfeeut7u7cFBtXmzJfslV4M9BlzE=;
-        b=G98Pd24zDgQ9EUoZrBp0ufPNCIK8i5Ma7+kNOWqAb3AxHg6Ggv/8LXL/BjDBMiq6vi
-         v0XdNZMZen1s3MPrAWw6sQC5NHgEsBtU9QuGXjIFhRqQlF1Y/FjvgiKHNFrOwZj7H9FY
-         /qBQstBUAKyLmZHR+5BebJBVBOgTGIBHVEBHc=
+        Tue, 22 Jan 2019 09:46:04 -0500
+Received: by mail-it1-f197.google.com with SMTP id x82so13282477ita.9
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 06:46:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=luzdU/Upa/y35VkDfeeut7u7cFBtXmzJfslV4M9BlzE=;
-        b=BNV6to9mPAp4OwTTLEsX2rFKZHipJxb6qZd3fw3oDmoosc0sUN5m87j1Sv3J1RzIEQ
-         yem/xCfh3IeKNh6zJ8kEe6wupvZgPAxwzo6o1chxdh/9Yv5rQ8lLcsgFQArHU2sHS3Ry
-         r3ks0I40hCI/zGv5qRIrP4grktQzHLlT5tkWgAU0kJPnjiusY+byYBYqaJSJQKZpzRx0
-         0JUMeLYIfBLvghggNmkXDacweFTtj/a+MQQZJPiUPY1NiVr2Hz79JSG96hwA7El3Xiyr
-         U3+VxirHz3oM+bn67dkOPqQmjqEL79CcvGR4qw/ODDgT+wiwlvIZcAuDFXti6UTzepbj
-         wslA==
-X-Gm-Message-State: AJcUukcPKcFAcezX60A1iqOTejoE2+itlunh6jeboav1l6G33tmjI1ZZ
-        RriMVsmltGgzAUaPDAdWYoWtlw==
-X-Google-Smtp-Source: ALg8bN6BTuDWJJb9ED9a21deOqr8RV3FaPoeGBBcLaVERluThr739pdhxwAXwwcgWzIlEYL08bS/OQ==
-X-Received: by 2002:a5d:6889:: with SMTP id h9mr32815715wru.222.1548168326450;
-        Tue, 22 Jan 2019 06:45:26 -0800 (PST)
-Received: from [10.44.66.8] ([212.45.67.2])
-        by smtp.googlemail.com with ESMTPSA id a62sm44317721wmf.47.2019.01.22.06.45.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Jan 2019 06:45:25 -0800 (PST)
-Subject: Re: [PATCH v13 0/8] Introduce on-chip interconnect API
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     andy.gross@linaro.org, olof@lixom.net, arnd@arndb.de,
-        rjw@rjwysocki.net, robh+dt@kernel.org, mturquette@baylibre.com,
-        khilman@baylibre.com, vincent.guittot@linaro.org,
-        skannan@codeaurora.org, bjorn.andersson@linaro.org,
-        amit.kucheria@linaro.org, seansw@qti.qualcomm.com,
-        daidavid1@codeaurora.org, evgreen@chromium.org,
-        dianders@chromium.org, abailon@baylibre.com,
-        maxime.ripard@bootlin.com, thierry.reding@gmail.com,
-        ksitaraman@nvidia.com, sanjayc@nvidia.com,
-        henryc.chen@mediatek.com, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-mediatek@lists.infradead.org
-References: <20190116161103.6937-1-georgi.djakov@linaro.org>
- <20190122124204.GA26969@kroah.com>
-From:   Georgi Djakov <georgi.djakov@linaro.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=georgi.djakov@linaro.org; prefer-encrypt=mutual; keydata=
- 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
- KEmKjLDvB0pePJkdTw==
-Message-ID: <2ac9b994-ecbf-05fd-5c01-7ecd0089c744@linaro.org>
-Date:   Tue, 22 Jan 2019 16:45:20 +0200
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=tZ75i4rbvSM77zRbeSNhYTFR1GllBSkW3HGwpNt3Sd8=;
+        b=pV7hlLPLUb5wxk8GdNPDAKKWkEUOaKkyLYyDF6rG/Pe9dXduVcxJ54IAVc4buBIu6T
+         G8w727faS8UWkJ6YCfuFA4RPBtKUGeddLdoXogcITpKJnFnlhyXGLT7WR97gDiYiiAbM
+         VUMN69/8AvPuSq6DfWu53Yfjwqp6m+DXlnu/kr2CJN1v+LvN89bDJdL7wj7bZLCaH+ax
+         lULaaYgPZ21VM5pEhxTCVYvI43gs37Ah0hSpiN2RQLlXbnJS59AdYrH3gtAGJOc9RZ+Q
+         e4nOESmmZ+mWd+vcbgnCUqXHOFMCrnY0WkjZ/gRdnLcYM6OYQ0lJytP4AHEibFdPoIAI
+         gCiA==
+X-Gm-Message-State: AHQUAuaE3SeJTuqKBIIPVHmJkBLmXktJmWEFFbJWtuX1Wof2YB+4lCHM
+        O3OP3twgSKN568G9rEbZ9P74Ss/9Sflll2aCR2D5bMA7cqw7
+X-Google-Smtp-Source: ALg8bN6p8giWAHu3JMN3RnBjUiUatuUrVBTpnvYgJFWxz/LCZYQAwSYrekaoWTh6GWbMEDf1jW/MHGAAv/4QDE9z7F0IXyY/XD6L
 MIME-Version: 1.0
-In-Reply-To: <20190122124204.GA26969@kroah.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a5d:9ad7:: with SMTP id x23mr917387ion.21.1548168363115;
+ Tue, 22 Jan 2019 06:46:03 -0800 (PST)
+Date:   Tue, 22 Jan 2019 06:46:03 -0800
+In-Reply-To: <CACT4Y+bEsav4r82z5rE1b0rH==VpU7FEK7DzuqTu3AV+w0Ve9g@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000005609bd05800d09e9@google.com>
+Subject: Re: possible deadlock in shmem_fallocate (2)
+From:   syzbot <syzbot+4b8b031b89e6b96c4b2e@syzkaller.appspotmail.com>
+To:     arve@android.com, dvyukov@google.com, hughd@google.com,
+        joelaf@google.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, penguin-kernel@i-love.sakura.ne.jp,
+        syzkaller-bugs@googlegroups.com, tkjos@google.com,
+        willy@infradead.org, xieyisheng1@huawei.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/22/19 14:42, Greg KH wrote:
-> On Wed, Jan 16, 2019 at 06:10:55PM +0200, Georgi Djakov wrote:
-[..]
-> 
-> All now queued up, thanks.
-> 
-> greg k-h
+Hello,
 
-Hi Greg,
+syzbot has tested the proposed patch and the reproducer did not trigger  
+crash:
 
-Thanks for considering these patches! Actually i have a branch named
-icc-next [1] which is pulled into linux-next. I will drop these same
-patches to avoid conflicts.
+Reported-and-tested-by:  
+syzbot+4b8b031b89e6b96c4b2e@syzkaller.appspotmail.com
 
-If all is well, i was wondering how to proceed with follow-up patches.
-Some consumers of this API are already floating on the lists. How about
-sending you a pull request before the merge window with the collected
-patches?
+Tested on:
 
-Thanks,
-Georgi
+commit:         48b161983ae5 Merge tag 'xarray-5.0-rc3' of git://git.infra..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=864ab9949c515a07
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1064a9a0c00000
 
-1. https://git.linaro.org/people/georgi.djakov/linux.git/log/?h=icc-next
-
+Note: testing is done by a robot and is best-effort only.
