@@ -7,46 +7,50 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EBB3C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:24:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67230C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:24:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C5E0217D4
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:24:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3681D217F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:24:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548170657;
-	bh=efw6pBkIp0k7AQbq8JdQ6FqmYPAXGro3w8ye/pSMz3w=;
+	s=default; t=1548170662;
+	bh=osTFfjFH9cbApvli8AfiOV1oemQK3cCtFnsQq73QHJM=;
 	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=PnjcobH170AoM46KuOnJmyNFc9YWvBG7MPV7k/+0puN6Sd8UgaiXx8INgsc2zlFDQ
-	 /eZGk+gkO39w9/qGztFBEWmaoGjLgNoLFItTHMQoqwq1EVvFQAAN2Is7SDtbq82bMm
-	 BE4xKnlvxY7n/iNAOXZoG+tKsdylp+FNigulzetc=
+	b=LIPkQi1vd/ak7On/r3bJ7B8YfDNYKWSm8bMpBffQn2Fe5cAaJjX+jAqVhCYLj/LA+
+	 z8qjVagAXv3X3x5leICQ97CMnJoQOXFinnSxPO/1GAabTRzN5mEJKkCqelK53uLL8k
+	 FgOl0Fkh6APDL+gQ3gjhy4ETMdRt8Tnfy4FGspWk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730081AbfAVPYP (ORCPT
+        id S1730106AbfAVPYU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 10:24:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37874 "EHLO mail.kernel.org"
+        Tue, 22 Jan 2019 10:24:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37918 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730062AbfAVPYM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 10:24:12 -0500
+        id S1729537AbfAVPYO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 10:24:14 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 446D6217D6;
-        Tue, 22 Jan 2019 15:24:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D918020855;
+        Tue, 22 Jan 2019 15:24:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548170651;
-        bh=efw6pBkIp0k7AQbq8JdQ6FqmYPAXGro3w8ye/pSMz3w=;
+        s=default; t=1548170654;
+        bh=osTFfjFH9cbApvli8AfiOV1oemQK3cCtFnsQq73QHJM=;
         h=From:To:Cc:Subject:Date:From;
-        b=q42QrFy1Dn/39BxcZ314YMMCz22kUktqpSOTfhrpoKEeG49C1Ge0PW+ezshqvmz/q
-         TjMBbZ5F9Sqad8yW0aik138p3abT+SKmcxukVl+b3Z62fagy2Glc3Y73FHaSGTJQTh
-         CxKEXA5J4j4Aq3iWVcIAF7qInVHiUZ/uzHk/+syA=
+        b=XdiKNoXzGMwI7Fbw3oqn7tFjZ+4/Q7TogHsx2X+rfwSYOZQGFOZmrHqzNK5jik+NF
+         TMt+53Yt+NIEBIOcNrwzcdAxETuNEfMDl0XMN92iaXoN/Gb/PmQh54kTvuPKlgfYsh
+         ohC2Getlpjo+GuTKpYntC+fxsvln1S/jfZzvjE44=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Amitkumar Karwar <amitkarwar@gmail.com>,
+        Nishant Sarmukadam <nishants@marvell.com>,
+        Ganapathi Bhat <gbhat@marvell.com>,
+        Xinming Hu <huxinming820@gmail.com>,
         Kalle Valo <kvalo@codeaurora.org>,
-        libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org
-Subject: [PATCH] libertas: no need to check return value of debugfs_create functions
-Date:   Tue, 22 Jan 2019 16:21:36 +0100
-Message-Id: <20190122152151.16139-37-gregkh@linuxfoundation.org>
+        linux-wireless@vger.kernel.org
+Subject: [PATCH] mwifiex: no need to check return value of debugfs_create functions
+Date:   Tue, 22 Jan 2019 16:21:37 +0100
+Message-Id: <20190122152151.16139-38-gregkh@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -59,45 +63,33 @@ When calling debugfs functions, there is no need to ever check the
 return value.  The function can work or not, but the code logic should
 never do something different based on this.
 
+Cc: Amitkumar Karwar <amitkarwar@gmail.com>
+Cc: Nishant Sarmukadam <nishants@marvell.com>
+Cc: Ganapathi Bhat <gbhat@marvell.com>
+Cc: Xinming Hu <huxinming820@gmail.com>
 Cc: Kalle Valo <kvalo@codeaurora.org>
-Cc: libertas-dev@lists.infradead.org
 Cc: linux-wireless@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/marvell/libertas/debugfs.c | 6 ------
- 1 file changed, 6 deletions(-)
+ drivers/net/wireless/marvell/mwifiex/debugfs.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/wireless/marvell/libertas/debugfs.c b/drivers/net/wireless/marvell/libertas/debugfs.c
-index c83f44f9ddf1..fe14814af300 100644
---- a/drivers/net/wireless/marvell/libertas/debugfs.c
-+++ b/drivers/net/wireless/marvell/libertas/debugfs.c
-@@ -708,8 +708,6 @@ void lbs_debugfs_init_one(struct lbs_private *priv, struct net_device *dev)
- 		goto exit;
+diff --git a/drivers/net/wireless/marvell/mwifiex/debugfs.c b/drivers/net/wireless/marvell/mwifiex/debugfs.c
+index cbe4493b3266..8ab114cf3467 100644
+--- a/drivers/net/wireless/marvell/mwifiex/debugfs.c
++++ b/drivers/net/wireless/marvell/mwifiex/debugfs.c
+@@ -922,9 +922,8 @@ mwifiex_reset_write(struct file *file,
+ }
  
- 	priv->debugfs_dir = debugfs_create_dir(dev->name, lbs_dir);
--	if (!priv->debugfs_dir)
--		goto exit;
+ #define MWIFIEX_DFS_ADD_FILE(name) do {                                 \
+-	if (!debugfs_create_file(#name, 0644, priv->dfs_dev_dir,        \
+-			priv, &mwifiex_dfs_##name##_fops))              \
+-		return;                                                 \
++	debugfs_create_file(#name, 0644, priv->dfs_dev_dir, priv,       \
++			    &mwifiex_dfs_##name##_fops);                \
+ } while (0);
  
- 	for (i=0; i<ARRAY_SIZE(debugfs_files); i++) {
- 		files = &debugfs_files[i];
-@@ -721,8 +719,6 @@ void lbs_debugfs_init_one(struct lbs_private *priv, struct net_device *dev)
- 	}
- 
- 	priv->events_dir = debugfs_create_dir("subscribed_events", priv->debugfs_dir);
--	if (!priv->events_dir)
--		goto exit;
- 
- 	for (i=0; i<ARRAY_SIZE(debugfs_events_files); i++) {
- 		files = &debugfs_events_files[i];
-@@ -734,8 +730,6 @@ void lbs_debugfs_init_one(struct lbs_private *priv, struct net_device *dev)
- 	}
- 
- 	priv->regs_dir = debugfs_create_dir("registers", priv->debugfs_dir);
--	if (!priv->regs_dir)
--		goto exit;
- 
- 	for (i=0; i<ARRAY_SIZE(debugfs_regs_files); i++) {
- 		files = &debugfs_regs_files[i];
+ #define MWIFIEX_DFS_FILE_OPS(name)                                      \
 -- 
 2.20.1
 
