@@ -2,107 +2,88 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70E12C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:20:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D0F1C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:22:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4904C21721
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:20:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3B4921736
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:22:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548148932;
+	bh=CGEj8ssaPrjaS+pJehSNpdfo8oHKAsYjYvXUgxzo+p4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=P6YiyvURUY8RhY2RcnWaI1/stb+HgrkhHJzz9/n1FIr6BYPgzdK9SjwWCyAAI947W
+	 FtHvt6s7R3ZI0CjC12euF3CBKJGMuiYMnFWLiUoTZVFsTRWS/AS5JZJdaTzXr7PbQM
+	 D8qhD6uDfwrHKOlD/cZLR/os7HE7/FOlemsQES5Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727769AbfAVJUP (ORCPT
+        id S1727664AbfAVJWL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 04:20:15 -0500
-Received: from mx0a-00010702.pphosted.com ([148.163.156.75]:35932 "EHLO
-        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727208AbfAVJUO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 04:20:14 -0500
-Received: from pps.filterd (m0098780.ppops.net [127.0.0.1])
-        by mx0a-00010702.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0M9BB1h008122;
-        Tue, 22 Jan 2019 03:19:58 -0600
-Received: from ni.com (skprod3.natinst.com [130.164.80.24])
-        by mx0a-00010702.pphosted.com with ESMTP id 2q429x84jp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 22 Jan 2019 03:19:58 -0600
-Received: from us-aus-exch1.ni.corp.natinst.com (us-aus-exch1.ni.corp.natinst.com [130.164.68.11])
-        by us-aus-skprod3.natinst.com (8.16.0.27/8.16.0.27) with ESMTPS id x0M9JvaC011874
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Tue, 22 Jan 2019 03:19:57 -0600
-Received: from us-aus-exhub2.ni.corp.natinst.com (130.164.68.32) by
- us-aus-exch1.ni.corp.natinst.com (130.164.68.11) with Microsoft SMTP Server
- (TLS) id 15.0.1395.4; Tue, 22 Jan 2019 03:19:57 -0600
-Received: from my-pen-rd24.apac.corp.natinst.com (130.164.49.7) by
- us-aus-exhub2.ni.corp.natinst.com (130.164.68.32) with Microsoft SMTP Server
- id 15.0.1395.4 via Frontend Transport; Tue, 22 Jan 2019 03:19:55 -0600
-From:   Guan Yung Tseng <guan.yung.tseng@ni.com>
-To:     <gregkh@linuxfoundation.org>, <hch@infradead.org>
-CC:     <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Guan Yung Tseng" <guan.yung.tseng@ni.com>
-Subject: [PATCH v2] 8250_pci.c: Update NI specific devices class to multi serial
-Date:   Tue, 22 Jan 2019 17:19:42 +0800
-Message-ID: <1548148782-3414-1-git-send-email-guan.yung.tseng@ni.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 22 Jan 2019 04:22:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46272 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727509AbfAVJWK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 04:22:10 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9004E21019;
+        Tue, 22 Jan 2019 09:22:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548148930;
+        bh=CGEj8ssaPrjaS+pJehSNpdfo8oHKAsYjYvXUgxzo+p4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kyju2ZUqv06bhqbgTIgJFGn4fJiJl1ePLsaLDOw4SI7rxG+BHUgy8IGk9u3VErCqT
+         0YpFMMre/oEgCKOi5+wyJhY5WnHGpYpaRjM504GpxxmvNPdtbD07lfHl5GqjiO9Nf0
+         2mu3AF9or1Rt+IZzBKNDE+JjEcHqRBoyXbSFhzqI=
+Date:   Tue, 22 Jan 2019 10:22:07 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Finn Thain <fthain@telegraphics.com.au>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Joshua Thompson <funaho@jurai.org>,
+        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v9 15/22] m68k: Dispatch nvram_ops calls to Atari or Mac
+ functions
+Message-ID: <20190122092207.GA339@kroah.com>
+References: <cover.1547525936.git.fthain@telegraphics.com.au>
+ <fc5f13c7e60b846f533de41b179d904a95f58aea.1547525936.git.fthain@telegraphics.com.au>
+ <20190122091917.GA16612@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-22_04:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190122091917.GA16612@kroah.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On, Jan 14, 2019 at 10:10:05PM +0800, Guan Yung Tseng wrote:
->> Modified NI devices class to PCI_CLASS_COMMUNICATION_MULTISERIAL.
->> The reason of doing this is because all NI multi port serial cards
->> use PCI_CLASS_COMMUNICATION_OTHER class and thus fail the
->> serial_pci_is_class_communication test added in the commit 7d8905d06405
->> ("serial: 8250_pci: Enable device after we check black list").
->> 
->> Signed-off-by: Guan Yung Tseng <guan.yung.tseng@ni.com>
->> ---
->>  drivers/tty/serial/8250/8250_pci.c | 20 ++++++++++++++++++++
->>  1 file changed, 20 insertions(+)
->> 
->> diff --git a/drivers/tty/serial/8250/8250_pci.c b/drivers/tty/serial/8250/8250_pci.c
->> index 4986b4a..0949db1 100644
->> --- a/drivers/tty/serial/8250/8250_pci.c
->> +++ b/drivers/tty/serial/8250/8250_pci.c
->> @@ -663,6 +663,13 @@ static int pci_xircom_init(struct pci_dev *dev)
->>  	return 0;
->>  }
->>  
->> +static int pci_ni_probe(struct pci_dev *dev)
->> +{
->> +	dev->class = PCI_CLASS_COMMUNICATION_MULTISERIAL << 8 |
->> +			(dev->class & 0xff);
-
->
-> As Christoph said, this looks really odd.  This field comes from the
-> PCI structure on the device, it should not be modified by the kernel.
+On Tue, Jan 22, 2019 at 10:19:17AM +0100, Greg Kroah-Hartman wrote:
+> On Tue, Jan 15, 2019 at 03:18:56PM +1100, Finn Thain wrote:
+> > A multi-platform kernel binary has to decide at run-time how to dispatch
+> > the arch_nvram_ops calls. Add a platform-independent arch_nvram_ops
+> > struct for this, to replace the atari-specific one.
+> > 
+> > Enable CONFIG_HAVE_ARCH_NVRAM_OPS for Macs.
+> > 
+> > Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> > Tested-by: Stan Johnson <userm57@yahoo.com>
+> > Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+> > ---
+> > Changed since v8:
+> >  - Adopted nvram_read_bytes() and nvram_write_bytes() where possible.
 > 
-> Unless the device is broken and needs to be fixed up in the kernel?
+> This patch fails to apply to my tree, what did you make it against?
 > 
-> Also, you have sent 2 different patches here for this type of issue, are
-> both needed?  If so, please resend both of them as a patch series, with
-> more explainations in this one as to why you are modifying this field.
+> I tried against 5.0-rc1 :(
 > 
-> I've dropped all pending patches from you from my queue now.
-> 
+> Can you rebase this series against the char-misc-next branch of my
+> char-misc.git tree and resend so that I can apply the whole series?
 
-Hi Christoph and Greg,
+Oops, nope, my fault, I missed some patches in this series, nevermind...
 
-Sorry for the confusion sending 2 different patches to solve the same
-issue. I should have wait for your response before sending antoher
-patch to solve the similar issue.
-
-For some historical reason, NI serial devices use
-PCI_CLASS_COMMUNICATION_OTHER class code. Yes, I understand that
-the class code should read from config space instead modified from
-kernel. But these devices are shipped to the market for many years.
-That's why I am trying to fix the problem in the kernel.
-
-I will send another simple patch again to fix the problem.
+greg k-h
