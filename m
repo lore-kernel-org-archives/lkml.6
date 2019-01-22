@@ -7,35 +7,35 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9825EC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:06:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E829C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:06:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CAFA20879
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:06:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2532420879
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:06:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="CYsI0bDn"
+	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="aZZIHI1X"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728210AbfAVLGb (ORCPT
+        id S1728253AbfAVLGl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 06:06:31 -0500
-Received: from mail-eopbgr60079.outbound.protection.outlook.com ([40.107.6.79]:47728
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        Tue, 22 Jan 2019 06:06:41 -0500
+Received: from mail-eopbgr70089.outbound.protection.outlook.com ([40.107.7.89]:63488
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727775AbfAVLG2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 06:06:28 -0500
+        id S1727624AbfAVLG3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 06:06:29 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
  s=selector1-arm-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Kjp0xBOYLv/D9P6ubA6VlmpuUy5cLeaICgTq4kOTK+I=;
- b=CYsI0bDncVkJVWKEwkCFJ/P9uu2xhMHhKuy8pfllJ8jZSFQVjZUc2xJrLRhhU/kJ4HyP2UsFDMEiGgmwIvBwtrstaI+wS9Zlc9gA5k43OnX8fHdQJ2gZ+XotmKah1iU3tExFvZa8IXhvkppJnx1h/AN+8MJp3YDVr4LdWJDFSBc=
+ bh=sVCuN+Rgl6qxxikjUjUjHSDdemOyZgdyD7gXhJX8W+0=;
+ b=aZZIHI1X/R6sataDpBohjY8I2FQyiUlA6k6jeWLI2Au9/NZWwlArykW2TwBvx5p6/C8ZlZ7P4//RE7n8NAR/K2WACWXjXdASwR+U4Q+LlmmeZBpJ34ZewVMIiUSv3Rr2idve2cyGmOOitV11KIWZBFN+WPDduOoKiqNQvarzaUI=
 Received: from DB6PR0801MB1990.eurprd08.prod.outlook.com (10.168.81.21) by
- DB6PR0801MB1671.eurprd08.prod.outlook.com (10.169.226.23) with Microsoft SMTP
+ DB6PR0801MB1989.eurprd08.prod.outlook.com (10.168.85.150) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1558.16; Tue, 22 Jan 2019 11:05:51 +0000
+ 15.20.1537.26; Tue, 22 Jan 2019 11:06:22 +0000
 Received: from DB6PR0801MB1990.eurprd08.prod.outlook.com
  ([fe80::b9be:3d28:78a2:6e33]) by DB6PR0801MB1990.eurprd08.prod.outlook.com
  ([fe80::b9be:3d28:78a2:6e33%2]) with mapi id 15.20.1537.031; Tue, 22 Jan 2019
- 11:05:51 +0000
+ 11:06:22 +0000
 From:   "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
 To:     Liviu Dudau <Liviu.Dudau@arm.com>,
         "airlied@linux.ie" <airlied@linux.ie>,
@@ -55,13 +55,11 @@ CC:     "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
         "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
-Subject: [PATCH v2 2/5] drm/komeda: Add
- komeda_pipeline/component_get_state_and_set_user
-Thread-Topic: [PATCH v2 2/5] drm/komeda: Add
- komeda_pipeline/component_get_state_and_set_user
-Thread-Index: AQHUskJvY0A0BIanXk6La5fKStczuA==
-Date:   Tue, 22 Jan 2019 11:05:51 +0000
-Message-ID: <20190122110431.5025-3-james.qian.wang@arm.com>
+Subject: [PATCH v2 5/5] drm/komeda: Add komeda_plane/plane_helper_funcs
+Thread-Topic: [PATCH v2 5/5] drm/komeda: Add komeda_plane/plane_helper_funcs
+Thread-Index: AQHUskKCF0KwCqI+2kmiQGQ+rCgcTg==
+Date:   Tue, 22 Jan 2019 11:06:22 +0000
+Message-ID: <20190122110431.5025-6-james.qian.wang@arm.com>
 References: <20190122110431.5025-1-james.qian.wang@arm.com>
 In-Reply-To: <20190122110431.5025-1-james.qian.wang@arm.com>
 Accept-Language: en-US
@@ -76,31 +74,31 @@ authentication-results: spf=none (sender IP is )
 x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.17.1
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB6PR0801MB1671;6:YY8ApOn8wwXRUO+/4d2CJQgrkRKa+j5zTLnjqQrYyyOVrDmn/rDViiIXtH33lyTF3APugtp+QUJKSPoUOngbO89SHa6B0RrVsyslWWLCT9Vg1ygPLKg0VvA7apgp3upkF0KLZy6mXNKeZ/cPx6bbGrEUFQrv9dRZ6mX4zWqQC1K+Hy226VkTK1GI2BMpu6BAiyKzkAsJW8EDAmunwpcOsgBHhMA9PI1fPd0QEd9OS0H0bpkuScDMz2ZTXdYB4n1QwZkUYSzpwM/8u28Qnr+xmOtvSw7sfwyYuBqqgDvfqVLQvc8KsCZyvHXfE7ftGfIubgP/M0AG3lKbcLP2B/UgNcdteVIEP69d+E/XapJLlO9FHb1Pey0vNbijosumDFu9LYRxCFg6YC1KCzzkLfZ27etSv+gMlV38swKkhXorMBpnv9UzoTVgf9ZhgU82FiMh3HQ3KADo0gr45JcCNG2+pA==;5:MKh0zQVXgMZNduJC0oUWCmhVtk/51JglQ3c88XuN1h7LQ6On8qGHh712NLdytq4hZKTnHNMXqqYyyHkp6B6/HOTYdxmiEwRKhSd9qZVj7zFMobmK0FBf8taEhXBsvByUf9wF404PkCcOL9GeSfjFFqzVFm4J0AGFQh5kxUPhiSfHz9h/0lmJIldWWlwIP0i85ZXe/GLUC5gMU++ATjecRw==;7:dogdJWT9hM44Ng80POpRwxH9IJcOvRKAdGmI0gJ+aPCNHqGtCeSrkachA6FpC2Np8SNNPUNiZc26bVNWHn/xm4DMisAzoeJcFkar/1/+hHm/tVZ0UxhQIeiCB6560TZfBic2rnV8x1sbJM1ygztaCA==
-x-ms-office365-filtering-correlation-id: e1fb1516-cfbe-4e60-6ddd-08d6805991d5
+x-microsoft-exchange-diagnostics: 1;DB6PR0801MB1989;6:546P6yePM7Uzq5fvXhQo2UexgFAVmk6bIzWvFc26303jB2aLmHPQmg7sY0DFixxmiKzAYk7qIZzgiGlqAHcHwpNwFk+L5j0OdG5IxrboCo93aMcuNJsASS0ZD5GYQwgFIxtoy2cCXc9ORdSwy5s/4HyE5CDnzWCe3AR1hL3oUzmciWAZbNfc8BqsI55zTaKhyej/P1uicpCCyJdidbZySyCcgcWKgLpgSocCOyHopo7FMqTArhqZEaWtcLp/BjTKbtSsUio/w5np2VQAzVxCU+eunPWZcj8TXsHYXw6w8AlU1LlJN4lrgiwRvGMg8mqJzVCy0b16eY8fu0TsygKWf3cjCgReWqbVSpd86aWhH49+n70mYD3FK7zKykz11oM71oZX9KSHlP5gtjqU0h7UGxsvUAVJ9PjUSf7On6J3zEn0ICsQVdk3hO7l3XCaKN9TntmHb0hAgNDv7OE6hgOjVw==;5:8i4bynMZg9Y3MOmqpodaKmZ/R+XLcS0c3If8bdTtti7gF8+XBmtP0/464S76Zlk2XL4iB0t0okSXv9Y8jrOrVXefAPH264PbuA3HmuCJpGGVdtVYriLi7MbM1yx2pna9XW3h7M/crRVQWg46y7zi3n/E7Gw0CHLthDEL6BejycKsGneCRVeZw/LG8ENygkh6eUeA+63/sicSGQyxWhnKzg==;7:1pJcMUQ0PqtgXfzSK7s4JWYb1y0+IGKXUcafVNQiCGWzWlcQmrpx7CzJplPTXt3avMYVxxqUPHLoVyupznlfncpfgmrV4lYz5e5T7VRiWL7qJY89AkgFNUFylxDmGiudYhGaH1n387enbBCNWH9XPw==
+x-ms-office365-filtering-correlation-id: aaeb320f-ff82-48b5-8979-08d68059a467
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB6PR0801MB1671;
-x-ms-traffictypediagnostic: DB6PR0801MB1671:
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600109)(711020)(4618075)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DB6PR0801MB1989;
+x-ms-traffictypediagnostic: DB6PR0801MB1989:
 nodisclaimer: True
-x-microsoft-antispam-prvs: <DB6PR0801MB1671B930F02D720E41C0F526B3980@DB6PR0801MB1671.eurprd08.prod.outlook.com>
+x-microsoft-antispam-prvs: <DB6PR0801MB19894E5C0921C8F32E68107BB3980@DB6PR0801MB1989.eurprd08.prod.outlook.com>
 x-forefront-prvs: 0925081676
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(39860400002)(376002)(346002)(366004)(199004)(189003)(2906002)(25786009)(86362001)(36756003)(6116002)(3846002)(4326008)(2201001)(6486002)(103116003)(66066001)(105586002)(106356001)(6512007)(2501003)(53936002)(97736004)(6436002)(446003)(68736007)(81166006)(476003)(50226002)(8676002)(71200400001)(71190400001)(316002)(6506007)(52116002)(81156014)(486006)(11346002)(110136005)(54906003)(99286004)(305945005)(102836004)(14454004)(7736002)(26005)(76176011)(386003)(55236004)(1076003)(8936002)(478600001)(2616005)(186003)(14444005)(256004);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR0801MB1671;H:DB6PR0801MB1990.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(136003)(346002)(396003)(376002)(39860400002)(189003)(199004)(4326008)(106356001)(105586002)(316002)(25786009)(2501003)(8936002)(256004)(14444005)(2201001)(1076003)(86362001)(52116002)(53936002)(2906002)(54906003)(110136005)(478600001)(14454004)(6512007)(99286004)(26005)(102836004)(55236004)(97736004)(36756003)(386003)(6506007)(66066001)(76176011)(68736007)(2616005)(476003)(81166006)(50226002)(186003)(11346002)(6116002)(3846002)(7736002)(486006)(103116003)(8676002)(6486002)(305945005)(71190400001)(71200400001)(6436002)(446003)(81156014);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR0801MB1989;H:DB6PR0801MB1990.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: arm.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Mi3J/mA2ihNxH5XgqpcUyeRampgDmGAu/4GeN1kPhxB+lMKl+VzXcpN8HRiHXJp/tn0I1tMNzvCRg07nN5eVk20wkJBBwybKShIE8tCEvz8iVsn3nGdGAMSwhoIfnWZ+cTGHYsnTfCqXcJhpU9ASU2/s2XHV58u8CouPI/JHLT40siFa4rbOjDfLRdJnwfnjIlzjaZ/+TBQ0dJfhqa6MfBPOy+K0PwxF+7BJN8VCTnIZAoggZDtUxmtXspApnCogKvqIP5k0GZW9vwWpH/cXQM3AKm5tadAf6akaQ6YZW3/YgvQhXFRe/l9vkQmwjob0Zil8YxkZUPiqiEE6yD6ytHNhweKhCQajCtcvJCuRzSwSZNTiRD26RDjWqQWyNs5BdwfxCj5J6qImbJhk0H8AJwGzY9HxtoRsdwCJSwx7/Uw=
+x-microsoft-antispam-message-info: LzeDApEPeEhZ9GzyzOcjBsF9sKDAazNwX9vPATiHauEXf8noTISPooTVrlMK7/osCjtQmNjGvxd/o4yndN6fVpenBzd0qT3E+BpazXyiPxFVVYdv1RWjb9uEoQ75lc30K3kTJNW8JYT2PW/wMDDh+hJWVVDgQ6dlCozLSADcCIiWx8KgSaYmLWRJN/eKBYVWbUqONlkRiW725EHa036VEWELwXnrMJ1MpoFleP+VlEHnJWmK5+bvgW/HwRTCQeRrgwwGOx0pFqJmZFvIYH5IOY95GoGj5ZmX1HobG1rvTa9HmhWZ3sPQ+Txy+0zeHFP0drZRs4/NagsCmExKVJK++H6FrLJO9K4rCJy4BQjodLzMy6dP9kWpDPvlyHLziwsqAQP/Y/t2U+DKFEtEBMgkGPvsqkyUB5MBH5/Yx5hu9Q0=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e1fb1516-cfbe-4e60-6ddd-08d6805991d5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jan 2019 11:05:41.6475
+X-MS-Exchange-CrossTenant-Network-Message-Id: aaeb320f-ff82-48b5-8979-08d68059a467
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jan 2019 11:06:12.6946
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0801MB1671
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0801MB1989
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -108,195 +106,170 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
 
-get_state_and_set_user packed get_state and set_user into one function,
-which get pipeline/component state for a specific pipeline/component, if
-success set the user to it.
+Per komeda design KMS-plane maps to komeda layer input pipeline.
+komeda_plane_atomic_check is for building a komeda layer input pipeline.
 
-v2:
-- Rebase.
-- Applied commit:
-  b962a12050a3 ("drm/atomic: integrate modeset lock with private objects")
-  And delete our private modeset lock for pipeline.
+And KMS-plane is only a user of komeda resources. so there is no real HW
+update for plane, but all HW update will be handled in crtc->flush.
+
+v2: Rebase
 
 Signed-off-by: James Qian Wang (Arm Technology China) <james.qian.wang@arm.=
 com>
 ---
- drivers/gpu/drm/arm/display/komeda/Makefile   |   1 +
- .../display/komeda/komeda_pipeline_state.c    | 142 ++++++++++++++++++
- 2 files changed, 143 insertions(+)
- create mode 100644 drivers/gpu/drm/arm/display/komeda/komeda_pipeline_stat=
-e.c
+ .../gpu/drm/arm/display/komeda/komeda_plane.c | 128 ++++++++++++++++++
+ 1 file changed, 128 insertions(+)
 
-diff --git a/drivers/gpu/drm/arm/display/komeda/Makefile b/drivers/gpu/drm/=
-arm/display/komeda/Makefile
-index d593125236ae..62bd1bff66a3 100644
---- a/drivers/gpu/drm/arm/display/komeda/Makefile
-+++ b/drivers/gpu/drm/arm/display/komeda/Makefile
-@@ -9,6 +9,7 @@ komeda-y :=3D \
- 	komeda_dev.o \
- 	komeda_format_caps.o \
- 	komeda_pipeline.o \
-+	komeda_pipeline_state.o \
- 	komeda_framebuffer.o \
- 	komeda_kms.o \
- 	komeda_crtc.o \
-diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline_state.c b/d=
-rivers/gpu/drm/arm/display/komeda/komeda_pipeline_state.c
-new file mode 100644
-index 000000000000..7ebab4fae567
---- /dev/null
-+++ b/drivers/gpu/drm/arm/display/komeda/komeda_pipeline_state.c
-@@ -0,0 +1,142 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * (C) COPYRIGHT 2018 ARM Limited. All rights reserved.
-+ * Author: James.Qian.Wang <james.qian.wang@arm.com>
-+ *
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_plane.c b/drivers/gp=
+u/drm/arm/display/komeda/komeda_plane.c
+index 0a4953a9a909..af51f0cc9c16 100644
+--- a/drivers/gpu/drm/arm/display/komeda/komeda_plane.c
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_plane.c
+@@ -10,7 +10,82 @@
+ #include "komeda_dev.h"
+ #include "komeda_kms.h"
+=20
++static int
++komeda_plane_init_data_flow(struct drm_plane_state *st,
++			    struct komeda_data_flow_cfg *dflow)
++{
++	struct drm_framebuffer *fb =3D st->fb;
++
++	memset(dflow, 0, sizeof(*dflow));
++
++	dflow->blending_zorder =3D st->zpos;
++
++	/* if format doesn't have alpha, fix blend mode to PIXEL_NONE */
++	dflow->pixel_blend_mode =3D fb->format->has_alpha ?
++		st->pixel_blend_mode : DRM_MODE_BLEND_PIXEL_NONE;
++	dflow->layer_alpha =3D st->alpha >> 8;
++
++	dflow->out_x =3D st->crtc_x;
++	dflow->out_y =3D st->crtc_y;
++	dflow->out_w =3D st->crtc_w;
++	dflow->out_h =3D st->crtc_h;
++
++	dflow->in_x =3D st->src_x >> 16;
++	dflow->in_y =3D st->src_y >> 16;
++	dflow->in_w =3D st->src_w >> 16;
++	dflow->in_h =3D st->src_h >> 16;
++
++	return 0;
++}
++
++int komeda_plane_atomic_check(struct drm_plane *plane,
++			      struct drm_plane_state *state)
++{
++	struct komeda_plane *kplane =3D to_kplane(plane);
++	struct komeda_plane_state *kplane_st =3D to_kplane_st(state);
++	struct komeda_layer *layer =3D kplane->layer;
++	struct drm_crtc_state *crtc_st;
++	struct komeda_crtc *kcrtc;
++	struct komeda_crtc_state *kcrtc_st;
++	struct komeda_data_flow_cfg dflow;
++	int err;
++
++	if (!state->crtc || !state->fb)
++		return 0;
++
++	crtc_st =3D drm_atomic_get_crtc_state(state->state, state->crtc);
++	if (!crtc_st->enable) {
++		DRM_DEBUG_ATOMIC("Cannot update plane on a disabled CRTC.\n");
++		return -EINVAL;
++	}
++
++	/* crtc is inactive, skip the resource assignment */
++	if (!crtc_st->active)
++		return 0;
++
++	kcrtc =3D to_kcrtc(state->crtc);
++	kcrtc_st =3D to_kcrtc_st(crtc_st);
++
++	err =3D komeda_plane_init_data_flow(state, &dflow);
++	if (err)
++		return err;
++
++	err =3D komeda_build_layer_data_flow(layer, kplane_st, kcrtc_st, &dflow);
++
++	return err;
++}
++
++/* plane doesn't represent a real HW, so there is no HW update for plane.
++ * komeda handles all the HW update in crtc->atomic_flush
 + */
-+#include <linux/clk.h>
-+#include "komeda_dev.h"
-+#include "komeda_kms.h"
-+#include "komeda_pipeline.h"
-+
-+static inline bool is_switching_user(void *old, void *new)
++void komeda_plane_atomic_update(struct drm_plane *plane,
++				struct drm_plane_state *old_state)
 +{
-+	if (!old || !new)
-+		return false;
-+
-+	return old !=3D new;
 +}
 +
-+struct komeda_pipeline_state *
-+komeda_pipeline_get_state(struct komeda_pipeline *pipe,
-+			  struct drm_atomic_state *state)
+ static const struct drm_plane_helper_funcs komeda_plane_helper_funcs =3D {
++	.atomic_check	=3D komeda_plane_atomic_check,
++	.atomic_update	=3D komeda_plane_atomic_update,
+ };
+=20
+ static void komeda_plane_destroy(struct drm_plane *plane)
+@@ -20,7 +95,60 @@ static void komeda_plane_destroy(struct drm_plane *plane=
+)
+ 	kfree(to_kplane(plane));
+ }
+=20
++static void komeda_plane_reset(struct drm_plane *plane)
 +{
-+	struct drm_private_state *priv_st;
++	struct komeda_plane_state *state;
++	struct komeda_plane *kplane =3D to_kplane(plane);
 +
-+	priv_st =3D drm_atomic_get_private_obj_state(state, &pipe->obj);
-+	if (IS_ERR(priv_st))
-+		return ERR_CAST(priv_st);
++	if (plane->state)
++		__drm_atomic_helper_plane_destroy_state(plane->state);
 +
-+	return priv_to_pipe_st(priv_st);
-+}
++	kfree(plane->state);
++	plane->state =3D NULL;
 +
-+/* Assign pipeline for crtc */
-+struct komeda_pipeline_state *
-+komeda_pipeline_get_state_and_set_crtc(struct komeda_pipeline *pipe,
-+				       struct drm_atomic_state *state,
-+				       struct drm_crtc *crtc)
-+{
-+	struct komeda_pipeline_state *st;
-+
-+	st =3D komeda_pipeline_get_state(pipe, state);
-+	if (IS_ERR(st))
-+		return st;
-+
-+	if (is_switching_user(crtc, st->crtc)) {
-+		DRM_DEBUG_ATOMIC("CRTC%d required pipeline%d is busy.\n",
-+				 drm_crtc_index(crtc), pipe->id);
-+		return ERR_PTR(-EBUSY);
++	state =3D kzalloc(sizeof(*state), GFP_KERNEL);
++	if (state) {
++		state->base.rotation =3D DRM_MODE_ROTATE_0;
++		state->base.pixel_blend_mode =3D DRM_MODE_BLEND_PREMULTI;
++		state->base.alpha =3D DRM_BLEND_ALPHA_OPAQUE;
++		state->base.zpos =3D kplane->layer->base.id;
++		plane->state =3D &state->base;
++		plane->state->plane =3D plane;
 +	}
-+
-+	/* pipeline only can be disabled when the it is free or unused */
-+	if (!crtc && st->active_comps) {
-+		DRM_DEBUG_ATOMIC("Disabling a busy pipeline:%d.\n", pipe->id);
-+		return ERR_PTR(-EBUSY);
-+	}
-+
-+	st->crtc =3D crtc;
-+
-+	if (crtc) {
-+		struct komeda_crtc_state *kcrtc_st;
-+
-+		kcrtc_st =3D to_kcrtc_st(drm_atomic_get_new_crtc_state(state,
-+								     crtc));
-+
-+		kcrtc_st->active_pipes |=3D BIT(pipe->id);
-+		kcrtc_st->affected_pipes |=3D BIT(pipe->id);
-+	}
-+	return st;
 +}
 +
-+static struct komeda_component_state *
-+komeda_component_get_state(struct komeda_component *c,
-+			   struct drm_atomic_state *state)
++static struct drm_plane_state *
++komeda_plane_atomic_duplicate_state(struct drm_plane *plane)
 +{
-+	struct drm_private_state *priv_st;
++	struct komeda_plane_state *new;
 +
-+	WARN_ON(!drm_modeset_is_locked(&c->pipeline->obj.lock));
++	if (WARN_ON(!plane->state))
++		return NULL;
 +
-+	priv_st =3D drm_atomic_get_private_obj_state(state, &c->obj);
-+	if (IS_ERR(priv_st))
-+		return ERR_CAST(priv_st);
++	new =3D kzalloc(sizeof(*new), GFP_KERNEL);
++	if (!new)
++		return NULL;
 +
-+	return priv_to_comp_st(priv_st);
++	__drm_atomic_helper_plane_duplicate_state(plane, &new->base);
++
++	return &new->base;
 +}
 +
-+/**
-+ * komeda_component_get_state_and_set_user()
-+ *
-+ * @c: component to get state and set user
-+ * @state: global atomic state
-+ * @user: direct user, the binding user
-+ * @crtc: the CRTC user, the big boss :)
-+ *
-+ * This function accepts two users:
-+ * -   The direct user: can be plane/crtc/wb_connector depends on componen=
-t
-+ * -   The big boss (CRTC)
-+ * CRTC is the big boss (the final user), because all component resources
-+ * eventually will be assigned to CRTC, like the layer will be binding to
-+ * kms_plane, but kms plane will be binding to a CRTC eventually.
-+ *
-+ * The big boss (CRTC) is for pipeline assignment, since &komeda_component=
- isn't
-+ * independent and can be assigned to CRTC freely, but belongs to a specif=
-ic
-+ * pipeline, only pipeline can be shared between crtc, and pipeline as a w=
-hole
-+ * (include all the internal components) assigned to a specific CRTC.
-+ *
-+ * So when set a user to komeda_component, need first to check the status =
-of
-+ * component->pipeline to see if the pipeline is available on this specifi=
-c
-+ * CRTC. if the pipeline is busy (assigned to another CRTC), even the requ=
-ired
-+ * component is free, the component still cannot be assigned to the direct=
- user.
-+ */
-+struct komeda_component_state *
-+komeda_component_get_state_and_set_user(struct komeda_component *c,
-+					struct drm_atomic_state *state,
-+					void *user,
-+					struct drm_crtc *crtc)
++static void
++komeda_plane_atomic_destroy_state(struct drm_plane *plane,
++				  struct drm_plane_state *state)
 +{
-+	struct komeda_pipeline_state *pipe_st;
-+	struct komeda_component_state *st;
-+
-+	/* First check if the pipeline is available */
-+	pipe_st =3D komeda_pipeline_get_state_and_set_crtc(c->pipeline,
-+							 state, crtc);
-+	if (IS_ERR(pipe_st))
-+		return ERR_CAST(pipe_st);
-+
-+	st =3D komeda_component_get_state(c, state);
-+	if (IS_ERR(st))
-+		return st;
-+
-+	/* check if the component has been occupied */
-+	if (is_switching_user(user, st->binding_user)) {
-+		DRM_DEBUG_ATOMIC("required %s is busy.\n", c->name);
-+		return ERR_PTR(-EBUSY);
-+	}
-+
-+	st->binding_user =3D user;
-+	/* mark the component as active if user is valid */
-+	if (st->binding_user)
-+		pipe_st->active_comps |=3D BIT(c->id);
-+
-+	return st;
++	__drm_atomic_helper_plane_destroy_state(state);
++	kfree(to_kplane_st(state));
 +}
++
+ static const struct drm_plane_funcs komeda_plane_funcs =3D {
++	.update_plane		=3D drm_atomic_helper_update_plane,
++	.disable_plane		=3D drm_atomic_helper_disable_plane,
++	.destroy		=3D komeda_plane_destroy,
++	.reset			=3D komeda_plane_reset,
++	.atomic_duplicate_state	=3D komeda_plane_atomic_duplicate_state,
++	.atomic_destroy_state	=3D komeda_plane_atomic_destroy_state,
+ };
+=20
+ /* for komeda, which is pipeline can be share between crtcs */
 --=20
 2.17.1
 
