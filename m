@@ -2,116 +2,81 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0890CC37122
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 02:02:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99284C37122
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 02:03:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C87F120870
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 02:02:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F4DD20870
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 02:03:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="YeKQSxGa"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UyuPwi0A"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726792AbfAVCCG (ORCPT
+        id S1726872AbfAVCDj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 21:02:06 -0500
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:56995 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726601AbfAVCCG (ORCPT
+        Mon, 21 Jan 2019 21:03:39 -0500
+Received: from mail-qk1-f172.google.com ([209.85.222.172]:32975 "EHLO
+        mail-qk1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726601AbfAVCDi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 21:02:06 -0500
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52]) (authenticated)
-        by conssluserg-06.nifty.com with ESMTP id x0M21ptg027105;
-        Tue, 22 Jan 2019 11:01:51 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com x0M21ptg027105
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1548122512;
-        bh=3KjszKj7hQE/0MhMfckZri1t/eeBuLPzkQH2181wOFo=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=YeKQSxGa1HkCdiLdGwkOso2NappFwj5TacZlzLBUuhYtmCXU/vkSBfg0tLaFste7A
-         0i+b0Em/X2546+jWx4B8ymFFPJYbCz8JRFwemqhqJiNI1yhMnIniQqFyrn8WcwZhum
-         84msA0BClqJWkBZFHaA17wsaS+X8iVe7Qm1F9qdXHY8aUh8e4WwMumbCJczGCBMRBs
-         a+RtlxmihYJ5EYPv+kUGMRN2bzfdDjBsyIkulTHNKrarp/u5B0O8PrfgaHolOs6gZT
-         AoPW4VsnzxNBfuz/Gd0QdUXuS2PL5AulzNb6R0GE6L6/xBTUvfW0w/zMP4YM+uh07o
-         dI+xrYqLX079w==
-X-Nifty-SrcIP: [209.85.222.52]
-Received: by mail-ua1-f52.google.com with SMTP id t8so7582124uap.0;
-        Mon, 21 Jan 2019 18:01:51 -0800 (PST)
-X-Gm-Message-State: AJcUukdOsrz1ru3Ab+pwN2qW5n5vi4mzth1RXozccm4hX5GNIB9+WLb2
-        8Bsj1x1tUyAjjwRLWDY00QUh8lmW83yhwOzogsc=
-X-Google-Smtp-Source: ALg8bN6ofMx0hznmVYRlUKKmEtSWP+zE+0hmQhIpNBnZI09dc3Tw8Im/utW/u3tYG/PLLzBu/QY49wsnhUu3B1iGWvg=
-X-Received: by 2002:ab0:849:: with SMTP id b9mr12700737uaf.93.1548122510513;
- Mon, 21 Jan 2019 18:01:50 -0800 (PST)
+        Mon, 21 Jan 2019 21:03:38 -0500
+Received: by mail-qk1-f172.google.com with SMTP id d15so13503323qkj.0;
+        Mon, 21 Jan 2019 18:03:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=vMXTUdQBC4BXyHNbBMQ0XrGVf60Zpt7KDR3UM3phiVQ=;
+        b=UyuPwi0AUrLxQgf5ntCss4N40wjFpfBvd5d58tfaEVPW/5EhOAuvTPTWObIdQrrcdA
+         4d4biyHa8OOKQJ+87ca4+Ox+hg09nKLVx/DwkTXzbB0e0Z7CDZjI3vgEci3q5yj8Mabo
+         V7otlIAuw/Q9nwwpSqvT2zmqz0If5J7tfKrpFRU3hi1N8toalez8VF+qsMhNaOmWOAag
+         EysCEbcFqt20+/r2dk3vJsYHVN4CN2/J5RUKIgdJ9ZFPGM/UJzPUE4mAeCa4Jg9ja5eI
+         vCH/FBReCa4GO5K+vF8276lJpzB9ympCnxr+N3Ncd6z6aipKEyUSeRpzq8AQUgRmTxZT
+         mn+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=vMXTUdQBC4BXyHNbBMQ0XrGVf60Zpt7KDR3UM3phiVQ=;
+        b=t2JnzxjpWccLdo+HtVNbv3Sw7FVMI93HypIbgCGXxNjjDudCsZdYtijudI2RusqMYR
+         5DekTHZc54crzVKBeiWq+UXtAsG6vnXCYTojtizBNeSwFmgGgfI+yJr9mHo4arXMrh0G
+         iqeV8tS0qaCSeN2o1zHoWWhqWbuxiYq+i2I0KrWydoxPrvx8PujShDAzNo7oBo6cTZIB
+         4Rg2krqPXHGz9HQZ09Up75jBiqp9JgQvKyt92zMVOEm5EXaObNmSBquHM6Ep4cZez3Iz
+         OR+yGNOkJBEWCzpVzNOg65qZ83+kYENBJ+wSDU1ImYmGJb5F/K7uaiXbuQAe6Pe0GeGL
+         dqWA==
+X-Gm-Message-State: AJcUukd78pVJGkHLODqc85qUui+Odr7tZhRLVpLnxbe+qntOhbqR+omo
+        qFJJwxD6Jg63NSVm+X7Gh2v92V1I
+X-Google-Smtp-Source: ALg8bN7/J2zeknIwaV+Y0fGeP03hxmMcpQXkLjDmyaMogm0XkxMvyWAlmKRrCpHiOGrFUb9lbtf4uQ==
+X-Received: by 2002:a37:ae41:: with SMTP id x62mr25276869qke.354.1548122617166;
+        Mon, 21 Jan 2019 18:03:37 -0800 (PST)
+Received: from eaf ([190.19.101.95])
+        by smtp.gmail.com with ESMTPSA id p47sm85267069qta.36.2019.01.21.18.03.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 21 Jan 2019 18:03:36 -0800 (PST)
+Date:   Mon, 21 Jan 2019 23:03:26 -0300
+From:   Ernesto =?utf-8?Q?A=2E_Fern=C3=A1ndez?= 
+        <ernesto.mnd.fernandez@gmail.com>
+To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     linux-apfs@googlegroups.com
+Subject: [ANNOUNCE] Read-only APFS module
+Message-ID: <20190122020326.3dyswrfo64zbbk5k@eaf>
 MIME-Version: 1.0
-References: <1548038929-11814-1-git-send-email-yamada.masahiro@socionext.com> <20190121174106.6tgokdtlo5f72hdx@pburton-laptop>
-In-Reply-To: <20190121174106.6tgokdtlo5f72hdx@pburton-laptop>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 22 Jan 2019 11:01:14 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQpVF=uHs+AxVomxQDwzpPtmKTT4-D4Hc7JphygF0BFKQ@mail.gmail.com>
-Message-ID: <CAK7LNAQpVF=uHs+AxVomxQDwzpPtmKTT4-D4Hc7JphygF0BFKQ@mail.gmail.com>
-Subject: Re: [PATCH] MIPS: remove meaningless generic-(CONFIG_GENERIC_CSUM) += checksum.h
-To:     Paul Burton <paul.burton@mips.com>
-Cc:     "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul,
+Hi:
 
-On Tue, Jan 22, 2019 at 2:44 AM Paul Burton <paul.burton@mips.com> wrote:
->
-> Hi Masahiro,
->
-> On Mon, Jan 21, 2019 at 11:48:49AM +0900, Masahiro Yamada wrote:
-> > This line is weird in multiple ways.
-> >
-> > (CONFIG_GENERIC_CSUM) might be a typo of $(CONFIG_GENERIC_CSUM).
-> >
-> > Even if you add '$' to it, $(CONFIG_GENERIC_CSUM) is never evaluated
-> > to 'y' because scripts/Makefile.asm-generic does not include
-> > include/config/auto.conf. So, the asm-generic wrapper of checksum.h
-> > is never generated.
-> >
-> > Even if you manage to generate it, it is never included by anyone
-> > because MIPS has the checkin header with the same file name:
-> >
-> >   arch/mips/include/asm/checksum.h
-> >
-> > As you see in the top Makefile, the checkin headers are included before
-> > generated ones.
-> >
-> >   LINUXINCLUDE    := \
-> >                   -I$(srctree)/arch/$(SRCARCH)/include \
-> >                   -I$(objtree)/arch/$(SRCARCH)/include/generated \
-> >                   ...
-> >
-> > Commit 4e0748f5beb9 ("MIPS: Use generic checksum functions for MIPS R6")
-> > already added the asm-generic fallback code in the checkin header:
-> >
-> >   #ifdef CONFIG_GENERIC_CSUM
-> >   #include <asm/generic/checksum.h>
-> >   #else
-> >     ...
-> >   #endif
-> >
-> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->
-> Good catch. Would you prefer to take this through your kbuild tree or
-> that I take it through the MIPS tree?
+We've been working on a read-only module for the Apple File System.  It's
+reasonably full-featured (no compression or encryption yet) but not very
+well tested, so I'm hoping to find some interested users.  Questions and
+criticism are welcome.
 
-
-Could you apply it to MIPS tree? Thanks.
-
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+Git tree:	https://github.com/eafer/linux-apfs.git
+Mailing list:	linux-apfs@googlegroups.com
+Patchwork:	https://patchwork.kernel.org/project/linux-apfs/list
