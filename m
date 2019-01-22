@@ -2,124 +2,117 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D95FCC37122
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 02:06:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 448F7C37122
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 02:08:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF0C820870
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 02:06:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F99920870
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 02:08:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jpsaCZIA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726851AbfAVCGF (ORCPT
+        id S1726825AbfAVCIE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 21:06:05 -0500
-Received: from mgwkm04.jp.fujitsu.com ([202.219.69.171]:37390 "EHLO
-        mgwkm04.jp.fujitsu.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726682AbfAVCGE (ORCPT
+        Mon, 21 Jan 2019 21:08:04 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:51647 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726648AbfAVCID (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 21:06:04 -0500
-Received: from kw-mxauth.gw.nic.fujitsu.com (unknown [192.168.231.132]) by mgwkm04.jp.fujitsu.com with smtp
-         id 4693_85dc_e8214886_fecc_4033_a015_d5e8aae9d6c7;
-        Tue, 22 Jan 2019 11:05:59 +0900
-Received: from g01jpfmpwkw03.exch.g01.fujitsu.local (g01jpfmpwkw03.exch.g01.fujitsu.local [10.0.193.57])
-        by kw-mxauth.gw.nic.fujitsu.com (Postfix) with ESMTP id 489B4AC01BE
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 11:05:33 +0900 (JST)
-Received: from G01JPEXCHKW15.g01.fujitsu.local (G01JPEXCHKW15.g01.fujitsu.local [10.0.194.54])
-        by g01jpfmpwkw03.exch.g01.fujitsu.local (Postfix) with ESMTP id 3AF60BD6675;
-        Tue, 22 Jan 2019 11:05:27 +0900 (JST)
-Received: from G01JPEXMBKW03.g01.fujitsu.local ([10.0.194.67]) by
- g01jpexchkw15 ([10.0.194.54]) with mapi id 14.03.0415.000; Tue, 22 Jan 2019
- 11:05:26 +0900
-From:   "Zhang, Lei" <zhang.lei@jp.fujitsu.com>
-To:     'Mark Rutland' <mark.rutland@arm.com>
-CC:     "'catalin.marinas@arm.com'" <catalin.marinas@arm.com>,
-        "'will.deacon@arm.com'" <will.deacon@arm.com>,
-        "'linux-arm-kernel@lists.infradead.org'" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
-        "Zhang, Lei" <zhang.lei@jp.fujitsu.com>
-Subject: RE: [PATCH] arm64 memory accesses may cause undefined fault on
- Fujitsu-A64FX
-Thread-Topic: [PATCH] arm64 memory accesses may cause undefined fault on
- Fujitsu-A64FX
-Thread-Index: AdSvK6W0/Nm6810RQFa/OOuw1JbhXP//gw+A//n57fA=
-Date:   Tue, 22 Jan 2019 02:05:26 +0000
-Message-ID: <8898674D84E3B24BA3A2D289B872026A6A2A2F44@G01JPEXMBKW03>
-References: <8898674D84E3B24BA3A2D289B872026A6A29FA8F@G01JPEXMBKW03>
- <20190118141758.GC12256@lakrids.cambridge.arm.com>
-In-Reply-To: <20190118141758.GC12256@lakrids.cambridge.arm.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-securitypolicycheck: OK by SHieldMailChecker v2.2.3
-x-shieldmailcheckerpolicyversion: FJ-ISEC-20140219
-x-originating-ip: [10.18.70.198]
-Content-Type: text/plain; charset="iso-2022-jp"
+        Mon, 21 Jan 2019 21:08:03 -0500
+Received: by mail-it1-f194.google.com with SMTP id w18so19280197ite.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 18:08:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=uOAmpQ8tpNpwSSe+DsGaIGiIc0oKaybcAwK6+WCbZcw=;
+        b=jpsaCZIAqTHZdmFnwF/0lMYHzTVvGF/JksLa305TJQ6Qv8Jz4X5dK6KaDRWyXICuTw
+         UBU6p3fIr4FfYYeikWlaH3wmbpsSTFgzJVgz9naGL/sqcniFQTST24FImgimyq58AOCK
+         6T87GhqF19DLUGTy9duceB549cu3mUivZQkY1U/fdlj9+F4uvLlisPd6tdiswz+c8+59
+         RaRvtY+VrLm9IE2kuxrfR3tkRt0BldfV9ST6/2vngPucE3B0+P22phmun6ugjJUkjM8H
+         +UwsJ+OGGDjbbMr8wkqnL+GKssDFJXooSFhj3dSHZbJi+ZZLQWOgyyvkxDzZlVeUo0+i
+         F9ZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=uOAmpQ8tpNpwSSe+DsGaIGiIc0oKaybcAwK6+WCbZcw=;
+        b=iPqkHcP0qo2GAM2Gpq5RPOS7wIQwV/4UoUQlmPlzmOUr+P9cdShoUZAJ/kbfYWIMwX
+         dN1+S0N6uTEfvAtLroUsGSI2y8Pmrc8oDu93fDNjp9Hj3uqy9p7gFaFGA/JemIA1R1vv
+         wTiRETbjlsLQyRz1ocKo+TSuWx6pYtCu7anf8KunquhBCqAzka4AYfOi/h1MpV2lPdRF
+         mNSCOVZxXJWM+5bPzmVNWuAJYlZN3MagdtVVj9zNFPHfL8ZgP1b3cVWN2UxziTDhA1+p
+         wcQModvvuYx1+CDOXoglQ2bSTqABhVSMmxQj/dhSAgAumMgi9kszPjVb/7ozpCKOolL3
+         i1Qg==
+X-Gm-Message-State: AHQUAubH2V3x3kr6C9AHmEwWI0ky299PweoinFTLU7YIbc23ZVcSzHL0
+        ivYdYOduwX7gk+La6COzY4c=
+X-Google-Smtp-Source: ALg8bN4z7Fy1crnJkxvo5I/44XE050nGIY8Wu6jfWIslfcUQmi5W4HLfk+HOee4d2/K61qG+oFaO7g==
+X-Received: by 2002:a24:88:: with SMTP id 130mr1116696ita.92.1548122882689;
+        Mon, 21 Jan 2019 18:08:02 -0800 (PST)
+Received: from ubu-Virtual-Machine (66-188-57-61.dhcp.bycy.mi.charter.com. [66.188.57.61])
+        by smtp.gmail.com with ESMTPSA id w24sm5912958ioc.11.2019.01.21.18.08.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 21 Jan 2019 18:08:02 -0800 (PST)
+Date:   Mon, 21 Jan 2019 21:07:59 -0500
+From:   Kimberly Brown <kimbrownkd@gmail.com>
+To:     Michael Kelley <mikelley@microsoft.com>,
+        Long Li <longli@microsoft.com>,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        Dexuan Cui <decui@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>
+Cc:     "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        devel@linuxdriverproject.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] Drivers: hv: vmbus: Add mutex lock to channel show functions
+Message-ID: <20190122020759.GA4054@ubu-Virtual-Machine>
 MIME-Version: 1.0
-X-SecurityPolicyCheck-GC: OK by FENCE-Mail
-X-TM-AS-MML: disable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Mark
+The channel level "_show" functions are vulnerable to race conditions.
+Add a mutex lock and unlock around the call to the channel level "_show"
+functions in vmbus_chan_attr_show().
 
-Thanks for your comments, and sorry for late.
+This problem was discussed here: https://lkml.org/lkml/2018/10/18/830
 
-> -----Original Message-----
-> * Under what conditions can the fault occur? e.g. is this in place of
->   some other fault, or completely spurious?
-This fault can occur completely spurious under
-a specific hardware condition and instructions order.
- 
-> * Does this only occur for data abort? i.e. not instruction aborts?
-Yes. This fault only occurs for data abort.
-
-> * How often does this fault occur?
-In my test, this fault occurs once every several times 
-in the OS boot sequence, and after the completion of OS boot, 
-this fault have never occurred.
-In my opinion, this fault rarely occurs 
-after the completion of OS boot.
-
-> * Does this only apply to Stage-1, or can the same faults be taken at
->   Stage-2?
-This fault can be taken only at Stage-1.
-
-> I'm a bit surprised by the single retry. Is there any guarantee that a
-> thread will eventually stop delivering this fault code?
-I guarantee that a thread will stop delivering this 
-fault code by the this patch.
-The hardware condition which cause this fault is 
-reset at exception entry, therefore execution of at 
-least one instruction is guaranteed by this single retry.
-
-> Note that all CPUs and threads share the do_bad_ignore_first variable,
-> so this is going to behave non-deterministically and kill threads in
-> some cases.
-> 
-> This code is also preemptible, so checking the MIDR here doesn't make
-> much sense. Either this is always uniform (and we can check once in the
-> errata framework), or it's variable (e.g. on a big.LITTLE system) and
-> we
-> need to avoid preemption up until this point.
-> 
-> Rather than dynamically checking the MIDR, this should use the errata
-> framework, and if any A64FX CPU is discovered, set an erratum cap like
-> ARM64_WORKAROUND_CONFIG_FUJITSU_ERRATUM_010001, so we can do something
-> like:
-I try to provide a new patch to reflect your comments in today.
-Unfortunately this bug may occurs before 
-init_cpu_hwcaps_indirect_list called.
-It is means maybe errata cap is not available. I am trying to
-figure out best way to resolve this problem.
-
+Signed-off-by: Kimberly Brown <kimbrownkd@gmail.com>
 ---
-Best regards,
-Lei Zhang
-zhang.lei@jp.fujitsu.com
+ drivers/hv/vmbus_drv.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
+index 403fee01572c..e8189bc168da 100644
+--- a/drivers/hv/vmbus_drv.c
++++ b/drivers/hv/vmbus_drv.c
+@@ -1414,6 +1414,7 @@ static ssize_t vmbus_chan_attr_show(struct kobject *kobj,
+ 		= container_of(attr, struct vmbus_chan_attribute, attr);
+ 	const struct vmbus_channel *chan
+ 		= container_of(kobj, struct vmbus_channel, kobj);
++	ssize_t ret;
+ 
+ 	if (!attribute->show)
+ 		return -EIO;
+@@ -1421,7 +1422,10 @@ static ssize_t vmbus_chan_attr_show(struct kobject *kobj,
+ 	if (chan->state != CHANNEL_OPENED_STATE)
+ 		return -EINVAL;
+ 
+-	return attribute->show(chan, buf);
++	mutex_lock(&vmbus_connection.channel_mutex);
++	ret = attribute->show(chan, buf);
++	mutex_unlock(&vmbus_connection.channel_mutex);
++	return ret;
+ }
+ 
+ static const struct sysfs_ops vmbus_chan_sysfs_ops = {
+-- 
+2.17.1
 
