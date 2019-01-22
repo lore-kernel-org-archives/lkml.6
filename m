@@ -2,170 +2,109 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3A8BC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:38:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9664C41518
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:38:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEAD720823
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:38:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HKqDE8LF"
+	by mail.kernel.org (Postfix) with ESMTP id 7E47E21721
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:38:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548146311;
+	bh=Yels/iZ85iSTV7JF/8/1Oh7vzOo6HFLBfFsMpdEH1TM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=OSuvYxBsv+wlYWcRqtZ6XeXxHmBHLO2M4nuo2XlcNI9+FoWA0FNWeeF7R45SnEZNJ
+	 Ganhydf6ZqJACpdeO3i0amZVGUMOxvavd5F9eniRTNNkb6boEi0J7Afqo4nA9vjnEm
+	 4lyJ1NrwnITrTDehxNNBqoENeM1iUTHELriMwE24=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727397AbfAVIiX (ORCPT
+        id S1727467AbfAVIi2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 03:38:23 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:41184 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727093AbfAVIiW (ORCPT
+        Tue, 22 Jan 2019 03:38:28 -0500
+Received: from mail-lj1-f170.google.com ([209.85.208.170]:35656 "EHLO
+        mail-lj1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727093AbfAVIi1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 03:38:22 -0500
-Received: by mail-io1-f67.google.com with SMTP id s22so18461610ioc.8
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 00:38:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=qUQTqUpTVURbew+RiiCt5ESE99xTjivED68SiV0jtLM=;
-        b=HKqDE8LFlR4bcntUCzw5MakCFvbeNDgvCsz4iSgo1AZv4MlXU3MWDlW2eoMxt5jPgl
-         B1WLHHhoFo0U/ljemI8Z4J4693JULpk2nLHxNNhEdhr5Wm/Y8xKiI2BaLpwYMhTOBWQe
-         g/1w+snMb6corjU4aB7Pr3WUQDzxnbACZ13FM=
+        Tue, 22 Jan 2019 03:38:27 -0500
+Received: by mail-lj1-f170.google.com with SMTP id x85-v6so19863336ljb.2;
+        Tue, 22 Jan 2019 00:38:26 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=qUQTqUpTVURbew+RiiCt5ESE99xTjivED68SiV0jtLM=;
-        b=YMBIKWM8VUv1d1sPq7Tha6ZzwbwN3qyPLcpBn2JJJpZxhjljOyW7bjd1eeXNumCPFq
-         K+ezm+D1WJJNKhQv4hcYt+XbMrJRGFSprJpGQRjDaw4RkPSwXzE1lBO+p9FYG5/S7YV4
-         PVkliYeihN+rpfTyOJq99XxxP/XBrLlC0XxYZROgK0RzlhGvitHojkVjYk/1ng41MGIj
-         3WSBCRdpSKRykWO5z19lVwmLE+c5+UN4/CerA1aBTZ9Dq26C77ywXVv5ituyJPUudtDq
-         TRp01PeIbZDi3BUwmYJU1opSff+3GLu9MBFCd/k/67BPdirpfXb034upXQ2mpIwG71Pp
-         Z1Vw==
-X-Gm-Message-State: AJcUukfZc6Z7jY4RzpI3jq7ZRoSps4HCrBKQz5hg3QXEMR2hvjqE5eiU
-        X1ajgDrIJVMKH0GV9ZH3s//r1ynuN76YEucUHXSioA==
-X-Google-Smtp-Source: ALg8bN6UvlN0HUsOrry0u8K9wytWJ4FDuwAh2ipb28YCqe64kcItCGxwzZPOOJMwUUhEfDTU7KX/UKP05UpnCoB0EkA=
-X-Received: by 2002:a5e:c206:: with SMTP id v6mr19395883iop.60.1548146301581;
- Tue, 22 Jan 2019 00:38:21 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=m5A13cvB2eg27WOBv14LrmOzzEb6FVY/M7tYu0VplQw=;
+        b=ZGXKJL06+IJxd3o8SLe049RBc0JtBcLdXLJ6f0tdtMjH4GqwJV61HcKD8eDBE9eZZq
+         eLUyV1ePRmFQ02lYXTKdFwOnETJzMDe7o++QhJ/6sgDufNatFZKW9JY3mbF6uPXtOELP
+         CfRhQvVKhPc+xTXViGnYYoahdSBEvhQ+54BwDiApdSBWFdvIlGkiT/2KrRUG1v2xsGQD
+         pkXQ5oP/bigU/WXdPTrEXbl/WinwEldskO5/6wtu/ZpI5aLypTuMF1MG+hnMF0vsnCVw
+         CWexrjfPZRcQiRepalkmfubzm/rH7kwMqpbRYP+tSv/MRbcZzHmOnNfiDt5FoIuSzgg+
+         I+oQ==
+X-Gm-Message-State: AJcUukcWCTTOV2iI9IoU8oR3bjsm9D43vW6ekGolnPXTNC7llCTUWO37
+        hNGZaPS501VtQgJiWtTeDj6ayqX0
+X-Google-Smtp-Source: ALg8bN6mhxPbBGMw5kExugH6oE/xMZKs1SRZbMs/B8ymStn9NecUtW2u//XoUY4lT5YW+s+mCmVJUQ==
+X-Received: by 2002:a2e:9c7:: with SMTP id 190-v6mr17817025ljj.120.1548146305381;
+        Tue, 22 Jan 2019 00:38:25 -0800 (PST)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id v64sm2660087lfa.48.2019.01.22.00.38.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 22 Jan 2019 00:38:24 -0800 (PST)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1glrZb-0003LL-Gs; Tue, 22 Jan 2019 09:38:20 +0100
+Date:   Tue, 22 Jan 2019 09:38:19 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Andreas Kemnade <andreas@kemnade.info>
+Cc:     Johan Hovold <johan@kernel.org>, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>
+Subject: Re: [PATCH v2 2/5] gnss: sirf: power on logic for devices without
+ wakeup signal
+Message-ID: <20190122083819.GP3691@localhost>
+References: <20181209195150.5192-1-andreas@kemnade.info>
+ <20181209195150.5192-3-andreas@kemnade.info>
+ <20190110121038.GA9725@localhost>
+ <20190110230223.18ecbd87@kemnade.info>
+ <20190114105129.GE3691@localhost>
+ <20190114131346.4d476055@kemnade.info>
 MIME-Version: 1.0
-References: <20190121100617.2311-1-ard.biesheuvel@linaro.org>
- <20190121150734.GA30582@infradead.org> <CAKv+Gu-hR=uieOeg7QheA5yfAycUoi2vjZsDUvROKVjW4eUNqw@mail.gmail.com>
- <20190121155908.GA8084@infradead.org> <CAKv+Gu8LzS9OgvVnzUT8BZWVgDmx4OfqNiPSf+8=riY_LByN-g@mail.gmail.com>
- <20190121162238.GA17651@infradead.org> <CAKv+Gu-5V-UjP_YzZBCEsa+o_G6BRSVw2ZimYGNEfRGf-aRPNg@mail.gmail.com>
- <59ccf85d-b99d-b5c8-ea87-66c2a892e197@daenzer.net> <CAKv+Gu8OkbHwY5UBxahpQpM_gKh2331pQ6o-4YyJdLurbFNHvw@mail.gmail.com>
- <ccc775d3-3053-ab79-dac8-4feb28e8e690@daenzer.net> <CAKv+Gu-9VKL5RjScbKss4YfH1Cb8WbXmzU_0UsStnoXJcML7Rg@mail.gmail.com>
- <850b6aee-0040-c333-b125-45211c18ada5@daenzer.net> <CAKv+Gu99zHqcQtj6TiOXAr3Qa6WWhKem+DHVA_mAQ0-Bc0Vbqw@mail.gmail.com>
- <047667fd-17be-1c37-5d2a-26768cfd6ab8@daenzer.net>
-In-Reply-To: <047667fd-17be-1c37-5d2a-26768cfd6ab8@daenzer.net>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Tue, 22 Jan 2019 09:38:10 +0100
-Message-ID: <CAKv+Gu_VBd8agHASc5RS0eCgyXP64Lt_i4yPuBjKwGQ+5Lpd5Q@mail.gmail.com>
-Subject: Re: [RFC PATCH] drm: disable WC optimization for cache coherent
- devices on non-x86
-To:     =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel@daenzer.net>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        David Zhou <David1.Zhou@amd.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        amd-gfx@lists.freedesktop.org, Junwei Zhang <Jerry.Zhang@amd.com>,
-        Huang Rui <ray.huang@amd.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sean Paul <sean@poorly.run>,
-        Christian Koenig <christian.koenig@amd.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190114131346.4d476055@kemnade.info>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 21 Jan 2019 at 20:04, Michel D=C3=A4nzer <michel@daenzer.net> wrote=
-:
->
-> On 2019-01-21 7:28 p.m., Ard Biesheuvel wrote:
-> > On Mon, 21 Jan 2019 at 19:24, Michel D=C3=A4nzer <michel@daenzer.net> w=
-rote:
-> >> On 2019-01-21 7:20 p.m., Ard Biesheuvel wrote:
-> >>> On Mon, 21 Jan 2019 at 19:04, Michel D=C3=A4nzer <michel@daenzer.net>=
- wrote:
-> >>>> On 2019-01-21 6:59 p.m., Ard Biesheuvel wrote:
-> >>>>> On Mon, 21 Jan 2019 at 18:55, Michel D=C3=A4nzer <michel@daenzer.ne=
-t> wrote:
-> >>>>>> On 2019-01-21 5:30 p.m., Ard Biesheuvel wrote:
-> >>>>>>> On Mon, 21 Jan 2019 at 17:22, Christoph Hellwig <hch@infradead.or=
-g> wrote:
-> >>>>>>>
-> >>>>>>>> Until that happens we should just change the driver ifdefs to de=
-fault
-> >>>>>>>> the hacks to off and only enable them on setups where we 100%
-> >>>>>>>> positively know that they actually work.  And document that fact
-> >>>>>>>> in big fat comments.
-> >>>>>>>
-> >>>>>>> Well, as I mentioned in my commit log as well, if we default to o=
-ff
-> >>>>>>> unless CONFIG_X86, we may break working setups on MIPS and Power =
-where
-> >>>>>>> the device is in fact non-cache coherent, and relies on this
-> >>>>>>> 'optimization' to get things working.
-> >>>>>>
-> >>>>>> FWIW, the amdgpu driver doesn't rely on non-snooped transfers for
-> >>>>>> correct basic operation (the scenario Christian brought up is a ve=
-ry
-> >>>>>> specialized use-case), so that shouldn't be an issue.
-> >>>>>
-> >>>>> The point is that this is only true for x86.
-> >>>>>
-> >>>>> On other architectures, the use of non-cached mappings on the CPU s=
-ide
-> >>>>> means that you /do/ rely on non-snooped transfers, since if those
-> >>>>> transfers turn out not to snoop inadvertently, the accesses are
-> >>>>> incoherent with the CPU's view of memory.
-> >>>>
-> >>>> The driver generally only uses non-cached mappings if
-> >>>> drm_arch/device_can_wc_memory returns true.
-> >>>
-> >>> Indeed. And so we should take care to only return 'true' from that
-> >>> function if it is guaranteed that non-cached CPU mappings are coheren=
-t
-> >>> with the mappings used by the GPU, either because that is always the
-> >>> case (like on x86), or because we know that the platform in question
-> >>> implements NoSnoop correctly throughout the interconnect.
-> >>>
-> >>> What seems to be complicating matters is that in some cases, the
-> >>> device is non-cache coherent to begin with, so regardless of whether
-> >>> the NoSnoop attribute is used or not, those accesses will not snoop i=
-n
-> >>> the caches and be coherent with the non-cached mappings used by the
-> >>> CPU. So if we restrict this optimization [on non-X86] to platforms
-> >>> that are known to implement NoSnoop correctly, we may break platforms
-> >>> that are implicitly NoSnoop all the time.
-> >>
-> >> Since the driver generally doesn't rely on non-snooped accesses for
-> >> correctness, that couldn't "break" anything that hasn't always been br=
-oken.
-> >
-> > Again, that is only true on x86.
-> >
-> > On other architectures, DMA writes from the device may allocate in the
-> > caches, and be invisible to the CPU when it uses non-cached mappings.
->
-> Let me try one last time:
->
-> If drm_arch_can_wc_memory returns false, the driver falls back to the
-> normal mode of operation, using a cacheable CPU mapping and snooped GPU
-> transfers, even if userspace asks (as a performance optimization) for a
-> write-combined CPU mapping and non-snooped GPU transfers via
-> AMDGPU_GEM_CREATE_CPU_GTT_USWC.
+On Mon, Jan 14, 2019 at 01:13:46PM +0100, Andreas Kemnade wrote:
+> On Mon, 14 Jan 2019 11:51:29 +0100
+> Johan Hovold <johan@kernel.org> wrote:
 
-Another question: when userspace requests for such a mapping to be
-created, does this involve pages that are mapped cacheable into the
-userland process?
+> > Good point. Unless we know the current state, we'd need to sleep for
+> > HIBERNATE_TIMEOUT before waiting for data reception.
+> > 
+> > > >      - timeout: failure
+> > > > 
+> > > >   hibernate:
+> > > >    - toggle on-off
+> > > >    - sleep(HIBERNATE_TIMEOUT)  
+> > > we could also additionally check here for 
+> > >    if (last_bytes_received == GOODBYE_MSG)  
+> > 
+> > Caching and parsing the stream for this could get messy. And is the
+> > expected message clearly defined somewhere, or would it be device (and
+> > firmware) dependent?
+> > 
+> I think so but I must check.
+> $PSRF150.0
+> 
+> But as said, these ideas are be for a possibly later patchset.
+
+Yeah, and remember that the receiver can be in binary sirf mode as well,
+so this do indeed seem like something that will need to wait.
+
+Thanks,
+Johan
