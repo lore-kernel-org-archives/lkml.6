@@ -5,56 +5,57 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FAF1C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:08:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22066C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:08:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE51921019
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:08:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E020F21019
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:08:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L5NkXy7a"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RKCScfIN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726778AbfAVSIC (ORCPT
+        id S1726819AbfAVSIS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 13:08:02 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:56255 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726268AbfAVSH4 (ORCPT
+        Tue, 22 Jan 2019 13:08:18 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:53720 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725899AbfAVSHy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 13:07:56 -0500
-Received: by mail-wm1-f66.google.com with SMTP id y139so15024910wmc.5;
-        Tue, 22 Jan 2019 10:07:55 -0800 (PST)
+        Tue, 22 Jan 2019 13:07:54 -0500
+Received: by mail-wm1-f67.google.com with SMTP id d15so15126496wmb.3;
+        Tue, 22 Jan 2019 10:07:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=hZeBjCu63s+G7vddlBdkWNetlj8fXMGpFNN+/TY6MRo=;
-        b=L5NkXy7aTZ8XKkEQ/JkvZbIskcmBYB+a3VnftUaqDil89m7SsIgq3oxan6rwJ8Avhl
-         2GSb+9q5bBIpRP9UI6vGES+Jb6fL8G9XX0udqBOFDvAdiib2mik73HXTqJH8yx3EtEMY
-         tQBLiPjLIg/7g/vaCgvW7KWDXZ6+UWJLPFwkxpRnS85dtHRswFJwShPLAVW8CddnsbjR
-         9XCsOnWmoqn68FVwVypwOLAH0QK+S4/4sHQUViVeOQuEzPrl1sT5PZwIDe5lTrw/T11T
-         ZUBJNS6T+MwzqorWoQd7LfNE1kKTH4BMKzf/G44KtXedniuOuLTjw9B+dBsDGGEiTl8e
-         sD0g==
+        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=VqnCZBPi9Tl8tc5DJHEj6tCVcy/LFCMWRjEYRKuhKQA=;
+        b=RKCScfINRS5zdWC9dzaLGIlaYuflMHnkxts7r1Jd9IOZs9eIxjiQZBYIiyf+XqaPHV
+         6NcW1VOOdK7UdJAyrjUpC3zG36paPLccCwaowKeFUsBdkbSz4bivDEtWb1x8J5+gOtc6
+         9RX0s5hE+QYn59ykiamAEHtoIXKo+T8MX3m8PjHhTlyYlMwxTg6PDugMQC3QJi4dxGsQ
+         yQtQsID8bS959qdwgdmQqV6LJOLSLd7ozKWvy865fLBc4atTSry1DkTcvJRJ3bUMPPxQ
+         /yfu4XpZoJyWC/fNMbYoIfrstpzRjl1ZZT1tn4Q8SnfNEYHZeKWWlFkBh4SpTTMnYE0q
+         f27w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references;
-        bh=hZeBjCu63s+G7vddlBdkWNetlj8fXMGpFNN+/TY6MRo=;
-        b=dKiFHC9p9meIV39Rp/ipKivAKo0L/DsZkJOhKSR1E8Fo/UTFAA0j+21asx6KsUCajW
-         D6PoRomTVGSBNQo8pRgN5WksJ2lLpt/+lV5TbS4nCA3jYSjeSosfZH/Hd6cYGMO83K7p
-         Kc3tiY0QH4YNmVjFurbDAzKVAfk9bQsJffR+LsqM5T+f7pbuzZ6J+rRDDH4E2wXbRfFF
-         KZJWaggYYobib5+iuAiO2ZUzHu6Q5UsRr8Axn49YkLA6V7hvp4yvOFCDqjsSWS8Ml+Lw
-         UbDFzZRwZHUD3gMB7a0aZ/fx1tVbHUjMiwoInlK9S12MsNcX/VL6DYkBxNi4apeBwRdE
-         QocQ==
-X-Gm-Message-State: AJcUukdHJXcriHfWkAlGk7F3aSTBz2ggagl3/VJ1Lz9cdXZWKxRmnPCp
-        wFFfQWxDTmAyh4TdsZ9SGJc=
-X-Google-Smtp-Source: ALg8bN5Zo0pemL2//iH2rmrKltZVYNT0Zjv+/EW6dVIXXeVSjLinkFlnrHqbdKr7OL/h2lXJU/Dj6g==
-X-Received: by 2002:a1c:df46:: with SMTP id w67mr4894994wmg.51.1548180474781;
-        Tue, 22 Jan 2019 10:07:54 -0800 (PST)
+         :in-reply-to:references:mime-version:content-transfer-encoding;
+        bh=VqnCZBPi9Tl8tc5DJHEj6tCVcy/LFCMWRjEYRKuhKQA=;
+        b=iZz7+XenY1DWS0T653BB1kQfSLos4S4VWd8RVxQR4nlWnKIlQzNrCkhGJA03b9Fdpq
+         9VJXS7MjqTXMfQgBZAfYykmzvKOQt9BntEohpxUEi8BC5xVEKHmUMWzvG3ped8B1gOAu
+         sAPeMvEYyTaV0TXO8S9yYE2YV9sdkT2+Emwyy4GlUwPOcmxHk9M/5TlGAjwNd5srS5rD
+         XWGzJQNp1KQVM0vV2qQ0tkWnMsT5srMEMzhiZb5tBOZX/yozRqMjCp95XXRjJRcRurvu
+         NDFhAooOjWao0OBWABJ8graU+DKtwGaWxyGgi50liWu9hSfTIguWIoad/PFBPtvONA+O
+         R3nA==
+X-Gm-Message-State: AJcUukdBi7X867t0N6uAGlA+TP3js+phKG5y1bsuLRChKwvsZqPLp8JY
+        kRN7JpAnnaKX707+I6JD1xg=
+X-Google-Smtp-Source: ALg8bN4GEZ9VAjtno9nWFCTvGGLURMsDl9hyTK/K+mmWiFJtpiWWCsoRsaKDloWeDCC/q9whtAktEQ==
+X-Received: by 2002:a1c:5656:: with SMTP id k83mr4784099wmb.125.1548180472103;
+        Tue, 22 Jan 2019 10:07:52 -0800 (PST)
 Received: from Sarah.lan (229.98.125.91.dyn.plus.net. [91.125.98.229])
-        by smtp.gmail.com with ESMTPSA id 129sm93804220wmd.18.2019.01.22.10.07.53
+        by smtp.gmail.com with ESMTPSA id 129sm93804220wmd.18.2019.01.22.10.07.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Jan 2019 10:07:54 -0800 (PST)
+        Tue, 22 Jan 2019 10:07:51 -0800 (PST)
 From:   Ben Whitten <ben.whitten@gmail.com>
 X-Google-Original-From: Ben Whitten <ben.whitten@lairdtech.com>
 To:     afaerber@suse.de
@@ -64,12 +65,15 @@ Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         Ben Whitten <ben.whitten@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
         Rob Herring <robh+dt@kernel.org>
-Subject: [PATCH v2 lora-next 4/4] dt-bindings: lora: sx130x: add clock bindings
-Date:   Tue, 22 Jan 2019 18:07:29 +0000
-Message-Id: <20190122180729.1834-5-ben.whitten@lairdtech.com>
+Subject: [PATCH v2 lora-next 2/4] dt-bindings: lora: sx125x: add basic documentation
+Date:   Tue, 22 Jan 2019 18:07:27 +0000
+Message-Id: <20190122180729.1834-3-ben.whitten@lairdtech.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190122180729.1834-1-ben.whitten@lairdtech.com>
 References: <20190122180729.1834-1-ben.whitten@lairdtech.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -77,108 +81,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ben Whitten <ben.whitten@gmail.com>
 
-The SX130x family consumes two clocks, a 32 MHz clock provided by a
-connected IQ transceiver, and a 133 MHz high speed clock.
+The SX125x family are IQ radio transceivers from Semtech configured over
+SPI, they are typically connected to an SX130x series concentrator however
+may be connected to a host directly.
 
-In the example we connect the concentrator to a fixed clock providing
-the 133 MHz high speed clock, and we connect to a connected transceiver
-32 MHz clock.
-
-The connected radios are both fed from a fixed 32 MHz clock, with only
-one being the clock source back to the SX130x concentrator.
+Required properties include the radio number of the host or concentrator
+bus.
 
 Signed-off-by: Ben Whitten <ben.whitten@gmail.com>
 ---
 v1 -> v2:
-* Fixed incorrect usage of clock cells
-* Fixed wording in commit and descriptions
+* Dropped spi-max-frequency binding
+* Wording changes to commit and descriptions
+* Added spi wrapper suggested by Rob H
+* Dual licence
 ---
- .../bindings/net/lora/semtech,sx130x.yaml     | 39 ++++++++++++++++++-
- 1 file changed, 38 insertions(+), 1 deletion(-)
+ .../bindings/net/lora/semtech,sx125x.yaml     | 44 +++++++++++++++++++
+ 1 file changed, 44 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/net/lora/semtech,sx125x.yaml
 
-diff --git a/Documentation/devicetree/bindings/net/lora/semtech,sx130x.yaml b/Documentation/devicetree/bindings/net/lora/semtech,sx130x.yaml
-index 41919fb67ec4..6f9db3c84385 100644
---- a/Documentation/devicetree/bindings/net/lora/semtech,sx130x.yaml
-+++ b/Documentation/devicetree/bindings/net/lora/semtech,sx130x.yaml
-@@ -15,7 +15,8 @@ description: |
-   demodulating LoRa signals on 8 channels simultaneously.
- 
-   It is typically paired with two SX125x IQ radios controlled over an
--  SPI directly from the concentrator.
-+  SPI directly from the concentrator. One of the radios will provide
-+  a 32 MHz clock back into the concentrator.
- 
-   The concentrator itself is controlled over SPI.
- 
-@@ -35,6 +36,20 @@ properties:
-     maxItems: 1
-     description: A connection of the reset gpio line.
- 
-+  clocks:
-+    maxItems: 2
+diff --git a/Documentation/devicetree/bindings/net/lora/semtech,sx125x.yaml b/Documentation/devicetree/bindings/net/lora/semtech,sx125x.yaml
+new file mode 100644
+index 000000000000..4a51a251d97f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/net/lora/semtech,sx125x.yaml
+@@ -0,0 +1,44 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/net/lora/semtech,sx125x.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Semtech IQ modulator/de-modulator transeiver
++
++maintainers:
++  - Andreas Färber <afaerber@suse.de>
++  - Ben Whitten <ben.whitten@gmail.com>
++
++description: |
++  The SX125x family are transceivers capable of supporting multiple constant
++  and non-constant envelope modulation schemes.
++
++properties:
++  compatible:
 +    items:
-+      - description: 32 MHz clock provider (CLK32M)
-+      - description: 133 MHz high speed clock provider (CLKHS)
-+    description: The chip requires two clock inputs; A 32MHz clock at CMOS
-+      level which is provided from a connected radio.
-+      And a 133MHz high speed clock at CMOS level provided by an oscillator.
++      - enum:
++        - semtech,sx1255
++        - semtech,sx1257
++        - semtech,sx1258
 +
-+  clock-names:
-+    maxItems: 2
-+    description: Input clock (CLK32M) name from provider, Input clock (CLKHS)
-+      name from provider.
++  reg:
++    maxItems: 1
++    description: The chip select on the SPI bus or radio number in concentrator
++      , with radio A = 0 and radio B = 1.
 +
-   radio-spi:
-     type: object
-     description: The concentrator can have two radios connected which are
-@@ -68,6 +83,20 @@ examples:
- 
-     #include <dt-bindings/gpio/gpio.h>
- 
-+    tcxo: dummy32m {
-+      compatible = "fixed-clock";
-+      clock-frequency = <32000000>;
-+      clock-output-names = "tcxo";
-+      #clock-cells = <0>;
++required:
++  - compatible
++  - reg
++
++examples:
++  - |
++    spi {
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      radio0: lora@0 {
++        compatible = "semtech,sx1257";
++        reg = <0>;
++      };
 +    };
-+
-+    clkhs: dummy133m {
-+      compatible = "fixed-clock";
-+      clock-frequency = <133000000>;
-+      clock-output-names = "clkhs";
-+      #clock-cells = <0>;
-+    };
-+
-     spi {
-       #address-cells = <1>;
-       #size-cells = <0>;
-@@ -77,6 +106,8 @@ examples:
-         reg = <0>;
-         reset-gpios = <&pioB 27 GPIO_ACTIVE_HIGH>;
-         spi-max-frequency = <8000000>;
-+        clocks = <&radio1>, <&clkhs>;
-+        clock-names = "clk32m", "clkhs";
- 
-         radio-spi {
-           #address-cells = <1>;
-@@ -85,11 +116,17 @@ examples:
-           radio0: lora@0 {
-             compatible = "semtech,sx1257";
-             reg = <0>;
-+            clocks = <&tcxo>;
-+            clock-names = "tcxo";
-           };
- 
-           radio1: lora@1 {
-             compatible = "semtech,sx1257";
-             reg = <1>;
-+            clocks = <&tcxo>;
-+            clock-names = "tcxo";
-+            clock-output-names = "clk32m";
-+            #clock-cells = <0>;
-           };
-         };
-       };
 -- 
 2.17.1
 
