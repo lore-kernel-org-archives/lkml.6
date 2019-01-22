@@ -2,178 +2,197 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5231DC37122
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 01:45:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28093C37122
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 01:53:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2826F20870
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 01:45:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D048C21721
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 01:53:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="idLw4Xdp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726804AbfAVBpY (ORCPT
+        id S1726750AbfAVBxQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 20:45:24 -0500
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:38279 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726435AbfAVBpX (ORCPT
+        Mon, 21 Jan 2019 20:53:16 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:40591 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726435AbfAVBxQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 20:45:23 -0500
-X-UUID: 248165485f244c918a30da0181075cfd-20190122
-X-UUID: 248165485f244c918a30da0181075cfd-20190122
-Received: from mtkcas32.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
-        (envelope-from <min.guo@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 472872819; Tue, 22 Jan 2019 09:45:17 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31DR.mediatek.inc
- (172.27.6.102) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 22 Jan
- 2019 09:45:15 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 22 Jan 2019 09:45:15 +0800
-Message-ID: <1548121515.4433.259.camel@mhfsdcap03>
-Subject: Re: [PATCH v4 6/6] usb: musb: Add support for MediaTek musb
- controller
-From:   Min Guo <min.guo@mediatek.com>
-To:     Bin Liu <b-liu@ti.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Matthias Brugger" <matthias.bgg@gmail.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        <chunfeng.yun@mediatek.com>, <linux-usb@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <tony@atomide.com>,
-        <hdegoede@redhat.com>, Yonglong Wu <yonglong.wu@mediatek.com>
-Date:   Tue, 22 Jan 2019 09:45:15 +0800
-In-Reply-To: <20190121160749.GD30080@uda0271908>
-References: <1548073351-13739-1-git-send-email-min.guo@mediatek.com>
-         <1548073351-13739-7-git-send-email-min.guo@mediatek.com>
-         <20190121160749.GD30080@uda0271908>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Mon, 21 Jan 2019 20:53:16 -0500
+Received: by mail-vs1-f67.google.com with SMTP id z3so13769770vsf.7
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 17:53:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=p3iZTzvSMKsWoPNy8nnLF8wFN432MVgBa9lakKj4tn8=;
+        b=idLw4XdpJxqAQbwcG1pDEyBe+TV2gaO5gg7GIeN8FkioKCHgCTzA+stmpkpCThwCzZ
+         odHq+7Y/ORqUB0tgJmG+RZQ9mRk5X+GVZn1Oh4hELgvFS7YRu1zZXB2ujNZchVxhI4Sm
+         lm4l5hsD+6rxvxuseyDBt8aUbDhbm9UhOeNl8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=p3iZTzvSMKsWoPNy8nnLF8wFN432MVgBa9lakKj4tn8=;
+        b=YwuFyx2HyWbZxbwZVSUMeNfgXaM56fObYrLt08r2MDc/46/13IMbhGVyubIVOccOMD
+         MAAcgoILIv20XYTX+GJdri5c+DnfyKhMu7kwbjwZU+Q/6pqKNA2XnM7O3KwG3sVTrIby
+         fxQK87JyjVweIkrUaGWJ5cm8wUrh9/qTd6m/UXwk62U/dLVDulvT+eQJ0vlJrP+9JMBC
+         TvYp3Jx8GSbzk2YtUIzrJ3XgXceEPvVutVWldtDdl40x1YVljmml+HO+2s9HZGnqxPPO
+         BcXWCiDT6s93fL6v49yJiQdybidDXlCIr1n/WWLOi3TMU9Q1GH3VNg9q3xJW6dmBM5XZ
+         ueGg==
+X-Gm-Message-State: AJcUukek4l/63hA0lkkfxQbOgw+rDSMZ1PRi1wNNIjaNZ+ZSmO8Cbm+O
+        3BRppRXuDSIazHMa7PCWBpPUs2EA8rY=
+X-Google-Smtp-Source: ALg8bN6+zwjCIH0iMNmdCyuDJTr/0u9qXSp0DEXTTC1bsphUOl5Ius2tnEzmiLAQmbMBQ31Tnz7iAQ==
+X-Received: by 2002:a67:7f47:: with SMTP id a68mr13476321vsd.204.1548121994525;
+        Mon, 21 Jan 2019 17:53:14 -0800 (PST)
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com. [209.85.217.45])
+        by smtp.gmail.com with ESMTPSA id o19sm21485302vkd.14.2019.01.21.17.53.13
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 21 Jan 2019 17:53:13 -0800 (PST)
+Received: by mail-vs1-f45.google.com with SMTP id u11so13749623vsp.11
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 17:53:13 -0800 (PST)
+X-Received: by 2002:a67:2c13:: with SMTP id s19mr13053939vss.172.1548121992878;
+ Mon, 21 Jan 2019 17:53:12 -0800 (PST)
 MIME-Version: 1.0
-X-MTK:  N
+References: <5c4673dd.1c69fb81.b0b12.0b35SMTPIN_ADDED_BROKEN@mx.google.com>
+In-Reply-To: <5c4673dd.1c69fb81.b0b12.0b35SMTPIN_ADDED_BROKEN@mx.google.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 22 Jan 2019 14:53:01 +1300
+X-Gmail-Original-Message-ID: <CAGXu5jKs5Hzfaho0Bg7rJCLa7XJPzBOnBXMUNHPj2jjgOBD=8Q@mail.gmail.com>
+Message-ID: <CAGXu5jKs5Hzfaho0Bg7rJCLa7XJPzBOnBXMUNHPj2jjgOBD=8Q@mail.gmail.com>
+Subject: Re: [PATCH] pstore/ram: Replace dummy_data heap memory with stack memory
+To:     Yue Hu <huyue2@yulong.com>
+Cc:     Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bin,
+On Tue, Jan 22, 2019 at 2:37 PM Yue Hu <huyue2@yulong.com> wrote:
+>
+> From e37cbd4d22eae55c034536817b22d429ba0ae27a Mon Sep 17 00:00:00 2001
+> From: Yue Hu <huyue2@yulong.com>
+> Date: Mon, 21 Jan 2019 18:20:41 +0800
+> Subject: [PATCH] pstore/ram: Replace dummy_data heap memory with stack
+> memory
+>
+> In ramoops_register_dummy() dummy_data is allocated via kzalloc()
+> then it will always occupy the heap space after register platform
+> device via platform_device_register_data(), but it will not be
+> used any more. So let's free it for system usage, replace it with
+> stack memory is better due to small size.
 
-On Mon, 2019-01-21 at 10:07 -0600, Bin Liu wrote:
-> Hi Min,
-> 
-> On Mon, Jan 21, 2019 at 08:22:31PM +0800, min.guo@mediatek.com wrote:
-> > From: Min Guo <min.guo@mediatek.com>
-> > 
-> > This adds support for MediaTek musb controller in
-> > host, peripheral and otg mode.
-> > There are some quirk of MediaTek musb controller, such as:
-> >  -W1C interrupt status registers
-> >  -Private data toggle registers
-> >  -No dedicated DMA interrupt line
-> > 
-> > Signed-off-by: Min Guo <min.guo@mediatek.com>
-> > Signed-off-by: Yonglong Wu <yonglong.wu@mediatek.com>
-> > ---
-> > changes in v4:
-> > 1. no changes
-> > 
-> > changes in v3:
-> > suggested by Bin:
-> > 1. Remove 'u8/u16 data' parameter in clearb/w() hooks
-> > 2. Replace musb_readb/w() with musb_clearb/w() to clear interrupts status
-> > 
-> > changes in v2:
-> > suggested by Bin:
-> > 1. Add summarize of MediaTek musb controller differences in the commit log
-> > 2. Add "|| COMPILE_TEST" in Kconfig
-> > 3. Move MediaTek's private toggle registers from musb_regs.h to mediatek.c
-> > 4. Replace musb_readl() with musb_readw() to read 16bit toggle register
-> > ---
-> >  drivers/usb/musb/Kconfig    |   8 +-
-> >  drivers/usb/musb/Makefile   |   1 +
-> >  drivers/usb/musb/mediatek.c | 624 ++++++++++++++++++++++++++++++++++++++++++++
-> >  3 files changed, 632 insertions(+), 1 deletion(-)
-> >  create mode 100644 drivers/usb/musb/mediatek.c
-> > 
-> 
-> [snip]
-> 
-> > +static irqreturn_t generic_interrupt(int irq, void *__hci)
-> > +{
-> > +	unsigned long flags;
-> > +	irqreturn_t retval = IRQ_NONE;
-> > +	struct musb *musb = __hci;
-> > +
-> > +	spin_lock_irqsave(&musb->lock, flags);
-> > +	musb->int_usb = musb_readb(musb->mregs, MUSB_INTRUSB) &
-> > +	    musb_readb(musb->mregs, MUSB_INTRUSBE);
-> > +	musb->int_tx = musb_readw(musb->mregs, MUSB_INTRTX)
-> > +	    & musb_readw(musb->mregs, MUSB_INTRTXE);
-> > +	musb->int_rx = musb_readw(musb->mregs, MUSB_INTRRX)
-> > +	    & musb_readw(musb->mregs, MUSB_INTRRXE);
-> 
-> Based on my comment in 5/6, the above 3 musb_readb/w() can be changed to
-> 
-> > +	/* MediaTek controller interrupt status is W1C */
-> > +	musb_clearw(musb->mregs, MUSB_INTRRX);
-> > +	musb_clearw(musb->mregs, MUSB_INTRTX);
-> > +	musb_clearb(musb->mregs, MUSB_INTRUSB);
-> 
-> 	musb->int_usb = musb_clearb(musb->mregs, MUSB_INTRUSB)
-> 	musb->int_tx = musb_clearw(musb->mregs, MUSB_INTRTX);
-> 	musb->int_rx = musb_clearw(musb->mregs, MUSB_INTRRX);
+That's not true: dummy_data is registered with
+platform_device_register_data() which stores the pointer. (And is used
+in ramoops_probe().) When the probe runs, the stack frame will be
+gone.
 
-Okay.
+That said, it would be possible to move the stack allocation into
+ramoops_init() instead, since the frame will still be available during
+the call to platform_driver_register() which will call
+ramoops_probe(). If you made that change, then we could drop the
+ramoops_unregister_dummy() call, and rename ramoops_register_dummy()
+into ramoops_populate_dummy() or something.
 
-> > +
-> > +	if (musb->int_usb || musb->int_tx || musb->int_rx)
-> > +		retval = musb_interrupt(musb);
-> > +
-> > +	spin_unlock_irqrestore(&musb->lock, flags);
-> > +
-> > +	return retval;
-> > +}
-> > +
-> 
-> [snip]
-> 
-> > +
-> > +static u8 mtk_musb_clearb(void __iomem *addr, unsigned int offset)
-> > +{
-> > +	u8 data;
-> > +
-> > +	/* W1C */
-> > +	data = musb_readb(addr, offset);
-> > +	musb_writeb(addr, offset, data);
-> > +	return musb_readb(addr, offset);
-> 
-> 	return data;
+But even in this case, you'd need to remove the platform data after
+the probe just to make sure the stack pointer didn't stick around.
 
-Okay.
+-Kees
 
-> > +}
-> > +
-> > +static u16 mtk_musb_clearw(void __iomem *addr, unsigned int offset)
-> > +{
-> > +	u16 data;
-> > +
-> > +	/* W1C */
-> > +	data = musb_readw(addr, offset);
-> > +	musb_writew(addr, offset, data);
-> > +	return musb_readw(addr, offset);
-> 
-> 	return data;
-
-Okay.
-
-> 
-> Regards,
-> -Bin.
+>
+> Signed-off-by: Yue Hu <huyue2@yulong.com>
+> ---
+>  fs/pstore/ram.c | 34 +++++++++++++---------------------
+>  1 file changed, 13 insertions(+), 21 deletions(-)
+>
+> diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
+> index 96f7d32..8db1f7f 100644
+> --- a/fs/pstore/ram.c
+> +++ b/fs/pstore/ram.c
+> @@ -110,7 +110,6 @@ struct ramoops_context {
+>  };
+>
+>  static struct platform_device *dummy;
+> -static struct ramoops_platform_data *dummy_data;
+>
+>  static int ramoops_pstore_open(struct pstore_info *psi)
+>  {
+> @@ -896,13 +895,12 @@ static inline void ramoops_unregister_dummy(void)
+>  {
+>         platform_device_unregister(dummy);
+>         dummy = NULL;
+> -
+> -       kfree(dummy_data);
+> -       dummy_data = NULL;
+>  }
+>
+>  static void __init ramoops_register_dummy(void)
+>  {
+> +       struct ramoops_platform_data pdata;
+> +
+>         /*
+>          * Prepare a dummy platform data structure to carry the module
+>          * parameters. If mem_size isn't set, then there are no module
+> @@ -913,30 +911,24 @@ static void __init ramoops_register_dummy(void)
+>
+>         pr_info("using module parameters\n");
+>
+> -       dummy_data = kzalloc(sizeof(*dummy_data), GFP_KERNEL);
+> -       if (!dummy_data) {
+> -               pr_info("could not allocate pdata\n");
+> -               return;
+> -       }
+> -
+> -       dummy_data->mem_size = mem_size;
+> -       dummy_data->mem_address = mem_address;
+> -       dummy_data->mem_type = mem_type;
+> -       dummy_data->record_size = record_size;
+> -       dummy_data->console_size = ramoops_console_size;
+> -       dummy_data->ftrace_size = ramoops_ftrace_size;
+> -       dummy_data->pmsg_size = ramoops_pmsg_size;
+> -       dummy_data->dump_oops = dump_oops;
+> -       dummy_data->flags = RAMOOPS_FLAG_FTRACE_PER_CPU;
+> +       pdata.mem_size = mem_size;
+> +       pdata.mem_address = mem_address;
+> +       pdata.mem_type = mem_type;
+> +       pdata.record_size = record_size;
+> +       pdata.console_size = ramoops_console_size;
+> +       pdata.ftrace_size = ramoops_ftrace_size;
+> +       pdata.pmsg_size = ramoops_pmsg_size;
+> +       pdata.dump_oops = dump_oops;
+> +       pdata.flags = RAMOOPS_FLAG_FTRACE_PER_CPU;
+>
+>         /*
+>          * For backwards compatibility ramoops.ecc=1 means 16 bytes ECC
+>          * (using 1 byte for ECC isn't much of use anyway).
+>          */
+> -       dummy_data->ecc_info.ecc_size = ramoops_ecc == 1 ? 16 :
+> ramoops_ecc;
+> +       pdata.ecc_info.ecc_size = ramoops_ecc == 1 ? 16 : ramoops_ecc;
+>
+>         dummy = platform_device_register_data(NULL, "ramoops", -1,
+> -                       dummy_data, sizeof(struct
+> ramoops_platform_data));
+> +                       &pdata, sizeof(struct ramoops_platform_data));
+>         if (IS_ERR(dummy)) {
+>                 pr_info("could not create platform device: %ld\n",
+>                         PTR_ERR(dummy));
+> --
+> 1.9.1
+>
+>
+>
+>
 
 
+-- 
+Kees Cook
