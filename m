@@ -2,93 +2,77 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD9B3C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:40:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93FCDC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:40:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89591217D4
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:40:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CFD42085A
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:40:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729629AbfAVQk2 (ORCPT
+        id S1729641AbfAVQke (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 11:40:28 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:58600 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729539AbfAVQkS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 11:40:18 -0500
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 4556235762AC32097DE5;
-        Wed, 23 Jan 2019 00:40:10 +0800 (CST)
-Received: from SZA150611058.china.huawei.com (10.45.54.154) by
- DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.408.0; Wed, 23 Jan 2019 00:39:59 +0800
-From:   Huazhong Tan <tanhuazhong@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <huangdaode@hisilicon.com>, <yisen.zhuang@huawei.com>,
-        <salil.mehta@huawei.com>, <linuxarm@huawei.com>,
-        Yunsheng Lin <linyunsheng@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        Huazhong Tan <tanhuazhong@huawei.com>
-Subject: [PATCH net-next 08/12] net: hns3: Change fw error code NOT_EXEC to NOT_SUPPORTED
-Date:   Wed, 23 Jan 2019 00:39:36 +0800
-Message-ID: <20190122163940.7876-9-tanhuazhong@huawei.com>
-X-Mailer: git-send-email 2.20.1.windows.1
-In-Reply-To: <20190122163940.7876-1-tanhuazhong@huawei.com>
-References: <20190122163940.7876-1-tanhuazhong@huawei.com>
+        Tue, 22 Jan 2019 11:40:34 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:51998 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729539AbfAVQkb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 11:40:31 -0500
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtp (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1glz64-0000xC-4Q; Tue, 22 Jan 2019 09:40:20 -0700
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-ntb@googlegroups.com, linux-crypto@vger.kernel.org,
+        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        =?UTF-8?Q?Horia_Geant=c4=83?= <horia.geanta@nxp.com>
+References: <20190116182523.19446-1-logang@deltatee.com>
+ <20190122124044.GA11753@kroah.com>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <9fe43579-77e2-f845-0b30-4fea4ecc27a7@deltatee.com>
+Date:   Tue, 22 Jan 2019 09:40:17 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.45.54.154]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20190122124044.GA11753@kroah.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: horia.geanta@nxp.com, andy.shevchenko@gmail.com, arnd@arndb.de, akpm@linux-foundation.org, linux-mm@kvack.org, linux-crypto@vger.kernel.org, linux-ntb@googlegroups.com, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v25 0/6] Add io{read|write}64 to io-64-atomic headers
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yunsheng Lin <linyunsheng@huawei.com>
-
-According to firmware error code definition, the error code of 2
-means NOT_SUPPORTED, this patch changes it to NOT_SUPPORTED.
-
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
----
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c | 2 ++
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h | 2 +-
- 2 files changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
-index e483a6e730e6..b0ee070884eb 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
-@@ -259,6 +259,8 @@ int hclge_cmd_send(struct hclge_hw *hw, struct hclge_desc *desc, int num)
- 
- 			if (desc_ret == HCLGE_CMD_EXEC_SUCCESS)
- 				retval = 0;
-+			else if (desc_ret == HCLGE_CMD_NOT_SUPPORTED)
-+				retval = -EOPNOTSUPP;
- 			else
- 				retval = -EIO;
- 			hw->cmq.last_status = desc_ret;
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-index f23042b24c09..9f07279513b7 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-@@ -39,7 +39,7 @@ struct hclge_cmq_ring {
- enum hclge_cmd_return_status {
- 	HCLGE_CMD_EXEC_SUCCESS	= 0,
- 	HCLGE_CMD_NO_AUTH	= 1,
--	HCLGE_CMD_NOT_EXEC	= 2,
-+	HCLGE_CMD_NOT_SUPPORTED	= 2,
- 	HCLGE_CMD_QUEUE_FULL	= 3,
- };
- 
--- 
-2.20.1
 
 
+On 2019-01-22 5:40 a.m., Greg Kroah-Hartman wrote:
+> On Wed, Jan 16, 2019 at 11:25:17AM -0700, Logan Gunthorpe wrote:
+>> This is resend number 6 since the last change to this series.
+>>
+>> This cleanup was requested by Greg KH back in June of 2017. I've resent the series
+>> a couple times a cycle since then, updating and fixing as feedback was slowly
+>> recieved some patches were alread accepted by specific arches. In June 2018,
+>> Andrew picked the remainder of this up and it was in linux-next for a
+>> couple weeks. There were a couple problems that were identified and addressed
+>> back then and I'd really like to get the ball rolling again. A year
+>> and a half of sending this without much feedback is far too long.
+>>
+>> @Andrew, can you please pick this set up again so it can get into
+>> linux-next? Or let me know if there's something else I should be doing.
+> 
+> version 25?  That's crazy, this has gone on too long.  I've taken this
+> into my char/misc driver tree now, so sorry for the long suffering you
+> have gone through for this.
+
+Thanks a lot!
+
+Logan
