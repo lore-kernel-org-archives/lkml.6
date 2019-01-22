@@ -2,290 +2,171 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E64DC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:46:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93A4FC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:48:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6063E21019
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:46:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6075421019
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:48:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="O2N0aNf5";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UTO6FxKs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729374AbfAVQqV (ORCPT
+        id S1729399AbfAVQsp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 11:46:21 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:49884 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729031AbfAVQqV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 11:46:21 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Tue, 22 Jan 2019 11:48:45 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:48336 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729103AbfAVQsp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 11:48:45 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id D34F460854; Tue, 22 Jan 2019 16:48:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548175723;
+        bh=eP2k8C/TWcMco/1C7Pz9d07P0ZKYfLgyo4TtCUaWb3o=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=O2N0aNf59MRngS49WBCvadWzxu+57ZmDEQOx4wXf8ttQel1I08KMEOS8lk5AAXjxN
+         /9SgML3St6z0f9Z5JDDvjR+/cGJjUjv7SPvzgPoK0NaAUXmCvami6DLo+A/ZTUYJRa
+         UyNY+Enh4vnTHMYeh1mTq8sqQmIdwD4I0CCuFOEk=
+Received: from [192.168.1.100] (unknown [157.49.207.12])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CA4EEC0587DA;
-        Tue, 22 Jan 2019 16:46:19 +0000 (UTC)
-Received: from redhat.com (ovpn-125-220.rdu2.redhat.com [10.10.125.220])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id AC0E86B631;
-        Tue, 22 Jan 2019 16:46:16 +0000 (UTC)
-Date:   Tue, 22 Jan 2019 11:46:13 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     John Hubbard <jhubbard@nvidia.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
-        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
-        rcampbell@nvidia.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-Message-ID: <20190122164613.GA3188@redhat.com>
-References: <20190112024625.GB5059@redhat.com>
- <b6f4ed36-fc8d-1f9b-8c74-b12f61d496ae@nvidia.com>
- <20190114145447.GJ13316@quack2.suse.cz>
- <20190114172124.GA3702@redhat.com>
- <20190115080759.GC29524@quack2.suse.cz>
- <20190116113819.GD26069@quack2.suse.cz>
- <20190116130813.GA3617@redhat.com>
- <20190117093047.GB9378@quack2.suse.cz>
- <20190117151759.GA3550@redhat.com>
- <20190122152459.GG13149@quack2.suse.cz>
+        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 158736024C;
+        Tue, 22 Jan 2019 16:48:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548175722;
+        bh=eP2k8C/TWcMco/1C7Pz9d07P0ZKYfLgyo4TtCUaWb3o=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=UTO6FxKssWDy7V5uPfYO6e0XTr3b8t3R3PB7G38CYMIW5+nzFFD2X0juqhfRgpCQm
+         Dg3fZH01y2hmywiut0kmLGh8WO8y/osiWx+sNjZ/8OeVi/QsQ0co4DS2HccCpe4T1h
+         +hbWeCf+kwIlyKsBHFmP+ynGnFdgLvKrcZxlyv9o=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 158736024C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
+Subject: Re: [PATCHv4 1/4] arm64: dts: qcom: sdm845: Add Coresight support
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>, robh+dt@kernel.org,
+        mathieu.poirier@linaro.org, leo.yan@linaro.org,
+        alexander.shishkin@linux.intel.com, andy.gross@linaro.org,
+        david.brown@linaro.org, vivek.gautam@codeaurora.org,
+        dianders@chromium.org, sboyd@kernel.org,
+        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
+        mark.rutland@arm.com
+Cc:     rnayak@codeaurora.org, sibis@codeaurora.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+References: <cover.1548133311.git.saiprakash.ranjan@codeaurora.org>
+ <ad16cfb9b6f5efb85149458d5f5a1abf43fa027c.1548133311.git.saiprakash.ranjan@codeaurora.org>
+ <1bd39862-0725-70ce-6535-fdb59569f683@arm.com>
+ <75ed74af-6946-b86d-092e-42dc16e55308@codeaurora.org>
+ <91a90daa-9e14-2d2e-e633-2ddfdc0955bf@arm.com>
+From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Message-ID: <3906faf1-abbd-9c28-ad55-ed3800f06352@codeaurora.org>
+Date:   Tue, 22 Jan 2019 22:18:31 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <91a90daa-9e14-2d2e-e633-2ddfdc0955bf@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190122152459.GG13149@quack2.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Tue, 22 Jan 2019 16:46:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 04:24:59PM +0100, Jan Kara wrote:
-> On Thu 17-01-19 10:17:59, Jerome Glisse wrote:
-> > On Thu, Jan 17, 2019 at 10:30:47AM +0100, Jan Kara wrote:
-> > > On Wed 16-01-19 08:08:14, Jerome Glisse wrote:
-> > > > On Wed, Jan 16, 2019 at 12:38:19PM +0100, Jan Kara wrote:
-> > > > > On Tue 15-01-19 09:07:59, Jan Kara wrote:
-> > > > > > Agreed. So with page lock it would actually look like:
-> > > > > > 
-> > > > > > get_page_pin()
-> > > > > > 	lock_page(page);
-> > > > > > 	wait_for_stable_page();
-> > > > > > 	atomic_add(&page->_refcount, PAGE_PIN_BIAS);
-> > > > > > 	unlock_page(page);
-> > > > > > 
-> > > > > > And if we perform page_pinned() check under page lock, then if
-> > > > > > page_pinned() returned false, we are sure page is not and will not be
-> > > > > > pinned until we drop the page lock (and also until page writeback is
-> > > > > > completed if needed).
-> > > > > 
-> > > > > After some more though, why do we even need wait_for_stable_page() and
-> > > > > lock_page() in get_page_pin()?
-> > > > > 
-> > > > > During writepage page_mkclean() will write protect all page tables. So
-> > > > > there can be no new writeable GUP pins until we unlock the page as all such
-> > > > > GUPs will have to first go through fault and ->page_mkwrite() handler. And
-> > > > > that will wait on page lock and do wait_for_stable_page() for us anyway.
-> > > > > Am I just confused?
-> > > > 
-> > > > Yeah with page lock it should synchronize on the pte but you still
-> > > > need to check for writeback iirc the page is unlocked after file
-> > > > system has queue up the write and thus the page can be unlock with
-> > > > write back pending (and PageWriteback() == trye) and i am not sure
-> > > > that in that states we can safely let anyone write to that page. I
-> > > > am assuming that in some case the block device also expect stable
-> > > > page content (RAID stuff).
-> > > > 
-> > > > So the PageWriteback() test is not only for racing page_mkclean()/
-> > > > test_set_page_writeback() and GUP but also for pending write back.
-> > > 
-> > > But this is prevented by wait_for_stable_page() that is already present in
-> > > ->page_mkwrite() handlers. Look:
-> > > 
-> > > ->writepage()
-> > >   /* Page is locked here */
-> > >   clear_page_dirty_for_io(page)
-> > >     page_mkclean(page)
-> > >       -> page tables get writeprotected
-> > >     /* The following line will be added by our patches */
-> > >     if (page_pinned(page)) -> bounce
-> > >     TestClearPageDirty(page)
-> > >   set_page_writeback(page);
-> > >   unlock_page(page);
-> > >   ...submit_io...
-> > > 
-> > > IRQ
-> > >   - IO completion
-> > >   end_page_writeback()
-> > > 
-> > > So if GUP happens before page_mkclean() writeprotects corresponding PTE
-> > > (and these two actions are synchronized on the PTE lock), page_pinned()
-> > > will see the increment and report the page as pinned.
-> > > 
-> > > If GUP happens after page_mkclean() writeprotects corresponding PTE, it
-> > > will fault:
-> > >   handle_mm_fault()
-> > >     do_wp_page()
-> > >       wp_page_shared()
-> > >         do_page_mkwrite()
-> > >           ->page_mkwrite() - that is block_page_mkwrite() or
-> > > 	    iomap_page_mkwrite() or whatever filesystem provides
-> > > 	  lock_page(page)
-> > >           ... prepare page ...
-> > > 	  wait_for_stable_page(page) -> this blocks until IO completes
-> > > 	    if someone cares about pages not being modified while under IO.
-> > 
-> > The case i am worried is GUP see pte with write flag set but has not
-> > lock the page yet (GUP is get pte first, then pte to page then lock
-> > page), then it locks the page but the lock page can make it wait for a
-> > racing page_mkclean()...write back that have not yet write protected
-> > the pte the GUP just read. So by the time GUP has the page locked the
-> > pte it read might no longer have the write flag set. Hence why you need
-> > to also check for write back after taking the page lock. Alternatively
-> > you could recheck the pte after a successful try_lock on the page.
+Hi Suzuki,
+
+On 1/22/2019 9:38 PM, Suzuki K Poulose wrote:
 > 
-> This isn't really possible. GUP does:
+> By inconsistent, I meant the registers provides values which are not
+> the same on two different CPUs of the *same type*. And it is expected
+> that two different CPU/ETM implementations will have different PIDs.
 > 
-> get_user_pages()
-> ...
->   follow_page_mask()
->   ...
->     follow_page_pte()
->       ptep = pte_offset_map_lock()
->       check permissions and page sanity
->       if (flags & FOLL_GET)
->         get_page(page); -> this would become
-> 	  atomic_add(&page->_refcount, PAGE_PIN_BIAS);
->       pte_unmap_unlock(ptep, ptl);
+
+SDM845 has 4 Kryo 385 Gold (ARM A75) + 4 Kryo 385 Silver (ARM A55),
+so the PID values should be same for 4 ETMs atleast. But here one
+pid value(001bb803) is same for 6 ETMs and other one for 2
+ETMs(001bb802) which seems odd and hence the doubt if these pids
+are even valid ones.
+
+>>
+>> Below are the PIDs read for SDM845:
+>>
+>> [    5.996448] resname=etm@7040000 pid=001bb803
+>> [    6.052891] resname=etm@7140000 pid=001bb803
+>>
+>> <snip> .. (Same pid=001bb803 for etm@7240000 to etm@7540000 but differs
+>> for other 2 cpus as shown below)
+>>
+>> [    6.266687] resname=etm@7640000 pid=001bb802
+>> [    6.329171] resname=etm@7740000 pid=001bb802
+>>
+>> This is the case for MSM8996 also as shown below where PID
+>> value is not correct and has to be hardcoded.
 > 
-> page_mkclean() on the other hand grabs the same pte lock to change the pte
-> to write-protected. So after page_mkclean() has modified the PTE we are
-> racing on for access, we are sure to either see increased _refcount or get
-> page fault from GUP.
+> They differ because they are two different types of CPU cores (and thus 
+> different ETM PIDs). What does the Register descriptions say for
+> the Cores ?
 > 
-> If we see increased _refcount, we bounce the page and are fine. If GUP
-> faults, we will wait for page lock (so wait until page is prepared for IO
-> and has PageWriteback set) while handling the fault, then enter
-> ->page_mkwrite, which will do wait_for_stable_page() -> wait for
-> outstanding writeback to complete.
+> To me it looks like there are two different types of Qualcomm
+> Cores with their respective ETMs which are missing in the ETM4x
+> driver and we are trying to "make the ETM" work by faking it as
+> something else, which is not nice. I would rather prefer
+> to add the appropriate masks and the expected value for these
+> two different ETM implementations and be done with it, instead
+> of faking it in all the DTs where these cores appear.
 > 
-> So I still conclude - no need for page lock in the GUP path at all AFAICT.
-> In fact we rely on the very same page fault vs page writeback synchronization
-> for normal user faults as well. And normal user mmap access is even nastier
-> than GUP access because the CPU reads page tables without taking PTE lock.
 
-For the "slow" GUP path you are right you do not need a lock as the
-page table lock give you the ordering. For the GUP fast path you
-would either need the lock or the memory barrier with the test for
-page write back.
+ETM4x driver does not have entries for A55 and A75. Could you please
+let me know the PIDs for these CPUs so that we can compare?
 
-Maybe an easier thing is to convert GUP fast to try to take the page
-table lock if it fails taking the page table lock then we fall back
-to slow GUP path. Otherwise then we have the same garantee as the slow
-path.
-
-The issue is that i am not sure if the page table directory page and
-it's associated spinlock can go in bad state if the directory is being
-freed (like a racing munmap). This would need to be check. A scheme
-that might protect against that is to take the above lock of each level
-before going down one level. Once you are down one level you can unlock
-the above level. So at any point in time GUP fast holds the lock to a
-current and valid directory and thus no one could race to remove it.
-
-    GUP_fast()
-      gup_pgd_range()
-        if (p4d_try_map_lock()) {
-          gup_p4d_range()
-          if (pud_try_map_lock()) {
-            p4d_unlock();
-            gup_pud_range();
-              if (pmd_try_map_lock()) {
-                pud_unlock();
-                gup_pmd_range();
-                  if (pte_try_map_lock()) {
-                    pmd_unlock();
-                    // Do gup
-                  }
-             }
-          }
-       }
-
-Maybe this is worse than taking the mmap_sem and checking for vma.
-
-
-> > > > > That actually touches on another question I wanted to get opinions on. GUP
-> > > > > can be for read and GUP can be for write (that is one of GUP flags).
-> > > > > Filesystems with page cache generally have issues only with GUP for write
-> > > > > as it can currently corrupt data, unexpectedly dirty page etc.. DAX & memory
-> > > > > hotplug have issues with both (DAX cannot truncate page pinned in any way,
-> > > > > memory hotplug will just loop in kernel until the page gets unpinned). So
-> > > > > we probably want to track both types of GUP pins and page-cache based
-> > > > > filesystems will take the hit even if they don't have to for read-pins?
-> > > > 
-> > > > Yes the distinction between read and write would be nice. With the map
-> > > > count solution you can only increment the mapcount for GUP(write=true).
-> > > 
-> > > Well, but if we track only pins for write, DAX or memory hotplug will not
-> > > be able to use this mechanism. So at this point I'm more leaning towards
-> > > tracking all pins. It will cost some performance needlessly for read pins
-> > > and filesystems using page cache when bouncing such pages but it's not like
-> > > writeback of pinned pages is some performance critical operation... But I
-> > > wanted to spell this out so that people are aware of this.
-> > 
-> > No they would know for regular pin, it is just as page migrate code. If
-> > the refcount + (extra_ref_by_the_code_checking) > mapcount then you know
-> > someone has extra reference on your page.
-> > 
-> > Those extra references are either some regular fs event taking place (some
-> > code doing find_get_page for instance) or a GUP reference (wether it is a
-> > write pin or a read pin).
-> > 
-> > So the only issue is false positive, ie thinking the page is under GUP
-> > while it has just elevated refcount because of some other regular fs/mm
-> > event. To minimize false positive for a more accurate pin test (write or
-> > read) you can enforce few thing:
-> > 
-> >     1 - first page lock
-> >     2 - then freeze the page with expected counted
-> > 
-> > With that it should minimize false positive. In the end even with the bias
-> > case you can also have false positive.
+>>
+>> For MSM8996:
+>>
+>> resname=etm@3b40000 pid=102f0205
 > 
-> So this is basically what the code is currently doing. And for DAX it works
-> well since the page is being truncated and so essentially nobody is
-> touching it. But for hotplug it doesn't work quite well - hotplug would
-> like to return EBUSY to userspace when the page is pinned but retry if the
-> page reference is just transient.
+> I don't know what CPUs the MSM8996 have. If they don't have A53, you
+> must add the actual PIDs to the table once and for all.
+> 
 
-I do not think there is anyway around transient refcount other
-than periodicaly check. Maybe hot unplug (i am assuming we are
-talking about unplug here) can set the reserved page flag and
-we can change the page get ref to never inc refcount for page
-with reserved flag. I see that they have been cleanup on going
-around reserved page so it might or might not be possible.
+But again, this PID is some invalid value. And does not correspond
+to any of the ARM CPU cores and would be MSM8996 specific.
+MSM8996 has 2+2 Kryo cores which are not ARM derivative as SDM845
+if I am right.
 
-Also it would mean that get_page() could now fail and we would
-need to update all path that do that to handle this case. Then
-you know that if the freeze fails it must be because of read
-GUP (no transient refcount can happen).
+>>
+>>>> +        etm@7040000 {
+>>>> +            compatible = "arm,coresight-etm4x", "arm,primecell";
+>>>> +            arm,primecell-periphid = <0x000bb95d> > +            
+>>>> reg = <0 0x07040000 0 0x1000>;
+>>>> +
+>>>> +            cpu = <&CPU0>;
+>>>> +
+>>>
+>>> You seem to be specifying the PID of A53 ETM all over, while at least
+>>> one of your cores is ETMv4.2 (from the other patch) and A53 is not
+>>> ETMv4.2. As above, it would be good to add the PID to the table.
+>>>
+>>
+>> As explained in above comment, PID values read are not correct. Please 
+>> let me know if I am not clear.
+> 
+> There is no measure for "correctness" here. If the ETM exposes different
+> PID than what you expect from the TRM, then we could think of overriding
+> it. Otherwise please add the PIDs to the table.
+> 
 
-Or another way is to record page refcount at time t and then
-compare it at time t+timeout and if it matches then consider the
-refcount to be from a GUP read and not a transient refcount,
-this should at very least drasticly reduce the likely hood of
-a false GUP positive because of a transient refcount inc.
+This is exactly the case, ETM PID registers are exposing some invalid
+value and hence we override in DT.
 
-Cheers,
-J�r�me
+Thanks,
+Sai
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
