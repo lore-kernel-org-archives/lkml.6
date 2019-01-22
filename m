@@ -2,119 +2,92 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41E63C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:29:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31D41C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:30:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AE5A2085A
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:29:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C12921726
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:30:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729344AbfAVQ3k (ORCPT
+        id S1729301AbfAVQae (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 11:29:40 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:35375 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728580AbfAVQ3k (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 11:29:40 -0500
-Received: by mail-lj1-f194.google.com with SMTP id x85-v6so21217997ljb.2;
-        Tue, 22 Jan 2019 08:29:37 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=t9n/5sXdoTPr3CpWzcc788OMKiVQhMebV1SwmFqOkDM=;
-        b=kc4ImfRHJ2aMVsf55zZP8lUCmmJ37QbdjsKPhci54UIIqIlRGs2wRGzNv8ZhlB3wI5
-         hM9ZIo0+HzErsWrrJ/YTQtSObY6+YEHYaC+renfJVgV2301Rw7y+coMkk+Xf504OVmDM
-         FI1nlLzULKU/ipD3z3/oqzUMbifHQcX5IDin5WlVPEGtEvK56tsxtV8Gu2s8xIXUEUUQ
-         IALpk/uGeHl/0XuTIMaURd02vRx+GIIQRcE3nF17RxvZNOq6LRXkuoTigclJD92bnJfd
-         CtwnhSLEZ22YZJsUxilESOQ3XDL9daL4nBJSmDQ30+KUVx5jOyUhRTwIssclrwa9m+5w
-         YdvA==
-X-Gm-Message-State: AJcUukeDof6kSjknN4fYDyk+y0kBgniHQ3V5AkbxjgWSt0SdHXXgf4xq
-        rQ9vKRz6nTvmaGKZWG67ghg=
-X-Google-Smtp-Source: ALg8bN5YUVS7ySRm9No2eyYMF5Ufbs7NAJdPtgs1BAemEDk2cT7J3LmrPSOqxFA2z0aqGFT6E7LeOA==
-X-Received: by 2002:a2e:914b:: with SMTP id q11-v6mr8884858ljg.164.1548174576827;
-        Tue, 22 Jan 2019 08:29:36 -0800 (PST)
-Received: from localhost.localdomain (82-203-157-3.bb.dnainternet.fi. [82.203.157.3])
-        by smtp.gmail.com with ESMTPSA id h22-v6sm87861lji.45.2019.01.22.08.29.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 22 Jan 2019 08:29:36 -0800 (PST)
-Date:   Tue, 22 Jan 2019 18:29:31 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     mazziesaccount@gmail.com, lee.jones@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, lgirdwood@gmail.com, broonie@kernel.org,
-        gregkh@linuxfoundation.org, rafael@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        sre@kernel.org, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-        heikki.haikola@fi.rohmeurope.com
-Subject: Re: [RFC PATCH v1 11/13] rtc: bd70528: Initial support for ROHM
- bd70528 RTC
-Message-ID: <20190122162931.GB2559@localhost.localdomain>
-References: <cover.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
- <ebe1618710baf7cf59622c878e40052ca48cc7c3.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
- <390e9379-329b-02dc-13f6-763aeae703e1@roeck-us.net>
+        Tue, 22 Jan 2019 11:30:34 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:39472 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728580AbfAVQad (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 11:30:33 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id F30A2ED3C1;
+        Tue, 22 Jan 2019 16:30:32 +0000 (UTC)
+Received: from [10.18.17.208] (dhcp-17-208.bos.redhat.com [10.18.17.208])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9419268897;
+        Tue, 22 Jan 2019 16:30:31 +0000 (UTC)
+Subject: Re: [PATCH V2] livepatch: fix non-static warnings
+From:   Joe Lawrence <joe.lawrence@redhat.com>
+To:     Nicholas Mc Guire <hofrat@osadl.org>
+Cc:     Miroslav Benes <mbenes@suse.cz>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jessica Yu <jeyu@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+        Petr Mladek <pmladek@suse.com>, live-patching@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1544965657-26804-1-git-send-email-hofrat@osadl.org>
+ <alpine.LSU.2.21.1812171256390.3087@pobox.suse.cz>
+ <20ef1d3a-2916-ce00-2938-3397746efac9@redhat.com>
+ <alpine.LSU.2.21.1812180934090.9644@pobox.suse.cz>
+ <adeb1bca-9fa1-b150-d551-a9cf0853a63b@redhat.com>
+Message-ID: <13b0bd3d-1441-b83b-bee3-d5fc666a9d26@redhat.com>
+Date:   Tue, 22 Jan 2019 11:30:30 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <390e9379-329b-02dc-13f6-763aeae703e1@roeck-us.net>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <adeb1bca-9fa1-b150-d551-a9cf0853a63b@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 22 Jan 2019 16:30:33 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 06:48:21AM -0800, Guenter Roeck wrote:
-> On 1/22/19 1:47 AM, Matti Vaittinen wrote:
-> > +
-> > +static int bd70528_set_rtc_based_timers(struct bd70528 *bd70528, int new_state,
-> > +							int *old_state)
+On 12/18/18 10:18 AM, Joe Lawrence wrote:
+> On 12/18/2018 03:49 AM, Miroslav Benes wrote:
+>> On Mon, 17 Dec 2018, Joe Lawrence wrote:
+>>
+>>> I'm just being picky about its documentation and how we should note its
+>>> usage in the v3 patch.  Think that s/__noclone/used/g of the v2 commit
+>>> message would be sufficient?
+>>
+>> We could rephrase it. After all it is not only about symbol names in the
+>> symbol table. The traceable/patchable code has to be present...
+>>
+>> "Sparse reported warnings about non-static symbols. For the variables
+>> a simple static attribute is fine - for the functions referenced by
+>> livepatch via klp_func the symbol-names must be unmodified in the
+>> symbol table and the patchable code has to be emitted.
+>>
+>> Attach __used attribute to the shared statically declared functions."
+>>
+>> ?
 > 
-> Passed parameter is an int, not int *. I'd be quite surprised if this compiles
-> without warning.
+> That works for me.
 > 
-> > +static int bd70528_re_enable_rtc_based_timers(struct bd70528 *bd70528,
-> > +							int old_state)
-// snip
-> > +	return bd70528_set_rtc_based_timers(bd70528, old_state, NULL);
+Hi Nicholas,
 
-and
+Did you still want to post a v3 for this fix?  I think there were only a 
+few v3 suggestions (link tag, tag order, __used attribute, and commit 
+msg phrasing.)
 
-> > +static int bd70528_disable_rtc_based_timers(struct bd70528 *bd70528,
-> > +							int *old_state)
-// snip
-> > +	return bd70528_set_rtc_based_timers(bd70528, 0, old_state);
+The context has been clipped in the quoting above, so here's an archive 
+link if you need it:
 
-I'm not quite sure I understand what you mean by that. Second parameter is int,
-third one is is int *.
+https://lore.kernel.org/lkml/1544965657-26804-1-git-send-email-hofrat@osadl.org/
 
-> > +static int bd70528_re_enable_rtc_based_timers(struct bd70528 *bd70528,
-> > +							int old_state)
-> > +{
-> > +	if (bd70528->rtc_timer_lock)
-> > +		mutex_unlock(bd70528->rtc_timer_lock);
-> > +
-> Unlock before calling bd70528_set_rtc_based_timers is odd, especially since it
-> is called after locking below.
-> 
+Thanks,
 
-Yet another brainfart. Thanks for pointing this out! Will be fixed as
-well.
-
-Br,
-	Matti Vaittinen
-
--- 
-Matti Vaittinen
-ROHM Semiconductors
-
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+-- Joe
