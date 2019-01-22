@@ -2,285 +2,148 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83232C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:54:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D085DC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:54:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48C4A20684
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:54:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A02FE20684
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:54:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aVCWuwo7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728616AbfAVNyA (ORCPT
+        id S1728644AbfAVNyk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 08:54:00 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:57860 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728491AbfAVNyA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 08:54:00 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 17DA2C05D3ED;
-        Tue, 22 Jan 2019 13:53:59 +0000 (UTC)
-Received: from redhat.com (ovpn-123-48.rdu2.redhat.com [10.10.123.48])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 771BC26341;
-        Tue, 22 Jan 2019 13:53:56 +0000 (UTC)
-Date:   Tue, 22 Jan 2019 08:53:56 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     xuyandong <xuyandong2@huawei.com>
-Cc:     Bjorn Helgaas <helgaas@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Yinghai Lu <yinghai@kernel.org>,
-        Jesse Barnes <jbarnes@virtuousgeek.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Ofer Hayut <ofer@lightbitslabs.com>,
-        Roy Shterman <roys@lightbitslabs.com>,
-        Keith Busch <keith.busch@intel.com>,
-        "Wangzhou (B)" <wangzhou1@hisilicon.com>
-Subject: Re: [PATCH v3] PCI: avoid bridge feature re-probing on hotplug
-Message-ID: <20190122085336-mutt-send-email-mst@kernel.org>
-References: <20181218004455.20186-1-mst@redhat.com>
- <20190119201259.GA87988@google.com>
- <7CECC2DFC21538489F72729DF5EFB4D909EC77D4@dggemm501-mbs.china.huawei.com>
+        Tue, 22 Jan 2019 08:54:40 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:37681 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728567AbfAVNyk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 08:54:40 -0500
+Received: by mail-it1-f196.google.com with SMTP id b5so20106281iti.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 05:54:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Vrt00XEE7hMYYWS1xWhRin/2a/MlUA+hgmbfZmskq54=;
+        b=aVCWuwo7Clp4I+pwA2arLHCfiUT/pe0mMTF8n50T7goZtbdII5liIo8jGnMvTLuIdS
+         Of/q0OyHMLQeEjJHPO40KdjvAUL1pHXivYdWbG/UjbAHlSWJDW33IDQbgeZLH8vEQkcW
+         u10vFfMlkrukxsHOK69wftPOtYvn3Tt3HrY11UFrK/YE52KuhOXfZ2YUGETZEwlAYmLQ
+         hznJaOetOSXedOMQBWYYPq8/JmRQ2xrUgtlrQqlPbIbsaWmigylrCEPFaiZSKXG0aeWq
+         Aga//7XrkWjOfrpmzRJXXZ6I3KMbXThCkKy41e94FW4xpeq3fEwdnOwrP2U+JJ+wg3u0
+         KhWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Vrt00XEE7hMYYWS1xWhRin/2a/MlUA+hgmbfZmskq54=;
+        b=JvllbrEiy5Q4d/oPGGTN+0exJUkw8vaMbL3S9o3YvEOiqUzmmX50V7ixK84LLQg7xV
+         khWGUr73YMzxhH9InSXw5Tvb5s7msOEhd4TOen7yDekkqjBhzJ1EHAw/XYR/bZCCcPA8
+         xkcnveSw8Nj2/s7ltZg2FWLzPBn11lMScCzqnl0Qp5nS6EqPf2mHSnf0EUaJa0DiyIha
+         cJELlIjfpWtHKyl8zACc+dgxJMu1MclhGscVG+iywrbMR9H6hNDHDSbIYcpZkdqO9IRP
+         N3Ju9bXMpW6qaEcPUwDOt39tCX+B3Nj6jmUTy6BbVxXgRRbz9jHSYt+seL7qB0x5wibP
+         8RAg==
+X-Gm-Message-State: AJcUukfhVrfnGNYJ2oHKzr5lx2E9/4vH7YRn5VU/l/nkRqhw8inkvZif
+        YVe0aq3T8FC6YbeBxZhiOA+FnPxlT09/PZO859q3dw==
+X-Google-Smtp-Source: ALg8bN6M2+jLT9rXMFMYl0B6nASDNw3BP84b2+cgjyKYFpCgE6X3oicOiLJQvstcujV4l7DY9diQS1zg1kBSR9UAq1Q=
+X-Received: by 2002:a02:ac8c:: with SMTP id x12mr18479073jan.72.1548165279311;
+ Tue, 22 Jan 2019 05:54:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7CECC2DFC21538489F72729DF5EFB4D909EC77D4@dggemm501-mbs.china.huawei.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Tue, 22 Jan 2019 13:53:59 +0000 (UTC)
+References: <000000000000f7a28e057653dc6e@google.com> <20180920141058.4ed467594761e073606eafe2@linux-foundation.org>
+ <CAHRSSEzX5HOUEQ6DgEF76OLGrwS1isWMdtvneBLOEEnwoMxVrA@mail.gmail.com>
+ <CAEXW_YSot+3AMQ=jmDRowmqoOmQmujp9r8Dh18KJJN1EDmyHOw@mail.gmail.com>
+ <20180921162110.e22d09a9e281d194db3c8359@linux-foundation.org>
+ <4b0a5f8c-2be2-db38-a70d-8d497cb67665@I-love.SAKURA.ne.jp>
+ <CACT4Y+ZTjCGd9XYUCUoqv+AqXrPwX4OqWMC0jFgjNxZRFkNYXw@mail.gmail.com>
+ <c56d4d0b-8ecc-059d-69cb-4f3e91f9410c@i-love.sakura.ne.jp> <CACT4Y+YA38BfnByA_jrocbhbbqg7NWRe4-5UAp5Q-iKFi9hGQA@mail.gmail.com>
+In-Reply-To: <CACT4Y+YA38BfnByA_jrocbhbbqg7NWRe4-5UAp5Q-iKFi9hGQA@mail.gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Tue, 22 Jan 2019 14:54:28 +0100
+Message-ID: <CACT4Y+b7KhMECUF01fz0+1LJOiqzJhTRHOvezN4baPNd02om0Q@mail.gmail.com>
+Subject: Re: possible deadlock in __do_page_fault
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        syzbot+a76129f18c89f3e2ddd4@syzkaller.appspotmail.com,
+        Andi Kleen <ak@linux.intel.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks a lot for the testing!
-I'll play with it today hopefully.
+On Tue, Jan 22, 2019 at 2:52 PM Dmitry Vyukov <dvyukov@google.com> wrote:
+>
+> On Tue, Jan 22, 2019 at 11:32 AM Tetsuo Handa
+> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+> >
+> > On 2019/01/22 19:12, Dmitry Vyukov wrote:
+> > > On Tue, Jan 22, 2019 at 11:02 AM Tetsuo Handa
+> > > <penguin-kernel@i-love.sakura.ne.jp> wrote:
+> > >>
+> > >> On 2018/09/22 8:21, Andrew Morton wrote:
+> > >>> On Thu, 20 Sep 2018 19:33:15 -0400 Joel Fernandes <joel@joelfernandes.org> wrote:
+> > >>>
+> > >>>> On Thu, Sep 20, 2018 at 5:12 PM Todd Kjos <tkjos@google.com> wrote:
+> > >>>>>
+> > >>>>> +Joel Fernandes
+> > >>>>>
+> > >>>>> On Thu, Sep 20, 2018 at 2:11 PM Andrew Morton <akpm@linux-foundation.org> wrote:
+> > >>>>>>
+> > >>>>>>
+> > >>>>>> Thanks.  Let's cc the ashmem folks.
+> > >>>>>>
+> > >>>>
+> > >>>> This should be fixed by https://patchwork.kernel.org/patch/10572477/
+> > >>>>
+> > >>>> It has Neil Brown's Reviewed-by but looks like didn't yet appear in
+> > >>>> anyone's tree, could Greg take this patch?
+> > >>>
+> > >>> All is well.  That went into mainline yesterday, with a cc:stable.
+> > >>>
+> > >>
+> > >> This problem was not fixed at all.
+> > >
+> > > There are at least 2 other open deadlocks involving ashmem:
+> >
+> > Yes, they involve ashmem_shrink_scan() => {shmem|vfs}_fallocate() sequence.
+> > This approach tries to eliminate this sequence.
+> >
+> > >
+> > > https://syzkaller.appspot.com/bug?extid=148c2885d71194f18d28
+> > > https://syzkaller.appspot.com/bug?extid=4b8b031b89e6b96c4b2e
+> > >
+> > > Does this fix any of these too?
+> >
+> > I need checks from ashmem folks whether this approach is possible/correct.
+> > But you can ask syzbot to test this patch before ashmem folks respond.
+>
+> Right. Let's do this.
+>
+> As with any kernel changes only you really know how to apply it, git
+> tree/base commit info is missing, so let's do guessing and
+> finger-crossing as usual:
+>
+> #syz fix: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+> master
 
-On Tue, Jan 22, 2019 at 05:31:10AM +0000, xuyandong wrote:
-> Hi Bjorn and Michael
-> 
-> After trying to reproduce the problem for a whole day, the bug did not show up
-> any more. So I think the new patch does solve this problem.
-> 
-> > -----Original Message-----
-> > From: Bjorn Helgaas [mailto:helgaas@kernel.org]
-> > Sent: Sunday, January 20, 2019 4:13 AM
-> > To: Michael S. Tsirkin <mst@redhat.com>
-> > Cc: linux-kernel@vger.kernel.org; xuyandong <xuyandong2@huawei.com>;
-> > Yinghai Lu <yinghai@kernel.org>; Jesse Barnes <jbarnes@virtuousgeek.org>;
-> > linux-pci@vger.kernel.org; Sagi Grimberg <sagi@grimberg.me>; Ofer Hayut
-> > <ofer@lightbitslabs.com>; Roy Shterman <roys@lightbitslabs.com>; Keith
-> > Busch <keith.busch@intel.com>; Wangzhou (B) <wangzhou1@hisilicon.com>
-> > Subject: [PATCH v3] PCI: avoid bridge feature re-probing on hotplug
-> > 
-> > I gave up trying to reproduce the problem and test this patch with qemu; can
-> > you guys (Michael and Xu (sorry if I mangled your name)) give this a try?
-> > 
-> > I cc'd a few other people who have noticed this issue in the past, so just FYI for
-> > them.
-> > 
-> > Bjorn
-> > 
-> > 
-> > commit dd21b922db366ba069291b6fef2a8ce6768756a2
-> > Author: Bjorn Helgaas <bhelgaas@google.com>
-> > Date:   Sat Jan 19 11:35:04 2019 -0600
-> > 
-> >     PCI: Probe bridge window attributes once at enumeration-time
-> > 
-> >     pci_bridge_check_ranges() determines whether a bridge supports the
-> > optional
-> >     I/O and prefetchable memory windows and sets the flag bits in the bridge
-> >     resources.  This could be done once during enumeration except that the
-> >     resource allocation code completely clears the flag bits, e.g., in the
-> >     pci_assign_unassigned_bridge_resources() path.
-> > 
-> >     The problem was that in some cases pci_bridge_check_ranges() *changes*
-> > the
-> >     window registers to determine whether they're writable, and this may break
-> >     concurrent accesses to devices behind the bridge.
-> > 
-> >     Add a new pci_read_bridge_windows() to determine whether a bridge
-> > supports
-> >     the optional windows, call it once during enumeration, remember the
-> >     results, and change pci_bridge_check_ranges() to set the flag bits based on
-> >     those remembered results.
-> > 
-> >     Link: https://lore.kernel.org/linux-pci/1506151482-113560-1-git-send-email-
-> > wangzhou1@hisilicon.com
-> >     Link: https://lists.gnu.org/archive/html/qemu-devel/2018-12/msg02082.html
-> >     Reported-by: xuyandong <xuyandong2@huawei.com>
-> >     Cc: Sagi Grimberg <sagi@grimberg.me>
-> >     Cc: Ofer Hayut <ofer@lightbitslabs.com>
-> >     Cc: Roy Shterman <roys@lightbitslabs.com>
-> >     Cc: Keith Busch <keith.busch@intel.com>
-> >     Cc: Zhou Wang <wangzhou1@hisilicon.com>
-> > 
-> > diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c index
-> > 257b9f6f2ebb..2ef8b954c65a 100644
-> > --- a/drivers/pci/probe.c
-> > +++ b/drivers/pci/probe.c
-> > @@ -348,6 +348,57 @@ static void pci_read_bases(struct pci_dev *dev,
-> > unsigned int howmany, int rom)
-> >  	}
-> >  }
-> > 
-> > +static void pci_read_bridge_windows(struct pci_dev *bridge) {
-> > +	u16 io;
-> > +	u32 pmem, tmp;
-> > +
-> > +	pci_read_config_word(bridge, PCI_IO_BASE, &io);
-> > +	if (!io) {
-> > +		pci_write_config_word(bridge, PCI_IO_BASE, 0xe0f0);
-> > +		pci_read_config_word(bridge, PCI_IO_BASE, &io);
-> > +		pci_write_config_word(bridge, PCI_IO_BASE, 0x0);
-> > +	}
-> > +	if (io)
-> > +		bridge->io_window = 1;
-> > +
-> > +	/*
-> > +	 * DECchip 21050 pass 2 errata: the bridge may miss an address
-> > +	 * disconnect boundary by one PCI data phase.  Workaround: do not
-> > +	 * use prefetching on this device.
-> > +	 */
-> > +	if (bridge->vendor == PCI_VENDOR_ID_DEC && bridge->device ==
-> > 0x0001)
-> > +		return;
-> > +
-> > +	pci_read_config_dword(bridge, PCI_PREF_MEMORY_BASE, &pmem);
-> > +	if (!pmem) {
-> > +		pci_write_config_dword(bridge, PCI_PREF_MEMORY_BASE,
-> > +					       0xffe0fff0);
-> > +		pci_read_config_dword(bridge, PCI_PREF_MEMORY_BASE,
-> > &pmem);
-> > +		pci_write_config_dword(bridge, PCI_PREF_MEMORY_BASE,
-> > 0x0);
-> > +	}
-> > +	if (!pmem)
-> > +		return;
-> > +
-> > +	bridge->pref_window = 1;
-> > +
-> > +	if ((pmem & PCI_PREF_RANGE_TYPE_MASK) ==
-> > PCI_PREF_RANGE_TYPE_64) {
-> > +
-> > +		/*
-> > +		 * Bridge claims to have a 64-bit prefetchable memory
-> > +		 * window; verify that the upper bits are actually
-> > +		 * writable.
-> > +		 */
-> > +		pci_read_config_dword(bridge, PCI_PREF_BASE_UPPER32,
-> > &pmem);
-> > +		pci_write_config_dword(bridge, PCI_PREF_BASE_UPPER32,
-> > +				       0xffffffff);
-> > +		pci_read_config_dword(bridge, PCI_PREF_BASE_UPPER32,
-> > &tmp);
-> > +		pci_write_config_dword(bridge, PCI_PREF_BASE_UPPER32,
-> > pmem);
-> > +		if (tmp)
-> > +			bridge->pref_64_window = 1;
-> > +	}
-> > +}
-> > +
-> >  static void pci_read_bridge_io(struct pci_bus *child)  {
-> >  	struct pci_dev *dev = child->self;
-> > @@ -1739,6 +1790,7 @@ int pci_setup_device(struct pci_dev *dev)
-> >  		pci_read_irq(dev);
-> >  		dev->transparent = ((dev->class & 0xff) == 1);
-> >  		pci_read_bases(dev, 2, PCI_ROM_ADDRESS1);
-> > +		pci_read_bridge_windows(dev);
-> >  		set_pcie_hotplug_bridge(dev);
-> >  		pos = pci_find_capability(dev, PCI_CAP_ID_SSVID);
-> >  		if (pos) {
-> > diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c index
-> > ed960436df5e..1941bb0a6c13 100644
-> > --- a/drivers/pci/setup-bus.c
-> > +++ b/drivers/pci/setup-bus.c
-> > @@ -735,58 +735,21 @@ int pci_claim_bridge_resource(struct pci_dev
-> > *bridge, int i)
-> >     base/limit registers must be read-only and read as 0. */  static void
-> > pci_bridge_check_ranges(struct pci_bus *bus)  {
-> > -	u16 io;
-> > -	u32 pmem;
-> >  	struct pci_dev *bridge = bus->self;
-> > -	struct resource *b_res;
-> > +	struct resource *b_res = &bridge->resource[PCI_BRIDGE_RESOURCES];
-> > 
-> > -	b_res = &bridge->resource[PCI_BRIDGE_RESOURCES];
-> >  	b_res[1].flags |= IORESOURCE_MEM;
-> > 
-> > -	pci_read_config_word(bridge, PCI_IO_BASE, &io);
-> > -	if (!io) {
-> > -		pci_write_config_word(bridge, PCI_IO_BASE, 0xe0f0);
-> > -		pci_read_config_word(bridge, PCI_IO_BASE, &io);
-> > -		pci_write_config_word(bridge, PCI_IO_BASE, 0x0);
-> > -	}
-> > -	if (io)
-> > +	if (bridge->io_window)
-> >  		b_res[0].flags |= IORESOURCE_IO;
-> > 
-> > -	/*  DECchip 21050 pass 2 errata: the bridge may miss an address
-> > -	    disconnect boundary by one PCI data phase.
-> > -	    Workaround: do not use prefetching on this device. */
-> > -	if (bridge->vendor == PCI_VENDOR_ID_DEC && bridge->device ==
-> > 0x0001)
-> > -		return;
-> > -
-> > -	pci_read_config_dword(bridge, PCI_PREF_MEMORY_BASE, &pmem);
-> > -	if (!pmem) {
-> > -		pci_write_config_dword(bridge, PCI_PREF_MEMORY_BASE,
-> > -					       0xffe0fff0);
-> > -		pci_read_config_dword(bridge, PCI_PREF_MEMORY_BASE,
-> > &pmem);
-> > -		pci_write_config_dword(bridge, PCI_PREF_MEMORY_BASE,
-> > 0x0);
-> > -	}
-> > -	if (pmem) {
-> > +	if (bridge->pref_window) {
-> >  		b_res[2].flags |= IORESOURCE_MEM |
-> > IORESOURCE_PREFETCH;
-> > -		if ((pmem & PCI_PREF_RANGE_TYPE_MASK) ==
-> > -		    PCI_PREF_RANGE_TYPE_64) {
-> > +		if (bridge->pref_64_window) {
-> >  			b_res[2].flags |= IORESOURCE_MEM_64;
-> >  			b_res[2].flags |= PCI_PREF_RANGE_TYPE_64;
-> >  		}
-> >  	}
-> > -
-> > -	/* double check if bridge does support 64 bit pref */
-> > -	if (b_res[2].flags & IORESOURCE_MEM_64) {
-> > -		u32 mem_base_hi, tmp;
-> > -		pci_read_config_dword(bridge, PCI_PREF_BASE_UPPER32,
-> > -					 &mem_base_hi);
-> > -		pci_write_config_dword(bridge, PCI_PREF_BASE_UPPER32,
-> > -					       0xffffffff);
-> > -		pci_read_config_dword(bridge, PCI_PREF_BASE_UPPER32,
-> > &tmp);
-> > -		if (!tmp)
-> > -			b_res[2].flags &= ~IORESOURCE_MEM_64;
-> > -		pci_write_config_dword(bridge, PCI_PREF_BASE_UPPER32,
-> > -				       mem_base_hi);
-> > -	}
-> >  }
-> > 
-> >  /* Helper function for sizing routines: find first available diff --git
-> > a/include/linux/pci.h b/include/linux/pci.h index 65f1d8c2f082..40b327b814aa
-> > 100644
-> > --- a/include/linux/pci.h
-> > +++ b/include/linux/pci.h
-> > @@ -373,6 +373,9 @@ struct pci_dev {
-> >  	bool		match_driver;		/* Skip attaching driver */
-> > 
-> >  	unsigned int	transparent:1;		/* Subtractive decode bridge
-> > */
-> > +	unsigned int	io_window:1;		/* Bridge has I/O window */
-> > +	unsigned int	pref_window:1;		/* Bridge has pref mem
-> > window */
-> > +	unsigned int	pref_64_window:1;	/* Pref mem window is 64-bit
-> > */
-> >  	unsigned int	multifunction:1;	/* Multi-function device */
-> > 
-> >  	unsigned int	is_busmaster:1;		/* Is busmaster */
+This of course should be:
+
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+master
