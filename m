@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69D34C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:23:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 345EFC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:23:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F155217D6
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:23:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03F0C217D8
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:23:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548170610;
-	bh=Y+3f8hnkKRWgcyaq0Lvv7s9wQSn+ZZfJmrDS7NBu5Ko=;
+	s=default; t=1548170614;
+	bh=H5F4UgyusDZ7Ef0oy+Za7vJwL7xKGf1CV3vNOpALKd8=;
 	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=xAIrSiBTcINJAtneD3WXkx+b74JBAfH3V9rh7B/K6XyNcRX7kEhvZwk1F9I+Dlx3z
-	 qBZ+1MiqrBi1YuIa//uIejBH/OO+RBVXJMLp67jJfzMVF/ufqfvQexFruqAOWIpP74
-	 82b8mpst0NEo3WnaRzQu+/55UFyX4iB/vtuJPoHo=
+	b=EAaX7gkbQ9D2tYkyIf8qU1/XOJcr8O8rvczzMYEBDF+5fbOu8aC3SjLPY8gqU8Oif
+	 TksnzEAsvMJvPcftKqyYPfsZ7hFgaLt+PA1PrdTkfoR+2u/XsL0ObXAQ/xvEljWbP+
+	 ADJJE9hf+RMyggrizcnRtD851YWysaAFO1wW4Jno=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729851AbfAVPX3 (ORCPT
+        id S1729867AbfAVPXc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 10:23:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36502 "EHLO mail.kernel.org"
+        Tue, 22 Jan 2019 10:23:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36602 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729829AbfAVPX2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 10:23:28 -0500
+        id S1729829AbfAVPXb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 10:23:31 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F14C0217D8;
-        Tue, 22 Jan 2019 15:23:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 20C9A217D4;
+        Tue, 22 Jan 2019 15:23:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548170607;
-        bh=Y+3f8hnkKRWgcyaq0Lvv7s9wQSn+ZZfJmrDS7NBu5Ko=;
+        s=default; t=1548170610;
+        bh=H5F4UgyusDZ7Ef0oy+Za7vJwL7xKGf1CV3vNOpALKd8=;
         h=From:To:Cc:Subject:Date:From;
-        b=VlRle62t3lI5Ryf4yTULFjKUjjEdPyXTit3q/zjb1it0Md5PI+rZ15BvrAxVuIEMV
-         HyOWdi7bhm2C1++hA5QkGB6k3ccw4uwRnC3XH8voFzDSegxKJFZA46z4hiWFZg+rTJ
-         iQztU4Ibpph6MzKt8SWNNHSishYw5LVMgJVOjot4=
+        b=w4g0NIzJ1raZV7zSWvX+Mc4t6iqRssVIPbzdDgyaQG3Vj958Y6tBqnVipepad/Zp2
+         ZoTu1BcrwdDUenJXVBXwE7MOBwTq934ndOwzJ9r4nw5/N4T+uJyMMV1EPFkoAzqWI2
+         dDW9Vl6V8r3dKzDLcDoQ0Ru2WMQB5cBLOMfT3/0M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        linux-wireless@vger.kernel.org
-Subject: [PATCH] rsi: no need to check return value of debugfs_create functions
-Date:   Tue, 22 Jan 2019 16:21:32 +0100
-Message-Id: <20190122152151.16139-33-gregkh@linuxfoundation.org>
+        Jens Axboe <axboe@kernel.dk>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>, linux-block@vger.kernel.org
+Subject: [PATCH] blktrace: no need to check return value of debugfs_create functions
+Date:   Tue, 22 Jan 2019 16:21:41 +0100
+Message-Id: <20190122152151.16139-42-gregkh@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -59,29 +60,41 @@ When calling debugfs functions, there is no need to ever check the
 return value.  The function can work or not, but the code logic should
 never do something different based on this.
 
-Cc: Kalle Valo <kvalo@codeaurora.org>
-Cc: linux-wireless@vger.kernel.org
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: linux-block@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/rsi/rsi_91x_debugfs.c | 5 -----
- 1 file changed, 5 deletions(-)
+ kernel/trace/blktrace.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/drivers/net/wireless/rsi/rsi_91x_debugfs.c b/drivers/net/wireless/rsi/rsi_91x_debugfs.c
-index 8c6ca8e689e4..d0c35f3e2012 100644
---- a/drivers/net/wireless/rsi/rsi_91x_debugfs.c
-+++ b/drivers/net/wireless/rsi/rsi_91x_debugfs.c
-@@ -297,11 +297,6 @@ int rsi_init_dbgfs(struct rsi_hw *adapter)
+diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
+index fac0ddf8a8e2..97ee6b5a2887 100644
+--- a/kernel/trace/blktrace.c
++++ b/kernel/trace/blktrace.c
+@@ -512,8 +512,6 @@ static int do_blk_trace_setup(struct request_queue *q, char *name, dev_t dev,
+ 	dir = debugfs_lookup(buts->name, blk_debugfs_root);
+ 	if (!dir)
+ 		bt->dir = dir = debugfs_create_dir(buts->name, blk_debugfs_root);
+-	if (!dir)
+-		goto err;
  
- 	dev_dbgfs->subdir = debugfs_create_dir(devdir, NULL);
+ 	bt->dev = dev;
+ 	atomic_set(&bt->dropped, 0);
+@@ -522,12 +520,8 @@ static int do_blk_trace_setup(struct request_queue *q, char *name, dev_t dev,
+ 	ret = -EIO;
+ 	bt->dropped_file = debugfs_create_file("dropped", 0444, dir, bt,
+ 					       &blk_dropped_fops);
+-	if (!bt->dropped_file)
+-		goto err;
  
--	if (!dev_dbgfs->subdir) {
--		kfree(dev_dbgfs);
--		return -ENOMEM;
--	}
--
- 	for (ii = 0; ii < adapter->num_debugfs_entries; ii++) {
- 		files = &dev_debugfs_files[ii];
- 		dev_dbgfs->rsi_files[ii] =
+ 	bt->msg_file = debugfs_create_file("msg", 0222, dir, bt, &blk_msg_fops);
+-	if (!bt->msg_file)
+-		goto err;
+ 
+ 	bt->rchan = relay_open("trace", dir, buts->buf_size,
+ 				buts->buf_nr, &blk_relay_callbacks, bt);
 -- 
 2.20.1
 
