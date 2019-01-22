@@ -2,263 +2,167 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 887C3C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:36:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BAB3C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:39:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48AAB20870
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:36:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iBgbbkJs"
+	by mail.kernel.org (Postfix) with ESMTP id 0DE1D20870
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:39:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726385AbfAVUgW (ORCPT
+        id S1726352AbfAVUjp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 15:36:22 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:38819 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726009AbfAVUgW (ORCPT
+        Tue, 22 Jan 2019 15:39:45 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44638 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725925AbfAVUjp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 15:36:22 -0500
-Received: by mail-wr1-f65.google.com with SMTP id v13so28965544wrw.5;
-        Tue, 22 Jan 2019 12:36:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=jwHJoW4ME9CQP02zwm7KcPUs0g3IDmkfJllJgJY5Dco=;
-        b=iBgbbkJsF74yKgMzXMOwGl/s/aRkFenlW8DNlQjOWp5F7NsGSOppRWdteY1wA7zBKS
-         AUhX9OfWgUdNQ/BDV4P71opfHXizdqrBegSmT3sKl7f0Vozrk2KQ3BYSXlrhEcLpxcgA
-         IfUiEUxkSdRaYxy4V9fMmYHduv6Elei6u6cqSvdSj3yGQryBVYtdUQpJk67kirpeBa8+
-         hWaWA57FzWv/E8jZ+sxGz9HSoBqJg81C4Hi42jY7LY/Yls8VCv/+e0ph84mTpAE6cX9t
-         A14a1/9bji8OTrdPG1AsCx8fWoOwSCOFWVtKWQbJX1NQt/7+7Ne15eA/3yQ+5pykypBO
-         j6Zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=jwHJoW4ME9CQP02zwm7KcPUs0g3IDmkfJllJgJY5Dco=;
-        b=WfTb3ts9v4KxiwQzuMdAwY0/Hiir3w6D9lKao5MlKwdY1WM8puG6vlsRf/Gj78Izp1
-         2bU8O6N5YFyfFrZfwrV4aeoQmDt/SWz+bl8S+RhZyudVNnDbktAn6z3zklfS813huzBM
-         g7twSKke87RptgW2pRmjH68FDDy9jkc1vyhRoKwryw3ngKNluSAieqYYzlQ1L6cDaR1V
-         hjvR94Q5g/dBgA1R67jk+FHbnU6X74Jcu7fMCznAAjj9kphXr/CP/ES2oBjjtM+L3qy+
-         UwXZOpykBlUAP9CcXaCE2sYPhBh+crJP3sHOE7McxLDJGJDqRsvf1zAQUxrCfNnZtad0
-         P5Cw==
-X-Gm-Message-State: AJcUukfgzjSmV39X5N1eIcl3ZPP0P3ZuLkYn+9eGtZfC00Go94M5octs
-        C/zf9iRNvHi0CIKleKGwsoLLUdfNFFEFlA==
-X-Google-Smtp-Source: ALg8bN6j8uKWHjuhimAqlHaFmhTCX0VWquYZP4lhPoQhyJGLGn5fWmtUTDjtaReBZazLi77CFnj9QA==
-X-Received: by 2002:a5d:6710:: with SMTP id o16mr35334373wru.152.1548189379584;
-        Tue, 22 Jan 2019 12:36:19 -0800 (PST)
-Received: from [192.168.1.69] (229.98.125.91.dyn.plus.net. [91.125.98.229])
-        by smtp.gmail.com with ESMTPSA id y1sm69913818wme.1.2019.01.22.12.36.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Jan 2019 12:36:18 -0800 (PST)
-Subject: Re: [PATCH v2 lora-next 1/4] dt-bindings: lora: sx130x: add basic
- documentation
-To:     Rob Herring <robh@kernel.org>
-Cc:     =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
-        netdev <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        linux-lpwan@lists.infradead.org,
-        "David S. Miller" <davem@davemloft.net>
-References: <20190122180729.1834-1-ben.whitten@lairdtech.com>
- <20190122180729.1834-2-ben.whitten@lairdtech.com>
- <CAL_JsqJK_UN1pqce-VxJ=gog9OMoz9nUZ6XeQD9jJf+3aLBaUA@mail.gmail.com>
-From:   Ben Whitten <ben.whitten@gmail.com>
-Message-ID: <60e26fa6-079d-5380-f139-e177c4012e33@gmail.com>
-Date:   Tue, 22 Jan 2019 20:36:16 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 22 Jan 2019 15:39:45 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0MKXaTD083666
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 15:39:43 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2q6942b166-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 15:39:43 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
+        Tue, 22 Jan 2019 20:39:41 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 22 Jan 2019 20:39:39 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0MKdcU26422822
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 22 Jan 2019 20:39:38 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C04CB52050;
+        Tue, 22 Jan 2019 20:39:38 +0000 (GMT)
+Received: from oc7455500831.ibm.com (unknown [9.145.56.245])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 72B9C5204E;
+        Tue, 22 Jan 2019 20:39:38 +0000 (GMT)
+Subject: Re: [PATCH] kvm: no need to check return value of debugfs_create
+ functions
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org
+References: <20190122152151.16139-51-gregkh@linuxfoundation.org>
+From:   Christian Borntraeger <borntraeger@de.ibm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
+ 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
+ syiRa+UVlsKmx1hsEg==
+Date:   Tue, 22 Jan 2019 21:39:24 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqJK_UN1pqce-VxJ=gog9OMoz9nUZ6XeQD9jJf+3aLBaUA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20190122152151.16139-51-gregkh@linuxfoundation.org>
 Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 19012220-0028-0000-0000-0000033CB148
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19012220-0029-0000-0000-000023F9EC66
+Message-Id: <69eee5dd-5893-c93a-a9df-036f02dfbc1c@de.ibm.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-22_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901220154
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On 22/01/2019 20:04, Rob Herring wrote:
-> On Tue, Jan 22, 2019 at 12:07 PM Ben Whitten <ben.whitten@gmail.com> wrote:
->>
->> From: Ben Whitten <ben.whitten@gmail.com>
->>
->> Add basic documentation in YAML format for the SX130x series concentrators
->> from Semtech.
->> Required is; the location on the SPI bus and the compatible string.
->>
->> Signed-off-by: Ben Whitten <ben.whitten@gmail.com>
->> ---
->> v1 -> v2:
->> * Dropped reset-gpios, radio-spi from required.
->> * Dropped spi-max-frequency from binding.
->> * Changed compatible to allow fallback from SX1308 to SX1301.
->> * Wording changes in commit and descriptions.
->> * Dual licence
->> * Incorperate Robs comments on child node and spi wrapper
->> ---
->>   .../bindings/net/lora/semtech,sx130x.yaml     | 96 +++++++++++++++++++
->>   1 file changed, 96 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/net/lora/semtech,sx130x.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/net/lora/semtech,sx130x.yaml b/Documentation/devicetree/bindings/net/lora/semtech,sx130x.yaml
->> new file mode 100644
->> index 000000000000..41919fb67ec4
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/net/lora/semtech,sx130x.yaml
->> @@ -0,0 +1,96 @@
->> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/net/lora/semtech,sx130x.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Semtech LoRa concentrator
->> +
->> +maintainers:
->> +  - Andreas Färber <afaerber@suse.de>
->> +  - Ben Whitten <ben.whitten@gmail.com>
->> +
->> +description: |
->> +  Semtech LoRa concentrator SX130x digital baseband chip is capable of
->> +  demodulating LoRa signals on 8 channels simultaneously.
->> +
->> +  It is typically paired with two SX125x IQ radios controlled over an
->> +  SPI directly from the concentrator.
->> +
->> +  The concentrator itself is controlled over SPI.
->> +
->> +properties:
->> +  compatible:
->> +    items:
->> +      - enum:
->> +        - semtech,sx1308
->> +      - enum:
->> +        - semtech,sx1301
+
+On 22.01.2019 16:21, Greg Kroah-Hartman wrote:
+> When calling debugfs functions, there is no need to ever check the
+> return value.  The function can work or not, but the code logic should
+> never do something different based on this.
 > 
-> I think you want:
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: "Radim Krčmář" <rkrcmar@redhat.com>
+> Cc: kvm@vger.kernel.org
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+>  virt/kvm/kvm_main.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 > 
-> oneOf:
->    - items:
->        - enum:
->            - semtech,sx1308
->        - const: semtech,sx1301
->    - items:
->        - const: semtech,sx1301
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index 5ecea812cb6a..4f96450ecdfc 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -2528,9 +2528,7 @@ static int kvm_create_vcpu_debugfs(struct kvm_vcpu *vcpu)
 > 
-> That covers these 2 cases:
-> "semtech,sx1308", "semtech,sx1301"
-> "semtech,sx1301"
+>  	snprintf(dir_name, sizeof(dir_name), "vcpu%d", vcpu->vcpu_id);
+>  	vcpu->debugfs_dentry = debugfs_create_dir(dir_name,
+> -								vcpu->kvm->debugfs_dentry);
+> -	if (!vcpu->debugfs_dentry)
+> -		return -ENOMEM;
+> +						  vcpu->kvm->debugfs_dentry);
+> 
+>  	ret = kvm_arch_create_vcpu_debugfs(vcpu);
+>  	if (ret < 0) {
 > 
 
-Ah yes, that is what I was after. Thanks!
 
->> +
->> +  reg:
->> +    maxItems: 1
->> +    description: The chip select on the SPI bus.
->> +
->> +  reset-gpios:
->> +    maxItems: 1
->> +    description: A connection of the reset gpio line.
->> +
->> +  radio-spi:
->> +    type: object
->> +    description: The concentrator can have two radios connected which are
->> +      contained within the following node.
->> +
->> +    properties:
->> +      '#address-cells':
->> +        const: 1
->> +
->> +      '#size-cells':
->> +        const: 0
->> +
->> +    patternProperties:
->> +      "^[a-zA-Z0-9]@[0-1]$":
-> 
-> Is any node name allowed? We like to have generic names. 'lora' is
-> fine for me, but I'm don't know if other devices could be attached?
-> 
+The interesting part of these debugfs entries is that they export an interface that is used
+by the kvm_stat tool. (and all distributions that I checked have debugfs enabled).
 
-This sub bus will only have IQ radios attached to it, perhaps 'radio@0'
-as the system can handle other modulations.
+I think it is pretty unlikely that things will fail, but the question is: do we want to reject
+VM creation if that VM cannot be observed by instrumentation or not? No idea.
 
-> I thought up to 8 concentrators was supported? Or channels and radios
-> aren't 1-1?
+This also brings the question: shall we move these counters out of debugfs into something else?
 
-You can have multiple concentrator chips (SX130x) however each one may 
-have up to two IQ radios (SX125x) attached to its bus.
-And in terms of channels the system can listen on, the concentrator has 
-9 LoRa demodulators and 1 (G)FSK demodulator.
+Christian
 
-> 
-> This too should have 'type: object' since it is a node name.
-> 
-
-Ah yes
-
->> +        properties:
->> +          reg:
->> +            maxItems: 1
-> 
-> You can add:
-> minimum: 0
-> maximum: 1 (or 7?)
-> 
->> +        required:
->> +          - reg
->> +
->> +    required:
->> +      - '#address-cells'
->> +      - '#size-cells'
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +
->> +examples:
->> +  - |
->> +
->> +    #include <dt-bindings/gpio/gpio.h>
->> +
->> +    spi {
->> +      #address-cells = <1>;
->> +      #size-cells = <0>;
->> +
->> +      concentrator0: lora@0 {
->> +        compatible = "semtech,sx1301";
->> +        reg = <0>;
->> +        reset-gpios = <&pioB 27 GPIO_ACTIVE_HIGH>;
->> +        spi-max-frequency = <8000000>;
->> +
->> +        radio-spi {
->> +          #address-cells = <1>;
->> +          #size-cells = <0>;
->> +
->> +          radio0: lora@0 {
->> +            compatible = "semtech,sx1257";
->> +            reg = <0>;
->> +          };
->> +
->> +          radio1: lora@1 {
->> +            compatible = "semtech,sx1257";
->> +            reg = <1>;
->> +          };
->> +        };
->> +      };
->> +    };
->> --
->> 2.17.1
->>
-
-Thanks!
-Ben Whitten
