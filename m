@@ -2,116 +2,102 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECEA4C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 21:10:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24CB8C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 21:13:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B22A72084A
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 21:10:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5D2C217D6
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 21:13:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="rwuwppvE"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fGaHEIcz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726749AbfAVVKb (ORCPT
+        id S1726468AbfAVVNv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 16:10:31 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:56308 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725974AbfAVVKa (ORCPT
+        Tue, 22 Jan 2019 16:13:51 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:44022 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726214AbfAVVNv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 16:10:30 -0500
-Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 887D7575;
-        Tue, 22 Jan 2019 22:10:28 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1548191428;
-        bh=vKY129i8aRtbfAXk03mqMUCEEbXct5Bsh+1dVXPIr6w=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rwuwppvEvnWVQFJu+vupQTIbHuwBT/KiywJ7LQGsoRQIMCJDlysJNPoQxgAp0TUKH
-         hJjTVV4cL+DFNPe8yG1sJOoXScEVIwYF8EegL89BYDHfnZu2kdeTlmiS55xni2NbqL
-         OnlpD992OGVxstbcovw2AhV+P0ivWGWy8ff8UMR8=
-Date:   Tue, 22 Jan 2019 23:10:28 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Ronald =?utf-8?B?VHNjaGFsw6Ry?= <ronald@innovation.ch>
-Cc:     Andrzej Hajda <a.hajda@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/bridge: sil_sii8620: depend on INPUT instead of
- selecting it.
-Message-ID: <20190122211028.GK3264@pendragon.ideasonboard.com>
-References: <20190122141311.10445-1-ronald@innovation.ch>
+        Tue, 22 Jan 2019 16:13:51 -0500
+Received: by mail-ot1-f68.google.com with SMTP id a11so24996294otr.10
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 13:13:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=SXGfUfbqkWROu34b5v4AYgOrxsUcGJH357ltlGyo9L8=;
+        b=fGaHEIczp0cXNaFIbGcNfyeUizHfqDTXJY7FuDAq19uVL9wqv16RGKUpni8Iuykx/l
+         XpiGlTlzPsj+wdrbE//KHRHBmmuSxEFG+Rs7UfuCdbvaXlo6WcJyBJkaeJY/50e2yemf
+         ti/TnHbe42HnHLp4PyD/8CwpK4KgWdrKQ1Zvk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=SXGfUfbqkWROu34b5v4AYgOrxsUcGJH357ltlGyo9L8=;
+        b=nn+07pRq0fpFbhRoWYfaC7rO+9EMu/m1/8UxssX0z4JzSWhBZZWBSy5HbZ2ke6HQqg
+         gaKRh3MdGAA+9RiDN8vhD1gxiqhq5le9pZ9nBXnLPmWK3/wkQG23oJrYEKlo6mdE4/VJ
+         TljBDWubmWQI3h520DtJDZ1QLDseveHik1OJFJE2ssHdGDpy3aQe5JqO0KwoM5cPeX/J
+         2DBP7n3fbKhq/cb7QX1C2xxoqtHVZAHEjvAzT88qg1eKwGe0oiNNpKmtYw1nk25gyS28
+         DlmozucM5rTyf33WdYIFUz1SmbSw/C9hBqq24k8QJKqVvNSMkTXSyd/LxiD1TuE1yq59
+         Hq/w==
+X-Gm-Message-State: AJcUukcYONLs/3In8O9OKwVtAd7s4KE0+DpomtpleC0J8Vg8z0kS+R0P
+        JMbrRCTMkLqsMWsUL06QmTBO8w==
+X-Google-Smtp-Source: ALg8bN6Mhuz9TYD+1xUjodUKIq3pdqnhXRGH3ckKMvm0gJwKp5J5dmRZM8DS/ZzyBF0F2kIe4sHZAw==
+X-Received: by 2002:a9d:1296:: with SMTP id g22mr21719223otg.305.1548191630466;
+        Tue, 22 Jan 2019 13:13:50 -0800 (PST)
+Received: from localhost (107-207-74-175.lightspeed.austtx.sbcglobal.net. [107.207.74.175])
+        by smtp.gmail.com with ESMTPSA id n185sm8065230oih.18.2019.01.22.13.13.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 22 Jan 2019 13:13:49 -0800 (PST)
+Date:   Tue, 22 Jan 2019 15:13:46 -0600
+From:   Andy Gross <andy.gross@linaro.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Brian Masney <masneyb@onstation.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Doug Anderson <dianders@chromium.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        linux-arm-msm@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v6 00/15] qcom: spmi: add support for hierarchical IRQ
+ chip
+Message-ID: <20190122211346.GA30582@hector.attlocal.net>
+References: <20190119204252.18370-1-masneyb@onstation.org>
+ <CACRpkdap+AJ+eDVusg=ShwRKXOuR=tAyNLBeCxsxuu28DSfisQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190122141311.10445-1-ronald@innovation.ch>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CACRpkdap+AJ+eDVusg=ShwRKXOuR=tAyNLBeCxsxuu28DSfisQ@mail.gmail.com>
+User-Agent: Mutt/1.5.23.1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ronald,
-
-Thank you for the patch.
-
-On Tue, Jan 22, 2019 at 06:13:11AM -0800, Ronald Tschalär wrote:
-> commit d6abe6df706c66d803e6dd4fe98c1b6b7f125a56 (drm/bridge:
-
-Commits are usually quoted using the short 12 digits version of their
-SHA-1.
-
-> sil_sii8620: do not have a dependency of RC_CORE) added a dependency on
-> INPUT. However, this causes problems with other drivers, in particular
-> an input driver that depends on MFD_INTEL_LPSS_PCI (to be added in a
-> future commit):
+On Tue, Jan 22, 2019 at 04:31:20PM +0100, Linus Walleij wrote:
+> On Sat, Jan 19, 2019 at 9:43 PM Brian Masney <masneyb@onstation.org> wrote:
 > 
->   drivers/clk/Kconfig:9:error: recursive dependency detected!
->   drivers/clk/Kconfig:9:        symbol COMMON_CLK is selected by MFD_INTEL_LPSS
->   drivers/mfd/Kconfig:566:      symbol MFD_INTEL_LPSS is selected by MFD_INTEL_LPSS_PCI
->   drivers/mfd/Kconfig:580:      symbol MFD_INTEL_LPSS_PCI is implied by KEYBOARD_APPLESPI
->   drivers/input/keyboard/Kconfig:73:    symbol KEYBOARD_APPLESPI depends on INPUT
->   drivers/input/Kconfig:8:      symbol INPUT is selected by DRM_SIL_SII8620
->   drivers/gpu/drm/bridge/Kconfig:83:    symbol DRM_SIL_SII8620 depends on DRM_BRIDGE
->   drivers/gpu/drm/bridge/Kconfig:1:     symbol DRM_BRIDGE is selected by DRM_PL111
->   drivers/gpu/drm/pl111/Kconfig:1:      symbol DRM_PL111 depends on COMMON_CLK
+> > This patch series adds hierarchical IRQ chip support to spmi-gpio so
+> > that device tree consumers can request an IRQ directly from the GPIO
+> > block rather than having to request an IRQ from the underlying PMIC.
 > 
-> According to the docs, select should only be used for non-visible
-> symbols. Furthermore almost all other references to INPUT throughout the
-> kernel config are depends, not selects. Hence this change.
+> I have applied all these patches including the DTS patches to the GPIO
+> tree and pushed for linux-next.
 > 
-> CC: Inki Dae <inki.dae@samsung.com>
-> CC: Andrzej Hajda <a.hajda@samsung.com>
-> Signed-off-by: Ronald Tschalär <ronald@innovation.ch>
-> ---
->  drivers/gpu/drm/bridge/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-> index 2fee47b0d50b..eabedc83f25c 100644
-> --- a/drivers/gpu/drm/bridge/Kconfig
-> +++ b/drivers/gpu/drm/bridge/Kconfig
-> @@ -83,9 +83,9 @@ config DRM_PARADE_PS8622
->  config DRM_SIL_SII8620
->  	tristate "Silicon Image SII8620 HDMI/MHL bridge"
->  	depends on OF
-> +	depends on INPUT
->  	select DRM_KMS_HELPER
->  	imply EXTCON
-> -	select INPUT
->  	select RC_CORE
+> If all works out well I will solidify the branch, pull it into the pin control
+> tree as well and offer the branch to ARM SoC.
 
-RC_CORE is always a user-visible symbol (which by the way depends on
-INPUT). I think reverting commit d6abe6df706c would be a better
-solution.
-
->  	help
->  	  Silicon Image SII8620 HDMI/MHL bridge chip driver.
-
--- 
-Regards,
-
-Laurent Pinchart
+Thanks Linus!
