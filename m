@@ -2,139 +2,71 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 281BFC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:59:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C303C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:59:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F397B217D4
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:59:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5324217D6
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:59:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729451AbfAVQ7L (ORCPT
+        id S1729484AbfAVQ7s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 11:59:11 -0500
-Received: from mail1.windriver.com ([147.11.146.13]:53426 "EHLO
-        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728719AbfAVQ7K (ORCPT
+        Tue, 22 Jan 2019 11:59:48 -0500
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:53946 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729215AbfAVQ7r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 11:59:10 -0500
-Received: from ALA-HCB.corp.ad.wrs.com ([147.11.189.41])
-        by mail1.windriver.com (8.15.2/8.15.1) with ESMTPS id x0MGuxUv004932
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Tue, 22 Jan 2019 08:57:00 -0800 (PST)
-Received: from yow-pgortmak-d1.corp.ad.wrs.com (128.224.56.57) by
- ALA-HCB.corp.ad.wrs.com (147.11.189.41) with Microsoft SMTP Server id
- 14.3.408.0; Tue, 22 Jan 2019 08:56:59 -0800
-Received: by yow-pgortmak-d1.corp.ad.wrs.com (Postfix, from userid 1000)        id
- 182A42E0699; Tue, 22 Jan 2019 11:56:59 -0500 (EST)
-Date:   Tue, 22 Jan 2019 11:56:59 -0500
-From:   Paul Gortmaker <paul.gortmaker@windriver.com>
-To:     Sven Van Asbroeck <thesven73@gmail.com>
-CC:     <svendev@arcx.com>, <robh+dt@kernel.org>,
-        <linus.walleij@linaro.org>, <lee.jones@linaro.org>,
-        <mark.rutland@arm.com>, <afaerber@suse.de>, <treding@nvidia.com>,
-        <david@lechnology.com>, <noralf@tronnes.org>, <johan@kernel.org>,
-        <monstr@monstr.eu>, <michal.vokac@ysoft.com>, <arnd@arndb.de>,
-        <gregkh@linuxfoundation.org>, <john.garry@huawei.com>,
-        <geert+renesas@glider.be>, <robin.murphy@arm.com>,
-        <sebastien.bourdelin@savoirfairelinux.com>, <icenowy@aosc.io>,
-        <stuyoder@gmail.com>, <maxime.ripard@bootlin.com>,
+        Tue, 22 Jan 2019 11:59:47 -0500
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0MGxjCD020771;
+        Tue, 22 Jan 2019 10:59:45 -0600
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2q416tppuq-1;
+        Tue, 22 Jan 2019 10:59:44 -0600
+Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
+        by mail1.cirrus.com (Postfix) with ESMTP id 5C1AC611E122;
+        Tue, 22 Jan 2019 10:59:44 -0600 (CST)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Tue, 22 Jan 2019
+ 16:59:43 +0000
+Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id x0MGxgKa024839; Tue,
+ 22 Jan 2019 16:59:43 GMT
+Date:   Tue, 22 Jan 2019 16:59:42 +0000
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Axel Lin <axel.lin@ingics.com>
+CC:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
         <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v7 1/6] fieldbus_dev: add Fieldbus Device subsystem.
-Message-ID: <20190122165658.GH26416@windriver.com>
-References: <20190122152109.30488-1-TheSven73@googlemail.com>
- <20190122152109.30488-2-TheSven73@googlemail.com>
+Subject: Re: [PATCH] regulator: arizona-ldo1: Convert to use
+ regulator_linear_range for ldo1_hc
+Message-ID: <20190122165942.GH3837@imbe.wolfsonmicro.main>
+References: <20190119123636.19525-1-axel.lin@ingics.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20190122152109.30488-2-TheSven73@googlemail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190119123636.19525-1-axel.lin@ingics.com>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=683 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1901220131
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[[PATCH v7 1/6] fieldbus_dev: add Fieldbus Device subsystem.] On 22/01/2019 (Tue 10:21) Sven Van Asbroeck wrote:
+On Sat, Jan 19, 2019 at 08:36:36PM +0800, Axel Lin wrote:
+> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> ---
 
-> Fieldbus device (client) adapters allow data exchange with a PLC aka.
-> "Fieldbus Controller" over a fieldbus (Profinet, FLNet, etc.)
-> 
-> They are typically used when a Linux device wants to expose itself
-> as an actuator, motor, console light, switch, etc. over the fieldbus.
-> 
-> This framework is designed to provide a generic interface to Fieldbus
-> Devices from both the Linux Kernel and the userspace.
-> 
-> Signed-off-by: Sven Van Asbroeck <TheSven73@googlemail.com>
-
-[...]
-
-> diff --git a/drivers/fieldbus/Kconfig b/drivers/fieldbus/Kconfig
-> new file mode 100644
-> index 000000000000..5c2bef950d04
-> --- /dev/null
-> +++ b/drivers/fieldbus/Kconfig
-> @@ -0,0 +1,19 @@
-> +menuconfig FIELDBUS_DEV
-> +	bool "Fieldbus Device Support"
-
-OK, so the core support is NOT tristate, ie not modular, so I think...
-
-> diff --git a/drivers/fieldbus/dev_core.c b/drivers/fieldbus/dev_core.c
-> new file mode 100644
-> index 000000000000..c816df3201bb
-> --- /dev/null
-> +++ b/drivers/fieldbus/dev_core.c
-> @@ -0,0 +1,348 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Fieldbus Device Driver Core
-> + *
-> + */
-> +
-> +#include <linux/fieldbus_dev.h>
-> +#include <linux/mutex.h>
-> +#include <linux/module.h>
-
-...you don't need module.h here
-
-> +#include <linux/device.h>
-> +#include <linux/idr.h>
-> +#include <linux/fs.h>
-> +#include <linux/slab.h>
-> +#include <linux/poll.h>
-> +
-
-[...]
-
-> +
-> +static void __exit fieldbus_exit(void)
-> +{
-> +	unregister_chrdev_region(fieldbus_devt, MAX_FIELDBUSES);
-> +	class_unregister(&fieldbus_class);
-> +}
-> +
-> +subsys_initcall(fieldbus_init);
-> +module_exit(fieldbus_exit);
-
-...and the module_exit is never called, so fieldbus_exit is dead code
-and hence both should be removed.
-
-> +
-> +MODULE_AUTHOR("Sven Van Asbroeck <TheSven73@googlemail.com>");
-> +MODULE_AUTHOR("Jonathan Stiles <jonathans@arcx.com>");
-> +MODULE_DESCRIPTION("Fieldbus Device Driver Core");
-> +MODULE_LICENSE("GPL v2");
-
-And these are all no-ops for non-modules, so it is recommended that you
-instead capture the information at the top of the file in comments.
-
-You can find many similar cleanups for reference with this search:
-
-   git log  --no-merges --oneline --grep='make .* non-modular'
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
 Thanks,
-Paul.
---
+Charles
