@@ -2,111 +2,189 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CEEDC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:28:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E6B8C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:29:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D755A20855
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:28:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 448C220870
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:29:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hRlytScT"
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="hgiUYY1Z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728497AbfAVN2i (ORCPT
+        id S1728516AbfAVN30 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 08:28:38 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:60102 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727936AbfAVN2h (ORCPT
+        Tue, 22 Jan 2019 08:29:26 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:43514 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728390AbfAVN30 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 08:28:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=oaCtCQ6kT+by/muHzdDYBJDKqa8IRmfEauxvMMTSVZk=; b=hRlytScTE44qPk9wpY/NS5oJx
-        d/uSvL+++Xynwf9V61OYBDeoG5zitCKJpc9imtTFLA1Rbdg/ckocKlJsUpMvVtFj95KsuifrTj6wL
-        tah3begys5mED55FbfbIZOS6yWL3f6DP9UwKDr23NJa48SxU1NDDVQ9xPJapmDN0y6XJSZHxWg7qt
-        pdwjnN7zol6zcYtw39P2tq262gxqv6JHYcvRB/Gj/jsc+ARJxnNLrE68Cjao08pyfRh+CfB5YL+92
-        i3K/qvdIaSKS5VR4JGhrF8jMpFkb50/3ApPKNRdh9gka9NRKlUjRDyu/kHcsJMiRFsD4ihFFWwpZm
-        e2qKEZI8w==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1glw6G-0001i0-37; Tue, 22 Jan 2019 13:28:20 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 3B1F82042CFC3; Tue, 22 Jan 2019 14:28:17 +0100 (CET)
-Date:   Tue, 22 Jan 2019 14:28:17 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v6 05/16] sched/core: uclamp: Update CPU's refcount on
- clamp changes
-Message-ID: <20190122132817.GG13777@hirez.programming.kicks-ass.net>
-References: <20190115101513.2822-1-patrick.bellasi@arm.com>
- <20190115101513.2822-6-patrick.bellasi@arm.com>
- <20190121153308.GL27931@hirez.programming.kicks-ass.net>
- <20190121154412.fak2t2iquj3aixtu@e110439-lin>
- <20190122093704.GM27931@hirez.programming.kicks-ass.net>
- <20190122104305.6vjx37muqsxm536t@e110439-lin>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190122104305.6vjx37muqsxm536t@e110439-lin>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 22 Jan 2019 08:29:26 -0500
+Received: by mail-qt1-f193.google.com with SMTP id i7so27466557qtj.10
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 05:29:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=ZobmOX2RnjjwMTekUZRV4KZkyaPzmJrMtDFY/zT5fWk=;
+        b=hgiUYY1Zv38rllaGc/Dqx5sumCCcVbqE3ZTnV2chD2vWzm5Cva1yfGgWjau5yGvMVq
+         1ApDRpHeceF09+LzWKLHT6YFp5282nDFO6ouHsRCM3M9xbc5symulPMl46IfB2xw5C2+
+         tJlK+pHQhdSXrC10CwmcTkwbOsC2CIXNRnZUjm4h7wcHrC8Qz5qfcR13NaB2Y+kGcbq/
+         uu3hQkyKQA8tiVmBxWaf/NTr/6A5yNTGB8QLQtbzXuaIcvLNm2qFLIQ3waI86FMkenxR
+         gRZGrALk8tFa4L9kqWNp+5f8B3Wh1jlaD8qUmMdcGMGwqI63mEJqwrW7amHccuSGF6aI
+         /qCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ZobmOX2RnjjwMTekUZRV4KZkyaPzmJrMtDFY/zT5fWk=;
+        b=Weuirr3xN+m5nCe6HO4Lqem41qf1w8+0gM82RNXGDPx/vWI8/9/OIkDlb3bKMiQ03I
+         LxzZQR3ZcIUToOyhcOOsQnXPkAXR/vFEDPVSuKRh1XbaJJzBH/g73NNd065OZmgVvXxM
+         YNmXLRBBmyW8G3vnWeurku6HPbw/CFJzfnn8h9cyAxnGvTGcgs3yaJ1IV4r0T+cwznwL
+         nDqcNQHv6ZHvA1MxVbtFCfH2ITrdFLdfyr7oa1pQJt2B4hovBI209cexeiTB3WQWRBm3
+         ZWeLIebIAeth7gDUYEc06b+6CNBlC0fUplxEPoZ5qVOQ7kotFaQBvPEBiArK+8oJzpGD
+         ntcQ==
+X-Gm-Message-State: AJcUukfAlV35od2h3SpLG0pl3XPp/GdUCi71VPY3Wq17Z6EYsxkPUNKn
+        igPVKMu9KqPod/Avkf+VD3Mt3g==
+X-Google-Smtp-Source: ALg8bN76Cn4h6Y4oZX8zFJCJO5vXZUPpEabI8kgtI/uW6n4lLmxxe3h8VgNT8kxyiw6UIKgCHLI1Ig==
+X-Received: by 2002:ac8:1794:: with SMTP id o20mr29146970qtj.98.1548163764810;
+        Tue, 22 Jan 2019 05:29:24 -0800 (PST)
+Received: from ovpn-120-54.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id n11sm31511718qke.82.2019.01.22.05.29.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 22 Jan 2019 05:29:23 -0800 (PST)
+From:   Qian Cai <cai@lca.pw>
+To:     akpm@linux-foundation.org
+Cc:     osalvador@suse.de, catalin.marinas@arm.com, vbabka@suse.cz,
+        mhocko@suse.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Qian Cai <cai@lca.pw>
+Subject: [PATCH v4] mm/hotplug: invalid PFNs from pfn_to_online_page()
+Date:   Tue, 22 Jan 2019 08:29:16 -0500
+Message-Id: <20190122132916.28360-1-cai@lca.pw>
+X-Mailer: git-send-email 2.17.2 (Apple Git-113)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 10:43:05AM +0000, Patrick Bellasi wrote:
-> On 22-Jan 10:37, Peter Zijlstra wrote:
+On an arm64 ThunderX2 server, the first kmemleak scan would crash [1]
+with CONFIG_DEBUG_VM_PGFLAGS=y due to page_to_nid() found a pfn that is
+not directly mapped (MEMBLOCK_NOMAP). Hence, the page->flags is
+uninitialized.
 
-> > Sure, I get that. What I don't get is why you're adding that (2) here.
-> > Like said, __sched_setscheduler() already does a dequeue/enqueue under
-> > rq->lock, which should already take care of that.
-> 
-> Oh, ok... got it what you mean now.
-> 
-> With:
-> 
->    [PATCH v6 01/16] sched/core: Allow sched_setattr() to use the current policy
->    <20190115101513.2822-2-patrick.bellasi@arm.com>
-> 
-> we can call __sched_setscheduler() with:
-> 
->    attr->sched_flags & SCHED_FLAG_KEEP_POLICY
-> 
-> whenever we want just to change the clamp values of a task without
-> changing its class. Thus, we can end up returning from
-> __sched_setscheduler() without doing an actual dequeue/enqueue.
+This is due to the commit 9f1eb38e0e11 ("mm, kmemleak: little
+optimization while scanning") starts to use pfn_to_online_page() instead
+of pfn_valid(). However, in the CONFIG_MEMORY_HOTPLUG=y case,
+pfn_to_online_page() does not call memblock_is_map_memory() while
+pfn_valid() does.
 
-I don't see that happening.. when KEEP_POLICY we set attr.sched_policy =
-SETPARAM_POLICY. That is then checked again in __setscheduler_param(),
-which is in the middle of that dequeue/enqueue.
+Historically, the commit 68709f45385a ("arm64: only consider memblocks
+with NOMAP cleared for linear mapping") causes pages marked as nomap
+being no long reassigned to the new zone in memmap_init_zone() by
+calling __init_single_page().
 
-Also, and this might be 'broken', SETPARAM_POLICY _does_ reset all the
-other attributes, it only preserves policy, but it will (re)set nice
-level for example (see that same function).
+Since the commit 2d070eab2e82 ("mm: consider zone which is not fully
+populated to have holes") introduced pfn_to_online_page() and was
+designed to return a valid pfn only, but it is clearly broken on arm64.
 
-So maybe we want to introduce another (few?) FLAG_KEEP flag(s) that
-preserve the other bits; I'm thinking at least KEEP_PARAM and KEEP_UTIL
-or something.
+Therefore, let pfn_to_online_page() call pfn_valid_within(), so it can
+handle nomap thanks to the commit f52bb98f5ade ("arm64: mm: always
+enable CONFIG_HOLES_IN_ZONE"), while it will be optimized away on
+architectures where have no HOLES_IN_ZONE.
+
+[1]
+[  102.195320] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000006
+[  102.204113] Mem abort info:
+[  102.206921]   ESR = 0x96000005
+[  102.209997]   Exception class = DABT (current EL), IL = 32 bits
+[  102.215926]   SET = 0, FnV = 0
+[  102.218993]   EA = 0, S1PTW = 0
+[  102.222150] Data abort info:
+[  102.225047]   ISV = 0, ISS = 0x00000005
+[  102.228887]   CM = 0, WnR = 0
+[  102.231866] user pgtable: 64k pages, 48-bit VAs, pgdp = (____ptrval____)
+[  102.238572] [0000000000000006] pgd=0000000000000000, pud=0000000000000000
+[  102.245448] Internal error: Oops: 96000005 [#1] SMP
+[  102.264062] CPU: 60 PID: 1408 Comm: kmemleak Not tainted 5.0.0-rc2+ #8
+[  102.280403] pstate: 60400009 (nZCv daif +PAN -UAO)
+[  102.280409] pc : page_mapping+0x24/0x144
+[  102.280415] lr : __dump_page+0x34/0x3dc
+[  102.292923] sp : ffff00003a5cfd10
+[  102.296229] x29: ffff00003a5cfd10 x28: 000000000000802f
+[  102.301533] x27: 0000000000000000 x26: 0000000000277d00
+[  102.306835] x25: ffff000010791f56 x24: ffff7fe000000000
+[  102.312138] x23: ffff000010772f8b x22: ffff00001125f670
+[  102.317442] x21: ffff000011311000 x20: ffff000010772f8b
+[  102.322747] x19: fffffffffffffffe x18: 0000000000000000
+[  102.328049] x17: 0000000000000000 x16: 0000000000000000
+[  102.333352] x15: 0000000000000000 x14: ffff802698b19600
+[  102.338654] x13: ffff802698b1a200 x12: ffff802698b16f00
+[  102.343956] x11: ffff802698b1a400 x10: 0000000000001400
+[  102.349260] x9 : 0000000000000001 x8 : ffff00001121a000
+[  102.354563] x7 : 0000000000000000 x6 : ffff0000102c53b8
+[  102.359868] x5 : 0000000000000000 x4 : 0000000000000003
+[  102.365173] x3 : 0000000000000100 x2 : 0000000000000000
+[  102.370476] x1 : ffff000010772f8b x0 : ffffffffffffffff
+[  102.375782] Process kmemleak (pid: 1408, stack limit = 0x(____ptrval____))
+[  102.382648] Call trace:
+[  102.385091]  page_mapping+0x24/0x144
+[  102.388659]  __dump_page+0x34/0x3dc
+[  102.392140]  dump_page+0x28/0x4c
+[  102.395363]  kmemleak_scan+0x4ac/0x680
+[  102.399106]  kmemleak_scan_thread+0xb4/0xdc
+[  102.403285]  kthread+0x12c/0x13c
+[  102.406509]  ret_from_fork+0x10/0x18
+[  102.410080] Code: d503201f f9400660 36000040 d1000413 (f9400661)
+[  102.416357] ---[ end trace 4d4bd7f573490c8e ]---
+[  102.420966] Kernel panic - not syncing: Fatal exception
+[  102.426293] SMP: stopping secondary CPUs
+[  102.431830] Kernel Offset: disabled
+[  102.435311] CPU features: 0x002,20000c38
+[  102.439223] Memory Limit: none
+[  102.442384] ---[ end Kernel panic - not syncing: Fatal exception ]---
+
+Fixes: 9f1eb38e0e11 ("mm, kmemleak: little optimization while scanning")
+Acked-by: Michal Hocko <mhocko@suse.com>
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+
+v4: avoid unsafe macros with side effects.
+v3: change the "Fixes" line.
+v2: update the changelog; keep the bound check; use pfn_valid_within().
+
+ include/linux/memory_hotplug.h | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
+
+diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
+index 07da5c6c5ba0..368267c1b71b 100644
+--- a/include/linux/memory_hotplug.h
++++ b/include/linux/memory_hotplug.h
+@@ -21,14 +21,16 @@ struct vmem_altmap;
+  * walkers which rely on the fully initialized page->flags and others
+  * should use this rather than pfn_valid && pfn_to_page
+  */
+-#define pfn_to_online_page(pfn)				\
+-({							\
+-	struct page *___page = NULL;			\
+-	unsigned long ___nr = pfn_to_section_nr(pfn);	\
+-							\
+-	if (___nr < NR_MEM_SECTIONS && online_section_nr(___nr))\
+-		___page = pfn_to_page(pfn);		\
+-	___page;					\
++#define pfn_to_online_page(pfn)					   \
++({								   \
++	struct page *___page = NULL;				   \
++	unsigned long ___pfn = pfn;				   \
++	unsigned long ___nr = pfn_to_section_nr(___pfn);	   \
++								   \
++	if (___nr < NR_MEM_SECTIONS && online_section_nr(___nr) && \
++	    pfn_valid_within(___pfn))				   \
++		___page = pfn_to_page(___pfn);			   \
++	___page;						   \
+ })
+ 
+ /*
+-- 
+2.17.2 (Apple Git-113)
 
