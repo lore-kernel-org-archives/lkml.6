@@ -2,79 +2,117 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2D94C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:17:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B06C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:17:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72BE52085A
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:17:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548148632;
-	bh=riPfo+PaYom+qfXiEE/IofcK17wWSJ7PkzfeJ/8x54c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=emrp96QBB10B8TA2G5F9hZDxsm4IcSQvrKqsv1iQq44UaoJELd44MbjwnBydbV847
-	 tYXd06HtPr/1mpKJ0sMtFuSfedkJg/j+qA3A0HsHCB0jnPrb6cgXX7nOKzbe5UVzKs
-	 Vsgag2fO0ftWuwrRPVNbWDYEA6AuaZ5pSxQW2Wbs=
+	by mail.kernel.org (Postfix) with ESMTP id DCB5B20823
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:17:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727715AbfAVJRK (ORCPT
+        id S1727754AbfAVJRa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 04:17:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43092 "EHLO mail.kernel.org"
+        Tue, 22 Jan 2019 04:17:30 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:56419 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727318AbfAVJRK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 04:17:10 -0500
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6F3BC20823;
-        Tue, 22 Jan 2019 09:17:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548148629;
-        bh=riPfo+PaYom+qfXiEE/IofcK17wWSJ7PkzfeJ/8x54c=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=YS3jVl+v6tyxmwrUIIY6Oh8XaRLakz5CrUCT3W4H1Wjd9XPd/L3wR7QkF8LD4XMCp
-         Yipwj1SWWLu6ICaBZNrrErXsWRosFsoyi2tsv5/pzXFicJT27+1bQU6rRWipUzaZg5
-         khTD9423TYFBpJEiRGhxKpQHIsUHSlSEy+8/UYH8=
-Date:   Tue, 22 Jan 2019 10:16:58 +0100
-From:   Boris Brezillon <bbrezillon@kernel.org>
-To:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-Cc:     "robh@kernel.org" <robh@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "frieder.schrempf@kontron.de" <frieder.schrempf@kontron.de>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v8 2/5] dt-bindings: spi: add binding file for NXP
- FlexSPI controller
-Message-ID: <20190122101658.6bb89d54@bbrezillon>
-In-Reply-To: <VI1PR04MB57266D861937B99899F3C1C699980@VI1PR04MB5726.eurprd04.prod.outlook.com>
-References: <1547553487-9936-1-git-send-email-yogeshnarayan.gaur@nxp.com>
-        <1547553487-9936-3-git-send-email-yogeshnarayan.gaur@nxp.com>
-        <VI1PR04MB57266D861937B99899F3C1C699980@VI1PR04MB5726.eurprd04.prod.outlook.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727720AbfAVJR3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 04:17:29 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 1E1AE20898; Tue, 22 Jan 2019 10:17:27 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-37-87.w90-88.abo.wanadoo.fr [90.88.156.87])
+        by mail.bootlin.com (Postfix) with ESMTPSA id E4E512078C;
+        Tue, 22 Jan 2019 10:17:26 +0100 (CET)
+Date:   Tue, 22 Jan 2019 10:17:27 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Priit Laes <plaes@plaes.org>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Chen-Yu Tsai <wens@csie.org>, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Priit Laes <priit.laes@paf.com>
+Subject: Re: [PATCH] drm/sun4i: hdmi: Fix usage of TMDS clock
+Message-ID: <20190122091727.fksox7poqxvt5umu@flea>
+References: <20190122073232.7240-1-plaes@plaes.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="lbdnwpdvvhkcqe7e"
+Content-Disposition: inline
+In-Reply-To: <20190122073232.7240-1-plaes@plaes.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 22 Jan 2019 09:00:14 +0000
-Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
 
-> Hi Rob / Shawn,
-> 
-> Can you please apply patches [1] [2].
+--lbdnwpdvvhkcqe7e
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-No, DT bindings should go through Mark's tree. Just wait a bit please.
+On Tue, Jan 22, 2019 at 09:32:32AM +0200, Priit Laes wrote:
+> From: Priit Laes <priit.laes@paf.com>
+>=20
+> Although TMDS clock is required for HDMI to properly function,
+> nobody called clk_prepare_enable(). This fixes reference counting
+> issues and makes sure clock is running when it needs to be running.
+>=20
+> Due to TDMS clock being parent clock for DDC clock, TDMS clock
+> was turned on/off for each EDID probe, causing spurious failures
+> for certain HDMI/DVI screens.
+>=20
+> Fixes: 9c5681011a0c ("drm/sun4i: Add HDMI support")
+>=20
+> Signed-off-by: Priit Laes <priit.laes@paf.com>
+> ---
+>  drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>=20
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c b/drivers/gpu/drm/sun=
+4i/sun4i_hdmi_enc.c
+> index 061d2e0d9011..25f4d676fd82 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+> @@ -92,6 +92,8 @@ static void sun4i_hdmi_disable(struct drm_encoder *enco=
+der)
+>  	val =3D readl(hdmi->base + SUN4I_HDMI_VID_CTRL_REG);
+>  	val &=3D ~SUN4I_HDMI_VID_CTRL_ENABLE;
+>  	writel(val, hdmi->base + SUN4I_HDMI_VID_CTRL_REG);
+> +
+> +	clk_disable_unprepare(hdmi->tmds_clk);
+>  }
+> =20
+>  static void sun4i_hdmi_enable(struct drm_encoder *encoder)
+> @@ -112,6 +114,8 @@ static void sun4i_hdmi_enable(struct drm_encoder *enc=
+oder)
+>  		val |=3D SUN4I_HDMI_VID_CTRL_HDMI_MODE;
+> =20
+>  	writel(val, hdmi->base + SUN4I_HDMI_VID_CTRL_REG);
+> +
+> +	clk_prepare_enable(hdmi->tmds_clk);
+
+We'll probably need to enable that clock to send the infoframes as
+well. I moved it earlier (and that allows the enable and disable
+function to be symetric as well).
+
+Thanks for figuring this out!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--lbdnwpdvvhkcqe7e
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXEbfpwAKCRDj7w1vZxhR
+xVD8AP4r8ZYtfTpNba2DWGmqkcY/4eSPc/nhzr/mi+rgHBBzxgD/bXaa18v4nZPA
+1QuP3vO5DoJrfjiguCxTX+NGJJUvCw8=
+=NJQt
+-----END PGP SIGNATURE-----
+
+--lbdnwpdvvhkcqe7e--
