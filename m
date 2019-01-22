@@ -2,173 +2,133 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00FE2C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 21:53:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BBB2C282C5
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 21:53:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C571020866
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 21:53:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69D0220866
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 21:53:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="ZhKs/0Wh"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Y5YGS+Xf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726931AbfAVVx3 (ORCPT
+        id S1726960AbfAVVxd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 16:53:29 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:33580 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726832AbfAVVx3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 16:53:29 -0500
-Received: from zn.tnic (p200300EC2BCBD90048119EF4C35B6C28.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:d900:4811:9ef4:c35b:6c28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id AF0891EC06FB;
-        Tue, 22 Jan 2019 22:53:27 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1548194007;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=4e+Ea5IRFH+/ga0tTL4h2CD+dObJHkLC4yNrwwRN04I=;
-        b=ZhKs/0Wh0sIRHz+dUb7S7px9/WX5BgxfoUZRFEROt+zRTIvjZbkTAuNKHPOdWwYnxCQcVn
-        XVAwNn00/rxgOIwIZkej0TZGzxfTA3DJHQj5rzk76sjCqmvqEgfUVCzHjeCCWe8kE/IcBD
-        lF8Jp++Ul2LO01xEoDQR5MnU7KB9j2o=
-Date:   Tue, 22 Jan 2019 22:53:26 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Pu Wen <puwen@hygon.cn>
-Subject: Re: [PATCH 1/6] x86: mce: no need to check return value of
- debugfs_create functions
-Message-ID: <20190122215326.GM26587@zn.tnic>
-References: <20190122143542.8816-1-gregkh@linuxfoundation.org>
- <20190122143542.8816-2-gregkh@linuxfoundation.org>
+        Tue, 22 Jan 2019 16:53:33 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:41013 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726933AbfAVVxc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 16:53:32 -0500
+Received: by mail-pf1-f196.google.com with SMTP id b7so32408pfi.8
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 13:53:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=0xmELSHataISH5vThijiY1zNydt2sRYeLj/tC2a6MpI=;
+        b=Y5YGS+XfApbE/H9ALND+YmmlNPp7JXcRo9oaKgN0aXlulYRCcSFLaq3UQdJNJtpFcq
+         jj72LBn9McVB7BwKl6eTUTAcZpSbVS4ZFJDGtfxvZGXF4DKe5UDtKxzkCSqVetkMFbrP
+         MDCvUT7LX3k+7l3HmTbRbH3zFjx7ds7rfXXrI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=0xmELSHataISH5vThijiY1zNydt2sRYeLj/tC2a6MpI=;
+        b=JZGEmMurol7/zMiwRMxVgLtjIGV/eAOhQuwaj9OihWFQGhzLIs+6k9Vrs9JoBhwBar
+         cx+G+BS0bIKj4a9WEEqNUTBrjpoY8FIuiVG4PivMCwwN2n5/PORCqcmoSnU+rN6Ov7zz
+         bdKjmRNlUcqDWe0ySiou2QUMwG3O2Vi3/N9flwdbIDms/l0OASx1Eh390QxIGFTgrKya
+         HsZresXFHHUWOsPwzbERvGmkLUg+5YwDKW1wmUeMPtfoTbnAvzNY9H0GSBp0mGxX1QJC
+         k2H9aojKFHxt9j22qGTeWG/pUvzEumLqGckjt9L59dllafbpkOizZyZo6N1dGFPEmNaZ
+         ayrA==
+X-Gm-Message-State: AJcUukent0CPKP04xdRb4JDTUjLwfp2uu+U3hpnJ0rk64k6KBL23V70e
+        SCrbkD1zcfkhzJZy9YRi9Tx0rKZ5k2k=
+X-Google-Smtp-Source: ALg8bN43Fv6i7dp4x6fZQrpJTgaAAkSBgEvBMEKO5bp+aaHrZYNntySuODgk1VLu7hQn7HThysoN1w==
+X-Received: by 2002:a62:f907:: with SMTP id o7mr34695979pfh.244.1548194011474;
+        Tue, 22 Jan 2019 13:53:31 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id s9sm23467463pgl.88.2019.01.22.13.53.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 22 Jan 2019 13:53:31 -0800 (PST)
+Date:   Tue, 22 Jan 2019 13:53:30 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Cc:     Johan Hovold <johan@kernel.org>, marcel@holtmann.org,
+        johan.hedberg@gmail.com, linux-kernel@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, Johan Hovold <jhovold@gmail.com>
+Subject: Re: [PATCH v5 2/5] Bluetooth: hci_qca: Deassert RTS while baudrate
+ change command
+Message-ID: <20190122215330.GI261387@google.com>
+References: <20190111013707.GD261387@google.com>
+ <194b5d18ea86830b6a24939d483a964c@codeaurora.org>
+ <20190111235633.GK261387@google.com>
+ <a6e083d245baebc019b6e7163fd6f133@codeaurora.org>
+ <20190115234628.GQ261387@google.com>
+ <20190117160944.GV3691@localhost>
+ <20190117172109.GU261387@google.com>
+ <20190118094416.GB3691@localhost>
+ <20190119003109.GD261387@google.com>
+ <24831204bab89250099ca56e7562bd16@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190122143542.8816-2-gregkh@linuxfoundation.org>
+In-Reply-To: <24831204bab89250099ca56e7562bd16@codeaurora.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 03:35:37PM +0100, Greg Kroah-Hartman wrote:
-> When calling debugfs functions, there is no need to ever check the
-> return value.  The function can work or not, but the code logic should
-> never do something different based on this.
+On Mon, Jan 21, 2019 at 08:11:39PM +0530, Balakrishna Godavarthi wrote:
+> Hi Matthias,
 > 
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: <x86@kernel.org>
-> Cc: Tony Luck <tony.luck@intel.com>
-> Cc: Vishal Verma <vishal.l.verma@intel.com>
-> Cc: Pu Wen <puwen@hygon.cn>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
->  arch/x86/kernel/cpu/mce/core.c     | 15 ++++---------
->  arch/x86/kernel/cpu/mce/inject.c   | 34 +++++-------------------------
->  arch/x86/kernel/cpu/mce/severity.c | 14 +++---------
->  3 files changed, 12 insertions(+), 51 deletions(-)
+> On 2019-01-19 06:01, Matthias Kaehlcke wrote:
+> > On Fri, Jan 18, 2019 at 10:44:16AM +0100, Johan Hovold wrote:
+> > > On Thu, Jan 17, 2019 at 09:21:09AM -0800, Matthias Kaehlcke wrote:
+> > > 
+> > > > I observed that the qcom_geni_serial driver doesn't raise RTS with
+> > > > flow control disabled. It seems we have to investigate why that's the
+> > > > case. I agree that the driver should be platform agnostic.
+> > > 
+> > > Sounds like a driver bug, unless the hardware is just "odd". The
+> > > driver implementation of this looks very non-standard judging from a
+> > > quick peek.
+> > > 
+> > > In fact, qcom_geni_serial_get_mctrl() is currently a no-op if hardware
+> > > flow control is not enabled:
+> > > 
+> > > 	if (uart_console(uport) || !uart_cts_enabled(uport))
+> > > 		return;
+> > > 
+> > > Perhaps dropping the !uart_cts_enabled() test is sufficient.
+> > 
+> > Thanks for taking a look Johan, that was indeed the problem (also
+> > in set_mctrl()). I posted a fix:
+> > https://lore.kernel.org/patchwork/patch/1033611/
+> > 
+> > Balakrishna, the following (applied on top of your patch) works for me
+> > with the UART patch above:
+> > 
 > 
-> diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
-> index 672c7225cb1b..1f13f9032a8a 100644
-> --- a/arch/x86/kernel/cpu/mce/core.c
-> +++ b/arch/x86/kernel/cpu/mce/core.c
-> @@ -2457,22 +2457,15 @@ static int fake_panic_set(void *data, u64 val)
->  DEFINE_SIMPLE_ATTRIBUTE(fake_panic_fops, fake_panic_get,
->  			fake_panic_set, "%llu\n");
->  
-> -static int __init mcheck_debugfs_init(void)
-> +static void __init mcheck_debugfs_init(void)
->  {
-> -	struct dentry *dmce, *ffake_panic;
-> +	struct dentry *dmce;
->  
->  	dmce = mce_get_debugfs_dir();
-> -	if (!dmce)
-> -		return -ENOMEM;
-> -	ffake_panic = debugfs_create_file("fake_panic", 0444, dmce, NULL,
-> -					  &fake_panic_fops);
-> -	if (!ffake_panic)
-> -		return -ENOMEM;
-> -
-> -	return 0;
-> +	debugfs_create_file("fake_panic", 0444, dmce, NULL, &fake_panic_fops);
+> [Bala]: will test and update BT patch accordingly.
 
-Right, for that I don't care if it fails or not...
+Note that Johan pointed out that hci_uart_set_flow_control() deasserts
+RTS when flow control is disabled, so the _set_rts() calls can be
+removed. With that only a single action needs to be undone in case of
+an error, you can consider to keep the return instead of using the
+goto introduced by my patch.
 
->  #else
-> -static int __init mcheck_debugfs_init(void) { return -EINVAL; }
-> +static void __init mcheck_debugfs_init(void) { }
->  #endif
->  
->  DEFINE_STATIC_KEY_FALSE(mcsafe_key);
-> diff --git a/arch/x86/kernel/cpu/mce/inject.c b/arch/x86/kernel/cpu/mce/inject.c
-> index 8492ef7d9015..0f5b6c57ffde 100644
-> --- a/arch/x86/kernel/cpu/mce/inject.c
-> +++ b/arch/x86/kernel/cpu/mce/inject.c
-> @@ -648,7 +648,6 @@ static const struct file_operations readme_fops = {
->  
->  static struct dfs_node {
->  	char *name;
-> -	struct dentry *d;
->  	const struct file_operations *fops;
->  	umode_t perm;
->  } dfs_fls[] = {
-> @@ -662,7 +661,7 @@ static struct dfs_node {
->  	{ .name = "README",	.fops = &readme_fops, .perm = S_IRUSR | S_IRGRP | S_IROTH },
->  };
->  
-> -static int __init debugfs_init(void)
-> +static void __init debugfs_init(void)
->  {
->  	unsigned int i;
->  	u64 cap;
-> @@ -671,30 +670,11 @@ static int __init debugfs_init(void)
->  	n_banks = cap & MCG_BANKCNT_MASK;
->  
->  	dfs_inj = debugfs_create_dir("mce-inject", NULL);
-> -	if (!dfs_inj)
-> -		return -EINVAL;
-> -
-> -	for (i = 0; i < ARRAY_SIZE(dfs_fls); i++) {
-> -		dfs_fls[i].d = debugfs_create_file(dfs_fls[i].name,
-> -						    dfs_fls[i].perm,
-> -						    dfs_inj,
-> -						    &i_mce,
-> -						    dfs_fls[i].fops);
-> -
-> -		if (!dfs_fls[i].d)
-> -			goto err_dfs_add;
-> -	}
-> -
-> -	return 0;
->  
-> -err_dfs_add:
-> -	while (i-- > 0)
-> -		debugfs_remove(dfs_fls[i].d);
-> +	for (i = 0; i < ARRAY_SIZE(dfs_fls); i++)
-> +		debugfs_create_file(dfs_fls[i].name, dfs_fls[i].perm, dfs_inj,
-> +				    &i_mce, dfs_fls[i].fops);
+Please keep/adapt the "Deassert RTS while changing the baudrate ..."
+comment to leave it clear to posterity why flow control is disabled
+during baudrate changes. It's fairly obvious once you understand the
+problem and that disabling flow control deasserts RTS, but it took us
+a while to get there, initially we only had a comment saying
+"disabling flow control is mandatory" (I recall I inquired about this
+multiple times during the initial review of the wcn3990 patches ;-)
 
-... but that matters: if any of those debugfs files cannot be created
-for whatever reason, that injector module is useless because I can't
-inject MCEs properly.
+Thanks
 
-I mean, I like the simplification but ...
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Matthias
