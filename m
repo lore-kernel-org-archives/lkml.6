@@ -7,35 +7,35 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 101D0C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:11:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67022C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:11:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1E4120870
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:11:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C6C120870
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:11:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="Yth2X/t7"
+	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="BGu6+R4P"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728258AbfAVLLO (ORCPT
+        id S1728273AbfAVLLW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 06:11:14 -0500
-Received: from mail-eopbgr40053.outbound.protection.outlook.com ([40.107.4.53]:22688
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        Tue, 22 Jan 2019 06:11:22 -0500
+Received: from mail-eopbgr00076.outbound.protection.outlook.com ([40.107.0.76]:36352
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728022AbfAVLLN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 06:11:13 -0500
+        id S1727777AbfAVLLW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 06:11:22 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
  s=selector1-arm-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+xnecnrQIt5wQGyQ6SOQ9PiMlWX/rkVkZlgg+rt2Hso=;
- b=Yth2X/t77qFOo2Gx42PWJqP+qxxJEwcbD1JSU3G2mzaII+j+W7LzwwaBRCZELcAt0g6GYad8tAC9YF0s/jGaFCDaciuoNq3bz2BJUiECpcbjuVgs8pyX95qENZ2C0Y6oj6h5ryC0N/pNKD1rMtzlRuzztg5TI8BH2eOLHbSnrCI=
+ bh=tPdqsMPfjy9R7+XrHZN+SQxy7VWmMk6HKTMO9Qqkeow=;
+ b=BGu6+R4PMeChkFDEKUJN+W1dbLz55IKUI1QtXpuAv6P6566SUi7yBHubbTky1MNw4D6MBtQCCpiU7ZJiBQgHmaYHbLwTdhOgiuw4+wqsMm5mXN22gM5GyepRul/RG9rOPDh6gcYO5pZyPSEIj5pykh2EJQRndjF4CDn3nb37D3g=
 Received: from DB6PR0801MB1990.eurprd08.prod.outlook.com (10.168.81.21) by
  DB6PR0801MB1784.eurprd08.prod.outlook.com (10.169.227.19) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1558.16; Tue, 22 Jan 2019 11:11:07 +0000
+ 15.20.1558.16; Tue, 22 Jan 2019 11:11:16 +0000
 Received: from DB6PR0801MB1990.eurprd08.prod.outlook.com
  ([fe80::b9be:3d28:78a2:6e33]) by DB6PR0801MB1990.eurprd08.prod.outlook.com
  ([fe80::b9be:3d28:78a2:6e33%2]) with mapi id 15.20.1537.031; Tue, 22 Jan 2019
- 11:11:07 +0000
+ 11:11:16 +0000
 From:   "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
 To:     Liviu Dudau <Liviu.Dudau@arm.com>,
         "airlied@linux.ie" <airlied@linux.ie>,
@@ -52,11 +52,12 @@ CC:     "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
         "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
-Subject: [PATCH v2 05/11] drm/komeda: Add komeda_crtc_prepare/unprepare
-Thread-Topic: [PATCH v2 05/11] drm/komeda: Add komeda_crtc_prepare/unprepare
-Thread-Index: AQHUskMsibovwpzi6E6Ub38r7bWMsw==
-Date:   Tue, 22 Jan 2019 11:11:07 +0000
-Message-ID: <20190122110932.5138-6-james.qian.wang@arm.com>
+Subject: [PATCH v2 06/11] drm/komeda: Add komeda_crtc_atomic_enable/disable
+Thread-Topic: [PATCH v2 06/11] drm/komeda: Add
+ komeda_crtc_atomic_enable/disable
+Thread-Index: AQHUskMxu0VEuSfWC0GgPiORgM25bA==
+Date:   Tue, 22 Jan 2019 11:11:16 +0000
+Message-ID: <20190122110932.5138-7-james.qian.wang@arm.com>
 References: <20190122110932.5138-1-james.qian.wang@arm.com>
 In-Reply-To: <20190122110932.5138-1-james.qian.wang@arm.com>
 Accept-Language: en-US
@@ -71,27 +72,27 @@ authentication-results: spf=none (sender IP is )
 x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.17.1
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB6PR0801MB1784;6:ooIapGyulhLaPagrEqbrccF63UlMgLzibQHaahwhHy1xSW/UCfSOzrhpr4QlaecfzTC8JgNtaRkaz4UrVJTixnJqRCL5v13zuMH5KICoWLMbxJwB+7vn5D8lrleSAGDvws2hFFNjRdLSfSbIgB6pB2ed4H/KkSJZh2d5FPLuSnfp2tVmhay2ZtWFp3yMven2N9Q7SMdXVlzH8LMWAL6Dnlbv2IE4bNUjnW7k8T7AYjb1UN8m695LJPm2BzOfhaB1ADDSCs/WXTHHQro6mNWzRPQ9u9o6iHF/ZZz9jctHtPF7E++hCgJi1ltsA8vQBfAEOpQd3OF5SGMImM/EGc3PV47YE6qETpazjPylET1BYPDND9IzQT9kXFE5ph3h6kj0fki/kXfUtGPfYndOIJBXkQQNgYzkBy0gOZ9VMpiNp1hpp4MIH2XfJcGVDnf0PEtQQgSuKiqCSsVPvDNp3MjIEA==;5:qF2TT0ekMkht96yCMr6ZUUewja5oPTgLsylWyBS+tNAcBX98YeefYMK/VrdsCWojLBtvljlVmBVIEEdNS5hjdiGR8icoXBC7efYmvowzk84YrVHRtWYpApSThi7w3ZuCAxW9nOKNRiwjOENtT/dTZKTQVyiG4BNWlavK7Fd5Gzuw8toLADXAJClRw+aMLW5tcGEDhLDGQVtEZMSdktYjPQ==;7:gpPOndxJKIbHOHKQae9JF1TC7twTzBZ/M/k44SISHu3RkkCxAxSaZIjlA83vA5Vq56DeKtElKK/y4XcdcTs0F1sMjB4I9URXQbJKSPI2mFUJDe6FDHdWaxiNlX6FGIZakUs02JRqBm8ojvQHBOeM/w==
-x-ms-office365-filtering-correlation-id: 40e348af-74b7-478f-b995-08d6805a4de5
+x-microsoft-exchange-diagnostics: 1;DB6PR0801MB1784;6:QHo9BeYdchfzdkYbOkVuMUva0DRBn40fKrKe/09qrC2iQ6Jz5Uf41HuOmgXBtqQZ6GRBMuKHMHD+qIpGKbHqRYrV3euN5GcrbSDXkrpcPYNXxwvQz9ySXOrafJUQTxDg1tRH77SOXr64KdIs+sEoLOpNr6izhhNhbpaDoR75FcwAzpw9pTn0Fc84BcTWy5+1OW8eCZrEtWJ2A8Qqo2nwiRvhK/m2gFanNG6PWiv1zOVppQC0I/TYl/1vgoOfpJSTM5VnTQEa+Wz+ITaukJtsv6FPjCGOr0j748KGyrV7y77xvuBmhZ8c+j0noY4qWD6YpzvJ3kIsK13awnorh451zFXDwDbqDJZOabO21QqiykeXIig5gLYaKt8kZQBXSRu7F/jtJWKdifSW/pA3UVU3TqAfCIqfrjRP+DYImwVrdUoLbFYF0pAXv9e0FsiX8cEUaS5E7r4tCuCG0qHaUF+XCg==;5:biIedyQKLvyTmdR/V4HYuBg5+v5375KpesA1lH8RH3AhmLYOQ+JNc/tYOVDrtSJIlY8bweeaa8SnepbToVtGVfyWJvYEPxvRetqJZiPTidUNcucyEI4hsFMnDXyRS1eRw5Aoy5g5aIQwLy7xHwZXVPK7hXUo61KRiadlDgKgBOMB7Kt9rh6lzpt6C2M8Cy4ipvwhJvGl0BIgaBBntiRKig==;7:/1r+58eLXY6lS+hd89NDywF/IWKn6DEcY5GHSXwh3Od3fG/dnQJnLzMjidbCzNQFEFsKWm/1T7yjZP/5+oNsNu/jXTp8cuKr+ljt/zV5sN6w76ChfCvYG1QdUjrFwGgv8JRCuwtktOsnpgq6XVAwAw==
+x-ms-office365-filtering-correlation-id: d1e9e9b0-f3ab-4db7-16e6-08d6805a5394
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB6PR0801MB1784;
 x-ms-traffictypediagnostic: DB6PR0801MB1784:
 nodisclaimer: True
-x-microsoft-antispam-prvs: <DB6PR0801MB1784CFA2B55D97AE2F97E5A9B3980@DB6PR0801MB1784.eurprd08.prod.outlook.com>
+x-microsoft-antispam-prvs: <DB6PR0801MB17844FE5E1A1F901619D1203B3980@DB6PR0801MB1784.eurprd08.prod.outlook.com>
 x-forefront-prvs: 0925081676
 x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(366004)(376002)(39860400002)(346002)(189003)(199004)(446003)(2616005)(76176011)(11346002)(105586002)(14454004)(476003)(2501003)(14444005)(66066001)(6506007)(386003)(186003)(97736004)(26005)(68736007)(55236004)(102836004)(106356001)(478600001)(36756003)(52116002)(103116003)(6436002)(7736002)(6486002)(99286004)(81166006)(81156014)(8936002)(6116002)(3846002)(305945005)(50226002)(8676002)(71200400001)(71190400001)(25786009)(54906003)(6512007)(256004)(2906002)(486006)(110136005)(4326008)(6636002)(1076003)(53936002)(86362001)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR0801MB1784;H:DB6PR0801MB1990.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: arm.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 7Q0VV0hv19ND75Zrk2GbqAX6um+m7vmx4ELG8bC50OUQBnFseCYhHSPK5EZUEl0WLY6pAI7O6gWbWDtZRnQYk6cbNsGkaMf3xGeDEVuzat7s7Fzu3fu9VfQ7AD64OZYwgrUccRdoxczZZVnW9ylM9+V+bFcYuPiRRas+06Bz3m+qd36GAmqKM769msT7mB67+TIm/73+qDBOKGn2qXQB0lNYga7vAJVb6UUIxOK69nrJI966L6LDAhL8d4aa2NGarGMPGr3SaKhmREz/68vg6nPe6a+Kvsa9p72VP7tbklJkTko8xjZxlTP414iMiSSdYLe+hl6hE9ipqhUj37mh4tIt6ips7kz8cgBSOxJ/Kp41tS4cOpveY5PE+oWX6sBhGkiH6L7Dzzrz2Qcm6HJCxlMyKfeY0EoWMoa/C8aB/tQ=
+x-microsoft-antispam-message-info: ulBZTLKXWBpV2nDGbM3otuvYtPmQnt1zV8PAP9dJlZtRU8x+53Ha7oKvgA3ccZKJHexyOaLwNvvPjGvUFKAZDYXNvhbD3lhhq8PJyT6hda2otNFv/dgODy7LhURmkq02lJmMebUDAEehIbhNRflgLCi499x7O0yRnYhEngt8vKjECDXNbHm63RutgD5x5gb+PD3K//goPaRFqUijmjy9tO3TM9KZQoQxlCh86cSMe/VtXTU/CYbr4JIXXifXogI7nmCtFLOgwOIIC1jOoI6bPHkkzmb9cTL/7eXJdZygp6jXn/m4Fg8JBJvzoGa+Q7qL2JG5A+jxLcoIpSEs5K4Y3ZBBodXKtoK5bP4Z5hkB+mmNbyENjOvrnY28g2VlQlEVTsTJ9TsymJkxsnv2CLTnq3KF22FOzXENOvjeUU5kVYs=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 40e348af-74b7-478f-b995-08d6805a4de5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jan 2019 11:10:58.1034
+X-MS-Exchange-CrossTenant-Network-Message-Id: d1e9e9b0-f3ab-4db7-16e6-08d6805a5394
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jan 2019 11:11:07.6191
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
@@ -103,259 +104,244 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
 
-These two function will be used by komeda_crtc_enable/disable to do some
-prepartion works when enable/disable a crtc. like enable a crtc:
-  1. Adjust display operation mode.
-  2. Enable/prepare needed clk.
+Pass enable/disable command to komeda and adjust komeda hardware for
+enable/disable a display instance.
 
 v2: Rebase
 
 Signed-off-by: James Qian Wang (Arm Technology China) <james.qian.wang@arm.=
 com>
 ---
- .../gpu/drm/arm/display/komeda/d71/d71_dev.c  |  32 ++++++
- .../gpu/drm/arm/display/komeda/komeda_crtc.c  | 104 ++++++++++++++++++
- .../gpu/drm/arm/display/komeda/komeda_dev.c   |   2 +
- .../gpu/drm/arm/display/komeda/komeda_dev.h   |  26 +++++
- 4 files changed, 164 insertions(+)
+ .../gpu/drm/arm/display/komeda/komeda_crtc.c  | 106 +++++++++++++++++-
+ .../gpu/drm/arm/display/komeda/komeda_kms.h   |   3 +
+ .../drm/arm/display/komeda/komeda_pipeline.h  |   3 +
+ .../display/komeda/komeda_pipeline_state.c    |  32 ++++++
+ 4 files changed, 139 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/arm/display/komeda/d71/d71_dev.c b/drivers/gpu=
-/drm/arm/display/komeda/d71/d71_dev.c
-index 74aab4f23ea0..2fb29aea9f69 100644
---- a/drivers/gpu/drm/arm/display/komeda/d71/d71_dev.c
-+++ b/drivers/gpu/drm/arm/display/komeda/d71/d71_dev.c
-@@ -241,6 +241,37 @@ static int d71_disable_irq(struct komeda_dev *mdev)
- 	return 0;
- }
-=20
-+static int to_d71_opmode(int core_mode)
-+{
-+	switch (core_mode) {
-+	case KOMEDA_MODE_DISP0:
-+		return DO0_ACTIVE_MODE;
-+	case KOMEDA_MODE_DISP1:
-+		return DO1_ACTIVE_MODE;
-+	case KOMEDA_MODE_DUAL_DISP:
-+		return DO01_ACTIVE_MODE;
-+	case KOMEDA_MODE_INACTIVE:
-+		return INACTIVE_MODE;
-+	default:
-+		WARN(1, "Unknown operation mode");
-+		return INACTIVE_MODE;
-+	}
-+}
-+
-+static int d71_change_opmode(struct komeda_dev *mdev, int new_mode)
-+{
-+	struct d71_dev *d71 =3D mdev->chip_data;
-+	u32 opmode =3D to_d71_opmode(new_mode);
-+	int ret;
-+
-+	malidp_write32_mask(d71->gcu_addr, BLK_CONTROL, 0x7, opmode);
-+
-+	ret =3D dp_wait_cond(((malidp_read32(d71->gcu_addr, BLK_CONTROL) & 0x7) =
-=3D=3D opmode),
-+			   100, 1000, 10000);
-+
-+	return ret > 0 ? 0 : -ETIMEDOUT;
-+}
-+
- static void d71_flush(struct komeda_dev *mdev,
- 		      int master_pipe, u32 active_pipes)
- {
-@@ -467,6 +498,7 @@ static struct komeda_dev_funcs d71_chip_funcs =3D {
- 	.irq_handler	=3D d71_irq_handler,
- 	.enable_irq	=3D d71_enable_irq,
- 	.disable_irq	=3D d71_disable_irq,
-+	.change_opmode	=3D d71_change_opmode,
- 	.flush		=3D d71_flush,
- };
-=20
 diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c b/drivers/gpu=
 /drm/arm/display/komeda/komeda_crtc.c
-index 7e0bf78da733..ef4c3ee2a688 100644
+index ef4c3ee2a688..9b370e1232e2 100644
 --- a/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
 +++ b/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
-@@ -40,6 +40,110 @@ komeda_crtc_atomic_check(struct drm_crtc *crtc,
+@@ -51,7 +51,7 @@ u32 komeda_calc_mclk(struct komeda_crtc_state *kcrtc_st)
+  * 1. adjust display operation mode.
+  * 2. enable needed clk
+  */
+-int
++static int
+ komeda_crtc_prepare(struct komeda_crtc *kcrtc)
+ {
+ 	struct komeda_dev *mdev =3D kcrtc->base.dev->dev_private;
+@@ -107,7 +107,7 @@ komeda_crtc_prepare(struct komeda_crtc *kcrtc)
+ 	return err;
+ }
+=20
+-int
++static int
+ komeda_crtc_unprepare(struct komeda_crtc *kcrtc)
+ {
+ 	struct komeda_dev *mdev =3D kcrtc->base.dev->dev_private;
+@@ -157,9 +157,28 @@ void komeda_crtc_handle_event(struct komeda_crtc   *kc=
+rtc,
+ 	if (events & KOMEDA_EVENT_EOW)
+ 		DRM_DEBUG("EOW.\n");
+=20
+-	/* will handle it with crtc->flush */
+-	if (events & KOMEDA_EVENT_FLIP)
+-		DRM_DEBUG("FLIP Done.\n");
++	if (events & KOMEDA_EVENT_FLIP) {
++		unsigned long flags;
++		struct drm_pending_vblank_event *event;
++
++		spin_lock_irqsave(&crtc->dev->event_lock, flags);
++		if (kcrtc->disable_done) {
++			complete_all(kcrtc->disable_done);
++			kcrtc->disable_done =3D NULL;
++		} else if (crtc->state->event) {
++			event =3D crtc->state->event;
++			/*
++			 * Consume event before notifying drm core that flip
++			 * happened.
++			 */
++			crtc->state->event =3D NULL;
++			drm_crtc_send_vblank_event(crtc, event);
++		} else {
++			DRM_WARN("CRTC[%d]: FLIP happen but no pending commit.\n",
++				 drm_crtc_index(&kcrtc->base));
++		}
++		spin_unlock_irqrestore(&crtc->dev->event_lock, flags);
++	}
+ }
+=20
+ static void
+@@ -183,6 +202,81 @@ komeda_crtc_do_flush(struct drm_crtc *crtc,
+ 	mdev->funcs->flush(mdev, master->id, kcrtc_st->active_pipes);
+ }
+=20
++static void
++komeda_crtc_atomic_enable(struct drm_crtc *crtc,
++			  struct drm_crtc_state *old)
++{
++	komeda_crtc_prepare(to_kcrtc(crtc));
++	drm_crtc_vblank_on(crtc);
++	komeda_crtc_do_flush(crtc, old);
++}
++
++static void
++komeda_crtc_atomic_disable(struct drm_crtc *crtc,
++			   struct drm_crtc_state *old)
++{
++	struct komeda_crtc *kcrtc =3D to_kcrtc(crtc);
++	struct komeda_crtc_state *old_st =3D to_kcrtc_st(old);
++	struct komeda_dev *mdev =3D crtc->dev->dev_private;
++	struct komeda_pipeline *master =3D kcrtc->master;
++	struct completion *disable_done =3D &crtc->state->commit->flip_done;
++	struct completion temp;
++	int timeout;
++
++	DRM_DEBUG_ATOMIC("CRTC%d_DISABLE: active_pipes: 0x%x, affected: 0x%x.\n",
++			 drm_crtc_index(crtc),
++			 old_st->active_pipes, old_st->affected_pipes);
++
++	if (has_bit(master->id, old_st->active_pipes))
++		komeda_pipeline_disable(master, old->state);
++
++	/* crtc_disable has two scenarios according to the state->active switch.
++	 * 1. active -> inactive
++	 *    this commit is a disable commit. and the commit will be finished
++	 *    or done after the disable operation. on this case we can directly
++	 *    use the crtc->state->event to tracking the HW disable operation.
++	 * 2. active -> active
++	 *    the crtc->commit is not for disable, but a modeset operation when
++	 *    crtc is active, such commit actually has been completed by 3
++	 *    DRM operations:
++	 *    crtc_disable, update_planes(crtc_flush), crtc_enable
++	 *    so on this case the crtc->commit is for the whole process.
++	 *    we can not use it for tracing the disable, we need a temporary
++	 *    flip_done for tracing the disable. and crtc->state->event for
++	 *    the crtc_enable operation.
++	 *    That's also the reason why skip modeset commit in
++	 *    komeda_crtc_atomic_flush()
++	 */
++	if (crtc->state->active) {
++		struct komeda_pipeline_state *pipe_st;
++		/* clear the old active_comps to zero */
++		pipe_st =3D komeda_pipeline_get_old_state(master, old->state);
++		pipe_st->active_comps =3D 0;
++
++		init_completion(&temp);
++		kcrtc->disable_done =3D &temp;
++		disable_done =3D &temp;
++	}
++
++	mdev->funcs->flush(mdev, master->id, 0);
++
++	/* wait the disable take affect.*/
++	timeout =3D wait_for_completion_timeout(disable_done, HZ);
++	if (timeout =3D=3D 0) {
++		DRM_ERROR("disable pipeline%d timeout.\n", kcrtc->master->id);
++		if (crtc->state->active) {
++			unsigned long flags;
++
++			spin_lock_irqsave(&crtc->dev->event_lock, flags);
++			kcrtc->disable_done =3D NULL;
++			spin_unlock_irqrestore(&crtc->dev->event_lock, flags);
++		}
++	}
++
++	drm_crtc_vblank_off(crtc);
++	komeda_crtc_unprepare(kcrtc);
++}
++
+ static void
+ komeda_crtc_atomic_flush(struct drm_crtc *crtc,
+ 			 struct drm_crtc_state *old)
+@@ -247,6 +341,8 @@ static bool komeda_crtc_mode_fixup(struct drm_crtc *crt=
+c,
+ struct drm_crtc_helper_funcs komeda_crtc_helper_funcs =3D {
+ 	.atomic_check	=3D komeda_crtc_atomic_check,
+ 	.atomic_flush	=3D komeda_crtc_atomic_flush,
++	.atomic_enable	=3D komeda_crtc_atomic_enable,
++	.atomic_disable	=3D komeda_crtc_atomic_disable,
+ 	.mode_valid	=3D komeda_crtc_mode_valid,
+ 	.mode_fixup	=3D komeda_crtc_mode_fixup,
+ };
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_kms.h b/drivers/gpu/=
+drm/arm/display/komeda/komeda_kms.h
+index 06394716367b..990071352040 100644
+--- a/drivers/gpu/drm/arm/display/komeda/komeda_kms.h
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_kms.h
+@@ -69,6 +69,9 @@ struct komeda_crtc {
+ 	 * merge into the master.
+ 	 */
+ 	struct komeda_pipeline *slave;
++
++	/* this flip_done is for tracing the disable */
++	struct completion *disable_done;
+ };
+=20
+ /** struct komeda_crtc_state */
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h b/drivers=
+/gpu/drm/arm/display/komeda/komeda_pipeline.h
+index 3d7a9ee550b2..233e512319e8 100644
+--- a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h
+@@ -412,6 +412,9 @@ int komeda_build_display_data_flow(struct komeda_crtc *=
+kcrtc,
+ int komeda_release_unclaimed_resources(struct komeda_pipeline *pipe,
+ 				       struct komeda_crtc_state *kcrtc_st);
+=20
++struct komeda_pipeline_state *
++komeda_pipeline_get_old_state(struct komeda_pipeline *pipe,
++			      struct drm_atomic_state *state);
+ void komeda_pipeline_disable(struct komeda_pipeline *pipe,
+ 			     struct drm_atomic_state *old_state);
+ void komeda_pipeline_update(struct komeda_pipeline *pipe,
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline_state.c b/d=
+rivers/gpu/drm/arm/display/komeda/komeda_pipeline_state.c
+index 87fd6493d202..69a622f06453 100644
+--- a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline_state.c
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_pipeline_state.c
+@@ -549,6 +549,38 @@ int komeda_release_unclaimed_resources(struct komeda_p=
+ipeline *pipe,
  	return 0;
  }
 =20
-+u32 komeda_calc_mclk(struct komeda_crtc_state *kcrtc_st)
++void komeda_pipeline_disable(struct komeda_pipeline *pipe,
++			     struct drm_atomic_state *old_state)
 +{
-+	unsigned long mclk =3D kcrtc_st->base.adjusted_mode.clock * 1000;
++	struct komeda_pipeline_state *old;
++	struct komeda_component *c;
++	struct komeda_component_state *c_st;
++	u32 id, disabling_comps =3D 0;
 +
-+	return mclk;
++	old =3D komeda_pipeline_get_old_state(pipe, old_state);
++
++	disabling_comps =3D old->active_comps;
++	DRM_DEBUG_ATOMIC("PIPE%d: disabling_comps: 0x%x.\n",
++			 pipe->id, disabling_comps);
++
++	dp_for_each_set_bit(id, disabling_comps) {
++		c =3D komeda_pipeline_get_component(pipe, id);
++		c_st =3D priv_to_comp_st(c->obj.state);
++
++		/*
++		 * If we disabled a component then all active_inputs should be
++		 * put in the list of changed_active_inputs, so they get
++		 * re-enabled.
++		 * This usually happens during a modeset when the pipeline is
++		 * first disabled and then the actual state gets committed
++		 * again.
++		 */
++		c_st->changed_active_inputs |=3D c_st->active_inputs;
++
++		c->funcs->disable(c);
++	}
 +}
 +
-+/* For active a crtc, mainly need two parts of preparation
-+ * 1. adjust display operation mode.
-+ * 2. enable needed clk
-+ */
-+int
-+komeda_crtc_prepare(struct komeda_crtc *kcrtc)
-+{
-+	struct komeda_dev *mdev =3D kcrtc->base.dev->dev_private;
-+	struct komeda_pipeline *master =3D kcrtc->master;
-+	struct komeda_crtc_state *kcrtc_st =3D to_kcrtc_st(kcrtc->base.state);
-+	unsigned long pxlclk_rate =3D kcrtc_st->base.adjusted_mode.clock * 1000;
-+	u32 new_mode;
-+	int err;
-+
-+	mutex_lock(&mdev->lock);
-+
-+	new_mode =3D mdev->dpmode | BIT(master->id);
-+	if (WARN_ON(new_mode =3D=3D mdev->dpmode)) {
-+		err =3D 0;
-+		goto unlock;
-+	}
-+
-+	err =3D mdev->funcs->change_opmode(mdev, new_mode);
-+	if (err) {
-+		DRM_ERROR("failed to change opmode: 0x%x -> 0x%x.\n,",
-+			  mdev->dpmode, new_mode);
-+		goto unlock;
-+	}
-+
-+	mdev->dpmode =3D new_mode;
-+	/* Only need to enable mclk on single display mode, but no need to
-+	 * enable mclk it on dual display mode, since the dual mode always
-+	 * switch from single display mode, the mclk already enabled, no need
-+	 * to enable it again.
-+	 */
-+	if (new_mode !=3D KOMEDA_MODE_DUAL_DISP) {
-+		err =3D clk_set_rate(mdev->mclk, komeda_calc_mclk(kcrtc_st));
-+		if (err)
-+			DRM_ERROR("failed to set mclk.\n");
-+		err =3D clk_prepare_enable(mdev->mclk);
-+		if (err)
-+			DRM_ERROR("failed to enable mclk.\n");
-+	}
-+
-+	err =3D clk_prepare_enable(master->aclk);
-+	if (err)
-+		DRM_ERROR("failed to enable axi clk for pipe%d.\n", master->id);
-+	err =3D clk_set_rate(master->pxlclk, pxlclk_rate);
-+	if (err)
-+		DRM_ERROR("failed to set pxlclk for pipe%d\n", master->id);
-+	err =3D clk_prepare_enable(master->pxlclk);
-+	if (err)
-+		DRM_ERROR("failed to enable pxl clk for pipe%d.\n", master->id);
-+
-+unlock:
-+	mutex_unlock(&mdev->lock);
-+
-+	return err;
-+}
-+
-+int
-+komeda_crtc_unprepare(struct komeda_crtc *kcrtc)
-+{
-+	struct komeda_dev *mdev =3D kcrtc->base.dev->dev_private;
-+	struct komeda_pipeline *master =3D kcrtc->master;
-+	u32 new_mode;
-+	int err;
-+
-+	mutex_lock(&mdev->lock);
-+
-+	new_mode =3D mdev->dpmode & (~BIT(master->id));
-+
-+	if (WARN_ON(new_mode =3D=3D mdev->dpmode)) {
-+		err =3D 0;
-+		goto unlock;
-+	}
-+
-+	err =3D mdev->funcs->change_opmode(mdev, new_mode);
-+	if (err) {
-+		DRM_ERROR("failed to change opmode: 0x%x -> 0x%x.\n,",
-+			  mdev->dpmode, new_mode);
-+		goto unlock;
-+	}
-+
-+	mdev->dpmode =3D new_mode;
-+
-+	clk_disable_unprepare(master->pxlclk);
-+	clk_disable_unprepare(master->aclk);
-+	if (new_mode =3D=3D KOMEDA_MODE_INACTIVE)
-+		clk_disable_unprepare(mdev->mclk);
-+
-+unlock:
-+	mutex_unlock(&mdev->lock);
-+
-+	return err;
-+}
-+
- void komeda_crtc_handle_event(struct komeda_crtc   *kcrtc,
- 			      struct komeda_events *evts)
+ void komeda_pipeline_update(struct komeda_pipeline *pipe,
+ 			    struct drm_atomic_state *old_state)
  {
-diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c b/drivers/gpu/=
-drm/arm/display/komeda/komeda_dev.c
-index a012b3bbf53b..7152f2c08e01 100644
---- a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
-+++ b/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
-@@ -145,6 +145,8 @@ struct komeda_dev *komeda_dev_create(struct device *dev=
-)
- 	if (!mdev)
- 		return ERR_PTR(-ENOMEM);
-=20
-+	mutex_init(&mdev->lock);
-+
- 	mdev->dev =3D dev;
- 	mdev->reg_base =3D devm_ioremap_resource(dev, io_res);
- 	if (IS_ERR(mdev->reg_base)) {
-diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_dev.h b/drivers/gpu/=
-drm/arm/display/komeda/komeda_dev.h
-index 0bd38bdf0518..1ad1f6e49854 100644
---- a/drivers/gpu/drm/arm/display/komeda/komeda_dev.h
-+++ b/drivers/gpu/drm/arm/display/komeda/komeda_dev.h
-@@ -106,11 +106,34 @@ struct komeda_dev_funcs {
-=20
- 	/** @dump_register: Optional, dump registers to seq_file */
- 	void (*dump_register)(struct komeda_dev *mdev, struct seq_file *seq);
-+	/**
-+	 * @change_opmode:
-+	 *
-+	 * Notify HW to switch to a new display operation mode.
-+	 */
-+	int (*change_opmode)(struct komeda_dev *mdev, int new_mode);
- 	/** @flush: Notify the HW to flush or kickoff the update */
- 	void (*flush)(struct komeda_dev *mdev,
- 		      int master_pipe, u32 active_pipes);
- };
-=20
-+/**
-+ * DISPLAY_MODE describes how many display been enabled, and which will be
-+ * passed to CHIP by &komeda_dev_funcs->change_opmode(), then CHIP can do =
-the
-+ * pipeline resources assignment according to this usage hint.
-+ * -   KOMEDA_MODE_DISP0: Only one display enabled, pipeline-0 work as mas=
-ter.
-+ * -   KOMEDA_MODE_DISP1: Only one display enabled, pipeline-0 work as mas=
-ter.
-+ * -   KOMEDA_MODE_DUAL_DISP: Dual display mode, both display has been ena=
-bled.
-+ * And D71 supports assign two pipelines to one single display on mode
-+ * KOMEDA_MODE_DISP0/DISP1
-+ */
-+enum {
-+	KOMEDA_MODE_INACTIVE	=3D 0,
-+	KOMEDA_MODE_DISP0	=3D BIT(0),
-+	KOMEDA_MODE_DISP1	=3D BIT(1),
-+	KOMEDA_MODE_DUAL_DISP	=3D KOMEDA_MODE_DISP0 | KOMEDA_MODE_DISP1,
-+};
-+
- /**
-  * struct komeda_dev
-  *
-@@ -133,6 +156,9 @@ struct komeda_dev {
- 	/** @irq: irq number */
- 	int irq;
-=20
-+	struct mutex lock; /* used to protect dpmode */
-+	u32 dpmode; /* current display mode */
-+
- 	int n_pipelines;
- 	struct komeda_pipeline *pipelines[KOMEDA_MAX_PIPELINES];
-=20
 --=20
 2.17.1
 
