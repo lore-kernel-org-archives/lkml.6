@@ -2,196 +2,79 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AFEBC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:38:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7758DC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:38:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61B1C217F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:38:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DA2C2084A
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:38:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727791AbfAVKin (ORCPT
+        id S1727960AbfAVKiq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 05:38:43 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:48341 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726530AbfAVKim (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 05:38:42 -0500
-Received: from 79.184.255.239.ipv4.supernova.orange.pl (79.184.255.239) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
- id 7c665964e6219056; Tue, 22 Jan 2019 11:38:39 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v6 08/16] sched/cpufreq: uclamp: Add utilization clamping for FAIR tasks
-Date:   Tue, 22 Jan 2019 11:37:42 +0100
-Message-ID: <3006911.57lVBuUGX3@aspire.rjw.lan>
-In-Reply-To: <20190115101513.2822-9-patrick.bellasi@arm.com>
-References: <20190115101513.2822-1-patrick.bellasi@arm.com> <20190115101513.2822-9-patrick.bellasi@arm.com>
+        Tue, 22 Jan 2019 05:38:46 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44152 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726530AbfAVKip (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 05:38:45 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 75EAEAF09;
+        Tue, 22 Jan 2019 10:38:44 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 691AA1E3E1E; Tue, 22 Jan 2019 11:38:43 +0100 (CET)
+Date:   Tue, 22 Jan 2019 11:38:43 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Liu Xiang <liu.xiang6@zte.com.cn>
+Cc:     linux-ext4@vger.kernel.org, jack@suse.com,
+        linux-kernel@vger.kernel.org, liuxiang_1999@126.com
+Subject: Re: [PATCH] ext2: Remove redundant check on s_inode_size
+Message-ID: <20190122103843.GC13149@quack2.suse.cz>
+References: <1547561443-3411-1-git-send-email-liu.xiang6@zte.com.cn>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1547561443-3411-1-git-send-email-liu.xiang6@zte.com.cn>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, January 15, 2019 11:15:05 AM CET Patrick Bellasi wrote:
-> Each time a frequency update is required via schedutil, a frequency is
-> selected to (possibly) satisfy the utilization reported by each
-> scheduling class. However, when utilization clamping is in use, the
-> frequency selection should consider userspace utilization clamping
-> hints.  This will allow, for example, to:
+On Tue 15-01-19 22:10:43, Liu Xiang wrote:
+> The case of (EXT2_INODE_SIZE(sb) == 0) is included in
+> (sbi->s_inode_size < EXT2_GOOD_OLD_INODE_SIZE).
+> So there is no need to check again.
 > 
->  - boost tasks which are directly affecting the user experience
->    by running them at least at a minimum "requested" frequency
-> 
->  - cap low priority tasks not directly affecting the user experience
->    by running them only up to a maximum "allowed" frequency
-> 
-> These constraints are meant to support a per-task based tuning of the
-> frequency selection thus supporting a fine grained definition of
-> performance boosting vs energy saving strategies in kernel space.
-> 
-> Add support to clamp the utilization and IOWait boost of RUNNABLE FAIR
-> tasks within the boundaries defined by their aggregated utilization
-> clamp constraints.
-> Based on the max(min_util, max_util) of each task, max-aggregated the
-> CPU clamp value in a way to give the boosted tasks the performance they
-> need when they happen to be co-scheduled with other capped tasks.
-> 
-> Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
+> Signed-off-by: Liu Xiang <liu.xiang6@zte.com.cn>
+
+Thanks for the cleanup. I have added it to my tree.
+
+								Honza
+
 > ---
-> Changes in v6:
->  Message-ID: <20181107113849.GC14309@e110439-lin>
->  - sanity check util_max >= util_min
->  Others:
->  - wholesale s/group/bucket/
->  - wholesale s/_{get,put}/_{inc,dec}/ to match refcount APIs
-> ---
->  kernel/sched/cpufreq_schedutil.c | 27 ++++++++++++++++++++++++---
->  kernel/sched/sched.h             | 23 +++++++++++++++++++++++
->  2 files changed, 47 insertions(+), 3 deletions(-)
+>  fs/ext2/super.c | 2 --
+>  1 file changed, 2 deletions(-)
 > 
-> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-> index 033ec7c45f13..520ee2b785e7 100644
-> --- a/kernel/sched/cpufreq_schedutil.c
-> +++ b/kernel/sched/cpufreq_schedutil.c
-> @@ -218,8 +218,15 @@ unsigned long schedutil_freq_util(int cpu, unsigned long util_cfs,
->  	 * CFS tasks and we use the same metric to track the effective
->  	 * utilization (PELT windows are synchronized) we can directly add them
->  	 * to obtain the CPU's actual utilization.
-> +	 *
-> +	 * CFS utilization can be boosted or capped, depending on utilization
-> +	 * clamp constraints requested by currently RUNNABLE tasks.
-> +	 * When there are no CFS RUNNABLE tasks, clamps are released and
-> +	 * frequency will be gracefully reduced with the utilization decay.
->  	 */
-> -	util = util_cfs;
-> +	util = (type == ENERGY_UTIL)
-> +		? util_cfs
-> +		: uclamp_util(rq, util_cfs);
->  	util += cpu_util_rt(rq);
+> diff --git a/fs/ext2/super.c b/fs/ext2/super.c
+> index 73b2d52..c71c2e3 100644
+> --- a/fs/ext2/super.c
+> +++ b/fs/ext2/super.c
+> @@ -1024,8 +1024,6 @@ static int ext2_fill_super(struct super_block *sb, void *data, int silent)
+>  	sbi->s_frags_per_group = le32_to_cpu(es->s_frags_per_group);
+>  	sbi->s_inodes_per_group = le32_to_cpu(es->s_inodes_per_group);
 >  
->  	dl_util = cpu_util_dl(rq);
-> @@ -327,6 +334,7 @@ static void sugov_iowait_boost(struct sugov_cpu *sg_cpu, u64 time,
->  			       unsigned int flags)
->  {
->  	bool set_iowait_boost = flags & SCHED_CPUFREQ_IOWAIT;
-> +	unsigned int max_boost;
->  
->  	/* Reset boost if the CPU appears to have been idle enough */
->  	if (sg_cpu->iowait_boost &&
-> @@ -342,11 +350,24 @@ static void sugov_iowait_boost(struct sugov_cpu *sg_cpu, u64 time,
->  		return;
->  	sg_cpu->iowait_boost_pending = true;
->  
-> +	/*
-> +	 * Boost FAIR tasks only up to the CPU clamped utilization.
-> +	 *
-> +	 * Since DL tasks have a much more advanced bandwidth control, it's
-> +	 * safe to assume that IO boost does not apply to those tasks.
-> +	 * Instead, since RT tasks are not utilization clamped, we don't want
-> +	 * to apply clamping on IO boost while there is blocked RT
-> +	 * utilization.
-> +	 */
-> +	max_boost = sg_cpu->iowait_boost_max;
-> +	if (!cpu_util_rt(cpu_rq(sg_cpu->cpu)))
-> +		max_boost = uclamp_util(cpu_rq(sg_cpu->cpu), max_boost);
-> +
->  	/* Double the boost at each request */
->  	if (sg_cpu->iowait_boost) {
->  		sg_cpu->iowait_boost <<= 1;
-> -		if (sg_cpu->iowait_boost > sg_cpu->iowait_boost_max)
-> -			sg_cpu->iowait_boost = sg_cpu->iowait_boost_max;
-> +		if (sg_cpu->iowait_boost > max_boost)
-> +			sg_cpu->iowait_boost = max_boost;
->  		return;
->  	}
->  
-> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> index b7f3ee8ba164..95d62a2a0b44 100644
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -2267,6 +2267,29 @@ static inline unsigned int uclamp_none(int clamp_id)
->  	return SCHED_CAPACITY_SCALE;
->  }
->  
-> +#ifdef CONFIG_UCLAMP_TASK
-> +static inline unsigned int uclamp_util(struct rq *rq, unsigned int util)
-> +{
-> +	unsigned int min_util = READ_ONCE(rq->uclamp[UCLAMP_MIN].value);
-> +	unsigned int max_util = READ_ONCE(rq->uclamp[UCLAMP_MAX].value);
-> +
-> +	/*
-> +	 * Since CPU's {min,max}_util clamps are MAX aggregated considering
-> +	 * RUNNABLE tasks with _different_ clamps, we can end up with an
-> +	 * invertion, which we can fix at usage time.
-> +	 */
-> +	if (unlikely(min_util >= max_util))
-> +		return min_util;
-> +
-> +	return clamp(util, min_util, max_util);
-> +}
-> +#else /* CONFIG_UCLAMP_TASK */
-> +static inline unsigned int uclamp_util(struct rq *rq, unsigned int util)
-> +{
-> +	return util;
-> +}
-> +#endif /* CONFIG_UCLAMP_TASK */
-> +
->  #ifdef arch_scale_freq_capacity
->  # ifndef arch_scale_freq_invariant
->  #  define arch_scale_freq_invariant()	true
+> -	if (EXT2_INODE_SIZE(sb) == 0)
+> -		goto cantfind_ext2;
+>  	sbi->s_inodes_per_block = sb->s_blocksize / EXT2_INODE_SIZE(sb);
+>  	if (sbi->s_inodes_per_block == 0 || sbi->s_inodes_per_group == 0)
+>  		goto cantfind_ext2;
+> -- 
+> 1.9.1
 > 
-
-IMO it would be better to combine this patch with the next one.
-
-At least some things in it I was about to ask about would go away
-then. :-)
-
-Besides, I don't really see a reason for the split here.
-
-
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
