@@ -3,169 +3,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19705C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:43:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52755C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:45:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E25D421019
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:43:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DAE620844
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:45:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727944AbfAVKnM (ORCPT
+        id S1727733AbfAVKo6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 05:43:12 -0500
-Received: from foss.arm.com ([217.140.101.70]:50488 "EHLO foss.arm.com"
+        Tue, 22 Jan 2019 05:44:58 -0500
+Received: from 8bytes.org ([81.169.241.247]:58774 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726530AbfAVKnL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 05:43:11 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8E0E5A78;
-        Tue, 22 Jan 2019 02:43:10 -0800 (PST)
-Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9A9AB3F6A8;
-        Tue, 22 Jan 2019 02:43:07 -0800 (PST)
-Date:   Tue, 22 Jan 2019 10:43:05 +0000
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v6 05/16] sched/core: uclamp: Update CPU's refcount on
- clamp changes
-Message-ID: <20190122104305.6vjx37muqsxm536t@e110439-lin>
-References: <20190115101513.2822-1-patrick.bellasi@arm.com>
- <20190115101513.2822-6-patrick.bellasi@arm.com>
- <20190121153308.GL27931@hirez.programming.kicks-ass.net>
- <20190121154412.fak2t2iquj3aixtu@e110439-lin>
- <20190122093704.GM27931@hirez.programming.kicks-ass.net>
+        id S1726530AbfAVKo6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 05:44:58 -0500
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 021EB672; Tue, 22 Jan 2019 11:44:55 +0100 (CET)
+Date:   Tue, 22 Jan 2019 11:44:54 +0100
+From:   "joro@8bytes.org" <joro@8bytes.org>
+To:     "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        "Singh, Brijesh" <brijesh.singh@amd.com>
+Subject: Re: [PATCH] iommu/amd: Fix IOMMU page flush when detach all devices
+ from a domain
+Message-ID: <20190122104454.nke2knuyqiswfh5w@8bytes.org>
+References: <20190116041546.3541-1-Suravee.Suthikulpanit@amd.com>
+ <20190116132648.i5n3hz3k7d2wxbrx@8bytes.org>
+ <60c24182-c58e-0575-b085-c7eebc00c49b@amd.com>
+ <20190116170852.GD4681@8bytes.org>
+ <0a61c07d-edfe-2738-380d-33d39e40fc0a@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190122093704.GM27931@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <0a61c07d-edfe-2738-380d-33d39e40fc0a@amd.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22-Jan 10:37, Peter Zijlstra wrote:
-> On Mon, Jan 21, 2019 at 03:44:12PM +0000, Patrick Bellasi wrote:
-> > On 21-Jan 16:33, Peter Zijlstra wrote:
-> > > On Tue, Jan 15, 2019 at 10:15:02AM +0000, Patrick Bellasi wrote:
-> > > 
-> > > > +static inline void
-> > > > +uclamp_task_update_active(struct task_struct *p, unsigned int clamp_id)
-> > > > +{
-> > > > +	struct rq_flags rf;
-> > > > +	struct rq *rq;
-> > > > +
-> > > > +	/*
-> > > > +	 * Lock the task and the CPU where the task is (or was) queued.
-> > > > +	 *
-> > > > +	 * We might lock the (previous) rq of a !RUNNABLE task, but that's the
-> > > > +	 * price to pay to safely serialize util_{min,max} updates with
-> > > > +	 * enqueues, dequeues and migration operations.
-> > > > +	 * This is the same locking schema used by __set_cpus_allowed_ptr().
-> > > > +	 */
-> > > > +	rq = task_rq_lock(p, &rf);
-> > > > +
-> > > > +	/*
-> > > > +	 * Setting the clamp bucket is serialized by task_rq_lock().
-> > > > +	 * If the task is not yet RUNNABLE and its task_struct is not
-> > > > +	 * affecting a valid clamp bucket, the next time it's enqueued,
-> > > > +	 * it will already see the updated clamp bucket value.
-> > > > +	 */
-> > > > +	if (!p->uclamp[clamp_id].active)
-> > > > +		goto done;
-> > > > +
-> > > > +	uclamp_cpu_dec_id(p, rq, clamp_id);
-> > > > +	uclamp_cpu_inc_id(p, rq, clamp_id);
-> > > > +
-> > > > +done:
-> > > > +	task_rq_unlock(rq, p, &rf);
-> > > > +}
-> > > 
-> > > > @@ -1008,11 +1043,11 @@ static int __setscheduler_uclamp(struct task_struct *p,
-> > > >  
-> > > >  	mutex_lock(&uclamp_mutex);
-> > > >  	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MIN) {
-> > > > -		uclamp_bucket_inc(&p->uclamp[UCLAMP_MIN],
-> > > > +		uclamp_bucket_inc(p, &p->uclamp[UCLAMP_MIN],
-> > > >  				  UCLAMP_MIN, lower_bound);
-> > > >  	}
-> > > >  	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MAX) {
-> > > > -		uclamp_bucket_inc(&p->uclamp[UCLAMP_MAX],
-> > > > +		uclamp_bucket_inc(p, &p->uclamp[UCLAMP_MAX],
-> > > >  				  UCLAMP_MAX, upper_bound);
-> > > >  	}
-> > > >  	mutex_unlock(&uclamp_mutex);
-> > > 
-> > > 
-> > > But.... __sched_setscheduler() actually does the whole dequeue + enqueue
-> > > thing already ?!? See where it does __setscheduler().
-> > 
-> > This is slow-path accounting, not fast path.
-> 
-> Sure; but that's still no reason for duplicate or unneeded code.
-> 
-> > There are two refcounting going on here:
-> > 
-> >   1) mapped buckets:
-> > 
-> >      clamp_value <--(M1)--> bucket_id
-> > 
-> >   2) RUNNABLE tasks:
-> > 
-> >      bucket_id <--(M2)--> RUNNABLE tasks in a bucket
-> > 
-> > What we fix here is the refcounting for the buckets mapping. If a task
-> > does not have a task specific clamp value it does not refcount any
-> > bucket. The moment we assign a task specific clamp value, we need to
-> > refcount the task in the bucket corresponding to that clamp value.
-> > 
-> > This will keep the bucket in use at least as long as the task will
-> > need that clamp value.
-> 
-> Sure, I get that. What I don't get is why you're adding that (2) here.
-> Like said, __sched_setscheduler() already does a dequeue/enqueue under
-> rq->lock, which should already take care of that.
+Hi Suravee,
 
-Oh, ok... got it what you mean now.
+On Thu, Jan 17, 2019 at 08:44:36AM +0000, Suthikulpanit, Suravee wrote:
+> Then, in __domain_flush_pages, we issue command when the dev_iommu[] >= 0.
+> This should preserve previous behavior, and only add flushing condition to
+> the specific IOMMU in detached state. Please let me know what you think.
 
-With:
+I think the whole point why VFIO is detaching all devices first and then
+goes into unmapping pages is that there are no flushes needed anymore
+when devices are detached.
 
-   [PATCH v6 01/16] sched/core: Allow sched_setattr() to use the current policy
-   <20190115101513.2822-2-patrick.bellasi@arm.com>
+But when we follow your proposal we would still do IOTLB flushes even
+when no devices are attached anymore. So I'd like to avoid this, given
+the implications on unmapping performance. We should just flush the
+IOMMU TLB at detach time and be done with it.
 
-we can call __sched_setscheduler() with:
+Makes sense?
 
-   attr->sched_flags & SCHED_FLAG_KEEP_POLICY
+Regards,
 
-whenever we want just to change the clamp values of a task without
-changing its class. Thus, we can end up returning from
-__sched_setscheduler() without doing an actual dequeue/enqueue.
-
-This is likely the most common use-case.
-
-I'll better check if I can propagate this info and avoid M2 if we
-actually did a dequeue/enqueue.
-
-Cheers Patrick
-
--- 
-#include <best/regards.h>
-
-Patrick Bellasi
+	Joerg
