@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D856C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:23:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5377C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:23:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C98AB20879
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:23:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B89220879
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:23:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548170580;
-	bh=urRGes8OWVXQNU55psX7X+TVwJjeaCJAm4+Qrs4zg5g=;
+	s=default; t=1548170582;
+	bh=CXox3C/G3+yHsw0vm9mRoDQYOAcTRf0dWx7eRGxPWt0=;
 	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=BmOxtREoZpD3kVOKkkgWBlTGA8MI3SQ8gUsiJ3f0LdXpICBD35GE1EcvlmvGIQ2lE
-	 iA8XvwtKp3JugetvbuZubnPbokYldVSnGM9C9SaLMA7QobkL8rymPKtlqqRN1SuQf/
-	 87C2hvGPJVp4N9dA4K523ix3rPnA//S753M2hIcs=
+	b=kNFlE8liIzc6BTwQZ3boMn4L/VZ6gIWC0et8KjM+3jHRrYYv6xRLe3hPn69lNaEuk
+	 JX5xnWx8KYzSq+m67n4uXDMEQeLVKDyoMas4lNxGVtuIhyI2c88HFJmIgj/C1ObypW
+	 vBDgoRnFVi1/h25P+ULf26cKYijuy2OZlNl1Gzcc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729753AbfAVPW6 (ORCPT
+        id S1728998AbfAVPXB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 10:22:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35282 "EHLO mail.kernel.org"
+        Tue, 22 Jan 2019 10:23:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35438 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729732AbfAVPWy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 10:22:54 -0500
+        id S1729750AbfAVPW6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 10:22:58 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 31203217D6;
-        Tue, 22 Jan 2019 15:22:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C1D1E217D6;
+        Tue, 22 Jan 2019 15:22:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548170572;
-        bh=urRGes8OWVXQNU55psX7X+TVwJjeaCJAm4+Qrs4zg5g=;
+        s=default; t=1548170578;
+        bh=CXox3C/G3+yHsw0vm9mRoDQYOAcTRf0dWx7eRGxPWt0=;
         h=From:To:Cc:Subject:Date:From;
-        b=fgHV5vwzwre/UXaZHDDOh7WrGpFsxbuS4A9t32Kj6FIqjFTkQnlJv3PkqJQHs54Dt
-         C/lKxiwvgZUqaamycfP3CN44v0vBXsN+XwkZvZGoPMD8C7BWSwkQ5EvbawuhzMg9kq
-         Jh0M8GMuhSZ/dcAWr34zVqWgzdYpjZtX+gzaUs98=
+        b=kJhPAUpW0izjSgl3aNLtvEf2tGOEYNR+JDCNo9oCzNEZ1odlFDQSMekoqA1b2q7YI
+         J0nhbVaZLDvV2C1Q/qTRdv6cyYLWPlXtVacP1oZ4TnYBLsVTTVejEIMWyqcg9DeUDg
+         yM4KLqQQBMOtRaD2HMQ+xxmmhJYPAHfD9B+EnD8c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Solomon Peachy <pizza@shaftnet.org>,
         Kalle Valo <kvalo@codeaurora.org>,
-        Tony Lindgren <tony@atomide.com>,
         linux-wireless@vger.kernel.org
-Subject: [PATCH] ti: wl12xx: no need to check return value of debugfs_create functions
-Date:   Tue, 22 Jan 2019 16:21:26 +0100
-Message-Id: <20190122152151.16139-27-gregkh@linuxfoundation.org>
+Subject: [PATCH] cw1200: no need to check return value of debugfs_create functions
+Date:   Tue, 22 Jan 2019 16:21:28 +0100
+Message-Id: <20190122152151.16139-29-gregkh@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -60,53 +60,53 @@ When calling debugfs functions, there is no need to ever check the
 return value.  The function can work or not, but the code logic should
 never do something different based on this.
 
+Cc: Solomon Peachy <pizza@shaftnet.org>
 Cc: Kalle Valo <kvalo@codeaurora.org>
-Cc: Tony Lindgren <tony@atomide.com>
 Cc: linux-wireless@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ti/wl12xx/debugfs.c | 20 +-------------------
- 1 file changed, 1 insertion(+), 19 deletions(-)
+ drivers/net/wireless/st/cw1200/debug.c | 26 ++++++--------------------
+ 1 file changed, 6 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/net/wireless/ti/wl12xx/debugfs.c b/drivers/net/wireless/ti/wl12xx/debugfs.c
-index 0521cbf858cf..6c3c04eca8fd 100644
---- a/drivers/net/wireless/ti/wl12xx/debugfs.c
-+++ b/drivers/net/wireless/ti/wl12xx/debugfs.c
-@@ -125,20 +125,10 @@ WL12XX_DEBUGFS_FWSTATS_FILE(rxpipe, tx_xfr_host_int_trig_rx_data, "%u");
- int wl12xx_debugfs_add_files(struct wl1271 *wl,
- 			     struct dentry *rootdir)
- {
--	int ret = 0;
--	struct dentry *entry, *stats, *moddir;
-+	struct dentry *stats, *moddir;
+diff --git a/drivers/net/wireless/st/cw1200/debug.c b/drivers/net/wireless/st/cw1200/debug.c
+index 2231ba08bc1f..d94266d9d0b8 100644
+--- a/drivers/net/wireless/st/cw1200/debug.c
++++ b/drivers/net/wireless/st/cw1200/debug.c
+@@ -371,28 +371,14 @@ int cw1200_debug_init(struct cw1200_common *priv)
  
- 	moddir = debugfs_create_dir(KBUILD_MODNAME, rootdir);
--	if (!moddir || IS_ERR(moddir)) {
--		entry = moddir;
+ 	d->debugfs_phy = debugfs_create_dir("cw1200",
+ 					    priv->hw->wiphy->debugfsdir);
+-	if (!d->debugfs_phy)
 -		goto err;
--	}
 -
- 	stats = debugfs_create_dir("fw_stats", moddir);
--	if (!stats || IS_ERR(stats)) {
--		entry = stats;
+-	if (!debugfs_create_file("status", 0400, d->debugfs_phy,
+-				 priv, &cw1200_status_fops))
 -		goto err;
--	}
- 
- 	DEBUGFS_FWSTATS_ADD(tx, internal_desc_overflow);
- 
-@@ -232,12 +222,4 @@ int wl12xx_debugfs_add_files(struct wl1271 *wl,
- 	DEBUGFS_FWSTATS_ADD(rxpipe, tx_xfr_host_int_trig_rx_data);
+-
+-	if (!debugfs_create_file("counters", 0400, d->debugfs_phy,
+-				 priv, &cw1200_counters_fops))
+-		goto err;
+-
+-	if (!debugfs_create_file("wsm_dumps", 0200, d->debugfs_phy,
+-				 priv, &fops_wsm_dumps))
+-		goto err;
++	debugfs_create_file("status", 0400, d->debugfs_phy, priv,
++			    &cw1200_status_fops);
++	debugfs_create_file("counters", 0400, d->debugfs_phy, priv,
++			    &cw1200_counters_fops);
++	debugfs_create_file("wsm_dumps", 0200, d->debugfs_phy, priv,
++			    &fops_wsm_dumps);
  
  	return 0;
 -
 -err:
--	if (IS_ERR(entry))
--		ret = PTR_ERR(entry);
--	else
--		ret = -ENOMEM;
--
+-	priv->debug = NULL;
+-	debugfs_remove_recursive(d->debugfs_phy);
+-	kfree(d);
 -	return ret;
  }
+ 
+ void cw1200_debug_release(struct cw1200_common *priv)
 -- 
 2.20.1
 
