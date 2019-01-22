@@ -2,166 +2,257 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25534C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:33:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CA04C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:34:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA7E920870
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:33:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1264B20870
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:34:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IQF+8lYj"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FUkP7iMW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728503AbfAVNdl (ORCPT
+        id S1728540AbfAVNeJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 08:33:41 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:35520 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728339AbfAVNdl (ORCPT
+        Tue, 22 Jan 2019 08:34:09 -0500
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:43122 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728416AbfAVNeJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 08:33:41 -0500
-Received: by mail-lf1-f68.google.com with SMTP id e26so18085543lfc.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 05:33:40 -0800 (PST)
+        Tue, 22 Jan 2019 08:34:09 -0500
+Received: by mail-ua1-f67.google.com with SMTP id z11so8031350uaa.10
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 05:34:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=s/bavXojHDUtomwRUL9R87NB2iPK1uK7VySnEspdP2c=;
-        b=IQF+8lYjGm/C3l3/kuF1cPKQznEgBivpwXqmhlNUq9ljWKaohAdb/vqRV/edayB7IG
-         f5ugTLOZY3xHX/44/Nc3ad/XIvEbgI5INCwJwRMVPGoaPgwFnSbOY2s9RbVMJPZYXWek
-         RRgxludiSn8xtzzZQEfgOpVe7fOaXW/iRUZzQ=
+         :cc;
+        bh=EfdIwdbRK43b54fj1Noa2nq7BBPRmS7ID38/9dZ/ej4=;
+        b=FUkP7iMW/ncP9QxPm4dgq077EOzpkKzOfWnQBowPhnBrEqdTXPoiLpfl0tqMsu5bRM
+         aHDcFFejbqmZfz2hbI/G3BY4HjhhuDEppkf3CFMxOf+1K/cW217ni0+m71fXMtwmXc/Z
+         VfMIHP8v8u3N+9+Qtg/NN0eYXub86epKYCtG4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=s/bavXojHDUtomwRUL9R87NB2iPK1uK7VySnEspdP2c=;
-        b=UlvggPQOnB6vGHj1NAkIOYH48fsVRgfRdj1SwWhRwMIKMUVD/94M44jl19+DTWtKUF
-         bHnulm8sX5IkmwYVxx0uDIQ5Q/68FOQpN1BsheOC1VAUnL/TrMZibdt8h6hJaU5XGcZS
-         8gn5AIg1op8Pl8McWTfkYRZ/gWeBJlwDS38Iov/8zpOaQ3Caoh6gUdaM8lfiz1R0dLde
-         FCC5+LOS2ui7x7ugWQQvbhtkD7o04Cc4o3YvjsY/9/OdznrbvEfI3Ky5n52dpkSQEOT1
-         T5kW1aCr8QG9dVRc9OBXJPxXE7KP3D0F97lIB7RbDueOs3SKDinu2LuP0ySpADmmX2GS
-         TLrg==
-X-Gm-Message-State: AJcUukcCVHOAgNpdLiNrE4Q9c48YAaX2hgY+qq/N27qHXOm4ajFn8Ikx
-        4L51OxylyKabuDcBIuhRwt//0ye9OoWjtIMzTB7SDw==
-X-Google-Smtp-Source: ALg8bN4aj5ipwr+wmomd5yL76phV5rUgewhWrACicDQqX7VVumqdnqVMCdivuSc94APIMVkC0Qmdg7qhPOkhopAC58U=
-X-Received: by 2002:a19:280f:: with SMTP id o15mr20257201lfo.0.1548164019488;
- Tue, 22 Jan 2019 05:33:39 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=EfdIwdbRK43b54fj1Noa2nq7BBPRmS7ID38/9dZ/ej4=;
+        b=rDJjhiEiFdS3il1KMR3kJPz5oQFM1IdOorw1YGDWU4uRG3sVmoLo0zbK9lMMWcIxSS
+         nL9/nVHJzYFMLVnAA8Jf6aXP5b3rDxSUuwjIr5tYu46htahOoIR+fh5VHa8cAbPNs35w
+         OUoBKzJfTjgF8KMTIkHFOzDm3JFKzjRErbwu6S0RGTB5ghXNLMZFuzeiITy765/0ae5L
+         Ms7/wHYqFJ8qe7pJzfb0DRV5ChAjQg1YhrR01Ydzshd8jRNum1WJZN86+2rbTLHMhwnS
+         DM9wifp6QSemXynUMQ5ppfc3hAfp/a3jqqenKiC3k5X1i1EfRI6ORDWAGFdSMQDd3p8v
+         KjfQ==
+X-Gm-Message-State: AJcUukeeu/l+hKpIskDkA1iW1FZ3XZRp0noE1ATD/THzp340ODocdjPo
+        PnRjvO45QwmNj9csgtdZhrWtGgZBBl5dcJjBXyfmlQ==
+X-Google-Smtp-Source: ALg8bN4l8lnSDBnIygvscA7mC5eSoxhJVCjQV6W+yI7/heRBXhQV1fCZ+6BEgWVNY/Upa/uHx/mzjeq8JGTuGJSLHcM=
+X-Received: by 2002:ab0:148e:: with SMTP id d14mr13161268uae.23.1548164047542;
+ Tue, 22 Jan 2019 05:34:07 -0800 (PST)
 MIME-Version: 1.0
-References: <20190121122455.819406896@linuxfoundation.org>
-In-Reply-To: <20190121122455.819406896@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Tue, 22 Jan 2019 19:03:28 +0530
-Message-ID: <CA+G9fYvnXwTyD4+O10vr-26rX2eW2RWB=8v2W2N7nBCFozm+Fg@mail.gmail.com>
-Subject: Re: [PATCH 4.20 000/111] 4.20.4-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        lkft-triage@lists.linaro.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        linux- stable <stable@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>
+References: <1548062959-31860-1-git-send-email-sumit.garg@linaro.org>
+ <1548062959-31860-2-git-send-email-sumit.garg@linaro.org> <CACi5LpMN2N1joWxmwDy=DtH+stenUs64oJ2_T4T-7sSoS=NAgw@mail.gmail.com>
+In-Reply-To: <CACi5LpMN2N1joWxmwDy=DtH+stenUs64oJ2_T4T-7sSoS=NAgw@mail.gmail.com>
+From:   Sumit Garg <sumit.garg@linaro.org>
+Date:   Tue, 22 Jan 2019 19:03:56 +0530
+Message-ID: <CAFA6WYNDt2Mf3cwPrgfCpxYrCZ5Z1eMD9ieu0sfUCNeCSmu=RA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/4] tee: add bus driver framework for TEE based devices
+To:     Bhupesh Sharma <bhsharma@redhat.com>
+Cc:     Jens Wiklander <jens.wiklander@linaro.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        mpm@selenic.com, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        tee-dev@lists.linaro.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 21 Jan 2019 at 19:16, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Mon, 21 Jan 2019 at 20:58, Bhupesh Sharma <bhsharma@redhat.com> wrote:
 >
-> This is the start of the stable review cycle for the 4.20.4 release.
-> There are 111 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> Hi Sumit,
 >
-> Responses should be made by Wed Jan 23 12:23:56 UTC 2019.
-> Anything received after that time might be too late.
+> On Mon, Jan 21, 2019 at 3:00 PM Sumit Garg <sumit.garg@linaro.org> wrote:
+> >
+> > Introduce a generic TEE bus driver concept for TEE based kernel drivers
+> > which would like to communicate with TEE based devices/services.
+> >
+> > In this TEE bus concept, devices/services are identified via Universally
+> > Unique Identifier (UUID) and drivers register a table of device UUIDs
+> > which they can support.
+> >
+> > So this TEE bus framework registers a match() callback function which
+> > iterates over the driver UUID table to find a corresponding match for
+> > device UUID. If a match is found, then this particular device is probed
+> > via corresponding probe api registered by the driver. This process
+> > happens whenever a device or a driver is registered with TEE bus.
+> >
+> > Also this framework allows for device enumeration to be specific to
+> > corresponding TEE implementation like OP-TEE etc.
+> >
+> > Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+> > ---
+> >  drivers/tee/tee_core.c  | 45 +++++++++++++++++++++++++++++++++++++++++----
+> >  include/linux/tee_drv.h | 37 ++++++++++++++++++++++++++++++++++++-
+> >  2 files changed, 77 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/drivers/tee/tee_core.c b/drivers/tee/tee_core.c
+> > index 7b2bb4c..55370d5 100644
+> > --- a/drivers/tee/tee_core.c
+> > +++ b/drivers/tee/tee_core.c
+> > @@ -15,7 +15,6 @@
+> >  #define pr_fmt(fmt) "%s: " fmt, __func__
+> >
+> >  #include <linux/cdev.h>
+> > -#include <linux/device.h>
+> >  #include <linux/fs.h>
+> >  #include <linux/idr.h>
+> >  #include <linux/module.h>
+> > @@ -1027,6 +1026,30 @@ int tee_client_invoke_func(struct tee_context *ctx,
+> >  }
+> >  EXPORT_SYMBOL_GPL(tee_client_invoke_func);
+> >
+> > +static int tee_client_device_match(struct device *dev,
+> > +                                  struct device_driver *drv)
+> > +{
+> > +       const tee_client_device_id *id_table;
+> > +       struct tee_client_device *tee_device;
+> > +
+> > +       id_table = to_tee_client_driver(drv)->id_table;
+> > +       tee_device = to_tee_client_device(dev);
+> > +
+> > +       while (!uuid_is_null(id_table)) {
+> > +               if (uuid_equal(&tee_device->id, id_table))
+> > +                       return 1;
+> > +               id_table++;
+> > +       }
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +struct bus_type tee_bus_type = {
+> > +       .name           = "tee",
+> > +       .match          = tee_client_device_match,
+> > +};
+> > +EXPORT_SYMBOL_GPL(tee_bus_type);
+> > +
+> >  static int __init tee_init(void)
+> >  {
+> >         int rc;
+> > @@ -1040,18 +1063,32 @@ static int __init tee_init(void)
+> >         rc = alloc_chrdev_region(&tee_devt, 0, TEE_NUM_DEVICES, "tee");
+> >         if (rc) {
+> >                 pr_err("failed to allocate char dev region\n");
+> > -               class_destroy(tee_class);
+> > -               tee_class = NULL;
+> > +               goto out_unreg_class;
+> >         }
+> >
+> > +       rc = bus_register(&tee_bus_type);
+> > +       if (rc) {
+> > +               pr_err("failed to register tee bus\n");
+> > +               goto out_unreg_chrdev;
+> > +       }
+> > +
+> > +       return 0;
+> > +
+> > +out_unreg_chrdev:
+> > +       unregister_chrdev_region(tee_devt, TEE_NUM_DEVICES);
+> > +out_unreg_class:
+> > +       class_destroy(tee_class);
+> > +       tee_class = NULL;
+> > +
+> >         return rc;
+> >  }
+> >
+> >  static void __exit tee_exit(void)
+> >  {
+> > +       bus_unregister(&tee_bus_type);
+> > +       unregister_chrdev_region(tee_devt, TEE_NUM_DEVICES);
+> >         class_destroy(tee_class);
+> >         tee_class = NULL;
+> > -       unregister_chrdev_region(tee_devt, TEE_NUM_DEVICES);
+> >  }
+> >
+> >  subsys_initcall(tee_init);
+> > diff --git a/include/linux/tee_drv.h b/include/linux/tee_drv.h
+> > index 6cfe058..ba985d8 100644
+> > --- a/include/linux/tee_drv.h
+> > +++ b/include/linux/tee_drv.h
+> > @@ -15,11 +15,13 @@
+> >  #ifndef __TEE_DRV_H
+> >  #define __TEE_DRV_H
+> >
+> > -#include <linux/types.h>
+> > +#include <linux/device.h>
+> >  #include <linux/idr.h>
+> >  #include <linux/kref.h>
+> >  #include <linux/list.h>
+> >  #include <linux/tee.h>
+> > +#include <linux/types.h>
+> > +#include <linux/uuid.h>
+> >
+> >  /*
+> >   * The file describes the API provided by the generic TEE driver to the
+> > @@ -538,4 +540,37 @@ static inline bool tee_param_is_memref(struct tee_param *param)
+> >         }
+> >  }
+> >
+> > +extern struct bus_type tee_bus_type;
+> > +
+> > +/*
+> > + * For TEE based client devices we use the device uuid as the
+> > + * identifier.
+> > + */
+> > +typedef uuid_t tee_client_device_id;
+> > +
+> > +/**
+> > + * struct tee_client_device - tee based device
+> > + * @id:                        device identifier
+> > + * @dev:               device structure
+> > + */
+> > +struct tee_client_device {
+> > +       tee_client_device_id id;
+> > +       struct device dev;
+> > +};
+> > +
+> > +#define to_tee_client_device(d) container_of(d, struct tee_client_device, dev)
+> > +
+> > +/**
+> > + * struct tee_client_driver - tee client driver
+> > + * @id_table:          device id table supported by this driver
+> > + * @driver:            driver structure
+> > + */
+> > +struct tee_client_driver {
+> > +       const tee_client_device_id *id_table;
+> > +       struct device_driver driver;
+> > +};
+> > +
+> > +#define to_tee_client_driver(d) \
+> > +               container_of(d, struct tee_client_driver, driver)
+> > +
+> >  #endif /*__TEE_DRV_H*/
+> > --
+> > 2.7.4
+> >
 >
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.20.4-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.20.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+> LGTM, if there are no further comments on this patch please free to add:
+> Reviewed-by: Bhupesh Sharma <bhsharma@redhat.com>
 >
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Thanks for this review tag. Actually I have to add support in module
+device table for TEE bus devices as per Ard's comments on patch #4. So
+that will require changes in this patch in next version.
 
-Summary
-------------------------------------------------------------------------
+-Sumit
 
-kernel: 4.20.4-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.20.y
-git commit: 67648eb553fb944194c327026f4be4632dce710d
-git describe: v4.20.3-114-g67648eb553fb
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.20-oe/bu=
-ild/v4.20.3-114-g67648eb553fb
-
-No regressions (compared to build v4.20.3)
-
-No fixes (compared to build v4.20.3)
-
-
-Ran 20503 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* boot
-* install-android-platform-tools-r2600
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* spectre-meltdown-checker-test
-* ltp-fs-tests
-* ltp-open-posix-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
+> Thanks.
