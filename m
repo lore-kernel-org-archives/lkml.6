@@ -2,162 +2,91 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42C38C37122
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 00:29:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35C3DC37122
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 00:30:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1732121721
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 00:29:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE81C21721
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 00:30:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548117018;
+	bh=eaQiUBDfb6E9/VOYkZfCV15xusiVqeKPTawDXxzfKl0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=AHIHTOa67oFT2t1UAlYKBXfmO5f/vOtNVHh3rZ5BZjByiu7F6Kh+0/8FEcxpBISLZ
+	 7o7eviesu+dmtJ/AQje0pjGV47NDo8UdrKgCq0GLsIwwgRomt1+TLYv7JLQBJyjtJU
+	 aMuA2xszRZRIeD8ti6+ImTFv+H4kuGztbj8XN+2k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726724AbfAVA3q (ORCPT
+        id S1726778AbfAVAaQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 19:29:46 -0500
-Received: from mga06.intel.com ([134.134.136.31]:21558 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725962AbfAVA3q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 19:29:46 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jan 2019 16:29:45 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,504,1539673200"; 
-   d="scan'208";a="127777931"
-Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.37])
-  by orsmga002.jf.intel.com with ESMTP; 21 Jan 2019 16:29:44 -0800
-Date:   Tue, 22 Jan 2019 08:29:16 +0800
-From:   Wei Yang <richardw.yang@linux.intel.com>
-To:     Wei Yang <richardw.yang@linux.intel.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>, linux-nvdimm@lists.01.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] libnvdimm: Clarify nd_pfn_init() flow
-Message-ID: <20190122002915.GA5984@richard>
-Reply-To: Wei Yang <richardw.yang@linux.intel.com>
-References: <154785884329.2202034.3295476681016958230.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20190121075102.GA3758@richard>
+        Mon, 21 Jan 2019 19:30:16 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:38628 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725962AbfAVAaQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 19:30:16 -0500
+Received: by mail-ot1-f66.google.com with SMTP id e12so22139660otl.5;
+        Mon, 21 Jan 2019 16:30:15 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XpDQ3gXdzLJtDwqohrw59Qy2bmeppBzply4LsowzBYo=;
+        b=Xpty50lHRpxudAQknKYg6g8ZeyXk3xuH56+2C2v7bgH6hRGA7ly4NvBR8QIEYFCC4m
+         iNyod5EbH1JOwwmJ1Xk4CWBqXAXU5L0XJjpBYw44TfEhExOCA4g+5IelA1lUZ/hy3pJ2
+         GQg8H/y3/XJnpDu1Vx2P6uwHgmbZf6+ExDzIjiXLcty8+j/5dJGyiXTpLMiDkCdiuziw
+         dDy2ddUwXIW0RUnLdRRhbdv1XOtLZHNPF2MKO7OVVQ+SzEf58Sdj1CtloAfBttfi8x9V
+         eKzKVmFqcic/7/53sxZ4PC3rXGvRb52KhGpCVNirTu0rkkoxGZhDhjs/kr+YIM8o/p4j
+         RiaQ==
+X-Gm-Message-State: AJcUukd9u7b4NOugIfsfwVszzGcR8pDkMHXRMip2zBVGXpWryxC/6cxo
+        XiBp/Z5/XccC63i7CKwNNA==
+X-Google-Smtp-Source: ALg8bN4dO/uDXQQAzJ/yiWBBuVgTk1+I1T5uePSipxY4CNYMkXge4HZCM+dusjk1ye6T0Hq8WpXpmw==
+X-Received: by 2002:a9d:60b:: with SMTP id 11mr20062213otn.200.1548117015485;
+        Mon, 21 Jan 2019 16:30:15 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id v20sm6548792otp.10.2019.01.21.16.30.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 21 Jan 2019 16:30:14 -0800 (PST)
+Date:   Mon, 21 Jan 2019 18:30:14 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     AngeloGioacchino Del Regno <kholk11@gmail.com>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: smd: Add support for MSM8956/76 RPM clocks
+Message-ID: <20190122003014.GA26136@bogus>
+References: <2fcdf0e9b1eef55350911984064dd94f16f1fcd8.camel@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190121075102.GA3758@richard>
+In-Reply-To: <2fcdf0e9b1eef55350911984064dd94f16f1fcd8.camel@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 03:51:02PM +0800, Wei Yang wrote:
->On Fri, Jan 18, 2019 at 04:47:23PM -0800, Dan Williams wrote:
->>In recent days, 2 engineers, including the original author of
->>nd_pfn_init(), overlooked the internal call to nd_pfn_validate() and the
->>implications to memory allocation.
->>
->>Clarify this situation to help anyone that reads through this code in
->>the future.
->>
->>Reported-by: Wei Yang <richardw.yang@linux.intel.com>
->>Signed-off-by: Dan Williams <dan.j.williams@intel.com>
->>---
->> drivers/nvdimm/btt_devs.c |    5 +++++
->> drivers/nvdimm/dax_devs.c |    5 +++++
->> drivers/nvdimm/pfn_devs.c |   21 +++++++++++++++++++++
->> 3 files changed, 31 insertions(+)
->>
->>diff --git a/drivers/nvdimm/btt_devs.c b/drivers/nvdimm/btt_devs.c
->>index 795ad4ff35ca..e0a6f2491e57 100644
->>--- a/drivers/nvdimm/btt_devs.c
->>+++ b/drivers/nvdimm/btt_devs.c
->>@@ -354,6 +354,11 @@ int nd_btt_probe(struct device *dev, struct nd_namespace_common *ndns)
->> 		put_device(btt_dev);
->> 	}
->> 
->>+	/*
->>+	 * Successful probe indicates to the caller that an nd_btt
->>+	 * personality device has been registered and the caller can
->>+	 * fail the probe of the baseline namespace device.
->>+	 */
->> 	return rc;
->> }
->> EXPORT_SYMBOL(nd_btt_probe);
->>diff --git a/drivers/nvdimm/dax_devs.c b/drivers/nvdimm/dax_devs.c
->>index 0453f49dc708..65010d955fa7 100644
->>--- a/drivers/nvdimm/dax_devs.c
->>+++ b/drivers/nvdimm/dax_devs.c
->>@@ -136,6 +136,11 @@ int nd_dax_probe(struct device *dev, struct nd_namespace_common *ndns)
->> 	} else
->> 		__nd_device_register(dax_dev);
->> 
->>+	/*
->>+	 * Successful probe indicates to the caller that a device-dax
->>+	 * personality device has been registered and the caller can
->>+	 * fail the probe of the baseline namespace device.
->>+	 */
->> 	return rc;
->> }
->> EXPORT_SYMBOL(nd_dax_probe);
->>diff --git a/drivers/nvdimm/pfn_devs.c b/drivers/nvdimm/pfn_devs.c
->>index 6f22272e8d80..a8783b5a76ba 100644
->>--- a/drivers/nvdimm/pfn_devs.c
->>+++ b/drivers/nvdimm/pfn_devs.c
->>@@ -576,6 +576,11 @@ int nd_pfn_probe(struct device *dev, struct nd_namespace_common *ndns)
->> 	} else
->> 		__nd_device_register(pfn_dev);
->> 
->>+	/*
->>+	 * Successful probe indicates to the caller that an nd_pfn
->>+	 * personality device has been registered and the caller can
->>+	 * fail the probe of the baseline namespace device.
->>+	 */
->> 	return rc;
->> }
->> EXPORT_SYMBOL(nd_pfn_probe);
->>@@ -706,6 +711,22 @@ static int nd_pfn_init(struct nd_pfn *nd_pfn)
->> 		sig = DAX_SIG;
->> 	else
->> 		sig = PFN_SIG;
->>+
->>+	/*
->>+	 * Check for an existing 'pfn' superblock before writing a new
->>+	 * one. The intended flow is that on the first probe of an
->>+	 * nd_{pfn,dax} device the superblock is calculated and written
->>+	 * to the namespace. In this case nd_pfn_validate() returns
->>+	 * -ENODEV because no valid superblock exists currently.
->>+	 *
->>+	 * On subsequent probes nd_pfn_validate() will find a valid
->>+	 * superblock and return 0.
->>+	 *
->>+	 * If an assumption of the superblock has been violated, like a
->>+	 * change to the physical alignment of the namespace,
->>+	 * nd_pfn_validate() will return an error other than -ENODEV to
->>+	 * fail probing.
->>+	 */
->
->Let me reply in this thread. Sorry for my poor understand, I don't get it
->clearly now.
->
->To be honest, the structure is a little bit complicated, if my understanding
->is not correct, please forgive my poor understand.
->
->Below is a code flow. To simply analysis, I setup kernel parameter memmap to
->emulate, and configure one namespace to mode devdax. So that we would have the
->same root for code flow.
->
->Let's start with nd_region_driver:
->
->    nd_region_probe
->        nd_region_register_namespaces
->	    create_namespaces
->	nd_region->btt_seed = nd_btt_create(nd_region);
->	nd_region->pfn_seed = nd_pfn_create(nd_region);
->	nd_region->dax_seed = nd_dax_create(nd_region);
+On Sat, Jan 12, 2019 at 04:38:58PM +0100, AngeloGioacchino Del Regno wrote:
+> From 6aeefad77a2a5d47a9bd009d2d10db2a5dd153a2 Mon Sep 17 00:00:00 2001
+> From: "Angelo G. Del Regno" <kholk11@gmail.com>
+> Date: Sat, 12 Jan 2019 16:31:09 +0100
+> Subject: [PATCH] clk: qcom: smd: Add support for MSM8956/76 RPM clocks
+> 
+> Add all RPM clocks found on MSM8956/MSM8976 SoCs.
+> 
+> Signed-off-by: Angelo G. Del Regno <kholk11@gmail.com>
+> ---
+>  .../devicetree/bindings/clock/qcom,rpmcc.txt  |  1 +
 
-May I ask a question about the purpose to create these three device here?
+Separate patch preferred, but for a 1 line change:
 
-I see nd_pfn_create() doesn't allocate pfn_sb here, and the probe on these
-devices failed. Confused why we need these three devices.
+Acked-by: Rob Herring <robh@kernel.org>
 
--- 
-Wei Yang
-Help you, Help me
+>  drivers/clk/qcom/clk-smd-rpm.c                | 53 +++++++++++++++++++
+>  2 files changed, 54 insertions(+)
