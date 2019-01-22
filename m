@@ -2,120 +2,168 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A7CDC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:33:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C513C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:33:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1914B20879
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:33:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rm0rKjQK"
+	by mail.kernel.org (Postfix) with ESMTP id 63B0021721
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:33:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727429AbfAVIdc (ORCPT
+        id S1727488AbfAVIdn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 03:33:32 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:40598 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727062AbfAVIda (ORCPT
+        Tue, 22 Jan 2019 03:33:43 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:53487 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727062AbfAVIdn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 03:33:30 -0500
-Received: by mail-pg1-f194.google.com with SMTP id z10so10723619pgp.7;
-        Tue, 22 Jan 2019 00:33:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=56Ajni3E8oZE+o/bfMQDpPDoogGlR13oEATbHo2Cu/A=;
-        b=rm0rKjQK9GUvfcDjEXiVDMLEdrgt5o9JpBVcvm6/3/4uBbT2OFpoY4kCu3buz2WZaf
-         TE+PTo2JcZfISf12bVCsQQZ1g/t78GICw+q/GQd4JmEiSUVvnRWR0dIYYZrQIC+l7Q3u
-         u6zi/sgMuMMUezVtWKJHgRyJ0RHc/NRRUnX/g7mzAkyed0xdKrfn+F3bYPKquVyukdvw
-         4vcEBrY1rKyj6a7ViWsASljvhFRpB660snQbpAtEfaDQygjaZMJlddRVY3PHivwlKILH
-         yIm+AkcDudO63Y6dUM2tdiMKjpIoB+Tz7mIkbeM5AnDHB/qC3A80VlXwkcr4uhl9BVxa
-         iAuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=56Ajni3E8oZE+o/bfMQDpPDoogGlR13oEATbHo2Cu/A=;
-        b=Sk3I8LMm3hY4+HMjua3IvgTaP3v3Ci2dscD0HKqzRjSDeSbkhzevOj5O5X7WDtmqaY
-         3Fdmlv3Atp0bberwVDNdvcaPWPnir0n2VC2k10JhKXskSh4+b2FIhIoG8nAS09nSL+Ko
-         9yCiKkLORF4EJAbP+Ny7tBcpb9yYVv0Gx01y4seQ8idjH+iDY+Q640AnxPf5hxz2PUyd
-         N2GVxUjEQfiuBs17IdbOXGwRMAiUq0a2W+B5TjxiK901NVnUblOvsLtUgKEn8GepXnwH
-         rhxTM85no3xOIZ7qRIg+3bDZ5LUm1op4mUdq5jBv+mOosRtJtCKYVeNTOY/zd+0dEV+m
-         mwYA==
-X-Gm-Message-State: AJcUukfOZRy4DXUVgsgHjlbght/hX6n1C9dUPS8PxhCFJ0tMKd/sTjYQ
-        lUEIB3+Q4iWdRi2VRk5rLtxe9R2p
-X-Google-Smtp-Source: ALg8bN7XC3FuX9Jb2JkPCXHQm3qRM4DFi0DHCcUtFxBel/U59HqJwSLH6rGNyeCtbfbKGV+4C8mTog==
-X-Received: by 2002:a63:5026:: with SMTP id e38mr31220384pgb.123.1548146009345;
-        Tue, 22 Jan 2019 00:33:29 -0800 (PST)
-Received: from myunghoj-Precision-5530 (cpe-76-176-3-80.san.res.rr.com. [76.176.3.80])
-        by smtp.gmail.com with ESMTPSA id a65sm12860844pge.65.2019.01.22.00.33.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 22 Jan 2019 00:33:28 -0800 (PST)
-Date:   Tue, 22 Jan 2019 00:33:26 -0800
-From:   Myungho Jung <mhjungk@gmail.com>
-To:     Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>
-Cc:     linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] Bluetooth: hci_uart: Check if socket buffer is ERR_PTR in
- h4_recv_buf()
-Message-ID: <20190122083323.GA22508@myunghoj-Precision-5530>
+        Tue, 22 Jan 2019 03:33:43 -0500
+X-IronPort-AV: E=Sophos;i="5.56,505,1539619200"; 
+   d="scan'208";a="52564129"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 22 Jan 2019 16:33:41 +0800
+Received: from G08CNEXCHPEKD03.g08.fujitsu.local (unknown [10.167.33.85])
+        by cn.fujitsu.com (Postfix) with ESMTP id 5EF224B7D665;
+        Tue, 22 Jan 2019 16:33:37 +0800 (CST)
+Received: from [10.167.226.222] (10.167.226.222) by
+ G08CNEXCHPEKD03.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Tue, 22 Jan 2019 16:33:37 +0800
+Subject: Re: rcutorture: meaning of "End of test: RCU_HOTPLUG"
+To:     <paulmck@linux.ibm.com>
+CC:     <linux-kernel@vger.kernel.org>, <josh@joshtriplett.org>,
+        <rostedt@goodmis.org>, <mathieu.desnoyers@efficios.com>,
+        <jiangshanlai@gmail.com>, "Li, Philip" <philip.li@intel.com>,
+        <lkp-developer@eclists.intel.com>
+References: <996df745-8434-b92c-bad9-334cc6bf4b7f@cn.fujitsu.com>
+ <20190122040144.GB4240@linux.ibm.com>
+From:   Su Yue <suy.fnst@cn.fujitsu.com>
+Message-ID: <c2cf5125-2545-c325-0393-0dba4aab379d@cn.fujitsu.com>
+Date:   Tue, 22 Jan 2019 16:42:19 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190122040144.GB4240@linux.ibm.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.167.226.222]
+X-yoursite-MailScanner-ID: 5EF224B7D665.AC901
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: suy.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-h4_recv_buf() callers store the return value to socket buffer and
-recursively pass the buffer to h4_recv_buf() without protection. So,
-ERR_PTR returned from h4_recv_buf() can be dereferenced, if called again
-before setting the socket buffer to NULL from previous error. Check if
-skb is ERR_PTR in h4_recv_buf().
+Thanks for your quick reply! Paul
 
-Reported-by: syzbot+017a32f149406df32703@syzkaller.appspotmail.com
-Signed-off-by: Myungho Jung <mhjungk@gmail.com>
----
- drivers/bluetooth/h4_recv.h | 4 ++++
- drivers/bluetooth/hci_h4.c  | 4 ++++
- 2 files changed, 8 insertions(+)
+On 1/22/19 12:01 PM, Paul E. McKenney wrote:
+> On Tue, Jan 22, 2019 at 11:40:53AM +0800, Su Yue wrote:
+>> Hi, guys
+>>    While running rcutorture tests with "onoff_interval", some tests
+>> failed and results show like:
+>>
+>> =====================================================================
+>> [  316.354501] srcud-torture:--- End of test: RCU_HOTPLUG:
+>> nreaders=1 nfakewriters=4 stat_interval=60 verbose=2
+>> test_no_idle_hz=1 shuffle_interval=3 stutter=5 irqreader=1 fq\
+>> s_duration=0 fqs_holdoff=0 fqs_stutter=3 test_boost=1/0
+>> test_boost_interval=7 test_boost_duration=4 shutdown_secs=0
+>> stall_cpu=0 stall_cpu_holdoff=10 stall_cpu_irqsoff=0 n_ba\
+>> rrier_cbs=0 onoff_interval=3 onoff_holdoff=0
+>> ====================================================================
+>>
+>> I am wondering that meaning of "RCU_HOTPLUG". Is it expected because
+>> cpu hotplug is enabled in the test? Or just represents another type of
+>> failure?
+> 
+> This says that at least one CPU hotplug operation failed, that is,
+> the CPU didn't actually come online or go offline as requested.  If you
+> are introducing CPU hotplug to an architecture, this usually indicates
+> that you have bugs in your CPU-hotplug code.  Or it nmight be that
 
-diff --git a/drivers/bluetooth/h4_recv.h b/drivers/bluetooth/h4_recv.h
-index b432651f8236..285cf72190b7 100644
---- a/drivers/bluetooth/h4_recv.h
-+++ b/drivers/bluetooth/h4_recv.h
-@@ -60,6 +60,10 @@ static inline struct sk_buff *h4_recv_buf(struct hci_dev *hdev,
- 					  const struct h4_recv_pkt *pkts,
- 					  int pkts_count)
- {
-+	/* Check if socket buffer is not reset yet from previous error */
-+	if (IS_ERR(skb))
-+		skb = NULL;
-+
- 	while (count) {
- 		int i, len;
- 
-diff --git a/drivers/bluetooth/hci_h4.c b/drivers/bluetooth/hci_h4.c
-index fb97a3bf069b..dea48090d2dc 100644
---- a/drivers/bluetooth/hci_h4.c
-+++ b/drivers/bluetooth/hci_h4.c
-@@ -174,6 +174,10 @@ struct sk_buff *h4_recv_buf(struct hci_dev *hdev, struct sk_buff *skb,
- 	struct hci_uart *hu = hci_get_drvdata(hdev);
- 	u8 alignment = hu->alignment ? hu->alignment : 1;
- 
-+	/* Check if socket buffer is not reset yet from previous error */
-+	if (IS_ERR(skb))
-+		skb = NULL;
-+
- 	while (count) {
- 		int i, len;
- 
--- 
-2.17.1
+It should hit the case since there is no RCU CPU stall warnings.
+
+> RCU grace periods failed to progress -- though this would normally
+> also result in RCU CPU stall warnings.
+> 
+> There should be lines containing "ver:" in your console output.  What
+> does one of the later one of these say?
+> 
+
+The line says:
+======================================================================
+[  318.850175] busted_srcud-torture: rtc:           (null) ver: 27040 
+tfle: 0 rta: 27040 rtaf: 0 rtf: 27027 rtmbe: 0 rtbe: 0 rtbke: 0 rtbre: 0 
+rtbf: 0 rtb: 0 \
+nt: 9497 onoff: 2639/2639:2640/5310 40,373:10,355 162868:67542 (HZ=1000) 
+barrier: 0/0:0
+
+=====================================================================
+
+And here are useful errors:
+=====================================================================
+kern  :info  : [  135.379693] KVM setup async PF for cpu 1
+kern  :info  : [  135.381412] kvm-stealtime: cpu 1, msr 23fd16180
+kern  :alert : [  135.386897] busted_srcud-torture:torture_onoff task: 
+onlined 1
+kern  :alert : [  135.408241] busted_srcud-torture:torture_onoff task: 
+offlining 1
+kern  :info  : [  135.423310] Unregister pv shared memory for cpu 1
+kern  :info  : [  135.427940] smpboot: CPU 1 is now offline
+kern  :alert : [  135.430106] busted_srcud-torture:torture_onoff task: 
+offlined 1
+kern  :alert : [  135.436404] busted_srcud-torture:torture_onoff task: 
+offlining 0
+kern  :alert : [  135.446173] busted_srcud-torture:torture_onoff task: 
+offline 0 failed: errno -16
+kern  :alert : [  135.453076] busted_srcud-torture:torture_onoff task: 
+offlining 0
+kern  :alert : [  135.457461] busted_srcud-torture:torture_onoff task: 
+offline 0 failed: errno -16
+
+
+=====================================================================
+There are only two CPUs on the VM. Torture try to offline the last one
+but -EBUSY occured.
+
+I spent time to understand kernel/torture.c.
+There is torture_onoff():
+
+225        while (!torture_must_stop()) {
+226                cpu = (torture_random(&rand) >> 4) % (maxcpu + 1);
+227                if (!torture_offline(cpu,
+228                                     &n_offline_attempts, 
+&n_offline_successes,
+229                                     &sum_offline, &min_offline, 
+&max_offline))
+230                        torture_online(cpu,
+231                                       &n_online_attempts, 
+&n_online_successes,
+232                                       &sum_online, &min_online, 
+&max_online);
+233                schedule_timeout_interruptible(onoff_interval);
+234        }
+235
+
+torture_offline() and torture_offline() don't pre judge if the current
+cpu is only one usable.
+
+Our test machines are configured with CONFIG_BOOTPARAM_HOTPLUG_CPU0. If
+there are only one oneline and hotplugable cpux, then
+n_offline_successes != n_offline_attempts which caused "End of test:
+RCU_HOTPLUG".
+
+Does I misunderstand something above? Feel free to correct me.
+
+
+Thanks,
+Su
+
+> 							Thanx, Paul
+> 
+> 
+> 
+
 
