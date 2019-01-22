@@ -2,113 +2,90 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DATE_IN_FUTURE_06_12,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CA42C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 12:37:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98FB7C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 12:38:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E12CC20870
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 12:37:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FB0420870
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 12:38:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728413AbfAVMhn (ORCPT
+        id S1728435AbfAVMiQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 07:37:43 -0500
-Received: from foss.arm.com ([217.140.101.70]:52522 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728339AbfAVMhn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 07:37:43 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 550F2EBD;
-        Tue, 22 Jan 2019 04:37:42 -0800 (PST)
-Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 60F1D3F614;
-        Tue, 22 Jan 2019 04:37:39 -0800 (PST)
-Date:   Tue, 22 Jan 2019 12:37:04 +0000
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v6 09/16] sched/cpufreq: uclamp: Add utilization clamping
- for RT tasks
-Message-ID: <20190122123704.6rb3xemvxbp5yfjq@e110439-lin>
-References: <20190115101513.2822-1-patrick.bellasi@arm.com>
- <20190115101513.2822-10-patrick.bellasi@arm.com>
- <20190122123007.dkavjh73w223pa6y@queper01-lin>
+        Tue, 22 Jan 2019 07:38:16 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:41476 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728417AbfAVMiQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 07:38:16 -0500
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 6EA525587D8FE7E92D81;
+        Tue, 22 Jan 2019 20:38:14 +0800 (CST)
+Received: from huawei.com (10.175.104.208) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.408.0; Tue, 22 Jan 2019
+ 20:38:05 +0800
+From:   Liu Jian <liujian56@huawei.com>
+To:     <gregkh@linuxfoundation.org>
+CC:     <xiubli@redhat.com>, <liujian56@huawei.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v5] driver: uio: fix possible memory leak in uio_open
+Date:   Wed, 23 Jan 2019 06:38:24 +0800
+Message-ID: <1548196704-352035-1-git-send-email-liujian56@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190122123007.dkavjh73w223pa6y@queper01-lin>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain
+X-Originating-IP: [10.175.104.208]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22-Jan 12:30, Quentin Perret wrote:
-> On Tuesday 15 Jan 2019 at 10:15:06 (+0000), Patrick Bellasi wrote:
-> > diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-> > index 520ee2b785e7..38a05a4f78cc 100644
-> > --- a/kernel/sched/cpufreq_schedutil.c
-> > +++ b/kernel/sched/cpufreq_schedutil.c
-> > @@ -201,9 +201,6 @@ unsigned long schedutil_freq_util(int cpu, unsigned long util_cfs,
-> >  	unsigned long dl_util, util, irq;
-> >  	struct rq *rq = cpu_rq(cpu);
-> >  
-> > -	if (type == FREQUENCY_UTIL && rt_rq_is_runnable(&rq->rt))
-> > -		return max;
-> > -
-> >  	/*
-> >  	 * Early check to see if IRQ/steal time saturates the CPU, can be
-> >  	 * because of inaccuracies in how we track these -- see
-> > @@ -219,15 +216,19 @@ unsigned long schedutil_freq_util(int cpu, unsigned long util_cfs,
-> >  	 * utilization (PELT windows are synchronized) we can directly add them
-> >  	 * to obtain the CPU's actual utilization.
-> >  	 *
-> > -	 * CFS utilization can be boosted or capped, depending on utilization
-> > -	 * clamp constraints requested by currently RUNNABLE tasks.
-> > +	 * CFS and RT utilization can be boosted or capped, depending on
-> > +	 * utilization clamp constraints requested by currently RUNNABLE
-> > +	 * tasks.
-> >  	 * When there are no CFS RUNNABLE tasks, clamps are released and
-> >  	 * frequency will be gracefully reduced with the utilization decay.
-> >  	 */
-> > -	util = (type == ENERGY_UTIL)
-> > -		? util_cfs
-> > -		: uclamp_util(rq, util_cfs);
-> > -	util += cpu_util_rt(rq);
-> > +	util = cpu_util_rt(rq);
-> > +	if (type == FREQUENCY_UTIL) {
-> > +		util += cpu_util_cfs(rq);
-> > +		util  = uclamp_util(rq, util);
-> 
-> So with this we don't go to max to anymore for CONFIG_UCLAMP_TASK=n no ?
+If 'idev->info' is NULL, we need to  free 'listener'
 
-Mmm... good point!
+Fixes: 57c5f4df0a5a ("uio: fix crash after the device is unregistered")
+Signed-off-by: Liu Jian <liujian56@huawei.com>
+---
+v1->v2:
+rename the "err_infoopen" to "err_idev_info"
+v2->3:
+put the extra info after the "--"
+v3-v4:
+add git log
+v4-v5:
+correct git log
 
-I need to guard this chagen for the !CONFIG_UCLAMP_TASK case!
+ drivers/uio/uio.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-> 
-> Thanks,
-> Quentin
-
-Cheers Patrick
-
+diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c
+index 1313422..b4ae2d9 100644
+--- a/drivers/uio/uio.c
++++ b/drivers/uio/uio.c
+@@ -491,18 +491,19 @@ static int uio_open(struct inode *inode, struct file *filep)
+ 	if (!idev->info) {
+ 		mutex_unlock(&idev->info_lock);
+ 		ret = -EINVAL;
+-		goto err_alloc_listener;
++		goto err_idev_info;
+ 	}
+ 
+ 	if (idev->info && idev->info->open)
+ 		ret = idev->info->open(idev->info, inode);
+ 	mutex_unlock(&idev->info_lock);
+ 	if (ret)
+-		goto err_infoopen;
++		goto err_idev_info;
+ 
+ 	return 0;
+ 
+-err_infoopen:
++err_idev_info:
++	filep->private_data = NULL;
+ 	kfree(listener);
+ 
+ err_alloc_listener:
 -- 
-#include <best/regards.h>
+2.7.4
 
-Patrick Bellasi
