@@ -2,75 +2,125 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DATE_IN_FUTURE_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2ACCC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 12:45:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEED7C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 12:45:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97A2E20855
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 12:45:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B932B20855
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 12:45:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728457AbfAVMpf (ORCPT
+        id S1728474AbfAVMpw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 07:45:35 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:2211 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728215AbfAVMpe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 07:45:34 -0500
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 7AEF99E715B572238205;
-        Tue, 22 Jan 2019 20:45:25 +0800 (CST)
-Received: from huawei.com (10.175.104.208) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.408.0; Tue, 22 Jan 2019
- 20:45:22 +0800
-From:   Liu Jian <liujian56@huawei.com>
-To:     <gregkh@linuxfoundation.org>
-CC:     <hamish.martin@alliedtelesis.co.nz>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 1/2] driver: uio: fix possible memory leak in __uio_register_device
-Date:   Wed, 23 Jan 2019 06:45:37 +0800
-Message-ID: <1548197138-352285-2-git-send-email-liujian56@huawei.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1548197138-352285-1-git-send-email-liujian56@huawei.com>
-References: <1548197138-352285-1-git-send-email-liujian56@huawei.com>
+        Tue, 22 Jan 2019 07:45:52 -0500
+Received: from foss.arm.com ([217.140.101.70]:52624 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728215AbfAVMpw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 07:45:52 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7D424EBD;
+        Tue, 22 Jan 2019 04:45:51 -0800 (PST)
+Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8726C3F614;
+        Tue, 22 Jan 2019 04:45:48 -0800 (PST)
+Date:   Tue, 22 Jan 2019 12:45:46 +0000
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v6 11/16] sched/fair: Add uclamp support to
+ energy_compute()
+Message-ID: <20190122124546.njrpmykzbjpztd6u@e110439-lin>
+References: <20190115101513.2822-1-patrick.bellasi@arm.com>
+ <20190115101513.2822-12-patrick.bellasi@arm.com>
+ <20190122121321.r6mv23ao57uut3t7@queper01-lin>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.104.208]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190122121321.r6mv23ao57uut3t7@queper01-lin>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'idev' is malloced in __uio_register_device() and leak free it before
-leaving from the uio_get_minor() error handing case, it will cause
-memory leak.
+On 22-Jan 12:13, Quentin Perret wrote:
+> On Tuesday 15 Jan 2019 at 10:15:08 (+0000), Patrick Bellasi wrote:
+> > The Energy Aware Scheduler (AES) estimates the energy impact of waking
 
-Fixes: a93e7b331568 ("uio: Prevent device destruction while fds are
-open")
-Signed-off-by: Liu Jian <liujian56@huawei.com>
-Reviewed-by: Hamish Martin <hamish.martin@alliedtelesis.co.nz>
----
- drivers/uio/uio.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+[...]
 
-diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c
-index b4ae2d9..4d20220 100644
---- a/drivers/uio/uio.c
-+++ b/drivers/uio/uio.c
-@@ -941,8 +941,10 @@ int __uio_register_device(struct module *owner,
- 	atomic_set(&idev->event, 0);
- 
- 	ret = uio_get_minor(idev);
--	if (ret)
-+	if (ret) {
-+		kfree(idev);
- 		return ret;
-+	}
- 
- 	idev->dev.devt = MKDEV(uio_major, idev->minor);
- 	idev->dev.class = &uio_class;
+> > +		for_each_cpu_and(cpu, pd_mask, cpu_online_mask) {
+> > +			cfs_util = cpu_util_next(cpu, p, dst_cpu);
+> > +
+> > +			/*
+> > +			 * Busy time computation: utilization clamping is not
+> > +			 * required since the ratio (sum_util / cpu_capacity)
+> > +			 * is already enough to scale the EM reported power
+> > +			 * consumption at the (eventually clamped) cpu_capacity.
+> > +			 */
+> 
+> Right.
+> 
+> > +			sum_util += schedutil_cpu_util(cpu, cfs_util, cpu_cap,
+> > +						       ENERGY_UTIL, NULL);
+> > +
+> > +			/*
+> > +			 * Performance domain frequency: utilization clamping
+> > +			 * must be considered since it affects the selection
+> > +			 * of the performance domain frequency.
+> > +			 */
+> 
+> So that actually affects the way we deal with RT I think. I assume the
+> idea is to say if you don't want to reflect the RT-go-to-max-freq thing
+> in EAS (which is what we do now) you should set the min cap for RT to 0.
+> Is that correct ?
+
+By default configuration, RT tasks still go to max when uclamp is
+enabled, since they get a util_min=1024.
+
+If we want to save power on RT tasks, we can set a smaller util_min...
+but not necessarily 0. A util_min=0 for RT tasks means to use just
+cpu_util_rt() for that class.
+
+> I'm fine with this conceptually but maybe the specific case of RT should
+> be mentioned somewhere in the commit message or so ? I think it's
+> important to say that clearly since this patch changes the default
+> behaviour.
+
+Default behavior for RT should not be affected. While a capping is
+possible for those tasks... where do you see issues ?
+Here we are just figuring out what's the capacity the task will run
+at, if we will have clamped RT tasks will not be the max but: is that
+a problem ?
+
+> > +			cpu_util = schedutil_cpu_util(cpu, cfs_util, cpu_cap,
+> > +						      FREQUENCY_UTIL,
+> > +						      cpu == dst_cpu ? p : NULL);
+> > +			max_util = max(max_util, cpu_util);
+> >  		}
+> >  
+> >  		energy += em_pd_energy(pd->em_pd, max_util, sum_util);
+> 
+> Thanks,
+> Quentin
+
 -- 
-2.7.4
+#include <best/regards.h>
 
+Patrick Bellasi
