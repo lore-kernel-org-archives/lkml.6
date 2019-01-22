@@ -2,102 +2,189 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77F5EC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:21:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ECAFC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:21:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4750C20879
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:21:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jUVQE7oh"
+	by mail.kernel.org (Postfix) with ESMTP id E2205217D4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:21:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729391AbfAVPVn (ORCPT
+        id S1729436AbfAVPVx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 10:21:43 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:33044 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728829AbfAVPVl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 10:21:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=GKSXAN5UUuzd6Lw6D1GSbt4cs3vPetKBVm8iyWRMxn4=; b=jUVQE7ohGU7mksg2A34z3l6Ls
-        J7mnJ4velC2r5JfuDHZX8rF1vwMNyZspa6HxH0xwhtiPOtsy6deOk/Rk7ICPFSvCSSHyRnaxnfrYy
-        gc9ibpEAMZ/duv88y2SGSVvsD+s1gSJM9s0nchMk2E9XDNMuc74neY8ShHP/RIJFkYWOxNHKULjtx
-        YNqfAEcPpGVwUUMWBos1ruVljyBSBpoiB/trxqF7cdgEPXtf0prH3TN2g9uhcrK3tXc+dJw2AhQEO
-        kGeQLTzkHuXEzMOJKpXKNRDy1c0gQvhBgIMZQrBMpbtEkIkOsYOFBg+gmfc+9eDl0RNOph2CvZIiU
-        ssNPnfvCw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1glxrq-0003BE-DJ; Tue, 22 Jan 2019 15:21:34 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id DF9A22042CFC3; Tue, 22 Jan 2019 16:21:32 +0100 (CET)
-Date:   Tue, 22 Jan 2019 16:21:32 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v6 08/16] sched/cpufreq: uclamp: Add utilization clamping
- for FAIR tasks
-Message-ID: <20190122152132.GR27931@hirez.programming.kicks-ass.net>
-References: <20190115101513.2822-1-patrick.bellasi@arm.com>
- <20190115101513.2822-9-patrick.bellasi@arm.com>
+        Tue, 22 Jan 2019 10:21:53 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:59996 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728829AbfAVPVu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 10:21:50 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B8B9FC04959C;
+        Tue, 22 Jan 2019 15:21:49 +0000 (UTC)
+Received: from krava (ovpn-204-197.brq.redhat.com [10.40.204.197])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 5975B2654C;
+        Tue, 22 Jan 2019 15:21:46 +0000 (UTC)
+Date:   Tue, 22 Jan 2019 16:21:45 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Song Liu <songliubraving@fb.com>, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        peterz@infradead.org, ast@kernel.org, daniel@iogearbox.net,
+        kernel-team@fb.com
+Subject: Re: [PATCH v11 perf, bpf-next 7/9] perf tools: synthesize
+ PERF_RECORD_* for loaded BPF programs
+Message-ID: <20190122152145.GG27625@krava>
+References: <20190117161521.1341602-1-songliubraving@fb.com>
+ <20190117161521.1341602-8-songliubraving@fb.com>
+ <20190118144655.GM5823@kernel.org>
+ <20190122141320.GF14973@kernel.org>
+ <20190122143117.GG14973@kernel.org>
+ <20190122145119.GF27625@krava>
+ <20190122145805.GI14973@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190115101513.2822-9-patrick.bellasi@arm.com>
+In-Reply-To: <20190122145805.GI14973@kernel.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Tue, 22 Jan 2019 15:21:49 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 10:15:05AM +0000, Patrick Bellasi wrote:
-> --- a/kernel/sched/cpufreq_schedutil.c
-> +++ b/kernel/sched/cpufreq_schedutil.c
-> @@ -218,8 +218,15 @@ unsigned long schedutil_freq_util(int cpu, unsigned long util_cfs,
->  	 * CFS tasks and we use the same metric to track the effective
->  	 * utilization (PELT windows are synchronized) we can directly add them
->  	 * to obtain the CPU's actual utilization.
-> +	 *
-> +	 * CFS utilization can be boosted or capped, depending on utilization
-> +	 * clamp constraints requested by currently RUNNABLE tasks.
-> +	 * When there are no CFS RUNNABLE tasks, clamps are released and
-> +	 * frequency will be gracefully reduced with the utilization decay.
->  	 */
-> -	util = util_cfs;
-> +	util = (type == ENERGY_UTIL)
-> +		? util_cfs
-> +		: uclamp_util(rq, util_cfs);
+On Tue, Jan 22, 2019 at 12:58:05PM -0200, Arnaldo Carvalho de Melo wrote:
+> Em Tue, Jan 22, 2019 at 03:51:19PM +0100, Jiri Olsa escreveu:
+> > On Tue, Jan 22, 2019 at 12:31:17PM -0200, Arnaldo Carvalho de Melo wrote:
+> > > Em Tue, Jan 22, 2019 at 12:13:20PM -0200, Arnaldo Carvalho de Melo escreveu:
+> > > > Em Fri, Jan 18, 2019 at 11:46:55AM -0300, Arnaldo Carvalho de Melo escreveu:
+> > > > > Em Thu, Jan 17, 2019 at 08:15:19AM -0800, Song Liu escreveu:
+> > > > > > This patch synthesize PERF_RECORD_KSYMBOL and PERF_RECORD_BPF_EVENT for
+> > > > > > BPF programs loaded before perf-record. This is achieved by gathering
+> > > > > > information about all BPF programs via sys_bpf.
+> > > > > 
+> > > > > Ditto
+> > > > 
+> > > > This is breaking 'perf sched', see below, the fix seems trivial:
+> > > > 
+> > > > [root@quaco ~]# perf sched record -a sleep 2
+> > > > [ perf record: Woken up 1 times to write data ]
+> > > > 0x5b60 [0x138]: failed to process type: 17
+> > > > [ perf record: Captured and wrote 1.539 MB perf.data ]
+> > > > [root@quaco ~]# perf sched lat
+> > > > 0x5b60 [0x138]: failed to process type: 17
+> > > > Failed to process events, error -22
+> > > > [root@quaco ~]#
+> > > 
+> > > So:
+> > > 
+> > >    perf_session__process_event (event->header.type = 17 (PERF_RECORD_KSYMBOL)
+> > >      if (tool->ordered_events)
+> > >        ret = perf_evlist__parse_sample_timestamp(evlist, event, &timestamp);
+> > >        if (ret && ret != -1)
+> > >             return ret;
+> > > 
+> > > So it returns here with -EFAULT, i.e. this is failing:
+> > > 
+> > > int perf_evlist__parse_sample_timestamp(struct perf_evlist *evlist,
+> > >                                         union perf_event *event,
+> > >                                         u64 *timestamp)
+> > > {
+> > >         struct perf_evsel *evsel = perf_evlist__event2evsel(evlist, event);
+> > > 
+> > >         if (!evsel)
+> > >                 return -EFAULT;
+> > >         return perf_evsel__parse_sample_timestamp(evsel, event, timestamp);
+> > > }
+> > > 
+> > > It isn't mapping the event ID it finds back to an evsel.. Jiri, ideas?
+> > > 
+> > > This is happening so far only for 'perf sched', perf record with two
+> > > events works.
+> > 
+> > I saw also perf mem failing because of this.. will check
+> 
+> Right, seems something with the synthesizing of existing bpf progs,
+> which always there are some nowadays, for instance, on this fedora29
+> system:
+> 
+> [root@quaco tmp]# bpftool prog
+> 13: cgroup_skb  tag 7be49e3934a125ba  gpl
+> 	loaded_at 2019-01-21T13:30:27-0200  uid 0
+> 	xlated 296B  jited 229B  memlock 4096B  map_ids 13,14
+> 14: cgroup_skb  tag 2a142ef67aaad174  gpl
+> 	loaded_at 2019-01-21T13:30:27-0200  uid 0
+> 	xlated 296B  jited 229B  memlock 4096B  map_ids 13,14
+> 15: cgroup_skb  tag 7be49e3934a125ba  gpl
+> 	loaded_at 2019-01-21T13:30:27-0200  uid 0
+> 	xlated 296B  jited 229B  memlock 4096B  map_ids 15,16
+> 16: cgroup_skb  tag 2a142ef67aaad174  gpl
+> 	loaded_at 2019-01-21T13:30:27-0200  uid 0
+> 	xlated 296B  jited 229B  memlock 4096B  map_ids 15,16
+> 17: cgroup_skb  tag 7be49e3934a125ba  gpl
+> 	loaded_at 2019-01-21T13:30:29-0200  uid 0
+> 	xlated 296B  jited 229B  memlock 4096B  map_ids 17,18
+> 18: cgroup_skb  tag 2a142ef67aaad174  gpl
+> 	loaded_at 2019-01-21T13:30:29-0200  uid 0
+> 	xlated 296B  jited 229B  memlock 4096B  map_ids 17,18
+> 21: cgroup_skb  tag 7be49e3934a125ba  gpl
+> 	loaded_at 2019-01-21T13:30:29-0200  uid 0
+> 	xlated 296B  jited 229B  memlock 4096B  map_ids 21,22
+> 22: cgroup_skb  tag 2a142ef67aaad174  gpl
+> 	loaded_at 2019-01-21T13:30:29-0200  uid 0
+> 	xlated 296B  jited 229B  memlock 4096B  map_ids 21,22
+> [root@quaco tmp]#
+> 
+> When with a bunch of tracepoints, that is what 'perf mem', 'perf kmem',
+> 'perf sched', etc does, it ends up failing here:
+> 
+>                     ret = perf_evlist__parse_sample_timestamp(evlist, event, &timestamp);
+> 
+> So it is not passed to 
+> 
+>                    ret = perf_session__queue_event(session, event, timestamp, file_offset);
+> 
+> in perf_session__process_event, this happens right when processing
+> buildids in 'perf record', and also in 'perf report', so that is
+> something badly synthesized that hits perf.data for PERF_RECORD_KSYMBOL.
 
-That's pretty horrible; what's wrong with:
+it's reproducible with simple:
+  perf record -e cycles,instructions ls
 
-	util = util_cfs;
-	if (type == FREQUENCY_UTIL)
-		util = uclamp_util(rq, util);
+as you said on irc, it's the machine->id_hdr_size size missing
+there's one more glitch, attached patch fixes that for me
+you can't use sizeof(struct ksymbol_event), because it includes
+the name as well.. which screws the size
 
-That should generate the same code, but is (IMO) far easier to read.
+but I don't know that code that much.. might be still something
+missing
 
->  	util += cpu_util_rt(rq);
->  
->  	dl_util = cpu_util_dl(rq);
+jirka
+
+
+---
+diff --git a/tools/perf/util/bpf-event.c b/tools/perf/util/bpf-event.c
+index 01e1dc1bb7fb..d86b61cc635f 100644
+--- a/tools/perf/util/bpf-event.c
++++ b/tools/perf/util/bpf-event.c
+@@ -7,6 +7,7 @@
+ #include "bpf-event.h"
+ #include "debug.h"
+ #include "symbol.h"
++#include "machine.h"
+ 
+ #define ptr_to_u64(ptr)    ((__u64)(unsigned long)(ptr))
+ 
+@@ -149,7 +150,7 @@ static int perf_event__synthesize_one_bpf_prog(struct perf_tool *tool,
+ 		*ksymbol_event = (struct ksymbol_event){
+ 			.header = {
+ 				.type = PERF_RECORD_KSYMBOL,
+-				.size = sizeof(struct ksymbol_event),
++				.size = offsetof(struct ksymbol_event, name) + machine->id_hdr_size,
+ 			},
+ 			.addr = prog_addrs[i],
+ 			.len = prog_lens[i],
