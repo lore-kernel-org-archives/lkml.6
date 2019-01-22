@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A00C9C282C5
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 05:52:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E4AAC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 05:52:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CFE220879
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 05:52:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5644820879
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 05:52:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RKDtvGQL"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GI5rtE9h"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727162AbfAVFwL (ORCPT
+        id S1727207AbfAVFwU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 00:52:11 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:40030 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727075AbfAVFv4 (ORCPT
+        Tue, 22 Jan 2019 00:52:20 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:33895 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727063AbfAVFvx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 00:51:56 -0500
-Received: by mail-pg1-f196.google.com with SMTP id z10so10524177pgp.7
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 21:51:55 -0800 (PST)
+        Tue, 22 Jan 2019 00:51:53 -0500
+Received: by mail-pg1-f193.google.com with SMTP id j10so10539895pga.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 21:51:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=GjBCWU0YLJV4xz8elAnATcaOk73UwOaJ2hgycUvAavI=;
-        b=RKDtvGQLZvWYSkFUOZ8HT8YIQWO2AlYj8zviFc8rxVKGtD1nbPNHIk1uHarwkoX4Dd
-         AZXwzycWiJ9U47HKZt8jUXU+GV5QyMNQPtybhuG5oSkCl22OUO7YaC3TaLjhdII2FtrU
-         vc/0X8Yre38cghWml7wwgqMCzW+F/YsyevA34=
+        bh=pW9+FnFhTixsM1NvLiRxk7mkM5jyq1Bhl39XrdO6+DY=;
+        b=GI5rtE9hhYO4frHD9B68ZN3IRPw+OTuvhdfIbThO5ytG7OGbGq3c2hrdU3Zg0sDGPS
+         ++AKNgLNrpK3l7ZZno7q97JGpSm3fCZFA6AkSKxXHvq4eS7Xgc6XZsWSgEoYSWcTDNG6
+         rqpiLT7e52tzcYqNPJxmIbi/QvHKwcIpYm8lw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=GjBCWU0YLJV4xz8elAnATcaOk73UwOaJ2hgycUvAavI=;
-        b=mrOjGOXLnruLPTIqcp7TSj/LB0iM8NJi9Szbjv9EqXks7GJ+oKRCb9zfCoQ7YuqZAW
-         nBqV4xcDgq+3+yfduQORR2lx3+534cH1pSqOdcXm4qy3BjOvwp+KYvra5IjlwbaZfhdH
-         Y83HDhayZVa+d5NJkAsE8KCKb0KriMowlH9qekSZTJaLi1s+lASxNG4khpo7QqtTwPow
-         5agfaddYhTtnVg9Hzx+S1ubN04XoZ9zJM17/QJgBjIO7PdPLtIYGOSFUlfvAIZYdxmcI
-         pu/9MbLH1isogy0D2tx0sD7CC/XaLwqnTi1h9SJK0J2+cHgH/tEjx653n2jrhgWJLIle
-         CaLg==
-X-Gm-Message-State: AJcUukfi2dCuSe0lkmbRIZOy0LpgXG1DrqTg2bEsTEKEDhfxmhXe+el9
-        /ZPi0YOLSk/nCVFERJFqMSAPZw==
-X-Google-Smtp-Source: ALg8bN7Vf/tDuJeA7uROWKDxUjsyYyGwN4EJ5y0Jp8HLqZJlFD2mpjbMORSg4Hl/18zo+o2yxjKaTg==
-X-Received: by 2002:a63:6150:: with SMTP id v77mr30087868pgb.266.1548136315105;
-        Mon, 21 Jan 2019 21:51:55 -0800 (PST)
+        bh=pW9+FnFhTixsM1NvLiRxk7mkM5jyq1Bhl39XrdO6+DY=;
+        b=RahfCgI5qKDEEjlG9D69UHHzJQ3j7q6PyChN7/fF9I48MN0fUHQ+ZeJvQ6ocM/1whc
+         KP50r5L67Zw4ploUEC4uedpoUGgG9sT/wvy2DMS6M5NC7Iep05zTywMjBt4fNNfxG1y4
+         iB3C1rXpNwSEpt0eulZQw70oU3AVM+A9R+4+L42PzuSptqiApSIsZuuZupcAMKkm7tUz
+         IAsCrcmqSqCBYMhnRurm3D/RO3FwDxCytFy9coP5ATY6pFIf7mpBFGcIxEMgOqlpX0Xa
+         5vQa7JAX69yCpvh1HRImQ7WW1EX4vsIF9F0VbsuZQxPw9hEf5Q04qpKiJS3WYNoTfIr3
+         3L0w==
+X-Gm-Message-State: AJcUukdqArMmPFzuOHi6vmDEFMRatEQGrZ+XI2fub2FzsA2CRqqm8ROg
+        cdaRmQsAei8Xzbd0n11boJ3jpA==
+X-Google-Smtp-Source: ALg8bN5GTsOqm5afo95VqQSNA15p722lrD1Y//00N+DI1O6ubLKpuVI1lre/qlH/ix0K74hcLbM04A==
+X-Received: by 2002:a62:7086:: with SMTP id l128mr32186966pfc.68.1548136312529;
+        Mon, 21 Jan 2019 21:51:52 -0800 (PST)
 Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id z62sm23771572pfl.33.2019.01.21.21.51.53
+        by smtp.gmail.com with ESMTPSA id z62sm23771572pfl.33.2019.01.21.21.51.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 21 Jan 2019 21:51:54 -0800 (PST)
+        Mon, 21 Jan 2019 21:51:51 -0800 (PST)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Andy Gross <andy.gross@linaro.org>,
         David Brown <david.brown@linaro.org>,
@@ -60,9 +60,9 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 08/10] remoteproc: q6v5-mss: Active powerdomain for SDM845
-Date:   Mon, 21 Jan 2019 21:51:10 -0800
-Message-Id: <20190122055112.30943-9-bjorn.andersson@linaro.org>
+Subject: [PATCH v3 06/10] soc: qcom: Add AOSS QMP genpd provider
+Date:   Mon, 21 Jan 2019 21:51:08 -0800
+Message-Id: <20190122055112.30943-7-bjorn.andersson@linaro.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20190122055112.30943-1-bjorn.andersson@linaro.org>
 References: <20190122055112.30943-1-bjorn.andersson@linaro.org>
@@ -71,130 +71,200 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The SDM845 MSS needs the load_state powerdomain voted for during the
-duration of the MSS being powered on, to let the AOSS know that it may
-not perform certain power save measures. So vote for this.
+The AOSS QMP genpd provider implements control over power-related
+resources related to low-power state associated with the remoteprocs in
+the system as well as control over a set of clocks related to debug
+hardware in the SoC.
 
-Tested-by: Sibi Sankar <sibis@codeaurora.org>
-Reviewed-by: Sibi Sankar <sibis@codeaurora.org>
+Tested-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
 
 Changes since v2:
-- None
+- Add define for request array size
 
- drivers/remoteproc/qcom_q6v5_mss.c | 31 ++++++++++++++++++++++++++++--
- 1 file changed, 29 insertions(+), 2 deletions(-)
+ drivers/soc/qcom/Kconfig       |   9 +++
+ drivers/soc/qcom/Makefile      |   1 +
+ drivers/soc/qcom/aoss-qmp-pd.c | 138 +++++++++++++++++++++++++++++++++
+ 3 files changed, 148 insertions(+)
+ create mode 100644 drivers/soc/qcom/aoss-qmp-pd.c
 
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index 003186ce56c7..3e25016954d9 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -133,6 +133,7 @@ struct rproc_hexagon_res {
- 	char **proxy_clk_names;
- 	char **reset_clk_names;
- 	char **active_clk_names;
-+	char **active_pd_names;
- 	char **proxy_pd_names;
- 	int version;
- 	bool need_mem_protection;
-@@ -159,10 +160,12 @@ struct q6v5 {
- 	struct clk *active_clks[8];
- 	struct clk *reset_clks[4];
- 	struct clk *proxy_clks[4];
-+	struct device *active_pds[1];
- 	struct device *proxy_pds[3];
- 	int active_clk_count;
- 	int reset_clk_count;
- 	int proxy_clk_count;
-+	int active_pd_count;
- 	int proxy_pd_count;
+diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+index e2c859121b88..9d71e23005ad 100644
+--- a/drivers/soc/qcom/Kconfig
++++ b/drivers/soc/qcom/Kconfig
+@@ -12,6 +12,15 @@ config QCOM_AOSS_QMP
+ 	  micro-controller in the AOSS, using QMP, to control certain resource
+ 	  that are not exposed through RPMh.
  
- 	struct reg_info active_regs[1];
-@@ -730,10 +733,16 @@ static int q6v5_mba_load(struct q6v5 *qproc)
- 
- 	qcom_q6v5_prepare(&qproc->q6v5);
- 
-+	ret = q6v5_pds_enable(qproc, qproc->active_pds, qproc->active_pd_count);
-+	if (ret < 0) {
-+		dev_err(qproc->dev, "failed to enable active power domains\n");
-+		goto disable_irqs;
++config QCOM_AOSS_QMP_PD
++	tristate "Qualcomm AOSS Messaging Power Domain driver"
++	depends on QCOM_AOSS_QMP
++	select PM_GENERIC_DOMAINS
++	help
++	  This driver provides the means of controlling the AOSS's handling of
++	  low-power state for resources related to the remoteproc subsystems as
++	  well as controlling the debug clocks.
++
+ config QCOM_COMMAND_DB
+ 	bool "Qualcomm Command DB"
+ 	depends on ARCH_QCOM || COMPILE_TEST
+diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
+index 2c04d27fbf9e..16913e73fddf 100644
+--- a/drivers/soc/qcom/Makefile
++++ b/drivers/soc/qcom/Makefile
+@@ -1,6 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ CFLAGS_rpmh-rsc.o := -I$(src)
+ obj-$(CONFIG_QCOM_AOSS_QMP) +=	aoss-qmp.o
++obj-$(CONFIG_QCOM_AOSS_QMP_PD) += aoss-qmp-pd.o
+ obj-$(CONFIG_QCOM_GENI_SE) +=	qcom-geni-se.o
+ obj-$(CONFIG_QCOM_COMMAND_DB) += cmd-db.o
+ obj-$(CONFIG_QCOM_GLINK_SSR) +=	glink_ssr.o
+diff --git a/drivers/soc/qcom/aoss-qmp-pd.c b/drivers/soc/qcom/aoss-qmp-pd.c
+new file mode 100644
+index 000000000000..82dd569a2bc9
+--- /dev/null
++++ b/drivers/soc/qcom/aoss-qmp-pd.c
+@@ -0,0 +1,138 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2018, Linaro Ltd
++ */
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/pm_domain.h>
++#include <linux/soc/qcom/aoss-qmp.h>
++#include <dt-bindings/power/qcom-aoss-qmp.h>
++
++/* Requests are expected to be 96 bytes long */
++#define AOSS_QMP_PD_MSG_LEN	96
++
++struct qmp_pd {
++	struct qmp *qmp;
++
++	struct generic_pm_domain pd;
++
++	const char *name;
++};
++
++#define to_qmp_pd_resource(res) container_of(res, struct qmp_pd, pd)
++
++struct qmp_pd_resource {
++	const char *name;
++	int (*on)(struct generic_pm_domain *domain);
++	int (*off)(struct generic_pm_domain *domain);
++};
++
++static int qmp_pd_clock_toggle(struct qmp_pd *res, bool enable)
++{
++	char buf[AOSS_QMP_PD_MSG_LEN];
++
++	snprintf(buf, sizeof(buf), "{class: clock, res: %s, val: %d}",
++		 res->name, !!enable);
++	return qmp_send(res->qmp, buf, sizeof(buf));
++}
++
++static int qmp_pd_clock_on(struct generic_pm_domain *domain)
++{
++	return qmp_pd_clock_toggle(to_qmp_pd_resource(domain), true);
++}
++
++static int qmp_pd_clock_off(struct generic_pm_domain *domain)
++{
++	return qmp_pd_clock_toggle(to_qmp_pd_resource(domain), false);
++}
++
++static int qmp_pd_image_toggle(struct qmp_pd *res, bool enable)
++{
++	char buf[AOSS_QMP_PD_MSG_LEN];
++
++	snprintf(buf, sizeof(buf),
++		 "{class: image, res: load_state, name: %s, val: %s}",
++		 res->name, enable ? "on" : "off");
++	return qmp_send(res->qmp, buf, sizeof(buf));
++}
++
++static int qmp_pd_image_on(struct generic_pm_domain *domain)
++{
++	return qmp_pd_image_toggle(to_qmp_pd_resource(domain), true);
++}
++
++static int qmp_pd_image_off(struct generic_pm_domain *domain)
++{
++	return qmp_pd_image_toggle(to_qmp_pd_resource(domain), false);
++}
++
++static const struct qmp_pd_resource sdm845_resources[] = {
++	[AOSS_QMP_QDSS_CLK] = { "qdss", qmp_pd_clock_on, qmp_pd_clock_off },
++	[AOSS_QMP_LS_CDSP] = { "cdsp", qmp_pd_image_on, qmp_pd_image_off },
++	[AOSS_QMP_LS_LPASS] = { "adsp", qmp_pd_image_on, qmp_pd_image_off },
++	[AOSS_QMP_LS_MODEM] = { "modem", qmp_pd_image_on, qmp_pd_image_off },
++	[AOSS_QMP_LS_SLPI] = { "slpi", qmp_pd_image_on, qmp_pd_image_off },
++	[AOSS_QMP_LS_SPSS] = { "spss", qmp_pd_image_on, qmp_pd_image_off },
++	[AOSS_QMP_LS_VENUS] = { "venus", qmp_pd_image_on, qmp_pd_image_off },
++};
++
++static int qmp_pd_probe(struct platform_device *pdev)
++{
++	struct genpd_onecell_data *data;
++	struct device *parent = pdev->dev.parent;
++	struct qmp_pd *res;
++	struct qmp *qmp;
++	size_t num = ARRAY_SIZE(sdm845_resources);
++	int i;
++
++	qmp = dev_get_drvdata(pdev->dev.parent);
++	if (!qmp)
++		return -EINVAL;
++
++	res = devm_kcalloc(&pdev->dev, num, sizeof(*res), GFP_KERNEL);
++	if (!res)
++		return -ENOMEM;
++
++	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++
++	data->domains = devm_kcalloc(&pdev->dev, num, sizeof(*data->domains),
++				     GFP_KERNEL);
++
++	for (i = 0; i < num; i++) {
++		pm_genpd_init(&res[i].pd, NULL, true);
++		res[i].qmp = qmp;
++		res[i].name = sdm845_resources[i].name;
++
++		res[i].pd.name = sdm845_resources[i].name;
++		res[i].pd.power_on = sdm845_resources[i].on;
++		res[i].pd.power_off = sdm845_resources[i].off;
++
++		data->domains[data->num_domains++] = &res[i].pd;
 +	}
 +
- 	ret = q6v5_pds_enable(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
- 	if (ret < 0) {
- 		dev_err(qproc->dev, "failed to enable proxy power domains\n");
--		goto disable_irqs;
-+		goto disable_active_pds;
- 	}
- 
- 	ret = q6v5_regulator_enable(qproc, qproc->proxy_regs,
-@@ -839,6 +848,8 @@ static int q6v5_mba_load(struct q6v5 *qproc)
- 			       qproc->proxy_reg_count);
- disable_proxy_pds:
- 	q6v5_pds_disable(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
-+disable_active_pds:
-+	q6v5_pds_disable(qproc, qproc->active_pds, qproc->active_pd_count);
- disable_irqs:
- 	qcom_q6v5_unprepare(&qproc->q6v5);
- 
-@@ -878,6 +889,7 @@ static void q6v5_mba_reclaim(struct q6v5 *qproc)
- 			 qproc->active_clk_count);
- 	q6v5_regulator_disable(qproc, qproc->active_regs,
- 			       qproc->active_reg_count);
-+	q6v5_pds_disable(qproc, qproc->active_pds, qproc->active_pd_count);
- 
- 	/* In case of failure or coredump scenario where reclaiming MBA memory
- 	 * could not happen reclaim it here.
-@@ -1412,11 +1424,19 @@ static int q6v5_probe(struct platform_device *pdev)
- 	}
- 	qproc->active_reg_count = ret;
- 
-+	ret = q6v5_pds_attach(&pdev->dev, qproc->active_pds,
-+			      desc->active_pd_names);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Failed to attach active power domains\n");
-+		goto free_rproc;
-+	}
-+	qproc->active_pd_count = ret;
++	return of_genpd_add_provider_onecell(parent->of_node, data);
++}
 +
- 	ret = q6v5_pds_attach(&pdev->dev, qproc->proxy_pds,
- 			      desc->proxy_pd_names);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "Failed to init power domains\n");
--		goto free_rproc;
-+		goto detach_active_pds;
- 	}
- 	qproc->proxy_pd_count = ret;
- 
-@@ -1448,6 +1468,8 @@ static int q6v5_probe(struct platform_device *pdev)
- 
- detach_proxy_pds:
- 	q6v5_pds_detach(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
-+detach_active_pds:
-+	q6v5_pds_detach(qproc, qproc->active_pds, qproc->active_pd_count);
- free_rproc:
- 	rproc_free(rproc);
- 
-@@ -1465,6 +1487,7 @@ static int q6v5_remove(struct platform_device *pdev)
- 	qcom_remove_smd_subdev(qproc->rproc, &qproc->smd_subdev);
- 	qcom_remove_ssr_subdev(qproc->rproc, &qproc->ssr_subdev);
- 
-+	q6v5_pds_detach(qproc, qproc->active_pds, qproc->active_pd_count);
- 	q6v5_pds_detach(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
- 
- 	rproc_free(qproc->rproc);
-@@ -1491,6 +1514,10 @@ static const struct rproc_hexagon_res sdm845_mss = {
- 			"mnoc_axi",
- 			NULL
- 	},
-+	.active_pd_names = (char*[]){
-+			"load_state",
-+			NULL
++static int qmp_pd_remove(struct platform_device *pdev)
++{
++	struct device *parent = pdev->dev.parent;
++
++	of_genpd_del_provider(parent->of_node);
++
++	return 0;
++}
++
++static struct platform_driver qmp_pd_driver = {
++	.driver = {
++		.name		= "aoss_qmp_pd",
 +	},
- 	.proxy_pd_names = (char*[]){
- 			"cx",
- 			"mx",
++	.probe = qmp_pd_probe,
++	.remove = qmp_pd_remove,
++};
++module_platform_driver(qmp_pd_driver);
++
++MODULE_ALIAS("platform:aoss_qmp_pd");
++MODULE_DESCRIPTION("Qualcomm AOSS QMP load-state driver");
++MODULE_LICENSE("GPL v2");
 -- 
 2.18.0
 
