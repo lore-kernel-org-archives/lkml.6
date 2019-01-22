@@ -3,160 +3,214 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7449AC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:12:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7DADC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:12:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4417020866
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:12:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548187963;
-	bh=9akGmmtaOdopjNkPcQSBQ9Qnp9/7y4w/jQA3+Olur48=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=xHm259vhnaXxUkzsm5btMYADQqqVkhbJHP9paOPqyuOIh5rFFouKHlHeqlrAE3kxF
-	 4CLpubsXagaVdvieIgKgOrymn2UOopEdUhp1VKbOs7WwUY2IXMRWD+tDmlW/u9Ze0k
-	 CdY87tB4WrorjwyW7kCf1qiz0MbGUN858C4uLGJ0=
+	by mail.kernel.org (Postfix) with ESMTP id AAC8E20866
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:12:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="YM9GLDOk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726920AbfAVUMm (ORCPT
+        id S1726951AbfAVUMw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 15:12:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40440 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726059AbfAVUMl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 15:12:41 -0500
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CED8821841;
-        Tue, 22 Jan 2019 20:12:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548187960;
-        bh=9akGmmtaOdopjNkPcQSBQ9Qnp9/7y4w/jQA3+Olur48=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=V1LNpTqNN+UOaqLCkAE9cmgivjzvHfqrjwbIsTgBTQ0RfE5gbLyEy2kx3JVRCAgII
-         8/Mstcra0RK/iPsPc7kXClOqT7ypTSbbGq4JvsMwE5RAUKUDRNrr7swhREfacDNWRR
-         C3JC9A3hg5v0ou4DcZnt3zjGORoI7WGA0ZHeJwhI=
-Received: by mail-qt1-f169.google.com with SMTP id p17so29155465qtl.5;
-        Tue, 22 Jan 2019 12:12:39 -0800 (PST)
-X-Gm-Message-State: AJcUukdG/wFuhyZEE/ClRaZ6Igimpkv4YhB9WA9pRA+UWF1jUPEhLV8Z
-        kJ09qvZmPzYQFEiRxjIXtgy1ptf3J1w3f1le4g==
-X-Google-Smtp-Source: ALg8bN6EP1GdwThMzlyo1Q8vlpBEcDXwx4RsCqogkkwwoPdIvUEHAzgCrpAPApWAUuZZK51Hw0PeGNjSsWlBP4YCf0g=
-X-Received: by 2002:a0c:f212:: with SMTP id h18mr31281478qvk.106.1548187959020;
- Tue, 22 Jan 2019 12:12:39 -0800 (PST)
+        Tue, 22 Jan 2019 15:12:52 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:46592 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726130AbfAVUMv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 15:12:51 -0500
+Received: by mail-pl1-f194.google.com with SMTP id t13so11987386ply.13
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 12:12:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=lzB1F40T0BECSjVk/G6PCWKauVkIgx1ZLhCXr/OL7Go=;
+        b=YM9GLDOk+3AYhoaSB9s0WFl3KB6pVvIpBmK0SgWDzOq74gZvD4vwl+v3Vge+G6tkrZ
+         5PVx9l7VeUChsX3+PHA6/HsBORkrDvQzlYuAORN7plXWU/NGLCECm2UcriIl6EOZN1xE
+         bZi1XQ7llQNoqEwGEOMoZgrcGRJSEekD4ZRLM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=lzB1F40T0BECSjVk/G6PCWKauVkIgx1ZLhCXr/OL7Go=;
+        b=JrgjEaj7g6WGfr1RabJ5ZfwLyQ/OxFJ19f2o5Fy5s4LrO68/q1exACHnD4/rEbe9Xf
+         QwDNNbBKIRgElDR3oj1v1/WZjceb+NpcReE9j/7JIChG0GtNplerkz4sblDd4xKNYVkL
+         Lc1ZJSPJGkM/1AUd+bLzcB4FwsoYB3/b/6bXKyYqyeXuA/A0x3273zCapYduRYNeyTg0
+         sPZ913eA/1DiKD5w7AByh7OjhZkKFGtu6HFPnTqGI8Q+fcVRs/GRnVHJv9H2aTXgXPAp
+         ygZfPCP7SE0EuL/jBurkTMjrIL7CkXTpScCjHkTzyvzFx31NY0+ayanlWBSpz1KTrXQB
+         coMw==
+X-Gm-Message-State: AJcUukdtpl01+b5SPH1OEwjUDiinN9BKFcXFIG1qVi4ZBpiRaDE8/BiM
+        dYTrIuXMD2GPbx+UXIBKqCiCdQ==
+X-Google-Smtp-Source: ALg8bN6QE0zUBhaoAiv7g5A3LcMyvBk8c5qEm/CIe09HjPpiLCzzM8dFu9PnpMkvv/heAgLgVRvkMQ==
+X-Received: by 2002:a17:902:b01:: with SMTP id 1mr36296019plq.331.1548187971203;
+        Tue, 22 Jan 2019 12:12:51 -0800 (PST)
+Received: from [10.136.13.65] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id l85sm26297518pfg.161.2019.01.22.12.12.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 22 Jan 2019 12:12:50 -0800 (PST)
+Subject: Re: [PATCH 1/3] dt-bindings: pwm: kona: Add new compatible for new
+ version pwm-kona
+To:     Rob Herring <robh@kernel.org>
+Cc:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Sheetal Tigadoli <sheetal.tigadoli@broadcom.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com, linux-pwm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Praveen Kumar B <praveen.b@broadcom.com>
+References: <1547184076-20521-1-git-send-email-sheetal.tigadoli@broadcom.com>
+ <1547184076-20521-2-git-send-email-sheetal.tigadoli@broadcom.com>
+ <20190111204801.2ytdeblcai7lg3on@pengutronix.de>
+ <f1ec3121-a8e7-a1c0-008a-ea4ae6028157@broadcom.com>
+ <20190112150515.i7mwq7rtd62wlifh@pengutronix.de>
+ <faadc46d-94b5-a32c-79ae-4206fbc26608@broadcom.com>
+ <20190121231105.GA928@bogus>
+From:   Scott Branden <scott.branden@broadcom.com>
+Message-ID: <9b2dd73d-3a38-3a68-d37c-490811ed80ee@broadcom.com>
+Date:   Tue, 22 Jan 2019 12:12:46 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20190122180729.1834-1-ben.whitten@lairdtech.com> <20190122180729.1834-4-ben.whitten@lairdtech.com>
-In-Reply-To: <20190122180729.1834-4-ben.whitten@lairdtech.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 22 Jan 2019 14:12:27 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJfm6Pbg0CEzfNtd-aXMi8nAwt_8nZA0_Xs=4p1=cB1Kw@mail.gmail.com>
-Message-ID: <CAL_JsqJfm6Pbg0CEzfNtd-aXMi8nAwt_8nZA0_Xs=4p1=cB1Kw@mail.gmail.com>
-Subject: Re: [PATCH v2 lora-next 3/4] dt-bindings: lora: sx125x: add clock bindings
-To:     Ben Whitten <ben.whitten@gmail.com>
-Cc:     =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        netdev <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        linux-lpwan@lists.infradead.org,
-        "David S. Miller" <davem@davemloft.net>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190121231105.GA928@bogus>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 12:07 PM Ben Whitten <ben.whitten@gmail.com> wrote:
+Hi Rob,
+
+On 2019-01-21 3:11 p.m., Rob Herring wrote:
+> On Tue, Jan 15, 2019 at 04:14:21PM -0800, Scott Branden wrote:
+>> Hi Uwe,
+>>
+>> On 2019-01-12 7:05 a.m., Uwe Kleine-König wrote:
+>>> Hello Scott,
+>>>
+>>> On Fri, Jan 11, 2019 at 01:28:45PM -0800, Scott Branden wrote:
+>>>> On 2019-01-11 12:48 p.m., Uwe Kleine-König wrote:
+>>>>> On Fri, Jan 11, 2019 at 10:51:14AM +0530, Sheetal Tigadoli wrote:
+>>>>>> From: Praveen Kumar B <praveen.b@broadcom.com>
+>>>>>>
+>>>>>> Add new compatible string for new version of pwm-kona
+>>>>>>
+>>>>>> Signed-off-by: Praveen Kumar B <praveen.b@broadcom.com>
+>>>>>> Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+>>>>>> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+>>>>>> Signed-off-by: Sheetal Tigadoli <sheetal.tigadoli@broadcom.com>
+>>>>>> ---
+>>>>>>     Documentation/devicetree/bindings/pwm/brcm,kona-pwm.txt | 2 +-
+>>>>>>     1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/Documentation/devicetree/bindings/pwm/brcm,kona-pwm.txt b/Documentation/devicetree/bindings/pwm/brcm,kona-pwm.txt
+>>>>>> index 8eae9fe..d37f697 100644
+>>>>>> --- a/Documentation/devicetree/bindings/pwm/brcm,kona-pwm.txt
+>>>>>> +++ b/Documentation/devicetree/bindings/pwm/brcm,kona-pwm.txt
+>>>>>> @@ -3,7 +3,7 @@ Broadcom Kona PWM controller device tree bindings
+>>>>>>     This controller has 6 channels.
+>>>>>>     Required Properties :
+>>>>>> -- compatible: should contain "brcm,kona-pwm"
+>>>>>> +- compatible: should contain "brcm,kona-pwm" or "brcm,kona-pwm-v2"
+>>>>> Is v2 used on a newer generation of kona SoCs? On i.MX these variants
+>>>>> are usually named after the first SoC that came with the new variant. Is
+>>>>> this sensible here, too?
+>>>> It doesn't make as much sense here as different revs of the IP block are
+>>>> picked up based on various decisions.
+>>>>
+>>>> A new SoC could decide to use an old version.
+>>> IMHO this is no reason to not use the name of the oldest SoC with this
+>>> variant. I don't know how the SoC names are in the broadcom family, but
+>>> if they were (in order of age, oldest first):
+>>>
+>>> 	ant
+>>> 	bear
+>>> 	crocodile
+>>>
+>>> and ant and crocodile use the same IP block we would have
+>>>
+>>> a) with v1, v2:
+>>>
+>>> 	ant:
+>>> 		compatible = "brcm,kona-pwm-v1";
+>>> 	bear:
+>>> 		compatible = "brcm,kona-pwm-v2";
+>>> 	crocodile:
+>>> 		compatible = "brcm,kona-pwm-v1";
+> Version numbers can be fine, but generally only as fallbacks as even the
+> same IP version can be integrated into an SoC differently.
 >
-> From: Ben Whitten <ben.whitten@gmail.com>
+> The other issue with versions is they should be meanful such as
+> corresponding to version tags in IP repos. Often, I'd guess anything
+> with a 'v1' is just what some s/w person made up. Of course, we only
+> can really know that for opensource IP or programmable logic IP.
 >
-> The SX125x consumes a clock (FXOSC) ranging from 32 to 36 MHz.
-> If the radio is coupled with an SX130x the radio is therefor operating in
-> master mode and it may also provide a gated version of this clock for the
-> concentrator. In this case the concentrator is expecting a 32 MHz input
-> clock.
+> If you do use versions, document what the versioning scheme is.
 >
-> In the example we connect to the "txco" clock source, represented by a
-> fixed clock. The radio also provides a clock output named "clk32m" for
-> consumption by the SX130x concentrator.
-
-You can squash the clock patches into the 1st 2 patches if you want.
-
-> Signed-off-by: Ben Whitten <ben.whitten@gmail.com>
-> ---
-> v1 -> v2:
-> * Fixed incorrect usage of clock cells
-> * Fixed wording in commit and descriptions
-> * Dropped enforced clock names
-> ---
->  .../bindings/net/lora/semtech,sx125x.yaml     | 28 +++++++++++++++++++
->  1 file changed, 28 insertions(+)
+>>> ; and
+>>>
+>>> b) with the SoC naming:
+>>>
+>>> 	ant:
+>>> 		compatible = "brcm,kona-ant-pwm";
+>>> 	bear:
+>>> 		compatible = "brcm,kona-bear-pwm";
+>>> 	crocodile:
+>>> 		compatible = "brcm,kona-crocodile-pwm", "brcm,kona-ant-pwm";
+> This is the recommended practice.
 >
-> diff --git a/Documentation/devicetree/bindings/net/lora/semtech,sx125x.yaml b/Documentation/devicetree/bindings/net/lora/semtech,sx125x.yaml
-> index 4a51a251d97f..8287472fd545 100644
-> --- a/Documentation/devicetree/bindings/net/lora/semtech,sx125x.yaml
-> +++ b/Documentation/devicetree/bindings/net/lora/semtech,sx125x.yaml
-> @@ -27,12 +27,36 @@ properties:
->      description: The chip select on the SPI bus or radio number in concentrator
->        , with radio A = 0 and radio B = 1.
+>>> (If you want, drop "brcm,kona-crocodile-pwm", but keeping it is more
+>>> defensive.)
+> Generally, you should have "brcm,kona-crocodile-pwm" in case there's
+> some difference found later. Then you can support the bug or feature
+> without a DT change.
+
+No DT change would be necessary in any case.
+
+A check against the SOC type in the driver without additional DT 
+compatibility strings could be done.
+
 >
-> +  clocks:
-> +    maxItems: 1
-> +    description: Input clock (FXOSC) provider with output ranging from 32 MHz
-> +      to 36 MHz.
-> +
-> +  clock-names:
-> +    maxItems: 1
+>>> I like b) (with "...-crocodile-...") better than a). crocodile using
+>>> "...-ant-..." is not more ugly than crocodile using "...-v1". This is
+>>> also a tad more robust because if broadcom releases kona-dolphin and
+>>> someone finds a minor difference between the IPs used on ant and
+>>> crocodile it depends on the order of these events who gets v3, while
+>>> with the SoC naming the result is clear.
+>>>
+>>> (OK, and given that "brcm,kona-pwm" is already fixed, both approaches
+>>> need slight adaption, but I guess you still get what I meant.)
+>> Thanks for your thoughts and explanation.
+>>
+>> It is unfortunate devicetree has no proper guidelines or documentation on
+>>
+>> binding naming.  In the interest of getting this upstream we can name it
+> Surely we've captured that somewhere...
 
-This needs to say what the names are:
+Please point me at such documentation.
 
-items:
-  - const: txco
+There is no consistency in kernel drivers from what I have seen.
 
-With that, you can drop maxItems as that is implied if we list the items.
-
-Just to be clear, this name should be what the clock input is called,
-not what drives the input. Seems like that would be 'fxosc'?
-
-> +    description: Input clock (FXOSC) name from provider.
-> +
-> +  clock-output-names:
-> +    maxItems: 1
-
-This too should list the actual names.
-
-> +    description: Output clock (CLK_OUT) name, clock is gated version of the
-> +      input (FXOSC). Used in master mode operation.
-> +
-> +  '#clock-cells':
-> +    const: 0
-> +
->  required:
->    - compatible
->    - reg
 >
->  examples:
->    - |
-> +    tcxo: dummy32m {
-> +      compatible = "fixed-clock";
-> +      clock-frequency = <32000000>;
-> +      clock-output-names = "tcxo";
-> +      #clock-cells = <0>;
-> +    };
-> +
->      spi {
->        #address-cells = <1>;
->        #size-cells = <0>;
-> @@ -40,5 +64,9 @@ examples:
->        radio0: lora@0 {
->          compatible = "semtech,sx1257";
->          reg = <0>;
-> +        clocks = <&tcxo>;
-> +        clock-names = "tcxo";
-> +        clock-output-names = "clk32m";
-> +        #clock-cells = <0>;
->        };
->      };
-> --
-> 2.17.1
->
+>> "brcm, omega-pwm".  We can drop kona from the binding name as that
+>> architecture
+>>
+>> is really no more - only IP derived from it is - hence the name kona-v2
+>> previously.
+>>
+>>> Best regards
+>>> Uwe
+>>>
+>>>
+>> Cheers,
+>> Scott
