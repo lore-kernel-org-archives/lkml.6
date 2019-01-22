@@ -2,99 +2,120 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC403C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:19:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9781FC282C5
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:20:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D2AF20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:19:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66A1B217F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:20:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548188440;
+	bh=5ziCHOV8ZUAvvDOzEMcRPrlvW0YUizC8EC/qZLv3Z1o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=uuIFWa9sUzif1UuI1lvjH9bccXKZk3Vtrc/a5e38Zk5VG9qjtLlhqJoFb29KODloD
+	 6EV5gj5QaSdVU5mtr2nxNS8uwQOEMrqkzqSemsq5zFkooRX6WXlm/AldPo16ybgNcb
+	 3rtVcV0jbYsvHCVcBGUEM/EL3qDDVH3pCb42lRGs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726418AbfAVUTY (ORCPT
+        id S1726523AbfAVUUi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 15:19:24 -0500
-Received: from gateway23.websitewelcome.com ([192.185.49.184]:20867 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725913AbfAVUTY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 15:19:24 -0500
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway23.websitewelcome.com (Postfix) with ESMTP id A5AEEAE92
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 14:19:21 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id m2W1gvsDm2qH7m2W1gY6BK; Tue, 22 Jan 2019 14:19:21 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=33272 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gm2VP-001hp7-C0; Tue, 22 Jan 2019 14:19:21 -0600
-Date:   Tue, 22 Jan 2019 14:18:42 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     David Daney <david.daney@cavium.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>
-Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] MIPS: OCTEON: irq: Fix potential NULL pointer dereference
-Message-ID: <20190122201842.GA22886@embeddedor>
+        Tue, 22 Jan 2019 15:20:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46136 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725925AbfAVUUi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 15:20:38 -0500
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4AB4520866;
+        Tue, 22 Jan 2019 20:20:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548188437;
+        bh=5ziCHOV8ZUAvvDOzEMcRPrlvW0YUizC8EC/qZLv3Z1o=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=RbWc/jj4LDnrdATEqBjHPy0xSDU0Z7f5e1MG8pT1xwR05wmTmH0KMSWi++rjmKHV+
+         CyECWzQGJ7R0+J/f+eDLq8BC/u2ndKBh/GHaMuQdD3hxxf7czt4ZwgBSDKxzK0LQwe
+         cNrcaE/DiCps2pnZGTgDa/RMBGH8mt6AizM34u4A=
+Date:   Tue, 22 Jan 2019 14:20:35 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org,
+        Michael Bringmann <mwb@linux.vnet.ibm.com>
+Subject: Re: [PATCH] PCI: Use of_node_name_eq for node name comparisons
+Message-ID: <20190122202035.GD14636@google.com>
+References: <20181205195050.4759-18-robh@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1gm2VP-001hp7-C0
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.130.205]:33272
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20181205195050.4759-18-robh@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a potential NULL pointer dereference in case kzalloc()
-fails and returns NULL.
+[+cc Michael B]
 
-Fix this by adding a NULL check on *cd*
+On Wed, Dec 05, 2018 at 01:50:34PM -0600, Rob Herring wrote:
+> Convert string compares of DT node names to use of_node_name_eq helper
+> instead. This removes direct access to the node name pointer.
+> 
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Paul Mackerras <paulus@samba.org>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: linuxppc-dev@lists.ozlabs.org
+> Cc: linux-pci@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-This bug was detected with the help of Coccinelle.
+I applied the pci/of.c change to pci/misc for v5.1, thanks!
 
-Fixes: 64b139f97c01 ("MIPS: OCTEON: irq: add CIB and other fixes")
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- arch/mips/cavium-octeon/octeon-irq.c | 3 +++
- 1 file changed, 3 insertions(+)
+I dropped the rpaphp_core.c part because there's another patch
+in-flight [1] that touches the same code, and it would be easier if
+Michael picked up this change and added it to his series.
 
-diff --git a/arch/mips/cavium-octeon/octeon-irq.c b/arch/mips/cavium-octeon/octeon-irq.c
-index f97be32bf699..3ad1f76c063a 100644
---- a/arch/mips/cavium-octeon/octeon-irq.c
-+++ b/arch/mips/cavium-octeon/octeon-irq.c
-@@ -2199,6 +2199,9 @@ static int octeon_irq_cib_map(struct irq_domain *d,
- 	}
- 
- 	cd = kzalloc(sizeof(*cd), GFP_KERNEL);
-+	if (!cd)
-+		return -ENOMEM;
-+
- 	cd->host_data = host_data;
- 	cd->bit = hw;
- 
--- 
-2.20.1
+Bjorn
 
+[1] https://lore.kernel.org/lkml/20181214205120.16435.46952.stgit@powerkvm6.aus.stglabs.ibm.com/
+
+> ---
+>  drivers/pci/hotplug/rpaphp_core.c | 2 +-
+>  drivers/pci/of.c                  | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/hotplug/rpaphp_core.c b/drivers/pci/hotplug/rpaphp_core.c
+> index bcd5d357ca23..7697d9c92b98 100644
+> --- a/drivers/pci/hotplug/rpaphp_core.c
+> +++ b/drivers/pci/hotplug/rpaphp_core.c
+> @@ -354,7 +354,7 @@ int rpaphp_add_slot(struct device_node *dn)
+>  	const int *indexes, *names, *types, *power_domains;
+>  	char *name, *type;
+>  
+> -	if (!dn->name || strcmp(dn->name, "pci"))
+> +	if (!of_node_name_eq(dn, "pci"))
+>  		return 0;
+>  
+>  	/* If this is not a hotplug slot, return without doing anything. */
+> diff --git a/drivers/pci/of.c b/drivers/pci/of.c
+> index 4c4217d0c3f1..3d32da15c215 100644
+> --- a/drivers/pci/of.c
+> +++ b/drivers/pci/of.c
+> @@ -113,7 +113,7 @@ struct device_node *of_pci_find_child_device(struct device_node *parent,
+>  		 * a fake root for all functions of a multi-function
+>  		 * device we go down them as well.
+>  		 */
+> -		if (!strcmp(node->name, "multifunc-device")) {
+> +		if (of_node_name_eq(node, "multifunc-device")) {
+>  			for_each_child_of_node(node, node2) {
+>  				if (__of_pci_pci_compare(node2, devfn)) {
+>  					of_node_put(node);
+> -- 
+> 2.19.1
+> 
