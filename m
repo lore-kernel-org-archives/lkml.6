@@ -2,124 +2,243 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07DF7C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:11:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00C25C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:12:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D216720844
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:11:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC1ED2085A
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:12:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qWaoapor"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727562AbfAVKL2 (ORCPT
+        id S1727608AbfAVKMR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 05:11:28 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:48601 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727434AbfAVKL1 (ORCPT
+        Tue, 22 Jan 2019 05:12:17 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:55593 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726078AbfAVKMR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 05:11:27 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0MABFwE2906159
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 22 Jan 2019 02:11:15 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0MABFwf2906156;
-        Tue, 22 Jan 2019 02:11:15 -0800
-Date:   Tue, 22 Jan 2019 02:11:15 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-4f5a473d79c755d2e325c9a8dab01804d5416923@git.kernel.org>
-Cc:     acme@redhat.com, alexander.shishkin@linux.intel.com,
-        peterz@infradead.org, jolsa@kernel.org,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, mingo@kernel.org,
-        tglx@linutronix.de, namhyung@kernel.org
-Reply-To: alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
-          tglx@linutronix.de, namhyung@kernel.org, acme@redhat.com,
-          peterz@infradead.org, jolsa@kernel.org, mingo@kernel.org,
-          hpa@zytor.com
-In-Reply-To: <20190110101301.6196-3-jolsa@kernel.org>
-References: <20190110101301.6196-3-jolsa@kernel.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf session: Get rid of file_size variable
-Git-Commit-ID: 4f5a473d79c755d2e325c9a8dab01804d5416923
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 22 Jan 2019 05:12:17 -0500
+Received: by mail-it1-f193.google.com with SMTP id m62so20521599ith.5
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 02:12:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qlJATULT4hazjvfGK4NYpVOgm0Sh9BbR6oZEuDYHwYQ=;
+        b=qWaoaporDypT3ZRAg5ywetlOktU3YqDGCjG7AnNFuC3V7kkkULcU/CQxLkHYXUF+x/
+         b5lmJDd1zpzYSXUO0znN3yB9DBefiy77gdeSyclUJiDvrrSYnc0aBBQ2K3cjAPPJLHTY
+         XEWAKL0QNSPi4XRjyObbEEUI6ohVseZAgIlGFzdvw9r2GN4PpR3QC2fx7UkH3Jrrbn52
+         6wuKpqhDO7s0fDxGZeAGBysWavc7EFB+GjlYh6zQGY2idrK7TSWfixGtaWGllwf3I9Vk
+         DXBmql2yIEg1F+zZ202w+FWCLXvnjdN0vAGMFVqSwnkApa8EeEgeEU62z/U2k60aRjrb
+         gFcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qlJATULT4hazjvfGK4NYpVOgm0Sh9BbR6oZEuDYHwYQ=;
+        b=rTNiohxm7d+mYig6wH1a8Qy3F/Oe2ziIUtHHOGysxX4rhvkzDin1poGXKyaspFRh0f
+         sqrLuI9BWm0y2NC591xYSm+KMmBLtnaVGlWoLuDnyhGcO+cUwGh4o3pQCOtaJSm8l6jf
+         jFhEiXjxAD1YgaN5LKZ6C5JTDQkfTd9r6AVCSi8Lbm7LwQ0WpvujkFJnj5lGi1Q2gICU
+         i0+XWf3WN28IyDgD1RJUoXtWdFVcflps9x4NUPi+EF/Ex2h9FgxuQ4w+mBA5GK0FBNkP
+         t/+w0xQrhlVzDXhsYKdULcKSzwCq3XXf6on/A8QKXjDujvY/V8JibwTTBnWmr/tJPa1r
+         Cn3g==
+X-Gm-Message-State: AJcUukehDrJ7a5SHVjPsP81Glh/fCof0BKQJoCNzHABii6vGpJq9PdOQ
+        dEe4n4BrxH1jU4NCobxBzRCbtqSn+rT3lpMdv1kZYQ==
+X-Google-Smtp-Source: ALg8bN7aTbQMNuir1JTRpUsVdwRidIcv47/71jblvz33tQDaeKB/vnWq0sdDXSKXuTTIjoEMHVSdN27XEfJBcSpGkz8=
+X-Received: by 2002:a02:97a2:: with SMTP id s31mr19115716jaj.82.1548151936025;
+ Tue, 22 Jan 2019 02:12:16 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+References: <000000000000f7a28e057653dc6e@google.com> <20180920141058.4ed467594761e073606eafe2@linux-foundation.org>
+ <CAHRSSEzX5HOUEQ6DgEF76OLGrwS1isWMdtvneBLOEEnwoMxVrA@mail.gmail.com>
+ <CAEXW_YSot+3AMQ=jmDRowmqoOmQmujp9r8Dh18KJJN1EDmyHOw@mail.gmail.com>
+ <20180921162110.e22d09a9e281d194db3c8359@linux-foundation.org> <4b0a5f8c-2be2-db38-a70d-8d497cb67665@I-love.SAKURA.ne.jp>
+In-Reply-To: <4b0a5f8c-2be2-db38-a70d-8d497cb67665@I-love.SAKURA.ne.jp>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Tue, 22 Jan 2019 11:12:04 +0100
+Message-ID: <CACT4Y+ZTjCGd9XYUCUoqv+AqXrPwX4OqWMC0jFgjNxZRFkNYXw@mail.gmail.com>
+Subject: Re: possible deadlock in __do_page_fault
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        syzbot+a76129f18c89f3e2ddd4@syzkaller.appspotmail.com,
+        Andi Kleen <ak@linux.intel.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  4f5a473d79c755d2e325c9a8dab01804d5416923
-Gitweb:     https://git.kernel.org/tip/4f5a473d79c755d2e325c9a8dab01804d5416923
-Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Thu, 10 Jan 2019 11:12:57 +0100
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 21 Jan 2019 15:15:57 -0300
+On Tue, Jan 22, 2019 at 11:02 AM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+>
+> On 2018/09/22 8:21, Andrew Morton wrote:
+> > On Thu, 20 Sep 2018 19:33:15 -0400 Joel Fernandes <joel@joelfernandes.org> wrote:
+> >
+> >> On Thu, Sep 20, 2018 at 5:12 PM Todd Kjos <tkjos@google.com> wrote:
+> >>>
+> >>> +Joel Fernandes
+> >>>
+> >>> On Thu, Sep 20, 2018 at 2:11 PM Andrew Morton <akpm@linux-foundation.org> wrote:
+> >>>>
+> >>>>
+> >>>> Thanks.  Let's cc the ashmem folks.
+> >>>>
+> >>
+> >> This should be fixed by https://patchwork.kernel.org/patch/10572477/
+> >>
+> >> It has Neil Brown's Reviewed-by but looks like didn't yet appear in
+> >> anyone's tree, could Greg take this patch?
+> >
+> > All is well.  That went into mainline yesterday, with a cc:stable.
+> >
+>
+> This problem was not fixed at all.
 
-perf session: Get rid of file_size variable
+There are at least 2 other open deadlocks involving ashmem:
 
-It's not needed and removing it makes the code a little simpler for the
-upcoming changes.
+https://syzkaller.appspot.com/bug?extid=148c2885d71194f18d28
+https://syzkaller.appspot.com/bug?extid=4b8b031b89e6b96c4b2e
 
-It's safe to replace file_size with data_size, because the
-perf_data__size() value is never smaller than data_offset + data_size.
+Does this fix any of these too?
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Acked-by: Namhyung Kim <namhyung@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20190110101301.6196-3-jolsa@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/session.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
 
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index ad14192db811..c8c2069fb01e 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -1825,7 +1825,6 @@ static int __perf_session__process_events(struct perf_session *session)
- 	struct ordered_events *oe = &session->ordered_events;
- 	struct perf_tool *tool = session->tool;
- 	int fd = perf_data__fd(session->data);
--	u64 file_size = perf_data__size(session->data);
- 	u64 data_offset = session->header.data_offset;
- 	u64 data_size = session->header.data_size;
- 	u64 head, page_offset, file_offset, file_pos, size;
-@@ -1845,14 +1844,13 @@ static int __perf_session__process_events(struct perf_session *session)
- 	if (data_size == 0)
- 		goto out;
- 
--	if (data_offset + data_size < file_size)
--		file_size = data_offset + data_size;
-+	ui_progress__init_size(&prog, data_size, "Processing events...");
- 
--	ui_progress__init_size(&prog, file_size, "Processing events...");
-+	data_size += data_offset;
- 
- 	mmap_size = MMAP_SIZE;
--	if (mmap_size > file_size) {
--		mmap_size = file_size;
-+	if (mmap_size > data_size) {
-+		mmap_size = data_size;
- 		session->one_mmap = true;
- 	}
- 
-@@ -1917,7 +1915,7 @@ more:
- 	if (session_done())
- 		goto out;
- 
--	if (file_pos < file_size)
-+	if (file_pos < data_size)
- 		goto more;
- 
- out:
+> Why do we need to call fallocate() synchronously with ashmem_mutex held?
+> Why can't we call fallocate() asynchronously from WQ_MEM_RECLAIM workqueue
+> context so that we can call fallocate() with ashmem_mutex not held?
+>
+> I don't know how ashmem works, but as far as I can guess, offloading is
+> possible as long as other operations which depend on the completion of
+> fallocate() operation (e.g. read()/mmap(), querying/changing pinned status)
+> wait for completion of asynchronous fallocate() operation (like a draft
+> patch shown below is doing).
+>
+> ---
+>  drivers/staging/android/ashmem.c | 50 ++++++++++++++++++++++++++++----
+>  1 file changed, 45 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/staging/android/ashmem.c b/drivers/staging/android/ashmem.c
+> index 90a8a9f1ac7d..1a890c43a10a 100644
+> --- a/drivers/staging/android/ashmem.c
+> +++ b/drivers/staging/android/ashmem.c
+> @@ -75,6 +75,17 @@ struct ashmem_range {
+>  /* LRU list of unpinned pages, protected by ashmem_mutex */
+>  static LIST_HEAD(ashmem_lru_list);
+>
+> +static struct workqueue_struct *ashmem_wq;
+> +static atomic_t ashmem_shrink_inflight = ATOMIC_INIT(0);
+> +static DECLARE_WAIT_QUEUE_HEAD(ashmem_shrink_wait);
+> +
+> +struct ashmem_shrink_work {
+> +       struct work_struct work;
+> +       struct file *file;
+> +       loff_t start;
+> +       loff_t end;
+> +};
+> +
+>  /*
+>   * long lru_count - The count of pages on our LRU list.
+>   *
+> @@ -292,6 +303,7 @@ static ssize_t ashmem_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+>         int ret = 0;
+>
+>         mutex_lock(&ashmem_mutex);
+> +       wait_event(ashmem_shrink_wait, !atomic_read(&ashmem_shrink_inflight));
+>
+>         /* If size is not set, or set to 0, always return EOF. */
+>         if (asma->size == 0)
+> @@ -359,6 +371,7 @@ static int ashmem_mmap(struct file *file, struct vm_area_struct *vma)
+>         int ret = 0;
+>
+>         mutex_lock(&ashmem_mutex);
+> +       wait_event(ashmem_shrink_wait, !atomic_read(&ashmem_shrink_inflight));
+>
+>         /* user needs to SET_SIZE before mapping */
+>         if (!asma->size) {
+> @@ -421,6 +434,19 @@ static int ashmem_mmap(struct file *file, struct vm_area_struct *vma)
+>         return ret;
+>  }
+>
+> +static void ashmem_shrink_worker(struct work_struct *work)
+> +{
+> +       struct ashmem_shrink_work *w = container_of(work, typeof(*w), work);
+> +
+> +       w->file->f_op->fallocate(w->file,
+> +                                FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
+> +                                w->start, w->end - w->start);
+> +       fput(w->file);
+> +       kfree(w);
+> +       if (atomic_dec_and_test(&ashmem_shrink_inflight))
+> +               wake_up_all(&ashmem_shrink_wait);
+> +}
+> +
+>  /*
+>   * ashmem_shrink - our cache shrinker, called from mm/vmscan.c
+>   *
+> @@ -449,12 +475,18 @@ ashmem_shrink_scan(struct shrinker *shrink, struct shrink_control *sc)
+>                 return -1;
+>
+>         list_for_each_entry_safe(range, next, &ashmem_lru_list, lru) {
+> -               loff_t start = range->pgstart * PAGE_SIZE;
+> -               loff_t end = (range->pgend + 1) * PAGE_SIZE;
+> +               struct ashmem_shrink_work *w = kzalloc(sizeof(*w), GFP_ATOMIC);
+> +
+> +               if (!w)
+> +                       break;
+> +               INIT_WORK(&w->work, ashmem_shrink_worker);
+> +               w->file = range->asma->file;
+> +               get_file(w->file);
+> +               w->start = range->pgstart * PAGE_SIZE;
+> +               w->end = (range->pgend + 1) * PAGE_SIZE;
+> +               atomic_inc(&ashmem_shrink_inflight);
+> +               queue_work(ashmem_wq, &w->work);
+>
+> -               range->asma->file->f_op->fallocate(range->asma->file,
+> -                               FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
+> -                               start, end - start);
+>                 range->purged = ASHMEM_WAS_PURGED;
+>                 lru_del(range);
+>
+> @@ -713,6 +745,7 @@ static int ashmem_pin_unpin(struct ashmem_area *asma, unsigned long cmd,
+>                 return -EFAULT;
+>
+>         mutex_lock(&ashmem_mutex);
+> +       wait_event(ashmem_shrink_wait, !atomic_read(&ashmem_shrink_inflight));
+>
+>         if (!asma->file)
+>                 goto out_unlock;
+> @@ -883,8 +916,15 @@ static int __init ashmem_init(void)
+>                 goto out_free2;
+>         }
+>
+> +       ashmem_wq = alloc_workqueue("ashmem_wq", WQ_MEM_RECLAIM, 0);
+> +       if (!ashmem_wq) {
+> +               pr_err("failed to create workqueue\n");
+> +               goto out_demisc;
+> +       }
+> +
+>         ret = register_shrinker(&ashmem_shrinker);
+>         if (ret) {
+> +               destroy_workqueue(ashmem_wq);
+>                 pr_err("failed to register shrinker!\n");
+>                 goto out_demisc;
+>         }
+> --
+> 2.17.1
