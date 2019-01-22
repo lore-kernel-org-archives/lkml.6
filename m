@@ -2,125 +2,80 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEED7C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 12:45:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45218C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 12:49:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B932B20855
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 12:45:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CF9E21019
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 12:49:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728474AbfAVMpw (ORCPT
+        id S1728383AbfAVMs7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 07:45:52 -0500
-Received: from foss.arm.com ([217.140.101.70]:52624 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728215AbfAVMpw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 07:45:52 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7D424EBD;
-        Tue, 22 Jan 2019 04:45:51 -0800 (PST)
-Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8726C3F614;
-        Tue, 22 Jan 2019 04:45:48 -0800 (PST)
-Date:   Tue, 22 Jan 2019 12:45:46 +0000
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v6 11/16] sched/fair: Add uclamp support to
- energy_compute()
-Message-ID: <20190122124546.njrpmykzbjpztd6u@e110439-lin>
-References: <20190115101513.2822-1-patrick.bellasi@arm.com>
- <20190115101513.2822-12-patrick.bellasi@arm.com>
- <20190122121321.r6mv23ao57uut3t7@queper01-lin>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190122121321.r6mv23ao57uut3t7@queper01-lin>
-User-Agent: NeoMutt/20180716
+        Tue, 22 Jan 2019 07:48:59 -0500
+Received: from faui40.informatik.uni-erlangen.de ([131.188.34.40]:59222 "EHLO
+        faui40.informatik.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728209AbfAVMs6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 07:48:58 -0500
+Received: from faui49copter1 (faui49copter1.informatik.uni-erlangen.de [131.188.42.149])
+        by faui40.informatik.uni-erlangen.de (Postfix) with SMTP id 70E65548040;
+        Tue, 22 Jan 2019 13:48:53 +0100 (CET)
+Received: by faui49copter1 (sSMTP sendmail emulation); Tue, 22 Jan 2019 13:48:53 +0100
+From:   Andreas Ziegler <andreas.ziegler@fau.de>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Andreas Ziegler <andreas.ziegler@fau.de>
+Subject: [PATCH] tracing: probeevent: Correctly update remaining space in dynamic area
+Date:   Tue, 22 Jan 2019 13:48:48 +0100
+Message-Id: <20190122124848.17774-1-andreas.ziegler@fau.de>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22-Jan 12:13, Quentin Perret wrote:
-> On Tuesday 15 Jan 2019 at 10:15:08 (+0000), Patrick Bellasi wrote:
-> > The Energy Aware Scheduler (AES) estimates the energy impact of waking
+Commit 9178412ddf5a ("tracing: probeevent: Return consumed
+bytes of dynamic area") improved the string fetching
+mechanism by returning the number of required bytes after
+copying the argument to the dynamic area. However, this
+return value is now only used to increment the pointer
+inside the dynamic area but misses updating the 'maxlen'
+variable which indicates the remaining space in the dynamic
+area.
 
-[...]
+This means that fetch_store_string() always reads the *total*
+size of the dynamic area from the data_loc pointer instead of
+the *remaining* size (and passes it along to
+strncpy_from_{user,unsafe}) even if we're already about to
+copy data into the middle of the dynamic area.
 
-> > +		for_each_cpu_and(cpu, pd_mask, cpu_online_mask) {
-> > +			cfs_util = cpu_util_next(cpu, p, dst_cpu);
-> > +
-> > +			/*
-> > +			 * Busy time computation: utilization clamping is not
-> > +			 * required since the ratio (sum_util / cpu_capacity)
-> > +			 * is already enough to scale the EM reported power
-> > +			 * consumption at the (eventually clamped) cpu_capacity.
-> > +			 */
-> 
-> Right.
-> 
-> > +			sum_util += schedutil_cpu_util(cpu, cfs_util, cpu_cap,
-> > +						       ENERGY_UTIL, NULL);
-> > +
-> > +			/*
-> > +			 * Performance domain frequency: utilization clamping
-> > +			 * must be considered since it affects the selection
-> > +			 * of the performance domain frequency.
-> > +			 */
-> 
-> So that actually affects the way we deal with RT I think. I assume the
-> idea is to say if you don't want to reflect the RT-go-to-max-freq thing
-> in EAS (which is what we do now) you should set the min cap for RT to 0.
-> Is that correct ?
+Fixes: 9178412ddf5a ("tracing: probeevent: Return consumed bytes of dynamic area")
+Signed-off-by: Andreas Ziegler <andreas.ziegler@fau.de>
+---
+ kernel/trace/trace_probe_tmpl.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-By default configuration, RT tasks still go to max when uclamp is
-enabled, since they get a util_min=1024.
-
-If we want to save power on RT tasks, we can set a smaller util_min...
-but not necessarily 0. A util_min=0 for RT tasks means to use just
-cpu_util_rt() for that class.
-
-> I'm fine with this conceptually but maybe the specific case of RT should
-> be mentioned somewhere in the commit message or so ? I think it's
-> important to say that clearly since this patch changes the default
-> behaviour.
-
-Default behavior for RT should not be affected. While a capping is
-possible for those tasks... where do you see issues ?
-Here we are just figuring out what's the capacity the task will run
-at, if we will have clamped RT tasks will not be the max but: is that
-a problem ?
-
-> > +			cpu_util = schedutil_cpu_util(cpu, cfs_util, cpu_cap,
-> > +						      FREQUENCY_UTIL,
-> > +						      cpu == dst_cpu ? p : NULL);
-> > +			max_util = max(max_util, cpu_util);
-> >  		}
-> >  
-> >  		energy += em_pd_energy(pd->em_pd, max_util, sum_util);
-> 
-> Thanks,
-> Quentin
-
+diff --git a/kernel/trace/trace_probe_tmpl.h b/kernel/trace/trace_probe_tmpl.h
+index 5c56afc17cf8..0cf953e47584 100644
+--- a/kernel/trace/trace_probe_tmpl.h
++++ b/kernel/trace/trace_probe_tmpl.h
+@@ -182,8 +182,10 @@ store_trace_args(void *data, struct trace_probe *tp, struct pt_regs *regs,
+ 		ret = process_fetch_insn(arg->code, regs, dl, base);
+ 		if (unlikely(ret < 0 && arg->dynamic))
+ 			*dl = make_data_loc(0, dyndata - base);
+-		else
++		else {
+ 			dyndata += ret;
++			maxlen -= ret;
++		}
+ 	}
+ }
+ 
 -- 
-#include <best/regards.h>
+2.17.1
 
-Patrick Bellasi
