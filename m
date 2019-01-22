@@ -2,118 +2,402 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95FA6C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:14:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF32FC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:15:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6353220854
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:14:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9197E20854
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:15:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PVt8PbLQ"
+	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="mLuins3B"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726125AbfAVSOZ (ORCPT
+        id S1726885AbfAVSPK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 13:14:25 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:45307 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725896AbfAVSOZ (ORCPT
+        Tue, 22 Jan 2019 13:15:10 -0500
+Received: from alln-iport-4.cisco.com ([173.37.142.91]:56061 "EHLO
+        alln-iport-4.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726832AbfAVSPH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 13:14:25 -0500
-Received: by mail-lj1-f194.google.com with SMTP id s5-v6so21447416ljd.12
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 10:14:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lm7EySKtcW0vc0v5ouaoa1srnOUbcsVIKJbJS15qy3k=;
-        b=PVt8PbLQcTHGuat/x2woRKupR8GJtTa80TKinuBsAt/Gl37BwoKGieTHm2ODh+TB0j
-         hWR17ER/x3flA5KaCFsiYKSnxreE9RifO6OYREEPBYedLHe/H0xZ3p8vyZWfA2RV4Jnz
-         t+t0TdlwXmV4tx8ZaiT6BVCejCKqnNaZtc7AI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lm7EySKtcW0vc0v5ouaoa1srnOUbcsVIKJbJS15qy3k=;
-        b=QnRXR/dkCIYuGc9nrIhZ0YkfpUCzAJP8RkaTIe5c/U+P7nFn7F1hM6pp2exkMlINSI
-         WgtqGExyfVTdIVccm+KEqdBGwlyGt8iBloxPJ4A5AFHUYwUy3wgvOBvcLBEd3KwJpvZT
-         uWolbOILImln+6aMEFcMjDaeO3bc5nnLHXx6deorm7ZPMqIb+qdcpyKdwBfOfGyj0qnN
-         M02AivWrxYC/b3TnbIjU23e9FjyKgYINDkFbwG1gOJmVhEVvw/NL42eA6VKMRgYiiClj
-         MTf/8Vme7ddxM2/4/+kb17zavllIZAVWkRKLCM0mz9wEyhXNT+ubo0Ry+Sz8vxeUpA2W
-         N2kw==
-X-Gm-Message-State: AJcUukfb/j5A+z3iREgjk4qt9BFu7Hrnhdu1LePXeWbyEVHCiIMhZhbw
-        VWo8UJJ9Fdfai6MxRUuinvOp3t4CAaA=
-X-Google-Smtp-Source: ALg8bN4bIZuQbt5kR883YRpa37ur2T+gvxG+Yzr1jCuM/JLZVK9XBEtEU2EqPPZtVJz7Op56p9P+Zg==
-X-Received: by 2002:a2e:20f:: with SMTP id 15-v6mr21559405ljc.172.1548180863025;
-        Tue, 22 Jan 2019 10:14:23 -0800 (PST)
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
-        by smtp.gmail.com with ESMTPSA id p89-v6sm114870ljp.60.2019.01.22.10.14.21
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Jan 2019 10:14:22 -0800 (PST)
-Received: by mail-lj1-f172.google.com with SMTP id c19-v6so21498368lja.5
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 10:14:21 -0800 (PST)
-X-Received: by 2002:a2e:7e04:: with SMTP id z4-v6mr9312342ljc.97.1548180861093;
- Tue, 22 Jan 2019 10:14:21 -0800 (PST)
+        Tue, 22 Jan 2019 13:15:07 -0500
+X-Greylist: delayed 573 seconds by postgrey-1.27 at vger.kernel.org; Tue, 22 Jan 2019 13:15:06 EST
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=cisco.com; i=@cisco.com; l=10059; q=dns/txt;
+  s=iport; t=1548180906; x=1549390506;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=VVLUtUTfuG7rr8+82upZObDyjdmmuhELBaZ97CzohQk=;
+  b=mLuins3B3ZXaUBxMD0tEpuYTOGouvCFecgWEQi5tkmSl1cLrej3NUtwu
+   KjJZyXF75yQ01NJjtcElgtiQIyPNar4x3073Q9mXcnUsctWVyWxUWuDxr
+   HvjEcPawJp5vVbGvwRN/fd8ahn/G/i3qXuUWay1qjOX7GjtvzSQlqvunt
+   M=;
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A0ADAADpWkdc/40NJK1jGQEBAQEBAQE?=
+ =?us-ascii?q?BAQEBAQcBAQEBAQGBUQQBAQEBAQsBggNmgQInCowRi2yCDZgBgXsLAQEfhE0?=
+ =?us-ascii?q?Cgm0iNAkNAQMBAQIBAQJtHAyFSgEBAQEDJxM/DAQCAQgRBAEBHxAyHQgCBAE?=
+ =?us-ascii?q?NBQiDG4IBrjEziiqMQReBQD+BEYMSimECiVsKhiWBWJA+CQKHIopvIII0j2A?=
+ =?us-ascii?q?tiVeQcgIRFIEnHziBVnAVgycJgh4XE4QriWBBMYl4gR8BAQ?=
+X-IronPort-AV: E=Sophos;i="5.56,507,1539648000"; 
+   d="scan'208";a="229600963"
+Received: from alln-core-8.cisco.com ([173.36.13.141])
+  by alln-iport-4.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jan 2019 18:05:31 +0000
+Received: from XCH-ALN-015.cisco.com (xch-aln-015.cisco.com [173.36.7.25])
+        by alln-core-8.cisco.com (8.15.2/8.15.2) with ESMTPS id x0MI5V6e006796
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=FAIL);
+        Tue, 22 Jan 2019 18:05:31 GMT
+Received: from xch-rcd-012.cisco.com (173.37.102.22) by XCH-ALN-015.cisco.com
+ (173.36.7.25) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 22 Jan
+ 2019 12:05:31 -0600
+Received: from xch-rcd-012.cisco.com ([173.37.102.22]) by
+ XCH-RCD-012.cisco.com ([173.37.102.22]) with mapi id 15.00.1395.000; Tue, 22
+ Jan 2019 12:05:31 -0600
+From:   "Satish Kharat (satishkh)" <satishkh@cisco.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Martin Petersen <martin.petersen@oracle.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "Sesidhar Baddela (sebaddel)" <sebaddel@cisco.com>,
+        "Karan Tilak Kumar (kartilak)" <kartilak@cisco.com>
+Subject: RE: [PATCH 3/7] scsi: fnic: no need to check return value of
+ debugfs_create functions
+Thread-Topic: [PATCH 3/7] scsi: fnic: no need to check return value of
+ debugfs_create functions
+Thread-Index: AQHUsmR5/nkdgIvf/U6JwZrlfe277aW7k81g
+Date:   Tue, 22 Jan 2019 18:05:30 +0000
+Message-ID: <a001f340b2f94667bcc2870244cfccd7@XCH-RCD-012.cisco.com>
+References: <20190122150906.12470-1-gregkh@linuxfoundation.org>
+ <20190122150906.12470-4-gregkh@linuxfoundation.org>
+In-Reply-To: <20190122150906.12470-4-gregkh@linuxfoundation.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.157.132.77]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20190111230129.127037-1-evgreen@chromium.org> <20190111230129.127037-4-evgreen@chromium.org>
- <20190122002549.GA20481@bogus>
-In-Reply-To: <20190122002549.GA20481@bogus>
-From:   Evan Green <evgreen@chromium.org>
-Date:   Tue, 22 Jan 2019 10:13:44 -0800
-X-Gmail-Original-Message-ID: <CAE=gft6=WdPyA6WF_3oSNGYPEhqjGVB7Cpwybr0kzp+9ys821Q@mail.gmail.com>
-Message-ID: <CAE=gft6=WdPyA6WF_3oSNGYPEhqjGVB7Cpwybr0kzp+9ys821Q@mail.gmail.com>
-Subject: Re: [PATCH v1 3/8] arm64: dts: sdm845: Add UFS PHY reset
-To:     Rob Herring <robh@kernel.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Can Guo <cang@codeaurora.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Asutosh Das <asutoshd@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        devicetree@vger.kernel.org,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+X-Outbound-SMTP-Client: 173.36.7.25, xch-aln-015.cisco.com
+X-Outbound-Node: alln-core-8.cisco.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 4:25 PM Rob Herring <robh@kernel.org> wrote:
->
-> On Fri, Jan 11, 2019 at 03:01:24PM -0800, Evan Green wrote:
-> > Wire up the reset controller in the Qcom UFS controller for the PHY.
-> > This will be used to toggle PHY reset during initialization of the PHY.
-> >
-> > Signed-off-by: Evan Green <evgreen@chromium.org>
-> > ---
-> > This commit is based atop the series at [1]. Patches 1 and 2 of that
-> > series have landed, but 3, 4, and 5 are still outstanding.
-> >
-> > [1] https://lore.kernel.org/lkml/20181210192826.241350-1-evgreen@chromium.org/
-> >
-> >  arch/arm64/boot/dts/qcom/sdm845.dtsi | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> > index b29332b265d9e..029ab66405cf4 100644
-> > --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> > @@ -990,6 +990,7 @@
-> >                       phy-names = "ufsphy";
-> >                       lanes-per-direction = <2>;
-> >                       power-domains = <&gcc UFS_PHY_GDSC>;
-> > +                     #reset-cells = <1>;
->
-> Is this documented?
->
+Looks good to me.
+Acked-by: Satish Kharat <satishkh@cisco.com>
 
-No, I'll add this in my next spin. Thanks.
--Evan
+
+Satish Kharat
+TECHNICAL LEADER.ENGINEERING
+satishkh@cisco.com
+
+-----Original Message-----
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>=20
+Sent: Tuesday, January 22, 2019 7:09 AM
+To: James Bottomley <jejb@linux.ibm.com>; Martin Petersen <martin.petersen@=
+oracle.com>
+Cc: linux-kernel@vger.kernel.org; linux-scsi@vger.kernel.org; Greg Kroah-Ha=
+rtman <gregkh@linuxfoundation.org>; Satish Kharat (satishkh) <satishkh@cisc=
+o.com>; Sesidhar Baddela (sebaddel) <sebaddel@cisco.com>; Karan Tilak Kumar=
+ (kartilak) <kartilak@cisco.com>
+Subject: [PATCH 3/7] scsi: fnic: no need to check return value of debugfs_c=
+reate functions
+
+When calling debugfs functions, there is no need to ever check the return v=
+alue.  The function can work or not, but the code logic should never do som=
+ething different based on this.
+
+Cc: Satish Kharat <satishkh@cisco.com>
+Cc: Sesidhar Baddela <sebaddel@cisco.com>
+Cc: Karan Tilak Kumar <kartilak@cisco.com>
+Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/scsi/fnic/fnic_debugfs.c | 88 ++------------------------------
+ drivers/scsi/fnic/fnic_main.c    |  7 +--
+ drivers/scsi/fnic/fnic_stats.h   |  2 +-
+ drivers/scsi/fnic/fnic_trace.c   | 17 ++----
+ drivers/scsi/fnic/fnic_trace.h   |  4 +-
+ 5 files changed, 10 insertions(+), 108 deletions(-)
+
+diff --git a/drivers/scsi/fnic/fnic_debugfs.c b/drivers/scsi/fnic/fnic_debu=
+gfs.c
+index 139fffa3658a..21991c99db7c 100644
+--- a/drivers/scsi/fnic/fnic_debugfs.c
++++ b/drivers/scsi/fnic/fnic_debugfs.c
+@@ -54,23 +54,9 @@ int fnic_debugfs_init(void)  {
+ 	int rc =3D -1;
+ 	fnic_trace_debugfs_root =3D debugfs_create_dir("fnic", NULL);
+-	if (!fnic_trace_debugfs_root) {
+-		printk(KERN_DEBUG "Cannot create debugfs root\n");
+-		return rc;
+-	}
+-
+-	if (!fnic_trace_debugfs_root) {
+-		printk(KERN_DEBUG
+-			"fnic root directory doesn't exist in debugfs\n");
+-		return rc;
+-	}
+=20
+ 	fnic_stats_debugfs_root =3D debugfs_create_dir("statistics",
+ 						fnic_trace_debugfs_root);
+-	if (!fnic_stats_debugfs_root) {
+-		printk(KERN_DEBUG "Cannot create Statistics directory\n");
+-		return rc;
+-	}
+=20
+ 	/* Allocate memory to structure */
+ 	fc_trc_flag =3D (struct fc_trace_flag_type *) @@ -356,39 +342,19 @@ stati=
+c const struct file_operations fnic_trace_debugfs_fops =3D {
+  * it will also create file trace_enable to control enable/disable of
+  * trace logging into trace buffer.
+  */
+-int fnic_trace_debugfs_init(void)
++void fnic_trace_debugfs_init(void)
+ {
+-	int rc =3D -1;
+-	if (!fnic_trace_debugfs_root) {
+-		printk(KERN_DEBUG
+-			"FNIC Debugfs root directory doesn't exist\n");
+-		return rc;
+-	}
+ 	fnic_trace_enable =3D debugfs_create_file("tracing_enable",
+ 					S_IFREG|S_IRUGO|S_IWUSR,
+ 					fnic_trace_debugfs_root,
+ 					&(fc_trc_flag->fnic_trace),
+ 					&fnic_trace_ctrl_fops);
+=20
+-	if (!fnic_trace_enable) {
+-		printk(KERN_DEBUG
+-			"Cannot create trace_enable file under debugfs\n");
+-		return rc;
+-	}
+-
+ 	fnic_trace_debugfs_file =3D debugfs_create_file("trace",
+ 					S_IFREG|S_IRUGO|S_IWUSR,
+ 					fnic_trace_debugfs_root,
+ 					&(fc_trc_flag->fnic_trace),
+ 					&fnic_trace_debugfs_fops);
+-
+-	if (!fnic_trace_debugfs_file) {
+-		printk(KERN_DEBUG
+-			"Cannot create trace file under debugfs\n");
+-		return rc;
+-	}
+-	rc =3D 0;
+-	return rc;
+ }
+=20
+ /*
+@@ -419,37 +385,20 @@ void fnic_trace_debugfs_terminate(void)
+  * trace logging into trace buffer.
+  */
+=20
+-int fnic_fc_trace_debugfs_init(void)
++void fnic_fc_trace_debugfs_init(void)
+ {
+-	int rc =3D -1;
+-
+-	if (!fnic_trace_debugfs_root) {
+-		pr_err("fnic:Debugfs root directory doesn't exist\n");
+-		return rc;
+-	}
+-
+ 	fnic_fc_trace_enable =3D debugfs_create_file("fc_trace_enable",
+ 					S_IFREG|S_IRUGO|S_IWUSR,
+ 					fnic_trace_debugfs_root,
+ 					&(fc_trc_flag->fc_trace),
+ 					&fnic_trace_ctrl_fops);
+=20
+-	if (!fnic_fc_trace_enable) {
+-		pr_err("fnic: Failed create fc_trace_enable file\n");
+-		return rc;
+-	}
+-
+ 	fnic_fc_trace_clear =3D debugfs_create_file("fc_trace_clear",
+ 					S_IFREG|S_IRUGO|S_IWUSR,
+ 					fnic_trace_debugfs_root,
+ 					&(fc_trc_flag->fc_clear),
+ 					&fnic_trace_ctrl_fops);
+=20
+-	if (!fnic_fc_trace_clear) {
+-		pr_err("fnic: Failed to create fc_trace_enable file\n");
+-		return rc;
+-	}
+-
+ 	fnic_fc_rdata_trace_debugfs_file =3D
+ 		debugfs_create_file("fc_trace_rdata",
+ 				    S_IFREG|S_IRUGO|S_IWUSR,
+@@ -457,24 +406,12 @@ int fnic_fc_trace_debugfs_init(void)
+ 				    &(fc_trc_flag->fc_normal_file),
+ 				    &fnic_trace_debugfs_fops);
+=20
+-	if (!fnic_fc_rdata_trace_debugfs_file) {
+-		pr_err("fnic: Failed create fc_rdata_trace file\n");
+-		return rc;
+-	}
+-
+ 	fnic_fc_trace_debugfs_file =3D
+ 		debugfs_create_file("fc_trace",
+ 				    S_IFREG|S_IRUGO|S_IWUSR,
+ 				    fnic_trace_debugfs_root,
+ 				    &(fc_trc_flag->fc_row_file),
+ 				    &fnic_trace_debugfs_fops);
+-
+-	if (!fnic_fc_trace_debugfs_file) {
+-		pr_err("fnic: Failed to create fc_trace file\n");
+-		return rc;
+-	}
+-	rc =3D 0;
+-	return rc;
+ }
+=20
+ /*
+@@ -757,45 +694,26 @@ static const struct file_operations fnic_reset_debugf=
+s_fops =3D {
+  * It will create file stats and reset_stats under statistics/host# direct=
+ory
+  * to log per fnic stats.
+  */
+-int fnic_stats_debugfs_init(struct fnic *fnic)
++void fnic_stats_debugfs_init(struct fnic *fnic)
+ {
+-	int rc =3D -1;
+ 	char name[16];
+=20
+ 	snprintf(name, sizeof(name), "host%d", fnic->lport->host->host_no);
+=20
+-	if (!fnic_stats_debugfs_root) {
+-		printk(KERN_DEBUG "fnic_stats root doesn't exist\n");
+-		return rc;
+-	}
+ 	fnic->fnic_stats_debugfs_host =3D debugfs_create_dir(name,
+ 						fnic_stats_debugfs_root);
+-	if (!fnic->fnic_stats_debugfs_host) {
+-		printk(KERN_DEBUG "Cannot create host directory\n");
+-		return rc;
+-	}
+=20
+ 	fnic->fnic_stats_debugfs_file =3D debugfs_create_file("stats",
+ 						S_IFREG|S_IRUGO|S_IWUSR,
+ 						fnic->fnic_stats_debugfs_host,
+ 						fnic,
+ 						&fnic_stats_debugfs_fops);
+-	if (!fnic->fnic_stats_debugfs_file) {
+-		printk(KERN_DEBUG "Cannot create host stats file\n");
+-		return rc;
+-	}
+=20
+ 	fnic->fnic_reset_debugfs_file =3D debugfs_create_file("reset_stats",
+ 						S_IFREG|S_IRUGO|S_IWUSR,
+ 						fnic->fnic_stats_debugfs_host,
+ 						fnic,
+ 						&fnic_reset_debugfs_fops);
+-	if (!fnic->fnic_reset_debugfs_file) {
+-		printk(KERN_DEBUG "Cannot create host stats file\n");
+-		return rc;
+-	}
+-	rc =3D 0;
+-	return rc;
+ }
+=20
+ /*
+diff --git a/drivers/scsi/fnic/fnic_main.c b/drivers/scsi/fnic/fnic_main.c =
+index 5b3534b0deda..cc8f7c82e2ba 100644
+--- a/drivers/scsi/fnic/fnic_main.c
++++ b/drivers/scsi/fnic/fnic_main.c
+@@ -578,12 +578,7 @@ static int fnic_probe(struct pci_dev *pdev, const stru=
+ct pci_device_id *ent)
+=20
+ 	host->transportt =3D fnic_fc_transport;
+=20
+-	err =3D fnic_stats_debugfs_init(fnic);
+-	if (err) {
+-		shost_printk(KERN_ERR, fnic->lport->host,
+-				"Failed to initialize debugfs for stats\n");
+-		fnic_stats_debugfs_remove(fnic);
+-	}
++	fnic_stats_debugfs_init(fnic);
+=20
+ 	/* Setup PCI resources */
+ 	pci_set_drvdata(pdev, fnic);
+diff --git a/drivers/scsi/fnic/fnic_stats.h b/drivers/scsi/fnic/fnic_stats.=
+h index 9daa6ada6fa0..09c3f864c1cf 100644
+--- a/drivers/scsi/fnic/fnic_stats.h
++++ b/drivers/scsi/fnic/fnic_stats.h
+@@ -134,6 +134,6 @@ struct stats_debug_info {  };
+=20
+ int fnic_get_stats_data(struct stats_debug_info *, struct fnic_stats *); -=
+int fnic_stats_debugfs_init(struct fnic *);
++void fnic_stats_debugfs_init(struct fnic *);
+ void fnic_stats_debugfs_remove(struct fnic *);  #endif /* _FNIC_STATS_H_ *=
+/ diff --git a/drivers/scsi/fnic/fnic_trace.c b/drivers/scsi/fnic/fnic_trac=
+e.c index bf0fd2aeb92e..c08eda9ef086 100644
+--- a/drivers/scsi/fnic/fnic_trace.c
++++ b/drivers/scsi/fnic/fnic_trace.c
+@@ -503,15 +503,10 @@ int fnic_trace_buf_init(void)
+ 		fnic_trace_entries.page_offset[i] =3D fnic_buf_head;
+ 		fnic_buf_head +=3D FNIC_ENTRY_SIZE_BYTES;
+ 	}
+-	err =3D fnic_trace_debugfs_init();
+-	if (err < 0) {
+-		pr_err("fnic: Failed to initialize debugfs for tracing\n");
+-		goto err_fnic_trace_debugfs_init;
+-	}
++	fnic_trace_debugfs_init();
+ 	pr_info("fnic: Successfully Initialized Trace Buffer\n");
+ 	return err;
+-err_fnic_trace_debugfs_init:
+-	fnic_trace_free();
++
+ err_fnic_trace_buf_init:
+ 	return err;
+ }
+@@ -596,16 +591,10 @@ int fnic_fc_trace_init(void)
+ 		fc_trace_entries.page_offset[i] =3D fc_trace_buf_head;
+ 		fc_trace_buf_head +=3D FC_TRC_SIZE_BYTES;
+ 	}
+-	err =3D fnic_fc_trace_debugfs_init();
+-	if (err < 0) {
+-		pr_err("fnic: Failed to initialize FC_CTLR tracing.\n");
+-		goto err_fnic_fc_ctlr_trace_debugfs_init;
+-	}
++	fnic_fc_trace_debugfs_init();
+ 	pr_info("fnic: Successfully Initialized FC_CTLR Trace Buffer\n");
+ 	return err;
+=20
+-err_fnic_fc_ctlr_trace_debugfs_init:
+-	fnic_fc_trace_free();
+ err_fnic_fc_ctlr_trace_buf_init:
+ 	return err;
+ }
+diff --git a/drivers/scsi/fnic/fnic_trace.h b/drivers/scsi/fnic/fnic_trace.=
+h index e375d0c2eaaf..8aa55c1e2025 100644
+--- a/drivers/scsi/fnic/fnic_trace.h
++++ b/drivers/scsi/fnic/fnic_trace.h
+@@ -111,7 +111,7 @@ int fnic_trace_buf_init(void);  void fnic_trace_free(vo=
+id);  int fnic_debugfs_init(void);  void fnic_debugfs_terminate(void); -int=
+ fnic_trace_debugfs_init(void);
++void fnic_trace_debugfs_init(void);
+ void fnic_trace_debugfs_terminate(void);
+=20
+ /* Fnic FC CTLR Trace releated function */ @@ -123,7 +123,7 @@ int fnic_fc=
+_trace_get_data(fnic_dbgfs_t *fnic_dbgfs_prt, u8 rdata_flag);  void copy_an=
+d_format_trace_data(struct fc_trace_hdr *tdata,
+ 				fnic_dbgfs_t *fnic_dbgfs_prt,
+ 				int *len, u8 rdata_flag);
+-int fnic_fc_trace_debugfs_init(void);
++void fnic_fc_trace_debugfs_init(void);
+ void fnic_fc_trace_debugfs_terminate(void);
+=20
+ #endif
+--
+2.20.1
+
