@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE4FC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:58:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2BA5C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:58:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E686217D8
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:58:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2F91217D4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:58:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548169116;
-	bh=HVQq63F+Jt4yklUBPDZYzPWLiSc2sgrhuYQSlsHAx8M=;
+	s=default; t=1548169119;
+	bh=JssKERfluoLL++cBKjL1JZ7jtOSY5IhfmHDS3c2NyJc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QOgjQ6YuG5t+q6wPGSP+AvmWisxpLfOAG0ouAYFofzdyDmbpkkZwBbHYSLYXccP71
-	 v2hNjj1j0UXZWkCNqeQbJl7b+Z0lYQhV70uuophbaCwYAZjV9sWRfbCWvEXTbJa9GO
-	 OfpZiOrhoiArooj+r5Wuvo3A2xYzJFAdDT4J1Ztc=
+	b=j6SaRUf+DKBy2X0Hcbw4Gj88gUWTzEjBuuxVcrrJrP63LLENK8cNJzw1vMWsGAmly
+	 e1XKzoCH4XlBF8y/T3N6QDookwvC3SdKZGsv3yIbhGTsZrh2+vGwvu1eUR+5pDbvQV
+	 bLWyP/v32F40diCV3l9d1M2DQdtViO7+wXQnwFXQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729095AbfAVO6e (ORCPT
+        id S1729110AbfAVO6i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 09:58:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37858 "EHLO mail.kernel.org"
+        Tue, 22 Jan 2019 09:58:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38080 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729015AbfAVO6b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 09:58:31 -0500
+        id S1728947AbfAVO6h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 09:58:37 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 59112217D4;
-        Tue, 22 Jan 2019 14:58:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 829AE20870;
+        Tue, 22 Jan 2019 14:58:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548169110;
-        bh=HVQq63F+Jt4yklUBPDZYzPWLiSc2sgrhuYQSlsHAx8M=;
+        s=default; t=1548169115;
+        bh=JssKERfluoLL++cBKjL1JZ7jtOSY5IhfmHDS3c2NyJc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oQtYIrNA+a0daVHs9FzmxAiTn2omS6jUhL5hYVOywe0GNBkBVAcmgXK5Kb5EilyS9
-         gXQFI9J09KnAqx0GmLt/dKicftUZwLbMoyBjjPfOeWOXnWRki8eqbeePyl+AUXp4Qw
-         qVelNcVtXUMNJIKjWf3KR9CeiTQxuM6Dz2abLlko=
+        b=F88YiGUbuIDkcV5OMBNeMrExBnB6xxQzwEbEVgLUSXe27xiuUa6i9qRmyk7zEshEQ
+         oSz+r4vROOd1cws4EZY3RdEXmxQ66h+0X8vdVAOXvXrnYms6X+WSglgttShKnY0V94
+         LUhrWQequzXQV78riAMIuTTxfGJbXj8uhZBHAYp4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     Ralf Baechle <ralf@linux-mips.org>,
         Paul Burton <paul.burton@mips.com>,
@@ -46,10 +46,16 @@ To:     Ralf Baechle <ralf@linux-mips.org>,
         John Crispin <john@phrozen.org>
 Cc:     linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH 3/5] mips: mm: no need to check return value of debugfs_create functions
-Date:   Tue, 22 Jan 2019 15:57:40 +0100
-Message-Id: <20190122145742.11292-4-gregkh@linuxfoundation.org>
+        Yangtao Li <tiny.windzz@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Huacai Chen <chenhc@lemote.com>,
+        Marcin Nowakowski <marcin.nowakowski@mips.com>,
+        Yasha Cherikovsky <yasha.che3@gmail.com>
+Subject: [PATCH 5/5] mips: kernel: no need to check return value of debugfs_create functions
+Date:   Tue, 22 Jan 2019 15:57:42 +0100
+Message-Id: <20190122145742.11292-6-gregkh@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190122145742.11292-1-gregkh@linuxfoundation.org>
 References: <20190122145742.11292-1-gregkh@linuxfoundation.org>
@@ -67,41 +73,158 @@ never do something different based on this.
 Cc: Ralf Baechle <ralf@linux-mips.org>
 Cc: Paul Burton <paul.burton@mips.com>
 Cc: James Hogan <jhogan@kernel.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Yangtao Li <tiny.windzz@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc: Mathieu Malaterre <malat@debian.org>
+Cc: Huacai Chen <chenhc@lemote.com>
+Cc: Marcin Nowakowski <marcin.nowakowski@mips.com>
+Cc: Yasha Cherikovsky <yasha.che3@gmail.com>
 Cc: linux-mips@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/mips/mm/sc-debugfs.c | 15 +++------------
- 1 file changed, 3 insertions(+), 12 deletions(-)
+ arch/mips/kernel/mips-r2-to-r6-emul.c | 21 ++++-----------------
+ arch/mips/kernel/segment.c            | 15 +++------------
+ arch/mips/kernel/setup.c              |  7 +------
+ arch/mips/kernel/spinlock_test.c      | 21 ++++-----------------
+ arch/mips/kernel/unaligned.c          | 16 ++++------------
+ 5 files changed, 16 insertions(+), 64 deletions(-)
 
-diff --git a/arch/mips/mm/sc-debugfs.c b/arch/mips/mm/sc-debugfs.c
-index 2a116084216f..9507421de335 100644
---- a/arch/mips/mm/sc-debugfs.c
-+++ b/arch/mips/mm/sc-debugfs.c
-@@ -55,20 +55,11 @@ static const struct file_operations sc_prefetch_fops = {
+diff --git a/arch/mips/kernel/mips-r2-to-r6-emul.c b/arch/mips/kernel/mips-r2-to-r6-emul.c
+index c50c89a978f1..b4d210bfcdae 100644
+--- a/arch/mips/kernel/mips-r2-to-r6-emul.c
++++ b/arch/mips/kernel/mips-r2-to-r6-emul.c
+@@ -2351,23 +2351,10 @@ DEFINE_SHOW_ATTRIBUTE(mipsr2_clear);
  
- static int __init sc_debugfs_init(void)
+ static int __init mipsr2_init_debugfs(void)
  {
--	struct dentry *dir, *file;
+-	struct dentry		*mipsr2_emul;
 -
 -	if (!mips_debugfs_dir)
 -		return -ENODEV;
-+	struct dentry *dir;
- 
- 	dir = debugfs_create_dir("l2cache", mips_debugfs_dir);
--	if (IS_ERR(dir))
--		return PTR_ERR(dir);
 -
--	file = debugfs_create_file("prefetch", S_IRUGO | S_IWUSR, dir,
--				   NULL, &sc_prefetch_fops);
--	if (!file)
+-	mipsr2_emul = debugfs_create_file("r2_emul_stats", S_IRUGO,
+-					  mips_debugfs_dir, NULL,
+-					  &mipsr2_emul_fops);
+-	if (!mipsr2_emul)
 -		return -ENOMEM;
 -
-+	debugfs_create_file("prefetch", S_IRUGO | S_IWUSR, dir, NULL,
-+			    &sc_prefetch_fops);
+-	mipsr2_emul = debugfs_create_file("r2_emul_stats_clear", S_IRUGO,
+-					  mips_debugfs_dir, NULL,
+-					  &mipsr2_clear_fops);
+-	if (!mipsr2_emul)
+-		return -ENOMEM;
+-
++	debugfs_create_file("r2_emul_stats", S_IRUGO, mips_debugfs_dir, NULL,
++			    &mipsr2_emul_fops);
++	debugfs_create_file("r2_emul_stats_clear", S_IRUGO, mips_debugfs_dir,
++			    NULL, &mipsr2_clear_fops);
  	return 0;
  }
- late_initcall(sc_debugfs_init);
+ 
+diff --git a/arch/mips/kernel/segment.c b/arch/mips/kernel/segment.c
+index 2703f218202e..0a9bd7b0983b 100644
+--- a/arch/mips/kernel/segment.c
++++ b/arch/mips/kernel/segment.c
+@@ -95,18 +95,9 @@ static const struct file_operations segments_fops = {
+ 
+ static int __init segments_info(void)
+ {
+-	struct dentry *segments;
+-
+-	if (cpu_has_segments) {
+-		if (!mips_debugfs_dir)
+-			return -ENODEV;
+-
+-		segments = debugfs_create_file("segments", S_IRUGO,
+-					       mips_debugfs_dir, NULL,
+-					       &segments_fops);
+-		if (!segments)
+-			return -ENOMEM;
+-	}
++	if (cpu_has_segments)
++		debugfs_create_file("segments", S_IRUGO, mips_debugfs_dir, NULL,
++				    &segments_fops);
+ 	return 0;
+ }
+ 
+diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
+index 8c6c48ed786a..44434e50a355 100644
+--- a/arch/mips/kernel/setup.c
++++ b/arch/mips/kernel/setup.c
+@@ -1010,12 +1010,7 @@ unsigned long fw_passed_dtb;
+ struct dentry *mips_debugfs_dir;
+ static int __init debugfs_mips(void)
+ {
+-	struct dentry *d;
+-
+-	d = debugfs_create_dir("mips", NULL);
+-	if (!d)
+-		return -ENOMEM;
+-	mips_debugfs_dir = d;
++	mips_debugfs_dir = debugfs_create_dir("mips", NULL);
+ 	return 0;
+ }
+ arch_initcall(debugfs_mips);
+diff --git a/arch/mips/kernel/spinlock_test.c b/arch/mips/kernel/spinlock_test.c
+index eaed550e79a2..ab4e3e1b138d 100644
+--- a/arch/mips/kernel/spinlock_test.c
++++ b/arch/mips/kernel/spinlock_test.c
+@@ -118,23 +118,10 @@ DEFINE_SIMPLE_ATTRIBUTE(fops_multi, multi_get, NULL, "%llu\n");
+ 
+ static int __init spinlock_test(void)
+ {
+-	struct dentry *d;
+-
+-	if (!mips_debugfs_dir)
+-		return -ENODEV;
+-
+-	d = debugfs_create_file("spin_single", S_IRUGO,
+-				mips_debugfs_dir, NULL,
+-				&fops_ss);
+-	if (!d)
+-		return -ENOMEM;
+-
+-	d = debugfs_create_file("spin_multi", S_IRUGO,
+-				mips_debugfs_dir, NULL,
+-				&fops_multi);
+-	if (!d)
+-		return -ENOMEM;
+-
++	debugfs_create_file("spin_single", S_IRUGO, mips_debugfs_dir, NULL,
++			    &fops_ss);
++	debugfs_create_file("spin_multi", S_IRUGO, mips_debugfs_dir, NULL,
++			    &fops_multi);
+ 	return 0;
+ }
+ device_initcall(spinlock_test);
+diff --git a/arch/mips/kernel/unaligned.c b/arch/mips/kernel/unaligned.c
+index 595ca9c85111..0ed20a64b285 100644
+--- a/arch/mips/kernel/unaligned.c
++++ b/arch/mips/kernel/unaligned.c
+@@ -2374,18 +2374,10 @@ asmlinkage void do_ade(struct pt_regs *regs)
+ #ifdef CONFIG_DEBUG_FS
+ static int __init debugfs_unaligned(void)
+ {
+-	struct dentry *d;
+-
+-	if (!mips_debugfs_dir)
+-		return -ENODEV;
+-	d = debugfs_create_u32("unaligned_instructions", S_IRUGO,
+-			       mips_debugfs_dir, &unaligned_instructions);
+-	if (!d)
+-		return -ENOMEM;
+-	d = debugfs_create_u32("unaligned_action", S_IRUGO | S_IWUSR,
+-			       mips_debugfs_dir, &unaligned_action);
+-	if (!d)
+-		return -ENOMEM;
++	debugfs_create_u32("unaligned_instructions", S_IRUGO, mips_debugfs_dir,
++			   &unaligned_instructions);
++	debugfs_create_u32("unaligned_action", S_IRUGO | S_IWUSR,
++			   mips_debugfs_dir, &unaligned_action);
+ 	return 0;
+ }
+ arch_initcall(debugfs_unaligned);
 -- 
 2.20.1
 
