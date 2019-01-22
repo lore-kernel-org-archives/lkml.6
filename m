@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53406C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:21:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50CAAC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:22:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 247482084A
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:21:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 089B02084A
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:22:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727771AbfAVKVV (ORCPT
+        id S1727790AbfAVKWC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 05:21:21 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:36835 "EHLO
+        Tue, 22 Jan 2019 05:22:02 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:47155 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726281AbfAVKVV (ORCPT
+        with ESMTP id S1726281AbfAVKWB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 05:21:21 -0500
+        Tue, 22 Jan 2019 05:22:01 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0MAKkff2907555
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0MALQra2907796
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 22 Jan 2019 02:20:46 -0800
+        Tue, 22 Jan 2019 02:21:26 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0MAKktL2907551;
-        Tue, 22 Jan 2019 02:20:46 -0800
-Date:   Tue, 22 Jan 2019 02:20:46 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0MALQLZ2907793;
+        Tue, 22 Jan 2019 02:21:26 -0800
+Date:   Tue, 22 Jan 2019 02:21:26 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Song Liu <tipbot@zytor.com>
-Message-ID: <tip-9aa0bfa370b278a539077002b3c660468d66b5e7@git.kernel.org>
-Cc:     mingo@kernel.org, tglx@linutronix.de, ast@kernel.org,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, songliubraving@fb.com,
-        peterz@infradead.org, acme@redhat.com, daniel@iogearbox.net
-Reply-To: peterz@infradead.org, daniel@iogearbox.net, acme@redhat.com,
-          ast@kernel.org, tglx@linutronix.de, mingo@kernel.org,
-          songliubraving@fb.com, hpa@zytor.com,
-          linux-kernel@vger.kernel.org
-In-Reply-To: <20190117161521.1341602-6-songliubraving@fb.com>
-References: <20190117161521.1341602-6-songliubraving@fb.com>
+Message-ID: <tip-45178a928a4b7c6093f6621e627d09909e81cc13@git.kernel.org>
+Cc:     hpa@zytor.com, songliubraving@fb.com, daniel@iogearbox.net,
+        ast@kernel.org, peterz@infradead.org, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, acme@redhat.com, mingo@kernel.org
+Reply-To: daniel@iogearbox.net, ast@kernel.org, hpa@zytor.com,
+          songliubraving@fb.com, linux-kernel@vger.kernel.org,
+          mingo@kernel.org, acme@redhat.com, peterz@infradead.org,
+          tglx@linutronix.de
+In-Reply-To: <20190117161521.1341602-7-songliubraving@fb.com>
+References: <20190117161521.1341602-7-songliubraving@fb.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf tools: Handle PERF_RECORD_KSYMBOL
-Git-Commit-ID: 9aa0bfa370b278a539077002b3c660468d66b5e7
+Subject: [tip:perf/core] perf tools: Handle PERF_RECORD_BPF_EVENT
+Git-Commit-ID: 45178a928a4b7c6093f6621e627d09909e81cc13
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -57,34 +57,170 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  9aa0bfa370b278a539077002b3c660468d66b5e7
-Gitweb:     https://git.kernel.org/tip/9aa0bfa370b278a539077002b3c660468d66b5e7
+Commit-ID:  45178a928a4b7c6093f6621e627d09909e81cc13
+Gitweb:     https://git.kernel.org/tip/45178a928a4b7c6093f6621e627d09909e81cc13
 Author:     Song Liu <songliubraving@fb.com>
-AuthorDate: Thu, 17 Jan 2019 08:15:17 -0800
+AuthorDate: Thu, 17 Jan 2019 08:15:18 -0800
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Mon, 21 Jan 2019 17:00:57 -0300
 
-perf tools: Handle PERF_RECORD_KSYMBOL
+perf tools: Handle PERF_RECORD_BPF_EVENT
 
-This patch handles PERF_RECORD_KSYMBOL in perf record/report.
-Specifically, map and symbol are created for ksymbol register, and
-removed for ksymbol unregister.
-
-This patch also sets perf_event_attr.ksymbol properly. The flag is ON by
-default.
+This patch adds basic handling of PERF_RECORD_BPF_EVENT.  Tracking of
+PERF_RECORD_BPF_EVENT is OFF by default. Option --bpf-event is added to
+turn it on.
 
 Committer notes:
 
-Use proper inttypes.h for u64, fixing the build in some environments
-like in the android NDK r15c targetting ARM 32-bit.
+Add dummy machine__process_bpf_event() variant that returns zero for
+systems without HAVE_LIBBPF_SUPPORT, such as Alpine Linux, unbreaking
+the build in such systems.
 
-I.e. fixing this build error:
+Remove the needless include <machine.h> from bpf->event.h, provide just
+forward declarations for the structs and unions in the parameters, to
+reduce compilation time and needless rebuilds when machine.h gets
+changed.
 
-  util/event.c: In function 'perf_event__fprintf_ksymbol':
-  util/event.c:1489:10: error: format '%lx' expects argument of type 'long unsigned int', but argument 3 has type 'u64' [-Werror=format=]
-            event->ksymbol_event.flags, event->ksymbol_event.name);
-            ^
-  cc1: all warnings being treated as errors
+Committer testing:
+
+When running with:
+
+ # perf record --bpf-event
+
+On an older kernel where PERF_RECORD_BPF_EVENT and PERF_RECORD_KSYMBOL
+is not present, we fallback to removing those two bits from
+perf_event_attr, making the tool to continue to work on older kernels:
+
+  perf_event_attr:
+    size                             112
+    { sample_period, sample_freq }   4000
+    sample_type                      IP|TID|TIME|PERIOD
+    read_format                      ID
+    disabled                         1
+    inherit                          1
+    mmap                             1
+    comm                             1
+    freq                             1
+    enable_on_exec                   1
+    task                             1
+    precise_ip                       3
+    sample_id_all                    1
+    exclude_guest                    1
+    mmap2                            1
+    comm_exec                        1
+    ksymbol                          1
+    bpf_event                        1
+  ------------------------------------------------------------
+  sys_perf_event_open: pid 5779  cpu 0  group_fd -1  flags 0x8
+  sys_perf_event_open failed, error -22
+  switching off bpf_event
+  ------------------------------------------------------------
+  perf_event_attr:
+    size                             112
+    { sample_period, sample_freq }   4000
+    sample_type                      IP|TID|TIME|PERIOD
+    read_format                      ID
+    disabled                         1
+    inherit                          1
+    mmap                             1
+    comm                             1
+    freq                             1
+    enable_on_exec                   1
+    task                             1
+    precise_ip                       3
+    sample_id_all                    1
+    exclude_guest                    1
+    mmap2                            1
+    comm_exec                        1
+    ksymbol                          1
+  ------------------------------------------------------------
+  sys_perf_event_open: pid 5779  cpu 0  group_fd -1  flags 0x8
+  sys_perf_event_open failed, error -22
+  switching off ksymbol
+  ------------------------------------------------------------
+  perf_event_attr:
+    size                             112
+    { sample_period, sample_freq }   4000
+    sample_type                      IP|TID|TIME|PERIOD
+    read_format                      ID
+    disabled                         1
+    inherit                          1
+    mmap                             1
+    comm                             1
+    freq                             1
+    enable_on_exec                   1
+    task                             1
+    precise_ip                       3
+    sample_id_all                    1
+    exclude_guest                    1
+    mmap2                            1
+    comm_exec                        1
+  ------------------------------------------------------------
+
+And then proceeds to work without those two features.
+
+As passing --bpf-event is an explicit action performed by the user, perhaps we
+should emit a warning telling that the kernel has no such feature, but this can
+be done on top of this patch.
+
+Now with a kernel that supports these events, start the 'record --bpf-event -a'
+and then run 'perf trace sleep 10000' that will use the BPF
+augmented_raw_syscalls.o prebuilt (for another kernel version even) and thus
+should generate PERF_RECORD_BPF_EVENT events:
+
+  [root@quaco ~]# perf record -e dummy -a --bpf-event
+  ^C[ perf record: Woken up 1 times to write data ]
+  [ perf record: Captured and wrote 0.713 MB perf.data ]
+
+  [root@quaco ~]# bpftool prog
+  13: cgroup_skb  tag 7be49e3934a125ba  gpl
+  	loaded_at 2019-01-19T09:09:43-0300  uid 0
+  	xlated 296B  jited 229B  memlock 4096B  map_ids 13,14
+  14: cgroup_skb  tag 2a142ef67aaad174  gpl
+  	loaded_at 2019-01-19T09:09:43-0300  uid 0
+  	xlated 296B  jited 229B  memlock 4096B  map_ids 13,14
+  15: cgroup_skb  tag 7be49e3934a125ba  gpl
+  	loaded_at 2019-01-19T09:09:43-0300  uid 0
+  	xlated 296B  jited 229B  memlock 4096B  map_ids 15,16
+  16: cgroup_skb  tag 2a142ef67aaad174  gpl
+  	loaded_at 2019-01-19T09:09:43-0300  uid 0
+  	xlated 296B  jited 229B  memlock 4096B  map_ids 15,16
+  17: cgroup_skb  tag 7be49e3934a125ba  gpl
+  	loaded_at 2019-01-19T09:09:44-0300  uid 0
+  	xlated 296B  jited 229B  memlock 4096B  map_ids 17,18
+  18: cgroup_skb  tag 2a142ef67aaad174  gpl
+  	loaded_at 2019-01-19T09:09:44-0300  uid 0
+  	xlated 296B  jited 229B  memlock 4096B  map_ids 17,18
+  21: cgroup_skb  tag 7be49e3934a125ba  gpl
+  	loaded_at 2019-01-19T09:09:45-0300  uid 0
+  	xlated 296B  jited 229B  memlock 4096B  map_ids 21,22
+  22: cgroup_skb  tag 2a142ef67aaad174  gpl
+  	loaded_at 2019-01-19T09:09:45-0300  uid 0
+  	xlated 296B  jited 229B  memlock 4096B  map_ids 21,22
+  31: tracepoint  name sys_enter  tag 12504ba9402f952f  gpl
+  	loaded_at 2019-01-19T09:19:56-0300  uid 0
+  	xlated 512B  jited 374B  memlock 4096B  map_ids 30,29,28
+  32: tracepoint  name sys_exit  tag c1bd85c092d6e4aa  gpl
+  	loaded_at 2019-01-19T09:19:56-0300  uid 0
+  	xlated 256B  jited 191B  memlock 4096B  map_ids 30,29
+  # perf report -D | grep PERF_RECORD_BPF_EVENT | nl
+     1	0 55834574849 0x4fc8 [0x18]: PERF_RECORD_BPF_EVENT bpf event with type 1, flags 0, id 13
+     2	0 60129542145 0x5118 [0x18]: PERF_RECORD_BPF_EVENT bpf event with type 1, flags 0, id 14
+     3	0 64424509441 0x5268 [0x18]: PERF_RECORD_BPF_EVENT bpf event with type 1, flags 0, id 15
+     4	0 68719476737 0x53b8 [0x18]: PERF_RECORD_BPF_EVENT bpf event with type 1, flags 0, id 16
+     5	0 73014444033 0x5508 [0x18]: PERF_RECORD_BPF_EVENT bpf event with type 1, flags 0, id 17
+     6	0 77309411329 0x5658 [0x18]: PERF_RECORD_BPF_EVENT bpf event with type 1, flags 0, id 18
+     7	0 90194313217 0x57a8 [0x18]: PERF_RECORD_BPF_EVENT bpf event with type 1, flags 0, id 21
+     8	0 94489280513 0x58f8 [0x18]: PERF_RECORD_BPF_EVENT bpf event with type 1, flags 0, id 22
+     9	7 620922484360 0xb6390 [0x30]: PERF_RECORD_BPF_EVENT bpf event with type 1, flags 0, id 29
+    10	7 620922486018 0xb6410 [0x30]: PERF_RECORD_BPF_EVENT bpf event with type 2, flags 0, id 29
+    11	7 620922579199 0xb6490 [0x30]: PERF_RECORD_BPF_EVENT bpf event with type 1, flags 0, id 30
+    12	7 620922580240 0xb6510 [0x30]: PERF_RECORD_BPF_EVENT bpf event with type 2, flags 0, id 30
+    13	7 620922765207 0xb6598 [0x30]: PERF_RECORD_BPF_EVENT bpf event with type 1, flags 0, id 31
+    14	7 620922874543 0xb6620 [0x30]: PERF_RECORD_BPF_EVENT bpf event with type 1, flags 0, id 32
+  #
+
+There, the 31 and 32 tracepoint BPF programs put in place by 'perf trace'.
 
 Signed-off-by: Song Liu <songliubraving@fb.com>
 Reviewed-by: Arnaldo Carvalho de Melo <acme@redhat.com>
@@ -94,313 +230,325 @@ Cc: Daniel Borkmann <daniel@iogearbox.net>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: kernel-team@fb.com
 Cc: netdev@vger.kernel.org
-Link: http://lkml.kernel.org/r/20190117161521.1341602-6-songliubraving@fb.com
+Link: http://lkml.kernel.org/r/20190117161521.1341602-7-songliubraving@fb.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/event.c   | 21 ++++++++++++++++++
- tools/perf/util/event.h   | 20 +++++++++++++++++
- tools/perf/util/evsel.c   | 10 ++++++++-
- tools/perf/util/evsel.h   |  1 +
- tools/perf/util/machine.c | 55 +++++++++++++++++++++++++++++++++++++++++++++++
- tools/perf/util/machine.h |  3 +++
- tools/perf/util/session.c |  4 ++++
- tools/perf/util/tool.h    |  4 +++-
- 8 files changed, 116 insertions(+), 2 deletions(-)
+ tools/perf/builtin-record.c |  1 +
+ tools/perf/perf.h           |  1 +
+ tools/perf/util/Build       |  2 ++
+ tools/perf/util/bpf-event.c | 15 +++++++++++++++
+ tools/perf/util/bpf-event.h | 22 ++++++++++++++++++++++
+ tools/perf/util/event.c     | 20 ++++++++++++++++++++
+ tools/perf/util/event.h     | 16 ++++++++++++++++
+ tools/perf/util/evsel.c     | 11 ++++++++++-
+ tools/perf/util/evsel.h     |  1 +
+ tools/perf/util/machine.c   |  3 +++
+ tools/perf/util/session.c   |  4 ++++
+ tools/perf/util/tool.h      |  3 ++-
+ 12 files changed, 97 insertions(+), 2 deletions(-)
 
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index 882285fb9f64..deaf9b902094 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -1839,6 +1839,7 @@ static struct option __record_options[] = {
+ 	OPT_BOOLEAN(0, "tail-synthesize", &record.opts.tail_synthesize,
+ 		    "synthesize non-sample events at the end of output"),
+ 	OPT_BOOLEAN(0, "overwrite", &record.opts.overwrite, "use overwrite mode"),
++	OPT_BOOLEAN(0, "bpf-event", &record.opts.bpf_event, "record bpf events"),
+ 	OPT_BOOLEAN(0, "strict-freq", &record.opts.strict_freq,
+ 		    "Fail if the specified frequency can't be used"),
+ 	OPT_CALLBACK('F', "freq", &record.opts, "freq or 'max'",
+diff --git a/tools/perf/perf.h b/tools/perf/perf.h
+index 388c6dd128b8..5941fb6eccfc 100644
+--- a/tools/perf/perf.h
++++ b/tools/perf/perf.h
+@@ -66,6 +66,7 @@ struct record_opts {
+ 	bool	     ignore_missing_thread;
+ 	bool	     strict_freq;
+ 	bool	     sample_id;
++	bool	     bpf_event;
+ 	unsigned int freq;
+ 	unsigned int mmap_pages;
+ 	unsigned int auxtrace_mmap_pages;
+diff --git a/tools/perf/util/Build b/tools/perf/util/Build
+index 3ad6a800948d..c359af408334 100644
+--- a/tools/perf/util/Build
++++ b/tools/perf/util/Build
+@@ -154,6 +154,8 @@ endif
+ 
+ libperf-y += perf-hooks.o
+ 
++libperf-$(CONFIG_LIBBPF) += bpf-event.o
++
+ libperf-$(CONFIG_CXX) += c++/
+ 
+ CFLAGS_config.o   += -DETC_PERFCONFIG="BUILD_STR($(ETC_PERFCONFIG_SQ))"
+diff --git a/tools/perf/util/bpf-event.c b/tools/perf/util/bpf-event.c
+new file mode 100644
+index 000000000000..87004706874f
+--- /dev/null
++++ b/tools/perf/util/bpf-event.c
+@@ -0,0 +1,15 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <errno.h>
++#include <bpf/bpf.h>
++#include "bpf-event.h"
++#include "debug.h"
++#include "symbol.h"
++
++int machine__process_bpf_event(struct machine *machine __maybe_unused,
++			       union perf_event *event,
++			       struct perf_sample *sample __maybe_unused)
++{
++	if (dump_trace)
++		perf_event__fprintf_bpf_event(event, stdout);
++	return 0;
++}
+diff --git a/tools/perf/util/bpf-event.h b/tools/perf/util/bpf-event.h
+new file mode 100644
+index 000000000000..da0dfc035fc6
+--- /dev/null
++++ b/tools/perf/util/bpf-event.h
+@@ -0,0 +1,22 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef __PERF_BPF_EVENT_H
++#define __PERF_BPF_EVENT_H
++
++#include <linux/compiler.h>
++
++struct machine;
++union perf_event;
++struct perf_sample;
++
++#ifdef HAVE_LIBBPF_SUPPORT
++int machine__process_bpf_event(struct machine *machine, union perf_event *event,
++			       struct perf_sample *sample);
++#else
++static inline int machine__process_bpf_event(struct machine *machine __maybe_unused,
++					     union perf_event *event __maybe_unused,
++					     struct perf_sample *sample __maybe_unused)
++{
++	return 0;
++}
++#endif // HAVE_LIBBPF_SUPPORT
++#endif
 diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
-index 937a5a4f71cc..f06f3811b25b 100644
+index f06f3811b25b..1b5091a3d14f 100644
 --- a/tools/perf/util/event.c
 +++ b/tools/perf/util/event.c
-@@ -24,6 +24,7 @@
- #include "symbol/kallsyms.h"
+@@ -25,6 +25,7 @@
  #include "asm/bug.h"
  #include "stat.h"
-+#include "session.h"
+ #include "session.h"
++#include "bpf-event.h"
  
  #define DEFAULT_PROC_MAP_PARSE_TIMEOUT 500
  
-@@ -45,6 +46,7 @@ static const char *perf_event__names[] = {
- 	[PERF_RECORD_SWITCH]			= "SWITCH",
+@@ -47,6 +48,7 @@ static const char *perf_event__names[] = {
  	[PERF_RECORD_SWITCH_CPU_WIDE]		= "SWITCH_CPU_WIDE",
  	[PERF_RECORD_NAMESPACES]		= "NAMESPACES",
-+	[PERF_RECORD_KSYMBOL]			= "KSYMBOL",
+ 	[PERF_RECORD_KSYMBOL]			= "KSYMBOL",
++	[PERF_RECORD_BPF_EVENT]			= "BPF_EVENT",
  	[PERF_RECORD_HEADER_ATTR]		= "ATTR",
  	[PERF_RECORD_HEADER_EVENT_TYPE]		= "EVENT_TYPE",
  	[PERF_RECORD_HEADER_TRACING_DATA]	= "TRACING_DATA",
-@@ -1329,6 +1331,14 @@ int perf_event__process_switch(struct perf_tool *tool __maybe_unused,
- 	return machine__process_switch_event(machine, event);
+@@ -1339,6 +1341,14 @@ int perf_event__process_ksymbol(struct perf_tool *tool __maybe_unused,
+ 	return machine__process_ksymbol(machine, event, sample);
  }
  
-+int perf_event__process_ksymbol(struct perf_tool *tool __maybe_unused,
-+				union perf_event *event,
-+				struct perf_sample *sample __maybe_unused,
-+				struct machine *machine)
++int perf_event__process_bpf_event(struct perf_tool *tool __maybe_unused,
++				  union perf_event *event,
++				  struct perf_sample *sample __maybe_unused,
++				  struct machine *machine)
 +{
-+	return machine__process_ksymbol(machine, event, sample);
++	return machine__process_bpf_event(machine, event, sample);
 +}
 +
  size_t perf_event__fprintf_mmap(union perf_event *event, FILE *fp)
  {
  	return fprintf(fp, " %d/%d: [%#" PRIx64 "(%#" PRIx64 ") @ %#" PRIx64 "]: %c %s\n",
-@@ -1461,6 +1471,14 @@ static size_t perf_event__fprintf_lost(union perf_event *event, FILE *fp)
- 	return fprintf(fp, " lost %" PRIu64 "\n", event->lost.lost);
+@@ -1479,6 +1489,13 @@ size_t perf_event__fprintf_ksymbol(union perf_event *event, FILE *fp)
+ 		       event->ksymbol_event.flags, event->ksymbol_event.name);
  }
  
-+size_t perf_event__fprintf_ksymbol(union perf_event *event, FILE *fp)
++size_t perf_event__fprintf_bpf_event(union perf_event *event, FILE *fp)
 +{
-+	return fprintf(fp, " ksymbol event with addr %" PRIx64 " len %u type %u flags 0x%x name %s\n",
-+		       event->ksymbol_event.addr, event->ksymbol_event.len,
-+		       event->ksymbol_event.ksym_type,
-+		       event->ksymbol_event.flags, event->ksymbol_event.name);
++	return fprintf(fp, " bpf event with type %u, flags %u, id %u\n",
++		       event->bpf_event.type, event->bpf_event.flags,
++		       event->bpf_event.id);
 +}
 +
  size_t perf_event__fprintf(union perf_event *event, FILE *fp)
  {
  	size_t ret = fprintf(fp, "PERF_RECORD_%s",
-@@ -1496,6 +1514,9 @@ size_t perf_event__fprintf(union perf_event *event, FILE *fp)
- 	case PERF_RECORD_LOST:
- 		ret += perf_event__fprintf_lost(event, fp);
+@@ -1517,6 +1534,9 @@ size_t perf_event__fprintf(union perf_event *event, FILE *fp)
+ 	case PERF_RECORD_KSYMBOL:
+ 		ret += perf_event__fprintf_ksymbol(event, fp);
  		break;
-+	case PERF_RECORD_KSYMBOL:
-+		ret += perf_event__fprintf_ksymbol(event, fp);
++	case PERF_RECORD_BPF_EVENT:
++		ret += perf_event__fprintf_bpf_event(event, fp);
 +		break;
  	default:
  		ret += fprintf(fp, "\n");
  	}
 diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
-index eb95f3384958..018322f2a13e 100644
+index 018322f2a13e..dad32b81fe71 100644
 --- a/tools/perf/util/event.h
 +++ b/tools/perf/util/event.h
-@@ -5,6 +5,7 @@
- #include <limits.h>
- #include <stdio.h>
- #include <linux/kernel.h>
-+#include <linux/bpf.h>
- 
- #include "../perf.h"
- #include "build-id.h"
-@@ -84,6 +85,19 @@ struct throttle_event {
- 	u64 stream_id;
+@@ -98,6 +98,16 @@ struct ksymbol_event {
+ 	char name[KSYM_NAME_LEN];
  };
  
-+#ifndef KSYM_NAME_LEN
-+#define KSYM_NAME_LEN 256
-+#endif
-+
-+struct ksymbol_event {
++struct bpf_event {
 +	struct perf_event_header header;
-+	u64 addr;
-+	u32 len;
-+	u16 ksym_type;
++	u16 type;
 +	u16 flags;
-+	char name[KSYM_NAME_LEN];
++	u32 id;
++
++	/* for bpf_prog types */
++	u8 tag[BPF_TAG_SIZE];  // prog tag
 +};
 +
  #define PERF_SAMPLE_MASK				\
  	(PERF_SAMPLE_IP | PERF_SAMPLE_TID |		\
  	 PERF_SAMPLE_TIME | PERF_SAMPLE_ADDR |		\
-@@ -651,6 +665,7 @@ union perf_event {
- 	struct stat_round_event		stat_round;
+@@ -666,6 +676,7 @@ union perf_event {
  	struct time_conv_event		time_conv;
  	struct feature_event		feat;
-+	struct ksymbol_event		ksymbol_event;
+ 	struct ksymbol_event		ksymbol_event;
++	struct bpf_event		bpf_event;
  };
  
  void perf_event__print_totals(void);
-@@ -748,6 +763,10 @@ int perf_event__process_exit(struct perf_tool *tool,
- 			     union perf_event *event,
- 			     struct perf_sample *sample,
- 			     struct machine *machine);
-+int perf_event__process_ksymbol(struct perf_tool *tool,
-+				union perf_event *event,
-+				struct perf_sample *sample,
-+				struct machine *machine);
+@@ -767,6 +778,10 @@ int perf_event__process_ksymbol(struct perf_tool *tool,
+ 				union perf_event *event,
+ 				struct perf_sample *sample,
+ 				struct machine *machine);
++int perf_event__process_bpf_event(struct perf_tool *tool,
++				  union perf_event *event,
++				  struct perf_sample *sample,
++				  struct machine *machine);
  int perf_tool__process_synth_event(struct perf_tool *tool,
  				   union perf_event *event,
  				   struct machine *machine,
-@@ -811,6 +830,7 @@ size_t perf_event__fprintf_switch(union perf_event *event, FILE *fp);
- size_t perf_event__fprintf_thread_map(union perf_event *event, FILE *fp);
+@@ -831,6 +846,7 @@ size_t perf_event__fprintf_thread_map(union perf_event *event, FILE *fp);
  size_t perf_event__fprintf_cpu_map(union perf_event *event, FILE *fp);
  size_t perf_event__fprintf_namespaces(union perf_event *event, FILE *fp);
-+size_t perf_event__fprintf_ksymbol(union perf_event *event, FILE *fp);
+ size_t perf_event__fprintf_ksymbol(union perf_event *event, FILE *fp);
++size_t perf_event__fprintf_bpf_event(union perf_event *event, FILE *fp);
  size_t perf_event__fprintf(union perf_event *event, FILE *fp);
  
  int kallsyms__get_function_start(const char *kallsyms_filename,
 diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index dbc0466db368..9c8dc6d1aa7f 100644
+index 9c8dc6d1aa7f..684c893ca6bc 100644
 --- a/tools/perf/util/evsel.c
 +++ b/tools/perf/util/evsel.c
-@@ -1035,6 +1035,7 @@ void perf_evsel__config(struct perf_evsel *evsel, struct record_opts *opts,
- 	attr->mmap  = track;
+@@ -1036,6 +1036,8 @@ void perf_evsel__config(struct perf_evsel *evsel, struct record_opts *opts,
  	attr->mmap2 = track && !perf_missing_features.mmap2;
  	attr->comm  = track;
-+	attr->ksymbol = track && !perf_missing_features.ksymbol;
+ 	attr->ksymbol = track && !perf_missing_features.ksymbol;
++	attr->bpf_event = track && opts->bpf_event &&
++		!perf_missing_features.bpf_event;
  
  	if (opts->record_namespaces)
  		attr->namespaces  = track;
-@@ -1652,6 +1653,7 @@ int perf_event_attr__fprintf(FILE *fp, struct perf_event_attr *attr,
- 	PRINT_ATTRf(context_switch, p_unsigned);
+@@ -1654,6 +1656,7 @@ int perf_event_attr__fprintf(FILE *fp, struct perf_event_attr *attr,
  	PRINT_ATTRf(write_backward, p_unsigned);
  	PRINT_ATTRf(namespaces, p_unsigned);
-+	PRINT_ATTRf(ksymbol, p_unsigned);
+ 	PRINT_ATTRf(ksymbol, p_unsigned);
++	PRINT_ATTRf(bpf_event, p_unsigned);
  
  	PRINT_ATTRn("{ wakeup_events, wakeup_watermark }", wakeup_events, p_unsigned);
  	PRINT_ATTRf(bp_type, p_unsigned);
-@@ -1811,6 +1813,8 @@ fallback_missing_features:
- 				     PERF_SAMPLE_BRANCH_NO_CYCLES);
- 	if (perf_missing_features.group_read && evsel->attr.inherit)
+@@ -1815,6 +1818,8 @@ fallback_missing_features:
  		evsel->attr.read_format &= ~(PERF_FORMAT_GROUP|PERF_FORMAT_ID);
-+	if (perf_missing_features.ksymbol)
-+		evsel->attr.ksymbol = 0;
+ 	if (perf_missing_features.ksymbol)
+ 		evsel->attr.ksymbol = 0;
++	if (perf_missing_features.bpf_event)
++		evsel->attr.bpf_event = 0;
  retry_sample_id:
  	if (perf_missing_features.sample_id_all)
  		evsel->attr.sample_id_all = 0;
-@@ -1930,7 +1934,11 @@ try_fallback:
+@@ -1934,7 +1939,11 @@ try_fallback:
  	 * Must probe features in the order they were added to the
  	 * perf_event_attr interface.
  	 */
--	if (!perf_missing_features.write_backward && evsel->attr.write_backward) {
-+	if (!perf_missing_features.ksymbol && evsel->attr.ksymbol) {
-+		perf_missing_features.ksymbol = true;
-+		pr_debug2("switching off ksymbol\n");
+-	if (!perf_missing_features.ksymbol && evsel->attr.ksymbol) {
++	if (!perf_missing_features.bpf_event && evsel->attr.bpf_event) {
++		perf_missing_features.bpf_event = true;
++		pr_debug2("switching off bpf_event\n");
 +		goto fallback_missing_features;
-+	} else if (!perf_missing_features.write_backward && evsel->attr.write_backward) {
- 		perf_missing_features.write_backward = true;
- 		pr_debug2("switching off write_backward\n");
- 		goto out_close;
++	} else if (!perf_missing_features.ksymbol && evsel->attr.ksymbol) {
+ 		perf_missing_features.ksymbol = true;
+ 		pr_debug2("switching off ksymbol\n");
+ 		goto fallback_missing_features;
 diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
-index 82a289ce8b0c..4a8c3e7f4808 100644
+index 4a8c3e7f4808..29c5eb68c44b 100644
 --- a/tools/perf/util/evsel.h
 +++ b/tools/perf/util/evsel.h
-@@ -168,6 +168,7 @@ struct perf_missing_features {
- 	bool lbr_flags;
+@@ -169,6 +169,7 @@ struct perf_missing_features {
  	bool write_backward;
  	bool group_read;
-+	bool ksymbol;
+ 	bool ksymbol;
++	bool bpf_event;
  };
  
  extern struct perf_missing_features perf_missing_features;
 diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index 143f7057d581..9bca61c7d5bf 100644
+index 9bca61c7d5bf..ae85106bb5bf 100644
 --- a/tools/perf/util/machine.c
 +++ b/tools/perf/util/machine.c
-@@ -681,6 +681,59 @@ int machine__process_switch_event(struct machine *machine __maybe_unused,
- 	return 0;
- }
+@@ -21,6 +21,7 @@
+ #include "unwind.h"
+ #include "linux/hash.h"
+ #include "asm/bug.h"
++#include "bpf-event.h"
  
-+static int machine__process_ksymbol_register(struct machine *machine,
-+					     union perf_event *event,
-+					     struct perf_sample *sample __maybe_unused)
-+{
-+	struct symbol *sym;
-+	struct map *map;
-+
-+	map = map_groups__find(&machine->kmaps, event->ksymbol_event.addr);
-+	if (!map) {
-+		map = dso__new_map(event->ksymbol_event.name);
-+		if (!map)
-+			return -ENOMEM;
-+
-+		map->start = event->ksymbol_event.addr;
-+		map->pgoff = map->start;
-+		map->end = map->start + event->ksymbol_event.len;
-+		map_groups__insert(&machine->kmaps, map);
-+	}
-+
-+	sym = symbol__new(event->ksymbol_event.addr, event->ksymbol_event.len,
-+			  0, 0, event->ksymbol_event.name);
-+	if (!sym)
-+		return -ENOMEM;
-+	dso__insert_symbol(map->dso, sym);
-+	return 0;
-+}
-+
-+static int machine__process_ksymbol_unregister(struct machine *machine,
-+					       union perf_event *event,
-+					       struct perf_sample *sample __maybe_unused)
-+{
-+	struct map *map;
-+
-+	map = map_groups__find(&machine->kmaps, event->ksymbol_event.addr);
-+	if (map)
-+		map_groups__remove(&machine->kmaps, map);
-+
-+	return 0;
-+}
-+
-+int machine__process_ksymbol(struct machine *machine __maybe_unused,
-+			     union perf_event *event,
-+			     struct perf_sample *sample)
-+{
-+	if (dump_trace)
-+		perf_event__fprintf_ksymbol(event, stdout);
-+
-+	if (event->ksymbol_event.flags & PERF_RECORD_KSYMBOL_FLAGS_UNREGISTER)
-+		return machine__process_ksymbol_unregister(machine, event,
-+							   sample);
-+	return machine__process_ksymbol_register(machine, event, sample);
-+}
-+
- static void dso__adjust_kmod_long_name(struct dso *dso, const char *filename)
- {
- 	const char *dup_filename;
-@@ -1812,6 +1865,8 @@ int machine__process_event(struct machine *machine, union perf_event *event,
- 	case PERF_RECORD_SWITCH:
- 	case PERF_RECORD_SWITCH_CPU_WIDE:
+ #include "sane_ctype.h"
+ #include <symbol/kallsyms.h>
+@@ -1867,6 +1868,8 @@ int machine__process_event(struct machine *machine, union perf_event *event,
  		ret = machine__process_switch_event(machine, event); break;
-+	case PERF_RECORD_KSYMBOL:
-+		ret = machine__process_ksymbol(machine, event, sample); break;
+ 	case PERF_RECORD_KSYMBOL:
+ 		ret = machine__process_ksymbol(machine, event, sample); break;
++	case PERF_RECORD_BPF_EVENT:
++		ret = machine__process_bpf_event(machine, event, sample); break;
  	default:
  		ret = -1;
  		break;
-diff --git a/tools/perf/util/machine.h b/tools/perf/util/machine.h
-index a5d1da60f751..4ecd380ce1b4 100644
---- a/tools/perf/util/machine.h
-+++ b/tools/perf/util/machine.h
-@@ -130,6 +130,9 @@ int machine__process_mmap_event(struct machine *machine, union perf_event *event
- 				struct perf_sample *sample);
- int machine__process_mmap2_event(struct machine *machine, union perf_event *event,
- 				 struct perf_sample *sample);
-+int machine__process_ksymbol(struct machine *machine,
-+			     union perf_event *event,
-+			     struct perf_sample *sample);
- int machine__process_event(struct machine *machine, union perf_event *event,
- 				struct perf_sample *sample);
- 
 diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index b26bc9c54200..dcfacfb036a3 100644
+index dcfacfb036a3..24fd62528a33 100644
 --- a/tools/perf/util/session.c
 +++ b/tools/perf/util/session.c
-@@ -379,6 +379,8 @@ void perf_tool__fill_defaults(struct perf_tool *tool)
- 		tool->itrace_start = perf_event__process_itrace_start;
- 	if (tool->context_switch == NULL)
+@@ -381,6 +381,8 @@ void perf_tool__fill_defaults(struct perf_tool *tool)
  		tool->context_switch = perf_event__process_switch;
-+	if (tool->ksymbol == NULL)
-+		tool->ksymbol = perf_event__process_ksymbol;
+ 	if (tool->ksymbol == NULL)
+ 		tool->ksymbol = perf_event__process_ksymbol;
++	if (tool->bpf_event == NULL)
++		tool->bpf_event = perf_event__process_bpf_event;
  	if (tool->read == NULL)
  		tool->read = process_event_sample_stub;
  	if (tool->throttle == NULL)
-@@ -1310,6 +1312,8 @@ static int machines__deliver_event(struct machines *machines,
- 	case PERF_RECORD_SWITCH:
- 	case PERF_RECORD_SWITCH_CPU_WIDE:
+@@ -1314,6 +1316,8 @@ static int machines__deliver_event(struct machines *machines,
  		return tool->context_switch(tool, event, sample, machine);
-+	case PERF_RECORD_KSYMBOL:
-+		return tool->ksymbol(tool, event, sample, machine);
+ 	case PERF_RECORD_KSYMBOL:
+ 		return tool->ksymbol(tool, event, sample, machine);
++	case PERF_RECORD_BPF_EVENT:
++		return tool->bpf_event(tool, event, sample, machine);
  	default:
  		++evlist->stats.nr_unknown_events;
  		return -1;
 diff --git a/tools/perf/util/tool.h b/tools/perf/util/tool.h
-index 56e4ca54020a..9c81ca2f3cf7 100644
+index 9c81ca2f3cf7..250391672f9f 100644
 --- a/tools/perf/util/tool.h
 +++ b/tools/perf/util/tool.h
-@@ -53,7 +53,9 @@ struct perf_tool {
- 			itrace_start,
+@@ -54,7 +54,8 @@ struct perf_tool {
  			context_switch,
  			throttle,
--			unthrottle;
-+			unthrottle,
-+			ksymbol;
-+
+ 			unthrottle,
+-			ksymbol;
++			ksymbol,
++			bpf_event;
+ 
  	event_attr_op	attr;
  	event_attr_op	event_update;
- 	event_op2	tracing_data;
