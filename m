@@ -2,128 +2,159 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C878EC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:03:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0642AC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:03:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BBD820823
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:03:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8B00204EC
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:03:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DS+UdFrT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728170AbfAVKDQ (ORCPT
+        id S1728187AbfAVKDv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 05:03:16 -0500
-Received: from mga04.intel.com ([192.55.52.120]:41860 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727844AbfAVKDQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 05:03:16 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jan 2019 02:03:15 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,505,1539673200"; 
-   d="scan'208";a="313752991"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by fmsmga005.fm.intel.com with ESMTP; 22 Jan 2019 02:03:13 -0800
-Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
-        id 84067205C8; Tue, 22 Jan 2019 12:03:12 +0200 (EET)
-Date:   Tue, 22 Jan 2019 12:03:12 +0200
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     "Liu, Xinwu" <xinwu.liu@intel.com>
-Cc:     mchehab@kernel.org, hans.verkuil@cisco.com,
-        niklas.soderlund+renesas@ragnatech.se, ezequiel@collabora.com,
-        sque@chromium.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: v4l2-core: expose the device after it was
- registered.
-Message-ID: <20190122100311.isx57iktfpxawxjv@paasikivi.fi.intel.com>
-References: <1548146084-20445-1-git-send-email-xinwu.liu@intel.com>
+        Tue, 22 Jan 2019 05:03:51 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:57890 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727844AbfAVKDu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 05:03:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=MxW7EkzKu38OCx7JyMEyNb3O/cZi1s0UnYiz/UueQD0=; b=DS+UdFrTJoXG6NVzsO5q+oqle
+        iDE2hzB33OZkNOT2xnCRNy65Bm6DOfaSGM2AXPfCQgcJ5qGZawGEvi1ob6Gf8rqosSefFhXIwl/XL
+        KxZ7kr82LW6p0lL/df3oolHoXaxQT8zYfnziT62gc7MWu1ENiMC+sSv8aKG/s6Ld1HPfPQWX+eloQ
+        Aw3S2XxQDGgXVeIOypNgXWVk2AXeA7byjlGT6XSQE4wbVaruREU3tmeYOC99Xr2JTEmEkPd3HD+/Q
+        0qeLf5kyA4vqLXwJsnMCF1W7m60B3rd1f9CN87lcyVyiQV9eLlzgLUKptkWl5+yc36iFon6DwSGjw
+        kfHtKo4cQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1glsuH-0004iw-6u; Tue, 22 Jan 2019 10:03:45 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id C375B20267E52; Tue, 22 Jan 2019 11:03:42 +0100 (CET)
+Date:   Tue, 22 Jan 2019 11:03:42 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v6 04/16] sched/core: uclamp: Add CPU's clamp buckets
+ refcounting
+Message-ID: <20190122100342.GO27931@hirez.programming.kicks-ass.net>
+References: <20190115101513.2822-1-patrick.bellasi@arm.com>
+ <20190115101513.2822-5-patrick.bellasi@arm.com>
+ <20190121151717.GK27931@hirez.programming.kicks-ass.net>
+ <20190121155407.gv4cxpg2njqmdlj5@e110439-lin>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1548146084-20445-1-git-send-email-xinwu.liu@intel.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190121155407.gv4cxpg2njqmdlj5@e110439-lin>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Xinwu,
-
-On Tue, Jan 22, 2019 at 04:34:44PM +0800, Liu, Xinwu wrote:
-> device_register exposes the device to userspace.
+On Mon, Jan 21, 2019 at 03:54:07PM +0000, Patrick Bellasi wrote:
+> On 21-Jan 16:17, Peter Zijlstra wrote:
+> > On Tue, Jan 15, 2019 at 10:15:01AM +0000, Patrick Bellasi wrote:
+> > > +#ifdef CONFIG_UCLAMP_TASK
+> > 
+> > > +struct uclamp_bucket {
+> > > +	unsigned long value : bits_per(SCHED_CAPACITY_SCALE);
+> > > +	unsigned long tasks : BITS_PER_LONG - bits_per(SCHED_CAPACITY_SCALE);
+> > > +};
+> > 
+> > > +struct uclamp_cpu {
+> > > +	unsigned int value;
+> > 
+> > 	/* 4 byte hole */
+> > 
+> > > +	struct uclamp_bucket bucket[UCLAMP_BUCKETS];
+> > > +};
+> > 
+> > With the default of 5, this UCLAMP_BUCKETS := 6, so struct uclamp_cpu
+> > ends up being 7 'unsigned long's, or 56 bytes on 64bit (with a 4 byte
+> > hole).
 > 
-> Therefore, while the register process is ongoing, the userspace program
-> will fail to open the device (ENODEV will be set to errno currently).
-> The program in userspace must re-open the device to cover this case.
+> Yes, that's dimensioned and configured to fit into a single cache line
+> for all the possible 5 (by default) clamp values of a clamp index
+> (i.e. min or max util).
+
+And I suppose you picked 5 because 20% is a 'nice' number? whereas
+16./666/% is a bit odd?
+
+> > > +#endif /* CONFIG_UCLAMP_TASK */
+> > > +
+> > >  /*
+> > >   * This is the main, per-CPU runqueue data structure.
+> > >   *
+> > > @@ -835,6 +879,11 @@ struct rq {
+> > >  	unsigned long		nr_load_updates;
+> > >  	u64			nr_switches;
+> > >  
+> > > +#ifdef CONFIG_UCLAMP_TASK
+> > > +	/* Utilization clamp values based on CPU's RUNNABLE tasks */
+> > > +	struct uclamp_cpu	uclamp[UCLAMP_CNT] ____cacheline_aligned;
+> > 
+> > Which makes this 112 bytes with 8 bytes in 2 holes, which is short of 2
+> > 64 byte cachelines.
 > 
-> It is more reasonable to expose the device after everythings ready.
+> Right, we have 2 cache lines where:
+> - the first $L tracks 5 different util_min values
+> - the second $L tracks 5 different util_max values
+
+Well, not quite so, if you want that you should put
+____cacheline_aligned on struct uclamp_cpu. Such that the individual
+array entries are each aligned, the above only alignes the whole array,
+so the second uclamp_cpu is spread over both lines.
+
+But I think this is actually better, since you have to scan both
+min/max anyway, and allowing one the straddle a line you have to touch
+anyway, allows for using less lines in total.
+
+Consider for example the case where UCLAMP_BUCKETS=8, then each
+uclamp_cpu would be 9 words or 72 bytes. If you force align the member,
+then you end up with 4 lines, whereas now it would be 3.
+
+> > Is that the best layout?
 > 
-> Signed-off-by: Liu, Xinwu <xinwu.liu@intel.com>
-> ---
->  drivers/media/v4l2-core/v4l2-dev.c | 14 ++++++++------
->  1 file changed, 8 insertions(+), 6 deletions(-)
+> It changed few times and that's what I found more reasonable for both
+> for fitting the default configuration and also for code readability.
+> Notice that we access RQ and SE clamp values with the same patter,
+> for example:
 > 
-> diff --git a/drivers/media/v4l2-core/v4l2-dev.c b/drivers/media/v4l2-core/v4l2-dev.c
-> index d7528f8..01e5cc9 100644
-> --- a/drivers/media/v4l2-core/v4l2-dev.c
-> +++ b/drivers/media/v4l2-core/v4l2-dev.c
-> @@ -993,16 +993,11 @@ int __video_register_device(struct video_device *vdev,
->  		goto cleanup;
->  	}
->  
-> -	/* Part 4: register the device with sysfs */
-> +	/* Part 4: Prepare to register the device */
->  	vdev->dev.class = &video_class;
->  	vdev->dev.devt = MKDEV(VIDEO_MAJOR, vdev->minor);
->  	vdev->dev.parent = vdev->dev_parent;
->  	dev_set_name(&vdev->dev, "%s%d", name_base, vdev->num);
-> -	ret = device_register(&vdev->dev);
-> -	if (ret < 0) {
-> -		pr_err("%s: device_register failed\n", __func__);
-> -		goto cleanup;
-> -	}
->  	/* Register the release callback that will be called when the last
->  	   reference to the device goes away. */
->  	vdev->dev.release = v4l2_device_release;
-> @@ -1020,6 +1015,13 @@ int __video_register_device(struct video_device *vdev,
->  	/* Part 6: Activate this minor. The char device can now be used. */
->  	set_bit(V4L2_FL_REGISTERED, &vdev->flags);
->  
-> +	/* Part 7: Register the device with sysfs */
-> +	ret = device_register(&vdev->dev);
-> +	if (ret < 0) {
-> +		pr_err("%s: device_register failed\n", __func__);
-> +		goto cleanup;
+>    {rq|p}->uclamp[clamp_idx].value
+> 
+> Are you worried about the holes or something else specific ?
 
-The error handling needs to reflect the change as well.
+Not sure; just mostly asking if this was by design or by accident.
 
-Speaking of which, the error handling appears to be somewhat broken here.
-It should be fixed first before making changes to the registration order.
+One thing I did wonder though; since bucket[0] is counting the tasks
+that are unconstrained and it's bucket value is basically fixed (0 /
+1024), can't we abuse that value field to store uclamp_cpu::value ?
 
-The problem the patch addresses is related to another problem: how to tell
-the user space all devices in the media hardware complex have been
-registered successfully. Order generally has been the node first, and only
-then the entity. That suggests the order should probably be:
+OTOH, doing that might make the code really ugly with all them:
 
-1. video_register_media_controller
-2. set_bit(V4L2_FL_REGISTERED)
-3. device_register
+  if (!bucket_id)
 
-I wonder what Hans thinks.
-
-> +	}
-> +
->  	return 0;
->  
->  cleanup:
-
--- 
-Regards,
-
-Sakari Ailus
-sakari.ailus@linux.intel.com
+exceptions all over the place.
