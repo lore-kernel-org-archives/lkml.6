@@ -2,146 +2,108 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30E4DC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 17:58:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 624A9C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 17:58:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D21521019
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 17:58:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30A3421019
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 17:58:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726818AbfAVR6R (ORCPT
+        id S1726838AbfAVR60 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 12:58:17 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:38722 "EHLO mx1.redhat.com"
+        Tue, 22 Jan 2019 12:58:26 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:45449 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725862AbfAVR6R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 12:58:17 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9F47488E53;
-        Tue, 22 Jan 2019 17:58:16 +0000 (UTC)
-Received: from w520.home (ovpn-116-182.phx2.redhat.com [10.3.116.182])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E7F365D737;
-        Tue, 22 Jan 2019 17:58:15 +0000 (UTC)
-Date:   Tue, 22 Jan 2019 10:58:15 -0700
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Pierre Morel <pmorel@linux.ibm.com>
-Cc:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        gerald.schaefer@de.ibm.com, linux-s390@vger.kernel.org,
-        walling@linux.ibm.com, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] iommu/s390: Declare s390 iommu reserved regions
-Message-ID: <20190122105815.4796a2f9@w520.home>
-In-Reply-To: <d180bb2d-354f-0d05-8773-7a196a4de3cb@linux.ibm.com>
-References: <1547573850-9459-1-git-send-email-pmorel@linux.ibm.com>
-        <cc070df1-e7dc-8cce-f443-879e0e5e2903@arm.com>
-        <3cd790d6-aa6f-e817-27ce-56d7a9b6b6e5@linux.ibm.com>
-        <668fe734-e4bf-0342-ab8c-df54d9022db4@arm.com>
-        <d180bb2d-354f-0d05-8773-7a196a4de3cb@linux.ibm.com>
+        id S1725862AbfAVR6Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 12:58:25 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 12FDB209BF; Tue, 22 Jan 2019 18:58:23 +0100 (CET)
+Received: from localhost (unknown [80.12.58.130])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 8246C20A15;
+        Tue, 22 Jan 2019 18:57:52 +0100 (CET)
+Date:   Tue, 22 Jan 2019 18:57:52 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     Alessandro Zummo <a.zummo@towertech.it>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Urs =?iso-8859-1?Q?F=E4ssler?= <urs.fassler@bbv.ch>,
+        Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v3 0/6] add quartz load support to NXP rtc drivers
+Message-ID: <20190122175752.GD16702@piout.net>
+References: <20190119090031.29147-1-sam@ravnborg.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 22 Jan 2019 17:58:16 +0000 (UTC)
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190119090031.29147-1-sam@ravnborg.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 21 Jan 2019 12:51:14 +0100
-Pierre Morel <pmorel@linux.ibm.com> wrote:
+On 19/01/2019 10:00:25+0100, Sam Ravnborg wrote:
+> Respin of patchset on top of v5.0-rc2 with feedback addressed (thanks!)
+> 
+> Introduce a new generic property "quartz-load-femtofarad"
+> to specify the quartz load.
+> The default value is selected to match the current Linux
+> drivers, so there are no behavior changes if a binding do not
+> specify the quarts-load.
+> The unit is femtofarads because several RTC's define the quarts load
+> in steps of 0.5 pF.
+> 
+> The two drivers rtc-pcf8523 and rtc-pcf85063 are both
+> updated to use the new binding.
+> Previously pcf8523 hardcoded the quartz load to 12.5pF, and
+> pcf85063 used the reset default of 7pF.
+> With this patchset it can now be specified in the DT,
+> if the defaults are not OK.
+> 
+> The patch-set is tested on a proprietary board for both
+> RTC variants (v2 variant only as there was only trivial changes in v3).
+> 
+> 	Sam
+> 
+> v3:
+> - Document generic property "quartz-load-femtofarads" in rtc.txt (Rob)
+> - Fix indent several places - ups (Alexandre)
+> - Use the simpler name "rtc" in DT examples (Rob)
+> - Collected "Reviewed by's"
+> 
+> v2:
+> - Introduce a generic property "quartz-load-femtofarads"
+> - Add femtofarads to property-units.txt
+> - Make the changes backward compatible
+> - Reduced logging
+> - Warn, when we continue with a default value
+> - Tested, by Søren Andersen, on real HW
+> - Rebased on top of v5.0-rc1
+> 
+>         Sam
+> 
+> Sam Ravnborg (6):
+>       devicetree: property-units: Add femtofarads unit
+>       dt-bindings: rtc: Add quartz-load-femtofarads property
+>       dt-binding: pcf8523: add xtal load capacitance
+>       dt-binding: pcf85063: add xtal load capacitance
+>       rtc: pcf8523: set xtal load capacitance from DT
+>       rtc: pcf85063: set xtal load capacitance from DT
+> 
 
-> On 18/01/2019 14:51, Jean-Philippe Brucker wrote:
-> > Hi Pierre,
-> > 
-> > On 18/01/2019 13:29, Pierre Morel wrote:  
-> >> On 17/01/2019 14:02, Robin Murphy wrote:  
-> >>> On 15/01/2019 17:37, Pierre Morel wrote:  
-> >>>> The s390 iommu can only allow DMA transactions between the zPCI device
-> >>>> entries start_dma and end_dma.
-> >>>>  
-> 
-> ...
-> 
-> >>
-> >> I already posted a patch retrieving the geometry through
-> >> VFIO_IOMMU_GET_INFO using a specific capability for the geometry [1],
-> >> and AFAIU, Alex did not agree with this.  
-> > 
-> > On arm we also need to report the IOMMU geometry to userspace (max IOVA
-> > size in particular). Shameer has been working on a solution [2] that
-> > presents a unified view of both geometry and reserved regions into the
-> > VFIO_IOMMU_GET_INFO call, and I think we should go with that. If I
-> > understand correctly it's currently blocked on the RMRR problem and
-> > we're waiting for Jacob or Ashok to take a look at it, as Kevin pinged
-> > them on thread [1]?
-> > 
-> > [2] https://lkml.org/lkml/2018/4/18/293
-> > 
-> > Thanks,
-> > Jean
-> >   
-> 
-> Hi Jean,
-> 
-> I hopped that this proposition went in the same direction based on the 
-> following assumptions:
-> 
-> 
-> - The goal of the get_resv_region is defined in iommu.h as:
-> -----
-> * @get_resv_regions: Request list of reserved regions for a device
-> -----
-> 
-> - A iommu reserve region is a region which should not be mapped.
-> Isn't it exactly what happens outside the aperture?
-> Shouldn't it be reported by the iommu reserved region?
-> 
-> - If we use VFIO and want to get all reserved region we will have the 
-> VFIO_IOMMU_GET_INFO call provided by Shameer and it can get all reserved 
-> regions depending from the iommu driver itself at once by calling the 
-> get_reserved_region callback instead of having to merge them with the 
-> aperture.
-> 
-> - If there are other reserved region, depending on the system 
-> configuration and not on the IOMMU itself, the VFIO_IOMMU_GET_INFO call 
-> will have to merge them with the region gotten from the iommu driver.
-> 
-> - If we do not use QEMU nor VFIO at all, AFAIU, the standard way to 
-> retrieve the reserved regions associated with a device is to call the 
-> get_reserved_region callback from the associated iommu.
-> 
-> Please tell me were I am wrong.
+All applied, thanks.
 
-The existing proposal by Shameer exposes an IOVA list, which includes
-ranges that the user _can_ map through the IOMMU, therefore this
-original patch is unnecessary, the IOMMU geometry is already the
-starting point of the IOVA list, creating the original node, which is
-split as necessary to account for the reserved regions.  To me,
-presenting a user interface that exposes ranges that _cannot_ be mapped
-is a strange interface.  If we started from a position of what
-information do we want to provide to the user and how will they consume
-it, would we present a list of reserved ranges?  I think the only
-argument for the negative ranges is that we already have them in the
-kernel, but I don't see that it necessarily makes them the right
-solution for userspace.
-
-
-> >> What is different in what you propose?
-> >>
-> >> @Alex: I was hoping that this patch goes in your direction. What do you
-> >> think?
-
-I think it's unnecessary given that in Shameer's proposal:
-
- - We start from the IOMMU exposed geometry
- - We present a list of usable IOVA ranges, not a list of reserved
-   ranges
-
-Thanks,
-Alex
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
