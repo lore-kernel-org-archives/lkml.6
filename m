@@ -2,127 +2,120 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DD23C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:04:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31F40C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:07:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 666B820844
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:04:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09C6120879
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:07:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728224AbfAVKEh convert rfc822-to-8bit (ORCPT
+        id S1727977AbfAVKHA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 05:04:37 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:58489 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727663AbfAVKEh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 05:04:37 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 724FB2078C; Tue, 22 Jan 2019 11:04:35 +0100 (CET)
-Received: from xps13 (aaubervilliers-681-1-37-87.w90-88.abo.wanadoo.fr [90.88.156.87])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 1C36B206A7;
-        Tue, 22 Jan 2019 11:04:35 +0100 (CET)
-Date:   Tue, 22 Jan 2019 11:04:35 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     Vivien Didelot <vivien.didelot@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>
-Subject: Re: [PATCH net-next] net: dsa: mv88e6xxx: Add suspend/resume
- callbacks
-Message-ID: <20190122110435.5eaab82a@xps13>
-In-Reply-To: <b804e77a-5eb5-6d18-cb79-f8176e370775@gmail.com>
-References: <20190116153419.3208-1-miquel.raynal@bootlin.com>
-        <20190116155651.GC29244@lunn.ch>
-        <e9ac5203-87ba-c14f-8140-5b100808a8a4@gmail.com>
-        <20190116222329.GP29244@lunn.ch>
-        <20190117104641.GD13242@t480s.localdomain>
-        <20190117165052.6d1f1a58@xps13>
-        <b804e77a-5eb5-6d18-cb79-f8176e370775@gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 22 Jan 2019 05:07:00 -0500
+Received: from mx2.suse.de ([195.135.220.15]:39064 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727417AbfAVKG7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 05:06:59 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7F008AD23;
+        Tue, 22 Jan 2019 10:06:58 +0000 (UTC)
+Date:   Tue, 22 Jan 2019 11:06:56 +0100 (CET)
+From:   Miroslav Benes <mbenes@suse.cz>
+To:     Petr Mladek <pmladek@suse.com>
+cc:     Jiri Kosina <jikos@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/4] livepatch: Remove the redundant enabled flag in
+ struct klp_patch
+In-Reply-To: <20190116161720.796-5-pmladek@suse.com>
+Message-ID: <alpine.LSU.2.21.1901221100020.16809@pobox.suse.cz>
+References: <20190116161720.796-1-pmladek@suse.com> <20190116161720.796-5-pmladek@suse.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Florian,
+On Wed, 16 Jan 2019, Petr Mladek wrote:
 
-Florian Fainelli <f.fainelli@gmail.com> wrote on Thu, 17 Jan 2019
-10:00:46 -0800:
+> diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
+> index 684766d306ad..8e644837e668 100644
+> --- a/kernel/livepatch/core.c
+> +++ b/kernel/livepatch/core.c
+> @@ -59,6 +59,17 @@ static bool klp_is_module(struct klp_object *obj)
+>  	return obj->name;
+>  }
+>  
+> +static bool klp_patch_enabled(struct klp_patch *patch)
+> +{
+> +	if (patch == klp_transition_patch) {
+> +		WARN_ON_ONCE(klp_target_state == KLP_UNDEFINED);
 
-> On 1/17/19 7:50 AM, Miquel Raynal wrote:
-> > Hi Andrew, Vivien,
-> > 
-> > Vivien Didelot <vivien.didelot@gmail.com> wrote on Thu, 17 Jan 2019
-> > 10:46:41 -0500:
-> >   
-> >> Hi,
-> >>
-> >> On Wed, 16 Jan 2019 23:23:29 +0100, Andrew Lunn <andrew@lunn.ch> wrote:  
-> >>> Hi Florian
-> >>>     
-> >>>> A possible approach could be to call the port_disable, port_enable
-> >>>> callbacks from dsa_slave_suspend() and dsa_slave_resume(), I might have
-> >>>> some patches doing that already somewhere.    
-> >>>
-> >>> I expect it is also on Viviens TODO list, since this really could be
-> >>> in the core.    
-> >>
-> >> Indeed that is!  
-> > 
-> > So, shall I wait for Vivien's patches (adding port_disable/enable()
-> > in dsa_slave_suspend/resume()) and keep the driver as-is or do you want
-> > me to manually call port_disable/enable() from the mv88e6xxx driver?  
-> 
-> Up to you guys, the only thing that I an tell you is that my platform
-> loses its register contents during suspend/resume, therefore you must
-> make sure the driver re-applies the entire switch configuration,
-> identical to how it was prior to suspend. If you need me to test
-> something, please holler.
+I think we'd have a race in the code then. enabled_show() does not take 
+klp_mutex() when calling klp_patch_enabled().
 
-I am not sure to understand what is lost. On my setup ethtool shows
-that everything is fine after resume but maybe I fall into a "default"
-working case.
+A patch sysfs attributes are added quite early during its enablement. 
+klp_init_transition() first sets klp_transition_patch, then 
+klp_target_state. It means one can call enabled_show() with patch == 
+klp_transition_patch and klp_target_state == KLP_UNDEFINED. No?
 
-When I compare with the two drivers pointed out by Andrew:
-* qca8k resume callback:
-	* enable ports,
-	* call dsa_switch_resume().
-* bcm_sf2 resume callback:
-	* call dsa_switch_resume(),
-	* reset the switch,
-	* refresh rules (Not applicable?),
-	* enable the PHYs,
-	* setup the ports,
-	* configure vlan (Not applicable?),
-* mv88e6xxx resume callback:
-	* reset the switch,
-	* enable the PHYs,
-	* setup the ports,
-	* enable IRQs,
-	* call dsa_switch_resume().
+The similar applies the disablement. klp_complete_transition() first 
+clears klp_target_state (sets it to KLP_UNDEFINED), then it clears 
+klp_transition_patch.
 
-This looks pretty similar. Maybe the ports setup are set to default
-values while I should save some parameters at suspend? I changed a
-few parameters (like the MTU or the queue length) but they seem to be
-correct across suspend cycles. Can you show a diff of what part of the
-configuration is lost?
+We could add locking to enabled_show() or swap the assignments with some 
+barriers on top.
 
-Anyway, I have little background working with switches, so I might miss
-something big.
+Or we could remove WARN_ON_ONCE() and live with false results in 
+enabled_show(). It does not matter much, I think. All the other call sites 
+of klp_patch_enabled() should be fine.
 
+> +		return klp_target_state == KLP_PATCHED;
+> +	}
+> +
+> +	return !list_empty(&patch->list);
+> +}
+
+Shouldn't we also change list_del(&patch->list) in klp_free_patch_start() 
+to list_del_init(&patch->list)?
+
+[...]
+
+> @@ -955,7 +964,7 @@ static int __klp_enable_patch(struct klp_patch *patch)
+>  	if (klp_transition_patch)
+>  		return -EBUSY;
+>  
+> -	if (WARN_ON(patch->enabled))
+> +	if (list_empty(&patch->list))
+>  		return -EINVAL;
+
+I wanted to ask why there is list_empty() and not klp_patch_enabled(), so 
+just to be sure... the patch was added to klp_patches list, so patch->list 
+is not empty (should not be). We could achieve the same by calling 
+!klp_patch_enabled() given its implementation, but it would look 
+counter-intuitive here.
+
+The rest looks fine.
+
+However, I am not sure if the outcome is better than what we have. Yes, 
+patch->enabled is not technically necessary and we can live with that (as 
+the patch proves). On the other hand, it gives the reader clear guidance 
+about the patch's state. klp_patch_enabled() is not a complete 
+replacement. We have to call list_empty() in __klp_enable_patch() or check 
+the original klp_target_state in klp_try_complete_transition().
+
+I am not against the change, I am glad to see it is achievable, but I am 
+not sure if the code is better with it. Joe acked it. What do the others 
+think?
 
 Thanks,
-Miquèl
+Miroslav
