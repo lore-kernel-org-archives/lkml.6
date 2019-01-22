@@ -2,382 +2,182 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B49D1C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:56:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E5ACC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:57:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C66C21019
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:56:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 467BA20870
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:57:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C82kitik"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uxnurEWp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729044AbfAVO4J (ORCPT
+        id S1728971AbfAVO5v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 09:56:09 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:43630 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728836AbfAVO4J (ORCPT
+        Tue, 22 Jan 2019 09:57:51 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:44314 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728795AbfAVO5v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 09:56:09 -0500
-Received: by mail-qt1-f195.google.com with SMTP id i7so27806347qtj.10;
-        Tue, 22 Jan 2019 06:56:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=K+2zfFSibbg190l5BiqRyileh2/rBR4aXcPonbfilMU=;
-        b=C82kitik7fUqGHHOUPGruIWahZy3kw97dMhkOBRMkVnBYaSn1avhaJrMHP8lNxLGtW
-         pget1rtHcEcAZGiVWjJcZ53TJaGHPExeJx3oeyPVwVoAyT6OSRxDzntrqyI10TafTVwl
-         xBMD9vWx1MqknlTpl+hFt6qd4AtVSwvJ/EDQek++ri7UN+nYGL8kqS/9gpTPnKnGOIUP
-         nuf/hA+drfXADQlFpYWGpWq2Nr/kC9nHXS8Q+JkzPy/7SOmo8R65QhJHKO797J+JNDZ1
-         eXuNt9hcJ6SRgQ6nw3uZ/xRSHCuLrkt9qZjQdv27wHsz0BPXiXG9ZLpDlZCUU/J6ZDs5
-         60FQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=K+2zfFSibbg190l5BiqRyileh2/rBR4aXcPonbfilMU=;
-        b=PeGfGbGesIFCu3XQnS0Pzl9NKR76XLLyyjzGZ4v4Z8rweZ9msZk/i42Qi0UWTiqc+p
-         /vro0XuEchYcTnZoIUve3z0C/PRfLYYqn4AJbCU+w+zBggWHqo8dGr2l1DrFR1TjFAXa
-         k0HjbE2FKLd0dN1vK/LlGis2HFmAw5q2+MXSnFdV3MK86ith975NBGRNWnQIXkJMPK7I
-         /1dPl9McqOpa35tyy5wAZdKLMvTVelps0ecC04TwgYZ1iS9H3DOpaRh1XdkeRK8p4+Tf
-         oWFHLZv8RhDCMN2F3zWdnDyVma63TAVhHWteLsmdWtVU6YGgN9DQbEW9dSFFeEJvkrTu
-         B7Ew==
-X-Gm-Message-State: AJcUuke8pYDT5z04dBCbdoy/Ptm1cFROsqLdnA5u8AA3O0EWCdfMxnUp
-        krUC959epV3O8LvH7nR8O6o0CKYijlz3nCXqfaE=
-X-Google-Smtp-Source: ALg8bN5ma0qY+l5k267L+RT+FsCmVVer5VsFsZq0p5BAdDMenVVrQAx2rCy2uTCCVq3x2dnkr8oSFUI+8FEVYI427Iw=
-X-Received: by 2002:ac8:2585:: with SMTP id e5mr31667294qte.233.1548168967318;
- Tue, 22 Jan 2019 06:56:07 -0800 (PST)
+        Tue, 22 Jan 2019 09:57:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ubc/EeKgBxh6zaeMi0e7CVRJR36Rk40o1knBVNzRVgo=; b=uxnurEWpOwxfX07blsFss6LMX
+        QIsijql4IW5MQwVhqLc1fUPwBWjpaJrIvR4EoZxJIcHicV4VIjfWgyXF7KOYNGh04kLpi5OjW7KgK
+        j5cMe9L/dy1u8nafjWzsgStT8f7mH2EpJyUZmeUzFz3cHn5oPOFqjLPcp3QB7j1vorE44z68x+FrG
+        II+yp3j2g+106iMVvUW/AfSX2juhT1G5JeCZbZsU7rGO0td0suZVWaKtMteAmI+oKL8uZh+UMKskw
+        +Hl/hdwcuFfSUUjEMIfyUmg31A1R50ZOnghv3X5fI8N5oMmqUXRoKS+LeWuhFImUI8RRbSoyGGGu1
+        EQ3SM2kAw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1glxUn-0000N4-Bf; Tue, 22 Jan 2019 14:57:45 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id D1C0020EF9B32; Tue, 22 Jan 2019 15:57:42 +0100 (CET)
+Date:   Tue, 22 Jan 2019 15:57:42 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v6 05/16] sched/core: uclamp: Update CPU's refcount on
+ clamp changes
+Message-ID: <20190122145742.GQ27931@hirez.programming.kicks-ass.net>
+References: <20190115101513.2822-1-patrick.bellasi@arm.com>
+ <20190115101513.2822-6-patrick.bellasi@arm.com>
+ <20190121153308.GL27931@hirez.programming.kicks-ass.net>
+ <20190121154412.fak2t2iquj3aixtu@e110439-lin>
+ <20190122093704.GM27931@hirez.programming.kicks-ass.net>
+ <20190122104305.6vjx37muqsxm536t@e110439-lin>
+ <20190122132817.GG13777@hirez.programming.kicks-ass.net>
+ <20190122140115.twtx646vewm757ca@e110439-lin>
 MIME-Version: 1.0
-References: <20190119001422.48186-1-ncrews@chromium.org> <20190119001422.48186-6-ncrews@chromium.org>
-In-Reply-To: <20190119001422.48186-6-ncrews@chromium.org>
-From:   Enric Balletbo Serra <eballetbo@gmail.com>
-Date:   Tue, 22 Jan 2019 15:55:55 +0100
-Message-ID: <CAFqH_53QwY74L1uxqt+cMUwKqUb4Agn8GwBvmALN3qG5t1rW8g@mail.gmail.com>
-Subject: Re: [PATCH v3 5/9] platform/chrome: rtc: Add RTC driver
-To:     Nick Crews <ncrews@chromium.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Simon Glass <sjg@chromium.org>,
-        Daniel Kurtz <djkurtz@google.com>, dlaurie@chromium.org,
-        Duncan Laurie <dlaurie@google.com>, linux-rtc@vger.kernel.org,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Benson Leung <bleung@chromium.org>,
-        Nick Crews <ncrews@google.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190122140115.twtx646vewm757ca@e110439-lin>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nick,
+On Tue, Jan 22, 2019 at 02:01:15PM +0000, Patrick Bellasi wrote:
+> On 22-Jan 14:28, Peter Zijlstra wrote:
+> > On Tue, Jan 22, 2019 at 10:43:05AM +0000, Patrick Bellasi wrote:
+> > > On 22-Jan 10:37, Peter Zijlstra wrote:
+> > 
+> > > > Sure, I get that. What I don't get is why you're adding that (2) here.
+> > > > Like said, __sched_setscheduler() already does a dequeue/enqueue under
+> > > > rq->lock, which should already take care of that.
+> > > 
+> > > Oh, ok... got it what you mean now.
+> > > 
+> > > With:
+> > > 
+> > >    [PATCH v6 01/16] sched/core: Allow sched_setattr() to use the current policy
+> > >    <20190115101513.2822-2-patrick.bellasi@arm.com>
+> > > 
+> > > we can call __sched_setscheduler() with:
+> > > 
+> > >    attr->sched_flags & SCHED_FLAG_KEEP_POLICY
+> > > 
+> > > whenever we want just to change the clamp values of a task without
+> > > changing its class. Thus, we can end up returning from
+> > > __sched_setscheduler() without doing an actual dequeue/enqueue.
+> > 
+> > I don't see that happening.. when KEEP_POLICY we set attr.sched_policy =
+> > SETPARAM_POLICY. That is then checked again in __setscheduler_param(),
+> > which is in the middle of that dequeue/enqueue.
+> 
+> Yes, I think I've forgot a check before we actually dequeue the task.
+> 
+> The current code does:
+> 
+> ---8<---
+>    SYSCALL_DEFINE3(sched_setattr)
+> 
+>         // A) request to keep the same policy
+>         if (attr.sched_flags & SCHED_FLAG_KEEP_POLICY)
+>             attr.sched_policy = SETPARAM_POLICY;
+> 
+>         sched_setattr()
+>             // B) actually enforce the same policy
+>             if (policy < 0)
+>                 policy = oldpolicy = p->policy;
+> 
+>             // C) tune the clamp values
+>             if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP)
+>                 retval = __setscheduler_uclamp(p, attr);
+> 
+>             // D) tune attributes if policy is the same
+>             if (unlikely(policy == p->policy))
+>                 if (fair_policy(policy) && attr->sched_nice != task_nice(p))
+>                     goto change;
+>                 if (rt_policy(policy) && attr->sched_priority != p->rt_priority)
+>                     goto change;
+>                 if (dl_policy(policy) && dl_param_changed(p, attr))
+>                     goto change;
 
-Missatge de Nick Crews <ncrews@chromium.org> del dia ds., 19 de gen.
-2019 a les 1:17:
->
-> From: Duncan Laurie <dlaurie@google.com>
->
-> This Embedded Controller has an internal RTC that is exposed
-> as a standard RTC class driver with read/write functionality.
->
-> The driver is added to the drivers/rtc/ so that the maintainer of that
-> directory will be able to comment on this change, as that maintainer is
-> the expert on this system. In addition, the driver code is called
-> indirectly after a corresponding device is registered from core.c,
-> as opposed to core.c registering the driver callbacks directly.
->
-> > hwclock --show --rtc /dev/rtc1
-> 2007-12-31 16:01:20.460959-08:00
-> > hwclock --systohc --rtc /dev/rtc1
-> > hwclock --show --rtc /dev/rtc1
-> 2018-11-29 17:08:00.780793-08:00
->
-> Signed-off-by: Duncan Laurie <dlaurie@google.com>
-> Signed-off-by: Nick Crews <ncrews@chromium.org>
-> ---
->
-> Changes in v3:
-> - rm #define for driver name
-> - Don't compute weekday when reading from RTC.
->   Still set weekday when writing, as RTC needs this
->   to control advanced power scheduling
-> - rm check for invalid month data
-> - Set range_min and range_max on rtc_device
->
-> Changes in v2:
-> - rm license boiler plate
-> - rm "wilco_ec_rtc -" prefix in docstring
-> - Make rtc driver its own module within the drivers/rtc/ directory
-> - Register a rtc device from core.c that is picked up by this driver
->
->  drivers/platform/chrome/wilco_ec/core.c |  17 +++
+		  if (util_changed)
+		      goto change;
 
-Acked-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+?
 
->  drivers/rtc/Kconfig                     |  11 ++
->  drivers/rtc/Makefile                    |   1 +
->  drivers/rtc/rtc-wilco-ec.c              | 177 ++++++++++++++++++++++++
->  4 files changed, 206 insertions(+)
->  create mode 100644 drivers/rtc/rtc-wilco-ec.c
+>                 return 0;
+>         change:
+> 
+>             // E) dequeue/enqueue task
+> ---8<---
+> 
+> So, probably in D) I've missed a check on SCHED_FLAG_KEEP_POLICY to
+> enforce a return in that case...
+> 
+> > Also, and this might be 'broken', SETPARAM_POLICY _does_ reset all the
+> > other attributes, it only preserves policy, but it will (re)set nice
+> > level for example (see that same function).
+> 
+> Mmm... right... my bad! :/
+> 
+> > So maybe we want to introduce another (few?) FLAG_KEEP flag(s) that
+> > preserve the other bits; I'm thinking at least KEEP_PARAM and KEEP_UTIL
+> > or something.
+> 
+> Yes, I would say we have two options:
+> 
+>  1) SCHED_FLAG_KEEP_POLICY enforces all the scheduling class specific
+>     attributes, but cross class attributes (e.g. uclamp)
 >
-> diff --git a/drivers/platform/chrome/wilco_ec/core.c b/drivers/platform/chrome/wilco_ec/core.c
-> index 9b4a25e63b56..dd8b896b3833 100644
-> --- a/drivers/platform/chrome/wilco_ec/core.c
-> +++ b/drivers/platform/chrome/wilco_ec/core.c
-> @@ -34,6 +34,7 @@ static int wilco_ec_probe(struct platform_device *pdev)
->  {
->         struct device *dev = &pdev->dev;
->         struct wilco_ec_device *ec;
-> +       struct platform_device *child_pdev;
->         int ret;
->
->         ec = devm_kzalloc(dev, sizeof(*ec), GFP_KERNEL);
-> @@ -76,8 +77,24 @@ static int wilco_ec_probe(struct platform_device *pdev)
->                 goto rm_debugfs;
->         }
->
-> +       /*
-> +        * Register a RTC platform device that will get picked up by the RTC
-> +        * subsystem. This platform device will get freed when its parent device
-> +        * dev is unregistered.
-> +        */
-> +       child_pdev = platform_device_register_data(dev, "rtc-wilco-ec",
-> +                                                  PLATFORM_DEVID_AUTO,
-> +                                                  NULL, 0);
-> +       if (IS_ERR(child_pdev)) {
-> +               dev_err(dev, "Failed to create RTC platform device\n");
-> +               ret = PTR_ERR(child_pdev);
-> +               goto remove_sysfs;
-> +       }
-> +
->         return 0;
->
-> +remove_sysfs:
-> +       wilco_ec_sysfs_remove(ec);
->  rm_debugfs:
->         wilco_ec_debugfs_remove(ec);
->  destroy_mec:
-> diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-> index 225b0b8516f3..d5063c791515 100644
-> --- a/drivers/rtc/Kconfig
-> +++ b/drivers/rtc/Kconfig
-> @@ -1814,4 +1814,15 @@ config RTC_DRV_GOLDFISH
->           Goldfish is a code name for the virtual platform developed by Google
->           for Android emulation.
->
-> +config RTC_DRV_WILCO_EC
-> +       tristate "Wilco EC RTC"
-> +       depends on WILCO_EC
-> +       default m
-> +       help
-> +         If you say yes here, you get read/write support for the Real Time
-> +         Clock on the Wilco Embedded Controller (Wilco is a kind of Chromebook)
-> +
-> +         This can also be built as a module. If so, the module will
-> +         be named "rtc_wilco_ec".
-> +
->  endif # RTC_CLASS
-> diff --git a/drivers/rtc/Makefile b/drivers/rtc/Makefile
-> index df022d820bee..6255ea78da25 100644
-> --- a/drivers/rtc/Makefile
-> +++ b/drivers/rtc/Makefile
-> @@ -172,6 +172,7 @@ obj-$(CONFIG_RTC_DRV_V3020) += rtc-v3020.o
->  obj-$(CONFIG_RTC_DRV_VR41XX)   += rtc-vr41xx.o
->  obj-$(CONFIG_RTC_DRV_VRTC)     += rtc-mrst.o
->  obj-$(CONFIG_RTC_DRV_VT8500)   += rtc-vt8500.o
-> +obj-$(CONFIG_RTC_DRV_WILCO_EC) += rtc-wilco-ec.o
->  obj-$(CONFIG_RTC_DRV_WM831X)   += rtc-wm831x.o
->  obj-$(CONFIG_RTC_DRV_WM8350)   += rtc-wm8350.o
->  obj-$(CONFIG_RTC_DRV_X1205)    += rtc-x1205.o
-> diff --git a/drivers/rtc/rtc-wilco-ec.c b/drivers/rtc/rtc-wilco-ec.c
-> new file mode 100644
-> index 000000000000..b721cc3f17f0
-> --- /dev/null
-> +++ b/drivers/rtc/rtc-wilco-ec.c
-> @@ -0,0 +1,177 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * RTC interface for Wilco Embedded Controller with R/W abilities
-> + *
-> + * Copyright 2018 Google LLC
-> + *
-> + * The corresponding platform device is typically registered in
-> + * drivers/platform/chrome/wilco_ec/core.c
-> + */
-> +
-> +#include <linux/bcd.h>
-> +#include <linux/err.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/platform_data/wilco-ec.h>
-> +#include <linux/rtc.h>
-> +#include <linux/timekeeping.h>
-> +
-> +#define EC_COMMAND_CMOS                        0x7c
-> +#define EC_CMOS_TOD_WRITE              0x02
-> +#define EC_CMOS_TOD_READ               0x08
-> +
-> +/**
-> + * struct ec_rtc_read - Format of RTC returned by EC.
-> + * @second: Second value (0..59)
-> + * @minute: Minute value (0..59)
-> + * @hour: Hour value (0..23)
-> + * @day: Day value (1..31)
-> + * @month: Month value (1..12)
-> + * @year: Year value (full year % 100)
-> + * @century: Century value (full year / 100)
-> + *
-> + * All values are presented in binary (not BCD).
-> + */
-> +struct ec_rtc_read {
-> +       u8 second;
-> +       u8 minute;
-> +       u8 hour;
-> +       u8 day;
-> +       u8 month;
-> +       u8 year;
-> +       u8 century;
-> +} __packed;
-> +
-> +/**
-> + * struct ec_rtc_write - Format of RTC sent to the EC.
-> + * @param: EC_CMOS_TOD_WRITE
-> + * @century: Century value (full year / 100)
-> + * @year: Year value (full year % 100)
-> + * @month: Month value (1..12)
-> + * @day: Day value (1..31)
-> + * @hour: Hour value (0..23)
-> + * @minute: Minute value (0..59)
-> + * @second: Second value (0..59)
-> + * @weekday: Day of the week (0=Saturday)
-> + *
-> + * All values are presented in BCD.
-> + */
-> +struct ec_rtc_write {
-> +       u8 param;
-> +       u8 century;
-> +       u8 year;
-> +       u8 month;
-> +       u8 day;
-> +       u8 hour;
-> +       u8 minute;
-> +       u8 second;
-> +       u8 weekday;
-> +} __packed;
-> +
-> +int wilco_ec_rtc_read(struct device *dev, struct rtc_time *tm)
-> +{
-> +       struct wilco_ec_device *ec = dev_get_drvdata(dev->parent);
-> +       u8 param = EC_CMOS_TOD_READ;
-> +       struct ec_rtc_read rtc;
-> +       struct wilco_ec_message msg = {
-> +               .type = WILCO_EC_MSG_LEGACY,
-> +               .flags = WILCO_EC_FLAG_RAW_RESPONSE,
-> +               .command = EC_COMMAND_CMOS,
-> +               .request_data = &param,
-> +               .request_size = sizeof(param),
-> +               .response_data = &rtc,
-> +               .response_size = sizeof(rtc),
-> +       };
-> +       int ret;
-> +
-> +       ret = wilco_ec_mailbox(ec, &msg);
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       tm->tm_sec      = rtc.second;
-> +       tm->tm_min      = rtc.minute;
-> +       tm->tm_hour     = rtc.hour;
-> +       tm->tm_mday     = rtc.day;
-> +       tm->tm_mon      = rtc.month - 1;
-> +       tm->tm_year     = rtc.year + (rtc.century * 100) - 1900;
-> +       tm->tm_yday     = rtc_year_days(tm->tm_mday, tm->tm_mon, tm->tm_year);
-> +
-> +       /* Don't compute day of week, we don't need it. */
-> +       tm->tm_wday = -1;
-> +
-> +       return 0;
-> +}
-> +
-> +int wilco_ec_rtc_write(struct device *dev, struct rtc_time *tm)
-> +{
-> +       struct wilco_ec_device *ec = dev_get_drvdata(dev->parent);
-> +       struct ec_rtc_write rtc;
-> +       struct wilco_ec_message msg = {
-> +               .type = WILCO_EC_MSG_LEGACY,
-> +               .flags = WILCO_EC_FLAG_RAW_RESPONSE,
-> +               .command = EC_COMMAND_CMOS,
-> +               .request_data = &rtc,
-> +               .request_size = sizeof(rtc),
-> +       };
-> +       int year = tm->tm_year + 1900;
-> +       /*
-> +        * Convert from 0=Sunday to 0=Saturday for the EC
-> +        * We DO need to set weekday because the EC controls battery charging
-> +        * schedules that depend on the day of the week.
-> +        */
-> +       int wday = tm->tm_wday == 6 ? 0 : tm->tm_wday + 1;
-> +       int ret;
-> +
-> +       rtc.param       = EC_CMOS_TOD_WRITE;
-> +       rtc.century     = bin2bcd(year / 100);
-> +       rtc.year        = bin2bcd(year % 100);
-> +       rtc.month       = bin2bcd(tm->tm_mon + 1);
-> +       rtc.day         = bin2bcd(tm->tm_mday);
-> +       rtc.hour        = bin2bcd(tm->tm_hour);
-> +       rtc.minute      = bin2bcd(tm->tm_min);
-> +       rtc.second      = bin2bcd(tm->tm_sec);
-> +       rtc.weekday     = bin2bcd(wday);
-> +
-> +       ret = wilco_ec_mailbox(ec, &msg);
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       return 0;
-> +}
-> +
-> +static const struct rtc_class_ops wilco_ec_rtc_ops = {
-> +       .read_time = wilco_ec_rtc_read,
-> +       .set_time = wilco_ec_rtc_write,
-> +};
-> +
-> +static int wilco_ec_rtc_probe(struct platform_device *pdev)
-> +{
-> +       struct rtc_device *rtc;
-> +
-> +       rtc = devm_rtc_allocate_device(&pdev->dev);
-> +       if (IS_ERR(rtc))
-> +               return PTR_ERR(rtc);
-> +
-> +       rtc->ops = &wilco_ec_rtc_ops;
-> +       /* EC only supports this century */
-> +       rtc->range_min = RTC_TIMESTAMP_BEGIN_2000;
-> +       rtc->range_max = RTC_TIMESTAMP_END_2099;
-> +       rtc->owner = THIS_MODULE;
-> +
-> +       return rtc_register_device(rtc);
-> +}
-> +
-> +static struct platform_driver wilco_ec_rtc_driver = {
-> +       .driver = {
-> +               .name = "rtc-wilco-ec",
-> +       },
-> +       .probe = wilco_ec_rtc_probe,
-> +};
-> +
-> +module_platform_driver(wilco_ec_rtc_driver);
-> +
-> +MODULE_ALIAS("platform:rtc-wilco-ec");
-> +MODULE_AUTHOR("Nick Crews <ncrews@google.com>");
-> +MODULE_LICENSE("GPL v2");
-> +MODULE_DESCRIPTION("Wilco EC RTC driver");
-> --
-> 2.20.1.321.g9e740568ce-goog
->
+>  2) add SCHED_KEEP_NICE, SCHED_KEEP_PRIO, and SCED_KEEP_PARAMS
+>     and use them in the if conditions in D)
+
+So the current KEEP_POLICY basically provides sched_setparam(), and
+given we have that as a syscall, that is supposedly a useful
+functionality.
+
+Also, NICE/PRIO/DL* is all the same thing and depends on the policy,
+KEEP_PARAM should cover the lot
+
+And I suppose the UTIL_CLAMP is !KEEP_UTIL; we could go either way
+around with that flag.
+
+> In both cases the goal should be to return from code block D).
+
+I don't think so; we really do want to 'goto change' for util changes
+too I think. Why duplicate part of that logic?
