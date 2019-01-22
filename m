@@ -2,88 +2,106 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A997C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:49:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BE57C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:51:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8B9621019
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:49:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Eub6ULmR"
+	by mail.kernel.org (Postfix) with ESMTP id EABB021019
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:51:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728932AbfAVOtW (ORCPT
+        id S1728905AbfAVOvY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 09:49:22 -0500
-Received: from m12-13.163.com ([220.181.12.13]:48090 "EHLO m12-13.163.com"
+        Tue, 22 Jan 2019 09:51:24 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:57256 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728353AbfAVOtV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 09:49:21 -0500
-X-Greylist: delayed 909 seconds by postgrey-1.27 at vger.kernel.org; Tue, 22 Jan 2019 09:49:20 EST
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=SJCdauQe6QoeEHk3E6
-        CfEhMg/t1Nqq1uepFVEj/67nk=; b=Eub6ULmR2g9q9toVZw1RrsVkBhZnp7FI27
-        4MzKWruWfBgFsbvYNUIuuUBLmEupyvWhJxSwbomAAVzS8RUIRrVaMmIQ0EfqpaVz
-        861uq6wxcClj8J6RIuU7jglupNdXoI8zreg28F8h8a0zqo1cFUU3F7koz3LVw3bG
-        dMSz2+880=
-Received: from localhost.localdomain (unknown [182.139.212.77])
-        by smtp9 (Coremail) with SMTP id DcCowACnM4PaKUdcc20PCg--.32661S2;
-        Tue, 22 Jan 2019 22:34:03 +0800 (CST)
-From:   Bo Wang <wdjjwb@163.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, wang.bo116@zte.com.cn,
-        wangbo <wdjjwb@163.com>
-Subject: [PATCH v2] uio:remove unneeded variable ret
-Date:   Tue, 22 Jan 2019 22:33:57 +0800
-Message-Id: <1548167637-2607-1-git-send-email-wdjjwb@163.com>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID: DcCowACnM4PaKUdcc20PCg--.32661S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrZF1rtF15trW7Jw1rWr15Arb_yoWkXrXEkr
-        Wvq3y0gayDur4ruanI9F4YvFZ0yrWkWw4vqFnFkF93Wa47Grn5Jr4IyF9xXry8XrZ5GrWD
-        A3yxtr4UXr1DWjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUbT5l7UUUUU==
-X-Originating-IP: [182.139.212.77]
-X-CM-SenderInfo: xzgmy4re6rljoofrz/1tbiOxtEGVXlhoSZXwAAsJ
+        id S1728318AbfAVOvY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 09:51:24 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B766B87638;
+        Tue, 22 Jan 2019 14:51:23 +0000 (UTC)
+Received: from krava (ovpn-204-197.brq.redhat.com [10.40.204.197])
+        by smtp.corp.redhat.com (Postfix) with SMTP id D9C9C1001F45;
+        Tue, 22 Jan 2019 14:51:20 +0000 (UTC)
+Date:   Tue, 22 Jan 2019 15:51:19 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Song Liu <songliubraving@fb.com>, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        peterz@infradead.org, ast@kernel.org, daniel@iogearbox.net,
+        kernel-team@fb.com
+Subject: Re: [PATCH v11 perf, bpf-next 7/9] perf tools: synthesize
+ PERF_RECORD_* for loaded BPF programs
+Message-ID: <20190122145119.GF27625@krava>
+References: <20190117161521.1341602-1-songliubraving@fb.com>
+ <20190117161521.1341602-8-songliubraving@fb.com>
+ <20190118144655.GM5823@kernel.org>
+ <20190122141320.GF14973@kernel.org>
+ <20190122143117.GG14973@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190122143117.GG14973@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 22 Jan 2019 14:51:23 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: wangbo <wdjjwb@163.com>
+On Tue, Jan 22, 2019 at 12:31:17PM -0200, Arnaldo Carvalho de Melo wrote:
+> Em Tue, Jan 22, 2019 at 12:13:20PM -0200, Arnaldo Carvalho de Melo escreveu:
+> > Em Fri, Jan 18, 2019 at 11:46:55AM -0300, Arnaldo Carvalho de Melo escreveu:
+> > > Em Thu, Jan 17, 2019 at 08:15:19AM -0800, Song Liu escreveu:
+> > > > This patch synthesize PERF_RECORD_KSYMBOL and PERF_RECORD_BPF_EVENT for
+> > > > BPF programs loaded before perf-record. This is achieved by gathering
+> > > > information about all BPF programs via sys_bpf.
+> > > 
+> > > Ditto
+> > 
+> > This is breaking 'perf sched', see below, the fix seems trivial:
+> > 
+> > [root@quaco ~]# perf sched record -a sleep 2
+> > [ perf record: Woken up 1 times to write data ]
+> > 0x5b60 [0x138]: failed to process type: 17
+> > [ perf record: Captured and wrote 1.539 MB perf.data ]
+> > [root@quaco ~]# perf sched lat
+> > 0x5b60 [0x138]: failed to process type: 17
+> > Failed to process events, error -22
+> > [root@quaco ~]#
+> 
+> So:
+> 
+>    perf_session__process_event (event->header.type = 17 (PERF_RECORD_KSYMBOL)
+>      if (tool->ordered_events)
+>        ret = perf_evlist__parse_sample_timestamp(evlist, event, &timestamp);
+>        if (ret && ret != -1)
+>             return ret;
+> 
+> So it returns here with -EFAULT, i.e. this is failing:
+> 
+> int perf_evlist__parse_sample_timestamp(struct perf_evlist *evlist,
+>                                         union perf_event *event,
+>                                         u64 *timestamp)
+> {
+>         struct perf_evsel *evsel = perf_evlist__event2evsel(evlist, event);
+> 
+>         if (!evsel)
+>                 return -EFAULT;
+>         return perf_evsel__parse_sample_timestamp(evsel, event, timestamp);
+> }
+> 
+> It isn't mapping the event ID it finds back to an evsel.. Jiri, ideas?
+> 
+> This is happening so far only for 'perf sched', perf record with two
+> events works.
 
-In uio_dmem_genirq_open the variable ret is unneeded,remove it now.
+I saw also perf mem failing because of this.. will check
 
-Signed-off-by: Bo Wang <wang.bo116@zte.com.cn>
----
- drivers/uio/uio_dmem_genirq.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/uio/uio_dmem_genirq.c b/drivers/uio/uio_dmem_genirq.c
-index 003bada..2be7569 100644
---- a/drivers/uio/uio_dmem_genirq.c
-+++ b/drivers/uio/uio_dmem_genirq.c
-@@ -47,7 +47,6 @@ static int uio_dmem_genirq_open(struct uio_info *info, struct inode *inode)
- {
- 	struct uio_dmem_genirq_platdata *priv = info->priv;
- 	struct uio_mem *uiomem;
--	int ret = 0;
- 	int dmem_region = priv->dmem_region_start;
- 
- 	uiomem = &priv->uioinfo->mem[priv->dmem_region_start];
-@@ -71,7 +70,7 @@ static int uio_dmem_genirq_open(struct uio_info *info, struct inode *inode)
- 	mutex_unlock(&priv->alloc_lock);
- 	/* Wait until the Runtime PM code has woken up the device */
- 	pm_runtime_get_sync(&priv->pdev->dev);
--	return ret;
-+	return 0;
- }
- 
- static int uio_dmem_genirq_release(struct uio_info *info, struct inode *inode)
--- 
-2.7.4
-
-
+jirka
