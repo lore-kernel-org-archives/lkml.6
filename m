@@ -2,127 +2,106 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12FBDC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 04:02:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BB8CC282C5
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 04:18:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5EFD20861
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 04:02:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ihYRm3Au"
+	by mail.kernel.org (Postfix) with ESMTP id 3363B20855
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 04:18:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726942AbfAVECg (ORCPT
+        id S1726895AbfAVEOq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 23:02:36 -0500
-Received: from ozlabs.org ([203.11.71.1]:55559 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726819AbfAVECg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 23:02:36 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43kFB06pwtz9s7h;
-        Tue, 22 Jan 2019 15:02:32 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1548129753;
-        bh=WZjtRUR+A4nS2WR4PNIqtjxrmPx0VoR3XlFlP7neZ5A=;
-        h=Date:From:To:Cc:Subject:From;
-        b=ihYRm3AuGU6aS+bbQ6nkMzEBNFziYeRpVUmE1fgdTd9Qwa5udFcr9ZYQMBUngCMdS
-         hNiXQlFoKyjWp2m5ak2UtlODlVIa1RpB8tOzozs0LMMGbmBS8Xv4panKWKHKc8PGK8
-         ZXT3TYpJvt2zf7CSwQ7SUb9dLWqZKp+s0iFvL+1Rb/ZYSI2gZEmu5aszOvcy9LqI05
-         /QZHBcsUvONSdAJaGiBKJkcngdKbdkNyoUIs2hZt6oeCJbb0qx5GXoIid8knBfcCRg
-         d0ZDglsQFtmxDa+/lmg3rWnWTTAN6g8Oj2gx+3Ew92HhgQBYRTvvk1wx2dWhr1yQLB
-         jVx3pzAbEo+Zw==
-Date:   Tue, 22 Jan 2019 15:02:31 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: linux-next: manual merge of the akpm tree with the kbuild tree
-Message-ID: <20190122150231.0191e8d4@canb.auug.org.au>
+        Mon, 21 Jan 2019 23:14:46 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:14977 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726819AbfAVEOq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 23:14:46 -0500
+X-UUID: a458644dd1854e088f11c1ecc95e2c13-20190122
+X-UUID: a458644dd1854e088f11c1ecc95e2c13-20190122
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        (envelope-from <miles.chen@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1906042018; Tue, 22 Jan 2019 12:14:37 +0800
+Received: from MTKMBS06N1.mediatek.inc (172.21.101.129) by
+ mtkexhb01.mediatek.inc (172.21.101.102) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 22 Jan 2019 12:14:36 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs06n1.mediatek.inc (172.21.101.129) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 22 Jan 2019 12:14:35 +0800
+Received: from [172.21.77.33] (172.21.77.33) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 22 Jan 2019 12:14:35 +0800
+Message-ID: <1548130475.7975.74.camel@mtkswgap22>
+Subject: Re: [PATCH] mm/slub: use WARN_ON() for some slab errors
+From:   Miles Chen <miles.chen@mediatek.com>
+To:     Christopher Lameter <cl@linux.com>
+CC:     Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>
+Date:   Tue, 22 Jan 2019 12:14:35 +0800
+In-Reply-To: <01000168726fcf15-81d8feb3-26f0-44d6-bbd8-62aa149118b5-000000@email.amazonses.com>
+References: <1548063490-545-1-git-send-email-miles.chen@mediatek.com>
+         <01000168726fcf15-81d8feb3-26f0-44d6-bbd8-62aa149118b5-000000@email.amazonses.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/=T7=_vbGc._DhqQDGdMkICB"; protocol="application/pgp-signature"
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/=T7=_vbGc._DhqQDGdMkICB
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, 2019-01-21 at 22:02 +0000, Christopher Lameter wrote:
+> On Mon, 21 Jan 2019, miles.chen@mediatek.com wrote:
+> 
+> > From: Miles Chen <miles.chen@mediatek.com>
+> >
+> > When debugging with slub.c, sometimes we have to trigger a panic in
+> > order to get the coredump file. To do that, we have to modify slub.c and
+> > rebuild kernel. To make debugging easier, use WARN_ON() for these slab
+> > errors so we can dump stack trace by default or set panic_on_warn to
+> > trigger a panic.
+> 
+> These locations really should dump stack and not terminate. There is
+> subsequent processing that should be done.
 
-Hi all,
+Understood. We should not terminate the process for normal case. The
+change only terminate the process when panic_on_warn is set.
 
-Today's linux-next merge of the akpm tree got a conflict in:
+> Slub terminates by default. The messages you are modifying are only
+> enabled if the user specified that special debugging should be one
+> (typically via a kernel parameter slub_debug).
 
-  Makefile
+I'm a little bit confused about this: Do you mean that I should use the
+following approach?
 
-between commit:
+1. Add a special debugging flag (say SLAB_PANIC_ON_ERROR) and call
+panic() by:
 
-  b57304bb03de ("kbuild: remove meaningless prepare2 target")
+if (s->flags & SLAB_PANIC_ON_ERROR)
+     panic("slab error");
 
-from the kbuild tree and patch:
+2. The SLAB_PANIC_ON_ERROR should be set by slub_debug param.
 
-  "locking/atomics: build atomic headers as required"
+> It does not make sense to terminate the process here.
 
-from the akpm tree.
 
-I fixed it up (I hope - see below) and can carry the fix as necessary.
-This is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Thanks for you comment. Sometimes it's useful to trigger a panic and get
+its coredump file before any restore/reset processing because we can
+exam the unmodified data in the coredump file with this approach. 
 
---=20
-Cheers,
-Stephen Rothwell
+I added BUG() for the slab errors in internal branches for a few years
+and it does help for both software issues and bit flipping issues. It's
+a quite useful in developing stage.
 
-diff --cc Makefile
-index 004a190e3ece,bd0f79d8295e..000000000000
---- a/Makefile
-+++ b/Makefile
-@@@ -1077,8 -1077,12 +1077,8 @@@ ifneq ($(KBUILD_SRC),
-  	fi;
-  endif
- =20
-- prepare1: prepare3 outputmakefile asm-generic $(version_h) $(autoksyms_h)=
- \
-- 						include/generated/utsrelease.h
- -# prepare2 creates a makefile if using a separate output directory.
- -# From this point forward, .config has been reprocessed, so any rules
- -# that need to depend on updated CONFIG_* values can be checked here.
- -prepare2: prepare3 outputmakefile asm-generic genheader
- -
- -prepare1: prepare2 $(version_h) $(autoksyms_h) include/generated/utsrelea=
-se.h
-++prepare1: prepare3 outputmakefile asm-generic genheader $(version_h) \
-++				$(autoksyms_h) include/generated/utsrelease.h
-  	$(cmd_crmodverdir)
- =20
-  archprepare: archheaders archscripts prepare1 scripts
+cheers,
+Miles
 
---Sig_/=T7=_vbGc._DhqQDGdMkICB
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxGldcACgkQAVBC80lX
-0GwVcQf+NDr4pxKcxmfrU0pD0/cvlui8s6dvsEysDP5i1sSYs8o9CjJgud2UPUgv
-ACEk5Soih3OJT/ZJWIfa0JZ4y7PELyeYR0+k9GTp/6FEso/20mp6p5lef70l6N6R
-WD65XZSbhv9g7WdrJQ7anfS+2g69/UHj512QxlLe2ohvh1Dx6yzwUyaEvKsytqQu
-CXK9Wv3aPUum7RaYoPbe+OEyR48+V9awBvla7FLQM4gHqpcFMG8H+qbqjzCGShlv
-4Nmg9hASHc22HMX4LqWwciuFQV8fqpCz7YQcsxPbJuiW5DY1jFYe8JGANSeP9QnI
-8hkkENLoCdFT08vXI6atizgIsA8qLg==
-=Duuv
------END PGP SIGNATURE-----
-
---Sig_/=T7=_vbGc._DhqQDGdMkICB--
