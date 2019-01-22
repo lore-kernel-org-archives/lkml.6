@@ -7,49 +7,46 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1695C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:22:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B36F2C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:22:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6681217D6
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:22:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84AB920879
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:22:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548170539;
-	bh=5Y5vST1OjobeO9CIxGHlOIxMxUrZcMFiSYQTCjFTjg0=;
+	s=default; t=1548170544;
+	bh=nYZhELDHRUjRep/UElSMBbN2aNjVg8oiAJAZ+XgdfWM=;
 	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=WhE0WhisIC47dGuLEjQiVR4P53+f2hnGDZ0HEV6cSctBJHbS3vLwnDyrb7ACdah0+
-	 A1EHpVzJqQccjQ5WLTmAmUzyyfDNvbitfN5tsQ4HvDN5zx3PTh/S46GhQmQThkIaNd
-	 AaA87cqOtg61bQPvTBAEQrTlhbWl5fLRewCd7/mg=
+	b=FYf5G8qfXFYGIH9t+Fz++Ah5Qp4RtrHvCqYm/gv6aZ13DkPJ3pRf9Y9naY6fNnBEE
+	 /HrtMsgl4lY3a/cmj0grUA/reBQJ8zjmRtgCrn7rZHr8HV3/+14WIGCd4Ubc5yhEcm
+	 k+unYWmIfMlcJgU4HMlBJ9KkVVz0+XCPMtVfyc6s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729527AbfAVPWR (ORCPT
+        id S1729559AbfAVPWX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 10:22:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34284 "EHLO mail.kernel.org"
+        Tue, 22 Jan 2019 10:22:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34430 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729505AbfAVPWP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 10:22:15 -0500
+        id S1729505AbfAVPWV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 10:22:21 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E363E217F4;
-        Tue, 22 Jan 2019 15:22:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1FF1A20879;
+        Tue, 22 Jan 2019 15:22:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548170534;
-        bh=5Y5vST1OjobeO9CIxGHlOIxMxUrZcMFiSYQTCjFTjg0=;
+        s=default; t=1548170540;
+        bh=nYZhELDHRUjRep/UElSMBbN2aNjVg8oiAJAZ+XgdfWM=;
         h=From:To:Cc:Subject:Date:From;
-        b=AGh7zX5iDdvNYv1POqGcTx2uTItjFpqGrVduRkBESTYUl7dwKUVwuKlSuGygdVmwz
-         JMRAvSQ0StgeO36vWimQ/kdg8RuLh9ngVjwJfvVt4HG9eg0+tsbalnlScLn4hBUqKC
-         KcUVRJcXb/2tVIjPhXCc8z3Mas7xGFUUnO2afGOs=
+        b=JGdeZ8hhY3WvHvQVF0TgDwbv2A6RrFvq1gX7kOIE8fNYb4BGoYKJEjKuzT0O8C0TI
+         WUEIpmaxhW697+HHchYIyuSnsSQQ26ORyqlpVP79It+T13X4ZdYi9D4udp5ZC4KgfC
+         KsXpUdqVEOJ8ZTptKz8Ia0hHYNhbLUQ/sN9NvRh4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        David Rientjes <rientjes@google.com>,
-        Laura Abbott <labbott@redhat.com>, linux-mm@kvack.org
-Subject: [PATCH] mm: no need to check return value of debugfs_create functions
-Date:   Tue, 22 Jan 2019 16:21:13 +0100
-Message-Id: <20190122152151.16139-14-gregkh@linuxfoundation.org>
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
+Subject: [PATCH] fbdev: mbx: fix up debugfs file creation
+Date:   Tue, 22 Jan 2019 16:21:15 +0100
+Message-Id: <20190122152151.16139-16-gregkh@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -58,229 +55,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When calling debugfs functions, there is no need to ever check the
-return value.  The function can work or not, but the code logic should
-never do something different based on this.
+There is no need to keep the dentries around for the individual debugfs
+files, just delete the whole directory all at once at shutdown instead.
 
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Laura Abbott <labbott@redhat.com>
-Cc: linux-mm@kvack.org
+This also fixes a tiny memory leak where the memory for the pointers to
+the file dentries was never freed when the device shut down, as well as
+making the logic of the code a lot simpler.
+
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-fbdev@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/cma_debug.c     |  2 --
- mm/failslab.c      | 14 ++++----------
- mm/gup_benchmark.c |  8 ++------
- mm/huge_memory.c   |  8 ++------
- mm/memblock.c      |  3 +--
- mm/memory.c        |  8 ++------
- mm/page_alloc.c    | 22 ++++++----------------
- mm/page_owner.c    |  8 +++-----
- mm/vmstat.c        | 15 ++++-----------
- 9 files changed, 24 insertions(+), 64 deletions(-)
+ drivers/video/fbdev/mbx/mbxdebugfs.c | 40 +++++++++-------------------
+ drivers/video/fbdev/mbx/mbxfb.c      |  2 +-
+ 2 files changed, 14 insertions(+), 28 deletions(-)
 
-diff --git a/mm/cma_debug.c b/mm/cma_debug.c
-index ad6723e9d110..b55f28fbe831 100644
---- a/mm/cma_debug.c
-+++ b/mm/cma_debug.c
-@@ -191,8 +191,6 @@ static int __init cma_debugfs_init(void)
- 	int i;
- 
- 	cma_debugfs_root = debugfs_create_dir("cma", NULL);
--	if (!cma_debugfs_root)
--		return -ENOMEM;
- 
- 	for (i = 0; i < cma_area_count; i++)
- 		cma_debugfs_add_one(&cma_areas[i], i);
-diff --git a/mm/failslab.c b/mm/failslab.c
-index b135ebb88b6f..ec5aad211c5b 100644
---- a/mm/failslab.c
-+++ b/mm/failslab.c
-@@ -48,18 +48,12 @@ static int __init failslab_debugfs_init(void)
- 	if (IS_ERR(dir))
- 		return PTR_ERR(dir);
- 
--	if (!debugfs_create_bool("ignore-gfp-wait", mode, dir,
--				&failslab.ignore_gfp_reclaim))
--		goto fail;
--	if (!debugfs_create_bool("cache-filter", mode, dir,
--				&failslab.cache_filter))
--		goto fail;
-+	debugfs_create_bool("ignore-gfp-wait", mode, dir,
-+			    &failslab.ignore_gfp_reclaim);
-+	debugfs_create_bool("cache-filter", mode, dir,
-+			    &failslab.cache_filter);
- 
- 	return 0;
--fail:
--	debugfs_remove_recursive(dir);
--
--	return -ENOMEM;
- }
- 
- late_initcall(failslab_debugfs_init);
-diff --git a/mm/gup_benchmark.c b/mm/gup_benchmark.c
-index 5b42d3d4b60a..6c0279e70cc4 100644
---- a/mm/gup_benchmark.c
-+++ b/mm/gup_benchmark.c
-@@ -122,12 +122,8 @@ static const struct file_operations gup_benchmark_fops = {
- 
- static int gup_benchmark_init(void)
+diff --git a/drivers/video/fbdev/mbx/mbxdebugfs.c b/drivers/video/fbdev/mbx/mbxdebugfs.c
+index 2bd328883178..52cfe0132b25 100644
+--- a/drivers/video/fbdev/mbx/mbxdebugfs.c
++++ b/drivers/video/fbdev/mbx/mbxdebugfs.c
+@@ -211,36 +211,22 @@ static const struct file_operations misc_fops = {
+ static void mbxfb_debugfs_init(struct fb_info *fbi)
  {
--	void *ret;
+ 	struct mbxfb_info *mfbi = fbi->par;
+-	struct mbxfb_debugfs_data *dbg;
 -
--	ret = debugfs_create_file_unsafe("gup_benchmark", 0600, NULL, NULL,
--			&gup_benchmark_fops);
--	if (!ret)
--		pr_warn("Failed to create gup_benchmark in debugfs");
-+	debugfs_create_file_unsafe("gup_benchmark", 0600, NULL, NULL,
-+				   &gup_benchmark_fops);
- 
- 	return 0;
- }
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index faf357eaf0ce..94f05e3fff71 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -2886,12 +2886,8 @@ DEFINE_SIMPLE_ATTRIBUTE(split_huge_pages_fops, NULL, split_huge_pages_set,
- 
- static int __init split_huge_pages_debugfs(void)
- {
--	void *ret;
+-	dbg = kzalloc(sizeof(struct mbxfb_debugfs_data), GFP_KERNEL);
+-	mfbi->debugfs_data = dbg;
 -
--	ret = debugfs_create_file("split_huge_pages", 0200, NULL, NULL,
--			&split_huge_pages_fops);
--	if (!ret)
--		pr_warn("Failed to create split_huge_pages in debugfs");
-+	debugfs_create_file("split_huge_pages", 0200, NULL, NULL,
-+			    &split_huge_pages_fops);
- 	return 0;
- }
- late_initcall(split_huge_pages_debugfs);
-diff --git a/mm/memblock.c b/mm/memblock.c
-index 022d4cbb3618..18ee657fb918 100644
---- a/mm/memblock.c
-+++ b/mm/memblock.c
-@@ -1998,8 +1998,7 @@ DEFINE_SHOW_ATTRIBUTE(memblock_debug);
- static int __init memblock_init_debugfs(void)
- {
- 	struct dentry *root = debugfs_create_dir("memblock", NULL);
--	if (!root)
--		return -ENXIO;
+-	dbg->dir = debugfs_create_dir("mbxfb", NULL);
+-	dbg->sysconf = debugfs_create_file("sysconf", 0444, dbg->dir,
+-				      fbi, &sysconf_fops);
+-	dbg->clock = debugfs_create_file("clock", 0444, dbg->dir,
+-				    fbi, &clock_fops);
+-	dbg->display = debugfs_create_file("display", 0444, dbg->dir,
+-				      fbi, &display_fops);
+-	dbg->gsctl = debugfs_create_file("gsctl", 0444, dbg->dir,
+-				    fbi, &gsctl_fops);
+-	dbg->sdram = debugfs_create_file("sdram", 0444, dbg->dir,
+-					fbi, &sdram_fops);
+-	dbg->misc = debugfs_create_file("misc", 0444, dbg->dir,
+-					fbi, &misc_fops);
++	struct dentry *dir;
 +
- 	debugfs_create_file("memory", 0444, root,
- 			    &memblock.memory, &memblock_debug_fops);
- 	debugfs_create_file("reserved", 0444, root,
-diff --git a/mm/memory.c b/mm/memory.c
-index e11ca9dd823f..5009ad9e1d09 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -3321,12 +3321,8 @@ DEFINE_DEBUGFS_ATTRIBUTE(fault_around_bytes_fops,
++	dir = debugfs_create_dir("mbxfb", NULL);
++	mbfi->debugfs_dir = dir;
++
++	debugfs_create_file("sysconf", 0444, dir, fbi, &sysconf_fops);
++	debugfs_create_file("clock", 0444, dir, fbi, &clock_fops);
++	debugfs_create_file("display", 0444, dir, fbi, &display_fops);
++	debugfs_create_file("gsctl", 0444, dir, fbi, &gsctl_fops);
++	debugfs_create_file("sdram", 0444, dir, fbi, &sdram_fops);
++	debugfs_create_file("misc", 0444, dir, fbi, &misc_fops);
+ }
  
- static int __init fault_around_debugfs(void)
+ static void mbxfb_debugfs_remove(struct fb_info *fbi)
  {
--	void *ret;
+ 	struct mbxfb_info *mfbi = fbi->par;
+-	struct mbxfb_debugfs_data *dbg = mfbi->debugfs_data;
 -
--	ret = debugfs_create_file_unsafe("fault_around_bytes", 0644, NULL, NULL,
--			&fault_around_bytes_fops);
--	if (!ret)
--		pr_warn("Failed to create fault_around_bytes in debugfs");
-+	debugfs_create_file_unsafe("fault_around_bytes", 0644, NULL, NULL,
-+				   &fault_around_bytes_fops);
- 	return 0;
+-	debugfs_remove(dbg->misc);
+-	debugfs_remove(dbg->sdram);
+-	debugfs_remove(dbg->gsctl);
+-	debugfs_remove(dbg->display);
+-	debugfs_remove(dbg->clock);
+-	debugfs_remove(dbg->sysconf);
+-	debugfs_remove(dbg->dir);
++
++	debugfs_remove_recursive(mfbi->debugfs_dir);
  }
- late_initcall(fault_around_debugfs);
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index d295c9bc01a8..df33311eb1a7 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -3161,24 +3161,14 @@ static int __init fail_page_alloc_debugfs(void)
+diff --git a/drivers/video/fbdev/mbx/mbxfb.c b/drivers/video/fbdev/mbx/mbxfb.c
+index 539b85da0897..6ded480a69b4 100644
+--- a/drivers/video/fbdev/mbx/mbxfb.c
++++ b/drivers/video/fbdev/mbx/mbxfb.c
+@@ -74,7 +74,7 @@ struct mbxfb_info {
  
- 	dir = fault_create_debugfs_attr("fail_page_alloc", NULL,
- 					&fail_page_alloc.attr);
--	if (IS_ERR(dir))
--		return PTR_ERR(dir);
--
--	if (!debugfs_create_bool("ignore-gfp-wait", mode, dir,
--				&fail_page_alloc.ignore_gfp_reclaim))
--		goto fail;
--	if (!debugfs_create_bool("ignore-gfp-highmem", mode, dir,
--				&fail_page_alloc.ignore_gfp_highmem))
--		goto fail;
--	if (!debugfs_create_u32("min-order", mode, dir,
--				&fail_page_alloc.min_order))
--		goto fail;
+ 	u32 pseudo_palette[MAX_PALETTES];
+ #ifdef CONFIG_FB_MBX_DEBUG
+-	void *debugfs_data;
++	struct dentry *debugfs_dir;
+ #endif
  
--	return 0;
--fail:
--	debugfs_remove_recursive(dir);
-+	debugfs_create_bool("ignore-gfp-wait", mode, dir,
-+			    &fail_page_alloc.ignore_gfp_reclaim);
-+	debugfs_create_bool("ignore-gfp-highmem", mode, dir,
-+			    &fail_page_alloc.ignore_gfp_highmem);
-+	debugfs_create_u32("min-order", mode, dir, &fail_page_alloc.min_order);
- 
--	return -ENOMEM;
-+	return 0;
- }
- 
- late_initcall(fail_page_alloc_debugfs);
-diff --git a/mm/page_owner.c b/mm/page_owner.c
-index 28b06524939f..925b6f44a444 100644
---- a/mm/page_owner.c
-+++ b/mm/page_owner.c
-@@ -625,16 +625,14 @@ static const struct file_operations proc_page_owner_operations = {
- 
- static int __init pageowner_init(void)
- {
--	struct dentry *dentry;
--
- 	if (!static_branch_unlikely(&page_owner_inited)) {
- 		pr_info("page_owner is disabled\n");
- 		return 0;
- 	}
- 
--	dentry = debugfs_create_file("page_owner", 0400, NULL,
--				     NULL, &proc_page_owner_operations);
-+	debugfs_create_file("page_owner", 0400, NULL, NULL,
-+			    &proc_page_owner_operations);
- 
--	return PTR_ERR_OR_ZERO(dentry);
-+	return 0;
- }
- late_initcall(pageowner_init)
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index 83b30edc2f7f..36b56f858f0f 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -2121,21 +2121,14 @@ static int __init extfrag_debug_init(void)
- 	struct dentry *extfrag_debug_root;
- 
- 	extfrag_debug_root = debugfs_create_dir("extfrag", NULL);
--	if (!extfrag_debug_root)
--		return -ENOMEM;
- 
--	if (!debugfs_create_file("unusable_index", 0444,
--			extfrag_debug_root, NULL, &unusable_file_ops))
--		goto fail;
-+	debugfs_create_file("unusable_index", 0444, extfrag_debug_root, NULL,
-+			    &unusable_file_ops);
- 
--	if (!debugfs_create_file("extfrag_index", 0444,
--			extfrag_debug_root, NULL, &extfrag_file_ops))
--		goto fail;
-+	debugfs_create_file("extfrag_index", 0444, extfrag_debug_root, NULL,
-+			    &extfrag_file_ops);
- 
- 	return 0;
--fail:
--	debugfs_remove_recursive(extfrag_debug_root);
--	return -ENOMEM;
- }
- 
- module_init(extfrag_debug_init);
+ };
 -- 
 2.20.1
 
