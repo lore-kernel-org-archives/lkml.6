@@ -2,88 +2,95 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C28BAC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:43:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA951C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:44:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F97B21019
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:43:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EC59217D4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:44:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548175437;
-	bh=rfxfim8KsIxpsj1joBPPSaa7I6MEYhva8Dqp/zCEX28=;
+	s=default; t=1548175487;
+	bh=xPLBzMh2LtYJZLvZiCE2o6w8ak6475CYj7aZJqy76+Y=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=D4bkyQbt+Y1FyiMqpYDSNIUMjt5ivUjfxl+Pu6b+jW8nkkvEzLvQ2+0pvDS7yJETK
-	 LDkuf8JyWjMNer24AggrMGxprU4r3OdLcS4uNfo0aZg2dBDRZ798GYgk0jtaMzecTd
-	 9N+4MXTeRHFxMhg6eJBkZ56JZYZCOmE+DDnXXeto=
+	b=C46IB1PViTVIq2TmtKfvUwmUV/bIK96oVETiVQzBCOeRmU7ld1CNFelW2kCksTSOL
+	 xuU/sfNWG7dFwzH6px3d/3uHAbI7Fk3s0n036bcffIrgyEtnJuM3tnC0k2fKlVXu7b
+	 CdWGLv6pcAJZx+q3IFuM2odzp4OE4IZCb7n6NNkY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729555AbfAVQnz (ORCPT
+        id S1729582AbfAVQoq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 11:43:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34026 "EHLO mail.kernel.org"
+        Tue, 22 Jan 2019 11:44:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34644 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729031AbfAVQnz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 11:43:55 -0500
+        id S1729336AbfAVQoq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 11:44:46 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 64A3E21019;
-        Tue, 22 Jan 2019 16:43:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B4CA821019;
+        Tue, 22 Jan 2019 16:44:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548175434;
-        bh=rfxfim8KsIxpsj1joBPPSaa7I6MEYhva8Dqp/zCEX28=;
+        s=default; t=1548175485;
+        bh=xPLBzMh2LtYJZLvZiCE2o6w8ak6475CYj7aZJqy76+Y=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EmUNVi8SsFXF+TvhynBEGC+Eojjf7GI8xc7mpAzuzF5Y8I0oy7lLJOu0V0oWkJ0BM
-         vrsSosLJN9pn1R69h4H9C0rgLf1b8sRPAFxlW/I4ixBllsndQAAE2CyEM/zk0OVS8C
-         lEBcr4dlkVmgS25cpmwSt3fZ8uyOq07JIbCil7R8=
-Date:   Tue, 22 Jan 2019 17:43:52 +0100
+        b=L2nNA1sAMlwUQfv93fkmOjH/0vDpuWo2oEZb7+gdlBPINKVYPibz58oWd1zXXHbHP
+         +arRXQz+yR8Rh7zDC1Zd+fqdat6c4aqNMIjZwu3rWZfHh7VTlNj1MHLNiSnmzWd2BM
+         wov9YjiDPmoWoFvdGn9+6sqlUVRZ4wr4kORU9878=
+Date:   Tue, 22 Jan 2019 17:44:42 +0100
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH] regmap: no need to check return value of debugfs_create
- functions
-Message-ID: <20190122164352.GA24734@kroah.com>
-References: <20190122152151.16139-7-gregkh@linuxfoundation.org>
- <20190122155606.GB7579@sirena.org.uk>
- <20190122160857.GD21349@kroah.com>
- <20190122163826.GC7579@sirena.org.uk>
+To:     Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        lkft-triage@lists.linaro.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        linux- stable <stable@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH 4.20 000/111] 4.20.4-stable review
+Message-ID: <20190122164442.GB24734@kroah.com>
+References: <20190121122455.819406896@linuxfoundation.org>
+ <CA+G9fYvnXwTyD4+O10vr-26rX2eW2RWB=8v2W2N7nBCFozm+Fg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190122163826.GC7579@sirena.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+G9fYvnXwTyD4+O10vr-26rX2eW2RWB=8v2W2N7nBCFozm+Fg@mail.gmail.com>
 User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 04:38:26PM +0000, Mark Brown wrote:
-> On Tue, Jan 22, 2019 at 05:08:57PM +0100, Greg Kroah-Hartman wrote:
-> > On Tue, Jan 22, 2019 at 03:56:06PM +0000, Mark Brown wrote:
+On Tue, Jan 22, 2019 at 07:03:28PM +0530, Naresh Kamboju wrote:
+> On Mon, 21 Jan 2019 at 19:16, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > This is the start of the stable review cycle for the 4.20.4 release.
+> > There are 111 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Wed Jan 23 12:23:56 UTC 2019.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.20.4-rc1.gz
+> > or in the git tree and branch at:
+> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.20.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
+> >
 > 
-> > > Given that all the rest of the function is doing is further debugfs
-> > > operations and when it fails people trying to use the debugfs do welcome
-> > > some diagnostics I'm not sure that's particularly helpful.
-> 
-> > The only way it will fail is if we are out of memory.  And you are in a
-> > bigger mess then, no one cares about debugfs calls, just make them and
-> > move on, you should never care about the result of such a call.
-> 
-> No, it also fails if there's already something with the same name in
-> debugfs which can happen as as a result of configuration.  This gets
-> confusing for users, they see the debugfs files they're expecting but
-> the contents don't match up at all.
+> Results from Linaro’s test farm.
+> No regressions on arm64, arm, x86_64, and i386.
 
-How can you allow a duplicate name for the other regmap stuff?  Will
-that not also cause a collision somewhere else?
-
-Anyway, if this is that big of a problem, ok, but then your code will
-run differently if debugfs is enabled or not, which isn't ok.  Don't
-rely on debugfs to do your name filtering for you :)
-
-thanks,
+Thanks for testing all of these and letting me know.
 
 greg k-h
