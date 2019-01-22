@@ -2,137 +2,83 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FDB5C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:42:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58756C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:42:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2766320823
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:42:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1741920823
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:42:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jiuG3s4e";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="aMl88GED"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729037AbfAVQmJ (ORCPT
+        id S1729612AbfAVQmo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 11:42:09 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:58500 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729103AbfAVQkI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 11:40:08 -0500
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 0E6A6FF94CE67D49A913;
-        Wed, 23 Jan 2019 00:40:05 +0800 (CST)
-Received: from SZA150611058.china.huawei.com (10.45.54.154) by
- DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.408.0; Wed, 23 Jan 2019 00:39:57 +0800
-From:   Huazhong Tan <tanhuazhong@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <huangdaode@hisilicon.com>, <yisen.zhuang@huawei.com>,
-        <salil.mehta@huawei.com>, <linuxarm@huawei.com>,
-        Yunsheng Lin <linyunsheng@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        Huazhong Tan <tanhuazhong@huawei.com>
-Subject: [PATCH net-next 05/12] net: hns3: fix for shaper not setting when TC num changes
-Date:   Wed, 23 Jan 2019 00:39:33 +0800
-Message-ID: <20190122163940.7876-6-tanhuazhong@huawei.com>
-X-Mailer: git-send-email 2.20.1.windows.1
-In-Reply-To: <20190122163940.7876-1-tanhuazhong@huawei.com>
-References: <20190122163940.7876-1-tanhuazhong@huawei.com>
+        Tue, 22 Jan 2019 11:42:44 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:44964 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729031AbfAVQmo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 11:42:44 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 4977F60791; Tue, 22 Jan 2019 16:42:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548175363;
+        bh=UYSTGJKVyuDQyzIaI3kziFctIGSZWJJz/Bq8MkhebiI=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=jiuG3s4eVPDVpruuca7b1WCDRVrZ2pKgqUGE/QVE/3tETCn+CUu99Kt9kuunBYEAp
+         vYlI34xzeWcqzFZzG7U/0RigSaz1laZifNFWc+Ehx6PYZh1uhvHVdOOhyoTY85VZ2x
+         nGUzcTcd2RCOKRRuRDHbFOWphsnQuuF4rGbb+3cQ=
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 667F56028D;
+        Tue, 22 Jan 2019 16:42:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548175362;
+        bh=UYSTGJKVyuDQyzIaI3kziFctIGSZWJJz/Bq8MkhebiI=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=aMl88GEDK/IIxGVuiszDvhql+xL2E4j/QcjvZkIhpSIwYCMebcu7uivoys14uXoqh
+         IVXTgDy6BhnFjQdRwTVZxaMH6h3uBSwErzfGnA+J23LH4X5KcSjq3CRreAzaz4TCiM
+         BkgZpjuI0ZQesHamhz3V6R7g017aujtE1Z9yzJ/M=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 667F56028D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     Zhiwei Jiang <qq282012236@gmail.com>
+Cc:     ath9k-devel@qca.qualcomm.com, davem@davemloft.net,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ath: move spin_lock_bh to spin_lock in tasklet
+References: <20190122163033.51095-1-qq282012236@gmail.com>
+Date:   Tue, 22 Jan 2019 18:42:39 +0200
+In-Reply-To: <20190122163033.51095-1-qq282012236@gmail.com> (Zhiwei Jiang's
+        message of "Wed, 23 Jan 2019 00:30:33 +0800")
+Message-ID: <87ef94myo0.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.45.54.154]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yunsheng Lin <linyunsheng@huawei.com>
+Zhiwei Jiang <qq282012236@gmail.com> writes:
 
-Shaper setting does not change currently, when TC num changes,
-which may cause shaper parameter not setting problem.
+> as you are already in a tasklet, it is unnecessary to call
+> spin_lock_bh, because softirq already disable BH.
+>
+> Signed-off-by: Zhiwei Jiang <qq282012236@gmail.com>
 
-This patch fixes it by setting the shaper parameter when TC num
-changes.
+If you post a new version you should mark it as "v2":
 
-Fixes: cacde272dd00 ("net: hns3: Add hclge_dcb module for the support of DCB feature")
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
----
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c | 6 +-----
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c  | 6 +++---
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h  | 3 +--
- 3 files changed, 5 insertions(+), 10 deletions(-)
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches#patch_version_missing
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
-index 4ec0b9cd15ae..5f7ac63707b8 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
-@@ -162,11 +162,7 @@ static int hclge_map_update(struct hnae3_handle *h)
- 	struct hclge_dev *hdev = vport->back;
- 	int ret;
- 
--	ret = hclge_tm_map_cfg(hdev);
--	if (ret)
--		return ret;
--
--	ret = hclge_tm_schd_mode_hw(hdev);
-+	ret = hclge_tm_schd_setup_hw(hdev);
- 	if (ret)
- 		return ret;
- 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-index fb8596a3e5e4..d057c9f03175 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-@@ -1005,7 +1005,7 @@ static int hclge_tm_pri_dwrr_cfg(struct hclge_dev *hdev)
- 	return 0;
- }
- 
--int hclge_tm_map_cfg(struct hclge_dev *hdev)
-+static int hclge_tm_map_cfg(struct hclge_dev *hdev)
- {
- 	int ret;
- 
-@@ -1120,7 +1120,7 @@ static int hclge_tm_lvl34_schd_mode_cfg(struct hclge_dev *hdev)
- 	return 0;
- }
- 
--int hclge_tm_schd_mode_hw(struct hclge_dev *hdev)
-+static int hclge_tm_schd_mode_hw(struct hclge_dev *hdev)
- {
- 	int ret;
- 
-@@ -1131,7 +1131,7 @@ int hclge_tm_schd_mode_hw(struct hclge_dev *hdev)
- 	return hclge_tm_lvl34_schd_mode_cfg(hdev);
- }
- 
--static int hclge_tm_schd_setup_hw(struct hclge_dev *hdev)
-+int hclge_tm_schd_setup_hw(struct hclge_dev *hdev)
- {
- 	int ret;
- 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
-index 898163c4d400..ef3f93b70c22 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
-@@ -144,11 +144,10 @@ struct hclge_port_shapping_cmd {
- int hclge_tm_schd_init(struct hclge_dev *hdev);
- int hclge_tm_vport_map_update(struct hclge_dev *hdev);
- int hclge_pause_setup_hw(struct hclge_dev *hdev);
--int hclge_tm_schd_mode_hw(struct hclge_dev *hdev);
-+int hclge_tm_schd_setup_hw(struct hclge_dev *hdev);
- void hclge_tm_prio_tc_info_update(struct hclge_dev *hdev, u8 *prio_tc);
- void hclge_tm_schd_info_update(struct hclge_dev *hdev, u8 num_tc);
- int hclge_tm_dwrr_cfg(struct hclge_dev *hdev);
--int hclge_tm_map_cfg(struct hclge_dev *hdev);
- int hclge_tm_init_hw(struct hclge_dev *hdev);
- int hclge_mac_pause_en_cfg(struct hclge_dev *hdev, bool tx, bool rx);
- int hclge_pause_addr_cfg(struct hclge_dev *hdev, const u8 *mac_addr);
+No need to resend now but please keep in mind in the future.
+
 -- 
-2.20.1
-
-
+Kalle Valo
