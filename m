@@ -2,123 +2,116 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6076C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:20:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C2D8C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:21:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E6E8217D4
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:20:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D00C621019
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:21:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="tq5Maxpz"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ifqNeXZW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728489AbfAVNUN (ORCPT
+        id S1728562AbfAVNVn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 08:20:13 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:51529 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728239AbfAVNUM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 08:20:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=O+u0odsrSBsihdyWpnauKMfnZl0ym9tcZpZN6vfZhCw=;
-        b=tq5MaxpzUVnaqWGPJYGhN8rHzM0H448KVyCWRUCJWrkwsjZm8iRiEPBtxOA0bBM/gunW12QztgkilRHNMBNOgk8PMZQh4joAv1pY+FMc2awYhstkGHzbsAge49NQDq4+2KOz45CLvuj/nwDg+w71R7OlKLBrhxUmznkoTtMWQW8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1glvyH-0001A2-MB; Tue, 22 Jan 2019 14:20:05 +0100
-Date:   Tue, 22 Jan 2019 14:20:05 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>
-Subject: Re: [PATCH net-next] net: dsa: mv88e6xxx: Add suspend/resume
- callbacks
-Message-ID: <20190122132005.GA3634@lunn.ch>
-References: <20190116153419.3208-1-miquel.raynal@bootlin.com>
- <20190116155651.GC29244@lunn.ch>
- <e9ac5203-87ba-c14f-8140-5b100808a8a4@gmail.com>
- <20190116222329.GP29244@lunn.ch>
- <20190117104641.GD13242@t480s.localdomain>
- <20190117165052.6d1f1a58@xps13>
- <b804e77a-5eb5-6d18-cb79-f8176e370775@gmail.com>
- <20190122110435.5eaab82a@xps13>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190122110435.5eaab82a@xps13>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Tue, 22 Jan 2019 08:21:43 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:38820 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728439AbfAVNVm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 08:21:42 -0500
+Received: by mail-pl1-f193.google.com with SMTP id e5so11480945plb.5
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 05:21:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=euK4ZIyk6B19PT813VSDOnPJkx4d5LHCeMqPJd1aM7s=;
+        b=ifqNeXZWBx+cSJs+BkrC38f3XF88AhaIyImBMv0oNKRrpwVKoNXtInlwfbqYw0UebY
+         +4EH3Ry0FtdIIDBbkAC/8XAds81tNArKoVFQLhRvfGLJLLno7l4BP+zpVtIQOvVYCxfd
+         UeXzZ3Hewmv+k0WwxS+vGHQykIMx64UYi/3z4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=euK4ZIyk6B19PT813VSDOnPJkx4d5LHCeMqPJd1aM7s=;
+        b=XTy1mdgAHMod5R4jHuU9GW1R2SYpkhI/ECVytSRCDX09r+KszGWux+U2PKLXZyPkBS
+         zocJacX8Fb+er/eaaAa67GKat8Le3jzshJGgWOo2lJ1Ht8PgF4W5HOl81Z6DN9yXBSxL
+         vLgeJVpr6env4FCZbD7sYRmwHmKjcQyM0dLs8CbyI36tqcI43vNdZ73Mqk7GmPL6cQKm
+         EEj/8FMIsN6zRf1dliOHaEwb0e0KgJ8pLVztxlv+K9WvzHOXkXcXE3vOuW2FjCyPQTvy
+         XXpCRstaQOi8vR00Yr8fLHEdeuU4gB4FIwcifLGbDflP3rnhqGZvzyvzboJlsEcbGZbT
+         7i3w==
+X-Gm-Message-State: AJcUuke1hP12SMXnvDhwoR0aypZ4MCSL3QZFb3QnLDtkuAT3MUlKg+fL
+        Aoij0rCklQ+UTHtvJDe1lYKGcQ==
+X-Google-Smtp-Source: ALg8bN7o9RYueCBe0lZNaR5aIq2epf1WyUYhHSDbVeRj+xDQpH350xWmTJItTx1o4/fQxRnAchpVDg==
+X-Received: by 2002:a17:902:583:: with SMTP id f3mr35085581plf.202.1548163302104;
+        Tue, 22 Jan 2019 05:21:42 -0800 (PST)
+Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
+        by smtp.gmail.com with ESMTPSA id l185sm21609574pfl.54.2019.01.22.05.21.37
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 22 Jan 2019 05:21:41 -0800 (PST)
+From:   Baolin Wang <baolin.wang@linaro.org>
+To:     vkoul@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc:     arnd@arndb.de, olof@lixom.net, orsonzhai@gmail.com,
+        zhang.lyra@gmail.com, dan.j.williams@intel.com,
+        devicetree@vger.kernel.org, arm@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dmaengine@vger.kernel.org, eric.long@unisoc.com,
+        broonie@kernel.org, baolin.wang@linaro.org
+Subject: [PATCH 1/3] dt-bindings: dmaengine: Add one new cell to present hardware slave id
+Date:   Tue, 22 Jan 2019 21:20:51 +0800
+Message-Id: <a9718ae1e97a5911f47874fe23c00ef297d7fed8.1548158832.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> I am not sure to understand what is lost. On my setup ethtool shows
-> that everything is fine after resume but maybe I fall into a "default"
-> working case.
+The DMA engine clients can trigger DMA engine automatically by setting
+the corresponding hardware slave id for the DMA engine. Thus add one
+cell to present the hardware slave id for DMA clients.
 
-Hi Miquèl
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+---
+ Documentation/devicetree/bindings/dma/sprd-dma.txt |   12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-Is the power removed from the switch? If so, you need to restore the
-full switch configuration. The current code might be sufficient for
-runtime suspend, where the switch is put into a low power mode, but it
-is kept powered. It is not sufficient for a full power cycle.
-
-> When I compare with the two drivers pointed out by Andrew:
-> * qca8k resume callback:
-> 	* enable ports,
-> 	* call dsa_switch_resume().
-> * bcm_sf2 resume callback:
-> 	* call dsa_switch_resume(),
-> 	* reset the switch,
-> 	* refresh rules (Not applicable?),
-> 	* enable the PHYs,
-> 	* setup the ports,
-> 	* configure vlan (Not applicable?),
-> * mv88e6xxx resume callback:
-> 	* reset the switch,
-> 	* enable the PHYs,
-> 	* setup the ports,
-> 	* enable IRQs,
-> 	* call dsa_switch_resume().
+diff --git a/Documentation/devicetree/bindings/dma/sprd-dma.txt b/Documentation/devicetree/bindings/dma/sprd-dma.txt
+index 7a10fea..7812cf0 100644
+--- a/Documentation/devicetree/bindings/dma/sprd-dma.txt
++++ b/Documentation/devicetree/bindings/dma/sprd-dma.txt
+@@ -6,8 +6,8 @@ Required properties:
+ - compatible: Should be "sprd,sc9860-dma".
+ - reg: Should contain DMA registers location and length.
+ - interrupts: Should contain one interrupt shared by all channel.
+-- #dma-cells: must be <1>. Used to represent the number of integer
+-	cells in the dmas property of client device.
++- #dma-cells: must be <2>. Used to represent the channel id and slave id
++	of integer cells in the dmas property of client device.
+ - #dma-channels : Number of DMA channels supported. Should be 32.
+ - clock-names: Should contain the clock of the DMA controller.
+ - clocks: Should contain a clock specifier for each entry in clock-names.
+@@ -28,14 +28,16 @@ apdma: dma-controller@20100000 {
  
-Here are some commands to try before you suspend:
+ Client:
+ DMA clients connected to the Spreadtrum DMA controller must use the format
+-described in the dma.txt file, using a two-cell specifier for each channel.
+-The two cells in order are:
++described in the dma.txt file, using a three-cell specifier for each channel.
++The three cells in order are:
+ 1. A phandle pointing to the DMA controller.
+ 2. The channel id.
++3. The hardware slave id which is used for clients to trigger DMA engine
++automatically.
+ 
+ spi0: spi@70a00000{
+ 	...
+ 	dma-names = "rx_chn", "tx_chn";
+-	dmas = <&apdma 11>, <&apdma 12>;
++	dmas = <&apdma 11 11>, <&apdma 12 12>;
+ 	...
+ };
+-- 
+1.7.9.5
 
-ip link add name br0 type bridge
-ip link set br0 up
-ip link set lan1 up
-ip link set lan1 master br0
-ip link set lan2 up
-ip link set lan2 master br0
-
-At this point, you should be able to pass traffic between lan1 and
-lan2.
-
-bridge fdb add 00:42:42:42:42:42 lan1
-bridge fdb add 00:24:24:24:24:24 lan2
-
-That adds two static forwarding database entries. You can show these using
-
-bridge fdb show
-
-There are likely to be additional dynamic FDB entries. It is O.K. to
-loose the dynamic entries over a suspend/resume cycle, but the static
-ones must remain.
-
-> This looks pretty similar. Maybe the ports setup are set to default
-> values while I should save some parameters at suspend? I changed a
-> few parameters (like the MTU or the queue length) but they seem to be
-> correct across suspend cycles.
-
-MTU and queue length have nothing to do with the actual switch. Your
-tests need to actually program the hardware.
-
-    Andrew
