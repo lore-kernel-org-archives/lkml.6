@@ -2,170 +2,93 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3D39C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:27:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50CCAC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:28:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93B43217F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:27:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548188829;
-	bh=9RDXHb70pmGJqGXfFWUZ8MVyTvzv2Z3nrJ6Hh4MJ7DQ=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=gwOiUmAalTD4ulc0rxJX4vCNENE56UznjF5Z0Qlnt5hb6JRTAJNee9YokbnARQk48
-	 X48+Fdr33KMn1rfWny2rCZ9x8YMxDtg4jpNIc8X1o0riw0jF82XKPnLzmrjyzPIczs
-	 4hut3ur3bEdbV+b2K1PNZI8yn6yqIWPHceI0XIP0=
+	by mail.kernel.org (Postfix) with ESMTP id 268B320870
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:28:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726815AbfAVU1I (ORCPT
+        id S1726779AbfAVU2Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 15:27:08 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53096 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725862AbfAVU1G (ORCPT
+        Tue, 22 Jan 2019 15:28:24 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:60665 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726177AbfAVU2Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 15:27:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=m3RlphaRG/2B2jcugXLoZt/JuViV3K6XWXvzHNZx23g=; b=CXYQaks+xZv2
-        Vf9PUeCiUgUfMHIbzYPi8MJr3z25hkxANGIWQZD+uVT6dyq8jlGP4s2UenUo+2cb4m6Sk0e153qQs
-        unYz01htHYGqL7v4TZ8Mwd1lYSS78kDfQ3ZT2vCg/eIP/1mfxFfvOyWStN6EJu6Y0Mctg8B+rkXVI
-        5X1HI=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gm2dQ-0007DF-Ca; Tue, 22 Jan 2019 20:27:00 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 0A8C51127955; Tue, 22 Jan 2019 20:27:00 +0000 (GMT)
-From:   Mark Brown <broonie@kernel.org>
-To:     Axel Lin <axel.lin@ingics.com>
-Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: arizona-ldo1: Convert to use regulator_linear_range for ldo1_hc" to the regulator tree
-In-Reply-To: 
-X-Patchwork-Hint: ignore
-Message-Id: <20190122202700.0A8C51127955@debutante.sirena.org.uk>
-Date:   Tue, 22 Jan 2019 20:27:00 +0000 (GMT)
+        Tue, 22 Jan 2019 15:28:24 -0500
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1gm2ei-0007Of-Mg; Tue, 22 Jan 2019 21:28:20 +0100
+Date:   Tue, 22 Jan 2019 21:28:19 +0100
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>, Michal Hocko <mhocko@suse.com>,
+        linux-mm@kvack.org
+Subject: Re: [PATCH] backing-dev: no need to check return value of
+ debugfs_create functions
+Message-ID: <20190122202817.vypepopx4sd757c3@linutronix.de>
+References: <20190122152151.16139-8-gregkh@linuxfoundation.org>
+ <20190122160759.mx3h7gjc23zmrvxc@linutronix.de>
+ <20190122162503.GB22548@kroah.com>
+ <20190122171908.c7geuvluezkjp3s7@linutronix.de>
+ <20190122183348.GA31271@kroah.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190122183348.GA31271@kroah.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On 2019-01-22 19:33:48 [+0100], Greg Kroah-Hartman wrote:
+> On Tue, Jan 22, 2019 at 06:19:08PM +0100, Sebastian Andrzej Siewior wrote:
+> > but if you cat the stats file then it will dereference the bdi struct
+> > which has been free(), right?
+> 
+> Maybe, I don't know, your code is long gone, it doesn't matter :)
 
-   regulator: arizona-ldo1: Convert to use regulator_linear_range for ldo1_hc
+may point is that you may remain with a stats file in debugfs' root
+folder which you can cat and then crash.
 
-has been applied to the regulator tree at
+> > > But step back, how could that original call be NULL?  That only happens
+> > > if you pass it a bad parent dentry (which you didn't), or the system is
+> > > totally out of memory (in which case you don't care as everything else
+> > > is on fire).
+> > 
+> > debugfs_get_inode() could do -ENOMEM and then the directory creation
+> > fails with NULL.
+> 
+> And if that happens, your system has worse problems :)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+So we care to properly handle -ENOMEM in driver's probe function. Those
+change find their way to stable kernels.
+This unhandled -ENOMEM in debugfs_get_inode() will let
+debugfs_create_dir() reuturn NULL. Then debugfs_create_file() will
+create the stats in debugfs' root folder. This is a changed behaviour
+which is not expected. And then on rmmod the stats file is still present
+and will participate in use-after-free if it is read.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+> As it's been that way for over a decade, I think we will be fine :)
+> If it changes in the future, in some way that actually matters, I'll go
+> back and fix up all of the callers.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+That is okay then :).
+I don't mind if the stats file does not show up due to an error on
+probe. It is debugfs after all. However I don't think that it is okay
+that the stats file remains in the root folder even after the module has
+been removed (and access memory that does not belong to it).
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+> thanks,
+> 
+> greg k-h
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 37b9ef9c777538db2c024ae934fd0ac73ad48b13 Mon Sep 17 00:00:00 2001
-From: Axel Lin <axel.lin@ingics.com>
-Date: Sat, 19 Jan 2019 20:36:36 +0800
-Subject: [PATCH] regulator: arizona-ldo1: Convert to use
- regulator_linear_range for ldo1_hc
-
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/regulator/arizona-ldo1.c | 37 ++++++++------------------------
- 1 file changed, 9 insertions(+), 28 deletions(-)
-
-diff --git a/drivers/regulator/arizona-ldo1.c b/drivers/regulator/arizona-ldo1.c
-index b9a93049e41e..dfed6d3f03ad 100644
---- a/drivers/regulator/arizona-ldo1.c
-+++ b/drivers/regulator/arizona-ldo1.c
-@@ -40,30 +40,6 @@ struct arizona_ldo1 {
- 	struct gpio_desc *ena_gpiod;
- };
- 
--static int arizona_ldo1_hc_list_voltage(struct regulator_dev *rdev,
--					unsigned int selector)
--{
--	if (selector >= rdev->desc->n_voltages)
--		return -EINVAL;
--
--	if (selector == rdev->desc->n_voltages - 1)
--		return 1800000;
--	else
--		return rdev->desc->min_uV + (rdev->desc->uV_step * selector);
--}
--
--static int arizona_ldo1_hc_map_voltage(struct regulator_dev *rdev,
--				       int min_uV, int max_uV)
--{
--	int sel;
--
--	sel = DIV_ROUND_UP(min_uV - rdev->desc->min_uV, rdev->desc->uV_step);
--	if (sel >= rdev->desc->n_voltages)
--		sel = rdev->desc->n_voltages - 1;
--
--	return sel;
--}
--
- static int arizona_ldo1_hc_set_voltage_sel(struct regulator_dev *rdev,
- 					   unsigned sel)
- {
-@@ -113,14 +89,19 @@ static int arizona_ldo1_hc_get_voltage_sel(struct regulator_dev *rdev)
- }
- 
- static const struct regulator_ops arizona_ldo1_hc_ops = {
--	.list_voltage = arizona_ldo1_hc_list_voltage,
--	.map_voltage = arizona_ldo1_hc_map_voltage,
-+	.list_voltage = regulator_list_voltage_linear_range,
-+	.map_voltage = regulator_map_voltage_linear_range,
- 	.get_voltage_sel = arizona_ldo1_hc_get_voltage_sel,
- 	.set_voltage_sel = arizona_ldo1_hc_set_voltage_sel,
- 	.get_bypass = regulator_get_bypass_regmap,
- 	.set_bypass = regulator_set_bypass_regmap,
- };
- 
-+static const struct regulator_linear_range arizona_ldo1_hc_ranges[] = {
-+	REGULATOR_LINEAR_RANGE(900000, 0, 0x6, 50000),
-+	REGULATOR_LINEAR_RANGE(1800000, 0x7, 0x7, 0),
-+};
-+
- static const struct regulator_desc arizona_ldo1_hc = {
- 	.name = "LDO1",
- 	.supply_name = "LDOVDD",
-@@ -129,8 +110,8 @@ static const struct regulator_desc arizona_ldo1_hc = {
- 
- 	.bypass_reg = ARIZONA_LDO1_CONTROL_1,
- 	.bypass_mask = ARIZONA_LDO1_BYPASS,
--	.min_uV = 900000,
--	.uV_step = 50000,
-+	.linear_ranges = arizona_ldo1_hc_ranges,
-+	.n_linear_ranges = ARRAY_SIZE(arizona_ldo1_hc_ranges),
- 	.n_voltages = 8,
- 	.enable_time = 1500,
- 	.ramp_delay = 24000,
--- 
-2.20.1
-
+Sebastian
