@@ -2,172 +2,93 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 652DBC37124
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 01:55:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30191C37124
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 02:02:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2860E21721
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 01:55:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="N7W2BnHR"
+	by mail.kernel.org (Postfix) with ESMTP id 00F9F2089F
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 02:02:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726819AbfAVBzb (ORCPT
+        id S1726861AbfAVCCJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 20:55:31 -0500
-Received: from mail-vk1-f195.google.com ([209.85.221.195]:40941 "EHLO
-        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726435AbfAVBzb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 20:55:31 -0500
-Received: by mail-vk1-f195.google.com with SMTP id v70so5012929vkv.7
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 17:55:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eIkWHd2cZrXCgkMKwvQCLGQPOiyLHkTkobG1AOxnzrA=;
-        b=N7W2BnHRSnx5xPlI/Ano54X9gifFGjm5ofyhYAW6bEmKZcsAI0spORV+l1LhGmR8Y4
-         k2f+/OoI/BzTaHojMGNlW1uF+FvMWt4RppI9cA2SfuqRpKKs80O6yfhtGV+mxwchLp6G
-         vnRlKOeo7a9503ENGeY56X151uGOnpzEFZqfI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eIkWHd2cZrXCgkMKwvQCLGQPOiyLHkTkobG1AOxnzrA=;
-        b=Wv5/ENJZe5yiSsOgJiUd75kywtZtXn+trMB/9HRKaIxkqj8C+ybUis1EUQNAj9lA/G
-         PruU0vtIuNadLSPd/fWw5+wfGyXvUz8gos/iN9JGMcdbX1FX+EHkQ6aVLMqmvMbRwqzP
-         YS8B1+jj11xoBOQN+ZAYkNXwtZgkWboXD+Blt2xUPLxWYjtb/zkIuuOoctwTGgNVZl4U
-         Lin6j24YrZd4AnJresKjiAkUoqDiR8BUuL46zc+8XA2UCZDtZA5J98BvauYLa+V8d7xB
-         XQLIw61ulBSgFLUFbu3XcJqSAa3U52+eol1yO+Nzttiim7sV9ouiBvUGMw/JKfD44eDa
-         L8KA==
-X-Gm-Message-State: AJcUukeoXB4dNa7guEW6bBmtinxRFLmedM1Hq/WMwJsTNt3wfSeKQnEv
-        IrqMxRqmvcBYlsacEWSfpOorY33AMxY=
-X-Google-Smtp-Source: ALg8bN50duBq1WdtNWkikyo1xYLOSK0W9XvRu9oomrry4XOQ7V7NTKCW9oag8ZCpvoZdNZHsuNODDw==
-X-Received: by 2002:a1f:7244:: with SMTP id n65mr12653060vkc.75.1548122129228;
-        Mon, 21 Jan 2019 17:55:29 -0800 (PST)
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
-        by smtp.gmail.com with ESMTPSA id l13sm93885340vka.16.2019.01.21.17.55.28
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 21 Jan 2019 17:55:28 -0800 (PST)
-Received: by mail-ua1-f42.google.com with SMTP id d19so7536626uaq.11
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 17:55:28 -0800 (PST)
-X-Received: by 2002:ab0:645:: with SMTP id f63mr12357457uaf.106.1548122127669;
- Mon, 21 Jan 2019 17:55:27 -0800 (PST)
+        Mon, 21 Jan 2019 21:02:09 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:57730 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726601AbfAVCCI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 21:02:08 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D1A6BD2EE5;
+        Tue, 22 Jan 2019 02:02:07 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-25.pek2.redhat.com [10.72.8.25])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6D6F65D736;
+        Tue, 22 Jan 2019 02:01:37 +0000 (UTC)
+Date:   Tue, 22 Jan 2019 10:01:30 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Sagi Grimberg <sagi@grimberg.me>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Theodore Ts'o <tytso@mit.edu>, Omar Sandoval <osandov@fb.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        Christoph Hellwig <hch@lst.de>, linux-ext4@vger.kernel.org,
+        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
+        Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
+Subject: Re: [PATCH V14 00/18] block: support multi-page bvec
+Message-ID: <20190122020128.GB2490@ming.t460p>
+References: <20190121081805.32727-1-ming.lei@redhat.com>
+ <61dfaa1e-e7bf-75f1-410b-ed32f97d0782@grimberg.me>
 MIME-Version: 1.0
-References: <5c4585eb.1c69fb81.488aa.06ceSMTPIN_ADDED_BROKEN@mx.google.com>
-In-Reply-To: <5c4585eb.1c69fb81.488aa.06ceSMTPIN_ADDED_BROKEN@mx.google.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 22 Jan 2019 14:55:16 +1300
-X-Gmail-Original-Message-ID: <CAGXu5jJ_a-UHUVFCdmhxFQH1iMRDxW3ECJz7b=hh7u0WTwJ9Tw@mail.gmail.com>
-Message-ID: <CAGXu5jJ_a-UHUVFCdmhxFQH1iMRDxW3ECJz7b=hh7u0WTwJ9Tw@mail.gmail.com>
-Subject: Re: [PATCH] pstore/ram: Add ramoops_register_dummy failure process
-To:     Yue Hu <huyue2@yulong.com>
-Cc:     Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <61dfaa1e-e7bf-75f1-410b-ed32f97d0782@grimberg.me>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 22 Jan 2019 02:02:08 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 9:42 PM Yue Hu <huyue2@yulong.com> wrote:
->
-> From 0888dbf0e3ac4a6a8a6307e97d003e8deb9cc6db Mon Sep 17 00:00:00 2001
-> From: Yue Hu <huyue2@yulong.com>
-> Date: Mon, 21 Jan 2019 14:30:19 +0800
-> Subject: [PATCH] pstore/ram: Add ramoops_register_dummy failure process
->
-> If create dummy/dummy_data failed, platform_driver_register()
-> could also return 0 which leads to successful ramoops_init().
-> This logic is not reasonable, it should tell kernel ramoops is
-> failed. This change can also avoid duplicated ramoops dummy
-> unregister and remove some unnecessary messages too.
-
-No, this is working as intended (perhaps this code needs better
-comments). If there is no module parameters, they may yet still be a
-custom platform driver (see
-drivers/platform/chrome/chromeos_pstore.c), or device tree entry (see
-Documentation/admin-guide/ramoops.rst).
-
--Kees
-
->
-> Signed-off-by: Yue Hu <huyue2@yulong.com>
-> ---
->  fs/pstore/ram.c | 20 ++++++++++----------
->  1 file changed, 10 insertions(+), 10 deletions(-)
->
-> diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
-> index 64a51cd..7fb97aa 100644
-> --- a/fs/pstore/ram.c
-> +++ b/fs/pstore/ram.c
-> @@ -905,7 +905,7 @@ static inline void ramoops_unregister_dummy(void)
->         dummy_data = NULL;
->  }
->
-> -static void __init ramoops_register_dummy(void)
-> +static int __init ramoops_register_dummy(void)
->  {
->         /*
->          * Prepare a dummy platform data structure to carry the module
-> @@ -913,15 +913,13 @@ static void __init ramoops_register_dummy(void)
->          * parameters, and we can skip this.
->          */
->         if (!mem_size)
-> -               return;
-> +               return -EINVAL;
->
->         pr_info("using module parameters\n");
->
->         dummy_data = kzalloc(sizeof(*dummy_data), GFP_KERNEL);
-> -       if (!dummy_data) {
-> -               pr_info("could not allocate pdata\n");
-> -               return;
-> -       }
-> +       if (!dummy_data)
-> +               return -ENOMEM;
->
->         dummy_data->mem_size = mem_size;
->         dummy_data->mem_address = mem_address;
-> @@ -942,18 +940,20 @@ static void __init ramoops_register_dummy(void)
->         dummy = platform_device_register_data(NULL, "ramoops", -1,
->                         dummy_data, sizeof(struct ramoops_platform_data));
->         if (IS_ERR(dummy)) {
-> -               pr_info("could not create platform device: %ld\n",
-> -                       PTR_ERR(dummy));
-> -               dummy = NULL;
->                 ramoops_unregister_dummy();
-> +               return PTR_ERR(dummy);
->         }
-> +       return 0;
->  }
->
->  static int __init ramoops_init(void)
->  {
->         int ret;
->
-> -       ramoops_register_dummy();
-> +       ret = ramoops_register_dummy();
-> +       if (ret)
-> +               return ret;
-> +
->         ret = platform_driver_register(&ramoops_driver);
->         if (ret != 0)
->                 ramoops_unregister_dummy();
+On Mon, Jan 21, 2019 at 01:43:21AM -0800, Sagi Grimberg wrote:
+> 
+> > V14:
+> > 	- drop patch(patch 4 in V13) for renaming bvec helpers, as suggested by Jens
+> > 	- use mp_bvec_* as multi-page bvec helper name
+> > 	- fix one build issue, which is caused by missing one converion of
+> > 	bio_for_each_segment_all in fs/gfs2
+> > 	- fix one 32bit ARCH specific issue caused by segment boundary mask
+> > 	overflow
+> 
+> Hey Ming,
+> 
+> So is nvme-tcp also affected here? The only point where I see nvme-tcp
+> can be affected is when initializing a bvec iter using bio_segments() as
+> everywhere else we use iters which should transparently work..
+> 
+> I see that loop was converted, does it mean that nvme-tcp needs to
+> call something like?
 > --
-> 1.9.1
->
->
->
->
+> 	bio_for_each_mp_bvec(bv, bio, iter)
+> 		nr_bvecs++;
 
+bio_for_each_segment()/bio_segments() still works, just not as efficient
+as bio_for_each_mp_bvec() given each multi-page bvec(very similar with scatterlist)
+is returned in each loop.
 
--- 
-Kees Cook
+I don't look at nvme-tcp code yet. But if nvme-tcp supports this way,
+it can benefit from bio_for_each_mp_bvec().
+
+Thanks,
+Ming
