@@ -2,183 +2,319 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A85F1C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:39:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 656C7C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:39:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F09421721
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:39:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 217FF21726
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:39:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548167965;
+	bh=Cak8lgPzy7AyGNbKlPjL4qEFvSDBCMOwq1n7Z/uQqlQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=CoD2gxdSHmljBVT8Z2Cx7j5JuyKETTTPCaoBdSNKLF5oCjc5XzxSw//RoYcVZFwgJ
+	 55F/VjggXrUGHZBe2OJYiwGWIyTXx4ftXlU0/mpwi7r8vtgnEmjQG8e/F81W7ARGEM
+	 MumL8teEaqxk06MocGEFF2Jr4RjbHiUfPPPxHgEE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728868AbfAVOjR (ORCPT
+        id S1728906AbfAVOjX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 22 Jan 2019 09:39:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51958 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728318AbfAVOjR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 22 Jan 2019 09:39:17 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54568 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728671AbfAVOjQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 09:39:16 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E5B63A78;
-        Tue, 22 Jan 2019 06:39:15 -0800 (PST)
-Received: from queper01-lin (queper01-lin.cambridge.arm.com [10.1.195.48])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F08863F614;
-        Tue, 22 Jan 2019 06:39:12 -0800 (PST)
-Date:   Tue, 22 Jan 2019 14:39:11 +0000
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v6 11/16] sched/fair: Add uclamp support to
- energy_compute()
-Message-ID: <20190122143909.pmlqyhcjshyomrbw@queper01-lin>
-References: <20190115101513.2822-1-patrick.bellasi@arm.com>
- <20190115101513.2822-12-patrick.bellasi@arm.com>
- <20190122121321.r6mv23ao57uut3t7@queper01-lin>
- <20190122124546.njrpmykzbjpztd6u@e110439-lin>
- <20190122132944.sfxlnpc3xeft4rqd@queper01-lin>
- <20190122142606.gc5hnc5pzefblegw@e110439-lin>
+Received: from quaco.ghostprotocols.net (unknown [189.16.122.195])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 22A7320855;
+        Tue, 22 Jan 2019 14:39:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548167955;
+        bh=Cak8lgPzy7AyGNbKlPjL4qEFvSDBCMOwq1n7Z/uQqlQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=j9NyHovf9cRhh73KzU9Qq3vdsdpBRF0VETpJwoN8ak79neWIES3sDfmMNl1duRwZt
+         duH1BfgpHqDVL8GguC9ipW93N1ok40wcoOq25Daes3XNFykk+1eM5Y786ckJePjKhO
+         WOKaaeOAj5QtCLauzDA6gKC10XsOgfdZ8UTat3HE=
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id AB1E240355; Tue, 22 Jan 2019 12:31:17 -0200 (-02)
+Date:   Tue, 22 Jan 2019 12:31:17 -0200
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Song Liu <songliubraving@fb.com>, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        peterz@infradead.org, ast@kernel.org, daniel@iogearbox.net,
+        kernel-team@fb.com
+Subject: Re: [PATCH v11 perf, bpf-next 7/9] perf tools: synthesize
+ PERF_RECORD_* for loaded BPF programs
+Message-ID: <20190122143117.GG14973@kernel.org>
+References: <20190117161521.1341602-1-songliubraving@fb.com>
+ <20190117161521.1341602-8-songliubraving@fb.com>
+ <20190118144655.GM5823@kernel.org>
+ <20190122141320.GF14973@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190122142606.gc5hnc5pzefblegw@e110439-lin>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20190122141320.GF14973@kernel.org>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday 22 Jan 2019 at 14:26:06 (+0000), Patrick Bellasi wrote:
-> On 22-Jan 13:29, Quentin Perret wrote:
-> > On Tuesday 22 Jan 2019 at 12:45:46 (+0000), Patrick Bellasi wrote:
-> > > On 22-Jan 12:13, Quentin Perret wrote:
-> > > > On Tuesday 15 Jan 2019 at 10:15:08 (+0000), Patrick Bellasi wrote:
-> > > > > The Energy Aware Scheduler (AES) estimates the energy impact of waking
-> > > 
-> > > [...]
-> > > 
-> > > > > +		for_each_cpu_and(cpu, pd_mask, cpu_online_mask) {
-> > > > > +			cfs_util = cpu_util_next(cpu, p, dst_cpu);
-> > > > > +
-> > > > > +			/*
-> > > > > +			 * Busy time computation: utilization clamping is not
-> > > > > +			 * required since the ratio (sum_util / cpu_capacity)
-> > > > > +			 * is already enough to scale the EM reported power
-> > > > > +			 * consumption at the (eventually clamped) cpu_capacity.
-> > > > > +			 */
-> > > > 
-> > > > Right.
-> > > > 
-> > > > > +			sum_util += schedutil_cpu_util(cpu, cfs_util, cpu_cap,
-> > > > > +						       ENERGY_UTIL, NULL);
-> > > > > +
-> > > > > +			/*
-> > > > > +			 * Performance domain frequency: utilization clamping
-> > > > > +			 * must be considered since it affects the selection
-> > > > > +			 * of the performance domain frequency.
-> > > > > +			 */
-> > > > 
-> > > > So that actually affects the way we deal with RT I think. I assume the
-> > > > idea is to say if you don't want to reflect the RT-go-to-max-freq thing
-> > > > in EAS (which is what we do now) you should set the min cap for RT to 0.
-> > > > Is that correct ?
-> > > 
-> > > By default configuration, RT tasks still go to max when uclamp is
-> > > enabled, since they get a util_min=1024.
-> > > 
-> > > If we want to save power on RT tasks, we can set a smaller util_min...
-> > > but not necessarily 0. A util_min=0 for RT tasks means to use just
-> > > cpu_util_rt() for that class.
+Em Tue, Jan 22, 2019 at 12:13:20PM -0200, Arnaldo Carvalho de Melo escreveu:
+> Em Fri, Jan 18, 2019 at 11:46:55AM -0300, Arnaldo Carvalho de Melo escreveu:
+> > Em Thu, Jan 17, 2019 at 08:15:19AM -0800, Song Liu escreveu:
+> > > This patch synthesize PERF_RECORD_KSYMBOL and PERF_RECORD_BPF_EVENT for
+> > > BPF programs loaded before perf-record. This is achieved by gathering
+> > > information about all BPF programs via sys_bpf.
 > > 
-> > Ah, sorry, I guess my message was misleading. I'm saying this is
-> > changing the way _EAS_ deals with RT tasks. Right now we don't actually
-> > consider the RT-go-to-max thing at all in the EAS prediction. Your
-> > patch is changing that AFAICT. It actually changes the way EAS sees RT
-> > tasks even without uclamp ...
+> > Ditto
 > 
-> Lemme see if I get it right.
+> This is breaking 'perf sched', see below, the fix seems trivial:
 > 
-> Currently, whenever we look at CPU utilization for ENERGY_UTIL, we
-> always use cpu_util_rt() for RT tasks:
-> 
-> ---8<---
->         util = util_cfs;
->         util += cpu_util_rt(rq);
->         util += dl_util;
-> ---8<---
-> 
-> Thus, even when RT tasks are RUNNABLE, we don't always assume the CPU
-> running at the max capacity but just whatever is the aggregated
-> utilization across all the classes.
-> 
-> With uclamp, we have:
-> 
-> ---8<---
->         util = cpu_util_rt(rq) + util_cfs;
->         if (type == FREQUENCY_UTIL)
->             util = uclamp_util_with(rq, util, p);
->         dl_util = cpu_util_dl(rq);
->         if (type == ENERGY_UTIL)
->             util += dl_util;
-> ---8<---
-> 
-> So, I would say that, in terms of ENERGY_UTIL we do the same both
-> w/ and w/o uclamp. Isn't it?
+> [root@quaco ~]# perf sched record -a sleep 2
+> [ perf record: Woken up 1 times to write data ]
+> 0x5b60 [0x138]: failed to process type: 17
+> [ perf record: Captured and wrote 1.539 MB perf.data ]
+> [root@quaco ~]# perf sched lat
+> 0x5b60 [0x138]: failed to process type: 17
+> Failed to process events, error -22
+> [root@quaco ~]#
 
-Yes but now you use FREQUENCY_UTIL for computing 'max_util' in the EAS
-prediction.
+So:
 
-Let's take an example. You have a perf domain with two CPUs. One CPU is
-busy running a RT task, the other CPU runs a CFS task. Right now in
-compute_energy() we only use ENERGY_UTIL, so 'max_util' ends up being
-the max between the utilization of the two tasks. So we don't predict
-we're going to max freq.
+   perf_session__process_event (event->header.type = 17 (PERF_RECORD_KSYMBOL)
+     if (tool->ordered_events)
+       ret = perf_evlist__parse_sample_timestamp(evlist, event, &timestamp);
+       if (ret && ret != -1)
+            return ret;
 
-With your patch, we use FREQUENCY_UTIL to compute 'max_util', so we
-_will_ predict that we're going to max freq. And we will do that even if
-CONFIG_UCLAMP_TASK=n.
+So it returns here with -EFAULT, i.e. this is failing:
 
-The default EAS calculation will be different with your patch when there
-are runnable RT tasks in the system. This needs to be documented, I
-think.
+int perf_evlist__parse_sample_timestamp(struct perf_evlist *evlist,
+                                        union perf_event *event,
+                                        u64 *timestamp)
+{
+        struct perf_evsel *evsel = perf_evlist__event2evsel(evlist, event);
 
-> > But I'm not hostile to the idea since it's possible to enable uclamp and
-> > set the min cap to 0 for RT if you want. So there is a story there.
-> > However, I think this needs be documented somewhere, at the very least.
+        if (!evsel)
+                return -EFAULT;
+        return perf_evsel__parse_sample_timestamp(evsel, event, timestamp);
+}
+
+It isn't mapping the event ID it finds back to an evsel.. Jiri, ideas?
+
+This is happening so far only for 'perf sched', perf record with two
+events works.
+
+- Arnaldo
+ 
+> [acme@quaco perf]$ git bisect good
+> 7b612e291a5affb12b9d0b87332c71bcbe9c5db4 is the first bad commit
+> commit 7b612e291a5affb12b9d0b87332c71bcbe9c5db4
+> Author: Song Liu <songliubraving@fb.com>
+> Date:   Thu Jan 17 08:15:19 2019 -0800
 > 
-> The only difference I see is that the actual frequency could be
-> different (lower then max) when a clamped RT task is RUNNABLE.
+>     perf tools: Synthesize PERF_RECORD_* for loaded BPF programs
 > 
-> Are you worried that running RT on a lower freq could have side
-> effects on the estimated busy time the CPU ?
+>     This patch synthesize PERF_RECORD_KSYMBOL and PERF_RECORD_BPF_EVENT for
+>     BPF programs loaded before perf-record. This is achieved by gathering
+>     information about all BPF programs via sys_bpf.
 > 
-> I also still don't completely get why you say it could be useful to
->    "set the min cap to 0 for RT if you want"
+>     Committer notes:
+> 
+>     Fix the build on some older systems such as amazonlinux:1 where it was
+>     breaking with:
+> 
+>       util/bpf-event.c: In function 'perf_event__synthesize_one_bpf_prog':
+>       util/bpf-event.c:52:9: error: missing initializer for field 'type' of 'struct bpf_prog_info' [-Werror=missing-field-initializers]
+>         struct bpf_prog_info info = {};
+>                ^
+>       In file included from /git/linux/tools/lib/bpf/bpf.h:26:0,
+>                        from util/bpf-event.c:3:
+>       /git/linux/tools/include/uapi/linux/bpf.h:2699:8: note: 'type' declared here
+>         __u32 type;
+>               ^
+>       cc1: all warnings being treated as errors
+> 
+>     Further fix on a centos:6 system:
+> 
+>       cc1: warnings being treated as errors
+>       util/bpf-event.c: In function 'perf_event__synthesize_one_bpf_prog':
+>       util/bpf-event.c:50: error: 'func_info_rec_size' may be used uninitialized in this function
+> 
+>     The compiler is wrong, but to silence it, initialize that variable to
+>     zero.
+> 
+>     One more fix, this time for debian:experimental-x-mips, x-mips64 and
+>     x-mipsel:
+> 
+>       util/bpf-event.c: In function 'perf_event__synthesize_one_bpf_prog':
+>       util/bpf-event.c:93:16: error: implicit declaration of function 'calloc' [-Werror=implicit-function-declaration]
+>          func_infos = calloc(sub_prog_cnt, func_info_rec_size);
+>                       ^~~~~~
+>       util/bpf-event.c:93:16: error: incompatible implicit declaration of built-in function 'calloc' [-Werror]
+>       util/bpf-event.c:93:16: note: include '<stdlib.h>' or provide a declaration of 'calloc'
+> 
+>     Add the missing header.
+> 
+>     Committer testing:
+> 
+>       # perf record --bpf-event sleep 1
+>       [ perf record: Woken up 1 times to write data ]
+>       [ perf record: Captured and wrote 0.021 MB perf.data (7 samples) ]
+>       # perf report -D | grep PERF_RECORD_BPF_EVENT | nl
+>          1  0 0x4b10 [0x18]: PERF_RECORD_BPF_EVENT bpf event with type 1, flags 0, id 13
+>          2  0 0x4c60 [0x18]: PERF_RECORD_BPF_EVENT bpf event with type 1, flags 0, id 14
+>          3  0 0x4db0 [0x18]: PERF_RECORD_BPF_EVENT bpf event with type 1, flags 0, id 15
+>          4  0 0x4f00 [0x18]: PERF_RECORD_BPF_EVENT bpf event with type 1, flags 0, id 16
+>          5  0 0x5050 [0x18]: PERF_RECORD_BPF_EVENT bpf event with type 1, flags 0, id 17
+>          6  0 0x51a0 [0x18]: PERF_RECORD_BPF_EVENT bpf event with type 1, flags 0, id 18
+>          7  0 0x52f0 [0x18]: PERF_RECORD_BPF_EVENT bpf event with type 1, flags 0, id 21
+>          8  0 0x5440 [0x18]: PERF_RECORD_BPF_EVENT bpf event with type 1, flags 0, id 22
+>       # bpftool prog
+>       13: cgroup_skb  tag 7be49e3934a125ba  gpl
+>             loaded_at 2019-01-19T09:09:43-0300  uid 0
+>             xlated 296B  jited 229B  memlock 4096B  map_ids 13,14
+>       14: cgroup_skb  tag 2a142ef67aaad174  gpl
+>             loaded_at 2019-01-19T09:09:43-0300  uid 0
+>             xlated 296B  jited 229B  memlock 4096B  map_ids 13,14
+>       15: cgroup_skb  tag 7be49e3934a125ba  gpl
+>             loaded_at 2019-01-19T09:09:43-0300  uid 0
+>             xlated 296B  jited 229B  memlock 4096B  map_ids 15,16
+>       16: cgroup_skb  tag 2a142ef67aaad174  gpl
+>             loaded_at 2019-01-19T09:09:43-0300  uid 0
+>             xlated 296B  jited 229B  memlock 4096B  map_ids 15,16
+>       17: cgroup_skb  tag 7be49e3934a125ba  gpl
+>             loaded_at 2019-01-19T09:09:44-0300  uid 0
+>             xlated 296B  jited 229B  memlock 4096B  map_ids 17,18
+>       18: cgroup_skb  tag 2a142ef67aaad174  gpl
+>             loaded_at 2019-01-19T09:09:44-0300  uid 0
+>             xlated 296B  jited 229B  memlock 4096B  map_ids 17,18
+>       21: cgroup_skb  tag 7be49e3934a125ba  gpl
+>             loaded_at 2019-01-19T09:09:45-0300  uid 0
+>             xlated 296B  jited 229B  memlock 4096B  map_ids 21,22
+>       22: cgroup_skb  tag 2a142ef67aaad174  gpl
+>             loaded_at 2019-01-19T09:09:45-0300  uid 0
+>             xlated 296B  jited 229B  memlock 4096B  map_ids 21,22
+>       #
+> 
+>       # perf report -D | grep -B22 PERF_RECORD_KSYMBOL
+>       . ... raw event: size 312 bytes
+>       .  0000:  11 00 00 00 00 00 38 01 ff 44 06 c0 ff ff ff ff  ......8..D......
+>       .  0010:  e5 00 00 00 01 00 00 00 62 70 66 5f 70 72 6f 67  ........bpf_prog
+>       .  0020:  5f 37 62 65 34 39 65 33 39 33 34 61 31 32 35 62  _7be49e3934a125b
+>       .  0030:  61 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  a...............
+>        <SNIP zeroes>
+>       .  0110:  00 00 00 00 00 00 00 00 21 00 00 00 00 00 00 00  ........!.......
+>       .  0120:  7b e4 9e 39 34 a1 25 ba 00 00 00 00 00 00 00 00  {..94.%.........
+>       .  0130:  00 00 00 00 00 00 00 00                          ........
+> 
+>       0 0x49d8 [0x138]: PERF_RECORD_KSYMBOL ksymbol event with addr ffffffffc00644ff len 229 type 1 flags 0x0 name bpf_prog_7be49e3934a125ba
+>       --
+>       . ... raw event: size 312 bytes
+>       .  0000:  11 00 00 00 00 00 38 01 48 6d 06 c0 ff ff ff ff  ......8.Hm......
+>       .  0010:  e5 00 00 00 01 00 00 00 62 70 66 5f 70 72 6f 67  ........bpf_prog
+>       .  0020:  5f 32 61 31 34 32 65 66 36 37 61 61 61 64 31 37  _2a142ef67aaad17
+>       .  0030:  34 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  4...............
+>        <SNIP zeroes>
+>       .  0110:  00 00 00 00 00 00 00 00 21 00 00 00 00 00 00 00  ........!.......
+>       .  0120:  2a 14 2e f6 7a aa d1 74 00 00 00 00 00 00 00 00  *...z..t........
+>       .  0130:  00 00 00 00 00 00 00 00                          ........
+> 
+>       0 0x4b28 [0x138]: PERF_RECORD_KSYMBOL ksymbol event with addr ffffffffc0066d48 len 229 type 1 flags 0x0 name bpf_prog_2a142ef67aaad174
+>       --
+>       . ... raw event: size 312 bytes
+>       .  0000:  11 00 00 00 00 00 38 01 04 cf 03 c0 ff ff ff ff  ......8.........
+>       .  0010:  e5 00 00 00 01 00 00 00 62 70 66 5f 70 72 6f 67  ........bpf_prog
+>       .  0020:  5f 37 62 65 34 39 65 33 39 33 34 61 31 32 35 62  _7be49e3934a125b
+>       .  0030:  61 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  a...............
+>        <SNIP zeroes>
+>       .  0110:  00 00 00 00 00 00 00 00 21 00 00 00 00 00 00 00  ........!.......
+>       .  0120:  7b e4 9e 39 34 a1 25 ba 00 00 00 00 00 00 00 00  {..94.%.........
+>       .  0130:  00 00 00 00 00 00 00 00                          ........
+> 
+>       0 0x4c78 [0x138]: PERF_RECORD_KSYMBOL ksymbol event with addr ffffffffc003cf04 len 229 type 1 flags 0x0 name bpf_prog_7be49e3934a125ba
+>       --
+>       . ... raw event: size 312 bytes
+>       .  0000:  11 00 00 00 00 00 38 01 96 28 04 c0 ff ff ff ff  ......8..(......
+>       .  0010:  e5 00 00 00 01 00 00 00 62 70 66 5f 70 72 6f 67  ........bpf_prog
+>       .  0020:  5f 32 61 31 34 32 65 66 36 37 61 61 61 64 31 37  _2a142ef67aaad17
+>       .  0030:  34 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  4...............
+>        <SNIP zeroes>
+>       .  0110:  00 00 00 00 00 00 00 00 21 00 00 00 00 00 00 00  ........!.......
+>       .  0120:  2a 14 2e f6 7a aa d1 74 00 00 00 00 00 00 00 00  *...z..t........
+>       .  0130:  00 00 00 00 00 00 00 00                          ........
+> 
+>       0 0x4dc8 [0x138]: PERF_RECORD_KSYMBOL ksymbol event with addr ffffffffc0042896 len 229 type 1 flags 0x0 name bpf_prog_2a142ef67aaad174
+>       --
+>       . ... raw event: size 312 bytes
+>       .  0000:  11 00 00 00 00 00 38 01 05 13 17 c0 ff ff ff ff  ......8.........
+>       .  0010:  e5 00 00 00 01 00 00 00 62 70 66 5f 70 72 6f 67  ........bpf_prog
+>       .  0020:  5f 37 62 65 34 39 65 33 39 33 34 61 31 32 35 62  _7be49e3934a125b
+>       .  0030:  61 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  a...............
+>        <SNIP zeroes>
+>       .  0110:  00 00 00 00 00 00 00 00 21 00 00 00 00 00 00 00  ........!.......
+>       .  0120:  7b e4 9e 39 34 a1 25 ba 00 00 00 00 00 00 00 00  {..94.%.........
+>       .  0130:  00 00 00 00 00 00 00 00                          ........
+> 
+>       0 0x4f18 [0x138]: PERF_RECORD_KSYMBOL ksymbol event with addr ffffffffc0171305 len 229 type 1 flags 0x0 name bpf_prog_7be49e3934a125ba
+>       --
+>       . ... raw event: size 312 bytes
+>       .  0000:  11 00 00 00 00 00 38 01 0a 8c 23 c0 ff ff ff ff  ......8...#.....
+>       .  0010:  e5 00 00 00 01 00 00 00 62 70 66 5f 70 72 6f 67  ........bpf_prog
+>       .  0020:  5f 32 61 31 34 32 65 66 36 37 61 61 61 64 31 37  _2a142ef67aaad17
+>       .  0030:  34 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  4...............
+>        <SNIP zeroes>
+>       .  0110:  00 00 00 00 00 00 00 00 21 00 00 00 00 00 00 00  ........!.......
+>       .  0120:  2a 14 2e f6 7a aa d1 74 00 00 00 00 00 00 00 00  *...z..t........
+>       .  0130:  00 00 00 00 00 00 00 00                          ........
+> 
+>       0 0x5068 [0x138]: PERF_RECORD_KSYMBOL ksymbol event with addr ffffffffc0238c0a len 229 type 1 flags 0x0 name bpf_prog_2a142ef67aaad174
+>       --
+>       . ... raw event: size 312 bytes
+>       .  0000:  11 00 00 00 00 00 38 01 2a a5 a4 c0 ff ff ff ff  ......8.*.......
+>       .  0010:  e5 00 00 00 01 00 00 00 62 70 66 5f 70 72 6f 67  ........bpf_prog
+>       .  0020:  5f 37 62 65 34 39 65 33 39 33 34 61 31 32 35 62  _7be49e3934a125b
+>       .  0030:  61 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  a...............
+>        <SNIP zeroes>
+>       .  0110:  00 00 00 00 00 00 00 00 21 00 00 00 00 00 00 00  ........!.......
+>       .  0120:  7b e4 9e 39 34 a1 25 ba 00 00 00 00 00 00 00 00  {..94.%.........
+>       .  0130:  00 00 00 00 00 00 00 00                          ........
+> 
+>       0 0x51b8 [0x138]: PERF_RECORD_KSYMBOL ksymbol event with addr ffffffffc0a4a52a len 229 type 1 flags 0x0 name bpf_prog_7be49e3934a125ba
+>       --
+>       . ... raw event: size 312 bytes
+>       .  0000:  11 00 00 00 00 00 38 01 9b c9 a4 c0 ff ff ff ff  ......8.........
+>       .  0010:  e5 00 00 00 01 00 00 00 62 70 66 5f 70 72 6f 67  ........bpf_prog
+>       .  0020:  5f 32 61 31 34 32 65 66 36 37 61 61 61 64 31 37  _2a142ef67aaad17
+>       .  0030:  34 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  4...............
+>        <SNIP zeroes>
+>       .  0110:  00 00 00 00 00 00 00 00 21 00 00 00 00 00 00 00  ........!.......
+>       .  0120:  2a 14 2e f6 7a aa d1 74 00 00 00 00 00 00 00 00  *...z..t........
+>       .  0130:  00 00 00 00 00 00 00 00                          ........
+> 
+>       0 0x5308 [0x138]: PERF_RECORD_KSYMBOL ksymbol event with addr ffffffffc0a4c99b len 229 type 1 flags 0x0 name bpf_prog_2a142ef67aaad174
+> 
+>     Signed-off-by: Song Liu <songliubraving@fb.com>
+>     Reviewed-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+>     Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+>     Cc: Alexei Starovoitov <ast@kernel.org>
+>     Cc: Daniel Borkmann <daniel@iogearbox.net>
+>     Cc: Peter Zijlstra <peterz@infradead.org>
+>     Cc: kernel-team@fb.com
+>     Cc: netdev@vger.kernel.org
+>     Link: http://lkml.kernel.org/r/20190117161521.1341602-8-songliubraving@fb.com
+>     Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> 
+> :040000 040000 811377248529490fc3977be729bd1ac6ab515920 3f1cc9a3e8c92d0d5a23a21c33286b7cdf758534 M	tools
+> [acme@quaco perf]$
 
-I'm not saying it's useful, I'm saying userspace can decide to do that
-if it thinks it is a good idea. The default should be min_cap = 1024 for
-RT, no questions. But you _can_ change it at runtime if you want to.
-That's my point. And doing that basically provides the same behaviour as
-what we have right now in terms of EAS calculation (but it changes the
-freq selection obviously) which is why I'm not fundamentally opposed to
-your patch.
+-- 
 
-So in short, I'm fine with the behavioural change, but please at least
-mention it somewhere :-)
-
-Thanks,
-Quentin
+- Arnaldo
