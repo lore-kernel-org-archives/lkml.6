@@ -2,148 +2,111 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77C6CC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 17:12:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE66AC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 17:13:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5018B21726
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 17:12:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B05F21726
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 17:13:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MSi3ddBE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729573AbfAVRMk (ORCPT
+        id S1729591AbfAVRN1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 12:12:40 -0500
-Received: from mx2.suse.de ([195.135.220.15]:50986 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729365AbfAVRMk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 12:12:40 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 57EBCB0B7;
-        Tue, 22 Jan 2019 17:12:37 +0000 (UTC)
-Subject: Re: [PATCH v7 1/6] fieldbus_dev: add Fieldbus Device subsystem.
-To:     Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Sven Van Asbroeck <thesven73@gmail.com>
-Cc:     svendev@arcx.com, robh+dt@kernel.org, linus.walleij@linaro.org,
-        lee.jones@linaro.org, mark.rutland@arm.com, treding@nvidia.com,
-        david@lechnology.com, noralf@tronnes.org, johan@kernel.org,
-        monstr@monstr.eu, michal.vokac@ysoft.com, arnd@arndb.de,
-        gregkh@linuxfoundation.org, john.garry@huawei.com,
-        geert+renesas@glider.be, robin.murphy@arm.com,
-        sebastien.bourdelin@savoirfairelinux.com, icenowy@aosc.io,
-        stuyoder@gmail.com, maxime.ripard@bootlin.com,
-        linux-kernel@vger.kernel.org
-References: <20190122152109.30488-1-TheSven73@googlemail.com>
- <20190122152109.30488-2-TheSven73@googlemail.com>
- <20190122165658.GH26416@windriver.com>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Openpgp: preference=signencrypt
-Organization: SUSE Linux GmbH
-Message-ID: <2f4406b5-9970-211e-beef-a8b6ad60b99e@suse.de>
-Date:   Tue, 22 Jan 2019 18:12:31 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Tue, 22 Jan 2019 12:13:27 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:34346 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729316AbfAVRN1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 12:13:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=5mX3uOPs0Ea+SwmTP+PBPfXEY8NCxY+CmKxc5I2qaOQ=; b=MSi3ddBEszx/AT5tjeydVGqNX
+        tb5FTrpkTlVofYEyYaDyR8nxzQ849MjwLx3ujFBjgbgFuO/ld7LbJLFQmXAP+Vwg3XbUM06mIUVNL
+        zwj+qNOmkXFl8WhR2N/Cgugkylhdt9rRkiBRskFn0fc3Jv9QV4o12Y/oTT0ypoHbSnkKlWFKU2DyW
+        kOd0oiiN5pEzvwD1ZLMIR6W5efudpaKChjPn16V14lc3AHyfIWdwZpQqGng/xhTtqSItpW+1WibvY
+        V7ukLeMloMwGBz3s7h1QTzDv0lpZb9oVG/zJ3uxjWAGC1kwR1Fah/ECkmVwIL+u6Ce4SMdLC0lYzR
+        9Swbt2apg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1glzbw-0005Al-LX; Tue, 22 Jan 2019 17:13:17 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 213042042CFC2; Tue, 22 Jan 2019 18:13:14 +0100 (CET)
+Date:   Tue, 22 Jan 2019 18:13:14 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v6 08/16] sched/cpufreq: uclamp: Add utilization clamping
+ for FAIR tasks
+Message-ID: <20190122171314.GS27931@hirez.programming.kicks-ass.net>
+References: <20190115101513.2822-1-patrick.bellasi@arm.com>
+ <20190115101513.2822-9-patrick.bellasi@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20190122165658.GH26416@windriver.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190115101513.2822-9-patrick.bellasi@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 22.01.19 um 17:56 schrieb Paul Gortmaker:
-> [[PATCH v7 1/6] fieldbus_dev: add Fieldbus Device subsystem.] On 22/01/2019 (Tue 10:21) Sven Van Asbroeck wrote:
-> 
->> Fieldbus device (client) adapters allow data exchange with a PLC aka.
->> "Fieldbus Controller" over a fieldbus (Profinet, FLNet, etc.)
->>
->> They are typically used when a Linux device wants to expose itself
->> as an actuator, motor, console light, switch, etc. over the fieldbus.
->>
->> This framework is designed to provide a generic interface to Fieldbus
->> Devices from both the Linux Kernel and the userspace.
->>
->> Signed-off-by: Sven Van Asbroeck <TheSven73@googlemail.com>
-> 
-> [...]
-> 
->> diff --git a/drivers/fieldbus/Kconfig b/drivers/fieldbus/Kconfig
->> new file mode 100644
->> index 000000000000..5c2bef950d04
->> --- /dev/null
->> +++ b/drivers/fieldbus/Kconfig
->> @@ -0,0 +1,19 @@
->> +menuconfig FIELDBUS_DEV
->> +	bool "Fieldbus Device Support"
-> 
-> OK, so the core support is NOT tristate, ie not modular,
+On Tue, Jan 15, 2019 at 10:15:05AM +0000, Patrick Bellasi wrote:
+> @@ -342,11 +350,24 @@ static void sugov_iowait_boost(struct sugov_cpu *sg_cpu, u64 time,
+>  		return;
+>  	sg_cpu->iowait_boost_pending = true;
+>  
+> +	/*
+> +	 * Boost FAIR tasks only up to the CPU clamped utilization.
+> +	 *
+> +	 * Since DL tasks have a much more advanced bandwidth control, it's
+> +	 * safe to assume that IO boost does not apply to those tasks.
 
-Is that intentional though, and if so, why?
+I'm not buying that argument. IO-boost isn't related to b/w management.
 
-If possible, I would much rather see it changed to tristate and leave
-all the metadata below.
+IO-boot is more about compensating for hidden dependencies, and those
+don't get less hidden for using a different scheduling class.
 
-> so I think...
-> 
->> diff --git a/drivers/fieldbus/dev_core.c b/drivers/fieldbus/dev_core.c
->> new file mode 100644
->> index 000000000000..c816df3201bb
->> --- /dev/null
->> +++ b/drivers/fieldbus/dev_core.c
->> @@ -0,0 +1,348 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Fieldbus Device Driver Core
->> + *
->> + */
->> +
->> +#include <linux/fieldbus_dev.h>
->> +#include <linux/mutex.h>
->> +#include <linux/module.h>
-> 
-> ...you don't need module.h here
-> 
->> +#include <linux/device.h>
->> +#include <linux/idr.h>
->> +#include <linux/fs.h>
->> +#include <linux/slab.h>
->> +#include <linux/poll.h>
->> +
-> 
-> [...]
-> 
->> +
->> +static void __exit fieldbus_exit(void)
->> +{
->> +	unregister_chrdev_region(fieldbus_devt, MAX_FIELDBUSES);
->> +	class_unregister(&fieldbus_class);
->> +}
->> +
->> +subsys_initcall(fieldbus_init);
->> +module_exit(fieldbus_exit);
-> 
-> ...and the module_exit is never called, so fieldbus_exit is dead code
-> and hence both should be removed.
-> 
->> +
->> +MODULE_AUTHOR("Sven Van Asbroeck <TheSven73@googlemail.com>");
->> +MODULE_AUTHOR("Jonathan Stiles <jonathans@arcx.com>");
->> +MODULE_DESCRIPTION("Fieldbus Device Driver Core");
->> +MODULE_LICENSE("GPL v2");
+Now, arguably DL should not be doing IO in the first place, but that's a
+whole different discussion.
 
-Sven, as this code appears to be all by ArcX people, any chance you can
-make it just GPL (SPDX GPL-2.0-or-later)? Only reason to have it v2-only
-would be if this code was derived from v2-only code that can't be
-relicensed anymore.
+> +	 * Instead, since RT tasks are not utilization clamped, we don't want
+> +	 * to apply clamping on IO boost while there is blocked RT
+> +	 * utilization.
+> +	 */
+> +	max_boost = sg_cpu->iowait_boost_max;
+> +	if (!cpu_util_rt(cpu_rq(sg_cpu->cpu)))
+> +		max_boost = uclamp_util(cpu_rq(sg_cpu->cpu), max_boost);
+> +
+>  	/* Double the boost at each request */
+>  	if (sg_cpu->iowait_boost) {
+>  		sg_cpu->iowait_boost <<= 1;
+> -		if (sg_cpu->iowait_boost > sg_cpu->iowait_boost_max)
+> -			sg_cpu->iowait_boost = sg_cpu->iowait_boost_max;
+> +		if (sg_cpu->iowait_boost > max_boost)
+> +			sg_cpu->iowait_boost = max_boost;
+>  		return;
+>  	}
 
-Thanks,
-Andreas
-
--- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+Hurmph...  so I'm not sold on this bit.
