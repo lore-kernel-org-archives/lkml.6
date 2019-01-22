@@ -2,100 +2,106 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92D31C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 21:57:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C93E5C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 22:05:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 534D920870
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 21:57:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="lGUPlC0F";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Yrpwkn3J"
+	by mail.kernel.org (Postfix) with ESMTP id 9E84320870
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 22:05:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726772AbfAVV5s (ORCPT
+        id S1726816AbfAVWFm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 16:57:48 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:47754 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725919AbfAVV5s (ORCPT
+        Tue, 22 Jan 2019 17:05:42 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:38886 "EHLO
+        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726724AbfAVWFm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 16:57:48 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 19A1E6074E; Tue, 22 Jan 2019 21:57:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548194267;
-        bh=slzva9b7Horeo6+Qx1RPzLwHG79/nUlFt6Dz5noHP0s=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=lGUPlC0FpDuZE2erlxY2KSjUWFa+tUcKAKahj0e7U8e4Sqbk64kNXu1yhYsJq88JK
-         2NYBMk+tG8Ldwdx+DLATlzhIHu88MG140gQ6c0rHfrNV2vp9Q+NEoGyx/ZRBTk8nCu
-         i+dRLSzs+uD2e1V/NLP5M3losCzHXLDBqYihZZbs=
-Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0E3A660740;
-        Tue, 22 Jan 2019 21:57:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548194266;
-        bh=slzva9b7Horeo6+Qx1RPzLwHG79/nUlFt6Dz5noHP0s=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Yrpwkn3Jg16ugIDXT5ZAHWUNyq9zaEtfvjMSDPbobCZF16WBRE+w8Pn4P5WtMNgqU
-         TpxjAnfhowbYS7ncif5ZV1J2wNm10VahWS0UgyxuqUFb+IoLbuQpLQvTRvT53A0yt/
-         luHBdscU99XrZyVdVXH/wSsqF7J9FsmYr8iP7yrI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0E3A660740
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-Subject: Re: [PATCH] regulator: qcom-smd: Batch up requests for disabled
- regulators
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <20190122190147.26735-1-bjorn.andersson@linaro.org>
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-Message-ID: <5165f4d3-5c98-86de-4813-589e1e3da3d8@codeaurora.org>
-Date:   Tue, 22 Jan 2019 14:57:46 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 22 Jan 2019 17:05:42 -0500
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by kvm5.telegraphics.com.au (Postfix) with ESMTP id 085AC29B17;
+        Tue, 22 Jan 2019 17:05:35 -0500 (EST)
+Date:   Wed, 23 Jan 2019 09:06:30 +1100 (AEDT)
+From:   Finn Thain <fthain@telegraphics.com.au>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+cc:     Arnd Bergmann <arnd@arndb.de>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Joshua Thompson <funaho@jurai.org>,
+        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linuxppc-dev@lists.ozlabs.org, linux-scsi@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v9 00/22] Re-use nvram module
+In-Reply-To: <20190122092234.GA15813@kroah.com>
+Message-ID: <alpine.LNX.2.21.1901230858170.90@nippy.intranet>
+References: <cover.1547525936.git.fthain@telegraphics.com.au> <20190122092234.GA15813@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <20190122190147.26735-1-bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/22/2019 12:01 PM, Bjorn Andersson wrote:
-> In some scenarios the early stages of the boot chain has configured
-> regulators to be in a required state, but the later stages has skipped
-> to inform the RPM about it's requirements.
-> 
-> But as the SMD RPM regulators are being initialized voltage change
-> requests will be issued to align the voltage with the valid ranges. The
-> RPM aggregates all parameters for the specific regulator, the voltage
-> will be adjusted and the "enabled" state will be "off" - and the
-> regulator is turned off.
-> 
-> This patch addresses this problem by caching the requested enable state,
-> voltage and load and send the parameters in a batch, depending on the
-> enable state - effectively delaying the voltage request for disabled
-> regulators.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+On Tue, 22 Jan 2019, Greg Kroah-Hartman wrote:
 
-This happens to fix an annoyance I've been avoiding on 8998.
+> On Tue, Jan 15, 2019 at 03:18:56PM +1100, Finn Thain wrote:
+> > The "generic" NVRAM module, drivers/char/generic_nvram.c, implements a
+> > /dev/nvram misc device. This module is used only by 32-bit PowerPC
+> > platforms.
+> > 
+> > The RTC "CMOS" NVRAM module, drivers/char/nvram.c, also implements a
+> > /dev/nvram misc device. This module is now used only by x86 and m68k
+> > thanks to commit 3ba9faedc180 ("char: nvram: disable on ARM").
+> > 
+> > The "generic" module cannot be used by x86 or m68k platforms because it
+> > cannot co-exist with the "CMOS" module. One reason for that is the
+> > CONFIG_GENERIC_NVRAM kludge in drivers/char/Makefile. Another reason is
+> > that automatically loading the appropriate module would be impossible
+> > because only one module can provide the char-major-10-144 alias.
+> > 
+> > A multi-platform kernel binary needs a single, generic module. With this
+> > patch series, drivers/char/nvram.c becomes more generic and some of the
+> > arch-specific code gets moved under arch/. The nvram module is then
+> > usable by all m68k, powerpc and x86 platforms.
+> > 
+> > This allows for removal of drivers/char/generic_nvram.c as well as a
+> > duplicate in arch/powerpc/kernel/nvram_64.c. By reducing the number of
+> > /dev/nvram char misc device implementations, the number of bugs and
+> > inconsistencies is also reduced.
+> > 
+> > This approach reduces inconsistencies between PPC32 and PPC64 and also
+> > between PPC_PMAC and MAC. A uniform API has benefits for userspace.
+> > 
+> > For example, some error codes for some ioctl calls become consistent
+> > across PowerPC platforms. The uniform API can potentially benefit any
+> > bootloader that works across the various platforms having XPRAM
+> > (e.g. Emile).
+> > 
+> > This patch series was tested on Atari, Mac, PowerMac (both 32-bit and
+> > 64-bit) and ThinkPad hardware. AFAIK, it has not yet been tested on
+> > pSeries or CHRP.
+> > 
+> > I think there are two possible merge strategies for this patch series.
+> > The char misc maintainer could take the entire series. Alternatively,
+> > the m68k maintainer could take patches 1 thru 16 (though some of these
+> > have nothing to do with m68k) and after those patches reach mainline
+> > the powerpc maintainer could take 17 thru 22.
+> 
+> I just took the whole series, thanks for doing this, looks good.
+> 
 
-Reviewed-by: Jeffrey Hugo <jhugo@codeaurora.org>
-Tested-by: Jeffrey Hugo <jhugo@codeaurora.org>
+Thanks, Greg.
+
+I haven't seen any acks from powerpc maintainers yet...
 
 -- 
-Jeffrey Hugo
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
-Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+
+> greg k-h
+> 
