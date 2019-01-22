@@ -2,127 +2,122 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80721C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 22:42:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ADC6C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 22:42:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F1BD217D6
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 22:42:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECF3A217D6
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 22:42:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hGZ1Y4BH"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H+fiwqNo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727183AbfAVWmK (ORCPT
+        id S1727258AbfAVWmm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 17:42:10 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:45693 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726823AbfAVWmK (ORCPT
+        Tue, 22 Jan 2019 17:42:42 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:46194 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726851AbfAVWmk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 17:42:10 -0500
-Received: by mail-lf1-f68.google.com with SMTP id b20so117459lfa.12
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 14:42:09 -0800 (PST)
+        Tue, 22 Jan 2019 17:42:40 -0500
+Received: by mail-lj1-f193.google.com with SMTP id v15-v6so135236ljh.13
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 14:42:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=4CUfxIFjCLwXNeOGQDC9ZCki02WYGCOOurAekz4sYGQ=;
-        b=hGZ1Y4BHQ9qYXy4VSGzhGdB1HC/KiciK5qRggVc4SLTSv5dNBUorS79XytceYO+3rg
-         CVkrWdsaympS94nndoG10j997A4lD+q15bkY5Pbqc9HKpRLTOGHzCKcneZDLjsYXtlbP
-         VRHgBkl4Wh4jwvvCZ+Vm10/QMwn0eI0p5l+HE=
+        bh=VZaokQwl9SY/X/XqBGguubg/MHwgfemvv46E+U/pJUI=;
+        b=H+fiwqNoOcvcNZWQWfbjd2N4Yos2Y8HjtIZy3o+6FtirENKQocPD78+HRLOEAOUApV
+         bfzWgpniV9kUYsJ11BItK/AgMIpEw4WnBRsYoR+zZve3KAudED8YCCPWwZYVgAzDIprP
+         9jfVKCphA2N3H22CJ3N1y/0tJNHCjwuTrPtXi6dxchNdR5ybLZhH2PyBo75dXyWyESph
+         +27k5+J6bMX8GJu/smRLbB/996eJHOK1/kle8thHvfG2IhwEvLx7Go1aLZObnbBGwnUZ
+         GlY8wixosxoigmxUHmQui7XLdR8idqjqvZjNslwb7wxqngJ+VO5d8plYtki656sN5/+C
+         CWKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=4CUfxIFjCLwXNeOGQDC9ZCki02WYGCOOurAekz4sYGQ=;
-        b=dx1dX3KVvyz5V5Kf7lqpBkcD+beIJSa2G93cNi5n1a4HDHxGubjeVqeoCguMpmQMTC
-         Sd8BmBnPLcBw449OSJtcNk+1uLx1UfXcV8tzgjDV7A2syvghrDkNwvAm+D0b6weN+idM
-         GVpleieL7RENxCZ+aEoxHa51rfmS5l5MEZ3BKviPS/LjQLaVTj9EjKJs2McndWGFmKdF
-         cS5q62v4vc3wv0Q4T0BCYtmOfYi7p2f1DW1rcWrsj3J/fsQmWXHdcN9M7TQti4c0KbIA
-         rSh80+9xEv+xNstbA+mMWl0vRgkmn72xFrnsLTEveqJBZaQ+IqG7YCarmvc2c/L8BrV5
-         a3/w==
-X-Gm-Message-State: AJcUukcR4T6dCJZpgxwkMLOTcTeBqfhQArLgOnfZ7aSXySxNQv4iMSsO
-        k2YV3LQeAQcJ465EIr8TixqIbe1rL7c=
-X-Google-Smtp-Source: ALg8bN4of1e3WRXE0OvxUYJjIvB0Cn5VrrL4vyNPicrqk2W7wniyVZezl2uQlMKtrlfdAYKYfI3Gww==
-X-Received: by 2002:a19:ca51:: with SMTP id h17mr21479150lfj.126.1548196928278;
-        Tue, 22 Jan 2019 14:42:08 -0800 (PST)
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
-        by smtp.gmail.com with ESMTPSA id q3sm191298lff.42.2019.01.22.14.42.06
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Jan 2019 14:42:07 -0800 (PST)
-Received: by mail-lf1-f50.google.com with SMTP id l10so128069lfh.9
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 14:42:06 -0800 (PST)
-X-Received: by 2002:a19:7dc2:: with SMTP id y185mr21829996lfc.27.1548196926275;
- Tue, 22 Jan 2019 14:42:06 -0800 (PST)
+        bh=VZaokQwl9SY/X/XqBGguubg/MHwgfemvv46E+U/pJUI=;
+        b=kUYcOctsIysvE6xG7lcZLw9LiqCXA33iQwx0O1WGABpu44ALiABoQFNwT40iL8EdWj
+         6xs0spbWgnj4sm1jq9TOEtcStQhnELYVQOLbA1RrA3GIvnrmN+I/HsYQ0YR64Mre2Uod
+         cYLn7JWctJbabT3YCRYYz2nOsJ9l7gQpmNjJFrTDcbzaoCYNEpJLsV8MRB322sXcKWHy
+         LwU0xfBgtqy382wu/pmqF0lspzZVmSuAyX+oYtqrry4bSS/7aUtaUWNNaR7HIZkvChzf
+         9gR+KyMe/sOOlthQQyb/MlbbTWXC2YzebaFt/70xlnAjTzkEKSX9uteufCGV9VXwP3m6
+         mFig==
+X-Gm-Message-State: AJcUukcSQehabBZ8LqxhytyL+cCShBCVTfLXTZbXcucOqb4rhDtbTcYn
+        BLGrauLRjkBm9rGII8yWRLRskWJJth89vVnqRoX58A==
+X-Google-Smtp-Source: ALg8bN6wNCeiq6QpNe1OxJCB4vWA6uOSfhQBrIf5buaEctVVr8rj1u5HofMhBcQG+Mma/7YCYq9Mjk5ycvR29mP9aL4=
+X-Received: by 2002:a2e:9556:: with SMTP id t22-v6mr15318213ljh.36.1548196958207;
+ Tue, 22 Jan 2019 14:42:38 -0800 (PST)
 MIME-Version: 1.0
-References: <20190111230129.127037-1-evgreen@chromium.org> <20190111230129.127037-7-evgreen@chromium.org>
- <154785081323.169631.13477061319849880987@swboyd.mtv.corp.google.com>
-In-Reply-To: <154785081323.169631.13477061319849880987@swboyd.mtv.corp.google.com>
-From:   Evan Green <evgreen@chromium.org>
-Date:   Tue, 22 Jan 2019 14:41:29 -0800
-X-Gmail-Original-Message-ID: <CAE=gft4An9V8C-K-p8FtEpk5G6JsMvOAxGBHrgR_XuagGeMnXg@mail.gmail.com>
-Message-ID: <CAE=gft4An9V8C-K-p8FtEpk5G6JsMvOAxGBHrgR_XuagGeMnXg@mail.gmail.com>
-Subject: Re: [PATCH v1 6/8] phy: qcom-qmp: Utilize UFS reset controller
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Can Guo <cang@codeaurora.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Asutosh Das <asutoshd@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Manu Gautam <mgautam@codeaurora.org>
+References: <20181117010748.24347-1-rajatja@google.com> <20190118223407.64818-1-rajatja@google.com>
+ <C103ADA0-68A0-4571-AE47-1744E64E0D7E@holtmann.org> <CACK8Z6FzWTZ_SYCBqGsOcf2xzSp3+W9HD-1inyRtJ=Wqsww8Pw@mail.gmail.com>
+In-Reply-To: <CACK8Z6FzWTZ_SYCBqGsOcf2xzSp3+W9HD-1inyRtJ=Wqsww8Pw@mail.gmail.com>
+From:   Dmitry Torokhov <dtor@google.com>
+Date:   Tue, 22 Jan 2019 14:42:26 -0800
+Message-ID: <CAE_wzQ8C4KTpLWVvw4J-YhjzrUDOW4c+4bJmGStTR=BEdidkWQ@mail.gmail.com>
+Subject: Re: [PATCH v4 1/5] usb: split code locating ACPI companion into port
+ and device
+To:     Rajat Jain <rajatja@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Alex Hung <alex.hung@canonical.com>,
+        Bluez mailing list <linux-bluetooth@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-usb@vger.kernel.org, netdev <netdev@vger.kernel.org>,
+        Rajat Jain <rajatxjain@gmail.com>,
+        Raghuram Hegde <raghuram.hegde@intel.com>,
+        chethan.tumkur.narayan@intel.com,
+        "Ghorai, Sukumar" <sukumar.ghorai@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 2:33 PM Stephen Boyd <swboyd@chromium.org> wrote:
+On Tue, Jan 22, 2019 at 2:29 PM Rajat Jain <rajatja@google.com> wrote:
 >
-> Quoting Evan Green (2019-01-11 15:01:27)
-> > @@ -1214,6 +1225,32 @@ static int qcom_qmp_phy_init(struct phy *phy)
+> Hi Marcel,
+>
+> On Sat, Jan 19, 2019 at 11:51 AM Marcel Holtmann <marcel@holtmann.org> wrote:
 > >
-> >         dev_vdbg(qmp->dev, "Initializing QMP phy\n");
+> > Hi Rajat,
 > >
-> > +       if (cfg->has_ufsphy_reset) {
-> > +               /*
-> > +                * Get UFS reset, which is delayed until now to avoid a
-> > +                * circular dependency where UFS needs its PHY, but the PHY
-> > +                * needs this UFS reset.
-> > +                */
-> > +               if (!qmp->ufs_reset) {
-> > +                       qmp->ufs_reset = of_reset_control_get(qmp->dev->of_node,
+> > > In preparation for handling embedded USB devices let's split
+> > > usb_acpi_find_companion() into usb_acpi_find_companion_for_device() and
+> > > usb_acpi_find_companion_for_port().
+> > >
+> > > Signed-off-by: Dmitry Torokhov <dtor@chromium.org>
+> > > Signed-off-by: Rajat Jain <rajatja@google.com>
+> > > Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > Tested-by: Sukumar Ghorai <sukumar.ghorai@intel.com>
+> > > ---
+> > > v4: Add Acked-by and Tested-by in signatures.
+> > > v3: same as v1
+> > > v2: same as v1
+> > >
+> > > drivers/usb/core/usb-acpi.c | 133 +++++++++++++++++++-----------------
+> > > 1 file changed, 72 insertions(+), 61 deletions(-)
+> >
+> > what is the plan here? I take this via bluetooth-next tree?
 >
-> Can you use devm_reset_control_get()? Put another way, why is this DT
-> specific instead of using a firmware/platform agnostic API?
+> Yes, I'd think that would be the best plan. Dmitry / Greg - do you
+> have any objections / suggestions?
 
-Sure, will fix. (Though sadly of_* is peppered all over the place in
-this file for lane resets, pipe clocks, and more).
+That's up to Greg, but since he'd acked the patches I'd assume he's OK
+with taking it through bluetooth. As an option Marcel could cut an
+immutable branch off 4.20 with the first 2 patches so that he and Greg
+can both pull it into their main branches and then git will do the
+right thing when Linus pulls from them. Lee uses quite a bit of them
+in MFD and other maintainers are known to occasionally make them for
+work that needs to be shared between trees.
 
->
-> > +                                                             "ufsphy");
-> > +
-> > +                       if (IS_ERR(qmp->ufs_reset)) {
-> > +                               dev_err(qmp->dev,
-> > +                                       "failed to get UFS reset: %d\n",
-> > +                                       PTR_ERR(qmp->ufs_reset));
-> > +
-> > +                               return PTR_ERR(qmp->ufs_reset);
-> > +                       }
-> > +               }
-> > +
-> > +               ret = reset_control_assert(qmp->ufs_reset);
-> > +               if (ret) {
-> > +                       dev_err(qmp->dev, "ufsphy reset deassert failed\n");
->
-> It's an assert though. Maybe just ignore the error message because the
-> user won't be able to do anything anyway?
->
+Thanks.
 
-Fair enough. I'll remove the print from here and the deassert later.
--Evan
+-- 
+Dmitry
