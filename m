@@ -2,371 +2,214 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33663C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:58:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C480C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:59:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC31B21726
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:58:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B046217F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:59:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548187123;
-	bh=iKLci5owJws7gdXV9W4d6/9BY5O+zPZghR0unYeE1ns=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=nE/DfnDO5u37MTRPXufE7/Re/tubqbM84zwAteH3I4nzwGn2lYTygzX+WvMK6+SDc
-	 JMw+0utDMSYDEM31oCqK0oGtRo00bIIjerMBjss3JKxNA1FnxHzDNVhmpxDOkDulFw
-	 OPjfDje6zbECWViw4HSMy9i1WRXU8V2H9zPURpz4=
+	s=default; t=1548187184;
+	bh=jH7AH4owR95tO4IEbKdAkLeziPUKi8UODE0gkFkCess=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:List-ID:From;
+	b=J/7SepwtgaegCutgjZP2IWkpK3dXT0cJn0ET5iA/G/SgkP1XfRqMDJnCg6IQ9//Ca
+	 EFvjyAtYUAOVwjjiwR2xKlfPGXsFiPKyjsrZClGmUuPDiLr5c2xJ2mKnhHtby/nWSs
+	 yAAplm/HgV6BC6uNVoOLnDm1eO6MFRFgn4CQ5Ye4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726302AbfAVT6l (ORCPT
+        id S1726220AbfAVT7m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 14:58:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35956 "EHLO mail.kernel.org"
+        Tue, 22 Jan 2019 14:59:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36156 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726009AbfAVT6l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 14:58:41 -0500
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1725972AbfAVT7m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 14:59:42 -0500
+Received: from localhost (c-67-164-102-47.hsd1.ca.comcast.net [67.164.102.47])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 448702084A;
-        Tue, 22 Jan 2019 19:58:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0401321726;
+        Tue, 22 Jan 2019 19:59:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548187119;
-        bh=iKLci5owJws7gdXV9W4d6/9BY5O+zPZghR0unYeE1ns=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fJGAUhICA3LG48wG7UZilznlhHOQ3JJ0RAIceG4RBsdAmDwq7OidhqMv3otZSnnud
-         IH4mhMwoPCiTei7qZFCjd6HqXTl6gmKUsUk1JENli90BOJ2etWZv2MrcAYPgD47qvA
-         mOe3eAk7dA3PxVt1AowOsvSBDHtp6qgRFUddjI5I=
-Date:   Tue, 22 Jan 2019 13:58:38 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Michael Bringmann <mwb@linux.vnet.ibm.com>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
-        Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
-        Juliet Kim <minkim@us.ibm.com>
-Subject: Re: [RFC 5/6] powerpc/pci/hotplug: Use common drcinfo parsing
-Message-ID: <20190122195838.GC14636@google.com>
-References: <20181214204914.16435.59083.stgit@powerkvm6.aus.stglabs.ibm.com>
- <20181214205120.16435.46952.stgit@powerkvm6.aus.stglabs.ibm.com>
- <20190115002857.GG33971@google.com>
+        s=default; t=1548187180;
+        bh=jH7AH4owR95tO4IEbKdAkLeziPUKi8UODE0gkFkCess=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=d5R61jVHBCVGVCnWA/qh2NRQDzaXkREwWN1Kmdsb6tjajyBkQg7k75KQ+3R614ZqC
+         HWYfsjzhTarI1SesCZq14MquDSZABXVhoQTFEllbQv2e2UuTFLitono92/BbzhS6q/
+         Sg2n8fs/bq1MgLdcLn+WZUq4MGym9lZyuvC1kRgA=
+Date:   Tue, 22 Jan 2019 11:59:31 -0800 (PST)
+From:   Stefano Stabellini <sstabellini@kernel.org>
+X-X-Sender: sstabellini@sstabellini-ThinkPad-X260
+To:     Peng Fan <peng.fan@nxp.com>
+cc:     "mst@redhat.com" <mst@redhat.com>,
+        "jasowang@redhat.com" <jasowang@redhat.com>,
+        "sstabellini@kernel.org" <sstabellini@kernel.org>,
+        "hch@infradead.org" <hch@infradead.org>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>, luto@kernel.org,
+        jgross@suse.com, boris.ostrovsky@oracle.com
+Subject: Re: [Xen-devel] [RFC] virtio_ring: check dma_mem for xen_domain
+In-Reply-To: <20190121050056.14325-1-peng.fan@nxp.com>
+Message-ID: <alpine.DEB.2.10.1901221113410.17936@sstabellini-ThinkPad-X260>
+References: <20190121050056.14325-1-peng.fan@nxp.com>
+User-Agent: Alpine 2.10 (DEB 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190115002857.GG33971@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 06:28:57PM -0600, Bjorn Helgaas wrote:
-> On Fri, Dec 14, 2018 at 02:51:31PM -0600, Michael Bringmann wrote:
-> > The implementation of the pseries-specific drc info properties
-> > is currently implemented in pseries-specific and non-pseries-specific
-> > files.  This patch set uses a new implementation of the device-tree
-> > parsing code for the properties.
-> > 
-> > This patch refactors parsing of the pseries-specific drc-info properties
-> > out of rpaphp_core.c to use the common parser.  In the case where an
-> > architecture does not use these properties, an __weak copy of the
-> > function is provided with dummy return values.  Changes include creating
-> > appropriate callback functions and passing callback-specific data
-> > blocks into arch_find_drc_match.  All functions that were used just
-> > to support the previous parsing implementation have been moved.
-> > 
-> > Signed-off-by: Michael Bringmann <mwb@linux.vnet.ibm.com>
+On Mon, 21 Jan 2019, Peng Fan wrote:
+> on i.MX8QM, M4_1 is communicating with DomU using rpmsg with a fixed
+> address as the dma mem buffer which is predefined.
 > 
-> This is fine with me.  Any rpaphp_core.c maintainers want to comment?
-> Tyrel?
+> Without this patch, the flow is:
+> vring_map_one_sg -> vring_use_dma_api
+>                  -> dma_map_page
+> 		       -> __swiotlb_map_page
+> 		                ->swiotlb_map_page
+> 				->__dma_map_area(phys_to_virt(dma_to_phys(dev, dev_addr)), size, dir);
+> However we are using per device dma area for rpmsg, phys_to_virt
+> could not return a correct virtual address for virtual address in
+> vmalloc area. Then kernel panic.
 > 
-> $ ./scripts/get_maintainer.pl -f drivers/pci/hotplug/rpaphp_core.c
-> Tyrel Datwyler <tyreld@linux.vnet.ibm.com> (supporter:IBM Power PCI Hotplug Driver for RPA-compliant...)
-> Benjamin Herrenschmidt <benh@kernel.crashing.org> (supporter:LINUX FOR POWERPC (32-BIT AND 64-BIT))
-> Paul Mackerras <paulus@samba.org> (supporter:LINUX FOR POWERPC (32-BIT AND 64-BIT))
-> Michael Ellerman <mpe@ellerman.id.au> (supporter:LINUX FOR POWERPC (32-BIT AND 64-BIT))
+> With this patch, vring_use_dma_api will return false, and
+> vring_map_one_sg will return sg_phys(sg) which is the correct phys
+> address in the predefined memory region.
+> vring_map_one_sg -> vring_use_dma_api
+>                  -> sg_phys(sg)
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  drivers/virtio/virtio_ring.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> index cd7e755484e3..8993d7cb3592 100644
+> --- a/drivers/virtio/virtio_ring.c
+> +++ b/drivers/virtio/virtio_ring.c
+> @@ -248,6 +248,8 @@ static inline bool virtqueue_use_indirect(struct virtqueue *_vq,
+>  
+>  static bool vring_use_dma_api(struct virtio_device *vdev)
+>  {
+> +	struct device *dma_dev = vdev->dev.parent;
+> +
+>  	if (!virtio_has_iommu_quirk(vdev))
+>  		return true;
+>  
+> @@ -260,7 +262,7 @@ static bool vring_use_dma_api(struct virtio_device *vdev)
+>  	 * the DMA API if we're a Xen guest, which at least allows
+>  	 * all of the sensible Xen configurations to work correctly.
+>  	 */
+> -	if (xen_domain())
+> +	if (xen_domain() && !dma_dev->dma_mem)
+>  		return true;
+>  
+>  	return false;
 
-This looks like part of a larger series, but I only got this patch.  So I
-assume you'll route this elsewhere along with the rest of the series.
-Here's my ack if it's useful:
+I can see you spotted a real issue, but this is not the right fix. We
+just need something a bit more flexible than xen_domain(): there are
+many kinds of Xen domains on different architectures, we basically want
+to enable this (return true from vring_use_dma_api) only when the xen
+swiotlb is meant to be used. Does the appended patch fix the issue you
+have?
 
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+---
 
-> > ---
-> >  drivers/pci/hotplug/rpaphp_core.c |  232 ++++---------------------------------
-> >  1 file changed, 28 insertions(+), 204 deletions(-)
-> > 
-> > diff --git a/drivers/pci/hotplug/rpaphp_core.c b/drivers/pci/hotplug/rpaphp_core.c
-> > index bcd5d35..9ad7384 100644
-> > --- a/drivers/pci/hotplug/rpaphp_core.c
-> > +++ b/drivers/pci/hotplug/rpaphp_core.c
-> > @@ -154,182 +154,18 @@ static enum pci_bus_speed get_max_bus_speed(struct slot *slot)
-> >  	return speed;
-> >  }
-> >  
-> > -static int get_children_props(struct device_node *dn, const int **drc_indexes,
-> > -		const int **drc_names, const int **drc_types,
-> > -		const int **drc_power_domains)
-> > -{
-> > -	const int *indexes, *names, *types, *domains;
-> > -
-> > -	indexes = of_get_property(dn, "ibm,drc-indexes", NULL);
-> > -	names = of_get_property(dn, "ibm,drc-names", NULL);
-> > -	types = of_get_property(dn, "ibm,drc-types", NULL);
-> > -	domains = of_get_property(dn, "ibm,drc-power-domains", NULL);
-> > -
-> > -	if (!indexes || !names || !types || !domains) {
-> > -		/* Slot does not have dynamically-removable children */
-> > -		return -EINVAL;
-> > -	}
-> > -	if (drc_indexes)
-> > -		*drc_indexes = indexes;
-> > -	if (drc_names)
-> > -		/* &drc_names[1] contains NULL terminated slot names */
-> > -		*drc_names = names;
-> > -	if (drc_types)
-> > -		/* &drc_types[1] contains NULL terminated slot types */
-> > -		*drc_types = types;
-> > -	if (drc_power_domains)
-> > -		*drc_power_domains = domains;
-> > -
-> > -	return 0;
-> > -}
-> > -
-> > -
-> >  /* Verify the existence of 'drc_name' and/or 'drc_type' within the
-> > - * current node.  First obtain it's my-drc-index property.  Next,
-> > - * obtain the DRC info from it's parent.  Use the my-drc-index for
-> > - * correlation, and obtain/validate the requested properties.
-> > + * current node.
-> >   */
-> >  
-> > -static int rpaphp_check_drc_props_v1(struct device_node *dn, char *drc_name,
-> > -				char *drc_type, unsigned int my_index)
-> > -{
-> > -	char *name_tmp, *type_tmp;
-> > -	const int *indexes, *names;
-> > -	const int *types, *domains;
-> > -	int i, rc;
-> > -
-> > -	rc = get_children_props(dn->parent, &indexes, &names, &types, &domains);
-> > -	if (rc < 0) {
-> > -		return -EINVAL;
-> > -	}
-> > -
-> > -	name_tmp = (char *) &names[1];
-> > -	type_tmp = (char *) &types[1];
-> > -
-> > -	/* Iterate through parent properties, looking for my-drc-index */
-> > -	for (i = 0; i < be32_to_cpu(indexes[0]); i++) {
-> > -		if ((unsigned int) indexes[i + 1] == my_index)
-> > -			break;
-> > -
-> > -		name_tmp += (strlen(name_tmp) + 1);
-> > -		type_tmp += (strlen(type_tmp) + 1);
-> > -	}
-> > -
-> > -	if (((drc_name == NULL) || (drc_name && !strcmp(drc_name, name_tmp))) &&
-> > -	    ((drc_type == NULL) || (drc_type && !strcmp(drc_type, type_tmp))))
-> > -		return 0;
-> > -
-> > -	return -EINVAL;
-> > -}
-> > -
-> > -static int rpaphp_check_drc_props_v2(struct device_node *dn, char *drc_name,
-> > -				char *drc_type, unsigned int my_index)
-> > -{
-> > -	struct property *info;
-> > -	unsigned int entries;
-> > -	struct of_drc_info drc;
-> > -	const __be32 *value;
-> > -	char cell_drc_name[MAX_DRC_NAME_LEN];
-> > -	int j, fndit;
-> > -
-> > -	info = of_find_property(dn->parent, "ibm,drc-info", NULL);
-> > -	if (info == NULL)
-> > -		return -EINVAL;
-> > -
-> > -	value = of_prop_next_u32(info, NULL, &entries);
-> > -	if (!value)
-> > -		return -EINVAL;
-> > -
-> > -	for (j = 0; j < entries; j++) {
-> > -		of_read_drc_info_cell(&info, &value, &drc);
-> > -
-> > -		/* Should now know end of current entry */
-> > -
-> > -		if (my_index > drc.last_drc_index)
-> > -			continue;
-> > -
-> > -		fndit = 1;
-> > -		break;
-> > -	}
-> > -	/* Found it */
-> > -
-> > -	if (fndit)
-> > -		sprintf(cell_drc_name, "%s%d", drc.drc_name_prefix, 
-> > -			my_index);
-> > -
-> > -	if (((drc_name == NULL) ||
-> > -	     (drc_name && !strcmp(drc_name, cell_drc_name))) &&
-> > -	    ((drc_type == NULL) ||
-> > -	     (drc_type && !strcmp(drc_type, drc.drc_type))))
-> > -		return 0;
-> > -
-> > -	return -EINVAL;
-> > -}
-> > -
-> >  int rpaphp_check_drc_props(struct device_node *dn, char *drc_name,
-> >  			char *drc_type)
-> >  {
-> > -	const unsigned int *my_index;
-> > -
-> > -	my_index = of_get_property(dn, "ibm,my-drc-index", NULL);
-> > -	if (!my_index) {
-> > -		/* Node isn't DLPAR/hotplug capable */
-> > -		return -EINVAL;
-> > -	}
-> > -
-> > -	if (firmware_has_feature(FW_FEATURE_DRC_INFO))
-> > -		return rpaphp_check_drc_props_v2(dn, drc_name, drc_type,
-> > -						*my_index);
-> > -	else
-> > -		return rpaphp_check_drc_props_v1(dn, drc_name, drc_type,
-> > -						*my_index);
-> > +	return arch_find_drc_match(dn, NULL, drc_type, drc_name,
-> > +				true, false, NULL);
-> >  }
-> >  EXPORT_SYMBOL_GPL(rpaphp_check_drc_props);
-> >  
-> > -
-> > -static int is_php_type(char *drc_type)
-> > -{
-> > -	unsigned long value;
-> > -	char *endptr;
-> > -
-> > -	/* PCI Hotplug nodes have an integer for drc_type */
-> > -	value = simple_strtoul(drc_type, &endptr, 10);
-> > -	if (endptr == drc_type)
-> > -		return 0;
-> > -
-> > -	return 1;
-> > -}
-> > -
-> > -/**
-> > - * is_php_dn() - return 1 if this is a hotpluggable pci slot, else 0
-> > - * @dn: target &device_node
-> > - * @indexes: passed to get_children_props()
-> > - * @names: passed to get_children_props()
-> > - * @types: returned from get_children_props()
-> > - * @power_domains:
-> > - *
-> > - * This routine will return true only if the device node is
-> > - * a hotpluggable slot. This routine will return false
-> > - * for built-in pci slots (even when the built-in slots are
-> > - * dlparable.)
-> > - */
-> > -static int is_php_dn(struct device_node *dn, const int **indexes,
-> > -		const int **names, const int **types, const int **power_domains)
-> > -{
-> > -	const int *drc_types;
-> > -	int rc;
-> > -
-> > -	rc = get_children_props(dn, indexes, names, &drc_types, power_domains);
-> > -	if (rc < 0)
-> > -		return 0;
-> > -
-> > -	if (!is_php_type((char *) &drc_types[1]))
-> > -		return 0;
-> > -
-> > -	*types = drc_types;
-> > -	return 1;
-> > -}
-> > -
-> >  /**
-> >   * rpaphp_add_slot -- declare a hotplug slot to the hotplug subsystem.
-> >   * @dn: device node of slot
-> > @@ -346,54 +182,42 @@ static int is_php_dn(struct device_node *dn, const int **indexes,
-> >   *
-> >   * To remove a slot, it suffices to call rpaphp_deregister_slot().
-> >   */
-> > -int rpaphp_add_slot(struct device_node *dn)
-> > +
-> > +static int rpaphp_add_slot_cb(struct device_node *dn,
-> > +			u32 drc_index, char *drc_name, char *drc_type,
-> > +			u32 drc_power_domain, void *data)
-> >  {
-> >  	struct slot *slot;
-> >  	int retval = 0;
-> > -	int i;
-> > -	const int *indexes, *names, *types, *power_domains;
-> > -	char *name, *type;
-> > -
-> > -	if (!dn->name || strcmp(dn->name, "pci"))
-> > -		return 0;
-> > -
-> > -	/* If this is not a hotplug slot, return without doing anything. */
-> > -	if (!is_php_dn(dn, &indexes, &names, &types, &power_domains))
-> > -		return 0;
-> > -
-> > -	dbg("Entry %s: dn=%pOF\n", __func__, dn);
-> >  
-> > -	/* register PCI devices */
-> > -	name = (char *) &names[1];
-> > -	type = (char *) &types[1];
-> > -	for (i = 0; i < be32_to_cpu(indexes[0]); i++) {
-> > -		int index;
-> > +	slot = alloc_slot_struct(dn, drc_index, drc_name, drc_power_domain);
-> > +	if (!slot)
-> > +		return -ENOMEM;
-> >  
-> > -		index = be32_to_cpu(indexes[i + 1]);
-> > -		slot = alloc_slot_struct(dn, index, name,
-> > -					 be32_to_cpu(power_domains[i + 1]));
-> > -		if (!slot)
-> > -			return -ENOMEM;
-> > +	slot->type = simple_strtoul(drc_type, NULL, 10);
-> > +	if (retval)
-> > +		return -EINVAL;
-> >  
-> > -		slot->type = simple_strtoul(type, NULL, 10);
-> > +	dbg("Found drc-index:0x%x drc-name:%s drc-type:%s\n",
-> > +		drc_index, drc_name, drc_type);
-> >  
-> > -		dbg("Found drc-index:0x%x drc-name:%s drc-type:%s\n",
-> > -				index, name, type);
-> > +	retval = rpaphp_enable_slot(slot);
-> > +	if (!retval)
-> > +		retval = rpaphp_register_slot(slot);
-> >  
-> > -		retval = rpaphp_enable_slot(slot);
-> > -		if (!retval)
-> > -			retval = rpaphp_register_slot(slot);
-> > +	if (retval)
-> > +		dealloc_slot_struct(slot);
-> >  
-> > -		if (retval)
-> > -			dealloc_slot_struct(slot);
-> > +	return retval;
-> > +}
-> >  
-> > -		name += strlen(name) + 1;
-> > -		type += strlen(type) + 1;
-> > -	}
-> > -	dbg("%s - Exit: rc[%d]\n", __func__, retval);
-> > +int rpaphp_add_slot(struct device_node *dn)
-> > +{
-> > +	if (!dn->name || strcmp(dn->name, "pci"))
-> > +		return 0;
-> >  
-> > -	/* XXX FIXME: reports a failure only if last entry in loop failed */
-> > -	return retval;
-> > +	return arch_find_drc_match(dn, rpaphp_add_slot_cb,
-> > +			NULL, NULL, false, true, NULL);
-> >  }
-> >  EXPORT_SYMBOL_GPL(rpaphp_add_slot);
-> >  
-> > 
+xen: introduce xen_vring_use_dma
+
+From: Stefano Stabellini <stefanos@xilinx.com>
+
+Export xen_swiotlb on arm and arm64.
+
+Use xen_swiotlb to determine when vring should use dma APIs to map the
+ring: when xen_swiotlb is enabled the dma API is required. When it is
+disabled, it is not required.
+
+Reported-by: Peng Fan <peng.fan@nxp.com>
+Signed-off-by: Stefano Stabellini <stefanos@xilinx.com>
+
+diff --git a/arch/arm/include/asm/xen/swiotlb-xen.h b/arch/arm/include/asm/xen/swiotlb-xen.h
+new file mode 100644
+index 0000000..455ade5
+--- /dev/null
++++ b/arch/arm/include/asm/xen/swiotlb-xen.h
+@@ -0,0 +1 @@
++#include <xen/arm/swiotlb-xen.h>
+diff --git a/arch/arm/xen/mm.c b/arch/arm/xen/mm.c
+index cb44aa2..8592863 100644
+--- a/arch/arm/xen/mm.c
++++ b/arch/arm/xen/mm.c
+@@ -21,6 +21,8 @@
+ #include <asm/xen/hypercall.h>
+ #include <asm/xen/interface.h>
+ 
++int xen_swiotlb __read_mostly;
++
+ unsigned long xen_get_swiotlb_free_pages(unsigned int order)
+ {
+ 	struct memblock_region *reg;
+@@ -189,6 +191,7 @@ int __init xen_mm_init(void)
+ 	struct gnttab_cache_flush cflush;
+ 	if (!xen_initial_domain())
+ 		return 0;
++	xen_swiotlb = 1;
+ 	xen_swiotlb_init(1, false);
+ 	xen_dma_ops = &xen_swiotlb_dma_ops;
+ 
+diff --git a/arch/arm64/include/asm/xen/swiotlb-xen.h b/arch/arm64/include/asm/xen/swiotlb-xen.h
+new file mode 100644
+index 0000000..455ade5
+--- /dev/null
++++ b/arch/arm64/include/asm/xen/swiotlb-xen.h
+@@ -0,0 +1 @@
++#include <xen/arm/swiotlb-xen.h>
+diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+index cd7e755..bf8badc 100644
+--- a/drivers/virtio/virtio_ring.c
++++ b/drivers/virtio/virtio_ring.c
+@@ -260,7 +260,7 @@ static bool vring_use_dma_api(struct virtio_device *vdev)
+ 	 * the DMA API if we're a Xen guest, which at least allows
+ 	 * all of the sensible Xen configurations to work correctly.
+ 	 */
+-	if (xen_domain())
++	if (xen_vring_use_dma())
+ 		return true;
+ 
+ 	return false;
+diff --git a/include/xen/arm/swiotlb-xen.h b/include/xen/arm/swiotlb-xen.h
+new file mode 100644
+index 0000000..2aac7c4
+--- /dev/null
++++ b/include/xen/arm/swiotlb-xen.h
+@@ -0,0 +1,10 @@
++#ifndef _ASM_ARM_XEN_SWIOTLB_XEN_H
++#define _ASM_ARM_XEN_SWIOTLB_XEN_H
++
++#ifdef CONFIG_SWIOTLB_XEN
++extern int xen_swiotlb;
++#else
++#define xen_swiotlb (0)
++#endif
++
++#endif
+diff --git a/include/xen/xen.h b/include/xen/xen.h
+index 0e21567..74a536d 100644
+--- a/include/xen/xen.h
++++ b/include/xen/xen.h
+@@ -46,4 +46,10 @@ enum xen_domain_type {
+ bool xen_biovec_phys_mergeable(const struct bio_vec *vec1,
+ 		const struct bio_vec *vec2);
+ 
++#include <asm/xen/swiotlb-xen.h>
++static inline int xen_vring_use_dma(void)
++{
++	return !!xen_swiotlb;
++}
++
+ #endif	/* _XEN_XEN_H */
