@@ -7,156 +7,255 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40689C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 21:53:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9557AC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 21:53:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB42520866
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 21:53:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49B7820866
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 21:53:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=poorly.run header.i=@poorly.run header.b="AHvKGUc1"
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="bpG16L4S"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726864AbfAVVxC (ORCPT
+        id S1726905AbfAVVxQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 16:53:02 -0500
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:45450 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726832AbfAVVxB (ORCPT
+        Tue, 22 Jan 2019 16:53:16 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35808 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726832AbfAVVxQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 16:53:01 -0500
-Received: by mail-yb1-f194.google.com with SMTP id n78so17902yba.12
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 13:53:00 -0800 (PST)
+        Tue, 22 Jan 2019 16:53:16 -0500
+Received: by mail-wr1-f66.google.com with SMTP id 96so109204wrb.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 13:53:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=poorly.run; s=google;
+        d=joelfernandes.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=AGImLWKSXyqcZe7nveg/7vkgivfZ2ayznn3rwDCE8FY=;
-        b=AHvKGUc1yOVBQIXBFh5sY1o9v6Vm3IX0sfgcGrTG34kaFzlxf1Jm8AVan2dh507cGI
-         ygYgYsNvIhwq7FlmpQGjt7HdKurdL57SPlrCPaGP81/nFKDVEqWEvcR2G9pUVj41TaEI
-         f+EYZsEK5+fylSuCVIyAD5L4I8fbl0DWoyLf99bBl1JbckxrmMUBMBelq0KeNXxUQ2Qe
-         zfcnnCOGt6DmByNpeJFXR3bEmCMWomuGSAZ7WmfpVGkcfMnHyZ36k0Ebpy2RDVV37zwN
-         oRNf3Fcwl9Ecw1FMoc7Cgpxn5Hztk7gRaf6LyV3wGPZ+djf6oCq1CWw0JtuJV+lD7dNz
-         8iCw==
+        bh=OwmuQJG4J84U89kSAZNwKuCo+PTAbgAaqzPSmSChnAc=;
+        b=bpG16L4SOLYvpuRIPx8dRRKcd+z03KHJ2Pz4pISAmhhR3bcMFUcFDDeC+Svt5Ju4Bn
+         MrUAE8mqpheCD1h/RL7C+73N+9g+pTqGgpbs0zKmleo5jj5go1XvYwkOBzlKG6DXVeyl
+         e7uYpLpkP+EIdR7HYUrjV65FY2s404anwGQzQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AGImLWKSXyqcZe7nveg/7vkgivfZ2ayznn3rwDCE8FY=;
-        b=O1lYtZF6f0dZ863jrPfliL7m8/rBajAmvRSGzwuM0paMMQH2srpQduW9g4JJTvrMx3
-         ULTEcrevNJaNh+vj3aZo0qjSZ6ioGNA0rCEzvRKc5qOWA9YeqXLYWbUaA7uhGaWg0qHR
-         91N4/4KmnT9Ad1InMsvFzeBFHKVAjyaZZEAXwvSx+KpjfqPKTCCAEqtYeT7RZR1CSTsx
-         FVcy2wDNPaCY1mBIrBjTPpWOzVp+QG4rhHERsdpKBqxai7z1jOqVkKM3zjzuxTfbPADT
-         q7OVeZWgqwHjiecoSAUm7zucBiWNBsX9kMFbXJ3EhylH+3txR30nRzyY5/x2SwNWZXN4
-         B1sg==
-X-Gm-Message-State: AJcUukc4kL9bSzD7InaR+hpG1woEaBdEeXx/sYxQ+h9doqQ2TzIZAmZE
-        cuQ99YZ4GhxVNwZCgtCNDg4cwQ==
-X-Google-Smtp-Source: ALg8bN5UNJJkma6ODmjgOp5ajWZ643xJYjRhSPm0CyAqEy+6i7UzkoQS05f2gvmSgQitqKvDujro4A==
-X-Received: by 2002:a25:3455:: with SMTP id b82mr22727920yba.402.1548193980378;
-        Tue, 22 Jan 2019 13:53:00 -0800 (PST)
-Received: from localhost ([2620:0:1013:11:89c6:2139:5435:371d])
-        by smtp.gmail.com with ESMTPSA id w2sm6327173ywe.62.2019.01.22.13.52.59
+        bh=OwmuQJG4J84U89kSAZNwKuCo+PTAbgAaqzPSmSChnAc=;
+        b=o9ilbknaT1FuqFSuUe2+9YJxsGabF1HKmDO6EEkDj3jBbxXmXQK8NcaSgdCcMxpV9O
+         KXsBbaZo8xyHy9yNHA3YWFPvL+2EMfLbq5qHJPwPu4T2KQJ8taMDcluo4D0lAQC+yGi4
+         n+w8k5Hadq25/3us/oc2j8N8Tbl15setoSAvs2Yece30b1Qu+r/804e1xO1UPL6jNxT4
+         YMSHjgHGR/KLaiFRJXXtjuudHuNQc+uy5Rg0QdXkPvGcWG7khSurKjSv2CKmjnQKPcP+
+         4nFF8KxKEr4qvyLbIHbyHEHAXhbvxUlUluZycm2e76FmwEz6Jr3B90HESUq85QnUT/yq
+         c2Cg==
+X-Gm-Message-State: AJcUukcfX/GsxLCWOMFQoBc2HqYAERBjLFXd+Z/wzulmD4NL49ryAHKC
+        s40VaLocGg0flvzsLlU3LrRIiA==
+X-Google-Smtp-Source: ALg8bN7Gzq9C4cKv6LWzGLOmVLD9nUDbjCr0xcb66f/IfNtht8pTXjzVPnI+NP96jvPIS2TVIFVXrQ==
+X-Received: by 2002:adf:ee89:: with SMTP id b9mr35964284wro.246.1548193993781;
+        Tue, 22 Jan 2019 13:53:13 -0800 (PST)
+Received: from localhost ([2620:0:1004:1100:cca9:fccc:8667:9bdc])
+        by smtp.gmail.com with ESMTPSA id c65sm54802277wma.24.2019.01.22.13.53.12
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 22 Jan 2019 13:52:59 -0800 (PST)
-Date:   Tue, 22 Jan 2019 16:52:59 -0500
-From:   Sean Paul <sean@poorly.run>
-To:     Sean Paul <seanpaul@chromium.org>
-Cc:     "Hsin-Yi, Wang" <hsinyi@chromium.org>,
-        David Airlie <airlied@linux.ie>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH resend] drm/panel: panel-innolux: set display off in
- innolux_panel_unprepare
-Message-ID: <20190122215259.GN114153@art_vandelay>
-References: <20190109065922.231753-1-hsinyi@chromium.org>
- <CAOw6vb+a2SAq+=xfL9RZyA6R7zn-HYFQbDnDaK28TD8yrh+wLg@mail.gmail.com>
+        Tue, 22 Jan 2019 13:53:13 -0800 (PST)
+Date:   Tue, 22 Jan 2019 16:53:11 -0500
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Viktor Rosendahl <Viktor.Rosendahl@bmw.de>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] preemptirq_delay_test: Add the burst feature and a
+ sysfs trigger
+Message-ID: <20190122215311.GA200493@google.com>
+References: <1548074113-16599-1-git-send-email-Viktor.Rosendahl@bmw.de>
+ <1548074113-16599-3-git-send-email-Viktor.Rosendahl@bmw.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOw6vb+a2SAq+=xfL9RZyA6R7zn-HYFQbDnDaK28TD8yrh+wLg@mail.gmail.com>
+In-Reply-To: <1548074113-16599-3-git-send-email-Viktor.Rosendahl@bmw.de>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 12:58:10PM -0500, Sean Paul wrote:
-> On Wed, Jan 9, 2019 at 1:59 AM Hsin-Yi, Wang <hsinyi@chromium.org> wrote:
-> >
-> > Move mipi_dsi_dcs_set_display_off() from innolux_panel_disable()
-> > to innolux_panel_unprepare(), so they are consistent with
-> > innolux_panel_enable() and innolux_panel_prepare().
-> >
-> > This also fixes some mode check and irq timeout issue in MTK dsi code.
-> >
-> > Since some dsi code (e.g. mtk_dsi) have following call trace:
-> > 1. drm_panel_disable(), which calls innolux_panel_disable()
-> > 2. switch to cmd mode
-> > 3. drm_panel_unprepare(), which calls innolux_panel_unprepare()
-> >
-> > However, mtk_dsi needs to be in cmd mode to be able to send commands
-> > (e.g. mipi_dsi_dcs_set_display_off() and mipi_dsi_dcs_enter_sleep_mode()),
-> > so we need these functions to be called after the switch to cmd mode happens,
-> > i.e. in innolux_panel_unprepare.
-> >
-> >
-> > Signed-off-by: Hsin-Yi, Wang <hsinyi@chromium.org>
+Hi Viktor,
+
+Could you CC me on the other patches as well, next time? I am quite
+interested and recently have worked on the latency tracer.
+
+Some comments below:
+
+On Mon, Jan 21, 2019 at 02:35:11PM +0200, Viktor Rosendahl wrote:
+> This burst feature enables the user to generate a burst of
+> preempt/irqsoff latencies. This makes it possible to test whether we
+> are able to detect latencies that systematically occur very close to
+> each other.
 > 
-> Reviewed-by: Sean Paul <seanpaul@chromium.org>
-
-Applied to drm-misc-next, thanks for your patch.
-
-Sean
-
+> In addition, there is a sysfs trigger, so that it's not necessary to
+> reload the module to repeat the test. The trigger will appear as
+> /sys/kernel/preemptirq_delay_test/trigger in sysfs.
 > 
-> > ---
-> > Resend for review.
-> > ---
-> >  drivers/gpu/drm/panel/panel-innolux-p079zca.c | 11 +++++------
-> >  1 file changed, 5 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/panel/panel-innolux-p079zca.c b/drivers/gpu/drm/panel/panel-innolux-p079zca.c
-> > index ca4ae45dd307..8e5724b63f1f 100644
-> > --- a/drivers/gpu/drm/panel/panel-innolux-p079zca.c
-> > +++ b/drivers/gpu/drm/panel/panel-innolux-p079zca.c
-> > @@ -70,18 +70,12 @@ static inline struct innolux_panel *to_innolux_panel(struct drm_panel *panel)
-> >  static int innolux_panel_disable(struct drm_panel *panel)
-> >  {
-> >         struct innolux_panel *innolux = to_innolux_panel(panel);
-> > -       int err;
-> >
-> >         if (!innolux->enabled)
-> >                 return 0;
-> >
-> >         backlight_disable(innolux->backlight);
-> >
-> > -       err = mipi_dsi_dcs_set_display_off(innolux->link);
-> > -       if (err < 0)
-> > -               DRM_DEV_ERROR(panel->dev, "failed to set display off: %d\n",
-> > -                             err);
-> > -
-> >         innolux->enabled = false;
-> >
-> >         return 0;
-> > @@ -95,6 +89,11 @@ static int innolux_panel_unprepare(struct drm_panel *panel)
-> >         if (!innolux->prepared)
-> >                 return 0;
-> >
-> > +       err = mipi_dsi_dcs_set_display_off(innolux->link);
-> > +       if (err < 0)
-> > +               DRM_DEV_ERROR(panel->dev, "failed to set display off: %d\n",
-> > +                             err);
-> > +
-> >         err = mipi_dsi_dcs_enter_sleep_mode(innolux->link);
-> >         if (err < 0) {
-> >                 DRM_DEV_ERROR(panel->dev, "failed to enter sleep mode: %d\n",
-> > --
-> > 2.18.1
-> >
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> Signed-off-by: Viktor Rosendahl <Viktor.Rosendahl@bmw.de>
+> ---
+>  kernel/trace/preemptirq_delay_test.c | 139 +++++++++++++++++++++++----
+>  1 file changed, 120 insertions(+), 19 deletions(-)
+> 
+> diff --git a/kernel/trace/preemptirq_delay_test.c b/kernel/trace/preemptirq_delay_test.c
+> index d8765c952fab..1fc3cdbdd293 100644
+> --- a/kernel/trace/preemptirq_delay_test.c
+> +++ b/kernel/trace/preemptirq_delay_test.c
+> @@ -3,6 +3,7 @@
+>   * Preempt / IRQ disable delay thread to test latency tracers
+>   *
+>   * Copyright (C) 2018 Joel Fernandes (Google) <joel@joelfernandes.org>
+> + * Copyright (C) 2018 BMW Car IT GmbH
+>   */
+>  
+>  #include <linux/trace_clock.h>
+> @@ -10,18 +11,23 @@
+>  #include <linux/interrupt.h>
+>  #include <linux/irq.h>
+>  #include <linux/kernel.h>
+> +#include <linux/kobject.h>
+>  #include <linux/kthread.h>
+>  #include <linux/module.h>
+>  #include <linux/printk.h>
+>  #include <linux/string.h>
+> +#include <linux/sysfs.h>
+>  
+>  static ulong delay = 100;
+> -static char test_mode[10] = "irq";
+> +static char test_mode[12] = "irq";
+> +static uint burst_size = 1;
+>  
+> -module_param_named(delay, delay, ulong, S_IRUGO);
+> -module_param_string(test_mode, test_mode, 10, S_IRUGO);
+> -MODULE_PARM_DESC(delay, "Period in microseconds (100 uS default)");
+> -MODULE_PARM_DESC(test_mode, "Mode of the test such as preempt or irq (default irq)");
+> +module_param_named(delay, delay, ulong, 0444);
+> +module_param_string(test_mode, test_mode, 12, 0444);
+> +module_param_named(burst_size, burst_size, uint, 0444);
+> +MODULE_PARM_DESC(delay, "Period in microseconds (100 us default)");
+> +MODULE_PARM_DESC(test_mode, "Mode of the test such as preempt, irq, or alternate (default irq)");
+> +MODULE_PARM_DESC(burst_size, "The size of a burst (default 1)");
 
--- 
-Sean Paul, Software Engineer, Google / Chromium OS
+Where are we bounds checking the burst_size here? It seems like a high
+burst_size can overflow your array of functions.
+
+>  
+>  static void busy_wait(ulong time)
+>  {
+> @@ -34,37 +40,132 @@ static void busy_wait(ulong time)
+>  	} while ((end - start) < (time * 1000));
+>  }
+>  
+> -static int preemptirq_delay_run(void *data)
+> +static __always_inline void irqoff_test(void)
+>  {
+>  	unsigned long flags;
+> +	local_irq_save(flags);
+> +	busy_wait(delay);
+> +	local_irq_restore(flags);
+> +}
+> +
+> +static __always_inline void preemptoff_test(void)
+> +{
+> +	preempt_disable();
+> +	busy_wait(delay);
+> +	preempt_enable();
+> +}
+>  
+> -	if (!strcmp(test_mode, "irq")) {
+> -		local_irq_save(flags);
+> -		busy_wait(delay);
+> -		local_irq_restore(flags);
+> -	} else if (!strcmp(test_mode, "preempt")) {
+> -		preempt_disable();
+> -		busy_wait(delay);
+> -		preempt_enable();
+> +static void execute_preemptirqtest(int idx)
+> +{
+> +	if (!strcmp(test_mode, "irq"))
+> +		irqoff_test();
+> +	else if (!strcmp(test_mode, "preempt"))
+> +		preemptoff_test();
+> +	else if (!strcmp(test_mode, "alternate")) {
+> +		if (idx % 2 == 0)
+> +			irqoff_test();
+> +		else
+> +			preemptoff_test();
+>  	}
+> +}
+> +
+> +#define DECLARE_TESTFN(POSTFIX)				\
+> +	static void preemptirqtest_##POSTFIX(int idx)	\
+> +	{						\
+> +		execute_preemptirqtest(idx);		\
+> +	}						\
+> +
+> +DECLARE_TESTFN(0)
+> +DECLARE_TESTFN(1)
+> +DECLARE_TESTFN(2)
+> +DECLARE_TESTFN(3)
+> +DECLARE_TESTFN(4)
+> +DECLARE_TESTFN(5)
+> +DECLARE_TESTFN(6)
+> +DECLARE_TESTFN(7)
+> +DECLARE_TESTFN(8)
+> +DECLARE_TESTFN(9)
+
+You really only need 2 functions here, since the odd and even suffixed
+functions are identical.
+
+> +static void (*testfuncs[])(int)  = {
+> +	preemptirqtest_0,
+> +	preemptirqtest_1,
+> +	preemptirqtest_2,
+> +	preemptirqtest_3,
+> +	preemptirqtest_4,
+> +	preemptirqtest_5,
+> +	preemptirqtest_6,
+> +	preemptirqtest_7,
+> +	preemptirqtest_8,
+> +	preemptirqtest_9,
+> +};
+
+And then just have an array of 2 functions. Or nuke the array.
+
+> +#define NR_TEST_FUNCS ARRAY_SIZE(testfuncs)
+> +
+> +static int preemptirq_delay_run(void *data)
+> +{
+> +
+> +	int i;
+> +
+> +	for (i = 0; i < burst_size; i++)
+> +		(testfuncs[i % NR_TEST_FUNCS])(i);
+>  	return 0;
+>  }
+>  
+> -static int __init preemptirq_delay_init(void)
+> +static struct task_struct *preemptirq_start_test(void)
+>  {
+>  	char task_name[50];
+> -	struct task_struct *test_task;
+>  
+>  	snprintf(task_name, sizeof(task_name), "%s_test", test_mode);
+> +	return kthread_run(preemptirq_delay_run, NULL, task_name);
+> +}
+> +
+> +
+> +static ssize_t trigger_store(struct kobject *kobj, struct kobj_attribute *attr,
+> +			 const char *buf, size_t count)
+> +{
+> +	preemptirq_start_test();
+> +	return count;
+> +}
+
+I honestly feel a sysfs trigger file is pointless. Why can't the module be
+reloaded? Note also that module parameters can be changed after the module
+has been loaded. Perhaps that can be used as a trigger? So if the test_mode
+is changed, then the test is re-run.
+
+However, if Steve prefers the sysfs trigger file, then I am Ok with that.
+
+thanks,
+
+ - Joel
+
