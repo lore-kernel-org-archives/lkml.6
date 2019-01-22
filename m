@@ -2,103 +2,93 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29D7AC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:38:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34B8AC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:38:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7EF42085A
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:38:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548175113;
-	bh=NJRRsQL4YAMngR4DyEWPqzBh5UFihZdcDXyHNuuA7iU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=2COEVHDRON64DZyk/8fGKuW1z909u5p8xz9LwJlobHdPwCR/Lg+dvycLa9eEFq1aE
-	 YgyK8BpJNjjInKEeqZdn2KLxde1QmmIoZNpFgU9XXwIWM3ZJmushFSSb6tBxheDP41
-	 EDimhC5Csw52Ut3GZw42490BM1VMQbIt1attmbH8=
+	by mail.kernel.org (Postfix) with ESMTP id 0C6122085A
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:38:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729433AbfAVQib (ORCPT
+        id S1729465AbfAVQi5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 11:38:31 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36290 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729092AbfAVQia (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 11:38:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=eyicJrquXGCCr5aMxHfGYET6nSKco2zO3PaNejCdxVA=; b=MaBnurPQ5K7UsFy+SSa+UIrMN
-        I2zqxW0K7SIfYPFITeuuANPacr3dqmF4nTWvJ3D9+mbVGTO1bXkZw8EmQKwhQqjSQ952gPAmKO50x
-        Xm9AADFS71R2J0JXEecuEFIH8P/iswcRBKMTAm343TMqlGDYAX1HjMNl1qqDd0D3j2S+E=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1glz4F-000713-9z; Tue, 22 Jan 2019 16:38:27 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id A02161127A85; Tue, 22 Jan 2019 16:38:26 +0000 (GMT)
-Date:   Tue, 22 Jan 2019 16:38:26 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH] regmap: no need to check return value of debugfs_create
- functions
-Message-ID: <20190122163826.GC7579@sirena.org.uk>
-References: <20190122152151.16139-7-gregkh@linuxfoundation.org>
- <20190122155606.GB7579@sirena.org.uk>
- <20190122160857.GD21349@kroah.com>
+        Tue, 22 Jan 2019 11:38:57 -0500
+Received: from mx2.suse.de ([195.135.220.15]:45778 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729092AbfAVQi4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 11:38:56 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5685FB081;
+        Tue, 22 Jan 2019 16:38:55 +0000 (UTC)
+Date:   Tue, 22 Jan 2019 10:38:52 -0600
+From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        Ignaz Forster <iforster@suse.de>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Fabian Vogt <fvogt@suse.de>, Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v2] ima: define ima_post_create_tmpfile() hook and add
+ missing call
+Message-ID: <20190122163852.nbo7z5hrizfsb344@merlin>
+References: <1545158873.4206.86.camel@linux.ibm.com>
+ <20190117213421.ggasuc263dpqh46c@merlin>
+ <1548072003.3782.24.camel@linux.ibm.com>
+ <CAOQ4uxjNhNFfFidjzi-8ywQPi54LdzT=LxwdSaX+H-ERS6Qwog@mail.gmail.com>
+ <1548171789.4038.6.camel@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="QTprm0S8XgL7H0Dt"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190122160857.GD21349@kroah.com>
-X-Cookie: Truckers welcome.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1548171789.4038.6.camel@linux.ibm.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 10:43 22/01, Mimi Zohar wrote:
+> On Mon, 2019-01-21 at 14:29 +0200, Amir Goldstein wrote:
+> > On Mon, Jan 21, 2019 at 2:00 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > >
+> > > On Thu, 2019-01-17 at 15:34 -0600, Goldwyn Rodrigues wrote:
+> > > > On 13:47 18/12, Mimi Zohar wrote:
+> > > > > If tmpfiles can be made persistent, then newly created tmpfiles need to
+> > > > > be treated like any other new files in policy.
+> > > > >
+> > > > > This patch indicates which newly created tmpfiles are in policy, causing
+> > > > > the file hash to be calculated on __fput().
+> > > >
+> > > > Discussed in overlayfs, this would be better if we use this on inode
+> > > > and called from vfs_tmpfile() instead of do_tmpfile(). This will cover
+> > > > the overlayfs case which uses tmpfiles while performing copy_up().
+> > > > The patch is attached.
+> > > >
+> > > > Here is the updated patch which works for my cases.
+> > > > However, it is the the failure case after setting the IMA flags
+> > > > I am concerned about, though I don't think that should be as harmful.
+> > >
+> > > Right.  The new IMA hook allocates memory for storing the flags, which
+> > > needs to be cleaned up on failure.  For this reason, the IMA call is
+> > > deferred until after the transition from locally freeing memory on
+> > > failure to relying on __fput().  In "do_last", the call to IMA is
+> > > after "opened"; and in the original version of this patch the call to
+> > > IMA is after finish_open().
+> > >
+> > 
+> > Not sure I understand the concern.
+> > The integrity context is associated with the inode and will be freed
+> > on destroy_inode() no matter which error path is taken.
+> > Am I missing something?
+> 
+> No, as long as destroy_inode() is called, it should be fine.
+> 
 
---QTprm0S8XgL7H0Dt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Excellent. I will resend the patch as v3.
 
-On Tue, Jan 22, 2019 at 05:08:57PM +0100, Greg Kroah-Hartman wrote:
-> On Tue, Jan 22, 2019 at 03:56:06PM +0000, Mark Brown wrote:
+Thanks!
 
-> > Given that all the rest of the function is doing is further debugfs
-> > operations and when it fails people trying to use the debugfs do welcome
-> > some diagnostics I'm not sure that's particularly helpful.
-
-> The only way it will fail is if we are out of memory.  And you are in a
-> bigger mess then, no one cares about debugfs calls, just make them and
-> move on, you should never care about the result of such a call.
-
-No, it also fails if there's already something with the same name in
-debugfs which can happen as as a result of configuration.  This gets
-confusing for users, they see the debugfs files they're expecting but
-the contents don't match up at all.
-
---QTprm0S8XgL7H0Dt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxHRwEACgkQJNaLcl1U
-h9AE0Af/eIiC1KFg/nn23wa/AZbzsLhvgg2Ro2bR4Zvnepalah5BJXad7VeETWFx
-M5ZGKB+RMVjPkyaLonbReDzR4rKLlZEv0WFa2vUDRN3gmrQ6k0yVRVJTJg83cfRO
-s01crhCsSOKjsjgB2M0bJQeJYzkzLe3PpJMCX3igx9vkwWJSgU3Gxb+JmUKiwpXi
-65+atLCmNRWhHXH32GlEBCwcSiwgMiCbWgHV2JkvyzK7715E5GtHClszwHrdQPN2
-qRkC0gOIT/gohKa82aQMUbrvPOH7Pk7KZpMyw1SQAY1ZUEs0DEytV205IMkDYhpW
-HVTza2lnNhB2AOIWvKq6eVJ6c8RC8w==
-=TIzo
------END PGP SIGNATURE-----
-
---QTprm0S8XgL7H0Dt--
+-- 
+Goldwyn
