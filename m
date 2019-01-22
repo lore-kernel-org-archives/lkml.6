@@ -2,124 +2,154 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24F97C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:43:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65962C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:44:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECD4620870
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:43:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548186239;
-	bh=ny44NMaG7VnW6FhpikVdpDqlUfJ1Au5HIN4jro8vDhE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=xlHWqJUq9MFHvIG77mG1CSIsPf4SoQAweHvNxW00YsmYj4zL6td8v26G78Xekqczh
-	 RfATF7y2tn7biKdnZO3tMrvlBygPshk6tFCJz83QNUYSZr80fSvPlNAjOjSAy3LKCR
-	 xekQwJYVQaHXgG+cHko88vVbfOBbnKreEeq/6TSE=
+	by mail.kernel.org (Postfix) with ESMTP id 37652217F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:44:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726157AbfAVTn5 (ORCPT
+        id S1726214AbfAVToy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 14:43:57 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:39510 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725924AbfAVTn4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 14:43:56 -0500
-Received: by mail-pg1-f194.google.com with SMTP id w6so11520260pgl.6;
-        Tue, 22 Jan 2019 11:43:56 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=x5FSLqLc3BtCDdLtY785HrZaNfGzbeY41bTDjhiWvyw=;
-        b=mG+QtpSJvFhtKCVgY9fwpij4HKuI4l9yTaXA9yjstStW7vBK8RbXSsuaJ2EcuYjdzv
-         srk6IelXHoDM+l0Z2SVjWeN1mDHBV38JwgZIyc/cmiov/NLFWxyVrmaJQQOvXHK96Vxc
-         GFdoxxYVLlkVqu3HhlWelVUu6C9U3a2G1//D7gNRSSQ8tSrN9Ha5i5LF8g7Q/a9d+SNV
-         mPqvBRFeBzbN5xu5nZPdNedG++VrzsrdsWg0rNzVQ26zCIp2U/iPwLZv6zcDOp+Qv/Vg
-         4sncz2Mx3Wwu/qZtjNC5uFH64ijmn9/x14nZ37lN2y0D+s1rmlxk6vGm8eDtRspin4eM
-         6gIw==
-X-Gm-Message-State: AJcUukfGnBbWBinCocmfJmA00MXzsDDA8pqlp9fWon8pyu8QHkq7SIHa
-        BmQEPLD11cFmzL7KcaH3GeY=
-X-Google-Smtp-Source: ALg8bN7jdAq7BtZsLfZ6Mh8Ei5UO1/YfP+qmndO41zV/8DxNCp8FBgGAIeHXemgD/DvhJypyghFj2w==
-X-Received: by 2002:a65:6215:: with SMTP id d21mr2071824pgv.289.1548186236009;
-        Tue, 22 Jan 2019 11:43:56 -0800 (PST)
-Received: from garbanzo.do-not-panic.com (c-73-71-40-85.hsd1.ca.comcast.net. [73.71.40.85])
-        by smtp.gmail.com with ESMTPSA id i62sm19526835pge.44.2019.01.22.11.43.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 22 Jan 2019 11:43:54 -0800 (PST)
-Received: by garbanzo.do-not-panic.com (sSMTP sendmail emulation); Tue, 22 Jan 2019 11:43:52 -0800
-Date:   Tue, 22 Jan 2019 11:43:52 -0800
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Jeffrin Jose T <jeffrin@rajagiritech.edu.in>
-Cc:     shuah@kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] selftests: kmod: worked on errors which breaks the
- overall execution of the test script
-Message-ID: <20190122194352.GA11489@garbanzo.do-not-panic.com>
-References: <20190117210258.7871-1-jeffrin@rajagiritech.edu.in>
+        Tue, 22 Jan 2019 14:44:54 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:48626 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725924AbfAVToy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 14:44:54 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5C6CE80462;
+        Tue, 22 Jan 2019 19:44:53 +0000 (UTC)
+Received: from krava (ovpn-204-73.brq.redhat.com [10.40.204.73])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 68F4065F72;
+        Tue, 22 Jan 2019 19:44:50 +0000 (UTC)
+Date:   Tue, 22 Jan 2019 20:44:49 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        Kernel Team <Kernel-team@fb.com>
+Subject: Re: [PATCH v11 perf, bpf-next 7/9] perf tools: synthesize
+ PERF_RECORD_* for loaded BPF programs
+Message-ID: <20190122194449.GI27625@krava>
+References: <20190117161521.1341602-8-songliubraving@fb.com>
+ <20190118144655.GM5823@kernel.org>
+ <20190122141320.GF14973@kernel.org>
+ <20190122143117.GG14973@kernel.org>
+ <20190122145119.GF27625@krava>
+ <20190122145805.GI14973@kernel.org>
+ <20190122152145.GG27625@krava>
+ <101BF88D-2DA4-4B54-A710-D0641C427136@fb.com>
+ <20190122191555.GH27625@krava>
+ <CF447261-1B9C-423B-9508-60B32EAC4A5C@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190117210258.7871-1-jeffrin@rajagiritech.edu.in>
+In-Reply-To: <CF447261-1B9C-423B-9508-60B32EAC4A5C@fb.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 22 Jan 2019 19:44:53 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 02:32:58AM +0530, Jeffrin Jose T wrote:
-> The kmod.sh script breaks
-
-First thanks for the patch! But now let's get to it: on what
-distribution and version of bash does this break? The commit log should
-refer to this and it would help me confirm the issue.
-
-> because an array is passed
-
-Which is the array?
-
-> as input
-> instead of a single element input.This patch takes elements
-> one at a time and passed as input to the condition statement
-> which in turn fixes the error.There was an issue which had
-> the need for passing a single digit to the condition statement
-> which is fixed using regular expression.
+On Tue, Jan 22, 2019 at 07:24:43PM +0000, Song Liu wrote:
 > 
-> Signed-off-by: Jeffrin Jose T <jeffrin@rajagiritech.edu.in>
-> ---
->  tools/testing/selftests/kmod/kmod.sh | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
 > 
-> diff --git a/tools/testing/selftests/kmod/kmod.sh b/tools/testing/selftests/kmod/kmod.sh
-> index 0a76314b4414..49b273c3646e 100755
-> --- a/tools/testing/selftests/kmod/kmod.sh
-> +++ b/tools/testing/selftests/kmod/kmod.sh
-> @@ -526,9 +526,12 @@ function run_all_tests()
->  		TEST_ID=${i%:*:*}
->  		ENABLED=$(get_test_enabled $TEST_ID)
->  		TEST_COUNT=$(get_test_count $TEST_ID)
-> -		if [[ $ENABLED -eq "1" ]]; then
-> -			test_case $TEST_ID $TEST_COUNT
-> -		fi
+> > On Jan 22, 2019, at 11:15 AM, Jiri Olsa <jolsa@redhat.com> wrote:
+> > 
+> > On Tue, Jan 22, 2019 at 06:38:56PM +0000, Song Liu wrote:
+> > 
+> > SNIP
+> > 
+> >>>> in perf_session__process_event, this happens right when processing
+> >>>> buildids in 'perf record', and also in 'perf report', so that is
+> >>>> something badly synthesized that hits perf.data for PERF_RECORD_KSYMBOL.
+> >>> 
+> >>> it's reproducible with simple:
+> >>> perf record -e cycles,instructions ls
+> >>> 
+> >>> as you said on irc, it's the machine->id_hdr_size size missing
+> >>> there's one more glitch, attached patch fixes that for me
+> >>> you can't use sizeof(struct ksymbol_event), because it includes
+> >>> the name as well.. which screws the size
+> >>> 
+> >>> but I don't know that code that much.. might be still something
+> >>> missing
+> >>> 
+> >>> jirka
+> >> 
+> >> Hi Arnaldo and Jiri,
+> >> 
+> >> Thanks for catching and fixing the bug. 
+> >> 
+> >> I guess the following is OK?
+> >> 
+> >>        *bpf_event = (struct bpf_event){
+> >>                .header = {
+> >>                        .type = PERF_RECORD_BPF_EVENT,
+> >>                        .size = sizeof(struct bpf_event),
+> >>                },
+> >>                .type = PERF_BPF_EVENT_PROG_LOAD,
+> >>                .flags = 0,
+> >>                .id = info.id,
+> >>        };
+> >> 
+> >> as struct bpf_event doesn't have variable length name:
+> >> 
+> >>        struct bpf_event {
+> >>                struct perf_event_header header;
+> >>                u16 type;
+> >>                u16 flags;
+> >>                u32 id;
+> >> 
+> >>                /* for bpf_prog types */
+> >>                u8 tag[BPF_TAG_SIZE];  // prog tag
+> >>        };
+> >> 
+> >> Or we need similar fix? 
+> > 
+> > yep, looks good.. also don't forget to add the 'machine->id_hdr_size'
+> > 
+> > jirka
+> 
+> So we still need something like?
+> 
+> diff --git i/tools/perf/util/bpf-event.c w/tools/perf/util/bpf-event.c
+> index 01e1dc1bb7fb..d7bf45485820 100644
+> --- i/tools/perf/util/bpf-event.c
+> +++ w/tools/perf/util/bpf-event.c
+> @@ -4,6 +4,7 @@
+>  #include <bpf/bpf.h>
+>  #include <bpf/btf.h>
+>  #include <linux/btf.h>
+> +#include "machine.h"
+>  #include "bpf-event.h"
+>  #include "debug.h"
+>  #include "symbol.h"
+> @@ -187,7 +188,7 @@ static int perf_event__synthesize_one_bpf_prog(struct perf_tool *tool,
+>                 *bpf_event = (struct bpf_event){
+>                         .header = {
+>                                 .type = PERF_RECORD_BPF_EVENT,
+> -                               .size = sizeof(struct bpf_event),
+> +                               .size = sizeof(struct bpf_event) + machine->id_hdr_size,
+>                         },
+>                         .type = PERF_BPF_EVENT_PROG_LOAD,
+>                         .flags = 0,
+> 
+> Would you send the official patch? Or would you prefer me sending it?
 
-get_test_enabled() is supposed to do what you do open-handed here.
-So the better question is why are you getting an array returned
-for your version of bash.
+plese send it, thanks
 
-> +		for j in $ENABLED ; do
-> +		         CHECK=${j#*:*:}
-> +			 if [[ $CHECK -eq "1" ]]; then
-> +			     test_case $TEST_ID $TEST_COUNT
-> +			 fi
-> +		done
->  	done
->  }
->  
-> -- 
-> 2.20.1
-
-  Luis
+jirka
