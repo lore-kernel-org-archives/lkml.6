@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5298C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:41:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ACCDC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:41:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65D7321726
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:41:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3EE3E21726
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:41:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727360AbfAVXlV (ORCPT
+        id S1727390AbfAVXlX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 18:41:21 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:60038 "EHLO huawei.com"
+        Tue, 22 Jan 2019 18:41:23 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:60036 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726329AbfAVXkK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726309AbfAVXkK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 22 Jan 2019 18:40:10 -0500
 Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 08603E8678FC08227F38;
+        by Forcepoint Email with ESMTP id 0113586668EED81D1B7B;
         Wed, 23 Jan 2019 07:40:08 +0800 (CST)
 Received: from SZA150611058.china.huawei.com (10.45.143.16) by
  DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
- 14.3.408.0; Wed, 23 Jan 2019 07:40:00 +0800
+ 14.3.408.0; Wed, 23 Jan 2019 07:39:59 +0800
 From:   Huazhong Tan <tanhuazhong@huawei.com>
 To:     <davem@davemloft.net>, <eric.dumazet@gmail.com>
 CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <huangdaode@hisilicon.com>, <yisen.zhuang@huawei.com>,
         <salil.mehta@huawei.com>, <linuxarm@huawei.com>,
-        Huazhong Tan <tanhuazhong@huawei.com>,
-        Peng Li <lipeng321@huawei.com>
-Subject: [PATCH V2 net-next 06/12] net: hns3: fix bug of ethtool_ops.get_channels for VF
-Date:   Wed, 23 Jan 2019 07:39:32 +0800
-Message-ID: <20190122233938.7188-7-tanhuazhong@huawei.com>
+        Yunsheng Lin <linyunsheng@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
+        Huazhong Tan <tanhuazhong@huawei.com>
+Subject: [PATCH V2 net-next 05/12] net: hns3: fix for shaper not setting when TC num changes
+Date:   Wed, 23 Jan 2019 07:39:31 +0800
+Message-ID: <20190122233938.7188-6-tanhuazhong@huawei.com>
 X-Mailer: git-send-email 2.20.1.windows.1
 In-Reply-To: <20190122233938.7188-1-tanhuazhong@huawei.com>
 References: <20190122233938.7188-1-tanhuazhong@huawei.com>
@@ -48,43 +49,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current code returns the number of all queues that can be used and
-the number of queues that have been allocated, which is incorrect.
-What should be returned is the number of queues allocated for each enabled
-TC and the number of queues that can be allocated.
+From: Yunsheng Lin <linyunsheng@huawei.com>
 
-This patch fixes it.
+Shaper setting does not change currently, when TC num changes,
+which may cause shaper parameter not setting problem.
 
-Fixes: 849e46077689 ("net: hns3: add ethtool_ops.get_channels support for VF")
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+This patch fixes it by setting the shaper parameter when TC num
+changes.
+
+Fixes: cacde272dd00 ("net: hns3: Add hclge_dcb module for the support of DCB feature")
+Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c | 6 +-----
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c  | 6 +++---
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h  | 3 +--
+ 3 files changed, 5 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-index 989f08377d58..24b54083b5f9 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-@@ -2466,7 +2466,8 @@ static u32 hclgevf_get_max_channels(struct hclgevf_dev *hdev)
- 	struct hnae3_handle *nic = &hdev->nic;
- 	struct hnae3_knic_private_info *kinfo = &nic->kinfo;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
+index 4ec0b9cd15ae..5f7ac63707b8 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
+@@ -162,11 +162,7 @@ static int hclge_map_update(struct hnae3_handle *h)
+ 	struct hclge_dev *hdev = vport->back;
+ 	int ret;
  
--	return min_t(u32, hdev->rss_size_max * kinfo->num_tc, hdev->num_tqps);
-+	return min_t(u32, hdev->rss_size_max,
-+		     hdev->num_tqps / kinfo->num_tc);
+-	ret = hclge_tm_map_cfg(hdev);
+-	if (ret)
+-		return ret;
+-
+-	ret = hclge_tm_schd_mode_hw(hdev);
++	ret = hclge_tm_schd_setup_hw(hdev);
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
+index fb8596a3e5e4..d057c9f03175 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
+@@ -1005,7 +1005,7 @@ static int hclge_tm_pri_dwrr_cfg(struct hclge_dev *hdev)
+ 	return 0;
  }
  
- /**
-@@ -2487,7 +2488,7 @@ static void hclgevf_get_channels(struct hnae3_handle *handle,
- 	ch->max_combined = hclgevf_get_max_channels(hdev);
- 	ch->other_count = 0;
- 	ch->max_other = 0;
--	ch->combined_count = hdev->num_tqps;
-+	ch->combined_count = handle->kinfo.rss_size;
+-int hclge_tm_map_cfg(struct hclge_dev *hdev)
++static int hclge_tm_map_cfg(struct hclge_dev *hdev)
+ {
+ 	int ret;
+ 
+@@ -1120,7 +1120,7 @@ static int hclge_tm_lvl34_schd_mode_cfg(struct hclge_dev *hdev)
+ 	return 0;
  }
  
- static void hclgevf_get_tqps_and_rss_info(struct hnae3_handle *handle,
+-int hclge_tm_schd_mode_hw(struct hclge_dev *hdev)
++static int hclge_tm_schd_mode_hw(struct hclge_dev *hdev)
+ {
+ 	int ret;
+ 
+@@ -1131,7 +1131,7 @@ int hclge_tm_schd_mode_hw(struct hclge_dev *hdev)
+ 	return hclge_tm_lvl34_schd_mode_cfg(hdev);
+ }
+ 
+-static int hclge_tm_schd_setup_hw(struct hclge_dev *hdev)
++int hclge_tm_schd_setup_hw(struct hclge_dev *hdev)
+ {
+ 	int ret;
+ 
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
+index 898163c4d400..ef3f93b70c22 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
+@@ -144,11 +144,10 @@ struct hclge_port_shapping_cmd {
+ int hclge_tm_schd_init(struct hclge_dev *hdev);
+ int hclge_tm_vport_map_update(struct hclge_dev *hdev);
+ int hclge_pause_setup_hw(struct hclge_dev *hdev);
+-int hclge_tm_schd_mode_hw(struct hclge_dev *hdev);
++int hclge_tm_schd_setup_hw(struct hclge_dev *hdev);
+ void hclge_tm_prio_tc_info_update(struct hclge_dev *hdev, u8 *prio_tc);
+ void hclge_tm_schd_info_update(struct hclge_dev *hdev, u8 num_tc);
+ int hclge_tm_dwrr_cfg(struct hclge_dev *hdev);
+-int hclge_tm_map_cfg(struct hclge_dev *hdev);
+ int hclge_tm_init_hw(struct hclge_dev *hdev);
+ int hclge_mac_pause_en_cfg(struct hclge_dev *hdev, bool tx, bool rx);
+ int hclge_pause_addr_cfg(struct hclge_dev *hdev, const u8 *mac_addr);
 -- 
 2.20.1
 
