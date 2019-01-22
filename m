@@ -2,127 +2,129 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F58BC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:01:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47F8EC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:06:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C30E217D8
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:01:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12A9920823
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:06:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Wae96GsN"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="c7X/3k9j"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729062AbfAVQBo (ORCPT
+        id S1728952AbfAVQGW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 11:01:44 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:39915 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728987AbfAVQBn (ORCPT
+        Tue, 22 Jan 2019 11:06:22 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:37800 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728580AbfAVQGV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 11:01:43 -0500
-Received: by mail-it1-f194.google.com with SMTP id a6so20758778itl.4
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 08:01:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0nftD0XO+/j6/Dw0JUCv51heda6BPvUcWvn4up1XrIw=;
-        b=Wae96GsNXWSNdBQwr5d01k4uRI9vOQQYvRdID9cgNTNnvxA1UFyw/MAIlwde3chYck
-         1bqkK6YgnSqkHfxUMVGTqBknLL9i1OvvDwJ5aQ9aUd58tIFzkl4ePyVHuPOJD7q5a2yK
-         E650GE/j5wR8SxmrxiXjV+Jsvu9cD7T2BztkI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0nftD0XO+/j6/Dw0JUCv51heda6BPvUcWvn4up1XrIw=;
-        b=bXAVX17Z8F1bKR/WArjXaVAeJeBCej7FfGZdNe5InVxSNud6ncdrSlEpwDQY+G8WnW
-         CvBQftZQrVIXV0vPn6+oXp/LlhaD9DigRLNv5t0YxGV/qWHX/97Er8++Cr+YNYjtTY9l
-         ds7dU6RVhpkZklUy7/8Y9o+JZTPJTwACU7DCLKAA/Gz0utdRjqa1+Grx/XBVFdCXF4R9
-         StUq0Zze0y3LO+h4SrKObhuqDWxEZNvAcjiB/nUlq2WPqNpWRd0q+2C00zkgmHK2jOy3
-         fVLzKx7MCQ8gf+8nW22K1vSQnXebp6JPsQBp4CoHDZ8M6zu/xmgl9d7TS3Ccfl74BVor
-         /wTw==
-X-Gm-Message-State: AJcUukf34IQpvpRlIXsAndbJ8X9aUWE3QEp0ygOJNS3RnqNvxBofmjn1
-        S8OQuKT0v3yJga9ksdFQx/0fGA0J9LzPFfB7H39bKg==
-X-Google-Smtp-Source: ALg8bN7SOUcTeS+MGOuBrxYQlT5ksIRyDn73gWgW/Kwf2uiOMPyEDGlBv4zMMoD4Mlt8qfrMGUrmMs53Jky/HGwXAIw=
-X-Received: by 2002:a24:a20e:: with SMTP id j14mr2517538itf.14.1548172902201;
- Tue, 22 Jan 2019 08:01:42 -0800 (PST)
+        Tue, 22 Jan 2019 11:06:21 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0MG68ra063504;
+        Tue, 22 Jan 2019 10:06:08 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1548173168;
+        bh=nFzfox6An/m9F8EVq7d4aic6Y/jnq7Kdkyz3QzsmXwA=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=c7X/3k9jH+JMTs9H6NUn9P9LZKkbyL1ZTnx2yunOgqVGdfyM96HJJDsiqGwlmZsBR
+         bGe3PxB6gsBhwDhlzV4dpnr3Hnb5454d042iW9Wu0s9X9Tjg8cWa5ZzMKuMaIv5xCO
+         /qX2Yy5bCPN1oy/XDODw5j2p0UVFBVuX4cVEHCcg=
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0MG68CN088669
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 22 Jan 2019 10:06:08 -0600
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 22
+ Jan 2019 10:06:08 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Tue, 22 Jan 2019 10:06:08 -0600
+Received: from [172.22.102.164] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0MG67Cn027553;
+        Tue, 22 Jan 2019 10:06:07 -0600
+Subject: Re: [PATCH 3/4] dma-buf: add support for mapping with dma mapping
+ attributes
+To:     Liam Mark <lmark@codeaurora.org>,
+        Christoph Hellwig <hch@infradead.org>
+CC:     Laura Abbott <labbott@redhat.com>, <sumit.semwal@linaro.org>,
+        <arve@android.com>, <tkjos@android.com>, <maco@android.com>,
+        <joel@joelfernandes.org>, <christian@brauner.io>,
+        <devel@driverdev.osuosl.org>, <dri-devel@lists.freedesktop.org>,
+        <linaro-mm-sig@lists.linaro.org>, <linux-kernel@vger.kernel.org>,
+        <john.stultz@linaro.org>
+References: <1547836667-13695-1-git-send-email-lmark@codeaurora.org>
+ <1547836667-13695-4-git-send-email-lmark@codeaurora.org>
+ <20190119102527.GA17723@infradead.org>
+ <7ae73c39-9049-bcf6-775f-b0817ba0ec5f@redhat.com>
+ <20190121083046.GD12420@infradead.org>
+ <alpine.DEB.2.10.1901211142560.9631@lmark-linux.qualcomm.com>
+ <20190121212947.GA28620@infradead.org>
+ <alpine.DEB.2.10.1901211357140.11004@lmark-linux.qualcomm.com>
+From:   "Andrew F. Davis" <afd@ti.com>
+Message-ID: <8d87ffa0-0710-fc82-ef87-50843fe3a4ee@ti.com>
+Date:   Tue, 22 Jan 2019 10:06:07 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <1548167070-421-1-git-send-email-vincent.guittot@linaro.org>
- <1548167070-421-2-git-send-email-vincent.guittot@linaro.org> <CAJZ5v0gxYvDQZVrkQZ-eQgoQDhwRYR1x+SC_q7uxxbko0R03=w@mail.gmail.com>
-In-Reply-To: <CAJZ5v0gxYvDQZVrkQZ-eQgoQDhwRYR1x+SC_q7uxxbko0R03=w@mail.gmail.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Tue, 22 Jan 2019 17:01:31 +0100
-Message-ID: <CAKfTPtBfbUpnGOWJsDp06PeQSyOBreX31=3iRvkR1sdFOv29Mg@mail.gmail.com>
-Subject: Re: [PATCH v6 1/2] PM-runtime: update accounting_timestamp only when enable
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <alpine.DEB.2.10.1901211357140.11004@lmark-linux.qualcomm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 22 Jan 2019 at 16:14, Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> On Tue, Jan 22, 2019 at 3:24 PM Vincent Guittot
-> <vincent.guittot@linaro.org> wrote:
-> >
-> > Initializing accounting_timestamp to something different from 0 during
-> > pm_runtime_init() doesn't make sense and put useless ordering constraint between
-> > timekeeping_init() and pm_runtime_init().
-> > PM runtime should start accounting time only when it is enable and discard
-> > the period when disabled.
-> > Set accounting_timestamp to now when enabling PM runtime.
-> >
-> > Suggested-by: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> > ---
-> >  drivers/base/power/runtime.c | 6 +++++-
-> >  1 file changed, 5 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
-> > index fb5e2b6..7df1d05 100644
-> > --- a/drivers/base/power/runtime.c
-> > +++ b/drivers/base/power/runtime.c
-> > @@ -1306,6 +1306,10 @@ void pm_runtime_enable(struct device *dev)
-> >
-> >         spin_lock_irqsave(&dev->power.lock, flags);
-> >
-> > +       /* About to enable runtime pm, set accounting_timestamp to now */
-> > +       if (dev->power.disable_depth == 1)
-> > +               dev->power.accounting_timestamp = jiffies;
->
-> I would do this in the dev->power.disable_depth > 0 branch below.
-> Just check if disable_depth is zero after decrementing it and update
-> accounting_timestamp if so.
+On 1/21/19 4:12 PM, Liam Mark wrote:
+> On Mon, 21 Jan 2019, Christoph Hellwig wrote:
+> 
+>> On Mon, Jan 21, 2019 at 11:44:10AM -0800, Liam Mark wrote:
+>>> The main use case is for allowing clients to pass in 
+>>> DMA_ATTR_SKIP_CPU_SYNC in order to skip the default cache maintenance 
+>>> which happens in dma_buf_map_attachment and dma_buf_unmap_attachment. In 
+>>> ION the buffers aren't usually accessed from the CPU so this allows 
+>>> clients to often avoid doing unnecessary cache maintenance.
+>>
+>> This can't work.  The cpu can still easily speculate into this area.
+> 
+> Can you provide more detail on your concern here.
+> The use case I am thinking about here is a cached buffer which is accessed 
+> by a non IO-coherent device (quite a common use case for ION).
+> 
+> Guessing on your concern:
+> The speculative access can be an issue if you are going to access the 
+> buffer from the CPU after the device has written to it, however if you 
+> know you aren't going to do any CPU access before the buffer is again 
+> returned to the device then I don't think the speculative access is a 
+> concern.
+> 
+>> Moreover in general these operations should be cheap if the addresses
+>> aren't cached.
+>>
+> 
+> I am thinking of use cases with cached buffers here, so CMO isn't cheap.
+> 
 
-My goal was to prevent nested "if" which is sometime difficult to read.
-I'm going to change that and send a new version
+These buffers are cacheable, not cached, if you haven't written anything
+the data wont actually be in cache. And in the case of speculative cache
+filling the lines are marked clean. In either case the only cost is the
+little 7 instruction loop calling the clean/invalidate instruction (dc
+civac for ARMv8) for the cache-lines. Unless that is the cost you are
+trying to avoid?
 
-Vincent
+In that case if you are mapping and unmapping so much that the little
+CMO here is hurting performance then I would argue your usage is broken
+and needs to be re-worked a bit.
 
->
-> > +
-> >         if (dev->power.disable_depth > 0)
-> >                 dev->power.disable_depth--;
-> >         else
-> > @@ -1506,7 +1510,7 @@ void pm_runtime_init(struct device *dev)
-> >         dev->power.request_pending = false;
-> >         dev->power.request = RPM_REQ_NONE;
-> >         dev->power.deferred_resume = false;
-> > -       dev->power.accounting_timestamp = jiffies;
-> > +       dev->power.accounting_timestamp = 0;
-> >         INIT_WORK(&dev->power.work, pm_runtime_work);
-> >
-> >         dev->power.timer_expires = 0;
-> > --
-> > 2.7.4
-> >
+Andrew
+
+> 
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
