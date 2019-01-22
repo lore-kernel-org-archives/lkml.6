@@ -2,112 +2,222 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A879EC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:58:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AECB1C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:59:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C1D320854
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:58:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7888C20854
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:59:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="Gyl0oqkS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727520AbfAVI6f (ORCPT
+        id S1727532AbfAVI74 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 03:58:35 -0500
-Received: from mailgw02.mediatek.com ([1.203.163.81]:10711 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726953AbfAVI6f (ORCPT
+        Tue, 22 Jan 2019 03:59:56 -0500
+Received: from mail.kmu-office.ch ([178.209.48.109]:53718 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726953AbfAVI7z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 03:58:35 -0500
-X-UUID: f5c7b819a6cb43a4bd0230c9d2574c0a-20190122
-X-UUID: f5c7b819a6cb43a4bd0230c9d2574c0a-20190122
-Received: from mtkcas34.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
-        (envelope-from <jitao.shi@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1435875539; Tue, 22 Jan 2019 16:58:25 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS33N2.mediatek.inc
- (172.27.4.76) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 22 Jan
- 2019 16:58:23 +0800
-Received: from mszsdclx1018.gcn.mediatek.inc (10.16.6.18) by
- MTKCAS32.mediatek.inc (172.27.4.170) with Microsoft SMTP Server id
- 15.0.1395.4 via Frontend Transport; Tue, 22 Jan 2019 16:58:22 +0800
-From:   Jitao Shi <jitao.shi@mediatek.com>
-To:     Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>, <linux-pwm@vger.kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC:     Jitao Shi <jitao.shi@mediatek.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Ajay Kumar <ajaykumar.rs@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Rahul Sharma <rahul.sharma@samsung.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Vincent Palatin <vpalatin@chromium.org>,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Russell King <rmk+kernel@arm.linux.org.uk>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
-        <cawa.cheng@mediatek.com>, <bibby.hsieh@mediatek.com>,
-        <ck.hu@mediatek.com>, <stonea168@163.com>
-Subject: [PATCH] pwm: Add MediaTek MT8183 display PWM driver support
-Date:   Tue, 22 Jan 2019 16:58:18 +0800
-Message-ID: <20190122085818.76051-1-jitao.shi@mediatek.com>
-X-Mailer: git-send-email 2.20.1
+        Tue, 22 Jan 2019 03:59:55 -0500
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 65AFE5C1869;
+        Tue, 22 Jan 2019 09:59:52 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1548147592;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=34pKV0yV+V0SIokoQwQR8ivL4IXCi+WSHju/feFhZrA=;
+        b=Gyl0oqkSEjjq1B6MJpa5CuCjmGB5RPr+eLz42q8smIbpo4WD36JZHjgayX1m9DSKva/4eN
+        jobvgw7VDNNchrWwMQBEia0QlovN+3iFcwavGNokfQFITx8FoyKncSPaGba5bwD/UkkrCp
+        pw6HK1ygUtoDSOe/OELozVT99Zq1Vfo=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-MTK:  N
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 22 Jan 2019 09:59:49 +0100
+From:   Stefan Agner <stefan@agner.ch>
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     will.deacon@arm.com, shawnguo@kernel.org, l.stach@pengutronix.de,
+        kernel@pengutronix.de, fabio.estevam@nxp.com, linux-imx@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drivers/perf: handle multiple CPUs with single interrupts
+In-Reply-To: <20190121172325.GD47506@lakrids.cambridge.arm.com>
+References: <20190121144111.22716-1-stefan@agner.ch>
+ <20190121172325.GD47506@lakrids.cambridge.arm.com>
+Message-ID: <730dcd70a60efc0756570153b6ea84d2@agner.ch>
+X-Sender: stefan@agner.ch
+User-Agent: Roundcube Webmail/1.3.7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the mtk_pwm_data struction to define different registers
-and add MT8183 specific register operations, such as MT8183
-doesn't have commit register, needs to disable double buffer
-before writing register, and needs to select commit mode
-and use PWM_PERIOD/PWM_HIGH_WIDTH.
+On 21.01.2019 18:23, Mark Rutland wrote:
+> Hi Stefan,
+> 
+> On Mon, Jan 21, 2019 at 03:41:11PM +0100, Stefan Agner wrote:
+>> Currently, if only a single interrupt is available, the code assigns
+>> this single interrupt to the first CPU. All other CPUs are left
+>> unsupported. This allows to use perf events only on processes using
+>> the first CPU. This is not obvious to the user.
+>>
+>> Instead, disable interrupts but support all CPUs. This allows to use
+>> the PMU on all CPUs for all events other than sampling events which do
+>> require interrupt support.
+> 
+> Even for non-sampling events we use the overflow interrupt to ensure
+> that we don't lose count across overflows, and without that interrupt,
+> we cannot guarantee that the results are accurate.
+> 
+> For example:
+> 
+> 	Program counter to 0
+> 	Start program
+> 	< counter overflows, no interrupt >
+> 	< counter overflows, no interrupt >
+> 	Stop program
+> 	Counter reads as 5
+> 
+> 
+> ... which we cannot distinguish from:
+> 
+> 	Program counter to 0
+> 	Start program
+> 	< counter overflows, no interrupt >
+> 	< counter overflows, no interrupt >
+> 	< counter overflows, no interrupt >
+> 	< counter overflows, no interrupt >
+> 	< counter overflows, no interrupt >
+> 	< counter overflows, no interrupt >
+> 	Stop program
+> 	Counter reads as 5
+> 
+> ... and thus cannot provide any reasonable confidence in results.
 
-Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
----
- drivers/pwm/pwm-mtk-disp.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Oh ok I see, this is not what we want at all!
 
-diff --git a/drivers/pwm/pwm-mtk-disp.c b/drivers/pwm/pwm-mtk-disp.c
-index 893940d45f0d..15803c71fe80 100644
---- a/drivers/pwm/pwm-mtk-disp.c
-+++ b/drivers/pwm/pwm-mtk-disp.c
-@@ -277,10 +277,21 @@ static const struct mtk_pwm_data mt8173_pwm_data = {
- 	.commit_mask = 0x1,
- };
- 
-+static const struct mtk_pwm_data mt8183_pwm_data = {
-+	.enable_mask = BIT(0),
-+	.con0 = 0x18,
-+	.con0_sel = 0x0,
-+	.con1 = 0x1c,
-+	.has_commit = false,
-+	.bls_debug = 0x80,
-+	.bls_debug_mask = 0x3,
-+};
-+
- static const struct of_device_id mtk_disp_pwm_of_match[] = {
- 	{ .compatible = "mediatek,mt2701-disp-pwm", .data = &mt2701_pwm_data},
- 	{ .compatible = "mediatek,mt6595-disp-pwm", .data = &mt8173_pwm_data},
- 	{ .compatible = "mediatek,mt8173-disp-pwm", .data = &mt8173_pwm_data},
-+	{ .compatible = "mediatek,mt8183-disp-pwm", .data = &mt8183_pwm_data},
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, mtk_disp_pwm_of_match);
--- 
-2.20.1
+Currently we register that one IRQ for CPU0. So what happens today is:
 
+ 	Program counter to 0
+ 	Start program
+        < program scheduled on CPU0 >
+ 	< counter overflows, interrupt >
+        < program scheduled on CPU1 >
+ 	< counter overflows, no interrupt >
+ 	< counter overflows, no interrupt >
+ 	Stop program
+ 	Counter reads as 5
+
+Which is off too...
+
+I could also reproduce this by manually moving the process between
+CPU0/1...
+
+We probably should not probe the driver at all then? It seems rather
+unwise to provide users PMU data which might be plain wrong.
+
+> 
+> In theory, we could use a hrtimer to periodically refresh the events to
+> prevent this, but this would need to be set at some very high frequency
+> to account for the fastest potential counter, and would significantly
+> degrade performance.
+> 
+> I don't think that's going to be reliable, and given that, I don't think
+> that we can support muxed IRQs in this way.
+
+Is it possible to get the overflow interrupts as well as read the PMU
+counters for another CPU?
+
+If not, I assume the interrupt bounce mechanism from ux500 is the only
+way?
+
+--
+Stefan
+
+> 
+> Thanks,
+> Mark.
+> 
+>>
+>> Signed-off-by: Stefan Agner <stefan@agner.ch>
+>> ---
+>> This has been observed and tested on a i.MX 6DualLite, but is probably
+>> valid for i.MX 6Quad as well.
+>>
+>> It seems that ux500 once had support for single IRQ on a SMP system,
+>> however this got removed with:
+>> Commit 2b05f6ae1ee5 ("ARM: ux500: remove PMU IRQ bouncer")
+>>
+>> I noticed that with this patch I get an error when trying to use perf stat:
+>>   # perf top
+>>   Error:
+>>   cycles: PMU Hardware doesn't support sampling/overflow-interrupts. Try 'perf stat'
+>>
+>> Without this patch perf top seems to work, but it seems not to use any
+>> sampling events (?):
+>>   # perf top
+>> PerfTop:    7215 irqs/sec  kernel:100.0%  exact:  0.0% [4000Hz cpu-clock:pppH], (all, 2 CPUs)
+>> ....
+>>
+>> Also starting perf top and explicitly selecting cpu-clock seems to work
+>> and show the same data as before this change.
+>>   # perf top -e cpu-clock:pppH
+>> PerfTop:    7214 irqs/sec  kernel:100.0%  exact:  0.0% [4000Hz cpu-clock:pppH], (all, 2 CPUs)
+>>
+>> It seems that perf top falls back to cpu-clock in the old case, but not
+>> once sampling events are not supported...
+>>
+>> --
+>> Stefan
+>>
+>>
+>>  drivers/perf/arm_pmu_platform.c | 19 +++++++++++--------
+>>  1 file changed, 11 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/perf/arm_pmu_platform.c b/drivers/perf/arm_pmu_platform.c
+>> index 933bd8410fc2..80b991417b6e 100644
+>> --- a/drivers/perf/arm_pmu_platform.c
+>> +++ b/drivers/perf/arm_pmu_platform.c
+>> @@ -105,23 +105,26 @@ static int pmu_parse_irqs(struct arm_pmu *pmu)
+>>  		return num_irqs;
+>>  	}
+>>
+>> +	if (num_irqs == 1) {
+>> +		int irq = platform_get_irq(pdev, 0);
+>> +		if (irq && irq_is_percpu_devid(irq))
+>> +			return pmu_parse_percpu_irq(pmu, irq);
+>> +	}
+>> +
+>>  	/*
+>>  	 * In this case we have no idea which CPUs are covered by the PMU.
+>>  	 * To match our prior behaviour, we assume all CPUs in this case.
+>> +	 * Multiple CPUs with a single PMU irq are currently not handled.
+>> +	 * Rather than supporting only the first CPU, support all CPUs but
+>> +	 * without interrupt capability.
+>>  	 */
+>> -	if (num_irqs == 0) {
+>> -		pr_warn("no irqs for PMU, sampling events not supported\n");
+>> +	if (num_irqs == 0 || (nr_cpu_ids > 1 && num_irqs == 1)) {
+>> +		pr_info("No per CPU irqs for PMU, sampling events not supported\n");
+>>  		pmu->pmu.capabilities |= PERF_PMU_CAP_NO_INTERRUPT;
+>>  		cpumask_setall(&pmu->supported_cpus);
+>>  		return 0;
+>>  	}
+>>
+>> -	if (num_irqs == 1) {
+>> -		int irq = platform_get_irq(pdev, 0);
+>> -		if (irq && irq_is_percpu_devid(irq))
+>> -			return pmu_parse_percpu_irq(pmu, irq);
+>> -	}
+>> -
+>>  	if (nr_cpu_ids != 1 && !pmu_has_irq_affinity(pdev->dev.of_node)) {
+>>  		pr_warn("no interrupt-affinity property for %pOF, guessing.\n",
+>>  			pdev->dev.of_node);
+>> --
+>> 2.20.1
+>>
