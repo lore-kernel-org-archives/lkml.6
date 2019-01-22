@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A619EC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:11:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36B4EC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:12:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A17C21019
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:11:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0AE7721019
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:12:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="elnxxuCb"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iYX1E+Qk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726823AbfAVSL4 (ORCPT
+        id S1726863AbfAVSMA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 13:11:56 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:33906 "EHLO
+        Tue, 22 Jan 2019 13:12:00 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:32870 "EHLO
         mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726451AbfAVSLx (ORCPT
+        with ESMTP id S1726827AbfAVSL5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 13:11:53 -0500
-Received: by mail-pl1-f193.google.com with SMTP id w4so11870440plz.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 10:11:52 -0800 (PST)
+        Tue, 22 Jan 2019 13:11:57 -0500
+Received: by mail-pl1-f193.google.com with SMTP id z23so11875101plo.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 10:11:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=WD+b5Mm6yeuI88aSA3mrYBwAA3DBi7In9eqFESn15DU=;
-        b=elnxxuCbq/YgY5Pr7eGe+AErOidyhvDqdlc5GkuWmcB1CVlDqEFQbKy3JKEtULu/as
-         SH+9ZDtO9o9BFmiTBDcf7DH0ns1iv/tFr41XodKSsRPrlZDvA363X6H0nOQXHXuod64/
-         z19O662nB+dPd0mylCy+JlcXvcXf6rSHvLe9Y=
+        bh=W+tcSbssL1cjoomd1/kZjJ7IjRwzQZIgCHeNiM3a0+8=;
+        b=iYX1E+QkQtS+reozDRSNxJxAJ9t+crCH5YtMtbQ4hKqfNhGWIE6Oajd4RJIpXCTU2N
+         JUI21kO42yJuv8h2ZyR1KtgfDrWQ88ir7AC0UbLF8NrzgjWKi715QVxMIgYfHMtgGM7x
+         AdrigTyORi+AoTL5gf8Mvab/tfhrRU0HH3y6Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=WD+b5Mm6yeuI88aSA3mrYBwAA3DBi7In9eqFESn15DU=;
-        b=HOiqJs/djQfwpu+n4SgMBjcH2w+NJEyNhq+q6XM8YfWIo0+7RFH89hpA2wSMgB1ckr
-         E2KSXznVLpJAt92UhAoqXGHqzAm2yDLLoWgzPWn0ignhqr+ZI73qROFl+9MieqmETAmf
-         1SCcn7n+cbEoUE9Jt+0LfhfjEJVptvjKbBiIgsq1cNCXJwZwMN9InqV66OHDKywabKzR
-         fKaTEP81iuQgvLNpmInAZP5j7CunGHtwT/7aAbIWqkpuQbvaQp4q4z7Thf3vxfkH96CT
-         DAgmaNI6BvaJqN9iPQTSzUtwtTh3gcQPrNCAAMSA/K9itHIqRRcJ1WwePS3SOIuk2VCT
-         vRtg==
-X-Gm-Message-State: AJcUukf22hjOlWLBOBbjMFBFkKMKzUY1fehvis6ECfJLw0FENo5g00ZQ
-        evKuAAVDyNsusMJDllqzQw9PwQ==
-X-Google-Smtp-Source: ALg8bN4+Lt/EoUCyF+GWDLvxqQVSoIGZaCkRZ7fTfdtCKomAfnI7Qqe9ywNdAho//BSVgqgzN2sFew==
-X-Received: by 2002:a17:902:7296:: with SMTP id d22mr35979711pll.265.1548180712415;
-        Tue, 22 Jan 2019 10:11:52 -0800 (PST)
+        bh=W+tcSbssL1cjoomd1/kZjJ7IjRwzQZIgCHeNiM3a0+8=;
+        b=LT+S33qDBZX9vV8ASzvNRCKqFpuyXihmM2TvnN2W+zxd/MF7yy2cWZYQlxaow8Pzd9
+         HvcA8PPsBc2B/aBqk7ZGKGkuylqzwUueiMLZLNvQqZK3zHK9UhIHJAndJjW4sUhL73AW
+         4vz69Wxcpfx4SQ3veQE6fNP3varuF4AN5YSDVZTcm/VyJd6zDpUqGYCs74qsWKWLRk/p
+         orpEVJSEdIwMHEbGHYF4UfZq5Y8HCcagLxlfnI6Cd3FsYZsQXv159VpYzIq2QVEuZTdD
+         UB5+cJR9nB9l8DnLULYfGn4w9gsDMuUnyr8KCU6cGGgvappwkxol2/PQ6iQl/ioGcoWN
+         PhyA==
+X-Gm-Message-State: AJcUukcKrNgkpUlRLBn0x9tcbrh9k0V5mGS60Z0JLipSll7GtcaDhMvW
+        yp6yzKq8vPT3iE1Iwa6qUk2UNA==
+X-Google-Smtp-Source: ALg8bN6wxbGghhBavhc66500P1ObbbqDRCBN30ofvJI9xoWIhRiusoSZPhokath8yZI+3sutAiZi6w==
+X-Received: by 2002:a17:902:2862:: with SMTP id e89mr35764673plb.158.1548180717330;
+        Tue, 22 Jan 2019 10:11:57 -0800 (PST)
 Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id a18sm23489919pgj.30.2019.01.22.10.11.50
+        by smtp.gmail.com with ESMTPSA id a18sm23489919pgj.30.2019.01.22.10.11.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Jan 2019 10:11:51 -0800 (PST)
+        Tue, 22 Jan 2019 10:11:56 -0800 (PST)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     acme@kernel.org, peterz@infradead.org
 Cc:     gregkh@linuxfoundation.org, mingo@redhat.com, tglx@linutronix.de,
@@ -61,9 +61,9 @@ Cc:     gregkh@linuxfoundation.org, mingo@redhat.com, tglx@linutronix.de,
         adrian.hunter@intel.com, ast@kernel.org, hpa@zytor.com,
         linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, suzuki.poulose@arm.com
-Subject: [PATCH v2 3/7] coresight: Use event attributes for sink selection
-Date:   Tue, 22 Jan 2019 11:11:40 -0700
-Message-Id: <20190122181144.26645-4-mathieu.poirier@linaro.org>
+Subject: [PATCH v2 6/7] perf tools: Removing CoreSight set_drv_config() API
+Date:   Tue, 22 Jan 2019 11:11:43 -0700
+Message-Id: <20190122181144.26645-7-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190122181144.26645-1-mathieu.poirier@linaro.org>
 References: <20190122181144.26645-1-mathieu.poirier@linaro.org>
@@ -72,141 +72,120 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch uses the information conveyed by perf_event::attr::config2
-to select a sink to use for the session.  That way a sink can easily be
-selected to be used by more than one source, something that isn't currently
-possible with the sysfs implementation.
+Now that event's config2 attribute is used to communicate sink selection
+to the kernel, remove the old set_drv_config() implementation since it
+is no longer needed.
 
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- .../hwtracing/coresight/coresight-etm-perf.c  | 24 ++++++------
- drivers/hwtracing/coresight/coresight-priv.h  |  1 +
- drivers/hwtracing/coresight/coresight.c       | 39 +++++++++++++++++++
- 3 files changed, 52 insertions(+), 12 deletions(-)
+ tools/perf/arch/arm/util/cs-etm.c | 54 -------------------------------
+ tools/perf/arch/arm/util/cs-etm.h |  3 --
+ tools/perf/arch/arm/util/pmu.c    |  2 --
+ 3 files changed, 59 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
-index c68a0036532c..ea031eb673b3 100644
---- a/drivers/hwtracing/coresight/coresight-etm-perf.c
-+++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
-@@ -31,11 +31,14 @@ static DEFINE_PER_CPU(struct coresight_device *, csdev_src);
- PMU_FORMAT_ATTR(cycacc,		"config:" __stringify(ETM_OPT_CYCACC));
- PMU_FORMAT_ATTR(timestamp,	"config:" __stringify(ETM_OPT_TS));
- PMU_FORMAT_ATTR(retstack,	"config:" __stringify(ETM_OPT_RETSTK));
-+/* Sink ID - same for all ETMs */
-+PMU_FORMAT_ATTR(sinkid,		"config2:0-31");
+diff --git a/tools/perf/arch/arm/util/cs-etm.c b/tools/perf/arch/arm/util/cs-etm.c
+index 4aa6193dcb50..9a4a8153e4c2 100644
+--- a/tools/perf/arch/arm/util/cs-etm.c
++++ b/tools/perf/arch/arm/util/cs-etm.c
+@@ -26,9 +26,6 @@
+ #include <stdlib.h>
+ #include <sys/stat.h>
  
- static struct attribute *etm_config_formats_attr[] = {
- 	&format_attr_cycacc.attr,
- 	&format_attr_timestamp.attr,
- 	&format_attr_retstack.attr,
-+	&format_attr_sinkid.attr,
- 	NULL,
- };
- 
-@@ -191,6 +194,7 @@ static void etm_free_aux(void *data)
- static void *etm_setup_aux(struct perf_event *event, void **pages,
- 			   int nr_pages, bool overwrite)
- {
-+	u32 id;
- 	int cpu = event->cpu;
- 	cpumask_t *mask;
- 	struct coresight_device *sink;
-@@ -201,18 +205,14 @@ static void *etm_setup_aux(struct perf_event *event, void **pages,
- 		return NULL;
- 	INIT_WORK(&event_data->work, free_event_data);
- 
--	/*
--	 * In theory nothing prevent tracers in a trace session from being
--	 * associated with different sinks, nor having a sink per tracer.  But
--	 * until we have HW with this kind of topology we need to assume tracers
--	 * in a trace session are using the same sink.  Therefore go through
--	 * the coresight bus and pick the first enabled sink.
--	 *
--	 * When operated from sysFS users are responsible to enable the sink
--	 * while from perf, the perf tools will do it based on the choice made
--	 * on the cmd line.  As such the "enable_sink" flag in sysFS is reset.
--	 */
--	sink = coresight_get_enabled_sink(true);
-+	/* First get the selected sink from user space. */
-+	if (event->attr.config2) {
-+		id = (u32)event->attr.config2;
-+		sink = coresight_get_sink_by_id(id);
-+	} else {
-+		sink = coresight_get_enabled_sink(true);
-+	}
-+
- 	if (!sink || !sink_ops(sink)->alloc_buffer)
- 		goto err;
- 
-diff --git a/drivers/hwtracing/coresight/coresight-priv.h b/drivers/hwtracing/coresight/coresight-priv.h
-index 579f34943bf1..b936c6d7e13f 100644
---- a/drivers/hwtracing/coresight/coresight-priv.h
-+++ b/drivers/hwtracing/coresight/coresight-priv.h
-@@ -147,6 +147,7 @@ void coresight_disable_path(struct list_head *path);
- int coresight_enable_path(struct list_head *path, u32 mode, void *sink_data);
- struct coresight_device *coresight_get_sink(struct list_head *path);
- struct coresight_device *coresight_get_enabled_sink(bool reset);
-+struct coresight_device *coresight_get_sink_by_id(u32 id);
- struct list_head *coresight_build_path(struct coresight_device *csdev,
- 				       struct coresight_device *sink);
- void coresight_release_path(struct list_head *path);
-diff --git a/drivers/hwtracing/coresight/coresight.c b/drivers/hwtracing/coresight/coresight.c
-index d7fa90be6f42..c5f2df186a19 100644
---- a/drivers/hwtracing/coresight/coresight.c
-+++ b/drivers/hwtracing/coresight/coresight.c
-@@ -11,6 +11,7 @@
- #include <linux/err.h>
- #include <linux/export.h>
- #include <linux/slab.h>
-+#include <linux/stringhash.h>
- #include <linux/mutex.h>
- #include <linux/clk.h>
- #include <linux/coresight.h>
-@@ -541,6 +542,44 @@ struct coresight_device *coresight_get_enabled_sink(bool deactivate)
- 	return dev ? to_coresight_device(dev) : NULL;
+-#define ENABLE_SINK_MAX	128
+-#define CS_BUS_DEVICE_PATH "/bus/coresight/devices/"
+-
+ struct cs_etm_recording {
+ 	struct auxtrace_record	itr;
+ 	struct perf_pmu		*cs_etm_pmu;
+@@ -638,54 +635,3 @@ struct auxtrace_record *cs_etm_record_init(int *err)
+ out:
+ 	return NULL;
  }
+-
+-static FILE *cs_device__open_file(const char *name)
+-{
+-	struct stat st;
+-	char path[PATH_MAX];
+-	const char *sysfs;
+-
+-	sysfs = sysfs__mountpoint();
+-	if (!sysfs)
+-		return NULL;
+-
+-	snprintf(path, PATH_MAX,
+-		 "%s" CS_BUS_DEVICE_PATH "%s", sysfs, name);
+-
+-	if (stat(path, &st) < 0)
+-		return NULL;
+-
+-	return fopen(path, "w");
+-
+-}
+-
+-static int __printf(2, 3) cs_device__print_file(const char *name, const char *fmt, ...)
+-{
+-	va_list args;
+-	FILE *file;
+-	int ret = -EINVAL;
+-
+-	va_start(args, fmt);
+-	file = cs_device__open_file(name);
+-	if (file) {
+-		ret = vfprintf(file, fmt, args);
+-		fclose(file);
+-	}
+-	va_end(args);
+-	return ret;
+-}
+-
+-int cs_etm_set_drv_config(struct perf_evsel_config_term *term)
+-{
+-	int ret;
+-	char enable_sink[ENABLE_SINK_MAX];
+-
+-	snprintf(enable_sink, ENABLE_SINK_MAX, "%s/%s",
+-		 term->val.drv_cfg, "enable_sink");
+-
+-	ret = cs_device__print_file(enable_sink, "%d", 1);
+-	if (ret < 0)
+-		return ret;
+-
+-	return 0;
+-}
+diff --git a/tools/perf/arch/arm/util/cs-etm.h b/tools/perf/arch/arm/util/cs-etm.h
+index 1a12e64f5127..a3354bda4fe8 100644
+--- a/tools/perf/arch/arm/util/cs-etm.h
++++ b/tools/perf/arch/arm/util/cs-etm.h
+@@ -7,9 +7,6 @@
+ #ifndef INCLUDE__PERF_CS_ETM_H__
+ #define INCLUDE__PERF_CS_ETM_H__
  
-+static int coresight_sink_by_id(struct device *dev, void *data)
-+{
-+	struct coresight_device *csdev = to_coresight_device(dev);
-+	u32 hash;
-+
-+	if (csdev->type == CORESIGHT_DEV_TYPE_SINK ||
-+	     csdev->type == CORESIGHT_DEV_TYPE_LINKSINK) {
-+		/*
-+		 * See function etm_perf_sink_name_show() to know where this
-+		 * comes from.
-+		 */
-+		hash = hashlen_hash(hashlen_string(NULL, dev_name(dev)));
-+
-+		if (hash == (*(u32 *)data))
-+			return 1;
-+	}
-+
-+	return 0;
-+}
-+
-+/**
-+ * coresight_get_sink_by_id - returns the sink that matches the id
-+ * @id: Id of the sink to match
-+ *
-+ * The name of a sink is unique, whether it is found on the AMBA bus or
-+ * otherwise.  As such the hash of that name can easily be used to identify
-+ * a sink.
-+ */
-+struct coresight_device *coresight_get_sink_by_id(u32 id)
-+{
-+	struct device *dev = NULL;
-+
-+	dev = bus_find_device(&coresight_bustype, NULL, &id,
-+			      coresight_sink_by_id);
-+
-+	return dev ? to_coresight_device(dev) : NULL;
-+}
-+
- /*
-  * coresight_grab_device - Power up this device and any of the helper
-  * devices connected to it for trace operation. Since the helper devices
+-#include "../../util/evsel.h"
+-
+ struct auxtrace_record *cs_etm_record_init(int *err);
+-int cs_etm_set_drv_config(struct perf_evsel_config_term *term);
+ 
+ #endif
+diff --git a/tools/perf/arch/arm/util/pmu.c b/tools/perf/arch/arm/util/pmu.c
+index e047571e6080..e4619f2fe7ce 100644
+--- a/tools/perf/arch/arm/util/pmu.c
++++ b/tools/perf/arch/arm/util/pmu.c
+@@ -8,7 +8,6 @@
+ #include <linux/coresight-pmu.h>
+ #include <linux/perf_event.h>
+ 
+-#include "cs-etm.h"
+ #include "arm-spe.h"
+ #include "../../util/pmu.h"
+ 
+@@ -19,7 +18,6 @@ struct perf_event_attr
+ 	if (!strcmp(pmu->name, CORESIGHT_ETM_PMU_NAME)) {
+ 		/* add ETM default config here */
+ 		pmu->selectable = true;
+-		pmu->set_drv_config = cs_etm_set_drv_config;
+ #if defined(__aarch64__)
+ 	} else if (strstarts(pmu->name, ARM_SPE_PMU_NAME)) {
+ 		return arm_spe_pmu_default_config(pmu);
 -- 
 2.17.1
 
