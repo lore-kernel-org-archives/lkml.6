@@ -2,130 +2,122 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA7BCC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:22:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D33BC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:25:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B202620861
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:22:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D286020861
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:25:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DXgoI3OH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727575AbfAVIWt (ORCPT
+        id S1727356AbfAVIZb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 03:22:49 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52508 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727291AbfAVIWs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 03:22:48 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B83B9155AC;
-        Tue, 22 Jan 2019 08:22:47 +0000 (UTC)
-Received: from xz-x1 (dhcp-14-116.nay.redhat.com [10.66.14.116])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id AA5286013D;
-        Tue, 22 Jan 2019 08:22:41 +0000 (UTC)
-Date:   Tue, 22 Jan 2019 16:22:38 +0800
-From:   Peter Xu <peterx@redhat.com>
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Hugh Dickins <hughd@google.com>,
-        Maya Gokhale <gokhale2@llnl.gov>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Martin Cracauer <cracauer@cons.org>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Shaohua Li <shli@fb.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Marty McFadden <mcfadden8@llnl.gov>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH RFC 03/24] mm: allow VM_FAULT_RETRY for multiple times
-Message-ID: <20190122082238.GC14907@xz-x1>
-References: <20190121075722.7945-1-peterx@redhat.com>
- <20190121075722.7945-4-peterx@redhat.com>
- <20190121155536.GB3711@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190121155536.GB3711@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Tue, 22 Jan 2019 08:22:48 +0000 (UTC)
+        Tue, 22 Jan 2019 03:25:31 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:36394 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727062AbfAVIZa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 03:25:30 -0500
+Received: by mail-pl1-f193.google.com with SMTP id g9so11115209plo.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 00:25:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=MEZ/KI+mhuj3h0ZRrhGQdNJohbrmkbWZ1UJkGQBfUak=;
+        b=DXgoI3OHLnA9RWXeffj89lm52RX5bRr7TphFN/4lk5qeZjTUOKhAlosKEuc3Ipjjh0
+         UjOtAcVf4wWog3LHzy4KYr7zCK/edOrDGHssTEllKZxBUdS33k49ivBlFxNCMQm62iwL
+         f82ZZCLX44jjJLOYqcmMjWna1ZkXEPSeKZtd9sEa7CVMmh97/kwbbIGYCZkYwMlCPLLM
+         vdfxOgFBi5lcf+Zlzqu8ii9I2XMSRCXTKliox6YgnjleL/105GcaiTbtL0b0Ih6jzYl5
+         eBf3LPP7AMDvQJU/O0o8xEe1dGiB9Uu7rxIWR0HaLJ8dgm8t0ArAHAcr9krbewEDrdON
+         SBow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=MEZ/KI+mhuj3h0ZRrhGQdNJohbrmkbWZ1UJkGQBfUak=;
+        b=QDMJosiznmkyAgHNROHmJlcwGPzGkOF6KQfkiAFRpJ+9tYMjE7VC38Oy5QcdUFfvHw
+         hkzYjgnsx5yy8KJ88mKyyIDTVMya2Glts6JXH+mXAzohGIjDGFTBWXQe97cGFfjlTH0k
+         Le2RPttrTZ55Z5fRFfebw7dtwCadjKSwbxvdphmmbIW/ImrMsKXPsHUPRyCHVH6aifcY
+         9GXKxuziA4h7MjfomJMZrdJC/gmPkq1y+Xp6fmLDi/nVoA3mQAsmEHNs/jzC/DiYe1IN
+         EipzNEK9Z2GaOTfPW6aV/aXJB/kyBhPq2VvK890w2wtO788xPBJHzRBm2MxaiUomoGUh
+         c7Xg==
+X-Gm-Message-State: AJcUukcOFoOfY8Zkbti9hAskbaECgJ+ytrvIHY03YARzmZJLBK8qEvDU
+        rRxBV08AMnsOlnddKoocoWVz81hZ
+X-Google-Smtp-Source: ALg8bN4ZqfQ5qDXmNxtGFwBnaIrCmuufrP5ZP3l2WmPmeKewtTUT9az4XrPr9CtYVtdxb4CcFVB3fg==
+X-Received: by 2002:a17:902:bc3:: with SMTP id 61mr33472720plr.15.1548145530052;
+        Tue, 22 Jan 2019 00:25:30 -0800 (PST)
+Received: from hydra-Latitude-E5440.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id w88sm34018844pfk.11.2019.01.22.00.25.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 22 Jan 2019 00:25:29 -0800 (PST)
+From:   parna.naveenkumar@gmail.com
+To:     arnd@arndb.de, gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org,
+        Naveen Kumar Parna <parna.naveenkumar@gmail.com>
+Subject: [PATCH] efirtc: remove unnecessary code efi_rtc_open & efi_rtc_close
+Date:   Tue, 22 Jan 2019 13:55:10 +0530
+Message-Id: <20190122082510.10136-1-parna.naveenkumar@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 10:55:36AM -0500, Jerome Glisse wrote:
-> On Mon, Jan 21, 2019 at 03:57:01PM +0800, Peter Xu wrote:
-> > The idea comes from a discussion between Linus and Andrea [1].
-> > 
-> > Before this patch we only allow a page fault to retry once.  We achieved
-> > this by clearing the FAULT_FLAG_ALLOW_RETRY flag when doing
-> > handle_mm_fault() the second time.  This was majorly used to avoid
-> > unexpected starvation of the system by looping over forever to handle
-> > the page fault on a single page.  However that should hardly happen, and
-> > after all for each code path to return a VM_FAULT_RETRY we'll first wait
-> > for a condition (during which time we should possibly yield the cpu) to
-> > happen before VM_FAULT_RETRY is really returned.
-> > 
-> > This patch removes the restriction by keeping the FAULT_FLAG_ALLOW_RETRY
-> > flag when we receive VM_FAULT_RETRY.  It means that the page fault
-> > handler now can retry the page fault for multiple times if necessary
-> > without the need to generate another page fault event. Meanwhile we
-> > still keep the FAULT_FLAG_TRIED flag so page fault handler can still
-> > identify whether a page fault is the first attempt or not.
-> 
-> So there is nothing protecting starvation after this patch ? AFAICT.
-> Do we sufficient proof that we never have a scenario where one process
-> might starve fault another ?
-> 
-> For instance some page locking could starve one process.
+From: Naveen Kumar Parna <parna.naveenkumar@gmail.com>
 
-Hi, Jerome,
+There is no advantage to keep 'struct file_operations.open & .close'
+API's. So removed the unnecessary code efi_rtc_open & efi_rtc_close.
 
-Do you mean lock_page()?
+Signed-off-by: Naveen Kumar Parna <parna.naveenkumar@gmail.com>
+---
+ drivers/char/efirtc.c | 23 -----------------------
+ 1 file changed, 23 deletions(-)
 
-AFAIU lock_page() will only yield the process itself until the lock is
-released, so IMHO it's not really starving the process but a natural
-behavior.  After all the process may not continue without handling the
-page fault correctly.
-
-Or when you say "starvation" do you mean that we might return
-VM_FAULT_RETRY from handle_mm_fault() continuously so we'll looping
-over and over inside the page fault handler?
-
-Thanks,
-
-> 
-> 
-> > 
-> > GUP code is not touched yet and will be covered in follow up patch.
-> > 
-> > This will be a nice enhancement for current code at the same time a
-> > supporting material for the future userfaultfd-writeprotect work since
-> > in that work there will always be an explicit userfault writeprotect
-> > retry for protected pages, and if that cannot resolve the page
-> > fault (e.g., when userfaultfd-writeprotect is used in conjunction with
-> > shared memory) then we'll possibly need a 3rd retry of the page fault.
-> > It might also benefit other potential users who will have similar
-> > requirement like userfault write-protection.
-> > 
-> > Please read the thread below for more information.
-> > 
-> > [1] https://lkml.org/lkml/2017/11/2/833
-> > 
-> > Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> > Suggested-by: Andrea Arcangeli <aarcange@redhat.com>
-> > Signed-off-by: Peter Xu <peterx@redhat.com>
-> > ---
-
-Regards,
-
+diff --git a/drivers/char/efirtc.c b/drivers/char/efirtc.c
+index d9aab643997e..11781ebffbf7 100644
+--- a/drivers/char/efirtc.c
++++ b/drivers/char/efirtc.c
+@@ -254,27 +254,6 @@ static long efi_rtc_ioctl(struct file *file, unsigned int cmd,
+ 	return -ENOTTY;
+ }
+ 
+-/*
+- *	We enforce only one user at a time here with the open/close.
+- *	Also clear the previous interrupt data on an open, and clean
+- *	up things on a close.
+- */
+-
+-static int efi_rtc_open(struct inode *inode, struct file *file)
+-{
+-	/*
+-	 * nothing special to do here
+-	 * We do accept multiple open files at the same time as we
+-	 * synchronize on the per call operation.
+-	 */
+-	return 0;
+-}
+-
+-static int efi_rtc_close(struct inode *inode, struct file *file)
+-{
+-	return 0;
+-}
+-
+ /*
+  *	The various file operations we support.
+  */
+@@ -282,8 +261,6 @@ static int efi_rtc_close(struct inode *inode, struct file *file)
+ static const struct file_operations efi_rtc_fops = {
+ 	.owner		= THIS_MODULE,
+ 	.unlocked_ioctl	= efi_rtc_ioctl,
+-	.open		= efi_rtc_open,
+-	.release	= efi_rtc_close,
+ 	.llseek		= no_llseek,
+ };
+ 
 -- 
-Peter Xu
+2.17.1
+
