@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E890C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:42:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B68EC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:43:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42A1420870
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:42:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CED3220870
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:43:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727943AbfAVJmo (ORCPT
+        id S1727989AbfAVJnQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 04:42:44 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:36772 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727330AbfAVJmn (ORCPT
+        Tue, 22 Jan 2019 04:43:16 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:33769 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726872AbfAVJnP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 04:42:43 -0500
-Received: by mail-lf1-f65.google.com with SMTP id a16so17560870lfg.3;
-        Tue, 22 Jan 2019 01:42:40 -0800 (PST)
+        Tue, 22 Jan 2019 04:43:15 -0500
+Received: by mail-lj1-f195.google.com with SMTP id v1-v6so20031184ljd.0;
+        Tue, 22 Jan 2019 01:43:12 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rSINoHx6fveobh07vmnKFZw8KNcssMPxyGVcKKiu5q8=;
-        b=jFd3ZRbtWfBA6w0ulX50Gw1zF2VvX+sPtpaLz25CfKJVPvNDfffCrK1t1Ha7V9YCSe
-         TsS6SEqta/mpj6nifMt32Irom78nEw8+J9/1vXOJhYnKO7gfFnYakcQU6ln4qr14tDaY
-         IklHm4nwUvGjeTLbvfY8UdaleT05zukhN7qa9v+gHufm2PEKQIxdhOW5gSzZWYdFLcZk
-         YTFRU2TV8LtBUh1bk1XZKjMxNYVRRg3TU5yiPF1X4kRGVedf4/1cYx9jo0eZiZA0qxBj
-         syTkzzanZjweXNyMGzM2fg7Xxe8dO2LyTNuQGZ5YDE1RRriYy1kcTyg2eeQNMTE/Jroj
-         L3dw==
-X-Gm-Message-State: AJcUukcRf4NU+KpgQthCrcBp8NnI9iKSf/U3EESYxdVxtLDr2mDeqHZj
-        sTEzMyqPO0u2N5eo23bxLMQ=
-X-Google-Smtp-Source: ALg8bN6J7HtPWBbmKB4SjaNwfyxfN4BCtj0EVbChCHiVzaHFcztUD3B3WlpJLMSeqVgCNLYgX1FN5A==
-X-Received: by 2002:a19:d9d6:: with SMTP id s83mr20857090lfi.57.1548150159497;
-        Tue, 22 Jan 2019 01:42:39 -0800 (PST)
+        bh=XQMhsXdYeQEoqa9kUduf2WYgIBHM1c2g/MMxJfDQVWU=;
+        b=Q5ADtDNQ0XT3DLOHjId7CaLMBkiiVdoyylAE06cDXu+fBz93qxi/TIqQfcWnA74F13
+         67pg6vYCyEFBu/zMTzqiRLSlNkSXlxqo5cb7ymqxXR39fyyPzEwWl8X0/qz2jmXIRnX+
+         scBmNVGwNmvKcgoKn8vQE+2qD17gSSoOokRg1U5EAczzFFkDRT+Cf35S5vfR1dGwgRNV
+         oTQIBiaDKetrzLVlbDlQkmcAZrNCohYnyASxZTPaBHQMnkho+SUv0W0Sy2jD0dC5rP9D
+         I2NkqA4MU+hpugxn+KTur1cphFZC9TSHA9T9fcmvpMXZYe3XeyogmuH8KPmy2TUmiIj9
+         Kn6Q==
+X-Gm-Message-State: AJcUukcoNzMj3EoE8FJB+RTKxhrnum/1c1ybXmROov+8ZpOCfquewm4i
+        VgzS9HreNw6BvfovUDj2kzo=
+X-Google-Smtp-Source: ALg8bN4EvwpgvunpTQ9f36/DCMRIryLqCzsmMC1bI5J/ZM4f89ud5t92CjTJgvs7nY0G9kd5TslPIg==
+X-Received: by 2002:a2e:851a:: with SMTP id j26-v6mr20059474lji.163.1548150191955;
+        Tue, 22 Jan 2019 01:43:11 -0800 (PST)
 Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id 11-v6sm2738940ljv.1.2019.01.22.01.42.37
+        by smtp.gmail.com with ESMTPSA id y131sm2681769lfc.43.2019.01.22.01.43.10
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 22 Jan 2019 01:42:38 -0800 (PST)
-Date:   Tue, 22 Jan 2019 11:42:24 +0200
+        Tue, 22 Jan 2019 01:43:11 -0800 (PST)
+Date:   Tue, 22 Jan 2019 11:42:58 +0200
 From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
 Cc:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
@@ -57,9 +57,9 @@ Cc:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
         linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org,
         mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: [RFC PATCH v1 01/13] regmap: regmap-irq: Add main status register
- support
-Message-ID: <a5a3cdb00b9181897fc675f4a6900064d9289fdc.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
+Subject: [RFC PATCH v1 02/13] mfd: bd718x7.h split to ROHM common and bd718x7
+ specific parts
+Message-ID: <572e0507f1cf24365f50a6fb81929f0141f5c7d6.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
 References: <cover.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -71,213 +71,162 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is bunch of devices with multiple logical blocks which
-can generate interrupts. It's not a rare case that the interrupt
-reason registers are arranged so that there is own status/ack/mask
-register for each logical block. In some devices there is also a
-'main interrupt register(s)' which can indicate what sub blocks
-have interrupts pending.
-
-When such a device is connected via slow bus like i2c the main
-part of interrupt handling latency can be caused by bus accesses.
-On systems where it is expected that only one (or few) sub blocks
-have active interrupts we can reduce the latency by only reading
-the main register and those sub registers which have active
-interrupts. Support this with regmap-irq for simple cases where
-main register does not require acking or masking.
+Split the bd718x7.h to ROHM common and bd718x7 specific parts
+so that we do not need to add same things in every new ROHM
+PMIC header. Please note that this change requires changes also
+in bd718x7 sub-device drivers for regulators and clk.
 
 Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 ---
- drivers/base/regmap/regmap-irq.c | 99 ++++++++++++++++++++++++++++++++++++++--
- include/linux/regmap.h           | 31 +++++++++++++
- 2 files changed, 126 insertions(+), 4 deletions(-)
+ drivers/mfd/rohm-bd718x7.c       | 23 ++++++++++++-----------
+ include/linux/mfd/rohm-bd718x7.h | 22 ++++++++--------------
+ include/linux/mfd/rohm-generic.h | 20 ++++++++++++++++++++
+ 3 files changed, 40 insertions(+), 25 deletions(-)
+ create mode 100644 include/linux/mfd/rohm-generic.h
 
-diff --git a/drivers/base/regmap/regmap-irq.c b/drivers/base/regmap/regmap-irq.c
-index 1bd1145ad8b5..22778e9501ff 100644
---- a/drivers/base/regmap/regmap-irq.c
-+++ b/drivers/base/regmap/regmap-irq.c
-@@ -35,6 +35,7 @@ struct regmap_irq_chip_data {
- 	int wake_count;
- 
- 	void *status_reg_buf;
-+	unsigned int *main_status_buf;
- 	unsigned int *status_buf;
- 	unsigned int *mask_buf;
- 	unsigned int *mask_buf_def;
-@@ -326,6 +327,33 @@ static const struct irq_chip regmap_irq_chip = {
- 	.irq_set_wake		= regmap_irq_set_wake,
- };
- 
-+static inline int read_sub_irq_data(struct regmap_irq_chip_data *data,
-+					   unsigned int b)
-+{
-+	const struct regmap_irq_chip *chip = data->chip;
-+	struct regmap *map = data->map;
-+	struct regmap_irq_sub_irq_map *subreg;
-+	int i, ret = 0;
-+
-+	if (!chip->sub_reg_offsets) {
-+		/* Assume linear mapping */
-+		ret = regmap_read(map, chip->status_base +
-+				  (b * map->reg_stride * data->irq_reg_stride),
-+				   &data->status_buf[b]);
-+	} else {
-+		subreg = &chip->sub_reg_offsets[b];
-+		for (i = 0; i < subreg->num_regs; i++) {
-+			unsigned int offset = subreg->offset[i];
-+
-+			ret = regmap_read(map, chip->status_base + offset,
-+					  &data->status_buf[offset]);
-+			if (ret)
-+				break;
-+		}
-+	}
-+	return ret;
-+}
-+
- static irqreturn_t regmap_irq_thread(int irq, void *d)
- {
- 	struct regmap_irq_chip_data *data = d;
-@@ -349,11 +377,65 @@ static irqreturn_t regmap_irq_thread(int irq, void *d)
- 	}
- 
- 	/*
--	 * Read in the statuses, using a single bulk read if possible
--	 * in order to reduce the I/O overheads.
-+	 * Read only registers with active IRQs if the chip has 'main status
-+	 * register'. Else read in the statuses, using a single bulk read if
-+	 * possible in order to reduce the I/O overheads.
- 	 */
--	if (!map->use_single_read && map->reg_stride == 1 &&
--	    data->irq_reg_stride == 1) {
-+
-+	if (chip->num_main_regs) {
-+		unsigned int max_main_bits;
-+		unsigned long size;
-+
-+		size = chip->num_regs * sizeof(unsigned int);
-+
-+		max_main_bits = (chip->num_main_status_bits) ?
-+				 chip->num_main_status_bits : chip->num_regs;
-+		/* Clear the status buf as we don't read all status regs */
-+		memset(data->status_buf, 0, size);
-+
-+		/* We could support bulk read for main status registers
-+		 * but I don't expect to see devices with really many main
-+		 * status registers so let's only support single reads for the
-+		 * sake of simplicity. and add bulk reads only if needed
-+		 */
-+		for (i = 0; i < chip->num_main_regs; i++) {
-+			ret = regmap_read(map, chip->main_status +
-+				  (i * map->reg_stride
-+				   * data->irq_reg_stride),
-+				  &data->main_status_buf[i]);
-+			if (ret) {
-+				dev_err(map->dev,
-+					"Failed to read IRQ status %d\n",
-+					ret);
-+				goto exit;
-+			}
-+		}
-+
-+		/* Read sub registers with active IRQs */
-+		for (i = 0; i < chip->num_main_regs; i++) {
-+			unsigned int b;
-+			const unsigned long mreg = data->main_status_buf[i];
-+
-+			for_each_set_bit(b, &mreg, map->format.val_bytes * 8) {
-+				if (i * map->format.val_bytes * 8 + b >
-+				    max_main_bits)
-+					break;
-+				ret = read_sub_irq_data(data, b);
-+
-+				if (ret != 0) {
-+					dev_err(map->dev,
-+						"Failed to read IRQ status %d\n",
-+						ret);
-+					if (chip->runtime_pm)
-+						pm_runtime_put(map->dev);
-+					goto exit;
-+				}
-+			}
-+
-+		}
-+	} else if (!map->use_single_read && map->reg_stride == 1 &&
-+		   data->irq_reg_stride == 1) {
-+
- 		u8 *buf8 = data->status_reg_buf;
- 		u16 *buf16 = data->status_reg_buf;
- 		u32 *buf32 = data->status_reg_buf;
-@@ -518,6 +600,15 @@ int regmap_add_irq_chip(struct regmap *map, int irq, int irq_flags,
- 	if (!d)
+diff --git a/drivers/mfd/rohm-bd718x7.c b/drivers/mfd/rohm-bd718x7.c
+index a29d529a96f4..7beb444a57cb 100644
+--- a/drivers/mfd/rohm-bd718x7.c
++++ b/drivers/mfd/rohm-bd718x7.c
+@@ -98,18 +98,19 @@ static int bd718xx_i2c_probe(struct i2c_client *i2c,
  		return -ENOMEM;
  
-+	if (chip->num_main_regs) {
-+		d->main_status_buf = kcalloc(chip->num_main_regs,
-+					     sizeof(unsigned int),
-+					     GFP_KERNEL);
-+
-+		if (!d->main_status_buf)
-+			goto err_alloc;
-+	}
-+
- 	d->status_buf = kcalloc(chip->num_regs, sizeof(unsigned int),
- 				GFP_KERNEL);
- 	if (!d->status_buf)
-diff --git a/include/linux/regmap.h b/include/linux/regmap.h
-index 1781b6cb793c..daeec7dbd65c 100644
---- a/include/linux/regmap.h
-+++ b/include/linux/regmap.h
-@@ -1131,11 +1131,37 @@ struct regmap_irq {
- 		.reg_offset = (_id) / (_reg_bits),	\
+ 	bd718xx->chip_irq = i2c->irq;
+-	bd718xx->chip_type = (unsigned int)(uintptr_t)
++	bd718xx->chip.chip_type = (unsigned int)(uintptr_t)
+ 				of_device_get_match_data(&i2c->dev);
+-	bd718xx->dev = &i2c->dev;
++	bd718xx->chip.dev = &i2c->dev;
+ 	dev_set_drvdata(&i2c->dev, bd718xx);
+ 
+-	bd718xx->regmap = devm_regmap_init_i2c(i2c, &bd718xx_regmap_config);
+-	if (IS_ERR(bd718xx->regmap)) {
++	bd718xx->chip.regmap = devm_regmap_init_i2c(i2c,
++						    &bd718xx_regmap_config);
++	if (IS_ERR(bd718xx->chip.regmap)) {
+ 		dev_err(&i2c->dev, "regmap initialization failed\n");
+-		return PTR_ERR(bd718xx->regmap);
++		return PTR_ERR(bd718xx->chip.regmap);
  	}
  
-+#define REGMAP_IRQ_MAIN_REG_OFFSET(arr)				\
-+	{ .num_regs = ARRAY_SIZE((arr)), .offset = &(arr)[0] }
+-	ret = devm_regmap_add_irq_chip(&i2c->dev, bd718xx->regmap,
++	ret = devm_regmap_add_irq_chip(&i2c->dev, bd718xx->chip.regmap,
+ 				       bd718xx->chip_irq, IRQF_ONESHOT, 0,
+ 				       &bd718xx_irq_chip, &bd718xx->irq_data);
+ 	if (ret) {
+@@ -118,7 +119,7 @@ static int bd718xx_i2c_probe(struct i2c_client *i2c,
+ 	}
+ 
+ 	/* Configure short press to 10 milliseconds */
+-	ret = regmap_update_bits(bd718xx->regmap,
++	ret = regmap_update_bits(bd718xx->chip.regmap,
+ 				 BD718XX_REG_PWRONCONFIG0,
+ 				 BD718XX_PWRBTN_PRESS_DURATION_MASK,
+ 				 BD718XX_PWRBTN_SHORT_PRESS_10MS);
+@@ -129,7 +130,7 @@ static int bd718xx_i2c_probe(struct i2c_client *i2c,
+ 	}
+ 
+ 	/* Configure long press to 10 seconds */
+-	ret = regmap_update_bits(bd718xx->regmap,
++	ret = regmap_update_bits(bd718xx->chip.regmap,
+ 				 BD718XX_REG_PWRONCONFIG1,
+ 				 BD718XX_PWRBTN_PRESS_DURATION_MASK,
+ 				 BD718XX_PWRBTN_LONG_PRESS_10S);
+@@ -149,7 +150,7 @@ static int bd718xx_i2c_probe(struct i2c_client *i2c,
+ 
+ 	button.irq = ret;
+ 
+-	ret = devm_mfd_add_devices(bd718xx->dev, PLATFORM_DEVID_AUTO,
++	ret = devm_mfd_add_devices(bd718xx->chip.dev, PLATFORM_DEVID_AUTO,
+ 				   bd718xx_mfd_cells,
+ 				   ARRAY_SIZE(bd718xx_mfd_cells), NULL, 0,
+ 				   regmap_irq_get_domain(bd718xx->irq_data));
+@@ -162,11 +163,11 @@ static int bd718xx_i2c_probe(struct i2c_client *i2c,
+ static const struct of_device_id bd718xx_of_match[] = {
+ 	{
+ 		.compatible = "rohm,bd71837",
+-		.data = (void *)BD718XX_TYPE_BD71837,
++		.data = (void *)ROHM_CHIP_TYPE_BD71837,
+ 	},
+ 	{
+ 		.compatible = "rohm,bd71847",
+-		.data = (void *)BD718XX_TYPE_BD71847,
++		.data = (void *)ROHM_CHIP_TYPE_BD71847,
+ 	},
+ 	{ }
+ };
+diff --git a/include/linux/mfd/rohm-bd718x7.h b/include/linux/mfd/rohm-bd718x7.h
+index fd194bfc836f..7f2dbde402a1 100644
+--- a/include/linux/mfd/rohm-bd718x7.h
++++ b/include/linux/mfd/rohm-bd718x7.h
+@@ -4,14 +4,9 @@
+ #ifndef __LINUX_MFD_BD718XX_H__
+ #define __LINUX_MFD_BD718XX_H__
+ 
++#include <linux/mfd/rohm-generic.h>
+ #include <linux/regmap.h>
+ 
+-enum {
+-	BD718XX_TYPE_BD71837 = 0,
+-	BD718XX_TYPE_BD71847,
+-	BD718XX_TYPE_AMOUNT
+-};
+-
+ enum {
+ 	BD718XX_BUCK1 = 0,
+ 	BD718XX_BUCK2,
+@@ -321,18 +316,17 @@ enum {
+ 	BD718XX_PWRBTN_LONG_PRESS_15S
+ };
+ 
+-struct bd718xx_clk;
+-
+ struct bd718xx {
+-	unsigned int chip_type;
+-	struct device *dev;
+-	struct regmap *regmap;
+-	unsigned long int id;
++	/*
++	 * Please keep this as the first member here as some
++	 * drivers (clk) supporting more than one chip may only know this
++	 * generic struct 'struct rohm_regmap_dev' and assume it is
++	 * the first chunk of parent device's private data.
++	 */
++	struct rohm_regmap_dev chip;
+ 
+ 	int chip_irq;
+ 	struct regmap_irq_chip_data *irq_data;
+-
+-	struct bd718xx_clk *clk;
+ };
+ 
+ #endif /* __LINUX_MFD_BD718XX_H__ */
+diff --git a/include/linux/mfd/rohm-generic.h b/include/linux/mfd/rohm-generic.h
+new file mode 100644
+index 000000000000..bff15ac26f2c
+--- /dev/null
++++ b/include/linux/mfd/rohm-generic.h
+@@ -0,0 +1,20 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/* Copyright (C) 2018 ROHM Semiconductors */
 +
-+struct regmap_irq_sub_irq_map {
-+	unsigned int num_regs;
-+	unsigned int *offset;
++#ifndef __LINUX_MFD_ROHM_H__
++#define __LINUX_MFD_ROHM_H__
++
++enum {
++	ROHM_CHIP_TYPE_BD71837 = 0,
++	ROHM_CHIP_TYPE_BD71847,
++	ROHM_CHIP_TYPE_BD70528,
++	ROHM_CHIP_TYPE_AMOUNT
 +};
 +
- /**
-  * struct regmap_irq_chip - Description of a generic regmap irq_chip.
-  *
-  * @name:        Descriptive name for IRQ controller.
-  *
-+ * @main_status: Base main status register address. For chips which have
-+ *		 interrupts arranged in separate sub-irq blocks with own IRQ
-+ *		 registers and which have a main IRQ registers indicating
-+ *		 sub-irq blocks with unhandled interrupts. For such chips fill
-+ *		 sub-irq register information in status_base, mask_base and
-+ *		 ack_base.
-+ * @num_main_status_bits: Should be given to chips where number of meaningfull
-+ *			  main status bits differs from num_regs.
-+ * @sub_reg_offsets: arrays of mappings from main register bits to sub irq
-+ *		     registers. First item in array describes the registers
-+ *		     for first main status bit. Second array for second bit etc.
-+ *		     Offset is given as sub register status offset to
-+ *		     status_base. Should contain num_regs arrays.
-+ *		     Can be provided for chips with more complex mapping than
-+ *		     1.st bit to 1.st sub-reg, 2.nd bit to 2.nd sub-reg, ...
-+ * @num_main_regs: Number of 'main status' irq registers for chips which have
-+ *		   main_status set.
-+ *
-  * @status_base: Base status register address.
-  * @mask_base:   Base mask register address.
-  * @mask_writeonly: Base mask register is write only.
-@@ -1181,6 +1207,11 @@ struct regmap_irq {
- struct regmap_irq_chip {
- 	const char *name;
- 
-+	unsigned int main_status;
-+	unsigned int num_main_status_bits;
-+	struct regmap_irq_sub_irq_map *sub_reg_offsets;
-+	int num_main_regs;
++struct rohm_regmap_dev {
++	unsigned int chip_type;
++	struct device *dev;
++	struct regmap *regmap;
++};
 +
- 	unsigned int status_base;
- 	unsigned int mask_base;
- 	unsigned int unmask_base;
++#endif
 -- 
 2.14.3
 
