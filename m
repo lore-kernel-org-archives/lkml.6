@@ -2,121 +2,155 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65861C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:37:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04B06C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:37:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3ECB3218D0
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:37:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C45C9218D0
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:37:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PW0gNWBL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727897AbfAVJhF (ORCPT
+        id S1727929AbfAVJhM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 04:37:05 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:36805 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726784AbfAVJhE (ORCPT
+        Tue, 22 Jan 2019 04:37:12 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:47758 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727026AbfAVJhL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 04:37:04 -0500
-Received: by mail-vs1-f66.google.com with SMTP id v205so14313302vsc.3;
-        Tue, 22 Jan 2019 01:37:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MFZAKS9g2bkldfbHPWcJeB9c/pHa9RksLWPOsbWn8zI=;
-        b=Aq44rrYWgGsGUm+EUezJvfCz+ypm2ATPQj3p9+rRRibdttn5q8JcvyrpIApJOKBCCq
-         MPTEhKLa8boqkltHnSGKyJVpksEO2QlSSZS99PK0R2RHzxruEk6fahDqSOTFuxOVI2h2
-         /42WddYUNiMly5y5yJ8QXIMSTIIpEW06fg06UEFDsjiBPu7CiGa0MeFq+1+5M9yqfyp/
-         D3LHzZo+RTqHg9Ll8xL2zlVJN7+POtR3ItNan8ayxQSEZRf3YQmcql6VAzmA289EPQUG
-         8/1QbSFLGSr/k9PSHtroysZpISFywYelP7Y32y6Sr3XDUXPsA69hu3X4tHPrwABXdVfA
-         wQ8g==
-X-Gm-Message-State: AJcUukf2AK3jHQ2AKLTlQFSUNp4BDSP43t+M24cukeiKNd8XbLcKpupK
-        Vp5Q75SkHxbAsI0iRGAxrUCGdzdLLn926gD69Z8uKMs+
-X-Google-Smtp-Source: ALg8bN6S+aH37LsCepXrzpQ3KPhqUVyOW2ytY/GYW9gFqIQjZJ4AAyLAMVcmmZN2pM89nP7DCf3+kCrDteXa4p1d8CE=
-X-Received: by 2002:a67:f43:: with SMTP id 64mr13785461vsp.166.1548149822720;
- Tue, 22 Jan 2019 01:37:02 -0800 (PST)
+        Tue, 22 Jan 2019 04:37:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=NU4V5uCQmV84QkTw0S+I2r8MuzPTPNrPYuSs+2uS5y4=; b=PW0gNWBLoYOCSz6mnwSOOsGrA
+        Dxn2PRND+3H1sRQoZWifWHelGjQUeRKM/R8+nBIpI3flVLfRp9ZPQvC9emuHNTXk3hXHON6X4PKI2
+        qxk8UpjShmuoenwoZqSR4KmsetHZlfc+GS1BefEqhA2vxUCKMFbC6t5zBlS4t1zd0iMxQv3Ckk/ub
+        lRfYeTKuZoqUErQEpzC0UAiMPlv52D8Po64jx7lw2tBqEVupQBrrwnwksfqG8mh+9mFLSNmBtlSvD
+        /xz4BaeLTVf5pdqwBf0Sxx+uwypVB+o0tZDqd8XFvh8knuUAgnK0cpDpRHrkF8zbkVhuo+mTaYjoD
+        mGYGy8N0g==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1glsUU-0001FV-MW; Tue, 22 Jan 2019 09:37:06 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 9B6BD211A59B4; Tue, 22 Jan 2019 10:37:04 +0100 (CET)
+Date:   Tue, 22 Jan 2019 10:37:04 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v6 05/16] sched/core: uclamp: Update CPU's refcount on
+ clamp changes
+Message-ID: <20190122093704.GM27931@hirez.programming.kicks-ass.net>
+References: <20190115101513.2822-1-patrick.bellasi@arm.com>
+ <20190115101513.2822-6-patrick.bellasi@arm.com>
+ <20190121153308.GL27931@hirez.programming.kicks-ass.net>
+ <20190121154412.fak2t2iquj3aixtu@e110439-lin>
 MIME-Version: 1.0
-References: <f86eaebb-0359-13be-f4a2-4f2b8832252e@nvidia.com>
-In-Reply-To: <f86eaebb-0359-13be-f4a2-4f2b8832252e@nvidia.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 22 Jan 2019 10:36:50 +0100
-Message-ID: <CAMuHMdUiaNrQo3zWiR45VBANhUdkHMNhXLb9pPBLQ7tCtx1JDg@mail.gmail.com>
-Subject: Re: Regression: spi: core: avoid waking pump thread from spi_sync
- instead run teardown delayed
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Martin Sperl <kernel@martin.sperl.org>,
-        Mark Brown <broonie@kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190121154412.fak2t2iquj3aixtu@e110439-lin>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 4:36 PM Jon Hunter <jonathanh@nvidia.com> wrote:
-> I have noticed that system suspend has started failing consistently on a
-> couple Tegra boards over the last few days with the linux-next branch.
-> The following error is seen on on entering suspend ...
->
-> [   58.222033] spi_master spi1: could not stop message queue
-> [   58.222038] spi_master spi1: queue stop failed
-> [   58.222048] dpm_run_callback(): platform_pm_suspend+0x0/0x54 returns -16
-> [   58.222052] PM: Device 7000da00.spi failed to suspend: error -16
-> [   58.222057] PM: Some devices failed to suspend, or early wake event detected
->
-> Bisecting today's -next points to commit 412e60373245 ("spi: core: avoid
-> waking pump thread from spi_sync instead run teardown delayed") and
-> reverting this on top of -next fixes the problem. I have not had chance
-> to dig any further but wanted to report this issue to see if you have
-> any thoughts.
+On Mon, Jan 21, 2019 at 03:44:12PM +0000, Patrick Bellasi wrote:
+> On 21-Jan 16:33, Peter Zijlstra wrote:
+> > On Tue, Jan 15, 2019 at 10:15:02AM +0000, Patrick Bellasi wrote:
+> > 
+> > > +static inline void
+> > > +uclamp_task_update_active(struct task_struct *p, unsigned int clamp_id)
+> > > +{
+> > > +	struct rq_flags rf;
+> > > +	struct rq *rq;
+> > > +
+> > > +	/*
+> > > +	 * Lock the task and the CPU where the task is (or was) queued.
+> > > +	 *
+> > > +	 * We might lock the (previous) rq of a !RUNNABLE task, but that's the
+> > > +	 * price to pay to safely serialize util_{min,max} updates with
+> > > +	 * enqueues, dequeues and migration operations.
+> > > +	 * This is the same locking schema used by __set_cpus_allowed_ptr().
+> > > +	 */
+> > > +	rq = task_rq_lock(p, &rf);
+> > > +
+> > > +	/*
+> > > +	 * Setting the clamp bucket is serialized by task_rq_lock().
+> > > +	 * If the task is not yet RUNNABLE and its task_struct is not
+> > > +	 * affecting a valid clamp bucket, the next time it's enqueued,
+> > > +	 * it will already see the updated clamp bucket value.
+> > > +	 */
+> > > +	if (!p->uclamp[clamp_id].active)
+> > > +		goto done;
+> > > +
+> > > +	uclamp_cpu_dec_id(p, rq, clamp_id);
+> > > +	uclamp_cpu_inc_id(p, rq, clamp_id);
+> > > +
+> > > +done:
+> > > +	task_rq_unlock(rq, p, &rf);
+> > > +}
+> > 
+> > > @@ -1008,11 +1043,11 @@ static int __setscheduler_uclamp(struct task_struct *p,
+> > >  
+> > >  	mutex_lock(&uclamp_mutex);
+> > >  	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MIN) {
+> > > -		uclamp_bucket_inc(&p->uclamp[UCLAMP_MIN],
+> > > +		uclamp_bucket_inc(p, &p->uclamp[UCLAMP_MIN],
+> > >  				  UCLAMP_MIN, lower_bound);
+> > >  	}
+> > >  	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MAX) {
+> > > -		uclamp_bucket_inc(&p->uclamp[UCLAMP_MAX],
+> > > +		uclamp_bucket_inc(p, &p->uclamp[UCLAMP_MAX],
+> > >  				  UCLAMP_MAX, upper_bound);
+> > >  	}
+> > >  	mutex_unlock(&uclamp_mutex);
+> > 
+> > 
+> > But.... __sched_setscheduler() actually does the whole dequeue + enqueue
+> > thing already ?!? See where it does __setscheduler().
+> 
+> This is slow-path accounting, not fast path.
 
-I can confirm this on r8a7791/koelsch:
+Sure; but that's still no reason for duplicate or unneeded code.
 
-    PM: suspend entry (deep)
-    PM: Syncing filesystems ... done.
-    Freezing user space processes ... (elapsed 0.010 seconds) done.
-    OOM killer disabled.
-    Freezing remaining freezable tasks ... (elapsed 0.009 seconds) done.
-    spi_master spi0: could not stop message queue
-    spi_master spi0: queue stop failed
-    dpm_run_callback(): rspi_suspend+0x0/0xc returns -16
-    PM: Device e6b10000.spi failed to suspend: error -16
-    PM: Some devices failed to suspend, or early wake event detected
+> There are two refcounting going on here:
+> 
+>   1) mapped buckets:
+> 
+>      clamp_value <--(M1)--> bucket_id
+> 
+>   2) RUNNABLE tasks:
+> 
+>      bucket_id <--(M2)--> RUNNABLE tasks in a bucket
+> 
+> What we fix here is the refcounting for the buckets mapping. If a task
+> does not have a task specific clamp value it does not refcount any
+> bucket. The moment we assign a task specific clamp value, we need to
+> refcount the task in the bucket corresponding to that clamp value.
+> 
+> This will keep the bucket in use at least as long as the task will
+> need that clamp value.
 
-In addition, after boot, when the QSPI device is idle (the only activity
-was the initial probe), the device is no longer runtime-suspended, as
-witnessed by the following change to
-/sys/kernel/debug/pm_genpd/pm_genpd_summary:
-
-    -    /devices/platform/soc/e6b10000.spi                  suspended
-    +    /devices/platform/soc/e6b10000.spi                  active
-
-and by the following change to /sys/kernel/debug/clk/clk_summary:
-
-    -             qspi                     0        1        0
-97500000          0     0  50000
-    -                qspi_mod              0        1        0
-97500000          0     0  50000
-    +             qspi                     1        1        0
-97500000          0     0  50000
-    +                qspi_mod              1        1        0
-97500000          0     0  50000
-
-Reverting 412e60373245 also fixes that.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Sure, I get that. What I don't get is why you're adding that (2) here.
+Like said, __sched_setscheduler() already does a dequeue/enqueue under
+rq->lock, which should already take care of that.
