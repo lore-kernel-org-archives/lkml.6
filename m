@@ -2,168 +2,124 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C513C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:33:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E09EC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:38:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63B0021721
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:33:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EACCD20823
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:38:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dcP7txpk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727488AbfAVIdn (ORCPT
+        id S1727322AbfAVIiC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 03:33:43 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:53487 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727062AbfAVIdn (ORCPT
+        Tue, 22 Jan 2019 03:38:02 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:36396 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727093AbfAVIiB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 03:33:43 -0500
-X-IronPort-AV: E=Sophos;i="5.56,505,1539619200"; 
-   d="scan'208";a="52564129"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 22 Jan 2019 16:33:41 +0800
-Received: from G08CNEXCHPEKD03.g08.fujitsu.local (unknown [10.167.33.85])
-        by cn.fujitsu.com (Postfix) with ESMTP id 5EF224B7D665;
-        Tue, 22 Jan 2019 16:33:37 +0800 (CST)
-Received: from [10.167.226.222] (10.167.226.222) by
- G08CNEXCHPEKD03.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 22 Jan 2019 16:33:37 +0800
-Subject: Re: rcutorture: meaning of "End of test: RCU_HOTPLUG"
-To:     <paulmck@linux.ibm.com>
-CC:     <linux-kernel@vger.kernel.org>, <josh@joshtriplett.org>,
-        <rostedt@goodmis.org>, <mathieu.desnoyers@efficios.com>,
-        <jiangshanlai@gmail.com>, "Li, Philip" <philip.li@intel.com>,
-        <lkp-developer@eclists.intel.com>
-References: <996df745-8434-b92c-bad9-334cc6bf4b7f@cn.fujitsu.com>
- <20190122040144.GB4240@linux.ibm.com>
-From:   Su Yue <suy.fnst@cn.fujitsu.com>
-Message-ID: <c2cf5125-2545-c325-0393-0dba4aab379d@cn.fujitsu.com>
-Date:   Tue, 22 Jan 2019 16:42:19 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
-MIME-Version: 1.0
-In-Reply-To: <20190122040144.GB4240@linux.ibm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.167.226.222]
-X-yoursite-MailScanner-ID: 5EF224B7D665.AC901
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: suy.fnst@cn.fujitsu.com
+        Tue, 22 Jan 2019 03:38:01 -0500
+Received: by mail-lf1-f66.google.com with SMTP id a16so17423452lfg.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 00:38:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=QC6hI+o1F3bLp+jmcz5gH6/fp29Fuo/YO8irWTolOwQ=;
+        b=dcP7txpkZVMC5PY8+fHNtQdRKOBS8HtscDAMHiI61ZMr9YXMRWPbnCeMSQKQjplSRA
+         zS8h69fsjVE92EumcWExSrIQDdS5zdILWqxUZAqrzo3dCSjYEY6jCRuyHWeZb95GashH
+         lvCRV2WGRAshMPHhZBp5KLM4a25TA5uewzzGs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=QC6hI+o1F3bLp+jmcz5gH6/fp29Fuo/YO8irWTolOwQ=;
+        b=KyDJMzFGqVVYfEhnk/cIwyXtI41Bw18hw/+pwVRFmUCQgXum+Oah1AksZYe1joamL3
+         BCy8GA5pl4wGH22WG6Qga+XT6iNIrFHKR9KQYcKyT3okD+fIJ5Lu2/J7qzqPww3dM/yb
+         2prJu3K8VA3zVA5KXHzqH5opceJMzOnjbx9Of9GjPH/rAfhMZvLua6OE0unmPrNIv2zf
+         hcBdglL0xPcYX0lCOPBSUoaLzKbnOfECKz9sOFXyv0DkHblUp6jE7BJrS0krJ6Hh97nU
+         oB35pK2L184GxZ5tOs1d6RlRrVrC07sAfpykbLWss/OhM7M18uUgJpytH0lU+wRfoHMr
+         oo1g==
+X-Gm-Message-State: AJcUuke6ejaFmHra7EH/6HC5W5vKzMyeZ8XcV2Iw6k+vgdkAkNw/78AX
+        uA9/OsVFI0Hrh50D8y/5/grJkw==
+X-Google-Smtp-Source: ALg8bN7NXqsO4ewGzmrzFHHBEAl2b67scISSDlVnMTIWshlkEAsGlRUS6apPkw1LC14bE0zfNrMSIw==
+X-Received: by 2002:a19:c203:: with SMTP id l3mr7312577lfc.113.1548146279423;
+        Tue, 22 Jan 2019 00:37:59 -0800 (PST)
+Received: from localhost (c-573670d5.07-21-73746f28.bbcust.telenor.se. [213.112.54.87])
+        by smtp.gmail.com with ESMTPSA id c133sm2988651lfc.45.2019.01.22.00.37.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 22 Jan 2019 00:37:58 -0800 (PST)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     aisheng.dong@nxp.com, festevam@gmail.com, shawnguo@kernel.org,
+        stefan@agner.ch, linus.walleij@linaro.org
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH v3] pinctrl: freescale: fix link errors
+Date:   Tue, 22 Jan 2019 09:37:35 +0100
+Message-Id: <20190122083735.13286-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for your quick reply! Paul
+Fix link errors when PINCTRL_IMX_SCU, PINCTRL_IMX8QM or PINCTRL_IMXBQXP
+is enabled as a module and the dependent module is built-in.
 
-On 1/22/19 12:01 PM, Paul E. McKenney wrote:
-> On Tue, Jan 22, 2019 at 11:40:53AM +0800, Su Yue wrote:
->> Hi, guys
->>    While running rcutorture tests with "onoff_interval", some tests
->> failed and results show like:
->>
->> =====================================================================
->> [  316.354501] srcud-torture:--- End of test: RCU_HOTPLUG:
->> nreaders=1 nfakewriters=4 stat_interval=60 verbose=2
->> test_no_idle_hz=1 shuffle_interval=3 stutter=5 irqreader=1 fq\
->> s_duration=0 fqs_holdoff=0 fqs_stutter=3 test_boost=1/0
->> test_boost_interval=7 test_boost_duration=4 shutdown_secs=0
->> stall_cpu=0 stall_cpu_holdoff=10 stall_cpu_irqsoff=0 n_ba\
->> rrier_cbs=0 onoff_interval=3 onoff_holdoff=0
->> ====================================================================
->>
->> I am wondering that meaning of "RCU_HOTPLUG". Is it expected because
->> cpu hotplug is enabled in the test? Or just represents another type of
->> failure?
-> 
-> This says that at least one CPU hotplug operation failed, that is,
-> the CPU didn't actually come online or go offline as requested.  If you
-> are introducing CPU hotplug to an architecture, this usually indicates
-> that you have bugs in your CPU-hotplug code.  Or it nmight be that
+ld: drivers/pinctrl/freescale/pinctrl-scu.o: in function `imx_pinctrl_sc_ipc_init':
+pinctrl-scu.c:(.text+0x10): undefined reference to `imx_scu_get_handle'
+ld: pinctrl-scu.c:(.text+0x10): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `imx_scu_get_handle'
+ld: drivers/pinctrl/freescale/pinctrl-scu.o: in function `imx_pinconf_get_scu':
+pinctrl-scu.c:(.text+0xa0): undefined reference to `imx_scu_call_rpc'
+ld: pinctrl-scu.c:(.text+0xa0): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `imx_scu_call_rpc'
+ld: drivers/pinctrl/freescale/pinctrl-scu.o: in function `imx_pinconf_set_scu':
+pinctrl-scu.c:(.text+0x1b4): undefined reference to `imx_scu_call_rpc'
+ld: pinctrl-scu.c:(.text+0x1b4): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `imx_scu_call_rpc'
+ld: drivers/pinctrl/freescale/pinctrl-imx8qxp.o: in function `imx8qxp_pinctrl_probe':
+pinctrl-imx8qxp.c:(.text+0x28): undefined reference to `imx_pinctrl_probe'
+ld: pinctrl-imx8qxp.c:(.text+0x28): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `imx_pinctrl_probe'
 
-It should hit the case since there is no RCU CPU stall warnings.
+Rework so that PINCTRL_IMX_SCU and the config's that 'select
+PINCTRL_IMX_SCU' depends on IMX_SCU=y.
 
-> RCU grace periods failed to progress -- though this would normally
-> also result in RCU CPU stall warnings.
-> 
-> There should be lines containing "ver:" in your console output.  What
-> does one of the later one of these say?
-> 
+Suggested-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
+ drivers/pinctrl/freescale/Kconfig | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-The line says:
-======================================================================
-[  318.850175] busted_srcud-torture: rtc:           (null) ver: 27040 
-tfle: 0 rta: 27040 rtaf: 0 rtf: 27027 rtmbe: 0 rtbe: 0 rtbke: 0 rtbre: 0 
-rtbf: 0 rtb: 0 \
-nt: 9497 onoff: 2639/2639:2640/5310 40,373:10,355 162868:67542 (HZ=1000) 
-barrier: 0/0:0
-
-=====================================================================
-
-And here are useful errors:
-=====================================================================
-kern  :info  : [  135.379693] KVM setup async PF for cpu 1
-kern  :info  : [  135.381412] kvm-stealtime: cpu 1, msr 23fd16180
-kern  :alert : [  135.386897] busted_srcud-torture:torture_onoff task: 
-onlined 1
-kern  :alert : [  135.408241] busted_srcud-torture:torture_onoff task: 
-offlining 1
-kern  :info  : [  135.423310] Unregister pv shared memory for cpu 1
-kern  :info  : [  135.427940] smpboot: CPU 1 is now offline
-kern  :alert : [  135.430106] busted_srcud-torture:torture_onoff task: 
-offlined 1
-kern  :alert : [  135.436404] busted_srcud-torture:torture_onoff task: 
-offlining 0
-kern  :alert : [  135.446173] busted_srcud-torture:torture_onoff task: 
-offline 0 failed: errno -16
-kern  :alert : [  135.453076] busted_srcud-torture:torture_onoff task: 
-offlining 0
-kern  :alert : [  135.457461] busted_srcud-torture:torture_onoff task: 
-offline 0 failed: errno -16
-
-
-=====================================================================
-There are only two CPUs on the VM. Torture try to offline the last one
-but -EBUSY occured.
-
-I spent time to understand kernel/torture.c.
-There is torture_onoff():
-
-225        while (!torture_must_stop()) {
-226                cpu = (torture_random(&rand) >> 4) % (maxcpu + 1);
-227                if (!torture_offline(cpu,
-228                                     &n_offline_attempts, 
-&n_offline_successes,
-229                                     &sum_offline, &min_offline, 
-&max_offline))
-230                        torture_online(cpu,
-231                                       &n_online_attempts, 
-&n_online_successes,
-232                                       &sum_online, &min_online, 
-&max_online);
-233                schedule_timeout_interruptible(onoff_interval);
-234        }
-235
-
-torture_offline() and torture_offline() don't pre judge if the current
-cpu is only one usable.
-
-Our test machines are configured with CONFIG_BOOTPARAM_HOTPLUG_CPU0. If
-there are only one oneline and hotplugable cpux, then
-n_offline_successes != n_offline_attempts which caused "End of test:
-RCU_HOTPLUG".
-
-Does I misunderstand something above? Feel free to correct me.
-
-
-Thanks,
-Su
-
-> 							Thanx, Paul
-> 
-> 
-> 
-
+diff --git a/drivers/pinctrl/freescale/Kconfig b/drivers/pinctrl/freescale/Kconfig
+index b318c24b61be..af141dd2331d 100644
+--- a/drivers/pinctrl/freescale/Kconfig
++++ b/drivers/pinctrl/freescale/Kconfig
+@@ -7,7 +7,7 @@ config PINCTRL_IMX
+ 
+ config PINCTRL_IMX_SCU
+ 	bool
+-	depends on IMX_SCU
++	depends on IMX_SCU=y
+ 	select PINCTRL_IMX
+ 
+ config PINCTRL_IMX1_CORE
+@@ -131,14 +131,14 @@ config PINCTRL_IMX8MQ
+ 
+ config PINCTRL_IMX8QM
+ 	bool "IMX8QM pinctrl driver"
+-	depends on ARCH_MXC && ARM64
++	depends on IMX_SCU && ARCH_MXC && ARM64
+ 	select PINCTRL_IMX_SCU
+ 	help
+ 	  Say Y here to enable the imx8qm pinctrl driver
+ 
+ config PINCTRL_IMX8QXP
+ 	bool "IMX8QXP pinctrl driver"
+-	depends on ARCH_MXC && ARM64
++	depends on IMX_SCU && ARCH_MXC && ARM64
+ 	select PINCTRL_IMX_SCU
+ 	help
+ 	  Say Y here to enable the imx8qxp pinctrl driver
+-- 
+2.19.2
 
