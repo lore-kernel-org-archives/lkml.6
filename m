@@ -7,48 +7,50 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF8D1C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:14:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBDA7C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:14:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C028120879
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:14:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B77D9217D8
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:14:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548170087;
-	bh=pdbZX+e4YaHZHBBu2G1bBtBhTN0QM+ePWfjLnLkX1eo=;
+	s=default; t=1548170092;
+	bh=vUng/3Gdb3oYCxJxe2+j1CCWbQwGwRefUqh8xBlE5wY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fmf+MFf/hZ9Y5SS9+rWTA/gUaO82Kvh5xsnh8jtev8zxgW6bsO1crvpO4Rly3WhME
-	 nulycoRsPLY2baQZukzADjuSBHVowAN1XeheSxsR17FFVwI0EcYh9vJxd0ZD5lOGPP
-	 OAv5X37WhACVoAlyuaC8uQOmag62XEksc3/6n4KY=
+	b=RPhmGvcdrqQ1zhH7ZlsxBZGB7DJLr34pdbpJYZ+5lNoypFUkhIj2uy6OZLcZOGmKM
+	 B2x/3mBZdiVPn6Qy76kBOpkj0oMFIHsLwngrx7PCPTbnPzi1Ws2SvMr+bVdRyq8x3X
+	 7TnHnBStRWvIhAPn8ByIV82HGCBr1JU3VCH392oU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729295AbfAVPOq (ORCPT
+        id S1729308AbfAVPOu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 10:14:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54308 "EHLO mail.kernel.org"
+        Tue, 22 Jan 2019 10:14:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54404 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729199AbfAVPOp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 10:14:45 -0500
+        id S1729199AbfAVPOs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 10:14:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E84F6217D4;
-        Tue, 22 Jan 2019 15:14:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 81A3C217D6;
+        Tue, 22 Jan 2019 15:14:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548170084;
-        bh=pdbZX+e4YaHZHBBu2G1bBtBhTN0QM+ePWfjLnLkX1eo=;
+        s=default; t=1548170087;
+        bh=vUng/3Gdb3oYCxJxe2+j1CCWbQwGwRefUqh8xBlE5wY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MtFVwwMK4eO7yrOesrEBE+Mju+V+R/xSkFM0dpRjAX0r7x23OUW3kdEjqKYx6L1Ng
-         X1Tp8wGdk6GPjGvAqBTUOII5FLV1gmEYuwLvjSLcfJQq40Ml3BvxUTQydn1u0LdSMm
-         Y4pFixfZebdj0MHHiPvWzXziFfNtumj6Mm9VXraw=
+        b=WqCBMm70GDCL7uH2zNImPNcxOTmzD/xiG0ZU2eQCEvQ8hUMLPGI2AUyTjlVoIUF80
+         nEN1TTKKnVm+Dkq02s5wUhFjANshzZCo9Fh/j7rNYnuXXZBX2J08hBUcxacNaClzL4
+         J90mfo1vSZb+uIDjmGRCRs4iKlVOSYQx5sLaasuc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     Herbert Xu <herbert@gondor.apana.org.au>,
         David Miller <davem@davemloft.net>
 Cc:     linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Robert Richter <rrichter@cavium.com>,
-        Jan Glauber <jglauber@cavium.com>
-Subject: [PATCH 4/7] crypto: cavium: zip: no need to check return value of debugfs_create functions
-Date:   Tue, 22 Jan 2019 16:14:19 +0100
-Message-Id: <20190122151422.14204-5-gregkh@linuxfoundation.org>
+        Srikanth Jampala <Jampala.Srikanth@cavium.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        Gadam Sreerama <sgadam@cavium.com>,
+        Eric Biggers <ebiggers@google.com>
+Subject: [PATCH 5/7] crypto: cavium: nitrox: no need to check return value of debugfs_create functions
+Date:   Tue, 22 Jan 2019 16:14:20 +0100
+Message-Id: <20190122151422.14204-6-gregkh@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190122151422.14204-1-gregkh@linuxfoundation.org>
 References: <20190122151422.14204-1-gregkh@linuxfoundation.org>
@@ -65,103 +67,93 @@ never do something different based on this.
 
 Cc: Herbert Xu <herbert@gondor.apana.org.au>
 Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Robert Richter <rrichter@cavium.com>
-Cc: Jan Glauber <jglauber@cavium.com>
+Cc: Srikanth Jampala <Jampala.Srikanth@cavium.com>
+Cc: Yangtao Li <tiny.windzz@gmail.com>
+Cc: Gadam Sreerama <sgadam@cavium.com>
+Cc: Eric Biggers <ebiggers@google.com>
 Cc: linux-crypto@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/crypto/cavium/zip/zip_main.c | 52 ++++++----------------------
- 1 file changed, 11 insertions(+), 41 deletions(-)
+ drivers/crypto/cavium/nitrox/nitrox_debugfs.c | 27 ++++---------------
+ drivers/crypto/cavium/nitrox/nitrox_debugfs.h |  5 ++--
+ drivers/crypto/cavium/nitrox/nitrox_main.c    |  4 +--
+ 3 files changed, 8 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/crypto/cavium/zip/zip_main.c b/drivers/crypto/cavium/zip/zip_main.c
-index be055b9547f6..e6b09e784e66 100644
---- a/drivers/crypto/cavium/zip/zip_main.c
-+++ b/drivers/crypto/cavium/zip/zip_main.c
-@@ -618,41 +618,23 @@ static const struct file_operations zip_regs_fops = {
- /* Root directory for thunderx_zip debugfs entry */
- static struct dentry *zip_debugfs_root;
+diff --git a/drivers/crypto/cavium/nitrox/nitrox_debugfs.c b/drivers/crypto/cavium/nitrox/nitrox_debugfs.c
+index 0196b992280f..848ec93d4333 100644
+--- a/drivers/crypto/cavium/nitrox/nitrox_debugfs.c
++++ b/drivers/crypto/cavium/nitrox/nitrox_debugfs.c
+@@ -55,31 +55,14 @@ void nitrox_debugfs_exit(struct nitrox_device *ndev)
+ 	ndev->debugfs_dir = NULL;
+ }
  
--static int __init zip_debugfs_init(void)
-+static void __init zip_debugfs_init(void)
+-int nitrox_debugfs_init(struct nitrox_device *ndev)
++void nitrox_debugfs_init(struct nitrox_device *ndev)
  {
--	struct dentry *zip_stats, *zip_clear, *zip_regs;
--
- 	if (!debugfs_initialized())
--		return -ENODEV;
-+		return;
+-	struct dentry *dir, *f;
++	struct dentry *dir;
  
- 	zip_debugfs_root = debugfs_create_dir("thunderx_zip", NULL);
--	if (!zip_debugfs_root)
+ 	dir = debugfs_create_dir(KBUILD_MODNAME, NULL);
+-	if (!dir)
 -		return -ENOMEM;
  
- 	/* Creating files for entries inside thunderx_zip directory */
--	zip_stats = debugfs_create_file("zip_stats", 0444,
--					zip_debugfs_root,
--					NULL, &zip_stats_fops);
--	if (!zip_stats)
--		goto failed_to_create;
+ 	ndev->debugfs_dir = dir;
+-	f = debugfs_create_file("firmware", 0400, dir, ndev,
+-				&firmware_fops);
+-	if (!f)
+-		goto err;
+-	f = debugfs_create_file("device", 0400, dir, ndev,
+-				&device_fops);
+-	if (!f)
+-		goto err;
+-	f = debugfs_create_file("stats", 0400, dir, ndev,
+-				&stats_fops);
+-	if (!f)
+-		goto err;
 -
--	zip_clear = debugfs_create_file("zip_clear", 0444,
--					zip_debugfs_root,
--					NULL, &zip_clear_fops);
--	if (!zip_clear)
--		goto failed_to_create;
--
--	zip_regs = debugfs_create_file("zip_regs", 0444,
--				       zip_debugfs_root,
--				       NULL, &zip_regs_fops);
--	if (!zip_regs)
--		goto failed_to_create;
-+	debugfs_create_file("zip_stats", 0444, zip_debugfs_root, NULL,
-+			    &zip_stats_fops);
- 
 -	return 0;
-+	debugfs_create_file("zip_clear", 0444, zip_debugfs_root, NULL,
-+			    &zip_clear_fops);
-+
-+	debugfs_create_file("zip_regs", 0444, zip_debugfs_root, NULL,
-+			    &zip_regs_fops);
- 
--failed_to_create:
--	debugfs_remove_recursive(zip_debugfs_root);
--	return -ENOENT;
+-
+-err:
+-	nitrox_debugfs_exit(ndev);
+-	return -ENODEV;
++	debugfs_create_file("firmware", 0400, dir, ndev, &firmware_fops);
++	debugfs_create_file("device", 0400, dir, ndev, &device_fops);
++	debugfs_create_file("stats", 0400, dir, ndev, &stats_fops);
  }
+diff --git a/drivers/crypto/cavium/nitrox/nitrox_debugfs.h b/drivers/crypto/cavium/nitrox/nitrox_debugfs.h
+index a8d85ffa619c..f177b79bbab0 100644
+--- a/drivers/crypto/cavium/nitrox/nitrox_debugfs.h
++++ b/drivers/crypto/cavium/nitrox/nitrox_debugfs.h
+@@ -5,12 +5,11 @@
+ #include "nitrox_dev.h"
  
- static void __exit zip_debugfs_exit(void)
-@@ -661,13 +643,8 @@ static void __exit zip_debugfs_exit(void)
- }
- 
+ #ifdef CONFIG_DEBUG_FS
+-int nitrox_debugfs_init(struct nitrox_device *ndev);
++void nitrox_debugfs_init(struct nitrox_device *ndev);
+ void nitrox_debugfs_exit(struct nitrox_device *ndev);
  #else
--static int __init zip_debugfs_init(void)
--{
+-static inline int nitrox_debugfs_init(struct nitrox_device *ndev)
++static inline void nitrox_debugfs_init(struct nitrox_device *ndev)
+ {
 -	return 0;
--}
--
-+static void __init zip_debugfs_init(void) { }
- static void __exit zip_debugfs_exit(void) { }
--
- #endif
- /* debugfs - end */
+ }
  
-@@ -691,17 +668,10 @@ static int __init zip_init_module(void)
- 	}
+ static inline void nitrox_debugfs_exit(struct nitrox_device *ndev)
+diff --git a/drivers/crypto/cavium/nitrox/nitrox_main.c b/drivers/crypto/cavium/nitrox/nitrox_main.c
+index 014e9863c20e..faa78f651238 100644
+--- a/drivers/crypto/cavium/nitrox/nitrox_main.c
++++ b/drivers/crypto/cavium/nitrox/nitrox_main.c
+@@ -404,9 +404,7 @@ static int nitrox_probe(struct pci_dev *pdev,
+ 	if (err)
+ 		goto pf_hw_fail;
  
- 	/* comp-decomp statistics are handled with debugfs interface */
--	ret = zip_debugfs_init();
--	if (ret < 0) {
--		zip_err("ZIP: debugfs initialization failed\n");
--		goto err_crypto_unregister;
--	}
-+	zip_debugfs_init();
+-	err = nitrox_debugfs_init(ndev);
+-	if (err)
+-		goto pf_hw_fail;
++	nitrox_debugfs_init(ndev);
  
- 	return ret;
- 
--err_crypto_unregister:
--	zip_unregister_compression_device();
--
- err_pci_unregister:
- 	pci_unregister_driver(&zip_driver);
- 	return ret;
+ 	/* clear the statistics */
+ 	atomic64_set(&ndev->stats.posted, 0);
 -- 
 2.20.1
 
