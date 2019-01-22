@@ -2,143 +2,99 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44EEFC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:44:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66749C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:44:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F0B420844
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:44:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33B5920844
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:44:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g727yUE8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729005AbfAVPoU (ORCPT
+        id S1729114AbfAVPoj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 10:44:20 -0500
-Received: from smtp.nue.novell.com ([195.135.221.5]:47967 "EHLO
-        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728633AbfAVPoT (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Tue, 22 Jan 2019 10:44:19 -0500
-Received: from emea4-mta.ukb.novell.com ([10.120.13.87])
-        by smtp.nue.novell.com with ESMTP (TLS encrypted); Tue, 22 Jan 2019 16:44:18 +0100
-Received: from d104.suse.de (nwb-a10-snat.microfocus.com [10.120.13.201])
-        by emea4-mta.ukb.novell.com with ESMTP (NOT encrypted); Tue, 22 Jan 2019 15:44:13 +0000
-From:   Oscar Salvador <osalvador@suse.de>
-To:     akpm@linux-foundation.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org, mhocko@suse.com,
-        david@redhat.com, Oscar Salvador <osalvador@suse.de>
-Subject: [PATCH] mm,memory_hotplug: Fix scan_movable_pages for gigantic hugepages
-Date:   Tue, 22 Jan 2019 16:44:07 +0100
-Message-Id: <20190122154407.18417-1-osalvador@suse.de>
-X-Mailer: git-send-email 2.13.7
+        Tue, 22 Jan 2019 10:44:39 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:35399 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728633AbfAVPoj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 10:44:39 -0500
+Received: by mail-oi1-f193.google.com with SMTP id v6so17764200oif.2;
+        Tue, 22 Jan 2019 07:44:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=jySj76otXaOTOM3jZMZUQKaNajoL056bBFNn8sS0UsA=;
+        b=g727yUE8A2nSQzRd7uw1KsHFd6KYx0dPQ+wd/RYy5DKg0nQn/4zcaNbj2/ZhRMrdKw
+         hwAt31ShcD0EdxGjvLygy8jlikmMbY6Y8rrG1hVm4TxNuk5L7093MN6dUhSvguCFjtV7
+         Rd+p4r0yQi+UMNX7X8/ne0IR5DfECOCHUtZ4wj4oEs8cAYexEDnDLr7dbQx+1sCvzYZz
+         NfJR8VPETFi0Ja8/l7YAs1FTxkgzWkWDBjTA53AD0HfsnyqNZ9m/IqtfOqBW3uyx2PAn
+         vNrPcoRX2Fq28xh11qF++JCdr9Xsh04nWxjS1yKexFqycxcLcCy+g8BVi2PX+JmRq0rk
+         x8BQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=jySj76otXaOTOM3jZMZUQKaNajoL056bBFNn8sS0UsA=;
+        b=FgqrEQFj0WJxu27Ae2N/Xpaw160T/DGb6tbgHy4KkXMRALVQ09CgtZ7BahKyf3gfVm
+         HU97KT2Z1TIhPzTOhQkxXghHFCb0tNriAIRt/yQw94MUdoeQWuT7TbMR792yPfJVy+3w
+         dSTNRotG4ld6i8AvCqYOoC4ZWkO/j29DY7HXTFuTvxGnIsNxj7wcmzQDNjFAtFtLmjbb
+         xrXswyjdDcVfXtVp5HS1IdcRzK9tRYL67BMVIy9INqnC1F1it8OcixijJK8NXzuwQhTK
+         iBvbNbACIbIspAyoOZaylS/SlxDS4bSr5LZ8neyfdPhW+gVX2mHfD41Okq8uGEQaYrW1
+         yfpg==
+X-Gm-Message-State: AJcUukdePnzhzTFPyMtCGznH4GoaCheNhAdMt8JSPW48TuR3vkNIbA6d
+        EDTyTMU5fxQGzucC1VH3qPzh0P+z
+X-Google-Smtp-Source: ALg8bN7XBH47d57iXYQ/S88Fvq0CNTQVfGB/IvzBdxZ8TzSdLgW0HZkOEtX539CaBDCD6076GQVdaA==
+X-Received: by 2002:aca:720a:: with SMTP id p10mr8218016oic.169.1548171878586;
+        Tue, 22 Jan 2019 07:44:38 -0800 (PST)
+Received: from [192.168.1.112] (cpe-24-31-245-230.kc.res.rr.com. [24.31.245.230])
+        by smtp.gmail.com with ESMTPSA id c132sm7535850oia.41.2019.01.22.07.44.37
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 22 Jan 2019 07:44:38 -0800 (PST)
+Subject: Re: [PATCH] realtek: no need to check return value of debugfs_create
+ functions
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     Ping-Ke Shih <pkshih@realtek.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        linux-wireless@vger.kernel.org
+References: <20190122152151.16139-34-gregkh@linuxfoundation.org>
+From:   Larry Finger <Larry.Finger@lwfinger.net>
+Message-ID: <c09a1fb9-45e4-c21e-3c19-09ba94ebd859@lwfinger.net>
+Date:   Tue, 22 Jan 2019 09:44:37 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <20190122152151.16139-34-gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the same sort of error we saw in [1].
+On 1/22/19 9:21 AM, Greg Kroah-Hartman wrote:
+> When calling debugfs functions, there is no need to ever check the
+> return value.  The function can work or not, but the code logic should
+> never do something different based on this.
+> 
+> Cc: Ping-Ke Shih <pkshih@realtek.com>
+> Cc: Kalle Valo <kvalo@codeaurora.org>
+> Cc: linux-wireless@vger.kernel.org
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Gigantic hugepages crosses several memblocks, so it can be
-that the page we get in scan_movable_pages() is a page-tail
-belonging to a 1G-hugepage.
-If that happens, page_hstate()->size_to_hstate() will return NULL,
-and we will blow up in hugepage_migration_supported().
+Greg,
 
-The splat is as follows:
+Please change the subject to read "rtlwifi: ...". Otherwise the patch is correct.
 
-kernel: BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
-kernel: #PF error: [normal kernel read fault]
-kernel: PGD 0 P4D 0
-kernel: Oops: 0000 [#1] SMP PTI
-kernel: CPU: 1 PID: 1350 Comm: bash Tainted: G            E     5.0.0-rc1-mm1-1-default+ #27
-kernel: Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.0.0-prebuilt.qemu-project.org 04/01/2014
-kernel: RIP: 0010:__offline_pages+0x6ae/0x900
-kernel: Code: 48 c7 c6 d0 3e a4 81 e8 44 c8 ad ff 49 8b 04 24 bf 00 10 00 00 a9 00 00 01 00 74 09 41 0f b6 4c 24 51 48 d3 e7 e8 42 2a c1 ff <8b> 40 08 83 f8 09 0f 84 b0 fc ff ff 83 f8 12 0f 84 a7 fc ff ff 83
-kernel: RSP: 0018:ffffc900008e3d20 EFLAGS: 00010246
-kernel: RAX: 0000000000000000 RBX: ffffea0000000000 RCX: 0000000000000009
-kernel: RDX: ffffffff825c64f0 RSI: 0000000000001000 RDI: 0000000000001000
-kernel: RBP: ffffc900008e3d68 R08: 0000000000200000 R09: 00000000000001e4
-kernel: R10: 0000000000000058 R11: ffffffff8254a854 R12: ffffea0004200000
-kernel: R13: 0000000000108000 R14: 0000000000110000 R15: 0000000000000000
-kernel: FS:  00007ff172339b80(0000) GS:ffff88803eb00000(0000) knlGS:0000000000000000
-kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-kernel: CR2: 0000000000000008 CR3: 0000000038d78006 CR4: 00000000003606a0
-kernel: DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-kernel: DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-kernel: Call Trace:
-kernel:  ? klist_next+0x79/0xe0
-kernel:  memory_subsys_offline+0x42/0x60
-kernel:  device_offline+0x80/0xa0
-kernel:  state_store+0xab/0xc0
-kernel:  kernfs_fop_write+0x102/0x180
-kernel:  __vfs_write+0x26/0x190
-kernel:  ? set_close_on_exec+0x49/0x70
-kernel:  vfs_write+0xad/0x1b0
-kernel:  ksys_write+0x42/0x90
-kernel:  do_syscall_64+0x5b/0x180
-kernel:  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-kernel: RIP: 0033:0x7ff1719febe4
-kernel: Code: 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 80 00 00 00 00 8b 05 4a fc 2c 00 48 63 ff 85 c0 75 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 f3 c3 66 90 55 53 48 89 d5 48 89 f3 48 83
-kernel: RSP: 002b:00007ffd50b7ddc8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-kernel: RAX: ffffffffffffffda RBX: 0000000000000008 RCX: 00007ff1719febe4
-kernel: RDX: 0000000000000008 RSI: 00005556e9216b20 RDI: 0000000000000001
-kernel: RBP: 00005556e9216b20 R08: 000000000000000a R09: 0000000000000000
-kernel: R10: 000000000000000a R11: 0000000000000246 R12: 0000000000000008
-kernel: R13: 0000000000000001 R14: 00007ff171cca720 R15: 0000000000000008
-kernel: Modules linked in: af_packet(E) xt_tcpudp(E) ipt_REJECT(E) xt_conntrack(E) nf_conntrack(E) nf_defrag_ipv4(E) ip_set(E) nfnetlink(E) ebtable_nat(E) ebtable_broute(E) bridge(E) stp(E) llc(E) iptable_mangle(E) iptable_raw(E) iptable_security(E) ebtable_filter(E) ebtables(E) iptable_filter(E) ip_tables(E) x_tables(E) kvm_intel(E) kvm(E) irqbypass(E) crct10dif_pclmul(E) crc32_pclmul(E) ghash_clmulni_intel(E) bochs_drm(E) ttm(E) aesni_intel(E) drm_kms_helper(E) aes_x86_64(E) crypto_simd(E) cryptd(E) glue_helper(E) drm(E) virtio_net(E) syscopyarea(E) sysfillrect(E) net_failover(E) sysimgblt(E) pcspkr(E) failover(E) i2c_piix4(E) fb_sys_fops(E) parport_pc(E) parport(E) button(E) btrfs(E) libcrc32c(E) xor(E) zstd_decompress(E) zstd_compress(E) xxhash(E) raid6_pq(E) sd_mod(E) ata_generic(E) ata_piix(E) ahci(E) libahci(E) libata(E) crc32c_intel(E) serio_raw(E) virtio_pci(E) virtio_ring(E) virtio(E) sg(E) scsi_mod(E) autofs4(E)
-kernel: CR2: 0000000000000008
-kernel: ---[ end trace bdb71590872849fb ]---
-kernel: RIP: 0010:__offline_pages+0x6ae/0x900
-kernel: Code: 48 c7 c6 d0 3e a4 81 e8 44 c8 ad ff 49 8b 04 24 bf 00 10 00 00 a9 00 00 01 00 74 09 41 0f b6 4c 24 51 48 d3 e7 e8 42 2a c1 ff <8b> 40 08 83 f8 09 0f 84 b0 fc ff ff 83 f8 12 0f 84 a7 fc ff ff 83
-kernel: RSP: 0018:ffffc900008e3d20 EFLAGS: 00010246
-kernel: RAX: 0000000000000000 RBX: ffffea0000000000 RCX: 0000000000000009
-kernel: RDX: ffffffff825c64f0 RSI: 0000000000001000 RDI: 0000000000001000
-kernel: RBP: ffffc900008e3d68 R08: 0000000000200000 R09: 00000000000001e4
-kernel: R10: 0000000000000058 R11: ffffffff8254a854 R12: ffffea0004200000
-kernel: R13: 0000000000108000 R14: 0000000000110000 R15: 0000000000000000
-kernel: FS:  00007ff172339b80(0000) GS:ffff88803eb00000(0000) knlGS:0000000000000000
-kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-kernel: CR2: 0000000000000008 CR3: 0000000038d78006 CR4: 00000000003606a0
-kernel: DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-kernel: DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
 
-Fix this by getting the head page and testing against it.
+Thanks,
 
-[1] https://patchwork.kernel.org/patch/10739963/
-
-Signed-off-by: Oscar Salvador <osalvador@suse.de>
----
- mm/memory_hotplug.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
-
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index ec22c86d9f89..25aee4f04a72 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -1335,12 +1335,17 @@ static unsigned long scan_movable_pages(unsigned long start, unsigned long end)
- 			if (__PageMovable(page))
- 				return pfn;
- 			if (PageHuge(page)) {
--				if (hugepage_migration_supported(page_hstate(page)) &&
--				    page_huge_active(page))
-+				struct page *head = compound_head(page);
-+
-+				if (hugepage_migration_supported(page_hstate(head)) &&
-+				    page_huge_active(head))
- 					return pfn;
--				else
--					pfn = round_up(pfn + 1,
--						1 << compound_order(page)) - 1;
-+				else {
-+					unsigned long skip;
-+
-+					skip = (1 << compound_order(head)) - (page - head);
-+					pfn += skip - 1;
-+				}
- 			}
- 		}
- 	}
--- 
-2.13.7
-
+Larry
