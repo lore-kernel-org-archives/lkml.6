@@ -2,213 +2,103 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3E42C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:27:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F7CEC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:27:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A468021721
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:27:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GzLHEu/c"
+	by mail.kernel.org (Postfix) with ESMTP id C3F0720684
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:27:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548167264;
+	bh=xiQaeRHzgaae2MnGqyHq2QXKoL9k9FF497FB3myi43o=;
+	h=Date:From:To:Cc:Subject:List-ID:From;
+	b=OjQsd5PA5sQpHa9KqlYSMMjLqGRU/CISieFXuqTjIeHHd+8IhW0YZ5do9z4WMwnn3
+	 FI2qb9pyY2L48aPj0Ymhx1RBeNxQNswENyHioK1bVsc6LMNMNv59zVO4YnlzU7UIfH
+	 bmpcoJWR9GDi96a2QIrGZCUKJ3tA6MnHDMcHUgKQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728802AbfAVO1i (ORCPT
+        id S1728821AbfAVO1n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 22 Jan 2019 09:27:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46420 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728714AbfAVO1i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 22 Jan 2019 09:27:38 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:40852 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728365AbfAVO1h (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 09:27:37 -0500
-Received: by mail-io1-f67.google.com with SMTP id k2so19227502iog.7
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 06:27:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9uY6YEPa1qfq+QOnCjTUKRO/17Q+zAHt4AfScn3/2Wc=;
-        b=GzLHEu/cv4Rtm6aA2QHv+Ygq495Cnz426ES7diDoFGbYVMjHBhWGCJrbP4EctxBy9l
-         tHwVAo+AGjChh5VPVGN4S8Ml6zCW5h/+PUGu7i4x8l9z0qihKidh5aGeMFYLPipsFWBN
-         4rsJ0rVEbKo/CU1HEIuTf+JjGbUNXDwjHjvQQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9uY6YEPa1qfq+QOnCjTUKRO/17Q+zAHt4AfScn3/2Wc=;
-        b=Ce0OOxU1J2jnnLlYljpKDK+XJyRis2D3sHV8R1KXwmHdATIvs3IONjGW+2ArYKqvU0
-         1XMv2vmBlpY2D6/WzPBNCZaGIYTxVwmnxJi74Q5ONm3RE8W1vXrR2ioodDZjSFh4FeWM
-         ElHoEjboTX8hBp3wAFCPNiKoDTZPxvUr0Xc9ubgI4nlW2U53az5ci5hBpmLr0sc3uHeW
-         R+UhEyIuNZl3S1f0/ha7390pfT+kW+e6cP3j3yqxBi7bCZoPOgLLtQwJyKHqvCFVp34Y
-         9aNfTBkfRlKuQ3SLn2YQduzAmTO2bNkjkhwM0LfG60SCdvoyrysaomCKuKEXtApTykRf
-         /0Mg==
-X-Gm-Message-State: AJcUukeP2Xgx9UGHNsZeqLDbpk4OUu1oaP4xJPIuDGoLJgz6Txmvq0Xd
-        8a81OxZYtUWXg4emr9SNMMkXnk2tUY53CZj6dd1n64ZyUJ57kg==
-X-Google-Smtp-Source: ALg8bN7ASKKmueW1a4D09KObEYDIxJS2egsd+JeGqsJd9gHi0/oR8l6uc46nUC7Ud4KPm9vZ1xHmu5xpkSC3s8PX7OY=
-X-Received: by 2002:a6b:6b02:: with SMTP id g2mr10195520ioc.18.1548167256643;
- Tue, 22 Jan 2019 06:27:36 -0800 (PST)
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3891D20684;
+        Tue, 22 Jan 2019 14:27:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548167257;
+        bh=xiQaeRHzgaae2MnGqyHq2QXKoL9k9FF497FB3myi43o=;
+        h=Date:From:To:Cc:Subject:From;
+        b=Pqefch3IT5uZS9t8Tf+oulocDuMsGK4OScmIM1TjT+j9Hat9wn8k8biSi3lck+UKt
+         rZai9kmwTBWfhDoMhvKT8nMXMo7I0E3txEOWd3l6ipxawSaFKA8PG3+QUUJrDt6qcT
+         Xrte6rBA605Enqx7tJYBvSY3p2syD/OFJwt7o1V4=
+Date:   Tue, 22 Jan 2019 15:27:35 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Johannes Thumshirn <jth@kernel.org>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
+Subject: [PATCH v2] SCSI: fcoe: convert to use BUS_ATTR_WO
+Message-ID: <20190122142735.GB18225@kroah.com>
 MIME-Version: 1.0
-References: <1548167070-421-1-git-send-email-vincent.guittot@linaro.org> <1548167070-421-3-git-send-email-vincent.guittot@linaro.org>
-In-Reply-To: <1548167070-421-3-git-send-email-vincent.guittot@linaro.org>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Tue, 22 Jan 2019 15:27:25 +0100
-Message-ID: <CAKfTPtBNp0VMfguY6nPh1LiZKJm-Okzvg-5dsiL5Vg_MwngT1g@mail.gmail.com>
-Subject: Re: [PATCH 2/2] PM-runtime: Replace jiffies based accounting with
- ktime-based accounting
-To:     "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 22 Jan 2019 at 15:24, Vincent Guittot
-<vincent.guittot@linaro.org> wrote:
->
-> From: Thara Gopinath <thara.gopinath@linaro.org>
->
-> This patch replaces jiffies based accounting for runtime_active_time
-> and runtime_suspended_time with ktime-based accounting. This makes the
-> runtime debug counters inline with genpd and other PM subsytems which
-> use ktime-based accounting.
->
-> Timekeeping is initialized before driver_init(). It's only at that time
-> that PM runtime can be enabled.
->
-> Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
-> [switch from ktime to raw nsec]
-> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+We are trying to get rid of BUS_ATTR() and the usage of that in the fcoe
+driver can be trivially converted to use BUS_ATTR_WO(), so use that
+instead.
 
-Hi Ulf,
+Cc: Johannes Thumshirn <jth@kernel.org>
+Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+v2: Made simpler with wrapper functions to call the "real" show/store
+    functions, thanks to James for the idea.
+    Removed the EXPORT_SYMBOL() removal line, that belongs in a separate
+    patch
 
-I haven't added you reviewed-by because of the changes in this new version.
+ drivers/scsi/fcoe/fcoe_sysfs.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-Hi Guenter,
+diff --git a/drivers/scsi/fcoe/fcoe_sysfs.c b/drivers/scsi/fcoe/fcoe_sysfs.c
+index 5c8310bade61..c3dcbdc3aa64 100644
+--- a/drivers/scsi/fcoe/fcoe_sysfs.c
++++ b/drivers/scsi/fcoe/fcoe_sysfs.c
+@@ -671,8 +671,19 @@ static const struct device_type fcoe_fcf_device_type = {
+ 	.release = fcoe_fcf_device_release,
+ };
+ 
+-static BUS_ATTR(ctlr_create, S_IWUSR, NULL, fcoe_ctlr_create_store);
+-static BUS_ATTR(ctlr_destroy, S_IWUSR, NULL, fcoe_ctlr_destroy_store);
++static ssize_t ctlr_create_store(struct bus_type *bus, const char *buf,
++				 size_t count)
++{
++	return fcoe_ctlr_create_store(bus, buf, count);
++}
++static BUS_ATTR_WO(ctlr_create);
++
++static ssize_t ctlr_destroy_store(struct bus_type *bus, const char *buf,
++				  size_t count)
++{
++	return fcoe_ctlr_destroy_store(bus, buf, count);
++}
++static BUS_ATTR_WO(ctlr_destroy);
+ 
+ static struct attribute *fcoe_bus_attrs[] = {
+ 	&bus_attr_ctlr_create.attr,
+-- 
+2.20.1
 
-Could you test this version ?
-
-Thanks,
-Vincent
-
-> ---
->  drivers/base/power/runtime.c | 17 +++++++++--------
->  drivers/base/power/sysfs.c   | 11 ++++++++---
->  include/linux/pm.h           |  6 +++---
->  3 files changed, 20 insertions(+), 14 deletions(-)
->
-> diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
-> index 7df1d05..e49b3a8 100644
-> --- a/drivers/base/power/runtime.c
-> +++ b/drivers/base/power/runtime.c
-> @@ -66,8 +66,8 @@ static int rpm_suspend(struct device *dev, int rpmflags);
->   */
->  void update_pm_runtime_accounting(struct device *dev)
->  {
-> -       unsigned long now = jiffies;
-> -       unsigned long delta;
-> +       u64 now = ktime_to_ns(ktime_get());
-> +       u64 delta;
->
->         delta = now - dev->power.accounting_timestamp;
->
-> @@ -77,9 +77,9 @@ void update_pm_runtime_accounting(struct device *dev)
->                 return;
->
->         if (dev->power.runtime_status == RPM_SUSPENDED)
-> -               dev->power.suspended_jiffies += delta;
-> +               dev->power.suspended_time += delta;
->         else
-> -               dev->power.active_jiffies += delta;
-> +               dev->power.active_time += delta;
->  }
->
->  static void __update_runtime_status(struct device *dev, enum rpm_status status)
-> @@ -90,16 +90,17 @@ static void __update_runtime_status(struct device *dev, enum rpm_status status)
->
->  u64 pm_runtime_suspended_time(struct device *dev)
->  {
-> -       unsigned long flags, time;
-> +       u64 time;
-> +       unsigned long flags;
->
->         spin_lock_irqsave(&dev->power.lock, flags);
->
->         update_pm_runtime_accounting(dev);
-> -       time = dev->power.suspended_jiffies;
-> +       time = dev->power.suspended_time;
->
->         spin_unlock_irqrestore(&dev->power.lock, flags);
->
-> -       return jiffies_to_nsecs(time);
-> +       return time;
->  }
->  EXPORT_SYMBOL_GPL(pm_runtime_suspended_time);
->
-> @@ -1308,7 +1309,7 @@ void pm_runtime_enable(struct device *dev)
->
->         /* About to enable runtime pm, set accounting_timestamp to now */
->         if (dev->power.disable_depth == 1)
-> -               dev->power.accounting_timestamp = jiffies;
-> +               dev->power.accounting_timestamp = ktime_to_ns(ktime_get());
->
->         if (dev->power.disable_depth > 0)
->                 dev->power.disable_depth--;
-> diff --git a/drivers/base/power/sysfs.c b/drivers/base/power/sysfs.c
-> index d713738..96c8a22 100644
-> --- a/drivers/base/power/sysfs.c
-> +++ b/drivers/base/power/sysfs.c
-> @@ -125,9 +125,12 @@ static ssize_t runtime_active_time_show(struct device *dev,
->                                 struct device_attribute *attr, char *buf)
->  {
->         int ret;
-> +       u64 tmp;
->         spin_lock_irq(&dev->power.lock);
->         update_pm_runtime_accounting(dev);
-> -       ret = sprintf(buf, "%i\n", jiffies_to_msecs(dev->power.active_jiffies));
-> +       tmp = dev->power.active_time;
-> +       do_div(tmp, NSEC_PER_MSEC);
-> +       ret = sprintf(buf, "%llu\n", tmp);
->         spin_unlock_irq(&dev->power.lock);
->         return ret;
->  }
-> @@ -138,10 +141,12 @@ static ssize_t runtime_suspended_time_show(struct device *dev,
->                                 struct device_attribute *attr, char *buf)
->  {
->         int ret;
-> +       u64 tmp;
->         spin_lock_irq(&dev->power.lock);
->         update_pm_runtime_accounting(dev);
-> -       ret = sprintf(buf, "%i\n",
-> -               jiffies_to_msecs(dev->power.suspended_jiffies));
-> +       tmp = dev->power.suspended_time;
-> +       do_div(tmp, NSEC_PER_MSEC);
-> +       ret = sprintf(buf, "%llu\n", tmp);
->         spin_unlock_irq(&dev->power.lock);
->         return ret;
->  }
-> diff --git a/include/linux/pm.h b/include/linux/pm.h
-> index 0bd9de1..3d2cbf9 100644
-> --- a/include/linux/pm.h
-> +++ b/include/linux/pm.h
-> @@ -633,9 +633,9 @@ struct dev_pm_info {
->         int                     runtime_error;
->         int                     autosuspend_delay;
->         u64                     last_busy;
-> -       unsigned long           active_jiffies;
-> -       unsigned long           suspended_jiffies;
-> -       unsigned long           accounting_timestamp;
-> +       u64                     active_time;
-> +       u64                     suspended_time;
-> +       u64                     accounting_timestamp;
->  #endif
->         struct pm_subsys_data   *subsys_data;  /* Owned by the subsystem. */
->         void (*set_latency_tolerance)(struct device *, s32);
-> --
-> 2.7.4
->
