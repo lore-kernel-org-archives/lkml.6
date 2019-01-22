@@ -2,119 +2,152 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27FFBC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:45:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFD4DC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:45:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEBF720879
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:45:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="B5YqQXIG"
+	by mail.kernel.org (Postfix) with ESMTP id C4AD620879
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:45:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728084AbfAVJpO (ORCPT
+        id S1728128AbfAVJpZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 04:45:14 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:53344 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727274AbfAVJpN (ORCPT
+        Tue, 22 Jan 2019 04:45:25 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:37451 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727274AbfAVJpY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 04:45:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=sZa+wKfGdynh6C+yxUM26dT34VAjzflHBGafSA9mNMU=; b=B5YqQXIG576tSTDwoUMJmgz5G
-        FyVJeHm2zNsIM5xj3A1pn+HfU/gqLaMS/+qPsm62Vqg3zf+mjK21mgRhz/b60FqcFiEc0u5V4gopX
-        lWNFtjtFrq/y8tNieeBl9rzG9637Ge5bzWARbQ4LjOOFn72K32jgUVvCRWabjFsU+rvbhBRDgd29g
-        n2A0I/IJWoGm1HtsVTEpTuXyzcJvVkkOXjNl7d25Y8+j5g2ug/2WI7lEZvi4ypRCf86bwD6Qj770I
-        v3VarhTZ9FWARJXmSeqPN0lMNomG9oFzZX/9IDScdEW9Xcsma/4FP+BQzcoJ++76cisUOJ3PKZWwP
-        YRJvMYsVA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1glscH-0005pG-8W; Tue, 22 Jan 2019 09:45:09 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id BB2EC211A59B4; Tue, 22 Jan 2019 10:45:07 +0100 (CET)
-Date:   Tue, 22 Jan 2019 10:45:07 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v6 04/16] sched/core: uclamp: Add CPU's clamp buckets
- refcounting
-Message-ID: <20190122094507.GN27931@hirez.programming.kicks-ass.net>
-References: <20190115101513.2822-1-patrick.bellasi@arm.com>
- <20190115101513.2822-5-patrick.bellasi@arm.com>
- <20190121145929.GI27931@hirez.programming.kicks-ass.net>
- <20190121152311.7u7bwbjopuptnzcy@e110439-lin>
- <20190121161237.GB13777@hirez.programming.kicks-ass.net>
- <20190121163337.6l7hkggicndtpzjs@e110439-lin>
+        Tue, 22 Jan 2019 04:45:24 -0500
+Received: by mail-lf1-f68.google.com with SMTP id y11so17587504lfj.4;
+        Tue, 22 Jan 2019 01:45:21 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=U5ofuj/SpJN91nWjSU2HBWbgMkgJhLDUcWpcM5DC2Og=;
+        b=lgysYIDPEPawDCtdoX/h3A5SuYX3unVtkcsf5i3LzxADmuQXGSO1qfmprWglwj/5O3
+         PO25lVWOhOpSvpYgcfhsnaEOhJs+0NHqAjaP13cRvG5XUZ/3qG0Qc5AmXc2p1jeG+/SQ
+         6DOYcDzGixDK5FUIJEty5zH3UhuMTpdx/lnTNl3unB+urWHd379IUiV9B6W1JrvBE9pN
+         UPULmZVbTuW2N12Q1tU0caR2pVMhFVK1Oe9/MKrPTZuJElooYAnIuoKGymPiNq5TRus2
+         AUPko89K+ajTgCO/wdS7MbG2GNiKaXm7Mnfkg2xONnTDbxHZkJMrmLAhovJ4G1Zku0pD
+         RXXg==
+X-Gm-Message-State: AJcUukd4RkPIhNjuyimgDsgx+HtU5FAXkR+6hRvHXoah2HbSk1cFaAj7
+        AmI2i3VQL5r3UFM7y5U6K6Q=
+X-Google-Smtp-Source: ALg8bN6tyr0CRsu7M/eQ7tYO3m0gsOxSapwOwr372+cySC2Ai91s4H9Bu5fe2nV4a3t/N8+xbepaMw==
+X-Received: by 2002:a19:94d5:: with SMTP id o82mr19033740lfk.155.1548150321131;
+        Tue, 22 Jan 2019 01:45:21 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id q23sm2679067lfm.82.2019.01.22.01.45.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 22 Jan 2019 01:45:20 -0800 (PST)
+Date:   Tue, 22 Jan 2019 11:45:07 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
+Cc:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        lgirdwood@gmail.com, broonie@kernel.org,
+        gregkh@linuxfoundation.org, rafael@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        sre@kernel.org, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
+        linux@roeck-us.net, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: [RFC PATCH v1 06/13] clk: bd718x7: Support ROHM BD70528 clk block
+Message-ID: <ea98303c81c2637bfc023c02e89547ee2028140c.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190121163337.6l7hkggicndtpzjs@e110439-lin>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <cover.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 04:33:38PM +0000, Patrick Bellasi wrote:
-> On 21-Jan 17:12, Peter Zijlstra wrote:
-> > On Mon, Jan 21, 2019 at 03:23:11PM +0000, Patrick Bellasi wrote:
+ROHM BD70528 is an ultra low power PMIC with similar 32K clk as
+bd718x7. Only difference (from clk perspective) is register address.
+Add support for controlling BD70528 clk using bd718x7 driver.
 
-> > > and keep all
-> > > the buckets in use at the beginning of a cache line.
-> > 
-> > That; is that the rationale for all this? Note that per the defaults
-> > everything is in a single line already.
-> 
-> Yes, that's because of the loop in:
-> 
->    dequeue_task()
->      uclamp_cpu_dec()
->        uclamp_cpu_dec_id()
->          uclamp_cpu_update()
-> 
-> where buckets needs sometimes to be scanned to find a new max.
-> 
-> Consider also that, with mapping, we can more easily increase the
-> buckets count to 20 in order to have a finer clamping granularity if
-> needed without warring too much about performance impact especially
-> when we use anyway few different clamp values.
-> 
-> So, I agree that mapping adds (code) complexity but it can also save
-> few cycles in the fast path... do you think it's not worth the added
-> complexity?
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+---
+ drivers/clk/Kconfig       |  6 +++---
+ drivers/clk/clk-bd718x7.c | 21 +++++++++++++++++----
+ 2 files changed, 20 insertions(+), 7 deletions(-)
 
-Then maybe split this out in a separate patch? Do the trivial linear
-bucket thing first and then do this smarty pants thing on top.
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index e5b2fe80eab4..992cfb86f2ca 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -285,10 +285,10 @@ config COMMON_CLK_STM32H7
+ 
+ config COMMON_CLK_BD718XX
+ 	tristate "Clock driver for ROHM BD718x7 PMIC"
+-	depends on MFD_ROHM_BD718XX
++	depends on MFD_ROHM_BD718XX || MFD_ROHM_BD70528
+ 	help
+-	  This driver supports ROHM BD71837 and ROHM BD71847
+-	  PMICs clock gates.
++	  This driver supports ROHM BD71837, ROHM BD71847 and
++	  ROHM BD70528 PMICs clock gates.
+ 
+ source "drivers/clk/actions/Kconfig"
+ source "drivers/clk/bcm/Kconfig"
+diff --git a/drivers/clk/clk-bd718x7.c b/drivers/clk/clk-bd718x7.c
+index 461228ebf703..41c1374f4217 100644
+--- a/drivers/clk/clk-bd718x7.c
++++ b/drivers/clk/clk-bd718x7.c
+@@ -8,6 +8,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
+ #include <linux/mfd/rohm-bd718x7.h>
++#include <linux/mfd/rohm-bd70528.h>
+ #include <linux/clk-provider.h>
+ #include <linux/clkdev.h>
+ #include <linux/regmap.h>
+@@ -86,9 +87,21 @@ static int bd71837_clk_probe(struct platform_device *pdev)
+ 		dev_err(&pdev->dev, "No parent clk found\n");
+ 		return -EINVAL;
+ 	}
+-
+-	c->reg = BD718XX_REG_OUT32K;
+-	c->mask = BD718XX_OUT32K_EN;
++	switch (mfd->chip_type) {
++	case ROHM_CHIP_TYPE_BD71837:
++	case ROHM_CHIP_TYPE_BD71847:
++
++		c->reg = BD718XX_REG_OUT32K;
++		c->mask = BD718XX_OUT32K_EN;
++		break;
++	case ROHM_CHIP_TYPE_BD70528:
++		c->reg = BD70528_REG_CLK_OUT;
++		c->mask = BD70528_CLK_OUT_EN_MASK;
++		break;
++	default:
++		dev_err(&pdev->dev, "Unknown clk chip\n");
++		return -EINVAL;
++	}
+ 	c->mfd = mfd;
+ 	c->pdev = pdev;
+ 	c->hw.init = &init;
+@@ -119,5 +132,5 @@ static struct platform_driver bd71837_clk = {
+ module_platform_driver(bd71837_clk);
+ 
+ MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
+-MODULE_DESCRIPTION("BD71837/BD71847 chip clk driver");
++MODULE_DESCRIPTION("BD71837/BD71847/BD70528 chip clk driver");
+ MODULE_LICENSE("GPL");
+-- 
+2.14.3
 
-One problem with the scheme is that it doesn't defrag; so if you get a
-peak usage, you can still end up with only two active buckets in
-different lines.
 
-Also; if it is it's own patch, you get a much better view of the
-additional complexity and a chance to justify it ;-)
+-- 
+Matti Vaittinen
+ROHM Semiconductors
 
-Also; would it make sense to do s/cpu/rq/ on much of this? All this
-uclamp_cpu_*() stuff really is per rq and takes rq arguments, so why
-does it have cpu in the name... no strong feelings, just noticed it and
-thought is a tad inconsistent.
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
