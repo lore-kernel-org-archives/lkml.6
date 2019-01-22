@@ -2,258 +2,342 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D888C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 22:40:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0122AC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 22:41:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02BC520866
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 22:40:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC94120866
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 22:41:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OgeLwmV6"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nCd04wec"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727048AbfAVWkx (ORCPT
+        id S1727096AbfAVWlh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 17:40:53 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:38402 "EHLO
+        Tue, 22 Jan 2019 17:41:37 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:39730 "EHLO
         mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726307AbfAVWkw (ORCPT
+        with ESMTP id S1726307AbfAVWlg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 17:40:52 -0500
-Received: by mail-lj1-f193.google.com with SMTP id c19-v6so170375lja.5;
-        Tue, 22 Jan 2019 14:40:50 -0800 (PST)
+        Tue, 22 Jan 2019 17:41:36 -0500
+Received: by mail-lj1-f193.google.com with SMTP id t9-v6so168283ljh.6
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 14:41:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=P86M9OJGUdPJBYFxtq6NpWDHuZ+Eqt4/xj6GH9vlh3c=;
-        b=OgeLwmV6N5aV6q+bMyfvxQ+7xg8jt8NMjjAEdR2OL9GZJ9z4mAkxSFZvk0wsEkpu+s
-         ojAdq7045XmYFfGzxFPQV9sVgl7Ok9dLbUte7pQo2Tl7T2ctwhWFjd5uFcxp8VEwd5qx
-         3LVj/mnLCKr71FEWvS2Sztsb6vfuj5FtWrqUssqRyTUKJ4woNes7RvH/Vx3QJIyDD3+P
-         a3eKaDi6iGbvwDd/n4UJUk1fyqA8vWahI4sxRr0xJ7kL+B/9QhdTVGTe8TWRHc3Gzh8e
-         LLp72IQqvO8ldaud6TBhJbmQ5ghbzY4u0rf0A3s040wV65rarLR7z6XaU+LmT97KNh18
-         UPIw==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=llLReD4qXPJr43BL7RQyUXpT+nnzxU4MNu+0Lxyg34M=;
+        b=nCd04wecy54QOt4rRkX8Qx3YKQQYUVPJwW4OKJ/I16hPZMiQQhwAjimbH2q30SX29N
+         Cvb5SOv41OxK6mgoFGdp8ocPjLi+q3khAXIxeR9zN0okTBxcPlmg88a8JZTsQrTFqtYs
+         ZZKMqjkJ2YSN7InEnALfKZjIC93IljsbbKAQI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=P86M9OJGUdPJBYFxtq6NpWDHuZ+Eqt4/xj6GH9vlh3c=;
-        b=ETQRTF3YofpDTpazIpth13eWjqx+LYYEtEejPriuwmpStzuK1NLmNgsG9HlmplkmUF
-         JNj2DDoOLjk2MTU4aEWGlStl8zpeyEF1kNHgXynwNXaHjESE7SYiSUJmpGk+RlvqrOzM
-         Fo5Nq4lNJe+tsqePYE4JUbIw+/TWLv4t1tZl6C/3eKvHNIb6702vhRTFT+AtgEjarJyS
-         3JVuAI32vvg5Eggt+++03cdL5JYq0wa1N3tjYLwMFiRldxDgD5PMGldMEgJE7lfli3r6
-         /nPqiQFzcWjrUHe3V2kw/y6Gi4z92iyEilDLZrt1JfloAW35r2WqpTaZuVjsI2TP5dDZ
-         DYHw==
-X-Gm-Message-State: AJcUukfw2RXq0VJEzY+I7sDId9FglDw9Lt4kfTpBHS+upAHTkr/jSnWy
-        5Iv3EF7CzOF2ttoxziVWBiw=
-X-Google-Smtp-Source: ALg8bN4Oa9PC0PVo64XZ0WLzjIFZE7MiDf0+SZkj7FR0OAJ5/wziC77gpHnLBnBbCgew3rHDDnDXJA==
-X-Received: by 2002:a2e:98c9:: with SMTP id s9-v6mr11450929ljj.166.1548196849298;
-        Tue, 22 Jan 2019 14:40:49 -0800 (PST)
-Received: from dimatab (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
-        by smtp.gmail.com with ESMTPSA id y14-v6sm199871ljj.55.2019.01.22.14.40.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 22 Jan 2019 14:40:48 -0800 (PST)
-Date:   Wed, 23 Jan 2019 01:40:42 +0300
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>,
-        Shardar Mohammed <smohammed@nvidia.com>,
-        Timo Alho <talho@nvidia.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-Subject: Re: [PATCH V3] i2c: tegra: Add Bus Clear Master Support
-Message-ID: <20190123014042.6d64ee29@dimatab>
-In-Reply-To: <BYAPR12MB33984356AE1E279C7E0E880CC2980@BYAPR12MB3398.namprd12.prod.outlook.com>
-References: <1548187338-6807-1-git-send-email-skomatineni@nvidia.com>
-        <5405e9aa-d974-ca9d-dec1-32f8631a045d@gmail.com>
-        <BYAPR12MB33984356AE1E279C7E0E880CC2980@BYAPR12MB3398.namprd12.prod.outlook.com>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; arm-unknown-linux-gnueabihf)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=llLReD4qXPJr43BL7RQyUXpT+nnzxU4MNu+0Lxyg34M=;
+        b=qaOE5oMbB2tKRjDW/NQlsGyfOkuJrWiGhh3oblhY1h6iyRvE3mhpQUAhp1YgOtReOr
+         9wNbepYAh/gop+46UGBTRwSDVRPRtDLM0VstFQYXmDEAJerW464bej7XBzq4I8bJzi4F
+         S1sRdxA3RKC8dcpg5hpQX17urF10GdGvun6ny7cRM42hsJ1lCg/C66R+p2xTv/x6gVa3
+         DPnca/C1uSDxAceFbPzpbo0VImK4Rp8zw2iDKc4iGdzvcNoApJTsYIOkgGPfTeWmO7vI
+         U1DrRFP0I+fc2X18bhU7CUgY9Zvu/002MNRzI48DkYpj89uPX/3rkgUFfV4/y3FPWGC+
+         7Yhg==
+X-Gm-Message-State: AJcUukcAQNGpj2xAROpVgIMLx+YV4diPXOlqy9k9t2k0b/C9tci5pIsZ
+        D0MaY+PUTZZ+WaYob39xxwRc05/uPZc=
+X-Google-Smtp-Source: ALg8bN7BFLj/+o/bkpSms3xxLcSP8k7GyowBepSYEJMh65dAWPQxjVmWgoIflZSaUdqXzT7bnTmvSA==
+X-Received: by 2002:a2e:9bc3:: with SMTP id w3-v6mr21357763ljj.70.1548196893187;
+        Tue, 22 Jan 2019 14:41:33 -0800 (PST)
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
+        by smtp.gmail.com with ESMTPSA id v5-v6sm198527lje.78.2019.01.22.14.41.31
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 22 Jan 2019 14:41:31 -0800 (PST)
+Received: by mail-lj1-f175.google.com with SMTP id t18-v6so179613ljd.4
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 14:41:31 -0800 (PST)
+X-Received: by 2002:a2e:7011:: with SMTP id l17-v6mr23187415ljc.147.1548196891209;
+ Tue, 22 Jan 2019 14:41:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+References: <20190111230129.127037-1-evgreen@chromium.org> <20190111230129.127037-6-evgreen@chromium.org>
+ <154785066196.169631.9228316876601255899@swboyd.mtv.corp.google.com>
+In-Reply-To: <154785066196.169631.9228316876601255899@swboyd.mtv.corp.google.com>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Tue, 22 Jan 2019 14:40:54 -0800
+X-Gmail-Original-Message-ID: <CAE=gft5-96uyFhU-15MmQKKdYQn2mO2oRfg5P+OAt+J-eAze8g@mail.gmail.com>
+Message-ID: <CAE=gft5-96uyFhU-15MmQKKdYQn2mO2oRfg5P+OAt+J-eAze8g@mail.gmail.com>
+Subject: Re: [PATCH v1 5/8] scsi: ufs: qcom: Expose the reset controller for PHY
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Can Guo <cang@codeaurora.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Asutosh Das <asutoshd@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Vinayak Holikatti <vinholikatti@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=D0=92 Tue, 22 Jan 2019 22:13:53 +0000
-Sowjanya Komatineni <skomatineni@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+On Fri, Jan 18, 2019 at 2:31 PM Stephen Boyd <swboyd@chromium.org> wrote:
+>
+> Quoting Evan Green (2019-01-11 15:01:26)
+> > diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
+> > index 3aeadb14aae1e..db46f9a64b54c 100644
+> > --- a/drivers/scsi/ufs/ufs-qcom.c
+> > +++ b/drivers/scsi/ufs/ufs-qcom.c
+> > @@ -16,6 +16,7 @@
+> >  #include <linux/of.h>
+> >  #include <linux/platform_device.h>
+> >  #include <linux/phy/phy.h>
+> > +#include <linux/reset.h>
+>
+> Shouldn't this be <linux/reset-controller.h>?
 
-> >> Bus clear feature of tegra i2c controller helps to recover from
-> >> bus hang when i2c master loses the bus arbitration due to the
-> >> slave device holding SDA LOW continuously for some unknown reasons.
-> >>=20
-> >> Per I2C specification, the device that held the bus LOW should
-> >> release it within 9 clock pulses.
-> >>=20
-> >> During bus clear operation, Tegra I2C controller sends 9 clock
-> >> pulses and terminates the transaction with STOP condition.
-> >> Upon successful bus clear operation, bus goes to idle state and
-> >> driver retries the transaction.
-> >>=20
-> >> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> >> ---
-> >>  [V3]: Updated comments and commit message to be clear on the
-> >> change [V2]: Same as V1 rebased to 5.0-rc1
-> >>=20
-> >>  drivers/i2c/busses/i2c-tegra.c | 70=20
-> >> ++++++++++++++++++++++++++++++++++++++++++
-> >>  1 file changed, 70 insertions(+)
-> >>=20
-> >> diff --git a/drivers/i2c/busses/i2c-tegra.c=20
-> >> b/drivers/i2c/busses/i2c-tegra.c index e417ebf7628c..b1b920b4a203=20
-> >> 100644
-> >> --- a/drivers/i2c/busses/i2c-tegra.c
-> >> +++ b/drivers/i2c/busses/i2c-tegra.c
-> >> @@ -54,6 +54,7 @@
-> >>  #define I2C_FIFO_STATUS_RX_SHIFT		0
-> >>  #define I2C_INT_MASK				0x064
-> >>  #define I2C_INT_STATUS				0x068
-> >> +#define I2C_INT_BUS_CLR_DONE			BIT(11)
-> >>  #define I2C_INT_PACKET_XFER_COMPLETE		BIT(7)
-> >>  #define I2C_INT_ALL_PACKETS_XFER_COMPLETE	BIT(6)
-> >>  #define I2C_INT_TX_FIFO_OVERFLOW		BIT(5)
-> >> @@ -96,6 +97,15 @@
-> >>  #define I2C_HEADER_MASTER_ADDR_SHIFT		12
-> >>  #define I2C_HEADER_SLAVE_ADDR_SHIFT		1
-> >> =20
-> >> +#define I2C_BUS_CLEAR_CNFG			0x084
-> >> +#define I2C_BC_SCLK_THRESHOLD			9
-> >> +#define I2C_BC_SCLK_THRESHOLD_SHIFT		16
-> >> +#define I2C_BC_STOP_COND			BIT(2)
-> >> +#define I2C_BC_TERMINATE			BIT(1)
-> >> +#define I2C_BC_ENABLE				BIT(0)
-> >> +#define I2C_BUS_CLEAR_STATUS			0x088
-> >> +#define I2C_BC_STATUS				BIT(0)
-> >> +
-> >>  #define I2C_CONFIG_LOAD				0x08C
-> >>  #define I2C_MSTR_CONFIG_LOAD			BIT(0)
-> >>  #define I2C_SLV_CONFIG_LOAD			BIT(1)
-> >> @@ -155,6 +165,8 @@ enum msg_end_type {
-> >>   * @has_mst_fifo: The I2C controller contains the new MST FIFO
-> >> interface that
-> >>   *		provides additional features and allows for
-> >> longer messages to
-> >>   *		be transferred in one go.
-> >> + * @supports_bus_clear: Bus Clear support to recover from bus
-> >> hang during
-> >> + *		SDA stuck low from device for some unknown
-> >> reasons. */
-> >>  struct tegra_i2c_hw_feature {
-> >>  	bool has_continue_xfer_support;
-> >> @@ -167,6 +179,7 @@ struct tegra_i2c_hw_feature {
-> >>  	bool has_multi_master_mode;
-> >>  	bool has_slcg_override_reg;
-> >>  	bool has_mst_fifo;
-> >> +	bool supports_bus_clear;
-> >>  };
-> >> =20
-> >>  /**
-> >> @@ -639,6 +652,12 @@ static irqreturn_t tegra_i2c_isr(int irq,
-> >> void *dev_id) i2c_dev->msg_err |=3D I2C_ERR_ARBITRATION_LOST;
-> >>  		goto err;
-> >>  	}
-> >> +	/*
-> >> +	 * I2C transfer is terminated during the bus clear so skip
-> >> +	 * processing the other interrupts.
-> >> +	 */
-> >> +	if (i2c_dev->hw->supports_bus_clear && (status &
-> >> I2C_INT_BUS_CLR_DONE))
-> >> +		goto err;
-> >> =20
-> >>  	if (i2c_dev->msg_read && (status &
-> >> I2C_INT_RX_FIFO_DATA_REQ)) { if (i2c_dev->msg_buf_remaining)
-> >> @@ -668,6 +687,8 @@ static irqreturn_t tegra_i2c_isr(int irq, void
-> >> *dev_id) tegra_i2c_mask_irq(i2c_dev, I2C_INT_NO_ACK |
-> >> I2C_INT_ARBITRATION_LOST | I2C_INT_PACKET_XFER_COMPLETE |
-> >> I2C_INT_TX_FIFO_DATA_REQ | I2C_INT_RX_FIFO_DATA_REQ);
-> >> +	if (i2c_dev->hw->supports_bus_clear)
-> >> +		tegra_i2c_mask_irq(i2c_dev, I2C_INT_BUS_CLR_DONE);
-> >>  	i2c_writel(i2c_dev, status, I2C_INT_STATUS);
-> >>  	if (i2c_dev->is_dvc)
-> >>  		dvc_writel(i2c_dev, DVC_STATUS_I2C_DONE_INTR,
-> >> DVC_STATUS); @@ -678,6 +699,43 @@ static irqreturn_t
-> >> tegra_i2c_isr(int irq, void *dev_id) return IRQ_HANDLED;
-> >>  }
-> >> =20
-> >> +static int tegra_i2c_issue_bus_clear(struct tegra_i2c_dev
-> >> *i2c_dev) {
-> >> +	int err;
-> >> +	unsigned long time_left;
-> >> +	u32 reg;
-> >> +
-> >> +	if (i2c_dev->hw->supports_bus_clear) {
-> >> +		reinit_completion(&i2c_dev->msg_complete);
-> >> +		reg =3D (I2C_BC_SCLK_THRESHOLD <<
-> >> I2C_BC_SCLK_THRESHOLD_SHIFT) |
-> >> +		      I2C_BC_STOP_COND | I2C_BC_TERMINATE;
-> >> +		i2c_writel(i2c_dev, reg, I2C_BUS_CLEAR_CNFG);
-> >> +		if (i2c_dev->hw->has_config_load_reg) {
-> >> +			err =3D
-> >> tegra_i2c_wait_for_config_load(i2c_dev);
-> >> +			if (err)
-> >> +				return err;
-> >> +		}
-> >> +		reg |=3D I2C_BC_ENABLE;
-> >> +		i2c_writel(i2c_dev, reg, I2C_BUS_CLEAR_CNFG);
-> >> +		tegra_i2c_unmask_irq(i2c_dev,
-> >> I2C_INT_BUS_CLR_DONE); +
-> >> +		time_left =3D
-> >> wait_for_completion_timeout(&i2c_dev->msg_complete,
-> >> +
-> >> TEGRA_I2C_TIMEOUT);
-> >> +		if (time_left =3D=3D 0) {
-> >> +			dev_err(i2c_dev->dev, "timed out for bus
-> >> clear\n");
-> >> +			return -ETIMEDOUT;
-> >> +		}
-> >> +		reg =3D i2c_readl(i2c_dev, I2C_BUS_CLEAR_STATUS);
-> >> +		if (!(reg & I2C_BC_STATUS)) {
-> >> +			dev_err(i2c_dev->dev,
-> >> +				"Un-recovered arbitration
-> >> lost\n");
-> >> +			return -EIO;
-> >> +		}
-> >> +	}
-> >> +
-> >> +	return -EAGAIN;
-> >> +}
-> >> +
-> >>  static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
-> >>  	struct i2c_msg *msg, enum msg_end_type end_state)  { @@
-> >> -759,6 +817,12 @@ static int tegra_i2c_xfer_msg(struct
-> >> tegra_i2c_dev *i2c_dev, return 0;
-> >> =20
-> >>  	tegra_i2c_init(i2c_dev);
-> >> +	/* start recovery upon arbitration loss in single master
-> >> mode */
-> >> +	if (i2c_dev->msg_err =3D=3D I2C_ERR_ARBITRATION_LOST) {
-> >> +		if (!i2c_dev->is_multimaster_mode)
-> >> +			return tegra_i2c_issue_bus_clear(i2c_dev);
-> >> +		return -EAGAIN; =20
+Oh, actually I don't need this at all since ufs-qcom.h includes
+reset-controller.h. Will remove.
+
+>
 > >
-> >This changes the returned errno from -EIO to -EAGAIN for the
-> >supports_bus_clear=3Dfalse case, is it okay and intentional?
-> > =20
->=20
-> Yes EAGAIN is intentional to allow for transfer retry.
-> During single master mode, ARBITRATION LOST notification happens when=20
-> 1. I2C Master sees the bus is occupied by some other device when a
-> transfer is initiated 2. I2C Master lost the bus during arbitration
-> incase if slave device pulls SDA line low continuously for some
-> unknown reason If arbitration lost is due to cause 1, retry helps to
-> continue with transfer once bus is released by the slave and it just
-> added delay in communication due to bus release delay by slave. In
-> case of 2nd cause, retry never succeeds in cases where bus clear is
-> not supported.
+> >  #include "ufshcd.h"
+> >  #include "ufshcd-pltfrm.h"
+> > @@ -255,11 +261,6 @@ static int ufs_qcom_power_up_sequence(struct ufs_hba *hba)
+> >         if (is_rate_B)
+> >                 phy_set_mode(phy, PHY_MODE_UFS_HS_B);
+> >
+> > -       /* Assert PHY reset and apply PHY calibration values */
+> > -       ufs_qcom_assert_reset(hba);
+> > -       /* provide 1ms delay to let the reset pulse propagate */
+> > -       usleep_range(1000, 1100);
+> > -
+> >         /* phy initialization - calibrate the phy */
+> >         ret = phy_init(phy);
+> >         if (ret) {
+> > @@ -268,15 +269,6 @@ static int ufs_qcom_power_up_sequence(struct ufs_hba *hba)
+> >                 goto out;
+> >         }
+> >
+> > -       /* De-assert PHY reset and start serdes */
+> > -       ufs_qcom_deassert_reset(hba);
+> > -
+> > -       /*
+> > -        * after reset deassertion, phy will need all ref clocks,
+> > -        * voltage, current to settle down before starting serdes.
+> > -        */
+> > -       usleep_range(1000, 1100);
+> > -
+> >         /* power on phy - start serdes and phy's power and clocks */
+> >         ret = phy_power_on(phy);
+> >         if (ret) {
+> > @@ -290,7 +282,6 @@ static int ufs_qcom_power_up_sequence(struct ufs_hba *hba)
+> >         return 0;
+> >
+> >  out_disable_phy:
+> > -       ufs_qcom_assert_reset(hba);
+> >         phy_exit(phy);
+> >  out:
+> >         return ret;
+> > @@ -554,21 +545,10 @@ static int ufs_qcom_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op)
+> >                 ufs_qcom_disable_lane_clks(host);
+> >                 phy_power_off(phy);
+> >
+> > -               /* Assert PHY soft reset */
+> > -               ufs_qcom_assert_reset(hba);
+> > -               goto out;
+> > -       }
+> > -
+> > -       /*
+> > -        * If UniPro link is not active, PHY ref_clk, main PHY analog power
+> > -        * rail and low noise analog power rail for PLL can be switched off.
+>
+> We lost this comment?
 
-It's unclear whether the "never succeeds retry" may fail with the
-EAGAIN, causing an endless retry-loop. Could you please clarify this
-moment?
+Yeah. These are all phy implementation choices, and phy-qcom-qmp
+wasn't even doing any of this, so it didn't seem like an appropriate
+comment for the UFS controller code.
 
+>
+> > -        */
+> > -       if (!ufs_qcom_is_link_active(hba)) {
+> > +       } else if (!ufs_qcom_is_link_active(hba)) {
+> >                 ufs_qcom_disable_lane_clks(host);
+> > -               phy_power_off(phy);
+>
+> And now this looks similar to the above if statement, so can they be
+> combined?
+
+well, the if statement above has an extra phy_power_off in it... the
+only possible combining I see is this, which looks worse, doesn't it?
+
+if (ufs_qcom_is_link_off(hba) || !ufs_qcom_is_link_active(hba)) {
+    ufs_qcom_disable_lane_clocks(host);
+    if (ufs_qcom_is_link_off(hba)) {
+        phy_power_off(phy);
+    }
+}
+
+>
+> >
+> > -out:
+> >         return ret;
+> >  }
+> >
+> > @@ -578,21 +558,26 @@ static int ufs_qcom_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
+> >         struct phy *phy = host->generic_phy;
+> >         int err;
+> >
+> > -       err = phy_power_on(phy);
+> > -       if (err) {
+> > -               dev_err(hba->dev, "%s: failed enabling regs, err = %d\n",
+> > -                       __func__, err);
+> > -               goto out;
+> > -       }
+> > +       if (ufs_qcom_is_link_off(hba)) {
+> > +               err = phy_power_on(phy);
+> > +               if (err) {
+> > +                       dev_err(hba->dev, "%s: failed enabling regs, err = %d\n",
+>
+> Not a problem with this translation, but I would expect this error to
+> say something more like 'failed to power on phy' instead of 'enabling
+> regs'.
+
+Oh yeah. Will fix.
+
+>
+> > +                               __func__, err);
+> > +                       return err;
+> > +               }
+> >
+> > -       err = ufs_qcom_enable_lane_clks(host);
+> > -       if (err)
+> > -               goto out;
+> > +               err = ufs_qcom_enable_lane_clks(host);
+> > +               if (err)
+> > +                       return err;
+> >
+> > -       hba->is_sys_suspended = false;
+> > +       } else if (!ufs_qcom_is_link_active(hba)) {
+> > +               err = ufs_qcom_enable_lane_clks(host);
+> > +               if (err)
+> > +                       return err;
+> > +       }
+> >
+> > -out:
+> > -       return err;
+> > +       hba->is_sys_suspended = false;
+> > +       return 0;
+> >  }
+> >
+> >  struct ufs_qcom_dev_params {
+> > @@ -1118,8 +1103,6 @@ static int ufs_qcom_setup_clocks(struct ufs_hba *hba, bool on,
+> >                 return 0;
+> >
+> >         if (on && (status == POST_CHANGE)) {
+> > -               phy_power_on(host->generic_phy);
+> > -
+>
+> How is it ok to remove this call here?
+>
+> >                 /* enable the device ref clock for HS mode*/
+> >                 if (ufshcd_is_hs_mode(&hba->pwr_info))
+> >                         ufs_qcom_dev_ref_clk_ctrl(host, true);
+> > @@ -1131,9 +1114,6 @@ static int ufs_qcom_setup_clocks(struct ufs_hba *hba, bool on,
+> >                 if (!ufs_qcom_is_link_active(hba)) {
+> >                         /* disable device ref_clk */
+> >                         ufs_qcom_dev_ref_clk_ctrl(host, false);
+> > -
+> > -                       /* powering off PHY during aggressive clk gating */
+> > -                       phy_power_off(host->generic_phy);
+>
+> And here?
+
+This pair was calling phy_power_on and phy_power_off during clock
+gating (and init). For SDM845/phy-qcom-qmp, this did nothing, since
+there was no phy_power_off. In fact they needed an extra patch to not
+call phy_power_on too early during init because of this function [1].
+So for sdm845 this is a noop, since the phy will already be powered on
+in ufs_qcom_power_up_sequence.
+
+For msm8996/phy-qcom-ufs, it may change behavior a bit. Where we used
+to end up in ufs_qcom_phy_power_off during clock gating, this change
+is now not doing that. So regulators and a couple clocks are being
+left on during clock gating. The phy power off now happens in suspend
+if usermode selects that level. It seemed weird to be doing a bunch of
+regulator and power down stuff in something called "clock gating".
+
+Although looking at it now, I'm not even sure if these calls really
+did do anything, since phy_power_on is reference counted, and
+ufs_qcom_power_up_sequence called it... so it's possible ever since
+commit 052553af6a31 ("ufs/phy: qcom: Refactor to use phy_init call")
+in late 2017 this hasn't been doing anything at all.
+
+[1] https://lkml.org/lkml/2018/9/21/204
+
+>
+> >                 }
+> >
+> >                 vote = host->bus_vote.min_bw_vote;
+> > @@ -1147,6 +1127,39 @@ static int ufs_qcom_setup_clocks(struct ufs_hba *hba, bool on,
+> >         return err;
+> >  }
+> >
+> > +static int
+> > +ufs_qcom_reset_assert(struct reset_controller_dev *rcdev, unsigned long id)
+> > +{
+> > +       struct ufs_qcom_host *host = rcdev_to_ufs_host(rcdev);
+> > +
+> > +       WARN_ON(id);
+>
+> Nitpick: Add a comment explaining that there's only one reset expected?
+
+Will do.
+
+>
+> > +       ufs_qcom_assert_reset(host->hba);
+> > +       /* provide 1ms delay to let the reset pulse propagate */
+> > +       usleep_range(1000, 1100);
+> > +       return 0;
+> > +}
+> > +
+> > +static int
+> > +ufs_qcom_reset_deassert(struct reset_controller_dev *rcdev, unsigned long id)
+> > +{
+> > +       struct ufs_qcom_host *host = rcdev_to_ufs_host(rcdev);
+> > +
+> > +       WARN_ON(id);
+>
+> Same nitpick.
+
+Yep.
+
+>
+> > +       ufs_qcom_deassert_reset(host->hba);
+> > +
+> > +       /*
+> > +        * after reset deassertion, phy will need all ref clocks,
+> > +        * voltage, current to settle down before starting serdes.
+> > +        */
+> > +       usleep_range(1000, 1100);
+> > +       return 0;
+> > +}
+> > +
+> > +const struct reset_control_ops ufs_qcom_reset_ops = {
+>
+> Can it be static?
+
+Yes!
+
+>
+> > +       .assert = ufs_qcom_reset_assert,
+> > +       .deassert = ufs_qcom_reset_deassert,
+> > +};
+> > +
+> >  #define        ANDROID_BOOT_DEV_MAX    30
+> >  static char android_boot_dev[ANDROID_BOOT_DEV_MAX];
+> >
