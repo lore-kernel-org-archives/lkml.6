@@ -2,155 +2,118 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80E67C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:10:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89D1AC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:16:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50FF320856
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:10:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="nXYrpnC3"
+	by mail.kernel.org (Postfix) with ESMTP id 5A6C021019
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:16:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726423AbfAVTKr (ORCPT
+        id S1726647AbfAVTQA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 14:10:47 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:41046 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726191AbfAVTKq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 14:10:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=haCZ038HC8d6Fz4YWBQm/0Fr+4eV1xPEwWb6lWLRcsI=; b=nXYrpnC3dOGqX2SGINDoyT8Qd
-        j+yJfZxi2hoxZ28TNkDrGnnvs8xYEgULDm+R697zrhskymO3t4sEjHudkfIXHFF94NjOO7ITP+blF
-        i8ySyJQqHbfrqJMumq6ZxTLnAtLBMUIDT0GJDIvJhJVdTzGP3M2mgl0GJt0SgUjILxOrg=;
-Received: from e5254000004ec.dyn.armlinux.org.uk ([2002:4e20:1eda:1:5054:ff:fe00:4ec]:46188 helo=shell.armlinux.org.uk)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1gm1RY-00066Z-7N; Tue, 22 Jan 2019 19:10:40 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.89)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1gm1RX-0001wW-KW; Tue, 22 Jan 2019 19:10:39 +0000
-Date:   Tue, 22 Jan 2019 19:10:39 +0000
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/armada: add mmp2 support
-Message-ID: <20190122191039.ls6dgt2qaxympdnb@e5254000004ec.dyn.armlinux.org.uk>
-References: <20190121060349.549797-1-lkundrak@v3.sk>
+        Tue, 22 Jan 2019 14:16:00 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:34596 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726130AbfAVTQA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 14:16:00 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E0A96811AC;
+        Tue, 22 Jan 2019 19:15:59 +0000 (UTC)
+Received: from krava (ovpn-204-73.brq.redhat.com [10.40.204.73])
+        by smtp.corp.redhat.com (Postfix) with SMTP id EE39F5D9C8;
+        Tue, 22 Jan 2019 19:15:56 +0000 (UTC)
+Date:   Tue, 22 Jan 2019 20:15:55 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        Kernel Team <Kernel-team@fb.com>
+Subject: Re: [PATCH v11 perf, bpf-next 7/9] perf tools: synthesize
+ PERF_RECORD_* for loaded BPF programs
+Message-ID: <20190122191555.GH27625@krava>
+References: <20190117161521.1341602-1-songliubraving@fb.com>
+ <20190117161521.1341602-8-songliubraving@fb.com>
+ <20190118144655.GM5823@kernel.org>
+ <20190122141320.GF14973@kernel.org>
+ <20190122143117.GG14973@kernel.org>
+ <20190122145119.GF27625@krava>
+ <20190122145805.GI14973@kernel.org>
+ <20190122152145.GG27625@krava>
+ <101BF88D-2DA4-4B54-A710-D0641C427136@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190121060349.549797-1-lkundrak@v3.sk>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <101BF88D-2DA4-4B54-A710-D0641C427136@fb.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 22 Jan 2019 19:16:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 07:03:49AM +0100, Lubomir Rintel wrote:
-> Heavily based on the Armada 510 (Dove) support. Like with 510 support, this
-> also just supports a single source clock -- the "Display 1" clock as
-> generated by the APMU. This one was chosen because the OLPC XO 1.75 laptop
-> uses it for its internal panel.
+On Tue, Jan 22, 2019 at 06:38:56PM +0000, Song Liu wrote:
+
+SNIP
+
+> >> in perf_session__process_event, this happens right when processing
+> >> buildids in 'perf record', and also in 'perf report', so that is
+> >> something badly synthesized that hits perf.data for PERF_RECORD_KSYMBOL.
+> > 
+> > it's reproducible with simple:
+> >  perf record -e cycles,instructions ls
+> > 
+> > as you said on irc, it's the machine->id_hdr_size size missing
+> > there's one more glitch, attached patch fixes that for me
+> > you can't use sizeof(struct ksymbol_event), because it includes
+> > the name as well.. which screws the size
+> > 
+> > but I don't know that code that much.. might be still something
+> > missing
+> > 
+> > jirka
 > 
-> If anyone uses this to drive a MIPI or HDMI encoder, they may want to
-> extend this to choose a different source for the pixel clock -- it should
-> be a reasonably straightforward thing to do.
+> Hi Arnaldo and Jiri,
 > 
-> The data sheet is not available, but James Cameron of OLPC kindly
-> provided some details about the LCD_SCLK_DIV register.
+> Thanks for catching and fixing the bug. 
 > 
-> Link: https://lists.freedesktop.org/archives/dri-devel/2018-December/201021.html
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> ---
->  drivers/gpu/drm/armada/Makefile      |  1 +
->  drivers/gpu/drm/armada/armada_610.c  | 93 ++++++++++++++++++++++++++++
->  drivers/gpu/drm/armada/armada_crtc.c |  4 ++
->  drivers/gpu/drm/armada/armada_drm.h  |  1 +
->  drivers/gpu/drm/armada/armada_hw.h   | 10 +++
->  5 files changed, 109 insertions(+)
->  create mode 100644 drivers/gpu/drm/armada/armada_610.c
+> I guess the following is OK?
 > 
-> diff --git a/drivers/gpu/drm/armada/Makefile b/drivers/gpu/drm/armada/Makefile
-> index 9bc3c3213724..5bbf86324cda 100644
-> --- a/drivers/gpu/drm/armada/Makefile
-> +++ b/drivers/gpu/drm/armada/Makefile
-> @@ -2,6 +2,7 @@
->  armada-y	:= armada_crtc.o armada_drv.o armada_fb.o armada_fbdev.o \
->  		   armada_gem.o armada_overlay.o armada_plane.o armada_trace.o
->  armada-y	+= armada_510.o
-> +armada-y	+= armada_610.o
->  armada-$(CONFIG_DEBUG_FS) += armada_debugfs.o
->  
->  obj-$(CONFIG_DRM_ARMADA) := armada.o
-> diff --git a/drivers/gpu/drm/armada/armada_610.c b/drivers/gpu/drm/armada/armada_610.c
-> new file mode 100644
-> index 000000000000..278b204038ea
-> --- /dev/null
-> +++ b/drivers/gpu/drm/armada/armada_610.c
-> @@ -0,0 +1,93 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2012 Russell King
-> + * Copyright (C) 2018,2019 Lubomir Rintel
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + * Armada MMP2 variant support
-> + */
-> +#include <linux/clk.h>
-> +#include <drm/drm_modes.h>
-> +#include <drm/drm_crtc.h>
-> +#include "armada_crtc.h"
-> +#include "armada_drm.h"
-> +#include "armada_hw.h"
-> +
-> +static int armada610_crtc_init(struct armada_crtc *dcrtc, struct device *dev)
-> +{
-> +	struct clk *clk;
-> +
-> +	clk = devm_clk_get(dev, "disp0");
-> +	if (IS_ERR(clk))
-> +		return PTR_ERR(clk) == -ENOENT ? -EPROBE_DEFER : PTR_ERR(clk);
-> +
-> +	dcrtc->extclk[0] = clk;
+>         *bpf_event = (struct bpf_event){
+>                 .header = {
+>                         .type = PERF_RECORD_BPF_EVENT,
+>                         .size = sizeof(struct bpf_event),
+>                 },
+>                 .type = PERF_BPF_EVENT_PROG_LOAD,
+>                 .flags = 0,
+>                 .id = info.id,
+>         };
+> 
+> as struct bpf_event doesn't have variable length name:
+> 
+>         struct bpf_event {
+>                 struct perf_event_header header;
+>                 u16 type;
+>                 u16 flags;
+>                 u32 id;
+> 
+>                 /* for bpf_prog types */
+>                 u8 tag[BPF_TAG_SIZE];  // prog tag
+>         };
+> 
+> Or we need similar fix? 
 
-I've been reworking the clocking support for Armada, you can find the
-current code in my git tree's drm-armada-devel branch (as mentioned
-in MAINTAINERS).  You'll need to update to that before I can apply
-this.
+yep, looks good.. also don't forget to add the 'machine->id_hdr_size'
 
-The clocks are named in Dove's TRM as:
-
-   0 = AXIbus: Select AXI bus clock as pixel clock source.
-   1 = EXT_REF_CLK0: LCD_EXT_REF_CLK[0]
-   2 = PLLDivider: Select PLL divider input clock as pixel clock source.
-   3 = EXT_REF_CLK1: LCD_EXT_REF_CLK[1]
-
-So I chose to use these neumonics in the Armada 510.  Please can we
-keep to naming the clock inputs as per documented names please?
-
-Also, have a look at how Armada 510 gets its clocks from DT - note
-that the array they're placed in is ordered by priority (iow, if we
-have an external clock, we use that in preference to the more
-restricted axibus and plldivider clocks.)
-
-Thanks.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+jirka
