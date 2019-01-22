@@ -2,109 +2,139 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9664C41518
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:38:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B616FC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:44:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E47E21721
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:38:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548146311;
-	bh=Yels/iZ85iSTV7JF/8/1Oh7vzOo6HFLBfFsMpdEH1TM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=OSuvYxBsv+wlYWcRqtZ6XeXxHmBHLO2M4nuo2XlcNI9+FoWA0FNWeeF7R45SnEZNJ
-	 Ganhydf6ZqJACpdeO3i0amZVGUMOxvavd5F9eniRTNNkb6boEi0J7Afqo4nA9vjnEm
-	 4lyJ1NrwnITrTDehxNNBqoENeM1iUTHELriMwE24=
+	by mail.kernel.org (Postfix) with ESMTP id 7FB182084C
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:44:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VRWjb9rb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727467AbfAVIi2 (ORCPT
+        id S1727341AbfAVIoN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 03:38:28 -0500
-Received: from mail-lj1-f170.google.com ([209.85.208.170]:35656 "EHLO
-        mail-lj1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727093AbfAVIi1 (ORCPT
+        Tue, 22 Jan 2019 03:44:13 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:46932 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727201AbfAVIoN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 03:38:27 -0500
-Received: by mail-lj1-f170.google.com with SMTP id x85-v6so19863336ljb.2;
-        Tue, 22 Jan 2019 00:38:26 -0800 (PST)
+        Tue, 22 Jan 2019 03:44:13 -0500
+Received: by mail-lj1-f195.google.com with SMTP id v15-v6so19776726ljh.13
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 00:44:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wd+IFHRFSGZybgssa5Rga5Q6TfQk8CSgVm/c12T9/0A=;
+        b=VRWjb9rbVKrA7F6udNsiotHdlr+cRtBmRO70ZktTHSXbxm2xsck2S9bhqm7SW7ZQhC
+         N7KKq/i8igdTnCG7tjvSUDmaFbAQvoeYDeBZlTioLcYYYKsjEwyP0F7YO27wDkIGXK4Z
+         IrgSbGM4S+qYc4Rstasxg3tNIpA6Hi8rupsUQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=m5A13cvB2eg27WOBv14LrmOzzEb6FVY/M7tYu0VplQw=;
-        b=ZGXKJL06+IJxd3o8SLe049RBc0JtBcLdXLJ6f0tdtMjH4GqwJV61HcKD8eDBE9eZZq
-         eLUyV1ePRmFQ02lYXTKdFwOnETJzMDe7o++QhJ/6sgDufNatFZKW9JY3mbF6uPXtOELP
-         CfRhQvVKhPc+xTXViGnYYoahdSBEvhQ+54BwDiApdSBWFdvIlGkiT/2KrRUG1v2xsGQD
-         pkXQ5oP/bigU/WXdPTrEXbl/WinwEldskO5/6wtu/ZpI5aLypTuMF1MG+hnMF0vsnCVw
-         CWexrjfPZRcQiRepalkmfubzm/rH7kwMqpbRYP+tSv/MRbcZzHmOnNfiDt5FoIuSzgg+
-         I+oQ==
-X-Gm-Message-State: AJcUukcWCTTOV2iI9IoU8oR3bjsm9D43vW6ekGolnPXTNC7llCTUWO37
-        hNGZaPS501VtQgJiWtTeDj6ayqX0
-X-Google-Smtp-Source: ALg8bN6mhxPbBGMw5kExugH6oE/xMZKs1SRZbMs/B8ymStn9NecUtW2u//XoUY4lT5YW+s+mCmVJUQ==
-X-Received: by 2002:a2e:9c7:: with SMTP id 190-v6mr17817025ljj.120.1548146305381;
-        Tue, 22 Jan 2019 00:38:25 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id v64sm2660087lfa.48.2019.01.22.00.38.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Jan 2019 00:38:24 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1glrZb-0003LL-Gs; Tue, 22 Jan 2019 09:38:20 +0100
-Date:   Tue, 22 Jan 2019 09:38:19 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Andreas Kemnade <andreas@kemnade.info>
-Cc:     Johan Hovold <johan@kernel.org>, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>
-Subject: Re: [PATCH v2 2/5] gnss: sirf: power on logic for devices without
- wakeup signal
-Message-ID: <20190122083819.GP3691@localhost>
-References: <20181209195150.5192-1-andreas@kemnade.info>
- <20181209195150.5192-3-andreas@kemnade.info>
- <20190110121038.GA9725@localhost>
- <20190110230223.18ecbd87@kemnade.info>
- <20190114105129.GE3691@localhost>
- <20190114131346.4d476055@kemnade.info>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wd+IFHRFSGZybgssa5Rga5Q6TfQk8CSgVm/c12T9/0A=;
+        b=oVgmAPRRbTBJQ+Z6pX1lR2IaGJQw1jNgLRtgFqtidYPXTTTcsYh5RJA9/QdIfxe4IE
+         inizGibdGa5qj42co59ScHuaT6Q6h4FUOrCyapq+ml4IDs0xrsjyMP5xE7Xif39/8GAY
+         2+Twvdyd2cLZQlGkerBCLCuaYORxh/0KURSNTFPfs+LQCuNPzFThZewrPEUNf9RodX5i
+         i30m2/cGHAzwjFPW1bOiNp8lTklN33M5uvpEecS32tbHRJcdVZ7Wo3zt9ZdhqfXXfW40
+         Z0O2qcK5nw62TR2hV3BJ8u5kGwsLzSqux9/ggYOLW1qyt6Ega3jKL4B7tQTcSGwO04+E
+         v7sw==
+X-Gm-Message-State: AJcUukdQFeb6XtxDfxbSEsyDeTIcJeYbuz8Uc4EZj2aVB4lXVbQ0SCU0
+        Romorj47Mc/zteYazXFwHvk1lQ9uj9V0EbSK2Vw0sA==
+X-Google-Smtp-Source: ALg8bN6yJu2NaGTwPHYW3rAIWMijFOiSamyX6zzFe66bQAjWaqC3cgDaWKsfKhbZLgY650c2kcOPnRlx5TmOygDYKwo=
+X-Received: by 2002:a2e:5854:: with SMTP id x20-v6mr19401216ljd.31.1548146651061;
+ Tue, 22 Jan 2019 00:44:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190114131346.4d476055@kemnade.info>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+References: <ab49bb74e921474aa9390f81cdf65f32c3d9d898.1547559542.git.baolin.wang@linaro.org>
+ <7538d5806003b8f67e7e0d35638315974b7c2b50.1547559542.git.baolin.wang@linaro.org>
+ <CAL_Jsq+VpO+pX0A27-v_U+4kQKXKD5O1EWrn708RDeLsqnU1ng@mail.gmail.com>
+ <CAMz4kuK0tvYHL1gGDXCKDzow+YmAj587UoBp=fRi0_sujLh2QQ@mail.gmail.com> <CAMuHMdUGm+AzHsSgPf2Z0aPApzu5-gPuv1YfLU+RhXNb1DQ9yA@mail.gmail.com>
+In-Reply-To: <CAMuHMdUGm+AzHsSgPf2Z0aPApzu5-gPuv1YfLU+RhXNb1DQ9yA@mail.gmail.com>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Tue, 22 Jan 2019 16:43:58 +0800
+Message-ID: <CAMz4kuLfip=5MvUO_bPktAh7zGeOdig3B+PB0WYybCJSu7nj6w@mail.gmail.com>
+Subject: Re: [PATCH 3/4] dt-bindings: spi: Add the DMA properties for the SPI
+ dma mode
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Rob Herring <robh+dt@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Lyra Zhang <zhang.lyra@gmail.com>, lanqing.liu@unisoc.com,
+        linux-spi <linux-spi@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 01:13:46PM +0100, Andreas Kemnade wrote:
-> On Mon, 14 Jan 2019 11:51:29 +0100
-> Johan Hovold <johan@kernel.org> wrote:
+Hi Geert,
+On Tue, 22 Jan 2019 at 16:11, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>
+> Hi Baolin,
+>
+> On Tue, Jan 22, 2019 at 3:23 AM Baolin Wang <baolin.wang@linaro.org> wrote:
+> > On Mon, 21 Jan 2019 at 21:53, Rob Herring <robh+dt@kernel.org> wrote:
+> > > On Tue, Jan 15, 2019 at 7:47 AM Baolin Wang <baolin.wang@linaro.org> wrote:
+> > > > From: Lanqing Liu <lanqing.liu@spreadtrum.com>
+> > >
+> > > The email address should be updated with unisoc.com.
+> >
+> > Sure.
+> >
+> > >
+> > > > Add the DMA properties for the SPI dma mode.
+> > > >
+> > > > Signed-off-by: Lanqing Liu <lanqing.liu@spreadtrum.com>
+> > > > Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> > > > ---
+> > > >  Documentation/devicetree/bindings/spi/spi-sprd.txt |    9 +++++++++
+> > > >  1 file changed, 9 insertions(+)
+> > > >
+> > > > diff --git a/Documentation/devicetree/bindings/spi/spi-sprd.txt b/Documentation/devicetree/bindings/spi/spi-sprd.txt
+> > > > index bad211a..01ef53f 100644
+> > > > --- a/Documentation/devicetree/bindings/spi/spi-sprd.txt
+> > > > +++ b/Documentation/devicetree/bindings/spi/spi-sprd.txt
+> > > > @@ -14,6 +14,12 @@ Required properties:
+> > > >         address on the SPI bus. Should be set to 1.
+> > > >  - #size-cells: Should be set to 0.
+> > > >
+> > > > +Optional properties:
+> > > > +dma-names: Should contain names of the SPI used DMA channel.
+> > > > +dmas: Should contain DMA channels which the SPI used sorted in the
+> > > > +       same order as the dma-names property.
+> > > > +sprd,dma-slave-ids: Should contain the DMA number that the SPI hardware required.
+> > > > +
+> > > >  Example:
+> > > >  spi0: spi@70a00000{
+> > > >         compatible = "sprd,sc9860-spi";
+> > > > @@ -21,6 +27,9 @@ spi0: spi@70a00000{
+> > > >         interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
+> > > >         clock-names = "spi", "source","enable";
+> > > >         clocks = <&clk_spi0>, <&ext_26m>, <&clk_ap_apb_gates 5>;
+> > > > +       dma-names = "rx_chn", "tx_chn";
+> > > > +       dmas = <&apdma 11>, <&apdma 12>;
+> > > > +       sprd,dma-slave-ids = <11 12>;
+> > >
+> > > When would this be different values from what's in 'dmas'?
+> >
+> > Slave id is not always same with the DMA channel number in 'dmas', and
+> > it is just coincident for SPI driver. Moreover for different SoC , the
+> > slave ids for DMA engine consumers are not same. So we need one
+> > property to specify the slave id for the consumers to trigger DMA
+> > transfer.
+>
+> Perhaps the DMA controller should use #dma-cells = <2>, so you can specify
+> the second value in the dmas property?
 
-> > Good point. Unless we know the current state, we'd need to sleep for
-> > HIBERNATE_TIMEOUT before waiting for data reception.
-> > 
-> > > >      - timeout: failure
-> > > > 
-> > > >   hibernate:
-> > > >    - toggle on-off
-> > > >    - sleep(HIBERNATE_TIMEOUT)  
-> > > we could also additionally check here for 
-> > >    if (last_bytes_received == GOODBYE_MSG)  
-> > 
-> > Caching and parsing the stream for this could get messy. And is the
-> > expected message clearly defined somewhere, or would it be device (and
-> > firmware) dependent?
-> > 
-> I think so but I must check.
-> $PSRF150.0
-> 
-> But as said, these ideas are be for a possibly later patchset.
+Yes, that's a good point. I will try to change our DMA driver. Thanks.
 
-Yeah, and remember that the receiver can be in binary sirf mode as well,
-so this do indeed seem like something that will need to wait.
-
-Thanks,
-Johan
+-- 
+Baolin Wang
+Best Regards
