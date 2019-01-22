@@ -2,91 +2,125 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 049F3C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:24:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 037A1C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:24:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFABD2084A
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:24:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C74632084A
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:24:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bqnD5G1c"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cCy893vN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726752AbfAVTX7 (ORCPT
+        id S1726816AbfAVTYJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 14:23:59 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:33680 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725925AbfAVTX6 (ORCPT
+        Tue, 22 Jan 2019 14:24:09 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:39624 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726191AbfAVTYI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 14:23:58 -0500
-Received: by mail-pl1-f194.google.com with SMTP id z23so11966258plo.0;
-        Tue, 22 Jan 2019 11:23:58 -0800 (PST)
+        Tue, 22 Jan 2019 14:24:08 -0500
+Received: by mail-pl1-f193.google.com with SMTP id 101so11943019pld.6
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 11:24:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=X217PoeUPCaMIxFqSwvf/RBoB6yzbl8wahFM54PaqHg=;
-        b=bqnD5G1c0c1KjedIkTzfRDvuVhk3qpr/6Bs9YbZQMzlYGq1czciDSue5DyPhBaviVp
-         wzyhuWFo78ITldPIILtmUyp5x0nCiwOYXGr42zoIXw0tW1sAvccsEdcBDpdspVNlnZOz
-         j8W52IhxTdnZLcDaH0aAO7aGYwkkD45uXeaNftnhfOl6+yF6R29+eQE+CRcWgy76BC6k
-         y4BYyqgC4yemtEMYVaI/+qgjl9yev+NwiTxCv9OJgyzkXjJQw3jSD9/aKb4zKdTVVz04
-         ZrfPgT+5f5b5hTv3nLVyjuOecg12GXt0fIKQTiboso4266zQGgOdelmnr9YCS8c4K4Ks
-         mhpw==
+        bh=WvDB1UmY6P7Pi2/zWPPNgztIw2ztdKNOlQz8HoqixYw=;
+        b=cCy893vNLB8VNw4FAWvddnCeADD/+H32ZpUIf/t2+Kvqrv7uauTrVYpP8XLTzcFGMo
+         BwCU5sDXvinnIfComKNgKyh2Hh+gjLWgjpXU58CNSyFgBWoQfbOYfv/sYACJGvjoFHZA
+         e1MFhjSNbN+u7jcId9imFvfFRh1ATravezyQ8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=X217PoeUPCaMIxFqSwvf/RBoB6yzbl8wahFM54PaqHg=;
-        b=C5TQV/FjfPOPpnz0AdGLZcu3se3KAklLLeZB6ZKEbp66zEdPGjM7vJUSr9ApRLL9Dz
-         h+29fsz+rUTRu9g3yOYk6nwBL3yPzX5165b+Hz/oXt+V84XNLjPuw4obbmraBeB1y1V0
-         GR6LKLqycvMDhSA+izOjZnP0q8QvkpndyDsj1jzSU6n9IsbPzhhPIQApwnp6wOUn6lCv
-         M4VKhzGX21tHYUPm68/O6WI84nnYT89Xp6+CRnAuIq+nreHlydmULGO6jo50mxJO9YoK
-         Int5r+qHr17BsfmOogX5g7ImhZW5+XZlclLKxeFv5QO4tb8nm4NhYXdBOTTtYIEGCSx5
-         MbBg==
-X-Gm-Message-State: AJcUukfJXwCx+jXr9Vav4sBlXiytyxj74t5uOiyyOYKeIh2PBu5vL9r8
-        jjcDIzUIFq7GWjRquq8EkVQ=
-X-Google-Smtp-Source: ALg8bN7ztquefiK8mdIVp7O2T+2w1atgfhiKTBmE+i2q5StmfsmVElMeG+qQ3foyo8Dg08qLNxQS7w==
-X-Received: by 2002:a17:902:27a8:: with SMTP id d37mr35949119plb.182.1548185038096;
-        Tue, 22 Jan 2019 11:23:58 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id u123sm24681449pfb.1.2019.01.22.11.23.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Jan 2019 11:23:57 -0800 (PST)
-Date:   Tue, 22 Jan 2019 11:23:51 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.19 00/99] 4.19.17-stable review
-Message-ID: <20190122192351.GB2224@roeck-us.net>
-References: <20190121134913.924726465@linuxfoundation.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WvDB1UmY6P7Pi2/zWPPNgztIw2ztdKNOlQz8HoqixYw=;
+        b=UKkaqu1SvMyXvLWxxLsyCYtKIVIk+Y0+JcWIxBWn+U1ARZSNAvkz7gMKO0dSX1F8ua
+         mQ9c6YptSzbI31/JF1qedW4NaWWpkiQIinUEM+Ir1OmMvSP2n/l0EKHZ3VInstjT9p8w
+         PBK9xDdKH0xy5cUEkKjL/GSNplKgjlljXndn2aHwOXyv6HOgf+b2UOE25Q2Aa1kmAqv6
+         mjAPejL6ZO3foW9xtV3YsLSrdGOEMpySFHvip2dkuVAOnnycTDLidXDG08X6p6mEZpmR
+         MDZl/NVvPVIwvA3wUdn59sODBsKHxAhjQl8mRwdcpnhiWsSyxKyzMBQkVgEIhy+iOBgh
+         CC7g==
+X-Gm-Message-State: AJcUukcG2T682re9FqqUMBZ9ps3jOIxhWk/C/YuURVi4BvIJYtL08Ybl
+        NuycWf8tXYxNylWkoojKpGri0A==
+X-Google-Smtp-Source: ALg8bN5tr2zYGHgKz6yefqrssxuEdUitJTh8IhIITdm8+HkLsb2AvYzA5Jy14jJIUvCYBc+Pe5MGAw==
+X-Received: by 2002:a17:902:145:: with SMTP id 63mr35398172plb.256.1548185047730;
+        Tue, 22 Jan 2019 11:24:07 -0800 (PST)
+Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id j70sm22049196pfc.43.2019.01.22.11.24.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 22 Jan 2019 11:24:06 -0800 (PST)
+Date:   Tue, 22 Jan 2019 11:24:05 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 01/10] arm64: dts: qcom: sdm845: Update PIL region
+ memory map
+Message-ID: <20190122192404.GB31919@minitux>
+References: <20190122055112.30943-1-bjorn.andersson@linaro.org>
+ <20190122055112.30943-2-bjorn.andersson@linaro.org>
+ <154818353130.20280.17905705223316470797@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190121134913.924726465@linuxfoundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <154818353130.20280.17905705223316470797@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 02:47:52PM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.19.17 release.
-> There are 99 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed Jan 23 13:48:56 UTC 2019.
-> Anything received after that time might be too late.
-> 
-Build results:
-	total: 156 pass: 156 fail: 0
-Qemu test results:
-	total: 343 pass: 343 fail: 0
+On Tue 22 Jan 10:58 PST 2019, Stephen Boyd wrote:
 
-Guenter
+> Quoting Bjorn Andersson (2019-01-21 21:51:03)
+> > @@ -103,10 +138,30 @@
+> >                         no-map;
+> >                 };
+> >  
+> > +               venus_mem: memory@95800000 {
+> > +                       reg = <0 0x95800000 0 0x500000>;
+> > +                       no-map;
+> > +               };
+> > +
+> > +               cdsp_mem: memory@95d00000 {
+> > +                       reg = <0 0x95d00000 0 0x800000>;
+> > +                       no-map;
+> > +               };
+> > +
+> >                 mba_region: memory@96500000 {
+> >                         reg = <0 0x96500000 0 0x200000>;
+> >                         no-map;
+> >                 };
+> > +
+> > +               slpi_mem: memory@96700000 {
+> > +                       reg = <0 0x96700000 0 0x1400000>;
+> > +                       no-map;
+> > +               };
+> > +
+> > +               spss_mem: memory@97b00000 {
+> > +                       reg = <0 0x97b00000 0 0x100000>;
+> > +                       no-map;
+> > +               };
+> >         };
+> >  
+> 
+> What's the plan if certain configurations don't use all these carveouts?
+> Can we mark the reservation nodes as status = "disabled", or the reverse
+> and mark them as status = "ok" in all boards, and then reclaim the
+> memory for peripherals we don't care to use?
+> 
+
+The code path that picks these up does look for "status", so I suggest
+that we leave them all enabled in the platform dtsi and then let the
+device's reclaim them as needed.
+
+Regards,
+Bjorn
