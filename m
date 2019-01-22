@@ -4,89 +4,95 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35C3DC37122
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 00:30:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA107C37124
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 00:31:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE81C21721
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 00:30:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 749C521721
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 00:31:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548117018;
-	bh=eaQiUBDfb6E9/VOYkZfCV15xusiVqeKPTawDXxzfKl0=;
+	s=default; t=1548117101;
+	bh=IPtXGsL91pfW8SgPsairRpUvuIKPKfH68fmVNeO21/Y=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=AHIHTOa67oFT2t1UAlYKBXfmO5f/vOtNVHh3rZ5BZjByiu7F6Kh+0/8FEcxpBISLZ
-	 7o7eviesu+dmtJ/AQje0pjGV47NDo8UdrKgCq0GLsIwwgRomt1+TLYv7JLQBJyjtJU
-	 aMuA2xszRZRIeD8ti6+ImTFv+H4kuGztbj8XN+2k=
+	b=0hSpkZheSBb8lv8hstQd/m5aAYvw7XPDMz7qlAtNo/O5adYtR6tejLRfKiUv5FpUB
+	 qIpGw9pKxUvyQQCyStaqsLKy4pV516ggWSFSWgNAmxoB1PSM6gDNTwKKSWMdM3YqBI
+	 wtLwGZVdKxGgtNsbHJbsDao5/Ns3Hj3p+ukgSzpg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726778AbfAVAaQ (ORCPT
+        id S1726798AbfAVAbj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 19:30:16 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:38628 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725962AbfAVAaQ (ORCPT
+        Mon, 21 Jan 2019 19:31:39 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:38321 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726165AbfAVAbj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 19:30:16 -0500
-Received: by mail-ot1-f66.google.com with SMTP id e12so22139660otl.5;
-        Mon, 21 Jan 2019 16:30:15 -0800 (PST)
+        Mon, 21 Jan 2019 19:31:39 -0500
+Received: by mail-oi1-f196.google.com with SMTP id a77so16006037oii.5;
+        Mon, 21 Jan 2019 16:31:38 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XpDQ3gXdzLJtDwqohrw59Qy2bmeppBzply4LsowzBYo=;
-        b=Xpty50lHRpxudAQknKYg6g8ZeyXk3xuH56+2C2v7bgH6hRGA7ly4NvBR8QIEYFCC4m
-         iNyod5EbH1JOwwmJ1Xk4CWBqXAXU5L0XJjpBYw44TfEhExOCA4g+5IelA1lUZ/hy3pJ2
-         GQg8H/y3/XJnpDu1Vx2P6uwHgmbZf6+ExDzIjiXLcty8+j/5dJGyiXTpLMiDkCdiuziw
-         dDy2ddUwXIW0RUnLdRRhbdv1XOtLZHNPF2MKO7OVVQ+SzEf58Sdj1CtloAfBttfi8x9V
-         eKzKVmFqcic/7/53sxZ4PC3rXGvRb52KhGpCVNirTu0rkkoxGZhDhjs/kr+YIM8o/p4j
-         RiaQ==
-X-Gm-Message-State: AJcUukd9u7b4NOugIfsfwVszzGcR8pDkMHXRMip2zBVGXpWryxC/6cxo
-        XiBp/Z5/XccC63i7CKwNNA==
-X-Google-Smtp-Source: ALg8bN4dO/uDXQQAzJ/yiWBBuVgTk1+I1T5uePSipxY4CNYMkXge4HZCM+dusjk1ye6T0Hq8WpXpmw==
-X-Received: by 2002:a9d:60b:: with SMTP id 11mr20062213otn.200.1548117015485;
-        Mon, 21 Jan 2019 16:30:15 -0800 (PST)
+        bh=JWoG3DHHJ3PJYTklhTubbZN/R0wYZS7KWMnjHDZtnIs=;
+        b=JsvZpLRBp8P+awBi5RsEvBpD4HBkQmtm+G90KBycpjnFS6vrpRLiCzn28WRHYcitHe
+         9blBfPFyu2oGEwO2wgsub4APodyyVGlqvI37SvSXebtfLqqvNo+4d67rhlNn1htGHx9+
+         bERw+fATTfrI6GqIKeXrBLsiQImIHIVdsPElO8/u0QQ6DvSL5VVpxAj6YPzLIQRLnqRc
+         Y72ccIn4y/EzFcCZcxzjKENgfbEADKDh9bGfk5alasqxNypIA5R6mFzi4Y+6qGONdvHR
+         wMe0YU/LbPqGR3Lg37Qpm05aWskIcL5zfav4bBatqZu/EH5rzJdkh2kjdZWjfoopWdVN
+         g0kA==
+X-Gm-Message-State: AJcUukeaOJ3+Z4jNH0WFVT5nKbwqHCDsRHuC2wtNrzBmzVsOt5jlfnpY
+        ak5f2Wmh1gH7mz/fFf/QSQ==
+X-Google-Smtp-Source: ALg8bN6rm9MBZBYIOmoNq8rKDAN88J0am2wZTgXOQfF4BF4TGfZ8w7fAOQ2gKlwNHvMyoL8wkTI4uQ==
+X-Received: by 2002:aca:b102:: with SMTP id a2mr7204461oif.180.1548117098243;
+        Mon, 21 Jan 2019 16:31:38 -0800 (PST)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id v20sm6548792otp.10.2019.01.21.16.30.14
+        by smtp.gmail.com with ESMTPSA id k130sm7158547oia.47.2019.01.21.16.31.37
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 21 Jan 2019 16:30:14 -0800 (PST)
-Date:   Mon, 21 Jan 2019 18:30:14 -0600
+        Mon, 21 Jan 2019 16:31:37 -0800 (PST)
+Date:   Mon, 21 Jan 2019 18:31:36 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     AngeloGioacchino Del Regno <kholk11@gmail.com>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: smd: Add support for MSM8956/76 RPM clocks
-Message-ID: <20190122003014.GA26136@bogus>
-References: <2fcdf0e9b1eef55350911984064dd94f16f1fcd8.camel@gmail.com>
+To:     Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-arm-kernel@axis.com
+Subject: Re: [PATCH 03/24] dt-bindings: PCI: keystone: Add "reg-names"
+ binding information
+Message-ID: <20190122003136.GA30537@bogus>
+References: <20190114132424.6445-1-kishon@ti.com>
+ <20190114132424.6445-4-kishon@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2fcdf0e9b1eef55350911984064dd94f16f1fcd8.camel@gmail.com>
+In-Reply-To: <20190114132424.6445-4-kishon@ti.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 12, 2019 at 04:38:58PM +0100, AngeloGioacchino Del Regno wrote:
-> From 6aeefad77a2a5d47a9bd009d2d10db2a5dd153a2 Mon Sep 17 00:00:00 2001
-> From: "Angelo G. Del Regno" <kholk11@gmail.com>
-> Date: Sat, 12 Jan 2019 16:31:09 +0100
-> Subject: [PATCH] clk: qcom: smd: Add support for MSM8956/76 RPM clocks
+On Mon, 14 Jan 2019 18:54:03 +0530, Kishon Vijay Abraham I wrote:
+> Add "reg-names" binding information in order for device tree node
+> to be populated with the correct register strings. This will break
+> old dt compatibility. However Keystone PCI has never worked
+> in upstream kernel due to lack of SERDES support. Before SERDES
+> support is added, cleanup the Keystone PCI dt-bindngs. This new
+> binding will also be used by PCI in AM654 platform.
 > 
-> Add all RPM clocks found on MSM8956/MSM8976 SoCs.
-> 
-> Signed-off-by: Angelo G. Del Regno <kholk11@gmail.com>
+> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 > ---
->  .../devicetree/bindings/clock/qcom,rpmcc.txt  |  1 +
+>  Documentation/devicetree/bindings/pci/pci-keystone.txt | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
 
-Separate patch preferred, but for a 1 line change:
-
-Acked-by: Rob Herring <robh@kernel.org>
-
->  drivers/clk/qcom/clk-smd-rpm.c                | 53 +++++++++++++++++++
->  2 files changed, 54 insertions(+)
+Reviewed-by: Rob Herring <robh@kernel.org>
