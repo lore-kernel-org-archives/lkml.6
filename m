@@ -2,106 +2,195 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AD43C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:19:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F5AFC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:19:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F70D2084C
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:19:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548170350;
-	bh=KIFscL//F22DPcXexa3r8aN3FhgzPMtQQmgiZuAuheA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=2vVKH8AgnJtfErvpiPo+OZwv4b+ORfaD8KaKLi9m4+zQkEMRsHS4iJwpd9Ifehndd
-	 e07qCGTor7Gc1nw41OvXmjgJqdmL5KowrbBFIsUnqfOS6Et0QSztKvLC6QAfJTLFhq
-	 AJCObpWvQBELIa5FKcEe/LAmk2ktjUh9/aHiLGac=
+	by mail.kernel.org (Postfix) with ESMTP id 0163820879
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:19:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pe4uCC1C"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729406AbfAVPTI (ORCPT
+        id S1729411AbfAVPTY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 10:19:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59952 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729240AbfAVPTH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 10:19:07 -0500
-Received: from mail-yw1-f43.google.com (mail-yw1-f43.google.com [209.85.161.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8618B2084C;
-        Tue, 22 Jan 2019 15:19:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548170346;
-        bh=KIFscL//F22DPcXexa3r8aN3FhgzPMtQQmgiZuAuheA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=LwjvfC7cEAVIi1utCiTV7+6nIXyRrA0W1R6XZoaZKnGOlcVx4O+rD4BezTLE00mHo
-         dFPvKRifqVIDhC6CVy4fIo7XbVFzZcyqU+esiUmQs49e3bPh4DvR/FsLW/5GpoxcGm
-         Oq43FlYHUZx8lVzEMIOst1d5cm+SRupt8WBkrC7I=
-Received: by mail-yw1-f43.google.com with SMTP id b63so9513912ywc.11;
-        Tue, 22 Jan 2019 07:19:06 -0800 (PST)
-X-Gm-Message-State: AJcUukeL8c+JN24zpDWKVifkkv2c/WA9o9Ynm2gqN0I/HKTYU92O7TH4
-        zz/xa1SAnbxLG3cqjX7IGZlssWM2j2r/a5CDTzw=
-X-Google-Smtp-Source: ALg8bN7oWVrhUBie70J7iZE55wqCl39x9GHeFd87uxuROHHclESZBi3HvD2CpfMwEVyndBEqgh9MevjRqqzkPGnob84=
-X-Received: by 2002:a81:5984:: with SMTP id n126mr31704696ywb.433.1548170345808;
- Tue, 22 Jan 2019 07:19:05 -0800 (PST)
+        Tue, 22 Jan 2019 10:19:24 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:43650 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729028AbfAVPTY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 10:19:24 -0500
+Received: by mail-oi1-f196.google.com with SMTP id u18so17644886oie.10;
+        Tue, 22 Jan 2019 07:19:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=P2T84Tfc/ZuRQBZY1S8DPTdz+esS77Fl4v/tE2CDlTA=;
+        b=pe4uCC1CDIj7U6wC6lglbLU9O8yOVv7KeO0yLqQgh+TB1/UJAd8bBtiHY/75CznAzR
+         Vhe5T6zdYXzY+RZkZ+I7JI9Vpzwks2A+X9waTG98OOEZJjLkAsOw4MDe0WrkTkS44kGC
+         bCZwuyXvNBe9DcLOtgho6TrqtoCT4jBo6WSHyIOfIRwSIV6dwEFVGNrKf6wAj6pKWbSi
+         TDE31VmhhCpvonqkMn7xh9STCnYYsYgCfVvgHDDcb/U1aObzThS3x3FflDbERLN5G4Yv
+         xSTKVD+G6NN/+242BaDSZtOxC/1ZYUaDsnmm49eB5eRxsZTu8Tgz8rD3XzLw1TyG5jna
+         0x0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=P2T84Tfc/ZuRQBZY1S8DPTdz+esS77Fl4v/tE2CDlTA=;
+        b=EpcDd6n7+fF0Xlp2JR/mkow3z5cgdgfWiBT3bhXjlX6B623bFgAkOIj6SmU+L0YEl3
+         lHovBdrUQ6ps3FMi5+zk+UDIZPXlxWYuQssWMaQRye5imjo86Ak0OW3TO1Wn35FniVCX
+         n+fdq0YY4MCzDfTWTBUBx+FaAwvi+ORHqDYx9CWKEoR9S0fbszuM1kHjrpDEGLERW3VF
+         xXmKcV4MH0CfHIS/q8ylYRAHNoJXHw+GkjOEkU9CHf9nki4xWYOl+oud+AgR8Z8tIOpf
+         S6sSbkaioRKbRy3l7NRqI8vAk3dS8BICzk5YcY6NpK/vef98FpbMm4gWdu3XLn3x1s8G
+         GZDA==
+X-Gm-Message-State: AJcUukdEb8WMgO+9g7nmCPCfyEDs5MtTyYRJ5RgCA7CXL/3OTN4Md6SF
+        BO8Vi1go4M+webqXfPGE84DKmReX0Cza98iq56Y=
+X-Google-Smtp-Source: ALg8bN6toZ8jCBNh4tMWTuyjtgGFXn0+QGP0sDTTgzgORD2MEn1csrNenITQZX+Xmqhw4zEXUlYtl1p8Bq2aXNdohws=
+X-Received: by 2002:aca:6155:: with SMTP id v82mr8785678oib.259.1548170362828;
+ Tue, 22 Jan 2019 07:19:22 -0800 (PST)
 MIME-Version: 1.0
-References: <20190116020100.4813-1-atull@kernel.org> <CAJYdmeMfH-2aY09_rA0JavL4=WoRy+jWe+ZwgGgefDq-CbpCaA@mail.gmail.com>
-In-Reply-To: <CAJYdmeMfH-2aY09_rA0JavL4=WoRy+jWe+ZwgGgefDq-CbpCaA@mail.gmail.com>
-From:   Alan Tull <atull@kernel.org>
-Date:   Tue, 22 Jan 2019 09:18:28 -0600
-X-Gmail-Original-Message-ID: <CANk1AXRmdU01xEs=62fEOJNTmcmCe35mowHUeRidnPDSDB_2Qw@mail.gmail.com>
-Message-ID: <CANk1AXRmdU01xEs=62fEOJNTmcmCe35mowHUeRidnPDSDB_2Qw@mail.gmail.com>
-Subject: Re: [PATCH v3] fpga: altera_freeze_bridge: remove restriction to socfpga
-To:     Moritz Fischer <moritz.fischer.private@gmail.com>
-Cc:     Dinh Nguyen <dinguyen@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fpga@vger.kernel.org
+References: <20190122140705.4918-1-aford173@gmail.com>
+In-Reply-To: <20190122140705.4918-1-aford173@gmail.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Tue, 22 Jan 2019 13:19:17 -0200
+Message-ID: <CAOMZO5D1bNjBkRbVukDCgXYOO6wqAEiBgj17dmW22Zstcj3e7w@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: imx: Add support for Logic PD i.MX6QD EVM
+To:     Adam Ford <aford173@gmail.com>
+Cc:     "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 19, 2019 at 6:41 PM Moritz Fischer
-<moritz.fischer.private@gmail.com> wrote:
->
-> On Tue, Jan 15, 2019 at 6:01 PM Alan Tull <atull@kernel.org> wrote:
-> >
-> > The Altera Freeze Bridge should not be restricted to ARCH_SOCFPGA
-> > since it can be used on other platforms such as Stratix10.
-> >
-> > Signed-off-by: Alan Tull <atull@kernel.org>
-> Reviewed-by: Moritz Fischer <mdf@kernel.org>
+Hi Adam,
 
-Thanks!
+On Tue, Jan 22, 2019 at 12:07 PM Adam Ford <aford173@gmail.com> wrote:
 
-Alan
+> +       reg_audio: regulator-audio {
+> +               pinctrl-names = "default";
+> +               pinctrl-0 = <&pinctrl_reg_audio>;
+> +               compatible = "regulator-fixed";
+> +               regulator-name = "3v3_aud";
+> +               regulator-min-microvolt = <3300000>;
+> +               regulator-max-microvolt = <3300000>;
+> +               gpio = <&gpio1 29 GPIO_ACTIVE_HIGH>;
+> +               enable-active-high;
+> +               regulator-always-on;
 
+It seems that the 'regulator-always-on' property is not needed in this case.
 
-> > ---
-> > v2: add depends on HAS_IOMEM
-> > v3: put both dependencies on one line
-> > ---
-> >  drivers/fpga/Kconfig | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
-> > index 0bb7b5c..c20445b 100644
-> > --- a/drivers/fpga/Kconfig
-> > +++ b/drivers/fpga/Kconfig
-> > @@ -104,7 +104,7 @@ config SOCFPGA_FPGA_BRIDGE
-> >
-> >  config ALTERA_FREEZE_BRIDGE
-> >         tristate "Altera FPGA Freeze Bridge"
-> > -       depends on ARCH_SOCFPGA && FPGA_BRIDGE
-> > +       depends on FPGA_BRIDGE && HAS_IOMEM
-> >         help
-> >           Say Y to enable drivers for Altera FPGA Freeze bridges.  A
-> >           freeze bridge is a bridge that exists in the FPGA fabric to
-> > --
-> > 2.7.4
-> >
->
-> Thanks,
-> Moritz
+> +&i2c1 {
+> +       pinctrl-names = "default";
+> +       pinctrl-0 = <&pinctrl_i2c1>;
+> +       clock-frequency = <400000>;
+> +       status = "okay";
+> +
+> +       codec: wm8962@1a {
+
+Node name should be generic and label name should be specific, so:
+
+wm8962: codec@1a {
+
+> +       chosen {
+> +               stdout-path = &uart1;
+> +       };
+> +
+> +       memory@10000000 {
+
+Need to pass device_type = "memory";
+
+> +               reg = <0x10000000 0x80000000>;
+> +       };
+> +
+> +       reg_wl18xx_vmmc: regulator-wl18xx {
+> +               compatible = "regulator-fixed";
+> +               regulator-name = "vwl1837";
+> +               regulator-min-microvolt = <3300000>;
+> +               regulator-max-microvolt = <3300000>;
+> +               gpio = <&gpio7 0 GPIO_ACTIVE_HIGH>;
+> +               startup-delay-us = <70000>;
+> +               enable-active-high;
+> +       };
+> +
+
+No need for this blank line.
+
+> +};
+
+> +&i2c3 {
+> +       clock-frequency = <100000>;
+> +       pinctrl-names = "default";
+> +       pinctrl-0 = <&pinctrl_i2c3>;
+> +       status = "okay";
+> +
+> +       pmic: pfuze100@8 {
+
+pfuze100: pmic@8
+
+> +       tmp102_0: tmp102@4a {
+
+generic node name, please.
+
+> +               compatible = "ti,tmp102";
+> +               reg = <0x4a>;
+> +               pinctrl-names = "default";
+> +               pinctrl-0 = <&pinctrl_tempsense>;
+> +               interrupt-parent = <&gpio6>;
+> +               interrupts = <15 IRQ_TYPE_LEVEL_LOW>;
+> +               #thermal-sensor-cells = <1>;
+> +       };
+> +
+> +       tmp102_1: tmp102@49 {
+
+Ditto
+
+> +               compatible = "ti,tmp102";
+> +               reg = <0x49>;
+> +               interrupt-parent = <&gpio6>;
+> +               interrupts = <15 IRQ_TYPE_LEVEL_LOW>;
+> +               #thermal-sensor-cells = <1>;
+> +       };
+> +
+> +       at24c64_mfg: at24@51 {
+
+Ditto
+
+> +               compatible = "atmel,24c64";
+> +               pagesize = <32>;
+> +               read-only;      /* Manufacturing EEPROM programmed at factory */
+> +               reg = <0x51>;
+> +       };
+> +
+> +       at24c64_usr: at24@52 {
+
+Ditto
+
+> +       panel-lvds0 {
+> +               compatible = "ampire,am800480b3tmqw";
+
+Could not found this compatible documented.
+
+> +&i2c1 {
+> +       ili_touch: ilitouch@26 {
+
+Generic node name, please.
+
+> +               compatible = "ili,ili2117a";
+
+Could not found this compatible documented.
