@@ -2,71 +2,111 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B10AEC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 12:01:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A63C6C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 12:01:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CEC720855
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 12:01:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F28D21019
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 12:01:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728401AbfAVMBh (ORCPT
+        id S1728414AbfAVMBz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 07:01:37 -0500
-Received: from mga03.intel.com ([134.134.136.65]:2863 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728052AbfAVMBh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 07:01:37 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jan 2019 04:01:36 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,506,1539673200"; 
-   d="scan'208";a="140280031"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.115])
-  by fmsmga001.fm.intel.com with ESMTP; 22 Jan 2019 04:01:34 -0800
-Date:   Tue, 22 Jan 2019 14:01:33 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stefan Berger <stefanb@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/5] tpm: ppi: Possibly show command parameter if TPM
- PPI 1.3 is used
-Message-ID: <20190122120133.GB7514@linux.intel.com>
-References: <20190117174135.2117937-1-stefanb@linux.ibm.com>
- <20190117174135.2117937-5-stefanb@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190117174135.2117937-5-stefanb@linux.ibm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 22 Jan 2019 07:01:55 -0500
+Received: from mout.kundenserver.de ([212.227.126.133]:60707 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728360AbfAVMBz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 07:01:55 -0500
+Received: from orion.localdomain ([95.115.125.104]) by
+ mrelayeu.kundenserver.de (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis)
+ id 1MDhV1-1gsolR0C3z-00AjCB for <linux-kernel@vger.kernel.org>; Tue, 22 Jan
+ 2019 13:01:54 +0100
+From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
+To:     linux-kernel@vger.kernel.org
+Subject: [PATCH] .gitignore: add some missing excludes
+Date:   Tue, 22 Jan 2019 13:01:53 +0100
+Message-Id: <1548158513-21895-1-git-send-email-info@metux.net>
+X-Mailer: git-send-email 1.9.1
+X-Provags-ID: V03:K1:moez6aWrQbYN+DM/Ib9/zRSNDfYqc3SFR3U4yv9dxZLzWo3yTKR
+ 5rnA/NoQOp0GXouSVaLBh06fYGI6A6ZOVumzE2BsezbnF7I3flRmBD8kaXBJTDtOJ69R0l0
+ KOO/ZbB3rrSHBDcB4sizU0eiZiCOEazTk5MtNmJgM58j04eLgSd66fJE9Yhr4x+C7MDGmYY
+ V2O8C1yYxlk8dXd/bbnDg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:d0SB07ANGTk=:FFVYhnfATAMTSV4NKCTw8C
+ E1JXvWzkWK4cAH11oeh6BOJWJ17/EwEjknO9ENMiwn0o1TLW/INy/z2Js079sJfOO4wF+dY+7
+ V/3MJ/XaLFdTQ2T02QlkSte+XdDSZKxd+NPyDa/TM7gzHW5D4UGXA1Reg0N5PZA98FeYQ6rs6
+ aN1ZtiMD5g3u4/dxxPNtI5GKlv5aX8r9uXfijD/F2YUdjBl/nKAVAFtpDpQQUhayR3smttptk
+ ecKSzzCHBnHTkUQbEQ25OavcEwFjMsk5FNDWQD37uzfMCNKPogL0VQFBsKtYniPrrX8stIlFe
+ PP9kAwoo+JZmrCFdYlvkQkBA3jFcpaOuuadhxZLndchpPynLVj0QvLaCeX9YRce+OkB7D/5C3
+ nxHKcO81sbPhLW8iG3m0DayqxHNJuSt/aWnnzK7VNGM2YzmKxx7vbLwgGGWNuKZhA9GFPhCk6
+ FBxFS0IUxIWxOQm087N2XhUSKXmdzHmguqaVF56A9UzhO6SQ5DSwPWQVuKsgXvukKhJ3XXFYD
+ L1KiQc+imawVfVVp9gkf+Qij8V9918r0TVsk8iL38gH1ZAsuG6GMHgqjP2P1rG1T0fx+eqSvk
+ IY74pLAX01UD/6H2GKmDtHTwmCX/bm/968UZAgp089RABEYQ2SQtqcuW6yUpHmrgYtcEqAUS3
+ 6Z68PRLkNILEO5vmFUp50xNjFQH1a5vSQBZsSwQ+sjcC8xPQgeqWkHf9AV5HTySOUfKpom552
+ C9KpiMA/EGt84u1r/ilg1iiCsJ8e8R+Zg1Esbg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 12:41:34PM -0500, Stefan Berger wrote:
-> TPM PPI 1.3 introduces an additional optional command parameter
-> that may be needed for some commands. Display the parameter if the
-> command requires such a parameter. Only command 23 needs one.
-> 
-> The PPI request file will show output like this then:
-> 
->    # echo "23 16" > request
->    # cat request
->    23 16
-> 
->    # echo "5" > request
->    # cat request
->    5
-> 
-> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> Tested-by: David Safford <david.safford@ge.com>
+For now they're all catched by ".*", but some folks might remove
+that in order to add their own .config file.
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+---
+ .gitignore                 | 6 ++++++
+ scripts/kconfig/.gitignore | 1 +
+ 2 files changed, 7 insertions(+)
 
-/Jarkko
+diff --git a/.gitignore b/.gitignore
+index 97ba6b7..294452e 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -10,11 +10,14 @@
+ # Normal rules (sorted alphabetically)
+ #
+ .*
++*.cmd
++*.config.old
+ *.a
+ *.asn1.[ch]
+ *.bin
+ *.bz2
+ *.c.[012]*.*
++.*.d
+ *.dtb
+ *.dtb.S
+ *.dwo
+@@ -35,12 +38,15 @@
+ *.order
+ *.patch
+ *.s
++.scmversion
+ *.so
+ *.so.dbg
+ *.su
+ *.symtypes
++.tmp_*
+ *.tab.[ch]
+ *.tar
++*.version
+ *.xz
+ Module.symvers
+ modules.builtin
+diff --git a/scripts/kconfig/.gitignore b/scripts/kconfig/.gitignore
+index 0aabc1d..db990ae 100644
+--- a/scripts/kconfig/.gitignore
++++ b/scripts/kconfig/.gitignore
+@@ -2,6 +2,7 @@
+ # Generated files
+ #
+ *.moc
++.mconf-cfg
+ 
+ #
+ # configuration programs
+-- 
+1.9.1
+
