@@ -2,118 +2,129 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80767C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:46:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8225C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:48:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E1E920844
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:46:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="GauPpDcr"
+	by mail.kernel.org (Postfix) with ESMTP id 9E31120844
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:48:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727912AbfAVKqv (ORCPT
+        id S1727764AbfAVKsb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 05:46:51 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:43106 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726530AbfAVKqv (ORCPT
+        Tue, 22 Jan 2019 05:48:31 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:36612 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727505AbfAVKsb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 05:46:51 -0500
-Received: by mail-io1-f66.google.com with SMTP id b23so18723878ios.10
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 02:46:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eSPrnxQ6dQuliSqyrd4f/WYTHkwSHxqv0f/vECaUqJQ=;
-        b=GauPpDcrl64e4tZmT2X0TaxinL1WLSO/e90XrEAhy6A9K5RdTNcfu2y6p4OQhz7ydv
-         EpDwxsiW0Hd2WiJHPlrJV4XqbqfsDfqHqzHPoCDVh7HuVX6kSu5AUQr2fceY41BWpDqq
-         UlcGOn99RWMG2x1khvkRVV2iTjwiwzt9Pnyyo=
+        Tue, 22 Jan 2019 05:48:31 -0500
+Received: by mail-qk1-f194.google.com with SMTP id o125so13960431qkf.3;
+        Tue, 22 Jan 2019 02:48:30 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=eSPrnxQ6dQuliSqyrd4f/WYTHkwSHxqv0f/vECaUqJQ=;
-        b=loCUzpa28UanAbE2MYLR14xxOtQiTqqqqZM1GInMvLitMERqkoifjfdXgQM5l58nH/
-         +lNYgOnGCBV0hqAK7Dq4EFLF33hPsKXyNumXZqx8wPkTlhER6bMi6wuJ8F+PQn/rqiA1
-         L4fcAFHrRMyxccWXS5LAJOW6wdMu55kGD+wukWSZEwPojXyxLVVRKDypCmNDztmG9jZZ
-         nvqh85HW7yyHyjTwAb7tycqR5hJ2BQEOujMCceNGv1uYwz504f+ePuMh4j36pYF37rfD
-         GIOSA981wLcAkkbwXwRWWmCeBq4fnIFtcVFdCbgAC6wPbRDq68EQg+KFjWs9uoKZIXhr
-         04pg==
-X-Gm-Message-State: AJcUukecc9FQ652jnLVm6h3979TkFiz5rHSAgYwZVqAFXYWwwIU1yo7P
-        hx1Bjk1iBJvZ/7ga/Cq9mzAvjZUYUAT216BQdNXHdQ==
-X-Google-Smtp-Source: ALg8bN6q3OCD6Ec2smKZ3mgIzjcvR93Aj72RrpVZfQvqXacsPi3eYSCpkRDjjoqJASCqvQ5skowsMSJ/n/OQy9f3XmQ=
-X-Received: by 2002:a6b:4001:: with SMTP id k1mr20279439ioa.34.1548154010404;
- Tue, 22 Jan 2019 02:46:50 -0800 (PST)
+        bh=JXIAJR36kEO/zvEiW04RBVH9LrlxNTF+8bOtPJQemBk=;
+        b=etTTFnpOhPlPOCl/46QJI3pWf2yyFxbtaBz3CgLwhG17aPFc0eH0CNCC/qc8Sd5x0p
+         yvfkqnw/5d8lJk+kpzoN/rlDMldUob4n/CUjIJnaMvdWS3uq5tiFRgXjRPYfoF2iBdTT
+         6ydWTmXDyewasyI1HnZyiySbhltR6OSKDanoWMGXOIRcYhSrqR4lkx059f3Y9VakaZHg
+         6hATGsmhxbiYYuBeGu2g4ZpBvkpY2LAt5xOEytB+z9Knl/8yMwjpjHH7D0+YSLQNa+T6
+         QKKji7vcLOPX3VZGnr2+Pr8eDbXyYbtda4bxhIOLPE/BUQpmsTiEPxclweBswzIMLBFq
+         vFqA==
+X-Gm-Message-State: AJcUukfc0sM81heH/PvDU797GXiSPyv8hvo2qgcCIy8o75phkivXS/bl
+        fV4Pu3VweKtH9AXB6bU1YVI4CNNLN25CwhAJyoNyKDrZ
+X-Google-Smtp-Source: ALg8bN5vUZQxm6/RE/AcbWpdwVUAQ3H8x6uoxE0ESyNW4wGFPQRBjk4hz4vpTDxaoY7qov8zWUav8AQbme6iPIHnQvU=
+X-Received: by 2002:a37:bdc6:: with SMTP id n189mr27186170qkf.330.1548154109251;
+ Tue, 22 Jan 2019 02:48:29 -0800 (PST)
 MIME-Version: 1.0
-References: <20181227114948.ev4b3jte3ubsc5us@dcvr> <154642214920.6261.102817444136744919@jlahtine-desk.ger.corp.intel.com>
- <20190104010626.e6yqdqkmdcqjepke@dcvr> <154659116310.4596.13613897418163029789@jlahtine-desk.ger.corp.intel.com>
- <20190118121705.a4usvhnskyblooja@dcvr> <20190122103914.msboylvkor5sb5lq@8bytes.org>
-In-Reply-To: <20190122103914.msboylvkor5sb5lq@8bytes.org>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Tue, 22 Jan 2019 11:46:39 +0100
-Message-ID: <CAKMK7uEX1T6_yXoq_d4Fs2LiWC_tDaEEXv-hTL=S-_4HEeya7A@mail.gmail.com>
-Subject: Re: [PATCH] iommu/intel: quirk to disable DMAR for QM57 igfx
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     Eric Wong <e@80x24.org>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        David Airlie <airlied@linux.ie>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20190121143951.68956db3@canb.auug.org.au> <CAK8P3a0Yth+f8AANE6g8c_zE0Zt1CvCdzMDFK=pr8eNqmrBV0Q@mail.gmail.com>
+ <20190121191306.ifga5aw5atu2vvb7@brauner.io> <CAK8P3a2CkXJ=giXQgxEcQAeH1Wt8jKc_P+YTOLJpUPVKYU8m9g@mail.gmail.com>
+ <20190121202328.rgrv54lybilsvitu@brauner.io> <da262bd9-1de0-eabb-ee44-e0ee152d15bb@kernel.dk>
+ <20190121224811.gbvg22vg4kgg4kbs@brauner.io> <CAK8P3a0ej9NcJM8wXNPbcGUyOUZYX+VLoDFdbenW3s3114oQZw@mail.gmail.com>
+ <20190122093146.kmckcgdbvo2e7v3c@brauner.io> <20190122103009.vu2a67kviqhcb3cn@brauner.io>
+In-Reply-To: <20190122103009.vu2a67kviqhcb3cn@brauner.io>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 22 Jan 2019 11:48:12 +0100
+Message-ID: <CAK8P3a0EW6ZSMoo6FsRQ=XvyhJe50SR7YtpCtuHcPr=JO3fCtA@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the pidfd tree with the y2038 tree
+To:     Christian Brauner <christian@brauner.io>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 11:39 AM Joerg Roedel <joro@8bytes.org> wrote:
+On Tue, Jan 22, 2019 at 11:30 AM Christian Brauner <christian@brauner.io> wrote:
 >
-> On Fri, Jan 18, 2019 at 12:17:05PM +0000, Eric Wong wrote:
-> > @@ -5411,6 +5411,7 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x2e20, quirk_iommu_g4x_gfx);
-> >  DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x2e30, quirk_iommu_g4x_gfx);
-> >  DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x2e40, quirk_iommu_g4x_gfx);
-> >  DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x2e90, quirk_iommu_g4x_gfx);
-> > +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x0044, quirk_iommu_g4x_gfx);
-> >
-> >  static void quirk_iommu_rwbf(struct pci_dev *dev)
-> >  {
-> > @@ -5457,7 +5458,6 @@ static void quirk_calpella_no_shadow_gtt(struct pci_dev *dev)
-> >         }
-> >  }
-> >  DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x0040, quirk_calpella_no_shadow_gtt);
-> > -DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x0044, quirk_calpella_no_shadow_gtt);
-> >  DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x0062, quirk_calpella_no_shadow_gtt);
-> >  DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x006a, quirk_calpella_no_shadow_gtt);
+> On Tue, Jan 22, 2019 at 10:31:46AM +0100, Christian Brauner wrote:
+> > On Tue, Jan 22, 2019 at 10:26:56AM +0100, Arnd Bergmann wrote:
+> > > On Mon, Jan 21, 2019 at 11:48 PM Christian Brauner <christian@brauner.io> wrote:
+> > > >
+> > > > On Mon, Jan 21, 2019 at 03:44:17PM -0700, Jens Axboe wrote:
+> > > > > On 1/21/19 1:23 PM, Christian Brauner wrote:
+> > > > > > On Mon, Jan 21, 2019 at 09:15:27PM +0100, Arnd Bergmann wrote:
+> > > > > >> On Mon, Jan 21, 2019 at 8:13 PM Christian Brauner <christian@brauner.io> wrote:
+> > > > > >>> On Mon, Jan 21, 2019 at 06:16:22PM +0100, Arnd Bergmann wrote:
+> > > > > >>>> On Mon, Jan 21, 2019 at 4:40 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > > > > >>>
+> > > > > >>> I plan on sending the pidfd branch with the new pidfd_send_signal()
+> > > > > >>> syscall for the 5.1 window. Should we somehow coordinate so that our
+> > > > > >>> branches don't conflict? Any suggestions?
+> > > > > >>
+> > > > > >> A conflict can't be avoided, but if you pick system call number 427
+> > > > > >> for pidfd_send_signal, and Jens picks numbers 424 through 426 for
+> > > > > >
+> > > > > > That sounds good to me. Since it's only one syscall for the pidfd branch
+> > > > > > is there anything that speaks against me using 424? Given that the other
+> > > > > > patchset has 4 new syscalls. :)
+> > > > > > Jens, any objections?
+> > > > >
+> > > > > I'm fine with either one, I'll have to renumber in any case. But it's 3
+> > > > > new syscalls (424, 425, 426), not 4.
+> > > > >
+> > > > > Arnd, what's the best way to make this switch now, in my tree? Would be
+> > > >
+> > > > Yeah, I'd like to know that as well.
+> > > >
+> > > > > great if I didn't have to change it again once I make the change.
+> > >
+> > > I'd suggest that you each just take the numbers we talked about and
+> > > add them in your respective git trees, at the end of the current tables.
 >
-> This seems to make sense to me. Joonas, any comments or objections?
+> What should we do about unistd.h? We can't just bump that to 42*, right?
 
-This is ironlake, which has a huge iommu hack in the gpu driver to
-work around hard hangs, which:
-- causes massive stalls and kills performance
-- isn't well tested (it's the only one that needs this), so tends to break
+Do you mean the asm-generic uapi header? In my current series, I do that:
 
-So if we do this then imo we should:
-- probably nuke that w/a too (check for needs_idle_maps and all the
-related stuff in i915_gem_gtt.c)
-- roll it out for all affected chips (i.e. need to include 0x0040).
+#define __NR_rseq 293
+__SYSCALL(__NR_rseq, sys_rseq)
+#define __NR_kexec_file_load 294
+__SYSCALL(__NR_kexec_file_load,     sys_kexec_file_load)
+/* 295 through 402 are unassigned to sync up with generic numbers, don't use */
+#if __BITS_PER_LONG == 32
+#define __NR_clock_gettime64 403
+__SYSCALL(__NR_clock_gettime64, sys_clock_gettime)
+#define __NR_clock_settime64 404
+...
+#define __NR_rt_sigtimedwait_time64 421
+__SC_COMP(__NR_rt_sigtimedwait_time64, sys_rt_sigtimedwait,
+compat_sys_rt_sigtimedwait_time64)
+#define __NR_futex_time64 422
+__SYSCALL(__NR_futex_time64, sys_futex)
+#define __NR_sched_rr_get_interval_time64 423
+__SYSCALL(__NR_sched_rr_get_interval_time64, sys_sched_rr_get_interval)
+#endif
+#undef __NR_syscalls
+#define __NR_syscalls 424
 
-Note that the string of platforms which have various issues with iommu
-and igfx is very long, thus far we only disabled it where there's no
-workaround to stop it from hanging the box, but otherwise left it
-enabled. So if we make a policy change to also disable it anywhere
-where it doesn't work well (instead of not at all), there's a pile
-more platforms to switch.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+I've tried to feedback on that, but so far nobody has spoken out against
+skipping the 107 numbers here, though Russell felt that the idea of
+using the same numbers everywhere might not work out.
+
+     Arnd
