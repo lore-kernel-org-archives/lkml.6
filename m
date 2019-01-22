@@ -2,238 +2,205 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AB81C282C5
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 05:31:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B807DC282C5
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 05:31:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3000E20861
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 05:31:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="SqPO+eek"
+	by mail.kernel.org (Postfix) with ESMTP id 85D9E21721
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 05:31:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726178AbfAVFbX (ORCPT
+        id S1726933AbfAVFb2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 00:31:23 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:49698 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725913AbfAVFbW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 00:31:22 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0M5TcUL071744;
-        Tue, 22 Jan 2019 05:31:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=zkypv4rsjB8wJOxKtveDAmZ0JRpQxLGrXLwjO6YIE8Y=;
- b=SqPO+eekQo0KTK3LmW9eT6PAOET/DP368lAiCvPNpK+g98qqVF5wJfUxrnjTnKVeAzE5
- wHsMMmQ3oGdKyLoRY0/49LdHdr+RiwddpS+6f/TWgQm3LUOxrOzcyoqDROuFZwq+pJ4V
- YxQ/Fx6P760MLOAzHJ4B8tR9+qSkQU+euTWbIsECVs8KpejYzTfBlFJXMBsmYZ08OZM9
- 6p2th4GY2o5A52maXty3ELrirD8vZsYqnQZsZd5caGoPl3OUu3NSm9SEM/EHGiYOrogR
- PvtZO1dfSVRaz+aBhv9Ee2I1Q+eb5+jt6gNLtE2gtRkDpaYlFdNEOuWrFEx52R8I1/Fg NA== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2130.oracle.com with ESMTP id 2q3sde9m88-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 22 Jan 2019 05:31:10 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0M5VA5l012077
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 22 Jan 2019 05:31:10 GMT
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0M5V9EJ022811;
-        Tue, 22 Jan 2019 05:31:10 GMT
-Received: from char.us.oracle.com (/10.152.32.25)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 21 Jan 2019 21:31:09 -0800
-Received: by char.us.oracle.com (Postfix, from userid 1000)
-        id A9D136A0129; Tue, 22 Jan 2019 00:31:08 -0500 (EST)
-Date:   Tue, 22 Jan 2019 00:31:08 -0500
-From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To:     Lei Chen <chenl.lei@gmail.com>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, gregkh@linuxfoundation.org
-Cc:     tglx@linutronix.de
-Subject: Re: /proc/<pid>/status: incorrect format breaks userland tool
-Message-ID: <20190122053108.GA14185@char.us.oracle.com>
-References: <CAB5AJuWz2NgwixCDh3hr4uv8qECfE2m0q49E_5GfecTnGPuXuQ@mail.gmail.com>
+        Tue, 22 Jan 2019 00:31:28 -0500
+Received: from szxga02-in.huawei.com ([45.249.212.188]:2495 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725913AbfAVFb1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 00:31:27 -0500
+Received: from DGGEMM405-HUB.china.huawei.com (unknown [172.30.72.56])
+        by Forcepoint Email with ESMTP id 19003C8730B8449A4960;
+        Tue, 22 Jan 2019 13:31:21 +0800 (CST)
+Received: from DGGEMM501-MBS.china.huawei.com ([169.254.2.180]) by
+ DGGEMM405-HUB.china.huawei.com ([10.3.20.213]) with mapi id 14.03.0415.000;
+ Tue, 22 Jan 2019 13:31:12 +0800
+From:   xuyandong <xuyandong2@huawei.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Yinghai Lu <yinghai@kernel.org>,
+        Jesse Barnes <jbarnes@virtuousgeek.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Ofer Hayut <ofer@lightbitslabs.com>,
+        Roy Shterman <roys@lightbitslabs.com>,
+        Keith Busch <keith.busch@intel.com>,
+        "Wangzhou (B)" <wangzhou1@hisilicon.com>
+Subject: RE: [PATCH v3] PCI: avoid bridge feature re-probing on hotplug
+Thread-Topic: [PATCH v3] PCI: avoid bridge feature re-probing on hotplug
+Thread-Index: AQHUsDNnqtElovbrGkeo7LzcmVH1U6W6w02w
+Date:   Tue, 22 Jan 2019 05:31:10 +0000
+Message-ID: <7CECC2DFC21538489F72729DF5EFB4D909EC77D4@dggemm501-mbs.china.huawei.com>
+References: <20181218004455.20186-1-mst@redhat.com>
+ <20190119201259.GA87988@google.com>
+In-Reply-To: <20190119201259.GA87988@google.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.177.33.58]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="J2SCkAp4GZ/dPZZf"
-Content-Disposition: inline
-In-Reply-To: <CAB5AJuWz2NgwixCDh3hr4uv8qECfE2m0q49E_5GfecTnGPuXuQ@mail.gmail.com>
-User-Agent: Mutt/1.8.3 (2017-05-23)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9143 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901220045
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---J2SCkAp4GZ/dPZZf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Tue, Jan 22, 2019 at 11:29:16AM +0800, Lei Chen wrote:
-> Hi Konrad,
-
-Hi,
-
-CC-ing stable,Greg,and LKML. Pls see attached and inline patch and explanation
-at bottom.
-
-> I'm running kernel 4.4.153. When running iotop, I got such failure:
->  # iotop -P
-> Traceback (most recent call last):
->   File "/sbin/iotop", line 17, in <module>
->     main()
->   File "/usr/lib/python2.7/site-packages/iotop/ui.py", line 620, in main
->     main_loop()
->   File "/usr/lib/python2.7/site-packages/iotop/ui.py", line 610, in <lambda>
->     main_loop = lambda: run_iotop(options)
->   File "/usr/lib/python2.7/site-packages/iotop/ui.py", line 508, in
-> run_iotop
->     return curses.wrapper(run_iotop_window, options)
->   File "/usr/lib/python2.7/curses/wrapper.py", line 43, in wrapper
->     return func(stdscr, *args, **kwds)
->   File "/usr/lib/python2.7/site-packages/iotop/ui.py", line 501, in
-> run_iotop_window
->     ui.run()
->   File "/usr/lib/python2.7/site-packages/iotop/ui.py", line 155, in run
->     self.process_list.duration)
->   File "/usr/lib/python2.7/site-packages/iotop/ui.py", line 434, in
-> refresh_display
->     lines = self.get_data()
->   File "/usr/lib/python2.7/site-packages/iotop/ui.py", line 415, in get_data
->     return list(map(format, processes))
->   File "/usr/lib/python2.7/site-packages/iotop/ui.py", line 388, in format
->     cmdline = p.get_cmdline()
->   File "/usr/lib/python2.7/site-packages/iotop/data.py", line 292, in
-> get_cmdline
->     proc_status = parse_proc_pid_status(self.pid)
->   File "/usr/lib/python2.7/site-packages/iotop/data.py", line 196, in
-> parse_proc_pid_status
->     key, value = line.split(':\t', 1)
-> ValueError: need more than 1 value to unpack
-> 
-> Having a little further debug, I found this error is caused by the
-> unexpected blank line in /proc/<pid>/status file, like below:
-> 
-> CapBnd: 0000003fffffffff
-> CapAmb: 0000000000000000
-> 
-> Speculation_Store_Bypass:       vulnerable
-> Cpus_allowed:   ff
-> 
-> Checking the git history, I see you touched the line "seq_printf(m,
-> "\nSpeculation_Store_Bypass:\t");". Do you think this additional blank line
-> is caused by the leading "\n" of "Speculation_Store_Bypass"?
-
-That is correct.
-It looks that the backport missed the change. The v4.4 has:
-
-static inline void task_seccomp(struct seq_file *m, struct task_struct *p)         
-{                                                                                  
-#ifdef CONFIG_SECCOMP                                                              
-        seq_printf(m, "Seccomp:\t%d\n", p->seccomp.mode);                          
-#endif                                                                             
-        seq_printf(m, "\nSpeculation_Store_Bypass:\t");      
-
-Upstream has:
-
-tatic inline void task_seccomp(struct seq_file *m, struct task_struct *p)         
-{                                                                                  
-        seq_put_decimal_ull(m, "NoNewPrivs:\t", task_no_new_privs(p));             
-#ifdef CONFIG_SECCOMP                                                              
-        seq_put_decimal_ull(m, "\nSeccomp:\t", p->seccomp.mode);                   
-#endif                                                                             
-        seq_printf(m, "\nSpeculation_Store_Bypass:\t");                         
-
-The af884cd4a5ae6 is the one that removed the '\n' from the end and put it in the
-front of 'Seccomp '.
-
-Greg, I am not sure how one would fix this in a stable tree. But the fix is simple
-(hadn't tested it..)
-
-From 9e1909f29e1162f2fba190dbab88d1bbcaf0365d Mon Sep 17 00:00:00 2001
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Date: Tue, 22 Jan 2019 00:27:55 -0500
-Subject: [PATCH] Fix: proc: Use underscores for SSBD in 'status'
-
-Upstream af884cd4a5ae6 (not backported) added a '\n' in front
-of 'Seccomp' but we have the old format with '\n' at the end.
-This causes mayhem with 'Speculation_Store_Bypass' adding an extra
-newline breaking tools.
-
-Reported-by:Lei Chen <chenl.lei@gmail.com>
-CC: stable@vger.kernel.org
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
----
- fs/proc/array.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/proc/array.c b/fs/proc/array.c
-index cb71cbae606d..60cbaa821164 100644
---- a/fs/proc/array.c
-+++ b/fs/proc/array.c
-@@ -333,7 +333,7 @@ static inline void task_seccomp(struct seq_file *m, struct task_struct *p)
- #ifdef CONFIG_SECCOMP
- 	seq_printf(m, "Seccomp:\t%d\n", p->seccomp.mode);
- #endif
--	seq_printf(m, "\nSpeculation_Store_Bypass:\t");
-+	seq_printf(m, "Speculation_Store_Bypass:\t");
- 	switch (arch_prctl_spec_ctrl_get(p, PR_SPEC_STORE_BYPASS)) {
- 	case -EINVAL:
- 		seq_printf(m, "unknown");
--- 
-2.13.4
-
-
-> 
-> Thanks,
-> Lei Chen
-
---J2SCkAp4GZ/dPZZf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="0001-Fix-proc-Use-underscores-for-SSBD-in-status.patch"
-
-From 9e1909f29e1162f2fba190dbab88d1bbcaf0365d Mon Sep 17 00:00:00 2001
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Date: Tue, 22 Jan 2019 00:27:55 -0500
-Subject: [PATCH] Fix: proc: Use underscores for SSBD in 'status'
-
-Upstream af884cd4a5ae6 (not backported) added a '\n' in front
-of 'Seccomp' but we have the old format with '\n' at the end.
-This causes mayhem with 'Speculation_Store_Bypass' adding an extra
-newline breaking tools.
-
-Reported-by:Lei Chen <chenl.lei@gmail.com>
-CC: stable@vger.kernel.org
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
----
- fs/proc/array.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/proc/array.c b/fs/proc/array.c
-index cb71cbae606d..60cbaa821164 100644
---- a/fs/proc/array.c
-+++ b/fs/proc/array.c
-@@ -333,7 +333,7 @@ static inline void task_seccomp(struct seq_file *m, struct task_struct *p)
- #ifdef CONFIG_SECCOMP
- 	seq_printf(m, "Seccomp:\t%d\n", p->seccomp.mode);
- #endif
--	seq_printf(m, "\nSpeculation_Store_Bypass:\t");
-+	seq_printf(m, "Speculation_Store_Bypass:\t");
- 	switch (arch_prctl_spec_ctrl_get(p, PR_SPEC_STORE_BYPASS)) {
- 	case -EINVAL:
- 		seq_printf(m, "unknown");
--- 
-2.13.4
-
-
---J2SCkAp4GZ/dPZZf--
+SGkgQmpvcm4gYW5kIE1pY2hhZWwNCg0KQWZ0ZXIgdHJ5aW5nIHRvIHJlcHJvZHVjZSB0aGUgcHJv
+YmxlbSBmb3IgYSB3aG9sZSBkYXksIHRoZSBidWcgZGlkIG5vdCBzaG93IHVwDQphbnkgbW9yZS4g
+U28gSSB0aGluayB0aGUgbmV3IHBhdGNoIGRvZXMgc29sdmUgdGhpcyBwcm9ibGVtLg0KDQo+IC0t
+LS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEJqb3JuIEhlbGdhYXMgW21haWx0bzpo
+ZWxnYWFzQGtlcm5lbC5vcmddDQo+IFNlbnQ6IFN1bmRheSwgSmFudWFyeSAyMCwgMjAxOSA0OjEz
+IEFNDQo+IFRvOiBNaWNoYWVsIFMuIFRzaXJraW4gPG1zdEByZWRoYXQuY29tPg0KPiBDYzogbGlu
+dXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgeHV5YW5kb25nIDx4dXlhbmRvbmcyQGh1YXdlaS5j
+b20+Ow0KPiBZaW5naGFpIEx1IDx5aW5naGFpQGtlcm5lbC5vcmc+OyBKZXNzZSBCYXJuZXMgPGpi
+YXJuZXNAdmlydHVvdXNnZWVrLm9yZz47DQo+IGxpbnV4LXBjaUB2Z2VyLmtlcm5lbC5vcmc7IFNh
+Z2kgR3JpbWJlcmcgPHNhZ2lAZ3JpbWJlcmcubWU+OyBPZmVyIEhheXV0DQo+IDxvZmVyQGxpZ2h0
+Yml0c2xhYnMuY29tPjsgUm95IFNodGVybWFuIDxyb3lzQGxpZ2h0Yml0c2xhYnMuY29tPjsgS2Vp
+dGgNCj4gQnVzY2ggPGtlaXRoLmJ1c2NoQGludGVsLmNvbT47IFdhbmd6aG91IChCKSA8d2FuZ3po
+b3UxQGhpc2lsaWNvbi5jb20+DQo+IFN1YmplY3Q6IFtQQVRDSCB2M10gUENJOiBhdm9pZCBicmlk
+Z2UgZmVhdHVyZSByZS1wcm9iaW5nIG9uIGhvdHBsdWcNCj4gDQo+IEkgZ2F2ZSB1cCB0cnlpbmcg
+dG8gcmVwcm9kdWNlIHRoZSBwcm9ibGVtIGFuZCB0ZXN0IHRoaXMgcGF0Y2ggd2l0aCBxZW11OyBj
+YW4NCj4geW91IGd1eXMgKE1pY2hhZWwgYW5kIFh1IChzb3JyeSBpZiBJIG1hbmdsZWQgeW91ciBu
+YW1lKSkgZ2l2ZSB0aGlzIGEgdHJ5Pw0KPiANCj4gSSBjYydkIGEgZmV3IG90aGVyIHBlb3BsZSB3
+aG8gaGF2ZSBub3RpY2VkIHRoaXMgaXNzdWUgaW4gdGhlIHBhc3QsIHNvIGp1c3QgRllJIGZvcg0K
+PiB0aGVtLg0KPiANCj4gQmpvcm4NCj4gDQo+IA0KPiBjb21taXQgZGQyMWI5MjJkYjM2NmJhMDY5
+MjkxYjZmZWYyYThjZTY3Njg3NTZhMg0KPiBBdXRob3I6IEJqb3JuIEhlbGdhYXMgPGJoZWxnYWFz
+QGdvb2dsZS5jb20+DQo+IERhdGU6ICAgU2F0IEphbiAxOSAxMTozNTowNCAyMDE5IC0wNjAwDQo+
+IA0KPiAgICAgUENJOiBQcm9iZSBicmlkZ2Ugd2luZG93IGF0dHJpYnV0ZXMgb25jZSBhdCBlbnVt
+ZXJhdGlvbi10aW1lDQo+IA0KPiAgICAgcGNpX2JyaWRnZV9jaGVja19yYW5nZXMoKSBkZXRlcm1p
+bmVzIHdoZXRoZXIgYSBicmlkZ2Ugc3VwcG9ydHMgdGhlDQo+IG9wdGlvbmFsDQo+ICAgICBJL08g
+YW5kIHByZWZldGNoYWJsZSBtZW1vcnkgd2luZG93cyBhbmQgc2V0cyB0aGUgZmxhZyBiaXRzIGlu
+IHRoZSBicmlkZ2UNCj4gICAgIHJlc291cmNlcy4gIFRoaXMgY291bGQgYmUgZG9uZSBvbmNlIGR1
+cmluZyBlbnVtZXJhdGlvbiBleGNlcHQgdGhhdCB0aGUNCj4gICAgIHJlc291cmNlIGFsbG9jYXRp
+b24gY29kZSBjb21wbGV0ZWx5IGNsZWFycyB0aGUgZmxhZyBiaXRzLCBlLmcuLCBpbiB0aGUNCj4g
+ICAgIHBjaV9hc3NpZ25fdW5hc3NpZ25lZF9icmlkZ2VfcmVzb3VyY2VzKCkgcGF0aC4NCj4gDQo+
+ICAgICBUaGUgcHJvYmxlbSB3YXMgdGhhdCBpbiBzb21lIGNhc2VzIHBjaV9icmlkZ2VfY2hlY2tf
+cmFuZ2VzKCkgKmNoYW5nZXMqDQo+IHRoZQ0KPiAgICAgd2luZG93IHJlZ2lzdGVycyB0byBkZXRl
+cm1pbmUgd2hldGhlciB0aGV5J3JlIHdyaXRhYmxlLCBhbmQgdGhpcyBtYXkgYnJlYWsNCj4gICAg
+IGNvbmN1cnJlbnQgYWNjZXNzZXMgdG8gZGV2aWNlcyBiZWhpbmQgdGhlIGJyaWRnZS4NCj4gDQo+
+ICAgICBBZGQgYSBuZXcgcGNpX3JlYWRfYnJpZGdlX3dpbmRvd3MoKSB0byBkZXRlcm1pbmUgd2hl
+dGhlciBhIGJyaWRnZQ0KPiBzdXBwb3J0cw0KPiAgICAgdGhlIG9wdGlvbmFsIHdpbmRvd3MsIGNh
+bGwgaXQgb25jZSBkdXJpbmcgZW51bWVyYXRpb24sIHJlbWVtYmVyIHRoZQ0KPiAgICAgcmVzdWx0
+cywgYW5kIGNoYW5nZSBwY2lfYnJpZGdlX2NoZWNrX3JhbmdlcygpIHRvIHNldCB0aGUgZmxhZyBi
+aXRzIGJhc2VkIG9uDQo+ICAgICB0aG9zZSByZW1lbWJlcmVkIHJlc3VsdHMuDQo+IA0KPiAgICAg
+TGluazogaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvbGludXgtcGNpLzE1MDYxNTE0ODItMTEzNTYw
+LTEtZ2l0LXNlbmQtZW1haWwtDQo+IHdhbmd6aG91MUBoaXNpbGljb24uY29tDQo+ICAgICBMaW5r
+OiBodHRwczovL2xpc3RzLmdudS5vcmcvYXJjaGl2ZS9odG1sL3FlbXUtZGV2ZWwvMjAxOC0xMi9t
+c2cwMjA4Mi5odG1sDQo+ICAgICBSZXBvcnRlZC1ieTogeHV5YW5kb25nIDx4dXlhbmRvbmcyQGh1
+YXdlaS5jb20+DQo+ICAgICBDYzogU2FnaSBHcmltYmVyZyA8c2FnaUBncmltYmVyZy5tZT4NCj4g
+ICAgIENjOiBPZmVyIEhheXV0IDxvZmVyQGxpZ2h0Yml0c2xhYnMuY29tPg0KPiAgICAgQ2M6IFJv
+eSBTaHRlcm1hbiA8cm95c0BsaWdodGJpdHNsYWJzLmNvbT4NCj4gICAgIENjOiBLZWl0aCBCdXNj
+aCA8a2VpdGguYnVzY2hAaW50ZWwuY29tPg0KPiAgICAgQ2M6IFpob3UgV2FuZyA8d2FuZ3pob3Ux
+QGhpc2lsaWNvbi5jb20+DQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9wY2kvcHJvYmUuYyBi
+L2RyaXZlcnMvcGNpL3Byb2JlLmMgaW5kZXgNCj4gMjU3YjlmNmYyZWJiLi4yZWY4Yjk1NGM2NWEg
+MTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvcGNpL3Byb2JlLmMNCj4gKysrIGIvZHJpdmVycy9wY2kv
+cHJvYmUuYw0KPiBAQCAtMzQ4LDYgKzM0OCw1NyBAQCBzdGF0aWMgdm9pZCBwY2lfcmVhZF9iYXNl
+cyhzdHJ1Y3QgcGNpX2RldiAqZGV2LA0KPiB1bnNpZ25lZCBpbnQgaG93bWFueSwgaW50IHJvbSkN
+Cj4gIAl9DQo+ICB9DQo+IA0KPiArc3RhdGljIHZvaWQgcGNpX3JlYWRfYnJpZGdlX3dpbmRvd3Mo
+c3RydWN0IHBjaV9kZXYgKmJyaWRnZSkgew0KPiArCXUxNiBpbzsNCj4gKwl1MzIgcG1lbSwgdG1w
+Ow0KPiArDQo+ICsJcGNpX3JlYWRfY29uZmlnX3dvcmQoYnJpZGdlLCBQQ0lfSU9fQkFTRSwgJmlv
+KTsNCj4gKwlpZiAoIWlvKSB7DQo+ICsJCXBjaV93cml0ZV9jb25maWdfd29yZChicmlkZ2UsIFBD
+SV9JT19CQVNFLCAweGUwZjApOw0KPiArCQlwY2lfcmVhZF9jb25maWdfd29yZChicmlkZ2UsIFBD
+SV9JT19CQVNFLCAmaW8pOw0KPiArCQlwY2lfd3JpdGVfY29uZmlnX3dvcmQoYnJpZGdlLCBQQ0lf
+SU9fQkFTRSwgMHgwKTsNCj4gKwl9DQo+ICsJaWYgKGlvKQ0KPiArCQlicmlkZ2UtPmlvX3dpbmRv
+dyA9IDE7DQo+ICsNCj4gKwkvKg0KPiArCSAqIERFQ2NoaXAgMjEwNTAgcGFzcyAyIGVycmF0YTog
+dGhlIGJyaWRnZSBtYXkgbWlzcyBhbiBhZGRyZXNzDQo+ICsJICogZGlzY29ubmVjdCBib3VuZGFy
+eSBieSBvbmUgUENJIGRhdGEgcGhhc2UuICBXb3JrYXJvdW5kOiBkbyBub3QNCj4gKwkgKiB1c2Ug
+cHJlZmV0Y2hpbmcgb24gdGhpcyBkZXZpY2UuDQo+ICsJICovDQo+ICsJaWYgKGJyaWRnZS0+dmVu
+ZG9yID09IFBDSV9WRU5ET1JfSURfREVDICYmIGJyaWRnZS0+ZGV2aWNlID09DQo+IDB4MDAwMSkN
+Cj4gKwkJcmV0dXJuOw0KPiArDQo+ICsJcGNpX3JlYWRfY29uZmlnX2R3b3JkKGJyaWRnZSwgUENJ
+X1BSRUZfTUVNT1JZX0JBU0UsICZwbWVtKTsNCj4gKwlpZiAoIXBtZW0pIHsNCj4gKwkJcGNpX3dy
+aXRlX2NvbmZpZ19kd29yZChicmlkZ2UsIFBDSV9QUkVGX01FTU9SWV9CQVNFLA0KPiArCQkJCQkg
+ICAgICAgMHhmZmUwZmZmMCk7DQo+ICsJCXBjaV9yZWFkX2NvbmZpZ19kd29yZChicmlkZ2UsIFBD
+SV9QUkVGX01FTU9SWV9CQVNFLA0KPiAmcG1lbSk7DQo+ICsJCXBjaV93cml0ZV9jb25maWdfZHdv
+cmQoYnJpZGdlLCBQQ0lfUFJFRl9NRU1PUllfQkFTRSwNCj4gMHgwKTsNCj4gKwl9DQo+ICsJaWYg
+KCFwbWVtKQ0KPiArCQlyZXR1cm47DQo+ICsNCj4gKwlicmlkZ2UtPnByZWZfd2luZG93ID0gMTsN
+Cj4gKw0KPiArCWlmICgocG1lbSAmIFBDSV9QUkVGX1JBTkdFX1RZUEVfTUFTSykgPT0NCj4gUENJ
+X1BSRUZfUkFOR0VfVFlQRV82NCkgew0KPiArDQo+ICsJCS8qDQo+ICsJCSAqIEJyaWRnZSBjbGFp
+bXMgdG8gaGF2ZSBhIDY0LWJpdCBwcmVmZXRjaGFibGUgbWVtb3J5DQo+ICsJCSAqIHdpbmRvdzsg
+dmVyaWZ5IHRoYXQgdGhlIHVwcGVyIGJpdHMgYXJlIGFjdHVhbGx5DQo+ICsJCSAqIHdyaXRhYmxl
+Lg0KPiArCQkgKi8NCj4gKwkJcGNpX3JlYWRfY29uZmlnX2R3b3JkKGJyaWRnZSwgUENJX1BSRUZf
+QkFTRV9VUFBFUjMyLA0KPiAmcG1lbSk7DQo+ICsJCXBjaV93cml0ZV9jb25maWdfZHdvcmQoYnJp
+ZGdlLCBQQ0lfUFJFRl9CQVNFX1VQUEVSMzIsDQo+ICsJCQkJICAgICAgIDB4ZmZmZmZmZmYpOw0K
+PiArCQlwY2lfcmVhZF9jb25maWdfZHdvcmQoYnJpZGdlLCBQQ0lfUFJFRl9CQVNFX1VQUEVSMzIs
+DQo+ICZ0bXApOw0KPiArCQlwY2lfd3JpdGVfY29uZmlnX2R3b3JkKGJyaWRnZSwgUENJX1BSRUZf
+QkFTRV9VUFBFUjMyLA0KPiBwbWVtKTsNCj4gKwkJaWYgKHRtcCkNCj4gKwkJCWJyaWRnZS0+cHJl
+Zl82NF93aW5kb3cgPSAxOw0KPiArCX0NCj4gK30NCj4gKw0KPiAgc3RhdGljIHZvaWQgcGNpX3Jl
+YWRfYnJpZGdlX2lvKHN0cnVjdCBwY2lfYnVzICpjaGlsZCkgIHsNCj4gIAlzdHJ1Y3QgcGNpX2Rl
+diAqZGV2ID0gY2hpbGQtPnNlbGY7DQo+IEBAIC0xNzM5LDYgKzE3OTAsNyBAQCBpbnQgcGNpX3Nl
+dHVwX2RldmljZShzdHJ1Y3QgcGNpX2RldiAqZGV2KQ0KPiAgCQlwY2lfcmVhZF9pcnEoZGV2KTsN
+Cj4gIAkJZGV2LT50cmFuc3BhcmVudCA9ICgoZGV2LT5jbGFzcyAmIDB4ZmYpID09IDEpOw0KPiAg
+CQlwY2lfcmVhZF9iYXNlcyhkZXYsIDIsIFBDSV9ST01fQUREUkVTUzEpOw0KPiArCQlwY2lfcmVh
+ZF9icmlkZ2Vfd2luZG93cyhkZXYpOw0KPiAgCQlzZXRfcGNpZV9ob3RwbHVnX2JyaWRnZShkZXYp
+Ow0KPiAgCQlwb3MgPSBwY2lfZmluZF9jYXBhYmlsaXR5KGRldiwgUENJX0NBUF9JRF9TU1ZJRCk7
+DQo+ICAJCWlmIChwb3MpIHsNCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGNpL3NldHVwLWJ1cy5j
+IGIvZHJpdmVycy9wY2kvc2V0dXAtYnVzLmMgaW5kZXgNCj4gZWQ5NjA0MzZkZjVlLi4xOTQxYmIw
+YTZjMTMgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvcGNpL3NldHVwLWJ1cy5jDQo+ICsrKyBiL2Ry
+aXZlcnMvcGNpL3NldHVwLWJ1cy5jDQo+IEBAIC03MzUsNTggKzczNSwyMSBAQCBpbnQgcGNpX2Ns
+YWltX2JyaWRnZV9yZXNvdXJjZShzdHJ1Y3QgcGNpX2Rldg0KPiAqYnJpZGdlLCBpbnQgaSkNCj4g
+ICAgIGJhc2UvbGltaXQgcmVnaXN0ZXJzIG11c3QgYmUgcmVhZC1vbmx5IGFuZCByZWFkIGFzIDAu
+ICovICBzdGF0aWMgdm9pZA0KPiBwY2lfYnJpZGdlX2NoZWNrX3JhbmdlcyhzdHJ1Y3QgcGNpX2J1
+cyAqYnVzKSAgew0KPiAtCXUxNiBpbzsNCj4gLQl1MzIgcG1lbTsNCj4gIAlzdHJ1Y3QgcGNpX2Rl
+diAqYnJpZGdlID0gYnVzLT5zZWxmOw0KPiAtCXN0cnVjdCByZXNvdXJjZSAqYl9yZXM7DQo+ICsJ
+c3RydWN0IHJlc291cmNlICpiX3JlcyA9ICZicmlkZ2UtPnJlc291cmNlW1BDSV9CUklER0VfUkVT
+T1VSQ0VTXTsNCj4gDQo+IC0JYl9yZXMgPSAmYnJpZGdlLT5yZXNvdXJjZVtQQ0lfQlJJREdFX1JF
+U09VUkNFU107DQo+ICAJYl9yZXNbMV0uZmxhZ3MgfD0gSU9SRVNPVVJDRV9NRU07DQo+IA0KPiAt
+CXBjaV9yZWFkX2NvbmZpZ193b3JkKGJyaWRnZSwgUENJX0lPX0JBU0UsICZpbyk7DQo+IC0JaWYg
+KCFpbykgew0KPiAtCQlwY2lfd3JpdGVfY29uZmlnX3dvcmQoYnJpZGdlLCBQQ0lfSU9fQkFTRSwg
+MHhlMGYwKTsNCj4gLQkJcGNpX3JlYWRfY29uZmlnX3dvcmQoYnJpZGdlLCBQQ0lfSU9fQkFTRSwg
+JmlvKTsNCj4gLQkJcGNpX3dyaXRlX2NvbmZpZ193b3JkKGJyaWRnZSwgUENJX0lPX0JBU0UsIDB4
+MCk7DQo+IC0JfQ0KPiAtCWlmIChpbykNCj4gKwlpZiAoYnJpZGdlLT5pb193aW5kb3cpDQo+ICAJ
+CWJfcmVzWzBdLmZsYWdzIHw9IElPUkVTT1VSQ0VfSU87DQo+IA0KPiAtCS8qICBERUNjaGlwIDIx
+MDUwIHBhc3MgMiBlcnJhdGE6IHRoZSBicmlkZ2UgbWF5IG1pc3MgYW4gYWRkcmVzcw0KPiAtCSAg
+ICBkaXNjb25uZWN0IGJvdW5kYXJ5IGJ5IG9uZSBQQ0kgZGF0YSBwaGFzZS4NCj4gLQkgICAgV29y
+a2Fyb3VuZDogZG8gbm90IHVzZSBwcmVmZXRjaGluZyBvbiB0aGlzIGRldmljZS4gKi8NCj4gLQlp
+ZiAoYnJpZGdlLT52ZW5kb3IgPT0gUENJX1ZFTkRPUl9JRF9ERUMgJiYgYnJpZGdlLT5kZXZpY2Ug
+PT0NCj4gMHgwMDAxKQ0KPiAtCQlyZXR1cm47DQo+IC0NCj4gLQlwY2lfcmVhZF9jb25maWdfZHdv
+cmQoYnJpZGdlLCBQQ0lfUFJFRl9NRU1PUllfQkFTRSwgJnBtZW0pOw0KPiAtCWlmICghcG1lbSkg
+ew0KPiAtCQlwY2lfd3JpdGVfY29uZmlnX2R3b3JkKGJyaWRnZSwgUENJX1BSRUZfTUVNT1JZX0JB
+U0UsDQo+IC0JCQkJCSAgICAgICAweGZmZTBmZmYwKTsNCj4gLQkJcGNpX3JlYWRfY29uZmlnX2R3
+b3JkKGJyaWRnZSwgUENJX1BSRUZfTUVNT1JZX0JBU0UsDQo+ICZwbWVtKTsNCj4gLQkJcGNpX3dy
+aXRlX2NvbmZpZ19kd29yZChicmlkZ2UsIFBDSV9QUkVGX01FTU9SWV9CQVNFLA0KPiAweDApOw0K
+PiAtCX0NCj4gLQlpZiAocG1lbSkgew0KPiArCWlmIChicmlkZ2UtPnByZWZfd2luZG93KSB7DQo+
+ICAJCWJfcmVzWzJdLmZsYWdzIHw9IElPUkVTT1VSQ0VfTUVNIHwNCj4gSU9SRVNPVVJDRV9QUkVG
+RVRDSDsNCj4gLQkJaWYgKChwbWVtICYgUENJX1BSRUZfUkFOR0VfVFlQRV9NQVNLKSA9PQ0KPiAt
+CQkgICAgUENJX1BSRUZfUkFOR0VfVFlQRV82NCkgew0KPiArCQlpZiAoYnJpZGdlLT5wcmVmXzY0
+X3dpbmRvdykgew0KPiAgCQkJYl9yZXNbMl0uZmxhZ3MgfD0gSU9SRVNPVVJDRV9NRU1fNjQ7DQo+
+ICAJCQliX3Jlc1syXS5mbGFncyB8PSBQQ0lfUFJFRl9SQU5HRV9UWVBFXzY0Ow0KPiAgCQl9DQo+
+ICAJfQ0KPiAtDQo+IC0JLyogZG91YmxlIGNoZWNrIGlmIGJyaWRnZSBkb2VzIHN1cHBvcnQgNjQg
+Yml0IHByZWYgKi8NCj4gLQlpZiAoYl9yZXNbMl0uZmxhZ3MgJiBJT1JFU09VUkNFX01FTV82NCkg
+ew0KPiAtCQl1MzIgbWVtX2Jhc2VfaGksIHRtcDsNCj4gLQkJcGNpX3JlYWRfY29uZmlnX2R3b3Jk
+KGJyaWRnZSwgUENJX1BSRUZfQkFTRV9VUFBFUjMyLA0KPiAtCQkJCQkgJm1lbV9iYXNlX2hpKTsN
+Cj4gLQkJcGNpX3dyaXRlX2NvbmZpZ19kd29yZChicmlkZ2UsIFBDSV9QUkVGX0JBU0VfVVBQRVIz
+MiwNCj4gLQkJCQkJICAgICAgIDB4ZmZmZmZmZmYpOw0KPiAtCQlwY2lfcmVhZF9jb25maWdfZHdv
+cmQoYnJpZGdlLCBQQ0lfUFJFRl9CQVNFX1VQUEVSMzIsDQo+ICZ0bXApOw0KPiAtCQlpZiAoIXRt
+cCkNCj4gLQkJCWJfcmVzWzJdLmZsYWdzICY9IH5JT1JFU09VUkNFX01FTV82NDsNCj4gLQkJcGNp
+X3dyaXRlX2NvbmZpZ19kd29yZChicmlkZ2UsIFBDSV9QUkVGX0JBU0VfVVBQRVIzMiwNCj4gLQkJ
+CQkgICAgICAgbWVtX2Jhc2VfaGkpOw0KPiAtCX0NCj4gIH0NCj4gDQo+ICAvKiBIZWxwZXIgZnVu
+Y3Rpb24gZm9yIHNpemluZyByb3V0aW5lczogZmluZCBmaXJzdCBhdmFpbGFibGUgZGlmZiAtLWdp
+dA0KPiBhL2luY2x1ZGUvbGludXgvcGNpLmggYi9pbmNsdWRlL2xpbnV4L3BjaS5oIGluZGV4IDY1
+ZjFkOGMyZjA4Mi4uNDBiMzI3YjgxNGFhDQo+IDEwMDY0NA0KPiAtLS0gYS9pbmNsdWRlL2xpbnV4
+L3BjaS5oDQo+ICsrKyBiL2luY2x1ZGUvbGludXgvcGNpLmgNCj4gQEAgLTM3Myw2ICszNzMsOSBA
+QCBzdHJ1Y3QgcGNpX2RldiB7DQo+ICAJYm9vbAkJbWF0Y2hfZHJpdmVyOwkJLyogU2tpcCBhdHRh
+Y2hpbmcgZHJpdmVyICovDQo+IA0KPiAgCXVuc2lnbmVkIGludAl0cmFuc3BhcmVudDoxOwkJLyog
+U3VidHJhY3RpdmUgZGVjb2RlIGJyaWRnZQ0KPiAqLw0KPiArCXVuc2lnbmVkIGludAlpb193aW5k
+b3c6MTsJCS8qIEJyaWRnZSBoYXMgSS9PIHdpbmRvdyAqLw0KPiArCXVuc2lnbmVkIGludAlwcmVm
+X3dpbmRvdzoxOwkJLyogQnJpZGdlIGhhcyBwcmVmIG1lbQ0KPiB3aW5kb3cgKi8NCj4gKwl1bnNp
+Z25lZCBpbnQJcHJlZl82NF93aW5kb3c6MTsJLyogUHJlZiBtZW0gd2luZG93IGlzIDY0LWJpdA0K
+PiAqLw0KPiAgCXVuc2lnbmVkIGludAltdWx0aWZ1bmN0aW9uOjE7CS8qIE11bHRpLWZ1bmN0aW9u
+IGRldmljZSAqLw0KPiANCj4gIAl1bnNpZ25lZCBpbnQJaXNfYnVzbWFzdGVyOjE7CQkvKiBJcyBi
+dXNtYXN0ZXIgKi8NCg==
