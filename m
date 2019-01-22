@@ -2,71 +2,95 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C303C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:59:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39A9FC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 17:00:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5324217D6
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:59:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0899F20870
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 17:00:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="kuezHi2l"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729484AbfAVQ7s (ORCPT
+        id S1729517AbfAVRAa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 11:59:48 -0500
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:53946 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729215AbfAVQ7r (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 11:59:47 -0500
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0MGxjCD020771;
-        Tue, 22 Jan 2019 10:59:45 -0600
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
-        by mx0b-001ae601.pphosted.com with ESMTP id 2q416tppuq-1;
-        Tue, 22 Jan 2019 10:59:44 -0600
-Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail1.cirrus.com (Postfix) with ESMTP id 5C1AC611E122;
-        Tue, 22 Jan 2019 10:59:44 -0600 (CST)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Tue, 22 Jan 2019
- 16:59:43 +0000
-Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id x0MGxgKa024839; Tue,
- 22 Jan 2019 16:59:43 GMT
-Date:   Tue, 22 Jan 2019 16:59:42 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Axel Lin <axel.lin@ingics.com>
-CC:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] regulator: arizona-ldo1: Convert to use
- regulator_linear_range for ldo1_hc
-Message-ID: <20190122165942.GH3837@imbe.wolfsonmicro.main>
-References: <20190119123636.19525-1-axel.lin@ingics.com>
+        Tue, 22 Jan 2019 12:00:30 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:43126 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728719AbfAVRAa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 12:00:30 -0500
+Received: from zn.tnic (p200300EC2BCBD90089921F1AF5185B6A.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:d900:8992:1f1a:f518:5b6a])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 724111EC014A;
+        Tue, 22 Jan 2019 18:00:28 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1548176428;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=/jwaeb43GsSlwJ/wwpkZiDEe2fZXmyil6cWcPR206Qo=;
+        b=kuezHi2lNoV7fM+nb9LtGoWiNVxLVJgE9WYVwwKGHlWuI2+1/26geoPimZ97TSni4nkRlF
+        W5rULu5o6Lj3UrQ/5HBohns3P6pp+0ZUtvop82mq6zi9aZXGn8hIiGtYwAnW21ecrnKwp4
+        bfepe1EScSOsjBzjtXgfRCJuP5aIsUI=
+Date:   Tue, 22 Jan 2019 18:00:23 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Michael Matz <matz@suse.de>
+Subject: Re: [PATCH 05/22] x86/fpu: Remove fpu->initialized usage in
+ copy_fpstate_to_sigframe()
+Message-ID: <20190122170023.GJ26587@zn.tnic>
+References: <20190109114744.10936-1-bigeasy@linutronix.de>
+ <20190109114744.10936-6-bigeasy@linutronix.de>
+ <20190116193603.GK15409@zn.tnic>
+ <20190116224037.xkfnevzkwrck5dtt@linutronix.de>
+ <20190117122253.GC5023@zn.tnic>
+ <20190118211401.4komqsnvuof7563p@linutronix.de>
+ <33f0e144-1eec-b1a1-8858-58f20d5e477d@intel.com>
+ <20190121112117.GA32538@redhat.com>
+ <20190122134015.GI26587@zn.tnic>
+ <20190122161551.GB9745@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190119123636.19525-1-axel.lin@ingics.com>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=683 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1901220131
+In-Reply-To: <20190122161551.GB9745@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 19, 2019 at 08:36:36PM +0800, Axel Lin wrote:
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
-> ---
+On Tue, Jan 22, 2019 at 05:15:51PM +0100, Oleg Nesterov wrote:
+> I don't know... tried to google, found nothing.
+> 
+> the comment in /usr/include/sys/ucontext.h mentions SysV/i386 ABI + historical
+> reasons, this didn't help.
 
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+So I'm being told by one of the psABI folks that this is not really
+written down somewhere explicitly but it is the result from the POSIX
+and psABI treatise of signal handlers, what they're supposed to do,
+caller- and callee-saved registers, etc.
 
-Thanks,
-Charles
+And FPU registers are volatile, i.e., caller-saved. Which means, the
+handler itself doesn't save them but the caller, which, doesn't really
+expect any signals - they are async. So the kernel must do that and
+slap the FPU regs onto the user stack...
+
+Hohumm. Makes sense.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
