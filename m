@@ -2,96 +2,162 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EE42C37122
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 00:29:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42C38C37122
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 00:29:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 591AE21721
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 00:29:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="v6EsnPuj"
+	by mail.kernel.org (Postfix) with ESMTP id 1732121721
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 00:29:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726604AbfAVA3V (ORCPT
+        id S1726724AbfAVA3q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 19:29:21 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:44453 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726042AbfAVA3V (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 19:29:21 -0500
-Received: by mail-ot1-f66.google.com with SMTP id f18so22099339otl.11
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 16:29:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ParTT2wvy8/2g4XMgKE4wg3TCRVhMdNQ49X488sZEX8=;
-        b=v6EsnPujYLp6DaDxnMx8cmn7DjA/AnzBhnovQYCyAhZzVjr1VyDh4ZMtmjrsyGmOcn
-         r2ZN0DMvRjsoByH71MLpit+sWYQmarhxzceMKgX2oEpveccl9u298sXLWdhJ4V4fyeGI
-         3JdaWbxZQm8J9Js0zcp4lXJUKOxkPIJjqAjtJxU5spfdXD4p9YHEHi66/6rOB5X5cOOP
-         r5ycTkU+N4m4zTz7xQ03ZCM+g6Lev1+4n5cUHvjkEfOybY2khh4C66DwoNj7n2Jo1OsI
-         8PyG8P9QvrwmCLFQTd3C4MW/IOfzaQHlCI05DIKxmJm6e24GauK7+mqXK4k5m0jPLtkN
-         gEyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ParTT2wvy8/2g4XMgKE4wg3TCRVhMdNQ49X488sZEX8=;
-        b=BshY286tWLW9go9p3AlLvJt2y4AhASFcf4Jevvy5Rr2H60NxMQArJPU9U437aK/IHH
-         rv/ISt30MHpLFQG4MGAybxLr1sOG+nJKGNMkRwNLHjxXvjvqLES5ffpsdwIuIQKqApzo
-         mY/c6e+iVgjL0mJRoy9ETqryaubc1p/bsaYUhXbI2orYXQdrHxo1n5Kt5QVOb95yCvxz
-         CGsonpLyVMY1GG9C5puYpNtpZCUxwD+bSisu9c+x7zyAB9aWaLAuZnxvC9ZgF3hZaO0o
-         WOP4nQjtf79ZdzyqIOY+ZyEbqbBkZoChf1veF2JWSCafJdphGX8JgTqVFIAdSlkOBefO
-         FTFA==
-X-Gm-Message-State: AJcUukfCI/Cn9MB/ooVvD6uz0u5qj8tSeuLZsDkXiW9POwO0B+kW6MIx
-        Av110ySC4njYg+Fjbj+GfTDAw1xZhTFlKzLv20EbWA==
-X-Google-Smtp-Source: ALg8bN5chq7o0ZBbn81NBrSM0lFUnpG+t9BEegIPg82bAqfX6f8rOsFHaN6TuwfWXUhfxLwKMRPQWfVz78/MWuC0P2s=
-X-Received: by 2002:a9d:394:: with SMTP id f20mr19747872otf.98.1548116960377;
- Mon, 21 Jan 2019 16:29:20 -0800 (PST)
-MIME-Version: 1.0
-References: <154785884329.2202034.3295476681016958230.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20190122002615.GB5855@richard>
-In-Reply-To: <20190122002615.GB5855@richard>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 21 Jan 2019 16:29:08 -0800
-Message-ID: <CAPcyv4jXS-doCdyTrcV3DL63N-q4m1H2=Msgm1z88HnF8bcEig@mail.gmail.com>
-Subject: Re: [PATCH] libnvdimm: Clarify nd_pfn_init() flow
+        Mon, 21 Jan 2019 19:29:46 -0500
+Received: from mga06.intel.com ([134.134.136.31]:21558 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725962AbfAVA3q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 19:29:46 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jan 2019 16:29:45 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,504,1539673200"; 
+   d="scan'208";a="127777931"
+Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.37])
+  by orsmga002.jf.intel.com with ESMTP; 21 Jan 2019 16:29:44 -0800
+Date:   Tue, 22 Jan 2019 08:29:16 +0800
+From:   Wei Yang <richardw.yang@linux.intel.com>
 To:     Wei Yang <richardw.yang@linux.intel.com>
-Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     Dan Williams <dan.j.williams@intel.com>, linux-nvdimm@lists.01.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] libnvdimm: Clarify nd_pfn_init() flow
+Message-ID: <20190122002915.GA5984@richard>
+Reply-To: Wei Yang <richardw.yang@linux.intel.com>
+References: <154785884329.2202034.3295476681016958230.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20190121075102.GA3758@richard>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190121075102.GA3758@richard>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 4:26 PM Wei Yang <richardw.yang@linux.intel.com> wrote:
-[..]
-> >@@ -706,6 +711,22 @@ static int nd_pfn_init(struct nd_pfn *nd_pfn)
-> >               sig = DAX_SIG;
-> >       else
-> >               sig = PFN_SIG;
-> >+
-> >+      /*
-> >+       * Check for an existing 'pfn' superblock before writing a new
-> >+       * one. The intended flow is that on the first probe of an
-> >+       * nd_{pfn,dax} device the superblock is calculated and written
-> >+       * to the namespace. In this case nd_pfn_validate() returns
-> >+       * -ENODEV because no valid superblock exists currently.
+On Mon, Jan 21, 2019 at 03:51:02PM +0800, Wei Yang wrote:
+>On Fri, Jan 18, 2019 at 04:47:23PM -0800, Dan Williams wrote:
+>>In recent days, 2 engineers, including the original author of
+>>nd_pfn_init(), overlooked the internal call to nd_pfn_validate() and the
+>>implications to memory allocation.
+>>
+>>Clarify this situation to help anyone that reads through this code in
+>>the future.
+>>
+>>Reported-by: Wei Yang <richardw.yang@linux.intel.com>
+>>Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+>>---
+>> drivers/nvdimm/btt_devs.c |    5 +++++
+>> drivers/nvdimm/dax_devs.c |    5 +++++
+>> drivers/nvdimm/pfn_devs.c |   21 +++++++++++++++++++++
+>> 3 files changed, 31 insertions(+)
+>>
+>>diff --git a/drivers/nvdimm/btt_devs.c b/drivers/nvdimm/btt_devs.c
+>>index 795ad4ff35ca..e0a6f2491e57 100644
+>>--- a/drivers/nvdimm/btt_devs.c
+>>+++ b/drivers/nvdimm/btt_devs.c
+>>@@ -354,6 +354,11 @@ int nd_btt_probe(struct device *dev, struct nd_namespace_common *ndns)
+>> 		put_device(btt_dev);
+>> 	}
+>> 
+>>+	/*
+>>+	 * Successful probe indicates to the caller that an nd_btt
+>>+	 * personality device has been registered and the caller can
+>>+	 * fail the probe of the baseline namespace device.
+>>+	 */
+>> 	return rc;
+>> }
+>> EXPORT_SYMBOL(nd_btt_probe);
+>>diff --git a/drivers/nvdimm/dax_devs.c b/drivers/nvdimm/dax_devs.c
+>>index 0453f49dc708..65010d955fa7 100644
+>>--- a/drivers/nvdimm/dax_devs.c
+>>+++ b/drivers/nvdimm/dax_devs.c
+>>@@ -136,6 +136,11 @@ int nd_dax_probe(struct device *dev, struct nd_namespace_common *ndns)
+>> 	} else
+>> 		__nd_device_register(dax_dev);
+>> 
+>>+	/*
+>>+	 * Successful probe indicates to the caller that a device-dax
+>>+	 * personality device has been registered and the caller can
+>>+	 * fail the probe of the baseline namespace device.
+>>+	 */
+>> 	return rc;
+>> }
+>> EXPORT_SYMBOL(nd_dax_probe);
+>>diff --git a/drivers/nvdimm/pfn_devs.c b/drivers/nvdimm/pfn_devs.c
+>>index 6f22272e8d80..a8783b5a76ba 100644
+>>--- a/drivers/nvdimm/pfn_devs.c
+>>+++ b/drivers/nvdimm/pfn_devs.c
+>>@@ -576,6 +576,11 @@ int nd_pfn_probe(struct device *dev, struct nd_namespace_common *ndns)
+>> 	} else
+>> 		__nd_device_register(pfn_dev);
+>> 
+>>+	/*
+>>+	 * Successful probe indicates to the caller that an nd_pfn
+>>+	 * personality device has been registered and the caller can
+>>+	 * fail the probe of the baseline namespace device.
+>>+	 */
+>> 	return rc;
+>> }
+>> EXPORT_SYMBOL(nd_pfn_probe);
+>>@@ -706,6 +711,22 @@ static int nd_pfn_init(struct nd_pfn *nd_pfn)
+>> 		sig = DAX_SIG;
+>> 	else
+>> 		sig = PFN_SIG;
+>>+
+>>+	/*
+>>+	 * Check for an existing 'pfn' superblock before writing a new
+>>+	 * one. The intended flow is that on the first probe of an
+>>+	 * nd_{pfn,dax} device the superblock is calculated and written
+>>+	 * to the namespace. In this case nd_pfn_validate() returns
+>>+	 * -ENODEV because no valid superblock exists currently.
+>>+	 *
+>>+	 * On subsequent probes nd_pfn_validate() will find a valid
+>>+	 * superblock and return 0.
+>>+	 *
+>>+	 * If an assumption of the superblock has been violated, like a
+>>+	 * change to the physical alignment of the namespace,
+>>+	 * nd_pfn_validate() will return an error other than -ENODEV to
+>>+	 * fail probing.
+>>+	 */
 >
-> As you replied in following mail:
+>Let me reply in this thread. Sorry for my poor understand, I don't get it
+>clearly now.
 >
-> 3/ If present, nd_pfn_validate() returns 0 and nd_dax_probe()
-> registers the dax0.1 device (this is a libnvdimm 'personality device).
+>To be honest, the structure is a little bit complicated, if my understanding
+>is not correct, please forgive my poor understand.
 >
-> So at this point, nd_pfn_validate() return 0 or -ENODEV?
+>Below is a code flow. To simply analysis, I setup kernel parameter memmap to
+>emulate, and configure one namespace to mode devdax. So that we would have the
+>same root for code flow.
+>
+>Let's start with nd_region_driver:
+>
+>    nd_region_probe
+>        nd_region_register_namespaces
+>	    create_namespaces
+>	nd_region->btt_seed = nd_btt_create(nd_region);
+>	nd_region->pfn_seed = nd_pfn_create(nd_region);
+>	nd_region->dax_seed = nd_dax_create(nd_region);
 
-In this case 0, because the configuration was successfully validated.
+May I ask a question about the purpose to create these three device here?
 
--ENODEV, is only returned for the initial case where we want the
-kernel to write the configuration.
+I see nd_pfn_create() doesn't allocate pfn_sb here, and the probe on these
+devices failed. Confused why we need these three devices.
 
-All other error codes are an actual failure and the probe procedure stops.
+-- 
+Wei Yang
+Help you, Help me
