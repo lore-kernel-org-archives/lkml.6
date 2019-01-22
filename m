@@ -2,192 +2,99 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 746E9C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:19:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC403C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:19:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35A4B20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:19:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TMGS+hSs"
+	by mail.kernel.org (Postfix) with ESMTP id 7D2AF20866
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:19:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726317AbfAVUS6 (ORCPT
+        id S1726418AbfAVUTY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 15:18:58 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:53115 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726208AbfAVUS6 (ORCPT
+        Tue, 22 Jan 2019 15:19:24 -0500
+Received: from gateway23.websitewelcome.com ([192.185.49.184]:20867 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725913AbfAVUTY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 15:18:58 -0500
-Received: by mail-it1-f194.google.com with SMTP id g76so23716614itg.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 12:18:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rJT1F0qIq8Tsw54r6HJtqhgv9rAheiXApZ/xRhlov+g=;
-        b=TMGS+hSszdm5dq5n7TUbrF3ZUFew9a3yYBPtEZ+R29vkEOqdAEpSoDXdXJZyysl4vA
-         xwgtzm7TmWHimBbbNPZboUppWT3r+Wt4EZLAh0hTyS1kRfInpsC2S0QCgWdoChKQV6sS
-         jtVeafZ5wfqo/gsZxX0qpOpTyf4dShH8BvN/k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rJT1F0qIq8Tsw54r6HJtqhgv9rAheiXApZ/xRhlov+g=;
-        b=iTQPn2ey+FeJysWk3vsBLPcB/kD4M/DxqW4R2lonuSSNrwBNZeHNJQlX2tXrrxmmQQ
-         bxIoMh/mUp53mzecK1xxUA6+y97t8aqj13S+F1sRHGmJ7XkdR7V+abvb6ZQRTmbFcc3H
-         jinacVNjFMQ6Gpf4qU48D5FdXrYXBuAYr2r+vbWeJOX8UhiB7xEwb6p39xKqPbH53xDn
-         yAiro73KAtgVbxYUmx1RK44JOjzdhOj4KXC+bENq/n1S07tBnkCaFSqQ091IpJuAJDU7
-         Gw7zlrMRPjnjwFWrVkNrwVfXkMtqOc8tdTWh1Dnill85T/xjFWmBzVbpxmHhO0UMZyYo
-         8PJw==
-X-Gm-Message-State: AJcUukfU4Ix8EzPPIXag4jV6Fou3drXOnqmV9whzHSkdGrNrKWqDUOcQ
-        h+HxGmY+EfskImZFiqipLUvXZcxUZvUoCDnUHaVmtQ==
-X-Google-Smtp-Source: ALg8bN7ZSPCBtZpSW/6tE7vNhIk01WeXlaP6ZgI9xknccXjOxCZCY57zq6FnmgE8eukdUenQhcNgztF7HshFVOF2sb8=
-X-Received: by 2002:a24:710:: with SMTP id f16mr2660624itf.121.1548188337202;
- Tue, 22 Jan 2019 12:18:57 -0800 (PST)
+        Tue, 22 Jan 2019 15:19:24 -0500
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway23.websitewelcome.com (Postfix) with ESMTP id A5AEEAE92
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 14:19:21 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id m2W1gvsDm2qH7m2W1gY6BK; Tue, 22 Jan 2019 14:19:21 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=33272 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gm2VP-001hp7-C0; Tue, 22 Jan 2019 14:19:21 -0600
+Date:   Tue, 22 Jan 2019 14:18:42 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     David Daney <david.daney@cavium.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>
+Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] MIPS: OCTEON: irq: Fix potential NULL pointer dereference
+Message-ID: <20190122201842.GA22886@embeddedor>
 MIME-Version: 1.0
-References: <1548084825-8803-1-git-send-email-julien.thierry@arm.com> <1548084825-8803-10-git-send-email-julien.thierry@arm.com>
-In-Reply-To: <1548084825-8803-10-git-send-email-julien.thierry@arm.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Tue, 22 Jan 2019 21:18:45 +0100
-Message-ID: <CAKv+Gu8qL1BWE-xXA+X0wrORBpv+tVKKOnN0Dv+FGQFZGWUB-w@mail.gmail.com>
-Subject: Re: [PATCH v9 09/26] arm64: Unmask PMR before going idle
-To:     Julien Thierry <julien.thierry@arm.com>
-Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Joel Fernandes <joel@joelfernandes.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1gm2VP-001hp7-C0
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.130.205]:33272
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 21 Jan 2019 at 16:36, Julien Thierry <julien.thierry@arm.com> wrote:
->
-> CPU does not received signals for interrupts with a priority masked by
-> ICC_PMR_EL1. This means the CPU might not come back from a WFI
-> instruction.
->
-> Make sure ICC_PMR_EL1 does not mask interrupts when doing a WFI.
->
-> Since the logic of cpu_do_idle is becoming a bit more complex than just
-> two instructions, lets turn it from ASM to C.
->
-> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-> Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> ---
->  arch/arm64/kernel/process.c | 45 +++++++++++++++++++++++++++++++++++++++++++++
->  arch/arm64/mm/proc.S        | 11 -----------
->  2 files changed, 45 insertions(+), 11 deletions(-)
->
-> diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
-> index 6d410fc..f05b63f 100644
-> --- a/arch/arm64/kernel/process.c
-> +++ b/arch/arm64/kernel/process.c
-> @@ -51,6 +51,7 @@
->  #include <linux/thread_info.h>
->
->  #include <asm/alternative.h>
-> +#include <asm/arch_gicv3.h>
->  #include <asm/compat.h>
->  #include <asm/cacheflush.h>
->  #include <asm/exec.h>
-> @@ -74,6 +75,50 @@
->
->  void (*arm_pm_restart)(enum reboot_mode reboot_mode, const char *cmd);
->
-> +static inline void __cpu_do_idle(void)
-> +{
-> +       dsb(sy);
-> +       wfi();
-> +}
-> +
-> +static inline void __cpu_do_idle_irqprio(void)
+There is a potential NULL pointer dereference in case kzalloc()
+fails and returns NULL.
 
-Can we drop the 'inline's from all the function definitions in .c
-files? (not just in this patch)
-We tend to leave that to the compiler.
+Fix this by adding a NULL check on *cd*
 
-> +{
-> +       unsigned long pmr;
-> +       unsigned long daif_bits;
-> +
-> +       daif_bits = read_sysreg(daif);
-> +       write_sysreg(daif_bits | PSR_I_BIT, daif);
-> +
-> +       /*
-> +        * Unmask PMR before going idle to make sure interrupts can
-> +        * be raised.
-> +        */
-> +       pmr = gic_read_pmr();
-> +       gic_write_pmr(GIC_PRIO_IRQON);
-> +
-> +       __cpu_do_idle();
-> +
-> +       gic_write_pmr(pmr);
-> +       write_sysreg(daif_bits, daif);
-> +}
-> +
-> +/*
-> + *     cpu_do_idle()
-> + *
-> + *     Idle the processor (wait for interrupt).
-> + *
-> + *     If the CPU supports priority masking we must do additional work to
-> + *     ensure that interrupts are not masked at the PMR (because the core will
-> + *     not wake up if we block the wake up signal in the interrupt controller).
-> + */
-> +void cpu_do_idle(void)
-> +{
-> +       if (system_uses_irq_prio_masking())
-> +               __cpu_do_idle_irqprio();
-> +       else
-> +               __cpu_do_idle();
-> +}
-> +
->  /*
->   * This is our default idle handler.
->   */
-> diff --git a/arch/arm64/mm/proc.S b/arch/arm64/mm/proc.S
-> index 73886a5..3ea4f3b 100644
-> --- a/arch/arm64/mm/proc.S
-> +++ b/arch/arm64/mm/proc.S
-> @@ -55,17 +55,6 @@
->
->  #define MAIR(attr, mt) ((attr) << ((mt) * 8))
->
-> -/*
-> - *     cpu_do_idle()
-> - *
-> - *     Idle the processor (wait for interrupt).
-> - */
-> -ENTRY(cpu_do_idle)
-> -       dsb     sy                              // WFI may enter a low-power mode
-> -       wfi
-> -       ret
-> -ENDPROC(cpu_do_idle)
-> -
->  #ifdef CONFIG_CPU_PM
->  /**
->   * cpu_do_suspend - save CPU registers context
-> --
-> 1.9.1
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+This bug was detected with the help of Coccinelle.
+
+Fixes: 64b139f97c01 ("MIPS: OCTEON: irq: add CIB and other fixes")
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ arch/mips/cavium-octeon/octeon-irq.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/mips/cavium-octeon/octeon-irq.c b/arch/mips/cavium-octeon/octeon-irq.c
+index f97be32bf699..3ad1f76c063a 100644
+--- a/arch/mips/cavium-octeon/octeon-irq.c
++++ b/arch/mips/cavium-octeon/octeon-irq.c
+@@ -2199,6 +2199,9 @@ static int octeon_irq_cib_map(struct irq_domain *d,
+ 	}
+ 
+ 	cd = kzalloc(sizeof(*cd), GFP_KERNEL);
++	if (!cd)
++		return -ENOMEM;
++
+ 	cd->host_data = host_data;
+ 	cd->bit = hw;
+ 
+-- 
+2.20.1
+
