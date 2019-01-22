@@ -2,73 +2,99 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36F6DC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:23:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D129BC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:23:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12B2621019
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:23:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC5F82084A
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:23:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727902AbfAVKXs (ORCPT
+        id S1727941AbfAVKXw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 05:23:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59394 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727469AbfAVKXr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 05:23:47 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB6CD2084A;
-        Tue, 22 Jan 2019 10:23:46 +0000 (UTC)
-Date:   Tue, 22 Jan 2019 11:23:44 +0100
-From:   Greg KH <greg@kroah.com>
-To:     Adam Borowski <kilobyte@angband.pl>
-Cc:     Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] doc: process: GPL -> GPL-compatible
-Message-ID: <20190122102344.GA31836@kroah.com>
-References: <20190122093408.16756-1-kilobyte@angband.pl>
+        Tue, 22 Jan 2019 05:23:52 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:42595 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726530AbfAVKXt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 05:23:49 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0MANJ732907904
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Tue, 22 Jan 2019 02:23:19 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0MANJfD2907901;
+        Tue, 22 Jan 2019 02:23:19 -0800
+Date:   Tue, 22 Jan 2019 02:23:19 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Song Liu <tipbot@zytor.com>
+Message-ID: <tip-6934058d9fb6c058fb5e5b11cdcb19834e205c91@git.kernel.org>
+Cc:     songliubraving@fb.com, tglx@linutronix.de, acme@redhat.com,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, daniel@iogearbox.net,
+        peterz@infradead.org, mingo@kernel.org, ast@kernel.org
+Reply-To: daniel@iogearbox.net, hpa@zytor.com, mingo@kernel.org,
+          ast@kernel.org, peterz@infradead.org, songliubraving@fb.com,
+          tglx@linutronix.de, acme@redhat.com, linux-kernel@vger.kernel.org
+In-Reply-To: <20190117161521.1341602-10-songliubraving@fb.com>
+References: <20190117161521.1341602-10-songliubraving@fb.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] bpf: Add module name [bpf] to ksymbols for bpf
+ programs
+Git-Commit-ID: 6934058d9fb6c058fb5e5b11cdcb19834e205c91
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20190122093408.16756-1-kilobyte@angband.pl>
-User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 10:34:08AM +0100, Adam Borowski wrote:
-> Drivers under MIT, BSD-17-clause, or uncle-Bob's-newest-take-on-PD are
-> all fine, not just GPL.
-> 
-> Signed-off-by: Adam Borowski <kilobyte@angband.pl>
-> ---
-> Not reformatting to fill lines, it'll semi-conflict with another patch
-> that's been acked but not yet pushed.
-> 
->  Documentation/process/stable-api-nonsense.rst | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/process/stable-api-nonsense.rst b/Documentation/process/stable-api-nonsense.rst
-> index 24f5aeecee91..9b69fb08b65e 100644
-> --- a/Documentation/process/stable-api-nonsense.rst
-> +++ b/Documentation/process/stable-api-nonsense.rst
-> @@ -170,7 +170,8 @@ nightmare, and trying to keep up with an ever changing kernel interface
->  is also a rough job.
->  
->  Simple, get your kernel driver into the main kernel tree (remember we
-> -are talking about GPL released drivers here, if your code doesn't fall
-> +are talking about drivers released under a GPL-compatible license here,
-> +if your code doesn't fall
->  under this category, good luck, you are on your own here, you leech
->  <insert link to leech comment from Andrew and Linus here>.)  If your
->  driver is in the tree, and a kernel interface changes, it will be fixed
+Commit-ID:  6934058d9fb6c058fb5e5b11cdcb19834e205c91
+Gitweb:     https://git.kernel.org/tip/6934058d9fb6c058fb5e5b11cdcb19834e205c91
+Author:     Song Liu <songliubraving@fb.com>
+AuthorDate: Thu, 17 Jan 2019 08:15:21 -0800
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 21 Jan 2019 17:38:56 -0300
 
-Nice fix:
+bpf: Add module name [bpf] to ksymbols for bpf programs
 
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+With this patch, /proc/kallsyms will show BPF programs as
+
+  <addr> t bpf_prog_<tag>_<name> [bpf]
+
+Signed-off-by: Song Liu <songliubraving@fb.com>
+Reviewed-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Acked-by: Peter Zijlstra <peterz@infradead.org>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: kernel-team@fb.com
+Cc: netdev@vger.kernel.org
+Link: http://lkml.kernel.org/r/20190117161521.1341602-10-songliubraving@fb.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ kernel/kallsyms.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/kallsyms.c b/kernel/kallsyms.c
+index f3a04994e063..14934afa9e68 100644
+--- a/kernel/kallsyms.c
++++ b/kernel/kallsyms.c
+@@ -494,7 +494,7 @@ static int get_ksymbol_ftrace_mod(struct kallsym_iter *iter)
+ 
+ static int get_ksymbol_bpf(struct kallsym_iter *iter)
+ {
+-	iter->module_name[0] = '\0';
++	strlcpy(iter->module_name, "bpf", MODULE_NAME_LEN);
+ 	iter->exported = 0;
+ 	return bpf_get_kallsym(iter->pos - iter->pos_ftrace_mod_end,
+ 			       &iter->value, &iter->type,
