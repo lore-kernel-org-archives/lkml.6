@@ -2,137 +2,129 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D668C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:11:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E180C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:11:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08F5021726
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:11:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="T0TiVM6M"
+	by mail.kernel.org (Postfix) with ESMTP id 6084721726
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:11:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727033AbfAVXLF (ORCPT
+        id S1727093AbfAVXLY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 18:11:05 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:33904 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726948AbfAVXLF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 18:11:05 -0500
-Received: by mail-ua1-f66.google.com with SMTP id c24so105258uak.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 15:11:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VUa76ueEhCQvNbKtPQb2mHmncpNfRpiFmLfNvYO5FBQ=;
-        b=T0TiVM6MOIgLwJD27hPa0S3OrmIbMuJ7FpOAoWmxpUpaESq+8Yrf9TtW3WjpPI1LE2
-         sESR3IVGm+GKgKe6F3dXurK4EvXhMdy2FCELGAYTJuSaLvVEhmomgxFaotO0wp/vzLOZ
-         8jgXFaT59EFAC8U6KJkJGsXSj/KZlTch5jnxw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VUa76ueEhCQvNbKtPQb2mHmncpNfRpiFmLfNvYO5FBQ=;
-        b=CIq+JvXB7F6QDVocvYt7AFUzxCah5caOYm+dUGqzP4Htm0J1VQJe4evNd8+S97kFL3
-         NGXAtzePyIhrgKUvsIi3LvxcwzOKlzwbvZV/7A8qJsz9CLwGnT5c6NlurohVgnT4DlfN
-         ibz2RWDdcJFGeVdMb0kDQwXYa0/rDM99IvCr9enIHiA/ecgnCyIi86w7bVLC5TFxrOku
-         P3UbI/V/2Q+UixkakfT55VkEWfjBFZnM9nFygTxaAL4S02he130/amDyQgJUiqjUpMlr
-         e9HwiYh/rWummBO2WeKqSTYpMYAZNCMLqrhuyKrxxBUurtZubDvSivNtxl0XssHf+uMW
-         I6aw==
-X-Gm-Message-State: AJcUukdh8gDgs/9I4+I6N9TMQ/oAkMh48xczHozlewOMJnIJJ6rdsTQW
-        KM15+dO9EqGpOsIVqA065467UbXHyB8=
-X-Google-Smtp-Source: ALg8bN6vAt3TRBRJ7vvcOxWhvhRuuYMb2YpYo4AegjTy4pr+1oTWWB5d/dMSkzL7yB4bQCO0ure4ag==
-X-Received: by 2002:ab0:45d4:: with SMTP id u78mr13873266uau.52.1548198663384;
-        Tue, 22 Jan 2019 15:11:03 -0800 (PST)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
-        by smtp.gmail.com with ESMTPSA id a6sm7875416vse.30.2019.01.22.15.11.02
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Jan 2019 15:11:02 -0800 (PST)
-Received: by mail-vs1-f42.google.com with SMTP id x64so178872vsa.5
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 15:11:02 -0800 (PST)
-X-Received: by 2002:a67:dd94:: with SMTP id i20mr15781200vsk.111.1548198661895;
- Tue, 22 Jan 2019 15:11:01 -0800 (PST)
+        Tue, 22 Jan 2019 18:11:24 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:51762 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726682AbfAVXLX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 18:11:23 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E2FE489ACA;
+        Tue, 22 Jan 2019 23:11:22 +0000 (UTC)
+Received: from [10.36.112.69] (ovpn-112-69.ams2.redhat.com [10.36.112.69])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 46CA8600C5;
+        Tue, 22 Jan 2019 23:11:21 +0000 (UTC)
+Subject: Re: [PATCH] kvm: no need to check return value of debugfs_create
+ functions
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>
+Cc:     linux-kernel@vger.kernel.org,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org
+References: <20190122152151.16139-51-gregkh@linuxfoundation.org>
+ <69eee5dd-5893-c93a-a9df-036f02dfbc1c@de.ibm.com>
+ <20190122204828.GA30805@kroah.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
+Message-ID: <d7b38792-e91f-be0c-20cf-99023962f0a9@redhat.com>
+Date:   Wed, 23 Jan 2019 00:11:18 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-References: <20190122055112.30943-1-bjorn.andersson@linaro.org>
- <20190122055112.30943-2-bjorn.andersson@linaro.org> <154818353130.20280.17905705223316470797@swboyd.mtv.corp.google.com>
- <20190122192404.GB31919@minitux>
-In-Reply-To: <20190122192404.GB31919@minitux>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Tue, 22 Jan 2019 15:10:49 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=UgQtPZj-EWCzqGqgAbfijjd+j7kO8XsXttJKfejEzBzg@mail.gmail.com>
-Message-ID: <CAD=FV=UgQtPZj-EWCzqGqgAbfijjd+j7kO8XsXttJKfejEzBzg@mail.gmail.com>
-Subject: Re: [PATCH v3 01/10] arm64: dts: qcom: sdm845: Update PIL region
- memory map
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Stephen Boyd <swboyd@chromium.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190122204828.GA30805@kroah.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 22 Jan 2019 23:11:23 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 22/01/19 21:48, Greg Kroah-Hartman wrote:
+>> This also brings the question: shall we move these counters out of debugfs into something else?
+> If you have code that relies on debugfs, yes, you need to move that out
+> of debugfs because more and more systems are trying to disable it due to
+> the obvious problems with it (i.e. leaking tons of debugging
+> information).
+> 
+> debugfs is for DEBUG information, not for "statistics about how my VM is
+> working".  That sounds like something you need to rely on, so debugfs is
+> not the place for it.
 
-On Tue, Jan 22, 2019 at 11:24 AM Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
->
-> On Tue 22 Jan 10:58 PST 2019, Stephen Boyd wrote:
->
-> > Quoting Bjorn Andersson (2019-01-21 21:51:03)
-> > > @@ -103,10 +138,30 @@
-> > >                         no-map;
-> > >                 };
-> > >
-> > > +               venus_mem: memory@95800000 {
-> > > +                       reg = <0 0x95800000 0 0x500000>;
-> > > +                       no-map;
-> > > +               };
-> > > +
-> > > +               cdsp_mem: memory@95d00000 {
-> > > +                       reg = <0 0x95d00000 0 0x800000>;
-> > > +                       no-map;
-> > > +               };
-> > > +
-> > >                 mba_region: memory@96500000 {
-> > >                         reg = <0 0x96500000 0 0x200000>;
-> > >                         no-map;
-> > >                 };
-> > > +
-> > > +               slpi_mem: memory@96700000 {
-> > > +                       reg = <0 0x96700000 0 0x1400000>;
-> > > +                       no-map;
-> > > +               };
-> > > +
-> > > +               spss_mem: memory@97b00000 {
-> > > +                       reg = <0 0x97b00000 0 0x100000>;
-> > > +                       no-map;
-> > > +               };
-> > >         };
-> > >
-> >
-> > What's the plan if certain configurations don't use all these carveouts?
-> > Can we mark the reservation nodes as status = "disabled", or the reverse
-> > and mark them as status = "ok" in all boards, and then reclaim the
-> > memory for peripherals we don't care to use?
-> >
->
-> The code path that picks these up does look for "status", so I suggest
-> that we leave them all enabled in the platform dtsi and then let the
-> device's reclaim them as needed.
+Yes, we know that and tracepoints are already one replacement.  However,
+they are slower that just a lock-free "vcpu->stats.foo_happened++".
+Another idea that Steven Rostedt and I discussed a while ago is some
+kind of "statfs" which would already provide some code, similar to the
+one that KVM uses to accumulate statistics from multiple VMs or multiple
+VCPUs into a single counter.
 
-Does that mean we should add labels for all of the sub-nodes so that
-boards can easily mark them "disabled"?
-
--Doug
+Paolo
