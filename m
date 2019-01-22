@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E4AAC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 05:52:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E4FEC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 05:52:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5644820879
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 05:52:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 024F421721
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 05:52:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GI5rtE9h"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZuI7szlR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727207AbfAVFwU (ORCPT
+        id S1727182AbfAVFwT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 00:52:20 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:33895 "EHLO
+        Tue, 22 Jan 2019 00:52:19 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:46121 "EHLO
         mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727063AbfAVFvx (ORCPT
+        with ESMTP id S1727066AbfAVFvy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 00:51:53 -0500
-Received: by mail-pg1-f193.google.com with SMTP id j10so10539895pga.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 21:51:53 -0800 (PST)
+        Tue, 22 Jan 2019 00:51:54 -0500
+Received: by mail-pg1-f193.google.com with SMTP id w7so10502373pgp.13
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 21:51:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=pW9+FnFhTixsM1NvLiRxk7mkM5jyq1Bhl39XrdO6+DY=;
-        b=GI5rtE9hhYO4frHD9B68ZN3IRPw+OTuvhdfIbThO5ytG7OGbGq3c2hrdU3Zg0sDGPS
-         ++AKNgLNrpK3l7ZZno7q97JGpSm3fCZFA6AkSKxXHvq4eS7Xgc6XZsWSgEoYSWcTDNG6
-         rqpiLT7e52tzcYqNPJxmIbi/QvHKwcIpYm8lw=
+        bh=0K5Q8jXmAwTtQLgYnsHYIO7/6CejOJ/BLEqWsyhLhvo=;
+        b=ZuI7szlR3gXWxkaNjwfMO5RkEtTVXcm13nYgEwMiBYUc9DdMBTvv1sJxbNQPclMU/y
+         u3YNAg9aldmyfHqvBOBr74wRomLDKuLoBtNaHOWtt8/E4AHHfSXyWhq+ohRbc5tumGeF
+         6cUos7EfL0lkZaUQT8Z/Sc+IcpwK/kILQqMN8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=pW9+FnFhTixsM1NvLiRxk7mkM5jyq1Bhl39XrdO6+DY=;
-        b=RahfCgI5qKDEEjlG9D69UHHzJQ3j7q6PyChN7/fF9I48MN0fUHQ+ZeJvQ6ocM/1whc
-         KP50r5L67Zw4ploUEC4uedpoUGgG9sT/wvy2DMS6M5NC7Iep05zTywMjBt4fNNfxG1y4
-         iB3C1rXpNwSEpt0eulZQw70oU3AVM+A9R+4+L42PzuSptqiApSIsZuuZupcAMKkm7tUz
-         IAsCrcmqSqCBYMhnRurm3D/RO3FwDxCytFy9coP5ATY6pFIf7mpBFGcIxEMgOqlpX0Xa
-         5vQa7JAX69yCpvh1HRImQ7WW1EX4vsIF9F0VbsuZQxPw9hEf5Q04qpKiJS3WYNoTfIr3
-         3L0w==
-X-Gm-Message-State: AJcUukdqArMmPFzuOHi6vmDEFMRatEQGrZ+XI2fub2FzsA2CRqqm8ROg
-        cdaRmQsAei8Xzbd0n11boJ3jpA==
-X-Google-Smtp-Source: ALg8bN5GTsOqm5afo95VqQSNA15p722lrD1Y//00N+DI1O6ubLKpuVI1lre/qlH/ix0K74hcLbM04A==
-X-Received: by 2002:a62:7086:: with SMTP id l128mr32186966pfc.68.1548136312529;
-        Mon, 21 Jan 2019 21:51:52 -0800 (PST)
+        bh=0K5Q8jXmAwTtQLgYnsHYIO7/6CejOJ/BLEqWsyhLhvo=;
+        b=QXqrldGnqVuK7KAVu+MgDJkeOZer/umj5Ciwgy1EIBxLaGxoL/BeiB/yx2WaaUvO2f
+         D2wxjOv6DAQ8r3rr3wf0rObEgnta8vGf7HNLaGDBc4g73XeGrd88pboI5X8aESTKHkmi
+         01l/Fc3h6PnOVPIthLlsSuNtSinp8Nn4CC9gZ/zlf25pqvc4rNCMEZ1lEiVXCH1aNMjU
+         XJNkRdE9+tatu+ksYotYzDiYcOXAO8yCs9Nv14eajl3RctCpl3wZ2VR32qkMs25RvYZQ
+         qbIVwHFBLu2DXy4jgqQv9sO15DkDQ59pBcmN/n36l9k7ufeC80H2kg4p+8KtA5IFN5F4
+         hP4A==
+X-Gm-Message-State: AJcUukcZy0tIqpFpmdzujRmO8JERZhc/j7IoUHP6QZOa4Yw+U0nxfTje
+        yootvXZq8O2VyWv9gqVCBYxcTQ==
+X-Google-Smtp-Source: ALg8bN7uXQ634kxUImJv9TYGQcZsEEfDIerZ+og7Bq2od6lSWsduEOkXSHNEWae84Ukt9EbkbkADJw==
+X-Received: by 2002:a63:ff62:: with SMTP id s34mr30918917pgk.325.1548136313865;
+        Mon, 21 Jan 2019 21:51:53 -0800 (PST)
 Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id z62sm23771572pfl.33.2019.01.21.21.51.51
+        by smtp.gmail.com with ESMTPSA id z62sm23771572pfl.33.2019.01.21.21.51.52
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 21 Jan 2019 21:51:51 -0800 (PST)
+        Mon, 21 Jan 2019 21:51:52 -0800 (PST)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Andy Gross <andy.gross@linaro.org>,
         David Brown <david.brown@linaro.org>,
@@ -60,9 +60,9 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 06/10] soc: qcom: Add AOSS QMP genpd provider
-Date:   Mon, 21 Jan 2019 21:51:08 -0800
-Message-Id: <20190122055112.30943-7-bjorn.andersson@linaro.org>
+Subject: [PATCH v3 07/10] remoteproc: q6v5-mss: Vote for rpmh power domains
+Date:   Mon, 21 Jan 2019 21:51:09 -0800
+Message-Id: <20190122055112.30943-8-bjorn.andersson@linaro.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20190122055112.30943-1-bjorn.andersson@linaro.org>
 References: <20190122055112.30943-1-bjorn.andersson@linaro.org>
@@ -71,200 +71,258 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The AOSS QMP genpd provider implements control over power-related
-resources related to low-power state associated with the remoteprocs in
-the system as well as control over a set of clocks related to debug
-hardware in the SoC.
+From: Rajendra Nayak <rnayak@codeaurora.org>
 
-Tested-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+With rpmh ARC resources being modelled as power domains with performance
+state, we need to proxy vote on these for SDM845.
+Add support to vote on multiple of them, now that genpd supports
+associating mutliple power domains to a device.
+
+Tested-by: Sibi Sankar <sibis@codeaurora.org>
+Reviewed-by: Sibi Sankar <sibis@codeaurora.org>
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+[bjorn: Drop device link, improve error handling, name things "proxy"]
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
 
 Changes since v2:
-- Add define for request array size
+- Disable proxy pds if handover did not arrived before stop
 
- drivers/soc/qcom/Kconfig       |   9 +++
- drivers/soc/qcom/Makefile      |   1 +
- drivers/soc/qcom/aoss-qmp-pd.c | 138 +++++++++++++++++++++++++++++++++
- 3 files changed, 148 insertions(+)
- create mode 100644 drivers/soc/qcom/aoss-qmp-pd.c
+ drivers/remoteproc/qcom_q6v5_mss.c | 117 ++++++++++++++++++++++++++++-
+ 1 file changed, 113 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-index e2c859121b88..9d71e23005ad 100644
---- a/drivers/soc/qcom/Kconfig
-+++ b/drivers/soc/qcom/Kconfig
-@@ -12,6 +12,15 @@ config QCOM_AOSS_QMP
- 	  micro-controller in the AOSS, using QMP, to control certain resource
- 	  that are not exposed through RPMh.
- 
-+config QCOM_AOSS_QMP_PD
-+	tristate "Qualcomm AOSS Messaging Power Domain driver"
-+	depends on QCOM_AOSS_QMP
-+	select PM_GENERIC_DOMAINS
-+	help
-+	  This driver provides the means of controlling the AOSS's handling of
-+	  low-power state for resources related to the remoteproc subsystems as
-+	  well as controlling the debug clocks.
-+
- config QCOM_COMMAND_DB
- 	bool "Qualcomm Command DB"
- 	depends on ARCH_QCOM || COMPILE_TEST
-diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
-index 2c04d27fbf9e..16913e73fddf 100644
---- a/drivers/soc/qcom/Makefile
-+++ b/drivers/soc/qcom/Makefile
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- CFLAGS_rpmh-rsc.o := -I$(src)
- obj-$(CONFIG_QCOM_AOSS_QMP) +=	aoss-qmp.o
-+obj-$(CONFIG_QCOM_AOSS_QMP_PD) += aoss-qmp-pd.o
- obj-$(CONFIG_QCOM_GENI_SE) +=	qcom-geni-se.o
- obj-$(CONFIG_QCOM_COMMAND_DB) += cmd-db.o
- obj-$(CONFIG_QCOM_GLINK_SSR) +=	glink_ssr.o
-diff --git a/drivers/soc/qcom/aoss-qmp-pd.c b/drivers/soc/qcom/aoss-qmp-pd.c
-new file mode 100644
-index 000000000000..82dd569a2bc9
---- /dev/null
-+++ b/drivers/soc/qcom/aoss-qmp-pd.c
-@@ -0,0 +1,138 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2018, Linaro Ltd
-+ */
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
+diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+index 01be7314e176..003186ce56c7 100644
+--- a/drivers/remoteproc/qcom_q6v5_mss.c
++++ b/drivers/remoteproc/qcom_q6v5_mss.c
+@@ -25,6 +25,8 @@
+ #include <linux/of_address.h>
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
 +#include <linux/pm_domain.h>
-+#include <linux/soc/qcom/aoss-qmp.h>
-+#include <dt-bindings/power/qcom-aoss-qmp.h>
-+
-+/* Requests are expected to be 96 bytes long */
-+#define AOSS_QMP_PD_MSG_LEN	96
-+
-+struct qmp_pd {
-+	struct qmp *qmp;
-+
-+	struct generic_pm_domain pd;
-+
-+	const char *name;
-+};
-+
-+#define to_qmp_pd_resource(res) container_of(res, struct qmp_pd, pd)
-+
-+struct qmp_pd_resource {
-+	const char *name;
-+	int (*on)(struct generic_pm_domain *domain);
-+	int (*off)(struct generic_pm_domain *domain);
-+};
-+
-+static int qmp_pd_clock_toggle(struct qmp_pd *res, bool enable)
++#include <linux/pm_runtime.h>
+ #include <linux/regmap.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/remoteproc.h>
+@@ -131,6 +133,7 @@ struct rproc_hexagon_res {
+ 	char **proxy_clk_names;
+ 	char **reset_clk_names;
+ 	char **active_clk_names;
++	char **proxy_pd_names;
+ 	int version;
+ 	bool need_mem_protection;
+ 	bool has_alt_reset;
+@@ -156,9 +159,11 @@ struct q6v5 {
+ 	struct clk *active_clks[8];
+ 	struct clk *reset_clks[4];
+ 	struct clk *proxy_clks[4];
++	struct device *proxy_pds[3];
+ 	int active_clk_count;
+ 	int reset_clk_count;
+ 	int proxy_clk_count;
++	int proxy_pd_count;
+ 
+ 	struct reg_info active_regs[1];
+ 	struct reg_info proxy_regs[3];
+@@ -321,6 +326,41 @@ static void q6v5_clk_disable(struct device *dev,
+ 		clk_disable_unprepare(clks[i]);
+ }
+ 
++static int q6v5_pds_enable(struct q6v5 *qproc, struct device **pds,
++			   size_t pd_count)
 +{
-+	char buf[AOSS_QMP_PD_MSG_LEN];
-+
-+	snprintf(buf, sizeof(buf), "{class: clock, res: %s, val: %d}",
-+		 res->name, !!enable);
-+	return qmp_send(res->qmp, buf, sizeof(buf));
-+}
-+
-+static int qmp_pd_clock_on(struct generic_pm_domain *domain)
-+{
-+	return qmp_pd_clock_toggle(to_qmp_pd_resource(domain), true);
-+}
-+
-+static int qmp_pd_clock_off(struct generic_pm_domain *domain)
-+{
-+	return qmp_pd_clock_toggle(to_qmp_pd_resource(domain), false);
-+}
-+
-+static int qmp_pd_image_toggle(struct qmp_pd *res, bool enable)
-+{
-+	char buf[AOSS_QMP_PD_MSG_LEN];
-+
-+	snprintf(buf, sizeof(buf),
-+		 "{class: image, res: load_state, name: %s, val: %s}",
-+		 res->name, enable ? "on" : "off");
-+	return qmp_send(res->qmp, buf, sizeof(buf));
-+}
-+
-+static int qmp_pd_image_on(struct generic_pm_domain *domain)
-+{
-+	return qmp_pd_image_toggle(to_qmp_pd_resource(domain), true);
-+}
-+
-+static int qmp_pd_image_off(struct generic_pm_domain *domain)
-+{
-+	return qmp_pd_image_toggle(to_qmp_pd_resource(domain), false);
-+}
-+
-+static const struct qmp_pd_resource sdm845_resources[] = {
-+	[AOSS_QMP_QDSS_CLK] = { "qdss", qmp_pd_clock_on, qmp_pd_clock_off },
-+	[AOSS_QMP_LS_CDSP] = { "cdsp", qmp_pd_image_on, qmp_pd_image_off },
-+	[AOSS_QMP_LS_LPASS] = { "adsp", qmp_pd_image_on, qmp_pd_image_off },
-+	[AOSS_QMP_LS_MODEM] = { "modem", qmp_pd_image_on, qmp_pd_image_off },
-+	[AOSS_QMP_LS_SLPI] = { "slpi", qmp_pd_image_on, qmp_pd_image_off },
-+	[AOSS_QMP_LS_SPSS] = { "spss", qmp_pd_image_on, qmp_pd_image_off },
-+	[AOSS_QMP_LS_VENUS] = { "venus", qmp_pd_image_on, qmp_pd_image_off },
-+};
-+
-+static int qmp_pd_probe(struct platform_device *pdev)
-+{
-+	struct genpd_onecell_data *data;
-+	struct device *parent = pdev->dev.parent;
-+	struct qmp_pd *res;
-+	struct qmp *qmp;
-+	size_t num = ARRAY_SIZE(sdm845_resources);
++	int ret;
 +	int i;
 +
-+	qmp = dev_get_drvdata(pdev->dev.parent);
-+	if (!qmp)
-+		return -EINVAL;
-+
-+	res = devm_kcalloc(&pdev->dev, num, sizeof(*res), GFP_KERNEL);
-+	if (!res)
-+		return -ENOMEM;
-+
-+	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	data->domains = devm_kcalloc(&pdev->dev, num, sizeof(*data->domains),
-+				     GFP_KERNEL);
-+
-+	for (i = 0; i < num; i++) {
-+		pm_genpd_init(&res[i].pd, NULL, true);
-+		res[i].qmp = qmp;
-+		res[i].name = sdm845_resources[i].name;
-+
-+		res[i].pd.name = sdm845_resources[i].name;
-+		res[i].pd.power_on = sdm845_resources[i].on;
-+		res[i].pd.power_off = sdm845_resources[i].off;
-+
-+		data->domains[data->num_domains++] = &res[i].pd;
++	for (i = 0; i < pd_count; i++) {
++		dev_pm_genpd_set_performance_state(pds[i], INT_MAX);
++		ret = pm_runtime_get_sync(pds[i]);
++		if (ret < 0)
++			goto unroll_pd_votes;
 +	}
 +
-+	return of_genpd_add_provider_onecell(parent->of_node, data);
-+}
-+
-+static int qmp_pd_remove(struct platform_device *pdev)
-+{
-+	struct device *parent = pdev->dev.parent;
-+
-+	of_genpd_del_provider(parent->of_node);
-+
 +	return 0;
++
++unroll_pd_votes:
++	for (i--; i >= 0; i--) {
++		dev_pm_genpd_set_performance_state(pds[i], 0);
++		pm_runtime_put(pds[i]);
++	}
++
++	return ret;
++};
++
++static void q6v5_pds_disable(struct q6v5 *qproc, struct device **pds,
++			     size_t pd_count)
++{
++	int i;
++
++	for (i = 0; i < pd_count; i++) {
++		dev_pm_genpd_set_performance_state(pds[i], 0);
++		pm_runtime_put(pds[i]);
++	}
 +}
 +
-+static struct platform_driver qmp_pd_driver = {
-+	.driver = {
-+		.name		= "aoss_qmp_pd",
-+	},
-+	.probe = qmp_pd_probe,
-+	.remove = qmp_pd_remove,
-+};
-+module_platform_driver(qmp_pd_driver);
+ static int q6v5_xfer_mem_ownership(struct q6v5 *qproc, int *current_perm,
+ 				   bool remote_owner, phys_addr_t addr,
+ 				   size_t size)
+@@ -690,11 +730,17 @@ static int q6v5_mba_load(struct q6v5 *qproc)
+ 
+ 	qcom_q6v5_prepare(&qproc->q6v5);
+ 
++	ret = q6v5_pds_enable(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
++	if (ret < 0) {
++		dev_err(qproc->dev, "failed to enable proxy power domains\n");
++		goto disable_irqs;
++	}
 +
-+MODULE_ALIAS("platform:aoss_qmp_pd");
-+MODULE_DESCRIPTION("Qualcomm AOSS QMP load-state driver");
-+MODULE_LICENSE("GPL v2");
+ 	ret = q6v5_regulator_enable(qproc, qproc->proxy_regs,
+ 				    qproc->proxy_reg_count);
+ 	if (ret) {
+ 		dev_err(qproc->dev, "failed to enable proxy supplies\n");
+-		goto disable_irqs;
++		goto disable_proxy_pds;
+ 	}
+ 
+ 	ret = q6v5_clk_enable(qproc->dev, qproc->proxy_clks,
+@@ -791,6 +837,8 @@ static int q6v5_mba_load(struct q6v5 *qproc)
+ disable_proxy_reg:
+ 	q6v5_regulator_disable(qproc, qproc->proxy_regs,
+ 			       qproc->proxy_reg_count);
++disable_proxy_pds:
++	q6v5_pds_disable(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
+ disable_irqs:
+ 	qcom_q6v5_unprepare(&qproc->q6v5);
+ 
+@@ -841,6 +889,8 @@ static void q6v5_mba_reclaim(struct q6v5 *qproc)
+ 
+ 	ret = qcom_q6v5_unprepare(&qproc->q6v5);
+ 	if (ret) {
++		q6v5_pds_disable(qproc, qproc->proxy_pds,
++				 qproc->proxy_pd_count);
+ 		q6v5_clk_disable(qproc->dev, qproc->proxy_clks,
+ 				 qproc->proxy_clk_count);
+ 		q6v5_regulator_disable(qproc, qproc->proxy_regs,
+@@ -1121,6 +1171,7 @@ static void qcom_msa_handover(struct qcom_q6v5 *q6v5)
+ 			 qproc->proxy_clk_count);
+ 	q6v5_regulator_disable(qproc, qproc->proxy_regs,
+ 			       qproc->proxy_reg_count);
++	q6v5_pds_disable(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
+ }
+ 
+ static int q6v5_init_mem(struct q6v5 *qproc, struct platform_device *pdev)
+@@ -1181,6 +1232,45 @@ static int q6v5_init_clocks(struct device *dev, struct clk **clks,
+ 	return i;
+ }
+ 
++static int q6v5_pds_attach(struct device *dev, struct device **devs,
++			   char **pd_names)
++{
++	size_t num_pds = 0;
++	int ret;
++	int i;
++
++	if (!pd_names)
++		return 0;
++
++	while (pd_names[num_pds])
++		num_pds++;
++
++	for (i = 0; i < num_pds; i++) {
++		devs[i] = dev_pm_domain_attach_by_name(dev, pd_names[i]);
++		if (IS_ERR(devs[i])) {
++			ret = PTR_ERR(devs[i]);
++			goto unroll_attach;
++		}
++	}
++
++	return num_pds;
++
++unroll_attach:
++	for (i--; i >= 0; i--)
++		dev_pm_domain_detach(devs[i], false);
++
++	return ret;
++};
++
++static void q6v5_pds_detach(struct q6v5 *qproc, struct device **pds,
++			    size_t pd_count)
++{
++	int i;
++
++	for (i = 0; i < pd_count; i++)
++		dev_pm_domain_detach(pds[i], false);
++}
++
+ static int q6v5_init_reset(struct q6v5 *qproc)
+ {
+ 	qproc->mss_restart = devm_reset_control_get_exclusive(qproc->dev,
+@@ -1322,10 +1412,18 @@ static int q6v5_probe(struct platform_device *pdev)
+ 	}
+ 	qproc->active_reg_count = ret;
+ 
++	ret = q6v5_pds_attach(&pdev->dev, qproc->proxy_pds,
++			      desc->proxy_pd_names);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "Failed to init power domains\n");
++		goto free_rproc;
++	}
++	qproc->proxy_pd_count = ret;
++
+ 	qproc->has_alt_reset = desc->has_alt_reset;
+ 	ret = q6v5_init_reset(qproc);
+ 	if (ret)
+-		goto free_rproc;
++		goto detach_proxy_pds;
+ 
+ 	qproc->version = desc->version;
+ 	qproc->need_mem_protection = desc->need_mem_protection;
+@@ -1333,7 +1431,7 @@ static int q6v5_probe(struct platform_device *pdev)
+ 	ret = qcom_q6v5_init(&qproc->q6v5, pdev, rproc, MPSS_CRASH_REASON_SMEM,
+ 			     qcom_msa_handover);
+ 	if (ret)
+-		goto free_rproc;
++		goto detach_proxy_pds;
+ 
+ 	qproc->mpss_perm = BIT(QCOM_SCM_VMID_HLOS);
+ 	qproc->mba_perm = BIT(QCOM_SCM_VMID_HLOS);
+@@ -1344,10 +1442,12 @@ static int q6v5_probe(struct platform_device *pdev)
+ 
+ 	ret = rproc_add(rproc);
+ 	if (ret)
+-		goto free_rproc;
++		goto detach_proxy_pds;
+ 
+ 	return 0;
+ 
++detach_proxy_pds:
++	q6v5_pds_detach(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
+ free_rproc:
+ 	rproc_free(rproc);
+ 
+@@ -1364,6 +1464,9 @@ static int q6v5_remove(struct platform_device *pdev)
+ 	qcom_remove_glink_subdev(qproc->rproc, &qproc->glink_subdev);
+ 	qcom_remove_smd_subdev(qproc->rproc, &qproc->smd_subdev);
+ 	qcom_remove_ssr_subdev(qproc->rproc, &qproc->ssr_subdev);
++
++	q6v5_pds_detach(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
++
+ 	rproc_free(qproc->rproc);
+ 
+ 	return 0;
+@@ -1388,6 +1491,12 @@ static const struct rproc_hexagon_res sdm845_mss = {
+ 			"mnoc_axi",
+ 			NULL
+ 	},
++	.proxy_pd_names = (char*[]){
++			"cx",
++			"mx",
++			"mss",
++			NULL
++	},
+ 	.need_mem_protection = true,
+ 	.has_alt_reset = true,
+ 	.version = MSS_SDM845,
 -- 
 2.18.0
 
