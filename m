@@ -7,49 +7,51 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 323AFC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:23:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59F44C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:23:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00DEB20879
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:23:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D9F320879
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:23:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548170624;
-	bh=1nOozEsSUz8dyn0aFTKCY+ImkAwlfJO+S17q+cBSbzE=;
+	s=default; t=1548170627;
+	bh=emveA2b0EWOTR34gvt+EiX2+vy7ONpGQepNxROGKDYc=;
 	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=REhN3wrTXU53y0B/43ND1weLltg4RhUYvWfHvFmd9jIuMp7hAhYKxgT229gPj4Uyf
-	 SzDwXepR2udrCImnSRFZJVs7JumB5EwaMVbOnpliVnQpdXnRZdWQ7MYC69zot2hc5y
-	 bjWdHyhes7V+k5ZoziIGKxAb6y7caWWq95TVMtrc=
+	b=SO3Iujh6b/DFT3wqbEBJCbCK23a4+GleJ3hPEP3b2Q7aEjCS5F/xumoTh4av+/Vyp
+	 2iHwJdlJmLlAEPfgGaYCNL3d3WRnhnWWcztpm7EbzYuooc3xaprfwgfW/GEUf3h7bA
+	 dYeyn8RBu8MxULve8U8/CdP/YosgBmnDqkPiYSW0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729444AbfAVPXm (ORCPT
+        id S1729912AbfAVPXp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 10:23:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36914 "EHLO mail.kernel.org"
+        Tue, 22 Jan 2019 10:23:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37000 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729882AbfAVPXj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 10:23:39 -0500
+        id S1729447AbfAVPXm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 10:23:42 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 92E9F217D8;
-        Tue, 22 Jan 2019 15:23:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BFCD4217F5;
+        Tue, 22 Jan 2019 15:23:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548170619;
-        bh=1nOozEsSUz8dyn0aFTKCY+ImkAwlfJO+S17q+cBSbzE=;
+        s=default; t=1548170622;
+        bh=emveA2b0EWOTR34gvt+EiX2+vy7ONpGQepNxROGKDYc=;
         h=From:To:Cc:Subject:Date:From;
-        b=rVXoy3sTFc0lLqOHDZwObAk3X5j3/zho1lOxRAaw+Nce4QUt6mHtIx+lyR6dCTSg6
-         T++P1+qvmXzKZRqCKSX2Zoz0aCJj7mSH3QVuHLQxnWleUzV/wuIP9U6oipgv3Rww0/
-         hLSuMw2mz+Qwo5Fuc2QNVogmgORT/Zu8/ww6QAoc=
+        b=maLD7vJSvLjtxI4G8XZCv7i1/KwB0fe/Q1/gqGbS1Tzbv0tC0IkNxRGS/5G9bcjYo
+         gJx2W2ivlU6zZ6Mv41R3Bbufc397fqI5wYJW+E+AZ3L6jweUnruFDl+ztBKIja0Ixt
+         ERCujUqNBXKez+h7TxLqEyy7I3DKFFIyQ2wRICmY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Kees Cook <keescook@chromium.org>, Josef Bacik <jbacik@fb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        zhong jiang <zhongjiang@huawei.com>
-Subject: [PATCH] fail_function: no need to check return value of debugfs_create functions
-Date:   Tue, 22 Jan 2019 16:21:44 +0100
-Message-Id: <20190122152151.16139-45-gregkh@linuxfoundation.org>
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH] kcov: no need to check return value of debugfs_create functions
+Date:   Tue, 22 Jan 2019 16:21:45 +0100
+Message-Id: <20190122152151.16139-46-gregkh@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -62,75 +64,35 @@ When calling debugfs functions, there is no need to ever check the
 return value.  The function can work or not, but the code logic should
 never do something different based on this.
 
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Josef Bacik <jbacik@fb.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-Cc: zhong jiang <zhongjiang@huawei.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Anders Roxell <anders.roxell@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/fail_function.c | 23 +++++------------------
- 1 file changed, 5 insertions(+), 18 deletions(-)
+ kernel/kcov.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/fail_function.c b/kernel/fail_function.c
-index 17f75b545f66..afc779be5ebb 100644
---- a/kernel/fail_function.c
-+++ b/kernel/fail_function.c
-@@ -152,20 +152,13 @@ static int fei_retval_get(void *data, u64 *val)
- DEFINE_DEBUGFS_ATTRIBUTE(fei_retval_ops, fei_retval_get, fei_retval_set,
- 			 "%llx\n");
- 
--static int fei_debugfs_add_attr(struct fei_attr *attr)
-+static void fei_debugfs_add_attr(struct fei_attr *attr)
- {
- 	struct dentry *dir;
- 
- 	dir = debugfs_create_dir(attr->kp.symbol_name, fei_debugfs_dir);
--	if (!dir)
--		return -ENOMEM;
--
--	if (!debugfs_create_file("retval", 0600, dir, attr, &fei_retval_ops)) {
--		debugfs_remove_recursive(dir);
+diff --git a/kernel/kcov.c b/kernel/kcov.c
+index c2277dbdbfb1..5b0bb281c1a0 100644
+--- a/kernel/kcov.c
++++ b/kernel/kcov.c
+@@ -444,10 +444,8 @@ static int __init kcov_init(void)
+ 	 * there is no need to protect it against removal races. The
+ 	 * use of debugfs_create_file_unsafe() is actually safe here.
+ 	 */
+-	if (!debugfs_create_file_unsafe("kcov", 0600, NULL, NULL, &kcov_fops)) {
+-		pr_err("failed to create kcov in debugfs\n");
 -		return -ENOMEM;
 -	}
- 
--	return 0;
-+	debugfs_create_file("retval", 0600, dir, attr, &fei_retval_ops);
- }
- 
- static void fei_debugfs_remove_attr(struct fei_attr *attr)
-@@ -306,7 +299,7 @@ static ssize_t fei_write(struct file *file, const char __user *buffer,
- 
- 	ret = register_kprobe(&attr->kp);
- 	if (!ret)
--		ret = fei_debugfs_add_attr(attr);
-+		fei_debugfs_add_attr(attr);
- 	if (ret < 0)
- 		fei_attr_remove(attr);
- 	else {
-@@ -337,19 +330,13 @@ static int __init fei_debugfs_init(void)
- 		return PTR_ERR(dir);
- 
- 	/* injectable attribute is just a symlink of error_inject/list */
--	if (!debugfs_create_symlink("injectable", dir,
--				    "../error_injection/list"))
--		goto error;
-+	debugfs_create_symlink("injectable", dir, "../error_injection/list");
- 
--	if (!debugfs_create_file("inject", 0600, dir, NULL, &fei_ops))
--		goto error;
-+	debugfs_create_file("inject", 0600, dir, NULL, &fei_ops);
- 
- 	fei_debugfs_dir = dir;
- 
++	debugfs_create_file_unsafe("kcov", 0600, NULL, NULL, &kcov_fops);
++
  	return 0;
--error:
--	debugfs_remove_recursive(dir);
--	return -ENOMEM;
  }
  
- late_initcall(fei_debugfs_init);
 -- 
 2.20.1
 
