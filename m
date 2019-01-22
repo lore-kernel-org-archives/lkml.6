@@ -2,120 +2,99 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFD80C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:22:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84377C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:23:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7219217FA
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:22:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5822C21019
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:23:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728583AbfAVNWb (ORCPT
+        id S1728447AbfAVNXi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 08:22:31 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40202 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728406AbfAVNWa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 08:22:30 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 29C18AFF7;
-        Tue, 22 Jan 2019 13:22:29 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id C8F101E3E20; Tue, 22 Jan 2019 14:22:28 +0100 (CET)
-Date:   Tue, 22 Jan 2019 14:22:28 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Kevin Weidemann <kwe-lnx@postn.eu>
-Cc:     Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
-Subject: Re: udf: Prevent write-unsupported filesystem to be remounted
- read-write
-Message-ID: <20190122132228.GF13149@quack2.suse.cz>
-References: <124cc6ea-ca79-20f2-651e-c2f909729ac0@gmx.de>
- <8cf39b7c-505b-91e6-849d-e66ba980042f@postn.eu>
- <20190114103011.GD13316@quack2.suse.cz>
+        Tue, 22 Jan 2019 08:23:38 -0500
+Received: from mga02.intel.com ([134.134.136.20]:2638 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728215AbfAVNXh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 08:23:37 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jan 2019 05:23:36 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,506,1539673200"; 
+   d="scan'208";a="140294381"
+Received: from kuha.fi.intel.com ([10.237.72.189])
+  by fmsmga001.fm.intel.com with SMTP; 22 Jan 2019 05:23:33 -0800
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 22 Jan 2019 15:23:33 +0200
+Date:   Tue, 22 Jan 2019 15:23:33 +0200
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Jun Li <lijun.kernel@gmail.com>
+Cc:     Heiko Stuebner <heiko@sntech.de>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Hans de Goede <hdegoede@redhat.com>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 3/5] usb: roles: Find the muxes by also matching
+ against the device node
+Message-ID: <20190122132333.GC22960@kuha.fi.intel.com>
+References: <20181024150525.11552-1-heikki.krogerus@linux.intel.com>
+ <20181024150525.11552-4-heikki.krogerus@linux.intel.com>
+ <CAKgpwJVaOrZaPOZrfeDiym=P=uZSbG1Aw5T0xayuPMFxG-3cyQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190114103011.GD13316@quack2.suse.cz>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKgpwJVaOrZaPOZrfeDiym=P=uZSbG1Aw5T0xayuPMFxG-3cyQ@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-On Mon 14-01-19 11:30:11, Jan Kara wrote:
-> On Mon 14-01-19 01:33:30, Kevin Weidemann wrote:
-> > this is RE the patch 8515b9edf7a0c9dcf1ad218ccc783700db217336 (Upstream
-> > commit a9ad01bc759df79b0012f43ee52164391e31cd96) in 4.18.20.
-> > 
-> > I have an issue with UDF. I used to be able to create a UDF fs in a way
-> > that is very similar to this:
-> > 
-> > `# mkudffs --label=.... -m dvd -b 512 /dev/mapper/cryptdev1`
-> > 
-> > I used to proceed mounting it, noticing it got mounted as readonly
-> > (because the accesstype of the udf fs is readonly (as decided per -m
-> > dvd)), so I remounted it as rw and then was able to fill it with data.[1]
-> > 
-> > Now, this doesn't work anymore since the last time I did that. I figured
-> > out it must have to do with the commit mentioned above.  All I get now,
-> > during a remount-as-rw attempt, is:
-> > `cannot remount /dev/mapper/cryptdev1 read-write, is write-protected`.
-> > 
-> > I am not sure if this counts as a regression, because I see the point in
-> > not only auto-mounting such filesystems as readonly, but also preventing
-> > remounting as rw, however it breaks my use case.
-> > 
-> > However, I noticed the following, too:
-> > case A) when having a "readonly udf" on a readwrite device, the
-> > filesystem mounts as readonly (old behavior) and also prevents remounting
-> > as rw (new behavior)
+On Tue, Jan 22, 2019 at 01:40:02PM +0800, Jun Li wrote:
+> Hi Heikki,
+> Heikki Krogerus <heikki.krogerus@linux.intel.com> 于2018年10月24日周三 下午11:06写道：
+> >
+> > When the connections are defined in firmware, struct
+> > device_connection will have the fwnode member pointing to
+> > the device node (struct fwnode_handle) of the requested
+> > device, and the endpoint will not be used at all in that
+> > case.
+> >
+> > Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> > ---
+> >  drivers/usb/common/roles.c | 16 +++++++++++++---
+> >  1 file changed, 13 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/usb/common/roles.c b/drivers/usb/common/roles.c
+> > index 99116af07f1d..bb52e006d203 100644
+> > --- a/drivers/usb/common/roles.c
+> > +++ b/drivers/usb/common/roles.c
+> > @@ -8,6 +8,7 @@
+> >   */
+> >
+> >  #include <linux/usb/role.h>
+> > +#include <linux/property.h>
+> >  #include <linux/device.h>
+> >  #include <linux/module.h>
+> >  #include <linux/mutex.h>
+> > @@ -84,7 +85,12 @@ enum usb_role usb_role_switch_get_role(struct usb_role_switch *sw)
+> >  }
+> >  EXPORT_SYMBOL_GPL(usb_role_switch_get_role);
+> >
+> > -static int __switch_match(struct device *dev, const void *name)
+> > +static int switch_fwnode_match(struct device *dev, const void *fwnode)
+> > +{
+> > +       return dev_fwnode(dev) == fwnode;
 > 
-> This works as intended.
-> 
-> > case B) when having a "readwrite udf" on a readonly device, the
-> > filesystem mounts as readwrite (!), but the writes end up being invisibly
-> > discarded
-> 
-> That's a bug. I'll fix it. Thanks for reporting this!
+> Seems this should be dev_fwnode(dev->parent) == fwnode;
+> The role switch is the child dev of the caller of usb_role_switch_register().
 
-I have checked this and it works for me as designed:
-(none):~# mount -t udf /dev/ubdb /mnt
-mount: block device /dev/ubdb is write-protected, mounting read-only
-UDF-fs: warning (device ubdb): udf_load_vrs: No anchor found
-UDF-fs: Scanning with blocksize 512 failed
-UDF-fs: warning (device ubdb): udf_load_vrs: No anchor found
-UDF-fs: Scanning with blocksize 1024 failed
-UDF-fs: INFO Mounting volume 'LinuxUDF', timestamp 2017/01/20 10:17 (1000)
+Indeed.
 
-So if the block device is read-only, you will get only read only mount.
-Also remount read-write gets prevented:
+thanks,
 
-(none):~# mount -o remount,rw /mnt/
-mount: block device /dev/ubdb is write-protected, mounting read-only
-
-Or with more recent util-linux (2.31.1):
-(none):/ # mount -t udf /dev/ubdb /mnt
-UDF-fs: warning (device ubdb): udf_load_vrs: No anchor found
-UDF-fs: Scanning with blocksize 512 failed
-UDF-fs: warning (device ubdb): udf_load_vrs: No anchor found
-UDF-fs: Scanning with blocksize 1024 failed
-UDF-fs: INFO Mounting volume 'LinuxUDF', timestamp 2017/01/20 10:17 (1000)
-mount: /mnt: WARNING: device write-protected, mounted read-only.
-
-and remount:
-(none):/ # mount -o remount,rw /mnt
-mount: /mnt: cannot remount /dev/ubdb read-write, is write-protected.
-
-The kernel is 5.0-rc3. What kernel were you testing with?
-
-								Honza
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+heikki
