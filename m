@@ -2,198 +2,220 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BECBC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:37:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2486AC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:37:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09AF72084C
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:37:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBE912084C
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:37:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727811AbfAVKhR (ORCPT
+        id S1727826AbfAVKhq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 05:37:17 -0500
-Received: from smtp.nue.novell.com ([195.135.221.5]:49150 "EHLO
+        Tue, 22 Jan 2019 05:37:46 -0500
+Received: from smtp.nue.novell.com ([195.135.221.5]:45578 "EHLO
         smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727026AbfAVKhQ (ORCPT
+        with ESMTP id S1727026AbfAVKhp (ORCPT
         <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Tue, 22 Jan 2019 05:37:16 -0500
+        Tue, 22 Jan 2019 05:37:45 -0500
 Received: from emea4-mta.ukb.novell.com ([10.120.13.87])
-        by smtp.nue.novell.com with ESMTP (TLS encrypted); Tue, 22 Jan 2019 11:37:15 +0100
+        by smtp.nue.novell.com with ESMTP (TLS encrypted); Tue, 22 Jan 2019 11:37:44 +0100
 Received: from d104.suse.de (nwb-a10-snat.microfocus.com [10.120.13.202])
-        by emea4-mta.ukb.novell.com with ESMTP (NOT encrypted); Tue, 22 Jan 2019 10:37:11 +0000
+        by emea4-mta.ukb.novell.com with ESMTP (NOT encrypted); Tue, 22 Jan 2019 10:37:18 +0000
 From:   Oscar Salvador <osalvador@suse.de>
 To:     linux-mm@kvack.org
 Cc:     mhocko@suse.com, dan.j.williams@intel.com,
         Pavel.Tatashin@microsoft.com, david@redhat.com,
         linux-kernel@vger.kernel.org, dave.hansen@intel.com,
         Oscar Salvador <osalvador@suse.de>
-Subject: [RFC PATCH v2 0/4] mm, memory_hotplug: allocate memmap from hotadded memory
-Date:   Tue, 22 Jan 2019 11:37:04 +0100
-Message-Id: <20190122103708.11043-1-osalvador@suse.de>
+Subject: [RFC PATCH v2 1/4] mm, memory_hotplug: cleanup memory offline path
+Date:   Tue, 22 Jan 2019 11:37:05 +0100
+Message-Id: <20190122103708.11043-2-osalvador@suse.de>
 X-Mailer: git-send-email 2.13.7
+In-Reply-To: <20190122103708.11043-1-osalvador@suse.de>
+References: <20190122103708.11043-1-osalvador@suse.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+From: Michal Hocko <mhocko@suse.com>
 
-this is the v2 of the first RFC I sent back then in October [1].
-In this new version I tried to reduce the complexity as much as possible,
-plus some clean ups.
+check_pages_isolated_cb currently accounts the whole pfn range as being
+offlined if test_pages_isolated suceeds on the range. This is based on
+the assumption that all pages in the range are freed which is currently
+the case in most cases but it won't be with later changes. I haven't
+double checked but if the range contains invalid pfns we could
+theoretically over account and underflow zone's managed pages.
 
-[Testing]
+Move the offlined pages counting to offline_isolated_pages_cb and
+rely on __offline_isolated_pages to return the correct value.
+check_pages_isolated_cb will still do it's primary job and check the pfn
+range.
 
-I have tested it on "x86_64" (small/big memblocks) and on "powerpc".
-On both architectures hot-add/hot-remove online/offline operations
-worked as expected using vmemmap pages, I have not seen any issues so far.
-I wanted to try it out on Hyper-V/Xen, but I did not manage to.
-I plan to do so along this week (if time allows).
-I would also like to test it on arm64, but I am not sure I can grab
-an arm64 box anytime soon.
+While we are at it remove check_pages_isolated and offline_isolated_pages
+and use directly walk_system_ram_range as do in online_pages.
 
-[Coverletter]:
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+Signed-off-by: Oscar Salvador <osalvador@suse.de>
+---
+ include/linux/memory_hotplug.h |  2 +-
+ mm/memory_hotplug.c            | 45 +++++++++++-------------------------------
+ mm/page_alloc.c                | 11 +++++++++--
+ 3 files changed, 22 insertions(+), 36 deletions(-)
 
-This is another step to make the memory hotplug more usable. The primary
-goal of this patchset is to reduce memory overhead of the hot added
-memory (at least for SPARSE_VMEMMAP memory model). The current way we use
-to populate memmap (struct page array) has two main drawbacks:
-
-a) it consumes an additional memory until the hotadded memory itself is
-   onlined and
-b) memmap might end up on a different numa node which is especially true
-   for movable_node configuration.
-
-a) is problem especially for memory hotplug based memory "ballooning"
-   solutions when the delay between physical memory hotplug and the
-   onlining can lead to OOM and that led to introduction of hacks like auto
-   onlining (see 31bc3858ea3e ("memory-hotplug: add automatic onlining
-   policy for the newly added memory")).
-
-b) can have performance drawbacks.
-
-I have also seen hot-add operations failing on powerpc due to the fact
-that we try to use order-8 pages when populating the memmap array.
-Given 64KB base pagesize, that is 16MB.
-If we run out of those, we just fail the operation and we cannot add
-more memory.
-We could fallback to base pages as x86_64 does, but we can do better.
-
-One way to mitigate all these issues is to simply allocate memmap array
-(which is the largest memory footprint of the physical memory hotplug)
-from the hotadded memory itself. VMEMMAP memory model allows us to map
-any pfn range so the memory doesn't need to be online to be usable
-for the array. See patch 3 for more details. In short I am reusing an
-existing vmem_altmap which wants to achieve the same thing for nvdim
-device memory.
-
-There is also one potential drawback, though. If somebody uses memory
-hotplug for 1G (gigantic) hugetlb pages then this scheme will not work
-for them obviously because each memory block will contain reserved
-area. Large x86 machines will use 2G memblocks so at least one 1G page
-will be available but this is still not 2G...
-
-I am not really sure somebody does that and how reliable that can work
-actually. Nevertheless, I _believe_ that onlining more memory into
-virtual machines is much more common usecase. Anyway if there ever is a
-strong demand for such a usecase we have basically 3 options a) enlarge
-memory blocks even more b) enhance altmap allocation strategy and reuse
-low memory sections to host memmaps of other sections on the same NUMA
-node c) have the memmap allocation strategy configurable to fallback to
-the current allocation.
+diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
+index d56bfbacf7d6..1a230dde6027 100644
+--- a/include/linux/memory_hotplug.h
++++ b/include/linux/memory_hotplug.h
+@@ -85,7 +85,7 @@ extern int add_one_highpage(struct page *page, int pfn, int bad_ppro);
+ extern int online_pages(unsigned long, unsigned long, int);
+ extern int test_pages_in_a_zone(unsigned long start_pfn, unsigned long end_pfn,
+ 	unsigned long *valid_start, unsigned long *valid_end);
+-extern void __offline_isolated_pages(unsigned long, unsigned long);
++extern unsigned long __offline_isolated_pages(unsigned long, unsigned long);
  
-[Overall design]:
-
-Let us say we hot-add 2GB of memory on a x86_64 (memblock size = 128M).
-That is:
-
- - 16 sections
- - 524288 pages
- - 8192 vmemmap pages (out of those 524288. We spend 512 pages for each section)
-
- The range of pages is: 0xffffea0004000000 - 0xffffea0006000000
- The vmemmap range is:  0xffffea0004000000 - 0xffffea0004080000
-
- 0xffffea0004000000 is the head vmemmap page (first page), while all the others
- are "tails".
-
- We keep the following information in it:
-
- - Head page:
-   - head->_refcount: number of sections
-   - head->private :  number of vmemmap pages
- - Tail page:
-   - tail->freelist : pointer to the head
-
-This is done because it eases the work in cases where we have to compute the
-number of vmemmap pages to know how much do we have to skip etc, and to keep
-the right accounting to present_pages.
-
-When we want to hot-remove the range, we need to be careful because the first
-pages of that range, are used for the memmap maping, so if we remove those
-first, we would blow up while accessing the others later on.
-For that reason we keep the number of sections in head->_refcount, to know how
-much do we have to defer the free up.
-
-Since in a hot-remove operation, sections are being removed sequentially, the
-approach taken here is that every time we hit free_section_memmap(), we decrease
-the refcount of the head.
-When it reaches 0, we know that we hit the last section, so we call
-vmemmap_free() for the whole memory-range in backwards, so we make sure that
-the pages used for the mapping will be latest to be freed up.
-
-The accounting is as follows:
-
- Vmemmap pages are charged to spanned/present_paged, but not to manages_pages.
-
-I yet have to check a couple of things like creating an accounting item
-like VMEMMAP_PAGES to show in /proc/meminfo to ease to spot the memory that
-went in there, testing Hyper-V/Xen to see how they react to the fact that
-we are using the beginning of the memory-range for our own purposes, and to
-check the thing about gigantic pages + hotplug.
-I also have to check that there is no compilation/runtime errors when
-CONFIG_SPARSEMEM but !CONFIG_SPARSEMEM_VMEMMAP.
-But before that, I would like to get people's feedback about the overall
-design, and ideas/suggestions.
-
-
-[1] https://patchwork.kernel.org/cover/10685835/
-
-Michal Hocko (3):
-  mm, memory_hotplug: cleanup memory offline path
-  mm, memory_hotplug: provide a more generic restrictions for memory
-    hotplug
-  mm, sparse: rename kmalloc_section_memmap, __kfree_section_memmap
-
-Oscar Salvador (1):
-  mm, memory_hotplug: allocate memmap from the added memory range for
-    sparse-vmemmap
-
- arch/arm64/mm/mmu.c            |  10 ++-
- arch/ia64/mm/init.c            |   5 +-
- arch/powerpc/mm/init_64.c      |   7 ++
- arch/powerpc/mm/mem.c          |   6 +-
- arch/s390/mm/init.c            |  12 ++-
- arch/sh/mm/init.c              |   6 +-
- arch/x86/mm/init_32.c          |   6 +-
- arch/x86/mm/init_64.c          |  20 +++--
- drivers/hv/hv_balloon.c        |   1 +
- drivers/xen/balloon.c          |   1 +
- include/linux/memory_hotplug.h |  42 ++++++++--
- include/linux/memremap.h       |   2 +-
- include/linux/page-flags.h     |  23 +++++
- kernel/memremap.c              |   9 +-
- mm/compaction.c                |   8 ++
- mm/memory_hotplug.c            | 186 +++++++++++++++++++++++++++++------------
- mm/page_alloc.c                |  47 ++++++++++-
- mm/page_isolation.c            |  13 +++
- mm/sparse.c                    | 124 +++++++++++++++++++++++++--
- mm/util.c                      |   2 +
- 20 files changed, 431 insertions(+), 99 deletions(-)
-
+ typedef int (*online_page_callback_t)(struct page *page, unsigned int order);
+ 
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index ec22c86d9f89..6efa44087b37 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -1451,17 +1451,12 @@ static int
+ offline_isolated_pages_cb(unsigned long start, unsigned long nr_pages,
+ 			void *data)
+ {
+-	__offline_isolated_pages(start, start + nr_pages);
++	unsigned long offlined_pages;
++	offlined_pages = __offline_isolated_pages(start, start + nr_pages);
++	*(unsigned long *)data += offlined_pages;
+ 	return 0;
+ }
+ 
+-static void
+-offline_isolated_pages(unsigned long start_pfn, unsigned long end_pfn)
+-{
+-	walk_system_ram_range(start_pfn, end_pfn - start_pfn, NULL,
+-				offline_isolated_pages_cb);
+-}
+-
+ /*
+  * Check all pages in range, recoreded as memory resource, are isolated.
+  */
+@@ -1469,26 +1464,7 @@ static int
+ check_pages_isolated_cb(unsigned long start_pfn, unsigned long nr_pages,
+ 			void *data)
+ {
+-	int ret;
+-	long offlined = *(long *)data;
+-	ret = test_pages_isolated(start_pfn, start_pfn + nr_pages, true);
+-	offlined = nr_pages;
+-	if (!ret)
+-		*(long *)data += offlined;
+-	return ret;
+-}
+-
+-static long
+-check_pages_isolated(unsigned long start_pfn, unsigned long end_pfn)
+-{
+-	long offlined = 0;
+-	int ret;
+-
+-	ret = walk_system_ram_range(start_pfn, end_pfn - start_pfn, &offlined,
+-			check_pages_isolated_cb);
+-	if (ret < 0)
+-		offlined = (long)ret;
+-	return offlined;
++	return test_pages_isolated(start_pfn, start_pfn + nr_pages, true);
+ }
+ 
+ static int __init cmdline_parse_movable_node(char *p)
+@@ -1573,7 +1549,7 @@ static int __ref __offline_pages(unsigned long start_pfn,
+ 		  unsigned long end_pfn)
+ {
+ 	unsigned long pfn, nr_pages;
+-	long offlined_pages;
++	unsigned long offlined_pages = 0;
+ 	int ret, node;
+ 	unsigned long flags;
+ 	unsigned long valid_start, valid_end;
+@@ -1650,13 +1626,16 @@ static int __ref __offline_pages(unsigned long start_pfn,
+ 			goto failed_removal_isolated;
+ 		}
+ 		/* check again */
+-		offlined_pages = check_pages_isolated(start_pfn, end_pfn);
+-	} while (offlined_pages < 0);
++		ret = walk_system_ram_range(start_pfn, end_pfn - start_pfn, NULL,
++							check_pages_isolated_cb);
++	} while (ret);
+ 
+-	pr_info("Offlined Pages %ld\n", offlined_pages);
+ 	/* Ok, all of our target is isolated.
+ 	   We cannot do rollback at this point. */
+-	offline_isolated_pages(start_pfn, end_pfn);
++	walk_system_ram_range(start_pfn, end_pfn - start_pfn, &offlined_pages,
++						offline_isolated_pages_cb);
++
++	pr_info("Offlined Pages %ld\n", offlined_pages);
+ 	/* reset pagetype flags and makes migrate type to be MOVABLE */
+ 	undo_isolate_page_range(start_pfn, end_pfn, MIGRATE_MOVABLE);
+ 	/* removal success */
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index d7a521971a05..cad7468a0f20 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -8479,7 +8479,7 @@ void zone_pcp_reset(struct zone *zone)
+  * All pages in the range must be in a single zone and isolated
+  * before calling this.
+  */
+-void
++unsigned long
+ __offline_isolated_pages(unsigned long start_pfn, unsigned long end_pfn)
+ {
+ 	struct page *page;
+@@ -8487,12 +8487,15 @@ __offline_isolated_pages(unsigned long start_pfn, unsigned long end_pfn)
+ 	unsigned int order, i;
+ 	unsigned long pfn;
+ 	unsigned long flags;
++	unsigned long offlined_pages = 0;
++
+ 	/* find the first valid pfn */
+ 	for (pfn = start_pfn; pfn < end_pfn; pfn++)
+ 		if (pfn_valid(pfn))
+ 			break;
+ 	if (pfn == end_pfn)
+-		return;
++		return offlined_pages;
++
+ 	offline_mem_sections(pfn, end_pfn);
+ 	zone = page_zone(pfn_to_page(pfn));
+ 	spin_lock_irqsave(&zone->lock, flags);
+@@ -8510,12 +8513,14 @@ __offline_isolated_pages(unsigned long start_pfn, unsigned long end_pfn)
+ 		if (unlikely(!PageBuddy(page) && PageHWPoison(page))) {
+ 			pfn++;
+ 			SetPageReserved(page);
++			offlined_pages++;
+ 			continue;
+ 		}
+ 
+ 		BUG_ON(page_count(page));
+ 		BUG_ON(!PageBuddy(page));
+ 		order = page_order(page);
++		offlined_pages += 1 << order;
+ #ifdef CONFIG_DEBUG_VM
+ 		pr_info("remove from free list %lx %d %lx\n",
+ 			pfn, 1 << order, end_pfn);
+@@ -8528,6 +8533,8 @@ __offline_isolated_pages(unsigned long start_pfn, unsigned long end_pfn)
+ 		pfn += (1 << order);
+ 	}
+ 	spin_unlock_irqrestore(&zone->lock, flags);
++
++	return offlined_pages;
+ }
+ #endif
+ 
 -- 
 2.13.7
 
