@@ -2,87 +2,117 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8495C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:15:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70ED2C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:18:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B18D720870
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:15:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F03A20870
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:18:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XJkyOJhq";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="kBAFTqyL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729085AbfAVQP5 (ORCPT
+        id S1729175AbfAVQR7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 11:15:57 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:26998 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728669AbfAVQP5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 11:15:57 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Tue, 22 Jan 2019 11:17:59 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:54760 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728889AbfAVQR6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 11:17:58 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 46AC860740; Tue, 22 Jan 2019 16:17:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548173877;
+        bh=1J2e1Wig3CxLYt+X5PQyl0071E8oRbOPrMdLYtS7NO0=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=XJkyOJhqPtRq9kjdokzPG3RoTxtFQsQGCk5wc0PffGm2nGJ/sagHeWomCwRlBqvPl
+         1YWomTHEDZk0CdSxJxBcJ4oO+0hqwFyI3bnq2+G894/NqmONem4clGwWumMmpApgj/
+         9M4Y0DChnNyAOayuN9a/aobv5BbIvKfDLluMNkhk=
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 07CAA58E33;
-        Tue, 22 Jan 2019 16:15:56 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.163])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 6CA8A5D9C7;
-        Tue, 22 Jan 2019 16:15:52 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Tue, 22 Jan 2019 17:15:55 +0100 (CET)
-Date:   Tue, 22 Jan 2019 17:15:51 +0100
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Dave Hansen <dave.hansen@intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH 05/22] x86/fpu: Remove fpu->initialized usage in
- copy_fpstate_to_sigframe()
-Message-ID: <20190122161551.GB9745@redhat.com>
-References: <20190109114744.10936-1-bigeasy@linutronix.de>
- <20190109114744.10936-6-bigeasy@linutronix.de>
- <20190116193603.GK15409@zn.tnic>
- <20190116224037.xkfnevzkwrck5dtt@linutronix.de>
- <20190117122253.GC5023@zn.tnic>
- <20190118211401.4komqsnvuof7563p@linutronix.de>
- <33f0e144-1eec-b1a1-8858-58f20d5e477d@intel.com>
- <20190121112117.GA32538@redhat.com>
- <20190122134015.GI26587@zn.tnic>
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 93B1F60712;
+        Tue, 22 Jan 2019 16:17:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548173876;
+        bh=1J2e1Wig3CxLYt+X5PQyl0071E8oRbOPrMdLYtS7NO0=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=kBAFTqyLWr0KtWHeReOA/wQMKcn6LZK/sFhqJvPIFGwy/heDcipSb9rOzVOqL2Rke
+         ircOJjSzT3GH5dLS2/3vTMPae2E4Q/7l9+5sQgauseP2kxXkPXG8tBx6+qQWhg9AxU
+         VjbTIJOe8fKfP3eyEDywyHtDOxrczzRYBisG/xZs=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 93B1F60712
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     Sinan Kaya <okaya@kernel.org>
+Cc:     Luciano Coelho <luciano.coelho@intel.com>,
+        linux-next@vger.kernel.org,
+        Johannes Berg <johannes.berg@intel.com>,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Intel Linux Wireless <linuxwifi@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [for next][PATCH] iwlwifi: Fix unmet dependency error for IWLWIFI_LEDS
+References: <20190121233102.13705-1-okaya@kernel.org>
+        <ef50896ee3ecc895c72a9fbdedca65ac6433fef2.camel@intel.com>
+        <d00c99a7-423a-9a70-5f50-f95c5d044f85@kernel.org>
+Date:   Tue, 22 Jan 2019 18:17:52 +0200
+In-Reply-To: <d00c99a7-423a-9a70-5f50-f95c5d044f85@kernel.org> (Sinan Kaya's
+        message of "Tue, 22 Jan 2019 11:12:06 -0500")
+Message-ID: <87munsmztb.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190122134015.GI26587@zn.tnic>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 22 Jan 2019 16:15:57 +0000 (UTC)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/22, Borislav Petkov wrote:
+Sinan Kaya <okaya@kernel.org> writes:
+
+> On 1/22/2019 5:15 AM, Luciano Coelho wrote:
+>> On Mon, 2019-01-21 at 23:31 +0000, Sinan Kaya wrote:
+>>> There is an unresolved dependency as follows:
+>>>
+>>> IWLWIFI_LEDS selects MAC80211_LEDS.
+>>> MAC80211_LEDS depends on MAC80211.
+>>>
+>>> It is possible to choose MAC80211_LEDS (y) but not choose MAC80211
+>>> (n)
+>>>
+>>> WARNING: unmet direct dependencies detected for MAC80211_LEDS
+>>>    Depends on [n]: NET [=y] && WIRELESS [=y] && MAC80211 [=n] &&
+>>> LEDS_CLASS [=y]
+>>>    Selected by [y]:
+>>>    - IWLWIFI_LEDS [=y] && NETDEVICES [=y] && WLAN [=y] &&
+>>> WLAN_VENDOR_INTEL [=y] && IWLWIFI [=y] && (LEDS_CLASS [=y]=y ||
+>>> LEDS_CLASS [=y]=IWLWIFI [=y])
+>>>
+>>> Move the MAC80211 dependency into IWLWIFI_LEDS so that we avoid this
+>>> configuration.
+>>>
+>>> Signed-off-by: Sinan Kaya <okaya@kernel.org>
+>>> ---
+>>
+>> Thanks for your patch! But we already have another patch to fix this
+>> issued queued for 5.0-rc4 (it's currently in wireless-drivers.git):
+>>
+>> https://patchwork.kernel.org/patch/10762079/
 >
-> On Mon, Jan 21, 2019 at 12:21:17PM +0100, Oleg Nesterov wrote:
-> > And in any case I do not understand the idea to use the second
-> > in-kernel struct fpu. A signal handler can be interrupted by another
-> > signal, this will need to save/restore the FPU state again.
->
-> Well, we were just speculating whether doing that would simplify the
-> code around get_sigframe() et al. But if that is an ABI, then we can't
-> really touch it.
->
-> Btw, where is that whole ABI deal about saving FPU regs on the user
-> signal stack documented?
+> Is it possible to queue this up soon? There is an effort to clean up
+> linux-next against randconfig failures and this issue showed up there.
 
-I don't know... tried to google, found nothing.
+It already should be in linux-next:
 
-the comment in /usr/include/sys/ucontext.h mentions SysV/i386 ABI + historical
-reasons, this didn't help.
+https://git.kernel.org/pub/scm/linux/kernel/git/kvalo/wireless-drivers.git/commit/?id=ec5aecc0b227f5509d25853537f989ca303e2be1
 
-Oleg.
+But it's not in Linus' tree, yet.
 
+-- 
+Kalle Valo
