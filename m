@@ -2,123 +2,143 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8798BC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:43:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44EEFC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:44:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53B5B21726
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:43:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F0B420844
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:44:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728974AbfAVPn2 (ORCPT
+        id S1729005AbfAVPoU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 10:43:28 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59982 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728633AbfAVPn2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 10:43:28 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0MFe2eS122333
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 10:43:26 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2q65adjfav-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 10:43:26 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 22 Jan 2019 15:43:24 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 22 Jan 2019 15:43:22 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0MFhLDL8192264
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 22 Jan 2019 15:43:21 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 19FE64203F;
-        Tue, 22 Jan 2019 15:43:21 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EECF242041;
-        Tue, 22 Jan 2019 15:43:19 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.91.23])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 22 Jan 2019 15:43:19 +0000 (GMT)
-Subject: Re: [PATCH v2] ima: define ima_post_create_tmpfile() hook and add
- missing call
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Goldwyn Rodrigues <rgoldwyn@suse.de>,
-        Ignaz Forster <iforster@suse.de>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Fabian Vogt <fvogt@suse.de>, Al Viro <viro@zeniv.linux.org.uk>
-Date:   Tue, 22 Jan 2019 10:43:09 -0500
-In-Reply-To: <CAOQ4uxjNhNFfFidjzi-8ywQPi54LdzT=LxwdSaX+H-ERS6Qwog@mail.gmail.com>
-References: <1545158873.4206.86.camel@linux.ibm.com>
-         <20190117213421.ggasuc263dpqh46c@merlin>
-         <1548072003.3782.24.camel@linux.ibm.com>
-         <CAOQ4uxjNhNFfFidjzi-8ywQPi54LdzT=LxwdSaX+H-ERS6Qwog@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19012215-0020-0000-0000-00000309E46C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012215-0021-0000-0000-0000215B1A49
-Message-Id: <1548171789.4038.6.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-22_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901220122
+        Tue, 22 Jan 2019 10:44:20 -0500
+Received: from smtp.nue.novell.com ([195.135.221.5]:47967 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728633AbfAVPoT (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Tue, 22 Jan 2019 10:44:19 -0500
+Received: from emea4-mta.ukb.novell.com ([10.120.13.87])
+        by smtp.nue.novell.com with ESMTP (TLS encrypted); Tue, 22 Jan 2019 16:44:18 +0100
+Received: from d104.suse.de (nwb-a10-snat.microfocus.com [10.120.13.201])
+        by emea4-mta.ukb.novell.com with ESMTP (NOT encrypted); Tue, 22 Jan 2019 15:44:13 +0000
+From:   Oscar Salvador <osalvador@suse.de>
+To:     akpm@linux-foundation.org
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org, mhocko@suse.com,
+        david@redhat.com, Oscar Salvador <osalvador@suse.de>
+Subject: [PATCH] mm,memory_hotplug: Fix scan_movable_pages for gigantic hugepages
+Date:   Tue, 22 Jan 2019 16:44:07 +0100
+Message-Id: <20190122154407.18417-1-osalvador@suse.de>
+X-Mailer: git-send-email 2.13.7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-01-21 at 14:29 +0200, Amir Goldstein wrote:
-> On Mon, Jan 21, 2019 at 2:00 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> >
-> > On Thu, 2019-01-17 at 15:34 -0600, Goldwyn Rodrigues wrote:
-> > > On 13:47 18/12, Mimi Zohar wrote:
-> > > > If tmpfiles can be made persistent, then newly created tmpfiles need to
-> > > > be treated like any other new files in policy.
-> > > >
-> > > > This patch indicates which newly created tmpfiles are in policy, causing
-> > > > the file hash to be calculated on __fput().
-> > >
-> > > Discussed in overlayfs, this would be better if we use this on inode
-> > > and called from vfs_tmpfile() instead of do_tmpfile(). This will cover
-> > > the overlayfs case which uses tmpfiles while performing copy_up().
-> > > The patch is attached.
-> > >
-> > > Here is the updated patch which works for my cases.
-> > > However, it is the the failure case after setting the IMA flags
-> > > I am concerned about, though I don't think that should be as harmful.
-> >
-> > Right.  The new IMA hook allocates memory for storing the flags, which
-> > needs to be cleaned up on failure.  For this reason, the IMA call is
-> > deferred until after the transition from locally freeing memory on
-> > failure to relying on __fput().  In "do_last", the call to IMA is
-> > after "opened"; and in the original version of this patch the call to
-> > IMA is after finish_open().
-> >
-> 
-> Not sure I understand the concern.
-> The integrity context is associated with the inode and will be freed
-> on destroy_inode() no matter which error path is taken.
-> Am I missing something?
+This is the same sort of error we saw in [1].
 
-No, as long as destroy_inode() is called, it should be fine.
+Gigantic hugepages crosses several memblocks, so it can be
+that the page we get in scan_movable_pages() is a page-tail
+belonging to a 1G-hugepage.
+If that happens, page_hstate()->size_to_hstate() will return NULL,
+and we will blow up in hugepage_migration_supported().
 
-thanks,
+The splat is as follows:
 
-Mimi
+kernel: BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
+kernel: #PF error: [normal kernel read fault]
+kernel: PGD 0 P4D 0
+kernel: Oops: 0000 [#1] SMP PTI
+kernel: CPU: 1 PID: 1350 Comm: bash Tainted: G            E     5.0.0-rc1-mm1-1-default+ #27
+kernel: Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.0.0-prebuilt.qemu-project.org 04/01/2014
+kernel: RIP: 0010:__offline_pages+0x6ae/0x900
+kernel: Code: 48 c7 c6 d0 3e a4 81 e8 44 c8 ad ff 49 8b 04 24 bf 00 10 00 00 a9 00 00 01 00 74 09 41 0f b6 4c 24 51 48 d3 e7 e8 42 2a c1 ff <8b> 40 08 83 f8 09 0f 84 b0 fc ff ff 83 f8 12 0f 84 a7 fc ff ff 83
+kernel: RSP: 0018:ffffc900008e3d20 EFLAGS: 00010246
+kernel: RAX: 0000000000000000 RBX: ffffea0000000000 RCX: 0000000000000009
+kernel: RDX: ffffffff825c64f0 RSI: 0000000000001000 RDI: 0000000000001000
+kernel: RBP: ffffc900008e3d68 R08: 0000000000200000 R09: 00000000000001e4
+kernel: R10: 0000000000000058 R11: ffffffff8254a854 R12: ffffea0004200000
+kernel: R13: 0000000000108000 R14: 0000000000110000 R15: 0000000000000000
+kernel: FS:  00007ff172339b80(0000) GS:ffff88803eb00000(0000) knlGS:0000000000000000
+kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+kernel: CR2: 0000000000000008 CR3: 0000000038d78006 CR4: 00000000003606a0
+kernel: DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+kernel: DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+kernel: Call Trace:
+kernel:  ? klist_next+0x79/0xe0
+kernel:  memory_subsys_offline+0x42/0x60
+kernel:  device_offline+0x80/0xa0
+kernel:  state_store+0xab/0xc0
+kernel:  kernfs_fop_write+0x102/0x180
+kernel:  __vfs_write+0x26/0x190
+kernel:  ? set_close_on_exec+0x49/0x70
+kernel:  vfs_write+0xad/0x1b0
+kernel:  ksys_write+0x42/0x90
+kernel:  do_syscall_64+0x5b/0x180
+kernel:  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+kernel: RIP: 0033:0x7ff1719febe4
+kernel: Code: 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 80 00 00 00 00 8b 05 4a fc 2c 00 48 63 ff 85 c0 75 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 f3 c3 66 90 55 53 48 89 d5 48 89 f3 48 83
+kernel: RSP: 002b:00007ffd50b7ddc8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+kernel: RAX: ffffffffffffffda RBX: 0000000000000008 RCX: 00007ff1719febe4
+kernel: RDX: 0000000000000008 RSI: 00005556e9216b20 RDI: 0000000000000001
+kernel: RBP: 00005556e9216b20 R08: 000000000000000a R09: 0000000000000000
+kernel: R10: 000000000000000a R11: 0000000000000246 R12: 0000000000000008
+kernel: R13: 0000000000000001 R14: 00007ff171cca720 R15: 0000000000000008
+kernel: Modules linked in: af_packet(E) xt_tcpudp(E) ipt_REJECT(E) xt_conntrack(E) nf_conntrack(E) nf_defrag_ipv4(E) ip_set(E) nfnetlink(E) ebtable_nat(E) ebtable_broute(E) bridge(E) stp(E) llc(E) iptable_mangle(E) iptable_raw(E) iptable_security(E) ebtable_filter(E) ebtables(E) iptable_filter(E) ip_tables(E) x_tables(E) kvm_intel(E) kvm(E) irqbypass(E) crct10dif_pclmul(E) crc32_pclmul(E) ghash_clmulni_intel(E) bochs_drm(E) ttm(E) aesni_intel(E) drm_kms_helper(E) aes_x86_64(E) crypto_simd(E) cryptd(E) glue_helper(E) drm(E) virtio_net(E) syscopyarea(E) sysfillrect(E) net_failover(E) sysimgblt(E) pcspkr(E) failover(E) i2c_piix4(E) fb_sys_fops(E) parport_pc(E) parport(E) button(E) btrfs(E) libcrc32c(E) xor(E) zstd_decompress(E) zstd_compress(E) xxhash(E) raid6_pq(E) sd_mod(E) ata_generic(E) ata_piix(E) ahci(E) libahci(E) libata(E) crc32c_intel(E) serio_raw(E) virtio_pci(E) virtio_ring(E) virtio(E) sg(E) scsi_mod(E) autofs4(E)
+kernel: CR2: 0000000000000008
+kernel: ---[ end trace bdb71590872849fb ]---
+kernel: RIP: 0010:__offline_pages+0x6ae/0x900
+kernel: Code: 48 c7 c6 d0 3e a4 81 e8 44 c8 ad ff 49 8b 04 24 bf 00 10 00 00 a9 00 00 01 00 74 09 41 0f b6 4c 24 51 48 d3 e7 e8 42 2a c1 ff <8b> 40 08 83 f8 09 0f 84 b0 fc ff ff 83 f8 12 0f 84 a7 fc ff ff 83
+kernel: RSP: 0018:ffffc900008e3d20 EFLAGS: 00010246
+kernel: RAX: 0000000000000000 RBX: ffffea0000000000 RCX: 0000000000000009
+kernel: RDX: ffffffff825c64f0 RSI: 0000000000001000 RDI: 0000000000001000
+kernel: RBP: ffffc900008e3d68 R08: 0000000000200000 R09: 00000000000001e4
+kernel: R10: 0000000000000058 R11: ffffffff8254a854 R12: ffffea0004200000
+kernel: R13: 0000000000108000 R14: 0000000000110000 R15: 0000000000000000
+kernel: FS:  00007ff172339b80(0000) GS:ffff88803eb00000(0000) knlGS:0000000000000000
+kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+kernel: CR2: 0000000000000008 CR3: 0000000038d78006 CR4: 00000000003606a0
+kernel: DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+kernel: DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+Fix this by getting the head page and testing against it.
+
+[1] https://patchwork.kernel.org/patch/10739963/
+
+Signed-off-by: Oscar Salvador <osalvador@suse.de>
+---
+ mm/memory_hotplug.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index ec22c86d9f89..25aee4f04a72 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -1335,12 +1335,17 @@ static unsigned long scan_movable_pages(unsigned long start, unsigned long end)
+ 			if (__PageMovable(page))
+ 				return pfn;
+ 			if (PageHuge(page)) {
+-				if (hugepage_migration_supported(page_hstate(page)) &&
+-				    page_huge_active(page))
++				struct page *head = compound_head(page);
++
++				if (hugepage_migration_supported(page_hstate(head)) &&
++				    page_huge_active(head))
+ 					return pfn;
+-				else
+-					pfn = round_up(pfn + 1,
+-						1 << compound_order(page)) - 1;
++				else {
++					unsigned long skip;
++
++					skip = (1 << compound_order(head)) - (page - head);
++					pfn += skip - 1;
++				}
+ 			}
+ 		}
+ 	}
+-- 
+2.13.7
 
