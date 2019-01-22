@@ -2,78 +2,134 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEA3DC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:57:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFF3FC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:58:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A056B217F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:57:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4518217D8
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:58:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729401AbfAVP5y (ORCPT
+        id S1729275AbfAVP5l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 10:57:54 -0500
-Received: from smtprelay0186.hostedemail.com ([216.40.44.186]:37731 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729311AbfAVP5w (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 10:57:52 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 22A82181D340F;
-        Tue, 22 Jan 2019 15:57:50 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: wine81_615abde1e5925
-X-Filterd-Recvd-Size: 1750
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf02.hostedemail.com (Postfix) with ESMTPA;
-        Tue, 22 Jan 2019 15:57:48 +0000 (UTC)
-Message-ID: <920c0a6fa9db647f17ce94d29397a7ad0bf76e08.camel@perches.com>
-Subject: Re: [PATCH 4/4] sisusb: remove useless macros and compact the code
-From:   Joe Perches <joe@perches.com>
-To:     Jiri Slaby <jslaby@suse.cz>, thomas@winischhofer.net
-Cc:     gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 22 Jan 2019 07:57:47 -0800
-In-Reply-To: <20190122151202.18152-4-jslaby@suse.cz>
-References: <20190122151202.18152-1-jslaby@suse.cz>
-         <20190122151202.18152-4-jslaby@suse.cz>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 22 Jan 2019 10:57:41 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:47574 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729216AbfAVP5h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 10:57:37 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0E23829158;
+        Tue, 22 Jan 2019 15:57:37 +0000 (UTC)
+Received: from jlaw-desktop.bos.redhat.com (dhcp-17-208.bos.redhat.com [10.18.17.208])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A151B1019633;
+        Tue, 22 Jan 2019 15:57:34 +0000 (UTC)
+From:   Joe Lawrence <joe.lawrence@redhat.com>
+To:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        live-patching@vger.kernel.org
+Cc:     Balbir Singh <bsingharora@gmail.com>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicolai Stange <nstange@suse.de>, Torsten Duwe <duwe@lst.de>
+Subject: [PATCH 2/4] powerpc/livepatch: relax reliable stack tracer checks for first-frame
+Date:   Tue, 22 Jan 2019 10:57:22 -0500
+Message-Id: <20190122155724.27557-3-joe.lawrence@redhat.com>
+In-Reply-To: <20190122155724.27557-1-joe.lawrence@redhat.com>
+References: <20190122155724.27557-1-joe.lawrence@redhat.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 22 Jan 2019 15:57:37 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-01-22 at 16:12 +0100, Jiri Slaby wrote:
-> Remove macros which are only wrappers around standard operations. When
-> we expand them into code, we see that sisusbcon_memsetw can simply use
-> memset16 and sisusbcon_putcs can just call memcpy. So make the code
-> compact.
-[]
-> diff --git a/drivers/usb/misc/sisusbvga/sisusb_con.c b/drivers/usb/misc/sisusbvga/sisusb_con.c
-[]
-> @@ -344,13 +337,11 @@ sisusbcon_invert_region(struct vc_data *vc, u16 *p, int count)
->  	 */
->  
->  	while (count--) {
-> -		u16 a = sisusbcon_readw(p);
-> -
-> -		a = ((a) & 0x88ff)        |
-> -		    (((a) & 0x7000) >> 4) |
-> -		    (((a) & 0x0700) << 4);
-> +		u16 a = *p;
->  
-> -		sisusbcon_writew(a, p++);
-> +		*p++ = ((a) & 0x88ff)        |
-> +		       (((a) & 0x7000) >> 4) |
-> +		       (((a) & 0x0700) << 4);
+The bottom-most stack frame (the first to be unwound) may be largely
+uninitialized, for the "Power Architecture 64-Bit ELF V2 ABI" only
+requires its backchain pointer to be set.
 
-You might remove the unnecessary parentheses
-around (a) here too
+The reliable stack tracer should be careful when verifying this frame:
+skip checks on STACK_FRAME_LR_SAVE and STACK_FRAME_MARKER offsets that
+may contain uninitialized residual data.
 
+Fixes: df78d3f61480 ("powerpc/livepatch: Implement reliable stack tracing for the consistency model")
+Signed-off-by: Joe Lawrence <joe.lawrence@redhat.com>
+---
+ arch/powerpc/kernel/stacktrace.c | 32 ++++++++++++++++++++++++--------
+ 1 file changed, 24 insertions(+), 8 deletions(-)
+
+diff --git a/arch/powerpc/kernel/stacktrace.c b/arch/powerpc/kernel/stacktrace.c
+index e2c50b55138f..06688f4d557b 100644
+--- a/arch/powerpc/kernel/stacktrace.c
++++ b/arch/powerpc/kernel/stacktrace.c
+@@ -84,6 +84,12 @@ save_stack_trace_regs(struct pt_regs *regs, struct stack_trace *trace)
+ EXPORT_SYMBOL_GPL(save_stack_trace_regs);
+ 
+ #ifdef CONFIG_HAVE_RELIABLE_STACKTRACE
++/*
++ * This function returns an error if it detects any unreliable features of the
++ * stack.  Otherwise it guarantees that the stack trace is reliable.
++ *
++ * If the task is not 'current', the caller *must* ensure the task is inactive.
++ */
+ int
+ save_stack_trace_tsk_reliable(struct task_struct *tsk,
+ 				struct stack_trace *trace)
+@@ -142,12 +148,6 @@ save_stack_trace_tsk_reliable(struct task_struct *tsk,
+ 		if (sp & 0xF)
+ 			return 1;
+ 
+-		/* Mark stacktraces with exception frames as unreliable. */
+-		if (sp <= stack_end - STACK_INT_FRAME_SIZE &&
+-		    stack[STACK_FRAME_MARKER] == STACK_FRAME_REGS_MARKER) {
+-			return 1;
+-		}
+-
+ 		newsp = stack[0];
+ 		/* Stack grows downwards; unwinder may only go up. */
+ 		if (newsp <= sp)
+@@ -158,11 +158,26 @@ save_stack_trace_tsk_reliable(struct task_struct *tsk,
+ 			return 1; /* invalid backlink, too far up. */
+ 		}
+ 
++		/*
++		 * We can only trust the bottom frame's backlink, the
++		 * rest of the frame may be uninitialized, continue to
++		 * the next.
++		 */
++		if (firstframe) {
++			firstframe = 0;
++			goto next;
++		}
++
++		/* Mark stacktraces with exception frames as unreliable. */
++		if (sp <= stack_end - STACK_INT_FRAME_SIZE &&
++		    stack[STACK_FRAME_MARKER] == STACK_FRAME_REGS_MARKER) {
++			return 1;
++		}
++
+ 		/* Examine the saved LR: it must point into kernel code. */
+ 		ip = stack[STACK_FRAME_LR_SAVE];
+-		if (!firstframe && !__kernel_text_address(ip))
++		if (!__kernel_text_address(ip))
+ 			return 1;
+-		firstframe = 0;
+ 
+ 		/*
+ 		 * FIXME: IMHO these tests do not belong in
+@@ -183,6 +198,7 @@ save_stack_trace_tsk_reliable(struct task_struct *tsk,
+ 		else
+ 			trace->skip--;
+ 
++next:
+ 		if (newsp == stack_end)
+ 			break;
+ 
+-- 
+2.20.1
 
