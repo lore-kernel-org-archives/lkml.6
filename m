@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88328C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 05:52:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A6FFC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 05:52:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CB3A20879
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 05:52:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58BFE21721
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 05:52:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dVLVVgeN"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RnnzFMqV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727237AbfAVFwc (ORCPT
+        id S1727259AbfAVFwj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 00:52:32 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:41988 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727009AbfAVFvv (ORCPT
+        Tue, 22 Jan 2019 00:52:39 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:39856 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726986AbfAVFvu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 00:51:51 -0500
-Received: by mail-pg1-f194.google.com with SMTP id d72so10515880pga.9
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 21:51:50 -0800 (PST)
+        Tue, 22 Jan 2019 00:51:50 -0500
+Received: by mail-pf1-f193.google.com with SMTP id r136so11213507pfc.6
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 21:51:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=zCHYvSO8eaeXp9atcghciWLMcYsRcNwmxrzlQR0jYTw=;
-        b=dVLVVgeNw/7EFHHjRvM3C02+egpevGDjKwHICQV89JvZV1sQHtnwTrbSfOgjVlviEV
-         i2vHEhXipB3/d46PmvoN+iqH6P1hfmSMBAUfZRxaPSYj8mPe3orGnBf64w22UIg9QqwD
-         ns+Uun3aBXaXGSyaUpPLGMpvIk5lLMZoB/eCc=
+        bh=kRXJdEO8I/SlhbNJiF5XYNK/PWPlwRsErJzpDvsBh7A=;
+        b=RnnzFMqVPwZXf6lbGg26UrDC1U31+Y2IVKtIin52AUk8gWv2E7oFKRnGa6S4KYmAmZ
+         HH3hKspDqqPSyuo9XGTF1xH5sj6JjTKtPJpullhS1uQ4GDN9XvzP5nTypcjfUJ7yaSfb
+         mAi/SXjKUWL8knanbKy1bfLb6ipDb9YRFab9I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=zCHYvSO8eaeXp9atcghciWLMcYsRcNwmxrzlQR0jYTw=;
-        b=B9N9XcdKfYFbSLikVtdHOGbYs6GrxwHYjVNsz9w/tqNHZzyF+OVDgpqOkpmsUFZzqa
-         0CDyymbJ7Rk91MCvefGGXNRXEH+JynhtHyaHjekfAE5JO5H8BfuhPa3E+/o3/P37//hx
-         1MoWmxx4cVOLB3HBLvljlVllCTj4UjMZv6dXdaHblbnr5QLONGI1W1HHYyZ2boHjznqR
-         DcxWP9QNnoVKF585Fae8hx3bRoZ2VOa3JZGJTH7wPSVWfDwyZx7KcDFXG56u0TcqVTmF
-         8T1/LAwWKVz0a5VXX7OzkSZfPZRy/4gPhpqyEdpH8U5MYvL6rEygU26DYOQN4AOTOSIp
-         SDTQ==
-X-Gm-Message-State: AJcUukfVb4NpvSIwfPv+zTo53J1EsNbZszZ93vd6JtWIbSfTdmCO8uG1
-        RrlYDKKOdpd8UR5YCLnaudrvyA==
-X-Google-Smtp-Source: ALg8bN7iIVeH/nVS9mD8lwUo4XNkKg+rgaAWQmd/sF1b/dDqp5WMb7+7Ojnxz1iUWlvI6AURff8nDQ==
-X-Received: by 2002:a62:ca9c:: with SMTP id y28mr32200587pfk.236.1548136310190;
-        Mon, 21 Jan 2019 21:51:50 -0800 (PST)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id z62sm23771572pfl.33.2019.01.21.21.51.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        bh=kRXJdEO8I/SlhbNJiF5XYNK/PWPlwRsErJzpDvsBh7A=;
+        b=jvhyFZOCPfHDpTUs8E5TJjZNeo5JB06ppdHAEIOor3kaMIgfuTjPZ/ksN5n1b9l8dg
+         JEv6VwXHrKY6JZ3gq6zy6mqcF3xs8kHiX4A3V/ymMQAviZ8Hd5VGJqIXjw7swA1Q0awV
+         YanoUxVvmE6ilNNIeSmMeNH7dSst8uu01locwogRkx/jpIpBwxSEjgOqYsy55ck1TUk7
+         Rh1F7VIYz7H8D7a7MmjIMHDaop3SuL+rU37iasMdjxdH5KlziUPjcpT6SnJ5BjOshbqL
+         0UfRIWVzu+CuRaltebjwXcNHEjrIvwD3VUAsGSS6Wd3v7aGq33f6RASqKakVVC1l9fuC
+         xhhA==
+X-Gm-Message-State: AJcUukcYWKo2jsEhj1pW+e8r6+ho1r22Ul24xHaTUDTAGMvmoErdleG+
+        B34pr3yQkRLA1NjfnVrDAdruBQ==
+X-Google-Smtp-Source: ALg8bN6jt3cD5HSf+9YDjigyHAzbQgpiTbsPW3wVOsisVRZSmq7Y31Wl2cGWMp3ZIvrrbDpAAYNF1g==
+X-Received: by 2002:a63:da14:: with SMTP id c20mr2291579pgh.233.1548136309012;
         Mon, 21 Jan 2019 21:51:49 -0800 (PST)
+Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id z62sm23771572pfl.33.2019.01.21.21.51.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 21 Jan 2019 21:51:48 -0800 (PST)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Andy Gross <andy.gross@linaro.org>,
         David Brown <david.brown@linaro.org>,
@@ -60,9 +60,9 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 04/10] dt-bindings: soc: qcom: Add AOSS QMP binding
-Date:   Mon, 21 Jan 2019 21:51:06 -0800
-Message-Id: <20190122055112.30943-5-bjorn.andersson@linaro.org>
+Subject: [PATCH v3 03/10] arm64: dts: sdm845: Introduce ADSP and CDSP PAS nodes
+Date:   Mon, 21 Jan 2019 21:51:05 -0800
+Message-Id: <20190122055112.30943-4-bjorn.andersson@linaro.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20190122055112.30943-1-bjorn.andersson@linaro.org>
 References: <20190122055112.30943-1-bjorn.andersson@linaro.org>
@@ -71,127 +71,114 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add binding for the QMP based side-channel communication mechanism to
-the AOSS, which is used to control resources not exposed through the
-RPMh interface.
+Add the ADSP and CDSP nodes for PAS-based remoteproc, supporting booting
+these cores on e.g. the MTP, and enable the same for the MTP.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
 
 Changes since v2:
-- Update indentation of example
-- Add colling device subnodes to the description
+- New patch
 
- .../bindings/soc/qcom/qcom,aoss-qmp.txt       | 75 +++++++++++++++++++
- include/dt-bindings/power/qcom-aoss-qmp.h     | 15 ++++
- 2 files changed, 90 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.txt
- create mode 100644 include/dt-bindings/power/qcom-aoss-qmp.h
+ arch/arm64/boot/dts/qcom/sdm845-mtp.dts |  8 ++++
+ arch/arm64/boot/dts/qcom/sdm845.dtsi    | 58 +++++++++++++++++++++++++
+ 2 files changed, 66 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.txt
-new file mode 100644
-index 000000000000..881dc8c7907a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.txt
-@@ -0,0 +1,75 @@
-+Qualcomm Always-On Subsystem side channel binding
+diff --git a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
+index af8c6a2445a2..02b8357c8ce8 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
++++ b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
+@@ -48,6 +48,10 @@
+ 	};
+ };
+ 
++&adsp_pas {
++	status = "okay";
++};
 +
-+This binding describes the hardware component responsible for side channel
-+requests to the always-on subsystem (AOSS), used for certain power management
-+requests that is not handled by the standard RPMh interface. Each client in the
-+SoC has it's own block of message RAM and IRQ for communication with the AOSS.
-+The protocol used to communicate in the message RAM is known as QMP.
+ &apps_rsc {
+ 	pm8998-rpmh-regulators {
+ 		compatible = "qcom,pm8998-rpmh-regulators";
+@@ -344,6 +348,10 @@
+ 	};
+ };
+ 
++&cdsp_pas {
++	status = "okay";
++};
 +
-+The AOSS side channel exposes control over a set of resources, used to control
-+a set of debug related clocks and to affect the low power state of resources
-+related to the secondary subsystems. These resources are exposed as a set of
-+power-domains.
+ &gcc {
+ 	protected-clocks = <GCC_QSPI_CORE_CLK>,
+ 			   <GCC_QSPI_CORE_CLK_SRC>,
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index 64f57cc5c61a..1033b77856e6 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -319,6 +319,64 @@
+ 		};
+ 	};
+ 
++	adsp_pas: remoteproc-adsp {
++		compatible = "qcom,sdm845-adsp-pas";
 +
-+- compatible:
-+	Usage: required
-+	Value type: <string>
-+	Definition: must be "qcom,sdm845-aoss-qmp"
++		interrupts-extended = <&intc GIC_SPI 162 IRQ_TYPE_EDGE_RISING>,
++				      <&adsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
++				      <&adsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
++				      <&adsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
++				      <&adsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
++		interrupt-names = "wdog", "fatal", "ready",
++				  "handover", "stop-ack";
 +
-+- reg:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: the base address and size of the message RAM for this
-+		    client's communication with the AOSS
++		clocks = <&xo_board>;
++		clock-names = "xo";
 +
-+- interrupts:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: should specify the AOSS message IRQ for this client
++		memory-region = <&adsp_mem>;
 +
-+- mboxes:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: reference to the mailbox representing the outgoing doorbell
-+		    in APCS for this client, as described in mailbox/mailbox.txt
++		qcom,smem-states = <&adsp_smp2p_out 0>;
++		qcom,smem-state-names = "stop";
 +
-+- #power-domain-cells:
-+	Usage: optional
-+	Value type: <u32>
-+	Definition: must be 1
-+		    The provided power-domains are:
-+		    QDSS clock-domain (0), CDSP state (1), LPASS state (2),
-+		    modem state (3), SLPI state (4), SPSS state (5) and Venus
-+		    state (6).
++		status = "disabled";
 +
-+= SUBNODES
-+The AOSS side channel also provides the controls for three cooling devices,
-+these are expressed as subnodes of the QMP node. The name of the node is used
-+to identify the resource and must therefor be "cx", "mx" or "ebi".
++		glink-edge {
++			interrupts = <GIC_SPI 156 IRQ_TYPE_EDGE_RISING>;
++			label = "lpass";
++			qcom,remote-pid = <2>;
++			mboxes = <&apss_shared 8>;
++		};
++	};
 +
-+- #cooling-cells:
-+	Usage: optional
-+	Value type: <u32>
-+	Definition: must be 2
++	cdsp_pas: remoteproc-cdsp {
++		compatible = "qcom,sdm845-cdsp-pas";
 +
-+= EXAMPLE
++		interrupts-extended = <&intc GIC_SPI 578 IRQ_TYPE_EDGE_RISING>,
++				      <&cdsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
++				      <&cdsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
++				      <&cdsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
++				      <&cdsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
++		interrupt-names = "wdog", "fatal", "ready",
++				  "handover", "stop-ack";
 +
-+The following example represents the AOSS side-channel message RAM and the
-+mechanism exposing the power-domains, as found in SDM845.
++		clocks = <&xo_board>;
++		clock-names = "xo";
 +
-+  aoss_qmp: qmp@c300000 {
-+	  compatible = "qcom,sdm845-aoss-qmp";
-+	  reg = <0x0c300000 0x100000>;
-+	  interrupts = <GIC_SPI 389 IRQ_TYPE_EDGE_RISING>;
-+	  mboxes = <&apss_shared 0>;
++		memory-region = <&cdsp_mem>;
 +
-+	  #power-domain-cells = <1>;
++		qcom,smem-states = <&cdsp_smp2p_out 0>;
++		qcom,smem-state-names = "stop";
 +
-+	  cx_cdev: cx {
-+		#cooling-cells = <2>;
-+	  };
++		status = "disabled";
 +
-+	  mx_cdev: mx {
-+		#cooling-cells = <2>;
-+	  };
-+  };
-diff --git a/include/dt-bindings/power/qcom-aoss-qmp.h b/include/dt-bindings/power/qcom-aoss-qmp.h
-new file mode 100644
-index 000000000000..7d8ac1a4f90c
---- /dev/null
-+++ b/include/dt-bindings/power/qcom-aoss-qmp.h
-@@ -0,0 +1,15 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (c) 2018, Linaro Ltd. */
++		glink-edge {
++			interrupts = <GIC_SPI 574 IRQ_TYPE_EDGE_RISING>;
++			label = "turing";
++			qcom,remote-pid = <5>;
++			mboxes = <&apss_shared 4>;
++		};
++	};
 +
-+#ifndef __DT_BINDINGS_POWER_QCOM_AOSS_QMP_H
-+#define __DT_BINDINGS_POWER_QCOM_AOSS_QMP_H
-+
-+#define AOSS_QMP_QDSS_CLK	0
-+#define AOSS_QMP_LS_CDSP		1
-+#define AOSS_QMP_LS_LPASS	2
-+#define AOSS_QMP_LS_MODEM	3
-+#define AOSS_QMP_LS_SLPI		4
-+#define AOSS_QMP_LS_SPSS		5
-+#define AOSS_QMP_LS_VENUS	6
-+
-+#endif
+ 	tcsr_mutex: hwlock {
+ 		compatible = "qcom,tcsr-mutex";
+ 		syscon = <&tcsr_mutex_regs 0 0x1000>;
 -- 
 2.18.0
 
