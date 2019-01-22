@@ -2,137 +2,297 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3783AC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:26:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 521BBC282C5
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:26:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 035D5217D6
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:26:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C5CA217F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:26:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cHI2EPPL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730052AbfAVP0X (ORCPT
+        id S1729972AbfAVP0V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 10:26:23 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:42738 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729158AbfAVP0R (ORCPT
+        Tue, 22 Jan 2019 10:26:21 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:46348 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729908AbfAVP0T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 10:26:17 -0500
-Received: by mail-wr1-f65.google.com with SMTP id q18so27783401wrx.9;
-        Tue, 22 Jan 2019 07:26:16 -0800 (PST)
+        Tue, 22 Jan 2019 10:26:19 -0500
+Received: by mail-qk1-f194.google.com with SMTP id q1so14399160qkf.13;
+        Tue, 22 Jan 2019 07:26:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Ji37CWdDOCHmNeK85MzVTCmguGJDIIO9lJ5bDy4pIys=;
+        b=cHI2EPPLnRXOx0B6RXuXIgmMeQFpyesIcDZWcryea/++abq4OMzFdgJGCSUBjJDoQK
+         z1E2M8d44cQ28eWYJ38mq8bw4E8fqmy01UTXOSZxZVKQIfEjEf7hBIqb/nHd6LSrkOXg
+         n50avVj2V0Y1DVh5Sw5cm0bBe5+M2Dw3PTn2yXKgdiOpVBN5b1JTCktlVJdN2j7AF6Zd
+         IXr8E1KILnD1iLz5VKPVCUABmiAfXd7UZB5uEDoNqv5CL5QtRkkrEKDcQxdkIHIAIE1g
+         XaWHw+Q/MY7qgx604FI6WURQqnsHUv2A4NCfCVhKnqsw/O0djHr9LYGavSTMd2Qs4ABS
+         cPcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=CCp9upUIarVk3fVLsHz4QDegPcOwIOYW21pseveaDEk=;
-        b=uJcQ4A0P7/NCH/K1EX7mmkDzIatj1LUvHLRQj6G1e8bjoRMDNiWR4ULg1xqkqg+6Kz
-         Bjgs8UrbPvPveBcKsVwDP36tKJQHgxafwNjzJtHfykli2EL97loBp2nYUnvSazt5yq9O
-         HrYysucnKhH9tjbnrqcU03DJpa6r7/Mke3/zBtnFwrBHEYpTJmz5vM4+zjTMeCG0kx9t
-         QHB/fJ8WFz+TyHrcaao+kkFtchX6W/anBex1w62W4gYuBz3+WMWAUKZaR3i7ZTP7ahAp
-         38ISrAlwymBjmWydRd8WWXXv09vYYKORSr6jsPYItitWtSRXq45zZuiTSC1k1eaXTr6P
-         1eNw==
-X-Gm-Message-State: AJcUukc+b9NrKaGxT0mYzf9gB2cjO6vAhG6By0b79PWsna2cJDfeypuT
-        Zf56h9VoWIctE51lDPMHvfOtRC+g
-X-Google-Smtp-Source: ALg8bN6kQLiLsbsvRtLA2wxTPwZrI3KGNnWkBi6YXJ8XczqYF154jAJbFRNIld0EEMYdnShW7Q/Yig==
-X-Received: by 2002:adf:ed92:: with SMTP id c18mr34205975wro.194.1548170775430;
-        Tue, 22 Jan 2019 07:26:15 -0800 (PST)
-Received: from ?IPv6:2a0b:e7c0:0:107::70f? ([2a0b:e7c0:0:107::70f])
-        by smtp.gmail.com with ESMTPSA id v6sm76596430wrd.88.2019.01.22.07.26.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Jan 2019 07:26:14 -0800 (PST)
-Subject: Re: [PATCH 1/4] tty: sisusb_con, convert addr macros to functions
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     thomas@winischhofer.net, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190122151202.18152-1-jslaby@suse.cz>
- <20190122152322.GA17676@kroah.com>
-From:   Jiri Slaby <jslaby@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jslaby@suse.cz; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <15c671db-581d-7155-ea40-40d239069cb4@suse.cz>
-Date:   Tue, 22 Jan 2019 16:26:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ji37CWdDOCHmNeK85MzVTCmguGJDIIO9lJ5bDy4pIys=;
+        b=D+KHHXO5/Z4sG1iUqrnDZ8nxsw8ebEMDdxzfhgHXi+IKgb3gJnAudlnZB2p2iPXcB8
+         BUPrOn8CeOO5sS4wktgMdnWNVb1QQMFq6x8LM0WdbsHMU1hK76DwQo0g1hAfLrC+qv7T
+         d6R+bqqkMblrcKR5b9cPGVvooPCP3qbOQAkhvjbZ+VFtnCZYcvlKJBKJERbtPmdhtXLd
+         ZkbcZ0zN9mQBjj3TT8QfPHShJRYe+k6Lq7/VzbutEWvDZGbG5meglLDp3cVpRvoiLRGH
+         tVSiNuzhbaen+soTXBKaMXHTX80NGt6+/8hF9jsPrInU7O6P+2mhVTMIavKG/VzFLtM+
+         vLtQ==
+X-Gm-Message-State: AJcUukclpBTtR2KLBitUIlQGFvCLRIDSprnDUPXqt9pZYemw9MO0CKW5
+        ELGhUYPq7/6Gfi0Syg8ytfpdLgo/Q3CSK5SJuhI=
+X-Google-Smtp-Source: ALg8bN6qofZDOnP0YG5xVKc+QYUR7slb8VXvH04gRlXTXWvVgabtzsFR46YT9/0LB6UieWooR/GQtHFX23VyvJcLX6A=
+X-Received: by 2002:a37:cf9b:: with SMTP id v27mr28020588qkl.160.1548170777589;
+ Tue, 22 Jan 2019 07:26:17 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190122152322.GA17676@kroah.com>
-Content-Type: text/plain; charset=iso-8859-2
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <20190119001422.48186-1-ncrews@chromium.org>
+In-Reply-To: <20190119001422.48186-1-ncrews@chromium.org>
+From:   Enric Balletbo Serra <eballetbo@gmail.com>
+Date:   Tue, 22 Jan 2019 16:26:06 +0100
+Message-ID: <CAFqH_50P7Acx0Y0_YLq2o04B7fn08H-ES4-Mqew=KEsR2By0qQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/9] platform/chrome: rtc: Add support for Wilco EC
+To:     Nick Crews <ncrews@chromium.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Simon Glass <sjg@chromium.org>,
+        Daniel Kurtz <djkurtz@google.com>, dlaurie@chromium.org,
+        linux-rtc@vger.kernel.org,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Benson Leung <bleung@chromium.org>,
+        Nick Crews <ncrews@google.com>,
+        Duncan Laurie <dlaurie@google.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22. 01. 19, 16:23, Greg KH wrote:
-> On Tue, Jan 22, 2019 at 04:11:59PM +0100, Jiri Slaby wrote:
->> Convert SISUSB_VADDR and SISUSB_HADDR to inline functions. Now, there
->> are no more hidden accesses to local variables (vc_data and
->> sisusb_usb_data).
->>
->> sisusb_haddr returns unsigned long from now on, not u16 *, as ulong is
->> what every caller expects -- we can remove some casts.
->>
->> Call sites were aligned to be readable too.
->>
->> Use sisusb_haddr on 4 more places in sisusbcon_blank and
->> sisusbcon_scroll. It was open coded there with [x, y] being [0, 0].
->>
->> Signed-off-by: Jiri Slaby <jslaby@suse.cz>
->> ---
->>  drivers/usb/misc/sisusbvga/sisusb_con.c | 78 ++++++++++++-------------
->>  1 file changed, 39 insertions(+), 39 deletions(-)
-> 
-> Subject says "tty", yet this is the USB driver.  typo?
+Hi Nick,
 
-Originally, I had these as a part of various tty cleanups and the tty
-remained there. I will wait for some feedback, if any and drop them in
-v2.
+Missatge de Nick Crews <ncrews@chromium.org> del dia ds., 19 de gen.
+2019 a les 1:17:
+>
+>
+> There is a new chromebook that contains a different Embedded Controller
+> (codename Wilco) than the rest of the chromebook series. Thus the kernel
+> requires a different driver than the already existing and generalized
+> cros_ec_* drivers. Specifically, this driver adds support for getting
+> and setting the RTC on the EC, adding a binary sysfs attribute
+> that receives ACPI events from the EC, adding a binary sysfs
+> attribute to request telemetry data from the EC (useful for enterprise
+> applications), adding a debugfs interface for sending/receiving raw byte
+> sequesnces to the EC, and adding normal sysfs attributes to get/set various
+> other properties on the EC. The core of the communication with the EC
+> is implemented in wilco_ec/mailbox.c, using a simple byte-level protocol
+> with a checksum, transmitted over an eSPI bus. For debugging purposes,
+> a raw attribute is also provided which can write/read arbitrary
+> bytes to/from the eSPI bus.
+>
+> We attempted to adhere to the sysfs principles of "one piece of data per
+> attribute" as much as possible, and mostly succeded. However, with the
+> wilco_ec/adv_power.h attributes, which deal with scheduling power usage,
+> we found it most elegant to bundle setting event times for an entire day
+> into a single attribute, so at most you are using attributes formatted
+> as "%d %d %d %d %d %d". With the telemetry attribute, we had to use a
+> binary attribute, instead of the preferable human-readable ascii, in
+> order to keep secure the information which is proprietary to the
+> enterprise service provider. This opaque binary data will be read and
+> sent using a proprietary daemon running on the OS.
+>
 
-thanks,
--- 
-js
-suse labs
+I reviewed some patches of these series and I think that some of them
+are already close to be accepted, however, I still have several doubts
+regarding the bunch of sysfs attributes/properties. It is clear for me
+that some of them (like the version ones) fit into the sysfs, but I
+have several doubts with the power and telemetry attributes, looks to
+me that we're abusing of the sysfs interface. I am wondering if
+wouldn't be better use a simple ioctl functions that reads and writes
+to a chardev (/dev/wilco_ec). Did you think on that possibility? What
+people think?
+
+Thanks,
+ Enric
+
+> The RTC driver is exposed as a standard RTC driver with
+> read/write functionality.
+>
+> For event notification, the Wilco EC can return extended events that
+> are not handled by standard ACPI objects. These events can
+> include hotkeys which map to standard functions like brightness
+> controls, or information about EC controlled features like the
+> charger or battery. These events are triggered with an
+> ACPI Notify(0x90) and the event data buffer is read through an ACPI
+> method provided by the BIOS which reads the event buffer from EC RAM.
+> These events are then processed, with hotkey events being sent
+> to the input subsystem and other events put into a queue which
+> can be read by a userspace daemon via a sysfs attribute.
+>
+> The rest of the attributes are categorized as either "properties" or
+> "legacy". "legacy" implies that the attribute existed on the EC before it
+> was modified for ChromeOS, and "properties" implies that the attribute
+> exposes functionality that was added to the EC specifically for
+> ChromeOS. They are mostly boolean flags or percentages.
+>
+> A full thread of the development of these patches can be found at
+> https://chromium-review.googlesource.com/c/1371034. This thread contains
+> comments and revisions that could be helpful in understanding how the
+> driver arrived at the state it is in now. The thread also contains some
+> ChromeOS specific patches that actually enable the driver. If you want
+> to test the patch yourself, you would have to install the ChromeOS SDK
+> and cherry pick in these patches.
+>
+> I also wrote some integration tests using the Tast testing framework that
+> ChromeOS uses. It would require a full ChromeOS SDK to actually run the
+> tests, but the source of the tests, written in Go, are useful for
+> understanding what the desired behavior is. You can view the tests here:
+> https://chromium-review.googlesource.com/c/1372575
+>
+> Thank you for your comments!
+>
+> Changes in v3:
+> - Change <= to >= in mec_in_range()
+> - Add " - EC_HOST_CMD_REGION0" to offset arg for io_bytes_mec()
+> - remove unused ret in probe()
+> - Add newline spacer in probe()
+> - rm unnecessary res in get_resource()
+> - s/8bit/8-bit
+> - rm first sleep when sending command to EC
+> - Move the attribute to the debugfs system
+> - Move the implementation to debugfs.c
+> - Improve the raw hex parsing
+> - Encapsulate global variables in one object
+> - Add safety check when passing less than 3 bytes
+> - Move documentation to debugfs-wilco-ec
+> - explicitly define toplevel_groups from the start,
+> so adding telem later makes sense
+> - Break version attribute into individual attributes
+> - rm unused WILCO_EC_ATTR_RW macro
+> - Moved some #defines from legacy.h to legacy.c
+> - rm #define for driver name
+> - Don't compute weekday when reading from RTC.
+>   Still set weekday when writing, as RTC needs this
+>   to control advanced power scheduling
+> - rm check for invalid month data
+> - Set range_min and range_max on rtc_device
+> - change err check from "if (ret < 0)" to "if (ret)"
+> - Now bubble up error codes from within sysfs_init()
+> - Add comment that PID means Property ID
+> - rm some useless references to internal docs from documentation
+> - add err check on returned data size
+> - add check on read request offset and size
+>
+> Changes in v2:
+> - Fixed kernel-doc comments
+> - Fixed include of linux/mfd/cros_ec_lpc_mec.h
+> - cros_ec_lpc_mec_in_range() returns -EINVAL on error
+> - Added parens around macro variables
+> - Remove COMPILE_TEST from Kconfig because inb()/outb()
+> won't work on anything but X86
+> - Add myself as module author
+> - Tweak mailbox()
+> - Add sysfs documentation
+> - rm duplicate EC_MAILBOX_DATA_SIZE defs
+> - Make docstrings follow kernel style
+> - Fix tags in commit msg
+> - Move Kconfig to subdirectory
+> - Reading raw now includes ASCII translation
+> - Remove license boiler plate
+> - Remove "wilco_ec_sysfs -" docstring prefix
+> - Fix accidental Makefile deletion
+> - Add documentation for sysfs entries
+> - Change "enable ? 0 : 1" to "!enable"
+> - No longer override error code from sysfs_init()
+> - Put attributes in the legacy file to begin with, don't move later
+> - Remove duplicate error messages when init()ing sysfs
+> - rm license boiler plate
+> - rm "wilco_ec_rtc -" prefix in docstring
+> - Make rtc driver its own module within the drivers/rtc/ directory
+> - Register a rtc device from core.c that is picked up by this driver
+> - rm "wilco_ec_event -" prefix from docstring
+> - rm license boiler plate
+> - Add sysfs directory documentation
+> - Fix cosmetics
+> - events are init()ed before subdrivers now
+> - rm license boiler plate
+> - rm "wilco_ec_properties -" prefix from docstring
+> - Add documentation
+> - rm license boiler plate
+> - rm "wilco_ec_adv_power - " prefix from docstring
+> - Add documentation
+> - make format strings in read() and store() functions static
+>
+> Duncan Laurie (6):
+>   platform/chrome: Remove cros_ec dependency in lpc_mec
+>   platform/chrome: Add new driver for Wilco EC
+>   platform/chrome: Add support for raw commands in debugfs
+>   platform/chrome: Add sysfs attributes
+>   platform/chrome: rtc: Add RTC driver
+>   platform/chrome: Add event handling
+>
+> Nick Crews (3):
+>   platform/chrome: Add EC properties
+>   platform/chrome: Add peakshift and adv_batt_charging
+>   platform/chrome: Add binary telemetry attributes
+>
+>  Documentation/ABI/testing/debugfs-wilco-ec    |  23 +
+>  .../ABI/testing/sysfs-platform-wilco-ec       | 196 +++++++
+>  drivers/platform/chrome/Kconfig               |   4 +-
+>  drivers/platform/chrome/Makefile              |   2 +
+>  drivers/platform/chrome/cros_ec_lpc_mec.c     |  52 +-
+>  drivers/platform/chrome/cros_ec_lpc_mec.h     |  43 +-
+>  drivers/platform/chrome/cros_ec_lpc_reg.c     |  47 +-
+>  drivers/platform/chrome/wilco_ec/Kconfig      |  33 ++
+>  drivers/platform/chrome/wilco_ec/Makefile     |   6 +
+>  drivers/platform/chrome/wilco_ec/adv_power.c  | 544 ++++++++++++++++++
+>  drivers/platform/chrome/wilco_ec/adv_power.h  | 183 ++++++
+>  drivers/platform/chrome/wilco_ec/core.c       | 154 +++++
+>  drivers/platform/chrome/wilco_ec/debugfs.c    | 218 +++++++
+>  drivers/platform/chrome/wilco_ec/event.c      | 347 +++++++++++
+>  drivers/platform/chrome/wilco_ec/legacy.c     | 103 ++++
+>  drivers/platform/chrome/wilco_ec/legacy.h     |  79 +++
+>  drivers/platform/chrome/wilco_ec/mailbox.c    | 236 ++++++++
+>  drivers/platform/chrome/wilco_ec/properties.c | 344 +++++++++++
+>  drivers/platform/chrome/wilco_ec/properties.h | 180 ++++++
+>  drivers/platform/chrome/wilco_ec/sysfs.c      | 245 ++++++++
+>  drivers/platform/chrome/wilco_ec/telemetry.c  |  73 +++
+>  drivers/platform/chrome/wilco_ec/telemetry.h  |  41 ++
+>  drivers/platform/chrome/wilco_ec/util.h       |  38 ++
+>  drivers/rtc/Kconfig                           |  11 +
+>  drivers/rtc/Makefile                          |   1 +
+>  drivers/rtc/rtc-wilco-ec.c                    | 177 ++++++
+>  include/linux/platform_data/wilco-ec.h        | 189 ++++++
+>  27 files changed, 3509 insertions(+), 60 deletions(-)
+>  create mode 100644 Documentation/ABI/testing/debugfs-wilco-ec
+>  create mode 100644 Documentation/ABI/testing/sysfs-platform-wilco-ec
+>  create mode 100644 drivers/platform/chrome/wilco_ec/Kconfig
+>  create mode 100644 drivers/platform/chrome/wilco_ec/Makefile
+>  create mode 100644 drivers/platform/chrome/wilco_ec/adv_power.c
+>  create mode 100644 drivers/platform/chrome/wilco_ec/adv_power.h
+>  create mode 100644 drivers/platform/chrome/wilco_ec/core.c
+>  create mode 100644 drivers/platform/chrome/wilco_ec/debugfs.c
+>  create mode 100644 drivers/platform/chrome/wilco_ec/event.c
+>  create mode 100644 drivers/platform/chrome/wilco_ec/legacy.c
+>  create mode 100644 drivers/platform/chrome/wilco_ec/legacy.h
+>  create mode 100644 drivers/platform/chrome/wilco_ec/mailbox.c
+>  create mode 100644 drivers/platform/chrome/wilco_ec/properties.c
+>  create mode 100644 drivers/platform/chrome/wilco_ec/properties.h
+>  create mode 100644 drivers/platform/chrome/wilco_ec/sysfs.c
+>  create mode 100644 drivers/platform/chrome/wilco_ec/telemetry.c
+>  create mode 100644 drivers/platform/chrome/wilco_ec/telemetry.h
+>  create mode 100644 drivers/platform/chrome/wilco_ec/util.h
+>  create mode 100644 drivers/rtc/rtc-wilco-ec.c
+>  create mode 100644 include/linux/platform_data/wilco-ec.h
+>
+> --
+> 2.20.1.321.g9e740568ce-goog
+>
