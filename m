@@ -2,182 +2,164 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E5ACC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:57:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 160E2C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:58:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 467BA20870
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:57:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uxnurEWp"
+	by mail.kernel.org (Postfix) with ESMTP id D6F0221721
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:58:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548169091;
+	bh=QfQKaNsMjOXaYnkw/5gWxspUMectnW8nKcVStxMz8QA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=OPghuYcRNPLh/aEuPN1YP4w6CU6LUXgNjOPXG7XvpA6wDIKkNaSeIO/oXkE6WyrzX
+	 zulN8STYLmM0y1hN/mulOcXapP+lVBjmgM7rmIy2JL6kATj+jgOlNDgET7hYtCsSCM
+	 +HoNFNpktBDmKJOHqBb8vEi+crZ9vuA8c1AfnlQM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728971AbfAVO5v (ORCPT
+        id S1729007AbfAVO6K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 09:57:51 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:44314 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728795AbfAVO5v (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 09:57:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ubc/EeKgBxh6zaeMi0e7CVRJR36Rk40o1knBVNzRVgo=; b=uxnurEWpOwxfX07blsFss6LMX
-        QIsijql4IW5MQwVhqLc1fUPwBWjpaJrIvR4EoZxJIcHicV4VIjfWgyXF7KOYNGh04kLpi5OjW7KgK
-        j5cMe9L/dy1u8nafjWzsgStT8f7mH2EpJyUZmeUzFz3cHn5oPOFqjLPcp3QB7j1vorE44z68x+FrG
-        II+yp3j2g+106iMVvUW/AfSX2juhT1G5JeCZbZsU7rGO0td0suZVWaKtMteAmI+oKL8uZh+UMKskw
-        +Hl/hdwcuFfSUUjEMIfyUmg31A1R50ZOnghv3X5fI8N5oMmqUXRoKS+LeWuhFImUI8RRbSoyGGGu1
-        EQ3SM2kAw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1glxUn-0000N4-Bf; Tue, 22 Jan 2019 14:57:45 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id D1C0020EF9B32; Tue, 22 Jan 2019 15:57:42 +0100 (CET)
-Date:   Tue, 22 Jan 2019 15:57:42 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v6 05/16] sched/core: uclamp: Update CPU's refcount on
- clamp changes
-Message-ID: <20190122145742.GQ27931@hirez.programming.kicks-ass.net>
-References: <20190115101513.2822-1-patrick.bellasi@arm.com>
- <20190115101513.2822-6-patrick.bellasi@arm.com>
- <20190121153308.GL27931@hirez.programming.kicks-ass.net>
- <20190121154412.fak2t2iquj3aixtu@e110439-lin>
- <20190122093704.GM27931@hirez.programming.kicks-ass.net>
- <20190122104305.6vjx37muqsxm536t@e110439-lin>
- <20190122132817.GG13777@hirez.programming.kicks-ass.net>
- <20190122140115.twtx646vewm757ca@e110439-lin>
+        Tue, 22 Jan 2019 09:58:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37150 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728795AbfAVO6J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 09:58:09 -0500
+Received: from quaco.ghostprotocols.net (unknown [189.16.122.195])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C9C4120870;
+        Tue, 22 Jan 2019 14:58:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548169088;
+        bh=QfQKaNsMjOXaYnkw/5gWxspUMectnW8nKcVStxMz8QA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=POcyP7uKI1S/m6wK7M04erXA0Sz0U8DknDUHO5iotC627aKzjdoZe8oCMbNRKS7g/
+         yqcd8FLGiKrfwUKs2Jn+6een062fOzk3hsD1ac3JWfFHYyTCLaYNIP+jl9m53flCh0
+         6G2K8NjaUb66W295zrwmRTbJk7zQJU4dJtPSJ8yA=
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 8A6D540355; Tue, 22 Jan 2019 12:58:05 -0200 (-02)
+Date:   Tue, 22 Jan 2019 12:58:05 -0200
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Song Liu <songliubraving@fb.com>, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        peterz@infradead.org, ast@kernel.org, daniel@iogearbox.net,
+        kernel-team@fb.com
+Subject: Re: [PATCH v11 perf, bpf-next 7/9] perf tools: synthesize
+ PERF_RECORD_* for loaded BPF programs
+Message-ID: <20190122145805.GI14973@kernel.org>
+References: <20190117161521.1341602-1-songliubraving@fb.com>
+ <20190117161521.1341602-8-songliubraving@fb.com>
+ <20190118144655.GM5823@kernel.org>
+ <20190122141320.GF14973@kernel.org>
+ <20190122143117.GG14973@kernel.org>
+ <20190122145119.GF27625@krava>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190122140115.twtx646vewm757ca@e110439-lin>
+In-Reply-To: <20190122145119.GF27625@krava>
+X-Url:  http://acmel.wordpress.com
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 02:01:15PM +0000, Patrick Bellasi wrote:
-> On 22-Jan 14:28, Peter Zijlstra wrote:
-> > On Tue, Jan 22, 2019 at 10:43:05AM +0000, Patrick Bellasi wrote:
-> > > On 22-Jan 10:37, Peter Zijlstra wrote:
+Em Tue, Jan 22, 2019 at 03:51:19PM +0100, Jiri Olsa escreveu:
+> On Tue, Jan 22, 2019 at 12:31:17PM -0200, Arnaldo Carvalho de Melo wrote:
+> > Em Tue, Jan 22, 2019 at 12:13:20PM -0200, Arnaldo Carvalho de Melo escreveu:
+> > > Em Fri, Jan 18, 2019 at 11:46:55AM -0300, Arnaldo Carvalho de Melo escreveu:
+> > > > Em Thu, Jan 17, 2019 at 08:15:19AM -0800, Song Liu escreveu:
+> > > > > This patch synthesize PERF_RECORD_KSYMBOL and PERF_RECORD_BPF_EVENT for
+> > > > > BPF programs loaded before perf-record. This is achieved by gathering
+> > > > > information about all BPF programs via sys_bpf.
+> > > > 
+> > > > Ditto
+> > > 
+> > > This is breaking 'perf sched', see below, the fix seems trivial:
+> > > 
+> > > [root@quaco ~]# perf sched record -a sleep 2
+> > > [ perf record: Woken up 1 times to write data ]
+> > > 0x5b60 [0x138]: failed to process type: 17
+> > > [ perf record: Captured and wrote 1.539 MB perf.data ]
+> > > [root@quaco ~]# perf sched lat
+> > > 0x5b60 [0x138]: failed to process type: 17
+> > > Failed to process events, error -22
+> > > [root@quaco ~]#
 > > 
-> > > > Sure, I get that. What I don't get is why you're adding that (2) here.
-> > > > Like said, __sched_setscheduler() already does a dequeue/enqueue under
-> > > > rq->lock, which should already take care of that.
-> > > 
-> > > Oh, ok... got it what you mean now.
-> > > 
-> > > With:
-> > > 
-> > >    [PATCH v6 01/16] sched/core: Allow sched_setattr() to use the current policy
-> > >    <20190115101513.2822-2-patrick.bellasi@arm.com>
-> > > 
-> > > we can call __sched_setscheduler() with:
-> > > 
-> > >    attr->sched_flags & SCHED_FLAG_KEEP_POLICY
-> > > 
-> > > whenever we want just to change the clamp values of a task without
-> > > changing its class. Thus, we can end up returning from
-> > > __sched_setscheduler() without doing an actual dequeue/enqueue.
+> > So:
 > > 
-> > I don't see that happening.. when KEEP_POLICY we set attr.sched_policy =
-> > SETPARAM_POLICY. That is then checked again in __setscheduler_param(),
-> > which is in the middle of that dequeue/enqueue.
+> >    perf_session__process_event (event->header.type = 17 (PERF_RECORD_KSYMBOL)
+> >      if (tool->ordered_events)
+> >        ret = perf_evlist__parse_sample_timestamp(evlist, event, &timestamp);
+> >        if (ret && ret != -1)
+> >             return ret;
+> > 
+> > So it returns here with -EFAULT, i.e. this is failing:
+> > 
+> > int perf_evlist__parse_sample_timestamp(struct perf_evlist *evlist,
+> >                                         union perf_event *event,
+> >                                         u64 *timestamp)
+> > {
+> >         struct perf_evsel *evsel = perf_evlist__event2evsel(evlist, event);
+> > 
+> >         if (!evsel)
+> >                 return -EFAULT;
+> >         return perf_evsel__parse_sample_timestamp(evsel, event, timestamp);
+> > }
+> > 
+> > It isn't mapping the event ID it finds back to an evsel.. Jiri, ideas?
+> > 
+> > This is happening so far only for 'perf sched', perf record with two
+> > events works.
 > 
-> Yes, I think I've forgot a check before we actually dequeue the task.
-> 
-> The current code does:
-> 
-> ---8<---
->    SYSCALL_DEFINE3(sched_setattr)
-> 
->         // A) request to keep the same policy
->         if (attr.sched_flags & SCHED_FLAG_KEEP_POLICY)
->             attr.sched_policy = SETPARAM_POLICY;
-> 
->         sched_setattr()
->             // B) actually enforce the same policy
->             if (policy < 0)
->                 policy = oldpolicy = p->policy;
-> 
->             // C) tune the clamp values
->             if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP)
->                 retval = __setscheduler_uclamp(p, attr);
-> 
->             // D) tune attributes if policy is the same
->             if (unlikely(policy == p->policy))
->                 if (fair_policy(policy) && attr->sched_nice != task_nice(p))
->                     goto change;
->                 if (rt_policy(policy) && attr->sched_priority != p->rt_priority)
->                     goto change;
->                 if (dl_policy(policy) && dl_param_changed(p, attr))
->                     goto change;
+> I saw also perf mem failing because of this.. will check
 
-		  if (util_changed)
-		      goto change;
+Right, seems something with the synthesizing of existing bpf progs,
+which always there are some nowadays, for instance, on this fedora29
+system:
 
-?
+[root@quaco tmp]# bpftool prog
+13: cgroup_skb  tag 7be49e3934a125ba  gpl
+	loaded_at 2019-01-21T13:30:27-0200  uid 0
+	xlated 296B  jited 229B  memlock 4096B  map_ids 13,14
+14: cgroup_skb  tag 2a142ef67aaad174  gpl
+	loaded_at 2019-01-21T13:30:27-0200  uid 0
+	xlated 296B  jited 229B  memlock 4096B  map_ids 13,14
+15: cgroup_skb  tag 7be49e3934a125ba  gpl
+	loaded_at 2019-01-21T13:30:27-0200  uid 0
+	xlated 296B  jited 229B  memlock 4096B  map_ids 15,16
+16: cgroup_skb  tag 2a142ef67aaad174  gpl
+	loaded_at 2019-01-21T13:30:27-0200  uid 0
+	xlated 296B  jited 229B  memlock 4096B  map_ids 15,16
+17: cgroup_skb  tag 7be49e3934a125ba  gpl
+	loaded_at 2019-01-21T13:30:29-0200  uid 0
+	xlated 296B  jited 229B  memlock 4096B  map_ids 17,18
+18: cgroup_skb  tag 2a142ef67aaad174  gpl
+	loaded_at 2019-01-21T13:30:29-0200  uid 0
+	xlated 296B  jited 229B  memlock 4096B  map_ids 17,18
+21: cgroup_skb  tag 7be49e3934a125ba  gpl
+	loaded_at 2019-01-21T13:30:29-0200  uid 0
+	xlated 296B  jited 229B  memlock 4096B  map_ids 21,22
+22: cgroup_skb  tag 2a142ef67aaad174  gpl
+	loaded_at 2019-01-21T13:30:29-0200  uid 0
+	xlated 296B  jited 229B  memlock 4096B  map_ids 21,22
+[root@quaco tmp]#
 
->                 return 0;
->         change:
-> 
->             // E) dequeue/enqueue task
-> ---8<---
-> 
-> So, probably in D) I've missed a check on SCHED_FLAG_KEEP_POLICY to
-> enforce a return in that case...
-> 
-> > Also, and this might be 'broken', SETPARAM_POLICY _does_ reset all the
-> > other attributes, it only preserves policy, but it will (re)set nice
-> > level for example (see that same function).
-> 
-> Mmm... right... my bad! :/
-> 
-> > So maybe we want to introduce another (few?) FLAG_KEEP flag(s) that
-> > preserve the other bits; I'm thinking at least KEEP_PARAM and KEEP_UTIL
-> > or something.
-> 
-> Yes, I would say we have two options:
-> 
->  1) SCHED_FLAG_KEEP_POLICY enforces all the scheduling class specific
->     attributes, but cross class attributes (e.g. uclamp)
->
->  2) add SCHED_KEEP_NICE, SCHED_KEEP_PRIO, and SCED_KEEP_PARAMS
->     and use them in the if conditions in D)
+When with a bunch of tracepoints, that is what 'perf mem', 'perf kmem',
+'perf sched', etc does, it ends up failing here:
 
-So the current KEEP_POLICY basically provides sched_setparam(), and
-given we have that as a syscall, that is supposedly a useful
-functionality.
+                    ret = perf_evlist__parse_sample_timestamp(evlist, event, &timestamp);
 
-Also, NICE/PRIO/DL* is all the same thing and depends on the policy,
-KEEP_PARAM should cover the lot
+So it is not passed to 
 
-And I suppose the UTIL_CLAMP is !KEEP_UTIL; we could go either way
-around with that flag.
+                   ret = perf_session__queue_event(session, event, timestamp, file_offset);
 
-> In both cases the goal should be to return from code block D).
+in perf_session__process_event, this happens right when processing
+buildids in 'perf record', and also in 'perf report', so that is
+something badly synthesized that hits perf.data for PERF_RECORD_KSYMBOL.
 
-I don't think so; we really do want to 'goto change' for util changes
-too I think. Why duplicate part of that logic?
+- Arnaldo
