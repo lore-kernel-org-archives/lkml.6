@@ -2,198 +2,134 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B4A2C282C5
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 06:41:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5C2FC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 06:42:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 389AF205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 06:41:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B77120861
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 06:42:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HMXBbatg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727228AbfAVGlj (ORCPT
+        id S1727057AbfAVGmv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 01:41:39 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:47259 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727070AbfAVGlj (ORCPT
+        Tue, 22 Jan 2019 01:42:51 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:36121 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726127AbfAVGmu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 01:41:39 -0500
-X-UUID: ad60eacbd7694476a514c725c879d81b-20190122
-X-UUID: ad60eacbd7694476a514c725c879d81b-20190122
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
-        (envelope-from <jitao.shi@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 154833029; Tue, 22 Jan 2019 14:41:13 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by mtkmbs08n1.mediatek.inc
- (172.21.101.55) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 22 Jan
- 2019 14:41:11 +0800
-Received: from [10.16.6.141] (10.16.6.141) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 22 Jan 2019 14:41:10 +0800
-Message-ID: <1548139270.1697.1.camel@mszsdaap41>
-Subject: Re: [PATCH 9/9] drm/mediatek: add dpi dual edge support
-From:   Jitao Shi <jitao.shi@mediatek.com>
-To:     CK Hu =?UTF-8?Q?=28=E8=83=A1=E4=BF=8A=E5=85=89=29?= 
-        <ck.hu@mediatek.com>
-CC:     Chunhui Dai =?UTF-8?Q?=28=E6=88=B4=E6=98=A5=E6=99=96=29?= 
-        <Chunhui.Dai@mediatek.com>,
-        --to=Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Matthias Brugger" <matthias.bgg@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        Sean Wang <Sean.Wang@mediatek.com>,
-        "Ryder Lee =?UTF-8?Q?=28=E6=9D=8E=E5=BA=9A=E8=AB=BA=29?=" 
-        <Ryder.Lee@mediatek.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        Bibby Hsieh =?UTF-8?Q?=28=E8=AC=9D=E6=BF=9F=E9=81=A0=29?= 
-        <Bibby.Hsieh@mediatek.com>,
-        JamesJJ Liao =?UTF-8?Q?=28=E5=BB=96=E5=BB=BA=E6=99=BA=29?= 
-        <jamesjj.liao@mediatek.com>
-Date:   Tue, 22 Jan 2019 14:41:10 +0800
-In-Reply-To: <6021c8950c3146bb941ed1355391106d@mtkmbs01n1.mediatek.inc>
-References: <1546585439-30455-1-git-send-email-chunhui.dai@mediatek.com>
-         <1546585439-30455-10-git-send-email-chunhui.dai@mediatek.com>
-         <6021c8950c3146bb941ed1355391106d@mtkmbs01n1.mediatek.inc>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Tue, 22 Jan 2019 01:42:50 -0500
+Received: by mail-it1-f193.google.com with SMTP id c9so18696196itj.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 22:42:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ndWGJy7fWM7SEDYQT9UtimesU13A7WSjjIXUhm+p4kw=;
+        b=HMXBbatgpTHWNYlUjPDxEbtCJN2vqrNWbWG5lSa+uPssbhwYP+3zlxGkV6kN0FQ4Mr
+         t3uM4tILFgVhtzFna1nVaZGdb+XWtEiMQZn3sv3/OD1061pOZXvhL7dO3DmVtbyhAaB4
+         YSgxiKaytlowdZ7+YBW0i549c083TaPHaUQdYKMLWGVp6aVm+09K5QrBCIBT1sbNfE5k
+         MdTYTqRnSxr8ZV47Exf+kFJg15QEVI0dYOwk24MM8BAvMCacnkll1qL0C3O7R6myzyYr
+         R0zfiMQFBdWRiIloPjbBmXsHhbw4jM7n9ZrDbOmIwPNUjPp1eAwn4Xtl6GmAY9HNwA+G
+         BQ6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ndWGJy7fWM7SEDYQT9UtimesU13A7WSjjIXUhm+p4kw=;
+        b=JleJB/T1KC9Kbg+AHOErG5KhRtcjk4R36EgCh3SX9b+75PhVtr/VXjGWxGKNLupbbX
+         WRyjR70OyboUTdN0G4CDBlNltHXOHQsPcezPrBjISsW9JXhKd5PfFlaI6DIK3hk5+BVw
+         ITGe/UsRRCmq0jN5p9unmm5QE7tb5xV85nkta6igQaBZWpXKEK9ysDE2OAGvRn/cXQpn
+         jF/vDsV+LfXT8LVlBWlJE9HOKK56mS/4Z5SPx0FDTf9YJFtnbAfNf2Zg5uHO0KsT4l4H
+         anHpDqdiiQB4irMJ27iItTPwJ4G0e57maLx+yI/H6kAG3IUlcu2/H1w+JElyi0Y94S2w
+         Badg==
+X-Gm-Message-State: AJcUukdK2zqRV6TjmzTtlq0ZmU2oIM3mI5OUErvhKt+amNzyyuHlVX3A
+        8MXz/sQNgriqrG9Mnco/oa8=
+X-Google-Smtp-Source: AHgI3IY/96UkGbISUQlpqK/6PZQUqusK7crG8gGfiXuIIk2DAlbnu/REs/ViJ1Ps75fA3Zdy1eyU5Q==
+X-Received: by 2002:a24:e302:: with SMTP id d2mr1432723ith.155.1548139369635;
+        Mon, 21 Jan 2019 22:42:49 -0800 (PST)
+Received: from ubu-Virtual-Machine (66-188-57-61.dhcp.bycy.mi.charter.com. [66.188.57.61])
+        by smtp.gmail.com with ESMTPSA id t7sm5790313iom.27.2019.01.21.22.42.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 21 Jan 2019 22:42:49 -0800 (PST)
+Date:   Tue, 22 Jan 2019 01:42:46 -0500
+From:   Kimberly Brown <kimbrownkd@gmail.com>
+To:     Dexuan Cui <decui@microsoft.com>
+Cc:     Michael Kelley <mikelley@microsoft.com>,
+        Long Li <longli@microsoft.com>,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] Drivers: hv: vmbus: Add mutex lock to channel show
+ functions
+Message-ID: <20190122064246.GA28613@ubu-Virtual-Machine>
+References: <20190122020759.GA4054@ubu-Virtual-Machine>
+ <PU1P153MB0169EB8CFC0A69407A8AE2C2BF980@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PU1P153MB0169EB8CFC0A69407A8AE2C2BF980@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi CK,
-
-Ok, I'll send it again in an independent patch.
-
-Best Regards
-Jitao
-
-On Wed, 2019-01-16 at 14:52 +0800, CK Hu (胡俊光) wrote:
-> Hi, Chunhui:
-> 
-> > -----Original Message-----
-> > From: chunhui dai [mailto:chunhui.dai@mediatek.com]
-> > Sent: Friday, January 04, 2019 3:04 PM
-> > To: --to=Michael Turquette; Stephen Boyd; CK Hu (胡俊光)
-> > Cc: Matthias Brugger; Philipp Zabel; David Airlie; Chunhui Dai (戴春晖); Sean
-> > Wang; Ryder Lee (李庚諺); Colin Ian King; linux-clk@vger.kernel.org;
-> > linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> > linux-mediatek@lists.infradead.org; dri-devel@lists.freedesktop.org;
-> > srv_heupstream; Bibby Hsieh (謝濟遠); JamesJJ Liao (廖建智); Jitao Shi (石记
-> > 涛)
-> > Subject: [PATCH 9/9] drm/mediatek: add dpi dual edge support
+On Tue, Jan 22, 2019 at 03:46:48AM +0000, Dexuan Cui wrote:
+> > From: Kimberly Brown <kimbrownkd@gmail.com>
+> > Sent: Monday, January 21, 2019 6:08 PM
+> > Subject: [PATCH] Drivers: hv: vmbus: Add mutex lock to channel show functions
 > > 
-> > DPI sample on rising and falling edge. It can reduce half data io.
-> 
-> This patch looks like a patch for MT8183. For MT8173 and MT2701, dual_edge is false.
-> For now, we have not support MT8183 yet.
-> So you could just set dual_edge to false and remove MT8183 part in this patch.
-> You could send the MT8183 part in an independent patch, not in a series of MT2701.
-> 
-> Regards,
-> CK
-> 
+> > The channel level "_show" functions are vulnerable to race conditions.
+> > Add a mutex lock and unlock around the call to the channel level "_show"
+> > functions in vmbus_chan_attr_show().
 > > 
-> > Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
-> > Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
-> > ---
-> >  drivers/gpu/drm/mediatek/mtk_dpi.c | 30
-> > ++++++++++++++++++++++++++++++
-> >  1 file changed, 30 insertions(+)
+> > This problem was discussed here:
+> > https://lkml.org/lkml/2018/10/18/830
 > > 
-> > diff --git a/drivers/gpu/drm/mediatek/mtk_dpi.c
-> > b/drivers/gpu/drm/mediatek/mtk_dpi.c
-> > index 4a2f4a6..acb4f47 100644
-> > --- a/drivers/gpu/drm/mediatek/mtk_dpi.c
-> > +++ b/drivers/gpu/drm/mediatek/mtk_dpi.c
-> > @@ -117,6 +117,7 @@ struct mtk_dpi_conf {
-> >  	unsigned int (*cal_factor)(int clock);
-> >  	u32 reg_h_fre_con;
-> >  	bool edge_sel_en;
-> > +	bool dual_edge;
-> >  };
+> > --- a/drivers/hv/vmbus_drv.c
+> > +++ b/drivers/hv/vmbus_drv.c
+> > @@ -1414,6 +1414,7 @@ static ssize_t vmbus_chan_attr_show(struct kobject
+> > *kobj,
+> >  		= container_of(attr, struct vmbus_chan_attribute, attr);
+> >  	const struct vmbus_channel *chan
+> >  		= container_of(kobj, struct vmbus_channel, kobj);
+> > +	ssize_t ret;
 > > 
-> >  static void mtk_dpi_mask(struct mtk_dpi *dpi, u32 offset, u32 val, u32 mask)
-> > @@ -353,6 +354,15 @@ static void mtk_dpi_config_disable_edge(struct
-> > mtk_dpi *dpi)
-> >  		mtk_dpi_mask(dpi, dpi->conf->reg_h_fre_con, 0, EDGE_SEL_EN);  }
+> >  	if (!attribute->show)
+> >  		return -EIO;
+> > @@ -1421,7 +1422,10 @@ static ssize_t vmbus_chan_attr_show(struct
+> > kobject *kobj,
+> >  	if (chan->state != CHANNEL_OPENED_STATE)
+> >  		return -EINVAL;
 > > 
-> > +static void mtk_dpi_config_dual_edge(struct mtk_dpi *dpi) {
-> > +	if (dpi->conf->dual_edge) {
-> > +		mtk_dpi_mask(dpi, DPI_DDR_SETTING, DDR_EN |
-> > +				DDR_4PHASE, DDR_EN | DDR_4PHASE);
-> > +		mtk_dpi_mask(dpi, DPI_OUTPUT_SETTING, EDGE_SEL, EDGE_SEL);
-> > +	}
-> > +}
-> > +
-> >  static void mtk_dpi_config_color_format(struct mtk_dpi *dpi,
-> >  					enum mtk_dpi_out_color_format format)  { @@
-> > -509,6 +519,7 @@ static int mtk_dpi_set_display_mode(struct mtk_dpi *dpi,
-> >  	mtk_dpi_config_color_format(dpi, dpi->color_format);
-> >  	mtk_dpi_config_2n_h_fre(dpi);
-> >  	mtk_dpi_config_disable_edge(dpi);
-> > +	mtk_dpi_config_dual_edge(dpi);
-> >  	mtk_dpi_sw_reset(dpi, false);
-> > 
-> >  	return 0;
-> > @@ -669,6 +680,16 @@ static unsigned int mt2701_calculate_factor(int
-> > clock)
-> >  		return 1;
+> > -	return attribute->show(chan, buf);
+> > +	mutex_lock(&vmbus_connection.channel_mutex);
+> > +	ret = attribute->show(chan, buf);
+> > +	mutex_unlock(&vmbus_connection.channel_mutex);
+> > +	return ret;
 > >  }
-> > 
-> > +static unsigned int mt8183_calculate_factor(int clock) {
-> > +	if (clock <= 27000)
-> > +		return 8;
-> > +	else if (clock <= 167000)
-> > +		return 4;
-> > +	else
-> > +		return 2;
-> > +}
-> > +
-> >  static const struct mtk_dpi_conf mt8173_conf = {
-> >  	.cal_factor = mt8173_calculate_factor,
-> >  	.reg_h_fre_con = 0xe0,
-> > @@ -680,6 +701,12 @@ static unsigned int mt2701_calculate_factor(int
-> > clock)
-> >  	.edge_sel_en = true,
-> >  };
-> > 
-> > +static const struct mtk_dpi_conf mt8183_conf = {
-> > +	.cal_factor = mt8183_calculate_factor,
-> > +	.reg_h_fre_con = 0xe0,
-> > +	.dual_edge = true,
-> > +};
-> > +
-> >  static int mtk_dpi_probe(struct platform_device *pdev)  {
-> >  	struct device *dev = &pdev->dev;
-> > @@ -775,6 +802,9 @@ static int mtk_dpi_remove(struct platform_device
-> > *pdev)
-> >  	{ .compatible = "mediatek,mt8173-dpi",
-> >  	  .data = &mt8173_conf,
-> >  	},
-> > +	{ .compatible = "mediatek,mt8183-dpi",
-> > +	  .data = &mt8183_conf,
-> > +	},
-> >  	{ },
-> >  };
-> > 
-> > --
-> > 1.9.1
 > 
+> It looks this patch is already able to fix the original issue:
+> 6712cc9c2211 ("vmbus: don't return values for uninitalized channels"),
+> as chan->state can't be CHANNEL_OPENED_STATE when
+> channel->ringbuffer_page is not set up yet, or has been freed.
+> 
+> Thanks,
+> -- Dexuan
 
+I think that patch 6712cc9c2211 fixes the problem when the channel is
+not set up yet, but it doesn't fix the problem when the channel is being
+closed. The channel could be freed after the check that "chan->state" is
+CHANNEL_OPENED_STATE, while the "attribute->show()" function is running.
 
+Actually, there should be checks that "chan" is not null and that
+"chan->state" is CHANNEL_OPENED_STATE within the locked section. I'll
+need to fix that.
