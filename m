@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19C55C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:18:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4C2FC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:18:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9247217D4
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:18:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B43A217D6
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:18:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548170304;
-	bh=wB/JvBapYiDQgVtr2jp6q96gzmLv5iZIbGKk6+Bq2cc=;
+	s=default; t=1548170307;
+	bh=JpLuhssSF3HffO+LKSrkfj6wqEUs5pvFe3QVBB+FbKU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=X7FNGHOGIerMIRUAJE1AZp+hZqHJcY3CPorSIwpwJvLhI/0Uv98lB8Jwu7Z3C3/6g
-	 PRwh1g7doyaWyew7h6zNdZwQQEqr3VwYNbpVnry3oKhHPFA6yqhKnGKl5muoBJ6NJg
-	 MhGZXeRkY5TwW5bD+9jMOS8SzAv8a6EEMLAzfyrc=
+	b=lnkL1LrXKcrfdXf2iOxB/IPAH3X8BL6LnQCEuOaS/hF77m14tTb4haMjdvSBqHbW6
+	 W+NqP8qG4ODAX1M6vqNQL/2brfVtLCYsXOxlXkf02rFnDuqUNYX9RJfWLMOxHS18G1
+	 nXO5IcF4qRvkWg6BCi6JxuVZJ/0yGI/OoOREpbBs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729293AbfAVPSX (ORCPT
+        id S1729317AbfAVPSZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 10:18:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58880 "EHLO mail.kernel.org"
+        Tue, 22 Jan 2019 10:18:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59018 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729248AbfAVPSU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 10:18:20 -0500
+        id S1729287AbfAVPSX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 10:18:23 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BFEDB217D6;
-        Tue, 22 Jan 2019 15:18:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6BCA220879;
+        Tue, 22 Jan 2019 15:18:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548170300;
-        bh=wB/JvBapYiDQgVtr2jp6q96gzmLv5iZIbGKk6+Bq2cc=;
+        s=default; t=1548170302;
+        bh=JpLuhssSF3HffO+LKSrkfj6wqEUs5pvFe3QVBB+FbKU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zzqbXGWqht/z7C/Kl6NIQBjT9BPvnxBCVLmafCxk4S0Yi4z2G+lcAE+KaE2IEzKg0
-         hTwc6KHCKbBvMiLOewTkiYV0gg/4pUnNK68RD4pcZPPZAobZfG4IrjQTpiEdcWb0dX
-         tRTBkQTeg6QCOsfp9c0nxErjiTlDQG4/3L9xzWAM=
+        b=JbG6TsU3Oeb7WGQcWq/0/iP216KyMh8X5tQz8Dx0kVmqjnH+351mXbh/6rjaSMsuq
+         5gjIeAA7E+i3F8aicq+yUfvUffjtvmzzJKz3FvyQH9ltg+0+HuTuMYkfjPvBbLfjIq
+         hUaqLKfGkTU+NFHdeeVfzzBKWAo5fRhdlTwSbk1A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>
 Cc:     linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>
-Subject: [PATCH 4/8] infiniband: qib: no need to check return value of debugfs_create functions
-Date:   Tue, 22 Jan 2019 16:17:56 +0100
-Message-Id: <20190122151800.15092-5-gregkh@linuxfoundation.org>
+        Leon Romanovsky <leon@kernel.org>
+Subject: [PATCH 5/8] infiniband: mlx5: no need to check return value of debugfs_create functions
+Date:   Tue, 22 Jan 2019 16:17:57 +0100
+Message-Id: <20190122151800.15092-6-gregkh@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190122151800.15092-1-gregkh@linuxfoundation.org>
 References: <20190122151800.15092-1-gregkh@linuxfoundation.org>
@@ -62,70 +61,225 @@ When calling debugfs functions, there is no need to ever check the
 return value.  The function can work or not, but the code logic should
 never do something different based on this.
 
-Cc: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Cc: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Cc: Leon Romanovsky <leon@kernel.org>
 Cc: Doug Ledford <dledford@redhat.com>
 Cc: Jason Gunthorpe <jgg@ziepe.ca>
 Cc: linux-rdma@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/hw/qib/qib_debugfs.c | 26 +++++++------------------
- 1 file changed, 7 insertions(+), 19 deletions(-)
+ drivers/infiniband/hw/mlx5/cong.c    | 15 +++-----
+ drivers/infiniband/hw/mlx5/main.c    |  8 ++---
+ drivers/infiniband/hw/mlx5/mlx5_ib.h |  8 +----
+ drivers/infiniband/hw/mlx5/mr.c      | 51 +++++-----------------------
+ 4 files changed, 18 insertions(+), 64 deletions(-)
 
-diff --git a/drivers/infiniband/hw/qib/qib_debugfs.c b/drivers/infiniband/hw/qib/qib_debugfs.c
-index 5ed1ed93380f..8546e69c6a07 100644
---- a/drivers/infiniband/hw/qib/qib_debugfs.c
-+++ b/drivers/infiniband/hw/qib/qib_debugfs.c
-@@ -66,15 +66,6 @@ static const struct file_operations _##name##_file_ops = { \
- 	.release = seq_release \
- };
+diff --git a/drivers/infiniband/hw/mlx5/cong.c b/drivers/infiniband/hw/mlx5/cong.c
+index 7e4e358a4fd8..8ba439fabf7f 100644
+--- a/drivers/infiniband/hw/mlx5/cong.c
++++ b/drivers/infiniband/hw/mlx5/cong.c
+@@ -389,19 +389,19 @@ void mlx5_ib_cleanup_cong_debugfs(struct mlx5_ib_dev *dev, u8 port_num)
+ 	dev->port[port_num].dbg_cc_params = NULL;
+ }
  
--#define DEBUGFS_FILE_CREATE(name) \
--do { \
--	struct dentry *ent; \
--	ent = debugfs_create_file(#name , 0400, ibd->qib_ibdev_dbg, \
--		ibd, &_##name##_file_ops); \
--	if (!ent) \
--		pr_warn("create of " #name " failed\n"); \
--} while (0)
+-int mlx5_ib_init_cong_debugfs(struct mlx5_ib_dev *dev, u8 port_num)
++void mlx5_ib_init_cong_debugfs(struct mlx5_ib_dev *dev, u8 port_num)
+ {
+ 	struct mlx5_ib_dbg_cc_params *dbg_cc_params;
+ 	struct mlx5_core_dev *mdev;
+ 	int i;
+ 
+ 	if (!mlx5_debugfs_root)
+-		goto out;
++		return;
+ 
+ 	/* Takes a 1-based port number */
+ 	mdev = mlx5_ib_get_native_port_mdev(dev, port_num + 1, NULL);
+ 	if (!mdev)
+-		goto out;
++		return;
+ 
+ 	if (!MLX5_CAP_GEN(mdev, cc_query_allowed) ||
+ 	    !MLX5_CAP_GEN(mdev, cc_modify_allowed))
+@@ -415,8 +415,6 @@ int mlx5_ib_init_cong_debugfs(struct mlx5_ib_dev *dev, u8 port_num)
+ 
+ 	dbg_cc_params->root = debugfs_create_dir("cc_params",
+ 						 mdev->priv.dbg_root);
+-	if (!dbg_cc_params->root)
+-		goto err;
+ 
+ 	for (i = 0; i < MLX5_IB_DBG_CC_MAX; i++) {
+ 		dbg_cc_params->params[i].offset = i;
+@@ -427,14 +425,11 @@ int mlx5_ib_init_cong_debugfs(struct mlx5_ib_dev *dev, u8 port_num)
+ 					    0600, dbg_cc_params->root,
+ 					    &dbg_cc_params->params[i],
+ 					    &dbg_cc_fops);
+-		if (!dbg_cc_params->params[i].dentry)
+-			goto err;
+ 	}
+ 
+ put_mdev:
+ 	mlx5_ib_put_native_port_mdev(dev, port_num + 1);
+-out:
+-	return 0;
++	return;
+ 
+ err:
+ 	mlx5_ib_warn(dev, "cong debugfs failure\n");
+@@ -445,5 +440,5 @@ int mlx5_ib_init_cong_debugfs(struct mlx5_ib_dev *dev, u8 port_num)
+ 	 * We don't want to fail driver if debugfs failed to initialize,
+ 	 * so we are not forwarding error to the user.
+ 	 */
+-	return 0;
++	return;
+ }
+diff --git a/drivers/infiniband/hw/mlx5/main.c b/drivers/infiniband/hw/mlx5/main.c
+index 94fe253d4956..58e9adc94984 100644
+--- a/drivers/infiniband/hw/mlx5/main.c
++++ b/drivers/infiniband/hw/mlx5/main.c
+@@ -5508,9 +5508,7 @@ static bool mlx5_ib_bind_slave_port(struct mlx5_ib_dev *ibdev,
+ 	mpi->mdev_events.notifier_call = mlx5_ib_event_slave_port;
+ 	mlx5_notifier_register(mpi->mdev, &mpi->mdev_events);
+ 
+-	err = mlx5_ib_init_cong_debugfs(ibdev, port_num);
+-	if (err)
+-		goto unbind;
++	mlx5_ib_init_cong_debugfs(ibdev, port_num);
+ 
+ 	return true;
+ 
+@@ -6183,8 +6181,8 @@ void mlx5_ib_stage_counters_cleanup(struct mlx5_ib_dev *dev)
+ 
+ static int mlx5_ib_stage_cong_debugfs_init(struct mlx5_ib_dev *dev)
+ {
+-	return mlx5_ib_init_cong_debugfs(dev,
+-					 mlx5_core_native_port_num(dev->mdev) - 1);
++	mlx5_ib_init_cong_debugfs(dev, mlx5_core_native_port_num(dev->mdev) - 1);
++	return 0;
+ }
+ 
+ static void mlx5_ib_stage_cong_debugfs_cleanup(struct mlx5_ib_dev *dev)
+diff --git a/drivers/infiniband/hw/mlx5/mlx5_ib.h b/drivers/infiniband/hw/mlx5/mlx5_ib.h
+index b06d3b1efea8..b75afc4dd5f6 100644
+--- a/drivers/infiniband/hw/mlx5/mlx5_ib.h
++++ b/drivers/infiniband/hw/mlx5/mlx5_ib.h
+@@ -623,7 +623,6 @@ struct mlx5_cache_ent {
+ 	spinlock_t		lock;
+ 
+ 
+-	struct dentry	       *dir;
+ 	char                    name[4];
+ 	u32                     order;
+ 	u32			xlt;
+@@ -635,11 +634,6 @@ struct mlx5_cache_ent {
+ 	u32                     miss;
+ 	u32			limit;
+ 
+-	struct dentry          *fsize;
+-	struct dentry          *fcur;
+-	struct dentry          *fmiss;
+-	struct dentry          *flimit;
 -
- static void *_opcode_stats_seq_start(struct seq_file *s, loff_t *pos)
- {
- 	struct qib_opcode_stats_perctx *opstats;
-@@ -249,17 +240,16 @@ DEBUGFS_FILE(qp_stats)
+ 	struct mlx5_ib_dev     *dev;
+ 	struct work_struct	work;
+ 	struct delayed_work	dwork;
+@@ -1254,7 +1248,7 @@ __be16 mlx5_get_roce_udp_sport(struct mlx5_ib_dev *dev,
+ 			       const struct ib_gid_attr *attr);
  
- void qib_dbg_ibdev_init(struct qib_ibdev *ibd)
- {
-+	struct dentry *root;
- 	char name[10];
+ void mlx5_ib_cleanup_cong_debugfs(struct mlx5_ib_dev *dev, u8 port_num);
+-int mlx5_ib_init_cong_debugfs(struct mlx5_ib_dev *dev, u8 port_num);
++void mlx5_ib_init_cong_debugfs(struct mlx5_ib_dev *dev, u8 port_num);
  
- 	snprintf(name, sizeof(name), "qib%d", dd_from_dev(ibd)->unit);
--	ibd->qib_ibdev_dbg = debugfs_create_dir(name, qib_dbg_root);
--	if (!ibd->qib_ibdev_dbg) {
--		pr_warn("create of %s failed\n", name);
--		return;
--	}
--	DEBUGFS_FILE_CREATE(opcode_stats);
--	DEBUGFS_FILE_CREATE(ctx_stats);
--	DEBUGFS_FILE_CREATE(qp_stats);
-+	root = debugfs_create_dir(name, qib_dbg_root);
-+	ibd->qib_ibdev_dbg = root;
-+
-+	debugfs_create_file("opcode_stats", 0400, root, ibd, &_opcode_stats_file_ops);
-+	debugfs_create_file("ctx_stats", 0400, root, ibd, &_ctx_stats_file_ops);
-+	debugfs_create_file("qp_stats", 0400, root, ibd, &_qp_stats_file_ops);
+ /* GSI QP helper functions */
+ struct ib_qp *mlx5_ib_gsi_create_qp(struct ib_pd *pd,
+diff --git a/drivers/infiniband/hw/mlx5/mr.c b/drivers/infiniband/hw/mlx5/mr.c
+index fd6ea1f75085..7832da4971b0 100644
+--- a/drivers/infiniband/hw/mlx5/mr.c
++++ b/drivers/infiniband/hw/mlx5/mr.c
+@@ -610,52 +610,27 @@ static void mlx5_mr_cache_debugfs_cleanup(struct mlx5_ib_dev *dev)
+ 	dev->cache.root = NULL;
  }
  
- void qib_dbg_ibdev_exit(struct qib_ibdev *ibd)
-@@ -274,8 +264,6 @@ void qib_dbg_ibdev_exit(struct qib_ibdev *ibd)
- void qib_dbg_init(void)
+-static int mlx5_mr_cache_debugfs_init(struct mlx5_ib_dev *dev)
++static void mlx5_mr_cache_debugfs_init(struct mlx5_ib_dev *dev)
  {
- 	qib_dbg_root = debugfs_create_dir(QIB_DRV_NAME, NULL);
--	if (!qib_dbg_root)
--		pr_warn("init of debugfs failed\n");
+ 	struct mlx5_mr_cache *cache = &dev->cache;
+ 	struct mlx5_cache_ent *ent;
++	struct dentry *dir;
+ 	int i;
+ 
+ 	if (!mlx5_debugfs_root || dev->rep)
+-		return 0;
++		return;
+ 
+ 	cache->root = debugfs_create_dir("mr_cache", dev->mdev->priv.dbg_root);
+-	if (!cache->root)
+-		return -ENOMEM;
+ 
+ 	for (i = 0; i < MAX_MR_CACHE_ENTRIES; i++) {
+ 		ent = &cache->ent[i];
+ 		sprintf(ent->name, "%d", ent->order);
+-		ent->dir = debugfs_create_dir(ent->name,  cache->root);
+-		if (!ent->dir)
+-			goto err;
+-
+-		ent->fsize = debugfs_create_file("size", 0600, ent->dir, ent,
+-						 &size_fops);
+-		if (!ent->fsize)
+-			goto err;
+-
+-		ent->flimit = debugfs_create_file("limit", 0600, ent->dir, ent,
+-						  &limit_fops);
+-		if (!ent->flimit)
+-			goto err;
+-
+-		ent->fcur = debugfs_create_u32("cur", 0400, ent->dir,
+-					       &ent->cur);
+-		if (!ent->fcur)
+-			goto err;
+-
+-		ent->fmiss = debugfs_create_u32("miss", 0600, ent->dir,
+-						&ent->miss);
+-		if (!ent->fmiss)
+-			goto err;
++		dir = debugfs_create_dir(ent->name, cache->root);
++		debugfs_create_file("size", 0600, dir, ent, &size_fops);
++		debugfs_create_file("limit", 0600, dir, ent, &limit_fops);
++		debugfs_create_u32("cur", 0400, dir, &ent->cur);
++		debugfs_create_u32("miss", 0600, dir, &ent->miss);
+ 	}
+-
+-	return 0;
+-err:
+-	mlx5_mr_cache_debugfs_cleanup(dev);
+-
+-	return -ENOMEM;
  }
  
- void qib_dbg_exit(void)
+ static void delay_time_func(struct timer_list *t)
+@@ -669,7 +644,6 @@ int mlx5_mr_cache_init(struct mlx5_ib_dev *dev)
+ {
+ 	struct mlx5_mr_cache *cache = &dev->cache;
+ 	struct mlx5_cache_ent *ent;
+-	int err;
+ 	int i;
+ 
+ 	mutex_init(&dev->slow_path_mutex);
+@@ -713,14 +687,7 @@ int mlx5_mr_cache_init(struct mlx5_ib_dev *dev)
+ 		queue_work(cache->wq, &ent->work);
+ 	}
+ 
+-	err = mlx5_mr_cache_debugfs_init(dev);
+-	if (err)
+-		mlx5_ib_warn(dev, "cache debugfs failure\n");
+-
+-	/*
+-	 * We don't want to fail driver if debugfs failed to initialize,
+-	 * so we are not forwarding error to the user.
+-	 */
++	mlx5_mr_cache_debugfs_init(dev);
+ 
+ 	return 0;
+ }
 -- 
 2.20.1
 
