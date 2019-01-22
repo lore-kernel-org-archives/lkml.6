@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67AD0C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:23:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1BFFC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:23:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37F8B217D8
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:23:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91CC3217D6
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:23:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548170630;
-	bh=0yNuOAQk176i2GYqxghL1ZfWbitCGMbN3lB5divZh2Y=;
+	s=default; t=1548170632;
+	bh=1Aj3YCEataN9QBHBaY/Us+DbXKs7RxzlYEOjTLFBVVU=;
 	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=T8MRB3Y1q4WH0r0tHPQGZnDekXzQlW/jFIv4HYsosQ+MAFeBQIZrCuM8IL778X/gc
-	 C0PUMg0j8eAyc/SbcnNwsgeQB7VM1lk80dXzw2T+OoDFx8HVklVAqB9QDQZRAPaRY+
-	 P6ACreXJSUNIIDReqciwtZFGWUlVMX9GkWOZVh48=
+	b=m3kzybRWBQACESilcceKjlVxSgThVF4iPojG9Tvl5HkcNAF5P+DPrwoKmCfTZi831
+	 G0FRGVbdA6lTqTXzA8txMfacg8C6T/7dLc367EtHWvEcibju2PBHkI6UAzmqXkM5xd
+	 OVyQL40aHMGyg6WxU07A+Hem5xwQhkX6yyvViyQ8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729925AbfAVPXs (ORCPT
+        id S1729943AbfAVPXv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 10:23:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37102 "EHLO mail.kernel.org"
+        Tue, 22 Jan 2019 10:23:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729910AbfAVPXp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 10:23:45 -0500
+        id S1729924AbfAVPXs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 10:23:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6FB0E20879;
-        Tue, 22 Jan 2019 15:23:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E1104217D6;
+        Tue, 22 Jan 2019 15:23:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548170624;
-        bh=0yNuOAQk176i2GYqxghL1ZfWbitCGMbN3lB5divZh2Y=;
+        s=default; t=1548170628;
+        bh=1Aj3YCEataN9QBHBaY/Us+DbXKs7RxzlYEOjTLFBVVU=;
         h=From:To:Cc:Subject:Date:From;
-        b=ljX2Mt1jDigt9huAS5kExEs4CaxeiZhX7eo62jw1ZnMCeYrim/HuNmQRzZcYkVH6J
-         zRKn7teAQEsRE0si/BxOO7hdBHfcI+2jDq2ODEmcJ+mMpgyy3Zhn7Gl19kLyFVBwPL
-         Zj2KrxBNwI7QsXTRhZTAJk+vxJo6zjMqbErPMYMY=
+        b=sGRWCi0/M8EIlfFmxt0IH6UwnrJzhC2QA6xC9YoGFfvJ5cDS/+WqIVlxglj3jvkPc
+         tgtvJ8bcSU1YAh0XyK0Xfda5uAnuN3WXsXBNEQ1E9qLaNpyubkQoWFxPH7JnmvoP/8
+         xT9Gnqnc9hD+JkKn41zNSAvAGWmFd0wA9MogrudU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [PATCH] kprobes: no need to check return value of debugfs_create functions
-Date:   Tue, 22 Jan 2019 16:21:46 +0100
-Message-Id: <20190122152151.16139-47-gregkh@linuxfoundation.org>
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        linux-pm@vger.kernel.org
+Subject: [PATCH] power: qos: no need to check return value of debugfs_create functions
+Date:   Tue, 22 Jan 2019 16:21:47 +0100
+Message-Id: <20190122152151.16139-48-gregkh@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -61,59 +60,41 @@ When calling debugfs functions, there is no need to ever check the
 return value.  The function can work or not, but the code logic should
 never do something different based on this.
 
-Cc: "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>
-Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Len Brown <len.brown@intel.com>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: linux-pm@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/kprobes.c | 25 ++++++-------------------
- 1 file changed, 6 insertions(+), 19 deletions(-)
+ kernel/power/qos.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-index f4ddfdd2d07e..7287e7de2350 100644
---- a/kernel/kprobes.c
-+++ b/kernel/kprobes.c
-@@ -2566,33 +2566,20 @@ static const struct file_operations fops_kp = {
+diff --git a/kernel/power/qos.c b/kernel/power/qos.c
+index b7a82502857a..9d22131afc1e 100644
+--- a/kernel/power/qos.c
++++ b/kernel/power/qos.c
+@@ -582,10 +582,8 @@ static int register_pm_qos_misc(struct pm_qos_object *qos, struct dentry *d)
+ 	qos->pm_qos_power_miscdev.name = qos->name;
+ 	qos->pm_qos_power_miscdev.fops = &pm_qos_power_fops;
  
- static int __init debugfs_kprobe_init(void)
- {
--	struct dentry *dir, *file;
-+	struct dentry *dir;
- 	unsigned int value = 1;
+-	if (d) {
+-		(void)debugfs_create_file(qos->name, S_IRUGO, d,
+-					  (void *)qos, &pm_qos_debug_fops);
+-	}
++	debugfs_create_file(qos->name, S_IRUGO, d, (void *)qos,
++			    &pm_qos_debug_fops);
  
- 	dir = debugfs_create_dir("kprobes", NULL);
--	if (!dir)
--		return -ENOMEM;
- 
--	file = debugfs_create_file("list", 0400, dir, NULL,
--				&debugfs_kprobes_operations);
--	if (!file)
--		goto error;
-+	debugfs_create_file("list", 0400, dir, NULL,
-+			    &debugfs_kprobes_operations);
- 
--	file = debugfs_create_file("enabled", 0600, dir,
--					&value, &fops_kp);
--	if (!file)
--		goto error;
-+	debugfs_create_file("enabled", 0600, dir, &value, &fops_kp);
- 
--	file = debugfs_create_file("blacklist", 0400, dir, NULL,
--				&debugfs_kprobe_blacklist_ops);
--	if (!file)
--		goto error;
-+	debugfs_create_file("blacklist", 0400, dir, NULL,
-+			    &debugfs_kprobe_blacklist_ops);
- 
- 	return 0;
--
--error:
--	debugfs_remove(dir);
--	return -ENOMEM;
+ 	return misc_register(&qos->pm_qos_power_miscdev);
  }
+@@ -685,8 +683,6 @@ static int __init pm_qos_power_init(void)
+ 	BUILD_BUG_ON(ARRAY_SIZE(pm_qos_array) != PM_QOS_NUM_CLASSES);
  
- late_initcall(debugfs_kprobe_init);
+ 	d = debugfs_create_dir("pm_qos", NULL);
+-	if (IS_ERR_OR_NULL(d))
+-		d = NULL;
+ 
+ 	for (i = PM_QOS_CPU_DMA_LATENCY; i < PM_QOS_NUM_CLASSES; i++) {
+ 		ret = register_pm_qos_misc(pm_qos_array[i], d);
 -- 
 2.20.1
 
