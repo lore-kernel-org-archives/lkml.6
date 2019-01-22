@@ -2,1154 +2,681 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B313C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:07:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 397E1C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:08:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D22DD21019
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:07:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C38cVRXS"
+	by mail.kernel.org (Postfix) with ESMTP id E8A8621019
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:08:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728675AbfAVOHZ (ORCPT
+        id S1728710AbfAVOIH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 09:07:25 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:38817 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728359AbfAVOHY (ORCPT
+        Tue, 22 Jan 2019 09:08:07 -0500
+Received: from mail-io1-f71.google.com ([209.85.166.71]:42971 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728416AbfAVOIG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 09:07:24 -0500
-Received: by mail-it1-f193.google.com with SMTP id h65so20182057ith.3;
-        Tue, 22 Jan 2019 06:07:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=r+Q69nF1pU+EO5fLdbYL+dMAZ6riFiW1zru75KG1W/E=;
-        b=C38cVRXS0NvV07vrtAcFVnD6KVhothOm507G6MqViX0/6lbwa1U41vlx8P9wUynvSW
-         TOw7aWku587x0ysKdb67ZR5cDm5FRBRLXr1p63umu59k0NHnudj1Sz1NjgLbabv9nNkl
-         9auDoc6+jKV8qYsjpFApbFMLBcdaIjIbCU9OKN9QMMtV9x1EiNBHwVOhIgK5Va9XcB4H
-         aiaMn0bMlYQSefhOemnA4MQbOlho0wDr7OE8rzWRr2etJaN1KusYtjI0gDVzndEtz7Rj
-         8urqqrvb0waeID+VJAT4pkEwaYc78MJejnXwZ8avy2dOR6JFrFV/8Atn993DYNM54JpP
-         6nVw==
+        Tue, 22 Jan 2019 09:08:06 -0500
+Received: by mail-io1-f71.google.com with SMTP id a2so19810275ioq.9
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 06:08:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=r+Q69nF1pU+EO5fLdbYL+dMAZ6riFiW1zru75KG1W/E=;
-        b=tTZ72Xt9YnMOoXDoFU0BPvnCvLZ0rgXkM5LEqeBVwtWL6gd/v3XgRW343MyFg7iqL9
-         9DsIBd/I5B9/sdjLGOqWCeweVsELOsw9kOI8twpuaImBs/iuKjL4/CWuxNxwXwUWqB6V
-         70ph7Su4NvogxQV/Th3nPaKJm5jeTm4Gj4z9KkbC92HN247xaE502mTGkH6+ooBiOTKu
-         PvjyiZbS1Uth7coEJEW24ZV01Ql+ZKxvaXt32S6wNyjyhhkwOsS7t5gWDLhKImqwhLjA
-         8zOw8J2IDwSSaX9Ct3lOFtEW36izDdpBuMqrk8oO5wwhDodjbmMLlbDaE9HKXUMWse94
-         gleA==
-X-Gm-Message-State: AJcUukfDzPm4R0PlRijMitI65wzelAT4C2mX34PaAx3RB9vWrVmzJdfH
-        eCLXD32hI/aRyQzdeNapvyM=
-X-Google-Smtp-Source: AHgI3IZwAQ2UrgkR15k2gwGCKCkof+yPsWfccMrus4Mgej/oybXm0s2U9Y5waxj9ALJ2LvQ5DJyloQ==
-X-Received: by 2002:a24:6890:: with SMTP id v138mr2264900itb.53.1548166042505;
-        Tue, 22 Jan 2019 06:07:22 -0800 (PST)
-Received: from aford-OptiPlex-7050.logicpd.com ([174.46.170.158])
-        by smtp.gmail.com with ESMTPSA id t2sm6877962iob.7.2019.01.22.06.07.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Jan 2019 06:07:21 -0800 (PST)
-From:   Adam Ford <aford173@gmail.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Adam Ford <aford173@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: dts: imx: Add support for Logic PD i.MX6QD EVM
-Date:   Tue, 22 Jan 2019 08:07:05 -0600
-Message-Id: <20190122140705.4918-1-aford173@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=tRIniidD5Vj4WLUl3aQE7kbwSRQjNaPAspY9qsbDOe0=;
+        b=s36uBKaKxK+kedkF2+deANBZWkHntH9kVu/luTOvq+Rv9yleutF6u/nyS7j2gJcbeA
+         JWNef+058Ih+/RFWNQ46ml3/SWrs7Ck7qjxo3vY1AvFmIq3SyxBkenhWj9yLCB8vAoJa
+         qH7j2yEwOL8CjdXREkAftjliKy5Af2DHAxAGxZOzkT8Oytl+Wlni5uBNhryxi60HFL65
+         1VgK8dqpGVuaQkJ0t2Obz2Aj0+uRAFkvhFJnixPhqRhMZs6YTZVKtkeUR/hsnu/mc4OC
+         GG+Gl0yH71v+PFzS+X+4IbBKVHQbHT5VGlTrnkzzpD4wPxgIvoYpWd9v3dbsC/4YGWaP
+         iboQ==
+X-Gm-Message-State: AJcUukdzUpQQE/1SlQHQBCPKWwxD9UdoBwxKAk4VwL7/pqcOVDZ5si34
+        tw32stet/FquJwlEyPFXYl/LDx2bFpbPFg0SF5GZWdQ0orNF
+X-Google-Smtp-Source: ALg8bN7BUTDo9M6lOTQsEoUiACyTGLSejEYxlmBd7x3tUvKevkjI6s3gm0yDkwjxaa6NVhhETb3F7qU8Ui7pLptchJS/TAowuzEu
+MIME-Version: 1.0
+X-Received: by 2002:a5d:9b81:: with SMTP id r1mr816496iom.38.1548166084797;
+ Tue, 22 Jan 2019 06:08:04 -0800 (PST)
+Date:   Tue, 22 Jan 2019 06:08:04 -0800
+In-Reply-To: <CACT4Y+b7KhMECUF01fz0+1LJOiqzJhTRHOvezN4baPNd02om0Q@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000089b42c05800c8145@google.com>
+Subject: Re: possible deadlock in __do_page_fault
+From:   syzbot <syzbot+a76129f18c89f3e2ddd4@syzkaller.appspotmail.com>
+To:     ak@linux.intel.com, akpm@linux-foundation.org, arve@android.com,
+        dvyukov@google.com, gregkh@linuxfoundation.org, hannes@cmpxchg.org,
+        jack@suse.cz, joel@joelfernandes.org, joelaf@google.com,
+        jrdr.linux@gmail.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, maco@android.com, mgorman@techsingularity.net,
+        penguin-kernel@i-love.sakura.ne.jp,
+        syzkaller-bugs@googlegroups.com, tkjos@android.com,
+        tkjos@google.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The EVM consists of a system on module (SOM) and baseboard, and LCD.
-This patch adds a DTSI file for the SOM and baseboard separately,
-then a wrapper to combine them and specify processor type and a
-LCD information.
+Hello,
 
-Signed-off-by: Adam Ford <aford173@gmail.com>
+syzbot has tested the proposed patch but the reproducer still triggered  
+crash:
+possible deadlock in __do_page_fault
 
-diff --git a/arch/arm/boot/dts/imx6-logicpd-baseboard.dtsi b/arch/arm/boot/dts/imx6-logicpd-baseboard.dtsi
-new file mode 100644
-index 000000000000..d09549362164
---- /dev/null
-+++ b/arch/arm/boot/dts/imx6-logicpd-baseboard.dtsi
-@@ -0,0 +1,556 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Copyright (C) 2019 Logic PD, Inc.
-+
-+/ {
-+	keyboard {
-+		compatible = "gpio-keys";
-+
-+		btn0 {
-+			gpios = <&pcf8575 0 GPIO_ACTIVE_LOW>;
-+			label = "btn0";
-+			linux,code = <KEY_WAKEUP>;
-+			debounce-interval = <10>;
-+			wakeup-source;
-+		};
-+
-+		btn1 {
-+			gpios = <&pcf8575 1 GPIO_ACTIVE_LOW>;
-+			label = "btn1";
-+			linux,code = <KEY_WAKEUP>;
-+			debounce-interval = <10>;
-+			wakeup-source;
-+		};
-+
-+		btn2 {
-+			gpios = <&pcf8575 2 GPIO_ACTIVE_LOW>;
-+			label = "btn2";
-+			linux,code = <KEY_WAKEUP>;
-+			debounce-interval = <10>;
-+			wakeup-source;
-+		};
-+		btn3 {
-+			gpios = <&pcf8575 3 GPIO_ACTIVE_LOW>;
-+			label = "btn3";
-+			linux,code = <KEY_WAKEUP>;
-+			debounce-interval = <10>;
-+			wakeup-source;
-+		};
-+
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		gen_led0 {
-+			label = "led0";
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pinctrl_led0>;
-+			gpios = <&gpio1 30 GPIO_ACTIVE_HIGH>;
-+			linux,default-trigger = "cpu0";
-+		};
-+
-+		gen_led1 {
-+			label = "led1";
-+			gpios = <&pcf8575 8 GPIO_ACTIVE_HIGH>;
-+		};
-+
-+		gen_led2 {
-+			label = "led2";
-+			gpios = <&pcf8575 9 GPIO_ACTIVE_HIGH>;
-+			linux,default-trigger = "heartbeat";
-+		};
-+
-+		gen_led3 {
-+			label = "led3";
-+			gpios = <&pcf8575 10 GPIO_ACTIVE_HIGH>;
-+			linux,default-trigger = "default-on";
-+		};
-+	};
-+
-+	reg_usb_otg_vbus: regulator-otg-vbus {
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_reg_usb_otg>;
-+		compatible = "regulator-fixed";
-+		regulator-name = "usb_otg_vbus";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		gpio = <&gpio4 15 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	reg_usb_h1_vbus: regulator-usb-h1-vbus {
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_reg_usb_h1_vbus>;
-+		compatible = "regulator-fixed";
-+		regulator-name = "usb_h1_vbus";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		gpio = <&gpio7 12 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	reg_3v3: regulator-3v3 {
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_reg_3v3>;
-+		compatible = "regulator-fixed";
-+		regulator-name = "reg_3v3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		gpio = <&gpio1 26 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+		regulator-always-on;
-+	};
-+
-+
-+	reg_enet: regulator-ethernet {
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_reg_enet>;
-+		compatible = "regulator-fixed";
-+		regulator-name = "ethernet-supply";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		gpio = <&gpio3 31 GPIO_ACTIVE_HIGH>;
-+		startup-delay-us = <70000>;
-+		enable-active-high;
-+		vin-supply = <&sw4_reg>;
-+	};
-+
-+	reg_audio: regulator-audio {
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_reg_audio>;
-+		compatible = "regulator-fixed";
-+		regulator-name = "3v3_aud";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		gpio = <&gpio1 29 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+		regulator-always-on;
-+		vin-supply = <&reg_3v3>;
-+	};
-+
-+	reg_hdmi: regulator-hdmi {
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_reg_hdmi>;
-+		compatible = "regulator-fixed";
-+		regulator-name = "hdmi-supply";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		gpio = <&gpio3 20 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+		vin-supply = <&reg_3v3>;
-+	};
-+
-+	reg_uart3: regulator-uart3 {
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_reg_uart3>;
-+		compatible = "regulator-fixed";
-+		regulator-name = "uart3-supply";
-+		gpio = <&gpio1 28 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+		regulator-always-on;
-+		vin-supply = <&reg_3v3>;
-+	};
-+
-+	reg_1v8: regulator-1v8 {
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_reg_1v8>;
-+		compatible = "regulator-fixed";
-+		regulator-name = "1v8-supply";
-+		gpio = <&gpio3 30 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+		regulator-always-on;
-+		vin-supply = <&reg_3v3>;
-+	};
-+
-+	reg_pcie: regulator-pcie {
-+		compatible = "regulator-fixed";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_reg_pcie>;
-+		regulator-name = "mpcie_3v3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		gpio = <&gpio1 2 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	reg_mipi: regulator-mipi {
-+		compatible = "regulator-fixed";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_reg_mipi>;
-+		regulator-name = "mipi_pwr_en";
-+		regulator-min-microvolt = <2800000>;
-+		regulator-max-microvolt = <2800000>;
-+		gpio = <&gpio3 19 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	sound {
-+		compatible = "fsl,imx-audio-wm8962";
-+		model = "wm8962-audio";
-+		ssi-controller = <&ssi2>;
-+		audio-codec = <&codec>;
-+		audio-routing =
-+			"Headphone Jack", "HPOUTL",
-+			"Headphone Jack", "HPOUTR",
-+			"Ext Spk", "SPKOUTL",
-+			"Ext Spk", "SPKOUTR",
-+			"AMIC", "MICBIAS",
-+			"IN3R", "AMIC";
-+		mux-int-port = <2>;
-+		mux-ext-port = <4>;
-+	};
-+};
-+
-+&audmux {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_audmux>;
-+	status = "okay";
-+};
-+
-+&ecspi1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_ecspi1>;
-+	status = "disabled";
-+};
-+
-+&fec {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_enet>;
-+	phy-mode = "rgmii";
-+	phy-reset-duration = <10>;
-+	phy-reset-gpios = <&gpio1 24 GPIO_ACTIVE_LOW>;
-+	phy-supply = <&reg_enet>;
-+	interrupt-parent = <&gpio1>;
-+	interrupts = <25 IRQ_TYPE_EDGE_FALLING>;
-+	status = "okay";
-+};
-+
-+&i2c1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_i2c1>;
-+	clock-frequency = <400000>;
-+	status = "okay";
-+
-+	codec: wm8962@1a {
-+		compatible = "wlf,wm8962";
-+		reg = <0x1a>;
-+		clocks = <&clks IMX6QDL_CLK_CKO>;
-+		clock-names = "xclk";
-+		DCVDD-supply = <&reg_audio>;
-+		DBVDD-supply = <&reg_audio>;
-+		AVDD-supply = <&reg_audio>;
-+		CPVDD-supply = <&reg_audio>;
-+		MICVDD-supply = <&reg_audio>;
-+		PLLVDD-supply = <&reg_audio>;
-+		SPKVDD1-supply = <&reg_audio>;
-+		SPKVDD2-supply = <&reg_audio>;
-+		gpio-cfg = <
-+			0x0000 /* 0:Default */
-+			0x0000 /* 1:Default */
-+			0x0013 /* 2:FN_DMICCLK */
-+			0x0000 /* 3:Default */
-+			0x8014 /* 4:FN_DMICCDAT */
-+			0x0000 /* 5:Default */
-+		>;
-+	};
-+};
-+
-+&i2c3 {
-+	ov5640: camera@10 {
-+		compatible = "ovti,ov5640";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_ov5640>;
-+		reg = <0x10>;
-+		clocks = <&clks IMX6QDL_CLK_CKO>;
-+		clock-names = "xclk";
-+		DOVDD-supply = <&reg_mipi>;
-+		AVDD-supply = <&reg_mipi>;
-+		DVDD-supply = <&reg_mipi>;
-+		reset-gpios = <&gpio3 26 GPIO_ACTIVE_LOW>;
-+		powerdown-gpios = <&gpio3 27 GPIO_ACTIVE_HIGH>;
-+
-+		port {
-+			ov5640_to_mipi_csi2: endpoint {
-+				remote-endpoint = <&mipi_csi2_in>;
-+				clock-lanes = <0>;
-+				data-lanes = <1 2>;
-+			};
-+		};
-+	};
-+
-+	pcf8575: gpio@20 {
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_pcf8574>;
-+		compatible = "nxp,pcf8575";
-+		reg = <0x20>;
-+		interrupt-parent = <&gpio6>;
-+		interrupts = <31 IRQ_TYPE_EDGE_FALLING>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		lines-initial-states = <0x0710>;
-+		wakeup-source;
-+	};
-+};
-+
-+&ipu1_csi1_from_mipi_vc1 {
-+	clock-lanes = <0>;
-+	data-lanes = <1 2>;
-+};
-+
-+&mipi_csi {
-+	status = "okay";
-+
-+	port@0 {
-+		reg = <0>;
-+
-+		mipi_csi2_in: endpoint {
-+			remote-endpoint = <&ov5640_to_mipi_csi2>;
-+			clock-lanes = <0>;
-+			data-lanes = <1 2>;
-+		};
-+	};
-+};
-+
-+&pcie {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_pcie>;
-+	reset-gpio = <&gpio1 9 GPIO_ACTIVE_LOW>;
-+	status = "okay";
-+	vpcie-supply = <&reg_pcie>;
-+};
-+
-+&pwm3 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_pwm3>;
-+};
-+
-+&ssi2 {
-+	status = "okay";
-+};
-+
-+&uart3 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_uart3>;
-+	status = "okay";
-+};
-+
-+&usbh1 {
-+	vbus-supply = <&reg_usb_h1_vbus>;
-+	status = "okay";
-+};
-+
-+&usbotg {
-+	vbus-supply = <&reg_usb_otg_vbus>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_usbotg>;
-+	disable-over-current;
-+	dr_mode = "otg";
-+	status = "okay";
-+};
-+
-+&usdhc2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_usdhc2>;
-+	pinctrl-1 = <&pinctrl_usdhc2_100mhz>;
-+	pinctrl-2 = <&pinctrl_usdhc2_200mhz>;
-+	vmmc-supply = <&reg_3v3>;
-+	no-1-8-v;
-+	keep-power-in-suspend;
-+	status = "okay";
-+	cd-gpios = <&gpio1 4 GPIO_ACTIVE_LOW>;
-+};
-+
-+&iomuxc {
-+
-+	pinctrl_audmux: audmuxgrp {
-+		fsl,pins = <
-+			MX6QDL_PAD_DISP0_DAT20__AUD4_TXC  0x130b0
-+			MX6QDL_PAD_DISP0_DAT21__AUD4_TXD  0x110b0
-+			MX6QDL_PAD_DISP0_DAT22__AUD4_TXFS 0x130b0
-+			MX6QDL_PAD_DISP0_DAT23__AUD4_RXD  0x130b0
-+		>;
-+	};
-+
-+	pinctrl_ecspi1: ecspi1grp {
-+		fsl,pins = <
-+			MX6QDL_PAD_KEY_COL0__ECSPI1_SCLK	0x100b1
-+			MX6QDL_PAD_KEY_ROW0__ECSPI1_MOSI	0x100b1
-+			MX6QDL_PAD_KEY_COL1__ECSPI1_MISO	0x100b1
-+			MX6QDL_PAD_KEY_ROW1__ECSPI1_SS0		0x100b1
-+		>;
-+	};
-+
-+	pinctrl_enet: enetgrp {
-+		fsl,pins = <
-+			MX6QDL_PAD_ENET_MDIO__ENET_MDIO		0x1b8b0
-+			MX6QDL_PAD_ENET_MDC__ENET_MDC		0x1b0b0
-+			MX6QDL_PAD_RGMII_TXC__RGMII_TXC		0x1b030
-+			MX6QDL_PAD_RGMII_TD0__RGMII_TD0		0x1b030
-+			MX6QDL_PAD_RGMII_TD1__RGMII_TD1		0x1b030
-+			MX6QDL_PAD_RGMII_TD2__RGMII_TD2		0x1b030
-+			MX6QDL_PAD_RGMII_TD3__RGMII_TD3		0x1b030
-+			MX6QDL_PAD_ENET_REF_CLK__ENET_TX_CLK	0x100b0
-+			MX6QDL_PAD_RGMII_TX_CTL__RGMII_TX_CTL	0x1b030
-+			MX6QDL_PAD_GPIO_16__ENET_REF_CLK	0x4001b0a8
-+			MX6QDL_PAD_RGMII_RXC__RGMII_RXC		0x1b030
-+			MX6QDL_PAD_RGMII_RD0__RGMII_RD0		0x13030
-+			MX6QDL_PAD_RGMII_RD1__RGMII_RD1		0x13030
-+			MX6QDL_PAD_RGMII_RD2__RGMII_RD2		0x1b030
-+			MX6QDL_PAD_RGMII_RD3__RGMII_RD3		0x1b030
-+			MX6QDL_PAD_RGMII_RX_CTL__RGMII_RX_CTL	0x13030
-+			MX6QDL_PAD_ENET_CRS_DV__GPIO1_IO25	0x1b0b0	/* ENET_INT */
-+			MX6QDL_PAD_ENET_RX_ER__GPIO1_IO24	0x1b0b0	/* ETHR_nRST */
-+		>;
-+	};
-+
-+	pinctrl_i2c1: i2c1grp {
-+		fsl,pins = <
-+			MX6QDL_PAD_EIM_D21__I2C1_SCL	0x4001b8b1
-+			MX6QDL_PAD_EIM_D28__I2C1_SDA	0x4001b8b1
-+		>;
-+	};
-+
-+	pinctrl_led0: led0grp {
-+	    fsl,pins = <
-+		MX6QDL_PAD_ENET_TXD0__GPIO1_IO30	0x1b0b0
-+	    >;
-+	};
-+
-+	pinctrl_ov5640: ov5640grp {
-+		fsl,pins = <
-+			MX6QDL_PAD_EIM_D26__GPIO3_IO26	0x1b0b1
-+			MX6QDL_PAD_EIM_D27__GPIO3_IO27	0x1b0b1
-+		>;
-+	};
-+
-+	pinctrl_pcf8574: pcf8575grp {
-+		fsl,pins = <
-+			MX6QDL_PAD_EIM_BCLK__GPIO6_IO31 0x1b0b0
-+		>;
-+	};
-+
-+	pinctrl_pcie: pciegrp {
-+		fsl,pins = <
-+			MX6QDL_PAD_GPIO_8__GPIO1_IO08 0x1b0b0
-+			MX6QDL_PAD_GPIO_9__GPIO1_IO09 0x1b0b0
-+		>;
-+	};
-+
-+	pinctrl_pwm3: pwm3grp {
-+	    fsl,pins = <
-+		MX6QDL_PAD_SD4_DAT1__PWM3_OUT		0x1b0b1
-+	    >;
-+	};
-+
-+	pinctrl_uart3: uart3grp {
-+		fsl,pins = <
-+			MX6QDL_PAD_EIM_D23__UART3_CTS_B		0x1b0b1
-+			MX6QDL_PAD_EIM_D24__UART3_TX_DATA	0x1b0b1
-+			MX6QDL_PAD_EIM_D25__UART3_RX_DATA	0x1b0b1
-+			MX6QDL_PAD_EIM_EB3__UART3_RTS_B		0x1b0b1
-+		>;
-+	};
-+
-+	pinctrl_usbotg: usbotggrp {
-+		fsl,pins = <
-+			MX6QDL_PAD_GPIO_1__USB_OTG_ID	0xd17059
-+		>;
-+	};
-+
-+	pinctrl_usdhc2: usdhc2grp {
-+		fsl,pins = <
-+			MX6QDL_PAD_GPIO_4__GPIO1_IO04		0x1b0b0	/* CD */
-+			MX6QDL_PAD_SD2_CMD__SD2_CMD		0x17069
-+			MX6QDL_PAD_SD2_CLK__SD2_CLK		0x10069
-+			MX6QDL_PAD_SD2_DAT0__SD2_DATA0		0x17069
-+			MX6QDL_PAD_SD2_DAT1__SD2_DATA1		0x17069
-+			MX6QDL_PAD_SD2_DAT2__SD2_DATA2		0x17069
-+			MX6QDL_PAD_SD2_DAT3__SD2_DATA3		0x17069
-+		>;
-+	};
-+
-+	pinctrl_usdhc2_100mhz: h100-usdhc2-100mhz {
-+		fsl,pins = <
-+			MX6QDL_PAD_GPIO_4__GPIO1_IO04		0x1b0b0	/* CD */
-+			MX6QDL_PAD_SD2_CMD__SD2_CMD		0x170b9
-+			MX6QDL_PAD_SD2_CLK__SD2_CLK		0x100b9
-+			MX6QDL_PAD_SD2_DAT0__SD2_DATA0		0x170b9
-+			MX6QDL_PAD_SD2_DAT1__SD2_DATA1		0x170b9
-+			MX6QDL_PAD_SD2_DAT2__SD2_DATA2		0x170b9
-+			MX6QDL_PAD_SD2_DAT3__SD2_DATA3		0x170b9
-+		>;
-+	};
-+
-+	pinctrl_usdhc2_200mhz: h100-usdhc2-200mhz {
-+		fsl,pins = <
-+			MX6QDL_PAD_GPIO_4__GPIO1_IO04		0x1b0b0	/* CD */
-+			MX6QDL_PAD_SD2_CMD__SD2_CMD		0x170f9
-+			MX6QDL_PAD_SD2_CLK__SD2_CLK		0x100f9
-+			MX6QDL_PAD_SD2_DAT0__SD2_DATA0		0x170f9
-+			MX6QDL_PAD_SD2_DAT1__SD2_DATA1		0x170f9
-+			MX6QDL_PAD_SD2_DAT2__SD2_DATA2		0x170f9
-+			MX6QDL_PAD_SD2_DAT3__SD2_DATA3		0x170f9
-+		>;
-+	};
-+
-+	pinctrl_reg_1v8: reg1v8grp {
-+	    fsl,pins = <
-+		MX6QDL_PAD_EIM_D30__GPIO3_IO30		0x1b0b0
-+	    >;
-+	};
-+
-+	pinctrl_reg_3v3: reg3v3grp {
-+	    fsl,pins = <
-+		MX6QDL_PAD_ENET_RXD1__GPIO1_IO26	0x1b0b0
-+	    >;
-+	};
-+
-+	pinctrl_reg_audio: reg-audiogrp {
-+		fsl,pins = <
-+			MX6QDL_PAD_ENET_TXD1__GPIO1_IO29 0x1b0b0
-+		>;
-+	};
-+
-+	pinctrl_reg_enet: reg-enetgrp {
-+		fsl,pins = <
-+			MX6QDL_PAD_EIM_D31__GPIO3_IO31	0x1b0b0
-+		>;
-+	};
-+
-+	pinctrl_reg_hdmi: reg-hdmigrp {
-+		fsl,pins = <
-+			MX6QDL_PAD_EIM_D20__GPIO3_IO20	0x1b0b0
-+		>;
-+	};
-+
-+	pinctrl_reg_mipi: reg-mipigrp {
-+		fsl,pins = <MX6QDL_PAD_EIM_D19__GPIO3_IO19 0x1b0b1>;
-+	};
-+
-+	pinctrl_reg_pcie: reg-pciegrp {
-+		fsl,pins = <
-+			MX6QDL_PAD_GPIO_2__GPIO1_IO02	0x1b0b0
-+			>;
-+	};
-+
-+	pinctrl_reg_uart3: reguart3grp {
-+	    fsl,pins = <
-+		MX6QDL_PAD_ENET_TX_EN__GPIO1_IO28	0x1b0b0
-+	    >;
-+	};
-+
-+	pinctrl_reg_usb_h1_vbus: usbh1grp {
-+		fsl,pins = <
-+			MX6QDL_PAD_GPIO_17__GPIO7_IO12		0x1b0b0
-+		>;
-+	};
-+
-+	pinctrl_reg_usb_otg: reg-usb-otggrp {
-+		fsl,pins = <
-+			MX6QDL_PAD_KEY_ROW4__GPIO4_IO15		0x1b0b0
-+		>;
-+	};
-+};
-diff --git a/arch/arm/boot/dts/imx6-logicpd-som.dtsi b/arch/arm/boot/dts/imx6-logicpd-som.dtsi
-new file mode 100644
-index 000000000000..35bbf7880f3c
---- /dev/null
-+++ b/arch/arm/boot/dts/imx6-logicpd-som.dtsi
-@@ -0,0 +1,364 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Copyright (C) 2019 Logic PD, Inc.
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+
-+/ {
-+	chosen {
-+		stdout-path = &uart1;
-+	};
-+
-+	memory@10000000 {
-+		reg = <0x10000000 0x80000000>;
-+	};
-+
-+	reg_wl18xx_vmmc: regulator-wl18xx {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vwl1837";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		gpio = <&gpio7 0 GPIO_ACTIVE_HIGH>;
-+		startup-delay-us = <70000>;
-+		enable-active-high;
-+	};
-+
-+};
-+
-+&clks {
-+	assigned-clocks = <&clks IMX6QDL_CLK_LDB_DI0_SEL>,
-+			  <&clks IMX6QDL_CLK_LDB_DI1_SEL>;
-+	assigned-clock-parents = <&clks IMX6QDL_CLK_PLL3_USB_OTG>,
-+				 <&clks IMX6QDL_CLK_PLL3_USB_OTG>;
-+};
-+
-+&gpmi {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_gpmi_nand>;
-+	status = "okay";
-+	nand-on-flash-bbt;
-+};
-+
-+&i2c3 {
-+	clock-frequency = <100000>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_i2c3>;
-+	status = "okay";
-+
-+	pmic: pfuze100@8 {
-+		compatible = "fsl,pfuze100";
-+		reg = <0x08>;
-+
-+		regulators {
-+			sw1a_reg: sw1ab {
-+				regulator-min-microvolt = <725000>;
-+				regulator-max-microvolt = <1450000>;
-+				regulator-name = "vddcore";
-+				regulator-boot-on;
-+				regulator-always-on;
-+				regulator-ramp-delay = <6250>;
-+			};
-+
-+			sw1c_reg: sw1c {
-+				regulator-min-microvolt = <725000>;
-+				regulator-max-microvolt = <1450000>;
-+				regulator-name = "vddsoc";
-+				regulator-boot-on;
-+				regulator-always-on;
-+				regulator-ramp-delay = <6250>;
-+			};
-+
-+			sw2_reg: sw2 {
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-name = "gen_3v3";
-+				regulator-boot-on;
-+				/* regulator-always-on; */
-+			};
-+
-+			sw3a_reg: sw3a {
-+				regulator-min-microvolt = <1350000>;
-+				regulator-max-microvolt = <1350000>;
-+				regulator-name = "sw3a_vddr";
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			sw3b_reg: sw3b {
-+				regulator-min-microvolt = <1350000>;
-+				regulator-max-microvolt = <1350000>;
-+				regulator-name = "sw3b_vddr";
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			sw4_reg: sw4 {
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-name = "gen_rgmii";
-+			};
-+
-+			swbst_reg: swbst {
-+				regulator-min-microvolt = <5000000>;
-+				regulator-max-microvolt = <5150000>;
-+				regulator-name = "gen_5v0";
-+			};
-+
-+			snvs_reg: vsnvs {
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <3000000>;
-+				regulator-name = "gen_vsns";
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			vref_reg: vrefddr {
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			vgen1_reg: vgen1 {
-+				regulator-min-microvolt = <1500000>;
-+				regulator-max-microvolt = <1500000>;
-+				regulator-name = "gen_1v5";
-+			};
-+
-+			vgen2_reg: vgen2 {
-+				regulator-name = "vgen2";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <1550000>;
-+			};
-+
-+			vgen3_reg: vgen3 {
-+				regulator-name = "gen_vadj_0";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <3300000>;
-+			};
-+
-+			vgen4_reg: vgen4 {
-+				regulator-name = "gen_1v8";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
-+			};
-+
-+			vgen5_reg: vgen5 {
-+				regulator-name = "gen_vadj_1";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-always-on;
-+			};
-+
-+			vgen6_reg: vgen6 {
-+				regulator-name = "gen_2v5";
-+				regulator-min-microvolt = <2500000>;
-+				regulator-max-microvolt = <2500000>;
-+				regulator-always-on;
-+			};
-+
-+			coin_reg: coin {
-+				regulator-min-microvolt = <2500000>;
-+				regulator-max-microvolt = <3000000>;
-+				regulator-always-on;
-+			};
-+		};
-+	};
-+
-+	tmp102_0: tmp102@4a {
-+		compatible = "ti,tmp102";
-+		reg = <0x4a>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_tempsense>;
-+		interrupt-parent = <&gpio6>;
-+		interrupts = <15 IRQ_TYPE_LEVEL_LOW>;
-+		#thermal-sensor-cells = <1>;
-+	};
-+
-+	tmp102_1: tmp102@49 {
-+		compatible = "ti,tmp102";
-+		reg = <0x49>;
-+		interrupt-parent = <&gpio6>;
-+		interrupts = <15 IRQ_TYPE_LEVEL_LOW>;
-+		#thermal-sensor-cells = <1>;
-+	};
-+
-+	at24c64_mfg: at24@51 {
-+		compatible = "atmel,24c64";
-+		pagesize = <32>;
-+		read-only;	/* Manufacturing EEPROM programmed at factory */
-+		reg = <0x51>;
-+	};
-+
-+	at24c64_usr: at24@52 {
-+		compatible = "atmel,24c64";
-+		pagesize = <32>;
-+		reg = <0x52>;
-+	};
-+};
-+
-+/* Reroute power feeding the CPU to come from the external PMIC */
-+&reg_arm
-+{
-+	vin-supply = <&sw1a_reg>;
-+};
-+
-+&reg_soc
-+{
-+	vin-supply = <&sw1c_reg>;
-+};
-+
-+&iomuxc {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_hog>;
-+
-+	pinctrl_hog: hoggrp {
-+		fsl,pins = <	/* Enable ARM Debugger */
-+			MX6QDL_PAD_CSI0_MCLK__ARM_TRACE_CTL	0x1b0b0
-+			MX6QDL_PAD_CSI0_PIXCLK__ARM_EVENTO	0x1b0b0
-+			MX6QDL_PAD_CSI0_VSYNC__ARM_TRACE00	0x1b0b0
-+			MX6QDL_PAD_CSI0_DATA_EN__ARM_TRACE_CLK	0x1b0b0
-+			MX6QDL_PAD_CSI0_DAT4__ARM_TRACE01	0x1b0b0
-+			MX6QDL_PAD_CSI0_DAT5__ARM_TRACE02	0x1b0b0
-+			MX6QDL_PAD_CSI0_DAT6__ARM_TRACE03	0x1b0b0
-+			MX6QDL_PAD_CSI0_DAT7__ARM_TRACE04	0x1b0b0
-+			MX6QDL_PAD_CSI0_DAT8__ARM_TRACE05	0x1b0b0
-+			MX6QDL_PAD_CSI0_DAT9__ARM_TRACE06	0x1b0b0
-+			MX6QDL_PAD_CSI0_DAT10__ARM_TRACE07	0x1b0b0
-+			MX6QDL_PAD_CSI0_DAT11__ARM_TRACE08	0x1b0b0
-+			MX6QDL_PAD_CSI0_DAT12__ARM_TRACE09	0x1b0b0
-+			MX6QDL_PAD_CSI0_DAT13__ARM_TRACE10	0x1b0b0
-+			MX6QDL_PAD_CSI0_DAT14__ARM_TRACE11	0x1b0b0
-+			MX6QDL_PAD_CSI0_DAT15__ARM_TRACE12	0x1b0b0
-+			MX6QDL_PAD_CSI0_DAT16__ARM_TRACE13	0x1b0b0
-+			MX6QDL_PAD_CSI0_DAT17__ARM_TRACE14	0x1b0b0
-+			MX6QDL_PAD_CSI0_DAT18__ARM_TRACE15	0x1b0b0
-+			MX6QDL_PAD_GPIO_0__CCM_CLKO1        0x130b0
-+		>;
-+	};
-+
-+	pinctrl_gpmi_nand: gpmi-nandgrp {
-+		fsl,pins = <
-+			MX6QDL_PAD_NANDF_CLE__NAND_CLE		0x0b0b1
-+			MX6QDL_PAD_NANDF_ALE__NAND_ALE		0x0b0b1
-+			MX6QDL_PAD_NANDF_WP_B__NAND_WP_B	0x0b0b1
-+			MX6QDL_PAD_NANDF_RB0__NAND_READY_B	0x0b000
-+			MX6QDL_PAD_NANDF_CS0__NAND_CE0_B	0x0b0b1
-+			MX6QDL_PAD_SD4_CMD__NAND_RE_B		0x0b0b1
-+			MX6QDL_PAD_SD4_CLK__NAND_WE_B		0x0b0b1
-+			MX6QDL_PAD_NANDF_D0__NAND_DATA00	0x0b0b1
-+			MX6QDL_PAD_NANDF_D1__NAND_DATA01	0x0b0b1
-+			MX6QDL_PAD_NANDF_D2__NAND_DATA02	0x0b0b1
-+			MX6QDL_PAD_NANDF_D3__NAND_DATA03	0x0b0b1
-+			MX6QDL_PAD_NANDF_D4__NAND_DATA04	0x0b0b1
-+			MX6QDL_PAD_NANDF_D5__NAND_DATA05	0x0b0b1
-+			MX6QDL_PAD_NANDF_D6__NAND_DATA06	0x0b0b1
-+			MX6QDL_PAD_NANDF_D7__NAND_DATA07	0x0b0b1
-+		>;
-+	};
-+
-+	pinctrl_i2c3: i2c3grp {
-+		fsl,pins = <
-+			MX6QDL_PAD_EIM_D17__I2C3_SCL		0x4001b8b1
-+			MX6QDL_PAD_EIM_D18__I2C3_SDA		0x4001b8b1
-+		>;
-+	};
-+
-+	pinctrl_uart1: uart1grp {
-+		fsl,pins = <
-+			MX6QDL_PAD_SD3_DAT6__UART1_RX_DATA	0x1b0b1
-+			MX6QDL_PAD_SD3_DAT7__UART1_TX_DATA	0x1b0b1
-+		>;
-+	};
-+
-+	pinctrl_uart2: uart2grp {
-+		fsl,pins = <
-+			MX6QDL_PAD_SD3_RST__GPIO7_IO08		0x13059	/* BT_EN */
-+			MX6QDL_PAD_SD4_DAT4__UART2_RX_DATA	0x1b0b1
-+			MX6QDL_PAD_SD4_DAT5__UART2_RTS_B	0x1b0b1
-+			MX6QDL_PAD_SD4_DAT6__UART2_CTS_B	0x1b0b1
-+			MX6QDL_PAD_SD4_DAT7__UART2_TX_DATA	0x1b0b1
-+		>;
-+	};
-+
-+	pinctrl_usdhc1: usdhc1grp {
-+		fsl,pins = <
-+			MX6QDL_PAD_SD1_CMD__SD1_CMD	0x170B9
-+			MX6QDL_PAD_SD1_CLK__SD1_CLK	0x100B9
-+			MX6QDL_PAD_SD1_DAT0__SD1_DATA0	0x170B9
-+			MX6QDL_PAD_SD1_DAT1__SD1_DATA1	0x170B9
-+			MX6QDL_PAD_SD1_DAT2__SD1_DATA2	0x170B9
-+			MX6QDL_PAD_SD1_DAT3__SD1_DATA3	0x170B9
-+		>;
-+	};
-+
-+	pinctrl_usdhc3: usdhc3grp {
-+		fsl,pins = <
-+			MX6QDL_PAD_SD3_CMD__SD3_CMD    0x17049
-+			MX6QDL_PAD_SD3_CLK__SD3_CLK    0x10049
-+			MX6QDL_PAD_SD3_DAT0__SD3_DATA0 0x17049
-+			MX6QDL_PAD_SD3_DAT1__SD3_DATA1 0x17049
-+			MX6QDL_PAD_SD3_DAT2__SD3_DATA2 0x17049
-+			MX6QDL_PAD_SD3_DAT3__SD3_DATA3 0x17049
-+			MX6QDL_PAD_SD3_DAT4__GPIO7_IO01	0x130b0 /* WL_IRQ */
-+			MX6QDL_PAD_SD3_DAT5__GPIO7_IO00	0x17059 /* WLAN_EN */
-+		>;
-+	};
-+
-+	pinctrl_tempsense: tempsensegrp {
-+		fsl,pins = <
-+			MX6QDL_PAD_NANDF_CS2__GPIO6_IO15 0x1b0b0
-+		>;
-+	};
-+};
-+
-+&snvs_poweroff {
-+	status = "okay";
-+};
-+
-+&uart1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_uart1>;
-+	status = "okay";
-+};
-+
-+&uart2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_uart2>;
-+	status = "okay";
-+	uart-has-rtscts;
-+	bluetooth {
-+		compatible = "ti,wl1837-st";
-+		enable-gpios = <&gpio7 8 GPIO_ACTIVE_HIGH>;
-+	};
-+};
-+
-+&usdhc1 {
-+	pinctrl-names = "default", "state_100mhz", "state_200mhz";
-+	pinctrl-0 = <&pinctrl_usdhc1>;
-+	non-removable;
-+	keep-power-in-suspend;
-+	enable-sdio-wakeup;
-+	status = "okay";
-+	vmmc-supply = <&sw2_reg>;
-+};
-+
-+&usdhc3 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_usdhc3>;
-+	non-removable;
-+	cap-power-off-card;
-+	keep-power-in-suspend;
-+	wakeup-source;
-+	vmmc-supply = <&reg_wl18xx_vmmc>;
-+	status = "okay";
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	wlcore: wlcore@2 {
-+		  compatible = "ti,wl1837";
-+		  reg = <2>;
-+		  interrupt-parent = <&gpio7>;
-+		  interrupts = <1 IRQ_TYPE_LEVEL_HIGH>;
-+		  tcxo-clock-frequency = <26000000>;
-+	};
-+};
-diff --git a/arch/arm/boot/dts/imx6q-logicpd.dts b/arch/arm/boot/dts/imx6q-logicpd.dts
-new file mode 100644
-index 000000000000..4b910ab03ac6
---- /dev/null
-+++ b/arch/arm/boot/dts/imx6q-logicpd.dts
-@@ -0,0 +1,132 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Copyright (C) 2019 Logic PD, Inc.
-+
-+/dts-v1/;
-+#include "imx6q.dtsi"
-+#include "imx6-logicpd-som.dtsi"
-+#include "imx6-logicpd-baseboard.dtsi"
-+
-+/ {
-+	model = "Logic PD i.MX6QD SOM-M3";
-+	compatible = "fsl,imx6q";
-+
-+	backlight: backlight_lvds {
-+		compatible = "pwm-backlight";
-+		pwms = <&pwm3 0 20000>;
-+		brightness-levels = <0 4 8 16 32 64 128 255>;
-+		default-brightness-level = <6>;
-+		power-supply = <&reg_lcd>;
-+	};
-+
-+	panel-lvds0 {
-+		compatible = "ampire,am800480b3tmqw";
-+
-+		port {
-+			panel_in_lvds0: endpoint {
-+				remote-endpoint = <&lvds0_out>;
-+			};
-+		};
-+	};
-+
-+	reg_lcd: regulator-lcd {
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_lcd_reg>;
-+		compatible = "regulator-fixed";
-+		regulator-name = "lcd_panel_pwr";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		gpio = <&gpio4 17 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+		regulator-always-on;
-+		vin-supply = <&reg_3v3>;
-+		startup-delay-us = <500000>;
-+	};
-+
-+	reg_lcd_reset: regulator-lcd-reset {
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_lcd_reset>;
-+		compatible = "regulator-fixed";
-+		regulator-name = "nLCD_RESET";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		gpio = <&gpio5 2 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+		regulator-always-on;
-+		vin-supply = <&reg_lcd>;
-+	};
-+};
-+
-+&clks {
-+	assigned-clocks = <&clks IMX6QDL_CLK_LDB_DI0_SEL>,
-+			  <&clks IMX6QDL_CLK_LDB_DI1_SEL>,
-+			  <&clks IMX6QDL_CLK_IPU1_DI0_PRE_SEL>,
-+			  <&clks IMX6QDL_CLK_IPU2_DI0_PRE_SEL>;
-+	assigned-clock-parents = <&clks IMX6QDL_CLK_PLL5_VIDEO_DIV>,
-+				 <&clks IMX6QDL_CLK_PLL5_VIDEO_DIV>,
-+				 <&clks IMX6QDL_CLK_PLL2_PFD2_396M>,
-+				 <&clks IMX6QDL_CLK_PLL2_PFD2_396M>;
-+};
-+
-+&hdmi {
-+	ddc-i2c-bus = <&i2c3>;
-+	status = "okay";
-+};
-+
-+&i2c1 {
-+	ili_touch: ilitouch@26 {
-+		compatible = "ili,ili2117a";
-+		reg = <0x26>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_touchscreen>;
-+		interrupts-extended = <&gpio1 6 IRQ_TYPE_LEVEL_HIGH>;
-+		ili2117a,poll-period = <10>;
-+		ili2117a,max-touch = <2>;
-+	};
-+};
-+
-+&ldb {
-+	status = "okay";
-+
-+	lvds-channel@0 {
-+		fsl,data-mapping = "spwg";
-+		fsl,data-width = <24>;
-+		status = "okay";
-+
-+		port@4 {
-+			reg = <4>;
-+			lvds0_out: endpoint {
-+				remote-endpoint = <&panel_in_lvds0>;
-+			};
-+		};
-+	};
-+
-+};
-+
-+&pwm3 {
-+	status = "okay";
-+};
-+
-+&reg_hdmi {
-+	regulator-always-on;	/* Without this, the level shifter on HDMI doesn't turn on */
-+};
-+
-+&iomuxc {
-+	pinctrl_lcd_reg: lcdreg {
-+		fsl,pins = <
-+			MX6QDL_PAD_DI0_PIN15__GPIO4_IO17	0x100b0	/* R_LCD_PANEL_PWR */
-+		>;
-+	};
-+
-+	pinctrl_lcd_reset: lcdreset {
-+		fsl,pins = <
-+			MX6QDL_PAD_EIM_A25__GPIO5_IO02	0x100b0	/* LCD_nRESET */
-+		>;
-+	};
-+
-+	pinctrl_touchscreen: touchscreengrp {
-+		fsl,pins = <
-+			MX6QDL_PAD_GPIO_6__GPIO1_IO06	0x1b0b0	/* TOUCH_nPINTDAV */
-+		>;
-+	};
-+};
--- 
-2.17.1
+8021q: adding VLAN 0 to HW filter on device team0
+8021q: adding VLAN 0 to HW filter on device team0
+8021q: adding VLAN 0 to HW filter on device team0
+8021q: adding VLAN 0 to HW filter on device team0
+======================================================
+WARNING: possible circular locking dependency detected
+5.0.0-rc3+ #1 Not tainted
+------------------------------------------------------
+syz-executor2/7371 is trying to acquire lock:
+00000000435ca279 (&mm->mmap_sem){++++}, at: do_user_addr_fault  
+arch/x86/mm/fault.c:1426 [inline]
+00000000435ca279 (&mm->mmap_sem){++++}, at: __do_page_fault+0x9c2/0xd60  
+arch/x86/mm/fault.c:1541
+
+but task is already holding lock:
+00000000b64def52 (&sb->s_type->i_mutex_key#11){+.+.}, at: inode_lock  
+include/linux/fs.h:757 [inline]
+00000000b64def52 (&sb->s_type->i_mutex_key#11){+.+.}, at:  
+generic_file_write_iter+0xe5/0x6a0 mm/filemap.c:3358
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #2 (&sb->s_type->i_mutex_key#11){+.+.}:
+        down_write+0x8a/0x130 kernel/locking/rwsem.c:70
+        inode_lock include/linux/fs.h:757 [inline]
+        shmem_fallocate+0x168/0x1200 mm/shmem.c:2633
+        ashmem_shrink_scan drivers/staging/android/ashmem.c:455 [inline]
+        ashmem_shrink_scan+0x239/0x630 drivers/staging/android/ashmem.c:439
+        ashmem_ioctl+0x38a/0x12c0 drivers/staging/android/ashmem.c:797
+        vfs_ioctl fs/ioctl.c:46 [inline]
+        file_ioctl fs/ioctl.c:509 [inline]
+        do_vfs_ioctl+0x107b/0x17d0 fs/ioctl.c:696
+kobject: 'loop3' (00000000bfa624b6): kobject_uevent_env
+        ksys_ioctl+0xab/0xd0 fs/ioctl.c:713
+        __do_sys_ioctl fs/ioctl.c:720 [inline]
+        __se_sys_ioctl fs/ioctl.c:718 [inline]
+        __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+kobject: 'loop3' (00000000bfa624b6): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+        do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+-> #1 (ashmem_mutex){+.+.}:
+        __mutex_lock_common kernel/locking/mutex.c:925 [inline]
+        __mutex_lock+0x12f/0x1670 kernel/locking/mutex.c:1072
+        mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1087
+        ashmem_mmap+0x55/0x520 drivers/staging/android/ashmem.c:361
+        call_mmap include/linux/fs.h:1867 [inline]
+        mmap_region+0xde5/0x1ca0 mm/mmap.c:1786
+        do_mmap+0xa09/0x1220 mm/mmap.c:1559
+        do_mmap_pgoff include/linux/mm.h:2379 [inline]
+        vm_mmap_pgoff+0x20b/0x2b0 mm/util.c:350
+        ksys_mmap_pgoff+0x4f8/0x650 mm/mmap.c:1609
+        __do_sys_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
+        __se_sys_mmap arch/x86/kernel/sys_x86_64.c:91 [inline]
+        __x64_sys_mmap+0xe9/0x1b0 arch/x86/kernel/sys_x86_64.c:91
+        do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+-> #0 (&mm->mmap_sem){++++}:
+        lock_acquire+0x1db/0x570 kernel/locking/lockdep.c:3841
+kobject: 'loop4' (00000000e9e52bda): kobject_uevent_env
+        down_read+0x8d/0x120 kernel/locking/rwsem.c:24
+kobject: 'loop4' (00000000e9e52bda): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+        do_user_addr_fault arch/x86/mm/fault.c:1426 [inline]
+        __do_page_fault+0x9c2/0xd60 arch/x86/mm/fault.c:1541
+        do_page_fault+0xe6/0x7d8 arch/x86/mm/fault.c:1572
+        page_fault+0x1e/0x30 arch/x86/entry/entry_64.S:1143
+        fault_in_pages_readable include/linux/pagemap.h:611 [inline]
+        iov_iter_fault_in_readable+0x377/0x450 lib/iov_iter.c:425
+        generic_perform_write+0x202/0x6b0 mm/filemap.c:3198
+        __generic_file_write_iter+0x25e/0x630 mm/filemap.c:3333
+        generic_file_write_iter+0x34e/0x6a0 mm/filemap.c:3361
+        call_write_iter include/linux/fs.h:1862 [inline]
+        new_sync_write fs/read_write.c:474 [inline]
+        __vfs_write+0x764/0xb40 fs/read_write.c:487
+        vfs_write+0x20c/0x580 fs/read_write.c:549
+        ksys_write+0x105/0x260 fs/read_write.c:598
+        __do_sys_write fs/read_write.c:610 [inline]
+        __se_sys_write fs/read_write.c:607 [inline]
+        __x64_sys_write+0x73/0xb0 fs/read_write.c:607
+        do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+other info that might help us debug this:
+
+Chain exists of:
+   &mm->mmap_sem --> ashmem_mutex --> &sb->s_type->i_mutex_key#11
+
+  Possible unsafe locking scenario:
+
+        CPU0                    CPU1
+        ----                    ----
+   lock(&sb->s_type->i_mutex_key#11);
+                                lock(ashmem_mutex);
+                                lock(&sb->s_type->i_mutex_key#11);
+   lock(&mm->mmap_sem);
+
+  *** DEADLOCK ***
+
+2 locks held by syz-executor2/7371:
+  #0: 00000000cdd032c7 (sb_writers#5){.+.+}, at: file_start_write  
+include/linux/fs.h:2815 [inline]
+  #0: 00000000cdd032c7 (sb_writers#5){.+.+}, at: vfs_write+0x429/0x580  
+fs/read_write.c:548
+kobject: 'loop3' (00000000bfa624b6): kobject_uevent_env
+  #1: 00000000b64def52 (&sb->s_type->i_mutex_key#11){+.+.}, at: inode_lock  
+include/linux/fs.h:757 [inline]
+  #1: 00000000b64def52 (&sb->s_type->i_mutex_key#11){+.+.}, at:  
+generic_file_write_iter+0xe5/0x6a0 mm/filemap.c:3358
+
+stack backtrace:
+kobject: 'loop3' (00000000bfa624b6): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+CPU: 1 PID: 7371 Comm: syz-executor2 Not tainted 5.0.0-rc3+ #1
+kobject: 'loop4' (00000000e9e52bda): kobject_uevent_env
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
+kobject: 'loop4' (00000000e9e52bda): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+  print_circular_bug.isra.0.cold+0x1cc/0x28f kernel/locking/lockdep.c:1224
+  check_prev_add kernel/locking/lockdep.c:1866 [inline]
+  check_prevs_add kernel/locking/lockdep.c:1979 [inline]
+  validate_chain kernel/locking/lockdep.c:2350 [inline]
+  __lock_acquire+0x3014/0x4a30 kernel/locking/lockdep.c:3338
+  lock_acquire+0x1db/0x570 kernel/locking/lockdep.c:3841
+  down_read+0x8d/0x120 kernel/locking/rwsem.c:24
+  do_user_addr_fault arch/x86/mm/fault.c:1426 [inline]
+  __do_page_fault+0x9c2/0xd60 arch/x86/mm/fault.c:1541
+  do_page_fault+0xe6/0x7d8 arch/x86/mm/fault.c:1572
+  page_fault+0x1e/0x30 arch/x86/entry/entry_64.S:1143
+kobject: 'loop4' (00000000e9e52bda): kobject_uevent_env
+RIP: 0010:fault_in_pages_readable include/linux/pagemap.h:611 [inline]
+RIP: 0010:iov_iter_fault_in_readable+0x377/0x450 lib/iov_iter.c:425
+Code: 89 f6 41 88 57 e0 e8 b8 2f f4 fd 45 85 f6 74 c1 e9 70 fe ff ff e8 29  
+2e f4 fd 0f 1f 00 0f ae e8 44 89 f0 48 8b 8d 68 ff ff ff <8a> 11 89 c3 0f  
+1f 00 41 88 57 d0 31 ff 89 de e8 85 2f f4 fd 85 db
+RSP: 0018:ffff8881c52478a8 EFLAGS: 00010293
+kobject: 'loop4' (00000000e9e52bda): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 000000002020053f
+RDX: 0000000000000000 RSI: ffffffff838db067 RDI: 0000000000000007
+RBP: ffff8881c5247948 R08: ffff8881c4c18240 R09: fffff94000d13e07
+R10: fffff94000d13e06 R11: ffffea000689f037 R12: 0000000000001000
+R13: 0000000000001000 R14: 0000000000000000 R15: ffff8881c5247920
+  generic_perform_write+0x202/0x6b0 mm/filemap.c:3198
+  __generic_file_write_iter+0x25e/0x630 mm/filemap.c:3333
+  generic_file_write_iter+0x34e/0x6a0 mm/filemap.c:3361
+kobject: 'loop4' (00000000e9e52bda): kobject_uevent_env
+kobject: 'loop4' (00000000e9e52bda): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+  call_write_iter include/linux/fs.h:1862 [inline]
+  new_sync_write fs/read_write.c:474 [inline]
+  __vfs_write+0x764/0xb40 fs/read_write.c:487
+  vfs_write+0x20c/0x580 fs/read_write.c:549
+  ksys_write+0x105/0x260 fs/read_write.c:598
+  __do_sys_write fs/read_write.c:610 [inline]
+  __se_sys_write fs/read_write.c:607 [inline]
+  __x64_sys_write+0x73/0xb0 fs/read_write.c:607
+  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457579
+Code: 1d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 eb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+kobject: 'loop5' (000000008a2391db): kobject_uevent_env
+RSP: 002b:00007f51cc66ac78 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457579
+RDX: 00000000fffffda2 RSI: 0000000020000540 RDI: 0000000000000003
+RBP: 000000000072bf00 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f51cc66b6d4
+R13: 00000000004c554e R14: 00000000004d8e68 R15: 00000000ffffffff
+kobject: 'loop5' (000000008a2391db): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop0' (00000000a9b29aa3): kobject_uevent_env
+kobject: 'loop0' (00000000a9b29aa3): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop2' (0000000019bfd72c): kobject_uevent_env
+kobject: 'loop2' (0000000019bfd72c): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop1' (00000000893eaf09): kobject_uevent_env
+kobject: 'loop1' (00000000893eaf09): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop3' (00000000bfa624b6): kobject_uevent_env
+kobject: 'loop3' (00000000bfa624b6): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop4' (00000000e9e52bda): kobject_uevent_env
+kobject: 'loop4' (00000000e9e52bda): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop2' (0000000019bfd72c): kobject_uevent_env
+kobject: 'loop2' (0000000019bfd72c): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop1' (00000000893eaf09): kobject_uevent_env
+kobject: 'loop1' (00000000893eaf09): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop5' (000000008a2391db): kobject_uevent_env
+kobject: 'loop5' (000000008a2391db): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop4' (00000000e9e52bda): kobject_uevent_env
+kobject: 'loop4' (00000000e9e52bda): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop0' (00000000a9b29aa3): kobject_uevent_env
+kobject: 'loop0' (00000000a9b29aa3): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop3' (00000000bfa624b6): kobject_uevent_env
+kobject: 'loop3' (00000000bfa624b6): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop5' (000000008a2391db): kobject_uevent_env
+kobject: 'loop5' (000000008a2391db): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop0' (00000000a9b29aa3): kobject_uevent_env
+kobject: 'loop0' (00000000a9b29aa3): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop4' (00000000e9e52bda): kobject_uevent_env
+kobject: 'loop4' (00000000e9e52bda): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop2' (0000000019bfd72c): kobject_uevent_env
+kobject: 'loop2' (0000000019bfd72c): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop1' (00000000893eaf09): kobject_uevent_env
+kobject: 'loop1' (00000000893eaf09): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop5' (000000008a2391db): kobject_uevent_env
+kobject: 'loop5' (000000008a2391db): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop0' (00000000a9b29aa3): kobject_uevent_env
+kobject: 'loop0' (00000000a9b29aa3): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop1' (00000000893eaf09): kobject_uevent_env
+kobject: 'loop1' (00000000893eaf09): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop4' (00000000e9e52bda): kobject_uevent_env
+kobject: 'loop4' (00000000e9e52bda): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop2' (0000000019bfd72c): kobject_uevent_env
+kobject: 'loop2' (0000000019bfd72c): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop5' (000000008a2391db): kobject_uevent_env
+kobject: 'loop5' (000000008a2391db): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop0' (00000000a9b29aa3): kobject_uevent_env
+kobject: 'loop0' (00000000a9b29aa3): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop2' (0000000019bfd72c): kobject_uevent_env
+kobject: 'loop2' (0000000019bfd72c): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop3' (00000000bfa624b6): kobject_uevent_env
+kobject: 'loop3' (00000000bfa624b6): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop1' (00000000893eaf09): kobject_uevent_env
+kobject: 'loop1' (00000000893eaf09): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop5' (000000008a2391db): kobject_uevent_env
+kobject: 'loop5' (000000008a2391db): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop0' (00000000a9b29aa3): kobject_uevent_env
+kobject: 'loop0' (00000000a9b29aa3): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop2' (0000000019bfd72c): kobject_uevent_env
+kobject: 'loop2' (0000000019bfd72c): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop3' (00000000bfa624b6): kobject_uevent_env
+kobject: 'loop3' (00000000bfa624b6): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop4' (00000000e9e52bda): kobject_uevent_env
+kobject: 'loop4' (00000000e9e52bda): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop1' (00000000893eaf09): kobject_uevent_env
+kobject: 'loop1' (00000000893eaf09): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop0' (00000000a9b29aa3): kobject_uevent_env
+kobject: 'loop0' (00000000a9b29aa3): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop5' (000000008a2391db): kobject_uevent_env
+kobject: 'loop5' (000000008a2391db): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop3' (00000000bfa624b6): kobject_uevent_env
+kobject: 'loop3' (00000000bfa624b6): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop1' (00000000893eaf09): kobject_uevent_env
+kobject: 'loop1' (00000000893eaf09): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop0' (00000000a9b29aa3): kobject_uevent_env
+kobject: 'loop0' (00000000a9b29aa3): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop2' (0000000019bfd72c): kobject_uevent_env
+kobject: 'loop2' (0000000019bfd72c): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop5' (000000008a2391db): kobject_uevent_env
+kobject: 'loop5' (000000008a2391db): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop4' (00000000e9e52bda): kobject_uevent_env
+kobject: 'loop4' (00000000e9e52bda): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop3' (00000000bfa624b6): kobject_uevent_env
+kobject: 'loop3' (00000000bfa624b6): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop0' (00000000a9b29aa3): kobject_uevent_env
+kobject: 'loop0' (00000000a9b29aa3): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop1' (00000000893eaf09): kobject_uevent_env
+kobject: 'loop1' (00000000893eaf09): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop2' (0000000019bfd72c): kobject_uevent_env
+kobject: 'loop2' (0000000019bfd72c): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop5' (000000008a2391db): kobject_uevent_env
+kobject: 'loop5' (000000008a2391db): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop3' (00000000bfa624b6): kobject_uevent_env
+kobject: 'loop3' (00000000bfa624b6): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop1' (00000000893eaf09): kobject_uevent_env
+kobject: 'loop1' (00000000893eaf09): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop0' (00000000a9b29aa3): kobject_uevent_env
+kobject: 'loop0' (00000000a9b29aa3): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop4' (00000000e9e52bda): kobject_uevent_env
+kobject: 'loop4' (00000000e9e52bda): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop5' (000000008a2391db): kobject_uevent_env
+kobject: 'loop5' (000000008a2391db): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop1' (00000000893eaf09): kobject_uevent_env
+kobject: 'loop1' (00000000893eaf09): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop3' (00000000bfa624b6): kobject_uevent_env
+kobject: 'loop3' (00000000bfa624b6): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop0' (00000000a9b29aa3): kobject_uevent_env
+kobject: 'loop0' (00000000a9b29aa3): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop4' (00000000e9e52bda): kobject_uevent_env
+kobject: 'loop4' (00000000e9e52bda): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop2' (0000000019bfd72c): kobject_uevent_env
+kobject: 'loop2' (0000000019bfd72c): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop5' (000000008a2391db): kobject_uevent_env
+kobject: 'loop5' (000000008a2391db): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop1' (00000000893eaf09): kobject_uevent_env
+kobject: 'loop1' (00000000893eaf09): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop0' (00000000a9b29aa3): kobject_uevent_env
+kobject: 'loop0' (00000000a9b29aa3): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop3' (00000000bfa624b6): kobject_uevent_env
+kobject: 'loop3' (00000000bfa624b6): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop4' (00000000e9e52bda): kobject_uevent_env
+kobject: 'loop4' (00000000e9e52bda): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop2' (0000000019bfd72c): kobject_uevent_env
+kobject: 'loop2' (0000000019bfd72c): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop3' (00000000bfa624b6): kobject_uevent_env
+kobject: 'loop3' (00000000bfa624b6): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop0' (00000000a9b29aa3): kobject_uevent_env
+kobject: 'loop0' (00000000a9b29aa3): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop4' (00000000e9e52bda): kobject_uevent_env
+kobject: 'loop4' (00000000e9e52bda): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop2' (0000000019bfd72c): kobject_uevent_env
+kobject: 'loop2' (0000000019bfd72c): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop5' (000000008a2391db): kobject_uevent_env
+kobject: 'loop5' (000000008a2391db): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop1' (00000000893eaf09): kobject_uevent_env
+kobject: 'loop1' (00000000893eaf09): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop4' (00000000e9e52bda): kobject_uevent_env
+kobject: 'loop4' (00000000e9e52bda): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop3' (00000000bfa624b6): kobject_uevent_env
+kobject: 'loop3' (00000000bfa624b6): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop2' (0000000019bfd72c): kobject_uevent_env
+kobject: 'loop2' (0000000019bfd72c): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop0' (00000000a9b29aa3): kobject_uevent_env
+kobject: 'loop0' (00000000a9b29aa3): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop1' (00000000893eaf09): kobject_uevent_env
+kobject: 'loop1' (00000000893eaf09): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop2' (0000000019bfd72c): kobject_uevent_env
+kobject: 'loop2' (0000000019bfd72c): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop5' (000000008a2391db): kobject_uevent_env
+kobject: 'loop5' (000000008a2391db): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop1' (00000000893eaf09): kobject_uevent_env
+kobject: 'loop1' (00000000893eaf09): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop4' (00000000e9e52bda): kobject_uevent_env
+kobject: 'loop4' (00000000e9e52bda): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop2' (0000000019bfd72c): kobject_uevent_env
+kobject: 'loop2' (0000000019bfd72c): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop3' (00000000bfa624b6): kobject_uevent_env
+kobject: 'loop3' (00000000bfa624b6): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop0' (00000000a9b29aa3): kobject_uevent_env
+kobject: 'loop0' (00000000a9b29aa3): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop5' (000000008a2391db): kobject_uevent_env
+kobject: 'loop5' (000000008a2391db): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop1' (00000000893eaf09): kobject_uevent_env
+kobject: 'loop1' (00000000893eaf09): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop4' (00000000e9e52bda): kobject_uevent_env
+kobject: 'loop4' (00000000e9e52bda): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop2' (0000000019bfd72c): kobject_uevent_env
+kobject: 'loop2' (0000000019bfd72c): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop3' (00000000bfa624b6): kobject_uevent_env
+kobject: 'loop3' (00000000bfa624b6): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop0' (00000000a9b29aa3): kobject_uevent_env
+kobject: 'loop0' (00000000a9b29aa3): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop5' (000000008a2391db): kobject_uevent_env
+kobject: 'loop5' (000000008a2391db): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop1' (00000000893eaf09): kobject_uevent_env
+kobject: 'loop1' (00000000893eaf09): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop3' (00000000bfa624b6): kobject_uevent_env
+kobject: 'loop3' (00000000bfa624b6): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop2' (0000000019bfd72c): kobject_uevent_env
+kobject: 'loop2' (0000000019bfd72c): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop5' (000000008a2391db): kobject_uevent_env
+kobject: 'loop5' (000000008a2391db): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop4' (00000000e9e52bda): kobject_uevent_env
+kobject: 'loop4' (00000000e9e52bda): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop1' (00000000893eaf09): kobject_uevent_env
+kobject: 'loop1' (00000000893eaf09): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop0' (00000000a9b29aa3): kobject_uevent_env
+kobject: 'loop0' (00000000a9b29aa3): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop4' (00000000e9e52bda): kobject_uevent_env
+kobject: 'loop4' (00000000e9e52bda): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop2' (0000000019bfd72c): kobject_uevent_env
+kobject: 'loop2' (0000000019bfd72c): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop1' (00000000893eaf09): kobject_uevent_env
+kobject: 'loop1' (00000000893eaf09): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop0' (00000000a9b29aa3): kobject_uevent_env
+kobject: 'loop0' (00000000a9b29aa3): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop3' (00000000bfa624b6): kobject_uevent_env
+kobject: 'loop3' (00000000bfa624b6): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop2' (0000000019bfd72c): kobject_uevent_env
+kobject: 'loop2' (0000000019bfd72c): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop4' (00000000e9e52bda): kobject_uevent_env
+kobject: 'loop4' (00000000e9e52bda): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop5' (000000008a2391db): kobject_uevent_env
+kobject: 'loop5' (000000008a2391db): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop0' (00000000a9b29aa3): kobject_uevent_env
+kobject: 'loop0' (00000000a9b29aa3): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop1' (00000000893eaf09): kobject_uevent_env
+kobject: 'loop1' (00000000893eaf09): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop4' (00000000e9e52bda): kobject_uevent_env
+kobject: 'loop4' (00000000e9e52bda): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop3' (00000000bfa624b6): kobject_uevent_env
+kobject: 'loop3' (00000000bfa624b6): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop5' (000000008a2391db): kobject_uevent_env
+kobject: 'loop5' (000000008a2391db): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop0' (00000000a9b29aa3): kobject_uevent_env
+kobject: 'loop0' (00000000a9b29aa3): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop1' (00000000893eaf09): kobject_uevent_env
+kobject: 'loop1' (00000000893eaf09): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop2' (0000000019bfd72c): kobject_uevent_env
+kobject: 'loop2' (0000000019bfd72c): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop3' (00000000bfa624b6): kobject_uevent_env
+kobject: 'loop3' (00000000bfa624b6): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop4' (00000000e9e52bda): kobject_uevent_env
+kobject: 'loop4' (00000000e9e52bda): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop0' (00000000a9b29aa3): kobject_uevent_env
+kobject: 'loop0' (00000000a9b29aa3): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop1' (00000000893eaf09): kobject_uevent_env
+kobject: 'loop1' (00000000893eaf09): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop5' (000000008a2391db): kobject_uevent_env
+kobject: 'loop5' (000000008a2391db): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop3' (00000000bfa624b6): kobject_uevent_env
+kobject: 'loop3' (00000000bfa624b6): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop2' (0000000019bfd72c): kobject_uevent_env
+kobject: 'loop2' (0000000019bfd72c): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop0' (00000000a9b29aa3): kobject_uevent_env
+kobject: 'loop0' (00000000a9b29aa3): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop5' (000000008a2391db): kobject_uevent_env
+kobject: 'loop5' (000000008a2391db): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop2' (0000000019bfd72c): kobject_uevent_env
+kobject: 'loop2' (0000000019bfd72c): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop4' (00000000e9e52bda): kobject_uevent_env
+kobject: 'loop4' (00000000e9e52bda): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop3' (00000000bfa624b6): kobject_uevent_env
+kobject: 'loop3' (00000000bfa624b6): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop5' (000000008a2391db): kobject_uevent_env
+kobject: 'loop5' (000000008a2391db): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop1' (00000000893eaf09): kobject_uevent_env
+kobject: 'loop1' (00000000893eaf09): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop2' (0000000019bfd72c): kobject_uevent_env
+kobject: 'loop2' (0000000019bfd72c): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop3' (00000000bfa624b6): kobject_uevent_env
+kobject: 'loop3' (00000000bfa624b6): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop5' (000000008a2391db): kobject_uevent_env
+kobject: 'loop5' (000000008a2391db): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop1' (00000000893eaf09): kobject_uevent_env
+kobject: 'loop1' (00000000893eaf09): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop0' (00000000a9b29aa3): kobject_uevent_env
+kobject: 'loop0' (00000000a9b29aa3): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop4' (00000000e9e52bda): kobject_uevent_env
+kobject: 'loop4' (00000000e9e52bda): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop3' (00000000bfa624b6): kobject_uevent_env
+kobject: 'loop3' (00000000bfa624b6): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop5' (000000008a2391db): kobject_uevent_env
+kobject: 'loop5' (000000008a2391db): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop4' (00000000e9e52bda): kobject_uevent_env
+kobject: 'loop4' (00000000e9e52bda): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop0' (00000000a9b29aa3): kobject_uevent_env
+kobject: 'loop0' (00000000a9b29aa3): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop1' (00000000893eaf09): kobject_uevent_env
+kobject: 'loop1' (00000000893eaf09): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop2' (0000000019bfd72c): kobject_uevent_env
+kobject: 'loop2' (0000000019bfd72c): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop4' (00000000e9e52bda): kobject_uevent_env
+kobject: 'loop4' (00000000e9e52bda): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop3' (00000000bfa624b6): kobject_uevent_env
+kobject: 'loop3' (00000000bfa624b6): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop5' (000000008a2391db): kobject_uevent_env
+kobject: 'loop5' (000000008a2391db): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop2' (0000000019bfd72c): kobject_uevent_env
+kobject: 'loop2' (0000000019bfd72c): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop1' (00000000893eaf09): kobject_uevent_env
+kobject: 'loop1' (00000000893eaf09): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop4' (00000000e9e52bda): kobject_uevent_env
+kobject: 'loop4' (00000000e9e52bda): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+
+
+Tested on:
+
+commit:         48b161983ae5 Merge tag 'xarray-5.0-rc3' of git://git.infra..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13d8ae5b400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ae7255cd515c8fef
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 
