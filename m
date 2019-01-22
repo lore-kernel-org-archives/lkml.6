@@ -2,68 +2,68 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 381FAC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:00:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0B55C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:00:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE78520879
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:00:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C22D421019
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:00:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548154814;
-	bh=4OalttqA8FfRTkoI8BA7XgZkcPkaXQAiGWwRBZyL0i4=;
+	s=default; t=1548154850;
+	bh=QW24MFMkT9hHcq17VGKtsGLUh7GVgB7JQuQvgz2ARhs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=E388c9l4JiC3T/jo/BbktI5Jk0d06J3ie9vJgeKsmcZ4A6CxU/2WOTCbra9Tj0con
-	 Og8nhpahUQz4U0tPhycSXQJsrY6GINyBtHBFyer2XP8RHM2hDGFseZBv9psKFUlufK
-	 AKITRkjvXTGhnUwLrI0BKOLfipenIJJJ7f1WJVgw=
+	b=iflIoGCkPrDKZ/bzgYJPbaAtumsDGrE4wKW4s1ADvfe1DqlD8zspdgvmPwXGY+7UK
+	 /5huNZ9p+yhL5frH/yAA2A5MmGyPsnl4uxU5wapCIlADF0TuWE8EBBad1ZthbAufSF
+	 +cAjzsZaAOAvXVCFOfbJToyIaYFBlmmicWKeFZT8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727909AbfAVLAM (ORCPT
+        id S1727948AbfAVLAt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 06:00:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55856 "EHLO mail.kernel.org"
+        Tue, 22 Jan 2019 06:00:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727048AbfAVLAL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 06:00:11 -0500
+        id S1727639AbfAVLAs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 06:00:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D259020870;
-        Tue, 22 Jan 2019 11:00:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B119F20870;
+        Tue, 22 Jan 2019 11:00:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548154811;
-        bh=4OalttqA8FfRTkoI8BA7XgZkcPkaXQAiGWwRBZyL0i4=;
+        s=default; t=1548154848;
+        bh=QW24MFMkT9hHcq17VGKtsGLUh7GVgB7JQuQvgz2ARhs=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xUK8w8VjsPqYdGNbSDzScxmxpDSaGfH766Cn10OdKtZcjf9SkOW/zlXi/8HPDWz3Y
-         cYeKwWQcUYU6+GtUkMhbQ+xkMT5jLsn2JfA5A9gDIrqwvy1E4+eRhZ/0B++xt7VjN4
-         mOUueOz6awgxCvGAQD9QIGnF/jhzdOOYg3SQt98s=
-Date:   Tue, 22 Jan 2019 12:00:09 +0100
+        b=k6L6kfluYk7Q9tnYIhLtDY8lTEdqysMm5bMYcE7vlW5VD0xWzD/7P0qp/U/8KEiz7
+         iRCgibqMdyJyMdGVk4GYEHmeTDeMHrIL3gFHA4Ju007XH0291waCCGICkNq0nQoUxf
+         YmKURuSGSm4wjH+/ghhEkJCKZBIL2tsVnGs6/xU8=
+Date:   Tue, 22 Jan 2019 12:00:45 +0100
 From:   Greg KH <gregkh@linuxfoundation.org>
-To:     wangbo <wdjjwb@163.com>
-Cc:     linux-kernel@vger.kernel.org, wang.bo116@zte.com.cn
-Subject: Re: [PATCH] uio:remove unneeded variable ret
-Message-ID: <20190122110009.GA21034@kroah.com>
-References: <1547034839-3493-1-git-send-email-wdjjwb@163.com>
+To:     Liu Jian <liujian56@huawei.com>
+Cc:     hamish.martin@alliedtelesis.co.nz, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] driver: uio: fix possible memory leak in
+ __uio_register_device
+Message-ID: <20190122110045.GB21034@kroah.com>
+References: <1546952508-186003-1-git-send-email-liujian56@huawei.com>
+ <1546952508-186003-2-git-send-email-liujian56@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1547034839-3493-1-git-send-email-wdjjwb@163.com>
+In-Reply-To: <1546952508-186003-2-git-send-email-liujian56@huawei.com>
 User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 07:53:59PM +0800, wangbo wrote:
-> In uio_dmem_genirq_open the variable ret is unneededw,remove it now.
+On Tue, Jan 08, 2019 at 09:01:47PM +0800, Liu Jian wrote:
+> From: liujian <liujian56@huawei.com>
 
-Minor typo in this sentence :(
+This From: line does not match your email From: line, nor your
+signed-off-by name :(
 
-> 
-> Signed-off-by: wangbo <wang.bo116@zte.com.cn>
-
-I need a "full" name for a patch to be able to be accepted.
+Please fix up and resend.
 
 thanks,
 
