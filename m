@@ -2,153 +2,182 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 034A1C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:14:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 747C0C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:14:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC9722084A
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:14:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3598E21019
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:14:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Q2SUQq3P"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728121AbfAVLOW (ORCPT
+        id S1728189AbfAVLOc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 06:14:22 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:60478 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727663AbfAVLOV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 06:14:21 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 63DF22078C; Tue, 22 Jan 2019 12:14:18 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-37-87.w90-88.abo.wanadoo.fr [90.88.156.87])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 2BD8E206A7;
-        Tue, 22 Jan 2019 12:14:08 +0100 (CET)
-Date:   Tue, 22 Jan 2019 12:14:08 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-amarula@amarulasolutions.com
-Subject: Re: [PATCH v5 07/17] drm/sun4i: sun6i_mipi_dsi: Refactor vertical
- video start delay
-Message-ID: <20190122111408.4zlhecsxywulvrfy@flea>
-References: <20181211164900.wfmkmbrbj3nmlb3h@flea>
- <CAMty3ZB5F5jD9iJT1soXSA5HtQOf5W9rKO9nCdGFUfVo0hpO4Q@mail.gmail.com>
- <20190107141158.zaimizk4rlqa6xli@flea>
- <CAMty3ZBb8byOwh=_W83Ta0Dse1qkoqccOeaBEY9oHPaxDxe9QA@mail.gmail.com>
- <20190108085829.clianbtjovu3oieq@flea>
- <CAMty3ZC9OQtwT-iH=S1LhHsBPc_jFKGAnCYYeR9nuKuDWSKLQw@mail.gmail.com>
- <20190112164319.whr7gwvl4oux5svz@flea>
- <CAMty3ZD8X9KmHjUtAo-+Y83a2j8NF3DjM9Yr3LPMxOvQ8kOV7g@mail.gmail.com>
- <20190116191756.ajzzaga43srk77dk@flea>
- <CAMty3ZCw8itG=nizA5E218HT5kg=-xDzLmShF51vRh4ENYKuBA@mail.gmail.com>
+        Tue, 22 Jan 2019 06:14:32 -0500
+Received: from mail-eopbgr00088.outbound.protection.outlook.com ([40.107.0.88]:53696
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727777AbfAVLOc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 06:14:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZM7TxwbN9tPA2MfIEsf6GQiSUPbu2CtiZ2uIJ4YQ74E=;
+ b=Q2SUQq3P6JK1E1EhEUnGXioZC8gD1XvfCaXCDmUlXTKw6wBBMlrL44Wv1ELKoq5HvAwy6qtdT9yu+3Z0D8VEiqAr0Bkh9Jhjq9IlvEgqFqcqMrfDVG93nz9wr+lDSU+JqXpOmejov7DbSQ+R9hlZEA4L2XFs+4e1bSwVIJ81F3A=
+Received: from VI1PR04MB4704.eurprd04.prod.outlook.com (20.177.48.157) by
+ VI1PR04MB5422.eurprd04.prod.outlook.com (20.178.121.76) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1537.31; Tue, 22 Jan 2019 11:14:28 +0000
+Received: from VI1PR04MB4704.eurprd04.prod.outlook.com
+ ([fe80::e58a:8812:d380:2080]) by VI1PR04MB4704.eurprd04.prod.outlook.com
+ ([fe80::e58a:8812:d380:2080%2]) with mapi id 15.20.1537.031; Tue, 22 Jan 2019
+ 11:14:28 +0000
+From:   Viorel Suman <viorel.suman@nxp.com>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Timur Tabi <timur@kernel.org>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Xiubo Li <Xiubo.Lee@gmail.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Viorel Suman <viorel.suman@nxp.com>,
+        "S.j. Wang" <shengjiu.wang@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Cosmin Samoila <cosmin.samoila@nxp.com>
+CC:     "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Viorel Suman <viorel.suman@gmail.com>
+Subject: [PATCH v4 2/3] ASoC: add fsl_audmix DT binding documentation
+Thread-Topic: [PATCH v4 2/3] ASoC: add fsl_audmix DT binding documentation
+Thread-Index: AQHUskOjyw34cq16q0ecl8TZoyZj1A==
+Date:   Tue, 22 Jan 2019 11:14:27 +0000
+Message-ID: <1548155654-12985-3-git-send-email-viorel.suman@nxp.com>
+References: <1548155654-12985-1-git-send-email-viorel.suman@nxp.com>
+In-Reply-To: <1548155654-12985-1-git-send-email-viorel.suman@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM6PR05CA0019.eurprd05.prod.outlook.com
+ (2603:10a6:20b:2e::32) To VI1PR04MB4704.eurprd04.prod.outlook.com
+ (2603:10a6:803:52::29)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.7.4
+x-originating-ip: [95.76.156.53]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR04MB5422;6:6vXyixJzRr536t6FlJyyGj660fqoyAUEHNB8xgdiP552zB5RziJ3T09tYZT29OnakuDJ6fXK/aNL374kzcjmS9L3q8Vv2Bui3nbqGYuQKItcxb2rqqCRhUfR3RA9eA5wNz5OMAvnrMHoGcI/uIlL/TJTG9VR+5YzaPKbDpQPkbvp0xNDktXHYQj4P9fHnCfbMeN2/Fcw7xVXxp5MqwjH5slPRx/tJlNFIhkrigoOwzkr5YkzEsMWZDFbgYmbdaHemycRUHDja47o2EUrkFScLDYWTtoYhKNqIeGxc0Co9sP52DcHSvl8kIcWmsJGy0KWL2hTyOUcpxqTWU7FKClsBYX8m6XlJo/GYo+wmFnJjNz+aAhEgW7btU7InNTQhKY934AO53jUrOELgDfpTdvz8ve08tZXJNE5MWBB+tiJlt+wKuSm3VpZxk9tet+hMlykqDN+gXPJC1q8eN8KPcKZiQ==;5:cUimCHdxBj5XMD4DLgcZCLt27TKjUsBIkiQCpbwMVVVhEfbBQBct4L/WM9MbWyz71vETC5nTikT4qq4+NM4qQ8y4SOjqER2qSWJRe69zEk/KwGRgC1Db7YAea8nfmcgT9ugsFndSamMtl5QuFhBCCxrUUCdzYacjsyMjJrbh0dyRWe6ZEck95vFqm++aPCpYfX9gnZrIaj31482K1xOxVA==;7:L95kri6dsAGcJlwAaWxCpCCNxnfKRnAvJNL1+Lq5pMRh0d0MnW9kLjC6qy0ZktkklIB796EUKdAA8dJPnn7L9ZwghE8BIbMZa2tFb+TTw8GFq+nuAAZN9i7hkWIdJyIZywX1imw9VOkWbyTpqS76yA==
+x-ms-office365-filtering-correlation-id: ca960435-dc1e-4e8f-8411-08d6805ac5f9
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600109)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB5422;
+x-ms-traffictypediagnostic: VI1PR04MB5422:
+x-microsoft-antispam-prvs: <VI1PR04MB54225F81E3D9BD89BD865C6592980@VI1PR04MB5422.eurprd04.prod.outlook.com>
+x-forefront-prvs: 0925081676
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(136003)(39860400002)(376002)(346002)(396003)(199004)(189003)(316002)(8936002)(86362001)(6636002)(36756003)(50226002)(110136005)(6486002)(14454004)(54906003)(6436002)(99286004)(6116002)(97736004)(7416002)(81166006)(81156014)(3846002)(478600001)(2906002)(44832011)(8676002)(68736007)(66066001)(105586002)(106356001)(7736002)(305945005)(25786009)(26005)(6346003)(186003)(71190400001)(256004)(486006)(39060400002)(2616005)(4326008)(476003)(6512007)(6506007)(446003)(386003)(53936002)(71200400001)(14444005)(11346002)(102836004)(52116002)(76176011)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5422;H:VI1PR04MB4704.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=viorel.suman@nxp.com; 
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: ZwIRHBS5FhKnP8LsAsMEgdG2wsr7ILX/TEoAx6SShzQLTXIiMumOGL1ma7jYLfUCYH6WeV1ym3ncJmHTBWmZAVpDLryw7UfS+A8dPYeOTfw6QM+P+Us1ZWSIPD29cFH4uuPpeAzpFs3XC7DDlVp/rlUV0ifj7CMv6bVa3Tu1eD1S82w56eIddjajPi/cN0grCHcnbo4j3hnaByxkQtngZNaIzu0HR96sRa1swhlD8/jBmqlBVA6CMysQ6FEU0cngWZ0CYIIMYltvqg2WwbSWbmH9Yoho++YtvxsBHclefamGAK36JnFFbPHkgTeLdyE4lMYKqtiia4uZVngPmeZ7E8UeJMIkQ4nsk19rhN8QjI/O0sU0l9ZPxHH6tu0AJgGaYm5fVreIZfTP99WFc/0qvD670j6MSaBuk+ITnxf0Sww=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="lpmn2jm2w26y3xo2"
-Content-Disposition: inline
-In-Reply-To: <CAMty3ZCw8itG=nizA5E218HT5kg=-xDzLmShF51vRh4ENYKuBA@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ca960435-dc1e-4e8f-8411-08d6805ac5f9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jan 2019 11:14:26.3078
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5422
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Add the DT binding documentation for NXP Audio Mixer
+CPU DAI driver.
 
---lpmn2jm2w26y3xo2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Viorel Suman <viorel.suman@nxp.com>
+---
+ .../devicetree/bindings/sound/fsl,audmix.txt       | 54 ++++++++++++++++++=
+++++
+ 1 file changed, 54 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/fsl,audmix.txt
 
-On Thu, Jan 17, 2019 at 10:02:12AM +0530, Jagan Teki wrote:
-> On Thu, Jan 17, 2019 at 12:48 AM Maxime Ripard
-> <maxime.ripard@bootlin.com> wrote:
-> >
-> > On Sun, Jan 13, 2019 at 01:07:41AM +0530, Jagan Teki wrote:
-> > > > > > > > Again, I cannot help you without the datasheet for the pane=
-ls you're
-> > > > > > > > trying to submit.
-> > > > > > >
-> > > > > > > The panel bound with Sitronix ST7701 IC
-> > > > > > > http://www.startek-lcd.com/res/starteklcd/pdres/201705/201705=
-12144242904.pdf
-> > > > > >
-> > > > > > It's the controller, not the panel
-> > > > >
-> > > > > As I said before, the datasheet of that panel doesn't have any
-> > > > > information except electrical characteristics and used IC which is
-> > > > > ST7701.
-> > > > >
-> > > > > I have one more panel, which is from Bananapi, S070WV20-CT16 ICN6=
-21
-> > > > > please find the attachment for the same.
-> > > > >
-> > > > > Here is some more details of the same.
-> > > > >
-> > > > > https://github.com/yesnoandor/x300/blob/master/kernel/arch/arm/bo=
-ot/dts/erobbing/x300/x300.dtsi#L81
-> > > > > https://github.com/wxzed/Raspberry_5MIPI_Display/blob/master/I2C_=
-Slave/USER/main.c#L15
-> > > > >
-> > > > > https://github.com/eliot-shao/qcom/blob/master/icn6211_cxn0102/ke=
-rnel/drivers/video/msm/mdss/mdss_i2c_interface.c#L152
-> > > > > matches timings for
-> > > > > https://github.com/eliot-shao/qcom/blob/master/icn6211_cxn0102/ke=
-rnel/arch/arm/boot/dts/qcom/dsi-mipi-2-rgb_1280p_video.dtsi#L20
-> > > > >
-> > > > > https://github.com/zestroly/micromat/blob/master/test/raspberry/I=
-CN6211.cpp#L169
-> > > >
-> > > > Where did you get the timings from then?
-> > >
-> > > You mean drm_mode timings, the same panel with RGB available in
-> > > panel-simple[1], and dsi driver in Mailing list[2] and actual DSI
-> > > sequence commands from BSP[3]
-> > >
-> > > [1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.g=
-it/commit/drivers/gpu/drm/panel/panel-simple.c?id=3D7ad8b41cd8f5c2842646d01=
-cdd576663caee04a7
-> > > [2] https://patchwork.kernel.org/patch/10680331/
-> > > [3] https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sun=
-xi/drivers/video/sunxi/disp2/disp/lcd/S070WV20_MIPI_RGB.c
-> >
-> > So you had no reliable source for the timings then? How do you know if
-> > all your patches that are timing related are right then?
->=20
-> I don't understand your point, or may be I confused with many links
-> that I attached in previous mail.
->=20
-> 1. Patch for same panel timings are already in Mainline that was
-> tested on one of the board. [1]
-> 2. Driver from AW, released bsp from BPI-M64-bsp [3]
->=20
-> Do you think the above two points are not valid sources?
-
-I'm saying that the only valid source is the datasheet or a DSI analyzer.
-
-Maxmie
-
+diff --git a/Documentation/devicetree/bindings/sound/fsl,audmix.txt b/Docum=
+entation/devicetree/bindings/sound/fsl,audmix.txt
+new file mode 100644
+index 0000000..45f807e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/fsl,audmix.txt
+@@ -0,0 +1,54 @@
++NXP Audio Mixer (AUDMIX).
++
++The Audio Mixer is a on-chip functional module that allows mixing of two
++audio streams into a single audio stream. Audio Mixer has two input serial
++audio interfaces. These are driven by two Synchronous Audio interface
++modules (SAI). Each input serial interface carries 8 audio channels in its
++frame in TDM manner. Mixer mixes audio samples of corresponding channels
++from two interfaces into a single sample. Before mixing, audio samples of
++two inputs can be attenuated based on configuration. The output of the
++Audio Mixer is also a serial audio interface. Like input interfaces it has
++the same TDM frame format. This output is used to drive the serial DAC TDM
++interface of audio codec and also sent to the external pins along with the
++receive path of normal audio SAI module for readback by the CPU.
++
++The output of Audio Mixer can be selected from any of the three streams
++ - serial audio input 1
++ - serial audio input 2
++ - mixed audio
++
++Mixing operation is independent of audio sample rate but the two audio
++input streams must have same audio sample rate with same number of channel=
+s
++in TDM frame to be eligible for mixing.
++
++Device driver required properties:
++=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D
++  - compatible		: Compatible list, contains "fsl,imx8qm-audmix"
++
++  - reg			: Offset and length of the register set for the device.
++
++  - clocks		: Must contain an entry for each entry in clock-names.
++
++  - clock-names		: Must include the "ipg" for register access.
++
++  - power-domains	: Must contain the phandle to AUDMIX power domain node
++
++  - dais		: Must contain a list of phandles to AUDMIX connected
++			  DAIs. The current implementation requires two phandles
++			  to SAI interfaces to be provided, the first SAI in the
++			  list being used to route the AUDMIX output.
++
++  - model		: Must contain machine driver name which will configure
++			  and instantiate the appropriate audio card.
++
++Device driver configuration example:
++=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
++  audmix: audmix@59840000 {
++    compatible =3D "fsl,imx8qm-audmix";
++    reg =3D <0x0 0x59840000 0x0 0x10000>;
++    clocks =3D <&clk IMX8QXP_AUD_AUDMIX_IPG>;
++    clock-names =3D "ipg";
++    power-domains =3D <&pd_audmix>;
++    dais =3D <&sai4>, <&sai5>;
++    model =3D "imx-audmix";
++  };
 --=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.7.4
 
---lpmn2jm2w26y3xo2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXEb7AAAKCRDj7w1vZxhR
-xS0fAQDHNLlvyCOc0d7sfDgkpCCnV2uB18j9NbgTDPWP1QmK1AD/XDTH92oI17hs
-5fb6v71atKI/c3In5qsOSLUKIicisAQ=
-=fPrs
------END PGP SIGNATURE-----
-
---lpmn2jm2w26y3xo2--
