@@ -2,109 +2,119 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 763F8C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:24:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2CE3C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:25:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40D8720870
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:24:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LSLh7O3c";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="JeNtrQcX"
+	by mail.kernel.org (Postfix) with ESMTP id C0F0621726
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:25:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729334AbfAVQYX (ORCPT
+        id S1729264AbfAVQZG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 11:24:23 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:59482 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728669AbfAVQYX (ORCPT
+        Tue, 22 Jan 2019 11:25:06 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54654 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728669AbfAVQZF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 11:24:23 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A2EFE609C2; Tue, 22 Jan 2019 16:24:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548174261;
-        bh=iwuux+PLy64yLtyeY1kzGq3fqWTXjGf1OJ8fz5xddeo=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=LSLh7O3cMGU1IAaMNnCdzWz9Yz5Krl/WCJsjT3jz6B2j1xIIi3bMmCQuLfpWRp3OG
-         SdIDWR9/y1NiypCWgyiXLdyrVjPDEWxrQop9HhiFpus0GU5qoiLuJKxaB8W3MDQlca
-         VtoP5j2laBUBnh9z2CjqeT9ndBxYH6l2tde77Wu4=
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D938D60995;
-        Tue, 22 Jan 2019 16:24:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548174259;
-        bh=iwuux+PLy64yLtyeY1kzGq3fqWTXjGf1OJ8fz5xddeo=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=JeNtrQcXAWJgXNsjbWWiC6gZMQrcDbWuHFHFGq1chskqxAoAkC2KwZYSa4Sa9OKQn
-         P2lUU1nLWzrNIKsp0JJOQEeAXBdPhvNd7IIagYERcHN9sj3KpRw5x8vXEZGcEOkSLf
-         /qLJ/e2jIKdrABKz0/lxl/qjIDXSloMTZZ4NSIlE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D938D60995
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Tue, 22 Jan 2019 11:25:05 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0MGOshC062820
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 11:25:04 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2q66dh8wb1-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 11:25:03 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
+        Tue, 22 Jan 2019 16:24:59 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 22 Jan 2019 16:24:56 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0MGOtOw62324828
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 22 Jan 2019 16:24:56 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D6E5D11C04C;
+        Tue, 22 Jan 2019 16:24:55 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9870411C05B;
+        Tue, 22 Jan 2019 16:24:55 +0000 (GMT)
+Received: from osiris (unknown [9.152.212.95])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue, 22 Jan 2019 16:24:55 +0000 (GMT)
+Date:   Tue, 22 Jan 2019 17:24:54 +0100
+From:   Heiko Carstens <heiko.carstens@de.ibm.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org
+Subject: Re: [PATCH] s390: kernel: no need to check return value of
+ debugfs_create functions
+References: <20190122152151.16139-3-gregkh@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH V2] wlcore: sdio: Fixup power on/off sequence
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20190116113723.15668-1-ulf.hansson@linaro.org>
-References: <20190116113723.15668-1-ulf.hansson@linaro.org>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Tony Lindgren <tony@atomide.com>, Eyal Reizer <eyalr@ti.com>,
-        linux-wireless@vger.kernel.org,
-        Ricardo Salveti <rsalveti@rsalveti.net>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Jan Kiszka <jan.kiszka@web.de>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20190122162421.A2EFE609C2@smtp.codeaurora.org>
-Date:   Tue, 22 Jan 2019 16:24:21 +0000 (UTC)
+In-Reply-To: <20190122152151.16139-3-gregkh@linuxfoundation.org>
+X-TM-AS-GCONF: 00
+x-cbid: 19012216-0008-0000-0000-000002B479DD
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19012216-0009-0000-0000-00002220A69D
+Message-Id: <20190122162454.GA31034@osiris>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-22_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901220128
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ulf Hansson <ulf.hansson@linaro.org> wrote:
-
-> During "wlan-up", we are programming the FW into the WiFi-chip. However,
-> re-programming the FW doesn't work, unless a power cycle of the WiFi-chip
-> is made in-between the programmings.
+On Tue, Jan 22, 2019 at 04:21:02PM +0100, Greg Kroah-Hartman wrote:
+> When calling debugfs functions, there is no need to ever check the
+> return value.  The function can work or not, but the code logic should
+> never do something different based on this.
 > 
-> To conform to this requirement and to fix the regression in a simple way,
-> let's start by allowing that the SDIO card (WiFi-chip) may stay powered on
-> (runtime resumed) when wl12xx_sdio_power_off() returns. The intent with the
-> current code is to treat this scenario as an error, but unfortunate this
-> doesn't work as expected, so let's fix this.
+> Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+> Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Christian Borntraeger <borntraeger@de.ibm.com>
+> Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+> Cc: linux-s390@vger.kernel.org
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+>  arch/s390/kernel/debug.c    | 6 ------
+>  arch/s390/kernel/kdebugfs.c | 2 --
+>  arch/s390/kernel/sysinfo.c  | 2 --
+>  3 files changed, 10 deletions(-)
+> diff --git a/arch/s390/kernel/sysinfo.c b/arch/s390/kernel/sysinfo.c
+> index 12f80d1f0415..2ac3c9b56a13 100644
+> --- a/arch/s390/kernel/sysinfo.c
+> +++ b/arch/s390/kernel/sysinfo.c
+> @@ -545,8 +545,6 @@ static __init int stsi_init_debugfs(void)
+>  	int lvl, i;
 > 
-> The other part is to guarantee that a power cycle of the SDIO card has been
-> completed when wl12xx_sdio_power_on() returns, as to allow the FW
-> programming to succeed. However, relying solely on runtime PM to deal with
-> this isn't sufficient. For example, userspace may prevent runtime suspend
-> via sysfs for the device that represents the SDIO card, leading to that the
-> mmc core also keeps it powered on. For this reason, let's instead do a
-> brute force power cycle in wl12xx_sdio_power_on().
-> 
-> Fixes: 728a9dc61f13 ("wlcore: sdio: Fix flakey SDIO runtime PM handling")
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> Tested-by: Tony Lindgren <tony@atomide.com>
-> Tested-by: Anders Roxell <anders.roxell@linaro.org>
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+>  	stsi_root = debugfs_create_dir("stsi", arch_debugfs_dir);
+> -	if (IS_ERR_OR_NULL(stsi_root))
+> -		return 0;
 
-Patch applied to wireless-drivers.git, thanks.
+No objections, however will you also change the odd behaviour that
+e.g. debugfs_create_file() returns -ENODEV instead of (the expected)
+NULL pointer if CONFIG_DEBUGFS is disabled?
 
-13e62626c578 wlcore: sdio: Fixup power on/off sequence
+I do remember this since it caused at least one crash ;)
 
--- 
-https://patchwork.kernel.org/patch/10765781/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+19cdd08ba155 ("[S390] qdio: fix broken pointer in case of CONFIG_DEBUG_FS is disabled").
 
