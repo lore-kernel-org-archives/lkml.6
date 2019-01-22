@@ -2,137 +2,146 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F0D0C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 17:57:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30E4DC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 17:58:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B25E21019
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 17:57:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D21521019
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 17:58:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726786AbfAVR5l (ORCPT
+        id S1726818AbfAVR6R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 12:57:41 -0500
-Received: from muru.com ([72.249.23.125]:34712 "EHLO muru.com"
+        Tue, 22 Jan 2019 12:58:17 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38722 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725950AbfAVR5b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 12:57:31 -0500
-Received: from hillo.muru.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTP id EDE56814C;
-        Tue, 22 Jan 2019 17:57:37 +0000 (UTC)
-From:   Tony Lindgren <tony@atomide.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "H . Nikolaus Schaller" <hns@goldelico.com>,
-        Keerthy <j-keerthy@ti.com>,
-        Ladislav Michl <ladis@linux-mips.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        Sebastian Reichel <sre@kernel.org>,
-        Tero Kristo <t-kristo@ti.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 2/3] bus: ti-sysc: Fix timer handling with drop pm_runtime_irq_safe()
-Date:   Tue, 22 Jan 2019 09:57:16 -0800
-Message-Id: <20190122175717.13428-3-tony@atomide.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190122175717.13428-1-tony@atomide.com>
-References: <20190122175717.13428-1-tony@atomide.com>
+        id S1725862AbfAVR6R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 12:58:17 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9F47488E53;
+        Tue, 22 Jan 2019 17:58:16 +0000 (UTC)
+Received: from w520.home (ovpn-116-182.phx2.redhat.com [10.3.116.182])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E7F365D737;
+        Tue, 22 Jan 2019 17:58:15 +0000 (UTC)
+Date:   Tue, 22 Jan 2019 10:58:15 -0700
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     Pierre Morel <pmorel@linux.ibm.com>
+Cc:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        gerald.schaefer@de.ibm.com, linux-s390@vger.kernel.org,
+        walling@linux.ibm.com, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] iommu/s390: Declare s390 iommu reserved regions
+Message-ID: <20190122105815.4796a2f9@w520.home>
+In-Reply-To: <d180bb2d-354f-0d05-8773-7a196a4de3cb@linux.ibm.com>
+References: <1547573850-9459-1-git-send-email-pmorel@linux.ibm.com>
+        <cc070df1-e7dc-8cce-f443-879e0e5e2903@arm.com>
+        <3cd790d6-aa6f-e817-27ce-56d7a9b6b6e5@linux.ibm.com>
+        <668fe734-e4bf-0342-ab8c-df54d9022db4@arm.com>
+        <d180bb2d-354f-0d05-8773-7a196a4de3cb@linux.ibm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 22 Jan 2019 17:58:16 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 84badc5ec5fc ("ARM: dts: omap4: Move l4 child devices to probe
-them with ti-sysc") started producing a warning for pwm-omap-dmtimer:
+On Mon, 21 Jan 2019 12:51:14 +0100
+Pierre Morel <pmorel@linux.ibm.com> wrote:
 
-WARNING: CPU: 0 PID: 77 at drivers/bus/omap_l3_noc.c:147
-l3_interrupt_handler+0x2f8/0x388
-44000000.ocp:L3 Custom Error: MASTER MPU TARGET L4PER2 (Idle):
-Data Access in Supervisor mode during Functional access
-...
-__pm_runtime_idle
-omap_dm_timer_disable
-pwm_omap_dmtimer_start
-pwm_omap_dmtimer_enable
-pwm_apply_state
-pwm_vibrator_start
-pwm_vibrator_play_work
+> On 18/01/2019 14:51, Jean-Philippe Brucker wrote:
+> > Hi Pierre,
+> > 
+> > On 18/01/2019 13:29, Pierre Morel wrote:  
+> >> On 17/01/2019 14:02, Robin Murphy wrote:  
+> >>> On 15/01/2019 17:37, Pierre Morel wrote:  
+> >>>> The s390 iommu can only allow DMA transactions between the zPCI device
+> >>>> entries start_dma and end_dma.
+> >>>>  
+> 
+> ...
+> 
+> >>
+> >> I already posted a patch retrieving the geometry through
+> >> VFIO_IOMMU_GET_INFO using a specific capability for the geometry [1],
+> >> and AFAIU, Alex did not agree with this.  
+> > 
+> > On arm we also need to report the IOMMU geometry to userspace (max IOVA
+> > size in particular). Shameer has been working on a solution [2] that
+> > presents a unified view of both geometry and reserved regions into the
+> > VFIO_IOMMU_GET_INFO call, and I think we should go with that. If I
+> > understand correctly it's currently blocked on the RMRR problem and
+> > we're waiting for Jacob or Ashok to take a look at it, as Kevin pinged
+> > them on thread [1]?
+> > 
+> > [2] https://lkml.org/lkml/2018/4/18/293
+> > 
+> > Thanks,
+> > Jean
+> >   
+> 
+> Hi Jean,
+> 
+> I hopped that this proposition went in the same direction based on the 
+> following assumptions:
+> 
+> 
+> - The goal of the get_resv_region is defined in iommu.h as:
+> -----
+> * @get_resv_regions: Request list of reserved regions for a device
+> -----
+> 
+> - A iommu reserve region is a region which should not be mapped.
+> Isn't it exactly what happens outside the aperture?
+> Shouldn't it be reported by the iommu reserved region?
+> 
+> - If we use VFIO and want to get all reserved region we will have the 
+> VFIO_IOMMU_GET_INFO call provided by Shameer and it can get all reserved 
+> regions depending from the iommu driver itself at once by calling the 
+> get_reserved_region callback instead of having to merge them with the 
+> aperture.
+> 
+> - If there are other reserved region, depending on the system 
+> configuration and not on the IOMMU itself, the VFIO_IOMMU_GET_INFO call 
+> will have to merge them with the region gotten from the iommu driver.
+> 
+> - If we do not use QEMU nor VFIO at all, AFAIU, the standard way to 
+> retrieve the reserved regions associated with a device is to call the 
+> get_reserved_region callback from the associated iommu.
+> 
+> Please tell me were I am wrong.
 
-This is because the timer that pwm-omap-dmtimer is using is now being
-probed with ti-sysc interconnect target module instead of omap_device
-and the ti-sysc quirk for SYSC_QUIRK_LEGACY_IDLE is not fully
-compatible with what omap_device has been doing.
+The existing proposal by Shameer exposes an IOVA list, which includes
+ranges that the user _can_ map through the IOMMU, therefore this
+original patch is unnecessary, the IOMMU geometry is already the
+starting point of the IOVA list, creating the original node, which is
+split as necessary to account for the reserved regions.  To me,
+presenting a user interface that exposes ranges that _cannot_ be mapped
+is a strange interface.  If we started from a position of what
+information do we want to provide to the user and how will they consume
+it, would we present a list of reserved ranges?  I think the only
+argument for the negative ranges is that we already have them in the
+kernel, but I don't see that it necessarily makes them the right
+solution for userspace.
 
-We could fix this by reverting the timer changes and have the timer
-probe again with omap_device. Or we could add more quirk handling to
-ti-sysc driver. But as these options don't work nicely as longer term
-solutions, let's just make timers probe with ti-sysc without any
-quirks.
 
-To do this, all we need to do is remove quirks for timers for ti-sysc,
-and drop the bogus pm_runtime_irq_safe() flag for timer-ti-dm.
+> >> What is different in what you propose?
+> >>
+> >> @Alex: I was hoping that this patch goes in your direction. What do you
+> >> think?
 
-We should not use pm_runtime_irq_safe() anyways for drivers as it will
-take a permanent use count on the parent device blocking the parent
-devices from idling and has been forcing ti-sysc driver to use a
-quirk flag.
+I think it's unnecessary given that in Shameer's proposal:
 
-Note that we will move the timer data to DEBUG section later on in
-clean-up patches.
+ - We start from the IOMMU exposed geometry
+ - We present a list of usable IOVA ranges, not a list of reserved
+   ranges
 
-Fixes: 84badc5ec5fc ("ARM: dts: omap4: Move l4 child devices to probe
-them with ti-sysc")
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: H. Nikolaus Schaller <hns@goldelico.com>
-Cc: Keerthy <j-keerthy@ti.com>
-Cc: Ladislav Michl <ladis@linux-mips.org>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: Sebastian Reichel <sre@kernel.org>
-Cc: Tero Kristo <t-kristo@ti.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Reported-by: H. Nikolaus Schaller <hns@goldelico.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
- drivers/bus/ti-sysc.c             | 4 ++--
- drivers/clocksource/timer-ti-dm.c | 1 -
- 2 files changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
---- a/drivers/bus/ti-sysc.c
-+++ b/drivers/bus/ti-sysc.c
-@@ -879,10 +879,10 @@ static const struct sysc_revision_quirk sysc_revision_quirks[] = {
- 	SYSC_QUIRK("smartreflex", 0, -1, 0x38, -1, 0x00000000, 0xffffffff,
- 		   SYSC_QUIRK_LEGACY_IDLE),
- 	SYSC_QUIRK("timer", 0, 0, 0x10, 0x14, 0x00000015, 0xffffffff,
--		   SYSC_QUIRK_LEGACY_IDLE),
-+		   0),
- 	/* Some timers on omap4 and later */
- 	SYSC_QUIRK("timer", 0, 0, 0x10, -1, 0x4fff1301, 0xffffffff,
--		   SYSC_QUIRK_LEGACY_IDLE),
-+		   0),
- 	SYSC_QUIRK("uart", 0, 0x50, 0x54, 0x58, 0x00000052, 0xffffffff,
- 		   SYSC_QUIRK_LEGACY_IDLE),
- 	/* Uarts on omap4 and later */
-diff --git a/drivers/clocksource/timer-ti-dm.c b/drivers/clocksource/timer-ti-dm.c
---- a/drivers/clocksource/timer-ti-dm.c
-+++ b/drivers/clocksource/timer-ti-dm.c
-@@ -868,7 +868,6 @@ static int omap_dm_timer_probe(struct platform_device *pdev)
- 	timer->pdev = pdev;
- 
- 	pm_runtime_enable(dev);
--	pm_runtime_irq_safe(dev);
- 
- 	if (!timer->reserved) {
- 		ret = pm_runtime_get_sync(dev);
--- 
-2.20.1
+Thanks,
+Alex
