@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0B16C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:39:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B19D9C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:39:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C7A821726
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:39:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F72721726
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:39:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726964AbfAVSjN (ORCPT
+        id S1727047AbfAVSjU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 13:39:13 -0500
-Received: from mga04.intel.com ([192.55.52.120]:17399 "EHLO mga04.intel.com"
+        Tue, 22 Jan 2019 13:39:20 -0500
+Received: from mga17.intel.com ([192.55.52.151]:36947 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726208AbfAVSjL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 13:39:11 -0500
+        id S1726208AbfAVSjU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 13:39:20 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jan 2019 10:39:11 -0800
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jan 2019 10:39:16 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,507,1539673200"; 
-   d="scan'208";a="110185225"
+   d="scan'208";a="110185240"
 Received: from ahduyck-desk1.jf.intel.com (HELO ahduyck-desk1.amr.corp.intel.com) ([10.7.198.76])
-  by orsmga006.jf.intel.com with ESMTP; 22 Jan 2019 10:39:11 -0800
-Subject: [driver-core PATCH v10 1/9] driver core: Establish order of
- operations for device_add and device_del via bitflag
+  by orsmga006.jf.intel.com with ESMTP; 22 Jan 2019 10:39:16 -0800
+Subject: [driver-core PATCH v10 2/9] device core: Consolidate locking and
+ unlocking of parent and device
 From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
 To:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org
 Cc:     mcgrof@kernel.org, linux-nvdimm@lists.01.org, tj@kernel.org,
@@ -38,8 +38,8 @@ Cc:     mcgrof@kernel.org, linux-nvdimm@lists.01.org, tj@kernel.org,
         pavel@ucw.cz, zwisler@kernel.org, dan.j.williams@intel.com,
         dave.jiang@intel.com, bvanassche@acm.org,
         alexander.h.duyck@linux.intel.com
-Date:   Tue, 22 Jan 2019 10:39:10 -0800
-Message-ID: <154818235081.18753.1278409711806099880.stgit@ahduyck-desk1.amr.corp.intel.com>
+Date:   Tue, 22 Jan 2019 10:39:16 -0800
+Message-ID: <154818235600.18753.7281510470253974387.stgit@ahduyck-desk1.amr.corp.intel.com>
 In-Reply-To: <154818223154.18753.12374915684623789884.stgit@ahduyck-desk1.amr.corp.intel.com>
 References: <154818223154.18753.12374915684623789884.stgit@ahduyck-desk1.amr.corp.intel.com>
 User-Agent: StGit/unknown-version
@@ -51,129 +51,229 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add an additional bit flag to the device_private struct named "dead".
+Try to consolidate all of the locking and unlocking of both the parent and
+device when attaching or removing a driver from a given device.
 
-This additional flag provides a guarantee that when a device_del is
-executed on a given interface an async worker will not attempt to attach
-the driver following the earlier device_del call. Previously this
-guarantee was not present and could result in the device_del call
-attempting to remove a driver from an interface only to have the async
-worker attempt to probe the driver later when it finally completes the
-asynchronous probe call.
+To do that I first consolidated the lock pattern into two functions
+__device_driver_lock and __device_driver_unlock. After doing that I then
+created functions specific to attaching and detaching the driver while
+acquiring these locks. By doing this I was able to reduce the number of
+spots where we touch need_parent_lock from 12 down to 4.
 
-One additional change added was that I pulled the check for dev->driver
-out of the __device_attach_driver call and instead placed it in the
-__device_attach_async_helper call. This was motivated by the fact that the
-only other caller of this, __device_attach, had already taken the
-device_lock() and checked for dev->driver. Instead of testing for this
-twice in this path it makes more sense to just consolidate the dev->dead
-and dev->driver checks together into one set of checks.
+This patch should produce no functional changes, it is meant to be a code
+clean-up/consolidation only.
 
+Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
 Reviewed-by: Dan Williams <dan.j.williams@intel.com>
 Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 ---
- drivers/base/base.h |    4 ++++
- drivers/base/core.c |   11 +++++++++++
- drivers/base/dd.c   |   22 +++++++++++-----------
- 3 files changed, 26 insertions(+), 11 deletions(-)
+ drivers/base/base.h |    2 +
+ drivers/base/bus.c  |   23 ++----------
+ drivers/base/dd.c   |   95 ++++++++++++++++++++++++++++++++++++++++-----------
+ 3 files changed, 81 insertions(+), 39 deletions(-)
 
 diff --git a/drivers/base/base.h b/drivers/base/base.h
-index 37329a668935..7ca475af8953 100644
+index 7ca475af8953..b6966511b0ca 100644
 --- a/drivers/base/base.h
 +++ b/drivers/base/base.h
-@@ -67,6 +67,9 @@ struct driver_private {
-  *	probed first.
-  * @device - pointer back to the struct device that this structure is
-  * associated with.
-+ * @dead - This device is currently either in the process of or has been
-+ *	removed from the system. Any asynchronous events scheduled for this
-+ *	device should exit without taking any action.
-  *
-  * Nothing outside of the driver core should ever touch these fields.
-  */
-@@ -78,6 +81,7 @@ struct device_private {
- 	struct klist_node knode_class;
- 	struct list_head deferred_probe;
- 	struct device *device;
-+	u8 dead:1;
- };
- #define to_device_private_parent(obj)	\
- 	container_of(obj, struct device_private, knode_parent)
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index 4a4b6f8cbc4f..c9a82e367480 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -2080,6 +2080,17 @@ void device_del(struct device *dev)
- 	struct kobject *glue_dir = NULL;
- 	struct class_interface *class_intf;
+@@ -132,6 +132,8 @@ extern int driver_add_groups(struct device_driver *drv,
+ 			     const struct attribute_group **groups);
+ extern void driver_remove_groups(struct device_driver *drv,
+ 				 const struct attribute_group **groups);
++int device_driver_attach(struct device_driver *drv, struct device *dev);
++void device_driver_detach(struct device *dev);
  
-+	/*
-+	 * Hold the device lock and set the "dead" flag to guarantee that
-+	 * the update behavior is consistent with the other bitfields near
-+	 * it and that we cannot have an asynchronous probe routine trying
-+	 * to run while we are tearing out the bus/class/sysfs from
-+	 * underneath the device.
-+	 */
-+	device_lock(dev);
-+	dev->p->dead = true;
-+	device_unlock(dev);
-+
- 	/* Notify clients of device removal.  This call must come
- 	 * before dpm_sysfs_remove().
- 	 */
+ extern char *make_class_name(const char *name, struct kobject *kobj);
+ 
+diff --git a/drivers/base/bus.c b/drivers/base/bus.c
+index 3ab45843da39..cfa5b63b5582 100644
+--- a/drivers/base/bus.c
++++ b/drivers/base/bus.c
+@@ -187,11 +187,7 @@ static ssize_t unbind_store(struct device_driver *drv, const char *buf,
+ 
+ 	dev = bus_find_device_by_name(bus, NULL, buf);
+ 	if (dev && dev->driver == drv) {
+-		if (dev->parent && dev->bus->need_parent_lock)
+-			device_lock(dev->parent);
+-		device_release_driver(dev);
+-		if (dev->parent && dev->bus->need_parent_lock)
+-			device_unlock(dev->parent);
++		device_driver_detach(dev);
+ 		err = count;
+ 	}
+ 	put_device(dev);
+@@ -214,13 +210,7 @@ static ssize_t bind_store(struct device_driver *drv, const char *buf,
+ 
+ 	dev = bus_find_device_by_name(bus, NULL, buf);
+ 	if (dev && dev->driver == NULL && driver_match_device(drv, dev)) {
+-		if (dev->parent && bus->need_parent_lock)
+-			device_lock(dev->parent);
+-		device_lock(dev);
+-		err = driver_probe_device(drv, dev);
+-		device_unlock(dev);
+-		if (dev->parent && bus->need_parent_lock)
+-			device_unlock(dev->parent);
++		err = device_driver_attach(drv, dev);
+ 
+ 		if (err > 0) {
+ 			/* success */
+@@ -773,13 +763,8 @@ EXPORT_SYMBOL_GPL(bus_rescan_devices);
+  */
+ int device_reprobe(struct device *dev)
+ {
+-	if (dev->driver) {
+-		if (dev->parent && dev->bus->need_parent_lock)
+-			device_lock(dev->parent);
+-		device_release_driver(dev);
+-		if (dev->parent && dev->bus->need_parent_lock)
+-			device_unlock(dev->parent);
+-	}
++	if (dev->driver)
++		device_driver_detach(dev);
+ 	return bus_rescan_devices_helper(dev, NULL);
+ }
+ EXPORT_SYMBOL_GPL(device_reprobe);
 diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-index 8ac10af17c00..636cd16b1b62 100644
+index 636cd16b1b62..34556359c7da 100644
 --- a/drivers/base/dd.c
 +++ b/drivers/base/dd.c
-@@ -731,15 +731,6 @@ static int __device_attach_driver(struct device_driver *drv, void *_data)
- 	bool async_allowed;
- 	int ret;
+@@ -867,6 +867,64 @@ void device_initial_probe(struct device *dev)
+ 	__device_attach(dev, true);
+ }
  
--	/*
--	 * Check if device has already been claimed. This may
--	 * happen with driver loading, device discovery/registration,
--	 * and deferred probe processing happens all at once with
--	 * multiple threads.
--	 */
--	if (dev->driver)
--		return -EBUSY;
--
- 	ret = driver_match_device(drv, dev);
- 	if (ret == 0) {
- 		/* no match */
-@@ -774,6 +765,15 @@ static void __device_attach_async_helper(void *_dev, async_cookie_t cookie)
- 
- 	device_lock(dev);
- 
-+	/*
-+	 * Check if device has already been removed or claimed. This may
-+	 * happen with driver loading, device discovery/registration,
-+	 * and deferred probe processing happens all at once with
-+	 * multiple threads.
-+	 */
-+	if (dev->p->dead || dev->driver)
-+		goto out_unlock;
++/*
++ * __device_driver_lock - acquire locks needed to manipulate dev->drv
++ * @dev: Device we will update driver info for
++ * @parent: Parent device. Needed if the bus requires parent lock
++ *
++ * This function will take the required locks for manipulating dev->drv.
++ * Normally this will just be the @dev lock, but when called for a USB
++ * interface, @parent lock will be held as well.
++ */
++static void __device_driver_lock(struct device *dev, struct device *parent)
++{
++	if (parent && dev->bus->need_parent_lock)
++		device_lock(parent);
++	device_lock(dev);
++}
 +
- 	if (dev->parent)
- 		pm_runtime_get_sync(dev->parent);
- 
-@@ -784,7 +784,7 @@ static void __device_attach_async_helper(void *_dev, async_cookie_t cookie)
- 
- 	if (dev->parent)
- 		pm_runtime_put(dev->parent);
--
-+out_unlock:
- 	device_unlock(dev);
- 
- 	put_device(dev);
-@@ -897,7 +897,7 @@ static int __driver_attach(struct device *dev, void *data)
- 	if (dev->parent && dev->bus->need_parent_lock)
- 		device_lock(dev->parent);
- 	device_lock(dev);
--	if (!dev->driver)
++/*
++ * __device_driver_unlock - release locks needed to manipulate dev->drv
++ * @dev: Device we will update driver info for
++ * @parent: Parent device. Needed if the bus requires parent lock
++ *
++ * This function will release the required locks for manipulating dev->drv.
++ * Normally this will just be the the @dev lock, but when called for a
++ * USB interface, @parent lock will be released as well.
++ */
++static void __device_driver_unlock(struct device *dev, struct device *parent)
++{
++	device_unlock(dev);
++	if (parent && dev->bus->need_parent_lock)
++		device_unlock(parent);
++}
++
++/**
++ * device_driver_attach - attach a specific driver to a specific device
++ * @drv: Driver to attach
++ * @dev: Device to attach it to
++ *
++ * Manually attach driver to a device. Will acquire both @dev lock and
++ * @dev->parent lock if needed.
++ */
++int device_driver_attach(struct device_driver *drv, struct device *dev)
++{
++	int ret = 0;
++
++	__device_driver_lock(dev, dev->parent);
++
++	/*
++	 * If device has been removed or someone has already successfully
++	 * bound a driver before us just skip the driver probe call.
++	 */
 +	if (!dev->p->dead && !dev->driver)
- 		driver_probe_device(drv, dev);
- 	device_unlock(dev);
- 	if (dev->parent && dev->bus->need_parent_lock)
++		ret = driver_probe_device(drv, dev);
++
++	__device_driver_unlock(dev, dev->parent);
++
++	return ret;
++}
++
+ static int __driver_attach(struct device *dev, void *data)
+ {
+ 	struct device_driver *drv = data;
+@@ -894,14 +952,7 @@ static int __driver_attach(struct device *dev, void *data)
+ 		return ret;
+ 	} /* ret > 0 means positive match */
+ 
+-	if (dev->parent && dev->bus->need_parent_lock)
+-		device_lock(dev->parent);
+-	device_lock(dev);
+-	if (!dev->p->dead && !dev->driver)
+-		driver_probe_device(drv, dev);
+-	device_unlock(dev);
+-	if (dev->parent && dev->bus->need_parent_lock)
+-		device_unlock(dev->parent);
++	device_driver_attach(drv, dev);
+ 
+ 	return 0;
+ }
+@@ -932,15 +983,11 @@ static void __device_release_driver(struct device *dev, struct device *parent)
+ 	drv = dev->driver;
+ 	if (drv) {
+ 		while (device_links_busy(dev)) {
+-			device_unlock(dev);
+-			if (parent && dev->bus->need_parent_lock)
+-				device_unlock(parent);
++			__device_driver_unlock(dev, parent);
+ 
+ 			device_links_unbind_consumers(dev);
+-			if (parent && dev->bus->need_parent_lock)
+-				device_lock(parent);
+ 
+-			device_lock(dev);
++			__device_driver_lock(dev, parent);
+ 			/*
+ 			 * A concurrent invocation of the same function might
+ 			 * have released the driver successfully while this one
+@@ -993,16 +1040,12 @@ void device_release_driver_internal(struct device *dev,
+ 				    struct device_driver *drv,
+ 				    struct device *parent)
+ {
+-	if (parent && dev->bus->need_parent_lock)
+-		device_lock(parent);
++	__device_driver_lock(dev, parent);
+ 
+-	device_lock(dev);
+ 	if (!drv || drv == dev->driver)
+ 		__device_release_driver(dev, parent);
+ 
+-	device_unlock(dev);
+-	if (parent && dev->bus->need_parent_lock)
+-		device_unlock(parent);
++	__device_driver_unlock(dev, parent);
+ }
+ 
+ /**
+@@ -1027,6 +1070,18 @@ void device_release_driver(struct device *dev)
+ }
+ EXPORT_SYMBOL_GPL(device_release_driver);
+ 
++/**
++ * device_driver_detach - detach driver from a specific device
++ * @dev: device to detach driver from
++ *
++ * Detach driver from device. Will acquire both @dev lock and @dev->parent
++ * lock if needed.
++ */
++void device_driver_detach(struct device *dev)
++{
++	device_release_driver_internal(dev, NULL, dev->parent);
++}
++
+ /**
+  * driver_detach - detach driver from all devices it controls.
+  * @drv: driver.
 
