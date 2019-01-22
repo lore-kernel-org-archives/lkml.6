@@ -2,54 +2,54 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44EA2C37122
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 00:25:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72AE9C37122
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 00:26:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0079621736
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 00:25:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34DFA21736
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 00:26:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548116754;
-	bh=ddWM+UBWPhRoIBvqhDahNKo1QE3UIcez5PKeEZA6eSg=;
+	s=default; t=1548116789;
+	bh=Gh7go1e5noE0CalTmolaBORl2KpCGA1dFF+2Vg+mr3U=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=GKpY/FLVSTpXzNhShDqS3JHQqsC+xYnsEpKvw+VsL88txRN4T2o4WfatziJuz6ER+
-	 KaB7eLV4pjhpGxT+Cv2j8YPcUaH/NX+5NA8SiY+eFht0h3ewkHXnlzq/jZYVEfiEXp
-	 Vuz1bWjaimLm9Bcv/4Ib6H+hu8fVQ0q9QXma+vK0=
+	b=2rI8KnqxAkomzB7xolO+O6cwiN67UGOeJNfrwtIQCX+/om8R0rWd5E+CxgXlaFHGd
+	 BJIS0D+MQddp6qvmTlwJ7aiYEUEbWhuObUbXSAF01UVBZk0EPndDvyTyyDp+shqFYd
+	 YhB3BU0MhY+gscMb9Tjb6ghWCCH7xiHvjeQdKP4Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726307AbfAVAZv (ORCPT
+        id S1726373AbfAVA01 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 19:25:51 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:36925 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725962AbfAVAZv (ORCPT
+        Mon, 21 Jan 2019 19:26:27 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:34218 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725962AbfAVA01 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 19:25:51 -0500
-Received: by mail-ot1-f65.google.com with SMTP id s13so22147977otq.4;
-        Mon, 21 Jan 2019 16:25:51 -0800 (PST)
+        Mon, 21 Jan 2019 19:26:27 -0500
+Received: by mail-ot1-f68.google.com with SMTP id t5so17104020otk.1;
+        Mon, 21 Jan 2019 16:26:26 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xV0RGCV2FL9mr4mSu1fd4WykekZj8OlmD7R8AWLzPrw=;
-        b=DbIMrcVcK//xXy7e7ss0U2F8m0rHoDeMD7HvxcONTITWavmaO6Yn/mDMqC2EIPHm1o
-         V/UHzrnwZohmvaErvDHChP8gjt8DLfHgQZEZoIXDaUGMw9QGaf08yPUvUu2h5IASmhl9
-         dTg2tEaFOo/X9wLrva9ZOtpkbF2+eHsuUqEaHM5Dj/VYlVLLC/w0pOKhbRzG/dtQ3DDK
-         kDOOYN2lqJNM8YdHVNLolYKObGv/Z0BGTKNOmMT2r00kjIeoaG1OSPYVJjLSt9fi5YpB
-         yEzB0ggYQ/WWK+mwbnGXOvZ78yhiyZmaDaR5WE64SZ5ITUyxzEqw9bAdnc7K1QFLlpcT
-         6izQ==
-X-Gm-Message-State: AJcUukfX363YdXjwtY2rXwa7JKozVLNmG3glxHanpxDaSxrrtd0ag4+X
-        8Fhs6tQzsyfUAAgRUvC+cg==
-X-Google-Smtp-Source: ALg8bN7mJkNAgQXh7MU+ZkZtO6T8ERMYYp2fz0B7iLmvzAPDqWNgISZSnJPqyTViXvjfFmEaxAR/Lw==
-X-Received: by 2002:a9d:39a6:: with SMTP id y35mr22060928otb.253.1548116750605;
-        Mon, 21 Jan 2019 16:25:50 -0800 (PST)
+        bh=BRXxaem06/3zekgZE+01VbfJHLkyejV8w4CEcn0uUvA=;
+        b=hj1uWw+msTNBpav70f+zdB41R2bCNAj2VQvNvRrJhJ6w1+vmC51GSXZlnS7M8LL2fb
+         QEK8BnTHIdkdgTlUlFgvB/146qPob44KC29vVl+0t1jOtlr9MSR5li5klrV3gn7WU6Oh
+         r+nHtDVd69tXm+Rt6KgnsiNJ7o8Br5cFkqdnIHCnBRHjH0XracPfkePfbM4Fz705NtQy
+         vBlmVMgpsAaAxpL+jHUdOSSj8Zi/n2xsEcvOTGrt5W9wUhv9wv1umQCkQINDCNPP9JZ0
+         /biFK8FvBo61NhGDManoQxacB5533yHD2paCAWKWfJuRMeADpW8I9/nHs7L3mPjold8R
+         pPNA==
+X-Gm-Message-State: AJcUukdA2r1JvnXPZuNK6K+ERQmTEU587NPdjpgL80fsoVvHeJg+HEqZ
+        GGoq+ufgKtVIdUlIKKmOnPys0XvSEA==
+X-Google-Smtp-Source: ALg8bN51vEeBhcTgMO5EoSf06sGeNsZ9a0brzvaSa0cI0jGxdBj08mlmtZ+h3qgN4MjH5Zfip71Tvg==
+X-Received: by 2002:a05:6830:1689:: with SMTP id k9mr19326835otr.129.1548116786403;
+        Mon, 21 Jan 2019 16:26:26 -0800 (PST)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id f127sm7047978oia.19.2019.01.21.16.25.49
+        by smtp.gmail.com with ESMTPSA id x127sm6781305oia.20.2019.01.21.16.26.25
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 21 Jan 2019 16:25:50 -0800 (PST)
-Date:   Mon, 21 Jan 2019 18:25:49 -0600
+        Mon, 21 Jan 2019 16:26:25 -0800 (PST)
+Date:   Mon, 21 Jan 2019 18:26:25 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Evan Green <evgreen@chromium.org>
 Cc:     Andy Gross <andy.gross@linaro.org>,
@@ -59,61 +59,35 @@ Cc:     Andy Gross <andy.gross@linaro.org>,
         Asutosh Das <asutoshd@codeaurora.org>,
         Stephen Boyd <swboyd@chromium.org>,
         Vivek Gautam <vivek.gautam@codeaurora.org>,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v1 3/8] arm64: dts: sdm845: Add UFS PHY reset
-Message-ID: <20190122002549.GA20481@bogus>
+        Evan Green <evgreen@chromium.org>, devicetree@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/8] dt-bindings: phy: qcom-ufs: Add resets property
+Message-ID: <20190122002625.GA22073@bogus>
 References: <20190111230129.127037-1-evgreen@chromium.org>
- <20190111230129.127037-4-evgreen@chromium.org>
+ <20190111230129.127037-3-evgreen@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190111230129.127037-4-evgreen@chromium.org>
+In-Reply-To: <20190111230129.127037-3-evgreen@chromium.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 03:01:24PM -0800, Evan Green wrote:
-> Wire up the reset controller in the Qcom UFS controller for the PHY.
-> This will be used to toggle PHY reset during initialization of the PHY.
+On Fri, 11 Jan 2019 15:01:23 -0800, Evan Green wrote:
+> Add a resets property to the PHY that represents the PHY reset
+> register in the UFS controller itself. This better describes the
+> complete specification of the PHY, and allows the PHY to perform
+> its initialization in a single function, rather than relying on
+> back-channel sequencing of initialization through the PHY framework.
 > 
 > Signed-off-by: Evan Green <evgreen@chromium.org>
 > ---
-> This commit is based atop the series at [1]. Patches 1 and 2 of that
-> series have landed, but 3, 4, and 5 are still outstanding.
 > 
-> [1] https://lore.kernel.org/lkml/20181210192826.241350-1-evgreen@chromium.org/
+>  Documentation/devicetree/bindings/ufs/ufs-qcom.txt | 1 +
+>  1 file changed, 1 insertion(+)
 > 
->  arch/arm64/boot/dts/qcom/sdm845.dtsi | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> index b29332b265d9e..029ab66405cf4 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -990,6 +990,7 @@
->  			phy-names = "ufsphy";
->  			lanes-per-direction = <2>;
->  			power-domains = <&gcc UFS_PHY_GDSC>;
-> +			#reset-cells = <1>;
 
-Is this documented?
-
->  
->  			clock-names =
->  				"core_clk",
-> @@ -1033,6 +1034,8 @@
->  			clocks = <&gcc GCC_UFS_MEM_CLKREF_CLK>,
->  				 <&gcc GCC_UFS_PHY_PHY_AUX_CLK>;
->  
-> +			resets = <&ufs_mem_hc 0>;
-> +			reset-names = "ufsphy";
->  			status = "disabled";
->  
->  			ufs_mem_phy_lanes: lanes@1d87400 {
-> -- 
-> 2.18.1
-> 
+Reviewed-by: Rob Herring <robh@kernel.org>
