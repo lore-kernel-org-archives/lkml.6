@@ -2,97 +2,495 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E85B7C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:17:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 316E8C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:17:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B88E72085A
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:17:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="sdTe3Nqj"
+	by mail.kernel.org (Postfix) with ESMTP id F39A32085A
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:17:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727979AbfAVKRT (ORCPT
+        id S1728024AbfAVKRh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 05:17:19 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:41686 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726284AbfAVKRT (ORCPT
+        Tue, 22 Jan 2019 05:17:37 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:33123 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727479AbfAVKRg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 05:17:19 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0MAHDi0003782;
-        Tue, 22 Jan 2019 04:17:13 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1548152233;
-        bh=9rlOa8bOpfOIZoGoE/YVN5G9UZprhrTTEpDIQJEVom0=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=sdTe3NqjkFWNS6Qs0Px6WSTdTolDwsVva2+c/zDF3wWBmJJuIADXOYc7OngeBNiko
-         A6/wA1/kejUqK+kqLnit1qLTb/gZiPg38N5/C26P3y/twNsZSsfnUkfOwfehDzoFPb
-         WtmTPRE06rVuYsPd1hUBEYHRILW9rMcLhEdNKO4U=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0MAHDs9051362
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 22 Jan 2019 04:17:13 -0600
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 22
- Jan 2019 04:17:12 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Tue, 22 Jan 2019 04:17:13 -0600
-Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0MAH8RO001272;
-        Tue, 22 Jan 2019 04:17:09 -0600
-Subject: Re: [PATCH] dt-bindings: sdhci-omap: Add properties for using
- external dma
-To:     Chunyan Zhang <zhang.chunyan@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-CC:     <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-References: <20190121232057.GA30919@bogus>
- <20190122084706.11522-1-zhang.chunyan@linaro.org>
-From:   Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <7231fba8-de0d-dd22-5ec8-d62d34c6495d@ti.com>
-Date:   Tue, 22 Jan 2019 15:50:10 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 22 Jan 2019 05:17:36 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0MAFgLH2906914
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Tue, 22 Jan 2019 02:15:42 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0MAFgVw2906911;
+        Tue, 22 Jan 2019 02:15:42 -0800
+Date:   Tue, 22 Jan 2019 02:15:42 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Thomas Richter <tipbot@zytor.com>
+Message-ID: <tip-s3jhif06et9ug78qhclw41z1@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, tmricht@linux.ibm.com,
+        brueckner@linux.ibm.com, hpa@zytor.com, tglx@linutronix.de,
+        heiko.carstens@de.ibm.com, acme@redhat.com, mingo@kernel.org,
+        schwidefsky@de.ibm.com
+Reply-To: mingo@kernel.org, acme@redhat.com, schwidefsky@de.ibm.com,
+          hpa@zytor.com, heiko.carstens@de.ibm.com, tglx@linutronix.de,
+          brueckner@linux.ibm.com, linux-kernel@vger.kernel.org,
+          tmricht@linux.ibm.com
+In-Reply-To: <9c856ac0-ef23-72b5-901d-a1f815508976@linux.ibm.com>
+References: <9c856ac0-ef23-72b5-901d-a1f815508976@linux.ibm.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf report: Display arch specific diagnostic
+ counter sets, starting with s390
+Git-Commit-ID: 93115d32e8666614f3578601a0b7b3f4914509f4
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <20190122084706.11522-1-zhang.chunyan@linaro.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chunyan,
+Commit-ID:  93115d32e8666614f3578601a0b7b3f4914509f4
+Gitweb:     https://git.kernel.org/tip/93115d32e8666614f3578601a0b7b3f4914509f4
+Author:     Thomas Richter <tmricht@linux.ibm.com>
+AuthorDate: Thu, 17 Jan 2019 10:37:17 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 21 Jan 2019 17:00:48 -0300
 
-+Rob Herring
+perf report: Display arch specific diagnostic counter sets, starting with s390
 
-On 22/01/19 2:17 PM, Chunyan Zhang wrote:
-> sdhci-omap can support both external dma controller via dmaengine
-> framework as well as ADMA which standard SD host controller
-> provides.
-> 
-> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
-> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
-> ---
+On s390 the event bc000 (also named CF_DIAG) extracts the CPU
+Measurement Facility diagnostic counter sets and displays them as
+counter number and counter value pairs sorted by counter set number.
 
-Thanks for fixing this. However, this change should be part of the
-series (with a change log and a version number). I will send this as a
-part of my series after I get some Acks on the driver patches.
+Output:
+ [root@s35lp76 perf]# ./perf report -D --stdio
 
-Thanks,
-Faiz
+ [00000000] Counterset:0 Counters:6
+   Counter:000 Value:0x000000000085ec36 Counter:001 Value:0x0000000000796c94
+   Counter:002 Value:0x0000000000005ada Counter:003 Value:0x0000000000092460
+   Counter:004 Value:0x0000000000006073 Counter:005 Value:0x00000000001a9a73
+ [0x000038] Counterset:1 Counters:2
+   Counter:000 Value:0x000000000007c59f Counter:001 Value:0x000000000002fad6
+ [0x000050] Counterset:2 Counters:16
+   Counter:000 Value:000000000000000000 Counter:001 Value:000000000000000000
+   Counter:002 Value:000000000000000000 Counter:003 Value:000000000000000000
+   Counter:004 Value:000000000000000000 Counter:005 Value:000000000000000000
+   Counter:006 Value:000000000000000000 Counter:007 Value:000000000000000000
+   Counter:008 Value:000000000000000000 Counter:009 Value:000000000000000000
+   Counter:010 Value:000000000000000000 Counter:011 Value:000000000000000000
+   Counter:012 Value:000000000000000000 Counter:013 Value:000000000000000000
+   Counter:014 Value:000000000000000000 Counter:015 Value:000000000000000000
+ [0x0000d8] Counterset:3 Counters:128
+   Counter:000 Value:0x000000000000020f Counter:001 Value:0x00000000000001d8
+   Counter:002 Value:0x000000000000d7fa Counter:003 Value:0x000000000000008b
+   ...
+
+The number in brackets is the offset into the raw data field of the
+sample.
+
+New functions trace_event_sample_raw__init() and s390_sample_raw() are
+introduced in the code path to enable interpretation on non s390
+platforms. This event bc000 attached raw data is generated only on s390
+platform. Correct display on other platforms requires correct endianness
+handling.
+
+Committer notes:
+
+Added a init function that sets up a evlist function pointer to avoid
+repeated tests on evlist->env and calls to perf_env__name() that
+involves normalizing, etc, for each PERF_RECORD_SAMPLE.
+
+Removed needless __maybe_unused from the trace_event_raw()
+prototype in session.h, move it to be an static function in evlist.
+
+The 'offset' variable is a size_t, not an u64, fix it to avoid this on
+some arches:
+
+    CC       /tmp/build/perf/util/s390-sample-raw.o
+  util/s390-sample-raw.c: In function 's390_cpumcfdg_testctr':
+  util/s390-sample-raw.c:77:4: error: format '%llx' expects argument of type 'long long unsigned int', but argument 4 has type 'size_t' [-Werror=format=]
+      pr_err("Invalid counter set entry at %#"  PRIx64 "\n",
+      ^
+  cc1: all warnings being treated as errors
+
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+Link: https://lkml.kernel.org/r/9c856ac0-ef23-72b5-901d-a1f815508976@linux.ibm.com
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Link: https://lkml.kernel.org/n/tip-s3jhif06et9ug78qhclw41z1@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/Build                |   2 +
+ tools/perf/util/evlist.h             |   4 +-
+ tools/perf/util/s390-cpumcf-kernel.h |  62 +++++++++++++
+ tools/perf/util/s390-sample-raw.c    | 173 +++++++++++++++++++++++++++++++++++
+ tools/perf/util/sample-raw.c         |  18 ++++
+ tools/perf/util/sample-raw.h         |  14 +++
+ tools/perf/util/session.c            |   5 +
+ 7 files changed, 277 insertions(+), 1 deletion(-)
+
+diff --git a/tools/perf/util/Build b/tools/perf/util/Build
+index af72be7f5b3b..3ad6a800948d 100644
+--- a/tools/perf/util/Build
++++ b/tools/perf/util/Build
+@@ -44,6 +44,8 @@ libperf-y += machine.o
+ libperf-y += map.o
+ libperf-y += pstack.o
+ libperf-y += session.o
++libperf-y += sample-raw.o
++libperf-y += s390-sample-raw.o
+ libperf-$(CONFIG_TRACE) += syscalltbl.o
+ libperf-y += ordered-events.o
+ libperf-y += namespaces.o
+diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
+index 868294491194..00ab43c6dd15 100644
+--- a/tools/perf/util/evlist.h
++++ b/tools/perf/util/evlist.h
+@@ -49,6 +49,9 @@ struct perf_evlist {
+ 	struct perf_evsel *selected;
+ 	struct events_stats stats;
+ 	struct perf_env	*env;
++	void (*trace_event_sample_raw)(struct perf_evlist *evlist,
++				       union perf_event *event,
++				       struct perf_sample *sample);
+ 	u64		first_sample_time;
+ 	u64		last_sample_time;
+ };
+@@ -314,5 +317,4 @@ void perf_evlist__force_leader(struct perf_evlist *evlist);
+ 
+ struct perf_evsel *perf_evlist__reset_weak_group(struct perf_evlist *evlist,
+ 						 struct perf_evsel *evsel);
+-
+ #endif /* __PERF_EVLIST_H */
+diff --git a/tools/perf/util/s390-cpumcf-kernel.h b/tools/perf/util/s390-cpumcf-kernel.h
+new file mode 100644
+index 000000000000..d4356030b504
+--- /dev/null
++++ b/tools/perf/util/s390-cpumcf-kernel.h
+@@ -0,0 +1,62 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Support for s390 CPU measurement counter set diagnostic facility
++ *
++ * Copyright IBM Corp. 2019
++   Author(s): Hendrik Brueckner <brueckner@linux.ibm.com>
++ *		Thomas Richter <tmricht@linux.ibm.com>
++ */
++#ifndef S390_CPUMCF_KERNEL_H
++#define S390_CPUMCF_KERNEL_H
++
++#define	S390_CPUMCF_DIAG_DEF	0xfeef	/* Counter diagnostic entry ID */
++#define	PERF_EVENT_CPUM_CF_DIAG	0xBC000	/* Event: Counter sets */
++
++struct cf_ctrset_entry {	/* CPU-M CF counter set entry (8 byte) */
++	unsigned int def:16;	/* 0-15  Data Entry Format */
++	unsigned int set:16;	/* 16-23 Counter set identifier */
++	unsigned int ctr:16;	/* 24-39 Number of stored counters */
++	unsigned int res1:16;	/* 40-63 Reserved */
++};
++
++struct cf_trailer_entry {	/* CPU-M CF trailer for raw traces (64 byte) */
++	/* 0 - 7 */
++	union {
++		struct {
++			unsigned int clock_base:1;	/* TOD clock base */
++			unsigned int speed:1;		/* CPU speed */
++			/* Measurement alerts */
++			unsigned int mtda:1;	/* Loss of MT ctr. data alert */
++			unsigned int caca:1;	/* Counter auth. change alert */
++			unsigned int lcda:1;	/* Loss of counter data alert */
++		};
++		unsigned long flags;		/* 0-63    All indicators */
++	};
++	/* 8 - 15 */
++	unsigned int cfvn:16;			/* 64-79   Ctr First Version */
++	unsigned int csvn:16;			/* 80-95   Ctr Second Version */
++	unsigned int cpu_speed:32;		/* 96-127  CPU speed */
++	/* 16 - 23 */
++	unsigned long timestamp;		/* 128-191 Timestamp (TOD) */
++	/* 24 - 55 */
++	union {
++		struct {
++			unsigned long progusage1;
++			unsigned long progusage2;
++			unsigned long progusage3;
++			unsigned long tod_base;
++		};
++		unsigned long progusage[4];
++	};
++	/* 56 - 63 */
++	unsigned int mach_type:16;		/* Machine type */
++	unsigned int res1:16;			/* Reserved */
++	unsigned int res2:32;			/* Reserved */
++};
++
++#define	CPUMF_CTR_SET_BASIC	0	/* Basic Counter Set */
++#define	CPUMF_CTR_SET_USER	1	/* Problem-State Counter Set */
++#define	CPUMF_CTR_SET_CRYPTO	2	/* Crypto-Activity Counter Set */
++#define	CPUMF_CTR_SET_EXT	3	/* Extended Counter Set */
++#define	CPUMF_CTR_SET_MT_DIAG	4	/* MT-diagnostic Counter Set */
++#endif
+diff --git a/tools/perf/util/s390-sample-raw.c b/tools/perf/util/s390-sample-raw.c
+new file mode 100644
+index 000000000000..1c5a4d63bc9d
+--- /dev/null
++++ b/tools/perf/util/s390-sample-raw.c
+@@ -0,0 +1,173 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright IBM Corp. 2019
++ * Author(s): Thomas Richter <tmricht@linux.ibm.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License (version 2 only)
++ * as published by the Free Software Foundation.
++ *
++ * Architecture specific trace_event function. Save event's bc000 raw data
++ * to file. File name is aux.ctr.## where ## stands for the CPU number the
++ * sample was taken from.
++ */
++
++#include <unistd.h>
++#include <stdio.h>
++#include <string.h>
++#include <inttypes.h>
++
++#include <sys/stat.h>
++#include <linux/compiler.h>
++#include <asm/byteorder.h>
++
++#include "debug.h"
++#include "util.h"
++#include "auxtrace.h"
++#include "session.h"
++#include "evlist.h"
++#include "config.h"
++#include "color.h"
++#include "sample-raw.h"
++#include "s390-cpumcf-kernel.h"
++
++static size_t ctrset_size(struct cf_ctrset_entry *set)
++{
++	return sizeof(*set) + set->ctr * sizeof(u64);
++}
++
++static bool ctrset_valid(struct cf_ctrset_entry *set)
++{
++	return set->def == S390_CPUMCF_DIAG_DEF;
++}
++
++/* CPU Measurement Counter Facility raw data is a byte stream. It is 8 byte
++ * aligned and might have trailing padding bytes.
++ * Display the raw data on screen.
++ */
++static bool s390_cpumcfdg_testctr(struct perf_sample *sample)
++{
++	size_t len = sample->raw_size, offset = 0;
++	unsigned char *buf = sample->raw_data;
++	struct cf_trailer_entry *te;
++	struct cf_ctrset_entry *cep, ce;
++
++	if (!len)
++		return false;
++	while (offset < len) {
++		cep = (struct cf_ctrset_entry *)(buf + offset);
++		ce.def = be16_to_cpu(cep->def);
++		ce.set = be16_to_cpu(cep->set);
++		ce.ctr = be16_to_cpu(cep->ctr);
++		ce.res1 = be16_to_cpu(cep->res1);
++
++		if (!ctrset_valid(&ce) || offset + ctrset_size(&ce) > len) {
++			/* Raw data for counter sets are always multiple of 8
++			 * bytes. Prepending a 4 bytes size field to the
++			 * raw data block in the sample causes the perf tool
++			 * to append 4 padding bytes to make the raw data part
++			 * of the sample a multiple of eight bytes again.
++			 *
++			 * If the last entry (trailer) is 4 bytes off the raw
++			 * area data end, all is good.
++			 */
++			if (len - offset - sizeof(*te) == 4)
++				break;
++			pr_err("Invalid counter set entry at %zd\n", offset);
++			return false;
++		}
++		offset += ctrset_size(&ce);
++	}
++	return true;
++}
++
++/* Dump event bc000 on screen, already tested on correctness. */
++static void s390_cpumcfdg_dumptrail(const char *color, size_t offset,
++				    struct cf_trailer_entry *tep)
++{
++	struct cf_trailer_entry  te;
++
++	te.flags = be64_to_cpu(tep->flags);
++	te.cfvn = be16_to_cpu(tep->cfvn);
++	te.csvn = be16_to_cpu(tep->csvn);
++	te.cpu_speed = be32_to_cpu(tep->cpu_speed);
++	te.timestamp = be64_to_cpu(tep->timestamp);
++	te.progusage1 = be64_to_cpu(tep->progusage1);
++	te.progusage2 = be64_to_cpu(tep->progusage2);
++	te.progusage3 = be64_to_cpu(tep->progusage3);
++	te.tod_base = be64_to_cpu(tep->tod_base);
++	te.mach_type = be16_to_cpu(tep->mach_type);
++	te.res1 = be16_to_cpu(tep->res1);
++	te.res2 = be32_to_cpu(tep->res2);
++
++	color_fprintf(stdout, color, "    [%#08zx] Trailer:%c%c%c%c%c"
++		      " Cfvn:%d Csvn:%d Speed:%d TOD:%#llx\n",
++		      offset, te.clock_base ? 'T' : ' ',
++		      te.speed ? 'S' : ' ', te.mtda ? 'M' : ' ',
++		      te.caca ? 'C' : ' ', te.lcda ? 'L' : ' ',
++		      te.cfvn, te.csvn, te.cpu_speed, te.timestamp);
++	color_fprintf(stdout, color, "\t\t1:%lx 2:%lx 3:%lx TOD-Base:%#llx"
++		      " Type:%x\n\n",
++		      te.progusage1, te.progusage2, te.progusage3,
++		      te.tod_base, te.mach_type);
++}
++
++static void s390_cpumcfdg_dump(struct perf_sample *sample)
++{
++	size_t i, len = sample->raw_size, offset = 0;
++	unsigned char *buf = sample->raw_data;
++	const char *color = PERF_COLOR_BLUE;
++	struct cf_ctrset_entry *cep, ce;
++	u64 *p;
++
++	while (offset < len) {
++		cep = (struct cf_ctrset_entry *)(buf + offset);
++
++		ce.def = be16_to_cpu(cep->def);
++		ce.set = be16_to_cpu(cep->set);
++		ce.ctr = be16_to_cpu(cep->ctr);
++		ce.res1 = be16_to_cpu(cep->res1);
++
++		if (!ctrset_valid(&ce)) {	/* Print trailer */
++			s390_cpumcfdg_dumptrail(color, offset,
++						(struct cf_trailer_entry *)cep);
++			return;
++		}
++
++		color_fprintf(stdout, color, "    [%#08zx] Counterset:%d"
++			      " Counters:%d\n", offset, ce.set, ce.ctr);
++		for (i = 0, p = (u64 *)(cep + 1); i < ce.ctr; i += 2, p += 2)
++			color_fprintf(stdout, color,
++				      "\tCounter:%03d Value:%#018lx"
++				      " Counter:%03d Value:%#018lx\n",
++				      i, be64_to_cpu(*p),
++				      i + 1, be64_to_cpu(*(p + 1)));
++		offset += ctrset_size(&ce);
++	}
++}
++
++/* S390 specific trace event function. Check for PERF_RECORD_SAMPLE events
++ * and if the event was triggered by a counter set diagnostic event display
++ * its raw data.
++ * The function is only invoked when the dump flag -D is set.
++ */
++void perf_evlist__s390_sample_raw(struct perf_evlist *evlist, union perf_event *event,
++				  struct perf_sample *sample)
++{
++	struct perf_evsel *ev_bc000;
++
++	if (event->header.type != PERF_RECORD_SAMPLE)
++		return;
++
++	ev_bc000 = perf_evlist__event2evsel(evlist, event);
++	if (ev_bc000 == NULL ||
++	    ev_bc000->attr.config != PERF_EVENT_CPUM_CF_DIAG)
++		return;
++
++	/* Display raw data on screen */
++	if (!s390_cpumcfdg_testctr(sample)) {
++		pr_err("Invalid counter set data encountered\n");
++		return;
++	}
++	s390_cpumcfdg_dump(sample);
++}
+diff --git a/tools/perf/util/sample-raw.c b/tools/perf/util/sample-raw.c
+new file mode 100644
+index 000000000000..c21e1311fb0f
+--- /dev/null
++++ b/tools/perf/util/sample-raw.c
+@@ -0,0 +1,18 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#include <string.h>
++#include "evlist.h"
++#include "env.h"
++#include "sample-raw.h"
++
++/*
++ * Check platform the perf data file was created on and perform platform
++ * specific interpretation.
++ */
++void perf_evlist__init_trace_event_sample_raw(struct perf_evlist *evlist)
++{
++	const char *arch_pf = perf_env__arch(evlist->env);
++
++	if (arch_pf && !strcmp("s390", arch_pf))
++		evlist->trace_event_sample_raw = perf_evlist__s390_sample_raw;
++}
+diff --git a/tools/perf/util/sample-raw.h b/tools/perf/util/sample-raw.h
+new file mode 100644
+index 000000000000..95d445c87e93
+--- /dev/null
++++ b/tools/perf/util/sample-raw.h
+@@ -0,0 +1,14 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef __SAMPLE_RAW_H
++#define __SAMPLE_RAW_H 1
++
++struct perf_evlist;
++union perf_event;
++struct perf_sample;
++
++void perf_evlist__s390_sample_raw(struct perf_evlist *evlist,
++				  union perf_event *event,
++				  struct perf_sample *sample);
++
++void perf_evlist__init_trace_event_sample_raw(struct perf_evlist *evlist);
++#endif /* __PERF_EVLIST_H */
+diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
+index d6f41611f504..b26bc9c54200 100644
+--- a/tools/perf/util/session.c
++++ b/tools/perf/util/session.c
+@@ -23,6 +23,7 @@
+ #include "auxtrace.h"
+ #include "thread.h"
+ #include "thread-stack.h"
++#include "sample-raw.h"
+ #include "stat.h"
+ #include "arch/common.h"
+ 
+@@ -147,6 +148,8 @@ struct perf_session *perf_session__new(struct perf_data *data,
+ 				perf_session__set_id_hdr_size(session);
+ 				perf_session__set_comm_exec(session);
+ 			}
++
++			perf_evlist__init_trace_event_sample_raw(session->evlist);
+ 		}
+ 	} else  {
+ 		session->machines.host.env = &perf_env;
+@@ -1065,6 +1068,8 @@ static void dump_event(struct perf_evlist *evlist, union perf_event *event,
+ 	       file_offset, event->header.size, event->header.type);
+ 
+ 	trace_event(event);
++	if (event->header.type == PERF_RECORD_SAMPLE && evlist->trace_event_sample_raw)
++		evlist->trace_event_sample_raw(evlist, event, sample);
+ 
+ 	if (sample)
+ 		perf_evlist__print_tstamp(evlist, event, sample);
