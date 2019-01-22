@@ -2,144 +2,73 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 792CEC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:25:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53333C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:26:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51CD2218D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:25:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A8E9218D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:26:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="du3MVWKq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727872AbfAVJZ5 (ORCPT
+        id S1727870AbfAVJ0c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 04:25:57 -0500
-Received: from mailgw02.mediatek.com ([1.203.163.81]:46643 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727382AbfAVJZ4 (ORCPT
+        Tue, 22 Jan 2019 04:26:32 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:58104 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727318AbfAVJ0c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 04:25:56 -0500
-X-UUID: b08172ea09744e72a38578e9cba9b43e-20190122
-X-UUID: b08172ea09744e72a38578e9cba9b43e-20190122
-Received: from mtkcas35.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
-        (envelope-from <jianjun.wang@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1541439935; Tue, 22 Jan 2019 17:25:49 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31N2.mediatek.inc
- (172.27.4.87) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 22 Jan
- 2019 17:25:47 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 22 Jan 2019 17:25:46 +0800
-Message-ID: <1548149146.11414.1.camel@mhfsdcap03>
-Subject: Re: PCI: mediatek: Remove MSI inner domain
-From:   Jianjun Wang <jianjun.wang@mediatek.com>
-To:     Ryder Lee <ryder.lee@mediatek.com>
-CC:     <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
-        <matthias.bgg@gmail.com>, <linux-pci@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <honghui.zhang@mediatek.com>, <youlin.pei@mediatek.com>,
-        <jianjun.wang@mediatek.com>
-Date:   Tue, 22 Jan 2019 17:25:46 +0800
-In-Reply-To: <1548128100.11442.7.camel@mtkswgap22>
-References: <1548071976-13279-1-git-send-email-jianjun.wang@mediatek.com>
-         <1548128100.11442.7.camel@mtkswgap22>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Tue, 22 Jan 2019 04:26:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=0ZboY0ZOPY5NRmUJpEeX7C8MEb6oU8DVQqtFVVjDqNA=; b=du3MVWKqmHsdf3DhGvsPai4EA
+        3cpTGOZq7lFzZ45B+593seGKoqyr6TdL03QFqXitgiEOu6Cj4U+dUrixzX0iKbVxosMDTGHN40PAx
+        K1WgkWTDskxcFA2BtzdP4Jm/B9PSelFmivKAff59Lg4MQCu68u5G+BA7DB1wBKWaWhJG+nLaeyB+E
+        3W+HFGYieg61HQsrQzL8tt/O7TiaeVqoiKt+W6/rF3UlexxvDlZAdT4SkvDszUJEmIpKpKOMegTYD
+        QWAat5VVY/67vr2FGq25QaVfdHc4+nfPHzhBfQAqV3u6RmbVcxL7CLZzTCbqYTbkrPgZdQP3CXh/g
+        qnCZfIPuQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1glsK1-00076Q-S0; Tue, 22 Jan 2019 09:26:18 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 58A94200C07BD; Tue, 22 Jan 2019 10:26:16 +0100 (CET)
+Date:   Tue, 22 Jan 2019 10:26:16 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Reshetova, Elena" <elena.reshetova@intel.com>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>
+Subject: Re: [PATCH 2/5] sched: convert signal_struct.sigcnt to refcount_t
+Message-ID: <20190122092616.GF13777@hirez.programming.kicks-ass.net>
+References: <1547814450-18902-1-git-send-email-elena.reshetova@intel.com>
+ <1547814450-18902-3-git-send-email-elena.reshetova@intel.com>
+ <20190121172822.GB8088@redhat.com>
+ <2236FBA76BA1254E88B949DDB74E612BA4B8B877@IRSMSX102.ger.corp.intel.com>
 MIME-Version: 1.0
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2236FBA76BA1254E88B949DDB74E612BA4B8B877@IRSMSX102.ger.corp.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-01-22 at 11:35 +0800, Ryder Lee wrote:
-> On Mon, 2019-01-21 at 19:59 +0800, Jianjun Wang wrote:
-> > There is no need to create the inner domain as a parent for MSI domian,
-> > some feature has been implemented by MSI framework.
-> > 
-> > Remove the inner domain and its irq chip, it will be more closer to the
-> > hardware implementation.
-> > 
-> > Signed-off-by: Jianjun Wang <jianjun.wang@mediatek.com>
-> > ---
-> >  drivers/pci/controller/pcie-mediatek.c | 82 +++++++++++---------------
-> >  1 file changed, 35 insertions(+), 47 deletions(-)
-> > 
-> > diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
-> > index 8d05df56158b..216e6fa8aec0 100644
-> > --- a/drivers/pci/controller/pcie-mediatek.c
-> > +++ b/drivers/pci/controller/pcie-mediatek.c
-> > @@ -169,7 +169,6 @@ struct mtk_pcie_soc {
-> >   * @slot: port slot
-> >   * @irq: GIC irq
-> >   * @irq_domain: legacy INTx IRQ domain
-> > - * @inner_domain: inner IRQ domain
-> >   * @msi_domain: MSI IRQ domain
-> >   * @lock: protect the msi_irq_in_use bitmap
-> >   * @msi_irq_in_use: bit map for assigned MSI IRQ
-> > @@ -190,7 +189,6 @@ struct mtk_pcie_port {
-> >  	u32 slot;
-> >  	int irq;
-> >  	struct irq_domain *irq_domain;
-> > -	struct irq_domain *inner_domain;
-> >  	struct irq_domain *msi_domain;
-> >  	struct mutex lock;
-> >  	DECLARE_BITMAP(msi_irq_in_use, MTK_MSI_IRQS_NUM);
-> > @@ -418,22 +416,25 @@ static void mtk_msi_ack_irq(struct irq_data *data)
-> >  	u32 hwirq = data->hwirq;
-> >  
-> >  	writel(1 << hwirq, port->base + PCIE_IMSI_STATUS);
-> > +	writel(MSI_STATUS, port->base + PCIE_INT_STATUS);
-> >  }
-> >  
-> > -static struct irq_chip mtk_msi_bottom_irq_chip = {
-> > -	.name			= "MTK MSI",
-> > +static struct irq_chip mtk_msi_irq_chip = {
-> > +	.name			= "MTK PCIe",
-> >  	.irq_compose_msi_msg	= mtk_compose_msi_msg,
-> > +	.irq_write_msi_msg	= pci_msi_domain_write_msg,
-> >  	.irq_set_affinity	= mtk_msi_set_affinity,
-> >  	.irq_ack		= mtk_msi_ack_irq,
-> > +	.irq_mask		= pci_msi_mask_irq,
-> > +	.irq_unmask		= pci_msi_unmask_irq,
-> >  };
-> 
-> (...omitted...)
-> 
-> To keep the patch simple, we don't need to adjust the position for
-> mtk_msi_irq_chip.
+On Tue, Jan 22, 2019 at 09:11:42AM +0000, Reshetova, Elena wrote:
+> Will you be able to take this and the other scheduler
+> patch to whatever tree/path it should normally go to get eventually 
+> integrated? 
 
-OK, I will fix it in next version, thanks.
-> 
-> > -
-> > -static struct irq_chip mtk_msi_irq_chip = {
-> > -	.name		= "MTK PCIe MSI",
-> > -	.irq_ack	= irq_chip_ack_parent,
-> > -	.irq_mask	= pci_msi_mask_irq,
-> > -	.irq_unmask	= pci_msi_unmask_irq,
-> > +static struct msi_domain_ops mtk_msi_domain_ops = {
-> > +	.get_hwirq	= mtk_pcie_msi_get_hwirq,
-> > +	.msi_free	= mtk_pcie_msi_free,
-> >  };
-> >  
-> >  static struct msi_domain_info mtk_msi_domain_info = {
-> > -	.flags	= (MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF_CHIP_OPS |
-> > -		   MSI_FLAG_PCI_MSIX),
-> > -	.chip	= &mtk_msi_irq_chip,
-> > +	.flags		= (MSI_FLAG_USE_DEF_DOM_OPS |
-> > +			   MSI_FLAG_USE_DEF_CHIP_OPS | MSI_FLAG_PCI_MSIX),
-> > +	.ops		= &mtk_msi_domain_ops,
-> > +	.chip		= &mtk_msi_irq_chip,
-> > +	.handler	= handle_edge_irq,
-> > +	.handler_name	= "MSI",
-> >  };
-> >  
-> 
-> 
-
-
+I've queeud them up.
