@@ -2,122 +2,110 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EEF9C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:27:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF7A4C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:33:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20A9620823
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:27:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="CMl+ODFK"
+	by mail.kernel.org (Postfix) with ESMTP id 7B4C9217D6
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:33:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548182033;
+	bh=EAUgKB5MRBG268AYyy5GwVUX7cbp6D6CEq4cK/4bDos=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=qsHRxu/o3wYHofyuGJGmfdzQrscRvAtgmgjTIe9hl02wTOgdHsVtQP+gTAyhQwtqe
+	 QEL2Bevnan5/W+h1OBvVvJ09PCQe/7HItU7GxEHq9wKvUKT6xEpHu984CP3ie8EZUk
+	 cn40FYkUVl5hFpHmWBjstl1HRDzVNqadXBLDFBtw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726302AbfAVS1E (ORCPT
+        id S1726899AbfAVSdv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 13:27:04 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:35027 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726005AbfAVS1D (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 13:27:03 -0500
-Received: by mail-lf1-f65.google.com with SMTP id e26so18838645lfc.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 10:27:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XUBcaPRcuqOLEl2SYy/Q6oqpj8zeKWGuZM5V88FmHF8=;
-        b=CMl+ODFKCfVLcBaWLY/tCSTTxYCbhG1V/NxINTD3f7ytfFq5M59K9J2K6RH2Pm/OSn
-         q7GCuvuWVGKVYV62U5nCjKlbBy782E6y+co8/T6PIdApkhHe0go43LUfYd6CwWmR5Ef5
-         WvkZWSVRmstQbxD52e4AK1z18Q87hMRWG808E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XUBcaPRcuqOLEl2SYy/Q6oqpj8zeKWGuZM5V88FmHF8=;
-        b=Wr/SI1eyGQKsSjIYtDVPyFRliJpAIKVgxR+IZs2Mq1I/e29KZl7XEiYj9zmq4X4StL
-         jjxzHJG+Fmcy1uWUGo0Al4xe8eyCaA8jp/I1rrt/tQeRiXvOLUBJHNgbgLdZuG4PpVSg
-         0324HJcJ9vyqJOk4mQhfaROtMBipJEpdn8cd4BhFiC8JE8h1DCrAtahRPVz0VLrZ8AEa
-         ArBi4nlvzFGKzMuU3IZeAP3rlXtNlHCdUuZeFpQjyAi2mKX4ZA1MmrNLS/zvkIQC9u7g
-         CP+KwPK3sgnUgKCMACeM6HOWONdd9y1fDSRDVQpX2wOsT4VKje2+XR8u8ChQN046fjRg
-         21EQ==
-X-Gm-Message-State: AJcUukeST6r6mddx8zaJIegrdBFiTYqWDRHVIeutHMB/4Ajg3I0mcffS
-        Kp6KNsK065pf/7UnHgFipnqGcQoRq994XA==
-X-Google-Smtp-Source: ALg8bN5jQf2Lf8plDQpfYH1c16qb9lSsZuW88lE724ZRnveFX31O70OFc7JuGNUqDmiJkV8+YMrSRA==
-X-Received: by 2002:a19:c396:: with SMTP id t144mr20951905lff.110.1548181620207;
-        Tue, 22 Jan 2019 10:27:00 -0800 (PST)
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com. [209.85.167.47])
-        by smtp.gmail.com with ESMTPSA id y131sm114055lfc.43.2019.01.22.10.26.58
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Jan 2019 10:26:59 -0800 (PST)
-Received: by mail-lf1-f47.google.com with SMTP id a8so18832910lfk.5
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 10:26:58 -0800 (PST)
-X-Received: by 2002:a19:980f:: with SMTP id a15mr22707685lfe.103.1548181618431;
- Tue, 22 Jan 2019 10:26:58 -0800 (PST)
+        Tue, 22 Jan 2019 13:33:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55570 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726120AbfAVSdv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 13:33:51 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 83C3D21726;
+        Tue, 22 Jan 2019 18:33:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548182031;
+        bh=EAUgKB5MRBG268AYyy5GwVUX7cbp6D6CEq4cK/4bDos=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=DSi/QNpdgLa480rW0MPapR2CjpSbUm4sOGMYehry0sDvp9p1QOIp8M0/+dhHnE7mF
+         OHDJBUwshgul7TVYJ25D4ADXbvu47z4IFODj6PL6VFzqvJO26K16InnVn1+CqpzhON
+         7uLaVkrCYiFH5ZhXIlAnxG0HCF5dSN2wVEqYzQXE=
+Date:   Tue, 22 Jan 2019 19:33:48 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>, Michal Hocko <mhocko@suse.com>,
+        linux-mm@kvack.org
+Subject: Re: [PATCH] backing-dev: no need to check return value of
+ debugfs_create functions
+Message-ID: <20190122183348.GA31271@kroah.com>
+References: <20190122152151.16139-8-gregkh@linuxfoundation.org>
+ <20190122160759.mx3h7gjc23zmrvxc@linutronix.de>
+ <20190122162503.GB22548@kroah.com>
+ <20190122171908.c7geuvluezkjp3s7@linutronix.de>
 MIME-Version: 1.0
-References: <20190118142559.GA4080@linux.intel.com> <1547849358.2794.90.camel@HansenPartnership.com>
- <20190120160413.GB30478@linux.intel.com> <20190122010218.GA26713@linux.intel.com>
- <20190122025836.GH25163@ziepe.ca> <20190122132910.GA2720@linux.intel.com>
-In-Reply-To: <20190122132910.GA2720@linux.intel.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 23 Jan 2019 07:26:42 +1300
-X-Gmail-Original-Message-ID: <CAHk-=wgdOfi+zVVfKDDqJMs2Y7Lq0uufmP8Hx8JzQFA9UzNrBw@mail.gmail.com>
-Message-ID: <CAHk-=wgdOfi+zVVfKDDqJMs2Y7Lq0uufmP8Hx8JzQFA9UzNrBw@mail.gmail.com>
-Subject: Re: Getting weird TPM error after rebasing my tree to security/next-general
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190122171908.c7geuvluezkjp3s7@linutronix.de>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 2:29 AM Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
->
-> > >
-> > > Fails on commit 170d13ca3a2fdaaa0283399247631b76b441cca2. Still works on
-> > > preceding commit a959dc88f9c8900296ccf13e2f3e1cbc555a8917.
-> >
-> > This changes the IO access pattern in memcpy_to/fromio.. Presumably
-> > CRB HW doesn't like the new 4 byte move? Swap each one in crb to
-> > memcpy to confirm..
-> >
-> > If the HW requires particular access patterns you can't use
-> > memcpy_to/fromio
->
-> Did not have time to look at the commit at all but your deduction
-> is correct. I know it without testing.
->
-> Memory controller will feed 1's on unaligned read from IO memory,
-> and as we can see from the TPM header, this change causes two of
-> those:
+On Tue, Jan 22, 2019 at 06:19:08PM +0100, Sebastian Andrzej Siewior wrote:
+> On 2019-01-22 17:25:03 [+0100], Greg Kroah-Hartman wrote:
+> > > >  }
+> > > >  
+> > > >  static void bdi_debug_unregister(struct backing_dev_info *bdi)
+> > > >  {
+> > > > -	debugfs_remove(bdi->debug_stats);
+> > > > -	debugfs_remove(bdi->debug_dir);
+> > > > +	debugfs_remove_recursive(bdi->debug_dir);
+> > > 
+> > > this won't remove it.
+> > 
+> > Which is fine, you don't care.
+> 
+> but if you cat the stats file then it will dereference the bdi struct
+> which has been free(), right?
 
-Funky. But how did it work before then?
+Maybe, I don't know, your code is long gone, it doesn't matter :)
 
-The new memcpy_fromio() is designed to have _predictable_ access
-patterns. Not necessarily the best, but at least consistent.
+> > But step back, how could that original call be NULL?  That only happens
+> > if you pass it a bad parent dentry (which you didn't), or the system is
+> > totally out of memory (in which case you don't care as everything else
+> > is on fire).
+> 
+> debugfs_get_inode() could do -ENOMEM and then the directory creation
+> fails with NULL.
 
-Prevously, we used whatever random "memcpy()" implementation we
-happened to pick, which *could* be aligned (particularly "rep movsb" -
-absolutely horrible performance for MMIO, but by doing IO one byte at
-a time it was certainly aligned ;), but most of our x86 memcpy
-implementations don't actually try all that hard to align the source.
-And the manual version will actually copy things *backwards* for some
-cases.
+And if that happens, your system has worse problems :)
 
-Is it just that this particular hardware always happened to trigger
-the ERMS case (ie "rep movsb")?
+> 
+> > > If you return for "debug_dir == NULL" then it is a nice cleanup.
+> > 
+> > No, that's not a valid thing to check for, you should not care as it
+> > will not happen.  And if it does happen, it's ok, it's only debugfs, no
+> > one can rely on it, it is only for debugging.
+> 
+> It might happen with ENOMEM as of now. It could happen for other reasons
+> in future if the code changes.
 
-Anyway, Jason is correct that if a device has particular IO pattern
-requirements, you shouldn't use "memcpy_fromio()" and friends, but
-it's interesting how it apparently *happened* to work before.
+As it's been that way for over a decade, I think we will be fine :)
+If it changes in the future, in some way that actually matters, I'll go
+back and fix up all of the callers.
 
-             Linus
+thanks,
+
+greg k-h
