@@ -2,101 +2,136 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E8C3C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:27:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A66C8C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:27:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5665B2084C
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:27:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548149231;
-	bh=hfRqU4/K9KCSWf14377C4GuFc6+wCeSaQXFVgxydbjU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=gvbN4C3C+BRbDMLwwAh+agPxVTRPZ7bAu0mvnx0BvhnUuxnKwICaNmhWWPttrXEel
-	 W6vgW8wctXIDq/iaITmOmbC83gQWQDgJslAEJauT9/vQkd1cE5ZJ1r3MzU9HhFIqec
-	 UncMy41QGHnnO2Kt2zBYsgqIE3hqoateECJ+u4c4=
+	by mail.kernel.org (Postfix) with ESMTP id 8198A2084C
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:27:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727905AbfAVJ1J (ORCPT
+        id S1727930AbfAVJ1P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 04:27:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49994 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727720AbfAVJ1J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 04:27:09 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D5162218D9;
-        Tue, 22 Jan 2019 09:27:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548149228;
-        bh=hfRqU4/K9KCSWf14377C4GuFc6+wCeSaQXFVgxydbjU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=zybm35QZiEKzGkb63XvO2ZegwaM13atjvWJtABqwWMzc7QsU/6glVzIAigb/2AHgT
-         w4Q1qWN2sHwdDp6fDEYOG6VlS+D8QiFRqb2Pz5G7IcKqBdiurPonP7FUeQC8gyEIQX
-         JzJekGj0CrzH465mTqu2k785zbOGH9TeOFSkj+Fw=
-Date:   Tue, 22 Jan 2019 10:27:06 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Kangjie Lu <kjlu@umn.edu>
-Cc:     pakki001@umn.edu, Samuel Holland <samuel@sholland.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] firmware: (memconsole) do not count numbers if read fails
-Message-ID: <20190122092706.GA6133@kroah.com>
-References: <20181226052913.74614-1-kjlu@umn.edu>
+        Tue, 22 Jan 2019 04:27:15 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:38942 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727824AbfAVJ1N (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 04:27:13 -0500
+Received: by mail-qk1-f196.google.com with SMTP id c21so13855834qkl.6;
+        Tue, 22 Jan 2019 01:27:13 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4HYXq5VhofMlSBRLNsKcOTbVg6tVURqWBHJ5+9PCfEg=;
+        b=o8UC3Y7VO/J6n5d+n4XkM5Osrmqzt2q291j681yh9OeN6uYi02Z5z7jKrnGSAWrgy/
+         ZEVM1IprXx5YC9eA1NcEieQkO7/ztAItZRCj4zJcbANAIoHlGqIv+LhNcMfpiloLcMML
+         SU57YUofy+QsXFU0yj/vFHMKq36qUjLeWwVybXd7FuZPH9p6/DI4clWxh9cvLudcjY0A
+         8DaKVXE953bhlAGW22B3ndteHKrfzk6Ra2iB8fCbmcpcHA9FUiDiwRqGlxUEZehDz3JJ
+         eodrcfblOD+xhFXgnw9jXQ3UpvEpS/gkeiCZV7hFSpOiYbcADpNGRGrIcbdCsOj9CLQB
+         U85g==
+X-Gm-Message-State: AJcUukdV2a6A4AC6PJolmT22lYGbxx9RkqqLgcJMbxNIsDfJ8s9YPoT1
+        8GOsFExcDyuWLWJHja84OZtOd4rIv5J/VhTyreEzl6d/
+X-Google-Smtp-Source: ALg8bN6QSZM0mcgSZMNnmUdpWLmCgsXg3rho8+72pgGRLaiG2Xt4NLQMUmYIi/JMp8bMrb3yfzUvarZfurYimk2lbvA=
+X-Received: by 2002:ae9:d8c2:: with SMTP id u185mr26312515qkf.107.1548149232702;
+ Tue, 22 Jan 2019 01:27:12 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181226052913.74614-1-kjlu@umn.edu>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+References: <20190121143951.68956db3@canb.auug.org.au> <CAK8P3a0Yth+f8AANE6g8c_zE0Zt1CvCdzMDFK=pr8eNqmrBV0Q@mail.gmail.com>
+ <20190121191306.ifga5aw5atu2vvb7@brauner.io> <CAK8P3a2CkXJ=giXQgxEcQAeH1Wt8jKc_P+YTOLJpUPVKYU8m9g@mail.gmail.com>
+ <20190121202328.rgrv54lybilsvitu@brauner.io> <da262bd9-1de0-eabb-ee44-e0ee152d15bb@kernel.dk>
+ <20190121224811.gbvg22vg4kgg4kbs@brauner.io>
+In-Reply-To: <20190121224811.gbvg22vg4kgg4kbs@brauner.io>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 22 Jan 2019 10:26:56 +0100
+Message-ID: <CAK8P3a0ej9NcJM8wXNPbcGUyOUZYX+VLoDFdbenW3s3114oQZw@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the pidfd tree with the y2038 tree
+To:     Christian Brauner <christian@brauner.io>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 25, 2018 at 11:29:11PM -0600, Kangjie Lu wrote:
-> When memory_read_from_buffer() fails, the return value is a negative
-> error code, thus we shouldn't count it as the number of read bytes.
-> 
-> The fix checks the return value of memory_read_from_buffer, and count
-> the number only when it succeeds.
-> 
-> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-> ---
->  drivers/firmware/google/memconsole-coreboot.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/firmware/google/memconsole-coreboot.c b/drivers/firmware/google/memconsole-coreboot.c
-> index b29e10757bfb..4e8a0ad110c1 100644
-> --- a/drivers/firmware/google/memconsole-coreboot.c
-> +++ b/drivers/firmware/google/memconsole-coreboot.c
-> @@ -55,6 +55,7 @@ static ssize_t memconsole_coreboot_read(char *buf, loff_t pos, size_t count)
->  	} seg[2] = { {0}, {0} };
->  	size_t done = 0;
->  	int i;
-> +	int ret;
->  
->  	if (flags & OVERFLOW) {
->  		if (cursor > size)	/* Shouldn't really happen, but... */
-> @@ -66,8 +67,10 @@ static ssize_t memconsole_coreboot_read(char *buf, loff_t pos, size_t count)
->  	}
->  
->  	for (i = 0; i < ARRAY_SIZE(seg) && count > done; i++) {
-> -		done += memory_read_from_buffer(buf + done, count - done, &pos,
-> +		ret = memory_read_from_buffer(buf + done, count - done, &pos,
->  			cbmem_console->body + seg[i].phys, seg[i].len);
-> +		if (ret >= 0)
-> +			done += ret;
+On Mon, Jan 21, 2019 at 11:48 PM Christian Brauner <christian@brauner.io> wrote:
+>
+> On Mon, Jan 21, 2019 at 03:44:17PM -0700, Jens Axboe wrote:
+> > On 1/21/19 1:23 PM, Christian Brauner wrote:
+> > > On Mon, Jan 21, 2019 at 09:15:27PM +0100, Arnd Bergmann wrote:
+> > >> On Mon, Jan 21, 2019 at 8:13 PM Christian Brauner <christian@brauner.io> wrote:
+> > >>> On Mon, Jan 21, 2019 at 06:16:22PM +0100, Arnd Bergmann wrote:
+> > >>>> On Mon, Jan 21, 2019 at 4:40 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > >>>
+> > >>> I plan on sending the pidfd branch with the new pidfd_send_signal()
+> > >>> syscall for the 5.1 window. Should we somehow coordinate so that our
+> > >>> branches don't conflict? Any suggestions?
+> > >>
+> > >> A conflict can't be avoided, but if you pick system call number 427
+> > >> for pidfd_send_signal, and Jens picks numbers 424 through 426 for
+> > >
+> > > That sounds good to me. Since it's only one syscall for the pidfd branch
+> > > is there anything that speaks against me using 424? Given that the other
+> > > patchset has 4 new syscalls. :)
+> > > Jens, any objections?
+> >
+> > I'm fine with either one, I'll have to renumber in any case. But it's 3
+> > new syscalls (424, 425, 426), not 4.
+> >
+> > Arnd, what's the best way to make this switch now, in my tree? Would be
+>
+> Yeah, I'd like to know that as well.
+>
+> > great if I didn't have to change it again once I make the change.
 
-But if ret < 0, then it's an error, and something should happen, right?
+I'd suggest that you each just take the numbers we talked about and
+add them in your respective git trees, at the end of the current tables.
 
-And really, the only way this can fail is if pos is less than 0, which.
-And if that happens, you just now stuck us in an endless loop, which is
-worse than just ignoring the error value returned :(
+Stephen and Linus can then do a trivial add/add merge between the
+three trees that does not involve changing any of the lines besides
+keeping them in the right order. The result should then be
 
-thanks,
+== arch/x86/entry/syscalls/syscall_32.tbl
+422    i386    futex_time64        sys_futex            __ia32_sys_futex
+423    i386    sched_rr_get_interval_time64
+sys_sched_rr_get_interval    __ia32_sys_sched_rr_get_interval
+424    i386    pidfd_send_signal     sys_pidfd_send_signal
+__ia32_sys_pidfd_send_signal
+425    i386    io_uring_setup          sys_io_uring_setup
+__ia32_compat_sys_io_uring_setup
+426    i386    io_uring_enter          sys_io_uring_enter
+ __ia32_sys_io_uring_enter
+427    i386    io_uring_register       sys_io_uring_register
+__ia32_sys_io_uring_register
 
-greg k-h
+== arch/x86/entry/syscalls/syscall_64.tbl
+...
+334    common  rseq                    __x64_sys_rseq
+# don't use numbers 387 through 423, add new calls after the last
+# 'common' entry
+424    common    pidfd_send_signal      __x64_sys_pidfd_send_signal
+425    common    io_uring_setup           __x64_sys_io_uring_setup
+426    common    io_uring_enter           __x64_sys_io_uring_enter
+427    common    io_uring_register        __x64_sys_io_uring_register
+#
+# x32-specific system call numbers start at 512 to avoid cache impact
+# for native 64-bit operation. The __x32_compat_sys stubs are created
+# on-the-fly for compat_sys_*() compatibility system calls if X86_X32
+# is defined.
+#
+512     x32     rt_sigaction            __x32_compat_sys_rt_sigaction
+...
+
+My hope is that in the future, any new system call will get added to
+all 16 syscall.tbl files at once, but let's maybe not do this for 5.1
+yet, since that only causes more conflicts. I can simply follow up
+with a patch to add pidfd_send_signal and io_uring_* everywhere
+during the merge window.
+
+      Arnd
