@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B36F2C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:22:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7C41C282C5
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:22:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84AB920879
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:22:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8566F217D4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:22:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548170544;
-	bh=nYZhELDHRUjRep/UElSMBbN2aNjVg8oiAJAZ+XgdfWM=;
+	s=default; t=1548170547;
+	bh=nZ0M9twGJD8LAfaJzrFl8VYsq0r/7+p6enj2M7fargA=;
 	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=FYf5G8qfXFYGIH9t+Fz++Ah5Qp4RtrHvCqYm/gv6aZ13DkPJ3pRf9Y9naY6fNnBEE
-	 /HrtMsgl4lY3a/cmj0grUA/reBQJ8zjmRtgCrn7rZHr8HV3/+14WIGCd4Ubc5yhEcm
-	 k+unYWmIfMlcJgU4HMlBJ9KkVVz0+XCPMtVfyc6s=
+	b=gRow7Llsvih3o61zR1dc03KVurzHBdWIyiQfloZPy9O+vXmwbsrTajO6jwu0zob6I
+	 4+Di6Xo8VgBpoHoik3wJTqAzeqaAzvau9R+i4fqbwqkGkKLqrZC5SiexMFmGlikkt4
+	 tIuAO/Pj04/3ipOQR9FZCIYEae018zy62gakEVL8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729559AbfAVPWX (ORCPT
+        id S1729579AbfAVPW0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 10:22:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34430 "EHLO mail.kernel.org"
+        Tue, 22 Jan 2019 10:22:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34484 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729505AbfAVPWV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 10:22:21 -0500
+        id S1729505AbfAVPWY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 10:22:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1FF1A20879;
-        Tue, 22 Jan 2019 15:22:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BF1A5217D4;
+        Tue, 22 Jan 2019 15:22:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548170540;
-        bh=nYZhELDHRUjRep/UElSMBbN2aNjVg8oiAJAZ+XgdfWM=;
+        s=default; t=1548170543;
+        bh=nZ0M9twGJD8LAfaJzrFl8VYsq0r/7+p6enj2M7fargA=;
         h=From:To:Cc:Subject:Date:From;
-        b=JGdeZ8hhY3WvHvQVF0TgDwbv2A6RrFvq1gX7kOIE8fNYb4BGoYKJEjKuzT0O8C0TI
-         WUEIpmaxhW697+HHchYIyuSnsSQQ26ORyqlpVP79It+T13X4ZdYi9D4udp5ZC4KgfC
-         KsXpUdqVEOJ8ZTptKz8Ia0hHYNhbLUQ/sN9NvRh4=
+        b=NrufUabFRi74GElQ/Aa2DE9PepN7dtTPoT5M1hEvUv6flGsGBrxsyqkW1gnZtOSwW
+         eZunQ6qfCoPIApKHrkb+fL5TCmTNVqIreydmm9LmCd6phcRgT9/EbeEYJng98PE2oj
+         o+eVTSAbIkcRLx/llqwOh0TO2yHoCfTuH5QAtOqM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
-Subject: [PATCH] fbdev: mbx: fix up debugfs file creation
-Date:   Tue, 22 Jan 2019 16:21:15 +0100
-Message-Id: <20190122152151.16139-16-gregkh@linuxfoundation.org>
+        Borislav Petkov <bp@alien8.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-edac@vger.kernel.org
+Subject: [PATCH] edac: no need to check return value of debugfs_create functions
+Date:   Tue, 22 Jan 2019 16:21:16 +0100
+Message-Id: <20190122152151.16139-17-gregkh@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -55,89 +56,118 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no need to keep the dentries around for the individual debugfs
-files, just delete the whole directory all at once at shutdown instead.
+When calling debugfs functions, there is no need to ever check the
+return value.  The function can work or not, but the code logic should
+never do something different based on this.
 
-This also fixes a tiny memory leak where the memory for the pointers to
-the file dentries was never freed when the device shut down, as well as
-making the logic of the code a lot simpler.
-
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-fbdev@vger.kernel.org
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-edac@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/video/fbdev/mbx/mbxdebugfs.c | 40 +++++++++-------------------
- drivers/video/fbdev/mbx/mbxfb.c      |  2 +-
- 2 files changed, 14 insertions(+), 28 deletions(-)
+ drivers/edac/debugfs.c     | 45 ++++++++++----------------------------
+ drivers/edac/edac_module.h |  4 ++--
+ 2 files changed, 13 insertions(+), 36 deletions(-)
 
-diff --git a/drivers/video/fbdev/mbx/mbxdebugfs.c b/drivers/video/fbdev/mbx/mbxdebugfs.c
-index 2bd328883178..52cfe0132b25 100644
---- a/drivers/video/fbdev/mbx/mbxdebugfs.c
-+++ b/drivers/video/fbdev/mbx/mbxdebugfs.c
-@@ -211,36 +211,22 @@ static const struct file_operations misc_fops = {
- static void mbxfb_debugfs_init(struct fb_info *fbi)
+diff --git a/drivers/edac/debugfs.c b/drivers/edac/debugfs.c
+index 92dbb7e2320c..fd27ea0453a3 100644
+--- a/drivers/edac/debugfs.c
++++ b/drivers/edac/debugfs.c
+@@ -44,10 +44,6 @@ static const struct file_operations debug_fake_inject_fops = {
+ int __init edac_debugfs_init(void)
  {
- 	struct mbxfb_info *mfbi = fbi->par;
--	struct mbxfb_debugfs_data *dbg;
--
--	dbg = kzalloc(sizeof(struct mbxfb_debugfs_data), GFP_KERNEL);
--	mfbi->debugfs_data = dbg;
--
--	dbg->dir = debugfs_create_dir("mbxfb", NULL);
--	dbg->sysconf = debugfs_create_file("sysconf", 0444, dbg->dir,
--				      fbi, &sysconf_fops);
--	dbg->clock = debugfs_create_file("clock", 0444, dbg->dir,
--				    fbi, &clock_fops);
--	dbg->display = debugfs_create_file("display", 0444, dbg->dir,
--				      fbi, &display_fops);
--	dbg->gsctl = debugfs_create_file("gsctl", 0444, dbg->dir,
--				    fbi, &gsctl_fops);
--	dbg->sdram = debugfs_create_file("sdram", 0444, dbg->dir,
--					fbi, &sdram_fops);
--	dbg->misc = debugfs_create_file("misc", 0444, dbg->dir,
--					fbi, &misc_fops);
-+	struct dentry *dir;
-+
-+	dir = debugfs_create_dir("mbxfb", NULL);
-+	mbfi->debugfs_dir = dir;
-+
-+	debugfs_create_file("sysconf", 0444, dir, fbi, &sysconf_fops);
-+	debugfs_create_file("clock", 0444, dir, fbi, &clock_fops);
-+	debugfs_create_file("display", 0444, dir, fbi, &display_fops);
-+	debugfs_create_file("gsctl", 0444, dir, fbi, &gsctl_fops);
-+	debugfs_create_file("sdram", 0444, dir, fbi, &sdram_fops);
-+	debugfs_create_file("misc", 0444, dir, fbi, &misc_fops);
+ 	edac_debugfs = debugfs_create_dir("edac", NULL);
+-	if (IS_ERR(edac_debugfs)) {
+-		edac_debugfs = NULL;
+-		return -ENOMEM;
+-	}
+ 	return 0;
  }
  
- static void mbxfb_debugfs_remove(struct fb_info *fbi)
- {
- 	struct mbxfb_info *mfbi = fbi->par;
--	struct mbxfb_debugfs_data *dbg = mfbi->debugfs_data;
--
--	debugfs_remove(dbg->misc);
--	debugfs_remove(dbg->sdram);
--	debugfs_remove(dbg->gsctl);
--	debugfs_remove(dbg->display);
--	debugfs_remove(dbg->clock);
--	debugfs_remove(dbg->sysconf);
--	debugfs_remove(dbg->dir);
-+
-+	debugfs_remove_recursive(mfbi->debugfs_dir);
+@@ -56,50 +52,31 @@ void edac_debugfs_exit(void)
+ 	debugfs_remove_recursive(edac_debugfs);
  }
-diff --git a/drivers/video/fbdev/mbx/mbxfb.c b/drivers/video/fbdev/mbx/mbxfb.c
-index 539b85da0897..6ded480a69b4 100644
---- a/drivers/video/fbdev/mbx/mbxfb.c
-+++ b/drivers/video/fbdev/mbx/mbxfb.c
-@@ -74,7 +74,7 @@ struct mbxfb_info {
  
- 	u32 pseudo_palette[MAX_PALETTES];
- #ifdef CONFIG_FB_MBX_DEBUG
--	void *debugfs_data;
-+	struct dentry *debugfs_dir;
- #endif
+-int edac_create_debugfs_nodes(struct mem_ctl_info *mci)
++void edac_create_debugfs_nodes(struct mem_ctl_info *mci)
+ {
+-	struct dentry *d, *parent;
++	struct dentry *parent;
+ 	char name[80];
+ 	int i;
  
- };
+-	if (!edac_debugfs)
+-		return -ENODEV;
+-
+-	d = debugfs_create_dir(mci->dev.kobj.name, edac_debugfs);
+-	if (!d)
+-		return -ENOMEM;
+-	parent = d;
++	parent = debugfs_create_dir(mci->dev.kobj.name, edac_debugfs);
+ 
+ 	for (i = 0; i < mci->n_layers; i++) {
+ 		sprintf(name, "fake_inject_%s",
+ 			     edac_layer_name[mci->layers[i].type]);
+-		d = debugfs_create_u8(name, S_IRUGO | S_IWUSR, parent,
+-				      &mci->fake_inject_layer[i]);
+-		if (!d)
+-			goto nomem;
++		debugfs_create_u8(name, S_IRUGO | S_IWUSR, parent,
++				  &mci->fake_inject_layer[i]);
+ 	}
+ 
+-	d = debugfs_create_bool("fake_inject_ue", S_IRUGO | S_IWUSR, parent,
+-				&mci->fake_inject_ue);
+-	if (!d)
+-		goto nomem;
++	debugfs_create_bool("fake_inject_ue", S_IRUGO | S_IWUSR, parent,
++			    &mci->fake_inject_ue);
+ 
+-	d = debugfs_create_u16("fake_inject_count", S_IRUGO | S_IWUSR, parent,
+-				&mci->fake_inject_count);
+-	if (!d)
+-		goto nomem;
++	debugfs_create_u16("fake_inject_count", S_IRUGO | S_IWUSR, parent,
++			   &mci->fake_inject_count);
+ 
+-	d = debugfs_create_file("fake_inject", S_IWUSR, parent,
+-				&mci->dev,
+-				&debug_fake_inject_fops);
+-	if (!d)
+-		goto nomem;
++	debugfs_create_file("fake_inject", S_IWUSR, parent, &mci->dev,
++			    &debug_fake_inject_fops);
+ 
+ 	mci->debugfs = parent;
+-	return 0;
+-nomem:
+-	edac_debugfs_remove_recursive(mci->debugfs);
+-	return -ENOMEM;
+ }
+ 
+ /* Create a toplevel dir under EDAC's debugfs hierarchy */
+diff --git a/drivers/edac/edac_module.h b/drivers/edac/edac_module.h
+index dec88dcea036..bc63a6a9dd0a 100644
+--- a/drivers/edac/edac_module.h
++++ b/drivers/edac/edac_module.h
+@@ -71,7 +71,7 @@ extern void *edac_align_ptr(void **p, unsigned size, int n_elems);
+ #ifdef CONFIG_EDAC_DEBUG
+ int edac_debugfs_init(void);
+ void edac_debugfs_exit(void);
+-int edac_create_debugfs_nodes(struct mem_ctl_info *mci);
++void edac_create_debugfs_nodes(struct mem_ctl_info *mci);
+ struct dentry *edac_debugfs_create_dir(const char *dirname);
+ struct dentry *
+ edac_debugfs_create_dir_at(const char *dirname, struct dentry *parent);
+@@ -85,7 +85,7 @@ edac_debugfs_create_x16(const char *name, umode_t mode, struct dentry *parent, u
+ #else
+ static inline int edac_debugfs_init(void)					{ return -ENODEV; }
+ static inline void edac_debugfs_exit(void)					{ }
+-static inline int edac_create_debugfs_nodes(struct mem_ctl_info *mci)		{ return 0; }
++static inline void edac_create_debugfs_nodes(struct mem_ctl_info *mci)		{ }
+ static inline struct dentry *edac_debugfs_create_dir(const char *dirname)	{ return NULL; }
+ static inline struct dentry *
+ edac_debugfs_create_dir_at(const char *dirname, struct dentry *parent)		{ return NULL; }
 -- 
 2.20.1
 
