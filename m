@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3F86C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:41:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD6D4C282C5
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:42:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE36B2085A
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:41:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A81982085A
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:42:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729804AbfAVQlv (ORCPT
+        id S1729438AbfAVQkI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 11:41:51 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:58492 "EHLO huawei.com"
+        Tue, 22 Jan 2019 11:40:08 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:58498 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729037AbfAVQkJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 11:40:09 -0500
+        id S1728798AbfAVQkI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 11:40:08 -0500
 Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 09F67E04762200A1FB4E;
+        by Forcepoint Email with ESMTP id 12C772E77810A95C6FFB;
         Wed, 23 Jan 2019 00:40:05 +0800 (CST)
 Received: from SZA150611058.china.huawei.com (10.45.54.154) by
  DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.408.0; Wed, 23 Jan 2019 00:39:57 +0800
+ 14.3.408.0; Wed, 23 Jan 2019 00:39:56 +0800
 From:   Huazhong Tan <tanhuazhong@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <huangdaode@hisilicon.com>, <yisen.zhuang@huawei.com>,
         <salil.mehta@huawei.com>, <linuxarm@huawei.com>,
-        Yunsheng Lin <linyunsheng@huawei.com>,
+        Jian Shen <shenjian15@huawei.com>,
         Peng Li <lipeng321@huawei.com>,
         Huazhong Tan <tanhuazhong@huawei.com>
-Subject: [PATCH net-next 04/12] net: hns3: fix rss configuration lost problem when setting channel
-Date:   Wed, 23 Jan 2019 00:39:32 +0800
-Message-ID: <20190122163940.7876-5-tanhuazhong@huawei.com>
+Subject: [PATCH net-next 03/12] net: hns3: refactor the statistics updating for netdev
+Date:   Wed, 23 Jan 2019 00:39:31 +0800
+Message-ID: <20190122163940.7876-4-tanhuazhong@huawei.com>
 X-Mailer: git-send-email 2.20.1.windows.1
 In-Reply-To: <20190122163940.7876-1-tanhuazhong@huawei.com>
 References: <20190122163940.7876-1-tanhuazhong@huawei.com>
@@ -49,96 +49,139 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yunsheng Lin <linyunsheng@huawei.com>
+From: Jian Shen <shenjian15@huawei.com>
 
-Currently rss configuration set by user will be lost when setting
-channel.
+In origin codes, there are some statistics item are got from mac, which
+also include the packets statistics of VF. It is unreasonable. This
+patch fixes it by counting them in the rx/tx processing flow.
 
-This patch fixes it by not setting rss configuration to default
-if user has configured the rss.
-
-Fixes: 09f2af6405b8 ("net: hns3: add support to modify tqps number")
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+Signed-off-by: Jian Shen <shenjian15@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hnae3.h             | 3 ++-
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c         | 6 ++++--
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 8 +++++++-
- 3 files changed, 13 insertions(+), 4 deletions(-)
+ .../net/ethernet/hisilicon/hns3/hns3_enet.c   | 27 ++++++++++++++-----
+ .../hisilicon/hns3/hns3pf/hclge_main.c        | 25 -----------------
+ 2 files changed, 20 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hnae3.h b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
-index d486748d5883..dc3db45361d3 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hnae3.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
-@@ -433,7 +433,8 @@ struct hnae3_ae_ops {
- 			     struct ethtool_channels *ch);
- 	void (*get_tqps_and_rss_info)(struct hnae3_handle *h,
- 				      u16 *alloc_tqps, u16 *max_rss_size);
--	int (*set_channels)(struct hnae3_handle *handle, u32 new_tqps_num);
-+	int (*set_channels)(struct hnae3_handle *handle, u32 new_tqps_num,
-+			    bool rxfh_configured);
- 	void (*get_flowctrl_adv)(struct hnae3_handle *handle,
- 				 u32 *flowctrl_adv);
- 	int (*set_led_id)(struct hnae3_handle *handle,
 diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index 2b4199fe0e57..0a546ee03f92 100644
+index f1ab2e4ca49e..2b4199fe0e57 100644
 --- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
 +++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -4166,6 +4166,7 @@ int hns3_set_channels(struct net_device *netdev,
- {
- 	struct hnae3_handle *h = hns3_get_handle(netdev);
- 	struct hnae3_knic_private_info *kinfo = &h->kinfo;
-+	bool rxfh_configured = netif_is_rxfh_configured(netdev);
- 	u32 new_tqp_num = ch->combined_count;
- 	u16 org_tqp_num;
- 	int ret;
-@@ -4193,9 +4194,10 @@ int hns3_set_channels(struct net_device *netdev,
- 		return ret;
+@@ -1399,7 +1399,12 @@ static void hns3_nic_get_stats64(struct net_device *netdev,
+ 	int queue_num = priv->ae_handle->kinfo.num_tqps;
+ 	struct hnae3_handle *handle = priv->ae_handle;
+ 	struct hns3_enet_ring *ring;
++	u64 rx_length_errors = 0;
++	u64 rx_crc_errors = 0;
++	u64 rx_multicast = 0;
+ 	unsigned int start;
++	u64 tx_errors = 0;
++	u64 rx_errors = 0;
+ 	unsigned int idx;
+ 	u64 tx_bytes = 0;
+ 	u64 rx_bytes = 0;
+@@ -1422,6 +1427,8 @@ static void hns3_nic_get_stats64(struct net_device *netdev,
+ 			tx_pkts += ring->stats.tx_pkts;
+ 			tx_drop += ring->stats.tx_busy;
+ 			tx_drop += ring->stats.sw_err_cnt;
++			tx_errors += ring->stats.tx_busy;
++			tx_errors += ring->stats.sw_err_cnt;
+ 		} while (u64_stats_fetch_retry_irq(&ring->syncp, start));
  
- 	org_tqp_num = h->kinfo.num_tqps;
--	ret = h->ae_algo->ops->set_channels(h, new_tqp_num);
-+	ret = h->ae_algo->ops->set_channels(h, new_tqp_num, rxfh_configured);
- 	if (ret) {
--		ret = h->ae_algo->ops->set_channels(h, org_tqp_num);
-+		ret = h->ae_algo->ops->set_channels(h, org_tqp_num,
-+						    rxfh_configured);
- 		if (ret) {
- 			/* If revert to old tqp failed, fatal error occurred */
- 			dev_err(&netdev->dev,
+ 		/* fetch the rx stats */
+@@ -1433,6 +1440,12 @@ static void hns3_nic_get_stats64(struct net_device *netdev,
+ 			rx_drop += ring->stats.non_vld_descs;
+ 			rx_drop += ring->stats.err_pkt_len;
+ 			rx_drop += ring->stats.l2_err;
++			rx_errors += ring->stats.non_vld_descs;
++			rx_errors += ring->stats.l2_err;
++			rx_crc_errors += ring->stats.l2_err;
++			rx_crc_errors += ring->stats.l3l4_csum_err;
++			rx_multicast += ring->stats.rx_multicast;
++			rx_length_errors += ring->stats.err_pkt_len;
+ 		} while (u64_stats_fetch_retry_irq(&ring->syncp, start));
+ 	}
+ 
+@@ -1441,15 +1454,15 @@ static void hns3_nic_get_stats64(struct net_device *netdev,
+ 	stats->rx_bytes = rx_bytes;
+ 	stats->rx_packets = rx_pkts;
+ 
+-	stats->rx_errors = netdev->stats.rx_errors;
+-	stats->multicast = netdev->stats.multicast;
+-	stats->rx_length_errors = netdev->stats.rx_length_errors;
+-	stats->rx_crc_errors = netdev->stats.rx_crc_errors;
++	stats->rx_errors = rx_errors;
++	stats->multicast = rx_multicast;
++	stats->rx_length_errors = rx_length_errors;
++	stats->rx_crc_errors = rx_crc_errors;
+ 	stats->rx_missed_errors = netdev->stats.rx_missed_errors;
+ 
+-	stats->tx_errors = netdev->stats.tx_errors;
+-	stats->rx_dropped = rx_drop + netdev->stats.rx_dropped;
+-	stats->tx_dropped = tx_drop + netdev->stats.tx_dropped;
++	stats->tx_errors = tx_errors;
++	stats->rx_dropped = rx_drop;
++	stats->tx_dropped = tx_drop;
+ 	stats->collisions = netdev->stats.collisions;
+ 	stats->rx_over_errors = netdev->stats.rx_over_errors;
+ 	stats->rx_frame_errors = netdev->stats.rx_frame_errors;
 diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index bf0931c6764f..3ba8de93bc3d 100644
+index 35fb0c54b986..bf0931c6764f 100644
 --- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
 +++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -7518,7 +7518,8 @@ static void hclge_get_tqps_and_rss_info(struct hnae3_handle *handle,
- 	*max_rss_size = hdev->rss_size_max;
+@@ -461,26 +461,6 @@ static u8 *hclge_comm_get_strings(u32 stringset,
+ 	return (u8 *)buff;
  }
  
--static int hclge_set_channels(struct hnae3_handle *handle, u32 new_tqps_num)
-+static int hclge_set_channels(struct hnae3_handle *handle, u32 new_tqps_num,
-+			      bool rxfh_configured)
+-static void hclge_update_netstat(struct hclge_hw_stats *hw_stats,
+-				 struct net_device_stats *net_stats)
+-{
+-	net_stats->tx_dropped = 0;
+-	net_stats->rx_errors = hw_stats->mac_stats.mac_rx_oversize_pkt_num;
+-	net_stats->rx_errors += hw_stats->mac_stats.mac_rx_undersize_pkt_num;
+-	net_stats->rx_errors += hw_stats->mac_stats.mac_rx_fcs_err_pkt_num;
+-
+-	net_stats->multicast = hw_stats->mac_stats.mac_tx_multi_pkt_num;
+-	net_stats->multicast += hw_stats->mac_stats.mac_rx_multi_pkt_num;
+-
+-	net_stats->rx_crc_errors = hw_stats->mac_stats.mac_rx_fcs_err_pkt_num;
+-	net_stats->rx_length_errors =
+-		hw_stats->mac_stats.mac_rx_undersize_pkt_num;
+-	net_stats->rx_length_errors +=
+-		hw_stats->mac_stats.mac_rx_oversize_pkt_num;
+-	net_stats->rx_over_errors =
+-		hw_stats->mac_stats.mac_rx_oversize_pkt_num;
+-}
+-
+ static void hclge_update_stats_for_all(struct hclge_dev *hdev)
+ {
+ 	struct hnae3_handle *handle;
+@@ -500,8 +480,6 @@ static void hclge_update_stats_for_all(struct hclge_dev *hdev)
+ 	if (status)
+ 		dev_err(&hdev->pdev->dev,
+ 			"Update MAC stats fail, status = %d.\n", status);
+-
+-	hclge_update_netstat(&hdev->hw_stats, &handle->kinfo.netdev->stats);
+ }
+ 
+ static void hclge_update_stats(struct hnae3_handle *handle,
+@@ -509,7 +487,6 @@ static void hclge_update_stats(struct hnae3_handle *handle,
  {
  	struct hclge_vport *vport = hclge_get_vport(handle);
- 	struct hnae3_knic_private_info *kinfo = &vport->nic.kinfo;
-@@ -7557,6 +7558,10 @@ static int hclge_set_channels(struct hnae3_handle *handle, u32 new_tqps_num)
- 	if (ret)
- 		return ret;
+ 	struct hclge_dev *hdev = vport->back;
+-	struct hclge_hw_stats *hw_stats = &hdev->hw_stats;
+ 	int status;
  
-+	/* RSS indirection table has been configuared by user */
-+	if (rxfh_configured)
-+		goto out;
-+
- 	/* Reinitializes the rss indirect table according to the new RSS size */
- 	rss_indir = kcalloc(HCLGE_RSS_IND_TBL_SIZE, sizeof(u32), GFP_KERNEL);
- 	if (!rss_indir)
-@@ -7572,6 +7577,7 @@ static int hclge_set_channels(struct hnae3_handle *handle, u32 new_tqps_num)
+ 	if (test_and_set_bit(HCLGE_STATE_STATISTICS_UPDATING, &hdev->state))
+@@ -527,8 +504,6 @@ static void hclge_update_stats(struct hnae3_handle *handle,
+ 			"Update TQPS stats fail, status = %d.\n",
+ 			status);
  
- 	kfree(rss_indir);
+-	hclge_update_netstat(hw_stats, net_stats);
+-
+ 	clear_bit(HCLGE_STATE_STATISTICS_UPDATING, &hdev->state);
+ }
  
-+out:
- 	if (!ret)
- 		dev_info(&hdev->pdev->dev,
- 			 "Channels changed, rss_size from %d to %d, tqps from %d to %d",
 -- 
 2.20.1
 
