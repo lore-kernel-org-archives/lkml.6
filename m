@@ -2,272 +2,93 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2D36C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:53:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 857FEC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:55:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73D0321019
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:53:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 522C521726
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:55:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548176100;
+	bh=My3dZ9/2oHNnBsx9uxWxM2iUi6CN09pg2wApri8QfyU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=oh8PlIq/qqx38EIUepm6lvh2qZJYQIfwfQLP2IrsWybfvJqqtO5rdGt8eAkiHaZ+x
+	 yuTPxPH/LJ+oldfryV+6lkKjw2jPb93R0se/soSg2eR+q6wiLX5TFnLKUj8jsmQDOr
+	 +S7mlDid05d2VtNkhnOZa+EqlwMMZbR5QnSxi6NM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729482AbfAVQxo (ORCPT
+        id S1729498AbfAVQy6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 11:53:44 -0500
-Received: from mx3.molgen.mpg.de ([141.14.17.11]:56245 "EHLO mx1.molgen.mpg.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729233AbfAVQxo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 11:53:44 -0500
-Received: from keineahnung.molgen.mpg.de (keineahnung.molgen.mpg.de [141.14.17.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: pmenzel)
-        by mx.molgen.mpg.de (Postfix) with ESMTPSA id BA178201352016;
-        Tue, 22 Jan 2019 17:53:40 +0100 (CET)
-Subject: Re: tsc: Fast TSC calibration failed with AMD B350M/Ryzen 3 2200G
-From:   Paul Menzel <pmenzel@molgen.mpg.de>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>
-References: <fd05d500-f1b5-7115-4326-7c7fee9f5456@molgen.mpg.de>
- <alpine.DEB.2.21.1901071622160.2688@nanos.tec.linutronix.de>
- <9f444c64-c221-e729-7eb5-fc4f093c16d3@molgen.mpg.de>
- <alpine.DEB.2.21.1901112141480.1661@nanos.tec.linutronix.de>
- <5656446a-eaef-aa94-8766-49fec24257c6@molgen.mpg.de>
-Message-ID: <0bacd3f0-12fd-c1d9-8bed-320ac87d4505@molgen.mpg.de>
-Date:   Tue, 22 Jan 2019 17:53:40 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 22 Jan 2019 11:54:58 -0500
+Received: from mail-ot1-f53.google.com ([209.85.210.53]:35169 "EHLO
+        mail-ot1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729103AbfAVQy5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 11:54:57 -0500
+Received: by mail-ot1-f53.google.com with SMTP id 81so24296408otj.2;
+        Tue, 22 Jan 2019 08:54:57 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=10akT0bp1NHa/2U4y1Gem6h2yLdRu35gxbi/m3mvu2Q=;
+        b=kYf2rpWwRce+9PSj/8yX9xKCEAERxJKq3fv7jLtV6F9TtbKPkE5pnfgLoOrSoG5N2V
+         73ESffpPnRKyzH5q0oHOjg9HmMExeL602CRGnY8om5JT4RdDYC2aU/y8N8NoM9WCvbPx
+         Pw30D4dAtzr4EUHfMh6l5bieUpujX7vUDxldKyhljfJzOoroeZLpeyqiwsbSrX4BumUu
+         wjUFnUxbtlAldN0+Vh7smfdyPGSHwawP9KKknX9/RchqKc6YLBVBb8Bv0UCFcZvo/W0T
+         fB5iw/qxOaapohb//cOc766FDzCAj1qsqNC05my8I0SFD4brxv0y7/gsuV0yyi/CYDIw
+         mN7A==
+X-Gm-Message-State: AJcUukdcT0n206MfAmStEEyPX+zViSnjGNcraWlvQnQ2x0s/Rib322Ki
+        zvVYwplzEA0sfME3TVnlhexQe41nslAUefYRQEqmOHiy
+X-Google-Smtp-Source: ALg8bN7/pj42bfI8MW2bGnxgQF7xVHkxCJOb9VEFnDvIEb8DKD9g0HZa8+FBZ9rVqFp0rnIb5zJLxmr2py7CtonYb70=
+X-Received: by 2002:a9d:588c:: with SMTP id x12mr23381958otg.139.1548176096957;
+ Tue, 22 Jan 2019 08:54:56 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <5656446a-eaef-aa94-8766-49fec24257c6@molgen.mpg.de>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms000709090900090808020204"
+References: <20190116175804.30196-1-keith.busch@intel.com> <20190116175804.30196-6-keith.busch@intel.com>
+ <CAJZ5v0jmkyrNBHzqHsOuWjLXF34tq83VnEhdBWrdFqxyiXC=cw@mail.gmail.com>
+ <CAPcyv4gH0_e_NFJNOFH4XXarSs7+TOj4nT0r-D33ZGNCfqBdxg@mail.gmail.com>
+ <20190119090129.GC10836@kroah.com> <CAJZ5v0jxuLPUvwr-hYstgC-7BKDwqkJpep94rnnUFvFhKG4W3g@mail.gmail.com>
+ <20190122163650.GD1477@localhost.localdomain> <CAJZ5v0ggO9DePeYJkEoZ-ymB5VQywBgTnsGBo4WPHD5_JrjKRA@mail.gmail.com>
+In-Reply-To: <CAJZ5v0ggO9DePeYJkEoZ-ymB5VQywBgTnsGBo4WPHD5_JrjKRA@mail.gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 22 Jan 2019 17:54:45 +0100
+Message-ID: <CAJZ5v0h1Q_dtJu7eXvs-7-bFRBBhLC158H1FKv96nE87rHv40A@mail.gmail.com>
+Subject: Re: [PATCHv4 05/13] Documentation/ABI: Add new node sysfs attributes
+To:     Keith Busch <keith.busch@intel.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Dave Hansen <dave.hansen@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a cryptographically signed message in MIME format.
+On Tue, Jan 22, 2019 at 5:51 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+>
+> On Tue, Jan 22, 2019 at 5:37 PM Keith Busch <keith.busch@intel.com> wrote:
+> >
+> > On Sun, Jan 20, 2019 at 05:16:05PM +0100, Rafael J. Wysocki wrote:
+> > > On Sat, Jan 19, 2019 at 10:01 AM Greg Kroah-Hartman
+> > > <gregkh@linuxfoundation.org> wrote:
+> > > >
+> > > > If you do a subdirectory "correctly" (i.e. a name for an attribute
+> > > > group), that's fine.
+> > >
+> > > Yes, that's what I was thinking about: along the lines of the "power"
+> > > group under device kobjects.
+> >
+> > We can't append symlinks to an attribute group, though.
+>
+> That's right, unfortunately.
 
---------------ms000709090900090808020204
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Scratch this.
 
-[Adding Tom to CC]
-
-Dear Thomas, dear Tom,
-
-
-On 01/14/19 11:09, Paul Menzel wrote:
-
-> On 01/11/19 21:43, Thomas Gleixner wrote:
->=20
->> On Mon, 7 Jan 2019, Paul Menzel wrote:
->>> On 01/07/19 16:24, Thomas Gleixner wrote:
->>>>> Linux 4.19.13 from Debian Sid/unstable logs the message below on th=
-e board MSI
->>>>> MS-7A37/B350M MORTAR with the processor AMD Ryzen 3 2200G.
->>>>>
->>>>> As a result, the early time stamps do not seem to be working.
->>>>
->>>>>> [    0.000000] DMI: Micro-Star International Co., Ltd. MS-7A37/B35=
-0M MORTAR (MS-7A37), BIOS 1.I0 11/06/2018
->>>>>> [    0.000000] tsc: Fast TSC calibration failed
->>>>
->>>> And the further boot log says:
->>>>
->>>> [    0.036000] tsc: Unable to calibrate against PIT
->>>> [    0.036000] tsc: using HPET reference calibration
->>>> [    0.036000] tsc: Detected 3500.117 MHz processor
->>>>
->>>> So the quick calibration in early boot fails because the PIT seems n=
-ot to
->>>> do what the kernel expects. Nothing we can cure :(
->>>
->>> I see. Can AMD confirm that this is the expected behavior? If yes, sh=
-ould
->>> the fast TSC calibration be skipped on these devices?
->>
->> It should work and we really don't want to add cpu family/model based
->> decisions whether we invoke something or not. Those tables are stale b=
-efore
->> they hit mainline.
->=20
-> Understood. If it=E2=80=99s supposed to work, any hints on how to debug=
- this?
->=20
-> Does some Linux kernel developers have an AMD Ryzen system, and can rep=
-roduce
-> the issue?
->=20
-> It seems to fail with an AMD Ryzen 2400G too [1].
-
-We now have an HP EliteDesk 705 G4 MT with that processsor, showing the s=
-ame
-problem.
-
-```
-[    0.000000] Linux version 4.20.0.mx64.238 (root@elcattivo.molgen.mpg.d=
-e) (gcc version 7.3.0 (GCC)) #1 SMP Mon Dec 24 14:50:00 CET 2018
-[=E2=80=A6]
-[    0.000000] NX (Execute Disable) protection: active
-[    0.000000] SMBIOS 3.1 present.
-[    0.000000] DMI: HP HP EliteDesk 705 G4 MT/83E7, BIOS Q06 Ver. 02.04.0=
-1 09/14/2018
-[    0.000000] tsc: Fast TSC calibration failed
-[    0.000000] e820: update [mem 0x00000000-0x00000fff] usable =3D=3D> re=
-served
-[=E2=80=A6]
-[    0.017860] smpboot: CPU0: AMD Ryzen 5 PRO 2400G with Radeon Vega Grap=
-hics (family: 0x17, model: 0x11, stepping: 0x0)
-[=E2=80=A6]
-```
-
-> It also fails on an AMD Ryzen 7 1700 [2].
->=20
-> ```
-> [ 0.000000] Linux version 4.15.0-kali3-amd64 (devel@kali.org) (gcc vers=
-ion 7.3.0 (Debian 7.3.0-16)) #1 SMP Debian 4.15.17-1kali1 (2018-04-25)
-> [=E2=80=A6]
-> [ 0.008000] ..TIMER: vector=3D0x30 apic1=3D0 pin1=3D2 apic2=3D-1 pin2=3D=
--1
-> [ 0.028000] tsc: Fast TSC calibration failed
-> [ 0.032000] tsc: PIT calibration matches HPET. 1 loops
-> [ 0.032000] tsc: Detected 2994.246 MHz processor
-> [=E2=80=A6]
-> [ 0.044000] smpboot: CPU0: AMD Ryzen 7 1700 Eight-Core Processor (famil=
-y: 0x17, model: 0x1, stepping: 0x1)
-> ```
->=20
-> It *works* here on one system with AMD Ryzen 5 PRO 1500 and Linux 4.14.=
-87.
->=20
-> ```
-> [    0.000000] Linux version 4.14.87.mx64.236 (root@likearollingstone.m=
-olgen.mpg.de) (gcc version 7.3.0 (GCC)) #1 SMP Mon Dec 10 09:48:57 CET 20=
-18
-> [=E2=80=A6]
-> [    0.000000] tsc: Fast TSC calibration using PIT
-> [=E2=80=A6]
-> [    0.035000] smpboot: CPU0: AMD Ryzen 5 PRO 1500 Quad-Core Processor =
-(family: 0x17, model: 0x1, stepping: 0x1)
-> ```
-
-How to continue from here? Is documentation for that available from AMD?
-I didn=E2=80=99t find a BKDG (Bios Kernel Developer Guide) at [3].
-
-
-Kind regards,
-
-Paul
-
-
-> [1]: https://bbs.archlinux.org/viewtopic.php?pid=3D1781282#p1781282
-> [2]: https://forums.kali.org/showthread.php?40444-error-loading-amdgpu-=
-drivers-AMD-RX580-driver[3]: https://developer.amd.com/resources/develope=
-r-guides-manuals/
-
-
---------------ms000709090900090808020204
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
-EFowggUSMIID+qADAgECAgkA4wvV+K8l2YEwDQYJKoZIhvcNAQELBQAwgYIxCzAJBgNVBAYT
-AkRFMSswKQYDVQQKDCJULVN5c3RlbXMgRW50ZXJwcmlzZSBTZXJ2aWNlcyBHbWJIMR8wHQYD
-VQQLDBZULVN5c3RlbXMgVHJ1c3QgQ2VudGVyMSUwIwYDVQQDDBxULVRlbGVTZWMgR2xvYmFs
-Um9vdCBDbGFzcyAyMB4XDTE2MDIyMjEzMzgyMloXDTMxMDIyMjIzNTk1OVowgZUxCzAJBgNV
-BAYTAkRFMUUwQwYDVQQKEzxWZXJlaW4genVyIEZvZXJkZXJ1bmcgZWluZXMgRGV1dHNjaGVu
-IEZvcnNjaHVuZ3NuZXR6ZXMgZS4gVi4xEDAOBgNVBAsTB0RGTi1QS0kxLTArBgNVBAMTJERG
-Ti1WZXJlaW4gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkgMjCCASIwDQYJKoZIhvcNAQEBBQAD
-ggEPADCCAQoCggEBAMtg1/9moUHN0vqHl4pzq5lN6mc5WqFggEcVToyVsuXPztNXS43O+FZs
-FVV2B+pG/cgDRWM+cNSrVICxI5y+NyipCf8FXRgPxJiZN7Mg9mZ4F4fCnQ7MSjLnFp2uDo0p
-eQcAIFTcFV9Kltd4tjTTwXS1nem/wHdN6r1ZB+BaL2w8pQDcNb1lDY9/Mm3yWmpLYgHurDg0
-WUU2SQXaeMpqbVvAgWsRzNI8qIv4cRrKO+KA3Ra0Z3qLNupOkSk9s1FcragMvp0049ENF4N1
-xDkesJQLEvHVaY4l9Lg9K7/AjsMeO6W/VRCrKq4Xl14zzsjz9AkH4wKGMUZrAcUQDBHHWekC
-AwEAAaOCAXQwggFwMA4GA1UdDwEB/wQEAwIBBjAdBgNVHQ4EFgQUk+PYMiba1fFKpZFK4OpL
-4qIMz+EwHwYDVR0jBBgwFoAUv1kgNgB5oKAia4zV8mHSuCzLgkowEgYDVR0TAQH/BAgwBgEB
-/wIBAjAzBgNVHSAELDAqMA8GDSsGAQQBga0hgiwBAQQwDQYLKwYBBAGBrSGCLB4wCAYGZ4EM
-AQICMEwGA1UdHwRFMEMwQaA/oD2GO2h0dHA6Ly9wa2kwMzM2LnRlbGVzZWMuZGUvcmwvVGVs
-ZVNlY19HbG9iYWxSb290X0NsYXNzXzIuY3JsMIGGBggrBgEFBQcBAQR6MHgwLAYIKwYBBQUH
-MAGGIGh0dHA6Ly9vY3NwMDMzNi50ZWxlc2VjLmRlL29jc3ByMEgGCCsGAQUFBzAChjxodHRw
-Oi8vcGtpMDMzNi50ZWxlc2VjLmRlL2NydC9UZWxlU2VjX0dsb2JhbFJvb3RfQ2xhc3NfMi5j
-ZXIwDQYJKoZIhvcNAQELBQADggEBAIcL/z4Cm2XIVi3WO5qYi3FP2ropqiH5Ri71sqQPrhE4
-eTizDnS6dl2e6BiClmLbTDPo3flq3zK9LExHYFV/53RrtCyD2HlrtrdNUAtmB7Xts5et6u5/
-MOaZ/SLick0+hFvu+c+Z6n/XUjkurJgARH5pO7917tALOxrN5fcPImxHhPalR6D90Bo0fa3S
-PXez7vTXTf/D6OWST1k+kEcQSrCFWMBvf/iu7QhCnh7U3xQuTY+8npTD5+32GPg8SecmqKc2
-2CzeIs2LgtjZeOJVEqM7h0S2EQvVDFKvaYwPBt/QolOLV5h7z/0HJPT8vcP9SpIClxvyt7bP
-ZYoaorVyGTkwggWNMIIEdaADAgECAgwcOtRQhH7u81j4jncwDQYJKoZIhvcNAQELBQAwgZUx
-CzAJBgNVBAYTAkRFMUUwQwYDVQQKEzxWZXJlaW4genVyIEZvZXJkZXJ1bmcgZWluZXMgRGV1
-dHNjaGVuIEZvcnNjaHVuZ3NuZXR6ZXMgZS4gVi4xEDAOBgNVBAsTB0RGTi1QS0kxLTArBgNV
-BAMTJERGTi1WZXJlaW4gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkgMjAeFw0xNjExMDMxNTI0
-NDhaFw0zMTAyMjIyMzU5NTlaMGoxCzAJBgNVBAYTAkRFMQ8wDQYDVQQIDAZCYXllcm4xETAP
-BgNVBAcMCE11ZW5jaGVuMSAwHgYDVQQKDBdNYXgtUGxhbmNrLUdlc2VsbHNjaGFmdDEVMBMG
-A1UEAwwMTVBHIENBIC0gRzAyMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnhx4
-59Lh4WqgOs/Md04XxU2yFtfM15ZuJV0PZP7BmqSJKLLPyqmOrADfNdJ5PIGBto2JBhtRRBHd
-G0GROOvTRHjzOga95WOTeura79T21FWwwAwa29OFnD3ZplQs6HgdwQrZWNi1WHNJxn/4mA19
-rNEBUc5urSIpZPvZi5XmlF3v3JHOlx3KWV7mUteB4pwEEfGTg4npPAJbp2o7arxQdoIq+Pu2
-OsvqhD7Rk4QeaX+EM1QS4lqd1otW4hE70h/ODPy1xffgbZiuotWQLC6nIwa65Qv6byqlIX0q
-Zuu99Vsu+r3sWYsL5SBkgecNI7fMJ5tfHrjoxfrKl/ErTAt8GQIDAQABo4ICBTCCAgEwEgYD
-VR0TAQH/BAgwBgEB/wIBATAOBgNVHQ8BAf8EBAMCAQYwKQYDVR0gBCIwIDANBgsrBgEEAYGt
-IYIsHjAPBg0rBgEEAYGtIYIsAQEEMB0GA1UdDgQWBBTEiKUH7rh7qgwTv9opdGNSG0lwFjAf
-BgNVHSMEGDAWgBST49gyJtrV8UqlkUrg6kviogzP4TCBjwYDVR0fBIGHMIGEMECgPqA8hjpo
-dHRwOi8vY2RwMS5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1Yi9jcmwvY2Fjcmwu
-Y3JsMECgPqA8hjpodHRwOi8vY2RwMi5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1
-Yi9jcmwvY2FjcmwuY3JsMIHdBggrBgEFBQcBAQSB0DCBzTAzBggrBgEFBQcwAYYnaHR0cDov
-L29jc3AucGNhLmRmbi5kZS9PQ1NQLVNlcnZlci9PQ1NQMEoGCCsGAQUFBzAChj5odHRwOi8v
-Y2RwMS5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1Yi9jYWNlcnQvY2FjZXJ0LmNy
-dDBKBggrBgEFBQcwAoY+aHR0cDovL2NkcDIucGNhLmRmbi5kZS9nbG9iYWwtcm9vdC1nMi1j
-YS9wdWIvY2FjZXJ0L2NhY2VydC5jcnQwDQYJKoZIhvcNAQELBQADggEBABLpeD5FygzqOjj+
-/lAOy20UQOGWlx0RMuPcI4nuyFT8SGmK9lD7QCg/HoaJlfU/r78ex+SEide326evlFAoJXIF
-jVyzNltDhpMKrPIDuh2N12zyn1EtagqPL6hu4pVRzcBpl/F2HCvtmMx5K4WN1L1fmHWLcSap
-dhXLvAZ9RG/B3rqyULLSNN8xHXYXpmtvG0VGJAndZ+lj+BH7uvd3nHWnXEHC2q7iQlDUqg0a
-wIqWJgdLlx1Q8Dg/sodv0m+LN0kOzGvVDRCmowBdWGhhusD+duKV66pBl+qhC+4LipariWaM
-qK5ppMQROATjYeNRvwI+nDcEXr2vDaKmdbxgDVwwggWvMIIEl6ADAgECAgweKlJIhfynPMVG
-/KIwDQYJKoZIhvcNAQELBQAwajELMAkGA1UEBhMCREUxDzANBgNVBAgMBkJheWVybjERMA8G
-A1UEBwwITXVlbmNoZW4xIDAeBgNVBAoMF01heC1QbGFuY2stR2VzZWxsc2NoYWZ0MRUwEwYD
-VQQDDAxNUEcgQ0EgLSBHMDIwHhcNMTcxMTE0MTEzNDE2WhcNMjAxMTEzMTEzNDE2WjCBizEL
-MAkGA1UEBhMCREUxIDAeBgNVBAoMF01heC1QbGFuY2stR2VzZWxsc2NoYWZ0MTQwMgYDVQQL
-DCtNYXgtUGxhbmNrLUluc3RpdHV0IGZ1ZXIgbW9sZWt1bGFyZSBHZW5ldGlrMQ4wDAYDVQQL
-DAVNUElNRzEUMBIGA1UEAwwLUGF1bCBNZW56ZWwwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw
-ggEKAoIBAQDIh/UR/AX/YQ48VWWDMLTYtXjYJyhRHMc81ZHMMoaoG66lWB9MtKRTnB5lovLZ
-enTIUyPsCrMhTqV9CWzDf6v9gOTWVxHEYqrUwK5H1gx4XoK81nfV8oGV4EKuVmmikTXiztGz
-peyDmOY8o/EFNWP7YuRkY/lPQJQBeBHYq9AYIgX4StuXu83nusq4MDydygVOeZC15ts0tv3/
-6WmibmZd1OZRqxDOkoBbY3Djx6lERohs3IKS6RKiI7e90rCSy9rtidJBOvaQS9wvtOSKPx0a
-+2pAgJEVzZFjOAfBcXydXtqXhcpOi2VCyl+7+LnnTz016JJLsCBuWEcB3kP9nJYNAgMBAAGj
-ggIxMIICLTAJBgNVHRMEAjAAMA4GA1UdDwEB/wQEAwIF4DAdBgNVHSUEFjAUBggrBgEFBQcD
-AgYIKwYBBQUHAwQwHQYDVR0OBBYEFHM0Mc3XjMLlhWpp4JufRELL4A/qMB8GA1UdIwQYMBaA
-FMSIpQfuuHuqDBO/2il0Y1IbSXAWMCAGA1UdEQQZMBeBFXBtZW56ZWxAbW9sZ2VuLm1wZy5k
-ZTB9BgNVHR8EdjB0MDigNqA0hjJodHRwOi8vY2RwMS5wY2EuZGZuLmRlL21wZy1nMi1jYS9w
-dWIvY3JsL2NhY3JsLmNybDA4oDagNIYyaHR0cDovL2NkcDIucGNhLmRmbi5kZS9tcGctZzIt
-Y2EvcHViL2NybC9jYWNybC5jcmwwgc0GCCsGAQUFBwEBBIHAMIG9MDMGCCsGAQUFBzABhido
-dHRwOi8vb2NzcC5wY2EuZGZuLmRlL09DU1AtU2VydmVyL09DU1AwQgYIKwYBBQUHMAKGNmh0
-dHA6Ly9jZHAxLnBjYS5kZm4uZGUvbXBnLWcyLWNhL3B1Yi9jYWNlcnQvY2FjZXJ0LmNydDBC
-BggrBgEFBQcwAoY2aHR0cDovL2NkcDIucGNhLmRmbi5kZS9tcGctZzItY2EvcHViL2NhY2Vy
-dC9jYWNlcnQuY3J0MEAGA1UdIAQ5MDcwDwYNKwYBBAGBrSGCLAEBBDARBg8rBgEEAYGtIYIs
-AQEEAwYwEQYPKwYBBAGBrSGCLAIBBAMGMA0GCSqGSIb3DQEBCwUAA4IBAQCQs6bUDROpFO2F
-Qz2FMgrdb39VEo8P3DhmpqkaIMC5ZurGbbAL/tAR6lpe4af682nEOJ7VW86ilsIJgm1j0ueY
-aOuL8jrN4X7IF/8KdZnnNnImW3QVni6TCcc+7+ggci9JHtt0IDCj5vPJBpP/dKXLCN4M+exl
-GXYpfHgxh8gclJPY1rquhQrihCzHfKB01w9h9tWZDVMtSoy9EUJFhCXw7mYUsvBeJwZesN2B
-fndPkrXx6XWDdU3S1LyKgHlLIFtarLFm2Hb5zAUR33h+26cN6ohcGqGEEzgIG8tXS8gztEaj
-1s2RyzmKd4SXTkKR3GhkZNVWy+gM68J7jP6zzN+cMYIDmjCCA5YCAQEwejBqMQswCQYDVQQG
-EwJERTEPMA0GA1UECAwGQmF5ZXJuMREwDwYDVQQHDAhNdWVuY2hlbjEgMB4GA1UECgwXTWF4
-LVBsYW5jay1HZXNlbGxzY2hhZnQxFTATBgNVBAMMDE1QRyBDQSAtIEcwMgIMHipSSIX8pzzF
-RvyiMA0GCWCGSAFlAwQCAQUAoIIB8TAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqG
-SIb3DQEJBTEPFw0xOTAxMjIxNjUzNDBaMC8GCSqGSIb3DQEJBDEiBCCq/TlZic7IkVAf0Y2R
-ecuhT/zl96E1lv71fjVgRbQ3jjBsBgkqhkiG9w0BCQ8xXzBdMAsGCWCGSAFlAwQBKjALBglg
-hkgBZQMEAQIwCgYIKoZIhvcNAwcwDgYIKoZIhvcNAwICAgCAMA0GCCqGSIb3DQMCAgFAMAcG
-BSsOAwIHMA0GCCqGSIb3DQMCAgEoMIGJBgkrBgEEAYI3EAQxfDB6MGoxCzAJBgNVBAYTAkRF
-MQ8wDQYDVQQIDAZCYXllcm4xETAPBgNVBAcMCE11ZW5jaGVuMSAwHgYDVQQKDBdNYXgtUGxh
-bmNrLUdlc2VsbHNjaGFmdDEVMBMGA1UEAwwMTVBHIENBIC0gRzAyAgweKlJIhfynPMVG/KIw
-gYsGCyqGSIb3DQEJEAILMXygejBqMQswCQYDVQQGEwJERTEPMA0GA1UECAwGQmF5ZXJuMREw
-DwYDVQQHDAhNdWVuY2hlbjEgMB4GA1UECgwXTWF4LVBsYW5jay1HZXNlbGxzY2hhZnQxFTAT
-BgNVBAMMDE1QRyBDQSAtIEcwMgIMHipSSIX8pzzFRvyiMA0GCSqGSIb3DQEBAQUABIIBAHbk
-lVRqIp/UJTGokUb4XXeA6V2VN7/VBPOCxX/H1kDqaR3I1fA6tP6Yv2ZofnPFYVn8eo7N3don
-lHcfd++dDS2zhIxMgQWXmNdWexonCu962EuKDyJRYptPisaSGzfVojKDO1DJVV4z7vdaNbLG
-mAIFJjGKmihmpCHuGMljRuAwF40iAdEeBOZbYNpZ7VZq6mcDvEEGPXpD1c2oaUQlrXbP0yWp
-++X7Fes6E974qOU10E+PNA7BCinhSJ/jxT5ZCstAg/X7lyLSXGETQJh8fQiFSEXRhMXMQ1JY
-lQd+11VTQqTn1d9SLI/iMXjDkUNbH7mw6x5f3vxjUQwcx539d8sAAAAAAAA=
---------------ms000709090900090808020204--
+You can add them using sysfs_add_link_to_group().  For example, see
+what acpi_power_expose_list() does.
