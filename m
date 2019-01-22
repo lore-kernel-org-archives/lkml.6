@@ -2,102 +2,119 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D0FCC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:28:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41E63C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:29:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 384562084C
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:28:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548174536;
-	bh=ZI+xnBU5OJzwlF+oyj/gaqOn1LGJeEAsSOJfjTpm780=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=vCEIIcu1d3dBQS6tpZXR/h4qb3VUQATnMsek5pjj6rNfuejJIC9pzTDvwITMUqyyW
-	 VCkOmOq9qAZTDksqpPhicgu0UooWCs/5Me3GejKoroNNp81QPcGBNSrTJwnhSh0nHb
-	 XxI9B2vpCz1EheIoLsbisjDsfuDybxGncLYKu17E=
+	by mail.kernel.org (Postfix) with ESMTP id 1AE5A2085A
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:29:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729320AbfAVQ2y (ORCPT
+        id S1729344AbfAVQ3k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 11:28:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53098 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729272AbfAVQ2y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 11:28:54 -0500
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B2E0A2085A;
-        Tue, 22 Jan 2019 16:28:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548174533;
-        bh=ZI+xnBU5OJzwlF+oyj/gaqOn1LGJeEAsSOJfjTpm780=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=lhBF2L5PZ/xYEHwP5t3tfjbWIRIPQsdyA9tWr3X+SeUfKnB7eru/rLrch2Sk6xo/v
-         YXnKQhOJ69LrB2OJbQuax+JRenVZu/ooiS2xhIl5enoqFFLLX0xTax8lfDeSAlud4j
-         ZL4mjT2l2b3Ili2qd6lXTy989HLXuyogwfZ99dps=
-Date:   Tue, 22 Jan 2019 17:28:42 +0100
-From:   Boris Brezillon <bbrezillon@kernel.org>
-To:     Schrempf Frieder <frieder.schrempf@kontron.de>
-Cc:     "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        "richard@nod.at" <richard@nod.at>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>
-Subject: Re: [PATCH v2 4/4] mtd: rawnand: AMD: Also use the last page for
- bad block markers
-Message-ID: <20190122172842.0c36876f@bbrezillon>
-In-Reply-To: <20190122112258.20042-5-frieder.schrempf@kontron.de>
-References: <20190122112258.20042-1-frieder.schrempf@kontron.de>
-        <20190122112258.20042-5-frieder.schrempf@kontron.de>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 22 Jan 2019 11:29:40 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:35375 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728580AbfAVQ3k (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 11:29:40 -0500
+Received: by mail-lj1-f194.google.com with SMTP id x85-v6so21217997ljb.2;
+        Tue, 22 Jan 2019 08:29:37 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=t9n/5sXdoTPr3CpWzcc788OMKiVQhMebV1SwmFqOkDM=;
+        b=kc4ImfRHJ2aMVsf55zZP8lUCmmJ37QbdjsKPhci54UIIqIlRGs2wRGzNv8ZhlB3wI5
+         hM9ZIo0+HzErsWrrJ/YTQtSObY6+YEHYaC+renfJVgV2301Rw7y+coMkk+Xf504OVmDM
+         FI1nlLzULKU/ipD3z3/oqzUMbifHQcX5IDin5WlVPEGtEvK56tsxtV8Gu2s8xIXUEUUQ
+         IALpk/uGeHl/0XuTIMaURd02vRx+GIIQRcE3nF17RxvZNOq6LRXkuoTigclJD92bnJfd
+         CtwnhSLEZ22YZJsUxilESOQ3XDL9daL4nBJSmDQ30+KUVx5jOyUhRTwIssclrwa9m+5w
+         YdvA==
+X-Gm-Message-State: AJcUukeDof6kSjknN4fYDyk+y0kBgniHQ3V5AkbxjgWSt0SdHXXgf4xq
+        rQ9vKRz6nTvmaGKZWG67ghg=
+X-Google-Smtp-Source: ALg8bN5YUVS7ySRm9No2eyYMF5Ufbs7NAJdPtgs1BAemEDk2cT7J3LmrPSOqxFA2z0aqGFT6E7LeOA==
+X-Received: by 2002:a2e:914b:: with SMTP id q11-v6mr8884858ljg.164.1548174576827;
+        Tue, 22 Jan 2019 08:29:36 -0800 (PST)
+Received: from localhost.localdomain (82-203-157-3.bb.dnainternet.fi. [82.203.157.3])
+        by smtp.gmail.com with ESMTPSA id h22-v6sm87861lji.45.2019.01.22.08.29.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 22 Jan 2019 08:29:36 -0800 (PST)
+Date:   Tue, 22 Jan 2019 18:29:31 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     mazziesaccount@gmail.com, lee.jones@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, lgirdwood@gmail.com, broonie@kernel.org,
+        gregkh@linuxfoundation.org, rafael@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        sre@kernel.org, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+        heikki.haikola@fi.rohmeurope.com
+Subject: Re: [RFC PATCH v1 11/13] rtc: bd70528: Initial support for ROHM
+ bd70528 RTC
+Message-ID: <20190122162931.GB2559@localhost.localdomain>
+References: <cover.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
+ <ebe1618710baf7cf59622c878e40052ca48cc7c3.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
+ <390e9379-329b-02dc-13f6-763aeae703e1@roeck-us.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <390e9379-329b-02dc-13f6-763aeae703e1@roeck-us.net>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 22 Jan 2019 11:23:33 +0000
-Schrempf Frieder <frieder.schrempf@kontron.de> wrote:
-
-> From: Frieder Schrempf <frieder.schrempf@kontron.de>
+On Tue, Jan 22, 2019 at 06:48:21AM -0800, Guenter Roeck wrote:
+> On 1/22/19 1:47 AM, Matti Vaittinen wrote:
+> > +
+> > +static int bd70528_set_rtc_based_timers(struct bd70528 *bd70528, int new_state,
+> > +							int *old_state)
 > 
-> According to the datasheet of some Cypress SLC NANDs, the bad
-> block markers can be in the first, second or last page of a block.
-> So let's check all three locations.
+> Passed parameter is an int, not int *. I'd be quite surprised if this compiles
+> without warning.
 > 
-> Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+> > +static int bd70528_re_enable_rtc_based_timers(struct bd70528 *bd70528,
+> > +							int old_state)
+// snip
+> > +	return bd70528_set_rtc_based_timers(bd70528, old_state, NULL);
 
-Reviewed-by: Boris Brezillon <bbrezillon@kernel.org>
+and
 
-> ---
->  drivers/mtd/nand/raw/nand_amd.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
+> > +static int bd70528_disable_rtc_based_timers(struct bd70528 *bd70528,
+> > +							int *old_state)
+// snip
+> > +	return bd70528_set_rtc_based_timers(bd70528, 0, old_state);
+
+I'm not quite sure I understand what you mean by that. Second parameter is int,
+third one is is int *.
+
+> > +static int bd70528_re_enable_rtc_based_timers(struct bd70528 *bd70528,
+> > +							int old_state)
+> > +{
+> > +	if (bd70528->rtc_timer_lock)
+> > +		mutex_unlock(bd70528->rtc_timer_lock);
+> > +
+> Unlock before calling bd70528_set_rtc_based_timers is odd, especially since it
+> is called after locking below.
 > 
-> diff --git a/drivers/mtd/nand/raw/nand_amd.c b/drivers/mtd/nand/raw/nand_amd.c
-> index 6202cbf7ee8d..2ffcddff3e27 100644
-> --- a/drivers/mtd/nand/raw/nand_amd.c
-> +++ b/drivers/mtd/nand/raw/nand_amd.c
-> @@ -40,7 +40,13 @@ static void amd_nand_decode_id(struct nand_chip *chip)
->  static int amd_nand_init(struct nand_chip *chip)
->  {
->  	if (nand_is_slc(chip))
-> -		chip->options |= NAND_BBM_FIRSTPAGE | NAND_BBM_SECONDPAGE;
-> +		/*
-> +		 * According to the datasheet of some Cypress SLC NANDs,
-> +		 * the bad block markers can be in the first, second or last
-> +		 * page of a block. So let's check all three locations.
-> +		 */
-> +		chip->options |= NAND_BBM_FIRSTPAGE | NAND_BBM_SECONDPAGE |
-> +				 NAND_BBM_LASTPAGE;
->  
->  	return 0;
->  }
 
+Yet another brainfart. Thanks for pointing this out! Will be fixed as
+well.
+
+Br,
+	Matti Vaittinen
+
+-- 
+Matti Vaittinen
+ROHM Semiconductors
+
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
