@@ -2,242 +2,204 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 314C3C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 22:33:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6765C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 22:35:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E199020866
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 22:33:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DD7920866
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 22:35:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fjfi.cvut.cz header.i=@fjfi.cvut.cz header.b="rQ2/x55Q"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tNRdemVe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727100AbfAVWci (ORCPT
+        id S1726960AbfAVWfc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 17:32:38 -0500
-Received: from mailgw1.fjfi.cvut.cz ([147.32.9.3]:45510 "EHLO
-        mailgw1.fjfi.cvut.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727046AbfAVWch (ORCPT
+        Tue, 22 Jan 2019 17:35:32 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:34995 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726839AbfAVWfc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 17:32:37 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTP id 9AF52B067E;
-        Tue, 22 Jan 2019 23:32:33 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fjfi.cvut.cz;
-        s=20151024; t=1548196353; i=@fjfi.cvut.cz;
-        bh=zhDqzAiUIfAJYs/kqmBNjAqyV8MAuWGL2Hmgk0052M0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=rQ2/x55Q16N1OoA7xQrd0I/+V8fKYkdzguNiIf0NBzw8cnrv8ebKXD4j1FmQZtnV+
-         xrHk9baBUf6ZOVVgTlmX/w+JQm4fQj3wgHTWNIeED18Sylau8ll2CXySRtpP6S/FOc
-         buuwTTYahXxufCDuOEGqb9EBvgSz652W+XQ+IMVk=
-X-CTU-FNSPE-Virus-Scanned: amavisd-new at fjfi.cvut.cz
-Received: from mailgw1.fjfi.cvut.cz ([127.0.0.1])
-        by localhost (mailgw1.fjfi.cvut.cz [127.0.0.1]) (amavisd-new, port 10022)
-        with ESMTP id uL0fgPwHheLn; Tue, 22 Jan 2019 23:32:26 +0100 (CET)
-Received: from linux.fjfi.cvut.cz (linux.fjfi.cvut.cz [147.32.5.111])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTPS id 8FA24B0666;
-        Tue, 22 Jan 2019 23:32:26 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailgw1.fjfi.cvut.cz 8FA24B0666
-Received: by linux.fjfi.cvut.cz (Postfix, from userid 1001)
-        id 6A8AB6004E; Tue, 22 Jan 2019 23:32:26 +0100 (CET)
-From:   David Kozub <zub@linux.fjfi.cvut.cz>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Jonathan Derrick <jonathan.derrick@intel.com>,
-        Scott Bauer <sbauer@plzdonthack.me>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>,
-        David Kozub <zub@linux.fjfi.cvut.cz>
-Subject: [PATCH v3 04/16] block: sed-opal: close parameter list in cmd_finalize
-Date:   Tue, 22 Jan 2019 23:31:35 +0100
-Message-Id: <1548196307-12987-5-git-send-email-zub@linux.fjfi.cvut.cz>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1548196307-12987-1-git-send-email-zub@linux.fjfi.cvut.cz>
-References: <1548196307-12987-1-git-send-email-zub@linux.fjfi.cvut.cz>
+        Tue, 22 Jan 2019 17:35:32 -0500
+Received: by mail-lf1-f67.google.com with SMTP id e26so147601lfc.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 14:35:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=QCFQ3/LFXyB79F8POK8jmGSXV3ke7RikEsl2ThYyROI=;
+        b=tNRdemVe11eGyQYmbwSwlv4x+G3+rX24JksmHOU3/qAONuaKJnrVdsAcSOl8g391wi
+         2uhVScAriP4gC2l7bPI6neqT8Oo8a5KDsK2l/VWO15c2DIAy6VUvc50MZyZEEZgOYSgB
+         5wybwRfyolTwawB0RlAswL60VQaWxU9c8OhBsGAR6zuE0Q0PF3gb/bZmiTWu3ZrKVLFl
+         lSalDQ+23N20sx26SDl1BHGeUzwonPgf2l4/o0MSzdU6ZAnJvWwXbYswbxPdgwX7cF7Q
+         VL0fKemCDfcprSkxMjIkWYYXJt4srUssuVVfvlvH53oho15KBnhDADrgD9Zh1vFMy0+H
+         WHUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=QCFQ3/LFXyB79F8POK8jmGSXV3ke7RikEsl2ThYyROI=;
+        b=oK1voRv8hJgPqIxfmuGr2GzrpfXmPSID1ukYr9SOi0+JtwN84oJbpAhqeg1W2UjIRO
+         4uTuWe8Q/LxfBzsUq28xunsX13+m7kGWmf0urAu+12qWCVZmu/wy/EtSY0L1kJNN3KkV
+         vUjZPV2NLjR6S2lrNQRc0tSg+aeBmLYzaOvjlCSMlyi1W9iE0O983vH2SN1ixaiyTnMJ
+         sDy1MvZZ7y6pLSujX9yzq4VnkTplsfPSF+g5M/NxcQM8wTDPTP/tf4JAYdPg6NT1G1lU
+         qXpYwXY76CV7UnnsXreLeGDMSsxmpfH+zOuvmQqTeFmC0oot0sKs33kGhPtQ1LyepOpi
+         U7Uw==
+X-Gm-Message-State: AJcUukddSZyOm5anmmxzBXYup4C7kzPh7Qa0ay4g1beB5rDPjcZo4Y4a
+        f669WjjdQj3qC4IpZkJ3EQYFWFEp8SOF/3XK7l6XpQ==
+X-Google-Smtp-Source: ALg8bN6//9MPig48NtGEAeFaPuk8Y78gGdXHbuCvU2euV9KADpbRVltAgq+HhrzyQU/6JU+mYxc2XIoFYUq0Ivgpmjs=
+X-Received: by 2002:a19:2906:: with SMTP id p6mr21485955lfp.17.1548196528984;
+ Tue, 22 Jan 2019 14:35:28 -0800 (PST)
+MIME-Version: 1.0
+References: <20181117010748.24347-1-rajatja@google.com> <20190118223407.64818-1-rajatja@google.com>
+ <20190118223407.64818-3-rajatja@google.com> <D1490A23-9076-4BAA-A932-CDE1C073475B@holtmann.org>
+In-Reply-To: <D1490A23-9076-4BAA-A932-CDE1C073475B@holtmann.org>
+From:   Rajat Jain <rajatja@google.com>
+Date:   Tue, 22 Jan 2019 14:34:52 -0800
+Message-ID: <CACK8Z6FyBxibu-oeAnhZgcSxx_uzGcHsOqJ1S=RGeEZJj3K_og@mail.gmail.com>
+Subject: Re: [PATCH v4 3/5] Bluetooth: Reset Bluetooth chip after multiple
+ command timeouts
+To:     Marcel Holtmann <marcel@holtmann.org>
+Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dmitry Torokhov <dtor@chromium.org>,
+        Alex Hung <alex.hung@canonical.com>,
+        Bluez mailing list <linux-bluetooth@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-usb@vger.kernel.org, netdev <netdev@vger.kernel.org>,
+        Rajat Jain <rajatxjain@gmail.com>,
+        Dmitry Torokhov <dtor@google.com>,
+        Raghuram Hegde <raghuram.hegde@intel.com>,
+        chethan.tumkur.narayan@intel.com,
+        "Ghorai, Sukumar" <sukumar.ghorai@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Every step ends by calling cmd_finalize (via finalize_and_send)
-yet every step adds the token OPAL_ENDLIST on its own. Moving
-this into cmd_finalize decreases code duplication.
+On Sat, Jan 19, 2019 at 11:51 AM Marcel Holtmann <marcel@holtmann.org> wrot=
+e:
+>
+> Hi Rajat,
+>
+> > Add a quirk and a hook to allow the HCI core to reset the BT chip
+> > if needed (after a number of timed out commands). Use that new hook to
+> > initiate BT chip reset if the controller fails to respond to certain
+> > number of commands (currently 5) including the HCI reset commands.
+> > This is done based on a newly introduced quirk. This is done based
+> > on some initial work by Intel.
+> >
+> > Signed-off-by: Rajat Jain <rajatja@google.com>
+> > ---
+> > v4: same as v1
+> > v3: same as v1
+> > v2: same as v1
+> >
+> > include/net/bluetooth/hci.h      |  8 ++++++++
+> > include/net/bluetooth/hci_core.h |  2 ++
+> > net/bluetooth/hci_core.c         | 15 +++++++++++++--
+> > 3 files changed, 23 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/include/net/bluetooth/hci.h b/include/net/bluetooth/hci.h
+> > index c36dc1e20556..af02fa5ffe54 100644
+> > --- a/include/net/bluetooth/hci.h
+> > +++ b/include/net/bluetooth/hci.h
+> > @@ -192,6 +192,14 @@ enum {
+> >        *
+> >        */
+> >       HCI_QUIRK_NON_PERSISTENT_SETUP,
+> > +
+> > +     /* When this quirk is set, hw_reset() would be run to reset the
+> > +      * hardware, after a certain number of commands (currently 5)
+> > +      * time out because the device fails to respond.
+> > +      *
+> > +      * This quirk should be set before hci_register_dev is called.
+> > +      */
+> > +     HCI_QUIRK_HW_RESET_ON_TIMEOUT,
+> > };
+> >
+> > /* HCI device flags */
+> > diff --git a/include/net/bluetooth/hci_core.h b/include/net/bluetooth/h=
+ci_core.h
+> > index e5ea633ea368..b86218304b80 100644
+> > --- a/include/net/bluetooth/hci_core.h
+> > +++ b/include/net/bluetooth/hci_core.h
+> > @@ -313,6 +313,7 @@ struct hci_dev {
+> >       unsigned int    acl_cnt;
+> >       unsigned int    sco_cnt;
+> >       unsigned int    le_cnt;
+> > +     unsigned int    timeout_cnt;
+> >
+> >       unsigned int    acl_mtu;
+> >       unsigned int    sco_mtu;
+> > @@ -437,6 +438,7 @@ struct hci_dev {
+> >       int (*post_init)(struct hci_dev *hdev);
+> >       int (*set_diag)(struct hci_dev *hdev, bool enable);
+> >       int (*set_bdaddr)(struct hci_dev *hdev, const bdaddr_t *bdaddr);
+> > +     void (*hw_reset)(struct hci_dev *hdev);
+> > };
+> >
+> > #define HCI_PHY_HANDLE(handle)        (handle & 0xff)
+> > diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
+> > index 7352fe85674b..ab3a6a8b7ba6 100644
+> > --- a/net/bluetooth/hci_core.c
+> > +++ b/net/bluetooth/hci_core.c
+> > @@ -2569,13 +2569,24 @@ static void hci_cmd_timeout(struct work_struct =
+*work)
+> >       struct hci_dev *hdev =3D container_of(work, struct hci_dev,
+> >                                           cmd_timer.work);
+> >
+> > +     hdev->timeout_cnt++;
+> >       if (hdev->sent_cmd) {
+> >               struct hci_command_hdr *sent =3D (void *) hdev->sent_cmd-=
+>data;
+> >               u16 opcode =3D __le16_to_cpu(sent->opcode);
+> >
+> > -             bt_dev_err(hdev, "command 0x%4.4x tx timeout", opcode);
+> > +             bt_dev_err(hdev, "command 0x%4.4x tx timeout (cnt =3D %u)=
+",
+> > +                        opcode, hdev->timeout_cnt);
+> >       } else {
+> > -             bt_dev_err(hdev, "command tx timeout");
+> > +             bt_dev_err(hdev, "command tx timeout (cnt =3D %u)",
+> > +                        hdev->timeout_cnt);
+> > +     }
+> > +
+> > +     if (test_bit(HCI_QUIRK_HW_RESET_ON_TIMEOUT, &hdev->quirks) &&
+> > +         hdev->timeout_cnt >=3D 5) {
+> > +             hdev->timeout_cnt =3D 0;
+> > +             if (hdev->hw_reset)
+> > +                     hdev->hw_reset(hdev);
+> > +             return;
+> >       }
+>
+> so I really do not see the need for the quirk here. Either hdev->hw_reset=
+ is provided, then execute it, if it is not provided then don=E2=80=99t. Th=
+e quirk is just duplicate information.
 
-Co-authored-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
-Signed-off-by: David Kozub <zub@linux.fjfi.cvut.cz>
-Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
----
- block/sed-opal.c | 25 +++----------------------
- 1 file changed, 3 insertions(+), 22 deletions(-)
+Sure, will do.
 
-diff --git a/block/sed-opal.c b/block/sed-opal.c
-index 980705681806..35b1747b650f 100644
---- a/block/sed-opal.c
-+++ b/block/sed-opal.c
-@@ -661,6 +661,9 @@ static int cmd_finalize(struct opal_dev *cmd, u32 hsn, u32 tsn)
- 	struct opal_header *hdr;
- 	int err = 0;
- 
-+	/* close parameter list */
-+	add_token_u8(&err, cmd, OPAL_ENDLIST);
-+
- 	add_token_u8(&err, cmd, OPAL_ENDOFDATA);
- 	add_token_u8(&err, cmd, OPAL_STARTLIST);
- 	add_token_u8(&err, cmd, 0);
-@@ -1079,7 +1082,6 @@ static int gen_key(struct opal_dev *dev, void *data)
- 	add_token_bytestring(&err, dev, opalmethod[OPAL_GENKEY],
- 			     OPAL_UID_LENGTH);
- 	add_token_u8(&err, dev, OPAL_STARTLIST);
--	add_token_u8(&err, dev, OPAL_ENDLIST);
- 
- 	if (err) {
- 		pr_debug("Error building gen key command\n");
-@@ -1142,7 +1144,6 @@ static int get_active_key(struct opal_dev *dev, void *data)
- 	add_token_u8(&err, dev, 10); /* ActiveKey */
- 	add_token_u8(&err, dev, OPAL_ENDNAME);
- 	add_token_u8(&err, dev, OPAL_ENDLIST);
--	add_token_u8(&err, dev, OPAL_ENDLIST);
- 	if (err) {
- 		pr_debug("Error building get active key command\n");
- 		return err;
-@@ -1188,7 +1189,6 @@ static int generic_lr_enable_disable(struct opal_dev *dev,
- 
- 	add_token_u8(&err, dev, OPAL_ENDLIST);
- 	add_token_u8(&err, dev, OPAL_ENDNAME);
--	add_token_u8(&err, dev, OPAL_ENDLIST);
- 	return err;
- }
- 
-@@ -1254,8 +1254,6 @@ static int setup_locking_range(struct opal_dev *dev, void *data)
- 
- 		add_token_u8(&err, dev, OPAL_ENDLIST);
- 		add_token_u8(&err, dev, OPAL_ENDNAME);
--		add_token_u8(&err, dev, OPAL_ENDLIST);
--
- 	}
- 	if (err) {
- 		pr_debug("Error building Setup Locking range command.\n");
-@@ -1295,7 +1293,6 @@ static int start_generic_opal_session(struct opal_dev *dev,
- 
- 	switch (auth) {
- 	case OPAL_ANYBODY_UID:
--		add_token_u8(&err, dev, OPAL_ENDLIST);
- 		break;
- 	case OPAL_ADMIN1_UID:
- 	case OPAL_SID_UID:
-@@ -1308,7 +1305,6 @@ static int start_generic_opal_session(struct opal_dev *dev,
- 		add_token_bytestring(&err, dev, opaluid[auth],
- 				     OPAL_UID_LENGTH);
- 		add_token_u8(&err, dev, OPAL_ENDNAME);
--		add_token_u8(&err, dev, OPAL_ENDLIST);
- 		break;
- 	default:
- 		pr_debug("Cannot start Admin SP session with auth %d\n", auth);
-@@ -1406,7 +1402,6 @@ static int start_auth_opal_session(struct opal_dev *dev, void *data)
- 	add_token_u8(&err, dev, 3);
- 	add_token_bytestring(&err, dev, lk_ul_user, OPAL_UID_LENGTH);
- 	add_token_u8(&err, dev, OPAL_ENDNAME);
--	add_token_u8(&err, dev, OPAL_ENDLIST);
- 
- 	if (err) {
- 		pr_debug("Error building STARTSESSION command.\n");
-@@ -1429,7 +1424,6 @@ static int revert_tper(struct opal_dev *dev, void *data)
- 	add_token_bytestring(&err, dev, opalmethod[OPAL_REVERT],
- 			     OPAL_UID_LENGTH);
- 	add_token_u8(&err, dev, OPAL_STARTLIST);
--	add_token_u8(&err, dev, OPAL_ENDLIST);
- 	if (err) {
- 		pr_debug("Error building REVERT TPER command.\n");
- 		return err;
-@@ -1463,7 +1457,6 @@ static int internal_activate_user(struct opal_dev *dev, void *data)
- 	add_token_u8(&err, dev, OPAL_ENDNAME);
- 	add_token_u8(&err, dev, OPAL_ENDLIST);
- 	add_token_u8(&err, dev, OPAL_ENDNAME);
--	add_token_u8(&err, dev, OPAL_ENDLIST);
- 
- 	if (err) {
- 		pr_debug("Error building Activate UserN command.\n");
-@@ -1490,7 +1483,6 @@ static int erase_locking_range(struct opal_dev *dev, void *data)
- 	add_token_bytestring(&err, dev, opalmethod[OPAL_ERASE],
- 			     OPAL_UID_LENGTH);
- 	add_token_u8(&err, dev, OPAL_STARTLIST);
--	add_token_u8(&err, dev, OPAL_ENDLIST);
- 
- 	if (err) {
- 		pr_debug("Error building Erase Locking Range Command.\n");
-@@ -1521,7 +1513,6 @@ static int set_mbr_done(struct opal_dev *dev, void *data)
- 	add_token_u8(&err, dev, OPAL_ENDNAME);
- 	add_token_u8(&err, dev, OPAL_ENDLIST);
- 	add_token_u8(&err, dev, OPAL_ENDNAME);
--	add_token_u8(&err, dev, OPAL_ENDLIST);
- 
- 	if (err) {
- 		pr_debug("Error Building set MBR Done command\n");
-@@ -1553,7 +1544,6 @@ static int set_mbr_enable_disable(struct opal_dev *dev, void *data)
- 	add_token_u8(&err, dev, OPAL_ENDNAME);
- 	add_token_u8(&err, dev, OPAL_ENDLIST);
- 	add_token_u8(&err, dev, OPAL_ENDNAME);
--	add_token_u8(&err, dev, OPAL_ENDLIST);
- 
- 	if (err) {
- 		pr_debug("Error Building set MBR done command\n");
-@@ -1585,7 +1575,6 @@ static int generic_pw_cmd(u8 *key, size_t key_len, u8 *cpin_uid,
- 	add_token_u8(&err, dev, OPAL_ENDNAME);
- 	add_token_u8(&err, dev, OPAL_ENDLIST);
- 	add_token_u8(&err, dev, OPAL_ENDNAME);
--	add_token_u8(&err, dev, OPAL_ENDLIST);
- 
- 	return err;
- }
-@@ -1694,7 +1683,6 @@ static int add_user_to_lr(struct opal_dev *dev, void *data)
- 	add_token_u8(&err, dev, OPAL_ENDNAME);
- 	add_token_u8(&err, dev, OPAL_ENDLIST);
- 	add_token_u8(&err, dev, OPAL_ENDNAME);
--	add_token_u8(&err, dev, OPAL_ENDLIST);
- 
- 	if (err) {
- 		pr_debug("Error building add user to locking range command.\n");
-@@ -1755,7 +1743,6 @@ static int lock_unlock_locking_range(struct opal_dev *dev, void *data)
- 
- 	add_token_u8(&err, dev, OPAL_ENDLIST);
- 	add_token_u8(&err, dev, OPAL_ENDNAME);
--	add_token_u8(&err, dev, OPAL_ENDLIST);
- 
- 	if (err) {
- 		pr_debug("Error building SET command.\n");
-@@ -1843,11 +1830,8 @@ static int activate_lsp(struct opal_dev *dev, void *data)
- 		}
- 		add_token_u8(&err, dev, OPAL_ENDLIST);
- 		add_token_u8(&err, dev, OPAL_ENDNAME);
--		add_token_u8(&err, dev, OPAL_ENDLIST);
--
- 	} else {
- 		add_token_u8(&err, dev, OPAL_STARTLIST);
--		add_token_u8(&err, dev, OPAL_ENDLIST);
- 	}
- 
- 	if (err) {
-@@ -1904,7 +1888,6 @@ static int get_lsp_lifecycle(struct opal_dev *dev, void *data)
- 	add_token_u8(&err, dev, 6); /* Lifecycle Column */
- 	add_token_u8(&err, dev, OPAL_ENDNAME);
- 
--	add_token_u8(&err, dev, OPAL_ENDLIST);
- 	add_token_u8(&err, dev, OPAL_ENDLIST);
- 
- 	if (err) {
-@@ -1964,8 +1947,6 @@ static int get_msid_cpin_pin(struct opal_dev *dev, void *data)
- 	add_token_u8(&err, dev, 4); /* End Column */
- 	add_token_u8(&err, dev, 3); /* Lifecycle Column */
- 	add_token_u8(&err, dev, OPAL_ENDNAME);
--
--	add_token_u8(&err, dev, OPAL_ENDLIST);
- 	add_token_u8(&err, dev, OPAL_ENDLIST);
- 
- 	if (err) {
--- 
-2.20.1
+>
+> I also don=E2=80=99t like hdev->hw_reset since that implies that the only=
+ way of handling a command timeout is a hardware reset. I prefer you call t=
+his hdev->cmd_timeout and also scrap the timeout_cnt. Let the driver decide=
+ what number of timeouts it wants to react on. The number 5 is just an arbi=
+trary number you picked based on one hardware manufacturer.
 
+Sure, I can move the timeout_cnt from hdev to btusb_data so that the
+btusb can track the number of the timeouts..
+
+Thanks,
+
+Rajat
+
+>
+> Regards
+>
+> Marcel
+>
