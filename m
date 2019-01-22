@@ -2,76 +2,119 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 137C0C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:06:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED4F6C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:06:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAFBA2084C
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:06:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5AC82084C
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:06:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727586AbfAVIGp (ORCPT
+        id S1727550AbfAVIGk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 03:06:45 -0500
-Received: from mx2.suse.de ([195.135.220.15]:48882 "EHLO mx1.suse.de"
+        Tue, 22 Jan 2019 03:06:40 -0500
+Received: from mx2.suse.de ([195.135.220.15]:48832 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727528AbfAVIGl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 03:06:41 -0500
+        id S1727219AbfAVIGk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 03:06:40 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 04D53ACD2;
-        Tue, 22 Jan 2019 08:06:40 +0000 (UTC)
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 2B2C8AC3A;
+        Tue, 22 Jan 2019 08:06:39 +0000 (UTC)
 From:   Juergen Gross <jgross@suse.com>
 To:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
         x86@kernel.org, linux-mm@kvack.org
 Cc:     boris.ostrovsky@oracle.com, sstabellini@kernel.org, hpa@zytor.com,
         tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
         Juergen Gross <jgross@suse.com>
-Subject: [PATCH 0/2] x86: respect memory size limits
-Date:   Tue, 22 Jan 2019 09:06:26 +0100
-Message-Id: <20190122080628.7238-1-jgross@suse.com>
+Subject: [PATCH 1/2] x86: respect memory size limiting via mem= parameter
+Date:   Tue, 22 Jan 2019 09:06:27 +0100
+Message-Id: <20190122080628.7238-2-jgross@suse.com>
 X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20190122080628.7238-1-jgross@suse.com>
+References: <20190122080628.7238-1-jgross@suse.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On a customer system running Xen a boot problem was observed due to
-the kernel not respecting the memory size limit imposed by the Xen
-hypervisor.
+When limiting memory size via kernel parameter "mem=" this should be
+respected even in case of memory made accessible via a PCI card.
 
-During analysis I found the same problem should be able to occur on
-bare metal in case the memory would be limited via the "mem=" boot
-parameter.
+Today this kind of memory won't be made usable in initial memory
+setup as the memory won't be visible in E820 map, but it might be
+added when adding PCI devices due to corresponding ACPI table entries.
 
-The system this problem has been observed on has tons of memory
-added via PCI. So while in the E820 map the not to be used memory has
-been wiped out the additional PCI memory is detected during ACPI scan
-and it is added via __add_memory().
+Not respecting "mem=" can be corrected by adding a global max_mem_size
+variable set by parse_memopt() which will result in rejecting adding
+memory areas resulting in a memory size above the allowed limit.
 
-This small series tries to repair the issue by testing the imposed
-memory limit during the memory hotplug process and refusing to add it
-in case the limit is being violated.
-
-I've chosen to refuse adding the complete memory chunk in case the
-limit is reached instead of adding only some of the memory, as I
-thought this would result in less problems (e.g. avoiding to add
-only parts of a 128MB memory bar which might be difficult to remove
-later).
-
-
-Juergen Gross (2):
-  x86: respect memory size limiting via mem= parameter
-  x86/xen: dont add memory above max allowed allocation
-
+Signed-off-by: Juergen Gross <jgross@suse.com>
+---
  arch/x86/kernel/e820.c         | 5 +++++
- arch/x86/xen/setup.c           | 5 +++++
  include/linux/memory_hotplug.h | 2 ++
  mm/memory_hotplug.c            | 6 ++++++
- 4 files changed, 18 insertions(+)
+ 3 files changed, 13 insertions(+)
 
+diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
+index 50895c2f937d..e67513e2cbbb 100644
+--- a/arch/x86/kernel/e820.c
++++ b/arch/x86/kernel/e820.c
+@@ -14,6 +14,7 @@
+ #include <linux/acpi.h>
+ #include <linux/firmware-map.h>
+ #include <linux/sort.h>
++#include <linux/memory_hotplug.h>
+ 
+ #include <asm/e820/api.h>
+ #include <asm/setup.h>
+@@ -881,6 +882,10 @@ static int __init parse_memopt(char *p)
+ 
+ 	e820__range_remove(mem_size, ULLONG_MAX - mem_size, E820_TYPE_RAM, 1);
+ 
++#ifdef CONFIG_MEMORY_HOTPLUG
++	max_mem_size = mem_size;
++#endif
++
+ 	return 0;
+ }
+ early_param("mem", parse_memopt);
+diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
+index 07da5c6c5ba0..fb6bd0022d41 100644
+--- a/include/linux/memory_hotplug.h
++++ b/include/linux/memory_hotplug.h
+@@ -98,6 +98,8 @@ extern void __online_page_free(struct page *page);
+ 
+ extern int try_online_node(int nid);
+ 
++extern u64 max_mem_size;
++
+ extern bool memhp_auto_online;
+ /* If movable_node boot option specified */
+ extern bool movable_node_enabled;
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index b9a667d36c55..7fc2a87110a3 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -96,10 +96,16 @@ void mem_hotplug_done(void)
+ 	cpus_read_unlock();
+ }
+ 
++u64 max_mem_size = -1;
++
+ /* add this memory to iomem resource */
+ static struct resource *register_memory_resource(u64 start, u64 size)
+ {
+ 	struct resource *res, *conflict;
++
++	if (start + size > max_mem_size)
++		return ERR_PTR(-E2BIG);
++
+ 	res = kzalloc(sizeof(struct resource), GFP_KERNEL);
+ 	if (!res)
+ 		return ERR_PTR(-ENOMEM);
 -- 
 2.16.4
 
