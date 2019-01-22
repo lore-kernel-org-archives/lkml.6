@@ -2,81 +2,93 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BE03C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:24:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B50DCC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:24:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D157B217D8
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:24:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8497B217D6
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:24:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548170674;
-	bh=xfrjMJYlvJzXwHbvlsBZunnBkihNX/e601fqkXZ92Ro=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=bK3sxPUmPbZaNL/F8aQuHIWFA1VndryBjNhBSQm/fgn6nppUfl/W++OMSHrhzZXVO
-	 UGBnTVnwZ9iVeuIVLV5feHY0oD4lTKXfcSRwdM2Zg2wB72xzwD6uZwT3WxuepVrMBA
-	 WSAhk8mI/RAIgONs84WBqmgnEc/utjww6ZD4jVS4=
+	s=default; t=1548170692;
+	bh=ZRjjvbRg0U8VrZAIH6rcEIDvpAUC2l9AVTIQKjQLbbc=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=2NYhKzfZRHxPPIWsYkjo0au4pC1VD4cup0dWdO2tEcnRD1MOHVUvFxR6jW1A55KzI
+	 t9A1nuHZxUdiZGJHXMQtdBNC78GE36xZnrL3WfFJai16/xChzghY+AGGCiGHDEYeq7
+	 sL0vPHuSvGU0LChfX7yzGzNFI2VsegCTLhZhpg58=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729363AbfAVPYd (ORCPT
+        id S1729609AbfAVPYv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 10:24:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38238 "EHLO mail.kernel.org"
+        Tue, 22 Jan 2019 10:24:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38032 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729476AbfAVPYa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 10:24:30 -0500
+        id S1730102AbfAVPYU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 10:24:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B793217D6;
-        Tue, 22 Jan 2019 15:24:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A2DDA217D8;
+        Tue, 22 Jan 2019 15:24:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548170669;
-        bh=xfrjMJYlvJzXwHbvlsBZunnBkihNX/e601fqkXZ92Ro=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eSfCb3I3tb0fFTHxRO/iW7Ngnpl9/cOWPRSEw2ulKFdi+shhlVVGAFBNp+J7jIUJK
-         bsXIccwzddOnmQ5AhOAibHY4hGtjCFALc/JqUuoMW5GcvK3TjHvCfu8drVEezm4Wk7
-         A9R80YYTHVQh2t2vi/E/J33V7L0grEXO1Zl6GLNQ=
-Date:   Tue, 22 Jan 2019 16:23:22 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Jiri Slaby <jslaby@suse.cz>
-Cc:     thomas@winischhofer.net, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] tty: sisusb_con, convert addr macros to functions
-Message-ID: <20190122152322.GA17676@kroah.com>
-References: <20190122151202.18152-1-jslaby@suse.cz>
+        s=default; t=1548170660;
+        bh=ZRjjvbRg0U8VrZAIH6rcEIDvpAUC2l9AVTIQKjQLbbc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=lBarISVofbIgT0jzpcaUdGMDNSFNTUBISIC6yceuDoEGf8zIqWrrgXGz4N0T3KKD3
+         WG/aRgpSFk+FpyK8tL6KJ39+r6i1nSVjCZd7kTpdniu7lvRwoOASmvaazeS8D5S6TJ
+         X3PJmJpHOCr3Y6UUrQkPnVrQ8NHYkxHJ0qmhnc7U=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Darren Hart <dvhart@infradead.org>
+Subject: [PATCH] futex: no need to check return value of debugfs_create functions
+Date:   Tue, 22 Jan 2019 16:21:39 +0100
+Message-Id: <20190122152151.16139-40-gregkh@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190122151202.18152-1-jslaby@suse.cz>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 04:11:59PM +0100, Jiri Slaby wrote:
-> Convert SISUSB_VADDR and SISUSB_HADDR to inline functions. Now, there
-> are no more hidden accesses to local variables (vc_data and
-> sisusb_usb_data).
-> 
-> sisusb_haddr returns unsigned long from now on, not u16 *, as ulong is
-> what every caller expects -- we can remove some casts.
-> 
-> Call sites were aligned to be readable too.
-> 
-> Use sisusb_haddr on 4 more places in sisusbcon_blank and
-> sisusbcon_scroll. It was open coded there with [x, y] being [0, 0].
-> 
-> Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-> ---
->  drivers/usb/misc/sisusbvga/sisusb_con.c | 78 ++++++++++++-------------
->  1 file changed, 39 insertions(+), 39 deletions(-)
+When calling debugfs functions, there is no need to ever check the
+return value.  The function can work or not, but the code logic should
+never do something different based on this.
 
-Subject says "tty", yet this is the USB driver.  typo?
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Darren Hart <dvhart@infradead.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ kernel/futex.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-thanks,
+diff --git a/kernel/futex.c b/kernel/futex.c
+index be3bff2315ff..c2ed57b084a4 100644
+--- a/kernel/futex.c
++++ b/kernel/futex.c
+@@ -321,12 +321,8 @@ static int __init fail_futex_debugfs(void)
+ 	if (IS_ERR(dir))
+ 		return PTR_ERR(dir);
+ 
+-	if (!debugfs_create_bool("ignore-private", mode, dir,
+-				 &fail_futex.ignore_private)) {
+-		debugfs_remove_recursive(dir);
+-		return -ENOMEM;
+-	}
+-
++	debugfs_create_bool("ignore-private", mode, dir,
++			    &fail_futex.ignore_private);
+ 	return 0;
+ }
+ 
+-- 
+2.20.1
 
-greg k-h
