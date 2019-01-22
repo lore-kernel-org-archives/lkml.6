@@ -2,164 +2,122 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1048EC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 21:02:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65D63C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 21:03:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CABA121019
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 21:02:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3343C21019
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 21:03:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="kbRrZ3mg"
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="cg0jTpR6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726366AbfAVVCE (ORCPT
+        id S1726627AbfAVVDB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 16:02:04 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:55898 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726178AbfAVVCD (ORCPT
+        Tue, 22 Jan 2019 16:03:01 -0500
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:56484 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726291AbfAVVDA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 16:02:03 -0500
-Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8DC36575;
-        Tue, 22 Jan 2019 22:02:00 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1548190920;
-        bh=LOtRytkw+jrom9cIWhQdQtl04YrC4p221I9BUeN4F5I=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kbRrZ3mg91UVN7BP2/JncWrGj0s60XpEHYmo62aqzIS2KFl+t9iUTygQkFq9tKriU
-         AVsut6KubGHOFDejNeiJ4Gz9AJUgIGtuQsLxcDO/11YIpoXyTUHvamn+4fcj3385Oz
-         gkqyLxqQxDc7bxc2XvuOoSq5Ykq6KSVr//i/bRg8=
-Date:   Tue, 22 Jan 2019 23:01:59 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Peter Rosin <peda@axentia.se>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v3 5/5] drm/bridge: lvds-encoder: add powerdown-gpios
- support
-Message-ID: <20190122210159.GI3264@pendragon.ideasonboard.com>
-References: <20181229070649.21308-1-peda@axentia.se>
- <20181229070649.21308-6-peda@axentia.se>
+        Tue, 22 Jan 2019 16:03:00 -0500
+Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0ML0nZB005813
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 13:02:59 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=Vq71pGzNvFa/CwSVGkqtdhx3IauhYZExC6e91g7mP5E=;
+ b=cg0jTpR6PTWYi+aJK3KMC/fn0rdPknloSCcZIG6OWN6k6pViJaVtyJuQXp7Amrqda118
+ dIqybocJZ7SK5bLyLurZNwJ+XSU4R52cUq02Jx97BlpqDk3nan6NDc292wklKWQ+rCz8
+ b+FpPyTZZzTLJdnZ9oQ8rLimix1l+mSKV4I= 
+Received: from maileast.thefacebook.com ([199.201.65.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2q690prdf1-4
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 13:02:58 -0800
+Received: from mx-out.facebook.com (2620:10d:c0a1:3::13) by
+ mail.thefacebook.com (2620:10d:c021:18::171) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
+ Tue, 22 Jan 2019 13:02:25 -0800
+Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
+        id 461E962E1D62; Tue, 22 Jan 2019 13:02:20 -0800 (PST)
+Smtp-Origin-Hostprefix: devbig
+From:   Song Liu <songliubraving@fb.com>
+Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
+To:     <linux-kernel@vger.kernel.org>
+CC:     Song Liu <songliubraving@fb.com>, <peterz@infradead.org>,
+        <acme@kernel.org>, <ast@kernel.org>, <daniel@iogearbox.net>,
+        <kernel-team@fb.com>, Arnaldo Carvalho de Melo <acme@redhat.com>
+Smtp-Origin-Cluster: ftw2c04
+Subject: [PATCH perf] perf tools: fix synthesized PERF_RECORD_KSYMBOL/BPF_EVENT
+Date:   Tue, 22 Jan 2019 13:02:18 -0800
+Message-ID: <20190122210218.358664-1-songliubraving@fb.com>
+X-Mailer: git-send-email 2.17.1
+X-FB-Internal: Safe
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181229070649.21308-6-peda@axentia.se>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-22_11:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
+Added missing machine->id_hdr_size to event->header.size. Also fixed size
+of PERF_RECORD_KSYMBOL by removing extra bytes for name.
 
-Thank you for the patch.
+Fixes: 7b612e291a5a ("perf tools: Synthesize PERF_RECORD_* for loaded BPF programs")
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Suggested-by: Jiri Olsa <jolsa@kernel.org>
+Signed-off-by: Song Liu <songliubraving@fb.com>
+---
+ tools/perf/util/bpf-event.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-On Sat, Dec 29, 2018 at 07:07:43AM +0000, Peter Rosin wrote:
-> Optionally power down the LVDS-encoder when it is not in use.
-> 
-> Signed-off-by: Peter Rosin <peda@axentia.se>
-
-As the powerdown-gpios property is only defined for two encoders, and
-both of them should work well with this code, I think the change is
-fine. In the future if different power-up/down sequences need to be
-implemented for different devices this will need to be made
-device-specific.
-
-> ---
->  drivers/gpu/drm/bridge/lvds-encoder.c | 34 ++++++++++++++++++++++++++++++++++
->  1 file changed, 34 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/bridge/lvds-encoder.c b/drivers/gpu/drm/bridge/lvds-encoder.c
-> index f6770e83d49d..36d8557bc097 100644
-> --- a/drivers/gpu/drm/bridge/lvds-encoder.c
-> +++ b/drivers/gpu/drm/bridge/lvds-encoder.c
-> @@ -11,11 +11,13 @@
->  #include <drm/drm_bridge.h>
->  #include <drm/drm_panel.h>
->  
-> +#include <linux/gpio/consumer.h>
->  #include <linux/of_graph.h>
->  
->  struct lvds_encoder {
->  	struct drm_bridge bridge;
->  	struct drm_bridge *panel_bridge;
-> +	struct gpio_desc *powerdown_gpio;
->  };
->  
->  static int lvds_encoder_attach(struct drm_bridge *bridge)
-> @@ -28,8 +30,30 @@ static int lvds_encoder_attach(struct drm_bridge *bridge)
->  				 bridge);
->  }
->  
-> +static void lvds_encoder_enable(struct drm_bridge *bridge)
-> +{
-> +	struct lvds_encoder *lvds_encoder = container_of(bridge,
-> +							 struct lvds_encoder,
-> +							 bridge);
-> +
-> +	if (lvds_encoder->powerdown_gpio)
-> +		gpiod_set_value_cansleep(lvds_encoder->powerdown_gpio, 0);
-
-gpiod_set_value_cansleep() already contains a NULL check, so you can
-drop it from here.
-
-> +}
-> +
-> +static void lvds_encoder_disable(struct drm_bridge *bridge)
-> +{
-> +	struct lvds_encoder *lvds_encoder = container_of(bridge,
-> +							 struct lvds_encoder,
-> +							 bridge);
-> +
-> +	if (lvds_encoder->powerdown_gpio)
-> +		gpiod_set_value_cansleep(lvds_encoder->powerdown_gpio, 1);
-
-Same here.
-
-> +}
-> +
->  static struct drm_bridge_funcs funcs = {
-
-While at it, could you make this const ?
-
-With these fixed,
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
->  	.attach = lvds_encoder_attach,
-> +	.enable = lvds_encoder_enable,
-> +	.disable = lvds_encoder_disable,
->  };
->  
->  static int lvds_encoder_probe(struct platform_device *pdev)
-> @@ -45,6 +69,16 @@ static int lvds_encoder_probe(struct platform_device *pdev)
->  	if (!lvds_encoder)
->  		return -ENOMEM;
->  
-> +	lvds_encoder->powerdown_gpio = devm_gpiod_get_optional(dev, "powerdown",
-> +							       GPIOD_OUT_HIGH);
-> +	if (IS_ERR(lvds_encoder->powerdown_gpio)) {
-> +		int err = PTR_ERR(lvds_encoder->powerdown_gpio);
-> +
-> +		if (err != -EPROBE_DEFER)
-> +			dev_err(dev, "powerdown GPIO failure: %d\n", err);
-> +		return err;
-> +	}
-> +
->  	/* Locate the panel DT node. */
->  	port = of_graph_get_port_by_id(dev->of_node, 1);
->  	if (!port) {
-
+diff --git a/tools/perf/util/bpf-event.c b/tools/perf/util/bpf-event.c
+index 01e1dc1bb7fb..f610872812ef 100644
+--- a/tools/perf/util/bpf-event.c
++++ b/tools/perf/util/bpf-event.c
+@@ -7,6 +7,7 @@
+ #include "bpf-event.h"
+ #include "debug.h"
+ #include "symbol.h"
++#include "machine.h"
+ 
+ #define ptr_to_u64(ptr)    ((__u64)(unsigned long)(ptr))
+ 
+@@ -149,7 +150,7 @@ static int perf_event__synthesize_one_bpf_prog(struct perf_tool *tool,
+ 		*ksymbol_event = (struct ksymbol_event){
+ 			.header = {
+ 				.type = PERF_RECORD_KSYMBOL,
+-				.size = sizeof(struct ksymbol_event),
++				.size = offsetof(struct ksymbol_event, name),
+ 			},
+ 			.addr = prog_addrs[i],
+ 			.len = prog_lens[i],
+@@ -178,6 +179,9 @@ static int perf_event__synthesize_one_bpf_prog(struct perf_tool *tool,
+ 
+ 		ksymbol_event->header.size += PERF_ALIGN(name_len + 1,
+ 							 sizeof(u64));
++
++		memset(event + event->header.size, 0, machine->id_hdr_size);
++		event->header.size += machine->id_hdr_size;
+ 		err = perf_tool__process_synth_event(tool, event,
+ 						     machine, process);
+ 	}
+@@ -194,6 +198,8 @@ static int perf_event__synthesize_one_bpf_prog(struct perf_tool *tool,
+ 			.id = info.id,
+ 		};
+ 		memcpy(bpf_event->tag, prog_tags[i], BPF_TAG_SIZE);
++		memset(event + event->header.size, 0, machine->id_hdr_size);
++		event->header.size += machine->id_hdr_size;
+ 		err = perf_tool__process_synth_event(tool, event,
+ 						     machine, process);
+ 	}
 -- 
-Regards,
+2.17.1
 
-Laurent Pinchart
