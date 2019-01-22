@@ -2,210 +2,375 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC062C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:33:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D32EC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:34:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AAA321019
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:33:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB052217D4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:34:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="vhr/TECE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728776AbfAVPdV (ORCPT
+        id S1728841AbfAVPeT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 10:33:21 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56096 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728601AbfAVPdV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 10:33:21 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A981CA78;
-        Tue, 22 Jan 2019 07:33:20 -0800 (PST)
-Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B59BC3F589;
-        Tue, 22 Jan 2019 07:33:17 -0800 (PST)
-Date:   Tue, 22 Jan 2019 15:33:15 +0000
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
+        Tue, 22 Jan 2019 10:34:19 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:33626 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728649AbfAVPeS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 10:34:18 -0500
+Received: by mail-qt1-f196.google.com with SMTP id l11so28094770qtp.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 07:34:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=nqiWFvpwE7r2Buuhu076X0tNR0812ALSMIQd51omX00=;
+        b=vhr/TECEJQJc2dz0vT2iNpp4FPZRHBEEY8pZdggiKJTVOsVMdVIYoHXgNIuuBdJk1g
+         g8Y0YUm6jZJ1pxKTM5Ox/ZQGmijgV9Q4iVGm2nW+tunKuhm3Zv5FhFiunjI2ks257vMS
+         L7AhgJ5KtJEnskFfnDCPWkvaPTV9xKcrg2xDw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=nqiWFvpwE7r2Buuhu076X0tNR0812ALSMIQd51omX00=;
+        b=k9noPLY8i9E/CJTyeD4o8MBdOrZBmOqnygRVkd0Ey3xF41fIFai/KdmUP/E0YITt8X
+         vXfJJ7kb56BMxOqKoQRD5p25LDIDllWAcYhWUWCz8mumJMwGufkn04ouShb/1SK1lcud
+         y2o5mBPafdBKMwUTJAZjosP8aKsmO2uI7W+IaS7uuKMBuSnjPx6ZzK5onQhL92Z17G/T
+         gA6rPPRQhGos+V2eqEuQWneHkAzZd3+/5UqftczX/fZkwfElqaMvdofqF7JRLccAEdVU
+         PsaLkPbgkdtYUt64k07PRviJFeUecBrRFKUwc0kYXhdcrqRt49UAMzXIUxKcXtkQBp2m
+         /1Tg==
+X-Gm-Message-State: AJcUukfk1ESKEZiHar1DijZa2BiDQ1Zoi7ACd5qp4TaOWlECSNG9q68h
+        orT5DT7hvoVouQmr4owjX+cFkw==
+X-Google-Smtp-Source: ALg8bN7mfAb1B7HBBrR5tN/Q867VHRPoNV6p+evBamBsPC1Hp+vSyJcEe2wuyP683Mxu0QsuqZdLEA==
+X-Received: by 2002:ac8:164a:: with SMTP id x10mr32164301qtk.67.1548171256633;
+        Tue, 22 Jan 2019 07:34:16 -0800 (PST)
+Received: from localhost ([2620:0:1004:1100:cca9:fccc:8667:9bdc])
+        by smtp.gmail.com with ESMTPSA id x202sm56140436qka.67.2019.01.22.07.34.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 22 Jan 2019 07:34:14 -0800 (PST)
+Date:   Tue, 22 Jan 2019 10:34:14 -0500
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        syzbot <syzbot+4b8b031b89e6b96c4b2e@syzkaller.appspotmail.com>,
+        Hugh Dickins <hughd@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Yisheng Xie <xieyisheng1@huawei.com>,
         Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v6 05/16] sched/core: uclamp: Update CPU's refcount on
- clamp changes
-Message-ID: <20190122153315.dhjl67sgpu74hmqv@e110439-lin>
-References: <20190115101513.2822-1-patrick.bellasi@arm.com>
- <20190115101513.2822-6-patrick.bellasi@arm.com>
- <20190121153308.GL27931@hirez.programming.kicks-ass.net>
- <20190121154412.fak2t2iquj3aixtu@e110439-lin>
- <20190122093704.GM27931@hirez.programming.kicks-ass.net>
- <20190122104305.6vjx37muqsxm536t@e110439-lin>
- <20190122132817.GG13777@hirez.programming.kicks-ass.net>
- <20190122140115.twtx646vewm757ca@e110439-lin>
- <20190122145742.GQ27931@hirez.programming.kicks-ass.net>
+        Arve Hjonnevag <arve@android.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Subject: Re: possible deadlock in shmem_fallocate (2)
+Message-ID: <20190122153414.GB191275@google.com>
+References: <0000000000004024240573137822@google.com>
+ <20180810161848.GB16533@bombadil.infradead.org>
+ <CACT4Y+bEsav4r82z5rE1b0rH==VpU7FEK7DzuqTu3AV+w0Ve9g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190122145742.GQ27931@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CACT4Y+bEsav4r82z5rE1b0rH==VpU7FEK7DzuqTu3AV+w0Ve9g@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22-Jan 15:57, Peter Zijlstra wrote:
-> On Tue, Jan 22, 2019 at 02:01:15PM +0000, Patrick Bellasi wrote:
-> > On 22-Jan 14:28, Peter Zijlstra wrote:
-> > > On Tue, Jan 22, 2019 at 10:43:05AM +0000, Patrick Bellasi wrote:
-> > > > On 22-Jan 10:37, Peter Zijlstra wrote:
-> > > 
-> > > > > Sure, I get that. What I don't get is why you're adding that (2) here.
-> > > > > Like said, __sched_setscheduler() already does a dequeue/enqueue under
-> > > > > rq->lock, which should already take care of that.
-> > > > 
-> > > > Oh, ok... got it what you mean now.
-> > > > 
-> > > > With:
-> > > > 
-> > > >    [PATCH v6 01/16] sched/core: Allow sched_setattr() to use the current policy
-> > > >    <20190115101513.2822-2-patrick.bellasi@arm.com>
-> > > > 
-> > > > we can call __sched_setscheduler() with:
-> > > > 
-> > > >    attr->sched_flags & SCHED_FLAG_KEEP_POLICY
-> > > > 
-> > > > whenever we want just to change the clamp values of a task without
-> > > > changing its class. Thus, we can end up returning from
-> > > > __sched_setscheduler() without doing an actual dequeue/enqueue.
-> > > 
-> > > I don't see that happening.. when KEEP_POLICY we set attr.sched_policy =
-> > > SETPARAM_POLICY. That is then checked again in __setscheduler_param(),
-> > > which is in the middle of that dequeue/enqueue.
-> > 
-> > Yes, I think I've forgot a check before we actually dequeue the task.
-> > 
-> > The current code does:
-> > 
-> > ---8<---
-> >    SYSCALL_DEFINE3(sched_setattr)
-> > 
-> >         // A) request to keep the same policy
-> >         if (attr.sched_flags & SCHED_FLAG_KEEP_POLICY)
-> >             attr.sched_policy = SETPARAM_POLICY;
-> > 
-> >         sched_setattr()
-> >             // B) actually enforce the same policy
-> >             if (policy < 0)
-> >                 policy = oldpolicy = p->policy;
-> > 
-> >             // C) tune the clamp values
-> >             if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP)
-> >                 retval = __setscheduler_uclamp(p, attr);
-> > 
-> >             // D) tune attributes if policy is the same
-> >             if (unlikely(policy == p->policy))
-> >                 if (fair_policy(policy) && attr->sched_nice != task_nice(p))
-> >                     goto change;
-> >                 if (rt_policy(policy) && attr->sched_priority != p->rt_priority)
-> >                     goto change;
-> >                 if (dl_policy(policy) && dl_param_changed(p, attr))
-> >                     goto change;
-> 
-> 		  if (util_changed)
-> 		      goto change;
-> 
-> ?
-> 
-> >                 return 0;
-> >         change:
-> > 
-> >             // E) dequeue/enqueue task
-> > ---8<---
-> > 
-> > So, probably in D) I've missed a check on SCHED_FLAG_KEEP_POLICY to
-> > enforce a return in that case...
-> > 
-> > > Also, and this might be 'broken', SETPARAM_POLICY _does_ reset all the
-> > > other attributes, it only preserves policy, but it will (re)set nice
-> > > level for example (see that same function).
-> > 
-> > Mmm... right... my bad! :/
-> > 
-> > > So maybe we want to introduce another (few?) FLAG_KEEP flag(s) that
-> > > preserve the other bits; I'm thinking at least KEEP_PARAM and KEEP_UTIL
-> > > or something.
-> > 
-> > Yes, I would say we have two options:
-> > 
-> >  1) SCHED_FLAG_KEEP_POLICY enforces all the scheduling class specific
-> >     attributes, but cross class attributes (e.g. uclamp)
+On Tue, Jan 22, 2019 at 02:59:29PM +0100, Dmitry Vyukov wrote:
+> On Fri, Aug 10, 2018 at 6:18 PM Matthew Wilcox <willy@infradead.org> wrote:
 > >
-> >  2) add SCHED_KEEP_NICE, SCHED_KEEP_PRIO, and SCED_KEEP_PARAMS
-> >     and use them in the if conditions in D)
+> >
+> > This is another ashmem lockdep splat.  Forwarding to the appropriate ashmem
+> > people.
 > 
-> So the current KEEP_POLICY basically provides sched_setparam(), and
-
-But it's not exposed user-space.
-
-> given we have that as a syscall, that is supposedly a useful
-> functionality.
-
-For uclamp is definitively useful to change clamps without the need to
-read beforehand the current policy params and use them in a following
-set syscall... which is racy pattern.
-
-> Also, NICE/PRIO/DL* is all the same thing and depends on the policy,
-> KEEP_PARAM should cover the lot
-
-Right, that makes sense.
-
-> And I suppose the UTIL_CLAMP is !KEEP_UTIL; we could go either way
-> around with that flag.
-
-What about getting rid of the racy case above by exposing userspace
-only the new UTIL_CLAMP and, on:
-
-  sched_setscheduler(flags: UTIL_CLAMP)
-
-we enforce the other two flags from the syscall:
-
----8<---
-        SYSCALL_DEFINE3(sched_setattr)
-            if (attr.sched_flags & SCHED_FLAG_KEEP_POLICY) {
-                attr.sched_policy = SETPARAM_POLICY;
-                attr.sched_flags |= (KEEP_POLICY|KEEP_PARAMS);
-            }
----8<---
-
-This will not make possible to change class and set flags in one go,
-but honestly that's likely a very limited use-case, isn't it ?
-
-> > In both cases the goal should be to return from code block D).
 > 
-> I don't think so; we really do want to 'goto change' for util changes
-> too I think. Why duplicate part of that logic?
+> Let's test Tetsuo's patch
+> 
+> #syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+> master
 
-But that will force a dequeue/enqueue... isn't too much overhead just
-to change a clamp value? Perhaps we can also end up with some wired
-side-effects like the task being preempted ?
+Just to clarify, the following patch only went in, in September:
+mm: shmem.c: Correctly annotate new inodes for lockdep
 
-Consider also that the uclamp_task_update_active() added by this patch
-not only has lower overhead but it will be use also by cgroups where
-we want to force update all the tasks on a cgroup's clamp change.
+thanks,
 
--- 
-#include <best/regards.h>
+ - Joel
 
-Patrick Bellasi
+
+> > On Fri, Aug 10, 2018 at 04:59:02AM -0700, syzbot wrote:
+> > > Hello,
+> > >
+> > > syzbot found the following crash on:
+> > >
+> > > HEAD commit:    4110b42356f3 Add linux-next specific files for 20180810
+> > > git tree:       linux-next
+> > > console output: https://syzkaller.appspot.com/x/log.txt?x=1411d6e2400000
+> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=1d80606e3795a4f5
+> > > dashboard link: https://syzkaller.appspot.com/bug?extid=4b8b031b89e6b96c4b2e
+> > > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> > > syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=175052f8400000
+> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11873622400000
+> > >
+> > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > > Reported-by: syzbot+4b8b031b89e6b96c4b2e@syzkaller.appspotmail.com
+> > >
+> > > random: sshd: uninitialized urandom read (32 bytes read)
+> > > random: sshd: uninitialized urandom read (32 bytes read)
+> > > random: sshd: uninitialized urandom read (32 bytes read)
+> > >
+> > > ======================================================
+> > > WARNING: possible circular locking dependency detected
+> > > 4.18.0-rc8-next-20180810+ #36 Not tainted
+> > > ------------------------------------------------------
+> > > syz-executor900/4483 is trying to acquire lock:
+> > > 00000000d2bfc8fe (&sb->s_type->i_mutex_key#9){++++}, at: inode_lock
+> > > include/linux/fs.h:765 [inline]
+> > > 00000000d2bfc8fe (&sb->s_type->i_mutex_key#9){++++}, at:
+> > > shmem_fallocate+0x18b/0x12e0 mm/shmem.c:2602
+> > >
+> > > but task is already holding lock:
+> > > 0000000025208078 (ashmem_mutex){+.+.}, at: ashmem_shrink_scan+0xb4/0x630
+> > > drivers/staging/android/ashmem.c:448
+> > >
+> > > which lock already depends on the new lock.
+> > >
+> > >
+> > > the existing dependency chain (in reverse order) is:
+> > >
+> > > -> #2 (ashmem_mutex){+.+.}:
+> > >        __mutex_lock_common kernel/locking/mutex.c:925 [inline]
+> > >        __mutex_lock+0x171/0x1700 kernel/locking/mutex.c:1073
+> > >        mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1088
+> > >        ashmem_mmap+0x55/0x520 drivers/staging/android/ashmem.c:361
+> > >        call_mmap include/linux/fs.h:1844 [inline]
+> > >        mmap_region+0xf27/0x1c50 mm/mmap.c:1762
+> > >        do_mmap+0xa10/0x1220 mm/mmap.c:1535
+> > >        do_mmap_pgoff include/linux/mm.h:2298 [inline]
+> > >        vm_mmap_pgoff+0x213/0x2c0 mm/util.c:357
+> > >        ksys_mmap_pgoff+0x4da/0x660 mm/mmap.c:1585
+> > >        __do_sys_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
+> > >        __se_sys_mmap arch/x86/kernel/sys_x86_64.c:91 [inline]
+> > >        __x64_sys_mmap+0xe9/0x1b0 arch/x86/kernel/sys_x86_64.c:91
+> > >        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+> > >        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > >
+> > > -> #1 (&mm->mmap_sem){++++}:
+> > >        __might_fault+0x155/0x1e0 mm/memory.c:4568
+> > >        _copy_to_user+0x30/0x110 lib/usercopy.c:25
+> > >        copy_to_user include/linux/uaccess.h:155 [inline]
+> > >        filldir+0x1ea/0x3a0 fs/readdir.c:196
+> > >        dir_emit_dot include/linux/fs.h:3464 [inline]
+> > >        dir_emit_dots include/linux/fs.h:3475 [inline]
+> > >        dcache_readdir+0x13a/0x620 fs/libfs.c:193
+> > >        iterate_dir+0x48b/0x5d0 fs/readdir.c:51
+> > >        __do_sys_getdents fs/readdir.c:231 [inline]
+> > >        __se_sys_getdents fs/readdir.c:212 [inline]
+> > >        __x64_sys_getdents+0x29f/0x510 fs/readdir.c:212
+> > >        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+> > >        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > >
+> > > -> #0 (&sb->s_type->i_mutex_key#9){++++}:
+> > >        lock_acquire+0x1e4/0x540 kernel/locking/lockdep.c:3924
+> > >        down_write+0x8f/0x130 kernel/locking/rwsem.c:70
+> > >        inode_lock include/linux/fs.h:765 [inline]
+> > >        shmem_fallocate+0x18b/0x12e0 mm/shmem.c:2602
+> > >        ashmem_shrink_scan+0x236/0x630 drivers/staging/android/ashmem.c:455
+> > >        ashmem_ioctl+0x3ae/0x13a0 drivers/staging/android/ashmem.c:797
+> > >        vfs_ioctl fs/ioctl.c:46 [inline]
+> > >        file_ioctl fs/ioctl.c:501 [inline]
+> > >        do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
+> > >        ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
+> > >        __do_sys_ioctl fs/ioctl.c:709 [inline]
+> > >        __se_sys_ioctl fs/ioctl.c:707 [inline]
+> > >        __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
+> > >        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+> > >        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > >
+> > > other info that might help us debug this:
+> > >
+> > > Chain exists of:
+> > >   &sb->s_type->i_mutex_key#9 --> &mm->mmap_sem --> ashmem_mutex
+> > >
+> > >  Possible unsafe locking scenario:
+> > >
+> > >        CPU0                    CPU1
+> > >        ----                    ----
+> > >   lock(ashmem_mutex);
+> > >                                lock(&mm->mmap_sem);
+> > >                                lock(ashmem_mutex);
+> > >   lock(&sb->s_type->i_mutex_key#9);
+> > >
+> > >  *** DEADLOCK ***
+> > >
+> > > 1 lock held by syz-executor900/4483:
+> > >  #0: 0000000025208078 (ashmem_mutex){+.+.}, at:
+> > > ashmem_shrink_scan+0xb4/0x630 drivers/staging/android/ashmem.c:448
+> > >
+> > > stack backtrace:
+> > > CPU: 1 PID: 4483 Comm: syz-executor900 Not tainted 4.18.0-rc8-next-20180810+
+> > > #36
+> > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> > > Google 01/01/2011
+> > > Call Trace:
+> > >  __dump_stack lib/dump_stack.c:77 [inline]
+> > >  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+> > >  print_circular_bug.isra.37.cold.58+0x1bd/0x27d
+> > > kernel/locking/lockdep.c:1227
+> > >  check_prev_add kernel/locking/lockdep.c:1867 [inline]
+> > >  check_prevs_add kernel/locking/lockdep.c:1980 [inline]
+> > >  validate_chain kernel/locking/lockdep.c:2421 [inline]
+> > >  __lock_acquire+0x3449/0x5020 kernel/locking/lockdep.c:3435
+> > >  lock_acquire+0x1e4/0x540 kernel/locking/lockdep.c:3924
+> > >  down_write+0x8f/0x130 kernel/locking/rwsem.c:70
+> > >  inode_lock include/linux/fs.h:765 [inline]
+> > >  shmem_fallocate+0x18b/0x12e0 mm/shmem.c:2602
+> > >  ashmem_shrink_scan+0x236/0x630 drivers/staging/android/ashmem.c:455
+> > >  ashmem_ioctl+0x3ae/0x13a0 drivers/staging/android/ashmem.c:797
+> > >  vfs_ioctl fs/ioctl.c:46 [inline]
+> > >  file_ioctl fs/ioctl.c:501 [inline]
+> > >  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
+> > >  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
+> > >  __do_sys_ioctl fs/ioctl.c:709 [inline]
+> > >  __se_sys_ioctl fs/ioctl.c:707 [inline]
+> > >  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
+> > >  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+> > >  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > > RIP: 0033:0x440099
+> > > Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7
+> > > 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff
+> > > 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+> > > RSP: 002b:00007fff3613dbf8 EFLAGS: 00000217 ORIG_RAX: 0000000000000010
+> > > RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440099
+> > > RDX: 00000
+> > >
+> > >
+> > > ---
+> > > This bug is generated by a bot. It may contain errors.
+> > > See https://goo.gl/tpsmEJ for more information about syzbot.
+> > > syzbot engineers can be reached at syzkaller@googlegroups.com.
+> > >
+> > > syzbot will keep track of this bug report. See:
+> > > https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> > > syzbot.
+> > > syzbot can test patches for this bug, for details see:
+> > > https://goo.gl/tpsmEJ#testing-patches
+> > >
+> >
+> > --
+> > You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> > To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> > To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/20180810161848.GB16533%40bombadil.infradead.org.
+> > For more options, visit https://groups.google.com/d/optout.
+
+> diff --git a/drivers/staging/android/ashmem.c b/drivers/staging/android/ashmem.c
+> index 90a8a9f1ac7d..1a890c43a10a 100644
+> --- a/drivers/staging/android/ashmem.c
+> +++ b/drivers/staging/android/ashmem.c
+> @@ -75,6 +75,17 @@ struct ashmem_range {
+>  /* LRU list of unpinned pages, protected by ashmem_mutex */
+>  static LIST_HEAD(ashmem_lru_list);
+>  
+> +static struct workqueue_struct *ashmem_wq;
+> +static atomic_t ashmem_shrink_inflight = ATOMIC_INIT(0);
+> +static DECLARE_WAIT_QUEUE_HEAD(ashmem_shrink_wait);
+> +
+> +struct ashmem_shrink_work {
+> +	struct work_struct work;
+> +	struct file *file;
+> +	loff_t start;
+> +	loff_t end;
+> +};
+> +
+>  /*
+>   * long lru_count - The count of pages on our LRU list.
+>   *
+> @@ -292,6 +303,7 @@ static ssize_t ashmem_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+>  	int ret = 0;
+>  
+>  	mutex_lock(&ashmem_mutex);
+> +	wait_event(ashmem_shrink_wait, !atomic_read(&ashmem_shrink_inflight));
+>  
+>  	/* If size is not set, or set to 0, always return EOF. */
+>  	if (asma->size == 0)
+> @@ -359,6 +371,7 @@ static int ashmem_mmap(struct file *file, struct vm_area_struct *vma)
+>  	int ret = 0;
+>  
+>  	mutex_lock(&ashmem_mutex);
+> +	wait_event(ashmem_shrink_wait, !atomic_read(&ashmem_shrink_inflight));
+>  
+>  	/* user needs to SET_SIZE before mapping */
+>  	if (!asma->size) {
+> @@ -421,6 +434,19 @@ static int ashmem_mmap(struct file *file, struct vm_area_struct *vma)
+>  	return ret;
+>  }
+>  
+> +static void ashmem_shrink_worker(struct work_struct *work)
+> +{
+> +	struct ashmem_shrink_work *w = container_of(work, typeof(*w), work);
+> +
+> +	w->file->f_op->fallocate(w->file,
+> +				 FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
+> +				 w->start, w->end - w->start);
+> +	fput(w->file);
+> +	kfree(w);
+> +	if (atomic_dec_and_test(&ashmem_shrink_inflight))
+> +		wake_up_all(&ashmem_shrink_wait);
+> +}
+> +
+>  /*
+>   * ashmem_shrink - our cache shrinker, called from mm/vmscan.c
+>   *
+> @@ -449,12 +475,18 @@ ashmem_shrink_scan(struct shrinker *shrink, struct shrink_control *sc)
+>  		return -1;
+>  
+>  	list_for_each_entry_safe(range, next, &ashmem_lru_list, lru) {
+> -		loff_t start = range->pgstart * PAGE_SIZE;
+> -		loff_t end = (range->pgend + 1) * PAGE_SIZE;
+> +		struct ashmem_shrink_work *w = kzalloc(sizeof(*w), GFP_ATOMIC);
+> +
+> +		if (!w)
+> +			break;
+> +		INIT_WORK(&w->work, ashmem_shrink_worker);
+> +		w->file = range->asma->file;
+> +		get_file(w->file);
+> +		w->start = range->pgstart * PAGE_SIZE;
+> +		w->end = (range->pgend + 1) * PAGE_SIZE;
+> +		atomic_inc(&ashmem_shrink_inflight);
+> +		queue_work(ashmem_wq, &w->work);
+>  
+> -		range->asma->file->f_op->fallocate(range->asma->file,
+> -				FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
+> -				start, end - start);
+>  		range->purged = ASHMEM_WAS_PURGED;
+>  		lru_del(range);
+>  
+> @@ -713,6 +745,7 @@ static int ashmem_pin_unpin(struct ashmem_area *asma, unsigned long cmd,
+>  		return -EFAULT;
+>  
+>  	mutex_lock(&ashmem_mutex);
+> +	wait_event(ashmem_shrink_wait, !atomic_read(&ashmem_shrink_inflight));
+>  
+>  	if (!asma->file)
+>  		goto out_unlock;
+> @@ -883,8 +916,15 @@ static int __init ashmem_init(void)
+>  		goto out_free2;
+>  	}
+>  
+> +	ashmem_wq = alloc_workqueue("ashmem_wq", WQ_MEM_RECLAIM, 0);
+> +	if (!ashmem_wq) {
+> +		pr_err("failed to create workqueue\n");
+> +		goto out_demisc;
+> +	}
+> +
+>  	ret = register_shrinker(&ashmem_shrinker);
+>  	if (ret) {
+> +		destroy_workqueue(ashmem_wq);
+>  		pr_err("failed to register shrinker!\n");
+>  		goto out_demisc;
+>  	}
+
