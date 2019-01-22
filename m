@@ -2,187 +2,353 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0CC4C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:55:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B6B0C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:56:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5126218D0
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:55:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="YXkEDndV"
+	by mail.kernel.org (Postfix) with ESMTP id E759A218D0
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:56:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727956AbfAVJza (ORCPT
+        id S1727992AbfAVJ4U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 04:55:30 -0500
-Received: from esa4.microchip.iphmx.com ([68.232.154.123]:24662 "EHLO
-        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726872AbfAVJza (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 04:55:30 -0500
-X-IronPort-AV: E=Sophos;i="5.56,505,1539673200"; 
-   d="scan'208";a="25338478"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 22 Jan 2019 02:55:29 -0700
-Received: from NAM03-DM3-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.108) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Tue, 22 Jan 2019 02:55:29 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eqEnAOZ2ImtyV7baUyoXcEzoxCxy3RPum7DteOE5EkY=;
- b=YXkEDndVRrL2+xo0uxeTFDu/Ke4R9ek8PcFfzwQWnv6Rdn9kerQ6hlpd8CdbcR/Uq8NGjfS7dTvUXuZLlcC15fog/EZ1nS792Z7YbR0UQLuJ8Xhk+ZmV8IsOcXscdsjmi4el80MA19mr6s4N1Dnqy4LF4oTS8Mkj5E+HH+59Pks=
-Received: from BN6PR11MB1842.namprd11.prod.outlook.com (10.175.99.146) by
- BN6PR11MB1844.namprd11.prod.outlook.com (10.175.99.148) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1537.27; Tue, 22 Jan 2019 09:55:26 +0000
-Received: from BN6PR11MB1842.namprd11.prod.outlook.com
- ([fe80::79d8:b977:b90a:76fa]) by BN6PR11MB1842.namprd11.prod.outlook.com
- ([fe80::79d8:b977:b90a:76fa%4]) with mapi id 15.20.1537.031; Tue, 22 Jan 2019
- 09:55:26 +0000
-From:   <Tudor.Ambarus@microchip.com>
-To:     <vigneshr@ti.com>, <bbrezillon@kernel.org>
-CC:     <marek.vasut@gmail.com>, <robh+dt@kernel.org>,
-        <linux-mtd@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 2/2] mtd: spi-nor: cadence-quadspi: Add support for
- Octal SPI controller
-Thread-Topic: [PATCH v4 2/2] mtd: spi-nor: cadence-quadspi: Add support for
- Octal SPI controller
-Thread-Index: AQHUsh2R/uQutu3u40+Y5WM8izS7+KW7DO+A
-Date:   Tue, 22 Jan 2019 09:55:26 +0000
-Message-ID: <c2be17a4-4725-e68b-f6f7-1ce78fd80e14@microchip.com>
-References: <20190122064137.17114-1-vigneshr@ti.com>
- <20190122064137.17114-3-vigneshr@ti.com>
-In-Reply-To: <20190122064137.17114-3-vigneshr@ti.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1PR07CA0192.eurprd07.prod.outlook.com
- (2603:10a6:802:3f::16) To BN6PR11MB1842.namprd11.prod.outlook.com
- (2603:10b6:404:103::18)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Tudor.Ambarus@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [94.177.32.154]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN6PR11MB1844;6:LNK44m/3+Ny78+jlcrT2CgOKLpC9v5bTtAExf3n2Zay+REIHQD3UdmBjupLnz1kCbTNlKL4j5yfO3zbhH9WRC4dK4IWyUKaZ4XzQ/I3VEjDLEZXZtkUVQXUkY21DQS5J7GQWZGHsfeu6SZXWV5jkBOCROiCOTtkiDuMPR0SGYM1iAuoe7HBBYLgY/opahioIfwHR5iEgNJtWpHb6cdrzbYi0+8cRW8wqPS/m7SstKGVgwQ7UtqG4bnczTCr8JbJorF50aH8rUICEH4b0YBVgl9ZpQN/h5iHTzhS4tyDopdoOuey/26QKk8WfI6VvjqTXnUfaQYBU1TrRpn/XbJFSiNMZ7EX2Cg7X228TwmrIFyJ8fMAVfIEvlko3oAW1LH1gTOJT4UeKvQCHOdvKJEFRYvmf3ow7ZuIIWNQ44MDmvgq6vJRvMXy7BNGiYWfl5Yk2mRzfgrsT8orFUR5jIE96TA==;5:wMZU75JZr0xo6fUzckGkgY9NGCsBWufRAwwqPVv9OccnXDM338VGVzvciFv2UnIOeaqbCgVn4RpaHvvcSehssmHro0NGsgfVH2aEpRzxR4BiM77D4t8woiu9PwS2FTqWye/PIoQh+UCSuksQykZtdGfrKKwBY9ZviMZh809sYfYxvPTrlQ5UlRjX3Pb3cHXe7LCTopoe5KXgE95dWDkYyA==;7:Dw100dTCMIpknta7AKefQS4yIORl6HQNs3Elsy2eAgpwVIHXotzne4dN7Dqevx9T8X1q+9rPBKvQkvw+z204Tt7u/Y4uECkSPDH4fHF1l1tYVbeN6i4OgyQwnwne82EFUgv0cg65+k4+fY8QOKppWA==
-x-ms-office365-filtering-correlation-id: 99cc6cfc-8608-45c1-0287-08d6804fbbde
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:BN6PR11MB1844;
-x-ms-traffictypediagnostic: BN6PR11MB1844:
-x-microsoft-antispam-prvs: <BN6PR11MB18442847A661F4151E5C5C17F0980@BN6PR11MB1844.namprd11.prod.outlook.com>
-x-forefront-prvs: 0925081676
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(396003)(39860400002)(136003)(376002)(366004)(189003)(199004)(39060400002)(31686004)(106356001)(6246003)(25786009)(6512007)(4326008)(72206003)(53936002)(478600001)(6486002)(105586002)(6436002)(14454004)(68736007)(36756003)(229853002)(97736004)(53546011)(66066001)(6506007)(86362001)(102836004)(31696002)(7736002)(2906002)(3846002)(446003)(386003)(186003)(76176011)(305945005)(71190400001)(316002)(110136005)(8676002)(99286004)(8936002)(54906003)(71200400001)(256004)(26005)(52116002)(14444005)(81156014)(81166006)(11346002)(6116002)(476003)(2616005)(486006);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR11MB1844;H:BN6PR11MB1842.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 4oOLaNaGMhRbRCv/kl+wA9/CqDV6dopesnRUf1wMTPgv+yDQs4caksMmC+f+JxrtJGpi+v7Sgy0MinQC8gEENhLcOpUKKZwQ2yZ1bn0T7UuOlUWssn3ELHhLj2j8YIPoS71nhGReh0KCAc1Vw5cWuDNyAIcu1JaP3d0OlvKS+HfqPhbjBY+Wg7GgjlKLTe+LBtBDzjmhOTnZ50wE6/xyc3uJTNQKT6Tj5OmGcTJ2oSPWA9JriIB4P266wka+KEn4ig25eCCtNUT8iLJmwZur59HFMIP8FqPAPFk3zzV4gi2CSKVn6Z5hf/mZO657/snS1Z4P3eYYQKRt1jd9eIKrwf/Z2FCwkSaZWi2UO/RhmDsvxNAOXsE4EG001MBoNQHwgS7wtQvDLFhOrWl0t7BxO5j/fIGkpZ9I5DYjqxS7PVM=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <CB74544DBD439C4585655E1B01B82001@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Tue, 22 Jan 2019 04:56:20 -0500
+Received: from mx2.suse.de ([195.135.220.15]:37036 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726872AbfAVJ4T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 04:56:19 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 744FDAE5C;
+        Tue, 22 Jan 2019 09:56:17 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 9A1AB1E1584; Tue, 22 Jan 2019 10:56:16 +0100 (CET)
+Date:   Tue, 22 Jan 2019 10:56:16 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Davidlohr Bueso <dave@stgolabs.net>
+Cc:     akpm@linux-foundation.org, dledford@redhat.com, jgg@mellanox.com,
+        jack@suse.de, ira.weiny@intel.com, linux-rdma@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Davidlohr Bueso <dbueso@suse.de>
+Subject: Re: [PATCH 1/6] mm: make mm->pinned_vm an atomic64 counter
+Message-ID: <20190122095616.GA13149@quack2.suse.cz>
+References: <20190121174220.10583-1-dave@stgolabs.net>
+ <20190121174220.10583-2-dave@stgolabs.net>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 99cc6cfc-8608-45c1-0287-08d6804fbbde
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jan 2019 09:55:24.2318
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR11MB1844
-X-OriginatorOrg: microchip.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190121174220.10583-2-dave@stgolabs.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDAxLzIyLzIwMTkgMDg6NDEgQU0sIFZpZ25lc2ggUiB3cm90ZToNCj4gQ2FkZW5jZSBP
-U1BJIGNvbnRyb2xsZXIgSVAgc3VwcG9ydHMgT2N0YWwgSU8gKHg4IElPIGxpbmVzKSwNCj4gSXQg
-YWxzbyBoYXMgYW4gaW50ZWdyYXRlZCBQSFkuIElQIHJlZ2lzdGVyIGxheW91dCBpcyB2ZXJ5DQo+
-IHNpbWlsYXIgdG8gZXhpc3RpbmcgUVNQSSBJUCBleGNlcHQgZm9yIGFkZGl0aW9uYWwgYml0cyB0
-byBzdXBwb3J0IE9jdGFsDQo+IGFuZCBPY3RhbCBERFIgbW9kZS4gVGhlcmVmb3JlLCBleHRlbmQg
-Y3VycmVudCBkcml2ZXIgdG8gc3VwcG9ydCBPY3RhbA0KPiBtb2RlLiBPbmx5IE9jdGFsIFNEUiBy
-ZWFkICgxLTEtOCltb2RlIGlzIHN1cHBvcnRlZCBmb3Igbm93Lg0KPiANCj4gVGVzdGVkIHdpdGgg
-bXQzNXh1NTEyYWJhIE9jdGFsIGZsYXNoIG9uIFRJJ3MgQU02NTQgRVZNLg0KPiANCj4gU2lnbmVk
-LW9mZi1ieTogVmlnbmVzaCBSIDx2aWduZXNockB0aS5jb20+DQo+IC0tLQ0KPiANCj4gdjQ6IEZp
-eCBjb21tZW50cyBieSBUdWRvciBvbiB2Mw0KPiB2MzogTm8gY2hhbmdlcw0KPiB2MjogRGVjbGFy
-ZSBPY3RhbCBtb2RlIGNhcGFiaWxpdHkgYmFzZWQgb24gY29tcGF0aWJsZS4NCj4gDQo+ICBkcml2
-ZXJzL210ZC9zcGktbm9yL2NhZGVuY2UtcXVhZHNwaS5jIHwgNTMgKysrKysrKysrKysrKysrKysr
-KysrLS0tLS0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgNDEgaW5zZXJ0aW9ucygrKSwgMTIgZGVsZXRp
-b25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tdGQvc3BpLW5vci9jYWRlbmNlLXF1
-YWRzcGkuYyBiL2RyaXZlcnMvbXRkL3NwaS1ub3IvY2FkZW5jZS1xdWFkc3BpLmMNCj4gaW5kZXgg
-MDRjZWRkM2EyYmY2Li4yMDkxYWRkYzQ1YTMgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbXRkL3Nw
-aS1ub3IvY2FkZW5jZS1xdWFkc3BpLmMNCj4gKysrIGIvZHJpdmVycy9tdGQvc3BpLW5vci9jYWRl
-bmNlLXF1YWRzcGkuYw0KPiBAQCAtNDQsNiArNDQsMTIgQEANCj4gIC8qIFF1aXJrcyAqLw0KPiAg
-I2RlZmluZSBDUVNQSV9ORUVEU19XUl9ERUxBWQkJQklUKDApDQo+ICANCj4gKy8qIENhcGFiaWxp
-dGllcyBtYXNrICovDQo+ICsjZGVmaW5lIGNxc3BpX2Jhc2VfaHdjYXBzX21hc2sJCQkJCVwNCj4g
-KwkoU05PUl9IV0NBUFNfUkVBRCB8IFNOT1JfSFdDQVBTX1JFQURfRkFTVCB8CQlcDQo+ICsJU05P
-Ul9IV0NBUFNfUkVBRF8xXzFfMiB8IFNOT1JfSFdDQVBTX1JFQURfMV8xXzQgfAlcDQo+ICsJU05P
-Ul9IV0NBUFNfUFApDQo+ICsNCj4gIHN0cnVjdCBjcXNwaV9zdDsNCj4gIA0KPiAgc3RydWN0IGNx
-c3BpX2ZsYXNoX3BkYXRhIHsNCj4gQEAgLTkzLDYgKzk5LDExIEBAIHN0cnVjdCBjcXNwaV9zdCB7
-DQo+ICAJc3RydWN0IGNxc3BpX2ZsYXNoX3BkYXRhIGZfcGRhdGFbQ1FTUElfTUFYX0NISVBTRUxF
-Q1RdOw0KPiAgfTsNCj4gIA0KPiArc3RydWN0IGNxc3BpX2RyaXZlcl9wbGF0ZGF0YSB7DQo+ICsJ
-dTMyIGh3Y2Fwc19tYXNrOw0KPiArCXU4IHF1aXJrczsNCj4gK307DQo+ICsNCj4gIC8qIE9wZXJh
-dGlvbiB0aW1lb3V0IHZhbHVlICovDQo+ICAjZGVmaW5lIENRU1BJX1RJTUVPVVRfTVMJCQk1MDAN
-Cj4gICNkZWZpbmUgQ1FTUElfUkVBRF9USU1FT1VUX01TCQkJMTANCj4gQEAgLTEwMSw2ICsxMTIs
-NyBAQCBzdHJ1Y3QgY3FzcGlfc3Qgew0KPiAgI2RlZmluZSBDUVNQSV9JTlNUX1RZUEVfU0lOR0xF
-CQkJMA0KPiAgI2RlZmluZSBDUVNQSV9JTlNUX1RZUEVfRFVBTAkJCTENCj4gICNkZWZpbmUgQ1FT
-UElfSU5TVF9UWVBFX1FVQUQJCQkyDQo+ICsjZGVmaW5lIENRU1BJX0lOU1RfVFlQRV9PQ1RBTAkJ
-CTMNCj4gIA0KPiAgI2RlZmluZSBDUVNQSV9EVU1NWV9DTEtTX1BFUl9CWVRFCQk4DQo+ICAjZGVm
-aW5lIENRU1BJX0RVTU1ZX0JZVEVTX01BWAkJCTQNCj4gQEAgLTkxMSw2ICs5MjMsOSBAQCBzdGF0
-aWMgaW50IGNxc3BpX3NldF9wcm90b2NvbChzdHJ1Y3Qgc3BpX25vciAqbm9yLCBjb25zdCBpbnQg
-cmVhZCkNCj4gIAkJY2FzZSBTTk9SX1BST1RPXzFfMV80Og0KPiAgCQkJZl9wZGF0YS0+ZGF0YV93
-aWR0aCA9IENRU1BJX0lOU1RfVFlQRV9RVUFEOw0KPiAgCQkJYnJlYWs7DQo+ICsJCWNhc2UgU05P
-Ul9QUk9UT18xXzFfODoNCj4gKwkJCWZfcGRhdGEtPmRhdGFfd2lkdGggPSBDUVNQSV9JTlNUX1RZ
-UEVfT0NUQUw7DQo+ICsJCQlicmVhazsNCj4gIAkJZGVmYXVsdDoNCj4gIAkJCXJldHVybiAtRUlO
-VkFMOw0KPiAgCQl9DQo+IEBAIC0xMjEzLDIxICsxMjI4LDIyIEBAIHN0YXRpYyB2b2lkIGNxc3Bp
-X3JlcXVlc3RfbW1hcF9kbWEoc3RydWN0IGNxc3BpX3N0ICpjcXNwaSkNCj4gIA0KPiAgc3RhdGlj
-IGludCBjcXNwaV9zZXR1cF9mbGFzaChzdHJ1Y3QgY3FzcGlfc3QgKmNxc3BpLCBzdHJ1Y3QgZGV2
-aWNlX25vZGUgKm5wKQ0KPiAgew0KPiAtCWNvbnN0IHN0cnVjdCBzcGlfbm9yX2h3Y2FwcyBod2Nh
-cHMgPSB7DQo+IC0JCS5tYXNrID0gU05PUl9IV0NBUFNfUkVBRCB8DQo+IC0JCQlTTk9SX0hXQ0FQ
-U19SRUFEX0ZBU1QgfA0KPiAtCQkJU05PUl9IV0NBUFNfUkVBRF8xXzFfMiB8DQo+IC0JCQlTTk9S
-X0hXQ0FQU19SRUFEXzFfMV80IHwNCj4gLQkJCVNOT1JfSFdDQVBTX1BQLA0KPiAtCX07DQo+ICAJ
-c3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldiA9IGNxc3BpLT5wZGV2Ow0KPiAgCXN0cnVjdCBk
-ZXZpY2UgKmRldiA9ICZwZGV2LT5kZXY7DQo+ICsJY29uc3Qgc3RydWN0IGNxc3BpX2RyaXZlcl9w
-bGF0ZGF0YSAqZGRhdGE7DQo+ICsJc3RydWN0IHNwaV9ub3JfaHdjYXBzIGh3Y2FwczsNCj4gIAlz
-dHJ1Y3QgY3FzcGlfZmxhc2hfcGRhdGEgKmZfcGRhdGE7DQo+ICAJc3RydWN0IHNwaV9ub3IgKm5v
-cjsNCj4gIAlzdHJ1Y3QgbXRkX2luZm8gKm10ZDsNCj4gIAl1bnNpZ25lZCBpbnQgY3M7DQo+ICAJ
-aW50IGksIHJldDsNCj4gIA0KPiArCWRkYXRhID0gb2ZfZGV2aWNlX2dldF9tYXRjaF9kYXRhKGRl
-dik7DQo+ICsJaWYgKCFkZGF0YSkNCj4gKwkJaHdjYXBzLm1hc2sgPSBjcXNwaV9iYXNlX2h3Y2Fw
-c19tYXNrOw0KDQpOaWNlIQ0KDQpSZXZpZXdlZC1ieTogVHVkb3IgQW1iYXJ1cyA8dHVkb3IuYW1i
-YXJ1c0BtaWNyb2NoaXAuY29tPg0KDQo+ICsJZWxzZQ0KPiArCQlod2NhcHMubWFzayA9IGRkYXRh
-LT5od2NhcHNfbWFzazsNCj4gKw0KPiAgCS8qIEdldCBmbGFzaCBkZXZpY2UgZGF0YSAqLw0KPiAg
-CWZvcl9lYWNoX2F2YWlsYWJsZV9jaGlsZF9vZl9ub2RlKGRldi0+b2Zfbm9kZSwgbnApIHsNCj4g
-IAkJcmV0ID0gb2ZfcHJvcGVydHlfcmVhZF91MzIobnAsICJyZWciLCAmY3MpOw0KPiBAQCAtMTMx
-MCw3ICsxMzI2LDcgQEAgc3RhdGljIGludCBjcXNwaV9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2
-aWNlICpwZGV2KQ0KPiAgCXN0cnVjdCBjcXNwaV9zdCAqY3FzcGk7DQo+ICAJc3RydWN0IHJlc291
-cmNlICpyZXM7DQo+ICAJc3RydWN0IHJlc291cmNlICpyZXNfYWhiOw0KPiAtCXVuc2lnbmVkIGxv
-bmcgZGF0YTsNCj4gKwljb25zdCBzdHJ1Y3QgY3FzcGlfZHJpdmVyX3BsYXRkYXRhICpkZGF0YTsN
-Cj4gIAlpbnQgcmV0Ow0KPiAgCWludCBpcnE7DQo+ICANCj4gQEAgLTEzNzcsOCArMTM5Myw4IEBA
-IHN0YXRpYyBpbnQgY3FzcGlfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikNCj4g
-IAl9DQo+ICANCj4gIAljcXNwaS0+bWFzdGVyX3JlZl9jbGtfaHogPSBjbGtfZ2V0X3JhdGUoY3Fz
-cGktPmNsayk7DQo+IC0JZGF0YSAgPSAodW5zaWduZWQgbG9uZylvZl9kZXZpY2VfZ2V0X21hdGNo
-X2RhdGEoZGV2KTsNCj4gLQlpZiAoZGF0YSAmIENRU1BJX05FRURTX1dSX0RFTEFZKQ0KPiArCWRk
-YXRhICA9IG9mX2RldmljZV9nZXRfbWF0Y2hfZGF0YShkZXYpOw0KPiArCWlmIChkZGF0YSAmJiAo
-ZGRhdGEtPnF1aXJrcyAmIENRU1BJX05FRURTX1dSX0RFTEFZKSkNCj4gIAkJY3FzcGktPndyX2Rl
-bGF5ID0gNSAqIERJVl9ST1VORF9VUChOU0VDX1BFUl9TRUMsDQo+ICAJCQkJCQkgICBjcXNwaS0+
-bWFzdGVyX3JlZl9jbGtfaHopOw0KPiAgDQo+IEBAIC0xNDYwLDE0ICsxNDc2LDI3IEBAIHN0YXRp
-YyBjb25zdCBzdHJ1Y3QgZGV2X3BtX29wcyBjcXNwaV9fZGV2X3BtX29wcyA9IHsNCj4gICNkZWZp
-bmUgQ1FTUElfREVWX1BNX09QUwlOVUxMDQo+ICAjZW5kaWYNCj4gIA0KPiArc3RhdGljIGNvbnN0
-IHN0cnVjdCBjcXNwaV9kcml2ZXJfcGxhdGRhdGEgazJnX3FzcGkgPSB7DQo+ICsJLmh3Y2Fwc19t
-YXNrID0gY3FzcGlfYmFzZV9od2NhcHNfbWFzaywNCj4gKwkucXVpcmtzID0gQ1FTUElfTkVFRFNf
-V1JfREVMQVksDQo+ICt9Ow0KPiArDQo+ICtzdGF0aWMgY29uc3Qgc3RydWN0IGNxc3BpX2RyaXZl
-cl9wbGF0ZGF0YSBhbTY1NF9vc3BpID0gew0KPiArCS5od2NhcHNfbWFzayA9IGNxc3BpX2Jhc2Vf
-aHdjYXBzX21hc2sgfCBTTk9SX0hXQ0FQU19SRUFEXzFfMV84LA0KPiArCS5xdWlya3MgPSBDUVNQ
-SV9ORUVEU19XUl9ERUxBWSwNCj4gK307DQo+ICsNCj4gIHN0YXRpYyBjb25zdCBzdHJ1Y3Qgb2Zf
-ZGV2aWNlX2lkIGNxc3BpX2R0X2lkc1tdID0gew0KPiAgCXsNCj4gIAkJLmNvbXBhdGlibGUgPSAi
-Y2Rucyxxc3BpLW5vciIsDQo+IC0JCS5kYXRhID0gKHZvaWQgKikwLA0KPiAgCX0sDQo+ICAJew0K
-PiAgCQkuY29tcGF0aWJsZSA9ICJ0aSxrMmctcXNwaSIsDQo+IC0JCS5kYXRhID0gKHZvaWQgKilD
-UVNQSV9ORUVEU19XUl9ERUxBWSwNCj4gKwkJLmRhdGEgPSAmazJnX3FzcGksDQo+ICsJfSwNCj4g
-Kwl7DQo+ICsJCS5jb21wYXRpYmxlID0gInRpLGFtNjU0LW9zcGkiLA0KPiArCQkuZGF0YSA9ICZh
-bTY1NF9vc3BpLA0KPiAgCX0sDQo+ICAJeyAvKiBlbmQgb2YgdGFibGUgKi8gfQ0KPiAgfTsNCj4g
-DQo=
+On Mon 21-01-19 09:42:15, Davidlohr Bueso wrote:
+> Taking a sleeping lock to _only_ increment a variable is quite the
+> overkill, and pretty much all users do this. Furthermore, some drivers
+> (ie: infiniband and scif) that need pinned semantics can go to quite
+> some trouble to actually delay via workqueue (un)accounting for pinned
+> pages when not possible to acquire it.
+> 
+> By making the counter atomic we no longer need to hold the mmap_sem
+> and can simply some code around it for pinned_vm users. The counter
+> is 64-bit such that we need not worry about overflows such as rdma
+> user input controlled from userspace.
+> 
+> Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+
+The patch looks good to me. You can add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+and I really like the cleanups allowed by this in the drivers :)
+
+								Honza
+
+> ---
+>  drivers/infiniband/core/umem.c             | 12 ++++++------
+>  drivers/infiniband/hw/hfi1/user_pages.c    |  6 +++---
+>  drivers/infiniband/hw/qib/qib_user_pages.c |  4 ++--
+>  drivers/infiniband/hw/usnic/usnic_uiom.c   |  8 ++++----
+>  drivers/misc/mic/scif/scif_rma.c           |  6 +++---
+>  fs/proc/task_mmu.c                         |  2 +-
+>  include/linux/mm_types.h                   |  2 +-
+>  kernel/events/core.c                       |  8 ++++----
+>  kernel/fork.c                              |  2 +-
+>  mm/debug.c                                 |  3 ++-
+>  10 files changed, 27 insertions(+), 26 deletions(-)
+> 
+> diff --git a/drivers/infiniband/core/umem.c b/drivers/infiniband/core/umem.c
+> index 1efe0a74e06b..678abe1afcba 100644
+> --- a/drivers/infiniband/core/umem.c
+> +++ b/drivers/infiniband/core/umem.c
+> @@ -166,13 +166,13 @@ struct ib_umem *ib_umem_get(struct ib_udata *udata, unsigned long addr,
+>  	lock_limit = rlimit(RLIMIT_MEMLOCK) >> PAGE_SHIFT;
+>  
+>  	down_write(&mm->mmap_sem);
+> -	if (check_add_overflow(mm->pinned_vm, npages, &new_pinned) ||
+> -	    (new_pinned > lock_limit && !capable(CAP_IPC_LOCK))) {
+> +	new_pinned = atomic64_read(&mm->pinned_vm) + npages;
+> +	if (new_pinned > lock_limit && !capable(CAP_IPC_LOCK)) {
+>  		up_write(&mm->mmap_sem);
+>  		ret = -ENOMEM;
+>  		goto out;
+>  	}
+> -	mm->pinned_vm = new_pinned;
+> +	atomic64_set(&mm->pinned_vm, new_pinned);
+>  	up_write(&mm->mmap_sem);
+>  
+>  	cur_base = addr & PAGE_MASK;
+> @@ -234,7 +234,7 @@ struct ib_umem *ib_umem_get(struct ib_udata *udata, unsigned long addr,
+>  	__ib_umem_release(context->device, umem, 0);
+>  vma:
+>  	down_write(&mm->mmap_sem);
+> -	mm->pinned_vm -= ib_umem_num_pages(umem);
+> +	atomic64_sub(ib_umem_num_pages(umem), &mm->pinned_vm);
+>  	up_write(&mm->mmap_sem);
+>  out:
+>  	if (vma_list)
+> @@ -263,7 +263,7 @@ static void ib_umem_release_defer(struct work_struct *work)
+>  	struct ib_umem *umem = container_of(work, struct ib_umem, work);
+>  
+>  	down_write(&umem->owning_mm->mmap_sem);
+> -	umem->owning_mm->pinned_vm -= ib_umem_num_pages(umem);
+> +	atomic64_sub(ib_umem_num_pages(umem), &umem->owning_mm->pinned_vm);
+>  	up_write(&umem->owning_mm->mmap_sem);
+>  
+>  	__ib_umem_release_tail(umem);
+> @@ -302,7 +302,7 @@ void ib_umem_release(struct ib_umem *umem)
+>  	} else {
+>  		down_write(&umem->owning_mm->mmap_sem);
+>  	}
+> -	umem->owning_mm->pinned_vm -= ib_umem_num_pages(umem);
+> +	atomic64_sub(ib_umem_num_pages(umem), &umem->owning_mm->pinned_vm);
+>  	up_write(&umem->owning_mm->mmap_sem);
+>  
+>  	__ib_umem_release_tail(umem);
+> diff --git a/drivers/infiniband/hw/hfi1/user_pages.c b/drivers/infiniband/hw/hfi1/user_pages.c
+> index e341e6dcc388..40a6e434190f 100644
+> --- a/drivers/infiniband/hw/hfi1/user_pages.c
+> +++ b/drivers/infiniband/hw/hfi1/user_pages.c
+> @@ -92,7 +92,7 @@ bool hfi1_can_pin_pages(struct hfi1_devdata *dd, struct mm_struct *mm,
+>  	size = DIV_ROUND_UP(size, PAGE_SIZE);
+>  
+>  	down_read(&mm->mmap_sem);
+> -	pinned = mm->pinned_vm;
+> +	pinned = atomic64_read(&mm->pinned_vm);
+>  	up_read(&mm->mmap_sem);
+>  
+>  	/* First, check the absolute limit against all pinned pages. */
+> @@ -112,7 +112,7 @@ int hfi1_acquire_user_pages(struct mm_struct *mm, unsigned long vaddr, size_t np
+>  		return ret;
+>  
+>  	down_write(&mm->mmap_sem);
+> -	mm->pinned_vm += ret;
+> +	atomic64_add(ret, &mm->pinned_vm);
+>  	up_write(&mm->mmap_sem);
+>  
+>  	return ret;
+> @@ -131,7 +131,7 @@ void hfi1_release_user_pages(struct mm_struct *mm, struct page **p,
+>  
+>  	if (mm) { /* during close after signal, mm can be NULL */
+>  		down_write(&mm->mmap_sem);
+> -		mm->pinned_vm -= npages;
+> +		atomic64_sub(npages, &mm->pinned_vm);
+>  		up_write(&mm->mmap_sem);
+>  	}
+>  }
+> diff --git a/drivers/infiniband/hw/qib/qib_user_pages.c b/drivers/infiniband/hw/qib/qib_user_pages.c
+> index 16543d5e80c3..602387bf98e7 100644
+> --- a/drivers/infiniband/hw/qib/qib_user_pages.c
+> +++ b/drivers/infiniband/hw/qib/qib_user_pages.c
+> @@ -75,7 +75,7 @@ static int __qib_get_user_pages(unsigned long start_page, size_t num_pages,
+>  			goto bail_release;
+>  	}
+>  
+> -	current->mm->pinned_vm += num_pages;
+> +	atomic64_add(num_pages, &current->mm->pinned_vm);
+>  
+>  	ret = 0;
+>  	goto bail;
+> @@ -156,7 +156,7 @@ void qib_release_user_pages(struct page **p, size_t num_pages)
+>  	__qib_release_user_pages(p, num_pages, 1);
+>  
+>  	if (current->mm) {
+> -		current->mm->pinned_vm -= num_pages;
+> +		atomic64_sub(num_pages, &current->mm->pinned_vm);
+>  		up_write(&current->mm->mmap_sem);
+>  	}
+>  }
+> diff --git a/drivers/infiniband/hw/usnic/usnic_uiom.c b/drivers/infiniband/hw/usnic/usnic_uiom.c
+> index ce01a59fccc4..854436a2b437 100644
+> --- a/drivers/infiniband/hw/usnic/usnic_uiom.c
+> +++ b/drivers/infiniband/hw/usnic/usnic_uiom.c
+> @@ -129,7 +129,7 @@ static int usnic_uiom_get_pages(unsigned long addr, size_t size, int writable,
+>  	uiomr->owning_mm = mm = current->mm;
+>  	down_write(&mm->mmap_sem);
+>  
+> -	locked = npages + current->mm->pinned_vm;
+> +	locked = npages + atomic64_read(&current->mm->pinned_vm);
+>  	lock_limit = rlimit(RLIMIT_MEMLOCK) >> PAGE_SHIFT;
+>  
+>  	if ((locked > lock_limit) && !capable(CAP_IPC_LOCK)) {
+> @@ -187,7 +187,7 @@ static int usnic_uiom_get_pages(unsigned long addr, size_t size, int writable,
+>  	if (ret < 0)
+>  		usnic_uiom_put_pages(chunk_list, 0);
+>  	else {
+> -		mm->pinned_vm = locked;
+> +		atomic64_set(&mm->pinned_vm, locked);
+>  		mmgrab(uiomr->owning_mm);
+>  	}
+>  
+> @@ -441,7 +441,7 @@ static void usnic_uiom_release_defer(struct work_struct *work)
+>  		container_of(work, struct usnic_uiom_reg, work);
+>  
+>  	down_write(&uiomr->owning_mm->mmap_sem);
+> -	uiomr->owning_mm->pinned_vm -= usnic_uiom_num_pages(uiomr);
+> +	atomic64_sub(usnic_uiom_num_pages(uiomr), &uiomr->owning_mm->pinned_vm);
+>  	up_write(&uiomr->owning_mm->mmap_sem);
+>  
+>  	__usnic_uiom_release_tail(uiomr);
+> @@ -469,7 +469,7 @@ void usnic_uiom_reg_release(struct usnic_uiom_reg *uiomr,
+>  	} else {
+>  		down_write(&uiomr->owning_mm->mmap_sem);
+>  	}
+> -	uiomr->owning_mm->pinned_vm -= usnic_uiom_num_pages(uiomr);
+> +	atomic64_sub(usnic_uiom_num_pages(uiomr), &uiomr->owning_mm->pinned_vm);
+>  	up_write(&uiomr->owning_mm->mmap_sem);
+>  
+>  	__usnic_uiom_release_tail(uiomr);
+> diff --git a/drivers/misc/mic/scif/scif_rma.c b/drivers/misc/mic/scif/scif_rma.c
+> index 749321eb91ae..2448368f181e 100644
+> --- a/drivers/misc/mic/scif/scif_rma.c
+> +++ b/drivers/misc/mic/scif/scif_rma.c
+> @@ -285,7 +285,7 @@ __scif_dec_pinned_vm_lock(struct mm_struct *mm,
+>  	} else {
+>  		down_write(&mm->mmap_sem);
+>  	}
+> -	mm->pinned_vm -= nr_pages;
+> +	atomic64_sub(nr_pages, &mm->pinned_vm);
+>  	up_write(&mm->mmap_sem);
+>  	return 0;
+>  }
+> @@ -299,7 +299,7 @@ static inline int __scif_check_inc_pinned_vm(struct mm_struct *mm,
+>  		return 0;
+>  
+>  	locked = nr_pages;
+> -	locked += mm->pinned_vm;
+> +	locked += atomic64_read(&mm->pinned_vm);
+>  	lock_limit = rlimit(RLIMIT_MEMLOCK) >> PAGE_SHIFT;
+>  	if ((locked > lock_limit) && !capable(CAP_IPC_LOCK)) {
+>  		dev_err(scif_info.mdev.this_device,
+> @@ -307,7 +307,7 @@ static inline int __scif_check_inc_pinned_vm(struct mm_struct *mm,
+>  			locked, lock_limit);
+>  		return -ENOMEM;
+>  	}
+> -	mm->pinned_vm = locked;
+> +	atomic64_set(&mm->pinned_vm, locked);
+>  	return 0;
+>  }
+>  
+> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> index 6976e17dba68..640ae8a47c73 100644
+> --- a/fs/proc/task_mmu.c
+> +++ b/fs/proc/task_mmu.c
+> @@ -59,7 +59,7 @@ void task_mem(struct seq_file *m, struct mm_struct *mm)
+>  	SEQ_PUT_DEC("VmPeak:\t", hiwater_vm);
+>  	SEQ_PUT_DEC(" kB\nVmSize:\t", total_vm);
+>  	SEQ_PUT_DEC(" kB\nVmLck:\t", mm->locked_vm);
+> -	SEQ_PUT_DEC(" kB\nVmPin:\t", mm->pinned_vm);
+> +	SEQ_PUT_DEC(" kB\nVmPin:\t", atomic64_read(&mm->pinned_vm));
+>  	SEQ_PUT_DEC(" kB\nVmHWM:\t", hiwater_rss);
+>  	SEQ_PUT_DEC(" kB\nVmRSS:\t", total_rss);
+>  	SEQ_PUT_DEC(" kB\nRssAnon:\t", anon);
+> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> index 6312b02d65ed..0c8be6f9c92d 100644
+> --- a/include/linux/mm_types.h
+> +++ b/include/linux/mm_types.h
+> @@ -404,7 +404,7 @@ struct mm_struct {
+>  
+>  		unsigned long total_vm;	   /* Total pages mapped */
+>  		unsigned long locked_vm;   /* Pages that have PG_mlocked set */
+> -		unsigned long pinned_vm;   /* Refcount permanently increased */
+> +		atomic64_t    pinned_vm;   /* Refcount permanently increased */
+>  		unsigned long data_vm;	   /* VM_WRITE & ~VM_SHARED & ~VM_STACK */
+>  		unsigned long exec_vm;	   /* VM_EXEC & ~VM_WRITE & ~VM_STACK */
+>  		unsigned long stack_vm;	   /* VM_STACK */
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index 3cd13a30f732..8df0b77a4687 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -5459,7 +5459,7 @@ static void perf_mmap_close(struct vm_area_struct *vma)
+>  
+>  		/* now it's safe to free the pages */
+>  		atomic_long_sub(rb->aux_nr_pages, &mmap_user->locked_vm);
+> -		vma->vm_mm->pinned_vm -= rb->aux_mmap_locked;
+> +		atomic64_sub(rb->aux_mmap_locked, &vma->vm_mm->pinned_vm);
+>  
+>  		/* this has to be the last one */
+>  		rb_free_aux(rb);
+> @@ -5532,7 +5532,7 @@ static void perf_mmap_close(struct vm_area_struct *vma)
+>  	 */
+>  
+>  	atomic_long_sub((size >> PAGE_SHIFT) + 1, &mmap_user->locked_vm);
+> -	vma->vm_mm->pinned_vm -= mmap_locked;
+> +	atomic64_sub(mmap_locked, &vma->vm_mm->pinned_vm);
+>  	free_uid(mmap_user);
+>  
+>  out_put:
+> @@ -5680,7 +5680,7 @@ static int perf_mmap(struct file *file, struct vm_area_struct *vma)
+>  
+>  	lock_limit = rlimit(RLIMIT_MEMLOCK);
+>  	lock_limit >>= PAGE_SHIFT;
+> -	locked = vma->vm_mm->pinned_vm + extra;
+> +	locked = atomic64_read(&vma->vm_mm->pinned_vm) + extra;
+>  
+>  	if ((locked > lock_limit) && perf_paranoid_tracepoint_raw() &&
+>  		!capable(CAP_IPC_LOCK)) {
+> @@ -5721,7 +5721,7 @@ static int perf_mmap(struct file *file, struct vm_area_struct *vma)
+>  unlock:
+>  	if (!ret) {
+>  		atomic_long_add(user_extra, &user->locked_vm);
+> -		vma->vm_mm->pinned_vm += extra;
+> +		atomic64_add(extra, &vma->vm_mm->pinned_vm);
+>  
+>  		atomic_inc(&event->mmap_count);
+>  	} else if (rb) {
+> diff --git a/kernel/fork.c b/kernel/fork.c
+> index c48e9e244a89..a68de9032ced 100644
+> --- a/kernel/fork.c
+> +++ b/kernel/fork.c
+> @@ -981,7 +981,7 @@ static struct mm_struct *mm_init(struct mm_struct *mm, struct task_struct *p,
+>  	mm_pgtables_bytes_init(mm);
+>  	mm->map_count = 0;
+>  	mm->locked_vm = 0;
+> -	mm->pinned_vm = 0;
+> +	atomic64_set(&mm->pinned_vm, 0);
+>  	memset(&mm->rss_stat, 0, sizeof(mm->rss_stat));
+>  	spin_lock_init(&mm->page_table_lock);
+>  	spin_lock_init(&mm->arg_lock);
+> diff --git a/mm/debug.c b/mm/debug.c
+> index 0abb987dad9b..bcf70e365a77 100644
+> --- a/mm/debug.c
+> +++ b/mm/debug.c
+> @@ -166,7 +166,8 @@ void dump_mm(const struct mm_struct *mm)
+>  		mm_pgtables_bytes(mm),
+>  		mm->map_count,
+>  		mm->hiwater_rss, mm->hiwater_vm, mm->total_vm, mm->locked_vm,
+> -		mm->pinned_vm, mm->data_vm, mm->exec_vm, mm->stack_vm,
+> +		atomic64_read(&mm->pinned_vm),
+> +		mm->data_vm, mm->exec_vm, mm->stack_vm,
+>  		mm->start_code, mm->end_code, mm->start_data, mm->end_data,
+>  		mm->start_brk, mm->brk, mm->start_stack,
+>  		mm->arg_start, mm->arg_end, mm->env_start, mm->env_end,
+> -- 
+> 2.16.4
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
