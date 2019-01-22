@@ -2,137 +2,123 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ACCDC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:41:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FEB9C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:46:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EE3E21726
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:41:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF58421726
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:46:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Z2KTpPOK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727390AbfAVXlX (ORCPT
+        id S1726919AbfAVXqa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 18:41:23 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:60036 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726309AbfAVXkK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 18:40:10 -0500
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 0113586668EED81D1B7B;
-        Wed, 23 Jan 2019 07:40:08 +0800 (CST)
-Received: from SZA150611058.china.huawei.com (10.45.143.16) by
- DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
- 14.3.408.0; Wed, 23 Jan 2019 07:39:59 +0800
-From:   Huazhong Tan <tanhuazhong@huawei.com>
-To:     <davem@davemloft.net>, <eric.dumazet@gmail.com>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <huangdaode@hisilicon.com>, <yisen.zhuang@huawei.com>,
-        <salil.mehta@huawei.com>, <linuxarm@huawei.com>,
-        Yunsheng Lin <linyunsheng@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        Huazhong Tan <tanhuazhong@huawei.com>
-Subject: [PATCH V2 net-next 05/12] net: hns3: fix for shaper not setting when TC num changes
-Date:   Wed, 23 Jan 2019 07:39:31 +0800
-Message-ID: <20190122233938.7188-6-tanhuazhong@huawei.com>
-X-Mailer: git-send-email 2.20.1.windows.1
-In-Reply-To: <20190122233938.7188-1-tanhuazhong@huawei.com>
-References: <20190122233938.7188-1-tanhuazhong@huawei.com>
+        Tue, 22 Jan 2019 18:46:30 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:35029 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726802AbfAVXq2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 18:46:28 -0500
+Received: by mail-vs1-f65.google.com with SMTP id e7so234263vsc.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 15:46:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=i8WHf7hkWnN/nMSBQaVLy22YEIon42+kV29du3uzw2U=;
+        b=Z2KTpPOKxWwss3Pdzik/34A5WOV7IyCY4tdtyqUXTvdaykr0SuAgaXjMbn9BQTAppX
+         JFdJ3GTGBrE9Vrw2iL1FS1Y3g7wwYz+RHHDD98QCC4y/1J5RCuaEj6gCS/f0T3c9+lXt
+         awFydh9bDQjeABPf7vC1nC7S0F6f2KfcN5tSA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=i8WHf7hkWnN/nMSBQaVLy22YEIon42+kV29du3uzw2U=;
+        b=EJEHerXk7Lke7gbIZ5DVyoomYpglXy5Jfdy2sDNV55nnQ1wJbx56hMvVMz6gCgP+Sf
+         NCo+99mrGzjijhyKySc1WAfA6WznjoeEDoLS/JjQiJgxHNeEjHJdbTeIs0hriNnQLVWE
+         76P//34uQazxfAGOcumNmrOb7uqzi9EWQGCR8UrxF/AJNH33phzKKKCJ4MjYg/tbE+2K
+         t0VwOk+nafNvRnkMN5Ffpw4XRODewAtciTIwmZ06g2H8q6ZrldJf3YNcW5KkCBnMmLDS
+         NOSwIXpUZc5Gb9Ub7wkPq3nXPUN83DEY65SFIVoIPWvtabtiRvLGLndZa9AmRzNJCbgK
+         ywYQ==
+X-Gm-Message-State: AJcUukf/BKshKcnLZBL0WtfX+57rVXdGkAfD5+uZqFR85qlLDOA641om
+        QBaVqoGjze9OTOCU6SwmK2bB6AUufjA=
+X-Google-Smtp-Source: ALg8bN69V5Adpw0lPglAT/FaYjpTDhsdNX3cFf0mob+DaR91Ulcr2MX5YKg9V0AZiAaKB7/25g9pTw==
+X-Received: by 2002:a67:e89a:: with SMTP id x26mr14729544vsn.80.1548200787128;
+        Tue, 22 Jan 2019 15:46:27 -0800 (PST)
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com. [209.85.221.176])
+        by smtp.gmail.com with ESMTPSA id w65sm34101970vsc.16.2019.01.22.15.46.25
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 22 Jan 2019 15:46:25 -0800 (PST)
+Received: by mail-vk1-f176.google.com with SMTP id y14so90744vkd.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 15:46:25 -0800 (PST)
+X-Received: by 2002:a1f:ab17:: with SMTP id u23mr14190434vke.73.1548200784941;
+ Tue, 22 Jan 2019 15:46:24 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.45.143.16]
-X-CFilter-Loop: Reflected
+References: <20190122055112.30943-1-bjorn.andersson@linaro.org> <20190122055112.30943-4-bjorn.andersson@linaro.org>
+In-Reply-To: <20190122055112.30943-4-bjorn.andersson@linaro.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Tue, 22 Jan 2019 15:46:13 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=WXind-uk7V_XTDgM83LZbmtKb2Ln6pQjmUkaZMz8SFsA@mail.gmail.com>
+Message-ID: <CAD=FV=WXind-uk7V_XTDgM83LZbmtKb2Ln6pQjmUkaZMz8SFsA@mail.gmail.com>
+Subject: Re: [PATCH v3 03/10] arm64: dts: sdm845: Introduce ADSP and CDSP PAS nodes
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yunsheng Lin <linyunsheng@huawei.com>
+Hi,
 
-Shaper setting does not change currently, when TC num changes,
-which may cause shaper parameter not setting problem.
+On Mon, Jan 21, 2019 at 9:52 PM Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+>
+> Add the ADSP and CDSP nodes for PAS-based remoteproc, supporting booting
+> these cores on e.g. the MTP, and enable the same for the MTP.
+>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>
+> Changes since v2:
+> - New patch
+>
+>  arch/arm64/boot/dts/qcom/sdm845-mtp.dts |  8 ++++
+>  arch/arm64/boot/dts/qcom/sdm845.dtsi    | 58 +++++++++++++++++++++++++
+>  2 files changed, 66 insertions(+)
 
-This patch fixes it by setting the shaper parameter when TC num
-changes.
+It's a bit of a nit of mine that if it's not totally obvious what
+acronyms mean that they should be spelled out in places that use them.
 
-Fixes: cacde272dd00 ("net: hns3: Add hclge_dcb module for the support of DCB feature")
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
----
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c | 6 +-----
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c  | 6 +++---
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h  | 3 +--
- 3 files changed, 5 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
-index 4ec0b9cd15ae..5f7ac63707b8 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
-@@ -162,11 +162,7 @@ static int hclge_map_update(struct hnae3_handle *h)
- 	struct hclge_dev *hdev = vport->back;
- 	int ret;
- 
--	ret = hclge_tm_map_cfg(hdev);
--	if (ret)
--		return ret;
--
--	ret = hclge_tm_schd_mode_hw(hdev);
-+	ret = hclge_tm_schd_setup_hw(hdev);
- 	if (ret)
- 		return ret;
- 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-index fb8596a3e5e4..d057c9f03175 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-@@ -1005,7 +1005,7 @@ static int hclge_tm_pri_dwrr_cfg(struct hclge_dev *hdev)
- 	return 0;
- }
- 
--int hclge_tm_map_cfg(struct hclge_dev *hdev)
-+static int hclge_tm_map_cfg(struct hclge_dev *hdev)
- {
- 	int ret;
- 
-@@ -1120,7 +1120,7 @@ static int hclge_tm_lvl34_schd_mode_cfg(struct hclge_dev *hdev)
- 	return 0;
- }
- 
--int hclge_tm_schd_mode_hw(struct hclge_dev *hdev)
-+static int hclge_tm_schd_mode_hw(struct hclge_dev *hdev)
- {
- 	int ret;
- 
-@@ -1131,7 +1131,7 @@ int hclge_tm_schd_mode_hw(struct hclge_dev *hdev)
- 	return hclge_tm_lvl34_schd_mode_cfg(hdev);
- }
- 
--static int hclge_tm_schd_setup_hw(struct hclge_dev *hdev)
-+int hclge_tm_schd_setup_hw(struct hclge_dev *hdev)
- {
- 	int ret;
- 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
-index 898163c4d400..ef3f93b70c22 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
-@@ -144,11 +144,10 @@ struct hclge_port_shapping_cmd {
- int hclge_tm_schd_init(struct hclge_dev *hdev);
- int hclge_tm_vport_map_update(struct hclge_dev *hdev);
- int hclge_pause_setup_hw(struct hclge_dev *hdev);
--int hclge_tm_schd_mode_hw(struct hclge_dev *hdev);
-+int hclge_tm_schd_setup_hw(struct hclge_dev *hdev);
- void hclge_tm_prio_tc_info_update(struct hclge_dev *hdev, u8 *prio_tc);
- void hclge_tm_schd_info_update(struct hclge_dev *hdev, u8 num_tc);
- int hclge_tm_dwrr_cfg(struct hclge_dev *hdev);
--int hclge_tm_map_cfg(struct hclge_dev *hdev);
- int hclge_tm_init_hw(struct hclge_dev *hdev);
- int hclge_mac_pause_en_cfg(struct hclge_dev *hdev, bool tx, bool rx);
- int hclge_pause_addr_cfg(struct hclge_dev *hdev, const u8 *mac_addr);
--- 
-2.20.1
+In this case I believe ADSP is the Audio DSP.  Is CDSP the Camera DSP?  ...or ?
 
 
+> +       adsp_pas: remoteproc-adsp {
+> +               compatible = "qcom,sdm845-adsp-pas";
+> +
+> +               interrupts-extended = <&intc GIC_SPI 162 IRQ_TYPE_EDGE_RISING>,
+> +                                     <&adsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
+> +                                     <&adsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
+> +                                     <&adsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
+> +                                     <&adsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
+> +               interrupt-names = "wdog", "fatal", "ready",
+> +                                 "handover", "stop-ack";
+> +
+> +               clocks = <&xo_board>;
+> +               clock-names = "xo";
+
+I've found that nearly all the places that refer to xo_board are wrong
+and should actually point to '<&rpmhcc RPMH_CXO_CLK>'.  Maybe yours
+should too?
+
+-Doug
