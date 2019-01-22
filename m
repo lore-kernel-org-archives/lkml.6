@@ -2,95 +2,183 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97D4EC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:00:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B78DAC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:01:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6630521721
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:00:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548169254;
-	bh=HJZhPDbYJqMS4nNQEXqjZxg5xuXEMO4YuuHVnKrEN34=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=d9VxjZ0LwfED+5RExoWDUwM3vkASq7931QS/d443BnO54PgXuZrGRSnNVHPGvrH/x
-	 Nwb+WIe8lZA2ctI7eEw+YfzmRdnlrTwNstmx/xyoFXiRjXBGLvEqYIP+w/C2HTixfg
-	 vQ6Cp3Xdzt6+VfIFEJC3GW65exVcBIZ6NkIK0Jzw=
+	by mail.kernel.org (Postfix) with ESMTP id 88E6A20879
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:01:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728995AbfAVPAw (ORCPT
+        id S1729030AbfAVPBo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 10:00:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40812 "EHLO mail.kernel.org"
+        Tue, 22 Jan 2019 10:01:44 -0500
+Received: from foss.arm.com ([217.140.101.70]:55318 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728836AbfAVPAw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 10:00:52 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B04CB20879;
-        Tue, 22 Jan 2019 15:00:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548169251;
-        bh=HJZhPDbYJqMS4nNQEXqjZxg5xuXEMO4YuuHVnKrEN34=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=e2KnJ3lUC2XZRAlej4KHBaC/einrcStzo7CMYurCtAeovVfHhtI9vh8XDw/TxQNRh
-         MdDgMVk7TWbmwfP3iZ9HUv6TPfrYt2n1Ss90m0IAeIv2w84XH/P78tKWzsthPOw+QP
-         v7ZRd3A9Oo7Ft7eStSUxwiZKBrFmAEUNjF7XGVlo=
-Date:   Tue, 22 Jan 2019 16:00:49 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Georgi Djakov <georgi.djakov@linaro.org>
-Cc:     andy.gross@linaro.org, olof@lixom.net, arnd@arndb.de,
-        rjw@rjwysocki.net, robh+dt@kernel.org, mturquette@baylibre.com,
-        khilman@baylibre.com, vincent.guittot@linaro.org,
-        skannan@codeaurora.org, bjorn.andersson@linaro.org,
-        amit.kucheria@linaro.org, seansw@qti.qualcomm.com,
-        daidavid1@codeaurora.org, evgreen@chromium.org,
-        dianders@chromium.org, abailon@baylibre.com,
-        maxime.ripard@bootlin.com, thierry.reding@gmail.com,
-        ksitaraman@nvidia.com, sanjayc@nvidia.com,
-        henryc.chen@mediatek.com, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v13 0/8] Introduce on-chip interconnect API
-Message-ID: <20190122150048.GA11466@kroah.com>
-References: <20190116161103.6937-1-georgi.djakov@linaro.org>
- <20190122124204.GA26969@kroah.com>
- <2ac9b994-ecbf-05fd-5c01-7ecd0089c744@linaro.org>
+        id S1728963AbfAVPBn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 10:01:43 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0F9ECA78;
+        Tue, 22 Jan 2019 07:01:43 -0800 (PST)
+Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1BB263F589;
+        Tue, 22 Jan 2019 07:01:39 -0800 (PST)
+Date:   Tue, 22 Jan 2019 15:01:37 +0000
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v6 11/16] sched/fair: Add uclamp support to
+ energy_compute()
+Message-ID: <20190122150137.fp4g4kdng2qpy6qx@e110439-lin>
+References: <20190115101513.2822-1-patrick.bellasi@arm.com>
+ <20190115101513.2822-12-patrick.bellasi@arm.com>
+ <20190122121321.r6mv23ao57uut3t7@queper01-lin>
+ <20190122124546.njrpmykzbjpztd6u@e110439-lin>
+ <20190122132944.sfxlnpc3xeft4rqd@queper01-lin>
+ <20190122142606.gc5hnc5pzefblegw@e110439-lin>
+ <20190122143909.pmlqyhcjshyomrbw@queper01-lin>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2ac9b994-ecbf-05fd-5c01-7ecd0089c744@linaro.org>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <20190122143909.pmlqyhcjshyomrbw@queper01-lin>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 04:45:20PM +0200, Georgi Djakov wrote:
-> On 1/22/19 14:42, Greg KH wrote:
-> > On Wed, Jan 16, 2019 at 06:10:55PM +0200, Georgi Djakov wrote:
-> [..]
-> > 
-> > All now queued up, thanks.
-> > 
-> > greg k-h
-> 
-> Hi Greg,
-> 
-> Thanks for considering these patches! Actually i have a branch named
-> icc-next [1] which is pulled into linux-next. I will drop these same
-> patches to avoid conflicts.
-> 
-> If all is well, i was wondering how to proceed with follow-up patches.
-> Some consumers of this API are already floating on the lists. How about
-> sending you a pull request before the merge window with the collected
-> patches?
+On 22-Jan 14:39, Quentin Perret wrote:
+> On Tuesday 22 Jan 2019 at 14:26:06 (+0000), Patrick Bellasi wrote:
+> > On 22-Jan 13:29, Quentin Perret wrote:
+> > > On Tuesday 22 Jan 2019 at 12:45:46 (+0000), Patrick Bellasi wrote:
+> > > > On 22-Jan 12:13, Quentin Perret wrote:
+> > > > > On Tuesday 15 Jan 2019 at 10:15:08 (+0000), Patrick Bellasi wrote:
+> > > > > > The Energy Aware Scheduler (AES) estimates the energy impact of waking
 
-Sure, that works, or you can just send them as patches, either works for
-me.
+[...]
 
-greg k-h
+> > > Ah, sorry, I guess my message was misleading. I'm saying this is
+> > > changing the way _EAS_ deals with RT tasks. Right now we don't actually
+> > > consider the RT-go-to-max thing at all in the EAS prediction. Your
+> > > patch is changing that AFAICT. It actually changes the way EAS sees RT
+> > > tasks even without uclamp ...
+> > 
+> > Lemme see if I get it right.
+> > 
+> > Currently, whenever we look at CPU utilization for ENERGY_UTIL, we
+> > always use cpu_util_rt() for RT tasks:
+> > 
+> > ---8<---
+> >         util = util_cfs;
+> >         util += cpu_util_rt(rq);
+> >         util += dl_util;
+> > ---8<---
+> > 
+> > Thus, even when RT tasks are RUNNABLE, we don't always assume the CPU
+> > running at the max capacity but just whatever is the aggregated
+> > utilization across all the classes.
+> > 
+> > With uclamp, we have:
+> > 
+> > ---8<---
+> >         util = cpu_util_rt(rq) + util_cfs;
+> >         if (type == FREQUENCY_UTIL)
+> >             util = uclamp_util_with(rq, util, p);
+> >         dl_util = cpu_util_dl(rq);
+> >         if (type == ENERGY_UTIL)
+> >             util += dl_util;
+> > ---8<---
+> > 
+> > So, I would say that, in terms of ENERGY_UTIL we do the same both
+> > w/ and w/o uclamp. Isn't it?
+> 
+> Yes but now you use FREQUENCY_UTIL for computing 'max_util' in the EAS
+> prediction.
+
+Right, I overlook that "little" detail... :/
+
+> Let's take an example. You have a perf domain with two CPUs. One CPU is
+> busy running a RT task, the other CPU runs a CFS task. Right now in
+> compute_energy() we only use ENERGY_UTIL, so 'max_util' ends up being
+> the max between the utilization of the two tasks. So we don't predict
+> we're going to max freq.
+
++1
+
+> With your patch, we use FREQUENCY_UTIL to compute 'max_util', so we
+> _will_ predict that we're going to max freq.
+
+Right, with the default conf yes.
+
+> And we will do that even if CONFIG_UCLAMP_TASK=n.
+
+While this should not happen, as I wrote in the RT integration patch,
+that's happening because I'm missing some compilation guard or
+similar. In this configurations we should always go to max... will
+look into that.
+
+> The default EAS calculation will be different with your patch when there
+> are runnable RT tasks in the system. This needs to be documented, I
+> think.
+
+Sure...
+
+> > > But I'm not hostile to the idea since it's possible to enable uclamp and
+> > > set the min cap to 0 for RT if you want. So there is a story there.
+> > > However, I think this needs be documented somewhere, at the very least.
+> > 
+> > The only difference I see is that the actual frequency could be
+> > different (lower then max) when a clamped RT task is RUNNABLE.
+> > 
+> > Are you worried that running RT on a lower freq could have side
+> > effects on the estimated busy time the CPU ?
+> > 
+> > I also still don't completely get why you say it could be useful to
+> >    "set the min cap to 0 for RT if you want"
+> 
+> I'm not saying it's useful, I'm saying userspace can decide to do that
+> if it thinks it is a good idea. The default should be min_cap = 1024 for
+> RT, no questions. But you _can_ change it at runtime if you want to.
+> That's my point. And doing that basically provides the same behaviour as
+> what we have right now in terms of EAS calculation (but it changes the
+> freq selection obviously) which is why I'm not fundamentally opposed to
+> your patch.
+
+Well, I think it's tricky to say whether the current or new approach
+is better... it probably depends on the use-case.
+
+> So in short, I'm fine with the behavioural change, but please at least
+> mention it somewhere :-)
+
+Anyway... agree, it's just that to add some documentation I need to
+get what you are pointing out ;)
+
+Will come up with some additional text to be added to the changelog
+
+Maybe we can add a more detailed explanation of the different
+behaviors you can get in the EAS documentation which is coming to
+mainline ?
+
+> Thanks,
+> Quentin
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
