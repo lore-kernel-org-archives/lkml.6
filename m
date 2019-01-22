@@ -2,177 +2,265 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 360F9C282C0
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 02:38:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3218FC282C0
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 02:41:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E962920870
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 02:38:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E098520870
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 02:41:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="JyJF46C0"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NTKD5+lg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726891AbfAVCih (ORCPT
+        id S1726887AbfAVClm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 21:38:37 -0500
-Received: from mail-eopbgr50058.outbound.protection.outlook.com ([40.107.5.58]:18336
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725950AbfAVCih (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 21:38:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=D3jz6o/NvneTgkiJf+F7LrbtU7FLesNn1rP47m1X8qY=;
- b=JyJF46C06KWa+6fKMxkYjo5/21a96FrLJeKsm73RkWcd4RWQoL1SzqE81JEW1NQ2K0r8YLgn+YF3Vq1J86pJ64W8jAm/aVNMdAfJ43VmZLdlOkQJQltHCfLRrhAYG7hmbSFpQg2Sf4YTCGKPgv0OlfTpzbYVK/+M/O9uWcWk1CM=
-Received: from AM5PR0402MB2865.eurprd04.prod.outlook.com (10.175.41.148) by
- AM5PR0402MB2786.eurprd04.prod.outlook.com (10.175.41.16) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1537.26; Tue, 22 Jan 2019 02:38:32 +0000
-Received: from AM5PR0402MB2865.eurprd04.prod.outlook.com
- ([fe80::1c0c:51da:f585:5626]) by AM5PR0402MB2865.eurprd04.prod.outlook.com
- ([fe80::1c0c:51da:f585:5626%2]) with mapi id 15.20.1537.031; Tue, 22 Jan 2019
- 02:38:32 +0000
-From:   Ran Wang <ran.wang_1@nxp.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 1/2] usb: dwc3: Add avoiding vbus glitch happen during
- xhci reset
-Thread-Topic: [PATCH 1/2] usb: dwc3: Add avoiding vbus glitch happen during
- xhci reset
-Thread-Index: AQHUrWdviEVntsRQzEWnqfJhKWO2IKW6ga0AgAASwBA=
-Date:   Tue, 22 Jan 2019 02:38:31 +0000
-Message-ID: <AM5PR0402MB286524243DB67DA15AE4EA42F1980@AM5PR0402MB2865.eurprd04.prod.outlook.com>
-References: <20190116064820.20007-1-ran.wang_1@nxp.com>
- <20190116064820.20007-2-ran.wang_1@nxp.com> <20190122010310.GA5165@bogus>
-In-Reply-To: <20190122010310.GA5165@bogus>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=ran.wang_1@nxp.com; 
-x-originating-ip: [119.31.174.73]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM5PR0402MB2786;6:frst9He2LRP2TMqMggPF7kac9GLEbrc5G8gnyolw0ih0+GD1o5kX3jc38lZzopX8/r5jZo0wwN50pPM5lvBB5yFDXAt/YFSmCoJCL/tCnXGHXuP/lSo+I6U9E7bw/llMviMCHLMU7BR+Z9quI08G5tMieX5HnYwHz/WjAI4U2kMwvOZF8gUzHfP7sGrnzmER9OmjlFYSrSJWb0WlJmvTKuHGiJoZscpq5VnZhbkib61v8nkdk3ULqJv0pEJ+d2DJUDertxaD+BwRK599nIj/TjZIkigOv+QrVmcuQrBl3sDCUElEdYMxa1LYEPxKNBEOcaj4uL6HSJVISuRe6z5z8Ms9B3o//XBHLMy3Y2aD3WVmy28skZFwj5QYACwCdakaIFUCy0byqDCLphVWuMyGck1vHPM3G3gKA5R5EHYh2JRTc66lzDIDPTPYenUWOLrxTEaqi9J7QJHONmzprUcSzA==;5:UbqpHz/NWqqbRnTZ4DcYMX4LZMDBdsO3RTukTyK2B5cXWZTiLhefpUInAcdVMXNDCRPR4iupZfoSpTVYJXfY1TkSIgTJChw+Y2UFcxYNGXaxmEVNrU/t6eofcYHrCdTMEy/5UKEsChsT7KF7+6BgQzploJ4hln7iE+D7H+hvzN93n8szSjG6et0uTQCs2kxudzPXN38eK5RSq3T5Mxrlfg==;7:nDN8DDNJnVzylS707+PNg30NEcvMlIiksvRam7HFxlf/nLxhD1wrN6yfq7+qCPA8tbox/5wSj4MrmQzHxr2nTv+vX5CyNO80IGXEXod57QxmUa5tP9bi+XfPAPFsdQQaw/YVYfaYzEgdsGqqVppYjw==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 81aad6d1-4144-4bd8-9c47-08d68012b302
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM5PR0402MB2786;
-x-ms-traffictypediagnostic: AM5PR0402MB2786:
-x-microsoft-antispam-prvs: <AM5PR0402MB2786D9EA88029E4423DC5795F1980@AM5PR0402MB2786.eurprd04.prod.outlook.com>
-x-forefront-prvs: 0925081676
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(39860400002)(366004)(376002)(346002)(396003)(136003)(85664002)(189003)(199004)(476003)(305945005)(186003)(6306002)(2906002)(7736002)(68736007)(3846002)(6116002)(9686003)(6916009)(53936002)(55016002)(6246003)(486006)(8936002)(106356001)(105586002)(229853002)(102836004)(86362001)(26005)(6506007)(81166006)(81156014)(8676002)(11346002)(478600001)(66066001)(4326008)(446003)(14454004)(71200400001)(71190400001)(76176011)(7696005)(33656002)(25786009)(74316002)(256004)(316002)(6436002)(97736004)(54906003)(99286004)(966005)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM5PR0402MB2786;H:AM5PR0402MB2865.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: g+FepUXpTkqUGExFfieDeeMcCq2S+d+gbPRR+044prlP1mitv8Z9hW4TT1eA8MLpxI7LNcPCdEFdnkJDdJpKGWPenMwDXKVInY+x2ULt6DTr9c3MNt96c6TDYBXMqXZ0jgPBEXtByzrllCpYRq1rg5YXkbMX1UmSVwA3URfJYWfeNbNOzmvpWPgZaELksWt4+yOPb6QcmJpLGVh0rdjHQ0OcpocMUBExBbLegom958bsyk/viS6/MNCFpZaB0fKWAjjaAJ7L28fQaR3Y+VRZFvE3sOm2BnxRDKpiyRpsJfXJNAkDcfgjr3DcjMo7M1fLpLShiCGcFUPstgBrFwSm/uzImcf3fOrqhsk5zb9fRoMQlBSyuxZJbZHkbdKd1G3Jw0J4lF5jzxCJGd7gTaVXzYZvTt6arruEjwEbQDog+W8=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 21 Jan 2019 21:41:42 -0500
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:37971 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726682AbfAVCll (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 21:41:41 -0500
+Received: by mail-yw1-f68.google.com with SMTP id d190so8832597ywb.5
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 18:41:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8Y2bLoS2D6sf3QVEXazrUJ6vwinbbs+17ubyrvA6rnE=;
+        b=NTKD5+lgaalZjZ1dJtbwKn4koSaKIBspB9yYoyDZQ5WKohIjQCFi9LwZoB8RVOCboo
+         rlTkpDtyWpdihV0T5aQZHqVkKL+L1UvI8xvLaGrxF7a3+004bAkzlg8tGeDf5vXpePa5
+         LQhBTwnykoTc3NoxJh9dIhUpeysYgCZmV9gcBmWEN+ceceb9rimrqIGxqEO8C+7l1/mK
+         ntg6+gSQOo3zwAlVOCVxXpfle2B6lD/8xDdhzi270mzdIKhBKUVNSv5sQBBVfT0w2i6X
+         OzlGOtuA5yeIGwiMJw+IdwJS4SUv6CW4IY1GXAhYAYhS32w0/m6tIQuAueggrwGQJyxb
+         wFIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8Y2bLoS2D6sf3QVEXazrUJ6vwinbbs+17ubyrvA6rnE=;
+        b=O0UvOxWSKnXQcTpWd2mVpLuqxQyHSSNsSMHjKmltqdfesKmkhawTS/aGyKa77dCUIY
+         cOGHI4Rrke/fK1GOG6QBGx3oPOWmmp0YxB5IC5YmJwMZXXirFHCydDxK4jPTRhTsWF8F
+         yJ382btI1Xb+iVJyfBqEsVb20TEcMRYv61XELwKIzLVzSz3AO729yOiq2/fz2ZNmCMep
+         L82M3Fy43WPWnWnebdi/o9b901M8dLxSEiDyKrJevxpXnRol18E80ZvDouGdsT1P7Rew
+         uteXaHS6ih8Zk/KrrdvZTXoq//0CxAeGAtSNC89MZBCfezhASDHQPPxZh3ju9X5205J/
+         ecIg==
+X-Gm-Message-State: AJcUukf9d/ZD0RQ2EuLKxEuCx/JwlUY1ufG4HKJyO4wOTg2s6HEzhbpL
+        0R3Qx/9hZVPWgRGtEZrfpRY7H2upTnpQOuz/wPA2gg==
+X-Google-Smtp-Source: ALg8bN7YLFBGOo8Ep29MSSpxZnp9reR7ulfRf6zYkkztFv3AoVxRpMCCLqSJzq7ZjVc09H4Vep/MRUhWEew9i2Hd7Dk=
+X-Received: by 2002:a81:60c4:: with SMTP id u187mr30368278ywb.345.1548124899854;
+ Mon, 21 Jan 2019 18:41:39 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 81aad6d1-4144-4bd8-9c47-08d68012b302
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jan 2019 02:38:31.9762
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0402MB2786
+References: <20190121215850.221745-1-shakeelb@google.com> <20190121215850.221745-2-shakeelb@google.com>
+In-Reply-To: <20190121215850.221745-2-shakeelb@google.com>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Mon, 21 Jan 2019 18:41:28 -0800
+Message-ID: <CALvZod5mvwj9yGOxaaOCnSTkg9rxVbdztewFgdyw_do4BwsHPQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] mm, oom: remove 'prefer children over parent' heuristic
+To:     Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Roman Gushchin <guro@fb.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux MM <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+On Mon, Jan 21, 2019 at 1:59 PM Shakeel Butt <shakeelb@google.com> wrote:
+>
+> From the start of the git history of Linux, the kernel after selecting
+> the worst process to be oom-killed, prefer to kill its child (if the
+> child does not share mm with the parent). Later it was changed to prefer
+> to kill a child who is worst. If the parent is still the worst then the
+> parent will be killed.
+>
+> This heuristic assumes that the children did less work than their parent
+> and by killing one of them, the work lost will be less. However this is
+> very workload dependent. If there is a workload which can benefit from
+> this heuristic, can use oom_score_adj to prefer children to be killed
+> before the parent.
+>
+> The select_bad_process() has already selected the worst process in the
+> system/memcg. There is no need to recheck the badness of its children
+> and hoping to find a worse candidate. That's a lot of unneeded racy
+> work. Also the heuristic is dangerous because it make fork bomb like
+> workloads to recover much later because we constantly pick and kill
+> processes which are not memory hogs. So, let's remove this whole
+> heuristic.
+>
+> Signed-off-by: Shakeel Butt <shakeelb@google.com>
+> Acked-by: Michal Hocko <mhocko@suse.com>
 
-On January 22, 2019 09:03, Rob Herring wrote:
->=20
-> On Wed, Jan 16, 2019 at 06:48:06AM +0000, Ran Wang wrote:
-> > When DWC3 is set to host mode by programming register DWC3_GCTL,
-> VUBS
->=20
-> s/VUBS/VBUS/
+Michal, though I have kept your Acked-by but I have made a couple of
+changes in the code. Please let me know if you are ok with the
+changes.
 
-Yes, will fix it in next version.
-=20
-> > (or its control signal) will on immediately on related Root Hub ports.
->=20
-> /will on/will turn on/
-
-Got it. Thanks.
-
-> > Then the VUBS will be de-asserted for a little while during xhci reset
-> > (conducted by xhci driver) for a little while and back to normal.
-> >
-> > This VBUS glitch might cause some USB devices emuration fail if kernel
-> > boot with them connected. One SW workaround which can fix this is to
-> > program all PORTSC[PP] to 0 to turn off VBUS immediately after setting
-> > host mode in DWC3 driver(per signal measurement result, it will be too
-> > late to do it in xhci-plat.c or xhci.c).
-> >
-> > Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
-> > ---
-> >  Documentation/devicetree/bindings/usb/dwc3.txt |    3 +++
-> >  1 files changed, 3 insertions(+), 0 deletions(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/usb/dwc3.txt
-> > b/Documentation/devicetree/bindings/usb/dwc3.txt
-> > index 8e5265e..dadb530 100644
-> > --- a/Documentation/devicetree/bindings/usb/dwc3.txt
-> > +++ b/Documentation/devicetree/bindings/usb/dwc3.txt
-> > @@ -106,6 +106,9 @@ Optional properties:
-> >  			When just one value, which means INCRX burst
-> mode enabled. When
-> >  			more than one value, which means undefined length
-> INCR burst type
-> >  			enabled. The values can be 1, 4, 8, 16, 32, 64, 128
-> and 256.
-> > + - snps,avoid-vbus-glitch-when-set-host: Power off all Root Hub ports
-> immediately
-> > +			after setting host mode to avoid vbus (negative)
-> glitch happen in later
-> > +			xhci reset. And the vbus will back to 5V automatically
-> when reset done.
->=20
-> Can't you imply this from the compatible string. You should have an SoC
-> specific compatible.
-
-Sorry, not quite get your point here? Actually I have discussed with Soc de=
-sign guys
-and Felipe, it seems to be DWC3 native behavior rather than SoC specific is=
-sue.
-https://lkml.org/lkml/2018/11/23/387
-https://lkml.org/lkml/2018/12/12/140
-
-I think there could be 2 reasons why we got no report for a long time till =
-now:
-1. Most USB devices are not so sensitive to this VBUS glitch, they would wo=
-rks fine.
-2. A proper VBUS pump circuit design can successfully filter this glitch ou=
-t. I have
-confirmed this with scope, which means some platforms might resolve issue i=
-n
-this way already (some might not, of cause).
-
-> Does this even need to be conditional? What would be the harm in doing
-> this unconditionally for all DWC3 hosts?
-
-From the logic level, I don't see a harm to DWC3 hosts if unconditionally a=
-pply this.
-However, since this is not a only solution (can fix it in HW way), I prefer=
- to let it
-controlled by property in DTS node for those questionable board already exi=
-sting
-in market.=20
-
-Regards,
-Ran
-
+> Cc: Roman Gushchin <guro@fb.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: David Rientjes <rientjes@google.com>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+> Cc: linux-mm@kvack.org
+> Cc: linux-kernel@vger.kernel.org
+>
+> ---
+> Changelog since v2:
+> - Propagate the message to __oom_kill_process().
+>
+> Changelog since v1:
+> - Improved commit message based on mhocko's comment.
+> - Replaced 'p' with 'victim'.
+> - Removed extra pr_err message.
+>
+> ---
+>  mm/oom_kill.c | 78 ++++++++++++---------------------------------------
+>  1 file changed, 18 insertions(+), 60 deletions(-)
+>
+> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+> index 1a007dae1e8f..c90184fd48a3 100644
+> --- a/mm/oom_kill.c
+> +++ b/mm/oom_kill.c
+> @@ -843,7 +843,7 @@ static bool task_will_free_mem(struct task_struct *task)
+>         return ret;
+>  }
+>
+> -static void __oom_kill_process(struct task_struct *victim)
+> +static void __oom_kill_process(struct task_struct *victim, const char *message)
+>  {
+>         struct task_struct *p;
+>         struct mm_struct *mm;
+> @@ -874,8 +874,9 @@ static void __oom_kill_process(struct task_struct *victim)
+>          */
+>         do_send_sig_info(SIGKILL, SEND_SIG_PRIV, victim, PIDTYPE_TGID);
+>         mark_oom_victim(victim);
+> -       pr_err("Killed process %d (%s) total-vm:%lukB, anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB\n",
+> -               task_pid_nr(victim), victim->comm, K(victim->mm->total_vm),
+> +       pr_err("%s: Killed process %d (%s) total-vm:%lukB, anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB\n",
+> +               message, task_pid_nr(victim), victim->comm,
+> +               K(victim->mm->total_vm),
+>                 K(get_mm_counter(victim->mm, MM_ANONPAGES)),
+>                 K(get_mm_counter(victim->mm, MM_FILEPAGES)),
+>                 K(get_mm_counter(victim->mm, MM_SHMEMPAGES)));
+> @@ -932,24 +933,19 @@ static void __oom_kill_process(struct task_struct *victim)
+>   * Kill provided task unless it's secured by setting
+>   * oom_score_adj to OOM_SCORE_ADJ_MIN.
+>   */
+> -static int oom_kill_memcg_member(struct task_struct *task, void *unused)
+> +static int oom_kill_memcg_member(struct task_struct *task, void *message)
+>  {
+>         if (task->signal->oom_score_adj != OOM_SCORE_ADJ_MIN) {
+>                 get_task_struct(task);
+> -               __oom_kill_process(task);
+> +               __oom_kill_process(task, message);
+>         }
+>         return 0;
+>  }
+>
+>  static void oom_kill_process(struct oom_control *oc, const char *message)
+>  {
+> -       struct task_struct *p = oc->chosen;
+> -       unsigned int points = oc->chosen_points;
+> -       struct task_struct *victim = p;
+> -       struct task_struct *child;
+> -       struct task_struct *t;
+> +       struct task_struct *victim = oc->chosen;
+>         struct mem_cgroup *oom_group;
+> -       unsigned int victim_points = 0;
+>         static DEFINE_RATELIMIT_STATE(oom_rs, DEFAULT_RATELIMIT_INTERVAL,
+>                                               DEFAULT_RATELIMIT_BURST);
+>
+> @@ -958,57 +954,18 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
+>          * its children or threads, just give it access to memory reserves
+>          * so it can die quickly
+>          */
+> -       task_lock(p);
+> -       if (task_will_free_mem(p)) {
+> -               mark_oom_victim(p);
+> -               wake_oom_reaper(p);
+> -               task_unlock(p);
+> -               put_task_struct(p);
+> +       task_lock(victim);
+> +       if (task_will_free_mem(victim)) {
+> +               mark_oom_victim(victim);
+> +               wake_oom_reaper(victim);
+> +               task_unlock(victim);
+> +               put_task_struct(victim);
+>                 return;
+>         }
+> -       task_unlock(p);
+> +       task_unlock(victim);
+>
+>         if (__ratelimit(&oom_rs))
+> -               dump_header(oc, p);
+> -
+> -       pr_err("%s: Kill process %d (%s) score %u or sacrifice child\n",
+> -               message, task_pid_nr(p), p->comm, points);
+> -
+> -       /*
+> -        * If any of p's children has a different mm and is eligible for kill,
+> -        * the one with the highest oom_badness() score is sacrificed for its
+> -        * parent.  This attempts to lose the minimal amount of work done while
+> -        * still freeing memory.
+> -        */
+> -       read_lock(&tasklist_lock);
+> -
+> -       /*
+> -        * The task 'p' might have already exited before reaching here. The
+> -        * put_task_struct() will free task_struct 'p' while the loop still try
+> -        * to access the field of 'p', so, get an extra reference.
+> -        */
+> -       get_task_struct(p);
+> -       for_each_thread(p, t) {
+> -               list_for_each_entry(child, &t->children, sibling) {
+> -                       unsigned int child_points;
+> -
+> -                       if (process_shares_mm(child, p->mm))
+> -                               continue;
+> -                       /*
+> -                        * oom_badness() returns 0 if the thread is unkillable
+> -                        */
+> -                       child_points = oom_badness(child,
+> -                               oc->memcg, oc->nodemask, oc->totalpages);
+> -                       if (child_points > victim_points) {
+> -                               put_task_struct(victim);
+> -                               victim = child;
+> -                               victim_points = child_points;
+> -                               get_task_struct(victim);
+> -                       }
+> -               }
+> -       }
+> -       put_task_struct(p);
+> -       read_unlock(&tasklist_lock);
+> +               dump_header(oc, victim);
+>
+>         /*
+>          * Do we need to kill the entire memory cgroup?
+> @@ -1017,14 +974,15 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
+>          */
+>         oom_group = mem_cgroup_get_oom_group(victim, oc->memcg);
+>
+> -       __oom_kill_process(victim);
+> +       __oom_kill_process(victim, message);
+>
+>         /*
+>          * If necessary, kill all tasks in the selected memory cgroup.
+>          */
+>         if (oom_group) {
+>                 mem_cgroup_print_oom_group(oom_group);
+> -               mem_cgroup_scan_tasks(oom_group, oom_kill_memcg_member, NULL);
+> +               mem_cgroup_scan_tasks(oom_group, oom_kill_memcg_member,
+> +                                     (void*) message);
+>                 mem_cgroup_put(oom_group);
+>         }
+>  }
+> --
+> 2.20.1.321.g9e740568ce-goog
+>
