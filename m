@@ -2,118 +2,116 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9D1CC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:36:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C293DC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:36:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B74D72084A
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:36:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ccP0SZnD"
+	by mail.kernel.org (Postfix) with ESMTP id 960862084C
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:36:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727726AbfAVKgU (ORCPT
+        id S1727787AbfAVKg2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 05:36:20 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:39653 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726281AbfAVKgU (ORCPT
+        Tue, 22 Jan 2019 05:36:28 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:57354 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727734AbfAVKg1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 05:36:20 -0500
-Received: by mail-lj1-f196.google.com with SMTP id t9-v6so20130029ljh.6
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 02:36:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=YSObxwMHqtkC/awE9I+bX0AU7eKOCKScYLfpaQugPuE=;
-        b=ccP0SZnDW53Tty9adhgMbars1kax5HN6gnRZch4Cj6BLS9FX8AeQQRog/3F5qu0QoB
-         adegLU0/UyoM/vTV2qZQ7PiR66YouofnDMmXgerVXgj3Bm1/btX6hDsk5a2ROFxX3asz
-         8CY2yr5kZKJK07Y3HqVyiqNb8UZDPoY5DoPTs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=YSObxwMHqtkC/awE9I+bX0AU7eKOCKScYLfpaQugPuE=;
-        b=JA0n8MGUHyr6WPnB5acK2t4MPQM9m/R8+pgNu16bla1f+WYlzGEyUzcWL7AVi0Qs9O
-         GGQ9dYal4kF9INtrdiyC/ph7k9RhbxfpkqM36mrGUneThCrxf85e0lO5NgKOpZVIrInp
-         NRhNwZVhVPuHhtt88MTW1MezuhRGIV+uM4jG7DHwTI0icVBnDlcmO9cm6wEm1qu24Te2
-         ydx5rntOc2Qc5WZXcdq7Cl3T1Z8jR6Lq/bda4T62WdHemkRJ72/9bbnmHCJ6BS1m3rtk
-         dvhX8Umiw6t19a2j7TFwhHuwvrof6EglfjFyvHQAgVVsXU/oZzJPokPP8TkMrzyCICsj
-         cmeQ==
-X-Gm-Message-State: AJcUukeTcQdJG4WiHckpanQFzi7W7/XcLEZ9jpSoZJA7NDfDa44zjp/R
-        Y46knEorqXjt6FVnkMnINoOcPyxGqiNP2g==
-X-Google-Smtp-Source: ALg8bN4+t0oLM4Y9wtNcFbO51/YMhWk1c7uXhKnegrDcaehrC8GBbrHhUwdGqA3f1mJMjvG8qCxXkg==
-X-Received: by 2002:a2e:9dcb:: with SMTP id x11-v6mr21579413ljj.158.1548153378296;
-        Tue, 22 Jan 2019 02:36:18 -0800 (PST)
-Received: from localhost (c-573670d5.07-21-73746f28.bbcust.telenor.se. [213.112.54.87])
-        by smtp.gmail.com with ESMTPSA id l21-v6sm2737684ljj.48.2019.01.22.02.36.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 22 Jan 2019 02:36:17 -0800 (PST)
-From:   Anders Roxell <anders.roxell@linaro.org>
-To:     balbi@kernel.org, gregkh@linuxfoundation.org
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH] usb: phy: fix link errors
-Date:   Tue, 22 Jan 2019 11:36:02 +0100
-Message-Id: <20190122103602.2641-1-anders.roxell@linaro.org>
-X-Mailer: git-send-email 2.20.1
+        Tue, 22 Jan 2019 05:36:27 -0500
+Received: from 79.184.255.239.ipv4.supernova.orange.pl (79.184.255.239) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
+ id 7fd8984a77e56357; Tue, 22 Jan 2019 11:36:24 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Amit Kucheria <amit.kucheria@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        viresh.kumar@linaro.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: Replace open-coded << with BIT()
+Date:   Tue, 22 Jan 2019 11:35:26 +0100
+Message-ID: <3475847.8TT7FkP2ce@aspire.rjw.lan>
+In-Reply-To: <2501c48872e5fa9c26f06216c19955d70b263a85.1548060067.git.amit.kucheria@linaro.org>
+References: <2501c48872e5fa9c26f06216c19955d70b263a85.1548060067.git.amit.kucheria@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix link errors when CONFIG_FSL_USB2_OTG is enabled and USB_OTG_FSM is
-set to module then the following link error occurs.
+On Monday, January 21, 2019 9:47:37 AM CET Amit Kucheria wrote:
+> Minor clean-up to use BIT() and keep checkpatch happy. Clean up the
+> comment formatting while we're at it to make it easier to read.
+> 
+> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+> ---
+>  include/linux/cpufreq.h | 25 +++++++++++++------------
+>  1 file changed, 13 insertions(+), 12 deletions(-)
+> 
+> diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
+> index c86d6d8bdfed..bd7fbd6a4478 100644
+> --- a/include/linux/cpufreq.h
+> +++ b/include/linux/cpufreq.h
+> @@ -346,14 +346,15 @@ struct cpufreq_driver {
+>  };
+>  
+>  /* flags */
+> -#define CPUFREQ_STICKY		(1 << 0)	/* driver isn't removed even if
+> -						   all ->init() calls failed */
+> -#define CPUFREQ_CONST_LOOPS	(1 << 1)	/* loops_per_jiffy or other
+> -						   kernel "constants" aren't
+> -						   affected by frequency
+> -						   transitions */
+> -#define CPUFREQ_PM_NO_WARN	(1 << 2)	/* don't warn on suspend/resume
+> -						   speed mismatches */
+> +
+> +/* driver isn't removed even if all ->init() calls failed */
+> +#define CPUFREQ_STICKY				BIT(0)
+> +
+> +/* loops_per_jiffy or other kernel "constants" aren't affected by frequency transitions */
+> +#define CPUFREQ_CONST_LOOPS			BIT(1)
+> +
+> +/* don't warn on suspend/resume speed mismatches */
+> +#define CPUFREQ_PM_NO_WARN			BIT(2)
+>  
+>  /*
+>   * This should be set by platforms having multiple clock-domains, i.e.
+> @@ -361,14 +362,14 @@ struct cpufreq_driver {
+>   * be created in cpu/cpu<num>/cpufreq/ directory and so they can use the same
+>   * governor with different tunables for different clusters.
+>   */
+> -#define CPUFREQ_HAVE_GOVERNOR_PER_POLICY (1 << 3)
+> +#define CPUFREQ_HAVE_GOVERNOR_PER_POLICY	BIT(3)
+>  
+>  /*
+>   * Driver will do POSTCHANGE notifications from outside of their ->target()
+>   * routine and so must set cpufreq_driver->flags with this flag, so that core
+>   * can handle them specially.
+>   */
+> -#define CPUFREQ_ASYNC_NOTIFICATION  (1 << 4)
+> +#define CPUFREQ_ASYNC_NOTIFICATION		BIT(4)
+>  
+>  /*
+>   * Set by drivers which want cpufreq core to check if CPU is running at a
+> @@ -377,13 +378,13 @@ struct cpufreq_driver {
+>   * from the table. And if that fails, we will stop further boot process by
+>   * issuing a BUG_ON().
+>   */
+> -#define CPUFREQ_NEED_INITIAL_FREQ_CHECK	(1 << 5)
+> +#define CPUFREQ_NEED_INITIAL_FREQ_CHECK	BIT(5)
+>  
+>  /*
+>   * Set by drivers to disallow use of governors with "dynamic_switching" flag
+>   * set.
+>   */
+> -#define CPUFREQ_NO_AUTO_DYNAMIC_SWITCHING (1 << 6)
+> +#define CPUFREQ_NO_AUTO_DYNAMIC_SWITCHING	BIT(6)
+>  
+>  int cpufreq_register_driver(struct cpufreq_driver *driver_data);
+>  int cpufreq_unregister_driver(struct cpufreq_driver *driver_data);
+> 
 
-aarch64-linux-gnu-ld: drivers/usb/phy/phy-fsl-usb.o: in function `fsl_otg_ioctl':
-drivers/usb/phy/phy-fsl-usb.c:1083: undefined reference to `otg_statemachine'
-aarch64-linux-gnu-ld: drivers/usb/phy/phy-fsl-usb.c:1083:(.text+0x574): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `otg_statemachine'
-aarch64-linux-gnu-ld: drivers/usb/phy/phy-fsl-usb.o: in function `fsl_otg_start_srp':
-drivers/usb/phy/phy-fsl-usb.c:674: undefined reference to `otg_statemachine'
-aarch64-linux-gnu-ld: drivers/usb/phy/phy-fsl-usb.c:674:(.text+0x61c): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `otg_statemachine'
-aarch64-linux-gnu-ld: drivers/usb/phy/phy-fsl-usb.o: in function `fsl_otg_set_host':
-drivers/usb/phy/phy-fsl-usb.c:593: undefined reference to `otg_statemachine'
-aarch64-linux-gnu-ld: drivers/usb/phy/phy-fsl-usb.c:593:(.text+0x7a4): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `otg_statemachine'
-aarch64-linux-gnu-ld: drivers/usb/phy/phy-fsl-usb.o: in function `fsl_otg_start_hnp':
-drivers/usb/phy/phy-fsl-usb.c:695: undefined reference to `otg_statemachine'
-aarch64-linux-gnu-ld: drivers/usb/phy/phy-fsl-usb.c:695:(.text+0x858): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `otg_statemachine'
-aarch64-linux-gnu-ld: drivers/usb/phy/phy-fsl-usb.o: in function `a_wait_enum':
-drivers/usb/phy/phy-fsl-usb.c:274: undefined reference to `otg_statemachine'
-aarch64-linux-gnu-ld: drivers/usb/phy/phy-fsl-usb.c:274:(.text+0x16f0): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `otg_statemachine'
-aarch64-linux-gnu-ld: drivers/usb/phy/phy-fsl-usb.o:drivers/usb/phy/phy-fsl-usb.c:619: more undefined references to `otg_statemachine' follow
-aarch64-linux-gnu-ld: drivers/usb/phy/phy-fsl-usb.o: in function `fsl_otg_set_peripheral':
-drivers/usb/phy/phy-fsl-usb.c:619:(.text+0x1fa0): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `otg_statemachine'
-make[1]: *** [Makefile:1020: vmlinux] Error 1
-make[1]: Target 'Image' not remade because of errors.
-make: *** [Makefile:152: sub-make] Error 2
-make: Target 'Image' not remade because of errors.
-
-Rework so that FSL_USB2_OTG depends on that the USB_OTG_FSM is builtin.
-
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
----
- drivers/usb/phy/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/usb/phy/Kconfig b/drivers/usb/phy/Kconfig
-index d7312eed6088..91ea3083e7ad 100644
---- a/drivers/usb/phy/Kconfig
-+++ b/drivers/usb/phy/Kconfig
-@@ -21,7 +21,7 @@ config AB8500_USB
- 
- config FSL_USB2_OTG
- 	bool "Freescale USB OTG Transceiver Driver"
--	depends on USB_EHCI_FSL && USB_FSL_USB2 && USB_OTG_FSM && PM
-+	depends on USB_EHCI_FSL && USB_FSL_USB2 && USB_OTG_FSM=y && PM
- 	depends on USB_GADGET || !USB_GADGET # if USB_GADGET=m, this can't be 'y'
- 	select USB_PHY
- 	help
--- 
-2.20.1
+Applied, thanks!
 
