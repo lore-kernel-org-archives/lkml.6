@@ -2,515 +2,126 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8575C37122
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 01:39:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4D45C37124
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 01:39:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 714602085A
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 01:39:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B308A2085A
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 01:39:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kpotKlWB"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="srcCaKKT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726756AbfAVBjp (ORCPT
+        id S1726820AbfAVBjt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 20:39:45 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:41539 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725896AbfAVBjo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 20:39:44 -0500
-Received: by mail-pl1-f193.google.com with SMTP id u6so10604350plm.8;
-        Mon, 21 Jan 2019 17:39:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=oVaWtdJtOuAoP3jjxmvui3unmLN9WqNCtOi9fm612zY=;
-        b=kpotKlWBGw1b0dFOJemGAV5DtAbJeaOL8YiHs4e5Q/NX6uQyr6Y365GqVQEEVw0XSx
-         giQDEFa95dtnY7tNwuEP/GdwhaW6XMU2MAPM1oyFCXPJvfuUgU+RMa7zpdmYX5gx7w1B
-         PEdLRL14JJJIPKJeKtBcQ7Mu4bhLg7jL3J2sT2l8gAEf05zTjv1yzaYjyWJLnYkZsdT7
-         RX4w6FAQzR7aaBDohHBWiDZQ+FZWXnbzyDLXP9UKK7bpY+jCE4EWqdw+USaNXweT0sZ2
-         wBULmxOiM7tFt9JfSaz0DdppagQllznhtFRBWMmc6AXRnRvTUElsetox2v9FzZm+vY36
-         DZrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=oVaWtdJtOuAoP3jjxmvui3unmLN9WqNCtOi9fm612zY=;
-        b=ggK5vubOb2sHiSFxSNPG0f26sLdQbpwtAgjcy8dgxSMMp7MkO4+3GIZUJyz0Z1ICJk
-         K/42ORNjmv2BTZgRJWVFLj7PjUsK5oBAArjWlLPjJx2YMOR2zD8ff210UuxASzsFOrup
-         Ib6HnJHz6JgtYtJ6P9AjRJVor/AUyWEUD/Md7PXQ24S/rgdKafAz68k0a3rbcqID0F6R
-         5iID45YXpH4Se/rZSzkg/x7za/9I73n4ZdVSjO+vFoFr8xCc9BB1LU+rBCzDJD9mNvR+
-         g0JXz9tQiJfshWe+LUpqWOknxT45GgkNwhHfoi1BLZBZjYVf1qco93s1lUle7l9XM8dP
-         nOeg==
-X-Gm-Message-State: AJcUuke5Lo6nBi4GlVHc1E956ZmO0tEeSACxYwqGv7eTyXJg1iBP168i
-        4ckwPSTGJchQgexDQ4/uvVzoy5qk/wRg/w==
-X-Google-Smtp-Source: ALg8bN7rg7IzYARPIaN479nOpKYi0IFLyuJogCSnfo+6JyMXZ6GcTodhGNrRikxdk9H0bNunfhiGXA==
-X-Received: by 2002:a17:902:d90d:: with SMTP id c13mr32471660plz.31.1548121182836;
-        Mon, 21 Jan 2019 17:39:42 -0800 (PST)
-Received: from 8c8590bceeee.ant.amazon.com ([54.240.193.1])
-        by smtp.gmail.com with ESMTPSA id i2sm20152195pfi.66.2019.01.21.17.39.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 21 Jan 2019 17:39:42 -0800 (PST)
-Subject: Re: [PATCH v7 2/3] arm64: implement ftrace with regs
-To:     Torsten Duwe <duwe@lst.de>, Mark Rutland <mark.rutland@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Amit Daniel Kachhap <amit.kachhap@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        live-patching@vger.kernel.org
-References: <20190118163736.6A99268CEB@newverein.lst.de>
- <20190118163908.E338E68D93@newverein.lst.de>
-From:   "Singh, Balbir" <bsingharora@gmail.com>
-Message-ID: <b4081483-e5d6-2e7b-3540-6f3c3622fa24@gmail.com>
-Date:   Tue, 22 Jan 2019 14:39:32 +1300
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:60.0)
- Gecko/20100101 Thunderbird/60.4.0
+        Mon, 21 Jan 2019 20:39:49 -0500
+Received: from mail-eopbgr80041.outbound.protection.outlook.com ([40.107.8.41]:27728
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726766AbfAVBjs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 20:39:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6jCjaEsMrFpFXdlfQWDK6yo191zjFRdtd0BbPrmDyII=;
+ b=srcCaKKTcBLPY854WIu+EC8n1ipwwA96dKoGxjGrYuNvFsTvuuu43xBdBNN922KV6G3IhMmMgKl/mDNmmi/1nFVlzgQ1GJzUWd6J3bMRe7wRKg8x2Cn9qF6hSgPtTi5LFk1K4e3NtflaVU/MCSQEcCAcHQAfMUrTMlhUWcuYYQU=
+Received: from VI1PR0402MB3600.eurprd04.prod.outlook.com (52.134.5.23) by
+ VI1PR0402MB3725.eurprd04.prod.outlook.com (52.134.15.31) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1558.16; Tue, 22 Jan 2019 01:39:44 +0000
+Received: from VI1PR0402MB3600.eurprd04.prod.outlook.com
+ ([fe80::6875:ea76:21be:1a58]) by VI1PR0402MB3600.eurprd04.prod.outlook.com
+ ([fe80::6875:ea76:21be:1a58%2]) with mapi id 15.20.1537.031; Tue, 22 Jan 2019
+ 01:39:44 +0000
+From:   Andy Duan <fugang.duan@nxp.com>
+To:     Stefan Agner <stefan@agner.ch>,
+        "davem@davemloft.net" <davem@davemloft.net>
+CC:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Max Krummenacher <max.krummenacher@toradex.com>,
+        "dev@pschenker.ch" <dev@pschenker.ch>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] net: fec: get regulator optional
+Thread-Topic: [PATCH] net: fec: get regulator optional
+Thread-Index: AQHUsZnSRnswizwjwEGgd4k/7MMsmKW6g0DA
+Date:   Tue, 22 Jan 2019 01:39:44 +0000
+Message-ID: <VI1PR0402MB3600576A0BE62C6363F93B45FF980@VI1PR0402MB3600.eurprd04.prod.outlook.com>
+References: <20190121145847.30223-1-stefan@agner.ch>
+In-Reply-To: <20190121145847.30223-1-stefan@agner.ch>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=fugang.duan@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR0402MB3725;6:ZWeph7Bea39JPa3mpNbf4Mfy3XN9Cp2lj+FgC8ONZhRCaWyPdFXigfimtTWt1RRHJ7jVAkki3OCIb9d5VXhMs5oKd2CzCfZxNjDzIg/x0UeN6GNRoZUEbibEdnVyTNDkAYdoeFir7GYB/j8yjAOnVdiQA+giGxmFHIFBuaQIyRCSZT3HCI/XnKg9bvBKpdDjsBe82sZUz2JIrEH3KxT6V49f1p645EVxJx2HYaauZSYoIGeamkB7oBOAWvWGIGtB9r8H4PMuib/08Rr2BZ7+N1EVuQPMhgPsCalViVqxgCum4IyauT6X8WD4GFJ0GTPOj+CW22PNZudCqh6nwrYvMnovdzsB0pkEbStRU7IA0EAq1DZBh0zNtUBqSIJGs/x/n+G9D/Vf0KOz44yUfMxcPbD9UMxA1hxV9mEI61jMiaRJQK5tEASFEqMMCzY2GoUIxISZpD0N61OYxbLLUbhe4g==;5:1PDVz2pL7HGZ8cIQb/8J5W51cYEsbZ6ITvGutEyWWLOEWelVF9FNMy6WbNgNdkp5cPIV9OldLEGKaG915FRH9x0u6t32FdxaDdwyIiaFVKe1DxerCCyJFg00KU9UOnUOOxrdN0VlwfqSDDW4B7YPtrWA/fX3iFVwqJtDWGUf/9yszM/Ky2HI3P/gaY74AEEBXHCazWt+ULII9ArG8/KJXQ==;7:1SQCp1MoCrfBqvRaTwhzrFz6wspLnOKTA6ftB1YQjLAMmFJh1P3IOkDEd2oePKb6sje1FSl5TT2goM364WP0ReguFQy+A/GHlGbqxIIMTH0GaVClAwUudwk/wg/D9Ums7Uvdq+AZ7VwebxXucrcvqQ==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: a543299e-de74-4063-d671-08d6800a7c5b
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0402MB3725;
+x-ms-traffictypediagnostic: VI1PR0402MB3725:
+x-ld-processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+x-microsoft-antispam-prvs: <VI1PR0402MB37250ACF6CAA88A6936ED786FF980@VI1PR0402MB3725.eurprd04.prod.outlook.com>
+x-forefront-prvs: 0925081676
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(136003)(366004)(39860400002)(396003)(376002)(189003)(199004)(74316002)(14454004)(66066001)(6506007)(229853002)(8936002)(478600001)(33656002)(2906002)(2501003)(81166006)(186003)(26005)(71190400001)(71200400001)(81156014)(8676002)(9686003)(68736007)(305945005)(7736002)(76176011)(53936002)(25786009)(97736004)(256004)(14444005)(7696005)(476003)(446003)(11346002)(6246003)(4326008)(486006)(106356001)(105586002)(102836004)(55016002)(110136005)(54906003)(316002)(6436002)(86362001)(6116002)(3846002)(99286004);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3725;H:VI1PR0402MB3600.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: DeHTcgd51MNLzrJ3T74mjdkiZMSKLbO1Kpo7PjQ4WS2eqB1FB/bA0w3ooayhRZeELuluPJ79iimNkSUkkOVauSr9SxJQkKZx1Is0umsr//j6v5IV+8bVZQ8zy1oxSonUk2M4DNSi9bd7bPwUVPcziZsdVFJ4YWJjtwx2N4tNW7AowpnpOb1ubF/b1fY5Lg8i8WNM+ma0Ap5xv9zJAahlpP0nkHZkyofibxDghsNgiVHlL3UBLZ/99n4rD/qa7ho1ANzOD7NY3F4G2FX73XFfHCGZBk0OzAe5KMGw+03p7jLHLP3KDg9sCwqeCxbm+UcRx0cqv+cMu/LwLzgIfjorRXjpKQZwm6wQpQ0GmrN0FMleJnktZMD+8iSs+Ku+ag2n1gaw/MskDTCgKUFSgDX3ZXoajhSNK1MjJcYle8OqIpU=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <20190118163908.E338E68D93@newverein.lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a543299e-de74-4063-d671-08d6800a7c5b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jan 2019 01:39:44.2675
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3725
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Stefan Agner <stefan@agner.ch> Sent: Monday, January 21, 2019 10:59 P=
+M
+> According to the device tree binding the phy-supply property is optional.=
+ Use
+> the regulator_get_optional API accordingly. The code already handles NULL
+> just fine.
+>=20
+> This gets rid of the following warning:
+>   fec 2188000.ethernet: 2188000.ethernet supply phy not found, using
+> dummy regulator
+>=20
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+Thanks.
 
-
-On 1/19/19 5:39 AM, Torsten Duwe wrote:
-> Once gcc8 adds 2 NOPs at the beginning of each function, replace the
-> first NOP thus generated with a quick LR saver (move it to scratch reg
-> x9), so the 2nd replacement insn, the call to ftrace, does not clobber
-> the value. Ftrace will then generate the standard stack frames.
-> 
-> Note that patchable-function-entry in GCC disables IPA-RA, which means
-> ABI register calling conventions are obeyed *and* scratch registers
-> such as x9 are available.
-> 
-> Introduce and handle an ftrace_regs_trampoline for module PLTs, right
-> after ftrace_trampoline, and double the size of this special section.
-> 
-> Signed-off-by: Torsten Duwe <duwe@suse.de>
-> 
+Acked-by: Fugang Duan <fugang.duan@nxp.com>
 > ---
-> 
-> Mark, if you see your ftrace entry macro code being represented correctly
-> here, please add your sign-off, As I've initially copied it from your mail.
-> 
-> ---
->  arch/arm64/include/asm/ftrace.h  |   17 ++++-
->  arch/arm64/include/asm/module.h  |    3 
->  arch/arm64/kernel/entry-ftrace.S |  125 +++++++++++++++++++++++++++++++++++++--
->  arch/arm64/kernel/ftrace.c       |  114 ++++++++++++++++++++++++++---------
->  arch/arm64/kernel/module-plts.c  |    3 
->  arch/arm64/kernel/module.c       |    2 
->  6 files changed, 227 insertions(+), 37 deletions(-)
-> --- a/arch/arm64/include/asm/ftrace.h
-> +++ b/arch/arm64/include/asm/ftrace.h
-> @@ -14,9 +14,24 @@
->  #include <asm/insn.h>
->  
->  #define HAVE_FUNCTION_GRAPH_FP_TEST
-> -#define MCOUNT_ADDR		((unsigned long)_mcount)
->  #define MCOUNT_INSN_SIZE	AARCH64_INSN_SIZE
->  
-> +/*
-> + * DYNAMIC_FTRACE_WITH_REGS is implemented by adding 2 NOPs at the beginning
-> + * of each function, with the second NOP actually calling ftrace. In contrary
-> + * to a classic _mcount call, the call instruction to be modified is thus
-> + * the second one, and not the only one.
-> + */
-> +#ifdef CONFIG_DYNAMIC_FTRACE_WITH_REGS
-> +#define ARCH_SUPPORTS_FTRACE_OPS 1
-> +#define REC_IP_BRANCH_OFFSET AARCH64_INSN_SIZE
-> +/* All we need is some magic value. Simply use "_mCount:" */
-> +#define MCOUNT_ADDR		(0x5f6d436f756e743a)
-> +#else
-> +#define REC_IP_BRANCH_OFFSET 0
-> +#define MCOUNT_ADDR		((unsigned long)_mcount)
-> +#endif
-> +
->  #ifndef __ASSEMBLY__
->  #include <linux/compat.h>
->  
-> --- a/arch/arm64/kernel/entry-ftrace.S
-> +++ b/arch/arm64/kernel/entry-ftrace.S
-> @@ -10,6 +10,7 @@
->   */
->  
->  #include <linux/linkage.h>
-> +#include <asm/asm-offsets.h>
->  #include <asm/assembler.h>
->  #include <asm/ftrace.h>
->  #include <asm/insn.h>
-> @@ -124,6 +125,7 @@ EXPORT_SYMBOL(_mcount)
->  NOKPROBE(_mcount)
->  
->  #else /* CONFIG_DYNAMIC_FTRACE */
-> +#ifndef CONFIG_DYNAMIC_FTRACE_WITH_REGS
->  /*
->   * _mcount() is used to build the kernel with -pg option, but all the branch
->   * instructions to _mcount() are replaced to NOP initially at kernel start up,
-> @@ -163,11 +165,6 @@ GLOBAL(ftrace_graph_call)		// ftrace_gra
->  
->  	mcount_exit
->  ENDPROC(ftrace_caller)
-> -#endif /* CONFIG_DYNAMIC_FTRACE */
-> -
-> -ENTRY(ftrace_stub)
-> -	ret
-> -ENDPROC(ftrace_stub)
->  
->  #ifdef CONFIG_FUNCTION_GRAPH_TRACER
->  /*
-> @@ -187,7 +184,125 @@ ENTRY(ftrace_graph_caller)
->  
->  	mcount_exit
->  ENDPROC(ftrace_graph_caller)
-> +#endif /* CONFIG_FUNCTION_GRAPH_TRACER */
-> +
-> +#else /* CONFIG_DYNAMIC_FTRACE_WITH_REGS */
-> +
-> +	.macro  ftrace_regs_entry, allregs=0
-> +	/* make room for pt_regs, plus a callee frame */
-> +	sub	sp, sp, #(S_FRAME_SIZE + 16)
-> +
-> +	/* save function arguments */
-> +	stp	x0, x1, [sp, #S_X0]
-> +	stp	x2, x3, [sp, #S_X2]
-> +	stp	x4, x5, [sp, #S_X4]
-> +	stp	x6, x7, [sp, #S_X6]
-> +	stp	x8, x9, [sp, #S_X8]
->  
-> +	.if \allregs == 1
-> +	stp	x10, x11, [sp, #S_X10]
-> +	stp	x12, x13, [sp, #S_X12]
-> +	stp	x14, x15, [sp, #S_X14]
-> +	stp	x16, x17, [sp, #S_X16]
-> +	stp	x18, x19, [sp, #S_X18]
-> +	stp	x20, x21, [sp, #S_X20]
-> +	stp	x22, x23, [sp, #S_X22]
-> +	stp	x24, x25, [sp, #S_X24]
-> +	stp	x26, x27, [sp, #S_X26]
-> +	.endif
-> +
-> +	/* Save fp and x28, which is used in this function. */
-> +	stp	x28, x29, [sp, #S_X28]
-> +
-> +	/* The stack pointer as it was on ftrace_caller entry... */
-> +	add	x28, sp, #(S_FRAME_SIZE + 16)	
-> +	/* ...and the link Register at callee entry */
-> +	stp	x9, x28, [sp, #S_LR]	/* to pt_regs.r[30] and .sp */
-> +
-> +	/* The program counter just after the ftrace call site */
-> +	str	lr, [sp, #S_PC]
-> +
-> +	/* Now fill in callee's preliminary stackframe. */
-> +	stp	x29, x9, [sp, #S_FRAME_SIZE]
-> +	/* Let FP point to it. */
-> +	add	x29, sp, #S_FRAME_SIZE
-> +
-> +	/* Our stackframe, stored inside pt_regs. */
-> +	stp	x29, x30, [sp, #S_STACKFRAME]
-> +	add	x29, sp, #S_STACKFRAME
-> +	.endm
-> +
-> +ENTRY(ftrace_regs_caller)
-> +	ftrace_regs_entry	1
-> +	b	ftrace_common
-> +ENDPROC(ftrace_regs_caller)
-> +
-> +ENTRY(ftrace_caller)
-> +	ftrace_regs_entry	0
-> +	b	ftrace_common
-> +ENDPROC(ftrace_caller)
-> +
-> +ENTRY(ftrace_common)
-> +
-> +	mov	x3, sp		/* pt_regs are @sp */
-> +	ldr_l	x2, function_trace_op, x0
-> +	mov	x1, x9		/* parent IP */
-> +	sub	x0, lr, #8	/* function entry == IP */
-> +
-> +GLOBAL(ftrace_call)
-> +	bl	ftrace_stub
-> +
-> +#ifdef CONFIG_FUNCTION_GRAPH_TRACER
-> +GLOBAL(ftrace_graph_call)		// ftrace_graph_caller();
-> +	nop				// If enabled, this will be replaced
-> +					// "b ftrace_graph_caller"
-> +#endif
-> +
-> +/*
-> + * GCC's patchable-function-entry implicitly disables IPA-RA,
-> + * so all non-argument registers are either scratch / dead
-> + * or callee-saved (within the ftrace framework). Function
-> + * arguments of the call we are intercepting right now however
-> + * need to be preserved in any case.
-> + */
-> +ftrace_common_return:
-> +	/* restore function args */
-> +	ldp	x0, x1, [sp]
-> +	ldp	x2, x3, [sp, #S_X2]
-> +	ldp	x4, x5, [sp, #S_X4]
-> +	ldp	x6, x7, [sp, #S_X6]
-> +	ldr	x8, [sp, #S_X8]
-> +
-> +	/* restore fp and x28 */
-> +	ldp	x28, x29, [sp, #S_X28]
-> +
-> +	ldr	lr, [sp, #S_LR]
-> +	ldr	x9, [sp, #S_PC]
+>  drivers/net/ethernet/freescale/fec_main.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/net/ethernet/freescale/fec_main.c
+> b/drivers/net/ethernet/freescale/fec_main.c
+> index 6db69ba30dcd..c8315d880c8c 100644
+> --- a/drivers/net/ethernet/freescale/fec_main.c
+> +++ b/drivers/net/ethernet/freescale/fec_main.c
+> @@ -3479,7 +3479,7 @@ fec_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		goto failed_clk_ipg;
+>=20
+> -	fep->reg_phy =3D devm_regulator_get(&pdev->dev, "phy");
+> +	fep->reg_phy =3D devm_regulator_get_optional(&pdev->dev, "phy");
+>  	if (!IS_ERR(fep->reg_phy)) {
+>  		ret =3D regulator_enable(fep->reg_phy);
+>  		if (ret) {
+> --
+> 2.20.1
 
-Is it fair to assume that we never modify registers beyond LR and PC as a result of ftrace/livepatching? I presume it is, but just checking.
-
-> +	/* clean up both frames, ours and callee preliminary */
-> +	add	sp, sp, #S_FRAME_SIZE + 16
-> +
-> +	ret	x9
-> +ENDPROC(ftrace_common)
-> +
-> +#ifdef CONFIG_FUNCTION_GRAPH_TRACER
-> +ENTRY(ftrace_graph_caller)
-> +	ldr	x0, [sp, #S_PC]		   /* pc */
-> +	sub	x0, x0, #8	/* start of the ftrace call site */
-> +	add	x1, sp, #S_LR		   /* &lr */
-> +	ldr	x2, [sp, #S_FRAME_SIZE]	   /* fp */
-> +	bl	prepare_ftrace_return
-> +	b	ftrace_common_return
-> +ENDPROC(ftrace_graph_caller)
-> +#endif /* CONFIG_FUNCTION_GRAPH_TRACER */
-> +#endif /* CONFIG_DYNAMIC_FTRACE_WITH_REGS */
-> +#endif /* CONFIG_DYNAMIC_FTRACE */
-> +
-> +ENTRY(ftrace_stub)
-> +	ret
-> +ENDPROC(ftrace_stub)
-> +
-> +
-> +#ifdef CONFIG_FUNCTION_GRAPH_TRACER
->  /*
->   * void return_to_handler(void)
->   *
-> --- a/arch/arm64/kernel/ftrace.c
-> +++ b/arch/arm64/kernel/ftrace.c
-> @@ -65,19 +65,67 @@ int ftrace_update_ftrace_func(ftrace_fun
->  	return ftrace_modify_code(pc, 0, new, false);
->  }
->  
-> +#ifdef CONFIG_ARM64_MODULE_PLTS
-> +static int install_ftrace_trampoline(struct module *mod, unsigned long *addr)
-> +{
-> +	struct plt_entry trampoline, *mod_trampoline;
-> +
-> +	/*
-> +	 * Iterate over
-> +	 * mod->arch.ftrace_trampolines[MOD_ARCH_NR_FTRACE_TRAMPOLINES]
-> +	 * The assignment to various ftrace functions happens here.
-> +	 */
-> +	if (*addr == FTRACE_ADDR)
-> +		mod_trampoline = &mod->arch.ftrace_trampolines[0];
-> +	else if (*addr == FTRACE_REGS_ADDR)
-> +		mod_trampoline = &mod->arch.ftrace_trampolines[1];
-> +	else
-> +		return -EINVAL;
-> +
-> +	trampoline = get_plt_entry(*addr, mod_trampoline);
-> +
-> +	if (!plt_entries_equal(mod_trampoline, &trampoline)) {
-> +		/* point the trampoline at our ftrace entry point */
-> +		module_disable_ro(mod);
-> +		*mod_trampoline = trampoline;
-> +		module_enable_ro(mod, true);
-> +
-> +		/* update trampoline before patching in the branch */
-> +		smp_wmb();
-> +	}
-> +	*addr = (unsigned long)(void *)mod_trampoline;
-> +
-> +	return 0;
-> +}
-> +#endif
-> +
-> +/*
-> + * Ftrace with regs generates the tracer calls as close as possible to
-> + * the function entry; no stack frame has been set up at that point.
-> + * In order to make another call e.g to ftrace_caller, the LR must be
-> + * saved from being overwritten.
-> + * Between two functions, and with IPA-RA turned off, the scratch registers
-> + * are available, so move the LR to x9 before calling into ftrace.
-> + * "mov x9, lr" is officially aliased from "orr x9, xzr, lr".
-> + */
-> +#define MOV_X9_X30 aarch64_insn_gen_logical_shifted_reg( \
-> +			AARCH64_INSN_REG_9, AARCH64_INSN_REG_ZR, \
-> +			AARCH64_INSN_REG_LR, 0, AARCH64_INSN_VARIANT_64BIT, \
-> +			AARCH64_INSN_LOGIC_ORR)
-> +
->  /*
->   * Turn on the call to ftrace_caller() in instrumented function
->   */
->  int ftrace_make_call(struct dyn_ftrace *rec, unsigned long addr)
->  {
-> -	unsigned long pc = rec->ip;
-> +	unsigned long pc = rec->ip + REC_IP_BRANCH_OFFSET;
->  	u32 old, new;
->  	long offset = (long)pc - (long)addr;
->  
->  	if (offset < -SZ_128M || offset >= SZ_128M) {
->  #ifdef CONFIG_ARM64_MODULE_PLTS
-> -		struct plt_entry trampoline;
->  		struct module *mod;
-> +		int ret;
->  
->  		/*
->  		 * On kernels that support module PLTs, the offset between the
-> @@ -96,32 +144,14 @@ int ftrace_make_call(struct dyn_ftrace *
->  		if (WARN_ON(!mod))
->  			return -EINVAL;
->  
-> -		/*
-> -		 * There is only one ftrace trampoline per module. For now,
-> -		 * this is not a problem since on arm64, all dynamic ftrace
-> -		 * invocations are routed via ftrace_caller(). This will need
-> -		 * to be revisited if support for multiple ftrace entry points
-> -		 * is added in the future, but for now, the pr_err() below
-> -		 * deals with a theoretical issue only.
-> -		 */
-> -		trampoline = get_plt_entry(addr, mod->arch.ftrace_trampoline);
-> -		if (!plt_entries_equal(mod->arch.ftrace_trampoline,
-> -				       &trampoline)) {
-> -			if (!plt_entries_equal(mod->arch.ftrace_trampoline,
-> -					       &(struct plt_entry){})) {
-> -				pr_err("ftrace: far branches to multiple entry points unsupported inside a single module\n");
-> -				return -EINVAL;
-> -			}
-> -
-> -			/* point the trampoline to our ftrace entry point */
-> -			module_disable_ro(mod);
-> -			*mod->arch.ftrace_trampoline = trampoline;
-> -			module_enable_ro(mod, true);
-> +		/* Check against our well-known list of ftrace entry points */
-> +		if (addr == FTRACE_ADDR || addr == FTRACE_REGS_ADDR) {
-> +			ret = install_ftrace_trampoline(mod, &addr);
-> +			if (ret < 0)
-> +				return ret;
-> +		} else
-> +			return -EINVAL;
->  
-> -			/* update trampoline before patching in the branch */
-> -			smp_wmb();
-> -		}
-> -		addr = (unsigned long)(void *)mod->arch.ftrace_trampoline;
->  #else /* CONFIG_ARM64_MODULE_PLTS */
->  		return -EINVAL;
->  #endif /* CONFIG_ARM64_MODULE_PLTS */
-> @@ -133,17 +163,45 @@ int ftrace_make_call(struct dyn_ftrace *
->  	return ftrace_modify_code(pc, old, new, true);
->  }
->  
-> +#ifdef CONFIG_DYNAMIC_FTRACE_WITH_REGS
-> +int ftrace_modify_call(struct dyn_ftrace *rec, unsigned long old_addr,
-> +			unsigned long addr)
-> +{
-> +	unsigned long pc = rec->ip + REC_IP_BRANCH_OFFSET;
-> +	u32 old, new;
-> +
-> +	old = aarch64_insn_gen_branch_imm(pc, old_addr, true);
-> +	new = aarch64_insn_gen_branch_imm(pc, addr, true);
-> +
-
-Is this a branch or a call? Does addr always fit in the immediate limits?
-
-> +	return ftrace_modify_code(pc, old, new, true);
-
-Can you talk to the semantics of whether this operation is atomic w.r.t system? Will old and new return consistent values? Given the nature of ftrace, I presume it's well isolated. 
-
-> +}
-> +#endif
-> +
->  /*
->   * Turn off the call to ftrace_caller() in instrumented function
->   */
->  int ftrace_make_nop(struct module *mod, struct dyn_ftrace *rec,
->  		    unsigned long addr)
->  {
-> -	unsigned long pc = rec->ip;
-> +	unsigned long pc = rec->ip + REC_IP_BRANCH_OFFSET;
->  	bool validate = true;
->  	u32 old = 0, new;
->  	long offset = (long)pc - (long)addr;
->  
-> +	/*
-> +	 * -fpatchable-function-entry= does not generate a profiling call
-> +	 *  initially; the NOPs are already there. So instead,
-> +	 *  put the LR saver there ahead of time, in order to avoid
-> +	 *  any race condition over patching 2 instructions.
-> +	 */
-> +	if (IS_ENABLED(CONFIG_DYNAMIC_FTRACE_WITH_REGS) &&
-> +		addr == MCOUNT_ADDR) {
-> +		old = aarch64_insn_gen_nop();
-> +		new = MOV_X9_X30;
-> +		pc -= REC_IP_BRANCH_OFFSET;
-> +		return ftrace_modify_code(pc, old, new, validate);
-
-I presume all the icache flush and barrier handling is in ftrace_modify_code()?
-
-> +	}
-> +
->  	if (offset < -SZ_128M || offset >= SZ_128M) {
->  #ifdef CONFIG_ARM64_MODULE_PLTS
->  		u32 replaced;
-> --- a/arch/arm64/include/asm/module.h
-> +++ b/arch/arm64/include/asm/module.h
-> @@ -32,7 +32,8 @@ struct mod_arch_specific {
->  	struct mod_plt_sec	init;
->  
->  	/* for CONFIG_DYNAMIC_FTRACE */
-> -	struct plt_entry 	*ftrace_trampoline;
-> +	struct plt_entry	*ftrace_trampolines;
-> +#define MOD_ARCH_NR_FTRACE_TRAMPOLINES	2
-
-I don't see the generation of ftrace_trampolines[1]
-
->  };
->  #endif
->  
-> --- a/arch/arm64/kernel/module.c
-> +++ b/arch/arm64/kernel/module.c
-> @@ -452,7 +452,7 @@ int module_finalize(const Elf_Ehdr *hdr,
->  #ifdef CONFIG_ARM64_MODULE_PLTS
->  		if (IS_ENABLED(CONFIG_DYNAMIC_FTRACE) &&
->  		    !strcmp(".text.ftrace_trampoline", secstrs + s->sh_name))
-> -			me->arch.ftrace_trampoline = (void *)s->sh_addr;
-> +			me->arch.ftrace_trampolines = (void *)s->sh_addr;
->  #endif
->  	}
->  
-> --- a/arch/arm64/kernel/module-plts.c
-> +++ b/arch/arm64/kernel/module-plts.c
-> @@ -333,7 +333,8 @@ int module_frob_arch_sections(Elf_Ehdr *
->  		tramp->sh_type = SHT_NOBITS;
->  		tramp->sh_flags = SHF_EXECINSTR | SHF_ALLOC;
->  		tramp->sh_addralign = __alignof__(struct plt_entry);
-> -		tramp->sh_size = sizeof(struct plt_entry);
-> +		tramp->sh_size = MOD_ARCH_NR_FTRACE_TRAMPOLINES
-> +				 * sizeof(struct plt_entry);
->  	}
->  
->  	return 0;
-> 
-
-Balbir Singh.
