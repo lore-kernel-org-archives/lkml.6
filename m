@@ -2,163 +2,120 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C24EBC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:33:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A7CDC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:33:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D21121721
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:33:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548146009;
-	bh=oskaqloGxzpVlEB9EoI/Hzkqp8YIG8E7IGPgpL/k7Qc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=KJS2QqCWEwaWioQwBm0wdzYqoHnFbpiMaIMcocV0RtdHc1RsMkNJcdnACTLa3WYQI
-	 gky2sHU7k4VjktmjN3uLcq1bI1iEkwWS0mSkJiFvTGIPKt7V9pCEM1yG+E8PZDyLfi
-	 0PG/E7oV4hQ8Sf7vGbsPJk/qTr897kcTrTvppZik=
+	by mail.kernel.org (Postfix) with ESMTP id 1914B20879
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:33:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rm0rKjQK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727347AbfAVId1 (ORCPT
+        id S1727429AbfAVIdc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 03:33:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45606 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727062AbfAVId1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 03:33:27 -0500
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4B39920854;
-        Tue, 22 Jan 2019 08:33:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548146005;
-        bh=oskaqloGxzpVlEB9EoI/Hzkqp8YIG8E7IGPgpL/k7Qc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=SN6uOnX8QcU7tNGU9shqUyIV1FcOmx2EDwewPXEUA3j1HSQ1E2IRndoza8MPxJC6c
-         fkBhLVgEvC7v1lP/src3CD9wEldzKuVx1B2M3jjQaQpC+qwCvnYdW+qrA7vJUtuKn2
-         7LQCt/AbXQjWhAPSGjDbdtPd190CEKmkxTGV4H84=
-Date:   Tue, 22 Jan 2019 09:33:13 +0100
-From:   Boris Brezillon <bbrezillon@kernel.org>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Lucas Stach <dev@lynxeye.de>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        linux-tegra@vger.kernel.org,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH 2/2] mtd: rawnand: use unnamed union in struct
- nand_op_parser_pattern_elem
-Message-ID: <20190122093313.67375948@bbrezillon>
-In-Reply-To: <20190122090830.118eb6be@xps13>
-References: <1548142975-14219-1-git-send-email-yamada.masahiro@socionext.com>
-        <1548142975-14219-3-git-send-email-yamada.masahiro@socionext.com>
-        <20190122084944.420fcd4a@xps13>
-        <CAK7LNAQvD03By1PQJ8KZG-UqX+NVQcL6JU-5a-2ZVVovdgBpEQ@mail.gmail.com>
-        <20190122090830.118eb6be@xps13>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 22 Jan 2019 03:33:32 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:40598 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727062AbfAVIda (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 03:33:30 -0500
+Received: by mail-pg1-f194.google.com with SMTP id z10so10723619pgp.7;
+        Tue, 22 Jan 2019 00:33:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=56Ajni3E8oZE+o/bfMQDpPDoogGlR13oEATbHo2Cu/A=;
+        b=rm0rKjQK9GUvfcDjEXiVDMLEdrgt5o9JpBVcvm6/3/4uBbT2OFpoY4kCu3buz2WZaf
+         TE+PTo2JcZfISf12bVCsQQZ1g/t78GICw+q/GQd4JmEiSUVvnRWR0dIYYZrQIC+l7Q3u
+         u6zi/sgMuMMUezVtWKJHgRyJ0RHc/NRRUnX/g7mzAkyed0xdKrfn+F3bYPKquVyukdvw
+         4vcEBrY1rKyj6a7ViWsASljvhFRpB660snQbpAtEfaDQygjaZMJlddRVY3PHivwlKILH
+         yIm+AkcDudO63Y6dUM2tdiMKjpIoB+Tz7mIkbeM5AnDHB/qC3A80VlXwkcr4uhl9BVxa
+         iAuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=56Ajni3E8oZE+o/bfMQDpPDoogGlR13oEATbHo2Cu/A=;
+        b=Sk3I8LMm3hY4+HMjua3IvgTaP3v3Ci2dscD0HKqzRjSDeSbkhzevOj5O5X7WDtmqaY
+         3Fdmlv3Atp0bberwVDNdvcaPWPnir0n2VC2k10JhKXskSh4+b2FIhIoG8nAS09nSL+Ko
+         9yCiKkLORF4EJAbP+Ny7tBcpb9yYVv0Gx01y4seQ8idjH+iDY+Q640AnxPf5hxz2PUyd
+         N2GVxUjEQfiuBs17IdbOXGwRMAiUq0a2W+B5TjxiK901NVnUblOvsLtUgKEn8GepXnwH
+         rhxTM85no3xOIZ7qRIg+3bDZ5LUm1op4mUdq5jBv+mOosRtJtCKYVeNTOY/zd+0dEV+m
+         mwYA==
+X-Gm-Message-State: AJcUukfOZRy4DXUVgsgHjlbght/hX6n1C9dUPS8PxhCFJ0tMKd/sTjYQ
+        lUEIB3+Q4iWdRi2VRk5rLtxe9R2p
+X-Google-Smtp-Source: ALg8bN7XC3FuX9Jb2JkPCXHQm3qRM4DFi0DHCcUtFxBel/U59HqJwSLH6rGNyeCtbfbKGV+4C8mTog==
+X-Received: by 2002:a63:5026:: with SMTP id e38mr31220384pgb.123.1548146009345;
+        Tue, 22 Jan 2019 00:33:29 -0800 (PST)
+Received: from myunghoj-Precision-5530 (cpe-76-176-3-80.san.res.rr.com. [76.176.3.80])
+        by smtp.gmail.com with ESMTPSA id a65sm12860844pge.65.2019.01.22.00.33.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 22 Jan 2019 00:33:28 -0800 (PST)
+Date:   Tue, 22 Jan 2019 00:33:26 -0800
+From:   Myungho Jung <mhjungk@gmail.com>
+To:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>
+Cc:     linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] Bluetooth: hci_uart: Check if socket buffer is ERR_PTR in
+ h4_recv_buf()
+Message-ID: <20190122083323.GA22508@myunghoj-Precision-5530>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 22 Jan 2019 09:08:30 +0100
-Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+h4_recv_buf() callers store the return value to socket buffer and
+recursively pass the buffer to h4_recv_buf() without protection. So,
+ERR_PTR returned from h4_recv_buf() can be dereferenced, if called again
+before setting the socket buffer to NULL from previous error. Check if
+skb is ERR_PTR in h4_recv_buf().
 
-> Hi Masahiro,
-> 
-> Masahiro Yamada <yamada.masahiro@socionext.com> wrote on Tue, 22 Jan
-> 2019 17:00:54 +0900:
-> 
-> > On Tue, Jan 22, 2019 at 4:50 PM Miquel Raynal <miquel.raynal@bootlin.com> wrote:  
-> > >
-> > > Hi Masahiro,
-> > >
-> > > Masahiro Yamada <yamada.masahiro@socionext.com> wrote on Tue, 22 Jan
-> > > 2019 16:42:55 +0900:
-> > >    
-> > > > Although drivers do not directly get access to the private data of
-> > > > instruction patterns, let's use unnamed union field to be consistent
-> > > > with nand_op_instr.
-> > > >    
-> > >
-> > > Actually this is how we wrote it the first time. Then we got robots
-> > > reporting that anonymous unions where not allowed with older (still
-> > > supported) GCC versions and I had to do this:
-> > >
-> > >
-> > > commit c1a72e2dbb4abb90bd408480d7c48ba40cb799ce
-> > > Author: Miquel Raynal <miquel.raynal@free-electrons.com>
-> > > Date:   Fri Jan 19 19:11:27 2018 +0100
-> > >
-> > >     mtd: nand: Fix build issues due to an anonymous union
-> > >
-> > >     GCC-4.4.4 raises errors when assigning a parameter in an anonymous
-> > >     union, leading to this kind of failure:
-> > >
-> > >     drivers/mtd/nand/marvell_nand.c:1936:
-> > >         warning: missing braces around initializer
-> > >         warning: (near initialization for '(anonymous)[1].<anonymous>')
-> > >         error: unknown field 'data' specified in initializer
-> > >         error: unknown field 'addr' specified in initializer
-> > >
-> > >     Work around the situation by naming these unions.
-> > >
-> > >     Fixes: 8878b126df76 ("mtd: nand: add ->exec_op() implementation")
-> > >     Reported-by: Andrew Morton <akpm@linux-foundation.org>
-> > >     Signed-off-by: Miquel Raynal <miquel.raynal@free-electrons.com>
-> > >     Tested-by: Andrew Morton <akpm@linux-foundation.org>
-> > >     Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> > >    
-> > 
-> > 
-> > Hmm, how come Andrew's compiler was fine with the following?
-> > 
-> > struct nand_flash_dev {
-> >         char *name;
-> >         union {
-> >                 struct {
-> >                         uint8_t mfr_id;
-> >                         uint8_t dev_id;
-> >                 };
-> >                 uint8_t id[NAND_MAX_ID_LEN];
-> >         };
-> >         unsigned int pagesize;
-> >         ...
-> > };
-> >   
-> 
-> It is probably not :)
+Reported-by: syzbot+017a32f149406df32703@syzkaller.appspotmail.com
+Signed-off-by: Myungho Jung <mhjungk@gmail.com>
+---
+ drivers/bluetooth/h4_recv.h | 4 ++++
+ drivers/bluetooth/hci_h4.c  | 4 ++++
+ 2 files changed, 8 insertions(+)
 
-It was compile fine. I don't know all the subtleties, but maybe it's
-because ->id[] is a base type and not a struct.
+diff --git a/drivers/bluetooth/h4_recv.h b/drivers/bluetooth/h4_recv.h
+index b432651f8236..285cf72190b7 100644
+--- a/drivers/bluetooth/h4_recv.h
++++ b/drivers/bluetooth/h4_recv.h
+@@ -60,6 +60,10 @@ static inline struct sk_buff *h4_recv_buf(struct hci_dev *hdev,
+ 					  const struct h4_recv_pkt *pkts,
+ 					  int pkts_count)
+ {
++	/* Check if socket buffer is not reset yet from previous error */
++	if (IS_ERR(skb))
++		skb = NULL;
++
+ 	while (count) {
+ 		int i, len;
+ 
+diff --git a/drivers/bluetooth/hci_h4.c b/drivers/bluetooth/hci_h4.c
+index fb97a3bf069b..dea48090d2dc 100644
+--- a/drivers/bluetooth/hci_h4.c
++++ b/drivers/bluetooth/hci_h4.c
+@@ -174,6 +174,10 @@ struct sk_buff *h4_recv_buf(struct hci_dev *hdev, struct sk_buff *skb,
+ 	struct hci_uart *hu = hci_get_drvdata(hdev);
+ 	u8 alignment = hu->alignment ? hu->alignment : 1;
+ 
++	/* Check if socket buffer is not reset yet from previous error */
++	if (IS_ERR(skb))
++		skb = NULL;
++
+ 	while (count) {
+ 		int i, len;
+ 
+-- 
+2.17.1
 
-> 
-> > 
-> > 
-> > The current minimum version is GCC 4.6
-> > (commit cafa0010cd51fb7)
-> > but I am not sure if this restriction is remaining.
-> >   
-> 
-> That's right, can you please test if this limitation is still
-> ongoing wit GCC 4.6?
-
-I have a more important question: why should we go bad back to unnamed
-unions? Why is that a problem to have a named union? Sure, we initially
-started with an unnamed ones because it made lines shorter, but now that
-we switched to named unions I don't see the point of going back and
-patching all drivers again (at the risk of seeing this problem appear
-again when compiled with an old compiler version).
