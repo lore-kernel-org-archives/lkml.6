@@ -2,101 +2,96 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLACK autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57048C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:45:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27692C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:45:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3167220844
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:45:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E678E20844
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:45:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D7GFl0XG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729173AbfAVPpd (ORCPT
+        id S1729198AbfAVPpv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 10:45:33 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56334 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729127AbfAVPpa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 10:45:30 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D405A1596;
-        Tue, 22 Jan 2019 07:45:29 -0800 (PST)
-Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DF84B3F589;
-        Tue, 22 Jan 2019 07:45:26 -0800 (PST)
-Date:   Tue, 22 Jan 2019 15:45:24 +0000
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v6 08/16] sched/cpufreq: uclamp: Add utilization clamping
- for FAIR tasks
-Message-ID: <20190122154524.64c6yawmutig35zo@e110439-lin>
-References: <20190115101513.2822-1-patrick.bellasi@arm.com>
- <20190115101513.2822-9-patrick.bellasi@arm.com>
- <20190122152132.GR27931@hirez.programming.kicks-ass.net>
+        Tue, 22 Jan 2019 10:45:51 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:43945 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728683AbfAVPpv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 10:45:51 -0500
+Received: by mail-oi1-f195.google.com with SMTP id u18so17724999oie.10;
+        Tue, 22 Jan 2019 07:45:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=7AXTiJ+PI1paWxcCtGYrxQmtleuHLj1fKPHB01K/gow=;
+        b=D7GFl0XGQp8AcNqsc6+0iHCU7aVrEtD3461MuJj6Lsu5p9X38pfWSxipkcBr+1wKYg
+         8YXEG+Xa5r/V/zDw64DQe10DzpQfSbXX0XL6KqPzGFOZ0CB2TukH9u9BRdAVzo4ERB73
+         i6jWna5hMQnHZmnYghl6DTxblmgQVGI2piQ/BnGqI1ab7KUurV4Zdj5Jlp9Zzc8UQLmp
+         JxIkHGuwNwYEcjAw/woEcAR/Vjv2pnpf4aT9UmJ7YTQaKnvMqBT9T9mrOA84Fiep36Nj
+         vLB3uoLaI/0Dfs3gVjbzqzHTDlkMf2WYh5oI4owhxqEx17CL7Avrlas5rsJ/vq48eMcX
+         11oQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=7AXTiJ+PI1paWxcCtGYrxQmtleuHLj1fKPHB01K/gow=;
+        b=bKCZAJ/hv5q5vjPtq5fQsGAQTIbY9OPCvYuJP1s86BDLf8pjTROxb+iVyoPSDcpWQa
+         vCfjBXLtAQCalFnvVWxJH+OEHfSj5oArkWgxH94tdfDdOjp8ipVzXM/nVV9K+jIPYz/B
+         4civez+xFCB8iGAgwIJAWbr9e4O1JzYSe2dMgryzkI5dOwe3fKffeM6FUm6m7VH1/wC7
+         JAm0JO6CMrTO0wYtblM4PqLGqi2CgeN5luWg/r57KsYgUUt8X8SN2WP9Wd6EMRCio7QY
+         PoNM/eNShM+pcRiPLcB0PK7wobzjEc+uK5EEc0BUQHT48uAYd1QfIgwB7EFqkTOR3aBH
+         UUYQ==
+X-Gm-Message-State: AJcUukcawgzN/WPmVvvv/W7mYPTBDGJ7Kxo1yF5rKcThGYjRbbhJ1jZa
+        oQnxkMXEwtTgXGByIKvP7zs=
+X-Google-Smtp-Source: ALg8bN4ZWVNntFV2nHZxnnsD6lak5rqvBPmOH5nsFDW6ulgGroR5cH9U1/u8ET5Q1T5zaCSV2SubpA==
+X-Received: by 2002:aca:eb0f:: with SMTP id j15mr9007980oih.110.1548171950476;
+        Tue, 22 Jan 2019 07:45:50 -0800 (PST)
+Received: from [192.168.1.112] (cpe-24-31-245-230.kc.res.rr.com. [24.31.245.230])
+        by smtp.gmail.com with ESMTPSA id y2sm6675064oto.49.2019.01.22.07.45.49
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 22 Jan 2019 07:45:50 -0800 (PST)
+Subject: Re: [PATCH] b43legacy: no need to check return value of
+ debugfs_create functions
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org,
+        b43-dev@lists.infradead.org
+References: <20190122152151.16139-31-gregkh@linuxfoundation.org>
+From:   Larry Finger <Larry.Finger@lwfinger.net>
+Message-ID: <451b54fb-0ef0-ce6b-71e4-39ba781b5a94@lwfinger.net>
+Date:   Tue, 22 Jan 2019 09:45:49 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190122152132.GR27931@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190122152151.16139-31-gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22-Jan 16:21, Peter Zijlstra wrote:
-> On Tue, Jan 15, 2019 at 10:15:05AM +0000, Patrick Bellasi wrote:
-> > --- a/kernel/sched/cpufreq_schedutil.c
-> > +++ b/kernel/sched/cpufreq_schedutil.c
-> > @@ -218,8 +218,15 @@ unsigned long schedutil_freq_util(int cpu, unsigned long util_cfs,
-> >  	 * CFS tasks and we use the same metric to track the effective
-> >  	 * utilization (PELT windows are synchronized) we can directly add them
-> >  	 * to obtain the CPU's actual utilization.
-> > +	 *
-> > +	 * CFS utilization can be boosted or capped, depending on utilization
-> > +	 * clamp constraints requested by currently RUNNABLE tasks.
-> > +	 * When there are no CFS RUNNABLE tasks, clamps are released and
-> > +	 * frequency will be gracefully reduced with the utilization decay.
-> >  	 */
-> > -	util = util_cfs;
-> > +	util = (type == ENERGY_UTIL)
-> > +		? util_cfs
-> > +		: uclamp_util(rq, util_cfs);
+On 1/22/19 9:21 AM, Greg Kroah-Hartman wrote:
+> When calling debugfs functions, there is no need to ever check the
+> return value.  The function can work or not, but the code logic should
+> never do something different based on this.
 > 
-> That's pretty horrible; what's wrong with:
-> 
-> 	util = util_cfs;
-> 	if (type == FREQUENCY_UTIL)
-> 		util = uclamp_util(rq, util);
-> 
-> That should generate the same code, but is (IMO) far easier to read.
+> Cc: Larry Finger <Larry.Finger@lwfinger.net>
+> Cc: Kalle Valo <kvalo@codeaurora.org>
+> Cc: linux-wireless@vger.kernel.org
+> Cc: b43-dev@lists.infradead.org
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Yes, right... and that's also the pattern we end up with the
-following patch on RT integration.
+Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
 
-However, as suggested by Rafael, I'll squash these two patches
-together and we will get rid of the above for free ;)
+Thanks,
 
-> >  	util += cpu_util_rt(rq);
-> >  
-> >  	dl_util = cpu_util_dl(rq);
+Larry
 
--- 
-#include <best/regards.h>
-
-Patrick Bellasi
