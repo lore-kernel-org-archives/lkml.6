@@ -2,189 +2,277 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D20FC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:44:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D278C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:45:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1125A21019
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:44:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD11021019
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:45:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="UYp3nuV3";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="c8xp/dmO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726096AbfAVSom (ORCPT
+        id S1726423AbfAVSpN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 13:44:42 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58918 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725958AbfAVSom (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 13:44:42 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B0139EBD;
-        Tue, 22 Jan 2019 10:44:41 -0800 (PST)
-Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9E94C3F5C1;
-        Tue, 22 Jan 2019 10:44:40 -0800 (PST)
-Subject: Re: [PATCH] dma: debug: no need to check return value of
- debugfs_create functions
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        iommu@lists.linux-foundation.org,
-        Corentin Labbe <clabbe@baylibre.com>
-References: <20190122152151.16139-39-gregkh@linuxfoundation.org>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <2b974ef1-4336-8187-cbc5-ba2a14691837@arm.com>
-Date:   Tue, 22 Jan 2019 18:44:38 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 22 Jan 2019 13:45:13 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:48466 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725896AbfAVSpM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 13:45:12 -0500
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0MIWZ75026884;
+        Tue, 22 Jan 2019 10:42:25 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=tKEYiWHRLjvJvu4mN6vm0SdQ9IBE5+x68MYfZ729N/I=;
+ b=UYp3nuV36nAuNcAm/W1BJNM77+F8FZ6i1SlEaI2jHKW9z/mbm1lFmf+0rZNuvv7z1yrU
+ RSuw11TFcGEjS8307DvLk3UJyDvUyTAHPYL/J6K6JyFPePplc9+VDB/DDrt5wUq2Lz7O
+ MlE8vDrcgrqQgQfUEmQlOvqqyvameHaEBCA= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2q68hs82mg-7
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Tue, 22 Jan 2019 10:42:25 -0800
+Received: from prn-hub02.TheFacebook.com (2620:10d:c081:35::126) by
+ prn-hub01.TheFacebook.com (2620:10d:c081:35::125) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1531.3; Tue, 22 Jan 2019 10:39:00 -0800
+Received: from NAM03-DM3-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.26) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
+ via Frontend Transport; Tue, 22 Jan 2019 10:39:00 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tKEYiWHRLjvJvu4mN6vm0SdQ9IBE5+x68MYfZ729N/I=;
+ b=c8xp/dmO4gfLnxOAtS3vAvdKQGUbGvCEcc0kY1bejrupkCdFb/qh7fq8N3Uc9rweGuiKqRS5tmGQI3ipSReJut/JfKBDMG129kAohFgECNwr73qFofe/oEF/UcH64E0evoNtv7b91WXf4scp2qTHeSJt501W37U++YRKDikRmrg=
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com (10.175.2.19) by
+ MWHPR15MB1438.namprd15.prod.outlook.com (10.173.234.140) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1537.31; Tue, 22 Jan 2019 18:38:56 +0000
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::ec0e:4a05:81f8:7df9]) by MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::ec0e:4a05:81f8:7df9%4]) with mapi id 15.20.1537.031; Tue, 22 Jan 2019
+ 18:38:56 +0000
+From:   Song Liu <songliubraving@fb.com>
+To:     Jiri Olsa <jolsa@redhat.com>
+CC:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        Kernel Team <Kernel-team@fb.com>
+Subject: Re: [PATCH v11 perf, bpf-next 7/9] perf tools: synthesize
+ PERF_RECORD_* for loaded BPF programs
+Thread-Topic: [PATCH v11 perf, bpf-next 7/9] perf tools: synthesize
+ PERF_RECORD_* for loaded BPF programs
+Thread-Index: AQHUrn/iSbG/DnBf4UmHa+IaoczOfaW1HE+AgAY/8gCAAAUEgIAABZmAgAAB44CAAAadgIAANxeA
+Date:   Tue, 22 Jan 2019 18:38:56 +0000
+Message-ID: <101BF88D-2DA4-4B54-A710-D0641C427136@fb.com>
+References: <20190117161521.1341602-1-songliubraving@fb.com>
+ <20190117161521.1341602-8-songliubraving@fb.com>
+ <20190118144655.GM5823@kernel.org> <20190122141320.GF14973@kernel.org>
+ <20190122143117.GG14973@kernel.org> <20190122145119.GF27625@krava>
+ <20190122145805.GI14973@kernel.org> <20190122152145.GG27625@krava>
+In-Reply-To: <20190122152145.GG27625@krava>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3445.102.3)
+x-originating-ip: [2620:10d:c090:200::4:df87]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR15MB1438;20:nYzW6BrN4us2lD1ibAYEUezgj4XheAGino8/6FrzktGrmBw1sn3gNNLtwI9NG5aJ/2VUprpMHkk4CsGKp191MmnJcEfvLfRsWEhcitwLL1DPOv5HCe1H5+45WSKNC9xEMlMdP/cyLgNgDzc4VAoge+q/Imco1/y76iuD8mMOvFU=
+x-ms-office365-filtering-correlation-id: d8498a02-b65f-4b77-e23d-08d68098ddb9
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600109)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:MWHPR15MB1438;
+x-ms-traffictypediagnostic: MWHPR15MB1438:
+x-microsoft-antispam-prvs: <MWHPR15MB1438ABAF168157B199BAB9DDB3980@MWHPR15MB1438.namprd15.prod.outlook.com>
+x-forefront-prvs: 0925081676
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39860400002)(396003)(366004)(136003)(376002)(189003)(199004)(93886005)(68736007)(82746002)(6512007)(229853002)(81156014)(83716004)(316002)(8936002)(50226002)(81166006)(6436002)(71190400001)(71200400001)(54906003)(86362001)(25786009)(2906002)(4326008)(5024004)(256004)(6246003)(8676002)(7736002)(305945005)(53936002)(14454004)(478600001)(99286004)(2616005)(105586002)(33656002)(46003)(6116002)(106356001)(476003)(486006)(446003)(11346002)(57306001)(6506007)(53546011)(6486002)(97736004)(6916009)(36756003)(76176011)(186003)(102836004);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1438;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: vxP9/ftILGzBZrmRSVXgfi1CBJoyM2KlX1T73e+zGXsJ8aBKNSirkX1dTp092RocoG2AnRt668ZbdnxH7xBHrVxxv+4pkJT2YztJaFRwmIRKgmYGdwTv84DSE2W3oYS5W6MkTcdGJSL25wBmPOklpDmTnsvuUnzoqbuqkSZa/o7ArFfL0oAEaB/1/iRqQGQhxD7MYIduntorMVIJc14q/0ctFHzmZ/dOHFsayl0DtTQyk2ZLyUnxozCvoJxk0gcBzUvd84A31eWfbr4Ee0TrY44NCgyPkAhOvSrKKXDJ6i9dISEG3QY+h7fKS36jDLHKbtgMhAnPVNQj19UarqQaXpxMuNhT7Ra9VHisdSPMIHQj9nEYs3/nryVorR++D4pOGn8zqj+trwXQYtsrgWtDB9aNCQO82G1FDCkwr6qjCRQ=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <B95954436305E04FBD915F1213BCE2DA@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <20190122152151.16139-39-gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-CrossTenant-Network-Message-Id: d8498a02-b65f-4b77-e23d-08d68098ddb9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jan 2019 18:38:56.1483
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1438
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-22_10:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
 
-On 22/01/2019 15:21, Greg Kroah-Hartman wrote:
-> When calling debugfs functions, there is no need to ever check the
-> return value.  The function can work or not, but the code logic should
-> never do something different based on this.
-> 
-> Also delete the variables for the file dentries for the debugfs entries
-> as they are never used at all once they are created.
 
-Modulo one nit below, I certainly approve of the cleanup :)
+> On Jan 22, 2019, at 7:21 AM, Jiri Olsa <jolsa@redhat.com> wrote:
+>=20
+> On Tue, Jan 22, 2019 at 12:58:05PM -0200, Arnaldo Carvalho de Melo wrote:
+>> Em Tue, Jan 22, 2019 at 03:51:19PM +0100, Jiri Olsa escreveu:
+>>> On Tue, Jan 22, 2019 at 12:31:17PM -0200, Arnaldo Carvalho de Melo wrot=
+e:
+>>>> Em Tue, Jan 22, 2019 at 12:13:20PM -0200, Arnaldo Carvalho de Melo esc=
+reveu:
+>>>>> Em Fri, Jan 18, 2019 at 11:46:55AM -0300, Arnaldo Carvalho de Melo es=
+creveu:
+>>>>>> Em Thu, Jan 17, 2019 at 08:15:19AM -0800, Song Liu escreveu:
+>>>>>>> This patch synthesize PERF_RECORD_KSYMBOL and PERF_RECORD_BPF_EVENT=
+ for
+>>>>>>> BPF programs loaded before perf-record. This is achieved by gatheri=
+ng
+>>>>>>> information about all BPF programs via sys_bpf.
+>>>>>>=20
+>>>>>> Ditto
+>>>>>=20
+>>>>> This is breaking 'perf sched', see below, the fix seems trivial:
+>>>>>=20
+>>>>> [root@quaco ~]# perf sched record -a sleep 2
+>>>>> [ perf record: Woken up 1 times to write data ]
+>>>>> 0x5b60 [0x138]: failed to process type: 17
+>>>>> [ perf record: Captured and wrote 1.539 MB perf.data ]
+>>>>> [root@quaco ~]# perf sched lat
+>>>>> 0x5b60 [0x138]: failed to process type: 17
+>>>>> Failed to process events, error -22
+>>>>> [root@quaco ~]#
+>>>>=20
+>>>> So:
+>>>>=20
+>>>>   perf_session__process_event (event->header.type =3D 17 (PERF_RECORD_=
+KSYMBOL)
+>>>>     if (tool->ordered_events)
+>>>>       ret =3D perf_evlist__parse_sample_timestamp(evlist, event, &time=
+stamp);
+>>>>       if (ret && ret !=3D -1)
+>>>>            return ret;
+>>>>=20
+>>>> So it returns here with -EFAULT, i.e. this is failing:
+>>>>=20
+>>>> int perf_evlist__parse_sample_timestamp(struct perf_evlist *evlist,
+>>>>                                        union perf_event *event,
+>>>>                                        u64 *timestamp)
+>>>> {
+>>>>        struct perf_evsel *evsel =3D perf_evlist__event2evsel(evlist, e=
+vent);
+>>>>=20
+>>>>        if (!evsel)
+>>>>                return -EFAULT;
+>>>>        return perf_evsel__parse_sample_timestamp(evsel, event, timesta=
+mp);
+>>>> }
+>>>>=20
+>>>> It isn't mapping the event ID it finds back to an evsel.. Jiri, ideas?
+>>>>=20
+>>>> This is happening so far only for 'perf sched', perf record with two
+>>>> events works.
+>>>=20
+>>> I saw also perf mem failing because of this.. will check
+>>=20
+>> Right, seems something with the synthesizing of existing bpf progs,
+>> which always there are some nowadays, for instance, on this fedora29
+>> system:
+>>=20
+>> [root@quaco tmp]# bpftool prog
+>> 13: cgroup_skb  tag 7be49e3934a125ba  gpl
+>> 	loaded_at 2019-01-21T13:30:27-0200  uid 0
+>> 	xlated 296B  jited 229B  memlock 4096B  map_ids 13,14
+>> 14: cgroup_skb  tag 2a142ef67aaad174  gpl
+>> 	loaded_at 2019-01-21T13:30:27-0200  uid 0
+>> 	xlated 296B  jited 229B  memlock 4096B  map_ids 13,14
+>> 15: cgroup_skb  tag 7be49e3934a125ba  gpl
+>> 	loaded_at 2019-01-21T13:30:27-0200  uid 0
+>> 	xlated 296B  jited 229B  memlock 4096B  map_ids 15,16
+>> 16: cgroup_skb  tag 2a142ef67aaad174  gpl
+>> 	loaded_at 2019-01-21T13:30:27-0200  uid 0
+>> 	xlated 296B  jited 229B  memlock 4096B  map_ids 15,16
+>> 17: cgroup_skb  tag 7be49e3934a125ba  gpl
+>> 	loaded_at 2019-01-21T13:30:29-0200  uid 0
+>> 	xlated 296B  jited 229B  memlock 4096B  map_ids 17,18
+>> 18: cgroup_skb  tag 2a142ef67aaad174  gpl
+>> 	loaded_at 2019-01-21T13:30:29-0200  uid 0
+>> 	xlated 296B  jited 229B  memlock 4096B  map_ids 17,18
+>> 21: cgroup_skb  tag 7be49e3934a125ba  gpl
+>> 	loaded_at 2019-01-21T13:30:29-0200  uid 0
+>> 	xlated 296B  jited 229B  memlock 4096B  map_ids 21,22
+>> 22: cgroup_skb  tag 2a142ef67aaad174  gpl
+>> 	loaded_at 2019-01-21T13:30:29-0200  uid 0
+>> 	xlated 296B  jited 229B  memlock 4096B  map_ids 21,22
+>> [root@quaco tmp]#
+>>=20
+>> When with a bunch of tracepoints, that is what 'perf mem', 'perf kmem',
+>> 'perf sched', etc does, it ends up failing here:
+>>=20
+>>                    ret =3D perf_evlist__parse_sample_timestamp(evlist, e=
+vent, &timestamp);
+>>=20
+>> So it is not passed to=20
+>>=20
+>>                   ret =3D perf_session__queue_event(session, event, time=
+stamp, file_offset);
+>>=20
+>> in perf_session__process_event, this happens right when processing
+>> buildids in 'perf record', and also in 'perf report', so that is
+>> something badly synthesized that hits perf.data for PERF_RECORD_KSYMBOL.
+>=20
+> it's reproducible with simple:
+>  perf record -e cycles,instructions ls
+>=20
+> as you said on irc, it's the machine->id_hdr_size size missing
+> there's one more glitch, attached patch fixes that for me
+> you can't use sizeof(struct ksymbol_event), because it includes
+> the name as well.. which screws the size
+>=20
+> but I don't know that code that much.. might be still something
+> missing
+>=20
+> jirka
 
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+Hi Arnaldo and Jiri,
 
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> Cc: Robin Murphy <robin.murphy@arm.com>
-> Cc: iommu@lists.linux-foundation.org
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
->   kernel/dma/debug.c | 81 ++++++----------------------------------------
->   1 file changed, 10 insertions(+), 71 deletions(-)
-> 
-> diff --git a/kernel/dma/debug.c b/kernel/dma/debug.c
-> index 23cf5361bcf1..2f5fc8b9d39f 100644
-> --- a/kernel/dma/debug.c
-> +++ b/kernel/dma/debug.c
-> @@ -136,14 +136,6 @@ static u32 nr_prealloc_entries = PREALLOC_DMA_DEBUG_ENTRIES;
->   
->   /* debugfs dentry's for the stuff above */
->   static struct dentry *dma_debug_dent        __read_mostly;
+Thanks for catching and fixing the bug.=20
 
-Does this actually need to be at file scope, or could it be punted to a 
-local in dma_debug_fs_init() while we're here?
+I guess the following is OK?
 
-Robin.
+        *bpf_event =3D (struct bpf_event){
+                .header =3D {
+                        .type =3D PERF_RECORD_BPF_EVENT,
+                        .size =3D sizeof(struct bpf_event),
+                },
+                .type =3D PERF_BPF_EVENT_PROG_LOAD,
+                .flags =3D 0,
+                .id =3D info.id,
+        };
 
-> -static struct dentry *global_disable_dent   __read_mostly;
-> -static struct dentry *error_count_dent      __read_mostly;
-> -static struct dentry *show_all_errors_dent  __read_mostly;
-> -static struct dentry *show_num_errors_dent  __read_mostly;
-> -static struct dentry *num_free_entries_dent __read_mostly;
-> -static struct dentry *min_free_entries_dent __read_mostly;
-> -static struct dentry *nr_total_entries_dent __read_mostly;
-> -static struct dentry *filter_dent           __read_mostly;
->   
->   /* per-driver filter related state */
->   
-> @@ -840,66 +832,18 @@ static const struct file_operations filter_fops = {
->   	.llseek = default_llseek,
->   };
->   
-> -static int dma_debug_fs_init(void)
-> +static void dma_debug_fs_init(void)
->   {
->   	dma_debug_dent = debugfs_create_dir("dma-api", NULL);
-> -	if (!dma_debug_dent) {
-> -		pr_err("can not create debugfs directory\n");
-> -		return -ENOMEM;
-> -	}
-> -
-> -	global_disable_dent = debugfs_create_bool("disabled", 0444,
-> -			dma_debug_dent,
-> -			&global_disable);
-> -	if (!global_disable_dent)
-> -		goto out_err;
-> -
-> -	error_count_dent = debugfs_create_u32("error_count", 0444,
-> -			dma_debug_dent, &error_count);
-> -	if (!error_count_dent)
-> -		goto out_err;
-> -
-> -	show_all_errors_dent = debugfs_create_u32("all_errors", 0644,
-> -			dma_debug_dent,
-> -			&show_all_errors);
-> -	if (!show_all_errors_dent)
-> -		goto out_err;
-> -
-> -	show_num_errors_dent = debugfs_create_u32("num_errors", 0644,
-> -			dma_debug_dent,
-> -			&show_num_errors);
-> -	if (!show_num_errors_dent)
-> -		goto out_err;
-> -
-> -	num_free_entries_dent = debugfs_create_u32("num_free_entries", 0444,
-> -			dma_debug_dent,
-> -			&num_free_entries);
-> -	if (!num_free_entries_dent)
-> -		goto out_err;
-> -
-> -	min_free_entries_dent = debugfs_create_u32("min_free_entries", 0444,
-> -			dma_debug_dent,
-> -			&min_free_entries);
-> -	if (!min_free_entries_dent)
-> -		goto out_err;
-> -
-> -	nr_total_entries_dent = debugfs_create_u32("nr_total_entries", 0444,
-> -			dma_debug_dent,
-> -			&nr_total_entries);
-> -	if (!nr_total_entries_dent)
-> -		goto out_err;
-> -
-> -	filter_dent = debugfs_create_file("driver_filter", 0644,
-> -					  dma_debug_dent, NULL, &filter_fops);
-> -	if (!filter_dent)
-> -		goto out_err;
-> -
-> -	return 0;
->   
-> -out_err:
-> -	debugfs_remove_recursive(dma_debug_dent);
-> -
-> -	return -ENOMEM;
-> +	debugfs_create_bool("disabled", 0444, dma_debug_dent, &global_disable);
-> +	debugfs_create_u32("error_count", 0444, dma_debug_dent, &error_count);
-> +	debugfs_create_u32("all_errors", 0644, dma_debug_dent, &show_all_errors);
-> +	debugfs_create_u32("num_errors", 0644, dma_debug_dent, &show_num_errors);
-> +	debugfs_create_u32("num_free_entries", 0444, dma_debug_dent, &num_free_entries);
-> +	debugfs_create_u32("min_free_entries", 0444, dma_debug_dent, &min_free_entries);
-> +	debugfs_create_u32("nr_total_entries", 0444, dma_debug_dent, &nr_total_entries);
-> +	debugfs_create_file("driver_filter", 0644, dma_debug_dent, NULL, &filter_fops);
->   }
->   
->   static int device_dma_allocations(struct device *dev, struct dma_debug_entry **out_entry)
-> @@ -985,12 +929,7 @@ static int dma_debug_init(void)
->   		spin_lock_init(&dma_entry_hash[i].lock);
->   	}
->   
-> -	if (dma_debug_fs_init() != 0) {
-> -		pr_err("error creating debugfs entries - disabling\n");
-> -		global_disable = true;
-> -
-> -		return 0;
-> -	}
-> +	dma_debug_fs_init();
->   
->   	nr_pages = DIV_ROUND_UP(nr_prealloc_entries, DMA_DEBUG_DYNAMIC_ENTRIES);
->   	for (i = 0; i < nr_pages; ++i)
-> 
+as struct bpf_event doesn't have variable length name:
+
+        struct bpf_event {
+                struct perf_event_header header;
+                u16 type;
+                u16 flags;
+                u32 id;
+
+                /* for bpf_prog types */
+                u8 tag[BPF_TAG_SIZE];  // prog tag
+        };
+
+Or we need similar fix?=20
+
+Song=
