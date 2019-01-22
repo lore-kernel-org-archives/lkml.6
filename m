@@ -2,108 +2,103 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94CA5C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 22:51:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98D16C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 22:51:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 630F820870
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 22:51:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Mdh/az/u"
+	by mail.kernel.org (Postfix) with ESMTP id 7173120870
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 22:51:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727004AbfAVWvT (ORCPT
+        id S1727062AbfAVWv5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 17:51:19 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:41849 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726735AbfAVWvS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 17:51:18 -0500
-Received: by mail-qt1-f196.google.com with SMTP id l12so257371qtf.8
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 14:51:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=o/XBYHY6SKkDwEIlSoffdYinDoT8V1LONeQ2d/odNaQ=;
-        b=Mdh/az/ur8N3P0fSSYxO41aX78d92rObeQskl7lbc4hS9DeDf73UVzUUoQnLrUd0Bd
-         Zatbb+NMZBOeS3NFGPdYahMoTBb07Iq5+kNvUVnquujE7C9y5uRKH0RP9h9mCLl90VY+
-         XomJsnQMp5EEdrxsr8xxLlc1SHbxLsUMdNl0o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=o/XBYHY6SKkDwEIlSoffdYinDoT8V1LONeQ2d/odNaQ=;
-        b=VxKE062krdKPzG0fLdS+QVAj0/eZI8iPmsdP9GBUbZmLh1P/XK/Qam79P7x6rtAgBK
-         DA+z9caTrJcPa2/+Or64P2U3ySsogd1qWJAWN/pSEVSn0Itibxw6j5LhsTocP1BkBoIh
-         rrocoBY1sikG9wFQYIi9rZMhwgxyr9QqNYdAhN+Pa0ClzfZKPcrLDKPPXVKGhy+21Ngm
-         JP2N/VwhMy94aB5vTdUPOaULZ2rCcStzi97ICzqRaHKdmfHrNz0Ci9xDUKJRH7Nys9qt
-         5Ww3jZFTBjLV2d34IZcY1+2aAmpojDUAu7IyMEQg7oD1jAsj0lJsW9AcEZ7Z8r6fxQeY
-         QlXw==
-X-Gm-Message-State: AJcUukdyhVuwdwku6oqCgjShKDKz9Mb4RgUcHkBA060TTe4oem4V0mWu
-        2PQ76YLSA+Zp7KQ/0ckXyyolYa6wbp7F6kDFsatA2A==
-X-Google-Smtp-Source: ALg8bN7Zt15oTdh/04iq08N8IN0vyYu7i10byl+0WgPF5QJSa0QzavTsyex2nrnJhE4cip6lVIqoJK0xipouBFaKmWQ=
-X-Received: by 2002:ac8:6b18:: with SMTP id w24mr33380556qts.144.1548197477728;
- Tue, 22 Jan 2019 14:51:17 -0800 (PST)
+        Tue, 22 Jan 2019 17:51:57 -0500
+Received: from sauhun.de ([88.99.104.3]:56624 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726225AbfAVWv5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 17:51:57 -0500
+Received: from localhost (p54B333AA.dip0.t-ipconnect.de [84.179.51.170])
+        by pokefinder.org (Postfix) with ESMTPSA id D6CBE2C78FF;
+        Tue, 22 Jan 2019 23:51:55 +0100 (CET)
+Date:   Tue, 22 Jan 2019 23:51:55 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Laurentiu Tudor <laurentiu.tudor@nxp.com>
+Cc:     linux-i2c@vger.kernel.org, linux-imx@nxp.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        fabio.estevam@nxp.com, leoyang.li@nxp.com
+Subject: Re: [PATCH v2 1/2] i2c: imx: fix dma_request_chan error handling
+Message-ID: <20190122225155.vfy37bfuikzzymao@ninjato>
+References: <20190116112855.13824-1-laurentiu.tudor@nxp.com>
 MIME-Version: 1.0
-References: <20181210011504.122604-1-drinkcat@chromium.org>
- <CANMq1KAmFKpcxi49wJyfP4N01A80B2d-2RGY2Wrwg0BvaFxAxg@mail.gmail.com> <20190111102155.in5rctq5krs4ewfi@8bytes.org>
-In-Reply-To: <20190111102155.in5rctq5krs4ewfi@8bytes.org>
-From:   Nicolas Boichat <drinkcat@chromium.org>
-Date:   Wed, 23 Jan 2019 06:51:05 +0800
-Message-ID: <CANMq1KCq7wEYXKLZGCZczZ_yQrmK=MkHbUXESKhHnx5G_CMNVg@mail.gmail.com>
-Subject: Re: [PATCH v6 0/3] iommu/io-pgtable-arm-v7s: Use DMA32 zone for page tables
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Will Deacon <will.deacon@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Michal Hocko <mhocko@suse.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Levin Alexander <Alexander.Levin@microsoft.com>,
-        Huaisheng Ye <yehs1@lenovo.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        iommu@lists.linux-foundation.org,
-        lkml <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        Yong Wu <yong.wu@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Tomasz Figa <tfiga@google.com>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>, hch@infradead.org,
-        Matthew Wilcox <willy@infradead.org>,
-        Hsin-Yi Wang <hsinyi@chromium.org>, stable@vger.kernel.org,
-        Joerg Roedel <joro@8bytes.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="tzp54if5hd3it573"
+Content-Disposition: inline
+In-Reply-To: <20190116112855.13824-1-laurentiu.tudor@nxp.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrew,
 
-On Fri, Jan 11, 2019 at 6:21 PM Joerg Roedel <joro@8bytes.org> wrote:
->
-> On Wed, Jan 02, 2019 at 01:51:45PM +0800, Nicolas Boichat wrote:
-> > Does anyone have any further comment on this series? If not, which
-> > maintainer is going to pick this up? I assume Andrew Morton?
->
-> Probably, yes. I don't like to carry the mm-changes in iommu-tree, so
-> this should go through mm.
+--tzp54if5hd3it573
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Gentle ping on this series, it seems like it's better if it goes
-through your tree.
+On Wed, Jan 16, 2019 at 01:28:54PM +0200, Laurentiu Tudor wrote:
+> Use the correct error pointer when extracting the error code.
+>=20
+> Fixes: ea1e5f176e97 ("i2c: imx: notify about real errors on dma i2c_imx_d=
+ma_request")
 
-Series still applies cleanly on linux-next, but I'm happy to resend if
-that helps.
+This is not the sha1 in my tree. Maybe you rebased? I applied another
+patch meanwhile fixing the same issue. Still thanks!
 
-Thanks!
+> Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
+> ---
+>  drivers/i2c/busses/i2c-imx.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
+> index 09b124547669..42fed40198a0 100644
+> --- a/drivers/i2c/busses/i2c-imx.c
+> +++ b/drivers/i2c/busses/i2c-imx.c
+> @@ -287,7 +287,7 @@ static int i2c_imx_dma_request(struct imx_i2c_struct =
+*i2c_imx,
+> =20
+>  	dma->chan_tx =3D dma_request_chan(dev, "tx");
+>  	if (IS_ERR(dma->chan_tx)) {
+> -		ret =3D PTR_ERR(dma->chan_rx);
+> +		ret =3D PTR_ERR(dma->chan_tx);
+>  		if (ret !=3D -ENODEV && ret !=3D -EPROBE_DEFER)
+>  			dev_err(dev, "can't request DMA tx channel (%d)\n", ret);
+>  		goto fail_al;
+> --=20
+> 2.17.1
+>=20
 
-> Regards,
->
->         Joerg
+--tzp54if5hd3it573
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxHnosACgkQFA3kzBSg
+KbZMgA//cFlQRC8UbygfeKRp1djCuNi+hrVDWQ3uHwvIO54srWtH/93QcngYpDo3
+zPaJY+syS3Hl22XvtZDgSMljAiN2JXGv0UsxjcTRxU60A4TQaY/UUYuDIF6PcPbN
+kiLGbHmZ+LaT/bSTH6k+c7l7nx/ffqxHrlcy5VOgp9pcOdTsvidJlVV/tsQ5QApJ
+I4c+7xWzr5CztMci10Dq5p3wRClQNpbA28AVWpufJ78yDxf1yMS2q1F84Qbvg1Wd
+XjJESQdlkAXs0e9Ujjwg1mHzAO7lwkF8oj2QN38E94ebyx2t3uoyrv8cbRi/ivCR
+UUwE5Aa72Yhk+h5sTPo3MnAXv9V2gYXkjuinzHwibOxC+B4PQu/oItW4xmGvihh3
+LO88WNnsBgK0M3ZGzWcKYubyYp+zF6a3Z3U47lN1zc2BzS1Ba8svDmQeoeuxItWc
+QRjYtymm/2daqJh7s+2PLjbXHckuw7BsiA9j42YsWiGNMxll88mEPGpg3+F1Fzhh
+0tTJ0zUuSm+99wJO1NanBnGE8vzGb9yjPKqf8xID+1W7q+EjwlNGsHQXb5YchWAe
+R+VmyaoTXoDFytH8LotU628o4WAEFFpJjJjV1hyeC/gev+N/gcWoE1p1W1Gzwvxd
+BxYwAedHrPXztHDfMi9p2EUtXOMyJsm4bIM2ToQ4Clh70xQBl8k=
+=gB2m
+-----END PGP SIGNATURE-----
+
+--tzp54if5hd3it573--
