@@ -3,28 +3,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6FF3C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:40:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 669E9C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:41:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A458D21726
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:40:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D78821726
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:41:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727299AbfAVXku (ORCPT
+        id S1727068AbfAVXkL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 18:40:50 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:60080 "EHLO huawei.com"
+        Tue, 22 Jan 2019 18:40:11 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:60040 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727064AbfAVXkM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 18:40:12 -0500
+        id S1726678AbfAVXkJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 18:40:09 -0500
 Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 184947DFA545853B0641;
+        by Forcepoint Email with ESMTP id 0C65715BE7649DD30CB7;
         Wed, 23 Jan 2019 07:40:08 +0800 (CST)
 Received: from SZA150611058.china.huawei.com (10.45.143.16) by
  DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
- 14.3.408.0; Wed, 23 Jan 2019 07:40:01 +0800
+ 14.3.408.0; Wed, 23 Jan 2019 07:39:59 +0800
 From:   Huazhong Tan <tanhuazhong@huawei.com>
 To:     <davem@davemloft.net>, <eric.dumazet@gmail.com>
 CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
@@ -33,9 +33,9 @@ CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Yunsheng Lin <linyunsheng@huawei.com>,
         Peng Li <lipeng321@huawei.com>,
         Huazhong Tan <tanhuazhong@huawei.com>
-Subject: [PATCH V2 net-next 08/12] net: hns3: Change fw error code NOT_EXEC to NOT_SUPPORTED
-Date:   Wed, 23 Jan 2019 07:39:34 +0800
-Message-ID: <20190122233938.7188-9-tanhuazhong@huawei.com>
+Subject: [PATCH V2 net-next 04/12] net: hns3: fix rss configuration lost problem when setting channel
+Date:   Wed, 23 Jan 2019 07:39:30 +0800
+Message-ID: <20190122233938.7188-5-tanhuazhong@huawei.com>
 X-Mailer: git-send-email 2.20.1.windows.1
 In-Reply-To: <20190122233938.7188-1-tanhuazhong@huawei.com>
 References: <20190122233938.7188-1-tanhuazhong@huawei.com>
@@ -51,43 +51,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yunsheng Lin <linyunsheng@huawei.com>
 
-According to firmware error code definition, the error code of 2
-means NOT_SUPPORTED, this patch changes it to NOT_SUPPORTED.
+Currently rss configuration set by user will be lost when setting
+channel.
 
+This patch fixes it by not setting rss configuration to default
+if user has configured the rss.
+
+Fixes: 09f2af6405b8 ("net: hns3: add support to modify tqps number")
 Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c | 2 ++
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h | 2 +-
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/hisilicon/hns3/hnae3.h             | 3 ++-
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c         | 6 ++++--
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 8 +++++++-
+ 3 files changed, 13 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
-index e483a6e730e6..b0ee070884eb 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
-@@ -259,6 +259,8 @@ int hclge_cmd_send(struct hclge_hw *hw, struct hclge_desc *desc, int num)
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hnae3.h b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
+index d486748d5883..dc3db45361d3 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hnae3.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
+@@ -433,7 +433,8 @@ struct hnae3_ae_ops {
+ 			     struct ethtool_channels *ch);
+ 	void (*get_tqps_and_rss_info)(struct hnae3_handle *h,
+ 				      u16 *alloc_tqps, u16 *max_rss_size);
+-	int (*set_channels)(struct hnae3_handle *handle, u32 new_tqps_num);
++	int (*set_channels)(struct hnae3_handle *handle, u32 new_tqps_num,
++			    bool rxfh_configured);
+ 	void (*get_flowctrl_adv)(struct hnae3_handle *handle,
+ 				 u32 *flowctrl_adv);
+ 	int (*set_led_id)(struct hnae3_handle *handle,
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+index 1f15864fb8db..544f0d2f1e12 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -4163,6 +4163,7 @@ int hns3_set_channels(struct net_device *netdev,
+ {
+ 	struct hnae3_handle *h = hns3_get_handle(netdev);
+ 	struct hnae3_knic_private_info *kinfo = &h->kinfo;
++	bool rxfh_configured = netif_is_rxfh_configured(netdev);
+ 	u32 new_tqp_num = ch->combined_count;
+ 	u16 org_tqp_num;
+ 	int ret;
+@@ -4190,9 +4191,10 @@ int hns3_set_channels(struct net_device *netdev,
+ 		return ret;
  
- 			if (desc_ret == HCLGE_CMD_EXEC_SUCCESS)
- 				retval = 0;
-+			else if (desc_ret == HCLGE_CMD_NOT_SUPPORTED)
-+				retval = -EOPNOTSUPP;
- 			else
- 				retval = -EIO;
- 			hw->cmq.last_status = desc_ret;
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-index f23042b24c09..9f07279513b7 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-@@ -39,7 +39,7 @@ struct hclge_cmq_ring {
- enum hclge_cmd_return_status {
- 	HCLGE_CMD_EXEC_SUCCESS	= 0,
- 	HCLGE_CMD_NO_AUTH	= 1,
--	HCLGE_CMD_NOT_EXEC	= 2,
-+	HCLGE_CMD_NOT_SUPPORTED	= 2,
- 	HCLGE_CMD_QUEUE_FULL	= 3,
- };
+ 	org_tqp_num = h->kinfo.num_tqps;
+-	ret = h->ae_algo->ops->set_channels(h, new_tqp_num);
++	ret = h->ae_algo->ops->set_channels(h, new_tqp_num, rxfh_configured);
+ 	if (ret) {
+-		ret = h->ae_algo->ops->set_channels(h, org_tqp_num);
++		ret = h->ae_algo->ops->set_channels(h, org_tqp_num,
++						    rxfh_configured);
+ 		if (ret) {
+ 			/* If revert to old tqp failed, fatal error occurred */
+ 			dev_err(&netdev->dev,
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+index bf0931c6764f..3ba8de93bc3d 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -7518,7 +7518,8 @@ static void hclge_get_tqps_and_rss_info(struct hnae3_handle *handle,
+ 	*max_rss_size = hdev->rss_size_max;
+ }
  
+-static int hclge_set_channels(struct hnae3_handle *handle, u32 new_tqps_num)
++static int hclge_set_channels(struct hnae3_handle *handle, u32 new_tqps_num,
++			      bool rxfh_configured)
+ {
+ 	struct hclge_vport *vport = hclge_get_vport(handle);
+ 	struct hnae3_knic_private_info *kinfo = &vport->nic.kinfo;
+@@ -7557,6 +7558,10 @@ static int hclge_set_channels(struct hnae3_handle *handle, u32 new_tqps_num)
+ 	if (ret)
+ 		return ret;
+ 
++	/* RSS indirection table has been configuared by user */
++	if (rxfh_configured)
++		goto out;
++
+ 	/* Reinitializes the rss indirect table according to the new RSS size */
+ 	rss_indir = kcalloc(HCLGE_RSS_IND_TBL_SIZE, sizeof(u32), GFP_KERNEL);
+ 	if (!rss_indir)
+@@ -7572,6 +7577,7 @@ static int hclge_set_channels(struct hnae3_handle *handle, u32 new_tqps_num)
+ 
+ 	kfree(rss_indir);
+ 
++out:
+ 	if (!ret)
+ 		dev_info(&hdev->pdev->dev,
+ 			 "Channels changed, rss_size from %d to %d, tqps from %d to %d",
 -- 
 2.20.1
 
