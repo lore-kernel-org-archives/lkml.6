@@ -2,228 +2,109 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA068C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:04:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 602ADC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:08:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A19B7217D6
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:04:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548187466;
-	bh=koJJaclCQXIF7ABw4OggJQsEhP4spKzRESafbMwrurs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=azY9RjeCw7hhQbXsCyzNBqh5wTWwqoX0U80kjmP17cmjq1oqOcqi27I6PX3h4+oaf
-	 TzsKBylFueGP5RnD6XRtZ3KX1J/idWghMwVs0wONZQq/lzI7wKHxrrvHtKPG3IylYR
-	 RqLjOGBdvKC2E/sgS9NHMpKPEM1JfcCsm97zPegU=
+	by mail.kernel.org (Postfix) with ESMTP id 2D54321726
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:08:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Gbc1hoZE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726604AbfAVUEZ (ORCPT
+        id S1726214AbfAVUH7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 15:04:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37146 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726009AbfAVUEY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 15:04:24 -0500
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E22F62184A;
-        Tue, 22 Jan 2019 20:04:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548187463;
-        bh=koJJaclCQXIF7ABw4OggJQsEhP4spKzRESafbMwrurs=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Grs+XzWwCNiOC2hscKzxx/HNwh2CUaS187t1RzwCkGTQqwBaUMcGgK6UMSG1hqE3B
-         tqgZ1h1KmArSbmtBCAT2mxFxTLqWH+4Sz5qsu0sG9Fy88Fw9XBdtm4nlXGLWtp7Y6b
-         cLr3uiiPYYiQvncrgXBtW6kUHb7FdKSon/BOwXuE=
-Received: by mail-qt1-f173.google.com with SMTP id v11so29164996qtc.2;
-        Tue, 22 Jan 2019 12:04:22 -0800 (PST)
-X-Gm-Message-State: AJcUukfg8pB/r62HMdnFYRQBMXzF/oVaNlp+44O36OTwIwZjs06tm8BU
-        gy+SQYZaD4+MtpO6MIEcjgGeEsVYGS9smaAAxA==
-X-Google-Smtp-Source: ALg8bN5uvpFmef3QYPZQeu3IST67In4wX0IZ5WUWOAT6e1IP6xNnnHC9IiiZT6afr0lXJQHNtjqgeZk2dxlCQppuQ5Y=
-X-Received: by 2002:ac8:1712:: with SMTP id w18mr32259869qtj.76.1548187462082;
- Tue, 22 Jan 2019 12:04:22 -0800 (PST)
+        Tue, 22 Jan 2019 15:07:59 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:35893 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726009AbfAVUH6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 15:07:58 -0500
+Received: by mail-pf1-f196.google.com with SMTP id b85so12298668pfc.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 12:07:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=nSCiDmvEKK1umqixYkYg0ZY/PwJtUZG68fykpqOn/nI=;
+        b=Gbc1hoZE8ThgmhjNwmTNRY3C+DpDxDFkCDqcf4s1jItV/X24dBHBTzBs0yDi5Civ7k
+         O11ZpN6c31oB66ZXHWaO9HHvH7xqgmhTcVuHP8u7aZaQVLPhzQQdiagoSJlxZqcWaMl+
+         It/VxvDGYMYVZFhYDaVrL8ZMZxdGjEOSJ3z2Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=nSCiDmvEKK1umqixYkYg0ZY/PwJtUZG68fykpqOn/nI=;
+        b=qz3j0eNnUQkpPyhAlZA7xQ6ZV9nfmECzIh+8fhLFnEhQIb2m2HNQSrcDJ3I4oIgBCG
+         P3vXkfmf77VvgOvKgkfNKC2bSTLZJuSLf0JhjJCYJnA9ZQ95O13ottc8NmmcbWuacpV8
+         8d30UAEdku+8QE+Q9C0fKucWc2ZBbTDZvK7iFDWFwOe/mykmj+9KuVok2Bow/kZ/ODUn
+         BVCZqotxTcTgDv9pGwtm+LsjjKv9kqtZc9p2P0yYfJxpURtdSndS1JXq/bQE9ZJti6Rw
+         uFBvCLXkltBdrlfO5HYcB7WWlBiWtpz1p46lgLHfcbxwlexqwhHHKSLYCWYhMfvAXntY
+         R7bQ==
+X-Gm-Message-State: AJcUukfiuoYTgIRbx+szEbPJTL67RwyHPmgdHxYBfRxktdktehdINtUI
+        RXF5+iGdjGEGeahSSeMBs3wAbg==
+X-Google-Smtp-Source: ALg8bN6o3jUllwnPsZZ1G1Q+W5aOLlJFiYz6W9r8AgieawDgi4doEvBkpxVlQX+MlcUlJEJBxs4qMw==
+X-Received: by 2002:a63:c00b:: with SMTP id h11mr23193182pgg.429.1548187677852;
+        Tue, 22 Jan 2019 12:07:57 -0800 (PST)
+Received: from [10.177.251.206] ([192.19.248.250])
+        by smtp.gmail.com with ESMTPSA id d18sm23345241pfj.47.2019.01.22.12.07.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 22 Jan 2019 12:07:57 -0800 (PST)
+Subject: Re: [PATCH] brcm80211: no need to check return value of
+ debugfs_create functions
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        Wright Feng <wright.feng@cypress.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com, brcm80211-dev-list@cypress.com
+References: <20190122152151.16139-32-gregkh@linuxfoundation.org>
+From:   Arend Van Spriel <arend.vanspriel@broadcom.com>
+Message-ID: <530d2424-d679-c81a-9d11-02b2d7631bea@broadcom.com>
+Date:   Tue, 22 Jan 2019 21:07:48 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20190122180729.1834-1-ben.whitten@lairdtech.com> <20190122180729.1834-2-ben.whitten@lairdtech.com>
-In-Reply-To: <20190122180729.1834-2-ben.whitten@lairdtech.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 22 Jan 2019 14:04:10 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJK_UN1pqce-VxJ=gog9OMoz9nUZ6XeQD9jJf+3aLBaUA@mail.gmail.com>
-Message-ID: <CAL_JsqJK_UN1pqce-VxJ=gog9OMoz9nUZ6XeQD9jJf+3aLBaUA@mail.gmail.com>
-Subject: Re: [PATCH v2 lora-next 1/4] dt-bindings: lora: sx130x: add basic documentation
-To:     Ben Whitten <ben.whitten@gmail.com>
-Cc:     =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        netdev <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        linux-lpwan@lists.infradead.org,
-        "David S. Miller" <davem@davemloft.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190122152151.16139-32-gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 12:07 PM Ben Whitten <ben.whitten@gmail.com> wrote:
->
-> From: Ben Whitten <ben.whitten@gmail.com>
->
-> Add basic documentation in YAML format for the SX130x series concentrator=
-s
-> from Semtech.
-> Required is; the location on the SPI bus and the compatible string.
->
-> Signed-off-by: Ben Whitten <ben.whitten@gmail.com>
+The prefix should be 'brcmsmac'.
+
+On 1/22/2019 4:21 PM, Greg Kroah-Hartman wrote:
+> When calling debugfs functions, there is no need to ever check the
+> return value.  The function can work or not, but the code logic should
+> never do something different based on this.
+
+I could argue that if above is true it would be better to make the 
+debugfs function return void, but I won't ;-p
+
+In start_creating() the parent dentry is indeed checked for IS_ERR() so...
+
+Acked-by: Arend van Spriel
+
+> Cc: Arend van Spriel <arend.vanspriel@broadcom.com>
+> Cc: Franky Lin <franky.lin@broadcom.com>
+> Cc: Hante Meuleman <hante.meuleman@broadcom.com>
+> Cc: Chi-Hsien Lin <chi-hsien.lin@cypress.com>
+> Cc: Wright Feng <wright.feng@cypress.com>
+> Cc: Kalle Valo <kvalo@codeaurora.org>
+> Cc: linux-wireless@vger.kernel.org
+> Cc: brcm80211-dev-list.pdl@broadcom.com
+> Cc: brcm80211-dev-list@cypress.com
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 > ---
-> v1 -> v2:
-> * Dropped reset-gpios, radio-spi from required.
-> * Dropped spi-max-frequency from binding.
-> * Changed compatible to allow fallback from SX1308 to SX1301.
-> * Wording changes in commit and descriptions.
-> * Dual licence
-> * Incorperate Robs comments on child node and spi wrapper
-> ---
->  .../bindings/net/lora/semtech,sx130x.yaml     | 96 +++++++++++++++++++
->  1 file changed, 96 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/net/lora/semtech,sx=
-130x.yaml
->
-> diff --git a/Documentation/devicetree/bindings/net/lora/semtech,sx130x.ya=
-ml b/Documentation/devicetree/bindings/net/lora/semtech,sx130x.yaml
-> new file mode 100644
-> index 000000000000..41919fb67ec4
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/net/lora/semtech,sx130x.yaml
-> @@ -0,0 +1,96 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/net/lora/semtech,sx130x.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Semtech LoRa concentrator
-> +
-> +maintainers:
-> +  - Andreas F=C3=A4rber <afaerber@suse.de>
-> +  - Ben Whitten <ben.whitten@gmail.com>
-> +
-> +description: |
-> +  Semtech LoRa concentrator SX130x digital baseband chip is capable of
-> +  demodulating LoRa signals on 8 channels simultaneously.
-> +
-> +  It is typically paired with two SX125x IQ radios controlled over an
-> +  SPI directly from the concentrator.
-> +
-> +  The concentrator itself is controlled over SPI.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +        - semtech,sx1308
-> +      - enum:
-> +        - semtech,sx1301
-
-I think you want:
-
-oneOf:
-  - items:
-      - enum:
-          - semtech,sx1308
-      - const: semtech,sx1301
-  - items:
-      - const: semtech,sx1301
-
-That covers these 2 cases:
-"semtech,sx1308", "semtech,sx1301"
-"semtech,sx1301"
-
-> +
-> +  reg:
-> +    maxItems: 1
-> +    description: The chip select on the SPI bus.
-> +
-> +  reset-gpios:
-> +    maxItems: 1
-> +    description: A connection of the reset gpio line.
-> +
-> +  radio-spi:
-> +    type: object
-> +    description: The concentrator can have two radios connected which ar=
-e
-> +      contained within the following node.
-> +
-> +    properties:
-> +      '#address-cells':
-> +        const: 1
-> +
-> +      '#size-cells':
-> +        const: 0
-> +
-> +    patternProperties:
-> +      "^[a-zA-Z0-9]@[0-1]$":
-
-Is any node name allowed? We like to have generic names. 'lora' is
-fine for me, but I'm don't know if other devices could be attached?
-
-I thought up to 8 concentrators was supported? Or channels and radios
-aren't 1-1?
-
-This too should have 'type: object' since it is a node name.
-
-> +        properties:
-> +          reg:
-> +            maxItems: 1
-
-You can add:
-minimum: 0
-maximum: 1 (or 7?)
-
-> +        required:
-> +          - reg
-> +
-> +    required:
-> +      - '#address-cells'
-> +      - '#size-cells'
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +examples:
-> +  - |
-> +
-> +    #include <dt-bindings/gpio/gpio.h>
-> +
-> +    spi {
-> +      #address-cells =3D <1>;
-> +      #size-cells =3D <0>;
-> +
-> +      concentrator0: lora@0 {
-> +        compatible =3D "semtech,sx1301";
-> +        reg =3D <0>;
-> +        reset-gpios =3D <&pioB 27 GPIO_ACTIVE_HIGH>;
-> +        spi-max-frequency =3D <8000000>;
-> +
-> +        radio-spi {
-> +          #address-cells =3D <1>;
-> +          #size-cells =3D <0>;
-> +
-> +          radio0: lora@0 {
-> +            compatible =3D "semtech,sx1257";
-> +            reg =3D <0>;
-> +          };
-> +
-> +          radio1: lora@1 {
-> +            compatible =3D "semtech,sx1257";
-> +            reg =3D <1>;
-> +          };
-> +        };
-> +      };
-> +    };
-> --
-> 2.17.1
->
+>   .../broadcom/brcm80211/brcmsmac/debug.c       | 26 +++----------------
+>   .../broadcom/brcm80211/brcmsmac/debug.h       |  2 +-
+>   2 files changed, 5 insertions(+), 23 deletions(-)
