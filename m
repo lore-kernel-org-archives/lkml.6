@@ -2,111 +2,355 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1A06C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:09:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6ACCC282C5
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:09:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9805020879
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:09:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C00721726
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:09:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548169771;
+	bh=uudQ1w+q02fmBc/guHGzrqejirYG1aio48VZ2kuKB5A=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=ymCx/+hrQ752XC89czgGrUxqAFKvmRAJ6NOFQZlZWMEWuR2AdD5B3YO+iNT6a3bwy
+	 rWiUSiK4OwgyjJkqYFooQj+HYmdjQzKQkK+7hbYZgqMPFqBgBlY9QRWI16o0d+6bmF
+	 thJCIBV5ZJk/Lw2TSb2HsF/7xYlaFTOdmsXdjuCI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729097AbfAVPJ1 (ORCPT
+        id S1729134AbfAVPJa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 10:09:27 -0500
-Received: from mail.loongson.cn ([114.242.206.163]:49272 "EHLO
-        mail.loongson.cn" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728687AbfAVPJZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 10:09:25 -0500
-X-Greylist: delayed 314 seconds by postgrey-1.27 at vger.kernel.org; Tue, 22 Jan 2019 10:09:23 EST
-Received: from localhost.localdomain (unknown [10.50.122.29])
-        by mail (Coremail) with SMTP id QMiowPBxSOXaMEdc4YB4AA--.40673S2;
-        Tue, 22 Jan 2019 23:04:03 +0800 (CST)
-From:   qiaochong <qiaochong@loongson.cn>
-To:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, QiaoChong <qiaochong@loongson.cn>
-Subject: [PATCH] parport_pc: fix find_superio io compare code, should use equal test.
-Date:   Tue, 22 Jan 2019 23:03:44 +0800
-Message-Id: <20190122150344.8072-1-qiaochong@loongson.cn>
-X-Mailer: git-send-email 2.17.0
-X-CM-TRANSID: QMiowPBxSOXaMEdc4YB4AA--.40673S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Cr47Ary7XryDuryDtFy5urg_yoW8CF4xpF
-        45tr48Z34vqF17Cw48J3W3GFs3u3ySkF1kGFWxG34avw1Utr4DCF4UArWFkr9xWFs5GF13
-        Xr1rtFsxCF4Iqr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUvY14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-        1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r1j
-        6r4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-        Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-        I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-        4UM4x0Y48IcxkI7VAKI48JM4x0Y48IcxkI7VAKI48G6xCjnVAKz4kxM4x0x7Aq67IIx4CE
-        Vc8vx2IErcIFxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
-        02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_
-        JF1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
-        CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6Fyj6rWUJwCI42IY6I8E87Iv67AK
-        xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0J
-        UV6wAUUUUU=
-X-CM-SenderInfo: 5tld0upkrqwqxorr0wxvrqhubq/
+        Tue, 22 Jan 2019 10:09:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48718 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729052AbfAVPJ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 10:09:26 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3C0A20879;
+        Tue, 22 Jan 2019 15:09:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548169765;
+        bh=uudQ1w+q02fmBc/guHGzrqejirYG1aio48VZ2kuKB5A=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=GcmXwlgompk7as2WqbuhwNPx6hQJdLYSX49CfA4nu+4GIDXQ8LMvgNbGuD6PKKtna
+         NtPFVqdQGSRgvJSmgiUVUvG7frLE9V336PU/Ep5oV4ONNgA6EaEcxne+LILz/brjVa
+         3+36KwbvghCYcoRkvzy7gep/ijRnheYHkBrfUJ48=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     James Bottomley <jejb@linux.ibm.com>,
+        Martin Petersen <martin.petersen@oracle.com>
+Cc:     linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Satish Kharat <satishkh@cisco.com>,
+        Sesidhar Baddela <sebaddel@cisco.com>,
+        Karan Tilak Kumar <kartilak@cisco.com>
+Subject: [PATCH 3/7] scsi: fnic: no need to check return value of debugfs_create functions
+Date:   Tue, 22 Jan 2019 16:09:02 +0100
+Message-Id: <20190122150906.12470-4-gregkh@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190122150906.12470-1-gregkh@linuxfoundation.org>
+References: <20190122150906.12470-1-gregkh@linuxfoundation.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: QiaoChong <qiaochong@loongson.cn>
+When calling debugfs functions, there is no need to ever check the
+return value.  The function can work or not, but the code logic should
+never do something different based on this.
 
-git blame drivers/parport/parport_pc.c
-
-181bf1e815a2a (Alan Cox                  2009-06-11 13:08:10 +0100 1376) static struct superio_struct *find_superio(struct parport *p)
-^1da177e4c3f4 (Linus Torvalds            2005-04-16 15:20:36 -0700 1377) {
-181bf1e815a2a (Alan Cox                  2009-06-11 13:08:10 +0100 1378)        int i;
-181bf1e815a2a (Alan Cox                  2009-06-11 13:08:10 +0100 1379)        for (i = 0; i < NR_SUPERIOS; i++)
-181bf1e815a2a (Alan Cox                  2009-06-11 13:08:10 +0100 1380)                if (superios[i].io != p->base)
-181bf1e815a2a (Alan Cox                  2009-06-11 13:08:10 +0100 1381)                        return &superios[i];
-181bf1e815a2a (Alan Cox                  2009-06-11 13:08:10 +0100 1382)        return NULL;
-181bf1e815a2a (Alan Cox                  2009-06-11 13:08:10 +0100 1383) }
-73e0d48b8c28f (Michael Buesch            2009-06-11 13:06:31 +0100 1384)
-
-git log -1 -p 181bf1e815a2a
-
--static int get_superio_dma(struct parport *p)
-+static struct superio_struct *find_superio(struct parport *p)
- {
--       int i = 0;
-+       int i;
-+       for (i = 0; i < NR_SUPERIOS; i++)
-+               if (superios[i].io != p->base)
-+                       return &superios[i];
-+       return NULL;
-+}
-
--       while ((i < NR_SUPERIOS) && (superios[i].io != p->base))
--               i++;
--       if (i != NR_SUPERIOS)
--               return superios[i].dma;
-
-the code before 181bf1e815a2a  also mean superio[i].io == p->base, fixup it.
-
-Signed-off-by: QiaoChong <qiaochong@loongson.cn>
+Cc: Satish Kharat <satishkh@cisco.com>
+Cc: Sesidhar Baddela <sebaddel@cisco.com>
+Cc: Karan Tilak Kumar <kartilak@cisco.com>
+Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/parport/parport_pc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/fnic/fnic_debugfs.c | 88 ++------------------------------
+ drivers/scsi/fnic/fnic_main.c    |  7 +--
+ drivers/scsi/fnic/fnic_stats.h   |  2 +-
+ drivers/scsi/fnic/fnic_trace.c   | 17 ++----
+ drivers/scsi/fnic/fnic_trace.h   |  4 +-
+ 5 files changed, 10 insertions(+), 108 deletions(-)
 
-diff --git a/drivers/parport/parport_pc.c b/drivers/parport/parport_pc.c
-index 9c8249f744792..6296dbb83d470 100644
---- a/drivers/parport/parport_pc.c
-+++ b/drivers/parport/parport_pc.c
-@@ -1377,7 +1377,7 @@ static struct superio_struct *find_superio(struct parport *p)
+diff --git a/drivers/scsi/fnic/fnic_debugfs.c b/drivers/scsi/fnic/fnic_debugfs.c
+index 139fffa3658a..21991c99db7c 100644
+--- a/drivers/scsi/fnic/fnic_debugfs.c
++++ b/drivers/scsi/fnic/fnic_debugfs.c
+@@ -54,23 +54,9 @@ int fnic_debugfs_init(void)
  {
- 	int i;
- 	for (i = 0; i < NR_SUPERIOS; i++)
--		if (superios[i].io != p->base)
-+		if (superios[i].io == p->base)
- 			return &superios[i];
- 	return NULL;
+ 	int rc = -1;
+ 	fnic_trace_debugfs_root = debugfs_create_dir("fnic", NULL);
+-	if (!fnic_trace_debugfs_root) {
+-		printk(KERN_DEBUG "Cannot create debugfs root\n");
+-		return rc;
+-	}
+-
+-	if (!fnic_trace_debugfs_root) {
+-		printk(KERN_DEBUG
+-			"fnic root directory doesn't exist in debugfs\n");
+-		return rc;
+-	}
+ 
+ 	fnic_stats_debugfs_root = debugfs_create_dir("statistics",
+ 						fnic_trace_debugfs_root);
+-	if (!fnic_stats_debugfs_root) {
+-		printk(KERN_DEBUG "Cannot create Statistics directory\n");
+-		return rc;
+-	}
+ 
+ 	/* Allocate memory to structure */
+ 	fc_trc_flag = (struct fc_trace_flag_type *)
+@@ -356,39 +342,19 @@ static const struct file_operations fnic_trace_debugfs_fops = {
+  * it will also create file trace_enable to control enable/disable of
+  * trace logging into trace buffer.
+  */
+-int fnic_trace_debugfs_init(void)
++void fnic_trace_debugfs_init(void)
+ {
+-	int rc = -1;
+-	if (!fnic_trace_debugfs_root) {
+-		printk(KERN_DEBUG
+-			"FNIC Debugfs root directory doesn't exist\n");
+-		return rc;
+-	}
+ 	fnic_trace_enable = debugfs_create_file("tracing_enable",
+ 					S_IFREG|S_IRUGO|S_IWUSR,
+ 					fnic_trace_debugfs_root,
+ 					&(fc_trc_flag->fnic_trace),
+ 					&fnic_trace_ctrl_fops);
+ 
+-	if (!fnic_trace_enable) {
+-		printk(KERN_DEBUG
+-			"Cannot create trace_enable file under debugfs\n");
+-		return rc;
+-	}
+-
+ 	fnic_trace_debugfs_file = debugfs_create_file("trace",
+ 					S_IFREG|S_IRUGO|S_IWUSR,
+ 					fnic_trace_debugfs_root,
+ 					&(fc_trc_flag->fnic_trace),
+ 					&fnic_trace_debugfs_fops);
+-
+-	if (!fnic_trace_debugfs_file) {
+-		printk(KERN_DEBUG
+-			"Cannot create trace file under debugfs\n");
+-		return rc;
+-	}
+-	rc = 0;
+-	return rc;
  }
+ 
+ /*
+@@ -419,37 +385,20 @@ void fnic_trace_debugfs_terminate(void)
+  * trace logging into trace buffer.
+  */
+ 
+-int fnic_fc_trace_debugfs_init(void)
++void fnic_fc_trace_debugfs_init(void)
+ {
+-	int rc = -1;
+-
+-	if (!fnic_trace_debugfs_root) {
+-		pr_err("fnic:Debugfs root directory doesn't exist\n");
+-		return rc;
+-	}
+-
+ 	fnic_fc_trace_enable = debugfs_create_file("fc_trace_enable",
+ 					S_IFREG|S_IRUGO|S_IWUSR,
+ 					fnic_trace_debugfs_root,
+ 					&(fc_trc_flag->fc_trace),
+ 					&fnic_trace_ctrl_fops);
+ 
+-	if (!fnic_fc_trace_enable) {
+-		pr_err("fnic: Failed create fc_trace_enable file\n");
+-		return rc;
+-	}
+-
+ 	fnic_fc_trace_clear = debugfs_create_file("fc_trace_clear",
+ 					S_IFREG|S_IRUGO|S_IWUSR,
+ 					fnic_trace_debugfs_root,
+ 					&(fc_trc_flag->fc_clear),
+ 					&fnic_trace_ctrl_fops);
+ 
+-	if (!fnic_fc_trace_clear) {
+-		pr_err("fnic: Failed to create fc_trace_enable file\n");
+-		return rc;
+-	}
+-
+ 	fnic_fc_rdata_trace_debugfs_file =
+ 		debugfs_create_file("fc_trace_rdata",
+ 				    S_IFREG|S_IRUGO|S_IWUSR,
+@@ -457,24 +406,12 @@ int fnic_fc_trace_debugfs_init(void)
+ 				    &(fc_trc_flag->fc_normal_file),
+ 				    &fnic_trace_debugfs_fops);
+ 
+-	if (!fnic_fc_rdata_trace_debugfs_file) {
+-		pr_err("fnic: Failed create fc_rdata_trace file\n");
+-		return rc;
+-	}
+-
+ 	fnic_fc_trace_debugfs_file =
+ 		debugfs_create_file("fc_trace",
+ 				    S_IFREG|S_IRUGO|S_IWUSR,
+ 				    fnic_trace_debugfs_root,
+ 				    &(fc_trc_flag->fc_row_file),
+ 				    &fnic_trace_debugfs_fops);
+-
+-	if (!fnic_fc_trace_debugfs_file) {
+-		pr_err("fnic: Failed to create fc_trace file\n");
+-		return rc;
+-	}
+-	rc = 0;
+-	return rc;
+ }
+ 
+ /*
+@@ -757,45 +694,26 @@ static const struct file_operations fnic_reset_debugfs_fops = {
+  * It will create file stats and reset_stats under statistics/host# directory
+  * to log per fnic stats.
+  */
+-int fnic_stats_debugfs_init(struct fnic *fnic)
++void fnic_stats_debugfs_init(struct fnic *fnic)
+ {
+-	int rc = -1;
+ 	char name[16];
+ 
+ 	snprintf(name, sizeof(name), "host%d", fnic->lport->host->host_no);
+ 
+-	if (!fnic_stats_debugfs_root) {
+-		printk(KERN_DEBUG "fnic_stats root doesn't exist\n");
+-		return rc;
+-	}
+ 	fnic->fnic_stats_debugfs_host = debugfs_create_dir(name,
+ 						fnic_stats_debugfs_root);
+-	if (!fnic->fnic_stats_debugfs_host) {
+-		printk(KERN_DEBUG "Cannot create host directory\n");
+-		return rc;
+-	}
+ 
+ 	fnic->fnic_stats_debugfs_file = debugfs_create_file("stats",
+ 						S_IFREG|S_IRUGO|S_IWUSR,
+ 						fnic->fnic_stats_debugfs_host,
+ 						fnic,
+ 						&fnic_stats_debugfs_fops);
+-	if (!fnic->fnic_stats_debugfs_file) {
+-		printk(KERN_DEBUG "Cannot create host stats file\n");
+-		return rc;
+-	}
+ 
+ 	fnic->fnic_reset_debugfs_file = debugfs_create_file("reset_stats",
+ 						S_IFREG|S_IRUGO|S_IWUSR,
+ 						fnic->fnic_stats_debugfs_host,
+ 						fnic,
+ 						&fnic_reset_debugfs_fops);
+-	if (!fnic->fnic_reset_debugfs_file) {
+-		printk(KERN_DEBUG "Cannot create host stats file\n");
+-		return rc;
+-	}
+-	rc = 0;
+-	return rc;
+ }
+ 
+ /*
+diff --git a/drivers/scsi/fnic/fnic_main.c b/drivers/scsi/fnic/fnic_main.c
+index 5b3534b0deda..cc8f7c82e2ba 100644
+--- a/drivers/scsi/fnic/fnic_main.c
++++ b/drivers/scsi/fnic/fnic_main.c
+@@ -578,12 +578,7 @@ static int fnic_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 
+ 	host->transportt = fnic_fc_transport;
+ 
+-	err = fnic_stats_debugfs_init(fnic);
+-	if (err) {
+-		shost_printk(KERN_ERR, fnic->lport->host,
+-				"Failed to initialize debugfs for stats\n");
+-		fnic_stats_debugfs_remove(fnic);
+-	}
++	fnic_stats_debugfs_init(fnic);
+ 
+ 	/* Setup PCI resources */
+ 	pci_set_drvdata(pdev, fnic);
+diff --git a/drivers/scsi/fnic/fnic_stats.h b/drivers/scsi/fnic/fnic_stats.h
+index 9daa6ada6fa0..09c3f864c1cf 100644
+--- a/drivers/scsi/fnic/fnic_stats.h
++++ b/drivers/scsi/fnic/fnic_stats.h
+@@ -134,6 +134,6 @@ struct stats_debug_info {
+ };
+ 
+ int fnic_get_stats_data(struct stats_debug_info *, struct fnic_stats *);
+-int fnic_stats_debugfs_init(struct fnic *);
++void fnic_stats_debugfs_init(struct fnic *);
+ void fnic_stats_debugfs_remove(struct fnic *);
+ #endif /* _FNIC_STATS_H_ */
+diff --git a/drivers/scsi/fnic/fnic_trace.c b/drivers/scsi/fnic/fnic_trace.c
+index bf0fd2aeb92e..c08eda9ef086 100644
+--- a/drivers/scsi/fnic/fnic_trace.c
++++ b/drivers/scsi/fnic/fnic_trace.c
+@@ -503,15 +503,10 @@ int fnic_trace_buf_init(void)
+ 		fnic_trace_entries.page_offset[i] = fnic_buf_head;
+ 		fnic_buf_head += FNIC_ENTRY_SIZE_BYTES;
+ 	}
+-	err = fnic_trace_debugfs_init();
+-	if (err < 0) {
+-		pr_err("fnic: Failed to initialize debugfs for tracing\n");
+-		goto err_fnic_trace_debugfs_init;
+-	}
++	fnic_trace_debugfs_init();
+ 	pr_info("fnic: Successfully Initialized Trace Buffer\n");
+ 	return err;
+-err_fnic_trace_debugfs_init:
+-	fnic_trace_free();
++
+ err_fnic_trace_buf_init:
+ 	return err;
+ }
+@@ -596,16 +591,10 @@ int fnic_fc_trace_init(void)
+ 		fc_trace_entries.page_offset[i] = fc_trace_buf_head;
+ 		fc_trace_buf_head += FC_TRC_SIZE_BYTES;
+ 	}
+-	err = fnic_fc_trace_debugfs_init();
+-	if (err < 0) {
+-		pr_err("fnic: Failed to initialize FC_CTLR tracing.\n");
+-		goto err_fnic_fc_ctlr_trace_debugfs_init;
+-	}
++	fnic_fc_trace_debugfs_init();
+ 	pr_info("fnic: Successfully Initialized FC_CTLR Trace Buffer\n");
+ 	return err;
+ 
+-err_fnic_fc_ctlr_trace_debugfs_init:
+-	fnic_fc_trace_free();
+ err_fnic_fc_ctlr_trace_buf_init:
+ 	return err;
+ }
+diff --git a/drivers/scsi/fnic/fnic_trace.h b/drivers/scsi/fnic/fnic_trace.h
+index e375d0c2eaaf..8aa55c1e2025 100644
+--- a/drivers/scsi/fnic/fnic_trace.h
++++ b/drivers/scsi/fnic/fnic_trace.h
+@@ -111,7 +111,7 @@ int fnic_trace_buf_init(void);
+ void fnic_trace_free(void);
+ int fnic_debugfs_init(void);
+ void fnic_debugfs_terminate(void);
+-int fnic_trace_debugfs_init(void);
++void fnic_trace_debugfs_init(void);
+ void fnic_trace_debugfs_terminate(void);
+ 
+ /* Fnic FC CTLR Trace releated function */
+@@ -123,7 +123,7 @@ int fnic_fc_trace_get_data(fnic_dbgfs_t *fnic_dbgfs_prt, u8 rdata_flag);
+ void copy_and_format_trace_data(struct fc_trace_hdr *tdata,
+ 				fnic_dbgfs_t *fnic_dbgfs_prt,
+ 				int *len, u8 rdata_flag);
+-int fnic_fc_trace_debugfs_init(void);
++void fnic_fc_trace_debugfs_init(void);
+ void fnic_fc_trace_debugfs_terminate(void);
+ 
+ #endif
 -- 
-2.17.1
-
+2.20.1
 
