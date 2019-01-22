@@ -2,283 +2,119 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18374C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:13:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20BE8C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:13:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1DE221721
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:13:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548166406;
-	bh=y1jVhcljQIFB6wDcrydb86ukLiHZ214jrDS2sYr4hPE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=v0tnVWYTl76VYalKUSgm3e3bdkUbLs5Oaw1T2TDO83cZYIzJ4GcxS6eMx3yBY5i05
-	 OB5mNajk19kH7fnCuAWqgKhaLssrA4SgXzPQAWsWRa+tyS0nDZeWdPFVrS8I9XG0+g
-	 LaXDvgJQoVNhXgRU7+S+RdLmHKPC/7aRDAfqf/fs=
+	by mail.kernel.org (Postfix) with ESMTP id ED6D220870
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:13:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728651AbfAVONZ (ORCPT
+        id S1728698AbfAVONm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 09:13:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49196 "EHLO mail.kernel.org"
+        Tue, 22 Jan 2019 09:13:42 -0500
+Received: from smtp3-g21.free.fr ([212.27.42.3]:45936 "EHLO smtp3-g21.free.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728456AbfAVONZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 09:13:25 -0500
-Received: from quaco.ghostprotocols.net (unknown [189.16.122.195])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 06FA820870;
-        Tue, 22 Jan 2019 14:13:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548166403;
-        bh=y1jVhcljQIFB6wDcrydb86ukLiHZ214jrDS2sYr4hPE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=V9XBYYn6oHtU9E8ChytiZ0Ra5J7Ly5pg1AAv/WNa9rcCpNxLsqpIexDO5tNYJPwRe
-         bfa9/DjkyKyvCgleilv71vh0zLqZRg0Zzx4TAPL7ze/XNlt8IjcIP2a1DNuZZR1LRB
-         mzvo/ekPd+3TiQGlWNryDYvEyeQ2q672mUqBT9Pk=
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 410C740355; Tue, 22 Jan 2019 12:13:20 -0200 (-02)
-Date:   Tue, 22 Jan 2019 12:13:20 -0200
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        peterz@infradead.org, ast@kernel.org, daniel@iogearbox.net,
-        kernel-team@fb.com
-Subject: Re: [PATCH v11 perf, bpf-next 7/9] perf tools: synthesize
- PERF_RECORD_* for loaded BPF programs
-Message-ID: <20190122141320.GF14973@kernel.org>
-References: <20190117161521.1341602-1-songliubraving@fb.com>
- <20190117161521.1341602-8-songliubraving@fb.com>
- <20190118144655.GM5823@kernel.org>
+        id S1728416AbfAVONm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 09:13:42 -0500
+Received: from [192.168.108.68] (unknown [213.36.7.13])
+        (Authenticated sender: marc.w.gonzalez)
+        by smtp3-g21.free.fr (Postfix) with ESMTPSA id EB16813F8A9;
+        Tue, 22 Jan 2019 15:12:54 +0100 (CET)
+Subject: Re: kmemleak panic
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+To:     Mike Rapoport <rppt@linux.ibm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Prateek Patel <prpatel@nvidia.com>,
+        Sachin Nikam <snikam@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Ralph Campbell <rcampbell@nvidia.com>
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Qian Cai <cai@lca.pw>, LKML <linux-kernel@vger.kernel.org>
+References: <f6fbf528-8213-e3b8-6990-9fcf9dec04d6@free.fr>
+ <20190118143434.GE118707@arrakis.emea.arm.com>
+ <b7629ecf-757c-f8b5-df83-ba83d7036b2f@free.fr>
+ <20190119132832.GA29881@MBP.local>
+ <6579db26-10ac-3fbf-1998-5b937a38f202@free.fr>
+ <d4facdc2-0581-929f-caa2-b9efa9bd8f97@arm.com>
+ <CAL_JsqKFT8J6g02gxeBiTfBb_XHhp2-ZNB6DgaLPK85kNZGRig@mail.gmail.com>
+ <20190121143704.GE29504@arrakis.emea.arm.com>
+ <CAL_JsqKQb34zVNTzo9DLNiDwmWGxkrKezSOjwCUPAvgzUoLYjg@mail.gmail.com>
+ <20190121174234.GC26461@rapoport-lnx>
+ <2bb30550-435a-046c-4f45-21dd594aa695@free.fr>
+Message-ID: <3c886941-bf9d-f040-b568-ee7a8eba9a04@free.fr>
+Date:   Tue, 22 Jan 2019 15:12:54 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190118144655.GM5823@kernel.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <2bb30550-435a-046c-4f45-21dd594aa695@free.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Jan 18, 2019 at 11:46:55AM -0300, Arnaldo Carvalho de Melo escreveu:
-> Em Thu, Jan 17, 2019 at 08:15:19AM -0800, Song Liu escreveu:
-> > This patch synthesize PERF_RECORD_KSYMBOL and PERF_RECORD_BPF_EVENT for
-> > BPF programs loaded before perf-record. This is achieved by gathering
-> > information about all BPF programs via sys_bpf.
+On 22/01/2019 15:02, Marc Gonzalez wrote:
+
+> On 21/01/2019 18:42, Mike Rapoport wrote:
 > 
-> Ditto
+>> If I understood correctly, the trouble comes from no-map range allocated in 
+>> early_init_dt_alloc_reserved_memory_arch().
+>>
+>> There's indeed imbalance, because memblock_alloc() does kmemleak_alloc(), but
+>> memblock_remove() does not do kmemleak_free().
+>>
+>> I think the best way is to replace __memblock_alloc_base() with
+>> memblock_find_in_range(), e.g something like:
+>>
+>>
+>> diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.c
+>> index 1977ee0adcb1..6807a1cffe55 100644
+>> --- a/drivers/of/of_reserved_mem.c
+>> +++ b/drivers/of/of_reserved_mem.c
+>> @@ -37,21 +37,16 @@ int __init __weak early_init_dt_alloc_reserved_memory_arch(phys_addr_t size,
+>>  	 */
+>>  	end = !end ? MEMBLOCK_ALLOC_ANYWHERE : end;
+>>  	align = !align ? SMP_CACHE_BYTES : align;
+>> -	base = __memblock_alloc_base(size, align, end);
+>> +	base = memblock_find_in_range(size, align, start, end);
+>>  	if (!base)
+>>  		return -ENOMEM;
+>>  
+>> -	/*
+>> -	 * Check if the allocated region fits in to start..end window
+>> -	 */
+>> -	if (base < start) {
+>> -		memblock_free(base, size);
+>> -		return -ENOMEM;
+>> -	}
+>> -
+>>  	*res_base = base;
+>>  	if (nomap)
+>>  		return memblock_remove(base, size);
+>> +	else
+>> +		return memblock_reserve(base, size);
+>> +
+>>  	return 0;
+>>  }
+>>  
+> 
+> Your patch solves the issue. \o/
 
-This is breaking 'perf sched', see below, the fix seems trivial:
-
-[root@quaco ~]# perf sched record -a sleep 2
-[ perf record: Woken up 1 times to write data ]
-0x5b60 [0x138]: failed to process type: 17
-[ perf record: Captured and wrote 1.539 MB perf.data ]
-[root@quaco ~]# perf sched lat
-0x5b60 [0x138]: failed to process type: 17
-Failed to process events, error -22
-[root@quaco ~]#
-
-[acme@quaco perf]$ git bisect good
-7b612e291a5affb12b9d0b87332c71bcbe9c5db4 is the first bad commit
-commit 7b612e291a5affb12b9d0b87332c71bcbe9c5db4
-Author: Song Liu <songliubraving@fb.com>
-Date:   Thu Jan 17 08:15:19 2019 -0800
-
-    perf tools: Synthesize PERF_RECORD_* for loaded BPF programs
-
-    This patch synthesize PERF_RECORD_KSYMBOL and PERF_RECORD_BPF_EVENT for
-    BPF programs loaded before perf-record. This is achieved by gathering
-    information about all BPF programs via sys_bpf.
-
-    Committer notes:
-
-    Fix the build on some older systems such as amazonlinux:1 where it was
-    breaking with:
-
-      util/bpf-event.c: In function 'perf_event__synthesize_one_bpf_prog':
-      util/bpf-event.c:52:9: error: missing initializer for field 'type' of 'struct bpf_prog_info' [-Werror=missing-field-initializers]
-        struct bpf_prog_info info = {};
-               ^
-      In file included from /git/linux/tools/lib/bpf/bpf.h:26:0,
-                       from util/bpf-event.c:3:
-      /git/linux/tools/include/uapi/linux/bpf.h:2699:8: note: 'type' declared here
-        __u32 type;
-              ^
-      cc1: all warnings being treated as errors
-
-    Further fix on a centos:6 system:
-
-      cc1: warnings being treated as errors
-      util/bpf-event.c: In function 'perf_event__synthesize_one_bpf_prog':
-      util/bpf-event.c:50: error: 'func_info_rec_size' may be used uninitialized in this function
-
-    The compiler is wrong, but to silence it, initialize that variable to
-    zero.
-
-    One more fix, this time for debian:experimental-x-mips, x-mips64 and
-    x-mipsel:
-
-      util/bpf-event.c: In function 'perf_event__synthesize_one_bpf_prog':
-      util/bpf-event.c:93:16: error: implicit declaration of function 'calloc' [-Werror=implicit-function-declaration]
-         func_infos = calloc(sub_prog_cnt, func_info_rec_size);
-                      ^~~~~~
-      util/bpf-event.c:93:16: error: incompatible implicit declaration of built-in function 'calloc' [-Werror]
-      util/bpf-event.c:93:16: note: include '<stdlib.h>' or provide a declaration of 'calloc'
-
-    Add the missing header.
-
-    Committer testing:
-
-      # perf record --bpf-event sleep 1
-      [ perf record: Woken up 1 times to write data ]
-      [ perf record: Captured and wrote 0.021 MB perf.data (7 samples) ]
-      # perf report -D | grep PERF_RECORD_BPF_EVENT | nl
-         1  0 0x4b10 [0x18]: PERF_RECORD_BPF_EVENT bpf event with type 1, flags 0, id 13
-         2  0 0x4c60 [0x18]: PERF_RECORD_BPF_EVENT bpf event with type 1, flags 0, id 14
-         3  0 0x4db0 [0x18]: PERF_RECORD_BPF_EVENT bpf event with type 1, flags 0, id 15
-         4  0 0x4f00 [0x18]: PERF_RECORD_BPF_EVENT bpf event with type 1, flags 0, id 16
-         5  0 0x5050 [0x18]: PERF_RECORD_BPF_EVENT bpf event with type 1, flags 0, id 17
-         6  0 0x51a0 [0x18]: PERF_RECORD_BPF_EVENT bpf event with type 1, flags 0, id 18
-         7  0 0x52f0 [0x18]: PERF_RECORD_BPF_EVENT bpf event with type 1, flags 0, id 21
-         8  0 0x5440 [0x18]: PERF_RECORD_BPF_EVENT bpf event with type 1, flags 0, id 22
-      # bpftool prog
-      13: cgroup_skb  tag 7be49e3934a125ba  gpl
-            loaded_at 2019-01-19T09:09:43-0300  uid 0
-            xlated 296B  jited 229B  memlock 4096B  map_ids 13,14
-      14: cgroup_skb  tag 2a142ef67aaad174  gpl
-            loaded_at 2019-01-19T09:09:43-0300  uid 0
-            xlated 296B  jited 229B  memlock 4096B  map_ids 13,14
-      15: cgroup_skb  tag 7be49e3934a125ba  gpl
-            loaded_at 2019-01-19T09:09:43-0300  uid 0
-            xlated 296B  jited 229B  memlock 4096B  map_ids 15,16
-      16: cgroup_skb  tag 2a142ef67aaad174  gpl
-            loaded_at 2019-01-19T09:09:43-0300  uid 0
-            xlated 296B  jited 229B  memlock 4096B  map_ids 15,16
-      17: cgroup_skb  tag 7be49e3934a125ba  gpl
-            loaded_at 2019-01-19T09:09:44-0300  uid 0
-            xlated 296B  jited 229B  memlock 4096B  map_ids 17,18
-      18: cgroup_skb  tag 2a142ef67aaad174  gpl
-            loaded_at 2019-01-19T09:09:44-0300  uid 0
-            xlated 296B  jited 229B  memlock 4096B  map_ids 17,18
-      21: cgroup_skb  tag 7be49e3934a125ba  gpl
-            loaded_at 2019-01-19T09:09:45-0300  uid 0
-            xlated 296B  jited 229B  memlock 4096B  map_ids 21,22
-      22: cgroup_skb  tag 2a142ef67aaad174  gpl
-            loaded_at 2019-01-19T09:09:45-0300  uid 0
-            xlated 296B  jited 229B  memlock 4096B  map_ids 21,22
-      #
-
-      # perf report -D | grep -B22 PERF_RECORD_KSYMBOL
-      . ... raw event: size 312 bytes
-      .  0000:  11 00 00 00 00 00 38 01 ff 44 06 c0 ff ff ff ff  ......8..D......
-      .  0010:  e5 00 00 00 01 00 00 00 62 70 66 5f 70 72 6f 67  ........bpf_prog
-      .  0020:  5f 37 62 65 34 39 65 33 39 33 34 61 31 32 35 62  _7be49e3934a125b
-      .  0030:  61 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  a...............
-       <SNIP zeroes>
-      .  0110:  00 00 00 00 00 00 00 00 21 00 00 00 00 00 00 00  ........!.......
-      .  0120:  7b e4 9e 39 34 a1 25 ba 00 00 00 00 00 00 00 00  {..94.%.........
-      .  0130:  00 00 00 00 00 00 00 00                          ........
-
-      0 0x49d8 [0x138]: PERF_RECORD_KSYMBOL ksymbol event with addr ffffffffc00644ff len 229 type 1 flags 0x0 name bpf_prog_7be49e3934a125ba
-      --
-      . ... raw event: size 312 bytes
-      .  0000:  11 00 00 00 00 00 38 01 48 6d 06 c0 ff ff ff ff  ......8.Hm......
-      .  0010:  e5 00 00 00 01 00 00 00 62 70 66 5f 70 72 6f 67  ........bpf_prog
-      .  0020:  5f 32 61 31 34 32 65 66 36 37 61 61 61 64 31 37  _2a142ef67aaad17
-      .  0030:  34 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  4...............
-       <SNIP zeroes>
-      .  0110:  00 00 00 00 00 00 00 00 21 00 00 00 00 00 00 00  ........!.......
-      .  0120:  2a 14 2e f6 7a aa d1 74 00 00 00 00 00 00 00 00  *...z..t........
-      .  0130:  00 00 00 00 00 00 00 00                          ........
-
-      0 0x4b28 [0x138]: PERF_RECORD_KSYMBOL ksymbol event with addr ffffffffc0066d48 len 229 type 1 flags 0x0 name bpf_prog_2a142ef67aaad174
-      --
-      . ... raw event: size 312 bytes
-      .  0000:  11 00 00 00 00 00 38 01 04 cf 03 c0 ff ff ff ff  ......8.........
-      .  0010:  e5 00 00 00 01 00 00 00 62 70 66 5f 70 72 6f 67  ........bpf_prog
-      .  0020:  5f 37 62 65 34 39 65 33 39 33 34 61 31 32 35 62  _7be49e3934a125b
-      .  0030:  61 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  a...............
-       <SNIP zeroes>
-      .  0110:  00 00 00 00 00 00 00 00 21 00 00 00 00 00 00 00  ........!.......
-      .  0120:  7b e4 9e 39 34 a1 25 ba 00 00 00 00 00 00 00 00  {..94.%.........
-      .  0130:  00 00 00 00 00 00 00 00                          ........
-
-      0 0x4c78 [0x138]: PERF_RECORD_KSYMBOL ksymbol event with addr ffffffffc003cf04 len 229 type 1 flags 0x0 name bpf_prog_7be49e3934a125ba
-      --
-      . ... raw event: size 312 bytes
-      .  0000:  11 00 00 00 00 00 38 01 96 28 04 c0 ff ff ff ff  ......8..(......
-      .  0010:  e5 00 00 00 01 00 00 00 62 70 66 5f 70 72 6f 67  ........bpf_prog
-      .  0020:  5f 32 61 31 34 32 65 66 36 37 61 61 61 64 31 37  _2a142ef67aaad17
-      .  0030:  34 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  4...............
-       <SNIP zeroes>
-      .  0110:  00 00 00 00 00 00 00 00 21 00 00 00 00 00 00 00  ........!.......
-      .  0120:  2a 14 2e f6 7a aa d1 74 00 00 00 00 00 00 00 00  *...z..t........
-      .  0130:  00 00 00 00 00 00 00 00                          ........
-
-      0 0x4dc8 [0x138]: PERF_RECORD_KSYMBOL ksymbol event with addr ffffffffc0042896 len 229 type 1 flags 0x0 name bpf_prog_2a142ef67aaad174
-      --
-      . ... raw event: size 312 bytes
-      .  0000:  11 00 00 00 00 00 38 01 05 13 17 c0 ff ff ff ff  ......8.........
-      .  0010:  e5 00 00 00 01 00 00 00 62 70 66 5f 70 72 6f 67  ........bpf_prog
-      .  0020:  5f 37 62 65 34 39 65 33 39 33 34 61 31 32 35 62  _7be49e3934a125b
-      .  0030:  61 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  a...............
-       <SNIP zeroes>
-      .  0110:  00 00 00 00 00 00 00 00 21 00 00 00 00 00 00 00  ........!.......
-      .  0120:  7b e4 9e 39 34 a1 25 ba 00 00 00 00 00 00 00 00  {..94.%.........
-      .  0130:  00 00 00 00 00 00 00 00                          ........
-
-      0 0x4f18 [0x138]: PERF_RECORD_KSYMBOL ksymbol event with addr ffffffffc0171305 len 229 type 1 flags 0x0 name bpf_prog_7be49e3934a125ba
-      --
-      . ... raw event: size 312 bytes
-      .  0000:  11 00 00 00 00 00 38 01 0a 8c 23 c0 ff ff ff ff  ......8...#.....
-      .  0010:  e5 00 00 00 01 00 00 00 62 70 66 5f 70 72 6f 67  ........bpf_prog
-      .  0020:  5f 32 61 31 34 32 65 66 36 37 61 61 61 64 31 37  _2a142ef67aaad17
-      .  0030:  34 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  4...............
-       <SNIP zeroes>
-      .  0110:  00 00 00 00 00 00 00 00 21 00 00 00 00 00 00 00  ........!.......
-      .  0120:  2a 14 2e f6 7a aa d1 74 00 00 00 00 00 00 00 00  *...z..t........
-      .  0130:  00 00 00 00 00 00 00 00                          ........
-
-      0 0x5068 [0x138]: PERF_RECORD_KSYMBOL ksymbol event with addr ffffffffc0238c0a len 229 type 1 flags 0x0 name bpf_prog_2a142ef67aaad174
-      --
-      . ... raw event: size 312 bytes
-      .  0000:  11 00 00 00 00 00 38 01 2a a5 a4 c0 ff ff ff ff  ......8.*.......
-      .  0010:  e5 00 00 00 01 00 00 00 62 70 66 5f 70 72 6f 67  ........bpf_prog
-      .  0020:  5f 37 62 65 34 39 65 33 39 33 34 61 31 32 35 62  _7be49e3934a125b
-      .  0030:  61 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  a...............
-       <SNIP zeroes>
-      .  0110:  00 00 00 00 00 00 00 00 21 00 00 00 00 00 00 00  ........!.......
-      .  0120:  7b e4 9e 39 34 a1 25 ba 00 00 00 00 00 00 00 00  {..94.%.........
-      .  0130:  00 00 00 00 00 00 00 00                          ........
-
-      0 0x51b8 [0x138]: PERF_RECORD_KSYMBOL ksymbol event with addr ffffffffc0a4a52a len 229 type 1 flags 0x0 name bpf_prog_7be49e3934a125ba
-      --
-      . ... raw event: size 312 bytes
-      .  0000:  11 00 00 00 00 00 38 01 9b c9 a4 c0 ff ff ff ff  ......8.........
-      .  0010:  e5 00 00 00 01 00 00 00 62 70 66 5f 70 72 6f 67  ........bpf_prog
-      .  0020:  5f 32 61 31 34 32 65 66 36 37 61 61 61 64 31 37  _2a142ef67aaad17
-      .  0030:  34 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  4...............
-       <SNIP zeroes>
-      .  0110:  00 00 00 00 00 00 00 00 21 00 00 00 00 00 00 00  ........!.......
-      .  0120:  2a 14 2e f6 7a aa d1 74 00 00 00 00 00 00 00 00  *...z..t........
-      .  0130:  00 00 00 00 00 00 00 00                          ........
-
-      0 0x5308 [0x138]: PERF_RECORD_KSYMBOL ksymbol event with addr ffffffffc0a4c99b len 229 type 1 flags 0x0 name bpf_prog_2a142ef67aaad174
-
-    Signed-off-by: Song Liu <songliubraving@fb.com>
-    Reviewed-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-    Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-    Cc: Alexei Starovoitov <ast@kernel.org>
-    Cc: Daniel Borkmann <daniel@iogearbox.net>
-    Cc: Peter Zijlstra <peterz@infradead.org>
-    Cc: kernel-team@fb.com
-    Cc: netdev@vger.kernel.org
-    Link: http://lkml.kernel.org/r/20190117161521.1341602-8-songliubraving@fb.com
-    Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-
-:040000 040000 811377248529490fc3977be729bd1ac6ab515920 3f1cc9a3e8c92d0d5a23a21c33286b7cdf758534 M	tools
-[acme@quaco perf]$
+[ Add nvidia devs, but drop schowdary@nvidia.com ]
