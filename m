@@ -2,83 +2,107 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96488C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:47:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B16D9C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:48:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64FE220870
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:47:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548186442;
-	bh=ZRhKcEBtRj63OA2uu2oEGvFoP7SaUJEPrFDmBTW8VuQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=N4/79miMNx3M+lBNrapCy+mjdRInBJ5jca/M0C4u0+zlcfOhf1HJ6dYO3nPsJ1JYq
-	 6AvrQehDSjGYCFFmHGy5a6fnuUDhNFDAYb2SdLBfwQgtgkXRYrQUm40MmsxTTPLRHe
-	 elzuvKV0ZE/+T4WExmkzBrqhAKglQJ0UGRos2kio=
+	by mail.kernel.org (Postfix) with ESMTP id 76B2620870
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:48:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="hv/wRP65"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726178AbfAVTrU (ORCPT
+        id S1726175AbfAVTsy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 14:47:20 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:46882 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725919AbfAVTrU (ORCPT
+        Tue, 22 Jan 2019 14:48:54 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:36192 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725919AbfAVTsy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 14:47:20 -0500
-Received: by mail-pl1-f196.google.com with SMTP id t13so11957177ply.13;
-        Tue, 22 Jan 2019 11:47:20 -0800 (PST)
+        Tue, 22 Jan 2019 14:48:54 -0500
+Received: by mail-lj1-f195.google.com with SMTP id g11-v6so21761134ljk.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 11:48:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=8XvQdNE3d4gDWFS7yzbcGSQQwhT2kd3xzEQN9QIwJ88=;
+        b=hv/wRP657hXkWTmrj/CGtSQDqF6rbnrzuQU2T2cQd6kc6789fGMeRwK1XQv5dHg5eA
+         z5b0pV8bHbF0WBDSoDpVlwZGKc31QY6fO4307PI/IAtFxWopSnqmNzmrYxh9+lvqRxuo
+         Arua7Aas3MBy5dUWLbxdMsE9t9bhRdxfiCAPD9Yz3XPaW+4mX4RAy+D/LnpLHZXbgxbP
+         +Z26NWOsqyTvgprQDpvZdECA1WwjjSt6fzb7TQC+yVTS49PoDhc9y6nQXr8tMEcnqaNH
+         8z3WhJoHfSc4xNFzZG3oFkz7IKqddaKeaN+cC8jZ6Ch7D6PduKze604lKUV12S6ThavJ
+         V1kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VWlB2kA1o3qxEvhnSpkZDe8u25k/XTrds3FcwlfjOPM=;
-        b=XXFdAtJrVBsFRpVnKMH8OBDChVqMnX5RvGU5kyT2e1yNcAOsO24gWMg2oV956ltfhB
-         +difozxPA8sTeups4qnm8LAUXKvWm1WGV/5gsR4p1MtGzs/SFLTxKjC3aLnPi4FEyjpM
-         mJWYwtNIMamvQwWSlbZSbxr+66ERpiRHkY2Sb1WXAL/zBlytJQpPuY+oFfh9agLrLkh/
-         6qJjAVbA1aUST7X3djIDHMa7zpK6EAHo0DcRKlnddxzC4Cp61vNwcr3purSq1NmyODVi
-         epkxlQxqh0MIC82fBOF0ZQJV4i3tC5ADQXNJO3iWfL5abbcMPJ7PT3dS+gm+yShKpv/y
-         D8pw==
-X-Gm-Message-State: AJcUukdJx6/kgfMHPYw52kkAFhLKyBlRmOIgff1KPxxFKP7mnYgNqmjI
-        9Y5dHRmPWje1WBX5+devdbY=
-X-Google-Smtp-Source: ALg8bN4KPKgZ8WJLvXF4NmBzB8/SSSqiW2m7YtFqBwvuMXAcYUTIfzp03SJniTuJkKreGkl7r/XWsA==
-X-Received: by 2002:a17:902:6b49:: with SMTP id g9mr34944119plt.98.1548186439612;
-        Tue, 22 Jan 2019 11:47:19 -0800 (PST)
-Received: from garbanzo.do-not-panic.com (c-73-71-40-85.hsd1.ca.comcast.net. [73.71.40.85])
-        by smtp.gmail.com with ESMTPSA id 125sm19367365pfx.159.2019.01.22.11.47.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 22 Jan 2019 11:47:18 -0800 (PST)
-Received: by garbanzo.do-not-panic.com (sSMTP sendmail emulation); Tue, 22 Jan 2019 11:47:17 -0800
-Date:   Tue, 22 Jan 2019 11:47:17 -0800
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>, akpm@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] lib/test_kmod: Potential double free in error handling
-Message-ID: <20190122194716.GC11489@garbanzo.do-not-panic.com>
-References: <20190121140011.GA14283@kadam>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=8XvQdNE3d4gDWFS7yzbcGSQQwhT2kd3xzEQN9QIwJ88=;
+        b=r/ukb7GTYA6AP29HTt1PC6So+SynBBPEM6+8P4mRpfNChVjjV7fF0IMGfOr7JpzCts
+         wtTdHYM9HVV80sz+jyRwrtapYPlN8HFtIlLVMoKCp8LQO+7VCZPDyGrrUMLfyoa4S4fc
+         ZBxsuEJqqeQlgyGo64BCpvMda/hDkCdoS2/lh7Xa+w+kKgwht8aXHTexNzA6p5x4uNfl
+         +4CsCd4W0UHxSpd2biaiYPzSwdo3FZQE8Z7690yJow9ZDfM08vEzrbdVE0K1+vp6DqDG
+         3jXGXPREkppiFY16ZdK1/OAgcHFOaGcDV9Iz2Z1ARhc25rygi4M5KIwtSUn+9sc6LwPt
+         31hQ==
+X-Gm-Message-State: AJcUukfj64LrJ6rvEx25gsPB+zlKOywb1AoJ0vrqPJN4jd9Q3OmXXNrS
+        bgmO85tYK2h3t1qIyGSvS5csYIYolU8=
+X-Google-Smtp-Source: ALg8bN6cMWyLWsL05ZEVpBGDhinAnMkyX9WBssN3n//rQZODor1VzW18nGhq5AD7W55lcPJamGIy6w==
+X-Received: by 2002:a2e:8992:: with SMTP id c18-v6mr21598790lji.17.1548186532401;
+        Tue, 22 Jan 2019 11:48:52 -0800 (PST)
+Received: from [192.168.0.36] (2-111-91-225-cable.dk.customer.tdc.net. [2.111.91.225])
+        by smtp.googlemail.com with ESMTPSA id c133sm157832lfc.45.2019.01.22.11.48.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 22 Jan 2019 11:48:51 -0800 (PST)
+Subject: Re: [PATCH] lightnvm: pblk: use vfree to free metadata on error path
+To:     hans@owltronix.com
+Cc:     javier@javigon.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Hans Holmberg <hans.holmberg@cnexlabs.com>
+References: <20190122101759.31201-1-hans@owltronix.com>
+From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <4b39d129-7db0-d2d9-4178-f2ac0009ce04@lightnvm.io>
+Date:   Tue, 22 Jan 2019 20:48:50 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190121140011.GA14283@kadam>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190122101759.31201-1-hans@owltronix.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 05:00:11PM +0300, Dan Carpenter wrote:
-> There is a copy and paste bug so we set "config->test_driver" to NULL
-> twice instead of setting "config->test_fs".  Smatch complains that it
-> leads to a double free:
+On 1/22/19 11:17 AM, hans@owltronix.com wrote:
+> From: Hans Holmberg <hans.holmberg@cnexlabs.com>
 > 
-> lib/test_kmod.c:840 __kmod_config_init() warn: 'config->test_fs' double freed
+> As chunk metadata is allocated using vmalloc, we need to free it
+> using vfree.
 > 
-> Fixes: d9c6a72d6fa2 ("kmod: add test driver to stress test the module loader")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Fixes: 090ee26fd512 ("lightnvm: use internal allocation for chunk log page")
+> Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
+> ---
+>   drivers/lightnvm/pblk-core.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
+> index 1ff165351180..1b5ff51faa63 100644
+> --- a/drivers/lightnvm/pblk-core.c
+> +++ b/drivers/lightnvm/pblk-core.c
+> @@ -141,7 +141,7 @@ struct nvm_chk_meta *pblk_get_chunk_meta(struct pblk *pblk)
+>   
+>   	ret = nvm_get_chunk_meta(dev, ppa, geo->all_chunks, meta);
+>   	if (ret) {
+> -		kfree(meta);
+> +		vfree(meta);
+>   		return ERR_PTR(-EIO);
+>   	}
+>   
+> 
 
-Thanks!
-
-Acked-by: Luis Chamberlain <mcgrof@kernel.org>
-
- Luis
+Thanks Hans. Applied for 5.1.
