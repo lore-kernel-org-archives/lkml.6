@@ -2,92 +2,149 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72AE9C37122
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 00:26:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C9DDC37124
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 00:26:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34DFA21736
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 00:26:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548116789;
-	bh=Gh7go1e5noE0CalTmolaBORl2KpCGA1dFF+2Vg+mr3U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=2rI8KnqxAkomzB7xolO+O6cwiN67UGOeJNfrwtIQCX+/om8R0rWd5E+CxgXlaFHGd
-	 BJIS0D+MQddp6qvmTlwJ7aiYEUEbWhuObUbXSAF01UVBZk0EPndDvyTyyDp+shqFYd
-	 YhB3BU0MhY+gscMb9Tjb6ghWCCH7xiHvjeQdKP4Y=
+	by mail.kernel.org (Postfix) with ESMTP id 1FA1021721
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 00:26:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726373AbfAVA01 (ORCPT
+        id S1726648AbfAVA0q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 19:26:27 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:34218 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725962AbfAVA01 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 19:26:27 -0500
-Received: by mail-ot1-f68.google.com with SMTP id t5so17104020otk.1;
-        Mon, 21 Jan 2019 16:26:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BRXxaem06/3zekgZE+01VbfJHLkyejV8w4CEcn0uUvA=;
-        b=hj1uWw+msTNBpav70f+zdB41R2bCNAj2VQvNvRrJhJ6w1+vmC51GSXZlnS7M8LL2fb
-         QEK8BnTHIdkdgTlUlFgvB/146qPob44KC29vVl+0t1jOtlr9MSR5li5klrV3gn7WU6Oh
-         r+nHtDVd69tXm+Rt6KgnsiNJ7o8Br5cFkqdnIHCnBRHjH0XracPfkePfbM4Fz705NtQy
-         vBlmVMgpsAaAxpL+jHUdOSSj8Zi/n2xsEcvOTGrt5W9wUhv9wv1umQCkQINDCNPP9JZ0
-         /biFK8FvBo61NhGDManoQxacB5533yHD2paCAWKWfJuRMeADpW8I9/nHs7L3mPjold8R
-         pPNA==
-X-Gm-Message-State: AJcUukdA2r1JvnXPZuNK6K+ERQmTEU587NPdjpgL80fsoVvHeJg+HEqZ
-        GGoq+ufgKtVIdUlIKKmOnPys0XvSEA==
-X-Google-Smtp-Source: ALg8bN51vEeBhcTgMO5EoSf06sGeNsZ9a0brzvaSa0cI0jGxdBj08mlmtZ+h3qgN4MjH5Zfip71Tvg==
-X-Received: by 2002:a05:6830:1689:: with SMTP id k9mr19326835otr.129.1548116786403;
-        Mon, 21 Jan 2019 16:26:26 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id x127sm6781305oia.20.2019.01.21.16.26.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 21 Jan 2019 16:26:25 -0800 (PST)
-Date:   Mon, 21 Jan 2019 18:26:25 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Evan Green <evgreen@chromium.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Can Guo <cang@codeaurora.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Asutosh Das <asutoshd@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Evan Green <evgreen@chromium.org>, devicetree@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
+        Mon, 21 Jan 2019 19:26:46 -0500
+Received: from mga05.intel.com ([192.55.52.43]:16730 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726300AbfAVA0p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 19:26:45 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jan 2019 16:26:45 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,504,1539673200"; 
+   d="scan'208";a="127777302"
+Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.37])
+  by orsmga002.jf.intel.com with ESMTP; 21 Jan 2019 16:26:43 -0800
+Date:   Tue, 22 Jan 2019 08:26:15 +0800
+From:   Wei Yang <richardw.yang@linux.intel.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     linux-nvdimm@lists.01.org,
+        Wei Yang <richardw.yang@linux.intel.com>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/8] dt-bindings: phy: qcom-ufs: Add resets property
-Message-ID: <20190122002625.GA22073@bogus>
-References: <20190111230129.127037-1-evgreen@chromium.org>
- <20190111230129.127037-3-evgreen@chromium.org>
+Subject: Re: [PATCH] libnvdimm: Clarify nd_pfn_init() flow
+Message-ID: <20190122002615.GB5855@richard>
+Reply-To: Wei Yang <richardw.yang@linux.intel.com>
+References: <154785884329.2202034.3295476681016958230.stgit@dwillia2-desk3.amr.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190111230129.127037-3-evgreen@chromium.org>
+In-Reply-To: <154785884329.2202034.3295476681016958230.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 11 Jan 2019 15:01:23 -0800, Evan Green wrote:
-> Add a resets property to the PHY that represents the PHY reset
-> register in the UFS controller itself. This better describes the
-> complete specification of the PHY, and allows the PHY to perform
-> its initialization in a single function, rather than relying on
-> back-channel sequencing of initialization through the PHY framework.
+On Fri, Jan 18, 2019 at 04:47:23PM -0800, Dan Williams wrote:
+>In recent days, 2 engineers, including the original author of
+>nd_pfn_init(), overlooked the internal call to nd_pfn_validate() and the
+>implications to memory allocation.
+>
+>Clarify this situation to help anyone that reads through this code in
+>the future.
+>
+>Reported-by: Wei Yang <richardw.yang@linux.intel.com>
+>Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+>---
+> drivers/nvdimm/btt_devs.c |    5 +++++
+> drivers/nvdimm/dax_devs.c |    5 +++++
+> drivers/nvdimm/pfn_devs.c |   21 +++++++++++++++++++++
+> 3 files changed, 31 insertions(+)
+>
+>diff --git a/drivers/nvdimm/btt_devs.c b/drivers/nvdimm/btt_devs.c
+>index 795ad4ff35ca..e0a6f2491e57 100644
+>--- a/drivers/nvdimm/btt_devs.c
+>+++ b/drivers/nvdimm/btt_devs.c
+>@@ -354,6 +354,11 @@ int nd_btt_probe(struct device *dev, struct nd_namespace_common *ndns)
+> 		put_device(btt_dev);
+> 	}
 > 
-> Signed-off-by: Evan Green <evgreen@chromium.org>
-> ---
+>+	/*
+>+	 * Successful probe indicates to the caller that an nd_btt
+>+	 * personality device has been registered and the caller can
+>+	 * fail the probe of the baseline namespace device.
+>+	 */
+> 	return rc;
+> }
+> EXPORT_SYMBOL(nd_btt_probe);
+>diff --git a/drivers/nvdimm/dax_devs.c b/drivers/nvdimm/dax_devs.c
+>index 0453f49dc708..65010d955fa7 100644
+>--- a/drivers/nvdimm/dax_devs.c
+>+++ b/drivers/nvdimm/dax_devs.c
+>@@ -136,6 +136,11 @@ int nd_dax_probe(struct device *dev, struct nd_namespace_common *ndns)
+> 	} else
+> 		__nd_device_register(dax_dev);
 > 
->  Documentation/devicetree/bindings/ufs/ufs-qcom.txt | 1 +
->  1 file changed, 1 insertion(+)
+>+	/*
+>+	 * Successful probe indicates to the caller that a device-dax
+>+	 * personality device has been registered and the caller can
+>+	 * fail the probe of the baseline namespace device.
+>+	 */
+> 	return rc;
+> }
+> EXPORT_SYMBOL(nd_dax_probe);
+>diff --git a/drivers/nvdimm/pfn_devs.c b/drivers/nvdimm/pfn_devs.c
+>index 6f22272e8d80..a8783b5a76ba 100644
+>--- a/drivers/nvdimm/pfn_devs.c
+>+++ b/drivers/nvdimm/pfn_devs.c
+>@@ -576,6 +576,11 @@ int nd_pfn_probe(struct device *dev, struct nd_namespace_common *ndns)
+> 	} else
+> 		__nd_device_register(pfn_dev);
 > 
+>+	/*
+>+	 * Successful probe indicates to the caller that an nd_pfn
+>+	 * personality device has been registered and the caller can
+>+	 * fail the probe of the baseline namespace device.
+>+	 */
+> 	return rc;
+> }
+> EXPORT_SYMBOL(nd_pfn_probe);
+>@@ -706,6 +711,22 @@ static int nd_pfn_init(struct nd_pfn *nd_pfn)
+> 		sig = DAX_SIG;
+> 	else
+> 		sig = PFN_SIG;
+>+
+>+	/*
+>+	 * Check for an existing 'pfn' superblock before writing a new
+>+	 * one. The intended flow is that on the first probe of an
+>+	 * nd_{pfn,dax} device the superblock is calculated and written
+>+	 * to the namespace. In this case nd_pfn_validate() returns
+>+	 * -ENODEV because no valid superblock exists currently.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+As you replied in following mail:
+
+3/ If present, nd_pfn_validate() returns 0 and nd_dax_probe()
+registers the dax0.1 device (this is a libnvdimm 'personality device).
+
+So at this point, nd_pfn_validate() return 0 or -ENODEV?
+
+>+	 *
+>+	 * On subsequent probes nd_pfn_validate() will find a valid
+>+	 * superblock and return 0.
+>+	 *
+>+	 * If an assumption of the superblock has been violated, like a
+>+	 * change to the physical alignment of the namespace,
+>+	 * nd_pfn_validate() will return an error other than -ENODEV to
+>+	 * fail probing.
+>+	 */
+> 	rc = nd_pfn_validate(nd_pfn, sig);
+> 	if (rc != -ENODEV)
+> 		return rc;
+
+-- 
+Wei Yang
+Help you, Help me
