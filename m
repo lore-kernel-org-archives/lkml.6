@@ -2,123 +2,103 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69B51C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:47:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0F48C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:48:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 372CC217D6
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:47:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B0BF2085A
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:48:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548182843;
-	bh=B0qFCitpNOkldy2prRrLmaRakaVyE82MIc/M0eFZCzQ=;
-	h=To:In-Reply-To:References:Subject:From:Cc:Date:List-ID:From;
-	b=DByAwQRyb1uJkMJkShg0rbt+PRr2APfMZWBaRXeVwnYHrC5kPwLtBCGOalWtGXG1v
-	 VriPzKQfwyxAB5N3gwi+vfRXMzCMmz+emBRV1owDwxwol/1hQ7ntM9CD/DgZTm0KV4
-	 aFZMO9DoPyG0mctH+XGSl/Lv5NB7aY6dt4sGgTms=
+	s=default; t=1548182932;
+	bh=1Q7e3mCTan2fPghdfqb2j+OPoeXtVWaBvg/Y5rIvhxI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=BSMvzQtnGRVqwWSz/xJZXPlDjwqmIB6TzROAU1Fj94mGdyfPez3KqtS5QtoVhzjaG
+	 40vTtQo6HPbtiwAnwJ4kKehuYzoxSHjmqEGAWwdBJZBszWwkuq75vQL/S2EkPLjN6v
+	 M7oxVyBOjhyH1leIsF3AE7MbG3+xJySKLc13WlcE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726329AbfAVSrV (ORCPT
+        id S1726232AbfAVSsv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 13:47:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33716 "EHLO mail.kernel.org"
+        Tue, 22 Jan 2019 13:48:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34920 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726028AbfAVSrV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 13:47:21 -0500
-Received: from localhost (unknown [104.132.0.74])
+        id S1725896AbfAVSsu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 13:48:50 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B35921019;
-        Tue, 22 Jan 2019 18:47:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 61BFE21019;
+        Tue, 22 Jan 2019 18:48:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548182840;
-        bh=B0qFCitpNOkldy2prRrLmaRakaVyE82MIc/M0eFZCzQ=;
-        h=To:In-Reply-To:References:Subject:From:Cc:Date:From;
-        b=FwQLCWkwXzubKhS4PZNrR9G+gxv+hmKTkZFPL9xxfnwn83x67JDOVbyRrTmZZTmI3
-         tlZ5x5xomXdNDndus56H9qwDnbBaSZWmf/xvf9mKE+7bsWzMiTN1Ferur04x1hVAxJ
-         9FldOyjbNgZfXWXCc+lUaCyLaoDYaggOsHOz2x7U=
-Content-Type: text/plain; charset="utf-8"
+        s=default; t=1548182929;
+        bh=1Q7e3mCTan2fPghdfqb2j+OPoeXtVWaBvg/Y5rIvhxI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=DXUoR9uk3DIMfghWBsZu4UJyf9/PZf/3+dntrk2OZDa76caDQOZL2fZwlEWYaor7/
+         qoUFqB2SBv/Hq96vqV3bNepBhLcZfFObkIsHYk4HMptvTEyGjrp06qXSasuV2+Y5wi
+         a05uLCCrC2z89lYgXkJy2SePZQmIvcgRMN8YSibY=
+Date:   Tue, 22 Jan 2019 19:48:47 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        iommu@lists.linux-foundation.org,
+        Corentin Labbe <clabbe@baylibre.com>
+Subject: Re: [PATCH] dma: debug: no need to check return value of
+ debugfs_create functions
+Message-ID: <20190122184847.GA32627@kroah.com>
+References: <20190122152151.16139-39-gregkh@linuxfoundation.org>
+ <2b974ef1-4336-8187-cbc5-ba2a14691837@arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-In-Reply-To: <e55df608-7058-63b9-b449-982d32e08759@linaro.org>
-User-Agent: alot/0.8
-References: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org> <1545039990-19984-9-git-send-email-jorge.ramirez-ortiz@linaro.org> <20190117063312.GE25498@builder> <9abbe59b-433c-4e30-1e4d-b5eed3afc695@linaro.org> <20190117100807.pmew5iqisdcc63eq@vireshk-i7> <e55df608-7058-63b9-b449-982d32e08759@linaro.org>
-Subject: Re: [PATCH 08/13] clk: qcom: hfpll: CLK_IGNORE_UNUSED
-From:   Stephen Boyd <sboyd@kernel.org>
-Message-ID: <154818283956.20280.2895221927807522124@swboyd.mtv.corp.google.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>, robh+dt@kernel.org,
-        mark.rutland@arm.com, andy.gross@linaro.org,
-        david.brown@linaro.org, will.deacon@arm.com,
-        mturquette@baylibre.com, jassisinghbrar@gmail.com,
-        vkoul@kernel.org, niklas.cassel@linaro.org, sibis@codeaurora.org,
-        georgi.djakov@linaro.org, arnd@arndb.de,
-        horms+renesas@verge.net.au, heiko@sntech.de,
-        enric.balletbo@collabora.com, jagan@amarulasolutions.com,
-        olof@lixom.net, amit.kucheria@linaro.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Date:   Tue, 22 Jan 2019 10:47:19 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2b974ef1-4336-8187-cbc5-ba2a14691837@arm.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Jorge Ramirez (2019-01-17 02:46:21)
-> On 1/17/19 11:08, Viresh Kumar wrote:
-> > On 17-01-19, 09:38, Jorge Ramirez wrote:
-> >> COMMON_CLK_DISABLED_UNUSED relies on the enable_count reference counter
-> >> to disable the clocks that were enabled by the firwmare and not by the
-> >> drivers.
-> >>
-> >> the cpufreq driver does not enable the cpu clock.
-> >>
-> >> so when clk_change_rate is called, the enable_count counter is not
-> >> incremented and therefore it just remains null since this was enabled =
-by
-> >> the firmware.
-> >>
-> >> I tried doing:
-> >>
-> >> diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt=
-.c
-> >> index e58bfcb..5a9f83e 100644
-> >> --- a/drivers/cpufreq/cpufreq-dt.c
-> >> +++ b/drivers/cpufreq/cpufreq-dt.c
-> >> @@ -124,6 +124,10 @@ static int resources_available(void)
-> >>                 return ret;
-> >>         }
-> >>
-> >> + ret =3D clk_prepare_enable(cpu_clk);
-> >> + if (ret)
-> >> +         return ret;
-> >> +
-> >>         clk_put(cpu_clk);
-> >>
-> >>         name =3D find_supply_name(cpu_dev);
-> >>
-> >>
-> >> and that removed the need for CLK_IGNORE_UNUSED. But I am not sure of
-> >> the system wide consequences of that change to cpufreq.
-> >=20
-> > If the cpufreq driver enables it then it should disable it on exit as
-> > well, right ? And in that case if you unload your driver's module, you
-> > will hang the system as the clock will get disabled :)
->=20
-> ah, of course, sorry was over-thinking this thing :)
->=20
-> >=20
-> > Every other platform must either be marking it with CLK_IGNORE_UNUSED
-> > or they must be doing clk_enable from somewhere, maybe the CPU online
-> > path, not sure though.
-> >=20
->=20
-> since this clock is enabled by the firmware, it seems to me that using
-> CLK_IGNORE_UNUSED remains the best option.
->=20
+On Tue, Jan 22, 2019 at 06:44:38PM +0000, Robin Murphy wrote:
+> Hi Greg,
+> 
+> On 22/01/2019 15:21, Greg Kroah-Hartman wrote:
+> > When calling debugfs functions, there is no need to ever check the
+> > return value.  The function can work or not, but the code logic should
+> > never do something different based on this.
+> > 
+> > Also delete the variables for the file dentries for the debugfs entries
+> > as they are never used at all once they are created.
+> 
+> Modulo one nit below, I certainly approve of the cleanup :)
+> 
+> Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+> 
+> > Cc: Christoph Hellwig <hch@lst.de>
+> > Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> > Cc: Robin Murphy <robin.murphy@arm.com>
+> > Cc: iommu@lists.linux-foundation.org
+> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > ---
+> >   kernel/dma/debug.c | 81 ++++++----------------------------------------
+> >   1 file changed, 10 insertions(+), 71 deletions(-)
+> > 
+> > diff --git a/kernel/dma/debug.c b/kernel/dma/debug.c
+> > index 23cf5361bcf1..2f5fc8b9d39f 100644
+> > --- a/kernel/dma/debug.c
+> > +++ b/kernel/dma/debug.c
+> > @@ -136,14 +136,6 @@ static u32 nr_prealloc_entries = PREALLOC_DMA_DEBUG_ENTRIES;
+> >   /* debugfs dentry's for the stuff above */
+> >   static struct dentry *dma_debug_dent        __read_mostly;
+> 
+> Does this actually need to be at file scope, or could it be punted to a
+> local in dma_debug_fs_init() while we're here?
 
-What do you do about CPUs being offlined? Presumably when the CPU is
-gone the system doesn't need to keep the clk enabled anymore.
+It can be moved to the function scope if you want me to, I was trying to
+do the least needed here :)
 
+thanks,
+
+greg k-h
