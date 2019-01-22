@@ -2,114 +2,166 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C12DC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:31:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25534C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:33:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 686B420870
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:31:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA7E920870
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:33:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IQF+8lYj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728530AbfAVNby (ORCPT
+        id S1728503AbfAVNdl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 08:31:54 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:58841 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728351AbfAVNbu (ORCPT
+        Tue, 22 Jan 2019 08:33:41 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:35520 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728339AbfAVNdl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 08:31:50 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0MDUvwu2962282
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 22 Jan 2019 05:30:57 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0MDUu592962279;
-        Tue, 22 Jan 2019 05:30:56 -0800
-Date:   Tue, 22 Jan 2019 05:30:56 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Borislav Petkov <tipbot@zytor.com>
-Message-ID: <tip-ee35b9b9f6d52ba134b4e75442531935f295be7a@git.kernel.org>
-Cc:     tglx@linutronix.de, luto@kernel.org, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, bigeasy@linutronix.de, bp@suse.de,
-        mingo@kernel.org
-Reply-To: tglx@linutronix.de, bp@suse.de, mingo@kernel.org,
-          luto@kernel.org, hpa@zytor.com, bigeasy@linutronix.de,
-          linux-kernel@vger.kernel.org
-In-Reply-To: <20190117120728.3811-1-bp@alien8.de>
-References: <20190117120728.3811-1-bp@alien8.de>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/fpu] x86/traps: Have read_cr0() only once in the #NM
- handler
-Git-Commit-ID: ee35b9b9f6d52ba134b4e75442531935f295be7a
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 22 Jan 2019 08:33:41 -0500
+Received: by mail-lf1-f68.google.com with SMTP id e26so18085543lfc.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 05:33:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=s/bavXojHDUtomwRUL9R87NB2iPK1uK7VySnEspdP2c=;
+        b=IQF+8lYjGm/C3l3/kuF1cPKQznEgBivpwXqmhlNUq9ljWKaohAdb/vqRV/edayB7IG
+         f5ugTLOZY3xHX/44/Nc3ad/XIvEbgI5INCwJwRMVPGoaPgwFnSbOY2s9RbVMJPZYXWek
+         RRgxludiSn8xtzzZQEfgOpVe7fOaXW/iRUZzQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=s/bavXojHDUtomwRUL9R87NB2iPK1uK7VySnEspdP2c=;
+        b=UlvggPQOnB6vGHj1NAkIOYH48fsVRgfRdj1SwWhRwMIKMUVD/94M44jl19+DTWtKUF
+         bHnulm8sX5IkmwYVxx0uDIQ5Q/68FOQpN1BsheOC1VAUnL/TrMZibdt8h6hJaU5XGcZS
+         8gn5AIg1op8Pl8McWTfkYRZ/gWeBJlwDS38Iov/8zpOaQ3Caoh6gUdaM8lfiz1R0dLde
+         FCC5+LOS2ui7x7ugWQQvbhtkD7o04Cc4o3YvjsY/9/OdznrbvEfI3Ky5n52dpkSQEOT1
+         T5kW1aCr8QG9dVRc9OBXJPxXE7KP3D0F97lIB7RbDueOs3SKDinu2LuP0ySpADmmX2GS
+         TLrg==
+X-Gm-Message-State: AJcUukcCVHOAgNpdLiNrE4Q9c48YAaX2hgY+qq/N27qHXOm4ajFn8Ikx
+        4L51OxylyKabuDcBIuhRwt//0ye9OoWjtIMzTB7SDw==
+X-Google-Smtp-Source: ALg8bN4aj5ipwr+wmomd5yL76phV5rUgewhWrACicDQqX7VVumqdnqVMCdivuSc94APIMVkC0Qmdg7qhPOkhopAC58U=
+X-Received: by 2002:a19:280f:: with SMTP id o15mr20257201lfo.0.1548164019488;
+ Tue, 22 Jan 2019 05:33:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+References: <20190121122455.819406896@linuxfoundation.org>
+In-Reply-To: <20190121122455.819406896@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Tue, 22 Jan 2019 19:03:28 +0530
+Message-ID: <CA+G9fYvnXwTyD4+O10vr-26rX2eW2RWB=8v2W2N7nBCFozm+Fg@mail.gmail.com>
+Subject: Re: [PATCH 4.20 000/111] 4.20.4-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        lkft-triage@lists.linaro.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        linux- stable <stable@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  ee35b9b9f6d52ba134b4e75442531935f295be7a
-Gitweb:     https://git.kernel.org/tip/ee35b9b9f6d52ba134b4e75442531935f295be7a
-Author:     Borislav Petkov <bp@suse.de>
-AuthorDate: Thu, 17 Jan 2019 13:02:05 +0100
-Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Tue, 22 Jan 2019 14:13:35 +0100
+On Mon, 21 Jan 2019 at 19:16, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 4.20.4 release.
+> There are 111 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed Jan 23 12:23:56 UTC 2019.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.20.4-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.20.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+>
 
-x86/traps: Have read_cr0() only once in the #NM handler
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-... instead of twice in the code. In any case, CR0 ends up being read
-once anyway:
+Summary
+------------------------------------------------------------------------
 
-1. The CONFIG_MATH_EMULATION case does so and exits.
-2. The normal case does it once too.
+kernel: 4.20.4-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.20.y
+git commit: 67648eb553fb944194c327026f4be4632dce710d
+git describe: v4.20.3-114-g67648eb553fb
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.20-oe/bu=
+ild/v4.20.3-114-g67648eb553fb
 
-However, read it on function entry instead to make the code even simpler
-to follow.
+No regressions (compared to build v4.20.3)
 
-No functional changes.
+No fixes (compared to build v4.20.3)
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Andy Lutomirski <luto@kernel.org>
-Acked-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: x86@kernel.org
-Link: https://lkml.kernel.org/r/20190117120728.3811-1-bp@alien8.de
----
- arch/x86/kernel/traps.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-index 9b7c4ca8f0a7..2684a9d11e66 100644
---- a/arch/x86/kernel/traps.c
-+++ b/arch/x86/kernel/traps.c
-@@ -880,12 +880,12 @@ do_spurious_interrupt_bug(struct pt_regs *regs, long error_code)
- dotraplinkage void
- do_device_not_available(struct pt_regs *regs, long error_code)
- {
--	unsigned long cr0;
-+	unsigned long cr0 = read_cr0();
- 
- 	RCU_LOCKDEP_WARN(!rcu_is_watching(), "entry code didn't wake RCU");
- 
- #ifdef CONFIG_MATH_EMULATION
--	if (!boot_cpu_has(X86_FEATURE_FPU) && (read_cr0() & X86_CR0_EM)) {
-+	if (!boot_cpu_has(X86_FEATURE_FPU) && (cr0 & X86_CR0_EM)) {
- 		struct math_emu_info info = { };
- 
- 		cond_local_irq_enable(regs);
-@@ -897,7 +897,6 @@ do_device_not_available(struct pt_regs *regs, long error_code)
- #endif
- 
- 	/* This should not happen. */
--	cr0 = read_cr0();
- 	if (WARN(cr0 & X86_CR0_TS, "CR0.TS was set")) {
- 		/* Try to fix it up and carry on. */
- 		write_cr0(cr0 & ~X86_CR0_TS);
+Ran 20503 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* boot
+* install-android-platform-tools-r2600
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-cve-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* spectre-meltdown-checker-test
+* ltp-fs-tests
+* ltp-open-posix-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
