@@ -2,98 +2,371 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28AD4C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:57:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33663C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:58:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED98C2084A
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:57:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC31B21726
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:58:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548187123;
+	bh=iKLci5owJws7gdXV9W4d6/9BY5O+zPZghR0unYeE1ns=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=nE/DfnDO5u37MTRPXufE7/Re/tubqbM84zwAteH3I4nzwGn2lYTygzX+WvMK6+SDc
+	 JMw+0utDMSYDEM31oCqK0oGtRo00bIIjerMBjss3JKxNA1FnxHzDNVhmpxDOkDulFw
+	 OPjfDje6zbECWViw4HSMy9i1WRXU8V2H9zPURpz4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726683AbfAVT5W (ORCPT
+        id S1726302AbfAVT6l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 14:57:22 -0500
-Received: from gateway22.websitewelcome.com ([192.185.46.234]:47744 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726015AbfAVT5W (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 14:57:22 -0500
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway22.websitewelcome.com (Postfix) with ESMTP id 198DD6F3C
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 13:57:21 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id m2AjgvM812qH7m2AjgXaHq; Tue, 22 Jan 2019 13:57:21 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=33118 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gm2Ai-001V4E-A0; Tue, 22 Jan 2019 13:57:20 -0600
-Date:   Tue, 22 Jan 2019 13:57:19 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] tty: serial: 8250_mtk: Fix potential NULL pointer dereference
-Message-ID: <20190122195719.GA21846@embeddedor>
+        Tue, 22 Jan 2019 14:58:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35956 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726009AbfAVT6l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 14:58:41 -0500
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 448702084A;
+        Tue, 22 Jan 2019 19:58:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548187119;
+        bh=iKLci5owJws7gdXV9W4d6/9BY5O+zPZghR0unYeE1ns=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fJGAUhICA3LG48wG7UZilznlhHOQ3JJ0RAIceG4RBsdAmDwq7OidhqMv3otZSnnud
+         IH4mhMwoPCiTei7qZFCjd6HqXTl6gmKUsUk1JENli90BOJ2etWZv2MrcAYPgD47qvA
+         mOe3eAk7dA3PxVt1AowOsvSBDHtp6qgRFUddjI5I=
+Date:   Tue, 22 Jan 2019 13:58:38 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Michael Bringmann <mwb@linux.vnet.ibm.com>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
+        Juliet Kim <minkim@us.ibm.com>
+Subject: Re: [RFC 5/6] powerpc/pci/hotplug: Use common drcinfo parsing
+Message-ID: <20190122195838.GC14636@google.com>
+References: <20181214204914.16435.59083.stgit@powerkvm6.aus.stglabs.ibm.com>
+ <20181214205120.16435.46952.stgit@powerkvm6.aus.stglabs.ibm.com>
+ <20190115002857.GG33971@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1gm2Ai-001V4E-A0
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.130.205]:33118
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 7
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20190115002857.GG33971@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a potential NULL pointer dereference in case devm_kzalloc()
-fails and returns NULL.
+On Mon, Jan 14, 2019 at 06:28:57PM -0600, Bjorn Helgaas wrote:
+> On Fri, Dec 14, 2018 at 02:51:31PM -0600, Michael Bringmann wrote:
+> > The implementation of the pseries-specific drc info properties
+> > is currently implemented in pseries-specific and non-pseries-specific
+> > files.  This patch set uses a new implementation of the device-tree
+> > parsing code for the properties.
+> > 
+> > This patch refactors parsing of the pseries-specific drc-info properties
+> > out of rpaphp_core.c to use the common parser.  In the case where an
+> > architecture does not use these properties, an __weak copy of the
+> > function is provided with dummy return values.  Changes include creating
+> > appropriate callback functions and passing callback-specific data
+> > blocks into arch_find_drc_match.  All functions that were used just
+> > to support the previous parsing implementation have been moved.
+> > 
+> > Signed-off-by: Michael Bringmann <mwb@linux.vnet.ibm.com>
+> 
+> This is fine with me.  Any rpaphp_core.c maintainers want to comment?
+> Tyrel?
+> 
+> $ ./scripts/get_maintainer.pl -f drivers/pci/hotplug/rpaphp_core.c
+> Tyrel Datwyler <tyreld@linux.vnet.ibm.com> (supporter:IBM Power PCI Hotplug Driver for RPA-compliant...)
+> Benjamin Herrenschmidt <benh@kernel.crashing.org> (supporter:LINUX FOR POWERPC (32-BIT AND 64-BIT))
+> Paul Mackerras <paulus@samba.org> (supporter:LINUX FOR POWERPC (32-BIT AND 64-BIT))
+> Michael Ellerman <mpe@ellerman.id.au> (supporter:LINUX FOR POWERPC (32-BIT AND 64-BIT))
 
-Fix this by adding a NULL check on data->dma
+This looks like part of a larger series, but I only got this patch.  So I
+assume you'll route this elsewhere along with the rest of the series.
+Here's my ack if it's useful:
 
-This bug was detected with the help of Coccinelle.
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 
-Fixes: 85b5c1dd0456 ("serial: 8250-mtk: add uart DMA support")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/tty/serial/8250/8250_mtk.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/tty/serial/8250/8250_mtk.c b/drivers/tty/serial/8250/8250_mtk.c
-index e2c407656fa6..c1fdbc0b6840 100644
---- a/drivers/tty/serial/8250/8250_mtk.c
-+++ b/drivers/tty/serial/8250/8250_mtk.c
-@@ -357,6 +357,9 @@ static int mtk8250_probe_of(struct platform_device *pdev, struct uart_port *p,
- 	if (dmacnt == 2) {
- 		data->dma = devm_kzalloc(&pdev->dev, sizeof(*data->dma),
- 					 GFP_KERNEL);
-+		if (!data->dma)
-+			return -ENOMEM;
-+
- 		data->dma->fn = mtk8250_dma_filter;
- 		data->dma->rx_size = MTK_UART_RX_SIZE;
- 		data->dma->rxconf.src_maxburst = MTK_UART_RX_TRIGGER;
--- 
-2.20.1
-
+> > ---
+> >  drivers/pci/hotplug/rpaphp_core.c |  232 ++++---------------------------------
+> >  1 file changed, 28 insertions(+), 204 deletions(-)
+> > 
+> > diff --git a/drivers/pci/hotplug/rpaphp_core.c b/drivers/pci/hotplug/rpaphp_core.c
+> > index bcd5d35..9ad7384 100644
+> > --- a/drivers/pci/hotplug/rpaphp_core.c
+> > +++ b/drivers/pci/hotplug/rpaphp_core.c
+> > @@ -154,182 +154,18 @@ static enum pci_bus_speed get_max_bus_speed(struct slot *slot)
+> >  	return speed;
+> >  }
+> >  
+> > -static int get_children_props(struct device_node *dn, const int **drc_indexes,
+> > -		const int **drc_names, const int **drc_types,
+> > -		const int **drc_power_domains)
+> > -{
+> > -	const int *indexes, *names, *types, *domains;
+> > -
+> > -	indexes = of_get_property(dn, "ibm,drc-indexes", NULL);
+> > -	names = of_get_property(dn, "ibm,drc-names", NULL);
+> > -	types = of_get_property(dn, "ibm,drc-types", NULL);
+> > -	domains = of_get_property(dn, "ibm,drc-power-domains", NULL);
+> > -
+> > -	if (!indexes || !names || !types || !domains) {
+> > -		/* Slot does not have dynamically-removable children */
+> > -		return -EINVAL;
+> > -	}
+> > -	if (drc_indexes)
+> > -		*drc_indexes = indexes;
+> > -	if (drc_names)
+> > -		/* &drc_names[1] contains NULL terminated slot names */
+> > -		*drc_names = names;
+> > -	if (drc_types)
+> > -		/* &drc_types[1] contains NULL terminated slot types */
+> > -		*drc_types = types;
+> > -	if (drc_power_domains)
+> > -		*drc_power_domains = domains;
+> > -
+> > -	return 0;
+> > -}
+> > -
+> > -
+> >  /* Verify the existence of 'drc_name' and/or 'drc_type' within the
+> > - * current node.  First obtain it's my-drc-index property.  Next,
+> > - * obtain the DRC info from it's parent.  Use the my-drc-index for
+> > - * correlation, and obtain/validate the requested properties.
+> > + * current node.
+> >   */
+> >  
+> > -static int rpaphp_check_drc_props_v1(struct device_node *dn, char *drc_name,
+> > -				char *drc_type, unsigned int my_index)
+> > -{
+> > -	char *name_tmp, *type_tmp;
+> > -	const int *indexes, *names;
+> > -	const int *types, *domains;
+> > -	int i, rc;
+> > -
+> > -	rc = get_children_props(dn->parent, &indexes, &names, &types, &domains);
+> > -	if (rc < 0) {
+> > -		return -EINVAL;
+> > -	}
+> > -
+> > -	name_tmp = (char *) &names[1];
+> > -	type_tmp = (char *) &types[1];
+> > -
+> > -	/* Iterate through parent properties, looking for my-drc-index */
+> > -	for (i = 0; i < be32_to_cpu(indexes[0]); i++) {
+> > -		if ((unsigned int) indexes[i + 1] == my_index)
+> > -			break;
+> > -
+> > -		name_tmp += (strlen(name_tmp) + 1);
+> > -		type_tmp += (strlen(type_tmp) + 1);
+> > -	}
+> > -
+> > -	if (((drc_name == NULL) || (drc_name && !strcmp(drc_name, name_tmp))) &&
+> > -	    ((drc_type == NULL) || (drc_type && !strcmp(drc_type, type_tmp))))
+> > -		return 0;
+> > -
+> > -	return -EINVAL;
+> > -}
+> > -
+> > -static int rpaphp_check_drc_props_v2(struct device_node *dn, char *drc_name,
+> > -				char *drc_type, unsigned int my_index)
+> > -{
+> > -	struct property *info;
+> > -	unsigned int entries;
+> > -	struct of_drc_info drc;
+> > -	const __be32 *value;
+> > -	char cell_drc_name[MAX_DRC_NAME_LEN];
+> > -	int j, fndit;
+> > -
+> > -	info = of_find_property(dn->parent, "ibm,drc-info", NULL);
+> > -	if (info == NULL)
+> > -		return -EINVAL;
+> > -
+> > -	value = of_prop_next_u32(info, NULL, &entries);
+> > -	if (!value)
+> > -		return -EINVAL;
+> > -
+> > -	for (j = 0; j < entries; j++) {
+> > -		of_read_drc_info_cell(&info, &value, &drc);
+> > -
+> > -		/* Should now know end of current entry */
+> > -
+> > -		if (my_index > drc.last_drc_index)
+> > -			continue;
+> > -
+> > -		fndit = 1;
+> > -		break;
+> > -	}
+> > -	/* Found it */
+> > -
+> > -	if (fndit)
+> > -		sprintf(cell_drc_name, "%s%d", drc.drc_name_prefix, 
+> > -			my_index);
+> > -
+> > -	if (((drc_name == NULL) ||
+> > -	     (drc_name && !strcmp(drc_name, cell_drc_name))) &&
+> > -	    ((drc_type == NULL) ||
+> > -	     (drc_type && !strcmp(drc_type, drc.drc_type))))
+> > -		return 0;
+> > -
+> > -	return -EINVAL;
+> > -}
+> > -
+> >  int rpaphp_check_drc_props(struct device_node *dn, char *drc_name,
+> >  			char *drc_type)
+> >  {
+> > -	const unsigned int *my_index;
+> > -
+> > -	my_index = of_get_property(dn, "ibm,my-drc-index", NULL);
+> > -	if (!my_index) {
+> > -		/* Node isn't DLPAR/hotplug capable */
+> > -		return -EINVAL;
+> > -	}
+> > -
+> > -	if (firmware_has_feature(FW_FEATURE_DRC_INFO))
+> > -		return rpaphp_check_drc_props_v2(dn, drc_name, drc_type,
+> > -						*my_index);
+> > -	else
+> > -		return rpaphp_check_drc_props_v1(dn, drc_name, drc_type,
+> > -						*my_index);
+> > +	return arch_find_drc_match(dn, NULL, drc_type, drc_name,
+> > +				true, false, NULL);
+> >  }
+> >  EXPORT_SYMBOL_GPL(rpaphp_check_drc_props);
+> >  
+> > -
+> > -static int is_php_type(char *drc_type)
+> > -{
+> > -	unsigned long value;
+> > -	char *endptr;
+> > -
+> > -	/* PCI Hotplug nodes have an integer for drc_type */
+> > -	value = simple_strtoul(drc_type, &endptr, 10);
+> > -	if (endptr == drc_type)
+> > -		return 0;
+> > -
+> > -	return 1;
+> > -}
+> > -
+> > -/**
+> > - * is_php_dn() - return 1 if this is a hotpluggable pci slot, else 0
+> > - * @dn: target &device_node
+> > - * @indexes: passed to get_children_props()
+> > - * @names: passed to get_children_props()
+> > - * @types: returned from get_children_props()
+> > - * @power_domains:
+> > - *
+> > - * This routine will return true only if the device node is
+> > - * a hotpluggable slot. This routine will return false
+> > - * for built-in pci slots (even when the built-in slots are
+> > - * dlparable.)
+> > - */
+> > -static int is_php_dn(struct device_node *dn, const int **indexes,
+> > -		const int **names, const int **types, const int **power_domains)
+> > -{
+> > -	const int *drc_types;
+> > -	int rc;
+> > -
+> > -	rc = get_children_props(dn, indexes, names, &drc_types, power_domains);
+> > -	if (rc < 0)
+> > -		return 0;
+> > -
+> > -	if (!is_php_type((char *) &drc_types[1]))
+> > -		return 0;
+> > -
+> > -	*types = drc_types;
+> > -	return 1;
+> > -}
+> > -
+> >  /**
+> >   * rpaphp_add_slot -- declare a hotplug slot to the hotplug subsystem.
+> >   * @dn: device node of slot
+> > @@ -346,54 +182,42 @@ static int is_php_dn(struct device_node *dn, const int **indexes,
+> >   *
+> >   * To remove a slot, it suffices to call rpaphp_deregister_slot().
+> >   */
+> > -int rpaphp_add_slot(struct device_node *dn)
+> > +
+> > +static int rpaphp_add_slot_cb(struct device_node *dn,
+> > +			u32 drc_index, char *drc_name, char *drc_type,
+> > +			u32 drc_power_domain, void *data)
+> >  {
+> >  	struct slot *slot;
+> >  	int retval = 0;
+> > -	int i;
+> > -	const int *indexes, *names, *types, *power_domains;
+> > -	char *name, *type;
+> > -
+> > -	if (!dn->name || strcmp(dn->name, "pci"))
+> > -		return 0;
+> > -
+> > -	/* If this is not a hotplug slot, return without doing anything. */
+> > -	if (!is_php_dn(dn, &indexes, &names, &types, &power_domains))
+> > -		return 0;
+> > -
+> > -	dbg("Entry %s: dn=%pOF\n", __func__, dn);
+> >  
+> > -	/* register PCI devices */
+> > -	name = (char *) &names[1];
+> > -	type = (char *) &types[1];
+> > -	for (i = 0; i < be32_to_cpu(indexes[0]); i++) {
+> > -		int index;
+> > +	slot = alloc_slot_struct(dn, drc_index, drc_name, drc_power_domain);
+> > +	if (!slot)
+> > +		return -ENOMEM;
+> >  
+> > -		index = be32_to_cpu(indexes[i + 1]);
+> > -		slot = alloc_slot_struct(dn, index, name,
+> > -					 be32_to_cpu(power_domains[i + 1]));
+> > -		if (!slot)
+> > -			return -ENOMEM;
+> > +	slot->type = simple_strtoul(drc_type, NULL, 10);
+> > +	if (retval)
+> > +		return -EINVAL;
+> >  
+> > -		slot->type = simple_strtoul(type, NULL, 10);
+> > +	dbg("Found drc-index:0x%x drc-name:%s drc-type:%s\n",
+> > +		drc_index, drc_name, drc_type);
+> >  
+> > -		dbg("Found drc-index:0x%x drc-name:%s drc-type:%s\n",
+> > -				index, name, type);
+> > +	retval = rpaphp_enable_slot(slot);
+> > +	if (!retval)
+> > +		retval = rpaphp_register_slot(slot);
+> >  
+> > -		retval = rpaphp_enable_slot(slot);
+> > -		if (!retval)
+> > -			retval = rpaphp_register_slot(slot);
+> > +	if (retval)
+> > +		dealloc_slot_struct(slot);
+> >  
+> > -		if (retval)
+> > -			dealloc_slot_struct(slot);
+> > +	return retval;
+> > +}
+> >  
+> > -		name += strlen(name) + 1;
+> > -		type += strlen(type) + 1;
+> > -	}
+> > -	dbg("%s - Exit: rc[%d]\n", __func__, retval);
+> > +int rpaphp_add_slot(struct device_node *dn)
+> > +{
+> > +	if (!dn->name || strcmp(dn->name, "pci"))
+> > +		return 0;
+> >  
+> > -	/* XXX FIXME: reports a failure only if last entry in loop failed */
+> > -	return retval;
+> > +	return arch_find_drc_match(dn, rpaphp_add_slot_cb,
+> > +			NULL, NULL, false, true, NULL);
+> >  }
+> >  EXPORT_SYMBOL_GPL(rpaphp_add_slot);
+> >  
+> > 
