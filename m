@@ -2,87 +2,115 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CA41C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 22:31:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67AF8C282C5
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 22:32:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D07F5217D6
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 22:31:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548196316;
-	bh=hnsOd0jiK3bdrl/YxWCHkszMA+csKQ/YGOT2DgfVr2Q=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=gcdETSqavPTASCKY0nUdwwS7l7LvtSlP8FYKbPqjt9KfZZNwwxHGCG2UIQ9Em95io
-	 TRIqj1jTBxnEx9/pzM8W1flfRr2Y8RwpiFtjnemRV0B36tyB4ht1HwNWIuD38mf5D4
-	 jojHs+uZUlVLUy6ns4+qTOQu0V0IjyGE37CdxUvg=
+	by mail.kernel.org (Postfix) with ESMTP id 336CB20866
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 22:32:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fjfi.cvut.cz header.i=@fjfi.cvut.cz header.b="pbpRFlcE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726964AbfAVWby (ORCPT
+        id S1726993AbfAVWcT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 17:31:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37906 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726719AbfAVWby (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 17:31:54 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Tue, 22 Jan 2019 17:32:19 -0500
+Received: from mailgw1.fjfi.cvut.cz ([147.32.9.3]:45160 "EHLO
+        mailgw1.fjfi.cvut.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726851AbfAVWcT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 17:32:19 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTP id 35867B0664;
+        Tue, 22 Jan 2019 23:32:16 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fjfi.cvut.cz;
+        s=20151024; t=1548196336; i=@fjfi.cvut.cz;
+        bh=gSCsnIkrDG/PwKOgkMCOsWlrMuMz1Qz/tzhM3T7IYxk=;
+        h=From:To:Cc:Subject:Date;
+        b=pbpRFlcE4qvLf8kWTNGhHNEVttY8duujwTTzfG2AiC4munk79tl0WwcsRgzr91pNS
+         5xepgunGCiHL6wBKPb8QfOGbXznBvEGS9UyNoHXBOJxVqlICa3PiH0WG9v+O3MTCWY
+         /n/Egjnk7vecezvfPlxvAEhftxwx3AzW/vqwHtfk=
+X-CTU-FNSPE-Virus-Scanned: amavisd-new at fjfi.cvut.cz
+Received: from mailgw1.fjfi.cvut.cz ([127.0.0.1])
+        by localhost (mailgw1.fjfi.cvut.cz [127.0.0.1]) (amavisd-new, port 10022)
+        with ESMTP id 8ZjyfmUs2t7x; Tue, 22 Jan 2019 23:32:14 +0100 (CET)
+Received: from linux.fjfi.cvut.cz (linux.fjfi.cvut.cz [147.32.5.111])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5CB6F20866;
-        Tue, 22 Jan 2019 22:31:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548196313;
-        bh=hnsOd0jiK3bdrl/YxWCHkszMA+csKQ/YGOT2DgfVr2Q=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=CwuBPhn+/jhP70ibwtCxdk6DU6r4ewvVYZPg5Jzloul8QRsDlSb9nIndMjJbYVR7n
-         +xhH+vKYCv8fhLPNDMxiHPv+EV1mWkpOJg+fbb05L/IOefbdZ4sH3FWLiKapxYb3Sv
-         Uz8hXuH33X4l0vZuzPFDmachqInp9vBUUMy3ex9g=
-Subject: Re: [PATCH 4.14 00/59] 4.14.95-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, shuah <shuah@kernel.org>
-References: <20190121122456.529172919@linuxfoundation.org>
-From:   shuah <shuah@kernel.org>
-Message-ID: <2a32edb8-94c6-0d31-cde6-5e864ea09845@kernel.org>
-Date:   Tue, 22 Jan 2019 15:31:52 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20190121122456.529172919@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTPS id 84EF0B0661;
+        Tue, 22 Jan 2019 23:32:13 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailgw1.fjfi.cvut.cz 84EF0B0661
+Received: by linux.fjfi.cvut.cz (Postfix, from userid 1001)
+        id 400E56004E; Tue, 22 Jan 2019 23:32:13 +0100 (CET)
+From:   David Kozub <zub@linux.fjfi.cvut.cz>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Jonathan Derrick <jonathan.derrick@intel.com>,
+        Scott Bauer <sbauer@plzdonthack.me>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>,
+        David Kozub <zub@linux.fjfi.cvut.cz>
+Subject: [PATCH v3 00/16] block: sed-opal: support shadow MBR done flag and write
+Date:   Tue, 22 Jan 2019 23:31:31 +0100
+Message-Id: <1548196307-12987-1-git-send-email-zub@linux.fjfi.cvut.cz>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/21/19 6:43 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.95 release.
-> There are 59 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed Jan 23 12:23:55 UTC 2019.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.95-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+This patch series extends OPAL support: it adds IOCTL for setting the shadow
+MBR done flag which can be useful for unlocking an OPAL disk on boot and it adds
+IOCTL for writing to the shadow MBR. Also included are some minor fixes and
+improvements.
 
-Compiled and booted on my test system. No dmesg regressions.
+This series is based on the original work done by Jonas Rabenstein which was
+submitted in March 2018.[1] I tried to apply suggestions made in review on the
+list and do some further improvements.
 
-thanks,
--- Shuah
+The most contentious issue in the original series was the IOCTL for shadow MBR
+write but I think no better approach was found[2] so this was not changed. I'm
+open to suggestions.
+
+There is a fork of sed-opal-temp that can use these new IOCTLs.[3] I tested
+these on Samsung 840 EVO and 850 EVO drives, on x86-64 and arm64 systems.
+
+The series applies on v5.0-rc3.
+
+Changes from v2 to v3:
+* review suggestions from Scott Bauer
+
+As Scott suggested I tried to do a more thorough testing, esp. with things like
+wrong passwords/invalid values. I did not observe any crash or unexpected
+behavior.
+
+David Kozub (8):
+  block: sed-opal: fix typos and formatting
+  block: sed-opal: close parameter list in cmd_finalize
+  block: sed-opal: unify cmd start
+  block: sed-opal: unify error handling of responses
+  block: sed-opal: reuse response_get_token to decrease code duplication
+  block: sed-opal: pass steps via argument rather than via opal_dev
+  block: sed-opal: don't repeat opal_discovery0 in each steps array
+  block: sed-opal: rename next to execute_steps
+
+Jonas Rabenstein (8):
+  block: sed-opal: use correct macro for method length
+  block: sed-opal: unify space check in add_token_*
+  block: sed-opal: print failed function address
+  block: sed-opal: split generation of bytestring header and content
+  block: sed-opal: add ioctl for done-mark of shadow mbr
+  block: sed-opal: ioctl for writing to shadow mbr
+  block: sed-opal: unify retrieval of table columns
+  block: sed-opal: check size of shadow mbr
+
+ block/opal_proto.h            |  18 +
+ block/sed-opal.c              | 845 +++++++++++++++++-----------------
+ include/linux/sed-opal.h      |   2 +
+ include/uapi/linux/sed-opal.h |   9 +
+ 4 files changed, 451 insertions(+), 423 deletions(-)
+
+-- 
+2.20.1
 
