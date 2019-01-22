@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7C41C282C5
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:22:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDB26C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:22:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8566F217D4
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:22:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B34F120879
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:22:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548170547;
-	bh=nZ0M9twGJD8LAfaJzrFl8VYsq0r/7+p6enj2M7fargA=;
+	s=default; t=1548170554;
+	bh=vJt3fJtaSvAhSbSKziKYEFt4JWMeK///oumcWnn9Uhs=;
 	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=gRow7Llsvih3o61zR1dc03KVurzHBdWIyiQfloZPy9O+vXmwbsrTajO6jwu0zob6I
-	 4+Di6Xo8VgBpoHoik3wJTqAzeqaAzvau9R+i4fqbwqkGkKLqrZC5SiexMFmGlikkt4
-	 tIuAO/Pj04/3ipOQR9FZCIYEae018zy62gakEVL8=
+	b=mHFUqlvVu9tg79/Rx0KUKHXHyME4AOregZyUB1l4xx0NgheJekwjVHJ7dXF5vh8jO
+	 jE5I9uM6dl411KscJyCSjU6rBAzBFoDsD5qTVnMcWSkGg0u14e9TcJeYL33mVAC6Go
+	 JRMTHWjuU7BIaFsja5/9tR3YQN3XvW2GEG/P3Mq8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729579AbfAVPW0 (ORCPT
+        id S1729613AbfAVPWc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 10:22:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34484 "EHLO mail.kernel.org"
+        Tue, 22 Jan 2019 10:22:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34644 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729505AbfAVPWY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 10:22:24 -0500
+        id S1729244AbfAVPWa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 10:22:30 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF1A5217D4;
-        Tue, 22 Jan 2019 15:22:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6430E217D4;
+        Tue, 22 Jan 2019 15:22:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548170543;
-        bh=nZ0M9twGJD8LAfaJzrFl8VYsq0r/7+p6enj2M7fargA=;
+        s=default; t=1548170548;
+        bh=vJt3fJtaSvAhSbSKziKYEFt4JWMeK///oumcWnn9Uhs=;
         h=From:To:Cc:Subject:Date:From;
-        b=NrufUabFRi74GElQ/Aa2DE9PepN7dtTPoT5M1hEvUv6flGsGBrxsyqkW1gnZtOSwW
-         eZunQ6qfCoPIApKHrkb+fL5TCmTNVqIreydmm9LmCd6phcRgT9/EbeEYJng98PE2oj
-         o+eVTSAbIkcRLx/llqwOh0TO2yHoCfTuH5QAtOqM=
+        b=XRl/HRFPoeZ1nonjHkieZYOdVgfG/cAY7HVqISRCOJor5QQWPxOkzyCATB3Ph01L0
+         XJ/sGqpRF/apYKnypLZK0N9bjciw/4HOcCNtN6RVqO+BEIehIQsDPSXEkXdAy9BG2V
+         HciqLp0LrZPk6CoCdvoRJ9gIAP2zV3Ff/Ifqv5J8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-edac@vger.kernel.org
-Subject: [PATCH] edac: no need to check return value of debugfs_create functions
-Date:   Tue, 22 Jan 2019 16:21:16 +0100
-Message-Id: <20190122152151.16139-17-gregkh@linuxfoundation.org>
+        Stanislaw Gruszka <sgruszka@redhat.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        linux-wireless@vger.kernel.org
+Subject: [PATCH] iwlegacy: no need to check return value of debugfs_create functions
+Date:   Tue, 22 Jan 2019 16:21:18 +0100
+Message-Id: <20190122152151.16139-19-gregkh@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -60,114 +60,142 @@ When calling debugfs functions, there is no need to ever check the
 return value.  The function can work or not, but the code logic should
 never do something different based on this.
 
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-edac@vger.kernel.org
+Cc: Stanislaw Gruszka <sgruszka@redhat.com>
+Cc: Kalle Valo <kvalo@codeaurora.org>
+Cc: linux-wireless@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/edac/debugfs.c     | 45 ++++++++++----------------------------
- drivers/edac/edac_module.h |  4 ++--
- 2 files changed, 13 insertions(+), 36 deletions(-)
+ .../net/wireless/intel/iwlegacy/3945-mac.c    |  5 +--
+ .../net/wireless/intel/iwlegacy/4965-mac.c    |  5 +--
+ drivers/net/wireless/intel/iwlegacy/common.h  |  6 ++--
+ drivers/net/wireless/intel/iwlegacy/debug.c   | 34 +++----------------
+ 4 files changed, 8 insertions(+), 42 deletions(-)
 
-diff --git a/drivers/edac/debugfs.c b/drivers/edac/debugfs.c
-index 92dbb7e2320c..fd27ea0453a3 100644
---- a/drivers/edac/debugfs.c
-+++ b/drivers/edac/debugfs.c
-@@ -44,10 +44,6 @@ static const struct file_operations debug_fake_inject_fops = {
- int __init edac_debugfs_init(void)
+diff --git a/drivers/net/wireless/intel/iwlegacy/3945-mac.c b/drivers/net/wireless/intel/iwlegacy/3945-mac.c
+index 57e3b6cca234..271977f7fbb0 100644
+--- a/drivers/net/wireless/intel/iwlegacy/3945-mac.c
++++ b/drivers/net/wireless/intel/iwlegacy/3945-mac.c
+@@ -3756,10 +3756,7 @@ il3945_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	if (err)
+ 		goto out_remove_sysfs;
+ 
+-	err = il_dbgfs_register(il, DRV_NAME);
+-	if (err)
+-		IL_ERR("failed to create debugfs files. Ignoring error: %d\n",
+-		       err);
++	il_dbgfs_register(il, DRV_NAME);
+ 
+ 	/* Start monitoring the killswitch */
+ 	queue_delayed_work(il->workqueue, &il->_3945.rfkill_poll, 2 * HZ);
+diff --git a/drivers/net/wireless/intel/iwlegacy/4965-mac.c b/drivers/net/wireless/intel/iwlegacy/4965-mac.c
+index 6b4488a178a7..94222ae464ae 100644
+--- a/drivers/net/wireless/intel/iwlegacy/4965-mac.c
++++ b/drivers/net/wireless/intel/iwlegacy/4965-mac.c
+@@ -4988,10 +4988,7 @@ il4965_ucode_callback(const struct firmware *ucode_raw, void *context)
+ 	if (err)
+ 		goto out_unbind;
+ 
+-	err = il_dbgfs_register(il, DRV_NAME);
+-	if (err)
+-		IL_ERR("failed to create debugfs files. Ignoring error: %d\n",
+-		       err);
++	il_dbgfs_register(il, DRV_NAME);
+ 
+ 	err = sysfs_create_group(&il->pci_dev->dev.kobj, &il_attribute_group);
+ 	if (err) {
+diff --git a/drivers/net/wireless/intel/iwlegacy/common.h b/drivers/net/wireless/intel/iwlegacy/common.h
+index dc6a74a05983..b079c64ca014 100644
+--- a/drivers/net/wireless/intel/iwlegacy/common.h
++++ b/drivers/net/wireless/intel/iwlegacy/common.h
+@@ -2974,13 +2974,11 @@ il_print_hex_dump(struct il_priv *il, int level, const void *p, u32 len)
+ #endif /* CONFIG_IWLEGACY_DEBUG */
+ 
+ #ifdef CONFIG_IWLEGACY_DEBUGFS
+-int il_dbgfs_register(struct il_priv *il, const char *name);
++void il_dbgfs_register(struct il_priv *il, const char *name);
+ void il_dbgfs_unregister(struct il_priv *il);
+ #else
+-static inline int
+-il_dbgfs_register(struct il_priv *il, const char *name)
++static inline void il_dbgfs_register(struct il_priv *il, const char *name)
  {
- 	edac_debugfs = debugfs_create_dir("edac", NULL);
--	if (IS_ERR(edac_debugfs)) {
--		edac_debugfs = NULL;
--		return -ENOMEM;
--	}
- 	return 0;
- }
- 
-@@ -56,50 +52,31 @@ void edac_debugfs_exit(void)
- 	debugfs_remove_recursive(edac_debugfs);
- }
- 
--int edac_create_debugfs_nodes(struct mem_ctl_info *mci)
-+void edac_create_debugfs_nodes(struct mem_ctl_info *mci)
- {
--	struct dentry *d, *parent;
-+	struct dentry *parent;
- 	char name[80];
- 	int i;
- 
--	if (!edac_debugfs)
--		return -ENODEV;
--
--	d = debugfs_create_dir(mci->dev.kobj.name, edac_debugfs);
--	if (!d)
--		return -ENOMEM;
--	parent = d;
-+	parent = debugfs_create_dir(mci->dev.kobj.name, edac_debugfs);
- 
- 	for (i = 0; i < mci->n_layers; i++) {
- 		sprintf(name, "fake_inject_%s",
- 			     edac_layer_name[mci->layers[i].type]);
--		d = debugfs_create_u8(name, S_IRUGO | S_IWUSR, parent,
--				      &mci->fake_inject_layer[i]);
--		if (!d)
--			goto nomem;
-+		debugfs_create_u8(name, S_IRUGO | S_IWUSR, parent,
-+				  &mci->fake_inject_layer[i]);
- 	}
- 
--	d = debugfs_create_bool("fake_inject_ue", S_IRUGO | S_IWUSR, parent,
--				&mci->fake_inject_ue);
--	if (!d)
--		goto nomem;
-+	debugfs_create_bool("fake_inject_ue", S_IRUGO | S_IWUSR, parent,
-+			    &mci->fake_inject_ue);
- 
--	d = debugfs_create_u16("fake_inject_count", S_IRUGO | S_IWUSR, parent,
--				&mci->fake_inject_count);
--	if (!d)
--		goto nomem;
-+	debugfs_create_u16("fake_inject_count", S_IRUGO | S_IWUSR, parent,
-+			   &mci->fake_inject_count);
- 
--	d = debugfs_create_file("fake_inject", S_IWUSR, parent,
--				&mci->dev,
--				&debug_fake_inject_fops);
--	if (!d)
--		goto nomem;
-+	debugfs_create_file("fake_inject", S_IWUSR, parent, &mci->dev,
-+			    &debug_fake_inject_fops);
- 
- 	mci->debugfs = parent;
 -	return 0;
--nomem:
--	edac_debugfs_remove_recursive(mci->debugfs);
+ }
+ 
+ static inline void
+diff --git a/drivers/net/wireless/intel/iwlegacy/debug.c b/drivers/net/wireless/intel/iwlegacy/debug.c
+index d76073def677..fa211412e0ac 100644
+--- a/drivers/net/wireless/intel/iwlegacy/debug.c
++++ b/drivers/net/wireless/intel/iwlegacy/debug.c
+@@ -128,23 +128,12 @@ EXPORT_SYMBOL(il_update_stats);
+ 
+ /* create and remove of files */
+ #define DEBUGFS_ADD_FILE(name, parent, mode) do {			\
+-	if (!debugfs_create_file(#name, mode, parent, il,		\
+-			 &il_dbgfs_##name##_ops))		\
+-		goto err;						\
++	debugfs_create_file(#name, mode, parent, il,			\
++			    &il_dbgfs_##name##_ops);			\
+ } while (0)
+ 
+ #define DEBUGFS_ADD_BOOL(name, parent, ptr) do {			\
+-	struct dentry *__tmp;						\
+-	__tmp = debugfs_create_bool(#name, 0600, parent, ptr);		\
+-	if (IS_ERR(__tmp) || !__tmp)					\
+-		goto err;						\
+-} while (0)
+-
+-#define DEBUGFS_ADD_X32(name, parent, ptr) do {				\
+-	struct dentry *__tmp;						\
+-	__tmp = debugfs_create_x32(#name, 0600, parent, ptr);		\
+-	if (IS_ERR(__tmp) || !__tmp)					\
+-		goto err;						\
++	debugfs_create_bool(#name, 0600, parent, ptr);			\
+ } while (0)
+ 
+ /* file operation */
+@@ -1341,27 +1330,18 @@ DEBUGFS_WRITE_FILE_OPS(wd_timeout);
+  * Create the debugfs files and directories
+  *
+  */
+-int
++void
+ il_dbgfs_register(struct il_priv *il, const char *name)
+ {
+ 	struct dentry *phyd = il->hw->wiphy->debugfsdir;
+ 	struct dentry *dir_drv, *dir_data, *dir_rf, *dir_debug;
+ 
+ 	dir_drv = debugfs_create_dir(name, phyd);
+-	if (!dir_drv)
+-		return -ENOMEM;
+-
+ 	il->debugfs_dir = dir_drv;
+ 
+ 	dir_data = debugfs_create_dir("data", dir_drv);
+-	if (!dir_data)
+-		goto err;
+ 	dir_rf = debugfs_create_dir("rf", dir_drv);
+-	if (!dir_rf)
+-		goto err;
+ 	dir_debug = debugfs_create_dir("debug", dir_drv);
+-	if (!dir_debug)
+-		goto err;
+ 
+ 	DEBUGFS_ADD_FILE(nvm, dir_data, 0400);
+ 	DEBUGFS_ADD_FILE(sram, dir_data, 0600);
+@@ -1399,12 +1379,6 @@ il_dbgfs_register(struct il_priv *il, const char *name)
+ 		DEBUGFS_ADD_BOOL(disable_chain_noise, dir_rf,
+ 				 &il->disable_chain_noise_cal);
+ 	DEBUGFS_ADD_BOOL(disable_tx_power, dir_rf, &il->disable_tx_power_cal);
+-	return 0;
+-
+-err:
+-	IL_ERR("Can't create the debugfs directory\n");
+-	il_dbgfs_unregister(il);
 -	return -ENOMEM;
  }
+ EXPORT_SYMBOL(il_dbgfs_register);
  
- /* Create a toplevel dir under EDAC's debugfs hierarchy */
-diff --git a/drivers/edac/edac_module.h b/drivers/edac/edac_module.h
-index dec88dcea036..bc63a6a9dd0a 100644
---- a/drivers/edac/edac_module.h
-+++ b/drivers/edac/edac_module.h
-@@ -71,7 +71,7 @@ extern void *edac_align_ptr(void **p, unsigned size, int n_elems);
- #ifdef CONFIG_EDAC_DEBUG
- int edac_debugfs_init(void);
- void edac_debugfs_exit(void);
--int edac_create_debugfs_nodes(struct mem_ctl_info *mci);
-+void edac_create_debugfs_nodes(struct mem_ctl_info *mci);
- struct dentry *edac_debugfs_create_dir(const char *dirname);
- struct dentry *
- edac_debugfs_create_dir_at(const char *dirname, struct dentry *parent);
-@@ -85,7 +85,7 @@ edac_debugfs_create_x16(const char *name, umode_t mode, struct dentry *parent, u
- #else
- static inline int edac_debugfs_init(void)					{ return -ENODEV; }
- static inline void edac_debugfs_exit(void)					{ }
--static inline int edac_create_debugfs_nodes(struct mem_ctl_info *mci)		{ return 0; }
-+static inline void edac_create_debugfs_nodes(struct mem_ctl_info *mci)		{ }
- static inline struct dentry *edac_debugfs_create_dir(const char *dirname)	{ return NULL; }
- static inline struct dentry *
- edac_debugfs_create_dir_at(const char *dirname, struct dentry *parent)		{ return NULL; }
 -- 
 2.20.1
 
