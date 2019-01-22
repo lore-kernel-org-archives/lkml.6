@@ -2,119 +2,114 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D50EC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:30:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AE78C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:30:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 589C221019
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:30:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FJfmqzLS"
+	by mail.kernel.org (Postfix) with ESMTP id 4B81321019
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:30:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548171053;
+	bh=+ze9XkHIdknVov2ncto1OAcGgPMRE1R5ksGVJ4Dzoto=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=x3KsXxif6bSeq5YS6ntEWTYKTalOvknY7+li38mXP6w7DDk5m9aKg+FEjYcoiEVf5
+	 qFLrTEciStKwAnYSttWdPu5e/4vJ/9QcP77eGTtc418xk9dH6HivxCMWCUFK9CGK2O
+	 r2qmRJeH9n4tVxdGPTPK5bX3adcWxdHbBJgq42h4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729294AbfAVPaU (ORCPT
+        id S1729328AbfAVPav (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 10:30:20 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:44044 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728949AbfAVPaU (ORCPT
+        Tue, 22 Jan 2019 10:30:51 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:36799 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728829AbfAVPav (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 10:30:20 -0500
-Received: by mail-pl1-f195.google.com with SMTP id e11so11638555plt.11;
-        Tue, 22 Jan 2019 07:30:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7TLT2/IdH4vIWNkPiXrnofB5eDwW2cOUdQoiq7/BcHg=;
-        b=FJfmqzLSsmWO0Y9zj1QMVVt7eKb/KBMhDqWQi6LMc0v53TthSvn/mi3xh93cudJK43
-         wNw5DPlwu2qQSIps7BrnnJZDHSOoFw+0kyMQ0aK6wCydfmsCefKADUurgCOmUMmbsr87
-         aqtheMmAs99adjrivDpeg0JWGCcg6Zgd0SVDOp0gZni0zfvkYNTHcjzZt9AGjWfIu3yQ
-         a651pOwNoj+VEqkyw+a7ou5Thsz7rB2qSywGAbJMVg5CHEqhr6iHDaUKyTZpkozVfjhr
-         F2OXOHa5O7IC89HvrhXEOLtuzNcMXo68AjVcFjdddqeQVUtiuKAfUD5nU2JBE9WQjSLe
-         IUSw==
+        Tue, 22 Jan 2019 10:30:51 -0500
+Received: by mail-oi1-f195.google.com with SMTP id x23so17716078oix.3;
+        Tue, 22 Jan 2019 07:30:50 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7TLT2/IdH4vIWNkPiXrnofB5eDwW2cOUdQoiq7/BcHg=;
-        b=AsQHh2ZZkjWMcu5IaJm6dGXXkk3Oo+fSfSY0zUieyl8SZme+DXWEee0vmVH6gbn6SO
-         oYIduG7tEfW3w/dfVB9kCrR2nhTH+cduxW6P/HgoTuBOlFUZADx8f0/r5AcPaOfzN9n8
-         H5q4k61fZY9rm0plWrVw56Lhtuczy6Ted0nJon2/GmLO4KyhZQ0ZElqRIM/JXGLA0X44
-         61pPZFGe5QWPpmbVXHkq61KKfq360bKhh8GJK69lbFCQAbOBfd1+QZ5n2XL+mI9zvodx
-         NQXBUp9dVexWtT0+LXbW6JJTW+M/SWHtHSVzfWiQjwNVMPzKiCLzaoxIKgWV47n0We/o
-         9xug==
-X-Gm-Message-State: AJcUukdWTbvzE3LBXmdKRvZPzGyROOnK8f/5FYr/kicYyycRZYBTQyqp
-        Worjx090F2KJcbTP5yE3qUU=
-X-Google-Smtp-Source: ALg8bN5ux96+ZCGVAUXKpCSDcSSUAZh5F5E4AM0lfOcDkjCABDaQ1Kc81k36Io5D8EVQO1NoI8O2LA==
-X-Received: by 2002:a17:902:20e9:: with SMTP id v38mr33395835plg.250.1548171019388;
-        Tue, 22 Jan 2019 07:30:19 -0800 (PST)
-Received: from localhost.localdomain ([207.246.99.41])
-        by smtp.gmail.com with ESMTPSA id l70sm41220697pgd.20.2019.01.22.07.30.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Jan 2019 07:30:18 -0800 (PST)
-From:   Changbin Du <changbin.du@gmail.com>
-To:     pbonzini@redhat.com
-Cc:     rkrcmar@redhat.com, tglx@linutronix.de, mingo@redhat.com,
-        x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Changbin Du <changbin.du@gmail.com>
-Subject: [PATCH] KVM: VMX: Fix vm entry failure caused by invalid vmexit controls
-Date:   Tue, 22 Jan 2019 23:29:52 +0800
-Message-Id: <20190122152952.8011-1-changbin.du@gmail.com>
-X-Mailer: git-send-email 2.19.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=v0oZbCOd/mtM48E/UJZ5LN56e4E+XswQVYFwXTP3224=;
+        b=mdekVGC3Asaf0d1swzmItotlw6zx3t3sp4qb3nu1rPHBiN/QFfTwiXoXzBtcuFJ8sX
+         fS1mxVnHySBm58gr3N39GROB9u02uYasNraLVMA4Dg68UTzAjuW56VV7O+rcewaiMbrS
+         9J9JQt5VLRQPN4Jvp8xL5ruguzxXYuwvBWr6aWdbshqxzL5wm8K9XouKvWKDnypazm5H
+         4HXJZ/ZOfe/HwKn8pVkiyfF5CpppzAhelOZdLX+M3Br2iqum/e1lzanJMy4s1bK/CyC7
+         yuY/upyEKXh2n97EHJUuGaJn5A22YW1WIqfKxRkkt+5vp979xmZ+L2FvJ0DtcS/9WUxG
+         ubCg==
+X-Gm-Message-State: AJcUukfvBbMCH4bSpiGMW/YorcG/wG3hbR5lgVXFyNJFfrAt+3iCF059
+        dWs/5rN7wispq6I0GqWkrNDdLW7HQJQH2mCYchU=
+X-Google-Smtp-Source: ALg8bN71MJPNQKjQ9XzsE5MbE8JlDkzZjOdBaKFYvXcjAHN2sd7o45ZAdchnvW5z/MlWx75tG2udVMZPWM0CFxKQMhc=
+X-Received: by 2002:aca:e715:: with SMTP id e21mr8788729oih.76.1548171050254;
+ Tue, 22 Jan 2019 07:30:50 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190122152151.16139-48-gregkh@linuxfoundation.org>
+In-Reply-To: <20190122152151.16139-48-gregkh@linuxfoundation.org>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 22 Jan 2019 16:30:38 +0100
+Message-ID: <CAJZ5v0jLeZfsmX12g6r0zXCt9dTjD0TnJ03+Sntt6i2f-PxsGw@mail.gmail.com>
+Subject: Re: [PATCH] power: qos: no need to check return value of
+ debugfs_create functions
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        Linux PM <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The commit c73da3f ("KVM: VMX: Properly handle dynamic VM Entry/Exit
-controls") has a typo that cause invalid vmexit controls. The
-VM_ENTRY_LOAD_IA32_PERF_GLOBAL_CTRL is against _vmentry_control.
+On Tue, Jan 22, 2019 at 4:25 PM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> When calling debugfs functions, there is no need to ever check the
+> return value.  The function can work or not, but the code logic should
+> never do something different based on this.
+>
+> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> Cc: Len Brown <len.brown@intel.com>
+> Cc: Pavel Machek <pavel@ucw.cz>
+> Cc: linux-pm@vger.kernel.org
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-KVM: entry failed, hardware error 0x7
-EAX=00000000 EBX=00000000 ECX=00000000 EDX=000206c2
-ESI=00000000 EDI=00000000 EBP=00000000 ESP=00000000
-EIP=0000fff0 EFL=00000002 [-------] CPL=0 II=0 A20=1 SMM=0 HLT=0
-ES =0000 00000000 0000ffff 00009300
-CS =f000 ffff0000 0000ffff 00009b00
-SS =0000 00000000 0000ffff 00009300
-DS =0000 00000000 0000ffff 00009300
-FS =0000 00000000 0000ffff 00009300
-GS =0000 00000000 0000ffff 00009300
-LDT=0000 00000000 0000ffff 00008200
-TR =0000 00000000 0000ffff 00008b00
-GDT= 00000000 0000ffff
-IDT= 00000000 0000ffff
-CR0=60000010 CR2=00000000 CR3=00000000 CR4=00000000
-DR0=0000000000000000 DR1=0000000000000000 DR2=0000000000000000
-DR3=0000000000000000 DR6=00000000ffff0ff0 DR7=0000000000000400
-EFER=0000000000000000
+All of these changes are fine by me and I can take the patches
+touching the code maintained by me, so please let me know.
 
-Fixes: c73da3f ("KVM: VMX: Properly handle dynamic VM Entry/Exit controls")
-Signed-off-by: Changbin Du <changbin.du@gmail.com>
----
- arch/x86/kvm/vmx/vmx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index f6915f10e584..0762fcab8fc9 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -2344,7 +2344,7 @@ static __init int setup_vmcs_config(struct vmcs_config *vmcs_conf,
- 		case 37: /* AAT100 */
- 		case 44: /* BC86,AAY89,BD102 */
- 		case 46: /* BA97 */
--			_vmexit_control &= ~VM_ENTRY_LOAD_IA32_PERF_GLOBAL_CTRL;
-+			_vmentry_control &= ~VM_ENTRY_LOAD_IA32_PERF_GLOBAL_CTRL;
- 			_vmexit_control &= ~VM_EXIT_LOAD_IA32_PERF_GLOBAL_CTRL;
- 			pr_warn_once("kvm: VM_EXIT_LOAD_IA32_PERF_GLOBAL_CTRL "
- 					"does not work properly. Using workaround\n");
--- 
-2.19.1
-
+> ---
+>  kernel/power/qos.c | 8 ++------
+>  1 file changed, 2 insertions(+), 6 deletions(-)
+>
+> diff --git a/kernel/power/qos.c b/kernel/power/qos.c
+> index b7a82502857a..9d22131afc1e 100644
+> --- a/kernel/power/qos.c
+> +++ b/kernel/power/qos.c
+> @@ -582,10 +582,8 @@ static int register_pm_qos_misc(struct pm_qos_object *qos, struct dentry *d)
+>         qos->pm_qos_power_miscdev.name = qos->name;
+>         qos->pm_qos_power_miscdev.fops = &pm_qos_power_fops;
+>
+> -       if (d) {
+> -               (void)debugfs_create_file(qos->name, S_IRUGO, d,
+> -                                         (void *)qos, &pm_qos_debug_fops);
+> -       }
+> +       debugfs_create_file(qos->name, S_IRUGO, d, (void *)qos,
+> +                           &pm_qos_debug_fops);
+>
+>         return misc_register(&qos->pm_qos_power_miscdev);
+>  }
+> @@ -685,8 +683,6 @@ static int __init pm_qos_power_init(void)
+>         BUILD_BUG_ON(ARRAY_SIZE(pm_qos_array) != PM_QOS_NUM_CLASSES);
+>
+>         d = debugfs_create_dir("pm_qos", NULL);
+> -       if (IS_ERR_OR_NULL(d))
+> -               d = NULL;
+>
+>         for (i = PM_QOS_CPU_DMA_LATENCY; i < PM_QOS_NUM_CLASSES; i++) {
+>                 ret = register_pm_qos_misc(pm_qos_array[i], d);
+> --
+> 2.20.1
+>
