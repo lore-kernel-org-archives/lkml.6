@@ -2,188 +2,190 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 286ACC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:55:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 243C2C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:56:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03CEF2084C
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:55:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E15D420870
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:56:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="ubwnKfx0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727546AbfAVIzg (ORCPT
+        id S1727394AbfAVI4s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 03:55:36 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:47540 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726953AbfAVIzg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 03:55:36 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C1C3F9D42E;
-        Tue, 22 Jan 2019 08:55:34 +0000 (UTC)
-Received: from xz-x1 (dhcp-14-116.nay.redhat.com [10.66.14.116])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 38EFC60123;
-        Tue, 22 Jan 2019 08:55:24 +0000 (UTC)
-Date:   Tue, 22 Jan 2019 16:55:22 +0800
-From:   Peter Xu <peterx@redhat.com>
-To:     Mike Rapoport <rppt@linux.ibm.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Hugh Dickins <hughd@google.com>,
-        Maya Gokhale <gokhale2@llnl.gov>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Martin Cracauer <cracauer@cons.org>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Shaohua Li <shli@fb.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Pavel Emelyanov <xemul@parallels.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Marty McFadden <mcfadden8@llnl.gov>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Rik van Riel <riel@redhat.com>
-Subject: Re: [PATCH RFC 06/24] userfaultfd: wp: support write protection for
- userfault vma range
-Message-ID: <20190122085522.GE14907@xz-x1>
-References: <20190121075722.7945-1-peterx@redhat.com>
- <20190121075722.7945-7-peterx@redhat.com>
- <20190121102035.GC19725@rapoport-lnx>
+        Tue, 22 Jan 2019 03:56:48 -0500
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:30216 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726953AbfAVI4r (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 03:56:47 -0500
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id x0M8uHHQ024251;
+        Tue, 22 Jan 2019 17:56:18 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com x0M8uHHQ024251
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1548147378;
+        bh=smsVEI+nS4GxdebYfz+g3FYvtIn8efSFFYmFzJSH/do=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=ubwnKfx0rlazLULIFSuZIkpvDWOSd1vSiHAhadJEnHQSXablUiH+iG/0dy0FXJuBi
+         41F3Op9X65/LKRaBq8ABpSvnhCKHwaf92W3V6PQwAsVBeHq/skwdSbb+mwgDZCciI2
+         5azSOdr05tA/J9HCYbHmw7QJyI6Z2BZDo3Y6o/n5s+oCgsa+AXRPtJQAaayWrc5Bn5
+         lhhx2ix+4eiQbjRwHSm2+i9ZzLLeslDwPOuEkKm9rWefE2ojy7kwejUciMl2aAF/+c
+         y3RXPjNS7Ct1Ruc5BFxODKtKTD5nRqj0PQZn9sK8En6QX4CQjwc+sho8QF4LYRvx42
+         iLcIdtaZOZsFw==
+X-Nifty-SrcIP: [209.85.221.178]
+Received: by mail-vk1-f178.google.com with SMTP id j23so5173297vke.13;
+        Tue, 22 Jan 2019 00:56:17 -0800 (PST)
+X-Gm-Message-State: AJcUukfwQYLZzCGn3NKHdEIQVK0FPxkjI+Zg5PAlE1cmy2A1OnmPlfUO
+        mx9Ci09NiJ33KtwrCrXtj9hqc3x56DV/GSUqPdY=
+X-Google-Smtp-Source: ALg8bN61wQ6e4LPjiM6HUfkbwIQw6hzkjHKsGZzfbRDO/Q02YlklZz6OTqn+3zZGxGfpXCy1KmD1H+bMCFppn4WFr8c=
+X-Received: by 2002:a1f:91cb:: with SMTP id t194mr12819882vkd.74.1548147376729;
+ Tue, 22 Jan 2019 00:56:16 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190121102035.GC19725@rapoport-lnx>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 22 Jan 2019 08:55:35 +0000 (UTC)
+References: <1548142975-14219-1-git-send-email-yamada.masahiro@socionext.com>
+ <1548142975-14219-3-git-send-email-yamada.masahiro@socionext.com>
+ <20190122084944.420fcd4a@xps13> <CAK7LNAQvD03By1PQJ8KZG-UqX+NVQcL6JU-5a-2ZVVovdgBpEQ@mail.gmail.com>
+ <20190122090830.118eb6be@xps13> <20190122093313.67375948@bbrezillon>
+In-Reply-To: <20190122093313.67375948@bbrezillon>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 22 Jan 2019 17:55:40 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARAbJ01n9+oh-VNAPP9Tt7NSBX8a-teSbDDhADF-bKAKw@mail.gmail.com>
+Message-ID: <CAK7LNARAbJ01n9+oh-VNAPP9Tt7NSBX8a-teSbDDhADF-bKAKw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] mtd: rawnand: use unnamed union in struct nand_op_parser_pattern_elem
+To:     Boris Brezillon <bbrezillon@kernel.org>
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Lucas Stach <dev@lynxeye.de>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Stefan Agner <stefan@agner.ch>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        linux-tegra@vger.kernel.org,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 12:20:35PM +0200, Mike Rapoport wrote:
-> On Mon, Jan 21, 2019 at 03:57:04PM +0800, Peter Xu wrote:
-> > From: Shaohua Li <shli@fb.com>
-> > 
-> > Add API to enable/disable writeprotect a vma range. Unlike mprotect,
-> > this doesn't split/merge vmas.
-> > 
-> > Cc: Andrea Arcangeli <aarcange@redhat.com>
-> > Cc: Pavel Emelyanov <xemul@parallels.com>
-> > Cc: Rik van Riel <riel@redhat.com>
-> > Cc: Kirill A. Shutemov <kirill@shutemov.name>
-> > Cc: Mel Gorman <mgorman@suse.de>
-> > Cc: Hugh Dickins <hughd@google.com>
-> > Cc: Johannes Weiner <hannes@cmpxchg.org>
-> > Signed-off-by: Shaohua Li <shli@fb.com>
-> > Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
-> > Signed-off-by: Peter Xu <peterx@redhat.com>
-> > ---
-> >  include/linux/userfaultfd_k.h |  2 ++
-> >  mm/userfaultfd.c              | 52 +++++++++++++++++++++++++++++++++++
-> >  2 files changed, 54 insertions(+)
-> > 
-> > diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
-> > index 38f748e7186e..e82f3156f4e9 100644
-> > --- a/include/linux/userfaultfd_k.h
-> > +++ b/include/linux/userfaultfd_k.h
-> > @@ -37,6 +37,8 @@ extern ssize_t mfill_zeropage(struct mm_struct *dst_mm,
-> >  			      unsigned long dst_start,
-> >  			      unsigned long len,
-> >  			      bool *mmap_changing);
-> > +extern int mwriteprotect_range(struct mm_struct *dst_mm,
-> > +		unsigned long start, unsigned long len, bool enable_wp);
-> > 
-> >  /* mm helpers */
-> >  static inline bool is_mergeable_vm_userfaultfd_ctx(struct vm_area_struct *vma,
-> > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-> > index 458acda96f20..c38903f501c7 100644
-> > --- a/mm/userfaultfd.c
-> > +++ b/mm/userfaultfd.c
-> > @@ -615,3 +615,55 @@ ssize_t mfill_zeropage(struct mm_struct *dst_mm, unsigned long start,
-> >  {
-> >  	return __mcopy_atomic(dst_mm, start, 0, len, true, mmap_changing);
-> >  }
-> > +
-> > +int mwriteprotect_range(struct mm_struct *dst_mm, unsigned long start,
-> > +	unsigned long len, bool enable_wp)
-> > +{
-> > +	struct vm_area_struct *dst_vma;
-> > +	pgprot_t newprot;
-> > +	int err;
-> > +
-> > +	/*
-> > +	 * Sanitize the command parameters:
-> > +	 */
-> > +	BUG_ON(start & ~PAGE_MASK);
-> > +	BUG_ON(len & ~PAGE_MASK);
-> > +
-> > +	/* Does the address range wrap, or is the span zero-sized? */
-> > +	BUG_ON(start + len <= start);
-> > +
-> > +	down_read(&dst_mm->mmap_sem);
-> > +
-> > +	/*
-> > +	 * Make sure the vma is not shared, that the dst range is
-> > +	 * both valid and fully within a single existing vma.
-> > +	 */
-> > +	err = -EINVAL;
-> 
-> In non-cooperative mode, there can be a race between VM layout changes and
-> mcopy_atomic [1]. I believe the same races are possible here, so can we
-> please make err = -ENOENT for consistency with mcopy?
+On Tue, Jan 22, 2019 at 5:33 PM Boris Brezillon <bbrezillon@kernel.org> wrote:
+>
+> On Tue, 22 Jan 2019 09:08:30 +0100
+> Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+>
+> > Hi Masahiro,
+> >
+> > Masahiro Yamada <yamada.masahiro@socionext.com> wrote on Tue, 22 Jan
+> > 2019 17:00:54 +0900:
+> >
+> > > On Tue, Jan 22, 2019 at 4:50 PM Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+> > > >
+> > > > Hi Masahiro,
+> > > >
+> > > > Masahiro Yamada <yamada.masahiro@socionext.com> wrote on Tue, 22 Jan
+> > > > 2019 16:42:55 +0900:
+> > > >
+> > > > > Although drivers do not directly get access to the private data of
+> > > > > instruction patterns, let's use unnamed union field to be consistent
+> > > > > with nand_op_instr.
+> > > > >
+> > > >
+> > > > Actually this is how we wrote it the first time. Then we got robots
+> > > > reporting that anonymous unions where not allowed with older (still
+> > > > supported) GCC versions and I had to do this:
+> > > >
+> > > >
+> > > > commit c1a72e2dbb4abb90bd408480d7c48ba40cb799ce
+> > > > Author: Miquel Raynal <miquel.raynal@free-electrons.com>
+> > > > Date:   Fri Jan 19 19:11:27 2018 +0100
+> > > >
+> > > >     mtd: nand: Fix build issues due to an anonymous union
+> > > >
+> > > >     GCC-4.4.4 raises errors when assigning a parameter in an anonymous
+> > > >     union, leading to this kind of failure:
+> > > >
+> > > >     drivers/mtd/nand/marvell_nand.c:1936:
+> > > >         warning: missing braces around initializer
+> > > >         warning: (near initialization for '(anonymous)[1].<anonymous>')
+> > > >         error: unknown field 'data' specified in initializer
+> > > >         error: unknown field 'addr' specified in initializer
+> > > >
+> > > >     Work around the situation by naming these unions.
+> > > >
+> > > >     Fixes: 8878b126df76 ("mtd: nand: add ->exec_op() implementation")
+> > > >     Reported-by: Andrew Morton <akpm@linux-foundation.org>
+> > > >     Signed-off-by: Miquel Raynal <miquel.raynal@free-electrons.com>
+> > > >     Tested-by: Andrew Morton <akpm@linux-foundation.org>
+> > > >     Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> > > >
+> > >
+> > >
+> > > Hmm, how come Andrew's compiler was fine with the following?
+> > >
+> > > struct nand_flash_dev {
+> > >         char *name;
+> > >         union {
+> > >                 struct {
+> > >                         uint8_t mfr_id;
+> > >                         uint8_t dev_id;
+> > >                 };
+> > >                 uint8_t id[NAND_MAX_ID_LEN];
+> > >         };
+> > >         unsigned int pagesize;
+> > >         ...
+> > > };
+> > >
+> >
+> > It is probably not :)
+>
+> It was compile fine. I don't know all the subtleties, but maybe it's
+> because ->id[] is a base type and not a struct.
+>
+> >
+> > >
+> > >
+> > > The current minimum version is GCC 4.6
+> > > (commit cafa0010cd51fb7)
+> > > but I am not sure if this restriction is remaining.
+> > >
+> >
+> > That's right, can you please test if this limitation is still
+> > ongoing wit GCC 4.6?
+>
+> I have a more important question: why should we go bad back to unnamed
+> unions? Why is that a problem to have a named union? Sure, we initially
+> started with an unnamed ones because it made lines shorter, but now that
+> we switched to named unions I don't see the point of going back and
+> patching all drivers again (at the risk of seeing this problem appear
+> again when compiled with an old compiler version).
 
-Sure.
 
-> 
-> > +	dst_vma = find_vma(dst_mm, start);
-> > +	if (!dst_vma || (dst_vma->vm_flags & VM_SHARED))
-> > +		goto out_unlock;
-> > +	if (start < dst_vma->vm_start ||
-> > +	    start + len > dst_vma->vm_end)
-> > +		goto out_unlock;
-> > +
-> > +	if (!dst_vma->vm_userfaultfd_ctx.ctx)
-> > +		goto out_unlock;
-> > +	if (!userfaultfd_wp(dst_vma))
-> > +		goto out_unlock;
-> > +
-> > +	if (!vma_is_anonymous(dst_vma))
-> > +		goto out_unlock;
-> 
-> The sanity checks here seem to repeat those in mcopy_atomic(). I'd suggest
-> splitting them out to a helper function.
+I did not know commit c1a72e2dbb4.
 
-It's a good suggestion.  Thanks!
+We can drop the union name if and only if we are "100% sure" about the safety.
+I cannot prove it.
 
-> 
-> > +	if (enable_wp)
-> > +		newprot = vm_get_page_prot(dst_vma->vm_flags & ~(VM_WRITE));
-> > +	else
-> > +		newprot = vm_get_page_prot(dst_vma->vm_flags);
-> > +
-> > +	change_protection(dst_vma, start, start + len, newprot,
-> > +				!enable_wp, 0);
-> > +
-> > +	err = 0;
-> > +out_unlock:
-> > +	up_read(&dst_mm->mmap_sem);
-> > +	return err;
-> > +}
-> > -- 
-> > 2.17.1
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=27d02568f529e908399514dfbee8ee43bdfd5299
-> 
-> -- 
-> Sincerely yours,
-> Mike.
-> 
+Generally, 0day bot helps us.
+Last time, nobody noticed the build error until Andrew reported it.
+So, we cannot count on the 0day bot.
 
--- 
-Peter Xu
+
+Less praise for this work.
+Lots of criticism once I break it.
+
+So, I have no reason to take the risk.
+
+
+
+--
+Best Regards
+Masahiro Yamada
