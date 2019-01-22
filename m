@@ -2,128 +2,95 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DED15C37122
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 02:23:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B377C37124
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 02:30:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD52A2085A
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 02:23:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BF1221019
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 02:30:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="C4xEUz9i"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="dhgQktT1";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="dhgQktT1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726874AbfAVCXN (ORCPT
+        id S1726849AbfAVCat (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 21:23:13 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:46229 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726756AbfAVCXM (ORCPT
+        Mon, 21 Jan 2019 21:30:49 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:59636 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725950AbfAVCat (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 21:23:12 -0500
-Received: by mail-lj1-f193.google.com with SMTP id v15-v6so19143678ljh.13
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 18:23:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=W0NdysI5CM7+I+Thbbv3VAV/KANlyL+WAtkRtmfEjoM=;
-        b=C4xEUz9ip1ZeTzPv/J8he2mpt/81PA8ReTSy+PGyUHpYAla6PzsjvYQrkUPoa/V10D
-         t9PWwuVdlZZR5Wht75GNWzHdPAFj3VBPKZi9wg8mcuTA6gEuaKeKvPhTmGMs0at02lip
-         SIaaytviRxeg6PmBPeAwzSdKTQiw9gN6xpG9Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=W0NdysI5CM7+I+Thbbv3VAV/KANlyL+WAtkRtmfEjoM=;
-        b=mJ4Chy8l5J+/jJhpVaWFOw0J1Dgk1W6Y0+ui1btnzQHb7ik9Ad438MCL2xtQiSq3sa
-         WqqSPMKgE7f8TJRJs6OjqP77P7fOwBuMxDbSfcGyowtEMhXnfi9UJseBf7K1IYJKoQon
-         lkhHJB8CgLv+xk/fJCEqsGQz7nUCv4WRu7IX4CNwqUDkRKslSTXSeVBvj2ZdsemKeM2X
-         mYY+5OPS8vrnDl8CBXIWsKjVT57zsDeWcUYL2uoAMk/OEa1LAzO3sBBSqS3Bbc4UYDU1
-         xNIGEjAPpUR+5tPWVLt0TAx5WO0gxFYWclHnHM4EYyk5y1mIt1EMfiPYjdtGnGobebau
-         sMzQ==
-X-Gm-Message-State: AJcUukecyAy1K2ZUYIs/Oy6Qc2o3hPxuPh6LQD8O0VanjWT33s47ouvg
-        51CXiLTQEItROxCM+BpcxOAv4BkNZ6IkNC0nvAIwTA==
-X-Google-Smtp-Source: ALg8bN5PRpU6ZIfqpFwp7k/qSXB7vILzoDLcbbz3BiUTy9+yeFET6KE1wHkgvMYxrPvES0WPzhEexI1CTYw7u3cvbxk=
-X-Received: by 2002:a2e:449b:: with SMTP id b27-v6mr18556784ljf.47.1548123790116;
- Mon, 21 Jan 2019 18:23:10 -0800 (PST)
+        Mon, 21 Jan 2019 21:30:49 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id D67D060860; Tue, 22 Jan 2019 02:30:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548124248;
+        bh=8vbIr5XY0YAd7DNq1WNeC1soeWhLsB0V644Kxzlptlw=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=dhgQktT1KfFjb1pRLXCf/mcfl923JKpnv2fs3BtiZToLKLTklMxQ9qfF/5c5yuKTJ
+         gihx8UiKc+bR2hhxMddM3QuLQ8naiRtTqclRrEDtzfkAyXw5m1Yq7zcgfHgWYww6G+
+         BNVoTGMr+Tg0oVFA1ua+xfZDjw4upo+O4MgqHKPI=
+Received: from [10.79.128.187] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rnayak@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id A46FB60712;
+        Tue, 22 Jan 2019 02:30:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548124248;
+        bh=8vbIr5XY0YAd7DNq1WNeC1soeWhLsB0V644Kxzlptlw=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=dhgQktT1KfFjb1pRLXCf/mcfl923JKpnv2fs3BtiZToLKLTklMxQ9qfF/5c5yuKTJ
+         gihx8UiKc+bR2hhxMddM3QuLQ8naiRtTqclRrEDtzfkAyXw5m1Yq7zcgfHgWYww6G+
+         BNVoTGMr+Tg0oVFA1ua+xfZDjw4upo+O4MgqHKPI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A46FB60712
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
+Subject: Re: [PATCH] soc: qcom: update config dependencies for QCOM_RPMPD
+To:     Stephen Boyd <swboyd@chromium.org>, andy.gross@linaro.org,
+        david.brown@linaro.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux@roeck-us.net
+References: <20190118044801.7312-1-rnayak@codeaurora.org>
+ <154783318835.169631.6614930101893188915@swboyd.mtv.corp.google.com>
+From:   Rajendra Nayak <rnayak@codeaurora.org>
+Message-ID: <df735d42-d208-62c7-ddbc-87ea314c36d1@codeaurora.org>
+Date:   Tue, 22 Jan 2019 08:00:44 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <ab49bb74e921474aa9390f81cdf65f32c3d9d898.1547559542.git.baolin.wang@linaro.org>
- <7538d5806003b8f67e7e0d35638315974b7c2b50.1547559542.git.baolin.wang@linaro.org>
- <CAL_Jsq+VpO+pX0A27-v_U+4kQKXKD5O1EWrn708RDeLsqnU1ng@mail.gmail.com>
-In-Reply-To: <CAL_Jsq+VpO+pX0A27-v_U+4kQKXKD5O1EWrn708RDeLsqnU1ng@mail.gmail.com>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Tue, 22 Jan 2019 10:22:58 +0800
-Message-ID: <CAMz4kuK0tvYHL1gGDXCKDzow+YmAj587UoBp=fRi0_sujLh2QQ@mail.gmail.com>
-Subject: Re: [PATCH 3/4] dt-bindings: spi: Add the DMA properties for the SPI
- dma mode
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Lyra Zhang <zhang.lyra@gmail.com>, lanqing.liu@unisoc.com,
-        linux-spi <linux-spi@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <154783318835.169631.6614930101893188915@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 21 Jan 2019 at 21:53, Rob Herring <robh+dt@kernel.org> wrote:
->
-> On Tue, Jan 15, 2019 at 7:47 AM Baolin Wang <baolin.wang@linaro.org> wrote:
-> >
-> > From: Lanqing Liu <lanqing.liu@spreadtrum.com>
->
-> The email address should be updated with unisoc.com.
 
-Sure.
 
->
-> > Add the DMA properties for the SPI dma mode.
-> >
-> > Signed-off-by: Lanqing Liu <lanqing.liu@spreadtrum.com>
-> > Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> > ---
-> >  Documentation/devicetree/bindings/spi/spi-sprd.txt |    9 +++++++++
-> >  1 file changed, 9 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/spi/spi-sprd.txt b/Documentation/devicetree/bindings/spi/spi-sprd.txt
-> > index bad211a..01ef53f 100644
-> > --- a/Documentation/devicetree/bindings/spi/spi-sprd.txt
-> > +++ b/Documentation/devicetree/bindings/spi/spi-sprd.txt
-> > @@ -14,6 +14,12 @@ Required properties:
-> >         address on the SPI bus. Should be set to 1.
-> >  - #size-cells: Should be set to 0.
-> >
-> > +Optional properties:
-> > +dma-names: Should contain names of the SPI used DMA channel.
-> > +dmas: Should contain DMA channels which the SPI used sorted in the
-> > +       same order as the dma-names property.
-> > +sprd,dma-slave-ids: Should contain the DMA number that the SPI hardware required.
-> > +
-> >  Example:
-> >  spi0: spi@70a00000{
-> >         compatible = "sprd,sc9860-spi";
-> > @@ -21,6 +27,9 @@ spi0: spi@70a00000{
-> >         interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-> >         clock-names = "spi", "source","enable";
-> >         clocks = <&clk_spi0>, <&ext_26m>, <&clk_ap_apb_gates 5>;
-> > +       dma-names = "rx_chn", "tx_chn";
-> > +       dmas = <&apdma 11>, <&apdma 12>;
-> > +       sprd,dma-slave-ids = <11 12>;
->
-> When would this be different values from what's in 'dmas'?
+On 1/18/2019 11:09 PM, Stephen Boyd wrote:
+> Quoting Rajendra Nayak (2019-01-17 20:48:01)
+>>   drivers/soc/qcom/Kconfig | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+>> index a5d5167c3f16..1ee298f6bf17 100644
+>> --- a/drivers/soc/qcom/Kconfig
+>> +++ b/drivers/soc/qcom/Kconfig
+>> @@ -109,7 +109,7 @@ config QCOM_RPMHPD
+>>   
+>>   config QCOM_RPMPD
+>>          bool "Qualcomm RPM Power domain driver"
+> 
+> Just curious, does it need to be bool for some reason?
 
-Slave id is not always same with the DMA channel number in 'dmas', and
-it is just coincident for SPI driver. Moreover for different SoC , the
-slave ids for DMA engine consumers are not same. So we need one
-property to specify the slave id for the consumers to trigger DMA
-transfer.
+Here's the link to the discussion around it on the v3 patchset of this series
+https://lkml.org/lkml/2018/6/12/111
 
 -- 
-Baolin Wang
-Best Regards
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
