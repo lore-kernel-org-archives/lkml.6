@@ -2,86 +2,114 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFB85C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:58:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8DE6C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:01:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AABD1218DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:58:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B472720823
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:01:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727859AbfAVJ6Y (ORCPT
+        id S1727933AbfAVKA6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 04:58:24 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:55711 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727601AbfAVJ6X (ORCPT
+        Tue, 22 Jan 2019 05:00:58 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36908 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727601AbfAVKA6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 04:58:23 -0500
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1glsoz-00081s-Ab; Tue, 22 Jan 2019 10:58:17 +0100
-Message-ID: <1548151096.3929.1.camel@pengutronix.de>
-Subject: Re: [PATCH v3 1/2] media: imx: csi: Disable SMFC before disabling
- IDMA channel
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Steve Longerbeam <slongerbeam@gmail.com>,
-        linux-media@vger.kernel.org
-Cc:     Gael PORTAY <gael.portay@collabora.com>,
-        Peter Seiderer <ps.report@gmx.net>, stable@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
-        open list <linux-kernel@vger.kernel.org>
-Date:   Tue, 22 Jan 2019 10:58:16 +0100
-In-Reply-To: <12937f2b-e25e-6cc5-0727-59a5e6224fd9@gmail.com>
-References: <20190119010457.2623-1-slongerbeam@gmail.com>
-         <20190119010457.2623-2-slongerbeam@gmail.com>
-         <1548071350.3287.3.camel@pengutronix.de>
-         <7432d18b-12fc-34c6-832f-576fc1b8e2e8@gmail.com>
-         <12937f2b-e25e-6cc5-0727-59a5e6224fd9@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Tue, 22 Jan 2019 05:00:58 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0M9x58d116974
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 05:00:57 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2q5y9ev7vv-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 05:00:56 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <joeln@il.ibm.com>;
+        Tue, 22 Jan 2019 10:00:54 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 22 Jan 2019 10:00:51 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0MA0oZ93539378
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 22 Jan 2019 10:00:50 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0A82711C064;
+        Tue, 22 Jan 2019 10:00:50 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 72DA111C050;
+        Tue, 22 Jan 2019 10:00:48 +0000 (GMT)
+Received: from tal (unknown [9.148.32.96])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue, 22 Jan 2019 10:00:48 +0000 (GMT)
+Received: by tal (sSMTP sendmail emulation); Tue, 22 Jan 2019 12:00:47 +0200
+From:   Joel Nider <joeln@il.ibm.com>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+        Doug Ledford <dledford@redhat.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Joel Nider <joeln@il.ibm.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/3] update infiniband uverbs documentation
+Date:   Tue, 22 Jan 2019 12:00:32 +0200
+X-Mailer: git-send-email 2.7.4
+X-TM-AS-GCONF: 00
+x-cbid: 19012210-0008-0000-0000-000002B44A9A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19012210-0009-0000-0000-0000222075CF
+Message-Id: <1548151235-386-1-git-send-email-joeln@il.ibm.com>
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-22_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=991 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901220081
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-01-21 at 10:46 -0800, Steve Longerbeam wrote:
-> 
-> On 1/21/19 10:43 AM, Steve Longerbeam wrote:
-> > 
-> > 
-> > On 1/21/19 3:49 AM, Philipp Zabel wrote:
-> > > Also ipu_smfc_disable is refcounted, so if the other CSI is capturing
-> > > simultaneously, this change has no effect.
-> > 
-> > Sigh, you're right. Let me go back to disabling the CSI before the 
-> > channel, the CSI enable/disable is not refcounted (it doesn't need to 
-> > be since it is single use) so it doesn't have this problem.
-> > 
-> > Should we drop this patch or keep it (with a big comment)? By only 
-> > changing the disable order to "CSI then channel", the hang is reliably 
-> > fixed from my and Gael's testing, but my concern is that by not 
-> > disabling the SMFC before the channel, the SMFC could still empty its 
-> > FIFO to the channel's internal FIFO and still create a hang.
-> 
-> Well, as you said it will have no effect if both CSI's are streaming 
-> with the SMFC, in which case the danger would still exist. Perhaps it 
-> would be best to just drop this patch.
+A small patchset to update the verbs API documentation with some
+information regarding the ioctl syscall. First patch converts the
+file format to ReST, since this is the new preferred format, moves
+the file to Documentation/userspace-api, and updates the index.
+The 2nd patch adds the new content, documenting a bit of the internal
+workings of the kernel side of the API functions. The goal is to make
+it easier for developers unfamiliar with the structure to understand
+what is going on when adding a new function.
+The 3rd patch updates the MAINTAINERS file.
 
-Hm, if we can't guarantee the intended effect with this patch, and
-stopping the CSI first helps reliably, it's indeed better to just do
-that instead.
+v3 addresses comments from Jon, Willy and Jason:
+ The location of the new content should be driver-api
+ The location of the old (converted) content should be userspace-api
+ MAINTAINERS file must be updated
 
-regards
-Philipp
+Joel Nider (3):
+  docs-rst: Convert user verbs doc to rst
+  docs-rst: driver-api: Add infiniband interface documentation
+  MAINTAINERS: add new RDMA/Infiniband documentation
+
+ Documentation/driver-api/index.rst              |  1 +
+ Documentation/driver-api/infiniband.rst         | 73 +++++++++++++++++++++++++
+ Documentation/infiniband/user_verbs.txt         | 69 -----------------------
+ Documentation/userspace-api/index.rst           |  1 +
+ Documentation/userspace-api/rdma_user_verbs.rst | 70 ++++++++++++++++++++++++
+ MAINTAINERS                                     |  2 +
+ 6 files changed, 147 insertions(+), 69 deletions(-)
+ create mode 100644 Documentation/driver-api/infiniband.rst
+ delete mode 100644 Documentation/infiniband/user_verbs.txt
+ create mode 100644 Documentation/userspace-api/rdma_user_verbs.rst
+
+-- 
+2.7.4
+
