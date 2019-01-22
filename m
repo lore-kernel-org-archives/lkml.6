@@ -2,147 +2,163 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BF26C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:32:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C24EBC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:33:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FAA420854
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:32:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D21121721
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:33:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548146009;
+	bh=oskaqloGxzpVlEB9EoI/Hzkqp8YIG8E7IGPgpL/k7Qc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=KJS2QqCWEwaWioQwBm0wdzYqoHnFbpiMaIMcocV0RtdHc1RsMkNJcdnACTLa3WYQI
+	 gky2sHU7k4VjktmjN3uLcq1bI1iEkwWS0mSkJiFvTGIPKt7V9pCEM1yG+E8PZDyLfi
+	 0PG/E7oV4hQ8Sf7vGbsPJk/qTr897kcTrTvppZik=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727281AbfAVIb7 (ORCPT
+        id S1727347AbfAVId1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 03:31:59 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:43702 "EHLO mx1.redhat.com"
+        Tue, 22 Jan 2019 03:33:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45606 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727062AbfAVIb7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 03:31:59 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727062AbfAVId1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 03:33:27 -0500
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 907F741116;
-        Tue, 22 Jan 2019 08:31:58 +0000 (UTC)
-Received: from xz-x1 (dhcp-14-116.nay.redhat.com [10.66.14.116])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0E64B61101;
-        Tue, 22 Jan 2019 08:31:48 +0000 (UTC)
-Date:   Tue, 22 Jan 2019 16:31:46 +0800
-From:   Peter Xu <peterx@redhat.com>
-To:     Mike Rapoport <rppt@linux.ibm.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Hugh Dickins <hughd@google.com>,
-        Maya Gokhale <gokhale2@llnl.gov>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Martin Cracauer <cracauer@cons.org>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Shaohua Li <shli@fb.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Pavel Emelyanov <xemul@parallels.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Marty McFadden <mcfadden8@llnl.gov>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Rik van Riel <riel@redhat.com>
-Subject: Re: [PATCH RFC 05/24] userfaultfd: wp: add helper for writeprotect
- check
-Message-ID: <20190122083146.GD14907@xz-x1>
-References: <20190121075722.7945-1-peterx@redhat.com>
- <20190121075722.7945-6-peterx@redhat.com>
- <20190121102312.GD19725@rapoport-lnx>
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B39920854;
+        Tue, 22 Jan 2019 08:33:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548146005;
+        bh=oskaqloGxzpVlEB9EoI/Hzkqp8YIG8E7IGPgpL/k7Qc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=SN6uOnX8QcU7tNGU9shqUyIV1FcOmx2EDwewPXEUA3j1HSQ1E2IRndoza8MPxJC6c
+         fkBhLVgEvC7v1lP/src3CD9wEldzKuVx1B2M3jjQaQpC+qwCvnYdW+qrA7vJUtuKn2
+         7LQCt/AbXQjWhAPSGjDbdtPd190CEKmkxTGV4H84=
+Date:   Tue, 22 Jan 2019 09:33:13 +0100
+From:   Boris Brezillon <bbrezillon@kernel.org>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Lucas Stach <dev@lynxeye.de>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Stefan Agner <stefan@agner.ch>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        linux-tegra@vger.kernel.org,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH 2/2] mtd: rawnand: use unnamed union in struct
+ nand_op_parser_pattern_elem
+Message-ID: <20190122093313.67375948@bbrezillon>
+In-Reply-To: <20190122090830.118eb6be@xps13>
+References: <1548142975-14219-1-git-send-email-yamada.masahiro@socionext.com>
+        <1548142975-14219-3-git-send-email-yamada.masahiro@socionext.com>
+        <20190122084944.420fcd4a@xps13>
+        <CAK7LNAQvD03By1PQJ8KZG-UqX+NVQcL6JU-5a-2ZVVovdgBpEQ@mail.gmail.com>
+        <20190122090830.118eb6be@xps13>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190121102312.GD19725@rapoport-lnx>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 22 Jan 2019 08:31:58 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 12:23:12PM +0200, Mike Rapoport wrote:
-> On Mon, Jan 21, 2019 at 03:57:03PM +0800, Peter Xu wrote:
-> > From: Shaohua Li <shli@fb.com>
-> > 
-> > add helper for writeprotect check. Will use it later.
+On Tue, 22 Jan 2019 09:08:30 +0100
+Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+
+> Hi Masahiro,
 > 
-> I'd merge this with the commit that actually uses this helper.
-
-Hi, Mike,
-
-Yeah actually that's what I'd prefer for most of the time.  But I'm
-trying to avoid doing that because I wanted to keep the credit of the
-original authors, not only for this single patch, but also for the
-whole series.  Meanwhile, since this work has been there for quite a
-few years (starting from 2015), IMHO keeping the old patches mostly
-untouched at least in the RFC stage might also help the reviewers if
-they have read or prior knowledge of the previous work.
-
-And if the patch cannot even stand on itself (this one can; it only
-introduces new functions) I'll do the merge no matter what.
-
-Please correct me if this is not the good way to do.
-
-Thanks!
-
->  
-> > Cc: Andrea Arcangeli <aarcange@redhat.com>
-> > Cc: Pavel Emelyanov <xemul@parallels.com>
-> > Cc: Rik van Riel <riel@redhat.com>
-> > Cc: Kirill A. Shutemov <kirill@shutemov.name>
-> > Cc: Mel Gorman <mgorman@suse.de>
-> > Cc: Hugh Dickins <hughd@google.com>
-> > Cc: Johannes Weiner <hannes@cmpxchg.org>
-> > Signed-off-by: Shaohua Li <shli@fb.com>
-> > Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
-> > Signed-off-by: Peter Xu <peterx@redhat.com>
-> > ---
-> >  include/linux/userfaultfd_k.h | 10 ++++++++++
-> >  1 file changed, 10 insertions(+)
-> > 
-> > diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
-> > index 37c9eba75c98..38f748e7186e 100644
-> > --- a/include/linux/userfaultfd_k.h
-> > +++ b/include/linux/userfaultfd_k.h
-> > @@ -50,6 +50,11 @@ static inline bool userfaultfd_missing(struct vm_area_struct *vma)
-> >  	return vma->vm_flags & VM_UFFD_MISSING;
-> >  }
-> > 
-> > +static inline bool userfaultfd_wp(struct vm_area_struct *vma)
-> > +{
-> > +	return vma->vm_flags & VM_UFFD_WP;
-> > +}
-> > +
-> >  static inline bool userfaultfd_armed(struct vm_area_struct *vma)
-> >  {
-> >  	return vma->vm_flags & (VM_UFFD_MISSING | VM_UFFD_WP);
-> > @@ -94,6 +99,11 @@ static inline bool userfaultfd_missing(struct vm_area_struct *vma)
-> >  	return false;
-> >  }
-> > 
-> > +static inline bool userfaultfd_wp(struct vm_area_struct *vma)
-> > +{
-> > +	return false;
-> > +}
-> > +
-> >  static inline bool userfaultfd_armed(struct vm_area_struct *vma)
-> >  {
-> >  	return false;
-> > -- 
-> > 2.17.1
-> > 
+> Masahiro Yamada <yamada.masahiro@socionext.com> wrote on Tue, 22 Jan
+> 2019 17:00:54 +0900:
 > 
-> -- 
-> Sincerely yours,
-> Mike.
+> > On Tue, Jan 22, 2019 at 4:50 PM Miquel Raynal <miquel.raynal@bootlin.com> wrote:  
+> > >
+> > > Hi Masahiro,
+> > >
+> > > Masahiro Yamada <yamada.masahiro@socionext.com> wrote on Tue, 22 Jan
+> > > 2019 16:42:55 +0900:
+> > >    
+> > > > Although drivers do not directly get access to the private data of
+> > > > instruction patterns, let's use unnamed union field to be consistent
+> > > > with nand_op_instr.
+> > > >    
+> > >
+> > > Actually this is how we wrote it the first time. Then we got robots
+> > > reporting that anonymous unions where not allowed with older (still
+> > > supported) GCC versions and I had to do this:
+> > >
+> > >
+> > > commit c1a72e2dbb4abb90bd408480d7c48ba40cb799ce
+> > > Author: Miquel Raynal <miquel.raynal@free-electrons.com>
+> > > Date:   Fri Jan 19 19:11:27 2018 +0100
+> > >
+> > >     mtd: nand: Fix build issues due to an anonymous union
+> > >
+> > >     GCC-4.4.4 raises errors when assigning a parameter in an anonymous
+> > >     union, leading to this kind of failure:
+> > >
+> > >     drivers/mtd/nand/marvell_nand.c:1936:
+> > >         warning: missing braces around initializer
+> > >         warning: (near initialization for '(anonymous)[1].<anonymous>')
+> > >         error: unknown field 'data' specified in initializer
+> > >         error: unknown field 'addr' specified in initializer
+> > >
+> > >     Work around the situation by naming these unions.
+> > >
+> > >     Fixes: 8878b126df76 ("mtd: nand: add ->exec_op() implementation")
+> > >     Reported-by: Andrew Morton <akpm@linux-foundation.org>
+> > >     Signed-off-by: Miquel Raynal <miquel.raynal@free-electrons.com>
+> > >     Tested-by: Andrew Morton <akpm@linux-foundation.org>
+> > >     Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> > >    
+> > 
+> > 
+> > Hmm, how come Andrew's compiler was fine with the following?
+> > 
+> > struct nand_flash_dev {
+> >         char *name;
+> >         union {
+> >                 struct {
+> >                         uint8_t mfr_id;
+> >                         uint8_t dev_id;
+> >                 };
+> >                 uint8_t id[NAND_MAX_ID_LEN];
+> >         };
+> >         unsigned int pagesize;
+> >         ...
+> > };
+> >   
 > 
+> It is probably not :)
 
-Regards,
+It was compile fine. I don't know all the subtleties, but maybe it's
+because ->id[] is a base type and not a struct.
 
--- 
-Peter Xu
+> 
+> > 
+> > 
+> > The current minimum version is GCC 4.6
+> > (commit cafa0010cd51fb7)
+> > but I am not sure if this restriction is remaining.
+> >   
+> 
+> That's right, can you please test if this limitation is still
+> ongoing wit GCC 4.6?
+
+I have a more important question: why should we go bad back to unnamed
+unions? Why is that a problem to have a named union? Sure, we initially
+started with an unnamed ones because it made lines shorter, but now that
+we switched to named unions I don't see the point of going back and
+patching all drivers again (at the risk of seeing this problem appear
+again when compiled with an old compiler version).
