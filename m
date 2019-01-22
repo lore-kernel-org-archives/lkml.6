@@ -2,144 +2,238 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 035DDC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 05:31:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AB81C282C5
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 05:31:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66E9E20861
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 05:31:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3000E20861
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 05:31:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="aJbUwez2"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="SqPO+eek"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726028AbfAVFbL (ORCPT
+        id S1726178AbfAVFbX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 00:31:11 -0500
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:38472 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725913AbfAVFbL (ORCPT
+        Tue, 22 Jan 2019 00:31:23 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:49698 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725913AbfAVFbW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 00:31:11 -0500
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id x0M5UuUh025827;
-        Tue, 22 Jan 2019 14:30:57 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com x0M5UuUh025827
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1548135057;
-        bh=/UerpFNVq+RiW7QGbPyYsuL0OvnDvCDK82tBkZpFt7o=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=aJbUwez20UirOCx2y43ijg349Sc9SmjJKxbGwopYxEu4rtrOzhmpvoNQCj9sTo3vB
-         cVbotOsiKCSEYpaEj3xGHJ8v2TPPzFdFYRmd4gbQNliGQGuWDREpwWQwgN06HIBfpM
-         APNoIms+wgKdBqRgtd03q4EghMZe9Yv3IC0x+mboA1Pk+UhN2//p9m9WEfQ52isO8G
-         aVLDzgJmwd6Emkj5gj45u3W7s2nqn1c4glSEOE+BiAklfhb/o5NxEG2DE9Ax1KkQ8v
-         qoyxueI7oFcFtP/Bzp22BssfYxDfUvU/ZS/YcUqDrCNM7pJVfUuQbkRcJEIU+fOAhb
-         0rFKuzFpYdLmQ==
-X-Nifty-SrcIP: [209.85.217.52]
-Received: by mail-vs1-f52.google.com with SMTP id x1so13973806vsc.10;
-        Mon, 21 Jan 2019 21:30:57 -0800 (PST)
-X-Gm-Message-State: AJcUukcBaGHLFxmDauCskg7Gj0DGa5PgP731NjSe6P/D5AO+7ohsObNn
-        6ca69NsoSu2EiK4/hWqck//ek+viLRvM36Wtmvs=
-X-Google-Smtp-Source: ALg8bN4fYaIAc6pmR8T+C8LImWViDQaM23mANtQQmKvX/ije8VsfZcC5WaRepMzKnKhUkuaxFZQ62M8pYS9txv6Q8Q4=
-X-Received: by 2002:a67:5f03:: with SMTP id t3mr13411241vsb.155.1548135056278;
- Mon, 21 Jan 2019 21:30:56 -0800 (PST)
+        Tue, 22 Jan 2019 00:31:22 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0M5TcUL071744;
+        Tue, 22 Jan 2019 05:31:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=zkypv4rsjB8wJOxKtveDAmZ0JRpQxLGrXLwjO6YIE8Y=;
+ b=SqPO+eekQo0KTK3LmW9eT6PAOET/DP368lAiCvPNpK+g98qqVF5wJfUxrnjTnKVeAzE5
+ wHsMMmQ3oGdKyLoRY0/49LdHdr+RiwddpS+6f/TWgQm3LUOxrOzcyoqDROuFZwq+pJ4V
+ YxQ/Fx6P760MLOAzHJ4B8tR9+qSkQU+euTWbIsECVs8KpejYzTfBlFJXMBsmYZ08OZM9
+ 6p2th4GY2o5A52maXty3ELrirD8vZsYqnQZsZd5caGoPl3OUu3NSm9SEM/EHGiYOrogR
+ PvtZO1dfSVRaz+aBhv9Ee2I1Q+eb5+jt6gNLtE2gtRkDpaYlFdNEOuWrFEx52R8I1/Fg NA== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2130.oracle.com with ESMTP id 2q3sde9m88-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 22 Jan 2019 05:31:10 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0M5VA5l012077
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 22 Jan 2019 05:31:10 GMT
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0M5V9EJ022811;
+        Tue, 22 Jan 2019 05:31:10 GMT
+Received: from char.us.oracle.com (/10.152.32.25)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 21 Jan 2019 21:31:09 -0800
+Received: by char.us.oracle.com (Postfix, from userid 1000)
+        id A9D136A0129; Tue, 22 Jan 2019 00:31:08 -0500 (EST)
+Date:   Tue, 22 Jan 2019 00:31:08 -0500
+From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To:     Lei Chen <chenl.lei@gmail.com>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, gregkh@linuxfoundation.org
+Cc:     tglx@linutronix.de
+Subject: Re: /proc/<pid>/status: incorrect format breaks userland tool
+Message-ID: <20190122053108.GA14185@char.us.oracle.com>
+References: <CAB5AJuWz2NgwixCDh3hr4uv8qECfE2m0q49E_5GfecTnGPuXuQ@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190122150231.0191e8d4@canb.auug.org.au>
-In-Reply-To: <20190122150231.0191e8d4@canb.auug.org.au>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 22 Jan 2019 14:30:20 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQAL0zm+OpHDpKdufznZ_nSqyOcEh_Pes3oCMs1CtA9Cw@mail.gmail.com>
-Message-ID: <CAK7LNAQAL0zm+OpHDpKdufznZ_nSqyOcEh_Pes3oCMs1CtA9Cw@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the akpm tree with the kbuild tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/mixed; boundary="J2SCkAp4GZ/dPZZf"
+Content-Disposition: inline
+In-Reply-To: <CAB5AJuWz2NgwixCDh3hr4uv8qECfE2m0q49E_5GfecTnGPuXuQ@mail.gmail.com>
+User-Agent: Mutt/1.8.3 (2017-05-23)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9143 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901220045
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 1:06 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
->
-> Today's linux-next merge of the akpm tree got a conflict in:
->
->   Makefile
->
-> between commit:
->
->   b57304bb03de ("kbuild: remove meaningless prepare2 target")
->
-> from the kbuild tree and patch:
->
->   "locking/atomics: build atomic headers as required"
 
+--J2SCkAp4GZ/dPZZf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This has been sitting around since the previous development cycle.
-The relevant patches were not sent to Linus in the previous MW.
+On Tue, Jan 22, 2019 at 11:29:16AM +0800, Lei Chen wrote:
+> Hi Konrad,
 
-I believe those should be dropped entirely,
-and re-implemented cleanly/correctly if Mark Rutland wants this change.
+Hi,
 
-People already pointed out the scripts are so slow,
-but that is not the only problem.
+CC-ing stable,Greg,and LKML. Pls see attached and inline patch and explanation
+at bottom.
 
-[1] I see annoying log message
-    "Nothing to be done for 'all'"
-    for every incremental build
+> I'm running kernel 4.4.153. When running iotop, I got such failure:
+>  # iotop -P
+> Traceback (most recent call last):
+>   File "/sbin/iotop", line 17, in <module>
+>     main()
+>   File "/usr/lib/python2.7/site-packages/iotop/ui.py", line 620, in main
+>     main_loop()
+>   File "/usr/lib/python2.7/site-packages/iotop/ui.py", line 610, in <lambda>
+>     main_loop = lambda: run_iotop(options)
+>   File "/usr/lib/python2.7/site-packages/iotop/ui.py", line 508, in
+> run_iotop
+>     return curses.wrapper(run_iotop_window, options)
+>   File "/usr/lib/python2.7/curses/wrapper.py", line 43, in wrapper
+>     return func(stdscr, *args, **kwds)
+>   File "/usr/lib/python2.7/site-packages/iotop/ui.py", line 501, in
+> run_iotop_window
+>     ui.run()
+>   File "/usr/lib/python2.7/site-packages/iotop/ui.py", line 155, in run
+>     self.process_list.duration)
+>   File "/usr/lib/python2.7/site-packages/iotop/ui.py", line 434, in
+> refresh_display
+>     lines = self.get_data()
+>   File "/usr/lib/python2.7/site-packages/iotop/ui.py", line 415, in get_data
+>     return list(map(format, processes))
+>   File "/usr/lib/python2.7/site-packages/iotop/ui.py", line 388, in format
+>     cmdline = p.get_cmdline()
+>   File "/usr/lib/python2.7/site-packages/iotop/data.py", line 292, in
+> get_cmdline
+>     proc_status = parse_proc_pid_status(self.pid)
+>   File "/usr/lib/python2.7/site-packages/iotop/data.py", line 196, in
+> parse_proc_pid_status
+>     key, value = line.split(':\t', 1)
+> ValueError: need more than 1 value to unpack
+> 
+> Having a little further debug, I found this error is caused by the
+> unexpected blank line in /proc/<pid>/status file, like below:
+> 
+> CapBnd: 0000003fffffffff
+> CapAmb: 0000000000000000
+> 
+> Speculation_Store_Bypass:       vulnerable
+> Cpus_allowed:   ff
+> 
+> Checking the git history, I see you touched the line "seq_printf(m,
+> "\nSpeculation_Store_Bypass:\t");". Do you think this additional blank line
+> is caused by the leading "\n" of "Speculation_Store_Bypass"?
 
-[2] Dependencies might not be sufficient.
-    For example, nothing is rebuilt when scripts/atomic/fallbacks/* is touched.
+That is correct.
+It looks that the backport missed the change. The v4.4 has:
 
-[3] I do not understand why scripts/Makefile.genheader must be added.
+static inline void task_seccomp(struct seq_file *m, struct task_struct *p)         
+{                                                                                  
+#ifdef CONFIG_SECCOMP                                                              
+        seq_printf(m, "Seccomp:\t%d\n", p->seccomp.mode);                          
+#endif                                                                             
+        seq_printf(m, "\nSpeculation_Store_Bypass:\t");      
 
+Upstream has:
 
+tatic inline void task_seccomp(struct seq_file *m, struct task_struct *p)         
+{                                                                                  
+        seq_put_decimal_ull(m, "NoNewPrivs:\t", task_no_new_privs(p));             
+#ifdef CONFIG_SECCOMP                                                              
+        seq_put_decimal_ull(m, "\nSeccomp:\t", p->seccomp.mode);                   
+#endif                                                                             
+        seq_printf(m, "\nSpeculation_Store_Bypass:\t");                         
 
+The af884cd4a5ae6 is the one that removed the '\n' from the end and put it in the
+front of 'Seccomp '.
 
+Greg, I am not sure how one would fix this in a stable tree. But the fix is simple
+(hadn't tested it..)
 
+From 9e1909f29e1162f2fba190dbab88d1bbcaf0365d Mon Sep 17 00:00:00 2001
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Date: Tue, 22 Jan 2019 00:27:55 -0500
+Subject: [PATCH] Fix: proc: Use underscores for SSBD in 'status'
 
-> from the akpm tree.
->
-> I fixed it up (I hope - see below) and can carry the fix as necessary.
-> This is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->
-> --
-> Cheers,
-> Stephen Rothwell
->
-> diff --cc Makefile
-> index 004a190e3ece,bd0f79d8295e..000000000000
-> --- a/Makefile
-> +++ b/Makefile
-> @@@ -1077,8 -1077,12 +1077,8 @@@ ifneq ($(KBUILD_SRC),
->         fi;
->   endif
->
-> - prepare1: prepare3 outputmakefile asm-generic $(version_h) $(autoksyms_h) \
-> -                                               include/generated/utsrelease.h
->  -# prepare2 creates a makefile if using a separate output directory.
->  -# From this point forward, .config has been reprocessed, so any rules
->  -# that need to depend on updated CONFIG_* values can be checked here.
->  -prepare2: prepare3 outputmakefile asm-generic genheader
->  -
->  -prepare1: prepare2 $(version_h) $(autoksyms_h) include/generated/utsrelease.h
-> ++prepare1: prepare3 outputmakefile asm-generic genheader $(version_h) \
-> ++                              $(autoksyms_h) include/generated/utsrelease.h
->         $(cmd_crmodverdir)
->
->   archprepare: archheaders archscripts prepare1 scripts
+Upstream af884cd4a5ae6 (not backported) added a '\n' in front
+of 'Seccomp' but we have the old format with '\n' at the end.
+This causes mayhem with 'Speculation_Store_Bypass' adding an extra
+newline breaking tools.
 
+Reported-by:Lei Chen <chenl.lei@gmail.com>
+CC: stable@vger.kernel.org
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+---
+ fs/proc/array.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
+diff --git a/fs/proc/array.c b/fs/proc/array.c
+index cb71cbae606d..60cbaa821164 100644
+--- a/fs/proc/array.c
++++ b/fs/proc/array.c
+@@ -333,7 +333,7 @@ static inline void task_seccomp(struct seq_file *m, struct task_struct *p)
+ #ifdef CONFIG_SECCOMP
+ 	seq_printf(m, "Seccomp:\t%d\n", p->seccomp.mode);
+ #endif
+-	seq_printf(m, "\nSpeculation_Store_Bypass:\t");
++	seq_printf(m, "Speculation_Store_Bypass:\t");
+ 	switch (arch_prctl_spec_ctrl_get(p, PR_SPEC_STORE_BYPASS)) {
+ 	case -EINVAL:
+ 		seq_printf(m, "unknown");
 -- 
-Best Regards
-Masahiro Yamada
+2.13.4
+
+
+> 
+> Thanks,
+> Lei Chen
+
+--J2SCkAp4GZ/dPZZf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename="0001-Fix-proc-Use-underscores-for-SSBD-in-status.patch"
+
+From 9e1909f29e1162f2fba190dbab88d1bbcaf0365d Mon Sep 17 00:00:00 2001
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Date: Tue, 22 Jan 2019 00:27:55 -0500
+Subject: [PATCH] Fix: proc: Use underscores for SSBD in 'status'
+
+Upstream af884cd4a5ae6 (not backported) added a '\n' in front
+of 'Seccomp' but we have the old format with '\n' at the end.
+This causes mayhem with 'Speculation_Store_Bypass' adding an extra
+newline breaking tools.
+
+Reported-by:Lei Chen <chenl.lei@gmail.com>
+CC: stable@vger.kernel.org
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+---
+ fs/proc/array.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/proc/array.c b/fs/proc/array.c
+index cb71cbae606d..60cbaa821164 100644
+--- a/fs/proc/array.c
++++ b/fs/proc/array.c
+@@ -333,7 +333,7 @@ static inline void task_seccomp(struct seq_file *m, struct task_struct *p)
+ #ifdef CONFIG_SECCOMP
+ 	seq_printf(m, "Seccomp:\t%d\n", p->seccomp.mode);
+ #endif
+-	seq_printf(m, "\nSpeculation_Store_Bypass:\t");
++	seq_printf(m, "Speculation_Store_Bypass:\t");
+ 	switch (arch_prctl_spec_ctrl_get(p, PR_SPEC_STORE_BYPASS)) {
+ 	case -EINVAL:
+ 		seq_printf(m, "unknown");
+-- 
+2.13.4
+
+
+--J2SCkAp4GZ/dPZZf--
