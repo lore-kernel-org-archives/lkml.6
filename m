@@ -2,121 +2,236 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2CC8C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:37:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 172C2C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:37:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69DFF218D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:37:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548149858;
-	bh=GUpWqifi+ww1FYhpfmzC6BDAzq5GQ2f5hA18yaMz1LQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=sW7hmYYJWtmiqERGXNK/lS1xQ6M/0Hs1m1NgZD2BMS8r7NbmhOy5jhsPSKZxAU+Bd
-	 IQbYLKR0D6neuSUtpzH3OqF9fyrr6hLBhCbreqo7lDrDBtpkQtcAfgDwpCi+eIwk+o
-	 iPGwmDY8FlAIFroI1xXxZLy3Ryg2qL3WZkVy2R30=
+	by mail.kernel.org (Postfix) with ESMTP id DB8FB218D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:37:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727975AbfAVJhg (ORCPT
+        id S1727997AbfAVJhr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 04:37:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57828 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727026AbfAVJhf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 04:37:35 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D15F218D0;
-        Tue, 22 Jan 2019 09:37:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548149854;
-        bh=GUpWqifi+ww1FYhpfmzC6BDAzq5GQ2f5hA18yaMz1LQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HSFLPz6TSCJu0Sbbxg7+0U+bjL2XKVdDcI8wNn6kEXOH/mJyAKZiC8j0rBHD904Fi
-         3/EZsdRba/iJU0tya97KAZd9P5kWIyyaK6lzAOirXiup9yzXvXpIyPM+o1tN2qSYj1
-         RvI4+kTZRm3f/Kyf9VyLC+qM5+JQD51qRFqntAF4=
-Date:   Tue, 22 Jan 2019 10:37:32 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Peng Hao <peng.hao2@zte.com.cn>
-Cc:     arnd@arndb.de, andy.shevchenko@gmail.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/6]  misc/pvpanic: Add pvpanic driver framework
-Message-ID: <20190122093732.GA29657@kroah.com>
-References: <1548098711-52497-1-git-send-email-peng.hao2@zte.com.cn>
- <1548098711-52497-2-git-send-email-peng.hao2@zte.com.cn>
+        Tue, 22 Jan 2019 04:37:47 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:24551 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727468AbfAVJhq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 04:37:46 -0500
+X-UUID: 14877d4decc842329470e2c683941130-20190122
+X-UUID: 14877d4decc842329470e2c683941130-20190122
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+        (envelope-from <jianjun.wang@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1136838786; Tue, 22 Jan 2019 17:37:38 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 22 Jan 2019 17:37:37 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 22 Jan 2019 17:37:37 +0800
+From:   Jianjun Wang <jianjun.wang@mediatek.com>
+To:     <ryder.lee@mediatek.com>, <lorenzo.pieralisi@arm.com>,
+        <bhelgaas@google.com>, <matthias.bgg@gmail.com>
+CC:     <linux-pci@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <honghui.zhang@mediatek.com>, <youlin.pei@mediatek.com>,
+        <jianjun.wang@mediatek.com>
+Subject: [v1] PCI: mediatek: Remove MSI inner domain
+Date:   Tue, 22 Jan 2019 17:37:35 +0800
+Message-ID: <1548149855-3225-1-git-send-email-jianjun.wang@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1548098711-52497-2-git-send-email-peng.hao2@zte.com.cn>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 03:25:07AM +0800, Peng Hao wrote:
-> Add pvpanic driver framework.
-> 
+There is no need to create the inner domain as a parent for MSI domian,
+some feature has been implemented by MSI framework.
 
-You need a lot more description of what you did here than this, as I can
-not understand from this text, what the patch does, or more importantly,
-why it is doing this, at all.
+Remove the inner domain and its irq chip, it will be more closer to
+hardware implementation.
 
+Signed-off-by: Jianjun Wang <jianjun.wang@mediatek.com>
+---
+ drivers/pci/controller/pcie-mediatek.c | 86 +++++++++++---------------
+ 1 file changed, 37 insertions(+), 49 deletions(-)
 
+diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
+index 8d05df56158b..f996a9a6331f 100644
+--- a/drivers/pci/controller/pcie-mediatek.c
++++ b/drivers/pci/controller/pcie-mediatek.c
+@@ -169,7 +169,6 @@ struct mtk_pcie_soc {
+  * @slot: port slot
+  * @irq: GIC irq
+  * @irq_domain: legacy INTx IRQ domain
+- * @inner_domain: inner IRQ domain
+  * @msi_domain: MSI IRQ domain
+  * @lock: protect the msi_irq_in_use bitmap
+  * @msi_irq_in_use: bit map for assigned MSI IRQ
+@@ -190,7 +189,6 @@ struct mtk_pcie_port {
+ 	u32 slot;
+ 	int irq;
+ 	struct irq_domain *irq_domain;
+-	struct irq_domain *inner_domain;
+ 	struct irq_domain *msi_domain;
+ 	struct mutex lock;
+ 	DECLARE_BITMAP(msi_irq_in_use, MTK_MSI_IRQS_NUM);
+@@ -418,22 +416,15 @@ static void mtk_msi_ack_irq(struct irq_data *data)
+ 	u32 hwirq = data->hwirq;
+ 
+ 	writel(1 << hwirq, port->base + PCIE_IMSI_STATUS);
++	writel(MSI_STATUS, port->base + PCIE_INT_STATUS);
+ }
+ 
+-static struct irq_chip mtk_msi_bottom_irq_chip = {
+-	.name			= "MTK MSI",
+-	.irq_compose_msi_msg	= mtk_compose_msi_msg,
+-	.irq_set_affinity	= mtk_msi_set_affinity,
+-	.irq_ack		= mtk_msi_ack_irq,
+-};
+-
+-static int mtk_pcie_irq_domain_alloc(struct irq_domain *domain, unsigned int virq,
+-				     unsigned int nr_irqs, void *args)
++static irq_hw_number_t mtk_pcie_msi_get_hwirq(struct msi_domain_info *info,
++					      msi_alloc_info_t *arg)
+ {
+-	struct mtk_pcie_port *port = domain->host_data;
+-	unsigned long bit;
++	struct mtk_pcie_port *port = info->chip_data;
++	irq_hw_number_t bit;
+ 
+-	WARN_ON(nr_irqs != 1);
+ 	mutex_lock(&port->lock);
+ 
+ 	bit = find_first_zero_bit(port->msi_irq_in_use, MTK_MSI_IRQS_NUM);
+@@ -446,18 +437,14 @@ static int mtk_pcie_irq_domain_alloc(struct irq_domain *domain, unsigned int vir
+ 
+ 	mutex_unlock(&port->lock);
+ 
+-	irq_domain_set_info(domain, virq, bit, &mtk_msi_bottom_irq_chip,
+-			    domain->host_data, handle_edge_irq,
+-			    NULL, NULL);
+-
+-	return 0;
++	return bit;
+ }
+ 
+-static void mtk_pcie_irq_domain_free(struct irq_domain *domain,
+-				     unsigned int virq, unsigned int nr_irqs)
++static void mtk_pcie_msi_free(struct irq_domain *domain,
++			      struct msi_domain_info *info, unsigned int virq)
+ {
+ 	struct irq_data *d = irq_domain_get_irq_data(domain, virq);
+-	struct mtk_pcie_port *port = irq_data_get_irq_chip_data(d);
++	struct mtk_pcie_port *port = info->chip_data;
+ 
+ 	mutex_lock(&port->lock);
+ 
+@@ -468,46 +455,50 @@ static void mtk_pcie_irq_domain_free(struct irq_domain *domain,
+ 		__clear_bit(d->hwirq, port->msi_irq_in_use);
+ 
+ 	mutex_unlock(&port->lock);
+-
+-	irq_domain_free_irqs_parent(domain, virq, nr_irqs);
+ }
+ 
+-static const struct irq_domain_ops msi_domain_ops = {
+-	.alloc	= mtk_pcie_irq_domain_alloc,
+-	.free	= mtk_pcie_irq_domain_free,
++static struct msi_domain_ops mtk_msi_domain_ops = {
++	.get_hwirq	= mtk_pcie_msi_get_hwirq,
++	.msi_free	= mtk_pcie_msi_free,
+ };
+ 
+ static struct irq_chip mtk_msi_irq_chip = {
+-	.name		= "MTK PCIe MSI",
+-	.irq_ack	= irq_chip_ack_parent,
+-	.irq_mask	= pci_msi_mask_irq,
+-	.irq_unmask	= pci_msi_unmask_irq,
++	.name			= "MTK PCIe",
++	.irq_compose_msi_msg	= mtk_compose_msi_msg,
++	.irq_write_msi_msg	= pci_msi_domain_write_msg,
++	.irq_set_affinity	= mtk_msi_set_affinity,
++	.irq_ack		= mtk_msi_ack_irq,
++	.irq_mask		= pci_msi_mask_irq,
++	.irq_unmask		= pci_msi_unmask_irq,
+ };
+ 
+ static struct msi_domain_info mtk_msi_domain_info = {
+-	.flags	= (MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF_CHIP_OPS |
+-		   MSI_FLAG_PCI_MSIX),
+-	.chip	= &mtk_msi_irq_chip,
++	.flags		= (MSI_FLAG_USE_DEF_DOM_OPS |
++			   MSI_FLAG_USE_DEF_CHIP_OPS | MSI_FLAG_PCI_MSIX),
++	.ops		= &mtk_msi_domain_ops,
++	.chip		= &mtk_msi_irq_chip,
++	.handler	= handle_edge_irq,
++	.handler_name	= "MSI",
+ };
+ 
+ static int mtk_pcie_allocate_msi_domains(struct mtk_pcie_port *port)
+ {
+-	struct fwnode_handle *fwnode = of_node_to_fwnode(port->pcie->dev->of_node);
++	struct device *dev = port->pcie->dev;
++	struct fwnode_handle *fwnode = of_node_to_fwnode(dev->of_node);
++	struct msi_domain_info *info;
+ 
+ 	mutex_init(&port->lock);
+ 
+-	port->inner_domain = irq_domain_create_linear(fwnode, MTK_MSI_IRQS_NUM,
+-						      &msi_domain_ops, port);
+-	if (!port->inner_domain) {
+-		dev_err(port->pcie->dev, "failed to create IRQ domain\n");
++	info = devm_kzalloc(dev, sizeof(*info), GFP_KERNEL);
++	if (!info)
+ 		return -ENOMEM;
+-	}
+ 
+-	port->msi_domain = pci_msi_create_irq_domain(fwnode, &mtk_msi_domain_info,
+-						     port->inner_domain);
++	memcpy(info, &mtk_msi_domain_info, sizeof(*info));
++	info->chip_data = port;
++
++	port->msi_domain = pci_msi_create_irq_domain(fwnode, info, NULL);
+ 	if (!port->msi_domain) {
+-		dev_err(port->pcie->dev, "failed to create MSI domain\n");
+-		irq_domain_remove(port->inner_domain);
++		dev_err(dev, "failed to create MSI domain\n");
+ 		return -ENOMEM;
+ 	}
+ 
+@@ -541,8 +532,6 @@ static void mtk_pcie_irq_teardown(struct mtk_pcie *pcie)
+ 		if (IS_ENABLED(CONFIG_PCI_MSI)) {
+ 			if (port->msi_domain)
+ 				irq_domain_remove(port->msi_domain);
+-			if (port->inner_domain)
+-				irq_domain_remove(port->inner_domain);
+ 		}
+ 
+ 		irq_dispose_mapping(port->irq);
+@@ -619,12 +608,11 @@ static void mtk_pcie_intr_handler(struct irq_desc *desc)
+ 
+ 			while ((imsi_status = readl(port->base + PCIE_IMSI_STATUS))) {
+ 				for_each_set_bit(bit, &imsi_status, MTK_MSI_IRQS_NUM) {
+-					virq = irq_find_mapping(port->inner_domain, bit);
++					virq = irq_find_mapping(
++							port->msi_domain, bit);
+ 					generic_handle_irq(virq);
+ 				}
+ 			}
+-			/* Clear MSI interrupt status */
+-			writel(MSI_STATUS, port->base + PCIE_INT_STATUS);
+ 		}
+ 	}
+ 
+-- 
+2.20.1
 
-> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
-> ---
->  drivers/misc/pvpanic/pvpanic.c | 171 ++++++++++-------------------------------
->  1 file changed, 39 insertions(+), 132 deletions(-)
-> 
-> diff --git a/drivers/misc/pvpanic/pvpanic.c b/drivers/misc/pvpanic/pvpanic.c
-> index 595ac06..6380540 100644
-> --- a/drivers/misc/pvpanic/pvpanic.c
-> +++ b/drivers/misc/pvpanic/pvpanic.c
-> @@ -8,15 +8,20 @@
->  
->  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
->  
-> -#include <linux/acpi.h>
-> +#include <linux/io.h>
->  #include <linux/kernel.h>
->  #include <linux/module.h>
-> -#include <linux/of.h>
-> -#include <linux/of_address.h>
->  #include <linux/platform_device.h>
->  #include <linux/types.h>
->  
-> -static void __iomem *base;
-> +static struct {
-> +	struct platform_device *pdev;
-> +	void __iomem *base;
-> +	bool is_ioport;
-> +} pvpanic_data = {
-> +	.pdev = NULL,
-> +	.is_ioport = false,
-
-You do not need to initialize variables to 0 specifically like this.
-
-> +};
->  
->  #define PVPANIC_PANICKED        (1 << 0)
->  
-> @@ -27,7 +32,7 @@
->  static void
->  pvpanic_send_event(unsigned int event)
->  {
-> -	iowrite8(event, base);
-> +	iowrite8(event, pvpanic_data.base);
-
-Why did you convert a single global variable into a single global
-structure?  Why not, if you really need to pass this value around, do
-that at the same time as you will end up touching these same functions
-again, right?
-
-thanks,
-
-greg k-h
