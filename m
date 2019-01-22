@@ -2,127 +2,108 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A530C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:18:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0570C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:18:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39509217D4
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:18:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="1UXXkLpU"
+	by mail.kernel.org (Postfix) with ESMTP id 7624820879
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:18:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548170294;
+	bh=H4DZ82+ray06XcDeK25lwTE6YmctquLm3nar8Zg6id0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=c1U0ayumzKVAZ7GWDDD4VEbf/NB4tJrvwgtkwIryn1Q6kRr5VcMyZPLFdD12ftrfR
+	 Q9vN74o1yKMMNHvVP1LjQFXZUa+hSWhdMO/65bPX+gJCcJdrBRdXTBZv6eQBvMCMnc
+	 68ZNuZeb5WzLRAbtx7N+nJIddBdotzpBUP8bKBiU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729129AbfAVPSK (ORCPT
+        id S1729174AbfAVPSN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 10:18:10 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:42630 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729101AbfAVPSJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 10:18:09 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0MFAvGh003633;
-        Tue, 22 Jan 2019 15:18:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=KDuShLuFGHIPPr7UEMQ9tH1UlcIP0l5Dd7vW+tAobA4=;
- b=1UXXkLpUxmeSeX665tKg6Zw4DOyfMA9tuvpgZL6XWJTsfurpim56R/7Ve8ZNr/cIWQrP
- 6RE7fMWOD6HoliHB/zSOK9XpyTBAhCRkML3MBlhV/3DrjsrHl+GN3QN19CHh7xcL2rZI
- UH5WB297xBzj45fjGjmMT9vWuWUocOjOp4eBSUStR0+5uJYphfGIyz7XEtyDdHs8owhd
- +XHTXi8W33Tl9CXeLt73zFN7QSqdtuVbU8XerDw9zfaE3TwAHYM4kfP2QOnsuMyR2FjQ
- b8413hOaJbbweqnxiZiKD5JNC+6upPXwCk59Q7tcEOrUqFADuwDHxK6fqGDPVD+DZLmg 8A== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2q3uaum78n-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 22 Jan 2019 15:18:03 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0MFI2ix029337
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 22 Jan 2019 15:18:03 GMT
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x0MFI2ZI021702;
-        Tue, 22 Jan 2019 15:18:02 GMT
-Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 22 Jan 2019 07:18:01 -0800
-Date:   Tue, 22 Jan 2019 10:18:20 -0500
-From:   Daniel Jordan <daniel.m.jordan@oracle.com>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Tejun Heo <tj@kernel.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] workqueue: Try to catch flush_work() without INIT_WORK().
-Message-ID: <20190122151819.qjzihyyd4h2ukou2@ca-dmjordan1.us.oracle.com>
-References: <1547831098-7930-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <20190118194853.pgdkz2ugwrob3zun@ca-dmjordan1.us.oracle.com>
- <90c831b3-0d09-3cf7-5a2c-2fa7afaa003e@i-love.sakura.ne.jp>
+        Tue, 22 Jan 2019 10:18:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58524 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729101AbfAVPSM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 10:18:12 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 30F9420879;
+        Tue, 22 Jan 2019 15:18:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548170291;
+        bh=H4DZ82+ray06XcDeK25lwTE6YmctquLm3nar8Zg6id0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=q0INdCp9GJLF09d4PxAVcE/r4LKuuz1nkpVU93/OilG2lXvr+tMEi4wTQMJu+IPpa
+         F1VZeblNRDuACTfzTGbr64Q1KyvlmlpIWShLW3OmmY0HUnpzw/xIhIHdTt7DG4P2p7
+         3sopyg9/gM0jEd+eLnAmkAV+GsbDO4zjxW6EocWg=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Steve Wise <swise@chelsio.com>
+Subject: [PATCH 1/8] infiniband: cxgb4: no need to check return value of debugfs_create functions
+Date:   Tue, 22 Jan 2019 16:17:53 +0100
+Message-Id: <20190122151800.15092-2-gregkh@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190122151800.15092-1-gregkh@linuxfoundation.org>
+References: <20190122151800.15092-1-gregkh@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <90c831b3-0d09-3cf7-5a2c-2fa7afaa003e@i-love.sakura.ne.jp>
-User-Agent: NeoMutt/20180323-268-5a959c
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9144 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901220118
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 19, 2019 at 11:41:22AM +0900, Tetsuo Handa wrote:
-> On 2019/01/19 4:48, Daniel Jordan wrote:
-> > On Sat, Jan 19, 2019 at 02:04:58AM +0900, Tetsuo Handa wrote:
-> > __queue_work has a sanity check already for work, but using list_empty.  Seems
-> > slightly better to be consistent?
-> > 
-> 
-> list_empty() won't work, for "struct work_struct" is embedded into a struct
-> which is allocated by kzalloc().
+When calling debugfs functions, there is no need to ever check the
+return value.  The function can work or not, but the code logic should
+never do something different based on this.
 
-Please check list_empty's definition again, it compares the address of the node
-to its next pointer, so it should work for a zeroed node.  I'll reiterate that
-it seems slightly better to be consistent in "is work_struct initialized?"
-checks, but it's not a big deal and I'm fine either way.
+Cc: Steve Wise <swise@chelsio.com>
+Cc: Doug Ledford <dledford@redhat.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: linux-rdma@vger.kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/infiniband/hw/cxgb4/device.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-> From 1bbf8d9c7aaef78d7f483d2131261162485c6f72 Mon Sep 17 00:00:00 2001
-> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Date: Sat, 19 Jan 2019 01:38:53 +0900
-> Subject: [PATCH] drm/vkms: Fix flush_work() without INIT_WORK().
-> 
-> syzbot is hitting a lockdep warning [1] because flush_work() is called
-> without INIT_WORK() after kzalloc() at vkms_atomic_crtc_reset().
-> 
-> Commit 6c234fe37c57627a ("drm/vkms: Implement CRC debugfs API") added
-> INIT_WORK() to only vkms_atomic_crtc_duplicate_state() side. Assuming
-> that lifecycle of crc_work is appropriately managed, fix this problem
-> by adding INIT_WORK() to vkms_atomic_crtc_reset() side.
-> 
-> [1] https://syzkaller.appspot.com/bug?id=a5954455fcfa51c29ca2ab55b203076337e1c770
-> 
-> Reported-and-tested-by: syzbot <syzbot+12f1b031b6da017e34f8@syzkaller.appspotmail.com>
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> ---
->  drivers/gpu/drm/vkms/vkms_crtc.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/gpu/drm/vkms/vkms_crtc.c b/drivers/gpu/drm/vkms/vkms_crtc.c
-> index 177bbcb..3c37d8c 100644
-> --- a/drivers/gpu/drm/vkms/vkms_crtc.c
-> +++ b/drivers/gpu/drm/vkms/vkms_crtc.c
-> @@ -104,6 +104,7 @@ static void vkms_atomic_crtc_reset(struct drm_crtc *crtc)
->  	vkms_state = kzalloc(sizeof(*vkms_state), GFP_KERNEL);
->  	if (!vkms_state)
->  		return;
-> +	INIT_WORK(&vkms_state->crc_work, vkms_crc_work_handle);
->  
->  	crtc->state = &vkms_state->base;
->  	crtc->state->crtc = crtc;
+diff --git a/drivers/infiniband/hw/cxgb4/device.c b/drivers/infiniband/hw/cxgb4/device.c
+index c13c0ba30f63..9c10fff6dcfb 100644
+--- a/drivers/infiniband/hw/cxgb4/device.c
++++ b/drivers/infiniband/hw/cxgb4/device.c
+@@ -720,11 +720,8 @@ static const struct file_operations ep_debugfs_fops = {
+ 	.read    = debugfs_read,
+ };
+ 
+-static int setup_debugfs(struct c4iw_dev *devp)
++static void setup_debugfs(struct c4iw_dev *devp)
+ {
+-	if (!devp->debugfs_root)
+-		return -1;
+-
+ 	debugfs_create_file_size("qps", S_IWUSR, devp->debugfs_root,
+ 				 (void *)devp, &qp_debugfs_fops, 4096);
+ 
+@@ -740,7 +737,6 @@ static int setup_debugfs(struct c4iw_dev *devp)
+ 	if (c4iw_wr_log)
+ 		debugfs_create_file_size("wr_log", S_IWUSR, devp->debugfs_root,
+ 					 (void *)devp, &wr_log_debugfs_fops, 4096);
+-	return 0;
+ }
+ 
+ void c4iw_release_dev_ucontext(struct c4iw_rdev *rdev,
+@@ -1553,8 +1549,6 @@ static int __init c4iw_init_module(void)
+ 		return err;
+ 
+ 	c4iw_debugfs_root = debugfs_create_dir(DRV_NAME, NULL);
+-	if (!c4iw_debugfs_root)
+-		pr_warn("could not create debugfs entry, continuing\n");
+ 
+ 	reg_workq = create_singlethread_workqueue("Register_iWARP_device");
+ 	if (!reg_workq) {
+-- 
+2.20.1
 
-Great, thanks, I think mentioning this path would improve the changelog.
