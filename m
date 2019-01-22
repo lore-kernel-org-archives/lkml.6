@@ -2,95 +2,106 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39A9FC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 17:00:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F873C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 17:00:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0899F20870
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 17:00:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="kuezHi2l"
+	by mail.kernel.org (Postfix) with ESMTP id 452F9217D4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 17:00:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729517AbfAVRAa (ORCPT
+        id S1729556AbfAVRAq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 12:00:30 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:43126 "EHLO mail.skyhub.de"
+        Tue, 22 Jan 2019 12:00:46 -0500
+Received: from mga06.intel.com ([134.134.136.31]:21649 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728719AbfAVRAa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 12:00:30 -0500
-Received: from zn.tnic (p200300EC2BCBD90089921F1AF5185B6A.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:d900:8992:1f1a:f518:5b6a])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 724111EC014A;
-        Tue, 22 Jan 2019 18:00:28 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1548176428;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=/jwaeb43GsSlwJ/wwpkZiDEe2fZXmyil6cWcPR206Qo=;
-        b=kuezHi2lNoV7fM+nb9LtGoWiNVxLVJgE9WYVwwKGHlWuI2+1/26geoPimZ97TSni4nkRlF
-        W5rULu5o6Lj3UrQ/5HBohns3P6pp+0ZUtvop82mq6zi9aZXGn8hIiGtYwAnW21ecrnKwp4
-        bfepe1EScSOsjBzjtXgfRCJuP5aIsUI=
-Date:   Tue, 22 Jan 2019 18:00:23 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Dave Hansen <dave.hansen@intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Michael Matz <matz@suse.de>
-Subject: Re: [PATCH 05/22] x86/fpu: Remove fpu->initialized usage in
- copy_fpstate_to_sigframe()
-Message-ID: <20190122170023.GJ26587@zn.tnic>
-References: <20190109114744.10936-1-bigeasy@linutronix.de>
- <20190109114744.10936-6-bigeasy@linutronix.de>
- <20190116193603.GK15409@zn.tnic>
- <20190116224037.xkfnevzkwrck5dtt@linutronix.de>
- <20190117122253.GC5023@zn.tnic>
- <20190118211401.4komqsnvuof7563p@linutronix.de>
- <33f0e144-1eec-b1a1-8858-58f20d5e477d@intel.com>
- <20190121112117.GA32538@redhat.com>
- <20190122134015.GI26587@zn.tnic>
- <20190122161551.GB9745@redhat.com>
+        id S1729428AbfAVRAq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 12:00:46 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jan 2019 09:00:45 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,507,1539673200"; 
+   d="scan'208";a="127979830"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.14])
+  by orsmga002.jf.intel.com with ESMTP; 22 Jan 2019 09:00:45 -0800
+Date:   Tue, 22 Jan 2019 09:00:45 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Changbin Du <changbin.du@gmail.com>
+Cc:     pbonzini@redhat.com, rkrcmar@redhat.com, tglx@linutronix.de,
+        mingo@redhat.com, x86@kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KVM: VMX: Fix vm entry failure caused by invalid vmexit
+ controls
+Message-ID: <20190122170045.GD28513@linux.intel.com>
+References: <20190122152952.8011-1-changbin.du@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190122161551.GB9745@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190122152952.8011-1-changbin.du@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 05:15:51PM +0100, Oleg Nesterov wrote:
-> I don't know... tried to google, found nothing.
+On Tue, Jan 22, 2019 at 11:29:52PM +0800, Changbin Du wrote:
+> The commit c73da3f ("KVM: VMX: Properly handle dynamic VM Entry/Exit
+> controls") has a typo that cause invalid vmexit controls. The
+> VM_ENTRY_LOAD_IA32_PERF_GLOBAL_CTRL is against _vmentry_control.
 > 
-> the comment in /usr/include/sys/ucontext.h mentions SysV/i386 ABI + historical
-> reasons, this didn't help.
+> KVM: entry failed, hardware error 0x7
+> EAX=00000000 EBX=00000000 ECX=00000000 EDX=000206c2
+> ESI=00000000 EDI=00000000 EBP=00000000 ESP=00000000
+> EIP=0000fff0 EFL=00000002 [-------] CPL=0 II=0 A20=1 SMM=0 HLT=0
+> ES =0000 00000000 0000ffff 00009300
+> CS =f000 ffff0000 0000ffff 00009b00
+> SS =0000 00000000 0000ffff 00009300
+> DS =0000 00000000 0000ffff 00009300
+> FS =0000 00000000 0000ffff 00009300
+> GS =0000 00000000 0000ffff 00009300
+> LDT=0000 00000000 0000ffff 00008200
+> TR =0000 00000000 0000ffff 00008b00
+> GDT= 00000000 0000ffff
+> IDT= 00000000 0000ffff
+> CR0=60000010 CR2=00000000 CR3=00000000 CR4=00000000
+> DR0=0000000000000000 DR1=0000000000000000 DR2=0000000000000000
+> DR3=0000000000000000 DR6=00000000ffff0ff0 DR7=0000000000000400
+> EFER=0000000000000000
+> 
+> Fixes: c73da3f ("KVM: VMX: Properly handle dynamic VM Entry/Exit controls")
+> Signed-off-by: Changbin Du <changbin.du@gmail.com>
 
-So I'm being told by one of the psABI folks that this is not really
-written down somewhere explicitly but it is the result from the POSIX
-and psABI treatise of signal handlers, what they're supposed to do,
-caller- and callee-saved registers, etc.
+Patch already submitted[1].
 
-And FPU registers are volatile, i.e., caller-saved. Which means, the
-handler itself doesn't save them but the caller, which, doesn't really
-expect any signals - they are async. So the kernel must do that and
-slap the FPU regs onto the user stack...
+Paolo/Radim, the VM-Exit fix needs to be queued asap.  The fix for the
+objtool warning[2] should also go into v5.0.
 
-Hohumm. Makes sense.
+[1] https://patchwork.kernel.org/patch/10763351/
+[2] https://patchwork.kernel.org/patch/10765309/
 
--- 
-Regards/Gruss,
-    Boris.
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+
+> ---
+>  arch/x86/kvm/vmx/vmx.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index f6915f10e584..0762fcab8fc9 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -2344,7 +2344,7 @@ static __init int setup_vmcs_config(struct vmcs_config *vmcs_conf,
+>  		case 37: /* AAT100 */
+>  		case 44: /* BC86,AAY89,BD102 */
+>  		case 46: /* BA97 */
+> -			_vmexit_control &= ~VM_ENTRY_LOAD_IA32_PERF_GLOBAL_CTRL;
+> +			_vmentry_control &= ~VM_ENTRY_LOAD_IA32_PERF_GLOBAL_CTRL;
+>  			_vmexit_control &= ~VM_EXIT_LOAD_IA32_PERF_GLOBAL_CTRL;
+>  			pr_warn_once("kvm: VM_EXIT_LOAD_IA32_PERF_GLOBAL_CTRL "
+>  					"does not work properly. Using workaround\n");
+> -- 
+> 2.19.1
+> 
