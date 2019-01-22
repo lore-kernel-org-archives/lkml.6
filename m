@@ -7,299 +7,270 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D07A7C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:11:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0009FC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:12:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92EBA217F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:11:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBD4821726
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:12:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="eF4vKclh"
+	dkim=pass (2048-bit key) header.d=poorly.run header.i=@poorly.run header.b="YyPjsn+a"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726825AbfAVULy (ORCPT
+        id S1726863AbfAVUMB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 15:11:54 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:47061 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726630AbfAVULx (ORCPT
+        Tue, 22 Jan 2019 15:12:01 -0500
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:37366 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726362AbfAVUMA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 15:11:53 -0500
-Received: by mail-pg1-f195.google.com with SMTP id w7so11531692pgp.13
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 12:11:52 -0800 (PST)
+        Tue, 22 Jan 2019 15:12:00 -0500
+Received: by mail-yb1-f195.google.com with SMTP id 2so9107778ybw.4
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 12:11:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=poorly.run; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=dUl/6E6j1ECKDBmAnpiUzwx3jDmolb1yccaxXR8VIR8=;
-        b=eF4vKclh3LVspS2k9w0nKLkUDvCmLeaUDXYKvc790t+GAt44URK0MhyPcrnecRGBhA
-         qjTeTiI+78PjV/8Ly5PO98hTmxlbM/Z8QUCPbVx2gqb35/wPbAtXKRYi2s/XtNguwHtL
-         6fayh7xL75EZLW0mbtUrOtgleOzRWQHL2BJe4=
+        bh=hraNLzCILizjLFoyJU2KQqxBF9/mllvQ6yego70fDmE=;
+        b=YyPjsn+ayZdNu7UZE6UtAoCxYDw+F9LkiYWIokON+2VPh0aNEz4dJBUEg3xqtn89NI
+         SZyiSlITNU1q1DFK0SfdGoFNDkol5mHKAPXo599+ox1+zND4UtzqHiMknas+kDSHNz38
+         MDC7cpcKDQ837hEsN7HCZfO62v1uOXcxt+oyr/PULkdNrpCPAW0bl7U3v/sanfEFIESa
+         fDB2ExEogkgNOsG3JHRdftTV5R+yc0dZOlzyxPDv9CGpicNC5UM2tsGDLI8cd/GZCJ9E
+         B0eh0r9fnwGfTDIGpnNR+PvWz+osYL6zL/Xp81+qJ3NMKEYUp+SgdiqYApu/9CgkzgFn
+         aZ1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dUl/6E6j1ECKDBmAnpiUzwx3jDmolb1yccaxXR8VIR8=;
-        b=NRWrWx5EASv3v8LXR1SwSinTmb9ZDzZqlfmsrle3Wx6HSY2DSYxxWfWSKt9gg81P84
-         vCkmCFGiPeyo3r6KLCCCPKVP/+MSwRcDwkcuaHAiQL8UBNtTXoINjfXLUI8NdEVSFvgJ
-         6Tld1qfk9MrYuleuqjjyLE8H5+lX44gaEOACgyGmGZM4D03vCpXlAmb+zSJ5+gQWSkD6
-         oKcaoJ/xRapONvsX648gC7Nbc9fd7zbyHtmjycT7hX969B8oRMRLZDHqdDd9HMZ/43hz
-         swRlr81XEQqL5KUNulXB+H9zbr7EtrFJLlZojB3QvQYPpFrf4g8INkZiUmeaFCgbVTiY
-         tScA==
-X-Gm-Message-State: AJcUukcnkrMllvkPd2xNRpyVYzBNc3KIr0wS/dE8kE/Gwa6B4yhMt6Lx
-        0BXwkQxsBXuHrH0NWF8xnMsZMg==
-X-Google-Smtp-Source: ALg8bN43e9q8nL5O34ee9OjB7WjmGAStH7boDpUVuU+LgIWdNWQBdyHxfrYIzihrahYJ7mdT76ysRA==
-X-Received: by 2002:a65:40c5:: with SMTP id u5mr32469742pgp.46.1548187911303;
-        Tue, 22 Jan 2019 12:11:51 -0800 (PST)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id z191sm21186934pgd.74.2019.01.22.12.11.50
+        bh=hraNLzCILizjLFoyJU2KQqxBF9/mllvQ6yego70fDmE=;
+        b=o8hdRLBbXdXXSytYYleUM4ihosE/tssXkV4MXt71Mx3XQIWg0JeIcRCoj28k4qfZXl
+         Y0G/jsuQr3lG/Rov5Rivg/2sjCcBUJWRvzRv5MoMogz5Talx8czEKSy/3lmB9qKhdXf9
+         WWgVQZgif75qzjLpzlhoN1oqdhiNNEmYC/3sVugckMtBll9ORIHEqTR4zOCuHKzxM+M0
+         WMzLR+CVNIyyOfRR/2D0+yMuGL5TX7GZoNgBsctcN51cNXuSFsufLR40aunlWG3XSzDp
+         gvDZIT34HquMrDGsk9phJbghNsMuhpllcqRdKyjgfmm3eqn8jhnnHYTkprVnKjIMJLlx
+         fx3g==
+X-Gm-Message-State: AJcUuke5FLLu3eMaAHVPZOGAsdA9VUEeDqTsHCe0sMi2VXJXj4z9oVM+
+        c044NY8c5bf57LV688rcJDyijg==
+X-Google-Smtp-Source: ALg8bN5x38dOwscjLtv4K9rtPekdequVfIdeRSsvbIT4SDOJDih7PDCdGvdC+BRGTngMpwhMLzy/Hw==
+X-Received: by 2002:a25:ca08:: with SMTP id a8mr13518415ybg.127.1548187918868;
+        Tue, 22 Jan 2019 12:11:58 -0800 (PST)
+Received: from localhost ([2620:0:1013:11:89c6:2139:5435:371d])
+        by smtp.gmail.com with ESMTPSA id b129sm7318468ywc.106.2019.01.22.12.11.58
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 22 Jan 2019 12:11:50 -0800 (PST)
-Date:   Tue, 22 Jan 2019 12:11:48 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Jeffrey Hugo <jhugo@codeaurora.org>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH] regulator: qcom-smd: Batch up requests for disabled
- regulators
-Message-ID: <20190122201148.GD31919@minitux>
-References: <20190122190147.26735-1-bjorn.andersson@linaro.org>
- <fee88300-dbda-344a-81e3-4d81b6ba2234@codeaurora.org>
+        Tue, 22 Jan 2019 12:11:58 -0800 (PST)
+Date:   Tue, 22 Jan 2019 15:11:58 -0500
+From:   Sean Paul <sean@poorly.run>
+To:     Jayant Shekhar <jshekhar@codeaurora.org>
+Cc:     dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, abhinavk@codeaurora.org,
+        robdclark@gmail.com, nganji@codeaurora.org, seanpaul@chromium.org,
+        hoegsberg@chromium.org, jsanka@codeaurora.org,
+        chandanu@codeaurora.org
+Subject: Re: [Freedreno] [v3] drm/msm/dpu: Clean up dpu hw interrupts
+Message-ID: <20190122201157.GL114153@art_vandelay>
+References: <1545132948-20833-1-git-send-email-jshekhar@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fee88300-dbda-344a-81e3-4d81b6ba2234@codeaurora.org>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <1545132948-20833-1-git-send-email-jshekhar@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 22 Jan 11:25 PST 2019, Jeffrey Hugo wrote:
-
-> Hi Bjorn,
+On Tue, Dec 18, 2018 at 05:05:48PM +0530, Jayant Shekhar wrote:
+> Remove unused functions and macros from files handling
+> dpu hardware interrupts.
 > 
-> This seems intresting, but I'm not sure I fully understand it yet.
+> changes in v2:
+>   Removed clear_interrupt_status (Jordan Crouse)
+> changes in v3:
+>   Changed commit text
 > 
-> On 1/22/2019 12:01 PM, Bjorn Andersson wrote:
-> > In some scenarios the early stages of the boot chain has configured
-> > regulators to be in a required state, but the later stages has skipped
-> > to inform the RPM about it's requirements.
-> So if I understand this correctly, the boot chain turned on and configured
-> the regulator, but didn't give the RPM its vote, so the RPM doesn't know
-> anything and just assumes the default state - off/unconfigured.  Right?
+> Signed-off-by: Jayant Shekhar <jshekhar@codeaurora.org>
+
+Applied to dpu-staging, thanks!
+
+Sean
+> ---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.c | 44 -----------------------
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.h | 44 -----------------------
+>  2 files changed, 88 deletions(-)
 > 
-
-In our particular case we see that if ABL decides not to enter fastboot
-it will not request the RPM to power the USB block. But the particular
-regulator is part of the power-on sequence of the PMIC, so it's on.
-
-So there's no votes in the RPM to have this on, but it is on and
-disabling it causes the system to reboot.
-
-> If we are in Linux, is that boot chain "vote" valid anymore?
-
-I've never seen this code, but I assume it treats votes from "unsecure
-apps" the same. The problem here is that there's no votes, from anyone,
-to keep this regulator enabled.
-
-> > 
-> > But as the SMD RPM regulators are being initialized voltage change
-> > requests will be issued to align the voltage with the valid ranges. The
-> > RPM aggregates all parameters for the specific regulator, the voltage
-> > will be adjusted and the "enabled" state will be "off" - and the
-> > regulator is turned off.
-> 
-> So, this would happen when Linux is processing the constraints from DT for
-> example, but is still initing the devices, so there are no consumers and
-> thus the device is not enabled, but the voltage configuration is sent to the
-> RPM to ensure the constraints are met?
-> 
-
-Correct.
-
-> > 
-> > This patch addresses this problem by caching the requested enable state,
-> > voltage and load and send the parameters in a batch, depending on the
-> > enable state - effectively delaying the voltage request for disabled
-> > regulators.
-> 
-> I'm curious, would any sort of additional latency be expected because the
-> RPM has delayed work to the enable "stage"?
-> 
-
-Afaict the PMIC itself is enabled/disabled by setting the voltage, so
-there should be no negative latency difference in postponing the voltage
-change until enable time. There's quite likely a positive gain though,
-by removing the extra round trip over SMD.
-
-> While I suspect there are benefits to this change regardless, it seems like
-> what you are describing above should be addressed by "regulator-boot-on" in
-> the DT.  Why is that not a valid solution for this scenario?
-> 
-
-Because set_machine_constraints() first calls
-machine_constraints_voltage() then _regulator_do_enable() (if boot_on is
-set). So without this patch the RPM will disable the regulator in the
-beginning of the function and not reach the end of it.
-
-Regards,
-Bjorn
-
-> > 
-> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > ---
-> >   drivers/regulator/qcom_smd-regulator.c | 104 ++++++++++++++++---------
-> >   1 file changed, 69 insertions(+), 35 deletions(-)
-> > 
-> > diff --git a/drivers/regulator/qcom_smd-regulator.c b/drivers/regulator/qcom_smd-regulator.c
-> > index f5bca77d67c1..dfdc67da5cec 100644
-> > --- a/drivers/regulator/qcom_smd-regulator.c
-> > +++ b/drivers/regulator/qcom_smd-regulator.c
-> > @@ -31,6 +31,11 @@ struct qcom_rpm_reg {
-> >   	int is_enabled;
-> >   	int uV;
-> > +	u32 load;
-> > +
-> > +	unsigned int enabled_updated:1;
-> > +	unsigned int uv_updated:1;
-> > +	unsigned int load_updated:1;
-> >   };
-> >   struct rpm_regulator_req {
-> > @@ -43,30 +48,59 @@ struct rpm_regulator_req {
-> >   #define RPM_KEY_UV	0x00007675 /* "uv" */
-> >   #define RPM_KEY_MA	0x0000616d /* "ma" */
-> > -static int rpm_reg_write_active(struct qcom_rpm_reg *vreg,
-> > -				struct rpm_regulator_req *req,
-> > -				size_t size)
-> > +static int rpm_reg_write_active(struct qcom_rpm_reg *vreg)
-> >   {
-> > -	return qcom_rpm_smd_write(vreg->rpm,
-> > -				  QCOM_SMD_RPM_ACTIVE_STATE,
-> > -				  vreg->type,
-> > -				  vreg->id,
-> > -				  req, size);
-> > +	struct rpm_regulator_req req[3];
-> > +	int reqlen = 0;
-> > +	int ret;
-> > +
-> > +	if (vreg->enabled_updated) {
-> > +		req[reqlen].key = cpu_to_le32(RPM_KEY_SWEN);
-> > +		req[reqlen].nbytes = cpu_to_le32(sizeof(u32));
-> > +		req[reqlen].value = cpu_to_le32(vreg->is_enabled);
-> > +		reqlen++;
-> > +	}
-> > +
-> > +	if (vreg->uv_updated && vreg->is_enabled) {
-> > +		req[reqlen].key = cpu_to_le32(RPM_KEY_UV);
-> > +		req[reqlen].nbytes = cpu_to_le32(sizeof(u32));
-> > +		req[reqlen].value = cpu_to_le32(vreg->uV);
-> > +		reqlen++;
-> > +	}
-> > +
-> > +	if (vreg->load_updated && vreg->is_enabled) {
-> > +		req[reqlen].key = cpu_to_le32(RPM_KEY_MA);
-> > +		req[reqlen].nbytes = cpu_to_le32(sizeof(u32));
-> > +		req[reqlen].value = cpu_to_le32(vreg->load / 1000);
-> > +		reqlen++;
-> > +	}
-> > +
-> > +	if (!reqlen)
-> > +		return 0;
-> > +
-> > +	ret = qcom_rpm_smd_write(vreg->rpm, QCOM_SMD_RPM_ACTIVE_STATE,
-> > +				 vreg->type, vreg->id,
-> > +				 req, sizeof(req[0]) * reqlen);
-> > +	if (!ret) {
-> > +		vreg->enabled_updated = 0;
-> > +		vreg->uv_updated = 0;
-> > +		vreg->load_updated = 0;
-> > +	}
-> > +
-> > +	return ret;
-> >   }
-> >   static int rpm_reg_enable(struct regulator_dev *rdev)
-> >   {
-> >   	struct qcom_rpm_reg *vreg = rdev_get_drvdata(rdev);
-> > -	struct rpm_regulator_req req;
-> >   	int ret;
-> > -	req.key = cpu_to_le32(RPM_KEY_SWEN);
-> > -	req.nbytes = cpu_to_le32(sizeof(u32));
-> > -	req.value = cpu_to_le32(1);
-> > +	vreg->is_enabled = 1;
-> > +	vreg->enabled_updated = 1;
-> > -	ret = rpm_reg_write_active(vreg, &req, sizeof(req));
-> > -	if (!ret)
-> > -		vreg->is_enabled = 1;
-> > +	ret = rpm_reg_write_active(vreg);
-> > +	if (ret)
-> > +		vreg->is_enabled = 0;
-> >   	return ret;
-> >   }
-> > @@ -81,16 +115,14 @@ static int rpm_reg_is_enabled(struct regulator_dev *rdev)
-> >   static int rpm_reg_disable(struct regulator_dev *rdev)
-> >   {
-> >   	struct qcom_rpm_reg *vreg = rdev_get_drvdata(rdev);
-> > -	struct rpm_regulator_req req;
-> >   	int ret;
-> > -	req.key = cpu_to_le32(RPM_KEY_SWEN);
-> > -	req.nbytes = cpu_to_le32(sizeof(u32));
-> > -	req.value = 0;
-> > +	vreg->is_enabled = 0;
-> > +	vreg->enabled_updated = 1;
-> > -	ret = rpm_reg_write_active(vreg, &req, sizeof(req));
-> > -	if (!ret)
-> > -		vreg->is_enabled = 0;
-> > +	ret = rpm_reg_write_active(vreg);
-> > +	if (ret)
-> > +		vreg->is_enabled = 1;
-> >   	return ret;
-> >   }
-> > @@ -108,16 +140,15 @@ static int rpm_reg_set_voltage(struct regulator_dev *rdev,
-> >   			       unsigned *selector)
-> >   {
-> >   	struct qcom_rpm_reg *vreg = rdev_get_drvdata(rdev);
-> > -	struct rpm_regulator_req req;
-> > -	int ret = 0;
-> > +	int ret;
-> > +	int old_uV = vreg->uV;
-> > -	req.key = cpu_to_le32(RPM_KEY_UV);
-> > -	req.nbytes = cpu_to_le32(sizeof(u32));
-> > -	req.value = cpu_to_le32(min_uV);
-> > +	vreg->uV = min_uV;
-> > +	vreg->uv_updated = 1;
-> > -	ret = rpm_reg_write_active(vreg, &req, sizeof(req));
-> > -	if (!ret)
-> > -		vreg->uV = min_uV;
-> > +	ret = rpm_reg_write_active(vreg);
-> > +	if (ret)
-> > +		vreg->uV = old_uV;
-> >   	return ret;
-> >   }
-> > @@ -125,13 +156,16 @@ static int rpm_reg_set_voltage(struct regulator_dev *rdev,
-> >   static int rpm_reg_set_load(struct regulator_dev *rdev, int load_uA)
-> >   {
-> >   	struct qcom_rpm_reg *vreg = rdev_get_drvdata(rdev);
-> > -	struct rpm_regulator_req req;
-> > +	u32 old_load = vreg->load;
-> > +	int ret;
-> > -	req.key = cpu_to_le32(RPM_KEY_MA);
-> > -	req.nbytes = cpu_to_le32(sizeof(u32));
-> > -	req.value = cpu_to_le32(load_uA / 1000);
-> > +	vreg->load = load_uA;
-> > +	vreg->load_updated = 1;
-> > +	ret = rpm_reg_write_active(vreg);
-> > +	if (ret)
-> > +		vreg->load = old_load;
-> > -	return rpm_reg_write_active(vreg, &req, sizeof(req));
-> > +	return ret;
-> >   }
-> >   static const struct regulator_ops rpm_smps_ldo_ops = {
-> > 
-> 
-> 
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.c
+> index c0b7f00..8a28a03 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.c
+> @@ -170,10 +170,6 @@
+>  /**
+>   * AD4 interrupt status bit definitions
+>   */
+> -#define DPU_INTR_BRIGHTPR_UPDATED BIT(4)
+> -#define DPU_INTR_DARKENH_UPDATED BIT(3)
+> -#define DPU_INTR_STREN_OUTROI_UPDATED BIT(2)
+> -#define DPU_INTR_STREN_INROI_UPDATED BIT(1)
+>  #define DPU_INTR_BACKLIGHT_UPDATED BIT(0)
+>  /**
+>   * struct dpu_intr_reg - array of DPU register sets
+> @@ -782,18 +778,6 @@ static int dpu_hw_intr_irqidx_lookup(enum dpu_intr_type intr_type,
+>  	return -EINVAL;
+>  }
+>  
+> -static void dpu_hw_intr_set_mask(struct dpu_hw_intr *intr, uint32_t reg_off,
+> -		uint32_t mask)
+> -{
+> -	if (!intr)
+> -		return;
+> -
+> -	DPU_REG_WRITE(&intr->hw, reg_off, mask);
+> -
+> -	/* ensure register writes go through */
+> -	wmb();
+> -}
+> -
+>  static void dpu_hw_intr_dispatch_irq(struct dpu_hw_intr *intr,
+>  		void (*cbfunc)(void *, int),
+>  		void *arg)
+> @@ -1004,18 +988,6 @@ static int dpu_hw_intr_disable_irqs(struct dpu_hw_intr *intr)
+>  	return 0;
+>  }
+>  
+> -static int dpu_hw_intr_get_valid_interrupts(struct dpu_hw_intr *intr,
+> -		uint32_t *mask)
+> -{
+> -	if (!intr || !mask)
+> -		return -EINVAL;
+> -
+> -	*mask = IRQ_SOURCE_MDP | IRQ_SOURCE_DSI0 | IRQ_SOURCE_DSI1
+> -		| IRQ_SOURCE_HDMI | IRQ_SOURCE_EDP;
+> -
+> -	return 0;
+> -}
+> -
+>  static void dpu_hw_intr_get_interrupt_statuses(struct dpu_hw_intr *intr)
+>  {
+>  	int i;
+> @@ -1065,19 +1037,6 @@ static void dpu_hw_intr_clear_intr_status_nolock(struct dpu_hw_intr *intr,
+>  	wmb();
+>  }
+>  
+> -static void dpu_hw_intr_clear_interrupt_status(struct dpu_hw_intr *intr,
+> -		int irq_idx)
+> -{
+> -	unsigned long irq_flags;
+> -
+> -	if (!intr)
+> -		return;
+> -
+> -	spin_lock_irqsave(&intr->irq_lock, irq_flags);
+> -	dpu_hw_intr_clear_intr_status_nolock(intr, irq_idx);
+> -	spin_unlock_irqrestore(&intr->irq_lock, irq_flags);
+> -}
+> -
+>  static u32 dpu_hw_intr_get_interrupt_status(struct dpu_hw_intr *intr,
+>  		int irq_idx, bool clear)
+>  {
+> @@ -1113,16 +1072,13 @@ static u32 dpu_hw_intr_get_interrupt_status(struct dpu_hw_intr *intr,
+>  
+>  static void __setup_intr_ops(struct dpu_hw_intr_ops *ops)
+>  {
+> -	ops->set_mask = dpu_hw_intr_set_mask;
+>  	ops->irq_idx_lookup = dpu_hw_intr_irqidx_lookup;
+>  	ops->enable_irq = dpu_hw_intr_enable_irq;
+>  	ops->disable_irq = dpu_hw_intr_disable_irq;
+>  	ops->dispatch_irqs = dpu_hw_intr_dispatch_irq;
+>  	ops->clear_all_irqs = dpu_hw_intr_clear_irqs;
+>  	ops->disable_all_irqs = dpu_hw_intr_disable_irqs;
+> -	ops->get_valid_interrupts = dpu_hw_intr_get_valid_interrupts;
+>  	ops->get_interrupt_statuses = dpu_hw_intr_get_interrupt_statuses;
+> -	ops->clear_interrupt_status = dpu_hw_intr_clear_interrupt_status;
+>  	ops->clear_intr_status_nolock = dpu_hw_intr_clear_intr_status_nolock;
+>  	ops->get_interrupt_status = dpu_hw_intr_get_interrupt_status;
+>  }
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.h
+> index 61e4cba..4d7a1c7 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.h
+> @@ -20,13 +20,6 @@
+>  #include "dpu_hw_util.h"
+>  #include "dpu_hw_mdss.h"
+>  
+> -#define IRQ_SOURCE_MDP		BIT(0)
+> -#define IRQ_SOURCE_DSI0		BIT(4)
+> -#define IRQ_SOURCE_DSI1		BIT(5)
+> -#define IRQ_SOURCE_HDMI		BIT(8)
+> -#define IRQ_SOURCE_EDP		BIT(12)
+> -#define IRQ_SOURCE_MHL		BIT(16)
+> -
+>  /**
+>   * dpu_intr_type - HW Interrupt Type
+>   * @DPU_IRQ_TYPE_WB_ROT_COMP:		WB rotator done
+> @@ -96,18 +89,6 @@ enum dpu_intr_type {
+>   */
+>  struct dpu_hw_intr_ops {
+>  	/**
+> -	 * set_mask - Programs the given interrupt register with the
+> -	 *            given interrupt mask. Register value will get overwritten.
+> -	 * @intr:	HW interrupt handle
+> -	 * @reg_off:	MDSS HW register offset
+> -	 * @irqmask:	IRQ mask value
+> -	 */
+> -	void (*set_mask)(
+> -			struct dpu_hw_intr *intr,
+> -			uint32_t reg,
+> -			uint32_t irqmask);
+> -
+> -	/**
+>  	 * irq_idx_lookup - Lookup IRQ index on the HW interrupt type
+>  	 *                 Used for all irq related ops
+>  	 * @intr_type:		Interrupt type defined in dpu_intr_type
+> @@ -177,16 +158,6 @@ struct dpu_hw_intr_ops {
+>  			struct dpu_hw_intr *intr);
+>  
+>  	/**
+> -	 * clear_interrupt_status - Clears HW interrupt status based on given
+> -	 *                          lookup IRQ index.
+> -	 * @intr:	HW interrupt handle
+> -	 * @irq_idx:	Lookup irq index return from irq_idx_lookup
+> -	 */
+> -	void (*clear_interrupt_status)(
+> -			struct dpu_hw_intr *intr,
+> -			int irq_idx);
+> -
+> -	/**
+>  	 * clear_intr_status_nolock() - clears the HW interrupts without lock
+>  	 * @intr:	HW interrupt handle
+>  	 * @irq_idx:	Lookup irq index return from irq_idx_lookup
+> @@ -206,21 +177,6 @@ struct dpu_hw_intr_ops {
+>  			struct dpu_hw_intr *intr,
+>  			int irq_idx,
+>  			bool clear);
+> -
+> -	/**
+> -	 * get_valid_interrupts - Gets a mask of all valid interrupt sources
+> -	 *                        within DPU. These are actually status bits
+> -	 *                        within interrupt registers that specify the
+> -	 *                        source of the interrupt in IRQs. For example,
+> -	 *                        valid interrupt sources can be MDP, DSI,
+> -	 *                        HDMI etc.
+> -	 * @intr:	HW interrupt handle
+> -	 * @mask:	Returning the interrupt source MASK
+> -	 * @return:	0 for success, otherwise failure
+> -	 */
+> -	int (*get_valid_interrupts)(
+> -			struct dpu_hw_intr *intr,
+> -			uint32_t *mask);
+>  };
+>  
+>  /**
 > -- 
-> Jeffrey Hugo
-> Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies,
-> Inc.
-> Qualcomm Technologies, Inc. is a member of the
-> Code Aurora Forum, a Linux Foundation Collaborative Project.
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
+> _______________________________________________
+> Freedreno mailing list
+> Freedreno@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/freedreno
+
+-- 
+Sean Paul, Software Engineer, Google / Chromium OS
