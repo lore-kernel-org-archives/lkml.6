@@ -2,222 +2,160 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AECB1C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:59:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C52EFC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:00:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7888C20854
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:59:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="Gyl0oqkS"
+	by mail.kernel.org (Postfix) with ESMTP id 9D75920870
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:00:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727532AbfAVI74 (ORCPT
+        id S1727574AbfAVJAB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 03:59:56 -0500
-Received: from mail.kmu-office.ch ([178.209.48.109]:53718 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726953AbfAVI7z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 03:59:55 -0500
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 65AFE5C1869;
-        Tue, 22 Jan 2019 09:59:52 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1548147592;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=34pKV0yV+V0SIokoQwQR8ivL4IXCi+WSHju/feFhZrA=;
-        b=Gyl0oqkSEjjq1B6MJpa5CuCjmGB5RPr+eLz42q8smIbpo4WD36JZHjgayX1m9DSKva/4eN
-        jobvgw7VDNNchrWwMQBEia0QlovN+3iFcwavGNokfQFITx8FoyKncSPaGba5bwD/UkkrCp
-        pw6HK1ygUtoDSOe/OELozVT99Zq1Vfo=
+        Tue, 22 Jan 2019 04:00:01 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:43500 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726953AbfAVJAA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 04:00:00 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CA0827F6B3;
+        Tue, 22 Jan 2019 08:59:58 +0000 (UTC)
+Received: from [10.36.117.215] (ovpn-117-215.ams2.redhat.com [10.36.117.215])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 06FA2105704C;
+        Tue, 22 Jan 2019 08:59:34 +0000 (UTC)
+Subject: Re: [PATCH RFC 00/24] userfaultfd: write protection support
+To:     Peter Xu <peterx@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Hugh Dickins <hughd@google.com>,
+        Maya Gokhale <gokhale2@llnl.gov>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Martin Cracauer <cracauer@cons.org>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Shaohua Li <shli@fb.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Pavel Emelyanov <xemul@parallels.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Marty McFadden <mcfadden8@llnl.gov>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
+References: <20190121075722.7945-1-peterx@redhat.com>
+ <c2485a2d-25b3-2fc0-4902-01fa278be9c7@redhat.com>
+ <20190122031803.GB7669@xz-x1>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <c36071dd-da8a-22fa-8f9a-262c942fcdf4@redhat.com>
+Date:   Tue, 22 Jan 2019 09:59:34 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 22 Jan 2019 09:59:49 +0100
-From:   Stefan Agner <stefan@agner.ch>
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     will.deacon@arm.com, shawnguo@kernel.org, l.stach@pengutronix.de,
-        kernel@pengutronix.de, fabio.estevam@nxp.com, linux-imx@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drivers/perf: handle multiple CPUs with single interrupts
-In-Reply-To: <20190121172325.GD47506@lakrids.cambridge.arm.com>
-References: <20190121144111.22716-1-stefan@agner.ch>
- <20190121172325.GD47506@lakrids.cambridge.arm.com>
-Message-ID: <730dcd70a60efc0756570153b6ea84d2@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.7
+In-Reply-To: <20190122031803.GB7669@xz-x1>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 22 Jan 2019 08:59:59 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21.01.2019 18:23, Mark Rutland wrote:
-> Hi Stefan,
+On 22.01.19 04:18, Peter Xu wrote:
+> On Mon, Jan 21, 2019 at 03:33:21PM +0100, David Hildenbrand wrote:
 > 
-> On Mon, Jan 21, 2019 at 03:41:11PM +0100, Stefan Agner wrote:
->> Currently, if only a single interrupt is available, the code assigns
->> this single interrupt to the first CPU. All other CPUs are left
->> unsupported. This allows to use perf events only on processes using
->> the first CPU. This is not obvious to the user.
->>
->> Instead, disable interrupts but support all CPUs. This allows to use
->> the PMU on all CPUs for all events other than sampling events which do
->> require interrupt support.
+> [...]
 > 
-> Even for non-sampling events we use the overflow interrupt to ensure
-> that we don't lose count across overflows, and without that interrupt,
-> we cannot guarantee that the results are accurate.
+>> Does this series fix the "false positives" case I experienced on early
+>> prototypes of uffd-wp? (getting notified about a write access although
+>> it was not a write access?)
 > 
-> For example:
+> Hi, David,
 > 
-> 	Program counter to 0
-> 	Start program
-> 	< counter overflows, no interrupt >
-> 	< counter overflows, no interrupt >
-> 	Stop program
-> 	Counter reads as 5
-> 
-> 
-> ... which we cannot distinguish from:
-> 
-> 	Program counter to 0
-> 	Start program
-> 	< counter overflows, no interrupt >
-> 	< counter overflows, no interrupt >
-> 	< counter overflows, no interrupt >
-> 	< counter overflows, no interrupt >
-> 	< counter overflows, no interrupt >
-> 	< counter overflows, no interrupt >
-> 	Stop program
-> 	Counter reads as 5
-> 
-> ... and thus cannot provide any reasonable confidence in results.
+> Yes it should solve it.
 
-Oh ok I see, this is not what we want at all!
+Terrific, as my use case for uffd-wp really rely on not having false
+positives these are good news :)
 
-Currently we register that one IRQ for CPU0. So what happens today is:
+... however it will take a while until I actually have time to look back
+into it (too much stuff on my table).
 
- 	Program counter to 0
- 	Start program
-        < program scheduled on CPU0 >
- 	< counter overflows, interrupt >
-        < program scheduled on CPU1 >
- 	< counter overflows, no interrupt >
- 	< counter overflows, no interrupt >
- 	Stop program
- 	Counter reads as 5
+Just for reference (we talked about this offline once):
 
-Which is off too...
+My plan is to use this for virtio-mem in QEMU. Memory that a virtio-mem
+device provides to a guest can either be plugged or unplugged. When
+unplugging, memory will be MADVISE_DONTNEED'ed and uffd-wp'ed. The guest
+can still read memory (e.g. for dumping) but writing to it is considered
+bad (as the guest could this way consume more memory as intended). So I
+can detect malicious guests without too much overhead this way.
 
-I could also reproduce this by manually moving the process between
-CPU0/1...
+False positives would mean that I would detect guests as malicious
+although they are not. So it really would be harmful.
 
-We probably should not probe the driver at all then? It seems rather
-unwise to provide users PMU data which might be plain wrong.
+Thanks!
 
 > 
-> In theory, we could use a hrtimer to periodically refresh the events to
-> prevent this, but this would need to be set at some very high frequency
-> to account for the fastest potential counter, and would significantly
-> degrade performance.
-> 
-> I don't think that's going to be reliable, and given that, I don't think
-> that we can support muxed IRQs in this way.
-
-Is it possible to get the overflow interrupts as well as read the PMU
-counters for another CPU?
-
-If not, I assume the interrupt bounce mechanism from ux500 is the only
-way?
-
---
-Stefan
-
+> The early prototype in Andrea's tree hasn't yet applied the new
+> PTE/swap bits for uffd-wp hence it was not able to avoid those fause
+> positives.  This series has applied all those ideas (which actually
+> come from Andrea as well) so the protection information will be
+> persisent per PTE rather than per VMA and it will be kept even through
+> swapping and page migrations.
 > 
 > Thanks,
-> Mark.
 > 
->>
->> Signed-off-by: Stefan Agner <stefan@agner.ch>
->> ---
->> This has been observed and tested on a i.MX 6DualLite, but is probably
->> valid for i.MX 6Quad as well.
->>
->> It seems that ux500 once had support for single IRQ on a SMP system,
->> however this got removed with:
->> Commit 2b05f6ae1ee5 ("ARM: ux500: remove PMU IRQ bouncer")
->>
->> I noticed that with this patch I get an error when trying to use perf stat:
->>   # perf top
->>   Error:
->>   cycles: PMU Hardware doesn't support sampling/overflow-interrupts. Try 'perf stat'
->>
->> Without this patch perf top seems to work, but it seems not to use any
->> sampling events (?):
->>   # perf top
->> PerfTop:    7215 irqs/sec  kernel:100.0%  exact:  0.0% [4000Hz cpu-clock:pppH], (all, 2 CPUs)
->> ....
->>
->> Also starting perf top and explicitly selecting cpu-clock seems to work
->> and show the same data as before this change.
->>   # perf top -e cpu-clock:pppH
->> PerfTop:    7214 irqs/sec  kernel:100.0%  exact:  0.0% [4000Hz cpu-clock:pppH], (all, 2 CPUs)
->>
->> It seems that perf top falls back to cpu-clock in the old case, but not
->> once sampling events are not supported...
->>
->> --
->> Stefan
->>
->>
->>  drivers/perf/arm_pmu_platform.c | 19 +++++++++++--------
->>  1 file changed, 11 insertions(+), 8 deletions(-)
->>
->> diff --git a/drivers/perf/arm_pmu_platform.c b/drivers/perf/arm_pmu_platform.c
->> index 933bd8410fc2..80b991417b6e 100644
->> --- a/drivers/perf/arm_pmu_platform.c
->> +++ b/drivers/perf/arm_pmu_platform.c
->> @@ -105,23 +105,26 @@ static int pmu_parse_irqs(struct arm_pmu *pmu)
->>  		return num_irqs;
->>  	}
->>
->> +	if (num_irqs == 1) {
->> +		int irq = platform_get_irq(pdev, 0);
->> +		if (irq && irq_is_percpu_devid(irq))
->> +			return pmu_parse_percpu_irq(pmu, irq);
->> +	}
->> +
->>  	/*
->>  	 * In this case we have no idea which CPUs are covered by the PMU.
->>  	 * To match our prior behaviour, we assume all CPUs in this case.
->> +	 * Multiple CPUs with a single PMU irq are currently not handled.
->> +	 * Rather than supporting only the first CPU, support all CPUs but
->> +	 * without interrupt capability.
->>  	 */
->> -	if (num_irqs == 0) {
->> -		pr_warn("no irqs for PMU, sampling events not supported\n");
->> +	if (num_irqs == 0 || (nr_cpu_ids > 1 && num_irqs == 1)) {
->> +		pr_info("No per CPU irqs for PMU, sampling events not supported\n");
->>  		pmu->pmu.capabilities |= PERF_PMU_CAP_NO_INTERRUPT;
->>  		cpumask_setall(&pmu->supported_cpus);
->>  		return 0;
->>  	}
->>
->> -	if (num_irqs == 1) {
->> -		int irq = platform_get_irq(pdev, 0);
->> -		if (irq && irq_is_percpu_devid(irq))
->> -			return pmu_parse_percpu_irq(pmu, irq);
->> -	}
->> -
->>  	if (nr_cpu_ids != 1 && !pmu_has_irq_affinity(pdev->dev.of_node)) {
->>  		pr_warn("no interrupt-affinity property for %pOF, guessing.\n",
->>  			pdev->dev.of_node);
->> --
->> 2.20.1
->>
+
+
+-- 
+
+Thanks,
+
+David / dhildenb
