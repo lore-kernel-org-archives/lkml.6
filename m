@@ -2,93 +2,116 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30191C37124
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0890CC37122
 	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 02:02:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00F9F2089F
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 02:02:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C87F120870
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 02:02:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="YeKQSxGa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726861AbfAVCCJ (ORCPT
+        id S1726792AbfAVCCG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 21:02:09 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:57730 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726601AbfAVCCI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 21:02:08 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D1A6BD2EE5;
-        Tue, 22 Jan 2019 02:02:07 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-25.pek2.redhat.com [10.72.8.25])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6D6F65D736;
-        Tue, 22 Jan 2019 02:01:37 +0000 (UTC)
-Date:   Tue, 22 Jan 2019 10:01:30 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Sagi Grimberg <sagi@grimberg.me>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Theodore Ts'o <tytso@mit.edu>, Omar Sandoval <osandov@fb.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
-        Christoph Hellwig <hch@lst.de>, linux-ext4@vger.kernel.org,
-        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
-        Boaz Harrosh <ooo@electrozaur.com>,
-        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
-Subject: Re: [PATCH V14 00/18] block: support multi-page bvec
-Message-ID: <20190122020128.GB2490@ming.t460p>
-References: <20190121081805.32727-1-ming.lei@redhat.com>
- <61dfaa1e-e7bf-75f1-410b-ed32f97d0782@grimberg.me>
+        Mon, 21 Jan 2019 21:02:06 -0500
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:56995 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726601AbfAVCCG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 21:02:06 -0500
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id x0M21ptg027105;
+        Tue, 22 Jan 2019 11:01:51 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com x0M21ptg027105
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1548122512;
+        bh=3KjszKj7hQE/0MhMfckZri1t/eeBuLPzkQH2181wOFo=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=YeKQSxGa1HkCdiLdGwkOso2NappFwj5TacZlzLBUuhYtmCXU/vkSBfg0tLaFste7A
+         0i+b0Em/X2546+jWx4B8ymFFPJYbCz8JRFwemqhqJiNI1yhMnIniQqFyrn8WcwZhum
+         84msA0BClqJWkBZFHaA17wsaS+X8iVe7Qm1F9qdXHY8aUh8e4WwMumbCJczGCBMRBs
+         a+RtlxmihYJ5EYPv+kUGMRN2bzfdDjBsyIkulTHNKrarp/u5B0O8PrfgaHolOs6gZT
+         AoPW4VsnzxNBfuz/Gd0QdUXuS2PL5AulzNb6R0GE6L6/xBTUvfW0w/zMP4YM+uh07o
+         dI+xrYqLX079w==
+X-Nifty-SrcIP: [209.85.222.52]
+Received: by mail-ua1-f52.google.com with SMTP id t8so7582124uap.0;
+        Mon, 21 Jan 2019 18:01:51 -0800 (PST)
+X-Gm-Message-State: AJcUukdOsrz1ru3Ab+pwN2qW5n5vi4mzth1RXozccm4hX5GNIB9+WLb2
+        8Bsj1x1tUyAjjwRLWDY00QUh8lmW83yhwOzogsc=
+X-Google-Smtp-Source: ALg8bN6ofMx0hznmVYRlUKKmEtSWP+zE+0hmQhIpNBnZI09dc3Tw8Im/utW/u3tYG/PLLzBu/QY49wsnhUu3B1iGWvg=
+X-Received: by 2002:ab0:849:: with SMTP id b9mr12700737uaf.93.1548122510513;
+ Mon, 21 Jan 2019 18:01:50 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <61dfaa1e-e7bf-75f1-410b-ed32f97d0782@grimberg.me>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 22 Jan 2019 02:02:08 +0000 (UTC)
+References: <1548038929-11814-1-git-send-email-yamada.masahiro@socionext.com> <20190121174106.6tgokdtlo5f72hdx@pburton-laptop>
+In-Reply-To: <20190121174106.6tgokdtlo5f72hdx@pburton-laptop>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 22 Jan 2019 11:01:14 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQpVF=uHs+AxVomxQDwzpPtmKTT4-D4Hc7JphygF0BFKQ@mail.gmail.com>
+Message-ID: <CAK7LNAQpVF=uHs+AxVomxQDwzpPtmKTT4-D4Hc7JphygF0BFKQ@mail.gmail.com>
+Subject: Re: [PATCH] MIPS: remove meaningless generic-(CONFIG_GENERIC_CSUM) += checksum.h
+To:     Paul Burton <paul.burton@mips.com>
+Cc:     "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 01:43:21AM -0800, Sagi Grimberg wrote:
-> 
-> > V14:
-> > 	- drop patch(patch 4 in V13) for renaming bvec helpers, as suggested by Jens
-> > 	- use mp_bvec_* as multi-page bvec helper name
-> > 	- fix one build issue, which is caused by missing one converion of
-> > 	bio_for_each_segment_all in fs/gfs2
-> > 	- fix one 32bit ARCH specific issue caused by segment boundary mask
-> > 	overflow
-> 
-> Hey Ming,
-> 
-> So is nvme-tcp also affected here? The only point where I see nvme-tcp
-> can be affected is when initializing a bvec iter using bio_segments() as
-> everywhere else we use iters which should transparently work..
-> 
-> I see that loop was converted, does it mean that nvme-tcp needs to
-> call something like?
-> --
-> 	bio_for_each_mp_bvec(bv, bio, iter)
-> 		nr_bvecs++;
+Hi Paul,
 
-bio_for_each_segment()/bio_segments() still works, just not as efficient
-as bio_for_each_mp_bvec() given each multi-page bvec(very similar with scatterlist)
-is returned in each loop.
+On Tue, Jan 22, 2019 at 2:44 AM Paul Burton <paul.burton@mips.com> wrote:
+>
+> Hi Masahiro,
+>
+> On Mon, Jan 21, 2019 at 11:48:49AM +0900, Masahiro Yamada wrote:
+> > This line is weird in multiple ways.
+> >
+> > (CONFIG_GENERIC_CSUM) might be a typo of $(CONFIG_GENERIC_CSUM).
+> >
+> > Even if you add '$' to it, $(CONFIG_GENERIC_CSUM) is never evaluated
+> > to 'y' because scripts/Makefile.asm-generic does not include
+> > include/config/auto.conf. So, the asm-generic wrapper of checksum.h
+> > is never generated.
+> >
+> > Even if you manage to generate it, it is never included by anyone
+> > because MIPS has the checkin header with the same file name:
+> >
+> >   arch/mips/include/asm/checksum.h
+> >
+> > As you see in the top Makefile, the checkin headers are included before
+> > generated ones.
+> >
+> >   LINUXINCLUDE    := \
+> >                   -I$(srctree)/arch/$(SRCARCH)/include \
+> >                   -I$(objtree)/arch/$(SRCARCH)/include/generated \
+> >                   ...
+> >
+> > Commit 4e0748f5beb9 ("MIPS: Use generic checksum functions for MIPS R6")
+> > already added the asm-generic fallback code in the checkin header:
+> >
+> >   #ifdef CONFIG_GENERIC_CSUM
+> >   #include <asm/generic/checksum.h>
+> >   #else
+> >     ...
+> >   #endif
+> >
+> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>
+> Good catch. Would you prefer to take this through your kbuild tree or
+> that I take it through the MIPS tree?
 
-I don't look at nvme-tcp code yet. But if nvme-tcp supports this way,
-it can benefit from bio_for_each_mp_bvec().
 
-Thanks,
-Ming
+Could you apply it to MIPS tree? Thanks.
+
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
