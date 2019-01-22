@@ -2,84 +2,128 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1977DC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:46:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DC56C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:46:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2F1921019
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:46:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548182799;
-	bh=tl9DCLKXjAhXy9ycBvnviTa/2UvZp7jSj4VYZkcOkmA=;
-	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=vdmkXocgXdDmxUoJv5h7ubDXGkIQ5G339sO6+zZCVcBeHS7Z+wJK/A+dIwyumRNGu
-	 xCdye6i6bTMxg8qu4egDesd2GhP2BTznFgzLVGpIQYNFv9NbNkE//k8cwBS85PjHbx
-	 hJhp9SNasWPR2ySRXmuDpSqncxAj2i3AlDbaslyE=
+	by mail.kernel.org (Postfix) with ESMTP id 1D1A121019
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 18:46:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="Sf9O6DWT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726661AbfAVSqg (ORCPT
+        id S1726798AbfAVSqn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 13:46:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33308 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725984AbfAVSqf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 13:46:35 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A112D21019;
-        Tue, 22 Jan 2019 18:46:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548182795;
-        bh=tl9DCLKXjAhXy9ycBvnviTa/2UvZp7jSj4VYZkcOkmA=;
-        h=Date:From:To:Cc:Subject:From;
-        b=hzMnRk08UUUJER3sBFFjC/OWuKamTjdtDHi8eRKcqlkCF1ggVJhgGaGsCvvYvlmwB
-         eVym28nmG4SfkSsuLSpeqrxIo/p7LLS5qJCEGHaTiXr4ubCXm3lNJcKngh3pynyt8L
-         Z49rv483ClfyDwH54U5yDw6QW7yyDExqFqB0NVZE=
-Date:   Tue, 22 Jan 2019 19:46:32 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     Sasha Levin <sashal@kernel.org>, stable@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH] stable-kernel-rules.rst: add link to networking patch queue
-Message-ID: <20190122184632.GA32510@kroah.com>
+        Tue, 22 Jan 2019 13:46:43 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:42350 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726143AbfAVSql (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 13:46:41 -0500
+Received: by mail-qt1-f194.google.com with SMTP id d19so28770033qtq.9
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 10:46:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=K+cGlAPlqOoUkydwycvdrIyVVK2twhWUQCCP+F0nY5g=;
+        b=Sf9O6DWTBxyq0uyIQrHGw20l+KF8SLChDm62U4eYAR14HlCBX3slB0s8/9c9pHkITY
+         S977kjUs1BkvWJEUKv0PWIZMuCsc52Wpzer4ObFEQ5Pv0gEUmgtu5YGQtRaKzQulPdxU
+         MCWu9KgVt5Z5zi9chIMzpCROkm+TlI9R41Ce9Q8kio12mBKDBekYXqp2Uv5sji3S7mey
+         j8mmK6Eh3rUPOfM6xSsghXxa31Ss2eK4bKuZeZMIIh6ItSZjPj6xyQGBLsbTNhscYPJ7
+         wHoB1bILbqDF1ArdN1JyQXlq0ehpj8W8PzzwrExw5k+TEh/spznL21/QicxPvPmXmWGw
+         2sWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=K+cGlAPlqOoUkydwycvdrIyVVK2twhWUQCCP+F0nY5g=;
+        b=hA6jhvC38bCABRUTGfOo5U58nZ09viomN9mkYGkZeu9k+pp0sXkXbLZwzJ+qIUobn4
+         apaIb3RaBHIOrvL0aZoHahyKfTcYKIiXmPTG/Y8KLh8rEDp/GWdtq0F/rL4sbud7a4kA
+         E7fq4x53BDgkK58X3Ibt0nxI+YXGj6X555PKg6YpnfwttvPNw1L0rHAX6ez7Kqi6UzwU
+         5VnAbqvWhHG5irtSbadIp40TVCqGg4+B0n9evnOb7NOXKCLo0LZzJW5Wy4RI/pr6mgR1
+         +8Su4Wg9N4fLOYawIyE0MSv5sjGY/aWUS8bTFsTbGkAAJiS565akeFheNDEukYpH0vKF
+         p8wQ==
+X-Gm-Message-State: AJcUukchsF2jj2azxtX2LscFBfSXkMpinEXfHNEvvbY6YLW+c4w//VDE
+        TvCk7ehbr5VKvu2OLHf/f3INug==
+X-Google-Smtp-Source: ALg8bN4PHmfpYEQKbfrFlE763VSIsxHdEwy6HdGrSfm48R8Sm4zRMRj0mq+fR4QFR5W/Ri8UjI2kcQ==
+X-Received: by 2002:a0c:90a6:: with SMTP id p35mr30364014qvp.125.1548182800591;
+        Tue, 22 Jan 2019 10:46:40 -0800 (PST)
+Received: from ovpn-120-54.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id z18sm35579537qkz.96.2019.01.22.10.46.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 22 Jan 2019 10:46:40 -0800 (PST)
+Subject: Re: [PATCH] backing-dev: no need to check return value of
+ debugfs_create functions
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>, Michal Hocko <mhocko@suse.com>,
+        linux-mm@kvack.org
+References: <20190122152151.16139-8-gregkh@linuxfoundation.org>
+ <20190122160759.mx3h7gjc23zmrvxc@linutronix.de>
+ <20190122162503.GB22548@kroah.com>
+ <20190122171908.c7geuvluezkjp3s7@linutronix.de>
+ <20190122183348.GA31271@kroah.com>
+From:   Qian Cai <cai@lca.pw>
+Message-ID: <86349002-49d7-7053-b26f-51309e320a04@lca.pw>
+Date:   Tue, 22 Jan 2019 13:46:38 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <20190122183348.GA31271@kroah.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The networking maintainer keeps a public list of the patches being
-queued up for the next round of stable releases.  Be sure to check there
-before asking for a patch to be applied so that you do not waste
-people's time.
-
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Acked-by: David S. Miller <davem@davemloft.net>
----
-
-Jon, I can take this through one of my trees if you don't want to, which
-ever is easier for you.
 
 
-diff --git a/Documentation/process/stable-kernel-rules.rst b/Documentation/process/stable-kernel-rules.rst
-index 0de6f6145cc6..7ba8cd567f84 100644
---- a/Documentation/process/stable-kernel-rules.rst
-+++ b/Documentation/process/stable-kernel-rules.rst
-@@ -38,6 +38,9 @@ Procedure for submitting patches to the -stable tree
-  - If the patch covers files in net/ or drivers/net please follow netdev stable
-    submission guidelines as described in
-    :ref:`Documentation/networking/netdev-FAQ.rst <netdev-FAQ>`
-+   after first checking the stable networking queue at
-+   https://patchwork.ozlabs.org/bundle/davem/stable/?series=&submitter=&state=*&q=&archive=
-+   to ensure the requested patch is not already queued up.
-  - Security patches should not be handled (solely) by the -stable review
-    process but should follow the procedures in
-    :ref:`Documentation/admin-guide/security-bugs.rst <securitybugs>`.
+On 1/22/19 1:33 PM, Greg Kroah-Hartman wrote:
+> On Tue, Jan 22, 2019 at 06:19:08PM +0100, Sebastian Andrzej Siewior wrote:
+>> On 2019-01-22 17:25:03 [+0100], Greg Kroah-Hartman wrote:
+>>>>>  }
+>>>>>  
+>>>>>  static void bdi_debug_unregister(struct backing_dev_info *bdi)
+>>>>>  {
+>>>>> -	debugfs_remove(bdi->debug_stats);
+>>>>> -	debugfs_remove(bdi->debug_dir);
+>>>>> +	debugfs_remove_recursive(bdi->debug_dir);
+>>>>
+>>>> this won't remove it.
+>>>
+>>> Which is fine, you don't care.
+>>
+>> but if you cat the stats file then it will dereference the bdi struct
+>> which has been free(), right?
+> 
+> Maybe, I don't know, your code is long gone, it doesn't matter :)
+> 
+>>> But step back, how could that original call be NULL?  That only happens
+>>> if you pass it a bad parent dentry (which you didn't), or the system is
+>>> totally out of memory (in which case you don't care as everything else
+>>> is on fire).
+>>
+>> debugfs_get_inode() could do -ENOMEM and then the directory creation
+>> fails with NULL.
+> 
+> And if that happens, your system has worse problems :)
+
+Well, there are cases that people are running longevity testing on debug kernels
+that including OOM and reading all files in sysfs test cases.
+
+Admittedly, the situation right now is not all that healthy as many things are
+unable to survive in a low-memory situation, i.e., kmemleak, dma-api debug etc
+could just disable themselves.
+
+That's been said, it certainly not necessary to make the situation worse by
+triggering a NULL pointer dereferencing or KASAN use-after-free warnings because
+of those patches.
