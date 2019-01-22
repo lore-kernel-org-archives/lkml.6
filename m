@@ -2,169 +2,153 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15F8BC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:30:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED967C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:35:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC6B52085A
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:30:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B92522085A
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:35:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kliy7H1d"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="aYdOGeSx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726329AbfAVTaY (ORCPT
+        id S1726156AbfAVTfz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 14:30:24 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:43710 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725925AbfAVTaX (ORCPT
+        Tue, 22 Jan 2019 14:35:55 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:40951 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725925AbfAVTfy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 14:30:23 -0500
-Received: by mail-pf1-f193.google.com with SMTP id w73so12238728pfk.10
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 11:30:23 -0800 (PST)
+        Tue, 22 Jan 2019 14:35:54 -0500
+Received: by mail-wr1-f68.google.com with SMTP id p4so28765002wrt.7
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 11:35:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=0svbN6i4itkKxNAdYGiwewg99TGL10PzPycLA5Tqml0=;
-        b=kliy7H1dEdIGi4NgewX6L2KDp9EZdWGGzwN46i4wtvH7/AUci6vuKXYTw06vXlRUOy
-         htnhEOsPLuDSaztzLQiHiZgWN8MB57wySfDSRT9nghwabyjnfjZ/3jUyQ6wMfs9AWei/
-         jWoiaUx99vrD3CGC57YHBnYblizEFS0LeVXMk=
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=tRJsa09xm5VgkkRKpiXzMXtNZ4IuWnoYtrD79ZJjKyM=;
+        b=aYdOGeSxYb6EgYiJjYM3xMjjqx383yaSYPXElTvOyHBuB5oRkLCx1JsrfAA9OdboOn
+         OMtZr7PejcJ1g1ZQZSY3aolib8OGpd6rMt21yH4TSuhk4wHjS81nZG9sv8eorsD29mdC
+         4W5Z3im7ubSScOn1ZN82aUh4RAMk5kOtkN7tQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0svbN6i4itkKxNAdYGiwewg99TGL10PzPycLA5Tqml0=;
-        b=X+jxwWWSGStZMTpkbvER/DvUsQ/8GHkxeJhMhgnnwufK1B4QyHAWV9P4c9WPfp1Ovn
-         esP4oMhfzQ3vXEFh56tGGH03Iq8k/vMarLuGHY9n/9FZ2372MCl2bbYOz6oRvTRvL2SY
-         sCaJJ1vGzM38HN7ZjQLhSVSY+Lp04o0j6R4B5gOS8ly87f+IFygzwXpOIIfhRJu/C+au
-         SUhNEgF5uzjw58OlXF1NOFfUXgz2+8gZHgXJB6L5kTYpF8tSU1GLphcqHDuoCP7mn4n9
-         u1489LLaxtuo78oe0fHY1xF+EYX8zhNJa9/nBGUv6J/rJRHJTPeg6CWtj0s3spPzcjlY
-         1+nQ==
-X-Gm-Message-State: AJcUukdTVJvKOLeUiVv4InMtp5mFF03Fw30qPvVJoyZTNjS8dF9MbaP9
-        5agxi1wbQvBgGf4nOBUtIqIYQA==
-X-Google-Smtp-Source: ALg8bN7fldKpjtuf4P1W6W4vYDi1fHwpQGWyrFaZsXaUPJSmWtApndMcC1PLIaCFvVcsaRrlQRdQDw==
-X-Received: by 2002:a62:a510:: with SMTP id v16mr34480832pfm.18.1548185422745;
-        Tue, 22 Jan 2019 11:30:22 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id d6sm27033224pgc.89.2019.01.22.11.30.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 22 Jan 2019 11:30:22 -0800 (PST)
-Date:   Tue, 22 Jan 2019 11:30:21 -0800
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Juri Lelli <juri.lelli@gmail.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Rafael Wysocki <rjw@rjwysocki.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/3] drivers: Frequency constraint infrastructure
-Message-ID: <20190122193021.GG261387@google.com>
-References: <cover.1547197612.git.viresh.kumar@linaro.org>
- <CAJZ5v0gs3FnCgFS8rg7vwCeATJKfR+mfMVrpkTbM237XVhpDJQ@mail.gmail.com>
- <20190117131631.GA14385@localhost.localdomain>
- <CAJZ5v0jFqXGf_G2v1VNXSxyiDzgeFY8OKUFu2tQ8Wso3dBS+_w@mail.gmail.com>
- <20190118123900.GJ14385@localhost.localdomain>
- <CAJZ5v0gtjq9Nh0WHbMzY+3Z3o5NWiWhP=QEXxzjVe3ta32z7=Q@mail.gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=tRJsa09xm5VgkkRKpiXzMXtNZ4IuWnoYtrD79ZJjKyM=;
+        b=YmwhObPXBTvypUcFZ09BLGBQk9u/J10EvXDZDyo5nQlQbCXVfI8Eux7hmmqLhdybtG
+         P3diaAEmilf/HodFNDfkmvVfQvn3L3kkKmI+mEsTOxIC2AYdBA9z081TrHnm5O4vWleW
+         Hy7Jw166q9KdujVSIyEwVqm20n831Xj5ixBv8LT8WD5TEugHZmXO/2bUpaISuM1C21Jj
+         zbY/7EsZWfuTdR05Q6Bkz7TUPd3GxB2YvFMgMzoNC26pOwhxvIV6MBInMFgrpUwtZIG9
+         3CNSwqR+P5TEHfoVpbQJrAfAv9d7S7FsHRIZrYtfIHaItllH79dO81HAwFdsFO/B2OD9
+         ABwQ==
+X-Gm-Message-State: AJcUukfOWr8ZDvvM7RGBey9podVLTRF5C6LL4duSF6zOatc5L6OV11gV
+        OdPYdbH5urZqMKCxM2p9yT0LPA==
+X-Google-Smtp-Source: ALg8bN6jMUXSPhssGVxvXuXyM3eh9MIbLvsAUqJhuxMyFGI3KZkY+gsWJBz0thl0QEU68N2zVVoLaA==
+X-Received: by 2002:a05:6000:120a:: with SMTP id e10mr34485511wrx.85.1548185752852;
+        Tue, 22 Jan 2019 11:35:52 -0800 (PST)
+Received: from [192.168.1.2] (92.red-83-34-185.dynamicip.rima-tde.net. [83.34.185.92])
+        by smtp.gmail.com with ESMTPSA id e16sm168281100wrn.72.2019.01.22.11.35.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 22 Jan 2019 11:35:52 -0800 (PST)
+Subject: Re: [PATCH 08/13] clk: qcom: hfpll: CLK_IGNORE_UNUSED
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>, robh+dt@kernel.org,
+        mark.rutland@arm.com, andy.gross@linaro.org,
+        david.brown@linaro.org, will.deacon@arm.com,
+        mturquette@baylibre.com, jassisinghbrar@gmail.com,
+        vkoul@kernel.org, niklas.cassel@linaro.org, sibis@codeaurora.org,
+        georgi.djakov@linaro.org, arnd@arndb.de,
+        horms+renesas@verge.net.au, heiko@sntech.de,
+        enric.balletbo@collabora.com, jagan@amarulasolutions.com,
+        olof@lixom.net, amit.kucheria@linaro.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+References: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
+ <1545039990-19984-9-git-send-email-jorge.ramirez-ortiz@linaro.org>
+ <20190117063312.GE25498@builder>
+ <9abbe59b-433c-4e30-1e4d-b5eed3afc695@linaro.org>
+ <20190117100807.pmew5iqisdcc63eq@vireshk-i7>
+ <e55df608-7058-63b9-b449-982d32e08759@linaro.org>
+ <154818283956.20280.2895221927807522124@swboyd.mtv.corp.google.com>
+From:   Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
+Message-ID: <3ffe45a8-401d-37f6-4368-f14e2f2e5392@linaro.org>
+Date:   Tue, 22 Jan 2019 20:35:50 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
+In-Reply-To: <154818283956.20280.2895221927807522124@swboyd.mtv.corp.google.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0gtjq9Nh0WHbMzY+3Z3o5NWiWhP=QEXxzjVe3ta32z7=Q@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 12:10:55PM +0100, Rafael J. Wysocki wrote:
-> On Fri, Jan 18, 2019 at 1:39 PM Juri Lelli <juri.lelli@gmail.com> wrote:
-> >
-> > On 17/01/19 15:55, Rafael J. Wysocki wrote:
-> > > On Thu, Jan 17, 2019 at 2:16 PM Juri Lelli <juri.lelli@gmail.com> wrote:
-> > > >
-> > > > On 11/01/19 10:47, Rafael J. Wysocki wrote:
-> > > > > On Fri, Jan 11, 2019 at 10:18 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> > > > > >
-> > > > > > Hi,
-> > > > > >
-> > > > > > This commit introduces the frequency constraint infrastructure, which
-> > > > > > provides a generic interface for parts of the kernel to constraint the
-> > > > > > working frequency range of a device.
-> > > > > >
-> > > > > > The primary users of this are the cpufreq and devfreq frameworks. The
-> > > > > > cpufreq framework already implements such constraints with help of
-> > > > > > notifier chains (for thermal and other constraints) and some local code
-> > > > > > (for user-space constraints). The devfreq framework developers have also
-> > > > > > shown interest [1] in such a framework, which may use it at a later
-> > > > > > point of time.
-> > > > > >
-> > > > > > The idea here is to provide a generic interface and get rid of the
-> > > > > > notifier based mechanism.
-> > > > > >
-> > > > > > Only one constraint is added for now for the cpufreq framework and the
-> > > > > > rest will follow after this stuff is merged.
-> > > > > >
-> > > > > > Matthias Kaehlcke was involved in the preparation of the first draft of
-> > > > > > this work and so I have added him as Co-author to the first patch.
-> > > > > > Thanks Matthias.
-> > > > > >
-> > > > > > FWIW, This doesn't have anything to do with the boot-constraints
-> > > > > > framework [2] I was trying to upstream earlier :)
-> > > > >
-> > > > > This is quite a bit of code to review, so it will take some time.
-> > > > >
-> > > > > One immediate observation is that it seems to do quite a bit of what
-> > > > > is done in the PM QoS framework, so maybe there is an opportunity for
-> > > > > some consolidation in there.
-> > > >
-> > > > Right, had the same impression. :-)
-> > > >
-> > > > I was also wondering how this new framework is dealing with
-> > > > constraints/request imposed/generated by the scheduler and related
-> > > > interfaces (thinking about schedutil and Patrick's util_clamp).
-> > >
-> > > My understanding is that it is orthogonal to them, like adding extra
-> > > constraints on top of them etc.
-> >
-> > Mmm, ok. But, if that is indeed the case, I now wonder why and how
-> > existing (or hopefully to be added soon) interfaces are not sufficient.
-> > I'm not against this proposal, just trying to understand if this might
-> > create unwanted, hard to manage, overlap.
+On 1/22/19 19:47, Stephen Boyd wrote:
+> Quoting Jorge Ramirez (2019-01-17 02:46:21)
+>> On 1/17/19 11:08, Viresh Kumar wrote:
+>>> On 17-01-19, 09:38, Jorge Ramirez wrote:
+>>>> COMMON_CLK_DISABLED_UNUSED relies on the enable_count reference counter
+>>>> to disable the clocks that were enabled by the firwmare and not by the
+>>>> drivers.
+>>>>
+>>>> the cpufreq driver does not enable the cpu clock.
+>>>>
+>>>> so when clk_change_rate is called, the enable_count counter is not
+>>>> incremented and therefore it just remains null since this was enabled by
+>>>> the firmware.
+>>>>
+>>>> I tried doing:
+>>>>
+>>>> diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
+>>>> index e58bfcb..5a9f83e 100644
+>>>> --- a/drivers/cpufreq/cpufreq-dt.c
+>>>> +++ b/drivers/cpufreq/cpufreq-dt.c
+>>>> @@ -124,6 +124,10 @@ static int resources_available(void)
+>>>>                 return ret;
+>>>>         }
+>>>>
+>>>> + ret = clk_prepare_enable(cpu_clk);
+>>>> + if (ret)
+>>>> +         return ret;
+>>>> +
+>>>>         clk_put(cpu_clk);
+>>>>
+>>>>         name = find_supply_name(cpu_dev);
+>>>>
+>>>>
+>>>> and that removed the need for CLK_IGNORE_UNUSED. But I am not sure of
+>>>> the system wide consequences of that change to cpufreq.
+>>>
+>>> If the cpufreq driver enables it then it should disable it on exit as
+>>> well, right ? And in that case if you unload your driver's module, you
+>>> will hang the system as the clock will get disabled :)
+>>
+>> ah, of course, sorry was over-thinking this thing :)
+>>
+>>>
+>>> Every other platform must either be marking it with CLK_IGNORE_UNUSED
+>>> or they must be doing clk_enable from somewhere, maybe the CPU online
+>>> path, not sure though.
+>>>
+>>
+>> since this clock is enabled by the firmware, it seems to me that using
+>> CLK_IGNORE_UNUSED remains the best option.
+>>
 > 
-> That is a valid concern IMO.  Especially the utilization clamping and
-> the interconnect framework seem to approach the same problem space
-> from different directions.
+> What do you do about CPUs being offlined? Presumably when the CPU is
+> gone the system doesn't need to keep the clk enabled anymore.
 > 
-> For cpufreq this work can be regarded as a replacement for notifiers
-> which are a bandaid of sorts and it would be good to get rid of them.
-> They are mostly used for thermal management and I guess that devfreq
-> users also may want to reduce frequency for thermal reasons and I'd
-> rather not add notifiers to that framework for this purpose.
+> 
 
-FYI: devfreq already reduces frequency for thermal reasons, however
-they don't use notifiers, but directly disable OPPs in the cooling driver:
+the kernel does not take any action - it is under firmware control; and
+since the clock is shared between all cores I there will have to be some
+involvement not only at TF-A/firmware level but also at the TrustedOS
+level for when the last core is offlined.
 
-https://elixir.bootlin.com/linux/v4.20.3/source/drivers/thermal/devfreq_cooling.c#L78
-
-The idea to have a frequency constraint framework came up in the
-context of the throttler series
-(https://lore.kernel.org/patchwork/project/lkml/list/?series=357937)
-for non-thermal throttling. My initial approach was to copy the
-notifier bandaid ...
-
-> However, as stated previously, this resembles the PM QoS framework
-> quite a bit to me and whatever thermal entity, say, sets these
-> constraints, it should not work against schedutil and similar.  In
-> some situations setting a max frequency limit to control thermals is
-> not the most efficient way to go as it effectively turns into
-> throttling and makes performance go south.  For example, it may cause
-> things to run at the limit frequency all the time which may be too
-> slow and it may be more efficient to allow higher frequencies to be
-> used, but instead control how much of the time they can be used.  So
-> we need to be careful here.
+I dont have visibility on either of those projects though.
