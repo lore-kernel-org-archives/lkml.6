@@ -2,110 +2,113 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A346C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:29:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22FA0C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:29:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5AEB20870
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:29:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2D5120870
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:29:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728544AbfAVN3e (ORCPT
+        id S1728568AbfAVN3w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 08:29:34 -0500
-Received: from mga01.intel.com ([192.55.52.88]:3672 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727936AbfAVN3d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 08:29:33 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jan 2019 05:29:33 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,506,1539673200"; 
-   d="scan'208";a="293447219"
-Received: from fflynn-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.153])
-  by orsmga005.jf.intel.com with ESMTP; 22 Jan 2019 05:29:30 -0800
-Date:   Tue, 22 Jan 2019 15:29:28 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Jason Gunthorpe <jgg@ziepe.ca>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Getting weird TPM error after rebasing my tree to
- security/next-general
-Message-ID: <20190122132910.GA2720@linux.intel.com>
-References: <20190118142559.GA4080@linux.intel.com>
- <1547849358.2794.90.camel@HansenPartnership.com>
- <20190120160413.GB30478@linux.intel.com>
- <20190122010218.GA26713@linux.intel.com>
- <20190122025836.GH25163@ziepe.ca>
+        Tue, 22 Jan 2019 08:29:52 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53204 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727936AbfAVN3v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 08:29:51 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6C788EBD;
+        Tue, 22 Jan 2019 05:29:51 -0800 (PST)
+Received: from queper01-lin (queper01-lin.cambridge.arm.com [10.1.195.48])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 771073F614;
+        Tue, 22 Jan 2019 05:29:48 -0800 (PST)
+Date:   Tue, 22 Jan 2019 13:29:46 +0000
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v6 11/16] sched/fair: Add uclamp support to
+ energy_compute()
+Message-ID: <20190122132944.sfxlnpc3xeft4rqd@queper01-lin>
+References: <20190115101513.2822-1-patrick.bellasi@arm.com>
+ <20190115101513.2822-12-patrick.bellasi@arm.com>
+ <20190122121321.r6mv23ao57uut3t7@queper01-lin>
+ <20190122124546.njrpmykzbjpztd6u@e110439-lin>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190122025836.GH25163@ziepe.ca>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190122124546.njrpmykzbjpztd6u@e110439-lin>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 07:58:36PM -0700, Jason Gunthorpe wrote:
-> On Tue, Jan 22, 2019 at 03:02:18AM +0200, Jarkko Sakkinen wrote:
-> > On Sun, Jan 20, 2019 at 06:04:13PM +0200, Jarkko Sakkinen wrote:
-> > > On Fri, Jan 18, 2019 at 02:09:18PM -0800, James Bottomley wrote:
-> > > > On Fri, 2019-01-18 at 16:25 +0200, Jarkko Sakkinen wrote:
-> > > > > I get this on a Geminilake NUC after rebasing my maintainer trees:
-> > > > > 
-> > > > > tpm tpm0: A TPM error (-1) occurred attempting the self test
-> > > > > 
-> > > > > I checked the latest commit ID from drivers/char/tpm to make sure
-> > > > > that I did not put anything broken to my last PR [1]. It works
-> > > > > without issues.
-> > > > > 
-> > > > > In addition [2] gives me an empty diff.
-> > > > > 
-> > > > > Something outside of the TPM driver must have happened that breaks
-> > > > > the driver. Any ideas?
-> > > > > 
-> > > > > [1] commit 9488585b21bef0df1217e510c7134905d1d376a7
-> > > > > [2] git diff 9488585b21bef0df1217e510c7134905d1d376a7 master
-> > > > > drivers/char/tpm/
-> > > > 
-> > > > I'm afraid you're going to have to bisect to find the offending in-
-> > > > kernel commit, which is going to be painful since it seems to depend on
-> > > > physical hardware.  My first instinct is that we're getting a zero
-> > > > length read somewhere, but I still can't see anything in the merge
-> > > > window that would cause that behaviour.
-> > > 
-> > > Yeah, I've started to bisect it (still 9 rounds to go).
+On Tuesday 22 Jan 2019 at 12:45:46 (+0000), Patrick Bellasi wrote:
+> On 22-Jan 12:13, Quentin Perret wrote:
+> > On Tuesday 15 Jan 2019 at 10:15:08 (+0000), Patrick Bellasi wrote:
+> > > The Energy Aware Scheduler (AES) estimates the energy impact of waking
+> 
+> [...]
+> 
+> > > +		for_each_cpu_and(cpu, pd_mask, cpu_online_mask) {
+> > > +			cfs_util = cpu_util_next(cpu, p, dst_cpu);
+> > > +
+> > > +			/*
+> > > +			 * Busy time computation: utilization clamping is not
+> > > +			 * required since the ratio (sum_util / cpu_capacity)
+> > > +			 * is already enough to scale the EM reported power
+> > > +			 * consumption at the (eventually clamped) cpu_capacity.
+> > > +			 */
 > > 
-> > Fails on commit 170d13ca3a2fdaaa0283399247631b76b441cca2. Still works on
-> > preceding commit a959dc88f9c8900296ccf13e2f3e1cbc555a8917.
+> > Right.
+> > 
+> > > +			sum_util += schedutil_cpu_util(cpu, cfs_util, cpu_cap,
+> > > +						       ENERGY_UTIL, NULL);
+> > > +
+> > > +			/*
+> > > +			 * Performance domain frequency: utilization clamping
+> > > +			 * must be considered since it affects the selection
+> > > +			 * of the performance domain frequency.
+> > > +			 */
+> > 
+> > So that actually affects the way we deal with RT I think. I assume the
+> > idea is to say if you don't want to reflect the RT-go-to-max-freq thing
+> > in EAS (which is what we do now) you should set the min cap for RT to 0.
+> > Is that correct ?
 > 
-> This changes the IO access pattern in memcpy_to/fromio.. Presumably
-> CRB HW doesn't like the new 4 byte move? Swap each one in crb to
-> memcpy to confirm..
+> By default configuration, RT tasks still go to max when uclamp is
+> enabled, since they get a util_min=1024.
 > 
-> If the HW requires particular access patterns you can't use
-> memcpy_to/fromio
+> If we want to save power on RT tasks, we can set a smaller util_min...
+> but not necessarily 0. A util_min=0 for RT tasks means to use just
+> cpu_util_rt() for that class.
 
-Did not have time to look at the commit at all but your deduction
-is correct. I know it without testing.
+Ah, sorry, I guess my message was misleading. I'm saying this is
+changing the way _EAS_ deals with RT tasks. Right now we don't actually
+consider the RT-go-to-max thing at all in the EAS prediction. Your
+patch is changing that AFAICT. It actually changes the way EAS sees RT
+tasks even without uclamp ...
 
-Memory controller will feed 1's on unaligned read from IO memory,
-and as we can see from the TPM header, this change causes two of
-those:
+But I'm not hostile to the idea since it's possible to enable uclamp and
+set the min cap to 0 for RT if you want. So there is a story there.
+However, I think this needs be documented somewhere, at the very least.
 
-struct tpm_output_header {
-	__be16	tag;
-	__be32	length;
-	__be32	return_code;
-} __packed;
-
-/Jarkko
+Thanks,
+Quentin
