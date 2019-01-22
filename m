@@ -2,132 +2,138 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97C4DC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:35:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61078C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:35:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E57D20879
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:35:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C93C20879
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 11:35:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728162AbfAVLfh (ORCPT
+        id S1728201AbfAVLfp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 06:35:37 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51654 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727925AbfAVLfg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 06:35:36 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 19A78A78;
-        Tue, 22 Jan 2019 03:35:36 -0800 (PST)
-Received: from usa.arm.com (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B6F4B3F6A8;
-        Tue, 22 Jan 2019 03:35:34 -0800 (PST)
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     linux-arm-kernel@lists.infradead.org, ARM SoC Team <arm@kernel.org>
-Cc:     Sudeep Holla <sudeep.holla@arm.com>, linux-kernel@vger.kernel.org,
-        Kevin Hilman <khilman@linaro.org>,
-        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] firmware: arm_scmi: provide the mandatory device release callback
-Date:   Tue, 22 Jan 2019 11:35:25 +0000
-Message-Id: <20190122113525.13705-1-sudeep.holla@arm.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 22 Jan 2019 06:35:45 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:44409 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727663AbfAVLfp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 06:35:45 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0MBYZki2929511
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Tue, 22 Jan 2019 03:34:35 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0MBYZtf2929508;
+        Tue, 22 Jan 2019 03:34:35 -0800
+Date:   Tue, 22 Jan 2019 03:34:35 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Andi Kleen <tipbot@zytor.com>
+Message-ID: <tip-96167167b6e17b25c0e05ecc31119b73baeab094@git.kernel.org>
+Cc:     jolsa@kernel.org, linux-kernel@vger.kernel.org, acme@redhat.com,
+        ak@linux.intel.com, mingo@kernel.org, hpa@zytor.com,
+        tglx@linutronix.de
+Reply-To: acme@redhat.com, mingo@kernel.org, ak@linux.intel.com,
+          hpa@zytor.com, tglx@linutronix.de, jolsa@kernel.org,
+          linux-kernel@vger.kernel.org
+In-Reply-To: <20190117194834.21940-1-andi@firstfloor.org>
+References: <20190117194834.21940-1-andi@firstfloor.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf script: Fix crash with printing mixed trace
+ point and other events
+Git-Commit-ID: 96167167b6e17b25c0e05ecc31119b73baeab094
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The device/driver model clearly mandates that bus driver that discover
-and allocate the device must set the release callback. This callback
-will be used to free the device after all references have gone away.
+Commit-ID:  96167167b6e17b25c0e05ecc31119b73baeab094
+Gitweb:     https://git.kernel.org/tip/96167167b6e17b25c0e05ecc31119b73baeab094
+Author:     Andi Kleen <ak@linux.intel.com>
+AuthorDate: Thu, 17 Jan 2019 11:48:34 -0800
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Fri, 18 Jan 2019 09:53:07 -0300
 
-scmi bus driver is missing the obvious callback which will result in
-the following warning if the device is unregistered:
+perf script: Fix crash with printing mixed trace point and other events
 
-Device 'scmi_dev.1' does not have a release() function, it is broken and
-must be fixed. See Documentation/kobject.txt.
-WARNING at drivers/base/core.c:922 device_release+0x8c/0xa0
-Hardware name: ARM LTD Juno Development Platform BIOS EDK II Jan 21 2019
-Workqueue: events deferred_probe_work_func
-pstate: 60000005 (nZCv daif -PAN -UAO)
-pc : device_release+0x8c/0xa0
-lr : device_release+0x8c/0xa0
-Call trace:
- device_release+0x8c/0xa0
- kobject_put+0x8c/0x208
- device_unregister+0x30/0x78
- scmi_device_destroy+0x28/0x50
- scmi_probe+0x354/0x5b0
- platform_drv_probe+0x58/0xa8
- really_probe+0x2c4/0x3e8
- driver_probe_device+0x12c/0x148
- __device_attach_driver+0xac/0x150
- bus_for_each_drv+0x78/0xd8
- __device_attach+0xe0/0x168
- device_initial_probe+0x24/0x30
- bus_probe_device+0xa0/0xa8
- deferred_probe_work_func+0x8c/0xe0
- process_one_work+0x1f0/0x478
- worker_thread+0x22c/0x450
- kthread+0x134/0x138
- ret_from_fork+0x10/0x1c
----[ end trace 420bdb7f6af50937 ]---
+'perf script' crashes currently when printing mixed trace points and
+other events because the trace format does not handle events without
+trace meta data. Add a simple check to avoid that.
 
-Fix the issue by providing scmi_device_release callback. We have
-everything required for device release already in scmi_device_destroy,
-so we just need to move freeing of the device to scmi_device_release.
+  % cat > test.c
+  main()
+  {
+      printf("Hello world\n");
+  }
+  ^D
+  % gcc -g -o test test.c
+  % sudo perf probe -x test 'test.c:3'
+  % perf record -e '{cpu/cpu-cycles,period=10000/,probe_test:main}:S' ./test
+  % perf script
+  <segfault>
 
-Fixes: 933c504424a2 ("firmware: arm_scmi: add scmi protocol bus to enumerate protocol devices")
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+Committer testing:
+
+Before:
+
+  # perf probe -x /lib64/libc-2.28.so malloc
+  Added new event:
+    probe_libc:malloc    (on malloc in /usr/lib64/libc-2.28.so)
+
+  You can now use it in all perf tools, such as:
+
+	perf record -e probe_libc:malloc -aR sleep 1
+
+  # perf probe -l
+  probe_libc:malloc    (on __libc_malloc@malloc/malloc.c in /usr/lib64/libc-2.28.so)
+  # perf record -e '{cpu/cpu-cycles,period=10000/,probe_libc:*}:S' sleep 1
+  [ perf record: Woken up 1 times to write data ]
+  [ perf record: Captured and wrote 0.023 MB perf.data (40 samples) ]
+  # perf script
+  Segmentation fault (core dumped)
+  ^C
+  #
+
+After:
+
+  # perf script | head -6
+     sleep 2888 94796.944981: 16198 cpu/cpu-cycles,period=10000/: ffffffff925dc04f get_random_u32+0x1f (/lib/modules/5.0.0-rc2+/build/vmlinux)
+     sleep 2888 [-01] 94796.944981: probe_libc:malloc:
+     sleep 2888 94796.944983:  4713 cpu/cpu-cycles,period=10000/: ffffffff922763af change_protection+0xcf (/lib/modules/5.0.0-rc2+/build/vmlinux)
+     sleep 2888 [-01] 94796.944983: probe_libc:malloc:
+     sleep 2888 94796.944986:  9934 cpu/cpu-cycles,period=10000/: ffffffff922777e0 move_page_tables+0x0 (/lib/modules/5.0.0-rc2+/build/vmlinux)
+     sleep 2888 [-01] 94796.944986: probe_libc:malloc:
+  #
+
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Link: http://lkml.kernel.org/r/20190117194834.21940-1-andi@firstfloor.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- drivers/firmware/arm_scmi/bus.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ tools/perf/builtin-script.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Hi ARM-SoC team,
-
-Can you apply this one patch directly or I can send pull request if you
-prefer ?
-
-Regards,
-Sudeep
-
-diff --git a/drivers/firmware/arm_scmi/bus.c b/drivers/firmware/arm_scmi/bus.c
-index 472c88ae1c0f..92f843eaf1e0 100644
---- a/drivers/firmware/arm_scmi/bus.c
-+++ b/drivers/firmware/arm_scmi/bus.c
-@@ -119,6 +119,11 @@ void scmi_driver_unregister(struct scmi_driver *driver)
- }
- EXPORT_SYMBOL_GPL(scmi_driver_unregister);
-
-+static void scmi_device_release(struct device *dev)
-+{
-+	kfree(to_scmi_dev(dev));
-+}
-+
- struct scmi_device *
- scmi_device_create(struct device_node *np, struct device *parent, int protocol)
- {
-@@ -138,6 +143,7 @@ scmi_device_create(struct device_node *np, struct device *parent, int protocol)
- 	scmi_dev->dev.parent = parent;
- 	scmi_dev->dev.of_node = np;
- 	scmi_dev->dev.bus = &scmi_bus_type;
-+	scmi_dev->dev.release = scmi_device_release;
- 	dev_set_name(&scmi_dev->dev, "scmi_dev.%d", id);
-
- 	retval = device_register(&scmi_dev->dev);
-@@ -156,9 +162,8 @@ scmi_device_create(struct device_node *np, struct device *parent, int protocol)
- void scmi_device_destroy(struct scmi_device *scmi_dev)
- {
- 	scmi_handle_put(scmi_dev->handle);
--	device_unregister(&scmi_dev->dev);
- 	ida_simple_remove(&scmi_bus_id, scmi_dev->id);
--	kfree(scmi_dev);
-+	device_unregister(&scmi_dev->dev);
- }
-
- void scmi_set_handle(struct scmi_device *scmi_dev)
---
-2.17.1
-
+diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+index d079f36d342d..357906ed1898 100644
+--- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -1794,7 +1794,7 @@ static void process_event(struct perf_script *script,
+ 		return;
+ 	}
+ 
+-	if (PRINT_FIELD(TRACE)) {
++	if (PRINT_FIELD(TRACE) && sample->raw_data) {
+ 		event_format__fprintf(evsel->tp_format, sample->cpu,
+ 				      sample->raw_data, sample->raw_size, fp);
+ 	}
