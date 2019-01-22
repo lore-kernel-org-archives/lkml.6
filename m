@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-13.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE49AC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:27:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60FD0C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:27:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9ECF6217D6
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:27:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D66D217D6
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:27:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548188822;
-	bh=QbX6TrJhi3QqFNPy485f2iCUJRxWcPeRIyrH+KQ8dhQ=;
+	s=default; t=1548188826;
+	bh=mmuGj2NjVw0uPzP2r5ZID2STRmvYwZmTUS/n2Sk2H4o=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=WfNkoroyttOeyvBQLg1r3F5wiQPQxY6yK0mpIFjT8S/2mpLHpiyS3jP26l4YVofDR
-	 AB4n3tHZ8jon5cb2WWU01PiQ6jdUFrami2k3qHV7nb1gY1CL2aWM0DWoMTdgStWuxt
-	 UUu0/iMgT5jzHkBzfjGjC5hIG5kq7c2y6ip3SQJQ=
+	b=nkxPvtNVgh+j1k/w97pRURnf+d9agl0pgJE/tZQXiu6Si8rXQnveT9dI38bSwcu+x
+	 L5J2yA00LcJ1cG+HRb/R8THhU+qr4hX48KNaL5SchMqCGi8m5UbefXl2GOJcZt2F+L
+	 1lvO/33kmkSlSVi7l7fQapLjIj8XgpVLPERV1zY8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726724AbfAVU1B (ORCPT
+        id S1726678AbfAVU1E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 15:27:01 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52858 "EHLO
+        Tue, 22 Jan 2019 15:27:04 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52920 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726127AbfAVU07 (ORCPT
+        with ESMTP id S1726627AbfAVU1A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 15:26:59 -0500
+        Tue, 22 Jan 2019 15:27:00 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=5VLBVQxBuE54bneSct0eouRZ7ruwrRlC/w0RaRfzCh4=; b=NbB+8OwPbwZc
-        IKIQtBiO9aLBG1zDg/6K+7aaiUzz5+UiwR2df7wodSs3spBeiL5InsDwRbhmDJg19D8RBp45rcOC4
-        LRz5burxPbfxgeEtxh9eiRz4Ub6HbNNhAKtB+0yMaSU3P+6hx9Ywgtf3EbWG3zKFzYpNZ06upbF6b
-        pjJ8I=;
+        List-Archive; bh=P2w6zw/P3qnOl/Kw19ME3F+bkypknERIc74M+2S8p8o=; b=A+s+GGaHkOhD
+        VSZqmwSqWrf+bqNRlSOkmH6ld0f0bjnVSXg1CsOrIixTsjcnUTyqh24Mj14ovIg8x7V7bLO1bEz24
+        rnUbZRcs1eOfe5fgUGOmraGhJclyvUE1R9ZuYrAAdppejW/gX1WRP88GWYCjOGjQJbgKUa0FyXRFt
+        5GSRc=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gm2dM-0007D3-GF; Tue, 22 Jan 2019 20:26:56 +0000
+        id 1gm2dO-0007D9-Au; Tue, 22 Jan 2019 20:26:58 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 1E43D1127955; Tue, 22 Jan 2019 20:26:56 +0000 (GMT)
+        id EB74B1127955; Tue, 22 Jan 2019 20:26:57 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Axel Lin <axel.lin@ingics.com>
 Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: wm831x-dcdc: Convert to use regulator_linear_range for wm831x_buckv" to the regulator tree
+Subject: Applied "regulator: twl: Use of_device_get_match_data()" to the regulator tree
 In-Reply-To: 
 X-Patchwork-Hint: ignore
-Message-Id: <20190122202656.1E43D1127955@debutante.sirena.org.uk>
-Date:   Tue, 22 Jan 2019 20:26:56 +0000 (GMT)
+Message-Id: <20190122202657.EB74B1127955@debutante.sirena.org.uk>
+Date:   Tue, 22 Jan 2019 20:26:57 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -59,7 +59,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: wm831x-dcdc: Convert to use regulator_linear_range for wm831x_buckv
+   regulator: twl: Use of_device_get_match_data()
 
 has been applied to the regulator tree at
 
@@ -84,89 +84,39 @@ to this mail.
 Thanks,
 Mark
 
-From ccffcb8e9a11fe91f3577cefeed00b1f58d51671 Mon Sep 17 00:00:00 2001
+From 93997a05e6bd7347eb8d103c96af7df4625933f1 Mon Sep 17 00:00:00 2001
 From: Axel Lin <axel.lin@ingics.com>
-Date: Sun, 20 Jan 2019 15:33:56 +0800
-Subject: [PATCH] regulator: wm831x-dcdc: Convert to use regulator_linear_range
- for wm831x_buckv
+Date: Sat, 19 Jan 2019 20:41:35 +0800
+Subject: [PATCH] regulator: twl: Use of_device_get_match_data()
+
+Use of_device_get_match_data() to simplify the code a bit.
 
 Signed-off-by: Axel Lin <axel.lin@ingics.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/wm831x-dcdc.c | 39 ++++++++-------------------------
- 1 file changed, 9 insertions(+), 30 deletions(-)
+ drivers/regulator/twl-regulator.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/drivers/regulator/wm831x-dcdc.c b/drivers/regulator/wm831x-dcdc.c
-index 5a5bc4bb08d2..4a573eea284a 100644
---- a/drivers/regulator/wm831x-dcdc.c
-+++ b/drivers/regulator/wm831x-dcdc.c
-@@ -205,33 +205,10 @@ static irqreturn_t wm831x_dcdc_oc_irq(int irq, void *data)
-  * BUCKV specifics
-  */
+diff --git a/drivers/regulator/twl-regulator.c b/drivers/regulator/twl-regulator.c
+index 884c7505ed91..402ea43c77d1 100644
+--- a/drivers/regulator/twl-regulator.c
++++ b/drivers/regulator/twl-regulator.c
+@@ -576,14 +576,9 @@ static int twlreg_probe(struct platform_device *pdev)
+ 	struct regulator_init_data	*initdata;
+ 	struct regulation_constraints	*c;
+ 	struct regulator_dev		*rdev;
+-	const struct of_device_id	*match;
+ 	struct regulator_config		config = { };
  
--static int wm831x_buckv_list_voltage(struct regulator_dev *rdev,
--				      unsigned selector)
--{
--	if (selector <= 0x8)
--		return 600000;
--	if (selector <= WM831X_BUCKV_MAX_SELECTOR)
--		return 600000 + ((selector - 0x8) * 12500);
--	return -EINVAL;
--}
+-	match = of_match_device(twl_of_match, &pdev->dev);
+-	if (!match)
+-		return -ENODEV;
 -
--static int wm831x_buckv_map_voltage(struct regulator_dev *rdev,
--				   int min_uV, int max_uV)
--{
--	u16 vsel;
--
--	if (min_uV < 600000)
--		vsel = 0;
--	else if (min_uV <= 1800000)
--		vsel = DIV_ROUND_UP(min_uV - 600000, 12500) + 8;
--	else
--		return -EINVAL;
--
--	if (wm831x_buckv_list_voltage(rdev, vsel) > max_uV)
--		return -EINVAL;
--
--	return vsel;
--}
-+static const struct regulator_linear_range wm831x_buckv_ranges[] = {
-+	REGULATOR_LINEAR_RANGE(600000, 0, 0x7, 0),
-+	REGULATOR_LINEAR_RANGE(600000, 0x8, 0x68, 12500),
-+};
+-	template = match->data;
++	template = of_device_get_match_data(&pdev->dev);
+ 	if (!template)
+ 		return -ENODEV;
  
- static int wm831x_buckv_set_dvs(struct regulator_dev *rdev, int state)
- {
-@@ -309,7 +286,7 @@ static int wm831x_buckv_set_suspend_voltage(struct regulator_dev *rdev,
- 	u16 reg = dcdc->base + WM831X_DCDC_SLEEP_CONTROL;
- 	int vsel;
- 
--	vsel = wm831x_buckv_map_voltage(rdev, uV, uV);
-+	vsel = regulator_map_voltage_linear_range(rdev, uV, uV);
- 	if (vsel < 0)
- 		return vsel;
- 
-@@ -368,8 +345,8 @@ static int wm831x_buckv_get_current_limit(struct regulator_dev *rdev)
- static const struct regulator_ops wm831x_buckv_ops = {
- 	.set_voltage_sel = wm831x_buckv_set_voltage_sel,
- 	.get_voltage_sel = wm831x_buckv_get_voltage_sel,
--	.list_voltage = wm831x_buckv_list_voltage,
--	.map_voltage = wm831x_buckv_map_voltage,
-+	.list_voltage = regulator_list_voltage_linear_range,
-+	.map_voltage = regulator_map_voltage_linear_range,
- 	.set_suspend_voltage = wm831x_buckv_set_suspend_voltage,
- 	.set_current_limit = wm831x_buckv_set_current_limit,
- 	.get_current_limit = wm831x_buckv_get_current_limit,
-@@ -492,6 +469,8 @@ static int wm831x_buckv_probe(struct platform_device *pdev)
- 	dcdc->desc.id = id;
- 	dcdc->desc.type = REGULATOR_VOLTAGE;
- 	dcdc->desc.n_voltages = WM831X_BUCKV_MAX_SELECTOR + 1;
-+	dcdc->desc.linear_ranges = wm831x_buckv_ranges;
-+	dcdc->desc.n_linear_ranges = ARRAY_SIZE(wm831x_buckv_ranges);
- 	dcdc->desc.ops = &wm831x_buckv_ops;
- 	dcdc->desc.owner = THIS_MODULE;
- 	dcdc->desc.enable_reg = WM831X_DCDC_ENABLE;
 -- 
 2.20.1
 
