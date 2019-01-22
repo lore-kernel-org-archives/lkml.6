@@ -2,76 +2,160 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A70FC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:26:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82942C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:26:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D08C20870
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:26:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57A0720870
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:26:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728746AbfAVO0E (ORCPT
+        id S1728794AbfAVO0M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 09:26:04 -0500
-Received: from mail-io1-f72.google.com ([209.85.166.72]:35127 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728539AbfAVO0E (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 09:26:04 -0500
-Received: by mail-io1-f72.google.com with SMTP id x12so19649531ioj.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 06:26:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=ncWC1sQSGq8dCoDCHGdc0UKCVRQPCUtJfaMUbHP+6As=;
-        b=CzZhzAGWEjnHdXWRzKhiu5QMwYIxRWWRFk3tQtzWhlJF1hl6/5GcJRPtteWhoTzwAc
-         rS4wcOImPaBrVaZbeOKGbY0WCGcxRcN4viWBJnq3w+7GmVh0rIwThS29UTghC/Xuvk2e
-         aJhHDRFg/0v+FGRvDw4k3MF4/K4UVedqf3gYaZvp+4ZJuV/zEPNTsFXvB3blYcWjbx/y
-         3HAIXUNcgxznRxfg7+6Kl1dKLeXSrTrPDW00QyEUFJENktT10Xer3rwkwtadadJa4eSL
-         cLwhkZk/v6if90KTOUNDKwjJCv7aGnYUEf/Q75wkmY8m+oUENk6UrZeBH+TQHW6ZThTV
-         JuQA==
-X-Gm-Message-State: AJcUukcBWFhQoCMipYwgroCi/qG/IoGP+NDb+eSP4y8yg8wwsEYD5wIV
-        8FV3v/sYnNqAcwJrN0jeWiIQb2mK3r3kW6fCkUmPMqmus1d+
-X-Google-Smtp-Source: AHgI3IYLIwd0btNqvZ17JMk25EAWayJgMsh9D8yoQUA+QmySAdi7O8cHBh//V1EsXGAcyVM5KW297wrM0/sM9/0hC5qcw3aN6gHn
+        Tue, 22 Jan 2019 09:26:12 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54338 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728416AbfAVO0M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 09:26:12 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 97007EBD;
+        Tue, 22 Jan 2019 06:26:11 -0800 (PST)
+Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A27F43F614;
+        Tue, 22 Jan 2019 06:26:08 -0800 (PST)
+Date:   Tue, 22 Jan 2019 14:26:06 +0000
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v6 11/16] sched/fair: Add uclamp support to
+ energy_compute()
+Message-ID: <20190122142606.gc5hnc5pzefblegw@e110439-lin>
+References: <20190115101513.2822-1-patrick.bellasi@arm.com>
+ <20190115101513.2822-12-patrick.bellasi@arm.com>
+ <20190122121321.r6mv23ao57uut3t7@queper01-lin>
+ <20190122124546.njrpmykzbjpztd6u@e110439-lin>
+ <20190122132944.sfxlnpc3xeft4rqd@queper01-lin>
 MIME-Version: 1.0
-X-Received: by 2002:a5e:d50b:: with SMTP id e11mr848606iom.25.1548167163571;
- Tue, 22 Jan 2019 06:26:03 -0800 (PST)
-Date:   Tue, 22 Jan 2019 06:26:03 -0800
-In-Reply-To: <CACT4Y+YNgYqynkhv7DMCCkO+xFebrpWfTXwdyeYsN=RkWmLiYw@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d6738b05800cc19e@google.com>
-Subject: Re: possible deadlock in vfs_fallocate
-From:   syzbot <syzbot+148c2885d71194f18d28@syzkaller.appspotmail.com>
-To:     arve@android.com, devel@driverdev.osuosl.org, dvyukov@google.com,
-        ebiggers3@gmail.com, gregkh@linuxfoundation.org, joelaf@google.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        maco@android.com, penguin-kernel@i-love.sakura.ne.jp,
-        syzkaller-bugs@googlegroups.com, tkjos@android.com,
-        tkjos@google.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190122132944.sfxlnpc3xeft4rqd@queper01-lin>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 22-Jan 13:29, Quentin Perret wrote:
+> On Tuesday 22 Jan 2019 at 12:45:46 (+0000), Patrick Bellasi wrote:
+> > On 22-Jan 12:13, Quentin Perret wrote:
+> > > On Tuesday 15 Jan 2019 at 10:15:08 (+0000), Patrick Bellasi wrote:
+> > > > The Energy Aware Scheduler (AES) estimates the energy impact of waking
+> > 
+> > [...]
+> > 
+> > > > +		for_each_cpu_and(cpu, pd_mask, cpu_online_mask) {
+> > > > +			cfs_util = cpu_util_next(cpu, p, dst_cpu);
+> > > > +
+> > > > +			/*
+> > > > +			 * Busy time computation: utilization clamping is not
+> > > > +			 * required since the ratio (sum_util / cpu_capacity)
+> > > > +			 * is already enough to scale the EM reported power
+> > > > +			 * consumption at the (eventually clamped) cpu_capacity.
+> > > > +			 */
+> > > 
+> > > Right.
+> > > 
+> > > > +			sum_util += schedutil_cpu_util(cpu, cfs_util, cpu_cap,
+> > > > +						       ENERGY_UTIL, NULL);
+> > > > +
+> > > > +			/*
+> > > > +			 * Performance domain frequency: utilization clamping
+> > > > +			 * must be considered since it affects the selection
+> > > > +			 * of the performance domain frequency.
+> > > > +			 */
+> > > 
+> > > So that actually affects the way we deal with RT I think. I assume the
+> > > idea is to say if you don't want to reflect the RT-go-to-max-freq thing
+> > > in EAS (which is what we do now) you should set the min cap for RT to 0.
+> > > Is that correct ?
+> > 
+> > By default configuration, RT tasks still go to max when uclamp is
+> > enabled, since they get a util_min=1024.
+> > 
+> > If we want to save power on RT tasks, we can set a smaller util_min...
+> > but not necessarily 0. A util_min=0 for RT tasks means to use just
+> > cpu_util_rt() for that class.
+> 
+> Ah, sorry, I guess my message was misleading. I'm saying this is
+> changing the way _EAS_ deals with RT tasks. Right now we don't actually
+> consider the RT-go-to-max thing at all in the EAS prediction. Your
+> patch is changing that AFAICT. It actually changes the way EAS sees RT
+> tasks even without uclamp ...
 
-syzbot has tested the proposed patch and the reproducer did not trigger  
-crash:
+Lemme see if I get it right.
 
-Reported-and-tested-by:  
-syzbot+148c2885d71194f18d28@syzkaller.appspotmail.com
+Currently, whenever we look at CPU utilization for ENERGY_UTIL, we
+always use cpu_util_rt() for RT tasks:
 
-Tested on:
+---8<---
+        util = util_cfs;
+        util += cpu_util_rt(rq);
+        util += dl_util;
+---8<---
 
-commit:         48b161983ae5 Merge tag 'xarray-5.0-rc3' of git://git.infra..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=dd3a020d055fa2e8
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16e6d908c00000
+Thus, even when RT tasks are RUNNABLE, we don't always assume the CPU
+running at the max capacity but just whatever is the aggregated
+utilization across all the classes.
 
-Note: testing is done by a robot and is best-effort only.
+With uclamp, we have:
+
+---8<---
+        util = cpu_util_rt(rq) + util_cfs;
+        if (type == FREQUENCY_UTIL)
+            util = uclamp_util_with(rq, util, p);
+        dl_util = cpu_util_dl(rq);
+        if (type == ENERGY_UTIL)
+            util += dl_util;
+---8<---
+
+So, I would say that, in terms of ENERGY_UTIL we do the same both
+w/ and w/o uclamp. Isn't it?
+
+
+> But I'm not hostile to the idea since it's possible to enable uclamp and
+> set the min cap to 0 for RT if you want. So there is a story there.
+> However, I think this needs be documented somewhere, at the very least.
+
+The only difference I see is that the actual frequency could be
+different (lower then max) when a clamped RT task is RUNNABLE.
+
+Are you worried that running RT on a lower freq could have side
+effects on the estimated busy time the CPU ?
+
+I also still don't completely get why you say it could be useful to
+   "set the min cap to 0 for RT if you want"
+
+IMO this will be an even bigger difference wrt mainline, since the RT
+tasks will never have a granted minimum freq but just whatever
+utilization we measure for them.
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
