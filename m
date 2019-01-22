@@ -2,124 +2,86 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D50BEC37122
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 01:01:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1ADAC37124
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 01:02:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D86D20870
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 01:01:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="l5pKLiFO"
+	by mail.kernel.org (Postfix) with ESMTP id 7994B217D4
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 01:02:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726611AbfAVBBA (ORCPT
+        id S1726756AbfAVBCY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 21 Jan 2019 20:01:00 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:39800 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725896AbfAVBA7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 21 Jan 2019 20:00:59 -0500
-Received: by mail-ot1-f68.google.com with SMTP id n8so22184924otl.6
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jan 2019 17:00:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=h1skLVYct8+bIxnDMaRew62Ki/2P0urZDZUEYKn1S/U=;
-        b=l5pKLiFOtvtdJGkSnP8DHtCa57MqidgH+8wxJUMFFHiLyW77Mvezzicpr278Dbwm8f
-         XNboLh+U49Jx7EGv96M6LqzbDWFki0Hudy72n1zZ9FRfIv2Fi9G1IetLHeXnaSjRBvPX
-         i9c4SF3uMqiQLXjuYIX+jhplLqEnx7STUKHA5Ss0fm8NJAopD8jdFrAJC5sytP9Peb7N
-         MoXJPS9L1f2kusGjeo+ZD/xnT0zTGrfDcJC+e85qD3Qkmq7Vc4IvLUJlMuYR8jbo+X/j
-         YZL1U1hA6lUxTqOhYe1lZ6jzB+YVsHBkFI9f+AlxTfIDcHsuRDlBs6/N26DsKbd5E44Z
-         SAiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=h1skLVYct8+bIxnDMaRew62Ki/2P0urZDZUEYKn1S/U=;
-        b=JuA+lX6vK5cR1C1hcXxwOLlBt9CE4GcytqaROGFwkrP0hItHos9suHzVv+ZxwyBzFp
-         Eotq5Fj1k3KLiphYnZQ6MjJYXnXBH6befnN6zx8buDvlVmm7ZSGdFiH/N2+pRn47SBTv
-         jWuinMqyUXR/2Ll99tFtbiTXklHnh7+ZIINGk+NCHsPAE/iL7aN8fDuu6BStmGxQ4Olw
-         Aaagvqeunm27Y4P0un9xcug5eShCJ75LhceIHCuBa+UONQXY2/qsIsO5EQTIIO9O9H/7
-         QpoS8xxb+acjyu1ruVVsZFmT0nyhfHlq8Dfaz1XrdZ4vnOcWYh6rhQ0z7hy7Y28s6L+z
-         rwsA==
-X-Gm-Message-State: AJcUukcIUwsNYq2vR8mH01xM1OAegJJyfeoh4n9sqQFVPaFBHZk32PVI
-        yYppka9XhuyhcgcY8bbEbN3fCnOvglQhX/vNyaWBgw==
-X-Google-Smtp-Source: ALg8bN7inZo4gLeCMcjjb/+RwyWZATLJVYXo/PSMrbNmjzbHNngsGlV4YbMsVb3KnujAnw21gcqD4HyTwn3ZJ0rkTPg=
-X-Received: by 2002:a9d:394:: with SMTP id f20mr19794870otf.98.1548118858400;
- Mon, 21 Jan 2019 17:00:58 -0800 (PST)
+        Mon, 21 Jan 2019 20:02:24 -0500
+Received: from mga09.intel.com ([134.134.136.24]:44735 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725896AbfAVBCX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 21 Jan 2019 20:02:23 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jan 2019 17:02:22 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,504,1539673200"; 
+   d="scan'208";a="268842299"
+Received: from vkunnari-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.163])
+  by orsmga004.jf.intel.com with ESMTP; 21 Jan 2019 17:02:19 -0800
+Date:   Tue, 22 Jan 2019 03:02:18 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Getting weird TPM error after rebasing my tree to
+ security/next-general
+Message-ID: <20190122010218.GA26713@linux.intel.com>
+References: <20190118142559.GA4080@linux.intel.com>
+ <1547849358.2794.90.camel@HansenPartnership.com>
+ <20190120160413.GB30478@linux.intel.com>
 MIME-Version: 1.0
-References: <154785884329.2202034.3295476681016958230.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20190122002615.GB5855@richard> <CAPcyv4jXS-doCdyTrcV3DL63N-q4m1H2=Msgm1z88HnF8bcEig@mail.gmail.com>
- <20190122004647.GA6575@richard>
-In-Reply-To: <20190122004647.GA6575@richard>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 21 Jan 2019 17:00:47 -0800
-Message-ID: <CAPcyv4iVg09ryVAqOnxXAGUJf7xZqzxL0CWxGY4WOTEman--8w@mail.gmail.com>
-Subject: Re: [PATCH] libnvdimm: Clarify nd_pfn_init() flow
-To:     Wei Yang <richardw.yang@linux.intel.com>
-Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190120160413.GB30478@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 4:47 PM Wei Yang <richardw.yang@linux.intel.com> wrote:
->
-> On Mon, Jan 21, 2019 at 04:29:08PM -0800, Dan Williams wrote:
-> >On Mon, Jan 21, 2019 at 4:26 PM Wei Yang <richardw.yang@linux.intel.com> wrote:
-> >[..]
-> >> >@@ -706,6 +711,22 @@ static int nd_pfn_init(struct nd_pfn *nd_pfn)
-> >> >               sig = DAX_SIG;
-> >> >       else
-> >> >               sig = PFN_SIG;
-> >> >+
-> >> >+      /*
-> >> >+       * Check for an existing 'pfn' superblock before writing a new
-> >> >+       * one. The intended flow is that on the first probe of an
-> >> >+       * nd_{pfn,dax} device the superblock is calculated and written
-> >> >+       * to the namespace. In this case nd_pfn_validate() returns
-> >> >+       * -ENODEV because no valid superblock exists currently.
-> >>
-> >> As you replied in following mail:
-> >>
-> >> 3/ If present, nd_pfn_validate() returns 0 and nd_dax_probe()
-> >> registers the dax0.1 device (this is a libnvdimm 'personality device).
-> >>
-> >> So at this point, nd_pfn_validate() return 0 or -ENODEV?
-> >
-> >In this case 0, because the configuration was successfully validated.
-> >
-> >-ENODEV, is only returned for the initial case where we want the
-> >kernel to write the configuration.
-> >
-> >All other error codes are an actual failure and the probe procedure stops.
->
-> To be honest, this maybe crystal clear for you. But I still feel a little
-> confused. Especially on differentiating those cases. How many cases we have?
+On Sun, Jan 20, 2019 at 06:04:13PM +0200, Jarkko Sakkinen wrote:
+> On Fri, Jan 18, 2019 at 02:09:18PM -0800, James Bottomley wrote:
+> > On Fri, 2019-01-18 at 16:25 +0200, Jarkko Sakkinen wrote:
+> > > I get this on a Geminilake NUC after rebasing my maintainer trees:
+> > > 
+> > > tpm tpm0: A TPM error (-1) occurred attempting the self test
+> > > 
+> > > I checked the latest commit ID from drivers/char/tpm to make sure
+> > > that I did not put anything broken to my last PR [1]. It works
+> > > without issues.
+> > > 
+> > > In addition [2] gives me an empty diff.
+> > > 
+> > > Something outside of the TPM driver must have happened that breaks
+> > > the driver. Any ideas?
+> > > 
+> > > [1] commit 9488585b21bef0df1217e510c7134905d1d376a7
+> > > [2] git diff 9488585b21bef0df1217e510c7134905d1d376a7 master
+> > > drivers/char/tpm/
+> > 
+> > I'm afraid you're going to have to bisect to find the offending in-
+> > kernel commit, which is going to be painful since it seems to depend on
+> > physical hardware.  My first instinct is that we're getting a zero
+> > length read somewhere, but I still can't see anything in the merge
+> > window that would cause that behaviour.
+> 
+> Yeah, I've started to bisect it (still 9 rounds to go).
 
-There are 4 cases:
+Fails on commit 170d13ca3a2fdaaa0283399247631b76b441cca2. Still works on
+preceding commit a959dc88f9c8900296ccf13e2f3e1cbc555a8917.
 
-1/ namespace probed, no personality info-block found, namespace
-results in 'raw' mode
+Double-checked this after bisecting by compiling the kernel with these
+commits as tip.
 
-2/ namespace probed, {pfn,btt,dax} info-block found, {pfn,btt,dax}
-device created and attached to the corresponding personality driver
-
-3/ namespace probing ends in failure like -ENOMEM, or a -EIO error
-reading namespace capacity, for example due to a bad block.
-
-4/ namespace force assigned to a {pfn,btt,dax} device instance,
-{pfn,btt,dax} device force enabled  leading to the info-block being
-written out to the device
-
-> And what's your first probe mean? This the nd_btt/pfn/dax_probe()? or the
-> linux driver probe?
-
-The first probe is always nd_pmem_probe(). nd_{pfn,btt,dax}_probe()
-are secondary.
+/Jarkko
