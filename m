@@ -2,116 +2,124 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B73B7C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:32:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6F3EC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:35:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90CE72084A
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:32:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A92F52084A
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:35:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727676AbfAVKcj (ORCPT
+        id S1727525AbfAVKfb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 05:32:39 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:41135 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726284AbfAVKci (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 05:32:38 -0500
-Received: from fsav405.sakura.ne.jp (fsav405.sakura.ne.jp [133.242.250.104])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0MAWajS024510;
-        Tue, 22 Jan 2019 19:32:36 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav405.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp);
- Tue, 22 Jan 2019 19:32:36 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x0MAWZBB024496
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Tue, 22 Jan 2019 19:32:35 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: possible deadlock in __do_page_fault
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        syzbot+a76129f18c89f3e2ddd4@syzkaller.appspotmail.com,
-        Andi Kleen <ak@linux.intel.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        =?UTF-8?Q?Arve_Hj=c3=b8nnev=c3=a5g?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <000000000000f7a28e057653dc6e@google.com>
- <20180920141058.4ed467594761e073606eafe2@linux-foundation.org>
- <CAHRSSEzX5HOUEQ6DgEF76OLGrwS1isWMdtvneBLOEEnwoMxVrA@mail.gmail.com>
- <CAEXW_YSot+3AMQ=jmDRowmqoOmQmujp9r8Dh18KJJN1EDmyHOw@mail.gmail.com>
- <20180921162110.e22d09a9e281d194db3c8359@linux-foundation.org>
- <4b0a5f8c-2be2-db38-a70d-8d497cb67665@I-love.SAKURA.ne.jp>
- <CACT4Y+ZTjCGd9XYUCUoqv+AqXrPwX4OqWMC0jFgjNxZRFkNYXw@mail.gmail.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <c56d4d0b-8ecc-059d-69cb-4f3e91f9410c@i-love.sakura.ne.jp>
-Date:   Tue, 22 Jan 2019 19:32:34 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 22 Jan 2019 05:35:31 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43502 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726281AbfAVKfb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 05:35:31 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 685E9AE58;
+        Tue, 22 Jan 2019 10:35:30 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id A789F1E3E1E; Tue, 22 Jan 2019 11:35:29 +0100 (CET)
+Date:   Tue, 22 Jan 2019 11:35:29 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Albert Vaca Cintora <albertvaka@gmail.com>
+Cc:     jack@suse.cz, ebiederm@xmission.com, linux-kernel@vger.kernel.org,
+        nsaenzjulienne@suse.de
+Subject: Re: [PATCH 1/1] kernel/ucounts: expose current inotify watch count
+Message-ID: <20190122103529.GB13149@quack2.suse.cz>
+References: <20190121164511.10822-1-albertvaka@gmail.com>
+ <20190121164511.10822-2-albertvaka@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+ZTjCGd9XYUCUoqv+AqXrPwX4OqWMC0jFgjNxZRFkNYXw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190121164511.10822-2-albertvaka@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/01/22 19:12, Dmitry Vyukov wrote:
-> On Tue, Jan 22, 2019 at 11:02 AM Tetsuo Handa
-> <penguin-kernel@i-love.sakura.ne.jp> wrote:
->>
->> On 2018/09/22 8:21, Andrew Morton wrote:
->>> On Thu, 20 Sep 2018 19:33:15 -0400 Joel Fernandes <joel@joelfernandes.org> wrote:
->>>
->>>> On Thu, Sep 20, 2018 at 5:12 PM Todd Kjos <tkjos@google.com> wrote:
->>>>>
->>>>> +Joel Fernandes
->>>>>
->>>>> On Thu, Sep 20, 2018 at 2:11 PM Andrew Morton <akpm@linux-foundation.org> wrote:
->>>>>>
->>>>>>
->>>>>> Thanks.  Let's cc the ashmem folks.
->>>>>>
->>>>
->>>> This should be fixed by https://patchwork.kernel.org/patch/10572477/
->>>>
->>>> It has Neil Brown's Reviewed-by but looks like didn't yet appear in
->>>> anyone's tree, could Greg take this patch?
->>>
->>> All is well.  That went into mainline yesterday, with a cc:stable.
->>>
->>
->> This problem was not fixed at all.
+On Mon 21-01-19 17:45:11, Albert Vaca Cintora wrote:
+> Adds a readonly 'current_inotify_watches' entry to the user sysctl table.
+> The handler for this entry is a custom function that ends calling
+> proc_dointvec.
 > 
-> There are at least 2 other open deadlocks involving ashmem:
+> Signed-off-by: Albert Vaca Cintora <albertvaka@gmail.com>
 
-Yes, they involve ashmem_shrink_scan() => {shmem|vfs}_fallocate() sequence.
-This approach tries to eliminate this sequence.
+FWIW this makes sense to me. I'd just copy a lot of the rationale from the
+cover latter to this commit log so that it gets preseved in git history.
+Other than that feel free to add:
 
+Acked-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  kernel/ucount.c | 29 +++++++++++++++++++++++++++++
+>  1 file changed, 29 insertions(+)
 > 
-> https://syzkaller.appspot.com/bug?extid=148c2885d71194f18d28
-> https://syzkaller.appspot.com/bug?extid=4b8b031b89e6b96c4b2e
+> diff --git a/kernel/ucount.c b/kernel/ucount.c
+> index f48d1b6376a4..afa3b89e3373 100644
+> --- a/kernel/ucount.c
+> +++ b/kernel/ucount.c
+> @@ -57,6 +57,11 @@ static struct ctl_table_root set_root = {
+>  	.permissions = set_permissions,
+>  };
 > 
-> Does this fix any of these too?
-
-I need checks from ashmem folks whether this approach is possible/correct.
-But you can ask syzbot to test this patch before ashmem folks respond.
+> +#ifdef CONFIG_INOTIFY_USER
+> +int proc_read_inotify_watches(struct ctl_table *table, int write,
+> +		     void __user *buffer, size_t *lenp, loff_t *ppos);
+> +#endif
+> +
+>  static int zero = 0;
+>  static int int_max = INT_MAX;
+>  #define UCOUNT_ENTRY(name)				\
+> @@ -79,6 +84,12 @@ static struct ctl_table user_table[] = {
+>  #ifdef CONFIG_INOTIFY_USER
+>  	UCOUNT_ENTRY("max_inotify_instances"),
+>  	UCOUNT_ENTRY("max_inotify_watches"),
+> +	{
+> +		.procname	= "current_inotify_watches",
+> +		.maxlen		= sizeof(int),
+> +		.mode		= 0444,
+> +		.proc_handler	= proc_read_inotify_watches,
+> +	},
+>  #endif
+>  	{ }
+>  };
+> @@ -226,6 +237,24 @@ void dec_ucount(struct ucounts *ucounts, enum ucount_type type)
+>  	put_ucounts(ucounts);
+>  }
+> 
+> +#ifdef CONFIG_INOTIFY_USER
+> +int proc_read_inotify_watches(struct ctl_table *table, int write,
+> +		     void __user *buffer, size_t *lenp, loff_t *ppos)
+> +{
+> +	struct ucounts *ucounts;
+> +	struct ctl_table fake_table;
+> +	int count;
+> +
+> +	ucounts = get_ucounts(current_user_ns(), current_euid());
+> +	count = atomic_read(&ucounts->ucount[UCOUNT_INOTIFY_WATCHES]);
+> +	put_ucounts(ucounts);
+> +
+> +	fake_table.data = &count;
+> +	fake_table.maxlen = sizeof(count);
+> +	return proc_dointvec(&fake_table, write, buffer, lenp, ppos);
+> +}
+> +#endif
+> +
+>  static __init int user_namespace_sysctl_init(void)
+>  {
+>  #ifdef CONFIG_SYSCTL
+> --
+> 2.20.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
