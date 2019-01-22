@@ -2,114 +2,87 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79222C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:23:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95573C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:23:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40651218DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:23:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C4F3218D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 09:23:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548149006;
-	bh=tvfSfixV9M/zFUAZ25eiE9ftJmocefhGyeG7bJ1p+wc=;
+	s=default; t=1548149009;
+	bh=pJe8XyLxKPkUajc+9M0rp/1UfMXdLKAiLqf5eVtJ1do=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ckMnl0X+i/Uoz4hPBZ/ia3WUMIvC/G6DP8IBwxPvHitA0R6p28xZcJzy/ISark6fP
-	 1DfM5h68n0WWlzycRY0mnFCCL6V/Xc/r8T23qA9xKtGTItnhouSMka/LLVkxqXHgUC
-	 cS/za9bR4FvO0BBGRAbpbUZPUGm4EpjXz5jG0SU4=
+	b=je35hEG3HKR/MFicZZ1+Ac3j5elcGMhkc3MiCSK53cs3pI6CopIpSdYDklKsTcTKo
+	 EsOFAfspTSbbJU4nKSrjkHlXeNFHZ1kipfF/kjqyw96oBVMjL3Cknr4iuxI3+upqIj
+	 HTul3W2JDGGzwolRhSfBbB0g5/qMndEcupt6rCKg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727730AbfAVJXY (ORCPT
+        id S1727776AbfAVJX2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 04:23:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47216 "EHLO mail.kernel.org"
+        Tue, 22 Jan 2019 04:23:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47300 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727509AbfAVJXX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 04:23:23 -0500
+        id S1727509AbfAVJX0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 04:23:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8847218D4;
-        Tue, 22 Jan 2019 09:23:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 40FBD218D9;
+        Tue, 22 Jan 2019 09:23:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548149002;
-        bh=tvfSfixV9M/zFUAZ25eiE9ftJmocefhGyeG7bJ1p+wc=;
+        s=default; t=1548149005;
+        bh=pJe8XyLxKPkUajc+9M0rp/1UfMXdLKAiLqf5eVtJ1do=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FiR3edAXBVFUN7hzroBaOdWPtGHJ4PvajGPuamdx3G45qsVh4pQCSBGYHxHhWCvGG
-         UcxdFStjA+N+NgMGE/+jFBsRbGP+55MuNl0zqtSVFzpqWRf+oOcWl4sK+Qh8NEzL9d
-         5uAQ8uVHQZ3QkihfTDVeHr2RmnOHtQsEHcXatTxU=
-Date:   Tue, 22 Jan 2019 10:22:34 +0100
+        b=yJJBUcGxeRP8VcJuLBNkE3A/Qc7mCzfGP/ETh1uv+S9gyP8fS1gtivtPizLzMzijS
+         1n5CcAgC92zc3su5gY3cwWqQBFhQZzbeCVnfxUEGduy893js2ywVtm7fWTwtVULv4K
+         wSdmveUrnHxJPf4clsBeKsgTQhkt0K5TL7VwefGQ=
+Date:   Tue, 22 Jan 2019 10:23:01 +0100
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Finn Thain <fthain@telegraphics.com.au>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Joshua Thompson <funaho@jurai.org>,
-        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linuxppc-dev@lists.ozlabs.org, linux-scsi@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v9 00/22] Re-use nvram module
-Message-ID: <20190122092234.GA15813@kroah.com>
-References: <cover.1547525936.git.fthain@telegraphics.com.au>
+To:     Mathieu Malaterre <malat@debian.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] nvram: annotate implicit fall through
+Message-ID: <20190122092301.GA23719@kroah.com>
+References: <20190114204415.22296-1-malat@debian.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1547525936.git.fthain@telegraphics.com.au>
+In-Reply-To: <20190114204415.22296-1-malat@debian.org>
 User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 03:18:56PM +1100, Finn Thain wrote:
-> The "generic" NVRAM module, drivers/char/generic_nvram.c, implements a
-> /dev/nvram misc device. This module is used only by 32-bit PowerPC
-> platforms.
+On Mon, Jan 14, 2019 at 09:44:15PM +0100, Mathieu Malaterre wrote:
+> There is a plan to build the kernel with -Wimplicit-fallthrough and
+> this place in the code produced a warning (W=1).
 > 
-> The RTC "CMOS" NVRAM module, drivers/char/nvram.c, also implements a
-> /dev/nvram misc device. This module is now used only by x86 and m68k
-> thanks to commit 3ba9faedc180 ("char: nvram: disable on ARM").
+> This commit remove the following warning:
 > 
-> The "generic" module cannot be used by x86 or m68k platforms because it
-> cannot co-exist with the "CMOS" module. One reason for that is the
-> CONFIG_GENERIC_NVRAM kludge in drivers/char/Makefile. Another reason is
-> that automatically loading the appropriate module would be impossible
-> because only one module can provide the char-major-10-144 alias.
+>   drivers/char/generic_nvram.c:83:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
 > 
-> A multi-platform kernel binary needs a single, generic module. With this
-> patch series, drivers/char/nvram.c becomes more generic and some of the
-> arch-specific code gets moved under arch/. The nvram module is then
-> usable by all m68k, powerpc and x86 platforms.
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+> Acked-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  drivers/char/generic_nvram.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> This allows for removal of drivers/char/generic_nvram.c as well as a
-> duplicate in arch/powerpc/kernel/nvram_64.c. By reducing the number of
-> /dev/nvram char misc device implementations, the number of bugs and
-> inconsistencies is also reduced.
-> 
-> This approach reduces inconsistencies between PPC32 and PPC64 and also
-> between PPC_PMAC and MAC. A uniform API has benefits for userspace.
-> 
-> For example, some error codes for some ioctl calls become consistent
-> across PowerPC platforms. The uniform API can potentially benefit any
-> bootloader that works across the various platforms having XPRAM
-> (e.g. Emile).
-> 
-> This patch series was tested on Atari, Mac, PowerMac (both 32-bit and
-> 64-bit) and ThinkPad hardware. AFAIK, it has not yet been tested on
-> pSeries or CHRP.
-> 
-> I think there are two possible merge strategies for this patch series.
-> The char misc maintainer could take the entire series. Alternatively,
-> the m68k maintainer could take patches 1 thru 16 (though some of these
-> have nothing to do with m68k) and after those patches reach mainline
-> the powerpc maintainer could take 17 thru 22.
+> diff --git a/drivers/char/generic_nvram.c b/drivers/char/generic_nvram.c
+> index ff5394f47587..53123c110f7b 100644
+> --- a/drivers/char/generic_nvram.c
+> +++ b/drivers/char/generic_nvram.c
+> @@ -81,6 +81,7 @@ static int nvram_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+>  #ifdef CONFIG_PPC_PMAC
+>  	case OBSOLETE_PMAC_NVRAM_GET_OFFSET:
+>  		printk(KERN_WARNING "nvram: Using obsolete PMAC_NVRAM_GET_OFFSET ioctl\n");
+> +		/* fall through */
+>  	case IOC_NVRAM_GET_OFFSET: {
+>  		int part, offset;
+>  
 
-I just took the whole series, thanks for doing this, looks good.
+This file is now gone from my tree, sorry.
 
 greg k-h
