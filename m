@@ -2,121 +2,155 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75475C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:04:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80E67C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:10:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45C8120856
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:04:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50FF320856
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 19:10:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="b2o9Cg3s"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="nXYrpnC3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726899AbfAVTEU (ORCPT
+        id S1726423AbfAVTKr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 14:04:20 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:43726 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725971AbfAVTEU (ORCPT
+        Tue, 22 Jan 2019 14:10:47 -0500
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:41046 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726191AbfAVTKq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 14:04:20 -0500
-Received: by mail-pf1-f195.google.com with SMTP id w73so12204133pfk.10
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 11:04:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:to:in-reply-to:user-agent
-         :references:subject:from:message-id:cc:date;
-        bh=1430ryyH8ftf37ivOWfxzd7tRXPSdNdok9e9SW9Cz4U=;
-        b=b2o9Cg3sDbqTJFblRSyjw9Scda59tDKa96b1dh6R7HJ80HKhG/7m7vLGw1h54SF9o3
-         n1ZswMYdXq/rTexVfZpdWmdtEnjc+u99wzG97zr/6rX+TTXmTSjy4v76F+cI/tzMIIYz
-         GpQWCAlYuI77VLZ3eN4RM7VhPlr5zXKtikz+E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:to
-         :in-reply-to:user-agent:references:subject:from:message-id:cc:date;
-        bh=1430ryyH8ftf37ivOWfxzd7tRXPSdNdok9e9SW9Cz4U=;
-        b=OczEAm4kVYUL92/oS9D3BOKAZBtPdM+pfyqEd7eMR0SkHRDy/cIiLx5EOEkC38utjJ
-         aLFSQd7nrXLM3gvF0/uhYSRhUtApBptP8sob+s7pIOb4ri9EtjdtEwZg+OVOHfPNxXAS
-         raRtRgj8sJGhLgccEu6snxZ0jSyGwEUSTjAdVnA2srv6DZ46Jdh9Ysm385y8LFTIy9CD
-         hkPv8ckLVLoYWvfTVaLA0dICBldaQm3QHKPSokkPwZwQrLKLBD+8U/mbTXOJZdTBkHLV
-         utO6f0ZvNUJxmKdhbm0Zclgg6LiRM5yH2cMwVP29VGhx2S2cK0LlewJkJ4wGvD7xHysg
-         YtFQ==
-X-Gm-Message-State: AJcUukdfR5z6qYFhutbo6YUbESp94ellhsVQkIW5q4rYoXt1Y2EqYPfU
-        318z5OUaSDg5OlVBfBvGx3Xu2A==
-X-Google-Smtp-Source: ALg8bN6k5XEybICRkSa96zR+pcTfcOW/amwxTq0dTFbukvo1BqnRGg3xFiRwjne5fTwn8jXACh4Zig==
-X-Received: by 2002:a63:990a:: with SMTP id d10mr33180022pge.279.1548183859553;
-        Tue, 22 Jan 2019 11:04:19 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id l5sm27095849pgu.86.2019.01.22.11.04.18
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 22 Jan 2019 11:04:18 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 22 Jan 2019 14:10:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=haCZ038HC8d6Fz4YWBQm/0Fr+4eV1xPEwWb6lWLRcsI=; b=nXYrpnC3dOGqX2SGINDoyT8Qd
+        j+yJfZxi2hoxZ28TNkDrGnnvs8xYEgULDm+R697zrhskymO3t4sEjHudkfIXHFF94NjOO7ITP+blF
+        i8ySyJQqHbfrqJMumq6ZxTLnAtLBMUIDT0GJDIvJhJVdTzGP3M2mgl0GJt0SgUjILxOrg=;
+Received: from e5254000004ec.dyn.armlinux.org.uk ([2002:4e20:1eda:1:5054:ff:fe00:4ec]:46188 helo=shell.armlinux.org.uk)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1gm1RY-00066Z-7N; Tue, 22 Jan 2019 19:10:40 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.89)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1gm1RX-0001wW-KW; Tue, 22 Jan 2019 19:10:39 +0000
+Date:   Tue, 22 Jan 2019 19:10:39 +0000
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/armada: add mmp2 support
+Message-ID: <20190122191039.ls6dgt2qaxympdnb@e5254000004ec.dyn.armlinux.org.uk>
+References: <20190121060349.549797-1-lkundrak@v3.sk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Andy Gross <andy.gross@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Sibi Sankar <sibis@codeaurora.org>
-In-Reply-To: <20190122055112.30943-5-bjorn.andersson@linaro.org>
-User-Agent: alot/0.8
-References: <20190122055112.30943-1-bjorn.andersson@linaro.org> <20190122055112.30943-5-bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v3 04/10] dt-bindings: soc: qcom: Add AOSS QMP binding
-From:   Stephen Boyd <swboyd@chromium.org>
-Message-ID: <154818385792.20280.7601798748317142776@swboyd.mtv.corp.google.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 22 Jan 2019 11:04:17 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190121060349.549797-1-lkundrak@v3.sk>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Bjorn Andersson (2019-01-21 21:51:06)
-> Add binding for the QMP based side-channel communication mechanism to
-> the AOSS, which is used to control resources not exposed through the
-> RPMh interface.
->=20
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+On Mon, Jan 21, 2019 at 07:03:49AM +0100, Lubomir Rintel wrote:
+> Heavily based on the Armada 510 (Dove) support. Like with 510 support, this
+> also just supports a single source clock -- the "Display 1" clock as
+> generated by the APMU. This one was chosen because the OLPC XO 1.75 laptop
+> uses it for its internal panel.
+> 
+> If anyone uses this to drive a MIPI or HDMI encoder, they may want to
+> extend this to choose a different source for the pixel clock -- it should
+> be a reasonably straightforward thing to do.
+> 
+> The data sheet is not available, but James Cameron of OLPC kindly
+> provided some details about the LCD_SCLK_DIV register.
+> 
+> Link: https://lists.freedesktop.org/archives/dri-devel/2018-December/201021.html
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 > ---
->=20
-> Changes since v2:
-> - Update indentation of example
-> - Add colling device subnodes to the description
->=20
->  .../bindings/soc/qcom/qcom,aoss-qmp.txt       | 75 +++++++++++++++++++
->  include/dt-bindings/power/qcom-aoss-qmp.h     | 15 ++++
->  2 files changed, 90 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,aoss-=
-qmp.txt
->  create mode 100644 include/dt-bindings/power/qcom-aoss-qmp.h
->=20
-> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.txt=
- b/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.txt
+>  drivers/gpu/drm/armada/Makefile      |  1 +
+>  drivers/gpu/drm/armada/armada_610.c  | 93 ++++++++++++++++++++++++++++
+>  drivers/gpu/drm/armada/armada_crtc.c |  4 ++
+>  drivers/gpu/drm/armada/armada_drm.h  |  1 +
+>  drivers/gpu/drm/armada/armada_hw.h   | 10 +++
+>  5 files changed, 109 insertions(+)
+>  create mode 100644 drivers/gpu/drm/armada/armada_610.c
+> 
+> diff --git a/drivers/gpu/drm/armada/Makefile b/drivers/gpu/drm/armada/Makefile
+> index 9bc3c3213724..5bbf86324cda 100644
+> --- a/drivers/gpu/drm/armada/Makefile
+> +++ b/drivers/gpu/drm/armada/Makefile
+> @@ -2,6 +2,7 @@
+>  armada-y	:= armada_crtc.o armada_drv.o armada_fb.o armada_fbdev.o \
+>  		   armada_gem.o armada_overlay.o armada_plane.o armada_trace.o
+>  armada-y	+= armada_510.o
+> +armada-y	+= armada_610.o
+>  armada-$(CONFIG_DEBUG_FS) += armada_debugfs.o
+>  
+>  obj-$(CONFIG_DRM_ARMADA) := armada.o
+> diff --git a/drivers/gpu/drm/armada/armada_610.c b/drivers/gpu/drm/armada/armada_610.c
 > new file mode 100644
-> index 000000000000..881dc8c7907a
+> index 000000000000..278b204038ea
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.txt
-> @@ -0,0 +1,75 @@
-> +Qualcomm Always-On Subsystem side channel binding
+> +++ b/drivers/gpu/drm/armada/armada_610.c
+> @@ -0,0 +1,93 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2012 Russell King
+> + * Copyright (C) 2018,2019 Lubomir Rintel
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + * Armada MMP2 variant support
+> + */
+> +#include <linux/clk.h>
+> +#include <drm/drm_modes.h>
+> +#include <drm/drm_crtc.h>
+> +#include "armada_crtc.h"
+> +#include "armada_drm.h"
+> +#include "armada_hw.h"
 > +
-> +This binding describes the hardware component responsible for side chann=
-el
-> +requests to the always-on subsystem (AOSS), used for certain power manag=
-ement
-> +requests that is not handled by the standard RPMh interface. Each client=
- in the
-> +SoC has it's own block of message RAM and IRQ for communication with the=
- AOSS.
-> +The protocol used to communicate in the message RAM is known as QMP.
+> +static int armada610_crtc_init(struct armada_crtc *dcrtc, struct device *dev)
+> +{
+> +	struct clk *clk;
+> +
+> +	clk = devm_clk_get(dev, "disp0");
+> +	if (IS_ERR(clk))
+> +		return PTR_ERR(clk) == -ENOENT ? -EPROBE_DEFER : PTR_ERR(clk);
+> +
+> +	dcrtc->extclk[0] = clk;
 
-Just curious if QMP is "Qualcomm Messaging Protocol"? I don't think it's
-ever spelled out in this patchset.
+I've been reworking the clocking support for Armada, you can find the
+current code in my git tree's drm-armada-devel branch (as mentioned
+in MAINTAINERS).  You'll need to update to that before I can apply
+this.
 
+The clocks are named in Dove's TRM as:
 
+   0 = AXIbus: Select AXI bus clock as pixel clock source.
+   1 = EXT_REF_CLK0: LCD_EXT_REF_CLK[0]
+   2 = PLLDivider: Select PLL divider input clock as pixel clock source.
+   3 = EXT_REF_CLK1: LCD_EXT_REF_CLK[1]
+
+So I chose to use these neumonics in the Armada 510.  Please can we
+keep to naming the clock inputs as per documented names please?
+
+Also, have a look at how Armada 510 gets its clocks from DT - note
+that the array they're placed in is ordered by priority (iow, if we
+have an external clock, we use that in preference to the more
+restricted axibus and plldivider clocks.)
+
+Thanks.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
