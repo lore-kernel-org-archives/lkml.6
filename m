@@ -2,137 +2,150 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81DBDC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 21:30:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35186C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 21:39:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58CE321726
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 21:30:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0349021726
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 21:39:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="I7ccCNQT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726779AbfAVVax (ORCPT
+        id S1726765AbfAVVjk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 16:30:53 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:54036 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726214AbfAVVaw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 16:30:52 -0500
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1gm3dC-0004cW-8c; Tue, 22 Jan 2019 14:30:51 -0700
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1gm3d9-0001U7-W3; Tue, 22 Jan 2019 14:30:48 -0700
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Joerg Roedel <joro@8bytes.org>
-Date:   Tue, 22 Jan 2019 14:30:45 -0700
-Message-Id: <20190122213045.5667-1-logang@deltatee.com>
-X-Mailer: git-send-email 2.19.0
+        Tue, 22 Jan 2019 16:39:40 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:43282 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726604AbfAVVjk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 16:39:40 -0500
+Received: by mail-pg1-f195.google.com with SMTP id v28so7904pgk.10
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 13:39:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=s1uBC0RAdo9MQ/lPZMxofyh91Ty2fVmSBsf+/Kce4B4=;
+        b=I7ccCNQTJeR/B00UEtaVVVLPfimVQBrZH+7e8THmRr/vOfi2AW5v6tYxBxogRxvTKv
+         3pUkDwLngBTOJvrv93uQFguYN9OYL4dhbbtHkomYMo1hyzHBbd8qJeHvzixHckrec0av
+         u7Ic7zhhEW4YQj5y3A8ulf3vQI5/+RndW4cuM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=s1uBC0RAdo9MQ/lPZMxofyh91Ty2fVmSBsf+/Kce4B4=;
+        b=b0skPiNETRmYxK4nlB/kYDRAsWZ14ktmtWYQDduwfgZ52gBc1Xvl38geVdmEtBcJwe
+         hPJHm2h1ByjwtXSJeCNewurOKghB/EBgZ46oWAGrBjeWVt6+2z83Q7Rzi7E6I0P3jGxm
+         TEiGKJyegkuU+0dAGbpLysDKB92ajvGKQyWHaecmLFyyOvDZCQ+oNWPyp6UCyXobVYZu
+         cbQCh4rvXd8E2lEnMSDHesH9lZAmuTA3oY1318KVI7ZLC1FVVS1cdXoSfILq7+jICePD
+         rwtS80MlW2/+DoTjVCckWJfdKY4ns4KSPaA+YA/CFc01dZFy/cp7ZO05I6ilAFMpzxCw
+         im/Q==
+X-Gm-Message-State: AJcUukeWF4lgQlZf6e0DhDBGLahvZzXKmR6iD9gJAdfA2R7wtXm4JofR
+        r+Zxv8XXVztLSUta0jDGoiHpSQ==
+X-Google-Smtp-Source: ALg8bN6S4YbWGdSGRk/8ODqL2gEzCmVditL8nDs3gWaxGr62p3HvTqrUU9WblIa3fWCt/D7rwBat0w==
+X-Received: by 2002:a62:4851:: with SMTP id v78mr35282757pfa.97.1548193178952;
+        Tue, 22 Jan 2019 13:39:38 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id b7sm22038119pfa.52.2019.01.22.13.39.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 22 Jan 2019 13:39:37 -0800 (PST)
+Date:   Tue, 22 Jan 2019 13:39:36 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Johan Hovold <johan@kernel.org>
+Cc:     Balakrishna Godavarthi <bgodavar@codeaurora.org>,
+        marcel@holtmann.org, johan.hedberg@gmail.com,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        Johan Hovold <jhovold@gmail.com>
+Subject: Re: [PATCH v5 2/5] Bluetooth: hci_qca: Deassert RTS while baudrate
+ change command
+Message-ID: <20190122213936.GH261387@google.com>
+References: <20190111013707.GD261387@google.com>
+ <194b5d18ea86830b6a24939d483a964c@codeaurora.org>
+ <20190111235633.GK261387@google.com>
+ <a6e083d245baebc019b6e7163fd6f133@codeaurora.org>
+ <20190115234628.GQ261387@google.com>
+ <20190117160944.GV3691@localhost>
+ <20190117172109.GU261387@google.com>
+ <20190118094416.GB3691@localhost>
+ <20190119003109.GD261387@google.com>
+ <20190121085613.GG3691@localhost>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org, hch@lst.de, logang@deltatee.com, dwmw2@infradead.org, joro@8bytes.org
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v2] iommu/vt-d: Implement dma_[un]map_resource()
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190121085613.GG3691@localhost>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently the Intel IOMMU uses the default dma_[un]map_resource()
-implementations does nothing and simply returns the physical address
-unmodified.
+On Mon, Jan 21, 2019 at 09:56:13AM +0100, Johan Hovold wrote:
+> On Fri, Jan 18, 2019 at 04:31:09PM -0800, Matthias Kaehlcke wrote:
+> > On Fri, Jan 18, 2019 at 10:44:16AM +0100, Johan Hovold wrote:
+> > > On Thu, Jan 17, 2019 at 09:21:09AM -0800, Matthias Kaehlcke wrote:
+> > > 
+> > > > I observed that the qcom_geni_serial driver doesn't raise RTS with
+> > > > flow control disabled. It seems we have to investigate why that's the
+> > > > case. I agree that the driver should be platform agnostic.
+> > > 
+> > > Sounds like a driver bug, unless the hardware is just "odd". The
+> > > driver implementation of this looks very non-standard judging from a
+> > > quick peek.
+> > > 
+> > > In fact, qcom_geni_serial_get_mctrl() is currently a no-op if hardware
+> > > flow control is not enabled:
+> > > 
+> > > 	if (uart_console(uport) || !uart_cts_enabled(uport))
+> > > 		return;
+> > > 
+> > > Perhaps dropping the !uart_cts_enabled() test is sufficient.
+> > 
+> > Thanks for taking a look Johan, that was indeed the problem (also
+> > in set_mctrl()). I posted a fix: https://lore.kernel.org/patchwork/patch/1033611/
+> 
+> Nice (I did mean set_mctrl() above, as I think you noticed).
+> 
+> > Balakrishna, the following (applied on top of your patch) works for me
+> > with the UART patch above:
+> > 
+> > diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+> > index 9d5e41f159c78f..60bfdf01f72841 100644
+> > --- a/drivers/bluetooth/hci_qca.c
+> > +++ b/drivers/bluetooth/hci_qca.c
+> > @@ -1080,7 +1080,7 @@ static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
+> >  {
+> >  	unsigned int speed, qca_baudrate;
+> >  	struct qca_serdev *qcadev;
+> > -	int ret;
+> > +	int ret = 0;
+> >  
+> >  	if (speed_type == QCA_INIT_SPEED) {
+> >  		speed = qca_get_speed(hu, QCA_INIT_SPEED);
+> > @@ -1097,22 +1097,27 @@ static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
+> >  		 * the old speed.
+> >  		 */
+> >  		qcadev = serdev_device_get_drvdata(hu->serdev);
+> > -		if (qcadev->btsoc_type == QCA_WCN3990)
+> > +		if (qcadev->btsoc_type == QCA_WCN3990) {
+> > +			hci_uart_set_flow_control(hu, true);
+> 
+> Wow, yeah, this parameter inversion is indeed confusing...
+> 
+> >  			serdev_device_set_rts(hu->serdev, false);
+> > +		}
+> 
+> But looking at hci_uart_set_flow_control() now, it actually also
+> deasserts RTS. So all you need here is the hci_uart_set_flow_control()
+> call.  
 
-However, this doesn't create the IOVA entries necessary for addresses
-mapped this way to work when the IOMMU is enabled. Thus, when the
-IOMMU is enabled, drivers relying on dma_map_resource() will trigger
-DMAR errors. We see this when running ntb_transport with the IOMMU
-enabled, DMA, and switchtec hardware.
+Great, thanks for pointing that out!
 
-The implementation for intel_map_resource() is nearly identical to
-intel_map_page(), we just have to re-create __intel_map_single().
-dma_unmap_resource() uses intel_unmap_page() directly as the
-functions are identical.
+> And that makes the inversion make a bit more sense too, even if the
+> naming is a bit unfortunate with respect to
+> serdev_device_set_flow_control() at least.
 
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Joerg Roedel <joro@8bytes.org>
-
----
-
-Changes in v2:
-* Revert to a single __intel_map_single() helper instead of having
-  a second small __intel_map_page() helper. As requested by Christoph.
-
-
- drivers/iommu/intel-iommu.c | 23 ++++++++++++++++-------
- 1 file changed, 16 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 2bd9ac285c0d..64dab37c0b96 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -3649,11 +3649,9 @@ static int iommu_no_mapping(struct device *dev)
- 	return 0;
- }
-
--static dma_addr_t __intel_map_page(struct device *dev, struct page *page,
--				   unsigned long offset, size_t size, int dir,
--				   u64 dma_mask)
-+static dma_addr_t __intel_map_single(struct device *dev, phys_addr_t paddr,
-+				     size_t size, int dir, u64 dma_mask)
- {
--	phys_addr_t paddr = page_to_phys(page) + offset;
- 	struct dmar_domain *domain;
- 	phys_addr_t start_paddr;
- 	unsigned long iova_pfn;
-@@ -3715,7 +3713,15 @@ static dma_addr_t intel_map_page(struct device *dev, struct page *page,
- 				 enum dma_data_direction dir,
- 				 unsigned long attrs)
- {
--	return __intel_map_page(dev, page, offset, size, dir, *dev->dma_mask);
-+	return __intel_map_single(dev, page_to_phys(page) + offset, size,
-+				  dir, *dev->dma_mask);
-+}
-+
-+static dma_addr_t intel_map_resource(struct device *dev, phys_addr_t phys_addr,
-+				     size_t size, enum dma_data_direction dir,
-+				     unsigned long attrs)
-+{
-+	return __intel_map_single(dev, phys_addr, size, dir, *dev->dma_mask);
- }
-
- static void intel_unmap(struct device *dev, dma_addr_t dev_addr, size_t size)
-@@ -3806,8 +3812,9 @@ static void *intel_alloc_coherent(struct device *dev, size_t size,
- 		return NULL;
- 	memset(page_address(page), 0, size);
-
--	*dma_handle = __intel_map_page(dev, page, 0, size, DMA_BIDIRECTIONAL,
--				       dev->coherent_dma_mask);
-+	*dma_handle = __intel_map_single(dev, page_to_phys(page), size,
-+					 DMA_BIDIRECTIONAL,
-+					 dev->coherent_dma_mask);
- 	if (*dma_handle != DMA_MAPPING_ERROR)
- 		return page_address(page);
- 	if (!dma_release_from_contiguous(dev, page, size >> PAGE_SHIFT))
-@@ -3924,6 +3931,8 @@ static const struct dma_map_ops intel_dma_ops = {
- 	.unmap_sg = intel_unmap_sg,
- 	.map_page = intel_map_page,
- 	.unmap_page = intel_unmap_page,
-+	.map_resource = intel_map_resource,
-+	.unmap_resource = intel_unmap_page,
- 	.dma_supported = dma_direct_supported,
- };
-
---
-2.19.0
