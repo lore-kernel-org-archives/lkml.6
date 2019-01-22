@@ -2,160 +2,304 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC8E2C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:25:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F21CC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:26:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9692F20870
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:25:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7CC320870
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 16:26:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548174416;
+	bh=uNOI/dnFI5om+2ahYkWSzmIbJe82Yj46cOMQJSSHOZo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=vNY0k2sM3VBU0nKxzAkFmoXPV6lrM5a0yWyTlr85hyUiT/dJitJjwH9dugAPdYj/u
+	 v8Vsm+PHINoIm4l8XISxeAPbw6qynqPLUczuc/tmldjrlLrZoIeOTxrvnMEpXUJnU1
+	 tp7pBBlISOPgr9mK1eWO1XHexRE1FJkMCn5i3khI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729395AbfAVQZc (ORCPT
+        id S1729162AbfAVQ0y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 11:25:32 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56920 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728980AbfAVQZb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 11:25:31 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BE674A78;
-        Tue, 22 Jan 2019 08:25:30 -0800 (PST)
-Received: from e107985-lin.cambridge.arm.com (e107985-lin.cambridge.arm.com [10.1.194.38])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 428A43F6A8;
-        Tue, 22 Jan 2019 08:25:29 -0800 (PST)
-From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>
-Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] sched/fair: Call post_init_entity_util_avg() with task_struct pointer argument
-Date:   Tue, 22 Jan 2019 16:25:01 +0000
-Message-Id: <20190122162501.12000-1-dietmar.eggemann@arm.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 22 Jan 2019 11:26:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51762 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728756AbfAVQ0y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 11:26:54 -0500
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 28CC621726;
+        Tue, 22 Jan 2019 16:26:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548174412;
+        bh=uNOI/dnFI5om+2ahYkWSzmIbJe82Yj46cOMQJSSHOZo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=TO5Gf2/O7fqRoeAPMwH1yQH8lTNXzUBIFEY2VtFukNu+LKzpVPJ9Uvxe9YgEJEB7Q
+         YSqJNuh5Rf40KiiakMyFJbapv0zh+z+y4m2iIBJcYs6iqMGQOevoV6j+JtefzewTiU
+         z6fv0XyFi9QTMgMbr8y4GkZjX9CwJImyZ4M2mWo0=
+Date:   Tue, 22 Jan 2019 17:26:40 +0100
+From:   Boris Brezillon <bbrezillon@kernel.org>
+To:     Schrempf Frieder <frieder.schrempf@kontron.de>
+Cc:     "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>
+Subject: Re: [PATCH v2 2/4] mtd: rawnand: Support bad block markers in
+ first, second or last page
+Message-ID: <20190122172640.6114537f@bbrezillon>
+In-Reply-To: <20190122112258.20042-3-frieder.schrempf@kontron.de>
+References: <20190122112258.20042-1-frieder.schrempf@kontron.de>
+        <20190122112258.20042-3-frieder.schrempf@kontron.de>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit d03266910a53 ("sched/fair: Fix task group initialization")
-the utilization of a sched entity representing a task group is no longer
-initialized to any other value than 0. So post_init_entity_util_avg() is
-only used for tasks.
+On Tue, 22 Jan 2019 11:23:31 +0000
+Schrempf Frieder <frieder.schrempf@kontron.de> wrote:
 
-Make this clear by calling it with a task_struct pointer argument which
-also eliminates the entity_is_task(se) if condition in the fork path and
-get rid of the stale comment in remove_entity_load_avg() accordingly.
+> From: Frieder Schrempf <frieder.schrempf@kontron.de>
+> 
+> Currently supported bad block marker positions within the block are:
+> * in first page only
+> * in last page only
+> * in first or second page
+> 
+> Some ESMT NANDs are known to have been shipped by the manufacturer
+> with bad block markers in the first or last page, instead of the
+> first or second page.
+> 
+> Also the datasheets for Cypress/Spansion/AMD NANDs claim that the
+> first, second *and* last page needs to be checked.
+> 
+> Therefore we make it possible to set NAND_BBM_FIRSTPAGE,
+> NAND_BBM_SECONDPAGE and NAND_BBM_LASTPAGE independently in any
+> combination.
+> 
+> To simplify the code, the logic to evaluate the flags is moved to a
+> a new function nand_bbm_get_next_page().
+> 
+> Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
 
-Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
----
- kernel/sched/core.c  |  2 +-
- kernel/sched/fair.c  | 38 ++++++++++++++++----------------------
- kernel/sched/sched.h |  2 +-
- 3 files changed, 18 insertions(+), 24 deletions(-)
+Reviewed-by: Boris Brezillon <bbrezillon@kernel.org>
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index d4d3514c4fe9..20eab0d96a8d 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -2418,7 +2418,7 @@ void wake_up_new_task(struct task_struct *p)
- #endif
- 	rq = __task_rq_lock(p, &rf);
- 	update_rq_clock(rq);
--	post_init_entity_util_avg(&p->se);
-+	post_init_entity_util_avg(p);
- 
- 	activate_task(rq, p, ENQUEUE_NOCLOCK);
- 	p->on_rq = TASK_ON_RQ_QUEUED;
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index e2ff4b69dcf6..732711ed3cf3 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -744,8 +744,9 @@ static void attach_entity_cfs_rq(struct sched_entity *se);
-  * Finally, that extrapolated util_avg is clamped to the cap (util_avg_cap)
-  * if util_avg > util_avg_cap.
-  */
--void post_init_entity_util_avg(struct sched_entity *se)
-+void post_init_entity_util_avg(struct task_struct *p)
- {
-+	struct sched_entity *se = &p->se;
- 	struct cfs_rq *cfs_rq = cfs_rq_of(se);
- 	struct sched_avg *sa = &se->avg;
- 	long cpu_scale = arch_scale_cpu_capacity(NULL, cpu_of(rq_of(cfs_rq)));
-@@ -763,22 +764,19 @@ void post_init_entity_util_avg(struct sched_entity *se)
- 		}
- 	}
- 
--	if (entity_is_task(se)) {
--		struct task_struct *p = task_of(se);
--		if (p->sched_class != &fair_sched_class) {
--			/*
--			 * For !fair tasks do:
--			 *
--			update_cfs_rq_load_avg(now, cfs_rq);
--			attach_entity_load_avg(cfs_rq, se, 0);
--			switched_from_fair(rq, p);
--			 *
--			 * such that the next switched_to_fair() has the
--			 * expected state.
--			 */
--			se->avg.last_update_time = cfs_rq_clock_task(cfs_rq);
--			return;
--		}
-+	if (p->sched_class != &fair_sched_class) {
-+		/*
-+		 * For !fair tasks do:
-+		 *
-+		update_cfs_rq_load_avg(now, cfs_rq);
-+		attach_entity_load_avg(cfs_rq, se, 0);
-+		switched_from_fair(rq, p);
-+		 *
-+		 * such that the next switched_to_fair() has the
-+		 * expected state.
-+		 */
-+		se->avg.last_update_time = cfs_rq_clock_task(cfs_rq);
-+		return;
- 	}
- 
- 	attach_entity_cfs_rq(se);
-@@ -788,7 +786,7 @@ void post_init_entity_util_avg(struct sched_entity *se)
- void init_entity_runnable_average(struct sched_entity *se)
- {
- }
--void post_init_entity_util_avg(struct sched_entity *se)
-+void post_init_entity_util_avg(struct task_struct *p)
- {
- }
- static void update_tg_load_avg(struct cfs_rq *cfs_rq, int force)
-@@ -3577,10 +3575,6 @@ void remove_entity_load_avg(struct sched_entity *se)
- 	 * tasks cannot exit without having gone through wake_up_new_task() ->
- 	 * post_init_entity_util_avg() which will have added things to the
- 	 * cfs_rq, so we can remove unconditionally.
--	 *
--	 * Similarly for groups, they will have passed through
--	 * post_init_entity_util_avg() before unregister_sched_fair_group()
--	 * calls this.
- 	 */
- 
- 	sync_entity_load_avg(se);
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index d27c1a5d4e25..ac0a2c0cd33e 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -1781,7 +1781,7 @@ extern void init_dl_rq_bw_ratio(struct dl_rq *dl_rq);
- unsigned long to_ratio(u64 period, u64 runtime);
- 
- extern void init_entity_runnable_average(struct sched_entity *se);
--extern void post_init_entity_util_avg(struct sched_entity *se);
-+extern void post_init_entity_util_avg(struct task_struct *p);
- 
- #ifdef CONFIG_NO_HZ_FULL
- extern bool sched_can_stop_tick(struct rq *rq);
--- 
-2.17.1
+> ---
+>  drivers/mtd/nand/raw/internals.h |  1 +
+>  drivers/mtd/nand/raw/nand_base.c | 62 ++++++++++++++++++++++++-----------
+>  drivers/mtd/nand/raw/nand_bbt.c  | 29 +++++++---------
+>  3 files changed, 55 insertions(+), 37 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/raw/internals.h b/drivers/mtd/nand/raw/internals.h
+> index fbf6ca015cd7..97ae67e009d5 100644
+> --- a/drivers/mtd/nand/raw/internals.h
+> +++ b/drivers/mtd/nand/raw/internals.h
+> @@ -76,6 +76,7 @@ extern const struct nand_manufacturer_ops toshiba_nand_manuf_ops;
+>  
+>  /* Core functions */
+>  const struct nand_manufacturer *nand_get_manufacturer(u8 id);
+> +int nand_bbm_get_next_page(struct nand_chip *chip, int page);
+>  int nand_markbad_bbm(struct nand_chip *chip, loff_t ofs);
+>  int nand_erase_nand(struct nand_chip *chip, struct erase_info *instr,
+>  		    int allowbbt);
+> diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
+> index 9ef7b86cdc42..7bc20c1fe23c 100644
+> --- a/drivers/mtd/nand/raw/nand_base.c
+> +++ b/drivers/mtd/nand/raw/nand_base.c
+> @@ -285,6 +285,31 @@ static void nand_release_device(struct nand_chip *chip)
+>  	spin_unlock(&chip->controller->lock);
+>  }
+>  
+> +/**
+> + * nand_bbm_get_next_page - Get the next page for bad block markers
+> + * @chip: NAND chip object
+> + * @index: Current page, only pages beyond this will be considered
+> + *
+> + * Returns an integer that corresponds to the page offset within a block, for
+> + * a page that is used to store bad block markers. If no more pages are
+> + * available, -1 is returned.
+> + */
+> +int nand_bbm_get_next_page(struct nand_chip *chip, int page)
+> +{
+> +	struct mtd_info *mtd = nand_to_mtd(chip);
+> +	int last_page = ((mtd->erasesize - mtd->writesize) >>
+> +			 chip->page_shift) & chip->pagemask;
+> +
+> +	if (page < 0 && chip->options & NAND_BBM_FIRSTPAGE)
+> +		return 0;
+> +	else if (page < 1 && chip->options & NAND_BBM_SECONDPAGE)
+> +		return 1;
+> +	else if (page < last_page && chip->options & NAND_BBM_LASTPAGE)
+> +		return last_page;
+> +
+> +	return -1;
+> +}
+> +
+>  /**
+>   * nand_block_bad - [DEFAULT] Read bad block marker from the chip
+>   * @chip: NAND chip object
+> @@ -294,19 +319,14 @@ static void nand_release_device(struct nand_chip *chip)
+>   */
+>  static int nand_block_bad(struct nand_chip *chip, loff_t ofs)
+>  {
+> -	struct mtd_info *mtd = nand_to_mtd(chip);
+> -	int page, page_end, res;
+> +	int page_offset;
+> +	int res, first_page = (int)(ofs >> chip->page_shift) & chip->pagemask;
+>  	u8 bad;
+>  
+> -	if (chip->options & NAND_BBM_LASTPAGE)
+> -		ofs += mtd->erasesize - mtd->writesize;
+> +	page_offset = nand_bbm_get_next_page(chip, -1);
+>  
+> -	page = (int)(ofs >> chip->page_shift) & chip->pagemask;
+> -	page_end = page + (((chip->options & NAND_BBM_FIRSTPAGE) &&
+> -			    (chip->options & NAND_BBM_SECONDPAGE)) ? 2 : 1);
+> -
+> -	for (; page < page_end; page++) {
+> -		res = chip->ecc.read_oob(chip, page);
+> +	while (page_offset != -1) {
+> +		res = chip->ecc.read_oob(chip, first_page + page_offset);
+>  		if (res < 0)
+>  			return res;
+>  
+> @@ -318,6 +338,8 @@ static int nand_block_bad(struct nand_chip *chip, loff_t ofs)
+>  			res = hweight8(bad) < chip->badblockbits;
+>  		if (res)
+>  			return res;
+> +
+> +		page_offset = nand_bbm_get_next_page(chip, page_offset);
+>  	}
+>  
+>  	return 0;
+> @@ -528,7 +550,7 @@ static int nand_default_block_markbad(struct nand_chip *chip, loff_t ofs)
+>  	struct mtd_info *mtd = nand_to_mtd(chip);
+>  	struct mtd_oob_ops ops;
+>  	uint8_t buf[2] = { 0, 0 };
+> -	int ret = 0, res, i = 0;
+> +	int ret = 0, res, page_offset;
+>  
+>  	memset(&ops, 0, sizeof(ops));
+>  	ops.oobbuf = buf;
+> @@ -541,18 +563,18 @@ static int nand_default_block_markbad(struct nand_chip *chip, loff_t ofs)
+>  	}
+>  	ops.mode = MTD_OPS_PLACE_OOB;
+>  
+> -	/* Write to first/last page(s) if necessary */
+> -	if (chip->options & NAND_BBM_LASTPAGE)
+> -		ofs += mtd->erasesize - mtd->writesize;
+> -	do {
+> -		res = nand_do_write_oob(chip, ofs, &ops);
+> +	page_offset = nand_bbm_get_next_page(chip, -1);
+> +
+> +	while (page_offset != -1) {
+> +		res = nand_do_write_oob(chip,
+> +					ofs + page_offset * mtd->writesize,
+> +					&ops);
+> +
+>  		if (!ret)
+>  			ret = res;
+>  
+> -		i++;
+> -		ofs += mtd->writesize;
+> -	} while ((chip->options & NAND_BBM_FIRSTPAGE) &&
+> -		 (chip->options & NAND_BBM_SECONDPAGE) && i < 2);
+> +		page_offset = nand_bbm_get_next_page(chip, page_offset);
+> +	}
+>  
+>  	return ret;
+>  }
+> diff --git a/drivers/mtd/nand/raw/nand_bbt.c b/drivers/mtd/nand/raw/nand_bbt.c
+> index c095c04d566d..09603c502931 100644
+> --- a/drivers/mtd/nand/raw/nand_bbt.c
+> +++ b/drivers/mtd/nand/raw/nand_bbt.c
+> @@ -415,11 +415,12 @@ static void read_abs_bbts(struct nand_chip *this, uint8_t *buf,
+>  
+>  /* Scan a given block partially */
+>  static int scan_block_fast(struct nand_chip *this, struct nand_bbt_descr *bd,
+> -			   loff_t offs, uint8_t *buf, int numpages)
+> +			   loff_t offs, uint8_t *buf)
+>  {
+>  	struct mtd_info *mtd = nand_to_mtd(this);
+> +
+>  	struct mtd_oob_ops ops;
+> -	int j, ret;
+> +	int ret, page_offset;
+>  
+>  	ops.ooblen = mtd->oobsize;
+>  	ops.oobbuf = buf;
+> @@ -427,12 +428,15 @@ static int scan_block_fast(struct nand_chip *this, struct nand_bbt_descr *bd,
+>  	ops.datbuf = NULL;
+>  	ops.mode = MTD_OPS_PLACE_OOB;
+>  
+> -	for (j = 0; j < numpages; j++) {
+> +	page_offset = nand_bbm_get_next_page(this, -1);
+> +
+> +	while (page_offset != -1) {
+>  		/*
+>  		 * Read the full oob until read_oob is fixed to handle single
+>  		 * byte reads for 16 bit buswidth.
+>  		 */
+> -		ret = mtd_read_oob(mtd, offs, &ops);
+> +		ret = mtd_read_oob(mtd, offs + page_offset * mtd->writesize,
+> +				   &ops);
+>  		/* Ignore ECC errors when checking for BBM */
+>  		if (ret && !mtd_is_bitflip_or_eccerr(ret))
+>  			return ret;
+> @@ -440,8 +444,9 @@ static int scan_block_fast(struct nand_chip *this, struct nand_bbt_descr *bd,
+>  		if (check_short_pattern(buf, bd))
+>  			return 1;
+>  
+> -		offs += mtd->writesize;
+> +		page_offset = nand_bbm_get_next_page(this, page_offset);
+>  	}
+> +
+>  	return 0;
+>  }
+>  
+> @@ -460,18 +465,11 @@ static int create_bbt(struct nand_chip *this, uint8_t *buf,
+>  		      struct nand_bbt_descr *bd, int chip)
+>  {
+>  	struct mtd_info *mtd = nand_to_mtd(this);
+> -	int i, numblocks, numpages;
+> -	int startblock;
+> +	int i, numblocks, startblock;
+>  	loff_t from;
+>  
+>  	pr_info("Scanning device for bad blocks\n");
+>  
+> -	if ((this->options & NAND_BBM_FIRSTPAGE) &&
+> -	    (this->options & NAND_BBM_SECONDPAGE))
+> -		numpages = 2;
+> -	else
+> -		numpages = 1;
+> -
+>  	if (chip == -1) {
+>  		numblocks = mtd->size >> this->bbt_erase_shift;
+>  		startblock = 0;
+> @@ -488,15 +486,12 @@ static int create_bbt(struct nand_chip *this, uint8_t *buf,
+>  		from = (loff_t)startblock << this->bbt_erase_shift;
+>  	}
+>  
+> -	if (this->bbt_options & NAND_BBM_LASTPAGE)
+> -		from += mtd->erasesize - (mtd->writesize * numpages);
+> -
+>  	for (i = startblock; i < numblocks; i++) {
+>  		int ret;
+>  
+>  		BUG_ON(bd->options & NAND_BBT_NO_OOB);
+>  
+> -		ret = scan_block_fast(this, bd, from, buf, numpages);
+> +		ret = scan_block_fast(this, bd, from, buf);
+>  		if (ret < 0)
+>  			return ret;
+>  
 
