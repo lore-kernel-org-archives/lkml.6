@@ -2,109 +2,88 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 602ADC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:08:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B606C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:09:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D54321726
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:08:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Gbc1hoZE"
+	by mail.kernel.org (Postfix) with ESMTP id 0035621726
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 20:09:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726214AbfAVUH7 (ORCPT
+        id S1726385AbfAVUJy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 15:07:59 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:35893 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726009AbfAVUH6 (ORCPT
+        Tue, 22 Jan 2019 15:09:54 -0500
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:40510 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726166AbfAVUJy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 15:07:58 -0500
-Received: by mail-pf1-f196.google.com with SMTP id b85so12298668pfc.3
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 12:07:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=nSCiDmvEKK1umqixYkYg0ZY/PwJtUZG68fykpqOn/nI=;
-        b=Gbc1hoZE8ThgmhjNwmTNRY3C+DpDxDFkCDqcf4s1jItV/X24dBHBTzBs0yDi5Civ7k
-         O11ZpN6c31oB66ZXHWaO9HHvH7xqgmhTcVuHP8u7aZaQVLPhzQQdiagoSJlxZqcWaMl+
-         It/VxvDGYMYVZFhYDaVrL8ZMZxdGjEOSJ3z2Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=nSCiDmvEKK1umqixYkYg0ZY/PwJtUZG68fykpqOn/nI=;
-        b=qz3j0eNnUQkpPyhAlZA7xQ6ZV9nfmECzIh+8fhLFnEhQIb2m2HNQSrcDJ3I4oIgBCG
-         P3vXkfmf77VvgOvKgkfNKC2bSTLZJuSLf0JhjJCYJnA9ZQ95O13ottc8NmmcbWuacpV8
-         8d30UAEdku+8QE+Q9C0fKucWc2ZBbTDZvK7iFDWFwOe/mykmj+9KuVok2Bow/kZ/ODUn
-         BVCZqotxTcTgDv9pGwtm+LsjjKv9kqtZc9p2P0yYfJxpURtdSndS1JXq/bQE9ZJti6Rw
-         uFBvCLXkltBdrlfO5HYcB7WWlBiWtpz1p46lgLHfcbxwlexqwhHHKSLYCWYhMfvAXntY
-         R7bQ==
-X-Gm-Message-State: AJcUukfiuoYTgIRbx+szEbPJTL67RwyHPmgdHxYBfRxktdktehdINtUI
-        RXF5+iGdjGEGeahSSeMBs3wAbg==
-X-Google-Smtp-Source: ALg8bN6o3jUllwnPsZZ1G1Q+W5aOLlJFiYz6W9r8AgieawDgi4doEvBkpxVlQX+MlcUlJEJBxs4qMw==
-X-Received: by 2002:a63:c00b:: with SMTP id h11mr23193182pgg.429.1548187677852;
-        Tue, 22 Jan 2019 12:07:57 -0800 (PST)
-Received: from [10.177.251.206] ([192.19.248.250])
-        by smtp.gmail.com with ESMTPSA id d18sm23345241pfj.47.2019.01.22.12.07.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Jan 2019 12:07:57 -0800 (PST)
-Subject: Re: [PATCH] brcm80211: no need to check return value of
- debugfs_create functions
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tue, 22 Jan 2019 15:09:54 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01353;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0TInKYlb_1548187782;
+Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TInKYlb_1548187782)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 23 Jan 2019 04:09:51 +0800
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+To:     mhocko@suse.com, hannes@cmpxchg.org, akpm@linux-foundation.org
+Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Cc:     Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
-        Wright Feng <wright.feng@cypress.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com, brcm80211-dev-list@cypress.com
-References: <20190122152151.16139-32-gregkh@linuxfoundation.org>
-From:   Arend Van Spriel <arend.vanspriel@broadcom.com>
-Message-ID: <530d2424-d679-c81a-9d11-02b2d7631bea@broadcom.com>
-Date:   Tue, 22 Jan 2019 21:07:48 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190122152151.16139-32-gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Subject: [RFC PATCH] mm: vmscan: do not iterate all mem cgroups for global direct reclaim
+Date:   Wed, 23 Jan 2019 04:09:42 +0800
+Message-Id: <1548187782-108454-1-git-send-email-yang.shi@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The prefix should be 'brcmsmac'.
+In current implementation, both kswapd and direct reclaim has to iterate
+all mem cgroups.  It is not a problem before offline mem cgroups could
+be iterated.  But, currently with iterating offline mem cgroups, it
+could be very time consuming.  In our workloads, we saw over 400K mem
+cgroups accumulated in some cases, only a few hundred are online memcgs.
+Although kswapd could help out to reduce the number of memcgs, direct
+reclaim still get hit with iterating a number of offline memcgs in some
+cases.  We experienced the responsiveness problems due to this
+occassionally.
 
-On 1/22/2019 4:21 PM, Greg Kroah-Hartman wrote:
-> When calling debugfs functions, there is no need to ever check the
-> return value.  The function can work or not, but the code logic should
-> never do something different based on this.
+Here just break the iteration once it reclaims enough pages as what
+memcg direct reclaim does.  This may hurt the fairness among memcgs
+since direct reclaim may awlays do reclaim from same memcgs.  But, it
+sounds ok since direct reclaim just tries to reclaim SWAP_CLUSTER_MAX
+pages and memcgs can be protected by min/low.
 
-I could argue that if above is true it would be better to make the 
-debugfs function return void, but I won't ;-p
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Michal Hocko <mhocko@suse.com>
+Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+---
+ mm/vmscan.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-In start_creating() the parent dentry is indeed checked for IS_ERR() so...
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index a714c4f..ced5a16 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -2764,16 +2764,15 @@ static bool shrink_node(pg_data_t *pgdat, struct scan_control *sc)
+ 				   sc->nr_reclaimed - reclaimed);
+ 
+ 			/*
+-			 * Direct reclaim and kswapd have to scan all memory
+-			 * cgroups to fulfill the overall scan target for the
+-			 * node.
++			 * Kswapd have to scan all memory cgroups to fulfill
++			 * the overall scan target for the node.
+ 			 *
+ 			 * Limit reclaim, on the other hand, only cares about
+ 			 * nr_to_reclaim pages to be reclaimed and it will
+ 			 * retry with decreasing priority if one round over the
+ 			 * whole hierarchy is not sufficient.
+ 			 */
+-			if (!global_reclaim(sc) &&
++			if ((!global_reclaim(sc) || !current_is_kswapd()) &&
+ 					sc->nr_reclaimed >= sc->nr_to_reclaim) {
+ 				mem_cgroup_iter_break(root, memcg);
+ 				break;
+-- 
+1.8.3.1
 
-Acked-by: Arend van Spriel
-
-> Cc: Arend van Spriel <arend.vanspriel@broadcom.com>
-> Cc: Franky Lin <franky.lin@broadcom.com>
-> Cc: Hante Meuleman <hante.meuleman@broadcom.com>
-> Cc: Chi-Hsien Lin <chi-hsien.lin@cypress.com>
-> Cc: Wright Feng <wright.feng@cypress.com>
-> Cc: Kalle Valo <kvalo@codeaurora.org>
-> Cc: linux-wireless@vger.kernel.org
-> Cc: brcm80211-dev-list.pdl@broadcom.com
-> Cc: brcm80211-dev-list@cypress.com
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
->   .../broadcom/brcm80211/brcmsmac/debug.c       | 26 +++----------------
->   .../broadcom/brcm80211/brcmsmac/debug.h       |  2 +-
->   2 files changed, 5 insertions(+), 23 deletions(-)
