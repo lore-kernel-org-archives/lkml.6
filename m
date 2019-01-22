@@ -2,129 +2,76 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8225C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:48:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3C13C282C5
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:50:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E31120844
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:48:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E3BA20844
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 10:50:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727764AbfAVKsb (ORCPT
+        id S1727781AbfAVKu3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 05:48:31 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:36612 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727505AbfAVKsb (ORCPT
+        Tue, 22 Jan 2019 05:50:29 -0500
+Received: from paleale.coelho.fi ([176.9.41.70]:49508 "EHLO
+        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727048AbfAVKu2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 05:48:31 -0500
-Received: by mail-qk1-f194.google.com with SMTP id o125so13960431qkf.3;
-        Tue, 22 Jan 2019 02:48:30 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JXIAJR36kEO/zvEiW04RBVH9LrlxNTF+8bOtPJQemBk=;
-        b=etTTFnpOhPlPOCl/46QJI3pWf2yyFxbtaBz3CgLwhG17aPFc0eH0CNCC/qc8Sd5x0p
-         yvfkqnw/5d8lJk+kpzoN/rlDMldUob4n/CUjIJnaMvdWS3uq5tiFRgXjRPYfoF2iBdTT
-         6ydWTmXDyewasyI1HnZyiySbhltR6OSKDanoWMGXOIRcYhSrqR4lkx059f3Y9VakaZHg
-         6hATGsmhxbiYYuBeGu2g4ZpBvkpY2LAt5xOEytB+z9Knl/8yMwjpjHH7D0+YSLQNa+T6
-         QKKji7vcLOPX3VZGnr2+Pr8eDbXyYbtda4bxhIOLPE/BUQpmsTiEPxclweBswzIMLBFq
-         vFqA==
-X-Gm-Message-State: AJcUukfc0sM81heH/PvDU797GXiSPyv8hvo2qgcCIy8o75phkivXS/bl
-        fV4Pu3VweKtH9AXB6bU1YVI4CNNLN25CwhAJyoNyKDrZ
-X-Google-Smtp-Source: ALg8bN5vUZQxm6/RE/AcbWpdwVUAQ3H8x6uoxE0ESyNW4wGFPQRBjk4hz4vpTDxaoY7qov8zWUav8AQbme6iPIHnQvU=
-X-Received: by 2002:a37:bdc6:: with SMTP id n189mr27186170qkf.330.1548154109251;
- Tue, 22 Jan 2019 02:48:29 -0800 (PST)
-MIME-Version: 1.0
-References: <20190121143951.68956db3@canb.auug.org.au> <CAK8P3a0Yth+f8AANE6g8c_zE0Zt1CvCdzMDFK=pr8eNqmrBV0Q@mail.gmail.com>
- <20190121191306.ifga5aw5atu2vvb7@brauner.io> <CAK8P3a2CkXJ=giXQgxEcQAeH1Wt8jKc_P+YTOLJpUPVKYU8m9g@mail.gmail.com>
- <20190121202328.rgrv54lybilsvitu@brauner.io> <da262bd9-1de0-eabb-ee44-e0ee152d15bb@kernel.dk>
- <20190121224811.gbvg22vg4kgg4kbs@brauner.io> <CAK8P3a0ej9NcJM8wXNPbcGUyOUZYX+VLoDFdbenW3s3114oQZw@mail.gmail.com>
- <20190122093146.kmckcgdbvo2e7v3c@brauner.io> <20190122103009.vu2a67kviqhcb3cn@brauner.io>
-In-Reply-To: <20190122103009.vu2a67kviqhcb3cn@brauner.io>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 22 Jan 2019 11:48:12 +0100
-Message-ID: <CAK8P3a0EW6ZSMoo6FsRQ=XvyhJe50SR7YtpCtuHcPr=JO3fCtA@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the pidfd tree with the y2038 tree
-To:     Christian Brauner <christian@brauner.io>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>
+        Tue, 22 Jan 2019 05:50:28 -0500
+Received: from 91-156-4-241.elisa-laajakaista.fi ([91.156.4.241] helo=redipa)
+        by farmhouse.coelho.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.91)
+        (envelope-from <luca@coelho.fi>)
+        id 1gltdO-0007Gx-UG; Tue, 22 Jan 2019 12:50:23 +0200
+Message-ID: <10feddc47ffc96ca5cd93651731b8adfdbe16c31.camel@coelho.fi>
+From:   Luca Coelho <luca@coelho.fi>
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Cc:     Intel Linux Wireless <linuxwifi@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sara Sharon <sara.sharon@intel.com>,
+        Shahar S Matityahu <shahar.s.matityahu@intel.com>,
+        Lior Cohen <lior2.cohen@intel.com>,
+        Shaul Triebitz <shaul.triebitz@intel.com>,
+        Haim Dreyfuss <haim.dreyfuss@intel.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 22 Jan 2019 12:50:20 +0200
+In-Reply-To: <20181210203945.2147135-1-arnd@arndb.de>
+References: <20181210203945.2147135-1-arnd@arndb.de>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.3-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] iwlwifi: fix false-positive maybe-uninitialized warning
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 11:30 AM Christian Brauner <christian@brauner.io> wrote:
->
-> On Tue, Jan 22, 2019 at 10:31:46AM +0100, Christian Brauner wrote:
-> > On Tue, Jan 22, 2019 at 10:26:56AM +0100, Arnd Bergmann wrote:
-> > > On Mon, Jan 21, 2019 at 11:48 PM Christian Brauner <christian@brauner.io> wrote:
-> > > >
-> > > > On Mon, Jan 21, 2019 at 03:44:17PM -0700, Jens Axboe wrote:
-> > > > > On 1/21/19 1:23 PM, Christian Brauner wrote:
-> > > > > > On Mon, Jan 21, 2019 at 09:15:27PM +0100, Arnd Bergmann wrote:
-> > > > > >> On Mon, Jan 21, 2019 at 8:13 PM Christian Brauner <christian@brauner.io> wrote:
-> > > > > >>> On Mon, Jan 21, 2019 at 06:16:22PM +0100, Arnd Bergmann wrote:
-> > > > > >>>> On Mon, Jan 21, 2019 at 4:40 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > > > >>>
-> > > > > >>> I plan on sending the pidfd branch with the new pidfd_send_signal()
-> > > > > >>> syscall for the 5.1 window. Should we somehow coordinate so that our
-> > > > > >>> branches don't conflict? Any suggestions?
-> > > > > >>
-> > > > > >> A conflict can't be avoided, but if you pick system call number 427
-> > > > > >> for pidfd_send_signal, and Jens picks numbers 424 through 426 for
-> > > > > >
-> > > > > > That sounds good to me. Since it's only one syscall for the pidfd branch
-> > > > > > is there anything that speaks against me using 424? Given that the other
-> > > > > > patchset has 4 new syscalls. :)
-> > > > > > Jens, any objections?
-> > > > >
-> > > > > I'm fine with either one, I'll have to renumber in any case. But it's 3
-> > > > > new syscalls (424, 425, 426), not 4.
-> > > > >
-> > > > > Arnd, what's the best way to make this switch now, in my tree? Would be
-> > > >
-> > > > Yeah, I'd like to know that as well.
-> > > >
-> > > > > great if I didn't have to change it again once I make the change.
-> > >
-> > > I'd suggest that you each just take the numbers we talked about and
-> > > add them in your respective git trees, at the end of the current tables.
->
-> What should we do about unistd.h? We can't just bump that to 42*, right?
+On Mon, 2018-12-10 at 21:39 +0100, Arnd Bergmann wrote:
+> With CONFIG_NO_AUTO_INLINE, we run into a silly warning when
+> gcc fails to remember that n_profiles is constant across
+> the function call to iwl_mvm_sar_set_profile:
+> 
+> drivers/net/wireless/intel/iwlwifi/mvm/fw.c: In function
+> 'iwl_mvm_sar_get_ewrd_table':
+> drivers/net/wireless/intel/iwlwifi/mvm/fw.c:746:9: error: 'ret' may
+> be used uninitialized in this function [-Werror=maybe-uninitialized]
+> 
+> Marking that function 'inline' avoids the warning.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
 
-Do you mean the asm-generic uapi header? In my current series, I do that:
+Thanks! This has been applied in our internal tree and will reach the
+mainline following our normal upstreaming process.
 
-#define __NR_rseq 293
-__SYSCALL(__NR_rseq, sys_rseq)
-#define __NR_kexec_file_load 294
-__SYSCALL(__NR_kexec_file_load,     sys_kexec_file_load)
-/* 295 through 402 are unassigned to sync up with generic numbers, don't use */
-#if __BITS_PER_LONG == 32
-#define __NR_clock_gettime64 403
-__SYSCALL(__NR_clock_gettime64, sys_clock_gettime)
-#define __NR_clock_settime64 404
-...
-#define __NR_rt_sigtimedwait_time64 421
-__SC_COMP(__NR_rt_sigtimedwait_time64, sys_rt_sigtimedwait,
-compat_sys_rt_sigtimedwait_time64)
-#define __NR_futex_time64 422
-__SYSCALL(__NR_futex_time64, sys_futex)
-#define __NR_sched_rr_get_interval_time64 423
-__SYSCALL(__NR_sched_rr_get_interval_time64, sys_sched_rr_get_interval)
-#endif
-#undef __NR_syscalls
-#define __NR_syscalls 424
+--
+Cheers,
+Luca.
 
-I've tried to feedback on that, but so far nobody has spoken out against
-skipping the 107 numbers here, though Russell felt that the idea of
-using the same numbers everywhere might not work out.
-
-     Arnd
