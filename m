@@ -2,172 +2,325 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C009BC282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:59:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21FDDC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:59:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85A2021019
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:59:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548165547;
-	bh=eFCV2I0SuRanve7T87d5UFTNQZX8eA+dD9s9Tx4QdpU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=NEUdvs+OFGAbFIU3Pf8oNUarIHHEQOXxMZsbXXQsTmSc3T53sHxacxEYVMSFc3MIy
-	 JoEvDtZPhsMsSlsJCBYJ41E+464D0/Ck3kNT3aKA4SuQcNZ7mSbVeTy9G+Q1vfo9gA
-	 3f1c6nIMG9tb5U12Rv8gWgk99B63TiEHwkJYpSHo=
+	by mail.kernel.org (Postfix) with ESMTP id D2FB721019
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:59:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XdjhAxhA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728704AbfAVN7F (ORCPT
+        id S1728725AbfAVN7n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 08:59:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41782 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728456AbfAVN7F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 08:59:05 -0500
-Received: from quaco.ghostprotocols.net (unknown [189.16.122.195])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0094721019;
-        Tue, 22 Jan 2019 13:59:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548165544;
-        bh=eFCV2I0SuRanve7T87d5UFTNQZX8eA+dD9s9Tx4QdpU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tdmvdvwNbowWClLwsVn3B9pXPeFKiDH7YIgiUD8QcPleunfnSbH7wr9eRXdgc1yrh
-         W73Og8b3CT4EAtLQBnFRpewN1UeeeziWAzeEA4pCWP9FaFQitv/BYjxv25FEZfMtAh
-         ppv0lHMAmqX6COgtrazhmyMnpz5KWdnHS5+cS9hE=
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 2D60140355; Tue, 22 Jan 2019 11:59:01 -0200 (-02)
-Date:   Tue, 22 Jan 2019 11:59:01 -0200
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Davidlohr Bueso <dave@stgolabs.net>
-Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org,
-        Davidlohr Bueso <dbueso@suse.de>
-Subject: Re: [PATCH 6/7] perf hist: Use cached rbtrees
-Message-ID: <20190122135901.GE14973@kernel.org>
-References: <20181206191819.30182-1-dave@stgolabs.net>
- <20181206191819.30182-7-dave@stgolabs.net>
+        Tue, 22 Jan 2019 08:59:43 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:35681 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728509AbfAVN7m (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 08:59:42 -0500
+Received: by mail-it1-f195.google.com with SMTP id p197so20140149itp.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 05:59:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JS/7L1W+OtpcW4HV78gRpsNPKmPEFu+HJFgIIfyuo24=;
+        b=XdjhAxhAHyIkK9RrZmmez7LiwTjhh3Uy84d4Bdjc5hFQoEwq87NZwRuqeGsIRvsNxF
+         S9t/Cn9yAnnMo0Kd15DPUWhhzX4VE9KtFZhLDv4oBamiFdSbm2WZivwGbg+B8bsJbxaR
+         +mhwji7Ha4dZS7USnn/JhOSCrYL1y55noRwi8/6BHRynVjeahtJ5UgREQ4IjRW9pLfi1
+         0jZmSur8SMp2J/34mL1L/bEZ4zJ1UAcDPsMfkHsfwm13ILgyNBY53mg3ZMhUwARwY9wZ
+         gQNb7J4Yqd+AtkYh7RcjFIDbGrj4OqPf6mBxLQ3OurJewA08N/oKx8uMvwACB5LenAnb
+         MBEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JS/7L1W+OtpcW4HV78gRpsNPKmPEFu+HJFgIIfyuo24=;
+        b=JamFHaouAS5Ood7SblfaGF/M8wzZqOjiPs0yVbO6TtshblUWa3akBVZ2MqFOTmOkML
+         s+Ri31aApADe4ahPpKq6+UnAcCHxOYNtvdDgoILCHoVNHNmqFpZECPnzmiQCfvuczuku
+         13jDzg1eBjZvOpjiSkqjWnHymjdKgDOzmGPAN/7BKsT1YtWz2Yz3HeF1TuozdNJ+F4qX
+         tAS7KVLT6O5B130aFwf8GDY2SaRH3JTmr1GHPq4P2xK22hiCkxhDWe41ESex9DRcqMgD
+         IaZ1FhfuJSlzOJ22H8seGxZkJ7PgI3G+QRloFEK38iSbdfJUcwSAAXoS3seZXfpWhmsd
+         2b4Q==
+X-Gm-Message-State: AJcUukenpdX6uBhQBWAGdsz1U7sy5xjQGO5H0nR4VNuB5ouGQNvYLwNv
+        dZePI9vJQzPGx/uGNnhL15YZyAZy/fo2bt2afUf/Xg==
+X-Google-Smtp-Source: ALg8bN5K3HvFvoVVoinVo92bq+OKXVjie5d1/Ivtyvt9kezvzR2hVBfJ1a6bX/jEGpWbLqOHOLvr61UpZQy//Oi80Ao=
+X-Received: by 2002:a24:6511:: with SMTP id u17mr2178124itb.12.1548165581137;
+ Tue, 22 Jan 2019 05:59:41 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181206191819.30182-7-dave@stgolabs.net>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <0000000000004024240573137822@google.com> <20180810161848.GB16533@bombadil.infradead.org>
+In-Reply-To: <20180810161848.GB16533@bombadil.infradead.org>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Tue, 22 Jan 2019 14:59:29 +0100
+Message-ID: <CACT4Y+bEsav4r82z5rE1b0rH==VpU7FEK7DzuqTu3AV+w0Ve9g@mail.gmail.com>
+Subject: Re: possible deadlock in shmem_fallocate (2)
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     syzbot <syzbot+4b8b031b89e6b96c4b2e@syzkaller.appspotmail.com>,
+        Hugh Dickins <hughd@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Yisheng Xie <xieyisheng1@huawei.com>,
+        Todd Kjos <tkjos@google.com>,
+        Arve Hjonnevag <arve@android.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Content-Type: multipart/mixed; boundary="00000000000084ecc605800c638f"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Dec 06, 2018 at 11:18:18AM -0800, Davidlohr Bueso escreveu:
-> At the cost of an extra pointer, we can avoid the O(logN) cost
-> of finding the first element in the tree (smallest node), which
-> is something heavily required for histograms. Specifically, the
-> following are converted to rb_root_cached, and users accordingly:
-> 
-> hist::entries_in_array
-> hist::entries_in
-> hist::entries
-> hist::entries_collapsed
-> hist_entry::hroot_in
-> hist_entry::hroot_out
+--00000000000084ecc605800c638f
+Content-Type: text/plain; charset="UTF-8"
 
-  CC       /tmp/build/perf/util/hist.o
-ui/browsers/hists.c: In function ‘hierarchy_set_folding’:
-ui/browsers/hists.c:511:21: error: passing argument 1 of ‘rb_first’ from incompatible pointer type [-Werror=incompatible-pointer-types]
-  for (nd = rb_first(&he->hroot_out); nd; nd = rb_next(nd)) {
-                     ^~~~~~~~~~~~~~
-In file included from ui/browsers/hists.c:8:
-/home/acme/git/perf/tools/include/linux/rbtree.h:83:24: note: expected ‘const struct rb_root *’ but argument is of type ‘struct rb_root_cached *’
- extern struct rb_node *rb_first(const struct rb_root *);
-                        ^~~~~~~~
-ui/browsers/hists.c: In function ‘__hist_browser__set_folding’:
-ui/browsers/hists.c:569:16: error: passing argument 1 of ‘rb_first’ from incompatible pointer type [-Werror=incompatible-pointer-types]
-  nd = rb_first(&browser->hists->entries);
-                ^~~~~~~~~~~~~~~~~~~~~~~~
-
-So I added this on top, please check:
+On Fri, Aug 10, 2018 at 6:18 PM Matthew Wilcox <willy@infradead.org> wrote:
+>
+>
+> This is another ashmem lockdep splat.  Forwarding to the appropriate ashmem
+> people.
 
 
-diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
-index f8913723a99a..85790a4d1842 100644
---- a/tools/perf/ui/browsers/hists.c
-+++ b/tools/perf/ui/browsers/hists.c
-@@ -508,7 +508,7 @@ static int hierarchy_set_folding(struct hist_browser *hb, struct hist_entry *he,
- 	struct hist_entry *child;
- 	int n = 0;
- 
--	for (nd = rb_first(&he->hroot_out); nd; nd = rb_next(nd)) {
-+	for (nd = rb_first_cached(&he->hroot_out); nd; nd = rb_next(nd)) {
- 		child = rb_entry(nd, struct hist_entry, rb_node);
- 		percent = hist_entry__get_percent_limit(child);
- 		if (!child->filtered && percent >= hb->min_pcnt)
-@@ -566,7 +566,7 @@ __hist_browser__set_folding(struct hist_browser *browser, bool unfold)
- 	struct rb_node *nd;
- 	struct hist_entry *he;
- 
--	nd = rb_first(&browser->hists->entries);
-+	nd = rb_first_cached(&browser->hists->entries);
- 	while (nd) {
- 		he = rb_entry(nd, struct hist_entry, rb_node);
- 
-@@ -1738,7 +1738,7 @@ static void ui_browser__hists_init_top(struct ui_browser *browser)
- 		struct hist_browser *hb;
- 
- 		hb = container_of(browser, struct hist_browser, b);
--		browser->top = rb_first(&hb->hists->entries);
-+		browser->top = rb_first_cached(&hb->hists->entries);
- 	}
- }
- 
-@@ -2649,7 +2649,7 @@ add_socket_opt(struct hist_browser *browser, struct popup_action *act,
- static void hist_browser__update_nr_entries(struct hist_browser *hb)
- {
- 	u64 nr_entries = 0;
--	struct rb_node *nd = rb_first(&hb->hists->entries);
-+	struct rb_node *nd = rb_first_cached(&hb->hists->entries);
- 
- 	if (hb->min_pcnt == 0 && !symbol_conf.report_hierarchy) {
- 		hb->nr_non_filtered_entries = hb->hists->nr_non_filtered_entries;
-@@ -2669,7 +2669,7 @@ static void hist_browser__update_percent_limit(struct hist_browser *hb,
- 					       double percent)
- {
- 	struct hist_entry *he;
--	struct rb_node *nd = rb_first(&hb->hists->entries);
-+	struct rb_node *nd = rb_first_cached(&hb->hists->entries);
- 	u64 total = hists__total_period(hb->hists);
- 	u64 min_callchain_hits = total * (percent / 100);
- 
-diff --git a/tools/perf/ui/gtk/hists.c b/tools/perf/ui/gtk/hists.c
-index dfab3deef028..74414ccd8c84 100644
---- a/tools/perf/ui/gtk/hists.c
-+++ b/tools/perf/ui/gtk/hists.c
-@@ -401,7 +401,7 @@ static void perf_gtk__show_hists(GtkWidget *window, struct hists *hists,
- }
- 
- static void perf_gtk__add_hierarchy_entries(struct hists *hists,
--					    struct rb_root *root,
-+					    struct rb_root_cached *root,
- 					    GtkTreeStore *store,
- 					    GtkTreeIter *parent,
- 					    struct perf_hpp *hpp,
-@@ -415,7 +415,7 @@ static void perf_gtk__add_hierarchy_entries(struct hists *hists,
- 	u64 total = hists__total_period(hists);
- 	int size;
- 
--	for (node = rb_first(root); node; node = rb_next(node)) {
-+	for (node = rb_first_cached(root); node; node = rb_next(node)) {
- 		GtkTreeIter iter;
- 		float percent;
- 		char *bf;
-@@ -578,7 +578,7 @@ static void perf_gtk__show_hierarchy(GtkWidget *window, struct hists *hists,
- 	gtk_tree_view_set_model(GTK_TREE_VIEW(view), GTK_TREE_MODEL(store));
- 	g_object_unref(GTK_TREE_MODEL(store));
- 
--	perf_gtk__add_hierarchy_entries(hists, &hists->entries.rb_root, store,
-+	perf_gtk__add_hierarchy_entries(hists, &hists->entries, store,
- 					NULL, &hpp, min_pcnt);
- 
- 	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(view), TRUE);
+Let's test Tetsuo's patch
+
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+master
+
+
+
+> On Fri, Aug 10, 2018 at 04:59:02AM -0700, syzbot wrote:
+> > Hello,
+> >
+> > syzbot found the following crash on:
+> >
+> > HEAD commit:    4110b42356f3 Add linux-next specific files for 20180810
+> > git tree:       linux-next
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=1411d6e2400000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=1d80606e3795a4f5
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=4b8b031b89e6b96c4b2e
+> > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> > syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=175052f8400000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11873622400000
+> >
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+4b8b031b89e6b96c4b2e@syzkaller.appspotmail.com
+> >
+> > random: sshd: uninitialized urandom read (32 bytes read)
+> > random: sshd: uninitialized urandom read (32 bytes read)
+> > random: sshd: uninitialized urandom read (32 bytes read)
+> >
+> > ======================================================
+> > WARNING: possible circular locking dependency detected
+> > 4.18.0-rc8-next-20180810+ #36 Not tainted
+> > ------------------------------------------------------
+> > syz-executor900/4483 is trying to acquire lock:
+> > 00000000d2bfc8fe (&sb->s_type->i_mutex_key#9){++++}, at: inode_lock
+> > include/linux/fs.h:765 [inline]
+> > 00000000d2bfc8fe (&sb->s_type->i_mutex_key#9){++++}, at:
+> > shmem_fallocate+0x18b/0x12e0 mm/shmem.c:2602
+> >
+> > but task is already holding lock:
+> > 0000000025208078 (ashmem_mutex){+.+.}, at: ashmem_shrink_scan+0xb4/0x630
+> > drivers/staging/android/ashmem.c:448
+> >
+> > which lock already depends on the new lock.
+> >
+> >
+> > the existing dependency chain (in reverse order) is:
+> >
+> > -> #2 (ashmem_mutex){+.+.}:
+> >        __mutex_lock_common kernel/locking/mutex.c:925 [inline]
+> >        __mutex_lock+0x171/0x1700 kernel/locking/mutex.c:1073
+> >        mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1088
+> >        ashmem_mmap+0x55/0x520 drivers/staging/android/ashmem.c:361
+> >        call_mmap include/linux/fs.h:1844 [inline]
+> >        mmap_region+0xf27/0x1c50 mm/mmap.c:1762
+> >        do_mmap+0xa10/0x1220 mm/mmap.c:1535
+> >        do_mmap_pgoff include/linux/mm.h:2298 [inline]
+> >        vm_mmap_pgoff+0x213/0x2c0 mm/util.c:357
+> >        ksys_mmap_pgoff+0x4da/0x660 mm/mmap.c:1585
+> >        __do_sys_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
+> >        __se_sys_mmap arch/x86/kernel/sys_x86_64.c:91 [inline]
+> >        __x64_sys_mmap+0xe9/0x1b0 arch/x86/kernel/sys_x86_64.c:91
+> >        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+> >        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> >
+> > -> #1 (&mm->mmap_sem){++++}:
+> >        __might_fault+0x155/0x1e0 mm/memory.c:4568
+> >        _copy_to_user+0x30/0x110 lib/usercopy.c:25
+> >        copy_to_user include/linux/uaccess.h:155 [inline]
+> >        filldir+0x1ea/0x3a0 fs/readdir.c:196
+> >        dir_emit_dot include/linux/fs.h:3464 [inline]
+> >        dir_emit_dots include/linux/fs.h:3475 [inline]
+> >        dcache_readdir+0x13a/0x620 fs/libfs.c:193
+> >        iterate_dir+0x48b/0x5d0 fs/readdir.c:51
+> >        __do_sys_getdents fs/readdir.c:231 [inline]
+> >        __se_sys_getdents fs/readdir.c:212 [inline]
+> >        __x64_sys_getdents+0x29f/0x510 fs/readdir.c:212
+> >        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+> >        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> >
+> > -> #0 (&sb->s_type->i_mutex_key#9){++++}:
+> >        lock_acquire+0x1e4/0x540 kernel/locking/lockdep.c:3924
+> >        down_write+0x8f/0x130 kernel/locking/rwsem.c:70
+> >        inode_lock include/linux/fs.h:765 [inline]
+> >        shmem_fallocate+0x18b/0x12e0 mm/shmem.c:2602
+> >        ashmem_shrink_scan+0x236/0x630 drivers/staging/android/ashmem.c:455
+> >        ashmem_ioctl+0x3ae/0x13a0 drivers/staging/android/ashmem.c:797
+> >        vfs_ioctl fs/ioctl.c:46 [inline]
+> >        file_ioctl fs/ioctl.c:501 [inline]
+> >        do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
+> >        ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
+> >        __do_sys_ioctl fs/ioctl.c:709 [inline]
+> >        __se_sys_ioctl fs/ioctl.c:707 [inline]
+> >        __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
+> >        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+> >        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> >
+> > other info that might help us debug this:
+> >
+> > Chain exists of:
+> >   &sb->s_type->i_mutex_key#9 --> &mm->mmap_sem --> ashmem_mutex
+> >
+> >  Possible unsafe locking scenario:
+> >
+> >        CPU0                    CPU1
+> >        ----                    ----
+> >   lock(ashmem_mutex);
+> >                                lock(&mm->mmap_sem);
+> >                                lock(ashmem_mutex);
+> >   lock(&sb->s_type->i_mutex_key#9);
+> >
+> >  *** DEADLOCK ***
+> >
+> > 1 lock held by syz-executor900/4483:
+> >  #0: 0000000025208078 (ashmem_mutex){+.+.}, at:
+> > ashmem_shrink_scan+0xb4/0x630 drivers/staging/android/ashmem.c:448
+> >
+> > stack backtrace:
+> > CPU: 1 PID: 4483 Comm: syz-executor900 Not tainted 4.18.0-rc8-next-20180810+
+> > #36
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> > Google 01/01/2011
+> > Call Trace:
+> >  __dump_stack lib/dump_stack.c:77 [inline]
+> >  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+> >  print_circular_bug.isra.37.cold.58+0x1bd/0x27d
+> > kernel/locking/lockdep.c:1227
+> >  check_prev_add kernel/locking/lockdep.c:1867 [inline]
+> >  check_prevs_add kernel/locking/lockdep.c:1980 [inline]
+> >  validate_chain kernel/locking/lockdep.c:2421 [inline]
+> >  __lock_acquire+0x3449/0x5020 kernel/locking/lockdep.c:3435
+> >  lock_acquire+0x1e4/0x540 kernel/locking/lockdep.c:3924
+> >  down_write+0x8f/0x130 kernel/locking/rwsem.c:70
+> >  inode_lock include/linux/fs.h:765 [inline]
+> >  shmem_fallocate+0x18b/0x12e0 mm/shmem.c:2602
+> >  ashmem_shrink_scan+0x236/0x630 drivers/staging/android/ashmem.c:455
+> >  ashmem_ioctl+0x3ae/0x13a0 drivers/staging/android/ashmem.c:797
+> >  vfs_ioctl fs/ioctl.c:46 [inline]
+> >  file_ioctl fs/ioctl.c:501 [inline]
+> >  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
+> >  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
+> >  __do_sys_ioctl fs/ioctl.c:709 [inline]
+> >  __se_sys_ioctl fs/ioctl.c:707 [inline]
+> >  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
+> >  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+> >  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > RIP: 0033:0x440099
+> > Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7
+> > 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff
+> > 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+> > RSP: 002b:00007fff3613dbf8 EFLAGS: 00000217 ORIG_RAX: 0000000000000010
+> > RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440099
+> > RDX: 00000
+> >
+> >
+> > ---
+> > This bug is generated by a bot. It may contain errors.
+> > See https://goo.gl/tpsmEJ for more information about syzbot.
+> > syzbot engineers can be reached at syzkaller@googlegroups.com.
+> >
+> > syzbot will keep track of this bug report. See:
+> > https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> > syzbot.
+> > syzbot can test patches for this bug, for details see:
+> > https://goo.gl/tpsmEJ#testing-patches
+> >
+>
+> --
+> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/20180810161848.GB16533%40bombadil.infradead.org.
+> For more options, visit https://groups.google.com/d/optout.
+
+--00000000000084ecc605800c638f
+Content-Type: text/x-patch; charset="US-ASCII"; name="ashmem.patch"
+Content-Disposition: attachment; filename="ashmem.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_jr7tt1qp0>
+X-Attachment-Id: f_jr7tt1qp0
+
+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2luZy9hbmRyb2lkL2FzaG1lbS5jIGIvZHJpdmVycy9z
+dGFnaW5nL2FuZHJvaWQvYXNobWVtLmMKaW5kZXggOTBhOGE5ZjFhYzdkLi4xYTg5MGM0M2ExMGEg
+MTAwNjQ0Ci0tLSBhL2RyaXZlcnMvc3RhZ2luZy9hbmRyb2lkL2FzaG1lbS5jCisrKyBiL2RyaXZl
+cnMvc3RhZ2luZy9hbmRyb2lkL2FzaG1lbS5jCkBAIC03NSw2ICs3NSwxNyBAQCBzdHJ1Y3QgYXNo
+bWVtX3JhbmdlIHsKIC8qIExSVSBsaXN0IG9mIHVucGlubmVkIHBhZ2VzLCBwcm90ZWN0ZWQgYnkg
+YXNobWVtX211dGV4ICovCiBzdGF0aWMgTElTVF9IRUFEKGFzaG1lbV9scnVfbGlzdCk7CiAKK3N0
+YXRpYyBzdHJ1Y3Qgd29ya3F1ZXVlX3N0cnVjdCAqYXNobWVtX3dxOworc3RhdGljIGF0b21pY190
+IGFzaG1lbV9zaHJpbmtfaW5mbGlnaHQgPSBBVE9NSUNfSU5JVCgwKTsKK3N0YXRpYyBERUNMQVJF
+X1dBSVRfUVVFVUVfSEVBRChhc2htZW1fc2hyaW5rX3dhaXQpOworCitzdHJ1Y3QgYXNobWVtX3No
+cmlua193b3JrIHsKKwlzdHJ1Y3Qgd29ya19zdHJ1Y3Qgd29yazsKKwlzdHJ1Y3QgZmlsZSAqZmls
+ZTsKKwlsb2ZmX3Qgc3RhcnQ7CisJbG9mZl90IGVuZDsKK307CisKIC8qCiAgKiBsb25nIGxydV9j
+b3VudCAtIFRoZSBjb3VudCBvZiBwYWdlcyBvbiBvdXIgTFJVIGxpc3QuCiAgKgpAQCAtMjkyLDYg
+KzMwMyw3IEBAIHN0YXRpYyBzc2l6ZV90IGFzaG1lbV9yZWFkX2l0ZXIoc3RydWN0IGtpb2NiICpp
+b2NiLCBzdHJ1Y3QgaW92X2l0ZXIgKml0ZXIpCiAJaW50IHJldCA9IDA7CiAKIAltdXRleF9sb2Nr
+KCZhc2htZW1fbXV0ZXgpOworCXdhaXRfZXZlbnQoYXNobWVtX3Nocmlua193YWl0LCAhYXRvbWlj
+X3JlYWQoJmFzaG1lbV9zaHJpbmtfaW5mbGlnaHQpKTsKIAogCS8qIElmIHNpemUgaXMgbm90IHNl
+dCwgb3Igc2V0IHRvIDAsIGFsd2F5cyByZXR1cm4gRU9GLiAqLwogCWlmIChhc21hLT5zaXplID09
+IDApCkBAIC0zNTksNiArMzcxLDcgQEAgc3RhdGljIGludCBhc2htZW1fbW1hcChzdHJ1Y3QgZmls
+ZSAqZmlsZSwgc3RydWN0IHZtX2FyZWFfc3RydWN0ICp2bWEpCiAJaW50IHJldCA9IDA7CiAKIAlt
+dXRleF9sb2NrKCZhc2htZW1fbXV0ZXgpOworCXdhaXRfZXZlbnQoYXNobWVtX3Nocmlua193YWl0
+LCAhYXRvbWljX3JlYWQoJmFzaG1lbV9zaHJpbmtfaW5mbGlnaHQpKTsKIAogCS8qIHVzZXIgbmVl
+ZHMgdG8gU0VUX1NJWkUgYmVmb3JlIG1hcHBpbmcgKi8KIAlpZiAoIWFzbWEtPnNpemUpIHsKQEAg
+LTQyMSw2ICs0MzQsMTkgQEAgc3RhdGljIGludCBhc2htZW1fbW1hcChzdHJ1Y3QgZmlsZSAqZmls
+ZSwgc3RydWN0IHZtX2FyZWFfc3RydWN0ICp2bWEpCiAJcmV0dXJuIHJldDsKIH0KIAorc3RhdGlj
+IHZvaWQgYXNobWVtX3Nocmlua193b3JrZXIoc3RydWN0IHdvcmtfc3RydWN0ICp3b3JrKQorewor
+CXN0cnVjdCBhc2htZW1fc2hyaW5rX3dvcmsgKncgPSBjb250YWluZXJfb2Yod29yaywgdHlwZW9m
+KCp3KSwgd29yayk7CisKKwl3LT5maWxlLT5mX29wLT5mYWxsb2NhdGUody0+ZmlsZSwKKwkJCQkg
+RkFMTE9DX0ZMX1BVTkNIX0hPTEUgfCBGQUxMT0NfRkxfS0VFUF9TSVpFLAorCQkJCSB3LT5zdGFy
+dCwgdy0+ZW5kIC0gdy0+c3RhcnQpOworCWZwdXQody0+ZmlsZSk7CisJa2ZyZWUodyk7CisJaWYg
+KGF0b21pY19kZWNfYW5kX3Rlc3QoJmFzaG1lbV9zaHJpbmtfaW5mbGlnaHQpKQorCQl3YWtlX3Vw
+X2FsbCgmYXNobWVtX3Nocmlua193YWl0KTsKK30KKwogLyoKICAqIGFzaG1lbV9zaHJpbmsgLSBv
+dXIgY2FjaGUgc2hyaW5rZXIsIGNhbGxlZCBmcm9tIG1tL3Ztc2Nhbi5jCiAgKgpAQCAtNDQ5LDEy
+ICs0NzUsMTggQEAgYXNobWVtX3Nocmlua19zY2FuKHN0cnVjdCBzaHJpbmtlciAqc2hyaW5rLCBz
+dHJ1Y3Qgc2hyaW5rX2NvbnRyb2wgKnNjKQogCQlyZXR1cm4gLTE7CiAKIAlsaXN0X2Zvcl9lYWNo
+X2VudHJ5X3NhZmUocmFuZ2UsIG5leHQsICZhc2htZW1fbHJ1X2xpc3QsIGxydSkgewotCQlsb2Zm
+X3Qgc3RhcnQgPSByYW5nZS0+cGdzdGFydCAqIFBBR0VfU0laRTsKLQkJbG9mZl90IGVuZCA9IChy
+YW5nZS0+cGdlbmQgKyAxKSAqIFBBR0VfU0laRTsKKwkJc3RydWN0IGFzaG1lbV9zaHJpbmtfd29y
+ayAqdyA9IGt6YWxsb2Moc2l6ZW9mKCp3KSwgR0ZQX0FUT01JQyk7CisKKwkJaWYgKCF3KQorCQkJ
+YnJlYWs7CisJCUlOSVRfV09SSygmdy0+d29yaywgYXNobWVtX3Nocmlua193b3JrZXIpOworCQl3
+LT5maWxlID0gcmFuZ2UtPmFzbWEtPmZpbGU7CisJCWdldF9maWxlKHctPmZpbGUpOworCQl3LT5z
+dGFydCA9IHJhbmdlLT5wZ3N0YXJ0ICogUEFHRV9TSVpFOworCQl3LT5lbmQgPSAocmFuZ2UtPnBn
+ZW5kICsgMSkgKiBQQUdFX1NJWkU7CisJCWF0b21pY19pbmMoJmFzaG1lbV9zaHJpbmtfaW5mbGln
+aHQpOworCQlxdWV1ZV93b3JrKGFzaG1lbV93cSwgJnctPndvcmspOwogCi0JCXJhbmdlLT5hc21h
+LT5maWxlLT5mX29wLT5mYWxsb2NhdGUocmFuZ2UtPmFzbWEtPmZpbGUsCi0JCQkJRkFMTE9DX0ZM
+X1BVTkNIX0hPTEUgfCBGQUxMT0NfRkxfS0VFUF9TSVpFLAotCQkJCXN0YXJ0LCBlbmQgLSBzdGFy
+dCk7CiAJCXJhbmdlLT5wdXJnZWQgPSBBU0hNRU1fV0FTX1BVUkdFRDsKIAkJbHJ1X2RlbChyYW5n
+ZSk7CiAKQEAgLTcxMyw2ICs3NDUsNyBAQCBzdGF0aWMgaW50IGFzaG1lbV9waW5fdW5waW4oc3Ry
+dWN0IGFzaG1lbV9hcmVhICphc21hLCB1bnNpZ25lZCBsb25nIGNtZCwKIAkJcmV0dXJuIC1FRkFV
+TFQ7CiAKIAltdXRleF9sb2NrKCZhc2htZW1fbXV0ZXgpOworCXdhaXRfZXZlbnQoYXNobWVtX3No
+cmlua193YWl0LCAhYXRvbWljX3JlYWQoJmFzaG1lbV9zaHJpbmtfaW5mbGlnaHQpKTsKIAogCWlm
+ICghYXNtYS0+ZmlsZSkKIAkJZ290byBvdXRfdW5sb2NrOwpAQCAtODgzLDggKzkxNiwxNSBAQCBz
+dGF0aWMgaW50IF9faW5pdCBhc2htZW1faW5pdCh2b2lkKQogCQlnb3RvIG91dF9mcmVlMjsKIAl9
+CiAKKwlhc2htZW1fd3EgPSBhbGxvY193b3JrcXVldWUoImFzaG1lbV93cSIsIFdRX01FTV9SRUNM
+QUlNLCAwKTsKKwlpZiAoIWFzaG1lbV93cSkgeworCQlwcl9lcnIoImZhaWxlZCB0byBjcmVhdGUg
+d29ya3F1ZXVlXG4iKTsKKwkJZ290byBvdXRfZGVtaXNjOworCX0KKwogCXJldCA9IHJlZ2lzdGVy
+X3Nocmlua2VyKCZhc2htZW1fc2hyaW5rZXIpOwogCWlmIChyZXQpIHsKKwkJZGVzdHJveV93b3Jr
+cXVldWUoYXNobWVtX3dxKTsKIAkJcHJfZXJyKCJmYWlsZWQgdG8gcmVnaXN0ZXIgc2hyaW5rZXIh
+XG4iKTsKIAkJZ290byBvdXRfZGVtaXNjOwogCX0K
+--00000000000084ecc605800c638f--
