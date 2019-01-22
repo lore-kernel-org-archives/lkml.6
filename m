@@ -2,259 +2,1341 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43D8EC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:52:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08CBAC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:55:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 024D3217F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:52:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548147171;
-	bh=AswfUC0hujwEsAi2PItNy+8uOweABvpFP2ExbbiX1uk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=PZqF9XmCwjGgQkj/e58Md66wq12jdUqsL8CoR7wRiiyTiXVGPLED3TsJxqxH1/D/o
-	 Yuq8uEnQLk5PT57fhGO6gOQH3PTgr5UnkyM1yHApxMTtZ2IERWf0qSMFWn8KbEaW+e
-	 5tX/aIGV73z+DnJv/7HmBxRHreBtGuDgYs+sDIh0=
+	by mail.kernel.org (Postfix) with ESMTP id A1CE12084C
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 08:55:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="IZIoITuY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727448AbfAVIwt (ORCPT
+        id S1727403AbfAVIzL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 03:52:49 -0500
-Received: from mx2.suse.de ([195.135.220.15]:54474 "EHLO mx1.suse.de"
+        Tue, 22 Jan 2019 03:55:11 -0500
+Received: from mail-eopbgr80083.outbound.protection.outlook.com ([40.107.8.83]:24633
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726953AbfAVIws (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 03:52:48 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E2B8CAC91;
-        Tue, 22 Jan 2019 08:52:46 +0000 (UTC)
-Date:   Tue, 22 Jan 2019 09:52:44 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Shakeel Butt <shakeelb@google.com>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Roman Gushchin <guro@fb.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 2/2] mm, oom: remove 'prefer children over parent'
- heuristic
-Message-ID: <20190122085244.GD4087@dhcp22.suse.cz>
-References: <20190121215850.221745-1-shakeelb@google.com>
- <20190121215850.221745-2-shakeelb@google.com>
- <CALvZod5mvwj9yGOxaaOCnSTkg9rxVbdztewFgdyw_do4BwsHPQ@mail.gmail.com>
+        id S1726953AbfAVIzL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 03:55:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=K3XBlnxFo3IiU9vg/URKohDab5LdqQ4Itf/XLwBzMGg=;
+ b=IZIoITuY4IW9b5UfvIvEuR5UunXiHGcqklQsBUECNPr4kIuwtzbtJTBXGhg/en96cBMEPLljUXA4AKVGHGb4QUatGMmiZOtrstpQWTyOwVd+teIZUesnlqij6mJFfdgFRmaQYgAI3l79kpiTVbtG6ou5h/rKQGERjTbRRX1fsl0=
+Received: from VI1PR04MB5726.eurprd04.prod.outlook.com (20.178.127.24) by
+ VI1PR04MB3309.eurprd04.prod.outlook.com (10.170.231.146) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1537.31; Tue, 22 Jan 2019 08:54:59 +0000
+Received: from VI1PR04MB5726.eurprd04.prod.outlook.com
+ ([fe80::a1c2:cc79:80f3:3bcb]) by VI1PR04MB5726.eurprd04.prod.outlook.com
+ ([fe80::a1c2:cc79:80f3:3bcb%5]) with mapi id 15.20.1537.031; Tue, 22 Jan 2019
+ 08:54:59 +0000
+From:   Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+To:     "broonie@kernel.org" <broonie@kernel.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>
+CC:     "robh@kernel.org" <robh@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "frieder.schrempf@kontron.de" <frieder.schrempf@kontron.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "bbrezillon@kernel.org" <bbrezillon@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: RE: [PATCH v8 1/5] spi: spi-mem: Add driver for NXP FlexSPI
+ controller
+Thread-Topic: [PATCH v8 1/5] spi: spi-mem: Add driver for NXP FlexSPI
+ controller
+Thread-Index: AQHUrMng+WSpCR2JYEKS3BXOnFb66KW7Bf3A
+Date:   Tue, 22 Jan 2019 08:54:59 +0000
+Message-ID: <VI1PR04MB5726F4A5073E3E4C01E61CEE99980@VI1PR04MB5726.eurprd04.prod.outlook.com>
+References: <1547553487-9936-1-git-send-email-yogeshnarayan.gaur@nxp.com>
+ <1547553487-9936-2-git-send-email-yogeshnarayan.gaur@nxp.com>
+In-Reply-To: <1547553487-9936-2-git-send-email-yogeshnarayan.gaur@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=yogeshnarayan.gaur@nxp.com; 
+x-originating-ip: [92.120.0.7]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR04MB3309;6:02qTc0w86b/T/TEltQtQvSk6XXZURk9d1iOAPwfZn+6Ta2rsHoiPIaSR7iSKlan1EIA5og7AUOZwE9one0rPRnBCKVmxGBn/7EMY8W9r8bohmk80Aj7/+ncNsi8iyrQsZhgTWieDcIsOhdoAcosYTqmlZMr9JLJU0D/HEDeFTWlBJY9SLuXVlMIOKqxytO7j01y2ebt5Vu3B7J1Ggx7GC7YL3wy003tbFrHczWjGCOL91y20mskoTy8DIVCCFOloVIoI1UcWcxaAb4d2yuPmMQUAk0VQtqUL9+OdGpkrWxKAXR+3jE6HDZH+vhTGHcAKi7ytnedHw0I9UeDttsQ03MmwPX8FaM1bJSEGrjePhbLnhAfpV3rdhPJbpof8yEdgQ1HjkBb93ATEpDfo2AmjkNAVpNZcGIB0MpFB4Hf9f6ICTrN1p3pa+UFTc1x/rbmJQi6n+CLAFMbxHb3O0pP3aw==;5:YHr+nqjNGaxuC0Fw/ML92q0TjQ4YKvrVY2DHS8bJLGLV+w3cgJtZ+mQPsx1vKusciYbdObZb35Kiq9WQIpMmcHVhJSIZeSM5LZ85DPvESswYYX/MechAloMHXO2ynb6yEA/aX2LEzoHZQaJfE00BU2rxLqI8tPeSPxyOoeKHNAq/e3wXJVXDgr8qGwfUS1KYot768Vd0SB74WevGvAImSw==;7:pKcjyl1QDQruNA5y+vzVaQ3hqYGKV2OSr4MH24fxnOPxU4O3lELi5FpGoaxVzVMvl3mHNTjqS11f+2eaNOo+WpUQgVJJ4l4fU3UXX3QuNN0X6wjPLRqBNBcf3pj6gijBSOfydQXujyL64zU/j4Ecpg==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: feae6778-2596-4569-e507-08d680474a37
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB3309;
+x-ms-traffictypediagnostic: VI1PR04MB3309:
+x-microsoft-antispam-prvs: <VI1PR04MB3309324161DB3E73B6D54DE599980@VI1PR04MB3309.eurprd04.prod.outlook.com>
+x-forefront-prvs: 0925081676
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(39860400002)(346002)(376002)(396003)(189003)(199004)(13464003)(4326008)(8936002)(6246003)(39060400002)(81166006)(81156014)(8676002)(6116002)(3846002)(25786009)(7736002)(71200400001)(6506007)(53546011)(71190400001)(186003)(102836004)(86362001)(305945005)(26005)(53936002)(30864003)(74316002)(476003)(256004)(446003)(486006)(105586002)(11346002)(14444005)(14454004)(229853002)(478600001)(106356001)(2906002)(97736004)(9686003)(55016002)(66066001)(53946003)(7416002)(110136005)(7696005)(99286004)(68736007)(33656002)(54906003)(76176011)(6436002)(316002)(2501003)(579004)(569006);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB3309;H:VI1PR04MB5726.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: +jp276CmPXyrcsmz0Qggi62hW2TjLmAp8JpB4EF8CogDX6Z9zvIxO9j9qNpqgxHAT9yu31+3wKwTMD7gO6AkDoDJ/QE1YRxWjfUhX0W++dRARnJLeidneek1UXDWkKTV6UX1KGszU5Toy4xzrKDfVOATMyjyZF90JNIJMAIAzYHHBnElxVks5uylB7UL9y3Knr+usefEQLBhiiw7mwINE1KFABIqx/uEXm//91nBaHVusNbo6xgVwkox6ucMlrwtfJAqowdkEjNHM7VWXO5WUX5lR/6n6X+6kBXP1nTuzw15AXl8EuXo4KuggNrqXtIUIaNwhGViA2aBBwDRBEP+YDDyXE2ch9x7U0I9JM7NHKlDbIxpKQxQg6wuAA2GU3pqojtdF5pt5Iw0+HIobbpUxQhj6Hsw5nEugP5gYFnqJ3k=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALvZod5mvwj9yGOxaaOCnSTkg9rxVbdztewFgdyw_do4BwsHPQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: feae6778-2596-4569-e507-08d680474a37
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jan 2019 08:54:59.3883
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB3309
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 21-01-19 18:41:28, Shakeel Butt wrote:
-> On Mon, Jan 21, 2019 at 1:59 PM Shakeel Butt <shakeelb@google.com> wrote:
-> >
-> > From the start of the git history of Linux, the kernel after selecting
-> > the worst process to be oom-killed, prefer to kill its child (if the
-> > child does not share mm with the parent). Later it was changed to prefer
-> > to kill a child who is worst. If the parent is still the worst then the
-> > parent will be killed.
-> >
-> > This heuristic assumes that the children did less work than their parent
-> > and by killing one of them, the work lost will be less. However this is
-> > very workload dependent. If there is a workload which can benefit from
-> > this heuristic, can use oom_score_adj to prefer children to be killed
-> > before the parent.
-> >
-> > The select_bad_process() has already selected the worst process in the
-> > system/memcg. There is no need to recheck the badness of its children
-> > and hoping to find a worse candidate. That's a lot of unneeded racy
-> > work. Also the heuristic is dangerous because it make fork bomb like
-> > workloads to recover much later because we constantly pick and kill
-> > processes which are not memory hogs. So, let's remove this whole
-> > heuristic.
-> >
-> > Signed-off-by: Shakeel Butt <shakeelb@google.com>
-> > Acked-by: Michal Hocko <mhocko@suse.com>
-> 
-> Michal, though I have kept your Acked-by but I have made a couple of
-> changes in the code. Please let me know if you are ok with the
-> changes.
+Hello Mark,
 
-So the only change I can see is that we no longer print the score of the
-selected oom victim and that each killed task gets the oom scope prefix.
-I cannot think of anybody relying on the former and the later makes
-sense to me. So yeah, I am still OK with the resulting code.
+Can you please apply below patch in SPI tree?
+Patch has been reviewed by Boris and Frieder.
 
-> > Cc: Roman Gushchin <guro@fb.com>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > Cc: David Rientjes <rientjes@google.com>
-> > Cc: Johannes Weiner <hannes@cmpxchg.org>
-> > Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-> > Cc: linux-mm@kvack.org
-> > Cc: linux-kernel@vger.kernel.org
-> >
-> > ---
-> > Changelog since v2:
-> > - Propagate the message to __oom_kill_process().
-> >
-> > Changelog since v1:
-> > - Improved commit message based on mhocko's comment.
-> > - Replaced 'p' with 'victim'.
-> > - Removed extra pr_err message.
-> >
-> > ---
-> >  mm/oom_kill.c | 78 ++++++++++++---------------------------------------
-> >  1 file changed, 18 insertions(+), 60 deletions(-)
-> >
-> > diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-> > index 1a007dae1e8f..c90184fd48a3 100644
-> > --- a/mm/oom_kill.c
-> > +++ b/mm/oom_kill.c
-> > @@ -843,7 +843,7 @@ static bool task_will_free_mem(struct task_struct *task)
-> >         return ret;
-> >  }
-> >
-> > -static void __oom_kill_process(struct task_struct *victim)
-> > +static void __oom_kill_process(struct task_struct *victim, const char *message)
-> >  {
-> >         struct task_struct *p;
-> >         struct mm_struct *mm;
-> > @@ -874,8 +874,9 @@ static void __oom_kill_process(struct task_struct *victim)
-> >          */
-> >         do_send_sig_info(SIGKILL, SEND_SIG_PRIV, victim, PIDTYPE_TGID);
-> >         mark_oom_victim(victim);
-> > -       pr_err("Killed process %d (%s) total-vm:%lukB, anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB\n",
-> > -               task_pid_nr(victim), victim->comm, K(victim->mm->total_vm),
-> > +       pr_err("%s: Killed process %d (%s) total-vm:%lukB, anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB\n",
-> > +               message, task_pid_nr(victim), victim->comm,
-> > +               K(victim->mm->total_vm),
-> >                 K(get_mm_counter(victim->mm, MM_ANONPAGES)),
-> >                 K(get_mm_counter(victim->mm, MM_FILEPAGES)),
-> >                 K(get_mm_counter(victim->mm, MM_SHMEMPAGES)));
-> > @@ -932,24 +933,19 @@ static void __oom_kill_process(struct task_struct *victim)
-> >   * Kill provided task unless it's secured by setting
-> >   * oom_score_adj to OOM_SCORE_ADJ_MIN.
-> >   */
-> > -static int oom_kill_memcg_member(struct task_struct *task, void *unused)
-> > +static int oom_kill_memcg_member(struct task_struct *task, void *message)
-> >  {
-> >         if (task->signal->oom_score_adj != OOM_SCORE_ADJ_MIN) {
-> >                 get_task_struct(task);
-> > -               __oom_kill_process(task);
-> > +               __oom_kill_process(task, message);
-> >         }
-> >         return 0;
-> >  }
-> >
-> >  static void oom_kill_process(struct oom_control *oc, const char *message)
-> >  {
-> > -       struct task_struct *p = oc->chosen;
-> > -       unsigned int points = oc->chosen_points;
-> > -       struct task_struct *victim = p;
-> > -       struct task_struct *child;
-> > -       struct task_struct *t;
-> > +       struct task_struct *victim = oc->chosen;
-> >         struct mem_cgroup *oom_group;
-> > -       unsigned int victim_points = 0;
-> >         static DEFINE_RATELIMIT_STATE(oom_rs, DEFAULT_RATELIMIT_INTERVAL,
-> >                                               DEFAULT_RATELIMIT_BURST);
-> >
-> > @@ -958,57 +954,18 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
-> >          * its children or threads, just give it access to memory reserves
-> >          * so it can die quickly
-> >          */
-> > -       task_lock(p);
-> > -       if (task_will_free_mem(p)) {
-> > -               mark_oom_victim(p);
-> > -               wake_oom_reaper(p);
-> > -               task_unlock(p);
-> > -               put_task_struct(p);
-> > +       task_lock(victim);
-> > +       if (task_will_free_mem(victim)) {
-> > +               mark_oom_victim(victim);
-> > +               wake_oom_reaper(victim);
-> > +               task_unlock(victim);
-> > +               put_task_struct(victim);
-> >                 return;
-> >         }
-> > -       task_unlock(p);
-> > +       task_unlock(victim);
-> >
-> >         if (__ratelimit(&oom_rs))
-> > -               dump_header(oc, p);
-> > -
-> > -       pr_err("%s: Kill process %d (%s) score %u or sacrifice child\n",
-> > -               message, task_pid_nr(p), p->comm, points);
-> > -
-> > -       /*
-> > -        * If any of p's children has a different mm and is eligible for kill,
-> > -        * the one with the highest oom_badness() score is sacrificed for its
-> > -        * parent.  This attempts to lose the minimal amount of work done while
-> > -        * still freeing memory.
-> > -        */
-> > -       read_lock(&tasklist_lock);
-> > -
-> > -       /*
-> > -        * The task 'p' might have already exited before reaching here. The
-> > -        * put_task_struct() will free task_struct 'p' while the loop still try
-> > -        * to access the field of 'p', so, get an extra reference.
-> > -        */
-> > -       get_task_struct(p);
-> > -       for_each_thread(p, t) {
-> > -               list_for_each_entry(child, &t->children, sibling) {
-> > -                       unsigned int child_points;
-> > -
-> > -                       if (process_shares_mm(child, p->mm))
-> > -                               continue;
-> > -                       /*
-> > -                        * oom_badness() returns 0 if the thread is unkillable
-> > -                        */
-> > -                       child_points = oom_badness(child,
-> > -                               oc->memcg, oc->nodemask, oc->totalpages);
-> > -                       if (child_points > victim_points) {
-> > -                               put_task_struct(victim);
-> > -                               victim = child;
-> > -                               victim_points = child_points;
-> > -                               get_task_struct(victim);
-> > -                       }
-> > -               }
-> > -       }
-> > -       put_task_struct(p);
-> > -       read_unlock(&tasklist_lock);
-> > +               dump_header(oc, victim);
-> >
-> >         /*
-> >          * Do we need to kill the entire memory cgroup?
-> > @@ -1017,14 +974,15 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
-> >          */
-> >         oom_group = mem_cgroup_get_oom_group(victim, oc->memcg);
-> >
-> > -       __oom_kill_process(victim);
-> > +       __oom_kill_process(victim, message);
-> >
-> >         /*
-> >          * If necessary, kill all tasks in the selected memory cgroup.
-> >          */
-> >         if (oom_group) {
-> >                 mem_cgroup_print_oom_group(oom_group);
-> > -               mem_cgroup_scan_tasks(oom_group, oom_kill_memcg_member, NULL);
-> > +               mem_cgroup_scan_tasks(oom_group, oom_kill_memcg_member,
-> > +                                     (void*) message);
-> >                 mem_cgroup_put(oom_group);
-> >         }
-> >  }
-> > --
-> > 2.20.1.321.g9e740568ce-goog
-> >
+--
+Regards
+Yogesh Gaur
 
--- 
-Michal Hocko
-SUSE Labs
+> -----Original Message-----
+> From: Yogesh Narayan Gaur
+> Sent: Tuesday, January 15, 2019 5:30 PM
+> To: linux-mtd@lists.infradead.org; bbrezillon@kernel.org;
+> marek.vasut@gmail.com; broonie@kernel.org; linux-spi@vger.kernel.org;
+> devicetree@vger.kernel.org
+> Cc: robh@kernel.org; mark.rutland@arm.com; shawnguo@kernel.org; linux-
+> arm-kernel@lists.infradead.org; computersforpeace@gmail.com;
+> frieder.schrempf@kontron.de; linux-kernel@vger.kernel.org; Yogesh Narayan
+> Gaur <yogeshnarayan.gaur@nxp.com>
+> Subject: [PATCH v8 1/5] spi: spi-mem: Add driver for NXP FlexSPI controll=
+er
+>=20
+> - Add driver for NXP FlexSPI host controller
+>=20
+> (0) What is the FlexSPI controller?
+>  FlexSPI is a flexsible SPI host controller which supports two SPI  chann=
+els and up
+> to 4 external devices. Each channel supports  Single/Dual/Quad/Octal mode
+> data transfer (1/2/4/8 bidirectional  data lines) i.e. FlexSPI acts as an=
+ interface to
+> external devices,  maximum 4, each with up to 8 bidirectional data lines.
+>=20
+>  It uses new SPI memory interface of the SPI framework to issue  flash me=
+mory
+> operations to up to four connected flash  devices (2 buses with 2 CS each=
+).
+>=20
+> (1) Tested this driver with the mtd_debug and JFFS2 filesystem utility  o=
+n NXP
+> LX2160ARDB and LX2160AQDS targets.
+>  LX2160ARDB is having two NOR slave device connected on single bus A  i.e=
+. A0
+> and A1 (CS0 and CS1).
+>  LX2160AQDS is having two NOR slave device connected on separate buses  o=
+ne
+> flash on A0 and second on B1 i.e. (CS0 and CS3).
+>  Verified this driver on following SPI NOR flashes:
+>     Micron, mt35xu512ab, [Read - 1 bit mode]
+>     Cypress, s25fl512s, [Read - 1/2/4 bit mode]
+>=20
+> Signed-off-by: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+> Reviewed-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+> Reviewed-by: Boris Brezillon <bbrezillon@kernel.org>
+>=20
+> ---
+> Changes for v8:
+> - Typo review comments changes
+> - Fix logic of read data for case when read size is less than 8 bytes.
+> - Add correct email address of Boris
+> - Add r-o-b tag of Frieder and Boris
+> Changes for v7:
+> - Add func pointer for '.get_name' for struct spi_controller_mem_ops
+> - Add input address range check as per controller memory mapped space
+> - Update _fill_txfifo/_read_rxfifo funcs as per Frieder review comments C=
+hanges
+> for v6:
+> - Rebase on top of v5.0-rc1
+> - Updated as per Frieder review comments and perform code cleanup
+> - Updated _fill_txfifo/_read_rxfifo func write/read logic Changes for v5:
+> - Rebase on top of v4.20-rc2
+> - Modified fspi_readl_poll_tout() as per review comments
+> - Arrange header file in alphabetical order
+> - Removed usage of read()/write() function callback pointer
+> - Add support for 1 and 2 byte address length
+> - Change Frieder e-mail to new e-mail address Changes for v4:
+> - Incorporate Boris review comments
+>   * Use readl_poll_timeout() instead of busy looping.
+>   * Re-define register masking as per comment.
+>   * Drop fspi_devtype enum.
+> Changes for v3:
+> - Added endianness flag in platform specific structure instead of DTS.
+> - Modified nxp_fspi_read_ahb(), removed remapping code.
+> - Added Boris and Frieder as Author and provided reference of spi-fsl-qsp=
+i.c
+> Changes for v2:
+> - Incorporated Boris review comments.
+> - Remove dependency of driver over connected flash device size.
+> - Modified the logic to select requested CS.
+> - Remove SPI-Octal Macros.
+>  drivers/spi/Kconfig        |   10 +
+>  drivers/spi/Makefile       |    1 +
+>  drivers/spi/spi-nxp-fspi.c | 1105 ++++++++++++++++++++++++++++++++++++
+>  3 files changed, 1116 insertions(+)
+>  create mode 100644 drivers/spi/spi-nxp-fspi.c
+>=20
+> diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig index
+> dc67eda1788a..fc4cc7a65c33 100644
+> --- a/drivers/spi/Kconfig
+> +++ b/drivers/spi/Kconfig
+> @@ -279,6 +279,16 @@ config SPI_FSL_QUADSPI
+>  	  This controller does not support generic SPI messages. It only
+>  	  supports the high-level SPI memory interface.
+>=20
+> +config SPI_NXP_FLEXSPI
+> +	tristate "NXP Flex SPI controller"
+> +	depends on ARCH_LAYERSCAPE || HAS_IOMEM
+> +	help
+> +	  This enables support for the Flex SPI controller in master mode.
+> +	  Up to four slave devices can be connected on two buses with two
+> +	  chipselects each.
+> +	  This controller does not support generic SPI messages and only
+> +	  supports the high-level SPI memory interface.
+> +
+>  config SPI_GPIO
+>  	tristate "GPIO-based bitbanging SPI Master"
+>  	depends on GPIOLIB || COMPILE_TEST
+> diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile index
+> 2a857cb9aa81..5c5af4676279 100644
+> --- a/drivers/spi/Makefile
+> +++ b/drivers/spi/Makefile
+> @@ -64,6 +64,7 @@ obj-$(CONFIG_SPI_MXIC)			+=3D spi-mxic.o
+>  obj-$(CONFIG_SPI_MXS)			+=3D spi-mxs.o
+>  obj-$(CONFIG_SPI_NPCM_PSPI)		+=3D spi-npcm-pspi.o
+>  obj-$(CONFIG_SPI_NUC900)		+=3D spi-nuc900.o
+> +obj-$(CONFIG_SPI_NXP_FLEXSPI)		+=3D spi-nxp-fspi.o
+>  obj-$(CONFIG_SPI_OC_TINY)		+=3D spi-oc-tiny.o
+>  spi-octeon-objs				:=3D spi-cavium.o spi-cavium-octeon.o
+>  obj-$(CONFIG_SPI_OCTEON)		+=3D spi-octeon.o
+> diff --git a/drivers/spi/spi-nxp-fspi.c b/drivers/spi/spi-nxp-fspi.c new =
+file mode
+> 100644 index 000000000000..b8f19bab3b66
+> --- /dev/null
+> +++ b/drivers/spi/spi-nxp-fspi.c
+> @@ -0,0 +1,1105 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +
+> +/*
+> + * NXP FlexSPI(FSPI) controller driver.
+> + *
+> + * Copyright 2019 NXP.
+> + *
+> + * FlexSPI is a flexsible SPI host controller which supports two SPI
+> + * channels and up to 4 external devices. Each channel supports
+> + * Single/Dual/Quad/Octal mode data transfer (1/2/4/8 bidirectional
+> + * data lines).
+> + *
+> + * FlexSPI controller is driven by the LUT(Look-up Table) registers
+> + * LUT registers are a look-up-table for sequences of instructions.
+> + * A valid sequence consists of four LUT registers.
+> + * Maximum 32 LUT sequences can be programmed simultaneously.
+> + *
+> + * LUTs are being created at run-time based on the commands passed
+> + * from the spi-mem framework, thus using single LUT index.
+> + *
+> + * Software triggered Flash read/write access by IP Bus.
+> + *
+> + * Memory mapped read access by AHB Bus.
+> + *
+> + * Based on SPI MEM interface and spi-fsl-qspi.c driver.
+> + *
+> + * Author:
+> + *     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+> + *     Boris Brezillion <bbrezillon@kernel.org>
+> + *     Frieder Schrempf <frieder.schrempf@kontron.de>
+> + */
+> +
+> +#include <linux/bitops.h>
+> +#include <linux/clk.h>
+> +#include <linux/completion.h>
+> +#include <linux/delay.h>
+> +#include <linux/err.h>
+> +#include <linux/errno.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/io.h>
+> +#include <linux/iopoll.h>
+> +#include <linux/jiffies.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_qos.h>
+> +#include <linux/sizes.h>
+> +
+> +#include <linux/spi/spi.h>
+> +#include <linux/spi/spi-mem.h>
+> +
+> +/*
+> + * The driver only uses one single LUT entry, that is updated on
+> + * each call of exec_op(). Index 0 is preset at boot with a basic
+> + * read operation, so let's use the last entry (31).
+> + */
+> +#define	SEQID_LUT			31
+> +
+> +/* Registers used by the driver */
+> +#define FSPI_MCR0			0x00
+> +#define FSPI_MCR0_AHB_TIMEOUT(x)	((x) << 24)
+> +#define FSPI_MCR0_IP_TIMEOUT(x)		((x) << 16)
+> +#define FSPI_MCR0_LEARN_EN		BIT(15)
+> +#define FSPI_MCR0_SCRFRUN_EN		BIT(14)
+> +#define FSPI_MCR0_OCTCOMB_EN		BIT(13)
+> +#define FSPI_MCR0_DOZE_EN		BIT(12)
+> +#define FSPI_MCR0_HSEN			BIT(11)
+> +#define FSPI_MCR0_SERCLKDIV		BIT(8)
+> +#define FSPI_MCR0_ATDF_EN		BIT(7)
+> +#define FSPI_MCR0_ARDF_EN		BIT(6)
+> +#define FSPI_MCR0_RXCLKSRC(x)		((x) << 4)
+> +#define FSPI_MCR0_END_CFG(x)		((x) << 2)
+> +#define FSPI_MCR0_MDIS			BIT(1)
+> +#define FSPI_MCR0_SWRST			BIT(0)
+> +
+> +#define FSPI_MCR1			0x04
+> +#define FSPI_MCR1_SEQ_TIMEOUT(x)	((x) << 16)
+> +#define FSPI_MCR1_AHB_TIMEOUT(x)	(x)
+> +
+> +#define FSPI_MCR2			0x08
+> +#define FSPI_MCR2_IDLE_WAIT(x)		((x) << 24)
+> +#define FSPI_MCR2_SAMEDEVICEEN		BIT(15)
+> +#define FSPI_MCR2_CLRLRPHS		BIT(14)
+> +#define FSPI_MCR2_ABRDATSZ		BIT(8)
+> +#define FSPI_MCR2_ABRLEARN		BIT(7)
+> +#define FSPI_MCR2_ABR_READ		BIT(6)
+> +#define FSPI_MCR2_ABRWRITE		BIT(5)
+> +#define FSPI_MCR2_ABRDUMMY		BIT(4)
+> +#define FSPI_MCR2_ABR_MODE		BIT(3)
+> +#define FSPI_MCR2_ABRCADDR		BIT(2)
+> +#define FSPI_MCR2_ABRRADDR		BIT(1)
+> +#define FSPI_MCR2_ABR_CMD		BIT(0)
+> +
+> +#define FSPI_AHBCR			0x0c
+> +#define FSPI_AHBCR_RDADDROPT		BIT(6)
+> +#define FSPI_AHBCR_PREF_EN		BIT(5)
+> +#define FSPI_AHBCR_BUFF_EN		BIT(4)
+> +#define FSPI_AHBCR_CACH_EN		BIT(3)
+> +#define FSPI_AHBCR_CLRTXBUF		BIT(2)
+> +#define FSPI_AHBCR_CLRRXBUF		BIT(1)
+> +#define FSPI_AHBCR_PAR_EN		BIT(0)
+> +
+> +#define FSPI_INTEN			0x10
+> +#define FSPI_INTEN_SCLKSBWR		BIT(9)
+> +#define FSPI_INTEN_SCLKSBRD		BIT(8)
+> +#define FSPI_INTEN_DATALRNFL		BIT(7)
+> +#define FSPI_INTEN_IPTXWE		BIT(6)
+> +#define FSPI_INTEN_IPRXWA		BIT(5)
+> +#define FSPI_INTEN_AHBCMDERR		BIT(4)
+> +#define FSPI_INTEN_IPCMDERR		BIT(3)
+> +#define FSPI_INTEN_AHBCMDGE		BIT(2)
+> +#define FSPI_INTEN_IPCMDGE		BIT(1)
+> +#define FSPI_INTEN_IPCMDDONE		BIT(0)
+> +
+> +#define FSPI_INTR			0x14
+> +#define FSPI_INTR_SCLKSBWR		BIT(9)
+> +#define FSPI_INTR_SCLKSBRD		BIT(8)
+> +#define FSPI_INTR_DATALRNFL		BIT(7)
+> +#define FSPI_INTR_IPTXWE		BIT(6)
+> +#define FSPI_INTR_IPRXWA		BIT(5)
+> +#define FSPI_INTR_AHBCMDERR		BIT(4)
+> +#define FSPI_INTR_IPCMDERR		BIT(3)
+> +#define FSPI_INTR_AHBCMDGE		BIT(2)
+> +#define FSPI_INTR_IPCMDGE		BIT(1)
+> +#define FSPI_INTR_IPCMDDONE		BIT(0)
+> +
+> +#define FSPI_LUTKEY			0x18
+> +#define FSPI_LUTKEY_VALUE		0x5AF05AF0
+> +
+> +#define FSPI_LCKCR			0x1C
+> +
+> +#define FSPI_LCKER_LOCK			0x1
+> +#define FSPI_LCKER_UNLOCK		0x2
+> +
+> +#define FSPI_BUFXCR_INVALID_MSTRID	0xE
+> +#define FSPI_AHBRX_BUF0CR0		0x20
+> +#define FSPI_AHBRX_BUF1CR0		0x24
+> +#define FSPI_AHBRX_BUF2CR0		0x28
+> +#define FSPI_AHBRX_BUF3CR0		0x2C
+> +#define FSPI_AHBRX_BUF4CR0		0x30
+> +#define FSPI_AHBRX_BUF5CR0		0x34
+> +#define FSPI_AHBRX_BUF6CR0		0x38
+> +#define FSPI_AHBRX_BUF7CR0		0x3C
+> +#define FSPI_AHBRXBUF0CR7_PREF		BIT(31)
+> +
+> +#define FSPI_AHBRX_BUF0CR1		0x40
+> +#define FSPI_AHBRX_BUF1CR1		0x44
+> +#define FSPI_AHBRX_BUF2CR1		0x48
+> +#define FSPI_AHBRX_BUF3CR1		0x4C
+> +#define FSPI_AHBRX_BUF4CR1		0x50
+> +#define FSPI_AHBRX_BUF5CR1		0x54
+> +#define FSPI_AHBRX_BUF6CR1		0x58
+> +#define FSPI_AHBRX_BUF7CR1		0x5C
+> +
+> +#define FSPI_FLSHA1CR0			0x60
+> +#define FSPI_FLSHA2CR0			0x64
+> +#define FSPI_FLSHB1CR0			0x68
+> +#define FSPI_FLSHB2CR0			0x6C
+> +#define FSPI_FLSHXCR0_SZ_KB		10
+> +#define FSPI_FLSHXCR0_SZ(x)		((x) >> FSPI_FLSHXCR0_SZ_KB)
+> +
+> +#define FSPI_FLSHA1CR1			0x70
+> +#define FSPI_FLSHA2CR1			0x74
+> +#define FSPI_FLSHB1CR1			0x78
+> +#define FSPI_FLSHB2CR1			0x7C
+> +#define FSPI_FLSHXCR1_CSINTR(x)		((x) << 16)
+> +#define FSPI_FLSHXCR1_CAS(x)		((x) << 11)
+> +#define FSPI_FLSHXCR1_WA		BIT(10)
+> +#define FSPI_FLSHXCR1_TCSH(x)		((x) << 5)
+> +#define FSPI_FLSHXCR1_TCSS(x)		(x)
+> +
+> +#define FSPI_FLSHA1CR2			0x80
+> +#define FSPI_FLSHA2CR2			0x84
+> +#define FSPI_FLSHB1CR2			0x88
+> +#define FSPI_FLSHB2CR2			0x8C
+> +#define FSPI_FLSHXCR2_CLRINSP		BIT(24)
+> +#define FSPI_FLSHXCR2_AWRWAIT		BIT(16)
+> +#define FSPI_FLSHXCR2_AWRSEQN_SHIFT	13
+> +#define FSPI_FLSHXCR2_AWRSEQI_SHIFT	8
+> +#define FSPI_FLSHXCR2_ARDSEQN_SHIFT	5
+> +#define FSPI_FLSHXCR2_ARDSEQI_SHIFT	0
+> +
+> +#define FSPI_IPCR0			0xA0
+> +
+> +#define FSPI_IPCR1			0xA4
+> +#define FSPI_IPCR1_IPAREN		BIT(31)
+> +#define FSPI_IPCR1_SEQNUM_SHIFT		24
+> +#define FSPI_IPCR1_SEQID_SHIFT		16
+> +#define FSPI_IPCR1_IDATSZ(x)		(x)
+> +
+> +#define FSPI_IPCMD			0xB0
+> +#define FSPI_IPCMD_TRG			BIT(0)
+> +
+> +#define FSPI_DLPR			0xB4
+> +
+> +#define FSPI_IPRXFCR			0xB8
+> +#define FSPI_IPRXFCR_CLR		BIT(0)
+> +#define FSPI_IPRXFCR_DMA_EN		BIT(1)
+> +#define FSPI_IPRXFCR_WMRK(x)		((x) << 2)
+> +
+> +#define FSPI_IPTXFCR			0xBC
+> +#define FSPI_IPTXFCR_CLR		BIT(0)
+> +#define FSPI_IPTXFCR_DMA_EN		BIT(1)
+> +#define FSPI_IPTXFCR_WMRK(x)		((x) << 2)
+> +
+> +#define FSPI_DLLACR			0xC0
+> +#define FSPI_DLLACR_OVRDEN		BIT(8)
+> +
+> +#define FSPI_DLLBCR			0xC4
+> +#define FSPI_DLLBCR_OVRDEN		BIT(8)
+> +
+> +#define FSPI_STS0			0xE0
+> +#define FSPI_STS0_DLPHB(x)		((x) << 8)
+> +#define FSPI_STS0_DLPHA(x)		((x) << 4)
+> +#define FSPI_STS0_CMD_SRC(x)		((x) << 2)
+> +#define FSPI_STS0_ARB_IDLE		BIT(1)
+> +#define FSPI_STS0_SEQ_IDLE		BIT(0)
+> +
+> +#define FSPI_STS1			0xE4
+> +#define FSPI_STS1_IP_ERRCD(x)		((x) << 24)
+> +#define FSPI_STS1_IP_ERRID(x)		((x) << 16)
+> +#define FSPI_STS1_AHB_ERRCD(x)		((x) << 8)
+> +#define FSPI_STS1_AHB_ERRID(x)		(x)
+> +
+> +#define FSPI_AHBSPNST			0xEC
+> +#define FSPI_AHBSPNST_DATLFT(x)		((x) << 16)
+> +#define FSPI_AHBSPNST_BUFID(x)		((x) << 1)
+> +#define FSPI_AHBSPNST_ACTIVE		BIT(0)
+> +
+> +#define FSPI_IPRXFSTS			0xF0
+> +#define FSPI_IPRXFSTS_RDCNTR(x)		((x) << 16)
+> +#define FSPI_IPRXFSTS_FILL(x)		(x)
+> +
+> +#define FSPI_IPTXFSTS			0xF4
+> +#define FSPI_IPTXFSTS_WRCNTR(x)		((x) << 16)
+> +#define FSPI_IPTXFSTS_FILL(x)		(x)
+> +
+> +#define FSPI_RFDR			0x100
+> +#define FSPI_TFDR			0x180
+> +
+> +#define FSPI_LUT_BASE			0x200
+> +#define FSPI_LUT_OFFSET			(SEQID_LUT * 4 * 4)
+> +#define FSPI_LUT_REG(idx) \
+> +	(FSPI_LUT_BASE + FSPI_LUT_OFFSET + (idx) * 4)
+> +
+> +/* register map end */
+> +
+> +/* Instruction set for the LUT register. */
+> +#define LUT_STOP			0x00
+> +#define LUT_CMD				0x01
+> +#define LUT_ADDR			0x02
+> +#define LUT_CADDR_SDR			0x03
+> +#define LUT_MODE			0x04
+> +#define LUT_MODE2			0x05
+> +#define LUT_MODE4			0x06
+> +#define LUT_MODE8			0x07
+> +#define LUT_NXP_WRITE			0x08
+> +#define LUT_NXP_READ			0x09
+> +#define LUT_LEARN_SDR			0x0A
+> +#define LUT_DATSZ_SDR			0x0B
+> +#define LUT_DUMMY			0x0C
+> +#define LUT_DUMMY_RWDS_SDR		0x0D
+> +#define LUT_JMP_ON_CS			0x1F
+> +#define LUT_CMD_DDR			0x21
+> +#define LUT_ADDR_DDR			0x22
+> +#define LUT_CADDR_DDR			0x23
+> +#define LUT_MODE_DDR			0x24
+> +#define LUT_MODE2_DDR			0x25
+> +#define LUT_MODE4_DDR			0x26
+> +#define LUT_MODE8_DDR			0x27
+> +#define LUT_WRITE_DDR			0x28
+> +#define LUT_READ_DDR			0x29
+> +#define LUT_LEARN_DDR			0x2A
+> +#define LUT_DATSZ_DDR			0x2B
+> +#define LUT_DUMMY_DDR			0x2C
+> +#define LUT_DUMMY_RWDS_DDR		0x2D
+> +
+> +/*
+> + * Calculate number of required PAD bits for LUT register.
+> + *
+> + * The pad stands for the number of IO lines [0:7].
+> + * For example, the octal read needs eight IO lines,
+> + * so you should use LUT_PAD(8). This macro
+> + * returns 3 i.e. use eight (2^3) IP lines for read.
+> + */
+> +#define LUT_PAD(x) (fls(x) - 1)
+> +
+> +/*
+> + * Macro for constructing the LUT entries with the following
+> + * register layout:
+> + *
+> + *  ---------------------------------------------------
+> + *  | INSTR1 | PAD1 | OPRND1 | INSTR0 | PAD0 | OPRND0 |
+> + *  ---------------------------------------------------
+> + */
+> +#define PAD_SHIFT		8
+> +#define INSTR_SHIFT		10
+> +#define OPRND_SHIFT		16
+> +
+> +/* Macros for constructing the LUT register. */
+> +#define LUT_DEF(idx, ins, pad, opr)			  \
+> +	((((ins) << INSTR_SHIFT) | ((pad) << PAD_SHIFT) | \
+> +	(opr)) << (((idx) % 2) * OPRND_SHIFT))
+> +
+> +#define POLL_TOUT		5000
+> +#define NXP_FSPI_MAX_CHIPSELECT		4
+> +
+> +struct nxp_fspi_devtype_data {
+> +	unsigned int rxfifo;
+> +	unsigned int txfifo;
+> +	unsigned int ahb_buf_size;
+> +	unsigned int quirks;
+> +	bool little_endian;
+> +};
+> +
+> +static const struct nxp_fspi_devtype_data lx2160a_data =3D {
+> +	.rxfifo =3D SZ_512,       /* (64  * 64 bits)  */
+> +	.txfifo =3D SZ_1K,        /* (128 * 64 bits)  */
+> +	.ahb_buf_size =3D SZ_2K,  /* (256 * 64 bits)  */
+> +	.quirks =3D 0,
+> +	.little_endian =3D true,  /* little-endian    */
+> +};
+> +
+> +struct nxp_fspi {
+> +	void __iomem *iobase;
+> +	void __iomem *ahb_addr;
+> +	u32 memmap_phy;
+> +	u32 memmap_phy_size;
+> +	struct clk *clk, *clk_en;
+> +	struct device *dev;
+> +	struct completion c;
+> +	const struct nxp_fspi_devtype_data *devtype_data;
+> +	struct mutex lock;
+> +	struct pm_qos_request pm_qos_req;
+> +	int selected;
+> +};
+> +
+> +/*
+> + * R/W functions for big- or little-endian registers:
+> + * The FSPI controller's endianness is independent of
+> + * the CPU core's endianness. So far, although the CPU
+> + * core is little-endian the FSPI controller can use
+> + * big-endian or little-endian.
+> + */
+> +static void fspi_writel(struct nxp_fspi *f, u32 val, void __iomem
+> +*addr) {
+> +	if (f->devtype_data->little_endian)
+> +		iowrite32(val, addr);
+> +	else
+> +		iowrite32be(val, addr);
+> +}
+> +
+> +static u32 fspi_readl(struct nxp_fspi *f, void __iomem *addr) {
+> +	if (f->devtype_data->little_endian)
+> +		return ioread32(addr);
+> +	else
+> +		return ioread32be(addr);
+> +}
+> +
+> +static irqreturn_t nxp_fspi_irq_handler(int irq, void *dev_id) {
+> +	struct nxp_fspi *f =3D dev_id;
+> +	u32 reg;
+> +
+> +	/* clear interrupt */
+> +	reg =3D fspi_readl(f, f->iobase + FSPI_INTR);
+> +	fspi_writel(f, FSPI_INTR_IPCMDDONE, f->iobase + FSPI_INTR);
+> +
+> +	if (reg & FSPI_INTR_IPCMDDONE)
+> +		complete(&f->c);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static int nxp_fspi_check_buswidth(struct nxp_fspi *f, u8 width) {
+> +	switch (width) {
+> +	case 1:
+> +	case 2:
+> +	case 4:
+> +	case 8:
+> +		return 0;
+> +	}
+> +
+> +	return -ENOTSUPP;
+> +}
+> +
+> +static bool nxp_fspi_supports_op(struct spi_mem *mem,
+> +				 const struct spi_mem_op *op)
+> +{
+> +	struct nxp_fspi *f =3D spi_controller_get_devdata(mem->spi->master);
+> +	int ret;
+> +
+> +	ret =3D nxp_fspi_check_buswidth(f, op->cmd.buswidth);
+> +
+> +	if (op->addr.nbytes)
+> +		ret |=3D nxp_fspi_check_buswidth(f, op->addr.buswidth);
+> +
+> +	if (op->dummy.nbytes)
+> +		ret |=3D nxp_fspi_check_buswidth(f, op->dummy.buswidth);
+> +
+> +	if (op->data.nbytes)
+> +		ret |=3D nxp_fspi_check_buswidth(f, op->data.buswidth);
+> +
+> +	if (ret)
+> +		return false;
+> +
+> +	/*
+> +	 * The number of address bytes should be equal to or less than 4 bytes.
+> +	 */
+> +	if (op->addr.nbytes > 4)
+> +		return false;
+> +
+> +	/*
+> +	 * If requested address value is greater than controller assigned
+> +	 * memory mapped space, return error as it didn't fit in the range
+> +	 * of assigned address space.
+> +	 */
+> +	if (op->addr.val >=3D f->memmap_phy_size)
+> +		return false;
+> +
+> +	/* Max 64 dummy clock cycles supported */
+> +	if (op->dummy.buswidth &&
+> +	    (op->dummy.nbytes * 8 / op->dummy.buswidth > 64))
+> +		return false;
+> +
+> +	/* Max data length, check controller limits and alignment */
+> +	if (op->data.dir =3D=3D SPI_MEM_DATA_IN &&
+> +	    (op->data.nbytes > f->devtype_data->ahb_buf_size ||
+> +	     (op->data.nbytes > f->devtype_data->rxfifo - 4 &&
+> +	      !IS_ALIGNED(op->data.nbytes, 8))))
+> +		return false;
+> +
+> +	if (op->data.dir =3D=3D SPI_MEM_DATA_OUT &&
+> +	    op->data.nbytes > f->devtype_data->txfifo)
+> +		return false;
+> +
+> +	return true;
+> +}
+> +
+> +/* Instead of busy looping invoke readl_poll_timeout functionality. */
+> +static int fspi_readl_poll_tout(struct nxp_fspi *f, void __iomem *base,
+> +				u32 mask, u32 delay_us,
+> +				u32 timeout_us, bool c)
+> +{
+> +	u32 reg;
+> +
+> +	if (!f->devtype_data->little_endian)
+> +		mask =3D (u32)cpu_to_be32(mask);
+> +
+> +	if (c)
+> +		return readl_poll_timeout(base, reg, (reg & mask),
+> +					  delay_us, timeout_us);
+> +	else
+> +		return readl_poll_timeout(base, reg, !(reg & mask),
+> +					  delay_us, timeout_us);
+> +}
+> +
+> +/*
+> + * If the slave device content being changed by Write/Erase, need to
+> + * invalidate the AHB buffer. This can be achieved by doing the reset
+> + * of controller after setting MCR0[SWRESET] bit.
+> + */
+> +static inline void nxp_fspi_invalid(struct nxp_fspi *f) {
+> +	u32 reg;
+> +	int ret;
+> +
+> +	reg =3D fspi_readl(f, f->iobase + FSPI_MCR0);
+> +	fspi_writel(f, reg | FSPI_MCR0_SWRST, f->iobase + FSPI_MCR0);
+> +
+> +	/* w1c register, wait unit clear */
+> +	ret =3D fspi_readl_poll_tout(f, f->iobase + FSPI_MCR0,
+> +				   FSPI_MCR0_SWRST, 0, POLL_TOUT, false);
+> +	WARN_ON(ret);
+> +}
+> +
+> +static void nxp_fspi_prepare_lut(struct nxp_fspi *f,
+> +				 const struct spi_mem_op *op)
+> +{
+> +	void __iomem *base =3D f->iobase;
+> +	u32 lutval[4] =3D {};
+> +	int lutidx =3D 1, i;
+> +
+> +	/* cmd */
+> +	lutval[0] |=3D LUT_DEF(0, LUT_CMD, LUT_PAD(op->cmd.buswidth),
+> +			     op->cmd.opcode);
+> +
+> +	/* addr bytes */
+> +	if (op->addr.nbytes) {
+> +		lutval[lutidx / 2] |=3D LUT_DEF(lutidx, LUT_ADDR,
+> +					      LUT_PAD(op->addr.buswidth),
+> +					      op->addr.nbytes * 8);
+> +		lutidx++;
+> +	}
+> +
+> +	/* dummy bytes, if needed */
+> +	if (op->dummy.nbytes) {
+> +		lutval[lutidx / 2] |=3D LUT_DEF(lutidx, LUT_DUMMY,
+> +		/*
+> +		 * Due to FlexSPI controller limitation number of PAD for
+> dummy
+> +		 * buswidth needs to be programmed as equal to data buswidth.
+> +		 */
+> +					      LUT_PAD(op->data.buswidth),
+> +					      op->dummy.nbytes * 8 /
+> +					      op->dummy.buswidth);
+> +		lutidx++;
+> +	}
+> +
+> +	/* read/write data bytes */
+> +	if (op->data.nbytes) {
+> +		lutval[lutidx / 2] |=3D LUT_DEF(lutidx,
+> +					      op->data.dir =3D=3D
+> SPI_MEM_DATA_IN ?
+> +					      LUT_NXP_READ : LUT_NXP_WRITE,
+> +					      LUT_PAD(op->data.buswidth),
+> +					      0);
+> +		lutidx++;
+> +	}
+> +
+> +	/* stop condition. */
+> +	lutval[lutidx / 2] |=3D LUT_DEF(lutidx, LUT_STOP, 0, 0);
+> +
+> +	/* unlock LUT */
+> +	fspi_writel(f, FSPI_LUTKEY_VALUE, f->iobase + FSPI_LUTKEY);
+> +	fspi_writel(f, FSPI_LCKER_UNLOCK, f->iobase + FSPI_LCKCR);
+> +
+> +	/* fill LUT */
+> +	for (i =3D 0; i < ARRAY_SIZE(lutval); i++)
+> +		fspi_writel(f, lutval[i], base + FSPI_LUT_REG(i));
+> +
+> +	dev_dbg(f->dev, "CMD[%x] lutval[0:%x \t 1:%x \t 2:%x \t 3:%x]\n",
+> +		op->cmd.opcode, lutval[0], lutval[1], lutval[2], lutval[3]);
+> +
+> +	/* lock LUT */
+> +	fspi_writel(f, FSPI_LUTKEY_VALUE, f->iobase + FSPI_LUTKEY);
+> +	fspi_writel(f, FSPI_LCKER_LOCK, f->iobase + FSPI_LCKCR); }
+> +
+> +static int nxp_fspi_clk_prep_enable(struct nxp_fspi *f) {
+> +	int ret;
+> +
+> +	ret =3D clk_prepare_enable(f->clk_en);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D clk_prepare_enable(f->clk);
+> +	if (ret) {
+> +		clk_disable_unprepare(f->clk_en);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void nxp_fspi_clk_disable_unprep(struct nxp_fspi *f) {
+> +	clk_disable_unprepare(f->clk);
+> +	clk_disable_unprepare(f->clk_en);
+> +}
+> +
+> +/*
+> + * In FlexSPI controller, flash access is based on value of
+> +FSPI_FLSHXXCR0
+> + * register and start base address of the slave device.
+> + *
+> + *							    (Higher address)
+> + *				--------    <-- FLSHB2CR0
+> + *				|  B2  |
+> + *				|      |
+> + *	B2 start address -->	--------    <-- FLSHB1CR0
+> + *				|  B1  |
+> + *				|      |
+> + *	B1 start address -->	--------    <-- FLSHA2CR0
+> + *				|  A2  |
+> + *				|      |
+> + *	A2 start address -->	--------    <-- FLSHA1CR0
+> + *				|  A1  |
+> + *				|      |
+> + *	A1 start address -->	--------		    (Lower address)
+> + *
+> + *
+> + * Start base address defines the starting address range for given CS
+> +and
+> + * FSPI_FLSHXXCR0 defines the size of the slave device connected at give=
+n CS.
+> + *
+> + * But, different targets are having different combinations of number
+> +of CS,
+> + * some targets only have single CS or two CS covering controller's
+> +full
+> + * memory mapped space area.
+> + * Thus, implementation is being done as independent of the size and
+> +number
+> + * of the connected slave device.
+> + * Assign controller memory mapped space size as the size to the
+> +connected
+> + * slave device.
+> + * Mark FLSHxxCR0 as zero initially and then assign value only to the
+> +selected
+> + * chip-select Flash configuration register.
+> + *
+> + * For e.g. to access CS2 (B1), FLSHB1CR0 register would be equal to
+> +the
+> + * memory mapped size of the controller.
+> + * Value for rest of the CS FLSHxxCR0 register would be zero.
+> + *
+> + */
+> +static void nxp_fspi_select_mem(struct nxp_fspi *f, struct spi_device
+> +*spi) {
+> +	unsigned long rate =3D spi->max_speed_hz;
+> +	int ret;
+> +	uint64_t size_kb;
+> +
+> +	/*
+> +	 * Return, if previously selected slave device is same as current
+> +	 * requested slave device.
+> +	 */
+> +	if (f->selected =3D=3D spi->chip_select)
+> +		return;
+> +
+> +	/* Reset FLSHxxCR0 registers */
+> +	fspi_writel(f, 0, f->iobase + FSPI_FLSHA1CR0);
+> +	fspi_writel(f, 0, f->iobase + FSPI_FLSHA2CR0);
+> +	fspi_writel(f, 0, f->iobase + FSPI_FLSHB1CR0);
+> +	fspi_writel(f, 0, f->iobase + FSPI_FLSHB2CR0);
+> +
+> +	/* Assign controller memory mapped space as size, KBytes, of flash. */
+> +	size_kb =3D FSPI_FLSHXCR0_SZ(f->memmap_phy_size);
+> +
+> +	fspi_writel(f, size_kb, f->iobase + FSPI_FLSHA1CR0 +
+> +		    4 * spi->chip_select);
+> +
+> +	dev_dbg(f->dev, "Slave device [CS:%x] selected\n", spi->chip_select);
+> +
+> +	nxp_fspi_clk_disable_unprep(f);
+> +
+> +	ret =3D clk_set_rate(f->clk, rate);
+> +	if (ret)
+> +		return;
+> +
+> +	ret =3D nxp_fspi_clk_prep_enable(f);
+> +	if (ret)
+> +		return;
+> +
+> +	f->selected =3D spi->chip_select;
+> +}
+> +
+> +static void nxp_fspi_read_ahb(struct nxp_fspi *f, const struct
+> +spi_mem_op *op) {
+> +	u32 len =3D op->data.nbytes;
+> +
+> +	/* Read out the data directly from the AHB buffer. */
+> +	memcpy_fromio(op->data.buf.in, (f->ahb_addr + op->addr.val), len); }
+> +
+> +static void nxp_fspi_fill_txfifo(struct nxp_fspi *f,
+> +				 const struct spi_mem_op *op)
+> +{
+> +	void __iomem *base =3D f->iobase;
+> +	int i, ret;
+> +	u8 *buf =3D (u8 *) op->data.buf.out;
+> +
+> +	/* clear the TX FIFO. */
+> +	fspi_writel(f, FSPI_IPTXFCR_CLR, base + FSPI_IPTXFCR);
+> +
+> +	/*
+> +	 * Default value of water mark level is 8 bytes, hence in single
+> +	 * write request controller can write max 8 bytes of data.
+> +	 */
+> +
+> +	for (i =3D 0; i < ALIGN_DOWN(op->data.nbytes, 8); i +=3D 8) {
+> +		/* Wait for TXFIFO empty */
+> +		ret =3D fspi_readl_poll_tout(f, f->iobase + FSPI_INTR,
+> +					   FSPI_INTR_IPTXWE, 0,
+> +					   POLL_TOUT, true);
+> +		WARN_ON(ret);
+> +
+> +		fspi_writel(f, *(u32 *) (buf + i), base + FSPI_TFDR);
+> +		fspi_writel(f, *(u32 *) (buf + i + 4), base + FSPI_TFDR + 4);
+> +		fspi_writel(f, FSPI_INTR_IPTXWE, base + FSPI_INTR);
+> +	}
+> +
+> +	if (i < op->data.nbytes) {
+> +		u32 data =3D 0;
+> +		int j;
+> +		/* Wait for TXFIFO empty */
+> +		ret =3D fspi_readl_poll_tout(f, f->iobase + FSPI_INTR,
+> +					   FSPI_INTR_IPTXWE, 0,
+> +					   POLL_TOUT, true);
+> +		WARN_ON(ret);
+> +
+> +		for (j =3D 0; j < ALIGN(op->data.nbytes - i, 4); j +=3D 4) {
+> +			memcpy(&data, buf + i + j, 4);
+> +			fspi_writel(f, data, base + FSPI_TFDR + j);
+> +		}
+> +		fspi_writel(f, FSPI_INTR_IPTXWE, base + FSPI_INTR);
+> +	}
+> +}
+> +
+> +static void nxp_fspi_read_rxfifo(struct nxp_fspi *f,
+> +			  const struct spi_mem_op *op)
+> +{
+> +	void __iomem *base =3D f->iobase;
+> +	int i, ret;
+> +	int len =3D op->data.nbytes;
+> +	u8 *buf =3D (u8 *) op->data.buf.in;
+> +
+> +	/*
+> +	 * Default value of water mark level is 8 bytes, hence in single
+> +	 * read request controller can read max 8 bytes of data.
+> +	 */
+> +	for (i =3D 0; i < ALIGN_DOWN(len, 8); i +=3D 8) {
+> +		/* Wait for RXFIFO available */
+> +		ret =3D fspi_readl_poll_tout(f, f->iobase + FSPI_INTR,
+> +					   FSPI_INTR_IPRXWA, 0,
+> +					   POLL_TOUT, true);
+> +		WARN_ON(ret);
+> +
+> +		*(u32 *)(buf + i) =3D fspi_readl(f, base + FSPI_RFDR);
+> +		*(u32 *)(buf + i + 4) =3D fspi_readl(f, base + FSPI_RFDR + 4);
+> +		/* move the FIFO pointer */
+> +		fspi_writel(f, FSPI_INTR_IPRXWA, base + FSPI_INTR);
+> +	}
+> +
+> +	if (i < len) {
+> +		u32 tmp;
+> +		int size, j;
+> +
+> +		buf =3D op->data.buf.in + i;
+> +		/* Wait for RXFIFO available */
+> +		ret =3D fspi_readl_poll_tout(f, f->iobase + FSPI_INTR,
+> +					   FSPI_INTR_IPRXWA, 0,
+> +					   POLL_TOUT, true);
+> +		WARN_ON(ret);
+> +
+> +		len =3D op->data.nbytes - i;
+> +		for (j =3D 0; j < op->data.nbytes - i; j +=3D 4) {
+> +			tmp =3D fspi_readl(f, base + FSPI_RFDR + j);
+> +			size =3D min(len, 4);
+> +			memcpy(buf + j, &tmp, size);
+> +			len -=3D size;
+> +		}
+> +	}
+> +
+> +	/* invalid the RXFIFO */
+> +	fspi_writel(f, FSPI_IPRXFCR_CLR, base + FSPI_IPRXFCR);
+> +	/* move the FIFO pointer */
+> +	fspi_writel(f, FSPI_INTR_IPRXWA, base + FSPI_INTR); }
+> +
+> +static int nxp_fspi_do_op(struct nxp_fspi *f, const struct spi_mem_op
+> +*op) {
+> +	void __iomem *base =3D f->iobase;
+> +	int seqnum =3D 0;
+> +	int err =3D 0;
+> +	u32 reg;
+> +
+> +	reg =3D fspi_readl(f, base + FSPI_IPRXFCR);
+> +	/* invalid RXFIFO first */
+> +	reg &=3D ~FSPI_IPRXFCR_DMA_EN;
+> +	reg =3D reg | FSPI_IPRXFCR_CLR;
+> +	fspi_writel(f, reg, base + FSPI_IPRXFCR);
+> +
+> +	init_completion(&f->c);
+> +
+> +	fspi_writel(f, op->addr.val, base + FSPI_IPCR0);
+> +	/*
+> +	 * Always start the sequence at the same index since we update
+> +	 * the LUT at each exec_op() call. And also specify the DATA
+> +	 * length, since it's has not been specified in the LUT.
+> +	 */
+> +	fspi_writel(f, op->data.nbytes |
+> +		 (SEQID_LUT << FSPI_IPCR1_SEQID_SHIFT) |
+> +		 (seqnum << FSPI_IPCR1_SEQNUM_SHIFT),
+> +		 base + FSPI_IPCR1);
+> +
+> +	/* Trigger the LUT now. */
+> +	fspi_writel(f, FSPI_IPCMD_TRG, base + FSPI_IPCMD);
+> +
+> +	/* Wait for the interrupt. */
+> +	if (!wait_for_completion_timeout(&f->c, msecs_to_jiffies(1000)))
+> +		err =3D -ETIMEDOUT;
+> +
+> +	/* Invoke IP data read, if request is of data read. */
+> +	if (!err && op->data.nbytes && op->data.dir =3D=3D SPI_MEM_DATA_IN)
+> +		nxp_fspi_read_rxfifo(f, op);
+> +
+> +	return err;
+> +}
+> +
+> +static int nxp_fspi_exec_op(struct spi_mem *mem, const struct
+> +spi_mem_op *op) {
+> +	struct nxp_fspi *f =3D spi_controller_get_devdata(mem->spi->master);
+> +	int err =3D 0;
+> +
+> +	mutex_lock(&f->lock);
+> +
+> +	/* Wait for controller being ready. */
+> +	err =3D fspi_readl_poll_tout(f, f->iobase + FSPI_STS0,
+> +				   FSPI_STS0_ARB_IDLE, 1, POLL_TOUT, true);
+> +	WARN_ON(err);
+> +
+> +	nxp_fspi_select_mem(f, mem->spi);
+> +
+> +	nxp_fspi_prepare_lut(f, op);
+> +	/*
+> +	 * If we have large chunks of data, we read them through the AHB bus
+> +	 * by accessing the mapped memory. In all other cases we use
+> +	 * IP commands to access the flash.
+> +	 */
+> +	if (op->data.nbytes > (f->devtype_data->rxfifo - 4) &&
+> +	    op->data.dir =3D=3D SPI_MEM_DATA_IN) {
+> +		nxp_fspi_read_ahb(f, op);
+> +	} else {
+> +		if (op->data.nbytes && op->data.dir =3D=3D SPI_MEM_DATA_OUT)
+> +			nxp_fspi_fill_txfifo(f, op);
+> +
+> +		err =3D nxp_fspi_do_op(f, op);
+> +	}
+> +
+> +	/* Invalidate the data in the AHB buffer. */
+> +	nxp_fspi_invalid(f);
+> +
+> +	mutex_unlock(&f->lock);
+> +
+> +	return err;
+> +}
+> +
+> +static int nxp_fspi_adjust_op_size(struct spi_mem *mem, struct
+> +spi_mem_op *op) {
+> +	struct nxp_fspi *f =3D spi_controller_get_devdata(mem->spi->master);
+> +
+> +	if (op->data.dir =3D=3D SPI_MEM_DATA_OUT) {
+> +		if (op->data.nbytes > f->devtype_data->txfifo)
+> +			op->data.nbytes =3D f->devtype_data->txfifo;
+> +	} else {
+> +		if (op->data.nbytes > f->devtype_data->ahb_buf_size)
+> +			op->data.nbytes =3D f->devtype_data->ahb_buf_size;
+> +		else if (op->data.nbytes > (f->devtype_data->rxfifo - 4))
+> +			op->data.nbytes =3D ALIGN_DOWN(op->data.nbytes, 8);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int nxp_fspi_default_setup(struct nxp_fspi *f) {
+> +	void __iomem *base =3D f->iobase;
+> +	int ret, i;
+> +	u32 reg;
+> +
+> +	/* disable and unprepare clock to avoid glitch pass to controller */
+> +	nxp_fspi_clk_disable_unprep(f);
+> +
+> +	/* the default frequency, we will change it later if necessary. */
+> +	ret =3D clk_set_rate(f->clk, 20000000);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D nxp_fspi_clk_prep_enable(f);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Reset the module */
+> +	/* w1c register, wait unit clear */
+> +	ret =3D fspi_readl_poll_tout(f, f->iobase + FSPI_MCR0,
+> +				   FSPI_MCR0_SWRST, 0, POLL_TOUT, false);
+> +	WARN_ON(ret);
+> +
+> +	/* Disable the module */
+> +	fspi_writel(f, FSPI_MCR0_MDIS, base + FSPI_MCR0);
+> +
+> +	/* Reset the DLL register to default value */
+> +	fspi_writel(f, FSPI_DLLACR_OVRDEN, base + FSPI_DLLACR);
+> +	fspi_writel(f, FSPI_DLLBCR_OVRDEN, base + FSPI_DLLBCR);
+> +
+> +	/* enable module */
+> +	fspi_writel(f, FSPI_MCR0_AHB_TIMEOUT(0xFF) |
+> FSPI_MCR0_IP_TIMEOUT(0xFF),
+> +		 base + FSPI_MCR0);
+> +
+> +	/*
+> +	 * Disable same device enable bit and configure all slave devices
+> +	 * independently.
+> +	 */
+> +	reg =3D fspi_readl(f, f->iobase + FSPI_MCR2);
+> +	reg =3D reg & ~(FSPI_MCR2_SAMEDEVICEEN);
+> +	fspi_writel(f, reg, base + FSPI_MCR2);
+> +
+> +	/* AHB configuration for access buffer 0~7. */
+> +	for (i =3D 0; i < 7; i++)
+> +		fspi_writel(f, 0, base + FSPI_AHBRX_BUF0CR0 + 4 * i);
+> +
+> +	/*
+> +	 * Set ADATSZ with the maximum AHB buffer size to improve the read
+> +	 * performance.
+> +	 */
+> +	fspi_writel(f, (f->devtype_data->ahb_buf_size / 8 |
+> +		  FSPI_AHBRXBUF0CR7_PREF), base + FSPI_AHBRX_BUF7CR0);
+> +
+> +	/* prefetch and no start address alignment limitation */
+> +	fspi_writel(f, FSPI_AHBCR_PREF_EN | FSPI_AHBCR_RDADDROPT,
+> +		 base + FSPI_AHBCR);
+> +
+> +	/* AHB Read - Set lut sequence ID for all CS. */
+> +	fspi_writel(f, SEQID_LUT, base + FSPI_FLSHA1CR2);
+> +	fspi_writel(f, SEQID_LUT, base + FSPI_FLSHA2CR2);
+> +	fspi_writel(f, SEQID_LUT, base + FSPI_FLSHB1CR2);
+> +	fspi_writel(f, SEQID_LUT, base + FSPI_FLSHB2CR2);
+> +
+> +	f->selected =3D -1;
+> +
+> +	/* enable the interrupt */
+> +	fspi_writel(f, FSPI_INTEN_IPCMDDONE, base + FSPI_INTEN);
+> +
+> +	return 0;
+> +}
+> +
+> +static const char *nxp_fspi_get_name(struct spi_mem *mem) {
+> +	struct nxp_fspi *f =3D spi_controller_get_devdata(mem->spi->master);
+> +	struct device *dev =3D &mem->spi->dev;
+> +	const char *name;
+> +
+> +	// Set custom name derived from the platform_device of the controller.
+> +	if (of_get_available_child_count(f->dev->of_node) =3D=3D 1)
+> +		return dev_name(f->dev);
+> +
+> +	name =3D devm_kasprintf(dev, GFP_KERNEL,
+> +			      "%s-%d", dev_name(f->dev),
+> +			      mem->spi->chip_select);
+> +
+> +	if (!name) {
+> +		dev_err(dev, "failed to get memory for custom flash name\n");
+> +		return ERR_PTR(-ENOMEM);
+> +	}
+> +
+> +	return name;
+> +}
+> +
+> +static const struct spi_controller_mem_ops nxp_fspi_mem_ops =3D {
+> +	.adjust_op_size =3D nxp_fspi_adjust_op_size,
+> +	.supports_op =3D nxp_fspi_supports_op,
+> +	.exec_op =3D nxp_fspi_exec_op,
+> +	.get_name =3D nxp_fspi_get_name,
+> +};
+> +
+> +static int nxp_fspi_probe(struct platform_device *pdev) {
+> +	struct spi_controller *ctlr;
+> +	struct device *dev =3D &pdev->dev;
+> +	struct device_node *np =3D dev->of_node;
+> +	struct resource *res;
+> +	struct nxp_fspi *f;
+> +	int ret;
+> +
+> +	ctlr =3D spi_alloc_master(&pdev->dev, sizeof(*f));
+> +	if (!ctlr)
+> +		return -ENOMEM;
+> +
+> +	ctlr->mode_bits =3D SPI_RX_DUAL | SPI_RX_QUAD |
+> +			  SPI_TX_DUAL | SPI_TX_QUAD;
+> +
+> +	f =3D spi_controller_get_devdata(ctlr);
+> +	f->dev =3D dev;
+> +	f->devtype_data =3D of_device_get_match_data(dev);
+> +	if (!f->devtype_data) {
+> +		ret =3D -ENODEV;
+> +		goto err_put_ctrl;
+> +	}
+> +
+> +	platform_set_drvdata(pdev, f);
+> +
+> +	/* find the resources - configuration register address space */
+> +	res =3D platform_get_resource_byname(pdev, IORESOURCE_MEM,
+> "fspi_base");
+> +	f->iobase =3D devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(f->iobase)) {
+> +		ret =3D PTR_ERR(f->iobase);
+> +		goto err_put_ctrl;
+> +	}
+> +
+> +	/* find the resources - controller memory mapped space */
+> +	res =3D platform_get_resource_byname(pdev, IORESOURCE_MEM,
+> "fspi_mmap");
+> +	f->ahb_addr =3D devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(f->ahb_addr)) {
+> +		ret =3D PTR_ERR(f->ahb_addr);
+> +		goto err_put_ctrl;
+> +	}
+> +
+> +	/* assign memory mapped starting address and mapped size. */
+> +	f->memmap_phy =3D res->start;
+> +	f->memmap_phy_size =3D resource_size(res);
+> +
+> +	/* find the clocks */
+> +	f->clk_en =3D devm_clk_get(dev, "fspi_en");
+> +	if (IS_ERR(f->clk_en)) {
+> +		ret =3D PTR_ERR(f->clk_en);
+> +		goto err_put_ctrl;
+> +	}
+> +
+> +	f->clk =3D devm_clk_get(dev, "fspi");
+> +	if (IS_ERR(f->clk)) {
+> +		ret =3D PTR_ERR(f->clk);
+> +		goto err_put_ctrl;
+> +	}
+> +
+> +	ret =3D nxp_fspi_clk_prep_enable(f);
+> +	if (ret) {
+> +		dev_err(dev, "can not enable the clock\n");
+> +		goto err_put_ctrl;
+> +	}
+> +
+> +	/* find the irq */
+> +	ret =3D platform_get_irq(pdev, 0);
+> +	if (ret < 0) {
+> +		dev_err(dev, "failed to get the irq: %d\n", ret);
+> +		goto err_disable_clk;
+> +	}
+> +
+> +	ret =3D devm_request_irq(dev, ret,
+> +			nxp_fspi_irq_handler, 0, pdev->name, f);
+> +	if (ret) {
+> +		dev_err(dev, "failed to request irq: %d\n", ret);
+> +		goto err_disable_clk;
+> +	}
+> +
+> +	mutex_init(&f->lock);
+> +
+> +	ctlr->bus_num =3D -1;
+> +	ctlr->num_chipselect =3D NXP_FSPI_MAX_CHIPSELECT;
+> +	ctlr->mem_ops =3D &nxp_fspi_mem_ops;
+> +
+> +	nxp_fspi_default_setup(f);
+> +
+> +	ctlr->dev.of_node =3D np;
+> +
+> +	ret =3D spi_register_controller(ctlr);
+> +	if (ret)
+> +		goto err_destroy_mutex;
+> +
+> +	return 0;
+> +
+> +err_destroy_mutex:
+> +	mutex_destroy(&f->lock);
+> +
+> +err_disable_clk:
+> +	nxp_fspi_clk_disable_unprep(f);
+> +
+> +err_put_ctrl:
+> +	spi_controller_put(ctlr);
+> +
+> +	dev_err(dev, "NXP FSPI probe failed\n");
+> +	return ret;
+> +}
+> +
+> +static int nxp_fspi_remove(struct platform_device *pdev) {
+> +	struct nxp_fspi *f =3D platform_get_drvdata(pdev);
+> +
+> +	/* disable the hardware */
+> +	fspi_writel(f, FSPI_MCR0_MDIS, f->iobase + FSPI_MCR0);
+> +
+> +	nxp_fspi_clk_disable_unprep(f);
+> +
+> +	mutex_destroy(&f->lock);
+> +
+> +	return 0;
+> +}
+> +
+> +static int nxp_fspi_suspend(struct device *dev) {
+> +	return 0;
+> +}
+> +
+> +static int nxp_fspi_resume(struct device *dev) {
+> +	struct nxp_fspi *f =3D dev_get_drvdata(dev);
+> +
+> +	nxp_fspi_default_setup(f);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id nxp_fspi_dt_ids[] =3D {
+> +	{ .compatible =3D "nxp,lx2160a-fspi", .data =3D (void *)&lx2160a_data, =
+},
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(of, nxp_fspi_dt_ids);
+> +
+> +static const struct dev_pm_ops nxp_fspi_pm_ops =3D {
+> +	.suspend	=3D nxp_fspi_suspend,
+> +	.resume		=3D nxp_fspi_resume,
+> +};
+> +
+> +static struct platform_driver nxp_fspi_driver =3D {
+> +	.driver =3D {
+> +		.name	=3D "nxp-fspi",
+> +		.of_match_table =3D nxp_fspi_dt_ids,
+> +		.pm =3D   &nxp_fspi_pm_ops,
+> +	},
+> +	.probe          =3D nxp_fspi_probe,
+> +	.remove		=3D nxp_fspi_remove,
+> +};
+> +module_platform_driver(nxp_fspi_driver);
+> +
+> +MODULE_DESCRIPTION("NXP FSPI Controller Driver");
+> MODULE_AUTHOR("NXP
+> +Semiconductor"); MODULE_AUTHOR("Yogesh Narayan Gaur
+> +<yogeshnarayan.gaur@nxp.com>"); MODULE_AUTHOR("Boris Brezillion
+> +<bbrezillon@kernel.org>"); MODULE_AUTHOR("Frieder Schrempf
+> +<frieder.schrempf@kontron.de>"); MODULE_LICENSE("GPL v2");
+> --
+> 2.17.1
+
