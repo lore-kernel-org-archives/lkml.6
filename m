@@ -2,100 +2,114 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFFA8C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:35:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 806DBC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:38:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B05B217D4
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:35:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40B6321726
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 23:38:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dYFGN3OF"
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="WFKu1w3g"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726895AbfAVXfJ (ORCPT
+        id S1726804AbfAVXig (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 18:35:09 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:39573 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725925AbfAVXfJ (ORCPT
+        Tue, 22 Jan 2019 18:38:36 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:51826 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726175AbfAVXig (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 18:35:09 -0500
-Received: by mail-ed1-f68.google.com with SMTP id b14so238750edt.6
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 15:35:08 -0800 (PST)
+        Tue, 22 Jan 2019 18:38:36 -0500
+Received: by mail-it1-f194.google.com with SMTP id w18so640626ite.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 15:38:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+DolEyr7gJGm9u7cQZrQeuUuAycgGfyCyNIf36AY+m0=;
-        b=dYFGN3OFL+KQHonpmte6EDlTICB+8pxnrbTdszH6OB5eeCwBEFiyORrDgtk7In6mx7
-         yGqEsnOHnqxXnHCN5qUYOdsEn3NOxgVM8NU+PKFC9dpXmBJ4haJMWHRV+u9lJcFFHCa0
-         99DbPaLS5jm0P3S9ArH5e07hWmUiieQIN3ryw=
+        d=android.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/hezd3DAi4m26mdcQXgyX6zwdNZB7MKrbNOkLnCTYrE=;
+        b=WFKu1w3gKSkWSQbGKoIZWCpHMjxJ7Jaz7pmiw72v34nwMu8m7bLhrtMAf7EwFmn/J3
+         OW6cU1OiMaiJmQGSOEpnQ7w7Olpk9tp3rFw8MzXy1SXEYBqZlsyO1yWk+f0tiiAvFTDE
+         7zFsNuFhvydaANxqwm3wxxbZBDPT5UzQfLwAckPVaVREdOYByT6rsLWtIn9qq8N9ENAz
+         J2vNeiV3Ppf+ldzdijxLqv0LkegqGKm29J5o65c4tKAvuEdFgTUp3HZWEAA/3UvelPE0
+         H/l6Mf/ssCL4CXnW8xU9xu8k71QyxKBMMn0v5OMY1ZY6VdJ3RJsA6ntiCRLMuUCEQr8f
+         lj/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+DolEyr7gJGm9u7cQZrQeuUuAycgGfyCyNIf36AY+m0=;
-        b=MiAw90joA4dSM5znM3RmQ5JJAoSFAWijuQq1ok9dQKXXzGtT0J6l/8rX87uVuSVZ3w
-         2LjOskJ2nhCAdc8fEUJWlXznchqNg2MlmV5+QnkiUYhjYLjDGtXwqwVS9pQRyXqMfpgp
-         uSwzPEjPnrLtxqgM3BoSX6Y6HSf4n5TtkABlOSsTxqAgywY7XOCSisqcSPJPYyHtGLgz
-         Fw7/qlZy1yyZX97Ur5+kjMhmT3Uf11RKekvLl0hq1NZrtm0sFbouUlZCDJ0c9pJXdFFO
-         unNrPa4hQLLkI5YZmFJPkfRgdLU9+dig0rLnXCXSsv/8aJ0tGoIEDE72O45cjVR3bgbS
-         ro2g==
-X-Gm-Message-State: AJcUukdxcjJvUfkENmdg08lsa7HWgrl+CTyzUTGWdQ59P3L4aVkEYJPz
-        dasEfKE6AlZ9xB4oPntGMGP4u12PPGI=
-X-Google-Smtp-Source: ALg8bN4qNU7/EfdIU/GOE+0xBQZW+h6toMXr+ibcfh84SbmmJvcq08rMHJEdrxOYKL7wWXMUxUgMSw==
-X-Received: by 2002:a17:906:4c94:: with SMTP id q20-v6mr400719eju.26.1548200107294;
-        Tue, 22 Jan 2019 15:35:07 -0800 (PST)
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com. [209.85.208.52])
-        by smtp.gmail.com with ESMTPSA id v14sm9444505edq.74.2019.01.22.15.35.03
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/hezd3DAi4m26mdcQXgyX6zwdNZB7MKrbNOkLnCTYrE=;
+        b=kWyEgsG5z5D69QJZd2NVMqXsbc6pq8lQGnYpauWt7OKuB1S4YGKzWOLyjFpq4xnHxt
+         C3C44fvAhamXvGL0ey6vr9qM2TqhDjrtnxYh/nr1F+PcmbJvOaJJyEL3RtBGGrWAiV2r
+         2GgwZkrE6mCs/qVXEWebUxVkZ/acvh2zIbuBVUkI0jmfCbQvmIMBFdtE6l4WLJUXmMRo
+         YHKCG0JgLJfcShxnSeCMxpQPMPnYE/bGX95C6eP1jhmWZFzzgqXNAUttneb0yMedoFV0
+         9LQKHRhMesMpMNhuyg1R3uyUXEwxzMjYPkiaxnGsf2TzLRFVn9XI2XZZTPgj1oi+FQdP
+         DFKw==
+X-Gm-Message-State: AJcUukcN2dQ3zXsaxTh/72C5Xr2qqUX/lchFt3BFuMtDtlqhSwweTc7s
+        RkX/YIpzbH7BkpX8rgYcqY7Ofw==
+X-Google-Smtp-Source: ALg8bN5F+lxLQYsHtJDLoAae/8Sxk7g9bJ1N9b1jPaUyS6tdXlpY5G01vqTFG5O7GAoDnJu/O9DsRQ==
+X-Received: by 2002:a24:a701:: with SMTP id a1mr360156itf.7.1548200314979;
+        Tue, 22 Jan 2019 15:38:34 -0800 (PST)
+Received: from trong0.mtv.corp.google.com ([2620:0:1000:1601:c43f:8c1b:f6ef:3dce])
+        by smtp.gmail.com with ESMTPSA id g186sm8058823ite.39.2019.01.22.15.38.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Jan 2019 15:35:04 -0800 (PST)
-Received: by mail-ed1-f52.google.com with SMTP id b14so238646edt.6
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 15:35:03 -0800 (PST)
-X-Received: by 2002:a50:951a:: with SMTP id u26mr449585eda.4.1548200103236;
- Tue, 22 Jan 2019 15:35:03 -0800 (PST)
+        Tue, 22 Jan 2019 15:38:34 -0800 (PST)
+From:   Tri Vo <trong@android.com>
+To:     oberpar@linux.ibm.com
+Cc:     ghackmann@android.com, ndesaulniers@google.com,
+        linux-kernel@vger.kernel.org, kernel-team@android.com,
+        yamada.masahiro@socionext.com, Tri Vo <trong@android.com>
+Subject: [PATCH v3 0/3] gcov: add Clang support
+Date:   Tue, 22 Jan 2019 15:37:46 -0800
+Message-Id: <20190122233749.42220-1-trong@android.com>
+X-Mailer: git-send-email 2.20.1.321.g9e740568ce-goog
 MIME-Version: 1.0
-References: <20190122055112.30943-1-bjorn.andersson@linaro.org>
- <20190122055112.30943-3-bjorn.andersson@linaro.org> <CAD=FV=X0x4hQ=8yQ6wDWE8ximf9A8hpgpRWTdPrFXDD4FVO8VQ@mail.gmail.com>
-In-Reply-To: <CAD=FV=X0x4hQ=8yQ6wDWE8ximf9A8hpgpRWTdPrFXDD4FVO8VQ@mail.gmail.com>
-From:   Brian Norris <briannorris@chromium.org>
-Date:   Tue, 22 Jan 2019 15:34:51 -0800
-X-Gmail-Original-Message-ID: <CA+ASDXN2+bBiOT6svRE+1VtY7BQTFjjD_s4pzO8J7-dDx9QLDQ@mail.gmail.com>
-Message-ID: <CA+ASDXN2+bBiOT6svRE+1VtY7BQTFjjD_s4pzO8J7-dDx9QLDQ@mail.gmail.com>
-Subject: Re: [PATCH v3 02/10] arm64: dts: qcom: sdm845: Define rmtfs memory
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Evan Green <evgreen@chromium.org>,
-        Ben Chan <benchan@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 3:26 PM Doug Anderson <dianders@chromium.org> wrote:
-> 2. In https://crrev.com/c/1119572, the argument was made that the size
-> of this carveout is board-specific.  That makes it hard to put it in
-> sdm845.dts.
+This patch series adds Clang supoprt for gcov.
 
-And we've increased the size of the memory carve-out since then,
-because the memory requirements depend on the SW features you're using
-on the modem side.
+Patch 1 refactors existing code in preparation for Clang support.
+Patch 2 implements necessary LLVM runtime hooks and gcov kernel interfaces.
+Patch 3 updates documentation.
 
-So that's definitely a reason for giving it a label we can modify it
-with, at a minimum (as Doug suggested). I'm somewhat ambivalent as to
-whether this should or shouldn't go in the base sdm845.dtsi -- it's
-still a feature where most of the definitions (e.g., compatible;
-client ID) should be applicable to all boards.
+Greg Hackmann (2):
+  gcov: Clang: move common GCC code into gcc_base.c
+  gcov: Clang support
 
-Brian
+Tri Vo (1):
+  gcov: docs: add a note on GCC vs Clang differences
+
+ Documentation/dev-tools/gcov.rst |  18 +-
+ kernel/gcov/Kconfig              |   3 +-
+ kernel/gcov/Makefile             |   5 +-
+ kernel/gcov/base.c               |  84 +----
+ kernel/gcov/clang.c              | 555 +++++++++++++++++++++++++++++++
+ kernel/gcov/gcc_base.c           |  86 +++++
+ kernel/gcov/gcov.h               |   3 +
+ 7 files changed, 665 insertions(+), 89 deletions(-)
+ create mode 100644 kernel/gcov/clang.c
+ create mode 100644 kernel/gcov/gcc_base.c
+
+v2:
+- Reorganized config dependencies, as per Masahiro.
+
+v3:
+- Squashed patches 2-4 of v2, as per Nick, Masahiro, and Peter.
+Addressed comments by Peter:
+- Moved __gcov_exit() to gcc_base.c
+- Added missing header to gcc_base.c
+- Removed unnecessary boundary checks in gcov_info_add().
+- Changed counters' allocation to use vmalloc().
+- Added check for failed allocation of filename.
+- Changed list_for_each_entry_safe to list_for_each_entry when traversing
+  without modifying.
+- Updated Documentation/dev-tools/gcov.rst
+
+--
+2.20.1.321.g9e740568ce-goog
+
