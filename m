@@ -2,297 +2,251 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 521BBC282C5
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:26:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1E22C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:26:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C5CA217F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:26:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B84CF217D6
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 15:26:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cHI2EPPL"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="N2ch5Cln"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729972AbfAVP0V (ORCPT
+        id S1729938AbfAVP0h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 10:26:21 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:46348 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729908AbfAVP0T (ORCPT
+        Tue, 22 Jan 2019 10:26:37 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:49957 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729793AbfAVP0M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 10:26:19 -0500
-Received: by mail-qk1-f194.google.com with SMTP id q1so14399160qkf.13;
-        Tue, 22 Jan 2019 07:26:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ji37CWdDOCHmNeK85MzVTCmguGJDIIO9lJ5bDy4pIys=;
-        b=cHI2EPPLnRXOx0B6RXuXIgmMeQFpyesIcDZWcryea/++abq4OMzFdgJGCSUBjJDoQK
-         z1E2M8d44cQ28eWYJ38mq8bw4E8fqmy01UTXOSZxZVKQIfEjEf7hBIqb/nHd6LSrkOXg
-         n50avVj2V0Y1DVh5Sw5cm0bBe5+M2Dw3PTn2yXKgdiOpVBN5b1JTCktlVJdN2j7AF6Zd
-         IXr8E1KILnD1iLz5VKPVCUABmiAfXd7UZB5uEDoNqv5CL5QtRkkrEKDcQxdkIHIAIE1g
-         XaWHw+Q/MY7qgx604FI6WURQqnsHUv2A4NCfCVhKnqsw/O0djHr9LYGavSTMd2Qs4ABS
-         cPcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ji37CWdDOCHmNeK85MzVTCmguGJDIIO9lJ5bDy4pIys=;
-        b=D+KHHXO5/Z4sG1iUqrnDZ8nxsw8ebEMDdxzfhgHXi+IKgb3gJnAudlnZB2p2iPXcB8
-         BUPrOn8CeOO5sS4wktgMdnWNVb1QQMFq6x8LM0WdbsHMU1hK76DwQo0g1hAfLrC+qv7T
-         d6R+bqqkMblrcKR5b9cPGVvooPCP3qbOQAkhvjbZ+VFtnCZYcvlKJBKJERbtPmdhtXLd
-         ZkbcZ0zN9mQBjj3TT8QfPHShJRYe+k6Lq7/VzbutEWvDZGbG5meglLDp3cVpRvoiLRGH
-         tVSiNuzhbaen+soTXBKaMXHTX80NGt6+/8hF9jsPrInU7O6P+2mhVTMIavKG/VzFLtM+
-         vLtQ==
-X-Gm-Message-State: AJcUukclpBTtR2KLBitUIlQGFvCLRIDSprnDUPXqt9pZYemw9MO0CKW5
-        ELGhUYPq7/6Gfi0Syg8ytfpdLgo/Q3CSK5SJuhI=
-X-Google-Smtp-Source: ALg8bN6qofZDOnP0YG5xVKc+QYUR7slb8VXvH04gRlXTXWvVgabtzsFR46YT9/0LB6UieWooR/GQtHFX23VyvJcLX6A=
-X-Received: by 2002:a37:cf9b:: with SMTP id v27mr28020588qkl.160.1548170777589;
- Tue, 22 Jan 2019 07:26:17 -0800 (PST)
+        Tue, 22 Jan 2019 10:26:12 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190122152611euoutp014694e49fd07cd396e0276b1103b99456~8NR0aaI2M0896808968euoutp01J
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 15:26:10 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190122152611euoutp014694e49fd07cd396e0276b1103b99456~8NR0aaI2M0896808968euoutp01J
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1548170771;
+        bh=0iS4N47zJ6GyLB+EN4i3sgvj82GJztVtoi19B0s9OrY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=N2ch5ClnWlOS1nbrsqbHwDuKEsNYdG5V1cCuj3I0vkV6v0LemsZqZio3hxqHMSvLM
+         JFFUQr4AwX/PysyjcM/5SP+7Ia83OkBf3UPLQlE7mkE/YVX6+rtL6yBBXfN94lyGXY
+         RTB5iW1OKOdfctBwgoHydZ6/Yv0kib3j+UKkhyRs=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190122152610eucas1p1bafb37c557947c997db48bc4f47c8553~8NRzxvR2f2950829508eucas1p1N;
+        Tue, 22 Jan 2019 15:26:10 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id E2.69.04294.216374C5; Tue, 22
+        Jan 2019 15:26:10 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190122152609eucas1p287b83592af600dc080374a197e6dd917~8NRzGSoR51298012980eucas1p2M;
+        Tue, 22 Jan 2019 15:26:09 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190122152609eusmtrp23b76f5bd4ca80b7a783816e0197c5107~8NRyweIKw0539705397eusmtrp2Y;
+        Tue, 22 Jan 2019 15:26:09 +0000 (GMT)
+X-AuditID: cbfec7f4-84fff700000010c6-e8-5c4736126fb7
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 8A.89.04284.116374C5; Tue, 22
+        Jan 2019 15:26:09 +0000 (GMT)
+Received: from AMDC3218.DIGITAL.local (unknown [106.120.51.18]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190122152608eusmtip2f0abca2c9e35bd6a8c2e15adb74672e1~8NRyRd97Y0551005510eusmtip25;
+        Tue, 22 Jan 2019 15:26:08 +0000 (GMT)
+From:   Kamil Konieczny <k.konieczny@partner.samsung.com>
+To:     k.konieczny@partner.samsung.com
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v1 3/3] crypto: s5p: add AES support for Exynos5433
+Date:   Tue, 22 Jan 2019 16:25:53 +0100
+Message-Id: <20190122152553.1537-4-k.konieczny@partner.samsung.com>
+X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20190122152553.1537-1-k.konieczny@partner.samsung.com>
 MIME-Version: 1.0
-References: <20190119001422.48186-1-ncrews@chromium.org>
-In-Reply-To: <20190119001422.48186-1-ncrews@chromium.org>
-From:   Enric Balletbo Serra <eballetbo@gmail.com>
-Date:   Tue, 22 Jan 2019 16:26:06 +0100
-Message-ID: <CAFqH_50P7Acx0Y0_YLq2o04B7fn08H-ES4-Mqew=KEsR2By0qQ@mail.gmail.com>
-Subject: Re: [PATCH v3 0/9] platform/chrome: rtc: Add support for Wilco EC
-To:     Nick Crews <ncrews@chromium.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Simon Glass <sjg@chromium.org>,
-        Daniel Kurtz <djkurtz@google.com>, dlaurie@chromium.org,
-        linux-rtc@vger.kernel.org,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Benson Leung <bleung@chromium.org>,
-        Nick Crews <ncrews@google.com>,
-        Duncan Laurie <dlaurie@google.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGKsWRmVeSWpSXmKPExsWy7djP87pCZu4xBmfOs1hsnLGe1WLO+RYW
+        i+5XMhZ9+/4zWpw/v4Hd4v69n0wWl3fNYbOYcX4fk8XaI3fZLf7/amZ24PLYsvImk8e2A6oe
+        m1Z1snn8WziFxePguz1MHn1bVjF6fN4kF8AexWWTkpqTWZZapG+XwJWxt6mfqeCBXMX041YN
+        jBcluhg5OSQETCR2XGtm62Lk4hASWMEoMXH7dXYI5wujxOfzC1ghnM+MEreaTrDBtHxqO8EE
+        kVjOKHGypZkJruVH50OwKjYBc4lH288wgdgiAsoSk+9NZwYpYhZ4zSSx4fYrsISwgLPE0TUL
+        mUFsFgFViQ2zVrOC2LxA8UdH1zJCrJOXmLa6C6yeU8BF4vypVVA1ghInZz5hAbGZgWqat84G
+        WyAhsI5d4uz9b1DNLhJTH72CultY4tXxLewQtozE/53zmSDscondW5+xQzS3MErMnbwIKmEt
+        cfj4RaBtHEAbNCXW79KHCDtKPJr4jAUkLCHAJ3HjrSDEDXwSk7aBPAkS5pXoaBOCqNaVmPf/
+        DCuELS3R9X8dlO0h8WHNY+YJjIqzkHwzC8k3sxD2LmBkXsUonlpanJueWmyUl1quV5yYW1ya
+        l66XnJ+7iRGYmk7/O/5lB+OuP0mHGAU4GJV4eBMuuMYIsSaWFVfmHmKU4GBWEuF1vegWI8Sb
+        klhZlVqUH19UmpNafIhRmoNFSZy3muFBtJBAemJJanZqakFqEUyWiYNTqoHRyHemdZzA65vz
+        ehccrapjLNvn2b8w9n1Hofj5Jk6p+7x9/mV12Vk+QvnT/VkddszZ0fLO8NXHb18lA3Levmw/
+        rX+x8tnKk2WGNbnFEf94d8zZI25r+SiWfe+PEpY/EXyWC+UeK8mfKCquvdJwKzMtwu/Kk48L
+        53ZN/F6x7rqHwrQlW4oW2n1WYinOSDTUYi4qTgQAiyMrlUkDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEIsWRmVeSWpSXmKPExsVy+t/xe7qCZu4xBs0zuS02zljPajHnfAuL
+        RfcrGYu+ff8ZLc6f38Bucf/eTyaLy7vmsFnMOL+PyWLtkbvsFv9/NTM7cHlsWXmTyWPbAVWP
+        Tas62Tz+LZzC4nHw3R4mj74tqxg9Pm+SC2CP0rMpyi8tSVXIyC8usVWKNrQw0jO0tNAzMrHU
+        MzQ2j7UyMlXSt7NJSc3JLEst0rdL0MvY29TPVPBArmL6casGxosSXYycHBICJhKf2k4wgdhC
+        AksZJVrOyULEpSUaT69mgrCFJf5c62LrYuQCqvnEKHH+9DF2kASbgLnEo+1nwIpEBJQlJt+b
+        zgxiMwt8ZJL4s4obxBYWcJY4umYhWJxFQFViw6zVrCA2L1D80dG1jBAL5CWmre4Cm8Mp4CJx
+        /tQqVoiDnCUeT5gDVS8ocXLmExaI+fISzVtnM09gFJiFJDULSWoBI9MqRpHU0uLc9NxiQ73i
+        xNzi0rx0veT83E2MwPjZduzn5h2MlzYGH2IU4GBU4uHlOOcaI8SaWFZcmXuIUYKDWUmE1/Wi
+        W4wQb0piZVVqUX58UWlOavEhRlOgJyYyS4km5wNjO68k3tDU0NzC0tDc2NzYzEJJnPe8QWWU
+        kEB6YklqdmpqQWoRTB8TB6dUA6Pipxn7e0syLv7SDHLLqFTeJFn9h+vyw5LLHvc1pPdeFn79
+        Ivv3Uqnm8r1F33+JJoX3mjuknn5Sm57MMzfhfbxXK/MfryPKtzt0Z+vc5T7neMz6lvOlORMF
+        nrl+PLFok+v8SYef6z30zaz9+L2aPfHmM9ZS7rp5RUZbc9fb2v+VzBO5oud2g1mJpTgj0VCL
+        uag4EQAmdMqstQIAAA==
+X-CMS-MailID: 20190122152609eucas1p287b83592af600dc080374a197e6dd917
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190122152609eucas1p287b83592af600dc080374a197e6dd917
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190122152609eucas1p287b83592af600dc080374a197e6dd917
+References: <20190122152553.1537-1-k.konieczny@partner.samsung.com>
+        <CGME20190122152609eucas1p287b83592af600dc080374a197e6dd917@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nick,
+Add AES crypto HW acceleration for Exynos5433, with the help of SlimSSS IP.
 
-Missatge de Nick Crews <ncrews@chromium.org> del dia ds., 19 de gen.
-2019 a les 1:17:
->
->
-> There is a new chromebook that contains a different Embedded Controller
-> (codename Wilco) than the rest of the chromebook series. Thus the kernel
-> requires a different driver than the already existing and generalized
-> cros_ec_* drivers. Specifically, this driver adds support for getting
-> and setting the RTC on the EC, adding a binary sysfs attribute
-> that receives ACPI events from the EC, adding a binary sysfs
-> attribute to request telemetry data from the EC (useful for enterprise
-> applications), adding a debugfs interface for sending/receiving raw byte
-> sequesnces to the EC, and adding normal sysfs attributes to get/set various
-> other properties on the EC. The core of the communication with the EC
-> is implemented in wilco_ec/mailbox.c, using a simple byte-level protocol
-> with a checksum, transmitted over an eSPI bus. For debugging purposes,
-> a raw attribute is also provided which can write/read arbitrary
-> bytes to/from the eSPI bus.
->
-> We attempted to adhere to the sysfs principles of "one piece of data per
-> attribute" as much as possible, and mostly succeded. However, with the
-> wilco_ec/adv_power.h attributes, which deal with scheduling power usage,
-> we found it most elegant to bundle setting event times for an entire day
-> into a single attribute, so at most you are using attributes formatted
-> as "%d %d %d %d %d %d". With the telemetry attribute, we had to use a
-> binary attribute, instead of the preferable human-readable ascii, in
-> order to keep secure the information which is proprietary to the
-> enterprise service provider. This opaque binary data will be read and
-> sent using a proprietary daemon running on the OS.
->
+Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+---
+ drivers/crypto/s5p-sss.c | 50 ++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 46 insertions(+), 4 deletions(-)
 
-I reviewed some patches of these series and I think that some of them
-are already close to be accepted, however, I still have several doubts
-regarding the bunch of sysfs attributes/properties. It is clear for me
-that some of them (like the version ones) fit into the sysfs, but I
-have several doubts with the power and telemetry attributes, looks to
-me that we're abusing of the sysfs interface. I am wondering if
-wouldn't be better use a simple ioctl functions that reads and writes
-to a chardev (/dev/wilco_ec). Did you think on that possibility? What
-people think?
+diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
+index 0064be0e3941..1ae570ad4391 100644
+--- a/drivers/crypto/s5p-sss.c
++++ b/drivers/crypto/s5p-sss.c
+@@ -232,6 +232,7 @@
+  * struct samsung_aes_variant - platform specific SSS driver data
+  * @aes_offset: AES register offset from SSS module's base.
+  * @hash_offset: HASH register offset from SSS module's base.
++ * @clk_names: names of clocks needed to run SSS IP
+  *
+  * Specifies platform specific configuration of SSS module.
+  * Note: A structure for driver specific platform data is used for future
+@@ -240,6 +241,7 @@
+ struct samsung_aes_variant {
+ 	unsigned int			aes_offset;
+ 	unsigned int			hash_offset;
++	char				*clk_names[];
+ };
+ 
+ struct s5p_aes_reqctx {
+@@ -296,6 +298,7 @@ struct s5p_aes_ctx {
+ struct s5p_aes_dev {
+ 	struct device			*dev;
+ 	struct clk			*clk;
++	struct clk			*pclk;
+ 	void __iomem			*ioaddr;
+ 	void __iomem			*aes_ioaddr;
+ 	int				irq_fc;
+@@ -384,11 +387,19 @@ struct s5p_hash_ctx {
+ static const struct samsung_aes_variant s5p_aes_data = {
+ 	.aes_offset	= 0x4000,
+ 	.hash_offset	= 0x6000,
++	.clk_names	= { "secss", }
+ };
+ 
+ static const struct samsung_aes_variant exynos_aes_data = {
+ 	.aes_offset	= 0x200,
+ 	.hash_offset	= 0x400,
++	.clk_names	= { "secss", }
++};
++
++static const struct samsung_aes_variant exynos5433_slim_aes_data = {
++	.aes_offset	= 0x400,
++	.hash_offset	= 0x800,
++	.clk_names	= { "pclk", "aclk", }
+ };
+ 
+ static const struct of_device_id s5p_sss_dt_match[] = {
+@@ -400,6 +411,10 @@ static const struct of_device_id s5p_sss_dt_match[] = {
+ 		.compatible = "samsung,exynos4210-secss",
+ 		.data = &exynos_aes_data,
+ 	},
++	{
++		.compatible = "samsung,exynos5433-slim-sss",
++		.data = &exynos5433_slim_aes_data,
++	},
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, s5p_sss_dt_match);
+@@ -2208,18 +2223,40 @@ static int s5p_aes_probe(struct platform_device *pdev)
+ 			return PTR_ERR(pdata->ioaddr);
+ 	}
+ 
+-	pdata->clk = devm_clk_get(dev, "secss");
++	pdata->clk = devm_clk_get(dev, variant->clk_names[0]);
+ 	if (IS_ERR(pdata->clk)) {
+-		dev_err(dev, "failed to find secss clock source\n");
++		dev_err(dev, "failed to find secss clock %s\n",
++			variant->clk_names[0]);
+ 		return -ENOENT;
+ 	}
+ 
+ 	err = clk_prepare_enable(pdata->clk);
+ 	if (err < 0) {
+-		dev_err(dev, "Enabling SSS clk failed, err %d\n", err);
++		dev_err(dev, "Enabling clock %s failed, err %d\n",
++			variant->clk_names[0], err);
+ 		return err;
+ 	}
+ 
++	if (variant->clk_names[1]) {
++		pdata->pclk = devm_clk_get(dev, variant->clk_names[1]);
++		if (IS_ERR(pdata->pclk)) {
++			dev_err(dev, "failed to find clock %s\n",
++				variant->clk_names[1]);
++			clk_disable_unprepare(pdata->clk);
++			return -ENOENT;
++			}
++
++		err = clk_prepare_enable(pdata->pclk);
++		if (err < 0) {
++			dev_err(dev, "Enabling clock %s failed, err %d\n",
++				variant->clk_names[0], err);
++			clk_disable_unprepare(pdata->clk);
++			return err;
++		}
++	} else {
++		pdata->pclk = NULL;
++	}
++
+ 	spin_lock_init(&pdata->lock);
+ 	spin_lock_init(&pdata->hash_lock);
+ 
+@@ -2295,8 +2332,10 @@ static int s5p_aes_probe(struct platform_device *pdev)
+ 	tasklet_kill(&pdata->tasklet);
+ 
+ err_irq:
+-	clk_disable_unprepare(pdata->clk);
++	if (pdata->pclk)
++		clk_disable_unprepare(pdata->pclk);
+ 
++	clk_disable_unprepare(pdata->clk);
+ 	s5p_dev = NULL;
+ 
+ 	return err;
+@@ -2323,6 +2362,9 @@ static int s5p_aes_remove(struct platform_device *pdev)
+ 		pdata->use_hash = false;
+ 	}
+ 
++	if (pdata->pclk)
++		clk_disable_unprepare(pdata->pclk);
++
+ 	clk_disable_unprepare(pdata->clk);
+ 	s5p_dev = NULL;
+ 
+-- 
+2.20.0
 
-Thanks,
- Enric
-
-> The RTC driver is exposed as a standard RTC driver with
-> read/write functionality.
->
-> For event notification, the Wilco EC can return extended events that
-> are not handled by standard ACPI objects. These events can
-> include hotkeys which map to standard functions like brightness
-> controls, or information about EC controlled features like the
-> charger or battery. These events are triggered with an
-> ACPI Notify(0x90) and the event data buffer is read through an ACPI
-> method provided by the BIOS which reads the event buffer from EC RAM.
-> These events are then processed, with hotkey events being sent
-> to the input subsystem and other events put into a queue which
-> can be read by a userspace daemon via a sysfs attribute.
->
-> The rest of the attributes are categorized as either "properties" or
-> "legacy". "legacy" implies that the attribute existed on the EC before it
-> was modified for ChromeOS, and "properties" implies that the attribute
-> exposes functionality that was added to the EC specifically for
-> ChromeOS. They are mostly boolean flags or percentages.
->
-> A full thread of the development of these patches can be found at
-> https://chromium-review.googlesource.com/c/1371034. This thread contains
-> comments and revisions that could be helpful in understanding how the
-> driver arrived at the state it is in now. The thread also contains some
-> ChromeOS specific patches that actually enable the driver. If you want
-> to test the patch yourself, you would have to install the ChromeOS SDK
-> and cherry pick in these patches.
->
-> I also wrote some integration tests using the Tast testing framework that
-> ChromeOS uses. It would require a full ChromeOS SDK to actually run the
-> tests, but the source of the tests, written in Go, are useful for
-> understanding what the desired behavior is. You can view the tests here:
-> https://chromium-review.googlesource.com/c/1372575
->
-> Thank you for your comments!
->
-> Changes in v3:
-> - Change <= to >= in mec_in_range()
-> - Add " - EC_HOST_CMD_REGION0" to offset arg for io_bytes_mec()
-> - remove unused ret in probe()
-> - Add newline spacer in probe()
-> - rm unnecessary res in get_resource()
-> - s/8bit/8-bit
-> - rm first sleep when sending command to EC
-> - Move the attribute to the debugfs system
-> - Move the implementation to debugfs.c
-> - Improve the raw hex parsing
-> - Encapsulate global variables in one object
-> - Add safety check when passing less than 3 bytes
-> - Move documentation to debugfs-wilco-ec
-> - explicitly define toplevel_groups from the start,
-> so adding telem later makes sense
-> - Break version attribute into individual attributes
-> - rm unused WILCO_EC_ATTR_RW macro
-> - Moved some #defines from legacy.h to legacy.c
-> - rm #define for driver name
-> - Don't compute weekday when reading from RTC.
->   Still set weekday when writing, as RTC needs this
->   to control advanced power scheduling
-> - rm check for invalid month data
-> - Set range_min and range_max on rtc_device
-> - change err check from "if (ret < 0)" to "if (ret)"
-> - Now bubble up error codes from within sysfs_init()
-> - Add comment that PID means Property ID
-> - rm some useless references to internal docs from documentation
-> - add err check on returned data size
-> - add check on read request offset and size
->
-> Changes in v2:
-> - Fixed kernel-doc comments
-> - Fixed include of linux/mfd/cros_ec_lpc_mec.h
-> - cros_ec_lpc_mec_in_range() returns -EINVAL on error
-> - Added parens around macro variables
-> - Remove COMPILE_TEST from Kconfig because inb()/outb()
-> won't work on anything but X86
-> - Add myself as module author
-> - Tweak mailbox()
-> - Add sysfs documentation
-> - rm duplicate EC_MAILBOX_DATA_SIZE defs
-> - Make docstrings follow kernel style
-> - Fix tags in commit msg
-> - Move Kconfig to subdirectory
-> - Reading raw now includes ASCII translation
-> - Remove license boiler plate
-> - Remove "wilco_ec_sysfs -" docstring prefix
-> - Fix accidental Makefile deletion
-> - Add documentation for sysfs entries
-> - Change "enable ? 0 : 1" to "!enable"
-> - No longer override error code from sysfs_init()
-> - Put attributes in the legacy file to begin with, don't move later
-> - Remove duplicate error messages when init()ing sysfs
-> - rm license boiler plate
-> - rm "wilco_ec_rtc -" prefix in docstring
-> - Make rtc driver its own module within the drivers/rtc/ directory
-> - Register a rtc device from core.c that is picked up by this driver
-> - rm "wilco_ec_event -" prefix from docstring
-> - rm license boiler plate
-> - Add sysfs directory documentation
-> - Fix cosmetics
-> - events are init()ed before subdrivers now
-> - rm license boiler plate
-> - rm "wilco_ec_properties -" prefix from docstring
-> - Add documentation
-> - rm license boiler plate
-> - rm "wilco_ec_adv_power - " prefix from docstring
-> - Add documentation
-> - make format strings in read() and store() functions static
->
-> Duncan Laurie (6):
->   platform/chrome: Remove cros_ec dependency in lpc_mec
->   platform/chrome: Add new driver for Wilco EC
->   platform/chrome: Add support for raw commands in debugfs
->   platform/chrome: Add sysfs attributes
->   platform/chrome: rtc: Add RTC driver
->   platform/chrome: Add event handling
->
-> Nick Crews (3):
->   platform/chrome: Add EC properties
->   platform/chrome: Add peakshift and adv_batt_charging
->   platform/chrome: Add binary telemetry attributes
->
->  Documentation/ABI/testing/debugfs-wilco-ec    |  23 +
->  .../ABI/testing/sysfs-platform-wilco-ec       | 196 +++++++
->  drivers/platform/chrome/Kconfig               |   4 +-
->  drivers/platform/chrome/Makefile              |   2 +
->  drivers/platform/chrome/cros_ec_lpc_mec.c     |  52 +-
->  drivers/platform/chrome/cros_ec_lpc_mec.h     |  43 +-
->  drivers/platform/chrome/cros_ec_lpc_reg.c     |  47 +-
->  drivers/platform/chrome/wilco_ec/Kconfig      |  33 ++
->  drivers/platform/chrome/wilco_ec/Makefile     |   6 +
->  drivers/platform/chrome/wilco_ec/adv_power.c  | 544 ++++++++++++++++++
->  drivers/platform/chrome/wilco_ec/adv_power.h  | 183 ++++++
->  drivers/platform/chrome/wilco_ec/core.c       | 154 +++++
->  drivers/platform/chrome/wilco_ec/debugfs.c    | 218 +++++++
->  drivers/platform/chrome/wilco_ec/event.c      | 347 +++++++++++
->  drivers/platform/chrome/wilco_ec/legacy.c     | 103 ++++
->  drivers/platform/chrome/wilco_ec/legacy.h     |  79 +++
->  drivers/platform/chrome/wilco_ec/mailbox.c    | 236 ++++++++
->  drivers/platform/chrome/wilco_ec/properties.c | 344 +++++++++++
->  drivers/platform/chrome/wilco_ec/properties.h | 180 ++++++
->  drivers/platform/chrome/wilco_ec/sysfs.c      | 245 ++++++++
->  drivers/platform/chrome/wilco_ec/telemetry.c  |  73 +++
->  drivers/platform/chrome/wilco_ec/telemetry.h  |  41 ++
->  drivers/platform/chrome/wilco_ec/util.h       |  38 ++
->  drivers/rtc/Kconfig                           |  11 +
->  drivers/rtc/Makefile                          |   1 +
->  drivers/rtc/rtc-wilco-ec.c                    | 177 ++++++
->  include/linux/platform_data/wilco-ec.h        | 189 ++++++
->  27 files changed, 3509 insertions(+), 60 deletions(-)
->  create mode 100644 Documentation/ABI/testing/debugfs-wilco-ec
->  create mode 100644 Documentation/ABI/testing/sysfs-platform-wilco-ec
->  create mode 100644 drivers/platform/chrome/wilco_ec/Kconfig
->  create mode 100644 drivers/platform/chrome/wilco_ec/Makefile
->  create mode 100644 drivers/platform/chrome/wilco_ec/adv_power.c
->  create mode 100644 drivers/platform/chrome/wilco_ec/adv_power.h
->  create mode 100644 drivers/platform/chrome/wilco_ec/core.c
->  create mode 100644 drivers/platform/chrome/wilco_ec/debugfs.c
->  create mode 100644 drivers/platform/chrome/wilco_ec/event.c
->  create mode 100644 drivers/platform/chrome/wilco_ec/legacy.c
->  create mode 100644 drivers/platform/chrome/wilco_ec/legacy.h
->  create mode 100644 drivers/platform/chrome/wilco_ec/mailbox.c
->  create mode 100644 drivers/platform/chrome/wilco_ec/properties.c
->  create mode 100644 drivers/platform/chrome/wilco_ec/properties.h
->  create mode 100644 drivers/platform/chrome/wilco_ec/sysfs.c
->  create mode 100644 drivers/platform/chrome/wilco_ec/telemetry.c
->  create mode 100644 drivers/platform/chrome/wilco_ec/telemetry.h
->  create mode 100644 drivers/platform/chrome/wilco_ec/util.h
->  create mode 100644 drivers/rtc/rtc-wilco-ec.c
->  create mode 100644 include/linux/platform_data/wilco-ec.h
->
-> --
-> 2.20.1.321.g9e740568ce-goog
->
