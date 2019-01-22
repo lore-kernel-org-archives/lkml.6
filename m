@@ -2,161 +2,183 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E788C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:38:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A85F1C282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:39:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7556920854
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:38:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F09421721
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 14:39:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728832AbfAVOie convert rfc822-to-8bit (ORCPT
+        id S1728868AbfAVOjR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 09:38:34 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32833 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728773AbfAVOib (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 09:38:31 -0500
-Received: from lhreml707-cah.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id C3AEFCCC0BD1864EED60;
-        Tue, 22 Jan 2019 14:38:29 +0000 (GMT)
-Received: from LHREML524-MBB.china.huawei.com ([169.254.3.138]) by
- lhreml707-cah.china.huawei.com ([10.201.108.48]) with mapi id 14.03.0415.000;
- Tue, 22 Jan 2019 14:38:24 +0000
-From:   Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-To:     "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "robin.murphy@arm.com" <robin.murphy@arm.com>
-CC:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "vkilari@codeaurora.org" <vkilari@codeaurora.org>,
-        "neil.m.leeder@gmail.com" <neil.m.leeder@gmail.com>,
-        "jean-philippe.brucker@arm.com" <jean-philippe.brucker@arm.com>,
-        "pabba@codeaurora.org" <pabba@codeaurora.org>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "rruigrok@codeaurora.org" <rruigrok@codeaurora.org>,
-        Linuxarm <linuxarm@huawei.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH v5 0/4] arm64 SMMUv3 PMU driver with IORT support
-Thread-Topic: [PATCH v5 0/4] arm64 SMMUv3 PMU driver with IORT support
-Thread-Index: AQHUiMRc6YrtMxIxCUishushjyv1/KW7rRdg
-Date:   Tue, 22 Jan 2019 14:38:23 +0000
-Message-ID: <5FC3163CFD30C246ABAA99954A238FA8392939DF@lhreml524-mbb.china.huawei.com>
-References: <20181130154751.28580-1-shameerali.kolothum.thodi@huawei.com>
-In-Reply-To: <20181130154751.28580-1-shameerali.kolothum.thodi@huawei.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.47.94.162]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Tue, 22 Jan 2019 09:39:17 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54568 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728671AbfAVOjQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 09:39:16 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E5B63A78;
+        Tue, 22 Jan 2019 06:39:15 -0800 (PST)
+Received: from queper01-lin (queper01-lin.cambridge.arm.com [10.1.195.48])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F08863F614;
+        Tue, 22 Jan 2019 06:39:12 -0800 (PST)
+Date:   Tue, 22 Jan 2019 14:39:11 +0000
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v6 11/16] sched/fair: Add uclamp support to
+ energy_compute()
+Message-ID: <20190122143909.pmlqyhcjshyomrbw@queper01-lin>
+References: <20190115101513.2822-1-patrick.bellasi@arm.com>
+ <20190115101513.2822-12-patrick.bellasi@arm.com>
+ <20190122121321.r6mv23ao57uut3t7@queper01-lin>
+ <20190122124546.njrpmykzbjpztd6u@e110439-lin>
+ <20190122132944.sfxlnpc3xeft4rqd@queper01-lin>
+ <20190122142606.gc5hnc5pzefblegw@e110439-lin>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190122142606.gc5hnc5pzefblegw@e110439-lin>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robin/Lorenzo,
+On Tuesday 22 Jan 2019 at 14:26:06 (+0000), Patrick Bellasi wrote:
+> On 22-Jan 13:29, Quentin Perret wrote:
+> > On Tuesday 22 Jan 2019 at 12:45:46 (+0000), Patrick Bellasi wrote:
+> > > On 22-Jan 12:13, Quentin Perret wrote:
+> > > > On Tuesday 15 Jan 2019 at 10:15:08 (+0000), Patrick Bellasi wrote:
+> > > > > The Energy Aware Scheduler (AES) estimates the energy impact of waking
+> > > 
+> > > [...]
+> > > 
+> > > > > +		for_each_cpu_and(cpu, pd_mask, cpu_online_mask) {
+> > > > > +			cfs_util = cpu_util_next(cpu, p, dst_cpu);
+> > > > > +
+> > > > > +			/*
+> > > > > +			 * Busy time computation: utilization clamping is not
+> > > > > +			 * required since the ratio (sum_util / cpu_capacity)
+> > > > > +			 * is already enough to scale the EM reported power
+> > > > > +			 * consumption at the (eventually clamped) cpu_capacity.
+> > > > > +			 */
+> > > > 
+> > > > Right.
+> > > > 
+> > > > > +			sum_util += schedutil_cpu_util(cpu, cfs_util, cpu_cap,
+> > > > > +						       ENERGY_UTIL, NULL);
+> > > > > +
+> > > > > +			/*
+> > > > > +			 * Performance domain frequency: utilization clamping
+> > > > > +			 * must be considered since it affects the selection
+> > > > > +			 * of the performance domain frequency.
+> > > > > +			 */
+> > > > 
+> > > > So that actually affects the way we deal with RT I think. I assume the
+> > > > idea is to say if you don't want to reflect the RT-go-to-max-freq thing
+> > > > in EAS (which is what we do now) you should set the min cap for RT to 0.
+> > > > Is that correct ?
+> > > 
+> > > By default configuration, RT tasks still go to max when uclamp is
+> > > enabled, since they get a util_min=1024.
+> > > 
+> > > If we want to save power on RT tasks, we can set a smaller util_min...
+> > > but not necessarily 0. A util_min=0 for RT tasks means to use just
+> > > cpu_util_rt() for that class.
+> > 
+> > Ah, sorry, I guess my message was misleading. I'm saying this is
+> > changing the way _EAS_ deals with RT tasks. Right now we don't actually
+> > consider the RT-go-to-max thing at all in the EAS prediction. Your
+> > patch is changing that AFAICT. It actually changes the way EAS sees RT
+> > tasks even without uclamp ...
+> 
+> Lemme see if I get it right.
+> 
+> Currently, whenever we look at CPU utilization for ENERGY_UTIL, we
+> always use cpu_util_rt() for RT tasks:
+> 
+> ---8<---
+>         util = util_cfs;
+>         util += cpu_util_rt(rq);
+>         util += dl_util;
+> ---8<---
+> 
+> Thus, even when RT tasks are RUNNABLE, we don't always assume the CPU
+> running at the max capacity but just whatever is the aggregated
+> utilization across all the classes.
+> 
+> With uclamp, we have:
+> 
+> ---8<---
+>         util = cpu_util_rt(rq) + util_cfs;
+>         if (type == FREQUENCY_UTIL)
+>             util = uclamp_util_with(rq, util, p);
+>         dl_util = cpu_util_dl(rq);
+>         if (type == ENERGY_UTIL)
+>             util += dl_util;
+> ---8<---
+> 
+> So, I would say that, in terms of ENERGY_UTIL we do the same both
+> w/ and w/o uclamp. Isn't it?
 
-A gentle reminder on this series. Please take a look.
+Yes but now you use FREQUENCY_UTIL for computing 'max_util' in the EAS
+prediction.
+
+Let's take an example. You have a perf domain with two CPUs. One CPU is
+busy running a RT task, the other CPU runs a CFS task. Right now in
+compute_energy() we only use ENERGY_UTIL, so 'max_util' ends up being
+the max between the utilization of the two tasks. So we don't predict
+we're going to max freq.
+
+With your patch, we use FREQUENCY_UTIL to compute 'max_util', so we
+_will_ predict that we're going to max freq. And we will do that even if
+CONFIG_UCLAMP_TASK=n.
+
+The default EAS calculation will be different with your patch when there
+are runnable RT tasks in the system. This needs to be documented, I
+think.
+
+> > But I'm not hostile to the idea since it's possible to enable uclamp and
+> > set the min cap to 0 for RT if you want. So there is a story there.
+> > However, I think this needs be documented somewhere, at the very least.
+> 
+> The only difference I see is that the actual frequency could be
+> different (lower then max) when a clamped RT task is RUNNABLE.
+> 
+> Are you worried that running RT on a lower freq could have side
+> effects on the estimated busy time the CPU ?
+> 
+> I also still don't completely get why you say it could be useful to
+>    "set the min cap to 0 for RT if you want"
+
+I'm not saying it's useful, I'm saying userspace can decide to do that
+if it thinks it is a good idea. The default should be min_cap = 1024 for
+RT, no questions. But you _can_ change it at runtime if you want to.
+That's my point. And doing that basically provides the same behaviour as
+what we have right now in terms of EAS calculation (but it changes the
+freq selection obviously) which is why I'm not fundamentally opposed to
+your patch.
+
+So in short, I'm fine with the behavioural change, but please at least
+mention it somewhere :-)
 
 Thanks,
-Shameer
-
-> -----Original Message-----
-> From: Linuxarm [mailto:linuxarm-bounces@huawei.com] On Behalf Of Shameer
-> Kolothum
-> Sent: 30 November 2018 15:48
-> To: lorenzo.pieralisi@arm.com; robin.murphy@arm.com
-> Cc: mark.rutland@arm.com; vkilari@codeaurora.org;
-> neil.m.leeder@gmail.com; jean-philippe.brucker@arm.com;
-> pabba@codeaurora.org; will.deacon@arm.com; rruigrok@codeaurora.org;
-> Linuxarm <linuxarm@huawei.com>; linux-kernel@vger.kernel.org;
-> linux-acpi@vger.kernel.org; linux-arm-kernel@lists.infradead.org
-> Subject: [PATCH v5 0/4] arm64 SMMUv3 PMU driver with IORT support
-> 
-> This adds a driver for the SMMUv3 PMU into the perf framework.
-> It includes an IORT update to support PM Counter Groups.
-> 
-> This is based on the initial work done by Neil Leeder[1]
-> 
-> SMMUv3 PMCG devices are named as smmuv3_pmcg_<phys_addr_page>
-> where <phys_addr_page> is the physical page address of the SMMU PMCG.
-> For example, the PMCG at 0xff88840000 is named smmuv3_pmcg_ff88840
-> 
-> Usage example:
-> For common arch supported events:
-> perf stat -e smmuv3_pmcg_ff88840/transaction,filter_enable=1,
->  filter_span=1,filter_stream_id=0x42/ -a netperf
-> 
-> For IMP DEF events:
-> perf stat -e smmuv3_pmcg_ff88840/event=id/ -a netperf
-> 
-> This is sanity tested on a HiSilicon platform that requires
-> a quirk to run  it properly. As per HiSilicon erratum  #162001800,
-> PMCG event counter registers (SMMU_PMCG_EVCNTRn) on HiSilicon Hip08
-> platforms are read only and this prevents the software from setting
-> the initial period on event start. Unfortunately we were a bit late
-> in the cycle to detect this issue and now require software workaround
-> for this. Patch #4 is added to this series to provide a workaround
-> for this issue.
-> 
-> Further testing on supported platforms are very much welcome.
-> 
-> v4 ---> v5
-> -IORT code is modified to pass the option/quirk flags to the driver
->  through platform_data (patch #4), based on Robin's comments.
-> -Removed COMPILE_TEST (patch #2).
-> 
-> v3 --> v4
-> 
-> -Addressed comments from Jean and Robin.
-> -Merged dma config callbacks as per Lorenzo's comments(patch #1).
-> -Added handling of Global(Counter0) filter settings mode(patch #2).
-> -Added patch #4 to address HiSilicon erratum  #162001800
-> -
-> v2 --> v3
-> 
-> -Addressed comments from Robin.
-> -Removed iort helper function to retrieve the PMCG reference smmu.
-> -PMCG devices are now named using the base address
-> 
-> v1 --> v2
-> 
-> - Addressed comments from Robin.
-> - Added an helper to retrieve the associated smmu dev and named PMUs
->   to make the association visible to user.
-> - Added MSI support  for overflow irq
-> 
-> [1]https://www.spinics.net/lists/arm-kernel/msg598591.html
-> 
-> Neil Leeder (2):
->   acpi: arm64: add iort support for PMCG
->   perf: add arm64 smmuv3 pmu driver
-> 
-> Shameer Kolothum (2):
->   perf/smmuv3: Add MSI irq support
->   perf/smmuv3_pmu: Enable HiSilicon Erratum 162001800 quirk
-> 
->  drivers/acpi/arm64/iort.c     | 127 +++++--
->  drivers/perf/Kconfig          |   9 +
->  drivers/perf/Makefile         |   1 +
->  drivers/perf/arm_smmuv3_pmu.c | 859
-> ++++++++++++++++++++++++++++++++++++++++++
->  include/linux/acpi_iort.h     |   3 +
->  5 files changed, 975 insertions(+), 24 deletions(-)
->  create mode 100644 drivers/perf/arm_smmuv3_pmu.c
-> 
-> --
-> 2.7.4
-> 
-> 
-> _______________________________________________
-> Linuxarm mailing list
-> Linuxarm@huawei.com
-> http://hulk.huawei.com/mailman/listinfo/linuxarm
+Quentin
