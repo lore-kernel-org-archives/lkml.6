@@ -2,193 +2,118 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3CC6C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 17:49:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E344DC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 17:50:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD1EE20879
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 17:49:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B22AD20879
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 17:50:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jvtpsnKN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726307AbfAVRs7 (ORCPT
+        id S1726317AbfAVRuo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 12:48:59 -0500
-Received: from mga04.intel.com ([192.55.52.120]:12957 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725950AbfAVRs7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 12:48:59 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jan 2019 09:48:58 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,507,1539673200"; 
-   d="scan'208";a="111792579"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga008.jf.intel.com with ESMTP; 22 Jan 2019 09:48:58 -0800
-Received: from [10.252.24.137] (abudanko-mobl.ccr.corp.intel.com [10.252.24.137])
-        by linux.intel.com (Postfix) with ESMTP id 2837A580434;
-        Tue, 22 Jan 2019 09:48:55 -0800 (PST)
-Subject: [PATCH v5 2/4] perf record: bind the AIO user space buffers to nodes
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <af72a20b-117c-ec65-5fc9-35f4e81b26bd@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <5a5adebc-afe0-4806-81cd-180d49ec043f@linux.intel.com>
-Date:   Tue, 22 Jan 2019 20:48:54 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 22 Jan 2019 12:50:44 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:42529 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725896AbfAVRuo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 12:50:44 -0500
+Received: by mail-pg1-f195.google.com with SMTP id d72so11382004pga.9
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 09:50:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=J0lWivIqJSWPLJEIUEj0z08uyJuPVVlNV6NSc61Yen0=;
+        b=jvtpsnKNpO1tYovFfMhDqz4FL2D8L3fYoEOkTadwHPmhkRiyhuBB6gC8qsIaq+WHRd
+         Gr9Elf+M4jSvpb9eR+hYuoO9hIOL3n0tpk7poSeVu6jMtKe96JRqaRE/L00uhmQzYbfH
+         nnrn/qO0Xi6UHGHUWdJmmsDO6mzC0DepC5nKk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=J0lWivIqJSWPLJEIUEj0z08uyJuPVVlNV6NSc61Yen0=;
+        b=GjDVKhjIUXSfBXIEbvyyu/dvnc0WO8NwQrZv9dzPxYmnCXCv+1SALelMWXuZTxdbLN
+         HRMhuufK0SZXCwqul18a8derQAH4+Z7cs8nQ7IoQ9VwPPX5TpfmDVboQatOsLo9EOGyc
+         hg7PFW/ZIqft8S+Ruk+tWFD5fCYZCohZR+zJ8RsgJERK3esouKOuiBdhQnZ6s46J2BzH
+         FO/QdD+tRUwXDaD+uEp8EjuriSOZ6y2xv/9/Rdfqvt3tz2D/USMo+uiUOuPsTqiAO3q8
+         8IayzqziprtgtNnBR9ngmgzhETmdLhooq66P6AZ9Z7Es/2baS9TeTUQJDb98sZrBa0BS
+         krYw==
+X-Gm-Message-State: AJcUukdYI9vdAlpMJSB7O9auTG8QRoBFUjoBRcyaWIuBG5ObtIoHhlSc
+        bA/EqkXGvTR7BdDrnDX2RPoXOA==
+X-Google-Smtp-Source: ALg8bN62t3VmAOgxquLpwQZmC5AXlq4m9V2KlrwHVWDc41/nOIsB7D1p43ykhR0Jq0UrmK9+Cq7bug==
+X-Received: by 2002:a63:d604:: with SMTP id q4mr32492081pgg.175.1548179443509;
+        Tue, 22 Jan 2019 09:50:43 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id u69sm28069187pfj.116.2019.01.22.09.50.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 22 Jan 2019 09:50:42 -0800 (PST)
+Date:   Tue, 22 Jan 2019 09:50:42 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Rafael Wysocki <rjw@rjwysocki.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>, linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] drivers: base: Add frequency constraint
+ infrastructure
+Message-ID: <20190122175042.GE261387@google.com>
+References: <cover.1547197612.git.viresh.kumar@linaro.org>
+ <f3980beb6f2c02427d892a4bc4a04989544a3952.1547197612.git.viresh.kumar@linaro.org>
+ <20190118010305.GX261387@google.com>
+ <20190118100234.kq37hc4ldujqvvrb@vireshk-i7>
+ <20190118224534.GC261387@google.com>
+ <20190122070936.jsjvivzplfpdweck@vireshk-i7>
 MIME-Version: 1.0
-In-Reply-To: <af72a20b-117c-ec65-5fc9-35f4e81b26bd@linux.intel.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <20190122070936.jsjvivzplfpdweck@vireshk-i7>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jan 22, 2019 at 12:39:36PM +0530, Viresh Kumar wrote:
+> On 18-01-19, 14:45, Matthias Kaehlcke wrote:
+> > On Fri, Jan 18, 2019 at 03:32:34PM +0530, Viresh Kumar wrote:
+> > > On 17-01-19, 17:03, Matthias Kaehlcke wrote:
+> > > > On Fri, Jan 11, 2019 at 02:48:34PM +0530, Viresh Kumar wrote:
+> > > > > +static void fcs_update(struct freq_constraints *fcs, struct freq_pair *freq,
+> > > > > +		       enum fc_event event)
+> > > > > +{
+> > > > > +	mutex_lock(&fcs->lock);
+> > > > > +
+> > > > > +	if (_fcs_update(fcs, freq, event)) {
+> > > > > +		if (fcs->callback)
+> > > > > +			schedule_work(&fcs->work);
+> > > > 
+> > > > IIUC the constraints aren't applied until the callback is executed. I
+> > > > wonder if a dedicated workqueue should be used instead of the system
+> > > > one, to avoid longer delays from other kernel entities that might
+> > > > 'misbehave'. Especially for thermal constraints we want a quick
+> > > > response.
+> > > 
+> > > I thought the system workqueue should be fast enough, it contains
+> > > multiple threads which can all run in parallel and service this work.
+> > 
+> > Ok, I was still stuck at the old one thread per CPU model, where a
+> > slow work would block other items in the same workqueue until it
+> > finishes execution. After reading a bit through
+> > Documentation/core-api/workqueue.rst I agree that a system workqueue
+> > is probably fast enough. It might be warranted though to use
+> > system_highpri_wq here.
+> 
+> Is this really that high priority stuff ? I am not sure.
 
-Allocate and bind AIO user space buffers to the memory nodes
-that mmap kernel buffers are bound to.
-
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
----
-Changes in v4:
-- fixed compilation issue converting pr_warn() to pr_warning()
-- implemented stop if mbind() fails
-
-Changes in v3:
-- corrected code style issues
-- adjusted __aio_alloc,__aio_bind,__aio_free() implementation
-
-Changes in v2:
-- implemented perf_mmap__aio_alloc, perf_mmap__aio_free, perf_mmap__aio_bind 
-  and put HAVE_LIBNUMA_SUPPORT #ifdefs in there
----
- tools/perf/util/mmap.c | 77 +++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 73 insertions(+), 4 deletions(-)
-
-diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-index e68ba754a8e2..34be9f900575 100644
---- a/tools/perf/util/mmap.c
-+++ b/tools/perf/util/mmap.c
-@@ -10,6 +10,9 @@
- #include <sys/mman.h>
- #include <inttypes.h>
- #include <asm/bug.h>
-+#ifdef HAVE_LIBNUMA_SUPPORT
-+#include <numaif.h>
-+#endif
- #include "debug.h"
- #include "event.h"
- #include "mmap.h"
-@@ -154,9 +157,72 @@ void __weak auxtrace_mmap_params__set_idx(struct auxtrace_mmap_params *mp __mayb
- }
- 
- #ifdef HAVE_AIO_SUPPORT
-+
-+#ifdef HAVE_LIBNUMA_SUPPORT
-+static int perf_mmap__aio_alloc(struct perf_mmap *map, int index)
-+{
-+	map->aio.data[index] = mmap(NULL, perf_mmap__mmap_len(map), PROT_READ|PROT_WRITE,
-+				    MAP_PRIVATE|MAP_ANONYMOUS, 0, 0);
-+	if (map->aio.data[index] == MAP_FAILED) {
-+		map->aio.data[index] = NULL;
-+		return -1;
-+	}
-+
-+	return 0;
-+}
-+
-+static void perf_mmap__aio_free(struct perf_mmap *map, int index)
-+{
-+	if (map->aio.data[index]) {
-+		munmap(map->aio.data[index], perf_mmap__mmap_len(map));
-+		map->aio.data[index] = NULL;
-+	}
-+}
-+
-+static int perf_mmap__aio_bind(struct perf_mmap *map, int index, int cpu, int affinity)
-+{
-+	void *data;
-+	size_t mmap_len;
-+	unsigned long node_mask;
-+
-+	if (affinity != PERF_AFFINITY_SYS && cpu__max_node() > 1) {
-+		data = map->aio.data[index];
-+		mmap_len = perf_mmap__mmap_len(map);
-+		node_mask = 1UL << cpu__get_node(cpu);
-+		if (mbind(data, mmap_len, MPOL_BIND, &node_mask, 1, 0)) {
-+			pr_err("Failed to bind [%p-%p] AIO buffer to node %d: error %m\n",
-+				data, data + mmap_len, cpu__get_node(cpu));
-+			return -1;
-+		}
-+	}
-+
-+	return 0;
-+}
-+#else
-+static int perf_mmap__aio_alloc(struct perf_mmap *map, int index)
-+{
-+	map->aio.data[index] = malloc(perf_mmap__mmap_len(map));
-+	if (map->aio.data[index] == NULL)
-+		return -1;
-+
-+	return 0;
-+}
-+
-+static void perf_mmap__aio_free(struct perf_mmap *map, int index)
-+{
-+	zfree(&(map->aio.data[index]));
-+}
-+
-+static int perf_mmap__aio_bind(struct perf_mmap *map __maybe_unused, int index __maybe_unused,
-+		int cpu __maybe_unused, int affinity __maybe_unused)
-+{
-+	return 0;
-+}
-+#endif
-+
- static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
- {
--	int delta_max, i, prio;
-+	int delta_max, i, prio, ret;
- 
- 	map->aio.nr_cblocks = mp->nr_cblocks;
- 	if (map->aio.nr_cblocks) {
-@@ -177,11 +243,14 @@ static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
- 		}
- 		delta_max = sysconf(_SC_AIO_PRIO_DELTA_MAX);
- 		for (i = 0; i < map->aio.nr_cblocks; ++i) {
--			map->aio.data[i] = malloc(perf_mmap__mmap_len(map));
--			if (!map->aio.data[i]) {
-+			ret = perf_mmap__aio_alloc(map, i);
-+			if (ret == -1) {
- 				pr_debug2("failed to allocate data buffer area, error %m");
- 				return -1;
- 			}
-+			ret = perf_mmap__aio_bind(map, i, map->cpu, mp->affinity);
-+			if (ret == -1)
-+				return -1;
- 			/*
- 			 * Use cblock.aio_fildes value different from -1
- 			 * to denote started aio write operation on the
-@@ -210,7 +279,7 @@ static void perf_mmap__aio_munmap(struct perf_mmap *map)
- 	int i;
- 
- 	for (i = 0; i < map->aio.nr_cblocks; ++i)
--		zfree(&map->aio.data[i]);
-+		perf_mmap__aio_free(map, i);
- 	if (map->aio.data)
- 		zfree(&map->aio.data);
- 	zfree(&map->aio.cblocks);
+In terms of thermal it could be. But then again, thermal throttling is
+driven by input from thermal sensors, which often are polled with
+periods >= 100 ms rather than being interrupt driven, so the type of
+workqueue wouldn't make a major difference here. I now think it should
+be fine to use the normal workqueue unless problems are reported.
