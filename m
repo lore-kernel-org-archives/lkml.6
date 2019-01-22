@@ -2,99 +2,79 @@ Return-Path: <SRS0=A5md=P6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84377C282C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:23:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E88EEC282C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:25:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5822C21019
-	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:23:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B666621019
+	for <linux-kernel@archiver.kernel.org>; Tue, 22 Jan 2019 13:25:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uBoJaR1Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728447AbfAVNXi (ORCPT
+        id S1728504AbfAVNZA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 08:23:38 -0500
-Received: from mga02.intel.com ([134.134.136.20]:2638 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728215AbfAVNXh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 08:23:37 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jan 2019 05:23:36 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,506,1539673200"; 
-   d="scan'208";a="140294381"
-Received: from kuha.fi.intel.com ([10.237.72.189])
-  by fmsmga001.fm.intel.com with SMTP; 22 Jan 2019 05:23:33 -0800
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 22 Jan 2019 15:23:33 +0200
-Date:   Tue, 22 Jan 2019 15:23:33 +0200
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Jun Li <lijun.kernel@gmail.com>
-Cc:     Heiko Stuebner <heiko@sntech.de>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Hans de Goede <hdegoede@redhat.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 3/5] usb: roles: Find the muxes by also matching
- against the device node
-Message-ID: <20190122132333.GC22960@kuha.fi.intel.com>
-References: <20181024150525.11552-1-heikki.krogerus@linux.intel.com>
- <20181024150525.11552-4-heikki.krogerus@linux.intel.com>
- <CAKgpwJVaOrZaPOZrfeDiym=P=uZSbG1Aw5T0xayuPMFxG-3cyQ@mail.gmail.com>
+        Tue, 22 Jan 2019 08:25:00 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:46030 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728354AbfAVNY7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 08:24:59 -0500
+Received: by mail-yw1-f66.google.com with SMTP id d190so9347983ywd.12;
+        Tue, 22 Jan 2019 05:24:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=RdIJ6TN6RQjyee0EPj8EQ0qkbwpPQH+q7CWrQNKOLRQ=;
+        b=uBoJaR1YCt5paHLFcOQmDRasEzkiZiaLXJWT3FtYXSP4HOuEAVwZnWHcA3SofSrQQQ
+         7gQ6I5PdaKAUmmwdmZ20Brx74zSda4TouGtJKyW9spQAfoSTWREVzVy1SYrDYQ/383YQ
+         pTDAt0QpX6aWKNsShlICLtJQM15K6N36mrJoFQMvu0SCfYl6cuQmRrloiCpcxgsWfdYx
+         O0ckuE53EcJb5W39ec1pRFrYbI5MJFza6Sw9EsjIax5IYIIafLH0ofaauuZ4OMBTQiH8
+         ngXB0UGuVgx+ui/QHnRy05YFER81nLftenk3a3L/C3IpBfXaoGh6mRxZahYdXmjaC1El
+         zaqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=RdIJ6TN6RQjyee0EPj8EQ0qkbwpPQH+q7CWrQNKOLRQ=;
+        b=cxSSBeyrf2JypzmZH4gfK99SthGW13crzx8r1idvjs51DS7KY72LJ7aoPv6OIr6ISv
+         tv16R1p/pY1mPUH2QKCj2joJS9NwIgLqHSAdi81reCB0Rtzo8Al7/gvfZId5NhokxQXJ
+         IRqdo7byXnAX//gt+ZqExAMWfCs7/RHbuU5RKbdTytoE4oW7CQVfJrRLtd88BaJttEcI
+         OUK6JbWTRd1IOuf+S+c3JOVNADkNEZHePVm2SC0ohQVBgQIDTuJZKo8Nm8lNz4W8dRN3
+         NC5J2xb1dlGHifCH47xKpPr+sCXyItnPcdElYDSbe9OfYhir4VBGOrb8xJFK8EPf+i9N
+         +00Q==
+X-Gm-Message-State: AJcUukdRyh3FWG+gRx6l1PGLkYGz4nLCec+dPqq5w/dNTL+wadGyECv/
+        G8u4Gi6ciLM5J/brDy7/Qm02GgyUm8uLsED6nxDmk/ha
+X-Google-Smtp-Source: ALg8bN6+B+hkgpx6qAN8b6JsKTZkqJw3x+8Dg23tsBzhtCKqZEx3j4zjp+nYIOrhqr4a16i4CY78npKbsflTx1Qt/Nw=
+X-Received: by 2002:a0d:db97:: with SMTP id d145mr32269454ywe.487.1548163498220;
+ Tue, 22 Jan 2019 05:24:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKgpwJVaOrZaPOZrfeDiym=P=uZSbG1Aw5T0xayuPMFxG-3cyQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+From:   Fuqian Huang <huangfq.daxian@gmail.com>
+Date:   Tue, 22 Jan 2019 21:25:33 +0800
+Message-ID: <CABXRUiRP8fHvGkO3T9AOFV=prVUACiCm2frbAEnG2v6UhrTw0A@mail.gmail.com>
+Subject: Potential info leak: Kernel pointer leak?
+To:     linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 01:40:02PM +0800, Jun Li wrote:
-> Hi Heikki,
-> Heikki Krogerus <heikki.krogerus@linux.intel.com> 于2018年10月24日周三 下午11:06写道：
-> >
-> > When the connections are defined in firmware, struct
-> > device_connection will have the fwnode member pointing to
-> > the device node (struct fwnode_handle) of the requested
-> > device, and the endpoint will not be used at all in that
-> > case.
-> >
-> > Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> > ---
-> >  drivers/usb/common/roles.c | 16 +++++++++++++---
-> >  1 file changed, 13 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/usb/common/roles.c b/drivers/usb/common/roles.c
-> > index 99116af07f1d..bb52e006d203 100644
-> > --- a/drivers/usb/common/roles.c
-> > +++ b/drivers/usb/common/roles.c
-> > @@ -8,6 +8,7 @@
-> >   */
-> >
-> >  #include <linux/usb/role.h>
-> > +#include <linux/property.h>
-> >  #include <linux/device.h>
-> >  #include <linux/module.h>
-> >  #include <linux/mutex.h>
-> > @@ -84,7 +85,12 @@ enum usb_role usb_role_switch_get_role(struct usb_role_switch *sw)
-> >  }
-> >  EXPORT_SYMBOL_GPL(usb_role_switch_get_role);
-> >
-> > -static int __switch_match(struct device *dev, const void *name)
-> > +static int switch_fwnode_match(struct device *dev, const void *fwnode)
-> > +{
-> > +       return dev_fwnode(dev) == fwnode;
-> 
-> Seems this should be dev_fwnode(dev->parent) == fwnode;
-> The role switch is the child dev of the caller of usb_role_switch_register().
+Hi, recently I came across some code and it seems to be able to leak
+kernel address?
+Is the following code cause info leak in the Linux kernel?
+The callback function address is printed to debugfs.
+The local user could know the kernel object address, and is able to
+bypass kASLR.
+linux-4.14.90
+drivers/dma/qcom/hidma_dbg.c:46
+function - hidma_ll_chstats
 
-Indeed.
+The hidma_ll_chstats function in drivers/dma/qcom/hidma_dbg.c in the
+Linux kernel 4.14.90 allows local users to obtain sensitive address
+information by reading "callback=" lines in a debugfs file.
 
-thanks,
-
--- 
-heikki
+Similar to CVE-2018-7754
