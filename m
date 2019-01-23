@@ -2,111 +2,109 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2311C282C5
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:25:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18B77C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:25:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9ACB220870
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:25:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD08D20870
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:25:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="wEk/RSY9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727017AbfAWOZC (ORCPT
+        id S1727136AbfAWOZe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 09:25:02 -0500
-Received: from foss.arm.com ([217.140.101.70]:41906 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726236AbfAWOZB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 09:25:01 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6D969A78;
-        Wed, 23 Jan 2019 06:25:01 -0800 (PST)
-Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 78BE93F6A8;
-        Wed, 23 Jan 2019 06:24:58 -0800 (PST)
-Date:   Wed, 23 Jan 2019 14:24:55 +0000
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v6 08/16] sched/cpufreq: uclamp: Add utilization clamping
- for FAIR tasks
-Message-ID: <20190123142455.454u4w253xaxzar3@e110439-lin>
-References: <20190115101513.2822-1-patrick.bellasi@arm.com>
- <20190115101513.2822-9-patrick.bellasi@arm.com>
- <20190122171314.GS27931@hirez.programming.kicks-ass.net>
- <20190122181831.a4w65qcivx4hua6d@e110439-lin>
- <20190123095219.GV27931@hirez.programming.kicks-ass.net>
+        Wed, 23 Jan 2019 09:25:34 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:35574 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726236AbfAWOZd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 09:25:33 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0NEO4mQ058302;
+        Wed, 23 Jan 2019 14:25:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=8SJ/AdlUE+Lj8JQ2P4ZqUftJ4Yv93XPw6/EyTigYxLk=;
+ b=wEk/RSY92XSc4oeAdLto8TjvvHkXbAsGHHuCVv8Rgo6PUcUB0MjdhBgoVcN2bJ4vrKws
+ zzJBJTbgYUU84SFC3pnH36Jv/nttM94CDV1w/9Ym+cexzYCiHIhxKsfy2mC3fZiQ7dT9
+ LuAuSXrmvUZ0plICnq75rGsj4PPah8fWQS3MVVnwOubTq1RXvoLXniOF5P/tPypoeUBz
+ 9WfAnzWT033QJFBr9Iv5sLgfOWQKkZg5PKSTpyntE8CPpY2aFYUxeA1/65L1i1rKfRDx
+ LM2Fs4xo4WH+DtxW+/LKYAvhHwvzRNuXIKGNEMlWN0MmM1iX77xuZtqfd13zojCjkS1+ jA== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2130.oracle.com with ESMTP id 2q3sdej9gy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 23 Jan 2019 14:25:30 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0NEPUKO006861
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 23 Jan 2019 14:25:30 GMT
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x0NEPUj8014896;
+        Wed, 23 Jan 2019 14:25:30 GMT
+Received: from Konrads-MacBook-Pro.local (/75.104.64.133)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 23 Jan 2019 06:25:30 -0800
+Date:   Wed, 23 Jan 2019 09:25:07 -0500
+From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH] mm: cleancache: no need to check return value of
+ debugfs_create functions
+Message-ID: <20190123142504.GA19985@Konrads-MacBook-Pro.local>
+References: <20190122152151.16139-12-gregkh@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190123095219.GV27931@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190122152151.16139-12-gregkh@linuxfoundation.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9144 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901230108
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23-Jan 10:52, Peter Zijlstra wrote:
-> On Tue, Jan 22, 2019 at 06:18:31PM +0000, Patrick Bellasi wrote:
-> > On 22-Jan 18:13, Peter Zijlstra wrote:
-> > > On Tue, Jan 15, 2019 at 10:15:05AM +0000, Patrick Bellasi wrote:
-
-[...]
-
-> > If a task is not clamped we execute it at its required utilization or
-> > even max frequency in case of wakeup from IO.
-> > 
-> > When a task is util_max clamped instead, we are saying that we don't
-> > care to run it above the specified clamp value and, if possible, we
-> > should run it below that capacity level.
-> > 
-> > If that's the case, why this clamping hints should not be enforced on
-> > IO wakeups too?
-> > 
-> > At the end it's still a user-space decision, we basically allow
-> > userspace to defined what's the max IO boost they like to get.
+On Tue, Jan 22, 2019 at 04:21:11PM +0100, Greg Kroah-Hartman wrote:
+> When calling debugfs functions, there is no need to ever check the
+> return value.  The function can work or not, but the code logic should
+> never do something different based on this.
 > 
-> Because it is the wrong knob for it.
-> 
-> Ideally we'd extend the IO-wait state to include the device-busy state
-> at the time of sleep. At the very least double state io_schedule() state
-> space from 1 to 2 bits, where we not only indicate: yes this is an
-> IO-sleep, but also can indicate device saturation. When the device is
-> saturated, we don't need to boost further.
-> 
-> (this binary state will ofcourse cause oscilations where we drop the
-> freq, drop device saturation, then ramp the freq, regain device
-> saturation etc..)
-> 
-> However, doing this is going to require fairly massive surgery on our
-> whole IO stack.
-> 
-> Also; how big of a problem is 'supriouos' boosting really? Joel tried to
-> introduce a boost_max tunable, but the grandual boosting thing was good
-> enough at the time.
+> Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-Ok then, I'll drop the clamp on IOBoost... you right and moreover we
-can always investigate for a better solution in the future with a
-real use-case on hand.
+OK.
 
-Cheers.
+Acked-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
--- 
-#include <best/regards.h>
-
-Patrick Bellasi
+or I can push it through my tree but it may be just easier for Andrew
+too do it
+> Cc: linux-mm@kvack.org
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+>  mm/cleancache.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/mm/cleancache.c b/mm/cleancache.c
+> index 2bf12da9baa0..082fdda7aaa6 100644
+> --- a/mm/cleancache.c
+> +++ b/mm/cleancache.c
+> @@ -305,8 +305,7 @@ static int __init init_cleancache(void)
+>  {
+>  #ifdef CONFIG_DEBUG_FS
+>  	struct dentry *root = debugfs_create_dir("cleancache", NULL);
+> -	if (root == NULL)
+> -		return -ENXIO;
+> +
+>  	debugfs_create_u64("succ_gets", 0444, root, &cleancache_succ_gets);
+>  	debugfs_create_u64("failed_gets", 0444, root, &cleancache_failed_gets);
+>  	debugfs_create_u64("puts", 0444, root, &cleancache_puts);
+> -- 
+> 2.20.1
+> 
