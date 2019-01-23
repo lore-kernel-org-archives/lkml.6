@@ -2,83 +2,107 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A508FC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:10:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 468DAC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:11:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A21321855
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:10:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="oGurqBcx"
+	by mail.kernel.org (Postfix) with ESMTP id 1FDFC21855
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:11:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726840AbfAWSK1 (ORCPT
+        id S1726342AbfAWSLK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 13:10:27 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:45760 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725976AbfAWSK1 (ORCPT
+        Wed, 23 Jan 2019 13:11:10 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:44641 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725996AbfAWSLK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 13:10:27 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0NI43hD085134;
-        Wed, 23 Jan 2019 18:10:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=bVD5LDsbSc3yyx4PdM5bZ8an2osyHR4IYqsVov1duNU=;
- b=oGurqBcxF0t6wEqA6oVJa4eDt62pq4FUIgdVtrDO2umNzZND7KJNkiF9x/0jj0YreiZe
- 4nbf4yLjO4/RoXENPZ+Qr7IZO3UqUw9xVOkkMxjzfm8crMgTApMwKA8mW0AknOUFMVSO
- 7KENCNDzm4b+o63jw7blhwuos7ba6F0MdwFK7KM8T2lap7imQM/FwzwasbiQIM/74h9A
- gXylp3U12+qXwEKiCMAnzkcYmpNdzrbhTU7ZM4NggfaJkbKTEdifEKraZfwCm5sK642s
- ZFZoWAjjFLzUbl5oPwPwovoPz1PqxDV3Qim0JBMjuBNn4Ibzg1K2gXOMutAau+mjqYaq ZA== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2120.oracle.com with ESMTP id 2q3vhrue81-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 23 Jan 2019 18:10:22 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0NIALFi015558
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 23 Jan 2019 18:10:21 GMT
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x0NIALJv021825;
-        Wed, 23 Jan 2019 18:10:21 GMT
-Received: from Konrads-MacBook-Pro.local (/75.104.64.133)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 23 Jan 2019 10:10:21 -0800
-Date:   Wed, 23 Jan 2019 13:10:05 -0500
-From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To:     KarimAllah Ahmed <karahmed@amazon.de>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        pbonzini@redhat.com, rkrcmar@redhat.com
-Subject: Re: [PATCH v5 11/13] KVM/nVMX: Use kvm_vcpu_map for accessing the
- shadow VMCS
-Message-ID: <20190123181002.GP19289@Konrads-MacBook-Pro.local>
-References: <1547026933-31226-1-git-send-email-karahmed@amazon.de>
- <1547026933-31226-12-git-send-email-karahmed@amazon.de>
+        Wed, 23 Jan 2019 13:11:10 -0500
+Received: by mail-vs1-f66.google.com with SMTP id u11so1852407vsp.11;
+        Wed, 23 Jan 2019 10:11:09 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Lar/7CirLLuwgN7QjrkipPVg9UnJ8H/ir6GU33xHxvc=;
+        b=LJKJYHEdMi/ChlSo8PUD4F6tt57D+lZ5Fm6QiaXuvlC6Mti9i63yKyvYL3hma638yS
+         PFwd2YyFCeaCG56ccAtOmIOc95bS+LxOacJd1u5GpLCF7HeCCweeMbqrECpDVglJf8IN
+         0Gmzb2dVDV3j+LsjB6K44zBLMGdeVSakEhxUwCzGwqp73nCyRqsw67wwaYs86Oapf3z5
+         pndQiELaoHbL7aEkoRDicWVGAcvcJSjJKvQB3Nw3kPh+50hHSYlphvnnk//x8toZb+gz
+         PK0af6RbOjfEtBOvwqmRYQeC6bR5vYHUQF3yaUVEiyL+BrREsAe54ArmolvnY10p4lpW
+         e/yQ==
+X-Gm-Message-State: AJcUukfXUVhy62T6DQcDRNceKGj+ViKiub/R9yW9QTZcaiziW2ABKvCh
+        XU1kc3BUXCm8BJB+ORDBfXp6XVSfRKu1JlI0oMJWmw==
+X-Google-Smtp-Source: ALg8bN5566f0rXYuWl8e+cbAWmCn2WrWy84SUq0jLilszABY0OIU5GtWW6UAvSB0/TmF3OC/VqRb1bqwrHUqG4Muya4=
+X-Received: by 2002:a67:c202:: with SMTP id i2mr1277005vsj.11.1548267069275;
+ Wed, 23 Jan 2019 10:11:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1547026933-31226-12-git-send-email-karahmed@amazon.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9145 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=894
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901230134
+References: <20190118140525.29189-1-geert+renesas@glider.be> <20190118230740.44239fcf@bbrezillon>
+In-Reply-To: <20190118230740.44239fcf@bbrezillon>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 23 Jan 2019 19:10:56 +0100
+Message-ID: <CAMuHMdUWqcB7cTOenASWt6HXZhGsr9cH9B55Sh-+rmWmAkm4Fg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] eeprom: at25: SPI transfer improvements
+To:     Boris Brezillon <bbrezillon@kernel.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        MTD Maling List <linux-mtd@lists.infradead.org>,
+        Nguyen An Hoan <na-hoan@jinso.co.jp>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 10:42:11AM +0100, KarimAllah Ahmed wrote:
-> Use kvm_vcpu_map for accessing the shadow VMCS since using
-> kvm_vcpu_gpa_to_page() and kmap() will only work for guest memory that has
-> a "struct page".
-> 
-> Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+Hi Boris,
 
-Reviewed-by: Konrad Rzessutek Wilk <konrad.wilk@oracle.com>
+On Fri, Jan 18, 2019 at 11:07 PM Boris Brezillon <bbrezillon@kernel.org> wrote:
+> On Fri, 18 Jan 2019 15:05:23 +0100
+> Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+> > This patch series contains two improvements for the AT25 SPI EEPROM
+> > driver, related to SPI transfers.
+> >
+> > Changes compared to v1:
+> >   - Merge "off" and "offset" into a single variable instead of just
+> >     killing the cast, as suggested by Arnd,
+> >   - Add Acked-by,
+> >   - Dropped "[PATCH 3/3] eeprom: at25: Split writes in two SPI transfers
+> >     to optimize DMA", as this is better implemented in the SPI
+> >     controller driver (cfr. e.g. "[v2 PATCH 2/2] spi: sh-msiof: Use DMA
+> >     if possible",
+> >     https://lore.kernel.org/linux-renesas-soc/1547803771-9564-2-git-send-email-na-hoan@jinso.co.jp/)
+> >
+> > Tested on a Renesas Ebisu development board with R-Car E3 using MSIOF
+> > and a 25LC040 EEPROM.
+>
+> Did you consider converting this driver to spimem? Looks like the
+> protocol used to communicate with the memory resembles the one used on
+> SPI NANDs/NORs and fits pretty well in the spi_mem_op representation.
+
+No, I hadn't considered doing that ;-)
+
+> By doing this conversion you'd allow people to connect an AT25 EEPROM
+> to an advanced SPI controller that does not support regular SPI
+> transfers and you wouldn't have to forge SPI messages manually.
+>
+> Here is a patch (only compile tested) doing that. The diffstat is not in
+> favor of this conversion, but I find the resulting code cleaner and more
+> future proof.
+
+Thanks, will give it a try, eventually...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
