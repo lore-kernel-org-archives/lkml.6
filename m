@@ -2,146 +2,185 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CEC3C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:44:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D2FAC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:44:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19E4420861
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:44:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DpoYcyLj"
+	by mail.kernel.org (Postfix) with ESMTP id 4A8EE20861
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:44:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727434AbfAWKoH (ORCPT
+        id S1727479AbfAWKoh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 05:44:07 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:41435 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726322AbfAWKoG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 05:44:06 -0500
-Received: by mail-pf1-f196.google.com with SMTP id b7so985901pfi.8
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 02:44:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=9pw4RwT4muo1zdh9Ll40k+ETO7F58dzgX5dQSvihvpI=;
-        b=DpoYcyLjk52fPCLcIiJaeM0dUVyhxgpiIPooB0FgeITf6Cl5DXI3QNoaFIzuS48xhA
-         zC9gEudvvUZpr1srqRI/6U0ncVB/TyXRfm275Vpei53WLBF1JeFInpabBA8ftbuyabth
-         cpD9PFSIgn1WntVmlHgJ99mIe7A/uP/q798YU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9pw4RwT4muo1zdh9Ll40k+ETO7F58dzgX5dQSvihvpI=;
-        b=SpCv7Oz/nteMuMyAuW4SfmOvvnXQtU4l+KSKKraFDetcy+/uX263phyfwKFCIqa1J8
-         Kj/MWlon2DTD1qsDZRJRfP/CEo3EXQ0cMEmZBUNV9kJdtJT+WgJBzasuEjXSCY/T6o+2
-         F2omoVWwUEBKkMKzEKV/LmK01hq8LS/07iPL+2yrHbt9ZRHrTnRjF1hYf0wlMlsppTJk
-         4A0d4TUuMlivVcHRbNMf5I2CPoFwtxi49jynEPqJhtTssho0K4UXQZf5q+1Vehdpa50O
-         U/DnaAchUTGLOVXmHxmK+HYWIFSBoBOKa/T40Vo3ZLTWSkc4oAoe7IHp71ort4EF8sPu
-         pQNg==
-X-Gm-Message-State: AJcUukdwqAGSqj6h89r3s9myFPj3CMtF6iRDkiqTtC64EP/PUe5pJPI7
-        7BoWRD3Xd7CqY6hDMIks1vx6Og==
-X-Google-Smtp-Source: ALg8bN7Ac29dZxxy0KtFW37iKNKo1LBXAjlEaV+jw3QH2C31B1tQVdwcqd0mIR+U6ZDFkbi5LIwmgg==
-X-Received: by 2002:a62:2781:: with SMTP id n123mr1613101pfn.138.1548240245768;
-        Wed, 23 Jan 2019 02:44:05 -0800 (PST)
-Received: from localhost ([122.172.102.63])
-        by smtp.gmail.com with ESMTPSA id k191sm27828803pgd.9.2019.01.23.02.44.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 23 Jan 2019 02:44:05 -0800 (PST)
-Date:   Wed, 23 Jan 2019 16:14:03 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Amit Kucheria <amit.kucheria@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Doug Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Ingo Molnar <mingo@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Tao Wang <kevin.wangtao@hisilicon.com>,
-        Linux PM <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v2 2/9] cpufreq: Auto-register the driver as a thermal
- cooling device if asked
-Message-ID: <20190123104403.bl7mdidmvd7c227q@vireshk-i7>
-References: <cover.1548084260.git.amit.kucheria@linaro.org>
- <0036de796308b8919eac74a9a910f0d7b9c0cbf8.1548084260.git.amit.kucheria@linaro.org>
- <20190123103624.t4b2ij3bfvpezgjf@vireshk-i7>
- <CAJZ5v0g12U0M3aJOvRgRg3=-6f+2jeG1rT5RjLoSciM0FwFofg@mail.gmail.com>
- <20190123104322.o3whk6rfiaootspn@vireshk-i7>
+        Wed, 23 Jan 2019 05:44:37 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39256 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727148AbfAWKof (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 05:44:35 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1C22A15AB;
+        Wed, 23 Jan 2019 02:44:35 -0800 (PST)
+Received: from [10.1.197.45] (e112298-lin.cambridge.arm.com [10.1.197.45])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 13B3C3F5C1;
+        Wed, 23 Jan 2019 02:44:32 -0800 (PST)
+Subject: Re: [PATCH v9 12/26] arm64: irqflags: Use ICC_PMR_EL1 for interrupt
+ masking
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        daniel.thompson@linaro.org, joel@joelfernandes.org,
+        marc.zyngier@arm.com, christoffer.dall@arm.com,
+        james.morse@arm.com, will.deacon@arm.com, mark.rutland@arm.com,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Oleg Nesterov <oleg@redhat.com>
+References: <1548084825-8803-1-git-send-email-julien.thierry@arm.com>
+ <1548084825-8803-13-git-send-email-julien.thierry@arm.com>
+ <20190122152149.GD187049@arrakis.emea.arm.com>
+From:   Julien Thierry <julien.thierry@arm.com>
+Message-ID: <2eabb029-4efe-6829-7fb1-6174a2edb154@arm.com>
+Date:   Wed, 23 Jan 2019 10:44:31 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190123104322.o3whk6rfiaootspn@vireshk-i7>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <20190122152149.GD187049@arrakis.emea.arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23-01-19, 16:13, Viresh Kumar wrote:
-> On 23-01-19, 11:39, Rafael J. Wysocki wrote:
-> > On Wed, Jan 23, 2019 at 11:36 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> > >
-> > > On 21-01-19, 21:10, Amit Kucheria wrote:
-> > > > @@ -151,6 +152,11 @@ struct cpufreq_policy {
-> > > >
-> > > >       /* For cpufreq driver's internal use */
-> > > >       void                    *driver_data;
-> > > > +
-> > > > +#ifdef CONFIG_CPU_THERMAL
-> > > > +     /* Pointer to the cooling device if used for thermal mitigation */
-> > > > +     struct thermal_cooling_device *cdev;
-> > > > +#endif
-> > > >  };
-> > > >
-> > > >  /* Only for ACPI */
-> > > > @@ -386,6 +392,12 @@ struct cpufreq_driver {
-> > > >   */
-> > > >  #define CPUFREQ_NO_AUTO_DYNAMIC_SWITCHING    BIT(6)
-> > > >
-> > > > +/*
-> > > > + * Set by drivers that want the core to automatically register the cpufreq
-> > > > + * driver as a thermal cooling device.
-> > > > + */
-> > > > +#define CPUFREQ_AUTO_REGISTER_COOLING_DEV    BIT(7)
-> > > > +
-> > > >  int cpufreq_register_driver(struct cpufreq_driver *driver_data);
-> > > >  int cpufreq_unregister_driver(struct cpufreq_driver *driver_data);
-> > > >
-> > > > @@ -415,6 +427,19 @@ cpufreq_verify_within_cpu_limits(struct cpufreq_policy *policy)
-> > > >                       policy->cpuinfo.max_freq);
-> > > >  }
-> > > >
-> > > > +#ifdef CONFIG_CPU_THERMAL
-> > > > +static inline void register_cooling_device(struct cpufreq_policy *policy) {
-> > > > +     policy->cdev = of_cpufreq_cooling_register(policy);
-> > > > +}
-> > > > +
-> > > > +static inline void unregister_cooling_device(struct cpufreq_policy *policy) {
-> > > > +     cpufreq_cooling_unregister(policy->cdev);
-> > > > +     policy->cdev = NULL;
-> > > > +}
-> > > > +#else
-> > > > +static inline void register_cooling_device(struct cpufreq_policy *policy) {}
-> > > > +static inline void unregister_cooling_device(struct cpufreq_policy *policy) {}
-> > > > +#endif
-> > >
-> > > The whole ifdef hackery here saves space for a pointer per policy.
-> > > Just get rid of it, it isn't worth it.
-> > 
-> > Is struct thermal_cooling_device defined if CONFIG_THERMAL is unset?
-> 
-> No and it is defined in thermal.h without any ifdef stuff.
 
-I meant it is always available and doesn't depend on CONFIG_THERMAL.
+
+On 22/01/2019 15:21, Catalin Marinas wrote:
+> On Mon, Jan 21, 2019 at 03:33:31PM +0000, Julien Thierry wrote:
+>> diff --git a/arch/arm64/include/asm/irqflags.h b/arch/arm64/include/asm/irqflags.h
+>> index 24692ed..7e82a92 100644
+>> --- a/arch/arm64/include/asm/irqflags.h
+>> +++ b/arch/arm64/include/asm/irqflags.h
+>> @@ -18,7 +18,9 @@
+>>  
+>>  #ifdef __KERNEL__
+>>  
+>> +#include <asm/alternative.h>
+>>  #include <asm/ptrace.h>
+>> +#include <asm/sysreg.h>
+>>  
+>>  /*
+>>   * Aarch64 has flags for masking: Debug, Asynchronous (serror), Interrupts and
+>> @@ -36,33 +38,31 @@
+>>  /*
+>>   * CPU interrupt mask handling.
+>>   */
+>> -static inline unsigned long arch_local_irq_save(void)
+>> -{
+>> -	unsigned long flags;
+>> -	asm volatile(
+>> -		"mrs	%0, daif		// arch_local_irq_save\n"
+>> -		"msr	daifset, #2"
+>> -		: "=r" (flags)
+>> -		:
+>> -		: "memory");
+>> -	return flags;
+>> -}
+>> -
+>>  static inline void arch_local_irq_enable(void)
+>>  {
+>> -	asm volatile(
+>> -		"msr	daifclr, #2		// arch_local_irq_enable"
+>> -		:
+>> +	unsigned long unmasked = GIC_PRIO_IRQON;
+>> +
+>> +	asm volatile(ALTERNATIVE(
+>> +		"msr	daifclr, #2		// arch_local_irq_enable\n"
+>> +		"nop",
+>> +		"msr_s  " __stringify(SYS_ICC_PMR_EL1) ",%0\n"
+>> +		"dsb	sy",
+>> +		ARM64_HAS_IRQ_PRIO_MASKING)
+>>  		:
+>> +		: "r" (unmasked)
+>>  		: "memory");
+>>  }
+>>  
+>>  static inline void arch_local_irq_disable(void)
+>>  {
+>> -	asm volatile(
+>> -		"msr	daifset, #2		// arch_local_irq_disable"
+>> -		:
+>> +	unsigned long masked = GIC_PRIO_IRQOFF;
+>> +
+>> +	asm volatile(ALTERNATIVE(
+>> +		"msr	daifset, #2		// arch_local_irq_disable",
+>> +		"msr_s  " __stringify(SYS_ICC_PMR_EL1) ", %0",
+>> +		ARM64_HAS_IRQ_PRIO_MASKING)
+>>  		:
+>> +		: "r" (masked)
+>>  		: "memory");
+>>  }
+> 
+> Nitpicks: you could drop masked/unmasked variables here (it's up to you,
+> it wouldn't make any difference on the generated asm).
+> 
+
+Good point, I'll do that.
+
+>> @@ -71,12 +71,44 @@ static inline void arch_local_irq_disable(void)
+>>   */
+>>  static inline unsigned long arch_local_save_flags(void)
+>>  {
+>> +	unsigned long daif_bits;
+>>  	unsigned long flags;
+>> -	asm volatile(
+>> -		"mrs	%0, daif		// arch_local_save_flags"
+>> -		: "=r" (flags)
+>> -		:
+>> +
+>> +	daif_bits = read_sysreg(daif);
+>> +
+>> +	/*
+>> +	 * The asm is logically equivalent to:
+>> +	 *
+>> +	 * if (system_uses_irq_prio_masking())
+>> +	 *	flags = (daif_bits & PSR_I_BIT) ?
+>> +	 *			GIC_PRIO_IRQOFF :
+>> +	 *			read_sysreg_s(SYS_ICC_PMR_EL1);
+>> +	 * else
+>> +	 *	flags = daif_bits;
+>> +	 */
+>> +	asm volatile(ALTERNATIVE(
+>> +			"mov	%0, %1\n"
+>> +			"nop\n"
+>> +			"nop",
+>> +			"mrs_s	%0, " __stringify(SYS_ICC_PMR_EL1) "\n"
+>> +			"ands	%1, %1, " __stringify(PSR_I_BIT) "\n"
+>> +			"csel	%0, %0, %2, eq",
+>> +			ARM64_HAS_IRQ_PRIO_MASKING)
+>> +		: "=&r" (flags), "+r" (daif_bits)
+>> +		: "r" (GIC_PRIO_IRQOFF)
+>>  		: "memory");
+>> +
+>> +	return flags;
+>> +}
+> 
+> BTW, how's the code generated from the C version? It will have a branch
+> but may not be too bad. Either way is fine by me.
+> 
+
+It's a bit hard to talk about the code generated from the C version as
+it can lie within several layers of inline, so the instructions for that
+section are a bit more scattered.
+
+However, it seems like the compiler is more clever (maybe the asm
+volatile prevents some optimizations regarding register allocation or
+instruction ordering) and the C version seems to perform slightly better
+(although it could be within the noise) despite the branch.
+
+So, I'll just switch up to the C version.
+
+> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+> 
 
 -- 
-viresh
+Julien Thierry
