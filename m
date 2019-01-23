@@ -2,115 +2,126 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 595D6C282C5
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 20:35:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EE94C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 20:35:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 296B3218A2
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 20:35:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30BB7218A2
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 20:35:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="UwABq9HC"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="BY9X9J/4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726682AbfAWUfh (ORCPT
+        id S1726790AbfAWUfx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 15:35:37 -0500
-Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:38740 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726192AbfAWUfh (ORCPT
+        Wed, 23 Jan 2019 15:35:53 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:46680 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726192AbfAWUfw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 15:35:37 -0500
-Received: from mailhost.synopsys.com (dc2-mailhost1.synopsys.com [10.12.135.161])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay.synopsys.com (Postfix) with ESMTPS id 69EEB10C0EB9;
-        Wed, 23 Jan 2019 12:35:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1548275736; bh=5aqJIt6TmksnMnFVKjXMkW1BGCYVhXZ+GYxGZlH9Bhk=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References:From;
-        b=UwABq9HCGrxzd0x+PMqCWh3JwQ7ooGkdnfoILCzSLZeKmLLWOybXyjeu61ecChbV4
-         yOVNQ2j3JajcEzlUejxh3MnFRNGqN6epSxutpCQ8bthEigufj6W+dhjv7o/twWGNL6
-         KHMwVKZk8a4m464p/oP5gR+/yLSTDc9uRgmrnmmdWvD9dg4nONK/v5Q0XtBoxP3c3V
-         rY0ME/sobPY7eNFJkSZsoV1e8FADT0RbBpk6K5VtwA3Ii6FwFhuUg/2cHfuqn7TS3U
-         UgbNeHlRzmC5dM436fX0f8VCZtk4DB+8zzOjcI5k1u4D1Y0KcVYiHm4CX1LMLr9Ga2
-         bw3jOmjcALOkQ==
-Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id 22C98A0070;
-        Wed, 23 Jan 2019 20:35:34 +0000 (UTC)
-Received: from IN01WEHTCA.internal.synopsys.com (10.144.199.104) by
- us01wehtc1.internal.synopsys.com (10.12.239.235) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 23 Jan 2019 12:33:23 -0800
-Received: from IN01WEHTCB.internal.synopsys.com (10.144.199.105) by
- IN01WEHTCA.internal.synopsys.com (10.144.199.103) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Thu, 24 Jan 2019 02:03:24 +0530
-Received: from vineetg-Latitude-E7450.internal.synopsys.com (10.10.161.70) by
- IN01WEHTCB.internal.synopsys.com (10.144.199.243) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Thu, 24 Jan 2019 02:03:22 +0530
-From:   Vineet Gupta <vineet.gupta1@synopsys.com>
-To:     <linux-kernel@vger.kernel.org>
-CC:     <linux-snps-arc@lists.infradead.org>, <linux-mm@kvack.org>,
-        <peterz@infradead.org>, <mark.rutland@arm.com>,
-        Vineet Gupta <vineet.gupta1@synopsys.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Theodore Ts'o" <tytso@mit.edu>, <linux-fsdevel@vger.kernel.org>
-Subject: [PATCH v2 2/3] fs: inode_set_flags() replace opencoded set_mask_bits()
-Date:   Wed, 23 Jan 2019 12:33:03 -0800
-Message-ID: <1548275584-18096-3-git-send-email-vgupta@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1548275584-18096-1-git-send-email-vgupta@synopsys.com>
-References: <1548275584-18096-1-git-send-email-vgupta@synopsys.com>
+        Wed, 23 Jan 2019 15:35:52 -0500
+Received: by mail-lf1-f67.google.com with SMTP id f5so2579385lfc.13
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 12:35:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SKJLCHAPKT7F2kMasdD5CPgiqsCrm80NhZkTQRdPbiY=;
+        b=BY9X9J/4+qqxYeGyF3R59zxkMjOBG19x6ckQ3lzQ8Ru+lHBQz5Wyx5u058TqaI8R+Z
+         qAmOrx5ByYriMlr+YA0ByQJdlVx3veIJOEF+gI83DzB5PUQc/2ZZMGeD81NKhNvS3PWM
+         /uSEKiKERYfDI2z3E2tUOXDOKJqrmctffswU4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SKJLCHAPKT7F2kMasdD5CPgiqsCrm80NhZkTQRdPbiY=;
+        b=I5GAjG0P27YTqJFShZS5ifZTWTFypZfkHs3huwhqChPZifmU/wjn8PArICxx1yh7d+
+         +Zi1Au9jgNFEV9nyVVuV3TlAdiP0A77NDC3TRDDoQJdRigQ/6ffbv5gSjd+wqqUJzJMg
+         5j3m9KtT5SML7OmwZKiArHf3upjge65BDLfbpUgTWWFlpw7IKAsIwqopxnX5XM+mWWdv
+         qOlChX17ZbnHhoVwmsSbITFfKsWZp8fxuwbDqwWj/beXAM0nHb1ouJsCIYQJOfYWx63t
+         CWYpku3U5ESR2b0O6arZDkp2jraignfZSgn9cyVjn5gGk7rXw0UUqXO2gili7KELplQp
+         HH/Q==
+X-Gm-Message-State: AJcUukeW266sbn0pp2he/bxUMs93M1pYMhT/bA8k1gHJGYy+Y6If+t2n
+        aEKNAoI+6+BTJNVjmIPXapCEp1Z/hwoQbg==
+X-Google-Smtp-Source: ALg8bN7zroQrJgGhndl49yS6GR4Z04Y5HDKOASncLEWpRJiPtpUTekkUNqMujYUVzz1Z84CO4EbNwA==
+X-Received: by 2002:a19:a28e:: with SMTP id l136mr3000840lfe.87.1548275750830;
+        Wed, 23 Jan 2019 12:35:50 -0800 (PST)
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
+        by smtp.gmail.com with ESMTPSA id v64sm635729lfa.48.2019.01.23.12.35.49
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 23 Jan 2019 12:35:49 -0800 (PST)
+Received: by mail-lj1-f178.google.com with SMTP id v15-v6so3152862ljh.13
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 12:35:49 -0800 (PST)
+X-Received: by 2002:a2e:880a:: with SMTP id x10-v6mr3388044ljh.174.1548275749194;
+ Wed, 23 Jan 2019 12:35:49 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.10.161.70]
+References: <20190110004424.GH27534@dastard> <CAHk-=wg1jSQ-gq-M3+HeTBbDs1VCjyiwF4gqnnBhHeWizyrigg@mail.gmail.com>
+ <20190110070355.GJ27534@dastard> <CAHk-=wigwXV_G-V1VxLs6BAvVkvW5=Oj+xrNHxE_7yxEVwoe3w@mail.gmail.com>
+ <20190110122442.GA21216@nautica> <CAHk-=wip2CPrdOwgF0z4n2tsdW7uu+Egtcx9Mxxe3gPfPW_JmQ@mail.gmail.com>
+ <5c3e7de6.1c69fb81.4aebb.3fec@mx.google.com> <CAHk-=wgF9p9xNzZei_-ejGLy1bJf4VS1C5E9_V0kCTEpCkpCTQ@mail.gmail.com>
+ <9E337EA6-7CDA-457B-96C6-E91F83742587@amacapital.net> <CAHk-=wjqkbjL2_BwUYxJxJhdadiw6Zx-Yu_mK3E6P7kG3wSGcQ@mail.gmail.com>
+ <20190116054613.GA11670@nautica> <CAHk-=wjVjecbGRcxZUSwoSgAq9ZbMxbA=MOiqDrPgx7_P3xGhg@mail.gmail.com>
+ <nycvar.YFH.7.76.1901161710470.6626@cbobk.fhfr.pm> <CAHk-=wgsnWvSsMfoEYzOq6fpahkHWxF3aSJBbVqywLa34OXnLg@mail.gmail.com>
+ <nycvar.YFH.7.76.1901162120000.6626@cbobk.fhfr.pm> <CAHk-=wg+C65FJHB=Jx1OvuJP4kvpWdw+5G=XOXB6X_KB2XuofA@mail.gmail.com>
+In-Reply-To: <CAHk-=wg+C65FJHB=Jx1OvuJP4kvpWdw+5G=XOXB6X_KB2XuofA@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 24 Jan 2019 09:35:32 +1300
+X-Gmail-Original-Message-ID: <CAHk-=wgy+1YT-Rhj5qWb_aCuBADhcq42GDKHB74sqrnOVPKzPg@mail.gmail.com>
+Message-ID: <CAHk-=wgy+1YT-Rhj5qWb_aCuBADhcq42GDKHB74sqrnOVPKzPg@mail.gmail.com>
+Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
+To:     Jiri Kosina <jikos@kernel.org>
+Cc:     Dominique Martinet <asmadeus@codewreck.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Josh Snyder <joshs@netflix.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It seems that 5f16f3225b0624 and 00a1a053ebe5, both with same commitlog
-("ext4: atomically set inode->i_flags in ext4_set_inode_flags()")
-introduced the set_mask_bits API, but somehow missed not using it in
-ext4 in the end
+On Thu, Jan 24, 2019 at 9:27 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> I've reverted the 'let's try to just remove the code' part in my tree.
+> But I didn't apply the two other patches yet. Any final comments
+> before that should happen?
 
-Also, set_mask_bits is used in fs quite a bit and we can possibly come up
-with a generic llsc based implementation (w/o the cmpxchg loop)
+Side note: the inode_permission() addition to can_do_mincore() in that
+patch 0002, seems to be questionable. We do
 
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Theodore Ts'o <tytso@mit.edu>
-Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Reviewed-by: Anthony Yznaga <anthony.yznaga@oracle.com>
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
----
- fs/inode.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
++static inline bool can_do_mincore(struct vm_area_struct *vma)
++{
++       return vma_is_anonymous(vma)
++               || (vma->vm_file && (vma->vm_file->f_mode & FMODE_WRITE))
++               || inode_permission(file_inode(vma->vm_file), MAY_WRITE) == 0;
++}
 
-diff --git a/fs/inode.c b/fs/inode.c
-index 0cd47fe0dbe5..799b0c4beda8 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -2096,14 +2096,8 @@ EXPORT_SYMBOL(inode_dio_wait);
- void inode_set_flags(struct inode *inode, unsigned int flags,
- 		     unsigned int mask)
- {
--	unsigned int old_flags, new_flags;
--
- 	WARN_ON_ONCE(flags & ~mask);
--	do {
--		old_flags = READ_ONCE(inode->i_flags);
--		new_flags = (old_flags & ~mask) | flags;
--	} while (unlikely(cmpxchg(&inode->i_flags, old_flags,
--				  new_flags) != old_flags));
-+	set_mask_bits(&inode->i_flags, mask, flags);
- }
- EXPORT_SYMBOL(inode_set_flags);
- 
--- 
-2.7.4
+note how it tests whether vma->vm_file is NULL for the FMODE_WRITE
+test, but not for the inode_permission() test.
 
+So either we test unnecessarily in the second line, or we don't
+properly test it in the third one.
+
+I think the "test vm_file" thing may be unnecessary, because a
+non-anonymous mapping should always have a file pointer and an inode.
+But I could  imagine some odd case (vdso mapping, anyone?) that
+doesn't have a vm_file, but also isn't anonymous.
+
+Anybody?
+
+Anyway, it's one reason why I didn't actually apply those other two
+patches yet. This may be a 5.1 issue..
+
+                   Linus
