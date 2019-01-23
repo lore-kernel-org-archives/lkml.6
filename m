@@ -2,172 +2,144 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6F64C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 16:50:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AAFDC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 16:50:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9181A2085A
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 16:50:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="MkFYpkYc"
+	by mail.kernel.org (Postfix) with ESMTP id 54C082085A
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 16:50:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726751AbfAWQuF (ORCPT
+        id S1726820AbfAWQuf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 11:50:05 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:38786 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725948AbfAWQuE (ORCPT
+        Wed, 23 Jan 2019 11:50:35 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:44029 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725871AbfAWQuf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 11:50:04 -0500
-Received: by mail-wm1-f68.google.com with SMTP id m22so47031wml.3
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 08:50:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=MsjGYbxSdxohzPgNJOgdJcG5Xj2r796U0cFued0EXik=;
-        b=MkFYpkYcy4oZXYly9/PLBg0jVdJIwt2EkEgfCCBs4OgSLnZ1m7i0I/Re8efOfK1XBu
-         KDs6M2KBa8KkT9/n0UFf85qJBXTgKnwAnJsoJf6TlN7pKUN+PXqTg4wvcwJKoM6PgIKO
-         o0jyfroMpUlrGomUOztBa2EkmPO8f7JS9W1FpNSKFTskZrv2K0+0eBX7nRxk49zwf+aJ
-         6RAJbpXuwCu6e6LECVBVvJUvVsCUivaVlhqev87+Og09ADRjZHacvR+D/eBHcbXd4BOK
-         Tx498HcF/WhITEgMKO8Rvnxr92jSYcFdniqPXZhfBRqyBaW19LmSbqh5aLLZQcWzIb6r
-         xRcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=MsjGYbxSdxohzPgNJOgdJcG5Xj2r796U0cFued0EXik=;
-        b=G6i9+YZ/4uLCggtByznHcJlOlxA9kTWGeV7GXwlsykMxsPVQlzbWT/E/WeSQii2gyg
-         KnmGKd9BP5xJLPMaAGAmcDhGNWPcYNwer5gC59KtvGUlSCiUPDin4RPfcDR73ZnFcB1P
-         lAqSA46O5u6TP2cJ6MPXE+at6xUV3MS6eiatlJORmxbb8Tn6PF56opfaf19O4lR5x3wL
-         GAEKPI5n7JLLPaX+tQvDH1kuKlJiMr7J/wXFdvzSAywkI2frO8/diQ1zNh1x3ldSjHH+
-         1TkKu9HkNLq4tu5dZuhDxZm3F1PrJjVH5sTQv/G20VfLueHVJ3jCeqDTLWz/aO6lI2MF
-         fWPA==
-X-Gm-Message-State: AJcUukdu9DPKCYb7iUA+bkYVTz69aNOc2BXk9ebNSincyRJ59S7s4ytd
-        +JFV/bIAVE/1hJtWyuB5Z+EQZA==
-X-Google-Smtp-Source: ALg8bN76rDDh7Px17wGR3jvzg2ppwIBh0L0vXaAN8wCsbgjUfITkZQkDQLkP35IkeNSZGCxoQNH0vg==
-X-Received: by 2002:a1c:43:: with SMTP id 64mr3612223wma.72.1548262201461;
-        Wed, 23 Jan 2019 08:50:01 -0800 (PST)
-Received: from localhost (aputeaux-684-1-20-21.w90-86.abo.wanadoo.fr. [90.86.223.21])
-        by smtp.googlemail.com with ESMTPSA id w80sm82727567wme.38.2019.01.23.08.50.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 23 Jan 2019 08:50:00 -0800 (PST)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Anand Moon <linux.amoon@gmail.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Emiliano Ingrassia <ingrassia@epigenesys.com>
-Subject: Re: [PATCH 1/2] ARM: dts: meson8b: odroidc1: Enable usb phy node
-In-Reply-To: <20190113181808.5768-1-linux.amoon@gmail.com>
-References: <20190113181808.5768-1-linux.amoon@gmail.com>
-Date:   Wed, 23 Jan 2019 08:49:59 -0800
-Message-ID: <7hef93mi88.fsf@baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Wed, 23 Jan 2019 11:50:35 -0500
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1gmLjR-000789-4F; Wed, 23 Jan 2019 17:50:29 +0100
+Message-ID: <1548262227.28802.7.camel@pengutronix.de>
+Subject: Re: [PATCH v3 5/5] imx8mq.dtsi: add the sdma nodes
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     "Angus Ainslie (Purism)" <angus@akkea.ca>
+Cc:     angus.ainslie@puri.sm, Vinod Koul <vkoul@kernel.org>,
+        dmaengine@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Daniel Baluta <daniel.baluta@gmail.com>
+Date:   Wed, 23 Jan 2019 17:50:27 +0100
+In-Reply-To: <20190123152310.11680-6-angus@akkea.ca>
+References: <20190120023150.17138-1-angus@akkea.ca>
+         <20190123152310.11680-1-angus@akkea.ca>
+         <20190123152310.11680-6-angus@akkea.ca>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Anand Moon <linux.amoon@gmail.com> writes:
-
-> Add missing vbus-supply link to phy controller for usb_phy0
-> and usb_phy1 nodes, this changes fixed the power issue
-> on usb ports usb, changes help fix usb reset warning.
->
-> [  821.991470] usb 1-1.2: reset high-speed USB device number 3 using dwc2
-> [  825.243385] usb 1-1.2: reset high-speed USB device number 3 using dwc2
-> [  828.151310] usb 1-1.2: reset high-speed USB device number 3 using dwc2
-> [  830.991241] usb 1-1.2: reset high-speed USB device number 3 using dwc2
->
-> Fixes: 2eb79a4d15ff (ARM: dts: meson: enabling the USB Host controller on Odroid-C1/C1+ board)
-> Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> Cc: Jerome Brunet <jbrunet@baylibre.com>
-> Cc: Neil Armstrong <narmstrong@baylibre.com>
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+Am Mittwoch, den 23.01.2019, 08:23 -0700 schrieb Angus Ainslie (Purism):
+> Add the sdma nodes to the base devicetree for the imx8mq
+> 
+> > Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
 > ---
-> Rebased on Kevin's amlogic/v5.0/fixes branch
+>  arch/arm64/boot/dts/freescale/imx8mq.dtsi | 31 +++++++++++++++++++++++
+>  1 file changed, 31 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+> index c0402375e7c1..4397992fd021 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+> @@ -336,6 +336,19 @@
+> >  				clocks = <&clk IMX8MQ_CLK_WDOG3_ROOT>;
+> >  				status = "disabled";
+> >  			};
+> +
+> > > +			sdma2: sdma@302c0000 {
+> > +				compatible = "fsl,imx8mq-sdma", "fsl,imx7d-sdma";
+> > +				reg = <0x302c0000 0x10000>;
+> > +				interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
+> > +				clocks = <&clk IMX8MQ_CLK_SDMA2_ROOT>,
+> > +					<&clk IMX8MQ_CLK_SDMA2_ROOT>;
+> > +				clock-names = "ipg", "ahb";
+> > +				#dma-cells = <3>;
+> > +				fsl,sdma-ram-script-name = "imx/sdma/sdma-imx7d.bin";
+> +				fsl,ratio-1-1;
 
-As requested, dropping this series from the fixes branch pending further
-debug and testing.
+Property does not exist anymore.
 
-Kevin
+> +				status = "disabled";
 
-> [alarm@archl-c1t ~]$ lsusb -t
-> /:  Bus 01.Port 1: Dev 1, Class=root_hub, Driver=dwc2/1p, 480M
->     |__ Port 1: Dev 2, If 0, Class=Hub, Driver=hub/4p, 480M
->         |__ Port 1: Dev 4, If 0, Class=Mass Storage, Driver=usb-storage, 480M
->         |__ Port 3: Dev 3, If 0, Class=Video, Driver=uvcvideo, 480M
->         |__ Port 3: Dev 3, If 1, Class=Video, Driver=uvcvideo, 480M
->         |__ Port 3: Dev 3, If 2, Class=Audio, Driver=snd-usb-audio, 480M
->         |__ Port 3: Dev 3, If 3, Class=Audio, Driver=snd-usb-audio, 480M
-> [alarm@archl-c1t ~]$
-> [alarm@archl-c1t ~]$ lsusb -v|egrep "^Bus|MaxPower"
-> Couldn't open device, some information will be missing
-> Bus 001 Device 003: ID 1b71:0056 Fushicai
->     MaxPower              500mA
-> Couldn't open device, some information will be missing
-> Bus 001 Device 004: ID 152d:0578 JMicron Technology Corp. / JMicron USA Technology Corp. JMS567 SATA 6Gb/s bridge
->     MaxPower               30mA
-> Couldn't open device, some information will be missing
-> Couldn't open device, some information will be missing
-> Bus 001 Device 002: ID 05e3:0610 Genesys Logic, Inc. 4-port hub
->     MaxPower              100mA
-> Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
->     MaxPower                0mA
-> ---
->  arch/arm/boot/dts/meson8b-odroidc1.dts | 23 +++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/meson8b-odroidc1.dts b/arch/arm/boot/dts/meson8b-odroidc1.dts
-> index 0f0a46ddf3ff..a49a8509b288 100644
-> --- a/arch/arm/boot/dts/meson8b-odroidc1.dts
-> +++ b/arch/arm/boot/dts/meson8b-odroidc1.dts
-> @@ -83,6 +83,19 @@
->  		regulator-max-microvolt = <5000000>;
->  	};
->  
-> +	usb_vbus: regulator-usb-vbus {
-> +		compatible = "regulator-fixed";
+SoC peripherals that have no outside connection and thus don't depend
+on any board level configuration should always be enabled. Please drop
+this status property.
+
+> +			};
+> >  		};
+>  
+> >  		bus@30400000 { /* AIPS2 */
+> @@ -370,6 +383,8 @@
+> >  				clocks = <&clk IMX8MQ_CLK_UART3_ROOT>,
+> >  				         <&clk IMX8MQ_CLK_UART3_ROOT>;
+> >  				clock-names = "ipg", "per";
+> > +				dmas = <&sdma1 26 4 0>, <&sdma1 27 4 0>;
+> > +				dma-names = "rx", "tx";
+> >  				status = "disabled";
+> >  			};
+>  
+> @@ -381,6 +396,8 @@
+> >  				clocks = <&clk IMX8MQ_CLK_UART2_ROOT>,
+> >  				         <&clk IMX8MQ_CLK_UART2_ROOT>;
+> >  				clock-names = "ipg", "per";
+> > +				dmas = <&sdma1 24 4 0>, <&sdma1 25 4 0>;
+> > +				dma-names = "rx", "tx";
+> >  				status = "disabled";
+> >  			};
+>  
+> @@ -432,6 +449,8 @@
+> >  				clocks = <&clk IMX8MQ_CLK_UART4_ROOT>,
+> >  				         <&clk IMX8MQ_CLK_UART4_ROOT>;
+> >  				clock-names = "ipg", "per";
+> > +				dmas = <&sdma1 28 4 0>, <&sdma1 29 4 0>;
+> > +				dma-names = "rx", "tx";
+> >  				status = "disabled";
+> >  			};
+>  
+> @@ -465,6 +484,18 @@
+> >  				status = "disabled";
+> >  			};
+>  
+> > > +			sdma1: sdma@30bd0000 {
+> > +				compatible = "fsl,imx8mq-sdma", "fsl,imx7d-sdma";
+> > +				reg = <0x30bd0000 0x10000>;
+> > +				interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
+> > +				clocks = <&clk IMX8MQ_CLK_SDMA1_ROOT>,
+> > +					<&clk IMX8MQ_CLK_AHB>;
+> > +				clock-names = "ipg", "ahb";
+> > +				#dma-cells = <3>;
+> > +				fsl,sdma-ram-script-name = "imx/sdma/sdma-imx7d.bin";
+> +				status = "disabled";
+
+Same comment as above, this node should be enabled by default.
+
+Regards,
+Lucas
+
+> +			};
 > +
-> +		regulator-name = "USB_VBUS";
-> +		regulator-min-microvolt = <5000000>;
-> +		regulator-max-microvolt = <5000000>;
-> +
-> +		vin-supply = <&p5v0>;
-> +
-> +		gpio = <&gpio_ao GPIOAO_5 GPIO_ACTIVE_HIGH>;
-> +		enable-active-high;
-> +	};
-> +
->  	tflash_vdd: regulator-tflash_vdd {
->  		/*
->  		 * signal name from schematics: TFLASH_VDD_EN
-> @@ -293,8 +306,18 @@
->  	pinctrl-names = "default";
->  };
->  
-> +&usb0_phy {
-> +	status = "okay";
-> +	vbus-supply = <&usb_vbus>;
-> +};
-> +
->  &usb1_phy {
->  	status = "okay";
-> +	vbus-supply = <&usb_vbus>;
-> +};
-> +
-> +&usb0 {
-> +	status = "okay";
->  };
->  
->  &usb1 {
-> -- 
-> 2.20.1
+> > >  			fec1: ethernet@30be0000 {
+> >  				compatible = "fsl,imx8mq-fec", "fsl,imx6sx-fec";
+> >  				reg = <0x30be0000 0x10000>;
