@@ -2,132 +2,76 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 472F3C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:02:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02DEDC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:03:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17A8220870
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:02:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="G/Jj4jtn"
+	by mail.kernel.org (Postfix) with ESMTP id CE44D20870
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:03:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727335AbfAWKCg (ORCPT
+        id S1727381AbfAWKDW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 05:02:36 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:37062 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727090AbfAWKCf (ORCPT
+        Wed, 23 Jan 2019 05:03:22 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:9487 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727181AbfAWKDW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 05:02:35 -0500
-Received: by mail-ot1-f65.google.com with SMTP id s13so1405497otq.4
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 02:02:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=IHRz0QY5CZdQdoIc8komNLLlrqiTiPWXxllEMlAtARM=;
-        b=G/Jj4jtnKEpWTpEANW8y1CoH2U7MVFQE4/JJokkOHiGo4RSdztEqc6Yfgozx4nGkCC
-         e28o9RqZJhkPGmowb1WxKMgHlFPIlumm4KFp7ct9QR56npU3mTR1FNzSBz6AcTGbKcs6
-         lbh45MItOkxJS7teB2fmWDpKVD5WpThu2wlqI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=IHRz0QY5CZdQdoIc8komNLLlrqiTiPWXxllEMlAtARM=;
-        b=Fqqh1yzl9oTMpRPNMm1Hs7IKhcTlHZ38f29aTfJppoQQYT0xRJHCNDkj+LtBjr/fV9
-         WU/wdMEz/4lC4W5E1CMTG4qs7ldaTTmrFogz4gMTu1yATLWErf4DZJEzcgWZHvngKzlH
-         YsHvH36WYI6dsqrUiHbp3DtU9upFPLc4ROGCeguVY8FweUUkDUcqEag3rujViszGId9N
-         FtMh4aAcHvMnir3hmxMb7MF/wbmnsQhzja6ibYZ0VuLQIlim6sc36iAz9mYDvvqYhZ4a
-         naq+kFIMu9lbElG3BgmDZ+zehi293C2a+tHMqsIQm2LF8o36BAoiOhHTY2E/U2+KJWkN
-         ow2g==
-X-Gm-Message-State: AJcUukdyB5qAHFFudZdPqw2GO8dbcvvGAtYgSxmTfJM+svrxP051y8Ay
-        9n0IUO6BwdiQYa39GBNphDAXErQZ6cw=
-X-Google-Smtp-Source: ALg8bN4pMyyWll7cNhUZF6v8OPQpBDKl1GCg3nDMYQNl/kZDPwz7JDi6llqb5jK5XnOR9eIxQj6R4Q==
-X-Received: by 2002:a9d:d83:: with SMTP id 3mr935928ots.361.1548237754333;
-        Wed, 23 Jan 2019 02:02:34 -0800 (PST)
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com. [209.85.167.175])
-        by smtp.gmail.com with ESMTPSA id m129sm8740546oif.50.2019.01.23.02.02.32
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 23 Jan 2019 02:02:33 -0800 (PST)
-Received: by mail-oi1-f175.google.com with SMTP id u18so1290709oie.10
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 02:02:32 -0800 (PST)
-X-Received: by 2002:aca:5a88:: with SMTP id o130mr1024574oib.275.1548237752296;
- Wed, 23 Jan 2019 02:02:32 -0800 (PST)
+        Wed, 23 Jan 2019 05:03:22 -0500
+X-IronPort-AV: E=Sophos;i="5.56,510,1539619200"; 
+   d="scan'208";a="52647666"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 23 Jan 2019 18:03:19 +0800
+Received: from G08CNEXCHPEKD02.g08.fujitsu.local (unknown [10.167.33.83])
+        by cn.fujitsu.com (Postfix) with ESMTP id E17664B4030E;
+        Wed, 23 Jan 2019 18:03:20 +0800 (CST)
+Received: from TSAO.g08.fujitsu.local (10.167.226.60) by
+ G08CNEXCHPEKD02.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 23 Jan 2019 18:03:19 +0800
+From:   Cao jin <caoj.fnst@cn.fujitsu.com>
+To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>
+CC:     <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+        <hpa@zytor.com>, <kirill.shutemov@linux.intel.com>
+Subject: [PATCH] x86/boot: save several bytes in decompressor
+Date:   Wed, 23 Jan 2019 18:00:14 +0800
+Message-ID: <20190123100014.23721-1-caoj.fnst@cn.fujitsu.com>
+X-Mailer: git-send-email 2.17.2
 MIME-Version: 1.0
-References: <20181022144901.113852-1-tfiga@chromium.org> <20181022144901.113852-3-tfiga@chromium.org>
- <4cd223f0-b09c-da07-f26c-3b3f7a8868d7@xs4all.nl> <5fb0f2db44ba7aa3788b61f2aa9a30d4f4984de5.camel@ndufresne.ca>
- <d853eb91-c05d-fb10-f154-bc24e4ebb89d@xs4all.nl> <dae0211b3bc01423f1e9de63e9b4ef0aee44c086.camel@ndufresne.ca>
-In-Reply-To: <dae0211b3bc01423f1e9de63e9b4ef0aee44c086.camel@ndufresne.ca>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Wed, 23 Jan 2019 19:02:21 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5B5EhdK78uzDE=t-ZHYDVYrrUo9t2_HQH+bKjRp6HfSOw@mail.gmail.com>
-Message-ID: <CAAFQd5B5EhdK78uzDE=t-ZHYDVYrrUo9t2_HQH+bKjRp6HfSOw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] media: docs-rst: Document memory-to-memory video
- encoder interface
-To:     Nicolas Dufresne <nicolas@ndufresne.ca>
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        =?UTF-8?B?UGF3ZcWCIE/Fm2NpYWs=?= <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Kamil Debski <kamil@wypas.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Jeongtae Park <jtp.park@samsung.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Tiffany Lin <tiffany.lin@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dave.stevenson@raspberrypi.org,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Maxime Jourdan <maxi.jourdan@wanadoo.fr>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Originating-IP: [10.167.226.60]
+X-yoursite-MailScanner-ID: E17664B4030E.AA445
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: caoj.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 18, 2018 at 10:34 AM Nicolas Dufresne <nicolas@ndufresne.ca> wr=
-ote:
->
-> Le samedi 17 novembre 2018 =C3=A0 12:37 +0100, Hans Verkuil a =C3=A9crit =
-:
-> > > > Does V4L2_CID_MIN_BUFFERS_FOR_CAPTURE make any sense for encoders?
-> > >
-> > > We do account for it in GStreamer (the capture/output handling is
-> > > generic), but I don't know if it's being used anywhere.
-> >
-> > Do you use this value directly for REQBUFS, or do you use it as the min=
-imum
-> > value but in practice use more buffers?
->
-> We add more buffers to that value. We assume this value is what will be
-> held by the driver, hence without adding some buffers, the driver would
-> go idle as soon as one is dequeued. We also need to allocate for the
-> importing driver.
->
-> In general, if we have a pipeline with Driver A sending to Driver B,
-> both driver will require a certain amount of buffers to operate. E.g.
-> with DRM display, the driver will hold on 1 buffer (the scannout
-> buffer).
->
-> In GStreamer, it's implemented generically, so we do:
->
->   MIN_BUFFERS_FOR + remote_min + 1
->
-> If only MIN_BUFFERS_FOR was allocated, ignoring remote driver
-> requirement, the streaming will likely get stuck.
+gdt64 represents the content of GDTR under x86-64, which actually needs
+10 bytes only, ".long" & ".word" is superfluous.
 
-What happens if the driver doesn't report it?
+Signed-off-by: Cao jin <caoj.fnst@cn.fujitsu.com>
+---
+ arch/x86/boot/compressed/head_64.S | 2 --
+ 1 file changed, 2 deletions(-)
 
-Best regards,
-Tomasz
+diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
+index 58f6a467f1fa..541358454f10 100644
+--- a/arch/x86/boot/compressed/head_64.S
++++ b/arch/x86/boot/compressed/head_64.S
+@@ -642,8 +642,6 @@ no_longmode:
+ 	.data
+ gdt64:
+ 	.word	gdt_end - gdt
+-	.long	0
+-	.word	0
+ 	.quad   0
+ gdt:
+ 	.word	gdt_end - gdt
+-- 
+2.17.0
+
+
+
