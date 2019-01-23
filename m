@@ -4,112 +4,82 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 336E6C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 13:43:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF549C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 13:48:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E75CF2184B
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 13:43:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7071820855
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 13:48:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548250993;
-	bh=jqK/YN93TXmfORHoqG1DAfI93GeUNyfuuEKjVqyOqso=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=tSm8WK23KRiRYfZfuI8WzM8iNGPVr3oYdu7w6wgfmJWN1NtyJb2UcR7w13BtMVW3Y
-	 2VtoLAqec/aOyQMPLT7caZLm9vs/MUp4EhsKNgYxBSfZKDCbtIpJ2zXZw5DNzIfUuG
-	 Y+7D2TqmmBbbklD7BLjpX3SVnKKjrBNNel6tBXvg=
+	s=default; t=1548251339;
+	bh=ELiE3gPS8RiO5npZuv3ICzNh1ao0Y+7e0bYWVYrD7Go=;
+	h=Date:From:To:Cc:Subject:List-ID:From;
+	b=e/aq0tXgy+0l/EZOJOCEZ1PJzsf0x4wwatCgC4kERsi34mf6TmtribXs+fS/db5ii
+	 a15t1Yir5bpCGXRWODTaU25Jy47DQwW9TTkPTm33ZR2gXqDEPSWMet9pnj0QHP66Z9
+	 ztI5JAUG7Y+mFc5RH2kPJdS/fzl2wKEfQ6d8JSdg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726360AbfAWNnL (ORCPT
+        id S1726262AbfAWNs5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 08:43:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56700 "EHLO mail.kernel.org"
+        Wed, 23 Jan 2019 08:48:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59100 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725995AbfAWNnL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 08:43:11 -0500
+        id S1725995AbfAWNs5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 08:48:57 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B6BEA2184B;
-        Wed, 23 Jan 2019 13:43:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 355D920855;
+        Wed, 23 Jan 2019 13:48:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548250990;
-        bh=jqK/YN93TXmfORHoqG1DAfI93GeUNyfuuEKjVqyOqso=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=euMglUlOgjNgJKI3h+MNeK4EpWvvoooOfgfsZ28vwTVC978yS74/mmSYk0LQGcSS9
-         r+V/a92Y8KxDiBsPzjH+BWdV+xned9x3c/qrzKFZ5RUclAKWSsLJptUEctGiQv2EZb
-         CqpAWv9HtENMhsM7Z73GzA4sA5h6kgZA3/IMpuy4=
-Date:   Wed, 23 Jan 2019 14:43:07 +0100
+        s=default; t=1548251336;
+        bh=ELiE3gPS8RiO5npZuv3ICzNh1ao0Y+7e0bYWVYrD7Go=;
+        h=Date:From:To:Cc:Subject:From;
+        b=CHHibquj3l5ttf9TszKmovObl1oXhD9NvirJwlK0vB+tMNGTFzaubZZxc+nl6efm8
+         15+rItX7gNTZTm1TLP4D5kTp8RxX0x5uHG9+LOI/vE/Nv3XX3d3im5QxzCG88+OsMR
+         /Pwf8sfMmzvewuiOn3dkc+nY5ZagwdkBWBGOQjqQ=
+Date:   Wed, 23 Jan 2019 14:48:54 +0100
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Peter Oberparleiter <oberpar@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gcov: no need to check return value of debugfs_create
- functions
-Message-ID: <20190123134307.GD24700@kroah.com>
-References: <20190122152151.16139-49-gregkh@linuxfoundation.org>
- <b277b33b-bcc0-c1c5-52d6-9e1580531df3@linux.ibm.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        Michal Hocko <mhocko@kernel.org>
+Subject: [PATCH] blk-mq: protect debugfs_create_files() from failures
+Message-ID: <20190123134854.GA25906@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b277b33b-bcc0-c1c5-52d6-9e1580531df3@linux.ibm.com>
 User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 02:22:33PM +0100, Peter Oberparleiter wrote:
-> On 22.01.2019 16:21, Greg Kroah-Hartman wrote:
-> > When calling debugfs functions, there is no need to ever check the
-> > return value.  The function can work or not, but the code logic should
-> > never do something different based on this.
-> > 
-> > Also delete the dentry variable as it is never needed.
-> > 
-> > Cc: Peter Oberparleiter <oberpar@linux.ibm.com>
-> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > ---
-> >  kernel/gcov/fs.c | 22 ++--------------------
-> >  1 file changed, 2 insertions(+), 20 deletions(-)
-> 
-> Acked-by: Peter Oberparleiter <oberpar@linux.ibm.com>
-> 
-> Compile test was successful, but the patch introduces a compile warning.
-> Could you merge the attached patch?
-> 
-> 8<===
-> From: Peter Oberparleiter <oberpar@linux.vnet.ibm.com>
-> Subject: [PATCH] gcov: Fix compiler warning
-> 
-> Fix compiler warning when compiling with CONFIG_GCOV_KERNEL=y:
-> 
->   CC      kernel/gcov/fs.o
-> kernel/gcov/fs.c: In function ‘gcov_fs_init’:
-> kernel/gcov/fs.c:756:6: warning: unused variable ‘rc’ [-Wunused-variable]
->   int rc = -EIO;
->       ^~
-> 
-> Signed-off-by: Peter Oberparleiter <oberpar@linux.vnet.ibm.com>
-> ---
->  kernel/gcov/fs.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/kernel/gcov/fs.c b/kernel/gcov/fs.c
-> index aa9a49f72024..e5eb5ea7ea59 100644
-> --- a/kernel/gcov/fs.c
-> +++ b/kernel/gcov/fs.c
-> @@ -753,8 +753,6 @@ void gcov_event(enum gcov_action action, struct gcov_info *info)
->  /* Create debugfs entries. */
->  static __init int gcov_fs_init(void)
->  {
-> -	int rc = -EIO;
-> -
->  	init_node(&root_node, NULL, NULL, NULL);
->  	/*
->  	 * /sys/kernel/debug/gcov will be parent for the reset control file
-> -- 
+If debugfs were to return a non-NULL error for a debugfs call, using
+that pointer later in debugfs_create_files() would crash.
 
-Ah, good catch, will do that, thanks.
+Fix that by properly checking the pointer before referencing it.
 
-greg k-h
+Reported-by: Michal Hocko <mhocko@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ block/blk-mq-debugfs.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/block/blk-mq-debugfs.c b/block/blk-mq-debugfs.c
+index 90d68760af08..777638f597aa 100644
+--- a/block/blk-mq-debugfs.c
++++ b/block/blk-mq-debugfs.c
+@@ -838,6 +838,9 @@ static const struct blk_mq_debugfs_attr blk_mq_debugfs_ctx_attrs[] = {
+ static bool debugfs_create_files(struct dentry *parent, void *data,
+ 				 const struct blk_mq_debugfs_attr *attr)
+ {
++	if (IS_ERR_OR_NULL(parent))
++		return false;
++
+ 	d_inode(parent)->i_private = data;
+ 
+ 	for (; attr->name; attr++) {
+-- 
+2.20.1
+
