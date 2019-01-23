@@ -2,133 +2,114 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECCE3C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:48:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59AA0C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:50:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF00720870
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:48:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2264020870
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:50:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HeoATH3X"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726863AbfAWHsz (ORCPT
+        id S1726972AbfAWHuV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 02:48:55 -0500
-Received: from gateway24.websitewelcome.com ([192.185.51.36]:33922 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726313AbfAWHsw (ORCPT
+        Wed, 23 Jan 2019 02:50:21 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:41084 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726029AbfAWHuU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 02:48:52 -0500
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id C8584AAE1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 01:48:50 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id mDHGgxC5HYTGMmDHGgflgD; Wed, 23 Jan 2019 01:48:50 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=47094 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gmDHG-003Pm5-3f; Wed, 23 Jan 2019 01:48:50 -0600
-Date:   Wed, 23 Jan 2019 01:48:49 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH net-next] intel: Mark expected switch fall-throughs
-Message-ID: <20190123074849.GA24230@embeddedor>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1gmDHG-003Pm5-3f
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.130.205]:47094
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 48
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Wed, 23 Jan 2019 02:50:20 -0500
+Received: by mail-wr1-f65.google.com with SMTP id x10so1186477wrs.8
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 23:50:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=ErITnZX7V2KHQl6xx/ncGHB7pc8CDMknHP/nniLmEZs=;
+        b=HeoATH3X2Ycp16lTuJr3RNP5usYadU7AnoFwDbNRyOKZn/IcA2ni1PV2CGGgosiB8N
+         HVRGbIPQlZMh86aFd6EqXDD/0Na+czVJa4J6obEEqxxZKj/kbSNMCWA9YAxm0B9rpOXW
+         RD1Ej+Rvrj+NAAI0u8mAO7uebn1xvqjw5BWMg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ErITnZX7V2KHQl6xx/ncGHB7pc8CDMknHP/nniLmEZs=;
+        b=paU0X4YUSz1GS933LO6P2ImFsASgiDo9Vc0yBoRiRUXyu8ijd75WqspLD8WA6eZp5J
+         jP+ogiS3fSlRGI3GboNgP2kTyV+MaH1z8+9UNPBfWIMbbqCDzfZfM3yLSZI0uJktC+wb
+         DMGoyldlceBkYRDHV2P3mxrngcCL+inJB2KBPSw3GRWmxK0dYUuIH+khSkmdG8Avik8r
+         yuVlNBWSf+6748yC71fM2/EECozQwcMX/YlJpeVPK94ZPGC/8nevzBKEv2TVZbaECwPQ
+         j3+IWQzRRu0I+x5pW7n2fySuuFT8MXq9ZKc8cNQQtAuWKPt0UWRCIT20DYWUxWpinvwT
+         Jr5Q==
+X-Gm-Message-State: AJcUukcUGHunYNfuwRLxRx172YvMNZsHE2mzshYf9cG094p8g2xKQ6Zv
+        nyOzqJJI6Uo93GRjFVHRZOGyxw==
+X-Google-Smtp-Source: ALg8bN64TLsEtqUWmhPghRGCGHthC/cPxwQV/+PotTYAbILJ3Xs7xSV7CB8uD9ht0J0uipkuxPFCNQ==
+X-Received: by 2002:adf:ea11:: with SMTP id q17mr1325784wrm.328.1548229818594;
+        Tue, 22 Jan 2019 23:50:18 -0800 (PST)
+Received: from localhost.localdomain ([2a01:e0a:f:6020:5ca6:2921:648b:56b6])
+        by smtp.gmail.com with ESMTPSA id i186sm70138787wmd.19.2019.01.22.23.50.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 22 Jan 2019 23:50:17 -0800 (PST)
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+To:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        rjw@rjwysocki.net, thara.gopinath@linaro.org, linux@roeck-us.net
+Cc:     ulf.hansson@linaro.org,
+        Vincent Guittot <vincent.guittot@linaro.org>
+Subject: [PATCH v7 0/3] Move pm_runtime accounted time to raw nsec
+Date:   Wed, 23 Jan 2019 08:50:12 +0100
+Message-Id: <1548229814-24913-1-git-send-email-vincent.guittot@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+Move pm_runtime accounted time to raw nsec. The subject of the patchset
+has changed as 1st patch o the previous versions has been queued by
+Rafael.
 
-This patch fixes the following warnings:
+Patch 1 set accounting_timestamp to 0 in pm_runtime_init and update it when enable.
+So we remove ordering constraint between timekeeping_init and pm_runtime_init
 
-drivers/net/ethernet/intel/igb/e1000_82575.c:636:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
-drivers/net/ethernet/intel/igb/igb_main.c:6710:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
-drivers/net/ethernet/intel/i40e/i40e_xsk.c:237:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
+Patch 2 moves time accounting on raw ns. This patch initially used
+ktime instead of raw ns but it was easier to move i915 driver on raw ns
+than on ktime.
 
-Warning level 3 was used: -Wimplicit-fallthrough=3
+Change since v6:
+- move code that set accounting_timestamp in pm_runtime_enable
 
-This patch is part of the ongoing efforts to enabling
--Wimplicit-fallthrough.
+Changes since v5:
+- removed patches already queued.
+- set accounting_timestamp to 0 in pm_runtime_init and update it when enable
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/net/ethernet/intel/i40e/i40e_xsk.c   | 3 ++-
- drivers/net/ethernet/intel/igb/e1000_82575.c | 2 +-
- drivers/net/ethernet/intel/igb/igb_main.c    | 2 +-
- 3 files changed, 4 insertions(+), 3 deletions(-)
+Changes since v4:
+-Update commit message
 
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_xsk.c b/drivers/net/ethernet/intel/i40e/i40e_xsk.c
-index 96d849460d9b..774e31405ba0 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_xsk.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_xsk.c
-@@ -235,9 +235,10 @@ static int i40e_run_xdp_zc(struct i40e_ring *rx_ring, struct xdp_buff *xdp)
- 		break;
- 	default:
- 		bpf_warn_invalid_xdp_action(act);
-+		/* fall through */
- 	case XDP_ABORTED:
- 		trace_xdp_exception(rx_ring->netdev, xdp_prog, act);
--		/* fallthrough -- handle aborts by dropping packet */
-+		/* fall through - handle aborts by dropping packet */
- 	case XDP_DROP:
- 		result = I40E_XDP_CONSUMED;
- 		break;
-diff --git a/drivers/net/ethernet/intel/igb/e1000_82575.c b/drivers/net/ethernet/intel/igb/e1000_82575.c
-index bafdcf70a353..3ec2ce0725d5 100644
---- a/drivers/net/ethernet/intel/igb/e1000_82575.c
-+++ b/drivers/net/ethernet/intel/igb/e1000_82575.c
-@@ -638,7 +638,7 @@ static s32 igb_get_invariants_82575(struct e1000_hw *hw)
- 			dev_spec->sgmii_active = true;
- 			break;
- 		}
--		/* fall through for I2C based SGMII */
-+		/* fall through - for I2C based SGMII */
- 	case E1000_CTRL_EXT_LINK_MODE_PCIE_SERDES:
- 		/* read media type from SFP EEPROM */
- 		ret_val = igb_set_sfp_media_type_82575(hw);
-diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
-index dfa357b1a9d6..2c88e47574a7 100644
---- a/drivers/net/ethernet/intel/igb/igb_main.c
-+++ b/drivers/net/ethernet/intel/igb/igb_main.c
-@@ -6713,7 +6713,7 @@ static int __igb_notify_dca(struct device *dev, void *data)
- 			igb_setup_dca(adapter);
- 			break;
- 		}
--		/* Fall Through since DCA is disabled. */
-+		/* Fall Through - since DCA is disabled. */
- 	case DCA_PROVIDER_REMOVE:
- 		if (adapter->flags & IGB_FLAG_DCA_ENABLED) {
- 			/* without this a class_device is left
+Changes since v3:
+- Rebase on v4.20-rc7 without patch that has been queued by Rafael
+- Simplify the new interface pm_runtime_suspended_time()
+
+Changes since v2:
+- remove patch1 that has been queued by rafael
+- add new interface in pm_runtime to get accounted time
+- reorder patchset to prevent compilation error
+
+Changes since v1:
+- updated commit message of patch 1
+- Added patches 2 & 3 to move runtime_pm accounting on raw ns
+  
+Thara Gopinath (1):
+  PM-runtime: Replace jiffies based accounting with ktime-based
+    accounting
+
+Vincent Guittot (1):
+  PM-runtime: update accounting_timestamp only when enable
+
+ drivers/base/power/runtime.c | 26 ++++++++++++++++----------
+ drivers/base/power/sysfs.c   | 11 ++++++++---
+ include/linux/pm.h           |  6 +++---
+ 3 files changed, 27 insertions(+), 16 deletions(-)
+
 -- 
-2.20.1
+2.7.4
 
