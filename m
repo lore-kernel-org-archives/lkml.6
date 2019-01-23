@@ -2,80 +2,111 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D457C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 19:09:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EC54C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 19:10:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AD452184B
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 19:09:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548270584;
-	bh=zW7Ta9POVlZh+PSwhGR6T68BJo9n692c2oGfp6HGbEw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=wKhPMTCT5pXr0HBze2V+Quk8s0+bU35hA7e8S19pAxon+aQefUymloECUulC1MubJ
-	 tjTltwS27LGnwkVIN93p+GJFkEkHk7P6HG/BA2KO3/9T3KCtNnsLQ+Xh5ZyZo0FGp0
-	 C2u1IR+fPESqRAgqpIPKVvjYIskgS8wkv9x0rj8Q=
+	by mail.kernel.org (Postfix) with ESMTP id 5FDBF2184B
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 19:10:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Wg4QR/xK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726313AbfAWTJm (ORCPT
+        id S1726361AbfAWTKO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 14:09:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40264 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725896AbfAWTJl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 14:09:41 -0500
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C21D72184B;
-        Wed, 23 Jan 2019 19:09:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548270581;
-        bh=zW7Ta9POVlZh+PSwhGR6T68BJo9n692c2oGfp6HGbEw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bZHxNfyqlcAab0OiEVJ57a0ewrbJmRtb1Ui2HfPZ2rf/y/0CCjRPdVI8LyjblW6aI
-         yjh1WpiP0SSCpavhdIXmumzUn5o5DUV+vEmCW0BxRo1jMYJgaf6nyNgtTYmLm+MAOb
-         GfdjnR4bG3rpk+UwsMtPt3HYirXgpLrDgixPVGAs=
-Date:   Wed, 23 Jan 2019 14:09:39 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     mchehab@kernel.org, ruizhao@microsoft.com,
-        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kernel@microsoft.com, will.deacon@arm.com, okaya@kernel.org
-Subject: Re: [PATCH] EDAC, dmc520:: add DMC520 EDAC driver
-Message-ID: <20190123190939.GQ202535@sasha-vm>
-References: <20190118162324.17123-1-sashal@kernel.org>
- <20190121123547.GF29166@zn.tnic>
- <20190123185007.GP202535@sasha-vm>
- <20190123190353.GE3227@zn.tnic>
+        Wed, 23 Jan 2019 14:10:14 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:40660 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726101AbfAWTKO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 14:10:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=WR9PUrRzUHma+Z7YOmuyL5asuyyyFMfZUNkzeEZT7Xw=; b=Wg4QR/xKdD2VqbA6sZua2U0vF
+        83H5qKeRVt47aKzlbF/c8UanYJUfK29oMo6RcF+lgzon7fd/upEUrB0WA6xdiFWcLc2CsOAUH3Tni
+        hS2Ch0x0gHznAUuxQVXq/oN+vT5yEk1qyU2L36nHCwEzp2Mh2esTB61qsdQzWf/bMwlbbCP474HHr
+        A/QIjzgtBWyRKzq5EX/XEJ7mMw6Hvf0oOumGjJyAI8rs5Br+WBPrgChkGtZZdhKCmvkBxN4iz6yRu
+        fqLDZj8659YgC5NINqmyuFNYewf76J8bAYZHW1vPraOq7jKJf3HDWZ9+uZGwF+JKMkT8wSlP/+AZF
+        arYpJc2ew==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gmNub-0008GK-IG; Wed, 23 Jan 2019 19:10:09 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 02C90236EC0DA; Wed, 23 Jan 2019 20:10:07 +0100 (CET)
+Date:   Wed, 23 Jan 2019 20:10:07 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v6 07/16] sched/core: uclamp: Add system default clamps
+Message-ID: <20190123191007.GG17749@hirez.programming.kicks-ass.net>
+References: <20190115101513.2822-1-patrick.bellasi@arm.com>
+ <20190115101513.2822-8-patrick.bellasi@arm.com>
+ <20190122135644.GP27931@hirez.programming.kicks-ass.net>
+ <20190122144329.ziimv6fejwvky7yb@e110439-lin>
+ <20190122151317.GH13777@hirez.programming.kicks-ass.net>
+ <20190122154129.mxnpgaoxnccbjbch@e110439-lin>
+ <20190123092210.GU27931@hirez.programming.kicks-ass.net>
+ <20190123141924.x36iqxh42lkssrxl@e110439-lin>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190123190353.GE3227@zn.tnic>
+In-Reply-To: <20190123141924.x36iqxh42lkssrxl@e110439-lin>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 08:03:54PM +0100, Borislav Petkov wrote:
->On Wed, Jan 23, 2019 at 01:50:07PM -0500, Sasha Levin wrote:
->> A variant of a Broadcom's SST100 board.
->
->Is that some platform which people will use and run linux on and thus
->would make sense to have an EDAC driver for or is this something
->devel-only toy thing?
+On Wed, Jan 23, 2019 at 02:19:24PM +0000, Patrick Bellasi wrote:
+> On 23-Jan 10:22, Peter Zijlstra wrote:
+> > On Tue, Jan 22, 2019 at 03:41:29PM +0000, Patrick Bellasi wrote:
+> > > On 22-Jan 16:13, Peter Zijlstra wrote:
+> > > > On Tue, Jan 22, 2019 at 02:43:29PM +0000, Patrick Bellasi wrote:
+> > 
+> > > > > Do you think that could be acceptable?
+> > > > 
+> > > > Think so, it's a sysctl poke, 'nobody' ever does that.
+> > > 
+> > > Cool, so... I'll keep lazy update for system default.
+> > 
+> > Ah, I think I misunderstood. I meant to say that since nobody ever pokes
+> > at sysctl's it doesn't matter if its a little more expensive and iterate
+> > everything.
+> 
+> Here I was more worried about the code complexity/overhead... for
+> something actually not very used/useful.
+> 
+> > Also; if you always keep everything up-to-date, you can avoid doing that
+> > duplicate accounting.
+> 
+> To update everything we will have to walk all the CPUs and update all
+> the RUNNABLE tasks currently enqueued, which are either RT or CFS.
+> 
+> That's way more expensive both in code and time then what we do for
+> cgroups, where at least we have a limited scope since the cgroup
+> already provides a (usually limited) list of tasks to consider.
+> 
+> Do you think it's really worth to have ?
 
-It will have (a lot of) use in prod, and is not just a toy :)
-
->Searching a bit doesn't tell me a whole lot except some enablement for
->some stingray SOC reference board...
-
-Right, they hardware we're working on is nothing more than reference
-boards at this point.
-
---
-Thanks,
-Sasha
+Dunno; the whole double bucket thing seems a bit weird to me; but maybe
+it will all look better without the mapping stuff.
