@@ -2,154 +2,140 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32976C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 20:23:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8719C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 20:24:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F41A4218A1
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 20:23:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (4096-bit key) header.d=kolabnow.com header.i=@kolabnow.com header.b="5EDDlqTK"
+	by mail.kernel.org (Postfix) with ESMTP id B166E21855
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 20:24:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726256AbfAWUXW (ORCPT
+        id S1726309AbfAWUYz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 15:23:22 -0500
-Received: from mx.kolabnow.com ([95.128.36.42]:35008 "EHLO mx.kolabnow.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726035AbfAWUXW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 15:23:22 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by ext-mx-out001.mykolab.com (Postfix) with ESMTP id E5A95658;
-        Wed, 23 Jan 2019 21:23:18 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kolabnow.com; h=
-        content-transfer-encoding:content-type:content-type:mime-version
-        :message-id:date:date:subject:subject:from:from:received
-        :received:received; s=dkim20160331; t=1548274997; x=1550089398;
-         bh=pPaA/6PU9D8RLaJ3eAVllinKWh+K6DClev5miX+hjCo=; b=5EDDlqTKcePT
-        LUBwxZFSTVckO1Fct05mnQYw51/FB/0H7f0bVn0ajORmihlDgN8kxriUtj5Q0b+w
-        7MA4FwDGV+Bay1pJhldR5ScllugpuOOAdRsyDaduQxgzSvx2jWXKrj4sjWHGj9ut
-        ee/+QeoGP3aaNkgT/CSwguzfQNDxcjzbmucXs8S5ieV+zbnJdAjGDcz6X5XgRcqT
-        y73lTUGnEWUUmG+kjB+WHxK2+aCdVLPDyNHS/fGlNGt4ahANs7jjHbSlsf6Xo4h+
-        7wKRjngroYBVVlln0+tTlY6A/66JGMBFwrj6QODuARvkYHYbaXsAznXVNA/FIKFb
-        spPUWHITqWMdcQXXbg0XfuheyUJmHh/sOSLvFgZVySoR2iT4U2fleITaNxsM9ChL
-        6I2P5YvLASXNKw5j4OUj1RfRo8QCVL7HjGtZrOMX7r8Uh6S9ZgiX2cTtMe/D70k2
-        u7CaB0PBiDR+sHNEQl78HpwLOcVEVVliNM0Dp9Jdh4NJio921JZhYCDOahfFjbOO
-        MBKsatChVOlsWqojoJbVpMf1/u2nTYlaazMpsHES31hY26VzLWcQKMqJm165Voph
-        y1rdzGDXJ9ytJ2WPuj5Jw1No+cqZ+/ZtVlrK+B34/VTLTI1B/O3LfMtAYsbVUusL
-        uKudwyUAyM05BtTZbPJvC0MiuDT71eM=
-X-Virus-Scanned: amavisd-new at mykolab.com
-Received: from mx.kolabnow.com ([127.0.0.1])
-        by localhost (ext-mx-out001.mykolab.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id NgeO-eEFlnhv; Wed, 23 Jan 2019 21:23:17 +0100 (CET)
-Received: from int-mx002.mykolab.com (unknown [10.9.13.2])
-        by ext-mx-out001.mykolab.com (Postfix) with ESMTPS id A3ED0B6;
-        Wed, 23 Jan 2019 21:23:17 +0100 (CET)
-Received: from ext-subm003.mykolab.com (unknown [10.9.6.3])
-        by int-mx002.mykolab.com (Postfix) with ESMTPS id 3BAC325A6;
-        Wed, 23 Jan 2019 21:23:17 +0100 (CET)
-From:   Federico Vaga <federico.vaga@vaga.pv.it>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Federico Vaga <federico.vaga@vaga.pv.it>
-Subject: [PATCH] doc:it_IT: update coding-style - expectations around bool
-Date:   Wed, 23 Jan 2019 21:22:55 +0100
-Message-Id: <20190123202255.16479-1-federico.vaga@vaga.pv.it>
+        Wed, 23 Jan 2019 15:24:55 -0500
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:39713 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726035AbfAWUYy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 15:24:54 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01353;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0TIsBfGx_1548275079;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TIsBfGx_1548275079)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 24 Jan 2019 04:24:42 +0800
+Subject: Re: [RFC PATCH] mm: vmscan: do not iterate all mem cgroups for global
+ direct reclaim
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     hannes@cmpxchg.org, akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <1548187782-108454-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20190123095926.GS4087@dhcp22.suse.cz>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <3684a63c-4c1d-fd1a-cda5-af92fb6bea8d@linux.alibaba.com>
+Date:   Wed, 23 Jan 2019 12:24:38 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20190123095926.GS4087@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch translates in Italian the content of the following patch
 
-7967656ffbfa coding-style: Clarify the expectations around bool
 
-Signed-off-by: Federico Vaga <federico.vaga@vaga.pv.it>
----
- .../it_IT/process/coding-style.rst            | 43 ++++++++++++++++---
- 1 file changed, 38 insertions(+), 5 deletions(-)
+On 1/23/19 1:59 AM, Michal Hocko wrote:
+> On Wed 23-01-19 04:09:42, Yang Shi wrote:
+>> In current implementation, both kswapd and direct reclaim has to iterate
+>> all mem cgroups.  It is not a problem before offline mem cgroups could
+>> be iterated.  But, currently with iterating offline mem cgroups, it
+>> could be very time consuming.  In our workloads, we saw over 400K mem
+>> cgroups accumulated in some cases, only a few hundred are online memcgs.
+>> Although kswapd could help out to reduce the number of memcgs, direct
+>> reclaim still get hit with iterating a number of offline memcgs in some
+>> cases.  We experienced the responsiveness problems due to this
+>> occassionally.
+> Can you provide some numbers?
 
-diff --git a/Documentation/translations/it_IT/process/coding-style.rst b/Documentation/translations/it_IT/process/coding-style.rst
-index dfdefb951b89..2fd0e7f79d55 100644
---- a/Documentation/translations/it_IT/process/coding-style.rst
-+++ b/Documentation/translations/it_IT/process/coding-style.rst
-@@ -949,7 +949,40 @@ qualche valore fuori dai limiti.  Un tipico esempio è quello delle funzioni
- che ritornano un puntatore; queste utilizzano NULL o ERR_PTR come meccanismo
- di notifica degli errori.
- 
--17) Non reinventate le macro del kernel
-+17) L'uso di bool
-+-----------------
-+
-+Nel kernel Linux il tipo bool deriva dal tipo _Bool dello standard C99.
-+Un valore bool può assumere solo i valori 0 o 1, e implicitamente o
-+esplicitamente la conversione a bool converte i valori in vero (*true*) o
-+falso (*false*).  Quando si usa un tipo bool il costrutto !! non sarà più
-+necessario, e questo va ad eliminare una certa serie di bachi.
-+
-+Quando si usano i valori booleani, dovreste utilizzare le definizioni di true
-+e false al posto dei valori 1 e 0.
-+
-+Per il valore di ritorno delle funzioni e per le variabili sullo stack, l'uso
-+del tipo bool è sempre appropriato.  L'uso di bool viene incoraggiato per
-+migliorare la leggibilità e spesso è molto meglio di 'int' nella gestione di
-+valori booleani.
-+
-+Non usate bool se per voi sono importanti l'ordine delle righe di cache o
-+la loro dimensione; la dimensione e l'allineamento cambia a seconda
-+dell'architettura per la quale è stato compilato.  Le strutture che sono state
-+ottimizzate per l'allineamento o la dimensione non dovrebbero usare bool.
-+
-+Se una struttura ha molti valori true/false, considerate l'idea di raggrupparli
-+in un intero usando campi da 1 bit, oppure usate un tipo dalla larghezza fissa,
-+come u8.
-+
-+Come per gli argomenti delle funzioni, molti valori true/false possono essere
-+raggruppati in un singolo argomento a bit denominato 'flags'; spesso 'flags' è
-+un'alternativa molto più leggibile se si hanno valori costanti per true/false.
-+
-+Detto ciò, un uso parsimonioso di bool nelle strutture dati e negli argomenti
-+può migliorare la leggibilità.
-+
-+18) Non reinventate le macro del kernel
- ---------------------------------------
- 
- Il file di intestazione include/linux/kernel.h contiene un certo numero
-@@ -973,7 +1006,7 @@ rigido sui tipi.  Sentitevi liberi di leggere attentamente questo file
- d'intestazione per scoprire cos'altro è stato definito che non dovreste
- reinventare nel vostro codice.
- 
--18) Linee di configurazione degli editor e altre schifezze
-+19) Linee di configurazione degli editor e altre schifezze
- -----------------------------------------------------------
- 
- Alcuni editor possono interpretare dei parametri di configurazione integrati
-@@ -1007,8 +1040,8 @@ d'indentazione e di modalità d'uso.  Le persone potrebbero aver configurato una
- modalità su misura, oppure potrebbero avere qualche altra magia per far
- funzionare bene l'indentazione.
- 
--19) Inline assembly
-----------------------
-+20) Inline assembly
-+-------------------
- 
- Nel codice specifico per un'architettura, potreste aver bisogno di codice
- *inline assembly* per interfacciarvi col processore o con una funzionalità
-@@ -1040,7 +1073,7 @@ al fine di allineare correttamente l'assembler che verrà generato:
- 	     "more_magic %reg2, %reg3"
- 	     : /* outputs */ : /* inputs */ : /* clobbers */);
- 
--20) Compilazione sotto condizione
-+21) Compilazione sotto condizione
- ---------------------------------
- 
- Ovunque sia possibile, non usate le direttive condizionali del preprocessore
--- 
-2.20.1
+What numbers do you mean? How long did it take to iterate all the 
+memcgs? For now I don't have the exact number for the production 
+environment, but the unresponsiveness is visible.
+
+I had some test number with triggering direct reclaim with 8k memcgs 
+artificially, which has just one clean page charged for each memcg, so 
+the reclaim is cheaper than real production environment.
+
+perf shows it took around 220ms to iterate 8k memcgs:
+
+               dd 13873 [011]   578.542919: 
+vmscan:mm_vmscan_direct_reclaim_begin
+               dd 13873 [011]   578.758689: 
+vmscan:mm_vmscan_direct_reclaim_end
+
+So, iterating 400K would take at least 11s in this artificial case. The 
+production environment is much more complicated, so it would take much 
+longer in fact.
+
+>
+>> Here just break the iteration once it reclaims enough pages as what
+>> memcg direct reclaim does.  This may hurt the fairness among memcgs
+>> since direct reclaim may awlays do reclaim from same memcgs.  But, it
+>> sounds ok since direct reclaim just tries to reclaim SWAP_CLUSTER_MAX
+>> pages and memcgs can be protected by min/low.
+> OK, this makes some sense to me. The purpose of the direct reclaim is
+> to reclaim some memory and throttle the allocation pace. The iterator is
+> cached so the next reclaimer on the same hierarchy will simply continue
+> so the fairness should be more or less achieved.
+
+Yes, you are right. I missed this point.
+
+>
+> Btw. is there any reason to keep !global_reclaim() check in place? Why
+> is it not sufficient to exclude kswapd?
+
+Iterating all memcgs in kswapd is still useful to help to reduce those 
+zombie memcgs.
+
+Thanks,
+Yang
+
+>
+>> Cc: Johannes Weiner <hannes@cmpxchg.org>
+>> Cc: Michal Hocko <mhocko@suse.com>
+>> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+>> ---
+>>   mm/vmscan.c | 7 +++----
+>>   1 file changed, 3 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/mm/vmscan.c b/mm/vmscan.c
+>> index a714c4f..ced5a16 100644
+>> --- a/mm/vmscan.c
+>> +++ b/mm/vmscan.c
+>> @@ -2764,16 +2764,15 @@ static bool shrink_node(pg_data_t *pgdat, struct scan_control *sc)
+>>   				   sc->nr_reclaimed - reclaimed);
+>>   
+>>   			/*
+>> -			 * Direct reclaim and kswapd have to scan all memory
+>> -			 * cgroups to fulfill the overall scan target for the
+>> -			 * node.
+>> +			 * Kswapd have to scan all memory cgroups to fulfill
+>> +			 * the overall scan target for the node.
+>>   			 *
+>>   			 * Limit reclaim, on the other hand, only cares about
+>>   			 * nr_to_reclaim pages to be reclaimed and it will
+>>   			 * retry with decreasing priority if one round over the
+>>   			 * whole hierarchy is not sufficient.
+>>   			 */
+>> -			if (!global_reclaim(sc) &&
+>> +			if ((!global_reclaim(sc) || !current_is_kswapd()) &&
+>>   					sc->nr_reclaimed >= sc->nr_to_reclaim) {
+>>   				mem_cgroup_iter_break(root, memcg);
+>>   				break;
+>> -- 
+>> 1.8.3.1
+>>
 
