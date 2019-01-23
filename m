@@ -2,126 +2,124 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6B5CC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:57:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92611C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:59:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94D0B2184B
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:57:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 653C82184B
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:59:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="h5IRtFuI"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="I9aCRh9N"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726265AbfAWS5T (ORCPT
+        id S1726249AbfAWS7s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 13:57:19 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:38199 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725976AbfAWS5T (ORCPT
+        Wed, 23 Jan 2019 13:59:48 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:52982 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726027AbfAWS7s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 13:57:19 -0500
-Received: by mail-pg1-f196.google.com with SMTP id g189so1474731pgc.5
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 10:57:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
-         :content-transfer-encoding;
-        bh=uzkyORv9WHDjxXAzIFaE9ySsH2mGC9U4XGK9nC78CHA=;
-        b=h5IRtFuIVJH/cG3FVACxeIC4AI/AcK3/3xbMyrcYh3sq2L98YlyPIylJWOA+NPneVq
-         vfpL9vMlD+w1B0AJ8UnE8lS+zZ2cUt/ASW7a8Ut/w1V6JHuaQ3pA3TqkfcYef94rwMIj
-         YsYUEO5Y+cQ5NV6MDHoA3LdJQAjuzS76/EdhuzrXSoXS12Yr7610MpwxonbjZ+Q9/anS
-         vM8Ll+P7kPlMJ/T91z9FsBr9j7t/PgurOX3ZPhhiPv38ARc+7RyWtiEJ7oT8LyhaRl0k
-         aFd9kP+sZYJsXMJHB5bn3d2vZ0JtpGRUw9U1KoCc8twFRm8aA+aIZiICADoDeBE5mTpu
-         7eSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=uzkyORv9WHDjxXAzIFaE9ySsH2mGC9U4XGK9nC78CHA=;
-        b=i522Jx+t+UrZDQlwic//8mvexFcZTuKwh9N158FT9pNxXydW5ZdFa1SLtO/+llPk0T
-         7UZ9UTmcR91BIDFItWl3oDxpa5zgHTTeP0PzlU34WaBkZ9cAiF/SFVoJ+/9IB3yjUI+B
-         1rh64wRsy0cN2uMJUvh0V7UuVsLHi0nAqoQUunwjP5e1VHFAQOL42WuqdsXWvgiGOlmE
-         jLGKP/IzdQGH1cmAZuMXZYNMW9R7jHbIY5/+/ll4ANMhkq3SrEisoMEGxCii8kstt/PQ
-         3gY2ZOcS1iSDSzB6jQmwhTJthlKLdR32oqdHCsVmPkf/FmN8BXvm0qC3G2hMXq1PY/BV
-         TbHQ==
-X-Gm-Message-State: AJcUukeA/Sz53lYdLs0l6NU0K8ff4KVTUFVp6/QMNVeKOK3utBRGLhr+
-        Azq/UZ8aeOtWxm/K60vcaTLWEQ==
-X-Google-Smtp-Source: ALg8bN5mwouh5JuNw9Q+C5Y6nK005HnUqC2PlgGXjXxercm2orfgwKaSxnp0K6Ef32dTNhpSeMxLZQ==
-X-Received: by 2002:a63:bd51:: with SMTP id d17mr3068841pgp.443.1548269838008;
-        Wed, 23 Jan 2019 10:57:18 -0800 (PST)
-Received: from localhost ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id z62sm28719238pfi.4.2019.01.23.10.57.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 23 Jan 2019 10:57:16 -0800 (PST)
-Date:   Wed, 23 Jan 2019 10:57:16 -0800 (PST)
-X-Google-Original-Date: Wed, 23 Jan 2019 10:51:09 PST (-0800)
-Subject:     Re: [PATCH v4 0/5] IRQ affinity support in PLIC driver
-In-Reply-To: <CAAhSdy0NYKgX0whXLF8h9Pjeg05D=pL8FcH674jTrTwUX3YX3Q@mail.gmail.com>
-CC:     aou@eecs.berkeley.edu, daniel.lezcano@linaro.org,
-        tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
-        atish.patra@wdc.com, Christoph Hellwig <hch@infradead.org>,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:     anup@brainfault.org
-Message-ID: <mhng-228e5168-7ccc-49e6-91a3-a883a2aa8e58@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Wed, 23 Jan 2019 13:59:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=dgfqcSanb6lp9vXdmjSxOrnt6Pt+KGuiUR8MqoSxjtE=; b=I9aCRh9NxXEkgaarWs8JkHsB2
+        TMXVjUSy/Hy9/cXLp1VbmmzrZe1f5hkReu9jj0zg2LBmSSyjGnk0yngC3grF4incfpJpTJyKdIGoC
+        lqYlLWvPM6ZwYYg49Ue10/qM+HZsduT+3xFZSH5bITQ4Z9J8qoMTE8TsVhlj6OZZqJxCZTKEIA/+Y
+        onAhUUGqPzCZZu+qp5tEiXcEOorfzECaY/xg4lEA6zaWdnef7LObxH+Y/ymDjVjO8gJ8l+LEpliAF
+        GsNitQuAT5I8kFwQXvYa5sxbBgXfHMQ8FzIk/omNNI46UI0IlmvwxkAduLNKAGPCZJKnfgdFIYBaL
+        Gwoxb553w==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gmNkV-0000w4-0X; Wed, 23 Jan 2019 18:59:43 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 4BD1C201EC16E; Wed, 23 Jan 2019 19:59:40 +0100 (CET)
+Date:   Wed, 23 Jan 2019 19:59:40 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v6 05/16] sched/core: uclamp: Update CPU's refcount on
+ clamp changes
+Message-ID: <20190123185940.GF17749@hirez.programming.kicks-ass.net>
+References: <20190121153308.GL27931@hirez.programming.kicks-ass.net>
+ <20190121154412.fak2t2iquj3aixtu@e110439-lin>
+ <20190122093704.GM27931@hirez.programming.kicks-ass.net>
+ <20190122104305.6vjx37muqsxm536t@e110439-lin>
+ <20190122132817.GG13777@hirez.programming.kicks-ass.net>
+ <20190122140115.twtx646vewm757ca@e110439-lin>
+ <20190122145742.GQ27931@hirez.programming.kicks-ass.net>
+ <20190122153315.dhjl67sgpu74hmqv@e110439-lin>
+ <20190123091634.GT27931@hirez.programming.kicks-ass.net>
+ <20190123141426.5samtr4hl6okdypu@e110439-lin>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190123141426.5samtr4hl6okdypu@e110439-lin>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 08 Jan 2019 04:14:05 PST (-0800), anup@brainfault.org wrote:
-> On Thu, Dec 27, 2018 at 4:48 PM Anup Patel <anup@brainfault.org> wrote:
->>
->> This patchset primarily adds IRQ affinity support in PLIC driver and
->> other improvements.
->>
->> It gives mechanism for explicitly route external interrupts to particular
->> CPUs using smp_affinity attribute of each Linux IRQs. Also, we can now
->> use IRQ balancer from kernel-space or user-space.
->>
->> The patchset is tested on QEMU virt machine. It is based on Linux-4.20
->> and can be found at riscv_plic_irq_affinity_v4 branch of:
->> https://github.com/avpatel/linux.git
->>
->> Changes since v3:
->>  - Dropped PATCH2
->>  - Added PATCH to not inline plic_toggle() and plic_irq_toggle()
->>  - Moved PATCH3 changes to PATCH6
->>  - Used WARN_ON_ONCE() instead of WARN_ON() in PATCH5
->>
->> Changes since v2:
->>  - Fixed incorrect address of enable registers using sizeof(u32) in PATCH1
->>  - Retained comment about need for locking in PATCH1
->>  - Split PATCH2 into two patches
->>  - Split PATCH3 into two patches
->>  - Minor fix in commit description of PATCH4
->>
->> Changes since v1:
->>  - Removed few whitspace changes from PATCH1
->>  - Keep use of DEFINE_PER_CPU() as it is
->>
->> Anup Patel (5):
->>   irqchip: sifive-plic: Pre-compute context hart base and enable base
->>   irqchip: sifive-plic: Don't inline plic_toggle() and plic_irq_toggle()
->>   irqchip: sifive-plic: Add warning in plic_init() if handler already
->>     present
->>   irqchip: sifive-plic: Differentiate between PLIC handler and context
->>   irqchip: sifive-plic: Implement irq_set_affinity() for SMP host
->>
->>  drivers/irqchip/irq-sifive-plic.c | 110 +++++++++++++++++++-----------
->>  1 file changed, 71 insertions(+), 39 deletions(-)
->>
->> --
->> 2.17.1
->>
->
-> Any comments on this series??
+On Wed, Jan 23, 2019 at 02:14:26PM +0000, Patrick Bellasi wrote:
 
-Sorry, I haven't had a chance to take a look -- I've still a bit too behind on 
-getting my act together on our fixes and haven't had time to take a look at 
-things for the next merge window.
+> > > Consider also that the uclamp_task_update_active() added by this patch
+> > > not only has lower overhead but it will be use also by cgroups where
+> > > we want to force update all the tasks on a cgroup's clamp change.
+> > 
+> > I haven't gotten that far; but I would prefer not to have two different
+> > 'change' paths in __sched_setscheduler().
+> 
+> Yes, I agree that two paths in __sched_setscheduler() could be
+> confusing. Still we have to consider that here we are adding
+> "not class specific" attributes.
+
+But that change thing is not class specific; the whole:
+
+
+	rq = task_rq_lock(p, &rf);
+	queued = task_on_rq_queued(p);
+	running = task_current(rq, p);
+	if (queued)
+		dequeue_task(rq, p, queue_flags);
+	if (running)
+		put_prev_task(rq, p);
+
+
+	/* @p is in it's invariant state; frob it's state */
+
+
+	if (queued)
+		enqueue_task(rq, p, queue_flags);
+	if (running)
+		set_curr_task(rq, p);
+	task_rq_unlock(rq, p, &rf);
+
+
+pattern is all over the place; it is just because C sucks that that
+isn't more explicitly shared (do_set_cpus_allowed(), rt_mutex_setprio(),
+set_user_nice(), __sched_setscheduler(), sched_setnuma(),
+sched_move_task()).
+
+This is _the_ pattern for changing state and is not class specific at
+all.
+
