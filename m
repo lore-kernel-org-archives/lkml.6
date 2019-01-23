@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8BF9C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 15:16:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DECB5C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 15:17:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FBA0217D4
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 15:16:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9ADF217D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 15:17:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726546AbfAWPQ4 (ORCPT
+        id S1726200AbfAWPQd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 10:16:56 -0500
-Received: from mga05.intel.com ([192.55.52.43]:51376 "EHLO mga05.intel.com"
+        Wed, 23 Jan 2019 10:16:33 -0500
+Received: from mga05.intel.com ([192.55.52.43]:51361 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726256AbfAWPQf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 10:16:35 -0500
+        id S1726126AbfAWPQ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 10:16:29 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jan 2019 07:16:35 -0800
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jan 2019 07:16:29 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,511,1539673200"; 
-   d="scan'208";a="120686065"
+   d="scan'208";a="120686047"
 Received: from otc-lr-04.jf.intel.com ([10.54.39.129])
-  by orsmga003.jf.intel.com with ESMTP; 23 Jan 2019 07:16:35 -0800
+  by orsmga003.jf.intel.com with ESMTP; 23 Jan 2019 07:16:29 -0800
 From:   kan.liang@linux.intel.com
 To:     peterz@infradead.org, acme@kernel.org, tglx@linutronix.de,
         mingo@redhat.com, linux-kernel@vger.kernel.org
 Cc:     eranian@google.com, jolsa@redhat.com, namhyung@kernel.org,
         ak@linux.intel.com, Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V2 09/12] perf tools: Add support for PERF_SAMPLE_CODE_PAGE_SIZE
-Date:   Wed, 23 Jan 2019 07:15:27 -0800
-Message-Id: <1548256530-10065-9-git-send-email-kan.liang@linux.intel.com>
+Subject: [PATCH V2 05/12] perf mem: Clean up output format and sort order string
+Date:   Wed, 23 Jan 2019 07:15:23 -0800
+Message-Id: <1548256530-10065-5-git-send-email-kan.liang@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1548256530-10065-1-git-send-email-kan.liang@linux.intel.com>
 References: <1548256530-10065-1-git-send-email-kan.liang@linux.intel.com>
@@ -44,157 +44,232 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephane Eranian <eranian@google.com>
+From: Kan Liang <kan.liang@linux.intel.com>
 
-Adds the infrastructure to sample the code address page size.
+Now, "--phys-data" is the only option which impacts the output format
+and sort order. A simple "if else" is enough to handle the option.
+But there will be more options added, e.g. "--data-page-size", which
+also impact the output format and sort order. The code will become too
+complex to be maintained.
 
-Introduce a new --code-page-size option for perf record.
+Divide the big printf into several small pieces. Output the specific
+piece only if the related option is applied.
 
-Signed-off-by: Stephane Eranian <eranian@google.com>
+Divide the big sort order string into several small pieces as well.
+Appends specific sort string only if the related option is applied.
+
+No functional change.
+
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 ---
 
 No changes since V1
 
- tools/include/uapi/linux/perf_event.h    |  4 +++-
- tools/perf/Documentation/perf-record.txt |  3 +++
- tools/perf/builtin-record.c              |  2 ++
- tools/perf/perf.h                        |  1 +
- tools/perf/util/event.h                  |  1 +
- tools/perf/util/evsel.c                  | 18 ++++++++++++++++++
- 6 files changed, 28 insertions(+), 1 deletion(-)
+ tools/perf/builtin-mem.c | 132 +++++++++++++++++++++++------------------------
+ tools/perf/util/sort.h   |   2 +
+ 2 files changed, 66 insertions(+), 68 deletions(-)
 
-diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux/perf_event.h
-index 9d3d2af..e4e7e7a 100644
---- a/tools/include/uapi/linux/perf_event.h
-+++ b/tools/include/uapi/linux/perf_event.h
-@@ -142,8 +142,9 @@ enum perf_event_sample_format {
- 	PERF_SAMPLE_REGS_INTR			= 1U << 18,
- 	PERF_SAMPLE_PHYS_ADDR			= 1U << 19,
- 	PERF_SAMPLE_DATA_PAGE_SIZE		= 1U << 20,
-+	PERF_SAMPLE_CODE_PAGE_SIZE		= 1U << 21,
+diff --git a/tools/perf/builtin-mem.c b/tools/perf/builtin-mem.c
+index 57393e9..6048fca 100644
+--- a/tools/perf/builtin-mem.c
++++ b/tools/perf/builtin-mem.c
+@@ -14,6 +14,7 @@
+ #include "util/mem-events.h"
+ #include "util/debug.h"
+ #include "util/symbol.h"
++#include "util/sort.h"
  
--	PERF_SAMPLE_MAX = 1U << 21,		/* non-ABI */
-+	PERF_SAMPLE_MAX = 1U << 22,		/* non-ABI */
+ #define MEM_OPERATION_LOAD	0x1
+ #define MEM_OPERATION_STORE	0x2
+@@ -153,7 +154,7 @@ dump_raw_samples(struct perf_tool *tool,
+ {
+ 	struct perf_mem *mem = container_of(tool, struct perf_mem, tool);
+ 	struct addr_location al;
+-	const char *fmt;
++	const char *fmt, *field_sep;
  
- 	__PERF_SAMPLE_CALLCHAIN_EARLY		= 1ULL << 63, /* non-ABI; internal use */
- };
-@@ -863,6 +864,7 @@ enum perf_event_type {
- 	 *	  u64			regs[weight(mask)]; } && PERF_SAMPLE_REGS_INTR
- 	 *	{ u64			phys_addr;} && PERF_SAMPLE_PHYS_ADDR
- 	 *	{ u64			data_page_size;} && PERF_SAMPLE_DATA_PAGE_SIZE
-+	 *	{ u64			code_page_size;} && PERF_SAMPLE_CODE_PAGE_SIZE
- 	 * };
- 	 */
- 	PERF_RECORD_SAMPLE			= 9,
-diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
-index c2a2875..edaaeca 100644
---- a/tools/perf/Documentation/perf-record.txt
-+++ b/tools/perf/Documentation/perf-record.txt
-@@ -267,6 +267,9 @@ OPTIONS
- --data-page-size::
- 	Record the sampled data address data page size
+ 	if (machine__resolve(machine, &al, sample) < 0) {
+ 		fprintf(stderr, "problem processing %d event, skipping it.\n",
+@@ -167,60 +168,45 @@ dump_raw_samples(struct perf_tool *tool,
+ 	if (al.map != NULL)
+ 		al.map->dso->hit = 1;
  
-+--code-page-size::
-+	Record the sampled code address (ip) page size
-+
- -T::
- --timestamp::
- 	Record the sample timestamps. Use it with 'perf report -D' to see the
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index 50869f6..687e990 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -1865,6 +1865,8 @@ static struct option __record_options[] = {
- 		    "Record the sample physical addresses"),
- 	OPT_BOOLEAN(0, "data-page-size", &record.opts.sample_data_page_size,
- 		    "Record the sampled data address data page size"),
-+	OPT_BOOLEAN(0, "code-page-size", &record.opts.sample_code_page_size,
-+		    "Record the sampled code address page size"),
- 	OPT_BOOLEAN(0, "sample-cpu", &record.opts.sample_cpu, "Record the sample cpu"),
- 	OPT_BOOLEAN_SET('T', "timestamp", &record.opts.sample_time,
- 			&record.opts.sample_time_set,
-diff --git a/tools/perf/perf.h b/tools/perf/perf.h
-index b17d08d..36f7b4c 100644
---- a/tools/perf/perf.h
-+++ b/tools/perf/perf.h
-@@ -49,6 +49,7 @@ struct record_opts {
- 	bool	     sample_address;
- 	bool	     sample_phys_addr;
- 	bool	     sample_data_page_size;
-+	bool	     sample_code_page_size;
- 	bool	     sample_weight;
- 	bool	     sample_time;
- 	bool	     sample_time_set;
-diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
-index bf0346f..14493f1 100644
---- a/tools/perf/util/event.h
-+++ b/tools/perf/util/event.h
-@@ -203,6 +203,7 @@ struct perf_sample {
- 	u64 data_src;
- 	u64 phys_addr;
- 	u64 data_page_size;
-+	u64 code_page_size;
- 	u32 flags;
- 	u16 insn_len;
- 	u8  cpumode;
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 2ef94d5..3581693 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -1022,6 +1022,9 @@ void perf_evsel__config(struct perf_evsel *evsel, struct record_opts *opts,
- 	if (opts->sample_data_page_size)
- 		perf_evsel__set_sample_bit(evsel, DATA_PAGE_SIZE);
- 
-+	if (opts->sample_code_page_size)
-+		perf_evsel__set_sample_bit(evsel, CODE_PAGE_SIZE);
-+
- 	if (opts->no_buffering) {
- 		attr->watermark = 0;
- 		attr->wakeup_events = 1;
-@@ -1562,6 +1565,7 @@ static void __p_sample_type(char *buf, size_t size, u64 value)
- 		bit_name(BRANCH_STACK), bit_name(REGS_USER), bit_name(STACK_USER),
- 		bit_name(IDENTIFIER), bit_name(REGS_INTR), bit_name(DATA_SRC),
- 		bit_name(WEIGHT), bit_name(PHYS_ADDR), bit_name(DATA_PAGE_SIZE),
-+		bit_name(CODE_PAGE_SIZE),
- 		{ .name = NULL, }
- 	};
- #undef bit_name
-@@ -2384,6 +2388,12 @@ int perf_evsel__parse_sample(struct perf_evsel *evsel, union perf_event *event,
- 		array++;
- 	}
- 
-+	data->code_page_size = PERF_PAGE_SIZE_NONE;
-+	if (type & PERF_SAMPLE_CODE_PAGE_SIZE) {
-+		data->code_page_size = *array;
-+		array++;
+-	if (mem->phys_addr) {
+-		if (symbol_conf.field_sep) {
+-			fmt = "%d%s%d%s0x%"PRIx64"%s0x%"PRIx64"%s0x%016"PRIx64
+-			      "%s%"PRIu64"%s0x%"PRIx64"%s%s:%s\n";
+-		} else {
+-			fmt = "%5d%s%5d%s0x%016"PRIx64"%s0x016%"PRIx64
+-			      "%s0x%016"PRIx64"%s%5"PRIu64"%s0x%06"PRIx64
+-			      "%s%s:%s\n";
+-			symbol_conf.field_sep = " ";
+-		}
+-
+-		printf(fmt,
+-			sample->pid,
+-			symbol_conf.field_sep,
+-			sample->tid,
+-			symbol_conf.field_sep,
+-			sample->ip,
+-			symbol_conf.field_sep,
+-			sample->addr,
+-			symbol_conf.field_sep,
+-			sample->phys_addr,
+-			symbol_conf.field_sep,
+-			sample->weight,
+-			symbol_conf.field_sep,
+-			sample->data_src,
+-			symbol_conf.field_sep,
+-			al.map ? (al.map->dso ? al.map->dso->long_name : "???") : "???",
+-			al.sym ? al.sym->name : "???");
++	field_sep = symbol_conf.field_sep;
++	if (field_sep) {
++		fmt = "%d%s%d%s0x%"PRIx64"%s0x%"PRIx64"%s";
+ 	} else {
+-		if (symbol_conf.field_sep) {
+-			fmt = "%d%s%d%s0x%"PRIx64"%s0x%"PRIx64"%s%"PRIu64
+-			      "%s0x%"PRIx64"%s%s:%s\n";
+-		} else {
+-			fmt = "%5d%s%5d%s0x%016"PRIx64"%s0x016%"PRIx64
+-			      "%s%5"PRIu64"%s0x%06"PRIx64"%s%s:%s\n";
+-			symbol_conf.field_sep = " ";
+-		}
++		fmt = "%5d%s%5d%s0x%016"PRIx64"%s0x016%"PRIx64"%s";
++		symbol_conf.field_sep = " ";
 +	}
-+
- 	return 0;
- }
++	printf(fmt,
++		sample->pid,
++		symbol_conf.field_sep,
++		sample->tid,
++		symbol_conf.field_sep,
++		sample->ip,
++		symbol_conf.field_sep,
++		sample->addr,
++		symbol_conf.field_sep);
  
-@@ -2539,6 +2549,9 @@ size_t perf_event__sample_event_size(const struct perf_sample *sample, u64 type,
- 	if (type & PERF_SAMPLE_DATA_PAGE_SIZE)
- 		result += sizeof(u64);
- 
-+	if (type & PERF_SAMPLE_CODE_PAGE_SIZE)
-+		result += sizeof(u64);
-+
- 	return result;
- }
- 
-@@ -2713,6 +2726,11 @@ int perf_event__synthesize_sample(union perf_event *event, u64 type,
- 		array++;
++	if (mem->phys_addr) {
++		if (field_sep)
++			fmt = "0x%"PRIx64"%s";
++		else
++			fmt = "0x%016"PRIx64"%s";
+ 		printf(fmt,
+-			sample->pid,
+-			symbol_conf.field_sep,
+-			sample->tid,
+-			symbol_conf.field_sep,
+-			sample->ip,
+-			symbol_conf.field_sep,
+-			sample->addr,
+-			symbol_conf.field_sep,
+-			sample->weight,
+-			symbol_conf.field_sep,
+-			sample->data_src,
+-			symbol_conf.field_sep,
+-			al.map ? (al.map->dso ? al.map->dso->long_name : "???") : "???",
+-			al.sym ? al.sym->name : "???");
++			sample->phys_addr,
++			symbol_conf.field_sep);
  	}
- 
-+	if (type & PERF_SAMPLE_CODE_PAGE_SIZE) {
-+		*array = sample->code_page_size;
-+		array++;
-+	}
 +
++	if (field_sep)
++		fmt = "%"PRIu64"%s0x%"PRIx64"%s%s:%s\n";
++	else
++		fmt = "%5"PRIu64"%s0x%06"PRIx64"%s%s:%s\n";
++
++	printf(fmt,
++		sample->weight,
++		symbol_conf.field_sep,
++		sample->data_src,
++		symbol_conf.field_sep,
++		al.map ? (al.map->dso ? al.map->dso->long_name : "???") : "???",
++		al.sym ? al.sym->name : "???");
+ out_put:
+ 	addr_location__put(&al);
  	return 0;
- }
+@@ -262,10 +248,12 @@ static int report_raw_events(struct perf_mem *mem)
+ 	if (ret < 0)
+ 		goto out_delete;
  
++	printf("# PID, TID, IP, ADDR, ");
++
+ 	if (mem->phys_addr)
+-		printf("# PID, TID, IP, ADDR, PHYS ADDR, LOCAL WEIGHT, DSRC, SYMBOL\n");
+-	else
+-		printf("# PID, TID, IP, ADDR, LOCAL WEIGHT, DSRC, SYMBOL\n");
++		printf("PHYS ADDR, ");
++
++	printf("LOCAL WEIGHT, DSRC, SYMBOL\n");
+ 
+ 	ret = perf_session__process_events(session);
+ 
+@@ -273,11 +261,30 @@ static int report_raw_events(struct perf_mem *mem)
+ 	perf_session__delete(session);
+ 	return ret;
+ }
++static char *get_sort_order(struct perf_mem *mem)
++{
++	char sort[MAX_SORT_ORDER_STR];
++
++	/*
++	 * there is no weight (cost) associated with stores, so don't print
++	 * the column
++	 */
++	if (mem->operation & MEM_OPERATION_STORE)
++		strcpy(sort, "--sort=mem,sym,dso,symbol_daddr,dso_daddr,tlb,locked");
++	else
++		strcpy(sort, default_mem_sort_order);
++
++	if (mem->phys_addr)
++		strcat(sort, ",phys_daddr");
++
++	return strdup(sort);
++}
+ 
+ static int report_events(int argc, const char **argv, struct perf_mem *mem)
+ {
+ 	const char **rep_argv;
+ 	int ret, i = 0, j, rep_argc;
++	char *new_sort_order;
+ 
+ 	if (mem->dump_raw)
+ 		return report_raw_events(mem);
+@@ -291,20 +298,9 @@ static int report_events(int argc, const char **argv, struct perf_mem *mem)
+ 	rep_argv[i++] = "--mem-mode";
+ 	rep_argv[i++] = "-n"; /* display number of samples */
+ 
+-	/*
+-	 * there is no weight (cost) associated with stores, so don't print
+-	 * the column
+-	 */
+-	if (!(mem->operation & MEM_OPERATION_LOAD)) {
+-		if (mem->phys_addr)
+-			rep_argv[i++] = "--sort=mem,sym,dso,symbol_daddr,"
+-					"dso_daddr,tlb,locked,phys_daddr";
+-		else
+-			rep_argv[i++] = "--sort=mem,sym,dso,symbol_daddr,"
+-					"dso_daddr,tlb,locked";
+-	} else if (mem->phys_addr)
+-		rep_argv[i++] = "--sort=local_weight,mem,sym,dso,symbol_daddr,"
+-				"dso_daddr,snoop,tlb,locked,phys_daddr";
++	new_sort_order = get_sort_order(mem);
++	if (new_sort_order)
++		rep_argv[i++] = new_sort_order;
+ 
+ 	for (j = 1; j < argc; j++, i++)
+ 		rep_argv[i] = argv[j];
+diff --git a/tools/perf/util/sort.h b/tools/perf/util/sort.h
+index ea8ff64..fc8290c 100644
+--- a/tools/perf/util/sort.h
++++ b/tools/perf/util/sort.h
+@@ -46,6 +46,8 @@ extern struct sort_entry sort_srcline;
+ extern enum sort_type sort__first_dimension;
+ extern const char default_mem_sort_order[];
+ 
++#define MAX_SORT_ORDER_STR	128
++
+ struct he_stat {
+ 	u64			period;
+ 	u64			period_sys;
 -- 
 2.7.4
 
