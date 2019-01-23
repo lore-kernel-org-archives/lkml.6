@@ -2,152 +2,171 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61F2DC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:35:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E23CC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:35:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C1F421726
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:35:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A0CA21019
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:35:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HpZZAkXN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727159AbfAWJfR (ORCPT
+        id S1727204AbfAWJfq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 04:35:17 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36086 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726207AbfAWJfR (ORCPT
+        Wed, 23 Jan 2019 04:35:46 -0500
+Received: from mail-vk1-f195.google.com ([209.85.221.195]:42302 "EHLO
+        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726207AbfAWJfq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 04:35:17 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0N9VQKk137432
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 04:35:15 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2q6mfj31t0-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 04:35:15 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
-        Wed, 23 Jan 2019 09:35:14 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 23 Jan 2019 09:35:11 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0N9ZA1O56557616
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 23 Jan 2019 09:35:10 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 52327AE057;
-        Wed, 23 Jan 2019 09:35:10 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 16EA7AE051;
-        Wed, 23 Jan 2019 09:35:10 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.95])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed, 23 Jan 2019 09:35:10 +0000 (GMT)
-Date:   Wed, 23 Jan 2019 10:35:08 +0100
-From:   Heiko Carstens <heiko.carstens@de.ibm.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org
-Subject: Re: [PATCH] s390: kernel: no need to check return value of
- debugfs_create functions
-References: <20190122152151.16139-3-gregkh@linuxfoundation.org>
- <20190122162454.GA31034@osiris>
- <20190122163337.GB23510@kroah.com>
+        Wed, 23 Jan 2019 04:35:46 -0500
+Received: by mail-vk1-f195.google.com with SMTP id y14so330272vky.9
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 01:35:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2iEak07s7cOtu8GQ5P5VLdJkfqjEUXbdtC/8fBIbA3c=;
+        b=HpZZAkXN21uKjJvfwIkZToHvSe1BiWDEwXWJavqxI9cFKiJDKV3MA22Nymm3cScHfj
+         MaODR9GQC7Xr/RPCJ5pgIRIAyAWZDeX6mbO2Mar1fSKFYW1AVJbghPsC6E538b60KgW2
+         6Jmq3V00Qd5g1wtqW+yQV9umBLVCTXxTB9X9U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2iEak07s7cOtu8GQ5P5VLdJkfqjEUXbdtC/8fBIbA3c=;
+        b=Bz7SAQSzGveaN/yIGhw/oSSaVC0LfV84yFpgZ30f9ZHjY9bKD2AyzK4ko6b03fldrL
+         cBOkHWq2fvOmVd1LXeiZ/OpVrTDWKLb/kc3vW8tP37NGcGBzUiI3lfvLi7HeG9qHiaE5
+         QuZ4jws2zmzJgw/xN6woLllqlTDalWTbNrqi0KMsxydvdzPfiMRvMzCvjaOGeq13v2Ho
+         xwr5w4KExJ6tGdnMwqqzKf43pDTSyAYfv4Tpt0n3XHErvwwkzgm6VEOiCZA9huEEEtet
+         lLcjTTJx6VOyW5AI0OWKYvOOYBc+4FRHSaFjA+h3G8v+UpJ8neZZ2p/mybtnskj+mn/k
+         KvVg==
+X-Gm-Message-State: AJcUukf0kth0nEtRK3HOVtrnMT6j/1IafZef4e6PmaHN7TuT0vkryFJV
+        oYeekseP3t2x9b0Z8rvBS6+vV91J/OFrS2M25mfH/w==
+X-Google-Smtp-Source: ALg8bN5ld8V1v1uEFB0l1UfmCzo9blcwJBqABsNkDZnT1PHe9vqTL6iKtlsqnEspZF2hgV3UWApg4UWkmHLDhyxeKcI=
+X-Received: by 2002:a1f:1c81:: with SMTP id c123mr545200vkc.52.1548236144887;
+ Wed, 23 Jan 2019 01:35:44 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190122163337.GB23510@kroah.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19012309-4275-0000-0000-00000302F71D
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012309-4276-0000-0000-000038112AD8
-Message-Id: <20190123093508.GB3424@osiris>
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8bit
-Content-Disposition: inline
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-23_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901230072
+References: <1548167070-421-1-git-send-email-vincent.guittot@linaro.org>
+ <1548167070-421-2-git-send-email-vincent.guittot@linaro.org>
+ <CAPDyKFqeo1Yxso-iYF4Co-eRYXKDRmiFHi9i5wiZSCXGtgSdkQ@mail.gmail.com> <CAKfTPtDxWK-W-jP7Ak3Nk_zksCbVrY0CHT+OnWZgt1t17AYjFw@mail.gmail.com>
+In-Reply-To: <CAKfTPtDxWK-W-jP7Ak3Nk_zksCbVrY0CHT+OnWZgt1t17AYjFw@mail.gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 23 Jan 2019 10:35:08 +0100
+Message-ID: <CAPDyKFqwXckw7CaSwA2WTxHMG6H0Bh5dnsZsvRUngHavB-+vfw@mail.gmail.com>
+Subject: Re: [PATCH v6 1/2] PM-runtime: update accounting_timestamp only when enable
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 05:33:37PM +0100, Greg Kroah-Hartman wrote:
-> On Tue, Jan 22, 2019 at 05:24:54PM +0100, Heiko Carstens wrote:
-> > On Tue, Jan 22, 2019 at 04:21:02PM +0100, Greg Kroah-Hartman wrote:
-> > > When calling debugfs functions, there is no need to ever check the
-> > > return value.  The function can work or not, but the code logic should
-> > > never do something different based on this.
-> > > 
-> > > Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-> > > Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-> > > Cc: Kees Cook <keescook@chromium.org>
-> > > Cc: Christian Borntraeger <borntraeger@de.ibm.com>
-> > > Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-> > > Cc: linux-s390@vger.kernel.org
-> > > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > ---
-> > >  arch/s390/kernel/debug.c    | 6 ------
-> > >  arch/s390/kernel/kdebugfs.c | 2 --
-> > >  arch/s390/kernel/sysinfo.c  | 2 --
-> > >  3 files changed, 10 deletions(-)
-> > > diff --git a/arch/s390/kernel/sysinfo.c b/arch/s390/kernel/sysinfo.c
-> > > index 12f80d1f0415..2ac3c9b56a13 100644
-> > > --- a/arch/s390/kernel/sysinfo.c
-> > > +++ b/arch/s390/kernel/sysinfo.c
-> > > @@ -545,8 +545,6 @@ static __init int stsi_init_debugfs(void)
-> > >  	int lvl, i;
-> > > 
-> > >  	stsi_root = debugfs_create_dir("stsi", arch_debugfs_dir);
-> > > -	if (IS_ERR_OR_NULL(stsi_root))
-> > > -		return 0;
-> > 
-> > No objections, however will you also change the odd behaviour that
-> > e.g. debugfs_create_file() returns -ENODEV instead of (the expected)
-> > NULL pointer if CONFIG_DEBUGFS is disabled?
-> 
-> Nope.  That is intentional.
-> 
-> > I do remember this since it caused at least one crash ;)
-> 
-> Which is why you shouldn't care about the return value of these
-> functions :)
-> 
-> > 19cdd08ba155 ("[S390] qdio: fix broken pointer in case of CONFIG_DEBUG_FS is disabled").
-> 
-> Odd, what crashes when passed an error pointer?  What was someone trying
-> to do with those pointers?  The only thing you can do with a return
-> value from a debugfs function is to pass it back into another debugfs
-> call.  Sounds like someone wasn't doing that :(
+On Wed, 23 Jan 2019 at 09:50, Vincent Guittot
+<vincent.guittot@linaro.org> wrote:
+>
+> On Wed, 23 Jan 2019 at 09:14, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> >
+> > On Tue, 22 Jan 2019 at 15:24, Vincent Guittot
+> > <vincent.guittot@linaro.org> wrote:
+> > >
+> > > Initializing accounting_timestamp to something different from 0 during
+> > > pm_runtime_init() doesn't make sense and put useless ordering constraint between
+> > > timekeeping_init() and pm_runtime_init().
+> > > PM runtime should start accounting time only when it is enable and discard
+> > > the period when disabled.
+> > > Set accounting_timestamp to now when enabling PM runtime.
+> >
+> > Hmm, my first impression is that this sounds like a reasonable thing
+> > to do. However, there are couple of more things to consider.
+> >
+> > 1) update_pm_runtime_accounting() is setting a new value of
+> > dev->power.accounting_timestamp, no matter of whether runtime PM has
+> > been enabled. That's seems wrong to me, at least from the perspective
+> > of what we are trying to change here. So you probably needs to fix
+> > that too.
+>
+> note that whatever is done before enabling pm runtime, this will be
+> overwritten during the enablement.
 
-I think it used to be this code that crashed:
+Right. After this patch, but the original code seems wrong, doesn't it?
 
-static void remove_debugfs_entry(struct qdio_q *q)
-{
-	int i;
+> I can add a clean up patch but this behavior is already there with jiffies.
 
-	for (i = 0; i < MAX_DEBUGFS_QUEUES; i++) {
-		if (!debugfs_queues[i])
-			continue;
------>		if (debugfs_queues[i]->d_inode->i_private == q) {
-			debugfs_remove(debugfs_queues[i]);
-			debugfs_queues[i] = NULL;
-		}
-	}
-}
+That would be great, to get this sorted out.
 
-Which looks like a layering violation anyway. However this code is
-gone, so everything should be fine.
+>
+> Or do you think that update_pm_runtime_accounting can be called before
+> timekeeping_init() ?
 
+No.
+
+>
+> >
+> > 2) I don't think you explicitly need to set
+> > dev->power.accounting_timestamp to zero at pm_runtime_init(). Just
+> > leave it uninitialized, as we are anyways going to initialize it
+> > before we make use of it.
+>
+> yes probably
+>
+> >
+> > 3) How will this change affect accounting while being system
+> > suspended? As you know, the PM core disables and re-enables runtime PM
+>
+> So the time in system suspended will not be accounted
+
+Right. But, I am not sure the accounting is correctly done.
+
+>
+> > during a system suspend/resume sequence. It looks to me, that you
+> > actually need to call update_pm_runtime_accounting() from
+> > pm_runtime_enable|disable(), or something along those lines, as to get
+> > the accounting correct, no?
+>
+> I thought that everything was already done for jiffies too. As soon as
+> pm runtime is disable, we can't really account this time to
+> suspended_time or active_time because we don't have control anymore
+
+Correct.
+
+However, my point is that during system suspend, sooner or later we
+end up disabling runtime PM. Up until that point, we should account
+for, but it seems like we don't do that correctly. As instead, we just
+keep the old accounting timestamp during system suspend (until someone
+changes the runtime PM status, but there is now guarantee that
+happens).
+
+>
+> I think that we don't need any additional changes for
+> pm_runtime_enable because we just init the accounting_timestamp and
+> there is no active or suspend runtime to account yet
+
+Right, after a second thought, this makes sense.
+
+> For pm_runtime_disable(), I thought that everything was already there
+> otherwise it means that we already didn't account the time correctly.
+> I will have a deeper look at that
+
+Great!
+
+I think the accounting is simply based upon that the "time" is stopped
+during system suspend and thus also the accounting.
+
+Although, as the header of $subject patch indicates, we want to move
+to a well defined situation. Therefore it sounds to me that we need to
+care about accounting while disabling runtime PM.
+
+Anyway, let's see what you find out from your deeper look. :-)
+
+[...]
+
+Kind regards
+Uffe
