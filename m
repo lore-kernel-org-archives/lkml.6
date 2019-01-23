@@ -2,97 +2,106 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B048CC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:53:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A9BFC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:53:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64C782184C
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:53:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="AstDRY2b"
+	by mail.kernel.org (Postfix) with ESMTP id 60ACA2184C
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:53:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548284036;
+	bh=qva0Xse0lWrH/U7mmCUyYmvv8J/PRs6KvA4e7PG1R0M=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=ElB0oJktrK+qyLoZqvhlkm1lVZRoplO1nB4efcrnNx4v/xE7TIjf8sRJZLk+pH/XZ
+	 Vgt+0lobPmDuTao3BR6XjEokSFl4t4eqoSU8+Qs9I7/D8rxagq8zWbsUHA7XpKRNrj
+	 w1NUeP1AHttJlTcs9giJ39caJJhSPsw1D6IFA7TE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727465AbfAWWxp (ORCPT
+        id S1727511AbfAWWxy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 17:53:45 -0500
-Received: from ozlabs.org ([203.11.71.1]:34405 "EHLO ozlabs.org"
+        Wed, 23 Jan 2019 17:53:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50134 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726744AbfAWWxn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 17:53:43 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        id S1726517AbfAWWwd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 17:52:33 -0500
+Received: from ebiggers-linuxstation.mtv.corp.google.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43lLDg4S16z9s3l;
-        Thu, 24 Jan 2019 09:53:39 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1548284020;
-        bh=XiaXiK7fEXR9hi0xIIJnhntC//4z5yx8EPiVt5xZF/I=;
-        h=Date:From:To:Cc:Subject:From;
-        b=AstDRY2btpUrIQ+eYPPENu2Y5dKPm8h77I8vFZA8+MXouktaDAPF8p101fcUVMqIr
-         yQUL9wrOylqq2UNCzf8yWUY1E179QQ59BH84uxc7BVjZ6EBsN+nSTLFjOFvQXSE7Mx
-         Drf/jZcsnOdL2uvzz57DLNxtv5kM96WA2U7Wbif+kTD60QGJK6GFNi5z0pmwJgzKpk
-         JxhZSJWx2lBooZ3us0VL7HRlYWESTODplUAL9GFj8QLhSG+EhRL2P6yzvi9tXsyAtD
-         fX3zV6rPA0wflandFCgySyrfm1mbFH/3ooYtu9v3J4QWqW/Glp3euC2uVdYacZKkzR
-         9KZ5SCKS/WzTA==
-Date:   Thu, 24 Jan 2019 09:53:38 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Sterba <dsterba@suse.cz>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Qu Wenruo <wqu@suse.com>
-Subject: linux-next: build warning after merge of the btrfs-kdave tree
-Message-ID: <20190124095338.523fc3a3@canb.auug.org.au>
+        by mail.kernel.org (Postfix) with ESMTPSA id A714F218A6;
+        Wed, 23 Jan 2019 22:52:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548283952;
+        bh=qva0Xse0lWrH/U7mmCUyYmvv8J/PRs6KvA4e7PG1R0M=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=lLThBtyVs0g+kn83jridOI8C6OpSRnlCF+nqEV89ieyg7OqA1JSASzZyxe9w8flVJ
+         z0ikscS8KN8vGvthn4FtAYhnXxNNFl2JOGPHO/NYQHgsHRUzUpjzc7ouM0iJBhMu4X
+         PfulvRVW393pkJljPQpYPo8JDScWi9jjIivVkqLg=
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-crypto@vger.kernel.org,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     linux-kernel@vger.kernel.org,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>, stable@vger.kernel.org,
+        Dave Watson <davejwatson@fb.com>
+Subject: [RFC/RFT PATCH 05/15] crypto: x86/aesni-gcm - fix crash on empty plaintext
+Date:   Wed, 23 Jan 2019 14:49:16 -0800
+Message-Id: <20190123224926.250525-6-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.20.1.321.g9e740568ce-goog
+In-Reply-To: <20190123224926.250525-1-ebiggers@kernel.org>
+References: <20190123224926.250525-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/+lP+2jeFj5G.UNcTA7vUQ2z"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/+lP+2jeFj5G.UNcTA7vUQ2z
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Eric Biggers <ebiggers@google.com>
 
-Hi David,
+gcmaes_crypt_by_sg() dereferences the NULL pointer returned by
+scatterwalk_ffwd() when encrypting an empty plaintext and the source
+scatterlist ends immediately after the associated data.
 
-After merging the btrfs-kdave tree, today's linux-next build (powerpc
-ppc64_defconfig) produced this warning:
+Fix it by only fast-forwarding to the src/dst data scatterlists if the
+data length is nonzero.
 
-fs/btrfs/relocation.c: In function 'insert_dirty_subv':
-fs/btrfs/relocation.c:2138:6: warning: unused variable 'root_objectid' [-Wu=
-nused-variable]
-  u64 root_objectid =3D root->root_key.objectid;
-      ^~~~~~~~~~~~~
+This bug is reproduced by the "rfc4543(gcm(aes))" test vectors when run
+with the new AEAD test manager.
 
-Introduced by commit
+Fixes: e845520707f8 ("crypto: aesni - Update aesni-intel_glue to use scatter/gather")
+Cc: <stable@vger.kernel.org> # v4.17+
+Cc: Dave Watson <davejwatson@fb.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ arch/x86/crypto/aesni-intel_glue.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-  7b837199c581 ("btrfs: relocation: Delay reloc tree deletion after merge_r=
-eloc_roots()")
+diff --git a/arch/x86/crypto/aesni-intel_glue.c b/arch/x86/crypto/aesni-intel_glue.c
+index 9b5ccde3ef31..1e3d2102033a 100644
+--- a/arch/x86/crypto/aesni-intel_glue.c
++++ b/arch/x86/crypto/aesni-intel_glue.c
+@@ -813,11 +813,14 @@ static int gcmaes_crypt_by_sg(bool enc, struct aead_request *req,
+ 		scatterwalk_map_and_copy(assoc, req->src, 0, assoclen, 0);
+ 	}
+ 
+-	src_sg = scatterwalk_ffwd(src_start, req->src, req->assoclen);
+-	scatterwalk_start(&src_sg_walk, src_sg);
+-	if (req->src != req->dst) {
+-		dst_sg = scatterwalk_ffwd(dst_start, req->dst, req->assoclen);
+-		scatterwalk_start(&dst_sg_walk, dst_sg);
++	if (left) {
++		src_sg = scatterwalk_ffwd(src_start, req->src, req->assoclen);
++		scatterwalk_start(&src_sg_walk, src_sg);
++		if (req->src != req->dst) {
++			dst_sg = scatterwalk_ffwd(dst_start, req->dst,
++						  req->assoclen);
++			scatterwalk_start(&dst_sg_walk, dst_sg);
++		}
+ 	}
+ 
+ 	kernel_fpu_begin();
+-- 
+2.20.1.321.g9e740568ce-goog
 
-Presumably the ASSERT is compiled out in this configuration.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/+lP+2jeFj5G.UNcTA7vUQ2z
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxI8HIACgkQAVBC80lX
-0GytqAf9EP4Z1WY2SQ9oF7osbfIWY1PH+C+C3Oe/dPor2lC9HXEUFtYSs3cNKMXv
-FvChRWMplfLXUeu8qezW9xemZLQfX+pOnms7gM7RXSIXlVIMxJ84+0bKCSSIbxQs
-nbe8U2LVE77jDq5ot8394xAGIA3Cc1SXKAyYHLqG3YhxXIQROrbMR37TQlS3nYOg
-wJX2NQxkaNZRmn3FFDzIyqRMEciAgry/ZMKeJC1szQ0FCXyA5s6GgjxQ5jv53GsJ
-3vK3ebrwv504+7SU/dTseRGunFjFjFSs1YH8Krw7cWdDw3dBQuPdZfsZX5xKRgYi
-6e7r5jGhlOjqL3QAjr0LwBtKu0IEgw==
-=phOG
------END PGP SIGNATURE-----
-
---Sig_/+lP+2jeFj5G.UNcTA7vUQ2z--
