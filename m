@@ -2,159 +2,89 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F885C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 08:28:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 523B8C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 08:28:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B50820870
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 08:28:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20C3220870
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 08:28:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726886AbfAWI2P (ORCPT
+        id S1727056AbfAWI2w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 03:28:15 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56666 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726191AbfAWI2P (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 03:28:15 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0N8J21r041841
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 03:28:14 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2q6jmnn9yc-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 03:28:14 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
-        Wed, 23 Jan 2019 08:28:12 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 23 Jan 2019 08:28:10 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0N8S9Qb6947270
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 23 Jan 2019 08:28:09 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2203F4204B;
-        Wed, 23 Jan 2019 08:28:09 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 727A642041;
-        Wed, 23 Jan 2019 08:28:08 +0000 (GMT)
-Received: from oc7455500831.ibm.com (unknown [9.152.98.145])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 23 Jan 2019 08:28:08 +0000 (GMT)
-Subject: Re: [PATCH] kvm: no need to check return value of debugfs_create
- functions
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, Stefan Raspl <raspl@linux.vnet.ibm.com>
-References: <20190122152151.16139-51-gregkh@linuxfoundation.org>
- <69eee5dd-5893-c93a-a9df-036f02dfbc1c@de.ibm.com>
- <20190122204828.GA30805@kroah.com>
- <d7b38792-e91f-be0c-20cf-99023962f0a9@redhat.com>
-From:   Christian Borntraeger <borntraeger@de.ibm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
- 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
- syiRa+UVlsKmx1hsEg==
-Date:   Wed, 23 Jan 2019 09:28:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 23 Jan 2019 03:28:52 -0500
+Received: from sauhun.de ([88.99.104.3]:60188 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726000AbfAWI2w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 03:28:52 -0500
+Received: from localhost (p54B3320B.dip0.t-ipconnect.de [84.179.50.11])
+        by pokefinder.org (Postfix) with ESMTPSA id 5B2F72C54BC;
+        Wed, 23 Jan 2019 09:28:50 +0100 (CET)
+Date:   Wed, 23 Jan 2019 09:28:49 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Oleksij Rempel <o.rempel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] i2c: imx: fix inconsistent IS_ERR and PTR_ERR
+Message-ID: <20190123082849.GA1129@kunai>
+References: <20190123003741.GA12068@embeddedor>
 MIME-Version: 1.0
-In-Reply-To: <d7b38792-e91f-be0c-20cf-99023962f0a9@redhat.com>
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 19012308-4275-0000-0000-00000302EFED
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012308-4276-0000-0000-00003811235E
-Message-Id: <1dc2d59b-a178-59cc-42bd-4b09289240dc@de.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-23_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=861 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901230065
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="VbJkn9YxBvnuCH5J"
+Content-Disposition: inline
+In-Reply-To: <20190123003741.GA12068@embeddedor>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--VbJkn9YxBvnuCH5J
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 23.01.2019 00:11, Paolo Bonzini wrote:
-> On 22/01/19 21:48, Greg Kroah-Hartman wrote:
->>> This also brings the question: shall we move these counters out of debugfs into something else?
->> If you have code that relies on debugfs, yes, you need to move that out
->> of debugfs because more and more systems are trying to disable it due to
->> the obvious problems with it (i.e. leaking tons of debugging
->> information).
->>
->> debugfs is for DEBUG information, not for "statistics about how my VM is
->> working".  That sounds like something you need to rely on, so debugfs is
->> not the place for it.
-> 
-> Yes, we know that and tracepoints are already one replacement.  However,
-> they are slower that just a lock-free "vcpu->stats.foo_happened++".
+On Tue, Jan 22, 2019 at 06:37:41PM -0600, Gustavo A. R. Silva wrote:
+> Fix inconsistent IS_ERR and PTR_ERR in i2c_imx_dma_request.
+>=20
+> The proper pointer to be passed as argument is dma->chan_tx.
+>=20
+> This bug was detected with the help of Coccinelle.
+>=20
+> Fixes: 5b3a23a3cc94 ("i2c: imx: notify about real errors on dma i2c_imx_d=
+ma_request")
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Yes, the tracepoints are not a proper replacement for the counters (especially 
-the capability to get numbers after-the-fact. So I would really like to keep
-both.
-
-> Another idea that Steven Rostedt and I discussed a while ago is some
-> kind of "statfs" which would already provide some code, similar to the
-> one that KVM uses to accumulate statistics from multiple VMs or multiple
-> VCPUs into a single counter.
+I pushed a similar fix to linux-next yesterday.
 
 
-I think that would make a lot of sense to have a common filesystem to avoid
-code duplication bugs.
+--VbJkn9YxBvnuCH5J
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxIJcEACgkQFA3kzBSg
+KbbPdA/+LdO8wwH7iCh/9IZ4wC1rMppcRk1eXJf3wcUgYi0wCrAF/yiFO4GAvHXN
+1OH0daG1Q22hapc6B7aRfWtkpi6zf1b1w6/L/EFYi/2ykgV2TVqIKNiEhyvHLgBR
+sVOTYtYVZe4j3afB49nMcf7S3oSBPob7K+l59vmCXS1uNNhPbV4wlI3r7J6Rkw1Z
+37DKkPH3JvRLA07FjqlyM7D8NkRcQxchwQDmshVRaJ4RoMZ5QsonzZXTk1LWSDn/
+nZul0iV0G2PvgvU+GBTWdwLLBnq4b2W2S8ITtr52msthPuAt0AkotbCOc0EF2dLV
+zR/wbjpo6EwN9ImcyboL5/ybWW3swHmCxXLsqLw05lvSfYlIRg1kkrYOwMRvD/59
+KS9YbJeD5z8BDfVYXwGFCoDIIs44RrK9npBFmyn/aV2nI1TBXRtQbYxdyuHsEdKL
+GwBtjVityTWZYMIeT9RLQ8+4p6UvSx1Tsi9SgBojgpD2NER4Jcr5jFTJ4bBjgor5
+IV01oH4uaRhMk3sxeVtreNuZEHFxK2o/XU0YyUb78ov3sNA2L7APDYFkOjysVV8P
+ITFv6eniEogVQ+nuWJtcc5LFOOqloxSQXsQiZNodIYSHtOXmZHoCTWi3wEIEoBek
+DnZyF2MF4VSbxwAGCvQe40GFgNKBLcH8vj6x6gVYbR+g6RT3wp0=
+=hJl/
+-----END PGP SIGNATURE-----
+
+--VbJkn9YxBvnuCH5J--
