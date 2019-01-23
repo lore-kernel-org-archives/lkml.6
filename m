@@ -2,182 +2,261 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=CHARSET_FARAWAY_HEADER,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DE6FC282C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 02:01:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92744C282C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 02:01:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55B7C217D4
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 02:01:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6273E217D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 02:01:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727023AbfAWCBH (ORCPT
+        id S1727047AbfAWCBU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 21:01:07 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:31346 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726952AbfAWCBH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 21:01:07 -0500
-Received: from fsav404.sakura.ne.jp (fsav404.sakura.ne.jp [133.242.250.103])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0N214HC043847;
-        Wed, 23 Jan 2019 11:01:04 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav404.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav404.sakura.ne.jp);
- Wed, 23 Jan 2019 11:01:04 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav404.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0N214Oe043834;
-        Wed, 23 Jan 2019 11:01:04 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: (from i-love@localhost)
-        by www262.sakura.ne.jp (8.15.2/8.15.2/Submit) id x0N214eq043832;
-        Wed, 23 Jan 2019 11:01:04 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Message-Id: <201901230201.x0N214eq043832@www262.sakura.ne.jp>
-X-Authentication-Warning: www262.sakura.ne.jp: i-love set sender to penguin-kernel@i-love.sakura.ne.jp using -f
-Subject: Re: possible deadlock in =?ISO-2022-JP?B?X19kb19wYWdlX2ZhdWx0?=
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Todd Kjos <tkjos@google.com>,
-        syzbot+a76129f18c89f3e2ddd4@syzkaller.appspotmail.com,
-        ak@linux.intel.com, Johannes Weiner <hannes@cmpxchg.org>,
-        jack@suse.cz, jrdr.linux@gmail.com,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        mawilcox@microsoft.com, mgorman@techsingularity.net,
-        syzkaller-bugs@googlegroups.com,
-        Arve =?UTF-8?B?SGrDuG5uZXbDpWc=?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+        Tue, 22 Jan 2019 21:01:20 -0500
+Received: from mga06.intel.com ([134.134.136.31]:60351 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726942AbfAWCBU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 21:01:20 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jan 2019 18:01:19 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,509,1539673200"; 
+   d="scan'208,223";a="140471162"
+Received: from ankitgu1-mobl1.amr.corp.intel.com (HELO [10.254.15.171]) ([10.254.15.171])
+  by fmsmga001.fm.intel.com with ESMTP; 22 Jan 2019 18:01:16 -0800
+Subject: Re: [alsa-devel] [PATCH] ASoC: soc-core: Fix null pointer dereference
+ in soc_find_component
+To:     Curtis Malainey <cujomalainey@google.com>
+Cc:     rohkumar@qti.qualcomm.com, alsa-devel@alsa-project.org,
+        bgoswami@codeaurora.org, vinod.koul@linaro.org,
+        linux-kernel@vger.kernel.org, plai@codeaurora.org, tiwai@suse.com,
+        lgirdwood@gmail.com,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Matthias Reichl <hias@horus.com>,
+        Rohit kumar <rohitkr@codeaurora.org>,
+        Mark Brown <broonie@kernel.org>,
+        srinivas.kandagatla@linaro.org, asishb@codeaurora.org,
+        Ajit Pandey <ajitp@codeaurora.org>,
+        Curtis Malainey <cujomalainey@chromium.org>,
+        Dylan Reid <dgreid@google.com>
+References: <1547194442-1487-1-git-send-email-rohitkr@codeaurora.org>
+ <d8726e9a-3477-a573-8c1a-dd8245068802@linux.intel.com>
+ <4886ed21-65d2-159d-afcd-bb26dcde636e@linux.intel.com>
+ <20190115000610.GM11073@sirena.org.uk>
+ <796a856c-a9a6-022d-da63-947279090198@linux.intel.com>
+ <20190115211137.rhdyjadu7fppp3p4@lenny.lan>
+ <af2e9555-444f-7c40-865b-347f3db8fa76@linux.intel.com>
+ <044d59ba-094e-727d-14a9-6ebfc54cbbf4@linux.intel.com>
+ <CAOReqxjhZAzOpr-bGcV6uxPsOEid--Ym2Y0YZMHkybgZSePvtQ@mail.gmail.com>
+ <CAOReqxjLcdN6rT9w3_6MJaqE-hpiCsZ+3Luic+e793GwPde+Qg@mail.gmail.com>
+ <c6721670-cf89-5d21-953d-c1fa10d87367@linux.intel.com>
+ <CAOReqxgG4TJDXKCEVcDVXvpi_mnLUzqLwF7Rp0H5iAPdbMuZ_Q@mail.gmail.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <44029078-2749-5a3b-7b03-f38461bf268f@linux.intel.com>
+Date:   Tue, 22 Jan 2019 20:01:15 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Date:   Wed, 23 Jan 2019 11:01:04 +0900
-References: <4b0a5f8c-2be2-db38-a70d-8d497cb67665@I-love.SAKURA.ne.jp> <20190122153220.GA191275@google.com>
-In-Reply-To: <20190122153220.GA191275@google.com>
-Content-Type: text/plain; charset="ISO-2022-JP"
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAOReqxgG4TJDXKCEVcDVXvpi_mnLUzqLwF7Rp0H5iAPdbMuZ_Q@mail.gmail.com>
+Content-Type: multipart/mixed;
+ boundary="------------B0C56BB01237A674EAD19B5B"
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Joel Fernandes wrote:
-> > Why do we need to call fallocate() synchronously with ashmem_mutex held?
-> > Why can't we call fallocate() asynchronously from WQ_MEM_RECLAIM workqueue
-> > context so that we can call fallocate() with ashmem_mutex not held?
-> > 
-> > I don't know how ashmem works, but as far as I can guess, offloading is
-> > possible as long as other operations which depend on the completion of
-> > fallocate() operation (e.g. read()/mmap(), querying/changing pinned status)
-> > wait for completion of asynchronous fallocate() operation (like a draft
-> > patch shown below is doing).
-> 
-> This adds a bit of complexity, I am worried if it will introduce more
-> bugs especially because ashmem is going away in the long term, in favor of
-> memfd - and if its worth adding more complexity / maintenance burden to it.
+This is a multi-part message in MIME format.
+--------------B0C56BB01237A674EAD19B5B
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-I don't care migrating to memfd. I care when bugs are fixed.
 
-> 
-> I am wondering if we can do this synchronously, without using a workqueue.
-> All you would need is a temporary list of areas to punch. In
-> ashmem_shrink_scan, you would create this list under mutex and then once you
-> release the mutex, you can go through this list and do the fallocate followed
-> by the wake up of waiters on the wait queue, right? If you can do it this
-> way, then it would be better IMO.
+On 1/22/19 7:36 PM, Curtis Malainey wrote:
+> Curtis Malainey | Software Engineer | cujomalainey@google.com | 650-898-3849
+>
+>
+> On Wed, Jan 23, 2019 at 4:11 AM Pierre-Louis Bossart
+> <pierre-louis.bossart@linux.intel.com> wrote:
+>>
+>>> The issue was that we were seeing a memory corruption bug on an AMD
+>>> chromebooks with that function already (not observed on Intel). I was
+>>> testing some SOF integrations and was seeing this in the kernel logs.
+>>> I had Dylan verify my logic before I sent the patch because it took so
+>>> long to identify the bug and it was traced to the patch that introduce
+>>> soc_init_platform.
+>>>
+>>> [   10.922112] cz-da7219-max98357a AMD7219:00: ASoC: CPU DAI
+>>> designware-i2s.1.auto not registered
+>>> [   10.922122] cz-da7219-max98357a AMD7219:00:
+>>> devm_snd_soc_register_card(acpd7219m98357) failed: -517
+>>> [   11.001411] cz-da7219-max98357a AMD7219:00: ASoC: Both platform
+>>> name/of_node are set for amd-max98357-play
+>>> [   11.001423] cz-da7219-max98357a AMD7219:00: ASoC: failed to init
+>>> link amd-max98357-play
+>>> [   11.001431] cz-da7219-max98357a AMD7219:00:
+>>> devm_snd_soc_register_card(acpd7219m98357) failed: -22
+>>> [   11.001577] cz-da7219-max98357a: probe of AMD7219:00 failed with error -22
+>>>
+>>> of_node was never getting set but the pointer was becoming populated
+>>> (outside of the probe call) which traced to soc_init_platform function
+>>> which was not reallocating memory on a EPROBE_DEFER even though it was
+>>> getting freed by devm. I am not very familiar with devm but my local
+>>> maintainers say that it should be freeing the memory even on a
+>>> PROBE_DEFER.
+>>> The patch should mirror the memory behaviour in
+>>> snd_soc_init_multicodec which also reallocates its memory on every
+>>> probe. I'm not sure how the patch is causing you to defer, is your
+>>> component list corrupt?
+>>>
+>>> Sorry for the duplicate spam, forgot to send via plain text mode,
+>>> re-sending for the mailing list so it gets accepted.
+>> There is no defer issue with the intel stuff, but we call this routine
+>> multiple times
+>>
+>> snd_soc_register_card
+>>
+>> --soc_init_dai_link
+>>
+>> ----snd_soc_init_platform
+>>
+>> -- soc_soc_bind_card
+>>
+>> ----snd_soc_instantiate_card
+>>
+>> ------ soc_check_tplg_fes
+>>
+>> -------- snd_soc_init_platform << ALLOC1
+>>
+>> --------soc_init_dai_link
+>>
+>> ----------snd_soc_init_platform << ALLOC2
+>>
+> Ah that explains it, in my testing I didn't have the patch that
+> brought in the call from within tplg_fes
+>> Initially dai_link->legacy_platform is 0, so gets set after the first
+>> first devm_kzalloc (ALLOC1) and after that we always allocate new memory
+>> (ALLOC2). The end result is that whatever we set in soc_check_tplg_fes
+>> is lost with the new/unnecessary alloc.
+>>
+>> I would guess your solution is also a work-around, if devm_ effectively
+>> freed the memory then the pointer would become NULL. Or may that's the
+>> issue is that no one actually resets it.
+>>
+>>
+> Yes, its a work around to fix the memory issue. If you set the
+> platform in the machine driver the code will ignore it and not reset
+> it. That being said that is not a full proof workaround and a better
+> solution is definitely needed. We could go and clean up the pointers
+> in soc_instantiate_card based on the flag being set. That way we only
+> relocate on a NULL pointer like we used to but still don't affect
+> statically allocated memory. I will draft a patch, test it on the AMD
+> device, reply to this thread later with it, Pierre can you test it as
+> well?
+>
+> I am curious why soc_check_tplg_fes is calling snd_soc_init_platform.
+> It should have already been called earlier, in soc_init_dai_link at
+> the beginning of snd_soc_register_card so the memory should already be
+> initialized. Unless I am missing somewhere where links are getting
+> added between the calls.
 
-Are you sure that none of locks held before doing GFP_KERNEL allocation
-interferes lock dependency used by fallocate() ? If yes, we can do without a
-workqueue context (like a draft patch shown below). Since I don't understand
-what locks are potentially involved, I offloaded to a clean workqueue context.
+This is actually a second order problem, the main issue i have is that 
+the very first call to init_dai_link fails with the new DEFER_PROBE 
+handling.
 
-Anyway, I need your checks regarding whether this approach is waiting for
-completion at all locations which need to wait for completion.
+I don't quite understand what Linaro/AMD folks are doing but I trust 
+their changes are legitimate. To move forward, maybe it's not worth 
+spending too much time on a grand unification of string theory, there 
+are simpler solutions: the Intel machine drivers already do get the 
+platform driver name as an platform_data argument, so we could modify 
+the dailinks platform names before even registering the card. I tested 
+with the attached proof-of-concept patch, it adds 2 lines of code per 
+machine driver if we use a common helper (after the transition to the 
+"modern" dailink representation that's needed anyways) so maybe it's 
+better in the end? the override we care about is really the automatic 
+handling of all the hard-coded front-ends, the platform-name override 
+isn't really a battle i want to pick or spend time on.
 
+
+
+
+--------------B0C56BB01237A674EAD19B5B
+Content-Type: text/x-patch;
+ name="0001-ASoC-add-helper-to-change-platform-name-for-all-dail.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename*0="0001-ASoC-add-helper-to-change-platform-name-for-all-dail.pa";
+ filename*1="tch"
+
+From 5680c64b09964b134e20bf96142d1ce5dcf0f77f Mon Sep 17 00:00:00 2001
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Date: Tue, 22 Jan 2019 18:53:43 -0600
+Subject: [PATCH] ASoC: add helper to change platform name for all dailinks
+
+To reuse the same machine drivers with Atom/SST, Skylake and SOF, we
+need to change the default platform_name (or platforms->name in the
+"modern" representation).
+
+So far, this override was done with an automatic override, which was
+broken by a set of changes for DT platforms related to deferred probe
+handling.
+
+This automatic override is actually not really needed, the machine
+driver can already receive the platform name as a platform_data
+parameter. This is used e.g. for HDaudio support where we have
+different PCI aliases used for different platforms. We can reuse the
+same mechanism and modify the machine drivers to override the dailinks
+prior to registrating the card.
+
+This will require additional work for SOF, but with this helper it'll
+be just two lines of additional code per machine driver which is
+reused, not the end of the world.
+
+Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 ---
- drivers/staging/android/ashmem.c | 25 ++++++++++++++++++++-----
- 1 file changed, 20 insertions(+), 5 deletions(-)
+ include/sound/soc.h | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-diff --git a/drivers/staging/android/ashmem.c b/drivers/staging/android/ashmem.c
-index 90a8a9f1ac7d..6a267563cb66 100644
---- a/drivers/staging/android/ashmem.c
-+++ b/drivers/staging/android/ashmem.c
-@@ -75,6 +75,9 @@ struct ashmem_range {
- /* LRU list of unpinned pages, protected by ashmem_mutex */
- static LIST_HEAD(ashmem_lru_list);
+diff --git a/include/sound/soc.h b/include/sound/soc.h
+index b71b05019c68..59873084f3bd 100644
+--- a/include/sound/soc.h
++++ b/include/sound/soc.h
+@@ -1583,6 +1583,29 @@ struct snd_soc_dai *snd_soc_card_get_codec_dai(struct snd_soc_card *card,
+ 	return NULL;
+ }
  
-+static atomic_t ashmem_shrink_inflight = ATOMIC_INIT(0);
-+static DECLARE_WAIT_QUEUE_HEAD(ashmem_shrink_wait);
++static inline
++int snd_soc_fixup_dai_links_platform_name(struct snd_soc_card *card,
++					  const char *platform_name)
++{
++	struct snd_soc_dai_link *dai_link;
++	int i;
 +
- /*
-  * long lru_count - The count of pages on our LRU list.
-  *
-@@ -292,6 +295,7 @@ static ssize_t ashmem_read_iter(struct kiocb *iocb, struct iov_iter *iter)
- 	int ret = 0;
- 
- 	mutex_lock(&ashmem_mutex);
-+	wait_event(ashmem_shrink_wait, !atomic_read(&ashmem_shrink_inflight));
- 
- 	/* If size is not set, or set to 0, always return EOF. */
- 	if (asma->size == 0)
-@@ -359,6 +363,7 @@ static int ashmem_mmap(struct file *file, struct vm_area_struct *vma)
- 	int ret = 0;
- 
- 	mutex_lock(&ashmem_mutex);
-+	wait_event(ashmem_shrink_wait, !atomic_read(&ashmem_shrink_inflight));
- 
- 	/* user needs to SET_SIZE before mapping */
- 	if (!asma->size) {
-@@ -438,7 +443,6 @@ static int ashmem_mmap(struct file *file, struct vm_area_struct *vma)
- static unsigned long
- ashmem_shrink_scan(struct shrinker *shrink, struct shrink_control *sc)
- {
--	struct ashmem_range *range, *next;
- 	unsigned long freed = 0;
- 
- 	/* We might recurse into filesystem code, so bail out if necessary */
-@@ -448,17 +452,27 @@ ashmem_shrink_scan(struct shrinker *shrink, struct shrink_control *sc)
- 	if (!mutex_trylock(&ashmem_mutex))
- 		return -1;
- 
--	list_for_each_entry_safe(range, next, &ashmem_lru_list, lru) {
-+	while (!list_empty(&ashmem_lru_list)) {
-+		struct ashmem_range *range =
-+			list_first_entry(&ashmem_lru_list, typeof(*range), lru);
- 		loff_t start = range->pgstart * PAGE_SIZE;
- 		loff_t end = (range->pgend + 1) * PAGE_SIZE;
-+		struct file *f = range->asma->file;
- 
--		range->asma->file->f_op->fallocate(range->asma->file,
--				FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
--				start, end - start);
-+		get_file(f);
-+		atomic_inc(&ashmem_shrink_inflight);
- 		range->purged = ASHMEM_WAS_PURGED;
- 		lru_del(range);
- 
- 		freed += range_size(range);
-+		mutex_unlock(&ashmem_mutex);
-+		f->f_op->fallocate(f,
-+				   FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
-+				   start, end - start);
-+		fput(f);
-+		if (atomic_dec_and_test(&ashmem_shrink_inflight))
-+			wake_up_all(&ashmem_shrink_wait);
-+		mutex_lock(&ashmem_mutex);
- 		if (--sc->nr_to_scan <= 0)
- 			break;
- 	}
-@@ -713,6 +727,7 @@ static int ashmem_pin_unpin(struct ashmem_area *asma, unsigned long cmd,
- 		return -EFAULT;
- 
- 	mutex_lock(&ashmem_mutex);
-+	wait_event(ashmem_shrink_wait, !atomic_read(&ashmem_shrink_inflight));
- 
- 	if (!asma->file)
- 		goto out_unlock;
++	if (!platform_name) /* nothing to do */
++		return 0;
++
++	/* set platform name for each dailink */
++	for_each_card_prelinks(card, i, dai_link) {
++		/* only single platform is supported for now */
++		dai_link->platforms->name = devm_kstrdup(card->dev,
++							 platform_name,
++							 GFP_KERNEL);
++		if (!dai_link->platforms->name)
++			return -ENOMEM;
++	}
++
++	return 0;
++}
++
+ #ifdef CONFIG_DEBUG_FS
+ extern struct dentry *snd_soc_debugfs_root;
+ #endif
 -- 
 2.17.1
+
+
+--------------B0C56BB01237A674EAD19B5B--
