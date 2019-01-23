@@ -2,321 +2,268 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67842C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:27:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5B40C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:28:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2351F217F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:27:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A89D21726
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:28:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="arHuYuf7"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Kn1tAZ8w"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727054AbfAWH1Z (ORCPT
+        id S1727068AbfAWH2K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 02:27:25 -0500
-Received: from mout02.posteo.de ([185.67.36.66]:51701 "EHLO mout02.posteo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726986AbfAWH1X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 02:27:23 -0500
-Received: from submission (posteo.de [89.146.220.130]) 
-        by mout02.posteo.de (Postfix) with ESMTPS id 1072E240102
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 08:27:20 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
-        t=1548228440; bh=ZfLilP1zRVHrukYt4PRsnOUe2H0fbBaCZtdQMRph0Rg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=arHuYuf7agx1xlxi5SUa0W4LdOFVsiSbyQUmts/UwE9qMfexda0xlZ047t3XrrHY+
-         9itabHkXjSHrZuHRVE/m5Hv1j8hKEqSWY4gHH4Z4rbEID2megLhXKshvJZEz+NEja2
-         8BxPPKG3TXAPvJoHyvk+gap60kfgsLmyJxJFMW2P9Ec6FsWBgBAnx7FwOub3ZAy004
-         VrFYtYaVedWtT3COx67OQClcosIPniJDXlSc4po1W5Tl4XVL8PItCoxioJNivusx0L
-         8NC3+qGQLywFPMuunh/zskpxvQDYEMll2IxLmOxv8Q5fAd+t4nBOTpj6GuFN75bfAo
-         sXDNxqLFLTR8w==
-Received: from customer (localhost [127.0.0.1])
-        by submission (posteo.de) with ESMTPSA id 43kxgq13qLz9rxN;
-        Wed, 23 Jan 2019 08:27:19 +0100 (CET)
-From:   Martin Kepplinger <martink@posteo.de>
-To:     devicetree@vger.kernel.org, linux-input@vger.kernel.org
-Cc:     dmitry.torokhov@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, chinyeow.sim.xt@renesas.com,
-        linux-kernel@vger.kernel.org,
-        Martin Kepplinger <martin.kepplinger@ginzinger.com>
-Subject: [PATCH 2/2] Input: st1232 - add support for st1633
-Date:   Wed, 23 Jan 2019 08:26:51 +0100
-Message-Id: <20190123072651.31791-2-martink@posteo.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190123072651.31791-1-martink@posteo.de>
-References: <20190123072651.31791-1-martink@posteo.de>
+        Wed, 23 Jan 2019 02:28:10 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:36056 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726207AbfAWH2K (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 02:28:10 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190123072807euoutp026cc4bdbeaf68e92a281cfe2640246568~8aZtbr91W2825128251euoutp02v
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 07:28:07 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190123072807euoutp026cc4bdbeaf68e92a281cfe2640246568~8aZtbr91W2825128251euoutp02v
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1548228487;
+        bh=Kwashk6PJKuzpg3z/R1B0kvX5QaN9x3t+0AvpREXyRg=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=Kn1tAZ8wtLtGdUXhHWTVl3M1lAnhyVyfRAagOhnGg8JSAWYqdJVmw3xKujlWWrEFM
+         txh3n74NTTd1fe2t5cZiwu17HqZlUC44tkQ5IEx7jxvciE3u13ceUfI6Vc9rHOLL8m
+         ER/oZRYjUlkL54wyjkB15Xnd5gO6I8mRkEVD21uQ=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190123072806eucas1p2a792cd077e24098ba789e66054d436df~8aZscUlh50378203782eucas1p2b;
+        Wed, 23 Jan 2019 07:28:06 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 5C.94.04441.687184C5; Wed, 23
+        Jan 2019 07:28:06 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20190123072805eucas1p136f90773e9880906de93bcf148f19a86~8aZrgw6l53058330583eucas1p1q;
+        Wed, 23 Jan 2019 07:28:05 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190123072805eusmtrp2b22d4ae8e6914d463e8ee1a132ae268c~8aZrRoLBm0692606926eusmtrp2f;
+        Wed, 23 Jan 2019 07:28:05 +0000 (GMT)
+X-AuditID: cbfec7f2-5c9ff70000001159-d8-5c481786c3c5
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id D8.85.04284.587184C5; Wed, 23
+        Jan 2019 07:28:05 +0000 (GMT)
+Received: from [106.116.147.30] (unknown [106.116.147.30]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190123072804eusmtip19ebe6306de0b1866521c92d6be39b41a~8aZqHhOrR0811108111eusmtip1B;
+        Wed, 23 Jan 2019 07:28:04 +0000 (GMT)
+Subject: Re: kmemleak panic
+To:     Mike Rapoport <rppt@linux.ibm.com>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Prateek Patel <prpatel@nvidia.com>,
+        Sachin Nikam <snikam@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Qian Cai <cai@lca.pw>, LKML <linux-kernel@vger.kernel.org>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <78f4ea8a-996d-038e-9e33-5ff02fa2c43f@samsung.com>
+Date:   Wed, 23 Jan 2019 08:28:03 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+        Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190123055414.GA4747@rapoport-lnx>
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SazBUYRjHe/ecPefYac1paTxDU2OnmimTkOqdLqqZLqdP1Zc+lEaLM5Lr
+        7EakJiVdJLdB7GxpGF20kSUhtdnSKhmWLmqIabAy1ioppcjuSfn2e57n/7zP/z/zMoQsh3Jl
+        QiOP8MpIRbickpBVz360rDjrwvl7ZZa4Y02ZlsJTIw8Q/p31jMZN+mESf6rgsPV6KsL5Q1MU
+        Lu8rpHF7rYbCVaPNBC5+axLh7rTN+GWuEtdda6Zxv/4DhTvTBkmc/PApjetHesW4IzuRwskF
+        1WL8Mc1Cb57Paa9qETfxMwtx6aWjYq5G3UVzupILFDd0+4qY63xTR3GNeRMkl1H4GHGXkoYp
+        rqzyNclVNCVwo7qFu6X7JBuC+fDQWF650u+g5NCL4WwUnSmPa0w7QyaiHrcU5MAA6wu/Mn8i
+        G8vYmwgmLq5OQZJp/org+zkrLRSjCC7la6mZjc7uBkoY3EBgqCz5q7IiGK+9JbapnFg36O+q
+        EdnYmd0DZu0dwiYi2G4xmE/n2Z+iWG9IsaTYWcr6Qc6jFrsRkl0CQ6kZ0w8xzHzWH5LbJYJk
+        HjzP7yVt7DC9OtaVbJcT7CK4b9EQArvA+94Cke0WsK0MFBpykWB7KzRaikiBnWDQWEkLvACm
+        amYWkhCcy1PTQpGK4J6m+m/o9fDEaLI7IthlUFa7Umhvgb4XfSJbG1hH6LDME0w4QlbVZUJo
+        S+H8WZmgXgpqY+m/s/WtbUQGkqtnRVPPiqOeFUf9/+41RJYgFz5GFRHCq7wj+aOeKkWEKiYy
+        xDMoKkKHpj9r06TxSzUaaws0IJZB8rnS8TU7/GViRawqPsKAgCHkztJtpu3+MmmwIv4Yr4wK
+        UMaE8yoDcmNIuYs0YU7PfhkbojjCh/F8NK+cmYoYB9dEdNTRuLf2Slxr5qmOsb4iH4fVa28d
+        2AQDg+WTAYctJ5Y09C5Of2U2hnw5aVrlpy8Oqo8NmER3HfXHSZNOJq5bE7YrSuuRbv68d+sP
+        8rlp52D3p1NJerPHwLd8r3H3XHLEp5UYiK/zqMhDWo1xwf51Lf2V1o2BWc03F2okvvJ3nu5y
+        UnVI4b2cUKoUfwALIlOTqAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBKsWRmVeSWpSXmKPExsVy+t/xu7qt4h4xBv17ZC3mrF/DZvH/w25G
+        i7+TjrFbnN7/jsXi5WYPi/fLehgtZr75z2ax8ekidovLu+awWWz7fJbZYun1i0wW9/scLM5M
+        K7LYs+Asu8Wz/ffYLO70vWKxaN17hN3i4IcnrBY3pjSwWbTO38Fq8ajvLbuDqMeaeWsYPX7/
+        msTo0b/uM6vHzll32T02repk83izei6rx51re9g8Tsz4zeIxYdEBRo/e5ndsHuu3XGXx2Hy6
+        2uPzJrkA3ig9m6L80pJUhYz84hJbpWhDCyM9Q0sLPSMTSz1DY/NYKyNTJX07m5TUnMyy1CJ9
+        uwS9jFPvpjAWTFSqONHXwtLA+EC6i5GTQ0LAROLO/aNsXYxcHEICSxklljevYYNIyEicnNbA
+        CmELS/y51gUWFxJ4yyjxakc9iC0sIC3x7O5OJhBbRCBQYv/sJmaQQcwCD1klprduZIWY2sIq
+        cXhjPwtIFZuAoUTXW4hJvAJ2ElP3nWcEsVkEVCXe9EwA2yYqECMx60kfO0SNoMTJmU/AejmB
+        er/ebQWrZxZQl/gz7xIzhC0vsf3tHChbXOLWk/lMExiFZiFpn4WkZRaSlllIWhYwsqxiFEkt
+        Lc5Nzy021CtOzC0uzUvXS87P3cQITCXbjv3cvIPx0sbgQ4wCHIxKPLw/zNxjhFgTy4orcw8x
+        SnAwK4nwul50ixHiTUmsrEotyo8vKs1JLT7EaAr03ERmKdHkfGCayyuJNzQ1NLewNDQ3Njc2
+        s1AS5z1vUBklJJCeWJKanZpakFoE08fEwSnVwFhxw7hx7iFdi5CC79sbDr99EpCyYmvA0srF
+        V/p8N9u3Kly7sfP1g/7jkn3ZDUY9IjIGHLs1ehavrb3pVq08TfbHbYZ5cvYti3ZtOb/95kHH
+        az0v99yyPVQ0q7b+Rnprbp30rQDrL4l9cQ3eszveFiSKy3Y1Tiva+DXz1twX5xJmH74mLKce
+        vVqJpTgj0VCLuag4EQBJikcUOwMAAA==
+X-CMS-MailID: 20190123072805eucas1p136f90773e9880906de93bcf148f19a86
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190123055509epcas3p18a6d66fa08412f2308cb2c1997328ea8
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190123055509epcas3p18a6d66fa08412f2308cb2c1997328ea8
+References: <b7629ecf-757c-f8b5-df83-ba83d7036b2f@free.fr>
+        <20190119132832.GA29881@MBP.local>
+        <6579db26-10ac-3fbf-1998-5b937a38f202@free.fr>
+        <d4facdc2-0581-929f-caa2-b9efa9bd8f97@arm.com>
+        <CAL_JsqKFT8J6g02gxeBiTfBb_XHhp2-ZNB6DgaLPK85kNZGRig@mail.gmail.com>
+        <20190121143704.GE29504@arrakis.emea.arm.com>
+        <CAL_JsqKQb34zVNTzo9DLNiDwmWGxkrKezSOjwCUPAvgzUoLYjg@mail.gmail.com>
+        <20190121174234.GC26461@rapoport-lnx>
+        <2bb30550-435a-046c-4f45-21dd594aa695@free.fr>
+        <3c886941-bf9d-f040-b568-ee7a8eba9a04@free.fr>
+        <CGME20190123055509epcas3p18a6d66fa08412f2308cb2c1997328ea8@epcas3p1.samsung.com>
+        <20190123055414.GA4747@rapoport-lnx>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+Hi Mike,
 
-Add support for the Sitronix ST1633 touchscreen controller to the st1232
-driver.
+On 2019-01-23 06:54, Mike Rapoport wrote:
 
-Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
----
- drivers/input/touchscreen/Kconfig  |   6 +-
- drivers/input/touchscreen/st1232.c | 130 +++++++++++++++++++++--------
- 2 files changed, 98 insertions(+), 38 deletions(-)
+...
+> Resending it as a formal patch now, I took a liberty to add your Tested-by.
+>
+> >From a847ca684db29a3c09e4dd2a8a008b35cf36e52f Mon Sep 17 00:00:00 2001
+> From: Mike Rapoport <rppt@linux.ibm.com>
+> Date: Wed, 23 Jan 2019 07:38:50 +0200
+> Subject: [PATCH] of: fix kmemleak crash caused by imbalance in early memory
+>  reservation
+>
+> Marc Gonzalez reported the following kmemleak crash:
+>
+> Unable to handle kernel paging request at virtual address ffffffc021e00000
+> Mem abort info:
+>   ESR = 0x96000006
+>   Exception class = DABT (current EL), IL = 32 bits
+>   SET = 0, FnV = 0
+>   EA = 0, S1PTW = 0
+> Data abort info:
+>   ISV = 0, ISS = 0x00000006
+>   CM = 0, WnR = 0
+> swapper pgtable: 4k pages, 39-bit VAs, pgdp = (____ptrval____)
+> [ffffffc021e00000] pgd=000000017e3ba803, pud=000000017e3ba803,
+> pmd=0000000000000000
+> Internal error: Oops: 96000006 [#1] PREEMPT SMP
+> Modules linked in:
+> CPU: 6 PID: 523 Comm: kmemleak Tainted: G S      W         5.0.0-rc1 #13
+> Hardware name: Qualcomm Technologies, Inc. MSM8998 v1 MTP (DT)
+> pstate: 80000085 (Nzcv daIf -PAN -UAO)
+> pc : scan_block+0x70/0x190
+> lr : scan_block+0x6c/0x190
+> sp : ffffff8012e8bd20
+> x29: ffffff8012e8bd20 x28: ffffffc0fdbaf018
+> x27: ffffffc022000000 x26: 0000000000000080
+> x25: ffffff8011aadf70 x24: ffffffc0f8cc8000
+> x23: ffffff8010dc8000 x22: ffffff8010dc8830
+> x21: ffffffc021e00ff9 x20: ffffffc0f8cc8050
+> x19: ffffffc021e00000 x18: 0000000000002409
+> x17: 0000000000000200 x16: 0000000000000000
+> x15: ffffff8010e14dd8 x14: 0000000000002406
+> x13: 000000004c4dd0c6 x12: ffffffc0f77dad58
+> x11: 0000000000000001 x10: ffffff8010d9e688
+> x9 : ffffff8010d9f000 x8 : ffffff8010d9e688
+> x7 : 0000000000000002 x6 : 0000000000000000
+> x5 : ffffff8011511c20 x4 : 00000000000026d1
+> x3 : ffffff8010e14d88 x2 : 5b36396f4e7d4000
+> x1 : 0000000000208040 x0 : 0000000000000000
+> Process kmemleak (pid: 523, stack limit = 0x(____ptrval____))
+> Call trace:
+>  scan_block+0x70/0x190
+>  scan_gray_list+0x108/0x1c0
+>  kmemleak_scan+0x33c/0x7c0
+>  kmemleak_scan_thread+0x98/0xf0
+>  kthread+0x11c/0x120
+>  ret_from_fork+0x10/0x1c
+> Code: f9000fb4 d503201f 97ffffd2 35000580 (f9400260)
+> ---[ end trace 176d6ed9d86a0c33 ]---
+> note: kmemleak[523] exited with preempt_count 2
+>
+> The crash happens when a no-map area is allocated in
+> early_init_dt_alloc_reserved_memory_arch(). The allocated region is
+> registered with kmemleak, but it is then removed from memblock using
+> memblock_remove() that is not kmemleak-aware.
+>
+> Replacing __memblock_alloc_base() with memblock_find_in_range() makes sure
+> that the allocated memory is not added to kmemleak and then
+> memblock_remove()'ing this memory is safe.
+>
+> As a bonus, since memblock_find_in_range() ensures the allocation in the
+> specified range, the bounds check can be removed.
+>
+> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+> Tested-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
 
-diff --git a/drivers/input/touchscreen/Kconfig b/drivers/input/touchscreen/Kconfig
-index 068dbbc610fc..7c597a49c265 100644
---- a/drivers/input/touchscreen/Kconfig
-+++ b/drivers/input/touchscreen/Kconfig
-@@ -1168,11 +1168,11 @@ config TOUCHSCREEN_SIS_I2C
- 	  module will be called sis_i2c.
- 
- config TOUCHSCREEN_ST1232
--	tristate "Sitronix ST1232 touchscreen controllers"
-+	tristate "Sitronix ST1232 or ST1633 touchscreen controllers"
- 	depends on I2C
- 	help
--	  Say Y here if you want to support Sitronix ST1232
--	  touchscreen controller.
-+	  Say Y here if you want to support the Sitronix ST1232
-+	  or ST1633 touchscreen controller.
- 
- 	  If unsure, say N.
- 
-diff --git a/drivers/input/touchscreen/st1232.c b/drivers/input/touchscreen/st1232.c
-index 11ff32c68025..dc0288f37fda 100644
---- a/drivers/input/touchscreen/st1232.c
-+++ b/drivers/input/touchscreen/st1232.c
-@@ -18,18 +18,21 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_gpio.h>
-+#include <linux/of_device.h>
- #include <linux/pm_qos.h>
- #include <linux/slab.h>
- #include <linux/types.h>
- 
- #define ST1232_TS_NAME	"st1232-ts"
-+#define ST1633_TS_NAME	"st1633-ts"
-+
-+enum {
-+	st1232,
-+	st1633,
-+};
- 
- #define MIN_X		0x00
- #define MIN_Y		0x00
--#define MAX_X		0x31f	/* (800 - 1) */
--#define MAX_Y		0x1df	/* (480 - 1) */
--#define MAX_AREA	0xff
--#define MAX_FINGERS	2
- 
- struct st1232_ts_finger {
- 	u16 x;
-@@ -38,12 +41,24 @@ struct st1232_ts_finger {
- 	bool is_valid;
- };
- 
-+struct st_chip_info {
-+	u8	id;
-+	u16	max_x;
-+	u16	max_y;
-+	u16	max_area;
-+	u16	max_fingers;
-+	u8	start_reg;
-+};
-+
- struct st1232_ts_data {
- 	struct i2c_client *client;
- 	struct input_dev *input_dev;
--	struct st1232_ts_finger finger[MAX_FINGERS];
- 	struct dev_pm_qos_request low_latency_req;
- 	int reset_gpio;
-+	const struct st_chip_info *chip_info;
-+	int read_buf_len;
-+	u8 *read_buf;
-+	struct st1232_ts_finger *finger;
- };
- 
- static int st1232_ts_read_data(struct st1232_ts_data *ts)
-@@ -52,40 +67,35 @@ static int st1232_ts_read_data(struct st1232_ts_data *ts)
- 	struct i2c_client *client = ts->client;
- 	struct i2c_msg msg[2];
- 	int error;
--	u8 start_reg;
--	u8 buf[10];
-+	int i, y;
-+	u8 start_reg = ts->chip_info->start_reg;
-+	u8 *buf = ts->read_buf;
- 
--	/* read touchscreen data from ST1232 */
-+	/* read touchscreen data */
- 	msg[0].addr = client->addr;
- 	msg[0].flags = 0;
- 	msg[0].len = 1;
- 	msg[0].buf = &start_reg;
--	start_reg = 0x10;
- 
- 	msg[1].addr = ts->client->addr;
- 	msg[1].flags = I2C_M_RD;
--	msg[1].len = sizeof(buf);
-+	msg[1].len = ts->read_buf_len;
- 	msg[1].buf = buf;
- 
- 	error = i2c_transfer(client->adapter, msg, 2);
- 	if (error < 0)
- 		return error;
- 
--	/* get "valid" bits */
--	finger[0].is_valid = buf[2] >> 7;
--	finger[1].is_valid = buf[5] >> 7;
-+	for (i = 0, y = 0; i < ts->chip_info->max_fingers; i++, y += 3) {
-+		finger[i].is_valid = buf[i + y] >> 7;
-+		if (finger[i].is_valid) {
-+			finger[i].x = ((buf[i + y] & 0x0070) << 4) | buf[i + 1];
-+			finger[i].y = ((buf[i + y] & 0x0007) << 8) | buf[i + 2];
- 
--	/* get xy coordinate */
--	if (finger[0].is_valid) {
--		finger[0].x = ((buf[2] & 0x0070) << 4) | buf[3];
--		finger[0].y = ((buf[2] & 0x0007) << 8) | buf[4];
--		finger[0].t = buf[8];
--	}
--
--	if (finger[1].is_valid) {
--		finger[1].x = ((buf[5] & 0x0070) << 4) | buf[6];
--		finger[1].y = ((buf[5] & 0x0007) << 8) | buf[7];
--		finger[1].t = buf[9];
-+			/* st1232 includes a z-axis / touch strength */
-+			if (ts->chip_info->id == st1232)
-+				finger[i].t = buf[i + 6];
-+		}
- 	}
- 
- 	return 0;
-@@ -104,11 +114,14 @@ static irqreturn_t st1232_ts_irq_handler(int irq, void *dev_id)
- 		goto end;
- 
- 	/* multi touch protocol */
--	for (i = 0; i < MAX_FINGERS; i++) {
-+	for (i = 0; i < ts->chip_info->max_fingers; i++) {
- 		if (!finger[i].is_valid)
- 			continue;
- 
--		input_report_abs(input_dev, ABS_MT_TOUCH_MAJOR, finger[i].t);
-+		if (ts->chip_info->id == st1232)
-+			input_report_abs(input_dev, ABS_MT_TOUCH_MAJOR,
-+					 finger[i].t);
-+
- 		input_report_abs(input_dev, ABS_MT_POSITION_X, finger[i].x);
- 		input_report_abs(input_dev, ABS_MT_POSITION_Y, finger[i].y);
- 		input_mt_sync(input_dev);
-@@ -142,12 +155,46 @@ static void st1232_ts_power(struct st1232_ts_data *ts, bool poweron)
- 		gpio_direction_output(ts->reset_gpio, poweron);
- }
- 
-+static const struct st_chip_info st_chip_info_table[] = {
-+	[st1232] = {
-+		.id = st1232,
-+		.max_x = 0x31f, /* 800 - 1 */
-+		.max_y = 0x1df, /* 480 -1 */
-+		.max_area = 0xff,
-+		.max_fingers = 2,
-+		.start_reg = 0x12,
-+	},
-+	[st1633] = {
-+		.id = st1633,
-+		.max_x = 0x13f, /* 320 - 1 */
-+		.max_y = 0x1df, /* 480 -1 */
-+		.max_area = 0x00,
-+		.max_fingers = 5,
-+		.start_reg = 0x12,
-+	},
-+};
-+
-+static const struct of_device_id st1232_ts_dt_ids[] = {
-+	{ .compatible = "sitronix,st1232", .data = &st_chip_info_table[st1232] },
-+	{ .compatible = "sitronix,st1633", .data = &st_chip_info_table[st1633] },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, st1232_ts_dt_ids);
-+
- static int st1232_ts_probe(struct i2c_client *client,
- 			   const struct i2c_device_id *id)
- {
- 	struct st1232_ts_data *ts;
-+	struct st1232_ts_finger *finger;
- 	struct input_dev *input_dev;
- 	int error;
-+	const struct of_device_id *match;
-+
-+	match = of_match_device(st1232_ts_dt_ids, &client->dev);
-+	if (!match) {
-+		dev_err(&client->dev, "unknown device model\n");
-+		return -ENODEV;
-+	}
- 
- 	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C)) {
- 		dev_err(&client->dev, "need I2C_FUNC_I2C\n");
-@@ -163,6 +210,19 @@ static int st1232_ts_probe(struct i2c_client *client,
- 	if (!ts)
- 		return -ENOMEM;
- 
-+	ts->chip_info = match->data;
-+	ts->finger = devm_kzalloc(&client->dev,
-+				  sizeof(*finger) * ts->chip_info->max_fingers,
-+				  GFP_KERNEL);
-+	if (!ts->finger)
-+		return -ENOMEM;
-+
-+	/* allocate a buffer according to the number of registers to read */
-+	ts->read_buf_len = ts->chip_info->max_fingers * 4;
-+	ts->read_buf = devm_kzalloc(&client->dev, ts->read_buf_len, GFP_KERNEL);
-+	if (!ts->read_buf)
-+		return -ENOMEM;
-+
- 	input_dev = devm_input_allocate_device(&client->dev);
- 	if (!input_dev)
- 		return -ENOMEM;
-@@ -192,9 +252,14 @@ static int st1232_ts_probe(struct i2c_client *client,
- 	__set_bit(EV_KEY, input_dev->evbit);
- 	__set_bit(EV_ABS, input_dev->evbit);
- 
--	input_set_abs_params(input_dev, ABS_MT_TOUCH_MAJOR, 0, MAX_AREA, 0, 0);
--	input_set_abs_params(input_dev, ABS_MT_POSITION_X, MIN_X, MAX_X, 0, 0);
--	input_set_abs_params(input_dev, ABS_MT_POSITION_Y, MIN_Y, MAX_Y, 0, 0);
-+	if (ts->chip_info->id == st1232)
-+		input_set_abs_params(input_dev, ABS_MT_TOUCH_MAJOR, 0,
-+				     ts->chip_info->max_area, 0, 0);
-+
-+	input_set_abs_params(input_dev, ABS_MT_POSITION_X,
-+			     MIN_X, ts->chip_info->max_x, 0, 0);
-+	input_set_abs_params(input_dev, ABS_MT_POSITION_Y,
-+			     MIN_Y, ts->chip_info->max_y, 0, 0);
- 
- 	error = devm_request_threaded_irq(&client->dev, client->irq,
- 					  NULL, st1232_ts_irq_handler,
-@@ -262,16 +327,11 @@ static SIMPLE_DEV_PM_OPS(st1232_ts_pm_ops,
- 
- static const struct i2c_device_id st1232_ts_id[] = {
- 	{ ST1232_TS_NAME, 0 },
-+	{ ST1633_TS_NAME, 0 },
- 	{ }
- };
- MODULE_DEVICE_TABLE(i2c, st1232_ts_id);
- 
--static const struct of_device_id st1232_ts_dt_ids[] = {
--	{ .compatible = "sitronix,st1232", },
--	{ }
--};
--MODULE_DEVICE_TABLE(of, st1232_ts_dt_ids);
--
- static struct i2c_driver st1232_ts_driver = {
- 	.probe		= st1232_ts_probe,
- 	.remove		= st1232_ts_remove,
+With the minor fix mentioned below, you can add my:
+
+Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+
+> ---
+>  drivers/of/of_reserved_mem.c | 13 ++++---------
+>  1 file changed, 4 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.c
+> index 1977ee0adcb1..6807a1cffe55 100644
+> --- a/drivers/of/of_reserved_mem.c
+> +++ b/drivers/of/of_reserved_mem.c
+> @@ -37,21 +37,16 @@ int __init __weak early_init_dt_alloc_reserved_memory_arch(phys_addr_t size,
+>  	 */
+>  	end = !end ? MEMBLOCK_ALLOC_ANYWHERE : end;
+>  	align = !align ? SMP_CACHE_BYTES : align;
+> -	base = __memblock_alloc_base(size, align, end);
+> +	base = memblock_find_in_range(size, align, start, end);
+
+Please remove a comment about __memblock_alloc_base() above that block
+of code. It is no longer needed after this change.
+
+>  	if (!base)
+>  		return -ENOMEM;
+>  
+> -	/*
+> -	 * Check if the allocated region fits in to start..end window
+> -	 */
+> -	if (base < start) {
+> -		memblock_free(base, size);
+> -		return -ENOMEM;
+> -	}
+> -
+>  	*res_base = base;
+>  	if (nomap)
+>  		return memblock_remove(base, size);
+> +	else
+> +		return memblock_reserve(base, size);
+> +
+>  	return 0;
+>  }
+>  
+
+Best regards
 -- 
-2.20.1
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
