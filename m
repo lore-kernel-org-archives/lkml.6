@@ -2,95 +2,116 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB112C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 19:17:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7155EC282C5
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 19:18:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 879CF21872
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 19:17:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4429621872
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 19:18:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="P1Evooh0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726444AbfAWTRC (ORCPT
+        id S1726693AbfAWTSF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 14:17:02 -0500
-Received: from iolanthe.rowland.org ([192.131.102.54]:50396 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1725976AbfAWTRB (ORCPT
+        Wed, 23 Jan 2019 14:18:05 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:42446 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725896AbfAWTSF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 14:17:01 -0500
-Received: (qmail 5749 invoked by uid 2102); 23 Jan 2019 14:17:00 -0500
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 23 Jan 2019 14:17:00 -0500
-Date:   Wed, 23 Jan 2019 14:17:00 -0500 (EST)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Yinbo Zhu <yinbo.zhu@nxp.com>
-cc:     Xiaobo Xie <xiaobo.xie@nxp.com>, Jerry Huang <jerry.huang@nxp.com>,
-        Ran Wang <ran.wang_1@nxp.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ramneek Mehresh <ramneek.mehresh@freescale.com>,
-        Nikhil Badola <nikhil.badola@freescale.com>,
-        Suresh Gupta <suresh.gupta@freescale.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 5/5] usb :fsl: Change string format for errata property
-In-Reply-To: <20190123070615.14462-5-yinbo.zhu@nxp.com>
-Message-ID: <Pine.LNX.4.44L0.1901231416040.1564-100000@iolanthe.rowland.org>
+        Wed, 23 Jan 2019 14:18:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=9TxsPBM3jjXfVOkRBw/Td/M3gJ46TOrrJlMH4ZHJ0Lc=; b=P1Evooh0cZ31Vg3yJPMvCI5MF
+        CC4YBr/I1nCsU/rqUkDI1fV8Fvg4YGT43qI7wCHMpuOgMf5qtqld9gwF6JfYnCnFyVXQIJBqZqxKf
+        +bXh52Xuy8K9WkZlAHjLkFnoR0xSu90bX6HTDIw0irhqObr4H6eqbtd9kXiAye23pHVJO/RKrVfJm
+        wNphHaylDyKMeEoKt11LT9KvYUcIlkJ+556RxfH9Qpm4xmKK7vzyStJCyhZGt5UbGBf76tLO7MXgw
+        ofEKY62IMmhGnvY/zNmeOv+oxFFrJlpF+/pDa+gmT7EiT+uBtsSwuxI3eWvobtIa9Y2+jQCIFGt9g
+        vqukkVMFw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gmO2E-0001t7-R4; Wed, 23 Jan 2019 19:18:02 +0000
+Date:   Wed, 23 Jan 2019 11:18:02 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Jani Nikula <jani.nikula@linux.intel.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@chromium.org>, dev@openvswitch.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        netdev@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        kernel-hardening@lists.openwall.com,
+        intel-wired-lan@lists.osuosl.org, linux-fsdevel@vger.kernel.org,
+        xen-devel@lists.xenproject.org, Laura Abbott <labbott@redhat.com>,
+        linux-kbuild@vger.kernel.org,
+        Alexander Popov <alex.popov@linux.com>
+Subject: Re: [Intel-gfx] [PATCH 1/3] treewide: Lift switch variables out of
+ switches
+Message-ID: <20190123191802.GB15311@bombadil.infradead.org>
+References: <20190123110349.35882-1-keescook@chromium.org>
+ <20190123110349.35882-2-keescook@chromium.org>
+ <20190123115829.GA31385@kroah.com>
+ <874l9z31c5.fsf@intel.com>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <874l9z31c5.fsf@intel.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 23 Jan 2019, Yinbo Zhu wrote:
-
-> From: Nikhil Badola <nikhil.badola@freescale.com>
+On Wed, Jan 23, 2019 at 04:17:30PM +0200, Jani Nikula wrote:
+> Can't have:
 > 
-> Remove USB errata checking code from driver. Applicability of erratum
-> is retrieved by reading corresponding property in device tree.
-> This property is written during device tree fixup.
+> 	switch (i) {
+> 		int j;
+> 	case 0:
+>         	/* ... */
+> 	}
 > 
-> Signed-off-by: Ramneek Mehresh <ramneek.mehresh@freescale.com>
-> Signed-off-by: Nikhil Badola <nikhil.badola@freescale.com>
-> Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
-> ---
->  drivers/usb/host/fsl-mph-dr-of.c |   14 ++++----------
->  1 files changed, 4 insertions(+), 10 deletions(-)
+> because it can't be turned into:
 > 
-> diff --git a/drivers/usb/host/fsl-mph-dr-of.c b/drivers/usb/host/fsl-mph-dr-of.c
-> index bdc8812..ae8f60f 100644
-> --- a/drivers/usb/host/fsl-mph-dr-of.c
-> +++ b/drivers/usb/host/fsl-mph-dr-of.c
-> @@ -224,16 +224,10 @@ static int fsl_usb2_mph_dr_of_probe(struct platform_device *ofdev)
->  		of_property_read_bool(np, "fsl,usb-erratum-a005275");
->  	pdata->has_fsl_erratum_a005697 =
->  		of_property_read_bool(np, "fsl,usb_erratum-a005697");
-> -
-> -	if (of_get_property(np, "fsl,usb_erratum_14", NULL))
-> -		pdata->has_fsl_erratum_14 = 1;
-> -	else
-> -		pdata->has_fsl_erratum_14 = 0;
-> -
-> -	if (of_get_property(np, "fsl,erratum_a006918", NULL))
-> -		pdata->has_fsl_erratum_a006918 = 1;
-> -	else
-> -		pdata->has_fsl_erratum_a006918 = 0;
-> +	pdata->has_fsl_erratum_a006918 =
-> +		of_property_read_bool(np, "fsl,usb_erratum-a006918");
-> +	pdata->has_fsl_erratum_14 =
-> +		of_property_read_bool(np, "fsl,usb_erratum-14");
-
-Why go to the trouble of adding bad code for has_fsl_erratum_a006918 in 
-patch 4/5 if you're going to change that code here?  Why not just add 
-the correct code in the first place?
-
-Alan Stern
-
->  
->  	/*
->  	 * Determine whether phy_clk_valid needs to be checked
+> 	switch (i) {
+> 		int j = 0; /* not valid C */
+> 	case 0:
+>         	/* ... */
+> 	}
 > 
+> but can have e.g.:
+> 
+> 	switch (i) {
+> 	case 0:
+> 		{
+> 			int j = 0;
+> 	        	/* ... */
+> 		}
+> 	}
+> 
+> I think Kees' approach of moving such variable declarations to the
+> enclosing block scope is better than adding another nesting block.
 
+Another nesting level would be bad, but I think this is OK:
+
+	switch (i) {
+	case 0: {
+		int j = 0;
+        	/* ... */
+	}
+	case 1: {
+		void *p = q;
+		/* ... */
+	}
+	}
+
+I can imagine Kees' patch might have a bad effect on stack consumption,
+unless GCC can be relied on to be smart enough to notice the
+non-overlapping liveness of the vriables and use the same stack slots
+for both.
