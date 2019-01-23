@@ -2,172 +2,159 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA895C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 08:26:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F885C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 08:28:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A17E621726
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 08:26:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="iYzInfyx"
+	by mail.kernel.org (Postfix) with ESMTP id 1B50820870
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 08:28:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727087AbfAWI0y (ORCPT
+        id S1726886AbfAWI2P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 03:26:54 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:51926 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726191AbfAWI0x (ORCPT
+        Wed, 23 Jan 2019 03:28:15 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56666 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726191AbfAWI2P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 03:26:53 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190123082651euoutp01ad08e1a7ddb145a598d83399ce1fb6f6~8bM-PyiSJ0646706467euoutp01j
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 08:26:51 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190123082651euoutp01ad08e1a7ddb145a598d83399ce1fb6f6~8bM-PyiSJ0646706467euoutp01j
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1548232011;
-        bh=meVMRgsTYcqgFAT9IVIUB3oG3QcDW4crpl9UWZTS9Q8=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=iYzInfyxUMYZYikgQ5bswFrA2Ul0y3HHS4GqNeZ1pNebQ7iygI+7qrbi4IiwoXEG+
-         Ho78FavUxL7o7euStj5xgfpfwe9//BGcbINXnpdwwkfDlyjR6RyMP91j/1W0dL6xeX
-         cz8IdsP7PrS/KFBluJR9k+otuVL8QXR/1QD4SOA8=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20190123082651eucas1p246d5b28a7e2c92145588f8254105f555~8bM_9FbGM1835718357eucas1p2P;
-        Wed, 23 Jan 2019 08:26:51 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id D4.78.04806.B45284C5; Wed, 23
-        Jan 2019 08:26:51 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20190123082650eucas1p243ce21346a00e9b3e9eed2863cd3d280~8bM9zCFET1834918349eucas1p2N;
-        Wed, 23 Jan 2019 08:26:50 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190123082649eusmtrp2420e7092af5722c0e26899adb162acb3~8bM9keoC62287322873eusmtrp2J;
-        Wed, 23 Jan 2019 08:26:49 +0000 (GMT)
-X-AuditID: cbfec7f5-367ff700000012c6-eb-5c48254b4a56
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id D3.C2.04128.945284C5; Wed, 23
-        Jan 2019 08:26:49 +0000 (GMT)
-Received: from [106.116.147.30] (unknown [106.116.147.30]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190123082649eusmtip1244f2cda0f9e9080aedfd3f46821b3e4~8bM8zvwQT2571425714eusmtip1C;
-        Wed, 23 Jan 2019 08:26:49 +0000 (GMT)
-Subject: Re: Regression: spi: core: avoid waking pump thread from spi_sync
- instead run teardown delayed
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Jon Hunter <jonathanh@nvidia.com>
-Cc:     Martin Sperl <kernel@martin.sperl.org>,
-        Mark Brown <broonie@kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <47b23e55-11b7-3d44-d611-8d6120139d5c@samsung.com>
-Date:   Wed, 23 Jan 2019 09:26:48 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
-        Thunderbird/60.4.0
+        Wed, 23 Jan 2019 03:28:15 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0N8J21r041841
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 03:28:14 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2q6jmnn9yc-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 03:28:14 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
+        Wed, 23 Jan 2019 08:28:12 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 23 Jan 2019 08:28:10 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0N8S9Qb6947270
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 23 Jan 2019 08:28:09 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2203F4204B;
+        Wed, 23 Jan 2019 08:28:09 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 727A642041;
+        Wed, 23 Jan 2019 08:28:08 +0000 (GMT)
+Received: from oc7455500831.ibm.com (unknown [9.152.98.145])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 23 Jan 2019 08:28:08 +0000 (GMT)
+Subject: Re: [PATCH] kvm: no need to check return value of debugfs_create
+ functions
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, Stefan Raspl <raspl@linux.vnet.ibm.com>
+References: <20190122152151.16139-51-gregkh@linuxfoundation.org>
+ <69eee5dd-5893-c93a-a9df-036f02dfbc1c@de.ibm.com>
+ <20190122204828.GA30805@kroah.com>
+ <d7b38792-e91f-be0c-20cf-99023962f0a9@redhat.com>
+From:   Christian Borntraeger <borntraeger@de.ibm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
+ 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
+ syiRa+UVlsKmx1hsEg==
+Date:   Wed, 23 Jan 2019 09:28:08 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdUiaNrQo3zWiR45VBANhUdkHMNhXLb9pPBLQ7tCtx1JDg@mail.gmail.com>
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <d7b38792-e91f-be0c-20cf-99023962f0a9@redhat.com>
 Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDKsWRmVeSWpSXmKPExsWy7djPc7reqh4xBu+ucVhMffiEzeLZrb1M
-        Fi2zFrFYfH/UwGRxedccNoutL98xWTR+vMlu0fllFpsDh8emVZ1sHocOdzB6PNrq79Hb/I7N
-        4/MmuQDWKC6blNSczLLUIn27BK6M5u15BV+FKu68PM/YwLiAv4uRg0NCwETiy8/ALkZODiGB
-        FYwSM1uLuhi5gOwvjBInbjxlg3A+M0qcm7OMBaQKpOH/6kuMEInljBLXl75hh3DeM0pMWvaG
-        CaRKWCBT4tD/iWC2iECQxIYFW8A6mAUmMEm86m9hA0mwCRhKdL3tArN5Bewkuv/fYQS5iUVA
-        VaK/JQzEFBWIkWi9zAVRIShxcuYTsCM4BQIlLnzZxQ5iMwvIS2x/O4cZwhaXuPVkPhPIKgmB
-        bewSRzseMENc7SJx+/xyRghbWOLV8S3sELaMxP+dMA3NjBLtM2axQzg9jBJb5+xgg6iyljh8
-        /CIryEXMApoS63fpQ4QdJT5fXsEECUc+iRtvBSGO4JOYtG06M0SYV6KjTQiiWk1i1vF1cGsP
-        XrjEPIFRaRaS12YheWcWkndmIexdwMiyilE8tbQ4Nz212DgvtVyvODG3uDQvXS85P3cTIzAN
-        nf53/OsOxn1/kg4xCnAwKvHw/jBzjxFiTSwrrsw9xCjBwawkwut60S1GiDclsbIqtSg/vqg0
-        J7X4EKM0B4uSOG81w4NoIYH0xJLU7NTUgtQimCwTB6dUA+NJJ639NfZCD2SNPh+7knWaj+Ej
-        p5uFlFbBlOO/k582XM1rOylnorTq7dkCRemcggu+da5pphd0NuVKm9UFbi+eY/JeYNM1deMT
-        P90Nrq9w2shgE5Bmn9PrnWLuFv08anHl0VD2c9aulmt2cKoxhnJsMzLa2n5mFXvCJX9xoZV/
-        HrzUTGFcosRSnJFoqMVcVJwIAIioyOc/AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrIIsWRmVeSWpSXmKPExsVy+t/xu7qeqh4xBl9+mlpMffiEzeLZrb1M
-        Fi2zFrFYfH/UwGRxedccNoutL98xWTR+vMlu0fllFpsDh8emVZ1sHocOdzB6PNrq79Hb/I7N
-        4/MmuQDWKD2bovzSklSFjPziElulaEMLIz1DSws9IxNLPUNj81grI1MlfTublNSczLLUIn27
-        BL2M5u15BV+FKu68PM/YwLiAv4uRk0NCwETi/+pLjF2MXBxCAksZJRr+7mSCSMhInJzWwAph
-        C0v8udbFBlH0llHi2O1XbCAJYYFMiUP/J4I1iAgESTz4e5IVpIhZYBKTxOG906E6WhglbjZu
-        ZwSpYhMwlOh62wXWzStgJ9H9/w5QnIODRUBVor8lDCQsKhAjMetJHztEiaDEyZlPWEBsToFA
-        iQtfdoHFmQXUJf7Mu8QMYctLbH87B8oWl7j1ZD7TBEahWUjaZyFpmYWkZRaSlgWMLKsYRVJL
-        i3PTc4uN9IoTc4tL89L1kvNzNzECo2/bsZ9bdjB2vQs+xCjAwajEw/vDzD1GiDWxrLgy9xCj
-        BAezkgiv60W3GCHelMTKqtSi/Pii0pzU4kOMpkC/TWSWEk3OByaGvJJ4Q1NDcwtLQ3Njc2Mz
-        CyVx3vMGlVFCAumJJanZqakFqUUwfUwcnFINjKdPlryYs191cVfmy6ffblTFrbyxlvnyvOzJ
-        2zYc+f3aOL//iSfXcqN9i7sbLkSYfjd3+BLFev5MmlTrinsBu4963dgt/+uLsgq/q/fJCiHW
-        pndWunOmcmr/sHnCm7ZX5MK0CgbpWSmLZvPqzrWQzCyN9TB7z6jAHRxQ6X/i9WcfH/Gq7veH
-        bJVYijMSDbWYi4oTAeNO1G/UAgAA
-X-CMS-MailID: 20190123082650eucas1p243ce21346a00e9b3e9eed2863cd3d280
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190123082650eucas1p243ce21346a00e9b3e9eed2863cd3d280
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190123082650eucas1p243ce21346a00e9b3e9eed2863cd3d280
-References: <f86eaebb-0359-13be-f4a2-4f2b8832252e@nvidia.com>
-        <CAMuHMdUiaNrQo3zWiR45VBANhUdkHMNhXLb9pPBLQ7tCtx1JDg@mail.gmail.com>
-        <CGME20190123082650eucas1p243ce21346a00e9b3e9eed2863cd3d280@eucas1p2.samsung.com>
+X-TM-AS-GCONF: 00
+x-cbid: 19012308-4275-0000-0000-00000302EFED
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19012308-4276-0000-0000-00003811235E
+Message-Id: <1dc2d59b-a178-59cc-42bd-4b09289240dc@de.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-23_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=861 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901230065
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi All
 
-On 2019-01-22 10:36, Geert Uytterhoeven wrote:
-> On Mon, Jan 14, 2019 at 4:36 PM Jon Hunter <jonathanh@nvidia.com> wrote:
->> I have noticed that system suspend has started failing consistently on a
->> couple Tegra boards over the last few days with the linux-next branch.
->> The following error is seen on on entering suspend ...
+
+On 23.01.2019 00:11, Paolo Bonzini wrote:
+> On 22/01/19 21:48, Greg Kroah-Hartman wrote:
+>>> This also brings the question: shall we move these counters out of debugfs into something else?
+>> If you have code that relies on debugfs, yes, you need to move that out
+>> of debugfs because more and more systems are trying to disable it due to
+>> the obvious problems with it (i.e. leaking tons of debugging
+>> information).
 >>
->> [   58.222033] spi_master spi1: could not stop message queue
->> [   58.222038] spi_master spi1: queue stop failed
->> [   58.222048] dpm_run_callback(): platform_pm_suspend+0x0/0x54 returns -16
->> [   58.222052] PM: Device 7000da00.spi failed to suspend: error -16
->> [   58.222057] PM: Some devices failed to suspend, or early wake event detected
->>
->> Bisecting today's -next points to commit 412e60373245 ("spi: core: avoid
->> waking pump thread from spi_sync instead run teardown delayed") and
->> reverting this on top of -next fixes the problem. I have not had chance
->> to dig any further but wanted to report this issue to see if you have
->> any thoughts.
-> I can confirm this on r8a7791/koelsch:
->
->     PM: suspend entry (deep)
->     PM: Syncing filesystems ... done.
->     Freezing user space processes ... (elapsed 0.010 seconds) done.
->     OOM killer disabled.
->     Freezing remaining freezable tasks ... (elapsed 0.009 seconds) done.
->     spi_master spi0: could not stop message queue
->     spi_master spi0: queue stop failed
->     dpm_run_callback(): rspi_suspend+0x0/0xc returns -16
->     PM: Device e6b10000.spi failed to suspend: error -16
->     PM: Some devices failed to suspend, or early wake event detected
+>> debugfs is for DEBUG information, not for "statistics about how my VM is
+>> working".  That sounds like something you need to rely on, so debugfs is
+>> not the place for it.
+> 
+> Yes, we know that and tracepoints are already one replacement.  However,
+> they are slower that just a lock-free "vcpu->stats.foo_happened++".
 
-With recent linux-next I've got a similar issue on Samsung Exynos based
-Chromebooks: Peach-Pit and Peach-Pi, both using SPI for communicating
-with regulators via chrome EC bridge:
+Yes, the tracepoints are not a proper replacement for the counters (especially 
+the capability to get numbers after-the-fact. So I would really like to keep
+both.
 
-PM: suspend entry (deep)
-PM: Syncing filesystems ... done.
-Freezing user space processes ... (elapsed 0.001 seconds) done.
-OOM killer disabled.
-Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
-printk: Suspending console(s) (use no_console_suspend to debug)
-...
-spi_master spi2: could not stop message queue
-spi_master spi2: queue stop failed
-dpm_run_callback(): platform_pm_suspend+0x0/0x54 returns -16
-PM: Device 12d40000.spi failed to suspend: error -16
-PM: Some devices failed to suspend, or early wake event detected
+> Another idea that Steven Rostedt and I discussed a while ago is some
+> kind of "statfs" which would already provide some code, similar to the
+> one that KVM uses to accumulate statistics from multiple VMs or multiple
+> VCPUs into a single counter.
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+
+I think that would make a lot of sense to have a common filesystem to avoid
+code duplication bugs.
 
