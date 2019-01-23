@@ -4,72 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10198C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:01:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 472F3C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:02:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C375F217F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:01:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17A8220870
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:02:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="g0mxfGP0"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="G/Jj4jtn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727318AbfAWKBG (ORCPT
+        id S1727335AbfAWKCg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 05:01:06 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:33581 "EHLO
+        Wed, 23 Jan 2019 05:02:36 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:37062 "EHLO
         mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726804AbfAWKBG (ORCPT
+        with ESMTP id S1727090AbfAWKCf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 05:01:06 -0500
-Received: by mail-ot1-f65.google.com with SMTP id i20so1422721otl.0
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 02:01:06 -0800 (PST)
+        Wed, 23 Jan 2019 05:02:35 -0500
+Received: by mail-ot1-f65.google.com with SMTP id s13so1405497otq.4
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 02:02:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=77ZCzo2w78BSCMOdjec45OEgqSB0KV/7zPbxJ74wWS8=;
-        b=g0mxfGP0Vyphud4v6VrkINWLF1dLCn4/LZtTU+dsUzEP2cSzjgt4/6ZvvuYoiujKUK
-         HPiaBBBcahzq1Yt2laxH4z165FV1CjP+qdeDJWMw7ezntFW44H3QZca53qVKYiVQ3qlY
-         z9/4IqO50PuRfHVnKYWDtqAtPea5rj3kkd0ZA=
+        bh=IHRz0QY5CZdQdoIc8komNLLlrqiTiPWXxllEMlAtARM=;
+        b=G/Jj4jtnKEpWTpEANW8y1CoH2U7MVFQE4/JJokkOHiGo4RSdztEqc6Yfgozx4nGkCC
+         e28o9RqZJhkPGmowb1WxKMgHlFPIlumm4KFp7ct9QR56npU3mTR1FNzSBz6AcTGbKcs6
+         lbh45MItOkxJS7teB2fmWDpKVD5WpThu2wlqI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=77ZCzo2w78BSCMOdjec45OEgqSB0KV/7zPbxJ74wWS8=;
-        b=oDfN7pylwZUg3d0GRQh5mvv3wWJu+N+zdVZJy6/tsVvyWEl6/NZCfqFi4e3DXQI88O
-         /+o2Kp7dh3oYvgjT2JHBKo2+jK8EAsVFxPwaTLdUeWMspt/Xs5CZ7dqp571CZB0aoMJ7
-         j+9Nm283c1uhhYwoCkUDuIxnp80ntSK7Xe65wfd2S8XnexCnTJao4G170hdLWlp+B8YW
-         q6hzgMajVxN2CZc7PXrT7fOwkg0IT00am9xiFCA1HC4naXJPYvddjWHDG4B2UaawqPAA
-         f2IctFKgOK2oFmlNedKOuhXSOwNqJJhiDfVKoHTsXNK0fhv/+2gQoOM1M54wQt5m7lHC
-         ZEVw==
-X-Gm-Message-State: AJcUukecwAo126cusdbv0ZQ206KMNhG0IWQ5m/92fps3XVQEigJg2XuN
-        RRe0RGpvYy++QqB+oFTnleNfc7yfNA0=
-X-Google-Smtp-Source: ALg8bN6mg4+U8n1uoO9e1btl9ra43UeWLchBAFJ0EJx+p0XUQQGf6i+X+X50Ey01hvgwgI8rQ3u6vQ==
-X-Received: by 2002:a9d:6a50:: with SMTP id h16mr955982otn.95.1548237665950;
-        Wed, 23 Jan 2019 02:01:05 -0800 (PST)
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com. [209.85.210.50])
-        by smtp.gmail.com with ESMTPSA id c19sm7912339otl.16.2019.01.23.02.01.05
+        bh=IHRz0QY5CZdQdoIc8komNLLlrqiTiPWXxllEMlAtARM=;
+        b=Fqqh1yzl9oTMpRPNMm1Hs7IKhcTlHZ38f29aTfJppoQQYT0xRJHCNDkj+LtBjr/fV9
+         WU/wdMEz/4lC4W5E1CMTG4qs7ldaTTmrFogz4gMTu1yATLWErf4DZJEzcgWZHvngKzlH
+         YsHvH36WYI6dsqrUiHbp3DtU9upFPLc4ROGCeguVY8FweUUkDUcqEag3rujViszGId9N
+         FtMh4aAcHvMnir3hmxMb7MF/wbmnsQhzja6ibYZ0VuLQIlim6sc36iAz9mYDvvqYhZ4a
+         naq+kFIMu9lbElG3BgmDZ+zehi293C2a+tHMqsIQm2LF8o36BAoiOhHTY2E/U2+KJWkN
+         ow2g==
+X-Gm-Message-State: AJcUukdyB5qAHFFudZdPqw2GO8dbcvvGAtYgSxmTfJM+svrxP051y8Ay
+        9n0IUO6BwdiQYa39GBNphDAXErQZ6cw=
+X-Google-Smtp-Source: ALg8bN4pMyyWll7cNhUZF6v8OPQpBDKl1GCg3nDMYQNl/kZDPwz7JDi6llqb5jK5XnOR9eIxQj6R4Q==
+X-Received: by 2002:a9d:d83:: with SMTP id 3mr935928ots.361.1548237754333;
+        Wed, 23 Jan 2019 02:02:34 -0800 (PST)
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com. [209.85.167.175])
+        by smtp.gmail.com with ESMTPSA id m129sm8740546oif.50.2019.01.23.02.02.32
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 23 Jan 2019 02:01:05 -0800 (PST)
-Received: by mail-ot1-f50.google.com with SMTP id i20so1422704otl.0
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 02:01:05 -0800 (PST)
-X-Received: by 2002:a9d:4687:: with SMTP id z7mr1080754ote.350.1548237665228;
- Wed, 23 Jan 2019 02:01:05 -0800 (PST)
+        Wed, 23 Jan 2019 02:02:33 -0800 (PST)
+Received: by mail-oi1-f175.google.com with SMTP id u18so1290709oie.10
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 02:02:32 -0800 (PST)
+X-Received: by 2002:aca:5a88:: with SMTP id o130mr1024574oib.275.1548237752296;
+ Wed, 23 Jan 2019 02:02:32 -0800 (PST)
 MIME-Version: 1.0
 References: <20181022144901.113852-1-tfiga@chromium.org> <20181022144901.113852-3-tfiga@chromium.org>
  <4cd223f0-b09c-da07-f26c-3b3f7a8868d7@xs4all.nl> <5fb0f2db44ba7aa3788b61f2aa9a30d4f4984de5.camel@ndufresne.ca>
- <d853eb91-c05d-fb10-f154-bc24e4ebb89d@xs4all.nl>
-In-Reply-To: <d853eb91-c05d-fb10-f154-bc24e4ebb89d@xs4all.nl>
+ <d853eb91-c05d-fb10-f154-bc24e4ebb89d@xs4all.nl> <dae0211b3bc01423f1e9de63e9b4ef0aee44c086.camel@ndufresne.ca>
+In-Reply-To: <dae0211b3bc01423f1e9de63e9b4ef0aee44c086.camel@ndufresne.ca>
 From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Wed, 23 Jan 2019 19:00:54 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5COddN-YosKyfBJ7n=qt40ONP=YEjBo5HQBOPGhs19h+g@mail.gmail.com>
-Message-ID: <CAAFQd5COddN-YosKyfBJ7n=qt40ONP=YEjBo5HQBOPGhs19h+g@mail.gmail.com>
+Date:   Wed, 23 Jan 2019 19:02:21 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5B5EhdK78uzDE=t-ZHYDVYrrUo9t2_HQH+bKjRp6HfSOw@mail.gmail.com>
+Message-ID: <CAAFQd5B5EhdK78uzDE=t-ZHYDVYrrUo9t2_HQH+bKjRp6HfSOw@mail.gmail.com>
 Subject: Re: [PATCH v2 2/2] media: docs-rst: Document memory-to-memory video
  encoder interface
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     Nicolas Dufresne <nicolas@ndufresne.ca>,
+To:     Nicolas Dufresne <nicolas@ndufresne.ca>
+Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
         Linux Media Mailing List <linux-media@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -96,72 +96,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 17, 2018 at 8:37 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
+On Sun, Nov 18, 2018 at 10:34 AM Nicolas Dufresne <nicolas@ndufresne.ca> wr=
+ote:
 >
-> On 11/17/2018 05:18 AM, Nicolas Dufresne wrote:
-> > Le lundi 12 novembre 2018 =C3=A0 14:23 +0100, Hans Verkuil a =C3=A9crit=
- :
-> >> On 10/22/2018 04:49 PM, Tomasz Figa wrote:
-[snip]
-> >>> +      rely on it. The ``V4L2_BUF_FLAG_LAST`` buffer flag should be u=
-sed
-> >>> +      instead.
-> >>
-> >> Question: should new codec drivers still implement the EOS event?
+> Le samedi 17 novembre 2018 =C3=A0 12:37 +0100, Hans Verkuil a =C3=A9crit =
+:
+> > > > Does V4L2_CID_MIN_BUFFERS_FOR_CAPTURE make any sense for encoders?
+> > >
+> > > We do account for it in GStreamer (the capture/output handling is
+> > > generic), but I don't know if it's being used anywhere.
 > >
-> > I'm been asking around, but I think here is a good place. Do we really
-> > need the FLAG_LAST in userspace ? Userspace can also wait for the first
-> > EPIPE return from DQBUF.
+> > Do you use this value directly for REQBUFS, or do you use it as the min=
+imum
+> > value but in practice use more buffers?
 >
-> I'm interested in hearing Tomasz' opinion. This flag is used already, so =
-there
-> definitely is a backwards compatibility issue here.
+> We add more buffers to that value. We assume this value is what will be
+> held by the driver, hence without adding some buffers, the driver would
+> go idle as soon as one is dequeued. We also need to allocate for the
+> importing driver.
 >
-
-FWIW, it would add the overhead of 1 more system call, although I
-don't think it's of our concern.
-
-My personal feeling is that using error codes for signaling normal
-conditions isn't very elegant, though.
-
-> >
-> >>
-> >>> +
-> >>> +3. Once all ``OUTPUT`` buffers queued before the ``V4L2_ENC_CMD_STOP=
-`` call and
-> >>> +   the last ``CAPTURE`` buffer are dequeued, the encoder is stopped =
-and it will
-> >>> +   accept, but not process any newly queued ``OUTPUT`` buffers until=
- the client
-> >>> +   issues any of the following operations:
-> >>> +
-> >>> +   * ``V4L2_ENC_CMD_START`` - the encoder will resume operation norm=
-ally,
-> >>
-> >> Perhaps mention that this does not reset the encoder? It's not immedia=
-tely clear
-> >> when reading this.
-> >
-> > Which drivers supports this ? I believe I tried with Exynos in the
-> > past, and that didn't work. How do we know if a driver supports this or
-> > not. Do we make it mandatory ? When it's not supported, it basically
-> > mean userspace need to cache and resend the header in userspace, and
-> > also need to skip to some sync point.
+> In general, if we have a pipeline with Driver A sending to Driver B,
+> both driver will require a certain amount of buffers to operate. E.g.
+> with DRM display, the driver will hold on 1 buffer (the scannout
+> buffer).
 >
-> Once we agree on the spec, then the next step will be to add good complia=
-nce
-> checks and update drivers that fail the tests.
+> In GStreamer, it's implemented generically, so we do:
 >
-> To check if the driver support this ioctl you can call VIDIOC_TRY_ENCODER=
-_CMD
-> to see if the functionality is supported.
+>   MIN_BUFFERS_FOR + remote_min + 1
+>
+> If only MIN_BUFFERS_FOR was allocated, ignoring remote driver
+> requirement, the streaming will likely get stuck.
 
-There is nothing here for the hardware to support. It's an entirely
-driver thing, since it just needs to wait for the encoder to complete
-all the pending frames and stop enqueuing more frames to the decoder
-until V4L2_ENC_CMD_START is called. Any driver that can't do it must
-be fixed, since otherwise you have no way to ensure that you got all
-the encoded output.
+What happens if the driver doesn't report it?
 
 Best regards,
 Tomasz
