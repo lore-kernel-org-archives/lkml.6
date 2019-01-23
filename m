@@ -1,75 +1,90 @@
 Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,OBFU_BITCOIN,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B614AC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 13:34:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9BFDC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 13:37:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C65D20856
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 13:34:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ocntoken.com header.i=info@ocntoken.com header.b="yxoDlNui"
+	by mail.kernel.org (Postfix) with ESMTP id 78C5B2133D
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 13:37:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548250659;
+	bh=3a/MtQUpzEdTGF0DNHDAkp/SYrostyZCYJCi7oDxtKs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=dX8IE7IAmwuuGIgUnOHkURemI+R2qjZuB20y5n/DNsnla2jJUH2FHthmTjSQevq75
+	 iqXt4UWIBFA4kSR1RsM5lEIGIkzsR7rDRpcASuEc4j52NpmgfikxNp1CFQ/XsLenaL
+	 3MQ78Vn+HbFr3bAC9b/Y435GRpKiLZArucNGNCxc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726322AbfAWNeH (ORCPT
+        id S1726229AbfAWNhh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 08:34:07 -0500
-Received: from ocntoken.com ([176.53.163.208]:44419 "EHLO ocntoken.com"
+        Wed, 23 Jan 2019 08:37:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54168 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726104AbfAWNeH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 08:34:07 -0500
-X-Greylist: delayed 602 seconds by postgrey-1.27 at vger.kernel.org; Wed, 23 Jan 2019 08:34:06 EST
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; s=key1; d=ocntoken.com;
- h=Date:From:Message-ID:To:Subject:MIME-Version:Content-Type:
- Content-Transfer-Encoding; i=info@ocntoken.com;
- bh=pTvb4b9lpoxsCMOC6j4amLW6qpwyeA0TkvlBmjAT1vk=;
- b=yxoDlNuiiP4di0CcAonVzc1dpPJ/8U38JflymibEeyDJcHoy2QKyQfw1E0ejyJQ+4jDPi+BhfQzw
-   tHWKn4s+tgkhy223RsHqTU7N2WBWiil0U948LVCu5QNj5+w/Tel3w2UCTrWXpSe6tcv6ia9ouRKI
-   7cWmjpV8qJbaj8B8UtI=
-Date:   Wed, 23 Jan 2019 14:24:03 +0100
-From:   "=?utf-8?Q?Addilyn_Foth?=" <info@ocntoken.com>
-Organization: qmbbo
-X-Priority: 3 (Normal)
-Message-ID: <250353262.20190123142403@ocntoken.com>
-To:     linux-kernel@vger.kernel.org
-Subject: =?utf-8?Q?=28=236119=29_I_hope_this_is_our_last_conversation_23=2F01=2F2019_03=3A24=3A10?=
+        id S1726104AbfAWNhh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 08:37:37 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0FD1B20870;
+        Wed, 23 Jan 2019 13:37:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548250656;
+        bh=3a/MtQUpzEdTGF0DNHDAkp/SYrostyZCYJCi7oDxtKs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HipdrgOStFWDbf0zUs9zEET6zNCrPVlQXhqPWgmb+AY8g52S532G+mqnWYldfSoC6
+         cyc06EpUXiO045jVAu2mCe3i79IWqdc+jwNTxVmA2P6KMXf2dstb5ddzyQ7xNBhQvP
+         SZWBTs+UTCSUchhARu7LppYhOqwpuPn1f6mjlr9g=
+Date:   Wed, 23 Jan 2019 14:37:34 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Gilad Ben-Yossef <gilad@benyossef.com>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        David Miller <davem@davemloft.net>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        Yael Chemla <yael.chemla@foss.arm.com>
+Subject: Re: [PATCH 2/7] crypto: ccrree: no need to check return value of
+ debugfs_create functions
+Message-ID: <20190123133734.GA24700@kroah.com>
+References: <20190122151422.14204-1-gregkh@linuxfoundation.org>
+ <20190122151422.14204-3-gregkh@linuxfoundation.org>
+ <CAOtvUMc92ghc4LjHYJ7z9r11Om82rw=mNdAqA1GYJMxmuUqCLw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOtvUMc92ghc4LjHYJ7z9r11Om82rw=mNdAqA1GYJMxmuUqCLw@mail.gmail.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Camera ready,Notification: 23/01/2019 03:24:10
-Status: Waiting for Reply 37xuSaGy9A5f65wRnDmBkE5ZrX2By50Xu4_Priority: Normal
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+On Wed, Jan 23, 2019 at 02:58:22PM +0200, Gilad Ben-Yossef wrote:
+> Hi,
+> 
+> On Tue, Jan 22, 2019 at 5:14 PM Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > When calling debugfs functions, there is no need to ever check the
+> > return value.  The function can work or not, but the code logic should
+> > never do something different based on this.
+> 
+> 
+> 
+> I get the part about not failing loading the driver just because some
+> debugs entry isn't available,  but wont it be weird if
+> debugfs_create_dir() fails but  debugfs_create_regset32() succeeds and
+> we suddenly have weird files in the debugfs root dir?
+> Not the end of the world of course but maybe it's better to avoid
+> trying to create the files if the directory is not available?
 
+See this patch to handle that theoretical issue:
 
-Whats up,dear user of legi.george@bellaroseapparel.com.
+	https://lore.kernel.org/lkml/20190123130917.GZ4087@dhcp22.suse.cz/T/#me91cc3d16185be13d64f85c8477c543cbda9baf6
 
+thanks,
 
-I honestly anticipate that I will not damage your feelings. Shit happens, life didn’t give me a choice.I have nothing against perverted people, moreover only God can judge u.So: 
-
-First of all,I adjusted the special virus on a web site with porn videos (I think you understood me). 
-
-Secondly, when u clicked on a video,soft immediately started working,all cameras switched on and screen started recording,then my soft collected all contacts from emails,messengers etc.Im really supercilious for this soft,it makes devices act as remote desktop with keylogger function,exciting. This email address Ive collected from your device,I message u here because I guess u definitely are going to check your working address. 
-
-All in all,I edited a split screen video, with your participation and porn vid from your screen,its kinda weird.Therefore,I can share this video with all your friends,colleagues,relatives etc.I guess it’s a big problem for u. 
-
-But we can be done with this problem.
-
-Well,I believe,880 dollars in my opinion,very humanely cost for mistake like this,is a fair price for our little secret.You’ll make the payment via Bitc\'oin to the below address (if you don’t know this,search \"how to buy BITCOIN\" in GOOGLE). 
-
-I accept only bitcoin,here is my   wallet’s address:1yQmn1MskXVqopu24exY5CG3zA5LYyVC1
-(case SeNsItIvE,сopy & and paste)
-
-
-U have 40 hours after opening my message to complete transaction.I will know when u opened this letter,I adjusted special tracking pixel in it.This time is sufficiently only to finalize all verifications and transaction,so you have to think fast.If I wont get my «salary»,I will share this video with all contact Ive received from ur device. 
-
-You can complain to police for a help,but they wont find me for even 150 hours,Im from Romania,so think twice.If Ill receive btc-all compromising evidence will be destroyed forever and I will never contact you again. 
-
-You can reply,but this wont make sense,I sent you this message using my soft for anonymous messages,I don’t check the mailbox after using it,because I contemplate about my security too.Have a nice day,I hope u will make a successful decision for you. 
+greg k-h
