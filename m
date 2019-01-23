@@ -2,119 +2,90 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AEA7C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 11:18:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0425EC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 11:19:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E94F20870
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 11:18:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1C7720870
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 11:19:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727334AbfAWLS1 (ORCPT
+        id S1727248AbfAWLTx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 06:18:27 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:50056 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726359AbfAWLS1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 06:18:27 -0500
-X-IronPort-AV: E=Sophos;i="5.56,510,1539619200"; 
-   d="scan'208";a="52651487"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 23 Jan 2019 19:18:25 +0800
-Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id B175B4BAC826;
-        Wed, 23 Jan 2019 19:18:23 +0800 (CST)
-Received: from localhost.localdomain (10.167.225.56) by
- G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 23 Jan 2019 19:18:29 +0800
-Date:   Wed, 23 Jan 2019 19:17:17 +0800
-From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <bp@alien8.de>,
-        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
-        <keescook@chromium.org>, <bhe@redhat.com>, <msys.mizuma@gmail.com>
-CC:     <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>,
-        <kasong@redhat.com>
-Subject: Re: [PATCH v16 5/7] x86/boot: Early parse RSDP and fill in
- boot_params
-Message-ID: <20190123111717.GF15754@localhost.localdomain>
-References: <20190123110850.12433-1-fanc.fnst@cn.fujitsu.com>
- <20190123110850.12433-6-fanc.fnst@cn.fujitsu.com>
+        Wed, 23 Jan 2019 06:19:53 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39684 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726359AbfAWLTx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 06:19:53 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 67AA0EBD;
+        Wed, 23 Jan 2019 03:19:52 -0800 (PST)
+Received: from [0.0.0.0] (e107985-lin.cambridge.arm.com [10.1.194.38])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2B88E3F5C1;
+        Wed, 23 Jan 2019 03:19:45 -0800 (PST)
+Subject: Re: [PATCH v8 2/3] sched/fair: update scale invariance of PELT
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Paul Turner <pjt@google.com>, Ben Segall <bsegall@google.com>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        pkondeti@codeaurora.org, Quentin Perret <quentin.perret@arm.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+References: <1547631791-16018-1-git-send-email-vincent.guittot@linaro.org>
+ <1547631791-16018-3-git-send-email-vincent.guittot@linaro.org>
+ <a3671d96-5003-6a50-ad2d-64833ca216a1@arm.com>
+ <CAKfTPtCjb2PRxgs9nABw2V_MJq2wi=0DTpm+wEvvSX7qnAp+VA@mail.gmail.com>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <308e0dcc-f406-77b5-5631-d00dd4680a7d@arm.com>
+Date:   Wed, 23 Jan 2019 12:19:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20190123110850.12433-6-fanc.fnst@cn.fujitsu.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: B175B4BAC826.AB050
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+In-Reply-To: <CAKfTPtCjb2PRxgs9nABw2V_MJq2wi=0DTpm+wEvvSX7qnAp+VA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 07:08:48PM +0800, Chao Fan wrote:
-[...]
-> #endif /* CONFIG_ACPI */
->diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/misc.c
->index 8dd1d5ccae58..86fa8bf56d68 100644
->--- a/arch/x86/boot/compressed/misc.c
->+++ b/arch/x86/boot/compressed/misc.c
->@@ -382,6 +382,13 @@ asmlinkage __visible void *extract_kernel(void *rmode, memptr heap,
-> 	debug_putaddr(trampoline_32bit);
-> #endif
+On 1/23/19 10:48 AM, Vincent Guittot wrote:
+> On Wed, 23 Jan 2019 at 09:26, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
+>>
+>> On 1/16/19 10:43 AM, Vincent Guittot wrote:
+>>
+>> [...]
+>>
+>>> +static inline u64 rq_clock_pelt(struct rq *rq)
+>>> +{
+>>
+>> Doesn't this function need
+>>
+>>     lockdep_assert_held(&rq->lock);
+>>     assert_clock_updated(rq);
 > 
->+	/*
->+	 * Very early parse RSDP and fill in boot_params.
->+	 * Early parsing is only executed once, and later anyone who
->+	 * needs RSDP can gain RSDP address by boot_params but not parse again.
->+	 */
->+	boot_params->acpi_rsdp_addr = get_rsdp_addr();
->+
+> originally, it was replacing cfs_rq_clock_task which doesn't have this
+> debugging code.
+> But it also replaces rq_clock_task for deadline and rt so it's
+> probably worthing adding them for such case
 
-Hi Boris and Kairui,
+I think so. Moreover, cfs_rq_clock_pelt() uses rq_clock_pelt(). Like 
+cfs_rq_clock_task(), which was replaced by cfs_rq_clock_pelt() in 
+fair.c, uses rq_clock_task().
 
-I splite my v15 PATCH 5/6 to two patches, this v16 5/7 is new added.
-Since as Boris said much code such as Kairui's need RSDP where is not
-related to KASLR, but in my v15 version, the function entry is only
-in kaslr.c. So I expose get_rsdp_addr() as not static, and fill in
-boot_params without #ifdef KASLR issue ot MEMORY_HOTREMOVE and so on.
-More code can gain the RSDP by boot_params.
-
-Since in KALSR, we need RSDP to parse SRAT and gain memroy information,
-so I put  boot_params->acpi_rsdp_addr = get_rsdp_addr(); just before
-choose_random_location(), in which KASLR works. Then in this version
-v16 PATCH 6/7, only try to gain RSDP by boot_params and not parse again.
-
-So I think this method can cover other people's usage, such as Kairui
-Song, how do you think this change.
-
-Thanks,
-Chao Fan
-
-> 	/*
-> 	 * The memory hole needed for the kernel is the larger of either
-> 	 * the entire decompressed kernel plus relocation table, or the
->diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed/misc.h
->index 764ad50c0119..e1dd15769cf3 100644
->--- a/arch/x86/boot/compressed/misc.h
->+++ b/arch/x86/boot/compressed/misc.h
->@@ -119,3 +119,10 @@ static inline void console_init(void)
-> void set_sev_encryption_mask(void);
-> 
-> #endif
->+
->+/* acpi.c */
->+#ifdef CONFIG_ACPI
->+acpi_physical_address get_rsdp_addr(void);
->+#else
->+static inline acpi_physical_address get_rsdp_addr(void) { return 0; }
->+#endif
->-- 
->2.20.1
->
-
+>> like rq_clock() and rq_clock_task()? Later to support commit
+>> cb42c9a3ebbb "sched/core: Add debugging code to catch missing
+>> update_rq_clock() calls".
+>>
+>>> +     return rq->clock_pelt - rq->lost_idle_time;
+>>> +}
+>>
+>> [...]
 
