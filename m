@@ -2,97 +2,93 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D6A3C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:15:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E727FC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:15:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BD982183F
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:15:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B33DD21019
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:15:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SgueDaaF"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jaswnsz8";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NYIUWhS/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726301AbfAWHPa (ORCPT
+        id S1726556AbfAWHPe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 02:15:30 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:60032 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725950AbfAWHP3 (ORCPT
+        Wed, 23 Jan 2019 02:15:34 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:45926 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726312AbfAWHPc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 02:15:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=fU3Tp5X5mg3VkzsKQJ/bzPanWP1fn5wZRu0id58SM70=; b=SgueDaaFWbThNyTXXny6pl1un
-        RNiHq22AU335tbMtznh3r72u1FRxLOGF2FFZBY4m8Z3SIbMkITimVOpom3myxt9qf4z8A+WcAdYsO
-        s9FNM/OQiVNReECoGjf36k0673a9XrJZs48LUA+lKaNFsaK1T7pc+eLTKQlyD//AFeoeK16Ah63gJ
-        It5baQ4x+I5Rb0moAKumgxOVG58N5R4ccO023EMeK3qjoz/i7Az1R0Rd5S0EVWsr2oCfaOy2cRsMN
-        Zie3wvNiCGY0rWlbvtfYfTyB3vTWe0P9jna/LFb0i7SsCKeosMkCEyShap/srDGaA7LKeDZCPRnlm
-        PiCrzxp+w==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gmCks-0006hg-0j; Wed, 23 Jan 2019 07:15:22 +0000
-Date:   Tue, 22 Jan 2019 23:15:21 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Alex Deucher <alexdeucher@gmail.com>,
-        Michel =?iso-8859-1?Q?D=E4nzer?= <michel@daenzer.net>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        David Airlie <airlied@linux.ie>, Huang Rui <ray.huang@amd.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Junwei Zhang <Jerry.Zhang@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sean Paul <sean@poorly.run>,
-        Christian Koenig <christian.koenig@amd.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [RFC PATCH] drm: disable WC optimization for cache coherent
- devices on non-x86
-Message-ID: <20190123071521.GB20526@infradead.org>
-References: <59ccf85d-b99d-b5c8-ea87-66c2a892e197@daenzer.net>
- <CAKv+Gu8OkbHwY5UBxahpQpM_gKh2331pQ6o-4YyJdLurbFNHvw@mail.gmail.com>
- <ccc775d3-3053-ab79-dac8-4feb28e8e690@daenzer.net>
- <CAKv+Gu-9VKL5RjScbKss4YfH1Cb8WbXmzU_0UsStnoXJcML7Rg@mail.gmail.com>
- <850b6aee-0040-c333-b125-45211c18ada5@daenzer.net>
- <CAKv+Gu99zHqcQtj6TiOXAr3Qa6WWhKem+DHVA_mAQ0-Bc0Vbqw@mail.gmail.com>
- <047667fd-17be-1c37-5d2a-26768cfd6ab8@daenzer.net>
- <CAKv+Gu_VBd8agHASc5RS0eCgyXP64Lt_i4yPuBjKwGQ+5Lpd5Q@mail.gmail.com>
- <CADnq5_O1uxCrSksfF127AZTfbmdukxmqGdh2Ee0zM6CqgG_Mhg@mail.gmail.com>
- <CAKv+Gu-4uYh_HD_5Ry_L80Nf5zpRhT4oJYhhG5_8g3gSzBs2tg@mail.gmail.com>
+        Wed, 23 Jan 2019 02:15:32 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id E40E960988; Wed, 23 Jan 2019 07:15:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548227731;
+        bh=88J7/67QlL6OqeUQld1nxuJiFh4K5ba3TOorJ53ZYIc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=jaswnsz8Tfz03lDaOqHOygbFouxBsjohsqzJLq5WB8bN4/QPeh4S1e7/yC9qo6e4D
+         JcaLgsVomELEuxEW0EVEHsQ6lE4Tn1Dr4sMNLnvFsroIvqa4B/UKsEAozcaXV1A3UO
+         99rSmFP+NeI19JVsaJKLxLXmZSnL4pwi0H2Z1TPk=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id D922160909;
+        Wed, 23 Jan 2019 07:15:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548227730;
+        bh=88J7/67QlL6OqeUQld1nxuJiFh4K5ba3TOorJ53ZYIc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=NYIUWhS/VRB+sE6fAm+Ku2IrehEjfv5W2NgJmRBoc8H3+aMyneQDdumZz30BVaKB0
+         vOj/Xmi0N3GHaH91TMREWfgW2shVHaU7uU4veiizeYJtNx+02Ik8Nc7TKEBY/4SP1m
+         wfUeQQ6PO9G4j6eTLJ4L+JmOOuM72dWiQBIRCiDQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKv+Gu-4uYh_HD_5Ry_L80Nf5zpRhT4oJYhhG5_8g3gSzBs2tg@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 23 Jan 2019 12:45:30 +0530
+From:   alokc@codeaurora.org
+To:     Mark Brown <broonie@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-serial@vger.kernel.org,
+        andy.gross@linaro.org, david.brown@linaro.org,
+        georgi.djakov@linaro.org, dianders@chromium.org,
+        swboyd@chromium.org, bjorn.andersson@linaro.org,
+        linux-serial-owner@vger.kernel.org
+Subject: Re: [PATCH 4/6] spi: spi-geni-qcom: Add interconnect support
+In-Reply-To: <20190122202924.GL7579@sirena.org.uk>
+References: <1548138816-1149-1-git-send-email-alokc@codeaurora.org>
+ <1548138816-1149-5-git-send-email-alokc@codeaurora.org>
+ <20190122202924.GL7579@sirena.org.uk>
+Message-ID: <775cdd29a7d536772330a15a7013f251@codeaurora.org>
+X-Sender: alokc@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 10:07:07PM +0100, Ard Biesheuvel wrote:
-> Yes, so much was clear. And the reason this breaks on some arm64
-> systems is because
-> a) non-snooped PCIe TLP attributes may be ignored, and
-> b) non-x86 CPUs do not snoop the caches when accessing uncached mappings.
+On 2019-01-23 01:59, Mark Brown wrote:
+> On Tue, Jan 22, 2019 at 12:03:34PM +0530, Alok Chauhan wrote:
 > 
-> I don't think there is actually any disagreement on this part. And I
-> think my patch is reasonable, only Christoph is objecting to it on the
-> grounds that drivers should not go around the DMA API and create
-> vmap()s of DMA pages with self chosen attributes.
+>> Get the interconnect paths for SPI based Serial Engine device
+>> and vote accordingly based on maximum supported SPI frequency.
+> 
+> Still not seeing anything except this patch here in my inbox - like I
+> said what's the story with dependencies?
 
-I object to it on various grounds.  While the above is correct it really
-is a mid to long-term fix.
+I've added linux-spi mailing list to all the patches sent as part of 
+this series. Not sure why you didn't get other patches. Today I've 
+explicitly added you in all the patches.
+This change series basically enabled interconnect (as per 
+bindings/interconnect/interconnect.txt) support in GENI QUPs based 
+drivers so appropriate BW request can be put based on SE usages.
+here is my complete change series: 
+https://lore.kernel.org/lkml/1548069703-26595-1-git-send-email-alokc@codeaurora.org/
+I hope I answer to your question properly.
 
-But even in the short term your patch just maintains a random list of
-idefs in a random driver, pokes into the dma-mapping internals and lacks
-any comments in the code explaining on what is going on, leading to
-futher cargo culting.  So it very clearly is not acceptable.
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
+Forum,a Linux Foundation Collaborative Project
