@@ -2,193 +2,168 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9F59C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:47:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2713C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:47:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87BDF20861
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:47:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kFqb7u3V"
+	by mail.kernel.org (Postfix) with ESMTP id 6045E20861
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:47:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548236843;
+	bh=aFA8mFPKddCT2CGrHawBchVV29mhpiaQugUTDSlyoZg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=vvRBXTf8zqRHF7NT1aii/I33T17J3BtW9sLPNfk2eoTDdX1surkftiLva+Kkjmey0
+	 R8InydwWq6w2U4FPMd4OFGTU9tE+1CQcyH9Q7YOUrhp555W/prnRddbg0GJysmf6Lf
+	 LWoziAxFB0VD1zjoXp1SmGFV7bLxrLPeEJx3jKg8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727193AbfAWJrL (ORCPT
+        id S1727263AbfAWJrV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 04:47:11 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:44202 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726291AbfAWJrL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 04:47:11 -0500
-Received: by mail-pl1-f195.google.com with SMTP id e11so893870plt.11
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 01:47:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=cWiVUTF0OwClSBMFB+3K+yYSU4xFabUAUmOW0CNVwr4=;
-        b=kFqb7u3V7aVUgjSzC7NFxFBuHXfWy60O9qzmNlMuc5ZJbo4XUqDedjv1czl9pPQUAA
-         y7oRu18CWZ77PkDYH9mYBhsP43IR3i5zpU+/GJlmQfwupLeypxZ5/gli3L+pUJjbdSfB
-         znhgmTIqamwfQsB/RdBUwE3kBIvmWhHlwVL/K8dkXybwsRAlg3cDH5Qi3FLfr/bBwgi8
-         02yTZc129rJBGFl8MgYBQHGQABMgAz0+68NQDFnYpD4DdF84x7ZctRh6JK1KzUxfiZGx
-         b43zSLKLVOnfnNSJkJAUX4rS50P0pm9Zg62yq7gM3q5+vTDKOe0nQgzDlBbNtEkzdTF3
-         S7rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=cWiVUTF0OwClSBMFB+3K+yYSU4xFabUAUmOW0CNVwr4=;
-        b=Him2t8NJo5s0457Btf+gCSjx6MmWKTUUHlYeHVrdgiyVUvr8J+AMVXXpEvhkTgHFkt
-         SZuQW8WVUCqRKY0HfvuLb0MtAQCTFcr+HSfHcd3taPVWa87oFv9Ilv8LoPtOzFVSSEkO
-         XVXguZnUl6OQXJlNI/eMahN9PoUHEaZpBlZ4BQBHbr5aowSdnwetc2nS6sf06wPpANQ5
-         Yv3/wV2vTkngT51s4HmIMdEyMFGStiHQ0B71rR8+qI0qC5hmt2nNgQcnfITdesaL29kX
-         w+w8BlsHCXCf+Dw3ctkGIjQXyZqTtp1nJb4NWRLMGfUvFpsNOychJDrtZ0qSSokgTQu0
-         ro/w==
-X-Gm-Message-State: AJcUukd5Kzp/a+f3Af1ObRODzQ8Rf4Yr1/ZcPdA8cjvFFiXK/K6omYcZ
-        By3C+yjqDIU4xfiqr9RlDIw=
-X-Google-Smtp-Source: ALg8bN7jI7zazJa2pi8KKuxkqhWECCVUJxYogqpdwbejEMrcBuCnkYn2YHXGTYETPj6dF54Vgm4S4g==
-X-Received: by 2002:a17:902:14b:: with SMTP id 69mr1586204plb.52.1548236830764;
-        Wed, 23 Jan 2019 01:47:10 -0800 (PST)
-Received: from dest.didichuxing.com ([203.100.54.194])
-        by smtp.gmail.com with ESMTPSA id u87sm46745521pfi.2.2019.01.23.01.47.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 23 Jan 2019 01:47:10 -0800 (PST)
-From:   ufo19890607@gmail.com
-To:     mingo@redhat.com, peterz@infradead.org, yun.wang@linux.alibaba.com,
-        yuzhoujian@didichuxing.com
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH] sched/debug: Show intergroup and hierarchy sum wait time of a task group
-Date:   Wed, 23 Jan 2019 17:46:56 +0800
-Message-Id: <1548236816-18712-1-git-send-email-ufo19890607@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
+        Wed, 23 Jan 2019 04:47:21 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42454 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726291AbfAWJrV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 04:47:21 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 642CFB05D;
+        Wed, 23 Jan 2019 09:47:19 +0000 (UTC)
+Date:   Wed, 23 Jan 2019 10:47:17 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Oscar Salvador <osalvador@suse.de>
+Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, david@redhat.com
+Subject: Re: [PATCH] mm,memory_hotplug: Fix scan_movable_pages for gigantic
+ hugepages
+Message-ID: <20190123094717.GQ4087@dhcp22.suse.cz>
+References: <20190122154407.18417-1-osalvador@suse.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190122154407.18417-1-osalvador@suse.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: yuzhoujian <yuzhoujian@didichuxing.com>
+On Tue 22-01-19 16:44:07, Oscar Salvador wrote:
+> This is the same sort of error we saw in [1].
+> 
+> Gigantic hugepages crosses several memblocks, so it can be
+> that the page we get in scan_movable_pages() is a page-tail
+> belonging to a 1G-hugepage.
+> If that happens, page_hstate()->size_to_hstate() will return NULL,
+> and we will blow up in hugepage_migration_supported().
+> 
+> The splat is as follows:
+> 
+> kernel: BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
+> kernel: #PF error: [normal kernel read fault]
+> kernel: PGD 0 P4D 0
+> kernel: Oops: 0000 [#1] SMP PTI
+> kernel: CPU: 1 PID: 1350 Comm: bash Tainted: G            E     5.0.0-rc1-mm1-1-default+ #27
+> kernel: Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.0.0-prebuilt.qemu-project.org 04/01/2014
+> kernel: RIP: 0010:__offline_pages+0x6ae/0x900
+> kernel: Code: 48 c7 c6 d0 3e a4 81 e8 44 c8 ad ff 49 8b 04 24 bf 00 10 00 00 a9 00 00 01 00 74 09 41 0f b6 4c 24 51 48 d3 e7 e8 42 2a c1 ff <8b> 40 08 83 f8 09 0f 84 b0 fc ff ff 83 f8 12 0f 84 a7 fc ff ff 83
+> kernel: RSP: 0018:ffffc900008e3d20 EFLAGS: 00010246
+> kernel: RAX: 0000000000000000 RBX: ffffea0000000000 RCX: 0000000000000009
+> kernel: RDX: ffffffff825c64f0 RSI: 0000000000001000 RDI: 0000000000001000
+> kernel: RBP: ffffc900008e3d68 R08: 0000000000200000 R09: 00000000000001e4
+> kernel: R10: 0000000000000058 R11: ffffffff8254a854 R12: ffffea0004200000
+> kernel: R13: 0000000000108000 R14: 0000000000110000 R15: 0000000000000000
+> kernel: FS:  00007ff172339b80(0000) GS:ffff88803eb00000(0000) knlGS:0000000000000000
+> kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> kernel: CR2: 0000000000000008 CR3: 0000000038d78006 CR4: 00000000003606a0
+> kernel: DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> kernel: DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> kernel: Call Trace:
+> kernel:  ? klist_next+0x79/0xe0
+> kernel:  memory_subsys_offline+0x42/0x60
+> kernel:  device_offline+0x80/0xa0
+> kernel:  state_store+0xab/0xc0
+> kernel:  kernfs_fop_write+0x102/0x180
+> kernel:  __vfs_write+0x26/0x190
+> kernel:  ? set_close_on_exec+0x49/0x70
+> kernel:  vfs_write+0xad/0x1b0
+> kernel:  ksys_write+0x42/0x90
+> kernel:  do_syscall_64+0x5b/0x180
+> kernel:  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> kernel: RIP: 0033:0x7ff1719febe4
+> kernel: Code: 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 80 00 00 00 00 8b 05 4a fc 2c 00 48 63 ff 85 c0 75 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 f3 c3 66 90 55 53 48 89 d5 48 89 f3 48 83
+> kernel: RSP: 002b:00007ffd50b7ddc8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+> kernel: RAX: ffffffffffffffda RBX: 0000000000000008 RCX: 00007ff1719febe4
+> kernel: RDX: 0000000000000008 RSI: 00005556e9216b20 RDI: 0000000000000001
+> kernel: RBP: 00005556e9216b20 R08: 000000000000000a R09: 0000000000000000
+> kernel: R10: 000000000000000a R11: 0000000000000246 R12: 0000000000000008
+> kernel: R13: 0000000000000001 R14: 00007ff171cca720 R15: 0000000000000008
+> kernel: Modules linked in: af_packet(E) xt_tcpudp(E) ipt_REJECT(E) xt_conntrack(E) nf_conntrack(E) nf_defrag_ipv4(E) ip_set(E) nfnetlink(E) ebtable_nat(E) ebtable_broute(E) bridge(E) stp(E) llc(E) iptable_mangle(E) iptable_raw(E) iptable_security(E) ebtable_filter(E) ebtables(E) iptable_filter(E) ip_tables(E) x_tables(E) kvm_intel(E) kvm(E) irqbypass(E) crct10dif_pclmul(E) crc32_pclmul(E) ghash_clmulni_intel(E) bochs_drm(E) ttm(E) aesni_intel(E) drm_kms_helper(E) aes_x86_64(E) crypto_simd(E) cryptd(E) glue_helper(E) drm(E) virtio_net(E) syscopyarea(E) sysfillrect(E) net_failover(E) sysimgblt(E) pcspkr(E) failover(E) i2c_piix4(E) fb_sys_fops(E) parport_pc(E) parport(E) button(E) btrfs(E) libcrc32c(E) xor(E) zstd_decompress(E) zstd_compress(E) xxhash(E) raid6_pq(E) sd_mod(E) ata_generic(E) ata_piix(E) ahci(E) libahci(E) libata(E) crc32c_intel(E) serio_raw(E) virtio_pci(E) virtio_ring(E) virtio(E) sg(E) scsi_mod(E) autofs4(E)
+> kernel: CR2: 0000000000000008
+> kernel: ---[ end trace bdb71590872849fb ]---
+> kernel: RIP: 0010:__offline_pages+0x6ae/0x900
+> kernel: Code: 48 c7 c6 d0 3e a4 81 e8 44 c8 ad ff 49 8b 04 24 bf 00 10 00 00 a9 00 00 01 00 74 09 41 0f b6 4c 24 51 48 d3 e7 e8 42 2a c1 ff <8b> 40 08 83 f8 09 0f 84 b0 fc ff ff 83 f8 12 0f 84 a7 fc ff ff 83
+> kernel: RSP: 0018:ffffc900008e3d20 EFLAGS: 00010246
+> kernel: RAX: 0000000000000000 RBX: ffffea0000000000 RCX: 0000000000000009
+> kernel: RDX: ffffffff825c64f0 RSI: 0000000000001000 RDI: 0000000000001000
+> kernel: RBP: ffffc900008e3d68 R08: 0000000000200000 R09: 00000000000001e4
+> kernel: R10: 0000000000000058 R11: ffffffff8254a854 R12: ffffea0004200000
+> kernel: R13: 0000000000108000 R14: 0000000000110000 R15: 0000000000000000
+> kernel: FS:  00007ff172339b80(0000) GS:ffff88803eb00000(0000) knlGS:0000000000000000
+> kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> kernel: CR2: 0000000000000008 CR3: 0000000038d78006 CR4: 00000000003606a0
+> kernel: DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> kernel: DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> 
+> Fix this by getting the head page and testing against it.
+> 
+> [1] https://patchwork.kernel.org/patch/10739963/
 
-We can monitor the sum wait time of a task group since 'commit 3d6c50c27bd6
-("sched/debug: Show the sum wait time of a task group")'. However this
-wait_sum just represents the confilct between different task groups, since
-it is simply sum the wait time of task_group's cfs_rq. And we still cannot
-evaluate the conflict between all the tasks within hierarchy of this group,
-so the hierarchy wait time is still needed.
+So this should be probably folded into the above patch as it is
+incomplete unless I am missing something.
 
-Thus we introduce hierarchy wait_sum which summarizes the total wait sum of
-all the tasks in the hierarchy of a group.
+> Signed-off-by: Oscar Salvador <osalvador@suse.de>
 
-The 'cpu.stat' is modified to show the statistic, like:
+Other than that the change looks good to me.
 
-	nr_periods 0
-	nr_throttled 0
-	throttled_time 0
-	intergroup wait_sum 2842251984
-	hierarchy wait_sum 6389509389332798
+Acked-by: Michal Hocko <mhocko@suse.com>
 
-From now on we can monitor both the wait_sum of intergroup and hierarchy,
-which will inevitably help a system administrator know how intense the CPU
-competition is within a task group and between different task groups. We
-can calculate the wait rate of a task group based on hierarchy wait_sum and
-cpuacct.usage.
+> ---
+>  mm/memory_hotplug.c | 15 ++++++++++-----
+>  1 file changed, 10 insertions(+), 5 deletions(-)
+> 
+> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> index ec22c86d9f89..25aee4f04a72 100644
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
+> @@ -1335,12 +1335,17 @@ static unsigned long scan_movable_pages(unsigned long start, unsigned long end)
+>  			if (__PageMovable(page))
+>  				return pfn;
+>  			if (PageHuge(page)) {
+> -				if (hugepage_migration_supported(page_hstate(page)) &&
+> -				    page_huge_active(page))
+> +				struct page *head = compound_head(page);
+> +
+> +				if (hugepage_migration_supported(page_hstate(head)) &&
+> +				    page_huge_active(head))
+>  					return pfn;
+> -				else
+> -					pfn = round_up(pfn + 1,
+> -						1 << compound_order(page)) - 1;
+> +				else {
+> +					unsigned long skip;
+> +
+> +					skip = (1 << compound_order(head)) - (page - head);
+> +					pfn += skip - 1;
+> +				}
+>  			}
+>  		}
+>  	}
+> -- 
+> 2.13.7
 
-For example:
-	X% = (current_wait_sum - last_wait_sum) / ((current_usage -
-last_usage) + (current_wait_sum - last_wait_sum))
-
-That means the task group paid X percentage of time on runqueue waiting
-for the CPU.
-
-Signed-off-by: yuzhoujian <yuzhoujian@didichuxing.com>
----
- kernel/sched/core.c  | 11 +++++++----
- kernel/sched/fair.c  | 17 +++++++++++++++++
- kernel/sched/sched.h |  3 +++
- 3 files changed, 27 insertions(+), 4 deletions(-)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index ee77636..172e6fb 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -6760,13 +6760,16 @@ static int cpu_cfs_stat_show(struct seq_file *sf, void *v)
- 	seq_printf(sf, "throttled_time %llu\n", cfs_b->throttled_time);
- 
- 	if (schedstat_enabled() && tg != &root_task_group) {
--		u64 ws = 0;
-+		u64 inter_ws = 0, hierarchy_ws = 0;
- 		int i;
- 
--		for_each_possible_cpu(i)
--			ws += schedstat_val(tg->se[i]->statistics.wait_sum);
-+		for_each_possible_cpu(i) {
-+			inter_ws += schedstat_val(tg->se[i]->statistics.wait_sum);
-+			hierarchy_ws += tg->cfs_rq[i]->hierarchy_wait_sum;
-+		}
- 
--		seq_printf(sf, "wait_sum %llu\n", ws);
-+		seq_printf(sf, "intergroup wait_sum %llu\n", inter_ws);
-+		seq_printf(sf, "hierarchy wait_sum %llu\n", hierarchy_ws);
- 	}
- 
- 	return 0;
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index e2ff4b6..35e89ca 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -858,6 +858,19 @@ static void update_curr_fair(struct rq *rq)
- }
- 
- static inline void
-+update_hierarchy_wait_sum(struct sched_entity *se,
-+			u64 delta_wait)
-+{
-+	for_each_sched_entity(se) {
-+		struct cfs_rq *cfs_rq = cfs_rq_of(se);
-+
-+		if (cfs_rq->tg != &root_task_group)
-+			__schedstat_add(cfs_rq->hierarchy_wait_sum,
-+					delta_wait);
-+	}
-+}
-+
-+static inline void
- update_stats_wait_end(struct cfs_rq *cfs_rq, struct sched_entity *se)
- {
- 	struct task_struct *p;
-@@ -880,6 +893,7 @@ static void update_curr_fair(struct rq *rq)
- 			return;
- 		}
- 		trace_sched_stat_wait(p, delta);
-+		update_hierarchy_wait_sum(se, delta);
- 	}
- 
- 	__schedstat_set(se->statistics.wait_max,
-@@ -10273,6 +10287,9 @@ void init_cfs_rq(struct cfs_rq *cfs_rq)
- #ifndef CONFIG_64BIT
- 	cfs_rq->min_vruntime_copy = cfs_rq->min_vruntime;
- #endif
-+#ifdef CONFIG_SCHEDSTATS
-+	cfs_rq->hierarchy_wait_sum = 0;
-+#endif
- #ifdef CONFIG_SMP
- 	raw_spin_lock_init(&cfs_rq->removed.lock);
- #endif
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index d27c1a5..c01ab99 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -496,6 +496,9 @@ struct cfs_rq {
- #ifndef CONFIG_64BIT
- 	u64			min_vruntime_copy;
- #endif
-+#ifdef CONFIG_SCHEDSTATS
-+	u64			hierarchy_wait_sum;
-+#endif
- 
- 	struct rb_root_cached	tasks_timeline;
- 
 -- 
-1.8.3.1
-
+Michal Hocko
+SUSE Labs
