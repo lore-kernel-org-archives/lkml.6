@@ -2,109 +2,118 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0A3CC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 20:06:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B09A4C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 20:11:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A247421872
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 20:06:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="drmbuvVj"
+	by mail.kernel.org (Postfix) with ESMTP id 8B0E421872
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 20:11:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726411AbfAWUGN (ORCPT
+        id S1726262AbfAWULH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 15:06:13 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:41914 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726309AbfAWUGM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 15:06:12 -0500
-Received: by mail-pf1-f194.google.com with SMTP id b7so1710517pfi.8
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 12:06:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=dmgYLytqcXpKiqDSGytx2ByKJQl9jIZrL314W+klkqo=;
-        b=drmbuvVj3WrMF7JclWnBaSbxihgt2Ara6mWFHxHLpOjfaYjf7WzHPyXAS7v2cHFbMr
-         NEKEHg9rX4a7zDdEuVL44qlSdP3D6d6N4EsefvSaatMXfONBeKoZPmbYQtKAqGrgc1Kw
-         vynkJzhWAXb6otx5nK7BLmlHySPf7zQ48nzQs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=dmgYLytqcXpKiqDSGytx2ByKJQl9jIZrL314W+klkqo=;
-        b=gqRK0W2KDkqVK/2ecMHtHYq93XfD0XFmuhT1yfv8Lju0SP4diteEJYbJOUXJZbqbrR
-         B6W+ayjzs1BkONj6f2cSzwl2+Q3w84xrd1BCcfGkIwtlT7ptWE+vyq1pbpQkdkyOql4D
-         aOXDJ3IadXVoeFqfnNkNKsStcYCSFBFlPJGKBtIj9HqDInbhKd7X4APyDv2WzYK2zH7B
-         6DQF5knuuhNdodMXO1in9ue2xjn4T+q/4SfurbF5hYiTXlxsviGDsea/t0sCOex+Qxr8
-         tm10upAu08XwJaEHp7MAjpMHLlOGWlOGL9pY+lwWmPY+bcN38ImOtyhmM8DZGs0lYnXM
-         Fe8A==
-X-Gm-Message-State: AJcUukfK6hYVzNNrPIYPcqjZ9JTXLKAVGb/iUEMS2xJwd98eFbTp4v73
-        d2MpKV7VogCjC8lfu7+6Un0KUDBIqMyfxw==
-X-Google-Smtp-Source: ALg8bN60lx7LloKEj2l3IH4PQOVBIuD0VpNSKOxXF9ETH+Es3aw+Zn/c1zFENR/+faWopYtiyGFtWQ==
-X-Received: by 2002:a63:e950:: with SMTP id q16mr3282071pgj.138.1548273971449;
-        Wed, 23 Jan 2019 12:06:11 -0800 (PST)
-Received: from localhost.localdomain ([2601:1c2:680:1319:4e72:b9ff:fe99:466a])
-        by smtp.gmail.com with ESMTPSA id b9sm23258345pfi.118.2019.01.23.12.06.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 23 Jan 2019 12:06:10 -0800 (PST)
-From:   John Stultz <john.stultz@linaro.org>
-To:     lkml <linux-kernel@vger.kernel.org>
-Cc:     Alistair Strachan <astrachan@google.com>,
-        Ryan Grachek <ryan@edited.us>, Wei Xu <xuwei5@hisilicon.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        "stable #4 . 17+" <stable@vger.kernel.org>,
-        John Stultz <john.stultz@linaro.org>
-Subject: [PATCH] arm64: dts: hikey: Revert "Enable HS200 mode on eMMC"
-Date:   Wed, 23 Jan 2019 12:06:06 -0800
-Message-Id: <1548273966-5889-1-git-send-email-john.stultz@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        Wed, 23 Jan 2019 15:11:07 -0500
+Received: from mga18.intel.com ([134.134.136.126]:37380 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726035AbfAWULG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 15:11:06 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jan 2019 12:11:05 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,513,1539673200"; 
+   d="scan'208";a="112117495"
+Received: from rkazants-mobl.ccr.corp.intel.com (HELO localhost) ([10.249.254.156])
+  by orsmga008.jf.intel.com with ESMTP; 23 Jan 2019 12:11:01 -0800
+Date:   Wed, 23 Jan 2019 22:11:00 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        tomas.winkler@intel.com
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Subject: Re: Getting weird TPM error after rebasing my tree to
+ security/next-general
+Message-ID: <20190123201100.GA21074@linux.intel.com>
+References: <20190118142559.GA4080@linux.intel.com>
+ <1547849358.2794.90.camel@HansenPartnership.com>
+ <20190120160413.GB30478@linux.intel.com>
+ <20190122010218.GA26713@linux.intel.com>
+ <20190122025836.GH25163@ziepe.ca>
+ <20190122132910.GA2720@linux.intel.com>
+ <CAHk-=wgdOfi+zVVfKDDqJMs2Y7Lq0uufmP8Hx8JzQFA9UzNrBw@mail.gmail.com>
+ <20190123153638.GA8727@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190123153638.GA8727@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alistair Strachan <astrachan@google.com>
+On Wed, Jan 23, 2019 at 05:36:38PM +0200, Jarkko Sakkinen wrote:
+> On Wed, Jan 23, 2019 at 07:26:42AM +1300, Linus Torvalds wrote:
+> > On Wed, Jan 23, 2019 at 2:29 AM Jarkko Sakkinen
+> > <jarkko.sakkinen@linux.intel.com> wrote:
+> > >
+> > > > >
+> > > > > Fails on commit 170d13ca3a2fdaaa0283399247631b76b441cca2. Still works on
+> > > > > preceding commit a959dc88f9c8900296ccf13e2f3e1cbc555a8917.
+> > > >
+> > > > This changes the IO access pattern in memcpy_to/fromio.. Presumably
+> > > > CRB HW doesn't like the new 4 byte move? Swap each one in crb to
+> > > > memcpy to confirm..
+> > > >
+> > > > If the HW requires particular access patterns you can't use
+> > > > memcpy_to/fromio
+> > >
+> > > Did not have time to look at the commit at all but your deduction
+> > > is correct. I know it without testing.
+> > >
+> > > Memory controller will feed 1's on unaligned read from IO memory,
+> > > and as we can see from the TPM header, this change causes two of
+> > > those:
+> > 
+> > Funky. But how did it work before then?
+> > 
+> > The new memcpy_fromio() is designed to have _predictable_ access
+> > patterns. Not necessarily the best, but at least consistent.
+> > 
+> > Prevously, we used whatever random "memcpy()" implementation we
+> > happened to pick, which *could* be aligned (particularly "rep movsb" -
+> > absolutely horrible performance for MMIO, but by doing IO one byte at
+> > a time it was certainly aligned ;), but most of our x86 memcpy
+> > implementations don't actually try all that hard to align the source.
+> > And the manual version will actually copy things *backwards* for some
+> > cases.
+> > 
+> > Is it just that this particular hardware always happened to trigger
+> > the ERMS case (ie "rep movsb")?
+> 
+> This is the particular snippet in question:
+> 
+> memcpy_fromio(buf, priv->rsp, 6);
+> expected = be32_to_cpup((__be32 *) &buf[2]);
+> if (expected > count || expected < 6)
+> 	return -EIO;
+> 
+> memcpy_fromio(&buf[6], &priv->rsp[6], expected - 6);
+> 
+> I guess it did in the first memcpy_fromio operation since it is less
+> than a quad word, right? Not sure why the 2nd memcpy_fromio() operation
+> has worked, though.
 
-This reverts commit abd7d0972a192ee653efc7b151a6af69db58f2bb. This
-change was already partially reverted by John Stultz in commit
-9c6d26df1fae ("arm64: dts: hikey: Fix eMMC corruption regression").
+And I wonder why 32-bit has worked before.
 
-This change appears to cause controller resets and block read failures
-which prevents successful booting on some hikey boards.
+Tomas, you've been more involved with ME and fTPM runs there. Do you
+have any clues where this could be rooted?
 
-Cc: Ryan Grachek <ryan@edited.us>
-Cc: Wei Xu <xuwei5@hisilicon.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: devicetree@vger.kernel.org
-Cc: stable <stable@vger.kernel.org> #4.17+
-Signed-off-by: Alistair Strachan <astrachan@google.com>
-Signed-off-by: John Stultz <john.stultz@linaro.org>
----
- arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts b/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
-index 6102350..7092460 100644
---- a/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
-+++ b/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
-@@ -300,7 +300,6 @@
- 
- 		dwmmc_0: dwmmc0@f723d000 {
- 			cap-mmc-highspeed;
--			mmc-hs200-1_8v;
- 			non-removable;
- 			bus-width = <0x8>;
- 			vmmc-supply = <&ldo19>;
--- 
-2.7.4
-
+/Jarkko
