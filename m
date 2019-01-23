@@ -2,107 +2,97 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 058EBC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:23:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D874DC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:24:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2CFB20870
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:23:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6C8520870
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:24:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727146AbfAWJXr (ORCPT
+        id S1727183AbfAWJYH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 04:23:47 -0500
-Received: from foss.arm.com ([217.140.101.70]:37922 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726326AbfAWJXr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 04:23:47 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AF447A78;
-        Wed, 23 Jan 2019 01:23:46 -0800 (PST)
-Received: from brain-police (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E82063F5C1;
-        Wed, 23 Jan 2019 01:23:43 -0800 (PST)
-Date:   Wed, 23 Jan 2019 09:23:40 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, x86@kernel.org,
-        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
-        James Morse <james.morse@arm.com>,
-        SRINIVAS <srinivas.eeda@oracle.com>
-Subject: Re: [PATCH v2 2/4] locking/qspinlock_stat: Track the no MCS node
- available case
-Message-ID: <20190123092339.GD15019@brain-police>
-References: <1548215351-18896-1-git-send-email-longman@redhat.com>
- <1548215351-18896-3-git-send-email-longman@redhat.com>
+        Wed, 23 Jan 2019 04:24:07 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2218 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726326AbfAWJYG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 04:24:06 -0500
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 7DCE7CFD2C0853360E9C;
+        Wed, 23 Jan 2019 17:24:04 +0800 (CST)
+Received: from [127.0.0.1] (10.202.226.43) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.408.0; Wed, 23 Jan 2019
+ 17:23:59 +0800
+Subject: Re: [PATCH 0/7] SCSI: cleanup debugfs usage
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Martin Petersen <martin.petersen@oracle.com>
+References: <20190122150906.12470-1-gregkh@linuxfoundation.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <de49a145-cdbe-75a4-da8a-e2d376baad19@huawei.com>
+Date:   Wed, 23 Jan 2019 09:23:55 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1548215351-18896-3-git-send-email-longman@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190122150906.12470-1-gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.43]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 10:49:09PM -0500, Waiman Long wrote:
-> Track the number of slowpath locking operations that are being done
-> without any MCS node available as well renaming lock_index[123] to make
-> them more descriptive.
-> 
-> Using these stat counters is one way to find out if a code path is
-> being exercised.
-> 
-> Signed-off-by: Waiman Long <longman@redhat.com>
-> ---
->  kernel/locking/qspinlock.c      |  3 ++-
->  kernel/locking/qspinlock_stat.h | 21 +++++++++++++++------
->  2 files changed, 17 insertions(+), 7 deletions(-)
-> 
-> diff --git a/kernel/locking/qspinlock.c b/kernel/locking/qspinlock.c
-> index 0875053..21ee51b 100644
-> --- a/kernel/locking/qspinlock.c
-> +++ b/kernel/locking/qspinlock.c
-> @@ -422,6 +422,7 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
->  	 * simple enough.
->  	 */
->  	if (unlikely(idx >= MAX_NODES)) {
-> +		qstat_inc(qstat_lock_no_node, true);
->  		while (!queued_spin_trylock(lock))
->  			cpu_relax();
->  		goto release;
-> @@ -432,7 +433,7 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
->  	/*
->  	 * Keep counts of non-zero index values:
->  	 */
-> -	qstat_inc(qstat_lock_idx1 + idx - 1, idx);
-> +	qstat_inc(qstat_lock_use_node2 + idx - 1, idx);
->  
->  	/*
->  	 * Ensure that we increment the head node->count before initialising
-> diff --git a/kernel/locking/qspinlock_stat.h b/kernel/locking/qspinlock_stat.h
-> index 42d3d8d..31728f6 100644
-> --- a/kernel/locking/qspinlock_stat.h
-> +++ b/kernel/locking/qspinlock_stat.h
-> @@ -30,6 +30,13 @@
->   *   pv_wait_node	- # of vCPU wait's at a non-head queue node
->   *   lock_pending	- # of locking operations via pending code
->   *   lock_slowpath	- # of locking operations via MCS lock queue
-> + *   lock_use_node2	- # of locking operations that use 2nd percpu node
-> + *   lock_use_node3	- # of locking operations that use 3rd percpu node
-> + *   lock_use_node4	- # of locking operations that use 4th percpu node
-> + *   lock_no_node	- # of locking operations without using percpu node
-> + *
-> + * Subtraccting lock_use_node[234] from lock_slowpath will give you
-> + * lock_use_node1.
+On 22/01/2019 15:08, Greg Kroah-Hartman wrote:
+> When calling debugfs code, there is no need to ever check the return
+> value of the call, as no logic should ever change if a call works
+> properly or not.  Fix up a bunch of x86-specific code to not care about
+> the results of debugfs.
+>
+> Greg Kroah-Hartman (7):
+>   scsi: bfa: no need to check return value of debugfs_create functions
+>   scsi: csiostor: no need to check return value of debugfs_create
+>     functions
+>   scsi: fnic: no need to check return value of debugfs_create functions
+>   scsi: snic: no need to check return value of debugfs_create functions
+>   scsi: lpfc: no need to check return value of debugfs_create functions
+>   scsi: qlogic: no need to check return value of debugfs_create
+>     functions
+>   scsi: qla2xxx: no need to check return value of debugfs_create
+>     functions
+>
 
-Typo: "subtraccting"
+JFYI, Martin has some more debugfs usage queued for 5.1 here:
+https://kernel.googlesource.com/pub/scm/linux/kernel/git/mkp/scsi/+log/5.1/scsi-queue/drivers/scsi/hisi_sas
 
-Will
+I'll send a patch to tidy-up, as above. It would not be x86 specific, 
+but I am not sure what above is.
+
+Thanks,
+John
+
+
+
+>  drivers/scsi/bfa/bfad_debugfs.c   |  17 ---
+>  drivers/scsi/csiostor/csio_init.c |   6 +-
+>  drivers/scsi/fnic/fnic_debugfs.c  |  88 +---------------
+>  drivers/scsi/fnic/fnic_main.c     |   7 +-
+>  drivers/scsi/fnic/fnic_stats.h    |   2 +-
+>  drivers/scsi/fnic/fnic_trace.c    |  17 +--
+>  drivers/scsi/fnic/fnic_trace.h    |   4 +-
+>  drivers/scsi/lpfc/lpfc_debugfs.c  | 170 ------------------------------
+>  drivers/scsi/qedf/qedf_debugfs.c  |  18 +---
+>  drivers/scsi/qedi/qedi_debugfs.c  |  17 +--
+>  drivers/scsi/qla2xxx/qla_dfs.c    |  43 +-------
+>  drivers/scsi/snic/snic_debugfs.c  | 133 +++++------------------
+>  drivers/scsi/snic/snic_main.c     |  14 +--
+>  drivers/scsi/snic/snic_stats.h    |   2 +-
+>  drivers/scsi/snic/snic_trc.c      |  12 +--
+>  drivers/scsi/snic/snic_trc.h      |   4 +-
+>  16 files changed, 48 insertions(+), 506 deletions(-)
+>
+
+
