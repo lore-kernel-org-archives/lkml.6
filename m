@@ -2,100 +2,163 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31198C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 15:58:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3969CC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 15:59:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F245F2184C
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 15:58:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0345B20449
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 15:59:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726289AbfAWP6v (ORCPT
+        id S1726719AbfAWP7I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 10:58:51 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:41715 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725930AbfAWP6v (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 10:58:51 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id D20D18074E; Wed, 23 Jan 2019 16:58:41 +0100 (CET)
-Date:   Wed, 23 Jan 2019 16:58:50 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Lukas Wunner <lukas@wunner.de>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        "Hutter, Tony" <hutter2@llnl.gov>,
-        Marc Dionne <marc.c.dionne@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>, Kash Pande <kash@tripleback.net>
-Subject: Re: x86/fpu: Don't export __kernel_fpu_{begin,end}()
-Message-ID: <20190123155850.GB8721@amd>
-References: <CAB9dFdsZb-sZixeOzrt8F50h1pnUK2W2Cxx8+xjhgd0=6xs7iw@mail.gmail.com>
- <20190109111951.5zvnj7ls6jv56p2u@linutronix.de>
- <20190109165235.GA8151@kroah.com>
- <20190109170935.e6b6rwzpk6dlruu4@linutronix.de>
- <20190110131132.GC20217@kroah.com>
- <ba74ed88-06d0-5063-799f-c9c6ddbc7da0@llnl.gov>
- <20190110180752.f4cnunadzzkev24m@linutronix.de>
- <20190110182413.GA6932@kroah.com>
- <20190111050407.4k7pkir3jqtyn22o@wunner.de>
- <20190111054058.GA27966@kroah.com>
+        Wed, 23 Jan 2019 10:59:08 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:42224 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726124AbfAWP7H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 10:59:07 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 657D02084E; Wed, 23 Jan 2019 16:59:05 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-87-206.w90-88.abo.wanadoo.fr [90.88.29.206])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 29EB1209B6;
+        Wed, 23 Jan 2019 16:58:55 +0100 (CET)
+From:   Antoine Tenart <antoine.tenart@bootlin.com>
+To:     davem@davemloft.net, sd@queasysnail.net, andrew@lunn.ch,
+        f.fainelli@gmail.com, hkallweit1@gmail.com
+Cc:     Antoine Tenart <antoine.tenart@bootlin.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        thomas.petazzoni@bootlin.com, alexandre.belloni@bootlin.com,
+        quentin.schulz@bootlin.com, allan.nielsen@microchip.com
+Subject: [PATCH net-next 00/10] net: macsec: initial support for hardware offloading
+Date:   Wed, 23 Jan 2019 16:56:28 +0100
+Message-Id: <20190123155638.13852-1-antoine.tenart@bootlin.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="aM3YZ0Iwxop3KEKx"
-Content-Disposition: inline
-In-Reply-To: <20190111054058.GA27966@kroah.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
 
---aM3YZ0Iwxop3KEKx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This series intends to add support for offloading MACsec transformations
+in hardware enabled devices. The series is divided in two parts: the
+first 7 patches add the infrastructure support to offload a MACsec
+configuration to hardware drivers; and the last 3 patches introduce the
+MACsec offloading support in the Microsemi Ocelot networking PHY, making
+it the first driver to support the MACsec hardware offloading feature.
 
-On Fri 2019-01-11 06:40:58, Greg Kroah-Hartman wrote:
-> On Fri, Jan 11, 2019 at 06:04:07AM +0100, Lukas Wunner wrote:
-> > On Thu, Jan 10, 2019 at 07:24:13PM +0100, Greg Kroah-Hartman wrote:
-> > > My tolerance for ZFS is pretty non-existant.  Sun explicitly did not
-> > > want their code to work on Linux, so why would we do extra work to get
-> > > their code to work properly?
-> >=20
-> > ZoL facilitates seamless r/w cross-mounting with macOS, something no
-> > other filesystem allows, and that feature is critical for me to work
-> > on Linux drivers for Mac hardware.  Please don't make life harder than
-> > necessary for developers like me.  Your "extra work" argument seems
-> > disingenuous to me, Sebastian's patch is causing extra work for
-> > ZFS developers, not the kernel community.  The maintenance burden
-> > for the kernel community to retain the export is zero.
->=20
-> Sorry, no, we do not keep symbols exported for no in-kernel users.
+The series can also be found at:
+https://github.com/atenart/linux/tree/net-next/macsec
 
-Killing ZFS is _not_ nice. Its not like ZFS is closed source...=20
-=20
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+If you think I'm missing anyone who would be interested in
+participating to the discussion please feel free to Cc them and I'll add
+them to the Cc list for the next iteration.
 
---aM3YZ0Iwxop3KEKx
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+MACsec hardware offloading infrastructure
+-----------------------------------------
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Linux has a software implementation of the MACsec standard and so far no
+hardware offloading feature was developed and submitted. Some hardware
+engines can perform MACsec operations, such as the Intel ixgbe NIC and
+the Microsemi Ocelot PHY (the one we use in this series). This means the
+MACsec offloading infrastructure should support networking PHY and
+Ethernet drivers. A preliminary email[1] was sent about this.
 
-iEYEARECAAYFAlxIjzoACgkQMOfwapXb+vKnyQCfWS6aw9br4w0yFh+P3021ahMQ
-EBcAoKhg16FWGPC8DaXcVtYOgyQ00tC8
-=JjK+
------END PGP SIGNATURE-----
+The main idea here is to re-use the logic and data structures of the
+software MACsec implementation. This allows not to duplicate definitions
+and structure storing the same kind of information. It also allows to
+use a unified genlink interface for both MACsec implementations (so that
+the same userspace tool, `ip macsec`, is used with the same arguments).
+The MACsec offloading support cannot be disabled if an interface
+supports it at the moment, but this could be implemented later on if
+this is a need (we could think of something like
+`ip macsec set macsec0 offloading off`).
 
---aM3YZ0Iwxop3KEKx--
+The MACsec configuration is passed to device drivers supporting it
+through macsec_hw_offload() which is called (indirectly) from the MACsec
+genl helpers. This function calls the macsec() ops of PHY and Ethernet
+drivers in two steps: a preparation one, and a commit one. The first
+step is allowed to fail and should be used to check if a provided
+configuration is compatible with the features provided by a MACsec
+engine, while the second step is not allowed to fail and should only be
+used to enable a given MACsec configuration. Two extra calls are made:
+when a virtual MACsec interface is created and when it is deleted, so
+that the hardware driver can stay in sync.
+
+The Rx and TX handlers are modified to take in account the special case
+were the MACsec transformation happens in the hardware, whether in a PHY
+or in a MAC, as the packets seen by the networking stack on both the
+physical and MACsec virtual interface are exactly the same. This leads
+to some limitations: the hardware and software implementations can't be
+used on the same physical interface, as the policies would be impossible
+to fulfill (such as strict validation of the frames). Also only a single
+virtual MACsec interface can be attached to a physical port supporting
+hardware offloading as it would be impossible to guess onto which
+interface a given packet should go (for ingress traffic).
+
+Another limitation as of now is that the counters and statistics are not
+reported back from the hardware to the software MACsec implementation.
+This isn't an issue when using offloaded MACsec transformations, but it
+should be added in the future so that the MACsec state can be reported
+to the user (which would also improve the debug).
+
+[1] https://www.spinics.net/lists/netdev/msg513047.html
+
+Microsemi Ocelot PHY MACsec support
+-----------------------------------
+
+In order to add support for the MACsec offloading feature in the
+Microsemi Ocelot driver, the __phy_read_page and __phy_write_page
+helpers had to be exported. This is because the initialization of the
+PHY is done while holding the MDIO bus lock, and we need to change the
+page to configure the MACsec block.
+
+The support itself is then added in two patches. The first one adds
+support for configuring the MACsec block within the PHY, so that it is
+up, running and available for future configuration, but is not doing any
+modification on the traffic passing through the PHY. The second patch
+implements the phy_driver macsec() helper in the Microsemi Ocelot PHY
+driver, and introduce helpers to configure MACsec transformations and
+flows to match specific packets.
+
+Comments are of course welcomed. Thanks!
+Antoine
+
+Antoine Tenart (10):
+  net: introduce the MACSEC netdev feature
+  net: macsec: convert to SPDX
+  net: macsec: move some definitions in a dedicated header
+  net: macsec: introduce the netdev_macsec structure
+  net: phy: introduce a phy_driver macsec helper
+  net: introduce a net_device_ops macsec helper
+  net: macsec: hardware offloading infrastructure
+  net: phy: export __phy_read_page/__phy_write_page
+  net: phy: mscc: macsec initialization
+  net: phy: mscc: macsec support
+
+ drivers/net/macsec.c             | 466 +++++++++------
+ drivers/net/phy/Kconfig          |   2 +
+ drivers/net/phy/mscc.c           | 960 +++++++++++++++++++++++++++++++
+ drivers/net/phy/mscc_fc_buffer.h |  64 +++
+ drivers/net/phy/mscc_mac.h       | 159 +++++
+ drivers/net/phy/mscc_macsec.h    | 258 +++++++++
+ drivers/net/phy/phy-core.c       |   6 +-
+ drivers/net/phy/phy.c            |  17 +
+ include/linux/netdev_features.h  |   3 +
+ include/linux/netdevice.h        |   8 +
+ include/linux/phy.h              |  12 +
+ include/net/macsec.h             | 223 +++++++
+ net/core/ethtool.c               |   1 +
+ 13 files changed, 1996 insertions(+), 183 deletions(-)
+ create mode 100644 drivers/net/phy/mscc_fc_buffer.h
+ create mode 100644 drivers/net/phy/mscc_mac.h
+ create mode 100644 drivers/net/phy/mscc_macsec.h
+ create mode 100644 include/net/macsec.h
+
+-- 
+2.20.1
+
