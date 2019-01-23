@@ -2,139 +2,140 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C38EC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:52:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA83C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:53:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 292D020861
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:52:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ERhu3ROP"
+	by mail.kernel.org (Postfix) with ESMTP id 99A4120861
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:53:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548240804;
+	bh=+qKiIdIE44PnJoROnYeCboyHBIgzvK2/qhoJ6bYsaLs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=xKm7pXLQIYjCMWziCL9SlMMIzvqbZLz8FN24QVNslGtdgaU2TgPKqKSURodx/ZKyx
+	 jVGL3LD9ZVR4KdqBEd0/f9No6SJQlUSlsciVrE6JtTxEEOE2bMWQC/btx0C+l+47H+
+	 srqBG5pxIp3Jg9CxNIZsCUqsASV1eKWnIgDZJcs8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727465AbfAWKwy (ORCPT
+        id S1727550AbfAWKxX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 05:52:54 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:44886 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727399AbfAWKww (ORCPT
+        Wed, 23 Jan 2019 05:53:23 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:35470 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727207AbfAWKxW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 05:52:52 -0500
-Received: by mail-qt1-f194.google.com with SMTP id n32so1746689qte.11
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 02:52:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=UeQwqTaBnBEL+vSJ4Qs4kPJUoeipubfEWM+kHQ4IKmM=;
-        b=ERhu3ROPT0izkWP9QUnp9ItKvTxSzUw8kiy/WpDiSb28rOWuCI+5D49pblUkWjM5nQ
-         hkw2a1oY1rojec25aL2/e16PhZ9kVn7uNthFOzR8o66KZsY+q63ezRPGOHLAx8wQ6TT7
-         VcnZa59Kf09LF/bn4KBJFM9BNMlYm8qrPm8HM=
+        Wed, 23 Jan 2019 05:53:22 -0500
+Received: by mail-oi1-f194.google.com with SMTP id v6so1436996oif.2;
+        Wed, 23 Jan 2019 02:53:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=UeQwqTaBnBEL+vSJ4Qs4kPJUoeipubfEWM+kHQ4IKmM=;
-        b=G/Sd7C/sCT3D+nNkHWeUomftAvJ6xUM1U4oxOTElG8LHC0VO9WhAn5bFrVXEenZe4S
-         EY9mq+791jKsu9DIeOOl/+h/yBvG3t28Ao2rjhJwS0hoNiCynptP2zAyk4VnJTpm/DIi
-         Fa0ii2B7R42YT8vlGCyffgzfFV3y7Pac8HInQ0aUtwDqSts7tpF9D4f5TpYp4pQ45UAc
-         2iIjtfnIGJmey1x8qk81yxdeh5XScpa6yG5K5uM3KF4ZLPb6uWYsVYzo6gXK8zWaw+lU
-         65JKfxHlm/p14fPEEyFIxT+NARtK96wvMkSPmvgLNyIxQ+OD1F93vAoskRhnb6g98hvP
-         Hvvg==
-X-Gm-Message-State: AJcUukcM/v9lEYMQMa4BHFd6HQ7bjBr7cIbAarL8ZKe18DsUXcEajoAm
-        4yoTpGXu6GO6PJK00W8lfst3aprmyTdfNtQ7lyMnAg==
-X-Google-Smtp-Source: ALg8bN7APB0/TQ1hcmag9JsWyBz9CtqTnRuFLDBK1y8c4HEOWE34DjkEx2IpwPAC7bDw4ycv4vzqG7CPUqeGcjQdfvQ=
-X-Received: by 2002:ac8:51c3:: with SMTP id d3mr1728856qtn.107.1548240771731;
- Wed, 23 Jan 2019 02:52:51 -0800 (PST)
+        bh=4ADTjytmAzenk3tWw3iNskI0WI6s+ySevWLD6P1qk9M=;
+        b=geWzdI1LRAaY4a6zpKvb6405o7XfrrKthI6GiiREsxEFDsiVXF/OsigqVfJZ0l1vyv
+         KSRJ/fSrMVAj9YKbZyXtjGucqUp4kzkHkJU92SACNcx0sNxl1+EHmdEm8pJeCMLQjGwc
+         +VV41yov91L2NkJQ9udAug7mbSu7kZIBPs7Um0KYHvdhr2xweeq42Uk0WtJP3gFMSE3F
+         MDvKGQB67rNhphHwHYMJw8er8FbLEC7aPBxbxLhBsb1Wl8/jzsBL2S4R3B2nOJ1cDWoj
+         b2Z5U+VrQ/Bl4XiUP/VgYggj4pDzLFD48ynutGJJHfD/dX1RVc2bbMvbguFD0nkEq9MS
+         +ggw==
+X-Gm-Message-State: AJcUukcLI1ByuVI6unkkfX6t87PYbeGXW+nwcY2wMn69JXuRcuCpQRU9
+        y+7WfT2W/kwyhYZYtU/wq19S8MLze/uPPpt6N50=
+X-Google-Smtp-Source: ALg8bN7JA5wESjPTsucWGvrSrzYqJGmmufZDZ3ZQKDwcvk5UVLnZ7/iEKDgXyNSOR2VTsrGAxa7b70O2TJwePSAWIZc=
+X-Received: by 2002:aca:3d42:: with SMTP id k63mr1111959oia.95.1548240801410;
+ Wed, 23 Jan 2019 02:53:21 -0800 (PST)
 MIME-Version: 1.0
 References: <cover.1548084260.git.amit.kucheria@linaro.org>
- <3f3e38e55c2de4b730fd7c6aa30c125f3a6a8704.1548084260.git.amit.kucheria@linaro.org>
- <20190123103451.ap5vws3kj2ch4uba@vireshk-i7>
-In-Reply-To: <20190123103451.ap5vws3kj2ch4uba@vireshk-i7>
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-Date:   Wed, 23 Jan 2019 16:22:40 +0530
-Message-ID: <CAP245DWTyaOFhS3SYwAmLGpczQo9JR+gsDbGdHAnoxpTWayjgg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/9] thermal: cpu_cooling: Require thermal core to be
- compiled in
+ <0036de796308b8919eac74a9a910f0d7b9c0cbf8.1548084260.git.amit.kucheria@linaro.org>
+ <20190123103624.t4b2ij3bfvpezgjf@vireshk-i7> <CAJZ5v0g12U0M3aJOvRgRg3=-6f+2jeG1rT5RjLoSciM0FwFofg@mail.gmail.com>
+ <20190123104322.o3whk6rfiaootspn@vireshk-i7> <20190123104403.bl7mdidmvd7c227q@vireshk-i7>
+In-Reply-To: <20190123104403.bl7mdidmvd7c227q@vireshk-i7>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 23 Jan 2019 11:53:10 +0100
+Message-ID: <CAJZ5v0g0syxsHaLOUa+K7YkR0sf0rHQHOL6ytWg_8nhh16ZZMw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/9] cpufreq: Auto-register the driver as a thermal
+ cooling device if asked
 To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-arm-msm <linux-arm-msm@vger.kernel.org>,
         Eduardo Valentin <edubezval@gmail.com>,
         Stephen Boyd <swboyd@chromium.org>,
         Doug Anderson <dianders@chromium.org>,
         Matthias Kaehlcke <mka@chromium.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Linux PM list <linux-pm@vger.kernel.org>
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Ingo Molnar <mingo@kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Tao Wang <kevin.wangtao@hisilicon.com>,
+        Linux PM <linux-pm@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 4:04 PM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+On Wed, Jan 23, 2019 at 11:44 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
 >
-> On 21-01-19, 21:10, Amit Kucheria wrote:
-> > The CPU cooling driver (cpu_cooling.c) allows the platform's cpufreq
-> > driver to register as a cooling device and cool down the platform by
-> > throttling the CPU frequency. In order to be able to auto-register a
-> > cpufreq driver as a cooling device from the cpufreq core, we need access
-> > to code inside cpu_cooling.c which, in turn, accesses code inside
-> > thermal core.
+> On 23-01-19, 16:13, Viresh Kumar wrote:
+> > On 23-01-19, 11:39, Rafael J. Wysocki wrote:
+> > > On Wed, Jan 23, 2019 at 11:36 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> > > >
+> > > > On 21-01-19, 21:10, Amit Kucheria wrote:
+> > > > > @@ -151,6 +152,11 @@ struct cpufreq_policy {
+> > > > >
+> > > > >       /* For cpufreq driver's internal use */
+> > > > >       void                    *driver_data;
+> > > > > +
+> > > > > +#ifdef CONFIG_CPU_THERMAL
+> > > > > +     /* Pointer to the cooling device if used for thermal mitigation */
+> > > > > +     struct thermal_cooling_device *cdev;
+> > > > > +#endif
+> > > > >  };
+> > > > >
+> > > > >  /* Only for ACPI */
+> > > > > @@ -386,6 +392,12 @@ struct cpufreq_driver {
+> > > > >   */
+> > > > >  #define CPUFREQ_NO_AUTO_DYNAMIC_SWITCHING    BIT(6)
+> > > > >
+> > > > > +/*
+> > > > > + * Set by drivers that want the core to automatically register the cpufreq
+> > > > > + * driver as a thermal cooling device.
+> > > > > + */
+> > > > > +#define CPUFREQ_AUTO_REGISTER_COOLING_DEV    BIT(7)
+> > > > > +
+> > > > >  int cpufreq_register_driver(struct cpufreq_driver *driver_data);
+> > > > >  int cpufreq_unregister_driver(struct cpufreq_driver *driver_data);
+> > > > >
+> > > > > @@ -415,6 +427,19 @@ cpufreq_verify_within_cpu_limits(struct cpufreq_policy *policy)
+> > > > >                       policy->cpuinfo.max_freq);
+> > > > >  }
+> > > > >
+> > > > > +#ifdef CONFIG_CPU_THERMAL
+> > > > > +static inline void register_cooling_device(struct cpufreq_policy *policy) {
+> > > > > +     policy->cdev = of_cpufreq_cooling_register(policy);
+> > > > > +}
+> > > > > +
+> > > > > +static inline void unregister_cooling_device(struct cpufreq_policy *policy) {
+> > > > > +     cpufreq_cooling_unregister(policy->cdev);
+> > > > > +     policy->cdev = NULL;
+> > > > > +}
+> > > > > +#else
+> > > > > +static inline void register_cooling_device(struct cpufreq_policy *policy) {}
+> > > > > +static inline void unregister_cooling_device(struct cpufreq_policy *policy) {}
+> > > > > +#endif
+> > > >
+> > > > The whole ifdef hackery here saves space for a pointer per policy.
+> > > > Just get rid of it, it isn't worth it.
+> > >
+> > > Is struct thermal_cooling_device defined if CONFIG_THERMAL is unset?
 > >
-> > CPU_FREQ is a bool while THERMAL is tristate.  In some configurations
-> > (e.g. allmodconfig), CONFIG_THERMAL ends up as a module while
-> > CONFIG_CPU_FREQ is compiled in. This leads to following error:
-> >
-> > drivers/cpufreq/cpufreq.o: In function `cpufreq_offline':
-> > cpufreq.c:(.text+0x407c): undefined reference to `cpufreq_cooling_unregister'
-> > drivers/cpufreq/cpufreq.o: In function `cpufreq_online':
-> > cpufreq.c:(.text+0x70c0): undefined reference to `of_cpufreq_cooling_register'
-> >
-> > Given that platforms using CPU_THERMAL usually want it compiled-in so it
-> > is available early in boot, make CPU_THERMAL depend on THERMAL being
-> > compiled-in instead of allowing it to be a module.
-> >
-> > Suggested-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> > ---
-> >  drivers/thermal/Kconfig | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-> > index 30323426902e..58bb7d72dc2b 100644
-> > --- a/drivers/thermal/Kconfig
-> > +++ b/drivers/thermal/Kconfig
-> > @@ -152,6 +152,7 @@ config CPU_THERMAL
-> >       bool "generic cpu cooling support"
-> >       depends on CPU_FREQ
-> >       depends on THERMAL_OF
-> > +     depends on THERMAL=y
-> >       help
-> >         This implements the generic cpu cooling mechanism through frequency
-> >         reduction. An ACPI version of this already exists
+> > No and it is defined in thermal.h without any ifdef stuff.
 >
-> Please remove all Kconfig crap, which gets fixed with this, as well in
-> this patch itself. Like:
+> I meant it is always available and doesn't depend on CONFIG_THERMAL.
 
-OK, I planned to if/when this series was accepted. Will send out a patch.
+OK
 
-
-> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-> index 10bc5c798d17..40f8cc323996 100644
-> --- a/drivers/cpufreq/Kconfig.arm
-> +++ b/drivers/cpufreq/Kconfig.arm
-> @@ -40,8 +40,6 @@ config ARM_ARMADA_8K_CPUFREQ
->  config ARM_BIG_LITTLE_CPUFREQ
->         tristate "Generic ARM big LITTLE CPUfreq driver"
->         depends on ARM_CPU_TOPOLOGY && HAVE_CLK
-> -       # if CPU_THERMAL is on and THERMAL=m, ARM_BIT_LITTLE_CPUFREQ cannot be =y
-> -       depends on !CPU_THERMAL || THERMAL
->         select PM_OPP
->         help
->           This enables the Generic CPUfreq driver for ARM big.LITTLE platforms.
->
-> --
-> viresh
+I guess we can live with an extra unused pointer per policy on
+platforms with CONFIG_CPU_THERMAL unset.
