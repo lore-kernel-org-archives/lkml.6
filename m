@@ -2,140 +2,113 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8719C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 20:24:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B07A9C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 20:27:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B166E21855
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 20:24:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B3D02184C
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 20:27:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="g7TozyAr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726309AbfAWUYz (ORCPT
+        id S1726324AbfAWU1p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 15:24:55 -0500
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:39713 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726035AbfAWUYy (ORCPT
+        Wed, 23 Jan 2019 15:27:45 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:42710 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726124AbfAWU1o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 15:24:54 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01353;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0TIsBfGx_1548275079;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TIsBfGx_1548275079)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 24 Jan 2019 04:24:42 +0800
-Subject: Re: [RFC PATCH] mm: vmscan: do not iterate all mem cgroups for global
- direct reclaim
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     hannes@cmpxchg.org, akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <1548187782-108454-1-git-send-email-yang.shi@linux.alibaba.com>
- <20190123095926.GS4087@dhcp22.suse.cz>
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <3684a63c-4c1d-fd1a-cda5-af92fb6bea8d@linux.alibaba.com>
-Date:   Wed, 23 Jan 2019 12:24:38 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        Wed, 23 Jan 2019 15:27:44 -0500
+Received: by mail-lj1-f194.google.com with SMTP id l15-v6so3157936lja.9
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 12:27:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SDfZ035GKrH1GIAaUIA14ZhvfHWjaHvHCf05UvEOp58=;
+        b=g7TozyAr/TjlyP/pj0UDRVzDDsvR3kAUFSxxPmVW5Kf+mSJT0VpQZ2TFgJ0xW0gsNh
+         JeEA2KmzeYsEySIspPK22HdB9Dx9Fo7UXTKXBgFtm/fQBocUpVYGoSXmaEqGv1nLKa70
+         wpaoxnVihOxqnAcYAIt6fmk0R5xaGGxsN83rE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SDfZ035GKrH1GIAaUIA14ZhvfHWjaHvHCf05UvEOp58=;
+        b=CuzDYwrzb+7BHQ0Bjg8DgSohwnjOgTZm4DM7tm/Cs63KgoeHwxRctHLNZVa8OQLHkH
+         effYxSaDGQWLs1HCHSP4XTgnyS4kg0dIjHvNUfoFoMF9RRupNI4I9dUzWT+vtGhYPLB6
+         8QqpMbndpLrH1IXLsW5q55MV0SkQ3dG4g1m4HJeeH3VILOKo1AncCO/7WjLZ3CkCeJqo
+         Ok4W0GPuygzcFbNdcNu1bxkW/wAyfpR+dOF+hqUkyDAOX1cAMrOucMmPXuA1RYhPI17n
+         INGIYc/lArs/IlXUxjAvSbPJHMnyYarALaU3uq2L+AaXz1Oc6Xj1IbggCUERHK4/XQfh
+         ucEA==
+X-Gm-Message-State: AJcUukfX0EmPDLGgxzTUQYVpB0u6IyJDb8QOWXKT403O2e9gKYTJ11as
+        vS+rLNrEi1dDctMiUo4aEZr3SGOt/7/ChQ==
+X-Google-Smtp-Source: ALg8bN5/Ba6fiMj/uw8LoFAP1Jm+JGmkG3D4mTRjf6jjDvWeqyyBdaIG6bhCkNCzIxesRF1P3qgwgg==
+X-Received: by 2002:a2e:8596:: with SMTP id b22-v6mr3196316lji.122.1548275261952;
+        Wed, 23 Jan 2019 12:27:41 -0800 (PST)
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
+        by smtp.gmail.com with ESMTPSA id z6sm636233lfa.87.2019.01.23.12.27.38
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 23 Jan 2019 12:27:38 -0800 (PST)
+Received: by mail-lj1-f182.google.com with SMTP id n18-v6so3153978lji.7
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 12:27:38 -0800 (PST)
+X-Received: by 2002:a2e:9e16:: with SMTP id e22-v6mr3213844ljk.4.1548275258095;
+ Wed, 23 Jan 2019 12:27:38 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190123095926.GS4087@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <20190110004424.GH27534@dastard> <CAHk-=wg1jSQ-gq-M3+HeTBbDs1VCjyiwF4gqnnBhHeWizyrigg@mail.gmail.com>
+ <20190110070355.GJ27534@dastard> <CAHk-=wigwXV_G-V1VxLs6BAvVkvW5=Oj+xrNHxE_7yxEVwoe3w@mail.gmail.com>
+ <20190110122442.GA21216@nautica> <CAHk-=wip2CPrdOwgF0z4n2tsdW7uu+Egtcx9Mxxe3gPfPW_JmQ@mail.gmail.com>
+ <5c3e7de6.1c69fb81.4aebb.3fec@mx.google.com> <CAHk-=wgF9p9xNzZei_-ejGLy1bJf4VS1C5E9_V0kCTEpCkpCTQ@mail.gmail.com>
+ <9E337EA6-7CDA-457B-96C6-E91F83742587@amacapital.net> <CAHk-=wjqkbjL2_BwUYxJxJhdadiw6Zx-Yu_mK3E6P7kG3wSGcQ@mail.gmail.com>
+ <20190116054613.GA11670@nautica> <CAHk-=wjVjecbGRcxZUSwoSgAq9ZbMxbA=MOiqDrPgx7_P3xGhg@mail.gmail.com>
+ <nycvar.YFH.7.76.1901161710470.6626@cbobk.fhfr.pm> <CAHk-=wgsnWvSsMfoEYzOq6fpahkHWxF3aSJBbVqywLa34OXnLg@mail.gmail.com>
+ <nycvar.YFH.7.76.1901162120000.6626@cbobk.fhfr.pm>
+In-Reply-To: <nycvar.YFH.7.76.1901162120000.6626@cbobk.fhfr.pm>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 24 Jan 2019 09:27:21 +1300
+X-Gmail-Original-Message-ID: <CAHk-=wg+C65FJHB=Jx1OvuJP4kvpWdw+5G=XOXB6X_KB2XuofA@mail.gmail.com>
+Message-ID: <CAHk-=wg+C65FJHB=Jx1OvuJP4kvpWdw+5G=XOXB6X_KB2XuofA@mail.gmail.com>
+Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
+To:     Jiri Kosina <jikos@kernel.org>
+Cc:     Dominique Martinet <asmadeus@codewreck.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Josh Snyder <joshs@netflix.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 1/23/19 1:59 AM, Michal Hocko wrote:
-> On Wed 23-01-19 04:09:42, Yang Shi wrote:
->> In current implementation, both kswapd and direct reclaim has to iterate
->> all mem cgroups.  It is not a problem before offline mem cgroups could
->> be iterated.  But, currently with iterating offline mem cgroups, it
->> could be very time consuming.  In our workloads, we saw over 400K mem
->> cgroups accumulated in some cases, only a few hundred are online memcgs.
->> Although kswapd could help out to reduce the number of memcgs, direct
->> reclaim still get hit with iterating a number of offline memcgs in some
->> cases.  We experienced the responsiveness problems due to this
->> occassionally.
-> Can you provide some numbers?
-
-What numbers do you mean? How long did it take to iterate all the 
-memcgs? For now I don't have the exact number for the production 
-environment, but the unresponsiveness is visible.
-
-I had some test number with triggering direct reclaim with 8k memcgs 
-artificially, which has just one clean page charged for each memcg, so 
-the reclaim is cheaper than real production environment.
-
-perf shows it took around 220ms to iterate 8k memcgs:
-
-               dd 13873 [011]   578.542919: 
-vmscan:mm_vmscan_direct_reclaim_begin
-               dd 13873 [011]   578.758689: 
-vmscan:mm_vmscan_direct_reclaim_end
-
-So, iterating 400K would take at least 11s in this artificial case. The 
-production environment is much more complicated, so it would take much 
-longer in fact.
-
+On Thu, Jan 17, 2019 at 9:23 AM Jiri Kosina <jikos@kernel.org> wrote:
 >
->> Here just break the iteration once it reclaims enough pages as what
->> memcg direct reclaim does.  This may hurt the fairness among memcgs
->> since direct reclaim may awlays do reclaim from same memcgs.  But, it
->> sounds ok since direct reclaim just tries to reclaim SWAP_CLUSTER_MAX
->> pages and memcgs can be protected by min/low.
-> OK, this makes some sense to me. The purpose of the direct reclaim is
-> to reclaim some memory and throttle the allocation pace. The iterator is
-> cached so the next reclaimer on the same hierarchy will simply continue
-> so the fairness should be more or less achieved.
-
-Yes, you are right. I missed this point.
-
+> So I've done some basic smoke testing (~2 hours of LTP+xfstests) on the
+> kernel with the three topmost patches from
 >
-> Btw. is there any reason to keep !global_reclaim() check in place? Why
-> is it not sufficient to exclude kswapd?
-
-Iterating all memcgs in kswapd is still useful to help to reduce those 
-zombie memcgs.
-
-Thanks,
-Yang
-
+>         https://git.kernel.org/pub/scm/linux/kernel/git/jikos/jikos.git/log/?h=pagecache-sidechannel
 >
->> Cc: Johannes Weiner <hannes@cmpxchg.org>
->> Cc: Michal Hocko <mhocko@suse.com>
->> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
->> ---
->>   mm/vmscan.c | 7 +++----
->>   1 file changed, 3 insertions(+), 4 deletions(-)
->>
->> diff --git a/mm/vmscan.c b/mm/vmscan.c
->> index a714c4f..ced5a16 100644
->> --- a/mm/vmscan.c
->> +++ b/mm/vmscan.c
->> @@ -2764,16 +2764,15 @@ static bool shrink_node(pg_data_t *pgdat, struct scan_control *sc)
->>   				   sc->nr_reclaimed - reclaimed);
->>   
->>   			/*
->> -			 * Direct reclaim and kswapd have to scan all memory
->> -			 * cgroups to fulfill the overall scan target for the
->> -			 * node.
->> +			 * Kswapd have to scan all memory cgroups to fulfill
->> +			 * the overall scan target for the node.
->>   			 *
->>   			 * Limit reclaim, on the other hand, only cares about
->>   			 * nr_to_reclaim pages to be reclaimed and it will
->>   			 * retry with decreasing priority if one round over the
->>   			 * whole hierarchy is not sufficient.
->>   			 */
->> -			if (!global_reclaim(sc) &&
->> +			if ((!global_reclaim(sc) || !current_is_kswapd()) &&
->>   					sc->nr_reclaimed >= sc->nr_to_reclaim) {
->>   				mem_cgroup_iter_break(root, memcg);
->>   				break;
->> -- 
->> 1.8.3.1
->>
+> applied (also attaching to this mail), and no obvious breakage popped up.
+>
+> So if noone sees any principal problem there, I'll happily submit it with
+> proper attribution etc.
 
+So this seems to have died down, and a week later we seem to not have
+a lot of noise here any more. I think it means people either weren't
+testing it, or just didn't find any real problems.
+
+I've reverted the 'let's try to just remove the code' part in my tree.
+But I didn't apply the two other patches yet. Any final comments
+before that should happen?
+
+                     Linus
