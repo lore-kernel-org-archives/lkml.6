@@ -2,86 +2,133 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8CF0C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 08:00:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0BD1C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 08:00:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F3D621019
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 08:00:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFBE421019
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 08:00:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548230401;
-	bh=Ld0KRUt3QRCJ+ZW7Awr6wUdH+GXvmOvAXhrWQire5aU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=GYQmAgaoZBXZjO/RBWuSbk5YfA/Oc8AEuF04YmknsHlH3APdOhJuLkvjdrjJwoqsJ
-	 vs/4uJG6I/wgOWiLftWmmblSZrx+ShT70aqmFOH6DGJQOyxrtHp3FRQpHsnXt56SRk
-	 vc/DMG/3gqlWwUSzrpOroasM60actLyF6gd7Irvc=
+	s=default; t=1548230413;
+	bh=zmDyYWtKnhfHf7lFKwakcmxsKn8AOs4Tcp/ip0SX4BY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=ffR3dqkINnUuDd/NfpivdgfUunnl7jHIbBbyQDQI0SXB3qguCU/kAk2aQlOttfaiQ
+	 D84/dFwyE121rvjNjY3L2hlWXi4LxvD7lqv4szrI7lusAtZjRb15MCPN8kr4yqx40v
+	 BPwl/bt493NVWNJqm4yn9vCZR1T/HM4ccW8su5cU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726820AbfAWIAA (ORCPT
+        id S1726952AbfAWIAM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 03:00:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53074 "EHLO mail.kernel.org"
+        Wed, 23 Jan 2019 03:00:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53362 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726000AbfAWH77 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 02:59:59 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726827AbfAWIAL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 03:00:11 -0500
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A0F8421019;
-        Wed, 23 Jan 2019 07:59:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 19ABC2184A;
+        Wed, 23 Jan 2019 08:00:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548230399;
-        bh=Ld0KRUt3QRCJ+ZW7Awr6wUdH+GXvmOvAXhrWQire5aU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=T6o+64vaP/7PTjjSU+Nmajw6lWtdc91lszkbdkX8OOs4H/5ed5SRDonTMD6VzNSSY
-         skLukGioId/Leo7wWbNfZFr7Pm0lwY6i3bQzl+cC6FZAuglualTp7EvuU9vgzbIB2d
-         UT0b4t9fO5UC8x6kor2ATHJGKsJN5RQMqjYrs21k=
-Date:   Wed, 23 Jan 2019 08:59:56 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Len Brown <len.brown@intel.com>,
-        Linux PM <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH] power: domain: no need to check return value of
- debugfs_create functions
-Message-ID: <20190123075956.GA7597@kroah.com>
-References: <20190122152151.16139-6-gregkh@linuxfoundation.org>
- <CAPDyKFo=6NCiAzwF2mvfuvfCApiegBBnJdPM1EypK8xO38h_DA@mail.gmail.com>
+        s=default; t=1548230410;
+        bh=zmDyYWtKnhfHf7lFKwakcmxsKn8AOs4Tcp/ip0SX4BY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=H9xegQJSTAX2FX17/+lhkVypQWrZ+eKmB9jp6zRTkifrZeLtHZ+JrGcgqYsXU1YX8
+         LYwL2D6fjIyWr+tW9ZMg141wF3MJuwLxNi0R6eNA5/l7WgNfEhn0xAVXIPTfVpuE3c
+         umhFl4VozTwyiOzUUsK3a1mzAHS6ejcxtPKbxhh4=
+Received: by mail-lf1-f49.google.com with SMTP id a8so878454lfk.5;
+        Wed, 23 Jan 2019 00:00:10 -0800 (PST)
+X-Gm-Message-State: AJcUukcyxdjEnIPA9b6wwn6WhCf6KcGEU3etJLPneOw5rxCt0bBN2n8G
+        5B44bhOyGjNZpRp2yPTepcams3Eku/uU/vbpiOg=
+X-Google-Smtp-Source: ALg8bN5q24GuIwRANJT7Kpr2GPsYoK2FhbiIF3EEQ5Tt61TPzbvOCKsKjkpIlJS3LGV/55TSPpLg7EFoPinYwEPboVE=
+X-Received: by 2002:a19:9b50:: with SMTP id d77mr944239lfe.137.1548230408176;
+ Wed, 23 Jan 2019 00:00:08 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFo=6NCiAzwF2mvfuvfCApiegBBnJdPM1EypK8xO38h_DA@mail.gmail.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+References: <CGME20190122152608eucas1p27cff7b53eb3bb23447ef7ba2b3f69671@eucas1p2.samsung.com>
+ <20190122152553.1537-1-k.konieczny@partner.samsung.com> <20190122152553.1537-3-k.konieczny@partner.samsung.com>
+In-Reply-To: <20190122152553.1537-3-k.konieczny@partner.samsung.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Wed, 23 Jan 2019 08:59:56 +0100
+X-Gmail-Original-Message-ID: <CAJKOXPfGJxzPVcAitU=uDFfrmtwQZD1dcbbhy+BjEUF_6exx2g@mail.gmail.com>
+Message-ID: <CAJKOXPfGJxzPVcAitU=uDFfrmtwQZD1dcbbhy+BjEUF_6exx2g@mail.gmail.com>
+Subject: Re: [PATCH v1 2/3] dt-bindings: crypto: document Exynos5433 SlimSSS
+To:     Kamil Konieczny <k.konieczny@partner.samsung.com>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 08:44:36AM +0100, Ulf Hansson wrote:
-> On Tue, 22 Jan 2019 at 16:23, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > When calling debugfs functions, there is no need to ever check the
-> > return value.  The function can work or not, but the code logic should
-> > never do something different based on this.
-> 
-> Doesn't this boils done to whether we want to care to check if memory
-> allocation failed?
+On Tue, 22 Jan 2019 at 16:26, Kamil Konieczny
+<k.konieczny@partner.samsung.com> wrote:
+>
+> Document DT bindings for crypto Samsung Exynos5433 SlimSSS (Slim Security
+> SubSystem) IP.
+>
+> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+> ---
+>  .../devicetree/bindings/crypto/samsung-sss.txt      | 13 ++++++++++---
+>  1 file changed, 10 insertions(+), 3 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/crypto/samsung-sss.txt b/Documentation/devicetree/bindings/crypto/samsung-sss.txt
+> index 7a5ca56683cc..75718f86fe50 100644
+> --- a/Documentation/devicetree/bindings/crypto/samsung-sss.txt
+> +++ b/Documentation/devicetree/bindings/crypto/samsung-sss.txt
+> @@ -1,4 +1,4 @@
+> -Samsung SoC SSS (Security SubSystem) module
+> +Samsung SoC SSS (Security SubSystem) and SlimSSS module
+>
+>  The SSS module in S5PV210 SoC supports the following:
+>  -- Feeder (FeedCtrl)
+> @@ -15,6 +15,11 @@ supports the following also:
+>  -- True Random Number Generator (TRNG)
+>  -- Secure Key Manager
+>
+> +The SlimSSS module in Exynos5 (Exynos5433) supports:
+> +-- Feeder (FeedCtrl)
+> +-- Advanced Encryption Standard (AES)
+> +-- SHA-1/SHA-256/HMAC (SHA-1/SHA-256)
+> +
+>  Required properties:
+>
+>  - compatible : Should contain entries for this and backward compatible
+> @@ -22,11 +27,13 @@ Required properties:
+>    - "samsung,s5pv210-secss" for S5PV210 SoC.
+>    - "samsung,exynos4210-secss" for Exynos4210, Exynos4212, Exynos4412, Exynos5250,
+>                 Exynos5260 and Exynos5420 SoCs.
+> +  - "samsung,exynos5433-slim-sss" for Exynos542x and Exynos5433 SoCs.
 
-You should not care.
+For Exynos5420 there is a driver for regular/full SSS module. It would
+be nice to explain what is the difference between them and/or mention
+potential conflicts of usage.
 
-> Somewhere down the call chain from debugfs_create_dir(), we end up in
-> alloc_inode() and it looks like that can fail, no?
+The point is that previously we added drivers/bindings for SSS and now
+you use the other interface. It might be pretty confusing for users...
 
-Yes it can, right now it will return NULL, I'll go change that to return
-ENOMEM, but even then, your really do not care what happens as none of
-your other code flow should ever care about what debugfs does, or does
-not, do.
+Best regards,
+Krzysztof
 
-thanks,
-
-greg k-h
+>  - reg : Offset and length of the register set for the module
+>  - interrupts : interrupt specifiers of SSS module interrupts (one feed
+>                 control interrupt).
+>
+>  - clocks : list of clock phandle and specifier pairs for all clocks  listed in
+>                 clock-names property.
+> -- clock-names : list of device clock input names; should contain one entry
+> -               "secss".
+> +- clock-names : list of device clock input names; should contain "pclk" and
+> +               "aclk" for slim-sss in Exynos5433, and one entry "secss" for
+> +               other compatibles.
+> --
+> 2.20.0
+>
