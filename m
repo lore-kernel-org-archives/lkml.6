@@ -2,183 +2,163 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 482F0C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 08:50:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D83CC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 08:50:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F282B21019
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 08:50:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C696420861
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 08:50:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TpL5MWfF"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Rgi/Tq6c"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727016AbfAWIuP (ORCPT
+        id S1727077AbfAWIuu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 03:50:15 -0500
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:34854 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726158AbfAWIuO (ORCPT
+        Wed, 23 Jan 2019 03:50:50 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:40408 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726158AbfAWIut (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 03:50:14 -0500
-Received: by mail-yb1-f194.google.com with SMTP id h81so575719ybg.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 00:50:14 -0800 (PST)
+        Wed, 23 Jan 2019 03:50:49 -0500
+Received: by mail-it1-f193.google.com with SMTP id h193so1890063ita.5
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 00:50:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=+vP++zywrewyllFoY8SFFzZndvScys639HwssjycDzc=;
-        b=TpL5MWfFO8ISsmbcwyNb5vMW0TpSc3hyOxVBFCVdRl0jXEEycMPwnvftAfHjo0w0Tp
-         DAzSMuvgvq0Z/w6URa3cJ1S+zxU3SAxo3/eLc7Pn+sybzRO1ZfrP+pPB1O56V4y01xp1
-         zBlY7tEgR7N6WTw9En/NqSYh6OPwibdVx5rZQuJ4Iw0dDDF4zL1okNvBb+RLe6noNNtT
-         AsQeHI51M7YaB2YLXimiU4ZwHS1KEOEItp8yC6/lc6u/ipskI0M+j8SSh39YiDmX19Fh
-         ekkCklfCE6AUpQacFzecuptKQ7JYXf1rvhyy3eAj21K47sFa50uztfFg0w2hyjrYq5BK
-         56Ug==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qqqr6i1pzvuqiJVIw+m8cqVTw0rosF2QUA3fc4XZEmM=;
+        b=Rgi/Tq6cE7vhMZbsTkqzG/9yUzGm2P31U0XGUpA1wxdWslwUESOhEj3iuTyoc+OiaR
+         DszmcwND1PbaW+37f4bi1QrHL1Q43AunsiXbYielZA7NM7EmBAp36g4gwiPUvUxlVJ0y
+         mBkNNPcRUvfzGqcHcFcefH9LlJJ68JwIUdGA0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+vP++zywrewyllFoY8SFFzZndvScys639HwssjycDzc=;
-        b=sKr9X9PcAU9+CNtqgE1t9BD2izMdS/aO7eWD+cmW36WaB4IhIZnuQYUAZO+DeEMdf4
-         GgRP1NDsVmJP+gq0b6cZc4qLQm0dBR/wUHh4AMoOhKIXGoEJaq/80iYV8g8OT05XVFe1
-         kVQuo9QuXVB1boAhOTAAAr/4lP//MPuZx+DqqIZMdOjw2M62Q1vaXIV+LwYJlZBydMhu
-         9fQ4FwN0Gp8DALR+7v+pXfD9QtSIAbUFUPl0Bhh/n08g1jJg8Dg881RdxM96GeWue+J4
-         h04Ocvnsierx7hyMT64/32iE3PrsTwKDqIPMohbIkXOBtq7DIaTp6i9DR7nbU2jZXc60
-         haNg==
-X-Gm-Message-State: AJcUukfbkfXBoXPAghhx78ncqkT1sUQdFdAQkaAl2+AMsaB4BQWu4KAL
-        rdGSGn8ry76rSpijOvzp+W+2rz1yvNI=
-X-Google-Smtp-Source: ALg8bN5ijyyRqZqanTlbAOpXm2j/CprmOuWUdOhTtlIYta4uuuP0h3koMUg8Jt4/ludpeHvnkYIYXw==
-X-Received: by 2002:a25:aa64:: with SMTP id s91mr1096543ybi.245.1548233413632;
-        Wed, 23 Jan 2019 00:50:13 -0800 (PST)
-Received: from dumbo ([83.137.2.252])
-        by smtp.gmail.com with ESMTPSA id s185sm14134629yws.69.2019.01.23.00.50.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 23 Jan 2019 00:50:06 -0800 (PST)
-Date:   Wed, 23 Jan 2019 09:50:00 +0100
-From:   Domenico Andreoli <domenico.andreoli@linux.com>
-To:     Ben Finney <bignose@debian.org>
-Cc:     Nadia Yvette Chambers <nyc@holomorphy.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        919356@bugs.debian.org, debian-legal@lists.debian.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: Licensing of include/linux/hash.h
-Message-ID: <20190123085000.fp7lhtjxcyzw3m4x@dumbo>
-References: <20190115170017.5gxarqxzfezgr5ld@dumbo>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qqqr6i1pzvuqiJVIw+m8cqVTw0rosF2QUA3fc4XZEmM=;
+        b=CuSbVdzJLctyxFyWLGr7OoWniikqPrV9/eUiklOLpx4/7+kGMbPx2khuWPFHiAgZp+
+         vETnXSfOfw/yAWBsUXYqWMqYzzCZz9mQRQFVIhrFz6cVVxTYzLxKNgpn2X7IR7WRfVyf
+         +hunZFV6fz0myOgbXlq5sc5SK+o8jbYXlxV0T8lTNiObLTZQVM/FgpTGtmVqfX4eVbtX
+         jyMROlNzfVEYS3AdsMW1O53MRn2mPgplOKHRqzZ6c97oaI/YERgmy+nXBfdRd2id7HLe
+         JG7IDnuVVJmkaFzaSIzpg7SKyBdJrep5+rNcDh6RTY0J3Jku2awpYiwUX6bqlehxFwAq
+         bF2Q==
+X-Gm-Message-State: AJcUukfwT+mQVPkHNxp1LJkUeKI1welCCg7jrkcOEoIrD7EUzwVm/UAc
+        cTGRU3cpeKiMfBwT6N10dQ0tqc4V7z5RalK7JITa1w==
+X-Google-Smtp-Source: ALg8bN4scxqOcPYy/p1LsStP0vVZbqh7sdsTYYw6g2jOI+760/STofHImtKeHyUHHPSG/cBJd0ZVm8MmXPy7O4POYAY=
+X-Received: by 2002:a02:6019:: with SMTP id i25mr812238jac.137.1548233448576;
+ Wed, 23 Jan 2019 00:50:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="y6pzhqfh5wkjxynx"
-Content-Disposition: inline
-In-Reply-To: <20190115170017.5gxarqxzfezgr5ld@dumbo>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <1548167070-421-1-git-send-email-vincent.guittot@linaro.org>
+ <1548167070-421-2-git-send-email-vincent.guittot@linaro.org> <CAPDyKFqeo1Yxso-iYF4Co-eRYXKDRmiFHi9i5wiZSCXGtgSdkQ@mail.gmail.com>
+In-Reply-To: <CAPDyKFqeo1Yxso-iYF4Co-eRYXKDRmiFHi9i5wiZSCXGtgSdkQ@mail.gmail.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Wed, 23 Jan 2019 09:50:37 +0100
+Message-ID: <CAKfTPtDxWK-W-jP7Ak3Nk_zksCbVrY0CHT+OnWZgt1t17AYjFw@mail.gmail.com>
+Subject: Re: [PATCH v6 1/2] PM-runtime: update accounting_timestamp only when enable
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---y6pzhqfh5wkjxynx
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Ben Finney <bignose@debian.org> writes:
-> Domenico Andreoli <cavok@debian.org> writes:
->=20
-> >   the situation of dwarves-dfsg improved a lot over the weekend
->=20
-> That's good to hear. What is the event you're referring to? Can you give
-> a URL to something that describes this change?
-
-Upstream (in CC) reacted to my request of clarification and patches
-have been applied upstream and on Salsa. See bug 919356 [0] (please
-keep in CC).
-
-> > the only knot left is now the license of hash.h
+On Wed, 23 Jan 2019 at 09:14, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>
+> On Tue, 22 Jan 2019 at 15:24, Vincent Guittot
+> <vincent.guittot@linaro.org> wrote:
 > >
-> > This file is also present in the kernel [0] with an updated copyright
-> > but still without license.
->=20
-> The file you show (in the Linux code base) seems likely to have an
-> equivalent implementation under a different license, from some other
-> code base.
+> > Initializing accounting_timestamp to something different from 0 during
+> > pm_runtime_init() doesn't make sense and put useless ordering constraint between
+> > timekeeping_init() and pm_runtime_init().
+> > PM runtime should start accounting time only when it is enable and discard
+> > the period when disabled.
+> > Set accounting_timestamp to now when enabling PM runtime.
+>
+> Hmm, my first impression is that this sounds like a reasonable thing
+> to do. However, there are couple of more things to consider.
+>
+> 1) update_pm_runtime_accounting() is setting a new value of
+> dev->power.accounting_timestamp, no matter of whether runtime PM has
+> been enabled. That's seems wrong to me, at least from the perspective
+> of what we are trying to change here. So you probably needs to fix
+> that too.
 
-This will require research and work unlikely to be done before Buster
-release. Are we going to drop this package for now?
+note that whatever is done before enabling pm runtime, this will be
+overwritten during the enablement.
+I can add a clean up patch but this behavior is already there with jiffies.
 
-> > I received a private email from somebody in the kernel community who
-> > already tried to contact Nadia in the past but did not get any reply.
->=20
-> Thank you also for contacting the Linux developers forum to ask
-> <URL:https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1900588=
-=2Ehtml>.
+Or do you think that update_pm_runtime_accounting can be called before
+timekeeping_init() ?
 
-(also in CC now)
+>
+> 2) I don't think you explicitly need to set
+> dev->power.accounting_timestamp to zero at pm_runtime_init(). Just
+> leave it uninitialized, as we are anyways going to initialize it
+> before we make use of it.
 
-> > I think that pushing it to non-free is formally the right thing but I
-> > actually feel it's not the right thing.
->=20
-> To know that work (that file) is free software, we need a clear grant of
-> some specific license, for that work.
->=20
-> If the work is not free, it would be incorrect to have the work in Debian.
+yes probably
 
-Is it possible that for the kernel it is instead correct because it is,
-as whole, covered by its COPYING?
+>
+> 3) How will this change affect accounting while being system
+> suspended? As you know, the PM core disables and re-enables runtime PM
 
-> Alternatives, for complying with the Debian Free Software Guidelines with
-> this package, include:
->=20
-> * Find a credible grant of license under some GPL-compatible free
->   license to that exact file. Document that explicit grant in the Debian
->   package. This demonstrates the work is DFSG-free.
->=20
-> * Convince =E2=80=98dwarves-dfsg=E2=80=99 upstream to replace that file w=
-ith a different
->   implementation (I don't know whether such an implementation exists)
->   under a license compatible with the same version of GNU GPL. Document
->   that explicit grant in the Debian package. This demonstrates the
->   modified work is DFSG-free.
+So the time in system suspended will not be accounted
 
-Arnaldo, what priority would you give to this task?
+> during a system suspend/resume sequence. It looks to me, that you
+> actually need to call update_pm_runtime_accounting() from
+> pm_runtime_enable|disable(), or something along those lines, as to get
+> the accounting correct, no?
 
->=20
-> * Replace that file in Debian only, with a different implementation as
->   above. Document that explicit grant in the Debian package. This
->   demonstrates the modified Debian package is DFSG-free.
->=20
-> * Move the work to the =E2=80=98non-free=E2=80=99 area.
->=20
-> * Remove the work altogether.
->=20
-> Those are in descending order of (my recommended) preference.
+I thought that everything was already done for jiffies too. As soon as
+pm runtime is disable, we can't really account this time to
+suspended_time or active_time because we don't have control anymore
 
-Thanks,
-Domenico
+I think that we don't need any additional changes for
+pm_runtime_enable because we just init the accounting_timestamp and
+there is no active or suspend runtime to account yet
+For pm_runtime_disable(), I thought that everything was already there
+otherwise it means that we already didn't account the time correctly.
+I will have a deeper look at that
 
-[0] https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=3D919356
-
---=20
-3B10 0CA1 8674 ACBA B4FE  FCD2 CE5B CF17 9960 DE13
-
---y6pzhqfh5wkjxynx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEqwJ7wH2QqDPtVNX+Tg9k0miCQVoFAlxIKrIACgkQTg9k0miC
-QVpJaQ/+OmlHW6Y4OL2kw2mBvO9/p4VZaVfjM/7+eaf5AJ5IRWkoGpjexJGyCGMz
-8TaiFu1yaGuhvfYSM9g1NcxxGEK4nNMgp+MZsjSX5zRBH57ojknuvZwHsjRS3ofw
-lFWMG8gGaunrNNuC7jHKRc68d9J3/PLVwXbYyXFHmRt3Q58/ec8gfavk6u+mrN6h
-yyTqmec1bHLSCCofuQFFnlBJQXhAowu8FaqmtkuVFimeye3Epy6qHuh5SI408pPa
-4LyElnk6VzdMb70AK1WAjDjMFtziXoZQzQTgyIur5T4oBtg0qVTtxblXh7GU0cjX
-0DVqBrjpN4kemqhtZ+qNOq4Yn0xtOaqPdjpAt3h+lGTuQaJskBExuMlHEOh/ZBJo
-cUctYon4QgJXLhbTct5RtI4T+Vz0hhRawVCG3h3BcBi6SvIrHGLipxW1TeopIuDG
-jGg3ifudpBeZ1JEy0J1jiZucl5Sy/7n/0AsVDCVSdFq84RjPLka//CW+yWBcMMpJ
-xJv0iNCbJA6JZuUISc8mBKQhkI6Z7U3DBh60DZcXqmqqbzhNpCpQUWAFuWZRuoEM
-G8LcrGOFlc3TdZkLPTIHIzaXix6ic9X7ZT//pmbTAufeGWp2NOJALOVfDG1r9rv+
-fKWI0MfH4OLTNHTrWGcbehGOh8+GaP0cyUv/O0j3sI0A17HNQzM=
-=iy41
------END PGP SIGNATURE-----
-
---y6pzhqfh5wkjxynx--
+>
+> >
+> > Suggested-by: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> > ---
+> >  drivers/base/power/runtime.c | 6 +++++-
+> >  1 file changed, 5 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
+> > index fb5e2b6..7df1d05 100644
+> > --- a/drivers/base/power/runtime.c
+> > +++ b/drivers/base/power/runtime.c
+> > @@ -1306,6 +1306,10 @@ void pm_runtime_enable(struct device *dev)
+> >
+> >         spin_lock_irqsave(&dev->power.lock, flags);
+> >
+> > +       /* About to enable runtime pm, set accounting_timestamp to now */
+> > +       if (dev->power.disable_depth == 1)
+> > +               dev->power.accounting_timestamp = jiffies;
+> > +
+> >         if (dev->power.disable_depth > 0)
+> >                 dev->power.disable_depth--;
+> >         else
+> > @@ -1506,7 +1510,7 @@ void pm_runtime_init(struct device *dev)
+> >         dev->power.request_pending = false;
+> >         dev->power.request = RPM_REQ_NONE;
+> >         dev->power.deferred_resume = false;
+> > -       dev->power.accounting_timestamp = jiffies;
+> > +       dev->power.accounting_timestamp = 0;
+> >         INIT_WORK(&dev->power.work, pm_runtime_work);
+> >
+> >         dev->power.timer_expires = 0;
+> > --
+> > 2.7.4
+> >
