@@ -2,226 +2,95 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 056A2C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 23:11:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72F7CC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 23:12:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C367021019
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 23:11:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kORl+iX1"
+	by mail.kernel.org (Postfix) with ESMTP id 23AEC21855
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 23:12:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548285173;
+	bh=eUlux7236zRQGTNWkHWtzO3PQu6fP5caKEBP8oVHYKI=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:List-ID:From;
+	b=C2tmLo+dPLoxLI1hGLldTqB9nl52CwWzgxKHRQ8BY3E1OB+MphnuZ0W6wVxLoozDI
+	 ENu/XKl/y35ZEKOaIpIeTUiXyNQ88IgRuUFYjGZMDegmDXX+H3TNLu0Lxx6tVpCnBy
+	 kxUqTu3Lc9KzEXDHqwTl41wtabtyU+OzILrtpJhQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727010AbfAWXLB (ORCPT
+        id S1726960AbfAWXMv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 18:11:01 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:33888 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726109AbfAWXLA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 18:11:00 -0500
-Received: by mail-pl1-f195.google.com with SMTP id w4so1936850plz.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 15:11:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=Ghci5RYyJTurBJRPd2W1R8y3G9RVvh1VuxBKSrcz5ZM=;
-        b=kORl+iX11XpoVDVqRUIFpgMCY7LhJuTXaMPFNmZIF0HVIpsYVEwF+POju8UXdeHL8A
-         dKV5/HETevemyopSVRCnPFPtYJzQqI3hlGVHOGVwKx2lDVhLEoermqZodaziUKkFfRAK
-         ruLQXfp6W6x3Gl3bpCHS2pTIBgzH2Bk7+h2F15baR5o76fHlhV7EKHRM3Z3Csb4D92Q3
-         WV1IaYd7X9Vs+299YnRBTXlsakmqi4pNgkN1xbwdhCDXSYqyRc8AtmJmYylr2NY0V1NR
-         DHHcbuAntzZIVNEhr+StSseoITWQRm6pSDmQjOov6go07DrkNZVJwoJO/sSbS+EfcQVw
-         viZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Ghci5RYyJTurBJRPd2W1R8y3G9RVvh1VuxBKSrcz5ZM=;
-        b=JBjrDwcTguwujVSypX3hrfh2yuZjLok0reKgJ8DvW2IXMXM3PeOGQPC07xCToGpX01
-         HMnggFTLalQEvrIJH+wdQSJqLHQgoo5FW62ekuRxEJJXWEbV3SaaOWSr3GPJXBg3f0go
-         jBBWai709TwqunbfOJXhQ/ZJT4Luo6CkYWSIcql1glmkgwS8E8S+269EoDS8VUDaf5t8
-         A+6F/3lnvLEiSc91WYisM4rE1w3gI5asx5hC1muaAhA8KqjyXNUx3TJmKYwQqPjVo1wk
-         ONgB0qE5H5iNQIxB8zW5ykkSjq+9knzqEzpsXV0qSuP15KTLOkWk1qtbYDOhA85rdB0F
-         qJBg==
-X-Gm-Message-State: AJcUukeWfa9F9p+G3vavKeLT8ZlL8t6FDQSwxRviDwZY4e591Np8O6Nd
-        qiO3AUJkk4ZcxLpnfuHWcox+FCT5ZVOy3g==
-X-Google-Smtp-Source: ALg8bN7SMtr0+jb7vNKejJQL793zmjCWvlgsWyQWkjmQ5ZGgeYDOVoFtzTGoO/PuRqZbUb5/l412Pw==
-X-Received: by 2002:a17:902:b282:: with SMTP id u2mr4270996plr.89.1548285059224;
-        Wed, 23 Jan 2019 15:10:59 -0800 (PST)
-Received: from localhost ([2620:15c:2c3:fd00:55c3:110d:bbc8:eaa8])
-        by smtp.gmail.com with ESMTPSA id q1sm27597695pfb.96.2019.01.23.15.10.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 23 Jan 2019 15:10:58 -0800 (PST)
-From:   Stephane Eranian <eranian@google.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     acme@redhat.com, jolsa@redhat.com, peterz@infradead.org,
-        mingo@elte.hu, ak@linux.intel.com, kan.liang@intel.com
-Subject: [PATCH] perf tools api fs: make xxx__mountpoint() more scalable
-Date:   Wed, 23 Jan 2019 15:10:47 -0800
-Message-Id: <1548285047-5808-1-git-send-email-eranian@google.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 23 Jan 2019 18:12:51 -0500
+Received: from mx2.suse.de ([195.135.220.15]:53524 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726220AbfAWXMu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 18:12:50 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 1E373AF26;
+        Wed, 23 Jan 2019 23:12:49 +0000 (UTC)
+Date:   Thu, 24 Jan 2019 00:12:47 +0100 (CET)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+cc:     Dominique Martinet <asmadeus@codewreck.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Josh Snyder <joshs@netflix.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
+In-Reply-To: <CAHk-=wgy+1YT-Rhj5qWb_aCuBADhcq42GDKHB74sqrnOVPKzPg@mail.gmail.com>
+Message-ID: <nycvar.YFH.7.76.1901240009560.6626@cbobk.fhfr.pm>
+References: <20190110004424.GH27534@dastard> <CAHk-=wg1jSQ-gq-M3+HeTBbDs1VCjyiwF4gqnnBhHeWizyrigg@mail.gmail.com> <20190110070355.GJ27534@dastard> <CAHk-=wigwXV_G-V1VxLs6BAvVkvW5=Oj+xrNHxE_7yxEVwoe3w@mail.gmail.com> <20190110122442.GA21216@nautica>
+ <CAHk-=wip2CPrdOwgF0z4n2tsdW7uu+Egtcx9Mxxe3gPfPW_JmQ@mail.gmail.com> <5c3e7de6.1c69fb81.4aebb.3fec@mx.google.com> <CAHk-=wgF9p9xNzZei_-ejGLy1bJf4VS1C5E9_V0kCTEpCkpCTQ@mail.gmail.com> <9E337EA6-7CDA-457B-96C6-E91F83742587@amacapital.net>
+ <CAHk-=wjqkbjL2_BwUYxJxJhdadiw6Zx-Yu_mK3E6P7kG3wSGcQ@mail.gmail.com> <20190116054613.GA11670@nautica> <CAHk-=wjVjecbGRcxZUSwoSgAq9ZbMxbA=MOiqDrPgx7_P3xGhg@mail.gmail.com> <nycvar.YFH.7.76.1901161710470.6626@cbobk.fhfr.pm>
+ <CAHk-=wgsnWvSsMfoEYzOq6fpahkHWxF3aSJBbVqywLa34OXnLg@mail.gmail.com> <nycvar.YFH.7.76.1901162120000.6626@cbobk.fhfr.pm> <CAHk-=wg+C65FJHB=Jx1OvuJP4kvpWdw+5G=XOXB6X_KB2XuofA@mail.gmail.com>
+ <CAHk-=wgy+1YT-Rhj5qWb_aCuBADhcq42GDKHB74sqrnOVPKzPg@mail.gmail.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The xxx_mountpoint() interface provided by fs.c finds
-mount points for common pseudo filesystems. The first
-time xxx_mountpoint() is invoked, it scans the mount
-table (/proc/mounts) looking for a match. If found, it
-is cached. The price to scan /proc/mounts is paid once
-if the mount is found.
+On Thu, 24 Jan 2019, Linus Torvalds wrote:
 
-When the mount point is not found, subsequent calls to
-xxx_mountpoint() scan /proc/mounts over and over again.
-There is no cacheing.
+> Side note: the inode_permission() addition to can_do_mincore() in that
+> patch 0002, seems to be questionable. We do
+> 
+> +static inline bool can_do_mincore(struct vm_area_struct *vma)
+> +{
+> +       return vma_is_anonymous(vma)
+> +               || (vma->vm_file && (vma->vm_file->f_mode & FMODE_WRITE))
+> +               || inode_permission(file_inode(vma->vm_file), MAY_WRITE) == 0;
+> +}
+> 
+> note how it tests whether vma->vm_file is NULL for the FMODE_WRITE
+> test, but not for the inode_permission() test.
+> 
+> So either we test unnecessarily in the second line, or we don't
+> properly test it in the third one.
+> 
+> I think the "test vm_file" thing may be unnecessary, because a
+> non-anonymous mapping should always have a file pointer and an inode.
+> But I could  imagine some odd case (vdso mapping, anyone?) that
+> doesn't have a vm_file, but also isn't anonymous.
 
-This causes a scaling issue in perf record with hugeltbfs__mountpoint().
-The function is called for each process found in synthesize__mmap_events().
-If the machine has thousands of processes and if the /proc/mounts has many
-entries this could cause major overhead in perf record. We have observed
-multi-second slowdowns on some configurations.
+Hmm, good point.
 
-As an example on a laptop:
+So dropping the 'vma->vm_file' test and checking whether given vma is 
+special mapping should hopefully provide the desired semantics, shouldn't 
+it?
 
-Before:
-$ sudo umount /dev/hugepages
-$ strace -etrace=open -o /tmp/tt perf record -a ls
-$ fgrep mounts /tmp/tt
-285
-
-After:
-$ sudo umount /dev/hugepages
-$ strace -etrace=open -o /tmp/tt perf record -a ls
-$ fgrep mounts /tmp/tt
-1
-
-One could argue that the non-cacheing in case the moint point is not found
-is intentional. That way subsequent calls may discover a moint point if
-the syadmin mounts the filesystem. But the same argument could be made
-against cacheing the moint point. It could be unmounted causing errors.
-It all depends on the intent of the interface. This patch assumes it
-is expected to scan /proc/mounts once. The patch documents the cacheing
-behavior in the fs.h header file.
-
-An alternative would be to just fix perf record. But it would solve
-the problem with hugetlbs__mountpoint() but there could be similar
-issues (possibly down the line) with other xxx_mountpoint() calls
-in perf or other tools.
-
-Signed-off-by: Stephane Eranian <eranian@google.com>
----
- tools/lib/api/fs/fs.c | 19 +++++++++++++++++++
- tools/lib/api/fs/fs.h | 11 +++++++++++
- 2 files changed, 30 insertions(+)
-
-diff --git a/tools/lib/api/fs/fs.c b/tools/lib/api/fs/fs.c
-index 7aba8243a0e7..6934da54c96b 100644
---- a/tools/lib/api/fs/fs.c
-+++ b/tools/lib/api/fs/fs.c
-@@ -90,6 +90,7 @@ struct fs {
- 	const char * const	*mounts;
- 	char			 path[PATH_MAX];
- 	bool			 found;
-+	bool			 checked;
- 	long			 magic;
- };
- 
-@@ -111,31 +112,37 @@ static struct fs fs__entries[] = {
- 		.name	= "sysfs",
- 		.mounts	= sysfs__fs_known_mountpoints,
- 		.magic	= SYSFS_MAGIC,
-+		.checked= false,
- 	},
- 	[FS__PROCFS] = {
- 		.name	= "proc",
- 		.mounts	= procfs__known_mountpoints,
- 		.magic	= PROC_SUPER_MAGIC,
-+		.checked= false,
- 	},
- 	[FS__DEBUGFS] = {
- 		.name	= "debugfs",
- 		.mounts	= debugfs__known_mountpoints,
- 		.magic	= DEBUGFS_MAGIC,
-+		.checked= false,
- 	},
- 	[FS__TRACEFS] = {
- 		.name	= "tracefs",
- 		.mounts	= tracefs__known_mountpoints,
- 		.magic	= TRACEFS_MAGIC,
-+		.checked= false,
- 	},
- 	[FS__HUGETLBFS] = {
- 		.name	= "hugetlbfs",
- 		.mounts = hugetlbfs__known_mountpoints,
- 		.magic	= HUGETLBFS_MAGIC,
-+		.checked= false,
- 	},
- 	[FS__BPF_FS] = {
- 		.name	= "bpf",
- 		.mounts = bpf_fs__known_mountpoints,
- 		.magic	= BPF_FS_MAGIC,
-+		.checked= false,
- 	},
- };
- 
-@@ -158,6 +165,7 @@ static bool fs__read_mounts(struct fs *fs)
- 	}
- 
- 	fclose(fp);
-+	fs->checked = true;
- 	return fs->found = found;
- }
- 
-@@ -219,6 +227,7 @@ static bool fs__env_override(struct fs *fs)
- 		return false;
- 
- 	fs->found = true;
-+	fs->checked = true;
- 	strncpy(fs->path, override_path, sizeof(fs->path));
- 	return true;
- }
-@@ -244,6 +253,16 @@ static const char *fs__mountpoint(int idx)
- 	if (fs->found)
- 		return (const char *)fs->path;
- 
-+	/* the mount point was already checked for the mount point
-+	 * but and did not exist, so return NULL to avoid scanning again.
-+	 * This makes the found and not found paths cost equivalent
-+	 * in case of multiple calls. This was not the case before
-+	 * and could cause significant scaling issues with callers.
-+	 * in case /proc/mounts need to be checked many times
-+	 */
-+	if (fs->checked)
-+		return NULL;
-+
- 	return fs__get_mountpoint(fs);
- }
- 
-diff --git a/tools/lib/api/fs/fs.h b/tools/lib/api/fs/fs.h
-index 92d03b8396b1..00a5127b00e8 100644
---- a/tools/lib/api/fs/fs.h
-+++ b/tools/lib/api/fs/fs.h
-@@ -18,6 +18,17 @@
- 	const char *name##__mount(void);	\
- 	bool name##__configured(void);		\
- 
-+/*
-+ * The xxxx__mountpoint() entry points find the first match mount point for each
-+ * filesystems listed below, where xxxx is the filesystem type.
-+ *
-+ * The interface is as follows:
-+ * - If a mount point is found on first call, it is cached and used for all subsequent
-+ *   calls.
-+ *
-+ * - If a mount point is not found, NULL is returned on first call and all
-+ *   subsequent calls.
-+ */
- FS(sysfs)
- FS(procfs)
- FS(debugfs)
 -- 
-2.7.4
+Jiri Kosina
+SUSE Labs
 
