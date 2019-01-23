@@ -2,112 +2,138 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDBAEC282C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 00:40:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8143CC282C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 00:44:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAC2B21019
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 00:40:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46375217D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 00:44:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FyzSmBnX"
+	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="NAAXiA+/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726948AbfAWAkx (ORCPT
+        id S1726886AbfAWAoS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 19:40:53 -0500
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:40190 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726678AbfAWAkw (ORCPT
+        Tue, 22 Jan 2019 19:44:18 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:46109 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725985AbfAWAoS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 19:40:52 -0500
-Received: by mail-ua1-f65.google.com with SMTP id n7so152422uao.7
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 16:40:51 -0800 (PST)
+        Tue, 22 Jan 2019 19:44:18 -0500
+Received: by mail-qt1-f195.google.com with SMTP id y20so490756qtm.13;
+        Tue, 22 Jan 2019 16:44:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=jms.id.au; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/4G09eGQSUtCzRLs2M6LGUY+RLL2/d9Q2YQI9C3NhKo=;
-        b=FyzSmBnX75NtHvML0B30Glmz5G/MFvX5XXMi95RqHWAWYD5D7tRhO2L94Q/RPUqYue
-         5ueZKUexHi+WUgbyT/oycPz52Zrd6CimTe6cR/Nha7FF27zBxkr74R1+WsJlunKxU8+H
-         LlAT3Crcnsg8zd1FP2oM/yZUrG8+tHg1p6WOo=
+         :cc:content-transfer-encoding;
+        bh=Dx3TwqSOv1EutmQ/1LrWO3DnMbQtsVHAoaO29C4LdD8=;
+        b=NAAXiA+/9P0CAzbjfWcTz2IvWvPKNQkFBk+rTazxCBxEl2wdyaIXsFxZQeEFCJ3vsv
+         JAKqym8XRomj9UiHpEnKd+WiHn1m16u/6h3e3wNAL9YtlGM+zVzSopiZGzFbl9jsFt86
+         RbJ6DCZ+j3ruS/TIsPUcZKTsSMwvO3nXvX9TU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/4G09eGQSUtCzRLs2M6LGUY+RLL2/d9Q2YQI9C3NhKo=;
-        b=ECUuuxqPaKBYv7E7ZsMHmZEg+l9WMLyl+B7QJ1UO4tjUTOpQCL4X5X4e3mi4ecbUbu
-         KIyBamWlQ2uJ0/DjpWKT7Ha8dYOqktSUY8alJax5m4IQUNSYmxFcophfaN7BqrPnMuKt
-         jjCV5hvPk49m7PyCFHZHD0d2T19hvZEiseJ6M8Z1W2vK2AdTd4TwyRU5HAMs1oQptiNz
-         iRG/AqmDuO9D1eoYpbdm3/1zGcMNtfa29qlR2diivutjPX7W/+6GSTfA9jpHI1dhm6Th
-         fNxd3EAGr3VwdzxhglAFu7fT93fMHL+md/7EyWXd4yEpXL1aM7ex3d+R9nqoKFpxXdU5
-         j5cQ==
-X-Gm-Message-State: AJcUukc6yqUOmgQjNYrWWA4ePCAYj5lmPtZdBarDQRP6vc2/AZ/CGZE2
-        V1Q7YVdbu5kkKwzNEqrapPdrX+t4W7k=
-X-Google-Smtp-Source: ALg8bN4gddPLrddaOZlF8FnyQsOrOXTYPCdSSiSZiy/xsmbTpSkCyH0RIVyXHrUWHTg8JVZD/1jkhw==
-X-Received: by 2002:ab0:7581:: with SMTP id q1mr47354uap.17.1548204050599;
-        Tue, 22 Jan 2019 16:40:50 -0800 (PST)
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com. [209.85.221.175])
-        by smtp.gmail.com with ESMTPSA id g195sm48856855vka.5.2019.01.22.16.40.49
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Jan 2019 16:40:49 -0800 (PST)
-Received: by mail-vk1-f175.google.com with SMTP id t127so104300vke.8
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 16:40:49 -0800 (PST)
-X-Received: by 2002:a1f:1e09:: with SMTP id e9mr53211vke.18.1548204048991;
- Tue, 22 Jan 2019 16:40:48 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Dx3TwqSOv1EutmQ/1LrWO3DnMbQtsVHAoaO29C4LdD8=;
+        b=hPNYyMF9diW6hMpPKgpLAN3Vm6mPObj0TX65mqjG2OTsGUzHaesUZLm5tQYc6c1xGy
+         Yb8tMNAgOtgRDrB3YFwEYVI8ZAQgmepWovZYQ8pYf3udv2Iw4i7C/VVfoui/OW8vQbuu
+         /44P5As6KhiDHr5dw3rBpitW4RoF3X+f6K25H64aP3L8tRE7QPz5JDJ/Kt3ItCcvcFKU
+         p8jMLeyj7s71ZhbuVDRoO7iyrs22HZAPQbjWNafPlZ4TtqIiNJ5chFab7t2UyqBV36sy
+         ejw15RIUYXMYUPQ0BetJ4Cu8huSpGGC4dIdlRTBNeQgjqFg8O+ZN4v2UkHsWxIplgdql
+         kzhw==
+X-Gm-Message-State: AJcUukdF/XgF5damnP0l0fcDdssrFalHb4AZOBVhf9C6PDMKPUUBAEpk
+        JpBuvV51qBExLuqjw8bZIPjS7hIMNI9Ub/F+IZI=
+X-Google-Smtp-Source: ALg8bN6BmtxQefI5M5HjjEvADzcYfvuDhhQ4/sfEJY7qr/jHAJd/OPq0E2v3dAhbkIAP4JKsr756WWhPepMAsj2TKM4=
+X-Received: by 2002:a0c:e751:: with SMTP id g17mr130603qvn.160.1548204256472;
+ Tue, 22 Jan 2019 16:44:16 -0800 (PST)
 MIME-Version: 1.0
-References: <20190122055112.30943-1-bjorn.andersson@linaro.org>
- <20190122055112.30943-4-bjorn.andersson@linaro.org> <CAD=FV=WXind-uk7V_XTDgM83LZbmtKb2Ln6pQjmUkaZMz8SFsA@mail.gmail.com>
- <20190123002610.GE31919@minitux>
-In-Reply-To: <20190123002610.GE31919@minitux>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Tue, 22 Jan 2019 16:40:36 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=Wsk3s2NbX4pR6v9-kK41edLF4hd7B_BanoFkAXyLBwyA@mail.gmail.com>
-Message-ID: <CAD=FV=Wsk3s2NbX4pR6v9-kK41edLF4hd7B_BanoFkAXyLBwyA@mail.gmail.com>
-Subject: Re: [PATCH v3 03/10] arm64: dts: sdm845: Introduce ADSP and CDSP PAS nodes
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <20181010083007.239938-1-matthewgarrett@google.com>
+ <20181010083007.239938-2-matthewgarrett@google.com> <1543849707.2841.9.camel@intel.com>
+In-Reply-To: <1543849707.2841.9.camel@intel.com>
+From:   Joel Stanley <joel@jms.id.au>
+Date:   Wed, 23 Jan 2019 11:44:02 +1100
+Message-ID: <CACPK8Xdb0fEjU3kf_ZETtYE+D42QF-fNQacaHjVsLeE4MU0qFw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] thermal/int340x_thermal: Add additional UUIDs
+To:     Zhang Rui <rui.zhang@intel.com>
+Cc:     Matthew Garrett <matthewgarrett@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-pm@vger.kernel.org, Matthew Garrett <mjg59@google.com>,
+        Nisha Aram <nisha.aram@intel.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hello Rui,
 
-On Tue, Jan 22, 2019 at 4:26 PM Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
-> > > +               clocks = <&xo_board>;
-> > > +               clock-names = "xo";
+On Tue, 4 Dec 2018 at 02:12, Zhang Rui <rui.zhang@intel.com> wrote:
+> On =E4=B8=89, 2018-10-10 at 01:30 -0700, Matthew Garrett wrote:
+> > Platforms support more DPTF policies than the driver currently
+> > exposes.
+> > Add them. This effectively reverts
+> > 31908f45a583e8f21db37f402b6e8d5739945afd which removed several UUIDs
+> > without explaining why.
 > >
-> > I've found that nearly all the places that refer to xo_board are wrong
-> > and should actually point to '<&rpmhcc RPMH_CXO_CLK>'.  Maybe yours
-> > should too?
+> I'm going to apply this patch series, just with two minor changes,
+> 1. 31908f45a583e8f21db37f402b6e8d5739945afd does not follow the git
+> commit description style 'commit <12+ chars of sha1> ("<title line>")'
+> 2. the UUIDs were removed previously because these policies were not
+> used.
+
+Which tree did this series get applied to?
+
+Cheers,
+
+Joel
+
+>
+> thanks,
+> rui
+>
+> > Signed-off-by: Matthew Garrett <mjg59@google.com>
+> > Cc: Zhang Rui <rui.zhang@intel.com>
+> > Cc: Nisha Aram <nisha.aram@intel.com>
+> > ---
+> >  drivers/thermal/int340x_thermal/int3400_thermal.c | 14
+> > ++++++++++++++
+> >  1 file changed, 14 insertions(+)
 > >
->
-> Yes, xo_board is a fake clock representing the 19.2MHz clock feeding the
-> cxo (or cxo2) pad of the SoC. So you're definitely right in that this
-> should be referencing the actual 19.2MHz clock.
->
-> We've kept referring to this as xo_board, as we don't handle probe
-> deferral when gcc will probe earlier than rpmcc in the boot and for
-> other non-clock drivers the fear of actually hitting 0 on the refcounter
-> for this (you don't want to disable the cxo while running the system).
-
-Note that, as defined in the device tree, "xo_board" is actually 38.4.
-IIUC that is not actually a fake/bogus clock but represents the actual
-crystal on the board.  There's a divide by 2 in the CPU though so most
-peripherals consider "xo" as 19.2.
-
-...OK, confirmed.  The actual RF_XO_CLK pin on the board is truly
-connected to 38.4.
-
--Doug
+> > diff --git a/drivers/thermal/int340x_thermal/int3400_thermal.c
+> > b/drivers/thermal/int340x_thermal/int3400_thermal.c
+> > index e26b01c05e82..51c9097eaf7a 100644
+> > --- a/drivers/thermal/int340x_thermal/int3400_thermal.c
+> > +++ b/drivers/thermal/int340x_thermal/int3400_thermal.c
+> > @@ -22,6 +22,13 @@ enum int3400_thermal_uuid {
+> >       INT3400_THERMAL_PASSIVE_1,
+> >       INT3400_THERMAL_ACTIVE,
+> >       INT3400_THERMAL_CRITICAL,
+> > +     INT3400_THERMAL_ADAPTIVE_PERFORMANCE,
+> > +     INT3400_THERMAL_EMERGENCY_CALL_MODE,
+> > +     INT3400_THERMAL_PASSIVE_2,
+> > +     INT3400_THERMAL_POWER_BOSS,
+> > +     INT3400_THERMAL_VIRTUAL_SENSOR,
+> > +     INT3400_THERMAL_COOLING_MODE,
+> > +     INT3400_THERMAL_HARDWARE_DUTY_CYCLING,
+> >       INT3400_THERMAL_MAXIMUM_UUID,
+> >  };
+> >
+> > @@ -29,6 +36,13 @@ static char
+> > *int3400_thermal_uuids[INT3400_THERMAL_MAXIMUM_UUID] =3D {
+> >       "42A441D6-AE6A-462b-A84B-4A8CE79027D3",
+> >       "3A95C389-E4B8-4629-A526-C52C88626BAE",
+> >       "97C68AE7-15FA-499c-B8C9-5DA81D606E0A",
+> > +     "63BE270F-1C11-48FD-A6F7-3AF253FF3E2D",
+> > +     "5349962F-71E6-431D-9AE8-0A635B710AEE",
+> > +     "9E04115A-AE87-4D1C-9500-0F3E340BFE75",
+> > +     "F5A35014-C209-46A4-993A-EB56DE7530A1",
+> > +     "6ED722A7-9240-48A5-B479-31EEF723D7CF",
+> > +     "16CAF1B7-DD38-40ED-B1C1-1B8A1913D531",
+> > +     "BE84BABF-C4D4-403D-B495-3128FD44dAC1",
+> >  };
+> >
+> >  struct int3400_thermal_priv {
