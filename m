@@ -2,96 +2,105 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E66CC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:37:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E259C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:39:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9EAC217D4
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:37:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548254256;
-	bh=hcpv+fxe0oQ8iM8Kl4aiogpTMvxmAnW+WTp1TpW5C7w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=CpNAUKlrHnOS5GjJ/bFFj8bvdiA1sSYO1UEC9GlCOvPuWqXLKe3MNbWHvV4Rm792N
-	 x9STtsiw8uKu4lwai/NIWvzJiQczg9W2VXwod42/zI794/5gQY/g6nCFIuML60IMkk
-	 RIN3k1tO8CAF4XU5JY/TQsHQYSyJ2Kl01cfvLulc=
+	by mail.kernel.org (Postfix) with ESMTP id DCF4721726
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:39:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727004AbfAWOhe (ORCPT
+        id S1726872AbfAWOjO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 09:37:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53344 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726218AbfAWOhe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 09:37:34 -0500
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 116472085A;
-        Wed, 23 Jan 2019 14:37:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548254253;
-        bh=hcpv+fxe0oQ8iM8Kl4aiogpTMvxmAnW+WTp1TpW5C7w=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=1BP6nq6wMVtzuTuOW2e0zEWlhwJhwqSL5MrWc7Tmk/nRRCeoHyRWhE+gvwuolN0Lr
-         pSSDCymnF6w6u1DL3F91MEfSIYNOwqclVW0qDmCX6S7y5wC81a9j2Ad4a5TfRMfK3f
-         iXjAmjR1DwGoYyY1Jd7XWma+fk287IzlkJsot+cw=
-Date:   Wed, 23 Jan 2019 09:37:32 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Hans van Kranenburg <Hans.van.Kranenburg@mendix.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        David Sterba <dsterba@suse.com>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
-Subject: Re: [PATCH AUTOSEL 4.20 072/117] btrfs: alloc_chunk: fix more DUP
- stripe size handling
-Message-ID: <20190123143732.GL202535@sasha-vm>
-References: <20190108192628.121270-1-sashal@kernel.org>
- <20190108192628.121270-72-sashal@kernel.org>
- <783ccf1f-65df-d388-079c-9449d4319c27@mendix.com>
+        Wed, 23 Jan 2019 09:39:14 -0500
+Received: from mx2.suse.de ([195.135.220.15]:33484 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726337AbfAWOjO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 09:39:14 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 8CB9FAFA3;
+        Wed, 23 Jan 2019 14:39:12 +0000 (UTC)
+Subject: Re: [PATCH 1/2] x86: respect memory size limiting via mem= parameter
+To:     William Kucharski <william.kucharski@oracle.com>
+Cc:     kernel list <linux-kernel@vger.kernel.org>,
+        xen-devel <xen-devel@lists.xenproject.org>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        sstabellini@kernel.org, hpa@zytor.com, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de
+References: <20190122080628.7238-1-jgross@suse.com>
+ <20190122080628.7238-2-jgross@suse.com>
+ <69D0866F-77A7-4529-A01E-12395106E22D@oracle.com>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <222a2429-957c-c6cd-3f46-06a627bbbd5e@suse.com>
+Date:   Wed, 23 Jan 2019 15:39:11 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <783ccf1f-65df-d388-079c-9449d4319c27@mendix.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <69D0866F-77A7-4529-A01E-12395106E22D@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 08, 2019 at 11:52:02PM +0000, Hans van Kranenburg wrote:
->Hi Sasha,
->
->On 1/8/19 8:25 PM, Sasha Levin wrote:
->> From: Hans van Kranenburg <hans.van.kranenburg@mendix.com>
+On 23/01/2019 15:35, William Kucharski wrote:
+> 
+> 
+>> On Jan 22, 2019, at 1:06 AM, Juergen Gross <jgross@suse.com> wrote:
 >>
->> [ Upstream commit baf92114c7e6dd6124aa3d506e4bc4b694da3bc3 ]
+>> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+>> index b9a667d36c55..7fc2a87110a3 100644
+>> --- a/mm/memory_hotplug.c
+>> +++ b/mm/memory_hotplug.c
+>> @@ -96,10 +96,16 @@ void mem_hotplug_done(void)
+>> 	cpus_read_unlock();
+>> }
 >>
->> Commit 92e222df7b "btrfs: alloc_chunk: fix DUP stripe size handling"
->> fixed calculating the stripe_size for a new DUP chunk.
->
->That one also ended up as:
->
->4.14-stable
->0136bd7238b2cb8238426af4183ed0b02165c3f9
->
->4.9-stable
->8890bae03f4dba1c2292e5445682b556af4e8f1b
->
->4.4-stable
->97c3e46ef53748278286fc09dcc30b138d6677c4
->
->3.16.57-rc1
->f68f46284a199f6837c1d5b94a6ae979a2cc463c
->
->While hitting the failure condition without adding "crafting" steps to
->make it exactly match the scenario is unlikely, it might be good if we
->just go all the way back with this regression fix?
+>> +u64 max_mem_size = -1;
+> 
+> This may be pedantic, but I'd rather see U64_MAX used here.
 
-What do you mean with "all the way back"?
+Fine with me. Will change.
 
---
-Thanks,
-Sasha
+
+Juergen
+
