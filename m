@@ -2,121 +2,238 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF5FDC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 12:29:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F131AC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 12:31:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF94221726
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 12:29:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="YwHSGPoC"
+	by mail.kernel.org (Postfix) with ESMTP id A97C421019
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 12:31:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725995AbfAWM3T (ORCPT
+        id S1726804AbfAWMb6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 07:29:19 -0500
-Received: from mail-eopbgr60065.outbound.protection.outlook.com ([40.107.6.65]:39136
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727105AbfAWM3S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 07:29:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8LjDc4JCmcwSfquiNfBqJ0iuxOUaU8zD6R41tnX0fH0=;
- b=YwHSGPoCFr5gCz+BhS0HU1k9YNAhukT4NObE6XxC0jI+jp3PcQdSasgFK9EAdlC9Et/+Y/Hpu5A4Yhvu8ioJlqxvlToqcTxH4SAMma948j0EJI5AruaWdtTXqYI58w+SozOtSgPufga0HAengSSnBv0+ex/4F22Q8v+HHOxk6Pk=
-Received: from HE1PR05MB3257.eurprd05.prod.outlook.com (10.170.243.19) by
- HE1PR05MB3484.eurprd05.prod.outlook.com (10.170.244.142) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1537.27; Wed, 23 Jan 2019 12:29:13 +0000
-Received: from HE1PR05MB3257.eurprd05.prod.outlook.com
- ([fe80::6442:f114:69b6:e8be]) by HE1PR05MB3257.eurprd05.prod.outlook.com
- ([fe80::6442:f114:69b6:e8be%3]) with mapi id 15.20.1537.031; Wed, 23 Jan 2019
- 12:29:13 +0000
-From:   Tariq Toukan <tariqt@mellanox.com>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>
-CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next] net/mlx4: Mark expected switch fall-through
-Thread-Topic: [PATCH net-next] net/mlx4: Mark expected switch fall-through
-Thread-Index: AQHUsvKMXov6xCBEAkSqlPWQSZkpsqW8yJSA
-Date:   Wed, 23 Jan 2019 12:29:13 +0000
-Message-ID: <1598bfeb-0061-1d52-6b10-a3740ee25f46@mellanox.com>
-References: <20190123080511.GA32528@embeddedor>
-In-Reply-To: <20190123080511.GA32528@embeddedor>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM6PR03CA0003.eurprd03.prod.outlook.com (2603:10a6:20b::16)
- To HE1PR05MB3257.eurprd05.prod.outlook.com (2603:10a6:7:35::19)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=tariqt@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [77.124.63.215]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HE1PR05MB3484;6:cABhdeCcEInay6Nw5C5/kGHst75Rfm6pevDi0OItSax8QQpoZSa2Zk1QbXVa5HBKBchuew2pwTz5K3tOINu3XzxEwoIq1yHD3YSZyJeNITx0VBnmJei9S4+pYl0Gzym2Iw1I4frLDt8ooIr8pcRMb01VluybkP8lRhzLUrNbacEUwC5+2rq4KON3lZZeSbPj4IPGcat5PllLEiidxr6YfMcsbT2aMnGpSvCkVxRC0q0JHLAl1sxMktyumZ4RU39svAoo5/RtvJdZnrVmsbJzQfm/wTTbc2kKIoGIMrl8kLxtKV8RvRxKxurwz567LnXjSkHx+7j6pcyH/vJTEMpqYmK/NTNoyVe/HTLMo3QfmPIxu3TK4/ST9h10/wMaVjVTOwcL9OutDp79SbNA3cWkFRgcyp1Qa4Ij6bm2XeMUUB7yZPjjdep9o8kGU4cEanWTDaYxV4Ix0pLeh142ZTE6mA==;5:9KU2i5w5jCOXBAqB7VC2AfDbbR1fk3dHMg6V+Kg5omXxk4LNt5Kl/lXRVuyt+D4wFkp8+GhllUauC9rNQZDIwGvcwo7Jn21llEoEzAr6BvF2ZYLlo8wK5NO7tj+UZjFsKoZSClONs+V8nCNFHMs1smRNNClKf7EgVBM1yj2MFedjCuGyIzWvM3l3duMZBXsSQVfuhAzCuONSflS95h6NDg==;7:eTSd6gZK8A9yvmPr+Fgf7gkiNOFrkLLCa+XO5Rc9+J1jaoEeUw6dGFTMNMgy7vdIXYL1bkjp0dbPFP0OnqwVvngYoIrllJLGEyPgmD6chxroegzx1p5TJ5nrM79HCQh4Ek6PZrWPshd6VlhSKOEzrQ==
-x-ms-office365-filtering-correlation-id: d68d9698-679d-4238-25fa-08d6812e61f4
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605077)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:HE1PR05MB3484;
-x-ms-traffictypediagnostic: HE1PR05MB3484:
-x-microsoft-antispam-prvs: <HE1PR05MB3484AB86956F0C20519037DBAE990@HE1PR05MB3484.eurprd05.prod.outlook.com>
-x-forefront-prvs: 0926B0E013
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(376002)(346002)(136003)(396003)(366004)(199004)(189003)(486006)(186003)(8936002)(81156014)(25786009)(6436002)(8676002)(476003)(99286004)(31696002)(14454004)(105586002)(81166006)(106356001)(6246003)(31686004)(53936002)(6486002)(36756003)(229853002)(2616005)(11346002)(446003)(4326008)(66066001)(71200400001)(71190400001)(6506007)(386003)(3846002)(6116002)(316002)(54906003)(53546011)(102836004)(26005)(76176011)(7736002)(305945005)(2906002)(68736007)(14444005)(478600001)(256004)(86362001)(97736004)(6512007)(52116002)(110136005);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR05MB3484;H:HE1PR05MB3257.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 5i2TgoYHuyWtjhoE5ufjt2xPK70fACAUrirk2HmELu/7dLYq5khOYNNnpi450t0ecui6NT4lykddMwVYbQOTXgpyz6DND0TW/8OfukLPxqQXAK0h2N2ykJioK+U5pYYcBx5rcBa7soRN6Y+ILbkum0sNM9BLqO2wH4lWNIUe0c2gU5rgO3OhGD6A4kME5FIMzE0QDjH+gYtiwPGe9d76lk1bnFHV1NqP8WCm+fk7cipOHkeHQRkwEgvqQOs3syTLTANL+POM15y0a7BcYZ7eMh/PLxl5qmYiAJRpxozsD58n/T2NwJrtwximAE48ceiv1vBvY6ISxmmVr44x0PpTFi4nztMb0bh0IgAzj3pVsuvc9TwUmFdLXbi/jJ7BvM72bEryA/4Hf7dwzqSUu5+A8oUnubkgt/RgLxXIfbGXrUU=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <DF27542629F5864D91EF9F3C2D9E1F1C@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Wed, 23 Jan 2019 07:31:58 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52944 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725991AbfAWMb5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 07:31:57 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0NCOSaY079452
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 07:31:56 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2q6pss4c3q-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 07:31:56 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Wed, 23 Jan 2019 12:31:53 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 23 Jan 2019 12:31:48 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0NCVlI151773594
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 23 Jan 2019 12:31:47 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6842B11C070;
+        Wed, 23 Jan 2019 12:31:47 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7B87711C04C;
+        Wed, 23 Jan 2019 12:31:45 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.8.208])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Wed, 23 Jan 2019 12:31:45 +0000 (GMT)
+Date:   Wed, 23 Jan 2019 14:31:43 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Prateek Patel <prpatel@nvidia.com>,
+        Sachin Nikam <snikam@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Qian Cai <cai@lca.pw>, LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] of: fix kmemleak crash (was: Re: kmemleak panic)
+References: <d4facdc2-0581-929f-caa2-b9efa9bd8f97@arm.com>
+ <CAL_JsqKFT8J6g02gxeBiTfBb_XHhp2-ZNB6DgaLPK85kNZGRig@mail.gmail.com>
+ <20190121143704.GE29504@arrakis.emea.arm.com>
+ <CAL_JsqKQb34zVNTzo9DLNiDwmWGxkrKezSOjwCUPAvgzUoLYjg@mail.gmail.com>
+ <20190121174234.GC26461@rapoport-lnx>
+ <2bb30550-435a-046c-4f45-21dd594aa695@free.fr>
+ <3c886941-bf9d-f040-b568-ee7a8eba9a04@free.fr>
+ <CGME20190123055509epcas3p18a6d66fa08412f2308cb2c1997328ea8@epcas3p1.samsung.com>
+ <20190123055414.GA4747@rapoport-lnx>
+ <78f4ea8a-996d-038e-9e33-5ff02fa2c43f@samsung.com>
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d68d9698-679d-4238-25fa-08d6812e61f4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Jan 2019 12:29:12.1336
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR05MB3484
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <78f4ea8a-996d-038e-9e33-5ff02fa2c43f@samsung.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19012312-0028-0000-0000-0000033D0135
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19012312-0029-0000-0000-000023FA3EBA
+Message-Id: <20190123123143.GE4747@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-23_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901230093
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDEvMjMvMjAxOSAxMDowNSBBTSwgR3VzdGF2byBBLiBSLiBTaWx2YSB3cm90ZToNCj4g
-SW4gcHJlcGFyYXRpb24gdG8gZW5hYmxpbmcgLVdpbXBsaWNpdC1mYWxsdGhyb3VnaCwgbWFyayBz
-d2l0Y2ggY2FzZXMNCj4gd2hlcmUgd2UgYXJlIGV4cGVjdGluZyB0byBmYWxsIHRocm91Z2guDQo+
-IA0KPiBUaGlzIHBhdGNoIGZpeGVzIHRoZSBmb2xsb3dpbmcgd2FybmluZzoNCj4gDQo+IGRyaXZl
-cnMvbmV0L2V0aGVybmV0L21lbGxhbm94L21seDQvZXEuYzogSW4gZnVuY3Rpb24g4oCYbWx4NF9l
-cV9pbnTigJk6DQo+IGRyaXZlcnMvbmV0L2V0aGVybmV0L21lbGxhbm94L21seDQvbWx4NC5oOjIx
-OTo1OiB3YXJuaW5nOiB0aGlzIHN0YXRlbWVudCBtYXkgZmFsbCB0aHJvdWdoIFstV2ltcGxpY2l0
-LWZhbGx0aHJvdWdoPV0NCj4gICAgaWYgKG1seDRfZGVidWdfbGV2ZWwpICAgICAgXA0KPiAgICAg
-ICBeDQo+IGRyaXZlcnMvbmV0L2V0aGVybmV0L21lbGxhbm94L21seDQvZXEuYzo1NTg6NDogbm90
-ZTogaW4gZXhwYW5zaW9uIG9mIG1hY3JvIOKAmG1seDRfZGJn4oCZDQo+ICAgICAgbWx4NF9kYmco
-ZGV2LCAiJXM6IE1MWDRfRVZFTlRfVFlQRV9TUlFfTElNSVQuIHNycV9ubz0weCV4LCBlcSAweCV4
-XG4iLA0KPiAgICAgIF5+fn5+fn5+DQo+IGRyaXZlcnMvbmV0L2V0aGVybmV0L21lbGxhbm94L21s
-eDQvZXEuYzo1NjE6Mzogbm90ZTogaGVyZQ0KPiAgICAgY2FzZSBNTFg0X0VWRU5UX1RZUEVfU1JR
-X0NBVEFTX0VSUk9SOg0KPiAgICAgXn5+fg0KPiANCj4gV2FybmluZyBsZXZlbCAzIHdhcyB1c2Vk
-OiAtV2ltcGxpY2l0LWZhbGx0aHJvdWdoPTMNCj4gDQo+IFRoaXMgcGF0Y2ggaXMgcGFydCBvZiB0
-aGUgb25nb2luZyBlZmZvcnRzIHRvIGVuYWJsaW5nDQo+IC1XaW1wbGljaXQtZmFsbHRocm91Z2gu
-DQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBHdXN0YXZvIEEuIFIuIFNpbHZhIDxndXN0YXZvQGVtYmVk
-ZGVkb3IuY29tPg0KPiAtLS0NCj4gICBkcml2ZXJzL25ldC9ldGhlcm5ldC9tZWxsYW5veC9tbHg0
-L2VxLmMgfCAxICsNCj4gICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKykNCj4gDQo+IGRp
-ZmYgLS1naXQgYS9kcml2ZXJzL25ldC9ldGhlcm5ldC9tZWxsYW5veC9tbHg0L2VxLmMgYi9kcml2
-ZXJzL25ldC9ldGhlcm5ldC9tZWxsYW5veC9tbHg0L2VxLmMNCj4gaW5kZXggNDk1M2M4NTJjMjQ3
-Li4yZjQyMDEwMjM4MzYgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L21lbGxh
-bm94L21seDQvZXEuYw0KPiArKysgYi9kcml2ZXJzL25ldC9ldGhlcm5ldC9tZWxsYW5veC9tbHg0
-L2VxLmMNCj4gQEAgLTU1OCw2ICs1NTgsNyBAQCBzdGF0aWMgaW50IG1seDRfZXFfaW50KHN0cnVj
-dCBtbHg0X2RldiAqZGV2LCBzdHJ1Y3QgbWx4NF9lcSAqZXEpDQo+ICAgCQkJbWx4NF9kYmcoZGV2
-LCAiJXM6IE1MWDRfRVZFTlRfVFlQRV9TUlFfTElNSVQuIHNycV9ubz0weCV4LCBlcSAweCV4XG4i
-LA0KPiAgIAkJCQkgX19mdW5jX18sIGJlMzJfdG9fY3B1KGVxZS0+ZXZlbnQuc3JxLnNycW4pLA0K
-PiAgIAkJCQkgZXEtPmVxbik7DQo+ICsJCQkvKiBmYWxsIHRocm91Z2ggKi8NCj4gICAJCWNhc2Ug
-TUxYNF9FVkVOVF9UWVBFX1NSUV9DQVRBU19FUlJPUjoNCj4gICAJCQlpZiAobWx4NF9pc19tYXN0
-ZXIoZGV2KSkgew0KPiAgIAkJCQkvKiBmb3J3YXJkIG9ubHkgdG8gc2xhdmUgb3duaW5nIHRoZSBT
-UlEgKi8NCj4gDQoNCg0KUmV2aWV3ZWQtYnk6IFRhcmlxIFRvdWthbiA8dGFyaXF0QG1lbGxhbm94
-LmNvbT4NClRoYW5rcyBmb3IgeW91ciBwYXRjaC4NCg==
+On Wed, Jan 23, 2019 at 08:28:03AM +0100, Marek Szyprowski wrote:
+> Hi Mike,
+> 
+> On 2019-01-23 06:54, Mike Rapoport wrote:
+> 
+> > @@ -37,21 +37,16 @@ int __init __weak early_init_dt_alloc_reserved_memory_arch(phys_addr_t size,
+> >  	 */
+> >  	end = !end ? MEMBLOCK_ALLOC_ANYWHERE : end;
+> >  	align = !align ? SMP_CACHE_BYTES : align;
+> > -	base = __memblock_alloc_base(size, align, end);
+> > +	base = memblock_find_in_range(size, align, start, end);
+> 
+> Please remove a comment about __memblock_alloc_base() above that block
+> of code. It is no longer needed after this change.
+
+Huh, missed that, thanks!
+Fixed now.
+
+From 2f340afcc8cc81f1829a19f9c595a9995656e547 Mon Sep 17 00:00:00 2001
+From: Mike Rapoport <rppt@linux.ibm.com>
+Date: Wed, 23 Jan 2019 07:38:50 +0200
+Subject: [PATCH v2] of: fix kmemleak crash caused by imbalance in early memory
+ reservation
+
+Marc Gonzalez reported the following kmemleak crash:
+
+Unable to handle kernel paging request at virtual address ffffffc021e00000
+Mem abort info:
+  ESR = 0x96000006
+  Exception class = DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+Data abort info:
+  ISV = 0, ISS = 0x00000006
+  CM = 0, WnR = 0
+swapper pgtable: 4k pages, 39-bit VAs, pgdp = (____ptrval____)
+[ffffffc021e00000] pgd=000000017e3ba803, pud=000000017e3ba803,
+pmd=0000000000000000
+Internal error: Oops: 96000006 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 6 PID: 523 Comm: kmemleak Tainted: G S      W         5.0.0-rc1 #13
+Hardware name: Qualcomm Technologies, Inc. MSM8998 v1 MTP (DT)
+pstate: 80000085 (Nzcv daIf -PAN -UAO)
+pc : scan_block+0x70/0x190
+lr : scan_block+0x6c/0x190
+sp : ffffff8012e8bd20
+x29: ffffff8012e8bd20 x28: ffffffc0fdbaf018
+x27: ffffffc022000000 x26: 0000000000000080
+x25: ffffff8011aadf70 x24: ffffffc0f8cc8000
+x23: ffffff8010dc8000 x22: ffffff8010dc8830
+x21: ffffffc021e00ff9 x20: ffffffc0f8cc8050
+x19: ffffffc021e00000 x18: 0000000000002409
+x17: 0000000000000200 x16: 0000000000000000
+x15: ffffff8010e14dd8 x14: 0000000000002406
+x13: 000000004c4dd0c6 x12: ffffffc0f77dad58
+x11: 0000000000000001 x10: ffffff8010d9e688
+x9 : ffffff8010d9f000 x8 : ffffff8010d9e688
+x7 : 0000000000000002 x6 : 0000000000000000
+x5 : ffffff8011511c20 x4 : 00000000000026d1
+x3 : ffffff8010e14d88 x2 : 5b36396f4e7d4000
+x1 : 0000000000208040 x0 : 0000000000000000
+Process kmemleak (pid: 523, stack limit = 0x(____ptrval____))
+Call trace:
+ scan_block+0x70/0x190
+ scan_gray_list+0x108/0x1c0
+ kmemleak_scan+0x33c/0x7c0
+ kmemleak_scan_thread+0x98/0xf0
+ kthread+0x11c/0x120
+ ret_from_fork+0x10/0x1c
+Code: f9000fb4 d503201f 97ffffd2 35000580 (f9400260)
+---[ end trace 176d6ed9d86a0c33 ]---
+note: kmemleak[523] exited with preempt_count 2
+
+The crash happens when a no-map area is allocated in
+early_init_dt_alloc_reserved_memory_arch(). The allocated region is
+registered with kmemleak, but it is then removed from memblock using
+memblock_remove() that is not kmemleak-aware.
+
+Replacing __memblock_alloc_base() with memblock_find_in_range() makes sure
+that the allocated memory is not added to kmemleak and then
+memblock_remove()'ing this memory is safe.
+
+As a bonus, since memblock_find_in_range() ensures the allocation in the
+specified range, the bounds check can be removed.
+
+Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+Tested-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/of/of_reserved_mem.c | 18 +++++-------------
+ 1 file changed, 5 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.c
+index 1977ee0adcb1..2ae81604ffef 100644
+--- a/drivers/of/of_reserved_mem.c
++++ b/drivers/of/of_reserved_mem.c
+@@ -31,27 +31,19 @@ int __init __weak early_init_dt_alloc_reserved_memory_arch(phys_addr_t size,
+ 	phys_addr_t *res_base)
+ {
+ 	phys_addr_t base;
+-	/*
+-	 * We use __memblock_alloc_base() because memblock_alloc_base()
+-	 * panic()s on allocation failure.
+-	 */
++
+ 	end = !end ? MEMBLOCK_ALLOC_ANYWHERE : end;
+ 	align = !align ? SMP_CACHE_BYTES : align;
+-	base = __memblock_alloc_base(size, align, end);
++	base = memblock_find_in_range(size, align, start, end);
+ 	if (!base)
+ 		return -ENOMEM;
+ 
+-	/*
+-	 * Check if the allocated region fits in to start..end window
+-	 */
+-	if (base < start) {
+-		memblock_free(base, size);
+-		return -ENOMEM;
+-	}
+-
+ 	*res_base = base;
+ 	if (nomap)
+ 		return memblock_remove(base, size);
++	else
++		return memblock_reserve(base, size);
++
+ 	return 0;
+ }
+ 
+-- 
+2.7.4
+
+ 
+
