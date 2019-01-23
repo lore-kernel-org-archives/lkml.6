@@ -6,47 +6,46 @@ X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4C34C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:52:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9EF9C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:53:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80DF72184C
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:52:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7915E2184C
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:53:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548283978;
-	bh=Q9W59TbgJ1Q9YUDkqEDbFDT7Hi9s2AJUXcFF9AsLb3g=;
+	s=default; t=1548283986;
+	bh=MklWbl0VE4tMq0gPx0uCw+/dKmbmqahLBeql2PiT+OA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ay54oEwgy/GxUDY9qqxurHh7KhkB3ws7a2Jxu6VUQEXVKAjc3Rd647IMuhc+3ndAV
-	 LSnVQiD8HhtxjrJttXhowTTSx+9UQWC/VEDBXXdSuVGu/bgat2bgK1RNcgRylZp3t8
-	 sz9KkFo92bWHy2Kk36+vEXnBqTylgDy4L7cil1w4=
+	b=qjD0mzOqTB4C/p/51LPEwQoHsdyJ3tLJiMu4STQTVEcY4VLN3/afCvng4tnX0IVch
+	 /Yj895RPOPXUCbM7zojCYePRA7EZLVDxOxqMzDk8Mbcs4XLTj6YqfG1cgvB0WJ1h7C
+	 IzP0z3Wnw7/h6q1irMzLgD9OmpQ+vd9KiVMQs0Yo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727170AbfAWWwk (ORCPT
+        id S1727275AbfAWWxF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 17:52:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50108 "EHLO mail.kernel.org"
+        Wed, 23 Jan 2019 17:53:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50202 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726220AbfAWWwc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 17:52:32 -0500
+        id S1727087AbfAWWwg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 17:52:36 -0500
 Received: from ebiggers-linuxstation.mtv.corp.google.com (unknown [104.132.1.77])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A728A218A2;
-        Wed, 23 Jan 2019 22:52:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A42DD218A4;
+        Wed, 23 Jan 2019 22:52:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548283951;
-        bh=Q9W59TbgJ1Q9YUDkqEDbFDT7Hi9s2AJUXcFF9AsLb3g=;
+        s=default; t=1548283955;
+        bh=MklWbl0VE4tMq0gPx0uCw+/dKmbmqahLBeql2PiT+OA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0i6PbAKgb5zeFpSjHHhP5wllsgP4h3jXQMHa5IinFziCptvRz1KYIVrrK26/dVhKL
-         yNEoXMNUJxhMBoAyp1n3wxt7x3D0nCunJRTTVu3PlrhwiS73RVyDg9al8eHMh8cVaT
-         3fV8agJ8gtmqWZ//WsHLOPMYUfr6vJOoV4sz2SZ8=
+        b=ATCOtA5Lnk4UpQpYP+YUqXTDw7+dXwjgJP5gLLviW23QeYABiPNd35f2rrQGvlIE4
+         z7KWMXE+p1utFpy1WacgOeRRPStqO92A3NJsQ03I4L2XUUa3YKM90gWci+ioS/8O0z
+         yFDL7CpFMt7xK73hbsnKbqH2NaP41gwley9W1y04=
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     linux-crypto@vger.kernel.org,
         Herbert Xu <herbert@gondor.apana.org.au>
 Cc:     linux-kernel@vger.kernel.org,
-        "Jason A . Donenfeld" <Jason@zx2c4.com>, stable@vger.kernel.org,
-        Ondrej Mosnacek <omosnace@redhat.com>
-Subject: [RFC/RFT PATCH 02/15] crypto: morus - fix handling chunked inputs
-Date:   Wed, 23 Jan 2019 14:49:13 -0800
-Message-Id: <20190123224926.250525-3-ebiggers@kernel.org>
+        "Jason A . Donenfeld" <Jason@zx2c4.com>
+Subject: [RFC/RFT PATCH 15/15] crypto: testmgr - check for aead_request corruption
+Date:   Wed, 23 Jan 2019 14:49:26 -0800
+Message-Id: <20190123224926.250525-16-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.20.1.321.g9e740568ce-goog
 In-Reply-To: <20190123224926.250525-1-ebiggers@kernel.org>
 References: <20190123224926.250525-1-ebiggers@kernel.org>
@@ -59,78 +58,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-The generic MORUS implementations all fail the improved AEAD tests
-because they produce the wrong result with some data layouts.  Fix them.
+Check that algorithms do not change the aead_request structure, as users
+may rely on submitting the request again (e.g. after copying new data
+into the same source buffer) without reinitializing everything.
 
-Fixes: 396be41f16fd ("crypto: morus - Add generic MORUS AEAD implementations")
-Cc: <stable@vger.kernel.org> # v4.18+
-Cc: Ondrej Mosnacek <omosnace@redhat.com>
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- crypto/morus1280.c | 13 +++++++------
- crypto/morus640.c  | 13 +++++++------
- 2 files changed, 14 insertions(+), 12 deletions(-)
+ crypto/testmgr.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
-diff --git a/crypto/morus1280.c b/crypto/morus1280.c
-index 3889c188f266..b83576b4eb55 100644
---- a/crypto/morus1280.c
-+++ b/crypto/morus1280.c
-@@ -366,18 +366,19 @@ static void crypto_morus1280_process_crypt(struct morus1280_state *state,
- 					   const struct morus1280_ops *ops)
- {
- 	struct skcipher_walk walk;
--	u8 *dst;
--	const u8 *src;
- 
- 	ops->skcipher_walk_init(&walk, req, false);
- 
- 	while (walk.nbytes) {
--		src = walk.src.virt.addr;
--		dst = walk.dst.virt.addr;
-+		unsigned int nbytes = walk.nbytes;
- 
--		ops->crypt_chunk(state, dst, src, walk.nbytes);
-+		if (nbytes < walk.total)
-+			nbytes = round_down(nbytes, walk.stride);
- 
--		skcipher_walk_done(&walk, 0);
-+		ops->crypt_chunk(state, walk.dst.virt.addr, walk.src.virt.addr,
-+				 nbytes);
-+
-+		skcipher_walk_done(&walk, walk.nbytes - nbytes);
+diff --git a/crypto/testmgr.c b/crypto/testmgr.c
+index e5f06844c793..8e36fa3605d7 100644
+--- a/crypto/testmgr.c
++++ b/crypto/testmgr.c
+@@ -1254,6 +1254,50 @@ static int test_aead_vec_cfg(const char *driver, int enc,
+ 		return -EINVAL;
  	}
- }
  
-diff --git a/crypto/morus640.c b/crypto/morus640.c
-index da06ec2f6a80..b6a477444f6d 100644
---- a/crypto/morus640.c
-+++ b/crypto/morus640.c
-@@ -365,18 +365,19 @@ static void crypto_morus640_process_crypt(struct morus640_state *state,
- 					  const struct morus640_ops *ops)
- {
- 	struct skcipher_walk walk;
--	u8 *dst;
--	const u8 *src;
- 
- 	ops->skcipher_walk_init(&walk, req, false);
- 
- 	while (walk.nbytes) {
--		src = walk.src.virt.addr;
--		dst = walk.dst.virt.addr;
-+		unsigned int nbytes = walk.nbytes;
- 
--		ops->crypt_chunk(state, dst, src, walk.nbytes);
-+		if (nbytes < walk.total)
-+			nbytes = round_down(nbytes, walk.stride);
- 
--		skcipher_walk_done(&walk, 0);
-+		ops->crypt_chunk(state, walk.dst.virt.addr, walk.src.virt.addr,
-+				 nbytes);
++	/* Check that the algorithm didn't overwrite things it shouldn't have */
++	if (req->cryptlen != (enc ? vec->plen : vec->clen) ||
++	    req->assoclen != vec->alen ||
++	    req->iv != iv ||
++	    req->src != tsgls->src.sgl_ptr ||
++	    req->dst != tsgls->dst.sgl_ptr ||
++	    crypto_aead_reqtfm(req) != tfm ||
++	    req->base.complete != crypto_req_done ||
++	    req->base.flags != req_flags ||
++	    req->base.data != &wait) {
++		pr_err("alg: aead: %s %s corrupted request struct on test vector %u, cfg=\"%s\"\n",
++		       driver, op, vec_num, cfg->name);
++		if (req->cryptlen != (enc ? vec->plen : vec->clen))
++			pr_err("alg: aead: changed 'req->cryptlen'\n");
++		if (req->assoclen != vec->alen)
++			pr_err("alg: aead: changed 'req->assoclen'\n");
++		if (req->iv != iv)
++			pr_err("alg: aead: changed 'req->iv'\n");
++		if (req->src != tsgls->src.sgl_ptr)
++			pr_err("alg: aead: changed 'req->src'\n");
++		if (req->dst != tsgls->dst.sgl_ptr)
++			pr_err("alg: aead: changed 'req->dst'\n");
++		if (crypto_aead_reqtfm(req) != tfm)
++			pr_err("alg: aead: changed 'req->base.tfm'\n");
++		if (req->base.complete != crypto_req_done)
++			pr_err("alg: aead: changed 'req->base.complete'\n");
++		if (req->base.flags != req_flags)
++			pr_err("alg: aead: changed 'req->base.flags'\n");
++		if (req->base.data != &wait)
++			pr_err("alg: aead: changed 'req->base.data'\n");
++		return -EINVAL;
++	}
++	if (is_test_sglist_corrupted(&tsgls->src)) {
++		pr_err("alg: aead: %s %s corrupted src sgl on test vector %u, cfg=\"%s\"\n",
++		       driver, op, vec_num, cfg->name);
++		return -EINVAL;
++	}
++	if (tsgls->dst.sgl_ptr != tsgls->src.sgl &&
++	    is_test_sglist_corrupted(&tsgls->dst)) {
++		pr_err("alg: aead: %s %s corrupted dst sgl on test vector %u, cfg=\"%s\"\n",
++		       driver, op, vec_num, cfg->name);
++		return -EINVAL;
++	}
 +
-+		skcipher_walk_done(&walk, walk.nbytes - nbytes);
- 	}
- }
- 
+ 	/* Check for the correct output (ciphertext or plaintext) */
+ 	err = verify_correct_output(&tsgls->dst, enc ? vec->ctext : vec->ptext,
+ 				    enc ? vec->clen : vec->plen,
 -- 
 2.20.1.321.g9e740568ce-goog
 
