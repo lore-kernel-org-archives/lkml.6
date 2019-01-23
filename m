@@ -2,224 +2,268 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBB27C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:54:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B83CC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:55:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A4622184C
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:54:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AE5F2184C
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:55:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="SP/GG+v/"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eq9DXu6P"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727149AbfAWWyy (ORCPT
+        id S1727115AbfAWWzE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 17:54:54 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:40079 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726354AbfAWWyx (ORCPT
+        Wed, 23 Jan 2019 17:55:04 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:37603 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726183AbfAWWzE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 17:54:53 -0500
-Received: by mail-oi1-f193.google.com with SMTP id t204so3278339oie.7
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 14:54:52 -0800 (PST)
+        Wed, 23 Jan 2019 17:55:04 -0500
+Received: by mail-pf1-f193.google.com with SMTP id y126so1933745pfb.4
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 14:55:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=KXJGakeSaX7kv9eetlGNGm5mHRuC6WsYW0U7AeHhhy8=;
-        b=SP/GG+v/QxoIGNZ8VbX34PLfJJIZoF8sFWJ1gQIuxuTQbyTgJv9C6WJEv4vo/m4bSq
-         dDJbcbUdhOw6NsE7c92E8Zq8/gOJXfjNSdfdmk8X6aATPKS1vGxGhh6eOt+Y6zBmDkIY
-         NX1WAZLF8bkimY4e3g6XyXU1h23kOMk36V95AK17AS61C5BiondT3dW9S4zdYo3aZUhz
-         eQdysotsv1aCWm85RP8ni3CQvWbj5G/E9Y2TN7IRYQRgBWa3jSg8QQZ4PZZewPK+K15B
-         H0AuGW8ryNazURsm4VX3TVtwVjmD+ZoGvV7CdP5O5Q/55adJpq5u8ydSh99Ni0USR3DF
-         ri1Q==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=4WZVbXflNyi2B86ocdbFcoByaoSrHI2wAdzhIiL6Trs=;
+        b=eq9DXu6PQ6cdcasDYU0RhzADNFKg5SED5+iK6A/1Sxru1Z7sNBDsvDfSeTf1pdC7k4
+         CWUV2pXivwblZxew+d4C+N171XMkJzPXw7zV/69dvMLZZFEAC5KhCCyR520UICewQ8vj
+         UFWeg6NtSnl0VJBEiZfcbj1zIdcOo+C1k/tT7viywBLrlqd3Pqz3VCYi02BddhHlk7XJ
+         XdiM/5ue/5Tqi8wkgIroRIu8/02UTBuRc4jz+ydAJoF1uRzhjbbmue/Zf9oTIVg3I3tW
+         N/2jejYJWJNvdmXLSz6Bax7cWSkbDDwLsJCDYXGbVp9HvC9fNNYEOgz+7OG2iV9Txg8T
+         BivQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=KXJGakeSaX7kv9eetlGNGm5mHRuC6WsYW0U7AeHhhy8=;
-        b=U+baV2Wp2SmRw9Z68upt41dIaMWWHs4TIpfrv/iAfZO377C9KqCVl2lGu/mSy8QX2H
-         p3GtTqnpd/c0BXn77i2ZJBH3MjqhNr6hSLSEbfLJGNgzZqCktHsD3QxKh53KPqw2ZLYZ
-         tw646erS6CDnQ3sQeDxmcFCumcDefKzzH54s/jFCNcbk8Q7vi7uyzKBRjxE9ss1meAo7
-         QDwF0cvdiLXpa4Q+WUxUH6Z9mQBIOpVs4A2nZcELxOvnqX2XXGVFD0JurjrEOJfv8haS
-         koq+aitFmjXqSRWPxWDFr1wDea0kY+bvLmIWTRnKvQOICjxVxNg8ybULNVGP4Ld+F7z9
-         nHvQ==
-X-Gm-Message-State: AJcUukcP5ATY6ZdGnSyVKMf0hOjRdojSn4bBkJEcHmlcvKMa3pU4UPe9
-        n5rv/8tfMfskdKTHS27gFEI2k3QvEexe562oLKb3aA==
-X-Google-Smtp-Source: ALg8bN5xhNKlGCOtDldzoet0FqfgFQ3+v461/dUKws1MoZsT8qIoZbDtxRBwxe0VV7OEQZZWDQ5Oxh9CYHPic3DdhuM=
-X-Received: by 2002:aca:d78b:: with SMTP id o133mr2466766oig.232.1548284091829;
- Wed, 23 Jan 2019 14:54:51 -0800 (PST)
-MIME-Version: 1.0
-References: <20190123222315.1122-1-jglisse@redhat.com>
-In-Reply-To: <20190123222315.1122-1-jglisse@redhat.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 23 Jan 2019 14:54:40 -0800
-Message-ID: <CAPcyv4i9_T9779ZyaYt2T3b20-wQTaWA4P63+49TM=a=twtDVw@mail.gmail.com>
-Subject: Re: [PATCH v4 0/9] mmu notifier provide context informations
-To:     =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>
-Cc:     Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        Jan Kara <jack@suse.cz>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Ross Zwisler <zwisler@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        KVM list <kvm@vger.kernel.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=4WZVbXflNyi2B86ocdbFcoByaoSrHI2wAdzhIiL6Trs=;
+        b=As4PGAghbz8fC6x/DQLQhJctuvPadtztXkm2PkJ23iwNkxCurjhCJp6K5Kc/IRmcjx
+         r9Pw5AMB36+wWJQpKMq9ZXE9TGVVKLIMLFB1eKFmPmnOIpvjKo347DoHcgfhF2w8a2KU
+         jWKt0wDBRPXrT5PiVxCk2LHyx5Y6Z1NwKWIbGqVLpP5K/Zkhs6o4w9T35x7JsQMmripg
+         kzlbnQlWyIDwwyp6WSJVNQZ+nM6U+XI6AsrjYRsya9n/mJBd8wwsI3vJAR88qqgmM38M
+         MvoABoGYoHnQRj9Px1E8P4WxODKGROmel98oEkHsktVc30+DSZ+Pc+ycxlEafiY0nVGr
+         T8xA==
+X-Gm-Message-State: AJcUukfG8jQqvd7MXEj8Wb/bYAzVMoNrLww2AUeneaqL4MrBsgyhgEru
+        lBEBGcVWbLux9ssZZkgBP53vCF+J
+X-Google-Smtp-Source: ALg8bN5hY2fK9oq8SC/eikWU201RUpdua4mcjuvtZAdD/Iq2k0r84OWaerkZFp66Xkg36Nw+JXP/fw==
+X-Received: by 2002:a63:9501:: with SMTP id p1mr3731484pgd.149.1548284102276;
+        Wed, 23 Jan 2019 14:55:02 -0800 (PST)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
+        by smtp.gmail.com with ESMTPSA id b9sm23532435pfi.118.2019.01.23.14.55.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 23 Jan 2019 14:55:01 -0800 (PST)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     rdunlap@infradead.org, paul.gortmaker@windriver.com,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM BCM7XXX ARM
+        ARCHITECTURE),
+        linux-arm-kernel@lists.infradead.org (moderated list:BROADCOM BCM7XXX
+        ARM ARCHITECTURE)
+Subject: [PATCH reset/next] reset: Add Broadcom STB SW_INIT reset controller driver
+Date:   Wed, 23 Jan 2019 14:54:36 -0800
+Message-Id: <20190123225439.32622-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 2:23 PM <jglisse@redhat.com> wrote:
->
-> From: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
->
-> Hi Andrew, i see that you still have my event patch in you queue [1].
-> This patchset replace that single patch and is broken down in further
-> step so that it is easier to review and ascertain that no mistake were
-> made during mechanical changes. Here are the step:
->
->     Patch 1 - add the enum values
->     Patch 2 - coccinelle semantic patch to convert all call site of
->               mmu_notifier_range_init to default enum value and also
->               to passing down the vma when it is available
->     Patch 3 - update many call site to more accurate enum values
->     Patch 4 - add the information to the mmu_notifier_range struct
->     Patch 5 - helper to test if a range is updated to read only
->
-> All the remaining patches are update to various driver to demonstrate
-> how this new information get use by device driver. I build tested
-> with make all and make all minus everything that enable mmu notifier
-> ie building with MMU_NOTIFIER=3Dno. Also tested with some radeon,amd
-> gpu and intel gpu.
->
-> If they are no objections i believe best plan would be to merge the
-> the first 5 patches (all mm changes) through your queue for 5.1 and
-> then to delay driver update to each individual driver tree for 5.2.
-> This will allow each individual device driver maintainer time to more
-> thouroughly test this more then my own testing.
->
-> Note that i also intend to use this feature further in nouveau and
-> HMM down the road. I also expect that other user like KVM might be
-> interested into leveraging this new information to optimize some of
-> there secondary page table invalidation.
+Add support for resetting blocks through the Linux reset controller
+subsystem when reset lines are provided through a SW_INIT-style reset
+controller on Broadcom STB SoCs.
 
-"Down the road" users should introduce the functionality they want to
-consume. The common concern with preemptively including
-forward-looking infrastructure is realizing later that the
-infrastructure is not needed, or needs changing. If it has no current
-consumer, leave it out.
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+---
+Philipp,
 
->
-> Here is an explaination on the rational for this patchset:
->
->
-> CPU page table update can happens for many reasons, not only as a result
-> of a syscall (munmap(), mprotect(), mremap(), madvise(), ...) but also
-> as a result of kernel activities (memory compression, reclaim, migration,
-> ...).
->
-> This patch introduce a set of enums that can be associated with each of
-> the events triggering a mmu notifier. Latter patches take advantages of
-> those enum values.
->
-> - UNMAP: munmap() or mremap()
-> - CLEAR: page table is cleared (migration, compaction, reclaim, ...)
-> - PROTECTION_VMA: change in access protections for the range
-> - PROTECTION_PAGE: change in access protections for page in the range
-> - SOFT_DIRTY: soft dirtyness tracking
->
-> Being able to identify munmap() and mremap() from other reasons why the
-> page table is cleared is important to allow user of mmu notifier to
-> update their own internal tracking structure accordingly (on munmap or
-> mremap it is not longer needed to track range of virtual address as it
-> becomes invalid).
+This is a replacement patch for what is currently in your reset/next
+branch.
 
-The only context information consumed in this patch set is
-MMU_NOTIFY_PROTECTION_VMA.
+Thank you!
 
-What is the practical benefit of these "optimize out the case when a
-range is updated to read only" optimizations? Any numbers to show this
-is worth the code thrash?
+ drivers/reset/Kconfig         |   8 +++
+ drivers/reset/Makefile        |   1 +
+ drivers/reset/reset-brcmstb.c | 132 ++++++++++++++++++++++++++++++++++
+ 3 files changed, 141 insertions(+)
+ create mode 100644 drivers/reset/reset-brcmstb.c
 
->
-> [1] https://www.ozlabs.org/~akpm/mmotm/broken-out/mm-mmu_notifier-context=
-ual-information-for-event-triggering-invalidation-v2.patch
->
-> Cc: Christian K=C3=B6nig <christian.koenig@amd.com>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Felix Kuehling <Felix.Kuehling@amd.com>
-> Cc: Jason Gunthorpe <jgg@mellanox.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Matthew Wilcox <mawilcox@microsoft.com>
-> Cc: Ross Zwisler <zwisler@kernel.org>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@redhat.com>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: Ralph Campbell <rcampbell@nvidia.com>
-> Cc: John Hubbard <jhubbard@nvidia.com>
-> Cc: kvm@vger.kernel.org
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: linux-rdma@vger.kernel.org
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: Arnd Bergmann <arnd@arndb.de>
->
-> J=C3=A9r=C3=B4me Glisse (9):
->   mm/mmu_notifier: contextual information for event enums
->   mm/mmu_notifier: contextual information for event triggering
->     invalidation
->   mm/mmu_notifier: use correct mmu_notifier events for each invalidation
->   mm/mmu_notifier: pass down vma and reasons why mmu notifier is
->     happening
->   mm/mmu_notifier: mmu_notifier_range_update_to_read_only() helper
->   gpu/drm/radeon: optimize out the case when a range is updated to read
->     only
->   gpu/drm/amdgpu: optimize out the case when a range is updated to read
->     only
->   gpu/drm/i915: optimize out the case when a range is updated to read
->     only
->   RDMA/umem_odp: optimize out the case when a range is updated to read
->     only
->
->  drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c  | 13 ++++++++
->  drivers/gpu/drm/i915/i915_gem_userptr.c | 16 ++++++++++
->  drivers/gpu/drm/radeon/radeon_mn.c      | 13 ++++++++
->  drivers/infiniband/core/umem_odp.c      | 22 +++++++++++--
->  fs/proc/task_mmu.c                      |  3 +-
->  include/linux/mmu_notifier.h            | 42 ++++++++++++++++++++++++-
->  include/rdma/ib_umem_odp.h              |  1 +
->  kernel/events/uprobes.c                 |  3 +-
->  mm/huge_memory.c                        | 14 +++++----
->  mm/hugetlb.c                            | 11 ++++---
->  mm/khugepaged.c                         |  3 +-
->  mm/ksm.c                                |  6 ++--
->  mm/madvise.c                            |  3 +-
->  mm/memory.c                             | 25 +++++++++------
->  mm/migrate.c                            |  5 ++-
->  mm/mmu_notifier.c                       | 10 ++++++
->  mm/mprotect.c                           |  4 ++-
->  mm/mremap.c                             |  3 +-
->  mm/oom_kill.c                           |  3 +-
->  mm/rmap.c                               |  6 ++--
->  20 files changed, 171 insertions(+), 35 deletions(-)
->
-> --
-> 2.17.2
->
+diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+index 2e01bd833ffd..d9a02b7f90cf 100644
+--- a/drivers/reset/Kconfig
++++ b/drivers/reset/Kconfig
+@@ -40,6 +40,14 @@ config RESET_BERLIN
+ 	help
+ 	  This enables the reset controller driver for Marvell Berlin SoCs.
+ 
++config RESET_BRCMSTB
++	tristate "Broadcom STB reset controller"
++	depends on ARCH_BRCMSTB || COMPILE_TEST
++	default ARCH_BRCMSTB
++	help
++	  This enables the reset controller driver for Broadcom STB SoCs using
++	  a SUN_TOP_CTRL_SW_INIT style controller.
++
+ config RESET_HSDK
+ 	bool "Synopsys HSDK Reset Driver"
+ 	depends on HAS_IOMEM
+diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+index dc7874df78d9..7395db2cb1dd 100644
+--- a/drivers/reset/Makefile
++++ b/drivers/reset/Makefile
+@@ -7,6 +7,7 @@ obj-$(CONFIG_RESET_A10SR) += reset-a10sr.o
+ obj-$(CONFIG_RESET_ATH79) += reset-ath79.o
+ obj-$(CONFIG_RESET_AXS10X) += reset-axs10x.o
+ obj-$(CONFIG_RESET_BERLIN) += reset-berlin.o
++obj-$(CONFIG_RESET_BRCMSTB) += reset-brcmstb.o
+ obj-$(CONFIG_RESET_HSDK) += reset-hsdk.o
+ obj-$(CONFIG_RESET_IMX7) += reset-imx7.o
+ obj-$(CONFIG_RESET_LANTIQ) += reset-lantiq.o
+diff --git a/drivers/reset/reset-brcmstb.c b/drivers/reset/reset-brcmstb.c
+new file mode 100644
+index 000000000000..a608f445dad6
+--- /dev/null
++++ b/drivers/reset/reset-brcmstb.c
+@@ -0,0 +1,132 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Broadcom STB generic reset controller for SW_INIT style reset controller
++ *
++ * Author: Florian Fainelli <f.fainelli@gmail.com>
++ * Copyright (C) 2018 Broadcom
++ */
++#include <linux/delay.h>
++#include <linux/device.h>
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/reset-controller.h>
++#include <linux/types.h>
++
++struct brcmstb_reset {
++	void __iomem *base;
++	struct reset_controller_dev rcdev;
++};
++
++#define SW_INIT_SET		0x00
++#define SW_INIT_CLEAR		0x04
++#define SW_INIT_STATUS		0x08
++
++#define SW_INIT_BIT(id)		BIT((id) & 0x1f)
++#define SW_INIT_BANK(id)	((id) >> 5)
++
++/* A full bank contains extra registers that we are not utilizing but still
++ * qualify as a single bank.
++ */
++#define SW_INIT_BANK_SIZE	0x18
++
++static inline
++struct brcmstb_reset *to_brcmstb(struct reset_controller_dev *rcdev)
++{
++	return container_of(rcdev, struct brcmstb_reset, rcdev);
++}
++
++static int brcmstb_reset_assert(struct reset_controller_dev *rcdev,
++				unsigned long id)
++{
++	unsigned int off = SW_INIT_BANK(id) * SW_INIT_BANK_SIZE;
++	struct brcmstb_reset *priv = to_brcmstb(rcdev);
++
++	writel_relaxed(SW_INIT_BIT(id), priv->base + off + SW_INIT_SET);
++
++	return 0;
++}
++
++static int brcmstb_reset_deassert(struct reset_controller_dev *rcdev,
++				  unsigned long id)
++{
++	unsigned int off = SW_INIT_BANK(id) * SW_INIT_BANK_SIZE;
++	struct brcmstb_reset *priv = to_brcmstb(rcdev);
++
++	writel_relaxed(SW_INIT_BIT(id), priv->base + off + SW_INIT_CLEAR);
++	/* Maximum reset delay after de-asserting a line and seeing block
++	 * operation is typically 14us for the worst case, build some slack
++	 * here.
++	 */
++	usleep_range(100, 200);
++
++	return 0;
++}
++
++static int brcmstb_reset_status(struct reset_controller_dev *rcdev,
++				unsigned long id)
++{
++	unsigned int off = SW_INIT_BANK(id) * SW_INIT_BANK_SIZE;
++	struct brcmstb_reset *priv = to_brcmstb(rcdev);
++
++	return readl_relaxed(priv->base + off + SW_INIT_STATUS) &
++			     SW_INIT_BIT(id);
++}
++
++static const struct reset_control_ops brcmstb_reset_ops = {
++	.assert	= brcmstb_reset_assert,
++	.deassert = brcmstb_reset_deassert,
++	.status = brcmstb_reset_status,
++};
++
++static int brcmstb_reset_probe(struct platform_device *pdev)
++{
++	struct device *kdev = &pdev->dev;
++	struct brcmstb_reset *priv;
++	struct resource *res;
++
++	priv = devm_kzalloc(kdev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (!IS_ALIGNED(res->start, SW_INIT_BANK_SIZE) ||
++	    !IS_ALIGNED(resource_size(res), SW_INIT_BANK_SIZE)) {
++		dev_err(kdev, "incorrect register range\n");
++		return -EINVAL;
++	}
++
++	priv->base = devm_ioremap_resource(kdev, res);
++	if (IS_ERR(priv->base))
++		return PTR_ERR(priv->base);
++
++	dev_set_drvdata(kdev, priv);
++
++	priv->rcdev.owner = THIS_MODULE;
++	priv->rcdev.nr_resets = DIV_ROUND_DOWN_ULL(resource_size(res),
++						   SW_INIT_BANK_SIZE) * 32;
++	priv->rcdev.ops = &brcmstb_reset_ops;
++	priv->rcdev.of_node = kdev->of_node;
++	/* Use defaults: 1 cell and simple xlate function */
++
++	return devm_reset_controller_register(kdev, &priv->rcdev);
++}
++
++static const struct of_device_id brcmstb_reset_of_match[] = {
++	{ .compatible = "brcm,brcmstb-reset" },
++	{ /* sentinel */ }
++};
++
++static struct platform_driver brcmstb_reset_driver = {
++	.probe	= brcmstb_reset_probe,
++	.driver	= {
++		.name = "brcmstb-reset",
++		.of_match_table = brcmstb_reset_of_match,
++	},
++};
++module_platform_driver(brcmstb_reset_driver);
++
++MODULE_AUTHOR("Broadcom");
++MODULE_DESCRIPTION("Broadcom STB reset controller");
++MODULE_LICENSE("GPL");
+-- 
+2.17.1
+
