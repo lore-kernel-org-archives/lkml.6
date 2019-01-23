@@ -2,105 +2,120 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95A68C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 06:54:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E622C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 06:54:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5892A21726
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 06:54:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548226467;
-	bh=Fn+0fF9Fr/2cq8up47QqbjHOey9kzUYCbrdqfdRUASE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=sTfgj8d/KS5+gNbHHfmLf6S9iWDm1VNFP/ehwmfi1WDIMcHCafoqIr3vUIPXGdic7
-	 8OBspAzoajVq3Bk9y6wntt6VZv8w6xf90AOM8atMcWNwouxe7g9S7bJNjsx9FcSLkM
-	 WP6vzEavweSshG9r4WgK+nbWDngmSea7p+JCaquA=
+	by mail.kernel.org (Postfix) with ESMTP id D1838217F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 06:54:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FujQ25IF";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="k2bumKqF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726296AbfAWGy0 (ORCPT
+        id S1726367AbfAWGy5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 01:54:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57026 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725973AbfAWGyZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 01:54:25 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 598EE21726;
-        Wed, 23 Jan 2019 06:54:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548226464;
-        bh=Fn+0fF9Fr/2cq8up47QqbjHOey9kzUYCbrdqfdRUASE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xoSqs4KvsLnAVjubIM6uyq+rkM8dRWScHFnvNXtdYOXW/7UqXiHQcoEBVkhiwTNDN
-         vY8axu00gapaV3SH4w82LxoN3Ya/sEjmz4ZXtfWRg394uQmOELLFHief9D0UPkGr/c
-         aOgYqtJ6PUJ81B/32ZUenukJlJn1CJI2y4ChmwAw=
-Date:   Wed, 23 Jan 2019 07:54:22 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: Re: [PATCH] kprobes: no need to check return value of debugfs_create
- functions
-Message-ID: <20190123065422.GA27466@kroah.com>
-References: <20190122152151.16139-47-gregkh@linuxfoundation.org>
- <20190123111516.d5fd81cb315810235205fbeb@kernel.org>
+        Wed, 23 Jan 2019 01:54:57 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:57070 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725973AbfAWGy5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 01:54:57 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 0164E601D3; Wed, 23 Jan 2019 06:54:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548226496;
+        bh=fv8J34Z5tW5zm5Ukwtz/V98wDu3/5/xEaviSqPae3k0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=FujQ25IFhtlZhTsFxFSIKIxQJI8IWbz/AWpPd36sgT2f21q7oPM9WksYdmlivFUma
+         b6eTvLm6cbomvgzXqQDSFqyrSA6CXBgLuuxO2zm3ArERb+1Jo65lxkcrZ2sT6tvpf1
+         ykfH+JRY2QkxWMvYAf1YD6ofgVT9gupTOyvXbVeY=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 5339B60225;
+        Wed, 23 Jan 2019 06:54:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548226495;
+        bh=fv8J34Z5tW5zm5Ukwtz/V98wDu3/5/xEaviSqPae3k0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=k2bumKqFJlF5podcQIOBjjx26so0K4uPd2fRWDC2422/xcAm0JuVWwTF4S2Y/Cc5V
+         e26pPbAWnEH5O5DqNgDpPRkAUR4+HjmP5KVybHJEAPfzxamCz4V5pt2iSF5TpNow30
+         OPfBmRqP9XsRXzskdgobGJYGpxE7PU6pdxG3n+04=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190123111516.d5fd81cb315810235205fbeb@kernel.org>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 23 Jan 2019 12:24:55 +0530
+From:   alokc@codeaurora.org
+To:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-serial@vger.kernel.org,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mark Brown <broonie@kernel.org>
+Cc:     georgi.djakov@linaro.org, dianders@chromium.org,
+        swboyd@chromium.org, bjorn.andersson@linaro.org,
+        linux-serial-owner@vger.kernel.org
+Subject: Re: [PATCH 6/6] arm64: dts: sdm845: Add interconnect for GENI QUP
+In-Reply-To: <1548138816-1149-7-git-send-email-alokc@codeaurora.org>
+References: <1548138816-1149-1-git-send-email-alokc@codeaurora.org>
+ <1548138816-1149-7-git-send-email-alokc@codeaurora.org>
+Message-ID: <ae226b97fa2bbf9992a2727992031367@codeaurora.org>
+X-Sender: alokc@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 11:15:16AM +0900, Masami Hiramatsu wrote:
-> On Tue, 22 Jan 2019 16:21:46 +0100
-> Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
++Mark Brown
+
+On 2019-01-22 12:03, Alok Chauhan wrote:
+> Add interconnect ports for GENI QUPs to set bus
+> capabilities.
 > 
-> > When calling debugfs functions, there is no need to ever check the
-> > return value.  The function can work or not, but the code logic should
-> > never do something different based on this.
-> > 
-> > Cc: "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>
-> > Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
-> > Cc: "David S. Miller" <davem@davemloft.net>
-> > Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > ---
-> >  kernel/kprobes.c | 25 ++++++-------------------
-> >  1 file changed, 6 insertions(+), 19 deletions(-)
-> > 
-> > diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-> > index f4ddfdd2d07e..7287e7de2350 100644
-> > --- a/kernel/kprobes.c
-> > +++ b/kernel/kprobes.c
-> > @@ -2566,33 +2566,20 @@ static const struct file_operations fops_kp = {
-> >  
-> >  static int __init debugfs_kprobe_init(void)
-> >  {
-> > -	struct dentry *dir, *file;
-> > +	struct dentry *dir;
-> >  	unsigned int value = 1;
-> >  
-> >  	dir = debugfs_create_dir("kprobes", NULL);
-> > -	if (!dir)
-> > -		return -ENOMEM;
+> Signed-off-by: Alok Chauhan <alokc@codeaurora.org>
+> ---
+>  arch/arm64/boot/dts/qcom/sdm845.dtsi | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
 > 
-> Here, I think IS_ERR(dir) is OK for debugfs_create_file(),
-> but dir == NULL has different meaning. I think we'd better
-> keep this check. (I see, -ENOMEM will be no good...)
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> index c27cbd3..fb0a8a7 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> @@ -374,6 +374,13 @@
+>  			#address-cells = <1>;
+>  			#size-cells = <1>;
+>  			ranges;
+> +
+> +			interconnects = <&rsc_hlos MASTER_BLSP_1
+> +					&rsc_hlos SLAVE_EBI1>,
+> +					<&rsc_hlos MASTER_APPSS_PROC
+> +					&rsc_hlos SLAVE_BLSP_1>;
+> +			interconnect-names = "qup-memory", "qup-config";
+> +
+>  			status = "disabled";
+> 
+>  			i2c0: i2c@880000 {
+> @@ -682,6 +689,13 @@
+>  			#address-cells = <1>;
+>  			#size-cells = <1>;
+>  			ranges;
+> +
+> +			interconnects = <&rsc_hlos MASTER_BLSP_2
+> +					&rsc_hlos SLAVE_EBI1>,
+> +					<&rsc_hlos MASTER_APPSS_PROC
+> +					&rsc_hlos SLAVE_BLSP_2>;
+> +			interconnect-names = "qup-memory", "qup-config";
+> +
+>  			status = "disabled";
+> 
+>  			i2c8: i2c@a80000 {
 
-dir == NULL means the system is out of memory.  Which I'll change and
-just make it return an error, so it is fine to ignore this value.
-
-thanks,
-
-greg k-h
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
+Forum,a Linux Foundation Collaborative Project
