@@ -2,104 +2,122 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3713DC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 16:31:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FF2DC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 16:32:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 039CC217D4
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 16:31:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="n25oafAC"
+	by mail.kernel.org (Postfix) with ESMTP id E3C632184C
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 16:32:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548261137;
+	bh=1BDIS6KXx9yzhx3iZaDJM4GCMAdD+MohMdr82FfajPA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=eWYb6Iy8j1Lk0jiKE5vomEXDooYPjKCDyHd+qwHlf7hG9VtGiUTq48fbeEai8tpHq
+	 cjdIy1gcmdkrIuYNvB5KmXUcuQ0Ui6KvDGeZYEw0Pl0q2EiLqbaYkJg416Pe+ocXCs
+	 /HgfvmNevgK4djCyz0N/KCdD7MSzGrPzXQ2VgKU4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726919AbfAWQbg (ORCPT
+        id S1726944AbfAWQcP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 11:31:36 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:46846 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726156AbfAWQbg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 11:31:36 -0500
-Received: by mail-pf1-f196.google.com with SMTP id c73so1404369pfe.13
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 08:31:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=QM0WYe3U7IAOj7rprkn5WU3sgdnJny9GSGaYt8Q1O7U=;
-        b=n25oafACOUYanlrnKebPd3iJ13BqM2BW6n4fwQL4nQBvaHHtANoyXXznsGMDDhTYQY
-         ss/Wu5+iv0oXgbljpZJUX0JZWBBTMr042WuldfGPKX3STqAiwboOHAhvPvJbs7bNaII+
-         pffTKj4waqcEyRbcR/RsbuiGxMzSLFZ+KU5QLHJzNkM4V6VVJUCqoKvjvzEdO3k+bxXM
-         syqOwGFfxFMMh8wJL4jeVMzNp4WYZJiMdurYeaHG9Na0TkdfIBHn/94n9ySZVj3uN3OR
-         LHkkR2+Y/O3s76VCp1JkGYbllK/LBbay526QIls2irX+6Z4mAjXInHFswggPB9hHZOAO
-         rq1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=QM0WYe3U7IAOj7rprkn5WU3sgdnJny9GSGaYt8Q1O7U=;
-        b=UC8UNI+rrdwrfbWRFCah25c1Am5zDcbTw9MOJOwK0Aca82yehv2jzIffd5wA1pyuvS
-         cCocxmkS9Jkd+iYSKjlBDdCEolKxJA5bMkT/6nL9egNF8eWZBKl+LgvbaPCY1E08RsqS
-         +0L2ycZpsy2jPKfR9llJYc7EGNL1AqaAuMvRO3Tdie0fczZhU17JbLv604hOHtHpT+Bi
-         biKfL3O9yt+JTghK0F8UQ7s8RfyTuRCy1lmM4qxEPGYPLrwlz2T6wGa7cI5NWNLLvlFQ
-         I/K7PjnbPntVwhaGu40+6fai7lb2hX7oRYyHTFrz+OLWxkoVy5SAeA3+oU2P+HhoY/PQ
-         fLFQ==
-X-Gm-Message-State: AJcUukeWEJLN1QXa/QzfeS4VwaZRLcDb0+x3s0fZRfb47rK45dB0nGgv
-        iCySpwmsFr7GYul2uQmdtf0=
-X-Google-Smtp-Source: ALg8bN5Vw4EAGT2vjtiHBEOpf4DQ3xc1PfY5ECeqXTlfEd3/qTqUw7x5cFKTdNidpv3KVEd+sp1SvQ==
-X-Received: by 2002:a63:d949:: with SMTP id e9mr2594309pgj.24.1548261095381;
-        Wed, 23 Jan 2019 08:31:35 -0800 (PST)
-Received: from nishad ([106.51.25.107])
-        by smtp.gmail.com with ESMTPSA id w88sm44568938pfk.11.2019.01.23.08.31.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 23 Jan 2019 08:31:34 -0800 (PST)
-Date:   Wed, 23 Jan 2019 22:01:26 +0530
-From:   Nishad Kamdar <nishadkamdar@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     NeilBrown <neil@brown.name>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        John Crispin <blogic@openwrt.org>, devel@driverdev.osuosl.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Nishad Kamdar <nishadkamdar@gmail.com>
-Subject: [PATCH] staging: mt7621-pinctrl: Remove space after cast
-Message-ID: <20190123163122.GA4807@nishad>
+        Wed, 23 Jan 2019 11:32:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34472 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726088AbfAWQcO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 11:32:14 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2616B217D4;
+        Wed, 23 Jan 2019 16:32:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548261133;
+        bh=1BDIS6KXx9yzhx3iZaDJM4GCMAdD+MohMdr82FfajPA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QVMA+P7UjtQTDSLDVnRR97LBRoVzrbAi+7tdyCf7qbqVTg0Rg+ckdtGbvHKnoX695
+         mU2DNIAnUbRTi+BBi7q9QgY60MhyqFEsE0tE3NCoD9nQnF/hnXVlgMyGirUuWyN/vz
+         ddjFPmRecXH1sj5BdqgBeyHglUczzQBZyJBCoTg8=
+Date:   Wed, 23 Jan 2019 17:32:11 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Paul Menzel <pmenzel@molgen.mpg.de>
+Cc:     stable@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
+        LKML <linux-kernel@vger.kernel.org>, it+lkml@molgen.mpg.de
+Subject: Re: [PATCH] ipmi:pci: Blacklist a Realtek "IPMI" device
+Message-ID: <20190123163211.GA31955@kroah.com>
+References: <8520014d-6805-ce87-143d-fffbeb94d11d@molgen.mpg.de>
+ <78de72f8-e218-f91f-97b2-768ff5a920e4@acm.org>
+ <9ca94005-e2e4-cd5a-67bd-30c3d8680281@molgen.mpg.de>
+ <fe18b975-a577-8b09-c1cc-488356fc60a7@molgen.mpg.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <fe18b975-a577-8b09-c1cc-488356fc60a7@molgen.mpg.de>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch removes space after a cast as it
-is not needed.
-Issue found by checkpatch.
+On Wed, Jan 23, 2019 at 05:27:51PM +0100, Paul Menzel wrote:
+> From: Corey Minyard <cminyard@mvista.com>
+> Date: Thu, 15 Feb 2018 16:58:26 -0600
+> 
+> [ upstream commit bc48fa1b9d3b04106055b27078da824cd209865a ]
+> 
+> Realtek has some sort of "Virtual" IPMI device on the PCI bus as a
+> KCS controller, but whatever it is, it's not one.  Ignore it if seen.
+> 
+> Reported-by: Chris Chiu <chiu@endlessm.com>
+> Signed-off-by: Corey Minyard <cminyard@mvista.com>
+> Tested-by: Daniel Drake <drake@endlessm.com>
+> 
+> [ Commit 13d0b35c (ipmi_si: Move PCI setup to another file) from Linux
+>   4.15-rc1 has not been back ported, so the PCI code is still in
+>   `drivers/char/ipmi/ipmi_si_intf.c`, requiring to apply the commit
+>   manually.
+> 
+>   This fixes a 100 s boot delay on the HP EliteDesk 705 G4 MT with Linux
+>   4.14.94. ]
+> 
+> Signed-off-by: Paul Menzel <pmenzel@molgen.mpg.de>
+> ---
+>  drivers/char/ipmi/ipmi_si_intf.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/drivers/char/ipmi/ipmi_si_intf.c b/drivers/char/ipmi/ipmi_si_intf.c
+> index c04aa11f0e21..6d18f8090cea 100644
+> --- a/drivers/char/ipmi/ipmi_si_intf.c
+> +++ b/drivers/char/ipmi/ipmi_si_intf.c
+> @@ -2447,6 +2447,15 @@ static int ipmi_pci_probe_regspacing(struct smi_info *info)
+>  	return DEFAULT_REGSPACING;
+>  }
+>  
+> +static struct pci_device_id ipmi_pci_blacklist[] = {
+> +        /*
+> +         * This is a "Virtual IPMI device", whatever that is.  It appears
+> +         * as a KCS device by the class, but it is not one.
+> +         */
+> +        { PCI_VDEVICE(REALTEK, 0x816c) },
+> +        { 0, }
+> +};
+> +
+>  static int ipmi_pci_probe(struct pci_dev *pdev,
+>  				    const struct pci_device_id *ent)
+>  {
+> @@ -2454,6 +2463,9 @@ static int ipmi_pci_probe(struct pci_dev *pdev,
+>  	int class_type = pdev->class & PCI_ERMC_CLASSCODE_TYPE_MASK;
+>  	struct smi_info *info;
+>  
+> +        if (pci_match_id(ipmi_pci_blacklist, pdev))
+> +                return -ENODEV;
+> +
 
-Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
----
- drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Your patch does not have tabs where it should have tabs :(
 
-diff --git a/drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c b/drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c
-index 80e7067cfb79..3e959fa73703 100644
---- a/drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c
-+++ b/drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c
-@@ -363,7 +363,7 @@ static int rt2880_pinmux_probe(struct platform_device *pdev)
- 		}
- 
- 		range = devm_kzalloc(p->dev, sizeof(*range) + 4, GFP_KERNEL);
--		range->name = name = (char *) &range[1];
-+		range->name = name = (char *)&range[1];
- 		sprintf(name, "pio");
- 		range->npins = __be32_to_cpu(*ngpio);
- 		range->base = __be32_to_cpu(*gpiobase);
--- 
-2.17.1
+Can you fix this up and resend?
 
+thanks,
+
+greg k-h
