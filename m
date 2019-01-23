@@ -2,98 +2,96 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D249C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:35:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D1C5C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:36:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 299BE2085A
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:35:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 495E32085A
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:36:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="k96/f6G2"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="BknYr6s4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726906AbfAWOfE (ORCPT
+        id S1726965AbfAWOg1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 09:35:04 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.52]:15318 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726127AbfAWOfE (ORCPT
+        Wed, 23 Jan 2019 09:36:27 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:51140 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726183AbfAWOg1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 09:35:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1548254099;
-        s=strato-dkim-0002; d=xenosoft.de;
-        h=In-Reply-To:Date:Message-ID:References:Cc:To:From:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=yJnRdupOAZFXzlPR7YQoD+/EPzdEL/IZ9rZjQvP1r+M=;
-        b=k96/f6G2rv8Tnf7giC8IAMp6brZ2U8WUKFD9zhx1olGyLpf7S4XvO8xk/zZXfvTnGe
-        uzQBxRXRjEU3Yo6z5qh0CjJGc+UsQbogKG/4G3WZJQdgna33EmDc4leZ3w5M+X9wJGXE
-        DGH+LGdWflB5pQa7xO7HZxY1n3gWD2XIyxYx8842NLO1VZM1IG8U1EWN5Mz04xLJFn4y
-        Co0jXzxbOYj99wiOSQdJ0YiTu/9P0zmn+hJVvuD2IOOPmWpx8xZ5Ezx9XSO8f5k1QPIp
-        HcsiZ0BDB3Egl+QVf0Lc3EQEuSnI/LyhPO4uzOatpuCmhoutH10/Feq9/rYv/qsoUJkR
-        5STg==
-X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5G5MdirQj0WG7CkOivtz9BbcU3oIy/088u8A0IQPCQ=="
-X-RZG-CLASS-ID: mo00
-Received: from [IPv6:2a02:8109:a400:162c:14eb:4db9:5107:55c4]
-        by smtp.strato.de (RZmta 44.9 AUTH)
-        with ESMTPSA id t0203dv0NEYubJ4
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Wed, 23 Jan 2019 15:34:56 +0100 (CET)
-Subject: Re: use generic DMA mapping code in powerpc V4
-From:   Christian Zigotzky <chzigotzky@xenosoft.de>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-arch@vger.kernel.org,
-        Darren Stevens <darren@stevens-zone.net>,
-        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
-        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
-        Paul Mackerras <paulus@samba.org>,
-        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
-References: <871403f2-fa7d-de15-89eb-070432e15c69@xenosoft.de>
- <20190118112842.GA9115@lst.de>
- <a2ca0118-5915-8b1c-7cfa-71cb4b43eaa6@xenosoft.de>
- <20190118121810.GA13327@lst.de>
- <eceebeda-0e18-00f6-06e7-def2eb0aa961@xenosoft.de>
- <20190118125500.GA15657@lst.de>
- <e11e61b1-6468-122e-fc2b-3b3f857186bb@xenosoft.de>
- <f39d4fc6-7e4e-9132-c03f-59f1b52260e0@xenosoft.de>
- <b9e5e081-a3cc-2625-4e08-2d55c2ba224b@xenosoft.de>
- <20190119130222.GA24346@lst.de> <20190119140452.GA25198@lst.de>
- <bfe4adcc-01c1-7b46-f40a-8e020ff77f58@xenosoft.de>
-Message-ID: <8434e281-eb85-51d9-106f-f4faa559e89c@xenosoft.de>
-Date:   Wed, 23 Jan 2019 15:34:55 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <bfe4adcc-01c1-7b46-f40a-8e020ff77f58@xenosoft.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: de-DE
+        Wed, 23 Jan 2019 09:36:27 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0NEXwCq085089;
+        Wed, 23 Jan 2019 14:35:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2018-07-02; bh=suvHRLubqdsMG8K+emTAPVhlspl6gAsE78o8KWMhtkA=;
+ b=BknYr6s4rkDYWddJjIOR5qY/I/mN6zzAoy7lZGawv9lL/MTEzuNm/zXbocQVH87du3if
+ 6Fzy/ZYM8Sp3vLUCYN9pNhB4WqfTgoIp2IT6PmLuFCPzIaLA1Zlz5GFwONuyAcGEmKlZ
+ 78pKPioNoGgrvfPDfluHQ9LYmO4JHFPaE05bBPUgF3z7eok6AV6LJQVxv+Qo1cjFeSXk
+ 85jsmoT/IoW2SxUuH9LjM3d7HVYXeJhSsqjOcxzMA03qNi/wiSPxO6v9lolR2UdwV1Uy
+ pKrJiBg7cpGabKWfdLpVkDTpLJVUEwRNDDwY87qbOznNsK8hclA+5+n0QFzcJXYGWqy6 sg== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2q3vhrt2f9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 23 Jan 2019 14:35:31 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0NEZUIr012046
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 23 Jan 2019 14:35:30 GMT
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0NEZU0P023532;
+        Wed, 23 Jan 2019 14:35:30 GMT
+Received: from [192.168.0.110] (/73.243.10.6)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 23 Jan 2019 06:35:29 -0800
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH 1/2] x86: respect memory size limiting via mem= parameter
+From:   William Kucharski <william.kucharski@oracle.com>
+In-Reply-To: <20190122080628.7238-2-jgross@suse.com>
+Date:   Wed, 23 Jan 2019 07:35:28 -0700
+Cc:     kernel list <linux-kernel@vger.kernel.org>,
+        xen-devel <xen-devel@lists.xenproject.org>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        sstabellini@kernel.org, hpa@zytor.com, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de
+Content-Transfer-Encoding: 7bit
+Message-Id: <69D0866F-77A7-4529-A01E-12395106E22D@oracle.com>
+References: <20190122080628.7238-1-jgross@suse.com>
+ <20190122080628.7238-2-jgross@suse.com>
+To:     Juergen Gross <jgross@suse.com>
+X-Mailer: Apple Mail (2.3445.102.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9144 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901230109
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christoph,
-
-I also compiled a kernel (zImage) for the X1000  from your Git 
-'powerpc-dma.6-debug' (both patches) today.
-
-It boots and the P.A. Semi Ethernet works!
-
-I will test just the first patch tomorrow.
-
-Thanks,
-Christian
 
 
-On 21 January 2019 at 3:38PM, Christian Zigotzky wrote:
-> Hello Christoph,
->
-> Thanks for your reply. I successfully compiled a kernel (uImage) for 
-> the X5000 from your Git 'powerpc-dma.6-debug' (both patches) today.
->
-> It detects the SATA hard disk drive and boots without any problems.
->
+> On Jan 22, 2019, at 1:06 AM, Juergen Gross <jgross@suse.com> wrote:
+> 
+> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> index b9a667d36c55..7fc2a87110a3 100644
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
+> @@ -96,10 +96,16 @@ void mem_hotplug_done(void)
+> 	cpus_read_unlock();
+> }
+> 
+> +u64 max_mem_size = -1;
+
+This may be pedantic, but I'd rather see U64_MAX used here.
 
