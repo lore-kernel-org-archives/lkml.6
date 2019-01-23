@@ -2,113 +2,83 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2730AC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:00:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A420C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:00:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F240420861
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:00:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DBE321019
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:00:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727143AbfAWJAX (ORCPT
+        id S1727161AbfAWJAc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 04:00:23 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:42584 "EHLO huawei.com"
+        Wed, 23 Jan 2019 04:00:32 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:57172 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726207AbfAWJAX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 04:00:23 -0500
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 42158B0B4B805E195329;
-        Wed, 23 Jan 2019 17:00:21 +0800 (CST)
-Received: from linux-fhAnjn.huawei.com (10.175.104.222) by
- DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.408.0; Wed, 23 Jan 2019 17:00:14 +0800
-From:   Heyi Guo <guoheyi@huawei.com>
-To:     <linux-kernel@vger.kernel.org>
-CC:     Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        <wanghaibin.wang@huawei.com>, <yangyingliang@huawei.com>
-Subject: [PATCH] irqchip/gic-v4: fix occasional VLPI drop
-Date:   Wed, 23 Jan 2019 16:59:08 +0800
-Message-ID: <1548233948-7450-1-git-send-email-guoheyi@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S1726317AbfAWJAc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 04:00:32 -0500
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 3E9969E960ACFDC917AB;
+        Wed, 23 Jan 2019 17:00:30 +0800 (CST)
+Received: from [127.0.0.1] (10.184.213.217) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.408.0; Wed, 23 Jan 2019
+ 17:00:24 +0800
+Subject: Re: [PATCH] squashfs: fix mtime underflow on 64 bit system
+To:     <phillip@squashfs.org.uk>, <linux-kernel@vger.kernel.org>
+CC:     <houtao1@huawei.com>, <zhaohongjiang@huawei.com>
+References: <20190117082148.129347-1-zhengbin13@huawei.com>
+From:   "zhengbin (A)" <zhengbin13@huawei.com>
+Message-ID: <8b7bd95a-ff67-6e8d-8dc0-6a758e25c811@huawei.com>
+Date:   Wed, 23 Jan 2019 17:00:23 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.104.222]
+In-Reply-To: <20190117082148.129347-1-zhengbin13@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.184.213.217]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-1. In current implementation, every VLPI will temporarily be mapped to
-the first CPU in system (normally CPU0) and then moved to the real
-scheduled CPU later.
+Ping?
 
-2. So there is a time window and a VLPI may be sent to CPU0 instead of
-the real scheduled vCPU, in a multi-CPU virtual machine.
-
-3. However, CPU0 may have not been scheduled as a virtual CPU after
-system boots up, so the value of its GICR_VPROPBASER is unknown at
-that moment.
-
-4. If the INTID of VLPI is larger than 2^(GICR_VPROPBASER.IDbits+1),
-while IDbits is also in unknown state, GIC will behave as if the VLPI
-is out of range and simply drop it, which results in interrupt missing
-in Guest.
-
-As no code will clear GICR_VPROPBASER at runtime, we can safely
-initialize the IDbits field at boot time for each CPU to get rid of
-this issue.
-
-We also clear Valid bit of GICR_VPENDBASER in case any ancient
-programming gets left in and causes memory corrupting.
-
-Signed-off-by: Heyi Guo <guoheyi@huawei.com>
-Signed-off-by: Heyi Guo <heyi.guo@linaro.org>
----
- drivers/irqchip/irq-gic-v3-its.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
-
-diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-index 3365d44..634c8a7 100644
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -2145,6 +2145,31 @@ static void its_cpu_init_lpis(void)
- 	val |= GICR_CTLR_ENABLE_LPIS;
- 	writel_relaxed(val, rbase + GICR_CTLR);
- 
-+	if (gic_rdists->has_vlpis) {
-+		void __iomem *vlpi_base = gic_data_rdist_vlpi_base();
-+
-+		/*
-+		 * It's possible for CPU to receive VLPIs before it is
-+		 * sheduled as a vPE, especially for the first CPU, and the
-+		 * VLPI with INTID larger than 2^(IDbits+1) will be considered
-+		 * as out of range and dropped by GIC.
-+		 * So we initialize IDbits to known value to avoid VLPI drop.
-+		 */
-+		val = (LPI_NRBITS - 1) & GICR_VPROPBASER_IDBITS_MASK;
-+		pr_debug("GICv4: CPU%d: Init IDbits to 0x%llx for GICR_VPROPBASER\n",
-+			smp_processor_id(), val);
-+		gits_write_vpropbaser(val, vlpi_base + GICR_VPROPBASER);
-+
-+		/*
-+		 * Also clear Valid bit of GICR_VPENDBASER, in case some
-+		 * ancient programming gets left in and has possibility of
-+		 * corrupting memory.
-+		 */
-+		val = gits_read_vpendbaser(vlpi_base + GICR_VPENDBASER);
-+		val &= ~GICR_VPENDBASER_Valid;
-+		gits_write_vpendbaser(val, vlpi_base + GICR_VPENDBASER);
-+	}
-+
- 	/* Make sure the GIC has seen the above */
- 	dsb(sy);
- out:
--- 
-1.8.3.1
+On 2019/1/17 16:21, zhengbin wrote:
+> If we change the file mtime to 1969, mksquashfs and mount,
+> the atime/mtime of this file will be underflow. The reason is
+> treating timestamps with the high bit set as positive
+> times(before 1970), which should be set as negative times
+> just like on 32 bit system. After this, the poissble range
+> of timestamps will be 1901-2038(prev is 1970-2106) on 64
+> bit system.
+> 
+> Signed-off-by: zhengbin <zhengbin13@huawei.com>
+> ---
+>  fs/squashfs/inode.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/squashfs/inode.c b/fs/squashfs/inode.c
+> index e9793b1e49a5..03a6ef77a2d2 100644
+> --- a/fs/squashfs/inode.c
+> +++ b/fs/squashfs/inode.c
+> @@ -72,7 +72,7 @@ static int squashfs_new_inode(struct super_block *sb, struct inode *inode,
+>  	i_uid_write(inode, i_uid);
+>  	i_gid_write(inode, i_gid);
+>  	inode->i_ino = le32_to_cpu(sqsh_ino->inode_number);
+> -	inode->i_mtime.tv_sec = le32_to_cpu(sqsh_ino->mtime);
+> +	inode->i_mtime.tv_sec = (signed int)le32_to_cpu(sqsh_ino->mtime);
+>  	inode->i_atime.tv_sec = inode->i_mtime.tv_sec;
+>  	inode->i_ctime.tv_sec = inode->i_mtime.tv_sec;
+>  	inode->i_mode = le16_to_cpu(sqsh_ino->mode);
+> --
+> 2.16.2.dirty
+> 
+> 
+> .
+> 
 
