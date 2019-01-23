@@ -3,30 +3,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CF65C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:24:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D676C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:24:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4293F20856
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:24:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6578E218A2
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:24:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727364AbfAWWXz (ORCPT
+        id S1727423AbfAWWYR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 17:23:55 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:54554 "EHLO mx1.redhat.com"
+        Wed, 23 Jan 2019 17:24:17 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:54486 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727335AbfAWWXw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 17:23:52 -0500
+        id S1727297AbfAWWXt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 17:23:49 -0500
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 067D8432C1;
-        Wed, 23 Jan 2019 22:23:52 +0000 (UTC)
-Received: from localhost.localdomain.com (ovpn-120-127.rdu2.redhat.com [10.10.120.127])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5CF0E5D965;
+        by mx1.redhat.com (Postfix) with ESMTPS id 2DA69432A0;
         Wed, 23 Jan 2019 22:23:49 +0000 (UTC)
+Received: from localhost.localdomain.com (ovpn-120-127.rdu2.redhat.com [10.10.120.127])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 87EAF6A685;
+        Wed, 23 Jan 2019 22:23:46 +0000 (UTC)
 From:   jglisse@redhat.com
 To:     linux-mm@kvack.org
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
@@ -46,16 +46,16 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         John Hubbard <jhubbard@nvidia.com>, kvm@vger.kernel.org,
         dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v4 8/9] gpu/drm/i915: optimize out the case when a range is updated to read only
-Date:   Wed, 23 Jan 2019 17:23:14 -0500
-Message-Id: <20190123222315.1122-9-jglisse@redhat.com>
+Subject: [PATCH v4 7/9] gpu/drm/amdgpu: optimize out the case when a range is updated to read only
+Date:   Wed, 23 Jan 2019 17:23:13 -0500
+Message-Id: <20190123222315.1122-8-jglisse@redhat.com>
 In-Reply-To: <20190123222315.1122-1-jglisse@redhat.com>
 References: <20190123222315.1122-1-jglisse@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Wed, 23 Jan 2019 22:23:52 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Wed, 23 Jan 2019 22:23:49 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -87,64 +87,47 @@ Cc: linux-rdma@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org
 Cc: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/gpu/drm/i915/i915_gem_userptr.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/gpu/drm/i915/i915_gem_userptr.c b/drivers/gpu/drm/i915/i915_gem_userptr.c
-index 9558582c105e..23330ac3d7ea 100644
---- a/drivers/gpu/drm/i915/i915_gem_userptr.c
-+++ b/drivers/gpu/drm/i915/i915_gem_userptr.c
-@@ -59,6 +59,7 @@ struct i915_mmu_object {
- 	struct interval_tree_node it;
- 	struct list_head link;
- 	struct work_struct work;
-+	bool read_only;
- 	bool attached;
- };
- 
-@@ -119,6 +120,7 @@ static int i915_gem_userptr_mn_invalidate_range_start(struct mmu_notifier *_mn,
- 		container_of(_mn, struct i915_mmu_notifier, mn);
- 	struct i915_mmu_object *mo;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
+index 3e6823fdd939..7880eda064cd 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
+@@ -294,6 +294,7 @@ static int amdgpu_mn_invalidate_range_start_hsa(struct mmu_notifier *mn,
+ {
+ 	struct amdgpu_mn *amn = container_of(mn, struct amdgpu_mn, mn);
  	struct interval_tree_node *it;
 +	bool update_to_read_only;
- 	LIST_HEAD(cancelled);
  	unsigned long end;
  
-@@ -128,6 +130,8 @@ static int i915_gem_userptr_mn_invalidate_range_start(struct mmu_notifier *_mn,
- 	/* interval ranges are inclusive, but invalidate range is exclusive */
- 	end = range->end - 1;
+ 	/* notification is exclusive, but interval is inclusive */
+@@ -302,6 +303,8 @@ static int amdgpu_mn_invalidate_range_start_hsa(struct mmu_notifier *mn,
+ 	if (amdgpu_mn_read_lock(amn, range->blockable))
+ 		return -EAGAIN;
  
 +	update_to_read_only = mmu_notifier_range_update_to_read_only(range);
 +
- 	spin_lock(&mn->lock);
- 	it = interval_tree_iter_first(&mn->objects, range->start, end);
+ 	it = interval_tree_iter_first(&amn->objects, range->start, end);
  	while (it) {
-@@ -145,6 +149,17 @@ static int i915_gem_userptr_mn_invalidate_range_start(struct mmu_notifier *_mn,
- 		 * object if it is not in the process of being destroyed.
- 		 */
- 		mo = container_of(it, struct i915_mmu_object, it);
-+
-+		/*
-+		 * If it is already read only and we are updating to
-+		 * read only then we do not need to change anything.
-+		 * So save time and skip this one.
-+		 */
-+		if (update_to_read_only && mo->read_only) {
-+			it = interval_tree_iter_next(it, range->start, end);
-+			continue;
-+		}
-+
- 		if (kref_get_unless_zero(&mo->obj->base.refcount))
- 			queue_work(mn->wq, &mo->work);
+ 		struct amdgpu_mn_node *node;
+@@ -317,6 +320,16 @@ static int amdgpu_mn_invalidate_range_start_hsa(struct mmu_notifier *mn,
  
-@@ -270,6 +285,7 @@ i915_gem_userptr_init__mmu_notifier(struct drm_i915_gem_object *obj,
- 	mo->mn = mn;
- 	mo->obj = obj;
- 	mo->it.start = obj->userptr.ptr;
-+	mo->read_only = i915_gem_object_is_readonly(obj);
- 	mo->it.last = obj->userptr.ptr + obj->base.size - 1;
- 	INIT_WORK(&mo->work, cancel_userptr);
+ 		list_for_each_entry(bo, &node->bos, mn_list) {
+ 			struct kgd_mem *mem = bo->kfd_bo;
++			bool read_only;
++
++			/*
++			 * If it is already read only and we are updating to
++			 * read only then we do not need to change anything.
++			 * So save time and skip this one.
++			 */
++			read_only = amdgpu_ttm_tt_is_readonly(bo->tbo.ttm);
++			if (update_to_read_only && read_only)
++				continue;
  
+ 			if (amdgpu_ttm_tt_affect_userptr(bo->tbo.ttm,
+ 							 range->start,
 -- 
 2.17.2
 
