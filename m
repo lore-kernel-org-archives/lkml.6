@@ -2,111 +2,97 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12517C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 13:30:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B981AC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 13:33:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC22C20856
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 13:30:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EB092133D
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 13:33:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=CAVIUMNETWORKS.onmicrosoft.com header.i=@CAVIUMNETWORKS.onmicrosoft.com header.b="OSeMtJRc"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZfwZoJs3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726218AbfAWNab (ORCPT
+        id S1726238AbfAWNdn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 08:30:31 -0500
-Received: from mail-eopbgr750077.outbound.protection.outlook.com ([40.107.75.77]:3517
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725995AbfAWNab (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 08:30:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=CAVIUMNETWORKS.onmicrosoft.com; s=selector1-cavium-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lykaplj2STb4WGjZoD3KLti7Uo5E/uUK2vzcVx3Q+/0=;
- b=OSeMtJRc3Ow8PoBCN7k2zGwG0ZWwIeRLWiY71yzDou8mQBj2elA2mbwoBH0I1Kcwc5VfhhqGPVB0KjsZG912gZFIHkU/mCKdTm8wIqI9BocteraqDZH2XRsKk1puRY7TDuPRd6dH/Q/aQdUHBjnxatU4L4U15ymwqfrLj4cG52k=
-Received: from BYAPR07MB4599.namprd07.prod.outlook.com (52.135.204.25) by
- BYAPR07MB5782.namprd07.prod.outlook.com (20.178.0.144) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1537.29; Wed, 23 Jan 2019 13:30:19 +0000
-Received: from BYAPR07MB4599.namprd07.prod.outlook.com
- ([fe80::f549:786e:dc77:f919]) by BYAPR07MB4599.namprd07.prod.outlook.com
- ([fe80::f549:786e:dc77:f919%4]) with mapi id 15.20.1558.016; Wed, 23 Jan 2019
- 13:30:19 +0000
-From:   Jan Glauber <Jan.Glauber@cavium.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Herbert Xu <herbert@gondor.apana.org.au>,
-        David Miller <davem@davemloft.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "Richter, Robert" <Robert.Richter@cavium.com>
-Subject: Re: [PATCH 4/7] crypto: cavium: zip: no need to check return value of
- debugfs_create functions
-Thread-Topic: [PATCH 4/7] crypto: cavium: zip: no need to check return value
- of debugfs_create functions
-Thread-Index: AQHUsx/IvviD8o8m6EW/rhbqghkiag==
-Date:   Wed, 23 Jan 2019 13:30:19 +0000
-Message-ID: <20190123133010.GA13961@hc>
-References: <20190122151422.14204-1-gregkh@linuxfoundation.org>
- <20190122151422.14204-5-gregkh@linuxfoundation.org>
-In-Reply-To: <20190122151422.14204-5-gregkh@linuxfoundation.org>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1P194CA0057.EURP194.PROD.OUTLOOK.COM
- (2603:10a6:803:3c::46) To BYAPR07MB4599.namprd07.prod.outlook.com
- (2603:10b6:a02:f2::25)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Jan.Glauber@cavium.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [46.5.44.95]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR07MB5782;6:4JVVMPh8rOb0t9TkPgsP8eBfgF40lGgk+WZuUZk+04iFrNWLkb+GoOZ8NPTkQScHdI77m2FM3fVY375vZN6BH4OG+Jp/qu5hQQQyTVjUy3w/aM+4NyEGuVlcFFmDQgxmSScGS6NAGdSwMStl4gWuszC//KCOIX2AzY8QPIoWe8NGIQBeKeg7OCDXUS0h3X0sjAEOblrOX8hyrIKCaFhbEgIwRhLQYr3XpGhu8J1w/8xECLEtf9ZO1WdyBWwG2VJGFyubAhR/EuFHdFbheKkGG02fyigP3Pjzy+TjaSz+YjzPwbpr7Y/SxM/B83HmFH54ApoCyzBU8OmXOvulAcwaaQfvvVpZtZnEbtV+rwxGUo+KV2t3i5o2SVffilV8tbtEcYiVYePWKZpBU42o51J1bxQZOzDIs1ubEjBl0zH1lEyV0uYYvSvRxlsBZXAUnay4NHHAalEhivKVuyArylicSw==;5:BNd6pOxMS5wnIg70iWCg0J6caC28RXOEubtwnroO9jMvIWHfyH4LvcXq4axZQQc6IHMFsuOuojT7f9DrXUro0aTZY1AhxMJovdZ/oEWJXv75scH+hl0guZ7JNreLqBKpvVExbK7ysw4EgZnr1nj9C7iBGYvEMsDGW9b06TqX5Cx6Tt6EM+5vAvl4nhukllPxlk0C4ZYX9AuFg3T7IxxC+A==;7:wlzT1CCiP98Yhb+Oo/0pWHKvzyFR/CRFrtA17FQr7BwZWuClUAMMb3neV6yrG2jhNRbEJ+pJLaF7v5OiT0RzM83alK6pXhtVyzHuDLJbQq5B8c3rp5uvx1zu+3XoU41+C3BpPr9+yzNRufulmEfMLA==
-x-ms-office365-filtering-correlation-id: c4adc9de-62f0-461c-e304-08d68136eaec
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(7021145)(8989299)(5600110)(711020)(4605077)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(2017052603328)(7153060)(7193020);SRVR:BYAPR07MB5782;
-x-ms-traffictypediagnostic: BYAPR07MB5782:
-x-microsoft-antispam-prvs: <BYAPR07MB578235FC6E3AF8D966271CD591990@BYAPR07MB5782.namprd07.prod.outlook.com>
-x-forefront-prvs: 0926B0E013
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(396003)(346002)(366004)(376002)(136003)(39860400002)(189003)(199004)(71190400001)(71200400001)(107886003)(25786009)(106356001)(44832011)(105586002)(68736007)(102836004)(256004)(6916009)(66066001)(229853002)(33656002)(72206003)(6436002)(8676002)(2906002)(3846002)(6486002)(6116002)(4326008)(14454004)(6246003)(316002)(508600001)(33716001)(53936002)(76176011)(305945005)(52116002)(7736002)(9686003)(99286004)(8936002)(1076003)(26005)(486006)(386003)(6506007)(11346002)(97736004)(86362001)(81156014)(81166006)(33896004)(476003)(186003)(4744005)(54906003)(6512007)(446003);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB5782;H:BYAPR07MB4599.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: cavium.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: UFZc/ql26FXftU207VjHrgTsvc1CK1v7HqHxaF7d+cKVVwZMVUBEbkkr9JlyMXYCqYBoi0GFbqW0yPs3+92rbvRaaKWtwxmoe1Fq/n3IAxoGrDjwoUL9+DFHZlvb9fMJmrJoDctZ/RfMBDcEyWplzptcOc07V3dWDJfe/ghT1GthyXHKXREgr3GHu3FUsz27Lym95+vEhIC4nnwjbp2V+QgEDAZU3HovqutSZ+ld51rgrsrQMWeUYgXGMqSgC9aENACd9YJvxgd53QM0U6VI/sYzMdEEUTAIzRBVlRitnPpqOw0rf8zSA86RBdUGT0m58N5HG9En5NyQRxvselpBx+1qdiq9K251WQ0PKG0VljCeCOschaDwdc0QWmUIx5v6bBxX49pfRp4Uklb+MG4XeBxepKZTq2sihNejR8DzvIU=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <421AAA6FEBD1E6428ED9DC9840B2A5E9@namprd07.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Wed, 23 Jan 2019 08:33:43 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:43472 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726104AbfAWNdm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 08:33:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=2yUaeo/dnZnzfg7QEtal6rNxNpe5Yqn6qYqkT3FexpQ=; b=ZfwZoJs3sWnDchQ67flFRtMkO
+        BeKQO2gKEgqJmYfmAnx2+5Wt/uf1Y7dGpxO0JRavgUBv2neKjwM6OCGOc2N8JzZe8ZhR/+OsJLfia
+        jaF0nlwWaaCmC1AQiQ/v8w++dGy4tvbVI5sZxtgLAAV3dtZ77ACbcCtb5NtizBUJHez6ymbeDcUJ3
+        khdjZEElQOvNV5G3boyg/gvP5xwFfuVbD+cdyyhkQy9LTNtXnu31+0YzhFWH5yYtiSGOiS9CvQ7dy
+        DfbZaBaRwlJ91OyYIO2wFCqghTehr7hNqd7c4SLrgFC0XtgoHPYJgdZry0/APYDu7gxal27/n34AY
+        6c4oLpw+g==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gmIem-000379-00; Wed, 23 Jan 2019 13:33:28 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 7053C201EC168; Wed, 23 Jan 2019 14:33:24 +0100 (CET)
+Date:   Wed, 23 Jan 2019 14:33:24 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v6 10/16] sched/core: Add uclamp_util_with()
+Message-ID: <20190123133324.GY27931@hirez.programming.kicks-ass.net>
+References: <20190115101513.2822-1-patrick.bellasi@arm.com>
+ <20190115101513.2822-11-patrick.bellasi@arm.com>
 MIME-Version: 1.0
-X-OriginatorOrg: cavium.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c4adc9de-62f0-461c-e304-08d68136eaec
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Jan 2019 13:30:17.3802
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR07MB5782
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190115101513.2822-11-patrick.bellasi@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 04:14:19PM +0100, Greg Kroah-Hartman wrote:
-> When calling debugfs functions, there is no need to ever check the
-> return value.  The function can work or not, but the code logic should
-> never do something different based on this.
->=20
-> Cc: Herbert Xu <herbert@gondor.apana.org.au>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: Robert Richter <rrichter@cavium.com>
-> Cc: Jan Glauber <jglauber@cavium.com>
-> Cc: linux-crypto@vger.kernel.org
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
->  drivers/crypto/cavium/zip/zip_main.c | 52 ++++++----------------------
->  1 file changed, 11 insertions(+), 41 deletions(-)
+On Tue, Jan 15, 2019 at 10:15:07AM +0000, Patrick Bellasi wrote:
+> +static __always_inline
+> +unsigned int uclamp_util_with(struct rq *rq, unsigned int util,
+> +			      struct task_struct *p)
+>  {
+>  	unsigned int min_util = READ_ONCE(rq->uclamp[UCLAMP_MIN].value);
+>  	unsigned int max_util = READ_ONCE(rq->uclamp[UCLAMP_MAX].value);
+>  
+> +	if (p) {
+> +		min_util = max(min_util, uclamp_effective_value(p, UCLAMP_MIN));
+> +		max_util = max(max_util, uclamp_effective_value(p, UCLAMP_MAX));
+> +	}
+> +
 
-Reviewed-by: Jan Glauber <jglauber@cavium.com>
+Like I think you mentioned earlier; this doesn't look right at all.
 
-thanks,
-Jan
+Should that not be something like:
+
+	lo = READ_ONCE(rq->uclamp[UCLAMP_MIN].value);
+	hi = READ_ONCE(rq->uclamp[UCLAMP_MAX].value);
+
+	min_util = clamp(uclamp_effective(p, UCLAMP_MIN), lo, hi);
+	max_util = clamp(uclamp_effective(p, UCLAMP_MAX), lo, hi);
+
+
