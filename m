@@ -2,189 +2,87 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 468FFC282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 02:40:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5873FC282C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 02:42:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 159532085A
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 02:40:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15A33217D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 02:42:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="OQr+Yg4a"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726996AbfAWCj5 (ORCPT
+        id S1727011AbfAWCmN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 21:39:57 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:51702 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726910AbfAWCj4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 21:39:56 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 489B03DE2C;
-        Wed, 23 Jan 2019 02:39:55 +0000 (UTC)
-Received: from redhat.com (ovpn-120-227.rdu2.redhat.com [10.10.120.227])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 578361019625;
-        Wed, 23 Jan 2019 02:39:49 +0000 (UTC)
-Date:   Tue, 22 Jan 2019 21:39:47 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Peter Xu <peterx@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Hugh Dickins <hughd@google.com>,
-        Maya Gokhale <gokhale2@llnl.gov>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Martin Cracauer <cracauer@cons.org>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Shaohua Li <shli@fb.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Marty McFadden <mcfadden8@llnl.gov>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH RFC 03/24] mm: allow VM_FAULT_RETRY for multiple times
-Message-ID: <20190123023947.GA3652@redhat.com>
-References: <20190121075722.7945-1-peterx@redhat.com>
- <20190121075722.7945-4-peterx@redhat.com>
- <20190121155536.GB3711@redhat.com>
- <20190122082238.GC14907@xz-x1>
- <20190122165310.GB3188@redhat.com>
- <20190123021241.GA2970@xz-x1>
+        Tue, 22 Jan 2019 21:42:13 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:40098 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726814AbfAWCmN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 21:42:13 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0N2cqPc104858;
+        Wed, 23 Jan 2019 02:42:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=geVVHhEihPR/L/13pCGWXVs75306oM5YI8dQfCs7vKk=;
+ b=OQr+Yg4aRLHoQjFerrM9wXIMUgZKm2EuwoiD9O/nnj9eCv/APea0eWQumjz5PUFP14D5
+ z9HUB55FY4030vfkeJsW4RWzuxK6bcs2rQoB9ymCt1tyuJ5dBvzXl4z0dpdFUmeu5JBe
+ mzmisHmWzl6wNJmj89dtgzQGlamr6HtmV22HHO4Mz2Z6/Tf58a+10wTrJUIGh2BNp2y3
+ TnuFYiK393laNhbBhgsZQqTSz0vpagNWQmf+FeGy0Ouk4g9hhc4645S5RcHSiTtug7P8
+ JQlPcPNLdY0sa0S0yNOShHcOCQuBiIYYjq1GRQJUJeJSUjxosYBmJZj/MUy9K6xY3lz/ AQ== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2130.oracle.com with ESMTP id 2q3sdefcqg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 23 Jan 2019 02:42:03 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0N2g2VQ026022
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 23 Jan 2019 02:42:02 GMT
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x0N2fxRr017446;
+        Wed, 23 Jan 2019 02:42:01 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 22 Jan 2019 18:41:59 -0800
+To:     Ching Huang <ching2048@areca.com.tw>
+Cc:     martin.petersen@oracle.com, James.Bottomley@HansenPartnership.com,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dan.carpenter@oracle.com, hch@infradead.org,
+        colin.king@canonical.com
+Subject: Re: [PATCH v2 0/3] scsi: arcmsr: Fix suspend/resume of ACB_ADAPTER_TYPE_B part 2
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <1547779645.4532.9.camel@Centos6.3-64>
+Date:   Tue, 22 Jan 2019 21:41:56 -0500
+In-Reply-To: <1547779645.4532.9.camel@Centos6.3-64> (Ching Huang's message of
+        "Fri, 18 Jan 2019 10:47:25 +0800")
+Message-ID: <yq136pkm6x7.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190123021241.GA2970@xz-x1>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 23 Jan 2019 02:39:55 +0000 (UTC)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9144 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=668
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901230019
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 10:12:41AM +0800, Peter Xu wrote:
-> On Tue, Jan 22, 2019 at 11:53:10AM -0500, Jerome Glisse wrote:
-> > On Tue, Jan 22, 2019 at 04:22:38PM +0800, Peter Xu wrote:
-> > > On Mon, Jan 21, 2019 at 10:55:36AM -0500, Jerome Glisse wrote:
-> > > > On Mon, Jan 21, 2019 at 03:57:01PM +0800, Peter Xu wrote:
-> > > > > The idea comes from a discussion between Linus and Andrea [1].
-> > > > > 
-> > > > > Before this patch we only allow a page fault to retry once.  We achieved
-> > > > > this by clearing the FAULT_FLAG_ALLOW_RETRY flag when doing
-> > > > > handle_mm_fault() the second time.  This was majorly used to avoid
-> > > > > unexpected starvation of the system by looping over forever to handle
-> > > > > the page fault on a single page.  However that should hardly happen, and
-> > > > > after all for each code path to return a VM_FAULT_RETRY we'll first wait
-> > > > > for a condition (during which time we should possibly yield the cpu) to
-> > > > > happen before VM_FAULT_RETRY is really returned.
-> > > > > 
-> > > > > This patch removes the restriction by keeping the FAULT_FLAG_ALLOW_RETRY
-> > > > > flag when we receive VM_FAULT_RETRY.  It means that the page fault
-> > > > > handler now can retry the page fault for multiple times if necessary
-> > > > > without the need to generate another page fault event. Meanwhile we
-> > > > > still keep the FAULT_FLAG_TRIED flag so page fault handler can still
-> > > > > identify whether a page fault is the first attempt or not.
-> > > > 
-> > > > So there is nothing protecting starvation after this patch ? AFAICT.
-> > > > Do we sufficient proof that we never have a scenario where one process
-> > > > might starve fault another ?
-> > > > 
-> > > > For instance some page locking could starve one process.
-> > > 
-> > > Hi, Jerome,
-> > > 
-> > > Do you mean lock_page()?
-> > > 
-> > > AFAIU lock_page() will only yield the process itself until the lock is
-> > > released, so IMHO it's not really starving the process but a natural
-> > > behavior.  After all the process may not continue without handling the
-> > > page fault correctly.
-> > > 
-> > > Or when you say "starvation" do you mean that we might return
-> > > VM_FAULT_RETRY from handle_mm_fault() continuously so we'll looping
-> > > over and over inside the page fault handler?
-> > 
-> > That one ie every time we retry someone else is holding the lock and
-> > thus lock_page_or_retry() will continuously retry. Some process just
-> > get unlucky ;)
-> > 
-> > With existing code because we remove the retry flag then on the second
-> > try we end up waiting for the page lock while holding the mmap_sem so
-> > we know that we are in line for the page lock and we will get it once
-> > it is our turn.
-> 
-> Ah I see. :)  It's indeed a valid questioning.
-> 
-> Firstly note that even after this patch we can still identify whether
-> we're at the first attempt or not by checking against FAULT_FLAG_TRIED
-> (it will be applied to the fault flag in all the retries but not in
-> the first atttempt). So IMHO this change might suite if we want to
-> keep the old behavior [1]:
-> 
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 9f5e323e883e..44942c78bb92 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -1351,7 +1351,7 @@ EXPORT_SYMBOL_GPL(__lock_page_killable);
->  int __lock_page_or_retry(struct page *page, struct mm_struct *mm,
->                          unsigned int flags)
->  {
-> -       if (flags & FAULT_FLAG_ALLOW_RETRY) {
-> +       if (!flags & FAULT_FLAG_TRIED) {
->                 /*
->                  * CAUTION! In this case, mmap_sem is not released
->                  * even though return 0.
 
-I need to check how FAULT_FLAG_TRIED have been use so far, but yes
-it looks like this would keep the existing behavior intact.
+Ching,
 
-> 
-> But at the same time I'm stepping back trying to see the whole
-> picture... My understanding is that this is really a policy that we
-> can decide, and a trade off between "being polite or not on the
-> mmap_sem", that when taking the page lock in slow path we either:
-> 
->   (1) release mmap_sem before waiting, polite enough but uncertain to
->       finally have the lock, or,
-> 
->   (2) keep mmap_sem before waiting, not polite enough but certain to
->       take the lock.
-> 
-> We did (2) before on the reties because in existing code we only allow
-> to retry once, so we can't fail on the 2nd attempt.  That seems to be
-> a good reason to being "unpolite" - we took the mmap_sem without
-> considering others because we've been "polite" once.  I'm not that
-> experienced in mm development but AFAIU solution 2 is only reducing
-> our chance of starvation but adding that chance of starvation to other
-> processes that want the mmap_sem instead.  So IMHO the starvation
-> issue always existed even before this patch, and it looks natural and
-> sane to me so far...  And if with that in mind, I can't say that above
-> change at [1] would be better, and maybe, it'll be even more fair that
-> we should always release the mmap_sem first in this case (assuming
-> that we'll after all have that lock though we might pay more times of
-> retries)?
+> This patch series are against to mkp's 5.1/scsi-queue.
 
-Existing code does not starves anyone, the mmap_sem is rw_semaphore
-so if there is no writter waiting then no ones wait, if there is a
-writter waiting then everyone wait in line so that it is fair to
-writter. So with existing code we have a "fair" behavior where every-
-ones wait in line their turn. After this patch we can end up in unfair
-situation were one thread might be continuously starve because it is
-only doing try_lock and thus it is never added to wait line.
+Applied to 5.1/scsi-queue. Thank you.
 
+PS. Your file permissions are odd. I always have to change your diffs
+from 755 to 644 before applying.
 
-> Or, is there a way to constantly starve the process that handles the
-> page fault that I've totally missed?
-
-That's the discussion, with your change a process can constantly
-retry page fault because it never get a lock on a page, so it can
-end up in an infinite fault retry.
-
-Yes it is unlikely to be infinite, but it can change how kernel
-behave to some workload and thus impact existing user.
-
-Cheers,
-Jérôme
+-- 
+Martin K. Petersen	Oracle Linux Engineering
