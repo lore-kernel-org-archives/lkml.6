@@ -2,150 +2,105 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90FC8C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 06:53:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95A68C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 06:54:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56BDE217F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 06:53:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Yd/WkN0S";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="eSmWqtut"
+	by mail.kernel.org (Postfix) with ESMTP id 5892A21726
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 06:54:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548226467;
+	bh=Fn+0fF9Fr/2cq8up47QqbjHOey9kzUYCbrdqfdRUASE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=sTfgj8d/KS5+gNbHHfmLf6S9iWDm1VNFP/ehwmfi1WDIMcHCafoqIr3vUIPXGdic7
+	 8OBspAzoajVq3Bk9y6wntt6VZv8w6xf90AOM8atMcWNwouxe7g9S7bJNjsx9FcSLkM
+	 WP6vzEavweSshG9r4WgK+nbWDngmSea7p+JCaquA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726337AbfAWGxd (ORCPT
+        id S1726296AbfAWGy0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 01:53:33 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:56006 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725973AbfAWGxd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 01:53:33 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 5B6B960795; Wed, 23 Jan 2019 06:53:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548226411;
-        bh=SS7rYxPdMVWkbtJ1ROXKiUWK5xHmQiMDL3yy5M8+eC8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Yd/WkN0StZT2EIX3AKuUf5ra7ZPQ+y07KK0iZhk0Fe23ZF3Y/kyQJ0mSdf8pic3Kz
-         lAOGIriYYqnROWD9nz3PBmZgv7SDOLneIEWRQvHZhAbudQ5B4KEoU0ms9hnvyGmvD5
-         NyDnUgGoFjqc09ict08U4kXn9VXdanpjErqpr0b8=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 741BF60225;
-        Wed, 23 Jan 2019 06:53:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548226410;
-        bh=SS7rYxPdMVWkbtJ1ROXKiUWK5xHmQiMDL3yy5M8+eC8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=eSmWqtutgGZH17+DdJsTXG9MD4aEjj7R1CupNgGXXPlUPRIGumFR0Yp3WjZ93T3RO
-         PxINgkmjCj0RyKGvHdzePoNJkuDJhLaTYg2M7+0R6fEpDhKIfDX80oqRG4S58idG0g
-         bTv1A0dY/DL2ELkFJwdC2QbpzSR3qj6CV3t57Kjs=
+        Wed, 23 Jan 2019 01:54:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57026 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725973AbfAWGyZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 01:54:25 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 598EE21726;
+        Wed, 23 Jan 2019 06:54:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548226464;
+        bh=Fn+0fF9Fr/2cq8up47QqbjHOey9kzUYCbrdqfdRUASE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=xoSqs4KvsLnAVjubIM6uyq+rkM8dRWScHFnvNXtdYOXW/7UqXiHQcoEBVkhiwTNDN
+         vY8axu00gapaV3SH4w82LxoN3Ya/sEjmz4ZXtfWRg394uQmOELLFHief9D0UPkGr/c
+         aOgYqtJ6PUJ81B/32ZUenukJlJn1CJI2y4ChmwAw=
+Date:   Wed, 23 Jan 2019 07:54:22 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: Re: [PATCH] kprobes: no need to check return value of debugfs_create
+ functions
+Message-ID: <20190123065422.GA27466@kroah.com>
+References: <20190122152151.16139-47-gregkh@linuxfoundation.org>
+ <20190123111516.d5fd81cb315810235205fbeb@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 23 Jan 2019 12:23:30 +0530
-From:   alokc@codeaurora.org
-To:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-serial@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, Mark Brown <broonie@kernel.org>
-Cc:     andy.gross@linaro.org, david.brown@linaro.org,
-        georgi.djakov@linaro.org, dianders@chromium.org,
-        swboyd@chromium.org, bjorn.andersson@linaro.org,
-        linux-serial-owner@vger.kernel.org
-Subject: Re: [PATCH 5/6] tty: serial: qcom_geni_serial: Add interconnect
- support
-In-Reply-To: <1548138816-1149-6-git-send-email-alokc@codeaurora.org>
-References: <1548138816-1149-1-git-send-email-alokc@codeaurora.org>
- <1548138816-1149-6-git-send-email-alokc@codeaurora.org>
-Message-ID: <ac8c76ee1940d61278c0dd390982228b@codeaurora.org>
-X-Sender: alokc@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190123111516.d5fd81cb315810235205fbeb@kernel.org>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+Mark Brown
+On Wed, Jan 23, 2019 at 11:15:16AM +0900, Masami Hiramatsu wrote:
+> On Tue, 22 Jan 2019 16:21:46 +0100
+> Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+> 
+> > When calling debugfs functions, there is no need to ever check the
+> > return value.  The function can work or not, but the code logic should
+> > never do something different based on this.
+> > 
+> > Cc: "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>
+> > Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
+> > Cc: "David S. Miller" <davem@davemloft.net>
+> > Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > ---
+> >  kernel/kprobes.c | 25 ++++++-------------------
+> >  1 file changed, 6 insertions(+), 19 deletions(-)
+> > 
+> > diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+> > index f4ddfdd2d07e..7287e7de2350 100644
+> > --- a/kernel/kprobes.c
+> > +++ b/kernel/kprobes.c
+> > @@ -2566,33 +2566,20 @@ static const struct file_operations fops_kp = {
+> >  
+> >  static int __init debugfs_kprobe_init(void)
+> >  {
+> > -	struct dentry *dir, *file;
+> > +	struct dentry *dir;
+> >  	unsigned int value = 1;
+> >  
+> >  	dir = debugfs_create_dir("kprobes", NULL);
+> > -	if (!dir)
+> > -		return -ENOMEM;
+> 
+> Here, I think IS_ERR(dir) is OK for debugfs_create_file(),
+> but dir == NULL has different meaning. I think we'd better
+> keep this check. (I see, -ENOMEM will be no good...)
 
-On 2019-01-22 12:03, Alok Chauhan wrote:
-> Get the interconnect paths for Uart based Serial Engine device
-> and vote accordingly based on maximum supported Uart frequency.
-> 
-> Signed-off-by: Alok Chauhan <alokc@codeaurora.org>
-> ---
->  drivers/tty/serial/qcom_geni_serial.c | 27 ++++++++++++++++++++++++++-
->  1 file changed, 26 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/tty/serial/qcom_geni_serial.c
-> b/drivers/tty/serial/qcom_geni_serial.c
-> index a72d6d9..e2ea499 100644
-> --- a/drivers/tty/serial/qcom_geni_serial.c
-> +++ b/drivers/tty/serial/qcom_geni_serial.c
-> @@ -19,6 +19,7 @@
->  #include <linux/slab.h>
->  #include <linux/tty.h>
->  #include <linux/tty_flip.h>
-> +#include <linux/interconnect.h>
-> 
->  /* UART specific GENI registers */
->  #define SE_UART_LOOPBACK_CFG		0x22c
-> @@ -1348,6 +1349,22 @@ static int qcom_geni_serial_probe(struct
-> platform_device *pdev)
->  		return ret;
->  	}
-> 
-> +	/* Set the bus quota to a reasonable value */
-> +	port->se.avg_bw = console ? Bps_to_icc(1000) : Bps_to_icc(2500);
-> +	port->se.peak_bw = Bps_to_icc(76800000);
-> +	ret = geni_interconnect_init(&port->se);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "interconnect_init failed %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	/*
-> +	 * Vote for interconnect path early. This has to move as part of
-> +	 * Runtime PM APIs when implemented for better control betwen
-> +	 * console and non-console usecases
-> +	 */
-> +	geni_icc_update_bw(&port->se, true);
-> +
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	if (!res)
->  		return -EINVAL;
-> @@ -1385,8 +1402,15 @@ static int __maybe_unused
-> qcom_geni_serial_sys_suspend(struct device *dev)
->  {
->  	struct qcom_geni_serial_port *port = dev_get_drvdata(dev);
->  	struct uart_port *uport = &port->uport;
-> +	int ret;
-> +
-> +	ret = uart_suspend_port(uport->private_data, uport);
-> +	if (ret)
-> +		return ret;
-> +
-> +	geni_icc_update_bw(&port->se, false);
-> 
-> -	return uart_suspend_port(uport->private_data, uport);
-> +	return 0;
->  }
-> 
->  static int __maybe_unused qcom_geni_serial_sys_resume(struct device 
-> *dev)
-> @@ -1394,6 +1418,7 @@ static int __maybe_unused
-> qcom_geni_serial_sys_resume(struct device *dev)
->  	struct qcom_geni_serial_port *port = dev_get_drvdata(dev);
->  	struct uart_port *uport = &port->uport;
-> 
-> +	geni_icc_update_bw(&port->se, true);
->  	return uart_resume_port(uport->private_data, uport);
->  }
+dir == NULL means the system is out of memory.  Which I'll change and
+just make it return an error, so it is fine to ignore this value.
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
-Forum,a Linux Foundation Collaborative Project
+thanks,
+
+greg k-h
