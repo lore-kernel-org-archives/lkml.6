@@ -2,78 +2,222 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 241A3C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:40:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C52BFC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:40:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E542720861
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:40:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C10521019
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:40:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="U97/VS8B"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727413AbfAWKkW (ORCPT
+        id S1727448AbfAWKk1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 05:40:22 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:33947 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726322AbfAWKkV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 05:40:21 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 6350A207AB; Wed, 23 Jan 2019 11:40:19 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-87-206.w90-88.abo.wanadoo.fr [90.88.29.206])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 33DED20714;
-        Wed, 23 Jan 2019 11:40:09 +0100 (CET)
-Date:   Wed, 23 Jan 2019 11:40:09 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Corentin Labbe <clabbe@baylibre.com>
-Cc:     mark.rutland@arm.com, robh+dt@kernel.org, wens@csie.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2] arm: sun8i-h3-nanopi-m1-plus: enable HDMI
-Message-ID: <20190123104009.zf5xxsbxacmftwwt@flea>
-References: <1548143206-11404-1-git-send-email-clabbe@baylibre.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7sfrqbci6lvwmlro"
-Content-Disposition: inline
-In-Reply-To: <1548143206-11404-1-git-send-email-clabbe@baylibre.com>
-User-Agent: NeoMutt/20180716
+        Wed, 23 Jan 2019 05:40:27 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:34821 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727416AbfAWKkZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 05:40:25 -0500
+Received: by mail-wr1-f65.google.com with SMTP id 96so1831051wrb.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 02:40:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=3zHqWWuy6QdexbPT1WjzShm6eV44aO+EPNO+slMK+F4=;
+        b=U97/VS8BPPEXIvimWdZBzJb95FgDVep4KB90tpWx6CfjmRapHheIkX/OvvVmCJbSLY
+         7N8jE7t9ZVGN9z7rVoMnXPk/IT/RaudN/rvhuinP16iGjotwoKLItKyA3QEcI4ODqDUE
+         heze4eIc0tO+64BuREn9eDtSZ4xBqctXgsUzQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=3zHqWWuy6QdexbPT1WjzShm6eV44aO+EPNO+slMK+F4=;
+        b=ZtoaDhGbMYQCBPDhkyCJ3NItQjKuFtOh2PiADACitrduNIyi/Itq2EKVi542MFkjpt
+         T7jEgBTfxpRG1Iv54p5yzojxINfgHBcMm2vZUYK3xzisrjOcGEZgk4U3AQ/z3VwTO1LB
+         vt+RViIViEhbsRVfgLCWv4twaaFkBYKc7lKFA1LETs5NXNU1t7OvklMG73MhyGfc5jxi
+         e09uOCl4QadCLlp+UWmp3C+bj2Y1E5phpcUk7mRc3Ii3Q7K7GAp+307NYjd3/ExbPSxq
+         Pupiplzr4TixuVPe5PIIDAA5WqC3Ta9scwm6Q1gwnlM7kG5/Ba0Mk949gVU1rrN17e8R
+         xvjg==
+X-Gm-Message-State: AJcUukeCxbQZCotMk2woymb/4n0vEHdddT9SNF3t6qGTMS8/EHqoLRnJ
+        tpw+xyJyY6eFB3rPt1t619N7QngRY+s=
+X-Google-Smtp-Source: ALg8bN7uNDmPxaoEJFigbkxCqBkDWQWarNv1EK53vSYSoGPuYbdMR0EtQnnT8fH44tLapEp3BdiCLQ==
+X-Received: by 2002:a5d:4d87:: with SMTP id b7mr1969997wru.316.1548240022510;
+        Wed, 23 Jan 2019 02:40:22 -0800 (PST)
+Received: from localhost.localdomain ([37.157.136.206])
+        by smtp.gmail.com with ESMTPSA id b18sm84525211wrw.83.2019.01.23.02.40.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 23 Jan 2019 02:40:22 -0800 (PST)
+From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
+To:     linux-media@vger.kernel.org
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Vikash Garodia <vgarodia@codeaurora.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Malathi Gottam <mgottam@codeaurora.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Subject: [PATCH v2 1/4] venus: firmware: check fw size against DT memory region size
+Date:   Wed, 23 Jan 2019 12:39:46 +0200
+Message-Id: <20190123103949.13496-2-stanimir.varbanov@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190123103949.13496-1-stanimir.varbanov@linaro.org>
+References: <20190123103949.13496-1-stanimir.varbanov@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+By historical reasons we defined firmware memory size to be 6MB even
+that the firmware size for all supported Venus versions is 5MBs. Correct
+that by compare the required firmware size returned from mdt loader and
+the one provided by DT reserved memory region. We proceed further if the
+required firmware size is smaller than provided by DT memory region.
 
---7sfrqbci6lvwmlro
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: Alexandre Courbot <acourbot@chromium.org>
+Tested-by: Alexandre Courbot <acourbot@chromium.org>
+Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+---
+ drivers/media/platform/qcom/venus/core.h     |  1 +
+ drivers/media/platform/qcom/venus/firmware.c | 53 +++++++++++---------
+ 2 files changed, 31 insertions(+), 23 deletions(-)
 
-On Tue, Jan 22, 2019 at 07:46:46AM +0000, Corentin Labbe wrote:
-> This patch enable HDMI output on sun8i-h3-nanopi-m1-plus.
->=20
-> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
+index 6382cea29185..79c7e816c706 100644
+--- a/drivers/media/platform/qcom/venus/core.h
++++ b/drivers/media/platform/qcom/venus/core.h
+@@ -134,6 +134,7 @@ struct venus_core {
+ 	struct video_firmware {
+ 		struct device *dev;
+ 		struct iommu_domain *iommu_domain;
++		size_t mapped_mem_size;
+ 	} fw;
+ 	struct mutex lock;
+ 	struct list_head instances;
+diff --git a/drivers/media/platform/qcom/venus/firmware.c b/drivers/media/platform/qcom/venus/firmware.c
+index c29acfd70c1b..6cfa8021721e 100644
+--- a/drivers/media/platform/qcom/venus/firmware.c
++++ b/drivers/media/platform/qcom/venus/firmware.c
+@@ -35,14 +35,15 @@
+ 
+ static void venus_reset_cpu(struct venus_core *core)
+ {
++	u32 fw_size = core->fw.mapped_mem_size;
+ 	void __iomem *base = core->base;
+ 
+ 	writel(0, base + WRAPPER_FW_START_ADDR);
+-	writel(VENUS_FW_MEM_SIZE, base + WRAPPER_FW_END_ADDR);
++	writel(fw_size, base + WRAPPER_FW_END_ADDR);
+ 	writel(0, base + WRAPPER_CPA_START_ADDR);
+-	writel(VENUS_FW_MEM_SIZE, base + WRAPPER_CPA_END_ADDR);
+-	writel(VENUS_FW_MEM_SIZE, base + WRAPPER_NONPIX_START_ADDR);
+-	writel(VENUS_FW_MEM_SIZE, base + WRAPPER_NONPIX_END_ADDR);
++	writel(fw_size, base + WRAPPER_CPA_END_ADDR);
++	writel(fw_size, base + WRAPPER_NONPIX_START_ADDR);
++	writel(fw_size, base + WRAPPER_NONPIX_END_ADDR);
+ 	writel(0x0, base + WRAPPER_CPU_CGC_DIS);
+ 	writel(0x0, base + WRAPPER_CPU_CLOCK_CONFIG);
+ 
+@@ -74,6 +75,9 @@ static int venus_load_fw(struct venus_core *core, const char *fwname,
+ 	void *mem_va;
+ 	int ret;
+ 
++	*mem_phys = 0;
++	*mem_size = 0;
++
+ 	dev = core->dev;
+ 	node = of_parse_phandle(dev->of_node, "memory-region", 0);
+ 	if (!node) {
+@@ -85,28 +89,30 @@ static int venus_load_fw(struct venus_core *core, const char *fwname,
+ 	if (ret)
+ 		return ret;
+ 
++	ret = request_firmware(&mdt, fwname, dev);
++	if (ret < 0)
++		return ret;
++
++	fw_size = qcom_mdt_get_size(mdt);
++	if (fw_size < 0) {
++		ret = fw_size;
++		goto err_release_fw;
++	}
++
+ 	*mem_phys = r.start;
+ 	*mem_size = resource_size(&r);
+ 
+-	if (*mem_size < VENUS_FW_MEM_SIZE)
+-		return -EINVAL;
++	if (*mem_size < fw_size || fw_size > VENUS_FW_MEM_SIZE) {
++		ret = -EINVAL;
++		goto err_release_fw;
++	}
+ 
+ 	mem_va = memremap(r.start, *mem_size, MEMREMAP_WC);
+ 	if (!mem_va) {
+ 		dev_err(dev, "unable to map memory region: %pa+%zx\n",
+ 			&r.start, *mem_size);
+-		return -ENOMEM;
+-	}
+-
+-	ret = request_firmware(&mdt, fwname, dev);
+-	if (ret < 0)
+-		goto err_unmap;
+-
+-	fw_size = qcom_mdt_get_size(mdt);
+-	if (fw_size < 0) {
+-		ret = fw_size;
+-		release_firmware(mdt);
+-		goto err_unmap;
++		ret = -ENOMEM;
++		goto err_release_fw;
+ 	}
+ 
+ 	if (core->use_tz)
+@@ -116,10 +122,9 @@ static int venus_load_fw(struct venus_core *core, const char *fwname,
+ 		ret = qcom_mdt_load_no_init(dev, mdt, fwname, VENUS_PAS_ID,
+ 					    mem_va, *mem_phys, *mem_size, NULL);
+ 
+-	release_firmware(mdt);
+-
+-err_unmap:
+ 	memunmap(mem_va);
++err_release_fw:
++	release_firmware(mdt);
+ 	return ret;
+ }
+ 
+@@ -135,6 +140,7 @@ static int venus_boot_no_tz(struct venus_core *core, phys_addr_t mem_phys,
+ 		return -EPROBE_DEFER;
+ 
+ 	iommu = core->fw.iommu_domain;
++	core->fw.mapped_mem_size = mem_size;
+ 
+ 	ret = iommu_map(iommu, VENUS_FW_START_ADDR, mem_phys, mem_size,
+ 			IOMMU_READ | IOMMU_WRITE | IOMMU_PRIV);
+@@ -150,6 +156,7 @@ static int venus_boot_no_tz(struct venus_core *core, phys_addr_t mem_phys,
+ 
+ static int venus_shutdown_no_tz(struct venus_core *core)
+ {
++	const size_t mapped = core->fw.mapped_mem_size;
+ 	struct iommu_domain *iommu;
+ 	size_t unmapped;
+ 	u32 reg;
+@@ -166,8 +173,8 @@ static int venus_shutdown_no_tz(struct venus_core *core)
+ 
+ 	iommu = core->fw.iommu_domain;
+ 
+-	unmapped = iommu_unmap(iommu, VENUS_FW_START_ADDR, VENUS_FW_MEM_SIZE);
+-	if (unmapped != VENUS_FW_MEM_SIZE)
++	unmapped = iommu_unmap(iommu, VENUS_FW_START_ADDR, mapped);
++	if (unmapped != mapped)
+ 		dev_err(dev, "failed to unmap firmware\n");
+ 
+ 	return 0;
+-- 
+2.17.1
 
-The prefix must be "ARM: dts:"
-
-I've fixed it and applied, thanks!
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---7sfrqbci6lvwmlro
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXEhEiQAKCRDj7w1vZxhR
-xZ3pAQCJSE2FzvWr/4NVrljqNm+TQECoB/TPbuuY6UmGvzAo/QD/WmPY8QpFB2o2
-VzrlhG6RqaIhvq8dRquVzMxb5Y6zVww=
-=wXRH
------END PGP SIGNATURE-----
-
---7sfrqbci6lvwmlro--
