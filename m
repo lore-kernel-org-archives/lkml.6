@@ -7,60 +7,60 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D131EC282C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 00:01:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D047C282C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 00:01:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E922217D4
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 00:01:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CAEB20856
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 00:01:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MASW+BoL"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G303nbu1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727136AbfAWABX (ORCPT
+        id S1727161AbfAWAB2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 19:01:23 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34176 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727072AbfAWABR (ORCPT
+        Tue, 22 Jan 2019 19:01:28 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:40605 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727085AbfAWABW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 19:01:17 -0500
-Received: by mail-wr1-f65.google.com with SMTP id f7so390953wrp.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 16:01:14 -0800 (PST)
+        Tue, 22 Jan 2019 19:01:22 -0500
+Received: by mail-wr1-f67.google.com with SMTP id p4so355619wrt.7
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 16:01:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=WV7ulhUrdwk2uEHmi79cByka3FoartC+YhwRcCj++SQ=;
-        b=MASW+BoLxP5qX3i63Y/vjqspm/EksttCJC184EcPeNciUPZfi6F2/ssx94FnXEeAei
-         IddvJVz0z+rLfhN93qhCJ8hXkBRyu8FqoSnc7bqwKM+H0OsmyfGAZMZc4RUjeeTpEeq9
-         62mLqW6V8lMCdDIIZJrLIlXaVxfFitrbtrzbeeehxYHCcOGpUSqEnyeTygqHqwH4RZJs
-         i3QSylz4TFkFJ7x8v+7KoNUuN3dSYjnSFLzYdaWM5pUGnwDpuvvk0NMbYERDPjdCiuQm
-         GbRsovTRMU7kGIB312uCbcYoAX5axKE/KtvGfzaDSOrCJGS7//1Ikff24nps/CIY16+O
-         OJeg==
+        bh=NouvKCqIMoHNMwu9CRjntx+uv8lxt2EPplZv46NVOSA=;
+        b=G303nbu1nhJrmqWgVD7OvhxD4WUX00k9fq1hqpUEdkxAsGIv/vUNtv2OYejk79fv1F
+         iiLcotlYucM0/tU2rCSxXsIQ3mLurVXfXSAwXn0rSRWfQdorhEYqcaolfhkwU9Got3Rk
+         lyM0kl78FBSCMLgBhLf1MnVNitUD3/N/rML3wHGdu3HXz16cvPUblyEmu4Ob4NVNXAtn
+         noVPO3t6th6k728h+AqO//eKDQl5zO5m3DRxN78d+vRrdnbWLf01rwMT5/E4Lt66bwsP
+         LrSbtEA0mUzUTNDbm8Np0iMc+ZjbBG1/SC3difGmdeXPaaK3Anbai6W8u9CoTi0hvzBV
+         SDyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=WV7ulhUrdwk2uEHmi79cByka3FoartC+YhwRcCj++SQ=;
-        b=W/WGigKr99LXAfnRx6zy/MZxd2rBUPKMQPZ9QquxvfhgGGt8zBGSKccuN84UUQm1yP
-         Y+3FxVgUrfZ7kNDnbydgroivDeaxY7stWiRyf0Wfm+YzqjDTPFhfVJpeKMw5jKk9wQX9
-         IsMD6JU1JXnkKCEwB/jKfynWr9C5SFvyrD/27z6nfSx7QodXak1jIMH/irjzdEzBEhU8
-         tngA2CNhcjvcBMJ8IUDpjlyFsObdepMDfbfEEGAZJaEU3vka9pXeFLVvv++DWZNs0jY2
-         xVJU5Oc2usszM1DECunq3MAPedzL3OElPFEkpOuTy9Qv6AHUFtuIKmMXpXn0DFR+KnBv
-         zshA==
-X-Gm-Message-State: AJcUukePwQJyVbD/UT5L0n156p30Tk/9pvpRZeFZztJajPqC9InHNZIP
-        xWJEjrH1aHew5JDtkZD58FI=
-X-Google-Smtp-Source: ALg8bN5sfOjyOK19upSaYBAUVy041A3jA0m9w6LsyBamudPXDGwIuD5a6XPeseTVDh/sk+ZaLdIMxw==
-X-Received: by 2002:adf:d4c9:: with SMTP id w9mr3874wrk.119.1548201673724;
-        Tue, 22 Jan 2019 16:01:13 -0800 (PST)
+        bh=NouvKCqIMoHNMwu9CRjntx+uv8lxt2EPplZv46NVOSA=;
+        b=G9qYqR8CG4DAwqWv+T7gBcPv7PK6WoaC5CkXEjAtP6Jr28QCJ1SQzpb6NCge722rIp
+         XW4Suvc4ykWRZx5j/c1vLaqYSeCpUASErNExQMrWxT7MHsaRSx2OvGmBRqJnJI5cwWBE
+         q3mtkoTcxAQHVIN05Lo4q1GKV7JPAiWoeXZ7kNtG7X7JYQNG+lihfvnbz6IYEh0N6W/u
+         V7NOjDvSrOHLewVIdXeuTjkvBdos4YWyIIZwcQnCcMvTWp+bnv0nmnIFEOe4qfS/Vsmy
+         1YRSGACe1TqbMKADHMIX7NYbvU2jkSEY2ehFGo6bvWz52tCuQiLCHBi+sFAazGbYCZ5Y
+         F8pA==
+X-Gm-Message-State: AJcUukfaR0M3FIg/yOhZu1NjmdTT+jXpUsRrO85UbQuFmXQk1WRpMMYA
+        P3LrL/GYw3S17b5lNtFfTOY=
+X-Google-Smtp-Source: ALg8bN5q67Amm5vj9L5j1HSVxt3TVs5uLLalCLcHqkfXhDJ8oXhHXkTlMo9WO55RitCQP0hoHjngYQ==
+X-Received: by 2002:adf:fa05:: with SMTP id m5mr785wrr.155.1548201675274;
+        Tue, 22 Jan 2019 16:01:15 -0800 (PST)
 Received: from oded-ubuntu-desktop.habana-labs.com ([31.154.190.6])
-        by smtp.gmail.com with ESMTPSA id 125sm97582630wmm.26.2019.01.22.16.01.12
+        by smtp.gmail.com with ESMTPSA id 125sm97582630wmm.26.2019.01.22.16.01.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Jan 2019 16:01:13 -0800 (PST)
+        Tue, 22 Jan 2019 16:01:14 -0800 (PST)
 From:   Oded Gabbay <oded.gabbay@gmail.com>
 To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
 Cc:     ogabbay@habana.ai
-Subject: [PATCH 08/15] habanalabs: add event queue and interrupts
-Date:   Wed, 23 Jan 2019 02:00:50 +0200
-Message-Id: <20190123000057.31477-9-oded.gabbay@gmail.com>
+Subject: [PATCH 09/15] habanalabs: add sysfs and hwmon support
+Date:   Wed, 23 Jan 2019 02:00:51 +0200
+Message-Id: <20190123000057.31477-10-oded.gabbay@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190123000057.31477-1-oded.gabbay@gmail.com>
 References: <20190123000057.31477-1-oded.gabbay@gmail.com>
@@ -69,561 +69,1647 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support for receiving events from Goya's control CPU and
-for receiving MSI-X interrupts from Goya's DMA engines and CPU.
+This patch add the sysfs and hwmon entries that are exposed by the driver.
 
-Goya's PCI controller supports up to 8 MSI-X interrupts, which only 6 of
-them are currently used. The first 5 interrupts are dedicated for Goya's
-DMA engine queues. The 6th interrupt is dedicated for Goya's control CPU.
+Goya has several sensors, from various categories such as temperature,
+voltage, current, etc. The driver exposes those sensors in the standard
+hwmon mechanism.
 
-The DMA queue will signal its MSI-X entry upon each completion of a command
-buffer that was placed on its primary queue. The driver will then mark that
-CB as completed and free the related resources. It will also update the
-command submission object which that CB belongs to.
+In addition, the driver exposes a couple of interfaces in sysfs, both for
+configuration and for providing status of the device or driver.
 
-There is a dedicated event queue (EQ) between the driver and Goya's control
-CPU. The EQ is located on the Host memory. The control CPU writes a new
-entry to the EQ for various reasons, such as ECC error, MMU page fault, Hot
-temperature. After writing the new entry to the EQ, the control CPU will
-trigger its dedicated MSI-X entry to signal the driver that there is a new
-entry in the EQ. The driver will then read the entry and act accordingly.
+The configuration attributes is for Power Management:
+- Automatic or manual
+- Frequency value when moving to high frequency mode
+- Maximum power the device is allowed to consume
+
+The rest of the attributes are read-only and provide the following
+information:
+- Versions of the various firmwares running on the device
+- Contents of the device's EEPROM
+- The device type (currently only Goya is supported)
+- PCI address of the device (to allow user-space to connect between
+  /dev/hlX to PCI address)
+- Status of the device (operational, malfunction, in_reset)
+- How many processes are open on the device's file
 
 Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
 ---
- drivers/misc/habanalabs/device.c            |  35 +-
- drivers/misc/habanalabs/goya/goya.c         | 522 +++++++++++++++++++-
- drivers/misc/habanalabs/goya/goyaP.h        |   1 +
- drivers/misc/habanalabs/habanalabs.h        |  37 ++
- drivers/misc/habanalabs/include/goya/goya.h |   1 -
- drivers/misc/habanalabs/irq.c               | 144 ++++++
- 6 files changed, 729 insertions(+), 11 deletions(-)
+ .../ABI/testing/sysfs-driver-habanalabs       | 190 ++++++
+ drivers/misc/habanalabs/Makefile              |   2 +-
+ drivers/misc/habanalabs/device.c              | 146 +++++
+ drivers/misc/habanalabs/goya/Makefile         |   2 +-
+ drivers/misc/habanalabs/goya/goya.c           | 230 +++++++
+ drivers/misc/habanalabs/goya/goyaP.h          |  21 +
+ drivers/misc/habanalabs/goya/goya_hwmgr.c     | 306 +++++++++
+ drivers/misc/habanalabs/habanalabs.h          |  97 +++
+ drivers/misc/habanalabs/habanalabs_drv.c      |   7 +
+ drivers/misc/habanalabs/hwmon.c               | 449 +++++++++++++
+ drivers/misc/habanalabs/sysfs.c               | 588 ++++++++++++++++++
+ 11 files changed, 2036 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-driver-habanalabs
+ create mode 100644 drivers/misc/habanalabs/goya/goya_hwmgr.c
+ create mode 100644 drivers/misc/habanalabs/hwmon.c
+ create mode 100644 drivers/misc/habanalabs/sysfs.c
 
+diff --git a/Documentation/ABI/testing/sysfs-driver-habanalabs b/Documentation/ABI/testing/sysfs-driver-habanalabs
+new file mode 100644
+index 000000000000..19edd4da87c1
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-driver-habanalabs
+@@ -0,0 +1,190 @@
++What:           /sys/class/habanalabs/hl<n>/armcp_kernel_ver
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Version of the Linux kernel running on the device's CPU
++
++What:           /sys/class/habanalabs/hl<n>/armcp_ver
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Version of the application running on the device's CPU
++
++What:           /sys/class/habanalabs/hl<n>/cpld_ver
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Version of the Device's CPLD F/W
++
++What:           /sys/class/habanalabs/hl<n>/device_type
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Displays the code name of the device according to its type.
++                The supported values are: "GOYA"
++
++What:           /sys/class/habanalabs/hl<n>/eeprom
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    A binary file attribute that contains the contents of the
++                on-board EEPROM
++
++What:           /sys/class/habanalabs/hl<n>/fuse_ver
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Displays the device's version from the eFuse
++
++What:           /sys/class/habanalabs/hl<n>/hard_reset
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Interface to trigger a hard-reset operation for the device.
++                Hard-reset will reset ALL internal components of the device
++                except for the PCI interface and the internal PLLs
++
++What:           /sys/class/habanalabs/hl<n>/hard_reset_cnt
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Displays how many times the device have undergone a hard-reset
++                operation
++
++What:           /sys/class/habanalabs/hl<n>/high_pll
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Allows the user to set the maximum clock frequency for MME, TPC
++                and IC when the power management profile is set to "automatic".
++
++What:           /sys/class/habanalabs/hl<n>/ic_clk
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Allows the user to set the maximum clock frequency of the
++                Interconnect fabric. Writes to this parameter affect the device
++                only when the power management profile is set to "manual" mode.
++                The device IC clock might be set to lower value then the
++                maximum. The user should read the ic_clk_curr to see the actual
++                frequency value of the IC
++
++What:           /sys/class/habanalabs/hl<n>/ic_clk_curr
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Displays the current clock frequency of the Interconnect fabric
++
++What:           /sys/class/habanalabs/hl<n>/infineon_ver
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Version of the Device's power supply F/W code
++
++What:           /sys/class/habanalabs/hl<n>/max_power
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Allows the user to set the maximum power consumption of the
++                device in milliwatts.
++
++What:           /sys/class/habanalabs/hl<n>/mme_clk
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Allows the user to set the maximum clock frequency of the
++                MME compute engine. Writes to this parameter affect the device
++                only when the power management profile is set to "manual" mode.
++                The device MME clock might be set to lower value then the
++                maximum. The user should read the mme_clk_curr to see the actual
++                frequency value of the MME
++
++What:           /sys/class/habanalabs/hl<n>/mme_clk_curr
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Displays the current clock frequency of the MME compute engine
++
++What:           /sys/class/habanalabs/hl<n>/pci_addr
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Displays the PCI address of the device. This is needed so the
++                user would be able to open a device based on its PCI address
++
++What:           /sys/class/habanalabs/hl<n>/pm_mng_profile
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Power management profile. Values are "auto", "manual". In "auto"
++                mode, the driver will set the maximum clock frequency to a high
++                value when a user-space process opens the device's file (unless
++                it was already opened by another process). The driver will set
++                the max clock frequency to a low value when there are no user
++                processes that are opened on the device's file. In "manual"
++                mode, the user sets the maximum clock frequency by writing to
++                ic_clk, mme_clk and tpc_clk
++
++
++What:           /sys/class/habanalabs/hl<n>/preboot_btl_ver
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Version of the device's preboot F/W code
++
++What:           /sys/class/habanalabs/hl<n>/soft_reset
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Interface to trigger a soft-reset operation for the device.
++                Soft-reset will reset only the compute and DMA engines of the
++                device
++
++What:           /sys/class/habanalabs/hl<n>/soft_reset_cnt
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Displays how many times the device have undergone a soft-reset
++                operation
++
++What:           /sys/class/habanalabs/hl<n>/status
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Status of the card: "Operational", "Malfunction", "In reset".
++
++What:           /sys/class/habanalabs/hl<n>/thermal_ver
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Version of the Device's thermal daemon
++
++What:           /sys/class/habanalabs/hl<n>/tpc_clk
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Allows the user to set the maximum clock frequency of the
++                TPC compute engines. Writes to this parameter affect the device
++                only when the power management profile is set to "manual" mode.
++                The device TPC clock might be set to lower value then the
++                maximum. The user should read the tpc_clk_curr to see the actual
++                frequency value of the TPC
++
++What:           /sys/class/habanalabs/hl<n>/tpc_clk_curr
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Displays the current clock frequency of the TPC compute engines
++
++What:           /sys/class/habanalabs/hl<n>/uboot_ver
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Version of the u-boot running on the device's CPU
++
++What:           /sys/class/habanalabs/hl<n>/write_open_cnt
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Displays the total number of user processes that are currently
++                opened on the device's file
+diff --git a/drivers/misc/habanalabs/Makefile b/drivers/misc/habanalabs/Makefile
+index c07f3ccb57dc..b5607233d216 100644
+--- a/drivers/misc/habanalabs/Makefile
++++ b/drivers/misc/habanalabs/Makefile
+@@ -5,7 +5,7 @@
+ obj-m	:= habanalabs.o
+ 
+ habanalabs-y := habanalabs_drv.o device.o context.o asid.o habanalabs_ioctl.o \
+-		command_buffer.o hw_queue.o irq.o
++		command_buffer.o hw_queue.o irq.o sysfs.o hwmon.o
+ 
+ include $(src)/goya/Makefile
+ habanalabs-y += $(HL_GOYA_FILES)
 diff --git a/drivers/misc/habanalabs/device.c b/drivers/misc/habanalabs/device.c
-index 98220628a467..9199e070e79e 100644
+index 9199e070e79e..ff7b610f18c4 100644
 --- a/drivers/misc/habanalabs/device.c
 +++ b/drivers/misc/habanalabs/device.c
-@@ -173,9 +173,17 @@ static int device_early_init(struct hl_device *hdev)
- 	hdev->cq_wq = alloc_workqueue("hl-free-jobs", WQ_UNBOUND, 0);
- 	if (hdev->cq_wq == NULL) {
- 		dev_err(hdev->dev, "Failed to allocate CQ workqueue\n");
-+		rc = -ENOMEM;
- 		goto asid_fini;
- 	}
+@@ -226,6 +226,118 @@ static void device_early_fini(struct hl_device *hdev)
+ 	mutex_destroy(&hdev->device_open);
+ }
  
-+	hdev->eq_wq = alloc_workqueue("hl-events", WQ_UNBOUND, 0);
-+	if (hdev->eq_wq == NULL) {
-+		dev_err(hdev->dev, "Failed to allocate EQ workqueue\n");
-+		rc = -ENOMEM;
-+		goto free_cq_wq;
++static void set_freq_to_low_job(struct work_struct *work)
++{
++	struct hl_device *hdev = container_of(work, struct hl_device,
++						work_freq.work);
++
++	if (atomic_read(&hdev->fd_open_cnt) == 0)
++		hl_device_set_frequency(hdev, PLL_LOW);
++
++	schedule_delayed_work(&hdev->work_freq,
++			usecs_to_jiffies(HL_PLL_LOW_JOB_FREQ_USEC));
++}
++
++/**
++ * device_late_init - do late stuff initialization for the habanalabs device
++ *
++ * @hdev: pointer to habanalabs device structure
++ *
++ * Do stuff that either needs the device H/W queues to be active or needs
++ * to happen after all the rest of the initialization is finished
++ */
++static int device_late_init(struct hl_device *hdev)
++{
++	int rc;
++
++	INIT_DELAYED_WORK(&hdev->work_freq, set_freq_to_low_job);
++	hdev->high_pll = hdev->asic_prop.high_pll;
++
++	/* force setting to low frequency */
++	atomic_set(&hdev->curr_pll_profile, PLL_LOW);
++
++	if (hdev->pm_mng_profile == PM_AUTO)
++		hdev->asic_funcs->set_pll_profile(hdev, PLL_LOW);
++	else
++		hdev->asic_funcs->set_pll_profile(hdev, PLL_LAST);
++
++	if (hdev->asic_funcs->late_init) {
++		rc = hdev->asic_funcs->late_init(hdev);
++		if (rc) {
++			dev_err(hdev->dev,
++				"failed late initialization for the H/W\n");
++			return rc;
++		}
 +	}
 +
- 	hl_cb_mgr_init(&hdev->kernel_cb_mgr);
++	schedule_delayed_work(&hdev->work_freq,
++			usecs_to_jiffies(HL_PLL_LOW_JOB_FREQ_USEC));
++
++	hdev->late_init_done = true;
++
++	return 0;
++}
++
++/**
++ * device_late_fini - finalize all that was done in device_late_init
++ *
++ * @hdev: pointer to habanalabs device structure
++ *
++ */
++static void device_late_fini(struct hl_device *hdev)
++{
++	if (!hdev->late_init_done)
++		return;
++
++	cancel_delayed_work_sync(&hdev->work_freq);
++
++	if (hdev->asic_funcs->late_fini)
++		hdev->asic_funcs->late_fini(hdev);
++
++	hdev->late_init_done = false;
++}
++
++/**
++ * hl_device_set_frequency - set the frequency of the device
++ *
++ * @hdev: pointer to habanalabs device structure
++ * @freq: the new frequency value
++ *
++ * Change the frequency if needed.
++ * We allose to set PLL to low only if there is no user process
++ * Returns 0 if no change was done, otherwise returns 1;
++ */
++int hl_device_set_frequency(struct hl_device *hdev, enum hl_pll_frequency freq)
++{
++	enum hl_pll_frequency old_freq =
++			(freq == PLL_HIGH) ? PLL_LOW : PLL_HIGH;
++	int ret;
++
++	if (hdev->pm_mng_profile == PM_MANUAL)
++		return 0;
++
++	ret = atomic_cmpxchg(&hdev->curr_pll_profile, old_freq, freq);
++	if (ret == freq)
++		return 0;
++
++	/*
++	 * in case we want to lower frequency, check if device is not
++	 * opened. We must have a check here to workaround race condition with
++	 * hl_device_open
++	 */
++	if ((freq == PLL_LOW) && (atomic_read(&hdev->fd_open_cnt) > 0)) {
++		atomic_set(&hdev->curr_pll_profile, PLL_HIGH);
++		return 0;
++	}
++
++	dev_dbg(hdev->dev, "Changing device frequency to %s\n",
++		freq == PLL_HIGH ? "high" : "low");
++
++	hdev->asic_funcs->set_pll_profile(hdev, freq);
++
++	return 1;
++}
++
+ /**
+  * hl_device_suspend - initiate device suspend
+  *
+@@ -386,6 +498,12 @@ int hl_device_init(struct hl_device *hdev, struct class *hclass)
+ 		goto release_ctx;
+ 	}
  
- 	mutex_init(&hdev->device_open);
-@@ -184,6 +192,8 @@ static int device_early_init(struct hl_device *hdev)
++	rc = hl_sysfs_init(hdev);
++	if (rc) {
++		dev_err(hdev->dev, "failed to initialize sysfs\n");
++		goto free_cb_pool;
++	}
++
+ 	rc = hdev->asic_funcs->hw_init(hdev);
+ 	if (rc) {
+ 		dev_err(hdev->dev, "failed to initialize the H/W\n");
+@@ -403,11 +521,33 @@ int hl_device_init(struct hl_device *hdev, struct class *hclass)
+ 		goto out_disabled;
+ 	}
+ 
++	/* After test_queues, KMD can start sending messages to device CPU */
++
++	rc = device_late_init(hdev);
++	if (rc) {
++		dev_err(hdev->dev, "Failed late initialization\n");
++		rc = 0;
++		goto out_disabled;
++	}
++
++	dev_info(hdev->dev, "Found %s device with %lluGB DRAM\n",
++		hdev->asic_name,
++		hdev->asic_prop.dram_size / 1024 / 1024 / 1024);
++
++	rc = hl_hwmon_init(hdev);
++	if (rc) {
++		dev_err(hdev->dev, "Failed to initialize hwmon\n");
++		rc = 0;
++		goto out_disabled;
++	}
++
+ 	dev_notice(hdev->dev,
+ 		"Successfully added device to habanalabs driver\n");
  
  	return 0;
  
-+free_cq_wq:
-+	destroy_workqueue(hdev->cq_wq);
- asid_fini:
- 	hl_asid_fini(hdev);
- early_fini:
-@@ -205,6 +215,7 @@ static void device_early_fini(struct hl_device *hdev)
- 
- 	hl_cb_mgr_fini(hdev, &hdev->kernel_cb_mgr);
- 
-+	destroy_workqueue(hdev->eq_wq);
- 	destroy_workqueue(hdev->cq_wq);
- 
- 	hl_asid_fini(hdev);
-@@ -343,11 +354,22 @@ int hl_device_init(struct hl_device *hdev, struct class *hclass)
- 		}
- 	}
- 
-+	/*
-+	 * Initialize the event queue. Must be done before hw_init,
-+	 * because there the address of the event queue is being
-+	 * passed as argument to request_irq
-+	 */
-+	rc = hl_eq_init(hdev, &hdev->event_queue);
-+	if (rc) {
-+		dev_err(hdev->dev, "failed to initialize event queue\n");
-+		goto cq_fini;
-+	}
-+
- 	/* Allocate the kernel context */
- 	hdev->kernel_ctx = kzalloc(sizeof(*hdev->kernel_ctx), GFP_KERNEL);
- 	if (!hdev->kernel_ctx) {
- 		rc = -ENOMEM;
--		goto cq_fini;
-+		goto eq_fini;
- 	}
- 
- 	hdev->user_ctx = NULL;
-@@ -392,6 +414,8 @@ int hl_device_init(struct hl_device *hdev, struct class *hclass)
- 			"kernel ctx is still alive on initialization failure\n");
- free_ctx:
- 	kfree(hdev->kernel_ctx);
-+eq_fini:
-+	hl_eq_fini(hdev, &hdev->event_queue);
- cq_fini:
- 	for (i = 0 ; i < cq_ready_cnt ; i++)
- 		hl_cq_fini(hdev, &hdev->completion_queue[i]);
-@@ -433,6 +457,13 @@ void hl_device_fini(struct hl_device *hdev)
++free_cb_pool:
++	hl_cb_pool_fini(hdev);
+ release_ctx:
+ 	if (hl_ctx_put(hdev->kernel_ctx) != 1)
+ 		dev_err(hdev->dev,
+@@ -457,6 +597,12 @@ void hl_device_fini(struct hl_device *hdev)
  	/* Mark device as disabled */
  	hdev->disabled = true;
  
-+	/*
-+	 * Halt the engines and disable interrupts so we won't get any more
-+	 * completions from H/W and we won't have any accesses from the
-+	 * H/W to the host machine
-+	 */
-+	hdev->asic_funcs->halt_engines(hdev, true);
++	hl_hwmon_fini(hdev);
 +
- 	hl_cb_pool_fini(hdev);
- 
- 	/* Release kernel context */
-@@ -442,6 +473,8 @@ void hl_device_fini(struct hl_device *hdev)
- 	/* Reset the H/W. It will be in idle state after this returns */
- 	hdev->asic_funcs->hw_fini(hdev, true);
- 
-+	hl_eq_fini(hdev, &hdev->event_queue);
++	device_late_fini(hdev);
 +
- 	for (i = 0 ; i < hdev->asic_prop.completion_queues_count ; i++)
- 		hl_cq_fini(hdev, &hdev->completion_queue[i]);
- 	kfree(hdev->completion_queue);
++	hl_sysfs_fini(hdev);
++
+ 	/*
+ 	 * Halt the engines and disable interrupts so we won't get any more
+ 	 * completions from H/W and we won't have any accesses from the
+diff --git a/drivers/misc/habanalabs/goya/Makefile b/drivers/misc/habanalabs/goya/Makefile
+index a57096fa41b6..ada8518ec215 100644
+--- a/drivers/misc/habanalabs/goya/Makefile
++++ b/drivers/misc/habanalabs/goya/Makefile
+@@ -1,3 +1,3 @@
+ subdir-ccflags-y += -I$(src)
+ 
+-HL_GOYA_FILES :=  goya/goya.o goya/goya_security.o
+\ No newline at end of file
++HL_GOYA_FILES :=  goya/goya.o goya/goya_security.o goya/goya_hwmgr.o
+\ No newline at end of file
 diff --git a/drivers/misc/habanalabs/goya/goya.c b/drivers/misc/habanalabs/goya/goya.c
-index 08d5227eaf1d..6c04277ae0fa 100644
+index 6c04277ae0fa..7899ff762e0b 100644
 --- a/drivers/misc/habanalabs/goya/goya.c
 +++ b/drivers/misc/habanalabs/goya/goya.c
-@@ -92,9 +92,41 @@
+@@ -127,6 +127,8 @@ static const char *goya_axi_name[GOYA_MAX_INITIATORS] = {
  
- #define GOYA_MAX_INITIATORS		20
+ #define GOYA_ASYC_EVENT_GROUP_NON_FATAL_SIZE 121
  
-+#define GOYA_MAX_STRING_LEN		20
-+
- #define GOYA_CB_POOL_CB_CNT		512
- #define GOYA_CB_POOL_CB_SIZE		0x20000		/* 128KB */
- 
-+static const char goya_irq_name[GOYA_MSIX_ENTRIES][GOYA_MAX_STRING_LEN] = {
-+		"goya cq 0", "goya cq 1", "goya cq 2", "goya cq 3",
-+		"goya cq 4", "goya cpu eq"
-+};
-+
-+static const char *goya_axi_name[GOYA_MAX_INITIATORS] = {
-+	"MME0",
-+	"MME1",
-+	"MME2",
-+	"MME3",
-+	"MME4",
-+	"MME5",
-+	"TPC0",
-+	"TPC1",
-+	"TPC2",
-+	"TPC3",
-+	"TPC4",
-+	"TPC5",
-+	"TPC6",
-+	"TPC7",
-+	"PCI",
-+	"DMA", /* HBW */
-+	"DMA", /* LBW */
-+	"PSOC",
-+	"CPU",
-+	"MMU"
-+};
-+
-+#define GOYA_ASYC_EVENT_GROUP_NON_FATAL_SIZE 121
++static int goya_armcp_info_get(struct hl_device *hdev);
 +
  static void goya_get_fixed_properties(struct hl_device *hdev)
  {
  	struct asic_fixed_properties *prop = &hdev->asic_prop;
-@@ -139,6 +171,7 @@ static void goya_get_fixed_properties(struct hl_device *hdev)
- 	prop->va_space_dram_end_address = VA_DDR_SPACE_END;
- 	prop->cfg_size = CFG_SIZE;
- 	prop->max_asid = MAX_ASID;
-+	prop->num_of_events = GOYA_ASYNC_EVENT_ID_SIZE;
+@@ -174,6 +176,7 @@ static void goya_get_fixed_properties(struct hl_device *hdev)
+ 	prop->num_of_events = GOYA_ASYNC_EVENT_ID_SIZE;
  	prop->cb_pool_cb_cnt = GOYA_CB_POOL_CB_CNT;
  	prop->cb_pool_cb_size = GOYA_CB_POOL_CB_SIZE;
++	prop->max_power_default = MAX_POWER_DEFAULT;
  	prop->tpc_enabled_mask = TPC_ENABLED_MASK;
-@@ -668,15 +701,10 @@ static void goya_init_dma_qman(struct hl_device *hdev, int dma_id,
- 	WREG32(mmDMA_QM_0_PQ_CFG1 + reg_off, 0x00020002);
- 	WREG32(mmDMA_QM_0_CQ_CFG1 + reg_off, 0x00080008);
  
--	if (dma_id == 0)
--		WREG32(mmDMA_QM_0_GLBL_PROT + reg_off, QMAN_DMA_FULLY_TRUSTED);
-+	if (goya->hw_cap_initialized & HW_CAP_MMU)
-+		WREG32(mmDMA_QM_0_GLBL_PROT + reg_off, QMAN_DMA_PARTLY_TRUSTED);
- 	else
--		if (goya->hw_cap_initialized & HW_CAP_MMU)
--			WREG32(mmDMA_QM_0_GLBL_PROT + reg_off,
--					QMAN_DMA_PARTLY_TRUSTED);
--		else
--			WREG32(mmDMA_QM_0_GLBL_PROT + reg_off,
--					QMAN_DMA_FULLY_TRUSTED);
-+		WREG32(mmDMA_QM_0_GLBL_PROT + reg_off, QMAN_DMA_FULLY_TRUSTED);
- 
- 	WREG32(mmDMA_QM_0_GLBL_ERR_CFG + reg_off, QMAN_DMA_ERR_MSG_EN);
- 	WREG32(mmDMA_QM_0_GLBL_CFG0 + reg_off, QMAN_DMA_ENABLE);
-@@ -870,6 +898,7 @@ static void goya_resume_external_queues(struct hl_device *hdev)
- int goya_init_cpu_queues(struct hl_device *hdev)
- {
- 	struct goya_device *goya = hdev->asic_specific;
-+	struct hl_eq *eq;
- 	dma_addr_t bus_address;
- 	u32 status;
- 	struct hl_hw_queue *cpu_pq = &hdev->kernel_queues[GOYA_QUEUE_ID_CPU_PQ];
-@@ -881,17 +910,24 @@ int goya_init_cpu_queues(struct hl_device *hdev)
- 	if (goya->hw_cap_initialized & HW_CAP_CPU_Q)
- 		return 0;
- 
-+	eq = &hdev->event_queue;
-+
- 	bus_address = cpu_pq->bus_address +
- 			hdev->asic_prop.host_phys_base_address;
- 	WREG32(mmPSOC_GLOBAL_CONF_SCRATCHPAD_0, lower_32_bits(bus_address));
- 	WREG32(mmPSOC_GLOBAL_CONF_SCRATCHPAD_1, upper_32_bits(bus_address));
- 
-+	bus_address = eq->bus_address + hdev->asic_prop.host_phys_base_address;
-+	WREG32(mmPSOC_GLOBAL_CONF_SCRATCHPAD_2, lower_32_bits(bus_address));
-+	WREG32(mmPSOC_GLOBAL_CONF_SCRATCHPAD_3, upper_32_bits(bus_address));
-+
- 	bus_address = hdev->cpu_accessible_dma_address +
- 			hdev->asic_prop.host_phys_base_address;
- 	WREG32(mmPSOC_GLOBAL_CONF_SCRATCHPAD_8, lower_32_bits(bus_address));
- 	WREG32(mmPSOC_GLOBAL_CONF_SCRATCHPAD_9, upper_32_bits(bus_address));
- 
- 	WREG32(mmPSOC_GLOBAL_CONF_SCRATCHPAD_5, HL_QUEUE_SIZE_IN_BYTES);
-+	WREG32(mmPSOC_GLOBAL_CONF_SCRATCHPAD_4, HL_EQ_SIZE_IN_BYTES);
- 	WREG32(mmPSOC_GLOBAL_CONF_SCRATCHPAD_10, CPU_ACCESSIBLE_MEM_SIZE);
- 
- 	/* Used for EQ CI */
-@@ -2781,6 +2817,163 @@ static void goya_resume_internal_queues(struct hl_device *hdev)
- 	WREG32(mmTPC7_CMDQ_GLBL_CFG1, 0);
+ 	prop->high_pll = PLL_HIGH_DEFAULT;
+@@ -558,6 +561,89 @@ int goya_early_fini(struct hl_device *hdev)
+ 	return 0;
  }
  
-+static void goya_dma_stall(struct hl_device *hdev)
++/**
++ * goya_fetch_psoc_frequency - Fetch PSOC frequency values
++ *
++ * @hdev: pointer to hl_device structure
++ *
++ */
++static void goya_fetch_psoc_frequency(struct hl_device *hdev)
 +{
-+	WREG32(mmDMA_QM_0_GLBL_CFG1, 1 << DMA_QM_0_GLBL_CFG1_DMA_STOP_SHIFT);
-+	WREG32(mmDMA_QM_1_GLBL_CFG1, 1 << DMA_QM_1_GLBL_CFG1_DMA_STOP_SHIFT);
-+	WREG32(mmDMA_QM_2_GLBL_CFG1, 1 << DMA_QM_2_GLBL_CFG1_DMA_STOP_SHIFT);
-+	WREG32(mmDMA_QM_3_GLBL_CFG1, 1 << DMA_QM_3_GLBL_CFG1_DMA_STOP_SHIFT);
-+	WREG32(mmDMA_QM_4_GLBL_CFG1, 1 << DMA_QM_4_GLBL_CFG1_DMA_STOP_SHIFT);
++	struct asic_fixed_properties *prop = &hdev->asic_prop;
++
++	prop->psoc_pci_pll_nr = RREG32(mmPSOC_PCI_PLL_NR);
++	prop->psoc_pci_pll_nf = RREG32(mmPSOC_PCI_PLL_NF);
++	prop->psoc_pci_pll_od = RREG32(mmPSOC_PCI_PLL_OD);
++	prop->psoc_pci_pll_div_factor = RREG32(mmPSOC_PCI_PLL_DIV_FACTOR_1);
 +}
 +
-+static void goya_tpc_stall(struct hl_device *hdev)
++/**
++ * goya_late_init - GOYA late initialization code
++ *
++ * @hdev: pointer to hl_device structure
++ *
++ * Get ArmCP info and send message to CPU to enable PCI access
++ */
++static int goya_late_init(struct hl_device *hdev)
 +{
-+	WREG32(mmTPC0_CFG_TPC_STALL, 1 << TPC0_CFG_TPC_STALL_V_SHIFT);
-+	WREG32(mmTPC1_CFG_TPC_STALL, 1 << TPC1_CFG_TPC_STALL_V_SHIFT);
-+	WREG32(mmTPC2_CFG_TPC_STALL, 1 << TPC2_CFG_TPC_STALL_V_SHIFT);
-+	WREG32(mmTPC3_CFG_TPC_STALL, 1 << TPC3_CFG_TPC_STALL_V_SHIFT);
-+	WREG32(mmTPC4_CFG_TPC_STALL, 1 << TPC4_CFG_TPC_STALL_V_SHIFT);
-+	WREG32(mmTPC5_CFG_TPC_STALL, 1 << TPC5_CFG_TPC_STALL_V_SHIFT);
-+	WREG32(mmTPC6_CFG_TPC_STALL, 1 << TPC6_CFG_TPC_STALL_V_SHIFT);
-+	WREG32(mmTPC7_CFG_TPC_STALL, 1 << TPC7_CFG_TPC_STALL_V_SHIFT);
-+}
-+
-+static void goya_mme_stall(struct hl_device *hdev)
-+{
-+	WREG32(mmMME_STALL, 0xFFFFFFFF);
-+}
-+
-+static int goya_enable_msix(struct hl_device *hdev)
-+{
++	struct asic_fixed_properties *prop = &hdev->asic_prop;
 +	struct goya_device *goya = hdev->asic_specific;
-+	int cq_cnt = hdev->asic_prop.completion_queues_count;
-+	int rc, i, irq_cnt_init, irq;
++	int rc;
 +
-+	if (goya->hw_cap_initialized & HW_CAP_MSIX)
-+		return 0;
-+
-+	rc = pci_alloc_irq_vectors(hdev->pdev, GOYA_MSIX_ENTRIES,
-+				GOYA_MSIX_ENTRIES, PCI_IRQ_MSIX);
-+	if (rc < 0) {
-+		dev_err(hdev->dev,
-+			"MSI-X: Failed to enable support -- %d/%d\n",
-+			GOYA_MSIX_ENTRIES, rc);
++	rc = goya->armcp_info_get(hdev);
++	if (rc) {
++		dev_err(hdev->dev, "Failed to get armcp info\n");
 +		return rc;
 +	}
 +
-+	for (i = 0, irq_cnt_init = 0 ; i < cq_cnt ; i++, irq_cnt_init++) {
-+		irq = pci_irq_vector(hdev->pdev, i);
-+		rc = request_irq(irq, hl_irq_handler_cq, 0, goya_irq_name[i],
-+				&hdev->completion_queue[i]);
-+		if (rc) {
-+			dev_err(hdev->dev, "Failed to request IRQ %d", irq);
-+			goto free_irqs;
-+		}
-+	}
++	/* Now that we have the DRAM size in ASIC prop, we need to check
++	 * its size and configure the DMA_IF DDR wrap protection (which is in
++	 * the MMU block) accordingly. The value is the log2 of the DRAM size
++	 */
++	WREG32(mmMMU_LOG2_DDR_SIZE, ilog2(prop->dram_size));
 +
-+	irq = pci_irq_vector(hdev->pdev, EVENT_QUEUE_MSIX_IDX);
-+
-+	rc = request_irq(irq, hl_irq_handler_eq, 0,
-+			goya_irq_name[EVENT_QUEUE_MSIX_IDX],
-+			&hdev->event_queue);
++	rc = goya_send_pci_access_msg(hdev, ARMCP_PACKET_ENABLE_PCI_ACCESS);
 +	if (rc) {
-+		dev_err(hdev->dev, "Failed to request IRQ %d", irq);
-+		goto free_irqs;
++		dev_err(hdev->dev, "Failed to enable PCI access from CPU\n");
++		return rc;
 +	}
 +
-+	goya->hw_cap_initialized |= HW_CAP_MSIX;
++	WREG32(mmGIC_DISTRIBUTOR__5_GICD_SETSPI_NSR,
++			GOYA_ASYNC_EVENT_ID_INTS_REGISTER);
++
++	goya_fetch_psoc_frequency(hdev);
++
 +	return 0;
++}
 +
-+free_irqs:
-+	for (i = 0 ; i < irq_cnt_init ; i++)
-+		free_irq(pci_irq_vector(hdev->pdev, i),
-+			&hdev->completion_queue[i]);
++/**
++ * goya_late_fini - GOYA late tear-down code
++ *
++ * @hdev: pointer to hl_device structure
++ *
++ * Free sensors allocated structures
++ */
++void goya_late_fini(struct hl_device *hdev)
++{
++	const struct hwmon_channel_info **channel_info_arr;
++	int i = 0;
 +
-+	pci_free_irq_vectors(hdev->pdev);
++	if (!hdev->hl_chip_info.info)
++		return;
++
++	channel_info_arr = hdev->hl_chip_info.info;
++
++	while (channel_info_arr[i]) {
++		kfree(channel_info_arr[i]->config);
++		kfree(channel_info_arr[i]);
++		i++;
++	}
++
++	kfree(channel_info_arr);
++
++	hdev->hl_chip_info.info = NULL;
++}
++
+ /**
+  * goya_sw_init - Goya software initialization code
+  *
+@@ -575,9 +661,15 @@ static int goya_sw_init(struct hl_device *hdev)
+ 		return -ENOMEM;
+ 
+ 	goya->test_cpu_queue = goya_test_cpu_queue;
++	goya->armcp_info_get = goya_armcp_info_get;
+ 
+ 	/* according to goya_init_iatu */
+ 	goya->ddr_bar_cur_addr = DRAM_PHYS_BASE;
++
++	goya->mme_clk = GOYA_PLL_FREQ_LOW;
++	goya->tpc_clk = GOYA_PLL_FREQ_LOW;
++	goya->ic_clk = GOYA_PLL_FREQ_LOW;
++
+ 	hdev->asic_specific = goya;
+ 
+ 	/* Create DMA pool for small allocations */
+@@ -4272,6 +4364,87 @@ void *goya_get_events_stat(struct hl_device *hdev, u32 *size)
+ 	return goya->events_stat;
+ }
+ 
++static int goya_armcp_info_get(struct hl_device *hdev)
++{
++	struct goya_device *goya = hdev->asic_specific;
++	struct asic_fixed_properties *prop = &hdev->asic_prop;
++	struct armcp_packet pkt;
++	void *armcp_info_cpu_addr;
++	dma_addr_t armcp_info_dma_addr;
++	u64 dram_size;
++	long result;
++	int rc;
++
++	if (!(goya->hw_cap_initialized & HW_CAP_CPU_Q))
++		return 0;
++
++	armcp_info_cpu_addr =
++			hdev->asic_funcs->cpu_accessible_dma_pool_alloc(hdev,
++			sizeof(struct armcp_info), &armcp_info_dma_addr);
++	if (!armcp_info_cpu_addr) {
++		dev_err(hdev->dev,
++			"Failed to allocate DMA memory for ArmCP info packet\n");
++		return -ENOMEM;
++	}
++
++	memset(armcp_info_cpu_addr, 0, sizeof(struct armcp_info));
++
++	memset(&pkt, 0, sizeof(pkt));
++
++	pkt.opcode = ARMCP_PACKET_INFO_GET;
++	pkt.addr = armcp_info_dma_addr + prop->host_phys_base_address;
++	pkt.data_max_size = sizeof(struct armcp_info);
++
++	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
++			GOYA_ARMCP_INFO_TIMEOUT, &result);
++
++	if (rc) {
++		dev_err(hdev->dev,
++			"Failed to send armcp info pkt, error %d\n", rc);
++		goto out;
++	}
++
++	memcpy(&prop->armcp_info, armcp_info_cpu_addr,
++			sizeof(prop->armcp_info));
++
++	dram_size = prop->armcp_info.dram_size;
++	if (dram_size) {
++		if ((!is_power_of_2(dram_size)) ||
++				(dram_size < DRAM_PHYS_DEFAULT_SIZE)) {
++			dev_err(hdev->dev,
++				"F/W reported invalid DRAM size %llu. Trying to use default size\n",
++				dram_size);
++			dram_size = DRAM_PHYS_DEFAULT_SIZE;
++		}
++
++		prop->dram_size = dram_size;
++		prop->dram_end_address = prop->dram_base_address + dram_size;
++	}
++
++	rc = hl_build_hwmon_channel_info(hdev, prop->armcp_info.sensors);
++	if (rc) {
++		dev_err(hdev->dev,
++			"Failed to build hwmon channel info, error %d\n", rc);
++		rc = -EFAULT;
++		goto out;
++	}
++
++out:
++	hdev->asic_funcs->cpu_accessible_dma_pool_free(hdev,
++			sizeof(struct armcp_info), armcp_info_cpu_addr);
++
 +	return rc;
 +}
 +
-+static void goya_sync_irqs(struct hl_device *hdev)
++static void goya_init_clock_gating(struct hl_device *hdev)
 +{
-+	struct goya_device *goya = hdev->asic_specific;
-+	int i;
 +
-+	if (!(goya->hw_cap_initialized & HW_CAP_MSIX))
-+		return;
-+
-+	/* Wait for all pending IRQs to be finished */
-+	for (i = 0 ; i < hdev->asic_prop.completion_queues_count ; i++)
-+		synchronize_irq(pci_irq_vector(hdev->pdev, i));
-+
-+	synchronize_irq(pci_irq_vector(hdev->pdev, EVENT_QUEUE_MSIX_IDX));
 +}
 +
-+static void goya_disable_msix(struct hl_device *hdev)
++static void goya_disable_clock_gating(struct hl_device *hdev)
 +{
-+	struct goya_device *goya = hdev->asic_specific;
-+	int i, irq;
 +
-+	if (!(goya->hw_cap_initialized & HW_CAP_MSIX))
-+		return;
-+
-+	goya_sync_irqs(hdev);
-+
-+	irq = pci_irq_vector(hdev->pdev, EVENT_QUEUE_MSIX_IDX);
-+	free_irq(irq, &hdev->event_queue);
-+
-+	for (i = 0 ; i < hdev->asic_prop.completion_queues_count ; i++) {
-+		irq = pci_irq_vector(hdev->pdev, i);
-+		free_irq(irq, &hdev->completion_queue[i]);
-+	}
-+
-+	pci_free_irq_vectors(hdev->pdev);
-+
-+	goya->hw_cap_initialized &= ~HW_CAP_MSIX;
-+}
-+
-+static void goya_halt_engines(struct hl_device *hdev, bool hard_reset)
-+{
-+	struct goya_device *goya = hdev->asic_specific;
-+	u32 wait_timeout_ms, cpu_timeout_ms;
-+
-+	dev_info(hdev->dev,
-+		"Halting compute engines and disabling interrupts\n");
-+
-+	if (hdev->pldm) {
-+		wait_timeout_ms = GOYA_PLDM_RESET_WAIT_MSEC;
-+		cpu_timeout_ms = GOYA_PLDM_RESET_WAIT_MSEC;
-+	} else {
-+		wait_timeout_ms = GOYA_RESET_WAIT_MSEC;
-+		cpu_timeout_ms = GOYA_CPU_RESET_WAIT_MSEC;
-+	}
-+
-+	if ((hard_reset) && (goya->hw_cap_initialized & HW_CAP_CPU)) {
-+		WREG32(mmPSOC_GLOBAL_CONF_UBOOT_MAGIC, KMD_MSG_GOTO_WFE);
-+		if (hdev->fw_loading)
-+			WREG32(mmGIC_DISTRIBUTOR__5_GICD_SETSPI_NSR,
-+				GOYA_ASYNC_EVENT_ID_HALT_MACHINE);
-+		msleep(cpu_timeout_ms);
-+	}
-+
-+	goya_stop_external_queues(hdev);
-+	goya_stop_internal_queues(hdev);
-+
-+	msleep(wait_timeout_ms);
-+
-+	goya_dma_stall(hdev);
-+	goya_tpc_stall(hdev);
-+	goya_mme_stall(hdev);
-+
-+	msleep(wait_timeout_ms);
-+
-+	goya_disable_external_queues(hdev);
-+	goya_disable_internal_queues(hdev);
-+
-+	if (hard_reset)
-+		goya_disable_msix(hdev);
-+	else
-+		goya_sync_irqs(hdev);
 +}
  
- /**
-  * goya_push_uboot_to_device - Push u-boot FW code to device
-@@ -3166,11 +3359,16 @@ static int goya_hw_init(struct hl_device *hdev)
- 
- 	goya_init_tpc_qmans(hdev);
- 
-+	/* MSI-X must be enabled before CPU queues are initialized */
-+	rc = goya_enable_msix(hdev);
-+	if (rc)
-+		goto disable_queues;
-+
- 	rc = goya_init_cpu_queues(hdev);
- 	if (rc) {
- 		dev_err(hdev->dev, "failed to initialize CPU H/W queues %d\n",
- 			rc);
--		goto disable_queues;
-+		goto disable_msix;
- 	}
- 
- 	/* CPU initialization is finished, we can now move to 48 bit DMA mask */
-@@ -3204,6 +3402,8 @@ static int goya_hw_init(struct hl_device *hdev)
- 
- disable_pci_access:
- 	goya_send_pci_access_msg(hdev, ARMCP_PACKET_DISABLE_PCI_ACCESS);
-+disable_msix:
-+	goya_disable_msix(hdev);
- disable_queues:
- 	goya_disable_internal_queues(hdev);
- 	goya_disable_external_queues(hdev);
-@@ -3287,6 +3487,7 @@ static void goya_hw_fini(struct hl_device *hdev, bool hard_reset)
- 					HW_CAP_DMA | HW_CAP_MME |
- 					HW_CAP_MMU | HW_CAP_TPC_MBIST |
- 					HW_CAP_GOLDEN | HW_CAP_TPC);
-+	memset(goya->events_stat, 0, sizeof(goya->events_stat));
- 
- 	if (!hdev->pldm) {
- 		int rc;
-@@ -3772,6 +3973,305 @@ void goya_cpu_accessible_dma_pool_free(struct hl_device *hdev, size_t size,
- 	gen_pool_free(hdev->cpu_accessible_dma_pool, (u64) vaddr, size);
+ static void goya_hw_queues_lock(struct hl_device *hdev)
+ {
+@@ -4287,9 +4460,60 @@ static void goya_hw_queues_unlock(struct hl_device *hdev)
+ 	spin_unlock(&goya->hw_queues_lock);
  }
  
-+static void goya_update_eq_ci(struct hl_device *hdev, u32 val)
-+{
-+	WREG32(mmPSOC_GLOBAL_CONF_SCRATCHPAD_6, val);
-+}
-+
-+static void goya_get_axi_name(struct hl_device *hdev, u32 agent_id,
-+		u16 event_type, char *axi_name, int len)
-+{
-+	if (!strcmp(goya_axi_name[agent_id], "DMA"))
-+		if (event_type >= GOYA_ASYNC_EVENT_ID_DMA0_CH)
-+			snprintf(axi_name, len, "DMA %d",
-+				event_type - GOYA_ASYNC_EVENT_ID_DMA0_CH);
-+		else
-+			snprintf(axi_name, len, "DMA %d",
-+				event_type - GOYA_ASYNC_EVENT_ID_DMA0_QM);
-+	else
-+		snprintf(axi_name, len, "%s", goya_axi_name[agent_id]);
-+}
-+
-+static void goya_print_razwi_info(struct hl_device *hdev, u64 reg,
-+		bool is_hbw, bool is_read, u16 event_type)
-+{
-+	u32 val, id, internal_id, agent_id, y, x;
-+	char axi_name[10] = {0};
-+
-+	val = RREG32(reg);
-+
-+	if (is_hbw) {
-+		id = (val & GOYA_IRQ_HBW_ID_MASK) >> GOYA_IRQ_HBW_ID_SHIFT;
-+		internal_id = (val & GOYA_IRQ_HBW_INTERNAL_ID_MASK) >>
-+				GOYA_IRQ_HBW_INTERNAL_ID_SHIFT;
-+		agent_id = (val & GOYA_IRQ_HBW_AGENT_ID_MASK) >>
-+				GOYA_IRQ_HBW_AGENT_ID_SHIFT;
-+		y = (val & GOYA_IRQ_HBW_Y_MASK) >> GOYA_IRQ_HBW_Y_SHIFT;
-+		x = (val & GOYA_IRQ_HBW_X_MASK) >> GOYA_IRQ_HBW_X_SHIFT;
-+	} else {
-+		id = (val & GOYA_IRQ_LBW_ID_MASK) >> GOYA_IRQ_LBW_ID_SHIFT;
-+		internal_id = (val & GOYA_IRQ_LBW_INTERNAL_ID_MASK) >>
-+				GOYA_IRQ_LBW_INTERNAL_ID_SHIFT;
-+		agent_id = (val & GOYA_IRQ_LBW_AGENT_ID_MASK) >>
-+				GOYA_IRQ_LBW_AGENT_ID_SHIFT;
-+		y = (val & GOYA_IRQ_LBW_Y_MASK) >> GOYA_IRQ_LBW_Y_SHIFT;
-+		x = (val & GOYA_IRQ_LBW_X_MASK) >> GOYA_IRQ_LBW_X_SHIFT;
-+	}
-+
-+	if (agent_id >= GOYA_MAX_INITIATORS) {
-+		dev_err(hdev->dev,
-+			"Illegal %s %s with wrong initiator id %d, H/W IRQ %d\n",
-+				is_read ? "read from" : "write to",
-+				is_hbw ? "HBW" : "LBW",
-+				agent_id,
-+				event_type);
-+	} else {
-+		goya_get_axi_name(hdev, agent_id, event_type, axi_name,
-+				sizeof(axi_name));
-+		dev_err(hdev->dev, "Illegal %s by %s %s %s, H/W IRQ %d\n",
-+				is_read ? "read" : "write",
-+				axi_name,
-+				is_read ? "from" : "to",
-+				is_hbw ? "HBW" : "LBW",
-+				event_type);
-+	}
-+}
-+
-+static void goya_print_irq_info(struct hl_device *hdev, u16 event_type)
++int goya_get_eeprom_data(struct hl_device *hdev, void *data, size_t max_size)
 +{
 +	struct goya_device *goya = hdev->asic_specific;
-+	bool is_hbw = false, is_read = false, is_info = false;
++	struct asic_fixed_properties *prop = &hdev->asic_prop;
++	struct armcp_packet pkt;
++	void *eeprom_info_cpu_addr;
++	dma_addr_t eeprom_info_dma_addr;
++	long result;
++	int rc;
 +
-+	if (RREG32(mmDMA_MACRO_RAZWI_LBW_WT_VLD)) {
-+		goya_print_razwi_info(hdev, mmDMA_MACRO_RAZWI_LBW_WT_ID, is_hbw,
-+				is_read, event_type);
-+		WREG32(mmDMA_MACRO_RAZWI_LBW_WT_VLD, 0);
-+		is_info = true;
-+	}
-+	if (RREG32(mmDMA_MACRO_RAZWI_LBW_RD_VLD)) {
-+		is_read = true;
-+		goya_print_razwi_info(hdev, mmDMA_MACRO_RAZWI_LBW_RD_ID, is_hbw,
-+				is_read, event_type);
-+		WREG32(mmDMA_MACRO_RAZWI_LBW_RD_VLD, 0);
-+		is_info = true;
-+	}
-+	if (RREG32(mmDMA_MACRO_RAZWI_HBW_WT_VLD)) {
-+		is_hbw = true;
-+		goya_print_razwi_info(hdev, mmDMA_MACRO_RAZWI_HBW_WT_ID, is_hbw,
-+				is_read, event_type);
-+		WREG32(mmDMA_MACRO_RAZWI_HBW_WT_VLD, 0);
-+		is_info = true;
-+	}
-+	if (RREG32(mmDMA_MACRO_RAZWI_HBW_RD_VLD)) {
-+		is_hbw = true;
-+		is_read = true;
-+		goya_print_razwi_info(hdev, mmDMA_MACRO_RAZWI_HBW_RD_ID, is_hbw,
-+				is_read, event_type);
-+		WREG32(mmDMA_MACRO_RAZWI_HBW_RD_VLD, 0);
-+		is_info = true;
-+	}
-+	if (!is_info) {
++	if (!(goya->hw_cap_initialized & HW_CAP_CPU_Q))
++		return 0;
++
++	eeprom_info_cpu_addr =
++			hdev->asic_funcs->cpu_accessible_dma_pool_alloc(hdev,
++					max_size, &eeprom_info_dma_addr);
++	if (!eeprom_info_cpu_addr) {
 +		dev_err(hdev->dev,
-+			"Received H/W interrupt %d, no additional info\n",
-+			event_type);
-+		return;
++			"Failed to allocate DMA memory for EEPROM info packet\n");
++		return -ENOMEM;
 +	}
 +
-+	if (goya->hw_cap_initialized & HW_CAP_MMU) {
-+		u32 val = RREG32(mmMMU_PAGE_ERROR_CAPTURE);
-+		u64 addr;
++	memset(eeprom_info_cpu_addr, 0, max_size);
 +
-+		if (val & MMU_PAGE_ERROR_CAPTURE_ENTRY_VALID_MASK) {
-+			addr = val & MMU_PAGE_ERROR_CAPTURE_VA_49_32_MASK;
-+			addr <<= 32;
-+			addr |= RREG32(mmMMU_PAGE_ERROR_CAPTURE_VA);
++	memset(&pkt, 0, sizeof(pkt));
 +
-+			dev_err(hdev->dev, "MMU page fault on va 0x%llx\n",
-+					addr);
++	pkt.opcode = ARMCP_PACKET_EEPROM_DATA_GET;
++	pkt.addr = eeprom_info_dma_addr + prop->host_phys_base_address;
++	pkt.data_max_size = max_size;
 +
-+			WREG32(mmMMU_PAGE_ERROR_CAPTURE, 0);
-+		}
++	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
++			GOYA_ARMCP_EEPROM_TIMEOUT, &result);
++
++	if (rc) {
++		dev_err(hdev->dev,
++			"Failed to send armcp EEPROM pkt, error %d\n", rc);
++		goto out;
++	}
++
++	/* result contains the actual size */
++	memcpy(data, eeprom_info_cpu_addr, min((size_t)result, max_size));
++
++out:
++	hdev->asic_funcs->cpu_accessible_dma_pool_free(hdev, max_size,
++			eeprom_info_cpu_addr);
++
++	return rc;
++}
++
+ static const struct hl_asic_funcs goya_funcs = {
+ 	.early_init = goya_early_init,
+ 	.early_fini = goya_early_fini,
++	.late_init = goya_late_init,
++	.late_fini = goya_late_fini,
+ 	.sw_init = goya_sw_init,
+ 	.sw_fini = goya_sw_fini,
+ 	.hw_init = goya_hw_init,
+@@ -4310,10 +4534,16 @@ static const struct hl_asic_funcs goya_funcs = {
+ 	.cpu_accessible_dma_pool_alloc = goya_cpu_accessible_dma_pool_alloc,
+ 	.cpu_accessible_dma_pool_free = goya_cpu_accessible_dma_pool_free,
+ 	.update_eq_ci = goya_update_eq_ci,
++	.add_device_attr = goya_add_device_attr,
++	.remove_device_attr = goya_remove_device_attr,
+ 	.handle_eqe = goya_handle_eqe,
++	.set_pll_profile = goya_set_pll_profile,
+ 	.get_events_stat = goya_get_events_stat,
++	.enable_clock_gating = goya_init_clock_gating,
++	.disable_clock_gating = goya_disable_clock_gating,
+ 	.hw_queues_lock = goya_hw_queues_lock,
+ 	.hw_queues_unlock = goya_hw_queues_unlock,
++	.get_eeprom_data = goya_get_eeprom_data,
+ 	.send_cpu_message = goya_send_cpu_message
+ };
+ 
+diff --git a/drivers/misc/habanalabs/goya/goyaP.h b/drivers/misc/habanalabs/goya/goyaP.h
+index c6bfcb6c6905..42e8b1baef2f 100644
+--- a/drivers/misc/habanalabs/goya/goyaP.h
++++ b/drivers/misc/habanalabs/goya/goyaP.h
+@@ -48,7 +48,10 @@
+ 
+ #define PLL_HIGH_DEFAULT		1575000000	/* 1.575 GHz */
+ 
++#define MAX_POWER_DEFAULT		200000		/* 200W */
++
+ #define GOYA_ARMCP_INFO_TIMEOUT		10000000	/* 10s */
++#define GOYA_ARMCP_EEPROM_TIMEOUT	10000000	/* 10s */
+ 
+ #define DRAM_PHYS_DEFAULT_SIZE		0x100000000ull	/* 4GB */
+ 
+@@ -119,9 +122,15 @@ enum goya_fw_component {
+ 
+ struct goya_device {
+ 	int (*test_cpu_queue)(struct hl_device *hdev);
++	int (*armcp_info_get)(struct hl_device *hdev);
+ 
+ 	/* TODO: remove hw_queues_lock after moving to scheduler code */
+ 	spinlock_t	hw_queues_lock;
++
++	u64		mme_clk;
++	u64		tpc_clk;
++	u64		ic_clk;
++
+ 	u64		ddr_bar_cur_addr;
+ 	u32		events_stat[GOYA_ASYNC_EVENT_ID_SIZE];
+ 	u32		hw_cap_initialized;
+@@ -130,6 +139,18 @@ struct goya_device {
+ int goya_test_cpu_queue(struct hl_device *hdev);
+ int goya_send_cpu_message(struct hl_device *hdev, u32 *msg, u16 len,
+ 				u32 timeout, long *result);
++long goya_get_temperature(struct hl_device *hdev, int sensor_index, u32 attr);
++long goya_get_voltage(struct hl_device *hdev, int sensor_index, u32 attr);
++long goya_get_current(struct hl_device *hdev, int sensor_index, u32 attr);
++long goya_get_fan_speed(struct hl_device *hdev, int sensor_index, u32 attr);
++long goya_get_pwm_info(struct hl_device *hdev, int sensor_index, u32 attr);
++void goya_set_pwm_info(struct hl_device *hdev, int sensor_index, u32 attr,
++			long value);
++void goya_set_pll_profile(struct hl_device *hdev, enum hl_pll_frequency freq);
++int goya_add_device_attr(struct hl_device *hdev);
++void goya_remove_device_attr(struct hl_device *hdev);
+ void goya_init_security(struct hl_device *hdev);
++u64 goya_get_max_power(struct hl_device *hdev);
++void goya_set_max_power(struct hl_device *hdev, u64 value);
+ 
+ #endif /* GOYAP_H_ */
+diff --git a/drivers/misc/habanalabs/goya/goya_hwmgr.c b/drivers/misc/habanalabs/goya/goya_hwmgr.c
+new file mode 100644
+index 000000000000..866d1774b2e4
+--- /dev/null
++++ b/drivers/misc/habanalabs/goya/goya_hwmgr.c
+@@ -0,0 +1,306 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/*
++ * Copyright 2016-2018 HabanaLabs, Ltd.
++ * All Rights Reserved.
++ */
++
++#include "goyaP.h"
++
++void goya_set_pll_profile(struct hl_device *hdev, enum hl_pll_frequency freq)
++{
++	struct goya_device *goya = hdev->asic_specific;
++
++	switch (freq) {
++	case PLL_HIGH:
++		hl_set_frequency(hdev, MME_PLL, hdev->high_pll);
++		hl_set_frequency(hdev, TPC_PLL, hdev->high_pll);
++		hl_set_frequency(hdev, IC_PLL, hdev->high_pll);
++		break;
++	case PLL_LOW:
++		hl_set_frequency(hdev, MME_PLL, GOYA_PLL_FREQ_LOW);
++		hl_set_frequency(hdev, TPC_PLL, GOYA_PLL_FREQ_LOW);
++		hl_set_frequency(hdev, IC_PLL, GOYA_PLL_FREQ_LOW);
++		break;
++	case PLL_LAST:
++		hl_set_frequency(hdev, MME_PLL, goya->mme_clk);
++		hl_set_frequency(hdev, TPC_PLL, goya->tpc_clk);
++		hl_set_frequency(hdev, IC_PLL, goya->ic_clk);
++		break;
++	default:
++		dev_err(hdev->dev, "unknown frequency setting\n");
 +	}
 +}
 +
-+static int goya_unmask_irq(struct hl_device *hdev, u16 event_type)
++static ssize_t mme_clk_show(struct device *dev, struct device_attribute *attr,
++				char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++	long value;
++
++	if (hdev->disabled)
++		return -ENODEV;
++
++	value = hl_get_frequency(hdev, MME_PLL, false);
++
++	if (value < 0)
++		return value;
++
++	return snprintf(buf, PAGE_SIZE, "%lu\n", value);
++}
++
++static ssize_t mme_clk_store(struct device *dev, struct device_attribute *attr,
++				const char *buf, size_t count)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++	struct goya_device *goya = hdev->asic_specific;
++	int rc;
++	long value;
++
++	if (hdev->disabled) {
++		count = -ENODEV;
++		goto fail;
++	}
++
++	if (hdev->pm_mng_profile == PM_AUTO) {
++		count = -EPERM;
++		goto fail;
++	}
++
++	rc = kstrtoul(buf, 0, &value);
++
++	if (rc) {
++		count = -EINVAL;
++		goto fail;
++	}
++
++	hl_set_frequency(hdev, MME_PLL, value);
++	goya->mme_clk = value;
++
++fail:
++	return count;
++}
++
++static ssize_t tpc_clk_show(struct device *dev, struct device_attribute *attr,
++				char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++	long value;
++
++	if (hdev->disabled)
++		return -ENODEV;
++
++	value = hl_get_frequency(hdev, TPC_PLL, false);
++
++	if (value < 0)
++		return value;
++
++	return snprintf(buf, PAGE_SIZE, "%lu\n", value);
++}
++
++static ssize_t tpc_clk_store(struct device *dev, struct device_attribute *attr,
++				const char *buf, size_t count)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++	struct goya_device *goya = hdev->asic_specific;
++	int rc;
++	long value;
++
++	if (hdev->disabled) {
++		count = -ENODEV;
++		goto fail;
++	}
++
++	if (hdev->pm_mng_profile == PM_AUTO) {
++		count = -EPERM;
++		goto fail;
++	}
++
++	rc = kstrtoul(buf, 0, &value);
++
++	if (rc) {
++		count = -EINVAL;
++		goto fail;
++	}
++
++	hl_set_frequency(hdev, TPC_PLL, value);
++	goya->tpc_clk = value;
++
++fail:
++	return count;
++}
++
++static ssize_t ic_clk_show(struct device *dev, struct device_attribute *attr,
++				char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++	long value;
++
++	if (hdev->disabled)
++		return -ENODEV;
++
++	value = hl_get_frequency(hdev, IC_PLL, false);
++
++	if (value < 0)
++		return value;
++
++	return snprintf(buf, PAGE_SIZE, "%lu\n", value);
++}
++
++static ssize_t ic_clk_store(struct device *dev, struct device_attribute *attr,
++				const char *buf, size_t count)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++	struct goya_device *goya = hdev->asic_specific;
++	int rc;
++	long value;
++
++	if (hdev->disabled) {
++		count = -ENODEV;
++		goto fail;
++	}
++
++	if (hdev->pm_mng_profile == PM_AUTO) {
++		count = -EPERM;
++		goto fail;
++	}
++
++	rc = kstrtoul(buf, 0, &value);
++
++	if (rc) {
++		count = -EINVAL;
++		goto fail;
++	}
++
++	hl_set_frequency(hdev, IC_PLL, value);
++	goya->ic_clk = value;
++
++fail:
++	return count;
++}
++
++static ssize_t mme_clk_curr_show(struct device *dev,
++				struct device_attribute *attr, char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++	long value;
++
++	if (hdev->disabled)
++		return -ENODEV;
++
++	value = hl_get_frequency(hdev, MME_PLL, true);
++
++	if (value < 0)
++		return value;
++
++	return snprintf(buf, PAGE_SIZE, "%lu\n", value);
++}
++
++static ssize_t tpc_clk_curr_show(struct device *dev,
++				struct device_attribute *attr, char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++	long value;
++
++	if (hdev->disabled)
++		return -ENODEV;
++
++	value = hl_get_frequency(hdev, TPC_PLL, true);
++
++	if (value < 0)
++		return value;
++
++	return snprintf(buf, PAGE_SIZE, "%lu\n", value);
++}
++
++static ssize_t ic_clk_curr_show(struct device *dev,
++				struct device_attribute *attr, char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++	long value;
++
++	if (hdev->disabled)
++		return -ENODEV;
++
++	value = hl_get_frequency(hdev, IC_PLL, true);
++
++	if (value < 0)
++		return value;
++
++	return snprintf(buf, PAGE_SIZE, "%lu\n", value);
++}
++
++static DEVICE_ATTR_RW(mme_clk);
++static DEVICE_ATTR_RW(tpc_clk);
++static DEVICE_ATTR_RW(ic_clk);
++static DEVICE_ATTR_RO(mme_clk_curr);
++static DEVICE_ATTR_RO(tpc_clk_curr);
++static DEVICE_ATTR_RO(ic_clk_curr);
++
++int goya_add_device_attr(struct hl_device *hdev)
++{
++	int rc;
++
++	rc = device_create_file(hdev->dev, &dev_attr_mme_clk);
++	if (rc) {
++		dev_err(hdev->dev, "failed to create device file mme_clk\n");
++		return rc;
++	}
++
++	rc = device_create_file(hdev->dev, &dev_attr_tpc_clk);
++	if (rc) {
++		dev_err(hdev->dev, "failed to create device file tpc_clk\n");
++		goto remove_mme_clk;
++	}
++
++	rc = device_create_file(hdev->dev, &dev_attr_ic_clk);
++	if (rc) {
++		dev_err(hdev->dev, "failed to create device file ic_clk\n");
++		goto remove_tpc_clk;
++	}
++
++	rc = device_create_file(hdev->dev, &dev_attr_mme_clk_curr);
++	if (rc) {
++		dev_err(hdev->dev,
++			"failed to create device file mme_clk_curr\n");
++		goto remove_ic_clk;
++	}
++
++	rc = device_create_file(hdev->dev, &dev_attr_tpc_clk_curr);
++	if (rc) {
++		dev_err(hdev->dev,
++			"failed to create device file tpc_clk_curr\n");
++		goto remove_mme_clk_curr;
++	}
++
++	rc = device_create_file(hdev->dev, &dev_attr_ic_clk_curr);
++	if (rc) {
++		dev_err(hdev->dev,
++			"failed to create device file ic_clk_curr\n");
++		goto remove_tpc_clk_curr;
++	}
++
++	return 0;
++
++remove_tpc_clk_curr:
++	device_remove_file(hdev->dev, &dev_attr_tpc_clk_curr);
++remove_mme_clk_curr:
++	device_remove_file(hdev->dev, &dev_attr_mme_clk_curr);
++remove_ic_clk:
++	device_remove_file(hdev->dev, &dev_attr_ic_clk);
++remove_tpc_clk:
++	device_remove_file(hdev->dev, &dev_attr_tpc_clk);
++remove_mme_clk:
++	device_remove_file(hdev->dev, &dev_attr_mme_clk);
++	return rc;
++}
++
++void goya_remove_device_attr(struct hl_device *hdev)
++{
++	device_remove_file(hdev->dev, &dev_attr_ic_clk_curr);
++	device_remove_file(hdev->dev, &dev_attr_tpc_clk_curr);
++	device_remove_file(hdev->dev, &dev_attr_mme_clk_curr);
++	device_remove_file(hdev->dev, &dev_attr_ic_clk);
++	device_remove_file(hdev->dev, &dev_attr_tpc_clk);
++	device_remove_file(hdev->dev, &dev_attr_mme_clk);
++}
+diff --git a/drivers/misc/habanalabs/habanalabs.h b/drivers/misc/habanalabs/habanalabs.h
+index 899bf98eb002..49b84b3ff864 100644
+--- a/drivers/misc/habanalabs/habanalabs.h
++++ b/drivers/misc/habanalabs/habanalabs.h
+@@ -25,6 +25,8 @@
+ 
+ #define HL_DEVICE_TIMEOUT_USEC		1000000 /* 1 s */
+ 
++#define HL_PLL_LOW_JOB_FREQ_USEC	5000000 /* 5 s */
++
+ #define HL_MAX_QUEUES			128
+ 
+ struct hl_device;
+@@ -60,6 +62,8 @@ struct hw_queue_properties {
+ /**
+  * struct asic_fixed_properties - ASIC specific immutable properties.
+  * @hw_queues_props: H/W queues properties.
++ * @armcp_info: received various information from ArmCP regarding the H/W. e.g.
++ *		available sensors.
+  * @uboot_ver: F/W U-boot version.
+  * @preboot_ver: F/W Preboot version.
+  * @sram_base_address: SRAM physical start address.
+@@ -72,6 +76,7 @@ struct hw_queue_properties {
+  * @dram_pci_bar_size: size of PCI bar towards DRAM.
+  * @host_phys_base_address: base physical address of host memory for
+  *				transactions that the device generates.
++ * @max_power_default: max power of the device after reset
+  * @va_space_host_start_address: base address of virtual memory range for
+  *                               mapping host memory.
+  * @va_space_host_end_address: end address of virtual memory range for
+@@ -84,6 +89,10 @@ struct hw_queue_properties {
+  * @sram_size: total size of SRAM.
+  * @max_asid: maximum number of open contexts (ASIDs).
+  * @num_of_events: number of possible internal H/W IRQs.
++ * @psoc_pci_pll_nr: PCI PLL NR value.
++ * @psoc_pci_pll_nf: PCI PLL NF value.
++ * @psoc_pci_pll_od: PCI PLL OD value.
++ * @psoc_pci_pll_div_factor: PCI PLL DIV FACTOR 1 value.
+  * @completion_queues_count: number of completion queues.
+  * @high_pll: high PLL frequency used by the device.
+  * @cb_pool_cb_cnt: number of CBs in the CB pool.
+@@ -92,6 +101,7 @@ struct hw_queue_properties {
+  */
+ struct asic_fixed_properties {
+ 	struct hw_queue_properties	hw_queues_props[HL_MAX_QUEUES];
++	struct armcp_info	armcp_info;
+ 	char			uboot_ver[VERSION_MAX_LEN];
+ 	char			preboot_ver[VERSION_MAX_LEN];
+ 	u64			sram_base_address;
+@@ -103,6 +113,7 @@ struct asic_fixed_properties {
+ 	u64			dram_size;
+ 	u64			dram_pci_bar_size;
+ 	u64			host_phys_base_address;
++	u64			max_power_default;
+ 	u64			va_space_host_start_address;
+ 	u64			va_space_host_end_address;
+ 	u64			va_space_dram_start_address;
+@@ -111,6 +122,10 @@ struct asic_fixed_properties {
+ 	u32			sram_size;
+ 	u32			max_asid;
+ 	u32			num_of_events;
++	u32			psoc_pci_pll_nr;
++	u32			psoc_pci_pll_nf;
++	u32			psoc_pci_pll_od;
++	u32			psoc_pci_pll_div_factor;
+ 	u32			high_pll;
+ 	u32			cb_pool_cb_cnt;
+ 	u32			cb_pool_cb_size;
+@@ -296,13 +311,37 @@ enum hl_asic_type {
+ };
+ 
+ 
++/**
++ * enum hl_pm_mng_profile - power management profile.
++ * @PM_AUTO: internal clock is set by KMD.
++ * @PM_MANUAL: internal clock is set by the user.
++ * @PM_LAST: last power management type.
++ */
++enum hl_pm_mng_profile {
++	PM_AUTO = 1,
++	PM_MANUAL,
++	PM_LAST
++};
+ 
++/**
++ * enum hl_pll_frequency - PLL frequency.
++ * @PLL_HIGH: high frequency.
++ * @PLL_LOW: low frequency.
++ * @PLL_LAST: last frequency values that were configured by the user.
++ */
++enum hl_pll_frequency {
++	PLL_HIGH = 1,
++	PLL_LOW,
++	PLL_LAST
++};
+ 
+ /**
+  * struct hl_asic_funcs - ASIC specific functions that are can be called from
+  *                        common code.
+  * @early_init: sets up early driver state (pre sw_init), doesn't configure H/W.
+  * @early_fini: tears down what was done in early_init.
++ * @late_init: sets up late driver/hw state (post hw_init) - Optional.
++ * @late_fini: tears down what was done in late_init (pre hw_fini) - Optional.
+  * @sw_init: sets up driver state, does not configure H/W.
+  * @sw_fini: tears down driver state, does not configure H/W.
+  * @hw_init: sets up the H/W state.
+@@ -326,15 +365,23 @@ enum hl_asic_type {
+  * @cpu_accessible_dma_pool_alloc: allocate CPU PQ packet from DMA pool.
+  * @cpu_accessible_dma_pool_free: free CPU PQ packet from DMA pool.
+  * @update_eq_ci: update event queue CI.
++ * @add_device_attr: add ASIC specific device attributes.
++ * @remove_device_attr: remove ASIC specific device attributes.
+  * @handle_eqe: handle event queue entry (IRQ) from ArmCP.
++ * @set_pll_profile: change PLL profile (manual/automatic).
+  * @get_events_stat: retrieve event queue entries histogram.
++ * @enable_clock_gating: enable clock gating for reducing power consumption.
++ * @disable_clock_gating: disable clock for accessing registers on HBW.
+  * @hw_queues_lock: acquire H/W queues lock.
+  * @hw_queues_unlock: release H/W queues lock.
++ * @get_eeprom_data: retrieve EEPROM data from F/W.
+  * @send_cpu_message: send buffer to ArmCP.
+  */
+ struct hl_asic_funcs {
+ 	int (*early_init)(struct hl_device *hdev);
+ 	int (*early_fini)(struct hl_device *hdev);
++	int (*late_init)(struct hl_device *hdev);
++	void (*late_fini)(struct hl_device *hdev);
+ 	int (*sw_init)(struct hl_device *hdev);
+ 	int (*sw_fini)(struct hl_device *hdev);
+ 	int (*hw_init)(struct hl_device *hdev);
+@@ -363,11 +410,19 @@ struct hl_asic_funcs {
+ 	void (*cpu_accessible_dma_pool_free)(struct hl_device *hdev,
+ 				size_t size, void *vaddr);
+ 	void (*update_eq_ci)(struct hl_device *hdev, u32 val);
++	int (*add_device_attr)(struct hl_device *hdev);
++	void (*remove_device_attr)(struct hl_device *hdev);
+ 	void (*handle_eqe)(struct hl_device *hdev,
+ 				struct hl_eq_entry *eq_entry);
++	void (*set_pll_profile)(struct hl_device *hdev,
++			enum hl_pll_frequency freq);
+ 	void* (*get_events_stat)(struct hl_device *hdev, u32 *size);
++	void (*enable_clock_gating)(struct hl_device *hdev);
++	void (*disable_clock_gating)(struct hl_device *hdev);
+ 	void (*hw_queues_lock)(struct hl_device *hdev);
+ 	void (*hw_queues_unlock)(struct hl_device *hdev);
++	int (*get_eeprom_data)(struct hl_device *hdev, void *data,
++				size_t max_size);
+ 	int (*send_cpu_message)(struct hl_device *hdev, u32 *msg,
+ 				u16 len, u32 timeout, long *result);
+ };
+@@ -496,6 +551,7 @@ void hl_wreg(struct hl_device *hdev, u32 reg, u32 val);
+  * @rmmio: configuration area address on SRAM.
+  * @cdev: related char device.
+  * @dev: realted kernel basic device structure.
++ * @work_freq: delayed work to lower device frequency if possible.
+  * @asic_name: ASIC specific nmae.
+  * @asic_type: ASIC specific type.
+  * @completion_queue: array of hl_cq.
+@@ -517,13 +573,23 @@ void hl_wreg(struct hl_device *hdev, u32 reg, u32 val);
+  * @asic_prop: ASIC specific immutable properties.
+  * @asic_funcs: ASIC specific functions.
+  * @asic_specific: ASIC specific information to use only from ASIC files.
++ * @hwmon_dev: H/W monitor device.
++ * @pm_mng_profile: current power management profile.
++ * @hl_chip_info: ASIC's sensors information.
+  * @cb_pool: list of preallocated CBs.
+  * @cb_pool_lock: protects the CB pool.
+  * @user_ctx: current user context executing.
++ * @curr_pll_profile: current PLL profile.
+  * @fd_open_cnt: number of open context executing.
++ * @max_power: the max power of the device, as configured by the sysadmin. This
++ *             value is saved so in case of hard-reset, KMD will restore this
++ *             value and update the F/W after the re-initialization
+  * @major: habanalabs KMD major.
++ * @high_pll: high PLL profile frequency.
+  * @id: device minor.
+  * @disabled: is device disabled.
++ * @late_init_done: is late init stage was done during initialization.
++ * @hwmon_initialized: is H/W monitor sensors was initialized.
+  */
+ struct hl_device {
+ 	struct pci_dev			*pdev;
+@@ -531,6 +597,7 @@ struct hl_device {
+ 	void __iomem			*rmmio;
+ 	struct cdev			cdev;
+ 	struct device			*dev;
++	struct delayed_work		work_freq;
+ 	char				asic_name[16];
+ 	enum hl_asic_type		asic_type;
+ 	struct hl_cq			*completion_queue;
+@@ -553,16 +620,25 @@ struct hl_device {
+ 	struct asic_fixed_properties	asic_prop;
+ 	const struct hl_asic_funcs	*asic_funcs;
+ 	void				*asic_specific;
++	struct device			*hwmon_dev;
++	enum hl_pm_mng_profile		pm_mng_profile;
++	struct hwmon_chip_info		hl_chip_info;
+ 
+ 	struct list_head		cb_pool;
+ 	spinlock_t			cb_pool_lock;
+ 
+ 	/* TODO: The following fields should be moved for multi-context */
+ 	struct hl_ctx			*user_ctx;
++
++	atomic_t			curr_pll_profile;
+ 	atomic_t			fd_open_cnt;
++	u64				max_power;
+ 	u32				major;
++	u32				high_pll;
+ 	u16				id;
+ 	u8				disabled;
++	u8				late_init_done;
++	u8				hwmon_initialized;
+ 
+ 	/* Parameters for bring-up */
+ 	u8				cpu_enable;
+@@ -647,6 +723,15 @@ int hl_device_suspend(struct hl_device *hdev);
+ int hl_device_resume(struct hl_device *hdev);
+ void hl_hpriv_get(struct hl_fpriv *hpriv);
+ void hl_hpriv_put(struct hl_fpriv *hpriv);
++int hl_device_set_frequency(struct hl_device *hdev, enum hl_pll_frequency freq);
++int hl_build_hwmon_channel_info(struct hl_device *hdev,
++		struct armcp_sensor *sensors_arr);
++
++int hl_sysfs_init(struct hl_device *hdev);
++void hl_sysfs_fini(struct hl_device *hdev);
++
++int hl_hwmon_init(struct hl_device *hdev);
++void hl_hwmon_fini(struct hl_device *hdev);
+ 
+ int hl_cb_create(struct hl_device *hdev, struct hl_cb_mgr *mgr, u32 cb_size,
+ 		u64 *handle, int ctx_id);
+@@ -663,6 +748,18 @@ int hl_cb_pool_fini(struct hl_device *hdev);
+ 
+ void goya_set_asic_funcs(struct hl_device *hdev);
+ 
++long hl_get_frequency(struct hl_device *hdev, u32 pll_index, bool curr);
++void hl_set_frequency(struct hl_device *hdev, u32 pll_index, u64 freq);
++long hl_get_temperature(struct hl_device *hdev, int sensor_index, u32 attr);
++long hl_get_voltage(struct hl_device *hdev, int sensor_index, u32 attr);
++long hl_get_current(struct hl_device *hdev, int sensor_index, u32 attr);
++long hl_get_fan_speed(struct hl_device *hdev, int sensor_index, u32 attr);
++long hl_get_pwm_info(struct hl_device *hdev, int sensor_index, u32 attr);
++void hl_set_pwm_info(struct hl_device *hdev, int sensor_index, u32 attr,
++			long value);
++u64 hl_get_max_power(struct hl_device *hdev);
++void hl_set_max_power(struct hl_device *hdev, u64 value);
++
+ /* IOCTLs */
+ long hl_ioctl(struct file *filep, unsigned int cmd, unsigned long arg);
+ int hl_cb_ioctl(struct hl_fpriv *hpriv, void *data);
+diff --git a/drivers/misc/habanalabs/habanalabs_drv.c b/drivers/misc/habanalabs/habanalabs_drv.c
+index b64f58ad0f5d..47a9ab458b43 100644
+--- a/drivers/misc/habanalabs/habanalabs_drv.c
++++ b/drivers/misc/habanalabs/habanalabs_drv.c
+@@ -134,6 +134,13 @@ int hl_device_open(struct inode *inode, struct file *filp)
+ 
+ 	hpriv->taskpid = find_get_pid(current->pid);
+ 
++	/*
++	 * Device is IDLE at this point so it is legal to change PLLs. There
++	 * is no need to check anything because if the PLL is already HIGH, the
++	 * set function will return without doing anything
++	 */
++	hl_device_set_frequency(hdev, PLL_HIGH);
++
+ 	return 0;
+ 
+ out_err:
+diff --git a/drivers/misc/habanalabs/hwmon.c b/drivers/misc/habanalabs/hwmon.c
+new file mode 100644
+index 000000000000..6ca0decb7490
+--- /dev/null
++++ b/drivers/misc/habanalabs/hwmon.c
+@@ -0,0 +1,449 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/*
++ * Copyright 2016-2018 HabanaLabs, Ltd.
++ * All Rights Reserved.
++ */
++
++#include "habanalabs.h"
++
++#define SENSORS_PKT_TIMEOUT		100000	/* 100ms */
++#define HWMON_NR_SENSOR_TYPES		(hwmon_pwm + 1)
++
++int hl_build_hwmon_channel_info(struct hl_device *hdev,
++				struct armcp_sensor *sensors_arr)
++{
++	u32 counts[HWMON_NR_SENSOR_TYPES] = {0};
++	u32 *sensors_by_type[HWMON_NR_SENSOR_TYPES] = {0};
++	u32 sensors_by_type_next_index[HWMON_NR_SENSOR_TYPES] = {0};
++	struct hwmon_channel_info **channels_info;
++	u32 num_sensors_for_type, num_active_sensor_types = 0,
++			arr_size = 0, *curr_arr;
++	enum hwmon_sensor_types type;
++	int rc, i, j;
++
++	for (i = 0 ; i < ARMCP_MAX_SENSORS ; i++) {
++		type = sensors_arr[i].type;
++
++		if ((type == 0) && (sensors_arr[i].flags == 0))
++			break;
++
++		if (type >= HWMON_NR_SENSOR_TYPES) {
++			dev_err(hdev->dev,
++				"Got wrong sensor type %d from device\n", type);
++			return -EINVAL;
++		}
++
++		counts[type]++;
++		arr_size++;
++	}
++
++	for (i = 0 ; i < HWMON_NR_SENSOR_TYPES ; i++) {
++		if (counts[i] == 0)
++			continue;
++
++		num_sensors_for_type = counts[i] + 1;
++		curr_arr = kcalloc(num_sensors_for_type, sizeof(*curr_arr),
++				GFP_KERNEL);
++		if (!curr_arr) {
++			rc = -ENOMEM;
++			goto sensors_type_err;
++		}
++
++		num_active_sensor_types++;
++		sensors_by_type[i] = curr_arr;
++	}
++
++	for (i = 0 ; i < arr_size ; i++) {
++		type = sensors_arr[i].type;
++		curr_arr = sensors_by_type[type];
++		curr_arr[sensors_by_type_next_index[type]++] =
++				sensors_arr[i].flags;
++	}
++
++	channels_info = kcalloc(num_active_sensor_types + 1,
++			sizeof(*channels_info), GFP_KERNEL);
++	if (!channels_info) {
++		rc = -ENOMEM;
++		goto channels_info_array_err;
++	}
++
++	for (i = 0 ; i < num_active_sensor_types ; i++) {
++		channels_info[i] = kzalloc(sizeof(*channels_info[i]),
++				GFP_KERNEL);
++		if (!channels_info[i]) {
++			rc = -ENOMEM;
++			goto channel_info_err;
++		}
++	}
++
++	for (i = 0, j = 0 ; i < HWMON_NR_SENSOR_TYPES ; i++) {
++		if (!sensors_by_type[i])
++			continue;
++
++		channels_info[j]->type = i;
++		channels_info[j]->config = sensors_by_type[i];
++		j++;
++	}
++
++	hdev->hl_chip_info.info =
++			(const struct hwmon_channel_info **)channels_info;
++
++	return 0;
++
++channel_info_err:
++	for (i = 0 ; i < num_active_sensor_types ; i++)
++		if (channels_info[i]) {
++			kfree(channels_info[i]->config);
++			kfree(channels_info[i]);
++		}
++	kfree(channels_info);
++channels_info_array_err:
++sensors_type_err:
++	for (i = 0 ; i < HWMON_NR_SENSOR_TYPES ; i++)
++		kfree(sensors_by_type[i]);
++
++	return rc;
++}
++
++static int hl_read(struct device *dev, enum hwmon_sensor_types type,
++			u32 attr, int channel, long *val)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++
++	if (hdev->disabled)
++		return -ENODEV;
++
++	switch (type) {
++	case hwmon_temp:
++		switch (attr) {
++		case hwmon_temp_input:
++		case hwmon_temp_max:
++		case hwmon_temp_crit:
++		case hwmon_temp_max_hyst:
++		case hwmon_temp_crit_hyst:
++			break;
++		default:
++			return -EINVAL;
++		}
++
++		*val = hl_get_temperature(hdev, channel, attr);
++		break;
++	case hwmon_in:
++		switch (attr) {
++		case hwmon_in_input:
++		case hwmon_in_min:
++		case hwmon_in_max:
++			break;
++		default:
++			return -EINVAL;
++		}
++
++		*val = hl_get_voltage(hdev, channel, attr);
++		break;
++	case hwmon_curr:
++		switch (attr) {
++		case hwmon_curr_input:
++		case hwmon_curr_min:
++		case hwmon_curr_max:
++			break;
++		default:
++			return -EINVAL;
++		}
++
++		*val = hl_get_current(hdev, channel, attr);
++		break;
++	case hwmon_fan:
++		switch (attr) {
++		case hwmon_fan_input:
++		case hwmon_fan_min:
++		case hwmon_fan_max:
++			break;
++		default:
++			return -EINVAL;
++		}
++		*val = hl_get_fan_speed(hdev, channel, attr);
++		break;
++	case hwmon_pwm:
++		switch (attr) {
++		case hwmon_pwm_input:
++		case hwmon_pwm_enable:
++			break;
++		default:
++			return -EINVAL;
++		}
++		*val = hl_get_pwm_info(hdev, channel, attr);
++		break;
++	default:
++		return -EINVAL;
++	}
++	return 0;
++}
++
++static int hl_write(struct device *dev, enum hwmon_sensor_types type,
++			u32 attr, int channel, long val)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++
++	if (hdev->disabled)
++		return -ENODEV;
++
++	switch (type) {
++	case hwmon_pwm:
++		switch (attr) {
++		case hwmon_pwm_input:
++		case hwmon_pwm_enable:
++			break;
++		default:
++			return -EINVAL;
++		}
++		hl_set_pwm_info(hdev, channel, attr, val);
++		break;
++	default:
++		return -EINVAL;
++	}
++	return 0;
++}
++
++static umode_t hl_is_visible(const void *data, enum hwmon_sensor_types type,
++				u32 attr, int channel)
++{
++	switch (type) {
++	case hwmon_temp:
++		switch (attr) {
++		case hwmon_temp_input:
++		case hwmon_temp_max:
++		case hwmon_temp_max_hyst:
++		case hwmon_temp_crit:
++		case hwmon_temp_crit_hyst:
++			return 0444;
++		}
++		break;
++	case hwmon_in:
++		switch (attr) {
++		case hwmon_in_input:
++		case hwmon_in_min:
++		case hwmon_in_max:
++			return 0444;
++		}
++		break;
++	case hwmon_curr:
++		switch (attr) {
++		case hwmon_curr_input:
++		case hwmon_curr_min:
++		case hwmon_curr_max:
++			return 0444;
++		}
++		break;
++	case hwmon_fan:
++		switch (attr) {
++		case hwmon_fan_input:
++		case hwmon_fan_min:
++		case hwmon_fan_max:
++			return 0444;
++		}
++		break;
++	case hwmon_pwm:
++		switch (attr) {
++		case hwmon_pwm_input:
++		case hwmon_pwm_enable:
++			return 0644;
++		}
++		break;
++	default:
++		break;
++	}
++	return 0;
++}
++
++static const struct hwmon_ops hl_hwmon_ops = {
++	.is_visible = hl_is_visible,
++	.read = hl_read,
++	.write = hl_write
++};
++
++long hl_get_temperature(struct hl_device *hdev, int sensor_index, u32 attr)
 +{
 +	struct armcp_packet pkt;
 +	long result;
@@ -631,514 +1717,776 @@ index 08d5227eaf1d..6c04277ae0fa 100644
 +
 +	memset(&pkt, 0, sizeof(pkt));
 +
-+	pkt.opcode = ARMCP_PACKET_UNMASK_RAZWI_IRQ;
-+	pkt.value = event_type;
++	pkt.opcode = ARMCP_PACKET_TEMPERATURE_GET;
++	pkt.sensor_index = sensor_index;
++	pkt.type = attr;
 +
 +	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
-+			HL_DEVICE_TIMEOUT_USEC, &result);
++			SENSORS_PKT_TIMEOUT, &result);
++
++	if (rc) {
++		dev_err(hdev->dev,
++			"Failed to get temperature from sensor %d, error %d\n",
++			sensor_index, rc);
++		result = 0;
++	}
++
++	return result;
++}
++
++long hl_get_voltage(struct hl_device *hdev, int sensor_index, u32 attr)
++{
++	struct armcp_packet pkt;
++	long result;
++	int rc;
++
++	memset(&pkt, 0, sizeof(pkt));
++
++	pkt.opcode = ARMCP_PACKET_VOLTAGE_GET;
++	pkt.sensor_index = sensor_index;
++	pkt.type = attr;
++
++	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
++					SENSORS_PKT_TIMEOUT, &result);
++
++	if (rc) {
++		dev_err(hdev->dev,
++			"Failed to get voltage from sensor %d, error %d\n",
++			sensor_index, rc);
++		result = 0;
++	}
++
++	return result;
++}
++
++long hl_get_current(struct hl_device *hdev, int sensor_index, u32 attr)
++{
++	struct armcp_packet pkt;
++	long result;
++	int rc;
++
++	memset(&pkt, 0, sizeof(pkt));
++
++	pkt.opcode = ARMCP_PACKET_CURRENT_GET;
++	pkt.sensor_index = sensor_index;
++	pkt.type = attr;
++
++	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
++					SENSORS_PKT_TIMEOUT, &result);
++
++	if (rc) {
++		dev_err(hdev->dev,
++			"Failed to get current from sensor %d, error %d\n",
++			sensor_index, rc);
++		result = 0;
++	}
++
++	return result;
++}
++
++long hl_get_fan_speed(struct hl_device *hdev, int sensor_index, u32 attr)
++{
++	struct armcp_packet pkt;
++	long result;
++	int rc;
++
++	memset(&pkt, 0, sizeof(pkt));
++
++	pkt.opcode = ARMCP_PACKET_FAN_SPEED_GET;
++	pkt.sensor_index = sensor_index;
++	pkt.type = attr;
++
++	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
++					SENSORS_PKT_TIMEOUT, &result);
++
++	if (rc) {
++		dev_err(hdev->dev,
++			"Failed to get fan speed from sensor %d, error %d\n",
++			sensor_index, rc);
++		result = 0;
++	}
++
++	return result;
++}
++
++long hl_get_pwm_info(struct hl_device *hdev, int sensor_index, u32 attr)
++{
++	struct armcp_packet pkt;
++	long result;
++	int rc;
++
++	memset(&pkt, 0, sizeof(pkt));
++
++	pkt.opcode = ARMCP_PACKET_PWM_GET;
++	pkt.sensor_index = sensor_index;
++	pkt.type = attr;
++
++	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
++					SENSORS_PKT_TIMEOUT, &result);
++
++	if (rc) {
++		dev_err(hdev->dev,
++			"Failed to get pwm info from sensor %d, error %d\n",
++			sensor_index, rc);
++		result = 0;
++	}
++
++	return result;
++}
++
++void hl_set_pwm_info(struct hl_device *hdev, int sensor_index, u32 attr,
++			long value)
++{
++	struct armcp_packet pkt;
++	int rc;
++
++	memset(&pkt, 0, sizeof(pkt));
++
++	pkt.opcode = ARMCP_PACKET_PWM_SET;
++	pkt.sensor_index = sensor_index;
++	pkt.type = attr;
++	pkt.value = value;
++
++	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
++					SENSORS_PKT_TIMEOUT, NULL);
 +
 +	if (rc)
-+		dev_err(hdev->dev, "failed to unmask RAZWI IRQ %d", event_type);
-+
-+	return rc;
-+}
-+
-+void goya_handle_eqe(struct hl_device *hdev, struct hl_eq_entry *eq_entry)
-+{
-+	u16 event_type = ((eq_entry->hdr.ctl & EQ_CTL_EVENT_TYPE_MASK)
-+			>> EQ_CTL_EVENT_TYPE_SHIFT);
-+	struct goya_device *goya = hdev->asic_specific;
-+
-+	goya->events_stat[event_type]++;
-+
-+	switch (event_type) {
-+	case GOYA_ASYNC_EVENT_ID_PCIE_IF:
-+	case GOYA_ASYNC_EVENT_ID_TPC0_ECC:
-+	case GOYA_ASYNC_EVENT_ID_TPC1_ECC:
-+	case GOYA_ASYNC_EVENT_ID_TPC2_ECC:
-+	case GOYA_ASYNC_EVENT_ID_TPC3_ECC:
-+	case GOYA_ASYNC_EVENT_ID_TPC4_ECC:
-+	case GOYA_ASYNC_EVENT_ID_TPC5_ECC:
-+	case GOYA_ASYNC_EVENT_ID_TPC6_ECC:
-+	case GOYA_ASYNC_EVENT_ID_TPC7_ECC:
-+	case GOYA_ASYNC_EVENT_ID_MME_ECC:
-+	case GOYA_ASYNC_EVENT_ID_MME_ECC_EXT:
-+	case GOYA_ASYNC_EVENT_ID_MMU_ECC:
-+	case GOYA_ASYNC_EVENT_ID_DMA_MACRO:
-+	case GOYA_ASYNC_EVENT_ID_DMA_ECC:
-+	case GOYA_ASYNC_EVENT_ID_CPU_IF_ECC:
-+	case GOYA_ASYNC_EVENT_ID_PSOC_MEM:
-+	case GOYA_ASYNC_EVENT_ID_PSOC_CORESIGHT:
-+	case GOYA_ASYNC_EVENT_ID_SRAM0:
-+	case GOYA_ASYNC_EVENT_ID_SRAM1:
-+	case GOYA_ASYNC_EVENT_ID_SRAM2:
-+	case GOYA_ASYNC_EVENT_ID_SRAM3:
-+	case GOYA_ASYNC_EVENT_ID_SRAM4:
-+	case GOYA_ASYNC_EVENT_ID_SRAM5:
-+	case GOYA_ASYNC_EVENT_ID_SRAM6:
-+	case GOYA_ASYNC_EVENT_ID_SRAM7:
-+	case GOYA_ASYNC_EVENT_ID_SRAM8:
-+	case GOYA_ASYNC_EVENT_ID_SRAM9:
-+	case GOYA_ASYNC_EVENT_ID_SRAM10:
-+	case GOYA_ASYNC_EVENT_ID_SRAM11:
-+	case GOYA_ASYNC_EVENT_ID_SRAM12:
-+	case GOYA_ASYNC_EVENT_ID_SRAM13:
-+	case GOYA_ASYNC_EVENT_ID_SRAM14:
-+	case GOYA_ASYNC_EVENT_ID_SRAM15:
-+	case GOYA_ASYNC_EVENT_ID_SRAM16:
-+	case GOYA_ASYNC_EVENT_ID_SRAM17:
-+	case GOYA_ASYNC_EVENT_ID_SRAM18:
-+	case GOYA_ASYNC_EVENT_ID_SRAM19:
-+	case GOYA_ASYNC_EVENT_ID_SRAM20:
-+	case GOYA_ASYNC_EVENT_ID_SRAM21:
-+	case GOYA_ASYNC_EVENT_ID_SRAM22:
-+	case GOYA_ASYNC_EVENT_ID_SRAM23:
-+	case GOYA_ASYNC_EVENT_ID_SRAM24:
-+	case GOYA_ASYNC_EVENT_ID_SRAM25:
-+	case GOYA_ASYNC_EVENT_ID_SRAM26:
-+	case GOYA_ASYNC_EVENT_ID_SRAM27:
-+	case GOYA_ASYNC_EVENT_ID_SRAM28:
-+	case GOYA_ASYNC_EVENT_ID_SRAM29:
-+	case GOYA_ASYNC_EVENT_ID_GIC500:
-+	case GOYA_ASYNC_EVENT_ID_PLL0:
-+	case GOYA_ASYNC_EVENT_ID_PLL1:
-+	case GOYA_ASYNC_EVENT_ID_PLL3:
-+	case GOYA_ASYNC_EVENT_ID_PLL4:
-+	case GOYA_ASYNC_EVENT_ID_PLL5:
-+	case GOYA_ASYNC_EVENT_ID_PLL6:
-+	case GOYA_ASYNC_EVENT_ID_AXI_ECC:
-+	case GOYA_ASYNC_EVENT_ID_L2_RAM_ECC:
-+	case GOYA_ASYNC_EVENT_ID_PSOC_GPIO_05_SW_RESET:
-+	case GOYA_ASYNC_EVENT_ID_PSOC_GPIO_10_VRHOT_ICRIT:
 +		dev_err(hdev->dev,
-+			"Received H/W interrupt %d, reset the chip\n",
-+			event_type);
-+		break;
-+
-+	case GOYA_ASYNC_EVENT_ID_PCIE_DEC:
-+	case GOYA_ASYNC_EVENT_ID_TPC0_DEC:
-+	case GOYA_ASYNC_EVENT_ID_TPC1_DEC:
-+	case GOYA_ASYNC_EVENT_ID_TPC2_DEC:
-+	case GOYA_ASYNC_EVENT_ID_TPC3_DEC:
-+	case GOYA_ASYNC_EVENT_ID_TPC4_DEC:
-+	case GOYA_ASYNC_EVENT_ID_TPC5_DEC:
-+	case GOYA_ASYNC_EVENT_ID_TPC6_DEC:
-+	case GOYA_ASYNC_EVENT_ID_TPC7_DEC:
-+	case GOYA_ASYNC_EVENT_ID_MME_WACS:
-+	case GOYA_ASYNC_EVENT_ID_MME_WACSD:
-+	case GOYA_ASYNC_EVENT_ID_CPU_AXI_SPLITTER:
-+	case GOYA_ASYNC_EVENT_ID_PSOC_AXI_DEC:
-+	case GOYA_ASYNC_EVENT_ID_PSOC:
-+	case GOYA_ASYNC_EVENT_ID_TPC0_KRN_ERR:
-+	case GOYA_ASYNC_EVENT_ID_TPC1_KRN_ERR:
-+	case GOYA_ASYNC_EVENT_ID_TPC2_KRN_ERR:
-+	case GOYA_ASYNC_EVENT_ID_TPC3_KRN_ERR:
-+	case GOYA_ASYNC_EVENT_ID_TPC4_KRN_ERR:
-+	case GOYA_ASYNC_EVENT_ID_TPC5_KRN_ERR:
-+	case GOYA_ASYNC_EVENT_ID_TPC6_KRN_ERR:
-+	case GOYA_ASYNC_EVENT_ID_TPC7_KRN_ERR:
-+	case GOYA_ASYNC_EVENT_ID_TPC0_CMDQ:
-+	case GOYA_ASYNC_EVENT_ID_TPC1_CMDQ:
-+	case GOYA_ASYNC_EVENT_ID_TPC2_CMDQ:
-+	case GOYA_ASYNC_EVENT_ID_TPC3_CMDQ:
-+	case GOYA_ASYNC_EVENT_ID_TPC4_CMDQ:
-+	case GOYA_ASYNC_EVENT_ID_TPC5_CMDQ:
-+	case GOYA_ASYNC_EVENT_ID_TPC6_CMDQ:
-+	case GOYA_ASYNC_EVENT_ID_TPC7_CMDQ:
-+	case GOYA_ASYNC_EVENT_ID_TPC0_QM:
-+	case GOYA_ASYNC_EVENT_ID_TPC1_QM:
-+	case GOYA_ASYNC_EVENT_ID_TPC2_QM:
-+	case GOYA_ASYNC_EVENT_ID_TPC3_QM:
-+	case GOYA_ASYNC_EVENT_ID_TPC4_QM:
-+	case GOYA_ASYNC_EVENT_ID_TPC5_QM:
-+	case GOYA_ASYNC_EVENT_ID_TPC6_QM:
-+	case GOYA_ASYNC_EVENT_ID_TPC7_QM:
-+	case GOYA_ASYNC_EVENT_ID_MME_QM:
-+	case GOYA_ASYNC_EVENT_ID_MME_CMDQ:
-+	case GOYA_ASYNC_EVENT_ID_DMA0_QM:
-+	case GOYA_ASYNC_EVENT_ID_DMA1_QM:
-+	case GOYA_ASYNC_EVENT_ID_DMA2_QM:
-+	case GOYA_ASYNC_EVENT_ID_DMA3_QM:
-+	case GOYA_ASYNC_EVENT_ID_DMA4_QM:
-+	case GOYA_ASYNC_EVENT_ID_DMA0_CH:
-+	case GOYA_ASYNC_EVENT_ID_DMA1_CH:
-+	case GOYA_ASYNC_EVENT_ID_DMA2_CH:
-+	case GOYA_ASYNC_EVENT_ID_DMA3_CH:
-+	case GOYA_ASYNC_EVENT_ID_DMA4_CH:
-+		goya_print_irq_info(hdev, event_type);
-+		goya_unmask_irq(hdev, event_type);
-+		break;
-+
-+	case GOYA_ASYNC_EVENT_ID_TPC0_BMON_SPMU:
-+	case GOYA_ASYNC_EVENT_ID_TPC1_BMON_SPMU:
-+	case GOYA_ASYNC_EVENT_ID_TPC2_BMON_SPMU:
-+	case GOYA_ASYNC_EVENT_ID_TPC3_BMON_SPMU:
-+	case GOYA_ASYNC_EVENT_ID_TPC4_BMON_SPMU:
-+	case GOYA_ASYNC_EVENT_ID_TPC5_BMON_SPMU:
-+	case GOYA_ASYNC_EVENT_ID_TPC6_BMON_SPMU:
-+	case GOYA_ASYNC_EVENT_ID_TPC7_BMON_SPMU:
-+	case GOYA_ASYNC_EVENT_ID_DMA_BM_CH0:
-+	case GOYA_ASYNC_EVENT_ID_DMA_BM_CH1:
-+	case GOYA_ASYNC_EVENT_ID_DMA_BM_CH2:
-+	case GOYA_ASYNC_EVENT_ID_DMA_BM_CH3:
-+	case GOYA_ASYNC_EVENT_ID_DMA_BM_CH4:
-+		dev_info(hdev->dev, "Received H/W interrupt %d\n", event_type);
-+		break;
-+
-+	default:
-+		dev_err(hdev->dev, "Received invalid H/W interrupt %d\n",
-+				event_type);
-+		break;
-+	}
++			"Failed to set pwm info to sensor %d, error %d\n",
++			sensor_index, rc);
 +}
 +
-+void *goya_get_events_stat(struct hl_device *hdev, u32 *size)
++int hl_hwmon_init(struct hl_device *hdev)
 +{
-+	struct goya_device *goya = hdev->asic_specific;
++	struct device *dev = hdev->pdev ? &hdev->pdev->dev : hdev->dev;
++	int rc;
 +
-+	*size = (u32) sizeof(goya->events_stat);
++	if ((hdev->hwmon_initialized) || !(hdev->fw_loading))
++		return 0;
 +
-+	return goya->events_stat;
-+}
++	if (hdev->hl_chip_info.info) {
++		hdev->hl_chip_info.ops = &hl_hwmon_ops;
 +
- 
- static void goya_hw_queues_lock(struct hl_device *hdev)
- {
-@@ -3794,6 +4294,7 @@ static const struct hl_asic_funcs goya_funcs = {
- 	.sw_fini = goya_sw_fini,
- 	.hw_init = goya_hw_init,
- 	.hw_fini = goya_hw_fini,
-+	.halt_engines = goya_halt_engines,
- 	.suspend = goya_suspend,
- 	.resume = goya_resume,
- 	.mmap = goya_mmap,
-@@ -3808,6 +4309,9 @@ static const struct hl_asic_funcs goya_funcs = {
- 	.dma_pool_free = goya_dma_pool_free,
- 	.cpu_accessible_dma_pool_alloc = goya_cpu_accessible_dma_pool_alloc,
- 	.cpu_accessible_dma_pool_free = goya_cpu_accessible_dma_pool_free,
-+	.update_eq_ci = goya_update_eq_ci,
-+	.handle_eqe = goya_handle_eqe,
-+	.get_events_stat = goya_get_events_stat,
- 	.hw_queues_lock = goya_hw_queues_lock,
- 	.hw_queues_unlock = goya_hw_queues_unlock,
- 	.send_cpu_message = goya_send_cpu_message
-diff --git a/drivers/misc/habanalabs/goya/goyaP.h b/drivers/misc/habanalabs/goya/goyaP.h
-index 598a718d3df1..c6bfcb6c6905 100644
---- a/drivers/misc/habanalabs/goya/goyaP.h
-+++ b/drivers/misc/habanalabs/goya/goyaP.h
-@@ -123,6 +123,7 @@ struct goya_device {
- 	/* TODO: remove hw_queues_lock after moving to scheduler code */
- 	spinlock_t	hw_queues_lock;
- 	u64		ddr_bar_cur_addr;
-+	u32		events_stat[GOYA_ASYNC_EVENT_ID_SIZE];
- 	u32		hw_cap_initialized;
- };
- 
-diff --git a/drivers/misc/habanalabs/habanalabs.h b/drivers/misc/habanalabs/habanalabs.h
-index 8232e2259463..899bf98eb002 100644
---- a/drivers/misc/habanalabs/habanalabs.h
-+++ b/drivers/misc/habanalabs/habanalabs.h
-@@ -83,6 +83,7 @@ struct hw_queue_properties {
-  * @cfg_size: configuration space size on SRAM.
-  * @sram_size: total size of SRAM.
-  * @max_asid: maximum number of open contexts (ASIDs).
-+ * @num_of_events: number of possible internal H/W IRQs.
-  * @completion_queues_count: number of completion queues.
-  * @high_pll: high PLL frequency used by the device.
-  * @cb_pool_cb_cnt: number of CBs in the CB pool.
-@@ -109,6 +110,7 @@ struct asic_fixed_properties {
- 	u32			cfg_size;
- 	u32			sram_size;
- 	u32			max_asid;
-+	u32			num_of_events;
- 	u32			high_pll;
- 	u32			cb_pool_cb_cnt;
- 	u32			cb_pool_cb_size;
-@@ -209,6 +211,9 @@ struct hl_cs_job;
- #define HL_CQ_LENGTH			HL_QUEUE_LENGTH
- #define HL_CQ_SIZE_IN_BYTES		(HL_CQ_LENGTH * HL_CQ_ENTRY_SIZE)
- 
-+/* Must be power of 2 (HL_PAGE_SIZE / HL_EQ_ENTRY_SIZE) */
-+#define HL_EQ_LENGTH			64
-+#define HL_EQ_SIZE_IN_BYTES		(HL_EQ_LENGTH * HL_EQ_ENTRY_SIZE)
- 
- 
- /**
-@@ -256,6 +261,20 @@ struct hl_cq {
- 	atomic_t		free_slots_cnt;
- };
- 
-+/**
-+ * struct hl_eq - describes the event queue (single one per device)
-+ * @hdev: pointer to the device structure
-+ * @kernel_address: holds the queue's kernel virtual address
-+ * @bus_address: holds the queue's DMA address
-+ * @ci: ci inside the queue
-+ */
-+struct hl_eq {
-+	struct hl_device	*hdev;
-+	u64			kernel_address;
-+	dma_addr_t		bus_address;
-+	u32			ci;
-+};
-+
- 
- 
- 
-@@ -288,6 +307,9 @@ enum hl_asic_type {
-  * @sw_fini: tears down driver state, does not configure H/W.
-  * @hw_init: sets up the H/W state.
-  * @hw_fini: tears down the H/W state.
-+ * @halt_engines: halt engines, needed for reset sequence. This also disables
-+ *                interrupts from the device. Should be called before
-+ *                hw_fini and before CS rollback.
-  * @suspend: handles IP specific H/W or SW changes for suspend.
-  * @resume: handles IP specific H/W or SW changes for resume.
-  * @mmap: mmap function, does nothing.
-@@ -303,6 +325,9 @@ enum hl_asic_type {
-  * @dma_pool_free: free small DMA allocation from pool.
-  * @cpu_accessible_dma_pool_alloc: allocate CPU PQ packet from DMA pool.
-  * @cpu_accessible_dma_pool_free: free CPU PQ packet from DMA pool.
-+ * @update_eq_ci: update event queue CI.
-+ * @handle_eqe: handle event queue entry (IRQ) from ArmCP.
-+ * @get_events_stat: retrieve event queue entries histogram.
-  * @hw_queues_lock: acquire H/W queues lock.
-  * @hw_queues_unlock: release H/W queues lock.
-  * @send_cpu_message: send buffer to ArmCP.
-@@ -314,6 +339,7 @@ struct hl_asic_funcs {
- 	int (*sw_fini)(struct hl_device *hdev);
- 	int (*hw_init)(struct hl_device *hdev);
- 	void (*hw_fini)(struct hl_device *hdev, bool hard_reset);
-+	void (*halt_engines)(struct hl_device *hdev, bool hard_reset);
- 	int (*suspend)(struct hl_device *hdev);
- 	int (*resume)(struct hl_device *hdev);
- 	int (*mmap)(struct hl_fpriv *hpriv, struct vm_area_struct *vma);
-@@ -336,6 +362,10 @@ struct hl_asic_funcs {
- 				size_t size, dma_addr_t *dma_handle);
- 	void (*cpu_accessible_dma_pool_free)(struct hl_device *hdev,
- 				size_t size, void *vaddr);
-+	void (*update_eq_ci)(struct hl_device *hdev, u32 val);
-+	void (*handle_eqe)(struct hl_device *hdev,
-+				struct hl_eq_entry *eq_entry);
-+	void* (*get_events_stat)(struct hl_device *hdev, u32 *size);
- 	void (*hw_queues_lock)(struct hl_device *hdev);
- 	void (*hw_queues_unlock)(struct hl_device *hdev);
- 	int (*send_cpu_message)(struct hl_device *hdev, u32 *msg,
-@@ -474,6 +504,7 @@ void hl_wreg(struct hl_device *hdev, u32 reg, u32 val);
-  * @kernel_ctx: KMD context structure.
-  * @kernel_queues: array of hl_hw_queue.
-  * @kernel_cb_mgr: command buffer manager for creating/destroying/handling CGs.
-+ * @event_queue: event queue for IRQ from ArmCP.
-  * @dma_pool: DMA pool for small allocations.
-  * @cpu_accessible_dma_mem: KMD <-> ArmCP shared memory CPU address.
-  * @cpu_accessible_dma_address: KMD <-> ArmCP shared memory DMA address.
-@@ -504,9 +535,11 @@ struct hl_device {
- 	enum hl_asic_type		asic_type;
- 	struct hl_cq			*completion_queue;
- 	struct workqueue_struct		*cq_wq;
-+	struct workqueue_struct		*eq_wq;
- 	struct hl_ctx			*kernel_ctx;
- 	struct hl_hw_queue		*kernel_queues;
- 	struct hl_cb_mgr		kernel_cb_mgr;
-+	struct hl_eq			event_queue;
- 	struct dma_pool			*dma_pool;
- 	void				*cpu_accessible_dma_mem;
- 	dma_addr_t			cpu_accessible_dma_address;
-@@ -593,6 +626,10 @@ void hl_hw_queue_inc_ci_kernel(struct hl_device *hdev, u32 hw_queue_id);
- 
- int hl_cq_init(struct hl_device *hdev, struct hl_cq *q, u32 hw_queue_id);
- void hl_cq_fini(struct hl_device *hdev, struct hl_cq *q);
-+int hl_eq_init(struct hl_device *hdev, struct hl_eq *q);
-+void hl_eq_fini(struct hl_device *hdev, struct hl_eq *q);
-+irqreturn_t hl_irq_handler_cq(int irq, void *arg);
-+irqreturn_t hl_irq_handler_eq(int irq, void *arg);
- int hl_asid_init(struct hl_device *hdev);
- void hl_asid_fini(struct hl_device *hdev);
- unsigned long hl_asid_alloc(struct hl_device *hdev);
-diff --git a/drivers/misc/habanalabs/include/goya/goya.h b/drivers/misc/habanalabs/include/goya/goya.h
-index 2d0efb7b44bb..bcc461760e5f 100644
---- a/drivers/misc/habanalabs/include/goya/goya.h
-+++ b/drivers/misc/habanalabs/include/goya/goya.h
-@@ -65,7 +65,6 @@
- 
- #define GOYA_MSIX_ENTRIES	8
- #define EVENT_QUEUE_MSIX_IDX	5
--#define ARMCP_RESET_MSIX_IDX	6
- 
- #define QMAN_PQ_ENTRY_SIZE	16			/* Bytes */
- 
-diff --git a/drivers/misc/habanalabs/irq.c b/drivers/misc/habanalabs/irq.c
-index 97b0de7ea5c2..9586323e7dfb 100644
---- a/drivers/misc/habanalabs/irq.c
-+++ b/drivers/misc/habanalabs/irq.c
-@@ -9,6 +9,18 @@
- 
- #include <linux/dma-mapping.h>
- 
-+/**
-+ * This structure is used to schedule work of EQ entry and armcp_reset event
-+ *
-+ * @eq_work          - workqueue object to run when EQ entry is received
-+ * @hdev             - pointer to device structure
-+ * @eq_entry         - copy of the EQ entry
-+ */
-+struct hl_eqe_work {
-+	struct work_struct	eq_work;
-+	struct hl_device	*hdev;
-+	struct hl_eq_entry	eq_entry;
-+};
- 
- /**
-  * hl_cq_inc_ptr - increment ci or pi of cq
-@@ -26,6 +38,33 @@ inline u32 hl_cq_inc_ptr(u32 ptr)
- 	return ptr;
- }
- 
-+/**
-+ * hl_eq_inc_ptr - increment ci of eq
-+ *
-+ * @ptr: the current ci value of the event queue
-+ *
-+ * Increment ptr by 1. If it reaches the number of event queue
-+ * entries, set it to 0
-+ */
-+inline u32 hl_eq_inc_ptr(u32 ptr)
-+{
-+	ptr++;
-+	if (unlikely(ptr == HL_EQ_LENGTH))
-+		ptr = 0;
-+	return ptr;
-+}
-+
-+static void irq_handle_eqe(struct work_struct *work)
-+{
-+	struct hl_eqe_work *eqe_work = container_of(work, struct hl_eqe_work,
-+							eq_work);
-+	struct hl_device *hdev = eqe_work->hdev;
-+
-+	hdev->asic_funcs->handle_eqe(hdev, &eqe_work->eq_entry);
-+
-+	kfree(eqe_work);
-+}
-+
- /**
-  * hl_irq_handler_cq - irq handler for completion queue
-  *
-@@ -103,6 +142,68 @@ irqreturn_t hl_irq_handler_cq(int irq, void *arg)
- 	return IRQ_HANDLED;
- }
- 
-+/**
-+ * hl_irq_handler_eq - irq handler for event queue
-+ *
-+ * @irq: irq number
-+ * @arg: pointer to event queue structure
-+ *
-+ */
-+irqreturn_t hl_irq_handler_eq(int irq, void *arg)
-+{
-+	struct hl_eq *eq = arg;
-+	struct hl_device *hdev = eq->hdev;
-+	struct hl_eq_entry *eq_entry;
-+	struct hl_eq_entry *eq_base;
-+	struct hl_eqe_work *handle_eqe_work;
-+
-+	eq_base = (struct hl_eq_entry *) eq->kernel_address;
-+
-+	while (1) {
-+		bool entry_ready =
-+				((eq_base[eq->ci].hdr.ctl & EQ_CTL_READY_MASK)
-+						>> EQ_CTL_READY_SHIFT);
-+
-+		if (!entry_ready)
-+			break;
-+
-+		eq_entry = &eq_base[eq->ci];
-+
-+		/*
-+		 * Make sure we read EQ entry contents after we've
-+		 * checked the ownership bit.
-+		 */
-+		dma_rmb();
-+
-+		if (hdev->disabled) {
-+			dev_warn(hdev->dev,
-+				"Device disabled but received IRQ %d for EQ\n",
-+					irq);
-+			goto skip_irq;
++		hdev->hwmon_dev = hwmon_device_register_with_info(dev,
++				"habanalabs", hdev, &hdev->hl_chip_info, NULL);
++		if (IS_ERR(hdev->hwmon_dev)) {
++			rc = PTR_ERR(hdev->hwmon_dev);
++			dev_err(hdev->dev,
++				"Unable to register hwmon device: %d\n", rc);
++			return rc;
 +		}
 +
-+		handle_eqe_work = kmalloc(sizeof(*handle_eqe_work), GFP_ATOMIC);
-+		if (handle_eqe_work) {
-+			INIT_WORK(&handle_eqe_work->eq_work, irq_handle_eqe);
-+			handle_eqe_work->hdev = hdev;
++		dev_info(hdev->dev, "%s: add sensors information\n",
++			dev_name(hdev->hwmon_dev));
 +
-+			memcpy(&handle_eqe_work->eq_entry, eq_entry,
-+					sizeof(*eq_entry));
-+
-+			queue_work(hdev->eq_wq, &handle_eqe_work->eq_work);
-+		}
-+skip_irq:
-+		/* Clear EQ entry ready bit */
-+		eq_entry->hdr.ctl &= ~EQ_CTL_READY_MASK;
-+
-+		eq->ci = hl_eq_inc_ptr(eq->ci);
-+
-+		hdev->asic_funcs->update_eq_ci(hdev, eq->ci);
++		hdev->hwmon_initialized = true;
++	} else {
++		dev_info(hdev->dev, "no available sensors\n");
 +	}
-+
-+	return IRQ_HANDLED;
-+}
-+
- /**
-  * hl_cq_init - main initialization function for an cq object
-  *
-@@ -148,3 +249,46 @@ void hl_cq_fini(struct hl_device *hdev, struct hl_cq *q)
- 	hdev->asic_funcs->dma_free_coherent(hdev, HL_CQ_SIZE_IN_BYTES,
- 			(void *) q->kernel_address, q->bus_address);
- }
-+
-+/**
-+ * hl_eq_init - main initialization function for an event queue object
-+ *
-+ * @hdev: pointer to device structure
-+ * @q: pointer to eq structure
-+ *
-+ * Allocate dma-able memory for the event queue and initialize fields
-+ * Returns 0 on success
-+ */
-+int hl_eq_init(struct hl_device *hdev, struct hl_eq *q)
-+{
-+	void *p;
-+
-+	BUILD_BUG_ON(HL_EQ_SIZE_IN_BYTES > HL_PAGE_SIZE);
-+
-+	p = hdev->asic_funcs->dma_alloc_coherent(hdev, HL_EQ_SIZE_IN_BYTES,
-+				&q->bus_address, GFP_KERNEL | __GFP_ZERO);
-+	if (!p)
-+		return -ENOMEM;
-+
-+	q->hdev = hdev;
-+	q->kernel_address = (u64) p;
-+	q->ci = 0;
 +
 +	return 0;
 +}
 +
-+/**
-+ * hl_eq_fini - destroy event queue
-+ *
-+ * @hdev: pointer to device structure
-+ * @q: pointer to eq structure
-+ *
-+ * Free the event queue memory
-+ */
-+void hl_eq_fini(struct hl_device *hdev, struct hl_eq *q)
++void hl_hwmon_fini(struct hl_device *hdev)
 +{
-+	flush_workqueue(hdev->eq_wq);
++	if (!hdev->hwmon_initialized)
++		return;
 +
-+	hdev->asic_funcs->dma_free_coherent(hdev, HL_EQ_SIZE_IN_BYTES,
-+			(void *) q->kernel_address, q->bus_address);
++	hwmon_device_unregister(hdev->hwmon_dev);
++}
+diff --git a/drivers/misc/habanalabs/sysfs.c b/drivers/misc/habanalabs/sysfs.c
+new file mode 100644
+index 000000000000..edd5f7159de0
+--- /dev/null
++++ b/drivers/misc/habanalabs/sysfs.c
+@@ -0,0 +1,588 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/*
++ * Copyright 2016-2018 HabanaLabs, Ltd.
++ * All Rights Reserved.
++ */
++
++#include "habanalabs.h"
++#include "include/habanalabs_device_if.h"
++
++#include <linux/hwmon-sysfs.h>
++#include <linux/hwmon.h>
++
++#define SET_CLK_PKT_TIMEOUT	200000	/* 200ms */
++#define SET_PWR_PKT_TIMEOUT	400000	/* 400ms */
++
++long hl_get_frequency(struct hl_device *hdev, u32 pll_index, bool curr)
++{
++	struct armcp_packet pkt;
++	long result;
++	int rc;
++
++	memset(&pkt, 0, sizeof(pkt));
++
++	if (curr)
++		pkt.opcode = ARMCP_PACKET_FREQUENCY_CURR_GET;
++	else
++		pkt.opcode = ARMCP_PACKET_FREQUENCY_GET;
++	pkt.pll_index = pll_index;
++
++	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
++						SET_CLK_PKT_TIMEOUT, &result);
++
++	if (rc) {
++		dev_err(hdev->dev,
++			"Failed to get frequency of PLL %d, error %d\n",
++			pll_index, rc);
++		result = rc;
++	}
++
++	return result;
++}
++
++void hl_set_frequency(struct hl_device *hdev, u32 pll_index, u64 freq)
++{
++	struct armcp_packet pkt;
++	int rc;
++
++	memset(&pkt, 0, sizeof(pkt));
++
++	pkt.opcode = ARMCP_PACKET_FREQUENCY_SET;
++	pkt.pll_index = pll_index;
++	pkt.value = freq;
++
++	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
++					SET_CLK_PKT_TIMEOUT, NULL);
++
++	if (rc)
++		dev_err(hdev->dev,
++			"Failed to set frequency to PLL %d, error %d\n",
++			pll_index, rc);
++}
++
++u64 hl_get_max_power(struct hl_device *hdev)
++{
++	struct armcp_packet pkt;
++	long result;
++	int rc;
++
++	memset(&pkt, 0, sizeof(pkt));
++
++	pkt.opcode = ARMCP_PACKET_MAX_POWER_GET;
++
++	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
++						SET_PWR_PKT_TIMEOUT, &result);
++
++	if (rc) {
++		dev_err(hdev->dev, "Failed to get max power, error %d\n", rc);
++		result = rc;
++	}
++
++	return result;
++}
++
++void hl_set_max_power(struct hl_device *hdev, u64 value)
++{
++	struct armcp_packet pkt;
++	int rc;
++
++	memset(&pkt, 0, sizeof(pkt));
++
++	pkt.opcode = ARMCP_PACKET_MAX_POWER_SET;
++	pkt.value = value;
++
++	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
++					SET_PWR_PKT_TIMEOUT, NULL);
++
++	if (rc)
++		dev_err(hdev->dev, "Failed to set max power, error %d\n", rc);
++}
++
++static ssize_t pm_mng_profile_show(struct device *dev,
++				struct device_attribute *attr, char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++
++	if (hdev->disabled)
++		return -ENODEV;
++
++	return snprintf(buf, PAGE_SIZE, "%s\n",
++			(hdev->pm_mng_profile == PM_AUTO) ? "auto" :
++			(hdev->pm_mng_profile == PM_MANUAL) ? "manual" :
++			"unknown");
++}
++
++static ssize_t pm_mng_profile_store(struct device *dev,
++		struct device_attribute *attr, const char *buf, size_t count)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++
++	if (hdev->disabled) {
++		count = -ENODEV;
++		goto out;
++	}
++
++	mutex_lock(&hdev->device_open);
++
++	if (atomic_read(&hdev->fd_open_cnt) > 0) {
++		dev_err(hdev->dev,
++			"Can't change PM profile while user process is opened on the device\n");
++		count = -EPERM;
++		goto unlock_mutex;
++	}
++
++	if (strncmp("auto", buf, strlen("auto")) == 0) {
++		/* Make sure we are in LOW PLL when changing modes */
++		if (hdev->pm_mng_profile == PM_MANUAL) {
++			atomic_set(&hdev->curr_pll_profile, PLL_HIGH);
++			hl_device_set_frequency(hdev, PLL_LOW);
++			hdev->pm_mng_profile = PM_AUTO;
++		}
++	} else if (strncmp("manual", buf, strlen("manual")) == 0) {
++		/* Make sure we are in LOW PLL when changing modes */
++		if (hdev->pm_mng_profile == PM_AUTO) {
++			flush_delayed_work(&hdev->work_freq);
++			hdev->pm_mng_profile = PM_MANUAL;
++		}
++	} else {
++		dev_err(hdev->dev, "value should be auto or manual\n");
++		count = -EINVAL;
++		goto unlock_mutex;
++	}
++
++unlock_mutex:
++	mutex_unlock(&hdev->device_open);
++out:
++	return count;
++}
++
++static ssize_t high_pll_show(struct device *dev, struct device_attribute *attr,
++				char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++
++	if (hdev->disabled)
++		return -ENODEV;
++
++	return snprintf(buf, PAGE_SIZE, "%u\n", hdev->high_pll);
++}
++
++static ssize_t high_pll_store(struct device *dev, struct device_attribute *attr,
++				const char *buf, size_t count)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++	long value;
++	int rc;
++
++	if (hdev->disabled) {
++		count = -ENODEV;
++		goto out;
++	}
++
++	rc = kstrtoul(buf, 0, &value);
++
++	if (rc) {
++		count = -EINVAL;
++		goto out;
++	}
++
++	hdev->high_pll = value;
++
++out:
++	return count;
++}
++
++static ssize_t uboot_ver_show(struct device *dev, struct device_attribute *attr,
++				char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++
++	return snprintf(buf, PAGE_SIZE, "%s\n", hdev->asic_prop.uboot_ver);
++}
++
++static ssize_t armcp_kernel_ver_show(struct device *dev,
++				struct device_attribute *attr, char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++
++	return snprintf(buf, PAGE_SIZE, "%s",
++			hdev->asic_prop.armcp_info.kernel_version);
++}
++
++static ssize_t armcp_ver_show(struct device *dev, struct device_attribute *attr,
++				char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++
++	return snprintf(buf, PAGE_SIZE, "%s\n",
++			hdev->asic_prop.armcp_info.armcp_version);
++}
++
++static ssize_t cpld_ver_show(struct device *dev, struct device_attribute *attr,
++				char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++
++	return snprintf(buf, PAGE_SIZE, "0x%08x\n",
++			hdev->asic_prop.armcp_info.cpld_version);
++}
++
++static ssize_t infineon_ver_show(struct device *dev,
++				struct device_attribute *attr, char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++
++	return snprintf(buf, PAGE_SIZE, "0x%04x\n",
++			hdev->asic_prop.armcp_info.infineon_version);
++}
++
++static ssize_t fuse_ver_show(struct device *dev, struct device_attribute *attr,
++				char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++
++	return snprintf(buf, PAGE_SIZE, "%s\n",
++			hdev->asic_prop.armcp_info.fuse_version);
++}
++
++static ssize_t thermal_ver_show(struct device *dev,
++				struct device_attribute *attr, char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++
++	return snprintf(buf, PAGE_SIZE, "%s",
++			hdev->asic_prop.armcp_info.thermal_version);
++}
++
++static ssize_t preboot_btl_ver_show(struct device *dev,
++				struct device_attribute *attr, char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++
++	return snprintf(buf, PAGE_SIZE, "%s\n", hdev->asic_prop.preboot_ver);
++}
++
++static ssize_t device_type_show(struct device *dev,
++		struct device_attribute *attr, char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++	char *str;
++
++	switch (hdev->asic_type) {
++	case ASIC_GOYA:
++		str = "GOYA";
++		break;
++	default:
++		dev_err(hdev->dev, "Unrecognized ASIC type %d\n",
++				hdev->asic_type);
++		return -EINVAL;
++	}
++
++	return snprintf(buf, PAGE_SIZE, "%s\n", str);
++}
++
++static ssize_t pci_addr_show(struct device *dev, struct device_attribute *attr,
++				char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++
++	/* Use dummy, fixed address for simulator */
++	if (!hdev->pdev)
++		return snprintf(buf, PAGE_SIZE, "0000:%02d:00.0\n", hdev->id);
++
++	return snprintf(buf, PAGE_SIZE, "%04x:%02x:%02x.%x\n",
++			pci_domain_nr(hdev->pdev->bus),
++			hdev->pdev->bus->number,
++			PCI_SLOT(hdev->pdev->devfn),
++			PCI_FUNC(hdev->pdev->devfn));
++}
++
++static ssize_t status_show(struct device *dev, struct device_attribute *attr,
++				char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++	char *str;
++
++	if (hdev->disabled)
++		str = "Malfunction";
++	else
++		str = "Operational";
++
++	return snprintf(buf, PAGE_SIZE, "%s\n", str);
++}
++
++static ssize_t write_open_cnt_show(struct device *dev,
++		struct device_attribute *attr, char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++
++	return snprintf(buf, PAGE_SIZE, "%d\n", hdev->user_ctx ? 1 : 0);
++}
++
++static ssize_t max_power_show(struct device *dev, struct device_attribute *attr,
++				char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++	long val;
++
++	if (hdev->disabled)
++		return -ENODEV;
++
++	val = hl_get_max_power(hdev);
++
++	return snprintf(buf, PAGE_SIZE, "%lu\n", val);
++}
++
++static ssize_t max_power_store(struct device *dev,
++		struct device_attribute *attr, const char *buf, size_t count)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++	unsigned long value;
++	int rc;
++
++	if (hdev->disabled) {
++		count = -ENODEV;
++		goto out;
++	}
++
++	rc = kstrtoul(buf, 0, &value);
++
++	if (rc) {
++		count = -EINVAL;
++		goto out;
++	}
++
++	hdev->max_power = value;
++	hl_set_max_power(hdev, value);
++
++out:
++	return count;
++}
++
++static ssize_t eeprom_read_handler(struct file *filp, struct kobject *kobj,
++			struct bin_attribute *attr, char *buf, loff_t offset,
++			size_t max_size)
++{
++	struct device *dev = container_of(kobj, struct device, kobj);
++	struct hl_device *hdev = dev_get_drvdata(dev);
++	char *data;
++	int rc;
++
++	if (!max_size)
++		return -EINVAL;
++
++	data = kzalloc(max_size, GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++
++	rc = hdev->asic_funcs->get_eeprom_data(hdev, data, max_size);
++	if (rc)
++		goto out;
++
++	memcpy(buf, data, max_size);
++
++out:
++	kfree(data);
++
++	return max_size;
++}
++
++static DEVICE_ATTR_RW(pm_mng_profile);
++static DEVICE_ATTR_RW(high_pll);
++static DEVICE_ATTR_RO(uboot_ver);
++static DEVICE_ATTR_RO(armcp_kernel_ver);
++static DEVICE_ATTR_RO(armcp_ver);
++static DEVICE_ATTR_RO(cpld_ver);
++static DEVICE_ATTR_RO(infineon_ver);
++static DEVICE_ATTR_RO(fuse_ver);
++static DEVICE_ATTR_RO(thermal_ver);
++static DEVICE_ATTR_RO(preboot_btl_ver);
++static DEVICE_ATTR_RO(device_type);
++static DEVICE_ATTR_RO(pci_addr);
++static DEVICE_ATTR_RO(status);
++static DEVICE_ATTR_RO(write_open_cnt);
++static DEVICE_ATTR_RW(max_power);
++
++static const struct bin_attribute bin_attr_eeprom = {
++	.attr = {.name = "eeprom", .mode = (0444)},
++	.size = PAGE_SIZE,
++	.read = eeprom_read_handler
++};
++
++int hl_sysfs_init(struct hl_device *hdev)
++{
++	int rc;
++
++	rc = hdev->asic_funcs->add_device_attr(hdev);
++	if (rc) {
++		dev_err(hdev->dev, "failed to add device attributes\n");
++		return rc;
++	}
++
++	rc = device_create_file(hdev->dev, &dev_attr_pm_mng_profile);
++	if (rc) {
++		dev_err(hdev->dev,
++			"failed to create device file pm_mng_profile\n");
++		goto remove_device_attr;
++	}
++
++	hdev->pm_mng_profile = PM_AUTO;
++
++	rc = device_create_file(hdev->dev, &dev_attr_high_pll);
++	if (rc) {
++		dev_err(hdev->dev,
++			"failed to create device file pll_profile\n");
++		goto remove_pm_mng_profile;
++	}
++
++	rc = device_create_file(hdev->dev, &dev_attr_uboot_ver);
++	if (rc) {
++		dev_err(hdev->dev, "failed to create device file uboot_ver\n");
++		goto remove_pll_profile;
++	}
++
++	rc = device_create_file(hdev->dev, &dev_attr_armcp_kernel_ver);
++	if (rc) {
++		dev_err(hdev->dev,
++			"failed to create device file armcp_kernel_ver\n");
++		goto remove_uboot_ver;
++	}
++
++	rc = device_create_file(hdev->dev, &dev_attr_armcp_ver);
++	if (rc) {
++		dev_err(hdev->dev, "failed to create device file armcp_ver\n");
++		goto remove_armcp_kernel_ver;
++	}
++
++	rc = device_create_file(hdev->dev, &dev_attr_cpld_ver);
++	if (rc) {
++		dev_err(hdev->dev, "failed to create device file cpld_ver\n");
++		goto remove_armcp_ver;
++	}
++
++	rc = device_create_file(hdev->dev, &dev_attr_infineon_ver);
++	if (rc) {
++		dev_err(hdev->dev,
++			"failed to create device file infineon_ver\n");
++		goto remove_cpld_ver;
++	}
++
++	rc = device_create_file(hdev->dev, &dev_attr_fuse_ver);
++	if (rc) {
++		dev_err(hdev->dev, "failed to create device file fuse_ver\n");
++		goto remove_infineon_ver;
++	}
++
++	rc = device_create_file(hdev->dev, &dev_attr_thermal_ver);
++	if (rc) {
++		dev_err(hdev->dev, "failed to create device file thermal_ver\n");
++		goto remove_fuse_ver;
++	}
++
++	rc = device_create_file(hdev->dev, &dev_attr_preboot_btl_ver);
++	if (rc) {
++		dev_err(hdev->dev,
++			"failed to create device file preboot_btl_ver\n");
++		goto remove_thermal_ver;
++	}
++
++	rc = device_create_file(hdev->dev, &dev_attr_device_type);
++	if (rc) {
++		dev_err(hdev->dev,
++			"failed to create device file device_type\n");
++		goto remove_preboot_ver;
++	}
++
++	rc = device_create_file(hdev->dev, &dev_attr_pci_addr);
++	if (rc) {
++		dev_err(hdev->dev, "failed to create device file pci_addr\n");
++		goto remove_device_type;
++	}
++
++	rc = device_create_file(hdev->dev, &dev_attr_status);
++	if (rc) {
++		dev_err(hdev->dev, "failed to create device file status\n");
++		goto remove_pci_addr;
++	}
++
++	rc = device_create_file(hdev->dev, &dev_attr_write_open_cnt);
++	if (rc) {
++		dev_err(hdev->dev,
++			"failed to create device file write_open_count\n");
++		goto remove_status;
++	}
++
++	hdev->max_power = hdev->asic_prop.max_power_default;
++
++	rc = device_create_file(hdev->dev, &dev_attr_max_power);
++	if (rc) {
++		dev_err(hdev->dev,
++			"failed to create device file max_power\n");
++		goto remove_write_open_cnt;
++	}
++
++	rc = sysfs_create_bin_file(&hdev->dev->kobj, &bin_attr_eeprom);
++	if (rc) {
++		dev_err(hdev->dev, "failed to create EEPROM sysfs entry\n");
++		goto remove_attr_max_power;
++	}
++
++	return 0;
++
++remove_attr_max_power:
++	device_remove_file(hdev->dev, &dev_attr_max_power);
++remove_write_open_cnt:
++	device_remove_file(hdev->dev, &dev_attr_write_open_cnt);
++remove_status:
++	device_remove_file(hdev->dev, &dev_attr_status);
++remove_pci_addr:
++	device_remove_file(hdev->dev, &dev_attr_pci_addr);
++remove_device_type:
++	device_remove_file(hdev->dev, &dev_attr_device_type);
++remove_preboot_ver:
++	device_remove_file(hdev->dev, &dev_attr_preboot_btl_ver);
++remove_thermal_ver:
++	device_remove_file(hdev->dev, &dev_attr_thermal_ver);
++remove_fuse_ver:
++	device_remove_file(hdev->dev, &dev_attr_fuse_ver);
++remove_infineon_ver:
++	device_remove_file(hdev->dev, &dev_attr_infineon_ver);
++remove_cpld_ver:
++	device_remove_file(hdev->dev, &dev_attr_cpld_ver);
++remove_armcp_ver:
++	device_remove_file(hdev->dev, &dev_attr_armcp_ver);
++remove_armcp_kernel_ver:
++	device_remove_file(hdev->dev, &dev_attr_armcp_kernel_ver);
++remove_uboot_ver:
++	device_remove_file(hdev->dev, &dev_attr_uboot_ver);
++remove_pll_profile:
++	device_remove_file(hdev->dev, &dev_attr_high_pll);
++remove_pm_mng_profile:
++	device_remove_file(hdev->dev, &dev_attr_pm_mng_profile);
++remove_device_attr:
++	hdev->asic_funcs->remove_device_attr(hdev);
++
++	return rc;
++}
++
++void hl_sysfs_fini(struct hl_device *hdev)
++{
++	sysfs_remove_bin_file(&hdev->dev->kobj, &bin_attr_eeprom);
++	device_remove_file(hdev->dev, &dev_attr_max_power);
++	device_remove_file(hdev->dev, &dev_attr_write_open_cnt);
++	device_remove_file(hdev->dev, &dev_attr_status);
++	device_remove_file(hdev->dev, &dev_attr_pci_addr);
++	device_remove_file(hdev->dev, &dev_attr_device_type);
++	device_remove_file(hdev->dev, &dev_attr_preboot_btl_ver);
++	device_remove_file(hdev->dev, &dev_attr_thermal_ver);
++	device_remove_file(hdev->dev, &dev_attr_fuse_ver);
++	device_remove_file(hdev->dev, &dev_attr_infineon_ver);
++	device_remove_file(hdev->dev, &dev_attr_cpld_ver);
++	device_remove_file(hdev->dev, &dev_attr_armcp_ver);
++	device_remove_file(hdev->dev, &dev_attr_armcp_kernel_ver);
++	device_remove_file(hdev->dev, &dev_attr_uboot_ver);
++	device_remove_file(hdev->dev, &dev_attr_high_pll);
++	device_remove_file(hdev->dev, &dev_attr_pm_mng_profile);
++	hdev->asic_funcs->remove_device_attr(hdev);
 +}
 -- 
 2.17.1
