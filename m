@@ -2,195 +2,144 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 830C6C41518
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:46:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF21CC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:52:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5934E218A2
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:46:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD456218AF
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:52:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548283953;
+	bh=z1acsdBrMDi8btK2HQS9TUzGWqSo1H2q8vBl+ux6BTQ=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=DH0HTp18S+flyq6vD9LzRQPPIKLU0vF5sT+PP/5Ml1bU3nUZ4Dx69UVp3I++DA7sy
+	 oWbxsznPiYnjNF/ZasHYJPHdDdQsD9SqM9YXxxWOfKpAT6v4hWbe7hghSiy3qj+h7o
+	 TTHXhyzHaIDc8QUOJw05XwuxB0u4fc8Hj0ejHNUI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727073AbfAWWqr (ORCPT
+        id S1726367AbfAWWwc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 17:46:47 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:40332 "EHLO mx1.redhat.com"
+        Wed, 23 Jan 2019 17:52:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50094 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726109AbfAWWqr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 17:46:47 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726109AbfAWWwb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 17:52:31 -0500
+Received: from ebiggers-linuxstation.mtv.corp.google.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CB823C0C6C15;
-        Wed, 23 Jan 2019 22:46:45 +0000 (UTC)
-Received: from redhat.com (ovpn-120-127.rdu2.redhat.com [10.10.120.127])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id AFD076B8FC;
-        Wed, 23 Jan 2019 22:46:42 +0000 (UTC)
-Date:   Wed, 23 Jan 2019 17:46:40 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Jason Gunthorpe <jgg@mellanox.com>
-Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Jan Kara <jack@suse.cz>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Ross Zwisler <zwisler@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v4 9/9] RDMA/umem_odp: optimize out the case when a range
- is updated to read only
-Message-ID: <20190123224640.GA1257@redhat.com>
-References: <20190123222315.1122-1-jglisse@redhat.com>
- <20190123222315.1122-10-jglisse@redhat.com>
- <20190123223153.GP8986@mellanox.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 119452184C;
+        Wed, 23 Jan 2019 22:52:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548283951;
+        bh=z1acsdBrMDi8btK2HQS9TUzGWqSo1H2q8vBl+ux6BTQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=z3KMk5Crq0hKJGMvUxf/e2T5JSGeg8845CRkjn8O0O0NnCMJtaKGa/7wGaHFxBhTx
+         i2D8xwe6sYPbG02iAupM0KcDAyotyzJAf8USU8dVbDaxm4a2uCexAy1sTx+efLXqKr
+         aVh5aQWzQNy7HfkHii2T3IBLABeOt+15go6/tRPk=
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-crypto@vger.kernel.org,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     linux-kernel@vger.kernel.org,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>
+Subject: [RFC/RFT PATCH 00/15] crypto: improved skcipher, aead, and hash tests
+Date:   Wed, 23 Jan 2019 14:49:11 -0800
+Message-Id: <20190123224926.250525-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.20.1.321.g9e740568ce-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190123223153.GP8986@mellanox.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 23 Jan 2019 22:46:46 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 10:32:00PM +0000, Jason Gunthorpe wrote:
-> On Wed, Jan 23, 2019 at 05:23:15PM -0500, jglisse@redhat.com wrote:
-> > From: Jérôme Glisse <jglisse@redhat.com>
-> > 
-> > When range of virtual address is updated read only and corresponding
-> > user ptr object are already read only it is pointless to do anything.
-> > Optimize this case out.
-> > 
-> > Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
-> > Cc: Christian König <christian.koenig@amd.com>
-> > Cc: Jan Kara <jack@suse.cz>
-> > Cc: Felix Kuehling <Felix.Kuehling@amd.com>
-> > Cc: Jason Gunthorpe <jgg@mellanox.com>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > Cc: Matthew Wilcox <mawilcox@microsoft.com>
-> > Cc: Ross Zwisler <zwisler@kernel.org>
-> > Cc: Dan Williams <dan.j.williams@intel.com>
-> > Cc: Paolo Bonzini <pbonzini@redhat.com>
-> > Cc: Radim Krčmář <rkrcmar@redhat.com>
-> > Cc: Michal Hocko <mhocko@kernel.org>
-> > Cc: Ralph Campbell <rcampbell@nvidia.com>
-> > Cc: John Hubbard <jhubbard@nvidia.com>
-> > Cc: kvm@vger.kernel.org
-> > Cc: dri-devel@lists.freedesktop.org
-> > Cc: linux-rdma@vger.kernel.org
-> > Cc: linux-fsdevel@vger.kernel.org
-> > Cc: Arnd Bergmann <arnd@arndb.de>
-> >  drivers/infiniband/core/umem_odp.c | 22 +++++++++++++++++++---
-> >  include/rdma/ib_umem_odp.h         |  1 +
-> >  2 files changed, 20 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/infiniband/core/umem_odp.c b/drivers/infiniband/core/umem_odp.c
-> > index a4ec43093cb3..fa4e7fdcabfc 100644
-> > +++ b/drivers/infiniband/core/umem_odp.c
-> > @@ -140,8 +140,15 @@ static void ib_umem_notifier_release(struct mmu_notifier *mn,
-> >  static int invalidate_range_start_trampoline(struct ib_umem_odp *item,
-> >  					     u64 start, u64 end, void *cookie)
-> >  {
-> > +	bool update_to_read_only = *((bool *)cookie);
-> > +
-> >  	ib_umem_notifier_start_account(item);
-> > -	item->umem.context->invalidate_range(item, start, end);
-> > +	/*
-> > +	 * If it is already read only and we are updating to read only then we
-> > +	 * do not need to change anything. So save time and skip this one.
-> > +	 */
-> > +	if (!update_to_read_only || !item->read_only)
-> > +		item->umem.context->invalidate_range(item, start, end);
-> >  	return 0;
-> >  }
-> >  
-> > @@ -150,6 +157,7 @@ static int ib_umem_notifier_invalidate_range_start(struct mmu_notifier *mn,
-> >  {
-> >  	struct ib_ucontext_per_mm *per_mm =
-> >  		container_of(mn, struct ib_ucontext_per_mm, mn);
-> > +	bool update_to_read_only;
-> >  
-> >  	if (range->blockable)
-> >  		down_read(&per_mm->umem_rwsem);
-> > @@ -166,10 +174,13 @@ static int ib_umem_notifier_invalidate_range_start(struct mmu_notifier *mn,
-> >  		return 0;
-> >  	}
-> >  
-> > +	update_to_read_only = mmu_notifier_range_update_to_read_only(range);
-> > +
-> >  	return rbt_ib_umem_for_each_in_range(&per_mm->umem_tree, range->start,
-> >  					     range->end,
-> >  					     invalidate_range_start_trampoline,
-> > -					     range->blockable, NULL);
-> > +					     range->blockable,
-> > +					     &update_to_read_only);
-> >  }
-> >  
-> >  static int invalidate_range_end_trampoline(struct ib_umem_odp *item, u64 start,
-> > @@ -363,6 +374,9 @@ struct ib_umem_odp *ib_alloc_odp_umem(struct ib_ucontext_per_mm *per_mm,
-> >  		goto out_odp_data;
-> >  	}
-> >  
-> > +	/* Assume read only at first, each time GUP is call this is updated. */
-> > +	odp_data->read_only = true;
-> > +
-> >  	odp_data->dma_list =
-> >  		vzalloc(array_size(pages, sizeof(*odp_data->dma_list)));
-> >  	if (!odp_data->dma_list) {
-> > @@ -619,8 +633,10 @@ int ib_umem_odp_map_dma_pages(struct ib_umem_odp *umem_odp, u64 user_virt,
-> >  		goto out_put_task;
-> >  	}
-> >  
-> > -	if (access_mask & ODP_WRITE_ALLOWED_BIT)
-> > +	if (access_mask & ODP_WRITE_ALLOWED_BIT) {
-> > +		umem_odp->read_only = false;
-> 
-> No locking?
+Hello,
 
-The mmu notitfier exclusion will ensure that it is not missed
-ie it will be false before any mmu notifier might be call on
-page GUPed with write flag which is what matter here. So lock
-are useless here.
+Crypto algorithms must produce the same output for the same input
+regardless of data layout, i.e. how the src and dst scatterlists are
+divided into chunks and how each chunk is aligned.  Request flags such
+as CRYPTO_TFM_REQ_MAY_SLEEP must not affect the result either.
 
-> 
-> >  		flags |= FOLL_WRITE;
-> > +	}
-> >  
-> >  	start_idx = (user_virt - ib_umem_start(umem)) >> page_shift;
-> >  	k = start_idx;
-> > diff --git a/include/rdma/ib_umem_odp.h b/include/rdma/ib_umem_odp.h
-> > index 0b1446fe2fab..8256668c6170 100644
-> > +++ b/include/rdma/ib_umem_odp.h
-> > @@ -76,6 +76,7 @@ struct ib_umem_odp {
-> >  	struct completion	notifier_completion;
-> >  	int			dying;
-> >  	struct work_struct	work;
-> > +	bool read_only;
-> >  };
-> 
-> The ib_umem already has a writeable flag. This reflects if the user
-> asked for write permission to be granted.. The tracking here is if any
-> remote fault thus far has requested write, is this an important
-> difference to justify the new flag?
+However, testing of this currently has many gaps.  For example,
+individual algorithms are responsible for providing their own chunked
+test vectors.  But many don't bother to do this or test only one or two
+cases, providing poor test coverage.  Also, other things such as
+misaligned IVs and CRYPTO_TFM_REQ_MAY_SLEEP are never tested at all.
 
-I did that patch couple week ago and now i do not remember why
-i did not use that, i remember thinking about it ... damm i need
-to keep better notes. I will review the code again.
+Test code is also duplicated between the chunked and non-chunked cases,
+making it difficult to make other improvements.
 
-Cheers,
-Jérôme
+To improve the situation, this patch series basically moves the chunk
+descriptions into the testmgr itself so that they are shared by all
+algorithms.  However, it's done in an extensible way via a new struct
+'testvec_config', which describes not just the scaled chunk lengths but
+also all other aspects of the crypto operation besides the data itself
+such as the buffer alignments, the request flags, whether the operation
+is in-place or not, the IV alignment, and for hash algorithms when to do
+each update() and when to use finup() vs. final() vs. digest().
+
+Then, this patch series makes skcipher, aead, and hash algorithms be
+tested against a list of default testvec_configs, replacing the current
+test code.  This improves overall test coverage, without reducing test
+performance too much.  Note that the test vectors themselves are not
+changed, except for removing the chunk lists.
+
+This series also adds randomized fuzz tests, enabled by a new kconfig
+option intended for developer use only, where skcipher, aead, and hash
+algorithms are tested against many randomly generated testvec_configs.
+This provides much more comprehensive test coverage.
+
+These improved tests have already found many bugs.  Patches 1-7 fix the
+bugs found so far (*).  However, I've only tested implementations that I
+can easily test.  There will be more bugs found, especially in
+hardware-specific drivers.  Anyone reading this can help by applying
+these patches on your system (especially if it's non-x86 and/or has
+crypto accelerators), enabling CONFIG_CRYPTO_MANAGER_EXTRA_TESTS, and
+reporting or fixing any test failures.
+
+This patch series can also be found in git at
+https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git
+branch "testmgr-improvements".
+
+(*) Except that many AEADs incorrectly change aead_request::base.tfm.
+    I've left fixing that for later patches.
+
+Eric Biggers (15):
+  crypto: aegis - fix handling chunked inputs
+  crypto: morus - fix handling chunked inputs
+  crypto: x86/aegis - fix handling chunked inputs and MAY_SLEEP
+  crypto: x86/morus - fix handling chunked inputs and MAY_SLEEP
+  crypto: x86/aesni-gcm - fix crash on empty plaintext
+  crypto: ahash - fix another early termination in hash walk
+  crypto: arm64/aes-neonbs - fix returning final keystream block
+  crypto: testmgr - add testvec_config struct and helper functions
+  crypto: testmgr - introduce CONFIG_CRYPTO_MANAGER_EXTRA_TESTS
+  crypto: testmgr - implement random testvec_config generation
+  crypto: testmgr - convert skcipher testing to use testvec_configs
+  crypto: testmgr - convert aead testing to use testvec_configs
+  crypto: testmgr - convert hash testing to use testvec_configs
+  crypto: testmgr - check for skcipher_request corruption
+  crypto: testmgr - check for aead_request corruption
+
+ arch/arm64/crypto/aes-neonbs-core.S    |    8 +-
+ arch/x86/crypto/aegis128-aesni-glue.c  |   38 +-
+ arch/x86/crypto/aegis128l-aesni-glue.c |   38 +-
+ arch/x86/crypto/aegis256-aesni-glue.c  |   38 +-
+ arch/x86/crypto/aesni-intel_glue.c     |   13 +-
+ arch/x86/crypto/morus1280_glue.c       |   40 +-
+ arch/x86/crypto/morus640_glue.c        |   39 +-
+ crypto/Kconfig                         |   10 +
+ crypto/aegis128.c                      |   14 +-
+ crypto/aegis128l.c                     |   14 +-
+ crypto/aegis256.c                      |   14 +-
+ crypto/ahash.c                         |   14 +-
+ crypto/morus1280.c                     |   13 +-
+ crypto/morus640.c                      |   13 +-
+ crypto/testmgr.c                       | 2552 +++++++++++++-----------
+ crypto/testmgr.h                       |  407 +---
+ 16 files changed, 1558 insertions(+), 1707 deletions(-)
+
+-- 
+2.20.1.321.g9e740568ce-goog
+
