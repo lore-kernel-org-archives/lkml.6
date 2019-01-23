@@ -2,163 +2,134 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77A9BC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 12:57:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3948BC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 12:57:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48B3F21848
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 12:57:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548248229;
-	bh=4UHeL/PRsy5ZkqwjY/2Kvh0/ucw9ulcgdgyag/qx65M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Ag8e3zpuXh2NZ4bcENiO/oQt7EHBJwiTC/lxXzvXSb7ZIRKZKCblhz0/7SxoRee8V
-	 74locqIr+5dw0pv0Uhgfpb3zoAeWuUgIrTK7zTWCX/cYxDXqV4wTNWTXA5hOUSxMBm
-	 n+f9MM9wDEVHlsH1fDRoI5MvJlOYyqN8kfoBfc6Y=
+	by mail.kernel.org (Postfix) with ESMTP id 083B321848
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 12:57:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="H5zBqLdq";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Ddozk3S+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726360AbfAWM5H (ORCPT
+        id S1726367AbfAWM5p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 07:57:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38492 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726029AbfAWM5H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 07:57:07 -0500
-Received: from localhost (unknown [106.200.229.238])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB4C32183F;
-        Wed, 23 Jan 2019 12:57:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548248225;
-        bh=4UHeL/PRsy5ZkqwjY/2Kvh0/ucw9ulcgdgyag/qx65M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=a0aFG3JcIVRE+xK8lqRt6YzT8MICeP6Og7mSzJ+k7kVUJyoESVczFxoO77og2DQ4r
-         iN3hE2GSKH1Qjc5sPM0bxG3jNOz10am+IEq25vfAFdLszxMIk0WWtXQ5bmbPCQ29TK
-         KeVWw1OE6iKdNtwymxteXyYz2Z+ys/nJ5qW76Clo=
-Date:   Wed, 23 Jan 2019 18:25:33 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     John Stultz <john.stultz@linaro.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Youlin Wang <wwx575822@notesmail.huawei.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Zhuangluan Su <suzhuangluan@hisilicon.com>,
-        Ryan Grachek <ryan@edited.us>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        "open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM" 
-        <dmaengine@vger.kernel.org>, Tanglei Han <hantanglei@huawei.com>
-Subject: Re: [PATCH 3/8 v4] dma: k3dma: Upgrade k3dma driver to support
- hisi_asp_dma hardware
-Message-ID: <20190123125533.GP4635@vkoul-mobl>
-References: <1547658629-25378-1-git-send-email-john.stultz@linaro.org>
- <1547658629-25378-4-git-send-email-john.stultz@linaro.org>
- <20190120111115.GU4635@vkoul-mobl>
- <CALAqxLXauR4guYMtCYK-wnAqcZCkLY7-vWQ5U-knvHQt1twG4A@mail.gmail.com>
+        Wed, 23 Jan 2019 07:57:45 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:41756 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726029AbfAWM5p (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 07:57:45 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 9769260736; Wed, 23 Jan 2019 12:57:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548248263;
+        bh=Mz+DueOzCHqjZ4WaYFUaDzBjJPzVrxhpr9P0YTWphvU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=H5zBqLdql9Dr5PmUYZy7+f552lAhtjCw+B7wCKmhvWXmqZOaVYqUZw+t3918bgVhn
+         UtjG4Ywj8GuM+6J0AmYax95LAAx8WFpAFkKxw4qrhHIWlRHM8zZ8ayLixyVxhg5o8g
+         YqbfnDj1FAUej60O6ZRo9wON36O7UnTr9m2ejnyE=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id D0A0C6024C;
+        Wed, 23 Jan 2019 12:57:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548248262;
+        bh=Mz+DueOzCHqjZ4WaYFUaDzBjJPzVrxhpr9P0YTWphvU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Ddozk3S+mXaTq+cf+U0u96VsBktf4zD8r6mxOun444IjsvpB+zplBbd88UXrqEgtb
+         zvYkAdMoEeCYE3izRvlAiC+dAjoR2eU5M3ikGvLKS3kfvSfi6e5VChZ0njs5DLVcsL
+         eOSrgqrG+6o5+jyuD/ybWmBeUd8ho9CC146JBe+Y=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALAqxLXauR4guYMtCYK-wnAqcZCkLY7-vWQ5U-knvHQt1twG4A@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 23 Jan 2019 18:27:42 +0530
+From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Johan Hovold <johan@kernel.org>, marcel@holtmann.org,
+        johan.hedberg@gmail.com, linux-kernel@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, Johan Hovold <jhovold@gmail.com>
+Subject: Re: [PATCH v5 2/5] Bluetooth: hci_qca: Deassert RTS while baudrate
+ change command
+In-Reply-To: <20190122215330.GI261387@google.com>
+References: <20190111013707.GD261387@google.com>
+ <194b5d18ea86830b6a24939d483a964c@codeaurora.org>
+ <20190111235633.GK261387@google.com>
+ <a6e083d245baebc019b6e7163fd6f133@codeaurora.org>
+ <20190115234628.GQ261387@google.com> <20190117160944.GV3691@localhost>
+ <20190117172109.GU261387@google.com> <20190118094416.GB3691@localhost>
+ <20190119003109.GD261387@google.com>
+ <24831204bab89250099ca56e7562bd16@codeaurora.org>
+ <20190122215330.GI261387@google.com>
+Message-ID: <f5e3080235572c44fe1e8c0d4b2e5a97@codeaurora.org>
+X-Sender: bgodavar@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22-01-19, 15:48, John Stultz wrote:
-> On Sun, Jan 20, 2019 at 3:12 AM Vinod Koul <vkoul@kernel.org> wrote:
-> >
-> > On 16-01-19, 09:10, John Stultz wrote:
-> > > From: Youlin Wang <wwx575822@notesmail.huawei.com>
-> > >
-> > > On the hi3660 hardware there are two (at least) DMA controllers,
-> > > the DMA-P (Peripherial DMA) and the DMA-A (Audio DMA). The
-> >                     ^^^
-> > typo
-> 
-> Thanks so much for the review!
-> 
-> Fixed!
-> 
-> > > +
-> > > +#define K3_FLAG_NOCLK  (1<<0)
-> >
-> > why not use BIT()
-> >
-> > space between two please
-> 
-> Fixed.
-> 
-> > > +static const struct k3dma_soc_data k3_v1_dma_data = {
-> > > +     .flags = 0,
-> > > +};
-> >
-> > So basically this is default right, do we need to set dma_data and not
-> > assume default..
-> 
-> I'm not sure I fully understand you here. Basically I'm just creating
-> a per-variant data structure. The k3_v1_dma_data isn't really the
-> default, but is the first variant supported. There may be future
-> variants that cause some new flag that the k3_v3_dma_data may need to
-> set. But for now that variant doesn't have any flags set.
+Hi Matthias,
 
-So my point was we can skip this and treat driver data NULL as default
-i.e. no flags, no big deal though, saves you dummy k3_v1_dma_data.
-
+On 2019-01-23 03:23, Matthias Kaehlcke wrote:
+> On Mon, Jan 21, 2019 at 08:11:39PM +0530, Balakrishna Godavarthi wrote:
+>> Hi Matthias,
+>> 
+>> On 2019-01-19 06:01, Matthias Kaehlcke wrote:
+>> > On Fri, Jan 18, 2019 at 10:44:16AM +0100, Johan Hovold wrote:
+>> > > On Thu, Jan 17, 2019 at 09:21:09AM -0800, Matthias Kaehlcke wrote:
+>> > >
+>> > > > I observed that the qcom_geni_serial driver doesn't raise RTS with
+>> > > > flow control disabled. It seems we have to investigate why that's the
+>> > > > case. I agree that the driver should be platform agnostic.
+>> > >
+>> > > Sounds like a driver bug, unless the hardware is just "odd". The
+>> > > driver implementation of this looks very non-standard judging from a
+>> > > quick peek.
+>> > >
+>> > > In fact, qcom_geni_serial_get_mctrl() is currently a no-op if hardware
+>> > > flow control is not enabled:
+>> > >
+>> > > 	if (uart_console(uport) || !uart_cts_enabled(uport))
+>> > > 		return;
+>> > >
+>> > > Perhaps dropping the !uart_cts_enabled() test is sufficient.
+>> >
+>> > Thanks for taking a look Johan, that was indeed the problem (also
+>> > in set_mctrl()). I posted a fix:
+>> > https://lore.kernel.org/patchwork/patch/1033611/
+>> >
+>> > Balakrishna, the following (applied on top of your patch) works for me
+>> > with the UART patch above:
+>> >
+>> 
+>> [Bala]: will test and update BT patch accordingly.
 > 
+> Note that Johan pointed out that hci_uart_set_flow_control() deasserts
+> RTS when flow control is disabled, so the _set_rts() calls can be
+> removed. With that only a single action needs to be undone in case of
+> an error, you can consider to keep the return instead of using the
+> goto introduced by my patch.
 > 
-> > > +
-> > > +static const struct k3dma_soc_data asp_v1_dma_data = {
-> > > +     .flags = K3_FLAG_NOCLK,
-> > > +};
-> > > +
-> > >  static const struct of_device_id k3_pdma_dt_ids[] = {
-> > > -     { .compatible = "hisilicon,k3-dma-1.0", },
-> > > +     { .compatible = "hisilicon,k3-dma-1.0",
-> > > +       .data = &k3_v1_dma_data
-> > > +     },
-> > > +     { .compatible = "hisilicon,hisi-pcm-asp-dma-1.0",
-> > > +       .data = &asp_v1_dma_data
-> > > +     },
-> > >       {}
-> > >  };
-> > >  MODULE_DEVICE_TABLE(of, k3_pdma_dt_ids);
-> > > @@ -810,6 +830,7 @@ static struct dma_chan *k3_of_dma_simple_xlate(struct of_phandle_args *dma_spec,
-> > >
-> > >  static int k3_dma_probe(struct platform_device *op)
-> > >  {
-> > > +     const struct k3dma_soc_data *soc_data;
-> > >       struct k3_dma_dev *d;
-> > >       const struct of_device_id *of_id;
-> > >       struct resource *iores;
-> > > @@ -823,6 +844,10 @@ static int k3_dma_probe(struct platform_device *op)
-> > >       if (!d)
-> > >               return -ENOMEM;
-> > >
-> > > +     soc_data = device_get_match_data(&op->dev);
-> > > +     if (!soc_data)
-> > > +             return -EINVAL;
-> >
-> > So this is not optional, either ways fine by me :)
+
+[Bala]: ok sure. will note this.
+
+> Please keep/adapt the "Deassert RTS while changing the baudrate ..."
+> comment to leave it clear to posterity why flow control is disabled
+> during baudrate changes. It's fairly obvious once you understand the
+> problem and that disabling flow control deasserts RTS, but it took us
+> a while to get there, initially we only had a comment saying
+> "disabling flow control is mandatory" (I recall I inquired about this
+> multiple times during the initial review of the wcn3990 patches ;-)
 > 
-> I think this way makes sense, but maybe I'm missing a better alternative?
+> Thanks
 > 
-> Do let me know if there's an example you'd rather I follow.
-
-To elaborate I was thinking of alternate scheme with:
-
-        compatible = "hisilicon,k3-dma-1.0", NULL
-        compatible = "hisilicon,hisi-pcm-asp-dma-1.0", .data = &asp_v1_dma_data
-
-and
-
-        soc_data = device_get_match_data(&op->dev);
-        if (!soc_data) {
-                /* no data so flags are null */
-                dev_warn(... "no driver data specified, assuming  no flags\n"
-                k3_dma->flags = 0;
-        }
+> Matthias
 
 -- 
-~Vinod
+Regards
+Balakrishna.
