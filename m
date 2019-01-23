@@ -2,177 +2,84 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDF3EC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 20:11:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0247EC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 20:15:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A270121872
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 20:11:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CERkGtix"
+	by mail.kernel.org (Postfix) with ESMTP id BA3A721855
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 20:15:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726627AbfAWULz (ORCPT
+        id S1726234AbfAWUPN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 15:11:55 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:53286 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725999AbfAWULw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 15:11:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=E2w2CaYuVtMK5eV+H3KtSFT9Rrs65bOVP2q+MwteX0Q=; b=CERkGtix6Pe/wtkVzeKSALETh
-        yNkIqjtAHqt/wOAIIMB/rI2sCRqfSk9ULGQlRin7QJZXSastFkgH/wUtMi73msXVCNaSt7CCX+TH4
-        wRSvB1T9QqTj4BWO4oUvlBJWH5ALAivaEvs7DP5US4clvm2gzCqu+qjBAdTWlWRCDrqmcQIFNyC9H
-        G4mwHOGQvpcL3AuK1bi8VomUP0mkWJeRfft7nzex+3U0vCgidgGhpXHSl/Y4vm0VpQfJ50zjwzB24
-        yPqDwOnhQ3Y4GWdkQvVuiA6lDAUB6luVC0JpdkuWA7Gmr2f71l/zwZAjV33VfujmSbW0cNsGDRviI
-        m/jgNRpfg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gmOsG-0003q9-Ar; Wed, 23 Jan 2019 20:11:48 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 4C64520F51B1B; Wed, 23 Jan 2019 21:11:46 +0100 (CET)
-Date:   Wed, 23 Jan 2019 21:11:46 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v6 09/16] sched/cpufreq: uclamp: Add utilization clamping
- for RT tasks
-Message-ID: <20190123201146.GH17749@hirez.programming.kicks-ass.net>
-References: <20190115101513.2822-1-patrick.bellasi@arm.com>
- <20190115101513.2822-10-patrick.bellasi@arm.com>
- <20190123104944.GX27931@hirez.programming.kicks-ass.net>
- <20190123144011.iid3avb63r5v4r2c@e110439-lin>
+        Wed, 23 Jan 2019 15:15:13 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:37258 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726035AbfAWUPN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 15:15:13 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1D423C7C0A;
+        Wed, 23 Jan 2019 20:15:12 +0000 (UTC)
+Received: from redhat.com (ovpn-124-254.rdu2.redhat.com [10.10.124.254])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3A4CD6C510;
+        Wed, 23 Jan 2019 20:15:09 +0000 (UTC)
+Date:   Wed, 23 Jan 2019 15:15:06 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>, dave@sr71.net,
+        dan.j.williams@intel.com, dave.jiang@intel.com, zwisler@kernel.org,
+        vishal.l.verma@intel.com, thomas.lendacky@amd.com,
+        akpm@linux-foundation.org, mhocko@suse.com,
+        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, ying.huang@intel.com, fengguang.wu@intel.com,
+        bp@suse.de, bhelgaas@google.com, baiyaowei@cmss.chinamobile.com,
+        tiwai@suse.de
+Subject: Re: [PATCH 2/4] mm/memory-hotplug: allow memory resources to be
+ children
+Message-ID: <20190123201506.GG3097@redhat.com>
+References: <20190116181859.D1504459@viggo.jf.intel.com>
+ <20190116181902.670EEBC3@viggo.jf.intel.com>
+ <20190116191635.GD3617@redhat.com>
+ <2b52778d-f120-eec7-3e7a-3a9c182170f0@intel.com>
+ <20190116233849.GE3617@redhat.com>
+ <b1f22eda-b52f-af20-637f-b45971a12d33@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190123144011.iid3avb63r5v4r2c@e110439-lin>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b1f22eda-b52f-af20-637f-b45971a12d33@intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Wed, 23 Jan 2019 20:15:12 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 02:40:11PM +0000, Patrick Bellasi wrote:
-> On 23-Jan 11:49, Peter Zijlstra wrote:
-> > On Tue, Jan 15, 2019 at 10:15:06AM +0000, Patrick Bellasi wrote:
-> > > @@ -858,16 +859,23 @@ static inline void
-> > >  uclamp_effective_get(struct task_struct *p, unsigned int clamp_id,
-> > >  		     unsigned int *clamp_value, unsigned int *bucket_id)
-> > >  {
-> > > +	struct uclamp_se *default_clamp;
-> > > +
-> > >  	/* Task specific clamp value */
-> > >  	*clamp_value = p->uclamp[clamp_id].value;
-> > >  	*bucket_id = p->uclamp[clamp_id].bucket_id;
-> > >  
-> > > +	/* RT tasks have different default values */
-> > > +	default_clamp = task_has_rt_policy(p)
-> > > +		? uclamp_default_perf
-> > > +		: uclamp_default;
-> > > +
-> > >  	/* System default restriction */
-> > > -	if (unlikely(*clamp_value < uclamp_default[UCLAMP_MIN].value ||
-> > > -		     *clamp_value > uclamp_default[UCLAMP_MAX].value)) {
-> > > +	if (unlikely(*clamp_value < default_clamp[UCLAMP_MIN].value ||
-> > > +		     *clamp_value > default_clamp[UCLAMP_MAX].value)) {
-> > >  		/* Keep it simple: unconditionally enforce system defaults */
-> > > -		*clamp_value = uclamp_default[clamp_id].value;
-> > > -		*bucket_id = uclamp_default[clamp_id].bucket_id;
-> > > +		*clamp_value = default_clamp[clamp_id].value;
-> > > +		*bucket_id = default_clamp[clamp_id].bucket_id;
-> > >  	}
-> > >  }
-> > 
-> > So I still don't much like the whole effective thing;
+On Wed, Jan 23, 2019 at 12:03:54PM -0800, Dave Hansen wrote:
+> On 1/16/19 3:38 PM, Jerome Glisse wrote:
+> > So right now i would rather that we keep properly reporting this
+> > hazard so that at least we know it failed because of that. This
+> > also include making sure that we can not register private memory
+> > as a child of an un-busy resource that does exist but might not
+> > have yet been claim by its rightful owner.
 > 
-> :/
+> I can definitely keep the warning in.  But, I don't think there's a
+> chance of HMM registering a IORES_DESC_DEVICE_PRIVATE_MEMORY region as
+> the child of another.  The region_intersects() check *should* find that:
+
+Sounds fine to (just keep the warning).
+
+Cheers,
+Jérôme
+
 > 
-> I find back-annotation useful in many cases since we have different
-> sources for possible clamp values:
+> >         for (; addr > size && addr >= iomem_resource.start; addr -= size) {
+> >                 ret = region_intersects(addr, size, 0, IORES_DESC_NONE);
+> >                 if (ret != REGION_DISJOINT)
+> >                         continue;
 > 
->  1. task specific
->  2. cgroup defined
->  3. system defaults
->  4. system power default
-
-(I'm not sure I've seen 4 happen yet, what's that?)
-
-Anyway, once you get range composition defined; that should be something
-like:
-
-	R_p \Compose_g R_g
-
-Where R_p is the range of task-p, and R_g is the range of the g'th
-cgroup of p (where you can make an identity between the root cgroup and
-the system default).
-
-Now; as per the other email; I think the straight forward composition:
-
-struct range compose(struct range a, struct range b)
-{
-	return (range){.min = clamp(a.min, b.min, b.max),
-	               .max = clamp(a.max, b.min, b.max), };
-}
-
-(note that this is non-commutative, so we have to pay attention to
-get the order 'right')
-
-Works in this case; unlike the cpu/rq conposition where we resort to a
-pure max function for non-interference.
-
-> I don't think we can avoid to somehow back annotate on which bucket a
-> task has been refcounted... it makes dequeue so much easier, it helps
-> in ensuring that the refcouning is consistent and enable lazy updates.
-
-So I'll have to go over the code again, but I'm wondering why you're
-changing uclamp_se::bucket_id on a runnable task.
-
-Ideally you keep bucket_id invariant between enqueue and dequeue; then
-dequeue knows where we put it.
-
-Now I suppose actually determining bucket_id is 'expensive' (it
-certainly is with the whole mapping scheme, but even that integer
-division is not nice), so we'd like to precompute the bucket_id.
-
-This then leads to the problem of how to change uclamp_se::value while
-runnable (since per the other thread you don't want to always update all
-runnable tasks).
-
-So far so right?
-
-I'm thikning that if we haz a single bit, say:
-
-  struct uclamp_se {
-	...
-	unsigned int	changed : 1;
-  };
-
-We can update uclamp_se::value and set uclamp_se::changed, and then the
-next enqueue will (unlikely) test-and-clear changed and recompute the
-bucket_id.
-
-Would that not be simpler?
-
-
