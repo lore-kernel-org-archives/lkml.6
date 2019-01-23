@@ -2,169 +2,130 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0598C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 23:53:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60B04C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 23:58:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 868DA218A3
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 23:53:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 253C121850
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 23:58:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="OY3tPaoH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726324AbfAWXxE (ORCPT
+        id S1726366AbfAWX6p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 18:53:04 -0500
-Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:46711 "EHLO
-        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726157AbfAWXxE (ORCPT
+        Wed, 23 Jan 2019 18:58:45 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:33409 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726235AbfAWX6o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 18:53:04 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07417;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0TIsDp.m_1548287573;
-Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TIsDp.m_1548287573)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 24 Jan 2019 07:52:59 +0800
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-To:     ktkhai@virtuozzo.com, hughd@google.com, aarcange@redhat.com,
-        akpm@linux-foundation.org
-Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [v2 PATCH] mm: ksm: do not block on page lock when searching stable tree
-Date:   Thu, 24 Jan 2019 07:52:53 +0800
-Message-Id: <1548287573-15084-1-git-send-email-yang.shi@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
+        Wed, 23 Jan 2019 18:58:44 -0500
+Received: by mail-pl1-f193.google.com with SMTP id z23so1984087plo.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 15:58:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=GZJe5EbKNHuto8QgrVl02gFWkFbtyAX9mqXZe888OO8=;
+        b=OY3tPaoHGnOjIkVyDB2MTfeVzG/0RH08tubCal8WACGBYmOPAtJ+DQnFHSmccr8ham
+         /qNmDrTL19u4v9s5/09tMco2ss4pYkj1JJf9ivG2WrpUPvhpZSIH/IbtyQ1wqNqrXWZo
+         Up80Ty9MFBIEjuhQgklwjo+HJOoQSV0I5kL3nK70x9MxvtjRCzLXadUnEKHxUNNI5O1G
+         W6y72nPqeR/QCpuZm8bQ+VRfFbmUd2E4/DUZIU5akC/Vs1tEiLyOY/2wOfqTxqXO0+sH
+         GKeI/WWMHtzV3U0kwjVvVqUlcS00Wo3SJLmb++C+6RXkQj1mFI2xj58aTmoFVt1bQf5J
+         itng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=GZJe5EbKNHuto8QgrVl02gFWkFbtyAX9mqXZe888OO8=;
+        b=dPserzMLyHEOv8iypaZ/A4x6Kw4CGhFqZQJJmSWLCvwVLNVv/29aEA7lkrSK/EeD76
+         p1ICVy0+585gIxXyXF9297DHG7V4/UCyDRv0imNnlZaHtTeOL/sIln1oyHserKtEWQ57
+         aUKcIUsbODHUlDj2uzYqsmoKC/ymZuLCO0LL/qZesq/h67mWVOyoMilqjgmen4UmEMf+
+         6fbrVNiazpH3vc0acqF80BU9NkcP3tdMTJT7dMnLrh0LtdWtUlQMB1w2I5oXEBybPkGL
+         0iYe4QSMBSh0VbD5ErO2wSlXI4P+BvnjFU7BiiObM+VcXmVCCuB7xFnjILXqDhg/AYdr
+         eeIg==
+X-Gm-Message-State: AJcUukchBUaywBkEj2CgTKzuP8TCl+HWybsmLF4O588A9AO+8g1M8F0c
+        MytzgS6ikCj/SQj4C1AdNUXpJw==
+X-Google-Smtp-Source: ALg8bN545ZSLeJ/eysTaFxjJ03VGthSXs/Zpg/IM/sgTNv/TYcNVxhAhh+ZGHUb+t0Bf7ucAC+GNRg==
+X-Received: by 2002:a17:902:9a9:: with SMTP id 38mr4250658pln.204.1548287924007;
+        Wed, 23 Jan 2019 15:58:44 -0800 (PST)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id w184sm25022966pgd.34.2019.01.23.15.58.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 23 Jan 2019 15:58:43 -0800 (PST)
+Date:   Wed, 23 Jan 2019 15:58:43 -0800 (PST)
+X-Google-Original-Date: Wed, 23 Jan 2019 15:44:01 PST (-0800)
+Subject:     Re: [PATCH] tty/serial: use uart_console_write in the RISC-V SBL early console
+In-Reply-To: <CAAhSdy07AeWeMxQJvzRGzMQ84Sxc6O899T0dWO1vz0LB89ORyw@mail.gmail.com>
+CC:     schwab@suse.de, Greg KH <gregkh@linuxfoundation.org>,
+        jslaby@suse.com, aou@eecs.berkeley.edu, atish.patra@wdc.com,
+        Christoph Hellwig <hch@infradead.org>, robh@kernel.org,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     anup@brainfault.org
+Message-ID: <mhng-2f2fd42e-7dc1-4a21-9105-e129d55f1e5b@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ksmd need search stable tree to look for the suitable KSM page, but the
-KSM page might be locked for a while due to i.e. KSM page rmap walk.
-Basically it is not a big deal since commit 2c653d0ee2ae
-("ksm: introduce ksm_max_page_sharing per page deduplication limit"),
-since max_page_sharing limits the number of shared KSM pages.
+On Fri, 11 Jan 2019 03:13:30 PST (-0800), anup@brainfault.org wrote:
+> On Thu, Jan 10, 2019 at 10:41 PM Andreas Schwab <schwab@suse.de> wrote:
+>>
+>> This enables proper NLCR processing.
+>>
+>> Suggested-by: Anup Patel <anup@brainfault.org>
+>> Signed-off-by: Andreas Schwab <schwab@suse.de>
+>> ---
+>>  drivers/tty/serial/earlycon-riscv-sbi.c | 13 ++++++++-----
+>>  1 file changed, 8 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/tty/serial/earlycon-riscv-sbi.c b/drivers/tty/serial/earlycon-riscv-sbi.c
+>> index e1a551aae3..ce81523c31 100644
+>> --- a/drivers/tty/serial/earlycon-riscv-sbi.c
+>> +++ b/drivers/tty/serial/earlycon-riscv-sbi.c
+>> @@ -10,13 +10,16 @@
+>>  #include <linux/serial_core.h>
+>>  #include <asm/sbi.h>
+>>
+>> -static void sbi_console_write(struct console *con,
+>> -                             const char *s, unsigned int n)
+>> +static void sbi_putc(struct uart_port *port, int c)
+>>  {
+>> -       int i;
+>> +       sbi_console_putchar(c);
+>> +}
+>>
+>> -       for (i = 0; i < n; ++i)
+>> -               sbi_console_putchar(s[i]);
+>> +static void sbi_console_write(struct console *con,
+>> +                             const char *s, unsigned n)
+>> +{
+>> +       struct earlycon_device *dev = con->data;
+>> +       uart_console_write(&dev->port, s, n, sbi_putc);
+>>  }
+>>
+>>  static int __init early_sbi_setup(struct earlycon_device *device,
+>> --
+>> 2.20.1
+>>
+>> --
+>> Andreas Schwab, SUSE Labs, schwab@suse.de
+>> GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
+>> "And now for something completely different."
+>
+> Looks good to me.
+>
+> Reviewed-by: Anup Patel <anup@brainfault.org>
+>
+> Regards,
+> Anup
 
-But it still sounds not worth waiting for the lock, the page can be skip,
-then try to merge it in the next scan to avoid potential stall if its
-content is still intact.
-
-Introduce async mode to get_ksm_page() to not block on page lock, like
-what try_to_merge_one_page() does.
-
-Return -EBUSY if trylock fails, since NULL means not find suitable KSM
-page, which is a valid case.
-
-With the default max_page_sharing setting (256), there is almost no
-observed change comparing lock vs trylock.
-
-However, with ksm02 of LTP, the reduced ksmd full scan time can be
-observed, which has set max_page_sharing to 786432.  With lock version,
-ksmd may tak 10s - 11s to run two full scans, with trylock version ksmd
-may take 8s - 11s to run two full scans.  And, the number of
-pages_sharing and pages_to_scan keep same.  Basically, this change has
-no harm.
-
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Reviewed-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
----
-Hi folks,
-
-This patch was with "mm: vmscan: skip KSM page in direct reclaim if priority
-is low" in the initial submission.  Then Hugh and Andrea pointed out commit
-2c653d0ee2ae ("ksm: introduce ksm_max_page_sharing per page deduplication
-limit") is good enough for limiting the number of shared KSM page to prevent
-from softlock when walking ksm page rmap.  This commit does solve the problem.
-So, the series was dropped by Andrew from -mm tree.
-
-However, I thought the second patch (this one) still sounds useful.  So, I did
-some test and resubmit it.  The first version was reviewed by Krill Tkhai, so
-I keep his Reviewed-by tag since there is no change to the patch except the
-commit log.
-
-So, would you please reconsider this patch?
-
-v2: Updated the commit log to reflect some test result and latest discussion
-
- mm/ksm.c | 29 +++++++++++++++++++++++++----
- 1 file changed, 25 insertions(+), 4 deletions(-)
-
-diff --git a/mm/ksm.c b/mm/ksm.c
-index 6c48ad1..f66405c 100644
---- a/mm/ksm.c
-+++ b/mm/ksm.c
-@@ -668,7 +668,7 @@ static void remove_node_from_stable_tree(struct stable_node *stable_node)
- }
- 
- /*
-- * get_ksm_page: checks if the page indicated by the stable node
-+ * __get_ksm_page: checks if the page indicated by the stable node
-  * is still its ksm page, despite having held no reference to it.
-  * In which case we can trust the content of the page, and it
-  * returns the gotten page; but if the page has now been zapped,
-@@ -686,7 +686,8 @@ static void remove_node_from_stable_tree(struct stable_node *stable_node)
-  * a page to put something that might look like our key in page->mapping.
-  * is on its way to being freed; but it is an anomaly to bear in mind.
-  */
--static struct page *get_ksm_page(struct stable_node *stable_node, bool lock_it)
-+static struct page *__get_ksm_page(struct stable_node *stable_node,
-+				   bool lock_it, bool async)
- {
- 	struct page *page;
- 	void *expected_mapping;
-@@ -729,7 +730,14 @@ static struct page *get_ksm_page(struct stable_node *stable_node, bool lock_it)
- 	}
- 
- 	if (lock_it) {
--		lock_page(page);
-+		if (async) {
-+			if (!trylock_page(page)) {
-+				put_page(page);
-+				return ERR_PTR(-EBUSY);
-+			}
-+		} else
-+			lock_page(page);
-+
- 		if (READ_ONCE(page->mapping) != expected_mapping) {
- 			unlock_page(page);
- 			put_page(page);
-@@ -752,6 +760,11 @@ static struct page *get_ksm_page(struct stable_node *stable_node, bool lock_it)
- 	return NULL;
- }
- 
-+static struct page *get_ksm_page(struct stable_node *stable_node, bool lock_it)
-+{
-+	return __get_ksm_page(stable_node, lock_it, false);
-+}
-+
- /*
-  * Removing rmap_item from stable or unstable tree.
-  * This function will clean the information from the stable/unstable tree.
-@@ -1673,7 +1686,11 @@ static struct page *stable_tree_search(struct page *page)
- 			 * It would be more elegant to return stable_node
- 			 * than kpage, but that involves more changes.
- 			 */
--			tree_page = get_ksm_page(stable_node_dup, true);
-+			tree_page = __get_ksm_page(stable_node_dup, true, true);
-+
-+			if (PTR_ERR(tree_page) == -EBUSY)
-+				return ERR_PTR(-EBUSY);
-+
- 			if (unlikely(!tree_page))
- 				/*
- 				 * The tree may have been rebalanced,
-@@ -2060,6 +2077,10 @@ static void cmp_and_merge_page(struct page *page, struct rmap_item *rmap_item)
- 
- 	/* We first start with searching the page inside the stable tree */
- 	kpage = stable_tree_search(page);
-+
-+	if (PTR_ERR(kpage) == -EBUSY)
-+		return;
-+
- 	if (kpage == page && rmap_item->head == stable_node) {
- 		put_page(kpage);
- 		return;
--- 
-1.8.3.1
-
+Thanks.  I'm going to include this in my next PR, as it's pretty self contained 
+and is necessary to actually use this sanely.
