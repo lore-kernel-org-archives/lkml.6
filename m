@@ -2,144 +2,126 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEBBDC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:56:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6B5CC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:57:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9332E218A2
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:56:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94D0B2184B
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:57:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IquwkO95"
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="h5IRtFuI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726291AbfAWS4I (ORCPT
+        id S1726265AbfAWS5T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 13:56:08 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:42276 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725996AbfAWS4I (ORCPT
+        Wed, 23 Jan 2019 13:57:19 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:38199 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725976AbfAWS5T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 13:56:08 -0500
-Received: by mail-vs1-f65.google.com with SMTP id b74so1945682vsd.9
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 10:56:07 -0800 (PST)
+        Wed, 23 Jan 2019 13:57:19 -0500
+Received: by mail-pg1-f196.google.com with SMTP id g189so1474731pgc.5
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 10:57:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Ireb14swxzh/kGO0PaPMQde96Q1mT+0FNq7POlr1RtA=;
-        b=IquwkO95q/UwwPMizwgMyjj4ev3XxDyhR/G3JHGEMCF3sSBM1iMANjExCpcvgLzlnG
-         c0k6jUJJgFMV5g0qmbSVJ021AH6TGBxq+8XWJcUoxP8kLv+OEHJYUwpGc+sctoUZRDos
-         hIzip/irtCZpPPkUNHJdcUGvO4CqxO0BooUhg=
+        d=sifive.com; s=google;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uzkyORv9WHDjxXAzIFaE9ySsH2mGC9U4XGK9nC78CHA=;
+        b=h5IRtFuIVJH/cG3FVACxeIC4AI/AcK3/3xbMyrcYh3sq2L98YlyPIylJWOA+NPneVq
+         vfpL9vMlD+w1B0AJ8UnE8lS+zZ2cUt/ASW7a8Ut/w1V6JHuaQ3pA3TqkfcYef94rwMIj
+         YsYUEO5Y+cQ5NV6MDHoA3LdJQAjuzS76/EdhuzrXSoXS12Yr7610MpwxonbjZ+Q9/anS
+         vM8Ll+P7kPlMJ/T91z9FsBr9j7t/PgurOX3ZPhhiPv38ARc+7RyWtiEJ7oT8LyhaRl0k
+         aFd9kP+sZYJsXMJHB5bn3d2vZ0JtpGRUw9U1KoCc8twFRm8aA+aIZiICADoDeBE5mTpu
+         7eSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Ireb14swxzh/kGO0PaPMQde96Q1mT+0FNq7POlr1RtA=;
-        b=Rp2+FcL0t197vLn3tunKJ0Hh4N55VE++soTFOb6oo+dqXxrvyQzVvwy15GihHHQy0w
-         dZM75A8blANUyVKFGXpE5mfOGjxOEnfAsMeBIKcC7+x8wG2Gd7BTouRO8UNwmP28qXLt
-         iBBpopAPJBPjeaMcuXp/KoXPOQ4B2U94KN8CjXnLaIwHtliB+AsbW3nz8sOj5w6GhPGB
-         XiY3zTi3NRaKutOSVKgww4Ztw5TW5UPvmFNgQXXXfzbhwZl6twweqKxxwgs+sfCym0II
-         L9ptu0VtPCPeGL4S1VfRhNgMiVScTQomF667r7AviqHQ53EtrEaEj6WY6qs2qgLusUAz
-         x7Hw==
-X-Gm-Message-State: AJcUukcbM6oZhVwDQEB9ikrooZSmXot5XQkHtavcSKyHpoSpwiMw3wah
-        t7YALQIQb3O8pk81ayJldDFWSMVX7Yo=
-X-Google-Smtp-Source: ALg8bN7AHC/OkE3GEp/TdI/SKoGS45qAkUcVWcluQMecNrZHMIeZ/8AU0Ai7xM7LpYmoY7Oa5aZH0A==
-X-Received: by 2002:a67:1346:: with SMTP id 67mr1217733vst.31.1548269766502;
-        Wed, 23 Jan 2019 10:56:06 -0800 (PST)
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com. [209.85.222.41])
-        by smtp.gmail.com with ESMTPSA id x8sm3586124vsf.21.2019.01.23.10.56.05
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=uzkyORv9WHDjxXAzIFaE9ySsH2mGC9U4XGK9nC78CHA=;
+        b=i522Jx+t+UrZDQlwic//8mvexFcZTuKwh9N158FT9pNxXydW5ZdFa1SLtO/+llPk0T
+         7UZ9UTmcR91BIDFItWl3oDxpa5zgHTTeP0PzlU34WaBkZ9cAiF/SFVoJ+/9IB3yjUI+B
+         1rh64wRsy0cN2uMJUvh0V7UuVsLHi0nAqoQUunwjP5e1VHFAQOL42WuqdsXWvgiGOlmE
+         jLGKP/IzdQGH1cmAZuMXZYNMW9R7jHbIY5/+/ll4ANMhkq3SrEisoMEGxCii8kstt/PQ
+         3gY2ZOcS1iSDSzB6jQmwhTJthlKLdR32oqdHCsVmPkf/FmN8BXvm0qC3G2hMXq1PY/BV
+         TbHQ==
+X-Gm-Message-State: AJcUukeA/Sz53lYdLs0l6NU0K8ff4KVTUFVp6/QMNVeKOK3utBRGLhr+
+        Azq/UZ8aeOtWxm/K60vcaTLWEQ==
+X-Google-Smtp-Source: ALg8bN5mwouh5JuNw9Q+C5Y6nK005HnUqC2PlgGXjXxercm2orfgwKaSxnp0K6Ef32dTNhpSeMxLZQ==
+X-Received: by 2002:a63:bd51:: with SMTP id d17mr3068841pgp.443.1548269838008;
+        Wed, 23 Jan 2019 10:57:18 -0800 (PST)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id z62sm28719238pfi.4.2019.01.23.10.57.16
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 23 Jan 2019 10:56:05 -0800 (PST)
-Received: by mail-ua1-f41.google.com with SMTP id t8so1103537uap.0
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 10:56:05 -0800 (PST)
-X-Received: by 2002:ab0:470d:: with SMTP id h13mr1375354uac.122.1548269764744;
- Wed, 23 Jan 2019 10:56:04 -0800 (PST)
-MIME-Version: 1.0
-References: <20190123110349.35882-1-keescook@chromium.org> <20190123110349.35882-2-keescook@chromium.org>
- <20190123115829.GA31385@kroah.com> <874l9z31c5.fsf@intel.com>
- <000001d4b32a$845e06e0$8d1a14a0$@211mainstreet.net> <87va2f1int.fsf@intel.com>
-In-Reply-To: <87va2f1int.fsf@intel.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Thu, 24 Jan 2019 07:55:51 +1300
-X-Gmail-Original-Message-ID: <CAGXu5jJUxHtFq0rBJ9FwzMcZDWnusPUauC_=MaOz7H0_PF25jQ@mail.gmail.com>
-Message-ID: <CAGXu5jJUxHtFq0rBJ9FwzMcZDWnusPUauC_=MaOz7H0_PF25jQ@mail.gmail.com>
-Subject: Re: [Intel-gfx] [PATCH 1/3] treewide: Lift switch variables out of switches
-To:     Jani Nikula <jani.nikula@linux.intel.com>
-Cc:     Edwin Zimmerman <edwin@211mainstreet.net>,
-        Greg KH <gregkh@linuxfoundation.org>, dev@openvswitch.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Network Development <netdev@vger.kernel.org>,
-        intel-gfx@lists.freedesktop.org, linux-usb@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>, Linux-MM <linux-mm@kvack.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        intel-wired-lan@lists.osuosl.org,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        xen-devel <xen-devel@lists.xenproject.org>,
-        Laura Abbott <labbott@redhat.com>,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Alexander Popov <alex.popov@linux.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 23 Jan 2019 10:57:16 -0800 (PST)
+Date:   Wed, 23 Jan 2019 10:57:16 -0800 (PST)
+X-Google-Original-Date: Wed, 23 Jan 2019 10:51:09 PST (-0800)
+Subject:     Re: [PATCH v4 0/5] IRQ affinity support in PLIC driver
+In-Reply-To: <CAAhSdy0NYKgX0whXLF8h9Pjeg05D=pL8FcH674jTrTwUX3YX3Q@mail.gmail.com>
+CC:     aou@eecs.berkeley.edu, daniel.lezcano@linaro.org,
+        tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
+        atish.patra@wdc.com, Christoph Hellwig <hch@infradead.org>,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     anup@brainfault.org
+Message-ID: <mhng-228e5168-7ccc-49e6-91a3-a883a2aa8e58@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 4:44 AM Jani Nikula <jani.nikula@linux.intel.com> w=
-rote:
+On Tue, 08 Jan 2019 04:14:05 PST (-0800), anup@brainfault.org wrote:
+> On Thu, Dec 27, 2018 at 4:48 PM Anup Patel <anup@brainfault.org> wrote:
+>>
+>> This patchset primarily adds IRQ affinity support in PLIC driver and
+>> other improvements.
+>>
+>> It gives mechanism for explicitly route external interrupts to particular
+>> CPUs using smp_affinity attribute of each Linux IRQs. Also, we can now
+>> use IRQ balancer from kernel-space or user-space.
+>>
+>> The patchset is tested on QEMU virt machine. It is based on Linux-4.20
+>> and can be found at riscv_plic_irq_affinity_v4 branch of:
+>> https://github.com/avpatel/linux.git
+>>
+>> Changes since v3:
+>>  - Dropped PATCH2
+>>  - Added PATCH to not inline plic_toggle() and plic_irq_toggle()
+>>  - Moved PATCH3 changes to PATCH6
+>>  - Used WARN_ON_ONCE() instead of WARN_ON() in PATCH5
+>>
+>> Changes since v2:
+>>  - Fixed incorrect address of enable registers using sizeof(u32) in PATCH1
+>>  - Retained comment about need for locking in PATCH1
+>>  - Split PATCH2 into two patches
+>>  - Split PATCH3 into two patches
+>>  - Minor fix in commit description of PATCH4
+>>
+>> Changes since v1:
+>>  - Removed few whitspace changes from PATCH1
+>>  - Keep use of DEFINE_PER_CPU() as it is
+>>
+>> Anup Patel (5):
+>>   irqchip: sifive-plic: Pre-compute context hart base and enable base
+>>   irqchip: sifive-plic: Don't inline plic_toggle() and plic_irq_toggle()
+>>   irqchip: sifive-plic: Add warning in plic_init() if handler already
+>>     present
+>>   irqchip: sifive-plic: Differentiate between PLIC handler and context
+>>   irqchip: sifive-plic: Implement irq_set_affinity() for SMP host
+>>
+>>  drivers/irqchip/irq-sifive-plic.c | 110 +++++++++++++++++++-----------
+>>  1 file changed, 71 insertions(+), 39 deletions(-)
+>>
+>> --
+>> 2.17.1
+>>
 >
-> On Wed, 23 Jan 2019, Edwin Zimmerman <edwin@211mainstreet.net> wrote:
-> > On Wed, 23 Jan 2019, Jani Nikula <jani.nikula@linux.intel.com> wrote:
-> >> On Wed, 23 Jan 2019, Greg KH <gregkh@linuxfoundation.org> wrote:
-> >> > On Wed, Jan 23, 2019 at 03:03:47AM -0800, Kees Cook wrote:
-> >> >> Variables declared in a switch statement before any case statements
-> >> >> cannot be initialized, so move all instances out of the switches.
-> >> >> After this, future always-initialized stack variables will work
-> >> >> and not throw warnings like this:
-> >> >>
-> >> >> fs/fcntl.c: In function =E2=80=98send_sigio_to_task=E2=80=99:
-> >> >> fs/fcntl.c:738:13: warning: statement will never be executed [-Wswi=
-tch-unreachable]
-> >> >>    siginfo_t si;
-> >> >>              ^~
-> >> >
-> >> > That's a pain, so this means we can't have any new variables in { }
-> >> > scope except for at the top of a function?
+> Any comments on this series??
 
-Just in case this wasn't clear: no, it's just the switch statement
-before the first "case". I cannot imagine how bad it would be if we
-couldn't have block-scoped variables! Heh. :)
-
-> >> >
-> >> > That's going to be a hard thing to keep from happening over time, as
-> >> > this is valid C :(
-> >>
-> >> Not all valid C is meant to be used! ;)
-> >
-> > Very true.  The other thing to keep in mind is the burden of enforcing
-> > a prohibition on a valid C construct like this.  It seems to me that
-> > patch reviewers and maintainers have enough to do without forcing them
-> > to watch for variable declarations in switch statements.  Automating
-> > this prohibition, should it be accepted, seems like a good idea to me.
->
-> Considering that the treewide diffstat to fix this is:
->
->  18 files changed, 45 insertions(+), 46 deletions(-)
->
-> and using the gcc plugin in question will trigger the switch-unreachable
-> warning, I think we're good. There'll probably be the occasional
-> declarations that pass through, and will get fixed afterwards.
-
-Yeah, that was my thinking as well: it's a rare use, and we get a
-warning when it comes up.
-
-Thanks!
-
---=20
-Kees Cook
+Sorry, I haven't had a chance to take a look -- I've still a bit too behind on 
+getting my act together on our fixes and haven't had time to take a look at 
+things for the next merge window.
