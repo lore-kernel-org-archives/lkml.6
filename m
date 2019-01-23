@@ -2,247 +2,265 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 369D8C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 05:37:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA6C3C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 05:54:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE4AE217D4
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 05:37:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="wPJvALSF";
-	dkim=pass (1024-bit key) header.d=marvell.onmicrosoft.com header.i=@marvell.onmicrosoft.com header.b="NmtVZz+B"
+	by mail.kernel.org (Postfix) with ESMTP id 8DCB521019
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 05:54:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726235AbfAWFhB (ORCPT
+        id S1726100AbfAWFy2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 00:37:01 -0500
-Received: from mx0b-0016f401.pphosted.com ([67.231.156.173]:45054 "EHLO
-        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725945AbfAWFhA (ORCPT
+        Wed, 23 Jan 2019 00:54:28 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42326 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725945AbfAWFy2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 00:37:00 -0500
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-        by mx0b-0016f401.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0N5Z4Od014266;
-        Tue, 22 Jan 2019 21:36:56 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=pfpt0818;
- bh=bgGzGouNVxIepReWtKjU2BFeOWUIXx9SuAgiWayvmXE=;
- b=wPJvALSF91UeuKKjBk4t0tn/lffJc96FEe20FAXGI8gvRgceQSfqs5v2ksjReBKYuv7I
- kE8bfbtYRpdCfHYw0NsfzyiPQFHqpp/ONDXvlTWQDhji5fSoy7Gs9UJCvkj/ZojuIY4e
- eSKAEZkmDRrs+jnPSMC1NniVpL02Nk7hFPQqMPHWKu3mZjqSOfcW1t+9iuwMtS0mTyEt
- quGh6agWVpXj4ODwtltZSl4SMCIqqsqs6265v4/OSCvmiaUssBzTQeUyQzgl6flHo1e8
- afFybtfw8eY8zvzcwSVCNVcoKF3mVEvYOqNCOn5oxrAZpO5+WMl2RNIjTFGqoTt+Fzzz hw== 
-Received: from sc-exch02.marvell.com ([199.233.58.182])
-        by mx0b-0016f401.pphosted.com with ESMTP id 2q6cht9xq2-17
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Tue, 22 Jan 2019 21:36:56 -0800
-Received: from SC-EXCH03.marvell.com (10.93.176.83) by SC-EXCH02.marvell.com
- (10.93.176.82) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Tue, 22 Jan
- 2019 21:36:53 -0800
-Received: from NAM05-DM3-obe.outbound.protection.outlook.com (104.47.49.59) by
- SC-EXCH03.marvell.com (10.93.176.83) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3 via Frontend Transport; Tue, 22 Jan 2019 21:36:54 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=marvell.onmicrosoft.com; s=selector1-marvell-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bgGzGouNVxIepReWtKjU2BFeOWUIXx9SuAgiWayvmXE=;
- b=NmtVZz+Bwd7zQBHtYdpAw9bBxqJ0oT+TlT52onJKCJWWDQKNkHX1FoiV6U9PeSfbmYM8j4JnePe0RJcW4pNFCftcAQ/DPyk/30hB7wGw2a2SatqC9vDrjRijRHETGye/O3lagcj8cU0ptnIagRi2EzNsl1TwuH8OUg/z7NW7zYI=
-Received: from BYAPR18MB2485.namprd18.prod.outlook.com (20.179.92.143) by
- BYAPR18MB2983.namprd18.prod.outlook.com (20.179.60.15) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1537.24; Wed, 23 Jan 2019 05:36:50 +0000
-Received: from BYAPR18MB2485.namprd18.prod.outlook.com
- ([fe80::e845:9a54:f1be:a474]) by BYAPR18MB2485.namprd18.prod.outlook.com
- ([fe80::e845:9a54:f1be:a474%2]) with mapi id 15.20.1537.031; Wed, 23 Jan 2019
- 05:36:50 +0000
-From:   Manish Rangankar <mrangankar@marvell.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Martin Petersen <martin.petersen@oracle.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "QLogic-Storage-Upstream@cavium.com" 
-        <QLogic-Storage-Upstream@cavium.com>
-Subject: RE: [PATCH 6/7] scsi: qlogic: no need to check return value of
- debugfs_create functions
-Thread-Topic: [PATCH 6/7] scsi: qlogic: no need to check return value of
- debugfs_create functions
-Thread-Index: AQHUsmSKY1XdW2QBlUaP+OnoY78pxKW8VjDw
-Date:   Wed, 23 Jan 2019 05:36:50 +0000
-Message-ID: <BYAPR18MB2485661ACC93D549309BB720D8990@BYAPR18MB2485.namprd18.prod.outlook.com>
-References: <20190122150906.12470-1-gregkh@linuxfoundation.org>
- <20190122150906.12470-7-gregkh@linuxfoundation.org>
-In-Reply-To: <20190122150906.12470-7-gregkh@linuxfoundation.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [114.143.185.87]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR18MB2983;20:izr+ix7E58jBP8Y9lpYIqqK54iEyEa+Sp1dJZRtH1b0tjWHNVZAjWLIwMOGR6kuYs/dxOq+xvsC80+6xDQJjBtLXBVH1qmTZaWTinqWmlbAf8qazJ4tjht7eqHeTHFrzkCfN/yOe+qfwnwVRnbdtpvcY2lWxpw1pPIMCcSwF9Q8=
-x-ms-office365-filtering-correlation-id: ca2b8605-9f0f-48c0-ca1a-08d680f4c66b
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605077)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BYAPR18MB2983;
-x-ms-traffictypediagnostic: BYAPR18MB2983:
-x-microsoft-antispam-prvs: <BYAPR18MB298381DCA5207211AFDFB709D8990@BYAPR18MB2983.namprd18.prod.outlook.com>
-x-forefront-prvs: 0926B0E013
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(39860400002)(366004)(136003)(396003)(13464003)(199004)(189003)(6116002)(86362001)(186003)(7696005)(76176011)(102836004)(53546011)(6506007)(26005)(2906002)(3846002)(8936002)(66066001)(97736004)(74316002)(106356001)(105586002)(33656002)(229853002)(55016002)(486006)(4326008)(53936002)(6436002)(6246003)(25786009)(9686003)(71190400001)(99286004)(71200400001)(7736002)(54906003)(110136005)(81156014)(14454004)(8676002)(81166006)(476003)(478600001)(446003)(11346002)(305945005)(316002)(14444005)(68736007)(256004);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR18MB2983;H:BYAPR18MB2485.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: marvell.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: huhWzYeNUHRxGtluTn8V1JkGodYdefQKXVwSwNPgT2y+tqnWnqZ33jqzY3whMFq7Nsd7jcKGX1r4jhEIut7jS3IrwtCEs0trXTW8/knygopiAxR4fbigiAnEO5FWKUpbVZ7MaQzQ8MyffUjNPtW6jDxhLV5/WNpqHCSOHmFnKdG4LwyNV06T9NVAIfTmgUBYKeceXRTnuVEfGAuIkjMjGCzM/4xDVTqSjvA49R3aSBbGNw6QaUvy/tNfCPlNtcDFZK691GMt/J9IrVF90Nqlz6uIrDIvAq96PMpsvZuhIHyWplJ+IBCcyG+qB+SjYS0DWLEJeGgcpi4CRQbvWe97T0uohAQySnbidlbiFGDjq2H0v0omr4zBhEebZFVixoHxYKCQ97BsUsswdAxRbx/oGHhL14KHkS+9rRCO/jeNN74=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 23 Jan 2019 00:54:28 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0N5s9LA054528
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 00:54:27 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2q6e8pygnp-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 00:54:26 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Wed, 23 Jan 2019 05:54:24 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 23 Jan 2019 05:54:18 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0N5sHix24313864
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 23 Jan 2019 05:54:18 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DEB72A4054;
+        Wed, 23 Jan 2019 05:54:17 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 70EA7A405B;
+        Wed, 23 Jan 2019 05:54:16 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.8.208])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Wed, 23 Jan 2019 05:54:16 +0000 (GMT)
+Date:   Wed, 23 Jan 2019 07:54:14 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Marc Gonzalez <marc.w.gonzalez@free.fr>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Prateek Patel <prpatel@nvidia.com>,
+        Sachin Nikam <snikam@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Qian Cai <cai@lca.pw>, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: kmemleak panic
+References: <b7629ecf-757c-f8b5-df83-ba83d7036b2f@free.fr>
+ <20190119132832.GA29881@MBP.local>
+ <6579db26-10ac-3fbf-1998-5b937a38f202@free.fr>
+ <d4facdc2-0581-929f-caa2-b9efa9bd8f97@arm.com>
+ <CAL_JsqKFT8J6g02gxeBiTfBb_XHhp2-ZNB6DgaLPK85kNZGRig@mail.gmail.com>
+ <20190121143704.GE29504@arrakis.emea.arm.com>
+ <CAL_JsqKQb34zVNTzo9DLNiDwmWGxkrKezSOjwCUPAvgzUoLYjg@mail.gmail.com>
+ <20190121174234.GC26461@rapoport-lnx>
+ <2bb30550-435a-046c-4f45-21dd594aa695@free.fr>
+ <3c886941-bf9d-f040-b568-ee7a8eba9a04@free.fr>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: ca2b8605-9f0f-48c0-ca1a-08d680f4c66b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Jan 2019 05:36:50.7582
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR18MB2983
-X-OriginatorOrg: marvell.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3c886941-bf9d-f040-b568-ee7a8eba9a04@free.fr>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19012305-4275-0000-0000-00000302E0CA
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19012305-4276-0000-0000-0000381113E9
+Message-Id: <20190123055414.GA4747@rapoport-lnx>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-23_03:,,
  signatures=0
-X-Proofpoint-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901230044
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901230047
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Sent: Tuesday, January 22, 2019 8:39 PM
-> To: James Bottomley <jejb@linux.ibm.com>; Martin Petersen
-> <martin.petersen@oracle.com>
-> Cc: linux-kernel@vger.kernel.org; linux-scsi@vger.kernel.org; Greg Kroah-
-> Hartman <gregkh@linuxfoundation.org>; QLogic-Storage-
-> Upstream@cavium.com
-> Subject: [PATCH 6/7] scsi: qlogic: no need to check return value of
-> debugfs_create functions
->=20
-> External Email
->=20
-> When calling debugfs functions, there is no need to ever check the return
-> value.  The function can work or not, but the code logic should never do
-> something different based on this.
->=20
-> Cc: QLogic-Storage-Upstream@cavium.com
-> Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>
-> Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
-> Cc: linux-scsi@vger.kernel.org
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
->  drivers/scsi/qedf/qedf_debugfs.c | 18 ++----------------
-> drivers/scsi/qedi/qedi_debugfs.c | 17 ++---------------
->  2 files changed, 4 insertions(+), 31 deletions(-)
->=20
-> diff --git a/drivers/scsi/qedf/qedf_debugfs.c
-> b/drivers/scsi/qedf/qedf_debugfs.c
-> index c29c162a494f..a32d8ee4666e 100644
-> --- a/drivers/scsi/qedf/qedf_debugfs.c
-> +++ b/drivers/scsi/qedf/qedf_debugfs.c
-> @@ -27,30 +27,19 @@ qedf_dbg_host_init(struct qedf_dbg_ctx *qedf,
->                     const struct file_operations *fops)  {
->         char host_dirname[32];
-> -       struct dentry *file_dentry =3D NULL;
->=20
->         QEDF_INFO(qedf, QEDF_LOG_DEBUGFS, "Creating debugfs host
-> node\n");
->         /* create pf dir */
->         sprintf(host_dirname, "host%u", qedf->host_no);
->         qedf->bdf_dentry =3D debugfs_create_dir(host_dirname,
-> qedf_dbg_root);
-> -       if (!qedf->bdf_dentry)
-> -               return;
->=20
->         /* create debugfs files */
->         while (dops) {
->                 if (!(dops->name))
->                         break;
->=20
-> -               file_dentry =3D debugfs_create_file(dops->name, 0600,
-> -                                                 qedf->bdf_dentry, qedf,
-> -                                                 fops);
-> -               if (!file_dentry) {
-> -                       QEDF_INFO(qedf, QEDF_LOG_DEBUGFS,
-> -                                  "Debugfs entry %s creation failed\n",
-> -                                  dops->name);
-> -                       debugfs_remove_recursive(qedf->bdf_dentry);
-> -                       return;
-> -               }
-> +               debugfs_create_file(dops->name, 0600, qedf->bdf_dentry, q=
-edf,
-> +                                   fops);
->                 dops++;
->                 fops++;
->         }
-> @@ -80,9 +69,6 @@ qedf_dbg_init(char *drv_name)
->=20
->         /* create qed dir in root of debugfs. NULL means debugfs root */
->         qedf_dbg_root =3D debugfs_create_dir(drv_name, NULL);
-> -       if (!qedf_dbg_root)
-> -               QEDF_INFO(NULL, QEDF_LOG_DEBUGFS, "Init of debugfs "
-> -                          "failed\n");
->  }
->=20
->  /**
-> diff --git a/drivers/scsi/qedi/qedi_debugfs.c
-> b/drivers/scsi/qedi/qedi_debugfs.c
-> index fd914ca4149a..5667e4752e2e 100644
-> --- a/drivers/scsi/qedi/qedi_debugfs.c
-> +++ b/drivers/scsi/qedi/qedi_debugfs.c
-> @@ -23,27 +23,16 @@ qedi_dbg_host_init(struct qedi_dbg_ctx *qedi,
->                    const struct file_operations *fops)  {
->         char host_dirname[32];
-> -       struct dentry *file_dentry =3D NULL;
->=20
->         sprintf(host_dirname, "host%u", qedi->host_no);
->         qedi->bdf_dentry =3D debugfs_create_dir(host_dirname, qedi_dbg_ro=
-ot);
-> -       if (!qedi->bdf_dentry)
-> -               return;
->=20
->         while (dops) {
->                 if (!(dops->name))
->                         break;
->=20
-> -               file_dentry =3D debugfs_create_file(dops->name, 0600,
-> -                                                 qedi->bdf_dentry, qedi,
-> -                                                 fops);
-> -               if (!file_dentry) {
-> -                       QEDI_INFO(qedi, QEDI_LOG_DEBUGFS,
-> -                                 "Debugfs entry %s creation failed\n",
-> -                                 dops->name);
-> -                       debugfs_remove_recursive(qedi->bdf_dentry);
-> -                       return;
-> -               }
-> +               debugfs_create_file(dops->name, 0600, qedi->bdf_dentry, q=
-edi,
-> +                                   fops);
->                 dops++;
->                 fops++;
->         }
-> @@ -60,8 +49,6 @@ void
->  qedi_dbg_init(char *drv_name)
->  {
->         qedi_dbg_root =3D debugfs_create_dir(drv_name, NULL);
-> -       if (!qedi_dbg_root)
-> -               QEDI_INFO(NULL, QEDI_LOG_DEBUGFS, "Init of debugfs failed=
-\n");
->  }
->=20
->  void
-> --
-> 2.20.1
+On Tue, Jan 22, 2019 at 03:12:54PM +0100, Marc Gonzalez wrote:
+> On 22/01/2019 15:02, Marc Gonzalez wrote:
+> 
+> > On 21/01/2019 18:42, Mike Rapoport wrote:
+> > 
+> >> If I understood correctly, the trouble comes from no-map range allocated in 
+> >> early_init_dt_alloc_reserved_memory_arch().
+> >>
+> >> There's indeed imbalance, because memblock_alloc() does kmemleak_alloc(), but
+> >> memblock_remove() does not do kmemleak_free().
+> >>
+> >> I think the best way is to replace __memblock_alloc_base() with
+> >> memblock_find_in_range(), e.g something like:
+> >>
+> >>
+> >> diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.c
+> >> index 1977ee0adcb1..6807a1cffe55 100644
+> >> --- a/drivers/of/of_reserved_mem.c
+> >> +++ b/drivers/of/of_reserved_mem.c
+> >> @@ -37,21 +37,16 @@ int __init __weak early_init_dt_alloc_reserved_memory_arch(phys_addr_t size,
+> >>  	 */
+> >>  	end = !end ? MEMBLOCK_ALLOC_ANYWHERE : end;
+> >>  	align = !align ? SMP_CACHE_BYTES : align;
+> >> -	base = __memblock_alloc_base(size, align, end);
+> >> +	base = memblock_find_in_range(size, align, start, end);
+> >>  	if (!base)
+> >>  		return -ENOMEM;
+> >>  
+> >> -	/*
+> >> -	 * Check if the allocated region fits in to start..end window
+> >> -	 */
+> >> -	if (base < start) {
+> >> -		memblock_free(base, size);
+> >> -		return -ENOMEM;
+> >> -	}
+> >> -
+> >>  	*res_base = base;
+> >>  	if (nomap)
+> >>  		return memblock_remove(base, size);
+> >> +	else
+> >> +		return memblock_reserve(base, size);
+> >> +
+> >>  	return 0;
+> >>  }
+> >>  
+> > 
+> > Your patch solves the issue. \o/
 
-Thanks
-Acked-by: Manish Rangankar <mrangankar@marvell.com>
+Great :)
+ 
+> [ Add nvidia devs, but drop schowdary@nvidia.com ]
+> 
+
+Resending it as a formal patch now, I took a liberty to add your Tested-by.
+
+From a847ca684db29a3c09e4dd2a8a008b35cf36e52f Mon Sep 17 00:00:00 2001
+From: Mike Rapoport <rppt@linux.ibm.com>
+Date: Wed, 23 Jan 2019 07:38:50 +0200
+Subject: [PATCH] of: fix kmemleak crash caused by imbalance in early memory
+ reservation
+
+Marc Gonzalez reported the following kmemleak crash:
+
+Unable to handle kernel paging request at virtual address ffffffc021e00000
+Mem abort info:
+  ESR = 0x96000006
+  Exception class = DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+Data abort info:
+  ISV = 0, ISS = 0x00000006
+  CM = 0, WnR = 0
+swapper pgtable: 4k pages, 39-bit VAs, pgdp = (____ptrval____)
+[ffffffc021e00000] pgd=000000017e3ba803, pud=000000017e3ba803,
+pmd=0000000000000000
+Internal error: Oops: 96000006 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 6 PID: 523 Comm: kmemleak Tainted: G S      W         5.0.0-rc1 #13
+Hardware name: Qualcomm Technologies, Inc. MSM8998 v1 MTP (DT)
+pstate: 80000085 (Nzcv daIf -PAN -UAO)
+pc : scan_block+0x70/0x190
+lr : scan_block+0x6c/0x190
+sp : ffffff8012e8bd20
+x29: ffffff8012e8bd20 x28: ffffffc0fdbaf018
+x27: ffffffc022000000 x26: 0000000000000080
+x25: ffffff8011aadf70 x24: ffffffc0f8cc8000
+x23: ffffff8010dc8000 x22: ffffff8010dc8830
+x21: ffffffc021e00ff9 x20: ffffffc0f8cc8050
+x19: ffffffc021e00000 x18: 0000000000002409
+x17: 0000000000000200 x16: 0000000000000000
+x15: ffffff8010e14dd8 x14: 0000000000002406
+x13: 000000004c4dd0c6 x12: ffffffc0f77dad58
+x11: 0000000000000001 x10: ffffff8010d9e688
+x9 : ffffff8010d9f000 x8 : ffffff8010d9e688
+x7 : 0000000000000002 x6 : 0000000000000000
+x5 : ffffff8011511c20 x4 : 00000000000026d1
+x3 : ffffff8010e14d88 x2 : 5b36396f4e7d4000
+x1 : 0000000000208040 x0 : 0000000000000000
+Process kmemleak (pid: 523, stack limit = 0x(____ptrval____))
+Call trace:
+ scan_block+0x70/0x190
+ scan_gray_list+0x108/0x1c0
+ kmemleak_scan+0x33c/0x7c0
+ kmemleak_scan_thread+0x98/0xf0
+ kthread+0x11c/0x120
+ ret_from_fork+0x10/0x1c
+Code: f9000fb4 d503201f 97ffffd2 35000580 (f9400260)
+---[ end trace 176d6ed9d86a0c33 ]---
+note: kmemleak[523] exited with preempt_count 2
+
+The crash happens when a no-map area is allocated in
+early_init_dt_alloc_reserved_memory_arch(). The allocated region is
+registered with kmemleak, but it is then removed from memblock using
+memblock_remove() that is not kmemleak-aware.
+
+Replacing __memblock_alloc_base() with memblock_find_in_range() makes sure
+that the allocated memory is not added to kmemleak and then
+memblock_remove()'ing this memory is safe.
+
+As a bonus, since memblock_find_in_range() ensures the allocation in the
+specified range, the bounds check can be removed.
+
+Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+Tested-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+---
+ drivers/of/of_reserved_mem.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.c
+index 1977ee0adcb1..6807a1cffe55 100644
+--- a/drivers/of/of_reserved_mem.c
++++ b/drivers/of/of_reserved_mem.c
+@@ -37,21 +37,16 @@ int __init __weak early_init_dt_alloc_reserved_memory_arch(phys_addr_t size,
+ 	 */
+ 	end = !end ? MEMBLOCK_ALLOC_ANYWHERE : end;
+ 	align = !align ? SMP_CACHE_BYTES : align;
+-	base = __memblock_alloc_base(size, align, end);
++	base = memblock_find_in_range(size, align, start, end);
+ 	if (!base)
+ 		return -ENOMEM;
+ 
+-	/*
+-	 * Check if the allocated region fits in to start..end window
+-	 */
+-	if (base < start) {
+-		memblock_free(base, size);
+-		return -ENOMEM;
+-	}
+-
+ 	*res_base = base;
+ 	if (nomap)
+ 		return memblock_remove(base, size);
++	else
++		return memblock_reserve(base, size);
++
+ 	return 0;
+ }
+ 
+-- 
+2.7.4
+
