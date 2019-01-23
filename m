@@ -2,114 +2,116 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59AA0C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:50:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A81C8C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:50:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2264020870
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:50:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74BB421726
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:50:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HeoATH3X"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BUabxBkQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726972AbfAWHuV (ORCPT
+        id S1726986AbfAWHuZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 02:50:21 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:41084 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726029AbfAWHuU (ORCPT
+        Wed, 23 Jan 2019 02:50:25 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:44468 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726229AbfAWHuV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 02:50:20 -0500
-Received: by mail-wr1-f65.google.com with SMTP id x10so1186477wrs.8
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 23:50:19 -0800 (PST)
+        Wed, 23 Jan 2019 02:50:21 -0500
+Received: by mail-wr1-f67.google.com with SMTP id z5so1167009wrt.11
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 23:50:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=ErITnZX7V2KHQl6xx/ncGHB7pc8CDMknHP/nniLmEZs=;
-        b=HeoATH3X2Ycp16lTuJr3RNP5usYadU7AnoFwDbNRyOKZn/IcA2ni1PV2CGGgosiB8N
-         HVRGbIPQlZMh86aFd6EqXDD/0Na+czVJa4J6obEEqxxZKj/kbSNMCWA9YAxm0B9rpOXW
-         RD1Ej+Rvrj+NAAI0u8mAO7uebn1xvqjw5BWMg=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=dm1djdLVSS6M3bvErQJB+/zSgJ56gxH1n+KiZojviIM=;
+        b=BUabxBkQ80rAjig3sHrjRpICpMA5l8DxYnd61NyX7VsUZaeF8Q+yY3sayjbTXdCDQx
+         Ho7N26ZLjOaKxTeEN894vBwYx2rVgSmsjAngx0OVLrK3gq7P1LV6r4cLcmOI5yAn2ZWN
+         GqlL9OnXaCzCyE0eo9/sz4z4z227wF84QCC5s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=ErITnZX7V2KHQl6xx/ncGHB7pc8CDMknHP/nniLmEZs=;
-        b=paU0X4YUSz1GS933LO6P2ImFsASgiDo9Vc0yBoRiRUXyu8ijd75WqspLD8WA6eZp5J
-         jP+ogiS3fSlRGI3GboNgP2kTyV+MaH1z8+9UNPBfWIMbbqCDzfZfM3yLSZI0uJktC+wb
-         DMGoyldlceBkYRDHV2P3mxrngcCL+inJB2KBPSw3GRWmxK0dYUuIH+khSkmdG8Avik8r
-         yuVlNBWSf+6748yC71fM2/EECozQwcMX/YlJpeVPK94ZPGC/8nevzBKEv2TVZbaECwPQ
-         j3+IWQzRRu0I+x5pW7n2fySuuFT8MXq9ZKc8cNQQtAuWKPt0UWRCIT20DYWUxWpinvwT
-         Jr5Q==
-X-Gm-Message-State: AJcUukcUGHunYNfuwRLxRx172YvMNZsHE2mzshYf9cG094p8g2xKQ6Zv
-        nyOzqJJI6Uo93GRjFVHRZOGyxw==
-X-Google-Smtp-Source: ALg8bN64TLsEtqUWmhPghRGCGHthC/cPxwQV/+PotTYAbILJ3Xs7xSV7CB8uD9ht0J0uipkuxPFCNQ==
-X-Received: by 2002:adf:ea11:: with SMTP id q17mr1325784wrm.328.1548229818594;
-        Tue, 22 Jan 2019 23:50:18 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=dm1djdLVSS6M3bvErQJB+/zSgJ56gxH1n+KiZojviIM=;
+        b=lLByr5nOcpuVfFjUxinR8jX/nXgmKg5klw3oW1/4pTz0aFyq4pleOtpz1Krv0kZ3MC
+         k3KJAC5c2W95+VfqX4a/QxmawW3XM0GOvw4iljGwvkAG6FtnthIa1NJxP6Ps4gRx9TBx
+         6Y9lAK5rP1UK+syDkTSnsAkCR1TrzYBEDGHF0Tb+hnlORqAkIVh+r3SXKiDmPwRIMjIW
+         6xbIpkalT7Vxl0ucFC3aICa8lXUN7pK61PIj8WYCtCVgcQCoUViqMK0Yb7xk43vB4OoG
+         U6bX1Nnkem4MXFmUhL+Ey+28opAzjUV26FgII/y9Zqi2O6PltW90ZJ7+Vlyo3YdkKSrF
+         QOnw==
+X-Gm-Message-State: AJcUukdfu1rWMzHCKbi2NvkIB7bvqLiPyJplw0hNyNL6ziZym0+4vUEm
+        29aKa91GYRwFBXxp0jHvhsj39g==
+X-Google-Smtp-Source: ALg8bN4s0KYtXXBBeFBnpT/Xl0L1FkFFTtFdhD1CirE/gZvyOhrdWY3aDTvRofhEuD6XWg0LmsxXkw==
+X-Received: by 2002:a5d:4ccb:: with SMTP id c11mr1455765wrt.241.1548229820000;
+        Tue, 22 Jan 2019 23:50:20 -0800 (PST)
 Received: from localhost.localdomain ([2a01:e0a:f:6020:5ca6:2921:648b:56b6])
-        by smtp.gmail.com with ESMTPSA id i186sm70138787wmd.19.2019.01.22.23.50.17
+        by smtp.gmail.com with ESMTPSA id i186sm70138787wmd.19.2019.01.22.23.50.18
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 22 Jan 2019 23:50:17 -0800 (PST)
+        Tue, 22 Jan 2019 23:50:18 -0800 (PST)
 From:   Vincent Guittot <vincent.guittot@linaro.org>
 To:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
         rjw@rjwysocki.net, thara.gopinath@linaro.org, linux@roeck-us.net
 Cc:     ulf.hansson@linaro.org,
         Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [PATCH v7 0/3] Move pm_runtime accounted time to raw nsec
-Date:   Wed, 23 Jan 2019 08:50:12 +0100
-Message-Id: <1548229814-24913-1-git-send-email-vincent.guittot@linaro.org>
+Subject: [PATCH v7 1/2] PM-runtime: update accounting_timestamp only when enable
+Date:   Wed, 23 Jan 2019 08:50:13 +0100
+Message-Id: <1548229814-24913-2-git-send-email-vincent.guittot@linaro.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1548229814-24913-1-git-send-email-vincent.guittot@linaro.org>
+References: <1548229814-24913-1-git-send-email-vincent.guittot@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move pm_runtime accounted time to raw nsec. The subject of the patchset
-has changed as 1st patch o the previous versions has been queued by
-Rafael.
+Initializing accounting_timestamp to something different from 0 during
+pm_runtime_init() doesn't make sense and put useless ordering constraint between
+timekeeping_init() and pm_runtime_init().
+PM runtime should start accounting time only when it is enable and discard
+the period when disabled.
+Set accounting_timestamp to now when enabling PM runtime.
 
-Patch 1 set accounting_timestamp to 0 in pm_runtime_init and update it when enable.
-So we remove ordering constraint between timekeeping_init and pm_runtime_init
+Suggested-by: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+---
+ drivers/base/power/runtime.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-Patch 2 moves time accounting on raw ns. This patch initially used
-ktime instead of raw ns but it was easier to move i915 driver on raw ns
-than on ktime.
-
-Change since v6:
-- move code that set accounting_timestamp in pm_runtime_enable
-
-Changes since v5:
-- removed patches already queued.
-- set accounting_timestamp to 0 in pm_runtime_init and update it when enable
-
-Changes since v4:
--Update commit message
-
-Changes since v3:
-- Rebase on v4.20-rc7 without patch that has been queued by Rafael
-- Simplify the new interface pm_runtime_suspended_time()
-
-Changes since v2:
-- remove patch1 that has been queued by rafael
-- add new interface in pm_runtime to get accounted time
-- reorder patchset to prevent compilation error
-
-Changes since v1:
-- updated commit message of patch 1
-- Added patches 2 & 3 to move runtime_pm accounting on raw ns
-  
-Thara Gopinath (1):
-  PM-runtime: Replace jiffies based accounting with ktime-based
-    accounting
-
-Vincent Guittot (1):
-  PM-runtime: update accounting_timestamp only when enable
-
- drivers/base/power/runtime.c | 26 ++++++++++++++++----------
- drivers/base/power/sysfs.c   | 11 ++++++++---
- include/linux/pm.h           |  6 +++---
- 3 files changed, 27 insertions(+), 16 deletions(-)
-
+diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
+index fb5e2b6..eccd37f1 100644
+--- a/drivers/base/power/runtime.c
++++ b/drivers/base/power/runtime.c
+@@ -1306,10 +1306,15 @@ void pm_runtime_enable(struct device *dev)
+ 
+ 	spin_lock_irqsave(&dev->power.lock, flags);
+ 
+-	if (dev->power.disable_depth > 0)
++	if (dev->power.disable_depth > 0) {
+ 		dev->power.disable_depth--;
+-	else
++
++		/* About to enable runtime pm, set accounting_timestamp to now */
++		if (!dev->power.disable_depth)
++			dev->power.accounting_timestamp = jiffies;
++	} else {
+ 		dev_warn(dev, "Unbalanced %s!\n", __func__);
++	}
+ 
+ 	WARN(!dev->power.disable_depth &&
+ 	     dev->power.runtime_status == RPM_SUSPENDED &&
+@@ -1506,7 +1511,7 @@ void pm_runtime_init(struct device *dev)
+ 	dev->power.request_pending = false;
+ 	dev->power.request = RPM_REQ_NONE;
+ 	dev->power.deferred_resume = false;
+-	dev->power.accounting_timestamp = jiffies;
++	dev->power.accounting_timestamp = 0;
+ 	INIT_WORK(&dev->power.work, pm_runtime_work);
+ 
+ 	dev->power.timer_expires = 0;
 -- 
 2.7.4
 
