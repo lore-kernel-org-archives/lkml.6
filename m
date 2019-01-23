@@ -2,59 +2,60 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFFFEC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:15:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1A3CC282C5
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:15:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A021C20870
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:15:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5FC5220870
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:15:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="C72ZZDX/"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="V1qHlobF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726991AbfAWOPs (ORCPT
+        id S1727151AbfAWOPz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 09:15:48 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:38163 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726946AbfAWOPr (ORCPT
+        Wed, 23 Jan 2019 09:15:55 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:37153 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727069AbfAWOPx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 09:15:47 -0500
-Received: by mail-wr1-f67.google.com with SMTP id v13so2632721wrw.5
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 06:15:46 -0800 (PST)
+        Wed, 23 Jan 2019 09:15:53 -0500
+Received: by mail-wm1-f66.google.com with SMTP id g67so2098058wmd.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 06:15:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=MfMiR+XMEe6du7+Dt7wulgcs5Y8OkUZiz4lCQp0Fk4s=;
-        b=C72ZZDX/yumd3Db34fRNtFwhBZftusVs8T+Y7mvp3OfzwiWFOpIiwGXMilYb9yjGf1
-         YkWDOehnXohdtH136gSpzm6g9znyB7Xo+NLGdhJJAlmlkkOzic2Z5QeUf5L7/VPhd7Xq
-         XhUsEp3BAIZJK5UqT6zDizb5UqaMqGgZWDbeOxgV6umxwCn/XucyyU2q2T45LfRRAYNI
-         f3Y08Uv8rV/4XIIY183Gs8IvVJlabziuaU6W+a1HERppKk5v802f411llPJIsObjv/IL
-         Ud00+C55fsHsUphahX0+2Sia5YEfty5NjAvfyVa3c+3K/D8UuCIIMWMWibt10khDzp3V
-         M9Kw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=7qysfTh5siwOfbKv1X9ginQ3UPSZFJeCzUUMvaoxNkY=;
+        b=V1qHlobFyH0W19DrIw4NtoCcPhHkZE6Se59gihjX67LDovB5M23zUYK88eY4kylWBr
+         wioAmbcVIidXbaaPmdPKsF1YHc4z+3qJ8PZdTmhRmc3FS65GjmkOS6n73CM9yviswWuS
+         Epo6WVm7qFPFUC026hKDmVmd+eZYonk0baNrtgUPy25bxymuOek7DrVNkHC3JS0l+vmC
+         lBIsGPNDO+Os5pr16IVd+I6Vdrxm+JxXij+uM8XvJUTgJYuZuEmcrdFlaKXKuzjCMuXR
+         pfFovvvHZ7Bn5c6c/HFmKbPiqu0VWOFV4y65yfYAEy/rmnn1fiFkjuDda4Z1Gfx5evyP
+         E93g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=MfMiR+XMEe6du7+Dt7wulgcs5Y8OkUZiz4lCQp0Fk4s=;
-        b=DLjOUEtd8wDPqSxXMfiDB5xmGYArSJncvdiwAfr+JyHwoIc72gfaAetlmFQWTUuqdb
-         N1m+gZiwsbGrzKZpTKpzHBF5MeEx9Zed7Nk9yo90z6ns2J7GkjX4AP6RhDKaF/Z8Vk1I
-         fzt3p+SfMJAULPmj3Ire5fg3cW5EZ98MmllJheV3RvuamMZyvuaI2vY9cMTTKNswRHGI
-         dpefWN6I1UjHokRl/r2xCcGxjFd9hznvlTZZy5vbKH8reJWBhqdSnrP0epmEaBQoWPT4
-         VEXtGhvf37s1tx4EuEiqjRodaHK70YreULewARDO0HdneE7AbJ9EZuUdVihq17zcX0Nc
-         o/SQ==
-X-Gm-Message-State: AJcUukev20PhQNSct4O1czrxq4OfhRI7pmpNji3y49w/Kp0VLWeWT+FT
-        iHgRLtoqUnmIpc9Z5G1TN/vy7dXcx/w=
-X-Google-Smtp-Source: ALg8bN6ltRiaepdcB5KDEyCLj6np9kTmOqKvdGZIzleIxhmOj3TR9TQw6l1VksUMTx8ZyxwgA6UmPw==
-X-Received: by 2002:adf:891a:: with SMTP id s26mr2965007wrs.44.1548252945638;
-        Wed, 23 Jan 2019 06:15:45 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=7qysfTh5siwOfbKv1X9ginQ3UPSZFJeCzUUMvaoxNkY=;
+        b=ZtNDsEeGueG6nTYunVyhqi05kAbKLkdJ4ayDSuvqK96X+tPMU7mf8bsEPgUbS8nw6X
+         7JjxM65VmHQFxBEFmBf1XHGXnuJw7fYkVo3mz3NlXmU/u93RHpLOh6uUzTRogEiiVQLU
+         f0XxiUToazCn76HnqcfUxK8hGxWFtIohrhrzxvn78JFxfTCD6z5TlOFhsp99r+dj6uPk
+         tUJB7WevPycBjk9Uodb8Kl0vIQR+tnu1gpuqrsmxadygViwl2qD3OmFvFn2Ly1f4Z4b/
+         684v2HZGdQI5JfU/QruJsYUYLzSroFvlSd5PghITiifb6qYlM1RzKOtfz9hefMptgFI1
+         ++1g==
+X-Gm-Message-State: AJcUuke2rA21UawfWItJZYhcAxvrL4Msstmh50gVf2VS9D3ilpWUHjm2
+        KjrjuvTEJu+LDuMC6QTSSkzQBg==
+X-Google-Smtp-Source: ALg8bN6UXBoh4tXqrK10S2G+XEmMgtbXbaLd8rrv++BsgqtuMr+Rr9xc7qAY7gJV/G3RUicH1X8IUg==
+X-Received: by 2002:a7b:c24c:: with SMTP id b12mr2697326wmj.29.1548252951851;
+        Wed, 23 Jan 2019 06:15:51 -0800 (PST)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id a8sm29072997wme.23.2019.01.23.06.15.44
+        by smtp.gmail.com with ESMTPSA id a8sm29072997wme.23.2019.01.23.06.15.50
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 23 Jan 2019 06:15:44 -0800 (PST)
+        Wed, 23 Jan 2019 06:15:50 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -62,79 +63,62 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 0/9] gpio: mockup: improve the user-space testing interface
-Date:   Wed, 23 Jan 2019 15:15:29 +0100
-Message-Id: <20190123141538.29408-1-brgl@bgdev.pl>
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH 5/9] gpio: mockup: implement get_multiple()
+Date:   Wed, 23 Jan 2019 15:15:34 +0100
+Message-Id: <20190123141538.29408-6-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190123141538.29408-1-brgl@bgdev.pl>
+References: <20190123141538.29408-1-brgl@bgdev.pl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+We already support set_multiple(). Implement get_multiple() as well.
 
-This series aims at reworking the gpio-mockup debugfs interface. The
-reason for that is the fact that certain known problems with this
-testing module exist and the user-space tests are broken anyway
-after commit fa38869b0161 ("gpiolib: Don't support irq sharing
-for userspace") which made it impossible for gpio-mockup to ignore
-certain events (e.g. only receive notifications about rising edge
-events).
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+---
+ drivers/gpio/gpio-mockup.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-The first three patches improve the interrupt simulator. The first one
-makes the struct irq_chip part of the irq_sim structure so that we can
-support multiple instances at once. The second delegates the irq number
-mapping to the irq domain subsystem. The third patch provides a helper
-that will allow users to check the current configuration of a dummy
-interrupt and decide whether it should be fired depending on external
-logic.
-
-Next six patches improve the gpio-mockup module. Patches 4-5 have been
-reviewed before but missed the last merge window. Patch 6 is there
-because we're already breaking the debugfs interface anyway and it
-removes a link that has no users. Patches 7-8 are minor tweaks.
-
-Last patch introduces a rework of the debugfs interface. With this
-change each mockup chip is represented by a directory named after the
-chip's device name under <debugfs mount point>/gpio-mockup/. Each line
-is represented by a file using the line's offset as the name under the
-chip's directory. Reading from the line's file yields the current
-*value*, writing to the line's file changes the current "pull". Default
-pull for mockup lines is down. More info on that can be found in the
-comment added by this change to the gpio-mockup code.
-
-This is somewhat inspired by the idea of the gpio-simulator by
-Uwe Kleine-König except that I strongly belive that when testing
-certain user API code paths we should not be using the same paths for
-verification. That's why there's a separate interface (debugfs) sharing
-as little as possible with the character device that allows to check if
-various operations (reading and setting values, events) work as
-expected instead of two connected dummy chips sharing the same
-interface.
-
-If accepted this will of course require major modification of user-space
-tests in libgpiod once upstream.
-
-Bartosz Golaszewski (9):
-  irq/irq_sim: don't share the irq_chip structure between simulators
-  irq/irq_sim: use irq domain
-  irq/irq_sim: provide irq_sim_get_type()
-  gpio: mockup: add locking
-  gpio: mockup: implement get_multiple()
-  gpio: mockup: don't create the debugfs link named after the label
-  gpio: mockup: change the type of 'offset' to unsigned int
-  gpio: mockup: change the signature of unlocked get/set helpers
-  gpio: mockup: rework debugfs interface
-
- drivers/gpio/gpio-mockup.c | 186 +++++++++++++++++++++++++++++++------
- include/linux/irq_sim.h    |  10 +-
- kernel/irq/irq_sim.c       | 127 ++++++++++++++++++-------
- 3 files changed, 262 insertions(+), 61 deletions(-)
-
+diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
+index b4c1de6acf74..1c945c967f60 100644
+--- a/drivers/gpio/gpio-mockup.c
++++ b/drivers/gpio/gpio-mockup.c
+@@ -102,6 +102,22 @@ static int gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
+ 	return val;
+ }
+ 
++static int gpio_mockup_get_multiple(struct gpio_chip *gc,
++				    unsigned long *mask, unsigned long *bits)
++{
++	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
++	unsigned int bit, val;
++
++	mutex_lock(&chip->lock);
++	for_each_set_bit(bit, mask, gc->ngpio) {
++		val = __gpio_mockup_get(gc, bit);
++		__assign_bit(bit, bits, val);
++	}
++	mutex_unlock(&chip->lock);
++
++	return 0;
++}
++
+ static void __gpio_mockup_set(struct gpio_chip *gc,
+ 			      unsigned int offset, int value)
+ {
+@@ -327,6 +343,7 @@ static int gpio_mockup_probe(struct platform_device *pdev)
+ 	gc->parent = dev;
+ 	gc->get = gpio_mockup_get;
+ 	gc->set = gpio_mockup_set;
++	gc->get_multiple = gpio_mockup_get_multiple;
+ 	gc->set_multiple = gpio_mockup_set_multiple;
+ 	gc->direction_output = gpio_mockup_dirout;
+ 	gc->direction_input = gpio_mockup_dirin;
 -- 
 2.19.1
 
