@@ -2,110 +2,94 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACA12C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 06:45:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90A40C282C5
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 06:46:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7570221726
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 06:45:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RhKK5awk";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Gz1h7F9a"
+	by mail.kernel.org (Postfix) with ESMTP id 568C421841
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 06:46:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548226011;
+	bh=5QXH7AbOaOo5SJKtG5CEPSl1xutl/m0veyOLAaw5S5E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=GNXCAVlOwQk6H1Pq1M8bzaV3jbeTwigzg0HtsG9PnbRujXcEeUFlRontjR/7A9+/b
+	 eesIv1AfKW7UX9kIZSs38NeNPYyeJJDVNMEKOXcuU2KpLzdXrdt6HkfWmGwsHHU7wJ
+	 umpOagRODEpT/o+jXq7CCFaBpjS0qlYpqSXbPJ8Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726370AbfAWGpO (ORCPT
+        id S1726361AbfAWGqt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 01:45:14 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:47732 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725973AbfAWGpM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 01:45:12 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id EF4166044E; Wed, 23 Jan 2019 06:45:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548225911;
-        bh=reB+sFH9gB/CGoVID6Zz79pLcZ3lKJFvt+jTIZLSX6E=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=RhKK5awkx35OpEKQfsDlgpsB8fSz398MTuSzpf7RTu3Ix3L9tMrQWOiGF2ioxcgV2
-         Qcf5kN1sTbgaiMzfCH4EDY5fKecilp3aAMWP+v03xkQCUj4ovHrLZZ5+ObXPZA+2pK
-         IBpLwjiecznQhxrvHtJsMuhMHB1GZJzgddigNT/E=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 5E7C660112;
-        Wed, 23 Jan 2019 06:45:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548225910;
-        bh=reB+sFH9gB/CGoVID6Zz79pLcZ3lKJFvt+jTIZLSX6E=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Gz1h7F9aZIx9vCTR/DH+KMPWO5wCIbpTh/C6epWjghcttJMZMQzeC1DpSJHaCNXDR
-         pqXyMYH/llShpLC/Ff7BPWL5d194X23uz6NUQcIEz8Gv68UD2U52SwIhy60JPMCcB4
-         UlD+r/uZG4nUwg4WP1Syz6SMryxlnCH7Hw2Tuvuo=
+        Wed, 23 Jan 2019 01:46:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53920 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725973AbfAWGqt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 01:46:49 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1046B21726;
+        Wed, 23 Jan 2019 06:46:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548226008;
+        bh=5QXH7AbOaOo5SJKtG5CEPSl1xutl/m0veyOLAaw5S5E=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=f9PCRIhh9EZz/Aq3A3u8EzexW/9Oy+0Ppd7792PVNya1Z+1E5jCYbPXtyWJRH+rI1
+         QyaEWSoGd7UEBLJvAgvuDQ5X8W4MDyddY2V9kCOVGgWT3MNgtOfeb2s6AuaIMqxCFe
+         tJ9GTxaVmBw2ml0wD8ALyviHinM6uP+Rcb9Lgbas=
+Date:   Wed, 23 Jan 2019 07:46:46 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>, Michal Hocko <mhocko@suse.com>,
+        linux-mm@kvack.org
+Subject: Re: [PATCH] backing-dev: no need to check return value of
+ debugfs_create functions
+Message-ID: <20190123064646.GA26885@kroah.com>
+References: <20190122152151.16139-8-gregkh@linuxfoundation.org>
+ <20190122160759.mx3h7gjc23zmrvxc@linutronix.de>
+ <20190122162503.GB22548@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 23 Jan 2019 12:15:10 +0530
-From:   alokc@codeaurora.org
-To:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-serial@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>
-Cc:     andy.gross@linaro.org, david.brown@linaro.org,
-        georgi.djakov@linaro.org, dianders@chromium.org,
-        swboyd@chromium.org, bjorn.andersson@linaro.org,
-        linux-arm-msm-owner@vger.kernel.org
-Subject: Re: [PATCH 0/6] Add interconnect support for GENI QUPs
-In-Reply-To: <1548138816-1149-1-git-send-email-alokc@codeaurora.org>
-References: <1548138816-1149-1-git-send-email-alokc@codeaurora.org>
-Message-ID: <74b768d6573665fe2a4533a23ad23a9e@codeaurora.org>
-X-Sender: alokc@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190122162503.GB22548@kroah.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+Mark Brown
+On Tue, Jan 22, 2019 at 05:25:03PM +0100, Greg Kroah-Hartman wrote:
+> On Tue, Jan 22, 2019 at 05:07:59PM +0100, Sebastian Andrzej Siewior wrote:
+> > On 2019-01-22 16:21:07 [+0100], Greg Kroah-Hartman wrote:
+> > > diff --git a/mm/backing-dev.c b/mm/backing-dev.c
+> > > index 8a8bb8796c6c..85ef344a9c67 100644
+> > > --- a/mm/backing-dev.c
+> > > +++ b/mm/backing-dev.c
+> > > @@ -102,39 +102,25 @@ static int bdi_debug_stats_show(struct seq_file *m, void *v)
+> > >  }
+> > >  DEFINE_SHOW_ATTRIBUTE(bdi_debug_stats);
+> > >  
+> > > -static int bdi_debug_register(struct backing_dev_info *bdi, const char *name)
+> > > +static void bdi_debug_register(struct backing_dev_info *bdi, const char *name)
+> > >  {
+> > > -	if (!bdi_debug_root)
+> > > -		return -ENOMEM;
+> > > -
+> > >  	bdi->debug_dir = debugfs_create_dir(name, bdi_debug_root);
+> > 
+> > If this fails then ->debug_dir is NULL 
+> 
+> Wonderful, who cares :)
 
-On 2019-01-22 12:03, Alok Chauhan wrote:
-> This patch series contains following:
-> * Add wrapper framework to support interconnect path from GENI QUPs.
->   This wrapper enabled and help individual SEs to put their BW request.
->   Adding this wrapper make sense because we don't want individual SEs
->   to request to interconnect driver separately and put individual bw
->   votes from QUP.
-> 
->   This wrapper framework does the following:
->   - Request for interconnect path handle
->   - Maintain record of individual SEs' avg/peak bw.
->   - Aggregated avg/peak bw based on how many SE's are active and put
->     single bw request from QUP
-> 
-> * Interconnect wrapper API calling from I2C, SPI & Uart driver
-> * dt binding in sdm845 soc for Interconnect path for GENI QUPs
-> * dt binding documentation
-> 
-> 
-> Alok Chauhan (6):
->   dt-bindings: soc: qcom: Add interconnect binding for GENI QUP
->   soc: qcom: Add wrapper to support for Interconnect path
->   i2c: i2c-qcom-geni: Add interconnect support
->   spi: spi-geni-qcom: Add interconnect support
->   tty: serial: qcom_geni_serial: Add interconnect support
->   arm64: dts: sdm845: Add interconnect for GENI QUP
-> 
->  .../devicetree/bindings/soc/qcom/qcom,geni-se.txt  |  10 ++
->  arch/arm64/boot/dts/qcom/sdm845.dtsi               |  14 +++
->  drivers/i2c/busses/i2c-qcom-geni.c                 |  13 +++
->  drivers/soc/qcom/qcom-geni-se.c                    | 129 
-> +++++++++++++++++++++
->  drivers/spi/spi-geni-qcom.c                        |  20 +++-
->  drivers/tty/serial/qcom_geni_serial.c              |  27 ++++-
->  include/linux/qcom-geni-se.h                       |  11 ++
->  7 files changed, 222 insertions(+), 2 deletions(-)
+Ok, after sleeping on it, I'll change this function to return an error
+if we are out of memory, that way you will not be creating any files in
+any other location if you use the return value like this.  That should
+solve this issue.
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
-Forum,a Linux Foundation Collaborative Project
+thanks,
+
+greg k-h
