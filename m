@@ -2,120 +2,71 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D68A7C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 11:12:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBF69C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 11:15:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A37FF20870
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 11:12:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Z9aAMB+O";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="kt7am6XZ"
+	by mail.kernel.org (Postfix) with ESMTP id B43B820870
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 11:15:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727486AbfAWLMz (ORCPT
+        id S1727150AbfAWLPb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 06:12:55 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:35012 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727227AbfAWLMy (ORCPT
+        Wed, 23 Jan 2019 06:15:31 -0500
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:47512 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726317AbfAWLPa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 06:12:54 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 44DD76014B; Wed, 23 Jan 2019 11:12:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548241973;
-        bh=yx/RqyJ4hWDcNmGbeUJdRdVXCtvBV8K5olsKzX+lf5E=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Z9aAMB+O9zScpowUq/MJPgaRO+2nF+UejZ1vxjzDA13o+KnpDSKA3zygqfJOw6FNS
-         2PTI2Ey7hML4BCc8bXvk85wiAMoqmB3rwQP1Nf5nxQ6DhiFBDEO9XDbWxe7yh+fHp3
-         oraAaS9GY5df9rohLT2uk1QMSuXjOr7gzNizQ3kI=
-Received: from jshekhar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jshekhar@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8E71E6049C;
-        Wed, 23 Jan 2019 11:12:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548241972;
-        bh=yx/RqyJ4hWDcNmGbeUJdRdVXCtvBV8K5olsKzX+lf5E=;
-        h=From:To:Cc:Subject:Date:From;
-        b=kt7am6XZR19AsRDF8iu/ffgBlSUzmQwVTq2CRhBKMnPcNk8vtqYDkQh60PxvpmHto
-         RXmL5TFVr0Lag6e5To8eGhSUkct3yfpgL624I1LYJZ1/HkVLBwN8crwd8bMptWb7gK
-         RXK/7+kfOyRsDAbbOX+ye9H7Oqatz/GY/zh2fQnk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8E71E6049C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jshekhar@codeaurora.org
-From:   Jayant Shekhar <jshekhar@codeaurora.org>
-To:     dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org
-Cc:     Jayant Shekhar <jshekhar@codeaurora.org>,
-        linux-kernel@vger.kernel.org, robdclark@gmail.com,
-        seanpaul@chromium.org, hoegsberg@chromium.org,
-        abhinavk@codeaurora.org, jsanka@codeaurora.org,
-        chandanu@codeaurora.org, nganji@codeaurora.org
-Subject: [v1] drm/msm: Remove clock and bandwidth votes in mdss pm suspend
-Date:   Wed, 23 Jan 2019 16:42:40 +0530
-Message-Id: <1548241960-7412-1-git-send-email-jshekhar@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Wed, 23 Jan 2019 06:15:30 -0500
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0NB4w9l010521;
+        Wed, 23 Jan 2019 05:15:27 -0600
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2q416tqxxf-1;
+        Wed, 23 Jan 2019 05:15:26 -0600
+Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
+        by mail1.cirrus.com (Postfix) with ESMTP id 1EDEC611E127;
+        Wed, 23 Jan 2019 05:15:26 -0600 (CST)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Wed, 23 Jan 2019
+ 11:15:25 +0000
+Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id x0NBFPiF017490; Wed,
+ 23 Jan 2019 11:15:25 GMT
+Date:   Wed, 23 Jan 2019 11:15:25 +0000
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Axel Lin <axel.lin@ingics.com>
+CC:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] regulator: wm831x-dcdc: Convert to use
+ regulator_linear_range for wm831x_buckv
+Message-ID: <20190123111525.GI3837@imbe.wolfsonmicro.main>
+References: <20190120073356.20523-1-axel.lin@ingics.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20190120073356.20523-1-axel.lin@ingics.com>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=710 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1901230084
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-MDSS PM suspend is dependent on runtime suspend for disabling
-clocks and removing bandwidth votes. In case of pm_suspend
-triggered, dpm_prepare hold a refcount on power usage of device
-and hence runtime suspend is never triggered during pm_suspend.
-As runtime suspend is not triggered, clocks and bandwidth votes
-remain. Hence explicitly trigger mdss disable in msm_pm_suspend
-to disable clocks and remove the votes.
+On Sun, Jan 20, 2019 at 03:33:56PM +0800, Axel Lin wrote:
+> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> ---
 
-Signed-off-by: Jayant Shekhar <jshekhar@codeaurora.org>
----
- drivers/gpu/drm/msm/msm_drv.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
-index 5c60bb3..ffe3a25 100644
---- a/drivers/gpu/drm/msm/msm_drv.c
-+++ b/drivers/gpu/drm/msm/msm_drv.c
-@@ -1068,12 +1068,16 @@ static int msm_pm_suspend(struct device *dev)
- {
- 	struct drm_device *ddev = dev_get_drvdata(dev);
- 	struct msm_drm_private *priv = ddev->dev_private;
-+	struct msm_mdss *mdss = priv->mdss;
- 
- 	if (!IS_ERR_OR_NULL(priv->pm_state))
- 		return 0;
- 
- 	priv->pm_state = drm_atomic_helper_suspend(ddev);
- 
-+	if (mdss && mdss->funcs)
-+		mdss->funcs->disable(mdss);
-+
- 	return IS_ERR(priv->pm_state) ? PTR_ERR(priv->pm_state) : 0;
- }
- 
-@@ -1081,11 +1085,15 @@ static int msm_pm_resume(struct device *dev)
- {
- 	struct drm_device *ddev = dev_get_drvdata(dev);
- 	struct msm_drm_private *priv = ddev->dev_private;
-+	struct msm_mdss *mdss = priv->mdss;
- 	int ret;
- 
- 	if (IS_ERR_OR_NULL(priv->pm_state))
- 		return 0;
- 
-+	if (mdss && mdss->funcs)
-+		mdss->funcs->enable(mdss);
-+
- 	ret = drm_atomic_helper_resume(ddev, priv->pm_state);
- 	if (ret == 0)
- 		priv->pm_state = NULL;
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+Thanks,
+Charles
