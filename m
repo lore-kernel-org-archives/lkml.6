@@ -2,172 +2,170 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.2 required=3.0 tests=DATE_IN_FUTURE_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	RCVD_DOUBLE_IP_LOOSE,SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D0CDC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 17:04:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D483C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 17:05:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC78B2184C
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 17:04:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D657221855
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 17:05:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548263103;
+	bh=u2POsfJVNWx9rDsUBZMG6hj75l/E7ChbWNwy4645jfw=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=G1o3BUdRuethKyXgWhEO0rPH5GOcCvjynPjAHH1ZhdBIuFIuFa1Wxljmwnpl7RSwa
+	 Bya0tOEwXSDF6oACrV6M5wdpd1IBFCZm4e7I6OWhjOHgkU69+qrTrLS7wFcxkzF2Ti
+	 lt9HqS6Nf9FA7vNF1ts+u/hNlwtj7ZLAHbsPvgw8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726301AbfAWREK (ORCPT
+        id S1726632AbfAWRFB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 12:04:10 -0500
-Received: from [182.148.157.197] ([182.148.157.197]:34580 "HELO eyou.net"
-        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with SMTP
-        id S1725987AbfAWREJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 12:04:09 -0500
-X-EYOU-SPAMVALUE: 0
-X-EMDG-ORIGINAL-FROM: <zhouyanjie@cduestc.edu.cn>
-X-EMDG-ORIGINAL-TO: <linux-kernel@vger.kernel.org>
-X-EMDG-ORIGINAL-IP: 125.71.5.39
-X-EMDG-VER: 4.1.1
-X-EMDG-ABROAD: no
-Received: (eyou anti_spam gateway 4.1.0); Thu, 24 Jan 2019 01:04:37 +0800
-X-EMDG-MID: <748263077.28197@eyou.net>
-Received: from 125.71.5.39 by 182.148.157.197 with SMTP; Thu, 24 Jan 2019 01:04:37 +0800
-Received: from localhost ([127.0.0.1]) 
-        by cduestc.cn with sendmail id 649d5605120bee4f8068c59179a34600;
-        Thu, 24 Jan 2019 09:09:13 +0800
-Date:   Thu, 24 Jan 2019 09:09:13 +0800
-From:   "Zhou Yanjie" <zhouyanjie@cduestc.edu.cn>
-Subject: =?UTF-8?B?W1BBVENIIDMvNF0gUGluY3RybDogSW5nZW5pYzogVW5pZnk=?=
- =?UTF-8?B?IHRoZSBmdW5jdGlvbiBuYW1lIHByZWZpeCB0byAgImluZ2VuaWNfZ3A=?=
- =?UTF-8?B?aW9fIi4=?=
-To:     "linus.walleij" <linus.walleij@linaro.org>
-Cc:     "linux-gpio" <linux-gpio@vger.kernel.org>,
-        "linux-kernel" <linux-kernel@vger.kernel.org>,
-        "linux-mips" <linux-mips@vger.kernel.org>,
-        "paul" <paul@crapouillou.net>, "syq" <syq@debian.org>,
-        "jiaxun.yang" <jiaxun.yang@flygoat.com>
-Message-Id: <190124090913361712002288@cduestc.edu.cn>
+        Wed, 23 Jan 2019 12:05:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55516 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725966AbfAWRE7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 12:04:59 -0500
+Received: from [192.168.1.32] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C9A8521855;
+        Wed, 23 Jan 2019 17:04:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548263098;
+        bh=u2POsfJVNWx9rDsUBZMG6hj75l/E7ChbWNwy4645jfw=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=CxNM76bpb23lIThqkN4EMWWKuRZPNme2Bdq4jXm62nM1J72/NWp+jx2hf0lPXMBRz
+         o+7jYG/FJsNGdMvvy0EIJj1AYgqEAkJR2Mdxq1BFphq42pJWesuTvJGkgNmzbpaKEh
+         D/GycctFhh59mDK0FVsCLhk+Q09WIFQ6CQcFJUaA=
+Subject: Re: [PATCHv1] firmware: intel_stratix10_service: add hardware
+ dependency
+To:     Alan Tull <atull@kernel.org>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        Richard Gong <richard.gong@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        todd.riffel@intel.com, Richard Gong <richard.gong@intel.com>
+References: <1548258476-16821-1-git-send-email-richard.gong@linux.intel.com>
+ <20190123160019.GB4764@kroah.com>
+ <CANk1AXR2K5j6iU1y8GGn_8agOUY6ca8xKXPrFGT5Ht6_La7VrA@mail.gmail.com>
+ <e23f66a1-5cff-5620-7246-e894897b0d17@kernel.org>
+ <CANk1AXS=jG5qG31rOwhNF=y1YowA97cvmsvBPr6JfRFEz8JEhQ@mail.gmail.com>
+From:   Dinh Nguyen <dinguyen@kernel.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <f043f74b-c22d-526f-079c-8084f0867a5e@kernel.org>
+Date:   Wed, 23 Jan 2019 11:04:56 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-Mailer: eYou WebMail 8.13.6
-X-Eyou-Client: 171.221.112.138
-X-Eyou-Is-Onercpt: 0
-Content-Type: text/plain;
- charset="UTF-8"
-Content-Transfer-Encoding: base64
-X-Eyou-Sender: <zhouyanjie@cduestc.edu.cn>
+In-Reply-To: <CANk1AXS=jG5qG31rOwhNF=y1YowA97cvmsvBPr6JfRFEz8JEhQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogWmhvdSBZYW5qaWUgPHpob3V5YW5qaWVAY2R1ZXN0Yy5lZHUuY24+CgpJbiB0
-aGUgb3JpZ2luYWwgY29kZSwgc29tZSBmdW5jdGlvbiBuYW1lcyBiZWdpbiB3aXRoICJp
-bmdlbmljX2dwaW9fIiwKYW5kIHNvbWUgd2l0aCAiZ3Bpb19pbmdlbmljXyIuIEZvciB0
-aGUgc2FrZSBvZiB1bmlmb3JtIHN0eWxlLAphbGwgb2YgdGhlbSBhcmUgY2hhbmdlZCB0
-byB0aGUgYmVnaW5uaW5nIG9mICJpbmdlbmljX2dwaW9fIi4KClNpZ25lZC1vZmYtYnk6
-IFpob3UgWWFuamllIDx6aG91eWFuamllQGNkdWVzdGMuZWR1LmNuPgotLS0KIGRyaXZl
-cnMvcGluY3RybC9waW5jdHJsLWluZ2VuaWMuYyB8IDQ2ICsrKysrKysrKysrKysrKysr
-KystLS0tLS0tLS0tLS0tLS0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDIzIGluc2VydGlv
-bnMoKyksIDIzIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGluY3Ry
-bC9waW5jdHJsLWluZ2VuaWMuYyBiL2RyaXZlcnMvcGluY3RybC9waW5jdHJsLWluZ2Vu
-aWMuYwppbmRleCA2NTAxZjM1Li4yYjNmN2U0IDEwMDY0NAotLS0gYS9kcml2ZXJzL3Bp
-bmN0cmwvcGluY3RybC1pbmdlbmljLmMKKysrIGIvZHJpdmVycy9waW5jdHJsL3BpbmN0
-cmwtaW5nZW5pYy5jCkBAIC03MTUsNyArNzE1LDcgQEAgc3RhdGljIGNvbnN0IHN0cnVj
-dCBpbmdlbmljX2NoaXBfaW5mbyBqejQ3ODBfY2hpcF9pbmZvID0gewogCS5wdWxsX2Rv
-d25zID0gano0NzcwX3B1bGxfZG93bnMsCiB9OwogCi1zdGF0aWMgdTMyIGdwaW9faW5n
-ZW5pY19yZWFkX3JlZyhzdHJ1Y3QgaW5nZW5pY19ncGlvX2NoaXAgKmp6Z2MsIHU4IHJl
-ZykKK3N0YXRpYyB1MzIgaW5nZW5pY19ncGlvX3JlYWRfcmVnKHN0cnVjdCBpbmdlbmlj
-X2dwaW9fY2hpcCAqanpnYywgdTggcmVnKQogewogCXVuc2lnbmVkIGludCB2YWw7CiAK
-QEAgLTcyNCw3ICs3MjQsNyBAQCBzdGF0aWMgdTMyIGdwaW9faW5nZW5pY19yZWFkX3Jl
-ZyhzdHJ1Y3QgaW5nZW5pY19ncGlvX2NoaXAgKmp6Z2MsIHU4IHJlZykKIAlyZXR1cm4g
-KHUzMikgdmFsOwogfQogCi1zdGF0aWMgdm9pZCBncGlvX2luZ2VuaWNfc2V0X2JpdChz
-dHJ1Y3QgaW5nZW5pY19ncGlvX2NoaXAgKmp6Z2MsCitzdGF0aWMgdm9pZCBpbmdlbmlj
-X2dwaW9fc2V0X2JpdChzdHJ1Y3QgaW5nZW5pY19ncGlvX2NoaXAgKmp6Z2MsCiAJCXU4
-IHJlZywgdTggb2Zmc2V0LCBib29sIHNldCkKIHsKIAlpZiAoc2V0KQpAQCAtNzM4LDcg
-KzczOCw3IEBAIHN0YXRpYyB2b2lkIGdwaW9faW5nZW5pY19zZXRfYml0KHN0cnVjdCBp
-bmdlbmljX2dwaW9fY2hpcCAqanpnYywKIHN0YXRpYyBpbmxpbmUgYm9vbCBpbmdlbmlj
-X2dwaW9fZ2V0X3ZhbHVlKHN0cnVjdCBpbmdlbmljX2dwaW9fY2hpcCAqanpnYywKIAkJ
-CQkJICB1OCBvZmZzZXQpCiB7Ci0JdW5zaWduZWQgaW50IHZhbCA9IGdwaW9faW5nZW5p
-Y19yZWFkX3JlZyhqemdjLCBHUElPX1BJTik7CisJdW5zaWduZWQgaW50IHZhbCA9IGlu
-Z2VuaWNfZ3Bpb19yZWFkX3JlZyhqemdjLCBHUElPX1BJTik7CiAKIAlyZXR1cm4gISEo
-dmFsICYgQklUKG9mZnNldCkpOwogfQpAQCAtNzQ3LDkgKzc0Nyw5IEBAIHN0YXRpYyB2
-b2lkIGluZ2VuaWNfZ3Bpb19zZXRfdmFsdWUoc3RydWN0IGluZ2VuaWNfZ3Bpb19jaGlw
-ICpqemdjLAogCQkJCSAgIHU4IG9mZnNldCwgaW50IHZhbHVlKQogewogCWlmIChqemdj
-LT5qenBjLT52ZXJzaW9uID49IElEX0paNDc3MCkKLQkJZ3Bpb19pbmdlbmljX3NldF9i
-aXQoanpnYywgSlo0NzcwX0dQSU9fUEFUMCwgb2Zmc2V0LCAhIXZhbHVlKTsKKwkJaW5n
-ZW5pY19ncGlvX3NldF9iaXQoanpnYywgSlo0NzcwX0dQSU9fUEFUMCwgb2Zmc2V0LCAh
-IXZhbHVlKTsKIAllbHNlCi0JCWdwaW9faW5nZW5pY19zZXRfYml0KGp6Z2MsIEpaNDc0
-MF9HUElPX0RBVEEsIG9mZnNldCwgISF2YWx1ZSk7CisJCWluZ2VuaWNfZ3Bpb19zZXRf
-Yml0KGp6Z2MsIEpaNDc0MF9HUElPX0RBVEEsIG9mZnNldCwgISF2YWx1ZSk7CiB9CiAK
-IHN0YXRpYyB2b2lkIGlycV9zZXRfdHlwZShzdHJ1Y3QgaW5nZW5pY19ncGlvX2NoaXAg
-Kmp6Z2MsCkBAIC03NjcsMjEgKzc2NywyMSBAQCBzdGF0aWMgdm9pZCBpcnFfc2V0X3R5
-cGUoc3RydWN0IGluZ2VuaWNfZ3Bpb19jaGlwICpqemdjLAogCiAJc3dpdGNoICh0eXBl
-KSB7CiAJY2FzZSBJUlFfVFlQRV9FREdFX1JJU0lORzoKLQkJZ3Bpb19pbmdlbmljX3Nl
-dF9iaXQoanpnYywgcmVnMiwgb2Zmc2V0LCB0cnVlKTsKLQkJZ3Bpb19pbmdlbmljX3Nl
-dF9iaXQoanpnYywgcmVnMSwgb2Zmc2V0LCB0cnVlKTsKKwkJaW5nZW5pY19ncGlvX3Nl
-dF9iaXQoanpnYywgcmVnMiwgb2Zmc2V0LCB0cnVlKTsKKwkJaW5nZW5pY19ncGlvX3Nl
-dF9iaXQoanpnYywgcmVnMSwgb2Zmc2V0LCB0cnVlKTsKIAkJYnJlYWs7CiAJY2FzZSBJ
-UlFfVFlQRV9FREdFX0ZBTExJTkc6Ci0JCWdwaW9faW5nZW5pY19zZXRfYml0KGp6Z2Ms
-IHJlZzIsIG9mZnNldCwgZmFsc2UpOwotCQlncGlvX2luZ2VuaWNfc2V0X2JpdChqemdj
-LCByZWcxLCBvZmZzZXQsIHRydWUpOworCQlpbmdlbmljX2dwaW9fc2V0X2JpdChqemdj
-LCByZWcyLCBvZmZzZXQsIGZhbHNlKTsKKwkJaW5nZW5pY19ncGlvX3NldF9iaXQoanpn
-YywgcmVnMSwgb2Zmc2V0LCB0cnVlKTsKIAkJYnJlYWs7CiAJY2FzZSBJUlFfVFlQRV9M
-RVZFTF9ISUdIOgotCQlncGlvX2luZ2VuaWNfc2V0X2JpdChqemdjLCByZWcyLCBvZmZz
-ZXQsIHRydWUpOwotCQlncGlvX2luZ2VuaWNfc2V0X2JpdChqemdjLCByZWcxLCBvZmZz
-ZXQsIGZhbHNlKTsKKwkJaW5nZW5pY19ncGlvX3NldF9iaXQoanpnYywgcmVnMiwgb2Zm
-c2V0LCB0cnVlKTsKKwkJaW5nZW5pY19ncGlvX3NldF9iaXQoanpnYywgcmVnMSwgb2Zm
-c2V0LCBmYWxzZSk7CiAJCWJyZWFrOwogCWNhc2UgSVJRX1RZUEVfTEVWRUxfTE9XOgog
-CWRlZmF1bHQ6Ci0JCWdwaW9faW5nZW5pY19zZXRfYml0KGp6Z2MsIHJlZzIsIG9mZnNl
-dCwgZmFsc2UpOwotCQlncGlvX2luZ2VuaWNfc2V0X2JpdChqemdjLCByZWcxLCBvZmZz
-ZXQsIGZhbHNlKTsKKwkJaW5nZW5pY19ncGlvX3NldF9iaXQoanpnYywgcmVnMiwgb2Zm
-c2V0LCBmYWxzZSk7CisJCWluZ2VuaWNfZ3Bpb19zZXRfYml0KGp6Z2MsIHJlZzEsIG9m
-ZnNldCwgZmFsc2UpOwogCQlicmVhazsKIAl9CiB9CkBAIC03OTEsNyArNzkxLDcgQEAg
-c3RhdGljIHZvaWQgaW5nZW5pY19ncGlvX2lycV9tYXNrKHN0cnVjdCBpcnFfZGF0YSAq
-aXJxZCkKIAlzdHJ1Y3QgZ3Bpb19jaGlwICpnYyA9IGlycV9kYXRhX2dldF9pcnFfY2hp
-cF9kYXRhKGlycWQpOwogCXN0cnVjdCBpbmdlbmljX2dwaW9fY2hpcCAqanpnYyA9IGdw
-aW9jaGlwX2dldF9kYXRhKGdjKTsKIAotCWdwaW9faW5nZW5pY19zZXRfYml0KGp6Z2Ms
-IEdQSU9fTVNLLCBpcnFkLT5od2lycSwgdHJ1ZSk7CisJaW5nZW5pY19ncGlvX3NldF9i
-aXQoanpnYywgR1BJT19NU0ssIGlycWQtPmh3aXJxLCB0cnVlKTsKIH0KIAogc3RhdGlj
-IHZvaWQgaW5nZW5pY19ncGlvX2lycV91bm1hc2soc3RydWN0IGlycV9kYXRhICppcnFk
-KQpAQCAtNzk5LDcgKzc5OSw3IEBAIHN0YXRpYyB2b2lkIGluZ2VuaWNfZ3Bpb19pcnFf
-dW5tYXNrKHN0cnVjdCBpcnFfZGF0YSAqaXJxZCkKIAlzdHJ1Y3QgZ3Bpb19jaGlwICpn
-YyA9IGlycV9kYXRhX2dldF9pcnFfY2hpcF9kYXRhKGlycWQpOwogCXN0cnVjdCBpbmdl
-bmljX2dwaW9fY2hpcCAqanpnYyA9IGdwaW9jaGlwX2dldF9kYXRhKGdjKTsKIAotCWdw
-aW9faW5nZW5pY19zZXRfYml0KGp6Z2MsIEdQSU9fTVNLLCBpcnFkLT5od2lycSwgZmFs
-c2UpOworCWluZ2VuaWNfZ3Bpb19zZXRfYml0KGp6Z2MsIEdQSU9fTVNLLCBpcnFkLT5o
-d2lycSwgZmFsc2UpOwogfQogCiBzdGF0aWMgdm9pZCBpbmdlbmljX2dwaW9faXJxX2Vu
-YWJsZShzdHJ1Y3QgaXJxX2RhdGEgKmlycWQpCkBAIC04MDksOSArODA5LDkgQEAgc3Rh
-dGljIHZvaWQgaW5nZW5pY19ncGlvX2lycV9lbmFibGUoc3RydWN0IGlycV9kYXRhICpp
-cnFkKQogCWludCBpcnEgPSBpcnFkLT5od2lycTsKIAogCWlmIChqemdjLT5qenBjLT52
-ZXJzaW9uID49IElEX0paNDc3MCkKLQkJZ3Bpb19pbmdlbmljX3NldF9iaXQoanpnYywg
-Slo0NzcwX0dQSU9fSU5ULCBpcnEsIHRydWUpOworCQlpbmdlbmljX2dwaW9fc2V0X2Jp
-dChqemdjLCBKWjQ3NzBfR1BJT19JTlQsIGlycSwgdHJ1ZSk7CiAJZWxzZQotCQlncGlv
-X2luZ2VuaWNfc2V0X2JpdChqemdjLCBKWjQ3NDBfR1BJT19TRUxFQ1QsIGlycSwgdHJ1
-ZSk7CisJCWluZ2VuaWNfZ3Bpb19zZXRfYml0KGp6Z2MsIEpaNDc0MF9HUElPX1NFTEVD
-VCwgaXJxLCB0cnVlKTsKIAogCWluZ2VuaWNfZ3Bpb19pcnFfdW5tYXNrKGlycWQpOwog
-fQpAQCAtODI1LDkgKzgyNSw5IEBAIHN0YXRpYyB2b2lkIGluZ2VuaWNfZ3Bpb19pcnFf
-ZGlzYWJsZShzdHJ1Y3QgaXJxX2RhdGEgKmlycWQpCiAJaW5nZW5pY19ncGlvX2lycV9t
-YXNrKGlycWQpOwogCiAJaWYgKGp6Z2MtPmp6cGMtPnZlcnNpb24gPj0gSURfSlo0Nzcw
-KQotCQlncGlvX2luZ2VuaWNfc2V0X2JpdChqemdjLCBKWjQ3NzBfR1BJT19JTlQsIGly
-cSwgZmFsc2UpOworCQlpbmdlbmljX2dwaW9fc2V0X2JpdChqemdjLCBKWjQ3NzBfR1BJ
-T19JTlQsIGlycSwgZmFsc2UpOwogCWVsc2UKLQkJZ3Bpb19pbmdlbmljX3NldF9iaXQo
-anpnYywgSlo0NzQwX0dQSU9fU0VMRUNULCBpcnEsIGZhbHNlKTsKKwkJaW5nZW5pY19n
-cGlvX3NldF9iaXQoanpnYywgSlo0NzQwX0dQSU9fU0VMRUNULCBpcnEsIGZhbHNlKTsK
-IH0KIAogc3RhdGljIHZvaWQgaW5nZW5pY19ncGlvX2lycV9hY2soc3RydWN0IGlycV9k
-YXRhICppcnFkKQpAQCAtODUwLDkgKzg1MCw5IEBAIHN0YXRpYyB2b2lkIGluZ2VuaWNf
-Z3Bpb19pcnFfYWNrKHN0cnVjdCBpcnFfZGF0YSAqaXJxZCkKIAl9CiAKIAlpZiAoanpn
-Yy0+anpwYy0+dmVyc2lvbiA+PSBJRF9KWjQ3NzApCi0JCWdwaW9faW5nZW5pY19zZXRf
-Yml0KGp6Z2MsIEpaNDc3MF9HUElPX0ZMQUcsIGlycSwgZmFsc2UpOworCQlpbmdlbmlj
-X2dwaW9fc2V0X2JpdChqemdjLCBKWjQ3NzBfR1BJT19GTEFHLCBpcnEsIGZhbHNlKTsK
-IAllbHNlCi0JCWdwaW9faW5nZW5pY19zZXRfYml0KGp6Z2MsIEpaNDc0MF9HUElPX0RB
-VEEsIGlycSwgdHJ1ZSk7CisJCWluZ2VuaWNfZ3Bpb19zZXRfYml0KGp6Z2MsIEpaNDc0
-MF9HUElPX0RBVEEsIGlycSwgdHJ1ZSk7CiB9CiAKIHN0YXRpYyBpbnQgaW5nZW5pY19n
-cGlvX2lycV9zZXRfdHlwZShzdHJ1Y3QgaXJxX2RhdGEgKmlycWQsIHVuc2lnbmVkIGlu
-dCB0eXBlKQpAQCAtOTA3LDkgKzkwNyw5IEBAIHN0YXRpYyB2b2lkIGluZ2VuaWNfZ3Bp
-b19pcnFfaGFuZGxlcihzdHJ1Y3QgaXJxX2Rlc2MgKmRlc2MpCiAJY2hhaW5lZF9pcnFf
-ZW50ZXIoaXJxX2NoaXAsIGRlc2MpOwogCiAJaWYgKGp6Z2MtPmp6cGMtPnZlcnNpb24g
-Pj0gSURfSlo0NzcwKQotCQlmbGFnID0gZ3Bpb19pbmdlbmljX3JlYWRfcmVnKGp6Z2Ms
-IEpaNDc3MF9HUElPX0ZMQUcpOworCQlmbGFnID0gaW5nZW5pY19ncGlvX3JlYWRfcmVn
-KGp6Z2MsIEpaNDc3MF9HUElPX0ZMQUcpOwogCWVsc2UKLQkJZmxhZyA9IGdwaW9faW5n
-ZW5pY19yZWFkX3JlZyhqemdjLCBKWjQ3NDBfR1BJT19GTEFHKTsKKwkJZmxhZyA9IGlu
-Z2VuaWNfZ3Bpb19yZWFkX3JlZyhqemdjLCBKWjQ3NDBfR1BJT19GTEFHKTsKIAogCWZv
-cl9lYWNoX3NldF9iaXQoaSwgJmZsYWcsIDMyKQogCQlnZW5lcmljX2hhbmRsZV9pcnEo
-aXJxX2xpbmVhcl9yZXZtYXAoZ2MtPmlycS5kb21haW4sIGkpKTsKLS0gCjIuNy40Cg==
 
+
+On 1/23/19 11:01 AM, Alan Tull wrote:
+> On Wed, Jan 23, 2019 at 10:42 AM Dinh Nguyen <dinguyen@kernel.org> wrote:
+>>
+>>
+>>
+>> On 1/23/19 10:37 AM, Alan Tull wrote:
+>>> On Wed, Jan 23, 2019 at 10:00 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+>>>
+>>> Hi Greg,
+>>>
+>>>>
+>>>> On Wed, Jan 23, 2019 at 09:47:56AM -0600, richard.gong@linux.intel.com wrote:
+>>>>> From: Richard Gong <richard.gong@intel.com>
+>>>>>
+>>>>> Add a Kconfig dependency to ensure Intel Stratix10 service layer driver
+>>>>> can be built only on the platform that supports it.
+>>>>>
+>>>>> Signed-off-by: Richard Gong <richard.gong@intel.com>
+>>>>> ---
+>>>>>  drivers/firmware/Kconfig | 2 +-
+>>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
+>>>>> index f754578..cac16c4 100644
+>>>>> --- a/drivers/firmware/Kconfig
+>>>>> +++ b/drivers/firmware/Kconfig
+>>>>> @@ -218,7 +218,7 @@ config FW_CFG_SYSFS_CMDLINE
+>>>>>
+>>>>>  config INTEL_STRATIX10_SERVICE
+>>>>>       tristate "Intel Stratix10 Service Layer"
+>>>>> -     depends on HAVE_ARM_SMCCC
+>>>>> +     depends on ARCH_STRATIX10 && HAVE_ARM_SMCCC
+>>>>
+>>>> That's lame, what about building for testing?
+>>>
+>>> Do you mean this instead?
+>>>
+>>> depends on (ARCH_STRATIX10 && HAVE_ARM_SMCCC) || COMPILE_TEST
+>>>
+>>>>
+>>>> And is this needed now, for 5.0-final, or can it wait for 5.1?
+>>>
+>>> This change will reduce kernel size for most arm64.  It can go into
+>>> whichever kernel.  We can resubmit allowing for COMPILE_TEST.
+>>>
+>>
+>> I don't see how this is true? ARM64 has a single defconfig and
+>> ARCH_STRATIX10 is included in that defconfig. I don't see how adding
+>> this dependency will reduce the kernel size for most arm64?
+> 
+> Sorry, I wasn't clear.  By default it will be built in since there's
+> one arm64 defconfig.  But adding ARCH_STRATIX10 dependency here
+> supports users who turn off all the ARCH_* they don't care about in
+> their own defconfig that won't get upstreamed.
+> 
+
+Ah yes, forgot to consider that.
+
+Dinh
