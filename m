@@ -2,227 +2,122 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01ADBC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 23:42:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B5C5C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 23:43:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1D0421872
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 23:41:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="V5kM8us6"
+	by mail.kernel.org (Postfix) with ESMTP id 01166218A1
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 23:43:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548287029;
+	bh=Ht9d9bSQHb38KEouKFbK/xZBFFodlVBzidb47a3vGe4=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:List-ID:From;
+	b=lOVWnd2sL7w4K/DWnnR+dCGB23Sz9saIcYgPTskZcnk8DU2Q4DUgPRPxi9zAsJTQ/
+	 KwTDjwgxQGr6YoR0TXNCyzs5OsUCDVb19xSXUoMTaxCEVPTSBaWroDZMrj0FqduvUe
+	 NhbxIq/iaZwYls5T3LaIPX3lZ2L02IG81WBwF6YE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727009AbfAWXl6 (ORCPT
+        id S1726853AbfAWXnr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 18:41:58 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:35482 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726235AbfAWXl5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 18:41:57 -0500
-Received: by mail-it1-f196.google.com with SMTP id p197so1845504itp.0
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 15:41:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mvXFbasy0KxJM4oUz3E4CVPaZ2aAQL9LoekKdZeuEn0=;
-        b=V5kM8us6izsZVg7y0ePyVsfkkHkw2wTAs/4GLXIg4gRUBqaB+DwQ+c61lQgEnDwf5w
-         n+2pCsd840/UgkO8tlFFlH7V1ogiU6MShYfBT1Oja0Ur71C9If98XapdRhCSAEBGyg+P
-         WBzbbWC4CytiuaW0dHJ95TJv6S23usRhjLT7PzKyTFWxohygQbz3JWeTMtbqx3krwCLQ
-         FQEG4zHR0zrlNc/4EfT4Q+Ar8haA8AuHHaY8PTnz8sEp9UekSp5tkigZi1eZZMK0WIc3
-         6tP52tgsxNmk4Egs0CsLx6+HRrA+g/6E5GnMxwCbGKq8+KHl5rkNCHAYxps5QwUFNhdl
-         KwMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mvXFbasy0KxJM4oUz3E4CVPaZ2aAQL9LoekKdZeuEn0=;
-        b=Jn6MPFXjB/G27SihWnOa5Ij71ouk9ssemquasmH8PtGTZdnN8pNi/GnL8v8Wq+MqIy
-         MPLNZnkLfzGTYFXFM3yMwg+soqzW80nE72UfYN7teTfQDU9dhVyuxfKudogvPk+hIPW0
-         JCZFas5Cmm8jZD/U28T7Un5Be+LlgGUz3aaZhHvfku5ZiBaEd5L33K/MKGP3uA4NKVx4
-         yMuPh4DOhTPJoiQExLV0HNEfVbhZErJ+b1exy6NcqiED7CJFALa2V5xWVORUFwq/IdmV
-         yH2YcAgyE8sf7tTrzAXSiVR4O/C4n1zT3DyMIbS2SSvG4cd3VCUf4v1nGbN5bAfPzMAZ
-         t5YQ==
-X-Gm-Message-State: AJcUukey+RufpyE0iqOj2VK4mbKSNpVkSq30yrppY0RIRZDcGdeu80PI
-        Heopfj0kQU2cGOmwnM8OPkPEZsc9/x6Ldz1xsjYcsA==
-X-Google-Smtp-Source: ALg8bN7Ihps31c2yhVHOQXYtHFfI6aQ9OVSXSNqHPcJlsQcPyTOKejjQbrYMgq9CfDolMugkQ5rvG8DmwcuvEUlYPi8=
-X-Received: by 2002:a02:89dd:: with SMTP id e29mr3064676jak.21.1548286916412;
- Wed, 23 Jan 2019 15:41:56 -0800 (PST)
+        Wed, 23 Jan 2019 18:43:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34044 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726309AbfAWXnr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 18:43:47 -0500
+Received: from localhost (c-67-164-102-47.hsd1.ca.comcast.net [67.164.102.47])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2E45A21019;
+        Wed, 23 Jan 2019 23:43:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548287025;
+        bh=Ht9d9bSQHb38KEouKFbK/xZBFFodlVBzidb47a3vGe4=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=z4K0WRQYPBPv7/USmZMqF0to2B7agbO545aVbnNfz1oGFwOLRjDg/sy9bPKEq87Mu
+         k2r4tlgQDfIMGXcCcIOxTVw1JvrHMWJ7DJ53ucHTvYsUKeVBKxHbITgaou1H/ZvBTn
+         NUtu5yK7uZrfSQe2dGhe3pAUhU0U5M3zHHzlsy80=
+Date:   Wed, 23 Jan 2019 15:43:45 -0800 (PST)
+From:   Stefano Stabellini <sstabellini@kernel.org>
+X-X-Sender: sstabellini@sstabellini-ThinkPad-X260
+To:     "hch@infradead.org" <hch@infradead.org>
+cc:     Stefano Stabellini <sstabellini@kernel.org>,
+        Peng Fan <peng.fan@nxp.com>, "mst@redhat.com" <mst@redhat.com>,
+        "jasowang@redhat.com" <jasowang@redhat.com>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>, luto@kernel.org,
+        jgross@suse.com, boris.ostrovsky@oracle.com,
+        bjorn.andersson@linaro.org, jliang@xilinx.com
+Subject: Re: [Xen-devel] [RFC] virtio_ring: check dma_mem for xen_domain
+In-Reply-To: <20190123211405.GA4971@infradead.org>
+Message-ID: <alpine.DEB.2.10.1901231427010.17936@sstabellini-ThinkPad-X260>
+References: <20190121050056.14325-1-peng.fan@nxp.com> <alpine.DEB.2.10.1901221113410.17936@sstabellini-ThinkPad-X260> <20190123071232.GA20526@infradead.org> <alpine.DEB.2.10.1901230935280.17936@sstabellini-ThinkPad-X260>
+ <20190123211405.GA4971@infradead.org>
+User-Agent: Alpine 2.10 (DEB 1266 2009-07-14)
 MIME-Version: 1.0
-References: <20190123000057.31477-1-oded.gabbay@gmail.com> <CAPM=9tznaiw+a7rWqfdMMO6Aj3GtsO9vetd=3n9d+bGLW0U8Cg@mail.gmail.com>
- <CAPM=9tybcYSR_xu773W-cV1JfFg1Rcb9NajXhZd+zfZE8+XMRg@mail.gmail.com>
- <CAFCwf12FGkc3hDtgeFCn4Z4cgjL8wAf+SRkWqA+04WtuaEdpBA@mail.gmail.com>
- <CAPM=9tx3M6i44AL4hkt740Q35T4djz=-bjWDP4FVngOR0kcwag@mail.gmail.com>
- <CAOesGMg-_K_KJFtxyZJFbM+p1N5UfeUwvXmxkj+DRtNSj7Bosw@mail.gmail.com>
- <20190123232052.GD1257@redhat.com> <CAFCwf11PadVOM1jg+JnSzvLxro1PP6hEWX8WtRne9WVN26PaYQ@mail.gmail.com>
-In-Reply-To: <CAFCwf11PadVOM1jg+JnSzvLxro1PP6hEWX8WtRne9WVN26PaYQ@mail.gmail.com>
-From:   Olof Johansson <olof@lixom.net>
-Date:   Wed, 23 Jan 2019 15:41:45 -0800
-Message-ID: <CAOesGMjU133pMS2CMb0GADuJgGrH75mtq8w0Eh3c29DbvYh_0w@mail.gmail.com>
-Subject: Re: [PATCH 00/15] Habana Labs kernel driver
-To:     Oded Gabbay <oded.gabbay@gmail.com>
-Cc:     Jerome Glisse <jglisse@redhat.com>,
-        Dave Airlie <airlied@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        LKML <linux-kernel@vger.kernel.org>, ogabbay@habana.ai,
-        Arnd Bergmann <arnd@arndb.de>, fbarrat@linux.ibm.com,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: MULTIPART/MIXED; BOUNDARY="8323329-1172143826-1548282487=:17936"
+Content-ID: <alpine.DEB.2.10.1901231428550.17936@sstabellini-ThinkPad-X260>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 3:35 PM Oded Gabbay <oded.gabbay@gmail.com> wrote:
->
-> On Thu, Jan 24, 2019 at 1:20 AM Jerome Glisse <jglisse@redhat.com> wrote:
-> >
-> > On Wed, Jan 23, 2019 at 03:04:33PM -0800, Olof Johansson wrote:
-> > > On Wed, Jan 23, 2019 at 2:45 PM Dave Airlie <airlied@gmail.com> wrote:
-> > > >
-> > > > On Thu, 24 Jan 2019 at 08:32, Oded Gabbay <oded.gabbay@gmail.com> wrote:
-> > > > >
-> > > > > On Thu, Jan 24, 2019 at 12:02 AM Dave Airlie <airlied@gmail.com> wrote:
-> > > > > >
-> > > > > > Adding Daniel as well.
-> > > > > >
-> > > > > > Dave.
-> > > > > >
-> > > > > > On Thu, 24 Jan 2019 at 07:57, Dave Airlie <airlied@gmail.com> wrote:
-> > > > > > >
-> > > > > > > On Wed, 23 Jan 2019 at 10:01, Oded Gabbay <oded.gabbay@gmail.com> wrote:
-> > > > > > > >
-> > > > > > > > Hello,
-> > > > > > > >
-> > > > > > > > For those who don't know me, my name is Oded Gabbay (Kernel Maintainer
-> > > > > > > > for AMD's amdkfd driver, worked at RedHat's Desktop group) and I work at
-> > > > > > > > Habana Labs since its inception two and a half years ago.
-> > > > > > >
-> > > > > > > Hey Oded,
-> > > > > > >
-> > > > > > > So this creates a driver with a userspace facing API via ioctls.
-> > > > > > > Although this isn't a "GPU" driver we have a rule in the graphics
-> > > > > > > drivers are for accelerators that we don't merge userspace API with an
-> > > > > > > appropriate userspace user.
-> > > > > > >
-> > > > > > > https://dri.freedesktop.org/docs/drm/gpu/drm-uapi.html#open-source-userspace-requirements
-> > > > > > >
-> > > > > > > I see nothing in these accelerator drivers that make me think we
-> > > > > > > should be treating them different.
-> > > > > > >
-> > > > > > > Having large closed userspaces that we have no insight into means we
-> > > > > > > get suboptimal locked for ever uAPIs. If someone in the future creates
-> > > > > > > an open source userspace, we will end up in a place where they get
-> > > > > > > suboptimal behaviour because they are locked into a uAPI that we can't
-> > > > > > > change.
-> > > > > > >
-> > > > > > > Dave.
-> > > > >
-> > > > > Hi Dave,
-> > > > > While I always appreciate your opinion and happy to hear it, I totally
-> > > > > disagree with you on this point.
-> > > > >
-> > > > > First of all, as you said, this device is NOT a GPU. Hence, I wasn't
-> > > > > aware that this rule might apply to this driver or to any other driver
-> > > > > outside of drm. Has this rule been applied to all the current drivers
-> > > > > in the kernel tree with userspace facing API via IOCTLs, which are not
-> > > > > in the drm subsystem ?  I see the logic for GPUs as they drive the
-> > > > > display of the entire machine, but this is an accelerator for a
-> > > > > specific purpose, not something generic as GPU. I just don't see how
-> > > > > one can treat them in the same way.
-> > > >
-> > > > The logic isn't there for GPUs for those reason that we have an
-> > > > established library or that GPUs are in laptops. They are just where
-> > > > we learned the lessons of merging things whose primary reason for
-> > > > being in the kernel is to execute stuff from misc userspace stacks,
-> > > > where the uAPI has to remain stable indefinitely.
-> > > >
-> > > > a) security - without knowledge of what the accelerator can do how can
-> > > > we know if the API you expose isn't just a giant root hole?
-> > > >
-> > > > b) uAPI stability. Without a userspace for this, there is no way for
-> > > > anyone even if in possession of the hardware to validate the uAPI you
-> > > > provide and are asking the kernel to commit to supporting indefinitely
-> > > > is optimal or secure. If an open source userspace appears is it to be
-> > > > limited to API the closed userspace has created. It limits the future
-> > > > unnecessarily.
-> > > >
-> > > > > There is no way that "someone" will create a userspace
-> > > > > for our H/W without the intimate knowledge of the H/W or without the
-> > > > > ISA of our programmable cores. Maybe for large companies this request
-> > > > > is valid, but for startups complying to this request is not realistic.
-> > > >
-> > > > So what benefit does the Linux kernel get from having support for this
-> > > > feature upstream?
-> > > >
-> > > > If users can't access the necessary code to use it, why does this
-> > > > require to be maintained in the kernel.
-> > > >
-> > > > > To conclude, I think this approach discourage other companies from
-> > > > > open sourcing their drivers and is counter-productive. I'm not sure
-> > > > > you are aware of how difficult it is to convince startup management to
-> > > > > opensource the code...
-> > > >
-> > > > Oh I am, but I'm also more aware how quickly startups go away and
-> > > > leave the kernel holding a lot of code we don't know how to validate
-> > > > or use.
-> > > >
-> > > > I'm opening to being convinced but I think defining new userspace
-> > > > facing APIs is a task that we should take a lot more seriously going
-> > > > forward to avoid mistakes of the past.
-> > >
-> > > I think the most important thing here is to know that things are
-> > > likely to change quite a bit over the next couple of years, and that
-> > > we don't know yet what we actually need. If we hold off picking up
-> > > support for hardware while all of this is ironed out, we'll miss out
-> > > on being exposed to it, and will have a very tall hill to climb once
-> > > we try to convince vendors to come into the fold. It's also not been a
-> > > requirement for the other two drivers we have merged, as far as I can
-> > > tell (CAPI and OpenCAPI) so the cat's already out of the bag.
-> > >
-> > > I'd rather not get stuck in a stand-off needing the longterm solution
-> > > to pick up the short term contribution. That way we can move over to a
-> > > _new_ API once there's been a better chance of finding common grounds
-> > > and once things settle down a bit, instead of trying to bring some
-> > > larger legacy codebase for devices that people might no longer care
-> > > much about over to the newer APIs.
-> > >
-> > > It's better to be exposed to the HW and drivers now, than having
-> > > people build large elaborate out-of-tree software stacks for this.
-> > > It's also better to get them to come and collaborate now, instead of
-> > > pushing them away until things are perfect.
-> > >
-> > > Having a way to validate and exercise the userspace API is important,
-> > > including ability to change it if needed. Would it be possible to open
-> > > up the lowest userspace pieces (driver interactions), even if some
-> > > other layers might not yet be, to exercise the device/kernel/userspace
-> > > interfaces without "live" workload, etc?
-> >
-> > Yes and to exercise the userspace API you need at very least to
-> > know the ISA so that you can write program for the accelerator.
-> > You also need to know the set of commands the hardware has. The
-> > ioctl and how to create a userspace that interact with the kernel
-> > is the easy part, the hard part is the compiler.
->
-> So actually in my case in order to exercise the IOCTL API, you can
-> give "work" to the device that will not trigger the compute parts, but
-> only the different queues and the DMA engines.
-> I think that is enough to validate that the IOCTLs won't break.
-> All the "commands" that you can give to the queue logic (QMAN) is
-> exposed in one of the files in the driver (goya_packets.h).
->
-> I want to stress this - To validate the IOCTLs, it is enough to do DMA
-> work. You will use ALL the 5 IOCTLs to do just that - give work to the
-> DMA engines.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-I personally think this is a reasonable trade-off, given that you have
-a communication layer between. For hardware that doesn't have that,
-and where device behavior and data movement depends on execution on
-the compute parts, more would need to be open.
+--8323329-1172143826-1548282487=:17936
+Content-Type: TEXT/PLAIN; CHARSET=UTF-8
+Content-Transfer-Encoding: 8BIT
+Content-ID: <alpine.DEB.2.10.1901231428551.17936@sstabellini-ThinkPad-X260>
+
+On Wed, 23 Jan 2019, hch@infradead.org wrote:
+> On Wed, Jan 23, 2019 at 01:04:33PM -0800, Stefano Stabellini wrote:
+> > If vring_use_dma_api is actually supposed to return true when
+> > dma_dev->dma_mem is set, then both Peng's patch and the patch I wrote
+> > are not fixing the real issue here.
+> > 
+> > I don't know enough about remoteproc to know where the problem actually
+> > lies though.
+> 
+> The problem is the following:
+> 
+> Devices can declare a specific memory region that they want to use when
+> the driver calls dma_alloc_coherent for the device, this is done using
+> the shared-dma-pool DT attribute, which comes in two variants that
+> would be a little to much to explain here.
+> 
+> remoteproc makes use of that because apparently the device can
+> only communicate using that region.  But it then feeds back memory
+> obtained with dma_alloc_coherent into the virtio code.  For that
+> it calls vmalloc_to_page on the dma_alloc_coherent, which is a huge
+> no-go for the ĐMA API and only worked accidentally on a few platform,
+> and apparently arm64 just changed a few internals that made it stop
+> working for remoteproc.
+> 
+> The right answer is to not use the DMA API to allocate memory from
+> a device-speficic region, but to tie the driver directly into the
+> DT reserved memory API in a way that allows it to easilt obtain
+> a struct device for it.
+
+If I understand correctly, Peng should be able to reproduce the problem
+on native Linux without any Xen involvement simply by forcing
+vring_use_dma_api to return true. Peng, can you confirm?
+
+And the right fix is not to call vmalloc_to_page on a dma_alloc_coherent
+buffer -- I don't know about the recent changes on arm64, but that's not
+going to work with arm32 either AFAIK. Given that I don't have a repro,
+I'll leave it to Peng and/or others to send the appropriate patch for
+remoteproc.
 
 
--Olof
+> This is orthogonal to another issue, and that is that hardware
+> virtio devices really always need to use the DMA API, otherwise
+> we'll bypass such features as the device specific DMA pools,
+> DMA offsets, cache flushing, etc, etc.
+
+I understand, I'll drop my patch.
+--8323329-1172143826-1548282487=:17936--
