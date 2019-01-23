@@ -2,108 +2,103 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 735C4C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 08:53:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44B65C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 08:53:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 411F9217F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 08:53:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FgNMD29z"
+	by mail.kernel.org (Postfix) with ESMTP id 14B8F217F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 08:53:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727073AbfAWIxX (ORCPT
+        id S1727129AbfAWIxk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 03:53:23 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:43816 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726373AbfAWIxX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 03:53:23 -0500
-Received: by mail-vs1-f65.google.com with SMTP id x1so816584vsc.10
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 00:53:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=myClBJYjky/ABLpOmhPetslgHGs4AKLWXbFb0S/s6TU=;
-        b=FgNMD29zgVsSQlmigRDZeHU3WZHUc1lA3RTW0xS7RykJzN8JVzKiXGIcHH/IBP9Oc4
-         89SfL9vV7ZKu9RYfwkpvbStqohfNbKcZTjs0GU3f6U/WJJWp38AXaG7pqlkCSP6tQfuA
-         OXJGxPO3PKhkAXGH7J5pvc3kzfQe/HKiRbzd4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=myClBJYjky/ABLpOmhPetslgHGs4AKLWXbFb0S/s6TU=;
-        b=rvdoyPnNqtTEH0Cu2eEi6yC1XCGJ8wW7UbU3JtthqI7eCR4e/Z+ezDvtQ3ZsTl23bT
-         Cwy5ats21KALNObXqWYRd7ZXDhLcgknD/ZXyDhfGp5rPddWAoTZT3dyjygTkFrcjJ54x
-         ktOpVDm+U3lro9w8HL4xGHfPb2vnmfjmmZWZwsyY1WParMxKZlX/+is6ztmxtqTDhism
-         1YD7NDj5rUFURZD2J/zZt82nKhfahX2hopc8IU76nV3jz6OKPsoA+CTCZRgmyMT+55jZ
-         Gqv7fD5LzByygAGiT60Evw1JInFgdLD7WjFG2V+fRPxBbexuPqRbNii2CehyejLYc8xc
-         teIQ==
-X-Gm-Message-State: AJcUukcaQ6QOVxhkecYDAqR/aI2MvjwpoVWbvObii0nzO3O6iLpWaWDA
-        /FECbvJELjEEFDMy5AhazCp+EpnpswoAgFhjr+f40DOB
-X-Google-Smtp-Source: ALg8bN5Wba57QENUjnSVXUGZiFwVNQlOehcyTTWcwZxKY3Vr1AbmF7RdDkczHLWmprDaxv0o21JEblWeiqsHytMaXDY=
-X-Received: by 2002:a67:b245:: with SMTP id s5mr517434vsh.200.1548233601993;
- Wed, 23 Jan 2019 00:53:21 -0800 (PST)
+        Wed, 23 Jan 2019 03:53:40 -0500
+Received: from mx2.suse.de ([195.135.220.15]:32862 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726373AbfAWIxk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 03:53:40 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 31D6DB05C;
+        Wed, 23 Jan 2019 08:53:38 +0000 (UTC)
+Subject: Re: [PATCH 6/6] x86: xen: no need to check return value of
+ debugfs_create functions
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, xen-devel@lists.xenproject.org
+References: <20190122143542.8816-1-gregkh@linuxfoundation.org>
+ <20190122143542.8816-7-gregkh@linuxfoundation.org>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <7fc8d923-ff84-db12-defb-fe554f1711b7@suse.com>
+Date:   Wed, 23 Jan 2019 09:53:37 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-References: <20190116113723.15668-1-ulf.hansson@linaro.org> <20190122162421.7F047609B4@smtp.codeaurora.org>
-In-Reply-To: <20190122162421.7F047609B4@smtp.codeaurora.org>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 23 Jan 2019 09:52:46 +0100
-Message-ID: <CAPDyKFrSF0J7d7vM+RWFbS=Chn+pK6ur4xepCPGxnGXGajLRMg@mail.gmail.com>
-Subject: Re: [PATCH V2] wlcore: sdio: Fixup power on/off sequence
-To:     Kalle Valo <kvalo@codeaurora.org>
-Cc:     Tony Lindgren <tony@atomide.com>, Eyal Reizer <eyalr@ti.com>,
-        linux-wireless@vger.kernel.org,
-        Ricardo Salveti <rsalveti@rsalveti.net>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Jan Kiszka <jan.kiszka@web.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-omap <linux-omap@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190122143542.8816-7-gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 22 Jan 2019 at 17:24, Kalle Valo <kvalo@codeaurora.org> wrote:
->
-> Ulf Hansson <ulf.hansson@linaro.org> wrote:
->
-> > During "wlan-up", we are programming the FW into the WiFi-chip. However,
-> > re-programming the FW doesn't work, unless a power cycle of the WiFi-chip
-> > is made in-between the programmings.
-> >
-> > To conform to this requirement and to fix the regression in a simple way,
-> > let's start by allowing that the SDIO card (WiFi-chip) may stay powered on
-> > (runtime resumed) when wl12xx_sdio_power_off() returns. The intent with the
-> > current code is to treat this scenario as an error, but unfortunate this
-> > doesn't work as expected, so let's fix this.
-> >
-> > The other part is to guarantee that a power cycle of the SDIO card has been
-> > completed when wl12xx_sdio_power_on() returns, as to allow the FW
-> > programming to succeed. However, relying solely on runtime PM to deal with
-> > this isn't sufficient. For example, userspace may prevent runtime suspend
-> > via sysfs for the device that represents the SDIO card, leading to that the
-> > mmc core also keeps it powered on. For this reason, let's instead do a
-> > brute force power cycle in wl12xx_sdio_power_on().
-> >
-> > Fixes: 728a9dc61f13 ("wlcore: sdio: Fix flakey SDIO runtime PM handling")
-> > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > Tested-by: Tony Lindgren <tony@atomide.com>
-> > Tested-by: Anders Roxell <anders.roxell@linaro.org>
-> > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
->
-> Patch applied to wireless-drivers.git, thanks.
->
-> 13e62626c578 wlcore: sdio: Fixup power on/off sequence
+On 22/01/2019 15:35, Greg Kroah-Hartman wrote:
+> When calling debugfs functions, there is no need to ever check the
+> return value.  The function can work or not, but the code logic should
+> never do something different based on this.
+> 
+> Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+> Cc: Juergen Gross <jgross@suse.com>
+> Cc: Stefano Stabellini <sstabellini@kernel.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: <x86@kernel.org>
+> Cc: <xen-devel@lists.xenproject.org>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Great, thanks! Let's see how we can fix Jan's problem on top.
+Reviewed-by: Juergen Gross <jgross@suse.com>
 
-Kind regards
-Uffe
+
+Juergen
