@@ -2,80 +2,134 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AE00C282C8
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 04:25:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23227C282C8
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 04:30:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7F0421019
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 04:25:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="WH773/Ux";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="WH773/Ux"
+	by mail.kernel.org (Postfix) with ESMTP id EAE6521726
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 04:30:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727108AbfAWEZf (ORCPT
+        id S1727089AbfAWEap (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 23:25:35 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:33958 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726963AbfAWEZf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 23:25:35 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 70BA56044E; Wed, 23 Jan 2019 04:25:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548217534;
-        bh=9bdqg6OpZ8ek1oU3R3Vu/FLqBQ9mD8YwsTtbzaFP8dQ=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=WH773/UxFi//9rZN1tBisF+0R2C4Wu5Qwi5/dYELTEdif5Ct+M8dqymh+dGxQsHh5
-         LLDHxw0B1RwhddpOSbpqKVqq7WIXNnvfzt2EJ1oEyl3m8n/qSDDhbP10YLzMyA533m
-         t2z50hr2Lj+nhQN0qjw4uSbM0Ef94ECIRZlpGWYg=
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Tue, 22 Jan 2019 23:30:45 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:45862 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726963AbfAWEap (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 23:30:45 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id A77A26013C;
-        Wed, 23 Jan 2019 04:25:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548217534;
-        bh=9bdqg6OpZ8ek1oU3R3Vu/FLqBQ9mD8YwsTtbzaFP8dQ=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=WH773/UxFi//9rZN1tBisF+0R2C4Wu5Qwi5/dYELTEdif5Ct+M8dqymh+dGxQsHh5
-         LLDHxw0B1RwhddpOSbpqKVqq7WIXNnvfzt2EJ1oEyl3m8n/qSDDhbP10YLzMyA533m
-         t2z50hr2Lj+nhQN0qjw4uSbM0Ef94ECIRZlpGWYg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A77A26013C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     =?utf-8?B?5aec5pm65Lyf?= <qq282012236@gmail.com>
-Cc:     ath9k-devel@qca.qualcomm.com, davem@davemloft.net,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ath: move spin_lock_bh to spin_lock in tasklet
-References: <20190122163033.51095-1-qq282012236@gmail.com>
-        <87ef94myo0.fsf@kamboji.qca.qualcomm.com>
-        <CANHzP_uiEoYaSg4fC1gHHjc=gRLjaxt8S3=p6a-rkg5-WjR7MA@mail.gmail.com>
-Date:   Wed, 23 Jan 2019 06:25:29 +0200
-In-Reply-To: <CANHzP_uiEoYaSg4fC1gHHjc=gRLjaxt8S3=p6a-rkg5-WjR7MA@mail.gmail.com>
-        (=?utf-8?B?IuWnnOaZuuS8nyIncw==?= message of "Wed, 23 Jan 2019 10:51:19
- +0800")
-Message-ID: <87a7jsm24m.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        by mx1.redhat.com (Postfix) with ESMTPS id 551ADC05D3ED;
+        Wed, 23 Jan 2019 04:30:44 +0000 (UTC)
+Received: from x1.home (ovpn-116-182.phx2.redhat.com [10.3.116.182])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A15DB65F6E;
+        Wed, 23 Jan 2019 04:30:43 +0000 (UTC)
+Date:   Tue, 22 Jan 2019 21:30:43 -0700
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH kernel] vfio-pci/nvlink2: Fix ancient gcc warnings
+Message-ID: <20190122213043.051d7739@x1.home>
+In-Reply-To: <20190123040711.21759-1-aik@ozlabs.ru>
+References: <20190123040711.21759-1-aik@ozlabs.ru>
+Organization: Red Hat
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 23 Jan 2019 04:30:44 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=E5=A7=9C=E6=99=BA=E4=BC=9F <qq282012236@gmail.com> writes:
+Hi Geert,
 
-> Will do, thanks!=20
+The below patch comes about from the build regressions and improvements
+list you've sent out, but something doesn't add up that we'd be testing
+with an old compiler where initialization with { 0 } generates a
+"missing braces around initialization" warning.  Is this really the
+case or are we missing something here?  There's no harm that I can see
+with Alexey's fix, but are these really just false positives from a
+compiler bug that we should selectively ignore if the "fix" is less
+clean?  Thanks,
 
-Also don't send HTML mail :) Maillists drop those automatically.
+Alex
 
---=20
-Kalle Valo
+On Wed, 23 Jan 2019 15:07:11 +1100
+Alexey Kardashevskiy <aik@ozlabs.ru> wrote:
+
+> Using the {0} construct as a generic initializer is perfectly fine in C,
+> however due to a bug in old gcc there is a warning:
+> 
+>   + /kisskb/src/drivers/vfio/pci/vfio_pci_nvlink2.c: warning: (near
+> initialization for 'cap.header') [-Wmissing-braces]:  => 181:9
+> 
+> Since for whatever reason we still want to compile the modern kernel
+> with such an old gcc without warnings, this changes the capabilities
+> initialization.
+> 
+> The gcc bugzilla: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=53119
+> 
+> Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
+> ---
+>  drivers/vfio/pci/vfio_pci_nvlink2.c | 30 ++++++++++++++---------------
+>  1 file changed, 15 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/vfio/pci/vfio_pci_nvlink2.c b/drivers/vfio/pci/vfio_pci_nvlink2.c
+> index 054a2cf..91d945b 100644
+> --- a/drivers/vfio/pci/vfio_pci_nvlink2.c
+> +++ b/drivers/vfio/pci/vfio_pci_nvlink2.c
+> @@ -178,11 +178,11 @@ static int vfio_pci_nvgpu_add_capability(struct vfio_pci_device *vdev,
+>  		struct vfio_pci_region *region, struct vfio_info_cap *caps)
+>  {
+>  	struct vfio_pci_nvgpu_data *data = region->data;
+> -	struct vfio_region_info_cap_nvlink2_ssatgt cap = { 0 };
+> -
+> -	cap.header.id = VFIO_REGION_INFO_CAP_NVLINK2_SSATGT;
+> -	cap.header.version = 1;
+> -	cap.tgt = data->gpu_tgt;
+> +	struct vfio_region_info_cap_nvlink2_ssatgt cap = {
+> +		.header.id = VFIO_REGION_INFO_CAP_NVLINK2_SSATGT,
+> +		.header.version = 1,
+> +		.tgt = data->gpu_tgt
+> +	};
+>  
+>  	return vfio_info_add_capability(caps, &cap.header, sizeof(cap));
+>  }
+> @@ -365,18 +365,18 @@ static int vfio_pci_npu2_add_capability(struct vfio_pci_device *vdev,
+>  		struct vfio_pci_region *region, struct vfio_info_cap *caps)
+>  {
+>  	struct vfio_pci_npu2_data *data = region->data;
+> -	struct vfio_region_info_cap_nvlink2_ssatgt captgt = { 0 };
+> -	struct vfio_region_info_cap_nvlink2_lnkspd capspd = { 0 };
+> +	struct vfio_region_info_cap_nvlink2_ssatgt captgt = {
+> +		.header.id = VFIO_REGION_INFO_CAP_NVLINK2_SSATGT,
+> +		.header.version = 1,
+> +		.tgt = data->gpu_tgt
+> +	};
+> +	struct vfio_region_info_cap_nvlink2_lnkspd capspd = {
+> +		.header.id = VFIO_REGION_INFO_CAP_NVLINK2_LNKSPD,
+> +		.header.version = 1,
+> +		.link_speed = data->link_speed
+> +	};
+>  	int ret;
+>  
+> -	captgt.header.id = VFIO_REGION_INFO_CAP_NVLINK2_SSATGT;
+> -	captgt.header.version = 1;
+> -	captgt.tgt = data->gpu_tgt;
+> -
+> -	capspd.header.id = VFIO_REGION_INFO_CAP_NVLINK2_LNKSPD;
+> -	capspd.header.version = 1;
+> -	capspd.link_speed = data->link_speed;
+> -
+>  	ret = vfio_info_add_capability(caps, &captgt.header, sizeof(captgt));
+>  	if (ret)
+>  		return ret;
+
