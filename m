@@ -7,413 +7,123 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84854C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 21:39:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37A38C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 21:44:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F977217D4
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 21:39:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAC6721855
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 21:44:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jhBfmjWZ"
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="oLQMH4Ec"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726913AbfAWVjL (ORCPT
+        id S1726881AbfAWVoS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 16:39:11 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43519 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726627AbfAWVjL (ORCPT
+        Wed, 23 Jan 2019 16:44:18 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:33300 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726157AbfAWVoS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 16:39:11 -0500
-Received: by mail-pg1-f193.google.com with SMTP id v28so1651693pgk.10
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 13:39:10 -0800 (PST)
+        Wed, 23 Jan 2019 16:44:18 -0500
+Received: by mail-pl1-f194.google.com with SMTP id z23so1832893plo.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 13:44:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=ziepe.ca; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=UpUpCnIEjawET6RM7EmxQ2pQVnxrMDpSdlEm6HRqknE=;
-        b=jhBfmjWZl/iJmm4Nc0O+tz2uYfbqrm3Mkxxb7vMSa6YO4/42aW+C0+w3tdzhtZPSGH
-         cbD9WGMpZ+cXD6rYeZhHb+40RSTj/5flH6RedN5Py5yWgKkwaCpkyCUUnzgJBUc9dKCB
-         ztEKW5pNpizSYai6GjB0+Eus5LSobH46nXf0A=
+        bh=3/uZIwlnkiagj/KNfMOOqUpOUjR6rsb4oQn9ZsZlaNg=;
+        b=oLQMH4EcuyKyIYYV4vanW37DXXGFxK3/mbRoEqDP2Ju+Npq0YavvnV+GXjGRwIyJQz
+         h1gd9rlUWFkme4Fhj5KOZp9FAHQJ5AgH/uxuS6zITYyjB3sPNEhCuvEwUoOdbPLSKKHa
+         lcN7BVGFi9FjxOGQkzu5n/B17DWihiQ9mPkzWTuLQz0XWJv7X0JmKat3tLcYNXJcdEHF
+         CJkZo/xkGcbJKoGqrv6FVugXM65HU+VbrnPSOOaIUbwX6AcPcAbXSv3fbCYhR5q5l+2C
+         NIaMGhQ06iAWVje0JijuP193kp9/x4PUbGYTlEPUQHMDdODWpo3FDMWguQnhYJV9Pko3
+         m8cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UpUpCnIEjawET6RM7EmxQ2pQVnxrMDpSdlEm6HRqknE=;
-        b=h+Gcbtl7OWz307S2h3tRy91BaW6K1HUbTCb+BzjoWRkl/LGelbKEwlmi1ExOYojnML
-         JuRwL+sEvkz3W70ZS1kJjPmqli+jeQKlECJeJQproXIyyUTCA6eRnW4UzEDJI30vLnsz
-         SzVhIjgdaU9IS9SmxKYmYrBflbHQTr3Diix2bju9vI6Spgz1NRcAmLkFUKOZvJ6kMV+u
-         Qo6fzkVlMxEaeifbzXY6qlBRKkX5tU0Ns+Bu9M4MMtCzz9h1Le+A8pUZU16Hf0s9aZoK
-         477nTX/fHMgikwWkIBm0XslYitQaEzUoIVoZoy4y/QJAQGIXkpyutXM32r6OKMURbpKZ
-         wqfA==
-X-Gm-Message-State: AJcUukfJeT/a3BzRYh/Ae3LhRhfFP8XgM9hbK3q2yNSgbORMu9r6Q0V8
-        SkEGnLtLcPNB0zSi0wXr2Ynx5g==
-X-Google-Smtp-Source: ALg8bN7l+RTolXxe7+EBH08R0JMUFJ/UH9Sk0nUziC5i34H690PySLCFekgqTIQfksgxkqEOzByvGg==
-X-Received: by 2002:a62:29c3:: with SMTP id p186mr3792884pfp.117.1548279549629;
-        Wed, 23 Jan 2019 13:39:09 -0800 (PST)
-Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id 85sm27197626pfw.17.2019.01.23.13.39.08
+        bh=3/uZIwlnkiagj/KNfMOOqUpOUjR6rsb4oQn9ZsZlaNg=;
+        b=dKA1BvmfV+2ZuFJ80o8RsTnUCMmkVNMhDrxyLwyixpTQ4S092JmaikOF713EnmNwyj
+         X26xim/bc0/RuGoipnHTE/LKzJ8MeWV+tQyjgTTil+bsNBV5qdeW9JiJBoGY6+4/jchs
+         BEXVxr1gheJokEAEZAkHl8eQAQArHoJDtg8GEAGSOEmEM1FZpsJgPXztfJis9ACAA7Ui
+         fsbaurFGX3gfqxUpRW0z9yj+W88RU2SQiLxegLo+98GQpcoCGtzRRZ+BHBi3qqcAzwlr
+         9qUzzdFcCaeLJSyLZiWeyj6gEylr8oJwlIG3JPGvVhrjLebP0vHdIoldBzWfyDm1plOA
+         jNEQ==
+X-Gm-Message-State: AJcUukcwKQj2+eid6BVT0TYwp8uEaY74/lI4laWrUCMmWYJFuLvAu43D
+        6MNvukxaqPAiNX8eXUaG6zWr+w==
+X-Google-Smtp-Source: ALg8bN7Yn5IztwMbrUR640ecAT9jOBAZaSZGbtbGVmLYGVSGYZSuFBbopH7yzikDNMMlgWcY4OoY0g==
+X-Received: by 2002:a17:902:2c83:: with SMTP id n3mr4015238plb.104.1548279856564;
+        Wed, 23 Jan 2019 13:44:16 -0800 (PST)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id e187sm26380347pfa.130.2019.01.23.13.44.15
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 23 Jan 2019 13:39:08 -0800 (PST)
-Date:   Wed, 23 Jan 2019 14:39:06 -0700
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Leo Yan <leo.yan@linaro.org>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Mike Leach <mike.leach@linaro.org>,
-        Robert Walker <robert.walker@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Coresight ML <coresight@lists.linaro.org>
-Subject: Re: [PATCH v6 7/8] perf cs-etm: Set sample flags for exception packet
-Message-ID: <20190123213906.GG620@xps15>
-References: <20190119014347.27441-1-leo.yan@linaro.org>
- <20190119014347.27441-8-leo.yan@linaro.org>
+        Wed, 23 Jan 2019 13:44:15 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1gmQJj-0005NW-2p; Wed, 23 Jan 2019 14:44:15 -0700
+Date:   Wed, 23 Jan 2019 14:44:15 -0700
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Nicholas Mc Guire <hofrat@osadl.org>
+Cc:     Steve Wise <swise@chelsio.com>, Doug Ledford <dledford@redhat.com>,
+        Raju Rangoju <rajur@chelsio.com>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] iw_cxgb4: drop check - dead code
+Message-ID: <20190123214415.GA20648@ziepe.ca>
+References: <1547947633-10515-1-git-send-email-hofrat@osadl.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190119014347.27441-8-leo.yan@linaro.org>
+In-Reply-To: <1547947633-10515-1-git-send-email-hofrat@osadl.org>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 19, 2019 at 09:43:46AM +0800, Leo Yan wrote:
-> The exception taken and returning are typical flow for instruction jump
-> but it needs to be handled with exception packets. This patch is to set
-> sample flags for exception packet.
+On Sun, Jan 20, 2019 at 02:27:13AM +0100, Nicholas Mc Guire wrote:
+> The kmalloc is called with  | __GFP_NOFAIL  so there is no point in
+> checking the return value - it either returns valid storage or it would
+> hang/terminate there. But it is not possible to say if the use of
+> __GFP_NOFAIL is really needed and the check should be removed or
+> vice-versa (use of __GFP_NOFAIL should be only in exceptional
+> cases as I understand it and alloc_srq_queue() is called in quite
+> a few places)
+> In either way it would need fixing.
 > 
-> Since the exception packet contains the exception number, according to
-> the exception number this patch makes decision for belonging to which
-> exception types.
-> 
-> The decoder have defined different exception number for ETMv3 and ETMv4
-> separately, hence this patch needs firstly decide the ETM version by
-> using the metadata magic number, and this patch adds helper function
-> cs_etm__get_magic() for easily getting magic number.
-> 
-> Based on different ETM version, the exception packet contains the
-> exception number, according to the exception number this patch makes
-> decision for the exception belonging to which exception types.
-> 
-> In this patch, it introduces helper function cs_etm__is_svc_instr();
-> for ETMv4 CS_ETMV4_EXC_CALL covers SVC, SMC and HVC cases in the
-> single exception number, thus need to use cs_etm__is_svc_instr() to
-> decide an exception taken for system call.
-> 
-> Reviewed-by: Robert Walker <robert.walker@arm.com>
-> Signed-off-by: Leo Yan <leo.yan@linaro.org>
-
-This is the other way around, i.e you wrote the code and then Robert reviewed
-it.  With this change:
-
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-
+> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+> Fixes: 6a0b6174d35a ("rdma/cxgb4: Add support for kernel mode SRQ's")
 > ---
->  tools/perf/util/cs-etm.c | 215 +++++++++++++++++++++++++++++++++++++++
->  tools/perf/util/cs-etm.h |  44 ++++++++
->  2 files changed, 259 insertions(+)
-> 
-> diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-> index e89989fe0a5c..052805de6513 100644
-> --- a/tools/perf/util/cs-etm.c
-> +++ b/tools/perf/util/cs-etm.c
-> @@ -97,6 +97,20 @@ static u32 cs_etm__get_v7_protocol_version(u32 etmidr)
->  	return CS_ETM_PROTO_ETMV3;
->  }
->  
-> +static int cs_etm__get_magic(u8 trace_chan_id, u64 *magic)
-> +{
-> +	struct int_node *inode;
-> +	u64 *metadata;
-> +
-> +	inode = intlist__find(traceid_list, trace_chan_id);
-> +	if (!inode)
-> +		return -EINVAL;
-> +
-> +	metadata = inode->priv;
-> +	*magic = metadata[CS_ETM_MAGIC];
-> +	return 0;
-> +}
-> +
->  int cs_etm__get_cpu(u8 trace_chan_id, int *cpu)
->  {
->  	struct int_node *inode;
-> @@ -1122,10 +1136,174 @@ static int cs_etm__end_block(struct cs_etm_queue *etmq)
->  	return 0;
->  }
->  
-> +static bool cs_etm__is_svc_instr(struct cs_etm_queue *etmq,
-> +				 struct cs_etm_packet *packet,
-> +				 u64 end_addr)
-> +{
-> +	u16 instr16;
-> +	u32 instr32;
-> +	u64 addr;
-> +
-> +	switch (packet->isa) {
-> +	case CS_ETM_ISA_T32:
-> +		/*
-> +		 * The SVC of T32 is defined in ARM DDI 0487D.a, F5.1.247:
-> +		 *
-> +		 *  b'15         b'8
-> +		 * +-----------------+--------+
-> +		 * | 1 1 0 1 1 1 1 1 |  imm8  |
-> +		 * +-----------------+--------+
-> +		 *
-> +		 * According to the specifiction, it only defines SVC for T32
-> +		 * with 16 bits instruction and has no definition for 32bits;
-> +		 * so below only read 2 bytes as instruction size for T32.
-> +		 */
-> +		addr = end_addr - 2;
-> +		cs_etm__mem_access(etmq, addr, sizeof(instr16), (u8 *)&instr16);
-> +		if ((instr16 & 0xFF00) == 0xDF00)
-> +			return true;
-> +
-> +		break;
-> +	case CS_ETM_ISA_A32:
-> +		/*
-> +		 * The SVC of A32 is defined in ARM DDI 0487D.a, F5.1.247:
-> +		 *
-> +		 *  b'31 b'28 b'27 b'24
-> +		 * +---------+---------+-------------------------+
-> +		 * |  !1111  | 1 1 1 1 |        imm24            |
-> +		 * +---------+---------+-------------------------+
-> +		 */
-> +		addr = end_addr - 4;
-> +		cs_etm__mem_access(etmq, addr, sizeof(instr32), (u8 *)&instr32);
-> +		if ((instr32 & 0x0F000000) == 0x0F000000 &&
-> +		    (instr32 & 0xF0000000) != 0xF0000000)
-> +			return true;
-> +
-> +		break;
-> +	case CS_ETM_ISA_A64:
-> +		/*
-> +		 * The SVC of A64 is defined in ARM DDI 0487D.a, C6.2.294:
-> +		 *
-> +		 *  b'31               b'21           b'4     b'0
-> +		 * +-----------------------+---------+-----------+
-> +		 * | 1 1 0 1 0 1 0 0 0 0 0 |  imm16  | 0 0 0 0 1 |
-> +		 * +-----------------------+---------+-----------+
-> +		 */
-> +		addr = end_addr - 4;
-> +		cs_etm__mem_access(etmq, addr, sizeof(instr32), (u8 *)&instr32);
-> +		if ((instr32 & 0xFFE0001F) == 0xd4000001)
-> +			return true;
-> +
-> +		break;
-> +	case CS_ETM_ISA_UNKNOWN:
-> +	default:
-> +		break;
-> +	}
-> +
-> +	return false;
-> +}
-> +
-> +static bool cs_etm__is_syscall(struct cs_etm_queue *etmq, u64 magic)
-> +{
-> +	struct cs_etm_packet *packet = etmq->packet;
-> +	struct cs_etm_packet *prev_packet = etmq->prev_packet;
-> +
-> +	if (magic == __perf_cs_etmv3_magic)
-> +		if (packet->exception_number == CS_ETMV3_EXC_SVC)
-> +			return true;
-> +
-> +	/*
-> +	 * ETMv4 exception type CS_ETMV4_EXC_CALL covers SVC, SMC and
-> +	 * HVC cases; need to check if it's SVC instruction based on
-> +	 * packet address.
-> +	 */
-> +	if (magic == __perf_cs_etmv4_magic) {
-> +		if (packet->exception_number == CS_ETMV4_EXC_CALL &&
-> +		    cs_etm__is_svc_instr(etmq, prev_packet,
-> +					 prev_packet->end_addr))
-> +			return true;
-> +	}
-> +
-> +	return false;
-> +}
-> +
-> +static bool cs_etm__is_async_exception(struct cs_etm_queue *etmq, u64 magic)
-> +{
-> +	struct cs_etm_packet *packet = etmq->packet;
-> +
-> +	if (magic == __perf_cs_etmv3_magic)
-> +		if (packet->exception_number == CS_ETMV3_EXC_DEBUG_HALT ||
-> +		    packet->exception_number == CS_ETMV3_EXC_ASYNC_DATA_ABORT ||
-> +		    packet->exception_number == CS_ETMV3_EXC_PE_RESET ||
-> +		    packet->exception_number == CS_ETMV3_EXC_IRQ ||
-> +		    packet->exception_number == CS_ETMV3_EXC_FIQ)
-> +			return true;
-> +
-> +	if (magic == __perf_cs_etmv4_magic)
-> +		if (packet->exception_number == CS_ETMV4_EXC_RESET ||
-> +		    packet->exception_number == CS_ETMV4_EXC_DEBUG_HALT ||
-> +		    packet->exception_number == CS_ETMV4_EXC_SYSTEM_ERROR ||
-> +		    packet->exception_number == CS_ETMV4_EXC_INST_DEBUG ||
-> +		    packet->exception_number == CS_ETMV4_EXC_DATA_DEBUG ||
-> +		    packet->exception_number == CS_ETMV4_EXC_IRQ ||
-> +		    packet->exception_number == CS_ETMV4_EXC_FIQ)
-> +			return true;
-> +
-> +	return false;
-> +}
-> +
-> +static bool cs_etm__is_sync_exception(struct cs_etm_queue *etmq, u64 magic)
-> +{
-> +	struct cs_etm_packet *packet = etmq->packet;
-> +	struct cs_etm_packet *prev_packet = etmq->prev_packet;
-> +
-> +	if (magic == __perf_cs_etmv3_magic)
-> +		if (packet->exception_number == CS_ETMV3_EXC_SMC ||
-> +		    packet->exception_number == CS_ETMV3_EXC_HYP ||
-> +		    packet->exception_number == CS_ETMV3_EXC_JAZELLE_THUMBEE ||
-> +		    packet->exception_number == CS_ETMV3_EXC_UNDEFINED_INSTR ||
-> +		    packet->exception_number == CS_ETMV3_EXC_PREFETCH_ABORT ||
-> +		    packet->exception_number == CS_ETMV3_EXC_DATA_FAULT ||
-> +		    packet->exception_number == CS_ETMV3_EXC_GENERIC)
-> +			return true;
-> +
-> +	if (magic == __perf_cs_etmv4_magic) {
-> +		if (packet->exception_number == CS_ETMV4_EXC_TRAP ||
-> +		    packet->exception_number == CS_ETMV4_EXC_ALIGNMENT ||
-> +		    packet->exception_number == CS_ETMV4_EXC_INST_FAULT ||
-> +		    packet->exception_number == CS_ETMV4_EXC_DATA_FAULT)
-> +			return true;
-> +
-> +		/*
-> +		 * For CS_ETMV4_EXC_CALL, except SVC other instructions
-> +		 * (SMC, HVC) are taken as sync exceptions.
-> +		 */
-> +		if (packet->exception_number == CS_ETMV4_EXC_CALL &&
-> +		    !cs_etm__is_svc_instr(etmq, prev_packet,
-> +					  prev_packet->end_addr))
-> +			return true;
-> +
-> +		/*
-> +		 * ETMv4 has 5 bits for exception number; if the numbers
-> +		 * are in the range ( CS_ETMV4_EXC_FIQ, CS_ETMV4_EXC_END ]
-> +		 * they are implementation defined exceptions.
-> +		 *
-> +		 * For this case, simply take it as sync exception.
-> +		 */
-> +		if (packet->exception_number > CS_ETMV4_EXC_FIQ &&
-> +		    packet->exception_number <= CS_ETMV4_EXC_END)
-> +			return true;
-> +	}
-> +
-> +	return false;
-> +}
-> +
->  static int cs_etm__set_sample_flags(struct cs_etm_queue *etmq)
->  {
->  	struct cs_etm_packet *packet = etmq->packet;
->  	struct cs_etm_packet *prev_packet = etmq->prev_packet;
-> +	u64 magic;
-> +	int ret;
->  
->  	switch (packet->sample_type) {
->  	case CS_ETM_RANGE:
-> @@ -1206,6 +1384,43 @@ static int cs_etm__set_sample_flags(struct cs_etm_queue *etmq)
->  					      PERF_IP_FLAG_TRACE_END;
->  		break;
->  	case CS_ETM_EXCEPTION:
-> +		ret = cs_etm__get_magic(packet->trace_chan_id, &magic);
-> +		if (ret)
-> +			return ret;
-> +
-> +		/* The exception is for system call. */
-> +		if (cs_etm__is_syscall(etmq, magic))
-> +			packet->flags = PERF_IP_FLAG_BRANCH |
-> +					PERF_IP_FLAG_CALL |
-> +					PERF_IP_FLAG_SYSCALLRET;
-> +		/*
-> +		 * The exceptions are triggered by external signals from bus,
-> +		 * interrupt controller, debug module, PE reset or halt.
-> +		 */
-> +		else if (cs_etm__is_async_exception(etmq, magic))
-> +			packet->flags = PERF_IP_FLAG_BRANCH |
-> +					PERF_IP_FLAG_CALL |
-> +					PERF_IP_FLAG_ASYNC |
-> +					PERF_IP_FLAG_INTERRUPT;
-> +		/*
-> +		 * Otherwise, exception is caused by trap, instruction &
-> +		 * data fault, or alignment errors.
-> +		 */
-> +		else if (cs_etm__is_sync_exception(etmq, magic))
-> +			packet->flags = PERF_IP_FLAG_BRANCH |
-> +					PERF_IP_FLAG_CALL |
-> +					PERF_IP_FLAG_INTERRUPT;
-> +
-> +		/*
-> +		 * When the exception packet is inserted, since exception
-> +		 * packet is not used standalone for generating samples
-> +		 * and it's affiliation to the previous instruction range
-> +		 * packet; so set previous range packet flags to tell perf
-> +		 * it is an exception taken branch.
-> +		 */
-> +		if (prev_packet->sample_type == CS_ETM_RANGE)
-> +			prev_packet->flags = packet->flags;
-> +		break;
->  	case CS_ETM_EXCEPTION_RET:
->  	case CS_ETM_EMPTY:
->  	default:
-> diff --git a/tools/perf/util/cs-etm.h b/tools/perf/util/cs-etm.h
-> index 5d70d10f3907..7bd16ea8a62d 100644
-> --- a/tools/perf/util/cs-etm.h
-> +++ b/tools/perf/util/cs-etm.h
-> @@ -53,6 +53,50 @@ enum {
->  	CS_ETMV4_PRIV_MAX,
->  };
->  
-> +/*
-> + * ETMv3 exception encoding number:
-> + * See Embedded Trace Macrocell spcification (ARM IHI 0014Q)
-> + * table 7-12 Encoding of Exception[3:0] for non-ARMv7-M processors.
-> + */
-> +enum {
-> +	CS_ETMV3_EXC_NONE = 0,
-> +	CS_ETMV3_EXC_DEBUG_HALT = 1,
-> +	CS_ETMV3_EXC_SMC = 2,
-> +	CS_ETMV3_EXC_HYP = 3,
-> +	CS_ETMV3_EXC_ASYNC_DATA_ABORT = 4,
-> +	CS_ETMV3_EXC_JAZELLE_THUMBEE = 5,
-> +	CS_ETMV3_EXC_PE_RESET = 8,
-> +	CS_ETMV3_EXC_UNDEFINED_INSTR = 9,
-> +	CS_ETMV3_EXC_SVC = 10,
-> +	CS_ETMV3_EXC_PREFETCH_ABORT = 11,
-> +	CS_ETMV3_EXC_DATA_FAULT = 12,
-> +	CS_ETMV3_EXC_GENERIC = 13,
-> +	CS_ETMV3_EXC_IRQ = 14,
-> +	CS_ETMV3_EXC_FIQ = 15,
-> +};
-> +
-> +/*
-> + * ETMv4 exception encoding number:
-> + * See ARM Embedded Trace Macrocell Architecture Specification (ARM IHI 0064D)
-> + * table 6-12 Possible values for the TYPE field in an Exception instruction
-> + * trace packet, for ARMv7-A/R and ARMv8-A/R PEs.
-> + */
-> +enum {
-> +	CS_ETMV4_EXC_RESET = 0,
-> +	CS_ETMV4_EXC_DEBUG_HALT = 1,
-> +	CS_ETMV4_EXC_CALL = 2,
-> +	CS_ETMV4_EXC_TRAP = 3,
-> +	CS_ETMV4_EXC_SYSTEM_ERROR = 4,
-> +	CS_ETMV4_EXC_INST_DEBUG = 6,
-> +	CS_ETMV4_EXC_DATA_DEBUG = 7,
-> +	CS_ETMV4_EXC_ALIGNMENT = 10,
-> +	CS_ETMV4_EXC_INST_FAULT = 11,
-> +	CS_ETMV4_EXC_DATA_FAULT = 12,
-> +	CS_ETMV4_EXC_IRQ = 14,
-> +	CS_ETMV4_EXC_FIQ = 15,
-> +	CS_ETMV4_EXC_END = 31,
-> +};
-> +
->  /* RB tree for quick conversion between traceID and metadata pointers */
->  struct intlist *traceid_list;
->  
-> -- 
-> 2.17.1
-> 
+
+As per steve's remarkes I revised this to the below and applied it to
+for-next
+
+From 4b2d4262ee2ea58df867de1928bf208795344432 Mon Sep 17 00:00:00 2001
+From: Jason Gunthorpe <jgg@mellanox.com>
+Date: Sun, 20 Jan 2019 02:27:13 +0100
+Subject: [PATCH] RDMA/iw_cxgb4: Drop __GFP_NOFAIL
+
+There is no reason for this __GFP_NOFAIL, none of the other routines in
+this file use it, and there is an error unwind here. NOFAIL should be
+reserved for special cases, not used by network drivers.
+
+Fixes: 6a0b6174d35a ("rdma/cxgb4: Add support for kernel mode SRQ's")
+Reported-by: Nicholas Mc Guire <hofrat@osadl.org>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+---
+ drivers/infiniband/hw/cxgb4/qp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/infiniband/hw/cxgb4/qp.c b/drivers/infiniband/hw/cxgb4/qp.c
+index 03f4c66c265946..c00a4114412694 100644
+--- a/drivers/infiniband/hw/cxgb4/qp.c
++++ b/drivers/infiniband/hw/cxgb4/qp.c
+@@ -2597,7 +2597,7 @@ static int alloc_srq_queue(struct c4iw_srq *srq, struct c4iw_dev_ucontext *uctx,
+ 	/* build fw_ri_res_wr */
+ 	wr_len = sizeof(*res_wr) + sizeof(*res);
+ 
+-	skb = alloc_skb(wr_len, GFP_KERNEL | __GFP_NOFAIL);
++	skb = alloc_skb(wr_len, GFP_KERNEL);
+ 	if (!skb)
+ 		goto err_free_queue;
+ 	set_wr_txq(skb, CPL_PRIORITY_CONTROL, 0);
+-- 
+2.20.1
+
