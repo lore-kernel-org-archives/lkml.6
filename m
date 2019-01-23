@@ -2,97 +2,252 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7A7DC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 21:16:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9A93C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 21:19:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77F3A2184C
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 21:16:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 905EA2184C
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 21:19:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="c8OA4jpZ"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bbZWZ2A5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726976AbfAWVQA (ORCPT
+        id S1726867AbfAWVTD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 16:16:00 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:43259 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726340AbfAWVQA (ORCPT
+        Wed, 23 Jan 2019 16:19:03 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:34109 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726356AbfAWVTD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 16:16:00 -0500
-Received: by mail-pf1-f194.google.com with SMTP id w73so1795570pfk.10
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 13:16:00 -0800 (PST)
+        Wed, 23 Jan 2019 16:19:03 -0500
+Received: by mail-vs1-f65.google.com with SMTP id y27so2250909vsi.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 13:19:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ipLVKE7SAdMRWkIE0Xsa1BPy7hrsn7mLMBWA0mbXzK0=;
-        b=c8OA4jpZzke+0QkN6UAxs5N49Pu0DW1RciosXHY1w8YxazCuuKYeVS+daQQfzZvKnn
-         5fYJcJj4HvcOmSxy7a4oqrSLrlwT2X/FxB7KZNCcAe3yteZQOC4LcYMCmY8KE7p4oX+w
-         wTasCRZhSlXELLL3z2bPvBX50bFSpcW1B/hdPWST+zXhL24qDBTAZaghHdljr4Mq3HFM
-         E45ONxqJzRw/FgHTTuwGXa/LbwiVMMUKquQU8JDDfWBWAyK1MNzNcM6kUSE0XrYVpRuI
-         lUuZFL/AavPkymn09uTfpGBEZxi9p8OciEEL8ASIM0iOYctF9fcefYFNoMjZ+S/nCgW9
-         LVZw==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rQ+KNXYtfh0lLrH9AE8eIx1liek8JORdiOs3vrvOVbs=;
+        b=bbZWZ2A5unH7aMKORScfxp5ab8Fg7d4UQntyZKE57I6wWNdc/UKKza6N0XYyVhHcCm
+         X1EfvK+Xnu15T4Ojaf7nm49aH4NmrboCKVE1ObiMTOV779xgIvASg6GqninRL63gDcMx
+         IKLzGZd6IvteqHRRRQA8FZsakLJLClmxev77I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ipLVKE7SAdMRWkIE0Xsa1BPy7hrsn7mLMBWA0mbXzK0=;
-        b=FbkVk2dRUTcYY16wz4u8K9em63mqBEmSmHoB4UhkUeFqZQUC5SisFyps5yo/OexScD
-         ivf7AL1kZ+jB7N7JfOqq852Z0nQjYH41M62TlKQweV9hbSZhip+5y2xUYMpC/Z4ZQVHX
-         Ji7UEU45H7kCs/rqQC+kp3uEd1ieEdphWEuw7gA3wsbR+/KAcA7Su0gOSjmppEW8++Mt
-         410Y0gH27YmeT2teEF75eQNeFVb08NAyrQ7IK8cNOdPzPW8NtdzbrKVQWcRQRpZ2o691
-         ZqPSkBs4SZHW+N2pT58ImoP+jlqzfsD2BdzzJOgphrbfShDzaEJh4f7/tSffOREss1SW
-         rlOA==
-X-Gm-Message-State: AJcUukdfiEpz29K9QhL3PEVDoKtiVbvBapax3Trj1AwQ879IQpbqp8G6
-        VhiGaiIdyeuptnHuLuznyGTaDA==
-X-Google-Smtp-Source: ALg8bN61yf9k5S/8oktt+BV0DE7vSFj3gLvYxCHaugHTWIUWnDSRRmFpap7Y6cFFFOfNoQhAjh1tlA==
-X-Received: by 2002:a62:546:: with SMTP id 67mr3569072pff.99.1548278159816;
-        Wed, 23 Jan 2019 13:15:59 -0800 (PST)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id m3sm25349396pgl.69.2019.01.23.13.15.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 23 Jan 2019 13:15:58 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1gmPsL-0002ER-R9; Wed, 23 Jan 2019 14:15:57 -0700
-Date:   Wed, 23 Jan 2019 14:15:57 -0700
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Doug Ledford <dledford@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-rdma@vger.kernel.org
-Subject: Re: [PATCH 0/8] IB: cleanup debugfs usage
-Message-ID: <20190123211557.GA8556@ziepe.ca>
-References: <20190122151800.15092-1-gregkh@linuxfoundation.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rQ+KNXYtfh0lLrH9AE8eIx1liek8JORdiOs3vrvOVbs=;
+        b=m0ariWPbYkpakRvDincRtxW/g+h23+bGwGSPNXIuuEHYZOJdwi4fwSR4XIloAz5s++
+         Pytg+OfIMN62oQWOQ/95Q2Q8pZ4UBmd2v2I0OkaQDZGnb3nTpCm1InEZS3YqklxORaAh
+         BudsavqzLayViT7CrNXjSqzOfke43y2tZFofZm/d/JJrOd5QHEVYTfX/7a0BhbX8/08N
+         AY5HmHzG/gg4dGVMppPfouc7biCi9mkixetnrT2UNgO8GopTeDc+LwAeuSfacUqsPzoE
+         4pFxfKNXleQhKwa/M5vMuYMIC1KfpOaLDQDoeck2ayZOMd5gipVbaqK2g3Y2N/SQ8EvP
+         xrkg==
+X-Gm-Message-State: AJcUukfB1IqGVezcs0Zoqro+1Eq6Ri/kjKitmcxH1KuYFnVFfPLYnakH
+        V8UhFvY2eM1w81c/t6dnWiaYigwxqryXUDC29xcEEA==
+X-Google-Smtp-Source: ALg8bN4PN1cuoL3ORhGL5d746MNe7QAePwkJHDJA0t48nHKD2dogmO93mL+z7SZKDIsdVDHaVGMGMfdr+dyrRv8KQvI=
+X-Received: by 2002:a67:b245:: with SMTP id s5mr1578312vsh.200.1548278341746;
+ Wed, 23 Jan 2019 13:19:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190122151800.15092-1-gregkh@linuxfoundation.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190116113723.15668-1-ulf.hansson@linaro.org>
+ <258ecb6b-c2b2-c8b8-9804-4df69002d9f5@web.de> <CAPDyKFoqfyvQRnSBRvPVxrL-nmf1YoSzxRkPfGwr==L3LOwgaw@mail.gmail.com>
+ <5bf8514a-eb15-b098-1857-835b36d4a67c@web.de> <CAPDyKFo=m50jiQ639xzP9tzn+=Bn0CXXwO6p0_jPH0EnSc0UQg@mail.gmail.com>
+ <CAPDyKFrt3+i83x_qyTrVVCSxda_+3HpJPR6RuPBxzRHnZTRVvA@mail.gmail.com>
+ <be41bf8a-df36-7f21-7616-b1983f78b5c7@web.de> <CAPDyKFpj1yU0dDWjZnJN5uqkjcQSy=3gRo1=6grAfdTTD6Z+zg@mail.gmail.com>
+ <179da213-d7e1-74c5-8f67-fcbf6337264f@web.de>
+In-Reply-To: <179da213-d7e1-74c5-8f67-fcbf6337264f@web.de>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 23 Jan 2019 22:18:25 +0100
+Message-ID: <CAPDyKFoDWzydAxTTTR7w4Jqr9rWfhTyhaS3q4aSBwY6ORi6xFQ@mail.gmail.com>
+Subject: Re: [PATCH V2] wlcore: sdio: Fixup power on/off sequence
+To:     Jan Kiszka <jan.kiszka@web.de>
+Cc:     Kalle Valo <kvalo@codeaurora.org>,
+        Tony Lindgren <tony@atomide.com>, Eyal Reizer <eyalr@ti.com>,
+        linux-wireless@vger.kernel.org,
+        Ricardo Salveti <rsalveti@rsalveti.net>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-omap <linux-omap@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 04:17:52PM +0100, Greg Kroah-Hartman wrote:
-> When calling debugfs code, there is no need to ever check the return
-> value of the call, as no logic should ever change if a call works
-> properly or not.  Fix up a bunch of infiniband-specific code to not care
-> about the results of debugfs.
-> 
-> Greg Kroah-Hartman (8):
->   infiniband: cxgb4: no need to check return value of debugfs_create functions
->   infiniband: hfi1: drop crazy DEBUGFS_SEQ_FILE_CREATE() macro
->   infiniband: hfi1: no need to check return value of debugfs_create functions
->   infiniband: qib: no need to check return value of debugfs_create functions
->   infiniband: mlx5: no need to check return value of debugfs_create functions
->   infiniband: ocrdma: no need to check return value of debugfs_create functions
->   infiniband: usnic: no need to check return value of debugfs_create functions
->   infiniband: ipoib: no need to check return value of debugfs_create functions
+On Wed, 23 Jan 2019 at 21:17, Jan Kiszka <jan.kiszka@web.de> wrote:
+>
+> On 23.01.19 09:50, Ulf Hansson wrote:
+> > On Tue, 22 Jan 2019 at 17:08, Jan Kiszka <jan.kiszka@web.de> wrote:
+> >>
+> >> On 21.01.19 15:40, Ulf Hansson wrote:
+> >>> On Fri, 18 Jan 2019 at 16:09, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> >>>>
+> >>>> On Fri, 18 Jan 2019 at 13:09, Jan Kiszka <jan.kiszka@web.de> wrote:
+> >>>>>
+> >>>>> On 17.01.19 10:54, Ulf Hansson wrote:
+> >>>>>> On Wed, 16 Jan 2019 at 21:26, Jan Kiszka <jan.kiszka@web.de> wrote:
+> >>>>>>>
+> >>>>>>> On 16.01.19 12:37, Ulf Hansson wrote:
+> >>>>>>>> During "wlan-up", we are programming the FW into the WiFi-chip. However,
+> >>>>>>>> re-programming the FW doesn't work, unless a power cycle of the WiFi-chip
+> >>>>>>>> is made in-between the programmings.
+> >>>>>>>>
+> >>>>>>>> To conform to this requirement and to fix the regression in a simple way,
+> >>>>>>>> let's start by allowing that the SDIO card (WiFi-chip) may stay powered on
+> >>>>>>>> (runtime resumed) when wl12xx_sdio_power_off() returns. The intent with the
+> >>>>>>>> current code is to treat this scenario as an error, but unfortunate this
+> >>>>>>>> doesn't work as expected, so let's fix this.
+> >>>>>>>>
+> >>>>>>>> The other part is to guarantee that a power cycle of the SDIO card has been
+> >>>>>>>> completed when wl12xx_sdio_power_on() returns, as to allow the FW
+> >>>>>>>> programming to succeed. However, relying solely on runtime PM to deal with
+> >>>>>>>> this isn't sufficient. For example, userspace may prevent runtime suspend
+> >>>>>>>> via sysfs for the device that represents the SDIO card, leading to that the
+> >>>>>>>> mmc core also keeps it powered on. For this reason, let's instead do a
+> >>>>>>>> brute force power cycle in wl12xx_sdio_power_on().
+> >>>>>>>>
+> >>>>>>>> Fixes: 728a9dc61f13 ("wlcore: sdio: Fix flakey SDIO runtime PM handling")
+> >>>>>>>> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> >>>>>>>> ---
+> >>>>>>>>
+> >>>>>>>> Changes in v2:
+> >>>>>>>>          - Keep the SDIO host claimed when calling mmc_hw_reset().
+> >>>>>>>>          - Add a fixes tag.
+> >>>>>>>> ---
+> >>>>>>>>      drivers/net/wireless/ti/wlcore/sdio.c | 15 +++++++--------
+> >>>>>>>>      1 file changed, 7 insertions(+), 8 deletions(-)
+> >>>>>>>>
+> >>>>>>>> diff --git a/drivers/net/wireless/ti/wlcore/sdio.c b/drivers/net/wireless/ti/wlcore/sdio.c
+> >>>>>>>> index bd10165d7eec..4d4b07701149 100644
+> >>>>>>>> --- a/drivers/net/wireless/ti/wlcore/sdio.c
+> >>>>>>>> +++ b/drivers/net/wireless/ti/wlcore/sdio.c
+> >>>>>>>> @@ -164,6 +164,12 @@ static int wl12xx_sdio_power_on(struct wl12xx_sdio_glue *glue)
+> >>>>>>>>          }
+> >>>>>>>>
+> >>>>>>>>          sdio_claim_host(func);
+> >>>>>>>> +     /*
+> >>>>>>>> +      * To guarantee that the SDIO card is power cycled, as required to make
+> >>>>>>>> +      * the FW programming to succeed, let's do a brute force HW reset.
+> >>>>>>>> +      */
+> >>>>>>>> +     mmc_hw_reset(card->host);
+> >>>>>>>> +
+> >>>>>>>>          sdio_enable_func(func);
+> >>>>>>>>          sdio_release_host(func);
+> >>>>>>>>
+> >>>>>>>> @@ -174,20 +180,13 @@ static int wl12xx_sdio_power_off(struct wl12xx_sdio_glue *glue)
+> >>>>>>>>      {
+> >>>>>>>>          struct sdio_func *func = dev_to_sdio_func(glue->dev);
+> >>>>>>>>          struct mmc_card *card = func->card;
+> >>>>>>>> -     int error;
+> >>>>>>>>
+> >>>>>>>>          sdio_claim_host(func);
+> >>>>>>>>          sdio_disable_func(func);
+> >>>>>>>>          sdio_release_host(func);
+> >>>>>>>>
+> >>>>>>>>          /* Let runtime PM know the card is powered off */
+> >>>>>>>> -     error = pm_runtime_put(&card->dev);
+> >>>>>>>> -     if (error < 0 && error != -EBUSY) {
+> >>>>>>>> -             dev_err(&card->dev, "%s failed: %i\n", __func__, error);
+> >>>>>>>> -
+> >>>>>>>> -             return error;
+> >>>>>>>> -     }
+> >>>>>>>> -
+> >>>>>>>> +     pm_runtime_put(&card->dev);
+> >>>>>>>>          return 0;
+> >>>>>>>>      }
+> >>>>>>>>
+> >>>>>>>>
+> >>>>>>>
+> >>>>>>> Just tested on both HiKey (620) and Ultra96 but it fails to fix the issue on
+> >>>>>>> both. I'm getting
+> >>>>>>>
+> >>>>>>> wl1271_sdio: probe of mmc2:0001:1 failed with error -16
+> >>>>>>>
+> >>>>>>> during boot again, and the interface is not available.
+> >>>>>>
+> >>>>>> Okay, sounds like this may be a different problem then. Can you share
+> >>>>>> the complete log and the kernel config?
+> >>>>>
+> >>>>> You can find the config here [1], log from the HiKey boot attached.
+> >>>>>
+> >>>>>> I can prepare a debug patch as well, if you are willing to re-run the test?
+> >>>>>
+> >>>>> Sure, send it over, I can run it.
+> >>>>
+> >>>> Alright, sounds great. However, I need to defer that to Monday/Tuesday
+> >>>> next week.
+> >>>>
+> >>>>>
+> >>>>>>
+> >>>>>> Adding a post-power-on-delay-ms of 1 ms as you suggested [1], doesn't
+> >>>>>> sounds like the correct solution to me, unless I am overlooking some
+> >>>>>> things. The point is, since the mmc core succeeds to detect and
+> >>>>>> initialize the SDIO card, the power sequence seems to be correct.
+> >>>>>
+> >>>>> Yeah, I'm not claiming at all I know what I'm doing there, just that it happens
+> >>>>> to work.
+> >>>>
+> >>>> I see. Good to know, thanks!
+> >>>>
+> >>>>>
+> >>>>> Jan
+> >>>>>
+> >>>>> [1]
+> >>>>> https://github.com/siemens/jailhouse-images/blob/next/recipes-kernel/linux/files/arm64_defconfig_4.19
+> >>>>
+> >>>> I have looked through the log and the defconfig. No obvious things
+> >>>> found at this point. Thanks for sharing them!
+> >>>>
+> >>>
+> >>> So, I have put together a debug patch, mostly to verify that things
+> >>> seems to be correct in regards to runtime PM. It should produce some
+> >>> prints to the log, particular during power on/off of the SDIO card and
+> >>> during probe of the wifi driver. Please re-run the test on top of the
+> >>> v2 version of the $subject patch.
+> >>>
+> >>
+> >> Log attached.
+> >
+> > Thanks! Okay, so the re-initialization of the SDIO card is failing,
+> > that's very valuable information.
+> >
+> > I noticed one difference while comparing your log with the one I
+> > received (offlist) from Anders... In your case the initialization
+> > frequency that works the first time is 300KHz, while in Anders case
+> > it's 100KHz. This sounds a bit fishy to me, so maybe there are some
+> > problems with the pwrseq after all.
+> >
+> > Let me think a bit and see what I can come up with as a possible solution.
+> >
+> > In the meantime, can you re-run the test with same debug patch, but
+> > change the post-power-on-delay-ms to let's say 10 ms in the DTS? I am
+> > going to ask Anders to do the same test on his side, as to see if we
+> > get different values of the found initialization frequency.
+>
+> Here is a log with 10 ms power-on-delay.
 
-Applied to rdma for-next
+Thanks!
 
-Thanks,
-Jason
+According to the log, we are now using 400KHz as the init frequency,
+because we succeeds to initialize the SDIO card already at the first
+attempt. The same thing happens to Anders' new tests.
+
+Conclusion from my side: We need the delay, probably because the
+internals of the WiFi chip isn't ready as soon as the WiFi spec
+states. In either case, I suggest you to re-spin your patch [1] and
+extend to delay to 10ms (instead of 1ms, just to be safe). Let it have
+also have the below fixes tag (as it seems like an original problem
+with the pwrseq) and also tag it for stable.
+
+Fixes: ea452678734e ("arm64: dts: hikey: Fix WiFi support")
+
+Finally, feel free to add my ack for it.
+
+Kind regards
+Uffe
+
+[1]
+https://patchwork.kernel.org/patch/10745075/
