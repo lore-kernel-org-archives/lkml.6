@@ -2,274 +2,143 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70D35C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 19:48:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2942C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 19:49:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37417218A1
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 19:48:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Ra5bpZp9"
+	by mail.kernel.org (Postfix) with ESMTP id 7C818218A1
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 19:49:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726352AbfAWTsl (ORCPT
+        id S1726435AbfAWTtF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 14:48:41 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:4580 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726101AbfAWTsk (ORCPT
+        Wed, 23 Jan 2019 14:49:05 -0500
+Received: from mail-it1-f197.google.com ([209.85.166.197]:53779 "EHLO
+        mail-it1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726252AbfAWTtF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 14:48:40 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c48c4fd0000>; Wed, 23 Jan 2019 11:48:13 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Wed, 23 Jan 2019 11:48:37 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 23 Jan 2019 11:48:37 -0800
-Received: from HQMAIL110.nvidia.com (172.18.146.15) by HQMAIL108.nvidia.com
- (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 23 Jan
- 2019 19:48:37 +0000
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by hqmail110.nvidia.com
- (172.18.146.15) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 23 Jan
- 2019 19:48:36 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Wed, 23 Jan 2019 19:48:37 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.52]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c48c5140001>; Wed, 23 Jan 2019 11:48:36 -0800
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <mkarthik@nvidia.com>, <smohammed@nvidia.com>, <talho@nvidia.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V4] i2c: tegra: Add Bus Clear Master Support
-Date:   Wed, 23 Jan 2019 11:48:35 -0800
-Message-ID: <1548272915-20925-1-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-X-NVConfidentiality: public
+        Wed, 23 Jan 2019 14:49:05 -0500
+Received: by mail-it1-f197.google.com with SMTP id i12so548845ita.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 11:49:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=sXb1jIfDTRvw1g8a613u9RzCOhGJsCGv6nIfK4YAHps=;
+        b=lHQrd4OrCEK734BQ2OYHDJCZhZRjr7CS0nuQZ4/lpJ0D578V8htTvA3uADgy9Im5cG
+         srhW9tdakLJ63uajnR1hgpt5cDPFrNtlVX2ETpt8jHGhOGdKJHTJVK8SrxNRIGoByZ4R
+         vLs16sN71qMHZJ1w6C2oLdfRXc+GJ5S65Mmqki/80KpE5YRuFRYIHXw0dapn2SIqQouH
+         3wY89VD3ZvZzVxhbPsqQEYWB7MtW1jAh46qScr6B6k16Xne5VLlpZ7bJKCg3VVNw1udI
+         5DDEc7/JQOtlTBtcb0M8hBKxXaSQW54izDZWAUahC7A1PvJTGchen9zz4N0fqbqCW2Nc
+         pNMg==
+X-Gm-Message-State: AHQUAuaamvOoNcdNemIUkpOuJ9SLTllAdfwujQ/931ozBSbgvgrRpBu5
+        OAAMbaIwTOEmY1Lr1I0JDrXo1mj+bNG6HmvIYyfegEHCNq1y
+X-Google-Smtp-Source: ALg8bN539rbBlT2G5yKyMht7wmg7Rx+s/tyZF1ZdpexJQcqMY6NkLh1zzLVyKIczRSBhoUXLGzHt7pv6G0r6zvbXGKez8CCAXsw0
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1548272893; bh=Ppqw0zecR+IFVPMS9/y4K3ngDRknr8J1HJ6vyPahP/s=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         X-NVConfidentiality:MIME-Version:Content-Type;
-        b=Ra5bpZp9t82vNYK50D+y96+TOj1iY0sot7MumkRt2YNJfmY8RY8r6kgK5T6zMieAW
-         A/rL1MIOgryL/fXGQrGovPVn34PuMgpAC+nxR4ZQ95uGjBQ/OAUHqWLe7HIfXsIJz0
-         rWolC/FBS0c5x1eQuzb6y1/KENzIs6+Kju4513nG58cPhGJSX1XZqEuBqIOkPm2U3j
-         HytDzpYiU4dDCNrziBwySl0sCWZf8ylBPKjbXssAGa5hhOcJkT95cWGNsTUvTiISaZ
-         E//5pqQ76a5GOtxqrLbQSIfBJfVGmE+h+zNf20E9boB1GQZFYfaGQrkKoGPXMRattW
-         Gg2ebJSus65Xw==
+X-Received: by 2002:a24:5dd4:: with SMTP id w203mr3143563ita.8.1548272944070;
+ Wed, 23 Jan 2019 11:49:04 -0800 (PST)
+Date:   Wed, 23 Jan 2019 11:49:04 -0800
+In-Reply-To: <0000000000000cf22a058011d494@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d8cd0d05802562d2@google.com>
+Subject: Re: general protection fault in nf_ct_gre_keymap_flush
+From:   syzbot <syzbot+fcee88b2d87f0539dfe9@syzkaller.appspotmail.com>
+To:     coreteam@netfilter.org, davem@davemloft.net, fw@strlen.de,
+        kadlec@blackhole.kfki.hu, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        pablo@netfilter.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bus clear feature of tegra i2c controller helps to recover from
-bus hang when i2c master loses the bus arbitration due to the
-slave device holding SDA LOW continuously for some unknown reasons.
+syzbot has found a reproducer for the following crash on:
 
-Per I2C specification, the device that held the bus LOW should
-release it within 9 clock pulses.
+HEAD commit:    5b74ce505631 Add linux-next specific files for 20190123
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1137e1b7400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d4d5d672c7c71240
+dashboard link: https://syzkaller.appspot.com/bug?extid=fcee88b2d87f0539dfe9
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=165f80c0c00000
 
-During bus clear operation, Tegra I2C controller sends 9 clock
-pulses and terminates the transaction with STOP condition.
-Upon successful bus clear operation, bus goes to idle state and
-driver retries the transaction.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+fcee88b2d87f0539dfe9@syzkaller.appspotmail.com
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- [V4]: Sets for one retry on arb lost
- [V3]: Updated comments and commit message to be clear on the change
- [V2]: Same as V1 rebased to 5.0-rc1
-
- drivers/i2c/busses/i2c-tegra.c | 71 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 71 insertions(+)
-
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index e417ebf7628c..514f7a51434e 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -54,6 +54,7 @@
- #define I2C_FIFO_STATUS_RX_SHIFT		0
- #define I2C_INT_MASK				0x064
- #define I2C_INT_STATUS				0x068
-+#define I2C_INT_BUS_CLR_DONE			BIT(11)
- #define I2C_INT_PACKET_XFER_COMPLETE		BIT(7)
- #define I2C_INT_ALL_PACKETS_XFER_COMPLETE	BIT(6)
- #define I2C_INT_TX_FIFO_OVERFLOW		BIT(5)
-@@ -96,6 +97,15 @@
- #define I2C_HEADER_MASTER_ADDR_SHIFT		12
- #define I2C_HEADER_SLAVE_ADDR_SHIFT		1
- 
-+#define I2C_BUS_CLEAR_CNFG			0x084
-+#define I2C_BC_SCLK_THRESHOLD			9
-+#define I2C_BC_SCLK_THRESHOLD_SHIFT		16
-+#define I2C_BC_STOP_COND			BIT(2)
-+#define I2C_BC_TERMINATE			BIT(1)
-+#define I2C_BC_ENABLE				BIT(0)
-+#define I2C_BUS_CLEAR_STATUS			0x088
-+#define I2C_BC_STATUS				BIT(0)
-+
- #define I2C_CONFIG_LOAD				0x08C
- #define I2C_MSTR_CONFIG_LOAD			BIT(0)
- #define I2C_SLV_CONFIG_LOAD			BIT(1)
-@@ -155,6 +165,8 @@ enum msg_end_type {
-  * @has_mst_fifo: The I2C controller contains the new MST FIFO interface that
-  *		provides additional features and allows for longer messages to
-  *		be transferred in one go.
-+ * @supports_bus_clear: Bus Clear support to recover from bus hang during
-+ *		SDA stuck low from device for some unknown reasons.
-  */
- struct tegra_i2c_hw_feature {
- 	bool has_continue_xfer_support;
-@@ -167,6 +179,7 @@ struct tegra_i2c_hw_feature {
- 	bool has_multi_master_mode;
- 	bool has_slcg_override_reg;
- 	bool has_mst_fifo;
-+	bool supports_bus_clear;
- };
- 
- /**
-@@ -639,6 +652,12 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 			i2c_dev->msg_err |= I2C_ERR_ARBITRATION_LOST;
- 		goto err;
- 	}
-+	/*
-+	 * I2C transfer is terminated during the bus clear so skip
-+	 * processing the other interrupts.
-+	 */
-+	if (i2c_dev->hw->supports_bus_clear && (status & I2C_INT_BUS_CLR_DONE))
-+		goto err;
- 
- 	if (i2c_dev->msg_read && (status & I2C_INT_RX_FIFO_DATA_REQ)) {
- 		if (i2c_dev->msg_buf_remaining)
-@@ -668,6 +687,8 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 	tegra_i2c_mask_irq(i2c_dev, I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST |
- 		I2C_INT_PACKET_XFER_COMPLETE | I2C_INT_TX_FIFO_DATA_REQ |
- 		I2C_INT_RX_FIFO_DATA_REQ);
-+	if (i2c_dev->hw->supports_bus_clear)
-+		tegra_i2c_mask_irq(i2c_dev, I2C_INT_BUS_CLR_DONE);
- 	i2c_writel(i2c_dev, status, I2C_INT_STATUS);
- 	if (i2c_dev->is_dvc)
- 		dvc_writel(i2c_dev, DVC_STATUS_I2C_DONE_INTR, DVC_STATUS);
-@@ -678,6 +699,43 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 	return IRQ_HANDLED;
- }
- 
-+static int tegra_i2c_issue_bus_clear(struct tegra_i2c_dev *i2c_dev)
-+{
-+	int err;
-+	unsigned long time_left;
-+	u32 reg;
-+
-+	if (i2c_dev->hw->supports_bus_clear) {
-+		reinit_completion(&i2c_dev->msg_complete);
-+		reg = (I2C_BC_SCLK_THRESHOLD << I2C_BC_SCLK_THRESHOLD_SHIFT) |
-+		      I2C_BC_STOP_COND | I2C_BC_TERMINATE;
-+		i2c_writel(i2c_dev, reg, I2C_BUS_CLEAR_CNFG);
-+		if (i2c_dev->hw->has_config_load_reg) {
-+			err = tegra_i2c_wait_for_config_load(i2c_dev);
-+			if (err)
-+				return err;
-+		}
-+		reg |= I2C_BC_ENABLE;
-+		i2c_writel(i2c_dev, reg, I2C_BUS_CLEAR_CNFG);
-+		tegra_i2c_unmask_irq(i2c_dev, I2C_INT_BUS_CLR_DONE);
-+
-+		time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
-+							TEGRA_I2C_TIMEOUT);
-+		if (time_left == 0) {
-+			dev_err(i2c_dev->dev, "timed out for bus clear\n");
-+			return -ETIMEDOUT;
-+		}
-+		reg = i2c_readl(i2c_dev, I2C_BUS_CLEAR_STATUS);
-+		if (!(reg & I2C_BC_STATUS)) {
-+			dev_err(i2c_dev->dev,
-+				"Un-recovered arbitration lost\n");
-+			return -EIO;
-+		}
-+	}
-+
-+	return -EAGAIN;
-+}
-+
- static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	struct i2c_msg *msg, enum msg_end_type end_state)
- {
-@@ -759,6 +817,12 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 		return 0;
- 
- 	tegra_i2c_init(i2c_dev);
-+	/* start recovery upon arbitration loss in single master mode */
-+	if (i2c_dev->msg_err == I2C_ERR_ARBITRATION_LOST) {
-+		if (!i2c_dev->is_multimaster_mode)
-+			return tegra_i2c_issue_bus_clear(i2c_dev);
-+		return -EAGAIN;
-+	}
- 	if (i2c_dev->msg_err == I2C_ERR_NO_ACK) {
- 		if (msg->flags & I2C_M_IGNORE_NAK)
- 			return 0;
-@@ -848,6 +912,7 @@ static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
- 	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = false,
- 	.has_mst_fifo = false,
-+	.supports_bus_clear = false,
- };
- 
- static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
-@@ -861,6 +926,7 @@ static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
- 	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = false,
- 	.has_mst_fifo = false,
-+	.supports_bus_clear = false,
- };
- 
- static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
-@@ -874,6 +940,7 @@ static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
- 	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = false,
- 	.has_mst_fifo = false,
-+	.supports_bus_clear = true,
- };
- 
- static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
-@@ -887,6 +954,7 @@ static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
- 	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = true,
- 	.has_mst_fifo = false,
-+	.supports_bus_clear = true,
- };
- 
- static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
-@@ -900,6 +968,7 @@ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
- 	.has_multi_master_mode = true,
- 	.has_slcg_override_reg = true,
- 	.has_mst_fifo = false,
-+	.supports_bus_clear = true,
- };
- 
- static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
-@@ -913,6 +982,7 @@ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
- 	.has_multi_master_mode = true,
- 	.has_slcg_override_reg = true,
- 	.has_mst_fifo = true,
-+	.supports_bus_clear = true,
- };
- 
- /* Match table for of_platform binding */
-@@ -965,6 +1035,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 	i2c_dev->div_clk = div_clk;
- 	i2c_dev->adapter.algo = &tegra_i2c_algo;
- 	i2c_dev->adapter.quirks = &tegra_i2c_quirks;
-+	i2c_dev->adapter.retries = 1;
- 	i2c_dev->irq = irq;
- 	i2c_dev->cont_id = pdev->id;
- 	i2c_dev->dev = &pdev->dev;
--- 
-2.7.4
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+CPU: 1 PID: 8342 Comm: syz-executor2 Not tainted 5.0.0-rc3-next-20190123 #18
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:nf_ct_gre_keymap_flush+0xb9/0x2f0  
+net/netfilter/nf_conntrack_proto_gre.c:65
+Code: 4c 89 f0 48 c1 e8 03 42 80 3c 20 00 0f 85 2b 02 00 00 4c 8b bb f8 16  
+00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 f9 48 c1 e9 03 <80> 3c 01 00 0f  
+85 fc 01 00 00 4c 3b bd 68 ff ff ff 4d 8b 27 0f 84
+RSP: 0018:ffff8880743eeef8 EFLAGS: 00010246
+RAX: dffffc0000000000 RBX: ffff888074c10240 RCX: 0000000000000000
+RDX: 1ffffffff146dff2 RSI: 0000000000000004 RDI: ffff8880743eee60
+RBP: ffff8880743eefa8 R08: 1ffff1100e87ddcc R09: ffffed100e87ddcd
+R10: ffffed100e87ddcc R11: 0000000000000003 R12: dffffc0000000000
+R13: ffff8880743ef0b8 R14: ffff888074c11938 R15: 0000000000000000
+FS:  00007f7ceb928700(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020000000 CR3: 00000000a089b000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  nf_conntrack_proto_pernet_fini+0x16/0x1a  
+net/netfilter/nf_conntrack_proto.c:617
+  nf_conntrack_cleanup_net_list+0x204/0x330  
+net/netfilter/nf_conntrack_core.c:2183
+  nf_conntrack_cleanup_net+0x1c5/0x270 net/netfilter/nf_conntrack_core.c:2156
+  nf_conntrack_pernet_init net/netfilter/nf_conntrack_standalone.c:1122  
+[inline]
+  nf_conntrack_pernet_init+0xc3f/0xf00  
+net/netfilter/nf_conntrack_standalone.c:1091
+  ops_init+0x109/0x5d0 net/core/net_namespace.c:129
+  setup_net+0x38f/0x940 net/core/net_namespace.c:314
+  copy_net_ns+0x2ae/0x4b0 net/core/net_namespace.c:437
+  create_new_namespaces+0x4ce/0x930 kernel/nsproxy.c:107
+  copy_namespaces+0x3ff/0x4d0 kernel/nsproxy.c:165
+  copy_process+0x4a2d/0x8890 kernel/fork.c:1920
+  _do_fork+0x1a9/0x1170 kernel/fork.c:2227
+  __do_sys_clone kernel/fork.c:2334 [inline]
+  __se_sys_clone kernel/fork.c:2328 [inline]
+  __x64_sys_clone+0xbf/0x150 kernel/fork.c:2328
+  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x458099
+Code: 6d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 3b b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f7ceb927c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
+RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 0000000000458099
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000070024103
+RBP: 000000000073bfa0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f7ceb9286d4
+R13: 00000000004be480 R14: 00000000004ce960 R15: 00000000ffffffff
+Modules linked in:
+---[ end trace cdb65ca986e98ff1 ]---
+RIP: 0010:nf_ct_gre_keymap_flush+0xb9/0x2f0  
+net/netfilter/nf_conntrack_proto_gre.c:65
+Code: 4c 89 f0 48 c1 e8 03 42 80 3c 20 00 0f 85 2b 02 00 00 4c 8b bb f8 16  
+00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 f9 48 c1 e9 03 <80> 3c 01 00 0f  
+85 fc 01 00 00 4c 3b bd 68 ff ff ff 4d 8b 27 0f 84
+RSP: 0018:ffff8880743eeef8 EFLAGS: 00010246
+RAX: dffffc0000000000 RBX: ffff888074c10240 RCX: 0000000000000000
+RDX: 1ffffffff146dff2 RSI: 0000000000000004 RDI: ffff8880743eee60
+RBP: ffff8880743eefa8 R08: 1ffff1100e87ddcc R09: ffffed100e87ddcd
+R10: ffffed100e87ddcc R11: 0000000000000003 R12: dffffc0000000000
+R13: ffff8880743ef0b8 R14: ffff888074c11938 R15: 0000000000000000
+FS:  00007f7ceb928700(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020000000 CR3: 00000000a089b000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
