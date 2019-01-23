@@ -7,53 +7,59 @@ X-Spam-Status: No, score=-9.4 required=3.0 tests=DATE_IN_PAST_12_24,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2124C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:58:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D93BC282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:58:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CF0C218FF
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:58:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 074212184C
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:58:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548323892;
-	bh=m5B391HGx6lsJfLULHB7pn4PxnKTM+5jBjsLzN8S5gA=;
+	s=default; t=1548323897;
+	bh=7vJhNOo9WeoNi5SvZ9WE8EQrmWCSIPJ7mQtL79ati9Y=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=qn/U+wm+XY4lbS1Alok1Re0U8uOwU5wMGhBPq7sfq4NKNVZcAdd9n10HMmegGwqKl
-	 bWAqijpEAJbRdoVeiSzLXyHHLh8WiEtWPkKLuEnV5sZicR6Cl1pOtYBba3jRJcs/PE
-	 K2MjodKwTdl9hM8tcLkHMBPEyGrUCiSLS8tc5fxs=
+	b=ostVIdFy5zRv4WiPKFcnMv7w7l8Jw5PfvGpMDBDqheKKTRbEXUf/up38eQ/mxltox
+	 LCdUjCLJmVUJNjFudeuiRHZqVp5Z3azkZ7XvKrUb0H5ir5nHcmJsL1EIAHGPNC88kG
+	 4gLqTEkxdg1X7kD5oovL/y3dCqXqHkPJ2qiW3AgU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727501AbfAXJ6L (ORCPT
+        id S1727618AbfAXJ6P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 04:58:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49478 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 04:58:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49500 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726053AbfAXJ6K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 04:58:10 -0500
+        id S1727299AbfAXJ6L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 04:58:11 -0500
 Received: from earth.universe (dyndsl-037-138-185-084.ewe-ip-backbone.de [37.138.185.84])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 07245218A6;
+        by mail.kernel.org (Postfix) with ESMTPSA id 09AC1218AE;
         Thu, 24 Jan 2019 09:58:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1548323890;
-        bh=m5B391HGx6lsJfLULHB7pn4PxnKTM+5jBjsLzN8S5gA=;
+        bh=7vJhNOo9WeoNi5SvZ9WE8EQrmWCSIPJ7mQtL79ati9Y=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Pw9vawJoF56RHJDJlKkWe7NeslJSG1cq/cC9JuO5mvcJK7M6O3s+EvGFALp460IKT
-         IEXSauEEDRK7wZbO6VVgMBqANdGYCVXajbOgYA3GDFs3Zz3bW3MJOkS/rYM6P0XO6d
-         eHyt/RjMjRFI9q6zslJ+wYkdnizI8qNiFf4+PKGk=
+        b=Bdh12aqIw4N84mHDVhnkgQcrTzmhD3wpIvcKgnM4b8x7HZt/M1Y33gmjzAk3vNDXK
+         hELlSr7Dpo8qAw7cGQ0HqqHHobxAi5QHWyW7JlzVgkhugtkyYnrCGytcvHnx/fWVjF
+         2hLAdjLZy3gcHIiZckJn4loEqpFHYEnLzTXvQU/k=
 Received: by earth.universe (Postfix, from userid 1000)
-        id 93E7A3C08E1; Wed, 23 Jan 2019 19:31:06 +0100 (CET)
-Date:   Wed, 23 Jan 2019 19:31:06 +0100
+        id 38DA93C08E5; Wed, 23 Jan 2019 21:38:05 +0100 (CET)
+Date:   Wed, 23 Jan 2019 21:38:05 +0100
 From:   Sebastian Reichel <sre@kernel.org>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH -next] power: supply: core: remove duplicated include
- from power_supply_core.c
-Message-ID: <20190123183106.xs7ga7gqwhp5a55q@earth.universe>
-References: <20190117071143.14652-1-yuehaibing@huawei.com>
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, x86@kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v5 3/7] power: supply: olpc_battery: Use DT to get
+ battery version
+Message-ID: <20190123203805.qhmilqqozkgrchoy@earth.universe>
+References: <20190110174005.1202564-1-lkundrak@v3.sk>
+ <20190110174005.1202564-4-lkundrak@v3.sk>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="2rowui6hqeukn5r4"
+        protocol="application/pgp-signature"; boundary="6h6uhi6mqvm2kbpb"
 Content-Disposition: inline
-In-Reply-To: <20190117071143.14652-1-yuehaibing@huawei.com>
+In-Reply-To: <20190110174005.1202564-4-lkundrak@v3.sk>
 User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -61,65 +67,103 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---2rowui6hqeukn5r4
+--6h6uhi6mqvm2kbpb
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-On Thu, Jan 17, 2019 at 03:11:43PM +0800, YueHaibing wrote:
-> Remove duplicated include.
+On Thu, Jan 10, 2019 at 06:40:01PM +0100, Lubomir Rintel wrote:
+> Avoid using the x86 OLPC platform specific call to get the board
+> version. That wouldn't work on FDT-based ARM MMP2 platform.
 >=20
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> Add the XO 1.5 compatible string too. This is actually not completely
+> necessary as the battery nodes on XO 1.5 claim to be compatible with
+> "olpc,xo1-battery", but there are, in fact, differencies.
+>=20
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Acked-by: Pavel Machek <pavel@ucw.cz>
+> Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+>=20
 > ---
+> Changes since v2:
+> - Clarify the XO 1 compatibility in the commit message.
+>=20
+> Changes since v1:
+> - Sort the new include a bit higher
+>=20
+>  drivers/power/supply/olpc_battery.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/power/supply/olpc_battery.c b/drivers/power/supply/o=
+lpc_battery.c
+> index 5a97e42a3547..5323987d9284 100644
+> --- a/drivers/power/supply/olpc_battery.c
+> +++ b/drivers/power/supply/olpc_battery.c
+> @@ -14,6 +14,7 @@
+>  #include <linux/types.h>
+>  #include <linux/err.h>
+>  #include <linux/device.h>
+> +#include <linux/of.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/power_supply.h>
+>  #include <linux/jiffies.h>
+> @@ -622,11 +623,13 @@ static int olpc_battery_probe(struct platform_devic=
+e *pdev)
+>  	olpc_ac =3D power_supply_register(&pdev->dev, &olpc_ac_desc, NULL);
+>  	if (IS_ERR(olpc_ac))
+>  		return PTR_ERR(olpc_ac);
+> -
+> -	if (olpc_board_at_least(olpc_board_pre(0xd0))) { /* XO-1.5 */
+> +	if (of_property_match_string(pdev->dev.of_node, "compatible",
+> +					"olpc,xo1.5-battery") >=3D 0) {
 
-Thanks, but I already merged the same patch from Yangtao Li (who
-sent it a bit earlier).
+of_device_is_compatible(...)
 
 -- Sebastian
 
->  drivers/power/supply/power_supply_core.c | 2 --
->  1 file changed, 2 deletions(-)
->=20
-> diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/sup=
-ply/power_supply_core.c
-> index 569790e..07a85e1 100644
-> --- a/drivers/power/supply/power_supply_core.c
-> +++ b/drivers/power/supply/power_supply_core.c
-> @@ -156,8 +156,6 @@ static void power_supply_deferred_register_work(struc=
-t work_struct *work)
->  }
+> +		/* XO-1.5 */
+>  		olpc_bat_desc.properties =3D olpc_xo15_bat_props;
+>  		olpc_bat_desc.num_properties =3D ARRAY_SIZE(olpc_xo15_bat_props);
+> -	} else { /* XO-1 */
+> +	} else {
+> +		/* XO-1 */
+>  		olpc_bat_desc.properties =3D olpc_xo1_bat_props;
+>  		olpc_bat_desc.num_properties =3D ARRAY_SIZE(olpc_xo1_bat_props);
+>  	}
+> @@ -672,6 +675,7 @@ static int olpc_battery_remove(struct platform_device=
+ *pdev)
 > =20
->  #ifdef CONFIG_OF
-> -#include <linux/of.h>
-> -
->  static int __power_supply_populate_supplied_from(struct device *dev,
->  						 void *data)
->  {
+>  static const struct of_device_id olpc_battery_ids[] =3D {
+>  	{ .compatible =3D "olpc,xo1-battery" },
+> +	{ .compatible =3D "olpc,xo1.5-battery" },
+>  	{}
+>  };
+>  MODULE_DEVICE_TABLE(of, olpc_battery_ids);
 > --=20
-> 2.7.0
->=20
+> 2.20.1
 >=20
 
---2rowui6hqeukn5r4
+--6h6uhi6mqvm2kbpb
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlxIsuoACgkQ2O7X88g7
-+prU2RAAl4lM2vuRA0NKpqctn1kTLuY7tTn2y8N4BaHCdk9L9F/E0Ig9aOuNf4mn
-V/IIJj73SCTZOFDzfDEdDAM96STNWmwIzmzoj3DDf8GEiHaqNFblhue6Ij/HyG0+
-zQljKUW3ri6LIDvslq7iKWRZps1Z5metom3wljYpif6+VieaCncS7mROzKiIEBP9
-q4TG7E6TWY+ogiM5Zhtywgds23OyK8+nffE1ek/4s1PSPUwIpcg/hZqUlkWHg/4l
-bSr3j9A1Y4cWML0vmNVyzkubYuc8juA6gXAKKiH1P0GZqalM3fHnNHqcfcTpS9i2
-TqkHrhsMofsztW5VbO53/sJjtEv0nikjXh7cuJEyLj3SFzVqe8N72QLAlg/viIy3
-r2LwiRedNssU00dS6oYLnMX2kLVGrdivQj8F+14dD7dytlZHMisPdGbiw/Bx0975
-9Jw9IJMVoyvywfm1fg4yv+hunHaJVQPAlc5hE2c20RKGresNtdbyUqz4bEvih6QZ
-Y+bWlo1qawq9LJuZDskNAal2aoPwz+rpgzYFmdLQx8aN9BTqGF8yeNUktDi5NtVT
-hWkYezk7PsWylEKBn/Awwy3fDXI0AuIgjLv46Rb62ig17e6nwqkgTiegHgjMvSiM
-uK7Gr6HOG3Aw+whT4gZo4vYOikm6jCbeRA/nS6UM4uPeHe23PoQ=
-=5cFx
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlxI0KoACgkQ2O7X88g7
++pqb9g//Sl82KeYO3saUbSr7qshHZkKLWKj+rS928qqwf3eBjclKlSPzV1gHHJAD
+P5Y3IOSNKyMT5do0rSeDJYF82z9cOQbJnC3IGz6tHC8Lak6aC1eEVBBAPRf098e3
+ihrzgbF9OLINhCh5I8J1Zz7DaEv9bZpbxEWKnAO8zJaI37UhhYKA/LVoMIM9/3pT
+3+06zdmL5GdrOvC2xak45En0Lst+pmUpn2OtXoakzZ4SgMMvDInj0PIlg078pURp
+tjQhSlMZLFns7Wvf1AJxzTCtSNVp3Mz1wDa38u1smn0dB4EyFwC5ccv2FaiE7yp1
+iuTM2G1x7pTBzdjBqr7SY6qhfBji9Pr2lvrLywdVdTHc5krGSqIAiMxF18iIIzT+
+z9lqm5i6sNenGdOjDoS1ho1j7ttYKnyxaTVgCO+zLajaPjwOTzO+bPcEtwIKeooZ
+sdpa86bf9dfitMHafwpE0JdN0OOx6WiQx4N2YYUIPt4sxQcICWQmjkm6SqyfmM9h
+Xaht1qnBX6nYaDheRrsnKQeKsUu6K1lV0xCHDhJlxRaC9SwhtVfovawsZhJB0LE0
+mPVzPOaNQcU7gGAQIPwZ3quA4oNbWaobnm2K5wByIfZu54I+nXbxDqoucvdI8wmm
+LpWQW73C7pB5b7/wrjW+kD2qUpIsLjZOG108LEegWcZT3pFx3kE=
+=vWen
 -----END PGP SIGNATURE-----
 
---2rowui6hqeukn5r4--
+--6h6uhi6mqvm2kbpb--
