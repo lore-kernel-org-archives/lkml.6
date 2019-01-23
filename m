@@ -2,49 +2,51 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBE3DC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 11:10:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44F6FC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 11:10:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 892E621019
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 11:10:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0EE6A21019
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 11:10:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727200AbfAWLKF (ORCPT
+        id S1727276AbfAWLKJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 06:10:05 -0500
+        Wed, 23 Jan 2019 06:10:09 -0500
 Received: from mail.cn.fujitsu.com ([183.91.158.132]:7521 "EHLO
         heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726322AbfAWLKF (ORCPT
+        with ESMTP id S1727181AbfAWLKH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 06:10:05 -0500
+        Wed, 23 Jan 2019 06:10:07 -0500
 X-IronPort-AV: E=Sophos;i="5.56,510,1539619200"; 
-   d="scan'208";a="52651108"
+   d="scan'208";a="52651109"
 Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
   by heian.cn.fujitsu.com with ESMTP; 23 Jan 2019 19:10:03 +0800
 Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id 4853C4BAD9DB;
-        Wed, 23 Jan 2019 19:10:01 +0800 (CST)
+        by cn.fujitsu.com (Postfix) with ESMTP id 31EDF4C4A88D;
+        Wed, 23 Jan 2019 19:10:03 +0800 (CST)
 Received: from localhost.local (10.167.225.56) by
  G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 23 Jan 2019 19:10:07 +0800
+ (TLS) id 14.3.408.0; Wed, 23 Jan 2019 19:10:09 +0800
 From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
 To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <bp@alien8.de>,
         <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
         <keescook@chromium.org>, <bhe@redhat.com>, <msys.mizuma@gmail.com>
 CC:     <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>,
         <fanc.fnst@cn.fujitsu.com>, <kasong@redhat.com>
-Subject: [PATCH v16 0/7] Parse ACPI table and limit KASLR to choosing immovable memory
-Date:   Wed, 23 Jan 2019 19:08:43 +0800
-Message-ID: <20190123110850.12433-1-fanc.fnst@cn.fujitsu.com>
+Subject: [PATCH v16 1/7] x86/boot: Copy kstrtoull() to boot/string.c instead of simple_strtoull()
+Date:   Wed, 23 Jan 2019 19:08:44 +0800
+Message-ID: <20190123110850.12433-2-fanc.fnst@cn.fujitsu.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190123110850.12433-1-fanc.fnst@cn.fujitsu.com>
+References: <20190123110850.12433-1-fanc.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
 X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: 4853C4BAD9DB.AAB77
+X-yoursite-MailScanner-ID: 31EDF4C4A88D.AAC8E
 X-yoursite-MailScanner: Found to be clean
 X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
@@ -52,186 +54,192 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-***Background:
-People reported that KASLR may randomly choose some positions
-which are located in movable memory regions. This will make the
-movable memory chosen by KASLR can't be removed.
+Copy kstrtoull() and necessary functions from lib/kstrtox.c to
+boot/string.c so that code in boot/ can use kstrtoull() and the old
+simple_strtoull() can be replaced.
 
-***Solutions:
-Get the information of memory hot-remove, then KASLR knows the
-right regions. Information about memory-hotremove is in ACPI
-SRAT, which will be parsed after start_kernel(), so KASLR
-can't get the information.
+In boot/string.c, using div_u64() from math64.h directly will cause the
+dividend handled as 64-bit value and bring ld error. The solution is to
+separate the dividend to upper and lower in boot/string.o. So copy the
+useful div_u64() and div_u64_rem() to boot/string.c also. To avoid
+redefinition in i386, rename them as __div_u64() and __div_u64_rem().
 
-Someone suggested to add a kernel parameter to specify the
-immovable memory then limit KASLR in these regions. Then I make
-a PATCHSET. After several versions, Ingo gave a suggestion:
-https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1634024.html
-Follow Ingo's suggestion, imitate the ACPI code to parse the ACPI
-tables, so that the KASLR can get necessary memory information in
-ACPI tables.
-ACPI code is an independent part, so imitate the codes and functions
-to 'compressed/' directory, so that KASLR won't influence the
-initialization of ACPI.
+Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
+---
+ arch/x86/boot/string.c | 141 +++++++++++++++++++++++++++++++++++++++++
+ arch/x86/boot/string.h |   1 +
+ 2 files changed, 142 insertions(+)
 
-PATCH 1/7 Copy kstrtoull() to boot/string.c to instead of using
-          old simple_strtoull()
-PATCH 2/7 Introduce get_acpi_rsdp() to parse RSDP in cmdline from KEXEC
-PATCH 3/6 Introduce efi_get_rsdp_addr() to find RSDP from EFI table when
-          booting from EFI.
-PATCH 4/7 Introduce bios_get_rsdp_addr() to search RSDP in memory when
-          booting from BIOS
-PATCH 5/7 Parse RSDP and fill in boot_params->acpi_rsdp_addr before
-          KASLR.
-PATCH 6/7 Compute SRAT from RSDP and walk SRAT to store the immovable
-          memory regions and store the immovable memory regions.
-PATCH 7/7 Calculate the intersection between memory regions from e820/efi
-          memory table and immovable memory regions. Limit KASLR to
-          choosing these regions for randomization.
-
-***Tests:
-Test it in QEMU guest with 10 NUMA nodes, every node has 512M memory.
-Use earlyprintk with debug_putaddr() to display the immovable
-memory regions when KASLR walks all memory. Compare the result with
-dmesg. If they are same, the parsing job works well.
-Here are test cases:
- - x86_64 machine booting from EFI
- - x86_64 machine booting from BIOS
- - i386 machine booting from BIOS
- - According to '/sys/firmware/efi/systab', add 'acpi_rsdp=' to cmdline to
-   imitate case for get_acpi_rsdp()
- - Add 'acpi=off' to cmdline to test the detecting for cmdline.
- - Add debug_putaddr to test the value of boot_params->acpi_rsdp_addr
-
-v15->v16:
- - Splite the parsing of RSDP.
- - Clean ACPI_* functions as local type cast
-Follow Kairui Song's suggestion:
- - Add code to parse boot_params->acpi_rsdp_addr
-Follow Boris' suggetsion:
- - Drop CONFIG_EARLY_SRAT_PARSE and build acpi.o
- - Change get_acpi_srat_table() type and clean type cast.
- - Change num_immovable_mem as static variable
- - Change count_immovable_mem_regions() type to int.
-
-v14->v15:
-Follow Boris' suggestion:
- - Fix the usage of kstrtoull()
- - Add more test case
-Follow Ingo's suggestion:
- - Clear the typecast
- - Change some variable name
- - If no efi systab found, use error() to halt
-Follow Baoquan's suggestion:
- - Rebase from tip/master to tip/x86/boot
-
-v13->v14:
-Follow Baoquan's suggestion:
- - Use simple_strtoull() for now.
-Follow Boris' suggestion:
- - Put 'return 0' out of 'ifdef' to make sure function return.
-Follow Masa's suggestion:
- - Change the end of string as '\0'
-
-v12->v13:
-Follow Boris' suggestion:
- - Copy kstrtoull() to boot/string.c
-Follow Masa's suggestion:
- - Change some code logical
-Follow Baoquan's suggestion:
- - Add tag to disable export symbol
-
-v11->v12:
-Follow Boris' suggestion:
- - Change patch log and code comments.
- - Add 'CONFIG_EARLY_PARSE_RSDP' to make code easy to read
- - Put strtoull() to misc.c
-Follow Masa's suggestion:
- - Remove the detection for 'movable_node'
- - Change the code logical about cmdline_find_option()
-
-v10->v11:
-Follow Boris' suggestion:
- - Link kstrtoull() instead of copying it.
- - Drop the useless wrapped function.
-
-v9->v10:
-Follow Baoquan's suggestion:
- - Change some log
- - Merge last two patch together.
-
-v8-v9:
-Follow Boris' suggestion:
- - Change code style.
- - Splite PATCH 1/3 to more path.
- - Introduce some new function
- - Use existing function to rework some code
-Follow Masayoshi's suggetion:
- - Make code more readable
-
-v7-v8:
-Follow Kees Cook's suggestion:
- - Use mem_overlaps() to check memory region.
- - Use #ifdef in the definition of function.
-
-v6->v7:
-Follow Rafael's suggestion:
- - Add more comments and patch log.
-Follow test robot's suggestion:
- - Add "static" tag for function
-
-v5->v6:
-Follow Baoquan He's suggestion:
- - Change some log.
- - Add the check for acpi_rsdp
- - Change some code logical to make code clear
-
-v4->v5:
-Follow Dou Liyang's suggestion:
- - Add more comments about some functions based on kernel code.
- - Change some typo in comments.
- - Clean useless variable.
- - Add check for the boundary of array.
- - Add check for 'movable_node' parameter
-
-v3->v4:
-Follow Thomas Gleixner's suggestion:
- - Put the whole efi related function into #define CONFIG_EFI and return
-   false in the other stub.
-
-v2->v3:
- - Test in more conditions, so remove the 'RFC' tag.
- - Change some comments.
-
-v1->v2:
- - Simplify some code.
-Follow Baoquan He's suggestion:
- - Reuse the head file of acpi code.
-
-Any comments will be welcome.
-
-
-Chao Fan (7):
-  x86/boot: Copy kstrtoull() to boot/string.c instead of
-    simple_strtoull()
-  x86/boot: Introduce get_acpi_rsdp() to parse RSDP in cmdline from
-    KEXEC
-  x86/boot: Introduce efi_get_rsdp_addr() to find RSDP from EFI table
-  x86/boot: Introduce bios_get_rsdp_addr() to search RSDP in memory
-  x86/boot: Early parse RSDP and fill in boot_params
-  x86/boot: Parse SRAT address from RSDP and store immovable memory
-  x86/boot/KASLR: Limit KASLR to extracting kernel in immovable memory
-
- arch/x86/boot/compressed/Makefile |   2 +
- arch/x86/boot/compressed/acpi.c   | 341 ++++++++++++++++++++++++++++++
- arch/x86/boot/compressed/kaslr.c  |  76 +++++--
- arch/x86/boot/compressed/misc.c   |   7 +
- arch/x86/boot/compressed/misc.h   |  22 ++
- arch/x86/boot/string.c            | 141 ++++++++++++
- arch/x86/boot/string.h            |   1 +
- 7 files changed, 575 insertions(+), 15 deletions(-)
- create mode 100644 arch/x86/boot/compressed/acpi.c
-
+diff --git a/arch/x86/boot/string.c b/arch/x86/boot/string.c
+index c4428a176973..315a67b8896b 100644
+--- a/arch/x86/boot/string.c
++++ b/arch/x86/boot/string.c
+@@ -13,10 +13,14 @@
+  */
+ 
+ #include <linux/types.h>
++#include <linux/kernel.h>
++#include <linux/errno.h>
+ #include <asm/asm.h>
+ #include "ctype.h"
+ #include "string.h"
+ 
++#define KSTRTOX_OVERFLOW       (1U << 31)
++
+ /*
+  * Undef these macros so that the functions that we provide
+  * here will have the correct names regardless of how string.h
+@@ -187,3 +191,140 @@ char *strchr(const char *s, int c)
+ 			return NULL;
+ 	return (char *)s;
+ }
++
++static inline u64 __div_u64_rem(u64 dividend, u32 divisor, u32 *remainder)
++{
++	union {
++		u64 v64;
++		u32 v32[2];
++	} d = { dividend };
++	u32 upper;
++
++	upper = d.v32[1];
++	d.v32[1] = 0;
++	if (upper >= divisor) {
++		d.v32[1] = upper / divisor;
++		upper %= divisor;
++	}
++	asm ("divl %2" : "=a" (d.v32[0]), "=d" (*remainder) :
++		"rm" (divisor), "0" (d.v32[0]), "1" (upper));
++	return d.v64;
++}
++
++static inline u64 __div_u64(u64 dividend, u32 divisor)
++{
++	u32 remainder;
++
++	return __div_u64_rem(dividend, divisor, &remainder);
++}
++
++static inline char _tolower(const char c)
++{
++	return c | 0x20;
++}
++
++static const char *_parse_integer_fixup_radix(const char *s, unsigned int *base)
++{
++	if (*base == 0) {
++		if (s[0] == '0') {
++			if (_tolower(s[1]) == 'x' && isxdigit(s[2]))
++				*base = 16;
++			else
++				*base = 8;
++		} else
++			*base = 10;
++	}
++	if (*base == 16 && s[0] == '0' && _tolower(s[1]) == 'x')
++		s += 2;
++	return s;
++}
++
++/*
++ * Convert non-negative integer string representation in explicitly given radix
++ * to an integer.
++ * Return number of characters consumed maybe or-ed with overflow bit.
++ * If overflow occurs, result integer (incorrect) is still returned.
++ *
++ * Don't you dare use this function.
++ */
++static unsigned int _parse_integer(const char *s,
++				   unsigned int base,
++				   unsigned long long *p)
++{
++	unsigned long long res;
++	unsigned int rv;
++
++	res = 0;
++	rv = 0;
++	while (1) {
++		unsigned int c = *s;
++		unsigned int lc = c | 0x20; /* don't tolower() this line */
++		unsigned int val;
++
++		if ('0' <= c && c <= '9')
++			val = c - '0';
++		else if ('a' <= lc && lc <= 'f')
++			val = lc - 'a' + 10;
++		else
++			break;
++
++		if (val >= base)
++			break;
++		/*
++		 * Check for overflow only if we are within range of
++		 * it in the max base we support (16)
++		 */
++		if (unlikely(res & (~0ull << 60))) {
++			if (res > __div_u64(ULLONG_MAX - val, base))
++				rv |= KSTRTOX_OVERFLOW;
++		}
++		res = res * base + val;
++		rv++;
++		s++;
++	}
++	*p = res;
++	return rv;
++}
++
++static int _kstrtoull(const char *s, unsigned int base, unsigned long long *res)
++{
++	unsigned long long _res;
++	unsigned int rv;
++
++	s = _parse_integer_fixup_radix(s, &base);
++	rv = _parse_integer(s, base, &_res);
++	if (rv & KSTRTOX_OVERFLOW)
++		return -ERANGE;
++	if (rv == 0)
++		return -EINVAL;
++	s += rv;
++	if (*s == '\n')
++		s++;
++	if (*s)
++		return -EINVAL;
++	*res = _res;
++	return 0;
++}
++
++/**
++ * kstrtoull - convert a string to an unsigned long long
++ * @s: The start of the string. The string must be null-terminated, and may also
++ *  include a single newline before its terminating null. The first character
++ *  may also be a plus sign, but not a minus sign.
++ * @base: The number base to use. The maximum supported base is 16. If base is
++ *  given as 0, then the base of the string is automatically detected with the
++ *  conventional semantics - If it begins with 0x the number will be parsed as a
++ *  hexadecimal (case insensitive), if it otherwise begins with 0, it will be
++ *  parsed as an octal number. Otherwise it will be parsed as a decimal.
++ * @res: Where to write the result of the conversion on success.
++ *
++ * Returns 0 on success, -ERANGE on overflow and -EINVAL on parsing error.
++ * Used as a replacement for the obsolete simple_strtoull. Return code must
++ * be checked.
++ */
++int kstrtoull(const char *s, unsigned int base, unsigned long long *res)
++{
++	if (s[0] == '+')
++		s++;
++	return _kstrtoull(s, base, res);
++}
+diff --git a/arch/x86/boot/string.h b/arch/x86/boot/string.h
+index 3d78e27077f4..38d8f2f5e47e 100644
+--- a/arch/x86/boot/string.h
++++ b/arch/x86/boot/string.h
+@@ -29,4 +29,5 @@ extern unsigned int atou(const char *s);
+ extern unsigned long long simple_strtoull(const char *cp, char **endp,
+ 					  unsigned int base);
+ 
++int kstrtoull(const char *s, unsigned int base, unsigned long long *res);
+ #endif /* BOOT_STRING_H */
 -- 
 2.20.1
 
