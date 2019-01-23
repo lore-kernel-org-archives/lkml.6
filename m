@@ -2,227 +2,214 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EABFC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 16:53:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBB2DC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 16:53:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11BCF2085A
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 16:53:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E7C32085A
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 16:53:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qwp4sV2g"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="v+0hGbpE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726265AbfAWQxE (ORCPT
+        id S1726364AbfAWQxN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 11:53:04 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:36216 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726124AbfAWQxD (ORCPT
+        Wed, 23 Jan 2019 11:53:13 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:33098 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725948AbfAWQxN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 11:53:03 -0500
-Received: by mail-it1-f193.google.com with SMTP id c9so116122itj.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 08:53:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=L1JadXm3gI7vuj3pOPP2vToMpxP3v/bmNdWI/GD7ZDE=;
-        b=Qwp4sV2gW5k+CC/kpgsYJlEbT40wZztTQ9qcpOCl5sO/nk7LcmaZbe6Mm8TbFTZCIp
-         OKhb0hTr32ResG4wdV09rJv4PX1fU+8pDLF1VoveHqup0Hn9183nHwT2/XNNnEcaEoX7
-         pur30OvUFe1oqjAp01ayEA1NeQ1d3ROkLAC5M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=L1JadXm3gI7vuj3pOPP2vToMpxP3v/bmNdWI/GD7ZDE=;
-        b=Ow7nr/GlLupFdYaEzlyQ1VPbQVIbv0XRArDTVC7l2GNusq1mfBQBKNL+nWiTBWZEIL
-         9SGixbZzPSZYZYZDUuBIsDSRCsTF9Wv6jCalluJKAiXSnLNrghr6UFGfhXmKNW4y4maX
-         eO5xOKhYqGuC/sBOZnWX+lS22UnI4smSyZ+86Xw3CKGs1dCQm9nUz8P8nhw3dvw3+2aP
-         SDOpkXmOY4EmvqSvl1HYIq1TvIJ/ZBMYq7qZB09X3fDCsZ2AhM55CAbGvCyp9Bg95o+P
-         Y/RcHX9Nxtnn/aYXtLUrX9PAGxwUfRh2dtg3axWr12bGt/nn6s8ZrrrxQ+tufxRC2N5W
-         p0Ag==
-X-Gm-Message-State: AJcUukcvVVX6Vb6EGIfwjrNTfxaKuI2cncak1WiJfD8SQz4Wq+dTSlPi
-        B3hTRB2CC3bReDlLvZy0bpHV47/TAW6V+M12pHU/Xg==
-X-Google-Smtp-Source: ALg8bN43cqtnAk758IT2QWYIax59jaGfRHK8IMhmhPmNy5zjVaCzT94TMb7R+eZnHZconZW2Xup6sVPuaNFlkmBe6NE=
-X-Received: by 2002:a24:710:: with SMTP id f16mr1797362itf.121.1548262382384;
- Wed, 23 Jan 2019 08:53:02 -0800 (PST)
+        Wed, 23 Jan 2019 11:53:13 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0NGpQaT083640;
+        Wed, 23 Jan 2019 10:51:26 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1548262286;
+        bh=Oue4lDgrHgiUEwUpAPAyqRumS+Pijz8Ox6/VtLrFx/g=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=v+0hGbpErhFtY165I70CMtohgQadtPeMpP4E2b813Ybaf7DFbOARoSrBRplER4qRe
+         ryIt51WaqLwwrX8hOtziyiiCR7gSpbp0su4W6UQYTw5dpxkEfbnZBip3U9DfU/GOAF
+         lv2z+K1QAERY3WXKcgZolP1PDpox6tFOyGQekMok=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0NGpQjR115502
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 23 Jan 2019 10:51:26 -0600
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 23
+ Jan 2019 10:51:26 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Wed, 23 Jan 2019 10:51:26 -0600
+Received: from [172.22.97.60] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0NGpPBc012760;
+        Wed, 23 Jan 2019 10:51:25 -0600
+Subject: Re: [PATCH 13/14] staging: android: ion: Do not sync CPU cache on
+ map/unmap
+To:     Sumit Semwal <sumit.semwal@linaro.org>
+CC:     Brian Starkey <Brian.Starkey@arm.com>,
+        Liam Mark <lmark@codeaurora.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?Q?Arve_Hj=c3=b8nnev=c3=a5g?= <arve@android.com>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>, nd <nd@arm.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+References: <79eb70f6-00b0-2939-5ec9-65e196ab4987@ti.com>
+ <alpine.DEB.2.10.1901150937280.4046@lmark-linux.qualcomm.com>
+ <cfcd3daf-bd1d-0dbc-7b5c-8e504d179564@ti.com>
+ <f53987d5-b7c1-61f4-de44-3d7b4a3c68fe@ti.com>
+ <20190116151946.66vc6ibbivijdzvd@DESKTOP-E1NTVVP.localdomain>
+ <4a5d4147-765d-711f-af98-9022d0253b3b@ti.com>
+ <alpine.DEB.2.10.1901161450470.10666@lmark-linux.qualcomm.com>
+ <3bf4bfce-aee6-9c52-c2f7-783dc63bfc3a@ti.com>
+ <alpine.DEB.2.10.1901171704270.12287@lmark-linux.qualcomm.com>
+ <b8b16d71-e09b-6bf9-259e-79c1de7fd15b@ti.com>
+ <20190121112235.g36qqptpv6wjuj7w@DESKTOP-E1NTVVP.localdomain>
+ <b89df12e-00bc-5484-6458-f7c85a362b42@ti.com>
+ <CAO_48GEYPW0u6uWkkFgqjmmabLcBm69OD34QihSNGewqz_AqSQ@mail.gmail.com>
+From:   "Andrew F. Davis" <afd@ti.com>
+Message-ID: <d24949d2-3736-0e6f-99ae-b8550d53a828@ti.com>
+Date:   Wed, 23 Jan 2019 10:51:24 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <ccc775d3-3053-ab79-dac8-4feb28e8e690@daenzer.net>
- <CAKv+Gu-9VKL5RjScbKss4YfH1Cb8WbXmzU_0UsStnoXJcML7Rg@mail.gmail.com>
- <850b6aee-0040-c333-b125-45211c18ada5@daenzer.net> <CAKv+Gu99zHqcQtj6TiOXAr3Qa6WWhKem+DHVA_mAQ0-Bc0Vbqw@mail.gmail.com>
- <047667fd-17be-1c37-5d2a-26768cfd6ab8@daenzer.net> <CAKv+Gu_VBd8agHASc5RS0eCgyXP64Lt_i4yPuBjKwGQ+5Lpd5Q@mail.gmail.com>
- <CADnq5_O1uxCrSksfF127AZTfbmdukxmqGdh2Ee0zM6CqgG_Mhg@mail.gmail.com>
- <CAKv+Gu-4uYh_HD_5Ry_L80Nf5zpRhT4oJYhhG5_8g3gSzBs2tg@mail.gmail.com>
- <20190123071521.GB20526@infradead.org> <CAKv+Gu8+77uZHJ6ZYjGNcKQL8C3cT5Ree+TcTVmkQXAHV-ADyg@mail.gmail.com>
- <20190123164428.GA9367@infradead.org>
-In-Reply-To: <20190123164428.GA9367@infradead.org>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Wed, 23 Jan 2019 17:52:50 +0100
-Message-ID: <CAKv+Gu-9vEKu8mG-o+-4M1ZcgZmTTJVfEdNS9R27AFX8P5sqyQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] drm: disable WC optimization for cache coherent
- devices on non-x86
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Alex Deucher <alexdeucher@gmail.com>,
-        =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel@daenzer.net>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        David Airlie <airlied@linux.ie>, Huang Rui <ray.huang@amd.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Junwei Zhang <Jerry.Zhang@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sean Paul <sean@poorly.run>,
-        Christian Koenig <christian.koenig@amd.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAO_48GEYPW0u6uWkkFgqjmmabLcBm69OD34QihSNGewqz_AqSQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 23 Jan 2019 at 17:44, Christoph Hellwig <hch@infradead.org> wrote:
->
-> I think we just want a driver-local check for those combinations
-> where we know this hack actually works, which really just seems
-> to be x86-64 with PAT. Something like the patch below, but maybe with
-> even more strong warnings to not do something like this elsewhere:
->
+On 1/22/19 11:33 AM, Sumit Semwal wrote:
+> Hello everyone,
+> 
+> Sincere apologies for chiming in a bit late here, but was off due to
+> some health issues.
+> 
 
-I agree that your patch seems like the right way to ensure that the WC
-optimization hack is only used where we know it works.
+Hope you are feeling better friend :)
 
-But my concern is that it seems likely that non-cache coherent
-implementations are relying on this hack as well. There must be a
-reason that this hack is only disabled for PowerPC platforms if they
-are cache coherent, for instance, and I suspect that that reason is
-that the hack is the only thing ensuring that the CPU mapping
-attributes match the device ones used for these buffers (the vmap()ed
-ones), whereas the rings and other consistent data structures are
-using the DMA API as intended, and thus getting uncached attributes in
-the correct way.
+Looks like this email was a bit broken and you replied again, the
+responses are a little different in each email, so I'd like to respond
+to bits of both, I'll fix up the formatting.
 
-Given that the same concern applies to ARM (and arm64 to some extent),
-I'd be cautious to disable this optimization entirely, and this is why
-I ended up disabling it only for cache coherent devices.
+> Also, adding Daniel Vetter to the mix, since he has been one of the
+> core guys who shaped up dma-buf as it is today.
+> 
+> On Tue, 22 Jan 2019 at 02:51, Andrew F. Davis <afd@ti.com> wrote:
+>>
+>> On 1/21/19 5:22 AM, Brian Starkey wrote:
 
+[snip]
 
+>>>
+>>> Actually I meant in the kernel, in exporters. I haven't seen anyone
+>>> using the API as it was intended (defer allocation until first map,
+>>> migrate between different attachments, etc.). Mostly, backing storage
+>>> seems to get allocated at the point of export, and device mappings are
+>>> often held persistently (e.g. the DRM prime code maps the buffer at
+>>> import time, and keeps it mapped: drm_gem_prime_import_dev).
+>>>
+>>
+> 
+> So I suppose some clarification on the 'intended use' part of dma-buf
+> about deferred allocation is due, so here it is: (Daniel, please feel
+> free to chime in with your opinion here)
+> 
+>  - dma-buf was of course designed as a framework to help intelligent
+> exporters to defer allocation until first map, and be able to migrate
+> backing storage if required etc. At the same time, it is not a
+> _requirement_ from any exporter, so exporters so far have just used it
+> as a convenient mechanism for zero-copy.
+> - ION is one of the few dma-buf exporters in kernel, which satisfies a
+> certain set of expectations from its users.
+> 
 
+The issue here is that Ion is blocking the ability to late allocate, it
+expects its heaps to have the memory ready at allocation time. My point
+being if the DMA-BUFs intended design was to allow this then Ion should
+respect that and also allow the same from its heap exporters.
 
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
-> index 728e15e5d68a..5fe657f20232 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
-> @@ -456,33 +456,16 @@ static int amdgpu_bo_do_create(struct amdgpu_device *adev,
->
->         bo->flags = bp->flags;
->
-> -#ifdef CONFIG_X86_32
-> -       /* XXX: Write-combined CPU mappings of GTT seem broken on 32-bit
-> -        * See https://bugs.freedesktop.org/show_bug.cgi?id=84627
-> -        */
-> -       bo->flags &= ~AMDGPU_GEM_CREATE_CPU_GTT_USWC;
-> -#elif defined(CONFIG_X86) && !defined(CONFIG_X86_PAT)
-> -       /* Don't try to enable write-combining when it can't work, or things
-> -        * may be slow
-> -        * See https://bugs.freedesktop.org/show_bug.cgi?id=88758
-> -        */
-> -
-> -#ifndef CONFIG_COMPILE_TEST
-> -#warning Please enable CONFIG_MTRR and CONFIG_X86_PAT for better performance \
-> -        thanks to write-combining
-> -#endif
-> -
-> -       if (bo->flags & AMDGPU_GEM_CREATE_CPU_GTT_USWC)
-> -               DRM_INFO_ONCE("Please enable CONFIG_MTRR and CONFIG_X86_PAT for "
-> -                             "better performance thanks to write-combining\n");
-> -       bo->flags &= ~AMDGPU_GEM_CREATE_CPU_GTT_USWC;
-> -#else
-> -       /* For architectures that don't support WC memory,
-> -        * mask out the WC flag from the BO
-> +       /*
-> +        * Don't try to enable write-combined CPU mappings unless we 100%
-> +        * positively know it works, otherwise there may be dragons.
-> +        *
-> +        * See:
-> +        *  - https://bugs.freedesktop.org/show_bug.cgi?id=88758
-> +        *  - https://bugs.freedesktop.org/show_bug.cgi?id=84627
->          */
-> -       if (!drm_arch_can_wc_memory())
-> +       if (!(IS_ENABLED(CONFIG_X86_64) && IS_ENABLED(CONFIG_X86_PAT)))
->                 bo->flags &= ~AMDGPU_GEM_CREATE_CPU_GTT_USWC;
-> -#endif
->
->         bo->tbo.bdev = &adev->mman.bdev;
->         amdgpu_bo_placement_from_domain(bo, bp->domain);
-> diff --git a/drivers/gpu/drm/radeon/radeon_object.c b/drivers/gpu/drm/radeon/radeon_object.c
-> index 833e909706a9..c1fb5ad4ab9a 100644
-> --- a/drivers/gpu/drm/radeon/radeon_object.c
-> +++ b/drivers/gpu/drm/radeon/radeon_object.c
-> @@ -226,32 +226,17 @@ int radeon_bo_create(struct radeon_device *rdev,
->         if (rdev->family >= CHIP_RV610 && rdev->family <= CHIP_RV635)
->                 bo->flags &= ~(RADEON_GEM_GTT_WC | RADEON_GEM_GTT_UC);
->
-> -#ifdef CONFIG_X86_32
-> -       /* XXX: Write-combined CPU mappings of GTT seem broken on 32-bit
-> -        * See https://bugs.freedesktop.org/show_bug.cgi?id=84627
-> -        */
-> -       bo->flags &= ~(RADEON_GEM_GTT_WC | RADEON_GEM_GTT_UC);
-> -#elif defined(CONFIG_X86) && !defined(CONFIG_X86_PAT)
-> -       /* Don't try to enable write-combining when it can't work, or things
-> -        * may be slow
-> -        * See https://bugs.freedesktop.org/show_bug.cgi?id=88758
-> -        */
-> -#ifndef CONFIG_COMPILE_TEST
-> -#warning Please enable CONFIG_MTRR and CONFIG_X86_PAT for better performance \
-> -        thanks to write-combining
-> -#endif
->
-> -       if (bo->flags & RADEON_GEM_GTT_WC)
-> -               DRM_INFO_ONCE("Please enable CONFIG_MTRR and CONFIG_X86_PAT for "
-> -                             "better performance thanks to write-combining\n");
-> -       bo->flags &= ~(RADEON_GEM_GTT_WC | RADEON_GEM_GTT_UC);
-> -#else
-> -       /* For architectures that don't support WC memory,
-> -        * mask out the WC flag from the BO
-> +       /*
-> +        * Don't try to enable write-combined CPU mappings unless we 100%
-> +        * positively know it works, otherwise there may be dragons.
-> +        *
-> +        * See:
-> +        *  - https://bugs.freedesktop.org/show_bug.cgi?id=88758
-> +        *  - https://bugs.freedesktop.org/show_bug.cgi?id=84627
->          */
-> -       if (!drm_arch_can_wc_memory())
-> -               bo->flags &= ~RADEON_GEM_GTT_WC;
-> -#endif
-> +       if (!(IS_ENABLED(CONFIG_X86_64) && IS_ENABLED(CONFIG_X86_PAT)))
-> +               bo->flags &= ~(RADEON_GEM_GTT_WC | RADEON_GEM_GTT_UC);
->
->         radeon_ttm_placement_from_domain(bo, domain);
->         /* Kernel allocation are uninterruptible */
-> diff --git a/include/drm/drm_cache.h b/include/drm/drm_cache.h
-> index bfe1639df02d..6c3960f4c477 100644
-> --- a/include/drm/drm_cache.h
-> +++ b/include/drm/drm_cache.h
-> @@ -40,16 +40,4 @@ void drm_clflush_sg(struct sg_table *st);
->  void drm_clflush_virt_range(void *addr, unsigned long length);
->  u64 drm_get_max_iomem(void);
->
-> -
-> -static inline bool drm_arch_can_wc_memory(void)
-> -{
-> -#if defined(CONFIG_PPC) && !defined(CONFIG_NOT_COHERENT_CACHE)
-> -       return false;
-> -#elif defined(CONFIG_MIPS) && defined(CONFIG_CPU_LOONGSON3)
-> -       return false;
-> -#else
-> -       return true;
-> -#endif
-> -}
-> -
->  #endif
->
+>> I haven't either, which is a shame as it allows for some really useful
+>> management strategies for shared memory resources. I'm working on one
+>> such case right now, maybe I'll get to be the first to upstream one :)
+>>
+> That will be a really good thing! Though perhaps we ought to think if
+> for what you're trying to do, is ION the right place, or should you
+> have a device-specific exporter, available to users via dma-buf apis?
+> 
+
+I'm starting to question if Ion is the right place myself..
+
+At a conceptual level I don't believe userspace should be picking the
+backing memory type. This is because the right type of backing memory
+for a task will change from system to system. The kernel should abstract
+away these hardware differences from userspace as much as it can to
+allow portable code.
+
+For instance a device may need a contiguous buffer on one system but the
+same device on another may have some IOMMU. So which type of memory do
+we allocate? Same issue for cacheability and other properties.
+
+What we need is a central allocator with full system knowledge to do the
+choosing for us. It seems many agree with the above and I take
+inspiration from your cenalloc patchset. The thing I'm not sure about is
+letting the device drivers set their constraints, because they also
+don't have the full system integration details. For cases where devices
+are behind an IOMMU it is easy enough for the device to know, but what
+about when we have external MMUs out on the bus for anyone to use (I'm
+guessing you remember TILER..).
+
+I would propose the central allocator keep per-system knowledge (or
+fetch it from DT, or if this is considered policy then userspace) which
+it can use to directly check the attached devices and pick the right memory.
+
+Anyway the central system allocator could handle 90% of cases I can
+think of, and this is where Ion comes back in, the other cases would
+still require the program to manually pick the right memory (maybe for
+performance reasons, etc.).
+
+So my vision is to have Ion as the the main front-end for DMA-BUF
+allocations, and expose the central allocator through it (maybe as a
+default heap type that can be populated on a per-system basis), but also
+have other individual heap types exported for the edge cases where
+manual selection is needed like we do now.
+
+Hence why Ion should allow direct control of the dma_buf_ops from the
+heaps, so we can build central allocators as Ion heaps.
+
+If I'm off into the weeds here and you have some other ideas I'm all ears.
+
+Andrew
+
+>>> I wasn't aware that CPU access before first device access was
+>>> considered an abuse of the API - it seems like a valid thing to want
+>>> to do.
+>>>
+>>
+>> That's just it, I don't know if it is an abuse of API, I'm trying to get
+>> some clarity on that. If we do want to allow early CPU access then that
+>> seems to be in contrast to the idea of deferred allocation until first
+>> device map, what is supposed to backing the buffer if no devices have
+>> attached or mapped yet? Just some system memory followed by migration on
+>> the first attach to the proper backing? Seems too time wasteful to be
+>> have a valid use.
+>>
+>> Maybe it should be up to the exporter if early CPU access is allowed?
+>>
+>> I'm hoping someone with authority over the DMA-BUF framework can clarify
+>> original intentions here.
+> 
+> I don't think dma-buf as a framework stops early CPU access, and the
+> exporter can definitely decide on that by implementing
+> begin_cpu_access / end_cpu_access operations to not allow early CPU
+> access, if it so desires.
+> 
