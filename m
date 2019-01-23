@@ -2,223 +2,121 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C437EC282C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 03:23:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7494C282C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 03:31:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 921092085A
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 03:23:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8FFC8217D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 03:31:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="m9BMUkET";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="m9BMUkET"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726995AbfAWDW7 (ORCPT
+        id S1726972AbfAWDbx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 22:22:59 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48594 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726814AbfAWDW6 (ORCPT
+        Tue, 22 Jan 2019 22:31:53 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:53848 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726843AbfAWDbx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 22:22:58 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0N3ImIR017969
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 22:22:57 -0500
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2q6f9msrjx-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 22:22:57 -0500
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 23 Jan 2019 03:22:56 -0000
-Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 23 Jan 2019 03:22:54 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0N3Mrf521954814
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 23 Jan 2019 03:22:53 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0C1C6B2064;
-        Wed, 23 Jan 2019 03:22:53 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6CECCB2065;
-        Wed, 23 Jan 2019 03:22:52 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.80.212.48])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 23 Jan 2019 03:22:52 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 6C79F16C6133; Tue, 22 Jan 2019 19:22:51 -0800 (PST)
-Date:   Tue, 22 Jan 2019 19:22:51 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Su Yue <suy.fnst@cn.fujitsu.com>
-Cc:     linux-kernel@vger.kernel.org, josh@joshtriplett.org,
-        rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
-        jiangshanlai@gmail.com, "Li, Philip" <philip.li@intel.com>,
-        lkp-developer@eclists.intel.com
-Subject: Re: rcutorture: meaning of "End of test: RCU_HOTPLUG"
-Reply-To: paulmck@linux.ibm.com
-References: <996df745-8434-b92c-bad9-334cc6bf4b7f@cn.fujitsu.com>
- <20190122040144.GB4240@linux.ibm.com>
- <c2cf5125-2545-c325-0393-0dba4aab379d@cn.fujitsu.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c2cf5125-2545-c325-0393-0dba4aab379d@cn.fujitsu.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 19012303-0064-0000-0000-0000039B77F2
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010459; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000275; SDB=6.01150420; UDB=6.00599518; IPR=6.00930755;
- MB=3.00025247; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-23 03:22:55
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012303-0065-0000-0000-00003C23B987
-Message-Id: <20190123032251.GG4240@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-23_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901230024
+        Tue, 22 Jan 2019 22:31:53 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id BE9696083E; Wed, 23 Jan 2019 03:31:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548214311;
+        bh=WpcYHBl11YstlpMBq7xT1mvY73pLavZ8sEgM6YlJD9Y=;
+        h=From:To:Cc:Subject:Date:From;
+        b=m9BMUkETgoIQettg/h9fDlq+mANt3Y7sxUedPId3MM6RGrUCe0AL5o4YXqD+5hQeX
+         GpnfnagpVBTffBqFwBcnSufmBhPTXJbYpzMCr0Log6AAmnGUQaT3sCWuABj9Su8/kr
+         GkPcz0eWTqxpVf4+JrQwVLypjKX+xwH64lyHCOts=
+Received: from jshekhar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jshekhar@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3AF676030B;
+        Wed, 23 Jan 2019 03:31:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548214311;
+        bh=WpcYHBl11YstlpMBq7xT1mvY73pLavZ8sEgM6YlJD9Y=;
+        h=From:To:Cc:Subject:Date:From;
+        b=m9BMUkETgoIQettg/h9fDlq+mANt3Y7sxUedPId3MM6RGrUCe0AL5o4YXqD+5hQeX
+         GpnfnagpVBTffBqFwBcnSufmBhPTXJbYpzMCr0Log6AAmnGUQaT3sCWuABj9Su8/kr
+         GkPcz0eWTqxpVf4+JrQwVLypjKX+xwH64lyHCOts=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3AF676030B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jshekhar@codeaurora.org
+From:   Jayant Shekhar <jshekhar@codeaurora.org>
+To:     dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org
+Cc:     Jayant Shekhar <jshekhar@codeaurora.org>,
+        linux-kernel@vger.kernel.org, robdclark@gmail.com,
+        seanpaul@chromium.org, hoegsberg@chromium.org,
+        abhinavk@codeaurora.org, jsanka@codeaurora.org,
+        chandanu@codeaurora.org, nganji@codeaurora.org
+Subject: [v6 0/3] Use interconnect API in MDSS on SDM845
+Date:   Wed, 23 Jan 2019 09:01:34 +0530
+Message-Id: <1548214297-17697-1-git-send-email-jshekhar@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 04:42:19PM +0800, Su Yue wrote:
-> Thanks for your quick reply! Paul
-> 
-> On 1/22/19 12:01 PM, Paul E. McKenney wrote:
-> >On Tue, Jan 22, 2019 at 11:40:53AM +0800, Su Yue wrote:
-> >>Hi, guys
-> >>   While running rcutorture tests with "onoff_interval", some tests
-> >>failed and results show like:
-> >>
-> >>=====================================================================
-> >>[  316.354501] srcud-torture:--- End of test: RCU_HOTPLUG:
-> >>nreaders=1 nfakewriters=4 stat_interval=60 verbose=2
-> >>test_no_idle_hz=1 shuffle_interval=3 stutter=5 irqreader=1 fq\
-> >>s_duration=0 fqs_holdoff=0 fqs_stutter=3 test_boost=1/0
-> >>test_boost_interval=7 test_boost_duration=4 shutdown_secs=0
-> >>stall_cpu=0 stall_cpu_holdoff=10 stall_cpu_irqsoff=0 n_ba\
-> >>rrier_cbs=0 onoff_interval=3 onoff_holdoff=0
-> >>====================================================================
-> >>
-> >>I am wondering that meaning of "RCU_HOTPLUG". Is it expected because
-> >>cpu hotplug is enabled in the test? Or just represents another type of
-> >>failure?
-> >
-> >This says that at least one CPU hotplug operation failed, that is,
-> >the CPU didn't actually come online or go offline as requested.  If you
-> >are introducing CPU hotplug to an architecture, this usually indicates
-> >that you have bugs in your CPU-hotplug code.  Or it nmight be that
-> 
-> It should hit the case since there is no RCU CPU stall warnings.
-> 
-> >RCU grace periods failed to progress -- though this would normally
-> >also result in RCU CPU stall warnings.
-> >
-> >There should be lines containing "ver:" in your console output.  What
-> >does one of the later one of these say?
-> >
-> 
-> The line says:
-> ======================================================================
-> [  318.850175] busted_srcud-torture: rtc:           (null) ver:
-> 27040 tfle: 0 rta: 27040 rtaf: 0 rtf: 27027 rtmbe: 0 rtbe: 0 rtbke:
-> 0 rtbre: 0 rtbf: 0 rtb: 0 \
-> nt: 9497 onoff: 2639/2639:2640/5310 40,373:10,355 162868:67542
-> (HZ=1000) barrier: 0/0:0
+The interconnect API provides an interface for consumer drivers to express
+their bandwidth needs in the SoC. This data is aggregated and the on-chip
+interconnect hardware is configured to the appropriate power/performance
+profile.
 
-Yes, you have many more offline attempts than successes, which is
-why RCU_HOTPLUG was printed.
+MDSS is one of the interconnect consumers which uses the interconnect APIs
+to get the path between endpoints and set its bandwidth requirements
+for the given interconnected path.
 
-> =====================================================================
-> 
-> And here are useful errors:
-> =====================================================================
-> kern  :info  : [  135.379693] KVM setup async PF for cpu 1
-> kern  :info  : [  135.381412] kvm-stealtime: cpu 1, msr 23fd16180
-> kern  :alert : [  135.386897] busted_srcud-torture:torture_onoff
+Subsequently, there is a clean up patch to remove all the references
+of the DPU custom bus scaling.
 
-Just so your know, busted_srcud can sometimes fail by design.  Hence
-the "busted" in the name.  But failure didn't happen this time.
+There is corresponding DT patch with the source and destination ports
+defined for display driver which will be sent separately.
 
-> task: onlined 1
-> kern  :alert : [  135.408241] busted_srcud-torture:torture_onoff
-> task: offlining 1
-> kern  :info  : [  135.423310] Unregister pv shared memory for cpu 1
-> kern  :info  : [  135.427940] smpboot: CPU 1 is now offline
-> kern  :alert : [  135.430106] busted_srcud-torture:torture_onoff
-> task: offlined 1
-> kern  :alert : [  135.436404] busted_srcud-torture:torture_onoff
-> task: offlining 0
-> kern  :alert : [  135.446173] busted_srcud-torture:torture_onoff
-> task: offline 0 failed: errno -16
-> kern  :alert : [  135.453076] busted_srcud-torture:torture_onoff
-> task: offlining 0
-> kern  :alert : [  135.457461] busted_srcud-torture:torture_onoff
-> task: offline 0 failed: errno -16
-> 
-> 
-> =====================================================================
-> There are only two CPUs on the VM. Torture try to offline the last one
-> but -EBUSY occured.
-> 
-> I spent time to understand kernel/torture.c.
-> There is torture_onoff():
-> 
-> 225        while (!torture_must_stop()) {
-> 226                cpu = (torture_random(&rand) >> 4) % (maxcpu + 1);
-> 227                if (!torture_offline(cpu,
-> 228                                     &n_offline_attempts,
-> &n_offline_successes,
-> 229                                     &sum_offline, &min_offline,
-> &max_offline))
-> 230                        torture_online(cpu,
-> 231                                       &n_online_attempts,
-> &n_online_successes,
-> 232                                       &sum_online, &min_online,
-> &max_online);
-> 233                schedule_timeout_interruptible(onoff_interval);
-> 234        }
-> 235
-> 
-> torture_offline() and torture_offline() don't pre judge if the current
-> cpu is only one usable.
+Changes in v2:
+    - Remove error log and unnecessary check (Jordan Crouse)
+    - Fixed build error due to partial clean up
 
-That does appear to be the case, and that would be a problem with
-the CONFIG_BOOTPARAM_HOTPLUG_CPU0 listed below.
+Changes in v3:
+    - Remove common property definitions (Rob Herring)
+    - Code clean up involving variable name change, removal
+      of extra paranthesis and variables (Matthias Kaehlcke)
+    - Condense multiple lines into a single line (Sean Paul)
 
-Good catch!
+Changes in v4:
+   - Add comments, spacings, tabs, proper port name and icc macro
+   - Use port macros and change port string names (Georgi Djakov)
 
-> Our test machines are configured with CONFIG_BOOTPARAM_HOTPLUG_CPU0. If
-> there are only one oneline and hotplugable cpux, then
-> n_offline_successes != n_offline_attempts which caused "End of test:
-> RCU_HOTPLUG".
-> 
-> Does I misunderstand something above? Feel free to correct me.
+Changes in v5:
+   - Updated commit text and parenthesis alignment (Georgi Djakov)
 
-Does the following patch help?
+Changes in v6:
+   - Change icc_set to icc_set_bw (Doug Anderson)
 
-							Thanx, Paul
+Jayant Shekhar (3):
+  drm/msm/dpu: clean up references of DPU custom bus scaling
+  drm/msm/dpu: Integrate interconnect API in MDSS
+  dt-bindings: msm/disp: Introduce interconnect bindings for MDSS on
+    SDM845
 
-------------------------------------------------------------------------
+ .../devicetree/bindings/display/msm/dpu.txt        |  10 ++
+ drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.c      | 174 ++++++++-------------
+ drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.h      |   4 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c           |  13 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c           |  49 +++++-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_power_handle.c   |  47 ++----
+ drivers/gpu/drm/msm/disp/dpu1/dpu_power_handle.h   |  68 --------
+ drivers/gpu/drm/msm/disp/dpu1/dpu_trace.h          |  22 +--
+ 8 files changed, 144 insertions(+), 243 deletions(-)
 
-diff --git a/kernel/torture.c b/kernel/torture.c
-index a03ff722352b..2b6700ca2a43 100644
---- a/kernel/torture.c
-+++ b/kernel/torture.c
-@@ -101,6 +101,8 @@ bool torture_offline(int cpu, long *n_offl_attempts, long *n_offl_successes,
- 
- 	if (!cpu_online(cpu) || !cpu_is_hotpluggable(cpu))
- 		return false;
-+	if (num_online_cpus() <= 1)
-+		return false;  /* Can't offline the last CPU. */
- 
- 	if (verbose > 1)
- 		pr_alert("%s" TORTURE_FLAG
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
