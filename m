@@ -2,241 +2,122 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C42DC282C5
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:13:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C15EFC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:15:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6325621726
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:13:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D4EF21726
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:15:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="wTvNLKQ9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="da5gVgIs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727058AbfAWJNs (ORCPT
+        id S1727126AbfAWJPM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 04:13:48 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:33628 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726207AbfAWJNr (ORCPT
+        Wed, 23 Jan 2019 04:15:12 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:37901 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726158AbfAWJPM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 04:13:47 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0N9Dfpx088876;
-        Wed, 23 Jan 2019 03:13:41 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1548234821;
-        bh=ME2UghHWm60URYd5XeRPWEMfsgcmQm+/B9KBqqO3z84=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=wTvNLKQ9clHTJUDAacR7QM8OXWymQWDRltDgE467fi+EgWT4qF2Tdy4rT2iz4UyJy
-         2EusFw8C7cY77V1Vr5F2cUdcqfMCQLDYBCx9K7aYYWKF/NubgXB1CpTuJchfPiqm/X
-         3+CZ43TcucDgYxW+7jE6ig+Zmx/gEE6LI+9ex6Zo=
-Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0N9Df41084866
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 23 Jan 2019 03:13:41 -0600
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 23
- Jan 2019 03:13:40 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 23 Jan 2019 03:13:40 -0600
-Received: from [172.24.223.231] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0N9DbLN015066;
-        Wed, 23 Jan 2019 03:13:38 -0600
-Subject: Re: [PATCH v4 2/2] mtd: spi-nor: cadence-quadspi: Add support for
- Octal SPI controller
-To:     Boris Brezillon <bbrezillon@kernel.org>
-CC:     <Tudor.Ambarus@microchip.com>, Marek Vasut <marek.vasut@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        <linux-mtd@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20190122064137.17114-1-vigneshr@ti.com>
- <20190122064137.17114-3-vigneshr@ti.com> <20190123094552.57665d2e@bbrezillon>
-From:   Vignesh R <vigneshr@ti.com>
-Message-ID: <99eaa2bf-abc2-5432-31fd-e319fddcf478@ti.com>
-Date:   Wed, 23 Jan 2019 14:43:36 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 23 Jan 2019 04:15:12 -0500
+Received: by mail-wm1-f67.google.com with SMTP id m22so1190324wml.3;
+        Wed, 23 Jan 2019 01:15:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=kZljoAt5hVQYe4zZIHbbL7YaPy1SNOr6wdTRMrlsgMI=;
+        b=da5gVgIsnX5cYhZN+UH08vqr5LTlg46+PBMsb6ghh3Abui31N4ZrJayyQdxcImpV7d
+         7a1E7kHoqaVcFuPliQwICBwOKekE1ODspznmd8yAGvbU+fGVc3wUsYBoA3CnIqRlo5Xb
+         0EcOYoaXpyA83S3M5Yow0jgIjudd8HkDrin3wXzUFVGfq+0rOwE5tLsjOqq+nYgdVm6U
+         Bli7fIs4trwyVEhO7eQe7ptruBxFgkq67L5FKb+6IUNvCBkzVpcedn0uJmvCe9n+jLeE
+         VdPBFNOT1vNscdTs0J5lFxoNEQQz1CP08/CRiOa55tP8MuphDTm/dgybHHJgBs1RLgUU
+         qB9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kZljoAt5hVQYe4zZIHbbL7YaPy1SNOr6wdTRMrlsgMI=;
+        b=CKxbxbsM89FafycB+CV3NraGW0v2juhYtDkEXBe+tZEEdX0YDtg+jUdY2ja+xFGlyc
+         gnyPqD0xiG9x23EUzzp9Adfk/tYQVVIS+FBQByEdcxyVUsz1XNnoQLKx2geRlRepUgjh
+         9A+7JGfqvn9VbzOLgQgmUnCPJDKUhHv03Q2yUupvE5Yd0S1a7z6rmFle0Xg0kbyStOE+
+         9P39LT4uBLEbFiBKm1IYsD9lOtIdScMKRcOttPk7tZyOH5pz/ooE0tnTCqxFmFgQFdt0
+         mPhpc+PaCuSMQ/ikmcO6rU9YMKsE8fbw5VB7zf/OS9VZWy6TmdypkPXxU1RN6eBYnANe
+         c7Fg==
+X-Gm-Message-State: AJcUukeyXbWvN/iLuFp/URtP7x2cr96nmAWyHfoCHUtEkhNRWovFPT1B
+        g8412xZ8nHNVe9B4FvMuD2Y=
+X-Google-Smtp-Source: ALg8bN5xiBpAHj0f/w4R3pbm87VmEMSegwIoDpn5pnBrXc0fu31GtB4UiARGBB9ufnq2Hswq5wNvZA==
+X-Received: by 2002:a1c:cbc7:: with SMTP id b190mr1977766wmg.13.1548234909184;
+        Wed, 23 Jan 2019 01:15:09 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id o8sm97356937wrx.15.2019.01.23.01.15.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 23 Jan 2019 01:15:08 -0800 (PST)
+Date:   Wed, 23 Jan 2019 10:15:07 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, mperttunen@nvidia.com,
+        chunyan.zhang@unisoc.com, jonathanh@nvidia.com,
+        adrian.hunter@intel.com, ulf.hansson@linaro.org, anrao@nvidia.com,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
+Subject: Re: [PATCH V10 1/4] dt-bindings: mmc: Add supports-cqe property
+Message-ID: <20190123091507.GA24072@ulmo>
+References: <1548186993-6229-1-git-send-email-skomatineni@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20190123094552.57665d2e@bbrezillon>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="d6Gm4EdcadzBjdND"
+Content-Disposition: inline
+In-Reply-To: <1548186993-6229-1-git-send-email-skomatineni@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--d6Gm4EdcadzBjdND
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 23-Jan-19 2:15 PM, Boris Brezillon wrote:
-> On Tue, 22 Jan 2019 12:11:37 +0530
-> Vignesh R <vigneshr@ti.com> wrote:
-> 
->> Cadence OSPI controller IP supports Octal IO (x8 IO lines),
->> It also has an integrated PHY. IP register layout is very
->> similar to existing QSPI IP except for additional bits to support Octal
->> and Octal DDR mode. Therefore, extend current driver to support Octal
->> mode. Only Octal SDR read (1-1-8)mode is supported for now.
->>
->> Tested with mt35xu512aba Octal flash on TI's AM654 EVM.
->>
->> Signed-off-by: Vignesh R <vigneshr@ti.com>
->> ---
->>
->> v4: Fix comments by Tudor on v3
->> v3: No changes
->> v2: Declare Octal mode capability based on compatible.
->>
->>  drivers/mtd/spi-nor/cadence-quadspi.c | 53 +++++++++++++++++++++------
->>  1 file changed, 41 insertions(+), 12 deletions(-)
->>
->> diff --git a/drivers/mtd/spi-nor/cadence-quadspi.c b/drivers/mtd/spi-nor/cadence-quadspi.c
->> index 04cedd3a2bf6..2091addc45a3 100644
->> --- a/drivers/mtd/spi-nor/cadence-quadspi.c
->> +++ b/drivers/mtd/spi-nor/cadence-quadspi.c
->> @@ -44,6 +44,12 @@
->>  /* Quirks */
->>  #define CQSPI_NEEDS_WR_DELAY		BIT(0)
->>  
->> +/* Capabilities mask */
->> +#define cqspi_base_hwcaps_mask					\
-> 
-> Nit: we usually use upper cases for such definitions.
-> 
+On Tue, Jan 22, 2019 at 11:56:30AM -0800, Sowjanya Komatineni wrote:
+> Add supports-cqe optional property for MMC hosts.
+>=20
+> This property is used to identify the specific host controller
+> supporting command queue.
+>=20
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  [V10]: This patch version moves supports-cqe property from vendor
+> 	specific MMC property to common MMC property.
+>=20
+>  Documentation/devicetree/bindings/mmc/mmc.txt | 2 ++
+>  1 file changed, 2 insertions(+)
 
-Will fix.
+Reviewed-by: Thierry Reding <treding@nvidia.com>
 
->> +	(SNOR_HWCAPS_READ | SNOR_HWCAPS_READ_FAST |		\
->> +	SNOR_HWCAPS_READ_1_1_2 | SNOR_HWCAPS_READ_1_1_4 |	\
->> +	SNOR_HWCAPS_PP)
->> +
->>  struct cqspi_st;
->>  
->>  struct cqspi_flash_pdata {
->> @@ -93,6 +99,11 @@ struct cqspi_st {
->>  	struct cqspi_flash_pdata f_pdata[CQSPI_MAX_CHIPSELECT];
->>  };
->>  
->> +struct cqspi_driver_platdata {
->> +	u32 hwcaps_mask;
->> +	u8 quirks;
->> +};
->> +
->>  /* Operation timeout value */
->>  #define CQSPI_TIMEOUT_MS			500
->>  #define CQSPI_READ_TIMEOUT_MS			10
->> @@ -101,6 +112,7 @@ struct cqspi_st {
->>  #define CQSPI_INST_TYPE_SINGLE			0
->>  #define CQSPI_INST_TYPE_DUAL			1
->>  #define CQSPI_INST_TYPE_QUAD			2
->> +#define CQSPI_INST_TYPE_OCTAL			3
->>  
->>  #define CQSPI_DUMMY_CLKS_PER_BYTE		8
->>  #define CQSPI_DUMMY_BYTES_MAX			4
->> @@ -911,6 +923,9 @@ static int cqspi_set_protocol(struct spi_nor *nor, const int read)
->>  		case SNOR_PROTO_1_1_4:
->>  			f_pdata->data_width = CQSPI_INST_TYPE_QUAD;
->>  			break;
->> +		case SNOR_PROTO_1_1_8:
->> +			f_pdata->data_width = CQSPI_INST_TYPE_OCTAL;
->> +			break;
->>  		default:
->>  			return -EINVAL;
->>  		}
->> @@ -1213,21 +1228,22 @@ static void cqspi_request_mmap_dma(struct cqspi_st *cqspi)
->>  
->>  static int cqspi_setup_flash(struct cqspi_st *cqspi, struct device_node *np)
->>  {
->> -	const struct spi_nor_hwcaps hwcaps = {
->> -		.mask = SNOR_HWCAPS_READ |
->> -			SNOR_HWCAPS_READ_FAST |
->> -			SNOR_HWCAPS_READ_1_1_2 |
->> -			SNOR_HWCAPS_READ_1_1_4 |
->> -			SNOR_HWCAPS_PP,
->> -	};
->>  	struct platform_device *pdev = cqspi->pdev;
->>  	struct device *dev = &pdev->dev;
->> +	const struct cqspi_driver_platdata *ddata;
->> +	struct spi_nor_hwcaps hwcaps;
->>  	struct cqspi_flash_pdata *f_pdata;
->>  	struct spi_nor *nor;
->>  	struct mtd_info *mtd;
->>  	unsigned int cs;
->>  	int i, ret;
->>  
->> +	ddata = of_device_get_match_data(dev);
->> +	if (!ddata)
->> +		hwcaps.mask = cqspi_base_hwcaps_mask;
->> +	else
->> +		hwcaps.mask = ddata->hwcaps_mask;
->> +
->>  	/* Get flash device data */
->>  	for_each_available_child_of_node(dev->of_node, np) {
->>  		ret = of_property_read_u32(np, "reg", &cs);
->> @@ -1310,7 +1326,7 @@ static int cqspi_probe(struct platform_device *pdev)
->>  	struct cqspi_st *cqspi;
->>  	struct resource *res;
->>  	struct resource *res_ahb;
->> -	unsigned long data;
->> +	const struct cqspi_driver_platdata *ddata;
->>  	int ret;
->>  	int irq;
->>  
->> @@ -1377,8 +1393,8 @@ static int cqspi_probe(struct platform_device *pdev)
->>  	}
->>  
->>  	cqspi->master_ref_clk_hz = clk_get_rate(cqspi->clk);
->> -	data  = (unsigned long)of_device_get_match_data(dev);
->> -	if (data & CQSPI_NEEDS_WR_DELAY)
->> +	ddata  = of_device_get_match_data(dev);
->> +	if (ddata && (ddata->quirks & CQSPI_NEEDS_WR_DELAY))
->>  		cqspi->wr_delay = 5 * DIV_ROUND_UP(NSEC_PER_SEC,
->>  						   cqspi->master_ref_clk_hz);
->>  
->> @@ -1460,14 +1476,27 @@ static const struct dev_pm_ops cqspi__dev_pm_ops = {
->>  #define CQSPI_DEV_PM_OPS	NULL
->>  #endif
->>  
->> +static const struct cqspi_driver_platdata k2g_qspi = {
->> +	.hwcaps_mask = cqspi_base_hwcaps_mask,
->> +	.quirks = CQSPI_NEEDS_WR_DELAY,
->> +};
->> +
->> +static const struct cqspi_driver_platdata am654_ospi = {
->> +	.hwcaps_mask = cqspi_base_hwcaps_mask | SNOR_HWCAPS_READ_1_1_8,
->> +	.quirks = CQSPI_NEEDS_WR_DELAY,
->> +};
->> +
->>  static const struct of_device_id cqspi_dt_ids[] = {
->>  	{
->>  		.compatible = "cdns,qspi-nor",
->> -		.data = (void *)0,
-> 
-> Can't we have a cqspi_driver_platdata instance for that one too?
+--d6Gm4EdcadzBjdND
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I had that in v3, will add it back. Thanks for the review!
+-----BEGIN PGP SIGNATURE-----
 
-> 
->>  	},
->>  	{
->>  		.compatible = "ti,k2g-qspi",
->> -		.data = (void *)CQSPI_NEEDS_WR_DELAY,
->> +		.data = &k2g_qspi,
->> +	},
->> +	{
->> +		.compatible = "ti,am654-ospi",
->> +		.data = &am654_ospi,
->>  	},
->>  	{ /* end of table */ }
->>  };
-> 
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxIMJgACgkQ3SOs138+
+s6HG3w//cxrFZWZQwgA1NKCvuES8D+RpOE/c1K8+foWs8q/kyfEOJ4ormoKWaM72
+o6aHTxNbIaoJY8PXgd8Dx3IsBy9DJ6mGbLTz6LZD1+TMegRFxjy4gOAFCe2UljXY
+H4tAXZEeeKQ++dsz0UPOddcmlnCQeROSFILth5Em2RQV81NTGSZEYh4xTL9207pw
+w2t6dpyt302cM7A1RO7bYWtIk+jW/VHM9UGzs8h5p4oXknzj50KlqL+2YuQ16vAO
+3iBQbzNofRyM7yMn9pzIQR2Lr/VAHqGEgbuf5ceVIwo5il/gnj27oyN8luZyXELC
+LZcjYnob4L87LdiQL/vnymcr03UrzIdEFXov7kGmLrhRD3WKrrpj8oqvnDJISFEH
+QToBuPGp9RIaKWtgimpI81XR0AcztuuMkOPZsDvzwItKr6v4iLvt9/1h3h+bSxWv
+I6fWcyfJYSjI8xlXmoWPRGyCcxi+U6y4l1X7c5EPD/uW9C3KYf4IPIsM8JuIb1YK
+yLepArovnU/hzIrkPNZimVk5l24lmgsXB6elorbauumiUUsTvxnV7VTxNcE4+IC9
+Ty/moEjN8CsWIqHxpJLO1I972RA+LH2an86mBHMO0OAEg4d5+a+n+E+/u+vKwa6a
+AOp7fU1HSoih5mf/vRJCZNErDP3AAmcXXx/HNZbiEtoAdMnAyXE=
+=doj9
+-----END PGP SIGNATURE-----
 
-Regards
-Vignesh
+--d6Gm4EdcadzBjdND--
