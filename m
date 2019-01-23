@@ -2,150 +2,112 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C733C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:28:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEED8C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:30:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0C9321872
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:28:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C7C121872
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:30:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="iNF33/Dw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726451AbfAWS2B (ORCPT
+        id S1726183AbfAWSaM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 13:28:01 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:37334 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725871AbfAWS2B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 13:28:01 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0003623E6C1;
-        Wed, 23 Jan 2019 18:28:00 +0000 (UTC)
-Received: from [10.18.17.208] (dhcp-17-208.bos.redhat.com [10.18.17.208])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 16606608F3;
-        Wed, 23 Jan 2019 18:28:00 +0000 (UTC)
-Subject: Re: [PATCH 4/4] livepatch: Remove the redundant enabled flag in
- struct klp_patch
-To:     Miroslav Benes <mbenes@suse.cz>, Petr Mladek <pmladek@suse.com>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jason Baron <jbaron@akamai.com>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190116161720.796-1-pmladek@suse.com>
- <20190116161720.796-5-pmladek@suse.com>
- <alpine.LSU.2.21.1901221100020.16809@pobox.suse.cz>
-From:   Joe Lawrence <joe.lawrence@redhat.com>
-Message-ID: <d0f53387-1b6f-3d9a-2336-89485b0680ac@redhat.com>
-Date:   Wed, 23 Jan 2019 13:27:59 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 23 Jan 2019 13:30:12 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:45683 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725871AbfAWSaL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 13:30:11 -0500
+Received: by mail-pf1-f193.google.com with SMTP id g62so1570180pfd.12
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 10:30:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=mxVLM0hi0r57HRWjlFQ0MmFAI0ikleTkkJmNBfps9rk=;
+        b=iNF33/DwQ1eZVRU0xNA5xiBwsrhYQPlwMi7GLJPS/Ejd6arZM4DeyoZATVO8GnzOYq
+         Vqs5VS0WZiLL+hlimcO4TPxjgQkqlTzH96p3CVyikfzaVQcqRkpnMuhOgqtpZKS3/j7y
+         be9OJNrw2dCgby0IEIsdEFEENGlJa0zJtJEOGiX+2a/c2N/FsE3VdXJrdzrav2hd9PUx
+         J9n1p1VgibvLf2txM3Erk4T3sPsNKyexhdWhfOqjty9eBys8jjadBpzqb9bHPMgmqHph
+         C8I+R6wDsWn+jAEAmYZsVZd/m6tWNLVZXLd5eJDpjgLa2i8Uvh9W4hab8/JLduMmlVYE
+         X/LQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mxVLM0hi0r57HRWjlFQ0MmFAI0ikleTkkJmNBfps9rk=;
+        b=HGHBcnEp9KdQC8bIKyADwgpbCLKqFMJS/8dpqOxSN53OaDiFFbKxHQUMX9Ib0AXxM1
+         kGQcG3teC6bq+A63KDBTR2z10OCvd2nFQNROGmMAOVB2mjHH4H5XnXY6eabEr34Rtzri
+         Wdm971XHLLpquyA8/l+c0gQvkSUsJDTwaUk19aeOfpZXDEPAYx2CXtV69WmZMsyA/Ju7
+         S1ncM3gbsLTq9NAtoBnZVcRrbqfoGi0YcWs6r3ZkziQ+QZt/ZuZQDvuA9zk2uN2EeqqQ
+         DpKSR8GOL+Wp29NAVy3kaOPnBC+tPmfsbah1I3JKuhBwxpItWiExWEo9INDplcnDd6Lc
+         cvhw==
+X-Gm-Message-State: AJcUukcFeq4GJNxDHtssR1E7garVAmC5Cj3SdyASQmFQNSGY0gfg7YAu
+        BIS2eGzwbWTLdHCPq65aYIlVOA==
+X-Google-Smtp-Source: ALg8bN4Ooc+HqZJWvq9MR0p9beWP1zswkvtG278YdYZreM+wkOeFxT1zP3k9MO4l4Clqm+4O7vxonw==
+X-Received: by 2002:a62:4b4d:: with SMTP id y74mr3038129pfa.186.1548268210233;
+        Wed, 23 Jan 2019 10:30:10 -0800 (PST)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id v2sm20745748pgs.0.2019.01.23.10.30.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 23 Jan 2019 10:30:09 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1gmNHs-00045g-JN; Wed, 23 Jan 2019 11:30:08 -0700
+Date:   Wed, 23 Jan 2019 11:30:08 -0700
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Nicholas Mc Guire <hofrat@osadl.org>
+Cc:     Steve Wise <swise@chelsio.com>, Doug Ledford <dledford@redhat.com>,
+        Raju Rangoju <rajur@chelsio.com>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] iw_cxgb4: drop check - dead code
+Message-ID: <20190123183008.GA15698@ziepe.ca>
+References: <1547947633-10515-1-git-send-email-hofrat@osadl.org>
 MIME-Version: 1.0
-In-Reply-To: <alpine.LSU.2.21.1901221100020.16809@pobox.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 23 Jan 2019 18:28:01 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1547947633-10515-1-git-send-email-hofrat@osadl.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/22/19 5:06 AM, Miroslav Benes wrote:
-> On Wed, 16 Jan 2019, Petr Mladek wrote:
+On Sun, Jan 20, 2019 at 02:27:13AM +0100, Nicholas Mc Guire wrote:
+> The kmalloc is called with  | __GFP_NOFAIL  so there is no point in
+> checking the return value - it either returns valid storage or it would
+> hang/terminate there. But it is not possible to say if the use of
+> __GFP_NOFAIL is really needed and the check should be removed or
+> vice-versa (use of __GFP_NOFAIL should be only in exceptional
+> cases as I understand it and alloc_srq_queue() is called in quite
+> a few places)
+> In either way it would need fixing.
 > 
->> diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
->> index 684766d306ad..8e644837e668 100644
->> --- a/kernel/livepatch/core.c
->> +++ b/kernel/livepatch/core.c
->> @@ -59,6 +59,17 @@ static bool klp_is_module(struct klp_object *obj)
->>   	return obj->name;
->>   }
->>   
->> +static bool klp_patch_enabled(struct klp_patch *patch)
->> +{
->> +	if (patch == klp_transition_patch) {
->> +		WARN_ON_ONCE(klp_target_state == KLP_UNDEFINED);
-> 
-> I think we'd have a race in the code then. enabled_show() does not take
-> klp_mutex() when calling klp_patch_enabled().
- >
-> A patch sysfs attributes are added quite early during its enablement.
-> klp_init_transition() first sets klp_transition_patch, then
-> klp_target_state. It means one can call enabled_show() with patch ==
-> klp_transition_patch and klp_target_state == KLP_UNDEFINED. No?
-> 
-> The similar applies the disablement. klp_complete_transition() first
-> clears klp_target_state (sets it to KLP_UNDEFINED), then it clears
-> klp_transition_patch.
-> 
-> We could add locking to enabled_show() or swap the assignments with some
-> barriers on top.
->
+> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+> Fixes: 6a0b6174d35a ("rdma/cxgb4: Add support for kernel mode SRQ's")
+> ---
 
-Taking the mutex as enabled_store() does would be simplest, no?
+Steve? It seems weird to have NOFAIL and then have an error unwind
+path, what is the deal here?
 
-> Or we could remove WARN_ON_ONCE() and live with false results in
-> enabled_show(). It does not matter much, I think. All the other call sites
-> of klp_patch_enabled() should be fine.
+> diff --git a/drivers/infiniband/hw/cxgb4/qp.c b/drivers/infiniband/hw/cxgb4/qp.c
+> index 917ce5c..c2a12ba 100644
+> --- a/drivers/infiniband/hw/cxgb4/qp.c
+> +++ b/drivers/infiniband/hw/cxgb4/qp.c
+> @@ -2597,8 +2597,6 @@ static int alloc_srq_queue(struct c4iw_srq *srq, struct c4iw_dev_ucontext *uctx,
+>  	wr_len = sizeof(*res_wr) + sizeof(*res);
+>  
+>  	skb = alloc_skb(wr_len, GFP_KERNEL | __GFP_NOFAIL);
+> -	if (!skb)
+> -		goto err_free_queue;
+>  	set_wr_txq(skb, CPL_PRIORITY_CONTROL, 0);
+>  
+>  	res_wr = (struct fw_ri_res_wr *)__skb_put(skb, wr_len);
+> -- 
+> 2.1.4
 > 
-
-Hmm, the self-tests and the kpatch tool inspect the sysfs files, but as 
-long as the false result is a stale value, I think they would be okay. 
-Those tools poll sysfs and don't depend on a one-shot-read value to make 
-an enabled/disabled determination.
-
->> +		return klp_target_state == KLP_PATCHED;
->> +	}
->> +
->> +	return !list_empty(&patch->list);
->> +}
-> 
-> Shouldn't we also change list_del(&patch->list) in klp_free_patch_start()
-> to list_del_init(&patch->list)?
-> 
-
-Right, we should do that if klp_patch_enabled() is going to subsequently 
-check that list.
-
->> @@ -955,7 +964,7 @@ static int __klp_enable_patch(struct klp_patch *patch)
->>   	if (klp_transition_patch)
->>   		return -EBUSY;
->>   
->> -	if (WARN_ON(patch->enabled))
->> +	if (list_empty(&patch->list))
->>   		return -EINVAL;
-> 
-> I wanted to ask why there is list_empty() and not klp_patch_enabled(), so
-> just to be sure... the patch was added to klp_patches list, so patch->list
-> is not empty (should not be). We could achieve the same by calling
-> !klp_patch_enabled() given its implementation, but it would look
-> counter-intuitive here.
-> 
-> The rest looks fine.
-> 
-> However, I am not sure if the outcome is better than what we have. Yes,
-> patch->enabled is not technically necessary and we can live with that (as
-> the patch proves). On the other hand, it gives the reader clear guidance
-> about the patch's state. klp_patch_enabled() is not a complete
-> replacement. We have to call list_empty() in __klp_enable_patch() or check
-> the original klp_target_state in klp_try_complete_transition().
-> 
-> I am not against the change, I am glad to see it is achievable, but I am
-> not sure if the code is better with it. Joe acked it. What do the others
-> think?
-
-Let me qualify my ack -- I think minimizing the number of state 
-variables like patch->enabled can help readability... on the other hand, 
-deducing the same information from other properties like list-empty can 
-be confusing, ie, klp_patch_enabled() is generally a lot clearer than 
-list_empty(&patch->list)).
-
-So I like this idea and would be interested to hear what folks think 
-about the exception cases you pointed out.
-
--- Joe
