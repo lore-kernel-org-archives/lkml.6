@@ -2,94 +2,99 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4814C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 15:44:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD2ADC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 15:44:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A323321871
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 15:44:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94D4121871
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 15:44:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726661AbfAWPok (ORCPT
+        id S1726864AbfAWPor convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 10:44:40 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:41488 "EHLO mail.bootlin.com"
+        Wed, 23 Jan 2019 10:44:47 -0500
+Received: from mga06.intel.com ([134.134.136.31]:53707 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726307AbfAWPok (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 10:44:40 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 65FC2207AC; Wed, 23 Jan 2019 16:44:37 +0100 (CET)
-Received: from localhost (unknown [185.94.189.187])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 28D672077B;
-        Wed, 23 Jan 2019 16:44:37 +0100 (CET)
-Date:   Wed, 23 Jan 2019 16:44:37 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Yong Deng <yong.deng@magewell.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-media@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-amarula@amarulasolutions.com,
-        Michael Trimarchi <michael@amarulasolutions.com>
-Subject: Re: [PATCH v6 2/6] media: sun6i: Add mod_rate quirk
-Message-ID: <20190123154437.zjrpzzsenoioi43e@flea>
-References: <20190118163158.21418-1-jagan@amarulasolutions.com>
- <20190118163158.21418-3-jagan@amarulasolutions.com>
+        id S1726790AbfAWPoq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 10:44:46 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jan 2019 07:44:38 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,511,1539673200"; 
+   d="scan'208";a="140646916"
+Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.172])
+  by fmsmga001.fm.intel.com with ESMTP; 23 Jan 2019 07:44:31 -0800
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Edwin Zimmerman <edwin@211mainstreet.net>,
+        'Greg KH' <gregkh@linuxfoundation.org>,
+        'Kees Cook' <keescook@chromium.org>
+Cc:     dev@openvswitch.org, 'Ard Biesheuvel' <ard.biesheuvel@linaro.org>,
+        netdev@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        kernel-hardening@lists.openwall.com,
+        intel-wired-lan@lists.osuosl.org, linux-fsdevel@vger.kernel.org,
+        xen-devel@lists.xenproject.org,
+        'Laura Abbott' <labbott@redhat.com>,
+        linux-kbuild@vger.kernel.org,
+        'Alexander Popov' <alex.popov@linux.com>
+Subject: RE: [Intel-gfx] [PATCH 1/3] treewide: Lift switch variables out of switches
+In-Reply-To: <000001d4b32a$845e06e0$8d1a14a0$@211mainstreet.net>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20190123110349.35882-1-keescook@chromium.org> <20190123110349.35882-2-keescook@chromium.org> <20190123115829.GA31385@kroah.com> <874l9z31c5.fsf@intel.com> <000001d4b32a$845e06e0$8d1a14a0$@211mainstreet.net>
+Date:   Wed, 23 Jan 2019 17:46:14 +0200
+Message-ID: <87va2f1int.fsf@intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="yz2zv5rwxvomehn4"
-Content-Disposition: inline
-In-Reply-To: <20190118163158.21418-3-jagan@amarulasolutions.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 23 Jan 2019, Edwin Zimmerman <edwin@211mainstreet.net> wrote:
+> On Wed, 23 Jan 2019, Jani Nikula <jani.nikula@linux.intel.com> wrote:
+>> On Wed, 23 Jan 2019, Greg KH <gregkh@linuxfoundation.org> wrote:
+>> > On Wed, Jan 23, 2019 at 03:03:47AM -0800, Kees Cook wrote:
+>> >> Variables declared in a switch statement before any case statements
+>> >> cannot be initialized, so move all instances out of the switches.
+>> >> After this, future always-initialized stack variables will work
+>> >> and not throw warnings like this:
+>> >>
+>> >> fs/fcntl.c: In function ‘send_sigio_to_task’:
+>> >> fs/fcntl.c:738:13: warning: statement will never be executed [-Wswitch-unreachable]
+>> >>    siginfo_t si;
+>> >>              ^~
+>> >
+>> > That's a pain, so this means we can't have any new variables in { }
+>> > scope except for at the top of a function?
+>> >
+>> > That's going to be a hard thing to keep from happening over time, as
+>> > this is valid C :(
+>> 
+>> Not all valid C is meant to be used! ;)
+>
+> Very true.  The other thing to keep in mind is the burden of enforcing
+> a prohibition on a valid C construct like this.  It seems to me that
+> patch reviewers and maintainers have enough to do without forcing them
+> to watch for variable declarations in switch statements.  Automating
+> this prohibition, should it be accepted, seems like a good idea to me.
 
---yz2zv5rwxvomehn4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Considering that the treewide diffstat to fix this is:
 
-On Fri, Jan 18, 2019 at 10:01:54PM +0530, Jagan Teki wrote:
-> Unfortunately default CSI_SCLK rate cannot work properly to
-> drive the connected sensor interface, particularly on few
-> Allwinner SoC's like A64.
->=20
-> So, add mod_rate quirk via driver data so-that the respective
-> SoC's which require to alter the default mod clock rate can assign
-> the operating clock rate.
->=20
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+ 18 files changed, 45 insertions(+), 46 deletions(-)
 
-You still don't need the variant stuff. If the sole difference is that
-we need that clock rate to be fixed, then the following patch is enough.
+and using the gcc plugin in question will trigger the switch-unreachable
+warning, I think we're good. There'll probably be the occasional
+declarations that pass through, and will get fixed afterwards.
 
-http://code.bulix.org/9au998-562745?raw
+BR,
+Jani.
 
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---yz2zv5rwxvomehn4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXEiL5QAKCRDj7w1vZxhR
-xW+OAP9I14o2aqaDvi2Zkm7tBUQNgMKU5/cRvH0+/vPUZBw7tQEAi4AHCxrJMB7W
-dAeL9m2LXQ6M4nDrZE51/vBKoTOpQgM=
-=UHSo
------END PGP SIGNATURE-----
-
---yz2zv5rwxvomehn4--
+-- 
+Jani Nikula, Intel Open Source Graphics Center
