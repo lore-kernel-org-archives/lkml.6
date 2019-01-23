@@ -2,112 +2,165 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1A93C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:21:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC89BC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:22:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7852621872
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:21:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A170F21872
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:22:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FbkZEx2W"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="jgEuhTxM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726864AbfAWWVf (ORCPT
+        id S1726977AbfAWWWE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 17:21:35 -0500
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:41314 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726152AbfAWWVe (ORCPT
+        Wed, 23 Jan 2019 17:22:04 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:51816 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726152AbfAWWWE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 17:21:34 -0500
-Received: by mail-yw1-f68.google.com with SMTP id f65so1585424ywc.8
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 14:21:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=O0mGc987OtQsEjsYvbycooF1cumBqoiFK5EIP321jyE=;
-        b=FbkZEx2WChHfVrey6sz2jvIgKtXWWhgq2d9YpjBkGUf66ZezutKjJRkFd8Ju/WptJm
-         NW6OzsPvhhFWsPa/xD01s/zgVuJdTa9GzcELjAHRBiQsaVbspMX790fTHl5Vd5nYgj6y
-         DFmDHa35K50ND0QslEbdJvup1NcmxYNlQR6h0xpFOMq70kVCSYw3ZsbUNfSFfcn3m0Hc
-         UfXtT4MwoCalzrJrsmTN6ZX3fUEU9LdmFBHOBw4XSjFpLeKWwxmNmpBTi5Cg0qZIZXAH
-         2CS9i/hCHm2d+Anu0zCZvU8kiqFyqdJXg3l9QTlyS6XDbtqSw0Oqb5HpRQJpk+ZUXdNU
-         9dNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=O0mGc987OtQsEjsYvbycooF1cumBqoiFK5EIP321jyE=;
-        b=i0Dp0hWSaQgJIqXZjCAm11h6JxbdEmMlBntiDjLyhKGeI114dYFCFVMpF94cCFk1p9
-         +xQGNKke0/NLJrfZR4RlQwjh/cHBFQaQYkpZeqOvfJLlY1HT8KHlIKaBW0Wdaa3eVhPP
-         FoGplbcHf7rOoyd87yApUcjJ0ieQhTTjO9sOhMyegw/FP6KHvnjMKIf29fSwjl4xTEua
-         O1AQPEH6uVZzCd7rB/p1QocbKfPzRYWJ/ZjB8yeuEfi6wfjHT8RR3bwDuUQCQYXpDF5R
-         ZEFjYMfHmlg6QRCuLiOMB6l3Hvx2F46V+XmZTD5CrM3OAWJg7VxyF1Za6HRCgc6KzD3B
-         hxXw==
-X-Gm-Message-State: AJcUuke9g9f7qDRKz+Lkd6hwre6s53zZdOMV/t5t/chKd1WhdKhkL2Q0
-        fXCI+BHoBSs2HNwJD03uxClWV+Or/ns=
-X-Google-Smtp-Source: ALg8bN6SqbvHs66GYHEQnjlB+VTui8IVUPBWNMNoxIKNmqV53ACJHkQGaskQ3fR2lWcmQdXSZoSAFQ==
-X-Received: by 2002:a0d:de87:: with SMTP id h129mr4050360ywe.200.1548282093289;
-        Wed, 23 Jan 2019 14:21:33 -0800 (PST)
-Received: from mmccoy (cpe-2606-A000-111F-7E1-241A-8A48-C4E8-C468.dyn6.twc.com. [2606:a000:111f:7e1:241a:8a48:c4e8:c468])
-        by smtp.gmail.com with ESMTPSA id z139sm10482034ywa.36.2019.01.23.14.21.32
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 23 Jan 2019 14:21:32 -0800 (PST)
-Date:   Wed, 23 Jan 2019 17:21:31 -0500
-From:   Matt McCoy <mattmccoy110@gmail.com>
-To:     Joe Perches <joe@perches.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
-        Quytelda Kahja <quytelda@tamalin.org>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: ks7010: remove unnecessary parentheses
-Message-ID: <20190123222131.GA10543@mmccoy>
-References: <20190123021816.GA3478@mmccoy>
- <de570801f163a8d4972661ef794e910a8e1beed5.camel@perches.com>
+        Wed, 23 Jan 2019 17:22:04 -0500
+Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9A8B523F;
+        Wed, 23 Jan 2019 23:22:01 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1548282121;
+        bh=9A3f5OSG15SIiC6YnoKy7rcj+n56dcYwYo6pOD3aktE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jgEuhTxMABK2ccyzsvieAN5IpNYKJPgGfnm7Tdz/WDrGKf+wcCW/j7bQX9QUstc3A
+         jFzYc1zXFTMQaaEWraiRlK4adj3Ye+6KxlPVM0BtzNQ1hEDvfRSnRcg0hD61NTlrZ3
+         LGplkUoFUSX/3ai9lbMr10pJi3p6OxF/0F8v9ICc=
+Date:   Thu, 24 Jan 2019 00:22:00 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Lukas Wunner <lukas@wunner.de>,
+        Ronald =?utf-8?B?VHNjaGFsw6Ry?= <ronald@innovation.ch>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-input@vger.kernel.org
+Subject: Re: [PATCH] drm/bridge: sil_sii8620: depend on INPUT instead of
+ selecting it.
+Message-ID: <20190123222200.GF4675@pendragon.ideasonboard.com>
+References: <20190122141311.10445-1-ronald@innovation.ch>
+ <20190123084556.gsospl6joh53qnzs@wunner.de>
+ <20190123220342.GC179701@dtor-ws>
+ <20190123221735.GE4675@pendragon.ideasonboard.com>
+ <20190123222105.GF179701@dtor-ws>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <de570801f163a8d4972661ef794e910a8e1beed5.camel@perches.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190123222105.GF179701@dtor-ws>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 06:45:37PM -0800, Joe Perches wrote:
-> On Tue, 2019-01-22 at 21:18 -0500, Matt McCoy wrote:
-> > Remove unnecessary parentheses reported by checkpatch.
-> []
-> > diff --git a/drivers/staging/ks7010/ks_hostif.c b/drivers/staging/ks7010/ks_hostif.c
-> []
-> > @@ -171,7 +171,7 @@ int get_current_ap(struct ks_wlan_private *priv, struct link_ap_info *ap_info)
-> >  		   "- rate_set_size=%d\n",
-> >  		   ap->bssid[0], ap->bssid[1], ap->bssid[2],
-> >  		   ap->bssid[3], ap->bssid[4], ap->bssid[5],
-> > -		   &(ap->ssid.body[0]),
-> > +		   &ap->ssid.body[0],
-> >  		   ap->rate_set.body[0], ap->rate_set.body[1],
-> >  		   ap->rate_set.body[2], ap->rate_set.body[3],
-> >  		   ap->rate_set.body[4], ap->rate_set.body[5],
-> 
-> This bit:
-> 
-> []
-> 	netdev_dbg(priv->net_dev, "Link AP\n"
-> 		   "- bssid=%02X:%02X:%02X:%02X:%02X:%02X\n"
-> []
-> 		   ap->bssid[0], ap->bssid[1], ap->bssid[2],
-> 
-> should instead use the vsprintf %pM extension
-> 
-> 		"- bssid: %pM\n"
-> []
-> 		ap->bssid,
-> 
->
+Hello Dmity,
 
-Should I just make a v2 of this patch with 2 parts ?
-One being this change and the other using the %pM extension.
+On Wed, Jan 23, 2019 at 02:21:05PM -0800, Dmitry Torokhov wrote:
+> On Thu, Jan 24, 2019 at 12:17:35AM +0200, Laurent Pinchart wrote:
+> > On Wed, Jan 23, 2019 at 02:03:42PM -0800, Dmitry Torokhov wrote:
+> >> On Wed, Jan 23, 2019 at 09:45:56AM +0100, Lukas Wunner wrote:
+> >>> On Tue, Jan 22, 2019 at 06:13:11AM -0800, Ronald Tschalär wrote:
+> >>>> commit d6abe6df706c66d803e6dd4fe98c1b6b7f125a56 (drm/bridge:
+> >>>> sil_sii8620: do not have a dependency of RC_CORE) added a dependency on
+> >>>> INPUT. However, this causes problems with other drivers, in particular
+> >>>> an input driver that depends on MFD_INTEL_LPSS_PCI (to be added in a
+> >>>> future commit):
+> >>>> 
+> >>>>   drivers/clk/Kconfig:9:error: recursive dependency detected!
+> >>>>   drivers/clk/Kconfig:9:        symbol COMMON_CLK is selected by MFD_INTEL_LPSS
+> >>>>   drivers/mfd/Kconfig:566:      symbol MFD_INTEL_LPSS is selected by MFD_INTEL_LPSS_PCI
+> >>>>   drivers/mfd/Kconfig:580:      symbol MFD_INTEL_LPSS_PCI is implied by KEYBOARD_APPLESPI
+> >>>>   drivers/input/keyboard/Kconfig:73:    symbol KEYBOARD_APPLESPI depends on INPUT
+> >>>>   drivers/input/Kconfig:8:      symbol INPUT is selected by DRM_SIL_SII8620
+> >>>>   drivers/gpu/drm/bridge/Kconfig:83:    symbol DRM_SIL_SII8620 depends on DRM_BRIDGE
+> >>>>   drivers/gpu/drm/bridge/Kconfig:1:     symbol DRM_BRIDGE is selected by DRM_PL111
+> >>>>   drivers/gpu/drm/pl111/Kconfig:1:      symbol DRM_PL111 depends on COMMON_CLK
+> >>>> 
+> >>>> According to the docs, select should only be used for non-visible
+> >>>> symbols. Furthermore almost all other references to INPUT throughout the
+> >>>> kernel config are depends, not selects. Hence this change.
+> >> 
+> >> I think this is not as cut and dry. We should be able to select needed
+> >> subsystems (such as INPUT, USB, etc) even if they are user visible.
+> > 
+> > Semantically, maybe, but given the current state of Kconfig this results
+> > in a recursive dependencies nightmare. It's a no-go.
+> > 
+> >> User, when enabling a piece of hardware, does not need to know ultimate
+> >> details of all subsystems the driver might need ti function.
+> >> 
+> >> It looks like one of the drivers implies MFD_INTEL_LPSS_PCI, maybe
+> >> treating imply the same as select when detecting circular dependency is
+> >> wrong as we are allowed to deselect implied dependencies?
+> >> 
+> >>>> 
+> >>>> CC: Inki Dae <inki.dae@samsung.com>
+> >>>> CC: Andrzej Hajda <a.hajda@samsung.com>
+> >>>> Signed-off-by: Ronald Tschalär <ronald@innovation.ch>
+> >>> 
+> >>> Reviewed-by: Lukas Wunner <lukas@wunner.de>
+> >>> 
+> >>> I think this needs to be merged through the input tree as a prerequisite
+> >>> for the applespi.c driver (keyboard + touchpad driver for 2015+ MacBook,
+> >>> MacBook Air and MacBook Pro which uses SPI instead of USB) to avoid
+> >>> breaking the build.  Adding Dmitry.
+> >> 
+> >> I have no idea what applespi.c is (it is definitely not in my tree), so
+> >> I think it should be merged through the same tree that the original
+> >> commit was introduced through.
+> >> 
+> >>>> ---
+> >>>>  drivers/gpu/drm/bridge/Kconfig | 2 +-
+> >>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>>> 
+> >>>> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+> >>>> index 2fee47b0d50b..eabedc83f25c 100644
+> >>>> --- a/drivers/gpu/drm/bridge/Kconfig
+> >>>> +++ b/drivers/gpu/drm/bridge/Kconfig
+> >>>> @@ -83,9 +83,9 @@ config DRM_PARADE_PS8622
+> >>>>  config DRM_SIL_SII8620
+> >>>>  	tristate "Silicon Image SII8620 HDMI/MHL bridge"
+> >>>>  	depends on OF
+> >>>> +	depends on INPUT
+> >>>>  	select DRM_KMS_HELPER
+> >>>>  	imply EXTCON
+> >>>> -	select INPUT
+> >>>>  	select RC_CORE
+> >> 
+> >> Keeping "select RC_CORE" is wrong though, as the driver appears to be
+> >> working find without RC. Maybe it should be stubbed out?
+> > 
+> > It should definitely not be select'ed as it's a user-visible symbol. My
+> > preference would be to simply revert d6abe6df706c. If we want (and can)
+> > work without RC core then it should be stubbed out.
+> > 
+> > Commit d6abe6df706c states
+> > 
+> >     And some boards not using remote controller device don't really
+> >     need to know that RC_CORE config should be enabled to use sil_sii8620
+> >     driver only for HDMI.
+> > 
+> > The same reasoning applies to INPUT, if we agree that depending on
+> > RC_CORE is confusing for users, then depending on INPUT is confusing as
+> > well. There's not reason to apply different standards to INPUT and
+> > RC_CORE, depending on one and selecting the other doesn't make much
+> > sense.
+> 
+> OK, so revert + patch to stub out RC calls? That works for me (and I
+> still say it should go through the same tree that introduced
+> d6abe6df706c).
+
+Yes, that sounds good to me.
+
+-- 
+Regards,
+
+Laurent Pinchart
