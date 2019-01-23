@@ -7,65 +7,66 @@ X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00B54C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 06:10:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDB7FC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 06:11:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4B2921726
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 06:10:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A359421726
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 06:11:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="atALjpUS"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QpDVKa0P"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726340AbfAWGKH (ORCPT
+        id S1726344AbfAWGK6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 01:10:07 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:40114 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726289AbfAWGKH (ORCPT
+        Wed, 23 Jan 2019 01:10:58 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:33008 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725991AbfAWGK5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 01:10:07 -0500
-Received: by mail-oi1-f196.google.com with SMTP id t204so887425oie.7
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 22:10:07 -0800 (PST)
+        Wed, 23 Jan 2019 01:10:57 -0500
+Received: by mail-oi1-f195.google.com with SMTP id c206so926038oib.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 22:10:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=9FeO1gesXy6KU0wTtnDDJtJcP0TAwXtlCZpvjn7+aHM=;
-        b=atALjpUSlb7TCgaZHAqLsdxvdjr2mFnw3ZywEFCay6yGw4aroMpcL/Q/IRBD7z9aBB
-         zET+HXG8yBrNOur9CiqIj81Ptho6ThWc/9lHjCH0HwlZgvDUPdP5e1Ct4tgUpPn2hYBn
-         fLmI9hkKb98tv5EA34KS8t9vITbvDhBCoCIUU=
+        bh=tJ8uKtP+GD3ALDGLKkBVTt7dlC2NsD+m/yLfdirg0nE=;
+        b=QpDVKa0P06lGxk6pM4lQghnQEWcpCBCb2lR1nG4wo+HKQ/T+/UHMTKHHQaMYpw1u5R
+         qVS/du5jqjKOMbvuvxn2cuoe/nADs5nGIZXE0BdJa0TV3v6SgUKpa+6BHCIEBf5HPpSO
+         3xskFLeipxJ7N9J3aoYA/a5LBFz3ksFvaxrQ8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=9FeO1gesXy6KU0wTtnDDJtJcP0TAwXtlCZpvjn7+aHM=;
-        b=pO4YlcM4q9VuKWuAy+8RWtnsmIHLy0Y3Tu2youGEGwmX0YPYHtan2d/7BP3kqLwPQ0
-         v56A0MGb3Cl9PtGIaWOu3AzvB2WWSHNbXx/+jpNmqR9nCJ26l6cO4hUBpsiS1xOI+F4f
-         pp0sCWSB2aK9Bok5q/xyFWIC/IE8HfM120w3APbU5NX4lJB3xk822puQD7D3APKuoDF2
-         tNyIAAAXA9y8Xc2RzQwlhQUIPXByZL3bYk3XnIwgn6m0era7XpKTOqTU+QF3j3Ktl1WB
-         SqQPNNLBQohBTx4qGAHar5i3TvHkR//nA5RCJwhEoZgGjxz3kvbq8mN8KcKduyftRoUt
-         c0nA==
-X-Gm-Message-State: AJcUukdXXJl8RVo/awRwqZcZ+rHRQOhEMV+7Gf0e51XdCYx10/7E+bD2
-        b6rvXCMmvjYV1jZC+UZ8aXth7xpovnwcGQ==
-X-Google-Smtp-Source: ALg8bN6g99uEKQGCKHWPCE8oWjc735qwNwcWxXUyvrWLvE3U9K4aBWExwbs9vQI6gSGrgqTOU6Bl/Q==
-X-Received: by 2002:aca:ef87:: with SMTP id n129mr570750oih.118.1548223806679;
-        Tue, 22 Jan 2019 22:10:06 -0800 (PST)
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com. [209.85.167.173])
-        by smtp.gmail.com with ESMTPSA id h24sm7447101otq.11.2019.01.22.22.10.05
+        bh=tJ8uKtP+GD3ALDGLKkBVTt7dlC2NsD+m/yLfdirg0nE=;
+        b=QK5fSFJ7/1bhWdIoXh8dx2uriyb3AW504jd157HnbTkebctO3leFX/BdiyeTq1laTQ
+         mOKqPTxlWemDvAJ8o4I76agAVNq0sxTiRZh8Q64ilEHp+bk6eN/4IahtI7OLi11mKUzq
+         9Omdo0yD/pM2jpZzpdBKnh5PVXfra00GU34dskZAtyrrUdBwSRUzUn93LEAZEwq38TRu
+         FaFSU+BWD0txxEnkPOL8T/5nUWlx1nYnmE91qELlakMe/OWa3C41HgD+UtNLLwxUY3kS
+         OD7alm7qLJhZ5a2zlBUqVxXtwZZ39I2vpdcxeMSwO1Ni3uk93tyNp7BdBctRknLGQt7Q
+         GlAA==
+X-Gm-Message-State: AJcUukdFJ5XOeA26ytGGrBBDSH/hqNQVL9O8Vn2iIK2xwypYep3dwAEq
+        IiIlaMvebc4dhli6wKYHyvsLmvkx2BXgKg==
+X-Google-Smtp-Source: ALg8bN7kOn9WAobzn/OQW2LbzspjQqeiL3WPKgf9kZdobXgZsalKUzm7Mc66Laou2uiPdjM3OtCocw==
+X-Received: by 2002:aca:5b43:: with SMTP id p64mr563522oib.41.1548223856779;
+        Tue, 22 Jan 2019 22:10:56 -0800 (PST)
+Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com. [209.85.167.171])
+        by smtp.gmail.com with ESMTPSA id b2sm8562342oia.8.2019.01.22.22.10.56
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Jan 2019 22:10:05 -0800 (PST)
-Received: by mail-oi1-f173.google.com with SMTP id v6so914769oif.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 22:10:05 -0800 (PST)
-X-Received: by 2002:aca:ad14:: with SMTP id w20mr576883oie.3.1548223805144;
- Tue, 22 Jan 2019 22:10:05 -0800 (PST)
+        Tue, 22 Jan 2019 22:10:56 -0800 (PST)
+Received: by mail-oi1-f171.google.com with SMTP id x23so908012oix.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 22:10:56 -0800 (PST)
+X-Received: by 2002:aca:5e09:: with SMTP id s9mr551096oib.153.1548223855700;
+ Tue, 22 Jan 2019 22:10:55 -0800 (PST)
 MIME-Version: 1.0
-References: <20190109084616.17162-1-stanimir.varbanov@linaro.org> <20190109084616.17162-5-stanimir.varbanov@linaro.org>
-In-Reply-To: <20190109084616.17162-5-stanimir.varbanov@linaro.org>
+References: <20190109084616.17162-1-stanimir.varbanov@linaro.org> <20190109084616.17162-2-stanimir.varbanov@linaro.org>
+In-Reply-To: <20190109084616.17162-2-stanimir.varbanov@linaro.org>
 From:   Alexandre Courbot <acourbot@chromium.org>
-Date:   Wed, 23 Jan 2019 15:09:53 +0900
-X-Gmail-Original-Message-ID: <CAPBb6MWmeV2eUpk5HKOO1HVZ-eszehKfBW49+p4r-eSN1HuY0w@mail.gmail.com>
-Message-ID: <CAPBb6MWmeV2eUpk5HKOO1HVZ-eszehKfBW49+p4r-eSN1HuY0w@mail.gmail.com>
-Subject: Re: [PATCH 4/4] venus: helpers: drop setting of timestap invalid flag
+Date:   Wed, 23 Jan 2019 15:10:44 +0900
+X-Gmail-Original-Message-ID: <CAPBb6MXr-oLaLUjyPmUf5uFwSLv9WOs17YjnRp_bV8VhZpsosw@mail.gmail.com>
+Message-ID: <CAPBb6MXr-oLaLUjyPmUf5uFwSLv9WOs17YjnRp_bV8VhZpsosw@mail.gmail.com>
+Subject: Re: [PATCH 1/4] venus: firmware: check fw size against DT memory
+ region size
 To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
 Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -81,38 +82,153 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Sorry for the delayed review! >_<
+
 On Wed, Jan 9, 2019 at 5:46 PM Stanimir Varbanov
 <stanimir.varbanov@linaro.org> wrote:
 >
-> The zero timestap is really a valid so not sure why I discarded it. Fix
-
-s/timestap/timestamp, also in patch title.
-
-> that mistake by drop the code which checks for zero timestamp.
-
-s/drop/dropping
-
-
+> By historical reasons we defined firmware memory size to be 6MB even
+> that the firmware size for all supported Venus versions is 5MBs. Correct
+> that by compare the required firmware size returned from mdt loader and
+> the one provided by DT reserved memory region. We proceed further if the
+> required firmware size is smaller than provided by DT memory region.
 >
 > Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 > ---
->  drivers/media/platform/qcom/venus/helpers.c | 3 ---
->  1 file changed, 3 deletions(-)
+>  drivers/media/platform/qcom/venus/core.h     |  1 +
+>  drivers/media/platform/qcom/venus/firmware.c | 54 +++++++++++---------
+>  2 files changed, 31 insertions(+), 24 deletions(-)
 >
-> diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
-> index e436385bc5ab..5cad601d4c57 100644
-> --- a/drivers/media/platform/qcom/venus/helpers.c
-> +++ b/drivers/media/platform/qcom/venus/helpers.c
-> @@ -439,9 +439,6 @@ session_process_buf(struct venus_inst *inst, struct vb2_v4l2_buffer *vbuf)
->         fdata.flags = 0;
->         fdata.clnt_data = vbuf->vb2_buf.index;
+> diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
+> index 6382cea29185..79c7e816c706 100644
+> --- a/drivers/media/platform/qcom/venus/core.h
+> +++ b/drivers/media/platform/qcom/venus/core.h
+> @@ -134,6 +134,7 @@ struct venus_core {
+>         struct video_firmware {
+>                 struct device *dev;
+>                 struct iommu_domain *iommu_domain;
+> +               size_t mapped_mem_size;
+>         } fw;
+>         struct mutex lock;
+>         struct list_head instances;
+> diff --git a/drivers/media/platform/qcom/venus/firmware.c b/drivers/media/platform/qcom/venus/firmware.c
+> index c29acfd70c1b..6b509ffd022a 100644
+> --- a/drivers/media/platform/qcom/venus/firmware.c
+> +++ b/drivers/media/platform/qcom/venus/firmware.c
+> @@ -35,14 +35,15 @@
 >
-> -       if (!fdata.timestamp)
-> -               fdata.flags |= HFI_BUFFERFLAG_TIMESTAMPINVALID;
+>  static void venus_reset_cpu(struct venus_core *core)
+>  {
+> +       u32 fw_size = core->fw.mapped_mem_size;
+>         void __iomem *base = core->base;
+>
+>         writel(0, base + WRAPPER_FW_START_ADDR);
+> -       writel(VENUS_FW_MEM_SIZE, base + WRAPPER_FW_END_ADDR);
+> +       writel(fw_size, base + WRAPPER_FW_END_ADDR);
+>         writel(0, base + WRAPPER_CPA_START_ADDR);
+> -       writel(VENUS_FW_MEM_SIZE, base + WRAPPER_CPA_END_ADDR);
+> -       writel(VENUS_FW_MEM_SIZE, base + WRAPPER_NONPIX_START_ADDR);
+> -       writel(VENUS_FW_MEM_SIZE, base + WRAPPER_NONPIX_END_ADDR);
+> +       writel(fw_size, base + WRAPPER_CPA_END_ADDR);
+> +       writel(fw_size, base + WRAPPER_NONPIX_START_ADDR);
+> +       writel(fw_size, base + WRAPPER_NONPIX_END_ADDR);
+>         writel(0x0, base + WRAPPER_CPU_CGC_DIS);
+>         writel(0x0, base + WRAPPER_CPU_CLOCK_CONFIG);
+>
+> @@ -74,6 +75,9 @@ static int venus_load_fw(struct venus_core *core, const char *fwname,
+>         void *mem_va;
+>         int ret;
+>
+> +       *mem_phys = 0;
+> +       *mem_size = 0;
+> +
+>         dev = core->dev;
+>         node = of_parse_phandle(dev->of_node, "memory-region", 0);
+>         if (!node) {
+> @@ -85,28 +89,30 @@ static int venus_load_fw(struct venus_core *core, const char *fwname,
+>         if (ret)
+>                 return ret;
+>
+> +       ret = request_firmware(&mdt, fwname, dev);
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       fw_size = qcom_mdt_get_size(mdt);
+> +       if (fw_size < 0) {
+> +               ret = fw_size;
+> +               goto err_release_fw;
+> +       }
+> +
+>         *mem_phys = r.start;
+>         *mem_size = resource_size(&r);
+>
+> -       if (*mem_size < VENUS_FW_MEM_SIZE)
+> -               return -EINVAL;
+> +       if (*mem_size < fw_size || fw_size > VENUS_FW_MEM_SIZE) {
+
+Do we still need to check for fw_size > VENUS_FW_MEM_SIZE ? If we
+don't then we can remove the definition of VENUS_FW_MEM_SIZE
+altogether.
+
+> +               ret = -EINVAL;
+> +               goto err_release_fw;
+> +       }
+>
+>         mem_va = memremap(r.start, *mem_size, MEMREMAP_WC);
+>         if (!mem_va) {
+>                 dev_err(dev, "unable to map memory region: %pa+%zx\n",
+>                         &r.start, *mem_size);
+> -               return -ENOMEM;
+> -       }
 > -
->         if (type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
->                 fdata.buffer_type = HFI_BUFFER_INPUT;
->                 fdata.filled_len = vb2_get_plane_payload(vb, 0);
-> --
-> 2.17.1
+> -       ret = request_firmware(&mdt, fwname, dev);
+> -       if (ret < 0)
+> -               goto err_unmap;
+> -
+> -       fw_size = qcom_mdt_get_size(mdt);
+> -       if (fw_size < 0) {
+> -               ret = fw_size;
+> -               release_firmware(mdt);
+> -               goto err_unmap;
+> +               ret = -ENOMEM;
+> +               goto err_release_fw;
+>         }
 >
+>         if (core->use_tz)
+> @@ -116,10 +122,9 @@ static int venus_load_fw(struct venus_core *core, const char *fwname,
+>                 ret = qcom_mdt_load_no_init(dev, mdt, fwname, VENUS_PAS_ID,
+>                                             mem_va, *mem_phys, *mem_size, NULL);
+>
+> -       release_firmware(mdt);
+> -
+> -err_unmap:
+>         memunmap(mem_va);
+> +err_release_fw:
+> +       release_firmware(mdt);
+>         return ret;
+>  }
+>
+> @@ -135,6 +140,7 @@ static int venus_boot_no_tz(struct venus_core *core, phys_addr_t mem_phys,
+>                 return -EPROBE_DEFER;
+>
+>         iommu = core->fw.iommu_domain;
+> +       core->fw.mapped_mem_size = mem_size;
+>
+>         ret = iommu_map(iommu, VENUS_FW_START_ADDR, mem_phys, mem_size,
+>                         IOMMU_READ | IOMMU_WRITE | IOMMU_PRIV);
+> @@ -151,7 +157,7 @@ static int venus_boot_no_tz(struct venus_core *core, phys_addr_t mem_phys,
+>  static int venus_shutdown_no_tz(struct venus_core *core)
+>  {
+>         struct iommu_domain *iommu;
+> -       size_t unmapped;
+> +       size_t unmapped, mapped = core->fw.mapped_mem_size;
+
+mapped should probably be const here.
+
+With these minor comments:
+
+Reviewed-by: Alexandre Courbot <acourbot@chromium.org>
+Tested-by: Alexandre Courbot <acourbot@chromium.org>
+
+For the 4 patches in this series. I could see the improvement in
+decoder performance introduced by patches 2 and 3, thanks!
