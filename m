@@ -2,612 +2,179 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAE13C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:36:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39202C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:36:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71CA5218A1
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:36:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PNoNN0pw"
+	by mail.kernel.org (Postfix) with ESMTP id 101B9218A1
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:36:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727016AbfAWSgX (ORCPT
+        id S1727056AbfAWSg2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 13:36:23 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:39777 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726944AbfAWSgR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 13:36:17 -0500
-Received: by mail-it1-f194.google.com with SMTP id a6so583502itl.4
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 10:36:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=WMKhhCm6b6fGciswCcUfCd71SzS8vEPjCit8Xt9wZM4=;
-        b=PNoNN0pw0Gqaq4IsS5CYrHBhDAxEBG4XJAjtVo4QTCwehOQYigaBOMDrakqGizX9eQ
-         vN8G3l87cANTf7RT1laGcnpGQAtmhiLIlMjp8lXTTmLUyXggmcXo8JEmLpzfdhpqRFnL
-         kq3aAdlx85Dtax6okGJYBBkKBHqUZKvSnltic=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=WMKhhCm6b6fGciswCcUfCd71SzS8vEPjCit8Xt9wZM4=;
-        b=SuF7ghR6kGeA3QNaATybwQKP22iXXzkfivurguNVjDAuPbWqtlO25h+0/ZeH3UlnJV
-         LNIKHErPX7pV1HNXerGTzunIwauQhf5hDnHRFUbf8mz3jPasIRFWSBhbuTkCjH6tkAJg
-         7v+vYGZr/CjB3hpRfoRCUkHn75KFwJf7ojwFNnBUCfn1JPoUqBmCSc0gM4wbiuHc1UpS
-         ZI8R8vSi+i6aUz1gClltQBPVzT8MYI3gicdGPMUUgMG1dS+rZppc9i5JDfQF8+mCeCFy
-         bNcDOfB7FM2rgolv7IUQT6Aw3pzgaFkjSbZxV7UPF0Th+YAogY5D9+4HvWZflQ4uRbm0
-         OSzw==
-X-Gm-Message-State: AJcUukdDxuzlrH6MVSv/5JNePT+NC6nR7Dk/nHCpZVEwPjrXwZcRlEMe
-        F5tQD6AtuA/9GK8QG0NQKLLPuPj5J2s=
-X-Google-Smtp-Source: AHgI3IZgTxxJfMkYS8+G91SmEZgRBmVfD8VbJiw8RFLedroE3sn0C4uEvI84lOidxUGKokgCTWzpNw==
-X-Received: by 2002:a24:e38f:: with SMTP id d137mr2199662ith.69.1548268574821;
-        Wed, 23 Jan 2019 10:36:14 -0800 (PST)
-Received: from ncrews2.bld.corp.google.com ([2620:15c:183:200:8140:8e3f:aea5:bcdf])
-        by smtp.gmail.com with ESMTPSA id 189sm9537577itw.33.2019.01.23.10.36.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 23 Jan 2019 10:36:13 -0800 (PST)
-From:   Nick Crews <ncrews@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     sjg@chromium.org, dmitry.torokhov@gmail.com, sre@kernel.org,
-        linux-input@vger.kernel.org, groeck@chromium.org,
-        dlaurie@chromium.org, Duncan Laurie <dlaurie@google.com>,
-        Nick Crews <ncrews@chromium.org>,
-        Nick Crews <ncrews@google.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Benson Leung <bleung@chromium.org>
-Subject: [PATCH v4 6/9] platform/chrome: Add event handling
-Date:   Wed, 23 Jan 2019 11:33:22 -0700
-Message-Id: <20190123183325.92946-7-ncrews@chromium.org>
-X-Mailer: git-send-email 2.20.1.321.g9e740568ce-goog
-In-Reply-To: <20190123183325.92946-1-ncrews@chromium.org>
-References: <20190123183325.92946-1-ncrews@chromium.org>
+        Wed, 23 Jan 2019 13:36:28 -0500
+Received: from foss.arm.com ([217.140.101.70]:45826 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726140AbfAWSg1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 13:36:27 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E0774EBD;
+        Wed, 23 Jan 2019 10:36:26 -0800 (PST)
+Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 63B683F237;
+        Wed, 23 Jan 2019 10:36:25 -0800 (PST)
+Subject: Re: [PATCH] EDAC, dmc520:: add DMC520 EDAC driver
+To:     Rui Zhao <ruizhao@microsoft.com>
+Cc:     Sasha Levin <sashal@kernel.org>, "bp@alien8.de" <bp@alien8.de>,
+        "mchehab@kernel.org" <mchehab@kernel.org>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux Kernel <linux-kernel@microsoft.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "okaya@kernel.org" <okaya@kernel.org>
+References: <20190118162324.17123-1-sashal@kernel.org>
+ <0866a996-49f7-1498-4653-20232bef2f46@arm.com>
+ <MW2PR2101MB09701C705250DAC025AFC251B3990@MW2PR2101MB0970.namprd21.prod.outlook.com>
+From:   James Morse <james.morse@arm.com>
+Message-ID: <7d404c61-a916-5d5e-35cc-0f6f016cd8a9@arm.com>
+Date:   Wed, 23 Jan 2019 18:36:23 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
+In-Reply-To: <MW2PR2101MB09701C705250DAC025AFC251B3990@MW2PR2101MB0970.namprd21.prod.outlook.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-GB
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Duncan Laurie <dlaurie@google.com>
+Hi Rui,
 
-The Wilco Embedded Controller can return extended events that
-are not handled by standard ACPI objects.  These events can
-include hotkeys which map to standard functions like brightness
-controls, or information about EC controlled features like the
-charger or battery.
+On 23/01/2019 00:42, Rui Zhao wrote:
+> On Monday, January 21, 2019 9:09 AM, James Morse wrote:
+>> It would be good if we can make this generic, so it works on all platforms with
+>> a DMC520, possibly along with other components. (e.g. the a15 L2 driver posted
+>> recently).
+>>
+>> This will mostly be getting the DT right, as we can refactor the code when a
+>> second user comes along, but can't change the DT format.
 
-These events are triggered with an ACPI Notify(0x90) and the
-event data buffer is read through an ACPI method provided by
-the BIOS which reads the event buffer from EC RAM.
+> Agreed. It'd be good if we can move all platform specific settings to DT such
+> that a second user can update the code and won't break the DT for original
+> device. I'll think about the DT format to make it more generic.
 
-These events are then processed, with hotkey events being sent
-to the input subsystem and other events put into a queue which
-can be read by a userspace daemon via a sysfs attribute.
+When the time comes, could you post a dt-binding as the first patch? These add
+the documentation under Documentation/device-tree/bindings, and need to be CC'd
+to the DT folks.
 
-> evtest /dev/input/event6
-Input driver version is 1.0.1
-Input device ID: bus 0x19 vendor 0x0 product 0x0 version 0x0
-Input device name: "Wilco EC hotkeys"
-Supported events:
-  Event type 0 (EV_SYN)
-  Event type 1 (EV_KEY)
-    Event code 224 (KEY_BRIGHTNESSDOWN)
-    Event code 225 (KEY_BRIGHTNESSUP)
-    Event code 240 (KEY_UNKNOWN)
-  Event type 4 (EV_MSC)
-    Event code 4 (MSC_SCAN)
-Properties:
-Testing ... (interrupt to exit)
-Event: type 4 (EV_MSC), code 4 (MSC_SCAN), value 57
-Event: type 1 (EV_KEY), code 224 (KEY_BRIGHTNESSDOWN), value 1
-Event: -------------- SYN_REPORT ------------
-Event: type 1 (EV_KEY), code 224 (KEY_BRIGHTNESSDOWN), value 0
-Event: -------------- SYN_REPORT ------------
-Event: type 4 (EV_MSC), code 4 (MSC_SCAN), value 58
-Event: type 1 (EV_KEY), code 225 (KEY_BRIGHTNESSUP), value 1
-Event: -------------- SYN_REPORT ------------
-Event: type 1 (EV_KEY), code 225 (KEY_BRIGHTNESSUP), value 0
-Event: -------------- SYN_REPORT ------------
 
-Signed-off-by: Duncan Laurie <dlaurie@google.com>
-Signed-off-by: Nick Crews <ncrews@chromium.org>
----
+>> The TRM describes 'a set of interrupts', which ones does the binding anticipate
+>> are wired up for this? There are separate status bits for corrected and
+>> uncorrected, and one pair for dram versus ram. (not sure what this corresponds
+>> with).
 
-Changes in v4: None
-Changes in v3:
-- change err check from "if (ret < 0)" to "if (ret)"
+>> Do we care about the link-error interrupt?
 
-Changes in v2:
-- rm "wilco_ec_event -" prefix from docstring
-- rm license boiler plate
-- Add sysfs directory documentation
-- Fix cosmetics
-- events are init()ed before subdrivers now
+> Will add ram interrupts handling, and make it configurable in DT.
 
- drivers/platform/chrome/wilco_ec/Makefile |   3 +-
- drivers/platform/chrome/wilco_ec/core.c   |  12 +
- drivers/platform/chrome/wilco_ec/event.c  | 347 ++++++++++++++++++++++
- include/linux/platform_data/wilco-ec.h    |  34 +++
- 4 files changed, 395 insertions(+), 1 deletion(-)
- create mode 100644 drivers/platform/chrome/wilco_ec/event.c
+I don't think the code needs to change, we just need to make it clear these are
+the dram interrupts, and they are different numbers.
+This means someone can add the ram interrupts later, and not have to
+disambiguate them to keep your platform going.
 
-diff --git a/drivers/platform/chrome/wilco_ec/Makefile b/drivers/platform/chrome/wilco_ec/Makefile
-index b4dadf8b1a07..c5a8397b0a16 100644
---- a/drivers/platform/chrome/wilco_ec/Makefile
-+++ b/drivers/platform/chrome/wilco_ec/Makefile
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- 
--wilco_ec-objs				:= core.o mailbox.o sysfs.o legacy.o
-+wilco_ec-objs				:= core.o mailbox.o sysfs.o legacy.o \
-+					   event.o
- obj-$(CONFIG_WILCO_EC)			+= wilco_ec.o
- wilco_ec_debugfs-objs			:= debugfs.o
- obj-$(CONFIG_WILCO_EC_DEBUGFS)		+= wilco_ec_debugfs.o
-diff --git a/drivers/platform/chrome/wilco_ec/core.c b/drivers/platform/chrome/wilco_ec/core.c
-index 1a1cd8e59f3f..73901e8a8794 100644
---- a/drivers/platform/chrome/wilco_ec/core.c
-+++ b/drivers/platform/chrome/wilco_ec/core.c
-@@ -108,8 +108,17 @@ static int wilco_ec_probe(struct platform_device *pdev)
- 		goto destroy_mec;
- 	}
- 
-+	/* Prepare to handle events */
-+	ret = wilco_ec_event_init(ec);
-+	if (ret) {
-+		dev_err(dev, "Failed to setup event handling\n");
-+		goto remove_sysfs;
-+	}
-+
- 	return 0;
- 
-+remove_sysfs:
-+	wilco_ec_sysfs_remove(ec);
- destroy_mec:
- 	cros_ec_lpc_mec_destroy();
- 	return ret;
-@@ -119,6 +128,9 @@ static int wilco_ec_remove(struct platform_device *pdev)
- {
- 	struct wilco_ec_device *ec = platform_get_drvdata(pdev);
- 
-+	/* Stop handling EC events */
-+	wilco_ec_event_remove(ec);
-+
- 	/* Remove sysfs attributes */
- 	wilco_ec_sysfs_remove(ec);
- 
-diff --git a/drivers/platform/chrome/wilco_ec/event.c b/drivers/platform/chrome/wilco_ec/event.c
-new file mode 100644
-index 000000000000..7601c02dffe8
---- /dev/null
-+++ b/drivers/platform/chrome/wilco_ec/event.c
-@@ -0,0 +1,347 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Event handling for Wilco Embedded Controller
-+ *
-+ * Copyright 2018 Google LLC
-+ *
-+ * The Wilco Embedded Controller can return extended events that
-+ * are not handled by standard ACPI objects.  These events can
-+ * include hotkeys which map to standard functions like brightness
-+ * controls, or information about EC controlled features like the
-+ * charger or battery.
-+ *
-+ * These events are triggered with an ACPI Notify(0x90) and the
-+ * event data buffer is read through an ACPI method provided by
-+ * the BIOS which reads the event buffer from EC RAM.
-+ *
-+ * These events are then processed, with hotkey events being sent
-+ * to the input subsystem and other events put into a queue which
-+ * can be read by a userspace daemon via a sysfs attribute.
-+ */
-+
-+#include <linux/acpi.h>
-+#include <linux/device.h>
-+#include <linux/input.h>
-+#include <linux/input/sparse-keymap.h>
-+#include <linux/list.h>
-+#include <linux/platform_data/wilco-ec.h>
-+#include <linux/platform_device.h>
-+
-+/* ACPI Notify event code indicating event data is available */
-+#define EC_ACPI_NOTIFY_EVENT		0x90
-+
-+/* ACPI Method to execute to retrieve event data buffer from the EC */
-+#define EC_ACPI_GET_EVENT		"^QSET"
-+
-+/* Maximum number of words in event data returned by the EC */
-+#define EC_ACPI_MAX_EVENT_DATA		6
-+
-+/* Keep at most 100 events in the queue */
-+#define EC_EVENT_QUEUE_MAX		100
-+
-+/**
-+ * enum ec_event_type - EC event categories.
-+ * @EC_EVENT_TYPE_HOTKEY: Hotkey event for handling special keys.
-+ * @EC_EVENT_TYPE_NOTIFY: EC feature state changes.
-+ * @EC_EVENT_TYPE_SYSTEM: EC system messages.
-+ */
-+enum ec_event_type {
-+	EC_EVENT_TYPE_HOTKEY = 0x10,
-+	EC_EVENT_TYPE_NOTIFY = 0x11,
-+	EC_EVENT_TYPE_SYSTEM = 0x12,
-+};
-+
-+/**
-+ * struct ec_event - Extended event returned by the EC.
-+ * @size: Number of words in structure after the size word.
-+ * @type: Extended event type from &enum ec_event_type.
-+ * @event: Event data words.  Max count is %EC_ACPI_MAX_EVENT_DATA.
-+ */
-+struct ec_event {
-+	u16 size;
-+	u16 type;
-+	u16 event[0];
-+} __packed;
-+
-+/**
-+ * struct ec_event_entry - Event queue entry.
-+ * @list: List node.
-+ * @size: Number of bytes in event structure.
-+ * @event: Extended event returned by the EC.  This should be the last
-+ *         element because &struct ec_event includes a zero length array.
-+ */
-+struct ec_event_entry {
-+	struct list_head list;
-+	size_t size;
-+	struct ec_event event;
-+};
-+
-+static const struct key_entry wilco_ec_keymap[] = {
-+	{ KE_KEY, 0x0057, { KEY_BRIGHTNESSDOWN } },
-+	{ KE_KEY, 0x0058, { KEY_BRIGHTNESSUP } },
-+	{ KE_END, 0 }
-+};
-+
-+/**
-+ * wilco_ec_handle_events() - Handle Embedded Controller events.
-+ * @ec: EC device.
-+ * @buf: Buffer of event data.
-+ * @length: Length of event data buffer.
-+ *
-+ * Return: Number of events in queue or negative error code on failure.
-+ *
-+ * This function will handle EC extended events, sending hotkey events
-+ * to the input subsystem and queueing others to be read by userspace.
-+ */
-+static int wilco_ec_handle_events(struct wilco_ec_device *ec,
-+				  u8 *buf, u32 length)
-+{
-+	struct wilco_ec_event *queue = &ec->event;
-+	struct ec_event *event;
-+	struct ec_event_entry *entry;
-+	size_t entry_size, num_words;
-+	u32 offset = 0;
-+
-+	while (offset < length) {
-+		event = (struct ec_event *)(buf + offset);
-+		if (!event)
-+			return -EINVAL;
-+
-+		dev_dbg(ec->dev, "EC event type 0x%02x size %d\n", event->type,
-+			event->size);
-+
-+		/* Number of 16bit event data words is size - 1 */
-+		num_words = event->size - 1;
-+		entry_size = sizeof(*event) + (num_words * sizeof(u16));
-+
-+		if (num_words > EC_ACPI_MAX_EVENT_DATA) {
-+			dev_err(ec->dev, "Invalid event word count: %d > %d\n",
-+				num_words, EC_ACPI_MAX_EVENT_DATA);
-+			return -EOVERFLOW;
-+		};
-+
-+		/* Ensure event does not overflow the available buffer */
-+		if ((offset + entry_size) > length) {
-+			dev_err(ec->dev, "Event exceeds buffer: %d > %d\n",
-+				offset + entry_size, length);
-+			return -EOVERFLOW;
-+		}
-+
-+		/* Point to the next event in the buffer */
-+		offset += entry_size;
-+
-+		/* Hotkeys are sent to the input subsystem */
-+		if (event->type == EC_EVENT_TYPE_HOTKEY) {
-+			if (sparse_keymap_report_event(queue->input,
-+						       event->event[0],
-+						       1, true))
-+				continue;
-+
-+			/* Unknown hotkeys are put into the event queue */
-+			dev_dbg(ec->dev, "Unknown hotkey 0x%04x\n",
-+				event->event[0]);
-+		}
-+
-+		/* Prepare event for the queue */
-+		entry = kzalloc(entry_size, GFP_KERNEL);
-+		if (!entry)
-+			return -ENOMEM;
-+
-+		/* Copy event data */
-+		entry->size = entry_size;
-+		memcpy(&entry->event, event, entry->size);
-+
-+		/* Add this event to the queue */
-+		mutex_lock(&queue->lock);
-+		list_add_tail(&entry->list, &queue->list);
-+		queue->count++;
-+		mutex_unlock(&queue->lock);
-+	}
-+
-+	return queue->count;
-+}
-+
-+/**
-+ * wilco_ec_acpi_notify() - Handler called by ACPI subsystem for Notify.
-+ * @device: EC ACPI device.
-+ * @value: Value passed to Notify() in ACPI.
-+ * @data: Private data, pointer to EC device.
-+ */
-+static void wilco_ec_acpi_notify(acpi_handle device, u32 value, void *data)
-+{
-+	struct wilco_ec_device *ec = data;
-+	struct acpi_buffer event_buffer = { ACPI_ALLOCATE_BUFFER, NULL };
-+	union acpi_object *obj;
-+	acpi_status status;
-+	int count;
-+
-+	/* Currently only handle event notifications */
-+	if (value != EC_ACPI_NOTIFY_EVENT) {
-+		dev_err(ec->dev, "Invalid event: 0x%08x\n", value);
-+		return;
-+	}
-+
-+	/* Execute ACPI method to get event data buffer */
-+	status = acpi_evaluate_object(device, EC_ACPI_GET_EVENT,
-+				      NULL, &event_buffer);
-+	if (ACPI_FAILURE(status)) {
-+		dev_err(ec->dev, "Error executing ACPI method %s()\n",
-+			 EC_ACPI_GET_EVENT);
-+		return;
-+	}
-+
-+	obj = (union acpi_object *)event_buffer.pointer;
-+	if (!obj) {
-+		dev_err(ec->dev, "Nothing returned from %s()\n",
-+			EC_ACPI_GET_EVENT);
-+		return;
-+	}
-+	if (obj->type != ACPI_TYPE_BUFFER) {
-+		dev_err(ec->dev, "Invalid object returned from %s()\n",
-+			EC_ACPI_GET_EVENT);
-+		kfree(obj);
-+		return;
-+	}
-+	if (obj->buffer.length < sizeof(struct ec_event)) {
-+		dev_err(ec->dev, "Invalid buffer length %d from %s()\n",
-+			obj->buffer.length, EC_ACPI_GET_EVENT);
-+		kfree(obj);
-+		return;
-+	}
-+
-+	/* Handle events and notify sysfs if any queued for userspace */
-+	count = wilco_ec_handle_events(ec, obj->buffer.pointer,
-+				       obj->buffer.length);
-+
-+	if (count > 0) {
-+		dev_dbg(ec->dev, "EC event queue has %d entries\n", count);
-+		sysfs_notify(&ec->dev->kobj, NULL, "event");
-+	}
-+
-+	kfree(obj);
-+}
-+
-+static ssize_t wilco_ec_event_read(struct file *filp, struct kobject *kobj,
-+				   struct bin_attribute *attr,
-+				   char *buf, loff_t off, size_t count)
-+{
-+	struct wilco_ec_device *ec = attr->private;
-+	struct ec_event_entry *entry;
-+
-+	/* Only supports reading full events */
-+	if (off != 0)
-+		return -EINVAL;
-+
-+	/* Remove the first event and provide it to userspace */
-+	mutex_lock(&ec->event.lock);
-+	entry = list_first_entry_or_null(&ec->event.list,
-+					 struct ec_event_entry, list);
-+	if (entry) {
-+		if (entry->size < count)
-+			count = entry->size;
-+		memcpy(buf, &entry->event, count);
-+		list_del(&entry->list);
-+		kfree(entry);
-+		ec->event.count--;
-+	} else {
-+		count = 0;
-+	}
-+	mutex_unlock(&ec->event.lock);
-+
-+	return count;
-+}
-+
-+static void wilco_ec_event_clear(struct wilco_ec_device *ec)
-+{
-+	struct ec_event_entry *entry, *next;
-+
-+	mutex_lock(&ec->event.lock);
-+
-+	/* Clear the event queue */
-+	list_for_each_entry_safe(entry, next, &ec->event.list, list) {
-+		list_del(&entry->list);
-+		kfree(entry);
-+		ec->event.count--;
-+	}
-+
-+	mutex_unlock(&ec->event.lock);
-+}
-+
-+int wilco_ec_event_init(struct wilco_ec_device *ec)
-+{
-+	struct wilco_ec_event *event = &ec->event;
-+	struct device *dev = ec->dev;
-+	struct acpi_device *adev = ACPI_COMPANION(dev);
-+	acpi_status status;
-+	int ret;
-+
-+	if (!adev) {
-+		dev_err(dev, "Unable to find Wilco ACPI Device\n");
-+		return -ENODEV;
-+	}
-+
-+	INIT_LIST_HEAD(&event->list);
-+	mutex_init(&event->lock);
-+
-+	/* Allocate input device for hotkeys */
-+	event->input = input_allocate_device();
-+	if (!event->input)
-+		return -ENOMEM;
-+	event->input->name = "Wilco EC hotkeys";
-+	event->input->phys = "ec/input0";
-+	event->input->id.bustype = BUS_HOST;
-+	ret = sparse_keymap_setup(event->input, wilco_ec_keymap, NULL);
-+	if (ret) {
-+		dev_err(dev, "Unable to setup input device keymap\n");
-+		input_free_device(event->input);
-+		return ret;
-+	}
-+	ret = input_register_device(event->input);
-+	if (ret) {
-+		dev_err(dev, "Unable to register input device\n");
-+		input_free_device(event->input);
-+		return ret;
-+	}
-+
-+	/* Create sysfs attribute for userspace event handling */
-+	sysfs_bin_attr_init(&event->attr);
-+	event->attr.attr.name = "event";
-+	event->attr.attr.mode = 0400;
-+	event->attr.read = wilco_ec_event_read;
-+	event->attr.private = ec;
-+	ret = device_create_bin_file(dev, &event->attr);
-+	if (ret) {
-+		dev_err(dev, "Failed to create event attribute in sysfs\n");
-+		input_unregister_device(event->input);
-+		return ret;
-+	}
-+
-+	/* Install ACPI handler for Notify events */
-+	status = acpi_install_notify_handler(adev->handle, ACPI_ALL_NOTIFY,
-+					     wilco_ec_acpi_notify, ec);
-+	if (ACPI_FAILURE(status)) {
-+		dev_err(dev, "Failed to register notifier %08x\n", status);
-+		device_remove_bin_file(dev, &event->attr);
-+		input_unregister_device(event->input);
-+		return -ENODEV;
-+	}
-+
-+	return 0;
-+}
-+
-+void wilco_ec_event_remove(struct wilco_ec_device *ec)
-+{
-+	struct acpi_device *adev = ACPI_COMPANION(ec->dev);
-+
-+	/* Stop new events */
-+	if (adev)
-+		acpi_remove_notify_handler(adev->handle, ACPI_ALL_NOTIFY,
-+					   wilco_ec_acpi_notify);
-+
-+	/* Remove event interfaces */
-+	device_remove_bin_file(ec->dev, &ec->event.attr);
-+	input_unregister_device(ec->event.input);
-+
-+	/* Clear the event queue */
-+	wilco_ec_event_clear(ec);
-+}
-diff --git a/include/linux/platform_data/wilco-ec.h b/include/linux/platform_data/wilco-ec.h
-index 7c6ab6de7239..d6bfc114c50e 100644
---- a/include/linux/platform_data/wilco-ec.h
-+++ b/include/linux/platform_data/wilco-ec.h
-@@ -9,7 +9,9 @@
- #define WILCO_EC_H
- 
- #include <linux/device.h>
-+#include <linux/input.h>
- #include <linux/kernel.h>
-+#include <linux/list.h>
- 
- #define WILCO_EC_FLAG_NO_RESPONSE	BIT(0) /* EC does not respond */
- #define WILCO_EC_FLAG_EXTENDED_DATA	BIT(1) /* EC returns 256 data bytes */
-@@ -24,6 +26,22 @@
- /* Extended commands have 256 bytes of response data */
- #define EC_MAILBOX_DATA_SIZE_EXTENDED	256
- 
-+/**
-+ * struct wilco_ec_event - EC extended events.
-+ * @lock: Mutex to guard the list of events.
-+ * @list: Queue of EC events to be provided to userspace.
-+ * @attr: Sysfs attribute for userspace to read events.
-+ * @count: Count of events in the queue.
-+ * @input: Input device for hotkey events.
-+ */
-+struct wilco_ec_event {
-+	struct mutex lock;
-+	struct list_head list;
-+	struct bin_attribute attr;
-+	size_t count;
-+	struct input_dev *input;
-+};
-+
- /**
-  * struct wilco_ec_device - Wilco Embedded Controller handle.
-  * @dev: Device handle.
-@@ -34,6 +52,7 @@
-  * @data_buffer: Buffer used for EC communication.  The same buffer
-  *               is used to hold the request and the response.
-  * @data_size: Size of the data buffer used for EC communication.
-+ * @event: EC extended event handler.
-  */
- struct wilco_ec_device {
- 	struct device *dev;
-@@ -43,6 +62,7 @@ struct wilco_ec_device {
- 	struct resource *io_packet;
- 	void *data_buffer;
- 	size_t data_size;
-+	struct wilco_ec_event event;
- };
- 
- /**
-@@ -149,4 +169,18 @@ int wilco_ec_sysfs_init(struct wilco_ec_device *ec);
-  */
- void wilco_ec_sysfs_remove(struct wilco_ec_device *ec);
- 
-+/**
-+ * wilco_ec_event_init() - Prepare to handle EC events.
-+ * @ec: EC device.
-+ *
-+ * Return: 0 for success or negative error code on failure.
-+ */
-+int wilco_ec_event_init(struct wilco_ec_device *ec);
-+
-+/**
-+ * wilco_ec_event_remove() - Remove EC event handler.
-+ * @ec: EC device.
-+ */
-+void wilco_ec_event_remove(struct wilco_ec_device *ec);
-+
- #endif /* WILCO_EC_H */
--- 
-2.20.1.321.g9e740568ce-goog
+(its this stuff that the binding document describes)
 
+
+> Could you please
+> share a bit more info on link-error interrupt? TRM doesn't have detailed info about
+> it.
+
+I only have the TRM too! The section titled 'RAS' on page 2-23 talks about 'link
+error protection', so it might be relevant so someone. We don't care about this
+now, but if someone does in the future, we will need to have a way of adding it
+to the DT.
+
+> Would like to know what's the impact if this error happens, and how to fit it
+> with current reporting in EDAC core.
+
+At a guess the interrupt triggers when link_err_count increases. (link_err has
+an overflow bit, so the interrupt must be related to a counter).
+
+If we could associate a link with a layer in edac, we could report errors
+against that point. But I've no idea how 'links' correspond with 'ranks and banks'!
+
+
+>>> +     layers[1].type = EDAC_MC_LAYER_CHANNEL;
+>>> +     layers[1].size = DMC520_EDAC_CHANS;
+>>> +     layers[1].is_virt_csrow = false;
+
+>> If you can read the rank count, why hard code the bank?
+> 
+>> (which is what I assume channels corresponds to ... although this has confused
+>> me before [0]).
+
+> I misunderstood what channel meant. For bank, we can read config from the register.
+
+Its an assumption. Channel seems to be an overloaded term with different meanings.
+Fortunately edac drivers get to pick what their layers mean. It looks like all
+this controls is the names that come out of sysfs.
+
+rank/bank are part of the address decoding, as we can read both sizes I think it
+makes sense to use both as it should further localise the error.
+
+
+>>> +     mci->scrub_cap = SCRUB_HW_SRC;
+>>> +     mci->scrub_mode = SCRUB_NONE;
+
+>> Is this saying the device supports error scrubbing, but its disabled?
+>> Do we know that?
+
+>> Can the user try and turn it on? (I can't find anything that reads this!)
+
+> We don’t want to change what’s already configured.
+
+I don't think we could if we wanted to. This thing has 'READY' and 'CONFIG'
+modes, the scrubbing can only be written to in 'CONFIG' mode. I'm willing to bet
+we need it to be in 'READY' to be executing the kernel from dram.
+
+
+> Will change scrub_mode to HW.
+
+Do we know its enabled? This is something firmware has to set up, someone else's
+platform may do it differently.
+
+I think should read one of the scrub control registers to find out if its turned on.
+
+But, I can't find what uses this value ...
+
+
+>>> +     /* Enable interrupts */
+>>> +     dmc520_write_reg(edac,
+>>> +                      DRAM_ECC_INT_CE_MASK | DRAM_ECC_INT_UE_MASK,
+>>> +                      REG_OFFSET_INTERRUPT_CONTROL);
+
+>> What if they were enabled before? (e.g. enabled by firmware, the bootloader or
+>> kdump). If they're already enabled, can we race with the interrupt handler on
+>> another CPU and get double reporting of the error counter?
+
+> We don't expect interrupts to be enabled by firmware or bootloader if this driver
+> is enabled.
+
+What about a previous instance of this driver? Linux supports kexec, kdump and
+hibernate, all of which cause us to inherit a slightly used platform.
+
+
+> If firmware enables it, they're suppose to handle the interrupt.
+
+Ah, so you still have resident firmware!
+How come your firmware trusts linux not to turn off the memory controller?!
+These things are usually protected by trust zone so the OS can't pull the memory
+from under firmware's feet.
+
+
+Thanks,
+
+James
