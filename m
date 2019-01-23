@@ -2,152 +2,141 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D556C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 17:09:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9CB1C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 17:10:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD24021855
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 17:09:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8461821855
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 17:10:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="xArrTRjx"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="P3mexvda"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726177AbfAWRJ3 (ORCPT
+        id S1726262AbfAWRKj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 12:09:29 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:57238 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725871AbfAWRJ3 (ORCPT
+        Wed, 23 Jan 2019 12:10:39 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:45648 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725871AbfAWRKi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 12:09:29 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0NH9COD121219;
-        Wed, 23 Jan 2019 11:09:12 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1548263352;
-        bh=N3rMetUdTo4sFfyoFxABiDvjHajQT07HtXRmJ2kVnRY=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=xArrTRjxNBKSV7hM8nklqyADMFsbM8/yhYyHFPWv0Qxq03FHPGnH24hstrvkoc5nc
-         dBPLBkYKhwy+/20aG3ia8zTTe+C1Vmm0PeiFY5QuUPl6Ajg3NMyaFVW3rfYg5HLIME
-         E47ILDIk1r9LhaEfcuXFUiwK4dkxGEci45ioekwk=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0NH9COd093922
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 23 Jan 2019 11:09:12 -0600
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 23
- Jan 2019 11:09:12 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 23 Jan 2019 11:09:12 -0600
-Received: from [172.22.97.60] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0NH9BUX005473;
-        Wed, 23 Jan 2019 11:09:11 -0600
-Subject: Re: [PATCH 13/14] staging: android: ion: Do not sync CPU cache on
- map/unmap
-To:     Sumit Semwal <sumit.semwal@linaro.org>
-CC:     Brian Starkey <Brian.Starkey@arm.com>,
-        Liam Mark <lmark@codeaurora.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?Q?Arve_Hj=c3=b8nnev=c3=a5g?= <arve@android.com>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>, nd <nd@arm.com>,
-        Daniel Vetter <daniel@ffwll.ch>
-References: <79eb70f6-00b0-2939-5ec9-65e196ab4987@ti.com>
- <alpine.DEB.2.10.1901150937280.4046@lmark-linux.qualcomm.com>
- <cfcd3daf-bd1d-0dbc-7b5c-8e504d179564@ti.com>
- <f53987d5-b7c1-61f4-de44-3d7b4a3c68fe@ti.com>
- <20190116151946.66vc6ibbivijdzvd@DESKTOP-E1NTVVP.localdomain>
- <4a5d4147-765d-711f-af98-9022d0253b3b@ti.com>
- <alpine.DEB.2.10.1901161450470.10666@lmark-linux.qualcomm.com>
- <3bf4bfce-aee6-9c52-c2f7-783dc63bfc3a@ti.com>
- <alpine.DEB.2.10.1901171704270.12287@lmark-linux.qualcomm.com>
- <b8b16d71-e09b-6bf9-259e-79c1de7fd15b@ti.com>
- <20190121112235.g36qqptpv6wjuj7w@DESKTOP-E1NTVVP.localdomain>
- <b89df12e-00bc-5484-6458-f7c85a362b42@ti.com>
- <CAO_48GHZPkE8Or_dB6CVMi5Jv5eufE_Z36MT7ztJwTqTzkTpKA@mail.gmail.com>
-From:   "Andrew F. Davis" <afd@ti.com>
-Message-ID: <84d0fe2e-029c-a7a1-839c-e720efbcc3f9@ti.com>
-Date:   Wed, 23 Jan 2019 11:09:11 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 23 Jan 2019 12:10:38 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0NH8g5d070127;
+        Wed, 23 Jan 2019 17:10:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=Wk9Y5AB2WM8DzEpEfDhRpp1UaspNuMG9QRK3o30gmcI=;
+ b=P3mexvdaIdSbH6ShkwFCyC8xlF/rJxI1FHS8vL46hsuKsrC7XiN9R7LCHRSumq4I75Xn
+ UW5WMjCY0han1JElaOJo7OvQ+ruw0ebbiGiCL3PNPEwCKrYXjbtdQmtQIQWpfQGN7IQl
+ j3P31H/9IajJRTHS7TXvQb8J+iY2QA54yfmA0lsWNUz9y00+HcIMk5nyAXtY2wiN2vIZ
+ D2W1foCLRFrbbtac+5flK7r3iBRtmC1RYmAqVTGyPpcMfkp3t75cJF5O41SEeDCyfmT1
+ EsO8Nyw658LRn1gR7kuHY9xyYFuB0NBxG/94RmbIUDz6QDwmZpX+0ys4Eamtss+GfDX8 jw== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2130.oracle.com with ESMTP id 2q3uauu7ny-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 23 Jan 2019 17:10:16 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0NHAE1u029864
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 23 Jan 2019 17:10:15 GMT
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0NHACY8031044;
+        Wed, 23 Jan 2019 17:10:12 GMT
+Received: from Konrads-MacBook-Pro.local (/75.104.64.133)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 23 Jan 2019 09:10:12 -0800
+Date:   Wed, 23 Jan 2019 12:09:48 -0500
+From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To:     Joerg Roedel <joro@8bytes.org>
+Cc:     "Michael S . Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        virtualization@lists.linux-foundation.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, jfehlig@suse.com,
+        jon.grimm@amd.com, brijesh.singh@amd.com, jroedel@suse.de
+Subject: Re: [PATCH 0/5 v3] Fix virtio-blk issue with SWIOTLB
+Message-ID: <20190123170946.GB22672@Konrads-MacBook-Pro.local>
+References: <20190123163049.24863-1-joro@8bytes.org>
 MIME-Version: 1.0
-In-Reply-To: <CAO_48GHZPkE8Or_dB6CVMi5Jv5eufE_Z36MT7ztJwTqTzkTpKA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190123163049.24863-1-joro@8bytes.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9145 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901230126
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/22/19 9:23 PM, Sumit Semwal wrote:
-> Hello everyone,
+On Wed, Jan 23, 2019 at 05:30:44PM +0100, Joerg Roedel wrote:
+> Hi,
 > 
-> (Thanks to Dan for letting me know my last email got corrupted :/ -
-> resending it here)
+> here is the third version of this patch-set. Previous
+> versions can be found here:
 > 
-
-Hmm, this one seems a bit messed up also (Thunderbird doesn't seem to
-like it at least).
-
-[snip]
-
-> - from dma-buf PoV, ION is an exporter of dma-buf buffers, for its users
-> that have specific requirements.
+> 	V1: https://lore.kernel.org/lkml/20190110134433.15672-1-joro@8bytes.org/
 > 
-
-This is what I'm hoping to change up a little bit, Ion shouldn't be the
-exporter, its heaps should be the exporters (manage the dma_buf_ops),
-Ion would only do advertising of available heaps and allow allocating
-DMA-BUFs from them.
-
-IMO that would clear up the other discussions going on right now about
-how Ion should handle different dma-buf syncing tasks, it simply
-wouldn't :). Plus Ion core gets slimmed down, maybe even enough for
-destaging..
-
->> I haven't either, which is a shame as it allows for some really useful
->> management strategies for shared memory resources. I'm working on one
->> such case right now, maybe I'll get to be the first to upstream one :)
->>
-> Yes, it would, and great that you're looking to be the first one to do it :)
+> 	V2: https://lore.kernel.org/lkml/20190115132257.6426-1-joro@8bytes.org/
 > 
->> > I wasn't aware that CPU access before first device access was
->> > considered an abuse of the API - it seems like a valid thing to want
->> > to do.
->> >
->>
->> That's just it, I don't know if it is an abuse of API, I'm trying to get
->> some clarity on that. If we do want to allow early CPU access then that
->> seems to be in contrast to the idea of deferred allocation until first
->> device map, what is supposed to backing the buffer if no devices have
->> attached or mapped yet? Just some system memory followed by migration on
->> the first attach to the proper backing? Seems too time wasteful to be
->> have a valid use.
->>
->> Maybe it should be up to the exporter if early CPU access is allowed?
->>
->> I'm hoping someone with authority over the DMA-BUF framework can clarify
->> original intentions here.
->>
+> The problem solved here is a limitation of the SWIOTLB implementation,
+> which does not support allocations larger than 256kb.  When the
+> virtio-blk driver tries to read/write a block larger than that, the
+> allocation of the dma-handle fails and an IO error is reported.
 > 
-> I suppose dma-buf as a framework can't know or decide what the exporter
-> wants or can do - whether the exporter wants to use it for 'only
-> zero-copy', or do some intelligent things behind the scene, I think
-> should be best left to the exporter.
+> Changes to v2 are:
 > 
-> Hope this helps,
+> 	* Check if SWIOTLB is active before returning its limit in
+> 	  dma_direct_max_mapping_size()
+> 
+> 	* Only apply the maximum segment limit in virtio-blk when
+> 	  DMA-API is used for the vring
+> 
+> Please review.
+> 
+> Thanks,
+> 
+> 	Joerg
+> 
+> Joerg Roedel (5):
+>   swiotlb: Introduce swiotlb_max_mapping_size()
+>   swiotlb: Add is_swiotlb_active() function
+>   dma: Introduce dma_max_mapping_size()
+>   virtio: Introduce virtio_max_dma_size()
+>   virtio-blk: Consider virtio_max_dma_size() for maximum segment size
+> 
+>  drivers/block/virtio_blk.c   | 10 ++++++----
+>  drivers/virtio/virtio_ring.c | 10 ++++++++++
 
-Yes, these inputs are very helpful, thanks,
-Andrew
+The kvm-devel mailing list should have been copied on those.
 
-> Sumit.
+When you do can you please put 'Reviewed-by: Konrad Rzeszutek Wilk
+<konrad.wilk@oracle.com>' on all of them?
+
+Thank you!
+
+P.S.
+Christopher, I am assuming you are OK with this idea, if so - and once
+the owners of 'virtio' Ack, do you want to put it in my tree?
+
+Thanks!
+>  include/linux/dma-mapping.h  | 16 ++++++++++++++++
+>  include/linux/swiotlb.h      | 11 +++++++++++
+>  include/linux/virtio.h       |  2 ++
+>  kernel/dma/direct.c          | 11 +++++++++++
+>  kernel/dma/swiotlb.c         | 10 ++++++++++
+>  7 files changed, 66 insertions(+), 4 deletions(-)
+
+
+> 
+> -- 
+> 2.17.1
 > 
