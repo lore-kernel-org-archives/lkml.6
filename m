@@ -4,95 +4,96 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DATE_IN_FUTURE_06_12,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66CA9C282C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 03:15:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE4B1C282C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 03:15:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CDFF217F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 03:15:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98626217F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 03:15:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727175AbfAWDPB (ORCPT
+        id S1727198AbfAWDPF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 22:15:01 -0500
-Received: from mxhk.zte.com.cn ([63.217.80.70]:7602 "EHLO mxhk.zte.com.cn"
+        Tue, 22 Jan 2019 22:15:05 -0500
+Received: from out1.zte.com.cn ([202.103.147.172]:45506 "EHLO mxct.zte.com.cn"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727153AbfAWDPA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 22:15:00 -0500
+        id S1727158AbfAWDPD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 22:15:03 -0500
 Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id 662D5AE57FD7556C3671;
-        Wed, 23 Jan 2019 11:14:59 +0800 (CST)
+        by Forcepoint Email with ESMTPS id 357F73FB4E73B5E05AD7;
+        Wed, 23 Jan 2019 11:15:00 +0800 (CST)
 Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id x0N3EshI000750;
+        by mse01.zte.com.cn with ESMTP id x0N3EshJ000750;
         Wed, 23 Jan 2019 11:14:54 +0800 (GMT-8)
         (envelope-from peng.hao2@zte.com.cn)
 Received: from localhost.localdomain.localdomain ([10.74.120.59])
           by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019012311150937-23654355 ;
-          Wed, 23 Jan 2019 11:15:09 +0800 
+          with ESMTP id 2019012311151029-23654360 ;
+          Wed, 23 Jan 2019 11:15:10 +0800 
 From:   Peng Hao <peng.hao2@zte.com.cn>
 To:     gregkh@linuxfoundation.org, arnd@arndb.de,
         andy.shevchenko@gmail.com
 Cc:     linux-kernel@vger.kernel.org, Peng Hao <peng.hao2@zte.com.cn>
-Subject: [PATCH V2 5/6]  misc/pvpanic: add pvpanic mmio driver
-Date:   Wed, 23 Jan 2019 19:37:56 +0800
-Message-Id: <1548243477-60654-6-git-send-email-peng.hao2@zte.com.cn>
+Subject: [PATCH V2 6/6]  misc/pvpanic: add new pvpanic pci driver
+Date:   Wed, 23 Jan 2019 19:37:57 +0800
+Message-Id: <1548243477-60654-7-git-send-email-peng.hao2@zte.com.cn>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1548243477-60654-1-git-send-email-peng.hao2@zte.com.cn>
 References: <1548243477-60654-1-git-send-email-peng.hao2@zte.com.cn>
 X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2019-01-23 11:15:09,
+ 21, 2013) at 2019-01-23 11:15:10,
         Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
  2019-01-23 11:14:47,
         Serialize complete at 2019-01-23 11:14:47
-X-MAIL: mse01.zte.com.cn x0N3EshI000750
+X-MAIL: mse01.zte.com.cn x0N3EshJ000750
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make pvpanic mmioi driver as seperate file and modify code
-in order to adapt the framework.
+Add new pvpanic pci driver to pvpanic driver framework.
 
 Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
 ---
- drivers/misc/pvpanic/Kconfig      |  4 +++
- drivers/misc/pvpanic/Makefile     |  1 +
- drivers/misc/pvpanic/pvpanic-of.c | 53 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 58 insertions(+)
- create mode 100644 drivers/misc/pvpanic/pvpanic-of.c
+ drivers/misc/pvpanic/Kconfig       |  5 ++++
+ drivers/misc/pvpanic/Makefile      |  1 +
+ drivers/misc/pvpanic/pvpanic-pci.c | 56 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 62 insertions(+)
+ create mode 100644 drivers/misc/pvpanic/pvpanic-pci.c
 
 diff --git a/drivers/misc/pvpanic/Kconfig b/drivers/misc/pvpanic/Kconfig
-index d274130..47f8709 100644
+index 47f8709..46b6e05 100644
 --- a/drivers/misc/pvpanic/Kconfig
 +++ b/drivers/misc/pvpanic/Kconfig
-@@ -13,4 +13,8 @@ config PVPANIC_ACPI
- 	depends on ACPI
- 	default PVPANIC
+@@ -17,4 +17,9 @@ config PVPANIC_OF
+ 	tristate "pvpanic mmio driver"
+ 	depends on OF
  
-+config PVPANIC_OF
-+	tristate "pvpanic mmio driver"
-+	depends on OF
++config PVPANIC_PCI
++	tristate "pvpanic pci driver"
++	depends on PCI
++	default PVPANIC
 +
  endif
 diff --git a/drivers/misc/pvpanic/Makefile b/drivers/misc/pvpanic/Makefile
-index c5b73ca..63ef0db 100644
+index 63ef0db..7c71f85 100644
 --- a/drivers/misc/pvpanic/Makefile
 +++ b/drivers/misc/pvpanic/Makefile
-@@ -4,3 +4,4 @@
- 
+@@ -5,3 +5,4 @@
  obj-$(CONFIG_PVPANIC)            += pvpanic.o
  obj-$(CONFIG_PVPANIC_ACPI)	 += pvpanic-acpi.o
-+obj-$(CONFIG_PVPANIC_OF)	 += pvpanic-of.o
-diff --git a/drivers/misc/pvpanic/pvpanic-of.c b/drivers/misc/pvpanic/pvpanic-of.c
+ obj-$(CONFIG_PVPANIC_OF)	 += pvpanic-of.o
++obj-$(CONFIG_PVPANIC_PCI)	 += pvpanic-pci.o
+diff --git a/drivers/misc/pvpanic/pvpanic-pci.c b/drivers/misc/pvpanic/pvpanic-pci.c
 new file mode 100644
-index 0000000..73ca5f3
+index 0000000..b4f453b
 --- /dev/null
-+++ b/drivers/misc/pvpanic/pvpanic-of.c
-@@ -0,0 +1,53 @@
++++ b/drivers/misc/pvpanic/pvpanic-pci.c
+@@ -0,0 +1,56 @@
 +// SPDX-License-Identifier: GPL-2.0+
 +/*
-+ *  pvpanic of driver.
++ *  pvpanic acpi driver.
 + *
 + *  Copyright (C) 2019 ZTE Ltd.
 + *  Author: Peng Hao <peng.hao2@zte.com.cn>
@@ -100,49 +101,52 @@ index 0000000..73ca5f3
 +
 +#include <linux/kernel.h>
 +#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/platform_device.h>
++#include <linux/pci.h>
 +#include <linux/types.h>
 +#include "pvpanic.h"
 +
-+static int pvpanic_mmio_probe(struct platform_device *pdev)
-+{
-+	struct resource *res;
-+	int ret;
++#define PCI_VENDOR_ID_REDHAT             0x1b36
++#define PCI_DEVICE_ID_REDHAT_PVPANIC     0x0101
 +
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!res)
-+		return -EINVAL;
-+
-+	ret = pvpanic_add_device(&pdev->dev, res);
-+	if (ret)
-+		return -ENODEV;
-+
-+	return 0;
-+}
-+
-+static int pvpanic_mmio_remove(struct platform_device *pdev)
-+{
-+	pvpanic_remove_device();
-+	return 0;
-+}
-+
-+static const struct of_device_id pvpanic_mmio_match[] = {
-+	{ .compatible = "qemu,pvpanic-mmio", },
++static const struct pci_device_id pvpanic_pci_id_tbl[]  = {
++	{ PCI_DEVICE(PCI_VENDOR_ID_REDHAT, PCI_DEVICE_ID_REDHAT_PVPANIC),},
 +	{}
 +};
 +
-+static struct platform_driver pvpanic_mmio_driver = {
-+	.driver = {
-+		.name = "pvpanic-mmio",
-+		.of_match_table = pvpanic_mmio_match,
-+	},
-+	.probe = pvpanic_mmio_probe,
-+	.remove = pvpanic_mmio_remove,
++static int pvpanic_pci_probe(struct pci_dev *pdev,
++			     const struct pci_device_id *ent)
++{
++	int ret;
++	struct resource res;
++
++	ret = pcim_enable_device(pdev);
++	if (ret < 0)
++		return ret;
++
++	memset(&res, 0, sizeof(res));
++	res.start = pci_resource_start(pdev, 0);
++	res.end = pci_resource_end(pdev, 0);
++	res.flags = IORESOURCE_MEM;
++	ret = pvpanic_add_device(&pdev->dev, &res);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
++static void pvpanic_pci_remove(struct pci_dev *pdev)
++{
++	pvpanic_remove_device();
++}
++
++static struct pci_driver pvpanic_pci_driver = {
++	.name =         "pvpanic-pci",
++	.id_table =     pvpanic_pci_id_tbl,
++	.probe =        pvpanic_pci_probe,
++	.remove =       pvpanic_pci_remove,
 +};
 +
-+module_platform_driver(pvpanic_mmio_driver);
++module_pci_driver(pvpanic_pci_driver);
 -- 
 1.8.3.1
 
