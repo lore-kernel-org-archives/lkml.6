@@ -2,129 +2,100 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DATE_IN_FUTURE_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13499C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:24:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B550C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:25:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E055521019
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:24:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED5F621019
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:25:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726864AbfAWHYh (ORCPT
+        id S1727062AbfAWHZ4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 02:24:37 -0500
-Received: from mxhk.zte.com.cn ([63.217.80.70]:8562 "EHLO mxhk.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726604AbfAWHYf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 02:24:35 -0500
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id 73052D41861025D15EB9;
-        Wed, 23 Jan 2019 15:24:33 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id x0N7OOkI027466;
-        Wed, 23 Jan 2019 15:24:24 +0800 (GMT-8)
-        (envelope-from peng.hao2@zte.com.cn)
-Received: from localhost.localdomain.localdomain ([10.74.120.59])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019012315244576-23701695 ;
-          Wed, 23 Jan 2019 15:24:45 +0800 
-From:   Peng Hao <peng.hao2@zte.com.cn>
-To:     gregkh@linuxfoundation.org, arnd@arndb.de,
-        andy.shevchenko@gmail.com
-Cc:     linux-kernel@vger.kernel.org, Peng Hao <peng.hao2@zte.com.cn>
-Subject: [PATCH V3 1/6]  misc/pvpanic: preparing for pvpanic driver framework
-Date:   Wed, 23 Jan 2019 23:47:23 +0800
-Message-Id: <1548258448-62013-2-git-send-email-peng.hao2@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1548258448-62013-1-git-send-email-peng.hao2@zte.com.cn>
-References: <1548258448-62013-1-git-send-email-peng.hao2@zte.com.cn>
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2019-01-23 15:24:45,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2019-01-23 15:24:16,
-        Serialize complete at 2019-01-23 15:24:16
-X-MAIL: mse01.zte.com.cn x0N7OOkI027466
+        Wed, 23 Jan 2019 02:25:56 -0500
+Received: from gateway33.websitewelcome.com ([192.185.146.87]:23886 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726108AbfAWHZz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 02:25:55 -0500
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway33.websitewelcome.com (Postfix) with ESMTP id 596F0181689
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 01:25:55 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id mCv5gCeAliQermCv5gW5vm; Wed, 23 Jan 2019 01:25:55 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=40482 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gmCv4-003CBj-V4; Wed, 23 Jan 2019 01:25:55 -0600
+Subject: Re: [PATCH net-next] 9p: mark expected switch fall-through
+To:     Dominique Martinet <asmadeus@codewreck.org>
+Cc:     Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        v9fs-developer@lists.sourceforge.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190123071632.GA8039@embeddedor>
+ <20190123072329.GA27574@nautica>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Message-ID: <3eac33cb-fe23-34ef-2a19-a0abbd6bea1e@embeddedor.com>
+Date:   Wed, 23 Jan 2019 01:25:53 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20190123072329.GA27574@nautica>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1gmCv4-003CBj-V4
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.130.205]:40482
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 31
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Preparing for pvpanic driver framework. Create a pvpanic driver
-directory and move current driver file to new directory.
 
-Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
----
- drivers/misc/Kconfig                 | 9 +--------
- drivers/misc/Makefile                | 2 +-
- drivers/misc/pvpanic/Kconfig         | 7 +++++++
- drivers/misc/pvpanic/Makefile        | 5 +++++
- drivers/misc/{ => pvpanic}/pvpanic.c | 0
- 5 files changed, 14 insertions(+), 9 deletions(-)
- create mode 100644 drivers/misc/pvpanic/Kconfig
- create mode 100644 drivers/misc/pvpanic/Makefile
- rename drivers/misc/{ => pvpanic}/pvpanic.c (100%)
 
-diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-index f417b06..aa3a805 100644
---- a/drivers/misc/Kconfig
-+++ b/drivers/misc/Kconfig
-@@ -513,14 +513,7 @@ config MISC_RTSX
- 	tristate
- 	default MISC_RTSX_PCI || MISC_RTSX_USB
- 
--config PVPANIC
--	tristate "pvpanic device support"
--	depends on HAS_IOMEM && (ACPI || OF)
--	help
--	  This driver provides support for the pvpanic device.  pvpanic is
--	  a paravirtualized device provided by QEMU; it lets a virtual machine
--	  (guest) communicate panic events to the host.
--
-+source "drivers/misc/pvpanic/Kconfig"
- source "drivers/misc/c2port/Kconfig"
- source "drivers/misc/eeprom/Kconfig"
- source "drivers/misc/cb710/Kconfig"
-diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
-index e39ccbb..cfe20b3 100644
---- a/drivers/misc/Makefile
-+++ b/drivers/misc/Makefile
-@@ -58,4 +58,4 @@ obj-$(CONFIG_ASPEED_LPC_SNOOP)	+= aspeed-lpc-snoop.o
- obj-$(CONFIG_PCI_ENDPOINT_TEST)	+= pci_endpoint_test.o
- obj-$(CONFIG_OCXL)		+= ocxl/
- obj-y				+= cardreader/
--obj-$(CONFIG_PVPANIC)   	+= pvpanic.o
-+obj-$(CONFIG_PVPANIC)   	+= pvpanic/
-diff --git a/drivers/misc/pvpanic/Kconfig b/drivers/misc/pvpanic/Kconfig
-new file mode 100644
-index 0000000..3e612c6
---- /dev/null
-+++ b/drivers/misc/pvpanic/Kconfig
-@@ -0,0 +1,7 @@
-+config PVPANIC
-+	tristate "pvpanic device support"
-+	depends on HAS_IOMEM && (ACPI || OF)
-+	help
-+	  This driver provides support for the pvpanic device.  pvpanic is
-+	  a paravirtualized device provided by QEMU; it lets a virtual machine
-+	  (guest) communicate panic events to the host.
-diff --git a/drivers/misc/pvpanic/Makefile b/drivers/misc/pvpanic/Makefile
-new file mode 100644
-index 0000000..6394224
---- /dev/null
-+++ b/drivers/misc/pvpanic/Makefile
-@@ -0,0 +1,5 @@
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+#
-+# Copyright (c) 2018 ZTE Ltd.
-+
-+obj-$(CONFIG_PVPANIC)            += pvpanic.o
-diff --git a/drivers/misc/pvpanic.c b/drivers/misc/pvpanic/pvpanic.c
-similarity index 100%
-rename from drivers/misc/pvpanic.c
-rename to drivers/misc/pvpanic/pvpanic.c
--- 
-1.8.3.1
+On 1/23/19 1:23 AM, Dominique Martinet wrote:
+> Gustavo A. R. Silva wrote on Wed, Jan 23, 2019:
+>> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+>> where we are expecting to fall through.
+>>
+>> This patch fixes the following warning:
+>>
+>> net/9p/trans_xen.c:514:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>>
+>> Warning level 3 was used: -Wimplicit-fallthrough=3
+>>
+>> This patch is part of the ongoing efforts to enabling
+>> -Wimplicit-fallthrough
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> 
+> Sure, taking this to my queue for -next
+> 
 
+Thanks, Dominique. :)
+
+--
+Gustavo
