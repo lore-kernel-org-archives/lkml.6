@@ -2,92 +2,83 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52B65C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:22:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1316AC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:22:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20EE920870
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:22:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jqsZg6J9"
+	by mail.kernel.org (Postfix) with ESMTP id CABF221726
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:22:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548235369;
+	bh=QbQ+0FtMp55OgNZXPcfZ1al4xezVqyH8ot8uon9/Zmk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=F6V1n9xKBGk5J9k7UYrPZ9bycZzINPOFk+jexJVx1EKFYJ5vVJmjr6a7/AbCBqM13
+	 9vZT3uAZH5THRpINDIAPtHLSBYRbPAf+cC6r6khEKROlfvotdh8WHn2qOuQI45nYiP
+	 /Eg/nJClOneXJo83BiH39tGPYvkFEMLxw3N58A2I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727066AbfAWJWT (ORCPT
+        id S1727113AbfAWJWs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 04:22:19 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:46718 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726373AbfAWJWT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 04:22:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=VLlTIIrH5qLsPjaslKHuo/k0NeQTHW2baqg2WbBpwOM=; b=jqsZg6J9R7TGfyuEnRemmlgVo
-        3xIqnrzahfAcLO+P/pyl3xYg4YWuqPR2hO6XYP1WtIW+s8L5+cVgsugZ9xG9QVLc00Ehx7BTbHnTQ
-        fzTOgIKfVyUd0CuTn/SStGG1bBhlIhreUVCt1X/ebcE00Wf3hfuzs03Dmp5vEAv8wRcY8HqanDS/5
-        +sN5Gx7WtqVgowxGz4QXC7c7HGxPq4DiPbYFl9DeIwGMd+xOfzBzbtSwFZeTNPliQ/cT3swGteTsk
-        yB8wpqHoZWwF/i8P0trmnM0QAqjWNO2s/35mx8bQRiCUqlHlBKMwW1CVXKRuiv6aSqRsEJvepQTTZ
-        C5/yQ4N2g==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gmEjc-0006LG-Fw; Wed, 23 Jan 2019 09:22:12 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id F3D2C20D1580D; Wed, 23 Jan 2019 10:22:10 +0100 (CET)
-Date:   Wed, 23 Jan 2019 10:22:10 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v6 07/16] sched/core: uclamp: Add system default clamps
-Message-ID: <20190123092210.GU27931@hirez.programming.kicks-ass.net>
-References: <20190115101513.2822-1-patrick.bellasi@arm.com>
- <20190115101513.2822-8-patrick.bellasi@arm.com>
- <20190122135644.GP27931@hirez.programming.kicks-ass.net>
- <20190122144329.ziimv6fejwvky7yb@e110439-lin>
- <20190122151317.GH13777@hirez.programming.kicks-ass.net>
- <20190122154129.mxnpgaoxnccbjbch@e110439-lin>
+        Wed, 23 Jan 2019 04:22:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39332 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726954AbfAWJWs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 04:22:48 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3E7BA20870;
+        Wed, 23 Jan 2019 09:22:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548235367;
+        bh=QbQ+0FtMp55OgNZXPcfZ1al4xezVqyH8ot8uon9/Zmk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FoWaAR8/YtZlo7uZgVcOJaO26VkGa4dq9/oGxbTyvw9JVr6Y49Ka7gPzRECQwCaKz
+         FwX3bEviUIjUOcRz5dJs+8hsFYVSA9fP/+c7YsaWU6YlRIlYCfsVnrOoCc5so4crd6
+         Td+Trlo7HE66UaKUYL2y0F0uE0d8LLJtju5K3sWI=
+Date:   Wed, 23 Jan 2019 10:22:45 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>
+Subject: Re: [PATCH] qspinlock: no need to check return value of
+ debugfs_create functions
+Message-ID: <20190123092245.GB14010@kroah.com>
+References: <20190122152151.16139-44-gregkh@linuxfoundation.org>
+ <20190123091016.GA15019@brain-police>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190122154129.mxnpgaoxnccbjbch@e110439-lin>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190123091016.GA15019@brain-police>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 03:41:29PM +0000, Patrick Bellasi wrote:
-> On 22-Jan 16:13, Peter Zijlstra wrote:
-> > On Tue, Jan 22, 2019 at 02:43:29PM +0000, Patrick Bellasi wrote:
-
-> > > Do you think that could be acceptable?
+On Wed, Jan 23, 2019 at 09:10:18AM +0000, Will Deacon wrote:
+> On Tue, Jan 22, 2019 at 04:21:43PM +0100, Greg Kroah-Hartman wrote:
+> > When calling debugfs functions, there is no need to ever check the
+> > return value.  The function can work or not, but the code logic should
+> > never do something different based on this.
 > > 
-> > Think so, it's a sysctl poke, 'nobody' ever does that.
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Cc: Ingo Molnar <mingo@redhat.com>
+> > Cc: Will Deacon <will.deacon@arm.com>
+> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > ---
+> >  kernel/locking/qspinlock_stat.h | 18 ++++--------------
+> >  1 file changed, 4 insertions(+), 14 deletions(-)
 > 
-> Cool, so... I'll keep lazy update for system default.
+> Curious, but are you planning to make these functions return void after
+> you've modified all of the callers?
 
-Ah, I think I misunderstood. I meant to say that since nobody ever pokes
-at sysctl's it doesn't matter if its a little more expensive and iterate
-everything.
+I wish, but I can't, as those values are needed for some other debugfs
+calls.
 
-Also; if you always keep everything up-to-date, you can avoid doing that
-duplicate accounting.
+thanks,
+
+greg k-h
