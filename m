@@ -7,46 +7,48 @@ X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C33E2C282C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 00:02:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4E54C282C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 00:02:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88FCB217D6
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 00:02:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96B2C217D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 00:02:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548201755;
-	bh=VYI+i4bMBDXqk3Oix1DPbGYy6NsGYjUNiifqub418rE=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=Yxy2zsDLMdl7aZPyArczKfN/Ouu7N8G3mzcUFaeAppIv6lkXZ1ZCVAgDMF+pFURxC
-	 wCeJOKz7p3NHt55noFhvEwyD7VkwnOdc8kTCIz56iKXGF80jNV+sPsq8K5yGn2Heu8
-	 19OHLrghTwLUFpClnR61YmGdMmZlkNo5iBglq9C8=
+	s=default; t=1548201760;
+	bh=9jFY1FOOu2PmQUONlzapd2mhdLt0P/sf+j7CzeZl0rU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=Txmqvf+BM6KeJXY3BLhGS9rOqp+Y1K7UmcPebYfHkVUtqa13n1dMwfqFJ5ylXvMIM
+	 wAfxUH8dzmr3/Zxb5XsPxysxgf5KdCaFI5PbZSwV25dRDb6mu3EpkCRjOk1O+aNZA8
+	 dw8n6P+w7LcuZtsRs2KjYgJvMwsoEj9jMbYtzmBQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727420AbfAWACd (ORCPT
+        id S1727441AbfAWACi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 19:02:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59892 "EHLO mail.kernel.org"
+        Tue, 22 Jan 2019 19:02:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59908 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726863AbfAWACc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727070AbfAWACc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 22 Jan 2019 19:02:32 -0500
 Received: from localhost (unknown [104.132.1.80])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 87C9D20856;
-        Wed, 23 Jan 2019 00:02:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1A71A217D4;
+        Wed, 23 Jan 2019 00:02:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548201750;
-        bh=VYI+i4bMBDXqk3Oix1DPbGYy6NsGYjUNiifqub418rE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=V/tAi8ntkN3FAg86Ou/oFCNtI9rOCtEMvv0jSsX2972YE5fHVV0vOJQq4xQgXDGbv
-         r2tWP16hq2wMmWO7/XFzBaU5ZQ/yX5xhlsCRaYXetHUOjG2j7TrXCDr3MjWFxu823M
-         tgou2sArOsQQx+gyKo8t0B6ZUyGP1Rerqn+eKZKo=
+        s=default; t=1548201751;
+        bh=9jFY1FOOu2PmQUONlzapd2mhdLt0P/sf+j7CzeZl0rU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=JnL1Mn4QEPcbpSJPmMBTnyywH1UhXi4Mk3xzD4TSu2wdWi8IAz8xLgyIho88tOTy+
+         YbsL1M7+zKjR2shHeiauIjlxQ74WPpAcTsWIriZf4PU4+xkusBG1Dsp/REYvMKA1gq
+         dFhXjD6Voz4/7+N8J+AW+Gmy1cu0fS5b0uHkWyQg=
 From:   Jaegeuk Kim <jaegeuk@kernel.org>
 To:     linux-kernel@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net
 Cc:     Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 1/2] f2fs: run discard jobs when put_super
-Date:   Tue, 22 Jan 2019 16:02:28 -0800
-Message-Id: <20190123000229.45236-1-jaegeuk@kernel.org>
+Subject: [PATCH 2/2] f2fs: sync filesystem after roll-forward recovery
+Date:   Tue, 22 Jan 2019 16:02:29 -0800
+Message-Id: <20190123000229.45236-2-jaegeuk@kernel.org>
 X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
+In-Reply-To: <20190123000229.45236-1-jaegeuk@kernel.org>
+References: <20190123000229.45236-1-jaegeuk@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -54,185 +56,161 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When we umount f2fs, we need to avoid long delay due to discard commands, which
-is actually taking tens of seconds, if storage is very slow on UNMAP. So, this
-patch introduces timeout-based work on it.
+Some works after roll-forward recovery can get an error which will release
+all the data structures. Let's flush them in order to make it clean.
 
-By default, let me give 5 seconds for discard.
+One possible corruption came from:
 
+[   90.400500] list_del corruption. prev->next should be ffffffed1f566208, but was (null)
+[   90.675349] Call trace:
+[   90.677869]  __list_del_entry_valid+0x94/0xb4
+[   90.682351]  remove_dirty_inode+0xac/0x114
+[   90.686563]  __f2fs_write_data_pages+0x6a8/0x6c8
+[   90.691302]  f2fs_write_data_pages+0x40/0x4c
+[   90.695695]  do_writepages+0x80/0xf0
+[   90.699372]  __writeback_single_inode+0xdc/0x4ac
+[   90.704113]  writeback_sb_inodes+0x280/0x440
+[   90.708501]  wb_writeback+0x1b8/0x3d0
+[   90.712267]  wb_workfn+0x1a8/0x4d4
+[   90.715765]  process_one_work+0x1c0/0x3d4
+[   90.719883]  worker_thread+0x224/0x344
+[   90.723739]  kthread+0x120/0x130
+[   90.727055]  ret_from_fork+0x10/0x18
+
+Reported-by: Sahitya Tummala <stummala@codeaurora.org>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- Documentation/ABI/testing/sysfs-fs-f2fs |  7 +++++++
- fs/f2fs/f2fs.h                          |  5 ++++-
- fs/f2fs/segment.c                       | 11 ++++++++++-
- fs/f2fs/super.c                         | 17 ++++++++---------
- fs/f2fs/sysfs.c                         |  3 +++
- 5 files changed, 32 insertions(+), 11 deletions(-)
+ fs/f2fs/checkpoint.c |  5 +++--
+ fs/f2fs/node.c       |  4 +++-
+ fs/f2fs/super.c      | 42 +++++++++++++++++++++++++++++++-----------
+ 3 files changed, 37 insertions(+), 14 deletions(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index a7ce33199457..91822ce25831 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -86,6 +86,13 @@ Description:
- 		The unit size is one block, now only support configuring in range
- 		of [1, 512].
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index f955cd3e0677..ccccf0ce2f06 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -306,8 +306,9 @@ static int f2fs_write_meta_pages(struct address_space *mapping,
+ 		goto skip_write;
  
-+What:          /sys/fs/f2fs/<disk>/umount_discard_timeout
-+Date:          January 2019
-+Contact:       "Jaegeuk Kim" <jaegeuk@kernel.org>
-+Description:
-+		Set timeout to issue discard commands during umount.
-+		Default: 5 secs
-+
- What:		/sys/fs/f2fs/<disk>/max_victim_search
- Date:		January 2014
- Contact:	"Jaegeuk Kim" <jaegeuk.kim@samsung.com>
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 0f564883e078..6b6ec5600089 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -191,6 +191,7 @@ enum {
- #define DEF_CP_INTERVAL			60	/* 60 secs */
- #define DEF_IDLE_INTERVAL		5	/* 5 secs */
- #define DEF_DISABLE_INTERVAL		5	/* 5 secs */
-+#define DEF_UMOUNT_DISCARD_TIMEOUT	5	/* 5 secs */
+ 	/* collect a number of dirty meta pages and write together */
+-	if (wbc->for_kupdate ||
+-		get_pages(sbi, F2FS_DIRTY_META) < nr_pages_to_skip(sbi, META))
++	if (wbc->sync_mode != WB_SYNC_ALL &&
++			get_pages(sbi, F2FS_DIRTY_META) <
++					nr_pages_to_skip(sbi, META))
+ 		goto skip_write;
  
- struct cp_control {
- 	int reason;
-@@ -310,6 +311,7 @@ struct discard_policy {
- 	bool sync;			/* submit discard with REQ_SYNC flag */
- 	bool ordered;			/* issue discard by lba order */
- 	unsigned int granularity;	/* discard granularity */
-+	int timeout;			/* discard timeout for put_super */
- };
+ 	/* if locked failed, cp will flush dirty pages instead */
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 4f450e573312..f6ff84e29749 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1920,7 +1920,9 @@ static int f2fs_write_node_pages(struct address_space *mapping,
+ 	f2fs_balance_fs_bg(sbi);
  
- struct discard_cmd_control {
-@@ -1110,6 +1112,7 @@ enum {
- 	DISCARD_TIME,
- 	GC_TIME,
- 	DISABLE_TIME,
-+	UMOUNT_DISCARD_TIMEOUT,
- 	MAX_TIME,
- };
+ 	/* collect a number of dirty node pages and write together */
+-	if (get_pages(sbi, F2FS_DIRTY_NODES) < nr_pages_to_skip(sbi, NODE))
++	if (wbc->sync_mode != WB_SYNC_ALL &&
++			get_pages(sbi, F2FS_DIRTY_NODES) <
++					nr_pages_to_skip(sbi, NODE))
+ 		goto skip_write;
  
-@@ -3006,7 +3009,7 @@ void f2fs_invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr);
- bool f2fs_is_checkpointed_data(struct f2fs_sb_info *sbi, block_t blkaddr);
- void f2fs_drop_discard_cmd(struct f2fs_sb_info *sbi);
- void f2fs_stop_discard_thread(struct f2fs_sb_info *sbi);
--bool f2fs_wait_discard_bios(struct f2fs_sb_info *sbi);
-+bool f2fs_issue_discard_timeout(struct f2fs_sb_info *sbi);
- void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
- 					struct cp_control *cpc);
- void f2fs_dirty_to_prefree(struct f2fs_sb_info *sbi);
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 9b79056d705d..97e0faf09ebf 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1037,6 +1037,7 @@ static void __init_discard_policy(struct f2fs_sb_info *sbi,
- 
- 	dpolicy->max_requests = DEF_MAX_DISCARD_REQUEST;
- 	dpolicy->io_aware_gran = MAX_PLIST_NUM;
-+	dpolicy->timeout = MAX_TIME;
- 
- 	if (discard_type == DPOLICY_BG) {
- 		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
-@@ -1424,7 +1425,14 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
- 	int i, issued = 0;
- 	bool io_interrupted = false;
- 
-+	if (dpolicy->timeout != MAX_TIME)
-+		f2fs_update_time(sbi, dpolicy->timeout);
-+
- 	for (i = MAX_PLIST_NUM - 1; i >= 0; i--) {
-+		if (dpolicy->timeout != MAX_TIME &&
-+				f2fs_time_over(sbi, dpolicy->timeout))
-+			break;
-+
- 		if (i + 1 < dpolicy->granularity)
- 			break;
- 
-@@ -1611,7 +1619,7 @@ void f2fs_stop_discard_thread(struct f2fs_sb_info *sbi)
- }
- 
- /* This comes from f2fs_put_super */
--bool f2fs_wait_discard_bios(struct f2fs_sb_info *sbi)
-+bool f2fs_issue_discard_timeout(struct f2fs_sb_info *sbi)
- {
- 	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
- 	struct discard_policy dpolicy;
-@@ -1619,6 +1627,7 @@ bool f2fs_wait_discard_bios(struct f2fs_sb_info *sbi)
- 
- 	__init_discard_policy(sbi, &dpolicy, DPOLICY_UMOUNT,
- 					dcc->discard_granularity);
-+	dpolicy.timeout = UMOUNT_DISCARD_TIMEOUT;
- 	__issue_discard_cmd(sbi, &dpolicy);
- 	dropped = __drop_discard_cmd(sbi);
- 
+ 	if (wbc->sync_mode == WB_SYNC_ALL)
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index ea514acede36..7998ff5418f2 100644
+index 7998ff5418f2..2af0db2b738e 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -1029,6 +1029,9 @@ static void f2fs_put_super(struct super_block *sb)
- 	int i;
- 	bool dropped;
+@@ -1456,9 +1456,16 @@ static int f2fs_enable_quotas(struct super_block *sb);
  
-+	/* be sure to wait for any on-going discard commands */
-+	dropped = f2fs_issue_discard_timeout(sbi);
-+
- 	f2fs_quota_off_umount(sb);
+ static int f2fs_disable_checkpoint(struct f2fs_sb_info *sbi)
+ {
++	unsigned int s_flags = sbi->sb->s_flags;
+ 	struct cp_control cpc;
+-	int err;
++	int err = 0;
++	int ret;
  
- 	/* prevent remaining shrinker jobs */
-@@ -1044,17 +1047,12 @@ static void f2fs_put_super(struct super_block *sb)
- 		struct cp_control cpc = {
- 			.reason = CP_UMOUNT,
- 		};
--		f2fs_write_checkpoint(sbi, &cpc);
--	}
++	if (s_flags & SB_RDONLY) {
++		f2fs_msg(sbi->sb, KERN_ERR,
++				"checkpoint=disable on readonly fs");
++		return -EINVAL;
++	}
+ 	sbi->sb->s_flags |= SB_ACTIVE;
  
--	/* be sure to wait for any on-going discard commands */
--	dropped = f2fs_wait_discard_bios(sbi);
-+		if ((f2fs_hw_support_discard(sbi) ||
-+				f2fs_hw_should_discard(sbi)) &&
-+				!sbi->discard_blks && !dropped)
-+			cpc.reason |= CP_TRIMMED;
- 
--	if ((f2fs_hw_support_discard(sbi) || f2fs_hw_should_discard(sbi)) &&
--					!sbi->discard_blks && !dropped) {
--		struct cp_control cpc = {
--			.reason = CP_UMOUNT | CP_TRIMMED,
--		};
- 		f2fs_write_checkpoint(sbi, &cpc);
+ 	f2fs_update_time(sbi, DISABLE_TIME);
+@@ -1466,18 +1473,24 @@ static int f2fs_disable_checkpoint(struct f2fs_sb_info *sbi)
+ 	while (!f2fs_time_over(sbi, DISABLE_TIME)) {
+ 		mutex_lock(&sbi->gc_mutex);
+ 		err = f2fs_gc(sbi, true, false, NULL_SEGNO);
+-		if (err == -ENODATA)
++		if (err == -ENODATA) {
++			err = 0;
+ 			break;
++		}
+ 		if (err && err != -EAGAIN)
+-			return err;
++			break;
  	}
  
-@@ -2706,6 +2704,7 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
- 	sbi->interval_time[DISCARD_TIME] = DEF_IDLE_INTERVAL;
- 	sbi->interval_time[GC_TIME] = DEF_IDLE_INTERVAL;
- 	sbi->interval_time[DISABLE_TIME] = DEF_DISABLE_INTERVAL;
-+	sbi->interval_time[UMOUNT_DISCARD_TIMEOUT] = DEF_UMOUNT_DISCARD_TIMEOUT;
- 	clear_sbi_flag(sbi, SBI_NEED_FSCK);
+-	err = sync_filesystem(sbi->sb);
+-	if (err)
+-		return err;
++	ret = sync_filesystem(sbi->sb);
++	if (ret || err) {
++		err = ret ? ret: err;
++		goto restore_flag;
++	}
  
- 	for (i = 0; i < NR_COUNT_TYPE; i++)
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index 5b83e1d66cb3..18c627e8fc90 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -426,6 +426,8 @@ F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, idle_interval, interval_time[REQ_TIME]);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, discard_idle_interval,
- 					interval_time[DISCARD_TIME]);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_idle_interval, interval_time[GC_TIME]);
-+F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info,
-+		umount_discard_timeout, interval_time[UMOUNT_DISCARD_TIMEOUT]);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, iostat_enable, iostat_enable);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, readdir_ra, readdir_ra);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_pin_file_thresh, gc_pin_file_threshold);
-@@ -483,6 +485,7 @@ static struct attribute *f2fs_attrs[] = {
- 	ATTR_LIST(idle_interval),
- 	ATTR_LIST(discard_idle_interval),
- 	ATTR_LIST(gc_idle_interval),
-+	ATTR_LIST(umount_discard_timeout),
- 	ATTR_LIST(iostat_enable),
- 	ATTR_LIST(readdir_ra),
- 	ATTR_LIST(gc_pin_file_thresh),
+-	if (f2fs_disable_cp_again(sbi))
+-		return -EAGAIN;
++	if (f2fs_disable_cp_again(sbi)) {
++		err = -EAGAIN;
++		goto restore_flag;
++	}
+ 
+ 	mutex_lock(&sbi->gc_mutex);
+ 	cpc.reason = CP_PAUSE;
+@@ -1486,7 +1499,9 @@ static int f2fs_disable_checkpoint(struct f2fs_sb_info *sbi)
+ 
+ 	sbi->unusable_block_count = 0;
+ 	mutex_unlock(&sbi->gc_mutex);
+-	return 0;
++restore_flag:
++	sbi->sb->s_flags = s_flags;	/* Restore MS_RDONLY status */
++	return err;
+ }
+ 
+ static void f2fs_enable_checkpoint(struct f2fs_sb_info *sbi)
+@@ -3356,7 +3371,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	if (test_opt(sbi, DISABLE_CHECKPOINT)) {
+ 		err = f2fs_disable_checkpoint(sbi);
+ 		if (err)
+-			goto free_meta;
++			goto sync_free_meta;
+ 	} else if (is_set_ckpt_flags(sbi, CP_DISABLED_FLAG)) {
+ 		f2fs_enable_checkpoint(sbi);
+ 	}
+@@ -3369,7 +3384,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 		/* After POR, we can run background GC thread.*/
+ 		err = f2fs_start_gc_thread(sbi);
+ 		if (err)
+-			goto free_meta;
++			goto sync_free_meta;
+ 	}
+ 	kvfree(options);
+ 
+@@ -3391,6 +3406,11 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	f2fs_update_time(sbi, REQ_TIME);
+ 	return 0;
+ 
++sync_free_meta:
++	/* safe to flush all the data */
++	sync_filesystem(sbi->sb);
++	retry = false;
++
+ free_meta:
+ #ifdef CONFIG_QUOTA
+ 	f2fs_truncate_quota_inode_pages(sb);
 -- 
 2.19.0.605.g01d371f741-goog
 
