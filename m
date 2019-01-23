@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E5FCC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 19:11:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6381C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 19:12:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E20042184B
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 19:11:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2B8721872
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 19:12:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726778AbfAWTLP (ORCPT
+        id S1726324AbfAWTMn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 14:11:15 -0500
-Received: from iolanthe.rowland.org ([192.131.102.54]:50314 "HELO
+        Wed, 23 Jan 2019 14:12:43 -0500
+Received: from iolanthe.rowland.org ([192.131.102.54]:50346 "HELO
         iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1726296AbfAWTLO (ORCPT
+        with SMTP id S1725996AbfAWTMm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 14:11:14 -0500
-Received: (qmail 5600 invoked by uid 2102); 23 Jan 2019 14:11:13 -0500
+        Wed, 23 Jan 2019 14:12:42 -0500
+Received: (qmail 5670 invoked by uid 2102); 23 Jan 2019 14:12:41 -0500
 Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 23 Jan 2019 14:11:13 -0500
-Date:   Wed, 23 Jan 2019 14:11:13 -0500 (EST)
+  by localhost with SMTP; 23 Jan 2019 14:12:41 -0500
+Date:   Wed, 23 Jan 2019 14:12:41 -0500 (EST)
 From:   Alan Stern <stern@rowland.harvard.edu>
 X-X-Sender: stern@iolanthe.rowland.org
 To:     Yinbo Zhu <yinbo.zhu@nxp.com>
@@ -35,9 +35,10 @@ cc:     Xiaobo Xie <xiaobo.xie@nxp.com>, Jerry Huang <jerry.huang@nxp.com>,
         Suresh Gupta <suresh.gupta@freescale.com>,
         "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/5] usb: fsl: Set USB_EN bit to select ULPI phy
-In-Reply-To: <20190123070615.14462-1-yinbo.zhu@nxp.com>
-Message-ID: <Pine.LNX.4.44L0.1901231410530.1564-100000@iolanthe.rowland.org>
+Subject: Re: [PATCH v3 3/5] usb: host: Stops USB controller init if PLL fails
+ to lock
+In-Reply-To: <20190123070615.14462-3-yinbo.zhu@nxp.com>
+Message-ID: <Pine.LNX.4.44L0.1901231411350.1564-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
 Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
@@ -47,40 +48,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Wed, 23 Jan 2019, Yinbo Zhu wrote:
 
-> From: Nikhil Badola <nikhil.badola@freescale.com>
+> From: Ramneek Mehresh <ramneek.mehresh@freescale.com>
 > 
-> Set USB_EN bit to select ULPI phy for USB controller version 2.5
+> USB erratum-A006918 workaround tries to start internal PHY inside
+> uboot (when PLL fails to lock). However, if the workaround also
+> fails, then USB initialization is also stopped inside Linux.
+> Erratum-A006918 workaround failure creates "fsl,erratum_a006918"
+> node in device-tree. Presence of this node in device-tree is
+> used to stop USB controller initialization in Linux
 > 
-> Signed-off-by: Nikhil Badola <nikhil.badola@freescale.com>
+> Signed-off-by: Ramneek Mehresh <ramneek.mehresh@freescale.com>
+> Signed-off-by: Suresh Gupta <suresh.gupta@freescale.com>
 > Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
 > ---
-> Change in v3:
-> 		Code base already has patch[5/6], so remove it.  
-> 
->  drivers/usb/host/ehci-fsl.c |    6 ++++++
->  1 files changed, 6 insertions(+), 0 deletions(-)
+>  drivers/usb/host/ehci-fsl.c      |    5 +++++
+>  drivers/usb/host/fsl-mph-dr-of.c |    4 ++++
+>  2 files changed, 9 insertions(+), 0 deletions(-)
 > 
 > diff --git a/drivers/usb/host/ehci-fsl.c b/drivers/usb/host/ehci-fsl.c
-> index e3d0c1c..ea7e17b 100644
+> index 8b0f3ed..e276067 100644
 > --- a/drivers/usb/host/ehci-fsl.c
 > +++ b/drivers/usb/host/ehci-fsl.c
-> @@ -122,6 +122,12 @@ static int fsl_ehci_drv_probe(struct platform_device *pdev)
->  		tmp |= 0x4;
->  		iowrite32be(tmp, hcd->regs + FSL_SOC_USB_CTRL);
->  	}
-> +
-> +	/* Set USB_EN bit to select ULPI phy for USB controller version 2.5 */
-> +	if (pdata->controller_ver == FSL_USB_VER_2_5 &&
-> +		pdata->phy_mode == FSL_USB2_PHY_ULPI)
+> @@ -236,6 +236,11 @@ static int ehci_fsl_setup_phy(struct usb_hcd *hcd,
+>  		portsc |= PORT_PTS_PTW;
+>  		/* fall through */
+>  	case FSL_USB2_PHY_UTMI:
+> +		if (pdata->has_fsl_erratum_a006918) {
+> +			pr_warn("fsl-ehci: USB PHY clock invalid\n");
 
-Incorrect indentation of the continuation line.
+As before, use dev_warn.
 
 Alan Stern
 
-> +		iowrite32be(USB_CTRL_USB_EN, hcd->regs + FSL_SOC_USB_CTRL);
+> +			return -EINVAL;
+> +		}
 > +
+>  	case FSL_USB2_PHY_UTMI_DUAL:
+>  		/* PHY_CLK_VALID bit is de-featured from all controller
+>  		 * versions below 2.4 and is to be checked only for
+> diff --git a/drivers/usb/host/fsl-mph-dr-of.c b/drivers/usb/host/fsl-mph-dr-of.c
+> index 4f8b8a0..bdc8812 100644
+> --- a/drivers/usb/host/fsl-mph-dr-of.c
+> +++ b/drivers/usb/host/fsl-mph-dr-of.c
+> @@ -230,6 +230,10 @@ static int fsl_usb2_mph_dr_of_probe(struct platform_device *ofdev)
+>  	else
+>  		pdata->has_fsl_erratum_14 = 0;
+>  
+> +	if (of_get_property(np, "fsl,erratum_a006918", NULL))
+> +		pdata->has_fsl_erratum_a006918 = 1;
+> +	else
+> +		pdata->has_fsl_erratum_a006918 = 0;
+>  
 >  	/*
->  	 * Enable UTMI phy and program PTS field in UTMI mode before asserting
->  	 * controller reset for USB Controller version 2.5
+>  	 * Determine whether phy_clk_valid needs to be checked
 > 
 
