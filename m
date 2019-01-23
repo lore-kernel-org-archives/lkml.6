@@ -2,174 +2,142 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC281C282C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 00:28:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB997C282C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 00:30:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7C7720868
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 00:28:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81EDD217D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 00:30:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JaO7flI/"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AtfS6bzN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727010AbfAWA2W (ORCPT
+        id S1726893AbfAWAaq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 19:28:22 -0500
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:42276 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726783AbfAWA2V (ORCPT
+        Tue, 22 Jan 2019 19:30:46 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:43574 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726329AbfAWAap (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 19:28:21 -0500
-Received: by mail-vk1-f196.google.com with SMTP id y14so98093vky.9
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 16:28:20 -0800 (PST)
+        Tue, 22 Jan 2019 19:30:45 -0500
+Received: by mail-pf1-f194.google.com with SMTP id w73so216197pfk.10
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 16:30:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hx/I5Uxyx54XWN1O7MeDfbIiaH2FN7OkgoMsFcs8oHU=;
-        b=JaO7flI/kdZrv+Zt/C/qsS5CphBDrS5awNL99nZoN3tgw0Fhw/xWe5lBfE4mmrumrL
-         jrC3vhPEJqlKuyWPQEA4YSj3WVqdppobrzzKptAJPxRGyFAo8ec4l6Zx4KEerhxsYtLF
-         AWXzak6X81pUDifUNUnuYhkbxwjCJCb9m8wbQ=
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=bZHGW9UIzeo3jg9G6hlmccfpVJD3jkJYVrWsAWmLXGQ=;
+        b=AtfS6bzNoQsWyIrV6i2nu48uWdnxzUqo77EaEHA7uqbmBF6UK9fNZgstbvSSBVv5Uc
+         pgDefYjymoAVvpR7E3ZtQEj7xj9A+gZ3qH6rdWWoiGlw+9h8Ft7CPNu6gb33DOZANfi6
+         BRj39FZSP385NhXy4GBibqQ8I46SBhm6sKZXc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hx/I5Uxyx54XWN1O7MeDfbIiaH2FN7OkgoMsFcs8oHU=;
-        b=fTtVQThSuXx9DF04UvWtTRTzSUSZQgOGPGaKhjHLMQSdmNVXeGHn6TgA3W/b7Vni+T
-         FQcaQojcMfctXUQ5p97uotmKAi5QY2tz6IuSmmpq1rlkOeXrOdq3awh/+VL6m7PZFOKB
-         nplp4C92y9XgulhtGyNaG/L5iMtaNFKsbqapizdHydha5wcgQVFPV2urkcE52gPU1DCX
-         dZNJLuXbrIC8efN7MfrlaZ1aq/eSXrD9uTmhK1wmX82zX2GfH9ai29RHSXhJdtDhSC9K
-         KX0kWuyMxg9LDJd1OK1ek6hBPrTAcoySJk7JIZon2ACEAlWmF7/Mdrjrebaxw5cQkJqG
-         q8SA==
-X-Gm-Message-State: AJcUukcDf2gvuIgzlhXGVgKXxXFVQuHysV6naL3idBZD9Jofl3Yeoqzq
-        kR2oVFEa4A+LSGxzvzTzSPSyUvlvGuo=
-X-Google-Smtp-Source: ALg8bN7A50MD6d+ZpXcUH9CZaFTMyhDrPbb2om7AQ5p1IPnQuHs7kvBoaqPtplZvP5axdUzPtSbmRQ==
-X-Received: by 2002:a1f:a147:: with SMTP id k68mr31212vke.1.1548203300125;
-        Tue, 22 Jan 2019 16:28:20 -0800 (PST)
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com. [209.85.222.50])
-        by smtp.gmail.com with ESMTPSA id q193sm23803432vsd.0.2019.01.22.16.28.19
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Jan 2019 16:28:19 -0800 (PST)
-Received: by mail-ua1-f50.google.com with SMTP id d21so141000uap.9
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 16:28:19 -0800 (PST)
-X-Received: by 2002:ab0:5590:: with SMTP id v16mr34488uaa.132.1548203298731;
- Tue, 22 Jan 2019 16:28:18 -0800 (PST)
-MIME-Version: 1.0
-References: <20190122055112.30943-1-bjorn.andersson@linaro.org> <20190122055112.30943-11-bjorn.andersson@linaro.org>
-In-Reply-To: <20190122055112.30943-11-bjorn.andersson@linaro.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Tue, 22 Jan 2019 16:28:04 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=XuA0Sm0fXfaHtib7+rji1s3s_SmjHc6d_DbEQ1LROq+A@mail.gmail.com>
-Message-ID: <CAD=FV=XuA0Sm0fXfaHtib7+rji1s3s_SmjHc6d_DbEQ1LROq+A@mail.gmail.com>
-Subject: Re: [PATCH v3 10/10] arm64: dts: qcom: sdm845: Add Q6V5 MSS node
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=bZHGW9UIzeo3jg9G6hlmccfpVJD3jkJYVrWsAWmLXGQ=;
+        b=Ny3cdIKQaHJYweEtJOvQv/n4cnK31zsvslCGf/XSOfOwGMwStzBXQKfoErMkm5cx/+
+         TS2+TT3e6CAyT0nQ4txBlr6dvz3eJ3koLf33LVnrm06mMOlBTt9rmc0hFHobesjCcyrx
+         4lkfL5lzkewlweox18YemnMPLwvjvgg5LIONNyUHpPYq/5vVgf1aRK0hQefDani1Uxvm
+         XR/2/4Jbs+H+jiJOxIaziLzboo8gLjKEkArZUrpJIYwVFdF/1dzA85aHUU+MPTirVqZ3
+         y0U3H1HZyTxQuY0Zsc9Bkktt306s1Wx15OMcnRtRNG4eyyZIUZKjtC9rwCv9mSe14+4/
+         j4SA==
+X-Gm-Message-State: AJcUukcTbjKDyzinIRD0b7b7hvlzlxvutArXk6bP2zJOx1FFO5kxwQMx
+        AfxsqEW+2ucdrztgq2uVH7cmVg==
+X-Google-Smtp-Source: ALg8bN5ZTjrRVW/4/YKDlaumhB/VkjtzeMiCyE4Zw1B6paCHrsYzLOx11b5zUDX1tc4poCX6r+I7XA==
+X-Received: by 2002:a62:fb07:: with SMTP id x7mr90139pfm.71.1548203444718;
+        Tue, 22 Jan 2019 16:30:44 -0800 (PST)
+Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id 15sm28538874pfr.55.2019.01.22.16.30.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 22 Jan 2019 16:30:43 -0800 (PST)
+Date:   Tue, 22 Jan 2019 16:30:41 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Stephen Boyd <swboyd@chromium.org>,
+        Andy Gross <andy.gross@linaro.org>,
         David Brown <david.brown@linaro.org>,
         Sibi Sankar <sibis@codeaurora.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-arm-msm <linux-arm-msm@vger.kernel.org>,
         devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v3 01/10] arm64: dts: qcom: sdm845: Update PIL region
+ memory map
+Message-ID: <20190123003041.GF31919@minitux>
+References: <20190122055112.30943-1-bjorn.andersson@linaro.org>
+ <20190122055112.30943-2-bjorn.andersson@linaro.org>
+ <154818353130.20280.17905705223316470797@swboyd.mtv.corp.google.com>
+ <20190122192404.GB31919@minitux>
+ <CAD=FV=UgQtPZj-EWCzqGqgAbfijjd+j7kO8XsXttJKfejEzBzg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=UgQtPZj-EWCzqGqgAbfijjd+j7kO8XsXttJKfejEzBzg@mail.gmail.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue 22 Jan 15:10 PST 2019, Doug Anderson wrote:
 
-On Mon, Jan 21, 2019 at 9:52 PM Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
->
-> From: Sibi Sankar <sibis@codeaurora.org>
->
-> This patch adds Q6V5 MSS remoteproc node for SDM845 SoCs.
->
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->
-> Changes since v2:
-> - Picked up Sibi's patch
-> - Fixed reg to work with address/size-cells as 2
->
->  arch/arm64/boot/dts/qcom/sdm845.dtsi | 58 ++++++++++++++++++++++++++++
->  1 file changed, 58 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> index 5cc2615461da..78df5f1bce2d 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -1617,6 +1617,64 @@
->                         clock-names = "xo";
->                 };
->
-> +               mss_pil: remoteproc@4080000 {
-> +                       compatible = "qcom,sdm845-mss-pil";
-> +                       reg = <0 0x04080000 0 0x408>, <0 0x04180000 0 0x48>;
-> +                       reg-names = "qdsp6", "rmb";
-> +
-> +                       interrupts-extended =
-> +                               <&intc GIC_SPI 266 IRQ_TYPE_EDGE_RISING>,
-> +                               <&modem_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-> +                               <&modem_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-> +                               <&modem_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-> +                               <&modem_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
-> +                               <&modem_smp2p_in 7 IRQ_TYPE_EDGE_RISING>;
-> +                       interrupt-names = "wdog", "fatal", "ready",
-> +                                         "handover", "stop-ack",
-> +                                         "shutdown-ack";
-> +
-> +                       clocks = <&gcc GCC_MSS_CFG_AHB_CLK>,
-> +                                <&gcc GCC_MSS_Q6_MEMNOC_AXI_CLK>,
-> +                                <&gcc GCC_BOOT_ROM_AHB_CLK>,
-> +                                <&gcc GCC_MSS_GPLL0_DIV_CLK_SRC>,
-> +                                <&gcc GCC_MSS_SNOC_AXI_CLK>,
-> +                                <&gcc GCC_MSS_MFAB_AXIS_CLK>,
-> +                                <&gcc GCC_PRNG_AHB_CLK>,
-> +                                <&rpmhcc RPMH_CXO_CLK>;
-> +                       clock-names = "iface", "bus", "mem", "gpll0_mss",
-> +                                     "snoc_axi", "mnoc_axi", "prng", "xo";
-> +
-> +                       qcom,smem-states = <&modem_smp2p_out 0>;
-> +                       qcom,smem-state-names = "stop";
-> +
-> +                       resets = <&aoss_reset AOSS_CC_MSS_RESTART>,
-> +                                <&pdc_reset PDC_MODEM_SYNC_RESET>;
-> +                       reset-names = "mss_restart", "pdc_reset";
-> +
-> +                       qcom,halt-regs = <&tcsr_mutex_regs 0x23000 0x25000 0x24000>;
-> +
-> +                       power-domains = <&aoss_qmp AOSS_QMP_LS_MODEM>,
-> +                                       <&rpmhpd SDM845_CX>,
-> +                                       <&rpmhpd SDM845_MX>,
-> +                                       <&rpmhpd SDM845_MSS>;
-> +                       power-domain-names = "load_state", "cx", "mx", "mss";
-> +
-> +                       mba {
-> +                               memory-region = <&mba_region>;
-> +                       };
-> +
-> +                       mpss {
-> +                               memory-region = <&mpss_region>;
-> +                       };
-> +
-> +                       glink-edge {
-> +                               interrupts = <GIC_SPI 449 IRQ_TYPE_EDGE_RISING>;
-> +                               label = "modem";
-> +                               qcom,remote-pid = <1>;
-> +                               mboxes = <&apss_shared 12>;
-> +                       };
-> +               };
-> +
->                 sdhc_2: sdhci@8804000 {
+> Hi,
+> 
+> On Tue, Jan 22, 2019 at 11:24 AM Bjorn Andersson
+> <bjorn.andersson@linaro.org> wrote:
+> >
+> > On Tue 22 Jan 10:58 PST 2019, Stephen Boyd wrote:
+> >
+> > > Quoting Bjorn Andersson (2019-01-21 21:51:03)
+> > > > @@ -103,10 +138,30 @@
+> > > >                         no-map;
+> > > >                 };
+> > > >
+> > > > +               venus_mem: memory@95800000 {
+> > > > +                       reg = <0 0x95800000 0 0x500000>;
+> > > > +                       no-map;
+> > > > +               };
+> > > > +
+> > > > +               cdsp_mem: memory@95d00000 {
+> > > > +                       reg = <0 0x95d00000 0 0x800000>;
+> > > > +                       no-map;
+> > > > +               };
+> > > > +
+> > > >                 mba_region: memory@96500000 {
+> > > >                         reg = <0 0x96500000 0 0x200000>;
+> > > >                         no-map;
+> > > >                 };
+> > > > +
+> > > > +               slpi_mem: memory@96700000 {
+> > > > +                       reg = <0 0x96700000 0 0x1400000>;
+> > > > +                       no-map;
+> > > > +               };
+> > > > +
+> > > > +               spss_mem: memory@97b00000 {
+> > > > +                       reg = <0 0x97b00000 0 0x100000>;
+> > > > +                       no-map;
+> > > > +               };
+> > > >         };
+> > > >
+> > >
+> > > What's the plan if certain configurations don't use all these carveouts?
+> > > Can we mark the reservation nodes as status = "disabled", or the reverse
+> > > and mark them as status = "ok" in all boards, and then reclaim the
+> > > memory for peripherals we don't care to use?
+> > >
+> >
+> > The code path that picks these up does look for "status", so I suggest
+> > that we leave them all enabled in the platform dtsi and then let the
+> > device's reclaim them as needed.
+> 
+> Does that mean we should add labels for all of the sub-nodes so that
+> boards can easily mark them "disabled"?
+> 
 
-Can you please sort by unit address now that you have a device tree
-that has more stuff?
+That sounds reasonable, I'll dig up some labels for the unlabeled nodes
+as well.
 
--Doug
+Thanks,
+Bjorn
