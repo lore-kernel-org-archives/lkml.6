@@ -2,127 +2,78 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6370AC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 13:09:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9922C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 13:10:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 321DE20855
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 13:09:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548248963;
-	bh=iDwBI/t4xFRVlLFQq4IzY0VVRnVQGIG6gT9vVHAKbrc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=CDoev/7dT1WJPaHlX9ocoTtesFJePfeMXYkScUEDzBpl4ywIzN4sFm3l+aAzLAbXZ
-	 JBXevofR5dOZwQMl9wQQPAYrmiZXCKnb4kkp102d2wZoqysfn0I05CiAE1c5W+GE+4
-	 te2zwVw5zrViGdUsMM4FtxQ5Po0mIWRBjhi/kFrQ=
+	by mail.kernel.org (Postfix) with ESMTP id 955DE20855
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 13:10:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726906AbfAWNJV (ORCPT
+        id S1726926AbfAWNKI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 08:09:21 -0500
-Received: from mx2.suse.de ([195.135.220.15]:45538 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726057AbfAWNJV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 08:09:21 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 07C16AE80;
-        Wed, 23 Jan 2019 13:09:19 +0000 (UTC)
-Date:   Wed, 23 Jan 2019 14:09:17 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Gary R Hook <ghook@amd.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: Re: [PATCH 2/2] debugfs: return error values, not NULL
-Message-ID: <20190123130917.GZ4087@dhcp22.suse.cz>
-References: <20190123102702.GA17123@kroah.com>
- <20190123102814.GB17123@kroah.com>
- <20190123110628.GV4087@dhcp22.suse.cz>
- <20190123115535.GA31237@kroah.com>
- <20190123121350.GX4087@dhcp22.suse.cz>
- <20190123122626.GA27968@kroah.com>
- <20190123124024.GY4087@dhcp22.suse.cz>
- <20190123130057.GB21318@kroah.com>
+        Wed, 23 Jan 2019 08:10:08 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:53702 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726141AbfAWNKI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 08:10:08 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1gmII8-0006ou-Dg; Wed, 23 Jan 2019 13:10:04 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi: qlogicfas408: clean up a couple of indentation issues
+Date:   Wed, 23 Jan 2019 13:10:04 +0000
+Message-Id: <20190123131004.24460-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190123130057.GB21318@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 23-01-19 14:00:57, Greg KH wrote:
-> On Wed, Jan 23, 2019 at 01:40:24PM +0100, Michal Hocko wrote:
-> > On Wed 23-01-19 13:26:26, Greg KH wrote:
-> > > On Wed, Jan 23, 2019 at 01:13:50PM +0100, Michal Hocko wrote:
-> > > > On Wed 23-01-19 12:55:35, Greg KH wrote:
-> > > > > On Wed, Jan 23, 2019 at 12:06:28PM +0100, Michal Hocko wrote:
-> > > > > > On Wed 23-01-19 11:28:14, Greg KH wrote:
-> > > > > > > When an error happens, debugfs should return an error pointer value, not
-> > > > > > > NULL.  This will prevent the totally theoretical error where a debugfs
-> > > > > > > call fails due to lack of memory, returning NULL, and that dentry value
-> > > > > > > is then passed to another debugfs call, which would end up succeeding,
-> > > > > > > creating a file at the root of the debugfs tree, but would then be
-> > > > > > > impossible to remove (because you can not remove the directory NULL).
-> > > > > > > 
-> > > > > > > So, to make everyone happy, always return errors, this makes the users
-> > > > > > > of debugfs much simpler (they do not have to ever check the return
-> > > > > > > value), and everyone can rest easy.
-> > > > > > 
-> > > > > > How come this is safe at all? Say you are creating a directory by
-> > > > > > debugfs_create_dir and then feed the return value to debugfs_create_files
-> > > > > > as a parent. In case of error you are giving it an invalid pointer and
-> > > > > > likely blow up unless I miss something.
-> > > > > 
-> > > > > debugfs_create_files checks for invalid parents and will just refuse to
-> > > > > create the file.  It's always done that.
-> > > > 
-> > > > I must be missing something because debugfs_create_files does
-> > > > 	d_inode(parent)->i_private = data;
-> > > > as the very first thing and that means that it dereferences an invalid
-> > > > pointer right there.
-> > > 
-> > > debugfs_create_file() -> __debugfs_create_file() -> start_creating()
-> > > and that function checks if parent is an error, which it aborts on, or
-> > > if it is NULL, it sets parent to a valid value:
-> > > 
-> > >         /* If the parent is not specified, we create it in the root.
-> > >          * We need the root dentry to do this, which is in the super
-> > >          * block. A pointer to that is in the struct vfsmount that we
-> > >          * have around.
-> > >          */
-> > >         if (!parent)
-> > >                 parent = debugfs_mount->mnt_root;
-> > > 
-> > > I don't see any line that looks like:
-> > > >       d_inode(parent)->i_private = data;
-> > > in Linus's tree right now, what kernel version are you referring to?
-> > 
-> > Ohh, my bad. I have looked at debugfs_create_files which is a mq helper
-> > around debugfs_create_file. But that is a good example why this patch is
-> > dangerous anyway. blk_mq_debugfs_register simply checks for NULL and
-> > debugfs_create_files doesn't expect ERR_PTR here. So you would have to
-> > check each and every user to make sure you can do that.
-> 
-> Ah, I already have that patch in my "to add a proper changelog" queue,
-> it's below and fixes that problem.
+From: Colin Ian King <colin.king@canonical.com>
 
-OK, fair enough. I am just wondering how many more gems like that are
-lurking there. Do not get me wrong but a broken error handling is rarely
-fixed by removing it.
+An if statement is indented correctly and an outb statement has
+a redundant empty comment and incorrect indentation. Fix these.
 
-And Cc: stable is completely inappropriate IMNSHO. This is just adding a
-risk without a large benefit.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/qlogicfas408.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Moreover all these changes should be posted in a single patch thread so
-that everybody can see the final outcome.
+diff --git a/drivers/scsi/qlogicfas408.c b/drivers/scsi/qlogicfas408.c
+index 8b471a925b43..136681ad18a5 100644
+--- a/drivers/scsi/qlogicfas408.c
++++ b/drivers/scsi/qlogicfas408.c
+@@ -139,7 +139,7 @@ static int ql_pdma(struct qlogicfas408_priv *priv, int phase, char *request, int
+ 	} else {		/* out */
+ #if QL_TURBO_PDMA
+ 		rtrc(4)
+-		    if (reqlen >= 128 && inb(qbase + 8) & 0x10) {	/* empty */
++		if (reqlen >= 128 && inb(qbase + 8) & 0x10) {	/* empty */
+ 			outsl(qbase + 4, request, 32);
+ 			reqlen -= 128;
+ 			request += 128;
+@@ -240,7 +240,7 @@ static void ql_icmd(struct scsi_cmnd *cmd)
+ 	outb(0x40 | qlcfg8 | priv->qinitid, qbase + 8);
+ 	outb(qlcfg7, qbase + 7);
+ 	outb(qlcfg6, qbase + 6);
+-	 /**/ outb(qlcfg5, qbase + 5);	/* select timer */
++	outb(qlcfg5, qbase + 5);	/* select timer */
+ 	outb(qlcfg9 & 7, qbase + 9);	/* prescaler */
+ /*	outb(0x99, qbase + 5);	*/
+ 	outb(scmd_id(cmd), qbase + 4);
 -- 
-Michal Hocko
-SUSE Labs
+2.19.1
+
