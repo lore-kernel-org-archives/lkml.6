@@ -4,23 +4,23 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D594C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 16:31:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AF78C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 16:31:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68C69217D4
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 16:31:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DDF5217D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 16:31:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726352AbfAWQax (ORCPT
+        id S1726870AbfAWQbQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 11:30:53 -0500
-Received: from 8bytes.org ([81.169.241.247]:59178 "EHLO theia.8bytes.org"
+        Wed, 23 Jan 2019 11:31:16 -0500
+Received: from 8bytes.org ([81.169.241.247]:59196 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725994AbfAWQaw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 11:30:52 -0500
+        id S1726156AbfAWQax (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 11:30:53 -0500
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 424A6273; Wed, 23 Jan 2019 17:30:51 +0100 (CET)
+        id 6761243A; Wed, 23 Jan 2019 17:30:51 +0100 (CET)
 From:   Joerg Roedel <joro@8bytes.org>
 To:     "Michael S . Tsirkin" <mst@redhat.com>,
         Jason Wang <jasowang@redhat.com>,
@@ -32,9 +32,9 @@ Cc:     Jens Axboe <axboe@kernel.dk>,
         iommu@lists.linux-foundation.org, jfehlig@suse.com,
         jon.grimm@amd.com, brijesh.singh@amd.com, joro@8bytes.org,
         jroedel@suse.de
-Subject: [PATCH 1/5] swiotlb: Introduce swiotlb_max_mapping_size()
-Date:   Wed, 23 Jan 2019 17:30:45 +0100
-Message-Id: <20190123163049.24863-2-joro@8bytes.org>
+Subject: [PATCH 2/5] swiotlb: Add is_swiotlb_active() function
+Date:   Wed, 23 Jan 2019 17:30:46 +0100
+Message-Id: <20190123163049.24863-3-joro@8bytes.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190123163049.24863-1-joro@8bytes.org>
 References: <20190123163049.24863-1-joro@8bytes.org>
@@ -45,51 +45,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Joerg Roedel <jroedel@suse.de>
 
-The function returns the maximum size that can be remapped
-by the SWIOTLB implementation. This function will be later
-exposed to users through the DMA-API.
+This function will be used from dma_direct code to determine
+the maximum segment size of a dma mapping.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- include/linux/swiotlb.h | 5 +++++
+ include/linux/swiotlb.h | 6 ++++++
  kernel/dma/swiotlb.c    | 5 +++++
- 2 files changed, 10 insertions(+)
+ 2 files changed, 11 insertions(+)
 
 diff --git a/include/linux/swiotlb.h b/include/linux/swiotlb.h
-index 7c007ed7505f..ceb623321f38 100644
+index ceb623321f38..5c087d330b4b 100644
 --- a/include/linux/swiotlb.h
 +++ b/include/linux/swiotlb.h
-@@ -62,6 +62,7 @@ extern void swiotlb_tbl_sync_single(struct device *hwdev,
- 
+@@ -63,6 +63,7 @@ extern void swiotlb_tbl_sync_single(struct device *hwdev,
  extern int
  swiotlb_dma_supported(struct device *hwdev, u64 mask);
-+extern size_t swiotlb_max_mapping_size(struct device *dev);
+ extern size_t swiotlb_max_mapping_size(struct device *dev);
++bool is_swiotlb_active(void);
  
  #ifdef CONFIG_SWIOTLB
  extern enum swiotlb_force swiotlb_force;
-@@ -95,6 +96,10 @@ static inline unsigned int swiotlb_max_segment(void)
+@@ -100,6 +101,11 @@ static inline size_t swiotlb_max_mapping_size(struct device *dev)
  {
- 	return 0;
+ 	return SIZE_MAX;
  }
-+static inline size_t swiotlb_max_mapping_size(struct device *dev)
++
++static inline bool is_swiotlb_active(void)
 +{
-+	return SIZE_MAX;
++	return false;
 +}
  #endif /* CONFIG_SWIOTLB */
  
  extern void swiotlb_print_info(void);
 diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
-index 1fb6fd68b9c7..9cb21259cb0b 100644
+index 9cb21259cb0b..9fbd075081d9 100644
 --- a/kernel/dma/swiotlb.c
 +++ b/kernel/dma/swiotlb.c
-@@ -662,3 +662,8 @@ swiotlb_dma_supported(struct device *hwdev, u64 mask)
+@@ -667,3 +667,8 @@ size_t swiotlb_max_mapping_size(struct device *dev)
  {
- 	return __phys_to_dma(hwdev, io_tlb_end - 1) <= mask;
+ 	return ((size_t)1 << IO_TLB_SHIFT) * IO_TLB_SEGSIZE;
  }
 +
-+size_t swiotlb_max_mapping_size(struct device *dev)
++bool is_swiotlb_active(void)
 +{
-+	return ((size_t)1 << IO_TLB_SHIFT) * IO_TLB_SEGSIZE;
++	return !no_iotlb_memory;
 +}
 -- 
 2.17.1
