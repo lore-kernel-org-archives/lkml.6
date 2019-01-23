@@ -2,165 +2,179 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC89BC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:22:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EE4AC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:23:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A170F21872
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:22:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="jgEuhTxM"
+	by mail.kernel.org (Postfix) with ESMTP id 1293221872
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:23:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726977AbfAWWWE (ORCPT
+        id S1727026AbfAWWXa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 17:22:04 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:51816 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726152AbfAWWWE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 17:22:04 -0500
-Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9A8B523F;
-        Wed, 23 Jan 2019 23:22:01 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1548282121;
-        bh=9A3f5OSG15SIiC6YnoKy7rcj+n56dcYwYo6pOD3aktE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jgEuhTxMABK2ccyzsvieAN5IpNYKJPgGfnm7Tdz/WDrGKf+wcCW/j7bQX9QUstc3A
-         jFzYc1zXFTMQaaEWraiRlK4adj3Ye+6KxlPVM0BtzNQ1hEDvfRSnRcg0hD61NTlrZ3
-         LGplkUoFUSX/3ai9lbMr10pJi3p6OxF/0F8v9ICc=
-Date:   Thu, 24 Jan 2019 00:22:00 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Lukas Wunner <lukas@wunner.de>,
-        Ronald =?utf-8?B?VHNjaGFsw6Ry?= <ronald@innovation.ch>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-input@vger.kernel.org
-Subject: Re: [PATCH] drm/bridge: sil_sii8620: depend on INPUT instead of
- selecting it.
-Message-ID: <20190123222200.GF4675@pendragon.ideasonboard.com>
-References: <20190122141311.10445-1-ronald@innovation.ch>
- <20190123084556.gsospl6joh53qnzs@wunner.de>
- <20190123220342.GC179701@dtor-ws>
- <20190123221735.GE4675@pendragon.ideasonboard.com>
- <20190123222105.GF179701@dtor-ws>
+        Wed, 23 Jan 2019 17:23:30 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:46602 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726249AbfAWWXa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 17:23:30 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 51D88C7E6F;
+        Wed, 23 Jan 2019 22:23:29 +0000 (UTC)
+Received: from localhost.localdomain.com (ovpn-120-127.rdu2.redhat.com [10.10.120.127])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3AE056C202;
+        Wed, 23 Jan 2019 22:23:26 +0000 (UTC)
+From:   jglisse@redhat.com
+To:     linux-mm@kvack.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Jan Kara <jack@suse.cz>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Ross Zwisler <zwisler@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>, kvm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v4 0/9] mmu notifier provide context informations
+Date:   Wed, 23 Jan 2019 17:23:06 -0500
+Message-Id: <20190123222315.1122-1-jglisse@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190123222105.GF179701@dtor-ws>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Wed, 23 Jan 2019 22:23:29 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Dmity,
+From: Jérôme Glisse <jglisse@redhat.com>
 
-On Wed, Jan 23, 2019 at 02:21:05PM -0800, Dmitry Torokhov wrote:
-> On Thu, Jan 24, 2019 at 12:17:35AM +0200, Laurent Pinchart wrote:
-> > On Wed, Jan 23, 2019 at 02:03:42PM -0800, Dmitry Torokhov wrote:
-> >> On Wed, Jan 23, 2019 at 09:45:56AM +0100, Lukas Wunner wrote:
-> >>> On Tue, Jan 22, 2019 at 06:13:11AM -0800, Ronald Tschalär wrote:
-> >>>> commit d6abe6df706c66d803e6dd4fe98c1b6b7f125a56 (drm/bridge:
-> >>>> sil_sii8620: do not have a dependency of RC_CORE) added a dependency on
-> >>>> INPUT. However, this causes problems with other drivers, in particular
-> >>>> an input driver that depends on MFD_INTEL_LPSS_PCI (to be added in a
-> >>>> future commit):
-> >>>> 
-> >>>>   drivers/clk/Kconfig:9:error: recursive dependency detected!
-> >>>>   drivers/clk/Kconfig:9:        symbol COMMON_CLK is selected by MFD_INTEL_LPSS
-> >>>>   drivers/mfd/Kconfig:566:      symbol MFD_INTEL_LPSS is selected by MFD_INTEL_LPSS_PCI
-> >>>>   drivers/mfd/Kconfig:580:      symbol MFD_INTEL_LPSS_PCI is implied by KEYBOARD_APPLESPI
-> >>>>   drivers/input/keyboard/Kconfig:73:    symbol KEYBOARD_APPLESPI depends on INPUT
-> >>>>   drivers/input/Kconfig:8:      symbol INPUT is selected by DRM_SIL_SII8620
-> >>>>   drivers/gpu/drm/bridge/Kconfig:83:    symbol DRM_SIL_SII8620 depends on DRM_BRIDGE
-> >>>>   drivers/gpu/drm/bridge/Kconfig:1:     symbol DRM_BRIDGE is selected by DRM_PL111
-> >>>>   drivers/gpu/drm/pl111/Kconfig:1:      symbol DRM_PL111 depends on COMMON_CLK
-> >>>> 
-> >>>> According to the docs, select should only be used for non-visible
-> >>>> symbols. Furthermore almost all other references to INPUT throughout the
-> >>>> kernel config are depends, not selects. Hence this change.
-> >> 
-> >> I think this is not as cut and dry. We should be able to select needed
-> >> subsystems (such as INPUT, USB, etc) even if they are user visible.
-> > 
-> > Semantically, maybe, but given the current state of Kconfig this results
-> > in a recursive dependencies nightmare. It's a no-go.
-> > 
-> >> User, when enabling a piece of hardware, does not need to know ultimate
-> >> details of all subsystems the driver might need ti function.
-> >> 
-> >> It looks like one of the drivers implies MFD_INTEL_LPSS_PCI, maybe
-> >> treating imply the same as select when detecting circular dependency is
-> >> wrong as we are allowed to deselect implied dependencies?
-> >> 
-> >>>> 
-> >>>> CC: Inki Dae <inki.dae@samsung.com>
-> >>>> CC: Andrzej Hajda <a.hajda@samsung.com>
-> >>>> Signed-off-by: Ronald Tschalär <ronald@innovation.ch>
-> >>> 
-> >>> Reviewed-by: Lukas Wunner <lukas@wunner.de>
-> >>> 
-> >>> I think this needs to be merged through the input tree as a prerequisite
-> >>> for the applespi.c driver (keyboard + touchpad driver for 2015+ MacBook,
-> >>> MacBook Air and MacBook Pro which uses SPI instead of USB) to avoid
-> >>> breaking the build.  Adding Dmitry.
-> >> 
-> >> I have no idea what applespi.c is (it is definitely not in my tree), so
-> >> I think it should be merged through the same tree that the original
-> >> commit was introduced through.
-> >> 
-> >>>> ---
-> >>>>  drivers/gpu/drm/bridge/Kconfig | 2 +-
-> >>>>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>>> 
-> >>>> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-> >>>> index 2fee47b0d50b..eabedc83f25c 100644
-> >>>> --- a/drivers/gpu/drm/bridge/Kconfig
-> >>>> +++ b/drivers/gpu/drm/bridge/Kconfig
-> >>>> @@ -83,9 +83,9 @@ config DRM_PARADE_PS8622
-> >>>>  config DRM_SIL_SII8620
-> >>>>  	tristate "Silicon Image SII8620 HDMI/MHL bridge"
-> >>>>  	depends on OF
-> >>>> +	depends on INPUT
-> >>>>  	select DRM_KMS_HELPER
-> >>>>  	imply EXTCON
-> >>>> -	select INPUT
-> >>>>  	select RC_CORE
-> >> 
-> >> Keeping "select RC_CORE" is wrong though, as the driver appears to be
-> >> working find without RC. Maybe it should be stubbed out?
-> > 
-> > It should definitely not be select'ed as it's a user-visible symbol. My
-> > preference would be to simply revert d6abe6df706c. If we want (and can)
-> > work without RC core then it should be stubbed out.
-> > 
-> > Commit d6abe6df706c states
-> > 
-> >     And some boards not using remote controller device don't really
-> >     need to know that RC_CORE config should be enabled to use sil_sii8620
-> >     driver only for HDMI.
-> > 
-> > The same reasoning applies to INPUT, if we agree that depending on
-> > RC_CORE is confusing for users, then depending on INPUT is confusing as
-> > well. There's not reason to apply different standards to INPUT and
-> > RC_CORE, depending on one and selecting the other doesn't make much
-> > sense.
-> 
-> OK, so revert + patch to stub out RC calls? That works for me (and I
-> still say it should go through the same tree that introduced
-> d6abe6df706c).
+Hi Andrew, i see that you still have my event patch in you queue [1].
+This patchset replace that single patch and is broken down in further
+step so that it is easier to review and ascertain that no mistake were
+made during mechanical changes. Here are the step:
 
-Yes, that sounds good to me.
+    Patch 1 - add the enum values
+    Patch 2 - coccinelle semantic patch to convert all call site of
+              mmu_notifier_range_init to default enum value and also
+              to passing down the vma when it is available
+    Patch 3 - update many call site to more accurate enum values
+    Patch 4 - add the information to the mmu_notifier_range struct
+    Patch 5 - helper to test if a range is updated to read only
+
+All the remaining patches are update to various driver to demonstrate
+how this new information get use by device driver. I build tested
+with make all and make all minus everything that enable mmu notifier
+ie building with MMU_NOTIFIER=no. Also tested with some radeon,amd
+gpu and intel gpu.
+
+If they are no objections i believe best plan would be to merge the
+the first 5 patches (all mm changes) through your queue for 5.1 and
+then to delay driver update to each individual driver tree for 5.2.
+This will allow each individual device driver maintainer time to more
+thouroughly test this more then my own testing.
+
+Note that i also intend to use this feature further in nouveau and
+HMM down the road. I also expect that other user like KVM might be
+interested into leveraging this new information to optimize some of
+there secondary page table invalidation.
+
+Here is an explaination on the rational for this patchset:
+
+
+CPU page table update can happens for many reasons, not only as a result
+of a syscall (munmap(), mprotect(), mremap(), madvise(), ...) but also
+as a result of kernel activities (memory compression, reclaim, migration,
+...).
+
+This patch introduce a set of enums that can be associated with each of
+the events triggering a mmu notifier. Latter patches take advantages of
+those enum values.
+
+- UNMAP: munmap() or mremap()
+- CLEAR: page table is cleared (migration, compaction, reclaim, ...)
+- PROTECTION_VMA: change in access protections for the range
+- PROTECTION_PAGE: change in access protections for page in the range
+- SOFT_DIRTY: soft dirtyness tracking
+
+Being able to identify munmap() and mremap() from other reasons why the
+page table is cleared is important to allow user of mmu notifier to
+update their own internal tracking structure accordingly (on munmap or
+mremap it is not longer needed to track range of virtual address as it
+becomes invalid).
+
+[1] https://www.ozlabs.org/~akpm/mmotm/broken-out/mm-mmu_notifier-contextual-information-for-event-triggering-invalidation-v2.patch
+
+Cc: Christian König <christian.koenig@amd.com>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Felix Kuehling <Felix.Kuehling@amd.com>
+Cc: Jason Gunthorpe <jgg@mellanox.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>
+Cc: Ross Zwisler <zwisler@kernel.org>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Ralph Campbell <rcampbell@nvidia.com>
+Cc: John Hubbard <jhubbard@nvidia.com>
+Cc: kvm@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-rdma@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>
+
+Jérôme Glisse (9):
+  mm/mmu_notifier: contextual information for event enums
+  mm/mmu_notifier: contextual information for event triggering
+    invalidation
+  mm/mmu_notifier: use correct mmu_notifier events for each invalidation
+  mm/mmu_notifier: pass down vma and reasons why mmu notifier is
+    happening
+  mm/mmu_notifier: mmu_notifier_range_update_to_read_only() helper
+  gpu/drm/radeon: optimize out the case when a range is updated to read
+    only
+  gpu/drm/amdgpu: optimize out the case when a range is updated to read
+    only
+  gpu/drm/i915: optimize out the case when a range is updated to read
+    only
+  RDMA/umem_odp: optimize out the case when a range is updated to read
+    only
+
+ drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c  | 13 ++++++++
+ drivers/gpu/drm/i915/i915_gem_userptr.c | 16 ++++++++++
+ drivers/gpu/drm/radeon/radeon_mn.c      | 13 ++++++++
+ drivers/infiniband/core/umem_odp.c      | 22 +++++++++++--
+ fs/proc/task_mmu.c                      |  3 +-
+ include/linux/mmu_notifier.h            | 42 ++++++++++++++++++++++++-
+ include/rdma/ib_umem_odp.h              |  1 +
+ kernel/events/uprobes.c                 |  3 +-
+ mm/huge_memory.c                        | 14 +++++----
+ mm/hugetlb.c                            | 11 ++++---
+ mm/khugepaged.c                         |  3 +-
+ mm/ksm.c                                |  6 ++--
+ mm/madvise.c                            |  3 +-
+ mm/memory.c                             | 25 +++++++++------
+ mm/migrate.c                            |  5 ++-
+ mm/mmu_notifier.c                       | 10 ++++++
+ mm/mprotect.c                           |  4 ++-
+ mm/mremap.c                             |  3 +-
+ mm/oom_kill.c                           |  3 +-
+ mm/rmap.c                               |  6 ++--
+ 20 files changed, 171 insertions(+), 35 deletions(-)
 
 -- 
-Regards,
+2.17.2
 
-Laurent Pinchart
