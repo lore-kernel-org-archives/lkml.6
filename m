@@ -5,54 +5,78 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0A68C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 11:05:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70501C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 11:05:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AC9A21841
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 11:05:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 477C821019
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 11:05:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727689AbfAWLFC (ORCPT
+        id S1727520AbfAWLFd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 06:05:02 -0500
-Received: from smtprelay0079.hostedemail.com ([216.40.44.79]:48934 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727075AbfAWLFB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 06:05:01 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 3DFD1180A8853;
-        Wed, 23 Jan 2019 11:05:00 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: wing91_48a9add928d5d
-X-Filterd-Recvd-Size: 1166
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf02.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 23 Jan 2019 11:04:59 +0000 (UTC)
-Message-ID: <b594fea0c643dd940dbbff0476d37e31fb00e504.camel@perches.com>
-Subject: Re: [PATCH] checkpatch: Verify SPDX comment style
-From:   Joe Perches <joe@perches.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Andy Whitcroft <apw@canonical.com>
-Cc:     Rob Herring <robh@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Date:   Wed, 23 Jan 2019 03:04:58 -0800
-In-Reply-To: <8b02899853247a2c67669561761f354dd3bd110e.camel@perches.com>
-References: <8b02899853247a2c67669561761f354dd3bd110e.camel@perches.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
+        Wed, 23 Jan 2019 06:05:33 -0500
+Received: from relay.sw.ru ([185.231.240.75]:55022 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726872AbfAWLFd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 06:05:33 -0500
+Received: from [172.16.25.169]
+        by relay.sw.ru with esmtp (Exim 4.91)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1gmGLZ-0006xL-Cn; Wed, 23 Jan 2019 14:05:29 +0300
+Subject: Re: [RFC PATCH] mm: vmscan: do not iterate all mem cgroups for global
+ direct reclaim
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Yang Shi <yang.shi@linux.alibaba.com>, hannes@cmpxchg.org,
+        akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <1548187782-108454-1-git-send-email-yang.shi@linux.alibaba.com>
+ <fa1d9a1f-99c8-a4ae-da7f-ed90336497e9@virtuozzo.com>
+ <20190123110254.GU4087@dhcp22.suse.cz>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <9bd4044b-63d0-b24f-a108-3061c00ed131@virtuozzo.com>
+Date:   Wed, 23 Jan 2019 14:05:28 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <20190123110254.GU4087@dhcp22.suse.cz>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-01-10 at 16:05 -0800, Joe Perches wrote:
-> Using SPDX commenting style // or /* is specified for
-> various file types in Documentation/process/license-rules.rst
-> so add an appropriate test for .[chsS] files because many
-> proposed file additions and patches do not use the correct style.
+On 23.01.2019 14:02, Michal Hocko wrote:
+> On Wed 23-01-19 13:28:03, Kirill Tkhai wrote:
+>> On 22.01.2019 23:09, Yang Shi wrote:
+>>> In current implementation, both kswapd and direct reclaim has to iterate
+>>> all mem cgroups.  It is not a problem before offline mem cgroups could
+>>> be iterated.  But, currently with iterating offline mem cgroups, it
+>>> could be very time consuming.  In our workloads, we saw over 400K mem
+>>> cgroups accumulated in some cases, only a few hundred are online memcgs.
+>>> Although kswapd could help out to reduce the number of memcgs, direct
+>>> reclaim still get hit with iterating a number of offline memcgs in some
+>>> cases.  We experienced the responsiveness problems due to this
+>>> occassionally.
+>>>
+>>> Here just break the iteration once it reclaims enough pages as what
+>>> memcg direct reclaim does.  This may hurt the fairness among memcgs
+>>> since direct reclaim may awlays do reclaim from same memcgs.  But, it
+>>> sounds ok since direct reclaim just tries to reclaim SWAP_CLUSTER_MAX
+>>> pages and memcgs can be protected by min/low.
+>>
+>> In case of we stop after SWAP_CLUSTER_MAX pages are reclaimed; it's possible
+>> the following situation. Memcgs, which are closest to root_mem_cgroup, will
+>> become empty, and you will have to iterate over empty memcg hierarchy long time,
+>> just to find a not empty memcg.
+>>
+>> I'd suggest, we should not lose fairness. We may introduce
+>> mem_cgroup::last_reclaim_child parameter to save a child
+>> (or its id), where the last reclaim was interrupted. Then
+>> next reclaim should start from this child:
+> 
+> Why is not our reclaim_cookie based caching sufficient?
 
-ping?
+Hm, maybe I missed them. Do cookies already implement this functionality?
 
-
+Kirill
