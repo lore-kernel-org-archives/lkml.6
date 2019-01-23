@@ -2,372 +2,174 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C386CC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:37:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F16E5C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:41:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84BA021872
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:37:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B651F21872
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:41:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Th34eL1c"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Net8mN9K"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727152AbfAWShR (ORCPT
+        id S1726252AbfAWSl0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 13:37:17 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:39760 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726772AbfAWSgJ (ORCPT
+        Wed, 23 Jan 2019 13:41:26 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:55661 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726140AbfAWSlZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 13:36:09 -0500
-Received: by mail-it1-f195.google.com with SMTP id a6so582992itl.4
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 10:36:08 -0800 (PST)
+        Wed, 23 Jan 2019 13:41:25 -0500
+Received: by mail-wm1-f68.google.com with SMTP id y139so437141wmc.5
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 10:41:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=evMrm5Co6sgj4eqRD1Ty4LE0U0B+an+cx5Tng2VqSGE=;
-        b=Th34eL1c4fCPlErgVqk5OD9jVhamMOrZjFdNcEzJ0/610jE9r5nKwixhXKDEPmrIxA
-         usxZ0xi9rQ6rFB1yy9xHzZm0PIpQNQ7+IqTrKhp2zSGjTJjPBraB+tOABi6LACeUGpq7
-         KprNqWIH1kOFgKHbTUgFxmLe4T/+LQJnWBe58=
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=AOHx8DTeE6cL3Ds4t6Et/EuHayh8m70wTdAYYmCzxoA=;
+        b=Net8mN9Khs34TLzsQjIFiyri6Ua3KvnfNp3/w2hYQKsg6hWo99Ax1EsdXBruXX7/F+
+         79cPn2i/kqIjm0Ay0LQky/dnuro63pZ1F2WlO97iLOHPaZH5JlhgXcGFdzJfjcSn5lC+
+         veAmOzPLSrVFQRT2lGoHlrsnFFaLWEEl8NEKs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=evMrm5Co6sgj4eqRD1Ty4LE0U0B+an+cx5Tng2VqSGE=;
-        b=EMrjgBuKdohRxbMw0OYfN4iE+/Uw2+++O/frIR5B47oc5zdI7CRTi+Bn1XG3MJLsuu
-         iEfVDqywaJPNC5e2snYsK6LU/iidUl2Sl/AbV11mu+ksYA+mmY7VXtRaKdHQJHI3YYw1
-         Sv7pasKygX8x6iz1XJYv2j7u2YDLd650h29v8NFCWw4LYwYIpL2scN9IozUm2orej+5k
-         +sGrHRBezRZrZzdPfe6O0v5WbjRyH81s0aZ8Cfb2sS6zlUp2hRm2nW1a/bny6CSUjnx1
-         wNmcK8kMB+NZvitAbXGHtNaFFuqYfV/w+77pplmGBAmOPGuHnVgsyLxmwoP0isu69zwL
-         v0hw==
-X-Gm-Message-State: AJcUukfYzX6n6CpDiu4BT/4jwaJNjdY27umheUjI8IjcnMTh73wmb4bF
-        e7t80FFaFIb9bqgE/uOiNCWdZPezOBk=
-X-Google-Smtp-Source: ALg8bN73RazOuDnUcz0o3yE2+gzy6z+n6SWxosqSGB2iYLwLINKuk1Mdc3JY2GX+UHEVP7SsTtCmzw==
-X-Received: by 2002:a02:98d2:: with SMTP id c18mr2066528jak.11.1548268567884;
-        Wed, 23 Jan 2019 10:36:07 -0800 (PST)
-Received: from ncrews2.bld.corp.google.com ([2620:15c:183:200:8140:8e3f:aea5:bcdf])
-        by smtp.gmail.com with ESMTPSA id 189sm9537577itw.33.2019.01.23.10.36.06
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=AOHx8DTeE6cL3Ds4t6Et/EuHayh8m70wTdAYYmCzxoA=;
+        b=ZH9n59FcvbRdYaSJD3wMdUPFNCyStDnrLb+y/Up4Uqa9XgSgluKJF8P022Z8RmcCQ4
+         t7lk0Yz48ZL4tjh2XvMqw09Pg2w57MHmOYdJQqTX7cfFImtcB3l3VDgBArsnAXSBJsXA
+         g7gTo54rBzdxbL6s0cDdh1qDNv9ft7UB5gI846DDT64oTrmvC3cmFQnAK45zIIxdUu6V
+         zKWqwPFmGq/pDnEmUN1MORoWgbSxTLavhyEaitBdgebBCV5wiDsFhhBgrwF2jLIJh6vv
+         CTbmP0v4B+g47usttbLurNLODrMbOoq/ex1ihyCwKeY452pU6QEq7beRXy3GmalKD4gQ
+         AwWw==
+X-Gm-Message-State: AJcUukea98UY2AN/MkqnKjZfDhziaQM8A1Wbl96ndGDm4RlFppLARG6g
+        m0NVoqT2Bl+lAS/CnIz8aIQNXg==
+X-Google-Smtp-Source: ALg8bN4YYIOLZ8XbdzOCQb5fBlrx+eI06655G+7AyaEIy7pFG+GWdNXRl08wMx2+B6BiGmG85KsBog==
+X-Received: by 2002:a1c:26c1:: with SMTP id m184mr3633066wmm.25.1548268882419;
+        Wed, 23 Jan 2019 10:41:22 -0800 (PST)
+Received: from [10.44.66.8] ([212.45.67.2])
+        by smtp.googlemail.com with ESMTPSA id z9sm102052133wrs.63.2019.01.23.10.41.20
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 23 Jan 2019 10:36:07 -0800 (PST)
-From:   Nick Crews <ncrews@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     sjg@chromium.org, dmitry.torokhov@gmail.com, sre@kernel.org,
-        linux-input@vger.kernel.org, groeck@chromium.org,
-        dlaurie@chromium.org, Duncan Laurie <dlaurie@google.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Nick Crews <ncrews@chromium.org>,
-        Benson Leung <bleung@chromium.org>
-Subject: [PATCH v4 1/9] cros_ec: Remove cros_ec dependency in lpc_mec
-Date:   Wed, 23 Jan 2019 11:33:17 -0700
-Message-Id: <20190123183325.92946-2-ncrews@chromium.org>
-X-Mailer: git-send-email 2.20.1.321.g9e740568ce-goog
-In-Reply-To: <20190123183325.92946-1-ncrews@chromium.org>
-References: <20190123183325.92946-1-ncrews@chromium.org>
+        Wed, 23 Jan 2019 10:41:21 -0800 (PST)
+Subject: Re: [PATCH 1/6] dt-bindings: soc: qcom: Add interconnect binding for
+ GENI QUP
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Alok Chauhan <alokc@codeaurora.org>
+Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-serial@vger.kernel.org,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, dianders@chromium.org,
+        swboyd@chromium.org
+References: <1548138816-1149-1-git-send-email-alokc@codeaurora.org>
+ <1548138816-1149-2-git-send-email-alokc@codeaurora.org>
+ <20190123170758.GB512@tuxbook-pro>
+From:   Georgi Djakov <georgi.djakov@linaro.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=georgi.djakov@linaro.org; prefer-encrypt=mutual; keydata=
+ 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
+ KEmKjLDvB0pePJkdTw==
+Message-ID: <5ca1ce61-c458-5550-f89d-ab361f1ec456@linaro.org>
+Date:   Wed, 23 Jan 2019 20:41:20 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190123170758.GB512@tuxbook-pro>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Duncan Laurie <dlaurie@google.com>
+Hi,
 
-In order to allow this code to be re-used, remove the dependency
-on the rest of the cros_ec code from the cros_ec_lpc_mec functions.
+On 1/23/19 19:07, Bjorn Andersson wrote:
+> On Mon 21 Jan 22:33 PST 2019, Alok Chauhan wrote:
+> 
+>> Add documentation for the interconnect and interconnect-names bindings
+>> for the GENI QUP as detailed by bindings/interconnect/interconnect.txt.
+>>
+>> Signed-off-by: Alok Chauhan <alokc@codeaurora.org>
+>> ---
+>>  Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt | 10 ++++++++++
+>>  1 file changed, 10 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt
+>> index dab7ca9..44d7e02 100644
+>> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt
+>> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt
+>> @@ -17,6 +17,12 @@ Required properties if child node exists:
+>>  - #address-cells: 	Must be <1> for Serial Engine Address
+>>  - #size-cells: 		Must be <1> for Serial Engine Address Size
+>>  - ranges: 		Must be present
+>> +- interconnects:	phandle to a interconnect provider. Please refer
+>> +			../interconnect/interconnect.txt for details.
+>> +			Must be 2 paths corresponding to 2 AXI ports.
+>> +- interconnect-names:	Port names to differentiate between the
+> 
+> s/Port names/Path names/
+> 
+>> +			2 interconnect paths defined with interconnect
+>> +			specifier.
+> 
+> These two names are significant in that they must match what the driver
+> expects, hence you must actually specify them here.
+> 
+> And as the scope of these strings are local to the QUP node you can omit
+> "qup" from them, so make them "memory" and "config" (or perhaps iface,
+> to match the clock naming?).
 
-Instead of using a hardcoded register base address of 0x800 have
-this be passed in to cros_ec_lpc_mec_init().  The existing cros_ec
-use case now passes in the 0x800 base address this way.
+Actually there was a discussion in the past where we decided include
+both the src and dst endpoint names in this property so that there is
+some symmetry with the "interconnects" property. It would be nice to be
+consistent across different drivers at least for now.
+If we want to denote the master and slave ports here, my two cents would
+be for "qup-mem" and "cpu-qup" or something similar?
 
-There are some error checks that happen in cros_ec_lpc_mec_in_range()
-that probably shouldn't be there, as they are checking kernel-space
-callers and not user-space input. However, we'll just do the refactor in
-this patch, and in a future patch might remove this error checking and
-fix all the instances of code that calls this.
-
-There's a similar problem in cros_ec_lpc_read_bytes(), where we return a
-checksum, but on error just return 0. This should probably be changed so
-that it returns int, but we don't want to have to mess with all the
-calling code for this fix. Maybe we'll come back through later and fix
-this.
-
-Signed-off-by: Duncan Laurie <dlaurie@google.com>
-Acked-for-chrome-platform-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Signed-off-by: Nick Crews <ncrews@chromium.org>
----
-
-Changes in v4: None
-Changes in v3:
-- Change <= to >= in mec_in_range()
-- Add " - EC_HOST_CMD_REGION0" to offset arg for io_bytes_mec()
-
-Changes in v2:
-- Fixed kernel-doc comments
-- Fixed include of linux/mfd/cros_ec_lpc_mec.h
-- cros_ec_lpc_mec_in_range() returns -EINVAL on error
-- Added parens around macro variables
-
- drivers/platform/chrome/cros_ec_lpc_mec.c | 52 +++++++++++++++++++----
- drivers/platform/chrome/cros_ec_lpc_mec.h | 43 ++++++++++---------
- drivers/platform/chrome/cros_ec_lpc_reg.c | 47 +++++++-------------
- 3 files changed, 83 insertions(+), 59 deletions(-)
-
-diff --git a/drivers/platform/chrome/cros_ec_lpc_mec.c b/drivers/platform/chrome/cros_ec_lpc_mec.c
-index c4edfa83e493..782e238a8d4e 100644
---- a/drivers/platform/chrome/cros_ec_lpc_mec.c
-+++ b/drivers/platform/chrome/cros_ec_lpc_mec.c
-@@ -23,7 +23,6 @@
- 
- #include <linux/delay.h>
- #include <linux/io.h>
--#include <linux/mfd/cros_ec_commands.h>
- #include <linux/mutex.h>
- #include <linux/types.h>
- 
-@@ -34,6 +33,7 @@
-  * EC mutex because memmap data may be accessed without it being held.
-  */
- static struct mutex io_mutex;
-+static u16 mec_emi_base, mec_emi_end;
- 
- /*
-  * cros_ec_lpc_mec_emi_write_address
-@@ -46,10 +46,37 @@ static struct mutex io_mutex;
- static void cros_ec_lpc_mec_emi_write_address(u16 addr,
- 			enum cros_ec_lpc_mec_emi_access_mode access_type)
- {
--	/* Address relative to start of EMI range */
--	addr -= MEC_EMI_RANGE_START;
--	outb((addr & 0xfc) | access_type, MEC_EMI_EC_ADDRESS_B0);
--	outb((addr >> 8) & 0x7f, MEC_EMI_EC_ADDRESS_B1);
-+	outb((addr & 0xfc) | access_type, MEC_EMI_EC_ADDRESS_B0(mec_emi_base));
-+	outb((addr >> 8) & 0x7f, MEC_EMI_EC_ADDRESS_B1(mec_emi_base));
-+}
-+
-+/**
-+ * cros_ec_lpc_mec_in_range() - Determine if addresses are in MEC EMI range.
-+ *
-+ * @offset: Address offset
-+ * @length: Number of bytes to check
-+ *
-+ * Return: 1 if in range, 0 if not, and -EINVAL on failure
-+ *         such as the mec range not being initialized
-+ */
-+int cros_ec_lpc_mec_in_range(unsigned int offset, unsigned int length)
-+{
-+	if (length == 0)
-+		return -EINVAL;
-+
-+	if (WARN_ON(mec_emi_base == 0 || mec_emi_end == 0))
-+		return -EINVAL;
-+
-+	if (offset >= mec_emi_base && offset < mec_emi_end) {
-+		if (WARN_ON(offset + length - 1 >= mec_emi_end))
-+			return -EINVAL;
-+		return 1;
-+	}
-+
-+	if (WARN_ON(offset + length > mec_emi_base && offset < mec_emi_end))
-+		return -EINVAL;
-+
-+	return 0;
- }
- 
- /*
-@@ -71,6 +98,11 @@ u8 cros_ec_lpc_io_bytes_mec(enum cros_ec_lpc_mec_io_type io_type,
- 	u8 sum = 0;
- 	enum cros_ec_lpc_mec_emi_access_mode access, new_access;
- 
-+	/* Return checksum of 0 if window is not initialized */
-+	WARN_ON(mec_emi_base == 0 || mec_emi_end == 0);
-+	if (mec_emi_base == 0 || mec_emi_end == 0)
-+		return 0;
-+
- 	/*
- 	 * Long access cannot be used on misaligned data since reading B0 loads
- 	 * the data register and writing B3 flushes.
-@@ -86,9 +118,9 @@ u8 cros_ec_lpc_io_bytes_mec(enum cros_ec_lpc_mec_io_type io_type,
- 	cros_ec_lpc_mec_emi_write_address(offset, access);
- 
- 	/* Skip bytes in case of misaligned offset */
--	io_addr = MEC_EMI_EC_DATA_B0 + (offset & 0x3);
-+	io_addr = MEC_EMI_EC_DATA_B0(mec_emi_base) + (offset & 0x3);
- 	while (i < length) {
--		while (io_addr <= MEC_EMI_EC_DATA_B3) {
-+		while (io_addr <= MEC_EMI_EC_DATA_B3(mec_emi_base)) {
- 			if (io_type == MEC_IO_READ)
- 				buf[i] = inb(io_addr++);
- 			else
-@@ -118,7 +150,7 @@ u8 cros_ec_lpc_io_bytes_mec(enum cros_ec_lpc_mec_io_type io_type,
- 		}
- 
- 		/* Access [B0, B3] on each loop pass */
--		io_addr = MEC_EMI_EC_DATA_B0;
-+		io_addr = MEC_EMI_EC_DATA_B0(mec_emi_base);
- 	}
- 
- done:
-@@ -128,9 +160,11 @@ u8 cros_ec_lpc_io_bytes_mec(enum cros_ec_lpc_mec_io_type io_type,
- }
- EXPORT_SYMBOL(cros_ec_lpc_io_bytes_mec);
- 
--void cros_ec_lpc_mec_init(void)
-+void cros_ec_lpc_mec_init(unsigned int base, unsigned int end)
- {
- 	mutex_init(&io_mutex);
-+	mec_emi_base = base;
-+	mec_emi_end = end;
- }
- EXPORT_SYMBOL(cros_ec_lpc_mec_init);
- 
-diff --git a/drivers/platform/chrome/cros_ec_lpc_mec.h b/drivers/platform/chrome/cros_ec_lpc_mec.h
-index 105068c0e919..896fffd174b3 100644
---- a/drivers/platform/chrome/cros_ec_lpc_mec.h
-+++ b/drivers/platform/chrome/cros_ec_lpc_mec.h
-@@ -24,8 +24,6 @@
- #ifndef __CROS_EC_LPC_MEC_H
- #define __CROS_EC_LPC_MEC_H
- 
--#include <linux/mfd/cros_ec_commands.h>
--
- enum cros_ec_lpc_mec_emi_access_mode {
- 	/* 8-bit access */
- 	ACCESS_TYPE_BYTE = 0x0,
-@@ -45,27 +43,23 @@ enum cros_ec_lpc_mec_io_type {
- 	MEC_IO_WRITE,
- };
- 
--/* Access IO ranges 0x800 thru 0x9ff using EMI interface instead of LPC */
--#define MEC_EMI_RANGE_START EC_HOST_CMD_REGION0
--#define MEC_EMI_RANGE_END   (EC_LPC_ADDR_MEMMAP + EC_MEMMAP_SIZE)
--
- /* EMI registers are relative to base */
--#define MEC_EMI_BASE 0x800
--#define MEC_EMI_HOST_TO_EC (MEC_EMI_BASE + 0)
--#define MEC_EMI_EC_TO_HOST (MEC_EMI_BASE + 1)
--#define MEC_EMI_EC_ADDRESS_B0 (MEC_EMI_BASE + 2)
--#define MEC_EMI_EC_ADDRESS_B1 (MEC_EMI_BASE + 3)
--#define MEC_EMI_EC_DATA_B0 (MEC_EMI_BASE + 4)
--#define MEC_EMI_EC_DATA_B1 (MEC_EMI_BASE + 5)
--#define MEC_EMI_EC_DATA_B2 (MEC_EMI_BASE + 6)
--#define MEC_EMI_EC_DATA_B3 (MEC_EMI_BASE + 7)
-+#define MEC_EMI_HOST_TO_EC(MEC_EMI_BASE)	((MEC_EMI_BASE) + 0)
-+#define MEC_EMI_EC_TO_HOST(MEC_EMI_BASE)	((MEC_EMI_BASE) + 1)
-+#define MEC_EMI_EC_ADDRESS_B0(MEC_EMI_BASE)	((MEC_EMI_BASE) + 2)
-+#define MEC_EMI_EC_ADDRESS_B1(MEC_EMI_BASE)	((MEC_EMI_BASE) + 3)
-+#define MEC_EMI_EC_DATA_B0(MEC_EMI_BASE)	((MEC_EMI_BASE) + 4)
-+#define MEC_EMI_EC_DATA_B1(MEC_EMI_BASE)	((MEC_EMI_BASE) + 5)
-+#define MEC_EMI_EC_DATA_B2(MEC_EMI_BASE)	((MEC_EMI_BASE) + 6)
-+#define MEC_EMI_EC_DATA_B3(MEC_EMI_BASE)	((MEC_EMI_BASE) + 7)
- 
--/*
-- * cros_ec_lpc_mec_init
-+/**
-+ * cros_ec_lpc_mec_init() - Initialize MEC I/O.
-  *
-- * Initialize MEC I/O.
-+ * @base: MEC EMI Base address
-+ * @end: MEC EMI End address
-  */
--void cros_ec_lpc_mec_init(void);
-+void cros_ec_lpc_mec_init(unsigned int base, unsigned int end);
- 
- /*
-  * cros_ec_lpc_mec_destroy
-@@ -74,6 +68,17 @@ void cros_ec_lpc_mec_init(void);
-  */
- void cros_ec_lpc_mec_destroy(void);
- 
-+/**
-+ * cros_ec_lpc_mec_in_range() - Determine if addresses are in MEC EMI range.
-+ *
-+ * @offset: Address offset
-+ * @length: Number of bytes to check
-+ *
-+ * Return: 1 if in range, 0 if not, and -EINVAL on failure
-+ *         such as the mec range not being initialized
-+ */
-+int cros_ec_lpc_mec_in_range(unsigned int offset, unsigned int length);
-+
- /**
-  * cros_ec_lpc_io_bytes_mec - Read / write bytes to MEC EMI port
-  *
-diff --git a/drivers/platform/chrome/cros_ec_lpc_reg.c b/drivers/platform/chrome/cros_ec_lpc_reg.c
-index fc23d535c404..1d9f3b7ffb3e 100644
---- a/drivers/platform/chrome/cros_ec_lpc_reg.c
-+++ b/drivers/platform/chrome/cros_ec_lpc_reg.c
-@@ -59,51 +59,36 @@ static u8 lpc_write_bytes(unsigned int offset, unsigned int length, u8 *msg)
- 
- u8 cros_ec_lpc_read_bytes(unsigned int offset, unsigned int length, u8 *dest)
- {
--	if (length == 0)
--		return 0;
--
--	/* Access desired range through EMI interface */
--	if (offset >= MEC_EMI_RANGE_START && offset <= MEC_EMI_RANGE_END) {
--		/* Ensure we don't straddle EMI region */
--		if (WARN_ON(offset + length - 1 > MEC_EMI_RANGE_END))
--			return 0;
-+	int in_range = cros_ec_lpc_mec_in_range(offset, length);
- 
--		return cros_ec_lpc_io_bytes_mec(MEC_IO_READ, offset, length,
--						dest);
--	}
--
--	if (WARN_ON(offset + length > MEC_EMI_RANGE_START &&
--		    offset < MEC_EMI_RANGE_START))
-+	if (in_range < 0)
- 		return 0;
- 
--	return lpc_read_bytes(offset, length, dest);
-+	return in_range ?
-+		cros_ec_lpc_io_bytes_mec(MEC_IO_READ,
-+					 offset - EC_HOST_CMD_REGION0,
-+					 length, dest) :
-+		lpc_read_bytes(offset, length, dest);
- }
- 
- u8 cros_ec_lpc_write_bytes(unsigned int offset, unsigned int length, u8 *msg)
- {
--	if (length == 0)
--		return 0;
--
--	/* Access desired range through EMI interface */
--	if (offset >= MEC_EMI_RANGE_START && offset <= MEC_EMI_RANGE_END) {
--		/* Ensure we don't straddle EMI region */
--		if (WARN_ON(offset + length - 1 > MEC_EMI_RANGE_END))
--			return 0;
-+	int in_range = cros_ec_lpc_mec_in_range(offset, length);
- 
--		return cros_ec_lpc_io_bytes_mec(MEC_IO_WRITE, offset, length,
--						msg);
--	}
--
--	if (WARN_ON(offset + length > MEC_EMI_RANGE_START &&
--		    offset < MEC_EMI_RANGE_START))
-+	if (in_range < 0)
- 		return 0;
- 
--	return lpc_write_bytes(offset, length, msg);
-+	return in_range ?
-+		cros_ec_lpc_io_bytes_mec(MEC_IO_WRITE,
-+					 offset - EC_HOST_CMD_REGION0,
-+					 length, msg) :
-+		lpc_write_bytes(offset, length, msg);
- }
- 
- void cros_ec_lpc_reg_init(void)
- {
--	cros_ec_lpc_mec_init();
-+	cros_ec_lpc_mec_init(EC_HOST_CMD_REGION0,
-+			     EC_LPC_ADDR_MEMMAP + EC_MEMMAP_SIZE);
- }
- 
- void cros_ec_lpc_reg_destroy(void)
--- 
-2.20.1.321.g9e740568ce-goog
-
+Thanks,
+Georgi
