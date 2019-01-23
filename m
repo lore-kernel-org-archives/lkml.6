@@ -2,51 +2,54 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF21CC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:52:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B60BC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:52:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD456218AF
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:52:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DCF12184C
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:52:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548283953;
-	bh=z1acsdBrMDi8btK2HQS9TUzGWqSo1H2q8vBl+ux6BTQ=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=DH0HTp18S+flyq6vD9LzRQPPIKLU0vF5sT+PP/5Ml1bU3nUZ4Dx69UVp3I++DA7sy
-	 oWbxsznPiYnjNF/ZasHYJPHdDdQsD9SqM9YXxxWOfKpAT6v4hWbe7hghSiy3qj+h7o
-	 TTHXhyzHaIDc8QUOJw05XwuxB0u4fc8Hj0ejHNUI=
+	s=default; t=1548283959;
+	bh=/o/+1Gkyv+VzQmr4JnBcr7AkSlA8Gm95V2Q7alCLmr4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=FfMkZXMqpaZVx4+eMjy/G2RGpir/d/zOe4Nl1uvF4vZhH0QR5wOAnbp/JmcpKMvgt
+	 V4HuiyUZ/qQdTkyEaPRz3fOru56lmpq87jO5L+h6mqGuxtTavFYLbTcaEXDPSaVuj9
+	 BIRjf/3oKo/ywW/wTTqHByk1fnOXq4kd26ste66U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726367AbfAWWwc (ORCPT
+        id S1727078AbfAWWwf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 17:52:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50094 "EHLO mail.kernel.org"
+        Wed, 23 Jan 2019 17:52:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50114 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726109AbfAWWwb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 17:52:31 -0500
+        id S1726109AbfAWWwd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 17:52:33 -0500
 Received: from ebiggers-linuxstation.mtv.corp.google.com (unknown [104.132.1.77])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 119452184C;
+        by mail.kernel.org (Postfix) with ESMTPSA id 044B5218A3;
         Wed, 23 Jan 2019 22:52:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548283951;
-        bh=z1acsdBrMDi8btK2HQS9TUzGWqSo1H2q8vBl+ux6BTQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=z3KMk5Crq0hKJGMvUxf/e2T5JSGeg8845CRkjn8O0O0NnCMJtaKGa/7wGaHFxBhTx
-         i2D8xwe6sYPbG02iAupM0KcDAyotyzJAf8USU8dVbDaxm4a2uCexAy1sTx+efLXqKr
-         aVh5aQWzQNy7HfkHii2T3IBLABeOt+15go6/tRPk=
+        s=default; t=1548283952;
+        bh=/o/+1Gkyv+VzQmr4JnBcr7AkSlA8Gm95V2Q7alCLmr4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=FX/W04iqnAk7YBzyM5Tv9r1oCignom7TCRgnoPXS7PPTZa09+8AKMHfO5v7mkBeT/
+         NNHLbXYgnCE+Pt/GjZtxn7Qfyy6/lll2QGVZpg+VX/E881ms4WRnzulyfPxDugg7pn
+         PVQ13rR8gIQ+8LEXJWGCUv0+XzktMxGMHKjSyyaI=
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     linux-crypto@vger.kernel.org,
         Herbert Xu <herbert@gondor.apana.org.au>
 Cc:     linux-kernel@vger.kernel.org,
-        "Jason A . Donenfeld" <Jason@zx2c4.com>
-Subject: [RFC/RFT PATCH 00/15] crypto: improved skcipher, aead, and hash tests
-Date:   Wed, 23 Jan 2019 14:49:11 -0800
-Message-Id: <20190123224926.250525-1-ebiggers@kernel.org>
+        "Jason A . Donenfeld" <Jason@zx2c4.com>, stable@vger.kernel.org,
+        Ondrej Mosnacek <omosnace@redhat.com>
+Subject: [RFC/RFT PATCH 03/15] crypto: x86/aegis - fix handling chunked inputs and MAY_SLEEP
+Date:   Wed, 23 Jan 2019 14:49:14 -0800
+Message-Id: <20190123224926.250525-4-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.20.1.321.g9e740568ce-goog
+In-Reply-To: <20190123224926.250525-1-ebiggers@kernel.org>
+References: <20190123224926.250525-1-ebiggers@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -54,92 +57,220 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+From: Eric Biggers <ebiggers@google.com>
 
-Crypto algorithms must produce the same output for the same input
-regardless of data layout, i.e. how the src and dst scatterlists are
-divided into chunks and how each chunk is aligned.  Request flags such
-as CRYPTO_TFM_REQ_MAY_SLEEP must not affect the result either.
+The x86 AEGIS implementations all fail the improved AEAD tests because
+they produce the wrong result with some data layouts.  Also, when the
+MAY_SLEEP flag is given, they can sleep in the skcipher_walk_*()
+functions while preemption is disabled by kernel_fpu_begin().
 
-However, testing of this currently has many gaps.  For example,
-individual algorithms are responsible for providing their own chunked
-test vectors.  But many don't bother to do this or test only one or two
-cases, providing poor test coverage.  Also, other things such as
-misaligned IVs and CRYPTO_TFM_REQ_MAY_SLEEP are never tested at all.
+Fix these bugs.
 
-Test code is also duplicated between the chunked and non-chunked cases,
-making it difficult to make other improvements.
+Fixes: 1d373d4e8e15 ("crypto: x86 - Add optimized AEGIS implementations")
+Cc: <stable@vger.kernel.org> # v4.18+
+Cc: Ondrej Mosnacek <omosnace@redhat.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ arch/x86/crypto/aegis128-aesni-glue.c  | 38 ++++++++++----------------
+ arch/x86/crypto/aegis128l-aesni-glue.c | 38 ++++++++++----------------
+ arch/x86/crypto/aegis256-aesni-glue.c  | 38 ++++++++++----------------
+ 3 files changed, 45 insertions(+), 69 deletions(-)
 
-To improve the situation, this patch series basically moves the chunk
-descriptions into the testmgr itself so that they are shared by all
-algorithms.  However, it's done in an extensible way via a new struct
-'testvec_config', which describes not just the scaled chunk lengths but
-also all other aspects of the crypto operation besides the data itself
-such as the buffer alignments, the request flags, whether the operation
-is in-place or not, the IV alignment, and for hash algorithms when to do
-each update() and when to use finup() vs. final() vs. digest().
-
-Then, this patch series makes skcipher, aead, and hash algorithms be
-tested against a list of default testvec_configs, replacing the current
-test code.  This improves overall test coverage, without reducing test
-performance too much.  Note that the test vectors themselves are not
-changed, except for removing the chunk lists.
-
-This series also adds randomized fuzz tests, enabled by a new kconfig
-option intended for developer use only, where skcipher, aead, and hash
-algorithms are tested against many randomly generated testvec_configs.
-This provides much more comprehensive test coverage.
-
-These improved tests have already found many bugs.  Patches 1-7 fix the
-bugs found so far (*).  However, I've only tested implementations that I
-can easily test.  There will be more bugs found, especially in
-hardware-specific drivers.  Anyone reading this can help by applying
-these patches on your system (especially if it's non-x86 and/or has
-crypto accelerators), enabling CONFIG_CRYPTO_MANAGER_EXTRA_TESTS, and
-reporting or fixing any test failures.
-
-This patch series can also be found in git at
-https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git
-branch "testmgr-improvements".
-
-(*) Except that many AEADs incorrectly change aead_request::base.tfm.
-    I've left fixing that for later patches.
-
-Eric Biggers (15):
-  crypto: aegis - fix handling chunked inputs
-  crypto: morus - fix handling chunked inputs
-  crypto: x86/aegis - fix handling chunked inputs and MAY_SLEEP
-  crypto: x86/morus - fix handling chunked inputs and MAY_SLEEP
-  crypto: x86/aesni-gcm - fix crash on empty plaintext
-  crypto: ahash - fix another early termination in hash walk
-  crypto: arm64/aes-neonbs - fix returning final keystream block
-  crypto: testmgr - add testvec_config struct and helper functions
-  crypto: testmgr - introduce CONFIG_CRYPTO_MANAGER_EXTRA_TESTS
-  crypto: testmgr - implement random testvec_config generation
-  crypto: testmgr - convert skcipher testing to use testvec_configs
-  crypto: testmgr - convert aead testing to use testvec_configs
-  crypto: testmgr - convert hash testing to use testvec_configs
-  crypto: testmgr - check for skcipher_request corruption
-  crypto: testmgr - check for aead_request corruption
-
- arch/arm64/crypto/aes-neonbs-core.S    |    8 +-
- arch/x86/crypto/aegis128-aesni-glue.c  |   38 +-
- arch/x86/crypto/aegis128l-aesni-glue.c |   38 +-
- arch/x86/crypto/aegis256-aesni-glue.c  |   38 +-
- arch/x86/crypto/aesni-intel_glue.c     |   13 +-
- arch/x86/crypto/morus1280_glue.c       |   40 +-
- arch/x86/crypto/morus640_glue.c        |   39 +-
- crypto/Kconfig                         |   10 +
- crypto/aegis128.c                      |   14 +-
- crypto/aegis128l.c                     |   14 +-
- crypto/aegis256.c                      |   14 +-
- crypto/ahash.c                         |   14 +-
- crypto/morus1280.c                     |   13 +-
- crypto/morus640.c                      |   13 +-
- crypto/testmgr.c                       | 2552 +++++++++++++-----------
- crypto/testmgr.h                       |  407 +---
- 16 files changed, 1558 insertions(+), 1707 deletions(-)
-
+diff --git a/arch/x86/crypto/aegis128-aesni-glue.c b/arch/x86/crypto/aegis128-aesni-glue.c
+index 2a356b948720..3ea71b871813 100644
+--- a/arch/x86/crypto/aegis128-aesni-glue.c
++++ b/arch/x86/crypto/aegis128-aesni-glue.c
+@@ -119,31 +119,20 @@ static void crypto_aegis128_aesni_process_ad(
+ }
+ 
+ static void crypto_aegis128_aesni_process_crypt(
+-		struct aegis_state *state, struct aead_request *req,
++		struct aegis_state *state, struct skcipher_walk *walk,
+ 		const struct aegis_crypt_ops *ops)
+ {
+-	struct skcipher_walk walk;
+-	u8 *src, *dst;
+-	unsigned int chunksize, base;
+-
+-	ops->skcipher_walk_init(&walk, req, false);
+-
+-	while (walk.nbytes) {
+-		src = walk.src.virt.addr;
+-		dst = walk.dst.virt.addr;
+-		chunksize = walk.nbytes;
+-
+-		ops->crypt_blocks(state, chunksize, src, dst);
+-
+-		base = chunksize & ~(AEGIS128_BLOCK_SIZE - 1);
+-		src += base;
+-		dst += base;
+-		chunksize &= AEGIS128_BLOCK_SIZE - 1;
+-
+-		if (chunksize > 0)
+-			ops->crypt_tail(state, chunksize, src, dst);
++	while (walk->nbytes >= AEGIS128_BLOCK_SIZE) {
++		ops->crypt_blocks(state,
++				  round_down(walk->nbytes, AEGIS128_BLOCK_SIZE),
++				  walk->src.virt.addr, walk->dst.virt.addr);
++		skcipher_walk_done(walk, walk->nbytes % AEGIS128_BLOCK_SIZE);
++	}
+ 
+-		skcipher_walk_done(&walk, 0);
++	if (walk->nbytes) {
++		ops->crypt_tail(state, walk->nbytes, walk->src.virt.addr,
++				walk->dst.virt.addr);
++		skcipher_walk_done(walk, 0);
+ 	}
+ }
+ 
+@@ -186,13 +175,16 @@ static void crypto_aegis128_aesni_crypt(struct aead_request *req,
+ {
+ 	struct crypto_aead *tfm = crypto_aead_reqtfm(req);
+ 	struct aegis_ctx *ctx = crypto_aegis128_aesni_ctx(tfm);
++	struct skcipher_walk walk;
+ 	struct aegis_state state;
+ 
++	ops->skcipher_walk_init(&walk, req, true);
++
+ 	kernel_fpu_begin();
+ 
+ 	crypto_aegis128_aesni_init(&state, ctx->key.bytes, req->iv);
+ 	crypto_aegis128_aesni_process_ad(&state, req->src, req->assoclen);
+-	crypto_aegis128_aesni_process_crypt(&state, req, ops);
++	crypto_aegis128_aesni_process_crypt(&state, &walk, ops);
+ 	crypto_aegis128_aesni_final(&state, tag_xor, req->assoclen, cryptlen);
+ 
+ 	kernel_fpu_end();
+diff --git a/arch/x86/crypto/aegis128l-aesni-glue.c b/arch/x86/crypto/aegis128l-aesni-glue.c
+index dbe8bb980da1..1b1b39c66c5e 100644
+--- a/arch/x86/crypto/aegis128l-aesni-glue.c
++++ b/arch/x86/crypto/aegis128l-aesni-glue.c
+@@ -119,31 +119,20 @@ static void crypto_aegis128l_aesni_process_ad(
+ }
+ 
+ static void crypto_aegis128l_aesni_process_crypt(
+-		struct aegis_state *state, struct aead_request *req,
++		struct aegis_state *state, struct skcipher_walk *walk,
+ 		const struct aegis_crypt_ops *ops)
+ {
+-	struct skcipher_walk walk;
+-	u8 *src, *dst;
+-	unsigned int chunksize, base;
+-
+-	ops->skcipher_walk_init(&walk, req, false);
+-
+-	while (walk.nbytes) {
+-		src = walk.src.virt.addr;
+-		dst = walk.dst.virt.addr;
+-		chunksize = walk.nbytes;
+-
+-		ops->crypt_blocks(state, chunksize, src, dst);
+-
+-		base = chunksize & ~(AEGIS128L_BLOCK_SIZE - 1);
+-		src += base;
+-		dst += base;
+-		chunksize &= AEGIS128L_BLOCK_SIZE - 1;
+-
+-		if (chunksize > 0)
+-			ops->crypt_tail(state, chunksize, src, dst);
++	while (walk->nbytes >= AEGIS128L_BLOCK_SIZE) {
++		ops->crypt_blocks(state, round_down(walk->nbytes,
++						    AEGIS128L_BLOCK_SIZE),
++				  walk->src.virt.addr, walk->dst.virt.addr);
++		skcipher_walk_done(walk, walk->nbytes % AEGIS128L_BLOCK_SIZE);
++	}
+ 
+-		skcipher_walk_done(&walk, 0);
++	if (walk->nbytes) {
++		ops->crypt_tail(state, walk->nbytes, walk->src.virt.addr,
++				walk->dst.virt.addr);
++		skcipher_walk_done(walk, 0);
+ 	}
+ }
+ 
+@@ -186,13 +175,16 @@ static void crypto_aegis128l_aesni_crypt(struct aead_request *req,
+ {
+ 	struct crypto_aead *tfm = crypto_aead_reqtfm(req);
+ 	struct aegis_ctx *ctx = crypto_aegis128l_aesni_ctx(tfm);
++	struct skcipher_walk walk;
+ 	struct aegis_state state;
+ 
++	ops->skcipher_walk_init(&walk, req, true);
++
+ 	kernel_fpu_begin();
+ 
+ 	crypto_aegis128l_aesni_init(&state, ctx->key.bytes, req->iv);
+ 	crypto_aegis128l_aesni_process_ad(&state, req->src, req->assoclen);
+-	crypto_aegis128l_aesni_process_crypt(&state, req, ops);
++	crypto_aegis128l_aesni_process_crypt(&state, &walk, ops);
+ 	crypto_aegis128l_aesni_final(&state, tag_xor, req->assoclen, cryptlen);
+ 
+ 	kernel_fpu_end();
+diff --git a/arch/x86/crypto/aegis256-aesni-glue.c b/arch/x86/crypto/aegis256-aesni-glue.c
+index 8bebda2de92f..6227ca3220a0 100644
+--- a/arch/x86/crypto/aegis256-aesni-glue.c
++++ b/arch/x86/crypto/aegis256-aesni-glue.c
+@@ -119,31 +119,20 @@ static void crypto_aegis256_aesni_process_ad(
+ }
+ 
+ static void crypto_aegis256_aesni_process_crypt(
+-		struct aegis_state *state, struct aead_request *req,
++		struct aegis_state *state, struct skcipher_walk *walk,
+ 		const struct aegis_crypt_ops *ops)
+ {
+-	struct skcipher_walk walk;
+-	u8 *src, *dst;
+-	unsigned int chunksize, base;
+-
+-	ops->skcipher_walk_init(&walk, req, false);
+-
+-	while (walk.nbytes) {
+-		src = walk.src.virt.addr;
+-		dst = walk.dst.virt.addr;
+-		chunksize = walk.nbytes;
+-
+-		ops->crypt_blocks(state, chunksize, src, dst);
+-
+-		base = chunksize & ~(AEGIS256_BLOCK_SIZE - 1);
+-		src += base;
+-		dst += base;
+-		chunksize &= AEGIS256_BLOCK_SIZE - 1;
+-
+-		if (chunksize > 0)
+-			ops->crypt_tail(state, chunksize, src, dst);
++	while (walk->nbytes >= AEGIS256_BLOCK_SIZE) {
++		ops->crypt_blocks(state,
++				  round_down(walk->nbytes, AEGIS256_BLOCK_SIZE),
++				  walk->src.virt.addr, walk->dst.virt.addr);
++		skcipher_walk_done(walk, walk->nbytes % AEGIS256_BLOCK_SIZE);
++	}
+ 
+-		skcipher_walk_done(&walk, 0);
++	if (walk->nbytes) {
++		ops->crypt_tail(state, walk->nbytes, walk->src.virt.addr,
++				walk->dst.virt.addr);
++		skcipher_walk_done(walk, 0);
+ 	}
+ }
+ 
+@@ -186,13 +175,16 @@ static void crypto_aegis256_aesni_crypt(struct aead_request *req,
+ {
+ 	struct crypto_aead *tfm = crypto_aead_reqtfm(req);
+ 	struct aegis_ctx *ctx = crypto_aegis256_aesni_ctx(tfm);
++	struct skcipher_walk walk;
+ 	struct aegis_state state;
+ 
++	ops->skcipher_walk_init(&walk, req, true);
++
+ 	kernel_fpu_begin();
+ 
+ 	crypto_aegis256_aesni_init(&state, ctx->key, req->iv);
+ 	crypto_aegis256_aesni_process_ad(&state, req->src, req->assoclen);
+-	crypto_aegis256_aesni_process_crypt(&state, req, ops);
++	crypto_aegis256_aesni_process_crypt(&state, &walk, ops);
+ 	crypto_aegis256_aesni_final(&state, tag_xor, req->assoclen, cryptlen);
+ 
+ 	kernel_fpu_end();
 -- 
 2.20.1.321.g9e740568ce-goog
 
