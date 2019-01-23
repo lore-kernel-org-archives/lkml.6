@@ -2,92 +2,90 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CFC5C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 20:40:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA97BC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 20:43:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05E40218A2
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 20:40:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EF6C21872
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 20:43:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lqA9MppD"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ZkZzQ66C"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726648AbfAWUks (ORCPT
+        id S1726786AbfAWUnc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 15:40:48 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:59572 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726192AbfAWUks (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 15:40:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=e1OdoA01J6AO7IA0mqGfYg8tGIE5GhQmlisIo1s6rU4=; b=lqA9MppDhmqIZ0R5yVG8Pg7vU
-        QGCMuKYQERnZq0Naimnj7JavtkmAi0+Wg8AnSKHECB3T8aRCcqnmvqXpW2rg5x9xC/buCMXT8Tk9i
-        O7yRdnBUCh8uc77zoFRSzusM0sy4eIC24ZtbYTVOan0haNFxn08/uQn94HfkpPtoMsJJSZGlKgWU2
-        XS76Zu7ni2g6waADw8mp6Ns5r34D7ZxUMz9AXjz1J5ouyh4ww3imH4jyRLQWINuB6z45QG36jt/rY
-        wdp5UpcCOVnIBC2RpyDTVQPkZkjUgmE/dosXjZ6EyMZFdNGZccTpKBB2dnawmY0phxjboXPCrW7Sv
-        6zZ5Y0EPg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gmPKB-0007cY-Mj; Wed, 23 Jan 2019 20:40:40 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 0E07A20F51B05; Wed, 23 Jan 2019 21:40:38 +0100 (CET)
-Date:   Wed, 23 Jan 2019 21:40:38 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Will Deacon <will.deacon@arm.com>, Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, x86@kernel.org,
-        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
-        James Morse <james.morse@arm.com>,
-        SRINIVAS <srinivas.eeda@oracle.com>
-Subject: Re: [PATCH v2 1/4] locking/qspinlock: Handle > 4 slowpath nesting
- levels
-Message-ID: <20190123204038.GL13777@hirez.programming.kicks-ass.net>
-References: <1548215351-18896-1-git-send-email-longman@redhat.com>
- <1548215351-18896-2-git-send-email-longman@redhat.com>
- <20190123093424.GE15019@brain-police>
- <63131030-bd24-34bf-10dc-b5e7c7c177be@redhat.com>
+        Wed, 23 Jan 2019 15:43:32 -0500
+Received: from ozlabs.org ([203.11.71.1]:56785 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726213AbfAWUnc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 15:43:32 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43lHLT6P35z9s55;
+        Thu, 24 Jan 2019 07:43:29 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1548276210;
+        bh=W++zRMEewXyhP4Y2wG46Lq03dVxetorEJw3bweGGF1o=;
+        h=Date:From:To:Cc:Subject:From;
+        b=ZkZzQ66C7scUEKC0Qe8VTwD8JGPeb28o29GzV2sYnsFLtzec6+URaf7XcMMR2kyxI
+         P1gDj2PwUYUmdUCVEG6fzLCdR0G3rPuS0Lp6/zl7NAh9RsOMKaZwvMfwempZGj8mXG
+         5+4sPL1wZ1RyJhnjMa1sE4ithAOh4u87R+wlswhrW6mDfHlf3sKBhCwJwPYEVIQdIw
+         4Wl1oTrs2DO+koXj3XIuHfByJUUcPMZBn84RRMtgt2+7T+stm46D1puvzM9tWl3ySl
+         K4Vg6O/NnLLeMcdA1UBsJ8FA18UH8VB4+72KaXLeyr4Rt2xVuncTPERuGu3Jw7cRnM
+         mYlzBFnV6bPaw==
+Date:   Thu, 24 Jan 2019 07:43:16 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the
+ dma-mapping-fixes tree
+Message-ID: <20190124074316.5730569d@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <63131030-bd24-34bf-10dc-b5e7c7c177be@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/62VH0y98=ihLOpL7220dIxi"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 03:11:19PM -0500, Waiman Long wrote:
-> On 01/23/2019 04:34 AM, Will Deacon wrote:
-> > On Tue, Jan 22, 2019 at 10:49:08PM -0500, Waiman Long wrote:
+--Sig_/62VH0y98=ihLOpL7220dIxi
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> >> @@ -412,6 +412,21 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
-> >>  	idx = node->count++;
-> >>  	tail = encode_tail(smp_processor_id(), idx);
+Hi Christoph,
 
-> >> +	if (unlikely(idx >= MAX_NODES)) {
-> >> +		while (!queued_spin_trylock(lock))
-> >> +			cpu_relax();
-> >> +		goto release;
-> >> +	}
+Commit
 
-> So the additional code checks the idx value and branch to the end of the
-> function when the condition is true. There isn't too much overhead here.
+  e31614683919 ("Revert "arm64/xen: fix xen-swiotlb cache flushing"")
 
-So something horrible we could do (and I'm not at all advocating we do
-this), is invert node->count. That is, start at 3 and decrement and
-detect sign flips.
+is missing a Signed-off-by from its author and committer.
 
-That avoids the additional compare. It would require we change the
-structure layout though, otherwise we keep hitting that second line by
-default, which would suck.
+Reverts are commits too.  Also, it can be useful to have an explanation
+for the revert in the commit message.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/62VH0y98=ihLOpL7220dIxi
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxI0eQACgkQAVBC80lX
+0GyHiQf6Akao8O5G5WAs2YgmwIrq8ib7um/hVLImOFmOWN0KBsrLErIpiaB9/Fgw
+KNBzRHaikidB/pSb4xIwtmuZSx7j0YX+4Aofb8LFjhrCFRerYVSN3kY5/w9m9/cE
+32MosBsMWENc1MiTHn6wWOPzbrZJVf7CeVF6tiiNC+UgBA6qcGG7dcMCz28E9e0y
+X0xzxxigH1n9O1LuzljZRknedbxRlw7k4X4S8/aN6mZ0uzaw+XkCPow9NGXzlaDv
+Grt4jX+ScViszIHKNIdidVNedjQath1haAp4dYc/M6Y4VKcPFh9oeNyiT18TVEkw
+WeY3Aahx8FufWYkqwMDOA47Mpbz+qg==
+=csny
+-----END PGP SIGNATURE-----
+
+--Sig_/62VH0y98=ihLOpL7220dIxi--
