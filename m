@@ -2,122 +2,260 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B5C5C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 23:43:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57F4EC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 23:45:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01166218A1
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 23:43:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548287029;
-	bh=Ht9d9bSQHb38KEouKFbK/xZBFFodlVBzidb47a3vGe4=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:List-ID:From;
-	b=lOVWnd2sL7w4K/DWnnR+dCGB23Sz9saIcYgPTskZcnk8DU2Q4DUgPRPxi9zAsJTQ/
-	 KwTDjwgxQGr6YoR0TXNCyzs5OsUCDVb19xSXUoMTaxCEVPTSBaWroDZMrj0FqduvUe
-	 NhbxIq/iaZwYls5T3LaIPX3lZ2L02IG81WBwF6YE=
+	by mail.kernel.org (Postfix) with ESMTP id 12B3B21019
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 23:45:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="J8GRzmmb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726853AbfAWXnr (ORCPT
+        id S1726957AbfAWXpY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 18:43:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34044 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726309AbfAWXnr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 18:43:47 -0500
-Received: from localhost (c-67-164-102-47.hsd1.ca.comcast.net [67.164.102.47])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E45A21019;
-        Wed, 23 Jan 2019 23:43:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548287025;
-        bh=Ht9d9bSQHb38KEouKFbK/xZBFFodlVBzidb47a3vGe4=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=z4K0WRQYPBPv7/USmZMqF0to2B7agbO545aVbnNfz1oGFwOLRjDg/sy9bPKEq87Mu
-         k2r4tlgQDfIMGXcCcIOxTVw1JvrHMWJ7DJ53ucHTvYsUKeVBKxHbITgaou1H/ZvBTn
-         NUtu5yK7uZrfSQe2dGhe3pAUhU0U5M3zHHzlsy80=
-Date:   Wed, 23 Jan 2019 15:43:45 -0800 (PST)
-From:   Stefano Stabellini <sstabellini@kernel.org>
-X-X-Sender: sstabellini@sstabellini-ThinkPad-X260
-To:     "hch@infradead.org" <hch@infradead.org>
-cc:     Stefano Stabellini <sstabellini@kernel.org>,
-        Peng Fan <peng.fan@nxp.com>, "mst@redhat.com" <mst@redhat.com>,
-        "jasowang@redhat.com" <jasowang@redhat.com>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>, luto@kernel.org,
-        jgross@suse.com, boris.ostrovsky@oracle.com,
-        bjorn.andersson@linaro.org, jliang@xilinx.com
-Subject: Re: [Xen-devel] [RFC] virtio_ring: check dma_mem for xen_domain
-In-Reply-To: <20190123211405.GA4971@infradead.org>
-Message-ID: <alpine.DEB.2.10.1901231427010.17936@sstabellini-ThinkPad-X260>
-References: <20190121050056.14325-1-peng.fan@nxp.com> <alpine.DEB.2.10.1901221113410.17936@sstabellini-ThinkPad-X260> <20190123071232.GA20526@infradead.org> <alpine.DEB.2.10.1901230935280.17936@sstabellini-ThinkPad-X260>
- <20190123211405.GA4971@infradead.org>
-User-Agent: Alpine 2.10 (DEB 1266 2009-07-14)
+        Wed, 23 Jan 2019 18:45:24 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:34803 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726252AbfAWXpY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 18:45:24 -0500
+Received: by mail-ot1-f68.google.com with SMTP id t5so3649775otk.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 15:45:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=a3th3BKt1EQbGJOKU8oizYvxZ8/FDSRcU1watEvglZY=;
+        b=J8GRzmmb+RYWJS+uMs/9xie4QPR1lTnfvKcmFiOrNBDuNGHenKIlH3hBeg2WaLiq6z
+         w7h8auWxHllDUuocciDn7NYF0eu3uw7M6FCs0QCzPdiAwFiOwySCJcGApBGQiE2lhFh0
+         a7Y7OTb90q0abhigjRr94WVFMz0p1//jNvN2o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=a3th3BKt1EQbGJOKU8oizYvxZ8/FDSRcU1watEvglZY=;
+        b=ReB8fDlNWYkySmdMM2j7TqA0mz1ZU4gOM/jVAjnA3i7Ho8j+tcrI0F5xcaTkovQxzc
+         57bztlMx2QhzkBmoCTwzVR6fODAfx/9JoEiCmwDh1Us9zoOE7HEqAZY4tJZN4MIOgHMJ
+         oWM+Vup391oaaOse2fNRO5WMuYIxHg7GUFbz8CURbjr1vmHsfAqrQRvYrY6aaFj2QCO2
+         UuNzXReWT+V7PbB8bW/94j7wfUMC6X1LMgPAQK0NaUH26gJTmjn6m+HlIRmfGs9m7VN3
+         NZWAuh7Mrj8aQ75lFCBcLAXgHGVCT1ZDLnctXDiEs80MR6INdPyGJVk4KM+G6bJb3yFm
+         9AyA==
+X-Gm-Message-State: AJcUukdTreD1xyxfiZDY5WO5uuw3F/xZRZF69EavSa+s7WEjEYrzBYo0
+        m5jp+QBcfV1PMDfynQdA2j4A9A==
+X-Google-Smtp-Source: ALg8bN6dupU3zeKkd1JJr9ER4sChtX/C+3HJ4kq0r7sDpLOcxBRptmnNucd2o6OoMtOmCRHKuYJ9Cg==
+X-Received: by 2002:a9d:2aea:: with SMTP id e97mr2888299otb.206.1548287122477;
+        Wed, 23 Jan 2019 15:45:22 -0800 (PST)
+Received: from leoy-ThinkPad-X240s (li1118-108.members.linode.com. [45.79.19.108])
+        by smtp.gmail.com with ESMTPSA id y25sm8406759otk.50.2019.01.23.15.45.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 23 Jan 2019 15:45:21 -0800 (PST)
+Date:   Thu, 24 Jan 2019 07:45:14 +0800
+From:   Leo Yan <leo.yan@linaro.org>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Mike Leach <mike.leach@linaro.org>,
+        Robert Walker <robert.walker@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Coresight ML <coresight@lists.linaro.org>
+Subject: Re: [PATCH v6 5/8] perf cs-etm: Change tuple from traceID-CPU# to
+ traceID-metadata
+Message-ID: <20190123234514.GB3268@leoy-ThinkPad-X240s>
+References: <20190119014347.27441-1-leo.yan@linaro.org>
+ <20190119014347.27441-6-leo.yan@linaro.org>
+ <20190123211300.GE620@xps15>
 MIME-Version: 1.0
-Content-Type: MULTIPART/MIXED; BOUNDARY="8323329-1172143826-1548282487=:17936"
-Content-ID: <alpine.DEB.2.10.1901231428550.17936@sstabellini-ThinkPad-X260>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190123211300.GE620@xps15>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---8323329-1172143826-1548282487=:17936
-Content-Type: TEXT/PLAIN; CHARSET=UTF-8
-Content-Transfer-Encoding: 8BIT
-Content-ID: <alpine.DEB.2.10.1901231428551.17936@sstabellini-ThinkPad-X260>
-
-On Wed, 23 Jan 2019, hch@infradead.org wrote:
-> On Wed, Jan 23, 2019 at 01:04:33PM -0800, Stefano Stabellini wrote:
-> > If vring_use_dma_api is actually supposed to return true when
-> > dma_dev->dma_mem is set, then both Peng's patch and the patch I wrote
-> > are not fixing the real issue here.
+On Wed, Jan 23, 2019 at 02:13:00PM -0700, Mathieu Poirier wrote:
+> On Sat, Jan 19, 2019 at 09:43:44AM +0800, Leo Yan wrote:
+> > If packet processing wants to know the packet is bound with which ETM
+> > version, it needs to access metadata to decide that based on metadata
+> > magic number; but we cannot simply to use CPU logic ID number as index
+> > to access metadata sequential array, especially when system have
+> > hotplugged off CPUs, the metadata array are only allocated for online
+> > CPUs but not offline CPUs, so the CPU logic number doesn't match with
+> > its index in the array.
 > > 
-> > I don't know enough about remoteproc to know where the problem actually
-> > lies though.
+> > For this reason, a reliable way for accessing metadata array is to use
+> > traceID to find associated metadata; by accessing metadata content we
+> > can know not only the CPU number but also for ETM version, which can be
+> > used for sequential change for setting sample flags for exception
+> > packets.
 > 
-> The problem is the following:
+> This paragraph is not needed to understand why this patch is needed.  Please
+> remove.
+
+Will do.
+
+> > This patch is to change tuple from traceID-CPU# to traceID-metadata,
+> > thus it can use the tuple to retrieve metadata pointer according to
+> > traceID.
+> > 
+> > For safe accessing metadata fields, this patch provides helper function
+> > cs_etm__get_cpu() which is used to return CPU number according to
+> > traceID; cs_etm_decoder__buffer_packet() is the first consumer for this
+> > helper function.
+> > 
+> > Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> > ---
+> >  .../perf/util/cs-etm-decoder/cs-etm-decoder.c |  8 ++--
+> >  tools/perf/util/cs-etm.c                      | 37 ++++++++++++++++---
+> >  tools/perf/util/cs-etm.h                      |  4 +-
+> >  3 files changed, 37 insertions(+), 12 deletions(-)
+> > 
+> > diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+> > index 294efa76c9e3..cdd38ffd10d2 100644
+> > --- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+> > +++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+> > @@ -305,14 +305,12 @@ cs_etm_decoder__buffer_packet(struct cs_etm_decoder *decoder,
+> >  			      enum cs_etm_sample_type sample_type)
+> >  {
+> >  	u32 et = 0;
+> > -	struct int_node *inode = NULL;
+> > +	int cpu;
+> >  
+> >  	if (decoder->packet_count >= MAX_BUFFER - 1)
+> >  		return OCSD_RESP_FATAL_SYS_ERR;
+> >  
+> > -	/* Search the RB tree for the cpu associated with this traceID */
+> > -	inode = intlist__find(traceid_list, trace_chan_id);
+> > -	if (!inode)
+> > +	if (cs_etm__get_cpu(trace_chan_id, &cpu) < 0)
+> >  		return OCSD_RESP_FATAL_SYS_ERR;
+> >  
+> >  	et = decoder->tail;
+> > @@ -322,7 +320,7 @@ cs_etm_decoder__buffer_packet(struct cs_etm_decoder *decoder,
+> >  
+> >  	decoder->packet_buffer[et].sample_type = sample_type;
+> >  	decoder->packet_buffer[et].isa = CS_ETM_ISA_UNKNOWN;
+> > -	decoder->packet_buffer[et].cpu = *((int *)inode->priv);
+> > +	decoder->packet_buffer[et].cpu = cpu;
+> >  	decoder->packet_buffer[et].start_addr = CS_ETM_INVAL_ADDR;
+> >  	decoder->packet_buffer[et].end_addr = CS_ETM_INVAL_ADDR;
+> >  	decoder->packet_buffer[et].instr_count = 0;
+> > diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+> > index 1aa29633ce77..e89989fe0a5c 100644
+> > --- a/tools/perf/util/cs-etm.c
+> > +++ b/tools/perf/util/cs-etm.c
+> > @@ -97,6 +97,20 @@ static u32 cs_etm__get_v7_protocol_version(u32 etmidr)
+> >  	return CS_ETM_PROTO_ETMV3;
+> >  }
+> >  
+> > +int cs_etm__get_cpu(u8 trace_chan_id, int *cpu)
+> > +{
+> > +	struct int_node *inode;
+> > +	u64 *metadata;
+> > +
+> > +	inode = intlist__find(traceid_list, trace_chan_id);
+> > +	if (!inode)
+> > +		return -EINVAL;
+> > +
+> > +	metadata = inode->priv;
+> > +	*cpu = (int)metadata[CS_ETM_CPU];
+> > +	return 0;
+> > +}
+> > +
+> >  static void cs_etm__packet_dump(const char *pkt_string)
+> >  {
+> >  	const char *color = PERF_COLOR_BLUE;
+> > @@ -252,7 +266,7 @@ static void cs_etm__free(struct perf_session *session)
+> >  	cs_etm__free_events(session);
+> >  	session->auxtrace = NULL;
+> >  
+> > -	/* First remove all traceID/CPU# nodes for the RB tree */
+> > +	/* First remove all traceID/metadata nodes for the RB tree */
+> >  	intlist__for_each_entry_safe(inode, tmp, traceid_list)
+> >  		intlist__remove(traceid_list, inode);
+> >  	/* Then the RB tree itself */
+> > @@ -1519,9 +1533,20 @@ int cs_etm__process_auxtrace_info(union perf_event *event,
+> >  				    0xffffffff);
+> >  
+> >  	/*
+> > -	 * Create an RB tree for traceID-CPU# tuple. Since the conversion has
+> > -	 * to be made for each packet that gets decoded, optimizing access in
+> > -	 * anything other than a sequential array is worth doing.
+> > +	 * Create an RB tree for traceID-metadata tuple.
+> > +	 *
+> > +	 * The conversion between traceID and CPU logic ID number has to
+> > +	 * be made for each packet that gets decoded: firstly retrieve
+> > +	 * metadata pointer from trace ID by using traceID-metadata tuple,
+> > +	 * then read CPU logic ID number in metadata.
+> > +	 *
+> > +	 * It's not safe to directly use CPU logic ID number as index to
+> > +	 * access metadata sequential array, e.g. when system have
+> > +	 * hotplugged out CPUs, the metadata array are only allocated for
+> > +	 * online CPUs but not offline CPUs, thus the CPU logic number is
+> > +	 * not consistent with its index in the arrary.  For this reason,
+> > +	 * we need to fallback to use TraceID-metadata tuple as a reliable
+> > +	 * method to access metadata.
 > 
-> Devices can declare a specific memory region that they want to use when
-> the driver calls dma_alloc_coherent for the device, this is done using
-> the shared-dma-pool DT attribute, which comes in two variants that
-> would be a little to much to explain here.
+> Why adding this long comment?  To me all that is needed is
+> s/traceID-CPU#/traceID-metadata .
+
+Here just want to give more information for why we create
+traceID-metadata tuple (and hope can give the reason why we need
+to use traceID-metadata rather than traceID-CPU# tuple).
+
+If you think it's redundant, will drop it.
+
+> >  	 */
+> >  	traceid_list = intlist__new(NULL);
+> >  	if (!traceid_list) {
+> > @@ -1587,8 +1612,8 @@ int cs_etm__process_auxtrace_info(union perf_event *event,
+> >  			err = -EINVAL;
+> >  			goto err_free_metadata;
+> >  		}
+> > -		/* All good, associate the traceID with the CPU# */
+> > -		inode->priv = &metadata[j][CS_ETM_CPU];
+> > +		/* All good, associate the traceID with the metadata pointer */
+> > +		inode->priv = metadata[j];
+> >  	}
+> >  
+> >  	/*
+> > diff --git a/tools/perf/util/cs-etm.h b/tools/perf/util/cs-etm.h
+> > index 37f8d48179ca..5d70d10f3907 100644
+> > --- a/tools/perf/util/cs-etm.h
+> > +++ b/tools/perf/util/cs-etm.h
+> > @@ -53,7 +53,7 @@ enum {
+> >  	CS_ETMV4_PRIV_MAX,
+> >  };
+> >  
+> > -/* RB tree for quick conversion between traceID and CPUs */
+> > +/* RB tree for quick conversion between traceID and metadata pointers */
+> >  struct intlist *traceid_list;
+> >  
+> >  #define KiB(x) ((x) * 1024)
+> > @@ -78,4 +78,6 @@ cs_etm__process_auxtrace_info(union perf_event *event __maybe_unused,
+> >  }
+> >  #endif
+> >  
+> > +int cs_etm__get_cpu(u8 trace_chan_id, int *cpu);
 > 
-> remoteproc makes use of that because apparently the device can
-> only communicate using that region.  But it then feeds back memory
-> obtained with dma_alloc_coherent into the virtio code.  For that
-> it calls vmalloc_to_page on the dma_alloc_coherent, which is a huge
-> no-go for the ĐMA API and only worked accidentally on a few platform,
-> and apparently arm64 just changed a few internals that made it stop
-> working for remoteproc.
-> 
-> The right answer is to not use the DMA API to allocate memory from
-> a device-speficic region, but to tie the driver directly into the
-> DT reserved memory API in a way that allows it to easilt obtain
-> a struct device for it.
+> This function is part of a public header that can theoretically be included by
+> any other file.  As such it has to be defined within the HAVE_CSTRACE_SUPPORT
+> define.
 
-If I understand correctly, Peng should be able to reproduce the problem
-on native Linux without any Xen involvement simply by forcing
-vring_use_dma_api to return true. Peng, can you confirm?
+My stupid.  Will move it into HAVE_CSTRACE_SUPPORT blocks.
 
-And the right fix is not to call vmalloc_to_page on a dma_alloc_coherent
-buffer -- I don't know about the recent changes on arm64, but that's not
-going to work with arm32 either AFAIK. Given that I don't have a repro,
-I'll leave it to Peng and/or others to send the appropriate patch for
-remoteproc.
+Thanks a lot for reviewing.
 
-
-> This is orthogonal to another issue, and that is that hardware
-> virtio devices really always need to use the DMA API, otherwise
-> we'll bypass such features as the device specific DMA pools,
-> DMA offsets, cache flushing, etc, etc.
-
-I understand, I'll drop my patch.
---8323329-1172143826-1548282487=:17936--
+> > +
+> >  #endif
+> > -- 
+> > 2.17.1
+> > 
