@@ -4,53 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB377C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 11:04:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6C47C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 11:04:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A55FD21019
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 11:04:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABFDA21019
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 11:04:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cShFyyzP"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cnJST061"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727676AbfAWLE0 (ORCPT
+        id S1727685AbfAWLEq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 06:04:26 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:39891 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727598AbfAWLER (ORCPT
+        Wed, 23 Jan 2019 06:04:46 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:35506 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727455AbfAWLEO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 06:04:17 -0500
-Received: by mail-pl1-f193.google.com with SMTP id 101so1007724pld.6
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 03:04:17 -0800 (PST)
+        Wed, 23 Jan 2019 06:04:14 -0500
+Received: by mail-pf1-f193.google.com with SMTP id z9so1028078pfi.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 03:04:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=JO0vE/vFJiS4gzSeqeVbyVV3LiMkmvtrdh6Lf0qdc2s=;
-        b=cShFyyzPSMdUXoOJVfMLqeNzdV+YrRJK6IXF4kAh8ZTXzNNuKV/QvBxjTT5icsuwrY
-         UI9Ov5OKi9yenNcIWuqxwc6xavsJbYXtmKINI3hGjpxMiNapqnei3zZlr1cZX+6R9/tU
-         8QMPkn/5RJa8oKDZcAJajxEhmkLrtvUk25PMA=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=2oTiebAzQ5b6qVKjCZS4pAFofSOciry9mA2bg9E9rXs=;
+        b=cnJST061ci5OXEjV2JX9Ft1UTAM+A2tN08MzJmbqli+RSpPNcMaRCmDXjsaSCE44IZ
+         IKTe9gOS+UUMxQXAQg6oZD2ZuQoudeqxj0hfHiOyNlcz0Ju1KDgiD0yD06yvalFBL61k
+         fAwJbo8Ok5tqOSlkxx9W0rjUrq3pcA8Q9v5jA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=JO0vE/vFJiS4gzSeqeVbyVV3LiMkmvtrdh6Lf0qdc2s=;
-        b=ToW4qoGcj7S70xRhm78byQU8hGax+F5xpcagMJgSKZCdKZ09UBT/6xLgcRddZoDhLS
-         PxCzHfdwt3S9+hUgMxb0UepU0xGqtd2u6BbouAeziVVAGbz060Co447yzxQc3UyVwIGa
-         aKgDjTBD1WWfFsu3juSJNSnbE+afRg/wgz4FlCRRGCdlP1rvgdtxQrts6NcPsCA7uUXh
-         Q5+LgbP0TKUPMffbnfhbhWs02/KtSSF4W5Dk206ADPhMdnKVkxvVI4lTPKrkpomh0JKG
-         8fROMeJsuHtKFHLEbY7c5ZokeRioh4kL8422FWQgP6yGxpULi1zIOEWhdL6rf7Qkt8Ul
-         bWoQ==
-X-Gm-Message-State: AJcUukdYuv7Waj1IlJ7JWG9UokdP5HbJyrMnQKwnWYrxGB4/o6Ghi4oN
-        MgK5cljObchniuHLSqffW0y41g==
-X-Google-Smtp-Source: ALg8bN6/BGw8B1OP0mS7q6FPiu4ppk8p8QOO9dHknhYA8VVGQHUkP+l6TrWW+pGtZS5VbAttBUYaFw==
-X-Received: by 2002:a17:902:346:: with SMTP id 64mr1790469pld.337.1548241456456;
-        Wed, 23 Jan 2019 03:04:16 -0800 (PST)
+         :references;
+        bh=2oTiebAzQ5b6qVKjCZS4pAFofSOciry9mA2bg9E9rXs=;
+        b=V+MuNWrYfb1DoLLSsgJICuibnYZuM3RLpi8Zgn66PizFjtLwM42j1TkxmaWpo8x5tb
+         YIR1bppfnlD6Q7ynD+s1PE+jSlvuAQ1r3m5sBl5p5qvW7Sp8t5If78iS/i11q/Ye8oz8
+         jEs3dTf954r/6wBjvhGNZ1880Jgrh7uYXyoy6T3b5ZMvG1lKTyN1BzSESktFSxi4NbN7
+         H4ItVLIINQG+JO8LU8AN0TocH1RXMQDmygdOkzo6BSnw4N169rEW1FM596KofH7CT+xQ
+         583G4Tj+G6Tp4X39Lx0Ud6PtZn3B1IRhL3U3vJxQjyGs6rbBJsWyf9KUzOolqNPxm5U0
+         V9qQ==
+X-Gm-Message-State: AJcUukcUusFUyIczHAa1Bbn50pzpWPaaapx4BRB+lxUlidRzYXM+Zpbx
+        gVTTgNhpFGHgG+a9vWxNdtzGdA==
+X-Google-Smtp-Source: ALg8bN7KzuIz1gic94LNejFFA7v4wK4lCeYq6wzgHu7pVkAgD50U+IS6a7uMtYrk4PkQfwJqul8B0Q==
+X-Received: by 2002:a62:e0d8:: with SMTP id d85mr1609113pfm.214.1548241453780;
+        Wed, 23 Jan 2019 03:04:13 -0800 (PST)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id l74sm29941153pfb.145.2019.01.23.03.04.12
+        by smtp.gmail.com with ESMTPSA id p64sm3050357pfi.56.2019.01.23.03.04.12
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Wed, 23 Jan 2019 03:04:12 -0800 (PST)
 From:   Kees Cook <keescook@chromium.org>
@@ -66,461 +65,187 @@ Cc:     Kees Cook <keescook@chromium.org>,
         dev@openvswitch.org, linux-kbuild@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         kernel-hardening@lists.openwall.com
-Subject: [PATCH 1/3] treewide: Lift switch variables out of switches
-Date:   Wed, 23 Jan 2019 03:03:47 -0800
-Message-Id: <20190123110349.35882-2-keescook@chromium.org>
+Subject: [PATCH 2/3] gcc-plugins: Introduce stackinit plugin
+Date:   Wed, 23 Jan 2019 03:03:48 -0800
+Message-Id: <20190123110349.35882-3-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190123110349.35882-1-keescook@chromium.org>
 References: <20190123110349.35882-1-keescook@chromium.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Variables declared in a switch statement before any case statements
-cannot be initialized, so move all instances out of the switches.
-After this, future always-initialized stack variables will work
-and not throw warnings like this:
+This attempts to duplicate the proposed gcc option -finit-local-vars[1]
+in an effort to implement the "always initialize local variables" kernel
+development goal[2].
 
-fs/fcntl.c: In function ‘send_sigio_to_task’:
-fs/fcntl.c:738:13: warning: statement will never be executed [-Wswitch-unreachable]
-   siginfo_t si;
-             ^~
+Enabling CONFIG_GCC_PLUGIN_STACKINIT should stop all "uninitialized
+stack variable" flaws as long as they don't depend on being zero. :)
+
+[1] https://gcc.gnu.org/ml/gcc-patches/2014-06/msg00615.html
+[2] https://lkml.kernel.org/r/CA+55aFykZL+cSBJjBBts7ebEFfyGPdMzTmLSxKnT_29=j942dA@mail.gmail.com
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- arch/x86/xen/enlighten_pv.c                   |  7 ++++---
- drivers/char/pcmcia/cm4000_cs.c               |  2 +-
- drivers/char/ppdev.c                          | 20 ++++++++-----------
- drivers/gpu/drm/drm_edid.c                    |  4 ++--
- drivers/gpu/drm/i915/intel_display.c          |  2 +-
- drivers/gpu/drm/i915/intel_pm.c               |  4 ++--
- drivers/net/ethernet/intel/e1000/e1000_main.c |  3 ++-
- drivers/tty/n_tty.c                           |  3 +--
- drivers/usb/gadget/udc/net2280.c              |  5 ++---
- fs/fcntl.c                                    |  3 ++-
- mm/shmem.c                                    |  5 +++--
- net/core/skbuff.c                             |  4 ++--
- net/ipv6/ip6_gre.c                            |  4 ++--
- net/ipv6/ip6_tunnel.c                         |  4 ++--
- net/openvswitch/flow_netlink.c                |  7 +++----
- security/tomoyo/common.c                      |  3 ++-
- security/tomoyo/condition.c                   |  7 ++++---
- security/tomoyo/util.c                        |  4 ++--
- 18 files changed, 45 insertions(+), 46 deletions(-)
+ scripts/Makefile.gcc-plugins           |  6 ++
+ scripts/gcc-plugins/Kconfig            |  9 +++
+ scripts/gcc-plugins/gcc-common.h       | 11 +++-
+ scripts/gcc-plugins/stackinit_plugin.c | 79 ++++++++++++++++++++++++++
+ 4 files changed, 102 insertions(+), 3 deletions(-)
+ create mode 100644 scripts/gcc-plugins/stackinit_plugin.c
 
-diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
-index c54a493e139a..a79d4b548a08 100644
---- a/arch/x86/xen/enlighten_pv.c
-+++ b/arch/x86/xen/enlighten_pv.c
-@@ -907,14 +907,15 @@ static u64 xen_read_msr_safe(unsigned int msr, int *err)
- static int xen_write_msr_safe(unsigned int msr, unsigned low, unsigned high)
- {
- 	int ret;
-+#ifdef CONFIG_X86_64
-+	unsigned which;
-+	u64 base;
+diff --git a/scripts/Makefile.gcc-plugins b/scripts/Makefile.gcc-plugins
+index 35042d96cf5d..2483121d781c 100644
+--- a/scripts/Makefile.gcc-plugins
++++ b/scripts/Makefile.gcc-plugins
+@@ -12,6 +12,12 @@ export DISABLE_LATENT_ENTROPY_PLUGIN
+ 
+ gcc-plugin-$(CONFIG_GCC_PLUGIN_SANCOV)		+= sancov_plugin.so
+ 
++gcc-plugin-$(CONFIG_GCC_PLUGIN_STACKINIT)	+= stackinit_plugin.so
++ifdef CONFIG_GCC_PLUGIN_STACKINIT
++    DISABLE_STACKINIT_PLUGIN += -fplugin-arg-stackinit_plugin-disable
++endif
++export DISABLE_STACKINIT_PLUGIN
++
+ gcc-plugin-$(CONFIG_GCC_PLUGIN_STRUCTLEAK)	+= structleak_plugin.so
+ gcc-plugin-cflags-$(CONFIG_GCC_PLUGIN_STRUCTLEAK_VERBOSE)	\
+ 		+= -fplugin-arg-structleak_plugin-verbose
+diff --git a/scripts/gcc-plugins/Kconfig b/scripts/gcc-plugins/Kconfig
+index d45f7f36b859..b117fe83f1d3 100644
+--- a/scripts/gcc-plugins/Kconfig
++++ b/scripts/gcc-plugins/Kconfig
+@@ -66,6 +66,15 @@ config GCC_PLUGIN_LATENT_ENTROPY
+ 	   * https://grsecurity.net/
+ 	   * https://pax.grsecurity.net/
+ 
++config GCC_PLUGIN_STACKINIT
++	bool "Initialize all stack variables to zero by default"
++	depends on GCC_PLUGINS
++	depends on !GCC_PLUGIN_STRUCTLEAK
++	help
++	  This plugin zero-initializes all stack variables. This is more
++	  comprehensive than GCC_PLUGIN_STRUCTLEAK, and attempts to
++	  duplicate the proposed -finit-local-vars gcc build flag.
++
+ config GCC_PLUGIN_STRUCTLEAK
+ 	bool "Force initialization of variables containing userspace addresses"
+ 	# Currently STRUCTLEAK inserts initialization out of live scope of
+diff --git a/scripts/gcc-plugins/gcc-common.h b/scripts/gcc-plugins/gcc-common.h
+index 552d5efd7cb7..f690b4deeabd 100644
+--- a/scripts/gcc-plugins/gcc-common.h
++++ b/scripts/gcc-plugins/gcc-common.h
+@@ -76,6 +76,14 @@
+ #include "c-common.h"
+ #endif
+ 
++#if BUILDING_GCC_VERSION > 4005
++#include "c-tree.h"
++#else
++/* should come from c-tree.h if only it were installed for gcc 4.5... */
++#define C_TYPE_FIELDS_READONLY(TYPE) TREE_LANG_FLAG_1(TYPE)
++extern bool global_bindings_p (void);
 +#endif
- 
- 	ret = 0;
- 
- 	switch (msr) {
- #ifdef CONFIG_X86_64
--		unsigned which;
--		u64 base;
--
- 	case MSR_FS_BASE:		which = SEGBASE_FS; goto set;
- 	case MSR_KERNEL_GS_BASE:	which = SEGBASE_GS_USER; goto set;
- 	case MSR_GS_BASE:		which = SEGBASE_GS_KERNEL; goto set;
-diff --git a/drivers/char/pcmcia/cm4000_cs.c b/drivers/char/pcmcia/cm4000_cs.c
-index 7a4eb86aedac..7211dc0e6f4f 100644
---- a/drivers/char/pcmcia/cm4000_cs.c
-+++ b/drivers/char/pcmcia/cm4000_cs.c
-@@ -663,6 +663,7 @@ static void monitor_card(struct timer_list *t)
- {
- 	struct cm4000_dev *dev = from_timer(dev, t, timer);
- 	unsigned int iobase = dev->p_dev->resource[0]->start;
-+	unsigned char flags0;
- 	unsigned short s;
- 	struct ptsreq ptsreq;
- 	int i, atrc;
-@@ -731,7 +732,6 @@ static void monitor_card(struct timer_list *t)
- 	}
- 
- 	switch (dev->mstate) {
--		unsigned char flags0;
- 	case M_CARDOFF:
- 		DEBUGP(4, dev, "M_CARDOFF\n");
- 		flags0 = inb(REG_FLAGS0(iobase));
-diff --git a/drivers/char/ppdev.c b/drivers/char/ppdev.c
-index 1ae77b41050a..d77c97e4f996 100644
---- a/drivers/char/ppdev.c
-+++ b/drivers/char/ppdev.c
-@@ -359,14 +359,19 @@ static int pp_do_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 	struct pp_struct *pp = file->private_data;
- 	struct parport *port;
- 	void __user *argp = (void __user *)arg;
-+	struct ieee1284_info *info;
-+	unsigned char reg;
-+	unsigned char mask;
-+	int mode;
-+	s32 time32[2];
-+	s64 time64[2];
-+	struct timespec64 ts;
-+	int ret;
- 
- 	/* First handle the cases that don't take arguments. */
- 	switch (cmd) {
- 	case PPCLAIM:
- 	    {
--		struct ieee1284_info *info;
--		int ret;
--
- 		if (pp->flags & PP_CLAIMED) {
- 			dev_dbg(&pp->pdev->dev, "you've already got it!\n");
- 			return -EINVAL;
-@@ -517,15 +522,6 @@ static int pp_do_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 
- 	port = pp->pdev->port;
- 	switch (cmd) {
--		struct ieee1284_info *info;
--		unsigned char reg;
--		unsigned char mask;
--		int mode;
--		s32 time32[2];
--		s64 time64[2];
--		struct timespec64 ts;
--		int ret;
--
- 	case PPRSTATUS:
- 		reg = parport_read_status(port);
- 		if (copy_to_user(argp, &reg, sizeof(reg)))
-diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
-index b506e3622b08..8f93956c1628 100644
---- a/drivers/gpu/drm/drm_edid.c
-+++ b/drivers/gpu/drm/drm_edid.c
-@@ -3942,12 +3942,12 @@ static void drm_edid_to_eld(struct drm_connector *connector, struct edid *edid)
- 		}
- 
- 		for_each_cea_db(cea, i, start, end) {
-+			int sad_count;
 +
- 			db = &cea[i];
- 			dbl = cea_db_payload_len(db);
+ #if BUILDING_GCC_VERSION <= 4008
+ #include "tree-flow.h"
+ #else
+@@ -158,9 +166,6 @@ void dump_gimple_stmt(pretty_printer *, gimple, int, int);
+ #define TYPE_NAME_POINTER(node) IDENTIFIER_POINTER(TYPE_NAME(node))
+ #define TYPE_NAME_LENGTH(node) IDENTIFIER_LENGTH(TYPE_NAME(node))
  
- 			switch (cea_db_tag(db)) {
--				int sad_count;
+-/* should come from c-tree.h if only it were installed for gcc 4.5... */
+-#define C_TYPE_FIELDS_READONLY(TYPE) TREE_LANG_FLAG_1(TYPE)
 -
- 			case AUDIO_BLOCK:
- 				/* Audio Data Block, contains SADs */
- 				sad_count = min(dbl / 3, 15 - total_sad_count);
-diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
-index 3da9c0f9e948..aa1c2ebea456 100644
---- a/drivers/gpu/drm/i915/intel_display.c
-+++ b/drivers/gpu/drm/i915/intel_display.c
-@@ -11341,6 +11341,7 @@ static bool check_digital_port_conflicts(struct drm_atomic_state *state)
- 	drm_for_each_connector_iter(connector, &conn_iter) {
- 		struct drm_connector_state *connector_state;
- 		struct intel_encoder *encoder;
-+		unsigned int port_mask;
- 
- 		connector_state = drm_atomic_get_new_connector_state(state, connector);
- 		if (!connector_state)
-@@ -11354,7 +11355,6 @@ static bool check_digital_port_conflicts(struct drm_atomic_state *state)
- 		WARN_ON(!connector_state->crtc);
- 
- 		switch (encoder->type) {
--			unsigned int port_mask;
- 		case INTEL_OUTPUT_DDI:
- 			if (WARN_ON(!HAS_DDI(to_i915(dev))))
- 				break;
-diff --git a/drivers/gpu/drm/i915/intel_pm.c b/drivers/gpu/drm/i915/intel_pm.c
-index a26b4eddda25..c135fdec96b3 100644
---- a/drivers/gpu/drm/i915/intel_pm.c
-+++ b/drivers/gpu/drm/i915/intel_pm.c
-@@ -478,9 +478,9 @@ static void vlv_get_fifo_size(struct intel_crtc_state *crtc_state)
- 	struct vlv_fifo_state *fifo_state = &crtc_state->wm.vlv.fifo_state;
- 	enum pipe pipe = crtc->pipe;
- 	int sprite0_start, sprite1_start;
-+	uint32_t dsparb, dsparb2, dsparb3;
- 
- 	switch (pipe) {
--		uint32_t dsparb, dsparb2, dsparb3;
- 	case PIPE_A:
- 		dsparb = I915_READ(DSPARB);
- 		dsparb2 = I915_READ(DSPARB2);
-@@ -1944,6 +1944,7 @@ static void vlv_atomic_update_fifo(struct intel_atomic_state *state,
- 	const struct vlv_fifo_state *fifo_state =
- 		&crtc_state->wm.vlv.fifo_state;
- 	int sprite0_start, sprite1_start, fifo_size;
-+	uint32_t dsparb, dsparb2, dsparb3;
- 
- 	if (!crtc_state->fifo_changed)
- 		return;
-@@ -1969,7 +1970,6 @@ static void vlv_atomic_update_fifo(struct intel_atomic_state *state,
- 	spin_lock(&dev_priv->uncore.lock);
- 
- 	switch (crtc->pipe) {
--		uint32_t dsparb, dsparb2, dsparb3;
- 	case PIPE_A:
- 		dsparb = I915_READ_FW(DSPARB);
- 		dsparb2 = I915_READ_FW(DSPARB2);
-diff --git a/drivers/net/ethernet/intel/e1000/e1000_main.c b/drivers/net/ethernet/intel/e1000/e1000_main.c
-index 8fe9af0e2ab7..041062736845 100644
---- a/drivers/net/ethernet/intel/e1000/e1000_main.c
-+++ b/drivers/net/ethernet/intel/e1000/e1000_main.c
-@@ -3140,8 +3140,9 @@ static netdev_tx_t e1000_xmit_frame(struct sk_buff *skb,
- 
- 		hdr_len = skb_transport_offset(skb) + tcp_hdrlen(skb);
- 		if (skb->data_len && hdr_len == len) {
-+			unsigned int pull_size;
-+
- 			switch (hw->mac_type) {
--				unsigned int pull_size;
- 			case e1000_82544:
- 				/* Make sure we have room to chop off 4 bytes,
- 				 * and that the end alignment will work out to
-diff --git a/drivers/tty/n_tty.c b/drivers/tty/n_tty.c
-index 5dc9686697cf..eafb39157281 100644
---- a/drivers/tty/n_tty.c
-+++ b/drivers/tty/n_tty.c
-@@ -634,6 +634,7 @@ static size_t __process_echoes(struct tty_struct *tty)
- 	while (MASK(ldata->echo_commit) != MASK(tail)) {
- 		c = echo_buf(ldata, tail);
- 		if (c == ECHO_OP_START) {
-+			unsigned int num_chars, num_bs;
- 			unsigned char op;
- 			int no_space_left = 0;
- 
-@@ -652,8 +653,6 @@ static size_t __process_echoes(struct tty_struct *tty)
- 			op = echo_buf(ldata, tail + 1);
- 
- 			switch (op) {
--				unsigned int num_chars, num_bs;
--
- 			case ECHO_OP_ERASE_TAB:
- 				if (MASK(ldata->echo_commit) == MASK(tail + 2))
- 					goto not_yet_stored;
-diff --git a/drivers/usb/gadget/udc/net2280.c b/drivers/usb/gadget/udc/net2280.c
-index e7dae5379e04..2b275a574e94 100644
---- a/drivers/usb/gadget/udc/net2280.c
-+++ b/drivers/usb/gadget/udc/net2280.c
-@@ -2854,16 +2854,15 @@ static void ep_clear_seqnum(struct net2280_ep *ep)
- static void handle_stat0_irqs_superspeed(struct net2280 *dev,
- 		struct net2280_ep *ep, struct usb_ctrlrequest r)
+ static inline tree build_const_char_string(int len, const char *str)
  {
-+	struct net2280_ep *e;
- 	int tmp = 0;
-+	u16 status;
- 
- #define	w_value		le16_to_cpu(r.wValue)
- #define	w_index		le16_to_cpu(r.wIndex)
- #define	w_length	le16_to_cpu(r.wLength)
- 
- 	switch (r.bRequest) {
--		struct net2280_ep *e;
--		u16 status;
--
- 	case USB_REQ_SET_CONFIGURATION:
- 		dev->addressed_state = !w_value;
- 		goto usb3_delegate;
-diff --git a/fs/fcntl.c b/fs/fcntl.c
-index 083185174c6d..0640b64ecdc2 100644
---- a/fs/fcntl.c
-+++ b/fs/fcntl.c
-@@ -725,6 +725,8 @@ static void send_sigio_to_task(struct task_struct *p,
- 			       struct fown_struct *fown,
- 			       int fd, int reason, enum pid_type type)
- {
-+	kernel_siginfo_t si;
+ 	tree cstr, elem, index, type;
+diff --git a/scripts/gcc-plugins/stackinit_plugin.c b/scripts/gcc-plugins/stackinit_plugin.c
+new file mode 100644
+index 000000000000..41055cd7098e
+--- /dev/null
++++ b/scripts/gcc-plugins/stackinit_plugin.c
+@@ -0,0 +1,79 @@
++/* SPDX-License: GPLv2 */
++/*
++ * This will zero-initialize local stack variables. (Though structure
++ * padding may remain uninitialized in certain cases.)
++ *
++ * Implements Florian Weimer's "-finit-local-vars" gcc patch as a plugin:
++ * https://gcc.gnu.org/ml/gcc-patches/2014-06/msg00615.html
++ *
++ * Plugin skeleton code thanks to PaX Team.
++ *
++ * Options:
++ * -fplugin-arg-stackinit_plugin-disable
++ */
 +
- 	/*
- 	 * F_SETSIG can change ->signum lockless in parallel, make
- 	 * sure we read it once and use the same value throughout.
-@@ -735,7 +737,6 @@ static void send_sigio_to_task(struct task_struct *p,
- 		return;
- 
- 	switch (signum) {
--		kernel_siginfo_t si;
- 		default:
- 			/* Queue a rt signal with the appropriate fd as its
- 			   value.  We use SI_SIGIO as the source, not 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 6ece1e2fe76e..0b02624dd8b2 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1721,6 +1721,9 @@ static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
- 		swap_free(swap);
- 
- 	} else {
-+		loff_t i_size;
-+		pgoff_t off;
++#include "gcc-common.h"
 +
- 		if (vma && userfaultfd_missing(vma)) {
- 			*fault_type = handle_userfault(vmf, VM_UFFD_MISSING);
- 			return 0;
-@@ -1734,8 +1737,6 @@ static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
- 		if (shmem_huge == SHMEM_HUGE_FORCE)
- 			goto alloc_huge;
- 		switch (sbinfo->huge) {
--			loff_t i_size;
--			pgoff_t off;
- 		case SHMEM_HUGE_NEVER:
- 			goto alloc_nohuge;
- 		case SHMEM_HUGE_WITHIN_SIZE:
-diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-index 26d848484912..7597b3fc9d21 100644
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -4506,9 +4506,9 @@ static __sum16 *skb_checksum_setup_ip(struct sk_buff *skb,
- 				      typeof(IPPROTO_IP) proto,
- 				      unsigned int off)
- {
--	switch (proto) {
--		int err;
-+	int err;
- 
-+	switch (proto) {
- 	case IPPROTO_TCP:
- 		err = skb_maybe_pull_tail(skb, off + sizeof(struct tcphdr),
- 					  off + MAX_TCP_HDR_LEN);
-diff --git a/net/ipv6/ip6_gre.c b/net/ipv6/ip6_gre.c
-index b1be67ca6768..9aee1add46c0 100644
---- a/net/ipv6/ip6_gre.c
-+++ b/net/ipv6/ip6_gre.c
-@@ -427,9 +427,11 @@ static int ip6gre_err(struct sk_buff *skb, struct inet6_skb_parm *opt,
- 		       u8 type, u8 code, int offset, __be32 info)
- {
- 	struct net *net = dev_net(skb->dev);
-+	struct ipv6_tlv_tnl_enc_lim *tel;
- 	const struct ipv6hdr *ipv6h;
- 	struct tnl_ptk_info tpi;
- 	struct ip6_tnl *t;
-+	__u32 teli;
- 
- 	if (gre_parse_header(skb, &tpi, NULL, htons(ETH_P_IPV6),
- 			     offset) < 0)
-@@ -442,8 +444,6 @@ static int ip6gre_err(struct sk_buff *skb, struct inet6_skb_parm *opt,
- 		return -ENOENT;
- 
- 	switch (type) {
--		struct ipv6_tlv_tnl_enc_lim *tel;
--		__u32 teli;
- 	case ICMPV6_DEST_UNREACH:
- 		net_dbg_ratelimited("%s: Path to destination invalid or inactive!\n",
- 				    t->parms.name);
-diff --git a/net/ipv6/ip6_tunnel.c b/net/ipv6/ip6_tunnel.c
-index 0c6403cf8b52..94ccc7a9037b 100644
---- a/net/ipv6/ip6_tunnel.c
-+++ b/net/ipv6/ip6_tunnel.c
-@@ -478,10 +478,12 @@ ip6_tnl_err(struct sk_buff *skb, __u8 ipproto, struct inet6_skb_parm *opt,
- 	struct net *net = dev_net(skb->dev);
- 	u8 rel_type = ICMPV6_DEST_UNREACH;
- 	u8 rel_code = ICMPV6_ADDR_UNREACH;
-+	struct ipv6_tlv_tnl_enc_lim *tel;
- 	__u32 rel_info = 0;
- 	struct ip6_tnl *t;
- 	int err = -ENOENT;
- 	int rel_msg = 0;
-+	__u32 mtu, teli;
- 	u8 tproto;
- 	__u16 len;
- 
-@@ -501,8 +503,6 @@ ip6_tnl_err(struct sk_buff *skb, __u8 ipproto, struct inet6_skb_parm *opt,
- 	err = 0;
- 
- 	switch (*type) {
--		struct ipv6_tlv_tnl_enc_lim *tel;
--		__u32 mtu, teli;
- 	case ICMPV6_DEST_UNREACH:
- 		net_dbg_ratelimited("%s: Path to destination invalid or inactive!\n",
- 				    t->parms.name);
-diff --git a/net/openvswitch/flow_netlink.c b/net/openvswitch/flow_netlink.c
-index 691da853bef5..dee2f9516ae8 100644
---- a/net/openvswitch/flow_netlink.c
-+++ b/net/openvswitch/flow_netlink.c
-@@ -2652,8 +2652,11 @@ static int validate_set(const struct nlattr *a,
- 			u8 mac_proto, __be16 eth_type, bool masked, bool log)
- {
- 	const struct nlattr *ovs_key = nla_data(a);
-+	const struct ovs_key_ipv4 *ipv4_key;
-+	const struct ovs_key_ipv6 *ipv6_key;
- 	int key_type = nla_type(ovs_key);
- 	size_t key_len;
-+	int err;
- 
- 	/* There can be only one key in a action */
- 	if (nla_total_size(nla_len(ovs_key)) != nla_len(a))
-@@ -2671,10 +2674,6 @@ static int validate_set(const struct nlattr *a,
- 		return -EINVAL;
- 
- 	switch (key_type) {
--	const struct ovs_key_ipv4 *ipv4_key;
--	const struct ovs_key_ipv6 *ipv6_key;
--	int err;
--
- 	case OVS_KEY_ATTR_PRIORITY:
- 	case OVS_KEY_ATTR_SKB_MARK:
- 	case OVS_KEY_ATTR_CT_MARK:
-diff --git a/security/tomoyo/common.c b/security/tomoyo/common.c
-index c598aa00d5e3..bedbd0518153 100644
---- a/security/tomoyo/common.c
-+++ b/security/tomoyo/common.c
-@@ -1583,8 +1583,9 @@ static void tomoyo_read_domain(struct tomoyo_io_buffer *head)
- 	list_for_each_cookie(head->r.domain, &tomoyo_domain_list) {
- 		struct tomoyo_domain_info *domain =
- 			list_entry(head->r.domain, typeof(*domain), list);
-+		u8 i;
++__visible int plugin_is_GPL_compatible;
 +
- 		switch (head->r.step) {
--			u8 i;
- 		case 0:
- 			if (domain->is_deleted &&
- 			    !head->r.print_this_domain_only)
-diff --git a/security/tomoyo/condition.c b/security/tomoyo/condition.c
-index 8d0e1b9c9c57..c10d903febe5 100644
---- a/security/tomoyo/condition.c
-+++ b/security/tomoyo/condition.c
-@@ -787,10 +787,11 @@ bool tomoyo_condition(struct tomoyo_request_info *r,
- 		/* Check string expressions. */
- 		if (right == TOMOYO_NAME_UNION) {
- 			const struct tomoyo_name_union *ptr = names_p++;
-+			struct tomoyo_path_info *symlink;
-+			struct tomoyo_execve *ee;
-+			struct file *file;
++static struct plugin_info stackinit_plugin_info = {
++	.version	= "20190122",
++	.help		= "disable\tdo not activate plugin\n",
++};
 +
- 			switch (left) {
--				struct tomoyo_path_info *symlink;
--				struct tomoyo_execve *ee;
--				struct file *file;
- 			case TOMOYO_SYMLINK_TARGET:
- 				symlink = obj ? obj->symlink_target : NULL;
- 				if (!symlink ||
-diff --git a/security/tomoyo/util.c b/security/tomoyo/util.c
-index badffc8271c8..8e2bb36df37b 100644
---- a/security/tomoyo/util.c
-+++ b/security/tomoyo/util.c
-@@ -668,6 +668,8 @@ static bool tomoyo_file_matches_pattern2(const char *filename,
- {
- 	while (filename < filename_end && pattern < pattern_end) {
- 		char c;
-+		int i, j;
++static void finish_decl(void *event_data, void *data)
++{
++	tree decl = (tree)event_data;
++	tree type;
 +
- 		if (*pattern != '\\') {
- 			if (*filename++ != *pattern++)
- 				return false;
-@@ -676,8 +678,6 @@ static bool tomoyo_file_matches_pattern2(const char *filename,
- 		c = *filename;
- 		pattern++;
- 		switch (*pattern) {
--			int i;
--			int j;
- 		case '?':
- 			if (c == '/') {
- 				return false;
++	if (TREE_CODE (decl) != VAR_DECL)
++		return;
++
++	if (DECL_EXTERNAL (decl))
++		return;
++
++	if (DECL_INITIAL (decl) != NULL_TREE)
++		return;
++
++	if (global_bindings_p ())
++		return;
++
++	type = TREE_TYPE (decl);
++	if (AGGREGATE_TYPE_P (type))
++		DECL_INITIAL (decl) = build_constructor (type, NULL);
++	else
++		DECL_INITIAL (decl) = fold_convert (type, integer_zero_node);
++}
++
++__visible int plugin_init(struct plugin_name_args *plugin_info, struct plugin_gcc_version *version)
++{
++	int i;
++	const char * const plugin_name = plugin_info->base_name;
++	const int argc = plugin_info->argc;
++	const struct plugin_argument * const argv = plugin_info->argv;
++	bool enable = true;
++
++	if (!plugin_default_version_check(version, &gcc_version)) {
++		error(G_("incompatible gcc/plugin versions"));
++		return 1;
++	}
++
++	if (strncmp(lang_hooks.name, "GNU C", 5) && !strncmp(lang_hooks.name, "GNU C+", 6)) {
++		inform(UNKNOWN_LOCATION, G_("%s supports C only, not %s"), plugin_name, lang_hooks.name);
++		enable = false;
++	}
++
++	for (i = 0; i < argc; ++i) {
++		if (!strcmp(argv[i].key, "disable")) {
++			enable = false;
++			continue;
++		}
++		error(G_("unknown option '-fplugin-arg-%s-%s'"), plugin_name, argv[i].key);
++	}
++
++	register_callback(plugin_name, PLUGIN_INFO, NULL, &stackinit_plugin_info);
++	if (enable)
++		register_callback(plugin_name, PLUGIN_FINISH_DECL, finish_decl, NULL);
++
++	return 0;
++}
 -- 
 2.17.1
 
