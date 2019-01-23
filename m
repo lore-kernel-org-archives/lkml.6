@@ -2,99 +2,274 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAC24C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 19:44:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70D35C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 19:48:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 831612184C
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 19:44:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37417218A1
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 19:48:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BraoATOQ"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Ra5bpZp9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726345AbfAWToL (ORCPT
+        id S1726352AbfAWTsl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 14:44:11 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:43732 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726220AbfAWToK (ORCPT
+        Wed, 23 Jan 2019 14:48:41 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:4580 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726101AbfAWTsk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 14:44:10 -0500
-Received: by mail-wr1-f65.google.com with SMTP id r10so3889336wrs.10
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 11:44:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=L7E5s2faLUvFouJyNzWtK64dj/0fRKj9h4yiNMIbrZ4=;
-        b=BraoATOQ0xC48uoV22t9n3l1wrqHy0d2h2LLfxAgBA79PZL0rCHYGEWgE0fULrzoGS
-         tGkdaauyuoeECEPfPnBpbP+KRlfjB7do6yvO4weh598oOVDS++YQEVDRRMG322mHvh9M
-         ONxhf/eFwNdTD/zXXyKMr2bFuvd35Iw2F4Rf3EaeEReCJunybmFrJhCJr2E5DXXxgeR7
-         jEe3nfwzeta+Wlv9FrdPCybltmfrvfawmD+mvFFD9H2nNLGud85UKKxUaE0sbTh/Amwi
-         fequp9ilPxmGMNHQqrgVvkH2QT3yxlkwvho13utxsYaAm2B5s4vqk0IfCR1b+W1KaeqT
-         lfLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=L7E5s2faLUvFouJyNzWtK64dj/0fRKj9h4yiNMIbrZ4=;
-        b=cWcdceImrhKAeS1c4V3cmNSrVPK6qbCZ/OKyb7XJoICFAvZrTKqPtjPt84iQSJDCil
-         u5yRyLnnlDdLOXTfGX6NwCIVvOevTq80cnSvAUBAMwDsBnB8C3zYBF5ky11vJg4ulSs+
-         H+bxo/tThwnQ1zdxbZzOkj+agdTyd+R99OxSJRIyUWoBWVqnol8+Q0klosirUTlPw+T6
-         WtI7ng66dbJ6j25DlN7VSMUsu5vZ5IoPOfVSIRkgtYaihlxaRlrSkCl6N1VJxwcd9Fxs
-         U3iB4Z3gHfbHWl1dX1umxJD1fQ/vvzzlSZGvZcPcSQvffiTv+G0MYvLJiQOXSwRVdCfe
-         K4bA==
-X-Gm-Message-State: AJcUukf2EbLYgBqu2Yr/rY49/qX9juMMdhFYxfgyJggt5uZXmGI89BfB
-        1C5uI9ejUCGa28pDXM8tXUgoS+MI
-X-Google-Smtp-Source: ALg8bN5b4JcEXoM9jw3kaklngo5eQTdPBwxRXyANvUS2tMYOb/oeAhvLBYPONanSPQ24S1+MnbwJKA==
-X-Received: by 2002:adf:9123:: with SMTP id j32mr4343262wrj.122.1548272648936;
-        Wed, 23 Jan 2019 11:44:08 -0800 (PST)
-Received: from macbookpro.malat.net (bru31-1-78-225-224-134.fbx.proxad.net. [78.225.224.134])
-        by smtp.gmail.com with ESMTPSA id 67sm153033500wra.37.2019.01.23.11.43.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 23 Jan 2019 11:43:36 -0800 (PST)
-Received: by macbookpro.malat.net (Postfix, from userid 1000)
-        id 329E0114246D; Wed, 23 Jan 2019 20:43:35 +0100 (CET)
-From:   Mathieu Malaterre <malat@debian.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Mathieu Malaterre <malat@debian.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] drivers: base: Use __printf markup to silence compiler
-Date:   Wed, 23 Jan 2019 20:42:00 +0100
-Message-Id: <20190123194200.19698-1-malat@debian.org>
-X-Mailer: git-send-email 2.19.2
+        Wed, 23 Jan 2019 14:48:40 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c48c4fd0000>; Wed, 23 Jan 2019 11:48:13 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Wed, 23 Jan 2019 11:48:37 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Wed, 23 Jan 2019 11:48:37 -0800
+Received: from HQMAIL110.nvidia.com (172.18.146.15) by HQMAIL108.nvidia.com
+ (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 23 Jan
+ 2019 19:48:37 +0000
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by hqmail110.nvidia.com
+ (172.18.146.15) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 23 Jan
+ 2019 19:48:36 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Wed, 23 Jan 2019 19:48:37 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.52]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5c48c5140001>; Wed, 23 Jan 2019 11:48:36 -0800
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <mkarthik@nvidia.com>, <smohammed@nvidia.com>, <talho@nvidia.com>
+CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-i2c@vger.kernel.org>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH V4] i2c: tegra: Add Bus Clear Master Support
+Date:   Wed, 23 Jan 2019 11:48:35 -0800
+Message-ID: <1548272915-20925-1-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1548272893; bh=Ppqw0zecR+IFVPMS9/y4K3ngDRknr8J1HJ6vyPahP/s=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=Ra5bpZp9t82vNYK50D+y96+TOj1iY0sot7MumkRt2YNJfmY8RY8r6kgK5T6zMieAW
+         A/rL1MIOgryL/fXGQrGovPVn34PuMgpAC+nxR4ZQ95uGjBQ/OAUHqWLe7HIfXsIJz0
+         rWolC/FBS0c5x1eQuzb6y1/KENzIs6+Kju4513nG58cPhGJSX1XZqEuBqIOkPm2U3j
+         HytDzpYiU4dDCNrziBwySl0sCWZf8ylBPKjbXssAGa5hhOcJkT95cWGNsTUvTiISaZ
+         E//5pqQ76a5GOtxqrLbQSIfBJfVGmE+h+zNf20E9boB1GQZFYfaGQrkKoGPXMRattW
+         Gg2ebJSus65Xw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Silence warnings (triggered at W=1) by adding relevant __printf
-attributes.
+Bus clear feature of tegra i2c controller helps to recover from
+bus hang when i2c master loses the bus arbitration due to the
+slave device holding SDA LOW continuously for some unknown reasons.
 
-  drivers/base/cpu.c:432:2: warning: function '__cpu_device_create' might be a candidate for 'gnu_printf' format attribute [-Wsuggest-attribute=format]
+Per I2C specification, the device that held the bus LOW should
+release it within 9 clock pulses.
 
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
+During bus clear operation, Tegra I2C controller sends 9 clock
+pulses and terminates the transaction with STOP condition.
+Upon successful bus clear operation, bus goes to idle state and
+driver retries the transaction.
+
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/base/cpu.c | 1 +
- 1 file changed, 1 insertion(+)
+ [V4]: Sets for one retry on arb lost
+ [V3]: Updated comments and commit message to be clear on the change
+ [V2]: Same as V1 rebased to 5.0-rc1
 
-diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
-index eb9443d5bae1..de74d7d93558 100644
---- a/drivers/base/cpu.c
-+++ b/drivers/base/cpu.c
-@@ -409,6 +409,7 @@ static void device_create_release(struct device *dev)
- 	kfree(dev);
+ drivers/i2c/busses/i2c-tegra.c | 71 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 71 insertions(+)
+
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index e417ebf7628c..514f7a51434e 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -54,6 +54,7 @@
+ #define I2C_FIFO_STATUS_RX_SHIFT		0
+ #define I2C_INT_MASK				0x064
+ #define I2C_INT_STATUS				0x068
++#define I2C_INT_BUS_CLR_DONE			BIT(11)
+ #define I2C_INT_PACKET_XFER_COMPLETE		BIT(7)
+ #define I2C_INT_ALL_PACKETS_XFER_COMPLETE	BIT(6)
+ #define I2C_INT_TX_FIFO_OVERFLOW		BIT(5)
+@@ -96,6 +97,15 @@
+ #define I2C_HEADER_MASTER_ADDR_SHIFT		12
+ #define I2C_HEADER_SLAVE_ADDR_SHIFT		1
+ 
++#define I2C_BUS_CLEAR_CNFG			0x084
++#define I2C_BC_SCLK_THRESHOLD			9
++#define I2C_BC_SCLK_THRESHOLD_SHIFT		16
++#define I2C_BC_STOP_COND			BIT(2)
++#define I2C_BC_TERMINATE			BIT(1)
++#define I2C_BC_ENABLE				BIT(0)
++#define I2C_BUS_CLEAR_STATUS			0x088
++#define I2C_BC_STATUS				BIT(0)
++
+ #define I2C_CONFIG_LOAD				0x08C
+ #define I2C_MSTR_CONFIG_LOAD			BIT(0)
+ #define I2C_SLV_CONFIG_LOAD			BIT(1)
+@@ -155,6 +165,8 @@ enum msg_end_type {
+  * @has_mst_fifo: The I2C controller contains the new MST FIFO interface that
+  *		provides additional features and allows for longer messages to
+  *		be transferred in one go.
++ * @supports_bus_clear: Bus Clear support to recover from bus hang during
++ *		SDA stuck low from device for some unknown reasons.
+  */
+ struct tegra_i2c_hw_feature {
+ 	bool has_continue_xfer_support;
+@@ -167,6 +179,7 @@ struct tegra_i2c_hw_feature {
+ 	bool has_multi_master_mode;
+ 	bool has_slcg_override_reg;
+ 	bool has_mst_fifo;
++	bool supports_bus_clear;
+ };
+ 
+ /**
+@@ -639,6 +652,12 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
+ 			i2c_dev->msg_err |= I2C_ERR_ARBITRATION_LOST;
+ 		goto err;
+ 	}
++	/*
++	 * I2C transfer is terminated during the bus clear so skip
++	 * processing the other interrupts.
++	 */
++	if (i2c_dev->hw->supports_bus_clear && (status & I2C_INT_BUS_CLR_DONE))
++		goto err;
+ 
+ 	if (i2c_dev->msg_read && (status & I2C_INT_RX_FIFO_DATA_REQ)) {
+ 		if (i2c_dev->msg_buf_remaining)
+@@ -668,6 +687,8 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
+ 	tegra_i2c_mask_irq(i2c_dev, I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST |
+ 		I2C_INT_PACKET_XFER_COMPLETE | I2C_INT_TX_FIFO_DATA_REQ |
+ 		I2C_INT_RX_FIFO_DATA_REQ);
++	if (i2c_dev->hw->supports_bus_clear)
++		tegra_i2c_mask_irq(i2c_dev, I2C_INT_BUS_CLR_DONE);
+ 	i2c_writel(i2c_dev, status, I2C_INT_STATUS);
+ 	if (i2c_dev->is_dvc)
+ 		dvc_writel(i2c_dev, DVC_STATUS_I2C_DONE_INTR, DVC_STATUS);
+@@ -678,6 +699,43 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
+ 	return IRQ_HANDLED;
  }
  
-+__printf(4, 0)
- static struct device *
- __cpu_device_create(struct device *parent, void *drvdata,
- 		    const struct attribute_group **groups,
++static int tegra_i2c_issue_bus_clear(struct tegra_i2c_dev *i2c_dev)
++{
++	int err;
++	unsigned long time_left;
++	u32 reg;
++
++	if (i2c_dev->hw->supports_bus_clear) {
++		reinit_completion(&i2c_dev->msg_complete);
++		reg = (I2C_BC_SCLK_THRESHOLD << I2C_BC_SCLK_THRESHOLD_SHIFT) |
++		      I2C_BC_STOP_COND | I2C_BC_TERMINATE;
++		i2c_writel(i2c_dev, reg, I2C_BUS_CLEAR_CNFG);
++		if (i2c_dev->hw->has_config_load_reg) {
++			err = tegra_i2c_wait_for_config_load(i2c_dev);
++			if (err)
++				return err;
++		}
++		reg |= I2C_BC_ENABLE;
++		i2c_writel(i2c_dev, reg, I2C_BUS_CLEAR_CNFG);
++		tegra_i2c_unmask_irq(i2c_dev, I2C_INT_BUS_CLR_DONE);
++
++		time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
++							TEGRA_I2C_TIMEOUT);
++		if (time_left == 0) {
++			dev_err(i2c_dev->dev, "timed out for bus clear\n");
++			return -ETIMEDOUT;
++		}
++		reg = i2c_readl(i2c_dev, I2C_BUS_CLEAR_STATUS);
++		if (!(reg & I2C_BC_STATUS)) {
++			dev_err(i2c_dev->dev,
++				"Un-recovered arbitration lost\n");
++			return -EIO;
++		}
++	}
++
++	return -EAGAIN;
++}
++
+ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 	struct i2c_msg *msg, enum msg_end_type end_state)
+ {
+@@ -759,6 +817,12 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 		return 0;
+ 
+ 	tegra_i2c_init(i2c_dev);
++	/* start recovery upon arbitration loss in single master mode */
++	if (i2c_dev->msg_err == I2C_ERR_ARBITRATION_LOST) {
++		if (!i2c_dev->is_multimaster_mode)
++			return tegra_i2c_issue_bus_clear(i2c_dev);
++		return -EAGAIN;
++	}
+ 	if (i2c_dev->msg_err == I2C_ERR_NO_ACK) {
+ 		if (msg->flags & I2C_M_IGNORE_NAK)
+ 			return 0;
+@@ -848,6 +912,7 @@ static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
+ 	.has_multi_master_mode = false,
+ 	.has_slcg_override_reg = false,
+ 	.has_mst_fifo = false,
++	.supports_bus_clear = false,
+ };
+ 
+ static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
+@@ -861,6 +926,7 @@ static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
+ 	.has_multi_master_mode = false,
+ 	.has_slcg_override_reg = false,
+ 	.has_mst_fifo = false,
++	.supports_bus_clear = false,
+ };
+ 
+ static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
+@@ -874,6 +940,7 @@ static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
+ 	.has_multi_master_mode = false,
+ 	.has_slcg_override_reg = false,
+ 	.has_mst_fifo = false,
++	.supports_bus_clear = true,
+ };
+ 
+ static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
+@@ -887,6 +954,7 @@ static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
+ 	.has_multi_master_mode = false,
+ 	.has_slcg_override_reg = true,
+ 	.has_mst_fifo = false,
++	.supports_bus_clear = true,
+ };
+ 
+ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
+@@ -900,6 +968,7 @@ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
+ 	.has_multi_master_mode = true,
+ 	.has_slcg_override_reg = true,
+ 	.has_mst_fifo = false,
++	.supports_bus_clear = true,
+ };
+ 
+ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
+@@ -913,6 +982,7 @@ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
+ 	.has_multi_master_mode = true,
+ 	.has_slcg_override_reg = true,
+ 	.has_mst_fifo = true,
++	.supports_bus_clear = true,
+ };
+ 
+ /* Match table for of_platform binding */
+@@ -965,6 +1035,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 	i2c_dev->div_clk = div_clk;
+ 	i2c_dev->adapter.algo = &tegra_i2c_algo;
+ 	i2c_dev->adapter.quirks = &tegra_i2c_quirks;
++	i2c_dev->adapter.retries = 1;
+ 	i2c_dev->irq = irq;
+ 	i2c_dev->cont_id = pdev->id;
+ 	i2c_dev->dev = &pdev->dev;
 -- 
-2.19.2
+2.7.4
 
