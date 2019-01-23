@@ -2,97 +2,62 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF249C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:56:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6D4AC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:57:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA06E20870
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:56:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE0CE20870
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:57:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727026AbfAWH4k convert rfc822-to-8bit (ORCPT
+        id S1727022AbfAWH5A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 02:56:40 -0500
-Received: from skedge04.snt-world.com ([91.208.41.69]:47442 "EHLO
-        skedge04.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726000AbfAWH4j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 02:56:39 -0500
-Received: from sntmail10s.snt-is.com (unknown [10.203.32.183])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by skedge04.snt-world.com (Postfix) with ESMTPS id 7803F67A7B4;
-        Wed, 23 Jan 2019 08:56:37 +0100 (CET)
-Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail10s.snt-is.com
- (10.203.32.183) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Wed, 23 Jan
- 2019 08:56:37 +0100
-Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
- sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%5]) with mapi id
- 15.01.1466.003; Wed, 23 Jan 2019 08:56:37 +0100
-From:   Schrempf Frieder <frieder.schrempf@kontron.de>
-To:     Marek Vasut <marek.vasut@gmail.com>
-CC:     "Tudor.Ambarus@microchip.com" <Tudor.Ambarus@microchip.com>,
-        "Schrempf Frieder" <frieder.schrempf@kontron.de>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/2] mtd: spi-nor: Add support for MX25V8035F
-Thread-Topic: [PATCH 2/2] mtd: spi-nor: Add support for MX25V8035F
-Thread-Index: AQHUsvEqzdNzbQDuPUeqPLG7vEYoWQ==
-Date:   Wed, 23 Jan 2019 07:56:36 +0000
-Message-ID: <20190123075538.12681-2-frieder.schrempf@kontron.de>
-References: <20190123075538.12681-1-frieder.schrempf@kontron.de>
-In-Reply-To: <20190123075538.12681-1-frieder.schrempf@kontron.de>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.25.9.42]
-x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+        Wed, 23 Jan 2019 02:57:00 -0500
+Received: from 8bytes.org ([81.169.241.247]:59056 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726000AbfAWH5A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 02:57:00 -0500
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 50A6139A; Wed, 23 Jan 2019 08:56:58 +0100 (CET)
+Date:   Wed, 23 Jan 2019 08:56:58 +0100
+From:   "joro@8bytes.org" <joro@8bytes.org>
+To:     "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        "Singh, Brijesh" <brijesh.singh@amd.com>
+Subject: Re: [PATCH] iommu/amd: Fix IOMMU page flush when detach all devices
+ from a domain
+Message-ID: <20190123075658.GE32526@8bytes.org>
+References: <20190116041546.3541-1-Suravee.Suthikulpanit@amd.com>
+ <20190116132648.i5n3hz3k7d2wxbrx@8bytes.org>
+ <60c24182-c58e-0575-b085-c7eebc00c49b@amd.com>
+ <20190116170852.GD4681@8bytes.org>
+ <0a61c07d-edfe-2738-380d-33d39e40fc0a@amd.com>
+ <20190122104454.nke2knuyqiswfh5w@8bytes.org>
+ <e27055c1-89b0-e804-b99c-c94965de5344@amd.com>
 MIME-Version: 1.0
-X-SnT-MailScanner-Information: Please contact the ISP for more information
-X-SnT-MailScanner-ID: 7803F67A7B4.AD00B
-X-SnT-MailScanner: Found to be clean
-X-SnT-MailScanner-SpamCheck: 
-X-SnT-MailScanner-From: frieder.schrempf@kontron.de
-X-SnT-MailScanner-To: bbrezillon@kernel.org, computersforpeace@gmail.com,
-        dwmw2@infradead.org, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, marek.vasut@gmail.com, richard@nod.at,
-        tudor.ambarus@microchip.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e27055c1-89b0-e804-b99c-c94965de5344@amd.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frieder Schrempf <frieder.schrempf@kontron.de>
+Hi Suravee,
 
-This adds support for the Macronix MX25V8035F, a 8Mb SPI NOR chip.
+On Tue, Jan 22, 2019 at 03:53:18PM +0000, Suthikulpanit, Suravee wrote:
+> Thanks for the detail. Alright then, let's just go with the version you
+> sent on 1/16/19. Do you want me to resend V3 with that changes, or
+> would you be taking care of that?
 
-Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
----
- drivers/mtd/spi-nor/spi-nor.c | 2 ++
- 1 file changed, 2 insertions(+)
+Please send me a v3 based on the diff I sent last week. Also add a
+separate patch which adds the missing dte flush for the alias entry.
 
-diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-index aa8a04293a25..f08ea9cf86b6 100644
---- a/drivers/mtd/spi-nor/spi-nor.c
-+++ b/drivers/mtd/spi-nor/spi-nor.c
-@@ -1849,6 +1849,8 @@ static const struct flash_info spi_nor_ids[] = {
- 			 SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ)
- 			 .fixups = &mx25l25635_fixups },
- 	{ "mx25u25635f", INFO(0xc22539, 0, 64 * 1024, 512, SECT_4K | SPI_NOR_4B_OPCODES) },
-+	{ "mx25v8035f",  INFO(0xc22314, 0, 64 * 1024,  16,
-+			 SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
- 	{ "mx25l25655e", INFO(0xc22619, 0, 64 * 1024, 512, 0) },
- 	{ "mx66l51235l", INFO(0xc2201a, 0, 64 * 1024, 1024, SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ | SPI_NOR_4B_OPCODES) },
- 	{ "mx66u51235f", INFO(0xc2253a, 0, 64 * 1024, 1024, SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ | SPI_NOR_4B_OPCODES) },
--- 
-2.17.1
+Thanks,
+
+	Joerg
