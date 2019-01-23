@@ -2,142 +2,135 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDC62C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:32:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50040C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:36:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B460921855
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:32:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mf8ABKvD"
+	by mail.kernel.org (Postfix) with ESMTP id 1597121855
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:36:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727154AbfAWWcR (ORCPT
+        id S1726934AbfAWWg2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 17:32:17 -0500
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:34780 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726322AbfAWWcQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 17:32:16 -0500
-Received: by mail-vk1-f196.google.com with SMTP id y14so892995vkd.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 14:32:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=L+zp7PxO+/xU8Opo0WDDu4w6vRsV8TAqdqaRfU8eb6I=;
-        b=Mf8ABKvDceM6UqpovAMHhFJniZfPSPAqoyoW5388S2NtYsdtVcnF2H5OvHZC8PAaKR
-         9xQb+e4tj+ahNB5H2Pgnds/AzLujcYvb7JH1zU76gCKBZ0Bt3TD0bzMWmlGainYB5Qli
-         5Qlea3ohrN4AYyffaxdVr/JBdo429iblxH2HDU9sYXflr9xmFXI2uUjIkJR2yPpU2s9O
-         CJkgR6ic0yIAvLM47aHkLY06HyktLPypPQNTlL2Bn1A5ZbYHcN4Ki2Kzek/EWTZk29P1
-         uH99YUhlbMy+bnp3iz5SdAYIs60Bbq2zpak2d7JJjXAtK6i6ai9+6deLDChBCl4wRIZj
-         SZoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=L+zp7PxO+/xU8Opo0WDDu4w6vRsV8TAqdqaRfU8eb6I=;
-        b=D6iU056vHIyQU5kNnVpsn0N1KUggNNPdc9wHpyAjkGMXjCb0PePC4RdChv2U750kny
-         Z5Cmh60jXO32gWqQzc5BnvCpef5PBAYYNFZm4I0IkBXIsUBOvGpblnaOjRD19ka4b/kf
-         xckXw6TvO1+1aRHEnFrf31m8lDcUYCjqFze+VMjMEuVth9X4iGUCfIXwXViZHHlARpxQ
-         8tlbYlFZ3jA6ZImQcp/V1z+RlY634l+39q2v0wyadQ8aEOyjdIsKHucsUI1QRkRsjdDf
-         ofuY/9C3FdUOYGGYp1fp66nILvqF4LI+IPKMcak3LO6IcBSsLlvdcniPb7HJBWdJ0hah
-         Gjdg==
-X-Gm-Message-State: AJcUukf1P46tvm9+dfgjomtg+4l7/wwxE/dkaheQ5L0DAEshQH0rGer2
-        nLb03fWtEWdQnsB6mn3D2a9dReo5LczTI04vhpE=
-X-Google-Smtp-Source: ALg8bN4hztNcjfpA/jX6xcYAj9GE47ctUVU31VrrS8XSLME5yKYu2QfnMfNGhpfnaN/vSuE7uroCShgy5/5W3+J2DQ0=
-X-Received: by 2002:a1f:ab17:: with SMTP id u23mr1652892vke.73.1548282734960;
- Wed, 23 Jan 2019 14:32:14 -0800 (PST)
+        Wed, 23 Jan 2019 17:36:28 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:46646 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726313AbfAWWg1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 17:36:27 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4707B420B7;
+        Wed, 23 Jan 2019 22:36:27 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-121-92.rdu2.redhat.com [10.10.121.92])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 956934D720;
+        Wed, 23 Jan 2019 22:36:24 +0000 (UTC)
+Subject: Re: [PATCH v2 1/4] locking/qspinlock: Handle > 4 slowpath nesting
+ levels
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Will Deacon <will.deacon@arm.com>, Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, x86@kernel.org,
+        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
+        James Morse <james.morse@arm.com>,
+        SRINIVAS <srinivas.eeda@oracle.com>
+References: <1548215351-18896-1-git-send-email-longman@redhat.com>
+ <1548215351-18896-2-git-send-email-longman@redhat.com>
+ <20190123093424.GE15019@brain-police>
+ <63131030-bd24-34bf-10dc-b5e7c7c177be@redhat.com>
+ <20190123204038.GL13777@hirez.programming.kicks-ass.net>
+From:   Waiman Long <longman@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ weim8xU=
+Organization: Red Hat
+Message-ID: <0229798a-f5c8-4c90-3ae6-f25a969989a3@redhat.com>
+Date:   Wed, 23 Jan 2019 17:36:22 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20190123000057.31477-1-oded.gabbay@gmail.com> <CAPM=9tznaiw+a7rWqfdMMO6Aj3GtsO9vetd=3n9d+bGLW0U8Cg@mail.gmail.com>
- <CAPM=9tybcYSR_xu773W-cV1JfFg1Rcb9NajXhZd+zfZE8+XMRg@mail.gmail.com>
-In-Reply-To: <CAPM=9tybcYSR_xu773W-cV1JfFg1Rcb9NajXhZd+zfZE8+XMRg@mail.gmail.com>
-From:   Oded Gabbay <oded.gabbay@gmail.com>
-Date:   Thu, 24 Jan 2019 00:31:49 +0200
-Message-ID: <CAFCwf12FGkc3hDtgeFCn4Z4cgjL8wAf+SRkWqA+04WtuaEdpBA@mail.gmail.com>
-Subject: Re: [PATCH 00/15] Habana Labs kernel driver
-To:     Dave Airlie <airlied@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Jerome Glisse <jglisse@redhat.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        LKML <linux-kernel@vger.kernel.org>, ogabbay@habana.ai,
-        Arnd Bergmann <arnd@arndb.de>, fbarrat@linux.ibm.com,
-        andrew.donnellan@au1.ibm.com, Olof Johansson <olof@lixom.net>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190123204038.GL13777@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Wed, 23 Jan 2019 22:36:27 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 12:02 AM Dave Airlie <airlied@gmail.com> wrote:
+On 01/23/2019 03:40 PM, Peter Zijlstra wrote:
+> On Wed, Jan 23, 2019 at 03:11:19PM -0500, Waiman Long wrote:
+>> On 01/23/2019 04:34 AM, Will Deacon wrote:
+>>> On Tue, Jan 22, 2019 at 10:49:08PM -0500, Waiman Long wrote:
+>>>> @@ -412,6 +412,21 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
+>>>>  	idx = node->count++;
+>>>>  	tail = encode_tail(smp_processor_id(), idx);
+>>>> +	if (unlikely(idx >= MAX_NODES)) {
+>>>> +		while (!queued_spin_trylock(lock))
+>>>> +			cpu_relax();
+>>>> +		goto release;
+>>>> +	}
+>> So the additional code checks the idx value and branch to the end of the
+>> function when the condition is true. There isn't too much overhead here.
+> So something horrible we could do (and I'm not at all advocating we do
+> this), is invert node->count. That is, start at 3 and decrement and
+> detect sign flips.
 >
-> Adding Daniel as well.
->
-> Dave.
->
-> On Thu, 24 Jan 2019 at 07:57, Dave Airlie <airlied@gmail.com> wrote:
-> >
-> > On Wed, 23 Jan 2019 at 10:01, Oded Gabbay <oded.gabbay@gmail.com> wrote:
-> > >
-> > > Hello,
-> > >
-> > > For those who don't know me, my name is Oded Gabbay (Kernel Maintainer
-> > > for AMD's amdkfd driver, worked at RedHat's Desktop group) and I work at
-> > > Habana Labs since its inception two and a half years ago.
-> >
-> > Hey Oded,
-> >
-> > So this creates a driver with a userspace facing API via ioctls.
-> > Although this isn't a "GPU" driver we have a rule in the graphics
-> > drivers are for accelerators that we don't merge userspace API with an
-> > appropriate userspace user.
-> >
-> > https://dri.freedesktop.org/docs/drm/gpu/drm-uapi.html#open-source-userspace-requirements
-> >
-> > I see nothing in these accelerator drivers that make me think we
-> > should be treating them different.
-> >
-> > Having large closed userspaces that we have no insight into means we
-> > get suboptimal locked for ever uAPIs. If someone in the future creates
-> > an open source userspace, we will end up in a place where they get
-> > suboptimal behaviour because they are locked into a uAPI that we can't
-> > change.
-> >
-> > Dave.
+> That avoids the additional compare. It would require we change the
+> structure layout though, otherwise we keep hitting that second line by
+> default, which would suck.
 
-Hi Dave,
-While I always appreciate your opinion and happy to hear it, I totally
-disagree with you on this point.
+The cost of the additional compare will not be noticeable if the branch
+prediction logic is working properly. Inverting the loop logic, however,
+will be a much bigger change and it may not guarantee it will be faster
+anyway. So I don't think we should down go this route :-)
 
-First of all, as you said, this device is NOT a GPU. Hence, I wasn't
-aware that this rule might apply to this driver or to any other driver
-outside of drm. Has this rule been applied to all the current drivers
-in the kernel tree with userspace facing API via IOCTLs, which are not
-in the drm subsystem ?  I see the logic for GPUs as they drive the
-display of the entire machine, but this is an accelerator for a
-specific purpose, not something generic as GPU. I just don't see how
-one can treat them in the same way.
+Cheers,
+Longman
 
-Second, I talked to Greg a couple of weeks ago about this driver and I
-definitely didn't get any such requirement from him. Had I gotten such
-a requirement, I would have planned this differently.
-
-Third, I think this requirement, while maybe valid for drivers that
-are inside an established framework with common userspace library,
-such as drm, doesn't apply to a standalone driver which is not part of
-any subsystem. There is no way that "someone" will create a userspace
-for our H/W without the intimate knowledge of the H/W or without the
-ISA of our programmable cores. Maybe for large companies this request
-is valid, but for startups complying to this request is not realistic.
-
-To conclude, I think this approach discourage other companies from
-open sourcing their drivers and is counter-productive. I'm not sure
-you are aware of how difficult it is to convince startup management to
-opensource the code...
-
-Thanks,
-Oded
