@@ -2,78 +2,114 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88C3FC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 21:09:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 087D2C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 21:10:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5622A21855
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 21:09:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WPSmr92C"
+	by mail.kernel.org (Postfix) with ESMTP id CAC4321855
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 21:10:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726921AbfAWVJN (ORCPT
+        id S1726982AbfAWVKN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 16:09:13 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:47444 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726307AbfAWVJN (ORCPT
+        Wed, 23 Jan 2019 16:10:13 -0500
+Received: from iolanthe.rowland.org ([192.131.102.54]:51310 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1726345AbfAWVKN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 16:09:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=PzEEtvq+ZFIfdohoCxqGSejXKNUndYefJYH09iMapkQ=; b=WPSmr92Ck9WtUCUTlRaOi2o8p
-        fvF6N6VxA7TIQSdC7bssukEMNAvkCby4Uusq4sy3rKZYOhx06M1PI6YXpegoXv3rXPvYoJqja1nLc
-        qX1xCnEAxiQp6fvbwxjgogBqTP0DBsUFlndLHgxHPYaaXW+ytZ+Cym+iNqKDhVGPQP0m8UAGvzk33
-        QZoYkl4l4F3kjud+X2zmJDejvXOinV436PemqURZ+rN0X/hKvvZ2TzCMc4R5i3zIF341fdakfXp57
-        gH1MTB86xBNhKMzJCRbdJdg4UVzSm+5RkjO+U2zAj/wq1FigN1hbyJyP3s13epVeyrhNdvaLyPQ4P
-        KNje0EWrA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gmPlW-0000bJ-TY; Wed, 23 Jan 2019 21:08:55 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 59C8520F51B1C; Wed, 23 Jan 2019 22:08:52 +0100 (CET)
-Date:   Wed, 23 Jan 2019 22:08:52 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     acme@kernel.org, gregkh@linuxfoundation.org, mingo@redhat.com,
-        tglx@linutronix.de, alexander.shishkin@linux.intel.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        will.deacon@arm.com, mark.rutland@arm.com, jolsa@redhat.com,
-        namhyung@kernel.org, adrian.hunter@intel.com, ast@kernel.org,
-        hpa@zytor.com, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        suzuki.poulose@arm.com
-Subject: Re: [PATCH v2 0/7] perf: Communicate sink via event::attr:config2
-Message-ID: <20190123210852.GA27931@hirez.programming.kicks-ass.net>
-References: <20190122181144.26645-1-mathieu.poirier@linaro.org>
+        Wed, 23 Jan 2019 16:10:13 -0500
+Received: (qmail 28071 invoked by uid 2102); 23 Jan 2019 16:10:12 -0500
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 23 Jan 2019 16:10:12 -0500
+Date:   Wed, 23 Jan 2019 16:10:12 -0500 (EST)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Paul Elder <paul.elder@ideasonboard.com>
+cc:     laurent.pinchart@ideasonboard.com,
+        <kieran.bingham@ideasonboard.com>, <b-liu@ti.com>, <rogerq@ti.com>,
+        <balbi@kernel.org>, <gregkh@linuxfoundation.org>,
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 4/6] usb: gadget: add mechanism to specify an explicit
+ status stage
+In-Reply-To: <20190114051113.GD32268@localhost.localdomain>
+Message-ID: <Pine.LNX.4.44L0.1901231604040.1564-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190122181144.26645-1-mathieu.poirier@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 11:11:37AM -0700, Mathieu Poirier wrote:
+On Mon, 14 Jan 2019, Paul Elder wrote:
 
-> Mathieu Poirier (7):
->   perf/aux: Make perf_event accessible to setup_aux()
->   coresight: perf: Add "sinks" group to PMU directory
->   coresight: Use event attributes for sink selection
+> On Fri, Jan 11, 2019 at 10:50:11AM -0500, Alan Stern wrote:
+> > On Fri, 11 Jan 2019, Paul Elder wrote:
+> > 
+> > > On Wed, Jan 09, 2019 at 02:06:31PM -0500, Alan Stern wrote:
+> > > > On Wed, 9 Jan 2019, Paul Elder wrote:
+> > > > 
+> > > > > A usb gadget function driver may or may not want to delay the status
+> > > > > stage of a control OUT request. An instance where it might want to is to
+> > > > > asynchronously validate the data of a class-specific request.
+> > > > > 
+> > > > > A function driver that wants an explicit status stage should set the
+> > > > > newly added explicit_status flag of the usb_request corresponding to the
+> > > > > data stage. Later on, the function driver can explicitly complete the
+> > > > > status stage by enqueueing a usb_request for ACK, or calling
+> > > > > usb_ep_set_halt() for STALL.
+> > > > > 
+> > > > > To support both explicit and implicit status stages, a UDC driver must
+> > > > > call the newly added usb_gadget_control_complete function right before
+> > > > > calling usb_gadget_giveback_request. To support the explicit status
+> > > > > stage, it might then check what stage the usb_request was queued in, and
+> > > > > for control IN ACK the host's zero-length data packet, or for control
+> > > > > OUT send a zero-length DATA1 ACK packet.
+> > > > > 
+> > > > > Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
+> > > > > v4 Acked-by: Alan Stern <stern@rowland.harvard.edu>
+> > > > > v1 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > > > 
+> > > > This looks good and has passed my tests so far.
+> > > 
+> > > Good! Thank you :)
+> > > 
+> > > > Can you check your uvc
+> > > > changes using dummy_hcd with the patch below?
+> > > 
+> > > I'm not sure what to make of the test results. I get the same results
+> > > with or without the patch. Which I guess makes sense... in dummy_queue,
+> > > this is getting hit when the uvc function driver tries to complete the
+> > > delayed status:
+> > > 
+> > > 	req = usb_request_to_dummy_request(_req);
+> > > 	if (!_req || !list_empty(&req->queue) || !_req->complete)
+> > > 		return -EINVAL;
+> > > 
+> > > So the delayed/explicit status stage is never completed, afaict.
+> > 
+> > I presume you are hitting the !list_empty(&req->queue) test, yes?  The 
+> > other two tests are trivial.
+> 
+> Yes, that is what's happening.
+> 
+> > Triggering the !list_empty() test means the request has already been
+> > submitted and not yet completed.  This probably indicates there is a
+> > bug in the uvc function driver code.
+> 
+> The uvc function driver works with musb, though :/
 
-Them looks good to me,
+Did you ever figure out the reason for the "!list_empty(&req->queue)" 
+error with dummy_hcd?  Was it related to the confusion about completion 
+callbacks for status requests?
 
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Interesting new question: How does your code in musb tell the
+difference between a 0-length data-stage reply to a control-IN
+transfer, and a status-stage request?  Both would appear to the UDC
+driver as 0-length request submissions for ep0.
 
-Acme, since the majority is (4 of 7) is userspace patches, will you pick
-them up once you deem that part good?
+Do you explicitly keep track of whether the data stage is pending?
+
+Alan Stern
 
