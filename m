@@ -2,72 +2,69 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31AB9C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 20:29:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C47FBC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 20:30:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D530A218A1
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 20:29:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=postn.eu header.i=@postn.eu header.b="ia1UBVOj"
+	by mail.kernel.org (Postfix) with ESMTP id 91894218A2
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 20:30:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548275406;
+	bh=wxpjSuqhJMJOfTsP4EWjtg2IcGIs0+e6t4HMHC4sFuY=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=1pWvsnEciDJAtrnkRIvQxtjCHTEGNM2CVKCZ66oP/2QSYHlcSEmSg5WQ/AaEcXiPj
+	 Z4fIQCKHo/Mt+wlO2b5kacJ+555a6qpsrTS4tII9Qw6EdaRoRFVK/zUKTHLJmMMi8N
+	 Nnh9KoxoBbfGmhkFTP4obeeHQTj5fmylihXaH1gU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726356AbfAWU3p (ORCPT
+        id S1726519AbfAWUaF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 15:29:45 -0500
-Received: from postn.eu ([84.200.50.9]:43896 "EHLO postn.eu"
+        Wed, 23 Jan 2019 15:30:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35446 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726035AbfAWU3p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 15:29:45 -0500
-Received: from [127.0.0.123] (cloakedhost.private [127.0.0.123])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client did not present a certificate)
-        by postn.eu (Postfix) with ESMTPSA id AE4025FE86;
-        Wed, 23 Jan 2019 21:29:43 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=postn.eu; s=mail;
-        t=1548275383; bh=33Sw34tW6yxtrRkXs1DtORnQR9jUyo8S+uyZCIT+ZE8=;
-        h=From:Subject:To:Cc:References:Date:In-Reply-To:From;
-        b=ia1UBVOj06BkB7xLuTbfak6D3CKeWhdwbmhRPXFcZlh052y7m05rc7MW3SNSWeda5
-         o82ByhOffgQhB01uiXDkqBk8Yb8QKKV1gz5LBD71KtYq25cWXn0a8+K0K7wnk/bB5t
-         WZ7LO3pe5WfnLrEIBYluAKiq/OYYTgOngZkvexuU=
-From:   Kevin Weidemann <kwe-lnx@postn.eu>
-Subject: Re: udf: Prevent write-unsupported filesystem to be remounted
- read-write
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>
-References: <124cc6ea-ca79-20f2-651e-c2f909729ac0@gmx.de>
- <8cf39b7c-505b-91e6-849d-e66ba980042f@postn.eu>
- <20190114103011.GD13316@quack2.suse.cz>
- <20190122132228.GF13149@quack2.suse.cz>
-Message-ID: <3aaf70fd-39de-be64-c9b3-e821167f9e99@postn.eu>
-Date:   Wed, 23 Jan 2019 21:29:42 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190122132228.GF13149@quack2.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: de-DE
+        id S1726035AbfAWUaE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 15:30:04 -0500
+Subject: Re: [GIT PULL] s390 patches for 5.0 #2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548275404;
+        bh=wxpjSuqhJMJOfTsP4EWjtg2IcGIs0+e6t4HMHC4sFuY=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=VPr+naYZWRpzTVgORF8oDCa9axuPeo5QgF21jIADWoxHuU9Nc9cMLd5ymfeW8MztT
+         59LNQ+stdFzNHQBYMhI1WujzAP2MScFiK1V7x9O8xjctzGOFHLK9ie/Lne7vWe/nRd
+         NJOkOzHj3n5uQFEESbvpDQbwxzx0C2tSYYApD1Kw=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190123130147.079a7007@mschwideX1>
+References: <20190123130147.079a7007@mschwideX1>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190123130147.079a7007@mschwideX1>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-5.0-2
+X-PR-Tracked-Commit-Id: 60f1bf29c0b2519989927cae640cd1f50f59dc7f
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 09c2fe608a2608f9c7de7928f96f0ebc6197e195
+Message-Id: <154827540401.2661.13499491075347329054.pr-tracker-bot@kernel.org>
+Date:   Wed, 23 Jan 2019 20:30:04 +0000
+To:     Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+The pull request you sent on Wed, 23 Jan 2019 13:01:47 +0100:
 
-On Wednesday 22 January 2019 14:22 Jan Kara wrote
-> The kernel is 5.0-rc3. What kernel were you testing with?
+> git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-5.0-2
 
-I don't remember exactly, but it was probably in the 4.20 line, as far
-as I can tell.
-The test case was a Veracrypt-compatible container file mounted with
-cryptsetup using |the --readonly flag.|||
-||
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/09c2fe608a2608f9c7de7928f96f0ebc6197e195
 
-|--||
-Kevin Weidemann|
-||
+Thank you!
 
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
