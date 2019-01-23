@@ -2,257 +2,126 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7B88C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:05:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 186FAC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:05:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0ADA20870
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:05:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4AA720870
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:05:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="lku0bWzb"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="th+kFR5H"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726309AbfAWHFQ (ORCPT
+        id S1726365AbfAWHFa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 02:05:16 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:7957 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726134AbfAWHFQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 02:05:16 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c4812070000>; Tue, 22 Jan 2019 23:04:39 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 22 Jan 2019 23:05:14 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 22 Jan 2019 23:05:14 -0800
-Received: from [10.24.242.22] (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 23 Jan
- 2019 07:05:05 +0000
-Subject: Re: kmemleak panic
-To:     Mike Rapoport <rppt@linux.ibm.com>,
-        Marc Gonzalez <marc.w.gonzalez@free.fr>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Sachin Nikam <snikam@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Qian Cai <cai@lca.pw>, LKML <linux-kernel@vger.kernel.org>,
-        <vdumpa@nvidia.com>, <praithatha@nvidia.com>
-References: <b7629ecf-757c-f8b5-df83-ba83d7036b2f@free.fr>
- <20190119132832.GA29881@MBP.local>
- <6579db26-10ac-3fbf-1998-5b937a38f202@free.fr>
- <d4facdc2-0581-929f-caa2-b9efa9bd8f97@arm.com>
- <CAL_JsqKFT8J6g02gxeBiTfBb_XHhp2-ZNB6DgaLPK85kNZGRig@mail.gmail.com>
- <20190121143704.GE29504@arrakis.emea.arm.com>
- <CAL_JsqKQb34zVNTzo9DLNiDwmWGxkrKezSOjwCUPAvgzUoLYjg@mail.gmail.com>
- <20190121174234.GC26461@rapoport-lnx>
- <2bb30550-435a-046c-4f45-21dd594aa695@free.fr>
- <3c886941-bf9d-f040-b568-ee7a8eba9a04@free.fr>
- <20190123055414.GA4747@rapoport-lnx>
-From:   Prateek Patel <prpatel@nvidia.com>
-Message-ID: <5e5be6bc-5fc1-5def-d1b8-dc2fa4bbc93e@nvidia.com>
-Date:   Wed, 23 Jan 2019 12:35:01 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Wed, 23 Jan 2019 02:05:30 -0500
+Received: from mail-eopbgr50060.outbound.protection.outlook.com ([40.107.5.60]:11488
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726029AbfAWHFa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 02:05:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ou/cxH1ZtpfNCwtRpW7qcW4PT1fqSfelercThCdDzNA=;
+ b=th+kFR5Hmdw2WwOA/ktfZ5D/T+Zz6St9edMWKCaAve1j8LF38GQA61iuLfs70ZDAliWuOhR9qrLNQL8V4WX57HgpYVkekO1fr/DV9Qo8iZBSD6UvxaQFigr9fKIRdqfoJso7yk2vopiGeSeELNuwT34VPqYMrjOSAmoJ65pmnCk=
+Received: from VI1PR04MB4158.eurprd04.prod.outlook.com (52.133.15.33) by
+ VI1PR04MB4717.eurprd04.prod.outlook.com (20.177.48.158) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1558.17; Wed, 23 Jan 2019 07:05:26 +0000
+Received: from VI1PR04MB4158.eurprd04.prod.outlook.com
+ ([fe80::257e:f28a:1a8c:c9c4]) by VI1PR04MB4158.eurprd04.prod.outlook.com
+ ([fe80::257e:f28a:1a8c:c9c4%2]) with mapi id 15.20.1537.031; Wed, 23 Jan 2019
+ 07:05:26 +0000
+From:   Yinbo Zhu <yinbo.zhu@nxp.com>
+To:     Alan Stern <stern@rowland.harvard.edu>
+CC:     Yinbo Zhu <yinbo.zhu@nxp.com>, Xiaobo Xie <xiaobo.xie@nxp.com>,
+        Jerry Huang <jerry.huang@nxp.com>,
+        Ran Wang <ran.wang_1@nxp.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ramneek Mehresh <ramneek.mehresh@freescale.com>,
+        Nikhil Badola <nikhil.badola@freescale.com>,
+        Suresh Gupta <suresh.gupta@freescale.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH v3 1/5] usb: fsl: Set USB_EN bit to select ULPI phy
+Thread-Topic: [PATCH v3 1/5] usb: fsl: Set USB_EN bit to select ULPI phy
+Thread-Index: AQHUsuoEAZ+tgAeQzEGU2KnFgFz/1w==
+Date:   Wed, 23 Jan 2019 07:05:26 +0000
+Message-ID: <20190123070615.14462-1-yinbo.zhu@nxp.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: HK2PR0302CA0022.apcprd03.prod.outlook.com
+ (2603:1096:202::32) To VI1PR04MB4158.eurprd04.prod.outlook.com
+ (2603:10a6:803:46::33)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=yinbo.zhu@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.17.1
+x-originating-ip: [119.31.174.73]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR04MB4717;6:xPM7FbK3TfEEj/ex40jddpO41fuWeknxrhpL9y1m5UKRISKz66fUlrd0bOJnqFKKjnZpwWOPXthKrjs0fE0Pi2OKylHRX5GI/8r4Nx1xBEyQK7enyzbhKsB/84/NV/ZXTaMHZjNQ6VPTYGoC0ETlVyQJz7Q7Zp3lD+8rOeJ42QeDuUktFR9LSRDNEJvhQ7SaS72IJ2FY2c1VIdAfvw5sCPhr1QP63JZVoSVvOAyB62DwTGBV25/4U2H15FY6sfp7j4X2/UzAzTHX9/x2tjWsLm3mKtPExuugPHbmADg1/Ko2paOAQu8g6P9x8bMIi3ZwVLafiv7ZMcOw1e3iTur9+NsYSiqaFJFNGKoX7RWpVsBUYQapN0kyDxgML9rdrhQspEH8s3sQMaeLWGTXMYJ4dTulzCvrqwEzL47QjF7HWocsCUu8ya/iyKuEBhLGGg7etepaQxfq4zMV2rZ1DczyYA==;5:fsoo/J+q/eIV+aDMnA+7WmAYBcp7lNz4MrcNDdAPnVoIXWIJ75mmdYa63LSTfKH9VThvfdf9RO2kyO0hQSk2kU2oRog/nh+GAKUePh6QSheAkiVIP8is1CXNl1TtRKkSkp6iFJXs2y3esEdWYer1nQ1uYptJqg3O6zRu7eTmjNgQWI96BpwbIbVcfH2itcmQFwZXFhF16G9N9ctL+wIbDQ==;7:zBWiPg6Xlimvjkm3GXexKgkcZEWKJk5qcNQkma5eILTgTp07Y9DnGQ/hRibdv6a+MdH1mmQF1WbhDYf8bIUvpvKpGrSWJ2JOAMKfB9baKwr05++sG7AI0vKo1qf2gR3QWVZEkCW6/ZJeyyOFC0U6Jw==
+x-ms-office365-filtering-correlation-id: 1abcd217-8d53-4105-e14e-08d681012665
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605077)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB4717;
+x-ms-traffictypediagnostic: VI1PR04MB4717:
+x-microsoft-antispam-prvs: <VI1PR04MB47177E2769F6029DB0B66D60E9990@VI1PR04MB4717.eurprd04.prod.outlook.com>
+x-forefront-prvs: 0926B0E013
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(396003)(39860400002)(366004)(346002)(199004)(189003)(36756003)(99286004)(386003)(53936002)(6506007)(6486002)(7736002)(71190400001)(305945005)(6916009)(102836004)(71200400001)(81156014)(86362001)(52116002)(2171002)(25786009)(81166006)(4744005)(6436002)(6512007)(4326008)(66066001)(8676002)(97736004)(486006)(256004)(106356001)(316002)(105586002)(68736007)(2906002)(2616005)(478600001)(26005)(54906003)(186003)(6116002)(1076003)(3846002)(14454004)(8936002)(44832011)(476003)(50226002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4717;H:VI1PR04MB4158.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: LyR6Q/RTog1EL6fCAB7taU3CywsA8mvzP+Z5cJPvkONoSj+x0FrRkzTH9lj03nDAE4HNSFsXQwqTebVk0stQ0g3TWXse+ha+kyejFB5noeC/n2IAqDuVSGWb2pPpi48AnjpLQRDK8FWKfbUjOblCCIsafqWxEdiheEj9xWua8uirjkx6MdR4VWiM3nn3cikaEN2Gg0GBX7xNd/lR835/WtN4KWweI5nSVI2zyb2wUVFU7f51PFxoqfdG52Q4QqeafucN/9VlI76+4GPegUGFOM4EiFyHF7ESwKfl03XcnwDFiD+RHrWUVNIF4FRUc+sqtd1AmFOcjnGS9L26NUyynBq4TzIcJXhyG5PPBXQF8JeWvppxJvMt0agsr+fJ+WW9XXq+WKLmOEPBKTTxg1ygxv+ex8hPwjTwzjr6fURTkSw=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <20190123055414.GA4747@rapoport-lnx>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1548227079; bh=XqLNJAxvj6WFZ0l03Rch4zfDuGF6h7Hpt/ajtk8MdT4=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=lku0bWzbbKgl/BPsCqUDjxTE2TnC1ob9pdgEtn+6Jtm1u7dIBWkn8PVY90ZM3bOPC
-         d+fvQuIACpZjFfnH234D2avmPGKiThatt9vfEn9u2b+6xbw3L1aJ6B5mk3IWM8YTcJ
-         6FPezTD7MQGb6JFC5GluCC/QpthvZ4jpM3pOZte1LczY1w5snU3uJpE1Es63CMErB2
-         N+Lt3HKt45mVz71QvPOayMxuGNLrL7B1hz83s+TKOh8jQOk69ycLPUU2OgAfZ56dxN
-         wN+B2fBcjXgkzW3LvIF3qf+U8Pps+gth9d+iV3f0NAxfcfFoeyC+CBn64cI3r10N23
-         uRSKvpPBXjr1Q==
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1abcd217-8d53-4105-e14e-08d681012665
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Jan 2019 07:05:22.0227
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4717
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Nikhil Badola <nikhil.badola@freescale.com>
 
-On 1/23/2019 11:24 AM, Mike Rapoport wrote:
-> On Tue, Jan 22, 2019 at 03:12:54PM +0100, Marc Gonzalez wrote:
->> On 22/01/2019 15:02, Marc Gonzalez wrote:
->>
->>> On 21/01/2019 18:42, Mike Rapoport wrote:
->>>
->>>> If I understood correctly, the trouble comes from no-map range allocated in
->>>> early_init_dt_alloc_reserved_memory_arch().
->>>>
->>>> There's indeed imbalance, because memblock_alloc() does kmemleak_alloc(), but
->>>> memblock_remove() does not do kmemleak_free().
->>>>
->>>> I think the best way is to replace __memblock_alloc_base() with
->>>> memblock_find_in_range(), e.g something like:
->>>>
->>>>
->>>> diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.c
->>>> index 1977ee0adcb1..6807a1cffe55 100644
->>>> --- a/drivers/of/of_reserved_mem.c
->>>> +++ b/drivers/of/of_reserved_mem.c
->>>> @@ -37,21 +37,16 @@ int __init __weak early_init_dt_alloc_reserved_memory_arch(phys_addr_t size,
->>>>   	 */
->>>>   	end = !end ? MEMBLOCK_ALLOC_ANYWHERE : end;
->>>>   	align = !align ? SMP_CACHE_BYTES : align;
->>>> -	base = __memblock_alloc_base(size, align, end);
->>>> +	base = memblock_find_in_range(size, align, start, end);
->>>>   	if (!base)
->>>>   		return -ENOMEM;
->>>>   
->>>> -	/*
->>>> -	 * Check if the allocated region fits in to start..end window
->>>> -	 */
->>>> -	if (base < start) {
->>>> -		memblock_free(base, size);
->>>> -		return -ENOMEM;
->>>> -	}
->>>> -
->>>>   	*res_base = base;
->>>>   	if (nomap)
->>>>   		return memblock_remove(base, size);
->>>> +	else
->>>> +		return memblock_reserve(base, size);
->>>> +
->>>>   	return 0;
->>>>   }
->>>>   
->>> Your patch solves the issue. \o/
-> Great :)
->   
->> [ Add nvidia devs, but drop schowdary@nvidia.com ]
->>
-> Resending it as a formal patch now, I took a liberty to add your Tested-by.
->
->  From a847ca684db29a3c09e4dd2a8a008b35cf36e52f Mon Sep 17 00:00:00 2001
-> From: Mike Rapoport <rppt@linux.ibm.com>
-> Date: Wed, 23 Jan 2019 07:38:50 +0200
-> Subject: [PATCH] of: fix kmemleak crash caused by imbalance in early memory
->   reservation
->
-> Marc Gonzalez reported the following kmemleak crash:
->
-> Unable to handle kernel paging request at virtual address ffffffc021e00000
-> Mem abort info:
->    ESR = 0x96000006
->    Exception class = DABT (current EL), IL = 32 bits
->    SET = 0, FnV = 0
->    EA = 0, S1PTW = 0
-> Data abort info:
->    ISV = 0, ISS = 0x00000006
->    CM = 0, WnR = 0
-> swapper pgtable: 4k pages, 39-bit VAs, pgdp = (____ptrval____)
-> [ffffffc021e00000] pgd=000000017e3ba803, pud=000000017e3ba803,
-> pmd=0000000000000000
-> Internal error: Oops: 96000006 [#1] PREEMPT SMP
-> Modules linked in:
-> CPU: 6 PID: 523 Comm: kmemleak Tainted: G S      W         5.0.0-rc1 #13
-> Hardware name: Qualcomm Technologies, Inc. MSM8998 v1 MTP (DT)
-> pstate: 80000085 (Nzcv daIf -PAN -UAO)
-> pc : scan_block+0x70/0x190
-> lr : scan_block+0x6c/0x190
-> sp : ffffff8012e8bd20
-> x29: ffffff8012e8bd20 x28: ffffffc0fdbaf018
-> x27: ffffffc022000000 x26: 0000000000000080
-> x25: ffffff8011aadf70 x24: ffffffc0f8cc8000
-> x23: ffffff8010dc8000 x22: ffffff8010dc8830
-> x21: ffffffc021e00ff9 x20: ffffffc0f8cc8050
-> x19: ffffffc021e00000 x18: 0000000000002409
-> x17: 0000000000000200 x16: 0000000000000000
-> x15: ffffff8010e14dd8 x14: 0000000000002406
-> x13: 000000004c4dd0c6 x12: ffffffc0f77dad58
-> x11: 0000000000000001 x10: ffffff8010d9e688
-> x9 : ffffff8010d9f000 x8 : ffffff8010d9e688
-> x7 : 0000000000000002 x6 : 0000000000000000
-> x5 : ffffff8011511c20 x4 : 00000000000026d1
-> x3 : ffffff8010e14d88 x2 : 5b36396f4e7d4000
-> x1 : 0000000000208040 x0 : 0000000000000000
-> Process kmemleak (pid: 523, stack limit = 0x(____ptrval____))
-> Call trace:
->   scan_block+0x70/0x190
->   scan_gray_list+0x108/0x1c0
->   kmemleak_scan+0x33c/0x7c0
->   kmemleak_scan_thread+0x98/0xf0
->   kthread+0x11c/0x120
->   ret_from_fork+0x10/0x1c
-> Code: f9000fb4 d503201f 97ffffd2 35000580 (f9400260)
-> ---[ end trace 176d6ed9d86a0c33 ]---
-> note: kmemleak[523] exited with preempt_count 2
->
-> The crash happens when a no-map area is allocated in
-> early_init_dt_alloc_reserved_memory_arch(). The allocated region is
-> registered with kmemleak, but it is then removed from memblock using
-> memblock_remove() that is not kmemleak-aware.
->
-> Replacing __memblock_alloc_base() with memblock_find_in_range() makes sure
-> that the allocated memory is not added to kmemleak and then
-> memblock_remove()'ing this memory is safe.
->
-> As a bonus, since memblock_find_in_range() ensures the allocation in the
-> specified range, the bounds check can be removed.
->
-> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
-> Tested-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
-> ---
->   drivers/of/of_reserved_mem.c | 13 ++++---------
->   1 file changed, 4 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.c
-> index 1977ee0adcb1..6807a1cffe55 100644
-> --- a/drivers/of/of_reserved_mem.c
-> +++ b/drivers/of/of_reserved_mem.c
-> @@ -37,21 +37,16 @@ int __init __weak early_init_dt_alloc_reserved_memory_arch(phys_addr_t size,
->   	 */
->   	end = !end ? MEMBLOCK_ALLOC_ANYWHERE : end;
->   	align = !align ? SMP_CACHE_BYTES : align;
-> -	base = __memblock_alloc_base(size, align, end);
-> +	base = memblock_find_in_range(size, align, start, end);
->   	if (!base)
->   		return -ENOMEM;
->   
-> -	/*
-> -	 * Check if the allocated region fits in to start..end window
-> -	 */
-> -	if (base < start) {
-> -		memblock_free(base, size);
-> -		return -ENOMEM;
-> -	}
-> -
->   	*res_base = base;
->   	if (nomap)
->   		return memblock_remove(base, size);
-> +	else
-> +		return memblock_reserve(base, size);
-> +
->   	return 0;
->   }
->   
+Set USB_EN bit to select ULPI phy for USB controller version 2.5
 
-Thanks Mike for the patch. With this, skipping kmemleak scan: 
-https://patchwork.ozlabs.org/patch/995367/ is not required.
+Signed-off-by: Nikhil Badola <nikhil.badola@freescale.com>
+Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
+---
+Change in v3:
+		Code base already has patch[5/6], so remove it. =20
+
+ drivers/usb/host/ehci-fsl.c |    6 ++++++
+ 1 files changed, 6 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/usb/host/ehci-fsl.c b/drivers/usb/host/ehci-fsl.c
+index e3d0c1c..ea7e17b 100644
+--- a/drivers/usb/host/ehci-fsl.c
++++ b/drivers/usb/host/ehci-fsl.c
+@@ -122,6 +122,12 @@ static int fsl_ehci_drv_probe(struct platform_device *=
+pdev)
+ 		tmp |=3D 0x4;
+ 		iowrite32be(tmp, hcd->regs + FSL_SOC_USB_CTRL);
+ 	}
++
++	/* Set USB_EN bit to select ULPI phy for USB controller version 2.5 */
++	if (pdata->controller_ver =3D=3D FSL_USB_VER_2_5 &&
++		pdata->phy_mode =3D=3D FSL_USB2_PHY_ULPI)
++		iowrite32be(USB_CTRL_USB_EN, hcd->regs + FSL_SOC_USB_CTRL);
++
+ 	/*
+ 	 * Enable UTMI phy and program PTS field in UTMI mode before asserting
+ 	 * controller reset for USB Controller version 2.5
+--=20
+1.7.1
 
