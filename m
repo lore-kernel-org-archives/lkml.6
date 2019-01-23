@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-13.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41956C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 17:57:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 585F1C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 17:57:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1946221872
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 17:57:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23C37217D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 17:57:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548266270;
-	bh=WNOwBRd7Cg3ccUfi5eKKXS6k5rYfcwwrn5HBDhNzsZE=;
+	s=default; t=1548266273;
+	bh=TYOoH5DqNOlFfr+LaH3IMh7+ohbocy0DxdFZj5NLyak=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=GS1WDIcF7223LaJ5Tq4tSRsWG9Wt7NDYrVXeCRmeXfjYXJg/7X3AWjNZbj59tNbbb
-	 E9pDuhUIUtcU4oyuvRcdDF5UUpxlraNJrc4/pRaeWYFXUHY+Sx1bCxw/Cz0zuWHx4G
-	 fBBr9W0pqXUcQYaSvheKJtEmbax0ccjRL4oI3Gvk=
+	b=D84ylwSEyYXnfkcuwepwA1/whRe0frO/MUjSiA+hHp22RL2jzS45hzomKNODS2YQt
+	 3KaGWyjuUeB8i2+3cuH4IAxLJZTGNPXO9aleh9n9H8FW1Du6i0Bf247VFrnUZZCYh2
+	 uM90mWWpU84+en4Y52h2pJH7s70tx3wGbYAmS2tA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726461AbfAWR5r (ORCPT
+        id S1726632AbfAWR5u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 12:57:47 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45584 "EHLO
+        Wed, 23 Jan 2019 12:57:50 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45646 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726183AbfAWR5p (ORCPT
+        with ESMTP id S1726192AbfAWR5s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 12:57:45 -0500
+        Wed, 23 Jan 2019 12:57:48 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=T6YxzP1LgQHgdegMGHZdS5wzUOUXXueEBQf/gO8791s=; b=d03UtRjA+SXx
-        Nr+3Toqq+U4ECTcj4EUD1RVaSKTRd2V7hMUUZbFLudbS0itb+KUbouJ410f5GlNaEojFCZpGkz4TH
-        uv/RH+lm5KrW1u6KAg9Ovs/gvjYMJfo59NFCbNuyAeYJ3n3gGGBCWsTqwTSxf9YZotnrnL6mBgZGx
-        jpFro=;
+        List-Archive; bh=K3gEBRjhCkLEHVM8PtCqTLeKYYLN9Si1VSwwDw2PYsU=; b=dLT7mQOGZl7h
+        Jk7nrMWfSLsk+TwVnoiOJfMaDX4pTo2KRVrv5qGX4TN8ZoXslb82lzg2cPALDBmC3tTvAFWtZNnrx
+        tL596T13rwwp+65KY0QF7OCTGOOMWKK4l4YJWx0CNnbj+Yf+ETfayL0muZcav/EDMP8+EZ62pujsR
+        w6wnA=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gmMmV-0006qI-0V; Wed, 23 Jan 2019 17:57:43 +0000
+        id 1gmMmW-0006qP-MX; Wed, 23 Jan 2019 17:57:44 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id EE9D91127ABA; Wed, 23 Jan 2019 17:57:41 +0000 (GMT)
+        id 085C91127ABA; Wed, 23 Jan 2019 17:57:44 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: bindings: ROHM bd70528 regulator bindings" to the regulator tree
+Subject: Applied "regulator: bd70528: Support ROHM BD70528 regulator block" to the regulator tree
 In-Reply-To: 
 X-Patchwork-Hint: ignore
-Message-Id: <20190123175741.EE9D91127ABA@debutante.sirena.org.uk>
-Date:   Wed, 23 Jan 2019 17:57:41 +0000 (GMT)
+Message-Id: <20190123175744.085C91127ABA@debutante.sirena.org.uk>
+Date:   Wed, 23 Jan 2019 17:57:44 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -59,7 +59,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: bindings: ROHM bd70528 regulator bindings
+   regulator: bd70528: Support ROHM BD70528 regulator block
 
 has been applied to the regulator tree at
 
@@ -84,96 +84,356 @@ to this mail.
 Thanks,
 Mark
 
-From 45b5d2b7a976309c31f13795ad63a9488d0d7bbd Mon Sep 17 00:00:00 2001
+From 99ea37bd1e7d727bb54c0c4a46708b3e6aa01180 Mon Sep 17 00:00:00 2001
 From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Date: Tue, 22 Jan 2019 11:46:37 +0200
-Subject: [PATCH] regulator: bindings: ROHM bd70528 regulator bindings
+Date: Tue, 22 Jan 2019 11:46:08 +0200
+Subject: [PATCH] regulator: bd70528: Support ROHM BD70528 regulator block
 
-ROHM bd70528 is a ultra low power PMIC which includes
-3 bucks, 3 LDOs and 2 LED drivers. Document the bindings
-for them.
+BD70528MWV is an ultra-low Iq general purpose single-chip power
+management IC for battery-powered portable devices.
+
+Add support for controlling 3 bucks and 3 LDOs present in
+ROHM BD70528.
 
 Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- .../regulator/rohm,bd70528-regulator.txt      | 68 +++++++++++++++++++
- 1 file changed, 68 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd70528-regulator.txt
+ drivers/regulator/Kconfig             |  11 +
+ drivers/regulator/Makefile            |   1 +
+ drivers/regulator/bd70528-regulator.c | 290 ++++++++++++++++++++++++++
+ 3 files changed, 302 insertions(+)
+ create mode 100644 drivers/regulator/bd70528-regulator.c
 
-diff --git a/Documentation/devicetree/bindings/regulator/rohm,bd70528-regulator.txt b/Documentation/devicetree/bindings/regulator/rohm,bd70528-regulator.txt
+diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+index 7fc1f88e27e7..21dc3b59db19 100644
+--- a/drivers/regulator/Kconfig
++++ b/drivers/regulator/Kconfig
+@@ -180,6 +180,17 @@ config REGULATOR_BCM590XX
+ 	  BCM590xx PMUs. This will enable support for the software
+ 	  controllable LDO/Switching regulators.
+ 
++config REGULATOR_BD70528
++	tristate "ROHM BD70528 Power Regulator"
++	depends on MFD_ROHM_BD70528
++	help
++	  This driver supports voltage regulators on ROHM BD70528 PMIC.
++	  This will enable support for the software controllable buck
++	  and LDO regulators.
++
++	  This driver can also be built as a module. If so, the module
++	  will be called bd70528-regulator.
++
+ config REGULATOR_BD718XX
+ 	tristate "ROHM BD71837 Power Regulator"
+ 	depends on MFD_ROHM_BD718XX
+diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
+index b12e1c9b2118..960406952119 100644
+--- a/drivers/regulator/Makefile
++++ b/drivers/regulator/Makefile
+@@ -27,6 +27,7 @@ obj-$(CONFIG_REGULATOR_AS3711) += as3711-regulator.o
+ obj-$(CONFIG_REGULATOR_AS3722) += as3722-regulator.o
+ obj-$(CONFIG_REGULATOR_AXP20X) += axp20x-regulator.o
+ obj-$(CONFIG_REGULATOR_BCM590XX) += bcm590xx-regulator.o
++obj-$(CONFIG_REGULATOR_BD70528) += bd70528-regulator.o
+ obj-$(CONFIG_REGULATOR_BD718XX) += bd718x7-regulator.o
+ obj-$(CONFIG_REGULATOR_BD9571MWV) += bd9571mwv-regulator.o
+ obj-$(CONFIG_REGULATOR_DA903X)	+= da903x.o
+diff --git a/drivers/regulator/bd70528-regulator.c b/drivers/regulator/bd70528-regulator.c
 new file mode 100644
-index 000000000000..698cfc3bc3dd
+index 000000000000..0cf261c469b9
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/regulator/rohm,bd70528-regulator.txt
-@@ -0,0 +1,68 @@
-+ROHM BD70528 Power Management Integrated Circuit regulator bindings
++++ b/drivers/regulator/bd70528-regulator.c
+@@ -0,0 +1,290 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2018 ROHM Semiconductors
++// bd70528-regulator.c ROHM BD70528MWV regulator driver
 +
-+Required properties:
-+ - regulator-name: should be "buck1", "buck2", "buck3", "ldo1", "ldo2", "ldo3",
-+		   "led_ldo1", "led_ldo2"
++#include <linux/delay.h>
++#include <linux/err.h>
++#include <linux/gpio.h>
++#include <linux/interrupt.h>
++#include <linux/kernel.h>
++#include <linux/mfd/rohm-bd70528.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++#include <linux/regulator/driver.h>
++#include <linux/regulator/machine.h>
++#include <linux/regulator/of_regulator.h>
++#include <linux/slab.h>
 +
-+List of regulators provided by this controller. BD70528 regulators node
-+should be sub node of the BD70528 MFD node. See BD70528 MFD bindings at
-+Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
++#define BUCK_RAMPRATE_250MV 0
++#define BUCK_RAMPRATE_125MV 1
++#define BUCK_RAMP_MAX 250
 +
-+The valid names for BD70528 regulator nodes are:
-+BUCK1, BUCK2, BUCK3, LDO1, LDO2, LDO3, LED_LDO1, LED_LDO2
-+
-+Optional properties:
-+- Any optional property defined in bindings/regulator/regulator.txt
-+
-+Example:
-+regulators {
-+	buck1: BUCK1 {
-+		regulator-name = "buck1";
-+		regulator-min-microvolt = <1200000>;
-+		regulator-max-microvolt = <3400000>;
-+		regulator-boot-on;
-+		regulator-ramp-delay = <125>;
-+	};
-+	buck2: BUCK2 {
-+		regulator-name = "buck2";
-+		regulator-min-microvolt = <1200000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-ramp-delay = <125>;
-+	};
-+	buck3: BUCK3 {
-+		regulator-name = "buck3";
-+		regulator-min-microvolt = <800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		regulator-ramp-delay = <250>;
-+	};
-+	ldo1: LDO1 {
-+		regulator-name = "ldo1";
-+		regulator-min-microvolt = <1650000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+	};
-+	ldo2: LDO2 {
-+		regulator-name = "ldo2";
-+		regulator-min-microvolt = <1650000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+	};
-+
-+	ldo3: LDO3 {
-+		regulator-name = "ldo3";
-+		regulator-min-microvolt = <1650000>;
-+		regulator-max-microvolt = <3300000>;
-+	};
-+	led_ldo1: LED_LDO1 {
-+		regulator-name = "led_ldo1";
-+		regulator-min-microvolt = <200000>;
-+		regulator-max-microvolt = <300000>;
-+	};
-+	led_ldo2: LED_LDO2 {
-+		regulator-name = "led_ldo2";
-+		regulator-min-microvolt = <200000>;
-+		regulator-max-microvolt = <300000>;
-+	};
++static struct regulator_linear_range bd70528_buck1_volts[] = {
++	REGULATOR_LINEAR_RANGE(1200000, 0x00, 0x1, 600000),
++	REGULATOR_LINEAR_RANGE(2750000, 0x2, 0xf, 50000),
 +};
++static struct regulator_linear_range bd70528_buck2_volts[] = {
++	REGULATOR_LINEAR_RANGE(1200000, 0x00, 0x1, 300000),
++	REGULATOR_LINEAR_RANGE(1550000, 0x2, 0xd, 50000),
++	REGULATOR_LINEAR_RANGE(3000000, 0xe, 0xf, 300000),
++};
++static struct regulator_linear_range bd70528_buck3_volts[] = {
++	REGULATOR_LINEAR_RANGE(800000, 0x00, 0xd, 50000),
++	REGULATOR_LINEAR_RANGE(1800000, 0xe, 0xf, 0),
++};
++
++/* All LDOs have same voltage ranges */
++static struct regulator_linear_range bd70528_ldo_volts[] = {
++	REGULATOR_LINEAR_RANGE(1650000, 0x0, 0x07, 50000),
++	REGULATOR_LINEAR_RANGE(2100000, 0x8, 0x0f, 100000),
++	REGULATOR_LINEAR_RANGE(2850000, 0x10, 0x19, 50000),
++	REGULATOR_LINEAR_RANGE(3300000, 0x19, 0x1f, 0),
++};
++
++/* Also both LEDs support same voltages */
++static const unsigned int led_volts[] = {
++	20000, 30000
++};
++
++static int bd70528_set_ramp_delay(struct regulator_dev *rdev, int ramp_delay)
++{
++	if (ramp_delay > 0 && ramp_delay <= BUCK_RAMP_MAX) {
++		unsigned int ramp_value = BUCK_RAMPRATE_250MV;
++
++		if (ramp_delay <= 125)
++			ramp_value = BUCK_RAMPRATE_125MV;
++
++		return regmap_update_bits(rdev->regmap, rdev->desc->vsel_reg,
++				  BD70528_MASK_BUCK_RAMP,
++				  ramp_value << BD70528_SIFT_BUCK_RAMP);
++	}
++	dev_err(&rdev->dev, "%s: ramp_delay: %d not supported\n",
++		rdev->desc->name, ramp_delay);
++	return -EINVAL;
++}
++
++static int bd70528_led_set_voltage_sel(struct regulator_dev *rdev,
++				       unsigned int sel)
++{
++	int ret;
++
++	ret = regulator_is_enabled_regmap(rdev);
++	if (ret < 0)
++		return ret;
++
++	if (ret == 0)
++		return regulator_set_voltage_sel_regmap(rdev, sel);
++
++	dev_err(&rdev->dev,
++		"LED voltage change not allowed when led is enabled\n");
++
++	return -EBUSY;
++}
++
++static struct regulator_ops bd70528_buck_ops = {
++	.enable = regulator_enable_regmap,
++	.disable = regulator_disable_regmap,
++	.is_enabled = regulator_is_enabled_regmap,
++	.list_voltage = regulator_list_voltage_linear_range,
++	.set_voltage_sel = regulator_set_voltage_sel_regmap,
++	.get_voltage_sel = regulator_get_voltage_sel_regmap,
++	.set_voltage_time_sel = regulator_set_voltage_time_sel,
++	.set_ramp_delay = bd70528_set_ramp_delay,
++};
++
++static struct regulator_ops bd70528_ldo_ops = {
++	.enable = regulator_enable_regmap,
++	.disable = regulator_disable_regmap,
++	.is_enabled = regulator_is_enabled_regmap,
++	.list_voltage = regulator_list_voltage_linear_range,
++	.set_voltage_sel = regulator_set_voltage_sel_regmap,
++	.get_voltage_sel = regulator_get_voltage_sel_regmap,
++	.set_voltage_time_sel = regulator_set_voltage_time_sel,
++	.set_ramp_delay = bd70528_set_ramp_delay,
++};
++
++static struct regulator_ops bd70528_led_ops = {
++	.enable = regulator_enable_regmap,
++	.disable = regulator_disable_regmap,
++	.is_enabled = regulator_is_enabled_regmap,
++	.list_voltage = regulator_list_voltage_table,
++	.set_voltage_sel = bd70528_led_set_voltage_sel,
++	.get_voltage_sel = regulator_get_voltage_sel_regmap,
++};
++
++
++static struct regulator_desc bd70528_desc[] = {
++	{
++		.name = "buck1",
++		.of_match = of_match_ptr("BUCK1"),
++		.regulators_node = of_match_ptr("regulators"),
++		.id = BD70528_BUCK1,
++		.ops = &bd70528_buck_ops,
++		.type = REGULATOR_VOLTAGE,
++		.linear_ranges = bd70528_buck1_volts,
++		.n_linear_ranges = ARRAY_SIZE(bd70528_buck1_volts),
++		.n_voltages = BD70528_BUCK_VOLTS,
++		.enable_reg = BD70528_REG_BUCK1_EN,
++		.enable_mask = BD70528_MASK_RUN_EN,
++		.vsel_reg = BD70528_REG_BUCK1_VOLT,
++		.vsel_mask = BD70528_MASK_BUCK_VOLT,
++		.owner = THIS_MODULE,
++	},
++	{
++		.name = "buck2",
++		.of_match = of_match_ptr("BUCK2"),
++		.regulators_node = of_match_ptr("regulators"),
++		.id = BD70528_BUCK2,
++		.ops = &bd70528_buck_ops,
++		.type = REGULATOR_VOLTAGE,
++		.linear_ranges = bd70528_buck2_volts,
++		.n_linear_ranges = ARRAY_SIZE(bd70528_buck2_volts),
++		.n_voltages = BD70528_BUCK_VOLTS,
++		.enable_reg = BD70528_REG_BUCK2_EN,
++		.enable_mask = BD70528_MASK_RUN_EN,
++		.vsel_reg = BD70528_REG_BUCK2_VOLT,
++		.vsel_mask = BD70528_MASK_BUCK_VOLT,
++		.owner = THIS_MODULE,
++	},
++	{
++		.name = "buck3",
++		.of_match = of_match_ptr("BUCK3"),
++		.regulators_node = of_match_ptr("regulators"),
++		.id = BD70528_BUCK3,
++		.ops = &bd70528_buck_ops,
++		.type = REGULATOR_VOLTAGE,
++		.linear_ranges = bd70528_buck3_volts,
++		.n_linear_ranges = ARRAY_SIZE(bd70528_buck3_volts),
++		.n_voltages = BD70528_BUCK_VOLTS,
++		.enable_reg = BD70528_REG_BUCK3_EN,
++		.enable_mask = BD70528_MASK_RUN_EN,
++		.vsel_reg = BD70528_REG_BUCK3_VOLT,
++		.vsel_mask = BD70528_MASK_BUCK_VOLT,
++		.owner = THIS_MODULE,
++	},
++	{
++		.name = "ldo1",
++		.of_match = of_match_ptr("LDO1"),
++		.regulators_node = of_match_ptr("regulators"),
++		.id = BD70528_LDO1,
++		.ops = &bd70528_ldo_ops,
++		.type = REGULATOR_VOLTAGE,
++		.linear_ranges = bd70528_ldo_volts,
++		.n_linear_ranges = ARRAY_SIZE(bd70528_ldo_volts),
++		.n_voltages = BD70528_LDO_VOLTS,
++		.enable_reg = BD70528_REG_LDO1_EN,
++		.enable_mask = BD70528_MASK_RUN_EN,
++		.vsel_reg = BD70528_REG_LDO1_VOLT,
++		.vsel_mask = BD70528_MASK_LDO_VOLT,
++		.owner = THIS_MODULE,
++	},
++	{
++		.name = "ldo2",
++		.of_match = of_match_ptr("LDO2"),
++		.regulators_node = of_match_ptr("regulators"),
++		.id = BD70528_LDO2,
++		.ops = &bd70528_ldo_ops,
++		.type = REGULATOR_VOLTAGE,
++		.linear_ranges = bd70528_ldo_volts,
++		.n_linear_ranges = ARRAY_SIZE(bd70528_ldo_volts),
++		.n_voltages = BD70528_LDO_VOLTS,
++		.enable_reg = BD70528_REG_LDO2_EN,
++		.enable_mask = BD70528_MASK_RUN_EN,
++		.vsel_reg = BD70528_REG_LDO2_VOLT,
++		.vsel_mask = BD70528_MASK_LDO_VOLT,
++		.owner = THIS_MODULE,
++	},
++	{
++		.name = "ldo3",
++		.of_match = of_match_ptr("LDO3"),
++		.regulators_node = of_match_ptr("regulators"),
++		.id = BD70528_LDO3,
++		.ops = &bd70528_ldo_ops,
++		.type = REGULATOR_VOLTAGE,
++		.linear_ranges = bd70528_ldo_volts,
++		.n_linear_ranges = ARRAY_SIZE(bd70528_ldo_volts),
++		.n_voltages = BD70528_LDO_VOLTS,
++		.enable_reg = BD70528_REG_LDO3_EN,
++		.enable_mask = BD70528_MASK_RUN_EN,
++		.vsel_reg = BD70528_REG_LDO3_VOLT,
++		.vsel_mask = BD70528_MASK_LDO_VOLT,
++		.owner = THIS_MODULE,
++	},
++	{
++		.name = "ldo_led1",
++		.of_match = of_match_ptr("LDO_LED1"),
++		.regulators_node = of_match_ptr("regulators"),
++		.id = BD70528_LED1,
++		.ops = &bd70528_led_ops,
++		.type = REGULATOR_VOLTAGE,
++		.volt_table = &led_volts[0],
++		.n_voltages = ARRAY_SIZE(led_volts),
++		.enable_reg = BD70528_REG_LED_EN,
++		.enable_mask = BD70528_MASK_LED1_EN,
++		.vsel_reg = BD70528_REG_LED_VOLT,
++		.vsel_mask = BD70528_MASK_LED1_VOLT,
++		.owner = THIS_MODULE,
++	},
++	{
++		.name = "ldo_led2",
++		.of_match = of_match_ptr("LDO_LED2"),
++		.regulators_node = of_match_ptr("regulators"),
++		.id = BD70528_LED2,
++		.ops = &bd70528_led_ops,
++		.type = REGULATOR_VOLTAGE,
++		.volt_table = &led_volts[0],
++		.n_voltages = ARRAY_SIZE(led_volts),
++		.enable_reg = BD70528_REG_LED_EN,
++		.enable_mask = BD70528_MASK_LED2_EN,
++		.vsel_reg = BD70528_REG_LED_VOLT,
++		.vsel_mask = BD70528_MASK_LED2_VOLT,
++		.owner = THIS_MODULE,
++	},
++
++};
++
++static int bd70528_probe(struct platform_device *pdev)
++{
++	struct bd70528 *bd70528;
++	int i;
++	struct regulator_config config = {
++		.dev = pdev->dev.parent,
++	};
++
++	bd70528 = dev_get_drvdata(pdev->dev.parent);
++	if (!bd70528) {
++		dev_err(&pdev->dev, "No MFD driver data\n");
++		return -EINVAL;
++	}
++
++	config.regmap = bd70528->chip.regmap;
++
++	for (i = 0; i < ARRAY_SIZE(bd70528_desc); i++) {
++		struct regulator_dev *rdev;
++
++		rdev = devm_regulator_register(&pdev->dev, &bd70528_desc[i],
++					       &config);
++		if (IS_ERR(rdev)) {
++			dev_err(&pdev->dev,
++				"failed to register %s regulator\n",
++				bd70528_desc[i].name);
++			return PTR_ERR(rdev);
++		}
++	}
++	return 0;
++}
++
++static struct platform_driver bd70528_regulator = {
++	.driver = {
++		.name = "bd70528-pmic"
++	},
++	.probe = bd70528_probe,
++};
++
++module_platform_driver(bd70528_regulator);
++
++MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
++MODULE_DESCRIPTION("BD70528 voltage regulator driver");
++MODULE_LICENSE("GPL");
 -- 
 2.20.1
 
