@@ -2,105 +2,104 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77F0AC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:14:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7077BC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:15:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4363720870
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:14:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3ED8320870
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:15:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548252917;
+	bh=lFNDwoR0OhL3bWZay1O52231t/GK0UdyOgwDnab9cec=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=RIDQ5s+cR0IPN4dWrqCouDPlhiE2Ah1XJMwl+/CdNiCbcBf7fgK1i2x3ddDhz4SZU
+	 cObX/Pd5sbvLjZSHsbc3PAaM3s7LnSQbavRBytyKlctD8q779hEVueuE5tAXacdAJ8
+	 1XewaJAa4dd+DgvTlnHx2onmrrjEnatigV2zfSg8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726832AbfAWOOk (ORCPT
+        id S1726917AbfAWOPP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 09:14:40 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:3410 "EHLO mx1.redhat.com"
+        Wed, 23 Jan 2019 09:15:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43620 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726175AbfAWOOj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 09:14:39 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726173AbfAWOPP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 09:15:15 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 38E5CA7888;
-        Wed, 23 Jan 2019 14:14:39 +0000 (UTC)
-Received: from localhost (ovpn-12-42.pek2.redhat.com [10.72.12.42])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id BF5256C207;
-        Wed, 23 Jan 2019 14:14:35 +0000 (UTC)
-Date:   Wed, 23 Jan 2019 22:14:32 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Kairui Song <kasong@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de, bp@alien8.de,
-        mingo@redhat.com, hpa@zytor.com, jbohac@suse.cz,
-        adobriyan@gmail.com, akpm@linux-foundation.org, osandov@fb.com,
-        bhsharma@redhat.com, dyoung@redhat.com
-Subject: Re: [PATCH v2] x86/gart/kcore: Exclude GART aperture from kcore
-Message-ID: <20190123141432.GA19177@MiWiFi-R3L-srv>
-References: <20190102105408.7124-1-kasong@redhat.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id E649E20870;
+        Wed, 23 Jan 2019 14:15:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548252914;
+        bh=lFNDwoR0OhL3bWZay1O52231t/GK0UdyOgwDnab9cec=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Lzv0ByXn4Aazb34IYd0TxPekxlAfmQr7KYpXgUfIU9DbT+6+Yq2SezxS1HLJq2XI8
+         ZQ+rjxWtG7RFCvE3vIdRr1q1PwtVe/2yjyP3DJIxrSSakepP2l7xWVDC3+bb2pyyS3
+         /CmyZYN5a6WGksX7Pn7hajX+k9tZ1cLtq8dlS8Og=
+Subject: Re: [PATCH v3] selftests: add binderfs selftests
+To:     Greg KH <gregkh@linuxfoundation.org>,
+        Christian Brauner <christian@brauner.io>
+Cc:     tkjos@android.com, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        arve@android.com, maco@android.com, joel@joelfernandes.org,
+        tkjos@google.com, shuah <shuah@kernel.org>
+References: <20190117114854.15132-1-christian@brauner.io>
+ <20190123105457.k7oobylgq6rwka55@brauner.io>
+ <20190123110052.GB22520@kroah.com>
+From:   shuah <shuah@kernel.org>
+Message-ID: <d1893da7-1222-d303-04c7-fb0500b55088@kernel.org>
+Date:   Wed, 23 Jan 2019 07:15:01 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190102105408.7124-1-kasong@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Wed, 23 Jan 2019 14:14:39 +0000 (UTC)
+In-Reply-To: <20190123110052.GB22520@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/02/19 at 06:54pm, Kairui Song wrote:
-> diff --git a/arch/x86/kernel/aperture_64.c b/arch/x86/kernel/aperture_64.c
-> index 58176b56354e..c8a56f083419 100644
-> --- a/arch/x86/kernel/aperture_64.c
-> +++ b/arch/x86/kernel/aperture_64.c
-> @@ -14,6 +14,7 @@
->  #define pr_fmt(fmt) "AGP: " fmt
->  
->  #include <linux/kernel.h>
-> +#include <linux/kcore.h>
->  #include <linux/types.h>
->  #include <linux/init.h>
->  #include <linux/memblock.h>
-> @@ -57,7 +58,7 @@ int fallback_aper_force __initdata;
->  
->  int fix_aperture __initdata = 1;
->  
-> -#ifdef CONFIG_PROC_VMCORE
-> +#if defined(CONFIG_PROC_VMCORE) || defined(CONFIG_PROC_KCORE)
->  /*
->   * If the first kernel maps the aperture over e820 RAM, the kdump kernel will
->   * use the same range because it will remain configured in the northbridge.
-> @@ -66,7 +67,7 @@ int fix_aperture __initdata = 1;
->   */
->  static unsigned long aperture_pfn_start, aperture_page_count;
->  
-> -static int gart_oldmem_pfn_is_ram(unsigned long pfn)
-> +static int gart_mem_pfn_is_ram(unsigned long pfn)
->  {
->  	return likely((pfn < aperture_pfn_start) ||
->  		      (pfn >= aperture_pfn_start + aperture_page_count));
-> @@ -76,7 +77,12 @@ static void exclude_from_vmcore(u64 aper_base, u32 aper_order)
+On 1/23/19 4:00 AM, Greg KH wrote:
+> On Wed, Jan 23, 2019 at 11:54:58AM +0100, Christian Brauner wrote:
+>> On Thu, Jan 17, 2019 at 12:48:54PM +0100, Christian Brauner wrote:
+>>> This adds the promised selftest for binderfs. It will verify the following
+>>> things:
+>>> - binderfs mounting works
+>>> - binder device allocation works
+>>> - performing a binder ioctl() request through a binderfs device works
+>>> - binder device removal works
+>>> - binder-control removal fails
+>>> - binderfs unmounting works
+>>>
+>>> The tests are performed both privileged and unprivileged. The latter
+>>> verifies that binderfs behaves correctly in user namespaces.
+>>>
+>>> Cc: Todd Kjos <tkjos@google.com>
+>>> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+>>
+>> Hey Shuah,
+>>
+>> If you're ok with the patch in its current form, can you please make
+>> sure that this still lands in 5.0? If at all possible I'd like to have
+>> all ducks in a row and release binderfs with selftests and everything.
+>> :)
+> 
 
-Shouldn't this function name be changed? It's not only handling vmcore
-stuff any more, but also kcore. And this function is not excluding, but
-resgistering.
+The patch is good and I was planning to get this into 5.1.
 
-Other than this, it looks good to me.
+> I can take it in my tree with the other binderfs patches if I can get an
+> ack from Shuah.
+> 
 
-Thanks
-Baoquan
+Great. It is good for the test patch to go with the other binderfs
+patches.
 
->  {
->  	aperture_pfn_start = aper_base >> PAGE_SHIFT;
->  	aperture_page_count = (32 * 1024 * 1024) << aper_order >> PAGE_SHIFT;
-> -	WARN_ON(register_oldmem_pfn_is_ram(&gart_oldmem_pfn_is_ram));
-> +#ifdef CONFIG_PROC_VMCORE
-> +	WARN_ON(register_oldmem_pfn_is_ram(&gart_mem_pfn_is_ram));
-> +#endif
-> +#ifdef CONFIG_PROC_KCORE
-> +	WARN_ON(register_mem_pfn_is_ram(&gart_mem_pfn_is_ram));
-> +#endif
->  }
->  #else
->  static void exclude_from_vmcore(u64 aper_base, u32 aper_order)
+Acked-by: Shuah Khan <shuah@kernel.org>
+
+thanks,
+-- Shuah
+
