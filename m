@@ -2,124 +2,121 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62648C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:18:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A776C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:18:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37197218A1
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:18:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548267489;
-	bh=OHfXKqS/cd5PdeS0hlQomNAdJPyO2rGLTqijJHyb9X4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=d2tFLYbI/kFnFTjUQAXmPkfm5/GCF0jkZtLAAozOXGwaL11BA4duX78bWVwExkvgH
-	 wsy24I7/MMmvBl0V/0G/C+cU8vsxF7cM2bd1OlKZBwTFysNLDtWk/D87wfTW/UgoGp
-	 4XmTOXjf4RPmC9aYQNQFogHBQ8iWnTyD7c80Dnac=
+	by mail.kernel.org (Postfix) with ESMTP id 1171F21019
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:18:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="aefkn7m1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726361AbfAWSSH (ORCPT
+        id S1726682AbfAWSSa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 13:18:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57886 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725976AbfAWSSH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 13:18:07 -0500
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6478421019;
-        Wed, 23 Jan 2019 18:18:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548267486;
-        bh=OHfXKqS/cd5PdeS0hlQomNAdJPyO2rGLTqijJHyb9X4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oDEsVf0BiYCdgmuZcW2l3EKh8c1bHNzP0k1o7H9NzSoHl+/xDqIqkb0vDcOEMmrMg
-         wvl+LKcgJlRCFRUY4zuw+hT8au1n+cSXN0iGZhCV5eqRP3EDP0cOYTHNRKmTdcQ67N
-         IcDegIsyD5V4usq6TB02m/98vboSbaj1P8jPdNgs=
-Date:   Wed, 23 Jan 2019 13:18:05 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Hans van Kranenburg <Hans.van.Kranenburg@mendix.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        David Sterba <dsterba@suse.com>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
-Subject: Re: [PATCH AUTOSEL 4.20 072/117] btrfs: alloc_chunk: fix more DUP
- stripe size handling
-Message-ID: <20190123181805.GM202535@sasha-vm>
-References: <20190108192628.121270-1-sashal@kernel.org>
- <20190108192628.121270-72-sashal@kernel.org>
- <783ccf1f-65df-d388-079c-9449d4319c27@mendix.com>
- <20190123143732.GL202535@sasha-vm>
- <cb62ab8d-7d6f-de02-2912-3d9391a2bbb2@mendix.com>
+        Wed, 23 Jan 2019 13:18:30 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:45240 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725987AbfAWSSa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 13:18:30 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0NI44sD067414;
+        Wed, 23 Jan 2019 18:18:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=PEO+aGSI1e6bWoYsMqiXF8S8alvOI+II99jL3BO+F04=;
+ b=aefkn7m1rJuJvC8gQzjvQnxfYkJbaU0QKakIE5UhXRj4EDh0nExflBDXcDCWZCuAj7JI
+ CSusHqIt/nvEpbwZUb8q1eYVqwSZPh9DPGZof6EY4ovZRtkXdReZD+fpQ78Z+2ing8st
+ 0I2S4QEnbAycNgc0PNIaZL+kOwxYEs38ruxUziOh3I5mpByxAFgarbJ2G+VMtPK+KgB2
+ BdpHBli5SSBeKf2d0XeZmN46wFfIIyjF7SGYAeWrbqZBYCvlN47QK/puB+A5zvJIjMLC
+ zgntOzR034pU60Ye+Zm2lCCZlHoaG4w8R1t9Lq0ZwHu5FrkiEzUJVy2TGc9NGe6ajmaQ Xg== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2130.oracle.com with ESMTP id 2q3sdekrbm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 23 Jan 2019 18:18:24 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0NIINXK019577
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 23 Jan 2019 18:18:24 GMT
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x0NIIM4v020326;
+        Wed, 23 Jan 2019 18:18:22 GMT
+Received: from Konrads-MacBook-Pro.local (/75.104.64.133)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 23 Jan 2019 10:18:22 -0800
+Date:   Wed, 23 Jan 2019 13:18:09 -0500
+From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To:     KarimAllah Ahmed <karahmed@amazon.de>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        pbonzini@redhat.com, rkrcmar@redhat.com
+Subject: Re: [PATCH v5 13/13] KVM/nVMX: Use page_address_valid in a few more
+ locations
+Message-ID: <20190123181807.GS19289@Konrads-MacBook-Pro.local>
+References: <1547026933-31226-1-git-send-email-karahmed@amazon.de>
+ <1547026933-31226-14-git-send-email-karahmed@amazon.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cb62ab8d-7d6f-de02-2912-3d9391a2bbb2@mendix.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1547026933-31226-14-git-send-email-karahmed@amazon.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9145 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901230134
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 03:54:00PM +0000, Hans van Kranenburg wrote:
->On 1/23/19 3:37 PM, Sasha Levin wrote:
->> On Tue, Jan 08, 2019 at 11:52:02PM +0000, Hans van Kranenburg wrote:
->>> Hi Sasha,
->>>
->>> On 1/8/19 8:25 PM, Sasha Levin wrote:
->>>> From: Hans van Kranenburg <hans.van.kranenburg@mendix.com>
->>>>
->>>> [ Upstream commit baf92114c7e6dd6124aa3d506e4bc4b694da3bc3 ]
->>>>
->>>> Commit 92e222df7b "btrfs: alloc_chunk: fix DUP stripe size handling"
->>>> fixed calculating the stripe_size for a new DUP chunk.
->>>
->>> That one also ended up as:
->>>
->>> 4.14-stable
->>> 0136bd7238b2cb8238426af4183ed0b02165c3f9
->>>
->>> 4.9-stable
->>> 8890bae03f4dba1c2292e5445682b556af4e8f1b
->>>
->>> 4.4-stable
->>> 97c3e46ef53748278286fc09dcc30b138d6677c4
->>>
->>> 3.16.57-rc1
->>> f68f46284a199f6837c1d5b94a6ae979a2cc463c
->>>
->>> While hitting the failure condition without adding "crafting" steps to
->>> make it exactly match the scenario is unlikely, it might be good if we
->>> just go all the way back with this regression fix?
->>
->> What do you mean with "all the way back"?
->
->Oh, apologies for not using unambigious phrasing.
->
->I mean, it seems the autoselection only found 92e222df7b in places where
->it's actually called 92e222df7b, and not where it was cherry-picked.
->
->So, for my own understanding: If I have to do something like this ever
->again, then should I have added it like this inside baf92114c?
->
->Fixes: 92e222df7b ("btrfs: alloc_chunk: fix DUP stripe size handling")
->Fixes: 0136bd7238 ("btrfs: alloc_chunk: fix DUP stripe size handling")
->Fixes: 8890bae03f ("btrfs: alloc_chunk: fix DUP stripe size handling")
->Fixes: 97c3e46ef5 ("btrfs: alloc_chunk: fix DUP stripe size handling")
->Fixes: f68f46284a ("btrfs: alloc_chunk: fix DUP stripe size handling")
->
->Thanks for your patience, :)
+On Wed, Jan 09, 2019 at 10:42:13AM +0100, KarimAllah Ahmed wrote:
+> Use page_address_valid in a few more locations that is already checking for
+> a page aligned address that does not cross the maximum physical address.
 
-Ah, the scripts have enough "brains" to deal with these on their own, so
-no need to annotate that much.
-
-This patch wasn't applied to older trees because it didn't cherry-pick
-cleanly on top of them. Looking at it now, it seems to depend on
-793ff2c88c6 ("btrfs: volumes: Cleanup stripe size calculation") which
-can possibly be picked up if it makes sense.
-
---
-Thanks,
-Sasha
+Where is this page_address_valid declared? The latest linus's tree does
+not have it, nor does your patchset?
+> 
+> Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+> ---
+>  arch/x86/kvm/vmx/nested.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+> index ccb3b63..77aad46 100644
+> --- a/arch/x86/kvm/vmx/nested.c
+> +++ b/arch/x86/kvm/vmx/nested.c
+> @@ -4203,7 +4203,7 @@ static int handle_vmon(struct kvm_vcpu *vcpu)
+>  	 * Note - IA32_VMX_BASIC[48] will never be 1 for the nested case;
+>  	 * which replaces physical address width with 32
+>  	 */
+> -	if (!PAGE_ALIGNED(vmptr) || (vmptr >> cpuid_maxphyaddr(vcpu)))
+> +	if (!page_address_valid(vcpu, vmptr))
+>  		return nested_vmx_failInvalid(vcpu);
+>  
+>  	if (kvm_read_guest(vcpu->kvm, vmptr, &revision, sizeof(revision)) ||
+> @@ -4266,7 +4266,7 @@ static int handle_vmclear(struct kvm_vcpu *vcpu)
+>  	if (nested_vmx_get_vmptr(vcpu, &vmptr))
+>  		return 1;
+>  
+> -	if (!PAGE_ALIGNED(vmptr) || (vmptr >> cpuid_maxphyaddr(vcpu)))
+> +	if (!page_address_valid(vcpu, vmptr))
+>  		return nested_vmx_failValid(vcpu,
+>  			VMXERR_VMCLEAR_INVALID_ADDRESS);
+>  
+> @@ -4473,7 +4473,7 @@ static int handle_vmptrld(struct kvm_vcpu *vcpu)
+>  	if (nested_vmx_get_vmptr(vcpu, &vmptr))
+>  		return 1;
+>  
+> -	if (!PAGE_ALIGNED(vmptr) || (vmptr >> cpuid_maxphyaddr(vcpu)))
+> +	if (!page_address_valid(vcpu, vmptr))
+>  		return nested_vmx_failValid(vcpu,
+>  			VMXERR_VMPTRLD_INVALID_ADDRESS);
+>  
+> -- 
+> 2.7.4
+> 
