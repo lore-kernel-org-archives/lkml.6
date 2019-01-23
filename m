@@ -2,58 +2,60 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A11C6C282C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 00:33:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22340C282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 00:33:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6439D20868
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 00:33:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E25BD217D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 00:33:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dg4r9Dbw"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AWe9AOIk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726905AbfAWAdu (ORCPT
+        id S1726961AbfAWAdy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 19:33:50 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:34305 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725985AbfAWAdu (ORCPT
+        Tue, 22 Jan 2019 19:33:54 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:46644 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725985AbfAWAdv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 19:33:50 -0500
-Received: by mail-pf1-f196.google.com with SMTP id h3so245297pfg.1;
-        Tue, 22 Jan 2019 16:33:49 -0800 (PST)
+        Tue, 22 Jan 2019 19:33:51 -0500
+Received: by mail-pl1-f193.google.com with SMTP id t13so194490ply.13;
+        Tue, 22 Jan 2019 16:33:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=JGX1Ly4z5f3bXKnacbZ85ykhGo/mX1yILkHHVN3dZqs=;
-        b=dg4r9DbwnDaAsFdQ97K3S7DEkC8oLVejOyPGbeLMgqKZz9EC6Aazcs85yYI6gl4ceF
-         uYKMZ8Dy8ps/8dEtZ3a4zCRXLmAuBd/MHeU/mJgdNUbXUP86+UqW1UyXYHyeX/taZ8eC
-         FdXcuUurnGCHXl498YsDywouiYNeNId7NotwXUUGWrMQBt1kPJDCVei4YitVp5L+cnxa
-         L5fBclneQK2Dbk423w1pWM50m02e5oW6VtgV9q7CexWj262f3Q8qSyuIECaENXPzpGWC
-         TYZASVwBUfHWWp5u8KzkDWvtBeBtF3DYohCwvTvZ3biFfsJWvInAtyRGMPN9QjrtGN1s
-         841g==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=VqOzV70nxn1aW4YfYzttzB6N0VuBYDY1Aq/89e4xjMU=;
+        b=AWe9AOIkv9l1RZqN62H7Kq/OQ3+m3b+nwSJGFdCtsD2hWxr2SH/qrS+AkJz4Q5X48j
+         kVIpYm4ClBd0baxCP+wOw9GvQEdi1HK+iKa8vVoUHj9xY0c7p8w8xmDL0FO6QCdmfwjO
+         Xo3D6m/1OWdZ/fEU1BWBzPdW2i0iM0b8wh1uwFSLmMgPZc9p2+ksaYTKDgJaB3iqZyf5
+         WTPgNC7ihnCSo5gW0O57jCsOMEuxfJyLg/s4kUgT0S0Hey9d2w2vUeKrRLkGBOLA2bnu
+         zya8z2Pg9ckp9IVknWH3+da40NVWIjNB1kDhh3QlUuVLlz4pcVjuYLZItkusWxnn0ZHO
+         lGuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=JGX1Ly4z5f3bXKnacbZ85ykhGo/mX1yILkHHVN3dZqs=;
-        b=PeVDLSZp0Fu0Qt5NqnKo99HQf4gydhIstQtLJzjIJ41I8yp5NXUXcW4lNvYCqLa8Tc
-         /rQnTLPZcem61ByZXiFSMbXkq9aMM/R4kdCRvK9KjAfQkF9h42fxGuANkQjsvhqx7ZZ7
-         V9j85SvN+2lNfWwT2H4WzhCL6y4F6D7oPzrPDBOy/N0nTbZYaTx3+3i0dPyY/SjjYbuX
-         hOR8eN0x++IBBcEtM1j8vKVShI01G5Wcr0GF2yz2pRjY34TXVnvnqiS9fbNVj9G9gFXc
-         P9RPMfdMG+B+/zJEQJfMCidxu3fIT74mMZM6er0F8/J2FJDn01r0jSZDJEtY04s4wkno
-         l07Q==
-X-Gm-Message-State: AJcUukd30hTECRgs2CRAfo44PbU7wHRnZ2E/Gj+tna+ctbi7zvFEdjTe
-        vMJePcklFNqyyAw8gxRX4WcT8nX5
-X-Google-Smtp-Source: ALg8bN7dLxJAroblpO8C3P39gJe2W9L7DTNMwQpvqXH/iox7V2bPHjTtITuUU6IC2bEOGnK8TW1TPQ==
-X-Received: by 2002:a65:560e:: with SMTP id l14mr109616pgs.168.1548203628775;
-        Tue, 22 Jan 2019 16:33:48 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=VqOzV70nxn1aW4YfYzttzB6N0VuBYDY1Aq/89e4xjMU=;
+        b=T7XEtLFCqN/wQgYY3MUqPGfT1jKv+hwfKo/FK4X0SdsSl7k9nNtsTVus5KPcHrcCYd
+         pPYTAEXwkewJxifOExEgF+btcuSEgfUWat7UzkgV/p5KTUQ8llg6b2KVMuNd2OoRWu9o
+         Wt/Pq424DIhZixpvdpV9Jh3u1ZXeSxaTBQVUAy4zmsM9NzyCD9kc/KqWOU9GWBfnCQRg
+         7GfL5ZLeX/tvNBSLNy/nOszCXcjGxtPR7SxzJRKJSd2ccfqZcbFDRULI3henkYcoqm93
+         059BKibWMIKXZlAm3A7vIY8ADbQSFSqLlUe4U96Jrh6y1BQO0eXgG+riF3bowAep+O82
+         pP1g==
+X-Gm-Message-State: AJcUukd3wNTeNasr3z+hdpFpJGryBq+/Jq6V2r2q92BEm3At+mp+kp0z
+        PkE/srL9Z4BfwMuUwJCUc8VfrOYd
+X-Google-Smtp-Source: ALg8bN6l8JdqmLtMFRJekrpeUWsbzJiGZHxNvPvvu5yMskwWQ2j3uRemVufdSEJs3e7/B3mrCwryCw==
+X-Received: by 2002:a17:902:a5c3:: with SMTP id t3mr92596plq.117.1548203630540;
+        Tue, 22 Jan 2019 16:33:50 -0800 (PST)
 Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id e86sm25465257pfb.6.2019.01.22.16.33.46
+        by smtp.gmail.com with ESMTPSA id e86sm25465257pfb.6.2019.01.22.16.33.48
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Jan 2019 16:33:47 -0800 (PST)
+        Tue, 22 Jan 2019 16:33:49 -0800 (PST)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
@@ -70,32 +72,40 @@ Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         ARM ARCHITECTURE), rdunlap@infradead.org,
         linux-next@vger.kernel.org, sfr@canb.auug.org.au,
         paul.gortmaker@windriver.com
-Subject: [PATCH reset-next 0/2] reset: brcmstb: Misc fixes
-Date:   Tue, 22 Jan 2019 16:33:43 -0800
-Message-Id: <20190123003345.13750-1-f.fainelli@gmail.com>
+Subject: [PATCH reset-next 1/2] reset: brcmstb: Make it tristate
+Date:   Tue, 22 Jan 2019 16:33:44 -0800
+Message-Id: <20190123003345.13750-2-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190123003345.13750-1-f.fainelli@gmail.com>
+References: <20190123003345.13750-1-f.fainelli@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Philipp,
+The driver can be built as a module just fine, so let's make it
+selectable as such.
 
-These two patches fix some recent issues brought up by Paul and Randy,
-feel free to squash into c196cdc7659d ("reset: Add Broadcom STB SW_INIT
-reset controller driver") since this is only in reset/next and
-linux-next so far.
+Reported-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ drivers/reset/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Thank you!
-
-Florian Fainelli (2):
-  reset: brcmstb: Make it tristate
-  reset: brcmstb: Fix 32-bit build with 64-bit resource_size_t
-
- drivers/reset/Kconfig         | 3 ++-
- drivers/reset/reset-brcmstb.c | 6 ++++--
- 2 files changed, 6 insertions(+), 3 deletions(-)
-
+diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+index 1ca03c57e049..d9a02b7f90cf 100644
+--- a/drivers/reset/Kconfig
++++ b/drivers/reset/Kconfig
+@@ -41,7 +41,8 @@ config RESET_BERLIN
+ 	  This enables the reset controller driver for Marvell Berlin SoCs.
+ 
+ config RESET_BRCMSTB
+-	bool "Broadcom STB reset controller" if COMPILE_TEST
++	tristate "Broadcom STB reset controller"
++	depends on ARCH_BRCMSTB || COMPILE_TEST
+ 	default ARCH_BRCMSTB
+ 	help
+ 	  This enables the reset controller driver for Broadcom STB SoCs using
 -- 
 2.17.1
 
