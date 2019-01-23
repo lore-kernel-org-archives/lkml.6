@@ -2,95 +2,144 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F004BC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:37:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 642F8C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:41:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA21E21726
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:37:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32A9221852
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:41:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726461AbfAWHhX (ORCPT
+        id S1726678AbfAWHlX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 02:37:23 -0500
-Received: from bastet.se.axis.com ([195.60.68.11]:38808 "EHLO
-        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726108AbfAWHhW (ORCPT
+        Wed, 23 Jan 2019 02:41:23 -0500
+Received: from gateway34.websitewelcome.com ([192.185.148.164]:41409 "EHLO
+        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726229AbfAWHlX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 02:37:22 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bastet.se.axis.com (Postfix) with ESMTP id 4E681184F0;
-        Wed, 23 Jan 2019 08:37:20 +0100 (CET)
-X-Axis-User: NO
-X-Axis-NonUser: YES
-X-Virus-Scanned: Debian amavisd-new at bastet.se.axis.com
-Received: from bastet.se.axis.com ([IPv6:::ffff:127.0.0.1])
-        by localhost (bastet.se.axis.com [::ffff:127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id NlHpBvvo-gF1; Wed, 23 Jan 2019 08:37:18 +0100 (CET)
-Received: from boulder03.se.axis.com (boulder03.se.axis.com [10.0.8.17])
-        by bastet.se.axis.com (Postfix) with ESMTPS id B7936184A3;
-        Wed, 23 Jan 2019 08:37:15 +0100 (CET)
-Received: from boulder03.se.axis.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A2E201E077;
-        Wed, 23 Jan 2019 08:37:15 +0100 (CET)
-Received: from boulder03.se.axis.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 968251E06A;
-        Wed, 23 Jan 2019 08:37:15 +0100 (CET)
-Received: from thoth.se.axis.com (unknown [10.0.2.173])
-        by boulder03.se.axis.com (Postfix) with ESMTP;
-        Wed, 23 Jan 2019 08:37:15 +0100 (CET)
-Received: from XBOX04.axis.com (xbox04.axis.com [10.0.5.18])
-        by thoth.se.axis.com (Postfix) with ESMTP id 8A5B6202D;
-        Wed, 23 Jan 2019 08:37:15 +0100 (CET)
-Received: from [10.88.41.2] (10.0.5.60) by XBOX04.axis.com (10.0.5.18) with
- Microsoft SMTP Server (TLS) id 15.0.1365.1; Wed, 23 Jan 2019 08:37:14 +0100
-Subject: Re: [PATCH 3/7] crypto: axis: no need to check return value of
- debugfs_create functions
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        David Miller <davem@davemloft.net>
-CC:     <linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-        "Jesper Nilsson" <jespern@axis.com>,
-        Lars Persson <larper@axis.com>, <linux-arm-kernel@axis.com>
-References: <20190122151422.14204-1-gregkh@linuxfoundation.org>
- <20190122151422.14204-4-gregkh@linuxfoundation.org>
-From:   Lars Persson <lars.persson@axis.com>
-Message-ID: <ad5fd669-a717-ee17-cebf-fc6b717ba46c@axis.com>
-Date:   Wed, 23 Jan 2019 08:37:06 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 23 Jan 2019 02:41:23 -0500
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway34.websitewelcome.com (Postfix) with ESMTP id 23150C6994
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 01:41:22 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id mDA2g3i3z2qH7mDA2gfptS; Wed, 23 Jan 2019 01:41:22 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=47018 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gmDA1-003L0w-9L; Wed, 23 Jan 2019 01:41:21 -0600
+Date:   Wed, 23 Jan 2019 01:41:19 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Ariel Elior <ariel.elior@cavium.com>,
+        Sudarsana Kalluru <sudarsana.kalluru@cavium.com>,
+        everest-linux-l2@cavium.com,
+        "David S. Miller" <davem@davemloft.net>,
+        Siva Reddy Kallam <siva.kallam@broadcom.com>,
+        Prashant Sreedharan <prashant@broadcom.com>,
+        Michael Chan <mchan@broadcom.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH net-next] broadcom: Mark expected switch fall-throughs
+Message-ID: <20190123074119.GA18304@embeddedor>
 MIME-Version: 1.0
-In-Reply-To: <20190122151422.14204-4-gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: sv
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: XBOX01.axis.com (10.0.5.15) To XBOX04.axis.com (10.0.5.18)
-X-TM-AS-GCONF: 00
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1gmDA1-003L0w-9L
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.130.205]:47018
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 43
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
 
-On 1/22/19 4:14 PM, Greg Kroah-Hartman wrote:
-> When calling debugfs functions, there is no need to ever check the
-> return value.  The function can work or not, but the code logic should
-> never do something different based on this.
-> 
-> Cc: Jesper Nilsson <jesper.nilsson@axis.com>
-> Cc: Lars Persson <lars.persson@axis.com>
-> Cc: Herbert Xu <herbert@gondor.apana.org.au>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: linux-arm-kernel@axis.com
-> Cc: linux-crypto@vger.kernel.org
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
->   drivers/crypto/axis/artpec6_crypto.c | 9 ---------
->   1 file changed, 9 deletions(-)
+This patch fixes the following warnings:
 
-Acked-by: Lars Persson <lars.persson@axis.com>
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c:6336:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c:2231:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+drivers/net/ethernet/broadcom/tg3.c:722:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+drivers/net/ethernet/broadcom/tg3.c:783:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
 
-Thanks,
-  Lars
+Warning level 3 was used: -Wimplicit-fallthrough=3
+
+This patch is part of the ongoing efforts to enabling
+-Wimplicit-fallthrough.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c  | 2 +-
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c | 2 +-
+ drivers/net/ethernet/broadcom/tg3.c               | 4 ++--
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
+index 29738dfa878c..d581d0ae6584 100644
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
+@@ -6335,7 +6335,7 @@ int bnx2x_set_led(struct link_params *params,
+ 		 */
+ 		if (!vars->link_up)
+ 			break;
+-		/* else: fall through */
++		/* fall through */
+ 	case LED_MODE_ON:
+ 		if (((params->phy[EXT_PHY1].type ==
+ 			  PORT_HW_CFG_XGXS_EXT_PHY_TYPE_BCM8727) ||
+diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c
+index c835f6c7ecd0..c97b642e6537 100644
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c
+@@ -2230,7 +2230,7 @@ int bnx2x_vf_free(struct bnx2x *bp, struct bnx2x_virtf *vf)
+ 		rc = bnx2x_vf_close(bp, vf);
+ 		if (rc)
+ 			goto op_err;
+-		/* Fallthrough to release resources */
++		/* Fall through - to release resources */
+ 	case VF_ACQUIRED:
+ 		DP(BNX2X_MSG_IOV, "about to free resources\n");
+ 		bnx2x_vf_free_resc(bp, vf);
+diff --git a/drivers/net/ethernet/broadcom/tg3.c b/drivers/net/ethernet/broadcom/tg3.c
+index b1627dd5f2fd..328373e0578f 100644
+--- a/drivers/net/ethernet/broadcom/tg3.c
++++ b/drivers/net/ethernet/broadcom/tg3.c
+@@ -721,7 +721,7 @@ static int tg3_ape_lock(struct tg3 *tp, int locknum)
+ 	case TG3_APE_LOCK_GPIO:
+ 		if (tg3_asic_rev(tp) == ASIC_REV_5761)
+ 			return 0;
+-		/* else: fall through */
++		/* fall through */
+ 	case TG3_APE_LOCK_GRC:
+ 	case TG3_APE_LOCK_MEM:
+ 		if (!tp->pci_fn)
+@@ -782,7 +782,7 @@ static void tg3_ape_unlock(struct tg3 *tp, int locknum)
+ 	case TG3_APE_LOCK_GPIO:
+ 		if (tg3_asic_rev(tp) == ASIC_REV_5761)
+ 			return;
+-		/* else: fall through */
++		/* fall through */
+ 	case TG3_APE_LOCK_GRC:
+ 	case TG3_APE_LOCK_MEM:
+ 		if (!tp->pci_fn)
+-- 
+2.20.1
+
