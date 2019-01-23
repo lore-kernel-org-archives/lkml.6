@@ -2,144 +2,128 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AAFDC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 16:50:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5D99C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 16:50:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54C082085A
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 16:50:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 814CC2085A
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 16:50:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726820AbfAWQuf (ORCPT
+        id S1726881AbfAWQuj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 11:50:35 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:44029 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725871AbfAWQuf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 11:50:35 -0500
-Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1gmLjR-000789-4F; Wed, 23 Jan 2019 17:50:29 +0100
-Message-ID: <1548262227.28802.7.camel@pengutronix.de>
-Subject: Re: [PATCH v3 5/5] imx8mq.dtsi: add the sdma nodes
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     "Angus Ainslie (Purism)" <angus@akkea.ca>
-Cc:     angus.ainslie@puri.sm, Vinod Koul <vkoul@kernel.org>,
-        dmaengine@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Daniel Baluta <daniel.baluta@gmail.com>
-Date:   Wed, 23 Jan 2019 17:50:27 +0100
-In-Reply-To: <20190123152310.11680-6-angus@akkea.ca>
-References: <20190120023150.17138-1-angus@akkea.ca>
-         <20190123152310.11680-1-angus@akkea.ca>
-         <20190123152310.11680-6-angus@akkea.ca>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
+        Wed, 23 Jan 2019 11:50:39 -0500
+Received: from mga18.intel.com ([134.134.136.126]:19565 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725871AbfAWQuh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 11:50:37 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jan 2019 08:50:36 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,512,1539673200"; 
+   d="asc'?scan'208";a="312849120"
+Received: from jtkirshe-desk1.jf.intel.com ([134.134.177.96])
+  by fmsmga006.fm.intel.com with ESMTP; 23 Jan 2019 08:50:36 -0800
+Message-ID: <7d8a6120ea335d74c41a5fba3754518ea60e936e.camel@intel.com>
+Subject: Re: [Intel-wired-lan] [PATCH 1/3] treewide: Lift switch variables
+ out of switches
+From:   Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Reply-To: jeffrey.t.kirsher@intel.com
+To:     Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org
+Cc:     dev@openvswitch.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        netdev@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-usb@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+        kernel-hardening@lists.openwall.com,
+        intel-wired-lan@lists.osuosl.org, linux-fsdevel@vger.kernel.org,
+        xen-devel@lists.xenproject.org, Laura Abbott <labbott@redhat.com>,
+        linux-kbuild@vger.kernel.org,
+        Alexander Popov <alex.popov@linux.com>
+Date:   Wed, 23 Jan 2019 08:51:38 -0800
+In-Reply-To: <20190123110349.35882-2-keescook@chromium.org>
+References: <20190123110349.35882-1-keescook@chromium.org>
+         <20190123110349.35882-2-keescook@chromium.org>
+Organization: Intel
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-ckUn9AFZsnGNoWsnxDog"
+User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Mittwoch, den 23.01.2019, 08:23 -0700 schrieb Angus Ainslie (Purism):
-> Add the sdma nodes to the base devicetree for the imx8mq
-> 
-> > Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
+
+--=-ckUn9AFZsnGNoWsnxDog
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, 2019-01-23 at 03:03 -0800, Kees Cook wrote:
+> Variables declared in a switch statement before any case statements
+> cannot be initialized, so move all instances out of the switches.
+> After this, future always-initialized stack variables will work
+> and not throw warnings like this:
+>=20
+> fs/fcntl.c: In function =E2=80=98send_sigio_to_task=E2=80=99:
+> fs/fcntl.c:738:13: warning: statement will never be executed [-
+> Wswitch-unreachable]
+>    siginfo_t si;
+>              ^~
+>=20
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+
+Acked-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+
+For the e1000 changes.
+
 > ---
->  arch/arm64/boot/dts/freescale/imx8mq.dtsi | 31 +++++++++++++++++++++++
->  1 file changed, 31 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-> index c0402375e7c1..4397992fd021 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-> @@ -336,6 +336,19 @@
-> >  				clocks = <&clk IMX8MQ_CLK_WDOG3_ROOT>;
-> >  				status = "disabled";
-> >  			};
-> +
-> > > +			sdma2: sdma@302c0000 {
-> > +				compatible = "fsl,imx8mq-sdma", "fsl,imx7d-sdma";
-> > +				reg = <0x302c0000 0x10000>;
-> > +				interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
-> > +				clocks = <&clk IMX8MQ_CLK_SDMA2_ROOT>,
-> > +					<&clk IMX8MQ_CLK_SDMA2_ROOT>;
-> > +				clock-names = "ipg", "ahb";
-> > +				#dma-cells = <3>;
-> > +				fsl,sdma-ram-script-name = "imx/sdma/sdma-imx7d.bin";
-> +				fsl,ratio-1-1;
+>  arch/x86/xen/enlighten_pv.c                   |  7 ++++---
+>  drivers/char/pcmcia/cm4000_cs.c               |  2 +-
+>  drivers/char/ppdev.c                          | 20 ++++++++---------
+> --
+>  drivers/gpu/drm/drm_edid.c                    |  4 ++--
+>  drivers/gpu/drm/i915/intel_display.c          |  2 +-
+>  drivers/gpu/drm/i915/intel_pm.c               |  4 ++--
+>  drivers/net/ethernet/intel/e1000/e1000_main.c |  3 ++-
+>  drivers/tty/n_tty.c                           |  3 +--
+>  drivers/usb/gadget/udc/net2280.c              |  5 ++---
+>  fs/fcntl.c                                    |  3 ++-
+>  mm/shmem.c                                    |  5 +++--
+>  net/core/skbuff.c                             |  4 ++--
+>  net/ipv6/ip6_gre.c                            |  4 ++--
+>  net/ipv6/ip6_tunnel.c                         |  4 ++--
+>  net/openvswitch/flow_netlink.c                |  7 +++----
+>  security/tomoyo/common.c                      |  3 ++-
+>  security/tomoyo/condition.c                   |  7 ++++---
+>  security/tomoyo/util.c                        |  4 ++--
+>  18 files changed, 45 insertions(+), 46 deletions(-)
 
-Property does not exist anymore.
 
-> +				status = "disabled";
+--=-ckUn9AFZsnGNoWsnxDog
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-SoC peripherals that have no outside connection and thus don't depend
-on any board level configuration should always be enabled. Please drop
-this status property.
+-----BEGIN PGP SIGNATURE-----
 
-> +			};
-> >  		};
->  
-> >  		bus@30400000 { /* AIPS2 */
-> @@ -370,6 +383,8 @@
-> >  				clocks = <&clk IMX8MQ_CLK_UART3_ROOT>,
-> >  				         <&clk IMX8MQ_CLK_UART3_ROOT>;
-> >  				clock-names = "ipg", "per";
-> > +				dmas = <&sdma1 26 4 0>, <&sdma1 27 4 0>;
-> > +				dma-names = "rx", "tx";
-> >  				status = "disabled";
-> >  			};
->  
-> @@ -381,6 +396,8 @@
-> >  				clocks = <&clk IMX8MQ_CLK_UART2_ROOT>,
-> >  				         <&clk IMX8MQ_CLK_UART2_ROOT>;
-> >  				clock-names = "ipg", "per";
-> > +				dmas = <&sdma1 24 4 0>, <&sdma1 25 4 0>;
-> > +				dma-names = "rx", "tx";
-> >  				status = "disabled";
-> >  			};
->  
-> @@ -432,6 +449,8 @@
-> >  				clocks = <&clk IMX8MQ_CLK_UART4_ROOT>,
-> >  				         <&clk IMX8MQ_CLK_UART4_ROOT>;
-> >  				clock-names = "ipg", "per";
-> > +				dmas = <&sdma1 28 4 0>, <&sdma1 29 4 0>;
-> > +				dma-names = "rx", "tx";
-> >  				status = "disabled";
-> >  			};
->  
-> @@ -465,6 +484,18 @@
-> >  				status = "disabled";
-> >  			};
->  
-> > > +			sdma1: sdma@30bd0000 {
-> > +				compatible = "fsl,imx8mq-sdma", "fsl,imx7d-sdma";
-> > +				reg = <0x30bd0000 0x10000>;
-> > +				interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
-> > +				clocks = <&clk IMX8MQ_CLK_SDMA1_ROOT>,
-> > +					<&clk IMX8MQ_CLK_AHB>;
-> > +				clock-names = "ipg", "ahb";
-> > +				#dma-cells = <3>;
-> > +				fsl,sdma-ram-script-name = "imx/sdma/sdma-imx7d.bin";
-> +				status = "disabled";
+iQIzBAABCAAdFiEEiTyZWz+nnTrOJ1LZ5W/vlVpL7c4FAlxIm5oACgkQ5W/vlVpL
+7c6nHA/+I5AUD+yELZtkueGqZrZ0E/i+TX7+2pxKNRieTprDcNtILryQEfP4XrvX
+r7X4QwfM9Rfmrlr1WcZrQW2LVn+uuflivdbtCmE0ZX4iBnIhAoeguyZ6+hInlbDY
+oN+TzAFm96uYB70bOnyqutGVBKfMkazDXiVtqzbu+7HAMWFnQFFzKX6/o+eL0/Np
+1qBQP1okUj2dM/ujfQKLxWQu8IupAI5nDeucqFsscZO1Yh/g9IjOyClDUGSXAyBO
+Xr67/lCCAt1/Z0GkqN+HElzbtjokp0xitLFF9MyOkmrHiHKcvD62I4OJ97OXlFuF
+YXvwIg6/9NfVhGgh/k8z6xAAB9JDIZ0rb5yezcdu1FqSYVrAyzI4tmD+l3fS7zyr
+AnHaQ4tTzsmj0T70bz1wooR2oOnyA2MhVhGUfPXNER24TaApApki5eqydsVPpsMk
+3gukrduJogzBL2AVMTp780UAj2WnHYsJhso62fYOPT0huDhAsIWaqcuVi5Fs0o94
+b9t84vtQG5NHFEBmaaaVdFhB9+Tw3sOHh+nglVzHm3UZNHcFi+lEgxjtV6cTcm0C
+1oIX6J17KkZPxkOf0ENU8Cj/gnvNRF/ZhkDPe0r1bMYnL8w0WxB/rCSPQfWD/F5r
+bdTuBQbV5MKBc4evjKtB1mFUYD9WrOMIbPjMo9pkJ0XQuttdthc=
+=MB+1
+-----END PGP SIGNATURE-----
 
-Same comment as above, this node should be enabled by default.
+--=-ckUn9AFZsnGNoWsnxDog--
 
-Regards,
-Lucas
-
-> +			};
-> +
-> > >  			fec1: ethernet@30be0000 {
-> >  				compatible = "fsl,imx8mq-fec", "fsl,imx6sx-fec";
-> >  				reg = <0x30be0000 0x10000>;
