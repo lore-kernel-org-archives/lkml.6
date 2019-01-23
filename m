@@ -2,172 +2,110 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64AFBC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 12:12:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67E1DC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 12:12:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 279C720861
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 12:12:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3894D20861
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 12:12:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mPJ/Kv2s";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oAGLcM2S"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="H+m7GGMj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727264AbfAWMMI (ORCPT
+        id S1726262AbfAWMMj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 07:12:08 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:36590 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726108AbfAWMMH (ORCPT
+        Wed, 23 Jan 2019 07:12:39 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:40035 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726228AbfAWMMj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 07:12:07 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 0A452607C6; Wed, 23 Jan 2019 12:12:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548245526;
-        bh=TOwqByPOK0JcqDzIL0TmrrT3a7x2WZU8v1t4RkS0TnM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=mPJ/Kv2sqgYTWbDdJNJaMU/v/Jv1cfLZLJz4JGoaAfXEproekFb/BywpIgmeVnhbO
-         TEVuqitntoVaflvRqMbIkzBYmRS6sAvzZ7XCuIqIJQFe4RVJCgxBDhBMIDkpMJQoLd
-         m8Sa6Xfer+SQJBkpFchLlz1/rR/U8eZzLR/nHBFA=
-Received: from [10.79.129.250] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D1798602BA;
-        Wed, 23 Jan 2019 12:11:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548245525;
-        bh=TOwqByPOK0JcqDzIL0TmrrT3a7x2WZU8v1t4RkS0TnM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=oAGLcM2SANEZaUiyEp/kv9ys321vLR2E8Or16hna5DCgNXLQwOaRzFMfuKfRtrRdi
-         Vtddcb3Lj7/vZGOjuhantWkhbpeyWAicbN6KbJuOvYwJ7ZSqjkQ4sGSCA/NlJ2JKzh
-         2vnT9y3tGds/QO2u8Zs9XwQElyvACqeRyg7V67zM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D1798602BA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
-Subject: Re: [PATCHv4 1/4] arm64: dts: qcom: sdm845: Add Coresight support
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>, robh+dt@kernel.org,
-        mathieu.poirier@linaro.org, leo.yan@linaro.org,
-        alexander.shishkin@linux.intel.com, andy.gross@linaro.org,
-        david.brown@linaro.org, vivek.gautam@codeaurora.org,
-        dianders@chromium.org, sboyd@kernel.org,
-        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
-        mark.rutland@arm.com
-Cc:     rnayak@codeaurora.org, sibis@codeaurora.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, john.horley@arm.com
-References: <cover.1548133311.git.saiprakash.ranjan@codeaurora.org>
- <ad16cfb9b6f5efb85149458d5f5a1abf43fa027c.1548133311.git.saiprakash.ranjan@codeaurora.org>
- <1bd39862-0725-70ce-6535-fdb59569f683@arm.com>
- <75ed74af-6946-b86d-092e-42dc16e55308@codeaurora.org>
- <91a90daa-9e14-2d2e-e633-2ddfdc0955bf@arm.com>
- <3906faf1-abbd-9c28-ad55-ed3800f06352@codeaurora.org>
- <c03b63bf-aca8-ea46-70ad-ee4558f0319e@arm.com>
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Message-ID: <5b54c6e0-7d22-ecee-486f-31333f49f84a@codeaurora.org>
-Date:   Wed, 23 Jan 2019 17:41:57 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 23 Jan 2019 07:12:39 -0500
+Received: by mail-io1-f68.google.com with SMTP id k2so1473630iog.7
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 04:12:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=7CuKdBNpc7lIzSxWikvoBf9wcEakd+B812ZHSpJjJVY=;
+        b=H+m7GGMjF6744xT1D2UwyNiY/KMpTtbRw5bi2y+pCDduRAgSAvhW2ZIPfnH2kOOExh
+         3Su0JFmxMJMowRT9N2wYUjrjYvuBsgKmxpYbizh11PtffeWo9FwZbrdMYunm9gcvYSN7
+         D7CAGGUmeHybx5kZaQ1Zx2WU51V6DvtSTJ2bc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=7CuKdBNpc7lIzSxWikvoBf9wcEakd+B812ZHSpJjJVY=;
+        b=qQ653MXo/8qnxL+VvFSfWAGJTQjs0vWDAVfdsx1LBdYB/HhGJosUMplhwoSS7YbQDv
+         L3amboo1SPD0lHmqDn6EOegdm/f1uwOKeaEIHjDkMc7qRcRAScFLHj3I/Bjs9kFfThvT
+         rHBLhsIGVQ57fbTAWguPqXjeTHZA++eRGrLx3scUV3XxbEl7enlRP5Ck1ewGh1wsnxEh
+         V3Xd77weAseaVbWT4++S6Aw5FrRKxXObKwyr/nwPKWJoKUi7UlXsbLm7o+Nj9BsP5Krd
+         5CF/6apXDgJgeuFUiTBpProipKIUBlqfSSpo44p8ROknZBiicuJvmTg3aXOHT529Uajv
+         8Y+g==
+X-Gm-Message-State: AHQUAuYV9idQpCRoX/u5Kv/+JLN/N825jWV7iTm8YFFl+6tVg0ZZjMGE
+        nz0s+fZMroO6F4plPuqiXjZOAVez+V6eqghZCBPBHg==
+X-Google-Smtp-Source: ALg8bN4sFH3iEczabalnBNhAFEjMavAEqGBGd/B710UVgMJuAnz9dDSdLnQkCrtIxakuPDjbIn3RSmgeu7Pdts1qkOs=
+X-Received: by 2002:a5d:8410:: with SMTP id i16mr1019729ion.173.1548245557818;
+ Wed, 23 Jan 2019 04:12:37 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <c03b63bf-aca8-ea46-70ad-ee4558f0319e@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190123110349.35882-1-keescook@chromium.org> <20190123110349.35882-2-keescook@chromium.org>
+ <20190123115829.GA31385@kroah.com> <CAG48ez2vfXkr9dozJiGmze8k49VOXfs=K7M8bv0aQsDDpzrEFQ@mail.gmail.com>
+In-Reply-To: <CAG48ez2vfXkr9dozJiGmze8k49VOXfs=K7M8bv0aQsDDpzrEFQ@mail.gmail.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Wed, 23 Jan 2019 13:12:26 +0100
+Message-ID: <CAKv+Gu-ECKNy+nmnbsetkOg28VR1YkFgnRsu+u9mN4DC_poBwg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] treewide: Lift switch variables out of switches
+To:     Jann Horn <jannh@google.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Alexander Popov <alex.popov@linux.com>,
+        xen-devel <xen-devel@lists.xenproject.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        intel-gfx@lists.freedesktop.org, intel-wired-lan@lists.osuosl.org,
+        Network Development <netdev@vger.kernel.org>,
+        linux-usb <linux-usb@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
+        dev@openvswitch.org,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Suzuki,
+On Wed, 23 Jan 2019 at 13:09, Jann Horn <jannh@google.com> wrote:
+>
+> On Wed, Jan 23, 2019 at 1:04 PM Greg KH <gregkh@linuxfoundation.org> wrot=
+e:
+> > On Wed, Jan 23, 2019 at 03:03:47AM -0800, Kees Cook wrote:
+> > > Variables declared in a switch statement before any case statements
+> > > cannot be initialized, so move all instances out of the switches.
+> > > After this, future always-initialized stack variables will work
+> > > and not throw warnings like this:
+> > >
+> > > fs/fcntl.c: In function =E2=80=98send_sigio_to_task=E2=80=99:
+> > > fs/fcntl.c:738:13: warning: statement will never be executed [-Wswitc=
+h-unreachable]
+> > >    siginfo_t si;
+> > >              ^~
+> >
+> > That's a pain, so this means we can't have any new variables in { }
+> > scope except for at the top of a function?
+>
+> AFAICS this only applies to switch statements (because they jump to a
+> case and don't execute stuff at the start of the block), not blocks
+> after if/while/... .
+>
 
-On 1/23/2019 1:42 AM, Suzuki K Poulose wrote:
-> Hi Sai,
-> 
-> On 01/22/2019 04:48 PM, Sai Prakash Ranjan wrote:
->> Hi Suzuki,
->>
-[..]
->>
->> SDM845 has 4 Kryo 385 Gold (ARM A75) + 4 Kryo 385 Silver (ARM A55),
->> so the PID values should be same for 4 ETMs atleast. But here one
->> pid value(001bb803) is same for 6 ETMs and other one for 2
->> ETMs(001bb802) which seems odd and hence the doubt if these pids
->> are even valid ones.
-> 
-> Have you checked other SoCs with A55 for the ETM PID ? The drivers
-> usually only care about PID0[7-0], PID1[7-0], PID2[3-0] and ignores
-> the other fields that may change over revisions of the core. So, in your
-> case the ETM ID could be treated as 0xbb802 and 0xbb803.
-> 
+I guess that means it may apply to other cases where you do a 'goto'
+into the middle of a for() loop, for instance (at the first
+iteration), which is also a valid pattern.
 
-Very sorry to have mislead you here. I checked again today on SDM845 and 
-as you said 4 ETMs based on A75 has 0xbb803 and other 4 ETMs based on
-A55 has 0Xbb803. I wrongly mentioned it as 6 and 2.
-
-[    6.688809] resname=etm@7040000 pid = 0x1bb803
-[    6.694957]
-[    6.694957] resname=etm@7140000 pid = 0x1bb803
-[    6.701135]
-[    6.701135] resname=etm@7240000 pid = 0x1bb803
-[    6.707256]
-[    6.707256] resname=etm@7340000 pid = 0x1bb803
-[    6.713454]
-[    6.713454] resname=etm@7440000 pid = 0x1bb802
-[    6.719621]
-[    6.719621] resname=etm@7540000 pid = 0x1bb802
-[    6.725814]
-[    6.725814] resname=etm@7640000 pid = 0x1bb802
-[    6.731971]
-[    6.731971] resname=etm@7740000 pid = 0x1bb802
-
-So is it ok to add these to table as below in etm4x driver with the
-following comment since these do not exactly match A75 and A55 PIDs
-which you provided? Or any other way you prefer?
-
-@@ -1079,6 +1079,10 @@ static const struct amba_id etm4_ids[] = {
-         ETM4x_AMBA_ID(0x000bb95a),              /* Cortex-A72 */
-         ETM4x_AMBA_ID(0x000bb959),              /* Cortex-A73 */
-         ETM4x_AMBA_ID(0x000bb9da),              /* Cortex-A35 */
-+       ETM4x_AMBA_ID(0x000f0211),              /* Qualcomm Kryo */
-+       ETM4x_AMBA_ID(0x000f0205),              /* Qualcomm Kryo */
-+       ETM4x_AMBA_ID(0x000bb803),              /* Qualcomm Kryo 385 
-Cortex-A75 */
-+       ETM4x_AMBA_ID(0x000bb802),              /* Qualcomm Kryo 385 
-Cortex-A55 */
-         {},
-  };
-
-For msm8996, cpu debug module pid returned is same as ETM
-which is causing the probe failure for cpu debug coresight module
-as shown in below logs.
-For this case, I tried adding these ids to cpu debug driver, but it
-splits some errors (coresight-cpu-debug: probe of 3840000.etm failed 
-with error -16) since the ids are same. Can we override for this case
-or there is something else we can do here?
-
-[    5.480629] resname=debug@3810000 pid = 0x102f0211
-[    5.480920] OF: graph: no port node found in /soc/debug@3810000
-[    5.513214] coresight-etm4x: probe of 3810000.debug failed with error -22
-[    5.524362]
-[    5.524362] resname=debug@3910000 pid = 0x102f0211
-[    5.524888] OF: graph: no port node found in /soc/debug@3910000
-[    5.537586] coresight-etm4x: probe of 3910000.debug failed with error -22
-[    5.541481]
-[    5.549643] resname=debug@3a10000 pid = 0x102f0205
-[    5.580990] OF: graph: no port node found in /soc/debug@3a10000
-[    5.586817] coresight-etm4x: probe of 3a10000.debug failed with error -22
-[    5.592082]
-[    5.592629] resname=debug@3b10000 pid = 0x102f0205
-[    5.604922] OF: graph: no port node found in /soc/debug@3b10000
-[    5.611234] coresight-etm4x: probe of 3b10000.debug failed with error -22
-
-
-Thanks,
-Sai
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Is there any way to tag these assignments so the diagnostic disregards them=
+?
