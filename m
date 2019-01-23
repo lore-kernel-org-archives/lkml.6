@@ -2,218 +2,87 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE9A0C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 15:17:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 853B0C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 15:19:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EA7B21850
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 15:17:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 405D82184C
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 15:19:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Drz0Dfy0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726792AbfAWPRV (ORCPT
+        id S1726109AbfAWPTB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 10:17:21 -0500
-Received: from mga05.intel.com ([192.55.52.43]:51346 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725930AbfAWPQ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 10:16:26 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jan 2019 07:16:25 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,511,1539673200"; 
-   d="scan'208";a="120686038"
-Received: from otc-lr-04.jf.intel.com ([10.54.39.129])
-  by orsmga003.jf.intel.com with ESMTP; 23 Jan 2019 07:16:25 -0800
-From:   kan.liang@linux.intel.com
-To:     peterz@infradead.org, acme@kernel.org, tglx@linutronix.de,
-        mingo@redhat.com, linux-kernel@vger.kernel.org
-Cc:     eranian@google.com, jolsa@redhat.com, namhyung@kernel.org,
-        ak@linux.intel.com, Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V2 02/12] perf tools: Support new sample type for data page size
-Date:   Wed, 23 Jan 2019 07:15:20 -0800
-Message-Id: <1548256530-10065-2-git-send-email-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1548256530-10065-1-git-send-email-kan.liang@linux.intel.com>
-References: <1548256530-10065-1-git-send-email-kan.liang@linux.intel.com>
+        Wed, 23 Jan 2019 10:19:01 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:40091 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725930AbfAWPTB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 10:19:01 -0500
+Received: by mail-pl1-f193.google.com with SMTP id u18so1326231plq.7;
+        Wed, 23 Jan 2019 07:19:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JIpB2mCVisWekV7gPUDfpECk9juHE23oSRspeDhXTrA=;
+        b=Drz0Dfy0pJMwj2Ycu9BQgECe6ecHQAxShKC5kUte4JcFg9DHKCo0DgCXiACBlgAm25
+         K/JACJdrM+PrQTe09dAWLiORE47W7LLjKQlKLBpS8vVxCI1IPh4PRLwycnBdINGvmdAJ
+         uBAXX5rZy/EM68eZvvSIbhgdb1sFBR5q07gr4mkaTFwEFooHpE4P7rHBhq6xDEPjstT/
+         SOdrH1du0wXTnIfpFgrGxjXZgy0kue7Rm9ca6/DM1zomfEoE5josQihLDYmv4veZP6N0
+         B5snCxXlFmnpKyeQzuzoLKsZ17WUpP/ewxulKFodr8hbee5lSKvr/souBT9PKmyJ9Kvr
+         MJXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JIpB2mCVisWekV7gPUDfpECk9juHE23oSRspeDhXTrA=;
+        b=AQmwHqXbllPdkNHVF+O/UVNJclX+hSx0O3KzQKItY6/nPgs69aGZimXB3pzjzGgP+Q
+         iN9qpwEVDdkQ/lkuZmzf6ZRPo3AlFi/EeVZbWHniTycxpUGwOhT7rBPkXvY9F5GEAcRj
+         kRSQZBZHZ+O+NfhLSSix6VfjiWf4jYSknUjshmZ/uG7qXqq55tIWf/YykQpRfOQMhVGG
+         2D7brgKTlgRYEjBL0h/EjrP/pSfFu+JsfzWkLvu7oCmWZhFMHMTs5E0r4OTGlz5NJm4I
+         tH9EliuqCsGQ3BOI/uHcIhjnIQJeXZzH+9Jvb6lB274U2Ix5OhLzIxcXbwR9/mej6XkH
+         FXiA==
+X-Gm-Message-State: AJcUukdbFbyQ5rWyjEFZQTN97HbvJQTgItMTRdDfH77phfGpssD4rWr8
+        csBAto9ZCL96MHafXCPbOEn5ckBMQPMrdiB1fzA=
+X-Google-Smtp-Source: ALg8bN4dkf0RybAmoR0gqnBuzk3WsVePcU5VYVm5aWgORj10FKR46HpfCmCGWL2ua7HOQ6ZuYfvBwIx8WnLUVAMuJjo=
+X-Received: by 2002:a17:902:112c:: with SMTP id d41mr2504123pla.144.1548256740394;
+ Wed, 23 Jan 2019 07:19:00 -0800 (PST)
+MIME-Version: 1.0
+References: <1547475005-23435-1-git-send-email-guan.yung.tseng@ni.com>
+In-Reply-To: <1547475005-23435-1-git-send-email-guan.yung.tseng@ni.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 23 Jan 2019 17:18:48 +0200
+Message-ID: <CAHp75VcxtSi64qsK6tHx+vtEeRsX3ZVwfzRYOVuyS=qSTnK0qQ@mail.gmail.com>
+Subject: Re: [PATCH] 8250_pci.c: Update NI specific devices class to multi serial
+To:     Guan Yung Tseng <guan.yung.tseng@ni.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+On Mon, Jan 14, 2019 at 4:13 PM Guan Yung Tseng <guan.yung.tseng@ni.com> wrote:
+>
+> Modified NI devices class to PCI_CLASS_COMMUNICATION_MULTISERIAL.
+> The reason of doing this is because all NI multi port serial cards
+> use PCI_CLASS_COMMUNICATION_OTHER class and thus fail the
+> serial_pci_is_class_communication test added in the commit 7d8905d06405
+> ("serial: 8250_pci: Enable device after we check black list").
 
-Support new sample type PERF_SAMPLE_DATA_PAGE_SIZE for page size.
+Guan, can you provide an output of the
 
-Add new option --data-page-size to record sample data page size.
+lspci -nk -xx -vv -s <BDF>
 
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
+of your device, where <BDF> is a PCI address in a form of bus:device.function?
 
-No changes since V1
-
- tools/include/uapi/linux/perf_event.h    | 16 +++++++++++++++-
- tools/perf/Documentation/perf-record.txt |  3 +++
- tools/perf/builtin-record.c              |  2 ++
- tools/perf/perf.h                        |  1 +
- tools/perf/util/event.h                  |  1 +
- tools/perf/util/evsel.c                  | 19 ++++++++++++++++++-
- 6 files changed, 40 insertions(+), 2 deletions(-)
-
-diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux/perf_event.h
-index ea19b5d..9d3d2af 100644
---- a/tools/include/uapi/linux/perf_event.h
-+++ b/tools/include/uapi/linux/perf_event.h
-@@ -141,8 +141,9 @@ enum perf_event_sample_format {
- 	PERF_SAMPLE_TRANSACTION			= 1U << 17,
- 	PERF_SAMPLE_REGS_INTR			= 1U << 18,
- 	PERF_SAMPLE_PHYS_ADDR			= 1U << 19,
-+	PERF_SAMPLE_DATA_PAGE_SIZE		= 1U << 20,
- 
--	PERF_SAMPLE_MAX = 1U << 20,		/* non-ABI */
-+	PERF_SAMPLE_MAX = 1U << 21,		/* non-ABI */
- 
- 	__PERF_SAMPLE_CALLCHAIN_EARLY		= 1ULL << 63, /* non-ABI; internal use */
- };
-@@ -861,6 +862,7 @@ enum perf_event_type {
- 	 *	{ u64			abi; # enum perf_sample_regs_abi
- 	 *	  u64			regs[weight(mask)]; } && PERF_SAMPLE_REGS_INTR
- 	 *	{ u64			phys_addr;} && PERF_SAMPLE_PHYS_ADDR
-+	 *	{ u64			data_page_size;} && PERF_SAMPLE_DATA_PAGE_SIZE
- 	 * };
- 	 */
- 	PERF_RECORD_SAMPLE			= 9,
-@@ -1099,6 +1101,18 @@ union perf_mem_data_src {
- #define PERF_MEM_S(a, s) \
- 	(((__u64)PERF_MEM_##a##_##s) << PERF_MEM_##a##_SHIFT)
- 
-+
-+enum perf_mem_page_size {
-+	PERF_PAGE_SIZE_NONE,
-+	PERF_PAGE_SIZE_4K,
-+	PERF_PAGE_SIZE_8K,
-+	PERF_PAGE_SIZE_16K,
-+	PERF_PAGE_SIZE_64K,
-+	PERF_PAGE_SIZE_2M,
-+	PERF_PAGE_SIZE_1G,
-+	PERF_PAGE_SIZE_512G,
-+};
-+
- /*
-  * single taken branch record layout:
-  *
-diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
-index d232b13..c2a2875 100644
---- a/tools/perf/Documentation/perf-record.txt
-+++ b/tools/perf/Documentation/perf-record.txt
-@@ -264,6 +264,9 @@ OPTIONS
- --phys-data::
- 	Record the sample physical addresses.
- 
-+--data-page-size::
-+	Record the sampled data address data page size
-+
- -T::
- --timestamp::
- 	Record the sample timestamps. Use it with 'perf report -D' to see the
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index 882285f..50869f6 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -1863,6 +1863,8 @@ static struct option __record_options[] = {
- 	OPT_BOOLEAN('d', "data", &record.opts.sample_address, "Record the sample addresses"),
- 	OPT_BOOLEAN(0, "phys-data", &record.opts.sample_phys_addr,
- 		    "Record the sample physical addresses"),
-+	OPT_BOOLEAN(0, "data-page-size", &record.opts.sample_data_page_size,
-+		    "Record the sampled data address data page size"),
- 	OPT_BOOLEAN(0, "sample-cpu", &record.opts.sample_cpu, "Record the sample cpu"),
- 	OPT_BOOLEAN_SET('T', "timestamp", &record.opts.sample_time,
- 			&record.opts.sample_time_set,
-diff --git a/tools/perf/perf.h b/tools/perf/perf.h
-index 388c6dd..b17d08d 100644
---- a/tools/perf/perf.h
-+++ b/tools/perf/perf.h
-@@ -48,6 +48,7 @@ struct record_opts {
- 	bool	     raw_samples;
- 	bool	     sample_address;
- 	bool	     sample_phys_addr;
-+	bool	     sample_data_page_size;
- 	bool	     sample_weight;
- 	bool	     sample_time;
- 	bool	     sample_time_set;
-diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
-index eb95f33..9772296 100644
---- a/tools/perf/util/event.h
-+++ b/tools/perf/util/event.h
-@@ -202,6 +202,7 @@ struct perf_sample {
- 	u32 raw_size;
- 	u64 data_src;
- 	u64 phys_addr;
-+	u64 data_page_size;
- 	u32 flags;
- 	u16 insn_len;
- 	u8  cpumode;
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index dbc0466..2ef94d5 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -1019,6 +1019,9 @@ void perf_evsel__config(struct perf_evsel *evsel, struct record_opts *opts,
- 	if (opts->sample_phys_addr)
- 		perf_evsel__set_sample_bit(evsel, PHYS_ADDR);
- 
-+	if (opts->sample_data_page_size)
-+		perf_evsel__set_sample_bit(evsel, DATA_PAGE_SIZE);
-+
- 	if (opts->no_buffering) {
- 		attr->watermark = 0;
- 		attr->wakeup_events = 1;
-@@ -1558,7 +1561,7 @@ static void __p_sample_type(char *buf, size_t size, u64 value)
- 		bit_name(PERIOD), bit_name(STREAM_ID), bit_name(RAW),
- 		bit_name(BRANCH_STACK), bit_name(REGS_USER), bit_name(STACK_USER),
- 		bit_name(IDENTIFIER), bit_name(REGS_INTR), bit_name(DATA_SRC),
--		bit_name(WEIGHT), bit_name(PHYS_ADDR),
-+		bit_name(WEIGHT), bit_name(PHYS_ADDR), bit_name(DATA_PAGE_SIZE),
- 		{ .name = NULL, }
- 	};
- #undef bit_name
-@@ -2375,6 +2378,12 @@ int perf_evsel__parse_sample(struct perf_evsel *evsel, union perf_event *event,
- 		array++;
- 	}
- 
-+	data->data_page_size = 0;
-+	if (type & PERF_SAMPLE_DATA_PAGE_SIZE) {
-+		data->data_page_size = *array;
-+		array++;
-+	}
-+
- 	return 0;
- }
- 
-@@ -2527,6 +2536,9 @@ size_t perf_event__sample_event_size(const struct perf_sample *sample, u64 type,
- 	if (type & PERF_SAMPLE_PHYS_ADDR)
- 		result += sizeof(u64);
- 
-+	if (type & PERF_SAMPLE_DATA_PAGE_SIZE)
-+		result += sizeof(u64);
-+
- 	return result;
- }
- 
-@@ -2696,6 +2708,11 @@ int perf_event__synthesize_sample(union perf_event *event, u64 type,
- 		array++;
- 	}
- 
-+	if (type & PERF_SAMPLE_DATA_PAGE_SIZE) {
-+		*array = sample->data_page_size;
-+		array++;
-+	}
-+
- 	return 0;
- }
- 
 -- 
-2.7.4
-
+With Best Regards,
+Andy Shevchenko
