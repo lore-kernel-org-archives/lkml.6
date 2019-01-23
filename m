@@ -2,137 +2,171 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6720CC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:15:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AB8FC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:16:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3317C20870
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:15:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 612C720870
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:16:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FVsiGJpK"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dGvn6phD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727175AbfAWJPh (ORCPT
+        id S1727182AbfAWJQl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 04:15:37 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:43729 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726158AbfAWJPh (ORCPT
+        Wed, 23 Jan 2019 04:16:41 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:46548 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726158AbfAWJQl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 04:15:37 -0500
-Received: by mail-wr1-f65.google.com with SMTP id r10so1460742wrs.10;
-        Wed, 23 Jan 2019 01:15:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=V001b6OBjBCjuddvceJR/6UFdTow9JswknBvmYgzsH8=;
-        b=FVsiGJpKyPWmvI6wMtli9v3OM9BlG5Gb46AYx0M/zusxgOa2mJYDq+jpWc40o+iWpE
-         kVoMU9IfugyYgFJeM7SQCWwrq5QMF07eQQd+IE1aPEIxGrsZSjaY0HS6MMYmc/8r2UJU
-         SsTeNpQ73g/z7q2ZQ+sQzU90fKypNbU6WtvlAylubNKklmfB5oUHBgBxJdaKvpxo91ab
-         W1an7XswjP+60j6qra7jVw8DhiNOmI658QsV9xCFMiV132zMdY8kfI0UiPl9YrYOESsK
-         VSUneEs26LfoJNjF0qzx+lE1aKwvwHd1lHp/f5tnWVnNMWw8wMJ6j+j/jifgo8S8HSgY
-         hpIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=V001b6OBjBCjuddvceJR/6UFdTow9JswknBvmYgzsH8=;
-        b=pokP7snaG05g26DfdRDh69IDzKl1ZTNvHQwgYylVzAvx8Uzwl5faSu1N5Y7ZnlV+QR
-         /YsLG9Sx7ChWcQ0jEvWGxZcSHMhv9QdLFBoErUTWUpx2Gza4Ld4aoCUg+phxSsR1DsUN
-         3mkUYDjUFlk/gc+dRDlOMi7gRxPvYNmL8tM+jKnCoZ74SvJRaN+2b/j29B33WsCGWrli
-         iuLanFecdGGnCGbyeKTLD1/Wz+xNpfwCnZpJtzdf50H4B51kErzS0qACdu19zm4HVpk7
-         Y5N/Em4T9AlpgrkAwfbQp+5G8HUWGCMOygLgWDUbQLrf0WK5LVrnuMUwbTZzTyFnL3kg
-         F05Q==
-X-Gm-Message-State: AJcUukeESUunEvGIK6oSrFjitCOYx+rclGne7PjSl0dw8jtGfkZXmwMj
-        r3t/qu86+qAWtLL/ZN7UNtA=
-X-Google-Smtp-Source: ALg8bN4ZNef6cwVg6GdXMeKETULO7cZOXYQOMPTDFO/n7Ih5t+1qn0mbWfXRWKFgnYmPSg8NtvL9yw==
-X-Received: by 2002:a5d:5443:: with SMTP id w3mr1666077wrv.4.1548234934478;
-        Wed, 23 Jan 2019 01:15:34 -0800 (PST)
-Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
-        by smtp.gmail.com with ESMTPSA id p139sm113362746wmd.31.2019.01.23.01.15.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 23 Jan 2019 01:15:33 -0800 (PST)
-Date:   Wed, 23 Jan 2019 10:15:32 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, mperttunen@nvidia.com,
-        chunyan.zhang@unisoc.com, jonathanh@nvidia.com,
-        adrian.hunter@intel.com, ulf.hansson@linaro.org, anrao@nvidia.com,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
-Subject: Re: [PATCH V10 3/4] mmc: sdhci: Add ADMA3 DMA support for V4 enabled
- host
-Message-ID: <20190123091532.GB24072@ulmo>
-References: <1548186993-6229-1-git-send-email-skomatineni@nvidia.com>
- <1548186993-6229-3-git-send-email-skomatineni@nvidia.com>
+        Wed, 23 Jan 2019 04:16:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=nyFFw2tVuIIaX9gCZe5JJqss3pbgf7XHgJ577vpgrw4=; b=dGvn6phD00uBeGfvhOHwE8yUz
+        fM5EaB2YTK7DfvGTmXDA+Qjz/Y7Rc9lLsev1+dCh6+a8+Wl/NqK2ypYdzI1AiRXDij0FmxsO6iCYB
+        unL2wfhRhC9FGs5ToL7uq7nc5Y/gWjcRUUGzRrMurIDZ2qXncwj0feSJegbxu2yi/eRREuwdyWwBo
+        r62FX//wC4oAvS0Elry5sJhwOn3qKnsr4s+8WaAdKZ5/kEjF1APKsTD/oep87hcM/6W9PcoHH/9iC
+        q5rpgbzs/F1GrP57CVVS+Y6RJUM7+7oaO/52/u27HNDniETV4mKTx3vx9x6e2RmLJIvel4LjQio2c
+        vLjbcWFvw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gmEeD-0004Ra-0f; Wed, 23 Jan 2019 09:16:37 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 5E08220D1580D; Wed, 23 Jan 2019 10:16:34 +0100 (CET)
+Date:   Wed, 23 Jan 2019 10:16:34 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v6 05/16] sched/core: uclamp: Update CPU's refcount on
+ clamp changes
+Message-ID: <20190123091634.GT27931@hirez.programming.kicks-ass.net>
+References: <20190115101513.2822-1-patrick.bellasi@arm.com>
+ <20190115101513.2822-6-patrick.bellasi@arm.com>
+ <20190121153308.GL27931@hirez.programming.kicks-ass.net>
+ <20190121154412.fak2t2iquj3aixtu@e110439-lin>
+ <20190122093704.GM27931@hirez.programming.kicks-ass.net>
+ <20190122104305.6vjx37muqsxm536t@e110439-lin>
+ <20190122132817.GG13777@hirez.programming.kicks-ass.net>
+ <20190122140115.twtx646vewm757ca@e110439-lin>
+ <20190122145742.GQ27931@hirez.programming.kicks-ass.net>
+ <20190122153315.dhjl67sgpu74hmqv@e110439-lin>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="TakKZr9L6Hm6aLOc"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1548186993-6229-3-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <20190122153315.dhjl67sgpu74hmqv@e110439-lin>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jan 22, 2019 at 03:33:15PM +0000, Patrick Bellasi wrote:
+> On 22-Jan 15:57, Peter Zijlstra wrote:
+> > On Tue, Jan 22, 2019 at 02:01:15PM +0000, Patrick Bellasi wrote:
 
---TakKZr9L6Hm6aLOc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> > > Yes, I would say we have two options:
+> > > 
+> > >  1) SCHED_FLAG_KEEP_POLICY enforces all the scheduling class specific
+> > >     attributes, but cross class attributes (e.g. uclamp)
+> > >
+> > >  2) add SCHED_KEEP_NICE, SCHED_KEEP_PRIO, and SCED_KEEP_PARAMS
+> > >     and use them in the if conditions in D)
+> > 
+> > So the current KEEP_POLICY basically provides sched_setparam(), and
+> 
+> But it's not exposed user-space.
 
-On Tue, Jan 22, 2019 at 11:56:32AM -0800, Sowjanya Komatineni wrote:
-> Below are the supported DMA types in Host Control1 Register
-> with Version 4 enable
-> b'00 - SDMA
-> b'01 - Not Used
-> b'10 - ADMA2
-> b'11 - ADMA2 or ADMA3
->=20
-> ADMA3 uses Command Descriptor to issue an SD command.
-> A multi-block data transfer is performed by using a pair of CMD
-> descriptor and ADMA2 descriptor.
->=20
-> ADMA3 performs multiple of multi-block data transfer by using
-> Integrated Descriptor which is more suitable for Command Queuing
-> to fetch both Command and Transfer descriptors.
->=20
-> Host Capabilities register indiactes the supports of ADMA3 DMA.
->=20
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  [V10]: Changes are same as V9 except this series has SDHCI core changes
-> 	into seperate patch=20
->=20
->  drivers/mmc/host/sdhci.c | 9 ++++++++-
->  drivers/mmc/host/sdhci.h | 2 ++
->  2 files changed, 10 insertions(+), 1 deletion(-)
+Correct; not until your first patch indeed.
 
-Reviewed-by: Thierry Reding <treding@nvidia.com>
+> > given we have that as a syscall, that is supposedly a useful
+> > functionality.
+> 
+> For uclamp is definitively useful to change clamps without the need to
+> read beforehand the current policy params and use them in a following
+> set syscall... which is racy pattern.
 
---TakKZr9L6Hm6aLOc
-Content-Type: application/pgp-signature; name="signature.asc"
+Right; but my argument was mostly that if sched_setparam() is a useful
+interface, a 'pure' KEEP_POLICY would be too and your (1) looses that.
 
------BEGIN PGP SIGNATURE-----
+> > And I suppose the UTIL_CLAMP is !KEEP_UTIL; we could go either way
+> > around with that flag.
+> 
+> What about getting rid of the racy case above by exposing userspace
+> only the new UTIL_CLAMP and, on:
+> 
+>   sched_setscheduler(flags: UTIL_CLAMP)
+> 
+> we enforce the other two flags from the syscall:
+> 
+> ---8<---
+>         SYSCALL_DEFINE3(sched_setattr)
+>             if (attr.sched_flags & SCHED_FLAG_KEEP_POLICY) {
+>                 attr.sched_policy = SETPARAM_POLICY;
+>                 attr.sched_flags |= (KEEP_POLICY|KEEP_PARAMS);
+>             }
+> ---8<---
+> 
+> This will not make possible to change class and set flags in one go,
+> but honestly that's likely a very limited use-case, isn't it ?
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxIMLQACgkQ3SOs138+
-s6EavhAAudFsfnYNJZTEr8sMOY/ebBedQ38LJY9rBEVW8M4STWhN6P3wpbFT/nF0
-6K42ZkR0sogXsKpvmX+OrLE6nEK3rm/4jQnAa1VWgDXyPFb7up0oevMQ2vQ7Z6aM
-D1wJ/swiIfptDmI8jOAZg79giOHsSLCJ7LA4kq91nD/PZI7RCHUNpd6DIOd4nB3a
-pKE7XEOT8h9/voL9kt5KZuEPSo4rTnRssQvxn/e+63ovzeU9TljYpJ4vCRxC+EPT
-ClUDSbHzK/0FeAIG0mTR32v3OHlssrOFUDD1To6b48hVP7o5/WHwG+olkYTR2RhS
-GYDooX41OFuBFF7g491fYcJpXdoiCO0XdTqrLhPW0Oooe64DpFX/BHqA6yrotvBW
-nQ0L7mzhfTFXSlfXo4NcnnTPDvCw7dbKmv6SaS75p5MiJ6t4vGdSj+ZGJv3LntVw
-cGpPJ4y6MDZ6LCrEpZm5eV514tHezPMklY2DVKRJKPOqZF03mS06RQlSuNNbtpN2
-mJFdaL68fP41jY1+jUIdSLzbCIeX1uieHgLo9/VxbYHoqmWaWa0edTIhyvsUarHC
-cypLR6z649URlZLGgGf4lO9C14N6l5foFpPU5ucxvoxfpHpKiKXmYYvgsBy0buuW
-v9HLYwxiIcMzBmWbEh2cRfcsUGmATAGy0riLVcae2FL90L745q4=
-=FPU6
------END PGP SIGNATURE-----
+So I must admit to not seeing much use for sched_setparam() (and its
+equivalents) myself, but given it is an existing interface, I also think
+it would be nice to cover that functionality in the sched_setattr()
+call.
 
---TakKZr9L6Hm6aLOc--
+That is; I know of userspace priority-ceiling implementations using
+sched_setparam(), but I don't see any reason why that wouldn't also work
+with sched_setscheduler() (IOW always also set the policy).
+
+> > > In both cases the goal should be to return from code block D).
+> > 
+> > I don't think so; we really do want to 'goto change' for util changes
+> > too I think. Why duplicate part of that logic?
+> 
+> But that will force a dequeue/enqueue... isn't too much overhead just
+> to change a clamp value?
+
+These syscalls aren't what I consider fast paths anyway. However, there
+are people that rely on the scheduler syscalls not to schedule
+themselves, or rather be non-blocking (see for example that prio-ceiling
+implementation).
+
+And in that respect the newly introduced uclamp_mutex does appear to be
+a problem.
+
+Also; do you expect these clamp values to be changed often?
+
+> Perhaps we can also end up with some wired
+
+s/wired/weird/, right?
+
+> side-effects like the task being preempted ?
+
+Nothing worse than any other random reschedule would cause.
+
+> Consider also that the uclamp_task_update_active() added by this patch
+> not only has lower overhead but it will be use also by cgroups where
+> we want to force update all the tasks on a cgroup's clamp change.
+
+I haven't gotten that far; but I would prefer not to have two different
+'change' paths in __sched_setscheduler().
