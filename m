@@ -2,220 +2,105 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AE43C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:14:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77F0AC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:14:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7CF620870
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:14:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4363720870
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:14:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726435AbfAWOOd (ORCPT
+        id S1726832AbfAWOOk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 09:14:33 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41686 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726126AbfAWOOc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 09:14:32 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0CDFDA78;
-        Wed, 23 Jan 2019 06:14:32 -0800 (PST)
-Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1806C3F6A8;
-        Wed, 23 Jan 2019 06:14:28 -0800 (PST)
-Date:   Wed, 23 Jan 2019 14:14:26 +0000
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v6 05/16] sched/core: uclamp: Update CPU's refcount on
- clamp changes
-Message-ID: <20190123141426.5samtr4hl6okdypu@e110439-lin>
-References: <20190115101513.2822-6-patrick.bellasi@arm.com>
- <20190121153308.GL27931@hirez.programming.kicks-ass.net>
- <20190121154412.fak2t2iquj3aixtu@e110439-lin>
- <20190122093704.GM27931@hirez.programming.kicks-ass.net>
- <20190122104305.6vjx37muqsxm536t@e110439-lin>
- <20190122132817.GG13777@hirez.programming.kicks-ass.net>
- <20190122140115.twtx646vewm757ca@e110439-lin>
- <20190122145742.GQ27931@hirez.programming.kicks-ass.net>
- <20190122153315.dhjl67sgpu74hmqv@e110439-lin>
- <20190123091634.GT27931@hirez.programming.kicks-ass.net>
+        Wed, 23 Jan 2019 09:14:40 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:3410 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726175AbfAWOOj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 09:14:39 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 38E5CA7888;
+        Wed, 23 Jan 2019 14:14:39 +0000 (UTC)
+Received: from localhost (ovpn-12-42.pek2.redhat.com [10.72.12.42])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id BF5256C207;
+        Wed, 23 Jan 2019 14:14:35 +0000 (UTC)
+Date:   Wed, 23 Jan 2019 22:14:32 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Kairui Song <kasong@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de, bp@alien8.de,
+        mingo@redhat.com, hpa@zytor.com, jbohac@suse.cz,
+        adobriyan@gmail.com, akpm@linux-foundation.org, osandov@fb.com,
+        bhsharma@redhat.com, dyoung@redhat.com
+Subject: Re: [PATCH v2] x86/gart/kcore: Exclude GART aperture from kcore
+Message-ID: <20190123141432.GA19177@MiWiFi-R3L-srv>
+References: <20190102105408.7124-1-kasong@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190123091634.GT27931@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190102105408.7124-1-kasong@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Wed, 23 Jan 2019 14:14:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23-Jan 10:16, Peter Zijlstra wrote:
-> On Tue, Jan 22, 2019 at 03:33:15PM +0000, Patrick Bellasi wrote:
-> > On 22-Jan 15:57, Peter Zijlstra wrote:
-> > > On Tue, Jan 22, 2019 at 02:01:15PM +0000, Patrick Bellasi wrote:
-> 
-> > > > Yes, I would say we have two options:
-> > > > 
-> > > >  1) SCHED_FLAG_KEEP_POLICY enforces all the scheduling class specific
-> > > >     attributes, but cross class attributes (e.g. uclamp)
-> > > >
-> > > >  2) add SCHED_KEEP_NICE, SCHED_KEEP_PRIO, and SCED_KEEP_PARAMS
-> > > >     and use them in the if conditions in D)
-> > > 
-> > > So the current KEEP_POLICY basically provides sched_setparam(), and
-> > 
-> > But it's not exposed user-space.
-> 
-> Correct; not until your first patch indeed.
-> 
-> > > given we have that as a syscall, that is supposedly a useful
-> > > functionality.
-> > 
-> > For uclamp is definitively useful to change clamps without the need to
-> > read beforehand the current policy params and use them in a following
-> > set syscall... which is racy pattern.
-> 
-> Right; but my argument was mostly that if sched_setparam() is a useful
-> interface, a 'pure' KEEP_POLICY would be too and your (1) looses that.
+On 01/02/19 at 06:54pm, Kairui Song wrote:
+> diff --git a/arch/x86/kernel/aperture_64.c b/arch/x86/kernel/aperture_64.c
+> index 58176b56354e..c8a56f083419 100644
+> --- a/arch/x86/kernel/aperture_64.c
+> +++ b/arch/x86/kernel/aperture_64.c
+> @@ -14,6 +14,7 @@
+>  #define pr_fmt(fmt) "AGP: " fmt
+>  
+>  #include <linux/kernel.h>
+> +#include <linux/kcore.h>
+>  #include <linux/types.h>
+>  #include <linux/init.h>
+>  #include <linux/memblock.h>
+> @@ -57,7 +58,7 @@ int fallback_aper_force __initdata;
+>  
+>  int fix_aperture __initdata = 1;
+>  
+> -#ifdef CONFIG_PROC_VMCORE
+> +#if defined(CONFIG_PROC_VMCORE) || defined(CONFIG_PROC_KCORE)
+>  /*
+>   * If the first kernel maps the aperture over e820 RAM, the kdump kernel will
+>   * use the same range because it will remain configured in the northbridge.
+> @@ -66,7 +67,7 @@ int fix_aperture __initdata = 1;
+>   */
+>  static unsigned long aperture_pfn_start, aperture_page_count;
+>  
+> -static int gart_oldmem_pfn_is_ram(unsigned long pfn)
+> +static int gart_mem_pfn_is_ram(unsigned long pfn)
+>  {
+>  	return likely((pfn < aperture_pfn_start) ||
+>  		      (pfn >= aperture_pfn_start + aperture_page_count));
+> @@ -76,7 +77,12 @@ static void exclude_from_vmcore(u64 aper_base, u32 aper_order)
 
-Ok, that's an argument in favour of option (2).
+Shouldn't this function name be changed? It's not only handling vmcore
+stuff any more, but also kcore. And this function is not excluding, but
+resgistering.
 
-> > > And I suppose the UTIL_CLAMP is !KEEP_UTIL; we could go either way
-> > > around with that flag.
-> > 
-> > What about getting rid of the racy case above by exposing userspace
-> > only the new UTIL_CLAMP and, on:
-> > 
-> >   sched_setscheduler(flags: UTIL_CLAMP)
-> > 
-> > we enforce the other two flags from the syscall:
-> > 
-> > ---8<---
-> >         SYSCALL_DEFINE3(sched_setattr)
-> >             if (attr.sched_flags & SCHED_FLAG_KEEP_POLICY) {
-> >                 attr.sched_policy = SETPARAM_POLICY;
-> >                 attr.sched_flags |= (KEEP_POLICY|KEEP_PARAMS);
-> >             }
-> > ---8<---
-> > 
-> > This will not make possible to change class and set flags in one go,
-> > but honestly that's likely a very limited use-case, isn't it ?
-> 
-> So I must admit to not seeing much use for sched_setparam() (and its
-> equivalents) myself, but given it is an existing interface, I also think
-> it would be nice to cover that functionality in the sched_setattr()
-> call.
+Other than this, it looks good to me.
 
-Which will make them sort-of equivalent... meaning: both the POSIX
-sched_setparam() and the !POSIX sched_setattr() will allow to change
-params/attributes without changing the policy.
+Thanks
+Baoquan
 
-> That is; I know of userspace priority-ceiling implementations using
-> sched_setparam(), but I don't see any reason why that wouldn't also work
-> with sched_setscheduler() (IOW always also set the policy).
-
-The sched_setscheduler() requires a policy to be explicitely defined,
-it's a mandatory parameter and has to be specified.
-
-Unless a RT task could be blocked by a FAIR one and you need
-sched_setscheduler() to boost both prio and class (which looks like a
-poor RT design to begin with) why would you use sched_setscheduler()
-instead of sched_setparam()?
-
-They are both POSIX calls and, AFAIU, sched_setparam() seems to be
-designed exactly for those kind on use cases.
-
-> > > > In both cases the goal should be to return from code block D).
-> > > 
-> > > I don't think so; we really do want to 'goto change' for util changes
-> > > too I think. Why duplicate part of that logic?
-> > 
-> > But that will force a dequeue/enqueue... isn't too much overhead just
-> > to change a clamp value?
-> 
-> These syscalls aren't what I consider fast paths anyway. However, there
-> are people that rely on the scheduler syscalls not to schedule
-> themselves, or rather be non-blocking (see for example that prio-ceiling
-> implementation).
-> 
-> And in that respect the newly introduced uclamp_mutex does appear to be
-> a problem.
-
-Mmm... could be... I'll look better into it. Could be that that mutex
-is not really required. We don't need to serialize task specific
-clamp changes and anyway the protected code never sleeps and uses
-atomic instruction.
-
-> Also; do you expect these clamp values to be changed often?
-
-Not really, the most common use cases are:
- a) a resource manager (e.g. the Android run-time) set clamps for a
-    bunch of tasks whenever you switch for example from one app to
-    antoher... but that will be done via cgroups (i.e. different path)
- b) a task can relax his constraints to save energy (something
-    conceptually similar to use a deferrable timers)
-
-In both cases I expect a limited call frequency.
-
-> > Perhaps we can also end up with some wired
-> 
-> s/wired/weird/, right?
-
-Right :)
-
-> > side-effects like the task being preempted ?
-> 
-> Nothing worse than any other random reschedule would cause.
-> 
-> > Consider also that the uclamp_task_update_active() added by this patch
-> > not only has lower overhead but it will be use also by cgroups where
-> > we want to force update all the tasks on a cgroup's clamp change.
-> 
-> I haven't gotten that far; but I would prefer not to have two different
-> 'change' paths in __sched_setscheduler().
-
-Yes, I agree that two paths in __sched_setscheduler() could be
-confusing. Still we have to consider that here we are adding
-"not class specific" attributes.
-
-What if we keep "not class specific" code completely outside of
-__sched_setscheduler() and do something like:
-
----8<---
-    int sched_setattr(struct task_struct *p, const struct sched_attr *attr)
-    {
-            retval = __sched_setattr(p, attr);
-            if (retval)
-                return retval;
-            return __sched_setscheduler(p, attr, true, true);
-    }
-    EXPORT_SYMBOL_GPL(sched_setattr);
----8<---
-
-where __sched_setattr() will collect all the tunings which do not
-require an enqueue/dequeue, so far only the new uclamp settings, while
-the rest remains under __sched_setscheduler().
-
-Thoughts ?
-
--- 
-#include <best/regards.h>
-
-Patrick Bellasi
+>  {
+>  	aperture_pfn_start = aper_base >> PAGE_SHIFT;
+>  	aperture_page_count = (32 * 1024 * 1024) << aper_order >> PAGE_SHIFT;
+> -	WARN_ON(register_oldmem_pfn_is_ram(&gart_oldmem_pfn_is_ram));
+> +#ifdef CONFIG_PROC_VMCORE
+> +	WARN_ON(register_oldmem_pfn_is_ram(&gart_mem_pfn_is_ram));
+> +#endif
+> +#ifdef CONFIG_PROC_KCORE
+> +	WARN_ON(register_mem_pfn_is_ram(&gart_mem_pfn_is_ram));
+> +#endif
+>  }
+>  #else
+>  static void exclude_from_vmcore(u64 aper_base, u32 aper_order)
