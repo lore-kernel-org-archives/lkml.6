@@ -2,101 +2,78 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83038C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:53:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4401EC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:56:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 531DE20861
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:53:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548237187;
-	bh=HF9eJMFJxhcLLoRHjywiWFMXig3DHPntZ6ReryupSo4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=LICRQLgKc3M3U7MyuG5PXy+IOJIrtH46cjJI9YvvJ9L/lzOXI4O1T885yDHwJpfP/
-	 AUu4GaqCFtdIRMa6jI9dZB9UsWV2c5/MTxgg3WeTFHXxuGl+4VILVFl8QtlCWUebQP
-	 i/CbhkIhOoqJjagYL5m2bCBOuhBx1rXiadgnSL3U=
+	by mail.kernel.org (Postfix) with ESMTP id 1D52920861
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:56:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727371AbfAWJxF (ORCPT
+        id S1727297AbfAWJ4G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 04:53:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51594 "EHLO mail.kernel.org"
+        Wed, 23 Jan 2019 04:56:06 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:46222 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727075AbfAWJxD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 04:53:03 -0500
-Received: from bbrezillon (unknown [91.160.177.164])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726804AbfAWJ4F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 04:56:05 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8D22220861;
-        Wed, 23 Jan 2019 09:52:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548237182;
-        bh=HF9eJMFJxhcLLoRHjywiWFMXig3DHPntZ6ReryupSo4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=AAOQb4aL46H8730kX9v8dQYrlcrWKckmvMVuCxONgxV1uj7voN9aChjhPj3+lsUKS
-         c+wSCwluwefmmiIER48K8je53BT9nk+1LXOmQ+YoV6k3eyWxDPyeIuniZ1KKpNS/ts
-         B/7H/E0voNVMlPBfZe44gXjjtd+wgPXFklpfEP+g=
-Date:   Wed, 23 Jan 2019 10:52:53 +0100
-From:   Boris Brezillon <bbrezillon@kernel.org>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     <robert.jarzmik@free.fr>, <dwmw2@infradead.org>,
-        <computersforpeace@gmail.com>, <marek.vasut@gmail.com>,
-        <richard@nod.at>, <linux-kernel@vger.kernel.org>,
-        <linux-mtd@lists.infradead.org>
-Subject: Re: [PATCH -next] mtd: docg3: Fix passing zero to 'PTR_ERR' warning
- in doc_probe_device
-Message-ID: <20190123105253.1f4487f2@bbrezillon>
-In-Reply-To: <86533285-e800-5cc0-f495-88fff8326b5a@huawei.com>
-References: <20190123065827.16748-1-yuehaibing@huawei.com>
-        <20190123101253.243add9d@bbrezillon>
-        <86533285-e800-5cc0-f495-88fff8326b5a@huawei.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        by mx1.redhat.com (Postfix) with ESMTPS id C95AD89ACB;
+        Wed, 23 Jan 2019 09:56:05 +0000 (UTC)
+Received: from jason-ThinkPad-T450s.redhat.com (ovpn-12-89.pek2.redhat.com [10.72.12.89])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 549CB60168;
+        Wed, 23 Jan 2019 09:55:59 +0000 (UTC)
+From:   Jason Wang <jasowang@redhat.com>
+To:     virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jasowang@redhat.com
+Cc:     mst@redhat.com, kvm@vger.kernel.org
+Subject: [PATCH net-next V4 0/5] vhost: accelerate metadata access through vmap()
+Date:   Wed, 23 Jan 2019 17:55:52 +0800
+Message-Id: <20190123095557.30168-1-jasowang@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 23 Jan 2019 09:56:05 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 23 Jan 2019 17:43:58 +0800
-YueHaibing <yuehaibing@huawei.com> wrote:
+This series tries to access virtqueue metadata through kernel virtual
+address instead of copy_user() friends since they had too much
+overheads like checks, spec barriers or even hardware feature
+toggling.
 
-> On 2019/1/23 17:12, Boris Brezillon wrote:
-> > On Wed, 23 Jan 2019 14:58:27 +0800
-> > YueHaibing <yuehaibing@huawei.com> wrote:
-> >   
-> >> Fix a static code checker warning:
-> >> drivers/mtd/devices/docg3.c:1875
-> >>  doc_probe_device() warn: passing zero to 'ERR_PTR'
-> >>
-> >> Fixes: ae9d4934b2d7 ("mtd: docg3: add multiple floor support")
-> >> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> >> ---
-> >>  drivers/mtd/devices/docg3.c | 2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/mtd/devices/docg3.c b/drivers/mtd/devices/docg3.c
-> >> index 4c94fc0..60ddc38 100644
-> >> --- a/drivers/mtd/devices/docg3.c
-> >> +++ b/drivers/mtd/devices/docg3.c
-> >> @@ -1872,7 +1872,7 @@ doc_probe_device(struct docg3_cascade *cascade, int floor, struct device *dev)
-> >>  nomem2:
-> >>  	kfree(docg3);
-> >>  nomem1:
-> >> -	return ERR_PTR(ret);
-> >> +	return ret ? ERR_PTR(ret) : NULL;
-> >>  }
-> >>    
-> > 
-> > This is not the right fix, you should instead set ret to -EINVAL:  
-> 
-> Thanks , will fix it in v2.
-> 
-> And seems doc_probe_device cannot return NULL. The NULL check of doc_probe_device
-> in docg3_probe also can been removed, right?
+Test shows about 24% improvement on TX PPS. It should benefit other
+cases as well.
 
-Hm, looks like the ret = 0 was intentional (to identify when ID is
-invalid). Let's just keep your initial patch.
+Changes from V3:
+- don't try to use vmap for file backed pages
+- rebase to master
+Changes from V2:
+- fix buggy range overlapping check
+- tear down MMU notifier during vhost ioctl to make sure invalidation
+  request can read metadata userspace address and vq size without
+  holding vq mutex.
+Changes from V1:
+- instead of pinning pages, use MMU notifier to invalidate vmaps and
+  remap duing metadata prefetch
+- fix build warning on MIPS
+
+Jason Wang (5):
+  vhost: generalize adding used elem
+  vhost: fine grain userspace memory accessors
+  vhost: rename vq_iotlb_prefetch() to vq_meta_prefetch()
+  vhost: introduce helpers to get the size of metadata area
+  vhost: access vq metadata through kernel virtual address
+
+ drivers/vhost/net.c   |   4 +-
+ drivers/vhost/vhost.c | 441 +++++++++++++++++++++++++++++++++++++-----
+ drivers/vhost/vhost.h |  15 +-
+ mm/shmem.c            |   1 +
+ 4 files changed, 410 insertions(+), 51 deletions(-)
+
+-- 
+2.17.1
+
