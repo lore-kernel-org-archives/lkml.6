@@ -2,120 +2,92 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63D4AC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 12:49:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16A30C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 12:51:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F01F20870
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 12:49:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="faqctQH+"
+	by mail.kernel.org (Postfix) with ESMTP id D432D21726
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 12:51:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726304AbfAWMti (ORCPT
+        id S1726296AbfAWMvQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 07:49:38 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:37493 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726100AbfAWMti (ORCPT
+        Wed, 23 Jan 2019 07:51:16 -0500
+Received: from mgwkm02.jp.fujitsu.com ([202.219.69.169]:53653 "EHLO
+        mgwkm02.jp.fujitsu.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726029AbfAWMvP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 07:49:38 -0500
-Received: by mail-vs1-f68.google.com with SMTP id n13so1213786vsk.4
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 04:49:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fg8tm4ujmdwme+GYgwItmtfVDjIcodldM6MBnJ+XuhY=;
-        b=faqctQH+kG/xc39NIpC8/AZk1cU5SDeLRNYS8e1AwKdIZpX3qFkBRHw+a629T/IIdt
-         SnPcVv0uNGwU6jyuHyNrs6WwNmZZ0sXCImuEPF7/8FYmZ0DHvqf3wN9nq3tkMYV/A6En
-         aWV6NOnBtSJZzobHd5oZoSC+pmYChw8SqWhuI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fg8tm4ujmdwme+GYgwItmtfVDjIcodldM6MBnJ+XuhY=;
-        b=R1YftJ7lVcIyB4cbh83JDjRyWQXP03m7/DSGl/yhWxYovTC9+phQtiJQ98ta4F5nKY
-         2HhFPRJLM86goK7md1D6fdBkcespOKmWFrxi9djLfeUvqRPYN0EvzJnRo6WZT4uGPINC
-         kbThcAn856BxPWqGKL0rqaY9dInU0tMVg0OonbRh0zNhKYZU1C6IO5zORqj3SYJHbKWq
-         H3kMMs8BJ4Nl50Glh9BlanqTYKdKJtcMTh9j43qCFgxfpENv4LhPxWBKJ6MZSfeEWJSZ
-         BpH9sCXWU3+4ZACeo4qEefY1VovMTqAhXl5dVVmWFSuQmaxtyPn/nzR+zmrUp83HLLul
-         axOA==
-X-Gm-Message-State: AJcUukcWi5DQgXsxE/VQaHxqYEzN19MxI4aCIC/JHX8pzEDBLwfDsjSm
-        YNGk/01w9ahj+wnVSoMr04j4FGstV33VqvSlY5OQqg==
-X-Google-Smtp-Source: ALg8bN5E+XntigXtqrr+hkOUW5i89svT1sDE+osBsMg87NtF5kZUIijSMVDo/7ghk7P6KH4Doga6skjmObZM9SYUUDw=
-X-Received: by 2002:a67:d00f:: with SMTP id r15mr774169vsi.191.1548247776934;
- Wed, 23 Jan 2019 04:49:36 -0800 (PST)
+        Wed, 23 Jan 2019 07:51:15 -0500
+Received: from kw-mxoi1.gw.nic.fujitsu.com (unknown [192.168.231.131]) by mgwkm02.jp.fujitsu.com with smtp
+         id 1472_10b5_ea807b26_0004_410e_897d_635f5e36908c;
+        Wed, 23 Jan 2019 21:51:11 +0900
+Received: from g01jpfmpwkw02.exch.g01.fujitsu.local (g01jpfmpwkw02.exch.g01.fujitsu.local [10.0.193.56])
+        by kw-mxoi1.gw.nic.fujitsu.com (Postfix) with ESMTP id 89730AC0108
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 21:51:11 +0900 (JST)
+Received: from G01JPEXCHKW17.g01.fujitsu.local (G01JPEXCHKW17.g01.fujitsu.local [10.0.194.56])
+        by g01jpfmpwkw02.exch.g01.fujitsu.local (Postfix) with ESMTP id 58EC2328726;
+        Wed, 23 Jan 2019 21:51:10 +0900 (JST)
+Received: from G01JPEXMBKW03.g01.fujitsu.local ([10.0.194.67]) by
+ g01jpexchkw17 ([10.0.194.56]) with mapi id 14.03.0415.000; Wed, 23 Jan 2019
+ 21:51:10 +0900
+From:   "Zhang, Lei" <zhang.lei@jp.fujitsu.com>
+To:     'Mark Rutland' <mark.rutland@arm.com>,
+        "'james.morse@arm.com'" <james.morse@arm.com>
+CC:     "'catalin.marinas@arm.com'" <catalin.marinas@arm.com>,
+        "'will.deacon@arm.com'" <will.deacon@arm.com>,
+        "'linux-arm-kernel@lists.infradead.org'" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
+        "Zhang, Lei" <zhang.lei@jp.fujitsu.com>
+Subject: RE: [PATCH] arm64 memory accesses may cause undefined fault on
+ Fujitsu-A64FX
+Thread-Topic: [PATCH] arm64 memory accesses may cause undefined fault on
+ Fujitsu-A64FX
+Thread-Index: AdSvK6W0/Nm6810RQFa/OOuw1JbhXP//gw+A//n57fCADGG/gP/+BGiA
+Date:   Wed, 23 Jan 2019 12:51:08 +0000
+Message-ID: <8898674D84E3B24BA3A2D289B872026A6A2A3BED@G01JPEXMBKW03>
+References: <8898674D84E3B24BA3A2D289B872026A6A29FA8F@G01JPEXMBKW03>
+ <20190118141758.GC12256@lakrids.cambridge.arm.com>
+ <8898674D84E3B24BA3A2D289B872026A6A2A2F44@G01JPEXMBKW03>
+ <20190122152339.GD52887@lakrids.cambridge.arm.com>
+In-Reply-To: <20190122152339.GD52887@lakrids.cambridge.arm.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-securitypolicycheck: OK by SHieldMailChecker v2.2.3
+x-shieldmailcheckerpolicyversion: FJ-ISEC-20140219
+x-originating-ip: [10.18.70.198]
+Content-Type: text/plain; charset="iso-2022-jp"
 MIME-Version: 1.0
-References: <20190122152151.16139-6-gregkh@linuxfoundation.org>
-In-Reply-To: <20190122152151.16139-6-gregkh@linuxfoundation.org>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 23 Jan 2019 13:49:00 +0100
-Message-ID: <CAPDyKFrLn=gTz80sw5f4W=0W86p9Ktj3Zo1b+4R-YZd-sbRNzA@mail.gmail.com>
-Subject: Re: [PATCH] power: domain: no need to check return value of
- debugfs_create functions
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Len Brown <len.brown@intel.com>,
-        Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-SecurityPolicyCheck-GC: OK by FENCE-Mail
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 22 Jan 2019 at 16:23, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> When calling debugfs functions, there is no need to ever check the
-> return value.  The function can work or not, but the code logic should
-> never do something different based on this.
->
-> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> Cc: Kevin Hilman <khilman@kernel.org>
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Cc: Len Brown <len.brown@intel.com>
-> Cc: linux-pm@vger.kernel.org
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Hi, Mark, James
+> -----Original Message-----
+> From: Mark Rutland [mailto:mark.rutland@arm.com]
+> Sent: Wednesday, January 23, 2019 12:24 AM
+> To: Zhang, Lei/張 雷
+> Cc: 'catalin.marinas@arm.com'; 'will.deacon@arm.com';
+> 'linux-arm-kernel@lists.infradead.org';
+> 'linux-kernel@vger.kernel.org'
+> Subject: Re: [PATCH] arm64 memory accesses may cause undefined fault on
+> Fujitsu-A64FX
+> 
+ 
+> As above, I'm very concerned that this could be taken from kernel
+> context. There are a number of cases where we cannot handle such faults:
+At first thanks for your comments. 
+I thinks James's comments is quite similar with above comment.
+I am reviewing this point now.
+I will respond to your questions after I check this.
 
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Thanks
+Lei Zhang
 
-Kind regards
-Uffe
 
-> ---
->  drivers/base/power/domain.c | 11 ++---------
->  1 file changed, 2 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> index 500de1dee967..45eafe8cf7dd 100644
-> --- a/drivers/base/power/domain.c
-> +++ b/drivers/base/power/domain.c
-> @@ -2948,18 +2948,11 @@ static int __init genpd_debug_init(void)
->
->         genpd_debugfs_dir = debugfs_create_dir("pm_genpd", NULL);
->
-> -       if (!genpd_debugfs_dir)
-> -               return -ENOMEM;
-> -
-> -       d = debugfs_create_file("pm_genpd_summary", S_IRUGO,
-> -                       genpd_debugfs_dir, NULL, &summary_fops);
-> -       if (!d)
-> -               return -ENOMEM;
-> +       debugfs_create_file("pm_genpd_summary", S_IRUGO, genpd_debugfs_dir,
-> +                           NULL, &summary_fops);
->
->         list_for_each_entry(genpd, &gpd_list, gpd_list_node) {
->                 d = debugfs_create_dir(genpd->name, genpd_debugfs_dir);
-> -               if (!d)
-> -                       return -ENOMEM;
->
->                 debugfs_create_file("current_state", 0444,
->                                 d, genpd, &status_fops);
-> --
-> 2.20.1
->
