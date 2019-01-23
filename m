@@ -2,198 +2,222 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5CFDC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 16:44:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D337EC41518
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 16:45:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A57B2085A
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 16:44:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uJb4l3RO"
+	by mail.kernel.org (Postfix) with ESMTP id 9FCF02085A
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 16:45:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726243AbfAWQoh (ORCPT
+        id S1726361AbfAWQpB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 11:44:37 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:45748 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725999AbfAWQog (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 11:44:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=SKfebThuFP0F4/tsnjwY/Fkl9hfWgsMdV6Ea2OHbvZg=; b=uJb4l3ROyIAyG5uiVgaTMZv5D
-        WWjRjourlA5lpyLeZF4u1U4oeCKY7/kumhBnHvOCVjDhcLoPG60RfXnvgmCcNFGR95591Y90rlswA
-        h9UedfXtVL1DV+RJnzgOtAE0hn7E3WcFylC+vHasMQh/pVUnvDmEPOQQ1hrFbIkDzWpJuBVAcisXJ
-        ncdQS4oZhMnJCWu6cAIYrq7xX5XB1CHNGlalJ4Vn06gMf9pLP3rYJc4Sbw9l+OtGiWeqGl8o3BMM2
-        9NA27NAOmLpL9RoQQTSDtH4V+OPfKBkRVpWVeh5CRL+p/JfetEtXEFf/v2ulJqh99aZ+WdhwhKLuf
-        jNlqzO0ug==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gmLdc-0002OQ-9E; Wed, 23 Jan 2019 16:44:28 +0000
-Date:   Wed, 23 Jan 2019 08:44:28 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Alex Deucher <alexdeucher@gmail.com>,
-        Michel =?iso-8859-1?Q?D=E4nzer?= <michel@daenzer.net>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        David Airlie <airlied@linux.ie>, Huang Rui <ray.huang@amd.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Junwei Zhang <Jerry.Zhang@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sean Paul <sean@poorly.run>,
-        Christian Koenig <christian.koenig@amd.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [RFC PATCH] drm: disable WC optimization for cache coherent
- devices on non-x86
-Message-ID: <20190123164428.GA9367@infradead.org>
-References: <ccc775d3-3053-ab79-dac8-4feb28e8e690@daenzer.net>
- <CAKv+Gu-9VKL5RjScbKss4YfH1Cb8WbXmzU_0UsStnoXJcML7Rg@mail.gmail.com>
- <850b6aee-0040-c333-b125-45211c18ada5@daenzer.net>
- <CAKv+Gu99zHqcQtj6TiOXAr3Qa6WWhKem+DHVA_mAQ0-Bc0Vbqw@mail.gmail.com>
- <047667fd-17be-1c37-5d2a-26768cfd6ab8@daenzer.net>
- <CAKv+Gu_VBd8agHASc5RS0eCgyXP64Lt_i4yPuBjKwGQ+5Lpd5Q@mail.gmail.com>
- <CADnq5_O1uxCrSksfF127AZTfbmdukxmqGdh2Ee0zM6CqgG_Mhg@mail.gmail.com>
- <CAKv+Gu-4uYh_HD_5Ry_L80Nf5zpRhT4oJYhhG5_8g3gSzBs2tg@mail.gmail.com>
- <20190123071521.GB20526@infradead.org>
- <CAKv+Gu8+77uZHJ6ZYjGNcKQL8C3cT5Ree+TcTVmkQXAHV-ADyg@mail.gmail.com>
+        Wed, 23 Jan 2019 11:45:01 -0500
+Received: from mx3.molgen.mpg.de ([141.14.17.11]:37445 "EHLO mx1.molgen.mpg.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725871AbfAWQpA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 11:45:00 -0500
+Received: from keineahnung.molgen.mpg.de (keineahnung.molgen.mpg.de [141.14.17.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: pmenzel)
+        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 246B120135342E;
+        Wed, 23 Jan 2019 17:44:58 +0100 (CET)
+Subject: [PATCH v2] ipmi:pci: Blacklist a Realtek "IPMI" device
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     stable@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
+        LKML <linux-kernel@vger.kernel.org>, it+lkml@molgen.mpg.de
+References: <8520014d-6805-ce87-143d-fffbeb94d11d@molgen.mpg.de>
+ <78de72f8-e218-f91f-97b2-768ff5a920e4@acm.org>
+ <9ca94005-e2e4-cd5a-67bd-30c3d8680281@molgen.mpg.de>
+ <fe18b975-a577-8b09-c1cc-488356fc60a7@molgen.mpg.de>
+ <20190123163211.GA31955@kroah.com>
+From:   Paul Menzel <pmenzel@molgen.mpg.de>
+Message-ID: <cc8b4831-73bf-5f18-ebaa-e0fa6c3d5366@molgen.mpg.de>
+Date:   Wed, 23 Jan 2019 17:44:57 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKv+Gu8+77uZHJ6ZYjGNcKQL8C3cT5Ree+TcTVmkQXAHV-ADyg@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20190123163211.GA31955@kroah.com>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms080000080507070506000708"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I think we just want a driver-local check for those combinations
-where we know this hack actually works, which really just seems
-to be x86-64 with PAT. Something like the patch below, but maybe with
-even more strong warnings to not do something like this elsewhere:
+This is a cryptographically signed message in MIME format.
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
-index 728e15e5d68a..5fe657f20232 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
-@@ -456,33 +456,16 @@ static int amdgpu_bo_do_create(struct amdgpu_device *adev,
- 
- 	bo->flags = bp->flags;
- 
--#ifdef CONFIG_X86_32
--	/* XXX: Write-combined CPU mappings of GTT seem broken on 32-bit
--	 * See https://bugs.freedesktop.org/show_bug.cgi?id=84627
--	 */
--	bo->flags &= ~AMDGPU_GEM_CREATE_CPU_GTT_USWC;
--#elif defined(CONFIG_X86) && !defined(CONFIG_X86_PAT)
--	/* Don't try to enable write-combining when it can't work, or things
--	 * may be slow
--	 * See https://bugs.freedesktop.org/show_bug.cgi?id=88758
--	 */
--
--#ifndef CONFIG_COMPILE_TEST
--#warning Please enable CONFIG_MTRR and CONFIG_X86_PAT for better performance \
--	 thanks to write-combining
--#endif
--
--	if (bo->flags & AMDGPU_GEM_CREATE_CPU_GTT_USWC)
--		DRM_INFO_ONCE("Please enable CONFIG_MTRR and CONFIG_X86_PAT for "
--			      "better performance thanks to write-combining\n");
--	bo->flags &= ~AMDGPU_GEM_CREATE_CPU_GTT_USWC;
--#else
--	/* For architectures that don't support WC memory,
--	 * mask out the WC flag from the BO
-+	/*
-+	 * Don't try to enable write-combined CPU mappings unless we 100%
-+	 * positively know it works, otherwise there may be dragons.
-+	 *
-+	 * See:
-+	 *  - https://bugs.freedesktop.org/show_bug.cgi?id=88758
-+	 *  - https://bugs.freedesktop.org/show_bug.cgi?id=84627
- 	 */
--	if (!drm_arch_can_wc_memory())
-+	if (!(IS_ENABLED(CONFIG_X86_64) && IS_ENABLED(CONFIG_X86_PAT)))
- 		bo->flags &= ~AMDGPU_GEM_CREATE_CPU_GTT_USWC;
--#endif
- 
- 	bo->tbo.bdev = &adev->mman.bdev;
- 	amdgpu_bo_placement_from_domain(bo, bp->domain);
-diff --git a/drivers/gpu/drm/radeon/radeon_object.c b/drivers/gpu/drm/radeon/radeon_object.c
-index 833e909706a9..c1fb5ad4ab9a 100644
---- a/drivers/gpu/drm/radeon/radeon_object.c
-+++ b/drivers/gpu/drm/radeon/radeon_object.c
-@@ -226,32 +226,17 @@ int radeon_bo_create(struct radeon_device *rdev,
- 	if (rdev->family >= CHIP_RV610 && rdev->family <= CHIP_RV635)
- 		bo->flags &= ~(RADEON_GEM_GTT_WC | RADEON_GEM_GTT_UC);
- 
--#ifdef CONFIG_X86_32
--	/* XXX: Write-combined CPU mappings of GTT seem broken on 32-bit
--	 * See https://bugs.freedesktop.org/show_bug.cgi?id=84627
--	 */
--	bo->flags &= ~(RADEON_GEM_GTT_WC | RADEON_GEM_GTT_UC);
--#elif defined(CONFIG_X86) && !defined(CONFIG_X86_PAT)
--	/* Don't try to enable write-combining when it can't work, or things
--	 * may be slow
--	 * See https://bugs.freedesktop.org/show_bug.cgi?id=88758
--	 */
--#ifndef CONFIG_COMPILE_TEST
--#warning Please enable CONFIG_MTRR and CONFIG_X86_PAT for better performance \
--	 thanks to write-combining
--#endif
- 
--	if (bo->flags & RADEON_GEM_GTT_WC)
--		DRM_INFO_ONCE("Please enable CONFIG_MTRR and CONFIG_X86_PAT for "
--			      "better performance thanks to write-combining\n");
--	bo->flags &= ~(RADEON_GEM_GTT_WC | RADEON_GEM_GTT_UC);
--#else
--	/* For architectures that don't support WC memory,
--	 * mask out the WC flag from the BO
-+	/*
-+	 * Don't try to enable write-combined CPU mappings unless we 100%
-+	 * positively know it works, otherwise there may be dragons.
-+	 *
-+	 * See:
-+	 *  - https://bugs.freedesktop.org/show_bug.cgi?id=88758
-+	 *  - https://bugs.freedesktop.org/show_bug.cgi?id=84627
- 	 */
--	if (!drm_arch_can_wc_memory())
--		bo->flags &= ~RADEON_GEM_GTT_WC;
--#endif
-+	if (!(IS_ENABLED(CONFIG_X86_64) && IS_ENABLED(CONFIG_X86_PAT)))
-+		bo->flags &= ~(RADEON_GEM_GTT_WC | RADEON_GEM_GTT_UC);
- 
- 	radeon_ttm_placement_from_domain(bo, domain);
- 	/* Kernel allocation are uninterruptible */
-diff --git a/include/drm/drm_cache.h b/include/drm/drm_cache.h
-index bfe1639df02d..6c3960f4c477 100644
---- a/include/drm/drm_cache.h
-+++ b/include/drm/drm_cache.h
-@@ -40,16 +40,4 @@ void drm_clflush_sg(struct sg_table *st);
- void drm_clflush_virt_range(void *addr, unsigned long length);
- u64 drm_get_max_iomem(void);
- 
--
--static inline bool drm_arch_can_wc_memory(void)
--{
--#if defined(CONFIG_PPC) && !defined(CONFIG_NOT_COHERENT_CACHE)
--	return false;
--#elif defined(CONFIG_MIPS) && defined(CONFIG_CPU_LOONGSON3)
--	return false;
--#else
--	return true;
--#endif
--}
--
- #endif
+--------------ms080000080507070506000708
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
+From: Corey Minyard <cminyard@mvista.com>
+Date: Thu, 15 Feb 2018 16:58:26 -0600
+
+[ upstream commit bc48fa1b9d3b04106055b27078da824cd209865a ]
+
+Realtek has some sort of "Virtual" IPMI device on the PCI bus as a
+KCS controller, but whatever it is, it's not one.  Ignore it if seen.
+
+Reported-by: Chris Chiu <chiu@endlessm.com>
+Signed-off-by: Corey Minyard <cminyard@mvista.com>
+Tested-by: Daniel Drake <drake@endlessm.com>
+
+[ Commit 13d0b35c (ipmi_si: Move PCI setup to another file) from Linux
+  4.15-rc1 has not been back ported, so the PCI code is still in
+  `drivers/char/ipmi/ipmi_si_intf.c`, requiring to apply the commit
+  manually.
+
+  This fixes a 100 s boot delay on the HP EliteDesk 705 G4 MT with Linux
+  4.14.94. ]
+
+Signed-off-by: Paul Menzel <pmenzel@molgen.mpg.de>
+---
+
+v2: Use tabs. Sorry for messing that up.
+
+ drivers/char/ipmi/ipmi_si_intf.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/drivers/char/ipmi/ipmi_si_intf.c b/drivers/char/ipmi/ipmi_si=
+_intf.c
+index c04aa11f0e21..a106cf7b5ee0 100644
+--- a/drivers/char/ipmi/ipmi_si_intf.c
++++ b/drivers/char/ipmi/ipmi_si_intf.c
+@@ -2447,6 +2447,15 @@ static int ipmi_pci_probe_regspacing(struct smi_in=
+fo *info)
+ 	return DEFAULT_REGSPACING;
+ }
+=20
++static struct pci_device_id ipmi_pci_blacklist[] =3D {
++	/*
++	 * This is a "Virtual IPMI device", whatever that is.  It appears
++	 * as a KCS device by the class, but it is not one.
++	 */
++	{ PCI_VDEVICE(REALTEK, 0x816c) },
++	{ 0, }
++};
++
+ static int ipmi_pci_probe(struct pci_dev *pdev,
+ 				    const struct pci_device_id *ent)
+ {
+@@ -2454,6 +2463,9 @@ static int ipmi_pci_probe(struct pci_dev *pdev,
+ 	int class_type =3D pdev->class & PCI_ERMC_CLASSCODE_TYPE_MASK;
+ 	struct smi_info *info;
+=20
++	if (pci_match_id(ipmi_pci_blacklist, pdev))
++		return -ENODEV;
++
+ 	info =3D smi_info_alloc();
+ 	if (!info)
+ 		return -ENOMEM;
+--=20
+2.17.1
+
+
+--------------ms080000080507070506000708
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
+EFowggUSMIID+qADAgECAgkA4wvV+K8l2YEwDQYJKoZIhvcNAQELBQAwgYIxCzAJBgNVBAYT
+AkRFMSswKQYDVQQKDCJULVN5c3RlbXMgRW50ZXJwcmlzZSBTZXJ2aWNlcyBHbWJIMR8wHQYD
+VQQLDBZULVN5c3RlbXMgVHJ1c3QgQ2VudGVyMSUwIwYDVQQDDBxULVRlbGVTZWMgR2xvYmFs
+Um9vdCBDbGFzcyAyMB4XDTE2MDIyMjEzMzgyMloXDTMxMDIyMjIzNTk1OVowgZUxCzAJBgNV
+BAYTAkRFMUUwQwYDVQQKEzxWZXJlaW4genVyIEZvZXJkZXJ1bmcgZWluZXMgRGV1dHNjaGVu
+IEZvcnNjaHVuZ3NuZXR6ZXMgZS4gVi4xEDAOBgNVBAsTB0RGTi1QS0kxLTArBgNVBAMTJERG
+Ti1WZXJlaW4gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkgMjCCASIwDQYJKoZIhvcNAQEBBQAD
+ggEPADCCAQoCggEBAMtg1/9moUHN0vqHl4pzq5lN6mc5WqFggEcVToyVsuXPztNXS43O+FZs
+FVV2B+pG/cgDRWM+cNSrVICxI5y+NyipCf8FXRgPxJiZN7Mg9mZ4F4fCnQ7MSjLnFp2uDo0p
+eQcAIFTcFV9Kltd4tjTTwXS1nem/wHdN6r1ZB+BaL2w8pQDcNb1lDY9/Mm3yWmpLYgHurDg0
+WUU2SQXaeMpqbVvAgWsRzNI8qIv4cRrKO+KA3Ra0Z3qLNupOkSk9s1FcragMvp0049ENF4N1
+xDkesJQLEvHVaY4l9Lg9K7/AjsMeO6W/VRCrKq4Xl14zzsjz9AkH4wKGMUZrAcUQDBHHWekC
+AwEAAaOCAXQwggFwMA4GA1UdDwEB/wQEAwIBBjAdBgNVHQ4EFgQUk+PYMiba1fFKpZFK4OpL
+4qIMz+EwHwYDVR0jBBgwFoAUv1kgNgB5oKAia4zV8mHSuCzLgkowEgYDVR0TAQH/BAgwBgEB
+/wIBAjAzBgNVHSAELDAqMA8GDSsGAQQBga0hgiwBAQQwDQYLKwYBBAGBrSGCLB4wCAYGZ4EM
+AQICMEwGA1UdHwRFMEMwQaA/oD2GO2h0dHA6Ly9wa2kwMzM2LnRlbGVzZWMuZGUvcmwvVGVs
+ZVNlY19HbG9iYWxSb290X0NsYXNzXzIuY3JsMIGGBggrBgEFBQcBAQR6MHgwLAYIKwYBBQUH
+MAGGIGh0dHA6Ly9vY3NwMDMzNi50ZWxlc2VjLmRlL29jc3ByMEgGCCsGAQUFBzAChjxodHRw
+Oi8vcGtpMDMzNi50ZWxlc2VjLmRlL2NydC9UZWxlU2VjX0dsb2JhbFJvb3RfQ2xhc3NfMi5j
+ZXIwDQYJKoZIhvcNAQELBQADggEBAIcL/z4Cm2XIVi3WO5qYi3FP2ropqiH5Ri71sqQPrhE4
+eTizDnS6dl2e6BiClmLbTDPo3flq3zK9LExHYFV/53RrtCyD2HlrtrdNUAtmB7Xts5et6u5/
+MOaZ/SLick0+hFvu+c+Z6n/XUjkurJgARH5pO7917tALOxrN5fcPImxHhPalR6D90Bo0fa3S
+PXez7vTXTf/D6OWST1k+kEcQSrCFWMBvf/iu7QhCnh7U3xQuTY+8npTD5+32GPg8SecmqKc2
+2CzeIs2LgtjZeOJVEqM7h0S2EQvVDFKvaYwPBt/QolOLV5h7z/0HJPT8vcP9SpIClxvyt7bP
+ZYoaorVyGTkwggWNMIIEdaADAgECAgwcOtRQhH7u81j4jncwDQYJKoZIhvcNAQELBQAwgZUx
+CzAJBgNVBAYTAkRFMUUwQwYDVQQKEzxWZXJlaW4genVyIEZvZXJkZXJ1bmcgZWluZXMgRGV1
+dHNjaGVuIEZvcnNjaHVuZ3NuZXR6ZXMgZS4gVi4xEDAOBgNVBAsTB0RGTi1QS0kxLTArBgNV
+BAMTJERGTi1WZXJlaW4gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkgMjAeFw0xNjExMDMxNTI0
+NDhaFw0zMTAyMjIyMzU5NTlaMGoxCzAJBgNVBAYTAkRFMQ8wDQYDVQQIDAZCYXllcm4xETAP
+BgNVBAcMCE11ZW5jaGVuMSAwHgYDVQQKDBdNYXgtUGxhbmNrLUdlc2VsbHNjaGFmdDEVMBMG
+A1UEAwwMTVBHIENBIC0gRzAyMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnhx4
+59Lh4WqgOs/Md04XxU2yFtfM15ZuJV0PZP7BmqSJKLLPyqmOrADfNdJ5PIGBto2JBhtRRBHd
+G0GROOvTRHjzOga95WOTeura79T21FWwwAwa29OFnD3ZplQs6HgdwQrZWNi1WHNJxn/4mA19
+rNEBUc5urSIpZPvZi5XmlF3v3JHOlx3KWV7mUteB4pwEEfGTg4npPAJbp2o7arxQdoIq+Pu2
+OsvqhD7Rk4QeaX+EM1QS4lqd1otW4hE70h/ODPy1xffgbZiuotWQLC6nIwa65Qv6byqlIX0q
+Zuu99Vsu+r3sWYsL5SBkgecNI7fMJ5tfHrjoxfrKl/ErTAt8GQIDAQABo4ICBTCCAgEwEgYD
+VR0TAQH/BAgwBgEB/wIBATAOBgNVHQ8BAf8EBAMCAQYwKQYDVR0gBCIwIDANBgsrBgEEAYGt
+IYIsHjAPBg0rBgEEAYGtIYIsAQEEMB0GA1UdDgQWBBTEiKUH7rh7qgwTv9opdGNSG0lwFjAf
+BgNVHSMEGDAWgBST49gyJtrV8UqlkUrg6kviogzP4TCBjwYDVR0fBIGHMIGEMECgPqA8hjpo
+dHRwOi8vY2RwMS5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1Yi9jcmwvY2Fjcmwu
+Y3JsMECgPqA8hjpodHRwOi8vY2RwMi5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1
+Yi9jcmwvY2FjcmwuY3JsMIHdBggrBgEFBQcBAQSB0DCBzTAzBggrBgEFBQcwAYYnaHR0cDov
+L29jc3AucGNhLmRmbi5kZS9PQ1NQLVNlcnZlci9PQ1NQMEoGCCsGAQUFBzAChj5odHRwOi8v
+Y2RwMS5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1Yi9jYWNlcnQvY2FjZXJ0LmNy
+dDBKBggrBgEFBQcwAoY+aHR0cDovL2NkcDIucGNhLmRmbi5kZS9nbG9iYWwtcm9vdC1nMi1j
+YS9wdWIvY2FjZXJ0L2NhY2VydC5jcnQwDQYJKoZIhvcNAQELBQADggEBABLpeD5FygzqOjj+
+/lAOy20UQOGWlx0RMuPcI4nuyFT8SGmK9lD7QCg/HoaJlfU/r78ex+SEide326evlFAoJXIF
+jVyzNltDhpMKrPIDuh2N12zyn1EtagqPL6hu4pVRzcBpl/F2HCvtmMx5K4WN1L1fmHWLcSap
+dhXLvAZ9RG/B3rqyULLSNN8xHXYXpmtvG0VGJAndZ+lj+BH7uvd3nHWnXEHC2q7iQlDUqg0a
+wIqWJgdLlx1Q8Dg/sodv0m+LN0kOzGvVDRCmowBdWGhhusD+duKV66pBl+qhC+4LipariWaM
+qK5ppMQROATjYeNRvwI+nDcEXr2vDaKmdbxgDVwwggWvMIIEl6ADAgECAgweKlJIhfynPMVG
+/KIwDQYJKoZIhvcNAQELBQAwajELMAkGA1UEBhMCREUxDzANBgNVBAgMBkJheWVybjERMA8G
+A1UEBwwITXVlbmNoZW4xIDAeBgNVBAoMF01heC1QbGFuY2stR2VzZWxsc2NoYWZ0MRUwEwYD
+VQQDDAxNUEcgQ0EgLSBHMDIwHhcNMTcxMTE0MTEzNDE2WhcNMjAxMTEzMTEzNDE2WjCBizEL
+MAkGA1UEBhMCREUxIDAeBgNVBAoMF01heC1QbGFuY2stR2VzZWxsc2NoYWZ0MTQwMgYDVQQL
+DCtNYXgtUGxhbmNrLUluc3RpdHV0IGZ1ZXIgbW9sZWt1bGFyZSBHZW5ldGlrMQ4wDAYDVQQL
+DAVNUElNRzEUMBIGA1UEAwwLUGF1bCBNZW56ZWwwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw
+ggEKAoIBAQDIh/UR/AX/YQ48VWWDMLTYtXjYJyhRHMc81ZHMMoaoG66lWB9MtKRTnB5lovLZ
+enTIUyPsCrMhTqV9CWzDf6v9gOTWVxHEYqrUwK5H1gx4XoK81nfV8oGV4EKuVmmikTXiztGz
+peyDmOY8o/EFNWP7YuRkY/lPQJQBeBHYq9AYIgX4StuXu83nusq4MDydygVOeZC15ts0tv3/
+6WmibmZd1OZRqxDOkoBbY3Djx6lERohs3IKS6RKiI7e90rCSy9rtidJBOvaQS9wvtOSKPx0a
++2pAgJEVzZFjOAfBcXydXtqXhcpOi2VCyl+7+LnnTz016JJLsCBuWEcB3kP9nJYNAgMBAAGj
+ggIxMIICLTAJBgNVHRMEAjAAMA4GA1UdDwEB/wQEAwIF4DAdBgNVHSUEFjAUBggrBgEFBQcD
+AgYIKwYBBQUHAwQwHQYDVR0OBBYEFHM0Mc3XjMLlhWpp4JufRELL4A/qMB8GA1UdIwQYMBaA
+FMSIpQfuuHuqDBO/2il0Y1IbSXAWMCAGA1UdEQQZMBeBFXBtZW56ZWxAbW9sZ2VuLm1wZy5k
+ZTB9BgNVHR8EdjB0MDigNqA0hjJodHRwOi8vY2RwMS5wY2EuZGZuLmRlL21wZy1nMi1jYS9w
+dWIvY3JsL2NhY3JsLmNybDA4oDagNIYyaHR0cDovL2NkcDIucGNhLmRmbi5kZS9tcGctZzIt
+Y2EvcHViL2NybC9jYWNybC5jcmwwgc0GCCsGAQUFBwEBBIHAMIG9MDMGCCsGAQUFBzABhido
+dHRwOi8vb2NzcC5wY2EuZGZuLmRlL09DU1AtU2VydmVyL09DU1AwQgYIKwYBBQUHMAKGNmh0
+dHA6Ly9jZHAxLnBjYS5kZm4uZGUvbXBnLWcyLWNhL3B1Yi9jYWNlcnQvY2FjZXJ0LmNydDBC
+BggrBgEFBQcwAoY2aHR0cDovL2NkcDIucGNhLmRmbi5kZS9tcGctZzItY2EvcHViL2NhY2Vy
+dC9jYWNlcnQuY3J0MEAGA1UdIAQ5MDcwDwYNKwYBBAGBrSGCLAEBBDARBg8rBgEEAYGtIYIs
+AQEEAwYwEQYPKwYBBAGBrSGCLAIBBAMGMA0GCSqGSIb3DQEBCwUAA4IBAQCQs6bUDROpFO2F
+Qz2FMgrdb39VEo8P3DhmpqkaIMC5ZurGbbAL/tAR6lpe4af682nEOJ7VW86ilsIJgm1j0ueY
+aOuL8jrN4X7IF/8KdZnnNnImW3QVni6TCcc+7+ggci9JHtt0IDCj5vPJBpP/dKXLCN4M+exl
+GXYpfHgxh8gclJPY1rquhQrihCzHfKB01w9h9tWZDVMtSoy9EUJFhCXw7mYUsvBeJwZesN2B
+fndPkrXx6XWDdU3S1LyKgHlLIFtarLFm2Hb5zAUR33h+26cN6ohcGqGEEzgIG8tXS8gztEaj
+1s2RyzmKd4SXTkKR3GhkZNVWy+gM68J7jP6zzN+cMYIDmjCCA5YCAQEwejBqMQswCQYDVQQG
+EwJERTEPMA0GA1UECAwGQmF5ZXJuMREwDwYDVQQHDAhNdWVuY2hlbjEgMB4GA1UECgwXTWF4
+LVBsYW5jay1HZXNlbGxzY2hhZnQxFTATBgNVBAMMDE1QRyBDQSAtIEcwMgIMHipSSIX8pzzF
+RvyiMA0GCWCGSAFlAwQCAQUAoIIB8TAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqG
+SIb3DQEJBTEPFw0xOTAxMjMxNjQ0NTdaMC8GCSqGSIb3DQEJBDEiBCAGUxayGFuAMJkoL2pb
+ohL/keOymwjf70uFWxvoRyBOEDBsBgkqhkiG9w0BCQ8xXzBdMAsGCWCGSAFlAwQBKjALBglg
+hkgBZQMEAQIwCgYIKoZIhvcNAwcwDgYIKoZIhvcNAwICAgCAMA0GCCqGSIb3DQMCAgFAMAcG
+BSsOAwIHMA0GCCqGSIb3DQMCAgEoMIGJBgkrBgEEAYI3EAQxfDB6MGoxCzAJBgNVBAYTAkRF
+MQ8wDQYDVQQIDAZCYXllcm4xETAPBgNVBAcMCE11ZW5jaGVuMSAwHgYDVQQKDBdNYXgtUGxh
+bmNrLUdlc2VsbHNjaGFmdDEVMBMGA1UEAwwMTVBHIENBIC0gRzAyAgweKlJIhfynPMVG/KIw
+gYsGCyqGSIb3DQEJEAILMXygejBqMQswCQYDVQQGEwJERTEPMA0GA1UECAwGQmF5ZXJuMREw
+DwYDVQQHDAhNdWVuY2hlbjEgMB4GA1UECgwXTWF4LVBsYW5jay1HZXNlbGxzY2hhZnQxFTAT
+BgNVBAMMDE1QRyBDQSAtIEcwMgIMHipSSIX8pzzFRvyiMA0GCSqGSIb3DQEBAQUABIIBAH5m
+AKRMjq9nRlfphAuP+t20ZBA3jiu0Y9esl2CPzvnEv7FnMUEQyeVVtaRDRfqi8rpw3KX3BBbJ
+lrRBtZFpD6CcPUr9I5GdLhbTFk7MfJj3kOK2GCx6UMvszdFf7vB6aA1irIPJXKS7Kq62VLTY
+XnMYZJoDRRhkkdIoAm+TyKOEFheNT45qd4ZZPFI8xFENYa+jwB2fxoDwvtgFZT4dx3e0S2zW
+vp0g1XgemwHj+3MCiEfxlGU1qbJIDmpiazX9R+LBJrO5LWYMHfrYb/n7Yhufp5jz2swi+Pk1
+Ff7szBfj+JXG8hMazeeaUn3Pdxaz/X13tf6NkIQ3KUpyIFu8AsQAAAAAAAA=
+--------------ms080000080507070506000708--
