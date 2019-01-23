@@ -3,184 +3,92 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D2FAC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:44:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE37FC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:49:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A8EE20861
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:44:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F56120861
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:49:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727479AbfAWKoh (ORCPT
+        id S1727185AbfAWKtc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 05:44:37 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39256 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727148AbfAWKof (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 05:44:35 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1C22A15AB;
-        Wed, 23 Jan 2019 02:44:35 -0800 (PST)
-Received: from [10.1.197.45] (e112298-lin.cambridge.arm.com [10.1.197.45])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 13B3C3F5C1;
-        Wed, 23 Jan 2019 02:44:32 -0800 (PST)
-Subject: Re: [PATCH v9 12/26] arm64: irqflags: Use ICC_PMR_EL1 for interrupt
- masking
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        daniel.thompson@linaro.org, joel@joelfernandes.org,
-        marc.zyngier@arm.com, christoffer.dall@arm.com,
-        james.morse@arm.com, will.deacon@arm.com, mark.rutland@arm.com,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Oleg Nesterov <oleg@redhat.com>
-References: <1548084825-8803-1-git-send-email-julien.thierry@arm.com>
- <1548084825-8803-13-git-send-email-julien.thierry@arm.com>
- <20190122152149.GD187049@arrakis.emea.arm.com>
-From:   Julien Thierry <julien.thierry@arm.com>
-Message-ID: <2eabb029-4efe-6829-7fb1-6174a2edb154@arm.com>
-Date:   Wed, 23 Jan 2019 10:44:31 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20190122152149.GD187049@arrakis.emea.arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Wed, 23 Jan 2019 05:49:32 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:38251 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726322AbfAWKtb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 05:49:31 -0500
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1gmG5w-0000rg-RX; Wed, 23 Jan 2019 11:49:20 +0100
+Message-ID: <1548240560.3904.6.camel@pengutronix.de>
+Subject: Re: [PATCH v5 3/3] reset: imx7: Add support for i.MX8MQ IP block
+ variant
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc:     Fabio Estevam <fabio.estevam@nxp.com>, cphealy@gmail.com,
+        l.stach@pengutronix.de, Leonard Crestez <leonard.crestez@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
+        linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 23 Jan 2019 11:49:20 +0100
+In-Reply-To: <20190122021043.25449-4-andrew.smirnov@gmail.com>
+References: <20190122021043.25449-1-andrew.smirnov@gmail.com>
+         <20190122021043.25449-4-andrew.smirnov@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Andrey,
 
-
-On 22/01/2019 15:21, Catalin Marinas wrote:
-> On Mon, Jan 21, 2019 at 03:33:31PM +0000, Julien Thierry wrote:
->> diff --git a/arch/arm64/include/asm/irqflags.h b/arch/arm64/include/asm/irqflags.h
->> index 24692ed..7e82a92 100644
->> --- a/arch/arm64/include/asm/irqflags.h
->> +++ b/arch/arm64/include/asm/irqflags.h
->> @@ -18,7 +18,9 @@
->>  
->>  #ifdef __KERNEL__
->>  
->> +#include <asm/alternative.h>
->>  #include <asm/ptrace.h>
->> +#include <asm/sysreg.h>
->>  
->>  /*
->>   * Aarch64 has flags for masking: Debug, Asynchronous (serror), Interrupts and
->> @@ -36,33 +38,31 @@
->>  /*
->>   * CPU interrupt mask handling.
->>   */
->> -static inline unsigned long arch_local_irq_save(void)
->> -{
->> -	unsigned long flags;
->> -	asm volatile(
->> -		"mrs	%0, daif		// arch_local_irq_save\n"
->> -		"msr	daifset, #2"
->> -		: "=r" (flags)
->> -		:
->> -		: "memory");
->> -	return flags;
->> -}
->> -
->>  static inline void arch_local_irq_enable(void)
->>  {
->> -	asm volatile(
->> -		"msr	daifclr, #2		// arch_local_irq_enable"
->> -		:
->> +	unsigned long unmasked = GIC_PRIO_IRQON;
->> +
->> +	asm volatile(ALTERNATIVE(
->> +		"msr	daifclr, #2		// arch_local_irq_enable\n"
->> +		"nop",
->> +		"msr_s  " __stringify(SYS_ICC_PMR_EL1) ",%0\n"
->> +		"dsb	sy",
->> +		ARM64_HAS_IRQ_PRIO_MASKING)
->>  		:
->> +		: "r" (unmasked)
->>  		: "memory");
->>  }
->>  
->>  static inline void arch_local_irq_disable(void)
->>  {
->> -	asm volatile(
->> -		"msr	daifset, #2		// arch_local_irq_disable"
->> -		:
->> +	unsigned long masked = GIC_PRIO_IRQOFF;
->> +
->> +	asm volatile(ALTERNATIVE(
->> +		"msr	daifset, #2		// arch_local_irq_disable",
->> +		"msr_s  " __stringify(SYS_ICC_PMR_EL1) ", %0",
->> +		ARM64_HAS_IRQ_PRIO_MASKING)
->>  		:
->> +		: "r" (masked)
->>  		: "memory");
->>  }
+On Mon, 2019-01-21 at 18:10 -0800, Andrey Smirnov wrote:
+> Add bits and pieces needed to support IP block variant found on
+> i.MX8MQ SoCs.
 > 
-> Nitpicks: you could drop masked/unmasked variables here (it's up to you,
-> it wouldn't make any difference on the generated asm).
-> 
+> Cc: p.zabel@pengutronix.de
+> Cc: Fabio Estevam <fabio.estevam@nxp.com>
+> Cc: cphealy@gmail.com
+> Cc: l.stach@pengutronix.de
+> Cc: Leonard Crestez <leonard.crestez@nxp.com>
+> Cc: "A.s. Dong" <aisheng.dong@nxp.com>
+> Cc: Richard Zhu <hongxing.zhu@nxp.com>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-imx@nxp.com
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+[...]
+> +static int imx8mq_reset_assert(struct reset_controller_dev *rcdev,
+> +			     unsigned long id)
+                            ^
+> +{
+> +	return imx8mq_reset_set(rcdev, id, true);
+> +}
+> +
+> +static int imx8mq_reset_deassert(struct reset_controller_dev *rcdev,
+> +			       unsigned long id)
+                              ^
+> +{
+> +	return imx8mq_reset_set(rcdev, id, false);
+> +}
 
-Good point, I'll do that.
+Thank you, applied all three to reset/next with a small whitespace
+alignment fix.
 
->> @@ -71,12 +71,44 @@ static inline void arch_local_irq_disable(void)
->>   */
->>  static inline unsigned long arch_local_save_flags(void)
->>  {
->> +	unsigned long daif_bits;
->>  	unsigned long flags;
->> -	asm volatile(
->> -		"mrs	%0, daif		// arch_local_save_flags"
->> -		: "=r" (flags)
->> -		:
->> +
->> +	daif_bits = read_sysreg(daif);
->> +
->> +	/*
->> +	 * The asm is logically equivalent to:
->> +	 *
->> +	 * if (system_uses_irq_prio_masking())
->> +	 *	flags = (daif_bits & PSR_I_BIT) ?
->> +	 *			GIC_PRIO_IRQOFF :
->> +	 *			read_sysreg_s(SYS_ICC_PMR_EL1);
->> +	 * else
->> +	 *	flags = daif_bits;
->> +	 */
->> +	asm volatile(ALTERNATIVE(
->> +			"mov	%0, %1\n"
->> +			"nop\n"
->> +			"nop",
->> +			"mrs_s	%0, " __stringify(SYS_ICC_PMR_EL1) "\n"
->> +			"ands	%1, %1, " __stringify(PSR_I_BIT) "\n"
->> +			"csel	%0, %0, %2, eq",
->> +			ARM64_HAS_IRQ_PRIO_MASKING)
->> +		: "=&r" (flags), "+r" (daif_bits)
->> +		: "r" (GIC_PRIO_IRQOFF)
->>  		: "memory");
->> +
->> +	return flags;
->> +}
-> 
-> BTW, how's the code generated from the C version? It will have a branch
-> but may not be too bad. Either way is fine by me.
-> 
-
-It's a bit hard to talk about the code generated from the C version as
-it can lie within several layers of inline, so the instructions for that
-section are a bit more scattered.
-
-However, it seems like the compiler is more clever (maybe the asm
-volatile prevents some optimizations regarding register allocation or
-instruction ordering) and the C version seems to perform slightly better
-(although it could be within the noise) despite the branch.
-
-So, I'll just switch up to the C version.
-
-> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-> 
-
--- 
-Julien Thierry
+regards
+Philipp
