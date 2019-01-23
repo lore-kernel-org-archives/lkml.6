@@ -2,87 +2,109 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 018BDC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 13:58:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3244C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 13:58:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8A842133D
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 13:58:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A47B72133D
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 13:58:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548251915;
+	bh=YaoOwzPhlusepuKK6nNhPrPhHcQyK6Hho8Tqvya0vzE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=AI/IKzjEt/B+cDYkFvJnNYMx7MwesIGQst9eiUZfQ4nihkqSnS9Mya6zAaj/ZphVK
+	 D08xdwlzMd2NW0lTXCTwpBVgtc5XFkqcR27X7mZC+aSXAkEo5UXd5LofAAnXfuWOD+
+	 UJa7EmjJ58XvAAafXbI8NLQn4ySm0LbIlntMlvyE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726359AbfAWN6L (ORCPT
+        id S1726783AbfAWN6e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 08:58:11 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:58676 "EHLO mx1.redhat.com"
+        Wed, 23 Jan 2019 08:58:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36288 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726122AbfAWN6K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 08:58:10 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726104AbfAWN6d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 08:58:33 -0500
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7C1EB89AD7;
-        Wed, 23 Jan 2019 13:58:10 +0000 (UTC)
-Received: from redhat.com (ovpn-123-123.rdu2.redhat.com [10.10.123.123])
-        by smtp.corp.redhat.com (Postfix) with SMTP id BC1745D6A6;
-        Wed, 23 Jan 2019 13:58:07 +0000 (UTC)
-Date:   Wed, 23 Jan 2019 08:58:07 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Subject: Re: [PATCH net-next V4 0/5] vhost: accelerate metadata access
- through vmap()
-Message-ID: <20190123085652-mutt-send-email-mst@kernel.org>
-References: <20190123095557.30168-1-jasowang@redhat.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id A04552133D;
+        Wed, 23 Jan 2019 13:58:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548251912;
+        bh=YaoOwzPhlusepuKK6nNhPrPhHcQyK6Hho8Tqvya0vzE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=A+LqxXTMBPOIncX0VazN8sQ3MTgWZs1PtPTuRPZfimeT2HvI5M7N5B4/eh+bKnNYl
+         aUwIlieYt8z/bY1Nc1Q4sfAhK2+BVrBHntTbQtQCCiFDCTgczm9ENDefhqGCgqhJoD
+         Q4mHsNnTQmn5yy9ZBu9q3AVWFTdYjnsStyuTlx6w=
+Date:   Wed, 23 Jan 2019 08:58:31 -0500
+From:   Sasha Levin <sashal@kernel.org>
+To:     Johan Hovold <johan@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Nikolaj Fogh <nikolajfogh@gmail.com>, linux-usb@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 4.20 025/117] USB: serial: ftdi_sio: use rounding
+ when calculating baud rate divisors
+Message-ID: <20190123135831.GI202535@sasha-vm>
+References: <20190108192628.121270-1-sashal@kernel.org>
+ <20190108192628.121270-25-sashal@kernel.org>
+ <20190109082437.GA3389@localhost>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20190123095557.30168-1-jasowang@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 23 Jan 2019 13:58:10 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190109082437.GA3389@localhost>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 05:55:52PM +0800, Jason Wang wrote:
-> This series tries to access virtqueue metadata through kernel virtual
-> address instead of copy_user() friends since they had too much
-> overheads like checks, spec barriers or even hardware feature
-> toggling.
-> 
-> Test shows about 24% improvement on TX PPS. It should benefit other
-> cases as well.
+On Wed, Jan 09, 2019 at 09:24:37AM +0100, Johan Hovold wrote:
+>On Tue, Jan 08, 2019 at 02:24:53PM -0500, Sasha Levin wrote:
+>> From: Nikolaj Fogh <nikolajfogh@gmail.com>
+>>
+>> [ Upstream commit 6abd837104a3a8e1cda64fc4d7675f6c3ece9d8b ]
+>>
+>> Improve baud-rate generation by using rounding-to-closest instead of
+>> truncation in divisor calculation.
+>>
+>> Results have been verified by logic analyzer on an FT232RT (232BM) chip.
+>> The following table shows the wanted baud rate, the baud rate obtained
+>> with the old method (truncation), with the new method (rounding) and the
+>> baud rate generated by the windows 10 driver. The numbers in parentheses
+>> is the error.
+>>
+>> +- Wanted --+------ Old -------+------ New -------+------ Win -------+
+>> |    9600   |    9600 (0.00%)  |    9604 (0.05%)  |    9605 (0.05%)  |
+>> |   19200   |   19200 (0.00%)  |   19199 (0.01%)  |   19198 (0.01%)  |
+>> |   38400   |   38395 (0.01%)  |   38431 (0.08%)  |   38394 (0.02%)  |
+>> |   57600   |   57725 (0.22%)  |   57540 (0.10%)  |   57673 (0.13%)  |
+>> |  115200   |  115307 (0.09%)  |  115330 (0.11%)  |  115320 (0.10%)  |
+>> |  921600   |  919963 (0.18%)  |  920386 (0.13%)  |  920810 (0.09%)  |
+>> |  961200   |  996512 (3.67%)  |  956480 (0.49%)  |  956937 (0.44%)  |
+>> +-----------+------------------+------------------+------------------+
+>>
+>> The error due to noise in the measurements is in the order of a few
+>> tenths of a %. As can be seen, the baud rate is significantly improved
+>> for some rates (e.g. 961200), and corresponds to the output given by the
+>> windows driver.
+>>
+>> The theoretical baud rate has been calculated for all baud rates from 1
+>> to 3M, and as expected, the error is centered around 0, with a triangle
+>> shape instead of a sawtooth, so the maximum error is decreased to half.
+>>
+>> Signed-off-by: Nikolaj Fogh <nikolajfogh@gmail.com>
+>> [ johan: edit commit message slightly ]
+>> Signed-off-by: Johan Hovold <johan@kernel.org>
+>> Signed-off-by: Sasha Levin <sashal@kernel.org>
+>
+>The stable tag was left out on purpose for this one to avoid breaking
+>working setups which may have compensated and adapted to this driver
+>behaviour which has been there since the driver was merged ages ago.
 
-ok I think this addresses most comments but it's a big change and we
-just started 1.1 review so to pls give me a week to review this ok?
+I'll drop it, thank you.
 
-> Changes from V3:
-> - don't try to use vmap for file backed pages
-> - rebase to master
-> Changes from V2:
-> - fix buggy range overlapping check
-> - tear down MMU notifier during vhost ioctl to make sure invalidation
->   request can read metadata userspace address and vq size without
->   holding vq mutex.
-> Changes from V1:
-> - instead of pinning pages, use MMU notifier to invalidate vmaps and
->   remap duing metadata prefetch
-> - fix build warning on MIPS
-> 
-> Jason Wang (5):
->   vhost: generalize adding used elem
->   vhost: fine grain userspace memory accessors
->   vhost: rename vq_iotlb_prefetch() to vq_meta_prefetch()
->   vhost: introduce helpers to get the size of metadata area
->   vhost: access vq metadata through kernel virtual address
-> 
->  drivers/vhost/net.c   |   4 +-
->  drivers/vhost/vhost.c | 441 +++++++++++++++++++++++++++++++++++++-----
->  drivers/vhost/vhost.h |  15 +-
->  mm/shmem.c            |   1 +
->  4 files changed, 410 insertions(+), 51 deletions(-)
-> 
-> -- 
-> 2.17.1
+--
+Thanks,
+Sasha
