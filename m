@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED6B8C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:53:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC32BC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:53:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB4AA2184C
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:53:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AADFE2184C
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:53:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548284003;
-	bh=C8TKeeMhQf8479EZg15Ln589zEiTSuXOTM+X2AkqBhY=;
+	s=default; t=1548284008;
+	bh=rVbGDT71dBT/zRkzkJEevIBX0SIfRuicvb3fn0GBt7Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tu/JA4DOYj2hx4Tbo5s+WlxXWuvaZRcGkIo0A0yqCUySKEMNWhDgIIkhu0uBm/SnG
-	 UV7YZpw+7zN3ckKeIL6Nv2Umoe4DRw9bLDfmnnS8CyfAYny00su8+phgkhkh5vGikt
-	 UBk+OSskewTc7G0qjNH1Kg7eNCyyE61zjN/69rCM=
+	b=lwKrP7NbOBQdEEZ5rMlh1vvjBIK5LwaskA4X2pJmarggpZJKMbfkRqFHUImflSdCn
+	 rYN790rKXbJ5BJ18f7pah7nLWoxR5Un/L0eDVrgbXod+TPFylyPlhj/p/NWkyvoVfU
+	 sNsoeM21FycD8on8k3Uy/ys1rItTwVpzdGoWgFCY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727390AbfAWWxW (ORCPT
+        id S1727358AbfAWWxV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 17:53:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50142 "EHLO mail.kernel.org"
+        Wed, 23 Jan 2019 17:53:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50134 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726977AbfAWWwe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727009AbfAWWwe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 23 Jan 2019 17:52:34 -0500
 Received: from ebiggers-linuxstation.mtv.corp.google.com (unknown [104.132.1.77])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E9074218AF;
-        Wed, 23 Jan 2019 22:52:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 380AF218B0;
+        Wed, 23 Jan 2019 22:52:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1548283954;
-        bh=C8TKeeMhQf8479EZg15Ln589zEiTSuXOTM+X2AkqBhY=;
+        bh=rVbGDT71dBT/zRkzkJEevIBX0SIfRuicvb3fn0GBt7Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MiqCrMXoohQQwKOPyPb7vGRZrk9BYTUlbnLQfftmzuuWv3aWWz2LlJAuxWMfeF6mj
-         WtVosqIdVFZWL91FcSoEXHFpDtFP0ZNDtceNHQeYEzZCLaToFXDJgF3sjNzgCwEkPu
-         zn1Wh0d7WzdBJwOHy8X+yZ586LzIWzcVwXE8Mp2U=
+        b=yulEvxbqg1xm3zVKLZ7hBBoWsBK0gqJSP1Mwd3Rv7iQ4kUsXIqRDIi8yoyoez+QQg
+         +6kezoO1j3yDIaT/ftSGaViFCUwo/n7ZijWrRPsDck5+NQugTcOdsWDUZkKlVHCQn2
+         oXrYSEhOGlu7wZCwc1Lj2THHzcGaYmcLP5d/SzDY=
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     linux-crypto@vger.kernel.org,
         Herbert Xu <herbert@gondor.apana.org.au>
 Cc:     linux-kernel@vger.kernel.org,
         "Jason A . Donenfeld" <Jason@zx2c4.com>
-Subject: [RFC/RFT PATCH 09/15] crypto: testmgr - introduce CONFIG_CRYPTO_MANAGER_EXTRA_TESTS
-Date:   Wed, 23 Jan 2019 14:49:20 -0800
-Message-Id: <20190123224926.250525-10-ebiggers@kernel.org>
+Subject: [RFC/RFT PATCH 10/15] crypto: testmgr - implement random testvec_config generation
+Date:   Wed, 23 Jan 2019 14:49:21 -0800
+Message-Id: <20190123224926.250525-11-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.20.1.321.g9e740568ce-goog
 In-Reply-To: <20190123224926.250525-1-ebiggers@kernel.org>
 References: <20190123224926.250525-1-ebiggers@kernel.org>
@@ -58,86 +58,149 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-To achieve more comprehensive crypto test coverage, I'd like to add fuzz
-tests that use random data layouts and request flags.
-
-To be most effective these tests should be part of testmgr, so they
-automatically run on every algorithm registered with the crypto API.
-However, they will take much longer to run than the current tests and
-therefore will only really be intended to be run by developers, whereas
-the current tests have a wider audience.
-
-Therefore, add a new kconfig option CONFIG_CRYPTO_MANAGER_EXTRA_TESTS
-that can be set by developers to enable these extra, expensive tests.
-
-Similar to the regular tests, also add a module parameter
-cryptomgr.noextratests to support disabling the tests.
-
-Finally, another module parameter cryptomgr.fuzz_iterations is added to
-control how many iterations the fuzz tests do.  Note: for now setting
-this to 0 will be equivalent to cryptomgr.noextratests=1.  But I opted
-for separate parameters to provide more flexibility to add other types
-of tests under the "extra tests" category in the future.
+Add functions that generate a random testvec_config, in preparation for
+using it for randomized fuzz tests.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- crypto/Kconfig   | 10 ++++++++++
- crypto/testmgr.c | 14 ++++++++++++++
- 2 files changed, 24 insertions(+)
+ crypto/testmgr.c | 117 +++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 117 insertions(+)
 
-diff --git a/crypto/Kconfig b/crypto/Kconfig
-index 86960aa53e0f..cbeba16fd8c1 100644
---- a/crypto/Kconfig
-+++ b/crypto/Kconfig
-@@ -168,6 +168,16 @@ config CRYPTO_MANAGER_DISABLE_TESTS
- 	  Disable run-time self tests that normally take place at
- 	  algorithm registration.
- 
-+config CRYPTO_MANAGER_EXTRA_TESTS
-+	bool "Enable extra run-time crypto self tests"
-+	depends on !CRYPTO_MANAGER_DISABLE_TESTS
-+	help
-+	  Enable extra run-time self tests of registered crypto algorithms,
-+	  including randomized fuzz tests.
-+
-+	  This is intended for developer use only, as these tests take much
-+	  longer to run than the normal self tests.
-+
- config CRYPTO_GF128MUL
- 	tristate "GF(2^128) multiplication functions"
- 	help
 diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-index a29b42a17841..7c68b4101bd0 100644
+index 7c68b4101bd0..ccc0e18b13ea 100644
 --- a/crypto/testmgr.c
 +++ b/crypto/testmgr.c
-@@ -43,6 +43,16 @@ static bool notests;
- module_param(notests, bool, 0644);
- MODULE_PARM_DESC(notests, "disable crypto self-tests");
- 
-+#ifdef CONFIG_CRYPTO_MANAGER_EXTRA_TESTS
-+static bool noextratests;
-+module_param(noextratests, bool, 0644);
-+MODULE_PARM_DESC(noextratests, "disable expensive crypto self-tests");
-+
-+static unsigned int fuzz_iterations = 100;
-+module_param(fuzz_iterations, uint, 0644);
-+MODULE_PARM_DESC(fuzz_iterations, "number of fuzz test iterations");
-+#endif
-+
- #ifdef CONFIG_CRYPTO_MANAGER_DISABLE_TESTS
- 
- /* a perfect nop */
-@@ -4099,6 +4109,10 @@ static void testmgr_onetime_init(void)
- {
- 	alg_check_test_descs_order();
- 	alg_check_testvec_configs();
-+
-+#ifdef CONFIG_CRYPTO_MANAGER_EXTRA_TESTS
-+	pr_warn("alg: extra crypto tests enabled.  This is intended for developer use only.\n");
-+#endif
+@@ -28,6 +28,7 @@
+ #include <linux/fips.h>
+ #include <linux/module.h>
+ #include <linux/once.h>
++#include <linux/random.h>
+ #include <linux/scatterlist.h>
+ #include <linux/slab.h>
+ #include <linux/string.h>
+@@ -603,6 +604,122 @@ static int build_cipher_test_sglists(struct cipher_test_sglists *tsgls,
+ 				 alignmask, dst_total_len, NULL, NULL);
  }
  
- static int alg_find_test(const char *alg)
++#ifdef CONFIG_CRYPTO_MANAGER_EXTRA_TESTS
++static char *generate_random_sgl_divisions(struct test_sg_division *divs,
++					   size_t max_divs, char *p, char *end,
++					   bool gen_flushes)
++{
++	struct test_sg_division *div = divs;
++	unsigned int remaining = TEST_SG_TOTAL;
++
++	do {
++		unsigned int this_len;
++
++		if (div == &divs[max_divs - 1] || prandom_u32() % 2 != 0)
++			this_len = remaining;
++		else
++			this_len = 1 + (prandom_u32() % remaining);
++		div->proportion_of_total = this_len;
++
++		if (prandom_u32() % 4 == 0)
++			div->offset = (PAGE_SIZE - 128) + (prandom_u32() % 128);
++		else if (prandom_u32() % 2 == 0)
++			div->offset = prandom_u32() % 32;
++		else
++			div->offset = prandom_u32() % PAGE_SIZE;
++		if (prandom_u32() % 8 == 0)
++			div->offset_relative_to_alignmask = true;
++
++		div->flush_type = FLUSH_TYPE_NONE;
++		if (gen_flushes) {
++			switch (prandom_u32() % 4) {
++			case 0:
++				div->flush_type = FLUSH_TYPE_REIMPORT;
++				break;
++			case 1:
++				div->flush_type = FLUSH_TYPE_FLUSH;
++				break;
++			}
++		}
++
++		BUILD_BUG_ON(TEST_SG_TOTAL != 10000); /* for "%u.%u%%" */
++		p += scnprintf(p, end - p, "%s%u.%u%%@%s+%u%s",
++			       div->flush_type == FLUSH_TYPE_NONE ? "" :
++			       div->flush_type == FLUSH_TYPE_FLUSH ?
++			       "<flush> " : "<reimport> ",
++			       this_len / 100, this_len % 100,
++			       div->offset_relative_to_alignmask ?
++					"alignmask" : "",
++			       div->offset, this_len == remaining ? "" : ", ");
++		remaining -= this_len;
++		div++;
++	} while (remaining);
++
++	return p;
++}
++
++/* Generate a random testvec_config for fuzz testing */
++static void generate_random_testvec_config(struct testvec_config *cfg,
++					   char *name, size_t max_namelen)
++{
++	char *p = name;
++	char * const end = name + max_namelen;
++
++	memset(cfg, 0, sizeof(*cfg));
++
++	cfg->name = name;
++
++	p += scnprintf(p, end - p, "random:");
++
++	if (prandom_u32() % 2 == 0) {
++		cfg->inplace = true;
++		p += scnprintf(p, end - p, " inplace");
++	}
++
++	if (prandom_u32() % 2 == 0) {
++		cfg->req_flags |= CRYPTO_TFM_REQ_MAY_SLEEP;
++		p += scnprintf(p, end - p, " may_sleep");
++	}
++
++	switch (prandom_u32() % 4) {
++	case 0:
++		cfg->finalization_type = FINALIZATION_TYPE_FINAL;
++		p += scnprintf(p, end - p, " use_final");
++		break;
++	case 1:
++		cfg->finalization_type = FINALIZATION_TYPE_FINUP;
++		p += scnprintf(p, end - p, " use_finup");
++		break;
++	default:
++		cfg->finalization_type = FINALIZATION_TYPE_DIGEST;
++		p += scnprintf(p, end - p, " use_digest");
++		break;
++	}
++
++	p += scnprintf(p, end - p, " src_divs=[");
++	p = generate_random_sgl_divisions(cfg->src_divs,
++					  ARRAY_SIZE(cfg->src_divs), p, end,
++					  (cfg->finalization_type !=
++					   FINALIZATION_TYPE_DIGEST));
++	p += scnprintf(p, end - p, "]");
++
++	if (!cfg->inplace && prandom_u32() % 2 == 0) {
++		p += scnprintf(p, end - p, " dst_divs=[");
++		p = generate_random_sgl_divisions(cfg->dst_divs,
++						  ARRAY_SIZE(cfg->dst_divs),
++						  p, end, false);
++		p += scnprintf(p, end - p, "]");
++	}
++
++	if (prandom_u32() % 2 == 0) {
++		cfg->iv_offset = 1 + (prandom_u32() % MAX_ALGAPI_ALIGNMASK);
++		p += scnprintf(p, end - p, " iv_offset=%u", cfg->iv_offset);
++	}
++
++	WARN_ON_ONCE(!valid_testvec_config(cfg));
++}
++#endif /* CONFIG_CRYPTO_MANAGER_EXTRA_TESTS */
++
+ static int ahash_guard_result(char *result, char c, int size)
+ {
+ 	int i;
 -- 
 2.20.1.321.g9e740568ce-goog
 
