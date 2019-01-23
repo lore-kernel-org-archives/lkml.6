@@ -2,88 +2,77 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47792C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:44:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84281C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:44:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 138732133D
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:44:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="O0cA3M5Z"
+	by mail.kernel.org (Postfix) with ESMTP id 5B73F2133D
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:44:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726101AbfAWOoO (ORCPT
+        id S1726312AbfAWOoT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 09:44:14 -0500
-Received: from ozlabs.org ([203.11.71.1]:49019 "EHLO ozlabs.org"
+        Wed, 23 Jan 2019 09:44:19 -0500
+Received: from mga04.intel.com ([192.55.52.120]:38046 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725930AbfAWOoN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 09:44:13 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43l7Mv1rWkz9s4s;
-        Thu, 24 Jan 2019 01:44:11 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1548254651;
-        bh=tKaTJUlZpGVfOslsL2mqF83Hevfu4NFQirde93eTYHY=;
-        h=Date:From:To:Cc:Subject:From;
-        b=O0cA3M5ZM/IgaLWc2d1GNq+g+w0MSL9zOoR8Hjc5bsFwVgdkGGxtDltpd2j/DSmw9
-         zqH0vZ8Iy440LaqTSunmf09i7ciHDhHg5GYP35F5s+kLtUB5CSxpQZ4Ehj0m/7Klvy
-         /+zwmrnxE33NPv+zb8qWOj6eTrLlj4Gy8chRM6mBZQa9l4TbvyTrAzrQQseGP/VfwI
-         VjQvuFbu3a8pkIe610KPLK2YlYuBDTk6Lhmll+dFVmw3ymzDajevBJKMadV1CVyFdg
-         Fa9YJKVSGtQ4fFeCGwfJbj4JaG0Inwc4kjjonzdh68aTLqr2kYZUqbXOneb1pfIr/Y
-         uorkaEoiA0d5Q==
-Date:   Thu, 24 Jan 2019 01:44:10 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: linux-next: Signed-off-by missing for commit in the opp tree
-Message-ID: <20190124014410.5f932c52@canb.auug.org.au>
+        id S1725871AbfAWOoT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 09:44:19 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jan 2019 06:44:19 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,511,1539673200"; 
+   d="scan'208";a="140631675"
+Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
+  by fmsmga001.fm.intel.com with ESMTP; 23 Jan 2019 06:44:17 -0800
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
+Subject: [PATCH] device property: Fix the length used in PROPERTY_ENTRY_STRING
+Date:   Wed, 23 Jan 2019 17:44:16 +0300
+Message-Id: <20190123144416.51859-1-heikki.krogerus@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/X6e3yL38YDIfEbvVH_9I+/M"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/X6e3yL38YDIfEbvVH_9I+/M
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+With string type property entries we need to use
+sizeof(const char *) instead of the number of characters as
+the length of the entry.
 
-Hi Viresh,
+If the string was shorter then sizeof(const char *),
+attempts to read it would have failed with -EOVERFLOW. The
+problem has been hidden because all build-in string
+properties have had a string longer then 8 characters until
+now.
 
-Commit
+Fixes: a85f42047533 ("device property: helper macros for property entry creation")
+Cc: stable@vger.kernel.org
+Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+---
+ include/linux/property.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  9389d5c08571 ("opp: no need to check return value of debugfs_create funct=
-ions")
+diff --git a/include/linux/property.h b/include/linux/property.h
+index 3789ec755fb6..65d3420dd5d1 100644
+--- a/include/linux/property.h
++++ b/include/linux/property.h
+@@ -258,7 +258,7 @@ struct property_entry {
+ #define PROPERTY_ENTRY_STRING(_name_, _val_)		\
+ (struct property_entry) {				\
+ 	.name = _name_,					\
+-	.length = sizeof(_val_),			\
++	.length = sizeof(const char *),			\
+ 	.type = DEV_PROP_STRING,			\
+ 	{ .value = { .str = _val_ } },			\
+ }
+-- 
+2.20.1
 
-is missing a Signed-off-by from its committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/X6e3yL38YDIfEbvVH_9I+/M
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxIfboACgkQAVBC80lX
-0GzLhggAli0bqpNpz9SuR8winZI7RyuoJEKO1k+ImGEE7+o3COJ2toj2KGT4sCTX
-xJRjMnUoCUVy7IonGtIgLnkKymS1U9cIotS5KVKhuztqBr3g7hHc5qTn6Ydpxc2F
-y3L8BJ+rIxnsWvTnZQwwC6cvHdMTv/BTxVy1BQmhGiRLEKG8fVZ9uJ0kfPRvAgd/
-1IBKi9W49JaAhzepDwZRCpOCnL0lgXkEQSsk+a73Rp1ssGESB2Y+bQ50CEYhFgI0
-SsRdUU3A4QH4RITt1nCm0vg2N2adbljRwKo8GFJQWogcVtV++UokyYLXCSoFW2w2
-73IrzExPOvwpHtMq/8pl4vEWDos5+g==
-=YIJc
------END PGP SIGNATURE-----
-
---Sig_/X6e3yL38YDIfEbvVH_9I+/M--
