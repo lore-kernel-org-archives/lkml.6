@@ -2,86 +2,93 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B329BC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 11:58:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34D54C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 11:58:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7227521726
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 11:58:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548244714;
-	bh=LLGw68OcF7jTXYNq3Xh87u9Jd9LaEbZfXSnSASJOdrs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=hVezovoVB/kGe7+23cj3imVtELfzKj8MJ0TW5B2+9WIPRSl67E3w3pDpQ6Rqk3Vpe
-	 YxNBpso3m4h6h4NzkCNBZZMZzDIfyTzETrySqRmNpog5wS03emuxvhqZCUFMPhzoqa
-	 bAbZUPa5uAZZa1BPgaaYCJMsLwdkapsY76+xpZ80=
+	by mail.kernel.org (Postfix) with ESMTP id 0D7BB20870
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 11:58:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726957AbfAWL6d (ORCPT
+        id S1727050AbfAWL64 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 06:58:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39770 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725995AbfAWL6c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 06:58:32 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45A0A20870;
-        Wed, 23 Jan 2019 11:58:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548244711;
-        bh=LLGw68OcF7jTXYNq3Xh87u9Jd9LaEbZfXSnSASJOdrs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=muuBFnpLVpcn10SSeFHen/Vdmcf+fEUADEzYwBy2TrXtTsu9RF1VRQzpQKqfok+Ux
-         w7HBhaXM+RfJfagPnk3tqYLOxDqKsO7z8SenVs0oBPzOGo/jdAK0H0BMvWtuu6Zd/P
-         fNEg2uXnn99LTngHnEMOwjlcAD6zTxVkX/IHQ6tA=
-Date:   Wed, 23 Jan 2019 12:58:29 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Alexander Popov <alex.popov@linux.com>,
-        xen-devel@lists.xenproject.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, intel-wired-lan@lists.osuosl.org,
-        netdev@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        dev@openvswitch.org, linux-kbuild@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        kernel-hardening@lists.openwall.com
-Subject: Re: [PATCH 1/3] treewide: Lift switch variables out of switches
-Message-ID: <20190123115829.GA31385@kroah.com>
-References: <20190123110349.35882-1-keescook@chromium.org>
- <20190123110349.35882-2-keescook@chromium.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190123110349.35882-2-keescook@chromium.org>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+        Wed, 23 Jan 2019 06:58:56 -0500
+Received: from mx2.suse.de ([195.135.220.15]:34374 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725991AbfAWL64 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 06:58:56 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 6DC7BAFED;
+        Wed, 23 Jan 2019 11:58:54 +0000 (UTC)
+Date:   Wed, 23 Jan 2019 12:58:51 +0100
+Message-ID: <s5h4l9z4mbo.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org,
+        arnd@arndb.de, keescook@chromium.org, bgoswami@codeaurora.org,
+        sr@denx.de, gustavo@embeddedor.com, philburk@google.com,
+        willy@infradead.org, mchehab+samsung@kernel.org, sboyd@kernel.org,
+        vkoul@kernel.org, Baolin Wang <baolin.wang@linaro.org>,
+        daniel.thompson@linaro.org, leo.yan@linaro.org,
+        mathieu.poirier@linaro.org, srinivas.kandagatla@linaro.org,
+        anna-maria@linutronix.de, corbet@lwn.net, jmiller@neverware.com,
+        ckeepax@opensource.wolfsonmicro.com, joe@perches.com,
+        o-takashi@sakamocchi.jp, colyli@suse.de,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] ALSA: core: Add DMA share buffer support
+In-Reply-To: <20190122202535.GK7579@sirena.org.uk>
+References: <290f6d3a5fe288b87480cc5fa12c5139728daeca.1547787189.git.baolin.wang@linaro.org>
+        <81e894ba-acad-2fd4-996d-8d35edd8825a@perex.cz>
+        <20190118190805.GF6260@sirena.org.uk>
+        <s5hzhrxzrez.wl-tiwai@suse.de>
+        <20190121124053.GA12679@sirena.org.uk>
+        <f278bb69-7df0-4d14-5e4f-9bcb57d7f2b6@perex.cz>
+        <20190122202535.GK7579@sirena.org.uk>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 03:03:47AM -0800, Kees Cook wrote:
-> Variables declared in a switch statement before any case statements
-> cannot be initialized, so move all instances out of the switches.
-> After this, future always-initialized stack variables will work
-> and not throw warnings like this:
+On Tue, 22 Jan 2019 21:25:35 +0100,
+Mark Brown wrote:
 > 
-> fs/fcntl.c: In function ‘send_sigio_to_task’:
-> fs/fcntl.c:738:13: warning: statement will never be executed [-Wswitch-unreachable]
->    siginfo_t si;
->              ^~
+> On Mon, Jan 21, 2019 at 03:15:43PM +0100, Jaroslav Kysela wrote:
+> > Dne 21.1.2019 v 13:40 Mark Brown napsal(a):
+> 
+> > > It was the bit about adding more extended permission control that I was
+> > > worried about there, not the initial O_APPEND bit.  Indeed the O_APPEND
+> > > bit sounds like it might also work from the base buffer sharing point of
+> > > view, I have to confess I'd not heard of that feature before (it didn't
+> > > come up in the discussion when Eric raised this in Prague).
+> 
+> > With permissions, I meant to make possible to restrict the file
+> > descriptor operations (ioctls) for the depending task (like access to
+> > the DMA buffer, synchronize it for the non-coherent platforms and maybe
+> > read/write the actual position, delay etc.). It should be relatively
+> > easy to implement using the snd_pcm_file structure.
+> 
+> Right, that's what I understood you to mean.  If you want to have a
+> policy saying "it's OK to export a PCM file descriptor if it's only got
+> permissions X and Y" the security module is going to need to know about
+> the mechanism for setting those permissions.  With dma_buf that's all a
+> bit easier as there's less new stuff, though I've no real idea how much
+> of a big deal that actually is.
 
-That's a pain, so this means we can't have any new variables in { }
-scope except for at the top of a function?
+There are many ways to implement such a thing, yeah.  If we'd need an
+implementation that is done solely in the sound driver layer, I can
+imagine to introduce either a new ioctl or an open flag (like O_EXCL)
+to specify the restricted sharing.  That is, a kind of master / slave
+model where only the master is allowed to manipulate the stream while
+the slave can mmap, read/write and get status.
 
-That's going to be a hard thing to keep from happening over time, as
-this is valid C :(
 
-greg k-h
+thanks,
+
+Takashi
