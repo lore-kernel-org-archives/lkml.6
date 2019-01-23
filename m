@@ -2,77 +2,62 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6976CC282C5
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:19:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9300FC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:23:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41F7F21019
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:19:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B10221019
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:23:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726451AbfAWHTf (ORCPT
+        id S1726358AbfAWHXq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 02:19:35 -0500
-Received: from verein.lst.de ([213.95.11.211]:40975 "EHLO newverein.lst.de"
+        Wed, 23 Jan 2019 02:23:46 -0500
+Received: from nautica.notk.org ([91.121.71.147]:34824 "EHLO nautica.notk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725973AbfAWHTf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 02:19:35 -0500
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 649D36FA7F; Wed, 23 Jan 2019 08:19:33 +0100 (CET)
-Date:   Wed, 23 Jan 2019 08:19:33 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ming Lei <ming.lei@redhat.com>
-Subject: Re: linux-next: Fixes tags need some work in the dma-mapping-fixes
- tree
-Message-ID: <20190123071933.GA24861@lst.de>
-References: <20190123074747.7cd44f12@canb.auug.org.au>
+        id S1725973AbfAWHXq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 02:23:46 -0500
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id 3A64FC009; Wed, 23 Jan 2019 08:23:44 +0100 (CET)
+Date:   Wed, 23 Jan 2019 08:23:29 +0100
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        v9fs-developer@lists.sourceforge.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] 9p: mark expected switch fall-through
+Message-ID: <20190123072329.GA27574@nautica>
+References: <20190123071632.GA8039@embeddedor>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190123074747.7cd44f12@canb.auug.org.au>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20190123071632.GA8039@embeddedor>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 07:47:47AM +1100, Stephen Rothwell wrote:
-> Hi Christoph,
+Gustavo A. R. Silva wrote on Wed, Jan 23, 2019:
+> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+> where we are expecting to fall through.
 > 
-> In commit
+> This patch fixes the following warning:
 > 
->   702e8ed37bed ("arm64/xen: fix xen-swiotlb cache flushing")
+> net/9p/trans_xen.c:514:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
 > 
-> Fixes tag
+> Warning level 3 was used: -Wimplicit-fallthrough=3
 > 
->   Fixes: 356da6d0cd ("dma-mapping: bypass indirect calls for dma-direct")
+> This patch is part of the ongoing efforts to enabling
+> -Wimplicit-fallthrough
 > 
-> has these problem(s):
-> 
->   - SHA1 should be at least 12 digits long
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-When did we decide on that?  As far as I know it was bumped to 10
-a while ago.  12 basically makes the line even more unreadable.
+Sure, taking this to my queue for -next
 
-> In commit
-> 
->   8218a55b6b91 ("sbitmap: Protect swap_lock from hardirq")
-> 
-> Fixes tag
-> 
->   Fixes: ab53dcfb3e7b ("sbitmap: Protect swap_lock from hardirq")
-> 
-> has these problem(s):
-> 
->   - Target SHA1 does not exist
-> 
-> This later patch appears to already be in Linus' tree as commit
-> fe76fc6aaf53 (also with an incorrect Fixes tag :-()
-
-That commit is not from the dma-mapping tree..
+-- 
+Dominique
