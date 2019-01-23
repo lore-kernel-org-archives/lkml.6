@@ -6,47 +6,47 @@ X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E66C6C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:52:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4C34C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:52:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6D64218A1
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:52:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80DF72184C
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:52:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548283975;
-	bh=oKS3kcktzzR287q6H0rR3/ZGl2v281gm1CFxOCbTNKo=;
+	s=default; t=1548283978;
+	bh=Q9W59TbgJ1Q9YUDkqEDbFDT7Hi9s2AJUXcFF9AsLb3g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=M6THpsfLwISRnawKcvw8VkW4lZvE8a+tGJRx2MyY6yEKtV8dj+u8CPtlSGJxKXNWT
-	 tAllQ9Wcm7Wk4q9UgpkMhYihdztnxh4QCVBxH2+mS7GRk3TdDD6Q/kHmLWkoEMoX7t
-	 mm5Rg3W3iyl5eJZKJf4ulc+H/HTJJ9cESjF97YjQ=
+	b=ay54oEwgy/GxUDY9qqxurHh7KhkB3ws7a2Jxu6VUQEXVKAjc3Rd647IMuhc+3ndAV
+	 LSnVQiD8HhtxjrJttXhowTTSx+9UQWC/VEDBXXdSuVGu/bgat2bgK1RNcgRylZp3t8
+	 sz9KkFo92bWHy2Kk36+vEXnBqTylgDy4L7cil1w4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727192AbfAWWwn (ORCPT
+        id S1727170AbfAWWwk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 17:52:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50100 "EHLO mail.kernel.org"
+        Wed, 23 Jan 2019 17:52:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50108 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726152AbfAWWwc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726220AbfAWWwc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 23 Jan 2019 17:52:32 -0500
 Received: from ebiggers-linuxstation.mtv.corp.google.com (unknown [104.132.1.77])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 55B17218A1;
+        by mail.kernel.org (Postfix) with ESMTPSA id A728A218A2;
         Wed, 23 Jan 2019 22:52:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1548283951;
-        bh=oKS3kcktzzR287q6H0rR3/ZGl2v281gm1CFxOCbTNKo=;
+        bh=Q9W59TbgJ1Q9YUDkqEDbFDT7Hi9s2AJUXcFF9AsLb3g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qQTo9TsyJIFSx7B9fdB6gM9g3V+tk13EL4VtX36GanzcAkhpi3ChJCsMX0xGvr/iL
-         rYDAaeiNZOTnHQippOj+MpyIPCuJdMPXG4RjL1gaEsVvmjXkUPeFf7Ag/+R18ZZ2TK
-         nd3H9MJCBn8t9dny/yrew0AMtQEdUTXhs+8Rrq/A=
+        b=0i6PbAKgb5zeFpSjHHhP5wllsgP4h3jXQMHa5IinFziCptvRz1KYIVrrK26/dVhKL
+         yNEoXMNUJxhMBoAyp1n3wxt7x3D0nCunJRTTVu3PlrhwiS73RVyDg9al8eHMh8cVaT
+         3fV8agJ8gtmqWZ//WsHLOPMYUfr6vJOoV4sz2SZ8=
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     linux-crypto@vger.kernel.org,
         Herbert Xu <herbert@gondor.apana.org.au>
 Cc:     linux-kernel@vger.kernel.org,
         "Jason A . Donenfeld" <Jason@zx2c4.com>, stable@vger.kernel.org,
         Ondrej Mosnacek <omosnace@redhat.com>
-Subject: [RFC/RFT PATCH 01/15] crypto: aegis - fix handling chunked inputs
-Date:   Wed, 23 Jan 2019 14:49:12 -0800
-Message-Id: <20190123224926.250525-2-ebiggers@kernel.org>
+Subject: [RFC/RFT PATCH 02/15] crypto: morus - fix handling chunked inputs
+Date:   Wed, 23 Jan 2019 14:49:13 -0800
+Message-Id: <20190123224926.250525-3-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.20.1.321.g9e740568ce-goog
 In-Reply-To: <20190123224926.250525-1-ebiggers@kernel.org>
 References: <20190123224926.250525-1-ebiggers@kernel.org>
@@ -59,39 +59,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-The generic AEGIS implementations all fail the improved AEAD tests
+The generic MORUS implementations all fail the improved AEAD tests
 because they produce the wrong result with some data layouts.  Fix them.
 
-Fixes: f606a88e5823 ("crypto: aegis - Add generic AEGIS AEAD implementations")
+Fixes: 396be41f16fd ("crypto: morus - Add generic MORUS AEAD implementations")
 Cc: <stable@vger.kernel.org> # v4.18+
 Cc: Ondrej Mosnacek <omosnace@redhat.com>
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- crypto/aegis128.c  | 14 +++++++-------
- crypto/aegis128l.c | 14 +++++++-------
- crypto/aegis256.c  | 14 +++++++-------
- 3 files changed, 21 insertions(+), 21 deletions(-)
+ crypto/morus1280.c | 13 +++++++------
+ crypto/morus640.c  | 13 +++++++------
+ 2 files changed, 14 insertions(+), 12 deletions(-)
 
-diff --git a/crypto/aegis128.c b/crypto/aegis128.c
-index c22f4414856d..789716f92e4c 100644
---- a/crypto/aegis128.c
-+++ b/crypto/aegis128.c
-@@ -290,19 +290,19 @@ static void crypto_aegis128_process_crypt(struct aegis_state *state,
- 					  const struct aegis128_ops *ops)
+diff --git a/crypto/morus1280.c b/crypto/morus1280.c
+index 3889c188f266..b83576b4eb55 100644
+--- a/crypto/morus1280.c
++++ b/crypto/morus1280.c
+@@ -366,18 +366,19 @@ static void crypto_morus1280_process_crypt(struct morus1280_state *state,
+ 					   const struct morus1280_ops *ops)
  {
  	struct skcipher_walk walk;
--	u8 *src, *dst;
--	unsigned int chunksize;
+-	u8 *dst;
+-	const u8 *src;
  
  	ops->skcipher_walk_init(&walk, req, false);
  
  	while (walk.nbytes) {
 -		src = walk.src.virt.addr;
 -		dst = walk.dst.virt.addr;
--		chunksize = walk.nbytes;
 +		unsigned int nbytes = walk.nbytes;
  
--		ops->crypt_chunk(state, dst, src, chunksize);
+-		ops->crypt_chunk(state, dst, src, walk.nbytes);
 +		if (nbytes < walk.total)
 +			nbytes = round_down(nbytes, walk.stride);
  
@@ -103,57 +101,25 @@ index c22f4414856d..789716f92e4c 100644
  	}
  }
  
-diff --git a/crypto/aegis128l.c b/crypto/aegis128l.c
-index b6fb21ebdc3e..73811448cb6b 100644
---- a/crypto/aegis128l.c
-+++ b/crypto/aegis128l.c
-@@ -353,19 +353,19 @@ static void crypto_aegis128l_process_crypt(struct aegis_state *state,
- 					   const struct aegis128l_ops *ops)
+diff --git a/crypto/morus640.c b/crypto/morus640.c
+index da06ec2f6a80..b6a477444f6d 100644
+--- a/crypto/morus640.c
++++ b/crypto/morus640.c
+@@ -365,18 +365,19 @@ static void crypto_morus640_process_crypt(struct morus640_state *state,
+ 					  const struct morus640_ops *ops)
  {
  	struct skcipher_walk walk;
--	u8 *src, *dst;
--	unsigned int chunksize;
+-	u8 *dst;
+-	const u8 *src;
  
  	ops->skcipher_walk_init(&walk, req, false);
  
  	while (walk.nbytes) {
 -		src = walk.src.virt.addr;
 -		dst = walk.dst.virt.addr;
--		chunksize = walk.nbytes;
 +		unsigned int nbytes = walk.nbytes;
  
--		ops->crypt_chunk(state, dst, src, chunksize);
-+		if (nbytes < walk.total)
-+			nbytes = round_down(nbytes, walk.stride);
- 
--		skcipher_walk_done(&walk, 0);
-+		ops->crypt_chunk(state, walk.dst.virt.addr, walk.src.virt.addr,
-+				 nbytes);
-+
-+		skcipher_walk_done(&walk, walk.nbytes - nbytes);
- 	}
- }
- 
-diff --git a/crypto/aegis256.c b/crypto/aegis256.c
-index 11f0f8ec9c7c..8a71e9c06193 100644
---- a/crypto/aegis256.c
-+++ b/crypto/aegis256.c
-@@ -303,19 +303,19 @@ static void crypto_aegis256_process_crypt(struct aegis_state *state,
- 					  const struct aegis256_ops *ops)
- {
- 	struct skcipher_walk walk;
--	u8 *src, *dst;
--	unsigned int chunksize;
- 
- 	ops->skcipher_walk_init(&walk, req, false);
- 
- 	while (walk.nbytes) {
--		src = walk.src.virt.addr;
--		dst = walk.dst.virt.addr;
--		chunksize = walk.nbytes;
-+		unsigned int nbytes = walk.nbytes;
- 
--		ops->crypt_chunk(state, dst, src, chunksize);
+-		ops->crypt_chunk(state, dst, src, walk.nbytes);
 +		if (nbytes < walk.total)
 +			nbytes = round_down(nbytes, walk.stride);
  
