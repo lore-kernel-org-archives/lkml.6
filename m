@@ -2,330 +2,155 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ABE6C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:12:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43BA0C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:17:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39FE321872
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:12:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F07B7218A1
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:17:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="I1wNGhx6"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="n630SCvA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727094AbfAWWMX (ORCPT
+        id S1726367AbfAWWRj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 17:12:23 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:46165 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727067AbfAWWMT (ORCPT
+        Wed, 23 Jan 2019 17:17:39 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:51778 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726152AbfAWWRj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 17:12:19 -0500
-Received: by mail-pl1-f194.google.com with SMTP id t13so1834522ply.13
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 14:12:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=vNORL193xH9Gk3reWaXvRuVX97J+wziyGZD9UO3aIRs=;
-        b=I1wNGhx6JkzWn1xAf1fb0qxQn1tYod6zuH4ME8m6TsP5j2tNnHghNnG1ieVHivjGVl
-         CF7lxDh2bUbZJJSgmhwC5laiukw75Wo4K7ZsnUrkZjE8G9C7raZ/bRuTisfNt9E5XH+/
-         JM+McAJPeJ6GA5486/AjBdqo4ZYFQLUHchLXc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=vNORL193xH9Gk3reWaXvRuVX97J+wziyGZD9UO3aIRs=;
-        b=G5upGAHCQh8FIgoaV7aSzlH6fFB3XPpq+mcHfXnuvo2/CQQpzoJWkQ/7lgvCRQFXmX
-         TRef14gGlGkG/bWKR9n+x9zOpDhbY1MyKt/1wU7b+ikkwHU8zVvjhRQxjwZfXGDj93Av
-         HdUorzKjGPnMi3bJPVOwhV+n+AzdEZgbxXTwUYg6CFybrcLTYQsfvjUYpNZxkkFlFWa3
-         Zam74K16pZcNL4KGMoUeUehGTx3if7KL3NLsItYqFnAAQrJjDte9orE/xs/tjkTFifwR
-         l4MVaR+eMKUy49plaNffuGNFqYy+HsFX4jVaDt8/5v3dpDKF3dE6LqAE5n7As2oys5nj
-         dpLg==
-X-Gm-Message-State: AJcUukeJqk/8J4VPzqcZNIJqg4PHvLrbnSXMt/EQnfjc1TxF4Uv9QDXq
-        S9ryYYOLaMkOm5kcme+WqiETENLQyNA=
-X-Google-Smtp-Source: ALg8bN5aLSi7zQZv02thFiqr5kar0gCVdkqv9XdfkyqzDZxDE/bV5ZV5jrcaH3bqXDG2dcZnhPgOrQ==
-X-Received: by 2002:a17:902:bb98:: with SMTP id m24mr3927423pls.71.1548281538511;
-        Wed, 23 Jan 2019 14:12:18 -0800 (PST)
-Received: from evgreen2.mtv.corp.google.com ([2620:15c:202:201:ffda:7716:9afc:1301])
-        by smtp.gmail.com with ESMTPSA id d18sm27927943pfj.47.2019.01.23.14.12.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 23 Jan 2019 14:12:17 -0800 (PST)
-From:   Evan Green <evgreen@chromium.org>
-To:     Andy Gross <andy.gross@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Can Guo <cang@codeaurora.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Asutosh Das <asutoshd@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Evan Green <evgreen@chromium.org>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Vinayak Holikatti <vinholikatti@gmail.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 6/9] scsi: ufs: qcom: Expose the reset controller for PHY
-Date:   Wed, 23 Jan 2019 14:11:34 -0800
-Message-Id: <20190123221137.41722-7-evgreen@chromium.org>
-X-Mailer: git-send-email 2.18.1
-In-Reply-To: <20190123221137.41722-1-evgreen@chromium.org>
-References: <20190123221137.41722-1-evgreen@chromium.org>
+        Wed, 23 Jan 2019 17:17:39 -0500
+Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 60D9423D;
+        Wed, 23 Jan 2019 23:17:36 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1548281856;
+        bh=GBiSJXMwkVdxvoTgXAhpme26VHbAsFe19uZJ27BgiDM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=n630SCvAimK3V9LFVdy6C6/9o4hNCPfhGUhCMi9NSKZEFfmvoFIbC3VOAaN6/kW42
+         L/msBj4lTtsXzo9jum/gltvyzqjBJmKRUSaetMpJxi/+z3tQEzLv9cAe7DfeiGWb7N
+         NrzocTnkcVhw+dCrFnDT5yP1OSFzONwtokvmRUlw=
+Date:   Thu, 24 Jan 2019 00:17:35 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Lukas Wunner <lukas@wunner.de>,
+        Ronald =?utf-8?B?VHNjaGFsw6Ry?= <ronald@innovation.ch>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-input@vger.kernel.org
+Subject: Re: [PATCH] drm/bridge: sil_sii8620: depend on INPUT instead of
+ selecting it.
+Message-ID: <20190123221735.GE4675@pendragon.ideasonboard.com>
+References: <20190122141311.10445-1-ronald@innovation.ch>
+ <20190123084556.gsospl6joh53qnzs@wunner.de>
+ <20190123220342.GC179701@dtor-ws>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190123220342.GC179701@dtor-ws>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Expose a reset controller that the phy can use to perform its
-initialization in a single callback.
+Hello Dmity,
 
-Also, change the use of the phy functions from ufs-qcom such that
-phy_poweron actually fires up the phy, and phy_poweroff actually
-powers it down.
+On Wed, Jan 23, 2019 at 02:03:42PM -0800, Dmitry Torokhov wrote:
+> On Wed, Jan 23, 2019 at 09:45:56AM +0100, Lukas Wunner wrote:
+> > On Tue, Jan 22, 2019 at 06:13:11AM -0800, Ronald Tschalär wrote:
+> >> commit d6abe6df706c66d803e6dd4fe98c1b6b7f125a56 (drm/bridge:
+> >> sil_sii8620: do not have a dependency of RC_CORE) added a dependency on
+> >> INPUT. However, this causes problems with other drivers, in particular
+> >> an input driver that depends on MFD_INTEL_LPSS_PCI (to be added in a
+> >> future commit):
+> >> 
+> >>   drivers/clk/Kconfig:9:error: recursive dependency detected!
+> >>   drivers/clk/Kconfig:9:        symbol COMMON_CLK is selected by MFD_INTEL_LPSS
+> >>   drivers/mfd/Kconfig:566:      symbol MFD_INTEL_LPSS is selected by MFD_INTEL_LPSS_PCI
+> >>   drivers/mfd/Kconfig:580:      symbol MFD_INTEL_LPSS_PCI is implied by KEYBOARD_APPLESPI
+> >>   drivers/input/keyboard/Kconfig:73:    symbol KEYBOARD_APPLESPI depends on INPUT
+> >>   drivers/input/Kconfig:8:      symbol INPUT is selected by DRM_SIL_SII8620
+> >>   drivers/gpu/drm/bridge/Kconfig:83:    symbol DRM_SIL_SII8620 depends on DRM_BRIDGE
+> >>   drivers/gpu/drm/bridge/Kconfig:1:     symbol DRM_BRIDGE is selected by DRM_PL111
+> >>   drivers/gpu/drm/pl111/Kconfig:1:      symbol DRM_PL111 depends on COMMON_CLK
+> >> 
+> >> According to the docs, select should only be used for non-visible
+> >> symbols. Furthermore almost all other references to INPUT throughout the
+> >> kernel config are depends, not selects. Hence this change.
+> 
+> I think this is not as cut and dry. We should be able to select needed
+> subsystems (such as INPUT, USB, etc) even if they are user visible.
 
-Signed-off-by: Evan Green <evgreen@chromium.org>
+Semantically, maybe, but given the current state of Kconfig this results
+in a recursive dependencies nightmare. It's a no-go.
 
----
-Note: This change depends on the remaining changes in this series,
-since UFS PHY reset now needs to be done by the PHY driver.
+> User, when enabling a piece of hardware, does not need to know ultimate
+> details of all subsystems the driver might need ti function.
+> 
+> It looks like one of the drivers implies MFD_INTEL_LPSS_PCI, maybe
+> treating imply the same as select when detecting circular dependency is
+> wrong as we are allowed to deselect implied dependencies?
+> 
+> >> 
+> >> CC: Inki Dae <inki.dae@samsung.com>
+> >> CC: Andrzej Hajda <a.hajda@samsung.com>
+> >> Signed-off-by: Ronald Tschalär <ronald@innovation.ch>
+> > 
+> > Reviewed-by: Lukas Wunner <lukas@wunner.de>
+> > 
+> > I think this needs to be merged through the input tree as a prerequisite
+> > for the applespi.c driver (keyboard + touchpad driver for 2015+ MacBook,
+> > MacBook Air and MacBook Pro which uses SPI instead of USB) to avoid
+> > breaking the build.  Adding Dmitry.
+> 
+> I have no idea what applespi.c is (it is definitely not in my tree), so
+> I think it should be merged through the same tree that the original
+> commit was introduced through.
+> 
+> >> ---
+> >>  drivers/gpu/drm/bridge/Kconfig | 2 +-
+> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >> 
+> >> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+> >> index 2fee47b0d50b..eabedc83f25c 100644
+> >> --- a/drivers/gpu/drm/bridge/Kconfig
+> >> +++ b/drivers/gpu/drm/bridge/Kconfig
+> >> @@ -83,9 +83,9 @@ config DRM_PARADE_PS8622
+> >>  config DRM_SIL_SII8620
+> >>  	tristate "Silicon Image SII8620 HDMI/MHL bridge"
+> >>  	depends on OF
+> >> +	depends on INPUT
+> >>  	select DRM_KMS_HELPER
+> >>  	imply EXTCON
+> >> -	select INPUT
+> >>  	select RC_CORE
+> 
+> Keeping "select RC_CORE" is wrong though, as the driver appears to be
+> working find without RC. Maybe it should be stubbed out?
 
-Changes in v2:
-- Remove include of reset.h (Stephen)
-- Fix error print of phy_power_on (Stephen)
-- Comment for reset controller warnings on id != 0 (Stephen)
-- Add static to ufs_qcom_reset_ops (Stephen).
+It should definitely not be select'ed as it's a user-visible symbol. My
+preference would be to simply revert d6abe6df706c. If we want (and can)
+work without RC core then it should be stubbed out.
 
- drivers/scsi/ufs/Kconfig    |   1 +
- drivers/scsi/ufs/ufs-qcom.c | 111 ++++++++++++++++++++++--------------
- drivers/scsi/ufs/ufs-qcom.h |   4 ++
- 3 files changed, 72 insertions(+), 44 deletions(-)
+Commit d6abe6df706c states
 
-diff --git a/drivers/scsi/ufs/Kconfig b/drivers/scsi/ufs/Kconfig
-index 2ddbb26d9c265..63c5c4115981f 100644
---- a/drivers/scsi/ufs/Kconfig
-+++ b/drivers/scsi/ufs/Kconfig
-@@ -100,6 +100,7 @@ config SCSI_UFS_QCOM
- 	tristate "QCOM specific hooks to UFS controller platform driver"
- 	depends on SCSI_UFSHCD_PLATFORM && ARCH_QCOM
- 	select PHY_QCOM_UFS
-+	select RESET_CONTROLLER
- 	help
- 	  This selects the QCOM specific additions to UFSHCD platform driver.
- 	  UFS host on QCOM needs some vendor specific configuration before
-diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
-index 3aeadb14aae1e..277ed6ad71c9b 100644
---- a/drivers/scsi/ufs/ufs-qcom.c
-+++ b/drivers/scsi/ufs/ufs-qcom.c
-@@ -49,6 +49,11 @@ static void ufs_qcom_get_default_testbus_cfg(struct ufs_qcom_host *host);
- static int ufs_qcom_set_dme_vs_core_clk_ctrl_clear_div(struct ufs_hba *hba,
- 						       u32 clk_cycles);
- 
-+static struct ufs_qcom_host *rcdev_to_ufs_host(struct reset_controller_dev *rcd)
-+{
-+	return container_of(rcd, struct ufs_qcom_host, rcdev);
-+}
-+
- static void ufs_qcom_dump_regs_wrapper(struct ufs_hba *hba, int offset, int len,
- 				       const char *prefix, void *priv)
- {
-@@ -255,11 +260,6 @@ static int ufs_qcom_power_up_sequence(struct ufs_hba *hba)
- 	if (is_rate_B)
- 		phy_set_mode(phy, PHY_MODE_UFS_HS_B);
- 
--	/* Assert PHY reset and apply PHY calibration values */
--	ufs_qcom_assert_reset(hba);
--	/* provide 1ms delay to let the reset pulse propagate */
--	usleep_range(1000, 1100);
--
- 	/* phy initialization - calibrate the phy */
- 	ret = phy_init(phy);
- 	if (ret) {
-@@ -268,15 +268,6 @@ static int ufs_qcom_power_up_sequence(struct ufs_hba *hba)
- 		goto out;
- 	}
- 
--	/* De-assert PHY reset and start serdes */
--	ufs_qcom_deassert_reset(hba);
--
--	/*
--	 * after reset deassertion, phy will need all ref clocks,
--	 * voltage, current to settle down before starting serdes.
--	 */
--	usleep_range(1000, 1100);
--
- 	/* power on phy - start serdes and phy's power and clocks */
- 	ret = phy_power_on(phy);
- 	if (ret) {
-@@ -290,7 +281,6 @@ static int ufs_qcom_power_up_sequence(struct ufs_hba *hba)
- 	return 0;
- 
- out_disable_phy:
--	ufs_qcom_assert_reset(hba);
- 	phy_exit(phy);
- out:
- 	return ret;
-@@ -554,21 +544,10 @@ static int ufs_qcom_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op)
- 		ufs_qcom_disable_lane_clks(host);
- 		phy_power_off(phy);
- 
--		/* Assert PHY soft reset */
--		ufs_qcom_assert_reset(hba);
--		goto out;
--	}
--
--	/*
--	 * If UniPro link is not active, PHY ref_clk, main PHY analog power
--	 * rail and low noise analog power rail for PLL can be switched off.
--	 */
--	if (!ufs_qcom_is_link_active(hba)) {
-+	} else if (!ufs_qcom_is_link_active(hba)) {
- 		ufs_qcom_disable_lane_clks(host);
--		phy_power_off(phy);
- 	}
- 
--out:
- 	return ret;
- }
- 
-@@ -578,21 +557,26 @@ static int ufs_qcom_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
- 	struct phy *phy = host->generic_phy;
- 	int err;
- 
--	err = phy_power_on(phy);
--	if (err) {
--		dev_err(hba->dev, "%s: failed enabling regs, err = %d\n",
--			__func__, err);
--		goto out;
--	}
-+	if (ufs_qcom_is_link_off(hba)) {
-+		err = phy_power_on(phy);
-+		if (err) {
-+			dev_err(hba->dev, "%s: failed PHY power on: %d\n",
-+				__func__, err);
-+			return err;
-+		}
- 
--	err = ufs_qcom_enable_lane_clks(host);
--	if (err)
--		goto out;
-+		err = ufs_qcom_enable_lane_clks(host);
-+		if (err)
-+			return err;
- 
--	hba->is_sys_suspended = false;
-+	} else if (!ufs_qcom_is_link_active(hba)) {
-+		err = ufs_qcom_enable_lane_clks(host);
-+		if (err)
-+			return err;
-+	}
- 
--out:
--	return err;
-+	hba->is_sys_suspended = false;
-+	return 0;
- }
- 
- struct ufs_qcom_dev_params {
-@@ -1118,8 +1102,6 @@ static int ufs_qcom_setup_clocks(struct ufs_hba *hba, bool on,
- 		return 0;
- 
- 	if (on && (status == POST_CHANGE)) {
--		phy_power_on(host->generic_phy);
--
- 		/* enable the device ref clock for HS mode*/
- 		if (ufshcd_is_hs_mode(&hba->pwr_info))
- 			ufs_qcom_dev_ref_clk_ctrl(host, true);
-@@ -1131,9 +1113,6 @@ static int ufs_qcom_setup_clocks(struct ufs_hba *hba, bool on,
- 		if (!ufs_qcom_is_link_active(hba)) {
- 			/* disable device ref_clk */
- 			ufs_qcom_dev_ref_clk_ctrl(host, false);
--
--			/* powering off PHY during aggressive clk gating */
--			phy_power_off(host->generic_phy);
- 		}
- 
- 		vote = host->bus_vote.min_bw_vote;
-@@ -1147,6 +1126,41 @@ static int ufs_qcom_setup_clocks(struct ufs_hba *hba, bool on,
- 	return err;
- }
- 
-+static int
-+ufs_qcom_reset_assert(struct reset_controller_dev *rcdev, unsigned long id)
-+{
-+	struct ufs_qcom_host *host = rcdev_to_ufs_host(rcdev);
-+
-+	/* Currently this code only knows about a single reset. */
-+	WARN_ON(id);
-+	ufs_qcom_assert_reset(host->hba);
-+	/* provide 1ms delay to let the reset pulse propagate */
-+	usleep_range(1000, 1100);
-+	return 0;
-+}
-+
-+static int
-+ufs_qcom_reset_deassert(struct reset_controller_dev *rcdev, unsigned long id)
-+{
-+	struct ufs_qcom_host *host = rcdev_to_ufs_host(rcdev);
-+
-+	/* Currently this code only knows about a single reset. */
-+	WARN_ON(id);
-+	ufs_qcom_deassert_reset(host->hba);
-+
-+	/*
-+	 * after reset deassertion, phy will need all ref clocks,
-+	 * voltage, current to settle down before starting serdes.
-+	 */
-+	usleep_range(1000, 1100);
-+	return 0;
-+}
-+
-+const static struct reset_control_ops ufs_qcom_reset_ops = {
-+	.assert = ufs_qcom_reset_assert,
-+	.deassert = ufs_qcom_reset_deassert,
-+};
-+
- #define	ANDROID_BOOT_DEV_MAX	30
- static char android_boot_dev[ANDROID_BOOT_DEV_MAX];
- 
-@@ -1191,6 +1205,15 @@ static int ufs_qcom_init(struct ufs_hba *hba)
- 	host->hba = hba;
- 	ufshcd_set_variant(hba, host);
- 
-+	/* Fire up the reset controller. Failure here is non-fatal. */
-+	host->rcdev.of_node = dev->of_node;
-+	host->rcdev.ops = &ufs_qcom_reset_ops;
-+	host->rcdev.owner = dev->driver->owner;
-+	host->rcdev.nr_resets = 1;
-+	err = devm_reset_controller_register(dev, &host->rcdev);
-+	if (err)
-+		dev_warn(dev, "Failed to register reset controller\n");
-+
- 	/*
- 	 * voting/devoting device ref_clk source is time consuming hence
- 	 * skip devoting it during aggressive clock gating. This clock
-diff --git a/drivers/scsi/ufs/ufs-qcom.h b/drivers/scsi/ufs/ufs-qcom.h
-index c114826316eb0..68a8801857529 100644
---- a/drivers/scsi/ufs/ufs-qcom.h
-+++ b/drivers/scsi/ufs/ufs-qcom.h
-@@ -14,6 +14,8 @@
- #ifndef UFS_QCOM_H_
- #define UFS_QCOM_H_
- 
-+#include <linux/reset-controller.h>
-+
- #define MAX_UFS_QCOM_HOSTS	1
- #define MAX_U32                 (~(u32)0)
- #define MPHY_TX_FSM_STATE       0x41
-@@ -237,6 +239,8 @@ struct ufs_qcom_host {
- 	/* Bitmask for enabling debug prints */
- 	u32 dbg_print_en;
- 	struct ufs_qcom_testbus testbus;
-+
-+	struct reset_controller_dev rcdev;
- };
- 
- static inline u32
+    And some boards not using remote controller device don't really
+    need to know that RC_CORE config should be enabled to use sil_sii8620
+    driver only for HDMI.
+
+The same reasoning applies to INPUT, if we agree that depending on
+RC_CORE is confusing for users, then depending on INPUT is confusing as
+well. There's not reason to apply different standards to INPUT and
+RC_CORE, depending on one and selecting the other doesn't make much
+sense.
+
 -- 
-2.18.1
+Regards,
 
+Laurent Pinchart
