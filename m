@@ -2,82 +2,108 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C76F5C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:08:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00E16C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:09:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C3D3217D4
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:08:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ZdhhhUw8"
+	by mail.kernel.org (Postfix) with ESMTP id AA492217D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:09:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726271AbfAWSI5 (ORCPT
+        id S1726519AbfAWSJK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 13:08:57 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:33560 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725976AbfAWSI5 (ORCPT
+        Wed, 23 Jan 2019 13:09:10 -0500
+Received: from gateway22.websitewelcome.com ([192.185.46.234]:21000 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726281AbfAWSJJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 13:08:57 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0NI42jc067366;
-        Wed, 23 Jan 2019 18:08:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=bQcmAj+uxiGdd1ToStbp1zvuhsqB4tnv+6umvvuRPCY=;
- b=ZdhhhUw8/n6+xDnzfuz3LkPsxAM5pViK0ucH4703l+jJkxM1ULieqArPPN7HpcWYVkKn
- Hda80UHAQyWCpH558Vg4JZ/NMsTIfmkJH0AGA9FR9sa1shVPIHDHtTLOcf9RmgnSXzD9
- 3ga4bIvDNN9lLbGXnXha0OC1QXkpwMfPWOSrLMUZaUioM0iCO+fiQjcBX/Ycfllsm9ek
- mch+utHW3Uc/8dpoYFG/sYZhAl3hRR+SUdu8bcErw9Z6rhPbu7ZWjAf38qsdZ0JqHerW
- ocmCMzaUP4SHHM+tmwK0ApwN6izTzOJe1WPHNBzW7KpD0ToXQiBvt9MT6bFgG/JyInKY Ew== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by aserp2130.oracle.com with ESMTP id 2q3sdekpxp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 23 Jan 2019 18:08:53 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0NI8qbJ025630
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 23 Jan 2019 18:08:52 GMT
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0NI8ppJ003371;
-        Wed, 23 Jan 2019 18:08:51 GMT
-Received: from Konrads-MacBook-Pro.local (/75.104.64.133)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 23 Jan 2019 10:08:51 -0800
-Date:   Wed, 23 Jan 2019 13:08:37 -0500
-From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To:     KarimAllah Ahmed <karahmed@amazon.de>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        pbonzini@redhat.com, rkrcmar@redhat.com
-Subject: Re: [PATCH v5 10/13] KVM/nSVM: Use the new mapping API for mapping
- guest memory
-Message-ID: <20190123180835.GO19289@Konrads-MacBook-Pro.local>
-References: <1547026933-31226-1-git-send-email-karahmed@amazon.de>
- <1547026933-31226-11-git-send-email-karahmed@amazon.de>
+        Wed, 23 Jan 2019 13:09:09 -0500
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id B80E4816B
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 12:09:08 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id mMxYg9eicYTGMmMxYgs8vA; Wed, 23 Jan 2019 12:09:08 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=50044 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gmMxY-000i3W-C2; Wed, 23 Jan 2019 12:09:08 -0600
+Subject: Re: [PATCH net-next] net/mlx4: Mark expected switch fall-through
+To:     David Miller <davem@davemloft.net>
+Cc:     tariqt@mellanox.com, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190123080511.GA32528@embeddedor>
+ <20190123.090803.438719975498577995.davem@davemloft.net>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Message-ID: <e27972ea-dc6a-569d-638f-293067c95059@embeddedor.com>
+Date:   Wed, 23 Jan 2019 12:09:07 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1547026933-31226-11-git-send-email-karahmed@amazon.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9145 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=823
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901230134
+In-Reply-To: <20190123.090803.438719975498577995.davem@davemloft.net>
+Content-Type: text/plain; charset=iso-8859-7
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1gmMxY-000i3W-C2
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.130.205]:50044
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 11
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 10:42:10AM +0100, KarimAllah Ahmed wrote:
-> Use the new mapping API for mapping guest memory to avoid depending on
-> "struct page".
-> 
-> Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
 
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+
+On 1/23/19 11:08 AM, David Miller wrote:
+> From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+> Date: Wed, 23 Jan 2019 02:05:11 -0600
+> 
+>> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+>> where we are expecting to fall through.
+>>
+>> This patch fixes the following warning:
+>>
+>> drivers/net/ethernet/mellanox/mlx4/eq.c: In function ¡mlx4_eq_int¢:
+>> drivers/net/ethernet/mellanox/mlx4/mlx4.h:219:5: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>>   if (mlx4_debug_level)      \
+>>      ^
+>> drivers/net/ethernet/mellanox/mlx4/eq.c:558:4: note: in expansion of macro ¡mlx4_dbg¢
+>>     mlx4_dbg(dev, "%s: MLX4_EVENT_TYPE_SRQ_LIMIT. srq_no=0x%x, eq 0x%x\n",
+>>     ^~~~~~~~
+>> drivers/net/ethernet/mellanox/mlx4/eq.c:561:3: note: here
+>>    case MLX4_EVENT_TYPE_SRQ_CATAS_ERROR:
+>>    ^~~~
+>>
+>> Warning level 3 was used: -Wimplicit-fallthrough=3
+>>
+>> This patch is part of the ongoing efforts to enabling
+>> -Wimplicit-fallthrough.
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> 
+> Applied.
+> 
+
+Thank you both, Tariq and David.
+
+--
+Gustavo
