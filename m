@@ -2,168 +2,104 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F943C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:08:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38D7CC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:11:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0948920870
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:08:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E55B420870
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:11:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bv6Q7Ro3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727353AbfAWKID (ORCPT
+        id S1727323AbfAWKLf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 05:08:03 -0500
-Received: from mx-ginzinger.sigmacloud.services ([185.154.235.147]:44153 "EHLO
-        mx-ginzinger.sigmacloud.services" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727227AbfAWKID (ORCPT
+        Wed, 23 Jan 2019 05:11:35 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:34742 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727095AbfAWKLe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 05:08:03 -0500
-Received: from [31.193.165.228] (port=64602 helo=mx-ginzinger.sigmacloud.services)
-        by mx-ginzinger.sigmacloud.services with esmtps (TLSv1.2:AES256-GCM-SHA384:256)
-        (Exim 4.82_1-5b7a7c0-XX)
-        (envelope-from <Martin.Kepplinger@ginzinger.com>)
-        id 1gmFRs-0007WL-1K; Wed, 23 Jan 2019 11:07:56 +0100
-Received: from [10.10.1.120] (10.10.1.120) by exc1.buero.ginzinger.com
- (10.1.1.204) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Wed, 23 Jan
- 2019 11:07:56 +0100
-X-CTCH-RefID: str=0001.0A0B0202.5C483CFC.0049,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Subject: Re: [PATCH 2/2] Input: st1232 - add support for st1633
-To:     Martin Kepplinger <martink@posteo.de>,
-        <devicetree@vger.kernel.org>, <linux-input@vger.kernel.org>
-CC:     <dmitry.torokhov@gmail.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <chinyeow.sim.xt@renesas.com>,
-        <linux-kernel@vger.kernel.org>
-References: <20190123072651.31791-1-martink@posteo.de>
- <20190123072651.31791-2-martink@posteo.de>
-From:   Martin Kepplinger <martin.kepplinger@ginzinger.com>
-Message-ID: <df37b873-0641-c127-d6d8-5bd9ed155e87@ginzinger.com>
-Date:   Wed, 23 Jan 2019 11:07:55 +0100
+        Wed, 23 Jan 2019 05:11:34 -0500
+Received: by mail-wm1-f67.google.com with SMTP id y185so10573959wmd.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 02:11:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=dBPGyksu/p6C69hqJ+z25/t9MgYsNomdetYysvi9FiE=;
+        b=bv6Q7Ro3eGnBUc8z4uR3ddO34jLVAz0HlxwbWZqwZe8m2+dlDi2NuHmHbNW8AMtsYj
+         GvOnVKyUuVmK78ssSddjjTOFzxWBSmg/LGsRaCEaKNx0QqORX3+BjEZ/PvBY0OVNK0On
+         ExGsAoF3CkC0OAMtx+Vr1hNbueEp6zYhOyPBc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=dBPGyksu/p6C69hqJ+z25/t9MgYsNomdetYysvi9FiE=;
+        b=g2yFpzxWwR+I0mKySw5Y21uJnErXQO54fqNsHvsRpDIjvZG21jPJSC9+BMvq5OzUEZ
+         ThwQDljGeMdCBm9cuI4U0QqbSXEfraAWy4T5m4VttB7qMCkIoUeXjTd76yCtjgJiG9bN
+         Tvwg7tErppKskr0xMd+npXXNxoYfpc6uxCJVFoclm9QSsTEoxzzPcaRu758Z8uhLxTMX
+         Bod49DbQl8OVPO42+eUqNsTgdJyPgBtYDlC05XjDfPTRO1bA6Zni/10arLbrRSSjk+b4
+         DcYUgsGmTk83qv97PvhiGQj+NvwNShNo62lV3s/KrWz73+b2DPUXc/kC7Ka3TkM9GTfP
+         LkUQ==
+X-Gm-Message-State: AJcUukdgzsv9aKzcZWOCg5lz3IWBWoSSZtBG87rI+m7RfWh6ns1rYhIk
+        sTkjqLnXS0HGE7RwcjKp20FOxHj9zGU=
+X-Google-Smtp-Source: ALg8bN6nGTo4qjyh9WK1NoR+HavC8GCw9cZ9jQbiAOSQVSTA7cb+nIkI6qvHm6FDrSXvy2ObGrRXBQ==
+X-Received: by 2002:a1c:b455:: with SMTP id d82mr2163949wmf.78.1548238293108;
+        Wed, 23 Jan 2019 02:11:33 -0800 (PST)
+Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.googlemail.com with ESMTPSA id 126sm45233616wmd.1.2019.01.23.02.11.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 23 Jan 2019 02:11:32 -0800 (PST)
+Subject: Re: [PATCH v5 4/8] ASoC: wcd9335: add basic controls
+To:     Mark Brown <broonie@kernel.org>
+Cc:     robh+dt@kernel.org, lgirdwood@gmail.com, bgoswami@codeaurora.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        vkoul@kernel.org, alsa-devel@alsa-project.org
+References: <20190110150616.2332-1-srinivas.kandagatla@linaro.org>
+ <20190110150616.2332-5-srinivas.kandagatla@linaro.org>
+ <20190122185253.GG7579@sirena.org.uk>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <6a3664d2-9b10-d6e6-9df5-ed50364812f4@linaro.org>
+Date:   Wed, 23 Jan 2019 10:11:31 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-In-Reply-To: <20190123072651.31791-2-martink@posteo.de>
-X-Originating-IP: [10.10.1.120]
-X-ClientProxiedBy: exc1.buero.ginzinger.com (10.1.1.204) To
- exc1.buero.ginzinger.com (10.1.1.204)
-X-EXCLAIMER-MD-ORIGINAL-SUBJECT: [NODISC][NOSIG]Re: [PATCH 2/2] Input: st1232
- - add support for st1633
-X-EXCLAIMER-MD-CONFIG: 9dd172f7-de2e-4231-b886-ec11f46e03b3
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="----F8DFFE4D3FF2C0DC8C9C0E3FF3694020"
+In-Reply-To: <20190122185253.GG7579@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an S/MIME signed message
+Thanks for the review,
 
-------F8DFFE4D3FF2C0DC8C9C0E3FF3694020
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-
-On 23.01.19 08:26, Martin Kepplinger wrote:
-> From: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+On 22/01/2019 18:52, Mark Brown wrote:
+> On Thu, Jan 10, 2019 at 03:06:12PM +0000, Srinivas Kandagatla wrote:
 > 
-> Add support for the Sitronix ST1633 touchscreen controller to the st1232
-> driver.
+>> +static const char * const wcd9335_ear_pa_gain_text[] = {
+>> +	"G_6_DB", "G_4P5_DB", "G_3_DB", "G_1P5_DB",
+>> +	"G_0_DB", "G_M2P5_DB", "UNDEFINED", "G_M12_DB"
+>> +};
 > 
+> Gains should be controlled with Volume controls, not enums.  Provide
+> information on the levels via TLV.
+I agree, I will fix this as well in next version!
+> 
+>> +static const char * const rx_hph_mode_mux_text[] = {
+>> +	"CLS_H_INVALID", "CLS_H_HIFI", "CLS_H_LP", "CLS_AB", "CLS_H_LOHIFI"
+>> +};
+> 
+> Is there a strong reason not to use more human readable strings here?
+> 
+No, I can rename them to below if it helps reader.
 
-FYI, here's a protocol spec:
-www.ampdisplay.com/documents/pdf/AM-320480B6TZQW-TC0H.pdf
+"Class-H Hi-Fi", "Class-H Low Power",   "Class-AB", "Class-H Hi-Fi Low 
+Power".
 
-Let me know if you want that link in the commit message.
-
-thanks
-
-                              martin
-
-
-
-------F8DFFE4D3FF2C0DC8C9C0E3FF3694020
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-
-MIIOHAYJKoZIhvcNAQcCoIIODTCCDgkCAQExDzANBglghkgBZQMEAgEFADALBgkq
-hkiG9w0BBwGgggshMIIF5jCCA86gAwIBAgIQapvhODv/K2ufAdXZuKdSVjANBgkq
-hkiG9w0BAQwFADCBhTELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFu
-Y2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExp
-bWl0ZWQxKzApBgNVBAMTIkNPTU9ETyBSU0EgQ2VydGlmaWNhdGlvbiBBdXRob3Jp
-dHkwHhcNMTMwMTEwMDAwMDAwWhcNMjgwMTA5MjM1OTU5WjCBlzELMAkGA1UEBhMC
-R0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9y
-ZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9ETyBS
-U0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwggEi
-MA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC+s55XrCh2dUAWxzgDmNPGGHYh
-UPMleQtMtaDRfTpYPpynMS6n9jR22YRq2tA9NEjk6vW7rN/5sYFLIP1of3l0NKZ6
-fLWfF2VgJ5cijKYy/qlAckY1wgOkUMgzKlWlVJGyK+UlNEQ1/5ErCsHq9x9aU/x1
-KwTdF/LCrT03Rl/FwFrf1XTCwa2QZYL55AqLPikFlgqOtzk06kb2qvGlnHJvijjI
-03BOrNpo+kZGpcHsgyO1/u1OZTaOo8wvEU17VVeP1cHWse9tGKTDyUGg2hJZjrqc
-k39UIm/nKbpDSZ0JsMoIw/JtOOg0JC56VzQgBo7ictReTQE5LFLG3yQK+xS1AgMB
-AAGjggE8MIIBODAfBgNVHSMEGDAWgBS7r34CPfqm8TyEjq3uOJjs2TIy1DAdBgNV
-HQ4EFgQUgq9sjPjF/pZhfOgfPStxSF7Ei8AwDgYDVR0PAQH/BAQDAgGGMBIGA1Ud
-EwEB/wQIMAYBAf8CAQAwEQYDVR0gBAowCDAGBgRVHSAAMEwGA1UdHwRFMEMwQaA/
-oD2GO2h0dHA6Ly9jcmwuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNlcnRpZmljYXRp
-b25BdXRob3JpdHkuY3JsMHEGCCsGAQUFBwEBBGUwYzA7BggrBgEFBQcwAoYvaHR0
-cDovL2NydC5jb21vZG9jYS5jb20vQ09NT0RPUlNBQWRkVHJ1c3RDQS5jcnQwJAYI
-KwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTANBgkqhkiG9w0BAQwF
-AAOCAgEAeFyygSg0TzzuX1bOn5dW7I+iaxf28/ZJCAbU2C81zd9A/tNx4+jsQgwR
-GiHjZrAYayZrrm78hOx7aEpkfNPQIHGG6Fvq3EzWf/Lvx7/hk6zSPwIal9v5IkDc
-ZoFD7f3iT7PdkHJY9B51csvU50rxpEg1OyOT8fk2zvvPBuM4qQNqbGWlnhMpIMwp
-WZT89RY0wpJO+2V6eXEGGHsROs3njeP9DqqqAJaBa4wBeKOdGCWn1/Jp2oY6dyNm
-NppI4ZNMUH4Tam85S1j6E95u4+1Nuru84OrMIzqvISE2HN/56ebTOWlcrurffade
-2022O/tUU1gb4jfWCcyvB8czm12FgX/y/lRjmDbEA08QJNB2729Y+io1IYO3ztve
-BdvUCIYZojTq/OCR6MvnzS6X72HP0PRLRTiOSEmIDsS5N5w/8IW1Hva5hEFy6fDA
-fd9yI+O+IMMAj1KcL/Zo9jzJ16HO5m60ttl1Enk8MQkz/W3JlHaeI5iKFn4UJu1/
-cP2YHXYPiWf2JyBzsLBrGk1II+3yL8aorYew6CQvdVifC3HtwlSam9V1niiCfOBe
-2C12TdKGu05LWIA3ZkFcWJGaNXOZ6Ggyh/TqvXG5v7zmEVDNXFnHn9tFpMpOUvxh
-csjycBtH0dZ0WrNw6gH+HF8TIhCnH3+zzWuDN0Rk6h9KVkfKehIwggUzMIIEG6AD
-AgECAhBNQrEzGzrZ6FVYh1EEYH4+MA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxm
-b3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
-IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAe
-Fw0xODA3MTgwMDAwMDBaFw0yMTA3MTcyMzU5NTlaMDAxLjAsBgkqhkiG9w0BCQEW
-H21hcnRpbi5rZXBwbGluZ2VyQGdpbnppbmdlci5jb20wggEiMA0GCSqGSIb3DQEB
-AQUAA4IBDwAwggEKAoIBAQDsMC77L0D+2D8I8X5ubnBhADLgU+HtlwMTFt/WJIhc
-kgbvnawYXWrCIpk8F6BJ0R/iFCykPdG7741EmlcHRKOJfhVxjXhwnoGFqnYmurCt
-fvZLR3+mT3FWnVv2RAdrXscXH3BpijqqWabdtTbiTvmcl86Zc6mNlVhYZSbDul/E
-voIGZotGcGIWrgZxN+8MQJQHKb0KHyWlPVPkrjvEfOJHKKLFsBNSnNMR95Ijg3Sp
-h8/8RG490/zRHflGzUlxDSlLyY9YJGzSdDzcFKoYcc4oaaUY5N3uhRna43TLUIQh
-6ybt3DKVz1Pw/ikwYJrOsulJrVr3D8KVHdGxq7HYl7jnAgMBAAGjggHfMIIB2zAf
-BgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQU/GtSUbHg
-14sPDlmo27eQYwtjaS0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYD
-VR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMCMEYGA1UdIAQ/MD0wOwYMKwYBBAGy
-MQECAQMFMCswKQYIKwYBBQUHAgEWHWh0dHBzOi8vc2VjdXJlLmNvbW9kby5uZXQv
-Q1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuY29tb2RvY2EuY29tL0NP
-TU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmww
-gYsGCCsGAQUFBwEBBH8wfTBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5jb21vZG9j
-YS5jb20vQ09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFp
-bENBLmNydDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuY29tb2RvY2EuY29tMCoG
-A1UdEQQjMCGBH21hcnRpbi5rZXBwbGluZ2VyQGdpbnppbmdlci5jb20wDQYJKoZI
-hvcNAQELBQADggEBAGEuG01K1tt5i3gUdQkYem/KpbJUYBZd43QwmoTa0TGXUiYq
-b+g/TeGG9QQ1yq+73xOr8fu6oT2608C7EiJc6JmjTs485/OZmTqgYkrLfs71F1kB
-3Z59WPf5aoR/pnn5vdfkkoO29V1cKPJR4z+iOG2hOlcK/dXrX8i6mnL5DGIe8l5n
-udUPvIbUhbMavrDd6kwhs0oCjylwdKGlFkCpKMn3HPflfDeHuV9Z8Nrpeq/7+Pm0
-I/fLPkaYlULASJoJCucMYcedY9rmuro9JhV+NuVXaqLIrQPc1vyKFeRuLHh84M6c
-1h1DArdGTykXZUwjXnnHtuOtzjIAzkx2Ns43vEsxggK/MIICuwIBATCBrDCBlzEL
-MAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UE
-BxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMT
-NENPTU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1h
-aWwgQ0ECEE1CsTMbOtnoVViHUQRgfj4wDQYJYIZIAWUDBAIBBQCggeQwGAYJKoZI
-hvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMTkwMTIzMTAwNzU4
-WjAvBgkqhkiG9w0BCQQxIgQg4zx8HDO0VcsiZx/sYju5LYGq9Q7togpMdqcshLTf
-Y0gweQYJKoZIhvcNAQkPMWwwajALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsG
-CWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcN
-AwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwDQYJKoZIhvcNAQEBBQAEggEA
-RsDiQi7ZfAT7bKNT2RNuXJ6LSdvZBkOAFs3fGUh13VRC2oAAdgiNUwFOqJ9P0h76
-qedfRgwGUWPKgVDhzU5itE7+OhNYpr+WtWogKzq+0QzPCV0iRs+Ay1ZcQAjKVHlU
-6C6G5xKWCm9TO87NjYsSqGsC67t+z26eLSgmVWEb/L9XKAojRprU7txnb01pRRQi
-1YKGT0x3+/1jREwM1XOw4OXig2ZElKR2wgVoP9Rxw9khhyTER4oSlO0Lj5T3qX44
-grZ+ThNXoaKgU5tsPlr33TZDulhYxmC9l+rda4YH/a23Msh6oDPyFq6do514oTwd
-KlWW2U17xlBxf3D0bH67bg==
-
-------F8DFFE4D3FF2C0DC8C9C0E3FF3694020--
-
+Thanks,
+srini
