@@ -2,94 +2,86 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5481C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 08:56:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C98EFC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 08:58:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9303B217F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 08:56:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QnUWG1Fh"
+	by mail.kernel.org (Postfix) with ESMTP id A19A621726
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 08:58:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727213AbfAWI4h (ORCPT
+        id S1727101AbfAWI60 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 03:56:37 -0500
-Received: from mail-pf1-f172.google.com ([209.85.210.172]:45103 "EHLO
-        mail-pf1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726913AbfAWI4h (ORCPT
+        Wed, 23 Jan 2019 03:58:26 -0500
+Received: from www62.your-server.de ([213.133.104.62]:47970 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726317AbfAWI6Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 03:56:37 -0500
-Received: by mail-pf1-f172.google.com with SMTP id g62so839095pfd.12
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 00:56:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:subject:to:cc:references:in-reply-to:mime-version
-         :user-agent:message-id:content-transfer-encoding;
-        bh=OI0t5bWDEsJdv7S188XOnBTvHNBarxIayFMx00OCpcE=;
-        b=QnUWG1FhQjDa77EWxaZ2e+/yhr1Xw7g04cyvR0s0uyUALH6vADwt2wIp67rR5FTC1D
-         1ivKRJpmzTQXXm7raLpr5u05HV1Vdld6s3O2yxEf4stbHV50t56cGIYpLKpyEVzZhAGk
-         mSXX0zCDmvQgUVbgYUb7+gHwdglrLa5TnmH4nfaGP7jMtBL31husdq1nKwl0tCXhxrjQ
-         iTYeLD6EbIk6lw2PK2GNiDYW/HYc0p7eDeovvtot1c7end6gjfZWCHEdItz7FSxnywJM
-         U8Yyk4uDh05R0m/ffCAjMykv3R6v45S79GJW/hm4VKoVzCDmQ9qef+HC3kjjRaEw3RpX
-         0HUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:subject:to:cc:references:in-reply-to
-         :mime-version:user-agent:message-id:content-transfer-encoding;
-        bh=OI0t5bWDEsJdv7S188XOnBTvHNBarxIayFMx00OCpcE=;
-        b=m+3ienU87CKMH92jyw2FM2AZKSPZ4wndJSXPDzzH6C0V5q+/4zE/bVMoFhxtnVcluz
-         bAYKx5YqrOsCJrkzvctzFJA7gyNrM1b8ZxCbaQWP+KPU6yakwyy3jUsBOJd0Lovn/fJo
-         ExfvNoZzvOZmq5mdV2FdwhVDwkXpPgex5ixlP03o4Mg9/a47ZtFYGai/EHFVSlq7egee
-         bGM2SQ/gMM+zBJzwA3FLmsujQNrdzcACUABVf5yKe0e+UesuErD033AYwN7dq8kf9S+i
-         ePIykBLuF1+A1a2Yeu5TjJiwOhreACZGGmRDp3kC1QxxlQQL7K5MchkUoggPRngFOwJS
-         cPHQ==
-X-Gm-Message-State: AJcUukcfOmz5Z7xZ1NZaqvYMN9J5eSkf1oaPjHFr68oPQ2P7HnxIUFnn
-        UtVAyueNZ8QwU+CzQMRP0+Q=
-X-Google-Smtp-Source: ALg8bN5aqenZFChd03ebhJNZnGHXfr787vhuzeKGAgnG/D+Ssbzi4jAGpIvLSpPrAQZQV/dashi2ug==
-X-Received: by 2002:a63:2b82:: with SMTP id r124mr1224905pgr.300.1548233796902;
-        Wed, 23 Jan 2019 00:56:36 -0800 (PST)
-Received: from localhost (193-116-78-72.tpgi.com.au. [193.116.78.72])
-        by smtp.gmail.com with ESMTPSA id j73sm24318886pge.13.2019.01.23.00.56.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 23 Jan 2019 00:56:36 -0800 (PST)
-Date:   Wed, 23 Jan 2019 18:56:24 +1000
-From:   Nicholas Piggin <npiggin@gmail.com>
-Subject: Re: [PATCH] powerpc/traps: fix recoverability of machine check
- handling on book3s/32
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <1c804764d38fb084b420b12ca13e8c1b2dea075e.1548166189.git.christophe.leroy@c-s.fr>
-In-Reply-To: <1c804764d38fb084b420b12ca13e8c1b2dea075e.1548166189.git.christophe.leroy@c-s.fr>
+        Wed, 23 Jan 2019 03:58:25 -0500
+Received: from [78.46.172.2] (helo=sslproxy05.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1gmEMY-0004vt-UB; Wed, 23 Jan 2019 09:58:23 +0100
+Received: from [62.203.87.61] (helo=linux.home)
+        by sslproxy05.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1gmEMY-000H3v-Np; Wed, 23 Jan 2019 09:58:22 +0100
+Subject: Re: [PATCH] bpftool: Fix prog dump by tag
+To:     Jiri Olsa <jolsa@kernel.org>, Alexei Starovoitov <ast@kernel.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
+        Lance Digby <ldigby@redhat.com>
+References: <20190118125817.10763-1-jolsa@kernel.org>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <182563c3-8e11-d489-2e9e-68a391e63f3e@iogearbox.net>
+Date:   Wed, 23 Jan 2019 09:58:22 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-User-Agent: astroid/0.14.0 (https://github.com/astroidmail/astroid)
-Message-Id: <1548233155.rsqberso19.astroid@bobo.none>
+In-Reply-To: <20190118125817.10763-1-jolsa@kernel.org>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.2/25323/Wed Jan 23 03:43:38 2019)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christophe Leroy's on January 23, 2019 12:11 am:
-> Looks like book3s/32 doesn't set RI on machine check, so
-> checking RI before calling die() will always be fatal
-> allthought this is not an issue in most cases.
+On 01/18/2019 01:58 PM, Jiri Olsa wrote:
+> Lance reported an issue with bpftool not being able to
+> dump program if there are more programs loaded and you
+> want to dump any but the first program, like:
+> 
+>   # bpftool prog
+>   28: kprobe  name trace_req_start  tag 1dfc28ba8b3dd597  gpl
+>   	loaded_at 2019-01-18T17:02:40+1100  uid 0
+>   	xlated 112B  jited 109B  memlock 4096B  map_ids 13
+>   29: kprobe  name trace_req_compl  tag 5b6a5ecc6030a683  gpl
+>   	loaded_at 2019-01-18T17:02:40+1100  uid 0
+>   	xlated 928B  jited 575B  memlock 4096B  map_ids 13,14
+>   #  bpftool prog dum jited tag 1dfc28ba8b3dd597
+>    0:	push   %rbp
+>    1:	mov    %rsp,%rbp
+>   ...
+> 
+>   #  bpftool prog dum jited tag 5b6a5ecc6030a683
+>   Error: can't get prog info (29): Bad address
+> 
+> The problem is in the prog_fd_by_tag function not cleaning
+> the struct bpf_prog_info before another request, so the
+> previous program length is still in there and kernel assumes
+> it needs to dump the program, which fails because there's no
+> user pointer set.
+> 
+> Moving the struct bpf_prog_info declaration into the loop,
+> so it gets cleaned before each query.
+> 
+> Reported-by: Lance Digby <ldigby@redhat.com>
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 
-Oh good catch, this is a fix for powerpc/64 as well. I think actually=20
-the panic was supposed to go in the bail: path, it's missing from
-there.
-
-But you may have a point, I don't know if we need to panic the box if=20
-we have !RI in process context... Possible we might be able to remove
-those panics and just turn them into die.
-
-Thanks,
-Nick
-=
+Applied to bpf and added Fixes tags, thanks!
