@@ -2,208 +2,246 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C16ADC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 15:08:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31D36C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 15:16:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 849F620870
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 15:08:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RSADum1D"
+	by mail.kernel.org (Postfix) with ESMTP id F3D7B217D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 15:16:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726207AbfAWPI2 (ORCPT
+        id S1726008AbfAWPQ0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 10:08:28 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:33603 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726008AbfAWPI1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 10:08:27 -0500
-Received: by mail-oi1-f196.google.com with SMTP id c206so2064455oib.0
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 07:08:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=18ET3Pw/X2XGjxY+fjfIqpa8hyMi/CJ0A0NkMa0FG8A=;
-        b=RSADum1D71p9hZ8UmGn4pj0cMbqsWa+HwRLRs8u/jCbB/6NqD039ANZtjyQ6EopCqG
-         cN7jLalE1q5Vk72g7EkHm+MSG/PpmObDj7YQKt7YwmvnilXk/tVH8WrUmmpej1eUneu+
-         xJVpW/d+TMCcF9pMKeGooSCUYQeAijVpZeGCxqKIZfnzPClhokYhuZW/gvvssrfL5unj
-         mVI3BPwiN1xdsozcWeujNJhQhAGmGUtZlZorPkxCMeT00Fha7USG62vnh7VHmN+LfKEv
-         gpI2ymnUdEW0Nxs8o5h6IKQpynnwDNYPhT8R3oPhWMhYrAM1nEu9yPVoTT5oz23pEh/y
-         LxIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=18ET3Pw/X2XGjxY+fjfIqpa8hyMi/CJ0A0NkMa0FG8A=;
-        b=JQlfRwMHTUbRSzoOSSUHOSx6fvX+mbWas68Htl/lK9+qukEhP/tkIuepgD8p5o8WNp
-         w8Oov7zKWT5wZMO1CQYfjudHXSpiPMfhBMT9VJNk1TJCdUB4AeMphT/cOBNA3+zV0ozT
-         1wBNCX7THs2v66JkLkO8lZBDKVucWW9Ty0fPUPz7jo51MW6eg1ShM5f5EO+xzpMm9GKE
-         gvaicJvI1g3mHcj6meEobVZtONVZPo9jYspNIm69wOCbpdoiaaZl92TMEsaZuGnYFEFT
-         AemRXf30wahqZgU8BN4TKM/n/LKOONmx7Fz7q63S0S6HhuM1K0MSUTL8U/HqVDb/BDgR
-         ppVQ==
-X-Gm-Message-State: AJcUukcl47JzKFWfj5EIpzgPr70yFnH/8HAe5lUytfyOpGNETl3/QaeQ
-        R/3i6ZEOssMmErdSIth4zdydp+i3UpVI+YKj6P6Whg==
-X-Google-Smtp-Source: ALg8bN40UoEGtVttjGS4WoUc0DogYkeZr6kF/tsnW6rusGpe8W93is49nj9I9q76cdsH/ALMY/orRPqtS2gi/XB9z0s=
-X-Received: by 2002:aca:3c06:: with SMTP id j6mr1549314oia.126.1548256105875;
- Wed, 23 Jan 2019 07:08:25 -0800 (PST)
-MIME-Version: 1.0
-References: <20190118161440.220134-1-jannh@google.com> <20190118161440.220134-3-jannh@google.com>
- <20190120224059.GA4205@dastard> <CAG48ez3SgejgGbctHwxON1B1k26xk-z16xdozKZkx7=-Li0aHw@mail.gmail.com>
- <20190121222411.GD4205@dastard>
-In-Reply-To: <20190121222411.GD4205@dastard>
-From:   Jann Horn <jannh@google.com>
-Date:   Wed, 23 Jan 2019 16:07:59 +0100
-Message-ID: <CAG48ez2UmgEkitbgyCCs9LLdgahweFFAJWCU_vcqES6YgN=gLw@mail.gmail.com>
-Subject: Re: [PATCH v4 3/3] fs: let filldir_t return bool instead of an error code
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-alpha@vger.kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 23 Jan 2019 10:16:26 -0500
+Received: from mga05.intel.com ([192.55.52.43]:51346 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725896AbfAWPQZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 10:16:25 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jan 2019 07:16:24 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,511,1539673200"; 
+   d="scan'208";a="120686032"
+Received: from otc-lr-04.jf.intel.com ([10.54.39.129])
+  by orsmga003.jf.intel.com with ESMTP; 23 Jan 2019 07:16:20 -0800
+From:   kan.liang@linux.intel.com
+To:     peterz@infradead.org, acme@kernel.org, tglx@linutronix.de,
+        mingo@redhat.com, linux-kernel@vger.kernel.org
+Cc:     eranian@google.com, jolsa@redhat.com, namhyung@kernel.org,
+        ak@linux.intel.com, Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH V2 01/12] perf/core, x86: Add PERF_SAMPLE_DATA_PAGE_SIZE
+Date:   Wed, 23 Jan 2019 07:15:19 -0800
+Message-Id: <1548256530-10065-1-git-send-email-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 11:24 PM Dave Chinner <david@fromorbit.com> wrote:
-> On Mon, Jan 21, 2019 at 04:49:45PM +0100, Jann Horn wrote:
-> > On Sun, Jan 20, 2019 at 11:41 PM Dave Chinner <david@fromorbit.com> wrote:
-> > > On Fri, Jan 18, 2019 at 05:14:40PM +0100, Jann Horn wrote:
-> > > > As Al Viro pointed out, many filldir_t functions return error codes, but
-> > > > all callers of filldir_t functions just check whether the return value is
-> > > > non-zero (to determine whether to continue reading the directory); more
-> > > > precise errors have to be signalled via struct dir_context.
-> > > > Change all filldir_t functions to return bool instead of int.
-> > > >
-> > > > Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
-> > > > Signed-off-by: Jann Horn <jannh@google.com>
-> > > > ---
-> > > >  arch/alpha/kernel/osf_sys.c | 12 +++----
-> > > >  fs/afs/dir.c                | 30 +++++++++--------
-> > > >  fs/ecryptfs/file.c          | 13 ++++----
-> > > >  fs/exportfs/expfs.c         |  8 ++---
-> > > >  fs/fat/dir.c                |  8 ++---
-> > > >  fs/gfs2/export.c            |  6 ++--
-> > > >  fs/nfsd/nfs4recover.c       |  8 ++---
-> > > >  fs/nfsd/vfs.c               |  6 ++--
-> > > >  fs/ocfs2/dir.c              | 10 +++---
-> > > >  fs/ocfs2/journal.c          | 14 ++++----
-> > > >  fs/overlayfs/readdir.c      | 24 +++++++-------
-> > > >  fs/readdir.c                | 64 ++++++++++++++++++-------------------
-> > > >  fs/reiserfs/xattr.c         | 20 ++++++------
-> > > >  fs/xfs/scrub/dir.c          |  8 ++---
-> > > >  fs/xfs/scrub/parent.c       |  4 +--
-> > > >  include/linux/fs.h          | 10 +++---
-> > > >  16 files changed, 125 insertions(+), 120 deletions(-)
-> > > >
-> > > > diff --git a/arch/alpha/kernel/osf_sys.c b/arch/alpha/kernel/osf_sys.c
-> > > > index db1c2144d477..14e5ae0dac50 100644
-> > > > --- a/arch/alpha/kernel/osf_sys.c
-> > > > +++ b/arch/alpha/kernel/osf_sys.c
-> > > > @@ -108,7 +108,7 @@ struct osf_dirent_callback {
-> > > >       int error;
-> > > >  };
-> > > >
-> > > > -static int
-> > > > +static bool
-> > > >  osf_filldir(struct dir_context *ctx, const char *name, int namlen,
-> > > >           loff_t offset, u64 ino, unsigned int d_type)
-> > > >  {
-> > > > @@ -120,14 +120,14 @@ osf_filldir(struct dir_context *ctx, const char *name, int namlen,
-> > > >
-> > > >       buf->error = check_dirent_name(name, namlen);
-> > > >       if (unlikely(buf->error))
-> > > > -             return -EFSCORRUPTED;
-> > > > +             return false;
-> > > >       buf->error = -EINVAL;   /* only used if we fail */
-> > > >       if (reclen > buf->count)
-> > > > -             return -EINVAL;
-> > > > +             return false;
-> > >
-> > > Oh, it's because the error being returned is being squashed by
-> > > dir_emit():
-> >
-> > Yeah.
-> >
-> > > >  struct dir_context {
-> > > > @@ -3469,17 +3471,17 @@ static inline bool dir_emit(struct dir_context *ctx,
-> > > >                           const char *name, int namelen,
-> > > >                           u64 ino, unsigned type)
-> > > >  {
-> > > > -     return ctx->actor(ctx, name, namelen, ctx->pos, ino, type) == 0;
-> > > > +     return ctx->actor(ctx, name, namelen, ctx->pos, ino, type);
-> > > >  }
-> > >
-> > > /me wonders if it would be cleaner to do:
-> > >
-> > > static inline bool dir_emit(...)
-> > > {
-> > >         buf->error = ctx->actor(....)
-> > >         if (buf->error)
-> > >                 return false;
-> > >         return true;
-> > > }
-> > >
-> > > And clean up all filldir actors just to return the error state
-> > > rather than have to jump through hoops to stash the error state in
-> > > the context buffer and return the error state?
-> >
-> > One negative thing about that, IMO, is that it mixes up the request
-> > for termination of the loop and the presence of an error.
->
-> Doesn't the code already do that, only worse?
+From: Kan Liang <kan.liang@linux.intel.com>
 
-The current code does that, yes. But with this patch, I think that's
-not really the case anymore?
+Current perf can report both virtual address and physical address, but
+it doesn't report page size. Users have no idea how large the utilized
+page is. They cannot promote/demote large pages to optimize memory use.
 
-> > > That then allows callers who want/need the full error info can
-> > > continue to call ctx->actor directly,
-> >
-> > "continue to call ctx->actor directly"? I don't remember any code that
-> > calls ctx->actor directly.
->
-> ovl_fill_real().
+Add a new sample type for data page size.
 
-Ah, right.
+Current perf already has a facility to collect data virtual address.
+A function, to retrieve page size by full page-table walk of a given
+virtual address, is introduced for x86. Other architectures can
+implement their own functions later separately.
+The function must be IRQ-safe. For x86, disabling IRQs over the walk is
+sufficient to prevent any tear down of the page tables.
 
+The new sample type requires collecting the virtual address. The
+virtual address will not be output unless SAMPLE_ADDR is applied.
 
-> And the XFS directory scrubber could probably make better use of the
-> error return from ctx->actor when validating the directory contents
-> rather than just calling dir_emit() and aborting the scan at the
-> first error encountered. We eventually want to know exactly what
-> error was encountered here to determine if it is safe to continue,
-> not just a "stop processing" flag. e.g. a bad name length will need
-> to stop traversal because we can't trust the underlying structure,
-> but an invalid file type isn't a structural flaw that prevents us
-> from continuing to traverse and check the rest of the directory....
+Although only a few bits are needed to indicate the page size, a u64
+type is still claimed for page_size. Because struct perf_sample_data
+requires cacheline_aligned.
 
-Sorry, maybe I'm a bit dense right now, I don't get your point. Are
-you talking about filesystem errors detected in the actor? If so,
-doesn't it make *more* sense for non-fatal errors to put a note that
-an error happened into the xchk_dir_ctx (if that information should be
-kept around), then return a value that says "please continue"?
+The large PEBS will be disabled with this sample type. Because we need
+to track munmap to flush the PEBS buffer for large PEBS. Perf doesn't
+support munmap tracking yet. The large PEBS can be enabled later
+separately when munmap tracking is supported.
 
-Or are you talking about filesystem errors detected in the readdir
-implementation? In that case, you're AFAICS going to need special-case
-logic gated on ctx->actor==xchk_dir_actor anyway if you want the
-scrubber to continue while readdir() stops.
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
 
-(But as I've said, I don't really care about this patch. If Al takes
-patches 1 and 2 from this series, I'm happy; this patch is just in
-response to <https://lore.kernel.org/lkml/20180731165112.GJ30522@ZenIV.linux.org.uk/>.)
+No changes since V1
+
+ arch/x86/events/core.c          | 38 ++++++++++++++++++++++++++++++++++++++
+ arch/x86/events/intel/ds.c      |  3 ++-
+ include/linux/perf_event.h      |  1 +
+ include/uapi/linux/perf_event.h | 16 +++++++++++++++-
+ kernel/events/core.c            | 15 +++++++++++++++
+ 5 files changed, 71 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index 374a197..f60f3f8 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -2578,3 +2578,41 @@ void perf_get_x86_pmu_capability(struct x86_pmu_capability *cap)
+ 	cap->events_mask_len	= x86_pmu.events_mask_len;
+ }
+ EXPORT_SYMBOL_GPL(perf_get_x86_pmu_capability);
++
++/*
++ * map x86 page levels to perf page sizes
++ */
++static const enum perf_page_size perf_page_size_map[PG_LEVEL_NUM] = {
++	[PG_LEVEL_NONE] = PERF_PAGE_SIZE_NONE,
++	[PG_LEVEL_4K]   = PERF_PAGE_SIZE_4K,
++	[PG_LEVEL_2M]   = PERF_PAGE_SIZE_2M,
++	[PG_LEVEL_1G]   = PERF_PAGE_SIZE_1G,
++	[PG_LEVEL_512G] = PERF_PAGE_SIZE_512G,
++};
++
++u64 perf_get_page_size(u64 virt)
++{
++	unsigned long flags;
++	unsigned int level;
++	pte_t *pte;
++
++	if (!virt)
++		return 0;
++
++	/*
++	 * Interrupts are disabled, so it prevents any tear down
++	 * of the page tables.
++	 * See the comment near struct mmu_table_batch.
++	 */
++	local_irq_save(flags);
++	if (virt >= TASK_SIZE)
++		pte = lookup_address(virt, &level);
++	else
++		pte = lookup_address_in_pgd(pgd_offset(current->mm, virt),
++					    virt, &level);
++	local_irq_restore(flags);
++	if (level >= PG_LEVEL_NUM)
++		return PERF_PAGE_SIZE_NONE;
++
++	return (u64)perf_page_size_map[level];
++}
+diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+index e9acf1d..720dc9e 100644
+--- a/arch/x86/events/intel/ds.c
++++ b/arch/x86/events/intel/ds.c
+@@ -1274,7 +1274,8 @@ static void setup_pebs_sample_data(struct perf_event *event,
+ 	}
+ 
+ 
+-	if ((sample_type & (PERF_SAMPLE_ADDR | PERF_SAMPLE_PHYS_ADDR)) &&
++	if ((sample_type & (PERF_SAMPLE_ADDR | PERF_SAMPLE_PHYS_ADDR
++			    | PERF_SAMPLE_DATA_PAGE_SIZE)) &&
+ 	    x86_pmu.intel_cap.pebs_format >= 1)
+ 		data->addr = pebs->dla;
+ 
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index cec02dc..3f94d0a 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -938,6 +938,7 @@ struct perf_sample_data {
+ 	u64				stack_user_size;
+ 
+ 	u64				phys_addr;
++	u64				data_page_size;
+ } ____cacheline_aligned;
+ 
+ /* default value for data source */
+diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+index ea19b5d..513c8ae 100644
+--- a/include/uapi/linux/perf_event.h
++++ b/include/uapi/linux/perf_event.h
+@@ -141,8 +141,9 @@ enum perf_event_sample_format {
+ 	PERF_SAMPLE_TRANSACTION			= 1U << 17,
+ 	PERF_SAMPLE_REGS_INTR			= 1U << 18,
+ 	PERF_SAMPLE_PHYS_ADDR			= 1U << 19,
++	PERF_SAMPLE_DATA_PAGE_SIZE		= 1U << 20,
+ 
+-	PERF_SAMPLE_MAX = 1U << 20,		/* non-ABI */
++	PERF_SAMPLE_MAX = 1U << 21,		/* non-ABI */
+ 
+ 	__PERF_SAMPLE_CALLCHAIN_EARLY		= 1ULL << 63, /* non-ABI; internal use */
+ };
+@@ -861,6 +862,7 @@ enum perf_event_type {
+ 	 *	{ u64			abi; # enum perf_sample_regs_abi
+ 	 *	  u64			regs[weight(mask)]; } && PERF_SAMPLE_REGS_INTR
+ 	 *	{ u64			phys_addr;} && PERF_SAMPLE_PHYS_ADDR
++	 *	{ u64			data_page_size;} && PERF_SAMPLE_DATA_PAGE_SIZE
+ 	 * };
+ 	 */
+ 	PERF_RECORD_SAMPLE			= 9,
+@@ -1099,6 +1101,18 @@ union perf_mem_data_src {
+ #define PERF_MEM_S(a, s) \
+ 	(((__u64)PERF_MEM_##a##_##s) << PERF_MEM_##a##_SHIFT)
+ 
++
++enum perf_page_size {
++	PERF_PAGE_SIZE_NONE,
++	PERF_PAGE_SIZE_4K,
++	PERF_PAGE_SIZE_8K,
++	PERF_PAGE_SIZE_16K,
++	PERF_PAGE_SIZE_64K,
++	PERF_PAGE_SIZE_2M,
++	PERF_PAGE_SIZE_1G,
++	PERF_PAGE_SIZE_512G,
++};
++
+ /*
+  * single taken branch record layout:
+  *
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index fbe59b7..0ddb9c2 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -1751,6 +1751,9 @@ static void __perf_event_header_size(struct perf_event *event, u64 sample_type)
+ 	if (sample_type & PERF_SAMPLE_PHYS_ADDR)
+ 		size += sizeof(data->phys_addr);
+ 
++	if (sample_type & PERF_SAMPLE_DATA_PAGE_SIZE)
++		size += sizeof(data->data_page_size);
++
+ 	event->header_size = size;
+ }
+ 
+@@ -6299,6 +6302,9 @@ void perf_output_sample(struct perf_output_handle *handle,
+ 	if (sample_type & PERF_SAMPLE_PHYS_ADDR)
+ 		perf_output_put(handle, data->phys_addr);
+ 
++	if (sample_type & PERF_SAMPLE_DATA_PAGE_SIZE)
++		perf_output_put(handle, data->data_page_size);
++
+ 	if (!event->attr.watermark) {
+ 		int wakeup_events = event->attr.wakeup_events;
+ 
+@@ -6346,6 +6352,12 @@ static u64 perf_virt_to_phys(u64 virt)
+ 	return phys_addr;
+ }
+ 
++/* Return page size of given virtual address. IRQ-safe required. */
++u64 __weak perf_get_page_size(u64 virt)
++{
++	return PERF_PAGE_SIZE_NONE;
++}
++
+ static struct perf_callchain_entry __empty_callchain = { .nr = 0, };
+ 
+ struct perf_callchain_entry *
+@@ -6487,6 +6499,9 @@ void perf_prepare_sample(struct perf_event_header *header,
+ 
+ 	if (sample_type & PERF_SAMPLE_PHYS_ADDR)
+ 		data->phys_addr = perf_virt_to_phys(data->addr);
++
++	if (sample_type & PERF_SAMPLE_DATA_PAGE_SIZE)
++		data->data_page_size = perf_get_page_size(data->addr);
+ }
+ 
+ static __always_inline void
+-- 
+2.7.4
+
