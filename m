@@ -2,74 +2,110 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F00CFC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 16:50:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9546C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 16:50:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C656E2085A
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 16:50:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8BA22085A
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 16:50:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726611AbfAWQuB (ORCPT
+        id S1726798AbfAWQuG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 11:50:01 -0500
-Received: from 8bytes.org ([81.169.241.247]:59296 "EHLO theia.8bytes.org"
+        Wed, 23 Jan 2019 11:50:06 -0500
+Received: from mga11.intel.com ([192.55.52.93]:18995 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725948AbfAWQuB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 11:50:01 -0500
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 5DADD42C; Wed, 23 Jan 2019 17:49:59 +0100 (CET)
-Date:   Wed, 23 Jan 2019 17:49:59 +0100
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc:     Daniel Vetter <daniel@ffwll.ch>, Eric Wong <e@80x24.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        David Airlie <airlied@linux.ie>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>, " <iommu@lists.linux-foundation.org>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] iommu/intel: quirk to disable DMAR for QM57 igfx
-Message-ID: <20190123164959.GF32526@8bytes.org>
-References: <154642214920.6261.102817444136744919@jlahtine-desk.ger.corp.intel.com>
- <20190104010626.e6yqdqkmdcqjepke@dcvr>
- <154659116310.4596.13613897418163029789@jlahtine-desk.ger.corp.intel.com>
- <20190118121705.a4usvhnskyblooja@dcvr>
- <20190122103914.msboylvkor5sb5lq@8bytes.org>
- <CAKMK7uEX1T6_yXoq_d4Fs2LiWC_tDaEEXv-hTL=S-_4HEeya7A@mail.gmail.com>
- <20190122110109.x3zoynemdl3ysbsn@8bytes.org>
- <154816850584.8871.13562920355478587539@jlahtine-desk.ger.corp.intel.com>
- <20190122165135.6rkdsxqepvmaoatn@8bytes.org>
- <154825575844.19121.1110495981060533179@jlahtine-desk.ger.corp.intel.com>
+        id S1725871AbfAWQuE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 11:50:04 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jan 2019 08:50:04 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,512,1539673200"; 
+   d="scan'208";a="109173853"
+Received: from marshy.an.intel.com (HELO [10.122.105.159]) ([10.122.105.159])
+  by orsmga007.jf.intel.com with ESMTP; 23 Jan 2019 08:50:03 -0800
+Subject: Re: [PATCHv1] firmware: intel_stratix10_service: add hardware
+ dependency
+To:     Greg KH <gregkh@linuxfoundation.org>, Alan Tull <atull@kernel.org>
+Cc:     Dinh Nguyen <dinguyen@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        todd.riffel@intel.com, Richard Gong <richard.gong@intel.com>
+References: <1548258476-16821-1-git-send-email-richard.gong@linux.intel.com>
+ <20190123160019.GB4764@kroah.com>
+ <CANk1AXR2K5j6iU1y8GGn_8agOUY6ca8xKXPrFGT5Ht6_La7VrA@mail.gmail.com>
+ <20190123164317.GA16162@kroah.com>
+From:   Richard Gong <richard.gong@linux.intel.com>
+Message-ID: <0d04145a-bd8b-5257-bccd-f9b6c855edcb@linux.intel.com>
+Date:   Wed, 23 Jan 2019 10:59:21 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <154825575844.19121.1110495981060533179@jlahtine-desk.ger.corp.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190123164317.GA16162@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 05:02:38PM +0200, Joonas Lahtinen wrote:
-> We have many reports where just having intel_iommu=on (and using the
-> system normally, without any virtualization stuff going on) will cause
-> unexplained GPU hangs. For those users, simply switching to
-> intel_iommu=igfx_off solves the problems, and the debug often ends
-> there.
+Hi Greg,
 
-If you can reproduce problems on your side, then you can try to enable
-CONFIG_INTEL_IOMMU_BROKEN_GFX_WA to force the GFX devices into the
-identity mapping. We can also add a boot-parameter and workarounds if it
-turns out that this is sufficient to make the GFX devices work with
-IOMMU enabled.
+On 1/23/19 10:43 AM, Greg KH wrote:
+> On Wed, Jan 23, 2019 at 10:37:07AM -0600, Alan Tull wrote:
+>> On Wed, Jan 23, 2019 at 10:00 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+>>
+>> Hi Greg,
+>>
+>>>
+>>> On Wed, Jan 23, 2019 at 09:47:56AM -0600, richard.gong@linux.intel.com wrote:
+>>>> From: Richard Gong <richard.gong@intel.com>
+>>>>
+>>>> Add a Kconfig dependency to ensure Intel Stratix10 service layer driver
+>>>> can be built only on the platform that supports it.
+>>>>
+>>>> Signed-off-by: Richard Gong <richard.gong@intel.com>
+>>>> ---
+>>>>   drivers/firmware/Kconfig | 2 +-
+>>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
+>>>> index f754578..cac16c4 100644
+>>>> --- a/drivers/firmware/Kconfig
+>>>> +++ b/drivers/firmware/Kconfig
+>>>> @@ -218,7 +218,7 @@ config FW_CFG_SYSFS_CMDLINE
+>>>>
+>>>>   config INTEL_STRATIX10_SERVICE
+>>>>        tristate "Intel Stratix10 Service Layer"
+>>>> -     depends on HAVE_ARM_SMCCC
+>>>> +     depends on ARCH_STRATIX10 && HAVE_ARM_SMCCC
+>>>
+>>> That's lame, what about building for testing?
+>>
+>> Do you mean this instead?
+>>
+>> depends on (ARCH_STRATIX10 && HAVE_ARM_SMCCC) || COMPILE_TEST
+> 
+> Yes, that would be better, right?
+> 
+>>>
+>>> And is this needed now, for 5.0-final, or can it wait for 5.1?
+>>
+>> This change will reduce kernel size for most arm64.  It can go into
+>> whichever kernel.  We can resubmit allowing for COMPILE_TEST.
+> 
+> So it's not fixing a bug, but rather just allowing you to shrink an
+> image?  If so, then 5.1 is good.
+> 
+> Please resubmit, after making sure it doesn't break the normal builds :)
 
-
-Regards,
-
-	Joerg
+Thanks for your review comments, I will resubmit the patch.
+> 
+> thanks,
+> 
+> greg k-h
+> 
