@@ -3,76 +3,88 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEA67C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:03:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 960ABC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:04:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD6CD2184D
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:03:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65E4621852
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:04:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548252230;
-	bh=ap8h6oG8+q3aCOcOLdhlE6/+rWHc/KqbXv9kX1o8sm8=;
+	s=default; t=1548252291;
+	bh=kDSBGLX2PNkg7XL0kjBL+5Zw95l+yMEWrrVlCxIEM5g=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=1JDAKtMGWHEl1wlL1qCwFH7otm/eDg9XzvyKFH2T8WzIZlXz1//9FArj5gqCFKMHY
-	 hC9nM7sWXZNS2OpL8AHXZsitXGLoP6gZKRI0D77DEXS40ileB5ZRI5apZBbdL0kSx6
-	 PpjbMRBPslbZUmjMAjSzw3YNQgqo31nwOARsYfj4=
+	b=iufE0vmg3Uutm/REhs1asbV8gxDoHzaRMyXIChUz64CvuXLDj+t+s319yI5adNSuI
+	 DlpRvC2i9bg0LVDkw/1sQvtVy/r3ZHz54rZl/ydl1eNCC7gy+8C+iQyo72vogfn5nc
+	 OoLCRDAztzYL1+iy5V06sg9N3H5AIb18Qv8733ys=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726229AbfAWODs (ORCPT
+        id S1726359AbfAWOEt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 09:03:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37986 "EHLO mail.kernel.org"
+        Wed, 23 Jan 2019 09:04:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38482 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726122AbfAWODr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 09:03:47 -0500
+        id S1726122AbfAWOEt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 09:04:49 -0500
 Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0CC802133D;
-        Wed, 23 Jan 2019 14:03:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8F05A2184D;
+        Wed, 23 Jan 2019 14:04:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548252227;
-        bh=ap8h6oG8+q3aCOcOLdhlE6/+rWHc/KqbXv9kX1o8sm8=;
+        s=default; t=1548252288;
+        bh=kDSBGLX2PNkg7XL0kjBL+5Zw95l+yMEWrrVlCxIEM5g=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KLm7KNDrS+Hl0vgdH+ErywmQaXT/JXjNqGAuP/Vgn6Y+A3/j0dckVpGy2TIoUdZdv
-         LQ75eMaV0s2UEj/pv1WzNa3kxjkRMIVNdu/YczIcL/4NYlAq+CfFta1FqDfgtOLc/f
-         V1CbjHxYO4ajYkhDan9zadH/LMP6Hs6aw+Gb96Bc=
-Date:   Wed, 23 Jan 2019 09:03:46 -0500
+        b=llr4S6SFcci6gFBfEnHx+5CMT0LAoeOeuGus/QYnf8nWjlJfOR0RG8Uqru+n80KTJ
+         uVKPQ2pa9ZzyTOzNZMJ0FWaFse26G2Xh0PaxdzRhwpM3xoC4MmWizAyYKaAYtAWnxj
+         6wqIyJDxIMjrVXBc/Y6UZ82LyVtyf6UTswn64JtQ=
+Date:   Wed, 23 Jan 2019 09:04:47 -0500
 From:   Sasha Levin <sashal@kernel.org>
-To:     Michel =?iso-8859-1?Q?D=E4nzer?= <michel@daenzer.net>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
 Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Alex Deucher <alexander.deucher@amd.com>,
-        dri-devel@lists.freedesktop.org,
-        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
-        amd-gfx@lists.freedesktop.org
-Subject: Re: [PATCH AUTOSEL 4.20 034/117] drm/amdgpu: Correct
- get_crtc_scanoutpos behavior when vpos >= vtotal
-Message-ID: <20190123140346.GJ202535@sasha-vm>
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        devel@driverdev.osuosl.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 4.20 056/117] media: cedrus: don't initialize
+ pointers with zero
+Message-ID: <20190123140447.GK202535@sasha-vm>
 References: <20190108192628.121270-1-sashal@kernel.org>
- <20190108192628.121270-34-sashal@kernel.org>
- <199e52c4-7e19-03c0-2d60-c638dda86bd4@daenzer.net>
+ <20190108192628.121270-56-sashal@kernel.org>
+ <20190109084854.GA1743@kadam>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <199e52c4-7e19-03c0-2d60-c638dda86bd4@daenzer.net>
+In-Reply-To: <20190109084854.GA1743@kadam>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 10:20:49AM +0100, Michel Dänzer wrote:
->On 2019-01-08 8:25 p.m., Sasha Levin wrote:
->> From: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
->>
->> [ Upstream commit 520f08df45fbe300ed650da786a74093d658b7e1 ]
->>
->> When variable refresh rate is active [...]
+On Wed, Jan 09, 2019 at 11:48:54AM +0300, Dan Carpenter wrote:
+>This is a pure cleanup patch, it doesn't affect runtime.
 >
->Variable refresh rate (FreeSync) support is only landing in 5.0,
->therefore this fix isn't needed in older kernels.
+>On Tue, Jan 08, 2019 at 02:25:24PM -0500, Sasha Levin wrote:
+>> From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+>>
+>> [ Upstream commit e4d7b113fdccde1acf8638c5879f2a450d492303 ]
+>>
+>> A common mistake is to assume that initializing a var with:
+>> 	struct foo f = { 0 };
+>>
+>> Would initialize a zeroed struct. Actually, what this does is
+>> to initialize the first element of the struct to zero.
+>>
+>> According to C99 Standard 6.7.8.21:
+>>
+>>     "If there are fewer initializers in a brace-enclosed
+>>      list than there are elements or members of an aggregate,
+>>      or fewer characters in a string literal used to initialize
+>>      an array of known size than there are elements in the array,
+>>      the remainder of the aggregate shall be initialized implicitly
+>>      the same as objects that have static storage duration."
+>
+>Static storage is initialized to zero so this is fine.  It's just
+>that Sparse complains if you mix NULL and zero.
 
 I'll drop it, thank you.
 
