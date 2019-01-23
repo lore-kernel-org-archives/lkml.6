@@ -6,22 +6,22 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17DFAC282C5
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 21:28:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15288C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 21:29:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E300321872
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 21:28:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E26DB218A1
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 21:29:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726948AbfAWV2P (ORCPT
+        id S1726967AbfAWV3W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 16:28:15 -0500
-Received: from verein.lst.de ([213.95.11.211]:44993 "EHLO newverein.lst.de"
+        Wed, 23 Jan 2019 16:29:22 -0500
+Received: from verein.lst.de ([213.95.11.211]:45006 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726352AbfAWV2P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 16:28:15 -0500
+        id S1726352AbfAWV3W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 16:29:22 -0500
 Received: by newverein.lst.de (Postfix, from userid 2407)
-        id B5AC968DCF; Wed, 23 Jan 2019 22:28:13 +0100 (CET)
-Date:   Wed, 23 Jan 2019 22:28:13 +0100
+        id 6916168CEC; Wed, 23 Jan 2019 22:29:21 +0100 (CET)
+Date:   Wed, 23 Jan 2019 22:29:21 +0100
 From:   Christoph Hellwig <hch@lst.de>
 To:     Joerg Roedel <joro@8bytes.org>
 Cc:     "Michael S . Tsirkin" <mst@redhat.com>,
@@ -32,20 +32,19 @@ Cc:     "Michael S . Tsirkin" <mst@redhat.com>,
         linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         iommu@lists.linux-foundation.org, jfehlig@suse.com,
         jon.grimm@amd.com, brijesh.singh@amd.com, jroedel@suse.de
-Subject: Re: [PATCH 1/5] swiotlb: Introduce swiotlb_max_mapping_size()
-Message-ID: <20190123212813.GB9032@lst.de>
-References: <20190123163049.24863-1-joro@8bytes.org> <20190123163049.24863-2-joro@8bytes.org>
+Subject: Re: [PATCH 3/5] dma: Introduce dma_max_mapping_size()
+Message-ID: <20190123212921.GC9032@lst.de>
+References: <20190123163049.24863-1-joro@8bytes.org> <20190123163049.24863-4-joro@8bytes.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190123163049.24863-2-joro@8bytes.org>
+In-Reply-To: <20190123163049.24863-4-joro@8bytes.org>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 05:30:45PM +0100, Joerg Roedel wrote:
-> +extern size_t swiotlb_max_mapping_size(struct device *dev);
 
-No need for the extern keyword on function declarations in headers.
+This looks ok, but could really use some documentation in
+Documentation/DMA-API.txt.
