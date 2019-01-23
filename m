@@ -2,88 +2,89 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 321F5C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 15:05:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 532E7C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 15:07:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0054520870
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 15:05:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="kW1i0yEg"
+	by mail.kernel.org (Postfix) with ESMTP id 10FD020870
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 15:07:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548256077;
+	bh=GzYMHgytKUjYpXQoMtfF+MD8fD7CbJ862YoePiDkiIY=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=epVL1ZNufIM9AbnI4RiAkqEeHVujtiQMxMIodYYgU8/zLTi07rxX4ObijpbB818r8
+	 MjcvdSBmnPDXMNUz7iehadO7YjiNPfqlf3ZR5QKo0XYCpkJ9dkKFKv204RI9lDBdDI
+	 wqmSvRxofNkhP4aFK63Kp+abAqTsmQJtQXY+kevw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726030AbfAWPFB (ORCPT
+        id S1726122AbfAWPHz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 10:05:01 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:34978 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725862AbfAWPFB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 10:05:01 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0NExZFU109200;
-        Wed, 23 Jan 2019 15:04:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=wqvT8Wb+W0AmbwGKCCcaLqdACPOdE/nTR7hWf9yNQnA=;
- b=kW1i0yEg7/5XZxmKxsmebigFyBfig/VaSmJkqufYV8/AhDkZI7IVM7k9s79hol9TmuGV
- n7LQE+Sd+/IPFJ6fxKk+EgVxb48Z0jiqgDusozkFYJRWHU4KimO62xA+Y3M7PWk9T6DK
- iZemFqNOJ0xdcdm22vdquEsUpYC1tEuaSL6I0HEuKKGlTHesL2XHlylumYaAd2M9ZUhH
- 3p736MsLh4xgVU6MAHu0cvt5hEE/RFNk9Tgxs1fWxWQI2zrRg5JQTNL5J3w7YCgs+e8c
- IbGshnhlJAbrGvWye57ct1cg15XtGg2ngG7rEa5+isdYshsRLZdFzGX7tdDu0u4eGV9W jg== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2120.oracle.com with ESMTP id 2q3vhrt8ge-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 23 Jan 2019 15:04:17 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0NF4Hm8000923
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 23 Jan 2019 15:04:17 GMT
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0NF4FQw028179;
-        Wed, 23 Jan 2019 15:04:15 GMT
-Received: from Konrads-MacBook-Pro.local (/75.104.64.133)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 23 Jan 2019 07:04:15 -0800
-Date:   Wed, 23 Jan 2019 10:03:36 -0500
-From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To:     Khalid Aziz <khalid.aziz@oracle.com>
-Cc:     juergh@gmail.com, tycho@tycho.ws, jsteckli@amazon.de,
-        ak@linux.intel.com, torvalds@linux-foundation.org,
-        liran.alon@oracle.com, keescook@google.com,
-        Tycho Andersen <tycho@docker.com>, deepa.srinivasan@oracle.com,
-        chris.hyser@oracle.com, tyhicks@canonical.com, dwmw@amazon.co.uk,
-        andrew.cooper3@citrix.com, jcm@redhat.com,
-        boris.ostrovsky@oracle.com, kanth.ghatraju@oracle.com,
-        joao.m.martins@oracle.com, jmattson@google.com,
-        pradeep.vincent@oracle.com, john.haxby@oracle.com,
-        tglx@linutronix.de, kirill.shutemov@linux.intel.com, hch@lst.de,
-        steven.sistare@oracle.com, kernel-hardening@lists.openwall.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, x86@kernel.org
-Subject: Re: [RFC PATCH v7 09/16] mm: add a user_virt_to_phys symbol
-Message-ID: <20190123150248.GE19289@Konrads-MacBook-Pro.local>
-References: <cover.1547153058.git.khalid.aziz@oracle.com>
- <c9a409397fc608f7ae6297597d9ea3d21eeb3b38.1547153058.git.khalid.aziz@oracle.com>
+        Wed, 23 Jan 2019 10:07:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36578 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725896AbfAWPHz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 10:07:55 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A35620870;
+        Wed, 23 Jan 2019 15:07:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548256074;
+        bh=GzYMHgytKUjYpXQoMtfF+MD8fD7CbJ862YoePiDkiIY=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=zmrmCy2j9Ss7cCvW0WVKpjXwLuupC5SbTvZaAtOh/HYPRMYaNJeLFPVi6PHvd5dZD
+         tAeNIMltYtfJTVzrK/TssuQ7FXSs2/nFybcv8BAOzkX2VLTNslMHCf9Z2UAo5w5Lnz
+         RT7Mpq5lKP9DPBQhd7G5f5tfv0rjJLuUfRDXQjvM=
+Subject: Re: [PATCH][V2] selftests: cpu-hotplug: fix case where CPUs offline >
+ CPUs present
+To:     Colin Ian King <colin.king@canonical.com>,
+        linux-kselftest@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shuah <shuah@kernel.org>
+References: <20190110123802.13832-1-colin.king@canonical.com>
+ <abb5a36f-e513-e3ba-3286-4cc2026ef580@canonical.com>
+From:   shuah <shuah@kernel.org>
+Message-ID: <c18c3293-631d-2deb-794d-b7057ea2c50d@kernel.org>
+Date:   Wed, 23 Jan 2019 08:07:53 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c9a409397fc608f7ae6297597d9ea3d21eeb3b38.1547153058.git.khalid.aziz@oracle.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9144 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=776
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901230113
+In-Reply-To: <abb5a36f-e513-e3ba-3286-4cc2026ef580@canonical.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> +EXPORT_SYMBOL(user_virt_to_phys);
+On 1/23/19 6:25 AM, Colin Ian King wrote:
+> ping?
+> 
+> On 10/01/2019 12:38, Colin King wrote:
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> The cpu-hotplug test assumes that we can offline the maximum CPU as
+>> described by /sys/devices/system/cpu/offline.  However, in the case
+>> where the number of CPUs exceeds like kernel configuration then
+>> the offline count can be greater than the present count and we end
+>> up trying to test the offlining of a CPU that is not available to
+>> offline.  Fix this by testing the maximum present CPU instead.
+>>
+>> Also, the test currently offlines the CPU and does not online it,
+>> so fix this by onlining the CPU after the test.
+>>
+>> Fixes: d89dffa976bc ("fault-injection: add selftests for cpu and memory hotplug")
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>>
+>> ---
+>>
+>> V2: remove some debug and an empty line
 
-Could it be _GPL? OTherwise looks OK to me.
+Sorry for the delay. I will take this for 5.0-rc5
+
+thanks,
+-- Shuah
