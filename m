@@ -2,121 +2,88 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBF7AC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:05:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDB12C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:05:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BD4020870
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:05:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADE5820870
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:05:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="mMpXGkUh"
+	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="guvo7xyV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727428AbfAWKFX (ORCPT
+        id S1727452AbfAWKF3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 05:05:23 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:52756 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727090AbfAWKFX (ORCPT
+        Wed, 23 Jan 2019 05:05:29 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:44166 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727090AbfAWKF1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 05:05:23 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0NA53uE099338;
-        Wed, 23 Jan 2019 04:05:03 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1548237903;
-        bh=LIwR+BIZfvM7UkpbXRiq2HxtOBot3cOhlo/4etvby+U=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=mMpXGkUhXlhsKFxov8yQr/bykLN2q9Jnzi9Hcip4j0QMf3e4kKR8mOjIbqVUwAB6/
-         mCZd2L7sqOw/xFRqi3OROKrsKMHsHRhLULOdLX90lP/FntqfrQc7/ZTxQKGklKpPSI
-         2mroLUY3jgNjC5EiDe/Ow7cNKYuzDYwnMOyU4C+I=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0NA52MW052300
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 23 Jan 2019 04:05:02 -0600
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 23
- Jan 2019 04:05:01 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 23 Jan 2019 04:05:01 -0600
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0NA4tiL008717;
-        Wed, 23 Jan 2019 04:04:57 -0600
-Subject: Re: [PATCH 09/24] dt-bindings: PCI: Document "atu" reg-names
-To:     Rob Herring <robh@kernel.org>
-CC:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-arm-kernel@axis.com>
-References: <20190114132424.6445-1-kishon@ti.com>
- <20190114132424.6445-10-kishon@ti.com> <20190122004806.GA32204@bogus>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <5f2fa7cd-b5a3-e466-6cbc-305f15836241@ti.com>
-Date:   Wed, 23 Jan 2019 15:34:28 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 23 Jan 2019 05:05:27 -0500
+Received: by mail-pg1-f193.google.com with SMTP id t13so838304pgr.11
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 02:05:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=vJtz3hfM+p125zxJRV32uw+CMJlXl4S2cS6zvFBDMv0=;
+        b=guvo7xyVefd0sNCIzYE1h+ha+rSDHAacMj10/CfEY9pVdrdXLRclTQuITvG+9YfMHq
+         3LjqVFF7xivWs2KgBnSAjJiS4h3L75ae78wDs52oIht65C7oRohrfu0fxGFvZVzM7uxA
+         oVNJ4wAn96giUBnCXmvCPEDXp2Y86DTcH5t3ZQ7eLJxe7QYa+lEmEAwU8mPRkUqVPe/w
+         TBuaz1vSEPy5h7mUua2z73cIPqv6kqpo278hFyLT077vCejuiXH6XWQ0k21xmkfxElZo
+         nmxD/UXHSZRTcrWtGQlQ6BeAArehsB9ldN1vPbR+Uw0wgTtdlSRIGHeSFZbOPMpP4HFu
+         aGVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=vJtz3hfM+p125zxJRV32uw+CMJlXl4S2cS6zvFBDMv0=;
+        b=sd0CsyHrb7b//74bt3yfyXyanf/2azHyO/g08XYavuJ5OeRh0OJGvRxywOKePJ6tGe
+         dONfef5z4iZirZN//xrVkpuh0n6wkXBW+6KhYIjxRMWGPJ3dw+cm1QE8ggmFjbpM4nX5
+         eOvMEZqabKh4bqwpZ7cxK77z5mGCjt1YMrG1L/fQwjeeg3LxqBYMuBUOROc4zokpa+0W
+         YZWZFea+ZWD2LXzzF4UGxZoz2dYCrdzbbLJXeet+6D0amDw2rZJlYAyBbGC/Un6/1sal
+         aKE7twGfEA6Z/5Z5D/nwI+AIQpzkIZzt48tNpX1nwRgAM/qGkqZC5EZ7bP165pgCEuTY
+         fjZQ==
+X-Gm-Message-State: AJcUukednqa/5sZlBD3Qdotx8CG3vBI1O6PX5u2uIS7FNK9N7NddIhum
+        L063vYnPb7U1LpHti7+H+6mm3Q==
+X-Google-Smtp-Source: ALg8bN4hCMrh72Cc2vi3SHRTR59WGj31TZ72MwOKeM0dBGcWDkbWYlN9aNjQ3TyxOo4CjdCvop6BqA==
+X-Received: by 2002:a63:2b82:: with SMTP id r124mr1401626pgr.300.1548237926793;
+        Wed, 23 Jan 2019 02:05:26 -0800 (PST)
+Received: from kshutemo-mobl1.localdomain ([134.134.139.82])
+        by smtp.gmail.com with ESMTPSA id k15sm28312389pfb.147.2019.01.23.02.05.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 23 Jan 2019 02:05:26 -0800 (PST)
+Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
+        id A88D0301A3F; Wed, 23 Jan 2019 13:05:21 +0300 (+03)
+Date:   Wed, 23 Jan 2019 13:05:21 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Cao jin <caoj.fnst@cn.fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        kirill.shutemov@linux.intel.com
+Subject: Re: [PATCH] x86/boot: save several bytes in decompressor
+Message-ID: <20190123100521.wv6tzar5mzyraoqn@kshutemo-mobl1>
+References: <20190123100014.23721-1-caoj.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
-In-Reply-To: <20190122004806.GA32204@bogus>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190123100014.23721-1-caoj.fnst@cn.fujitsu.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
-
-On 22/01/19 6:18 AM, Rob Herring wrote:
-> On Mon, Jan 14, 2019 at 06:54:09PM +0530, Kishon Vijay Abraham I wrote:
->> Document "atu" reg-names required to get the register space for ATU in
->> Synopsys designware core version >= 4.80.
->>
->> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
->> ---
->>  Documentation/devicetree/bindings/pci/designware-pcie.txt | 7 +++++--
->>  1 file changed, 5 insertions(+), 2 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
->> index c124f9bc11f3..5561a1c060d0 100644
->> --- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
->> +++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
->> @@ -4,8 +4,11 @@ Required properties:
->>  - compatible:
->>  	"snps,dw-pcie" for RC mode;
->>  	"snps,dw-pcie-ep" for EP mode;
->> -- reg: Should contain the configuration address space.
->> -- reg-names: Must be "config" for the PCIe configuration space.
->> +- reg: For designware cores version < 4.80 contains the configuration
->> +       address space. For designware core version >= 4.80, contains
->> +       the configuration and ATU address space
->> +- reg-names: Must be "config" for the PCIe configuration space and "atu" for
->> +	     the ATU address space.
+On Wed, Jan 23, 2019 at 06:00:14PM +0800, Cao jin wrote:
+> gdt64 represents the content of GDTR under x86-64, which actually needs
+> 10 bytes only, ".long" & ".word" is superfluous.
 > 
-> I'm pretty sure we already have other platforms with an ATU. Those all 
-> just represent it with the other ctrl registers? So maybe this is TI 
-> specific that it is separate. Or should have some conditional like 'if 
-> the ATU space is separate, the reg-name should be atu'.
+> Signed-off-by: Cao jin <caoj.fnst@cn.fujitsu.com>
 
-This is specific to Synopsys Designware version >= 4.80 and not to TI. The
-first platform used a fixed offset to get the atu_base which is incorrect.
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
-In the "reg" binding I've noted this dependency.
-
-Thanks
-Kishon
+-- 
+ Kirill A. Shutemov
