@@ -7,136 +7,109 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 082ECC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 13:41:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 336E6C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 13:43:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C83902133D
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 13:41:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E75CF2184B
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 13:43:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548250913;
-	bh=bhNsrBIzjCKhWx6dzhuEerxRchlI2MV0/XhG9VyGdSU=;
+	s=default; t=1548250993;
+	bh=jqK/YN93TXmfORHoqG1DAfI93GeUNyfuuEKjVqyOqso=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=I+A2YTW6PMZHZ6Y001HUjVNtBi5lLFD2gmbvbOBKKjO8UuxmaE4sLtobmE/xghO8q
-	 2wOuknaElrVeMmOhElb7dAplTzzZf+ztFejWrlu/so+ePTi4v2J3YHof1NEjEAUK/i
-	 53gGdZsQInghmbY8sXZR+d1tzdBSKfYpj7Tv7Py4=
+	b=tSm8WK23KRiRYfZfuI8WzM8iNGPVr3oYdu7w6wgfmJWN1NtyJb2UcR7w13BtMVW3Y
+	 2VtoLAqec/aOyQMPLT7caZLm9vs/MUp4EhsKNgYxBSfZKDCbtIpJ2zXZw5DNzIfUuG
+	 Y+7D2TqmmBbbklD7BLjpX3SVnKKjrBNNel6tBXvg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726322AbfAWNlw (ORCPT
+        id S1726360AbfAWNnL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 08:41:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56082 "EHLO mail.kernel.org"
+        Wed, 23 Jan 2019 08:43:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56700 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726029AbfAWNlv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 08:41:51 -0500
+        id S1725995AbfAWNnL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 08:43:11 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E28BD20870;
-        Wed, 23 Jan 2019 13:41:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B6BEA2184B;
+        Wed, 23 Jan 2019 13:43:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548250910;
-        bh=bhNsrBIzjCKhWx6dzhuEerxRchlI2MV0/XhG9VyGdSU=;
+        s=default; t=1548250990;
+        bh=jqK/YN93TXmfORHoqG1DAfI93GeUNyfuuEKjVqyOqso=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=a+SdaKaYT4B/rVemnsJPr85fmEkwRvBtNZnq4vq0T5LvH0EH9ikcA2zub9em5RVTE
-         ALCsv2Iml5jxscNoUaqOSicH9n7rfjYymUoaguY+MJSS7Gyx7mIuiXtFB+sH4tA3e1
-         kmoCBg6Pj2PrlY7A2aELGnjhKZY03pi0XO45wBCc=
-Date:   Wed, 23 Jan 2019 14:41:48 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH -next] usb: ftdi-elan: Fix if == else warnings in
- ftdi_elan_respond_engine
-Message-ID: <20190123134147.GC24700@kroah.com>
-References: <20190123123442.5256-1-yuehaibing@huawei.com>
- <20190123124319.GB19703@kroah.com>
- <10d0f378-03ab-1855-1476-a39cf6b816ab@huawei.com>
+        b=euMglUlOgjNgJKI3h+MNeK4EpWvvoooOfgfsZ28vwTVC978yS74/mmSYk0LQGcSS9
+         r+V/a92Y8KxDiBsPzjH+BWdV+xned9x3c/qrzKFZ5RUclAKWSsLJptUEctGiQv2EZb
+         CqpAWv9HtENMhsM7Z73GzA4sA5h6kgZA3/IMpuy4=
+Date:   Wed, 23 Jan 2019 14:43:07 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Peter Oberparleiter <oberpar@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gcov: no need to check return value of debugfs_create
+ functions
+Message-ID: <20190123134307.GD24700@kroah.com>
+References: <20190122152151.16139-49-gregkh@linuxfoundation.org>
+ <b277b33b-bcc0-c1c5-52d6-9e1580531df3@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <10d0f378-03ab-1855-1476-a39cf6b816ab@huawei.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b277b33b-bcc0-c1c5-52d6-9e1580531df3@linux.ibm.com>
 User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 09:17:38PM +0800, YueHaibing wrote:
-> On 2019/1/23 20:43, Greg KH wrote:
-> > On Wed, Jan 23, 2019 at 08:34:42PM +0800, YueHaibing wrote:
-> >> ./drivers/usb/misc/ftdi-elan.c:972:10-12: WARNING: possible condition with no effect (if == else)
-> >> ./drivers/usb/misc/ftdi-elan.c:983:9-11: WARNING: possible condition with no effect (if == else)
-> >> ./drivers/usb/misc/ftdi-elan.c:2052:11-13: WARNING: possible condition with no effect (if == else)
-> >>
-> >> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+On Wed, Jan 23, 2019 at 02:22:33PM +0100, Peter Oberparleiter wrote:
+> On 22.01.2019 16:21, Greg Kroah-Hartman wrote:
+> > When calling debugfs functions, there is no need to ever check the
+> > return value.  The function can work or not, but the code logic should
+> > never do something different based on this.
 > > 
-> > You can not just provide the output of a tool as a changelog text,
-> > sorry.
+> > Also delete the dentry variable as it is never needed.
 > > 
-> > Please explain what those lines mean, and why you are making the change
-> > that you are.
+> > Cc: Peter Oberparleiter <oberpar@linux.ibm.com>
+> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > ---
+> >  kernel/gcov/fs.c | 22 ++--------------------
+> >  1 file changed, 2 insertions(+), 20 deletions(-)
 > 
-> ok, will do that.
+> Acked-by: Peter Oberparleiter <oberpar@linux.ibm.com>
 > 
-> > 
-> >> ---
-> >>  drivers/usb/misc/ftdi-elan.c | 26 --------------------------
-> >>  1 file changed, 26 deletions(-)
-> >>
-> >> diff --git a/drivers/usb/misc/ftdi-elan.c b/drivers/usb/misc/ftdi-elan.c
-> >> index 76c718a..257efac 100644
-> >> --- a/drivers/usb/misc/ftdi-elan.c
-> >> +++ b/drivers/usb/misc/ftdi-elan.c
-> >> @@ -915,7 +915,6 @@ static int ftdi_elan_respond_engine(struct usb_ftdi *ftdi)
-> >>  	int bytes_read = 0;
-> >>  	int retry_on_empty = 1;
-> >>  	int retry_on_timeout = 3;
-> >> -	int empty_packets = 0;
-> >>  read:{
-> >>  		int packet_bytes = 0;
-> >>  		int retval = usb_bulk_msg(ftdi->udev,
-> >> @@ -960,31 +959,6 @@ read:{
-> >>  			dev_err(&ftdi->udev->dev, "error = %d with packet_bytes = %d with total %d bytes%s\n",
-> >>  				retval, packet_bytes, bytes_read, diag);
-> >>  			return retval;
-> >> -		} else if (packet_bytes == 2) {
-> >> -			unsigned char s0 = ftdi->bulk_in_buffer[0];
-> >> -			unsigned char s1 = ftdi->bulk_in_buffer[1];
-> >> -			empty_packets += 1;
-> >> -			if (s0 == 0x31 && s1 == 0x60) {
-> >> -				if (retry_on_empty-- > 0) {
-> >> -					goto more;
-> >> -				} else
-> >> -					return 0;
-> >> -			} else if (s0 == 0x31 && s1 == 0x00) {
-> >> -				if (retry_on_empty-- > 0) {
-> >> -					goto more;
-> >> -				} else
-> >> -					return 0;
-> >> -			} else {
-> >> -				if (retry_on_empty-- > 0) {
-> >> -					goto more;
-> >> -				} else
-> >> -					return 0;
-> >> -			}
-> >> -		} else if (packet_bytes == 1) {
-> >> -			if (retry_on_empty-- > 0) {
-> >> -				goto more;
-> >> -			} else
-> >> -				return 0;
-> > 
-> > Are you _sure_ that these lines are not needed and that the compiler is
-> > not really seeing them?  As it doesn't look that way to me, what am I
-> > missing?
+> Compile test was successful, but the patch introduces a compile warning.
+> Could you merge the attached patch?
 > 
-> I checked and make sure that All these if/else if branch just do the same thing:
+> 8<===
+> From: Peter Oberparleiter <oberpar@linux.vnet.ibm.com>
+> Subject: [PATCH] gcov: Fix compiler warning
 > 
-> 	if (retry_on_empty-- > 0) {
-> 		goto more;
-> 	} else
-> 		return 0;
+> Fix compiler warning when compiling with CONFIG_GCOV_KERNEL=y:
 > 
-> so it can be merged into the last else branch.
+>   CC      kernel/gcov/fs.o
+> kernel/gcov/fs.c: In function ‘gcov_fs_init’:
+> kernel/gcov/fs.c:756:6: warning: unused variable ‘rc’ [-Wunused-variable]
+>   int rc = -EIO;
+>       ^~
 > 
-> Also the variable 'empty_packets' doesn't use in any place, except for self increment
+> Signed-off-by: Peter Oberparleiter <oberpar@linux.vnet.ibm.com>
+> ---
+>  kernel/gcov/fs.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/kernel/gcov/fs.c b/kernel/gcov/fs.c
+> index aa9a49f72024..e5eb5ea7ea59 100644
+> --- a/kernel/gcov/fs.c
+> +++ b/kernel/gcov/fs.c
+> @@ -753,8 +753,6 @@ void gcov_event(enum gcov_action action, struct gcov_info *info)
+>  /* Create debugfs entries. */
+>  static __init int gcov_fs_init(void)
+>  {
+> -	int rc = -EIO;
+> -
+>  	init_node(&root_node, NULL, NULL, NULL);
+>  	/*
+>  	 * /sys/kernel/debug/gcov will be parent for the reset control file
+> -- 
 
-Don't do two different things in the same patch :)
+Ah, good catch, will do that, thanks.
 
+greg k-h
