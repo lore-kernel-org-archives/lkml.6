@@ -7,60 +7,60 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65091C282C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 00:01:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E87D3C282C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 00:01:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0461320856
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 00:01:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D53DB217D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 00:01:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mowNJblf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oLt+71V/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727248AbfAWABk (ORCPT
+        id S1727299AbfAWABw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 19:01:40 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:36215 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726960AbfAWABe (ORCPT
+        Tue, 22 Jan 2019 19:01:52 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:37544 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727148AbfAWABc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 19:01:34 -0500
-Received: by mail-wm1-f68.google.com with SMTP id p6so320483wmc.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 16:01:30 -0800 (PST)
+        Tue, 22 Jan 2019 19:01:32 -0500
+Received: by mail-wr1-f66.google.com with SMTP id s12so371581wrt.4
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 16:01:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=GV5oIG3+Pq7m4qJLxRFHTZNBI2Ux0w/5g1UCNuFY03A=;
-        b=mowNJblfSfdzqtEf1g3P3P8g9kj94U8Vl3b4ZHOMvaQbPUgY1joMX+X5QGwAMuyUGb
-         Dyr2X4ooKV7ikIULOpYxwBXgy14GypT4lUrgFFkalQHFjIPHL9dRYO/ESJbmwh48YaQx
-         ugyKv0RL7Un/6zMfCSaLYTOnr7Fx+NOKZpNw9ay02o2TGujXK22UWuldgC45flMtyvSi
-         NVU/9iaUtMRcPOzkYMVa01iD+aNA6rzXhUClqOzAXgE86zOw6aGOKPQPshdhM8aqK2dV
-         JQGXnjPuuFTMLHTOBU9oW275ZCRnao0lfls0/3A9XNs7lMxhI5OVu1X73M1xRFG9RseD
-         ktNg==
+        bh=VU75YdlBxoGDDKYdwA+i1jo86k61nuXHsFumAGRIX4M=;
+        b=oLt+71V/m7d4CVf7ighe8gtwpOQcfwh4BlOzt0lHteW0dp4dpnsf87M9NaYx++ORO0
+         SmiLb+nT9mjXoCTUGaXDJPfwJUKLlE17ZU/QfRFCL1ukMD8qELBS7EQfBSjfD7FFWwkW
+         Ja8ZJhGf6dcriwOakuSQO/O8CgWdBluh1dT3k++aV6n2VNpdnhGv5xFF6biDjlUkHo3x
+         0A4xocOMoB2ZABSK8qtg+hbB9AJLaMvJ1vMjwptLTgpYe8Htd7WvYNf+D/lvvRtaI1Ma
+         946GT8OD6+PzZOwtp+KvPOL/ntzKzFtet3yp0GOgkGkc2zLSD81J5/lFOQHNPKXPn3H4
+         gP5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=GV5oIG3+Pq7m4qJLxRFHTZNBI2Ux0w/5g1UCNuFY03A=;
-        b=VxljUmxv8eDbiQSXxreTbaDrNDfTjEPmv3TEN1k28zLzzfHechm4tPvFW9P3bfDbL3
-         g8V10CxlvCSw3p4VV0xLyv4VscP2awg3OQRPYJ4UhiLqDT4esm3PJly2TgPluMHxNb3I
-         igUJMPv+z1hz7SqSjlrN+C8OFD2tnvrsPOwAe6kIETh/G6a/chDXFproJFvOUwK7dZV4
-         SdTtXLubhvgo/Mai9dz9erTY4WxnVXL5bfKdD1IGxvrr8Fx1HBsFSen9HgQ48012V7IT
-         aJVo+Ym9w2DnxBvqK2QWGJrfeLMGhZeyw+JrpVEuoCEPht2Bp7Up7TWTnutbMY7SfZAV
-         nqRg==
-X-Gm-Message-State: AJcUukevBHpWDLB/fwYqY5RYX+gCyFynniKa5xUMGBSaeemVooXyVoU/
-        9bOplrEkFf/NAE3EIkmMa61R1ARB
-X-Google-Smtp-Source: ALg8bN6tNl0NZQSHLpXrjUGklGhozxz4c3ZxVYV7F1iTbStfcJmJKYg92K6NeLYQHgFCK9qfDiYAUw==
-X-Received: by 2002:a1c:2c6:: with SMTP id 189mr454176wmc.21.1548201688704;
-        Tue, 22 Jan 2019 16:01:28 -0800 (PST)
+        bh=VU75YdlBxoGDDKYdwA+i1jo86k61nuXHsFumAGRIX4M=;
+        b=Cfaf8h6oEjposEza+zdP0Byde6PENMaQlBAd8yxE1xdLmLyg405GuHDCTzv5CiH4Wv
+         DdzaIojR1XXmzT2L7XuzuleNYZ9KG693ZzRJaPc0bpS5Be+6SJhFByq8vDAavXxD5+AK
+         bCaeBMYopI7HKr/nAOkEccYEGD2KO3UuQYs3Nlv4fqNT6N04X90lxgHKm5huiu407Asd
+         XiU2908XMNpAOGOY16c1rYnEIYb2ZZQJRFTMIMvJXLEmF9s5tnHUDy5tdRDvWAbZCGnu
+         5+wqKZa2VCIKxJa9z0++6Y9byjJEwvewr6NCsAa5uknoTou9w3xCKVTfIdsEzbBohQTz
+         oWSg==
+X-Gm-Message-State: AJcUukc8WLH9Hr9LqFphOb0sEllIcYBhY+BVv0U2CXwfZbsiRMoQk712
+        ZuFuTTr/LPkyASiCPt3y7k0=
+X-Google-Smtp-Source: ALg8bN7AoRZ563PG1XtOVvHMCBZmyTxlclH+0lo8LGY0FbkTG63sVRbutT3hMHE8RwSk0EGzg4tueA==
+X-Received: by 2002:adf:8464:: with SMTP id 91mr36585203wrf.251.1548201686209;
+        Tue, 22 Jan 2019 16:01:26 -0800 (PST)
 Received: from oded-ubuntu-desktop.habana-labs.com ([31.154.190.6])
-        by smtp.gmail.com with ESMTPSA id 125sm97582630wmm.26.2019.01.22.16.01.27
+        by smtp.gmail.com with ESMTPSA id 125sm97582630wmm.26.2019.01.22.16.01.24
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Jan 2019 16:01:28 -0800 (PST)
+        Tue, 22 Jan 2019 16:01:25 -0800 (PST)
 From:   Oded Gabbay <oded.gabbay@gmail.com>
 To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
-Cc:     ogabbay@habana.ai
-Subject: [PATCH 14/15] habanalabs: add debugfs support
-Date:   Wed, 23 Jan 2019 02:00:56 +0200
-Message-Id: <20190123000057.31477-15-oded.gabbay@gmail.com>
+Cc:     ogabbay@habana.ai, Omer Shpigelman <oshpigelman@habana.ai>
+Subject: [PATCH 12/15] habanalabs: add virtual memory and MMU modules
+Date:   Wed, 23 Jan 2019 02:00:54 +0200
+Message-Id: <20190123000057.31477-13-oded.gabbay@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190123000057.31477-1-oded.gabbay@gmail.com>
 References: <20190123000057.31477-1-oded.gabbay@gmail.com>
@@ -69,250 +69,2626 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds debugfs support to the driver. It allows the user-space to
-display information that is contained in the internal structures of the
-driver, such as:
-- active command submissions
-- active user virtual memory mappings
-- number of allocated command buffers
+From: Omer Shpigelman <oshpigelman@habana.ai>
 
-It also enables the user to perform reads and writes through Goya's PCI
-bars.
+This patch adds the Virtual Memory and MMU modules.
 
+Goya has an internal MMU which provides process isolation on the internal
+DDR. The internal MMU also performs translations for transactions that go
+from Goya to the Host.
+
+The driver is responsible for allocating and freeing memory on the DDR
+upon user request. It also provides an interface to map and unmap DDR and
+Host memory to the device address space.
+
+Signed-off-by: Omer Shpigelman <oshpigelman@habana.ai>
 Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
 ---
- .../ABI/testing/debugfs-driver-habanalabs     |  127 ++
- drivers/misc/habanalabs/Makefile              |    2 +
- drivers/misc/habanalabs/command_buffer.c      |    4 +
- drivers/misc/habanalabs/command_submission.c  |   12 +
- drivers/misc/habanalabs/debugfs.c             | 1069 +++++++++++++++++
- drivers/misc/habanalabs/device.c              |    6 +
- drivers/misc/habanalabs/goya/goya.c           |  108 ++
- drivers/misc/habanalabs/goya/goyaP.h          |    5 +
- drivers/misc/habanalabs/habanalabs.h          |  191 +++
- drivers/misc/habanalabs/habanalabs_drv.c      |   16 +-
- drivers/misc/habanalabs/memory.c              |    8 +
- 11 files changed, 1546 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/ABI/testing/debugfs-driver-habanalabs
- create mode 100644 drivers/misc/habanalabs/debugfs.c
+ drivers/misc/habanalabs/Makefile              |    2 +-
+ drivers/misc/habanalabs/context.c             |   19 +-
+ drivers/misc/habanalabs/device.c              |   20 +-
+ drivers/misc/habanalabs/goya/goya.c           |  391 +++++
+ drivers/misc/habanalabs/habanalabs.h          |  195 +++
+ drivers/misc/habanalabs/habanalabs_drv.c      |    2 +-
+ drivers/misc/habanalabs/habanalabs_ioctl.c    |    3 +-
+ drivers/misc/habanalabs/include/goya/goya.h   |    6 +-
+ .../include/hw_ip/mmu/mmu_general.h           |   45 +
+ .../habanalabs/include/hw_ip/mmu/mmu_v1_0.h   |   15 +
+ drivers/misc/habanalabs/memory.c              | 1506 +++++++++++++++++
+ drivers/misc/habanalabs/mmu.c                 |  604 +++++++
+ include/uapi/misc/habanalabs.h                |  122 +-
+ 13 files changed, 2922 insertions(+), 8 deletions(-)
+ create mode 100644 drivers/misc/habanalabs/include/hw_ip/mmu/mmu_general.h
+ create mode 100644 drivers/misc/habanalabs/include/hw_ip/mmu/mmu_v1_0.h
+ create mode 100644 drivers/misc/habanalabs/mmu.c
 
-diff --git a/Documentation/ABI/testing/debugfs-driver-habanalabs b/Documentation/ABI/testing/debugfs-driver-habanalabs
-new file mode 100644
-index 000000000000..2b606c84938c
---- /dev/null
-+++ b/Documentation/ABI/testing/debugfs-driver-habanalabs
-@@ -0,0 +1,127 @@
-+What:           /sys/kernel/debug/habanalabs/hl<n>/addr
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Sets the device address to be used for read or write through
-+                PCI bar. The acceptable value is a string that starts with "0x"
-+
-+What:           /sys/kernel/debug/habanalabs/hl<n>/command_buffers
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Displays a list with information about the currently allocated
-+                command buffers
-+
-+What:           /sys/kernel/debug/habanalabs/hl<n>/command_submission
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Displays a list with information about the currently active
-+                command submissions
-+
-+What:           /sys/kernel/debug/habanalabs/hl<n>/command_submission_jobs
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Displays a list with detailed information about each JOB (CB) of
-+                each active command submission
-+
-+What:           /sys/kernel/debug/habanalabs/hl<n>/data32
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Allows the root user to read or write directly through the
-+                device's PCI bar. Writing to this file generates a write
-+                transaction while reading from the file generates a read
-+                transcation. This custom interface is needed (instead of using
-+                the generic Linux user-space PCI mapping) because the DDR bar
-+                is very small compared to the DDR memory and only the driver can
-+                move the bar before and after the transaction
-+
-+What:           /sys/kernel/debug/habanalabs/hl<n>/device
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Enables the root user to set the device to specific state.
-+                Valid values are "disable", "enable", "suspend", "resume".
-+                User can read this property to see the valid values
-+
-+What:           /sys/kernel/debug/habanalabs/hl<n>/i2c_addr
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Sets I2C device address for I2C transaction that is generated
-+                by the device's CPU
-+
-+What:           /sys/kernel/debug/habanalabs/hl<n>/i2c_bus
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Sets I2C bus address for I2C transaction that is generated by
-+                the device's CPU
-+
-+What:           /sys/kernel/debug/habanalabs/hl<n>/i2c_data
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Triggers an I2C transaction that is generated by the device's
-+                CPU. Writing to this file generates a write transaction while
-+                reading from the file generates a read transcation
-+
-+What:           /sys/kernel/debug/habanalabs/hl<n>/i2c_reg
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Sets I2C register id for I2C transaction that is generated by
-+                the device's CPU
-+
-+What:           /sys/kernel/debug/habanalabs/hl<n>/led0
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Sets the state of the first S/W led on the device
-+
-+What:           /sys/kernel/debug/habanalabs/hl<n>/led1
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Sets the state of the second S/W led on the device
-+
-+What:           /sys/kernel/debug/habanalabs/hl<n>/led2
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Sets the state of the third S/W led on the device
-+
-+What:           /sys/kernel/debug/habanalabs/hl<n>/mmu
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Displays the hop values and physical address for a given ASID
-+                and virtual address. The user should write the ASID and VA into
-+                the file and then read the file to get the result.
-+                e.g. to display info about VA 0x1000 for ASID 1 you need to do:
-+                echo "1 0x1000" > /sys/kernel/debug/habanalabs/hl0/mmu
-+
-+What:           /sys/kernel/debug/habanalabs/hl<n>/set_power_state
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Sets the PCI power state. Valid values are "1" for D0 and "2"
-+                for D3Hot
-+
-+What:           /sys/kernel/debug/habanalabs/hl<n>/userptr
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Displays a list with information about the currently user
-+                pointers (user virtual addresses) that are pinned and mapped
-+                to DMA addresses
-+
-+What:           /sys/kernel/debug/habanalabs/hl<n>/vm
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Displays a list with information about all the active virtual
-+                address mappings per ASID
-+
 diff --git a/drivers/misc/habanalabs/Makefile b/drivers/misc/habanalabs/Makefile
-index fd46f8b48bab..c6592db59b25 100644
+index d2fd0e18b1eb..fd46f8b48bab 100644
 --- a/drivers/misc/habanalabs/Makefile
 +++ b/drivers/misc/habanalabs/Makefile
-@@ -8,5 +8,7 @@ habanalabs-y := habanalabs_drv.o device.o context.o asid.o habanalabs_ioctl.o \
- 		command_buffer.o hw_queue.o irq.o sysfs.o hwmon.o memory.o \
- 		command_submission.o mmu.o
+@@ -6,7 +6,7 @@ obj-m	:= habanalabs.o
  
-+habanalabs-$(CONFIG_DEBUG_FS) += debugfs.o
-+
+ habanalabs-y := habanalabs_drv.o device.o context.o asid.o habanalabs_ioctl.o \
+ 		command_buffer.o hw_queue.o irq.o sysfs.o hwmon.o memory.o \
+-		command_submission.o
++		command_submission.o mmu.o
+ 
  include $(src)/goya/Makefile
  habanalabs-y += $(HL_GOYA_FILES)
-diff --git a/drivers/misc/habanalabs/command_buffer.c b/drivers/misc/habanalabs/command_buffer.c
-index 700c6da01188..c2aa580f2bd0 100644
---- a/drivers/misc/habanalabs/command_buffer.c
-+++ b/drivers/misc/habanalabs/command_buffer.c
-@@ -36,6 +36,8 @@ static void cb_release(struct kref *ref)
- 	cb = container_of(ref, struct hl_cb, refcount);
- 	hdev = cb->hdev;
+diff --git a/drivers/misc/habanalabs/context.c b/drivers/misc/habanalabs/context.c
+index 2da672113e7a..dc0800a0ac9c 100644
+--- a/drivers/misc/habanalabs/context.c
++++ b/drivers/misc/habanalabs/context.c
+@@ -26,8 +26,10 @@ static void hl_ctx_fini(struct hl_ctx *ctx)
+ 	for (i = 0 ; i < HL_MAX_PENDING_CS ; i++)
+ 		dma_fence_put(ctx->cs_pending[i]);
  
-+	hl_debugfs_remove_cb(cb);
-+
- 	cb_do_release(hdev, cb);
+-	if (ctx->asid != HL_KERNEL_ASID_ID)
++	if (ctx->asid != HL_KERNEL_ASID_ID) {
++		hl_vm_ctx_fini(ctx);
+ 		hl_asid_free(hdev, ctx->asid);
++	}
  }
  
-@@ -141,6 +143,8 @@ int hl_cb_create(struct hl_device *hdev, struct hl_cb_mgr *mgr,
- 	*handle = cb->id | HL_MMAP_CB_MASK;
- 	*handle <<= PAGE_SHIFT;
+ void hl_ctx_do_release(struct kref *ref)
+@@ -97,6 +99,8 @@ void hl_ctx_free(struct hl_device *hdev, struct hl_ctx *ctx)
  
-+	hl_debugfs_add_cb(cb);
+ int hl_ctx_init(struct hl_device *hdev, struct hl_ctx *ctx, bool is_kernel_ctx)
+ {
++	int rc = 0;
 +
- 	return 0;
+ 	ctx->hdev = hdev;
  
- release_cb:
-diff --git a/drivers/misc/habanalabs/command_submission.c b/drivers/misc/habanalabs/command_submission.c
-index 0116c2262f17..bc1a50682304 100644
---- a/drivers/misc/habanalabs/command_submission.c
-+++ b/drivers/misc/habanalabs/command_submission.c
-@@ -153,6 +153,8 @@ static void free_job(struct hl_device *hdev, struct hl_cs_job *job)
- 	list_del(&job->cs_node);
- 	spin_unlock(&cs->job_lock);
- 
-+	hl_debugfs_remove_job(hdev, job);
-+
- 	if (job->ext_queue)
- 		cs_put(cs);
- 
-@@ -215,6 +217,12 @@ static void cs_do_release(struct kref *ref)
+ 	kref_init(&ctx->refcount);
+@@ -114,9 +118,22 @@ int hl_ctx_init(struct hl_device *hdev, struct hl_ctx *ctx, bool is_kernel_ctx)
+ 			dev_err(hdev->dev, "No free ASID, failed to create context\n");
+ 			return -ENOMEM;
  		}
++
++		rc = hl_vm_ctx_init(ctx);
++		if (rc) {
++			dev_err(hdev->dev, "Failed to init mem ctx module\n");
++			rc = -ENOMEM;
++			goto mem_ctx_err;
++		}
  	}
  
+ 	return 0;
++
++mem_ctx_err:
++	if (ctx->asid != HL_KERNEL_ASID_ID)
++		hl_asid_free(hdev, ctx->asid);
++
++	return rc;
+ }
+ 
+ void hl_ctx_get(struct hl_device *hdev, struct hl_ctx *ctx)
+diff --git a/drivers/misc/habanalabs/device.c b/drivers/misc/habanalabs/device.c
+index a47e00fe5ccf..1f7340551386 100644
+--- a/drivers/misc/habanalabs/device.c
++++ b/drivers/misc/habanalabs/device.c
+@@ -585,8 +585,10 @@ int hl_device_reset(struct hl_device *hdev, bool hard_reset,
+ 	/* Reset the H/W. It will be in idle state after this returns */
+ 	hdev->asic_funcs->hw_fini(hdev, hard_reset);
+ 
+-	if (hard_reset)
++	if (hard_reset) {
++		hl_vm_fini(hdev);
+ 		hl_eq_reset(hdev, &hdev->event_queue);
++	}
+ 
+ 	/* Re-initialize PI,CI to 0 in all queues (hw queue, cq) */
+ 	hl_hw_queue_reset(hdev, hard_reset);
+@@ -647,6 +649,13 @@ int hl_device_reset(struct hl_device *hdev, bool hard_reset,
+ 			goto out_err;
+ 		}
+ 
++		rc = hl_vm_init(hdev);
++		if (rc) {
++			dev_err(hdev->dev,
++				"Failed to init memory module after hard reset\n");
++			goto out_err;
++		}
++
+ 		hl_set_max_power(hdev, hdev->max_power);
+ 
+ 		hdev->hard_reset_pending = false;
+@@ -828,6 +837,13 @@ int hl_device_init(struct hl_device *hdev, struct class *hclass)
+ 		hdev->asic_name,
+ 		hdev->asic_prop.dram_size / 1024 / 1024 / 1024);
+ 
++	rc = hl_vm_init(hdev);
++	if (rc) {
++		dev_err(hdev->dev, "Failed to initialize memory module\n");
++		rc = 0;
++		goto out_disabled;
++	}
++
+ 	rc = hl_hwmon_init(hdev);
+ 	if (rc) {
+ 		dev_err(hdev->dev, "Failed to initialize hwmon\n");
+@@ -941,6 +957,8 @@ void hl_device_fini(struct hl_device *hdev)
+ 	/* Reset the H/W. It will be in idle state after this returns */
+ 	hdev->asic_funcs->hw_fini(hdev, true);
+ 
++	hl_vm_fini(hdev);
++
+ 	hl_eq_fini(hdev, &hdev->event_queue);
+ 
+ 	for (i = 0 ; i < hdev->asic_prop.completion_queues_count ; i++)
+diff --git a/drivers/misc/habanalabs/goya/goya.c b/drivers/misc/habanalabs/goya/goya.c
+index e3867615b974..94ee4cb00a49 100644
+--- a/drivers/misc/habanalabs/goya/goya.c
++++ b/drivers/misc/habanalabs/goya/goya.c
+@@ -6,6 +6,8 @@
+  */
+ 
+ #include "goyaP.h"
++#include "include/hw_ip/mmu/mmu_general.h"
++#include "include/hw_ip/mmu/mmu_v1_0.h"
+ #include "include/goya/asic_reg/goya_masks.h"
+ 
+ #include <linux/fs.h>
+@@ -87,6 +89,7 @@
+ #define GOYA_PLDM_RESET_WAIT_MSEC	1000		/* 1s */
+ #define GOYA_CPU_TIMEOUT_USEC		10000000	/* 10s */
+ #define GOYA_TEST_QUEUE_WAIT_USEC	100000		/* 100ms */
++#define GOYA_PLDM_MMU_TIMEOUT_USEC	(MMU_CONFIG_TIMEOUT_USEC * 100)
+ 
+ #define GOYA_QMAN0_FENCE_VAL		0xD169B243
+ 
+@@ -138,6 +141,70 @@ static const char *goya_axi_name[GOYA_MAX_INITIATORS] = {
+ 	"MMU"
+ };
+ 
++static u64 goya_mmu_regs[GOYA_MMU_REGS_NUM] = {
++	mmDMA_QM_0_GLBL_NON_SECURE_PROPS,
++	mmDMA_QM_1_GLBL_NON_SECURE_PROPS,
++	mmDMA_QM_2_GLBL_NON_SECURE_PROPS,
++	mmDMA_QM_3_GLBL_NON_SECURE_PROPS,
++	mmDMA_QM_4_GLBL_NON_SECURE_PROPS,
++	mmTPC0_QM_GLBL_SECURE_PROPS,
++	mmTPC0_QM_GLBL_NON_SECURE_PROPS,
++	mmTPC0_CMDQ_GLBL_SECURE_PROPS,
++	mmTPC0_CMDQ_GLBL_NON_SECURE_PROPS,
++	mmTPC0_CFG_ARUSER,
++	mmTPC0_CFG_AWUSER,
++	mmTPC1_QM_GLBL_SECURE_PROPS,
++	mmTPC1_QM_GLBL_NON_SECURE_PROPS,
++	mmTPC1_CMDQ_GLBL_SECURE_PROPS,
++	mmTPC1_CMDQ_GLBL_NON_SECURE_PROPS,
++	mmTPC1_CFG_ARUSER,
++	mmTPC1_CFG_AWUSER,
++	mmTPC2_QM_GLBL_SECURE_PROPS,
++	mmTPC2_QM_GLBL_NON_SECURE_PROPS,
++	mmTPC2_CMDQ_GLBL_SECURE_PROPS,
++	mmTPC2_CMDQ_GLBL_NON_SECURE_PROPS,
++	mmTPC2_CFG_ARUSER,
++	mmTPC2_CFG_AWUSER,
++	mmTPC3_QM_GLBL_SECURE_PROPS,
++	mmTPC3_QM_GLBL_NON_SECURE_PROPS,
++	mmTPC3_CMDQ_GLBL_SECURE_PROPS,
++	mmTPC3_CMDQ_GLBL_NON_SECURE_PROPS,
++	mmTPC3_CFG_ARUSER,
++	mmTPC3_CFG_AWUSER,
++	mmTPC4_QM_GLBL_SECURE_PROPS,
++	mmTPC4_QM_GLBL_NON_SECURE_PROPS,
++	mmTPC4_CMDQ_GLBL_SECURE_PROPS,
++	mmTPC4_CMDQ_GLBL_NON_SECURE_PROPS,
++	mmTPC4_CFG_ARUSER,
++	mmTPC4_CFG_AWUSER,
++	mmTPC5_QM_GLBL_SECURE_PROPS,
++	mmTPC5_QM_GLBL_NON_SECURE_PROPS,
++	mmTPC5_CMDQ_GLBL_SECURE_PROPS,
++	mmTPC5_CMDQ_GLBL_NON_SECURE_PROPS,
++	mmTPC5_CFG_ARUSER,
++	mmTPC5_CFG_AWUSER,
++	mmTPC6_QM_GLBL_SECURE_PROPS,
++	mmTPC6_QM_GLBL_NON_SECURE_PROPS,
++	mmTPC6_CMDQ_GLBL_SECURE_PROPS,
++	mmTPC6_CMDQ_GLBL_NON_SECURE_PROPS,
++	mmTPC6_CFG_ARUSER,
++	mmTPC6_CFG_AWUSER,
++	mmTPC7_QM_GLBL_SECURE_PROPS,
++	mmTPC7_QM_GLBL_NON_SECURE_PROPS,
++	mmTPC7_CMDQ_GLBL_SECURE_PROPS,
++	mmTPC7_CMDQ_GLBL_NON_SECURE_PROPS,
++	mmTPC7_CFG_ARUSER,
++	mmTPC7_CFG_AWUSER,
++	mmMME_QM_GLBL_SECURE_PROPS,
++	mmMME_QM_GLBL_NON_SECURE_PROPS,
++	mmMME_CMDQ_GLBL_SECURE_PROPS,
++	mmMME_CMDQ_GLBL_NON_SECURE_PROPS,
++	mmMME_SBA_CONTROL_DATA,
++	mmMME_SBB_CONTROL_DATA,
++	mmMME_SBC_CONTROL_DATA,
++	mmMME_WBC_CONTROL_DATA
++};
++
+ #define GOYA_ASYC_EVENT_GROUP_NON_FATAL_SIZE 121
+ 
+ static u32 goya_non_fatal_events[GOYA_ASYC_EVENT_GROUP_NON_FATAL_SIZE] = {
+@@ -265,6 +332,10 @@ static u32 goya_non_fatal_events[GOYA_ASYC_EVENT_GROUP_NON_FATAL_SIZE] = {
+ };
+ 
+ static int goya_armcp_info_get(struct hl_device *hdev);
++static void goya_mmu_prepare(struct hl_device *hdev, u32 asid);
++static int goya_mmu_clear_pgt_range(struct hl_device *hdev);
++static int goya_mmu_update_asid_hop0_addr(struct hl_device *hdev, u32 asid,
++					u64 phys_addr);
+ 
+ static void goya_get_fixed_properties(struct hl_device *hdev)
+ {
+@@ -303,6 +374,16 @@ static void goya_get_fixed_properties(struct hl_device *hdev)
+ 	prop->sram_user_base_address = prop->sram_base_address +
+ 						SRAM_USER_BASE_OFFSET;
+ 
++	prop->mmu_pgt_addr = MMU_PAGE_TABLES_ADDR;
++	if (hdev->pldm)
++		prop->mmu_pgt_size = 0x800000; /* 8MB */
++	else
++		prop->mmu_pgt_size = MMU_PAGE_TABLES_SIZE;
++	prop->mmu_pte_size = PTE_SIZE;
++	prop->mmu_hop_table_size = HOP_TABLE_SIZE;
++	prop->mmu_hop0_tables_total_size = HOP0_TABLES_TOTAL_SIZE;
++	prop->dram_page_size = PAGE_SIZE_2MB;
++
+ 	prop->host_phys_base_address = HOST_PHYS_BASE;
+ 	prop->va_space_host_start_address = VA_HOST_SPACE_START;
+ 	prop->va_space_host_end_address = VA_HOST_SPACE_END;
+@@ -750,7 +831,18 @@ static int goya_late_init(struct hl_device *hdev)
+ 
+ 	goya_fetch_psoc_frequency(hdev);
+ 
++	rc = goya_mmu_clear_pgt_range(hdev);
++	if (rc) {
++		dev_err(hdev->dev, "Failed to clear MMU page tables range\n");
++		goto disable_pci_access;
++	}
++
+ 	return 0;
++
++disable_pci_access:
++	goya_send_pci_access_msg(hdev, ARMCP_PACKET_DISABLE_PCI_ACCESS);
++
++	return rc;
+ }
+ 
+ /**
+@@ -3532,6 +3624,54 @@ static int goya_init_cpu(struct hl_device *hdev, u32 cpu_timeout)
+ 	return 0;
+ }
+ 
++static int goya_mmu_init(struct hl_device *hdev)
++{
++	struct asic_fixed_properties *prop = &hdev->asic_prop;
++	struct goya_device *goya = hdev->asic_specific;
++	u64 hop0_addr;
++	int rc, i;
++
++	if (!hdev->mmu_enable)
++		return 0;
++
++	if (goya->hw_cap_initialized & HW_CAP_MMU)
++		return 0;
++
++	hdev->dram_supports_virtual_memory = true;
++
++	for (i = 0 ; i < prop->max_asid ; i++) {
++		hop0_addr = prop->mmu_pgt_addr +
++				(i * prop->mmu_hop_table_size);
++
++		rc = goya_mmu_update_asid_hop0_addr(hdev, i, hop0_addr);
++		if (rc) {
++			dev_err(hdev->dev,
++				"failed to set hop0 addr for asid %d\n", i);
++			goto err;
++		}
++	}
++
++	goya->hw_cap_initialized |= HW_CAP_MMU;
++
++	/* init MMU cache manage page */
++	WREG32(mmSTLB_CACHE_INV_BASE_39_8, MMU_CACHE_MNG_ADDR >> 8);
++	WREG32(mmSTLB_CACHE_INV_BASE_49_40, MMU_CACHE_MNG_ADDR << 40);
++
++	/* Remove follower feature due to performance bug */
++	WREG32_AND(mmSTLB_STLB_FEATURE_EN,
++			(~STLB_STLB_FEATURE_EN_FOLLOWER_EN_MASK));
++
++	hdev->asic_funcs->mmu_invalidate_cache(hdev, true);
++
++	WREG32(mmMMU_MMU_ENABLE, 1);
++	WREG32(mmMMU_SPI_MASK, 0xF);
++
++	return 0;
++
++err:
++	return rc;
++}
++
+ /**
+  * goya_hw_init - Goya hardware initialization code
+  *
+@@ -3580,6 +3720,10 @@ static int goya_hw_init(struct hl_device *hdev)
+ 		return rc;
+ 	}
+ 
++	rc = goya_mmu_init(hdev);
++	if (rc)
++		return rc;
++
+ 	goya_init_security(hdev);
+ 
+ 	goya_init_dma_qmans(hdev);
+@@ -5191,6 +5335,10 @@ int goya_context_switch(struct hl_device *hdev, u32 asid)
+ 
+ 	rc = goya_send_job_on_qman0(hdev, job);
+ 
++	/* no point in setting the asid in case of failure */
++	if (!rc)
++		goya_mmu_prepare(hdev, asid);
++
+ 	job->patched_cb->cs_cnt--;
+ 	hl_cb_put(job->patched_cb);
+ 
+@@ -5226,6 +5374,22 @@ void goya_restore_phase_topology(struct hl_device *hdev)
+ 	i = RREG32(mmSYNC_MNGR_SOB_OBJ_0);
+ }
+ 
++static u64 goya_read_pte(struct hl_device *hdev, u64 addr)
++{
++	struct goya_device *goya = hdev->asic_specific;
++
++	return readq(hdev->pcie_bar[DDR_BAR_ID] +
++			(addr - goya->ddr_bar_cur_addr));
++}
++
++static void goya_write_pte(struct hl_device *hdev, u64 addr, u64 val)
++{
++	struct goya_device *goya = hdev->asic_specific;
++
++	writeq(val, hdev->pcie_bar[DDR_BAR_ID] +
++			(addr - goya->ddr_bar_cur_addr));
++}
++
+ static void goya_get_axi_name(struct hl_device *hdev, u32 agent_id,
+ 		u16 event_type, char *axi_name, int len)
+ {
+@@ -5571,6 +5735,229 @@ void *goya_get_events_stat(struct hl_device *hdev, u32 *size)
+ 	return goya->events_stat;
+ }
+ 
++static int goya_mmu_clear_pgt_range(struct hl_device *hdev)
++{
++	struct asic_fixed_properties *prop = &hdev->asic_prop;
++	struct goya_device *goya = hdev->asic_specific;
++	struct packet_lin_dma *clear_pgt_range_pkt;
++	struct hl_cs_parser parser;
++	struct hl_cs_job *job;
++	u32 cb_size;
++	struct hl_cb *cb;
++	int rc;
++
++	if (!(goya->hw_cap_initialized & HW_CAP_MMU))
++		return 0;
++
++	cb = hl_cb_kernel_create(hdev, PAGE_SIZE);
++	if (!cb)
++		return -EFAULT;
++
++	clear_pgt_range_pkt = (struct packet_lin_dma *) cb->kernel_address;
++	memset(clear_pgt_range_pkt, 0, sizeof(*clear_pgt_range_pkt));
++	cb_size = sizeof(*clear_pgt_range_pkt);
++
++	clear_pgt_range_pkt->opcode = PACKET_LIN_DMA;
++	clear_pgt_range_pkt->src_addr = 0;
++	clear_pgt_range_pkt->dst_addr = prop->mmu_pgt_addr;
++	clear_pgt_range_pkt->dma_dir = DMA_HOST_TO_DRAM;
++	clear_pgt_range_pkt->tsize = prop->mmu_pgt_size + MMU_CACHE_MNG_SIZE;
++	clear_pgt_range_pkt->weakly_ordered = 1;
++	clear_pgt_range_pkt->reg_barrier = 1;
++	clear_pgt_range_pkt->msg_barrier = 1;
++	clear_pgt_range_pkt->memset_mode = 1;
++
++	job = hl_cs_allocate_job(hdev, true);
++	if (!job) {
++		dev_err(hdev->dev, "Failed to allocate a new job\n");
++		rc = -ENOMEM;
++		goto release_cb;
++	}
++
++	job->id = 0;
++	job->user_cb = cb;
++	job->user_cb->cs_cnt++;
++	job->user_cb_size = cb_size;
++	job->hw_queue_id = GOYA_QUEUE_ID_DMA_0;
++
++	parser.ctx_id = HL_KERNEL_ASID_ID;
++	parser.cs_sequence = 0;
++	parser.job_id = job->id;
++	parser.hw_queue_id = job->hw_queue_id;
++	parser.job_userptr_list = &job->userptr_list;
++	parser.user_cb = job->user_cb;
++	parser.user_cb_size = job->user_cb_size;
++	parser.ext_queue = job->ext_queue;
++	parser.use_virt_addr = hdev->mmu_enable;
++
++	rc = hdev->asic_funcs->cs_parser(hdev, &parser);
++	if (rc) {
++		dev_err(hdev->dev,
++			"Failed to parse kernel CB when clearing pgt\n");
++		goto free_job;
++	}
++
++	job->patched_cb = parser.patched_cb;
++	job->job_cb_size = parser.patched_cb_size;
++	job->patched_cb->cs_cnt++;
++
++	rc = goya_send_job_on_qman0(hdev, job);
++
++	job->patched_cb->cs_cnt--;
++	hl_cb_put(job->patched_cb);
++
++free_job:
++	hl_userptr_delete_list(hdev, &job->userptr_list);
++	kfree(job);
++	cb->cs_cnt--;
++
++release_cb:
++	hl_cb_put(cb);
++	hl_cb_destroy(hdev, &hdev->kernel_cb_mgr, cb->id << PAGE_SHIFT);
++
++	return rc;
++}
++
++static void goya_mmu_prepare(struct hl_device *hdev, u32 asid)
++{
++	struct goya_device *goya = hdev->asic_specific;
++	int i;
++
++	if (!(goya->hw_cap_initialized & HW_CAP_MMU))
++		return;
++
++	if (asid & ~MME_QM_GLBL_SECURE_PROPS_ASID_MASK) {
++		WARN(1, "asid %u is too big\n", asid);
++		return;
++	}
++
++	/* zero the MMBP and ASID bits and then set the ASID */
++	for (i = 0 ; i < GOYA_MMU_REGS_NUM ; i++) {
++		WREG32_AND(goya_mmu_regs[i], ~0x7FF);
++		WREG32_OR(goya_mmu_regs[i], asid);
++	}
++}
++
++static void goya_mmu_invalidate_cache(struct hl_device *hdev, bool is_hard)
++{
++	struct goya_device *goya = hdev->asic_specific;
++	u32 status, timeout_usec;
++	int rc;
++
++	if (!(goya->hw_cap_initialized & HW_CAP_MMU))
++		return;
++
++	/* no need in L1 only invalidation in Goya */
++	if (!is_hard)
++		return;
++
++	if (hdev->pldm)
++		timeout_usec = GOYA_PLDM_MMU_TIMEOUT_USEC;
++	else
++		timeout_usec = MMU_CONFIG_TIMEOUT_USEC;
++
++	mutex_lock(&hdev->mmu_cache_lock);
++
++	/* L0 & L1 invalidation */
++	WREG32(mmSTLB_INV_ALL_START, 1);
++
++	rc = hl_poll_timeout(
++		hdev,
++		mmSTLB_INV_ALL_START,
++		status,
++		!status,
++		1000,
++		timeout_usec);
++
++	mutex_unlock(&hdev->mmu_cache_lock);
++
++	if (rc)
++		dev_notice_ratelimited(hdev->dev,
++			"Timeout when waiting for MMU cache invalidation\n");
++}
++
++static void goya_mmu_invalidate_cache_range(struct hl_device *hdev,
++		bool is_hard, u32 asid, u64 va, u64 size)
++{
++	struct goya_device *goya = hdev->asic_specific;
++	u32 status, timeout_usec, inv_data, pi;
++	int rc;
++
++	if (!(goya->hw_cap_initialized & HW_CAP_MMU))
++		return;
++
++	/* no need in L1 only invalidation in Goya */
++	if (!is_hard)
++		return;
++
++	if (hdev->pldm)
++		timeout_usec = GOYA_PLDM_MMU_TIMEOUT_USEC;
++	else
++		timeout_usec = MMU_CONFIG_TIMEOUT_USEC;
++
++	mutex_lock(&hdev->mmu_cache_lock);
++
 +	/*
-+	 * Must be called before hl_ctx_put because inside we use ctx to get
-+	 * the device
++	 * TODO: currently invalidate entire L0 & L1 as in regular hard
++	 * invalidation. Need to apply invalidation of specific cache lines with
++	 * mask of ASID & VA & size.
++	 * Note that L1 with be flushed entirely in any case.
 +	 */
-+	hl_debugfs_remove_cs(cs);
 +
- 	hl_ctx_put(cs->ctx);
- 
- 	if (cs->timedout)
-@@ -483,6 +491,8 @@ static int _hl_cs_ioctl(struct hl_fpriv *hpriv, void __user *chunks,
- 
- 	*cs_seq = cs->sequence;
- 
-+	hl_debugfs_add_cs(cs);
++	/* L0 & L1 invalidation */
++	inv_data = RREG32(mmSTLB_CACHE_INV);
++	/* PI is 8 bit */
++	pi = ((inv_data & STLB_CACHE_INV_PRODUCER_INDEX_MASK) + 1) & 0xFF;
++	WREG32(mmSTLB_CACHE_INV,
++			(inv_data & STLB_CACHE_INV_INDEX_MASK_MASK) | pi);
 +
- 	/* Validate ALL the CS chunks before submitting the CS */
- 	for (i = 0, parse_cnt = 0 ; i < num_chunks ; i++, parse_cnt++) {
- 		struct hl_cs_chunk *chunk = &cs_chunk_array[i];
-@@ -531,6 +541,8 @@ static int _hl_cs_ioctl(struct hl_fpriv *hpriv, void __user *chunks,
- 		if (job->ext_queue)
- 			cs_get(cs);
- 
-+		hl_debugfs_add_job(hdev, job);
++	rc = hl_poll_timeout(
++		hdev,
++		mmSTLB_INV_CONSUMER_INDEX,
++		status,
++		status == pi,
++		1000,
++		timeout_usec);
 +
- 		rc = cs_parser(hpriv, job);
- 		if (rc) {
- 			dev_err(hdev->dev,
-diff --git a/drivers/misc/habanalabs/debugfs.c b/drivers/misc/habanalabs/debugfs.c
++	mutex_unlock(&hdev->mmu_cache_lock);
++
++	if (rc)
++		dev_notice_ratelimited(hdev->dev,
++			"Timeout when waiting for MMU cache invalidation\n");
++}
++
++static int goya_mmu_update_asid_hop0_addr(struct hl_device *hdev, u32 asid,
++						u64 phys_addr)
++{
++	u32 status, timeout_usec;
++	int rc;
++
++	if (hdev->pldm)
++		timeout_usec = GOYA_PLDM_MMU_TIMEOUT_USEC;
++	else
++		timeout_usec = MMU_CONFIG_TIMEOUT_USEC;
++
++	WREG32(MMU_HOP0_PA43_12, phys_addr >> MMU_HOP0_PA43_12_SHIFT);
++	WREG32(MMU_HOP0_PA49_44, phys_addr >> MMU_HOP0_PA49_44_SHIFT);
++	WREG32(MMU_ASID_BUSY, 0x80000000 | asid);
++
++	rc = hl_poll_timeout(
++		hdev,
++		MMU_ASID_BUSY,
++		status,
++		!(status & 0x80000000),
++		1000,
++		timeout_usec);
++
++	if (rc) {
++		dev_err(hdev->dev,
++			"Timeout during MMU hop0 config of asid %d\n", asid);
++		return rc;
++	}
++
++	return 0;
++}
++
+ int goya_send_heartbeat(struct hl_device *hdev)
+ {
+ 	struct goya_device *goya = hdev->asic_specific;
+@@ -5819,6 +6206,10 @@ static const struct hl_asic_funcs goya_funcs = {
+ 	.handle_eqe = goya_handle_eqe,
+ 	.set_pll_profile = goya_set_pll_profile,
+ 	.get_events_stat = goya_get_events_stat,
++	.read_pte = goya_read_pte,
++	.write_pte = goya_write_pte,
++	.mmu_invalidate_cache = goya_mmu_invalidate_cache,
++	.mmu_invalidate_cache_range = goya_mmu_invalidate_cache_range,
+ 	.send_heartbeat = goya_send_heartbeat,
+ 	.enable_clock_gating = goya_init_clock_gating,
+ 	.disable_clock_gating = goya_disable_clock_gating,
+diff --git a/drivers/misc/habanalabs/habanalabs.h b/drivers/misc/habanalabs/habanalabs.h
+index 793512b0fa09..1abc139d4293 100644
+--- a/drivers/misc/habanalabs/habanalabs.h
++++ b/drivers/misc/habanalabs/habanalabs.h
+@@ -38,6 +38,31 @@
+ /* MUST BE POWER OF 2 and larger than 1 */
+ #define HL_MAX_PENDING_CS		64
+ 
++/* Memory */
++#define MEM_HASH_TABLE_BITS		7 /* 1 << 7 buckets */
++
++/* MMU */
++#define MMU_HASH_TABLE_BITS		7 /* 1 << 7 buckets */
++
++/**
++ * struct pgt_info - MMU hop page info.
++ * @node: hash linked-list node for the pgts hash of pgts.
++ * @addr: physical address of the pgt.
++ * @ctx: pointer to the owner ctx.
++ * @num_of_ptes: indicates how many ptes are used in the pgt.
++ *
++ * The MMU page tables hierarchy is placed on the DRAM. When a new level (hop)
++ * is needed during mapping, a new page is allocated and this structure holds
++ * its essential information. During unmapping, if no valid PTEs remained in the
++ * page, it is freed with its pgt_info structure.
++ */
++struct pgt_info {
++	struct hlist_node node;
++	u64 addr;
++	struct hl_ctx *ctx;
++	int num_of_ptes;
++};
++
+ struct hl_device;
+ struct hl_fpriv;
+ 
+@@ -104,6 +129,12 @@ enum vm_type_t {
+  *                               mapping DRAM memory.
+  * @va_space_dram_end_address: end address of virtual memory range for
+  *                             mapping DRAM memory.
++ * @mmu_pgt_addr: base physical address in DRAM of MMU page tables.
++ * @mmu_pgt_size: MMU page tables total size.
++ * @mmu_pte_size: PTE size in MMU page tables.
++ * @mmu_hop_table_size: MMU hop table size.
++ * @mmu_hop0_tables_total_size: total size of MMU hop0 tables.
++ * @dram_page_size: page size for MMU DRAM allocation.
+  * @cfg_size: configuration space size on SRAM.
+  * @sram_size: total size of SRAM.
+  * @max_asid: maximum number of open contexts (ASIDs).
+@@ -137,6 +168,12 @@ struct asic_fixed_properties {
+ 	u64			va_space_host_end_address;
+ 	u64			va_space_dram_start_address;
+ 	u64			va_space_dram_end_address;
++	u64			mmu_pgt_addr;
++	u32			mmu_pgt_size;
++	u32			mmu_pte_size;
++	u32			mmu_hop_table_size;
++	u32			mmu_hop0_tables_total_size;
++	u32			dram_page_size;
+ 	u32			cfg_size;
+ 	u32			sram_size;
+ 	u32			max_asid;
+@@ -412,6 +449,12 @@ enum hl_pll_frequency {
+  * @handle_eqe: handle event queue entry (IRQ) from ArmCP.
+  * @set_pll_profile: change PLL profile (manual/automatic).
+  * @get_events_stat: retrieve event queue entries histogram.
++ * @read_pte: read MMU page table entry from DRAM.
++ * @write_pte: write MMU page table entry to DRAM.
++ * @mmu_invalidate_cache: flush MMU STLB cache, either with soft (L1 only) or
++ *                        hard (L0 & L1) flush.
++ * @mmu_invalidate_cache_range: flush specific MMU STLB cache lines with
++ *                              ASID-VA-size mask.
+  * @send_heartbeat: send is-alive packet to ArmCP and verify response.
+  * @enable_clock_gating: enable clock gating for reducing power consumption.
+  * @disable_clock_gating: disable clock for accessing registers on HBW.
+@@ -475,6 +518,11 @@ struct hl_asic_funcs {
+ 	void (*set_pll_profile)(struct hl_device *hdev,
+ 			enum hl_pll_frequency freq);
+ 	void* (*get_events_stat)(struct hl_device *hdev, u32 *size);
++	u64 (*read_pte)(struct hl_device *hdev, u64 addr);
++	void (*write_pte)(struct hl_device *hdev, u64 addr, u64 val);
++	void (*mmu_invalidate_cache)(struct hl_device *hdev, bool is_hard);
++	void (*mmu_invalidate_cache_range)(struct hl_device *hdev, bool is_hard,
++			u32 asid, u64 va, u64 size);
+ 	int (*send_heartbeat)(struct hl_device *hdev);
+ 	void (*enable_clock_gating)(struct hl_device *hdev);
+ 	void (*disable_clock_gating)(struct hl_device *hdev);
+@@ -498,17 +546,40 @@ struct hl_asic_funcs {
+ 
+ #define HL_KERNEL_ASID_ID	0
+ 
++/**
++ * struct hl_va_range - virtual addresses range.
++ * @lock: protects the virtual addresses list.
++ * @list: list of virtual addresses blocks available for mappings.
++ * @start_addr: range start address.
++ * @end_addr: range end address.
++ */
++struct hl_va_range {
++	struct mutex		lock;
++	struct list_head	list;
++	u64			start_addr;
++	u64			end_addr;
++};
++
+ /**
+  * struct hl_ctx - user/kernel context.
++ * @mem_hash: holds mapping from virtual address to virtual memory area
++ *		descriptor (hl_vm_phys_pg_list or hl_userptr).
++ * @mmu_hash: holds a mapping from virtual address to pgt_info structure.
+  * @hpriv: pointer to the private (KMD) data of the process (fd).
+  * @hdev: pointer to the device structure.
+  * @refcount: reference counter for the context. Context is released only when
+  *		this hits 0l. It is incremented on CS and CS_WAIT.
+  * @cs_pending: array of DMA fence objects representing pending CS.
++ * @host_va_range: holds available virtual addresses for host mappings.
++ * @dram_va_range: holds available virtual addresses for DRAM mappings.
++ * @mem_hash_lock: protects the mem_hash.
++ * @mmu_lock: protects the MMU page tables. Any change to the PGT, modifing the
++ *            MMU hash or walking the PGT requires talking this lock
+  * @cs_sequence: sequence number for CS. Value is assigned to a CS and passed
+  *			to user so user could inquire about CS. It is used as
+  *			index to cs_pending array.
+  * @cs_lock: spinlock to protect cs_sequence.
++ * @dram_phys_mem: amount of used physical DRAM memory by this context.
+  * @thread_restore_token: token to prevent multiple threads of the same context
+  *				from running the restore phase. Only one thread
+  *				should run it.
+@@ -518,12 +589,19 @@ struct hl_asic_funcs {
+  * @asid: context's unique address space ID in the device's MMU.
+  */
+ struct hl_ctx {
++	DECLARE_HASHTABLE(mem_hash, MEM_HASH_TABLE_BITS);
++	DECLARE_HASHTABLE(mmu_hash, MMU_HASH_TABLE_BITS);
+ 	struct hl_fpriv		*hpriv;
+ 	struct hl_device	*hdev;
+ 	struct kref		refcount;
+ 	struct dma_fence	*cs_pending[HL_MAX_PENDING_CS];
++	struct hl_va_range	host_va_range;
++	struct hl_va_range	dram_va_range;
++	struct mutex		mem_hash_lock;
++	struct mutex		mmu_lock;
+ 	u64			cs_sequence;
+ 	spinlock_t		cs_lock;
++	atomic64_t		dram_phys_mem;
+ 	atomic_t		thread_restore_token;
+ 	u32			thread_restore_wait_token;
+ 	u32			asid;
+@@ -672,6 +750,96 @@ struct hl_cs_parser {
+ 
+ 
+ 
++/*
++ * MEMORY STRUCTURE
++ */
++
++/**
++ * struct hl_vm_hash_node - hash element from virtual address to virtual
++ *				memory area descriptor (hl_vm_phys_pg_list or
++ *				hl_userptr).
++ * @node: node to hang on the hash table in context object.
++ * @vaddr: key virtual address.
++ * @ptr: value pointer (hl_vm_phys_pg_list or hl_userptr).
++ */
++struct hl_vm_hash_node {
++	struct hlist_node	node;
++	u64			vaddr;
++	void			*ptr;
++};
++
++/**
++ * struct hl_vm_phys_pg - physical page information.
++ * @node: node to hang on the physical page list.
++ * @paddr: physical address of the page.
++ * @page_size: size of the physical page.
++ */
++struct hl_vm_phys_pg {
++	struct list_head	node;
++	u64			paddr;
++	u32			page_size;
++	u32			pad;
++};
++
++/**
++ * struct hl_vm_phys_pg_list - physical page list.
++ * @vm_type: describes the type of the virtual area descriptor.
++ * @list: head of the physical page list.
++ * @mapping_cnt: number of shared mappings.
++ * @list_size: page list size.
++ * @asid: the context related to this list.
++ * @total_size: total size of all the pages in this list.
++ * @flags: HL_MEM_* flags related to this list.
++ * @handle: the provided handle related to this list.
++ * @offset: offset from the first page.
++ * @contiguous: is contiguous physical memory.
++ * @created_from_userptr: is product of host virtual address.
++ */
++struct hl_vm_phys_pg_list {
++	enum vm_type_t		vm_type; /* must be first */
++	struct list_head	list;
++	atomic_t		mapping_cnt;
++	u32			list_size;
++	u32			asid;
++	u32			total_size;
++	u32			flags;
++	u32			handle;
++	u32			offset;
++	u8			contiguous;
++	u8			created_from_userptr;
++};
++
++/**
++ * struct hl_vm_va_block - virtual range block information.
++ * @node: node to hang on the virtual range list in context object.
++ * @start: virtual range start address.
++ * @end: virtual range end address.
++ * @size: virtual range size.
++ */
++struct hl_vm_va_block {
++	struct list_head	node;
++	u64			start;
++	u64			end;
++	u64			size;
++};
++
++/**
++ * struct hl_vm - virtual memory manager for MMU.
++ * @dram_pg_pool: pool for DRAM physical pages of 2MB.
++ * @dram_pg_pool_refcount: reference counter for the pool usage.
++ * @idr_lock: protects the phys_pg_list_handles.
++ * @phys_pg_list_handles: idr to hold all device allocations handles.
++ * @init_done: whether initialization was done. We need this because VM
++ *		initialization might be skipped during device initialization.
++ */
++struct hl_vm {
++	struct gen_pool		*dram_pg_pool;
++	struct kref		dram_pg_pool_refcount;
++	spinlock_t		idr_lock;
++	struct idr		phys_pg_list_handles;
++	u8			init_done;
++};
++
+ /*
+  * FILE PRIVATE STRUCTURE
+  */
+@@ -783,12 +951,16 @@ struct hl_device_reset_work {
+  * @asic_prop: ASIC specific immutable properties.
+  * @asic_funcs: ASIC specific functions.
+  * @asic_specific: ASIC specific information to use only from ASIC files.
++ * @mmu_pgt_pool: pool of available MMU hops.
++ * @vm: virtual memory manager for MMU.
++ * @mmu_cache_lock: protects MMU cache invalidation as it can serve one context
+  * @hwmon_dev: H/W monitor device.
+  * @pm_mng_profile: current power management profile.
+  * @hl_chip_info: ASIC's sensors information.
+  * @cb_pool: list of preallocated CBs.
+  * @cb_pool_lock: protects the CB pool.
+  * @user_ctx: current user context executing.
++ * @dram_used_mem: current DRAM memory consumption.
+  * @in_reset: is device in reset flow.
+  * @curr_pll_profile: current PLL profile.
+  * @fd_open_cnt: number of open context executing.
+@@ -808,6 +980,7 @@ struct hl_device_reset_work {
+  * @heartbeat: is heartbeat sanity check towards ArmCP enabled.
+  * @reset_on_lockup: true if a reset should be done in case of stuck CS, false
+  *                   otherwise.
++ * @dram_supports_virtual_memory: is MMU enabled towards DRAM.
+  * @mmu_enable: is MMU enabled.
+  */
+ struct hl_device {
+@@ -842,6 +1015,9 @@ struct hl_device {
+ 	struct asic_fixed_properties	asic_prop;
+ 	const struct hl_asic_funcs	*asic_funcs;
+ 	void				*asic_specific;
++	struct gen_pool			*mmu_pgt_pool;
++	struct hl_vm			vm;
++	struct mutex			mmu_cache_lock;
+ 	struct device			*hwmon_dev;
+ 	enum hl_pm_mng_profile		pm_mng_profile;
+ 	struct hwmon_chip_info		hl_chip_info;
+@@ -852,6 +1028,7 @@ struct hl_device {
+ 	/* TODO: The following fields should be moved for multi-context */
+ 	struct hl_ctx			*user_ctx;
+ 
++	atomic64_t			dram_used_mem;
+ 	atomic_t			in_reset;
+ 	atomic_t			curr_pll_profile;
+ 	atomic_t			fd_open_cnt;
+@@ -868,6 +1045,7 @@ struct hl_device {
+ 	u8				hard_reset_pending;
+ 	u8				heartbeat;
+ 	u8				reset_on_lockup;
++	u8				dram_supports_virtual_memory;
+ 
+ 	/* Parameters for bring-up */
+ 	u8				mmu_enable;
+@@ -1019,6 +1197,7 @@ int hl_device_reset(struct hl_device *hdev, bool hard_reset,
+ void hl_hpriv_get(struct hl_fpriv *hpriv);
+ void hl_hpriv_put(struct hl_fpriv *hpriv);
+ int hl_device_set_frequency(struct hl_device *hdev, enum hl_pll_frequency freq);
++
+ int hl_build_hwmon_channel_info(struct hl_device *hdev,
+ 		struct armcp_sensor *sensors_arr);
+ 
+@@ -1046,6 +1225,12 @@ struct hl_cs_job *hl_cs_allocate_job(struct hl_device *hdev, bool ext_queue);
+ 
+ void goya_set_asic_funcs(struct hl_device *hdev);
+ 
++int hl_vm_ctx_init(struct hl_ctx *ctx);
++void hl_vm_ctx_fini(struct hl_ctx *ctx);
++
++int hl_vm_init(struct hl_device *hdev);
++void hl_vm_fini(struct hl_device *hdev);
++
+ int hl_pin_host_memory(struct hl_device *hdev, u64 addr, u32 size,
+ 			struct hl_userptr *userptr);
+ int hl_unpin_host_memory(struct hl_device *hdev, struct hl_userptr *userptr);
+@@ -1055,6 +1240,15 @@ bool hl_userptr_is_pinned(struct hl_device *hdev, u64 addr, u32 size,
+ 				struct list_head *userptr_list,
+ 				struct hl_userptr **userptr);
+ 
++int hl_mmu_init(struct hl_device *hdev);
++void hl_mmu_fini(struct hl_device *hdev);
++void hl_mmu_ctx_init(struct hl_ctx *ctx);
++void hl_mmu_ctx_fini(struct hl_ctx *ctx);
++int hl_mmu_map(struct hl_ctx *ctx, u64 virt_addr, u64 phys_addr, u32 page_size);
++int hl_mmu_unmap(struct hl_ctx *ctx, u64 virt_addr);
++void hl_mmu_swap_out(struct hl_ctx *ctx);
++void hl_mmu_swap_in(struct hl_ctx *ctx);
++
+ long hl_get_frequency(struct hl_device *hdev, u32 pll_index, bool curr);
+ void hl_set_frequency(struct hl_device *hdev, u32 pll_index, u64 freq);
+ long hl_get_temperature(struct hl_device *hdev, int sensor_index, u32 attr);
+@@ -1072,5 +1266,6 @@ long hl_ioctl(struct file *filep, unsigned int cmd, unsigned long arg);
+ int hl_cb_ioctl(struct hl_fpriv *hpriv, void *data);
+ int hl_cs_ioctl(struct hl_fpriv *hpriv, void *data);
+ int hl_cs_wait_ioctl(struct hl_fpriv *hpriv, void *data);
++int hl_mem_ioctl(struct hl_fpriv *hpriv, void *data);
+ 
+ #endif /* HABANALABSP_H_ */
+diff --git a/drivers/misc/habanalabs/habanalabs_drv.c b/drivers/misc/habanalabs/habanalabs_drv.c
+index fccfa7830121..4b7bf42a4d3e 100644
+--- a/drivers/misc/habanalabs/habanalabs_drv.c
++++ b/drivers/misc/habanalabs/habanalabs_drv.c
+@@ -202,7 +202,7 @@ int create_hdev(struct hl_device **dev, struct pci_dev *pdev,
+ 	hdev->reset_on_lockup = reset_on_lockup;
+ 
+ 	/* Parameters for bring-up - set them to defaults */
+-	hdev->mmu_enable = 0;
++	hdev->mmu_enable = 1;
+ 	hdev->cpu_enable = 1;
+ 	hdev->reset_pcilink = 0;
+ 	hdev->config_pll = 0;
+diff --git a/drivers/misc/habanalabs/habanalabs_ioctl.c b/drivers/misc/habanalabs/habanalabs_ioctl.c
+index f6969d6dba9c..6dcad810b821 100644
+--- a/drivers/misc/habanalabs/habanalabs_ioctl.c
++++ b/drivers/misc/habanalabs/habanalabs_ioctl.c
+@@ -18,7 +18,8 @@
+ static const struct hl_ioctl_desc hl_ioctls[] = {
+ 	HL_IOCTL_DEF(HL_IOCTL_CB, hl_cb_ioctl),
+ 	HL_IOCTL_DEF(HL_IOCTL_CS, hl_cs_ioctl),
+-	HL_IOCTL_DEF(HL_IOCTL_WAIT_CS, hl_cs_wait_ioctl)
++	HL_IOCTL_DEF(HL_IOCTL_WAIT_CS, hl_cs_wait_ioctl),
++	HL_IOCTL_DEF(HL_IOCTL_MEMORY, hl_mem_ioctl)
+ };
+ 
+ #define HL_CORE_IOCTL_COUNT	ARRAY_SIZE(hl_ioctls)
+diff --git a/drivers/misc/habanalabs/include/goya/goya.h b/drivers/misc/habanalabs/include/goya/goya.h
+index bcc461760e5f..3599a7833679 100644
+--- a/drivers/misc/habanalabs/include/goya/goya.h
++++ b/drivers/misc/habanalabs/include/goya/goya.h
+@@ -36,12 +36,14 @@
+ 
+ #define CPU_FW_IMAGE_SIZE	0x10000000	/* 256MB */
+ #define MMU_PAGE_TABLES_SIZE	0x0E000000	/* 224MB */
++#define MMU_CACHE_MNG_SIZE	0x00001000	/* 4KB */
+ #define CPU_PQ_PKT_SIZE		0x00001000	/* 4KB */
+-#define CPU_PQ_DATA_SIZE	0x01FFF000	/* 32MB - 4KB  */
++#define CPU_PQ_DATA_SIZE	0x01FFE000	/* 32MB - 8KB  */
+ 
+ #define CPU_FW_IMAGE_ADDR	DRAM_PHYS_BASE
+ #define MMU_PAGE_TABLES_ADDR	(CPU_FW_IMAGE_ADDR + CPU_FW_IMAGE_SIZE)
+-#define CPU_PQ_PKT_ADDR		(MMU_PAGE_TABLES_ADDR + MMU_PAGE_TABLES_SIZE)
++#define MMU_CACHE_MNG_ADDR	(MMU_PAGE_TABLES_ADDR + MMU_PAGE_TABLES_SIZE)
++#define CPU_PQ_PKT_ADDR		(MMU_CACHE_MNG_ADDR + MMU_CACHE_MNG_SIZE)
+ #define CPU_PQ_DATA_ADDR	(CPU_PQ_PKT_ADDR + CPU_PQ_PKT_SIZE)
+ #define DRAM_BASE_ADDR_USER	(CPU_PQ_DATA_ADDR + CPU_PQ_DATA_SIZE)
+ 
+diff --git a/drivers/misc/habanalabs/include/hw_ip/mmu/mmu_general.h b/drivers/misc/habanalabs/include/hw_ip/mmu/mmu_general.h
 new file mode 100644
-index 000000000000..09221b05daf7
+index 000000000000..8d61ee4f2d17
 --- /dev/null
-+++ b/drivers/misc/habanalabs/debugfs.c
-@@ -0,0 +1,1069 @@
++++ b/drivers/misc/habanalabs/include/hw_ip/mmu/mmu_general.h
+@@ -0,0 +1,45 @@
++/* SPDX-License-Identifier: GPL-2.0
++ *
++ * Copyright 2016-2018 HabanaLabs, Ltd.
++ * All Rights Reserved.
++ *
++ */
++
++#ifndef INCLUDE_MMU_GENERAL_H_
++#define INCLUDE_MMU_GENERAL_H_
++
++#define PAGE_SHIFT_4KB			12
++#define PAGE_SHIFT_2MB			21
++#define PAGE_SIZE_2MB			(_AC(1, UL) << PAGE_SHIFT_2MB)
++#define PAGE_SIZE_4KB			(_AC(1, UL) << PAGE_SHIFT_4KB)
++
++#define PAGE_PRESENT_MASK		0x0000000000001
++#define SWAP_OUT_MASK			0x0000000000004
++#define LAST_MASK			0x0000000000800
++#define PHYS_ADDR_MASK			0x3FFFFFFFFF000ull
++#define HOP0_MASK			0x3000000000000ull
++#define HOP1_MASK			0x0FF8000000000ull
++#define HOP2_MASK			0x0007FC0000000ull
++#define HOP3_MASK			0x000003FE00000
++#define HOP4_MASK			0x00000001FF000
++#define OFFSET_MASK			0x0000000000FFF
++
++#define HOP0_SHIFT			48
++#define HOP1_SHIFT			39
++#define HOP2_SHIFT			30
++#define HOP3_SHIFT			21
++#define HOP4_SHIFT			12
++
++#define PTE_PHYS_ADDR_SHIFT		12
++#define PTE_PHYS_ADDR_MASK		~0xFFF
++
++#define PTE_SIZE			sizeof(u64)
++#define HOP_TABLE_SIZE			PAGE_SIZE_4KB
++#define HOP0_TABLES_TOTAL_SIZE		(HOP_TABLE_SIZE * MAX_ASID)
++
++#define MMU_HOP0_PA43_12_SHIFT		12
++#define MMU_HOP0_PA49_44_SHIFT		(12 + 32)
++
++#define MMU_CONFIG_TIMEOUT_USEC		2000 /* 2 ms */
++
++#endif /* INCLUDE_MMU_GENERAL_H_ */
+diff --git a/drivers/misc/habanalabs/include/hw_ip/mmu/mmu_v1_0.h b/drivers/misc/habanalabs/include/hw_ip/mmu/mmu_v1_0.h
+new file mode 100644
+index 000000000000..8539dd041f2c
+--- /dev/null
++++ b/drivers/misc/habanalabs/include/hw_ip/mmu/mmu_v1_0.h
+@@ -0,0 +1,15 @@
++/* SPDX-License-Identifier: GPL-2.0
++ *
++ * Copyright 2016-2018 HabanaLabs, Ltd.
++ * All Rights Reserved.
++ *
++ */
++
++#ifndef INCLUDE_MMU_V1_0_H_
++#define INCLUDE_MMU_V1_0_H_
++
++#define MMU_HOP0_PA43_12	0x490004
++#define MMU_HOP0_PA49_44	0x490008
++#define MMU_ASID_BUSY		0x490000
++
++#endif /* INCLUDE_MMU_V1_0_H_ */
+diff --git a/drivers/misc/habanalabs/memory.c b/drivers/misc/habanalabs/memory.c
+index 94cbb252656d..c41ea19502e5 100644
+--- a/drivers/misc/habanalabs/memory.c
++++ b/drivers/misc/habanalabs/memory.c
+@@ -5,12 +5,1193 @@
+  * All Rights Reserved.
+  */
+ 
++#include <uapi/misc/habanalabs.h>
+ #include "habanalabs.h"
++#include "include/hw_ip/mmu/mmu_general.h"
+ 
+ #include <linux/sched.h>
+ #include <linux/uaccess.h>
+ #include <linux/genalloc.h>
+ 
++#define HL_MMU_DEBUG	0
++
++/*
++ * The va ranges in context object contain a list with the available chunks of
++ * device virtual memory.
++ * There is one range for host allocations and one for DRAM allocations.
++ *
++ * On initialization each range contains one chunk of all of its available
++ * virtual range which is a half of the total device virtual range.
++ *
++ * On each mapping of physical pages, a suitable virtual range chunk (with a
++ * minimum size) is selected from the list. If the chunk size equals the
++ * requested size, the chunk is returned. Otherwise, the chunk is split into
++ * two chunks - one to return as result and a remainder to stay in the list.
++ *
++ * On each Unmapping of a virtual address, the relevant virtual chunk is
++ * returned to the list. The chunk is added to the list and if its edges match
++ * the edges of the adjacent chunks (means a contiguous chunk can be created),
++ * the chunks are merged.
++ *
++ * On finish, the list is checked to have only one chunk of all the relevant
++ * virtual range (which is a half of the device total virtual range).
++ * If not (means not all mappings were unmapped), a warning is printed.
++ */
++
++/**
++ * alloc_device_memory - allocate device memory
++ *
++ * @ctx                 : current context
++ * @args                : host parameters containing the requested size
++ * @ret_handle          : result handle
++ *
++ * This function does the following:
++ * - Allocate the requested size rounded up to 2MB pages
++ * - Return unique handle
++ */
++static int alloc_device_memory(struct hl_ctx *ctx, struct hl_mem_in *args,
++				u32 *ret_handle)
++{
++	struct hl_device *hdev = ctx->hdev;
++	struct hl_vm *vm = &hdev->vm;
++	struct hl_vm_phys_pg_list *phys_pg_list;
++	struct hl_vm_phys_pg *phys_pg, *tmp;
++	u64 paddr = 0;
++	u32 total_size, num_pgs, page_size, page_shift;
++	int handle, rc, i;
++	bool contiguous;
++
++	page_size = hdev->asic_prop.dram_page_size;
++	page_shift = __ffs(page_size);
++	num_pgs = (args->alloc.mem_size + (page_size - 1)) >> page_shift;
++	total_size = num_pgs << page_shift;
++
++	contiguous = args->flags & HL_MEM_CONTIGUOUS;
++
++	if (contiguous) {
++		paddr = (u64) gen_pool_alloc(vm->dram_pg_pool, total_size);
++		if (!paddr) {
++			dev_err(hdev->dev,
++				"failed to allocate %u huge contiguous pages\n",
++				num_pgs);
++			return -ENOMEM;
++		}
++	}
++
++	phys_pg_list = kzalloc(sizeof(*phys_pg_list), GFP_KERNEL);
++	if (!phys_pg_list) {
++		rc = -ENOMEM;
++		goto page_list_err;
++	}
++
++	phys_pg_list->vm_type = VM_TYPE_PHYS_LIST;
++	phys_pg_list->asid = ctx->asid;
++	phys_pg_list->total_size = total_size;
++	phys_pg_list->flags = args->flags;
++	phys_pg_list->contiguous = contiguous;
++	INIT_LIST_HEAD(&phys_pg_list->list);
++
++	for (i = 0 ; i < num_pgs ; i++) {
++		phys_pg = kzalloc(sizeof(*phys_pg), GFP_KERNEL);
++		if (!phys_pg) {
++			rc = -ENOMEM;
++			goto pb_err;
++		}
++
++		phys_pg->page_size = page_size;
++
++		if (phys_pg_list->contiguous) {
++			phys_pg->paddr = paddr + i * phys_pg->page_size;
++		} else {
++			phys_pg->paddr =
++				(u64) gen_pool_alloc(vm->dram_pg_pool,
++							phys_pg->page_size);
++			if (!phys_pg->paddr) {
++				dev_err(hdev->dev, "ioctl failed to allocate page\n");
++				kfree(phys_pg);
++				rc = -ENOMEM;
++				goto pb_err;
++			}
++		}
++
++		list_add_tail(&phys_pg->node, &phys_pg_list->list);
++	}
++
++	spin_lock(&vm->idr_lock);
++	handle = idr_alloc(&vm->phys_pg_list_handles, phys_pg_list, 1, 0,
++				GFP_ATOMIC);
++	spin_unlock(&vm->idr_lock);
++
++	if (handle < 0) {
++		dev_err(hdev->dev, "Failed to get handle for page\n");
++		rc = -EFAULT;
++		goto idr_err;
++	}
++
++	for (i = 0; i < num_pgs ; i++)
++		kref_get(&vm->dram_pg_pool_refcount);
++
++	phys_pg_list->handle = handle;
++
++	atomic64_add(phys_pg_list->total_size, &ctx->dram_phys_mem);
++	atomic64_add(phys_pg_list->total_size, &hdev->dram_used_mem);
++
++	*ret_handle = handle;
++
++	return 0;
++
++idr_err:
++pb_err:
++	list_for_each_entry_safe(phys_pg, tmp, &phys_pg_list->list, node) {
++		if (!phys_pg_list->contiguous)
++			gen_pool_free(vm->dram_pg_pool, phys_pg->paddr,
++					phys_pg->page_size);
++
++		list_del(&phys_pg->node);
++		kfree(phys_pg);
++	}
++
++	kfree(phys_pg_list);
++page_list_err:
++	if (contiguous)
++		gen_pool_free(vm->dram_pg_pool, paddr, total_size);
++
++	return rc;
++}
++
++/**
++ * get_userptr_from_host_va - initialize userptr structure from given host
++ *                            virtual address
++ *
++ * @hdev                : habanalabs device structure
++ * @args                : parameters containing the virtual address and size
++ * @p_userptr           : pointer to result userptr structure
++ *
++ * This function does the following:
++ * - Allocate userptr structure
++ * - Pin the given host memory using the userptr structure
++ * - Perform DMA mapping to have the DMA addresses of the pages
++ */
++static int get_userptr_from_host_va(struct hl_device *hdev,
++		struct hl_mem_in *args, struct hl_userptr **p_userptr)
++{
++	struct hl_userptr *userptr;
++	int rc;
++
++	userptr = kzalloc(sizeof(*userptr), GFP_KERNEL);
++	if (!userptr) {
++		rc = -ENOMEM;
++		goto userptr_err;
++	}
++
++	rc = hl_pin_host_memory(hdev, args->map_host.host_virt_addr,
++			args->map_host.mem_size, userptr);
++	if (rc) {
++		dev_err(hdev->dev, "Failed to pin host memory\n");
++		goto pin_err;
++	}
++
++	rc = hdev->asic_funcs->asic_dma_map_sg(hdev, userptr->sgt->sgl,
++					userptr->sgt->nents, DMA_BIDIRECTIONAL);
++	if (rc) {
++		dev_err(hdev->dev, "failed to map sgt with DMA region\n");
++		goto dma_map_err;
++	}
++
++	userptr->dma_mapped = true;
++	userptr->dir = DMA_BIDIRECTIONAL;
++	userptr->vm_type = VM_TYPE_USERPTR;
++
++	*p_userptr = userptr;
++
++	return 0;
++
++dma_map_err:
++	hl_unpin_host_memory(hdev, userptr);
++pin_err:
++	kfree(userptr);
++userptr_err:
++
++	return rc;
++}
++
++/**
++ * free_userptr - free userptr structure
++ *
++ * @hdev                : habanalabs device structure
++ * @userptr             : userptr to free
++ *
++ * This function does the following:
++ * - Unpins the physical pages
++ * - Frees the userptr structure
++ */
++static void free_userptr(struct hl_device *hdev, struct hl_userptr *userptr)
++{
++	hl_unpin_host_memory(hdev, userptr);
++	kfree(userptr);
++}
++
++/**
++ * dram_pg_pool_do_release - free DRAM pages pool
++ *
++ * @ref                 : pointer to reference object
++ *
++ * This function does the following:
++ * - Frees the idr structure of physical pages handles
++ * - Frees the generic pool of DRAM physical pages
++ */
++static void dram_pg_pool_do_release(struct kref *ref)
++{
++	struct hl_vm *vm = container_of(ref, struct hl_vm,
++			dram_pg_pool_refcount);
++
++	/*
++	 * free the idr here as only here we know for sure that there are no
++	 * allocated physical pages and hence there are no handles in use
++	 */
++	idr_destroy(&vm->phys_pg_list_handles);
++	gen_pool_destroy(vm->dram_pg_pool);
++}
++
++/**
++ * free_phys_pg_list    - free physical page list
++ *
++ * @hdev                : habanalabs device structure
++ * @phys_pg_list        : physical page list to free
++ *
++ * This function does the following:
++ * - Iterate over the list and free each physical block structure
++ * - In case of allocated memory, return the physical memory to the general pool
++ * - Free the hl_vm_phys_pg_list structure
++ */
++static void free_phys_pg_list(struct hl_device *hdev,
++		struct hl_vm_phys_pg_list *phys_pg_list)
++{
++	struct hl_vm *vm = &hdev->vm;
++	struct hl_vm_phys_pg *phys_pg, *tmp;
++	u32 num_pgs;
++	bool first = true;
++	int i;
++
++	list_for_each_entry_safe(phys_pg, tmp, &phys_pg_list->list, node) {
++		/*
++		 * this if statement is relevant only when called from
++		 * hl_vm_ctx_fini() and free_device_memory()
++		 */
++		if (!phys_pg_list->created_from_userptr) {
++			if ((phys_pg_list->contiguous) && (first)) {
++				first = false;
++				gen_pool_free(vm->dram_pg_pool,
++						phys_pg->paddr,
++						phys_pg_list->total_size);
++
++				num_pgs = phys_pg_list->total_size >>
++					__ffs(hdev->asic_prop.dram_page_size);
++
++				for (i = 0; i < num_pgs ; i++)
++					kref_put(&vm->dram_pg_pool_refcount,
++						dram_pg_pool_do_release);
++
++			} else if (!phys_pg_list->contiguous) {
++				gen_pool_free(vm->dram_pg_pool, phys_pg->paddr,
++						phys_pg->page_size);
++				kref_put(&vm->dram_pg_pool_refcount,
++						dram_pg_pool_do_release);
++			}
++		}
++
++		list_del(&phys_pg->node);
++		kfree(phys_pg);
++	}
++
++	kfree(phys_pg_list);
++}
++
++/**
++ * free_device_memory - free device memory
++ *
++ * @ctx                  : current context
++ * @handle              : handle of the memory chunk to free
++ *
++ * This function does the following:
++ * - Free the device memory related to the given handle
++ */
++static int free_device_memory(struct hl_ctx *ctx, u32 handle)
++{
++	struct hl_device *hdev = ctx->hdev;
++	struct hl_vm *vm = &hdev->vm;
++	struct hl_vm_phys_pg_list *phys_pg_list;
++
++	spin_lock(&vm->idr_lock);
++	phys_pg_list = idr_find(&vm->phys_pg_list_handles, handle);
++	if (phys_pg_list) {
++		if (atomic_read(&phys_pg_list->mapping_cnt) > 0) {
++			dev_err(hdev->dev, "handle %u is mapped, cannot free\n",
++				handle);
++			spin_unlock(&vm->idr_lock);
++			return -EINVAL;
++		}
++
++		/*
++		 * must remove from idr before the freeing of the physical
++		 * pages as the refcount of the pool is also the trigger of the
++		 * idr destroy
++		 */
++		idr_remove(&vm->phys_pg_list_handles, handle);
++		spin_unlock(&vm->idr_lock);
++
++		atomic64_sub(phys_pg_list->total_size, &ctx->dram_phys_mem);
++		atomic64_sub(phys_pg_list->total_size, &hdev->dram_used_mem);
++
++		free_phys_pg_list(hdev, phys_pg_list);
++	} else {
++		spin_unlock(&vm->idr_lock);
++		dev_err(hdev->dev,
++			"free device memory failed, no match for handle %u\n",
++			handle);
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++/**
++ * clear_va_list_locked    - free virtual addresses list
++ *
++ * @hdev                : habanalabs device structure
++ * @va_list             : list of virtual addresses to free
++ *
++ * This function does the following:
++ * - Iterate over the list and free each virtual addresses block
++ *
++ * This function should be called only when va_list lock is taken
++ */
++static void clear_va_list_locked(struct hl_device *hdev,
++		struct list_head *va_list)
++{
++	struct hl_vm_va_block *va_block, *tmp;
++
++	list_for_each_entry_safe(va_block, tmp, va_list, node) {
++		list_del(&va_block->node);
++		kfree(va_block);
++	}
++}
++
++/**
++ * print_va_list_locked    - print virtual addresses list
++ *
++ * @hdev                : habanalabs device structure
++ * @va_list             : list of virtual addresses to print
++ *
++ * This function does the following:
++ * - Iterate over the list and print each virtual addresses block
++ *
++ * This function should be called only when va_list lock is taken
++ */
++static void print_va_list_locked(struct hl_device *hdev,
++		struct list_head *va_list)
++{
++#if HL_MMU_DEBUG
++	struct hl_vm_va_block *va_block;
++
++	dev_dbg(hdev->dev, "print va list:\n");
++
++	list_for_each_entry(va_block, va_list, node)
++		dev_dbg(hdev->dev,
++			"va block, start: 0x%llx, end: 0x%llx, size: %llu\n",
++			va_block->start, va_block->end, va_block->size);
++#endif
++}
++
++/**
++ * merge_va_blocks_locked - merge a virtual block if possible
++ *
++ * @hdev                : pointer to the habanalabs device structure
++ * @va_list             : pointer to the virtual addresses block list
++ * @va_block            : virtual block to merge with adjacent blocks
++ *
++ * This function does the following:
++ * - Merge the given blocks with the adjacent blocks if their virtual ranges
++ *   create a contiguous virtual range
++ *
++ * This Function should be called only when va_list lock is taken
++ */
++static void merge_va_blocks_locked(struct hl_device *hdev,
++		struct list_head *va_list, struct hl_vm_va_block *va_block)
++{
++	struct hl_vm_va_block *prev, *next;
++
++	prev = list_prev_entry(va_block, node);
++	if (&prev->node != va_list && prev->end + 1 == va_block->start) {
++		prev->end = va_block->end;
++		prev->size = prev->end - prev->start;
++		list_del(&va_block->node);
++		kfree(va_block);
++		va_block = prev;
++	}
++
++	next = list_next_entry(va_block, node);
++	if (&next->node != va_list && va_block->end + 1 == next->start) {
++		next->start = va_block->start;
++		next->size = next->end - next->start;
++		list_del(&va_block->node);
++		kfree(va_block);
++	}
++}
++
++/**
++ * add_va_block_locked - add a virtual block to the virtual addresses list
++ *
++ * @hdev                : pointer to the habanalabs device structure
++ * @va_list             : pointer to the virtual addresses block list
++ * @start               : start virtual address
++ * @end                 : end virtual address
++ *
++ * This function does the following:
++ * - Add the given block to the virtual blocks list and merge with other
++ * blocks if a contiguous virtual block can be created
++ *
++ * This Function should be called only when va_list lock is taken
++ */
++static int add_va_block_locked(struct hl_device *hdev,
++		struct list_head *va_list, u64 start, u64 end)
++{
++	struct hl_vm_va_block *va_block, *res = NULL;
++	u64 size = end - start;
++
++	print_va_list_locked(hdev, va_list);
++
++	list_for_each_entry(va_block, va_list, node) {
++		/* TODO: remove upon matureness */
++		if (hl_mem_area_crosses_range(start, size, va_block->start,
++				va_block->end)) {
++			dev_err(hdev->dev,
++				"block crossing ranges at start 0x%llx, end 0x%llx\n",
++				va_block->start, va_block->end);
++			return -EINVAL;
++		}
++
++		if (va_block->end < start)
++			res = va_block;
++	}
++
++	va_block = kmalloc(sizeof(*va_block), GFP_KERNEL);
++	if (!va_block)
++		return -ENOMEM;
++
++	va_block->start = start;
++	va_block->end = end;
++	va_block->size = size;
++
++	if (!res)
++		list_add(&va_block->node, va_list);
++	else
++		list_add(&va_block->node, &res->node);
++
++	merge_va_blocks_locked(hdev, va_list, va_block);
++
++	print_va_list_locked(hdev, va_list);
++
++	return 0;
++}
++
++/**
++ * add_va_block - wrapper for add_va_block_locked
++ *
++ * @hdev                : pointer to the habanalabs device structure
++ * @va_list             : pointer to the virtual addresses block list
++ * @start               : start virtual address
++ * @end                 : end virtual address
++ *
++ * This function does the following:
++ * - Takes the list lock and calls add_va_block_locked
++ */
++static inline int add_va_block(struct hl_device *hdev,
++		struct hl_va_range *va_range, u64 start, u64 end)
++{
++	int rc;
++
++	mutex_lock(&va_range->lock);
++	rc = add_va_block_locked(hdev, &va_range->list, start, end);
++	mutex_unlock(&va_range->lock);
++
++	return rc;
++}
++
++/**
++ * get_va_block - get a virtual block with the requested size
++ *
++ * @hdev            : pointer to the habanalabs device structure
++ * @va_range        : pointer to the virtual addresses range
++ * @size            : requested block size
++ * @hint_addr       : hint for request address by the user
++ * @is_userptr      : is host or DRAM memory
++ *
++ * This function does the following:
++ * - Iterate on the virtual block list to find a suitable virtual block for the
++ *   requested size
++ * - Reserve the requested block and update the list
++ * - Return the start address of the virtual block
++ */
++static u64 get_va_block(struct hl_device *hdev,
++		struct hl_va_range *va_range, u32 size, u64 hint_addr,
++		bool is_userptr)
++{
++	struct hl_vm_va_block *va_block, *new_va_block = NULL;
++	u64 valid_start, valid_size, prev_start, prev_end, page_mask,
++		res_valid_start = 0, res_valid_size = 0;
++	u32 page_size;
++	bool add_prev = false;
++
++	if (is_userptr) {
++		/*
++		 * We cannot know if the user allocated memory with huge pages
++		 * or not, hence we continue with the biggest possible
++		 * granularity.
++		 */
++		page_size = HPAGE_SIZE;
++		page_mask = HPAGE_MASK;
++	} else {
++		page_size = hdev->asic_prop.dram_page_size;
++		page_mask = ~((u64)page_size - 1);
++	}
++
++	mutex_lock(&va_range->lock);
++
++	print_va_list_locked(hdev, &va_range->list);
++
++	list_for_each_entry(va_block, &va_range->list, node) {
++		/* calc the first possible aligned addr */
++		valid_start = va_block->start;
++
++
++		if (valid_start & (page_size - 1)) {
++			valid_start &= page_mask;
++			valid_start += page_size;
++			if (valid_start > va_block->end)
++				continue;
++		}
++
++		valid_size = va_block->end - valid_start;
++
++		if (valid_size >= size &&
++			(!new_va_block || valid_size < res_valid_size)) {
++
++			new_va_block = va_block;
++			res_valid_start = valid_start;
++			res_valid_size = valid_size;
++		}
++
++		if (hint_addr && hint_addr >= valid_start &&
++				((hint_addr + size) <= va_block->end)) {
++			new_va_block = va_block;
++			res_valid_start = hint_addr;
++			res_valid_size = valid_size;
++			break;
++		}
++	}
++
++	if (!new_va_block) {
++		dev_err(hdev->dev, "no available va block for size %u\n", size);
++		goto out;
++	}
++
++	if (res_valid_start > new_va_block->start) {
++		prev_start = new_va_block->start;
++		prev_end = res_valid_start - 1;
++
++		new_va_block->start = res_valid_start;
++		new_va_block->size = res_valid_size;
++
++		add_prev = true;
++	}
++
++	if (new_va_block->size > size) {
++		new_va_block->start += size;
++		new_va_block->size = new_va_block->end - new_va_block->start;
++	} else {
++		list_del(&new_va_block->node);
++		kfree(new_va_block);
++	}
++
++	if (add_prev)
++		add_va_block_locked(hdev, &va_range->list, prev_start,
++				prev_end);
++
++	print_va_list_locked(hdev, &va_range->list);
++out:
++	mutex_unlock(&va_range->lock);
++
++	return res_valid_start;
++}
++
++/**
++ * init_phys_pg_list_from_userptr - initialize physical page list from host
++ *                                  memory
++ *
++ * @ctx                 : current context
++ * @userptr             : userptr to initialize from
++ * @pphys_pg_list       : res pointer
++ *
++ * This function does the following:
++ * - Pin the physical pages related to the given virtual block
++ * - Create a physical page list from the physical pages related to the given
++ *   virtual block
++ */
++static int init_phys_pg_list_from_userptr(struct hl_ctx *ctx,
++		struct hl_userptr *userptr,
++		struct hl_vm_phys_pg_list **pphys_pg_list)
++{
++	struct hl_device *hdev = ctx->hdev;
++	struct hl_vm_phys_pg_list *phys_pg_list;
++	struct hl_vm_phys_pg *phys_pg;
++	struct scatterlist *sg;
++	dma_addr_t dma_addr;
++	u32 npages, len;
++	bool first = true;
++	int rc, i;
++
++	phys_pg_list = kzalloc(sizeof(*phys_pg_list), GFP_KERNEL);
++	if (!phys_pg_list) {
++		rc = -ENOMEM;
++		goto page_list_mem_err;
++	}
++
++	phys_pg_list->vm_type = userptr->vm_type;
++	phys_pg_list->created_from_userptr = true;
++	INIT_LIST_HEAD(&phys_pg_list->list);
++	phys_pg_list->asid = ctx->asid;
++	atomic_set(&phys_pg_list->mapping_cnt, 1);
++
++	for_each_sg(userptr->sgt->sgl, sg, userptr->sgt->nents, i) {
++		len = sg_dma_len(sg);
++		dma_addr = sg_dma_address(sg);
++
++		/*
++		 * Calculate the number of consecutive pages described by the
++		 * SG list. Take the offset of the address in the first page,
++		 * add to it the length and round it up to the number of needed
++		 * 4K pages.
++		 *
++		 */
++		npages =
++			(((dma_addr & (PAGE_SIZE - 1)) + len) + (PAGE_SIZE - 1))
++			>> PAGE_SHIFT;
++
++		/* align down to physical page size and save the offset */
++		if (first) {
++			first = false;
++			phys_pg_list->offset = dma_addr & (PAGE_SIZE - 1);
++			dma_addr &= PAGE_MASK;
++		}
++
++		while (npages) {
++			phys_pg = kzalloc(sizeof(*phys_pg), GFP_KERNEL);
++			if (!phys_pg) {
++				rc = -ENOMEM;
++				goto page_mem_err;
++			}
++
++			list_add_tail(&phys_pg->node, &phys_pg_list->list);
++			phys_pg_list->list_size++;
++
++			phys_pg->page_size = PAGE_SIZE;
++			npages--;
++
++			phys_pg->paddr = dma_addr;
++			phys_pg_list->total_size += phys_pg->page_size;
++
++			dma_addr += phys_pg->page_size;
++		}
++	}
++
++	*pphys_pg_list = phys_pg_list;
++
++	return 0;
++
++page_mem_err:
++	free_phys_pg_list(hdev, phys_pg_list);
++page_list_mem_err:
++
++	return rc;
++}
++
++/**
++ * map_phys_page_list - maps the page list
++ *
++ * @ctx                 : current context
++ * @vaddr               : start address of the virtual area to map from
++ * @phys_pg_list        : the  list of physical pages to map to
++ *
++ * This function does the following:
++ * - Maps each chunk of virtual memory to matching physical chunk
++ * - Returns the number of successful mappings
++ */
++static int map_phys_page_list(struct hl_ctx *ctx, u64 vaddr,
++		struct hl_vm_phys_pg_list *phys_pg_list)
++{
++	struct hl_device *hdev = ctx->hdev;
++	struct hl_vm_phys_pg *phys_pg;
++	u64 next_vaddr = vaddr, paddr;
++	int rc, mapped_pg_cnt = 0;
++
++	list_for_each_entry(phys_pg, &phys_pg_list->list, node) {
++		paddr = phys_pg->paddr;
++
++		/* For accessing the host we need to turn on bit 39 */
++		if (phys_pg_list->created_from_userptr)
++			paddr += hdev->asic_prop.host_phys_base_address;
++
++		rc = hl_mmu_map(ctx, next_vaddr, paddr, phys_pg->page_size);
++		if (rc) {
++			dev_err(hdev->dev, "map failed for handle %u",
++					phys_pg_list->handle);
++			break;
++		}
++		mapped_pg_cnt++;
++		next_vaddr += phys_pg->page_size;
++	}
++
++	return mapped_pg_cnt;
++}
++
++static int get_paddr_from_handle(struct hl_ctx *ctx, struct hl_mem_in *args,
++				u64 *paddr)
++{
++	struct hl_device *hdev = ctx->hdev;
++	struct hl_vm *vm = &hdev->vm;
++	struct hl_vm_phys_pg_list *phys_pg_list;
++	struct hl_vm_phys_pg *phys_pg;
++	u32 handle;
++
++	handle = lower_32_bits(args->map_device.handle);
++	spin_lock(&vm->idr_lock);
++	phys_pg_list = idr_find(&vm->phys_pg_list_handles, handle);
++	if (!phys_pg_list) {
++		spin_unlock(&vm->idr_lock);
++		dev_err(hdev->dev, "no match for handle %u\n", handle);
++		return -EINVAL;
++	}
++
++	phys_pg = list_first_entry(&phys_pg_list->list, typeof(*phys_pg), node);
++
++	*paddr = phys_pg->paddr;
++
++	spin_unlock(&vm->idr_lock);
++
++	return 0;
++}
++
++/**
++ * map_device_va - map the given memory
++ *
++ * @ctx	         : current context
++ * @args         : host parameters with handle/host virtual address
++ * @device_addr	 : pointer to result device virtual address
++ *
++ * This function does the following:
++ * - If given a physical device memory handle, map to a device virtual block
++ *   and return the start address of this block
++ * - If given a host virtual address and size, find the related physical pages,
++ *   map a device virtual block to this pages and return the start address of
++ *   this block
++ */
++static int map_device_va(struct hl_ctx *ctx, struct hl_mem_in *args,
++		u64 *device_addr)
++{
++	struct hl_device *hdev = ctx->hdev;
++	struct hl_vm *vm = &hdev->vm;
++	struct hl_vm_phys_pg_list *phys_pg_list;
++	struct hl_userptr *userptr = NULL;
++	struct hl_vm_phys_pg *phys_pg;
++	struct hl_vm_hash_node *hnode;
++	enum vm_type_t *vm_type;
++	u64 ret_vaddr, next_vaddr, hint_addr;
++	u32 handle = 0;
++	int rc, mapped_pg_cnt = 0;
++	bool is_userptr = args->flags & HL_MEM_USERPTR;
++
++	/* Assume failure */
++	*device_addr = 0;
++
++	if (is_userptr) {
++		rc = get_userptr_from_host_va(hdev, args, &userptr);
++		if (rc) {
++			dev_err(hdev->dev, "failed to get userptr from va\n");
++			return rc;
++		}
++
++		rc = init_phys_pg_list_from_userptr(ctx, userptr,
++				&phys_pg_list);
++		if (rc) {
++			dev_err(hdev->dev,
++				"unable to init page list for vaddr 0x%llx\n",
++				args->map_host.host_virt_addr);
++			goto init_page_list_err;
++		}
++
++		vm_type = (enum vm_type_t *) userptr;
++		hint_addr = args->map_host.hint_addr;
++	} else {
++		handle = lower_32_bits(args->map_device.handle);
++
++		spin_lock(&vm->idr_lock);
++		phys_pg_list = idr_find(&vm->phys_pg_list_handles, handle);
++		if (!phys_pg_list) {
++			spin_unlock(&vm->idr_lock);
++			dev_err(hdev->dev,
++				"no match for handle %u\n", handle);
++			return -EINVAL;
++		}
++
++		/* increment now to avoid freeing device memory while mapping */
++		atomic_inc(&phys_pg_list->mapping_cnt);
++
++		spin_unlock(&vm->idr_lock);
++
++		vm_type = (enum vm_type_t *) phys_pg_list;
++
++		hint_addr = args->map_device.hint_addr;
++	}
++
++	/*
++	 * relevant for mapping device physical memory only, as host memory is
++	 * implicitly shared
++	 */
++	if (!is_userptr && !(phys_pg_list->flags & HL_MEM_SHARED) &&
++			phys_pg_list->asid != ctx->asid) {
++		dev_err(hdev->dev,
++			"Failed to map memory, handle %u is not shared\n",
++			handle);
++		rc = -EPERM;
++		goto shared_err;
++	}
++
++	hnode = kzalloc(sizeof(*hnode), GFP_KERNEL);
++	if (!hnode) {
++		rc = -ENOMEM;
++		goto hnode_err;
++	}
++
++	ret_vaddr = get_va_block(hdev,
++			is_userptr ? &ctx->host_va_range : &ctx->dram_va_range,
++			phys_pg_list->total_size, hint_addr, is_userptr);
++	if (!ret_vaddr) {
++		dev_err(hdev->dev, "no available va block for handle %u\n",
++				handle);
++		rc = -ENOMEM;
++		goto va_block_err;
++	}
++
++	mutex_lock(&ctx->mmu_lock);
++
++	mapped_pg_cnt = map_phys_page_list(ctx, ret_vaddr, phys_pg_list);
++	if (mapped_pg_cnt < phys_pg_list->list_size) {
++		mutex_unlock(&ctx->mmu_lock);
++		dev_err(hdev->dev, "mapping page list failed for handle %u\n",
++				handle);
++		goto map_err;
++	}
++
++	hdev->asic_funcs->mmu_invalidate_cache_range(hdev, false, ctx->asid,
++			ret_vaddr, phys_pg_list->total_size);
++
++	mutex_unlock(&ctx->mmu_lock);
++
++	hnode->ptr = vm_type;
++	hnode->vaddr = ret_vaddr;
++
++	mutex_lock(&ctx->mem_hash_lock);
++	hash_add(ctx->mem_hash, &hnode->node, ret_vaddr);
++	mutex_unlock(&ctx->mem_hash_lock);
++
++	*device_addr = ret_vaddr + phys_pg_list->offset;
++
++	if (is_userptr)
++		free_phys_pg_list(hdev, phys_pg_list);
++
++	return 0;
++
++map_err:
++	mutex_lock(&ctx->mmu_lock);
++	next_vaddr = ret_vaddr;
++	list_for_each_entry(phys_pg, &phys_pg_list->list, node) {
++		if (mapped_pg_cnt-- == 0)
++			break;
++
++		rc = hl_mmu_unmap(ctx, next_vaddr);
++		if (rc)
++			WARN(1,
++				"failed to unmap handle %u, vaddr 0x%llx, paddr 0x%llx, page size %u\n",
++				handle, next_vaddr, phys_pg->paddr,
++				phys_pg->page_size);
++
++		next_vaddr += phys_pg->page_size;
++	}
++
++	hdev->asic_funcs->mmu_invalidate_cache_range(hdev, true, ctx->asid,
++			ret_vaddr, phys_pg_list->total_size);
++
++	mutex_unlock(&ctx->mmu_lock);
++
++	rc = add_va_block(hdev,
++			is_userptr ? &ctx->host_va_range : &ctx->dram_va_range,
++			ret_vaddr,
++			ret_vaddr + phys_pg_list->total_size - 1);
++	if (rc)
++		WARN(1,
++		"release va block failed for handle 0x%x, vaddr: 0x%llx\n",
++				handle, *device_addr);
++
++va_block_err:
++	kfree(hnode);
++hnode_err:
++shared_err:
++	atomic_dec(&phys_pg_list->mapping_cnt);
++	if (is_userptr)
++		free_phys_pg_list(hdev, phys_pg_list);
++init_page_list_err:
++	if (is_userptr)
++		free_userptr(hdev, userptr);
++
++	return rc;
++}
++
++/**
++ * unmap_device_va      - unmap the given device virtual address
++ *
++ * @ctx                 : current context
++ * @vaddr               : device virtual address to unmap
++ *
++ * This function does the following:
++ * - Unmap the physical pages related to the given virtual address
++ * - return the device virtual block to the virtual block list
++ */
++static int unmap_device_va(struct hl_ctx *ctx, u64 vaddr)
++{
++	struct hl_device *hdev = ctx->hdev;
++	struct hl_vm_phys_pg_list *phys_pg_list = NULL;
++	struct hl_vm_phys_pg *phys_pg;
++	struct hl_vm_hash_node *hnode = NULL;
++	struct hl_userptr *userptr = NULL;
++	enum vm_type_t *vm_type;
++	u64 next_vaddr;
++	bool is_userptr;
++	int rc;
++
++	vaddr &= PAGE_MASK;
++
++	/* protect from double entrance */
++	mutex_lock(&ctx->mem_hash_lock);
++	hash_for_each_possible(ctx->mem_hash, hnode, node, (unsigned long)vaddr)
++		if (vaddr == hnode->vaddr)
++			break;
++
++	if (!hnode) {
++		mutex_unlock(&ctx->mem_hash_lock);
++		dev_err(hdev->dev,
++			"unmap failed, no mem hnode for vaddr 0x%llx\n",
++			vaddr);
++		return -EINVAL;
++	}
++
++	hash_del(&hnode->node);
++	mutex_unlock(&ctx->mem_hash_lock);
++
++	vm_type = hnode->ptr;
++
++	if (*vm_type == VM_TYPE_USERPTR) {
++		is_userptr = true;
++		userptr = hnode->ptr;
++		rc = init_phys_pg_list_from_userptr(ctx, userptr,
++				&phys_pg_list);
++		if (rc) {
++			dev_err(hdev->dev,
++				"unable to init page list for vaddr 0x%llx\n",
++				vaddr);
++			goto vm_type_err;
++		}
++	} else if (*vm_type == VM_TYPE_PHYS_LIST) {
++		is_userptr = false;
++		phys_pg_list = hnode->ptr;
++	} else {
++		WARN(1, "unmap failed, unknown vm desc for vaddr 0x%llx\n",
++				vaddr);
++		rc = -EFAULT;
++		goto vm_type_err;
++	}
++
++	if (atomic_read(&phys_pg_list->mapping_cnt) == 0) {
++		dev_err(hdev->dev, "vaddr 0x%llx is not mapped\n", vaddr);
++		rc = -EINVAL;
++		goto mapping_cnt_err;
++	}
++
++	next_vaddr = vaddr;
++
++	mutex_lock(&ctx->mmu_lock);
++
++	list_for_each_entry(phys_pg, &phys_pg_list->list, node) {
++		WARN(hl_mmu_unmap(ctx, next_vaddr),
++				"unmap failed for vaddr: 0x%llx\n", next_vaddr);
++
++		next_vaddr += phys_pg->page_size;
++	}
++
++	hdev->asic_funcs->mmu_invalidate_cache_range(hdev, true, ctx->asid,
++			vaddr, phys_pg_list->total_size);
++
++	mutex_unlock(&ctx->mmu_lock);
++
++	WARN(add_va_block(hdev,
++			is_userptr ? &ctx->host_va_range : &ctx->dram_va_range,
++			vaddr,
++			vaddr + phys_pg_list->total_size - 1),
++			"add va block failed for vaddr: 0x%llx\n", vaddr);
++
++	atomic_dec(&phys_pg_list->mapping_cnt);
++
++	kfree(hnode);
++
++	if (userptr) {
++		free_phys_pg_list(hdev, phys_pg_list);
++		free_userptr(hdev, userptr);
++	}
++
++	return 0;
++
++mapping_cnt_err:
++	if (userptr)
++		free_phys_pg_list(hdev, phys_pg_list);
++vm_type_err:
++	mutex_lock(&ctx->mem_hash_lock);
++	hash_add(ctx->mem_hash, &hnode->node, vaddr);
++	mutex_unlock(&ctx->mem_hash_lock);
++
++	return rc;
++}
++
++int hl_mem_ioctl(struct hl_fpriv *hpriv, void *data)
++{
++	union hl_mem_args *args = data;
++	struct hl_device *hdev = hpriv->hdev;
++	struct hl_ctx *ctx = hpriv->ctx;
++	u64 device_addr = 0;
++	u32 handle = 0;
++	int rc;
++
++	if (hdev->hard_reset_pending) {
++		dev_crit_ratelimited(hdev->dev,
++			"Device HARD reset pending !!! Please close FD\n");
++		return -ENODEV;
++	}
++
++	if ((hdev->disabled) || (atomic_read(&hdev->in_reset))) {
++		dev_warn_ratelimited(hdev->dev,
++			"Device is disabled or in reset !!! Can't execute memory IOCTL\n");
++		return -EBUSY;
++	}
++
++	if (hdev->mmu_enable) {
++		switch (args->in.op) {
++		case HL_MEM_OP_ALLOC:
++			if (!hdev->dram_supports_virtual_memory) {
++				dev_err(hdev->dev,
++					"DRAM alloc is not supported\n");
++				rc = -EINVAL;
++				goto out;
++			}
++			if (args->in.alloc.mem_size == 0) {
++				dev_err(hdev->dev,
++					"alloc size must be larger than 0\n");
++				rc = -EINVAL;
++				goto out;
++			}
++			rc = alloc_device_memory(ctx, &args->in, &handle);
++
++			memset(args, 0, sizeof(*args));
++			args->out.handle = (__u64) handle;
++			break;
++
++		case HL_MEM_OP_FREE:
++			if (!hdev->dram_supports_virtual_memory) {
++				dev_err(hdev->dev,
++					"DRAM free is not supported\n");
++				rc = -EINVAL;
++				goto out;
++			}
++			rc = free_device_memory(ctx, args->in.free.handle);
++			break;
++
++		case HL_MEM_OP_MAP:
++			rc = map_device_va(ctx, &args->in, &device_addr);
++
++			memset(args, 0, sizeof(*args));
++			args->out.device_virt_addr = device_addr;
++			break;
++
++		case HL_MEM_OP_UNMAP:
++			rc = unmap_device_va(ctx,
++					args->in.unmap.device_virt_addr);
++			break;
++
++		default:
++			dev_err(hdev->dev, "Unknown opcode for memory IOCTL\n");
++			rc = -EINVAL;
++			break;
++		}
++	} else {
++		switch (args->in.op) {
++		case HL_MEM_OP_ALLOC:
++			if (args->in.alloc.mem_size == 0) {
++				dev_err(hdev->dev,
++					"alloc size must be larger than 0\n");
++				rc = -EINVAL;
++				goto out;
++			}
++
++			/* Force contiguous as there are no real MMU
++			 * translations to overcome physical memory gaps
++			 */
++			args->in.flags |= HL_MEM_CONTIGUOUS;
++			rc = alloc_device_memory(ctx, &args->in, &handle);
++
++			memset(args, 0, sizeof(*args));
++			args->out.handle = (__u64) handle;
++			break;
++
++		case HL_MEM_OP_FREE:
++			rc = free_device_memory(ctx, args->in.free.handle);
++			break;
++
++		case HL_MEM_OP_MAP:
++			if (args->in.flags & HL_MEM_USERPTR) {
++				device_addr = args->in.map_host.host_virt_addr;
++				rc = 0;
++			} else {
++				rc = get_paddr_from_handle(ctx, &args->in,
++						&device_addr);
++			}
++
++			memset(args, 0, sizeof(*args));
++			args->out.device_virt_addr = device_addr;
++			break;
++
++		case HL_MEM_OP_UNMAP:
++			rc = 0;
++			break;
++
++		default:
++			dev_err(hdev->dev, "Unknown opcode for memory IOCTL\n");
++			rc = -EINVAL;
++			break;
++		}
++	}
++
++out:
++	return rc;
++}
++
+ /**
+  * hl_pin_host_memory - pins a chunk of host memory
+  *
+@@ -198,3 +1379,328 @@ bool hl_userptr_is_pinned(struct hl_device *hdev, u64 addr,
+ 	return false;
+ }
+ 
++/**
++ * hl_va_range_init - initialize virtual addresses range
++ *
++ * @hdev                : pointer to the habanalabs device structure
++ * @va_range            : pointer to the range to initialize
++ * @start               : range start address
++ * @end                 : range end address
++ *
++ * This function does the following:
++ * - Initializes the virtual addresses list of the given range with the given
++ *   addresses.
++ */
++static int hl_va_range_init(struct hl_device *hdev,
++		struct hl_va_range *va_range, u64 start, u64 end)
++{
++	int rc;
++
++	INIT_LIST_HEAD(&va_range->list);
++
++	/* PAGE_SIZE alignment */
++
++	if (start & (PAGE_SIZE - 1)) {
++		start &= PAGE_MASK;
++		start += PAGE_SIZE;
++	}
++
++	if (end & (PAGE_SIZE - 1))
++		end &= PAGE_MASK;
++
++	if (start >= end) {
++		dev_err(hdev->dev, "too small vm range for va list\n");
++		return -EFAULT;
++	}
++
++	rc = add_va_block(hdev, va_range, start, end);
++
++	if (rc) {
++		dev_err(hdev->dev, "Failed to init host va list\n");
++		return rc;
++	}
++
++	va_range->start_addr = start;
++	va_range->end_addr = end;
++
++	return 0;
++}
++
++/**
++ * hl_vm_ctx_init_with_ranges - initialize virtual memory for context
++ *
++ * @ctx                 : pointer to the habanalabs context structure
++ * @host_range_start    : host virtual addresses range start
++ * @host_range_end      : host virtual addresses range end
++ * @dram_range_start    : dram virtual addresses range start
++ * @dram_range_end      : dram virtual addresses range end
++ *
++ * This function initializes the following:
++ * - MMU for context
++ * - Virtual address to area descriptor hashtable
++ * - Virtual block list of available virtual memory
++ */
++int hl_vm_ctx_init_with_ranges(struct hl_ctx *ctx, u64 host_range_start,
++				u64 host_range_end, u64 dram_range_start,
++				u64 dram_range_end)
++{
++	struct hl_device *hdev = ctx->hdev;
++	int rc;
++
++	hl_mmu_ctx_init(ctx);
++
++	mutex_init(&ctx->mem_hash_lock);
++	hash_init(ctx->mem_hash);
++
++	mutex_init(&ctx->host_va_range.lock);
++
++	rc = hl_va_range_init(hdev, &ctx->host_va_range, host_range_start,
++			host_range_end);
++	if (rc) {
++		dev_err(hdev->dev, "failed to init host vm range\n");
++		goto host_vm_err;
++	}
++
++	mutex_init(&ctx->dram_va_range.lock);
++
++	rc = hl_va_range_init(hdev, &ctx->dram_va_range, dram_range_start,
++			dram_range_end);
++	if (rc) {
++		dev_err(hdev->dev, "failed to init dram vm range\n");
++		goto dram_vm_err;
++	}
++
++	return 0;
++
++dram_vm_err:
++	mutex_destroy(&ctx->dram_va_range.lock);
++
++	mutex_lock(&ctx->host_va_range.lock);
++	clear_va_list_locked(hdev, &ctx->host_va_range.list);
++	mutex_unlock(&ctx->host_va_range.lock);
++host_vm_err:
++	mutex_destroy(&ctx->host_va_range.lock);
++	mutex_destroy(&ctx->mem_hash_lock);
++	hl_mmu_ctx_fini(ctx);
++
++	return rc;
++}
++
++int hl_vm_ctx_init(struct hl_ctx *ctx)
++{
++	struct asic_fixed_properties *prop = &ctx->hdev->asic_prop;
++	u64 host_range_start, host_range_end, dram_range_start,
++		dram_range_end;
++
++	atomic64_set(&ctx->dram_phys_mem, 0);
++
++	/*
++	 * - If MMU is enabled, init the ranges as usual.
++	 * - If MMU is disabled, in case of host mapping, the returned address
++	 *   is the given one.
++	 *   In case of DRAM mapping, the returned address is the physical
++	 *   address of the memory related to the given handle.
++	 */
++	if (ctx->hdev->mmu_enable) {
++		dram_range_start = prop->va_space_dram_start_address;
++		dram_range_end = prop->va_space_dram_end_address;
++		host_range_start = prop->va_space_host_start_address;
++		host_range_end = prop->va_space_host_end_address;
++	} else {
++		dram_range_start = prop->dram_user_base_address;
++		dram_range_end = prop->dram_end_address;
++		host_range_start = prop->dram_user_base_address;
++		host_range_end = prop->dram_end_address;
++	}
++
++	return hl_vm_ctx_init_with_ranges(ctx, host_range_start, host_range_end,
++			dram_range_start, dram_range_end);
++}
++
++/**
++ * hl_va_range_fini     - clear a virtual addresses range
++ *
++ * @hdev                : pointer to the habanalabs structure
++ * va_range             : pointer to virtual addresses range
++ *
++ * This function initializes the following:
++ * - Checks that the given range contains the whole initial range
++ * - Frees the virtual addresses block list and its lock
++ */
++static void hl_va_range_fini(struct hl_device *hdev,
++		struct hl_va_range *va_range)
++{
++	struct hl_vm_va_block *va_block;
++
++	if (list_empty(&va_range->list)) {
++		WARN(1, "va list should not be empty on cleanup!\n");
++		goto out;
++	}
++
++	if (!list_is_singular(&va_range->list)) {
++		WARN(1,
++		"va list should not contain multiple blocks on cleanup!\n");
++		goto free_va_list;
++	}
++
++	va_block = list_first_entry(&va_range->list, typeof(*va_block), node);
++
++	if (va_block->start != va_range->start_addr ||
++		va_block->end != va_range->end_addr) {
++		WARN(1, "wrong va block on cleanup, from 0x%llx to 0x%llx\n",
++			va_block->start, va_block->end);
++		goto free_va_list;
++	}
++
++free_va_list:
++	mutex_lock(&va_range->lock);
++	clear_va_list_locked(hdev, &va_range->list);
++	mutex_unlock(&va_range->lock);
++
++out:
++	mutex_destroy(&va_range->lock);
++}
++
++/**
++ * hl_vm_ctx_fini       - virtual memory teardown of context
++ *
++ * @ctx                 : pointer to the habanalabs context structure
++ *
++ * This function perform teardown the following:
++ * - Virtual block list of available virtual memory
++ * - Virtual address to area descriptor hashtable
++ * - MMU for context
++ *
++ * In addition this function does the following:
++ * - Unmaps the existing hashtable nodes if the hashtable is not empty. The
++ *   hashtable should be empty as no valid mappings should exist at this
++ *   point.
++ * - Frees any existing physical page list from the idr which relates to the
++ *   current context asid.
++ * - This function checks the virtual block list for correctness. At this point
++ *   the list should contain one element which describes the whole virtual
++ *   memory range of the context. Otherwise, a warning is printed.
++ */
++void hl_vm_ctx_fini(struct hl_ctx *ctx)
++{
++	struct hl_device *hdev = ctx->hdev;
++	struct hl_vm *vm = &hdev->vm;
++	struct hl_vm_phys_pg_list *phys_pg_list;
++	struct hl_vm_hash_node *hnode;
++	struct hlist_node *tmp_node;
++	int i;
++
++	if (!hash_empty(ctx->mem_hash))
++		dev_notice(hdev->dev, "ctx is freed while it has va in use\n");
++
++	hash_for_each_safe(ctx->mem_hash, i, tmp_node, hnode, node) {
++		dev_dbg(hdev->dev,
++			"hl_mem_hash_node of vaddr 0x%llx of asid %d is still alive\n",
++			hnode->vaddr, ctx->asid);
++		unmap_device_va(ctx, hnode->vaddr);
++	}
++
++	spin_lock(&vm->idr_lock);
++	idr_for_each_entry(&vm->phys_pg_list_handles, phys_pg_list, i)
++		if (phys_pg_list->asid == ctx->asid) {
++			dev_dbg(hdev->dev,
++				"page list 0x%p of asid %d is still alive\n",
++				phys_pg_list, ctx->asid);
++			free_phys_pg_list(hdev, phys_pg_list);
++			idr_remove(&vm->phys_pg_list_handles, i);
++		}
++	spin_unlock(&vm->idr_lock);
++
++	hl_va_range_fini(hdev, &ctx->dram_va_range);
++	hl_va_range_fini(hdev, &ctx->host_va_range);
++
++	mutex_destroy(&ctx->mem_hash_lock);
++	hl_mmu_ctx_fini(ctx);
++}
++
++/**
++ * hl_vm_init           - initialize virtual memory module
++ *
++ * @hdev                : pointer to the habanalabs device structure
++ *
++ * This function initializes the following:
++ * - MMU module
++ * - DRAM physical pages pool of 2MB
++ * - Idr for device memory allocation handles
++ */
++int hl_vm_init(struct hl_device *hdev)
++{
++	struct asic_fixed_properties *prop = &hdev->asic_prop;
++	struct hl_vm *vm = &hdev->vm;
++	int rc;
++
++	rc = hl_mmu_init(hdev);
++	if (rc) {
++		dev_err(hdev->dev, "Failed to init MMU\n");
++		return rc;
++	}
++
++	vm->dram_pg_pool = gen_pool_create(__ffs(prop->dram_page_size), -1);
++	if (!vm->dram_pg_pool) {
++		dev_err(hdev->dev, "Failed to create dram page pool\n");
++		rc = -ENOMEM;
++		goto pool_create_err;
++	}
++
++	kref_init(&vm->dram_pg_pool_refcount);
++
++	rc = gen_pool_add(vm->dram_pg_pool, prop->dram_user_base_address,
++			prop->dram_end_address - prop->dram_user_base_address,
++			-1);
++
++	if (rc) {
++		dev_err(hdev->dev,
++			"Failed to add memory to dram page pool %d\n", rc);
++		goto pool_add_err;
++	}
++
++	spin_lock_init(&vm->idr_lock);
++	idr_init(&vm->phys_pg_list_handles);
++
++	atomic64_set(&hdev->dram_used_mem, 0);
++
++	vm->init_done = true;
++
++	return 0;
++
++pool_add_err:
++	gen_pool_destroy(vm->dram_pg_pool);
++pool_create_err:
++	hl_mmu_fini(hdev);
++
++	return rc;
++}
++
++/**
++ * hl_vm_fini           - virtual memory module teardown
++ *
++ * @hdev                : pointer to the habanalabs device structure
++ *
++ * This function perform teardown to the following:
++ * - Idr for device memory allocation handles
++ * - DRAM physical pages pool of 2MB
++ * - MMU module
++ */
++void hl_vm_fini(struct hl_device *hdev)
++{
++	struct hl_vm *vm = &hdev->vm;
++
++	if (!vm->init_done)
++		return;
++
++	/*
++	 * At this point all the contexts should be freed and hence no DRAM
++	 * memory should be in use. Hence the DRAM pool should be freed here.
++	 */
++	WARN(kref_put(&vm->dram_pg_pool_refcount, dram_pg_pool_do_release) != 1,
++			"dram_pg_pool was not destroyed on %s\n", __func__);
++
++	hl_mmu_fini(hdev);
++
++	vm->init_done = false;
++}
+diff --git a/drivers/misc/habanalabs/mmu.c b/drivers/misc/habanalabs/mmu.c
+new file mode 100644
+index 000000000000..083842d3c1a4
+--- /dev/null
++++ b/drivers/misc/habanalabs/mmu.c
+@@ -0,0 +1,604 @@
 +// SPDX-License-Identifier: GPL-2.0
 +
 +/*
@@ -323,292 +2699,94 @@ index 000000000000..09221b05daf7
 +#include "habanalabs.h"
 +#include "include/hw_ip/mmu/mmu_general.h"
 +
-+#include <linux/debugfs.h>
-+#include <linux/uaccess.h>
++#include <linux/genalloc.h>
 +
-+#define MMU_ADDR_BUF_SIZE	40
-+#define MMU_ASID_BUF_SIZE	10
-+#define MMU_KBUF_SIZE		(MMU_ADDR_BUF_SIZE + MMU_ASID_BUF_SIZE)
++#define HOP_NOT_FREED	0
++#define HOP_FREED	1
 +
-+static struct dentry *hl_debug_root;
-+
-+static int hl_debugfs_i2c_read(struct hl_device *hdev, u8 i2c_bus, u8 i2c_addr,
-+				u8 i2c_reg, u32 *val)
++static struct pgt_info *get_pgt_info(struct hl_ctx *ctx, u64 addr)
 +{
-+	struct armcp_packet pkt;
-+	int rc;
++	struct pgt_info *pgt_info = NULL;
 +
-+	if ((hdev->disabled) || (atomic_read(&hdev->in_reset)))
-+		return 0;
++	hash_for_each_possible(ctx->mmu_hash, pgt_info, node,
++				(unsigned long) addr)
++		if (addr == pgt_info->addr)
++			break;
 +
-+	memset(&pkt, 0, sizeof(pkt));
-+
-+	pkt.opcode = ARMCP_PACKET_I2C_RD;
-+	pkt.i2c_bus = i2c_bus;
-+	pkt.i2c_addr = i2c_addr;
-+	pkt.i2c_reg = i2c_reg;
-+
-+	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
-+					HL_DEVICE_TIMEOUT_USEC, (long *) val);
-+
-+	if (rc)
-+		dev_err(hdev->dev, "Failed to read from I2C, error %d\n", rc);
-+
-+	return rc;
++	return pgt_info;
 +}
 +
-+static int hl_debugfs_i2c_write(struct hl_device *hdev, u8 i2c_bus, u8 i2c_addr,
-+				u8 i2c_reg, u32 val)
++static void free_hop(struct hl_ctx *ctx, u64 hop_addr)
 +{
-+	struct armcp_packet pkt;
-+	int rc;
++	struct pgt_info *pgt_info = get_pgt_info(ctx, hop_addr);
 +
-+	if ((hdev->disabled) || (atomic_read(&hdev->in_reset)))
-+		return 0;
++	gen_pool_free(pgt_info->ctx->hdev->mmu_pgt_pool, pgt_info->addr,
++			ctx->hdev->asic_prop.mmu_hop_table_size);
++	hash_del(&pgt_info->node);
 +
-+	memset(&pkt, 0, sizeof(pkt));
-+
-+	pkt.opcode = ARMCP_PACKET_I2C_WR;
-+	pkt.i2c_bus = i2c_bus;
-+	pkt.i2c_addr = i2c_addr;
-+	pkt.i2c_reg = i2c_reg;
-+	pkt.value = val;
-+
-+	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
-+					HL_DEVICE_TIMEOUT_USEC, NULL);
-+
-+	if (rc)
-+		dev_err(hdev->dev, "Failed to write to I2C, error %d\n", rc);
-+
-+	return rc;
++	kfree(pgt_info);
 +}
 +
-+static void hl_debugfs_led_set(struct hl_device *hdev, u8 led, u8 state)
++static u64 alloc_hop(struct hl_ctx *ctx)
 +{
-+	struct armcp_packet pkt;
-+	int rc;
++	struct hl_device *hdev = ctx->hdev;
++	struct pgt_info *pgt_info;
++	u64 addr;
 +
-+	if ((hdev->disabled) || (atomic_read(&hdev->in_reset)))
-+		return;
++	pgt_info = kmalloc(sizeof(*pgt_info), GFP_KERNEL);
++	if (!pgt_info)
++		return ULLONG_MAX;
 +
-+	memset(&pkt, 0, sizeof(pkt));
-+
-+	pkt.opcode = ARMCP_PACKET_LED_SET;
-+	pkt.led_index = led;
-+	pkt.value = state;
-+
-+	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
-+						HL_DEVICE_TIMEOUT_USEC, NULL);
-+
-+	if (rc)
-+		dev_err(hdev->dev, "Failed to set LED %d, error %d\n", led, rc);
-+}
-+
-+static int command_buffers_show(struct seq_file *s, void *data)
-+{
-+	struct hl_debugfs_entry *entry = s->private;
-+	struct hl_dbg_device_entry *dev_entry = entry->dev_entry;
-+	struct hl_cb *cb;
-+	bool first = true;
-+
-+	spin_lock(&dev_entry->cb_spinlock);
-+
-+	list_for_each_entry(cb, &dev_entry->cb_list, debugfs_list) {
-+		if (first) {
-+			first = false;
-+			seq_puts(s, "\n");
-+			seq_puts(s, " CB ID   CTX ID   CB size    CB RefCnt    mmap?   CS counter\n");
-+			seq_puts(s, "---------------------------------------------------------------\n");
-+		}
-+		seq_printf(s,
-+			"   %03d        %d    0x%08x      %d          %d          %d\n",
-+			cb->id, cb->ctx_id, cb->size,
-+			kref_read(&cb->refcount),
-+			cb->mmap, cb->cs_cnt);
++	addr = (u64) gen_pool_alloc(hdev->mmu_pgt_pool,
++			hdev->asic_prop.mmu_hop_table_size);
++	if (!addr) {
++		dev_err(hdev->dev, "failed to allocate page\n");
++		kfree(pgt_info);
++		return ULLONG_MAX;
 +	}
 +
-+	spin_unlock(&dev_entry->cb_spinlock);
++	pgt_info->addr = addr;
++	pgt_info->ctx = ctx;
++	pgt_info->num_of_ptes = 0;
++	hash_add(ctx->mmu_hash, &pgt_info->node, addr);
 +
-+	if (!first)
-+		seq_puts(s, "\n");
-+
-+	return 0;
++	return addr;
 +}
 +
-+static int command_submission_show(struct seq_file *s, void *data)
++static inline void clear_pte(struct hl_device *hdev, u64 pte_addr)
 +{
-+	struct hl_debugfs_entry *entry = s->private;
-+	struct hl_dbg_device_entry *dev_entry = entry->dev_entry;
-+	struct hl_cs *cs;
-+	bool first = true;
++	/* clear the last and present bits */
++	hdev->asic_funcs->write_pte(hdev, pte_addr, 0);
++}
 +
-+	spin_lock(&dev_entry->cs_spinlock);
++static inline void inc_num_of_ptes(struct hl_ctx *ctx, u64 hop_addr)
++{
++	get_pgt_info(ctx, hop_addr)->num_of_ptes++;
++}
 +
-+	list_for_each_entry(cs, &dev_entry->cs_list, debugfs_list) {
-+		if (first) {
-+			first = false;
-+			seq_puts(s, "\n");
-+			seq_puts(s, " CS ID   CTX ASID   CS RefCnt   Submitted    Completed\n");
-+			seq_puts(s, "------------------------------------------------------\n");
-+		}
-+		seq_printf(s,
-+			"   %llu       %d          %d           %d            %d\n",
-+			cs->sequence, cs->ctx->asid,
-+			kref_read(&cs->refcount),
-+			cs->submitted, cs->completed);
++/**
++ * dec_num_of_ptes - decrement the num of ptes and free the hop if possible
++ *
++ * @ctx: pointer to the context structure
++ * @hop_addr: addr of the hop
++ *
++ * This function returns HOP_FREED if the hop was freed or HOP_NOT_FREED if the
++ * num of ptes was decremented without freeing the hop.
++ */
++static inline int dec_num_of_ptes(struct hl_ctx *ctx, u64 hop_addr)
++{
++	struct pgt_info *pgt_info = get_pgt_info(ctx, hop_addr);
++
++	pgt_info->num_of_ptes--;
++
++	if (pgt_info->num_of_ptes == 0) {
++		free_hop(ctx, hop_addr);
++		return HOP_FREED;
 +	}
 +
-+	spin_unlock(&dev_entry->cs_spinlock);
-+
-+	if (!first)
-+		seq_puts(s, "\n");
-+
-+	return 0;
++	return HOP_NOT_FREED;
 +}
 +
-+static int command_submission_jobs_show(struct seq_file *s, void *data)
-+{
-+	struct hl_debugfs_entry *entry = s->private;
-+	struct hl_dbg_device_entry *dev_entry = entry->dev_entry;
-+	struct hl_cs_job *job;
-+	bool first = true;
-+
-+	spin_lock(&dev_entry->cs_job_spinlock);
-+
-+	list_for_each_entry(job, &dev_entry->cs_job_list, debugfs_list) {
-+		if (first) {
-+			first = false;
-+			seq_puts(s, "\n");
-+			seq_puts(s, " JOB ID   CS ID    CTX ASID   H/W Queue\n");
-+			seq_puts(s, "---------------------------------------\n");
-+		}
-+		if (job->cs)
-+			seq_printf(s,
-+				"    %02d       %llu         %d         %d\n",
-+				job->id, job->cs->sequence, job->cs->ctx->asid,
-+				job->hw_queue_id);
-+		else
-+			seq_printf(s,
-+				"    %02d       0         %d         %d\n",
-+				job->id, HL_KERNEL_ASID_ID, job->hw_queue_id);
-+	}
-+
-+	spin_unlock(&dev_entry->cs_job_spinlock);
-+
-+	if (!first)
-+		seq_puts(s, "\n");
-+
-+	return 0;
-+}
-+
-+static int userptr_show(struct seq_file *s, void *data)
-+{
-+	struct hl_debugfs_entry *entry = s->private;
-+	struct hl_dbg_device_entry *dev_entry = entry->dev_entry;
-+	struct hl_userptr *userptr;
-+	char dma_dir[4][30] = {"DMA_BIDIRECTIONAL", "DMA_TO_DEVICE",
-+				"DMA_FROM_DEVICE", "DMA_NONE"};
-+	bool first = true;
-+
-+	spin_lock(&dev_entry->userptr_spinlock);
-+
-+	list_for_each_entry(userptr, &dev_entry->userptr_list, debugfs_list) {
-+		if (first) {
-+			first = false;
-+			seq_puts(s, "\n");
-+			seq_puts(s, " user virtual address     size             dma dir\n");
-+			seq_puts(s, "----------------------------------------------------------\n");
-+		}
-+		seq_printf(s,
-+			"    0x%-14llx      %-10u    %-30s\n",
-+			userptr->addr, userptr->size, dma_dir[userptr->dir]);
-+	}
-+
-+	spin_unlock(&dev_entry->userptr_spinlock);
-+
-+	if (!first)
-+		seq_puts(s, "\n");
-+
-+	return 0;
-+}
-+
-+static int vm_show(struct seq_file *s, void *data)
-+{
-+	struct hl_debugfs_entry *entry = s->private;
-+	struct hl_dbg_device_entry *dev_entry = entry->dev_entry;
-+	struct hl_ctx *ctx;
-+	struct hl_vm *vm;
-+	struct hl_vm_hash_node *hnode;
-+	struct hl_userptr *userptr;
-+	struct hl_vm_phys_pg_list *phys_pg_list = NULL;
-+	struct hl_vm_phys_pg *phys_pg;
-+	enum vm_type_t *vm_type;
-+	bool once = true;
-+	int i;
-+
-+	if (!dev_entry->hdev->mmu_enable)
-+		return 0;
-+
-+	spin_lock(&dev_entry->ctx_mem_hash_spinlock);
-+
-+	list_for_each_entry(ctx, &dev_entry->ctx_mem_hash_list, debugfs_list) {
-+		once = false;
-+		seq_puts(s, "\n\n----------------------------------------------------");
-+		seq_puts(s, "\n----------------------------------------------------\n\n");
-+		seq_printf(s, "ctx asid: %u\n", ctx->asid);
-+
-+		seq_puts(s, "\nmappings:\n\n");
-+		seq_puts(s, "    virtual address        size          handle\n");
-+		seq_puts(s, "----------------------------------------------------\n");
-+		mutex_lock(&ctx->mem_hash_lock);
-+		hash_for_each(ctx->mem_hash, i, hnode, node) {
-+			vm_type = hnode->ptr;
-+
-+			if (*vm_type == VM_TYPE_USERPTR) {
-+				userptr = hnode->ptr;
-+				seq_printf(s,
-+					"    0x%-14llx      %-10u\n",
-+					hnode->vaddr, userptr->size);
-+			} else {
-+				phys_pg_list = hnode->ptr;
-+				seq_printf(s,
-+					"    0x%-14llx      %-10u       %-4u\n",
-+					hnode->vaddr, phys_pg_list->total_size,
-+					phys_pg_list->handle);
-+			}
-+		}
-+		mutex_unlock(&ctx->mem_hash_lock);
-+
-+		vm = &ctx->hdev->vm;
-+		spin_lock(&vm->idr_lock);
-+
-+		if (!idr_is_empty(&vm->phys_pg_list_handles))
-+			seq_puts(s, "\n\nallocations:\n");
-+
-+		idr_for_each_entry(&vm->phys_pg_list_handles, phys_pg_list, i) {
-+			if (phys_pg_list->asid != ctx->asid)
-+				continue;
-+
-+			seq_printf(s, "\nhandle: %u\n", phys_pg_list->handle);
-+			seq_puts(s, "   physical address        size\n");
-+			seq_puts(s, "-------------------------------------\n");
-+			list_for_each_entry(phys_pg, &phys_pg_list->list, node)
-+				seq_printf(s, "    0x%-14llx      %-10u\n",
-+					phys_pg->paddr, phys_pg->page_size);
-+		}
-+		spin_unlock(&vm->idr_lock);
-+
-+	}
-+
-+	spin_unlock(&dev_entry->ctx_mem_hash_spinlock);
-+
-+	if (!once)
-+		seq_puts(s, "\n");
-+
-+	return 0;
-+}
-+
-+/* these inline functions are copied from mmu.c */
 +static inline u64 get_hop0_addr(struct hl_ctx *ctx)
 +{
 +	return ctx->hdev->asic_prop.mmu_pgt_addr +
@@ -616,35 +2794,35 @@ index 000000000000..09221b05daf7
 +}
 +
 +static inline u64 get_hop0_pte_addr(struct hl_ctx *ctx, u64 hop_addr,
-+		u64 virt_addr)
++					u64 virt_addr)
 +{
 +	return hop_addr + ctx->hdev->asic_prop.mmu_pte_size *
 +			((virt_addr & HOP0_MASK) >> HOP0_SHIFT);
 +}
 +
 +static inline u64 get_hop1_pte_addr(struct hl_ctx *ctx, u64 hop_addr,
-+		u64 virt_addr)
++					u64 virt_addr)
 +{
 +	return hop_addr + ctx->hdev->asic_prop.mmu_pte_size *
 +			((virt_addr & HOP1_MASK) >> HOP1_SHIFT);
 +}
 +
 +static inline u64 get_hop2_pte_addr(struct hl_ctx *ctx, u64 hop_addr,
-+		u64 virt_addr)
++					u64 virt_addr)
 +{
 +	return hop_addr + ctx->hdev->asic_prop.mmu_pte_size *
 +			((virt_addr & HOP2_MASK) >> HOP2_SHIFT);
 +}
 +
 +static inline u64 get_hop3_pte_addr(struct hl_ctx *ctx, u64 hop_addr,
-+		u64 virt_addr)
++					u64 virt_addr)
 +{
 +	return hop_addr + ctx->hdev->asic_prop.mmu_pte_size *
 +			((virt_addr & HOP3_MASK) >> HOP3_SHIFT);
 +}
 +
 +static inline u64 get_hop4_pte_addr(struct hl_ctx *ctx, u64 hop_addr,
-+		u64 virt_addr)
++					u64 virt_addr)
 +{
 +	return hop_addr + ctx->hdev->asic_prop.mmu_pte_size *
 +			((virt_addr & HOP4_MASK) >> HOP4_SHIFT);
@@ -658,1335 +2836,603 @@ index 000000000000..09221b05daf7
 +		return ULLONG_MAX;
 +}
 +
-+static int mmu_show(struct seq_file *s, void *data)
++/**
++ * hl_mmu_init - init the mmu module
++ *
++ * @hdev: pointer to the habanalabs device structure
++ *
++ * This function does the following:
++ * - Allocate max_asid zeroed hop0 pgts so no mapping is available
++ * - Enable mmu in hw
++ * - Invalidate the mmu cache
++ * - Create a pool of pages for pgts
++ * - Returns 0 on success
++ *
++ * This function depends on DMA QMAN to be working!
++ */
++int hl_mmu_init(struct hl_device *hdev)
 +{
-+	struct hl_debugfs_entry *entry = s->private;
-+	struct hl_dbg_device_entry *dev_entry = entry->dev_entry;
-+	struct hl_device *hdev = dev_entry->hdev;
-+	struct hl_ctx *ctx = hdev->user_ctx;
-+
-+	u64 hop0_addr = 0, hop0_pte_addr = 0, hop0_pte = 0,
-+		hop1_addr = 0, hop1_pte_addr = 0, hop1_pte = 0,
-+		hop2_addr = 0, hop2_pte_addr = 0, hop2_pte = 0,
-+		hop3_addr = 0, hop3_pte_addr = 0, hop3_pte = 0,
-+		hop4_addr = 0, hop4_pte_addr = 0, hop4_pte = 0,
-+		virt_addr = dev_entry->mmu_addr;
++	struct asic_fixed_properties *prop = &hdev->asic_prop;
++	int rc;
 +
 +	if (!hdev->mmu_enable)
 +		return 0;
 +
-+	if (!ctx) {
-+		dev_err(hdev->dev, "no ctx available\n");
-+		return 0;
++	/* MMU HW init was already done in device hw_init() */
++
++	mutex_init(&hdev->mmu_cache_lock);
++
++	hdev->mmu_pgt_pool =
++			gen_pool_create(__ffs(prop->mmu_hop_table_size), -1);
++
++	if (!hdev->mmu_pgt_pool) {
++		dev_err(hdev->dev, "Failed to create page gen pool\n");
++		rc = -ENOMEM;
++		goto err_pool_create;
 +	}
 +
-+	mutex_lock(&ctx->mmu_lock);
++	rc = gen_pool_add(hdev->mmu_pgt_pool, prop->mmu_pgt_addr +
++			prop->mmu_hop0_tables_total_size,
++			prop->mmu_pgt_size - prop->mmu_hop0_tables_total_size,
++			-1);
++	if (rc) {
++		dev_err(hdev->dev, "Failed to add memory to page gen pool\n");
++		goto err_pool_add;
++	}
 +
-+	/* the following lookup is copied from unmap() in mmu.c */
++	return 0;
++
++err_pool_add:
++	gen_pool_destroy(hdev->mmu_pgt_pool);
++err_pool_create:
++	mutex_destroy(&hdev->mmu_cache_lock);
++
++	return rc;
++}
++
++/**
++ * hl_mmu_fini - release the mmu module.
++ *
++ * @hdev: pointer to the habanalabs device structure
++ *
++ * This function does the following:
++ * - Disable mmu in hw
++ * - free the pgts pool
++ *
++ * All ctxs should be freed before calling this func
++ */
++void hl_mmu_fini(struct hl_device *hdev)
++{
++	if (!hdev->mmu_enable)
++		return;
++
++	gen_pool_destroy(hdev->mmu_pgt_pool);
++
++	mutex_destroy(&hdev->mmu_cache_lock);
++
++	/* MMU HW fini will be done in device hw_fini() */
++}
++
++/**
++ * hl_mmu_ctx_init - init a ctx for using the mmu module
++ *
++ * @ctx: pointer to the context structure
++ *
++ * This function does the following:
++ * - Init a mutex to protect the concurrent mapping flow
++ * - Init a hash to hold all pgts related to this ctx
++ */
++void hl_mmu_ctx_init(struct hl_ctx *ctx)
++{
++	if (!ctx->hdev->mmu_enable)
++		return;
++
++	mutex_init(&ctx->mmu_lock);
++	hash_init(ctx->mmu_hash);
++}
++
++/**
++ * hl_mmu_ctx_fini - disable a ctx from using the mmu module
++ *
++ * @ctx: pointer to the context structure
++ *
++ * This function does the following:
++ * - Free any pgts which were not freed yet
++ * - Free the mutex
++ */
++void hl_mmu_ctx_fini(struct hl_ctx *ctx)
++{
++	struct pgt_info *pgt_info;
++	struct hlist_node *tmp;
++	int i;
++
++	if (!ctx->hdev->mmu_enable)
++		return;
++
++	if (!hash_empty(ctx->mmu_hash))
++		dev_err(ctx->hdev->dev,
++				"ctx is freed while it has pgts in use\n");
++
++	hash_for_each_safe(ctx->mmu_hash, i, tmp, pgt_info, node) {
++		dev_err(ctx->hdev->dev,
++			"pgt_info of addr 0x%llx of asid %d was not destroyed, num_ptes: %d\n",
++			pgt_info->addr, ctx->asid, pgt_info->num_of_ptes);
++		free_hop(ctx, pgt_info->addr);
++	}
++
++	mutex_destroy(&ctx->mmu_lock);
++}
++
++/**
++ * hl_mmu_map - maps a virtual addr to physical addr
++ *
++ * @ctx: pointer to the context structure
++ * @virt_addr: virt addr to map from
++ * @phys_addr: phys addr to map to
++ * @page_size: physical page size
++ *
++ * This function does the following:
++ * - Check that the virt addr is not mapped
++ * - Allocate pgts as necessary in order to map the virt addr to the phys
++ * - Returns 0 on success, -EINVAL if addr is already mapped, or -ENOMEM.
++ *
++ * Because this function changes the page tables in the device and because it
++ * changes the MMU hash, it must be protected by a lock.
++ * However, because it maps only a single page, the lock should be implemented
++ * in a higher level in order to protect the entire mapping of the memory area
++ */
++int hl_mmu_map(struct hl_ctx *ctx, u64 virt_addr, u64 phys_addr, u32 page_size)
++{
++	struct hl_device *hdev = ctx->hdev;
++	u64 hop0_addr = 0, hop0_pte_addr = 0,
++		hop1_addr = 0, hop1_pte_addr = 0,
++		hop2_addr = 0, hop2_pte_addr = 0,
++		hop3_addr = 0, hop3_pte_addr = 0,
++		hop4_addr = 0, hop4_pte_addr = 0,
++		curr_pte = 0;
++	int hop1_new = 0, hop2_new = 0, hop3_new = 0, hop4_new = 0,
++			rc = -ENOMEM;
++	bool is_huge;
++
++	if (!hdev->mmu_enable)
++		return 0;
++
++	/*
++	 * This mapping function can map a 4KB/2MB page. For 2MB page there are
++	 * only 3 hops rather than 4. Currently the DRAM allocation uses 2MB
++	 * pages only but user memory could have been allocated with one of the
++	 * two page sizes. Since this is a common code for all the three cases,
++	 * we need this hugs page check.
++	 */
++	is_huge = page_size == PAGE_SIZE_2MB;
 +
 +	hop0_addr = get_hop0_addr(ctx);
++
 +	hop0_pte_addr = get_hop0_pte_addr(ctx, hop0_addr, virt_addr);
-+	hop0_pte = hdev->asic_funcs->read_pte(hdev, hop0_pte_addr);
-+	hop1_addr = get_next_hop_addr(hop0_pte);
++
++	curr_pte = hdev->asic_funcs->read_pte(hdev, hop0_pte_addr);
++
++	hop1_addr = get_next_hop_addr(curr_pte);
++
++	if (hop1_addr == ULLONG_MAX) {
++		hop1_addr = alloc_hop(ctx);
++		if (hop1_addr == ULLONG_MAX)
++			goto err;
++		else
++			hop1_new = 1;
++	}
++
++	hop1_pte_addr = get_hop1_pte_addr(ctx, hop1_addr, virt_addr);
++
++	curr_pte = hdev->asic_funcs->read_pte(hdev, hop1_pte_addr);
++
++	hop2_addr = get_next_hop_addr(curr_pte);
++
++	if (hop2_addr == ULLONG_MAX) {
++		hop2_addr = alloc_hop(ctx);
++		if (hop2_addr == ULLONG_MAX)
++			goto err;
++		else
++			hop2_new = 1;
++	}
++
++	hop2_pte_addr = get_hop2_pte_addr(ctx, hop2_addr, virt_addr);
++
++	curr_pte = hdev->asic_funcs->read_pte(hdev, hop2_pte_addr);
++
++	hop3_addr = get_next_hop_addr(curr_pte);
++
++	if (hop3_addr == ULLONG_MAX) {
++		hop3_addr = alloc_hop(ctx);
++		if (hop3_addr == ULLONG_MAX)
++			goto err;
++		else
++			hop3_new = 1;
++	}
++
++	hop3_pte_addr = get_hop3_pte_addr(ctx, hop3_addr, virt_addr);
++
++	curr_pte = hdev->asic_funcs->read_pte(hdev, hop3_pte_addr);
++
++	if (!is_huge) {
++		hop4_addr = get_next_hop_addr(curr_pte);
++
++		if (hop4_addr == ULLONG_MAX) {
++			hop4_addr = alloc_hop(ctx);
++			if (hop4_addr == ULLONG_MAX)
++				goto err;
++			else
++				hop4_new = 1;
++		}
++
++		hop4_pte_addr = get_hop4_pte_addr(ctx, hop4_addr, virt_addr);
++
++		curr_pte = hdev->asic_funcs->read_pte(hdev, hop4_pte_addr);
++	}
++
++	if (curr_pte & PAGE_PRESENT_MASK) {
++		dev_err(hdev->dev,
++				"mapping already exists for virt_addr 0x%llx\n",
++					virt_addr);
++
++		dev_dbg(hdev->dev, "hop0 pte: 0x%llx (0x%llx)\n",
++				hdev->asic_funcs->read_pte(hdev, hop0_pte_addr),
++				hop0_pte_addr);
++		dev_dbg(hdev->dev, "hop1 pte: 0x%llx (0x%llx)\n",
++				hdev->asic_funcs->read_pte(hdev, hop1_pte_addr),
++				hop1_pte_addr);
++		dev_dbg(hdev->dev, "hop2 pte: 0x%llx (0x%llx)\n",
++				hdev->asic_funcs->read_pte(hdev, hop2_pte_addr),
++				hop2_pte_addr);
++		dev_dbg(hdev->dev, "hop3 pte: 0x%llx (0x%llx)\n",
++				hdev->asic_funcs->read_pte(hdev, hop3_pte_addr),
++				hop3_pte_addr);
++
++		if (!is_huge)
++			dev_dbg(hdev->dev, "hop4 pte: 0x%llx (0x%llx)\n",
++				hdev->asic_funcs->read_pte(hdev,
++							hop4_pte_addr),
++							hop4_pte_addr);
++
++		rc = EINVAL;
++		goto err;
++	}
++
++	curr_pte = (phys_addr & PTE_PHYS_ADDR_MASK) | LAST_MASK
++			| PAGE_PRESENT_MASK;
++
++	hdev->asic_funcs->write_pte(hdev,
++				is_huge ? hop3_pte_addr : hop4_pte_addr,
++				curr_pte);
++
++	if (hop1_new) {
++		curr_pte = (hop1_addr & PTE_PHYS_ADDR_MASK) |
++				PAGE_PRESENT_MASK;
++		ctx->hdev->asic_funcs->write_pte(ctx->hdev, hop0_pte_addr,
++				curr_pte);
++	}
++	if (hop2_new) {
++		curr_pte = (hop2_addr & PTE_PHYS_ADDR_MASK) |
++				PAGE_PRESENT_MASK;
++		ctx->hdev->asic_funcs->write_pte(ctx->hdev, hop1_pte_addr,
++				curr_pte);
++		inc_num_of_ptes(ctx, hop1_addr);
++	}
++	if (hop3_new) {
++		curr_pte = (hop3_addr & PTE_PHYS_ADDR_MASK) |
++				PAGE_PRESENT_MASK;
++		ctx->hdev->asic_funcs->write_pte(ctx->hdev, hop2_pte_addr,
++				curr_pte);
++		inc_num_of_ptes(ctx, hop2_addr);
++	}
++
++	if (!is_huge) {
++		if (hop4_new) {
++			curr_pte = (hop4_addr & PTE_PHYS_ADDR_MASK) |
++					PAGE_PRESENT_MASK;
++			ctx->hdev->asic_funcs->write_pte(ctx->hdev,
++					hop3_pte_addr, curr_pte);
++			inc_num_of_ptes(ctx, hop3_addr);
++		}
++
++		inc_num_of_ptes(ctx, hop4_addr);
++	} else
++		inc_num_of_ptes(ctx, hop3_addr);
++
++	/* flush all writes from all cores to reach PCI */
++	mb();
++
++	hdev->asic_funcs->read_pte(hdev,
++				is_huge ? hop3_pte_addr : hop4_pte_addr);
++
++	return 0;
++
++err:
++	if (hop4_new)
++		free_hop(ctx, hop4_addr);
++	if (hop3_new)
++		free_hop(ctx, hop3_addr);
++	if (hop2_new)
++		free_hop(ctx, hop2_addr);
++	if (hop1_new)
++		free_hop(ctx, hop1_addr);
++
++	return rc;
++}
++
++/**
++ * hl_mmu_unmap - unmaps a virtual addr
++ *
++ * @ctx: pointer to the context structure
++ * @virt_addr: virt addr to map from
++ *
++ * This function does the following:
++ * - Check that the virt addr is mapped
++ * - Unmap the vurt addr and frees pgts if possible
++ * - Returns 0 on success, -EINVAL if the given addr is not mapped
++ *
++ * Because this function changes the page tables in the device and because it
++ * changes the MMU hash, it must be protected by a lock.
++ * However, because it maps only a single page, the lock should be implemented
++ * in a higher level in order to protect the entire mapping of the memory area
++ */
++int hl_mmu_unmap(struct hl_ctx *ctx, u64 virt_addr)
++{
++	struct hl_device *hdev = ctx->hdev;
++	u64 hop0_addr = 0, hop0_pte_addr = 0,
++		hop1_addr = 0, hop1_pte_addr = 0,
++		hop2_addr = 0, hop2_pte_addr = 0,
++		hop3_addr = 0, hop3_pte_addr = 0,
++		hop4_addr = 0, hop4_pte_addr = 0,
++		curr_pte;
++	int clear_hop3 = 1;
++
++	if (!hdev->mmu_enable)
++		return 0;
++
++	hop0_addr = get_hop0_addr(ctx);
++
++	hop0_pte_addr = get_hop0_pte_addr(ctx, hop0_addr, virt_addr);
++
++	curr_pte = hdev->asic_funcs->read_pte(hdev, hop0_pte_addr);
++
++	hop1_addr = get_next_hop_addr(curr_pte);
 +
 +	if (hop1_addr == ULLONG_MAX)
 +		goto not_mapped;
 +
 +	hop1_pte_addr = get_hop1_pte_addr(ctx, hop1_addr, virt_addr);
-+	hop1_pte = hdev->asic_funcs->read_pte(hdev, hop1_pte_addr);
-+	hop2_addr = get_next_hop_addr(hop1_pte);
++
++	curr_pte = hdev->asic_funcs->read_pte(hdev, hop1_pte_addr);
++
++	hop2_addr = get_next_hop_addr(curr_pte);
 +
 +	if (hop2_addr == ULLONG_MAX)
 +		goto not_mapped;
 +
 +	hop2_pte_addr = get_hop2_pte_addr(ctx, hop2_addr, virt_addr);
-+	hop2_pte = hdev->asic_funcs->read_pte(hdev, hop2_pte_addr);
-+	hop3_addr = get_next_hop_addr(hop2_pte);
++
++	curr_pte = hdev->asic_funcs->read_pte(hdev, hop2_pte_addr);
++
++	hop3_addr = get_next_hop_addr(curr_pte);
 +
 +	if (hop3_addr == ULLONG_MAX)
 +		goto not_mapped;
 +
 +	hop3_pte_addr = get_hop3_pte_addr(ctx, hop3_addr, virt_addr);
-+	hop3_pte = hdev->asic_funcs->read_pte(hdev, hop3_pte_addr);
 +
-+	if (!(hop3_pte & LAST_MASK)) {
-+		hop4_addr = get_next_hop_addr(hop3_pte);
++	curr_pte = hdev->asic_funcs->read_pte(hdev, hop3_pte_addr);
++
++	if (!(curr_pte & LAST_MASK)) {
++		hop4_addr = get_next_hop_addr(curr_pte);
 +
 +		if (hop4_addr == ULLONG_MAX)
 +			goto not_mapped;
 +
 +		hop4_pte_addr = get_hop4_pte_addr(ctx, hop4_addr, virt_addr);
-+		hop4_pte = hdev->asic_funcs->read_pte(hdev, hop4_pte_addr);
-+		if (!(hop4_pte & PAGE_PRESENT_MASK))
-+			goto not_mapped;
-+	} else {
-+		if (!(hop3_pte & PAGE_PRESENT_MASK))
-+			goto not_mapped;
++
++		curr_pte = hdev->asic_funcs->read_pte(hdev, hop4_pte_addr);
++
++		clear_hop3 = 0;
 +	}
 +
-+	seq_printf(s, "asid: %u, virt_addr: 0x%llx\n",
-+			dev_entry->mmu_asid, dev_entry->mmu_addr);
++	if (!(curr_pte & PAGE_PRESENT_MASK))
++		goto not_mapped;
 +
-+	seq_printf(s, "hop0_addr: 0x%llx\n", hop0_addr);
-+	seq_printf(s, "hop0_pte_addr: 0x%llx\n", hop0_pte_addr);
-+	seq_printf(s, "hop0_pte: 0x%llx\n", hop0_pte);
++	clear_pte(hdev, hop4_addr ? hop4_pte_addr : hop3_pte_addr);
 +
-+	seq_printf(s, "hop1_addr: 0x%llx\n", hop1_addr);
-+	seq_printf(s, "hop1_pte_addr: 0x%llx\n", hop1_pte_addr);
-+	seq_printf(s, "hop1_pte: 0x%llx\n", hop1_pte);
++	if (hop4_addr && dec_num_of_ptes(ctx, hop4_addr) == HOP_FREED)
++		clear_hop3 = 1;
 +
-+	seq_printf(s, "hop2_addr: 0x%llx\n", hop2_addr);
-+	seq_printf(s, "hop2_pte_addr: 0x%llx\n", hop2_pte_addr);
-+	seq_printf(s, "hop2_pte: 0x%llx\n", hop2_pte);
-+
-+	seq_printf(s, "hop3_addr: 0x%llx\n", hop3_addr);
-+	seq_printf(s, "hop3_pte_addr: 0x%llx\n", hop3_pte_addr);
-+	seq_printf(s, "hop3_pte: 0x%llx\n", hop3_pte);
-+
-+	if (!(hop3_pte & LAST_MASK)) {
-+		seq_printf(s, "hop4_addr: 0x%llx\n", hop4_addr);
-+		seq_printf(s, "hop4_pte_addr: 0x%llx\n", hop4_pte_addr);
-+		seq_printf(s, "hop4_pte: 0x%llx\n", hop4_pte);
++	if (clear_hop3) {
++		clear_pte(hdev, hop3_pte_addr);
++		if (dec_num_of_ptes(ctx, hop3_addr) == HOP_FREED) {
++			clear_pte(hdev, hop2_pte_addr);
++			if (dec_num_of_ptes(ctx, hop2_addr) == HOP_FREED) {
++				clear_pte(hdev, hop1_pte_addr);
++				if (dec_num_of_ptes(ctx, hop1_addr) ==
++						HOP_FREED)
++					clear_pte(hdev, hop0_pte_addr);
++			}
++		}
 +	}
 +
-+	goto out;
++	/* flush all writes from all cores to reach PCI */
++	mb();
++
++	hdev->asic_funcs->read_pte(hdev,
++				hop4_addr ? hop4_pte_addr : hop3_pte_addr);
++
++	return 0;
 +
 +not_mapped:
 +	dev_err(hdev->dev, "virt addr 0x%llx is not mapped to phys addr\n",
-+			virt_addr);
-+out:
-+	mutex_unlock(&ctx->mmu_lock);
-+
-+	return 0;
-+}
-+
-+static ssize_t mmu_write(struct file *file, const char __user *buf,
-+		size_t count, loff_t *f_pos)
-+{
-+	struct seq_file *s = file->private_data;
-+	struct hl_debugfs_entry *entry = s->private;
-+	struct hl_dbg_device_entry *dev_entry = entry->dev_entry;
-+	struct hl_device *hdev = dev_entry->hdev;
-+	char kbuf[MMU_KBUF_SIZE], asid_kbuf[MMU_ASID_BUF_SIZE],
-+		addr_kbuf[MMU_ADDR_BUF_SIZE];
-+	char *c;
-+	ssize_t rc;
-+
-+	if (!hdev->mmu_enable)
-+		return count;
-+
-+	memset(kbuf, 0, sizeof(kbuf));
-+	memset(asid_kbuf, 0, sizeof(asid_kbuf));
-+	memset(addr_kbuf, 0, sizeof(addr_kbuf));
-+
-+	if (copy_from_user(kbuf, buf, count))
-+		goto err;
-+
-+	kbuf[MMU_KBUF_SIZE - 1] = 0;
-+
-+	c = strchr(kbuf, ' ');
-+	if (!c)
-+		goto err;
-+
-+	memcpy(asid_kbuf, kbuf, c - kbuf);
-+
-+	rc = kstrtouint(asid_kbuf, 10, &dev_entry->mmu_asid);
-+	if (rc)
-+		goto err;
-+
-+	c = strstr(kbuf, " 0x");
-+	if (!c)
-+		goto err;
-+
-+	c += 3;
-+	memcpy(addr_kbuf, c, (kbuf + count) - c);
-+
-+	rc = kstrtoull(addr_kbuf, 16, &dev_entry->mmu_addr);
-+	if (rc)
-+		goto err;
-+
-+	return count;
-+
-+err:
-+	dev_err(hdev->dev, "usage: echo <asid> <0xaddr> > mmu\n");
++		virt_addr);
 +
 +	return -EINVAL;
 +}
 +
-+static ssize_t hl_data_read32(struct file *f, char __user *buf,
-+					size_t count, loff_t *ppos)
-+{
-+	struct hl_dbg_device_entry *entry = file_inode(f)->i_private;
-+	struct hl_device *hdev = entry->hdev;
-+	char tmp_buf[32];
-+	u32 val;
-+	ssize_t rc;
-+
-+	if (*ppos)
-+		return 0;
-+
-+	rc = hdev->asic_funcs->debugfs_read32(hdev, entry->addr, &val);
-+	if (rc) {
-+		dev_err(hdev->dev, "Failed to read from 0x%010llx\n",
-+			entry->addr);
-+		return rc;
-+	}
-+
-+	sprintf(tmp_buf, "0x%08x\n", val);
-+	rc = simple_read_from_buffer(buf, strlen(tmp_buf) + 1, ppos, tmp_buf,
-+			strlen(tmp_buf) + 1);
-+
-+	return rc;
-+}
-+
-+static ssize_t hl_data_write32(struct file *f, const char __user *buf,
-+					size_t count, loff_t *ppos)
-+{
-+	struct hl_dbg_device_entry *entry = file_inode(f)->i_private;
-+	struct hl_device *hdev = entry->hdev;
-+	u32 value;
-+	ssize_t rc;
-+
-+	rc = kstrtouint_from_user(buf, count, 16, &value);
-+	if (rc)
-+		return rc;
-+
-+	rc = hdev->asic_funcs->debugfs_write32(hdev, entry->addr, value);
-+	if (rc) {
-+		dev_err(hdev->dev, "Failed to write 0x%08x to 0x%010llx\n",
-+			value, entry->addr);
-+		return rc;
-+	}
-+
-+	return count;
-+}
-+
-+static ssize_t hl_get_power_state(struct file *f, char __user *buf,
-+		size_t count, loff_t *ppos)
-+{
-+	struct hl_dbg_device_entry *entry = file_inode(f)->i_private;
-+	struct hl_device *hdev = entry->hdev;
-+	char tmp_buf[200];
-+	ssize_t rc;
-+	int i;
-+
-+	if (*ppos)
-+		return 0;
-+
-+	if (hdev->pdev->current_state == PCI_D0)
-+		i = 1;
-+	else if (hdev->pdev->current_state == PCI_D3hot)
-+		i = 2;
-+	else
-+		i = 3;
-+
-+	sprintf(tmp_buf,
-+		"current power state: %d\n1 - D0\n2 - D3hot\n3 - Unknown\n", i);
-+	rc = simple_read_from_buffer(buf, strlen(tmp_buf) + 1, ppos, tmp_buf,
-+			strlen(tmp_buf) + 1);
-+
-+	return rc;
-+}
-+
-+static ssize_t hl_set_power_state(struct file *f, const char __user *buf,
-+					size_t count, loff_t *ppos)
-+{
-+	struct hl_dbg_device_entry *entry = file_inode(f)->i_private;
-+	struct hl_device *hdev = entry->hdev;
-+	u32 value;
-+	ssize_t rc;
-+
-+	rc = kstrtouint_from_user(buf, count, 10, &value);
-+	if (rc)
-+		return rc;
-+
-+	if (value == 1) {
-+		pci_set_power_state(hdev->pdev, PCI_D0);
-+		pci_restore_state(hdev->pdev);
-+		rc = pci_enable_device(hdev->pdev);
-+	} else if (value == 2) {
-+		pci_save_state(hdev->pdev);
-+		pci_disable_device(hdev->pdev);
-+		pci_set_power_state(hdev->pdev, PCI_D3hot);
-+	} else {
-+		dev_dbg(hdev->dev, "invalid power state value %u\n", value);
-+		return -EINVAL;
-+	}
-+
-+	return count;
-+}
-+
-+static ssize_t hl_i2c_data_read(struct file *f, char __user *buf,
-+					size_t count, loff_t *ppos)
-+{
-+	struct hl_dbg_device_entry *entry = file_inode(f)->i_private;
-+	struct hl_device *hdev = entry->hdev;
-+	char tmp_buf[32];
-+	u32 val;
-+	ssize_t rc;
-+
-+	if (*ppos)
-+		return 0;
-+
-+	rc = hl_debugfs_i2c_read(hdev, entry->i2c_bus, entry->i2c_addr,
-+			entry->i2c_reg, &val);
-+	if (rc) {
-+		dev_err(hdev->dev,
-+			"Failed to read from I2C bus %d, addr %d, reg %d\n",
-+			entry->i2c_bus, entry->i2c_addr, entry->i2c_reg);
-+		return rc;
-+	}
-+
-+	sprintf(tmp_buf, "0x%02x\n", val);
-+	rc = simple_read_from_buffer(buf, strlen(tmp_buf) + 1, ppos, tmp_buf,
-+			strlen(tmp_buf) + 1);
-+
-+	return rc;
-+}
-+
-+static ssize_t hl_i2c_data_write(struct file *f, const char __user *buf,
-+					size_t count, loff_t *ppos)
-+{
-+	struct hl_dbg_device_entry *entry = file_inode(f)->i_private;
-+	struct hl_device *hdev = entry->hdev;
-+	u32 value;
-+	ssize_t rc;
-+
-+	rc = kstrtouint_from_user(buf, count, 16, &value);
-+	if (rc)
-+		return rc;
-+
-+	rc = hl_debugfs_i2c_write(hdev, entry->i2c_bus, entry->i2c_addr,
-+			entry->i2c_reg, value);
-+	if (rc) {
-+		dev_err(hdev->dev,
-+			"Failed to write 0x%02x to I2C bus %d, addr %d, reg %d\n",
-+			value, entry->i2c_bus, entry->i2c_addr, entry->i2c_reg);
-+		return rc;
-+	}
-+
-+	return count;
-+}
-+
-+static ssize_t hl_led0_write(struct file *f, const char __user *buf,
-+					size_t count, loff_t *ppos)
-+{
-+	struct hl_dbg_device_entry *entry = file_inode(f)->i_private;
-+	struct hl_device *hdev = entry->hdev;
-+	u32 value;
-+	ssize_t rc;
-+
-+	rc = kstrtouint_from_user(buf, count, 10, &value);
-+	if (rc)
-+		return rc;
-+
-+	value = value ? 1 : 0;
-+
-+	hl_debugfs_led_set(hdev, 0, value);
-+
-+	return count;
-+}
-+
-+static ssize_t hl_led1_write(struct file *f, const char __user *buf,
-+					size_t count, loff_t *ppos)
-+{
-+	struct hl_dbg_device_entry *entry = file_inode(f)->i_private;
-+	struct hl_device *hdev = entry->hdev;
-+	u32 value;
-+	ssize_t rc;
-+
-+	rc = kstrtouint_from_user(buf, count, 10, &value);
-+	if (rc)
-+		return rc;
-+
-+	value = value ? 1 : 0;
-+
-+	hl_debugfs_led_set(hdev, 1, value);
-+
-+	return count;
-+}
-+
-+static ssize_t hl_led2_write(struct file *f, const char __user *buf,
-+					size_t count, loff_t *ppos)
-+{
-+	struct hl_dbg_device_entry *entry = file_inode(f)->i_private;
-+	struct hl_device *hdev = entry->hdev;
-+	u32 value;
-+	ssize_t rc;
-+
-+	rc = kstrtouint_from_user(buf, count, 10, &value);
-+	if (rc)
-+		return rc;
-+
-+	value = value ? 1 : 0;
-+
-+	hl_debugfs_led_set(hdev, 2, value);
-+
-+	return count;
-+}
-+
-+static ssize_t hl_device_read(struct file *f, char __user *buf,
-+					size_t count, loff_t *ppos)
-+{
-+	char tmp_buf[200];
-+	ssize_t rc;
-+
-+	if (*ppos)
-+		return 0;
-+
-+	sprintf(tmp_buf,
-+		"Valid values are: disable, enable, suspend, resume\n");
-+	rc = simple_read_from_buffer(buf, strlen(tmp_buf) + 1, ppos, tmp_buf,
-+			strlen(tmp_buf) + 1);
-+
-+	return rc;
-+}
-+
-+static ssize_t hl_device_write(struct file *f, const char __user *buf,
-+				     size_t count, loff_t *ppos)
-+{
-+	struct hl_dbg_device_entry *entry = file_inode(f)->i_private;
-+	struct hl_device *hdev = entry->hdev;
-+
-+	if (strncmp("disable", buf, strlen("disable")) == 0) {
-+		hdev->disabled = true;
-+	} else if (strncmp("enable", buf, strlen("enable")) == 0) {
-+		hdev->disabled = false;
-+	} else if (strncmp("suspend", buf, strlen("suspend")) == 0) {
-+		hdev->asic_funcs->suspend(hdev);
-+	} else if (strncmp("resume", buf, strlen("resume")) == 0) {
-+		hdev->asic_funcs->resume(hdev);
-+	} else {
-+		dev_err(hdev->dev,
-+			"Valid values are: disable, enable, suspend, resume\n");
-+		count = -EINVAL;
-+	}
-+
-+	return count;
-+}
-+
-+static const struct file_operations hl_data32b_fops = {
-+	.owner = THIS_MODULE,
-+	.read = hl_data_read32,
-+	.write = hl_data_write32
-+};
-+
-+static const struct file_operations hl_i2c_data_fops = {
-+	.owner = THIS_MODULE,
-+	.read = hl_i2c_data_read,
-+	.write = hl_i2c_data_write
-+};
-+
-+static const struct file_operations hl_power_fops = {
-+	.owner = THIS_MODULE,
-+	.read = hl_get_power_state,
-+	.write = hl_set_power_state
-+};
-+
-+static const struct file_operations hl_led0_fops = {
-+	.owner = THIS_MODULE,
-+	.write = hl_led0_write
-+};
-+
-+static const struct file_operations hl_led1_fops = {
-+	.owner = THIS_MODULE,
-+	.write = hl_led1_write
-+};
-+
-+static const struct file_operations hl_led2_fops = {
-+	.owner = THIS_MODULE,
-+	.write = hl_led2_write
-+};
-+
-+static const struct file_operations hl_device_fops = {
-+	.owner = THIS_MODULE,
-+	.read = hl_device_read,
-+	.write = hl_device_write
-+};
-+
-+static const struct hl_info_list hl_debugfs_list[] = {
-+	{"command_buffers", command_buffers_show, NULL},
-+	{"command_submission", command_submission_show, NULL},
-+	{"command_submission_jobs", command_submission_jobs_show, NULL},
-+	{"userptr", userptr_show, NULL},
-+	{"vm", vm_show, NULL},
-+	{"mmu", mmu_show, mmu_write},
-+};
-+
-+static int hl_debugfs_open(struct inode *inode, struct file *file)
-+{
-+	struct hl_debugfs_entry *node = inode->i_private;
-+
-+	return single_open(file, node->info_ent->show, node);
-+}
-+
-+static ssize_t hl_debugfs_write(struct file *file, const char __user *buf,
-+		size_t count, loff_t *f_pos)
-+{
-+	struct hl_debugfs_entry *node = file->f_inode->i_private;
-+
-+	if (node->info_ent->write)
-+		return node->info_ent->write(file, buf, count, f_pos);
-+	else
-+		return -EINVAL;
-+
-+}
-+
-+static const struct file_operations hl_debugfs_fops = {
-+	.owner = THIS_MODULE,
-+	.open = hl_debugfs_open,
-+	.read = seq_read,
-+	.write = hl_debugfs_write,
-+	.llseek = seq_lseek,
-+	.release = single_release,
-+};
-+
-+void hl_debugfs_add_device(struct hl_device *hdev)
-+{
-+	struct hl_dbg_device_entry *dev_entry = &hdev->hl_debugfs;
-+	int count = ARRAY_SIZE(hl_debugfs_list);
-+	struct hl_debugfs_entry *entry;
-+	struct dentry *ent;
-+	int i;
-+
-+	dev_entry->hdev = hdev;
-+	dev_entry->entry_arr = kmalloc_array(count,
-+					sizeof(struct hl_debugfs_entry),
-+					GFP_KERNEL);
-+	if (!dev_entry->entry_arr)
-+		return;
-+
-+	INIT_LIST_HEAD(&dev_entry->file_list);
-+	INIT_LIST_HEAD(&dev_entry->cb_list);
-+	INIT_LIST_HEAD(&dev_entry->cs_list);
-+	INIT_LIST_HEAD(&dev_entry->cs_job_list);
-+	INIT_LIST_HEAD(&dev_entry->userptr_list);
-+	INIT_LIST_HEAD(&dev_entry->ctx_mem_hash_list);
-+	mutex_init(&dev_entry->file_mutex);
-+	spin_lock_init(&dev_entry->cb_spinlock);
-+	spin_lock_init(&dev_entry->cs_spinlock);
-+	spin_lock_init(&dev_entry->cs_job_spinlock);
-+	spin_lock_init(&dev_entry->userptr_spinlock);
-+	spin_lock_init(&dev_entry->ctx_mem_hash_spinlock);
-+
-+	dev_entry->root = debugfs_create_dir(dev_name(hdev->dev),
-+						hl_debug_root);
-+
-+	debugfs_create_x64("addr",
-+				0644,
-+				dev_entry->root,
-+				&dev_entry->addr);
-+
-+	debugfs_create_file("data32",
-+				0644,
-+				dev_entry->root,
-+				dev_entry,
-+				&hl_data32b_fops);
-+
-+	debugfs_create_file("set_power_state",
-+				0200,
-+				dev_entry->root,
-+				dev_entry,
-+				&hl_power_fops);
-+
-+	debugfs_create_u8("i2c_bus",
-+				0644,
-+				dev_entry->root,
-+				&dev_entry->i2c_bus);
-+
-+	debugfs_create_u8("i2c_addr",
-+				0644,
-+				dev_entry->root,
-+				&dev_entry->i2c_addr);
-+
-+	debugfs_create_u8("i2c_reg",
-+				0644,
-+				dev_entry->root,
-+				&dev_entry->i2c_reg);
-+
-+	debugfs_create_file("i2c_data",
-+				0644,
-+				dev_entry->root,
-+				dev_entry,
-+				&hl_i2c_data_fops);
-+
-+	debugfs_create_file("led0",
-+				0200,
-+				dev_entry->root,
-+				dev_entry,
-+				&hl_led0_fops);
-+
-+	debugfs_create_file("led1",
-+				0200,
-+				dev_entry->root,
-+				dev_entry,
-+				&hl_led1_fops);
-+
-+	debugfs_create_file("led2",
-+				0200,
-+				dev_entry->root,
-+				dev_entry,
-+				&hl_led2_fops);
-+
-+	debugfs_create_file("device",
-+				0200,
-+				dev_entry->root,
-+				dev_entry,
-+				&hl_device_fops);
-+
-+	for (i = 0, entry = dev_entry->entry_arr ; i < count ; i++, entry++) {
-+
-+		ent = debugfs_create_file(hl_debugfs_list[i].name,
-+					0444,
-+					dev_entry->root,
-+					entry,
-+					&hl_debugfs_fops);
-+		entry->dent = ent;
-+		entry->info_ent = &hl_debugfs_list[i];
-+		entry->dev_entry = dev_entry;
-+	}
-+}
-+
-+void hl_debugfs_remove_device(struct hl_device *hdev)
-+{
-+	struct hl_dbg_device_entry *entry = &hdev->hl_debugfs;
-+
-+	debugfs_remove_recursive(entry->root);
-+
-+	mutex_destroy(&entry->file_mutex);
-+	kfree(entry->entry_arr);
-+}
-+
-+void hl_debugfs_add_file(struct hl_fpriv *hpriv)
-+{
-+	struct hl_dbg_device_entry *dev_entry = &hpriv->hdev->hl_debugfs;
-+
-+	mutex_lock(&dev_entry->file_mutex);
-+	list_add(&hpriv->debugfs_list, &dev_entry->file_list);
-+	mutex_unlock(&dev_entry->file_mutex);
-+}
-+
-+void hl_debugfs_remove_file(struct hl_fpriv *hpriv)
-+{
-+	struct hl_dbg_device_entry *dev_entry = &hpriv->hdev->hl_debugfs;
-+
-+	mutex_lock(&dev_entry->file_mutex);
-+	list_del(&hpriv->debugfs_list);
-+	mutex_unlock(&dev_entry->file_mutex);
-+}
-+
-+void hl_debugfs_add_cb(struct hl_cb *cb)
-+{
-+	struct hl_dbg_device_entry *dev_entry = &cb->hdev->hl_debugfs;
-+
-+	spin_lock(&dev_entry->cb_spinlock);
-+	list_add(&cb->debugfs_list, &dev_entry->cb_list);
-+	spin_unlock(&dev_entry->cb_spinlock);
-+}
-+
-+void hl_debugfs_remove_cb(struct hl_cb *cb)
-+{
-+	struct hl_dbg_device_entry *dev_entry = &cb->hdev->hl_debugfs;
-+
-+	spin_lock(&dev_entry->cb_spinlock);
-+	list_del(&cb->debugfs_list);
-+	spin_unlock(&dev_entry->cb_spinlock);
-+}
-+
-+void hl_debugfs_add_cs(struct hl_cs *cs)
-+{
-+	struct hl_dbg_device_entry *dev_entry = &cs->ctx->hdev->hl_debugfs;
-+
-+	spin_lock(&dev_entry->cs_spinlock);
-+	list_add(&cs->debugfs_list, &dev_entry->cs_list);
-+	spin_unlock(&dev_entry->cs_spinlock);
-+}
-+
-+void hl_debugfs_remove_cs(struct hl_cs *cs)
-+{
-+	struct hl_dbg_device_entry *dev_entry = &cs->ctx->hdev->hl_debugfs;
-+
-+	spin_lock(&dev_entry->cs_spinlock);
-+	list_del(&cs->debugfs_list);
-+	spin_unlock(&dev_entry->cs_spinlock);
-+}
-+
-+void hl_debugfs_add_job(struct hl_device *hdev, struct hl_cs_job *job)
-+{
-+	struct hl_dbg_device_entry *dev_entry = &hdev->hl_debugfs;
-+
-+	spin_lock(&dev_entry->cs_job_spinlock);
-+	list_add(&job->debugfs_list, &dev_entry->cs_job_list);
-+	spin_unlock(&dev_entry->cs_job_spinlock);
-+}
-+
-+void hl_debugfs_remove_job(struct hl_device *hdev, struct hl_cs_job *job)
-+{
-+	struct hl_dbg_device_entry *dev_entry = &hdev->hl_debugfs;
-+
-+	spin_lock(&dev_entry->cs_job_spinlock);
-+	list_del(&job->debugfs_list);
-+	spin_unlock(&dev_entry->cs_job_spinlock);
-+}
-+
-+void hl_debugfs_add_userptr(struct hl_device *hdev, struct hl_userptr *userptr)
-+{
-+	struct hl_dbg_device_entry *dev_entry = &hdev->hl_debugfs;
-+
-+	spin_lock(&dev_entry->userptr_spinlock);
-+	list_add(&userptr->debugfs_list, &dev_entry->userptr_list);
-+	spin_unlock(&dev_entry->userptr_spinlock);
-+}
-+
-+void hl_debugfs_remove_userptr(struct hl_device *hdev,
-+				struct hl_userptr *userptr)
-+{
-+	struct hl_dbg_device_entry *dev_entry = &hdev->hl_debugfs;
-+
-+	spin_lock(&dev_entry->userptr_spinlock);
-+	list_del(&userptr->debugfs_list);
-+	spin_unlock(&dev_entry->userptr_spinlock);
-+}
-+
-+void hl_debugfs_add_ctx_mem_hash(struct hl_device *hdev, struct hl_ctx *ctx)
-+{
-+	struct hl_dbg_device_entry *dev_entry = &hdev->hl_debugfs;
-+
-+	spin_lock(&dev_entry->ctx_mem_hash_spinlock);
-+	list_add(&ctx->debugfs_list, &dev_entry->ctx_mem_hash_list);
-+	spin_unlock(&dev_entry->ctx_mem_hash_spinlock);
-+}
-+
-+void hl_debugfs_remove_ctx_mem_hash(struct hl_device *hdev, struct hl_ctx *ctx)
-+{
-+	struct hl_dbg_device_entry *dev_entry = &hdev->hl_debugfs;
-+
-+	spin_lock(&dev_entry->ctx_mem_hash_spinlock);
-+	list_del(&ctx->debugfs_list);
-+	spin_unlock(&dev_entry->ctx_mem_hash_spinlock);
-+}
-+
-+int __init hl_debugfs_init(void)
-+{
-+	hl_debug_root = debugfs_create_dir("habanalabs", NULL);
-+	if (IS_ERR_OR_NULL(hl_debug_root)) {
-+		pr_err("habanalabs: can not create debugfs directory\n");
-+		hl_debug_root = NULL;
-+		return -ENOMEM;
-+	}
-+
-+	return 0;
-+}
-+
-+void hl_debugfs_fini(void)
-+{
-+	debugfs_remove_recursive(hl_debug_root);
-+}
-diff --git a/drivers/misc/habanalabs/device.c b/drivers/misc/habanalabs/device.c
-index 1f7340551386..ba69307de0a1 100644
---- a/drivers/misc/habanalabs/device.c
-+++ b/drivers/misc/habanalabs/device.c
-@@ -22,6 +22,8 @@ static void hpriv_release(struct kref *ref)
- 
- 	put_pid(hpriv->taskpid);
- 
-+	hl_debugfs_remove_file(hpriv);
-+
- 	mutex_destroy(&hpriv->restore_phase_mutex);
- 
- 	kfree(hpriv);
-@@ -807,6 +809,8 @@ int hl_device_init(struct hl_device *hdev, struct class *hclass)
- 		goto free_cb_pool;
- 	}
- 
-+	hl_debugfs_add_device(hdev);
-+
- 	rc = hdev->asic_funcs->hw_init(hdev);
- 	if (rc) {
- 		dev_err(hdev->dev, "failed to initialize the H/W\n");
-@@ -936,6 +940,8 @@ void hl_device_fini(struct hl_device *hdev)
- 
- 	device_late_fini(hdev);
- 
-+	hl_debugfs_remove_device(hdev);
-+
- 	hl_sysfs_fini(hdev);
- 
- 	/*
-diff --git a/drivers/misc/habanalabs/goya/goya.c b/drivers/misc/habanalabs/goya/goya.c
-index c21c6046f09b..d9782cdc6091 100644
---- a/drivers/misc/habanalabs/goya/goya.c
-+++ b/drivers/misc/habanalabs/goya/goya.c
-@@ -5312,6 +5312,8 @@ int goya_context_switch(struct hl_device *hdev, u32 asid)
- 	job->user_cb_size = cb_size;
- 	job->hw_queue_id = GOYA_QUEUE_ID_DMA_0;
- 
-+	hl_debugfs_add_job(hdev, job);
-+
- 	parser.ctx_id = HL_KERNEL_ASID_ID;
- 	parser.cs_sequence = 0;
- 	parser.job_id = job->id;
-@@ -5344,6 +5346,7 @@ int goya_context_switch(struct hl_device *hdev, u32 asid)
- 
- free_job:
- 	hl_userptr_delete_list(hdev, &job->userptr_list);
-+	hl_debugfs_remove_job(hdev, job);
- 	kfree(job);
- 	cb->cs_cnt--;
- 
-@@ -5374,6 +5377,106 @@ void goya_restore_phase_topology(struct hl_device *hdev)
- 	i = RREG32(mmSYNC_MNGR_SOB_OBJ_0);
- }
- 
 +/**
-+ * goya_debugfs_read32 - read a 32bit value from a given device address
++ * hl_mmu_swap_out - marks all mapping of the given ctx as swapped out
 + *
-+ * @hdev:	pointer to hl_device structure
-+ * @addr:	address in device
-+ * @val:	returned value
-+ *
-+ * In case of DDR address that is not mapped into the default aperture that
-+ * the DDR bar exposes, the function will configure the iATU so that the DDR
-+ * bar will be positioned at a base address that allows reading from the
-+ * required address. Configuring the iATU during normal operation can
-+ * lead to undefined behavior and therefore, should be done with extreme care
++ * @ctx: pointer to the context structure
 + *
 + */
-+int goya_debugfs_read32(struct hl_device *hdev, u64 addr, u32 *val)
++void hl_mmu_swap_out(struct hl_ctx *ctx)
 +{
-+	struct asic_fixed_properties *prop = &hdev->asic_prop;
-+	int rc = 0;
 +
-+	if ((addr >= CFG_BASE) && (addr < CFG_BASE + CFG_SIZE)) {
-+		*val = RREG32(addr - CFG_BASE);
-+
-+	} else if ((addr >= SRAM_BASE_ADDR) &&
-+			(addr < SRAM_BASE_ADDR + SRAM_SIZE)) {
-+
-+		*val = readl(hdev->pcie_bar[SRAM_CFG_BAR_ID] +
-+				(addr - SRAM_BASE_ADDR));
-+
-+	} else if ((addr >= DRAM_PHYS_BASE) &&
-+			(addr < DRAM_PHYS_BASE + hdev->asic_prop.dram_size)) {
-+
-+		u64 bar_base_addr = DRAM_PHYS_BASE +
-+				(addr & ~(prop->dram_pci_bar_size - 0x1ull));
-+
-+		rc = goya_set_ddr_bar_base(hdev, bar_base_addr);
-+		if (!rc) {
-+			*val = readl(hdev->pcie_bar[DDR_BAR_ID] +
-+						(addr - bar_base_addr));
-+
-+			rc = goya_set_ddr_bar_base(hdev, DRAM_PHYS_BASE +
-+				(MMU_PAGE_TABLES_ADDR &
-+					~(prop->dram_pci_bar_size - 0x1ull)));
-+		}
-+	} else {
-+		rc = -EFAULT;
-+	}
-+
-+	return rc;
 +}
 +
 +/**
-+ * goya_debugfs_write32 - write a 32bit value to a given device address
++ * hl_mmu_swap_in - marks all mapping of the given ctx as swapped in
 + *
-+ * @hdev:	pointer to hl_device structure
-+ * @addr:	address in device
-+ * @val:	returned value
-+ *
-+ * In case of DDR address that is not mapped into the default aperture that
-+ * the DDR bar exposes, the function will configure the iATU so that the DDR
-+ * bar will be positioned at a base address that allows writing to the
-+ * required address. Configuring the iATU during normal operation can
-+ * lead to undefined behavior and therefore, should be done with extreme care
++ * @ctx: pointer to the context structure
 + *
 + */
-+int goya_debugfs_write32(struct hl_device *hdev, u64 addr, u32 val)
++void hl_mmu_swap_in(struct hl_ctx *ctx)
 +{
-+	struct asic_fixed_properties *prop = &hdev->asic_prop;
-+	int rc = 0;
 +
-+	if ((addr >= CFG_BASE) && (addr < CFG_BASE + CFG_SIZE)) {
-+		WREG32(addr - CFG_BASE, val);
-+
-+	} else if ((addr >= SRAM_BASE_ADDR) &&
-+			(addr < SRAM_BASE_ADDR + SRAM_SIZE)) {
-+
-+		writel(val, hdev->pcie_bar[SRAM_CFG_BAR_ID] +
-+					(addr - SRAM_BASE_ADDR));
-+
-+	} else if ((addr >= DRAM_PHYS_BASE) &&
-+			(addr < DRAM_PHYS_BASE + hdev->asic_prop.dram_size)) {
-+
-+		u64 bar_base_addr = DRAM_PHYS_BASE +
-+				(addr & ~(prop->dram_pci_bar_size - 0x1ull));
-+
-+		rc = goya_set_ddr_bar_base(hdev, bar_base_addr);
-+		if (!rc) {
-+			writel(val, hdev->pcie_bar[DDR_BAR_ID] +
-+						(addr - bar_base_addr));
-+
-+			rc = goya_set_ddr_bar_base(hdev, DRAM_PHYS_BASE +
-+				(MMU_PAGE_TABLES_ADDR &
-+					~(prop->dram_pci_bar_size - 0x1ull)));
-+		}
-+	} else {
-+		rc = -EFAULT;
-+	}
-+
-+	return rc;
 +}
-+
- static u64 goya_read_pte(struct hl_device *hdev, u64 addr)
- {
- 	struct goya_device *goya = hdev->asic_specific;
-@@ -5780,6 +5883,8 @@ static int goya_mmu_clear_pgt_range(struct hl_device *hdev)
- 	job->user_cb_size = cb_size;
- 	job->hw_queue_id = GOYA_QUEUE_ID_DMA_0;
- 
-+	hl_debugfs_add_job(hdev, job);
-+
- 	parser.ctx_id = HL_KERNEL_ASID_ID;
- 	parser.cs_sequence = 0;
- 	parser.job_id = job->id;
-@@ -5808,6 +5913,7 @@ static int goya_mmu_clear_pgt_range(struct hl_device *hdev)
- 
- free_job:
- 	hl_userptr_delete_list(hdev, &job->userptr_list);
-+	hl_debugfs_remove_job(hdev, job);
- 	kfree(job);
- 	cb->cs_cnt--;
- 
-@@ -6206,6 +6312,8 @@ static const struct hl_asic_funcs goya_funcs = {
- 	.update_eq_ci = goya_update_eq_ci,
- 	.context_switch = goya_context_switch,
- 	.restore_phase_topology = goya_restore_phase_topology,
-+	.debugfs_read32 = goya_debugfs_read32,
-+	.debugfs_write32 = goya_debugfs_write32,
- 	.add_device_attr = goya_add_device_attr,
- 	.remove_device_attr = goya_remove_device_attr,
- 	.handle_eqe = goya_handle_eqe,
-diff --git a/drivers/misc/habanalabs/goya/goyaP.h b/drivers/misc/habanalabs/goya/goyaP.h
-index 42e8b1baef2f..4e98d0da75c9 100644
---- a/drivers/misc/habanalabs/goya/goyaP.h
-+++ b/drivers/misc/habanalabs/goya/goyaP.h
-@@ -136,6 +136,10 @@ struct goya_device {
- 	u32		hw_cap_initialized;
+diff --git a/include/uapi/misc/habanalabs.h b/include/uapi/misc/habanalabs.h
+index 369438dbc9c3..e5bfd7586b79 100644
+--- a/include/uapi/misc/habanalabs.h
++++ b/include/uapi/misc/habanalabs.h
+@@ -129,6 +129,108 @@ union hl_wait_cs_args {
+ 	struct hl_wait_cs_out out;
  };
  
-+int goya_debugfs_i2c_read(struct hl_device *hdev, u8 i2c_bus,
-+			u8 i2c_addr, u8 i2c_reg, u32 *val);
-+int goya_debugfs_i2c_write(struct hl_device *hdev, u8 i2c_bus,
-+			u8 i2c_addr, u8 i2c_reg, u32 val);
- int goya_test_cpu_queue(struct hl_device *hdev);
- int goya_send_cpu_message(struct hl_device *hdev, u32 *msg, u16 len,
- 				u32 timeout, long *result);
-@@ -146,6 +150,7 @@ long goya_get_fan_speed(struct hl_device *hdev, int sensor_index, u32 attr);
- long goya_get_pwm_info(struct hl_device *hdev, int sensor_index, u32 attr);
- void goya_set_pwm_info(struct hl_device *hdev, int sensor_index, u32 attr,
- 			long value);
-+void goya_debugfs_led_set(struct hl_device *hdev, u8 led, u8 state);
- void goya_set_pll_profile(struct hl_device *hdev, enum hl_pll_frequency freq);
- int goya_add_device_attr(struct hl_device *hdev);
- void goya_remove_device_attr(struct hl_device *hdev);
-diff --git a/drivers/misc/habanalabs/habanalabs.h b/drivers/misc/habanalabs/habanalabs.h
-index 6c0fe76936be..3f8a42a5af82 100644
---- a/drivers/misc/habanalabs/habanalabs.h
-+++ b/drivers/misc/habanalabs/habanalabs.h
-@@ -226,6 +226,7 @@ struct hl_cb_mgr {
-  * @refcount: reference counter for usage of the CB.
-  * @hdev: pointer to device this CB belongs to.
-  * @lock: spinlock to protect mmap/cs flows.
-+ * @debugfs_list: node in debugfs list of command buffers.
-  * @pool_list: node in pool list of command buffers.
-  * @kernel_address: Holds the CB's kernel virtual address.
-  * @bus_address: Holds the CB's DMA address.
-@@ -242,6 +243,7 @@ struct hl_cb {
- 	struct kref		refcount;
- 	struct hl_device	*hdev;
- 	spinlock_t		lock;
-+	struct list_head	debugfs_list;
- 	struct list_head	pool_list;
- 	u64			kernel_address;
- 	dma_addr_t		bus_address;
-@@ -444,6 +446,8 @@ enum hl_pll_frequency {
-  * @update_eq_ci: update event queue CI.
-  * @context_switch: called upon ASID context switch.
-  * @restore_phase_topology: clear all SOBs amd MONs.
-+ * @debugfs_read32: debug interface for reading u32 from DRAM/SRAM.
-+ * @debugfs_write32: debug interface for writing u32 to DRAM/SRAM.
-  * @add_device_attr: add ASIC specific device attributes.
-  * @remove_device_attr: remove ASIC specific device attributes.
-  * @handle_eqe: handle event queue entry (IRQ) from ArmCP.
-@@ -512,6 +516,8 @@ struct hl_asic_funcs {
- 	void (*update_eq_ci)(struct hl_device *hdev, u32 val);
- 	int (*context_switch)(struct hl_device *hdev, u32 asid);
- 	void (*restore_phase_topology)(struct hl_device *hdev);
-+	int (*debugfs_read32)(struct hl_device *hdev, u64 addr, u32 *val);
-+	int (*debugfs_write32)(struct hl_device *hdev, u64 addr, u32 val);
- 	int (*add_device_attr)(struct hl_device *hdev);
- 	void (*remove_device_attr)(struct hl_device *hdev);
- 	void (*handle_eqe)(struct hl_device *hdev,
-@@ -577,6 +583,7 @@ struct hl_va_range {
-  * @mem_hash_lock: protects the mem_hash.
-  * @mmu_lock: protects the MMU page tables. Any change to the PGT, modifing the
-  *            MMU hash or walking the PGT requires talking this lock
-+ * @debugfs_list: node in debugfs list of contexts.
-  * @cs_sequence: sequence number for CS. Value is assigned to a CS and passed
-  *			to user so user could inquire about CS. It is used as
-  *			index to cs_pending array.
-@@ -601,6 +608,7 @@ struct hl_ctx {
- 	struct hl_va_range	dram_va_range;
- 	struct mutex		mem_hash_lock;
- 	struct mutex		mmu_lock;
-+	struct list_head	debugfs_list;
- 	u64			cs_sequence;
- 	spinlock_t		cs_lock;
- 	atomic64_t		dram_phys_mem;
-@@ -662,6 +670,7 @@ struct hl_userptr {
-  * @fence: pointer to the fence object of this CS.
-  * @work_tdr: delayed work node for TDR.
-  * @mirror_node : node in device mirror list of command submissions.
-+ * @debugfs_list: node in debugfs list of command submissions.
-  * @sequence: the sequence number of this CS.
-  * @submitted: true if CS was submitted to H/W.
-  * @completed: true if CS was completed by device.
-@@ -679,6 +688,7 @@ struct hl_cs {
- 	struct dma_fence	*fence;
- 	struct delayed_work	work_tdr;
- 	struct list_head	mirror_node;
-+	struct list_head	debugfs_list;
- 	u64			sequence;
- 	u8			submitted;
- 	u8			completed;
-@@ -697,6 +707,7 @@ struct hl_cs {
-  * @finish_work: workqueue object to run when job is completed.
-  * @userptr_list: linked-list of userptr mappings that belong to this job and
-  *			wait for completion.
-+ * @debugfs_list: node in debugfs list of command submission jobs.
-  * @id: the id of this job inside a CS.
-  * @hw_queue_id: the id of the H/W queue this job is submitted to.
-  * @user_cb_size: the actual size of the CB we got from the user.
-@@ -710,6 +721,7 @@ struct hl_cs_job {
- 	struct hl_cb		*patched_cb;
- 	struct work_struct	finish_work;
- 	struct list_head	userptr_list;
-+	struct list_head	debugfs_list;
- 	u32			id;
- 	u32			hw_queue_id;
- 	u32			user_cb_size;
-@@ -854,6 +866,7 @@ struct hl_vm {
-  * @ctx: current executing context.
-  * @ctx_mgr: context manager to handle multiple context for this FD.
-  * @cb_mgr: command buffer manager to handle multiple buffers for this FD.
-+ * @debugfs_list: list of relevant ASIC debugfs.
-  * @refcount: number of related contexts.
-  * @restore_phase_mutex: lock for context switch and restore phase.
-  */
-@@ -864,6 +877,7 @@ struct hl_fpriv {
- 	struct hl_ctx		*ctx; /* TODO: remove for multiple ctx */
- 	struct hl_ctx_mgr	ctx_mgr;
- 	struct hl_cb_mgr	cb_mgr;
-+	struct list_head	debugfs_list;
- 	struct kref		refcount;
- 	struct mutex		restore_phase_mutex;
- };
-@@ -871,6 +885,85 @@ struct hl_fpriv {
- 
- 
- 
++/* Opcode to alloc device memory */
++#define HL_MEM_OP_ALLOC			0
++/* Opcode to free previously allocated device memory */
++#define HL_MEM_OP_FREE			1
++/* Opcode to map host memory */
++#define HL_MEM_OP_MAP			2
++/* Opcode to unmap previously mapped host memory */
++#define HL_MEM_OP_UNMAP			3
 +
-+/*
-+ * DebugFS
-+ */
++/* Memory flags */
++#define HL_MEM_CONTIGUOUS	0x1
++#define HL_MEM_SHARED		0x2
++#define HL_MEM_USERPTR		0x4
 +
-+/**
-+ * struct hl_info_list - debugfs file ops.
-+ * @name: file name.
-+ * @show: function to output information.
-+ * @write: function to write to the file.
-+ */
-+struct hl_info_list {
-+	const char	*name;
-+	int		(*show)(struct seq_file *s, void *data);
-+	ssize_t		(*write)(struct file *file, const char __user *buf,
-+				size_t count, loff_t *f_pos);
++struct hl_mem_in {
++	union {
++		/* HL_MEM_OP_ALLOC- allocate device memory */
++		struct {
++			/* Size to alloc */
++			__u32 mem_size;
++			__u32 pad;
++		} alloc;
++
++		/* HL_MEM_OP_FREE - free device memory */
++		struct {
++			/* Handle returned from HL_MEM_OP_ALLOC */
++			__u64 handle;
++		} free;
++
++		/* HL_MEM_OP_MAP - map device memory */
++		struct {
++			/*
++			 * Requested virtual address of mapped memory.
++			 * KMD will try to map the requested region to this
++			 * hint address, as long as the address is valid and
++			 * not already mapped. The user should check the
++			 * returned address of the IOCTL to make sure he got
++			 * the hint address. Passing 0 here means that KMD
++			 * will choose the address itself.
++			 */
++			__u64 hint_addr;
++			/* Handle returned from HL_MEM_OP_ALLOC */
++			__u64 handle;
++		} map_device;
++
++		/* HL_MEM_OP_MAP - map host memory */
++		struct {
++			/* Address of allocated host memory */
++			__u64 host_virt_addr;
++			/*
++			 * Requested virtual address of mapped memory.
++			 * KMD will try to map the requested region to this
++			 * hint address, as long as the address is valid and
++			 * not already mapped. The user should check the
++			 * returned address of the IOCTL to make sure he got
++			 * the hint address. Passing 0 here means that KMD
++			 * will choose the address itself.
++			 */
++			__u64 hint_addr;
++			/* Size of allocated host memory */
++			__u32 mem_size;
++			__u32 pad;
++		} map_host;
++
++		/* HL_MEM_OP_UNMAP - unmap host memory */
++		struct {
++			/* Virtual address returned from HL_MEM_OP_MAP */
++			__u64 device_virt_addr;
++		} unmap;
++	};
++
++	/* HL_MEM_OP_* */
++	__u32 op;
++	/* HL_MEM_* flags */
++	__u32 flags;
++	/* Context ID - Currently not in use */
++	__u32 ctx_id;
++	__u32 pad;
 +};
 +
-+/**
-+ * struct hl_debugfs_entry - debugfs dentry wrapper.
-+ * @dent: base debugfs entry structure.
-+ * @info_ent: dentry realted ops.
-+ * @dev_entry: ASIC specific debugfs manager.
-+ */
-+struct hl_debugfs_entry {
-+	struct dentry			*dent;
-+	const struct hl_info_list	*info_ent;
-+	struct hl_dbg_device_entry	*dev_entry;
++struct hl_mem_out {
++	union {
++		/*
++		 * Used for HL_MEM_OP_MAP as the virtual address that was
++		 * assigned in the device VA space.
++		 * A value of 0 means the requested operation failed.
++		 */
++		__u64 device_virt_addr;
++
++		/*
++		 * Used for HL_MEM_OP_ALLOC. This is the assigned
++		 * handle for the allocated memory
++		 */
++		__u64 handle;
++	};
 +};
 +
-+/**
-+ * struct hl_dbg_device_entry - ASIC specific debugfs manager.
-+ * @root: root dentry.
-+ * @hdev: habanalabs device structure.
-+ * @entry_arr: array of available hl_debugfs_entry.
-+ * @file_list: list of available debugfs files.
-+ * @file_mutex: protects file_list.
-+ * @cb_list: list of available CBs.
-+ * @cb_spinlock: protects cb_list.
-+ * @cs_list: list of available CSs.
-+ * @cs_spinlock: protects cs_list.
-+ * @cs_job_list: list of available CB jobs.
-+ * @cs_job_spinlock: protects cs_job_list.
-+ * @userptr_list: list of available userptrs (virtual memory chunk descriptor).
-+ * @userptr_spinlock: protects userptr_list.
-+ * @ctx_mem_hash_list: list of available contexts with MMU mappings.
-+ * @ctx_mem_hash_spinlock: protects cb_list.
-+ * @addr: next address to read/write from/to in read/write32.
-+ * @mmu_addr: next virtual address to translate to physical address in mmu_show.
-+ * @mmu_asid: ASID to use while translating in mmu_show.
-+ * @i2c_bus: generic u8 debugfs file for bus value to use in i2c_data_read.
-+ * @i2c_bus: generic u8 debugfs file for address value to use in i2c_data_read.
-+ * @i2c_bus: generic u8 debugfs file for register value to use in i2c_data_read.
-+ */
-+struct hl_dbg_device_entry {
-+	struct dentry			*root;
-+	struct hl_device		*hdev;
-+	struct hl_debugfs_entry		*entry_arr;
-+	struct list_head		file_list;
-+	struct mutex			file_mutex;
-+	struct list_head		cb_list;
-+	spinlock_t			cb_spinlock;
-+	struct list_head		cs_list;
-+	spinlock_t			cs_spinlock;
-+	struct list_head		cs_job_list;
-+	spinlock_t			cs_job_spinlock;
-+	struct list_head		userptr_list;
-+	spinlock_t			userptr_spinlock;
-+	struct list_head		ctx_mem_hash_list;
-+	spinlock_t			ctx_mem_hash_spinlock;
-+	u64				addr;
-+	u64				mmu_addr;
-+	u32				mmu_asid;
-+	u8				i2c_bus;
-+	u8				i2c_addr;
-+	u8				i2c_reg;
++union hl_mem_args {
++	struct hl_mem_in in;
++	struct hl_mem_out out;
 +};
-+
 +
  /*
-  * DEVICES
-  */
-@@ -959,6 +1052,7 @@ struct hl_device_reset_work {
-  * @hwmon_dev: H/W monitor device.
-  * @pm_mng_profile: current power management profile.
-  * @hl_chip_info: ASIC's sensors information.
-+ * @hl_debugfs: device's debugfs manager.
-  * @cb_pool: list of preallocated CBs.
-  * @cb_pool_lock: protects the CB pool.
-  * @user_ctx: current user context executing.
-@@ -1024,6 +1118,8 @@ struct hl_device {
- 	enum hl_pm_mng_profile		pm_mng_profile;
- 	struct hwmon_chip_info		hl_chip_info;
+  * Command Buffer
+  * - Request a Command Buffer
+@@ -212,7 +314,25 @@ union hl_wait_cs_args {
+ #define HL_IOCTL_WAIT_CS			\
+ 		_IOWR('H', 0x04, union hl_wait_cs_args)
  
-+	struct hl_dbg_device_entry	hl_debugfs;
++/*
++ * Memory
++ * - Map host memory to device MMU
++ * - Unmap host memory from device MMU
++ *
++ * This IOCTL allows the user to map host memory to the device MMU
++ *
++ * For host memory, the IOCTL doesn't allocate memory. The user is supposed
++ * to allocate the memory in user-space (malloc/new). The driver pins the
++ * physical pages (up to the allowed limit by the OS), assigns a virtual
++ * address in the device VA space and initializes the device MMU.
++ *
++ * There is an option for the user to specify the requested virtual address.
++ *
++ */
++#define HL_IOCTL_MEMORY		\
++		_IOWR('H', 0x05, union hl_mem_args)
 +
- 	struct list_head		cb_pool;
- 	spinlock_t			cb_pool_lock;
+ #define HL_COMMAND_START	0x02
+-#define HL_COMMAND_END		0x05
++#define HL_COMMAND_END		0x06
  
-@@ -1263,6 +1359,101 @@ void hl_set_pwm_info(struct hl_device *hdev, int sensor_index, u32 attr,
- u64 hl_get_max_power(struct hl_device *hdev);
- void hl_set_max_power(struct hl_device *hdev, u64 value);
- 
-+#ifdef CONFIG_DEBUG_FS
-+
-+int hl_debugfs_init(void);
-+void hl_debugfs_fini(void);
-+void hl_debugfs_add_device(struct hl_device *hdev);
-+void hl_debugfs_remove_device(struct hl_device *hdev);
-+void hl_debugfs_add_file(struct hl_fpriv *hpriv);
-+void hl_debugfs_remove_file(struct hl_fpriv *hpriv);
-+void hl_debugfs_add_cb(struct hl_cb *cb);
-+void hl_debugfs_remove_cb(struct hl_cb *cb);
-+void hl_debugfs_add_cs(struct hl_cs *cs);
-+void hl_debugfs_remove_cs(struct hl_cs *cs);
-+void hl_debugfs_add_job(struct hl_device *hdev, struct hl_cs_job *job);
-+void hl_debugfs_remove_job(struct hl_device *hdev, struct hl_cs_job *job);
-+void hl_debugfs_add_userptr(struct hl_device *hdev, struct hl_userptr *userptr);
-+void hl_debugfs_remove_userptr(struct hl_device *hdev,
-+				struct hl_userptr *userptr);
-+void hl_debugfs_add_ctx_mem_hash(struct hl_device *hdev, struct hl_ctx *ctx);
-+void hl_debugfs_remove_ctx_mem_hash(struct hl_device *hdev, struct hl_ctx *ctx);
-+
-+#else
-+
-+static inline int __init hl_debugfs_init(void)
-+{
-+	return 0;
-+}
-+
-+static inline void hl_debugfs_fini(void)
-+{
-+}
-+
-+static inline void hl_debugfs_add_device(struct hl_device *hdev)
-+{
-+}
-+
-+static inline void hl_debugfs_remove_device(struct hl_device *hdev)
-+{
-+}
-+
-+static inline void hl_debugfs_add_file(struct hl_fpriv *hpriv)
-+{
-+}
-+
-+static inline void hl_debugfs_remove_file(struct hl_fpriv *hpriv)
-+{
-+}
-+
-+static inline void hl_debugfs_add_cb(struct hl_cb *cb)
-+{
-+}
-+
-+static inline void hl_debugfs_remove_cb(struct hl_cb *cb)
-+{
-+}
-+
-+static inline void hl_debugfs_add_cs(struct hl_cs *cs)
-+{
-+}
-+
-+static inline void hl_debugfs_remove_cs(struct hl_cs *cs)
-+{
-+}
-+
-+static inline void hl_debugfs_add_job(struct hl_device *hdev,
-+					struct hl_cs_job *job)
-+{
-+}
-+
-+static inline void hl_debugfs_remove_job(struct hl_device *hdev,
-+					struct hl_cs_job *job)
-+{
-+}
-+
-+static inline void hl_debugfs_add_userptr(struct hl_device *hdev,
-+					struct hl_userptr *userptr)
-+{
-+}
-+
-+static inline void hl_debugfs_remove_userptr(struct hl_device *hdev,
-+					struct hl_userptr *userptr)
-+{
-+}
-+
-+static inline void hl_debugfs_add_ctx_mem_hash(struct hl_device *hdev,
-+					struct hl_ctx *ctx)
-+{
-+}
-+
-+static inline void hl_debugfs_remove_ctx_mem_hash(struct hl_device *hdev,
-+					struct hl_ctx *ctx)
-+{
-+}
-+
-+#endif
-+
- /* IOCTLs */
- long hl_ioctl(struct file *filep, unsigned int cmd, unsigned long arg);
- int hl_cb_ioctl(struct hl_fpriv *hpriv, void *data);
-diff --git a/drivers/misc/habanalabs/habanalabs_drv.c b/drivers/misc/habanalabs/habanalabs_drv.c
-index 4b7bf42a4d3e..c12a7807664e 100644
---- a/drivers/misc/habanalabs/habanalabs_drv.c
-+++ b/drivers/misc/habanalabs/habanalabs_drv.c
-@@ -153,6 +153,8 @@ int hl_device_open(struct inode *inode, struct file *filp)
- 	 */
- 	hl_device_set_frequency(hdev, PLL_HIGH);
- 
-+	hl_debugfs_add_file(hpriv);
-+
- 	return 0;
- 
- out_err:
-@@ -425,17 +427,20 @@ static int __init hl_init(void)
- 		goto remove_major;
- 	}
- 
-+	hl_debugfs_init();
-+
- 	rc = pci_register_driver(&hl_pci_driver);
- 	if (rc) {
- 		pr_err("habanalabs: failed to register pci device\n");
--		goto remove_class;
-+		goto remove_debugfs;
- 	}
- 
- 	pr_debug("habanalabs: driver loaded\n");
- 
- 	return 0;
- 
--remove_class:
-+remove_debugfs:
-+	hl_debugfs_fini();
- 	class_destroy(hl_class);
- remove_major:
- 	unregister_chrdev_region(MKDEV(hl_major, 0), HL_MAX_MINORS);
-@@ -450,6 +455,13 @@ static void __exit hl_exit(void)
- {
- 	pci_unregister_driver(&hl_pci_driver);
- 
-+	/*
-+	 * Removing debugfs must be after all devices or simulator devices
-+	 * have been removed because otherwise we get a bug in the
-+	 * debugfs module for referencing NULL objects
-+	 */
-+	hl_debugfs_fini();
-+
- 	class_destroy(hl_class);
- 	unregister_chrdev_region(MKDEV(hl_major, 0), HL_MAX_MINORS);
- 
-diff --git a/drivers/misc/habanalabs/memory.c b/drivers/misc/habanalabs/memory.c
-index c41ea19502e5..32698ec978b2 100644
---- a/drivers/misc/habanalabs/memory.c
-+++ b/drivers/misc/habanalabs/memory.c
-@@ -1284,6 +1284,8 @@ int hl_pin_host_memory(struct hl_device *hdev, u64 addr, u32 size,
- 		goto free_sgt;
- 	}
- 
-+	hl_debugfs_add_userptr(hdev, userptr);
-+
- 	return 0;
- 
- free_sgt:
-@@ -1309,6 +1311,8 @@ int hl_unpin_host_memory(struct hl_device *hdev, struct hl_userptr *userptr)
- {
- 	struct page **pages;
- 
-+	hl_debugfs_remove_userptr(hdev, userptr);
-+
- 	if (userptr->dma_mapped)
- 		hdev->asic_funcs->hl_dma_unmap_sg(hdev,
- 				userptr->sgt->sgl,
-@@ -1470,6 +1474,8 @@ int hl_vm_ctx_init_with_ranges(struct hl_ctx *ctx, u64 host_range_start,
- 		goto dram_vm_err;
- 	}
- 
-+	hl_debugfs_add_ctx_mem_hash(hdev, ctx);
-+
- 	return 0;
- 
- dram_vm_err:
-@@ -1590,6 +1596,8 @@ void hl_vm_ctx_fini(struct hl_ctx *ctx)
- 	struct hlist_node *tmp_node;
- 	int i;
- 
-+	hl_debugfs_remove_ctx_mem_hash(hdev, ctx);
-+
- 	if (!hash_empty(ctx->mem_hash))
- 		dev_notice(hdev->dev, "ctx is freed while it has va in use\n");
- 
+ #endif /* HABANALABS_H_ */
 -- 
 2.17.1
 
