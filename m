@@ -2,92 +2,180 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26E84C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 06:56:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CF84C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 06:56:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB58321726
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 06:56:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548226562;
-	bh=Tkc7rDSg0QL9HPWws+CpjjP/yX9Rh5dgxYMvX3gFKcM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=vCstGsUNDML+C5O9U0zvie1n2Umc8JXvyF6dbBDDZzlwkncGMJBe7aUuUDOImt9FD
-	 CI7SuyaDkOCk6qryE5h1vb4hGszc4NplsO9J/si9N29td+ZrzG/ugYJxlvCOuaju9t
-	 3o4NsynVTdafSA3A5eseArHEqQC1+jyu5qRlf/6k=
+	by mail.kernel.org (Postfix) with ESMTP id 0046F21726
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 06:56:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726719AbfAWGz7 (ORCPT
+        id S1726818AbfAWG4I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 01:55:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57636 "EHLO mail.kernel.org"
+        Wed, 23 Jan 2019 01:56:08 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:36160 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725995AbfAWGz7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 01:55:59 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726057AbfAWG4I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 01:56:08 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 25D4D21726;
-        Wed, 23 Jan 2019 06:55:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548226558;
-        bh=Tkc7rDSg0QL9HPWws+CpjjP/yX9Rh5dgxYMvX3gFKcM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BD9ZPS0GCmz2ebBY5F5QXoOaL6L0rB/hPQynCnJO88TeuQR7cvjAS3DiKqUlTfAOp
-         gMve2T0zfJ1gcE2nmDxO9lcVDGWqs5sh1hIgTnDQg0eDly0FiWNugG5m4GkJ+rQWpx
-         HxCERsV9y7I8IVkg54qYUGQVaEtIpGIkD1JjYX6s=
-Date:   Wed, 23 Jan 2019 07:55:56 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Gary R Hook <ghook@amd.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        David Miller <davem@davemloft.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "Hook, Gary" <Gary.Hook@amd.com>
-Subject: Re: [PATCH 6/7] crypto: ccp: no need to check return value of
- debugfs_create functions
-Message-ID: <20190123065556.GB27466@kroah.com>
-References: <20190122151422.14204-1-gregkh@linuxfoundation.org>
- <20190122151422.14204-7-gregkh@linuxfoundation.org>
- <1330d284-560a-5e09-6d15-50da354d0da2@amd.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id 03CAB107AB;
+        Wed, 23 Jan 2019 06:56:08 +0000 (UTC)
+Received: from [10.72.12.105] (ovpn-12-105.pek2.redhat.com [10.72.12.105])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7861F4519;
+        Wed, 23 Jan 2019 06:56:03 +0000 (UTC)
+Subject: Re: [virtio-dev] [PATCH] virtio: support VIRTIO_F_ORDER_PLATFORM
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Tiwei Bie <tiwei.bie@intel.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, virtio-dev@lists.oasis-open.org
+References: <20190122170346.6279-1-tiwei.bie@intel.com>
+ <ecf89b02-57ba-478f-1e28-4286888a4b26@redhat.com>
+ <20190122224203-mutt-send-email-mst@kernel.org>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <7f07c837-d3d0-b5c0-9ecb-29b545b377c3@redhat.com>
+Date:   Wed, 23 Jan 2019 14:56:00 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1330d284-560a-5e09-6d15-50da354d0da2@amd.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <20190122224203-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Wed, 23 Jan 2019 06:56:08 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 10:06:54PM +0000, Gary R Hook wrote:
-> On 1/22/19 9:14 AM, Greg Kroah-Hartman wrote:
-> > When calling debugfs functions, there is no need to ever check the
-> > return value.  The function can work or not, but the code logic should
-> > never do something different based on this.
-> 
-> Stupid question(s) time.
-> 
-> If we don't care about failures (because the subsystem handles them 
-> without our involvement) why do these functions even have return values? 
-> Why haven't they been changed to void so that they reflect the current 
-> style of intended use?
 
-Because on "normal" operations, you use the return value for something
-(i.e. a parent directory to pass to other functions, or a value so you
-can remove the file later).
+On 2019/1/23 上午11:49, Michael S. Tsirkin wrote:
+> On Wed, Jan 23, 2019 at 11:08:04AM +0800, Jason Wang wrote:
+>> On 2019/1/23 上午1:03, Tiwei Bie wrote:
+>>> This patch introduces the support for VIRTIO_F_ORDER_PLATFORM.
+>>> When this feature is negotiated, driver will use the barriers
+>>> suitable for hardware devices.
+>>>
+>>> Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+>>> ---
+>>>    drivers/virtio/virtio_ring.c       | 8 ++++++++
+>>>    include/uapi/linux/virtio_config.h | 6 ++++++
+>>>    2 files changed, 14 insertions(+)
+>>>
+>>> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+>>> index cd7e755484e3..27d3f057493e 100644
+>>> --- a/drivers/virtio/virtio_ring.c
+>>> +++ b/drivers/virtio/virtio_ring.c
+>>> @@ -1609,6 +1609,9 @@ static struct virtqueue *vring_create_virtqueue_packed(
+>>>    		!context;
+>>>    	vq->event = virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
+>>> +	if (virtio_has_feature(vdev, VIRTIO_F_ORDER_PLATFORM))
+>>> +		vq->weak_barriers = false;
+>>> +
+>>>    	vq->packed.ring_dma_addr = ring_dma_addr;
+>>>    	vq->packed.driver_event_dma_addr = driver_event_dma_addr;
+>>>    	vq->packed.device_event_dma_addr = device_event_dma_addr;
+>>> @@ -2079,6 +2082,9 @@ struct virtqueue *__vring_new_virtqueue(unsigned int index,
+>>>    		!context;
+>>>    	vq->event = virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
+>>> +	if (virtio_has_feature(vdev, VIRTIO_F_ORDER_PLATFORM))
+>>> +		vq->weak_barriers = false;
+>>> +
+>>>    	vq->split.queue_dma_addr = 0;
+>>>    	vq->split.queue_size_in_bytes = 0;
+>>> @@ -2213,6 +2219,8 @@ void vring_transport_features(struct virtio_device *vdev)
+>>>    			break;
+>>>    		case VIRTIO_F_RING_PACKED:
+>>>    			break;
+>>> +		case VIRTIO_F_ORDER_PLATFORM:
+>>> +			break;
+>>>    		default:
+>>>    			/* We don't understand this bit. */
+>>>    			__virtio_clear_bit(vdev, i);
+>>> diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
+>>> index 1196e1c1d4f6..ff8e7dc9d4dd 100644
+>>> --- a/include/uapi/linux/virtio_config.h
+>>> +++ b/include/uapi/linux/virtio_config.h
+>>> @@ -78,6 +78,12 @@
+>>>    /* This feature indicates support for the packed virtqueue layout. */
+>>>    #define VIRTIO_F_RING_PACKED		34
+>>> +/*
+>>> + * This feature indicates that memory accesses by the driver and the
+>>> + * device are ordered in a way described by the platform.
+>>> + */
+>>> +#define VIRTIO_F_ORDER_PLATFORM		36
+>>> +
+>>>    /*
+>>>     * Does the device support Single Root I/O Virtualization?
+>>>     */
+>>
+>> I wonder whether or not this is sufficient. Is dma barrier implies a mmio
+>> barrier? Looks not.
+> IIUC we don't need an mmio barrier because we are using a
+> serializing API: Documentation/memory-barriers.txt says:
+>
+> 	Note that, when using writel(), a prior
+>       wmb() is not needed to guarantee that the cache coherent memory writes
+>       have completed before writing to the MMIO region.
 
-> I realize I'm old fashioned, but if a failure occurs, I've always been 
-> of a mind to kick out and not try to do any further work. But debugfs is 
-> to be treated as an exception to that paradigm? Carry on, ignore errors, 
-> don't worry about it?
 
-Yes, that is the case here, it goes against what everyone normally
-thinks about kernel development :)
+Ah, I get this.
 
-thanks,
 
-greg k-h
+>
+>
+>> See ia64/include/asm/barrier.h:
+>>
+>>   * Note: "mb()" and its variants cannot be used as a fence to order
+>>   * accesses to memory mapped I/O registers.  For that, mf.a needs to
+>>   * be used.  However, we don't want to always use mf.a because (a)
+>>   * it's (presumably) much slower than mf and (b) mf.a is supported for
+>>   * sequential memory pages only.
+>>   */
+>> #define mb()            ia64_mf()
+>> #define rmb()           mb()
+>> #define wmb()           mb()
+>>
+>> #define dma_rmb()       mb()
+>> =>efine dma_wmb()       mb()
+>>
+>> Thanks
+> Frankly no idea about ia64.
+
+
+Neither did me.
+
+
+>   Sorry. Are any less esoteric platforms
+> affected?
+>
+
+E.g ppc64?
+
+define dma_wmb()       __asm__ __volatile__ (stringify_in_c(SMPWMB) : : 
+:"memo\
+ry")
+
+/*
+  * Enforce synchronisation of stores vs. spin_unlock
+  * (this does it explicitly, though our implementation of spin_unlock
+  * does it implicitely too)
+  */
+static inline void mmiowb(void)
+{
+         unsigned long tmp;
+
+         __asm__ __volatile__("sync; li %0,0; stb %0,%1(13)"
+         : "=&r" (tmp) : "i" (offsetof(struct paca_struct, io_sync))
+         : "memory");
+}
+
+dma_wmb() is lwsync which is more lightweight than sync I guess?
+
+Thanks
+
+
