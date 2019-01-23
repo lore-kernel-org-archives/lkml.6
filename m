@@ -2,130 +2,148 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C3F0C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 17:33:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7D50C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 17:38:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27F3820870
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 17:33:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CE1F20870
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 17:38:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qdRA7oPl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726291AbfAWRdt (ORCPT
+        id S1726152AbfAWRi3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 12:33:49 -0500
-Received: from foss.arm.com ([217.140.101.70]:44998 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725966AbfAWRdt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 12:33:49 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AB296EBD;
-        Wed, 23 Jan 2019 09:33:48 -0800 (PST)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 71C663F5C1;
-        Wed, 23 Jan 2019 09:33:46 -0800 (PST)
-Date:   Wed, 23 Jan 2019 17:33:44 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Scott Branden <scott.branden@broadcom.com>
-Cc:     Pramod Kumar <pramod.kumar@broadcom.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Steve Capper <steve.capper@arm.com>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 1/1] arm64: Use PSCI calls for CPU stop when hotplug
- is supported
-Message-ID: <20190123173343.GC55887@lakrids.cambridge.arm.com>
-References: <1547790380-6276-1-git-send-email-pramod.kumar@broadcom.com>
- <20190118113242.GA8928@e107155-lin>
- <CAJ+tv6+6yqT1xkmkY3x6SNQ83K+J6zqKZr7PV5A_ffvyEzceqg@mail.gmail.com>
- <CAJ+tv6KqynSf5t_VwLqpdM4BF+wLWcJ0wPTD4nWqL4ej1Yih4g@mail.gmail.com>
- <20190123164801.GA55887@lakrids.cambridge.arm.com>
- <f1851a76-8078-b8e7-6a54-b038b47f9214@broadcom.com>
+        Wed, 23 Jan 2019 12:38:29 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:52719 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725896AbfAWRi3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 12:38:29 -0500
+Received: by mail-wm1-f67.google.com with SMTP id m1so242485wml.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 09:38:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=1joVTuHcQFv5PhIFvZBlpu1jeKwRQi2Ty1HKsqzNx+0=;
+        b=qdRA7oPloipduZyiYE/EECaW/vCZup5EXmE5a1XgE9mc55H+TTPNNRTt44QJbQgbnn
+         wTNksIkBx8Gs0k3pJI9QIDO2J5AipLN8OOoxkPiDIJtAC8buHzQrdTxFG/4Uxw7tRf8X
+         A6PNyuUGr+02itkYIlALzEuDHvZna8yZx0zCeCDXF2IrGt0NBHZVTzz1XfX8LeQlCh9L
+         hleyVdDQnDvwxA7dXqrA4UugXUlEqT8HnIAUdg8+/xubsXOSz9T/22+zc9pZ9uSHm2uq
+         DpO/hgx1e5DONDN8T+sjjKCO0LnJ8Z9ZS0Huf+8W2XH1uxo48jSgXUOsygPQ36+8R/7t
+         ng6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=1joVTuHcQFv5PhIFvZBlpu1jeKwRQi2Ty1HKsqzNx+0=;
+        b=ZQrXdTIYsCSUGNJS1C0dn+gibvoSHb2o+kcUMGTbH6G2tag3Zy4vnfIcBT0xhmvPLq
+         5pU8jskcufXp0qQ0sivNsBpJYJCbsqqiChoivTs9WC4rxoM5G62Wi0pAZL59fGGDnmyV
+         xjSTkSoxe8CiB+26BDzg52zkynkWC2v0OHgaM7/1lTeTqNxdYIvQ+hC4LXdy40bAP64/
+         JIC1nET+KwewpPHJQc2u87ah4xp6nEjzO/4wTP3CUi4zbZPTU17oH007IAXhObL7JO0r
+         XkRBJAgpcTKexfAJB7HnAUc4KLSv5L5Uz+Z14TusskTuK6njE11PE9GSJ7Z7lqufqJNZ
+         Z4GQ==
+X-Gm-Message-State: AJcUukdaW+EjUkHLIrpaLWRYCoF9XYWdpSiPfNnJgu3VB9CW8t9xYlZJ
+        NDU6hJ2AXvnDR+awfdjm6IU=
+X-Google-Smtp-Source: ALg8bN59XklA0HTVEDaLFI+8dguNdipIQWTlgIi23N78PjaLBzniLMXowf2nCpIra7boIidjtFvfYg==
+X-Received: by 2002:a1c:7c05:: with SMTP id x5mr3525198wmc.54.1548265106544;
+        Wed, 23 Jan 2019 09:38:26 -0800 (PST)
+Received: from gmail.com (79.108.96.12.dyn.user.ono.com. [79.108.96.12])
+        by smtp.gmail.com with ESMTPSA id r77sm74200791wmd.22.2019.01.23.09.38.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 23 Jan 2019 09:38:25 -0800 (PST)
+Date:   Wed, 23 Jan 2019 18:37:07 +0100
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+To:     Jessica Yu <jeyu@kernel.org>
+Cc:     Laura Abbott <labbott@redhat.com>,
+        Martin Sebor <msebor@gcc.gnu.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH] include/linux/module.h: mark init/cleanup_module aliases as
+ __cold
+Message-ID: <20190123173707.GA16603@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f1851a76-8078-b8e7-6a54-b038b47f9214@broadcom.com>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+User-Agent: elm/2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 09:05:26AM -0800, Scott Branden wrote:
-> Hi Mark,
-> 
-> Hopefully I can shed some light on the use case inline.
-> 
-> On 2019-01-23 8:48 a.m., Mark Rutland wrote:
-> > On Mon, Jan 21, 2019 at 11:30:02AM +0530, Pramod Kumar wrote:
-> > > On Mon, Jan 21, 2019 at 11:28 AM Pramod Kumar <pramod.kumar@broadcom.com>
-> > > wrote:
-> > > 
-> > >      Need comes from a specific use case where one Accelerator card(SoC) is
-> > >      plugged in a sever over a PCIe interface.  This Card gets supply from a
-> > >      battery, which could provide very less power for a very small time, in case
-> > >      of any power loss. Once Card switches to battery, this has to reduce its
-> > >      power consumption to its lowest point and back-up the DDR contents asap
-> > >      before battery gets fully drained off.
-> > In this example is Linux running on the server, or on the accelerator?
-> Accelerator
-> > 
-> > What precisely are you trying to back up from DDR, and why?
-> Data in DDR is being written to disk at this time (disk is connected to
-> accelerator)
-> > 
-> > What is responsible for backing up that contents?
-> 
-> A low power M-class processor and DMA engine which continues necessary
-> operations to transfer DDR memory to disk.
-> 
-> The high power processors on the accelerator running linux needed to be
-> halted ASAP on this power loss event and M0 take over. Graceful shutdown of
-> linux and other peripherals is unnecessary (and we don't have the power
-> necessary to do so).
+The upcoming GCC 9 release adds the -Wmissing-attributes warnings
+(enabled by -Wall), which trigger for all the init/cleanup_module
+aliases in the kernel (defined by the module_init/exit macros),
+ending up being very noisy.
 
-If graceful shutdown of Linux is not required (and is in fact
-undesireable), why is Linux involved at all in this shutdown process?
+These aliases point to the __init/__exit functions of a module,
+which are defined as __cold (among other attributes). However,
+the aliases themselves do not have the __cold attribute.
 
-For example, why is this not a secure interrupt taken to EL3, which can
-(gracefully) shut down the CPUs regardless?
+Since the compiler behaves differently when compiling a __cold
+function as well as when compiling paths leading to calls
+to __cold functions, the warning is trying to point out
+the possibly-forgotten attribute in the alias.
 
-> > >      Since battery can provide limited power for a very short time hence need to
-> > >      transition to lowest power. As per the transition process , CPUs power
-> > >      domain has to be off but before that it needs to flush out its content to
-> > >      system memory(L3) so that content could be backed-up by a MCU, a controller
-> > >      consuming very less power. Since we can not afford plugging-out every
-> > >      individual CPUs in sequence hence uses  ipi_cpu_stop for all other CPUs
-> > >      which ultimately switch to ATF to flush out all the CPUs caches and comes
-> > >      out of coherency domain so that its power rails could be switched-off.
-> > If you're stopping CPUs from completely arbitrary states, what is the
-> > benefit of saving the RAM contents?
-> 
-> Some of the RAM contains data that was in the process of being written to
-> disk by the accelerator.
+In order to keep the warning enabled, we choose to silence
+the warning by marking the aliases as __cold. This is possible
+marking either the extern declaration, the definition, or both.
+In order to avoid changing the behavior of callers, we do it
+only in the definition of the aliases (since those are not
+seen by any other TU).
 
-Ok, so this isn't actually about backing up RAM contents; it's about
-completing pending I/O.
+Suggested-by: Martin Sebor <msebor@gcc.gnu.org>
+Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+---
+Note that an alternative is using the new copy attribute
+introduced by GCC 9 (Martin told me about it, as well as the
+new warning).
 
-I'm still confused as to how that works. How do you avoid leaving the
-disk in some corrupt state if data runs out partway through?
+What I am concerned about using __copy is that I am not sure
+we should be copying all the attributes (even if some are
+blacklisted by the copy itself), since:
+  - We have unknown-to-GCC attributes (e.g. from plugins).
+  - We wouldn't enjoy the fix for older compilers
+    (e.g. if the fix had an actual impact).
 
-> This data must be saved to disk and the high power CPUs consume too much
-> power to continue performing this operation.
-> 
-> > CPUs might be running with IRQs disabled for an arbitrarily long time,
-> 
-> In an embedded linux system we control everything running.
+So here I took the conservative approach for the moment,
+and we can discuss/apply whether another solution is best.
 
-Sure, and that complete control allows you to do something better than
-this RFC, AFAICT.
+Jessica: please review what I explain in the commit message.
+Do we actually want the __cold attribute in the declaration
+as well? If yes, AFAIK, GCC would assume paths that end up
+calling the __init/__exit functions are not meant to be taken
+(but when we are asked to load modules, that is the expected
+path, no?).
 
-Thanks,
-Mark.
+I will put this in the compiler-attributes tree and get
+some time in linux-next, unless you want to pick it up!
+
+ include/linux/module.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/module.h b/include/linux/module.h
+index 8fa38d3e7538..c4e805e87628 100644
+--- a/include/linux/module.h
++++ b/include/linux/module.h
+@@ -129,13 +129,13 @@ extern void cleanup_module(void);
+ #define module_init(initfn)					\
+ 	static inline initcall_t __maybe_unused __inittest(void)		\
+ 	{ return initfn; }					\
+-	int init_module(void) __attribute__((alias(#initfn)));
++	int init_module(void) __cold __attribute__((alias(#initfn)));
+ 
+ /* This is only required if you want to be unloadable. */
+ #define module_exit(exitfn)					\
+ 	static inline exitcall_t __maybe_unused __exittest(void)		\
+ 	{ return exitfn; }					\
+-	void cleanup_module(void) __attribute__((alias(#exitfn)));
++	void cleanup_module(void) __cold __attribute__((alias(#exitfn)));
+ 
+ #endif
+ 
+-- 
+2.17.1
+
