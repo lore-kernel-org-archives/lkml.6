@@ -2,155 +2,101 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43BA0C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:17:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F0E6C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:18:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F07B7218A1
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:17:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B62721872
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:18:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="n630SCvA"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Dd+ZxGO0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726367AbfAWWRj (ORCPT
+        id S1726792AbfAWWSA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 17:17:39 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:51778 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726152AbfAWWRj (ORCPT
+        Wed, 23 Jan 2019 17:18:00 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:37494 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726152AbfAWWSA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 17:17:39 -0500
-Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 60D9423D;
-        Wed, 23 Jan 2019 23:17:36 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1548281856;
-        bh=GBiSJXMwkVdxvoTgXAhpme26VHbAsFe19uZJ27BgiDM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=n630SCvAimK3V9LFVdy6C6/9o4hNCPfhGUhCMi9NSKZEFfmvoFIbC3VOAaN6/kW42
-         L/msBj4lTtsXzo9jum/gltvyzqjBJmKRUSaetMpJxi/+z3tQEzLv9cAe7DfeiGWb7N
-         NrzocTnkcVhw+dCrFnDT5yP1OSFzONwtokvmRUlw=
-Date:   Thu, 24 Jan 2019 00:17:35 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Lukas Wunner <lukas@wunner.de>,
-        Ronald =?utf-8?B?VHNjaGFsw6Ry?= <ronald@innovation.ch>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-input@vger.kernel.org
-Subject: Re: [PATCH] drm/bridge: sil_sii8620: depend on INPUT instead of
- selecting it.
-Message-ID: <20190123221735.GE4675@pendragon.ideasonboard.com>
-References: <20190122141311.10445-1-ronald@innovation.ch>
- <20190123084556.gsospl6joh53qnzs@wunner.de>
- <20190123220342.GC179701@dtor-ws>
+        Wed, 23 Jan 2019 17:18:00 -0500
+Received: by mail-lf1-f67.google.com with SMTP id y11so2809610lfj.4
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 14:17:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nJe7NZAW3aLxEeXJdyLXIXXc64Usi/TiOB7qd0/C1Mo=;
+        b=Dd+ZxGO0H3jaYp4B/DDL7DBdG5VZrtFTzXwGTQvtfDkD99UXqZHXfZXVmkOe3IxozC
+         cN2Ntvrfzb8eylZLplQqbJen/Tf6WWmb3J8zp+YZCHCFqgAeRPcgTcW2iitAlFtvHP7X
+         vNwKlOviePkKKsg38L5KFsBjmmOGGExA9BAJ4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nJe7NZAW3aLxEeXJdyLXIXXc64Usi/TiOB7qd0/C1Mo=;
+        b=sffTWOdwWMRQHpV3gmiUbzw3R+BFrvLE9C9jXdx5hLEDH6Ealsp3XTUqTKvMerVkF5
+         St/wVgIPnhKl9NzfW3zXwbT7Hx/NJ893zaFFHSm7/csZT+/o67izZmTdiTtDyCFh5Cn1
+         krevL2rX5yBe4q1CZFNp7vL/urwxGYW/EFlZEnrFKsRLDLDmotkg8l+szkHxmiWdEIQa
+         fUSLsRsvttUO5tBuY7wwihrru4/Xd3M69mafJ561zV4YFd0Kdg81f4uE4NYHCR4kbHt1
+         57Mrd3ERMuXnwU0S8x0SmQARuIPyRVye9jNchehcuibh2nIE/3yhmE/bVfunVIMRAFyc
+         oRFQ==
+X-Gm-Message-State: AJcUukcTsutKxUUIbbbezXDyHmNaKd+nszDxypgOHjIA0W95MwZta6Ao
+        0/EWEGGRgB36RJ0Wg4EKaMHj4Fd6R6o=
+X-Google-Smtp-Source: ALg8bN4gj67WZtEzsyKHldvID3F1mEdOuXb93GJUCwnZ97py/H6oecsiFpUKejCIwJWyhNOkjCBJHw==
+X-Received: by 2002:a19:9b50:: with SMTP id d77mr3134986lfe.137.1548281878033;
+        Wed, 23 Jan 2019 14:17:58 -0800 (PST)
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
+        by smtp.gmail.com with ESMTPSA id u30sm728120lfc.90.2019.01.23.14.17.55
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 23 Jan 2019 14:17:56 -0800 (PST)
+Received: by mail-lj1-f181.google.com with SMTP id n18-v6so3411892lji.7
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 14:17:55 -0800 (PST)
+X-Received: by 2002:a2e:3a10:: with SMTP id h16-v6mr3496014lja.184.1548281875489;
+ Wed, 23 Jan 2019 14:17:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190123220342.GC179701@dtor-ws>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181012213926.253765-1-dianders@chromium.org>
+ <CAFp+6iFy8V34cs6pEOie_tBX5wJqM7teUnH_XLLZ7cioPrX_hA@mail.gmail.com>
+ <CAD=FV=WYM5OOigy+81cVzPtAJXhvrhB1znr9zHzMf3q5iFOtFw@mail.gmail.com>
+ <CAFp+6iGxvDoptnjM18ggnHqX6MV0+HFqsnCMi61b8gquBxaYmw@mail.gmail.com>
+ <CAD=FV=XWC8q4Cx4GF0yXCgj2APwd5ZfccVBC_ORwnJg0vRsS7A@mail.gmail.com>
+ <1ce7b24c-b154-4ce6-2b4c-9eb0fd0d71cb@codeaurora.org> <CAD=FV=XSjfRSHP6B6GtiTqrQuUZaoA=hZNW_L1=71MU9fEXpDQ@mail.gmail.com>
+ <20cf6f02-ff3c-0904-2edc-a1b72c135866@codeaurora.org>
+In-Reply-To: <20cf6f02-ff3c-0904-2edc-a1b72c135866@codeaurora.org>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Wed, 23 Jan 2019 14:17:17 -0800
+X-Gmail-Original-Message-ID: <CAE=gft74tm8+zbg3NF2v3C=0_8yG9R7bs3VvLqyea2Z=yvsawQ@mail.gmail.com>
+Message-ID: <CAE=gft74tm8+zbg3NF2v3C=0_8yG9R7bs3VvLqyea2Z=yvsawQ@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: ufs: Fix the compatible string definition
+To:     Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc:     Doug Anderson <dianders@chromium.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Can Guo <cang@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        sayali <sayalil@codeaurora.org>,
+        Asutosh Das <asutoshd@codeaurora.org>,
+        devicetree@vger.kernel.org, liwei213@huawei.com,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Dmity,
+On Thu, Oct 18, 2018 at 12:52 AM Vivek Gautam
+<vivek.gautam@codeaurora.org> wrote:
+>
+...
+>
+> Yes, this patch is good to go.
+>
 
-On Wed, Jan 23, 2019 at 02:03:42PM -0800, Dmitry Torokhov wrote:
-> On Wed, Jan 23, 2019 at 09:45:56AM +0100, Lukas Wunner wrote:
-> > On Tue, Jan 22, 2019 at 06:13:11AM -0800, Ronald Tschalär wrote:
-> >> commit d6abe6df706c66d803e6dd4fe98c1b6b7f125a56 (drm/bridge:
-> >> sil_sii8620: do not have a dependency of RC_CORE) added a dependency on
-> >> INPUT. However, this causes problems with other drivers, in particular
-> >> an input driver that depends on MFD_INTEL_LPSS_PCI (to be added in a
-> >> future commit):
-> >> 
-> >>   drivers/clk/Kconfig:9:error: recursive dependency detected!
-> >>   drivers/clk/Kconfig:9:        symbol COMMON_CLK is selected by MFD_INTEL_LPSS
-> >>   drivers/mfd/Kconfig:566:      symbol MFD_INTEL_LPSS is selected by MFD_INTEL_LPSS_PCI
-> >>   drivers/mfd/Kconfig:580:      symbol MFD_INTEL_LPSS_PCI is implied by KEYBOARD_APPLESPI
-> >>   drivers/input/keyboard/Kconfig:73:    symbol KEYBOARD_APPLESPI depends on INPUT
-> >>   drivers/input/Kconfig:8:      symbol INPUT is selected by DRM_SIL_SII8620
-> >>   drivers/gpu/drm/bridge/Kconfig:83:    symbol DRM_SIL_SII8620 depends on DRM_BRIDGE
-> >>   drivers/gpu/drm/bridge/Kconfig:1:     symbol DRM_BRIDGE is selected by DRM_PL111
-> >>   drivers/gpu/drm/pl111/Kconfig:1:      symbol DRM_PL111 depends on COMMON_CLK
-> >> 
-> >> According to the docs, select should only be used for non-visible
-> >> symbols. Furthermore almost all other references to INPUT throughout the
-> >> kernel config are depends, not selects. Hence this change.
-> 
-> I think this is not as cut and dry. We should be able to select needed
-> subsystems (such as INPUT, USB, etc) even if they are user visible.
-
-Semantically, maybe, but given the current state of Kconfig this results
-in a recursive dependencies nightmare. It's a no-go.
-
-> User, when enabling a piece of hardware, does not need to know ultimate
-> details of all subsystems the driver might need ti function.
-> 
-> It looks like one of the drivers implies MFD_INTEL_LPSS_PCI, maybe
-> treating imply the same as select when detecting circular dependency is
-> wrong as we are allowed to deselect implied dependencies?
-> 
-> >> 
-> >> CC: Inki Dae <inki.dae@samsung.com>
-> >> CC: Andrzej Hajda <a.hajda@samsung.com>
-> >> Signed-off-by: Ronald Tschalär <ronald@innovation.ch>
-> > 
-> > Reviewed-by: Lukas Wunner <lukas@wunner.de>
-> > 
-> > I think this needs to be merged through the input tree as a prerequisite
-> > for the applespi.c driver (keyboard + touchpad driver for 2015+ MacBook,
-> > MacBook Air and MacBook Pro which uses SPI instead of USB) to avoid
-> > breaking the build.  Adding Dmitry.
-> 
-> I have no idea what applespi.c is (it is definitely not in my tree), so
-> I think it should be merged through the same tree that the original
-> commit was introduced through.
-> 
-> >> ---
-> >>  drivers/gpu/drm/bridge/Kconfig | 2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >> 
-> >> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-> >> index 2fee47b0d50b..eabedc83f25c 100644
-> >> --- a/drivers/gpu/drm/bridge/Kconfig
-> >> +++ b/drivers/gpu/drm/bridge/Kconfig
-> >> @@ -83,9 +83,9 @@ config DRM_PARADE_PS8622
-> >>  config DRM_SIL_SII8620
-> >>  	tristate "Silicon Image SII8620 HDMI/MHL bridge"
-> >>  	depends on OF
-> >> +	depends on INPUT
-> >>  	select DRM_KMS_HELPER
-> >>  	imply EXTCON
-> >> -	select INPUT
-> >>  	select RC_CORE
-> 
-> Keeping "select RC_CORE" is wrong though, as the driver appears to be
-> working find without RC. Maybe it should be stubbed out?
-
-It should definitely not be select'ed as it's a user-visible symbol. My
-preference would be to simply revert d6abe6df706c. If we want (and can)
-work without RC core then it should be stubbed out.
-
-Commit d6abe6df706c states
-
-    And some boards not using remote controller device don't really
-    need to know that RC_CORE config should be enabled to use sil_sii8620
-    driver only for HDMI.
-
-The same reasoning applies to INPUT, if we agree that depending on
-RC_CORE is confusing for users, then depending on INPUT is confusing as
-well. There's not reason to apply different standards to INPUT and
-RC_CORE, depending on one and selecting the other doesn't make much
-sense.
-
--- 
-Regards,
-
-Laurent Pinchart
+I don't think this patch ever got picked up, despite being reviewed
+and good to go. Can it be applied somewhere?
+-Evan
