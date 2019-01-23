@@ -2,143 +2,172 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2942C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 19:49:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38D3EC41518
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 19:57:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C818218A1
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 19:49:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01BBA218A1
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 19:57:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="IQllCqCz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726435AbfAWTtF (ORCPT
+        id S1726343AbfAWT5q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 14:49:05 -0500
-Received: from mail-it1-f197.google.com ([209.85.166.197]:53779 "EHLO
-        mail-it1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726252AbfAWTtF (ORCPT
+        Wed, 23 Jan 2019 14:57:46 -0500
+Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:37018 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726035AbfAWT5p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 14:49:05 -0500
-Received: by mail-it1-f197.google.com with SMTP id i12so548845ita.3
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 11:49:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=sXb1jIfDTRvw1g8a613u9RzCOhGJsCGv6nIfK4YAHps=;
-        b=lHQrd4OrCEK734BQ2OYHDJCZhZRjr7CS0nuQZ4/lpJ0D578V8htTvA3uADgy9Im5cG
-         srhW9tdakLJ63uajnR1hgpt5cDPFrNtlVX2ETpt8jHGhOGdKJHTJVK8SrxNRIGoByZ4R
-         vLs16sN71qMHZJ1w6C2oLdfRXc+GJ5S65Mmqki/80KpE5YRuFRYIHXw0dapn2SIqQouH
-         3wY89VD3ZvZzVxhbPsqQEYWB7MtW1jAh46qScr6B6k16Xne5VLlpZ7bJKCg3VVNw1udI
-         5DDEc7/JQOtlTBtcb0M8hBKxXaSQW54izDZWAUahC7A1PvJTGchen9zz4N0fqbqCW2Nc
-         pNMg==
-X-Gm-Message-State: AHQUAuaamvOoNcdNemIUkpOuJ9SLTllAdfwujQ/931ozBSbgvgrRpBu5
-        OAAMbaIwTOEmY1Lr1I0JDrXo1mj+bNG6HmvIYyfegEHCNq1y
-X-Google-Smtp-Source: ALg8bN539rbBlT2G5yKyMht7wmg7Rx+s/tyZF1ZdpexJQcqMY6NkLh1zzLVyKIczRSBhoUXLGzHt7pv6G0r6zvbXGKez8CCAXsw0
+        Wed, 23 Jan 2019 14:57:45 -0500
+Received: from mailhost.synopsys.com (dc8-mailhost1.synopsys.com [10.13.135.209])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay.synopsys.com (Postfix) with ESMTPS id E6D0510C0F86;
+        Wed, 23 Jan 2019 11:57:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1548273464; bh=UOeWzT2eFH20q70kvafD12wltqzBgqQZedWadsl1e/U=;
+        h=To:CC:From:Subject:Date:From;
+        b=IQllCqCzyYxY4q/830BeTW6mIiXFb57VGyv9r0wALCcLjFWNnfzRcRmbBP/57kbEO
+         lWfZNBixKK1e9FXCkh28ZyX21bUmEHVWUDn2mby15Kss8f9E0V8gO4ihVc3yzNAGnz
+         uqynwfXl5QXSjpU/gNH1ry7yHOaTxlGoWme/1tZGq9Uy9iMWhXnwfONv1Ru/xusQhl
+         5EiW997SroQsrzAvOyNxVzgKWQx6a7drmsmNxeRccNEY3pUInYOCe5EcNaFIuvOFL9
+         4/PkPq81i+g/z+cOAq2qdT6Zdw/mmgu9dFXqEVd9AKfVdsu1dRF/I+s+nf6Q28D8I7
+         owpTScAF3pa+Q==
+Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2.internal.synopsys.com [10.12.239.237])
+        (using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id 9125FA005D;
+        Wed, 23 Jan 2019 19:57:42 +0000 (UTC)
+Received: from IN01WEHTCA.internal.synopsys.com (10.144.199.104) by
+ US01WEHTC2.internal.synopsys.com (10.12.239.237) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 23 Jan 2019 11:55:58 -0800
+Received: from IN01WEHTCB.internal.synopsys.com (10.144.199.105) by
+ IN01WEHTCA.internal.synopsys.com (10.144.199.103) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 24 Jan 2019 01:25:59 +0530
+Received: from [10.10.161.70] (10.10.161.70) by
+ IN01WEHTCB.internal.synopsys.com (10.144.199.243) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 24 Jan 2019 01:25:57 +0530
+X-Mozilla-News-Host: news://gmane.comp.lib.uclibc.buildroot:119
+To:     "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>
+CC:     lkml <linux-kernel@vger.kernel.org>,
+        arcml <linux-snps-arc@lists.infradead.org>,
+        Eugeniy Paltsev <eugeniy.paltsev@synopsys.com>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+From:   Vineet Gupta <vineet.gupta1@synopsys.com>
+Subject: Semantics of symbol address in perf report -v
+Openpgp: preference=signencrypt
+Autocrypt: addr=vgupta@synopsys.com; keydata=
+ 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
+ hhqBJlyU6MVUa6vZNv8E
+Message-ID: <da403654-f21d-9959-067f-b76581600741@synopsys.com>
+Date:   Wed, 23 Jan 2019 11:55:49 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-Received: by 2002:a24:5dd4:: with SMTP id w203mr3143563ita.8.1548272944070;
- Wed, 23 Jan 2019 11:49:04 -0800 (PST)
-Date:   Wed, 23 Jan 2019 11:49:04 -0800
-In-Reply-To: <0000000000000cf22a058011d494@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d8cd0d05802562d2@google.com>
-Subject: Re: general protection fault in nf_ct_gre_keymap_flush
-From:   syzbot <syzbot+fcee88b2d87f0539dfe9@syzkaller.appspotmail.com>
-To:     coreteam@netfilter.org, davem@davemloft.net, fw@strlen.de,
-        kadlec@blackhole.kfki.hu, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        pablo@netfilter.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.10.161.70]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
+Hi,
 
-HEAD commit:    5b74ce505631 Add linux-next specific files for 20190123
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1137e1b7400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d4d5d672c7c71240
-dashboard link: https://syzkaller.appspot.com/bug?extid=fcee88b2d87f0539dfe9
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=165f80c0c00000
+I noticed a small anomaly in perf report -v output on ARC and x86 as well.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+fcee88b2d87f0539dfe9@syzkaller.appspotmail.com
+A simple program which sits in tight loop, compiled for x86_64
 
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 8342 Comm: syz-executor2 Not tainted 5.0.0-rc3-next-20190123 #18
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:nf_ct_gre_keymap_flush+0xb9/0x2f0  
-net/netfilter/nf_conntrack_proto_gre.c:65
-Code: 4c 89 f0 48 c1 e8 03 42 80 3c 20 00 0f 85 2b 02 00 00 4c 8b bb f8 16  
-00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 f9 48 c1 e9 03 <80> 3c 01 00 0f  
-85 fc 01 00 00 4c 3b bd 68 ff ff ff 4d 8b 27 0f 84
-RSP: 0018:ffff8880743eeef8 EFLAGS: 00010246
-RAX: dffffc0000000000 RBX: ffff888074c10240 RCX: 0000000000000000
-RDX: 1ffffffff146dff2 RSI: 0000000000000004 RDI: ffff8880743eee60
-RBP: ffff8880743eefa8 R08: 1ffff1100e87ddcc R09: ffffed100e87ddcd
-R10: ffffed100e87ddcc R11: 0000000000000003 R12: dffffc0000000000
-R13: ffff8880743ef0b8 R14: ffff888074c11938 R15: 0000000000000000
-FS:  00007f7ceb928700(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000000 CR3: 00000000a089b000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  nf_conntrack_proto_pernet_fini+0x16/0x1a  
-net/netfilter/nf_conntrack_proto.c:617
-  nf_conntrack_cleanup_net_list+0x204/0x330  
-net/netfilter/nf_conntrack_core.c:2183
-  nf_conntrack_cleanup_net+0x1c5/0x270 net/netfilter/nf_conntrack_core.c:2156
-  nf_conntrack_pernet_init net/netfilter/nf_conntrack_standalone.c:1122  
-[inline]
-  nf_conntrack_pernet_init+0xc3f/0xf00  
-net/netfilter/nf_conntrack_standalone.c:1091
-  ops_init+0x109/0x5d0 net/core/net_namespace.c:129
-  setup_net+0x38f/0x940 net/core/net_namespace.c:314
-  copy_net_ns+0x2ae/0x4b0 net/core/net_namespace.c:437
-  create_new_namespaces+0x4ce/0x930 kernel/nsproxy.c:107
-  copy_namespaces+0x3ff/0x4d0 kernel/nsproxy.c:165
-  copy_process+0x4a2d/0x8890 kernel/fork.c:1920
-  _do_fork+0x1a9/0x1170 kernel/fork.c:2227
-  __do_sys_clone kernel/fork.c:2334 [inline]
-  __se_sys_clone kernel/fork.c:2328 [inline]
-  __x64_sys_clone+0xbf/0x150 kernel/fork.c:2328
-  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x458099
-Code: 6d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 3b b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f7ceb927c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
-RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 0000000000458099
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000070024103
-RBP: 000000000073bfa0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f7ceb9286d4
-R13: 00000000004be480 R14: 00000000004ce960 R15: 00000000ffffffff
-Modules linked in:
----[ end trace cdb65ca986e98ff1 ]---
-RIP: 0010:nf_ct_gre_keymap_flush+0xb9/0x2f0  
-net/netfilter/nf_conntrack_proto_gre.c:65
-Code: 4c 89 f0 48 c1 e8 03 42 80 3c 20 00 0f 85 2b 02 00 00 4c 8b bb f8 16  
-00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 f9 48 c1 e9 03 <80> 3c 01 00 0f  
-85 fc 01 00 00 4c 3b bd 68 ff ff ff 4d 8b 27 0f 84
-RSP: 0018:ffff8880743eeef8 EFLAGS: 00010246
-RAX: dffffc0000000000 RBX: ffff888074c10240 RCX: 0000000000000000
-RDX: 1ffffffff146dff2 RSI: 0000000000000004 RDI: ffff8880743eee60
-RBP: ffff8880743eefa8 R08: 1ffff1100e87ddcc R09: ffffed100e87ddcd
-R10: ffffed100e87ddcc R11: 0000000000000003 R12: dffffc0000000000
-R13: ffff8880743ef0b8 R14: ffff888074c11938 R15: 0000000000000000
-FS:  00007f7ceb928700(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000000 CR3: 00000000a089b000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+void main() { while(1) {} }
 
+$ gcc -g tight.c
+$ ./a.out &
+$ perf record -e cycles -p 26703
+$ perf report -n -v  --stdio  | egrep "(main|Symbol)"
+
+|# Overhead Samples Command  Shared Object         Symbol
+
+|  99.93%    55753   a.out   /home/arc/test/a.out  0x4da     B [.] main
+
+|                                                  ^^^^^
+
+The printer address for Symbols is *not* the actual address in elf, but rather VMA
+start offset.
+
+0x4da = 0x4004da - 0x0000000000400000
+
+$ objdump -d ./a.out
+
+| 00000000004004d6 <main>:
+|  4004d6:	55                   	push   %rbp
+|  4004d7:	48 89 e5             	mov    %rsp,%rbp
+|  4004da:	eb fe                	jmp    4004da <main+0x4>
+|  4004dc:	0f 1f 40 00          	nopl   0x0(%rax)
+
+$ readelf -a ./a.out
+
+| Program Headers:
+|  Type           Offset             VirtAddr           PhysAddr
+|                 FileSiz            MemSiz              Flags  Align
+| Program Headers:
+|  LOAD           0x0000000000000000 0x0000000000400000 0x0000000000400000
+                 0x000000000000068c 0x000000000000068c  R E    200000
+
+
+This is problematic in narrowing down the hotspot instruction, when the binary
+itself is. One needs to do the offset addition manually to find the actual hotspot
+location.
+
+|   99.79%  100064  a.out  /home/arc/test/a.out  0x4da  B [.] 0x00000000000004da
+
+                                                               ^^^^^^^^^^^^^^^^
+
+Is this considered an issue ? Would the fix to print the actual symbol address
+(and recorded in raw perf event data) break some existing tooling etc.
+
+-Vineet
