@@ -2,162 +2,135 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5C39C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 23:05:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABD4CC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 23:07:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FA79218A1
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 23:05:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78BD121019
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 23:07:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="AtGo2odd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726957AbfAWXFC (ORCPT
+        id S1726627AbfAWXHP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 18:05:02 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:34390 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726157AbfAWXFC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 18:05:02 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 367F7B2755;
-        Wed, 23 Jan 2019 23:05:01 +0000 (UTC)
-Received: from redhat.com (ovpn-120-127.rdu2.redhat.com [10.10.120.127])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8DA7C604DB;
-        Wed, 23 Jan 2019 23:04:49 +0000 (UTC)
-Date:   Wed, 23 Jan 2019 18:04:47 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Ralph Campbell <rcampbell@nvidia.com>, Jan Kara <jack@suse.cz>,
-        Arnd Bergmann <arnd@arndb.de>, KVM list <kvm@vger.kernel.org>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Ross Zwisler <zwisler@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
-Subject: Re: [PATCH v4 0/9] mmu notifier provide context informations
-Message-ID: <20190123230447.GC1257@redhat.com>
-References: <20190123222315.1122-1-jglisse@redhat.com>
- <CAPcyv4i9_T9779ZyaYt2T3b20-wQTaWA4P63+49TM=a=twtDVw@mail.gmail.com>
+        Wed, 23 Jan 2019 18:07:15 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:52078 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726109AbfAWXHP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 18:07:15 -0500
+Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0NN0Bm6028150
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 15:07:14 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=iIazPrlt7tOWnA4QOJ1iZhFr3bvbXxhMyXLj+/1AyVo=;
+ b=AtGo2oddJtBfGaHVrMHnXcRqotFi4HNVwUh21Avcd03wvNjj59JfPn/fMCmBTVO/Z6hi
+ wqNB2xlfeGvUSI06D3lfq4P56cmkDf0vOQcdjeKIe9nK0UEBV0ewszB4/YvXYIQskYcV
+ gLq+81zWN6rBlX/e6ofhdScTgPo8mRZrxA4= 
+Received: from maileast.thefacebook.com ([199.201.65.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2q700arah0-4
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 15:07:14 -0800
+Received: from mx-out.facebook.com (2620:10d:c0a1:3::13) by
+ mail.thefacebook.com (2620:10d:c021:18::172) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
+ Wed, 23 Jan 2019 15:06:38 -0800
+Received: by devvm4117.prn2.facebook.com (Postfix, from userid 167582)
+        id 48A96861B012; Wed, 23 Jan 2019 15:06:36 -0800 (PST)
+Smtp-Origin-Hostprefix: devvm
+From:   Vijay Khemka <vijaykhemka@fb.com>
+Smtp-Origin-Hostname: devvm4117.prn2.facebook.com
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
+CC:     <vijaykhemka@fb.com>,
+        "openbmc @ lists . ozlabs . org" <openbmc@lists.ozlabs.org>
+Smtp-Origin-Cluster: prn2c23
+Subject: [PATCH] misc: aspeed-lpc-ctrl: Correct return values
+Date:   Wed, 23 Jan 2019 15:06:34 -0800
+Message-ID: <20190123230634.1815021-1-vijaykhemka@fb.com>
+X-Mailer: git-send-email 2.17.1
+X-FB-Internal: Safe
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPcyv4i9_T9779ZyaYt2T3b20-wQTaWA4P63+49TM=a=twtDVw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Wed, 23 Jan 2019 23:05:01 +0000 (UTC)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-23_11:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 02:54:40PM -0800, Dan Williams wrote:
-> On Wed, Jan 23, 2019 at 2:23 PM <jglisse@redhat.com> wrote:
-> >
-> > From: Jérôme Glisse <jglisse@redhat.com>
-> >
-> > Hi Andrew, i see that you still have my event patch in you queue [1].
-> > This patchset replace that single patch and is broken down in further
-> > step so that it is easier to review and ascertain that no mistake were
-> > made during mechanical changes. Here are the step:
-> >
-> >     Patch 1 - add the enum values
-> >     Patch 2 - coccinelle semantic patch to convert all call site of
-> >               mmu_notifier_range_init to default enum value and also
-> >               to passing down the vma when it is available
-> >     Patch 3 - update many call site to more accurate enum values
-> >     Patch 4 - add the information to the mmu_notifier_range struct
-> >     Patch 5 - helper to test if a range is updated to read only
-> >
-> > All the remaining patches are update to various driver to demonstrate
-> > how this new information get use by device driver. I build tested
-> > with make all and make all minus everything that enable mmu notifier
-> > ie building with MMU_NOTIFIER=no. Also tested with some radeon,amd
-> > gpu and intel gpu.
-> >
-> > If they are no objections i believe best plan would be to merge the
-> > the first 5 patches (all mm changes) through your queue for 5.1 and
-> > then to delay driver update to each individual driver tree for 5.2.
-> > This will allow each individual device driver maintainer time to more
-> > thouroughly test this more then my own testing.
-> >
-> > Note that i also intend to use this feature further in nouveau and
-> > HMM down the road. I also expect that other user like KVM might be
-> > interested into leveraging this new information to optimize some of
-> > there secondary page table invalidation.
-> 
-> "Down the road" users should introduce the functionality they want to
-> consume. The common concern with preemptively including
-> forward-looking infrastructure is realizing later that the
-> infrastructure is not needed, or needs changing. If it has no current
-> consumer, leave it out.
+Corrected some of return values with appropriate meanings.
 
-This patchset already show that this is useful, what more can i do ?
-I know i will use this information, in nouveau for memory policy we
-allocate our own structure for every vma the GPU ever accessed or that
-userspace hinted we should set a policy for. Right now with existing
-mmu notifier i _must_ free those structure because i do not know if
-the invalidation is an munmap or something else. So i am loosing
-important informations and unecessarly free struct that i will have
-to re-allocate just couple jiffies latter. That's one way i am using
-this. The other way is to optimize GPU page table update just like i
-am doing with all the patches to RDMA/ODP and various GPU drivers.
+Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
+---
+ drivers/misc/aspeed-lpc-ctrl.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
+diff --git a/drivers/misc/aspeed-lpc-ctrl.c b/drivers/misc/aspeed-lpc-ctrl.c
+index 332210e06e98..97ae341109d5 100644
+--- a/drivers/misc/aspeed-lpc-ctrl.c
++++ b/drivers/misc/aspeed-lpc-ctrl.c
+@@ -68,7 +68,6 @@ static long aspeed_lpc_ctrl_ioctl(struct file *file, unsigned int cmd,
+ 		unsigned long param)
+ {
+ 	struct aspeed_lpc_ctrl *lpc_ctrl = file_aspeed_lpc_ctrl(file);
+-	struct device *dev = file->private_data;
+ 	void __user *p = (void __user *)param;
+ 	struct aspeed_lpc_ctrl_mapping map;
+ 	u32 addr;
+@@ -93,8 +92,8 @@ static long aspeed_lpc_ctrl_ioctl(struct file *file, unsigned int cmd,
+ 
+ 		/* If memory-region is not described in device tree */
+ 		if (!lpc_ctrl->mem_size) {
+-			dev_err(dev, "Didn't find reserved memory\n");
+-			return -EINVAL;
++			pr_err("aspeed_lpc_ctrl: ioctl: Didn't find reserved memory\n");
++			return -ENXIO;
+ 		}
+ 
+ 		map.size = lpc_ctrl->mem_size;
+@@ -134,16 +133,16 @@ static long aspeed_lpc_ctrl_ioctl(struct file *file, unsigned int cmd,
+ 
+ 		if (map.window_type == ASPEED_LPC_CTRL_WINDOW_FLASH) {
+ 			if (!lpc_ctrl->pnor_size) {
+-				dev_err(dev, "Didn't find host pnor flash\n");
+-				return -EINVAL;
++				pr_err("aspeed_lpc_ctrl: ioctl: Didn't find host pnor flash\n");
++				return -ENXIO;
+ 			}
+ 			addr = lpc_ctrl->pnor_base;
+ 			size = lpc_ctrl->pnor_size;
+ 		} else if (map.window_type == ASPEED_LPC_CTRL_WINDOW_MEMORY) {
+ 			/* If memory-region is not described in device tree */
+ 			if (!lpc_ctrl->mem_size) {
+-				dev_err(dev, "Didn't find reserved memory\n");
+-				return -EINVAL;
++				pr_err("aspeed_lpc_ctrl: ioctl: Didn't find reserved memory\n");
++				return -ENXIO;
+ 			}
+ 			addr = lpc_ctrl->mem_base;
+ 			size = lpc_ctrl->mem_size;
+@@ -239,7 +238,7 @@ static int aspeed_lpc_ctrl_probe(struct platform_device *pdev)
+ 		of_node_put(node);
+ 		if (rc) {
+ 			dev_err(dev, "Couldn't address to resource for reserved memory\n");
+-			return -ENOMEM;
++			return -ENXIO;
+ 		}
+ 
+ 		lpc_ctrl->mem_size = resource_size(&resm);
+-- 
+2.17.1
 
-> > Here is an explaination on the rational for this patchset:
-> >
-> >
-> > CPU page table update can happens for many reasons, not only as a result
-> > of a syscall (munmap(), mprotect(), mremap(), madvise(), ...) but also
-> > as a result of kernel activities (memory compression, reclaim, migration,
-> > ...).
-> >
-> > This patch introduce a set of enums that can be associated with each of
-> > the events triggering a mmu notifier. Latter patches take advantages of
-> > those enum values.
-> >
-> > - UNMAP: munmap() or mremap()
-> > - CLEAR: page table is cleared (migration, compaction, reclaim, ...)
-> > - PROTECTION_VMA: change in access protections for the range
-> > - PROTECTION_PAGE: change in access protections for page in the range
-> > - SOFT_DIRTY: soft dirtyness tracking
-> >
-> > Being able to identify munmap() and mremap() from other reasons why the
-> > page table is cleared is important to allow user of mmu notifier to
-> > update their own internal tracking structure accordingly (on munmap or
-> > mremap it is not longer needed to track range of virtual address as it
-> > becomes invalid).
-> 
-> The only context information consumed in this patch set is
-> MMU_NOTIFY_PROTECTION_VMA.
-> 
-> What is the practical benefit of these "optimize out the case when a
-> range is updated to read only" optimizations? Any numbers to show this
-> is worth the code thrash?
-
-It depends on the workload for instance if you map to RDMA a file
-read only like a log file for export, all write back that would
-disrupt the RDMA mapping can be optimized out.
-
-See above for more reasons why it is beneficial (knowing when it is
-an munmap/mremap versus something else).
-
-I would have not thought that passing down information as something
-that controversial. Hopes this help you see the benefit of this.
-
-Cheers,
-Jérôme
