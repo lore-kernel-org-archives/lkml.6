@@ -2,134 +2,217 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3948BC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 12:57:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08FD0C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 12:58:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 083B321848
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 12:57:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B13E821848
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 12:58:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="H5zBqLdq";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Ddozk3S+"
+	dkim=pass (2048-bit key) header.d=benyossef-com.20150623.gappssmtp.com header.i=@benyossef-com.20150623.gappssmtp.com header.b="wtE7yITG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726367AbfAWM5p (ORCPT
+        id S1726301AbfAWM6g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 07:57:45 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:41756 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726029AbfAWM5p (ORCPT
+        Wed, 23 Jan 2019 07:58:36 -0500
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:41729 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725991AbfAWM6f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 07:57:45 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 9769260736; Wed, 23 Jan 2019 12:57:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548248263;
-        bh=Mz+DueOzCHqjZ4WaYFUaDzBjJPzVrxhpr9P0YTWphvU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=H5zBqLdql9Dr5PmUYZy7+f552lAhtjCw+B7wCKmhvWXmqZOaVYqUZw+t3918bgVhn
-         UtjG4Ywj8GuM+6J0AmYax95LAAx8WFpAFkKxw4qrhHIWlRHM8zZ8ayLixyVxhg5o8g
-         YqbfnDj1FAUej60O6ZRo9wON36O7UnTr9m2ejnyE=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id D0A0C6024C;
-        Wed, 23 Jan 2019 12:57:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548248262;
-        bh=Mz+DueOzCHqjZ4WaYFUaDzBjJPzVrxhpr9P0YTWphvU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Ddozk3S+mXaTq+cf+U0u96VsBktf4zD8r6mxOun444IjsvpB+zplBbd88UXrqEgtb
-         zvYkAdMoEeCYE3izRvlAiC+dAjoR2eU5M3ikGvLKS3kfvSfi6e5VChZ0njs5DLVcsL
-         eOSrgqrG+6o5+jyuD/ybWmBeUd8ho9CC146JBe+Y=
+        Wed, 23 Jan 2019 07:58:35 -0500
+Received: by mail-ua1-f67.google.com with SMTP id z24so663489ual.8
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 04:58:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=benyossef-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=SKiTehzyUlwJV0b2BKwZAroAqyP7BP93rdA3qUyv8K0=;
+        b=wtE7yITG9nC0MKUTE1uCkJhlgvNuDODsGQc+7d0xdAjyicQ7J1inMNAW5JNctY5BT2
+         g1cQuchqogEy/xNENLUgv+qmkeVWW4i9eLSozBElRfRI+sRb7IFvgo/pbc0xrWnXrvDS
+         7xTN1Kh+spAMsU3/cVtvSIJo2/zJI1LE1mU1nmJfo7Z4LJ7sqsOrFkTufo4I6TVjq1mO
+         ifH620Cic3pmPQhuAoW9/HjmYHUAlY/m21Bd2TtoVXaqt8oTEct8USVnaMK6YJR5ulsJ
+         fzoY5yNfmZxa/P9i9OwCx3eTbOZlfXMP+vmgXB3+ZmUb8PPJ5E3ExdbVoEjWFQuUA8TS
+         K8tA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=SKiTehzyUlwJV0b2BKwZAroAqyP7BP93rdA3qUyv8K0=;
+        b=nS38StsEMzi4QnuuA7tVcAWJrQpy8VgGaiF0hUeFX5N14ogEdvOHaPkuuF3qnx/2BA
+         tlfnDgvjJ25JJQD0w3oYmVTkXcdaphrCysah4mOoLym0vUhZFmfkhoKo7s3YnFCm2CBL
+         /HHM+77Ry54ZOuBKqeCjEYikdDiUdKUVKc+FVK7wpuhwDD89pupeLvuRGCuF0BL7yb8g
+         QYNN5+34EHmxV/SKBVbqYYxF/w+FLY+CFmUz/jY7jM4aHjjyoRfYPilUNQQwT9CRbMjp
+         HMjSW7LPpgwEX0/lodlZsktec0CV0qvrll4cd0Qc6CwfaQ6rrhse7ypcX6IinJoviCdA
+         MUrA==
+X-Gm-Message-State: AJcUuke5lLZ89ELgR5EyYDPK7QKw1Y/1i4XXDYGbGAujTxYU6INeiBX7
+        ylt/KNF413v0zDSpeJ3zRxt2cClwMNyr7Vx22fbl/8iwBDM=
+X-Google-Smtp-Source: ALg8bN5jfIsuJQn2h0/RVZ74q4dkjnHMPoPDoWPYVjMjlUrX0/gq/YvtfhKNyVOTstk+vGaGudq5vj/UJJiivf7P0IU=
+X-Received: by 2002:ab0:7493:: with SMTP id n19mr786352uap.115.1548248314009;
+ Wed, 23 Jan 2019 04:58:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 23 Jan 2019 18:27:42 +0530
-From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Johan Hovold <johan@kernel.org>, marcel@holtmann.org,
-        johan.hedberg@gmail.com, linux-kernel@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, Johan Hovold <jhovold@gmail.com>
-Subject: Re: [PATCH v5 2/5] Bluetooth: hci_qca: Deassert RTS while baudrate
- change command
-In-Reply-To: <20190122215330.GI261387@google.com>
-References: <20190111013707.GD261387@google.com>
- <194b5d18ea86830b6a24939d483a964c@codeaurora.org>
- <20190111235633.GK261387@google.com>
- <a6e083d245baebc019b6e7163fd6f133@codeaurora.org>
- <20190115234628.GQ261387@google.com> <20190117160944.GV3691@localhost>
- <20190117172109.GU261387@google.com> <20190118094416.GB3691@localhost>
- <20190119003109.GD261387@google.com>
- <24831204bab89250099ca56e7562bd16@codeaurora.org>
- <20190122215330.GI261387@google.com>
-Message-ID: <f5e3080235572c44fe1e8c0d4b2e5a97@codeaurora.org>
-X-Sender: bgodavar@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+References: <20190122151422.14204-1-gregkh@linuxfoundation.org> <20190122151422.14204-3-gregkh@linuxfoundation.org>
+In-Reply-To: <20190122151422.14204-3-gregkh@linuxfoundation.org>
+From:   Gilad Ben-Yossef <gilad@benyossef.com>
+Date:   Wed, 23 Jan 2019 14:58:22 +0200
+Message-ID: <CAOtvUMc92ghc4LjHYJ7z9r11Om82rw=mNdAqA1GYJMxmuUqCLw@mail.gmail.com>
+Subject: Re: [PATCH 2/7] crypto: ccrree: no need to check return value of
+ debugfs_create functions
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        David Miller <davem@davemloft.net>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        Yael Chemla <yael.chemla@foss.arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matthias,
+Hi,
 
-On 2019-01-23 03:23, Matthias Kaehlcke wrote:
-> On Mon, Jan 21, 2019 at 08:11:39PM +0530, Balakrishna Godavarthi wrote:
->> Hi Matthias,
->> 
->> On 2019-01-19 06:01, Matthias Kaehlcke wrote:
->> > On Fri, Jan 18, 2019 at 10:44:16AM +0100, Johan Hovold wrote:
->> > > On Thu, Jan 17, 2019 at 09:21:09AM -0800, Matthias Kaehlcke wrote:
->> > >
->> > > > I observed that the qcom_geni_serial driver doesn't raise RTS with
->> > > > flow control disabled. It seems we have to investigate why that's the
->> > > > case. I agree that the driver should be platform agnostic.
->> > >
->> > > Sounds like a driver bug, unless the hardware is just "odd". The
->> > > driver implementation of this looks very non-standard judging from a
->> > > quick peek.
->> > >
->> > > In fact, qcom_geni_serial_get_mctrl() is currently a no-op if hardware
->> > > flow control is not enabled:
->> > >
->> > > 	if (uart_console(uport) || !uart_cts_enabled(uport))
->> > > 		return;
->> > >
->> > > Perhaps dropping the !uart_cts_enabled() test is sufficient.
->> >
->> > Thanks for taking a look Johan, that was indeed the problem (also
->> > in set_mctrl()). I posted a fix:
->> > https://lore.kernel.org/patchwork/patch/1033611/
->> >
->> > Balakrishna, the following (applied on top of your patch) works for me
->> > with the UART patch above:
->> >
->> 
->> [Bala]: will test and update BT patch accordingly.
-> 
-> Note that Johan pointed out that hci_uart_set_flow_control() deasserts
-> RTS when flow control is disabled, so the _set_rts() calls can be
-> removed. With that only a single action needs to be undone in case of
-> an error, you can consider to keep the return instead of using the
-> goto introduced by my patch.
-> 
+On Tue, Jan 22, 2019 at 5:14 PM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> When calling debugfs functions, there is no need to ever check the
+> return value.  The function can work or not, but the code logic should
+> never do something different based on this.
 
-[Bala]: ok sure. will note this.
 
-> Please keep/adapt the "Deassert RTS while changing the baudrate ..."
-> comment to leave it clear to posterity why flow control is disabled
-> during baudrate changes. It's fairly obvious once you understand the
-> problem and that disabling flow control deasserts RTS, but it took us
-> a while to get there, initially we only had a comment saying
-> "disabling flow control is mandatory" (I recall I inquired about this
-> multiple times during the initial review of the wcn3990 patches ;-)
-> 
-> Thanks
-> 
-> Matthias
 
--- 
-Regards
-Balakrishna.
+I get the part about not failing loading the driver just because some
+debugs entry isn't available,  but wont it be weird if
+debugfs_create_dir() fails but  debugfs_create_regset32() succeeds and
+we suddenly have weird files in the debugfs root dir?
+Not the end of the world of course but maybe it's better to avoid
+trying to create the files if the directory is not available?
+
+Thanks,
+Gilad
+
+>
+> Cc: Yael Chemla <yael.chemla@foss.arm.com>
+> Cc: Gilad Ben-Yossef <gilad@benyossef.com>
+> Cc: Herbert Xu <herbert@gondor.apana.org.au>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: linux-crypto@vger.kernel.org
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+>  drivers/crypto/ccree/cc_debugfs.c | 22 +++-------------------
+>  drivers/crypto/ccree/cc_debugfs.h |  8 ++------
+>  drivers/crypto/ccree/cc_driver.c  |  7 +------
+>  3 files changed, 6 insertions(+), 31 deletions(-)
+>
+> diff --git a/drivers/crypto/ccree/cc_debugfs.c b/drivers/crypto/ccree/cc_=
+debugfs.c
+> index 5ca184e42483..5fa05a7bcf36 100644
+> --- a/drivers/crypto/ccree/cc_debugfs.c
+> +++ b/drivers/crypto/ccree/cc_debugfs.c
+> @@ -39,11 +39,9 @@ static struct debugfs_reg32 debug_regs[] =3D {
+>         CC_DEBUG_REG(AXIM_MON_COMP),
+>  };
+>
+> -int __init cc_debugfs_global_init(void)
+> +void __init cc_debugfs_global_init(void)
+>  {
+>         cc_debugfs_dir =3D debugfs_create_dir("ccree", NULL);
+> -
+> -       return !cc_debugfs_dir;
+>  }
+>
+>  void __exit cc_debugfs_global_fini(void)
+> @@ -56,7 +54,6 @@ int cc_debugfs_init(struct cc_drvdata *drvdata)
+>         struct device *dev =3D drvdata_to_dev(drvdata);
+>         struct cc_debugfs_ctx *ctx;
+>         struct debugfs_regset32 *regset;
+> -       struct dentry *file;
+>
+>         debug_regs[0].offset =3D drvdata->sig_offset;
+>         debug_regs[1].offset =3D drvdata->ver_offset;
+> @@ -74,22 +71,9 @@ int cc_debugfs_init(struct cc_drvdata *drvdata)
+>         regset->base =3D drvdata->cc_base;
+>
+>         ctx->dir =3D debugfs_create_dir(drvdata->plat_dev->name, cc_debug=
+fs_dir);
+> -       if (!ctx->dir)
+> -               return -ENFILE;
+> -
+> -       file =3D debugfs_create_regset32("regs", 0400, ctx->dir, regset);
+> -       if (!file) {
+> -               debugfs_remove(ctx->dir);
+> -               return -ENFILE;
+> -       }
+>
+> -       file =3D debugfs_create_bool("coherent", 0400, ctx->dir,
+> -                                  &drvdata->coherent);
+> -
+> -       if (!file) {
+> -               debugfs_remove_recursive(ctx->dir);
+> -               return -ENFILE;
+> -       }
+> +       debugfs_create_regset32("regs", 0400, ctx->dir, regset);
+> +       debugfs_create_bool("coherent", 0400, ctx->dir, &drvdata->coheren=
+t);
+>
+>         drvdata->debugfs =3D ctx;
+>
+> diff --git a/drivers/crypto/ccree/cc_debugfs.h b/drivers/crypto/ccree/cc_=
+debugfs.h
+> index 5b5320eca7d2..01cbd9a95659 100644
+> --- a/drivers/crypto/ccree/cc_debugfs.h
+> +++ b/drivers/crypto/ccree/cc_debugfs.h
+> @@ -5,7 +5,7 @@
+>  #define __CC_DEBUGFS_H__
+>
+>  #ifdef CONFIG_DEBUG_FS
+> -int cc_debugfs_global_init(void);
+> +void cc_debugfs_global_init(void);
+>  void cc_debugfs_global_fini(void);
+>
+>  int cc_debugfs_init(struct cc_drvdata *drvdata);
+> @@ -13,11 +13,7 @@ void cc_debugfs_fini(struct cc_drvdata *drvdata);
+>
+>  #else
+>
+> -static inline int cc_debugfs_global_init(void)
+> -{
+> -       return 0;
+> -}
+> -
+> +static inline void cc_debugfs_global_init(void) {}
+>  static inline void cc_debugfs_global_fini(void) {}
+>
+>  static inline int cc_debugfs_init(struct cc_drvdata *drvdata)
+> diff --git a/drivers/crypto/ccree/cc_driver.c b/drivers/crypto/ccree/cc_d=
+river.c
+> index 8ada308d72ee..662738e53ced 100644
+> --- a/drivers/crypto/ccree/cc_driver.c
+> +++ b/drivers/crypto/ccree/cc_driver.c
+> @@ -538,13 +538,8 @@ static struct platform_driver ccree_driver =3D {
+>
+>  static int __init ccree_init(void)
+>  {
+> -       int ret;
+> -
+>         cc_hash_global_init();
+> -
+> -       ret =3D cc_debugfs_global_init();
+> -       if (ret)
+> -               return ret;
+> +       cc_debugfs_global_init();
+>
+>         return platform_driver_register(&ccree_driver);
+>  }
+> --
+> 2.20.1
+>
+
+
+--=20
+Gilad Ben-Yossef
+Chief Coffee Drinker
+
+values of =CE=B2 will give rise to dom!
