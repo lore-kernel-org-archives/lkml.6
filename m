@@ -2,69 +2,129 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F6D1C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 15:39:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 817F7C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 15:40:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D34F2184C
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 15:39:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 591CF21855
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 15:40:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726122AbfAWPjL (ORCPT
+        id S1726200AbfAWPkc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 10:39:11 -0500
-Received: from mga02.intel.com ([134.134.136.20]:61588 "EHLO mga02.intel.com"
+        Wed, 23 Jan 2019 10:40:32 -0500
+Received: from foss.arm.com ([217.140.101.70]:42996 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725948AbfAWPjL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 10:39:11 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jan 2019 07:39:10 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,511,1539673200"; 
-   d="scan'208";a="112045535"
-Received: from marshy.an.intel.com ([10.122.105.159])
-  by orsmga008.jf.intel.com with ESMTP; 23 Jan 2019 07:39:09 -0800
-From:   richard.gong@linux.intel.com
-To:     gregkh@linuxfoundation.org
-Cc:     atull@kernel.org, dinguyen@kernel.org,
-        linux-kernel@vger.kernel.org, todd.riffel@intel.com,
-        richard.gong@linux.intel.com, Richard Gong <richard.gong@intel.com>
-Subject: [PATCHv1] firmware: intel_stratix10_service: add hardware dependency
-Date:   Wed, 23 Jan 2019 09:47:56 -0600
-Message-Id: <1548258476-16821-1-git-send-email-richard.gong@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S1725871AbfAWPkb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 10:40:31 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 67B05A78;
+        Wed, 23 Jan 2019 07:40:31 -0800 (PST)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 01FC73F5C1;
+        Wed, 23 Jan 2019 07:40:28 -0800 (PST)
+Date:   Wed, 23 Jan 2019 15:40:24 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Jianjun Wang <jianjun.wang@mediatek.com>
+Cc:     Bjorn Helgaas <helgaas@kernel.org>, ryder.lee@mediatek.com,
+        robh+dt@kernel.org, matthias.bgg@gmail.com,
+        linux-pci@vger.kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, youlin.pei@mediatek.com,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        honghui.zhang@mediatek.com, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/2] PCI: mediatek: Add controller support for MT7629
+Message-ID: <20190123154023.GA1157@e107981-ln.cambridge.arm.com>
+References: <1544058553-10936-1-git-send-email-jianjun.wang@mediatek.com>
+ <1544058553-10936-3-git-send-email-jianjun.wang@mediatek.com>
+ <20181213145517.GB4701@google.com>
+ <1545034779.8528.8.camel@mhfsdcap03>
+ <20181217143247.GK20725@google.com>
+ <20181217154645.GA24864@e107981-ln.cambridge.arm.com>
+ <1545124764.25199.3.camel@mhfsdcap03>
+ <20181220182043.GC183878@google.com>
+ <1545651628.5634.57.camel@mhfsdcap03>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1545651628.5634.57.camel@mhfsdcap03>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Richard Gong <richard.gong@intel.com>
+On Mon, Dec 24, 2018 at 07:40:28PM +0800, Jianjun Wang wrote:
+> On Thu, 2018-12-20 at 12:20 -0600, Bjorn Helgaas wrote:
+> > On Tue, Dec 18, 2018 at 05:19:24PM +0800, Jianjun Wang wrote:
+> > > On Mon, 2018-12-17 at 15:46 +0000, Lorenzo Pieralisi wrote:
+> > > > On Mon, Dec 17, 2018 at 08:32:47AM -0600, Bjorn Helgaas wrote:
+> > > > > On Mon, Dec 17, 2018 at 04:19:39PM +0800, Jianjun Wang wrote:
+> > > > > > On Thu, 2018-12-13 at 08:55 -0600, Bjorn Helgaas wrote:
+> > > > > > > On Thu, Dec 06, 2018 at 09:09:13AM +0800, Jianjun Wang wrote:
+> > > > > > > > The read value of BAR0 is 0xffff_ffff, it's size will be
+> > > > > > > > calculated as 4GB in arm64 but bogus alignment values at
+> > > > > > > > arm32, the pcie device and devices behind this bridge will
+> > > > > > > > not be enabled. Fix it's BAR0 resource size to guarantee
+> > > > > > > > the pcie devices will be enabled correctly.
+> > > > > > > 
+> > > > > > > So this is a hardware erratum?  Per spec, a memory BAR has
+> > > > > > > bit 0 hardwired to 0, and an IO BAR has bit 1 hardwired to
+> > > > > > > 0.
+> > > > > > 
+> > > > > > Yes, it only works properly on 64bit platform.
+> > > > > 
+> > > > > I don't understand.  BARs are supposed to work the same
+> > > > > regardless of whether it's a 32- or 64-bit platform.  If this is
+> > > > > a workaround for a hardware defect, please just say that
+> > > > > explicitly.
+> > > > 
+> > > > I do not understand this either. First thing to do is to describe
+> > > > the problem properly so that we can actually find a solution to
+> > > > it.
+> > > 
+> > > This BAR0 is a 64-bit memory BAR, the HW default values for this BAR
+> > > is 0xffff_ffff_0000_0000 and it could not be changed except by
+> > > config write operation.
+> > 
+> > If you literally get 0xffff_ffff_0000_0000 when reading the BAR, that
+> > is out of spec because the low-order 4 bits of a 64-bit memory BAR
+> > cannot all be zero.
+> > 
+> > A 64-bit BAR consumes two DWORDS in config space.  For a 64-bit BAR0,
+> > the DWORD at 0x10 contains the low-order bits, and the DWORD at 0x14
+> > contains the upper 32 bits.  Bits 0-3 of the low-order DWORD (the
+> > one at 0x10) are read-only, and in this case should contain the value
+> > 0b1100 (0xc).  That means the range is prefetchable (bit 3 == 1) and
+> > the BAR is 64 bits (bits 2:1 == 10).
+> 
+> Sorry, I have confused the HW default value and the read value of BAR
+> size. The hardware default value is 0xffff_ffff_0000_000c, it's a 64-bit
+> BAR with prefetchable range.
+> 
+> When we start to decoding the BAR, the read value of BAR0 at 0x10 is
+> 0x0c, and the value at 0x14 is 0xffff_ffff, so the read value of BAR
+> size is 0xffff_ffff_0000_0000, which will be decoded to 0xffff_ffff, and
+> it will be set to the end value of BAR0 resource in the pci_dev.
+> > 
+> > > The calculated BAR size will be 0 in 32-bit platform since the
+> > > phys_addr_t is a 32bit value in 32-bit platform.
+> > 
+> > Either (1) this is a hardware defect that feeds incorrect data to the
+> > BAR size calculation, or (2) there's a problem in the BAR size
+> > calculation code.  We need to figure out which one and work around or
+> > fix it correctly.
+> 
+> The BAR size is calculated by the code (res->end - res->start + 1) is
+> fine, I think it's a hardware defect because that we can not change the
+> hardware default value or just disable it since we don't using it.
 
-Add a Kconfig dependency to ensure Intel Stratix10 service layer driver
-can be built only on the platform that supports it.
+Apologies for the delay in getting back to this.
 
-Signed-off-by: Richard Gong <richard.gong@intel.com>
----
- drivers/firmware/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This looks like a kernel defect, not a HW defect.
 
-diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
-index f754578..cac16c4 100644
---- a/drivers/firmware/Kconfig
-+++ b/drivers/firmware/Kconfig
-@@ -218,7 +218,7 @@ config FW_CFG_SYSFS_CMDLINE
- 
- config INTEL_STRATIX10_SERVICE
- 	tristate "Intel Stratix10 Service Layer"
--	depends on HAVE_ARM_SMCCC
-+	depends on ARCH_STRATIX10 && HAVE_ARM_SMCCC
- 	default n
- 	help
- 	  Intel Stratix10 service layer runs at privileged exception level,
--- 
-2.7.4
+I need some time to make up my mind on what the right fix for this
+but it is most certainly not this patch.
 
+Lorenzo
