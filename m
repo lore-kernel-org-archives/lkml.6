@@ -2,211 +2,269 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88473C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:17:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83913C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:19:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5860F21019
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:17:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F8EA21019
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:19:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726945AbfAWHRs convert rfc822-to-8bit (ORCPT
+        id S1726312AbfAWHTU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 02:17:48 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:47328 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726604AbfAWHRq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 02:17:46 -0500
-Received: from mail-qt1-f197.google.com ([209.85.160.197])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1gmCnA-0001pL-Lc
-        for linux-kernel@vger.kernel.org; Wed, 23 Jan 2019 07:17:44 +0000
-Received: by mail-qt1-f197.google.com with SMTP id p24so1486094qtl.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 23:17:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=St9mV3iKZXKzcGc7dcEFWjwZHYfQyG5DMI1JCAY27WQ=;
-        b=MWHsFIPpKRUi3xfV14R/zjAfejPVZuHJZvVAJUDNB75nyHz5wbiZQxqqKCJnfHfn+k
-         onU2bo3W9lPErJhpJdI5O+PbXDrX9yV9njCY57n35oKB1MDd1Y9I3VTRSPCP57FkkXr5
-         Ck8iortwT5IuC8vhAGyKoOFNtuzIDtKb8tRqjv6PiIdOxcZCAyUTdMsJK9HxVzTSdPrv
-         EzDROS/4LM1mBA13w0PUWgj4dVVMxwLvM+32eLLKAh3TNKoszZLE+ffsiZ48Zd0GJqqK
-         KLNS5A94cZ7pTYm0aGk4ObeKUAkXhavjW7JsP5VdBLfE6gw8p5xGK80LMC7/or7Ho9yV
-         ZC+Q==
-X-Gm-Message-State: AJcUukcrPQHTn4uW08dv75I1Vy5+J2jSiB+qJQ2pSBMCilpjuEW8Mm7O
-        /cd31AFJ+quYCmF0eXOFWnIqvbR2o61MwnmiPwbDAYT3/iNtsPQKpaOYl0IWcuCBmAnc+IIcLXg
-        SDlmoxIEZk3InalWs3qz893UEMRriF7isdAlsiEUrsQ==
-X-Received: by 2002:a0c:8382:: with SMTP id k2mr1033491qva.0.1548227863841;
-        Tue, 22 Jan 2019 23:17:43 -0800 (PST)
-X-Google-Smtp-Source: ALg8bN60SMpG2vK2ejh9n8cdWd0ef5hwZRZWZYc7doEf7ACVcWwyNSOcHXmrqMXWB7YcamHlUbUxKw==
-X-Received: by 2002:a0c:8382:: with SMTP id k2mr1033476qva.0.1548227863629;
-        Tue, 22 Jan 2019 23:17:43 -0800 (PST)
-Received: from [10.101.46.245] (61-220-137-37.HINET-IP.hinet.net. [61.220.137.37])
-        by smtp.gmail.com with ESMTPSA id x14sm23729980qki.30.2019.01.22.23.17.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Jan 2019 23:17:43 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.1 \(3445.101.1\))
-Subject: Re: [PATCH] PCI / ACPI: Don't clear pme_poll on device that has
- unreliable ACPI wake
-From:   Kai Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <20190122235134.GE14636@google.com>
-Date:   Wed, 23 Jan 2019 15:17:37 +0800
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, jeffrey.t.kirsher@intel.com,
-        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <91E74111-5BB6-4604-A1D7-B537AB42C317@canonical.com>
-References: <20190122064544.27426-1-kai.heng.feng@canonical.com>
- <20190122235134.GE14636@google.com>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-X-Mailer: Apple Mail (2.3445.101.1)
+        Wed, 23 Jan 2019 02:19:20 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:41894 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725973AbfAWHTU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 02:19:20 -0500
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id E471136CEFC1D88072A9;
+        Wed, 23 Jan 2019 15:19:17 +0800 (CST)
+Received: from huawei.com (10.90.53.225) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.408.0; Wed, 23 Jan 2019
+ 15:19:12 +0800
+From:   Yufen Yu <yuyufen@huawei.com>
+To:     <dwmw2@infradead.org>, <richard.weinberger@gmail.com>,
+        <linux-mtd@lists.infradead.org>
+CC:     <Joakim.Tjernlund@infinera.com>, <viro@zeniv.linux.org.uk>,
+        <linux-kernel@vger.kernel.org>, <houtao1@huawei.com>
+Subject: [PATCH v2] jffs2: safely remove obsolete dirent from the f->dents list
+Date:   Wed, 23 Jan 2019 15:22:49 +0800
+Message-ID: <20190123072249.103847-1-yuyufen@huawei.com>
+X-Mailer: git-send-email 2.16.2.dirty
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.90.53.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+We may delete a bunch of directory entries, operating such as:
+getdents(), unlink(), getdents()..., until the end of the directory.
+jffs2 handles f_pos on the directory merely as the position on the
+f->dents list. So, the next getdents() may skip some entries
+before f_pos, if we remove some entries from the list between two
+getdents(), resulting in some entries of the directory cannot be deleted.
 
+Commit 15953580e79b is introduced to resolve this bug by not
+removing delete entries from the list immediately.
 
-> On Jan 23, 2019, at 7:51 AM, Bjorn Helgaas <helgaas@kernel.org> wrote:
-> 
-> On Tue, Jan 22, 2019 at 02:45:44PM +0800, Kai-Heng Feng wrote:
->> There are some e1000e devices can only be woken up from D3 one time, by
->> plugging ethernet cable. Subsequent cable plugging does set PME bit
->> correctly, but it still doesn't get woken up.
->> 
->> Since e1000e connects to the root complex directly, we rely on ACPI to
->> wake it up. In this case, the GPE from _PRW only works once and stops
->> working after that.
->> 
->> So introduce a new PCI quirk, to avoid clearing pme_poll flag for buggy
->> platform firmwares that have unreliable GPE wake.
-> 
-> This quirk applies to all 0x15bb (E1000_DEV_ID_PCH_CNP_I219_LM7) and
-> 0x15bd (E1000_DEV_ID_PCH_CNP_I219_LM6) devices.  The e1000e driver
-> claims about a zillion different device IDs.
-> 
-> I would be surprised if these two devices are defective but all the
-> others work correctly.  Could it be that there is a problem with the
-> wiring on this particular motherboard or with the ACPI _PRW methods
-> (or the way Linux interprets them) in this firmware?
+However, when CONFIG_JFFS2_SUMMARY is not set, it can cause the
+following issues:
 
-If this is a motherboard issue or platform specific, do you prefer to use
-DMI matches here?
+* 'deletion' dirents is always in the f->dents list, wasting memory
+    resource. For example:
+        There is a file named 'file1'. Then we rename it:
+        mv file1 file2;
+        mv file2 file3;
+        ...
+        mv file99999 file1000000
 
-As for _PRW, it’s shared by USB controller, Audio controller and ethernet.
-Only the ethernet (e1000e) has this issue.
+    All of file1~file1000000 dirents always in the f->dents list.
 
-When this issue happens, the e1000e doesn’t get woken up by ethernet cable
-plugging, but inserting a USB device or plugging audio jack can wake up all
-three devices. So I think Linux interprets ACPI correctly here.
+* Though, the list we're traversing is already ordered by CRC,
+it could waste much CPU time when the list is very long.
 
-Their _PRW here:
-USB controller:
-    Scope (_SB.PCI0)                       
-    {                                      
-        Device (XDCI)                            
-        {                    
-            Method (_PRW, 0, NotSerialized)  // _PRW: Power Resources for Wake
-            {            
-                Return (GPRW (0x6D, 0x04))
-            } 
+To fix, we define two variables in struct jffs2_inode_info: nr_dir_opening,
+obsolete_count, and two new functions: jffs2_dir_open(), jffs2_dir_release().
 
-Audio controller:
-Scope (_SB.PCI0)                                                                                           
-    {                                                                                                          
-        Device (HDAS)                                  
-        {                                                                             
-            …         
-            Method (_PRW, 0, NotSerialized)  // _PRW: Power Resources for Wake                 
-            {                                        
-                Return (GPRW (0x6D, 0x04))           
-            }                                  
+When open a directory, jffs2_dir_open() will increase nr_dir_opening,
+which will be decreased by jffs2_dir_release(). if the value is 0,
+it means nobody open the dir and nobody in getdents()/seek() semantics.
+Thus, we can remove all obsolete dirent from the list.
 
-Ethernet controller:
-    Scope (_SB.PCI0)                                                                     
-    {                                                                     
-        Device (GLAN)                                                  
-        {                                                                            
-           …
-            Method (_PRW, 0, NotSerialized)  // _PRW: Power Resources for Wake                 
-            {                                        
-                Return (GPRW (0x6D, 0x04))                       
-            }                                                              
-        }                                                             
-    }  
+When delete a file, jffs2_do_unlink() can remove the dirent directly if
+nobody open the directory(i.e. nr_dir_opending == 0). Otherwise, it just
+increase obsolete_count, denoting obsolete dirent count of the list.
 
+Fixes: 15953580e79b ("[JFFS2] Improve getdents vs. f_pos handling on NOR flash.")
+Signed-off-by: Yufen Yu <yuyufen@huawei.com>
+---
+ fs/jffs2/dir.c             | 49 ++++++++++++++++++++++++++++++++++++++++++++++
+ fs/jffs2/jffs2_fs_i.h      |  7 +++++++
+ fs/jffs2/super.c           |  4 ++++
+ fs/jffs2/write.c           | 30 +++++++++++++++++++---------
+ include/uapi/linux/jffs2.h |  4 ++++
+ 5 files changed, 85 insertions(+), 9 deletions(-)
 
-> 
-> Would you mind attaching a complete dmesg log and "sudo lspci -vvv"
-> output to the bugzilla, please?
-
-Sure.
-
-Kai-Heng
-
-> 
->> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
->> ---
->> drivers/pci/pci-acpi.c | 2 +-
->> drivers/pci/quirks.c   | 8 ++++++++
->> include/linux/pci.h    | 1 +
->> 3 files changed, 10 insertions(+), 1 deletion(-)
->> 
->> diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
->> index e1949f7efd9c..184e2fc8a294 100644
->> --- a/drivers/pci/pci-acpi.c
->> +++ b/drivers/pci/pci-acpi.c
->> @@ -430,7 +430,7 @@ static void pci_acpi_wake_dev(struct acpi_device_wakeup_context *context)
->> 
->> 	pci_dev = to_pci_dev(context->dev);
->> 
->> -	if (pci_dev->pme_poll)
->> +	if (pci_dev->pme_poll && !pci_dev->unreliable_acpi_wake)
->> 		pci_dev->pme_poll = false;
->> 
->> 	if (pci_dev->current_state == PCI_D3cold) {
->> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
->> index b0a413f3f7ca..ed4863496fa8 100644
->> --- a/drivers/pci/quirks.c
->> +++ b/drivers/pci/quirks.c
->> @@ -4948,6 +4948,14 @@ DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_AMD, PCI_ANY_ID,
->> DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_NVIDIA, PCI_ANY_ID,
->> 			      PCI_CLASS_MULTIMEDIA_HD_AUDIO, 8, quirk_gpu_hda);
->> 
->> +static void quirk_unreliable_acpi_wake(struct pci_dev *pdev)
->> +{
->> +	pci_info(pdev, "ACPI Wake unreliable, always poll PME\n");
->> +	pdev->unreliable_acpi_wake = 1;
->> +}
->> +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x15bb, quirk_unreliable_acpi_wake);
->> +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x15bd, quirk_unreliable_acpi_wake);
->> +
->> /*
->>  * Some IDT switches incorrectly flag an ACS Source Validation error on
->>  * completions for config read requests even though PCIe r4.0, sec
->> diff --git a/include/linux/pci.h b/include/linux/pci.h
->> index 65f1d8c2f082..d22065c1576f 100644
->> --- a/include/linux/pci.h
->> +++ b/include/linux/pci.h
->> @@ -331,6 +331,7 @@ struct pci_dev {
->> 	unsigned int	pme_support:5;	/* Bitmask of states from which PME#
->> 					   can be generated */
->> 	unsigned int	pme_poll:1;	/* Poll device's PME status bit */
->> +	unsigned int	unreliable_acpi_wake:1;	/* ACPI Wake doesn't always work */
->> 	unsigned int	d1_support:1;	/* Low power state D1 is supported */
->> 	unsigned int	d2_support:1;	/* Low power state D2 is supported */
->> 	unsigned int	no_d1d2:1;	/* D1 and D2 are forbidden */
->> -- 
->> 2.17.1
->> 
+diff --git a/fs/jffs2/dir.c b/fs/jffs2/dir.c
+index f20cff1194bb..aed872dcd0ca 100644
+--- a/fs/jffs2/dir.c
++++ b/fs/jffs2/dir.c
+@@ -37,6 +37,8 @@ static int jffs2_mknod (struct inode *,struct dentry *,umode_t,dev_t);
+ static int jffs2_rename (struct inode *, struct dentry *,
+ 			 struct inode *, struct dentry *,
+ 			 unsigned int);
++static int jffs2_dir_release (struct inode *, struct file *);
++static int jffs2_dir_open (struct inode *, struct file *);
+ 
+ const struct file_operations jffs2_dir_operations =
+ {
+@@ -45,6 +47,8 @@ const struct file_operations jffs2_dir_operations =
+ 	.unlocked_ioctl=jffs2_ioctl,
+ 	.fsync =	jffs2_fsync,
+ 	.llseek =	generic_file_llseek,
++	.open =		jffs2_dir_open,
++	.release =	jffs2_dir_release,
+ };
+ 
+ 
+@@ -865,3 +869,48 @@ static int jffs2_rename (struct inode *old_dir_i, struct dentry *old_dentry,
+ 	return 0;
+ }
+ 
++static int jffs2_dir_open(struct inode *dir_i, struct file *filp)
++{
++#ifndef CONFIG_JFFS2_SUMMARY
++	struct jffs2_inode_info *dir_f = JFFS2_INODE_INFO(dir_i);
++	atomic_inc(&dir_f->nr_dir_opening);
++#endif
++
++	return 0;
++}
++
++static int jffs2_dir_release(struct inode *dir_i, struct file *filp)
++{
++#ifndef CONFIG_JFFS2_SUMMARY
++	struct jffs2_inode_info *dir_f = JFFS2_INODE_INFO(dir_i);
++
++	BUG_ON(atomic_read(&dir_f->nr_dir_opening) <= 0);
++
++	mutex_lock(&dir_f->sem);
++	/* jffs2_dir_open may increase nr_dir_opening after
++	 * atomic_dec_and_test() returning true.
++	 * However, it cannot traverse the list until hold
++	 * mutex dir_f->sem lock, so that we can go on
++	 * removing.*/
++	if (atomic_dec_and_test(&dir_f->nr_dir_opening) &&
++			dir_f->obsolete_count > JFFS2_OBS_DIRENT_LIMIT) {
++		struct jffs2_full_dirent **prev = &dir_f->dents;
++
++		/* remove all obsolete dirent from the list, which
++		 * can save memory space and reduce CPU time for
++		 * traverse the list */
++		while(*prev) {
++			if ((*prev)->raw == NULL && (*prev)->ino == 0) {
++				struct jffs2_full_dirent *this = *prev;
++				*prev = this->next;
++				jffs2_free_full_dirent(this);
++			} else
++				prev = &((*prev)->next);
++		}
++		dir_f->obsolete_count = 0;
++	}
++	mutex_unlock(&dir_f->sem);
++#endif
++
++	return 0;
++}
+diff --git a/fs/jffs2/jffs2_fs_i.h b/fs/jffs2/jffs2_fs_i.h
+index 2e4a86763c07..a4da25d16cb4 100644
+--- a/fs/jffs2/jffs2_fs_i.h
++++ b/fs/jffs2/jffs2_fs_i.h
+@@ -50,6 +50,13 @@ struct jffs2_inode_info {
+ 
+ 	uint16_t flags;
+ 	uint8_t usercompr;
++
++	/* obsolete dirent count in the list of 'dents' */
++	uint8_t  obsolete_count;
++
++	/* Directory open refcount */
++	atomic_t nr_dir_opening;
++
+ 	struct inode vfs_inode;
+ };
+ 
+diff --git a/fs/jffs2/super.c b/fs/jffs2/super.c
+index 87bdf0f4cba1..bf181b0ade9c 100644
+--- a/fs/jffs2/super.c
++++ b/fs/jffs2/super.c
+@@ -41,6 +41,10 @@ static struct inode *jffs2_alloc_inode(struct super_block *sb)
+ 	f = kmem_cache_alloc(jffs2_inode_cachep, GFP_KERNEL);
+ 	if (!f)
+ 		return NULL;
++
++	atomic_set(&f->nr_dir_opening, 0);
++	f->obsolete_count = 0;
++
+ 	return &f->vfs_inode;
+ }
+ 
+diff --git a/fs/jffs2/write.c b/fs/jffs2/write.c
+index cda9a361368e..780b4fd9af51 100644
+--- a/fs/jffs2/write.c
++++ b/fs/jffs2/write.c
+@@ -600,29 +600,41 @@ int jffs2_do_unlink(struct jffs2_sb_info *c, struct jffs2_inode_info *dir_f,
+ 	} else {
+ 		uint32_t nhash = full_name_hash(NULL, name, namelen);
+ 
+-		fd = dir_f->dents;
++		struct jffs2_full_dirent **prev = &dir_f->dents;
++
+ 		/* We don't actually want to reserve any space, but we do
+ 		   want to be holding the alloc_sem when we write to flash */
+ 		mutex_lock(&c->alloc_sem);
+ 		mutex_lock(&dir_f->sem);
+ 
+-		for (fd = dir_f->dents; fd; fd = fd->next) {
+-			if (fd->nhash == nhash &&
+-			    !memcmp(fd->name, name, namelen) &&
+-			    !fd->name[namelen]) {
++		while((*prev) && (*prev)->nhash <= nhash) {
++			if ((*prev)->nhash == nhash &&
++			    !memcmp((*prev)->name, name, namelen) &&
++			    !(*prev)->name[namelen]) {
+ 
++				fd = *prev;
+ 				jffs2_dbg(1, "Marking old dirent node (ino #%u) @%08x obsolete\n",
+ 					  fd->ino, ref_offset(fd->raw));
+ 				jffs2_mark_node_obsolete(c, fd->raw);
+-				/* We don't want to remove it from the list immediately,
+-				   because that screws up getdents()/seek() semantics even
+-				   more than they're screwed already. Turn it into a
+-				   node-less deletion dirent instead -- a placeholder */
+ 				fd->raw = NULL;
+ 				fd->ino = 0;
++
++				/* if nr_dir_openning is 0, we think nobody open the dir, and
++				 * nobody being in getdents()/seek() semantics. Thus, we can
++				 * safely remove this obsolete dirent from the list. Otherwise,
++				 * we just increase obsolete_count, and finally delete it in
++				 * jffs2_dir_release() */
++				if (atomic_read(&dir_f->nr_dir_opening) == 0) {
++					*prev = fd->next;
++					jffs2_free_full_dirent(fd);
++				} else
++					dir_f->obsolete_count++;
++
+ 				break;
+ 			}
++			prev = &((*prev)->next);
+ 		}
++
+ 		mutex_unlock(&dir_f->sem);
+ 	}
+ 
+diff --git a/include/uapi/linux/jffs2.h b/include/uapi/linux/jffs2.h
+index a18b719f49d4..dff3ac2d6b0c 100644
+--- a/include/uapi/linux/jffs2.h
++++ b/include/uapi/linux/jffs2.h
+@@ -35,6 +35,10 @@
+ */
+ #define JFFS2_MAX_NAME_LEN 254
+ 
++/* The obsolete dirent of dents list limit. When the number over
++ * this limit, we can remove the obsoleted dents. */
++#define JFFS2_OBS_DIRENT_LIMIT 64
++
+ /* How small can we sensibly write nodes? */
+ #define JFFS2_MIN_DATA_LEN 128
+ 
+-- 
+2.14.4
 
