@@ -2,135 +2,94 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 573FFC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 15:43:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4814C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 15:44:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EBD1218AC
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 15:43:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A323321871
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 15:44:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726766AbfAWPnz (ORCPT
+        id S1726661AbfAWPok (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 10:43:55 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:59125 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726243AbfAWPnz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 10:43:55 -0500
-Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1gmKgu-0008R4-DT; Wed, 23 Jan 2019 16:43:48 +0100
-Message-ID: <1548258228.28802.5.camel@pengutronix.de>
-Subject: Re: [PATCH v3 1/5] dma: imx-sdma: add clock ratio 1:1 check
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     "Angus Ainslie (Purism)" <angus@akkea.ca>
-Cc:     angus.ainslie@puri.sm, Vinod Koul <vkoul@kernel.org>,
-        dmaengine@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Daniel Baluta <daniel.baluta@gmail.com>
-Date:   Wed, 23 Jan 2019 16:43:48 +0100
-In-Reply-To: <20190123152310.11680-2-angus@akkea.ca>
-References: <20190120023150.17138-1-angus@akkea.ca>
-         <20190123152310.11680-1-angus@akkea.ca>
-         <20190123152310.11680-2-angus@akkea.ca>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Wed, 23 Jan 2019 10:44:40 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:41488 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726307AbfAWPok (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 10:44:40 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 65FC2207AC; Wed, 23 Jan 2019 16:44:37 +0100 (CET)
+Received: from localhost (unknown [185.94.189.187])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 28D672077B;
+        Wed, 23 Jan 2019 16:44:37 +0100 (CET)
+Date:   Wed, 23 Jan 2019 16:44:37 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-media@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-amarula@amarulasolutions.com,
+        Michael Trimarchi <michael@amarulasolutions.com>
+Subject: Re: [PATCH v6 2/6] media: sun6i: Add mod_rate quirk
+Message-ID: <20190123154437.zjrpzzsenoioi43e@flea>
+References: <20190118163158.21418-1-jagan@amarulasolutions.com>
+ <20190118163158.21418-3-jagan@amarulasolutions.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="yz2zv5rwxvomehn4"
+Content-Disposition: inline
+In-Reply-To: <20190118163158.21418-3-jagan@amarulasolutions.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Mittwoch, den 23.01.2019, 08:23 -0700 schrieb Angus Ainslie (Purism):
-> On i.mx8 mscale B0 chip, AHB/SDMA clock ratio 2:1 can't be supportted,
-> since SDMA clock ratio has to be increased to 250Mhz, AHB can't reach
-> to 500Mhz, so use 1:1 instead.
-> 
-> > Based on NXP commit MLK-16841-1 by Robin Gong <yibin.gong@nxp.com>
-> 
-> > Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
-> ---
->  drivers/dma/imx-sdma.c | 23 +++++++++++++++++++----
->  1 file changed, 19 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
-> index 0b3a67ff8e82..531a9d8b032a 100644
-> --- a/drivers/dma/imx-sdma.c
-> +++ b/drivers/dma/imx-sdma.c
-> @@ -440,6 +440,8 @@ struct sdma_engine {
-> > >  	unsigned int			irq;
-> > >  	dma_addr_t			bd0_phys;
-> > >  	struct sdma_buffer_descriptor	*bd0;
-> > +	/* clock ratio for AHB:SDMA core. 1:1 is 1, 2:1 is 0*/
-> > > +	bool				clk_ratio;
->  };
->  
->  static int sdma_config_write(struct dma_chan *chan,
-> @@ -662,8 +664,14 @@ static int sdma_run_channel0(struct sdma_engine *sdma)
-> >  		dev_err(sdma->dev, "Timeout waiting for CH0 ready\n");
->  
-> >  	/* Set bits of CONFIG register with dynamic context switching */
-> > -	if (readl(sdma->regs + SDMA_H_CONFIG) == 0)
-> > -		writel_relaxed(SDMA_H_CONFIG_CSM, sdma->regs + SDMA_H_CONFIG);
-> +	if (readl(sdma->regs + SDMA_H_CONFIG) == 0) {
 
-If the ACR bit gets set in sdma_init(), do we ever end up in this code
-path? From a quick glance it seems we might wrongfully skip the CSM
-enable here.
+--yz2zv5rwxvomehn4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +		if (sdma->clk_ratio)
-> > +			reg = SDMA_H_CONFIG_CSM | SDMA_H_CONFIG_ACR;
-> > +		else
-> +			reg = SDMA_H_CONFIG_CSM;
+On Fri, Jan 18, 2019 at 10:01:54PM +0530, Jagan Teki wrote:
+> Unfortunately default CSI_SCLK rate cannot work properly to
+> drive the connected sensor interface, particularly on few
+> Allwinner SoC's like A64.
+>=20
+> So, add mod_rate quirk via driver data so-that the respective
+> SoC's which require to alter the default mod clock rate can assign
+> the operating clock rate.
+>=20
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 
-That's a personal style preference, but I would write this as:
+You still don't need the variant stuff. If the sole difference is that
+we need that clock rate to be fixed, then the following patch is enough.
 
-reg = SDMA_H_CONFIG_CSM;
+http://code.bulix.org/9au998-562745?raw
 
-if (sdma->clk_ratio);
-	reg |= SDMA_H_CONFIG_ACR;
+Maxime
 
-> +
-> > +		writel_relaxed(reg, sdma->regs + SDMA_H_CONFIG);
-> > +	}
->  
-> >  	return ret;
->  }
-> @@ -1840,6 +1848,11 @@ static int sdma_init(struct sdma_engine *sdma)
-> >  	if (ret)
-> >  		goto disable_clk_ipg;
->  
-> > +	if (clk_get_rate(sdma->clk_ahb) == clk_get_rate(sdma->clk_ipg))
-> > +		sdma->clk_ratio = 1;
-> > +	else
-> +		sdma->clk_ratio = 0;
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-sdma is zeroed at allocation, so the else path here isn't necessary.
+--yz2zv5rwxvomehn4
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +
-> >  	/* Be sure SDMA has not started yet */
-> >  	writel_relaxed(0, sdma->regs + SDMA_H_C0PTR);
->  
-> @@ -1880,8 +1893,10 @@ static int sdma_init(struct sdma_engine *sdma)
-> >  	writel_relaxed(0x4050, sdma->regs + SDMA_CHN0ADDR);
->  
-> >  	/* Set bits of CONFIG register but with static context switching */
-> > -	/* FIXME: Check whether to set ACR bit depending on clock ratios */
-> > -	writel_relaxed(0, sdma->regs + SDMA_H_CONFIG);
-> > +	if (sdma->clk_ratio)
-> > +		writel_relaxed(SDMA_H_CONFIG_ACR, sdma->regs + SDMA_H_CONFIG);
-> > +	else
-> > +		writel_relaxed(0, sdma->regs + SDMA_H_CONFIG);
->  
-> >  	writel_relaxed(ccb_phys, sdma->regs + SDMA_H_C0PTR);
->  
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXEiL5QAKCRDj7w1vZxhR
+xW+OAP9I14o2aqaDvi2Zkm7tBUQNgMKU5/cRvH0+/vPUZBw7tQEAi4AHCxrJMB7W
+dAeL9m2LXQ6M4nDrZE51/vBKoTOpQgM=
+=UHSo
+-----END PGP SIGNATURE-----
+
+--yz2zv5rwxvomehn4--
