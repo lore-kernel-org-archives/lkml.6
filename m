@@ -2,75 +2,122 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2A43C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:28:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42FABC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:28:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A28FD21019
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:28:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C27621019
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:28:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726999AbfAWJ2j (ORCPT
+        id S1727070AbfAWJ2l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 23 Jan 2019 04:28:41 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37992 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726229AbfAWJ2j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 23 Jan 2019 04:28:39 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:59210 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726229AbfAWJ2i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 04:28:38 -0500
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 2F511E955A46C3247450;
-        Wed, 23 Jan 2019 17:28:37 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.408.0; Wed, 23 Jan 2019
- 17:28:27 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <robert.jarzmik@free.fr>, <dwmw2@infradead.org>,
-        <computersforpeace@gmail.com>, <bbrezillon@kernel.org>,
-        <marek.vasut@gmail.com>, <richard@nod.at>
-CC:     <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH v3 -next] mtd: docg3: Fix a possible memory leak of mtd->name
-Date:   Wed, 23 Jan 2019 17:28:19 +0800
-Message-ID: <20190123092819.5020-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1F93BA78;
+        Wed, 23 Jan 2019 01:28:39 -0800 (PST)
+Received: from queper01-lin (queper01-lin.cambridge.arm.com [10.1.195.48])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BADEA3F5C1;
+        Wed, 23 Jan 2019 01:28:37 -0800 (PST)
+Date:   Wed, 23 Jan 2019 09:28:36 +0000
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     rafael@kernel.org, peterz@infradead.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        dietmar.eggemann@arm.com
+Subject: Re: [PATCH v2] PM / EM: Expose the Energy Model in debugfs
+Message-ID: <20190123092834.hj5v6lup4422wrmf@queper01-lin>
+References: <20190122164247.19439-1-quentin.perret@arm.com>
+ <20190122184136.GD31777@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190122184136.GD31777@kroah.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In case DOC_CHIPID_G3, mtd->name is not freed in err handling path,
-which is alloced by kasprintf(). Fix this by using devm_kasprintf().
+On Tuesday 22 Jan 2019 at 19:41:36 (+0100), Greg KH wrote:
+> On Tue, Jan 22, 2019 at 04:42:47PM +0000, Quentin Perret wrote:
+> > The recently introduced Energy Model (EM) framework manages power cost
+> > tables of CPUs. These tables are currently only visible from kernel
+> > space. However, in order to debug the behaviour of subsystems that use
+> > the EM (EAS for example), it is often required to know what the power
+> > costs are from userspace.
+> > 
+> > For this reason, introduce under /sys/kernel/debug/energy_model a set of
+> > directories representing the performance domains of the system. Each
+> > performance domain contains a set of sub-directories representing the
+> > different capacity states (cs) and their attributes, as well as a file
+> > exposing the related CPUs.
+> > 
+> > The resulting hierarchy is as follows on Arm juno r0 for example:
+> > 
+> >     /sys/kernel/debug/energy_model
+> >     ├── pd0
+> >     │   ├── cpus
+> >     │   ├── cs:450000
+> >     │   │   ├── cost
+> >     │   │   ├── frequency
+> >     │   │   └── power
+> >     │   ├── cs:575000
+> >     │   │   ├── cost
+> >     │   │   ├── frequency
+> >     │   │   └── power
+> >     │   ├── cs:700000
+> >     │   │   ├── cost
+> >     │   │   ├── frequency
+> >     │   │   └── power
+> >     │   ├── cs:775000
+> >     │   │   ├── cost
+> >     │   │   ├── frequency
+> >     │   │   └── power
+> >     │   └── cs:850000
+> >     │       ├── cost
+> >     │       ├── frequency
+> >     │       └── power
+> >     └── pd1
+> >         ├── cpus
+> >         ├── cs:1100000
+> >         │   ├── cost
+> >         │   ├── frequency
+> >         │   └── power
+> >         ├── cs:450000
+> >         │   ├── cost
+> >         │   ├── frequency
+> >         │   └── power
+> >         ├── cs:625000
+> >         │   ├── cost
+> >         │   ├── frequency
+> >         │   └── power
+> >         ├── cs:800000
+> >         │   ├── cost
+> >         │   ├── frequency
+> >         │   └── power
+> >         └── cs:950000
+> >             ├── cost
+> >             ├── frequency
+> >             └── power
+> > 
+> > Signed-off-by: Quentin Perret <quentin.perret@arm.com>
+> > 
+> > ---
+> > 
+> > V2: removed check on return value of debugfs_create_* (Greg KH)
+> > ---
+> >  kernel/power/energy_model.c | 57 +++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 57 insertions(+)
+> 
+> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Fixes: ae9d4934b2d7 ("mtd: docg3: add multiple floor support")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
-v3: use devm_kasprintf
----
- drivers/mtd/devices/docg3.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/mtd/devices/docg3.c b/drivers/mtd/devices/docg3.c
-index 4c94fc0..59ca4f5 100644
---- a/drivers/mtd/devices/docg3.c
-+++ b/drivers/mtd/devices/docg3.c
-@@ -1767,8 +1767,8 @@ static int __init doc_set_driver_info(int chip_id, struct mtd_info *mtd)
- 
- 	switch (chip_id) {
- 	case DOC_CHIPID_G3:
--		mtd->name = kasprintf(GFP_KERNEL, "docg3.%d",
--				      docg3->device_id);
-+		mtd->name = devm_kasprintf(docg3->dev, GFP_KERNEL, "docg3.%d",
-+					   docg3->device_id);
- 		if (!mtd->name)
- 			return -ENOMEM;
- 		docg3->max_block = 2047;
--- 
-2.7.0
-
-
+Thanks !
+Quentin
