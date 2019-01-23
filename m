@@ -2,114 +2,118 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21898C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:21:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42D23C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:22:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECEB021019
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:21:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1370321019
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:22:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727162AbfAWKVN (ORCPT
+        id S1727278AbfAWKWE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 05:21:13 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38878 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726207AbfAWKVM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 05:21:12 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 20C8BA78;
-        Wed, 23 Jan 2019 02:21:12 -0800 (PST)
-Received: from brain-police (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 372783F5C1;
-        Wed, 23 Jan 2019 02:21:10 -0800 (PST)
-Date:   Wed, 23 Jan 2019 10:21:06 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        chenwandun <chenwandun@huawei.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "Wangkefeng (Kevin)" <wangkefeng.wang@huawei.com>,
-        anshuman.khandual@arm.com
-Subject: Re: [Qestion] Softlockup when send IPI to other CPUs
-Message-ID: <20190123102104.GF15019@brain-police>
-References: <95C141B25E7AB14BA042DCCC556C0E6501620A47@dggeml529-mbx.china.huawei.com>
- <20190119235825.GG26876@brain-police>
- <20190121142127.GD29504@arrakis.emea.arm.com>
- <20190122054400.GB6445@brain-police>
- <20190122145522.GC52887@lakrids.cambridge.arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190122145522.GC52887@lakrids.cambridge.arm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Wed, 23 Jan 2019 05:22:04 -0500
+Received: from regular1.263xmail.com ([211.150.99.137]:43350 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727198AbfAWKWE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 05:22:04 -0500
+X-Greylist: delayed 434 seconds by postgrey-1.27 at vger.kernel.org; Wed, 23 Jan 2019 05:22:02 EST
+Received: from hjc?rock-chips.com (unknown [192.168.167.163])
+        by regular1.263xmail.com (Postfix) with ESMTP id B3B4F26F;
+        Wed, 23 Jan 2019 18:14:44 +0800 (CST)
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+Received: from localhost.localdomain (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P3625T140363032495872S1548238482061932_;
+        Wed, 23 Jan 2019 18:14:43 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <d70be505612b2cf0b7ae91f5e3d8f503>
+X-RL-SENDER: hjc@rock-chips.com
+X-SENDER: hjc@rock-chips.com
+X-LOGIN-NAME: hjc@rock-chips.com
+X-FST-TO: hjc@rock-chips.com
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+From:   Sandy Huang <hjc@rock-chips.com>
+To:     hjc@rock-chips.com, tglx@linutronix.de, heiko@sntech.de,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/rockchip: rgb: update SPDX license identifier
+Date:   Wed, 23 Jan 2019 18:14:39 +0800
+Message-Id: <1548238479-171491-1-git-send-email-hjc@rock-chips.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 02:55:22PM +0000, Mark Rutland wrote:
-> On Tue, Jan 22, 2019 at 05:44:02AM +0000, Will Deacon wrote:
-> > On Mon, Jan 21, 2019 at 02:21:28PM +0000, Catalin Marinas wrote:
-> > > On Sat, Jan 19, 2019 at 11:58:27PM +0000, Will Deacon wrote:
-> > > > On Thu, Jan 17, 2019 at 07:42:44AM +0000, chenwandun wrote:
-> > > > > Recently, I do some tests on linux-4.19 and hit a softlockup issue.
-> > > > > 
-> > > > > I find some CPUs get the spinlock in the __split_huge_pmd function and
-> > > > > then send IPI to other CPUs, waiting the response, while several CPUs
-> > > > > enter the __split_huge_pmd function, want to get the spinlock, but always
-> > > > > in queued_spin_lock_slowpath,
-> > > > > 
-> > > > > Because long time no response to the IPI, that results in a softlockup.
-> > > > > 
-> > > > > As to sending IPI, it was in the patch
-> > > > > 3b8c9f1cdfc506e94e992ae66b68bbe416f89610.  The patch is mean to send IPI
-> > > > > to each CPU after invalidating the I-cache for kernel mappings.  In this
-> > > > > case, after modify pmd, it sends IPI to other CPUS to sync memory
-> > > > > mappings.
-> > > > > 
-> > > > > No stable test case to repeat the result, it is hard to repeat the test procedure.
-> > > > > 
-> > > > > The environment is arm64, 64 CPUs. Except for idle CPU, there are 6 kind
-> > > > > of callstacks in total.
-> > > > 
-> > > > This looks like another lockup that would be solved if we deferred our
-> > > > I-cache invalidation when mapping user-executable pages, and instead
-> > > > performed the invalidation off the back of a UXN permission fault, where we
-> > > > could avoid holding any locks.
-> > > 
-> > > Looking back at commit 3b8c9f1cdfc5 ("arm64: IPI each CPU after
-> > > invalidating the I-cache for kernel mappings"), the text implies that it
-> > > should only do this for kernel mappings. I don't think we need this for
-> > > user mappings. We have a few scenarios where we invoke set_pte_at() with
-> > > exec permission:
-> > 
-> > Yes, I think you're right. I got confused because in this case we are
-> > invalidating lines written by the kernel, but actually it's not about who
-> > writes the data, but about whether or not the page table is being changed.
-> 
-> IIUC we may have a userspace problem analagous to the kernel modules
-> problem, if userspace uses dlopen/dlclose to dynamically load/unload
-> shared objects.
-> 
-> If userspace unloads an object, then loads another, the new object might
-> get placed at the same VA. A PE could have started speculating
-> instructions from the old object, and IIUC the TLB invalidation and
-> I-cache maintenance don't cause those instructions be re-fetched from
-> the I-cache unless there's a context synchronization event.
-> 
-> Do we require the use of membarrier when loading or unloading objects?
-> If so, when does that happen relative to the unmap or map?
+update SPDX License Identifier from GPL-2.0+ to GPL-2.0
+and drop some GPL text.
 
-membarrier seems a bit OTT for this. Assumedly userspace is already having
-to synchronise threads in this case so that (a) nobody is executing the old
-object when it is unloaded and (b) nobody tries to execute the new
-object until it has been successfully loaded. Squeezing in an ISB shouldn't
-be too tricky, although I don't know whether it's actually done (especially
-since the chance of this going wrong is so tiny).
+Signed-off-by: Sandy Huang <hjc@rock-chips.com>
+---
+ drivers/gpu/drm/rockchip/rockchip_rgb.c | 11 +----------
+ drivers/gpu/drm/rockchip/rockchip_rgb.h | 11 +----------
+ 2 files changed, 2 insertions(+), 20 deletions(-)
 
-Will
+diff --git a/drivers/gpu/drm/rockchip/rockchip_rgb.c b/drivers/gpu/drm/rockchip/rockchip_rgb.c
+index 96ac145..ad9358f 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_rgb.c
++++ b/drivers/gpu/drm/rockchip/rockchip_rgb.c
+@@ -1,17 +1,8 @@
+-//SPDX-License-Identifier: GPL-2.0+
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
+  * Author:
+  *      Sandy Huang <hjc@rock-chips.com>
+- *
+- * This software is licensed under the terms of the GNU General Public
+- * License version 2, as published by the Free Software Foundation, and
+- * may be copied, distributed, and modified under those terms.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
+ 
+ #include <drm/drmP.h>
+diff --git a/drivers/gpu/drm/rockchip/rockchip_rgb.h b/drivers/gpu/drm/rockchip/rockchip_rgb.h
+index 38b52e6..27b9635 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_rgb.h
++++ b/drivers/gpu/drm/rockchip/rockchip_rgb.h
+@@ -1,17 +1,8 @@
+-//SPDX-License-Identifier: GPL-2.0+
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
+  * Author:
+  *      Sandy Huang <hjc@rock-chips.com>
+- *
+- * This software is licensed under the terms of the GNU General Public
+- * License version 2, as published by the Free Software Foundation, and
+- * may be copied, distributed, and modified under those terms.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
+ 
+ #ifdef CONFIG_ROCKCHIP_RGB
+-- 
+2.7.4
+
+
+
