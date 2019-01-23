@@ -2,105 +2,193 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EF4EC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 23:14:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38944C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 23:16:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59FC821855
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 23:14:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3A66218A1
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 23:16:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uGCbI81j"
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="xW2YDxCA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726881AbfAWXOg (ORCPT
+        id S1726864AbfAWXQ3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 18:14:36 -0500
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:38170 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726157AbfAWXOg (ORCPT
+        Wed, 23 Jan 2019 18:16:29 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:45923 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726157AbfAWXQ3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 18:14:36 -0500
-Received: by mail-yw1-f65.google.com with SMTP id d190so1644608ywb.5
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 15:14:36 -0800 (PST)
+        Wed, 23 Jan 2019 18:16:29 -0500
+Received: by mail-io1-f68.google.com with SMTP id c2so3080215iom.12
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 15:16:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=77nseqghbtkKnRpvB3e475OP+PoAx0CijNQ1xr4WOls=;
-        b=uGCbI81jfiPjJKcNJOeEOOYc7D+GD5tAx5o4QqDcnN2jXkUw6RH7RZtHQT84tsntVh
-         6tGdeExAIGA/05gxxWyhyckbR128hFtWJ4u8WdBxZ+dtJ+QNDHe3RRM8jgohOmOt/nXD
-         BXmVp0sM2UnzA4l/Jt0lqcA9NcW+L+Dk1cFJneL5YS1QF6GwyalZlc382VyMuTPnMF4K
-         taJCuZ9PVnjNnzvpp2ji+/FLFqXflAfQzzr1QiWbJbw58ibrqT40MxR4NKVw7Pmct/Gt
-         sFvECnkjmmS1a0OndhB3jDCTfyFMoHCwEIGFARGXzkd/MTbhk3/IM6ezw6KdHQsx4srJ
-         7fxw==
+        bh=U683wiu2cXkZaa6Y9YxxJr4NP8GMfyJ8YKCyetqBhZA=;
+        b=xW2YDxCAUwt8goNmt4GOy2QYGGkQEFEqf5Zc5PGy61pCCqqwPunSJDV6iQlzIx0wa4
+         8h+rqXAajCDotfkP6xD6JJTn110jLreFeC18/oKkTF8EgmGiYJouwVgXOLs4yotCrvg0
+         0yohqHsOcSaT4Op4Bz1XGBTCY1y7OxRv+oya+Zd3rmEb51W5GodO8mVEN+IfjTDd67H7
+         ykaxTyb1pLxwfsihHgapLG65iEhmf4ZlL4yUJ/oTJlhzTtc6aN/waBjygU+SVKfguPA5
+         PV9FWzivn/a0WDW+S5GPvwELTSx+shNVesVkgT1UrHhoWUdv45xhUy20xmbJtROBExyu
+         U5Xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=77nseqghbtkKnRpvB3e475OP+PoAx0CijNQ1xr4WOls=;
-        b=WGAfcEegvQKJK+B85zxrT6o8OLMgeITyMGtfrcY84lFTu+8rp3HlmFGpX7Nwl2IKCp
-         iOBDxcBj48ElJDMm+AH/HAPNoJzesu+/Bq5AICkE7DJ5NaIIqlSQYu5DM9qB7YPZdpqe
-         lxM2OM6MMXkqE6RsZQ4CQzIU0+ucSFVHB3HPS6Xwv+inUF3DoDqnuJnHbaFrqxOqj0aR
-         2VTken05s3ylH/5ICMdG5tqK2hL2yuF0d58aW+TVRA7pipsnSd3X8NgJ5tS3bUo79aob
-         qJYr96FOyd+tsNShR17f5GGjWLox9vD6/tG1tVM6duVSC/hfJKeFhLx6vz0vjNbW7SbM
-         Mk7A==
-X-Gm-Message-State: AJcUukcPMyBs+5haeDhgZv4S3rHVxxcPD6sN6P6ORZNh46R6vnWS/lse
-        T4Zi5xfZGVnohEUKl+BR8Ci92o/qKlNHO3yHnwXhnQ==
-X-Google-Smtp-Source: ALg8bN5/2AzYRxKLMu5LI/hDbLHSR/jN9IBZ4A2oLxjcFDGOySnrBCBRZaPkMbQWulmQXz9os4q4lrzOE3Th0laJ28c=
-X-Received: by 2002:a81:ee07:: with SMTP id l7mr4081632ywm.489.1548285275451;
- Wed, 23 Jan 2019 15:14:35 -0800 (PST)
+        bh=U683wiu2cXkZaa6Y9YxxJr4NP8GMfyJ8YKCyetqBhZA=;
+        b=Or+XOqFocrDSZrxl/U5yINrn2KDmvBSL3Gat8UTKlAUCHZ00Q+RVgm12V0W3G+W+DP
+         dswBjQnrfGhssyUUTy5Pn/jX8XWxqZlRUfEFjm100C0CluXBKIadEkoX/PbISs4TZfVH
+         2MpIzv4vMgPgzeRKoNDUhAEGOsgSATC5MZbIro01aBglsaYfe9cewM4O/IYkMCP7yjt/
+         lN5krFM4bIaPRJ1qanipTQSbdTA2w3fG7LYieNvbhdosall7U9CqOylGr+k2ll4r7+mQ
+         HXmqyV5RvlO8QPxyEKzH0KvfwcnVLL8ygACxkcuJhGP3tTnXJS2O8PfCSr3zNfxVJ8sG
+         EHlg==
+X-Gm-Message-State: AHQUAua8yjd4cZZ6gKgCVdQ+4qvMH4mvYseRhJopt+vB5Nb83JHRXgZX
+        NU4jQdFwaLCENfoC7J7HfRTdlbdvriB+yCSqOYmJ0w==
+X-Google-Smtp-Source: ALg8bN5LEg3iHVIe84+sUv7j0SKANB5/brHXBe69lQKNtz4VvIgVHO47cRuP/BK0JlHYplrMkyJOTBxw6YyFMhScQ1U=
+X-Received: by 2002:a5e:c107:: with SMTP id v7mr2684098iol.155.1548285387956;
+ Wed, 23 Jan 2019 15:16:27 -0800 (PST)
 MIME-Version: 1.0
-References: <20190121215850.221745-1-shakeelb@google.com> <20190123225747.8715120856@mail.kernel.org>
-In-Reply-To: <20190123225747.8715120856@mail.kernel.org>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Wed, 23 Jan 2019 15:14:24 -0800
-Message-ID: <CALvZod5h7fSoZTA+3bDTn93JuFgY=SUGEq=gpDYE8rdSfuNcPQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] mm, oom: fix use-after-free in oom_kill_process
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Rientjes <rientjes@google.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        stable@kernel.org, stable@vger.kernel.org
+References: <20190123000057.31477-1-oded.gabbay@gmail.com> <CAOesGMjU0tjJwAqCADaAv6XrCGbjB8G2oT=4LxOgSQBHO7Gptw@mail.gmail.com>
+ <CAFCwf11sxVAi1fxeZ698rBoJbaV3WHRJAyqB3RyddDLzfOysxA@mail.gmail.com>
+In-Reply-To: <CAFCwf11sxVAi1fxeZ698rBoJbaV3WHRJAyqB3RyddDLzfOysxA@mail.gmail.com>
+From:   Olof Johansson <olof@lixom.net>
+Date:   Wed, 23 Jan 2019 15:16:14 -0800
+Message-ID: <CAOesGMgUTE_AHE6h5jbB6sdX0EdiMwKnMmRKo4U6t8wXt1wtWQ@mail.gmail.com>
+Subject: Re: [PATCH 00/15] Habana Labs kernel driver
+To:     Oded Gabbay <oded.gabbay@gmail.com>
+Cc:     Dave Airlie <airlied@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ogabbay@habana.ai, Arnd Bergmann <arnd@arndb.de>,
+        fbarrat@linux.ibm.com,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 2:57 PM Sasha Levin <sashal@kernel.org> wrote:
+On Wed, Jan 23, 2019 at 2:41 PM Oded Gabbay <oded.gabbay@gmail.com> wrote:
 >
-> Hi,
+> On Wed, Jan 23, 2019 at 11:52 PM Olof Johansson <olof@lixom.net> wrote:
+> >
+> > Hi,
+> >
+> > On Tue, Jan 22, 2019 at 4:01 PM Oded Gabbay <oded.gabbay@gmail.com> wrote:
+> > >
+> > > Hello,
+> > >
+> > > For those who don't know me, my name is Oded Gabbay (Kernel Maintainer
+> > > for AMD's amdkfd driver, worked at RedHat's Desktop group) and I work at
+> > > Habana Labs since its inception two and a half years ago.
+> > >
+> > > Habana is a leading startup in the emerging AI processor space and we have
+> > > already started production of our first Goya inference processor PCIe card
+> > > and delivered it to customers. The Goya processor silicon has been tested
+> > > since June of 2018 and is production-qualified by now. The Gaudi training
+> > > processor solution is slated to sample in the second quarter of 2019.
+> > >
+> > > This patch-set contains the kernel driver for Habana's AI Processors
+> > > (AIP) that are designed to accelerate Deep Learning inference and training
+> > > workloads. The current version supports only the Goya processor and
+> > > support for Gaudi will be upstreamed after the ASIC will be available to
+> > > customers.
+> > [...]
+> >
+> > As others have mentioned, thanks for the amount of background and
+> > information in this patch set, it's great to see.
+> >
+> > Some have pointed out style and formatting issues, I'm not going to do
+> > that here but I do have some higher-level comments:
+> >
+> >  - There's a whole bunch of register definition headers. Outside of
+> > GPUs, traditionally we don't include the full sets unless they're
+> > needed in the driver since they tend to be very verbose.
 >
-> [This is an automated email]
->
-> This commit has been processed because it contains a "Fixes:" tag,
-> fixing commit: 6b0c81b3be11 mm, oom: reduce dependency on tasklist_lock.
->
-> The bot has tested the following trees: v4.20.3, v4.19.16, v4.14.94, v4.9.151, v4.4.171, v3.18.132.
->
-> v4.20.3: Build OK!
-> v4.19.16: Build OK!
-> v4.14.94: Failed to apply! Possible dependencies:
->     5989ad7b5ede ("mm, oom: refactor oom_kill_process()")
->
+> And it is not the entire list :)
+> I trimmed down the files to only the files I actually use registers
+> from. I didn't went into those files and removed from them the
+> registers I don't use.
+> I hope this isn't a hard requirement because that's really a dirty work.
 
-Very easy to resolve the conflict. Please let me know if you want me
-to send a version for 4.14-stable kernel.
+Yeah, it's always awkward to do this kind of cleanup. drivers/staging
+was created in part for allowing a driver to go through this while
+in-tree, if that helps.
 
-> v4.9.151: Build OK!
-> v4.4.171: Build OK!
-> v3.18.132: Build OK!
+> >  - I see a good amount of HW setup code that's mostly just writing
+> > hardcoded values to a large number of registers. I don't have any
+> > specific recommendation on how to do it better, but doing as much as
+> > possible of this through on-device firmware tends to be a little
+> > cleaner (or rather, hides it from the kernel. :). I don't know if that
+> > fits your design though.
 >
->
-> How should we proceed with this patch?
->
+> This is actually not according to our design. In our design, the host
+> driver is the "king" of the device and we prefer to have all
+> initializations which can be done from the host to be done from the
+> host.
+> I know its not a "technical" hard reason, but on the other hand, I
+> don't think that's really something so terrible that it can't be done
+> from the driver.
 
-We do want to backport this patch to stable kernels. However shouldn't
-we wait for this patch to be applied to Linus's tree first.
+This is why I was asking. It makes for a lot of boilerplate in the
+driver, all with magic constants. They usually end up in some other
+layer, but they're often constants no matter what.
 
-Shakeel
+> >  - Are there any pointers to the userspace pieces that are used to run
+> > on this card, or any kind of test suites that can be used when someone
+> > has the hardware and is looking to change the driver?
+>
+> Not right now. I do hope we can release a package with some
+> pre-compiled libraries and binaries that can be used to work vs. the
+> driver, but I don't believe it will be open-source. At least, not in
+> 2019.
+
+See my other reply, having the lowest layer of the interface from
+userspace open might be an approach worth exploring.
+
+> > But, I think the largest question I have (for a broader audience) is:
+> >
+> > I predict that we will see a handful of these kind of devices over the
+> > upcoming future -- definitely from ML accelerators but maybe also for
+> > other kinds of processing, where there's a command-based, buffer-based
+> > setup sending workloads to an offload engine and getting results back.
+> > While the first waves will all look different due to design trade-offs
+> > made in isolation, I think it makes sense to group them in one bucket
+> > instead of merging them through drivers/misc, if nothing else to
+> > encourage more cross-collaboration over time. First steps in figuring
+> > out long-term suitable frameworks is to get a survey of a few
+> > non-shared implementations.
+> >
+> > So, I'd like to propose a drivers/accel drivers subtree, and I'd be
+> > happy to bootstrap it with a small group (@Dave Airlie: I think your
+> > input from GPU land be very useful, want to join in?). Individual
+> > drivers maintained by existing maintainers, of course.
+> >
+> > I think it might make sense to move the CAPI/OpenCAPI drivers over as
+> > well -- not necessarily to change those drivers, but to group them
+> > with the rest as more show up.
+>
+> I actually prefer not going down that path, at least not from the
+> start. AFAIK, there is no other device driver in the kernel for AI
+> acceleration and I don't want to presume I know all the answers for
+> such devices.
+
+I'm not saying you have to have those answers, I'm just saying let's
+start grouping them now so we at least have one place to look at them,
+especially since we now have more than 2.
+
+> You have said it yourself: there will be many devices and they won't
+> be similar, at least not in the next few years. So I think that trying
+> to setup a subsystem for this now would be a premature optimization.
+
+It is initially not about building the shared subsystem as much as
+grouping the general type of devices together, get someone to keep an
+overall view across them, and encouraging more work between vendors
+such as cross-review, etc.
+
+
+-Olof
