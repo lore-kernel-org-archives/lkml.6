@@ -2,126 +2,91 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACB8EC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:09:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FFE2C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:12:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83E7F20870
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:09:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35DDC21019
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:12:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jxbEv7H6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726277AbfAWHJe (ORCPT
+        id S1726238AbfAWHMg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 02:09:34 -0500
-Received: from gateway34.websitewelcome.com ([192.185.148.164]:12246 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725991AbfAWHJd (ORCPT
+        Wed, 23 Jan 2019 02:12:36 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:59808 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725991AbfAWHMf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 02:09:33 -0500
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway34.websitewelcome.com (Postfix) with ESMTP id 0C9896E79C4
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 01:09:33 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id mCfFg1fSO90onmCfFgT4b7; Wed, 23 Jan 2019 01:09:33 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=46214 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gmCfE-0032VP-7r; Wed, 23 Jan 2019 01:09:32 -0600
-Date:   Wed, 23 Jan 2019 01:09:31 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Jon Maloy <jon.maloy@ericsson.com>,
-        Ying Xue <ying.xue@windriver.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH net-next] tipc: mark expected switch fall-throughs
-Message-ID: <20190123070931.GA5514@embeddedor>
+        Wed, 23 Jan 2019 02:12:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=jRirieLgRGM56VeJxAWJgEI7+mG7GYr1VreLIKUztis=; b=jxbEv7H6cSLfj3r8Gyo3ZPu6N
+        qYvn+ZOuW0zdGGj7p+jdZBVD+Oe1101ue/m12CTnDUtnYZbSCjf3bj18B7xR1bNL1II9bNGg1Q0ui
+        K+jTEbFDu/TbG8nPex3RP2INa/WGmBS34GWhk0FWsaFeFgX6CIfovdzgwEp6gsJNMCh4OMyHI5TK+
+        QQDoZTXj8ySB91nXJnRhzOYAn5HoZ8FdY0/Cy95+3roClavCwpd/R2vAepIGPJYq7ltUK++MXRp1E
+        Dpu/U2JpFXrLmlY/e93JUEUpPQyfXHo8BlvjYTEIYmsp5rAscGG6R8pNe80JZoBWev/modYWMeXL/
+        0NrYXL8fg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gmCi8-0005NW-Eq; Wed, 23 Jan 2019 07:12:32 +0000
+Date:   Tue, 22 Jan 2019 23:12:32 -0800
+From:   "hch@infradead.org" <hch@infradead.org>
+To:     Stefano Stabellini <sstabellini@kernel.org>
+Cc:     Peng Fan <peng.fan@nxp.com>, "mst@redhat.com" <mst@redhat.com>,
+        "jasowang@redhat.com" <jasowang@redhat.com>,
+        "hch@infradead.org" <hch@infradead.org>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>, luto@kernel.org,
+        jgross@suse.com, boris.ostrovsky@oracle.com
+Subject: Re: [Xen-devel] [RFC] virtio_ring: check dma_mem for xen_domain
+Message-ID: <20190123071232.GA20526@infradead.org>
+References: <20190121050056.14325-1-peng.fan@nxp.com>
+ <alpine.DEB.2.10.1901221113410.17936@sstabellini-ThinkPad-X260>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1gmCfE-0032VP-7r
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.130.205]:46214
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 11
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <alpine.DEB.2.10.1901221113410.17936@sstabellini-ThinkPad-X260>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+On Tue, Jan 22, 2019 at 11:59:31AM -0800, Stefano Stabellini wrote:
+> >  	if (!virtio_has_iommu_quirk(vdev))
+> >  		return true;
+> >  
+> > @@ -260,7 +262,7 @@ static bool vring_use_dma_api(struct virtio_device *vdev)
+> >  	 * the DMA API if we're a Xen guest, which at least allows
+> >  	 * all of the sensible Xen configurations to work correctly.
+> >  	 */
+> > -	if (xen_domain())
+> > +	if (xen_domain() && !dma_dev->dma_mem)
+> >  		return true;
+> >  
+> >  	return false;
+> 
+> I can see you spotted a real issue, but this is not the right fix. We
+> just need something a bit more flexible than xen_domain(): there are
+> many kinds of Xen domains on different architectures, we basically want
+> to enable this (return true from vring_use_dma_api) only when the xen
+> swiotlb is meant to be used. Does the appended patch fix the issue you
+> have?
 
-This patch fixes the following warnings:
+The problem generally is the other way around - if dma_dev->dma_mem
+is set the device decription in the device tree explicitly requires
+using this memory, so we must _always_ use the DMA API.
 
-net/tipc/link.c:1125:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
-net/tipc/socket.c:736:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
-net/tipc/socket.c:2418:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
-
-Warning level 3 was used: -Wimplicit-fallthrough=3
-
-This patch is part of the ongoing efforts to enabling
--Wimplicit-fallthrough.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- net/tipc/link.c   | 2 +-
- net/tipc/socket.c | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/net/tipc/link.c b/net/tipc/link.c
-index 2792a3cae682..ac306d17f8ad 100644
---- a/net/tipc/link.c
-+++ b/net/tipc/link.c
-@@ -1126,7 +1126,7 @@ static bool tipc_data_input(struct tipc_link *l, struct sk_buff *skb,
- 			skb_queue_tail(mc_inputq, skb);
- 			return true;
- 		}
--		/* else: fall through */
-+		/* fall through */
- 	case CONN_MANAGER:
- 		skb_queue_tail(inputq, skb);
- 		return true;
-diff --git a/net/tipc/socket.c b/net/tipc/socket.c
-index 1217c90a363b..8fc5acd4820d 100644
---- a/net/tipc/socket.c
-+++ b/net/tipc/socket.c
-@@ -735,7 +735,7 @@ static __poll_t tipc_poll(struct file *file, struct socket *sock,
- 	case TIPC_CONNECTING:
- 		if (!tsk->cong_link_cnt && !tsk_conn_cong(tsk))
- 			revents |= EPOLLOUT;
--		/* fall thru' */
-+		/* fall through */
- 	case TIPC_LISTEN:
- 		if (!skb_queue_empty(&sk->sk_receive_queue))
- 			revents |= EPOLLIN | EPOLLRDNORM;
-@@ -2416,7 +2416,7 @@ static int tipc_connect(struct socket *sock, struct sockaddr *dest,
- 		 * case is EINPROGRESS, rather than EALREADY.
- 		 */
- 		res = -EINPROGRESS;
--		/* fall thru' */
-+		/* fall through */
- 	case TIPC_CONNECTING:
- 		if (!timeout) {
- 			if (previous == TIPC_CONNECTING)
--- 
-2.20.1
-
+The problem is just that that rproc driver absuses the DMA API
+in horrible ways.
