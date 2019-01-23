@@ -2,133 +2,99 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86FBAC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 15:55:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C1E3C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 15:56:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5696021019
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 15:55:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18E4E21019
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 15:56:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548258949;
-	bh=4XiF7XB6j/3r3YmS3LSqBWnY8A/uK9xGTJhL4sUFnJ4=;
+	s=default; t=1548259013;
+	bh=G3Ca8GuuS5k8n1POXOFs0XWw+9mQk5SNjXGrgF/Voj0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=jPcg6TlJrIzRetMSbuaYQdk7R9qIoQMXPnTdGYO+6sKGyQF1sybk0Ho0Ep1QDPjZu
-	 BsOBA6SLWNAWIFFHhMX8mcACM6AIrj0eCmU/ixXQWNNBZVJWbaAzPbmw5/pUsZO4Ol
-	 foRIkFBg7ACFog1lNUcEI8t6b5nAA1OMsP9h9iDI=
+	b=Se+SFrEHgOJDWjCFeD2UlXzspmhbbzGuWnc0wSCdnXqmTSLk8Cmt/zFhJsMmqSoJp
+	 oQGffyKKzKyqWjJ1CC822MQA4V7ClREKC+1T1pyvW32Z1zE1Zz15tsPUU5aqUDsRYK
+	 KNi5l+C9AP7UkI4WH+jb4ERx8MZs7hL53plJlxZo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726311AbfAWPzr (ORCPT
+        id S1726156AbfAWP4v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 10:55:47 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38494 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725871AbfAWPzr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 10:55:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=qCb2cfVsJ18RrAwohqaEffdA2F77n5lDC7o3AK/BZHM=; b=mps/FHoYLmktEb7TKgx7CrBPm
-        w6qMI8j0IcY3UJ2d1isBCMfrPChpZVej0SBylFxCiBCF1gVdikz95KxNbJA3IX0kBJ9TWjfVneyyS
-        bKsmqxSbSjdetg6nnzRz70qk9Tx7OmFQ0s/iJA6HssqIkoAYOOxzv7MxOjGrACMNHmy7U=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gmKsF-0005rq-Q7; Wed, 23 Jan 2019 15:55:31 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 6C47C1127ABA; Wed, 23 Jan 2019 15:55:31 +0000 (GMT)
-Date:   Wed, 23 Jan 2019 15:55:31 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     mazziesaccount@gmail.com, lee.jones@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, lgirdwood@gmail.com,
-        gregkh@linuxfoundation.org, rafael@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        sre@kernel.org, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
-        linux@roeck-us.net, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: Re: [RFC PATCH v1 01/13] regmap: regmap-irq: Add main status
- register support
-Message-ID: <20190123155531.GC7503@sirena.org.uk>
-References: <cover.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
- <a5a3cdb00b9181897fc675f4a6900064d9289fdc.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
+        Wed, 23 Jan 2019 10:56:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41274 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725871AbfAWP4u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 10:56:50 -0500
+Received: from localhost (unknown [106.200.229.238])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1314A21019;
+        Wed, 23 Jan 2019 15:56:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548259009;
+        bh=G3Ca8GuuS5k8n1POXOFs0XWw+9mQk5SNjXGrgF/Voj0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QxOt14X63mduhbkXQbIOlowO+iDCT3P5NJDSZcWYq2f7S5b5vWew+iNKteVSXDj1/
+         NDYSTFdRVVunMuLOYC0rvzxIXh0ZxJXGlLtSPxS09MvhiYHAR5Lz+1uRqBAzbztl8V
+         sLte/PdvW7921O5vt+dHbY5gHUXoDg3Ex6/XDOw8=
+Date:   Wed, 23 Jan 2019 21:25:17 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Angus Ainslie <angus@akkea.ca>
+Cc:     Lucas Stach <l.stach@pengutronix.de>, angus.ainslie@puri.sm,
+        dmaengine@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Daniel Baluta <daniel.baluta@gmail.com>
+Subject: Re: [PATCH v3 4/5] dma: imx-sdma: add an index for imx8mq multi sdma
+ devices
+Message-ID: <20190123155517.GR4635@vkoul-mobl>
+References: <20190120023150.17138-1-angus@akkea.ca>
+ <20190123152310.11680-1-angus@akkea.ca>
+ <20190123152310.11680-5-angus@akkea.ca>
+ <1548257514.28802.3.camel@pengutronix.de>
+ <d5f73096cf62ef379e27c11e024c52ff@www.akkea.ca>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ZwgA9U+XZDXt4+m+"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a5a3cdb00b9181897fc675f4a6900064d9289fdc.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
-X-Cookie: A couch is as good as a chair.
+In-Reply-To: <d5f73096cf62ef379e27c11e024c52ff@www.akkea.ca>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 23-01-19, 08:42, Angus Ainslie wrote:
+> On 2019-01-23 08:31, Lucas Stach wrote:
+> > Hi Angus,
+> > 
+> > Am Mittwoch, den 23.01.2019, 08:23 -0700 schrieb Angus Ainslie (Purism):
+> > > On i.mx8mq, there are two sdma instances, and the common dma framework
+> > > will get a channel dynamically from any available sdma instance
+> > > whether
+> > > it's the first sdma device or the second sdma device. Some IPs like
+> > > SAI only work with sdma2 not sdma1. To make sure the sdma channel is
+> > > from
+> > > the correct sdma device, use an index to match.
+> > > 
+> > > Based on MLK-16104-2 by Robin Gong <yibin.gong@nxp.com>
+> > 
+> > This relies on the probe order of the devices (which should be treated
+> > as random) for the match to find the right device. This is not
+> > acceptable upstream.
+> > 
+> > The DT "dmas" property already specifies the correct SDMA device to use
+> >  for a consumer, so the filter function should really match the OF node
+> > of the SDMA device with the node specified in the dmas phandle in order
+> > to pick the right SDMA engine.
+> > 
+> 
+> Thanks Lucas, I'll fix it for rev 4
 
---ZwgA9U+XZDXt4+m+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+And fix the subsystem name, it is 'dmaengine: ...' not 'dma: ...'. git
+log of the subsystem should give you good clue of the tags to be used..
 
-On Tue, Jan 22, 2019 at 11:42:24AM +0200, Matti Vaittinen wrote:
+Thanks
 
-> There is bunch of devices with multiple logical blocks which
-> can generate interrupts. It's not a rare case that the interrupt
-> reason registers are arranged so that there is own status/ack/mask
-> register for each logical block. In some devices there is also a
-> 'main interrupt register(s)' which can indicate what sub blocks
-> have interrupts pending.
-
-The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
-
-  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git tags/regmap-irq-main-status
-
-for you to fetch changes up to a2d21848d9211dad5e786aa7368709ca8938834e:
-
-  regmap: regmap-irq: Add main status register support (2019-01-23 15:52:15 +0000)
-
-----------------------------------------------------------------
-regmap: Main status register support
-
-Add support for a main status register, used by chips on slower buses
-with many interrupt sources to improve performance in interrupt
-handling.
-
-----------------------------------------------------------------
-Matti Vaittinen (1):
-      regmap: regmap-irq: Add main status register support
-
- drivers/base/regmap/regmap-irq.c | 99 ++++++++++++++++++++++++++++++++++++++--
- include/linux/regmap.h           | 31 +++++++++++++
- 2 files changed, 126 insertions(+), 4 deletions(-)
-
---ZwgA9U+XZDXt4+m+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxIjnIACgkQJNaLcl1U
-h9A6Dwf6A9lsIBpD+TiAoijbdEzoXqd/cmk7XgSy/A667LTDjzbi5yBhrjhOGwkz
-83o5oE/oS6bba5hgVls8QO4C3sGrPhdtDPF+Q6LpGS4uNxq/o6Mv3KRbZU8RAPzZ
-F0znv/m2UqJa67vx20iiS72+oZEyFfuaihQRjMBP+nP4nFu/dmnmLZegh3h6R/z6
-xliTfo5ljMjCb2h379hdmlbv4FUJ9d4A7ARvs49AB6Wt/br0WWVdINBPQiVRWYY7
-bTLeY9HglV2z2UL72NNMRU5ie1vhiLGDwCkEbiVWVXscay3sLl3xyBUJHFfLbc4D
-kIE6YXfIVU52U/5gIucvj4wN2qz+Qg==
-=kp0o
------END PGP SIGNATURE-----
-
---ZwgA9U+XZDXt4+m+--
+-- 
+~Vinod
