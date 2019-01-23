@@ -2,106 +2,77 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3244C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 13:58:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEA67C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:03:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A47B72133D
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 13:58:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD6CD2184D
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:03:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548251915;
-	bh=YaoOwzPhlusepuKK6nNhPrPhHcQyK6Hho8Tqvya0vzE=;
+	s=default; t=1548252230;
+	bh=ap8h6oG8+q3aCOcOLdhlE6/+rWHc/KqbXv9kX1o8sm8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=AI/IKzjEt/B+cDYkFvJnNYMx7MwesIGQst9eiUZfQ4nihkqSnS9Mya6zAaj/ZphVK
-	 D08xdwlzMd2NW0lTXCTwpBVgtc5XFkqcR27X7mZC+aSXAkEo5UXd5LofAAnXfuWOD+
-	 UJa7EmjJ58XvAAafXbI8NLQn4ySm0LbIlntMlvyE=
+	b=1JDAKtMGWHEl1wlL1qCwFH7otm/eDg9XzvyKFH2T8WzIZlXz1//9FArj5gqCFKMHY
+	 hC9nM7sWXZNS2OpL8AHXZsitXGLoP6gZKRI0D77DEXS40ileB5ZRI5apZBbdL0kSx6
+	 PpjbMRBPslbZUmjMAjSzw3YNQgqo31nwOARsYfj4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726783AbfAWN6e (ORCPT
+        id S1726229AbfAWODs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 08:58:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36288 "EHLO mail.kernel.org"
+        Wed, 23 Jan 2019 09:03:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37986 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726104AbfAWN6d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 08:58:33 -0500
+        id S1726122AbfAWODr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 09:03:47 -0500
 Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A04552133D;
-        Wed, 23 Jan 2019 13:58:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0CC802133D;
+        Wed, 23 Jan 2019 14:03:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548251912;
-        bh=YaoOwzPhlusepuKK6nNhPrPhHcQyK6Hho8Tqvya0vzE=;
+        s=default; t=1548252227;
+        bh=ap8h6oG8+q3aCOcOLdhlE6/+rWHc/KqbXv9kX1o8sm8=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=A+LqxXTMBPOIncX0VazN8sQ3MTgWZs1PtPTuRPZfimeT2HvI5M7N5B4/eh+bKnNYl
-         aUwIlieYt8z/bY1Nc1Q4sfAhK2+BVrBHntTbQtQCCiFDCTgczm9ENDefhqGCgqhJoD
-         Q4mHsNnTQmn5yy9ZBu9q3AVWFTdYjnsStyuTlx6w=
-Date:   Wed, 23 Jan 2019 08:58:31 -0500
+        b=KLm7KNDrS+Hl0vgdH+ErywmQaXT/JXjNqGAuP/Vgn6Y+A3/j0dckVpGy2TIoUdZdv
+         LQ75eMaV0s2UEj/pv1WzNa3kxjkRMIVNdu/YczIcL/4NYlAq+CfFta1FqDfgtOLc/f
+         V1CbjHxYO4ajYkhDan9zadH/LMP6Hs6aw+Gb96Bc=
+Date:   Wed, 23 Jan 2019 09:03:46 -0500
 From:   Sasha Levin <sashal@kernel.org>
-To:     Johan Hovold <johan@kernel.org>
+To:     Michel =?iso-8859-1?Q?D=E4nzer?= <michel@daenzer.net>
 Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Nikolaj Fogh <nikolajfogh@gmail.com>, linux-usb@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 4.20 025/117] USB: serial: ftdi_sio: use rounding
- when calculating baud rate divisors
-Message-ID: <20190123135831.GI202535@sasha-vm>
+        Alex Deucher <alexander.deucher@amd.com>,
+        dri-devel@lists.freedesktop.org,
+        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
+        amd-gfx@lists.freedesktop.org
+Subject: Re: [PATCH AUTOSEL 4.20 034/117] drm/amdgpu: Correct
+ get_crtc_scanoutpos behavior when vpos >= vtotal
+Message-ID: <20190123140346.GJ202535@sasha-vm>
 References: <20190108192628.121270-1-sashal@kernel.org>
- <20190108192628.121270-25-sashal@kernel.org>
- <20190109082437.GA3389@localhost>
+ <20190108192628.121270-34-sashal@kernel.org>
+ <199e52c4-7e19-03c0-2d60-c638dda86bd4@daenzer.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1; format=flowed
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190109082437.GA3389@localhost>
+In-Reply-To: <199e52c4-7e19-03c0-2d60-c638dda86bd4@daenzer.net>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 09:24:37AM +0100, Johan Hovold wrote:
->On Tue, Jan 08, 2019 at 02:24:53PM -0500, Sasha Levin wrote:
->> From: Nikolaj Fogh <nikolajfogh@gmail.com>
+On Wed, Jan 09, 2019 at 10:20:49AM +0100, Michel Dänzer wrote:
+>On 2019-01-08 8:25 p.m., Sasha Levin wrote:
+>> From: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
 >>
->> [ Upstream commit 6abd837104a3a8e1cda64fc4d7675f6c3ece9d8b ]
+>> [ Upstream commit 520f08df45fbe300ed650da786a74093d658b7e1 ]
 >>
->> Improve baud-rate generation by using rounding-to-closest instead of
->> truncation in divisor calculation.
->>
->> Results have been verified by logic analyzer on an FT232RT (232BM) chip.
->> The following table shows the wanted baud rate, the baud rate obtained
->> with the old method (truncation), with the new method (rounding) and the
->> baud rate generated by the windows 10 driver. The numbers in parentheses
->> is the error.
->>
->> +- Wanted --+------ Old -------+------ New -------+------ Win -------+
->> |    9600   |    9600 (0.00%)  |    9604 (0.05%)  |    9605 (0.05%)  |
->> |   19200   |   19200 (0.00%)  |   19199 (0.01%)  |   19198 (0.01%)  |
->> |   38400   |   38395 (0.01%)  |   38431 (0.08%)  |   38394 (0.02%)  |
->> |   57600   |   57725 (0.22%)  |   57540 (0.10%)  |   57673 (0.13%)  |
->> |  115200   |  115307 (0.09%)  |  115330 (0.11%)  |  115320 (0.10%)  |
->> |  921600   |  919963 (0.18%)  |  920386 (0.13%)  |  920810 (0.09%)  |
->> |  961200   |  996512 (3.67%)  |  956480 (0.49%)  |  956937 (0.44%)  |
->> +-----------+------------------+------------------+------------------+
->>
->> The error due to noise in the measurements is in the order of a few
->> tenths of a %. As can be seen, the baud rate is significantly improved
->> for some rates (e.g. 961200), and corresponds to the output given by the
->> windows driver.
->>
->> The theoretical baud rate has been calculated for all baud rates from 1
->> to 3M, and as expected, the error is centered around 0, with a triangle
->> shape instead of a sawtooth, so the maximum error is decreased to half.
->>
->> Signed-off-by: Nikolaj Fogh <nikolajfogh@gmail.com>
->> [ johan: edit commit message slightly ]
->> Signed-off-by: Johan Hovold <johan@kernel.org>
->> Signed-off-by: Sasha Levin <sashal@kernel.org>
+>> When variable refresh rate is active [...]
 >
->The stable tag was left out on purpose for this one to avoid breaking
->working setups which may have compensated and adapted to this driver
->behaviour which has been there since the driver was merged ages ago.
+>Variable refresh rate (FreeSync) support is only landing in 5.0,
+>therefore this fix isn't needed in older kernels.
 
 I'll drop it, thank you.
 
