@@ -2,105 +2,82 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39AEDC282C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 02:44:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E6FBC282C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 02:45:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA4C1217D4
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 02:44:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bam9gQH8"
+	by mail.kernel.org (Postfix) with ESMTP id ED0C2217D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 02:45:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727067AbfAWCou (ORCPT
+        id S1727089AbfAWCpZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 21:44:50 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:38146 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726814AbfAWCot (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 21:44:49 -0500
-Received: by mail-ed1-f65.google.com with SMTP id h50so496739ede.5
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 18:44:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=flH2rmXbAkXYFECvZrwJt+bKiZ7twQVvKyLk5qVzm5w=;
-        b=bam9gQH8KIIH5QvwmLu/D1NwHyKCbmw7pQb/ZsWAa0yD4ArCaGiDe2EF+Ao4yDx/Ea
-         1fngE+HRFedtVqZwy1iI5cvqa9RpIU5hM3Tu8aBzVqJgey3vTw99cSvhy1OGDzgxot6I
-         JGFy/wU9AT2502VNEM1PniiDBr08BK46n50W0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=flH2rmXbAkXYFECvZrwJt+bKiZ7twQVvKyLk5qVzm5w=;
-        b=Im0lgcCAs77T8f3Ub12PV6gIcaHTXgcIDpRswbeUWrTHi3uiq+emweJoTed6xW2WTa
-         ApZxFwgOg0idVZ37J0KLlScgUSveEZh6hy0A1HhQrQVW2jMoeeMkZvodszGBqYqC6IAF
-         cyXcwhHIyTiSkpd3ctLpM9kz7CPTQol95xXO8yt0qZfVBMpe9RM1v7hjenlCZFxdTNV8
-         PConseXVphOHharoKZjbDjZg9e+dW4ZtOzLT+eBYZSvLDTVNIsbFIyGy5JNqeftexCSp
-         0CZA479EAGQiwZE2BY/y15OSYU1CZhYyBWF/1EYumwaTEyGDRxFdl1owok0EZB4TgyFg
-         5Vmw==
-X-Gm-Message-State: AJcUukeaXWgLNe7TKyITK006EWYFyJpVl/Bw0uhjDhFJ6+XC4csMZ6gB
-        j/BsdtDBdVDlecrRefbhmwLZw0m1GIjFPCpGHsijJA==
-X-Google-Smtp-Source: ALg8bN4aMBDO/S8oCtjCoZzRXe91bGnkFQd8aQ8S9aPSuX8zgxRVnx2C2F9l4SCFJbKdUfbN7ZxxoK2VXIYt/N/Wm9g=
-X-Received: by 2002:a17:906:5202:: with SMTP id g2-v6mr787553ejm.139.1548211487535;
- Tue, 22 Jan 2019 18:44:47 -0800 (PST)
-MIME-Version: 1.0
-References: <20190121232057.GA30919@bogus> <20190122084706.11522-1-zhang.chunyan@linaro.org>
- <7231fba8-de0d-dd22-5ec8-d62d34c6495d@ti.com>
-In-Reply-To: <7231fba8-de0d-dd22-5ec8-d62d34c6495d@ti.com>
-From:   Chunyan Zhang <zhang.chunyan@linaro.org>
-Date:   Wed, 23 Jan 2019 10:44:35 +0800
-Message-ID: <CAG2=9p-JcAB0Re2hRB6bu_18Z_SJXjrynw2cRSKVFEBnWHPDKg@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: sdhci-omap: Add properties for using
- external dma
-To:     Faiz Abbas <faiz_abbas@ti.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        linux-mmc@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
+        Tue, 22 Jan 2019 21:45:25 -0500
+Received: from mga18.intel.com ([134.134.136.126]:20539 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726814AbfAWCpZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 22 Jan 2019 21:45:25 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jan 2019 18:45:25 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,509,1539673200"; 
+   d="scan'208";a="136905109"
+Received: from szhan10-mobl3.ccr.corp.intel.com ([10.249.172.83])
+  by fmsmga002.fm.intel.com with ESMTP; 22 Jan 2019 18:45:22 -0800
+Message-ID: <1548211521.4006.10.camel@intel.com>
+Subject: [GIT PULL] Thermal management updates for v5.0-rc4
+From:   Zhang Rui <rui.zhang@intel.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux PM list <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Eduardo Valentin <edubezval@gmail.com>
+Date:   Wed, 23 Jan 2019 10:45:21 +0800
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 22 Jan 2019 at 18:17, Faiz Abbas <faiz_abbas@ti.com> wrote:
->
-> Hi Chunyan,
->
-> +Rob Herring
->
-> On 22/01/19 2:17 PM, Chunyan Zhang wrote:
-> > sdhci-omap can support both external dma controller via dmaengine
-> > framework as well as ADMA which standard SD host controller
-> > provides.
-> >
-> > Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
-> > Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
-> > ---
->
-> Thanks for fixing this. However, this change should be part of the
+Hi, Linus,
 
-Right, I actually used "--in-reply-to" with the parameter of
-Message-ID of Rob's mail, but it seems not work as I expected that it
-was expected a reply to Rob's mail for review.
+Please pull from
+  git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git for-rc
 
-> series (with a change log and a version number). I will send this as a
-> part of my series after I get some Acks on the driver patches.
+to receive the latest Thermal management updates for v5.0-rc4 with
+top-most commit 129699bb8c7572106b5bbb2407c2daee4727ccad:
 
-Ok, thanks.
+  drivers: thermal: int340x_thermal: Fix sysfs race condition (2019-01-
+18 15:23:04 +0800)
 
-Chunyan
+on top of commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
 
->
-> Thanks,
-> Faiz
+  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
+
+Specifics:
+
+- Fix a race condition that sysfs could be accessed before necessary
+initialization in int340x thermal driver. (Aaron Hill)
+
+- Fix a NULL vs IS_ERR() check in int340x thermal driver. (Dan
+Carpenter)
+
+thanks,
+rui
+
+----------------------------------------------------------------
+Aaron Hill (1):
+      drivers: thermal: int340x_thermal: Fix sysfs race condition
+
+Dan Carpenter (1):
+      thermal: int340x_thermal: Fix a NULL vs IS_ERR() check
+
+ .../int340x_thermal/processor_thermal_device.c     | 30 ++++++++++++
+----------
+ 1 file changed, 16 insertions(+), 14 deletions(-)
