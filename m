@@ -2,147 +2,256 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 601B8C282C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 02:05:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D450C282C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 02:12:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2746C217D4
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 02:05:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58FCB20868
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 02:12:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="cmcuWCnQ"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bfLvHiWE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726964AbfAWCF2 (ORCPT
+        id S1726953AbfAWCMy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 21:05:28 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:58688 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726047AbfAWCF2 (ORCPT
+        Tue, 22 Jan 2019 21:12:54 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:46281 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726895AbfAWCMy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 21:05:28 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0N24A6W082611;
-        Wed, 23 Jan 2019 02:05:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=EHVilGvpk+iACGtRwhBK/zraNM4/mO2SgAAzuTQ6jp8=;
- b=cmcuWCnQmoyiywmjkKdghVdSDYrDlp02Y5k7bsyKXKs8gldAdBp7Ak2nMQnagHSza9uY
- 4zJaHzFpR8QqTiaKL2xl/a7dx33lPdwOP8QhRPBlZ/9D+9xzoqS9LsbSg0F0FfyuWxIp
- OyA1TibQkiO9vMi6PMKtA4vVXs5Bsi5m48QVa5Zzvf/7aQa53JR4HGPF57jVeMs2TGLT
- xPEE/BL75Vr8nvQKgEN1XZ37LqNfGUkWjuhU/IVEhm3xjc2iILwBEA9lTlI0bgUZDrKC
- KYZPxfZtdQGO15Z1941NprEqtFaSOQ3IXviFBBrnsG9SwuW/+12DmarbEuP1JXeAQ7L2 6w== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2130.oracle.com with ESMTP id 2q3sdefa44-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 23 Jan 2019 02:05:22 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0N25Kqb020985
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 23 Jan 2019 02:05:21 GMT
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0N25KNQ007384;
-        Wed, 23 Jan 2019 02:05:20 GMT
-Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 22 Jan 2019 18:05:20 -0800
-Date:   Tue, 22 Jan 2019 21:05:36 -0500
-From:   Daniel Jordan <daniel.m.jordan@oracle.com>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Tejun Heo <tj@kernel.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] workqueue: Try to catch flush_work() without INIT_WORK().
-Message-ID: <20190123020536.yv2zsyaeamkhys7c@ca-dmjordan1.us.oracle.com>
-References: <90c831b3-0d09-3cf7-5a2c-2fa7afaa003e@i-love.sakura.ne.jp>
- <20190122151819.qjzihyyd4h2ukou2@ca-dmjordan1.us.oracle.com>
- <201901230044.x0N0iCdk051613@www262.sakura.ne.jp>
+        Tue, 22 Jan 2019 21:12:54 -0500
+Received: by mail-pl1-f194.google.com with SMTP id t13so302998ply.13
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 18:12:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=3jqYMURHUlGumCMfsneHSVa8n2RCpsrdyKR5VG3aS3M=;
+        b=bfLvHiWE+hNmBsgVN7c80izSRXiQSzook3Qihlw5FNIcEgZ6BSNifyZwoK7WqH1aUj
+         gjIxLPuA5k+o2IUZb/khp82fXmde0YN7ixTCjmhPhWJfKjCqfnL665kcWyVfGV3lQzk0
+         zB+LbKgI+d4TJrtaHnanr2zDhbVOfInVkFX9E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3jqYMURHUlGumCMfsneHSVa8n2RCpsrdyKR5VG3aS3M=;
+        b=JwjX1EqpQA089NCmfxb5sJVIQcbUfgEDBgzQeuJ24JKcMDldThEGUntmj+JChffhex
+         NyKSaVNGh9bVzOf6SJtOfeuCm8uQV6WjZSVuUvkahTdkmXwlBOCFFaOVcg56wK3wG+uq
+         6jSiyKY2IpmiudHWSgPjJLmq1nfFuk9w6ujZk2xmgvs3VmBv65qRYc+UZC51K5/pOKZ0
+         MWK0YG01lWN3WKoQPZTIc4Cnk+35CbKFFpjnENts7vygBqqPVFwVrTNSQ27TQBvbLcKd
+         EDNnwUwMT1LzyrERdMu2F7i3iByS37E5YEIcf2nz8DM6WZoW/m6C5ScuFgHQhtm3YPDo
+         Dg5w==
+X-Gm-Message-State: AJcUukfDM/3obB80YvewR2mtr2+82E3RuKuxoyDaWL2MRwiE8ofcaf4D
+        yJZtvGMIGu36DLTCswxZI8ZN/g==
+X-Google-Smtp-Source: ALg8bN5cdCV2h3kScjHx+013Px132PDqUH75kzMgSSnoGIn66o/g4P75zM2QCw42yp4J943k/k79xg==
+X-Received: by 2002:a17:902:2a66:: with SMTP id i93mr364415plb.113.1548209573188;
+        Tue, 22 Jan 2019 18:12:53 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id i62sm20134071pge.44.2019.01.22.18.12.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 22 Jan 2019 18:12:52 -0800 (PST)
+Date:   Tue, 22 Jan 2019 18:12:51 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Amit Kucheria <amit.kucheria@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        bjorn.andersson@linaro.org, edubezval@gmail.com,
+        andy.gross@linaro.org, tdas@codeaurora.org, swboyd@chromium.org,
+        dianders@chromium.org, David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 1/1] arm64: dts: sdm845: wireup the thermal trip
+ points to cpufreq
+Message-ID: <20190123021251.GJ261387@google.com>
+References: <cover.1548093127.git.amit.kucheria@linaro.org>
+ <6a21a9ee7663e1b32d8ea81ac5e51d187aed25fb.1548093127.git.amit.kucheria@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <201901230044.x0N0iCdk051613@www262.sakura.ne.jp>
-User-Agent: NeoMutt/20180323-268-5a959c
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9144 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901230015
+In-Reply-To: <6a21a9ee7663e1b32d8ea81ac5e51d187aed25fb.1548093127.git.amit.kucheria@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 09:44:12AM +0900, Tetsuo Handa wrote:
-> Daniel Jordan wrote:
-> > On Sat, Jan 19, 2019 at 11:41:22AM +0900, Tetsuo Handa wrote:
-> > > On 2019/01/19 4:48, Daniel Jordan wrote:
-> > > > On Sat, Jan 19, 2019 at 02:04:58AM +0900, Tetsuo Handa wrote:
-> > > > __queue_work has a sanity check already for work, but using list_empty.  Seems
-> > > > slightly better to be consistent?
-> > > > 
-> > > 
-> > > list_empty() won't work, for "struct work_struct" is embedded into a struct
-> > > which is allocated by kzalloc().
-> > 
-> > Please check list_empty's definition again, it compares the address of the node
-> > to its next pointer, so it should work for a zeroed node.  I'll reiterate that
-> > it seems slightly better to be consistent in "is work_struct initialized?"
-> > checks, but it's not a big deal and I'm fine either way.
-> 
-> You are talking about
-> 
-> 	if (WARN_ON(!list_empty(&work->entry))) {
-> 		spin_unlock(&pwq->pool->lock);
-> 		return;
-> 	}
-> 
-> part in __queue_work(), aren't you? But since flush_work() is used for waiting for
-> a work to complete, that work can be either queued state (list_empty() == false) or
-> not queued state (list_empty() == true). Thus, I don't think that flush_work() can
-> use list_empty() for checking whether that work was initialized.
+Hi Amit,
 
-Oh, you're right, sorry for the noise!
-
-> [PATCH v2] workqueue: Try to catch flush_work() without INIT_WORK().
+On Mon, Jan 21, 2019 at 11:38:34PM +0530, Amit Kucheria wrote:
+> Since all cpus in the big and little clusters, respectively, are in the
+> same frequency domain, use all of them for mitigation in the
+> cooling-map. We end up with two cooling devices - one each for the big
+> and little clusters.
 > 
-> syzbot found a flush_work() caller who forgot to call INIT_WORK()
-> because that work_struct was allocated by kzalloc() [1]. But the message
+> We throttle lightly at the first trip point, just removing the boost
+> frequency. At the next trip point we allow ourselves to be throttled to
+> any extent.
 > 
->   INFO: trying to register non-static key.
->   the code is fine but needs lockdep annotation.
->   turning off the locking correctness validator.
-> 
-> by lock_map_acquire() is failing to tell that INIT_WORK() is missing.
-> 
-> Since flush_work() without INIT_WORK() is a bug, and INIT_WORK() should
-> set ->func field to non-zero, let's warn if ->func field is zero.
-> 
-> [1] https://syzkaller.appspot.com/bug?id=a5954455fcfa51c29ca2ab55b203076337e1c770
-> 
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
 > ---
->  kernel/workqueue.c | 3 +++
->  1 file changed, 3 insertions(+)
+>  arch/arm64/boot/dts/qcom/sdm845.dtsi | 225 +++++++++++++++++++++++++--
+>  1 file changed, 209 insertions(+), 16 deletions(-)
 > 
-> diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-> index 392be4b..a503ad9 100644
-> --- a/kernel/workqueue.c
-> +++ b/kernel/workqueue.c
-> @@ -2908,6 +2908,9 @@ static bool __flush_work(struct work_struct *work, bool from_cancel)
->  	if (WARN_ON(!wq_online))
->  		return false;
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> index c27cbd3bcb0a..878f661d16eb 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> @@ -13,6 +13,7 @@
+>  #include <dt-bindings/reset/qcom,sdm845-aoss.h>
+>  #include <dt-bindings/soc/qcom,rpmh-rsc.h>
+>  #include <dt-bindings/clock/qcom,gcc-sdm845.h>
+> +#include <dt-bindings/thermal/thermal.h>
 >  
-> +	if (WARN_ON(!work->func))
-> +		return false;
+>  / {
+>  	interrupt-parent = <&intc>;
+> @@ -99,6 +100,7 @@
+>  			compatible = "qcom,kryo385";
+>  			reg = <0x0 0x0>;
+>  			enable-method = "psci";
+> +			#cooling-cells = <2>;
+>  			next-level-cache = <&L2_0>;
+>  			L2_0: l2-cache {
+>  				compatible = "cache";
+> @@ -114,6 +116,7 @@
+>  			compatible = "qcom,kryo385";
+>  			reg = <0x0 0x100>;
+>  			enable-method = "psci";
+> +			#cooling-cells = <2>;
+>  			next-level-cache = <&L2_100>;
+>  			L2_100: l2-cache {
+>  				compatible = "cache";
+> @@ -126,6 +129,7 @@
+>  			compatible = "qcom,kryo385";
+>  			reg = <0x0 0x200>;
+>  			enable-method = "psci";
+> +			#cooling-cells = <2>;
+>  			next-level-cache = <&L2_200>;
+>  			L2_200: l2-cache {
+>  				compatible = "cache";
+> @@ -138,6 +142,7 @@
+>  			compatible = "qcom,kryo385";
+>  			reg = <0x0 0x300>;
+>  			enable-method = "psci";
+> +			#cooling-cells = <2>;
+>  			next-level-cache = <&L2_300>;
+>  			L2_300: l2-cache {
+>  				compatible = "cache";
+> @@ -150,6 +155,7 @@
+>  			compatible = "qcom,kryo385";
+>  			reg = <0x0 0x400>;
+>  			enable-method = "psci";
+> +			#cooling-cells = <2>;
+>  			next-level-cache = <&L2_400>;
+>  			L2_400: l2-cache {
+>  				compatible = "cache";
+> @@ -162,6 +168,7 @@
+>  			compatible = "qcom,kryo385";
+>  			reg = <0x0 0x500>;
+>  			enable-method = "psci";
+> +			#cooling-cells = <2>;
+>  			next-level-cache = <&L2_500>;
+>  			L2_500: l2-cache {
+>  				compatible = "cache";
+> @@ -174,6 +181,7 @@
+>  			compatible = "qcom,kryo385";
+>  			reg = <0x0 0x600>;
+>  			enable-method = "psci";
+> +			#cooling-cells = <2>;
+>  			next-level-cache = <&L2_600>;
+>  			L2_600: l2-cache {
+>  				compatible = "cache";
+> @@ -186,6 +194,7 @@
+>  			compatible = "qcom,kryo385";
+>  			reg = <0x0 0x700>;
+>  			enable-method = "psci";
+> +			#cooling-cells = <2>;
+>  			next-level-cache = <&L2_700>;
+>  			L2_700: l2-cache {
+>  				compatible = "cache";
+> @@ -1691,18 +1700,41 @@
+>  			thermal-sensors = <&tsens0 1>;
+>  
+>  			trips {
+> -				cpu_alert0: trip0 {
+> +				cpu0_alert1: trip-point@0 {
+>  					temperature = <75000>;
+
+In my observations a 'switch on/threshold' temperature of 75 degrees
+leads to aggressive throttling with IPA when the temperature is above
+this threshold:
+
+[  716.760804] cpu_cooling_ratelimit: 31 callbacks suppressed
+[  716.760836] cpu cpu4: Cooling state set to 10. New max freq = 1920000
+[  716.773390] power_allocator_ratelimit: 15 callbacks suppressed
+[  716.773405] thermal thermal_zone5: Controlling power: control_temp=95000 last_temp=73500, curr_temp=75200 total_requested_power=39025 total_granted_power=18654
+[  749.609336] cpu_cooling_ratelimit: 45 callbacks suppressed
+[  749.609371] cpu cpu4: Cooling state set to 11. New max freq = 1843200
+[  749.624300] power_allocator_ratelimit: 24 callbacks suppressed
+[  749.624323] thermal thermal_zone5: Controlling power: control_temp=95000 last_temp=70800, curr_temp=77200 total_requested_power=40136 total_granted_power=17402
+[  780.152633] cpu_cooling_ratelimit: 41 callbacks suppressed
+[  780.152666] cpu cpu4: Cooling state set to 11. New max freq = 1843200
+[  780.165247] power_allocator_ratelimit: 21 callbacks suppressed
+[  780.165261] thermal thermal_zone5: Controlling power: control_temp=95000 last_temp=64800, curr_temp=76900 total_requested_power=39719 total_granted_power=1759
+
+(the logs come from a local patch in our tree:
+https://chromium.googlesource.com/chromiumos/third_party/kernel/+/ec1c501a8093fed44a6697a5913ef2765f518e1f)
+
+At this point I don't have a clear idea what would be a reasonable
+value for the 'switch on/threshold' temperature, but probably it
+should to be higher than 75 degrees, at least with IPA. If there is
+no reasonable common configuration for different thermal governors I
+guess we'll have to target a commonly used governor and systems
+using other 'incompatible' governors need to override the config in
+their <board>.dtsi.
+
+I should also say that the system I'm testing on isn't a
+representative environment (if such a thing exists at all...). It
+isn't running an upstream kernel (it's a recent version though,
+4.19). We try to stay as close to upstream as possible, however our
+tree includes EAS related patches that affect thermal throttling which
+haven't landed upstream yet. Also we currently use a guesstimated
+value for 'dynamic-power-coefficient', which impacts IPA. And our
+device doesn't have it's final thermal envelope yet, possible future
+hardware changes (e.g. heatsink) may alter the behavior.
+
+>  					hysteresis = <2000>;
+>  					type = "passive";
+>  				};
+>  
+> -				cpu_crit0: trip1 {
+> +				cpu0_alert0: trip-point@1 {
+
+The labels of the two trip points (cpu0_alert0 and cpu0_alert1) are
+inverted.
+
+> +					temperature = <95000>;
+> +					hysteresis = <2000>;
+> +					type = "passive";
+> +				};
 > +
->  	if (!from_cancel) {
->  		lock_map_acquire(&work->lockdep_map);
->  		lock_map_release(&work->lockdep_map);
+> +				cpu0_crit: cpu_crit {
+>  					temperature = <110000>;
+>  					hysteresis = <1000>;
+>  					type = "critical";
+>  				};
+>  			};
+> +
+> +			cooling-maps {
+> +				map0 {
+> +					trip = <&cpu0_alert0>;
+> +					cooling-device = <&CPU0 THERMAL_NO_LIMIT 1>,
+> +							 <&CPU1 THERMAL_NO_LIMIT 1>,
+> +							 <&CPU2 THERMAL_NO_LIMIT 1>,
+> +							 <&CPU3 THERMAL_NO_LIMIT 1>;
+> +				};
 
-Thanks for updating the changelog.  FWIW, you can add
+With IPA this doesn't really limit throttling to the boost
+frequency. Not sure if it has a negative impact, some other platforms
+with a thermal configuration that targets IPA only have a cooling map
+entry for the 'desired/target' temperature.
 
-Reviewed-by: Daniel Jordan <daniel.m.jordan@oracle.com>
+Cheers
+
+Matthias
