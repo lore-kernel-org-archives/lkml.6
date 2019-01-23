@@ -2,168 +2,220 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F761C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:11:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AE43C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:14:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 261A92133D
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:11:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="ZttxaU0w"
+	by mail.kernel.org (Postfix) with ESMTP id E7CF620870
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:14:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727082AbfAWOLT (ORCPT
+        id S1726435AbfAWOOd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 09:11:19 -0500
-Received: from cock.li ([185.100.85.212]:60330 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726832AbfAWOLS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 09:11:18 -0500
+        Wed, 23 Jan 2019 09:14:33 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41686 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726126AbfAWOOc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 09:14:32 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0CDFDA78;
+        Wed, 23 Jan 2019 06:14:32 -0800 (PST)
+Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1806C3F6A8;
+        Wed, 23 Jan 2019 06:14:28 -0800 (PST)
+Date:   Wed, 23 Jan 2019 14:14:26 +0000
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v6 05/16] sched/core: uclamp: Update CPU's refcount on
+ clamp changes
+Message-ID: <20190123141426.5samtr4hl6okdypu@e110439-lin>
+References: <20190115101513.2822-6-patrick.bellasi@arm.com>
+ <20190121153308.GL27931@hirez.programming.kicks-ass.net>
+ <20190121154412.fak2t2iquj3aixtu@e110439-lin>
+ <20190122093704.GM27931@hirez.programming.kicks-ass.net>
+ <20190122104305.6vjx37muqsxm536t@e110439-lin>
+ <20190122132817.GG13777@hirez.programming.kicks-ass.net>
+ <20190122140115.twtx646vewm757ca@e110439-lin>
+ <20190122145742.GQ27931@hirez.programming.kicks-ass.net>
+ <20190122153315.dhjl67sgpu74hmqv@e110439-lin>
+ <20190123091634.GT27931@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
-        t=1548252675; bh=bQKJ7lFsXVYBybhRGw9Jw88tUBAz+0K/QBRZjPpx2MQ=;
-        h=Date:From:To:Subject:From;
-        b=ZttxaU0wEAEwp6NaDDEnDf+/GnqS+Y5KPZH7bPR7OzxhYew8k85Q1RgxjCgw+M13D
-         N2RHpsgV004N4I5Olyi/dVuMapLF77TWNF0NWc+lteuvNw2G0IJgbkmyUY1/DB/GTJ
-         C1Yc7u9XUJJuNHsIwMY27bUIVWC1GagmHZ5RZrtst7z3LZe3YGPAWKCSXMVh8mtMKV
-         zbZQhDLsdvwHEJArl8kuQzZOQytn+O2Ylas7CypJsIrP4rvAlo4ETR4r6+5IvtZYPY
-         labzy3tXFtyVW60e/1xGAnEAneFRyo16WarY5rNP97MLncmEN3T3tfk0rIc7ss3kR2
-         elRvwiXCLMwWQ==
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 23 Jan 2019 14:11:15 +0000
-From:   opensourcevideogames@redchan.it
-To:     linux-kernel@vger.kernel.org
-Subject: Xonotic vs ChaosEsque:Anthology, Which to chose. A debate on
- OpenSource FPS's
-Message-ID: <fd95e52659367ea17037a1c9367d69c9@redchan.it>
-X-Sender: opensourcevideogames@redchan.it
-User-Agent: Roundcube Webmail/1.3.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190123091634.GT27931@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Xonotic vs ChaosEsque:Anthology, Which to chose. A debate on OpenSource 
-FPS's
+On 23-Jan 10:16, Peter Zijlstra wrote:
+> On Tue, Jan 22, 2019 at 03:33:15PM +0000, Patrick Bellasi wrote:
+> > On 22-Jan 15:57, Peter Zijlstra wrote:
+> > > On Tue, Jan 22, 2019 at 02:01:15PM +0000, Patrick Bellasi wrote:
+> 
+> > > > Yes, I would say we have two options:
+> > > > 
+> > > >  1) SCHED_FLAG_KEEP_POLICY enforces all the scheduling class specific
+> > > >     attributes, but cross class attributes (e.g. uclamp)
+> > > >
+> > > >  2) add SCHED_KEEP_NICE, SCHED_KEEP_PRIO, and SCED_KEEP_PARAMS
+> > > >     and use them in the if conditions in D)
+> > > 
+> > > So the current KEEP_POLICY basically provides sched_setparam(), and
+> > 
+> > But it's not exposed user-space.
+> 
+> Correct; not until your first patch indeed.
+> 
+> > > given we have that as a syscall, that is supposedly a useful
+> > > functionality.
+> > 
+> > For uclamp is definitively useful to change clamps without the need to
+> > read beforehand the current policy params and use them in a following
+> > set syscall... which is racy pattern.
+> 
+> Right; but my argument was mostly that if sched_setparam() is a useful
+> interface, a 'pure' KEEP_POLICY would be too and your (1) looses that.
 
-> Xonotic over ChaosEsqueAnthology:
-..................................
-Ayyo. Before you make a big mistake in choosing a project or sum shit 
-you gotta be feeling the ways of the both the people. You feel me?
+Ok, that's an argument in favour of option (2).
 
-M'fcking Xonotic and dis bullshit is diffrens.
+> > > And I suppose the UTIL_CLAMP is !KEEP_UTIL; we could go either way
+> > > around with that flag.
+> > 
+> > What about getting rid of the racy case above by exposing userspace
+> > only the new UTIL_CLAMP and, on:
+> > 
+> >   sched_setscheduler(flags: UTIL_CLAMP)
+> > 
+> > we enforce the other two flags from the syscall:
+> > 
+> > ---8<---
+> >         SYSCALL_DEFINE3(sched_setattr)
+> >             if (attr.sched_flags & SCHED_FLAG_KEEP_POLICY) {
+> >                 attr.sched_policy = SETPARAM_POLICY;
+> >                 attr.sched_flags |= (KEEP_POLICY|KEEP_PARAMS);
+> >             }
+> > ---8<---
+> > 
+> > This will not make possible to change class and set flags in one go,
+> > but honestly that's likely a very limited use-case, isn't it ?
+> 
+> So I must admit to not seeing much use for sched_setparam() (and its
+> equivalents) myself, but given it is an existing interface, I also think
+> it would be nice to cover that functionality in the sched_setattr()
+> call.
 
-Xonotic devs deeply respect women and their rights and privileges.
+Which will make them sort-of equivalent... meaning: both the POSIX
+sched_setparam() and the !POSIX sched_setattr() will allow to change
+params/attributes without changing the policy.
 
-Dis Bullshit devs hate women's rights and have been harranging FLOSS 
-femininists fo like a decade. (Citation: 
-http://geekfeminism.wikia.com/wiki/MikeeUSA )
+> That is; I know of userspace priority-ceiling implementations using
+> sched_setparam(), but I don't see any reason why that wouldn't also work
+> with sched_setscheduler() (IOW always also set the policy).
 
-Xonotic Developers contribute to society by working real jobs.
+The sched_setscheduler() requires a policy to be explicitely defined,
+it's a mandatory parameter and has to be specified.
 
-Dis Bullshit is a pack of fucking NEETs who say dey ain't workin fo no 
-enemy.
+Unless a RT task could be blocked by a FAIR one and you need
+sched_setscheduler() to boost both prio and class (which looks like a
+poor RT design to begin with) why would you use sched_setscheduler()
+instead of sched_setparam()?
 
-Xonotic Programmers are attracted to real Women.
+They are both POSIX calls and, AFAIU, sched_setparam() seems to be
+designed exactly for those kind on use cases.
 
-Dis BULLSHIT faggots want to take little girls as brides.
+> > > > In both cases the goal should be to return from code block D).
+> > > 
+> > > I don't think so; we really do want to 'goto change' for util changes
+> > > too I think. Why duplicate part of that logic?
+> > 
+> > But that will force a dequeue/enqueue... isn't too much overhead just
+> > to change a clamp value?
+> 
+> These syscalls aren't what I consider fast paths anyway. However, there
+> are people that rely on the scheduler syscalls not to schedule
+> themselves, or rather be non-blocking (see for example that prio-ceiling
+> implementation).
+> 
+> And in that respect the newly introduced uclamp_mutex does appear to be
+> a problem.
 
-Xonotic Men respect and uphold modern ethical understandings and 
-beliefs.
+Mmm... could be... I'll look better into it. Could be that that mutex
+is not really required. We don't need to serialize task specific
+clamp changes and anyway the protected code never sleeps and uses
+atomic instruction.
 
-DIS BULLSHIT NEET FUCKS worship the war god of the jews and cite 
-"deuteronomy" as reason why raping young female children into marraige 
-is "awwwite" (Example: "Deuteronomy 22, 28-29,hebrew, see na'ar, tahpas 
-bla bla bla bla" -- These words are all spam-filtered on soylentnews.org 
-for a reason)
+> Also; do you expect these clamp values to be changed often?
 
-Xonotic Paragons have a correct work:life:hobby balance and deeply love 
-real women.
+Not really, the most common use cases are:
+ a) a resource manager (e.g. the Android run-time) set clamps for a
+    bunch of tasks whenever you switch for example from one app to
+    antoher... but that will be done via cgroups (i.e. different path)
+ b) a task can relax his constraints to save energy (something
+    conceptually similar to use a deferrable timers)
 
-Dis_Bullshit neet faggots do not work, do not life, they just program 
-the videogame and make maps for it. They hate women and like little 
-girls (and we all know that little girls are basically boys).
+In both cases I expect a limited call frequency.
 
-Choose wisely for you will be judged by the company you keep.
+> > Perhaps we can also end up with some wired
+> 
+> s/wired/weird/, right?
 
-If you want to get fired from your job: fine: shack up with mikeeeusa 
-and the faggot neets of Dis Bullshit and their mountain of shit. You 
-know: if you like pedophiles and guns so much. Also the neet assholes 
-added disgusting things like working torture chambers into the game. Do 
-you honestly want to be associated with that?
-..................................
+Right :)
 
+> > side-effects like the task being preempted ?
+> 
+> Nothing worse than any other random reschedule would cause.
+> 
+> > Consider also that the uclamp_task_update_active() added by this patch
+> > not only has lower overhead but it will be use also by cgroups where
+> > we want to force update all the tasks on a cgroup's clamp change.
+> 
+> I haven't gotten that far; but I would prefer not to have two different
+> 'change' paths in __sched_setscheduler().
 
-> CEA over Xonotic:
-..................................
+Yes, I agree that two paths in __sched_setscheduler() could be
+confusing. Still we have to consider that here we are adding
+"not class specific" attributes.
 
-Some things to consider:
+What if we keep "not class specific" code completely outside of
+__sched_setscheduler() and do something like:
 
-Chaos-Esque Anthology has little things coded in over the years like:
-Bullet Deceleration in Water (along with trails) (thus you can use water 
-for cover like in real life)
-Blood splatter on walls when bullets pass through players (noticed 
-Unreal 97 had this, and Xonotic didn't, so it was coded in).
-and various other little niggling details that were noticed as absent 
-and programmed in over the years.
+---8<---
+    int sched_setattr(struct task_struct *p, const struct sched_attr *attr)
+    {
+            retval = __sched_setattr(p, attr);
+            if (retval)
+                return retval;
+            return __sched_setscheduler(p, attr, true, true);
+    }
+    EXPORT_SYMBOL_GPL(sched_setattr);
+---8<---
 
-It also has big things like the tons of added weapons, and all the rest 
-that has allready been mentioned.
+where __sched_setattr() will collect all the tunings which do not
+require an enqueue/dequeue, so far only the new uclamp settings, while
+the rest remains under __sched_setscheduler().
 
-Xonotic itself could be prone to puritanism: one of the devs wanted to 
-strip out all the player models and replace them with only robots so it 
-is "less violent" (don't think they did it, but it was discussed).
-Chaos-Esque doesn't entertain such thoughts.
+Thoughts ?
 
-Xonotic has code churn from time to time when a dev decides to refactor 
-everything in the "right way". Samual did this once, and later some new 
-guys refactored the whole thing again.
-Chaos-Esque does not do this. It refines the codebase it has. The 
-machine doesn't care how asthetic ones quakec dialect appears to humans.
-(Rewriting codebases for no reason can reintroduce long banished bugs).
+-- 
+#include <best/regards.h>
 
-You can think of Xonotic as american-christianity: subject to bouts of 
-shakerism and other fads,
-while Chaos-Esque Anthology is more listening to the voices of 
-antiquity.
-
-Chaos-Esque Anthology believes in slow, steady, methodical advancement. 
-Like a large gear biting into whatever it is biting into.
-Xonotic is more of a ... talk about things... some bouts of 
-revolutionary change... some iconoclasm... and churn in developers.
-
-Chaos-Esque Anthology has one developer. Who listens to no one, who no 
-one talks to.
-
-One of these projects makes more progress than the other.
-
-Now, on the otherhand: Xonotic has a ... (close eyes, savor the moment, 
-breathe in, breathe out)...
-Xonotic has a Community.
-
-You can go to Xonotic. You can approach it. You can Talk to it.
-There are people you can say hey what is up, how be ist.
-You can talk about new features you want, discuss enacting them, have 
-arguments about it.
-
-You cannot do this with Chaos-Esque. I mean, you can talk to a wall.
-On the other hand, whatever feature you want in your heart... it has a 
-good chance of simply appearing in Chaos-Esque.
-The development model is: force of will. You will it. That desire is 
-tranferred to the heart of the developer. He has the desire to suddenly 
-implement a new feature. That feature is willed into existance.
-Many people scoff at this development model saying that it lacks 
-_Communication_, however Chaos-Esque has 185 weapons and Xonotic has 18. 
-Many people go on the Xonotic forum, make a feature request... and 
-unbeknonst to them Chaos-Esque has had this thing for many years (they 
-will never know).
-
-
-Note: Xonotic (and ofcourse Chaos-Esque) has a way of seperating game 
-types. You could do ./xonotic-executable -game vanilla, and 
-./xonotic-chaos-esque executable -game chaos
-...................
+Patrick Bellasi
