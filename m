@@ -2,78 +2,127 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9810BC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 13:09:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6370AC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 13:09:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B32E20823
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 13:09:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 321DE20855
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 13:09:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548248963;
+	bh=iDwBI/t4xFRVlLFQq4IzY0VVRnVQGIG6gT9vVHAKbrc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=CDoev/7dT1WJPaHlX9ocoTtesFJePfeMXYkScUEDzBpl4ywIzN4sFm3l+aAzLAbXZ
+	 JBXevofR5dOZwQMl9wQQPAYrmiZXCKnb4kkp102d2wZoqysfn0I05CiAE1c5W+GE+4
+	 te2zwVw5zrViGdUsMM4FtxQ5Po0mIWRBjhi/kFrQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726313AbfAWNIn (ORCPT
+        id S1726906AbfAWNJV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 08:08:43 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:36364 "EHLO huawei.com"
+        Wed, 23 Jan 2019 08:09:21 -0500
+Received: from mx2.suse.de ([195.135.220.15]:45538 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726104AbfAWNIn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 08:08:43 -0500
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 3EE7F737A955BA830DF1;
-        Wed, 23 Jan 2019 21:08:40 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.75) by
- DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
- 14.3.408.0; Wed, 23 Jan 2019 21:08:31 +0800
-From:   Zhou Wang <wangzhou1@hisilicon.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        <linux-crypto@vger.kernel.org>
-CC:     <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
-        Zhou Wang <wangzhou1@hisilicon.com>
-Subject: [PATCH v2 4/4] MAINTAINERS: add maintainer for HiSilicon QM and ZIP controller driver
-Date:   Wed, 23 Jan 2019 21:08:53 +0800
-Message-ID: <1548248933-149853-5-git-send-email-wangzhou1@hisilicon.com>
-X-Mailer: git-send-email 2.8.1
-In-Reply-To: <1548248933-149853-1-git-send-email-wangzhou1@hisilicon.com>
-References: <1548248933-149853-1-git-send-email-wangzhou1@hisilicon.com>
+        id S1726057AbfAWNJV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 08:09:21 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 07C16AE80;
+        Wed, 23 Jan 2019 13:09:19 +0000 (UTC)
+Date:   Wed, 23 Jan 2019 14:09:17 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Gary R Hook <ghook@amd.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: Re: [PATCH 2/2] debugfs: return error values, not NULL
+Message-ID: <20190123130917.GZ4087@dhcp22.suse.cz>
+References: <20190123102702.GA17123@kroah.com>
+ <20190123102814.GB17123@kroah.com>
+ <20190123110628.GV4087@dhcp22.suse.cz>
+ <20190123115535.GA31237@kroah.com>
+ <20190123121350.GX4087@dhcp22.suse.cz>
+ <20190123122626.GA27968@kroah.com>
+ <20190123124024.GY4087@dhcp22.suse.cz>
+ <20190123130057.GB21318@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190123130057.GB21318@kroah.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Zhou Wang as a maintainer for HiSilicon QM and ZIP controller driver.
+On Wed 23-01-19 14:00:57, Greg KH wrote:
+> On Wed, Jan 23, 2019 at 01:40:24PM +0100, Michal Hocko wrote:
+> > On Wed 23-01-19 13:26:26, Greg KH wrote:
+> > > On Wed, Jan 23, 2019 at 01:13:50PM +0100, Michal Hocko wrote:
+> > > > On Wed 23-01-19 12:55:35, Greg KH wrote:
+> > > > > On Wed, Jan 23, 2019 at 12:06:28PM +0100, Michal Hocko wrote:
+> > > > > > On Wed 23-01-19 11:28:14, Greg KH wrote:
+> > > > > > > When an error happens, debugfs should return an error pointer value, not
+> > > > > > > NULL.  This will prevent the totally theoretical error where a debugfs
+> > > > > > > call fails due to lack of memory, returning NULL, and that dentry value
+> > > > > > > is then passed to another debugfs call, which would end up succeeding,
+> > > > > > > creating a file at the root of the debugfs tree, but would then be
+> > > > > > > impossible to remove (because you can not remove the directory NULL).
+> > > > > > > 
+> > > > > > > So, to make everyone happy, always return errors, this makes the users
+> > > > > > > of debugfs much simpler (they do not have to ever check the return
+> > > > > > > value), and everyone can rest easy.
+> > > > > > 
+> > > > > > How come this is safe at all? Say you are creating a directory by
+> > > > > > debugfs_create_dir and then feed the return value to debugfs_create_files
+> > > > > > as a parent. In case of error you are giving it an invalid pointer and
+> > > > > > likely blow up unless I miss something.
+> > > > > 
+> > > > > debugfs_create_files checks for invalid parents and will just refuse to
+> > > > > create the file.  It's always done that.
+> > > > 
+> > > > I must be missing something because debugfs_create_files does
+> > > > 	d_inode(parent)->i_private = data;
+> > > > as the very first thing and that means that it dereferences an invalid
+> > > > pointer right there.
+> > > 
+> > > debugfs_create_file() -> __debugfs_create_file() -> start_creating()
+> > > and that function checks if parent is an error, which it aborts on, or
+> > > if it is NULL, it sets parent to a valid value:
+> > > 
+> > >         /* If the parent is not specified, we create it in the root.
+> > >          * We need the root dentry to do this, which is in the super
+> > >          * block. A pointer to that is in the struct vfsmount that we
+> > >          * have around.
+> > >          */
+> > >         if (!parent)
+> > >                 parent = debugfs_mount->mnt_root;
+> > > 
+> > > I don't see any line that looks like:
+> > > >       d_inode(parent)->i_private = data;
+> > > in Linus's tree right now, what kernel version are you referring to?
+> > 
+> > Ohh, my bad. I have looked at debugfs_create_files which is a mq helper
+> > around debugfs_create_file. But that is a good example why this patch is
+> > dangerous anyway. blk_mq_debugfs_register simply checks for NULL and
+> > debugfs_create_files doesn't expect ERR_PTR here. So you would have to
+> > check each and every user to make sure you can do that.
+> 
+> Ah, I already have that patch in my "to add a proper changelog" queue,
+> it's below and fixes that problem.
 
-Signed-off-by: Zhou Wang <wangzhou1@hisilicon.com>
-Reviewed-by: John Garry <john.garry@huawei.com>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+OK, fair enough. I am just wondering how many more gems like that are
+lurking there. Do not get me wrong but a broken error handling is rarely
+fixed by removing it.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 51029a4..6e6be9b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6868,6 +6868,14 @@ S:	Supported
- F:	drivers/scsi/hisi_sas/
- F:	Documentation/devicetree/bindings/scsi/hisilicon-sas.txt
- 
-+HISILICON QM AND ZIP Controller DRIVER
-+M:	Zhou Wang <wangzhou1@hisilicon.com>
-+L:	linux-crypto@vger.kernel.org
-+S:	Maintained
-+F:	drivers/crypto/hisilicon/qm.c
-+F:	drivers/crypto/hisilicon/qm.h
-+F:	drivers/crypto/hisilicon/zip/
-+
- HMM - Heterogeneous Memory Management
- M:	Jérôme Glisse <jglisse@redhat.com>
- L:	linux-mm@kvack.org
+And Cc: stable is completely inappropriate IMNSHO. This is just adding a
+risk without a large benefit.
+
+Moreover all these changes should be posted in a single patch thread so
+that everybody can see the final outcome.
 -- 
-2.8.1
-
+Michal Hocko
+SUSE Labs
