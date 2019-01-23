@@ -4,29 +4,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D676C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:24:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63733C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:24:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6578E218A2
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:24:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A45F20856
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:24:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727423AbfAWWYR (ORCPT
+        id S1727250AbfAWWXp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 17:24:17 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:54486 "EHLO mx1.redhat.com"
+        Wed, 23 Jan 2019 17:23:45 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:46712 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727297AbfAWWXt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 17:23:49 -0500
+        id S1727200AbfAWWXl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 17:23:41 -0500
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2DA69432A0;
-        Wed, 23 Jan 2019 22:23:49 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id C9341D7D58;
+        Wed, 23 Jan 2019 22:23:40 +0000 (UTC)
 Received: from localhost.localdomain.com (ovpn-120-127.rdu2.redhat.com [10.10.120.127])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 87EAF6A685;
-        Wed, 23 Jan 2019 22:23:46 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 21DE26A685;
+        Wed, 23 Jan 2019 22:23:38 +0000 (UTC)
 From:   jglisse@redhat.com
 To:     linux-mm@kvack.org
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
@@ -46,16 +46,16 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         John Hubbard <jhubbard@nvidia.com>, kvm@vger.kernel.org,
         dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v4 7/9] gpu/drm/amdgpu: optimize out the case when a range is updated to read only
-Date:   Wed, 23 Jan 2019 17:23:13 -0500
-Message-Id: <20190123222315.1122-8-jglisse@redhat.com>
+Subject: [PATCH v4 4/9] mm/mmu_notifier: pass down vma and reasons why mmu notifier is happening
+Date:   Wed, 23 Jan 2019 17:23:10 -0500
+Message-Id: <20190123222315.1122-5-jglisse@redhat.com>
 In-Reply-To: <20190123222315.1122-1-jglisse@redhat.com>
 References: <20190123222315.1122-1-jglisse@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Wed, 23 Jan 2019 22:23:49 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Wed, 23 Jan 2019 22:23:41 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -63,9 +63,17 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jérôme Glisse <jglisse@redhat.com>
 
-When range of virtual address is updated read only and corresponding
-user ptr object are already read only it is pointless to do anything.
-Optimize this case out.
+CPU page table update can happens for many reasons, not only as a result
+of a syscall (munmap(), mprotect(), mremap(), madvise(), ...) but also
+as a result of kernel activities (memory compression, reclaim, migration,
+...).
+
+Users of mmu notifier API track changes to the CPU page table and take
+specific action for them. While current API only provide range of virtual
+address affected by the change, not why the changes is happening
+
+This patch is just passing down the new informations by adding it to the
+mmu_notifier_range structure.
 
 Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
 Cc: Christian König <christian.koenig@amd.com>
@@ -87,47 +95,34 @@ Cc: linux-rdma@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org
 Cc: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ include/linux/mmu_notifier.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
-index 3e6823fdd939..7880eda064cd 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
-@@ -294,6 +294,7 @@ static int amdgpu_mn_invalidate_range_start_hsa(struct mmu_notifier *mn,
- {
- 	struct amdgpu_mn *amn = container_of(mn, struct amdgpu_mn, mn);
- 	struct interval_tree_node *it;
-+	bool update_to_read_only;
+diff --git a/include/linux/mmu_notifier.h b/include/linux/mmu_notifier.h
+index a9808add4070..7514775817de 100644
+--- a/include/linux/mmu_notifier.h
++++ b/include/linux/mmu_notifier.h
+@@ -56,9 +56,11 @@ struct mmu_notifier_mm {
+ };
+ 
+ struct mmu_notifier_range {
++	struct vm_area_struct *vma;
+ 	struct mm_struct *mm;
+ 	unsigned long start;
  	unsigned long end;
++	enum mmu_notifier_event event;
+ 	bool blockable;
+ };
  
- 	/* notification is exclusive, but interval is inclusive */
-@@ -302,6 +303,8 @@ static int amdgpu_mn_invalidate_range_start_hsa(struct mmu_notifier *mn,
- 	if (amdgpu_mn_read_lock(amn, range->blockable))
- 		return -EAGAIN;
- 
-+	update_to_read_only = mmu_notifier_range_update_to_read_only(range);
-+
- 	it = interval_tree_iter_first(&amn->objects, range->start, end);
- 	while (it) {
- 		struct amdgpu_mn_node *node;
-@@ -317,6 +320,16 @@ static int amdgpu_mn_invalidate_range_start_hsa(struct mmu_notifier *mn,
- 
- 		list_for_each_entry(bo, &node->bos, mn_list) {
- 			struct kgd_mem *mem = bo->kfd_bo;
-+			bool read_only;
-+
-+			/*
-+			 * If it is already read only and we are updating to
-+			 * read only then we do not need to change anything.
-+			 * So save time and skip this one.
-+			 */
-+			read_only = amdgpu_ttm_tt_is_readonly(bo->tbo.ttm);
-+			if (update_to_read_only && read_only)
-+				continue;
- 
- 			if (amdgpu_ttm_tt_affect_userptr(bo->tbo.ttm,
- 							 range->start,
+@@ -354,6 +356,8 @@ static inline void mmu_notifier_range_init(struct mmu_notifier_range *range,
+ 					   unsigned long start,
+ 					   unsigned long end)
+ {
++	range->vma = vma;
++	range->event = event;
+ 	range->mm = mm;
+ 	range->start = start;
+ 	range->end = end;
 -- 
 2.17.2
 
