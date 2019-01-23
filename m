@@ -2,84 +2,183 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0247EC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 20:15:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63066C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 20:16:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA3A721855
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 20:15:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 288F721855
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 20:16:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ALfZnFKz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726234AbfAWUPN (ORCPT
+        id S1726361AbfAWUQR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 15:15:13 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:37258 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726035AbfAWUPN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 15:15:13 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1D423C7C0A;
-        Wed, 23 Jan 2019 20:15:12 +0000 (UTC)
-Received: from redhat.com (ovpn-124-254.rdu2.redhat.com [10.10.124.254])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3A4CD6C510;
-        Wed, 23 Jan 2019 20:15:09 +0000 (UTC)
-Date:   Wed, 23 Jan 2019 15:15:06 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Dave Hansen <dave.hansen@linux.intel.com>, dave@sr71.net,
-        dan.j.williams@intel.com, dave.jiang@intel.com, zwisler@kernel.org,
-        vishal.l.verma@intel.com, thomas.lendacky@amd.com,
-        akpm@linux-foundation.org, mhocko@suse.com,
-        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, ying.huang@intel.com, fengguang.wu@intel.com,
-        bp@suse.de, bhelgaas@google.com, baiyaowei@cmss.chinamobile.com,
-        tiwai@suse.de
-Subject: Re: [PATCH 2/4] mm/memory-hotplug: allow memory resources to be
- children
-Message-ID: <20190123201506.GG3097@redhat.com>
-References: <20190116181859.D1504459@viggo.jf.intel.com>
- <20190116181902.670EEBC3@viggo.jf.intel.com>
- <20190116191635.GD3617@redhat.com>
- <2b52778d-f120-eec7-3e7a-3a9c182170f0@intel.com>
- <20190116233849.GE3617@redhat.com>
- <b1f22eda-b52f-af20-637f-b45971a12d33@intel.com>
+        Wed, 23 Jan 2019 15:16:17 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:44803 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726035AbfAWUQQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 15:16:16 -0500
+Received: by mail-pf1-f193.google.com with SMTP id u6so1713067pfh.11;
+        Wed, 23 Jan 2019 12:16:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=JXJ/lLYdAqpJYcVw/CUITGhv6YEBTpJ0e63mSR0VkaQ=;
+        b=ALfZnFKzhYrKKJaf5roMI1jtpUD+tcQKqyxOi//PuNJaCqq+f6FA2cl3ShAddv32UC
+         rWWQD/iRVARIt/jNUS311paW3kyCd7PwBQLSvqN0DRhZ9ktcoRta/y1N7NixDyaTvpUV
+         gyv2FC0Q7x5ljJXfeYntJiFcXLkAheYv7Nb/2AKiabCCfCyKUfFAzW1kqxFLm0mS1z1I
+         sT7/XP4YJAlgX6A/z//vBvYZ8a5lCi7JnJY8dDgE/oIjNoNKc1/aOSLvJyaE7MiIx9Lq
+         Jph8U0gGjrnxKcKh9MiQBNTgXsU3PacLkvRcqyM52Xtz29xnSECI2+17X87NKT13x5b5
+         z71g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=JXJ/lLYdAqpJYcVw/CUITGhv6YEBTpJ0e63mSR0VkaQ=;
+        b=b6jKiUh0ikn5e4PaF/PmIllmgTWrbSZguAY5+04wH2LPCpfBsmljiZXGycFk4L4qQ5
+         BKVtRJpmpzj4aiGLer73pgPIHEZr6+b0+A9yNbEaMjFXz6CsifWs1ekgIQaoIeZEmd9+
+         qoVB5/83Aje0fp0+3CoBUwRenJwg+yAlUgLgKzs5HVN+QcPhAGU/Gu1eytbY9b7jk3z3
+         emMT1dLV8xyl+k4xMr1tbcN1ix4qIjN/SnCiPKmHdFDj7y4ka2+pKQfWalsoIoHqSbcT
+         QMtZzILSR1QZChGDQMW/zsjvTQLLtWaQ7zL4doaWblL9HTUeo7xq4hgNJ/KmdOVEJr8y
+         Iziw==
+X-Gm-Message-State: AJcUukfGf7HkYQr0l6Wpw5jPHonVEUDm0zeHB8zemRp2ghZzXV0bO7Ul
+        Mnxopgq3Bp5xv152zoj1yiE=
+X-Google-Smtp-Source: ALg8bN5wML2ZpjY1+vwZnpFq5Sv0gptfkzNyHJ4FhTWyDYXqH2Qf7M1M1WJpBY0Uy4WgU2FGL+i0Cw==
+X-Received: by 2002:a63:e247:: with SMTP id y7mr3173072pgj.84.1548274575386;
+        Wed, 23 Jan 2019 12:16:15 -0800 (PST)
+Received: from [10.67.49.9] ([192.19.223.250])
+        by smtp.googlemail.com with ESMTPSA id p2sm32809197pgc.94.2019.01.23.12.16.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 23 Jan 2019 12:16:14 -0800 (PST)
+Subject: Re: [PATCH net-next 06/10] net: introduce a net_device_ops macsec
+ helper
+To:     Antoine Tenart <antoine.tenart@bootlin.com>, davem@davemloft.net,
+        sd@queasysnail.net, andrew@lunn.ch, hkallweit1@gmail.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        thomas.petazzoni@bootlin.com, alexandre.belloni@bootlin.com,
+        quentin.schulz@bootlin.com, allan.nielsen@microchip.com
+References: <20190123155638.13852-1-antoine.tenart@bootlin.com>
+ <20190123155638.13852-7-antoine.tenart@bootlin.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ M5kY0ACeNhCZJvZ5g4C2Lc9fcTHu8jxmEkI=
+Message-ID: <6ebf0541-0830-3df9-121f-ac560822bf1c@gmail.com>
+Date:   Wed, 23 Jan 2019 12:16:08 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <20190123155638.13852-7-antoine.tenart@bootlin.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <b1f22eda-b52f-af20-637f-b45971a12d33@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Wed, 23 Jan 2019 20:15:12 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 12:03:54PM -0800, Dave Hansen wrote:
-> On 1/16/19 3:38 PM, Jerome Glisse wrote:
-> > So right now i would rather that we keep properly reporting this
-> > hazard so that at least we know it failed because of that. This
-> > also include making sure that we can not register private memory
-> > as a child of an un-busy resource that does exist but might not
-> > have yet been claim by its rightful owner.
+On 1/23/19 7:56 AM, Antoine Tenart wrote:
+> This patch introduces a net_device_ops MACsec helper to allow net device
+> drivers to implement a MACsec offloading solution.
 > 
-> I can definitely keep the warning in.  But, I don't think there's a
-> chance of HMM registering a IORES_DESC_DEVICE_PRIVATE_MEMORY region as
-> the child of another.  The region_intersects() check *should* find that:
-
-Sounds fine to (just keep the warning).
-
-Cheers,
-Jérôme
-
+> Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
+> ---
+>  include/linux/netdevice.h | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 > 
-> >         for (; addr > size && addr >= iomem_resource.start; addr -= size) {
-> >                 ret = region_intersects(addr, size, 0, IORES_DESC_NONE);
-> >                 if (ret != REGION_DISJOINT)
-> >                         continue;
-> 
+> diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+> index e675ef97a426..ee2f40dca515 100644
+> --- a/include/linux/netdevice.h
+> +++ b/include/linux/netdevice.h
+> @@ -53,6 +53,10 @@
+>  #include <uapi/linux/pkt_cls.h>
+>  #include <linux/hashtable.h>
+>  
+> +#ifdef CONFIG_MACSEC
+> +#include <net/macsec.h>
+> +#endif
+
+You can provide a forward declaration for struct netdev_macsec and not
+have to include that header file.
+
+> +
+>  struct netpoll_info;
+>  struct device;
+>  struct phy_device;
+> @@ -1441,6 +1445,10 @@ struct net_device_ops {
+>  						u32 flags);
+>  	int			(*ndo_xsk_async_xmit)(struct net_device *dev,
+>  						      u32 queue_id);
+> +#ifdef CONFIG_MACSEC
+> +	int			(*ndo_macsec)(struct net_device *dev,
+> +					      struct netdev_macsec *macsec);
+
+You would really want to define an API which is more oriented towards
+configuring/deconfiguring a MACsec association here, e.g.: similar to
+what the IPsec offload ndos offer.
+
+It is not clear to me whether after your patch series we still need to
+create a macsec virtual device, and that gets offloaded onto its real
+device/PHY device, or if we don't need that all?
+-- 
+Florian
