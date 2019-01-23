@@ -2,100 +2,96 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39DC0C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 12:55:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38DF8C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 12:55:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F5D02183F
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 12:55:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0319321848
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 12:55:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548248140;
+	bh=8KmCeuQjaH4AqQ5T4/ZTC+Z8iw501hJhaTm0Hi/yMDo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=GG+Gcs+2lujWxRe7OFCL06D8RS39aMYOusJpWJHaTHCjc/ztijovq85VskjneybBa
+	 j+PungKBsBgpDSB4tR00mGKVRKMFU2jqTiv5O4nfjFcBRxn4Yj8Pn2Li2XCd8np5q5
+	 96vR/6p0Z73af1yxJNI1NmJe3DwDJdCfCXDKwPjE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726291AbfAWMzR (ORCPT
+        id S1726322AbfAWMzi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 07:55:17 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:37874 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726167AbfAWMzR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 07:55:17 -0500
-Received: by mail-wm1-f65.google.com with SMTP id g67so1849406wmd.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 04:55:16 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=qSxnX/Lfd6gY76ahY1VU8wnsHqE/+G4E8WN5R2sa4SQ=;
-        b=KEYuJf8h3yuBnizsfs1b+RtkFdc2cagM27NqWbZU53F4X84RgLXtHAdFUzbRE7SyFd
-         CfXKTVIwX2tc4HLvdQMvKbTNELjL32PJSnAH/lEtxm5cDZhrN/fFPs0IMwWB0IKPqMIg
-         E28zYyeLadTQMM+/fF6gpNrb3MYGUc0oeAy0T1pT4L6tKa6hZD1sheJqddHwJiwyEQ3F
-         g8HnVmLPkZOHUrISb2eSRwGVva9w4h6FjTVrBweYk7kUaQ8Jz/PVFycz44DKwbqAuUjF
-         8dO17/5u8TLPHXdbMc84psso+YoTkcBi0TY5tJITK+jmcYUq1qc5/kwGZg3qVy7GwwLi
-         84Ng==
-X-Gm-Message-State: AJcUuke+OBFOxUugem/U1moylNppZzpuqcpJLfQCTb5se6qsPlekh5ab
-        Y7fQdVX2jqIBIIoVy/w0RsV9fw==
-X-Google-Smtp-Source: ALg8bN50IX7t2OlgKJpCWlr5gDWnvdTJsyV9F2bbbUAwAm5frinDho6iWZ5M5DRanbDbMs/U60PxBA==
-X-Received: by 2002:a7b:c757:: with SMTP id w23mr2508967wmk.59.1548248115783;
-        Wed, 23 Jan 2019 04:55:15 -0800 (PST)
-Received: from labbott-redhat.redhat.com (ovpn-brq.redhat.com. [213.175.37.11])
-        by smtp.gmail.com with ESMTPSA id x15sm130679211wrs.27.2019.01.23.04.55.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 23 Jan 2019 04:55:15 -0800 (PST)
-From:   Laura Abbott <labbott@redhat.com>
-To:     Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc:     Laura Abbott <labbott@redhat.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] s390/jump_label: Correct asm contraint
-Date:   Wed, 23 Jan 2019 13:55:13 +0100
-Message-Id: <20190123125513.20210-1-labbott@redhat.com>
-X-Mailer: git-send-email 2.20.1
+        Wed, 23 Jan 2019 07:55:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37900 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726238AbfAWMzi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 07:55:38 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CEDAB2183F;
+        Wed, 23 Jan 2019 12:55:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548248137;
+        bh=8KmCeuQjaH4AqQ5T4/ZTC+Z8iw501hJhaTm0Hi/yMDo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CSWDpOaF3K2Vb4kmFvy5kRH3T7gvFRKzzGYn0f4PMcWhA46Fhx2tq3ptQx94xEx+K
+         M/ZBMZRX1EJ30Sw2PzZwBCpWKbh8BT3/PlQeSAfLzifub4NyxNeywZIypKXm8d2IeD
+         a5rPlIZg1wBWG8V8sccsIm6cLd+oi6+6bEG5iK1U=
+Date:   Wed, 23 Jan 2019 13:55:34 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 4.14 00/59] 4.14.95-stable review
+Message-ID: <20190123125534.GA21318@kroah.com>
+References: <20190121122456.529172919@linuxfoundation.org>
+ <514faa89-bfed-1741-3a93-930f20177259@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <514faa89-bfed-1741-3a93-930f20177259@nvidia.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There's a build failure with gcc9:
+On Wed, Jan 23, 2019 at 09:07:33AM +0000, Jon Hunter wrote:
+> 
+> On 21/01/2019 13:43, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 4.14.95 release.
+> > There are 59 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Wed Jan 23 12:23:55 UTC 2019.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.95-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> All tests passing for Tegra ...
+> 
+> Test results for stable-v4.14:
+>     8 builds:	8 pass, 0 fail
+>     16 boots:	16 pass, 0 fail
+>     14 tests:	14 pass, 0 fail
+> 
+> Linux version:	4.14.95-rc1-gb18179b9
+> Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra30-cardhu-a04
+> 
 
- ./arch/s390/include/asm/jump_label.h: Assembler messages:
- ./arch/s390/include/asm/jump_label.h:23: Error: bad expression
- ./arch/s390/include/asm/jump_label.h:23: Error: junk at end of line, first unrecognized character is `r'
- make[1]: *** [scripts/Makefile.build:277: init/main.o] Error 1
+Great, thanks for testing and letting me know.
 
-According to the toolchain people, the actual issue is the use of
-"X" constraint which is too permissive. Switch to using "i" instead.
-
-Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1668703
-Signed-off-by: Laura Abbott <labbott@redhat.com>
----
- arch/s390/include/asm/jump_label.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/s390/include/asm/jump_label.h b/arch/s390/include/asm/jump_label.h
-index e2d3e6c43395..41dabfd8518d 100644
---- a/arch/s390/include/asm/jump_label.h
-+++ b/arch/s390/include/asm/jump_label.h
-@@ -22,7 +22,7 @@ static inline bool arch_static_branch(struct static_key *key, bool branch)
- 			  ".long	0b-.,%l[label]-.\n"
- 			  ".quad	%0-.\n"
- 			  ".popsection\n"
--			  : : "X" (&((char *)key)[branch]) : : label);
-+			  : : "i" (&((char *)key)[branch]) : : label);
- 	return false;
- label:
- 	return true;
-@@ -36,7 +36,7 @@ static inline bool arch_static_branch_jump(struct static_key *key, bool branch)
- 			  ".long	0b-.,%l[label]-.\n"
- 			  ".quad	%0-.\n"
- 			  ".popsection\n"
--			  : : "X" (&((char *)key)[branch]) : : label);
-+			  : : "i" (&((char *)key)[branch]) : : label);
- 	return false;
- label:
- 	return true;
--- 
-2.20.1
-
+greg k-h
