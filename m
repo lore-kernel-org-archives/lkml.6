@@ -2,75 +2,88 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B62CFC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:40:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47792C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:44:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 900D5217D4
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:40:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 138732133D
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:44:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="O0cA3M5Z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727151AbfAWOkw (ORCPT
+        id S1726101AbfAWOoO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 09:40:52 -0500
-Received: from mga09.intel.com ([134.134.136.24]:14160 "EHLO mga09.intel.com"
+        Wed, 23 Jan 2019 09:44:14 -0500
+Received: from ozlabs.org ([203.11.71.1]:49019 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725971AbfAWOkv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 09:40:51 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jan 2019 06:40:51 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,511,1539673200"; 
-   d="scan'208";a="110421432"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga006.jf.intel.com with ESMTP; 23 Jan 2019 06:40:51 -0800
-Received: from [10.254.80.13] (kliang2-mobl1.ccr.corp.intel.com [10.254.80.13])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1725930AbfAWOoN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 09:44:13 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by linux.intel.com (Postfix) with ESMTPS id 16747580436;
-        Wed, 23 Jan 2019 06:40:49 -0800 (PST)
-Subject: Re: [PATCH 10/12] perf script: Add support for
- PERF_SAMPLE_CODE_PAGE_SIZE
-To:     Andi Kleen <ak@linux.intel.com>
-Cc:     peterz@infradead.org, acme@kernel.org, tglx@linutronix.de,
-        mingo@redhat.com, linux-kernel@vger.kernel.org, eranian@google.com,
-        jolsa@redhat.com, namhyung@kernel.org
-References: <1548090318-19149-1-git-send-email-kan.liang@linux.intel.com>
- <1548090318-19149-10-git-send-email-kan.liang@linux.intel.com>
- <20190122171144.GU6118@tassilo.jf.intel.com>
-From:   "Liang, Kan" <kan.liang@linux.intel.com>
-Message-ID: <f62f2b34-09a8-c107-b3d0-59e50b4753d3@linux.intel.com>
-Date:   Wed, 23 Jan 2019 09:40:47 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        by ozlabs.org (Postfix) with ESMTPSA id 43l7Mv1rWkz9s4s;
+        Thu, 24 Jan 2019 01:44:11 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1548254651;
+        bh=tKaTJUlZpGVfOslsL2mqF83Hevfu4NFQirde93eTYHY=;
+        h=Date:From:To:Cc:Subject:From;
+        b=O0cA3M5ZM/IgaLWc2d1GNq+g+w0MSL9zOoR8Hjc5bsFwVgdkGGxtDltpd2j/DSmw9
+         zqH0vZ8Iy440LaqTSunmf09i7ciHDhHg5GYP35F5s+kLtUB5CSxpQZ4Ehj0m/7Klvy
+         /+zwmrnxE33NPv+zb8qWOj6eTrLlj4Gy8chRM6mBZQa9l4TbvyTrAzrQQseGP/VfwI
+         VjQvuFbu3a8pkIe610KPLK2YlYuBDTk6Lhmll+dFVmw3ymzDajevBJKMadV1CVyFdg
+         Fa9YJKVSGtQ4fFeCGwfJbj4JaG0Inwc4kjjonzdh68aTLqr2kYZUqbXOneb1pfIr/Y
+         uorkaEoiA0d5Q==
+Date:   Thu, 24 Jan 2019 01:44:10 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: linux-next: Signed-off-by missing for commit in the opp tree
+Message-ID: <20190124014410.5f932c52@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20190122171144.GU6118@tassilo.jf.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/X6e3yL38YDIfEbvVH_9I+/M"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/X6e3yL38YDIfEbvVH_9I+/M
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi Viresh,
 
-On 1/22/2019 12:11 PM, Andi Kleen wrote:
->> +	PERF_OUTPUT_CODE_PAGE_SIZE  = 1UL << 32,
-> 
-> That won't work on 32bit. You need 1ULL
-> 
-> Also might want to audit that noone puts these flags into
-> an int.
-> 
+Commit
 
-I checked the codes, and there is no one puts the flags into an int.
+  9389d5c08571 ("opp: no need to check return value of debugfs_create funct=
+ions")
 
-I will use ULL in V2.
+is missing a Signed-off-by from its committer.
 
-Thanks,
-Kan
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/X6e3yL38YDIfEbvVH_9I+/M
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxIfboACgkQAVBC80lX
+0GzLhggAli0bqpNpz9SuR8winZI7RyuoJEKO1k+ImGEE7+o3COJ2toj2KGT4sCTX
+xJRjMnUoCUVy7IonGtIgLnkKymS1U9cIotS5KVKhuztqBr3g7hHc5qTn6Ydpxc2F
+y3L8BJ+rIxnsWvTnZQwwC6cvHdMTv/BTxVy1BQmhGiRLEKG8fVZ9uJ0kfPRvAgd/
+1IBKi9W49JaAhzepDwZRCpOCnL0lgXkEQSsk+a73Rp1ssGESB2Y+bQ50CEYhFgI0
+SsRdUU3A4QH4RITt1nCm0vg2N2adbljRwKo8GFJQWogcVtV++UokyYLXCSoFW2w2
+73IrzExPOvwpHtMq/8pl4vEWDos5+g==
+=YIJc
+-----END PGP SIGNATURE-----
+
+--Sig_/X6e3yL38YDIfEbvVH_9I+/M--
