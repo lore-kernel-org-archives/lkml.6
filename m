@@ -3,116 +3,106 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82975C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 12:16:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 188CCC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 12:18:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F6DF20861
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 12:16:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB9F520861
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 12:18:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548245816;
-	bh=sYpBi9Rv15CsOdOlrt6+JUPIBr033oHvZ52AthQyOao=;
+	s=default; t=1548245895;
+	bh=NeuDsS0OVy3+Ri+RiplV7k5Lp6RvyBQuzJB+RSICNRI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=BbemEwZXDah1ZgaI+NBuOXZMEMfYk02//FnDZUfzxvHs2tXU45CZxFayUTAmGEv5Q
-	 nSIR8a2NkgloY3fnuhrwsweLzo3MNO8NSr1wHzrWhBjHg+KGMYHxlgnEbPL4CWe51o
-	 oGZfLNgP+npxvHc/driolZqR6O6ebM8992Ld9YVM=
+	b=j7JxXvghSdVhEHMK6OEtOIpDaJiMTF8Bs+ZIkfrvjJN/EInOboeXUhplmIQsw/Z9T
+	 idKWEOV7beIHZiFVuikL4JoXnPF3fDd/SgL/M+TWhiY1FCPA32xeQQXplU5hFTXI/W
+	 0GB8w3+/Ea0L9E3gBZuhCbS6sL2P7sJ7aeK4XSo4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727110AbfAWMQy (ORCPT
+        id S1727131AbfAWMSO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 07:16:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47276 "EHLO mail.kernel.org"
+        Wed, 23 Jan 2019 07:18:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47690 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726029AbfAWMQy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 07:16:54 -0500
+        id S1726057AbfAWMSO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 07:18:14 -0500
 Received: from localhost (unknown [106.200.229.238])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 836EF20861;
-        Wed, 23 Jan 2019 12:16:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF31720861;
+        Wed, 23 Jan 2019 12:18:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548245813;
-        bh=sYpBi9Rv15CsOdOlrt6+JUPIBr033oHvZ52AthQyOao=;
+        s=default; t=1548245893;
+        bh=NeuDsS0OVy3+Ri+RiplV7k5Lp6RvyBQuzJB+RSICNRI=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=2Poht8yJz86OvJzoNsvR1ib6WGFUEeuthADX0MQ4Xyk7h041YQBhQzAIAN6Prl9Bf
-         JmFWoquZ8+W2dgtI94BaDisrZVeMuOHevBBO6jE5pM8BctJWaE8sjmF/QpEcyzRDv0
-         qArttKYzKIJXJdZusuTBNt5SpTjPkYPNDat3a4RQ=
-Date:   Wed, 23 Jan 2019 17:45:21 +0530
+        b=2LLZhpUqgwWX5T3ieq4dqEoHObIm3jwhGgEzxIjATPfClNAAMvmKMFcFTffiX5+ee
+         oW/+NuTuMUV/X9qJUCQ0om8QZX9I4wD//zQZIqGU1ttcmInQCJ9I9jmSPJrVGIW/Hr
+         7VBK2c1JThgeLyXNP/KXB+PpCWwrQr9lnB0xEyeM=
+Date:   Wed, 23 Jan 2019 17:46:41 +0530
 From:   Vinod Koul <vkoul@kernel.org>
-To:     Federico Vaga <federico.vaga@cern.ch>
-Cc:     linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org
-Subject: Re: dmaengine: usage of dmaengine_get() and dma_find_channel()
-Message-ID: <20190123121521.GM4635@vkoul-mobl>
-References: <23108003.0nNWatJzJB@pcbe13614>
+To:     Codrin.Ciubotariu@microchip.com
+Cc:     Ludovic.Desroches@microchip.com, dmaengine@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dmaengine: at_xdmac: Fix wrongfull report of a channel
+ as in use
+Message-ID: <20190123121641.GN4635@vkoul-mobl>
+References: <20190117160957.13175-1-codrin.ciubotariu@microchip.com>
+ <20190120110417.GS4635@vkoul-mobl>
+ <450ee975-a603-cf89-0000-13156c1cb5e8@microchip.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <23108003.0nNWatJzJB@pcbe13614>
+In-Reply-To: <450ee975-a603-cf89-0000-13156c1cb5e8@microchip.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21-01-19, 17:41, Federico Vaga wrote:
-> Hello,
+On 21-01-19, 14:38, Codrin.Ciubotariu@microchip.com wrote:
+> On 20.01.2019 13:04, Vinod Koul wrote:
+> > Hi Codrin,
+> > 
+> > On 17-01-19, 16:10, Codrin.Ciubotariu@microchip.com wrote:
+> >> From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+> >>
+> >> atchan->status is used for two things:
+> >>   - pass channel interrupts status from interrupt handler to tasklet;
+> >>   - channel information like whether it is cyclic or paused;
+> >>
+> >> Since these operations have nothing in common, this patch adds a
+> >> different struct member to keep the interrupts status.
+> >>
+> >> Fixes a bug in which a channel is wrongfully reported as in use when
+> >> trying to obtain a new descriptior for a previously used cyclic channel.
+> > 
+> > This looks reasonable but am unable to see how the bug is fixed. Perhaps
+> > would be great to split the bug part (which can go to fixes) and remove
+> > the reuse of variable as a subsequent patch..
 > 
-> I am a bit puzzle about the proper usage these two functions:
+> Hi Vinod,
 > 
-> void dmaengine_get(void)
-> struct dma_chan *dma_find_channel(enum dma_transaction_type tx_type)
+> This patch is the fix, since it moves the operations on atchan->status, 
+> in which the interrupt status register is saved, to a different member 
+> (irq_status). The AT_XDMAC_CHAN_IS_CYCLIC and AT_XDMAC_CHAN_IS_PAUSED 
+> bits have nothing in common with the interrupt status register.
 > 
-> Looking into the kernel sources dma_find_channel is not used, despite the fact 
-> that it looks as one of the suggested mechanism to access a DMA engine. So, I 
-> cannot find a valid example of its usage.
+> The bug reproduces when a device_terminate_all() is called, 
+> (AT_XDMAC_CHAN_IS_CYCLIC cleared on atchan->status) and then a late End 
+> of Block interrupt arrives (AT_XDMAC_CIS_BIS), which sets bit 0 of 
+> atchan->status. Bit 0 is also used for AT_XDMAC_CHAN_IS_CYCLIC, so when 
+> a new descriptor for a cyclic transfer is created, the driver reports 
+> the channel as in use:
 > 
-> The same for dmaengine_get(). On the other hand, at least this function is 
-> used in: drivers/video/fbdev/mx3fb.c. But I believe that its usage is wrong 
-> because it uses: dmaengine_get() + dma_request_channel(), instead of 
-> dmaengine_get() + dma_find_channel().
+> if (test_and_set_bit(AT_XDMAC_CHAN_IS_CYCLIC, &atchan->status)) {
+> 	dev_err(chan2dev(chan), "channel currently used\n");
+> 	return NULL;
+> }
 > 
-> Reading the code my understanding is that dmaengine_get() + dma_find_channel() 
-> should be used for "public" (not private) DMA engine channels.
-> 
-> It's here where things are getting obscure to me. My understanding is that DMA 
-> channels which are not private can be used by several drivers at the same 
-> time. In principle they submit all their transfers and the DMA engine will 
-> process them and then the DMA engine will notify the drivers about their 
-> completion.
+> I can send v2 if you consider the commit message misleading.
 
-The concept of public channel is a channel capable of doing any dma
-transfer for example a system dmaengine capable of flipping bits from
-system memory to memory/devices.
-
-For peripherals, we cannot do a generic transfer and the transfer is
-specific given a set of parameters for it to work, thus the channel is
-private... These channels can be used by many users as long as that is
-supported by engine. In an idle world, the dmaengine should have N
-channels and provide M software channels and lets users use them and
-schedule these for best throughput, we are not there yet :(
-
-> My understanding is also that the dmaengine subsystem assumes that "public" 
-> channels of the same type are interchangeable.
-> 
-> In my use case I wrote a DMA engine which is specific for a subset of driver, 
-> and it cannot be used by others (so is sharable among a group of drivers). All 
-> these drivers, potentially, they can submit their transfers to the DMA engine 
-> in parallel; but I cannot do it because I'm forced to use 
-> dma_request_channel() in order to be able to filter the DMA channels, and this 
-> will make automatically the channel PRIVATE which prevents other drivers to 
-> use the same channel.
-
-Please use virtual channels for that, clients can use virtual channels
-and they can be submitted to a hardware channel.
-
-> With the current API I do not see alternative for me. I have to use 
-> dma_request_channel() in order to filter DMA channels. But I am wondering if 
-> it make sense for you, and if it does, is there a solution today? Or, is it 
-> possibile to design one?
-> 
-> Thanks (I do not know if this message is clear enough)
-> 
+Yes please, that would be better and pls add fixes as suggested by
+Ludovic along with his ack
 
 -- 
 ~Vinod
