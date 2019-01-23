@@ -2,269 +2,77 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83913C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:19:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6976CC282C5
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:19:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F8EA21019
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:19:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41F7F21019
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:19:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726312AbfAWHTU (ORCPT
+        id S1726451AbfAWHTf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 02:19:20 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:41894 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725973AbfAWHTU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 02:19:20 -0500
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id E471136CEFC1D88072A9;
-        Wed, 23 Jan 2019 15:19:17 +0800 (CST)
-Received: from huawei.com (10.90.53.225) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.408.0; Wed, 23 Jan 2019
- 15:19:12 +0800
-From:   Yufen Yu <yuyufen@huawei.com>
-To:     <dwmw2@infradead.org>, <richard.weinberger@gmail.com>,
-        <linux-mtd@lists.infradead.org>
-CC:     <Joakim.Tjernlund@infinera.com>, <viro@zeniv.linux.org.uk>,
-        <linux-kernel@vger.kernel.org>, <houtao1@huawei.com>
-Subject: [PATCH v2] jffs2: safely remove obsolete dirent from the f->dents list
-Date:   Wed, 23 Jan 2019 15:22:49 +0800
-Message-ID: <20190123072249.103847-1-yuyufen@huawei.com>
-X-Mailer: git-send-email 2.16.2.dirty
+        Wed, 23 Jan 2019 02:19:35 -0500
+Received: from verein.lst.de ([213.95.11.211]:40975 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725973AbfAWHTf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 02:19:35 -0500
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 649D36FA7F; Wed, 23 Jan 2019 08:19:33 +0100 (CET)
+Date:   Wed, 23 Jan 2019 08:19:33 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ming Lei <ming.lei@redhat.com>
+Subject: Re: linux-next: Fixes tags need some work in the dma-mapping-fixes
+ tree
+Message-ID: <20190123071933.GA24861@lst.de>
+References: <20190123074747.7cd44f12@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.90.53.225]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190123074747.7cd44f12@canb.auug.org.au>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We may delete a bunch of directory entries, operating such as:
-getdents(), unlink(), getdents()..., until the end of the directory.
-jffs2 handles f_pos on the directory merely as the position on the
-f->dents list. So, the next getdents() may skip some entries
-before f_pos, if we remove some entries from the list between two
-getdents(), resulting in some entries of the directory cannot be deleted.
+On Wed, Jan 23, 2019 at 07:47:47AM +1100, Stephen Rothwell wrote:
+> Hi Christoph,
+> 
+> In commit
+> 
+>   702e8ed37bed ("arm64/xen: fix xen-swiotlb cache flushing")
+> 
+> Fixes tag
+> 
+>   Fixes: 356da6d0cd ("dma-mapping: bypass indirect calls for dma-direct")
+> 
+> has these problem(s):
+> 
+>   - SHA1 should be at least 12 digits long
 
-Commit 15953580e79b is introduced to resolve this bug by not
-removing delete entries from the list immediately.
+When did we decide on that?  As far as I know it was bumped to 10
+a while ago.  12 basically makes the line even more unreadable.
 
-However, when CONFIG_JFFS2_SUMMARY is not set, it can cause the
-following issues:
+> In commit
+> 
+>   8218a55b6b91 ("sbitmap: Protect swap_lock from hardirq")
+> 
+> Fixes tag
+> 
+>   Fixes: ab53dcfb3e7b ("sbitmap: Protect swap_lock from hardirq")
+> 
+> has these problem(s):
+> 
+>   - Target SHA1 does not exist
+> 
+> This later patch appears to already be in Linus' tree as commit
+> fe76fc6aaf53 (also with an incorrect Fixes tag :-()
 
-* 'deletion' dirents is always in the f->dents list, wasting memory
-    resource. For example:
-        There is a file named 'file1'. Then we rename it:
-        mv file1 file2;
-        mv file2 file3;
-        ...
-        mv file99999 file1000000
-
-    All of file1~file1000000 dirents always in the f->dents list.
-
-* Though, the list we're traversing is already ordered by CRC,
-it could waste much CPU time when the list is very long.
-
-To fix, we define two variables in struct jffs2_inode_info: nr_dir_opening,
-obsolete_count, and two new functions: jffs2_dir_open(), jffs2_dir_release().
-
-When open a directory, jffs2_dir_open() will increase nr_dir_opening,
-which will be decreased by jffs2_dir_release(). if the value is 0,
-it means nobody open the dir and nobody in getdents()/seek() semantics.
-Thus, we can remove all obsolete dirent from the list.
-
-When delete a file, jffs2_do_unlink() can remove the dirent directly if
-nobody open the directory(i.e. nr_dir_opending == 0). Otherwise, it just
-increase obsolete_count, denoting obsolete dirent count of the list.
-
-Fixes: 15953580e79b ("[JFFS2] Improve getdents vs. f_pos handling on NOR flash.")
-Signed-off-by: Yufen Yu <yuyufen@huawei.com>
----
- fs/jffs2/dir.c             | 49 ++++++++++++++++++++++++++++++++++++++++++++++
- fs/jffs2/jffs2_fs_i.h      |  7 +++++++
- fs/jffs2/super.c           |  4 ++++
- fs/jffs2/write.c           | 30 +++++++++++++++++++---------
- include/uapi/linux/jffs2.h |  4 ++++
- 5 files changed, 85 insertions(+), 9 deletions(-)
-
-diff --git a/fs/jffs2/dir.c b/fs/jffs2/dir.c
-index f20cff1194bb..aed872dcd0ca 100644
---- a/fs/jffs2/dir.c
-+++ b/fs/jffs2/dir.c
-@@ -37,6 +37,8 @@ static int jffs2_mknod (struct inode *,struct dentry *,umode_t,dev_t);
- static int jffs2_rename (struct inode *, struct dentry *,
- 			 struct inode *, struct dentry *,
- 			 unsigned int);
-+static int jffs2_dir_release (struct inode *, struct file *);
-+static int jffs2_dir_open (struct inode *, struct file *);
- 
- const struct file_operations jffs2_dir_operations =
- {
-@@ -45,6 +47,8 @@ const struct file_operations jffs2_dir_operations =
- 	.unlocked_ioctl=jffs2_ioctl,
- 	.fsync =	jffs2_fsync,
- 	.llseek =	generic_file_llseek,
-+	.open =		jffs2_dir_open,
-+	.release =	jffs2_dir_release,
- };
- 
- 
-@@ -865,3 +869,48 @@ static int jffs2_rename (struct inode *old_dir_i, struct dentry *old_dentry,
- 	return 0;
- }
- 
-+static int jffs2_dir_open(struct inode *dir_i, struct file *filp)
-+{
-+#ifndef CONFIG_JFFS2_SUMMARY
-+	struct jffs2_inode_info *dir_f = JFFS2_INODE_INFO(dir_i);
-+	atomic_inc(&dir_f->nr_dir_opening);
-+#endif
-+
-+	return 0;
-+}
-+
-+static int jffs2_dir_release(struct inode *dir_i, struct file *filp)
-+{
-+#ifndef CONFIG_JFFS2_SUMMARY
-+	struct jffs2_inode_info *dir_f = JFFS2_INODE_INFO(dir_i);
-+
-+	BUG_ON(atomic_read(&dir_f->nr_dir_opening) <= 0);
-+
-+	mutex_lock(&dir_f->sem);
-+	/* jffs2_dir_open may increase nr_dir_opening after
-+	 * atomic_dec_and_test() returning true.
-+	 * However, it cannot traverse the list until hold
-+	 * mutex dir_f->sem lock, so that we can go on
-+	 * removing.*/
-+	if (atomic_dec_and_test(&dir_f->nr_dir_opening) &&
-+			dir_f->obsolete_count > JFFS2_OBS_DIRENT_LIMIT) {
-+		struct jffs2_full_dirent **prev = &dir_f->dents;
-+
-+		/* remove all obsolete dirent from the list, which
-+		 * can save memory space and reduce CPU time for
-+		 * traverse the list */
-+		while(*prev) {
-+			if ((*prev)->raw == NULL && (*prev)->ino == 0) {
-+				struct jffs2_full_dirent *this = *prev;
-+				*prev = this->next;
-+				jffs2_free_full_dirent(this);
-+			} else
-+				prev = &((*prev)->next);
-+		}
-+		dir_f->obsolete_count = 0;
-+	}
-+	mutex_unlock(&dir_f->sem);
-+#endif
-+
-+	return 0;
-+}
-diff --git a/fs/jffs2/jffs2_fs_i.h b/fs/jffs2/jffs2_fs_i.h
-index 2e4a86763c07..a4da25d16cb4 100644
---- a/fs/jffs2/jffs2_fs_i.h
-+++ b/fs/jffs2/jffs2_fs_i.h
-@@ -50,6 +50,13 @@ struct jffs2_inode_info {
- 
- 	uint16_t flags;
- 	uint8_t usercompr;
-+
-+	/* obsolete dirent count in the list of 'dents' */
-+	uint8_t  obsolete_count;
-+
-+	/* Directory open refcount */
-+	atomic_t nr_dir_opening;
-+
- 	struct inode vfs_inode;
- };
- 
-diff --git a/fs/jffs2/super.c b/fs/jffs2/super.c
-index 87bdf0f4cba1..bf181b0ade9c 100644
---- a/fs/jffs2/super.c
-+++ b/fs/jffs2/super.c
-@@ -41,6 +41,10 @@ static struct inode *jffs2_alloc_inode(struct super_block *sb)
- 	f = kmem_cache_alloc(jffs2_inode_cachep, GFP_KERNEL);
- 	if (!f)
- 		return NULL;
-+
-+	atomic_set(&f->nr_dir_opening, 0);
-+	f->obsolete_count = 0;
-+
- 	return &f->vfs_inode;
- }
- 
-diff --git a/fs/jffs2/write.c b/fs/jffs2/write.c
-index cda9a361368e..780b4fd9af51 100644
---- a/fs/jffs2/write.c
-+++ b/fs/jffs2/write.c
-@@ -600,29 +600,41 @@ int jffs2_do_unlink(struct jffs2_sb_info *c, struct jffs2_inode_info *dir_f,
- 	} else {
- 		uint32_t nhash = full_name_hash(NULL, name, namelen);
- 
--		fd = dir_f->dents;
-+		struct jffs2_full_dirent **prev = &dir_f->dents;
-+
- 		/* We don't actually want to reserve any space, but we do
- 		   want to be holding the alloc_sem when we write to flash */
- 		mutex_lock(&c->alloc_sem);
- 		mutex_lock(&dir_f->sem);
- 
--		for (fd = dir_f->dents; fd; fd = fd->next) {
--			if (fd->nhash == nhash &&
--			    !memcmp(fd->name, name, namelen) &&
--			    !fd->name[namelen]) {
-+		while((*prev) && (*prev)->nhash <= nhash) {
-+			if ((*prev)->nhash == nhash &&
-+			    !memcmp((*prev)->name, name, namelen) &&
-+			    !(*prev)->name[namelen]) {
- 
-+				fd = *prev;
- 				jffs2_dbg(1, "Marking old dirent node (ino #%u) @%08x obsolete\n",
- 					  fd->ino, ref_offset(fd->raw));
- 				jffs2_mark_node_obsolete(c, fd->raw);
--				/* We don't want to remove it from the list immediately,
--				   because that screws up getdents()/seek() semantics even
--				   more than they're screwed already. Turn it into a
--				   node-less deletion dirent instead -- a placeholder */
- 				fd->raw = NULL;
- 				fd->ino = 0;
-+
-+				/* if nr_dir_openning is 0, we think nobody open the dir, and
-+				 * nobody being in getdents()/seek() semantics. Thus, we can
-+				 * safely remove this obsolete dirent from the list. Otherwise,
-+				 * we just increase obsolete_count, and finally delete it in
-+				 * jffs2_dir_release() */
-+				if (atomic_read(&dir_f->nr_dir_opening) == 0) {
-+					*prev = fd->next;
-+					jffs2_free_full_dirent(fd);
-+				} else
-+					dir_f->obsolete_count++;
-+
- 				break;
- 			}
-+			prev = &((*prev)->next);
- 		}
-+
- 		mutex_unlock(&dir_f->sem);
- 	}
- 
-diff --git a/include/uapi/linux/jffs2.h b/include/uapi/linux/jffs2.h
-index a18b719f49d4..dff3ac2d6b0c 100644
---- a/include/uapi/linux/jffs2.h
-+++ b/include/uapi/linux/jffs2.h
-@@ -35,6 +35,10 @@
- */
- #define JFFS2_MAX_NAME_LEN 254
- 
-+/* The obsolete dirent of dents list limit. When the number over
-+ * this limit, we can remove the obsoleted dents. */
-+#define JFFS2_OBS_DIRENT_LIMIT 64
-+
- /* How small can we sensibly write nodes? */
- #define JFFS2_MIN_DATA_LEN 128
- 
--- 
-2.14.4
-
+That commit is not from the dma-mapping tree..
