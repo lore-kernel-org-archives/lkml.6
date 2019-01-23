@@ -2,82 +2,74 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36DD8C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 16:14:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A221C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 16:14:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07D4C21726
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 16:14:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gKWS827i"
+	by mail.kernel.org (Postfix) with ESMTP id 4310D21726
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 16:14:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726289AbfAWQOC (ORCPT
+        id S1726365AbfAWQO5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 11:14:02 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:34793 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726009AbfAWQOC (ORCPT
+        Wed, 23 Jan 2019 11:14:57 -0500
+Received: from imap1.codethink.co.uk ([176.9.8.82]:52075 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725994AbfAWQO5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 11:14:02 -0500
-Received: by mail-it1-f194.google.com with SMTP id x124so257918itd.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 08:14:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zEZeJ9/dMg9wpQvp73WiD2fz9QbrhtcszzSnsQ11AG0=;
-        b=gKWS827i8Tc+cDWombpQIdPMy1wZnQoksTJZyxFjk0PzF7WTD3EjKNQKsGM6jUJWdv
-         loKUSeBd5R5TAjuR1xH+cBF/H+oILDXzUvil+ebCBJ4AjMKY/COijd4HN/f/Lge4M/XE
-         30fyC7Ykohd3cWliWm7TrPVSfMVK+UsGdPl3vvYz35RsQFU8kTNFqTBiA8x5UXZJuwXc
-         O59Zp9/VUQUrQZPcTD7Bav3T/a87WFKQwiIJ9Y1ClAeXS2GVoMcBn0UGOqMlfpbIaVOD
-         sRqBLOocID4mC0K13YemdG1kvqysRnd6x3bqujFFPSxmsvLUlqXVjnM3ZjDS3Od9aS99
-         sW0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zEZeJ9/dMg9wpQvp73WiD2fz9QbrhtcszzSnsQ11AG0=;
-        b=unMQJWIZOsV1Oy0JGW6T/oqFajc7VJq5K+l3P1aEV8plrTCd01R1sFPjyqglx9WizX
-         yryE1R0YWovaBkcF2F2ESmqbgYGPBsKZXrEj8GRv+NjQmXXgWi54SC3IAhyaeiJNlwAh
-         e5Ni/XldGffPQcycudEDp96p2RB5rtSDM4T4F/8/7IhKLsujPg1vWsA6CFUVnAXmWDrK
-         Gopq6H7BM1Oud3NRXuE+Gs2rgsiNsnXkhRhhiXEi6ugNpk7Mamx5WRXD7PIoNyY8pnFv
-         99k/qjy2O5Sqvb49oLsQ3VVcO8o1o5rQUXCCexkpuYL9UwVgr/TLwGX/KZhldX2oDSsO
-         ynUA==
-X-Gm-Message-State: AJcUukcaiLWiPLwwUiBAzY0M+VuuSMr+eYd9QXcdvFHtoCJ1gxboAjW7
-        vtegNUC36gDJgIh93RQTHAm0kj9DKcgrV//LQcU=
-X-Google-Smtp-Source: ALg8bN4MZtdOAOEOAXGn3f87ZIAk8z659PnEOwPoVuQgT13fHLK7H1TQkAoC9JO/cF6Rt15z0tRl+h4HGjWcC574eFo=
-X-Received: by 2002:a24:cb07:: with SMTP id u7mr1962232itg.118.1548260041618;
- Wed, 23 Jan 2019 08:14:01 -0800 (PST)
+        Wed, 23 Jan 2019 11:14:57 -0500
+Received: from [192.168.122.135] (helo=_)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1gmLAv-0002Jf-4z; Wed, 23 Jan 2019 16:14:49 +0000
 MIME-Version: 1.0
-References: <20190120161039.GA2808@bhar.linux> <20190122103134.GA32578@kroah.com>
-In-Reply-To: <20190122103134.GA32578@kroah.com>
-From:   Bharath Veda <linux.bhar@gmail.com>
-Date:   Wed, 23 Jan 2019 21:43:50 +0530
-Message-ID: <CAMwgTV7Q-56u4EMgGxDUE-Sc-8T=+QmSa6wvkdsYSJsVm-Hw7w@mail.gmail.com>
-Subject: Re: [PATCH] staging: netlogic: replace ---help--- with help in Kconfig
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 23 Jan 2019 16:14:49 +0000
+From:   Ben Dooks <ben.dooks@codethink.co.uk>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-amlogic@lists.infradead.org, thierry.reding@gmail.com,
+        boris.brezillon@free-electrons.com, lgirdwood@gmail.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] regulator: pwm: suppress EPROBE_DEFER error message
+In-Reply-To: <20190123160405.GD7503@sirena.org.uk>
+References: <20190121183723.25231-1-martin.blumenstingl@googlemail.com>
+ <20190121183723.25231-2-martin.blumenstingl@googlemail.com>
+ <20190123160405.GD7503@sirena.org.uk>
+Message-ID: <afa9ed378b7fa62e81662363fdaf7543@codethink.co.uk>
+X-Sender: ben.dooks@codethink.co.uk
+User-Agent: Roundcube Webmail/1.1.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 4:01 PM Greg KH <gregkh@linuxfoundation.org> wrote:
->
-> On Sun, Jan 20, 2019 at 09:40:39PM +0530, Bharath Vedartham wrote:
-> > This patch fixes the checkpatch.pl warning:
-> >
-> > WARNING: prefer 'help' over '---help---' for new help texts
-> >
-> > Signed-off-by: Bharath Vedartham <linux.bhar@gmail.com>
-> > ---
-> >  drivers/staging/netlogic/Kconfig | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> Any reason you sent this twice?
-sorry bout that. Made a typo on the mailing list ids.
+
+
+On 2019-01-23 16:04, Mark Brown wrote:
+> On Mon, Jan 21, 2019 at 07:37:23PM +0100, Martin Blumenstingl wrote:
+>> Suppress the "Failed to get PWM" error output if the actual error code
+>> is EPROBE_DEFER. This makes the behavior of the pwm-regulator driver
+>> consistent with what most other drivers do (which is: print all errors
+>> except EPROBE_DEFER).
+>> 
+>> An example where this cleans up the kernel log are the 32-bit Amlogic
+>> Meson boards:
+>> multi_v7_defconfig has CONFIG_REGULATOR_PWM=y and CONFIG_PWM_MESON=m.
+> 
+> This also cleans up the kernel log in the case where you've not got a
+> driver enabled that you need (or it's not loading for some reason) 
+> which
+> isn't super helpful when you're trying to figure out why the driver
+> won't probe.  There's not even anything at debug level, that would
+> probably be fine.
+> 
+> The ideal thing here would be to work on setting up the dependency
+> information based on DT and using that to try to sort initialization
+> order so we try things in an order that minimizes the number of failed
+> tries.
+
+Hmm, would it be useful to have a devfs file which holds the last probe 
+code?
