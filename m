@@ -2,64 +2,139 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3811DC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 17:08:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 903AAC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 17:08:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01ABC2184C
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 17:08:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F6A721872
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 17:08:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GP3yP9OR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727112AbfAWRIH (ORCPT
+        id S1727087AbfAWRIF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 12:08:07 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:47008 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727057AbfAWRIE (ORCPT
+        Wed, 23 Jan 2019 12:08:05 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:46244 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726029AbfAWRID (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 12:08:04 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 7DD9D14ECF0EB;
-        Wed, 23 Jan 2019 09:08:03 -0800 (PST)
-Date:   Wed, 23 Jan 2019 09:08:03 -0800 (PST)
-Message-Id: <20190123.090803.438719975498577995.davem@davemloft.net>
-To:     gustavo@embeddedor.com
-Cc:     tariqt@mellanox.com, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net/mlx4: Mark expected switch fall-through
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190123080511.GA32528@embeddedor>
-References: <20190123080511.GA32528@embeddedor>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-7
-Content-Transfer-Encoding: base64
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 23 Jan 2019 09:08:03 -0800 (PST)
+        Wed, 23 Jan 2019 12:08:03 -0500
+Received: by mail-pg1-f193.google.com with SMTP id w7so1323660pgp.13
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 09:08:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Mdyf5oyBgcfnR8L4p9FrrLtyz2DDZSi/aou2XyovQrs=;
+        b=GP3yP9ORIywJIRkT1ceBjLEFKBkMx5TMY2+A7vJIb+SIZzo98QRTNEFt0jD0pjAJlP
+         dxigrCUzE7Xre3QYrOspy2ABmAnehs39JIPBSoBgUwMQuW1HlgeDW/6dJendIpp6v3jF
+         hZkOqGAcWU8XlLycu54fiM3qwn4CsVP8UIGR4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Mdyf5oyBgcfnR8L4p9FrrLtyz2DDZSi/aou2XyovQrs=;
+        b=RRq/T0Zl9NA2BVW5NY4F1Qo6IjE1Vcvz8SSqH2UgWukX0LEKc+YT7JDbzX8Ho4kGLj
+         7EtR8HgHiMWNugr16mgTsTL3oauyU5WZBxE9glg4MDH4Yc/m5/wclQf4KMcqXHhRgZGv
+         ezPYiGhRE8eMRKwPsM5g3VI4cSt3yGN7lrd+L9KVhmZDu1Sg50K4IxuUw+GFIw7xz/nd
+         QZ3rnIIx0hWGAuCTAkrR5HqDeGeK7wsu4tuggJXFc/TMzRxmT65FvbTLocMIw9qCd7Rc
+         1XozAQJvIoloOGAVTY7Qnc8rpD6EtPr+u14Mgd8mSCbT4FM+wXngIF7CQXx5CchN11Zn
+         8HrQ==
+X-Gm-Message-State: AJcUukdn5YoE+c64HK+KPhmyspNkzUAmvwSUTns0e3mftd3GE5Telw5S
+        AEbr9IH+ZVGIDAZwtTUuo1Orlg==
+X-Google-Smtp-Source: ALg8bN5EIHAkwFGlnX3lA5P8PuU3MXURevjCT5fxfAIQDC2IcrBEvxem6+Wy7lHF8bCBMP1W6dnEEg==
+X-Received: by 2002:a62:1212:: with SMTP id a18mr2772613pfj.217.1548263282470;
+        Wed, 23 Jan 2019 09:08:02 -0800 (PST)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id 134sm26076337pgb.78.2019.01.23.09.08.00
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 23 Jan 2019 09:08:01 -0800 (PST)
+Date:   Wed, 23 Jan 2019 09:07:58 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Alok Chauhan <alokc@codeaurora.org>
+Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-serial@vger.kernel.org,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, georgi.djakov@linaro.org,
+        dianders@chromium.org, swboyd@chromium.org
+Subject: Re: [PATCH 1/6] dt-bindings: soc: qcom: Add interconnect binding for
+ GENI QUP
+Message-ID: <20190123170758.GB512@tuxbook-pro>
+References: <1548138816-1149-1-git-send-email-alokc@codeaurora.org>
+ <1548138816-1149-2-git-send-email-alokc@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1548138816-1149-2-git-send-email-alokc@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogIkd1c3Rhdm8gQS4gUi4gU2lsdmEiIDxndXN0YXZvQGVtYmVkZGVkb3IuY29tPg0KRGF0
-ZTogV2VkLCAyMyBKYW4gMjAxOSAwMjowNToxMSAtMDYwMA0KDQo+IEluIHByZXBhcmF0aW9uIHRv
-IGVuYWJsaW5nIC1XaW1wbGljaXQtZmFsbHRocm91Z2gsIG1hcmsgc3dpdGNoIGNhc2VzDQo+IHdo
-ZXJlIHdlIGFyZSBleHBlY3RpbmcgdG8gZmFsbCB0aHJvdWdoLg0KPiANCj4gVGhpcyBwYXRjaCBm
-aXhlcyB0aGUgZm9sbG93aW5nIHdhcm5pbmc6DQo+IA0KPiBkcml2ZXJzL25ldC9ldGhlcm5ldC9t
-ZWxsYW5veC9tbHg0L2VxLmM6IEluIGZ1bmN0aW9uIKFtbHg0X2VxX2ludKI6DQo+IGRyaXZlcnMv
-bmV0L2V0aGVybmV0L21lbGxhbm94L21seDQvbWx4NC5oOjIxOTo1OiB3YXJuaW5nOiB0aGlzIHN0
-YXRlbWVudCBtYXkgZmFsbCB0aHJvdWdoIFstV2ltcGxpY2l0LWZhbGx0aHJvdWdoPV0NCj4gICBp
-ZiAobWx4NF9kZWJ1Z19sZXZlbCkgICAgICBcDQo+ICAgICAgXg0KPiBkcml2ZXJzL25ldC9ldGhl
-cm5ldC9tZWxsYW5veC9tbHg0L2VxLmM6NTU4OjQ6IG5vdGU6IGluIGV4cGFuc2lvbiBvZiBtYWNy
-byChbWx4NF9kYmeiDQo+ICAgICBtbHg0X2RiZyhkZXYsICIlczogTUxYNF9FVkVOVF9UWVBFX1NS
-UV9MSU1JVC4gc3JxX25vPTB4JXgsIGVxIDB4JXhcbiIsDQo+ICAgICBefn5+fn5+fg0KPiBkcml2
-ZXJzL25ldC9ldGhlcm5ldC9tZWxsYW5veC9tbHg0L2VxLmM6NTYxOjM6IG5vdGU6IGhlcmUNCj4g
-ICAgY2FzZSBNTFg0X0VWRU5UX1RZUEVfU1JRX0NBVEFTX0VSUk9SOg0KPiAgICBefn5+DQo+IA0K
-PiBXYXJuaW5nIGxldmVsIDMgd2FzIHVzZWQ6IC1XaW1wbGljaXQtZmFsbHRocm91Z2g9Mw0KPiAN
-Cj4gVGhpcyBwYXRjaCBpcyBwYXJ0IG9mIHRoZSBvbmdvaW5nIGVmZm9ydHMgdG8gZW5hYmxpbmcN
-Cj4gLVdpbXBsaWNpdC1mYWxsdGhyb3VnaC4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IEd1c3Rhdm8g
-QS4gUi4gU2lsdmEgPGd1c3Rhdm9AZW1iZWRkZWRvci5jb20+DQoNCkFwcGxpZWQuDQo=
+On Mon 21 Jan 22:33 PST 2019, Alok Chauhan wrote:
+
+> Add documentation for the interconnect and interconnect-names bindings
+> for the GENI QUP as detailed by bindings/interconnect/interconnect.txt.
+> 
+> Signed-off-by: Alok Chauhan <alokc@codeaurora.org>
+> ---
+>  Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt
+> index dab7ca9..44d7e02 100644
+> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt
+> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt
+> @@ -17,6 +17,12 @@ Required properties if child node exists:
+>  - #address-cells: 	Must be <1> for Serial Engine Address
+>  - #size-cells: 		Must be <1> for Serial Engine Address Size
+>  - ranges: 		Must be present
+> +- interconnects:	phandle to a interconnect provider. Please refer
+> +			../interconnect/interconnect.txt for details.
+> +			Must be 2 paths corresponding to 2 AXI ports.
+> +- interconnect-names:	Port names to differentiate between the
+
+s/Port names/Path names/
+
+> +			2 interconnect paths defined with interconnect
+> +			specifier.
+
+These two names are significant in that they must match what the driver
+expects, hence you must actually specify them here.
+
+And as the scope of these strings are local to the QUP node you can omit
+"qup" from them, so make them "memory" and "config" (or perhaps iface,
+to match the clock naming?).
+
+Regards,
+Bjorn
+
+>  
+>  Properties for children:
+>  
+> @@ -67,6 +73,10 @@ Example:
+>  		#size-cells = <1>;
+>  		ranges;
+>  
+> +		interconnects = <&qnoc 11 &qnoc 512>,
+> +				<&qnoc 0 &qnoc 543>;
+
+I presu
+
+> +		interconnect-names = "qup-memory", "qup-config";
+> +
+>  		i2c0: i2c@a94000 {
+>  			compatible = "qcom,geni-i2c";
+>  			reg = <0xa94000 0x4000>;
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
