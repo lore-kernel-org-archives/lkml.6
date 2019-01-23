@@ -2,104 +2,163 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FEABC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:02:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4879C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:03:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAEE92184C
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:02:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64D1F218A1
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:03:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TSYgRM1t"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U8RVsqM2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726252AbfAWWCS (ORCPT
+        id S1726324AbfAWWDr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 17:02:18 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:37670 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726101AbfAWWCR (ORCPT
+        Wed, 23 Jan 2019 17:03:47 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:32860 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726101AbfAWWDq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 17:02:17 -0500
-Received: by mail-qt1-f195.google.com with SMTP id t33so4285035qtt.4
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 14:02:16 -0800 (PST)
+        Wed, 23 Jan 2019 17:03:46 -0500
+Received: by mail-pg1-f195.google.com with SMTP id z11so1705938pgu.0;
+        Wed, 23 Jan 2019 14:03:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/Sxsy0LQFleHCbFvFAYk4SrllxaKgydfncMB4UmQ72M=;
-        b=TSYgRM1tC4GWtlo5rNMDqhn53qOVmAax5bv8TGclxWtMcir75meUoeLe5fE4jGTpXU
-         O4tndn9bVdek+xS4g+F3+C+CsBJ/dzoxMmHz79TpRoiTDP5Nzs2G+otyBjJvxxlYZeEx
-         urQ+qsNd+VgoyaYLm3UgPD+tLo3+dFJKd0wG1YQZ6WM0XsIEViSOiDEbk25ne5faaxcw
-         D3qBF77nTnltKM9zNyGrw4bw2y86rs6n9iPn+Is4YNpdlBDOsOLN7KUtQww6/MZd1FIc
-         NUfi7v205zMscbw6miCPKKWONgoyZDD59CfqPtkBvj3xQTbIsKndRqj68X2EyOJOTURa
-         GJGg==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=SyFdcdvCcwUnrmB2s1421m4sGVu4iQQZ/zqmFjo/Mw4=;
+        b=U8RVsqM27qX7YizoG73MYwJyjYVycEbN3IvItrTaeXG9GGmw36dxG1AXWswRRVDQX5
+         XzMaRdlcsFQRgMYZKYi0gZ9dFhjEJXix9Ruh4lafbDQZ8ozXx79ISQOEK6jHhBREEl07
+         u2T5WFiPEL6veY+RCOJ5LFyaIcZYamTaVOPI2dECWiJ4bbU2aO50KkXCw1XTOY+I9byi
+         MNBw+3TCFUPsYhOXCni1AYs4R6takxmrw3pEec1EAgw9wKE7B1wE8yulBuQ/WuRA1VK+
+         MeaY5EAeUEaf+YYUp/3ILZLLnS5+FEYbXUmOM0CdhHE/P5Vl34VOIiiEk1gUi5LT5ppJ
+         3c1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/Sxsy0LQFleHCbFvFAYk4SrllxaKgydfncMB4UmQ72M=;
-        b=d/HqtGxzJh7xc7SKmncGQXoIpGLCRrCv75TEohElYJXhI93SVm28RZfgV3I6A074wn
-         tD6c/1Ipj7nWmasJqUmdQeGr2njzT+jG9U1w5oAa2Vsjp3QnhK1hNfm6YYSIFhG1C7wu
-         gTv78FHM4MYmLujN3uqYyQEjhLZyYGeBepMahtr9ZrvFz/iGe8v0SX6K4yg6XVH45gvO
-         x1XqotIC6e8O3xE83hODjF6WARKfYKKeS3/TSDhAc0YZsoEs9f7rrJsnypyYWXi2cX15
-         gEziS9fxk5HPgrNeyFQL4BEzXsSs6So5L9SfuFXlDSTkgQ9Fm2Mu4MhPbO7VylsViR1S
-         tcjQ==
-X-Gm-Message-State: AJcUukdzQCLPWf3oGdcxaetQNSTaMLVFm3jzy/qa0X6JPuSYZh39EbKe
-        oG3j5U78hRzOedhqDjoi7lp0fANGnR6mNX9wMO8=
-X-Google-Smtp-Source: ALg8bN4a8MPowI8L5GoYnWUcYmuOqCHj28TWdKj56MQXxC/xE8sRP+EFtrGZKXZejLd7ODNO6KPXUjyfB2pur6DGA2g=
-X-Received: by 2002:ac8:892:: with SMTP id v18mr4174140qth.297.1548280936447;
- Wed, 23 Jan 2019 14:02:16 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=SyFdcdvCcwUnrmB2s1421m4sGVu4iQQZ/zqmFjo/Mw4=;
+        b=PVbXWHJ01/TQ1xKfNS/YZTcwl4ylmcqRfdVhPStzxlxjcbJFh0DMwSsjSDD/J+159w
+         m/G7n8hlTW8iV+ECk3kOYkDB6CjfpHzXZjFDynNGzONebHwolcO1EPKE4w+XEBPiM6B0
+         d0Ai0AVLoajzO9yGdJvrW9c0DycdvThZISAmoC5lr4Oh5/GSeJ+NpZVwr16/JMxPCahW
+         URdcPsRS+wM3EN1Gss8X46LLwBCDygUxEdaN5mppqH8urczOiuLyLBkWcFv7SWqikyfA
+         c/tj2ut6fbBaY5Z1eBSFgY8+ZzQhJiqnXsVAvaDE/GjD0/JmthYDMV+KXMwFdGmWTJlV
+         jM1g==
+X-Gm-Message-State: AJcUukcD6HaEdlNTdPgQXTfG9xd2Xuz4eE9X4QyD6ECnwwX5WRYIrkQi
+        48zNo/kMWN2kf9newRrw154=
+X-Google-Smtp-Source: ALg8bN6aQx6WNwFfAKS8aByhbR0mzgO7I97tpUjhp/hScagJl9lL5zuUOYUDaxNNjZC6P3X/f+VNyg==
+X-Received: by 2002:a63:e5c:: with SMTP id 28mr3349008pgo.369.1548281025577;
+        Wed, 23 Jan 2019 14:03:45 -0800 (PST)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id b5sm36701879pfc.150.2019.01.23.14.03.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 23 Jan 2019 14:03:44 -0800 (PST)
+Date:   Wed, 23 Jan 2019 14:03:42 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Lukas Wunner <lukas@wunner.de>
+Cc:     Ronald =?iso-8859-1?Q?Tschal=E4r?= <ronald@innovation.ch>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-input@vger.kernel.org
+Subject: Re: [PATCH] drm/bridge: sil_sii8620: depend on INPUT instead of
+ selecting it.
+Message-ID: <20190123220342.GC179701@dtor-ws>
+References: <20190122141311.10445-1-ronald@innovation.ch>
+ <20190123084556.gsospl6joh53qnzs@wunner.de>
 MIME-Version: 1.0
-References: <20190123000057.31477-1-oded.gabbay@gmail.com> <CAPM=9tznaiw+a7rWqfdMMO6Aj3GtsO9vetd=3n9d+bGLW0U8Cg@mail.gmail.com>
-In-Reply-To: <CAPM=9tznaiw+a7rWqfdMMO6Aj3GtsO9vetd=3n9d+bGLW0U8Cg@mail.gmail.com>
-From:   Dave Airlie <airlied@gmail.com>
-Date:   Thu, 24 Jan 2019 08:02:04 +1000
-Message-ID: <CAPM=9tybcYSR_xu773W-cV1JfFg1Rcb9NajXhZd+zfZE8+XMRg@mail.gmail.com>
-Subject: Re: [PATCH 00/15] Habana Labs kernel driver
-To:     Oded Gabbay <oded.gabbay@gmail.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, ogabbay@habana.ai
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190123084556.gsospl6joh53qnzs@wunner.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding Daniel as well.
+On Wed, Jan 23, 2019 at 09:45:56AM +0100, Lukas Wunner wrote:
+> On Tue, Jan 22, 2019 at 06:13:11AM -0800, Ronald Tschalär wrote:
+> > commit d6abe6df706c66d803e6dd4fe98c1b6b7f125a56 (drm/bridge:
+> > sil_sii8620: do not have a dependency of RC_CORE) added a dependency on
+> > INPUT. However, this causes problems with other drivers, in particular
+> > an input driver that depends on MFD_INTEL_LPSS_PCI (to be added in a
+> > future commit):
+> > 
+> >   drivers/clk/Kconfig:9:error: recursive dependency detected!
+> >   drivers/clk/Kconfig:9:        symbol COMMON_CLK is selected by MFD_INTEL_LPSS
+> >   drivers/mfd/Kconfig:566:      symbol MFD_INTEL_LPSS is selected by MFD_INTEL_LPSS_PCI
+> >   drivers/mfd/Kconfig:580:      symbol MFD_INTEL_LPSS_PCI is implied by KEYBOARD_APPLESPI
+> >   drivers/input/keyboard/Kconfig:73:    symbol KEYBOARD_APPLESPI depends on INPUT
+> >   drivers/input/Kconfig:8:      symbol INPUT is selected by DRM_SIL_SII8620
+> >   drivers/gpu/drm/bridge/Kconfig:83:    symbol DRM_SIL_SII8620 depends on DRM_BRIDGE
+> >   drivers/gpu/drm/bridge/Kconfig:1:     symbol DRM_BRIDGE is selected by DRM_PL111
+> >   drivers/gpu/drm/pl111/Kconfig:1:      symbol DRM_PL111 depends on COMMON_CLK
+> > 
+> > According to the docs, select should only be used for non-visible
+> > symbols. Furthermore almost all other references to INPUT throughout the
+> > kernel config are depends, not selects. Hence this change.
 
-Dave.
+I think this is not as cut and dry. We should be able to select needed
+subsystems (such as INPUT, USB, etc) even if they are user visible.
+User, when enabling a piece of hardware, does not need to know ultimate
+details of all subsystems the driver might need ti function.
 
-On Thu, 24 Jan 2019 at 07:57, Dave Airlie <airlied@gmail.com> wrote:
->
-> On Wed, 23 Jan 2019 at 10:01, Oded Gabbay <oded.gabbay@gmail.com> wrote:
-> >
-> > Hello,
-> >
-> > For those who don't know me, my name is Oded Gabbay (Kernel Maintainer
-> > for AMD's amdkfd driver, worked at RedHat's Desktop group) and I work at
-> > Habana Labs since its inception two and a half years ago.
->
-> Hey Oded,
->
-> So this creates a driver with a userspace facing API via ioctls.
-> Although this isn't a "GPU" driver we have a rule in the graphics
-> drivers are for accelerators that we don't merge userspace API with an
-> appropriate userspace user.
->
-> https://dri.freedesktop.org/docs/drm/gpu/drm-uapi.html#open-source-userspace-requirements
->
-> I see nothing in these accelerator drivers that make me think we
-> should be treating them different.
->
-> Having large closed userspaces that we have no insight into means we
-> get suboptimal locked for ever uAPIs. If someone in the future creates
-> an open source userspace, we will end up in a place where they get
-> suboptimal behaviour because they are locked into a uAPI that we can't
-> change.
->
-> Dave.
+It looks like one of the drivers implies MFD_INTEL_LPSS_PCI, maybe
+treating imply the same as select when detecting circular dependency is
+wrong as we are allowed to deselect implied dependencies?
+
+> > 
+> > CC: Inki Dae <inki.dae@samsung.com>
+> > CC: Andrzej Hajda <a.hajda@samsung.com>
+> > Signed-off-by: Ronald Tschalär <ronald@innovation.ch>
+> 
+> Reviewed-by: Lukas Wunner <lukas@wunner.de>
+> 
+> I think this needs to be merged through the input tree as a prerequisite
+> for the applespi.c driver (keyboard + touchpad driver for 2015+ MacBook,
+> MacBook Air and MacBook Pro which uses SPI instead of USB) to avoid
+> breaking the build.  Adding Dmitry.
+
+I have no idea what applespi.c is (it is definitely not in my tree), so
+I think it should be merged through the same tree that the original
+commit was introduced through.
+
+> 
+> Thanks,
+> 
+> Lukas
+> 
+> 
+> > ---
+> >  drivers/gpu/drm/bridge/Kconfig | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+> > index 2fee47b0d50b..eabedc83f25c 100644
+> > --- a/drivers/gpu/drm/bridge/Kconfig
+> > +++ b/drivers/gpu/drm/bridge/Kconfig
+> > @@ -83,9 +83,9 @@ config DRM_PARADE_PS8622
+> >  config DRM_SIL_SII8620
+> >  	tristate "Silicon Image SII8620 HDMI/MHL bridge"
+> >  	depends on OF
+> > +	depends on INPUT
+> >  	select DRM_KMS_HELPER
+> >  	imply EXTCON
+> > -	select INPUT
+> >  	select RC_CORE
+
+Keeping "select RC_CORE" is wrong though, as the driver appears to be
+working find without RC. Maybe it should be stubbed out?
+
+Thanks.
+
+-- 
+Dmitry
