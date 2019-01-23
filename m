@@ -2,252 +2,168 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9321C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:06:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F943C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:08:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A41CF20870
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:06:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jc7pOUow"
+	by mail.kernel.org (Postfix) with ESMTP id 0948920870
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:08:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727457AbfAWKGB (ORCPT
+        id S1727353AbfAWKID (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 05:06:01 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:36169 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727185AbfAWKGB (ORCPT
+        Wed, 23 Jan 2019 05:08:03 -0500
+Received: from mx-ginzinger.sigmacloud.services ([185.154.235.147]:44153 "EHLO
+        mx-ginzinger.sigmacloud.services" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727227AbfAWKID (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 05:06:01 -0500
-Received: by mail-wr1-f65.google.com with SMTP id u4so1693298wrp.3
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 02:05:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ynBOsX/eqcl033dteY412McLrMDqBA/LXk1X+SVFGpY=;
-        b=Jc7pOUowJW7eIQU0oz3Sik7FbKI2DmRHpoTq6RIzN0oUdAhfaBc4zNZA2+LFmHx8tw
-         PqEfPboALMN73rUHodFup3gEi/qmwtyAdPJBAlZSAsKYA6oC633KcBGqjM2ec11Ltkvx
-         svtcCeCh/GK12eNvL5w7eRjQ2TlOrmZGslVjU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ynBOsX/eqcl033dteY412McLrMDqBA/LXk1X+SVFGpY=;
-        b=LEG+Y99oOU7qGWj0fdSrOuiQ4WATFoc2Tkzqfynd4f1+fO46HCRPlPOpcQO0wp0zBa
-         JKkznnOo6zKbJkagPqVoYGhb53xf3k7x8//DguuU4hkfCxM5g/fiBo+++lF2YPbAiNAQ
-         8iRDqGEly2T0o314uXCK+jEjCbgQqgzzPvU3Sl2cpQdXLD+MMl9ZXNWF756WNPeP+y2Z
-         o0gwtgTsMH/Y3gy85Z78qeosyFNi2r+u5wBuZ4jGUuFaBNITqRgzgogWtbH0hLDOBi34
-         y3tKuA9infzHp2iKPYGKtuaIcLZCVFFHpxseuLQ7CJmOmQp0q8Q658ZcPD9Iby+HkqhX
-         oteg==
-X-Gm-Message-State: AJcUukdiqMKk+YYuShdz5BeALImEue+/TnEJdjRNg2DYf1WEoz5VU49A
-        e9mR0wyiwgmPeYUumH3Exb6skg==
-X-Google-Smtp-Source: ALg8bN4goearlpBcfWPe3c/N1l03u9+xqpktnxZ1tGU6knJ/VQ2FJtGrKrQ1YvijdlmxlydFBG0inQ==
-X-Received: by 2002:adf:9d4c:: with SMTP id o12mr1849180wre.94.1548237958936;
-        Wed, 23 Jan 2019 02:05:58 -0800 (PST)
-Received: from [192.168.27.209] ([37.157.136.206])
-        by smtp.googlemail.com with ESMTPSA id j14sm81889107wrv.96.2019.01.23.02.05.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 23 Jan 2019 02:05:58 -0800 (PST)
-Subject: Re: [PATCH 1/4] venus: firmware: check fw size against DT memory
- region size
-To:     Alexandre Courbot <acourbot@chromium.org>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org,
-        Vikash Garodia <vgarodia@codeaurora.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Malathi Gottam <mgottam@codeaurora.org>
-References: <20190109084616.17162-1-stanimir.varbanov@linaro.org>
- <20190109084616.17162-2-stanimir.varbanov@linaro.org>
- <CAPBb6MXr-oLaLUjyPmUf5uFwSLv9WOs17YjnRp_bV8VhZpsosw@mail.gmail.com>
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <e6ec0925-2a60-6006-4d3b-218014e601fc@linaro.org>
-Date:   Wed, 23 Jan 2019 12:05:56 +0200
+        Wed, 23 Jan 2019 05:08:03 -0500
+Received: from [31.193.165.228] (port=64602 helo=mx-ginzinger.sigmacloud.services)
+        by mx-ginzinger.sigmacloud.services with esmtps (TLSv1.2:AES256-GCM-SHA384:256)
+        (Exim 4.82_1-5b7a7c0-XX)
+        (envelope-from <Martin.Kepplinger@ginzinger.com>)
+        id 1gmFRs-0007WL-1K; Wed, 23 Jan 2019 11:07:56 +0100
+Received: from [10.10.1.120] (10.10.1.120) by exc1.buero.ginzinger.com
+ (10.1.1.204) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Wed, 23 Jan
+ 2019 11:07:56 +0100
+X-CTCH-RefID: str=0001.0A0B0202.5C483CFC.0049,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Subject: Re: [PATCH 2/2] Input: st1232 - add support for st1633
+To:     Martin Kepplinger <martink@posteo.de>,
+        <devicetree@vger.kernel.org>, <linux-input@vger.kernel.org>
+CC:     <dmitry.torokhov@gmail.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <chinyeow.sim.xt@renesas.com>,
+        <linux-kernel@vger.kernel.org>
+References: <20190123072651.31791-1-martink@posteo.de>
+ <20190123072651.31791-2-martink@posteo.de>
+From:   Martin Kepplinger <martin.kepplinger@ginzinger.com>
+Message-ID: <df37b873-0641-c127-d6d8-5bd9ed155e87@ginzinger.com>
+Date:   Wed, 23 Jan 2019 11:07:55 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+ Thunderbird/60.4.0
+In-Reply-To: <20190123072651.31791-2-martink@posteo.de>
+X-Originating-IP: [10.10.1.120]
+X-ClientProxiedBy: exc1.buero.ginzinger.com (10.1.1.204) To
+ exc1.buero.ginzinger.com (10.1.1.204)
+X-EXCLAIMER-MD-ORIGINAL-SUBJECT: [NODISC][NOSIG]Re: [PATCH 2/2] Input: st1232
+ - add support for st1633
+X-EXCLAIMER-MD-CONFIG: 9dd172f7-de2e-4231-b886-ec11f46e03b3
 MIME-Version: 1.0
-In-Reply-To: <CAPBb6MXr-oLaLUjyPmUf5uFwSLv9WOs17YjnRp_bV8VhZpsosw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="----F8DFFE4D3FF2C0DC8C9C0E3FF3694020"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alex,
+This is an S/MIME signed message
 
-Thanks for the review!
+------F8DFFE4D3FF2C0DC8C9C0E3FF3694020
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 
-On 1/23/19 8:10 AM, Alexandre Courbot wrote:
-> Sorry for the delayed review! >_<
+On 23.01.19 08:26, Martin Kepplinger wrote:
+> From: Martin Kepplinger <martin.kepplinger@ginzinger.com>
 > 
-> On Wed, Jan 9, 2019 at 5:46 PM Stanimir Varbanov
-> <stanimir.varbanov@linaro.org> wrote:
->>
->> By historical reasons we defined firmware memory size to be 6MB even
->> that the firmware size for all supported Venus versions is 5MBs. Correct
->> that by compare the required firmware size returned from mdt loader and
->> the one provided by DT reserved memory region. We proceed further if the
->> required firmware size is smaller than provided by DT memory region.
->>
->> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
->> ---
->>  drivers/media/platform/qcom/venus/core.h     |  1 +
->>  drivers/media/platform/qcom/venus/firmware.c | 54 +++++++++++---------
->>  2 files changed, 31 insertions(+), 24 deletions(-)
->>
->> diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
->> index 6382cea29185..79c7e816c706 100644
->> --- a/drivers/media/platform/qcom/venus/core.h
->> +++ b/drivers/media/platform/qcom/venus/core.h
->> @@ -134,6 +134,7 @@ struct venus_core {
->>         struct video_firmware {
->>                 struct device *dev;
->>                 struct iommu_domain *iommu_domain;
->> +               size_t mapped_mem_size;
->>         } fw;
->>         struct mutex lock;
->>         struct list_head instances;
->> diff --git a/drivers/media/platform/qcom/venus/firmware.c b/drivers/media/platform/qcom/venus/firmware.c
->> index c29acfd70c1b..6b509ffd022a 100644
->> --- a/drivers/media/platform/qcom/venus/firmware.c
->> +++ b/drivers/media/platform/qcom/venus/firmware.c
->> @@ -35,14 +35,15 @@
->>
->>  static void venus_reset_cpu(struct venus_core *core)
->>  {
->> +       u32 fw_size = core->fw.mapped_mem_size;
->>         void __iomem *base = core->base;
->>
->>         writel(0, base + WRAPPER_FW_START_ADDR);
->> -       writel(VENUS_FW_MEM_SIZE, base + WRAPPER_FW_END_ADDR);
->> +       writel(fw_size, base + WRAPPER_FW_END_ADDR);
->>         writel(0, base + WRAPPER_CPA_START_ADDR);
->> -       writel(VENUS_FW_MEM_SIZE, base + WRAPPER_CPA_END_ADDR);
->> -       writel(VENUS_FW_MEM_SIZE, base + WRAPPER_NONPIX_START_ADDR);
->> -       writel(VENUS_FW_MEM_SIZE, base + WRAPPER_NONPIX_END_ADDR);
->> +       writel(fw_size, base + WRAPPER_CPA_END_ADDR);
->> +       writel(fw_size, base + WRAPPER_NONPIX_START_ADDR);
->> +       writel(fw_size, base + WRAPPER_NONPIX_END_ADDR);
->>         writel(0x0, base + WRAPPER_CPU_CGC_DIS);
->>         writel(0x0, base + WRAPPER_CPU_CLOCK_CONFIG);
->>
->> @@ -74,6 +75,9 @@ static int venus_load_fw(struct venus_core *core, const char *fwname,
->>         void *mem_va;
->>         int ret;
->>
->> +       *mem_phys = 0;
->> +       *mem_size = 0;
->> +
->>         dev = core->dev;
->>         node = of_parse_phandle(dev->of_node, "memory-region", 0);
->>         if (!node) {
->> @@ -85,28 +89,30 @@ static int venus_load_fw(struct venus_core *core, const char *fwname,
->>         if (ret)
->>                 return ret;
->>
->> +       ret = request_firmware(&mdt, fwname, dev);
->> +       if (ret < 0)
->> +               return ret;
->> +
->> +       fw_size = qcom_mdt_get_size(mdt);
->> +       if (fw_size < 0) {
->> +               ret = fw_size;
->> +               goto err_release_fw;
->> +       }
->> +
->>         *mem_phys = r.start;
->>         *mem_size = resource_size(&r);
->>
->> -       if (*mem_size < VENUS_FW_MEM_SIZE)
->> -               return -EINVAL;
->> +       if (*mem_size < fw_size || fw_size > VENUS_FW_MEM_SIZE) {
-> 
-> Do we still need to check for fw_size > VENUS_FW_MEM_SIZE ? If we
-> don't then we can remove the definition of VENUS_FW_MEM_SIZE
-> altogether.
-
-I know, it is a bit paranoid but I'd want to avoid if someone set
-unreasonable memory size. So I'd like to have some sanitized firmware
-region size in the driver.
-
-> 
->> +               ret = -EINVAL;
->> +               goto err_release_fw;
->> +       }
->>
->>         mem_va = memremap(r.start, *mem_size, MEMREMAP_WC);
->>         if (!mem_va) {
->>                 dev_err(dev, "unable to map memory region: %pa+%zx\n",
->>                         &r.start, *mem_size);
->> -               return -ENOMEM;
->> -       }
->> -
->> -       ret = request_firmware(&mdt, fwname, dev);
->> -       if (ret < 0)
->> -               goto err_unmap;
->> -
->> -       fw_size = qcom_mdt_get_size(mdt);
->> -       if (fw_size < 0) {
->> -               ret = fw_size;
->> -               release_firmware(mdt);
->> -               goto err_unmap;
->> +               ret = -ENOMEM;
->> +               goto err_release_fw;
->>         }
->>
->>         if (core->use_tz)
->> @@ -116,10 +122,9 @@ static int venus_load_fw(struct venus_core *core, const char *fwname,
->>                 ret = qcom_mdt_load_no_init(dev, mdt, fwname, VENUS_PAS_ID,
->>                                             mem_va, *mem_phys, *mem_size, NULL);
->>
->> -       release_firmware(mdt);
->> -
->> -err_unmap:
->>         memunmap(mem_va);
->> +err_release_fw:
->> +       release_firmware(mdt);
->>         return ret;
->>  }
->>
->> @@ -135,6 +140,7 @@ static int venus_boot_no_tz(struct venus_core *core, phys_addr_t mem_phys,
->>                 return -EPROBE_DEFER;
->>
->>         iommu = core->fw.iommu_domain;
->> +       core->fw.mapped_mem_size = mem_size;
->>
->>         ret = iommu_map(iommu, VENUS_FW_START_ADDR, mem_phys, mem_size,
->>                         IOMMU_READ | IOMMU_WRITE | IOMMU_PRIV);
->> @@ -151,7 +157,7 @@ static int venus_boot_no_tz(struct venus_core *core, phys_addr_t mem_phys,
->>  static int venus_shutdown_no_tz(struct venus_core *core)
->>  {
->>         struct iommu_domain *iommu;
->> -       size_t unmapped;
->> +       size_t unmapped, mapped = core->fw.mapped_mem_size;
-> 
-> mapped should probably be const here.
-
-Ok.
-
-> 
-> With these minor comments:
-> 
-> Reviewed-by: Alexandre Courbot <acourbot@chromium.org>
-> Tested-by: Alexandre Courbot <acourbot@chromium.org>
-> 
-> For the 4 patches in this series. I could see the improvement in
-> decoder performance introduced by patches 2 and 3, thanks!
+> Add support for the Sitronix ST1633 touchscreen controller to the st1232
+> driver.
 > 
 
--- 
-regards,
-Stan
+FYI, here's a protocol spec:
+www.ampdisplay.com/documents/pdf/AM-320480B6TZQW-TC0H.pdf
+
+Let me know if you want that link in the commit message.
+
+thanks
+
+                              martin
+
+
+
+------F8DFFE4D3FF2C0DC8C9C0E3FF3694020
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+
+MIIOHAYJKoZIhvcNAQcCoIIODTCCDgkCAQExDzANBglghkgBZQMEAgEFADALBgkq
+hkiG9w0BBwGgggshMIIF5jCCA86gAwIBAgIQapvhODv/K2ufAdXZuKdSVjANBgkq
+hkiG9w0BAQwFADCBhTELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFu
+Y2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExp
+bWl0ZWQxKzApBgNVBAMTIkNPTU9ETyBSU0EgQ2VydGlmaWNhdGlvbiBBdXRob3Jp
+dHkwHhcNMTMwMTEwMDAwMDAwWhcNMjgwMTA5MjM1OTU5WjCBlzELMAkGA1UEBhMC
+R0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9y
+ZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9ETyBS
+U0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwggEi
+MA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC+s55XrCh2dUAWxzgDmNPGGHYh
+UPMleQtMtaDRfTpYPpynMS6n9jR22YRq2tA9NEjk6vW7rN/5sYFLIP1of3l0NKZ6
+fLWfF2VgJ5cijKYy/qlAckY1wgOkUMgzKlWlVJGyK+UlNEQ1/5ErCsHq9x9aU/x1
+KwTdF/LCrT03Rl/FwFrf1XTCwa2QZYL55AqLPikFlgqOtzk06kb2qvGlnHJvijjI
+03BOrNpo+kZGpcHsgyO1/u1OZTaOo8wvEU17VVeP1cHWse9tGKTDyUGg2hJZjrqc
+k39UIm/nKbpDSZ0JsMoIw/JtOOg0JC56VzQgBo7ictReTQE5LFLG3yQK+xS1AgMB
+AAGjggE8MIIBODAfBgNVHSMEGDAWgBS7r34CPfqm8TyEjq3uOJjs2TIy1DAdBgNV
+HQ4EFgQUgq9sjPjF/pZhfOgfPStxSF7Ei8AwDgYDVR0PAQH/BAQDAgGGMBIGA1Ud
+EwEB/wQIMAYBAf8CAQAwEQYDVR0gBAowCDAGBgRVHSAAMEwGA1UdHwRFMEMwQaA/
+oD2GO2h0dHA6Ly9jcmwuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNlcnRpZmljYXRp
+b25BdXRob3JpdHkuY3JsMHEGCCsGAQUFBwEBBGUwYzA7BggrBgEFBQcwAoYvaHR0
+cDovL2NydC5jb21vZG9jYS5jb20vQ09NT0RPUlNBQWRkVHJ1c3RDQS5jcnQwJAYI
+KwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTANBgkqhkiG9w0BAQwF
+AAOCAgEAeFyygSg0TzzuX1bOn5dW7I+iaxf28/ZJCAbU2C81zd9A/tNx4+jsQgwR
+GiHjZrAYayZrrm78hOx7aEpkfNPQIHGG6Fvq3EzWf/Lvx7/hk6zSPwIal9v5IkDc
+ZoFD7f3iT7PdkHJY9B51csvU50rxpEg1OyOT8fk2zvvPBuM4qQNqbGWlnhMpIMwp
+WZT89RY0wpJO+2V6eXEGGHsROs3njeP9DqqqAJaBa4wBeKOdGCWn1/Jp2oY6dyNm
+NppI4ZNMUH4Tam85S1j6E95u4+1Nuru84OrMIzqvISE2HN/56ebTOWlcrurffade
+2022O/tUU1gb4jfWCcyvB8czm12FgX/y/lRjmDbEA08QJNB2729Y+io1IYO3ztve
+BdvUCIYZojTq/OCR6MvnzS6X72HP0PRLRTiOSEmIDsS5N5w/8IW1Hva5hEFy6fDA
+fd9yI+O+IMMAj1KcL/Zo9jzJ16HO5m60ttl1Enk8MQkz/W3JlHaeI5iKFn4UJu1/
+cP2YHXYPiWf2JyBzsLBrGk1II+3yL8aorYew6CQvdVifC3HtwlSam9V1niiCfOBe
+2C12TdKGu05LWIA3ZkFcWJGaNXOZ6Ggyh/TqvXG5v7zmEVDNXFnHn9tFpMpOUvxh
+csjycBtH0dZ0WrNw6gH+HF8TIhCnH3+zzWuDN0Rk6h9KVkfKehIwggUzMIIEG6AD
+AgECAhBNQrEzGzrZ6FVYh1EEYH4+MA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxm
+b3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
+IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAe
+Fw0xODA3MTgwMDAwMDBaFw0yMTA3MTcyMzU5NTlaMDAxLjAsBgkqhkiG9w0BCQEW
+H21hcnRpbi5rZXBwbGluZ2VyQGdpbnppbmdlci5jb20wggEiMA0GCSqGSIb3DQEB
+AQUAA4IBDwAwggEKAoIBAQDsMC77L0D+2D8I8X5ubnBhADLgU+HtlwMTFt/WJIhc
+kgbvnawYXWrCIpk8F6BJ0R/iFCykPdG7741EmlcHRKOJfhVxjXhwnoGFqnYmurCt
+fvZLR3+mT3FWnVv2RAdrXscXH3BpijqqWabdtTbiTvmcl86Zc6mNlVhYZSbDul/E
+voIGZotGcGIWrgZxN+8MQJQHKb0KHyWlPVPkrjvEfOJHKKLFsBNSnNMR95Ijg3Sp
+h8/8RG490/zRHflGzUlxDSlLyY9YJGzSdDzcFKoYcc4oaaUY5N3uhRna43TLUIQh
+6ybt3DKVz1Pw/ikwYJrOsulJrVr3D8KVHdGxq7HYl7jnAgMBAAGjggHfMIIB2zAf
+BgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQU/GtSUbHg
+14sPDlmo27eQYwtjaS0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYD
+VR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMCMEYGA1UdIAQ/MD0wOwYMKwYBBAGy
+MQECAQMFMCswKQYIKwYBBQUHAgEWHWh0dHBzOi8vc2VjdXJlLmNvbW9kby5uZXQv
+Q1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuY29tb2RvY2EuY29tL0NP
+TU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmww
+gYsGCCsGAQUFBwEBBH8wfTBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5jb21vZG9j
+YS5jb20vQ09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFp
+bENBLmNydDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuY29tb2RvY2EuY29tMCoG
+A1UdEQQjMCGBH21hcnRpbi5rZXBwbGluZ2VyQGdpbnppbmdlci5jb20wDQYJKoZI
+hvcNAQELBQADggEBAGEuG01K1tt5i3gUdQkYem/KpbJUYBZd43QwmoTa0TGXUiYq
+b+g/TeGG9QQ1yq+73xOr8fu6oT2608C7EiJc6JmjTs485/OZmTqgYkrLfs71F1kB
+3Z59WPf5aoR/pnn5vdfkkoO29V1cKPJR4z+iOG2hOlcK/dXrX8i6mnL5DGIe8l5n
+udUPvIbUhbMavrDd6kwhs0oCjylwdKGlFkCpKMn3HPflfDeHuV9Z8Nrpeq/7+Pm0
+I/fLPkaYlULASJoJCucMYcedY9rmuro9JhV+NuVXaqLIrQPc1vyKFeRuLHh84M6c
+1h1DArdGTykXZUwjXnnHtuOtzjIAzkx2Ns43vEsxggK/MIICuwIBATCBrDCBlzEL
+MAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UE
+BxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMT
+NENPTU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1h
+aWwgQ0ECEE1CsTMbOtnoVViHUQRgfj4wDQYJYIZIAWUDBAIBBQCggeQwGAYJKoZI
+hvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMTkwMTIzMTAwNzU4
+WjAvBgkqhkiG9w0BCQQxIgQg4zx8HDO0VcsiZx/sYju5LYGq9Q7togpMdqcshLTf
+Y0gweQYJKoZIhvcNAQkPMWwwajALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsG
+CWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcN
+AwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwDQYJKoZIhvcNAQEBBQAEggEA
+RsDiQi7ZfAT7bKNT2RNuXJ6LSdvZBkOAFs3fGUh13VRC2oAAdgiNUwFOqJ9P0h76
+qedfRgwGUWPKgVDhzU5itE7+OhNYpr+WtWogKzq+0QzPCV0iRs+Ay1ZcQAjKVHlU
+6C6G5xKWCm9TO87NjYsSqGsC67t+z26eLSgmVWEb/L9XKAojRprU7txnb01pRRQi
+1YKGT0x3+/1jREwM1XOw4OXig2ZElKR2wgVoP9Rxw9khhyTER4oSlO0Lj5T3qX44
+grZ+ThNXoaKgU5tsPlr33TZDulhYxmC9l+rda4YH/a23Msh6oDPyFq6do514oTwd
+KlWW2U17xlBxf3D0bH67bg==
+
+------F8DFFE4D3FF2C0DC8C9C0E3FF3694020--
+
