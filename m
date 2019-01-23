@@ -2,88 +2,252 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDB12C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:05:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9321C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:06:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADE5820870
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:05:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A41CF20870
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:06:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="guvo7xyV"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jc7pOUow"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727452AbfAWKF3 (ORCPT
+        id S1727457AbfAWKGB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 05:05:29 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:44166 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727090AbfAWKF1 (ORCPT
+        Wed, 23 Jan 2019 05:06:01 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36169 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727185AbfAWKGB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 05:05:27 -0500
-Received: by mail-pg1-f193.google.com with SMTP id t13so838304pgr.11
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 02:05:27 -0800 (PST)
+        Wed, 23 Jan 2019 05:06:01 -0500
+Received: by mail-wr1-f65.google.com with SMTP id u4so1693298wrp.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 02:05:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=vJtz3hfM+p125zxJRV32uw+CMJlXl4S2cS6zvFBDMv0=;
-        b=guvo7xyVefd0sNCIzYE1h+ha+rSDHAacMj10/CfEY9pVdrdXLRclTQuITvG+9YfMHq
-         3LjqVFF7xivWs2KgBnSAjJiS4h3L75ae78wDs52oIht65C7oRohrfu0fxGFvZVzM7uxA
-         oVNJ4wAn96giUBnCXmvCPEDXp2Y86DTcH5t3ZQ7eLJxe7QYa+lEmEAwU8mPRkUqVPe/w
-         TBuaz1vSEPy5h7mUua2z73cIPqv6kqpo278hFyLT077vCejuiXH6XWQ0k21xmkfxElZo
-         nmxD/UXHSZRTcrWtGQlQ6BeAArehsB9ldN1vPbR+Uw0wgTtdlSRIGHeSFZbOPMpP4HFu
-         aGVg==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ynBOsX/eqcl033dteY412McLrMDqBA/LXk1X+SVFGpY=;
+        b=Jc7pOUowJW7eIQU0oz3Sik7FbKI2DmRHpoTq6RIzN0oUdAhfaBc4zNZA2+LFmHx8tw
+         PqEfPboALMN73rUHodFup3gEi/qmwtyAdPJBAlZSAsKYA6oC633KcBGqjM2ec11Ltkvx
+         svtcCeCh/GK12eNvL5w7eRjQ2TlOrmZGslVjU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vJtz3hfM+p125zxJRV32uw+CMJlXl4S2cS6zvFBDMv0=;
-        b=sd0CsyHrb7b//74bt3yfyXyanf/2azHyO/g08XYavuJ5OeRh0OJGvRxywOKePJ6tGe
-         dONfef5z4iZirZN//xrVkpuh0n6wkXBW+6KhYIjxRMWGPJ3dw+cm1QE8ggmFjbpM4nX5
-         eOvMEZqabKh4bqwpZ7cxK77z5mGCjt1YMrG1L/fQwjeeg3LxqBYMuBUOROc4zokpa+0W
-         YZWZFea+ZWD2LXzzF4UGxZoz2dYCrdzbbLJXeet+6D0amDw2rZJlYAyBbGC/Un6/1sal
-         aKE7twGfEA6Z/5Z5D/nwI+AIQpzkIZzt48tNpX1nwRgAM/qGkqZC5EZ7bP165pgCEuTY
-         fjZQ==
-X-Gm-Message-State: AJcUukednqa/5sZlBD3Qdotx8CG3vBI1O6PX5u2uIS7FNK9N7NddIhum
-        L063vYnPb7U1LpHti7+H+6mm3Q==
-X-Google-Smtp-Source: ALg8bN4hCMrh72Cc2vi3SHRTR59WGj31TZ72MwOKeM0dBGcWDkbWYlN9aNjQ3TyxOo4CjdCvop6BqA==
-X-Received: by 2002:a63:2b82:: with SMTP id r124mr1401626pgr.300.1548237926793;
-        Wed, 23 Jan 2019 02:05:26 -0800 (PST)
-Received: from kshutemo-mobl1.localdomain ([134.134.139.82])
-        by smtp.gmail.com with ESMTPSA id k15sm28312389pfb.147.2019.01.23.02.05.25
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ynBOsX/eqcl033dteY412McLrMDqBA/LXk1X+SVFGpY=;
+        b=LEG+Y99oOU7qGWj0fdSrOuiQ4WATFoc2Tkzqfynd4f1+fO46HCRPlPOpcQO0wp0zBa
+         JKkznnOo6zKbJkagPqVoYGhb53xf3k7x8//DguuU4hkfCxM5g/fiBo+++lF2YPbAiNAQ
+         8iRDqGEly2T0o314uXCK+jEjCbgQqgzzPvU3Sl2cpQdXLD+MMl9ZXNWF756WNPeP+y2Z
+         o0gwtgTsMH/Y3gy85Z78qeosyFNi2r+u5wBuZ4jGUuFaBNITqRgzgogWtbH0hLDOBi34
+         y3tKuA9infzHp2iKPYGKtuaIcLZCVFFHpxseuLQ7CJmOmQp0q8Q658ZcPD9Iby+HkqhX
+         oteg==
+X-Gm-Message-State: AJcUukdiqMKk+YYuShdz5BeALImEue+/TnEJdjRNg2DYf1WEoz5VU49A
+        e9mR0wyiwgmPeYUumH3Exb6skg==
+X-Google-Smtp-Source: ALg8bN4goearlpBcfWPe3c/N1l03u9+xqpktnxZ1tGU6knJ/VQ2FJtGrKrQ1YvijdlmxlydFBG0inQ==
+X-Received: by 2002:adf:9d4c:: with SMTP id o12mr1849180wre.94.1548237958936;
+        Wed, 23 Jan 2019 02:05:58 -0800 (PST)
+Received: from [192.168.27.209] ([37.157.136.206])
+        by smtp.googlemail.com with ESMTPSA id j14sm81889107wrv.96.2019.01.23.02.05.57
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 23 Jan 2019 02:05:26 -0800 (PST)
-Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
-        id A88D0301A3F; Wed, 23 Jan 2019 13:05:21 +0300 (+03)
-Date:   Wed, 23 Jan 2019 13:05:21 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Cao jin <caoj.fnst@cn.fujitsu.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        kirill.shutemov@linux.intel.com
-Subject: Re: [PATCH] x86/boot: save several bytes in decompressor
-Message-ID: <20190123100521.wv6tzar5mzyraoqn@kshutemo-mobl1>
-References: <20190123100014.23721-1-caoj.fnst@cn.fujitsu.com>
+        Wed, 23 Jan 2019 02:05:58 -0800 (PST)
+Subject: Re: [PATCH 1/4] venus: firmware: check fw size against DT memory
+ region size
+To:     Alexandre Courbot <acourbot@chromium.org>
+Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org,
+        Vikash Garodia <vgarodia@codeaurora.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Malathi Gottam <mgottam@codeaurora.org>
+References: <20190109084616.17162-1-stanimir.varbanov@linaro.org>
+ <20190109084616.17162-2-stanimir.varbanov@linaro.org>
+ <CAPBb6MXr-oLaLUjyPmUf5uFwSLv9WOs17YjnRp_bV8VhZpsosw@mail.gmail.com>
+From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <e6ec0925-2a60-6006-4d3b-218014e601fc@linaro.org>
+Date:   Wed, 23 Jan 2019 12:05:56 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190123100014.23721-1-caoj.fnst@cn.fujitsu.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CAPBb6MXr-oLaLUjyPmUf5uFwSLv9WOs17YjnRp_bV8VhZpsosw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 06:00:14PM +0800, Cao jin wrote:
-> gdt64 represents the content of GDTR under x86-64, which actually needs
-> 10 bytes only, ".long" & ".word" is superfluous.
-> 
-> Signed-off-by: Cao jin <caoj.fnst@cn.fujitsu.com>
+Hi Alex,
 
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Thanks for the review!
+
+On 1/23/19 8:10 AM, Alexandre Courbot wrote:
+> Sorry for the delayed review! >_<
+> 
+> On Wed, Jan 9, 2019 at 5:46 PM Stanimir Varbanov
+> <stanimir.varbanov@linaro.org> wrote:
+>>
+>> By historical reasons we defined firmware memory size to be 6MB even
+>> that the firmware size for all supported Venus versions is 5MBs. Correct
+>> that by compare the required firmware size returned from mdt loader and
+>> the one provided by DT reserved memory region. We proceed further if the
+>> required firmware size is smaller than provided by DT memory region.
+>>
+>> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+>> ---
+>>  drivers/media/platform/qcom/venus/core.h     |  1 +
+>>  drivers/media/platform/qcom/venus/firmware.c | 54 +++++++++++---------
+>>  2 files changed, 31 insertions(+), 24 deletions(-)
+>>
+>> diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
+>> index 6382cea29185..79c7e816c706 100644
+>> --- a/drivers/media/platform/qcom/venus/core.h
+>> +++ b/drivers/media/platform/qcom/venus/core.h
+>> @@ -134,6 +134,7 @@ struct venus_core {
+>>         struct video_firmware {
+>>                 struct device *dev;
+>>                 struct iommu_domain *iommu_domain;
+>> +               size_t mapped_mem_size;
+>>         } fw;
+>>         struct mutex lock;
+>>         struct list_head instances;
+>> diff --git a/drivers/media/platform/qcom/venus/firmware.c b/drivers/media/platform/qcom/venus/firmware.c
+>> index c29acfd70c1b..6b509ffd022a 100644
+>> --- a/drivers/media/platform/qcom/venus/firmware.c
+>> +++ b/drivers/media/platform/qcom/venus/firmware.c
+>> @@ -35,14 +35,15 @@
+>>
+>>  static void venus_reset_cpu(struct venus_core *core)
+>>  {
+>> +       u32 fw_size = core->fw.mapped_mem_size;
+>>         void __iomem *base = core->base;
+>>
+>>         writel(0, base + WRAPPER_FW_START_ADDR);
+>> -       writel(VENUS_FW_MEM_SIZE, base + WRAPPER_FW_END_ADDR);
+>> +       writel(fw_size, base + WRAPPER_FW_END_ADDR);
+>>         writel(0, base + WRAPPER_CPA_START_ADDR);
+>> -       writel(VENUS_FW_MEM_SIZE, base + WRAPPER_CPA_END_ADDR);
+>> -       writel(VENUS_FW_MEM_SIZE, base + WRAPPER_NONPIX_START_ADDR);
+>> -       writel(VENUS_FW_MEM_SIZE, base + WRAPPER_NONPIX_END_ADDR);
+>> +       writel(fw_size, base + WRAPPER_CPA_END_ADDR);
+>> +       writel(fw_size, base + WRAPPER_NONPIX_START_ADDR);
+>> +       writel(fw_size, base + WRAPPER_NONPIX_END_ADDR);
+>>         writel(0x0, base + WRAPPER_CPU_CGC_DIS);
+>>         writel(0x0, base + WRAPPER_CPU_CLOCK_CONFIG);
+>>
+>> @@ -74,6 +75,9 @@ static int venus_load_fw(struct venus_core *core, const char *fwname,
+>>         void *mem_va;
+>>         int ret;
+>>
+>> +       *mem_phys = 0;
+>> +       *mem_size = 0;
+>> +
+>>         dev = core->dev;
+>>         node = of_parse_phandle(dev->of_node, "memory-region", 0);
+>>         if (!node) {
+>> @@ -85,28 +89,30 @@ static int venus_load_fw(struct venus_core *core, const char *fwname,
+>>         if (ret)
+>>                 return ret;
+>>
+>> +       ret = request_firmware(&mdt, fwname, dev);
+>> +       if (ret < 0)
+>> +               return ret;
+>> +
+>> +       fw_size = qcom_mdt_get_size(mdt);
+>> +       if (fw_size < 0) {
+>> +               ret = fw_size;
+>> +               goto err_release_fw;
+>> +       }
+>> +
+>>         *mem_phys = r.start;
+>>         *mem_size = resource_size(&r);
+>>
+>> -       if (*mem_size < VENUS_FW_MEM_SIZE)
+>> -               return -EINVAL;
+>> +       if (*mem_size < fw_size || fw_size > VENUS_FW_MEM_SIZE) {
+> 
+> Do we still need to check for fw_size > VENUS_FW_MEM_SIZE ? If we
+> don't then we can remove the definition of VENUS_FW_MEM_SIZE
+> altogether.
+
+I know, it is a bit paranoid but I'd want to avoid if someone set
+unreasonable memory size. So I'd like to have some sanitized firmware
+region size in the driver.
+
+> 
+>> +               ret = -EINVAL;
+>> +               goto err_release_fw;
+>> +       }
+>>
+>>         mem_va = memremap(r.start, *mem_size, MEMREMAP_WC);
+>>         if (!mem_va) {
+>>                 dev_err(dev, "unable to map memory region: %pa+%zx\n",
+>>                         &r.start, *mem_size);
+>> -               return -ENOMEM;
+>> -       }
+>> -
+>> -       ret = request_firmware(&mdt, fwname, dev);
+>> -       if (ret < 0)
+>> -               goto err_unmap;
+>> -
+>> -       fw_size = qcom_mdt_get_size(mdt);
+>> -       if (fw_size < 0) {
+>> -               ret = fw_size;
+>> -               release_firmware(mdt);
+>> -               goto err_unmap;
+>> +               ret = -ENOMEM;
+>> +               goto err_release_fw;
+>>         }
+>>
+>>         if (core->use_tz)
+>> @@ -116,10 +122,9 @@ static int venus_load_fw(struct venus_core *core, const char *fwname,
+>>                 ret = qcom_mdt_load_no_init(dev, mdt, fwname, VENUS_PAS_ID,
+>>                                             mem_va, *mem_phys, *mem_size, NULL);
+>>
+>> -       release_firmware(mdt);
+>> -
+>> -err_unmap:
+>>         memunmap(mem_va);
+>> +err_release_fw:
+>> +       release_firmware(mdt);
+>>         return ret;
+>>  }
+>>
+>> @@ -135,6 +140,7 @@ static int venus_boot_no_tz(struct venus_core *core, phys_addr_t mem_phys,
+>>                 return -EPROBE_DEFER;
+>>
+>>         iommu = core->fw.iommu_domain;
+>> +       core->fw.mapped_mem_size = mem_size;
+>>
+>>         ret = iommu_map(iommu, VENUS_FW_START_ADDR, mem_phys, mem_size,
+>>                         IOMMU_READ | IOMMU_WRITE | IOMMU_PRIV);
+>> @@ -151,7 +157,7 @@ static int venus_boot_no_tz(struct venus_core *core, phys_addr_t mem_phys,
+>>  static int venus_shutdown_no_tz(struct venus_core *core)
+>>  {
+>>         struct iommu_domain *iommu;
+>> -       size_t unmapped;
+>> +       size_t unmapped, mapped = core->fw.mapped_mem_size;
+> 
+> mapped should probably be const here.
+
+Ok.
+
+> 
+> With these minor comments:
+> 
+> Reviewed-by: Alexandre Courbot <acourbot@chromium.org>
+> Tested-by: Alexandre Courbot <acourbot@chromium.org>
+> 
+> For the 4 patches in this series. I could see the improvement in
+> decoder performance introduced by patches 2 and 3, thanks!
+> 
 
 -- 
- Kirill A. Shutemov
+regards,
+Stan
