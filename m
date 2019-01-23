@@ -2,138 +2,109 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73018C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 17:28:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 952F2C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 17:29:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4401A2085A
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 17:28:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FsRzDfPo"
+	by mail.kernel.org (Postfix) with ESMTP id 65E3520870
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 17:29:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548264561;
+	bh=YOFNuL5V9xmJWih53628u54IfpillMxhs4YavDpbH8g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=2FUOvflS26h3Z5LqREjk4m+xLo8J3CsncKs86TRTb/Fzg9BSyrgjwSMNwhdQyCdmv
+	 xhuoEa0srr3Lp+d8e9Y2PGJzyFIhlGhCbXLJ+GNt1FOYpzXUQJAo1Z32jd2Z6sx6nP
+	 JTgO+QMLUwpRjUpF1ijF2OMCVdI0dDpy9CfEjk3o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726684AbfAWR2m (ORCPT
+        id S1726300AbfAWR3T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 12:28:42 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:44658 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726357AbfAWR2l (ORCPT
+        Wed, 23 Jan 2019 12:29:19 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54310 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725995AbfAWR3T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 12:28:41 -0500
-Received: by mail-oi1-f195.google.com with SMTP id m6so2435140oig.11
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 09:28:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:reply-to:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-transfer-encoding:content-language;
-        bh=6uDiqMq26X/QdPGEYHQNDPTktTU2QNg1q0563PlXOhQ=;
-        b=FsRzDfPoBDNvi867kQzF+hMqEokoHyTR7NoDS2XlWGIPYZpjWz+8XuSWb5Z9yMsTQh
-         RDtEsOyibfRCMiVMTLqolbPEZohrr/O82E88mVmBfVwzDWgmbAuX9PLiNGmzMSQiUeft
-         rXoYQjKPifLcwH9prRgmYiQspCq8K3uU19XETdaZuSqQnH2E2SUfJ4hKiAvDHLF0IkGR
-         Tz/WKZHfz2xzuyGyS90iq4bChzNVIqz9HABZoCqgcHErUPexoHIqf00hjlz7pq9Z/n1M
-         5cM5vB7TztmMwyeVvUSWJ5BMFJ5L+9iZCr/bljzaEmiuvekVcNlF4avAx4KUFg5sLDvY
-         MiPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:reply-to:to:cc:from:subject:message-id
-         :date:user-agent:mime-version:content-transfer-encoding
-         :content-language;
-        bh=6uDiqMq26X/QdPGEYHQNDPTktTU2QNg1q0563PlXOhQ=;
-        b=hoSOmVIZxzMXjczMSCYe+6KphkcZHY8FT4V9SzmfHKBXh4zm786kWFdRiFyz81SETT
-         ZV00MGJC0KAFYEYPNK15J24mW1z3LLdMkUPgqUjE5keW1+ImNk8jgPMHlcnqpD21M7k3
-         4kdo3cdChcvTe5ANIOahOiDR8HJT87fmNRpB1hLT5/ldQfaO9iIIVggUaFGBKJBaIuhJ
-         C0uTYTE/hw+gIUQckDkGdkwc9rSCE8BdnZQyB6W/35Jiarg2eSw7F/YISZRScWedACLi
-         6rLSt63DKqO5+8xORBPIMPLqc7IPIp7/ZL/ZZZe6tA7CqThknRbuA+ql4/lf0cHHvJSF
-         XRPw==
-X-Gm-Message-State: AJcUuke3prSC87bdskCCeUs8eY9csy7d6it5RYZDvXLO6iItY0dRM/uw
-        KQBHcgj597mdQt1N7WOaLQ==
-X-Google-Smtp-Source: ALg8bN7ZdKmKkp41OaRjtnPTxIzWOiURm1H5Vyf/ofcozK2uRsSXpUDncsAt11jBUygUAfgbmD1u/Q==
-X-Received: by 2002:aca:b4c5:: with SMTP id d188mr1932532oif.309.1548264520162;
-        Wed, 23 Jan 2019 09:28:40 -0800 (PST)
-Received: from serve.minyard.net (serve.minyard.net. [2001:470:b8f6:1b::1])
-        by smtp.gmail.com with ESMTPSA id c9sm7876591otp.24.2019.01.23.09.28.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 23 Jan 2019 09:28:39 -0800 (PST)
-Received: from [IPv6:2001:470:b8f6:1b:a64e:31ff:fe14:d744] (unknown [IPv6:2001:470:b8f6:1b:a64e:31ff:fe14:d744])
-        by serve.minyard.net (Postfix) with ESMTPSA id 4791E39C;
-        Wed, 23 Jan 2019 11:28:38 -0600 (CST)
-Reply-To: minyard@acm.org
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        "openipmi-developer@lists.sourceforge.net" 
-        <openipmi-developer@lists.sourceforge.net>
-From:   Corey Minyard <minyard@acm.org>
-Subject: [GIT PULL] IPMI serious bugfixes for 5.0
-Message-ID: <200450ff-49dd-da74-53b6-b0a0d71b4c8a@acm.org>
-Date:   Wed, 23 Jan 2019 11:28:37 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 23 Jan 2019 12:29:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ucniJVHoVXntYH7Faf+Kz0hGhM5tUmJN7wC1AND91CI=; b=SPVjXKEqMI0+7m1tWfbbR2fcE
+        s3i+m4IaASJQUxVmEteiOSRdKgks+Dlqi/5afcL2KxYbDurcgjqrWrs+4EOInqvvDlb09DcR56jjy
+        xgoq3flTRyFO0dEfEP/1FbCfoe1Qtz5XY/yZFgIh6mO+JuQtlxBoWLZJd2+sKNfRXCKJQ=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gmMKv-0006e6-59; Wed, 23 Jan 2019 17:29:13 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 885AB1127ABA; Wed, 23 Jan 2019 17:29:12 +0000 (GMT)
+Date:   Wed, 23 Jan 2019 17:29:12 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Ben Dooks <ben.dooks@codethink.co.uk>
+Cc:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-amlogic@lists.infradead.org, thierry.reding@gmail.com,
+        boris.brezillon@free-electrons.com, lgirdwood@gmail.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] regulator: pwm: suppress EPROBE_DEFER error message
+Message-ID: <20190123172912.GF7503@sirena.org.uk>
+References: <20190121183723.25231-1-martin.blumenstingl@googlemail.com>
+ <20190121183723.25231-2-martin.blumenstingl@googlemail.com>
+ <20190123160405.GD7503@sirena.org.uk>
+ <afa9ed378b7fa62e81662363fdaf7543@codethink.co.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-GB
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="L2Brqb15TUChFOBK"
+Content-Disposition: inline
+In-Reply-To: <afa9ed378b7fa62e81662363fdaf7543@codethink.co.uk>
+X-Cookie: A couch is as good as a chair.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 7b55851367136b1efd84d98fea81ba57a98304cf:
 
-   fork: record start_time late (2019-01-08 09:40:53 -0800)
+--L2Brqb15TUChFOBK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-are available in the Git repository at:
+On Wed, Jan 23, 2019 at 04:14:49PM +0000, Ben Dooks wrote:
+> On 2019-01-23 16:04, Mark Brown wrote:
 
-   https://github.com/cminyard/linux-ipmi.git tags/for-linus-5.0
+> > This also cleans up the kernel log in the case where you've not got a
+> > driver enabled that you need (or it's not loading for some reason) which
+> > isn't super helpful when you're trying to figure out why the driver
+> > won't probe.  There's not even anything at debug level, that would
+> > probably be fine.
 
-for you to fetch changes up to 913a89f009d98c85a902d718cd54bb32ab11d167:
+> > The ideal thing here would be to work on setting up the dependency
+> > information based on DT and using that to try to sort initialization
+> > order so we try things in an order that minimizes the number of failed
+> > tries.
 
-   ipmi: Don't initialize anything in the core until something uses it 
-(2019-01-23 11:09:32 -0600)
+> Hmm, would it be useful to have a devfs file which holds the last probe
+> code?
 
-----------------------------------------------------------------
-I missed the merge window, which wasn't really important at the time
-as there was nothing that critical that I had for 5.0.
+You really also want the bit that says why it's deferring - "failed to
+get clock X" or whatever.
 
-However, I say that,and then a number of critical fixes come in:
+--L2Brqb15TUChFOBK
+Content-Type: application/pgp-signature; name="signature.asc"
 
-   ipmi: fix use-after-free of user->release_barrier.rda
-   ipmi: Prevent use-after-free in deliver_response
-   ipmi: msghandler: Fix potential Spectre v1 vulnerabilities
+-----BEGIN PGP SIGNATURE-----
 
-which are obvious candidates for 5.0.  Then there is:
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxIpGcACgkQJNaLcl1U
+h9Bd9Af+PkGTbTa3YfJpdWimXdj/2tU2uqKtxKx9uIg6/6IKCqZktIeGacUi7FWO
+zm/kLm+KThwOUBGde6/gGe+xgR0dIs7CgGFowdkKgt82mVYXeUrz9RlLL0fjA7VL
+ZJuH5KVzppqZ/AzwIYmondQLRa78wm4n1XQ15kvckDd+QLVigUAR+TSU3zaQ6EdU
+ocv/NZz4AzJZakil6qm2QGjjssNDdbl3J72eJCRGfq0fl8+lA4YT0jgMg4nUnvEo
+Y1X8REscqdePK20vL0qYOUl6xp/WbwrSWNFHa15c3skhjhMsdn9d+9/OMkaiAZdB
+RhIJURJar5C3Idww05p3lr9J/L+dWQ==
+=4QIo
+-----END PGP SIGNATURE-----
 
-   ipmi:ssif: Fix handling of multi-part return messages
-
-which is less critical, but it still has some off-by-one things that
-are not great, so it seemed appropriate.  Some machines are broken
-without it.  Then:
-
-   ipmi: Don't initialize anything in the core until something uses it
-
-It turns out that using SRCU causes large chunks of memory to be used
-on big iron machines, even if IPMI is never used.  This was causing
-some issues for people on those machines.
-
-Everything here is destined for stable.
-
-----------------------------------------------------------------
-Corey Minyard (2):
-       ipmi:ssif: Fix handling of multi-part return messages
-       ipmi: Don't initialize anything in the core until something uses it
-
-Fred Klassen (1):
-       ipmi: Prevent use-after-free in deliver_response
-
-Gustavo A. R. Silva (1):
-       ipmi: msghandler: Fix potential Spectre v1 vulnerabilities
-
-Yang Yingliang (1):
-       ipmi: fix use-after-free of user->release_barrier.rda
-
-  drivers/char/ipmi/ipmi_msghandler.c | 173 
-+++++++++++++++++++++---------------
-  drivers/char/ipmi/ipmi_ssif.c       |  25 ++++--
-  2 files changed, 117 insertions(+), 81 deletions(-)
-
+--L2Brqb15TUChFOBK--
