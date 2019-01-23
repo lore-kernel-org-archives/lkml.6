@@ -2,160 +2,110 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3123FC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 06:45:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACA12C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 06:45:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03F5521726
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 06:45:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7570221726
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 06:45:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RhKK5awk";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Gz1h7F9a"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726303AbfAWGpK (ORCPT
+        id S1726370AbfAWGpO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 01:45:10 -0500
-Received: from gateway23.websitewelcome.com ([192.185.49.218]:46928 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725973AbfAWGpK (ORCPT
+        Wed, 23 Jan 2019 01:45:14 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:47732 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725973AbfAWGpM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 01:45:10 -0500
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway23.websitewelcome.com (Postfix) with ESMTP id 6FD2126119
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 00:45:08 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id mCHcg2uuH2qH7mCHcgf3DX; Wed, 23 Jan 2019 00:45:08 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=46068 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gmCHZ-002o3x-5R; Wed, 23 Jan 2019 00:45:07 -0600
-Date:   Wed, 23 Jan 2019 00:45:01 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Philipp Reisner <philipp.reisner@linbit.com>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Joshua Morris <josh.h.morris@us.ibm.com>,
-        Philip Kelleher <pjk1939@linux.ibm.com>
-Cc:     drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] block: Mark expected switch fall-throughs
-Message-ID: <20190123064501.GA26147@embeddedor>
+        Wed, 23 Jan 2019 01:45:12 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id EF4166044E; Wed, 23 Jan 2019 06:45:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548225911;
+        bh=reB+sFH9gB/CGoVID6Zz79pLcZ3lKJFvt+jTIZLSX6E=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=RhKK5awkx35OpEKQfsDlgpsB8fSz398MTuSzpf7RTu3Ix3L9tMrQWOiGF2ioxcgV2
+         Qcf5kN1sTbgaiMzfCH4EDY5fKecilp3aAMWP+v03xkQCUj4ovHrLZZ5+ObXPZA+2pK
+         IBpLwjiecznQhxrvHtJsMuhMHB1GZJzgddigNT/E=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 5E7C660112;
+        Wed, 23 Jan 2019 06:45:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548225910;
+        bh=reB+sFH9gB/CGoVID6Zz79pLcZ3lKJFvt+jTIZLSX6E=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Gz1h7F9aZIx9vCTR/DH+KMPWO5wCIbpTh/C6epWjghcttJMZMQzeC1DpSJHaCNXDR
+         pqXyMYH/llShpLC/Ff7BPWL5d194X23uz6NUQcIEz8Gv68UD2U52SwIhy60JPMCcB4
+         UlD+r/uZG4nUwg4WP1Syz6SMryxlnCH7Hw2Tuvuo=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1gmCHZ-002o3x-5R
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.130.205]:46068
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 8
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 23 Jan 2019 12:15:10 +0530
+From:   alokc@codeaurora.org
+To:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-serial@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>
+Cc:     andy.gross@linaro.org, david.brown@linaro.org,
+        georgi.djakov@linaro.org, dianders@chromium.org,
+        swboyd@chromium.org, bjorn.andersson@linaro.org,
+        linux-arm-msm-owner@vger.kernel.org
+Subject: Re: [PATCH 0/6] Add interconnect support for GENI QUPs
+In-Reply-To: <1548138816-1149-1-git-send-email-alokc@codeaurora.org>
+References: <1548138816-1149-1-git-send-email-alokc@codeaurora.org>
+Message-ID: <74b768d6573665fe2a4533a23ad23a9e@codeaurora.org>
+X-Sender: alokc@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
++Mark Brown
 
-This patch fixes the following warnings:
+On 2019-01-22 12:03, Alok Chauhan wrote:
+> This patch series contains following:
+> * Add wrapper framework to support interconnect path from GENI QUPs.
+>   This wrapper enabled and help individual SEs to put their BW request.
+>   Adding this wrapper make sense because we don't want individual SEs
+>   to request to interconnect driver separately and put individual bw
+>   votes from QUP.
+> 
+>   This wrapper framework does the following:
+>   - Request for interconnect path handle
+>   - Maintain record of individual SEs' avg/peak bw.
+>   - Aggregated avg/peak bw based on how many SE's are active and put
+>     single bw request from QUP
+> 
+> * Interconnect wrapper API calling from I2C, SPI & Uart driver
+> * dt binding in sdm845 soc for Interconnect path for GENI QUPs
+> * dt binding documentation
+> 
+> 
+> Alok Chauhan (6):
+>   dt-bindings: soc: qcom: Add interconnect binding for GENI QUP
+>   soc: qcom: Add wrapper to support for Interconnect path
+>   i2c: i2c-qcom-geni: Add interconnect support
+>   spi: spi-geni-qcom: Add interconnect support
+>   tty: serial: qcom_geni_serial: Add interconnect support
+>   arm64: dts: sdm845: Add interconnect for GENI QUP
+> 
+>  .../devicetree/bindings/soc/qcom/qcom,geni-se.txt  |  10 ++
+>  arch/arm64/boot/dts/qcom/sdm845.dtsi               |  14 +++
+>  drivers/i2c/busses/i2c-qcom-geni.c                 |  13 +++
+>  drivers/soc/qcom/qcom-geni-se.c                    | 129 
+> +++++++++++++++++++++
+>  drivers/spi/spi-geni-qcom.c                        |  20 +++-
+>  drivers/tty/serial/qcom_geni_serial.c              |  27 ++++-
+>  include/linux/qcom-geni-se.h                       |  11 ++
+>  7 files changed, 222 insertions(+), 2 deletions(-)
 
-drivers/block/drbd/drbd_int.h:1774:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
-drivers/block/drbd/drbd_int.h:1774:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
-drivers/block/drbd/drbd_int.h:1774:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
-drivers/block/drbd/drbd_int.h:1774:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
-drivers/block/drbd/drbd_int.h:1774:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
-drivers/block/drbd/drbd_receiver.c:3093:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
-drivers/block/drbd/drbd_receiver.c:3120:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
-drivers/block/drbd/drbd_req.c:856:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
-
-Warning level 3 was used: -Wimplicit-fallthrough=3
-
-This patch is part of the ongoing efforts to enabling
--Wimplicit-fallthrough
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/block/drbd/drbd_int.h      | 2 +-
- drivers/block/drbd/drbd_receiver.c | 4 ++--
- drivers/block/drbd/drbd_req.c      | 2 +-
- drivers/block/rsxx/core.c          | 1 +
- 4 files changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/block/drbd/drbd_int.h b/drivers/block/drbd/drbd_int.h
-index 000a2f4c0e92..f070f7200fc0 100644
---- a/drivers/block/drbd/drbd_int.h
-+++ b/drivers/block/drbd/drbd_int.h
-@@ -1778,7 +1778,7 @@ static inline void __drbd_chk_io_error_(struct drbd_device *device,
- 				_drbd_set_state(_NS(device, disk, D_INCONSISTENT), CS_HARD, NULL);
- 			break;
- 		}
--		/* NOTE fall through for DRBD_META_IO_ERROR or DRBD_FORCE_DETACH */
-+		/* fall through - for DRBD_META_IO_ERROR or DRBD_FORCE_DETACH */
- 	case EP_DETACH:
- 	case EP_CALL_HELPER:
- 		/* Remember whether we saw a READ or WRITE error.
-diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
-index c7ad88d91a09..74350663443f 100644
---- a/drivers/block/drbd/drbd_receiver.c
-+++ b/drivers/block/drbd/drbd_receiver.c
-@@ -3094,7 +3094,7 @@ static int drbd_asb_recover_0p(struct drbd_peer_device *peer_device) __must_hold
- 			rv =  1;
- 			break;
- 		}
--		/* Else fall through to one of the other strategies... */
-+		/* Else fall through - to one of the other strategies... */
- 	case ASB_DISCARD_OLDER_PRI:
- 		if (self == 0 && peer == 1) {
- 			rv = 1;
-@@ -3119,7 +3119,7 @@ static int drbd_asb_recover_0p(struct drbd_peer_device *peer_device) __must_hold
- 		}
- 		if (after_sb_0p == ASB_DISCARD_ZERO_CHG)
- 			break;
--		/* else: fall through */
-+		/* else, fall through */
- 	case ASB_DISCARD_LEAST_CHG:
- 		if	(ch_self < ch_peer)
- 			rv = -1;
-diff --git a/drivers/block/drbd/drbd_req.c b/drivers/block/drbd/drbd_req.c
-index 643a04af213b..3809c7e6be8c 100644
---- a/drivers/block/drbd/drbd_req.c
-+++ b/drivers/block/drbd/drbd_req.c
-@@ -866,7 +866,7 @@ int __req_mod(struct drbd_request *req, enum drbd_req_event what,
- 			} /* else: FIXME can this happen? */
- 			break;
- 		}
--		/* else, fall through to BARRIER_ACKED */
-+		/* else, fall through - to BARRIER_ACKED */
- 
- 	case BARRIER_ACKED:
- 		/* barrier ack for READ requests does not make sense */
-diff --git a/drivers/block/rsxx/core.c b/drivers/block/rsxx/core.c
-index 0cf4509d575c..898d522e8338 100644
---- a/drivers/block/rsxx/core.c
-+++ b/drivers/block/rsxx/core.c
-@@ -439,6 +439,7 @@ static void card_state_change(struct rsxx_cardinfo *card,
- 		 * Fall through so the DMA devices can be attached and
- 		 * the user can attempt to pull off their data.
- 		 */
-+		/* fall through */
- 	case CARD_STATE_GOOD:
- 		st = rsxx_get_card_size8(card, &card->size8);
- 		if (st)
 -- 
-2.20.1
-
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
+Forum,a Linux Foundation Collaborative Project
