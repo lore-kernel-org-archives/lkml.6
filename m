@@ -2,422 +2,93 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7011C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 12:20:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA54C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 12:21:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C62420861
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 12:20:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9954E20861
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 12:21:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Ra+ni78g"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="dTRFFKhz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727208AbfAWMU3 (ORCPT
+        id S1727309AbfAWMV2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 07:20:29 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:36272 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726108AbfAWMU2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 07:20:28 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0NCKP4h034295;
-        Wed, 23 Jan 2019 06:20:25 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1548246025;
-        bh=s9lLR8B3ycTtYZwx2uNHMQburbWMNBkrqeFNG0FM+sE=;
-        h=Subject:From:To:CC:References:Date:In-Reply-To;
-        b=Ra+ni78gUsI38MGroISGInc1sYNnWiHLobaqYriZjSMz6fPfuLrW0tUyMeuirZouY
-         4c0HeWjPmg0U0hag2AEGZ+fBqLT3iC5mo0C6DXvQPQ4uQkuoLdzzRVl5Qj1eLeyhW0
-         GQjwxw1tB4bGxvfacsf+/tvNipHPsv3THf68A0QM=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0NCKP3Y012139
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 23 Jan 2019 06:20:25 -0600
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 23
- Jan 2019 06:20:25 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 23 Jan 2019 06:20:25 -0600
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0NCKMm1020631;
-        Wed, 23 Jan 2019 06:20:22 -0600
-Subject: Re: [PATCH 3/3] phy: ti: Add a new SERDES driver for TI's AM654x SoC
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-To:     Roger Quadros <rogerq@ti.com>, Rob Herring <robh+dt@kernel.org>
-CC:     Sekhar Nori <nsekhar@ti.com>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <20190121064813.18444-1-kishon@ti.com>
- <20190121064813.18444-4-kishon@ti.com> <5C459549.8090403@ti.com>
- <a44dd3db-367e-684b-a7f1-2f545b5191d7@ti.com>
-Message-ID: <79862f2a-22b6-e409-364b-e0939784ab9b@ti.com>
-Date:   Wed, 23 Jan 2019 17:49:54 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 23 Jan 2019 07:21:28 -0500
+Received: from ozlabs.org ([203.11.71.1]:46659 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726029AbfAWMV2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 07:21:28 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43l4C92fNkz9s3q;
+        Wed, 23 Jan 2019 23:21:25 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1548246085;
+        bh=ewT4294HGvgs2gu/z74ARslO8OAf9uBl/RdTEPSGUPk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=dTRFFKhza8LmY/VjF/47lnqonhvogw0K3dpz5uuHRzRhzqX287PJW20AfXF7sBcrJ
+         KWP8D4LBkLbPpq4EV7VGvR7DZDF/t8AbWGmi+PN/Is4oQXWuxtfthLUxhwBmRDoUvc
+         vQAwTw3Rs1F6CIZ3ueIn2CSaERHVqnO214WnLT2JbA4mpnXdH3JenWkIxozsa7CumS
+         vJImZI4iQiraYbr3E9HfpDCSBg60BZVvqP2bFrQHihMC34ZYisd2hNgxg9ybJMg4OY
+         5iWCNjhGRVvxoOZnSPL6UDYZMkbfK6x0XHHFvin+699KNlu40NYL3/mXbu9mp53tEa
+         p0MiNUOLNWKgw==
+Date:   Wed, 23 Jan 2019 23:21:24 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Simon Horman <horms@verge.net.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: Fixes tag needs some work in the renesas tree
+Message-ID: <20190123232124.1e5177a7@canb.auug.org.au>
+In-Reply-To: <TY1PR01MB1770C404E14E88CB912D12D4C0990@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+References: <20190123075605.116ddbd0@canb.auug.org.au>
+        <TY1PR01MB1770C404E14E88CB912D12D4C0990@TY1PR01MB1770.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <a44dd3db-367e-684b-a7f1-2f545b5191d7@ti.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/x2Q2h5UQ4TzeKwfxP._3_cK"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Roger,
+--Sig_/x2Q2h5UQ4TzeKwfxP._3_cK
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 21/01/19 4:41 PM, Kishon Vijay Abraham I wrote:
-> Hi Roger,
-> 
-> On 21/01/19 3:17 PM, Roger Quadros wrote:
->> Hi Kishon,
->>
->> On 21/01/19 08:48, Kishon Vijay Abraham I wrote:
->>> Add a new SERDES driver for TI's AM654x SoC which configures
->>> the SERDES only for PCIe. Support fo USB3 will be added later.
->>>
->>> SERDES in am654x has three input clocks (left input, externel reference
->>> clock and right input) and two output clocks (left output and right
->>> output) in addition to a PLL mux clock which the SERDES uses for Clock
->>> Multiplier Unit (CMU refclock).
->>>
->>> The PLL mux clock can select from one of the three input clocks.
->>> The right output can select between left input and external reference
->>> clock while the left output can select between the right input and
->>> external reference clock.
->>>
->>> The driver has support to select PLL mux and left/right output mux as
->>> specified in device tree.
->>>
->>> [rogerq@ti.com: Fix boot lockup caused by accessing a structure member
->>> (hw->init) allocated in stack of probe() and accessed in get_parent]
->>> [rogerq@ti.com: Fix "Failed to find the parent" warnings]
->>> Signed-off-by: Roger Quadros <rogerq@ti.com>
->>> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
->>> ---
->>>  drivers/phy/ti/Kconfig            |  11 +
->>>  drivers/phy/ti/Makefile           |   1 +
->>>  drivers/phy/ti/phy-am654-serdes.c | 528 ++++++++++++++++++++++++++++++
->>>  3 files changed, 540 insertions(+)
->>>  create mode 100644 drivers/phy/ti/phy-am654-serdes.c
->>>
->>> diff --git a/drivers/phy/ti/Kconfig b/drivers/phy/ti/Kconfig
->>> index f137e0107764..6357c32de115 100644
->>> --- a/drivers/phy/ti/Kconfig
->>> +++ b/drivers/phy/ti/Kconfig
->>> @@ -20,6 +20,17 @@ config PHY_DM816X_USB
->>>  	help
->>>  	  Enable this for dm816x USB to work.
->>>  
->>> +config PHY_AM654_SERDES
->>> +	tristate "TI AM654 SERDES support"
->>> +	depends on OF && ARCH_K3 || COMPILE_TEST
->>> +	select GENERIC_PHY
->>> +	select MULTIPLEXER
->>> +	select REGMAP_MMIO
->>> +	select MUX_MMIO
->>> +	help
->>> +	  This option enables support for TI AM654 SerDes PHY used for
->>> +	  PCIe.
->>> +
->>>  config OMAP_CONTROL_PHY
->>>  	tristate "OMAP CONTROL PHY Driver"
->>>  	depends on ARCH_OMAP2PLUS || COMPILE_TEST
->>> diff --git a/drivers/phy/ti/Makefile b/drivers/phy/ti/Makefile
->>> index bea8f25a137a..bff901eb0ecc 100644
->>> --- a/drivers/phy/ti/Makefile
->>> +++ b/drivers/phy/ti/Makefile
->>> @@ -6,4 +6,5 @@ obj-$(CONFIG_OMAP_USB2)			+= phy-omap-usb2.o
->>>  obj-$(CONFIG_TI_PIPE3)			+= phy-ti-pipe3.o
->>>  obj-$(CONFIG_PHY_TUSB1210)		+= phy-tusb1210.o
->>>  obj-$(CONFIG_TWL4030_USB)		+= phy-twl4030-usb.o
->>> +obj-$(CONFIG_PHY_AM654_SERDES)		+= phy-am654-serdes.o
->>>  obj-$(CONFIG_PHY_TI_GMII_SEL)		+= phy-gmii-sel.o
->>> diff --git a/drivers/phy/ti/phy-am654-serdes.c b/drivers/phy/ti/phy-am654-serdes.c
->>> new file mode 100644
->>> index 000000000000..fcc0a98fbbd3
->>> --- /dev/null
->>> +++ b/drivers/phy/ti/phy-am654-serdes.c
->>> @@ -0,0 +1,528 @@
->>> +// SPDX-License-Identifier: GPL-2.0
->>> +/**
->>> + * PCIe SERDES driver for AM654x SoC
->>> + *
->>> + * Copyright (C) 2018 Texas Instruments
->>> + * Author: Kishon Vijay Abraham I <kishon@ti.com>
->>> + */
->>> +
->>> +#include <dt-bindings/phy/phy.h>
->>> +#include <linux/clk.h>
->>> +#include <linux/clk-provider.h>
->>> +#include <linux/delay.h>
->>> +#include <linux/io.h>
->>> +#include <linux/module.h>
->>> +#include <linux/mux/consumer.h>
->>> +#include <linux/of_address.h>
->>> +#include <linux/of_device.h>
->>> +#include <linux/phy/phy.h>
->>> +#include <linux/platform_device.h>
->>> +#include <linux/pm_runtime.h>
->>> +#include <linux/regmap.h>
->>> +#include <linux/slab.h>
->>> +#include <linux/mfd/syscon.h>
->>> +
->>> +#define CMU_R07C		0x7c
->>> +#define CMU_MASTER_CDN_O	BIT(24)
->>> +
->>> +#define COMLANE_R138		0xb38
->>> +#define CONFIG_VERSION_REG_MASK	GENMASK(23, 16)
->>> +#define CONFIG_VERSION_REG_SHIFT 16
->>> +#define VERSION			0x70
->>> +
->>> +#define COMLANE_R190		0xb90
->>> +#define L1_MASTER_CDN_O		BIT(9)
->>> +
->>> +#define COMLANE_R194		0xb94
->>> +#define CMU_OK_I_0		BIT(19)
->>> +
->>> +#define SERDES_CTRL		0x1fd0
->>> +#define POR_EN			BIT(29)
->>> +
->>> +#define WIZ_LANEXCTL_STS	0x1fe0
->>> +#define TX0_ENABLE_OVL		BIT(31)
->>> +#define TX0_ENABLE_MASK		GENMASK(30, 29)
->>> +#define TX0_ENABLE_SHIFT	29
->>> +#define TX0_DISABLE_STATE	0x0
->>> +#define TX0_SLEEP_STATE		0x1
->>> +#define TX0_SNOOZE_STATE	0x2
->>> +#define TX0_ENABLE_STATE	0x3
->>> +#define RX0_ENABLE_OVL		BIT(15)
->>> +#define RX0_ENABLE_MASK		GENMASK(14, 13)
->>> +#define RX0_ENABLE_SHIFT	13
->>> +#define RX0_DISABLE_STATE	0x0
->>> +#define RX0_SLEEP_STATE		0x1
->>> +#define RX0_SNOOZE_STATE	0x2
->>> +#define RX0_ENABLE_STATE	0x3
->>> +
->>> +#define WIZ_PLL_CTRL		0x1ff4
->>> +#define PLL_ENABLE_OVL		BIT(31)
->>> +#define PLL_ENABLE_MASK		GENMASK(30, 29)
->>> +#define PLL_ENABLE_SHIFT	29
->>> +#define PLL_DISABLE_STATE	0x0
->>> +#define PLL_SLEEP_STATE		0x1
->>> +#define PLL_SNOOZE_STATE	0x2
->>> +#define PLL_ENABLE_STATE	0x3
->>> +#define PLL_OK			BIT(28)
->>> +
->>> +#define PLL_LOCK_TIME		100000	/* in microseconds */
->>> +#define SLEEP_TIME		100	/* in microseconds */
->>> +
->>> +#define LANE_USB3		0x0
->>> +#define LANE_PCIE0_LANE0	0x1
->>> +
->>> +#define LANE_PCIE1_LANE0	0x0
->>> +#define LANE_PCIE0_LANE1	0x1
->>> +
->>> +#define SERDES_NUM_CLOCKS	3
->>> +
->>> +struct serdes_am654_clk_mux {
->>> +	struct clk_hw	hw;
->>> +	struct regmap	*regmap;
->>> +	unsigned int	reg;
->>> +	int		*table;
->>> +	u32		mask;
->>> +	u8		shift;
->>> +	struct clk_init_data clk_data;
->>> +};
->>> +
->>> +#define to_serdes_am654_clk_mux(_hw)	\
->>> +		container_of(_hw, struct serdes_am654_clk_mux, hw)
->>> +
->>> +static struct regmap_config serdes_am654_regmap_config = {
->>> +	.reg_bits = 32,
->>> +	.val_bits = 32,
->>> +	.reg_stride = 4,
->>> +	.fast_io = true,
->>> +};
->>> +
->>> +struct serdes_am654 {
->>> +	struct regmap		*regmap;
->>> +	struct device		*dev;
->>> +	struct mux_control	*control;
->>> +	bool			busy;
->>> +	u32			type;
->>> +	struct device_node	*of_node;
->>> +	struct clk_onecell_data	clk_data;
->>> +	struct clk		*clks[SERDES_NUM_CLOCKS];
->>> +};
->>> +
->>> +static int serdes_am654_enable_pll(struct serdes_am654 *phy)
->>> +{
->>> +	u32 mask = PLL_ENABLE_OVL | PLL_ENABLE_MASK;
->>> +	u32 val = PLL_ENABLE_OVL | (PLL_ENABLE_STATE << PLL_ENABLE_SHIFT);
->>> +
->>> +	regmap_update_bits(phy->regmap, WIZ_PLL_CTRL, mask, val);
->>> +
->>> +	return regmap_read_poll_timeout(phy->regmap, WIZ_PLL_CTRL, val,
->>> +					val & PLL_OK, 1000, PLL_LOCK_TIME);
->>> +}
->>> +
->>> +static void serdes_am654_disable_pll(struct serdes_am654 *phy)
->>> +{
->>> +	u32 mask = PLL_ENABLE_OVL | PLL_ENABLE_MASK;
->>> +
->>> +	regmap_update_bits(phy->regmap, WIZ_PLL_CTRL, mask, 0);
->>
->> Shouldn't PLL_ENABLE_OVL be left set otherwise override mechanism won't work?
-> 
-> I have to check this.
+Hi Fabrizio,
 
-You are right, PLL_ENABLE_OVL should be set.
+On Wed, 23 Jan 2019 08:55:21 +0000 Fabrizio Castro <fabrizio.castro@bp.rene=
+sas.com> wrote:
+>
+> I am sorry for the trouble. My editor is configured to automatically
+> wrap lines when they are too long, I'll be more careful next time. Do
+> you need me to do anything about this patch?
 
-Thanks
-Kishon
+That is up to Simon.
 
->>
->> So,
->>
->> 	regmap_update_bits(phy->regmap, WIZ_PLL_CTRL, mask, PLL_ENABLE_OVL);
->>
->>> +}
->>> +
->>> +static int serdes_am654_enable_txrx(struct serdes_am654 *phy)
->>> +{
->>> +	u32 mask;
->>> +	u32 val;
->>> +
->>> +	/* Enable TX */
->>> +	mask = TX0_ENABLE_OVL | TX0_ENABLE_MASK;
->>> +	val = TX0_ENABLE_OVL | (TX0_ENABLE_STATE << TX0_ENABLE_SHIFT);
->>> +	regmap_update_bits(phy->regmap, WIZ_LANEXCTL_STS, mask, val);
->>> +
->>> +	/* Enable RX */
->>> +	mask = RX0_ENABLE_OVL | RX0_ENABLE_MASK;
->>> +	val = RX0_ENABLE_OVL | (RX0_ENABLE_STATE << RX0_ENABLE_SHIFT);
->>> +	regmap_update_bits(phy->regmap, WIZ_LANEXCTL_STS, mask, val);
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static int serdes_am654_disable_txrx(struct serdes_am654 *phy)
->>> +{
->>> +	u32 mask;
->>> +
->>> +	/* Disable TX */
->>> +	mask = TX0_ENABLE_OVL | TX0_ENABLE_MASK;
->>> +	regmap_update_bits(phy->regmap, WIZ_LANEXCTL_STS, mask, 0);
->>
->> Here too.
->>> +
->>> +	/* Disable RX */
->>> +	mask = RX0_ENABLE_OVL | RX0_ENABLE_MASK;
->>> +	regmap_update_bits(phy->regmap, WIZ_LANEXCTL_STS, mask, 0);
->>
->> Here as well.
->>
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static int serdes_am654_power_on(struct phy *x)
->>> +{
->>> +	struct serdes_am654 *phy = phy_get_drvdata(x);
->>> +	struct device *dev = phy->dev;
->>> +	int ret;
->>> +	u32 val;
->>> +
->>> +	ret = serdes_am654_enable_pll(phy);
->>> +	if (ret) {
->>> +		dev_err(dev, "Failed to enable PLL\n");
->>> +		return ret;
->>> +	}
->>> +
->>> +	ret = serdes_am654_enable_txrx(phy);
->>> +	if (ret) {
->>> +		dev_err(dev, "Failed to enable TX RX\n");
->>> +		return ret;
->>> +	}
->>> +
->>> +	return regmap_read_poll_timeout(phy->regmap, COMLANE_R194, val,
->>> +					val & CMU_OK_I_0, SLEEP_TIME,
->>> +					PLL_LOCK_TIME);
->>> +}
->>> +
->>> +static int serdes_am654_power_off(struct phy *x)
->>> +{
->>> +	struct serdes_am654 *phy = phy_get_drvdata(x);
->>> +
->>> +	serdes_am654_disable_txrx(phy);
->>> +	serdes_am654_disable_pll(phy);
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static int serdes_am654_init(struct phy *x)
->>> +{
->>> +	struct serdes_am654 *phy = phy_get_drvdata(x);
->>> +	u32 mask;
->>> +	u32 val;
->>> +
->>> +	mask = CONFIG_VERSION_REG_MASK;
->>> +	val = VERSION << CONFIG_VERSION_REG_SHIFT;
->>> +	regmap_update_bits(phy->regmap, COMLANE_R138, mask, val);
->>> +
->>> +	val = CMU_MASTER_CDN_O;
->>> +	regmap_update_bits(phy->regmap, CMU_R07C, val, val);
->>> +
->>> +	val = L1_MASTER_CDN_O;
->>> +	regmap_update_bits(phy->regmap, COMLANE_R190, val, val);
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static int serdes_am654_reset(struct phy *x)
->>> +{
->>> +	struct serdes_am654 *phy = phy_get_drvdata(x);
->>> +	u32 val;
->>> +
->>> +	val = POR_EN;
->>> +	regmap_update_bits(phy->regmap, SERDES_CTRL, val, val);
->>> +	mdelay(1);
->>> +	regmap_update_bits(phy->regmap, SERDES_CTRL, val, 0);
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +struct phy *serdes_am654_xlate(struct device *dev, struct of_phandle_args
->>> +				 *args)
->>> +{
->>> +	struct serdes_am654 *am654_phy;
->>> +	struct phy *phy;
->>> +	int ret;
->>> +
->>> +	phy = of_phy_simple_xlate(dev, args);
->>> +	if (IS_ERR(phy))
->>> +		return phy;
->>> +
->>> +	am654_phy = phy_get_drvdata(phy);
->>> +	if (am654_phy->type != args->args[0] && am654_phy->busy)
->>> +		return ERR_PTR(-EBUSY);
->>
->> You set the busy flag in this function but it is never cleared.
->> This means the second phy_get() will always fail. We might get into this
->> situation for example if the driver doing the phy_get() had to bail out
->> due to some reason (e.g. -EPROBE_DEFER), and gets probed again and does
->> a phy_get() a second time for the same PHY and lane.
->>
->> Can we clear the busy flag and call mux_control_deselect() on phy_put()?
-> 
-> Good point. Right now, the PHY framework doesn't have a callback to the PHY
-> drivers on phy_put. Looks like we might have to add it for this scenario.
-> 
-> Thanks
-> Kishon
-> 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/x2Q2h5UQ4TzeKwfxP._3_cK
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxIXEUACgkQAVBC80lX
+0GykDQf+NkNN9eE9dcQZafxW/6c9jhVJktIMGAkcvXF94Z14BGnd2tIYn3vb1zCT
+4WhdMqtD+Fj5Jp3/tFEECOIqAGzdLJdH8gro4/5l8S9SfxdON5xP0jwJCIxZEnR1
+7BewrLmKFpi4s6OCOU+Zdv4Pi63xrpXVXCO+kg8irNfd1GoqZVbM4GqvYGOffkNU
+k/hXhAYoG5ANv5AXAlH9kOlAwT/QadllxdSHLpK2HKdup69lYm1oW/znkFXOltfa
+dhiOi+7qBeQ63Q6wxp6M+LHsuvZagQHHVkGn739q/9IoicM2LycVyWQUAudBGbPr
+hmIiF0y83SQWQkY7uI8h7Hetsrebgw==
+=XQkC
+-----END PGP SIGNATURE-----
+
+--Sig_/x2Q2h5UQ4TzeKwfxP._3_cK--
