@@ -2,135 +2,194 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50040C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:36:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF800C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:38:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1597121855
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:36:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 954C121855
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 22:38:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XoLHPkMG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726934AbfAWWg2 (ORCPT
+        id S1727056AbfAWWiB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 17:36:28 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:46646 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726313AbfAWWg1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 17:36:27 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4707B420B7;
-        Wed, 23 Jan 2019 22:36:27 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-121-92.rdu2.redhat.com [10.10.121.92])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 956934D720;
-        Wed, 23 Jan 2019 22:36:24 +0000 (UTC)
-Subject: Re: [PATCH v2 1/4] locking/qspinlock: Handle > 4 slowpath nesting
- levels
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Will Deacon <will.deacon@arm.com>, Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, x86@kernel.org,
-        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
-        James Morse <james.morse@arm.com>,
-        SRINIVAS <srinivas.eeda@oracle.com>
-References: <1548215351-18896-1-git-send-email-longman@redhat.com>
- <1548215351-18896-2-git-send-email-longman@redhat.com>
- <20190123093424.GE15019@brain-police>
- <63131030-bd24-34bf-10dc-b5e7c7c177be@redhat.com>
- <20190123204038.GL13777@hirez.programming.kicks-ass.net>
-From:   Waiman Long <longman@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- weim8xU=
-Organization: Red Hat
-Message-ID: <0229798a-f5c8-4c90-3ae6-f25a969989a3@redhat.com>
-Date:   Wed, 23 Jan 2019 17:36:22 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 23 Jan 2019 17:38:01 -0500
+Received: from mail-ua1-f49.google.com ([209.85.222.49]:44189 "EHLO
+        mail-ua1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726313AbfAWWiB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 17:38:01 -0500
+Received: by mail-ua1-f49.google.com with SMTP id d19so1307749uaq.11
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 14:38:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=W4B8lCha9ZTaw69yBTneXvxWuhyv5HaHtF9PM+NeshY=;
+        b=XoLHPkMG0sjoqXANSoKCIxZjaGp5ZrPI3pNVduYbjj/qH0LRZRRtWb3fXkJjwaqcFO
+         65sIYsoQBmWv+AIWJWMR5UMTb3vwnHFwgi8qhA7m+QiWeWxnBp4OzemSJv1t7pLKz3QJ
+         efHx+GNbBhX1157wGglCRIFIg6YmQNmbp379ICdiqcwxrooQw083uu4rsYT1vpFaCNx+
+         QqPJaM6EpnEdXsBchxF6cykk4rKRQIK9w+qSDEazsGVyp0DDV3QZWi4iuX2vn+n2T8cd
+         JnspAPMM8encGI7z7lHMbx9okZema1B3oOgPebuLq8ppvmogV70mccNEB5p8hjvSuw1s
+         lkyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=W4B8lCha9ZTaw69yBTneXvxWuhyv5HaHtF9PM+NeshY=;
+        b=nIM18KZ6/CD/YWIYlhVqErYlfvY8cRkUMoq3Xo2llD5QoHjXC43TaONYF3iiuEiEbp
+         Wi1jllk4nfm2aV7m+JrtxRLRPJavZfBW2TCpWF67J9q182JXTFZL5us6ZgYv9EB2RQ0K
+         KyHwBLMW3LdzQ+4nTXYMr5/LTjEWIn+XGJM+IUhP8AhoicoJjDR+dWn5TSbN8eUi8+Lj
+         9YLikOTt7w88gYE1U/WeW1CoRCdfXLujJM4FzLokTINiy6bIqMGv7sR344ixvqWJcHnl
+         VRk1FN0KI8gIBS42Bu4/IjQqe5K38OTLZV2aGVCEjx4msCjYcVfnQjkhMCGWOGSKw9En
+         uVLw==
+X-Gm-Message-State: AJcUukfqc72Br3yb0O5c3+coN1S8sUNR7pvH/R5SEeLmeu6aOx0PQPbc
+        alsdNf9Uxp0DF9G4JakjfwODq/Vd2Aow1KvkEEz4Bg==
+X-Google-Smtp-Source: ALg8bN43ZqaePHNCwQ+Lf7w8/rQGYZmv+kzmliGFwnBMT+rJ88XiWLtsDnvk64R4joIO9g4wTrsG+z6DJ//u9fUfSik=
+X-Received: by 2002:ab0:63d7:: with SMTP id i23mr1704478uap.11.1548283079017;
+ Wed, 23 Jan 2019 14:37:59 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190123204038.GL13777@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Wed, 23 Jan 2019 22:36:27 +0000 (UTC)
+References: <20190118225543.86996-1-joel@joelfernandes.org>
+ <20190119102800.GB17723@infradead.org> <20190119103606.GA17400@kroah.com>
+ <8BD4CB7A-944C-4EC5-A198-1D85C9EE28D6@zytor.com> <20190120161003.GB23827@google.com>
+ <A40C22DF-B43F-44BA-8148-FC0881087315@zytor.com> <20190121014553.GD23827@google.com>
+ <BC774ED4-C0FC-4AA6-9BAF-36930A661D9B@zytor.com> <20190122133901.GA189736@google.com>
+ <117d2f96-b0e9-2376-69b7-836fa0c52539@opersys.com>
+In-Reply-To: <117d2f96-b0e9-2376-69b7-836fa0c52539@opersys.com>
+From:   Daniel Colascione <dancol@google.com>
+Date:   Wed, 23 Jan 2019 14:37:47 -0800
+Message-ID: <CAKOZuesWgo3CZj49aUChX_-dpijCrVLxgVZChyLLmOWXCLQf-Q@mail.gmail.com>
+Subject: Re: [RFC] Provide in-kernel headers for making it easy to extend the kernel
+To:     Karim Yaghmour <karim.yaghmour@opersys.com>
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>, ast@kernel.org,
+        atish patra <atishp04@gmail.com>,
+        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
+        Jan Kara <jack@suse.cz>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Manoj Rao <linux@manojrajarao.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>, rostedt@goodmis.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        yhs@fb.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/23/2019 03:40 PM, Peter Zijlstra wrote:
-> On Wed, Jan 23, 2019 at 03:11:19PM -0500, Waiman Long wrote:
->> On 01/23/2019 04:34 AM, Will Deacon wrote:
->>> On Tue, Jan 22, 2019 at 10:49:08PM -0500, Waiman Long wrote:
->>>> @@ -412,6 +412,21 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
->>>>  	idx = node->count++;
->>>>  	tail = encode_tail(smp_processor_id(), idx);
->>>> +	if (unlikely(idx >= MAX_NODES)) {
->>>> +		while (!queued_spin_trylock(lock))
->>>> +			cpu_relax();
->>>> +		goto release;
->>>> +	}
->> So the additional code checks the idx value and branch to the end of the
->> function when the condition is true. There isn't too much overhead here.
-> So something horrible we could do (and I'm not at all advocating we do
-> this), is invert node->count. That is, start at 3 and decrement and
-> detect sign flips.
+On Wed, Jan 23, 2019 at 1:29 PM Karim Yaghmour
+<karim.yaghmour@opersys.com> wrote:
+> > By the way, we can easily write a script to just extract the .ko directly -
+> > if the whole "load it as a module" thing bothers you. The kheaders.ko can
+> > just be thought of as a tarball. There's already a script to extract
+> > /proc/config.gz in the same/similar way: scripts/extract-ikconfig
 >
-> That avoids the additional compare. It would require we change the
-> structure layout though, otherwise we keep hitting that second line by
-> default, which would suck.
+> If I may add a few more thoughts here ... in no specific order:
+>
+>  From that point of view, if something comes from or is rooted in
+> mainline, instead of being mandated, it's usually easier to find it
+> across the board. A perfect example of this is ftrace. The fact that
+> it's in mainline has enabled google to: a) instrument their entire stack
+> to log events to it (see
+> http://www.opersys.com/downloads/cc-slides/android-debug/slides-main-181012.html#/82
+> and
+> http://www.opersys.com/downloads/cc-slides/android-debug/slides-main-181012.html#/83),
+> and b) provide app-developer-facing tools (see
+> https://developer.android.com/studio/command-line/systrace). Since this
+> tracing functionality is now integrated into Android Studio (look for
+> "System Trace" here:
+> https://developer.android.com/studio/profile/cpu-profiler), it's very
+> much "standard android" and additional proof, if any was needed, that
+> tracing is useful to everyone.
+>
+> A few years back I was asked by a customer to put together some class
+> material for internal Android debugging and performance analysis
+> (commercial disclaimer applies, but slides/exercises are under
+> "courseware":
+> http://www.opersys.com/training/android-debug-and-performance). ftrace
+> was very much in those early versions and it was great to show people
+> that they could use it "out of the box". Recently I wanted to update
+> this class material to cover eBPF and its applicability in Android. Holy
+> cow. That turned out to be less obvious than necessary and somewhat
+> peculiar to pull off. In this specific case, Joel tried a few things
+> (see
+> http://www.opersys.com/downloads/cc-slides/android-debug/slides-main-181012.html#/111)
+> before eventually settling on loading a Debian chroot jail into a live
+> Android (https://github.com/joelagnel/adeb) ... all of which require a
+> proper set of kernel headers to properly function. Don't get me wrong,
+> Joel's Androdeb makes this easy, but it's still outside the standard
+> Android MO.
+>
+> In short, let's just say that, contrary to ftrace, I don't see the path
+> for eBPF to being part of the standard toolset used by app developers
+> any time soon. The recently-released bpftrace might help in that regard,
+> but the kernel headers aren't too far in that regard either.
 
-The cost of the additional compare will not be noticeable if the branch
-prediction logic is working properly. Inverting the loop logic, however,
-will be a much bigger change and it may not guarantee it will be faster
-anyway. So I don't think we should down go this route :-)
+While I think there's definitely a place for eBPF as part of the
+Android performance toolkit, I think most users will end up using it
+through rich front-end performance collection and analysis tools (of
+the sort I'm working on) rather than directly as a first-line window
+into the operation of the system. Below this level is probably
+something like bpftrace, and below that, raw eBPF and ftrace
+manipulation. It's also worth noting that much of the time, system
+analysis is retrospection, not inspection (e.g., investigating the
+causes of rare and hard-to-reproduce bad behavior), and so iteration
+via interactive specification of eBPF programs isn't a practical path
+forward. It's still useful, even in this scenario, to be able (as part
+of higher-level tools) attach "canned" eBPF programs to the kernel to
+extract certain generally-useful bits of information, and in this
+capacity, Joel's header module would be useful.
 
-Cheers,
-Longman
+> Personally I advocated a more aggressive approach with Joel in private:
+> just put the darn headers straight into the kernel image, it's the
+> *only* artifact we're sure will follow the Android device whatever
+> happens to it (like built-in ftrace).
 
+I was thinking along similar lines. Ordinarily, we make loadable
+kernel modules. What we kind of want here is a non-loadable kernel
+module --- or a non-loadable section in the kernel image proper. I'm
+not familiar with early-stage kernel loader operation: I know it's
+possible to crease discardable sections in the kernel image, but can
+we create sections that are never slurped into memory in the first
+place? If not, maybe loading and immediately discarding the header
+section is good enough.
+
+> To that end, I even had some crazy
+> ideas on how to compress the headers even further than with std
+> compression algorithms -- here's a snippet from an email I sent Joel
+> some time back detailing such a hack:
+> > Since C headers have fairly constrained semantics and since the types of semantics generally used to name structs, etc. in the Linux kernel are well established, we can likely devise a very customized compression algorithm for the purpose.
+
+Would such a thing really do better than LZMA? LZMA already has very
+clever techniques for eliminating long-range redundancies in
+compressible text, including redundancies at the sub-byte level. I can
+certainly understand the benefit of stripping comments, since removing
+comments really does decrease the total amount of information the
+compressor has to preserve, but I'm not sure how much the encoding
+scheme you propose below would help, since it reminds me of the
+encoding scheme that LZMA would discover automatically.
+
+> Whether such craziness makes sense or is adopted or not isn't mine to
+> chart, but I certainly can't see eBPF reaching the same mass deployment
+> ftrace has within the Android ecosystem until there's a way to use it
+> without having to chase kernel headers independently of kernel images.
+> There are "too many clicks" involved and someone somewhere will drop the
+> ball if it's not glued to the kernel in some way shape or form. Any
+> solution that solves this is one I'd love to hear about.
+
+I agree. There definitely needs to be a "just collect a damn trace"
+button that works on any device, and for this button to work and
+incorporate eBPF, the system needs to be able to describe itself.
