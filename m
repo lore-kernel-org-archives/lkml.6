@@ -2,93 +2,120 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E727FC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:15:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFD24C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:16:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B33DD21019
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:15:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F92E21019
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:16:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jaswnsz8";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NYIUWhS/"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="J004psXZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726556AbfAWHPe (ORCPT
+        id S1726867AbfAWHQS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 02:15:34 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:45926 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726312AbfAWHPc (ORCPT
+        Wed, 23 Jan 2019 02:16:18 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:45047 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726783AbfAWHQS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 02:15:32 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id E40E960988; Wed, 23 Jan 2019 07:15:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548227731;
-        bh=88J7/67QlL6OqeUQld1nxuJiFh4K5ba3TOorJ53ZYIc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=jaswnsz8Tfz03lDaOqHOygbFouxBsjohsqzJLq5WB8bN4/QPeh4S1e7/yC9qo6e4D
-         JcaLgsVomELEuxEW0EVEHsQ6lE4Tn1Dr4sMNLnvFsroIvqa4B/UKsEAozcaXV1A3UO
-         99rSmFP+NeI19JVsaJKLxLXmZSnL4pwi0H2Z1TPk=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id D922160909;
-        Wed, 23 Jan 2019 07:15:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548227730;
-        bh=88J7/67QlL6OqeUQld1nxuJiFh4K5ba3TOorJ53ZYIc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=NYIUWhS/VRB+sE6fAm+Ku2IrehEjfv5W2NgJmRBoc8H3+aMyneQDdumZz30BVaKB0
-         vOj/Xmi0N3GHaH91TMREWfgW2shVHaU7uU4veiizeYJtNx+02Ik8Nc7TKEBY/4SP1m
-         wfUeQQ6PO9G4j6eTLJ4L+JmOOuM72dWiQBIRCiDQ=
+        Wed, 23 Jan 2019 02:16:18 -0500
+Received: by mail-pf1-f194.google.com with SMTP id u6so707226pfh.11
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 23:16:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=M0OY24iaJ+LUgpnwgOEWWd2b46N5j14tE0jLJuqHeC0=;
+        b=J004psXZOug1mdymxftV8S96zHa4pk9qXVZ8rkvUQh+cWfk6Cj+oIDPrJotDBA3CqQ
+         OQzt09UXIhzwf4PXXzHPBB/OvTQ8V+/EBDhDaSyNiLoIqtx4hRzvlvxRn42PGsDfRjs9
+         Qd4jy2QvpY01WXVfI7V3bCbIHX26h+LRbPugs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=M0OY24iaJ+LUgpnwgOEWWd2b46N5j14tE0jLJuqHeC0=;
+        b=OAqPpOlG3FwcvvI6ZR9f/awFtSSsvHodE8g7drlKdbgGXYhV/oKSHR9NrvPmVpfPw5
+         kdjiz6WtO2sbizFL0GH4d0H265G3SS/95Hpcmx+Ka9KqKGlsyPkqM0GEsAcuWFOxzfnd
+         C+8ILs3MccMY8qnXcu/vO4RlgGljp2ZV2e8OKORXG8U/jEh8JVJ3dpk85AeIahFqjCfF
+         M9XbDvsJrmH4TxaQDfzDQ4rfnIwwg4x1/Z7LvljxFiYLYXz0ap/GmZ3hHbwEPVIWHZlA
+         c5ejFOdt5fVu66FmEAheXOeWBwVRQGcyfX/oOWFeJI8P2GSswp2Yvng8NCVWfycBNSbZ
+         aI9A==
+X-Gm-Message-State: AJcUukdah55FR3+WwVPyUFHibpnOfWitduthaXxqUprax52VfskAYg7j
+        OHL0iEH5kUlKoL094VqVrswvJA==
+X-Google-Smtp-Source: ALg8bN6Dph+164Mj0YHE20MrAORr2EL3XF4Ug5oN5nprfjYnD05QqbWSmBA5fsxhlfyVNUk2CiJi+Q==
+X-Received: by 2002:a62:4587:: with SMTP id n7mr1087463pfi.118.1548227777202;
+        Tue, 22 Jan 2019 23:16:17 -0800 (PST)
+Received: from localhost ([122.172.102.63])
+        by smtp.gmail.com with ESMTPSA id h129sm46557742pfb.110.2019.01.22.23.16.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 22 Jan 2019 23:16:16 -0800 (PST)
+Date:   Wed, 23 Jan 2019 12:46:14 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
+        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH] opp: no need to check return value of debugfs_create
+ functions
+Message-ID: <20190123071614.nyzopisx4yhojgw3@vireshk-i7>
+References: <20190122152151.16139-18-gregkh@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 23 Jan 2019 12:45:30 +0530
-From:   alokc@codeaurora.org
-To:     Mark Brown <broonie@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-serial@vger.kernel.org,
-        andy.gross@linaro.org, david.brown@linaro.org,
-        georgi.djakov@linaro.org, dianders@chromium.org,
-        swboyd@chromium.org, bjorn.andersson@linaro.org,
-        linux-serial-owner@vger.kernel.org
-Subject: Re: [PATCH 4/6] spi: spi-geni-qcom: Add interconnect support
-In-Reply-To: <20190122202924.GL7579@sirena.org.uk>
-References: <1548138816-1149-1-git-send-email-alokc@codeaurora.org>
- <1548138816-1149-5-git-send-email-alokc@codeaurora.org>
- <20190122202924.GL7579@sirena.org.uk>
-Message-ID: <775cdd29a7d536772330a15a7013f251@codeaurora.org>
-X-Sender: alokc@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190122152151.16139-18-gregkh@linuxfoundation.org>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-01-23 01:59, Mark Brown wrote:
-> On Tue, Jan 22, 2019 at 12:03:34PM +0530, Alok Chauhan wrote:
+On 22-01-19, 16:21, Greg Kroah-Hartman wrote:
+> When calling debugfs functions, there is no need to ever check the
+> return value.  The function can work or not, but the code logic should
+> never do something different based on this.
 > 
->> Get the interconnect paths for SPI based Serial Engine device
->> and vote accordingly based on maximum supported SPI frequency.
-> 
-> Still not seeing anything except this patch here in my inbox - like I
-> said what's the story with dependencies?
+> Cc: Viresh Kumar <vireshk@kernel.org>
+> Cc: Nishanth Menon <nm@ti.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: linux-pm@vger.kernel.org
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+>  drivers/opp/core.c    |  10 +---
+>  drivers/opp/debugfs.c | 109 +++++++++++-------------------------------
+>  drivers/opp/opp.h     |  15 +++---
+>  3 files changed, 37 insertions(+), 97 deletions(-)
 
-I've added linux-spi mailing list to all the patches sent as part of 
-this series. Not sure why you didn't get other patches. Today I've 
-explicitly added you in all the patches.
-This change series basically enabled interconnect (as per 
-bindings/interconnect/interconnect.txt) support in GENI QUPs based 
-drivers so appropriate BW request can be put based on SE usages.
-here is my complete change series: 
-https://lore.kernel.org/lkml/1548069703-26595-1-git-send-email-alokc@codeaurora.org/
-I hope I answer to your question properly.
+Applied with following changes. Thanks Greg.
 
+diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+index 91d15c58eae1..d455b84cce5a 100644
+--- a/drivers/opp/core.c
++++ b/drivers/opp/core.c
+@@ -793,7 +793,6 @@ static struct opp_device *_add_opp_dev_unlocked(const struct device *dev,
+                                                struct opp_table *opp_table)
+ {
+        struct opp_device *opp_dev;
+-       int ret;
+ 
+        opp_dev = kzalloc(sizeof(*opp_dev), GFP_KERNEL);
+        if (!opp_dev)
+diff --git a/drivers/opp/debugfs.c b/drivers/opp/debugfs.c
+index baac1ae33c55..a1c57fe14de4 100644
+--- a/drivers/opp/debugfs.c
++++ b/drivers/opp/debugfs.c
+@@ -93,7 +93,8 @@ void opp_debug_create_one(struct dev_pm_opp *opp, struct opp_table *opp_table)
+        debugfs_create_bool("suspend", S_IRUGO, d, &opp->suspend);
+        debugfs_create_u32("performance_state", S_IRUGO, d, &opp->pstate);
+        debugfs_create_ulong("rate_hz", S_IRUGO, d, &opp->rate);
+-       debugfs_create_ulong("clock_latency_ns", S_IRUGO, d, &opp->clock_latency_ns);
++       debugfs_create_ulong("clock_latency_ns", S_IRUGO, d,
++                            &opp->clock_latency_ns);
+ 
+        opp_debug_create_supplies(opp, opp_table, d);
 
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
-Forum,a Linux Foundation Collaborative Project
+viresh
