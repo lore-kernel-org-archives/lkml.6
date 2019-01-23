@@ -2,99 +2,169 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9AE3C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:33:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C77A5C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:34:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C07F821872
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:33:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="MRoxCjVD"
+	by mail.kernel.org (Postfix) with ESMTP id A600921872
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:34:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726335AbfAWSd4 (ORCPT
+        id S1726357AbfAWSec (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 13:33:56 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:45467 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726035AbfAWSdz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 13:33:55 -0500
-Received: by mail-pl1-f194.google.com with SMTP id a14so1569918plm.12
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 10:33:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=DL3q+IUTyWeX3nP6URMGb0kr1tY0HYZhoeMEnZgMdlQ=;
-        b=MRoxCjVDiMpMfRSuuTsMPA5eS5LdypuT1S2N03TZcMho7FQXUcqSoEaCerSl2mJSjA
-         L3XXlEp+74C18MqYyGfU52SF5H+U6ImCqe+jaYEYH7ZVKXpJJnl7LQxStanFmrIweHS5
-         /tBPeNphOUP8B2254pKoPEbLeZ1GjS0WNrviFe7UHab/ioTFcn+EnOyhQi9VbkbEjOig
-         2IEXeZo0C2hgTWQPEovij6KTPPXLOhz6X2N6BvOl7lxVIdGJ/FoiuF9IoJCh7DHTD+T3
-         FmErd6EGssWOCKW9HXk7eImFEe8AHlQBc6Ct7miwYIzNkUPa4wchu/ZDQvmKYJWC6SDb
-         DjbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DL3q+IUTyWeX3nP6URMGb0kr1tY0HYZhoeMEnZgMdlQ=;
-        b=WoSzwDhWq0QG+ct2/WS2fYwWc+UajBBwbINWkayQGHzXCd2HG1EHBiplNMSBlP3C9W
-         GY6agUCoX+0NN4mB/r78b21Zs+1EmFwYVrQK8amQdFcVouUDyDK0mPwuzUcjDEbFkwb8
-         nEhxvViWBnVrmhKuD+TMCNBq+3z3uzl7kLfI7zUe2J1bumcGPME/LTrVFQLTgipxF9sp
-         rmGErjb82plAPOBX4dOBpMyTCO/I7IvT+kCpmZU4cr/m2ISBmoOE3QiKQDVW7oYhaFon
-         nmZXxQx/HgF85NNuP+3Ic37rSfY9nVSWAcpxX39YsSc7z5SCPoPLQ7VRvREp9p6R1JXN
-         cM2A==
-X-Gm-Message-State: AJcUukfirZPXTJr5janjzOprfuS2kPFDHlxg4ZhebFn3HOTJuJxVybli
-        ++8rdOcPOSRmceiBPf7ahySAIQ==
-X-Google-Smtp-Source: ALg8bN6D6auyCF7XfjhLDWY3Z0nqTfcDZippy5nFZCK123n23O0mDnr0DalQDRX5fxd/LfprIfuyPw==
-X-Received: by 2002:a17:902:4225:: with SMTP id g34mr3384728pld.152.1548268435382;
-        Wed, 23 Jan 2019 10:33:55 -0800 (PST)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id z8sm28599907pgg.62.2019.01.23.10.33.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 23 Jan 2019 10:33:54 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1gmNLV-00048Y-OT; Wed, 23 Jan 2019 11:33:53 -0700
-Date:   Wed, 23 Jan 2019 11:33:53 -0700
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Davidlohr Bueso <dave@stgolabs.net>
-Cc:     akpm@linux-foundation.org, dledford@redhat.com, jack@suse.de,
-        ira.weiny@intel.com, linux-rdma@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Davidlohr Bueso <dbueso@suse.de>,
-        Christoph Lameter <cl@linux.com>, Jan Kara <jack@suse.cz>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>
-Subject: Re: [PATCH 1/6] mm: make mm->pinned_vm an atomic64 counter
-Message-ID: <20190123183353.GA15768@ziepe.ca>
-References: <20190121174220.10583-1-dave@stgolabs.net>
- <20190121174220.10583-2-dave@stgolabs.net>
+        Wed, 23 Jan 2019 13:34:32 -0500
+Received: from anholt.net ([50.246.234.109]:56524 "EHLO anholt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726095AbfAWSeb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 13:34:31 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by anholt.net (Postfix) with ESMTP id 2BEBE10A2A9B;
+        Wed, 23 Jan 2019 10:34:31 -0800 (PST)
+X-Virus-Scanned: Debian amavisd-new at anholt.net
+Received: from anholt.net ([127.0.0.1])
+        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id SCLOHzzh0h_Y; Wed, 23 Jan 2019 10:34:29 -0800 (PST)
+Received: from eliezer.anholt.net (localhost [127.0.0.1])
+        by anholt.net (Postfix) with ESMTP id A3B0A10A1DB6;
+        Wed, 23 Jan 2019 10:34:29 -0800 (PST)
+Received: by eliezer.anholt.net (Postfix, from userid 1000)
+        id 118852FE3A6E; Wed, 23 Jan 2019 10:34:29 -0800 (PST)
+From:   Eric Anholt <eric@anholt.net>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Cc:     David Airlie <airlied@linux.ie>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Eben Upton <eben@raspberrypi.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Subject: Re: [PATCH v3 1/4] drm/vc4: Wait for display list synchronization when completing commit
+In-Reply-To: <20190108145056.2276-2-paul.kocialkowski@bootlin.com>
+References: <20190108145056.2276-1-paul.kocialkowski@bootlin.com> <20190108145056.2276-2-paul.kocialkowski@bootlin.com>
+User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
+Date:   Wed, 23 Jan 2019 10:34:28 -0800
+Message-ID: <87d0onussr.fsf@anholt.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190121174220.10583-2-dave@stgolabs.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 09:42:15AM -0800, Davidlohr Bueso wrote:
-> Taking a sleeping lock to _only_ increment a variable is quite the
-> overkill, and pretty much all users do this. Furthermore, some drivers
-> (ie: infiniband and scif) that need pinned semantics can go to quite
-> some trouble to actually delay via workqueue (un)accounting for pinned
-> pages when not possible to acquire it.
-> 
-> By making the counter atomic we no longer need to hold the mmap_sem
-> and can simply some code around it for pinned_vm users. The counter
-> is 64-bit such that we need not worry about overflows such as rdma
-> user input controlled from userspace.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-I see a number of MM people Reviewed-by this so are we good to take
-this in the RDMA tree now?
+Paul Kocialkowski <paul.kocialkowski@bootlin.com> writes:
 
-Regards,
-Jason
+> During an atomic commit, the HVS is configured with a display list
+> for the channel matching the associated CRTC. The Pixel Valve (CRTC)
+> and encoder are also configured for the new setup at that time.
+> While the Pixel Valve and encoder are reconfigured synchronously, the
+> HVS is only reconfigured after the display list address (DISPLIST) has
+> been updated to the current display list address (DISPLACTX), which is
+> the responsibility of the hardware.
+>
+> The time frame during which the HVS is still running on its previous
+> configuration but the CRTC and encoder have been reconfigured already
+> can lead to a number of synchronization issues. They will eventually
+> cause errors reported on the FIFOs, such as underruns.
+>
+> With underrun detection enabled (from Boris Brezillon's series), this
+> leads to unreliable underrun detection with random false positives.
+>
+> To ensure a coherent state, wait for each enabled channel of the HVS
+> to synchronize its current display list address. This fixes the issue
+> of random underrun reporting on commits.
+>
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> ---
+>  drivers/gpu/drm/vc4/vc4_drv.h  |  1 +
+>  drivers/gpu/drm/vc4/vc4_hvs.c  | 17 +++++++++++++++++
+>  drivers/gpu/drm/vc4/vc4_kms.c  |  2 ++
+>  drivers/gpu/drm/vc4/vc4_regs.h |  2 ++
+>  4 files changed, 22 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/vc4/vc4_drv.h b/drivers/gpu/drm/vc4/vc4_drv.h
+> index c24b078f0593..955f157f5ad0 100644
+> --- a/drivers/gpu/drm/vc4/vc4_drv.h
+> +++ b/drivers/gpu/drm/vc4/vc4_drv.h
+> @@ -772,6 +772,7 @@ void vc4_irq_reset(struct drm_device *dev);
+>  extern struct platform_driver vc4_hvs_driver;
+>  void vc4_hvs_dump_state(struct drm_device *dev);
+>  int vc4_hvs_debugfs_regs(struct seq_file *m, void *unused);
+> +void vc4_hvs_sync_dlist(struct drm_device *dev);
+>=20=20
+>  /* vc4_kms.c */
+>  int vc4_kms_load(struct drm_device *dev);
+> diff --git a/drivers/gpu/drm/vc4/vc4_hvs.c b/drivers/gpu/drm/vc4/vc4_hvs.c
+> index 5d8c749c9749..1ba60b8e0c2d 100644
+> --- a/drivers/gpu/drm/vc4/vc4_hvs.c
+> +++ b/drivers/gpu/drm/vc4/vc4_hvs.c
+> @@ -166,6 +166,23 @@ static int vc4_hvs_upload_linear_kernel(struct vc4_h=
+vs *hvs,
+>  	return 0;
+>  }
+>=20=20
+> +void vc4_hvs_sync_dlist(struct drm_device *dev)
+> +{
+> +	struct vc4_dev *vc4 =3D to_vc4_dev(dev);
+> +	unsigned int i;
+> +	int ret;
+> +
+> +	for (i =3D 0; i < SCALER_CHANNELS_COUNT; i++) {
+> +		if (!(HVS_READ(SCALER_DISPCTRLX(i)) & SCALER_DISPCTRLX_ENABLE))
+> +			continue;
+> +
+> +		ret =3D wait_for(HVS_READ(SCALER_DISPLACTX(i)) =3D=3D
+> +			       HVS_READ(SCALER_DISPLISTX(i)), 1000);
+> +		WARN(ret, "Timeout waiting for channel %d display list sync\n",
+> +		     i);
+> +	}
+> +}
+> +
+>  static int vc4_hvs_bind(struct device *dev, struct device *master, void =
+*data)
+>  {
+>  	struct platform_device *pdev =3D to_platform_device(dev);
+> diff --git a/drivers/gpu/drm/vc4/vc4_kms.c b/drivers/gpu/drm/vc4/vc4_kms.c
+> index 0490edb192a1..2d66a2b57a91 100644
+> --- a/drivers/gpu/drm/vc4/vc4_kms.c
+> +++ b/drivers/gpu/drm/vc4/vc4_kms.c
+> @@ -155,6 +155,8 @@ vc4_atomic_complete_commit(struct drm_atomic_state *s=
+tate)
+>=20=20
+>  	drm_atomic_helper_commit_hw_done(state);
+>=20=20
+> +	vc4_hvs_sync_dlist(dev);
+> +
+>  	drm_atomic_helper_wait_for_flip_done(dev, state);
+
+wait_for_flip_done should already be waiting for DISPLACTX to match our
+crtc's display list, though, right (see vc4_crtc_handle_page_flip())?
+This seems like a no-op to me.
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlxIs7QACgkQtdYpNtH8
+nuggiA//bWr2s7jgOPZ3iugGZA383KlyLd52nnKPkRBsRvY8w3UkDc8XAPsB22Yh
+uvdbSmGCOKO15y/r2MFWmjpTk66wTowJeaqnPAvU2HlmI90vOCH0kv7b8gFjzL5W
+l4hhj9P26HtKKGWSfzvYQhguinw3VbdFmclvfcvzg2hxAY35kz2qc5W4/edRW3KZ
+fts1sNipEmcUWQI+gw530sMpo6NWqr12aRIaA6pUdoDGH/+TrzGvJiZ92FFhdxk4
+ROjQk4hpcPSZTCVWx/v3igra1YyyZopg3nLECMFeEBnux1FcQsBzVZokIo//WC4L
+MOPjIt1DEtWdONcAGtLU/Hxn62PrOSAd8ASaM9I5niJ/H4bfPGy5h2HdDKqYQTTC
+WX7fdINp4haTtYcfL7HlIDO9zThdSqLSSEBgUCC7V1P+lesJFC7Mg9mztiIa32bg
+SvYCDcgYfYLqabBN9ui/VcmfKyeFEbaaL9psdFOwnc2c+nHoLatI81uQxOJ+2PoC
+fdTTKg8aOOl7iGVoVSQ9Z42zA1uLyMPXWgrtvxcIu14S72oAp2BAgZOaX48elJzs
+4IaefnIPlOpKtA8d8jhGiLEiYZI8BQfzpuPAC1NrXzBzjb2visUvf8c2U2WcMhVN
+V8ybytZt52fzxLWjEafdTqB3V7mSClIgNq/kRyyzDVaw05Tfkj8=
+=683S
+-----END PGP SIGNATURE-----
+--=-=-=--
