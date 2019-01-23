@@ -4,23 +4,23 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A468FC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 16:31:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D594C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 16:31:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81BA22184C
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 16:31:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68C69217D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 16:31:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726840AbfAWQbI (ORCPT
+        id S1726352AbfAWQax (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 11:31:08 -0500
-Received: from 8bytes.org ([81.169.241.247]:59242 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726197AbfAWQax (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 23 Jan 2019 11:30:53 -0500
+Received: from 8bytes.org ([81.169.241.247]:59178 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725994AbfAWQaw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 11:30:52 -0500
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id C807B450; Wed, 23 Jan 2019 17:30:51 +0100 (CET)
+        id 424A6273; Wed, 23 Jan 2019 17:30:51 +0100 (CET)
 From:   Joerg Roedel <joro@8bytes.org>
 To:     "Michael S . Tsirkin" <mst@redhat.com>,
         Jason Wang <jasowang@redhat.com>,
@@ -32,9 +32,9 @@ Cc:     Jens Axboe <axboe@kernel.dk>,
         iommu@lists.linux-foundation.org, jfehlig@suse.com,
         jon.grimm@amd.com, brijesh.singh@amd.com, joro@8bytes.org,
         jroedel@suse.de
-Subject: [PATCH 4/5] virtio: Introduce virtio_max_dma_size()
-Date:   Wed, 23 Jan 2019 17:30:48 +0100
-Message-Id: <20190123163049.24863-5-joro@8bytes.org>
+Subject: [PATCH 1/5] swiotlb: Introduce swiotlb_max_mapping_size()
+Date:   Wed, 23 Jan 2019 17:30:45 +0100
+Message-Id: <20190123163049.24863-2-joro@8bytes.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190123163049.24863-1-joro@8bytes.org>
 References: <20190123163049.24863-1-joro@8bytes.org>
@@ -45,56 +45,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Joerg Roedel <jroedel@suse.de>
 
-This function returns the maximum segment size for a single
-dma transaction of a virtio device. The possible limit comes
-from the SWIOTLB implementation in the Linux kernel, that
-has an upper limit of (currently) 256kb of contiguous
-memory it can map. Other DMA-API implementations might also
-have limits.
-
-Use the new dma_max_mapping_size() function to determine the
-maximum mapping size when DMA-API is in use for virtio.
+The function returns the maximum size that can be remapped
+by the SWIOTLB implementation. This function will be later
+exposed to users through the DMA-API.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- drivers/virtio/virtio_ring.c | 10 ++++++++++
- include/linux/virtio.h       |  2 ++
- 2 files changed, 12 insertions(+)
+ include/linux/swiotlb.h | 5 +++++
+ kernel/dma/swiotlb.c    | 5 +++++
+ 2 files changed, 10 insertions(+)
 
-diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-index cd7e755484e3..9ca3fe6af9fa 100644
---- a/drivers/virtio/virtio_ring.c
-+++ b/drivers/virtio/virtio_ring.c
-@@ -266,6 +266,16 @@ static bool vring_use_dma_api(struct virtio_device *vdev)
- 	return false;
- }
+diff --git a/include/linux/swiotlb.h b/include/linux/swiotlb.h
+index 7c007ed7505f..ceb623321f38 100644
+--- a/include/linux/swiotlb.h
++++ b/include/linux/swiotlb.h
+@@ -62,6 +62,7 @@ extern void swiotlb_tbl_sync_single(struct device *hwdev,
  
-+size_t virtio_max_dma_size(struct virtio_device *vdev)
-+{
-+	size_t max_segment_size = SIZE_MAX;
-+
-+	if (vring_use_dma_api(vdev))
-+		max_segment_size = dma_max_mapping_size(&vdev->dev);
-+
-+	return max_segment_size;
-+}
-+
- static void *vring_alloc_queue(struct virtio_device *vdev, size_t size,
- 			      dma_addr_t *dma_handle, gfp_t flag)
+ extern int
+ swiotlb_dma_supported(struct device *hwdev, u64 mask);
++extern size_t swiotlb_max_mapping_size(struct device *dev);
+ 
+ #ifdef CONFIG_SWIOTLB
+ extern enum swiotlb_force swiotlb_force;
+@@ -95,6 +96,10 @@ static inline unsigned int swiotlb_max_segment(void)
  {
-diff --git a/include/linux/virtio.h b/include/linux/virtio.h
-index fa1b5da2804e..673fe3ef3607 100644
---- a/include/linux/virtio.h
-+++ b/include/linux/virtio.h
-@@ -157,6 +157,8 @@ int virtio_device_freeze(struct virtio_device *dev);
- int virtio_device_restore(struct virtio_device *dev);
- #endif
+ 	return 0;
+ }
++static inline size_t swiotlb_max_mapping_size(struct device *dev)
++{
++	return SIZE_MAX;
++}
+ #endif /* CONFIG_SWIOTLB */
  
-+size_t virtio_max_dma_size(struct virtio_device *vdev);
+ extern void swiotlb_print_info(void);
+diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
+index 1fb6fd68b9c7..9cb21259cb0b 100644
+--- a/kernel/dma/swiotlb.c
++++ b/kernel/dma/swiotlb.c
+@@ -662,3 +662,8 @@ swiotlb_dma_supported(struct device *hwdev, u64 mask)
+ {
+ 	return __phys_to_dma(hwdev, io_tlb_end - 1) <= mask;
+ }
 +
- #define virtio_device_for_each_vq(vdev, vq) \
- 	list_for_each_entry(vq, &vdev->vqs, list)
- 
++size_t swiotlb_max_mapping_size(struct device *dev)
++{
++	return ((size_t)1 << IO_TLB_SHIFT) * IO_TLB_SEGSIZE;
++}
 -- 
 2.17.1
 
