@@ -2,28 +2,29 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 768C5C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 11:11:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CB9AC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 11:12:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 309D121019
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 11:11:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDC2721019
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 11:12:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727363AbfAWLLS (ORCPT
+        id S1727369AbfAWLMA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 06:11:18 -0500
-Received: from smtp2207-205.mail.aliyun.com ([121.197.207.205]:49166 "EHLO
+        Wed, 23 Jan 2019 06:12:00 -0500
+Received: from smtp2207-205.mail.aliyun.com ([121.197.207.205]:35526 "EHLO
         smtp2207-205.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726317AbfAWLLS (ORCPT
+        by vger.kernel.org with ESMTP id S1726207AbfAWLMA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 06:11:18 -0500
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07436282|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01l07391;MF=liaoweixiong@allwinnertech.com;NM=1;PH=DS;RN=13;RT=13;SR=0;TI=SMTPD_---.DpcaJmP_1548241867;
-Received: from 172.16.10.102(mailfrom:liaoweixiong@allwinnertech.com fp:SMTPD_---.DpcaJmP_1548241867)
-          by smtp.aliyun-inc.com(10.147.42.253);
-          Wed, 23 Jan 2019 19:11:08 +0800
+        Wed, 23 Jan 2019 06:12:00 -0500
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07436282|-1;CH=green;FP=13454414636332435291|1|1|12|0|-1|-1|-1;HT=e01l07394;MF=liaoweixiong@allwinnertech.com;NM=1;PH=DS;RN=13;RT=13;SR=0;TI=SMTPD_---.DpcbpW7_1548241911;
+Received: from 172.16.10.102(mailfrom:liaoweixiong@allwinnertech.com fp:SMTPD_---.DpcbpW7_1548241911)
+          by smtp.aliyun-inc.com(10.147.41.137);
+          Wed, 23 Jan 2019 19:11:51 +0800
+From:   liaoweixiong <liaoweixiong@allwinnertech.com>
 Subject: Re: [RFC v5 3/4] pstore/blk: support pmsg for pstore block
 To:     Kees Cook <keescook@chromium.org>
 Cc:     Anton Vorontsov <anton@enomsg.org>,
@@ -41,9 +42,8 @@ Cc:     Anton Vorontsov <anton@enomsg.org>,
 References: <1546862462-19640-1-git-send-email-liaoweixiong@allwinnertech.com>
  <1546862462-19640-4-git-send-email-liaoweixiong@allwinnertech.com>
  <CAGXu5jKeAAYDD-sBHmXCSJW3VNTb27AKpWpyCjP4i_g0MwSLDw@mail.gmail.com>
-From:   =?UTF-8?B?5buW5aiB6ZuE?= <liaoweixiong@allwinnertech.com>
-Message-ID: <a17e4c5e-cb54-8662-288b-b44b7f356650@allwinnertech.com>
-Date:   Wed, 23 Jan 2019 19:11:10 +0800
+Message-ID: <06553995-8dda-93a2-b142-3ca7fcee60ce@allwinnertech.com>
+Date:   Wed, 23 Jan 2019 19:11:53 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
@@ -55,6 +55,8 @@ Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+
+Resend this mail.
 
 On 2019-01-18 08:17, Kees Cook wrote:
 > On Mon, Jan 7, 2019 at 4:01 AM liaoweixiong
