@@ -7,60 +7,60 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73F53C282C5
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 00:01:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72058C282C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 00:01:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36393217D4
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 00:01:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1614D20856
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 00:01:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MAC1DOR7"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a+zUjWEq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727068AbfAWABO (ORCPT
+        id S1727105AbfAWABS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 22 Jan 2019 19:01:14 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:37967 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726979AbfAWABL (ORCPT
+        Tue, 22 Jan 2019 19:01:18 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:50432 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726992AbfAWABN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 22 Jan 2019 19:01:11 -0500
-Received: by mail-wm1-f65.google.com with SMTP id m22so311859wml.3
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 16:01:08 -0800 (PST)
+        Tue, 22 Jan 2019 19:01:13 -0500
+Received: by mail-wm1-f67.google.com with SMTP id n190so331820wmd.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jan 2019 16:01:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=uCcCZS37uauQgfUxCRmTk5vMM6TedLUwbdrwdxUqvBw=;
-        b=MAC1DOR73QnU10tKyIRyQhUZEy54XCOOBsY4R42wbdeEy8aD0LIo7zlhbT6QX4xTIr
-         wLx2j2/jE6+4pNUlnamqrhx1MdO6M2itvsqpB9ksofoelRdPjU/K/q7kY/AuRl5kxNEb
-         fDYRxsWWG24jWTQuvvqg7wZlZ7iWaddqQuJaYWG0Gj//jo9IAykM5xG3jmLnwDJZAo/5
-         R1thvAZTcw+x74QE+NlYlz+a2R4A4rJqcWgIPrBC0rIWAMThppnv+KDjUfROGdSHrcxN
-         DCwjkeAwfDmxbZ54/AXeyJUYZDFPuemcbafJ1PsLwOZwx26ioAa8iGvCuNvZ9vP/EAIi
-         uTrg==
+        bh=yLwbXkXfqT0yHkqXWjfuZAs0aLLx+HOeHgmWGgwS4Cs=;
+        b=a+zUjWEqHZrFJ+LlkI4lk3AQjWvT+FVtxJk5NLRLOKDoqjiks2V72zuI1sUnyS/eDj
+         EmyRUjGq2TkcqqT5Ajy2KAw3Z8s9UeFakiIR/s6Px0A2FPX5NV8PgsX0jl0YWgaEOvzy
+         tF6IPW90/5fycdPoJulXg287Mq9feAkANRIng6D8x/WwF1oagn3U+rLqu6XhmravnW7A
+         GBGJT1Po1hcUOcvgGYfIXEbOCNl91o6N1nJlg6BFOjj8wJUAmN3pTfJJAmVVep6M9ZoF
+         iuUbo7USL53Zdfos/hGvijR7arLFeK5i5RcRum0+jDyVKReDKwBnP7uGVYgH5RuFwdel
+         FPow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=uCcCZS37uauQgfUxCRmTk5vMM6TedLUwbdrwdxUqvBw=;
-        b=i4V1RL4Lo1UWKQpiT2lAo4IsgqIiqbyONxwnR6Cwj2T4Uflhq9xvnZYylO6ByEy9AZ
-         2i9d2f+4lNOyJmbsbeIaN2iG7IP22BNv8P/Z3zBtDezPONPn9y5CTf2XPxh1m807WAIe
-         W4sdgzgWSiKCl4nXLoipb88+QTRVGIiVUFJoNCTsnfg7Fk6dPIXjUI/8bk1+Wp+i7t2Q
-         yqr6dbVzfMk2QmoNCjgVWeSj/NzPfzkDtuIKDi3xLIAUVGEHglZCCLEzTwIMGjl7F7lG
-         WkHjy88Qfd161k9SFRWaA6tVz2hUBGZge4NNEMhPPw5Bc98WFN4teu1VSzE1zPTRx5V+
-         JqUQ==
-X-Gm-Message-State: AJcUukfOlBq7slR4MJKWvLlQc26+2m3V0fgzHKH4hqWolJqvG/Ea/TPb
-        TMh+tf3x4RSspmhtOcQgKIysxwAY
-X-Google-Smtp-Source: ALg8bN74GpQj5fuy+syimvlLtGMHRL+SfMawnHU1R9PHc0R2AdGbaMKYbYDZKsuq5dcem65c5ZNNnQ==
-X-Received: by 2002:a1c:9692:: with SMTP id y140mr474394wmd.67.1548201666832;
-        Tue, 22 Jan 2019 16:01:06 -0800 (PST)
+        bh=yLwbXkXfqT0yHkqXWjfuZAs0aLLx+HOeHgmWGgwS4Cs=;
+        b=YwTQXI5+OcxAJWAvEegdNoDYCSBf755T30FAuBrhM21mgkU1DHyzM8j0F60z0EHPao
+         wQAX163HJxOmNLQdrHBHdLD5C0z0wouI+jvg4LQ9LffJRe0hJiwdDpUJqTm5pYqxPoPZ
+         z05rTIv5HROH0VUGB5z3CwkMkU0s75DCAds1GSjIQkdIWs1Y5ZnN9CnwI/rRY75THcxC
+         J/dBV2Xha2eKwmwdyNsJcT8c/5sLvJEFGADJQpxZMKoazhvZHkMMTNUnbizICjG5Ievz
+         ab6l3iWaeH6rBQH/qdTL1dQLHoAVMqbZull14kiBE5BVOjklZFYNhhxj7Nwrody7ahc1
+         Vigw==
+X-Gm-Message-State: AJcUukfOz5uK8qItKTMHJ1qA/g+jfL8v2ZrK4Mcf/EBkQukHbkyumvD6
+        K8r27CpENDZccNTeoyOQtok=
+X-Google-Smtp-Source: ALg8bN5kQOn/U7QE/cM4ow+XYPqWTYPQA5+Ohe7oSWv+pMtnU0aAmKTcH5dxHKniw4PDGDZXLxddcg==
+X-Received: by 2002:a1c:c543:: with SMTP id v64mr428784wmf.123.1548201669322;
+        Tue, 22 Jan 2019 16:01:09 -0800 (PST)
 Received: from oded-ubuntu-desktop.habana-labs.com ([31.154.190.6])
-        by smtp.gmail.com with ESMTPSA id 125sm97582630wmm.26.2019.01.22.16.01.05
+        by smtp.gmail.com with ESMTPSA id 125sm97582630wmm.26.2019.01.22.16.01.08
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Jan 2019 16:01:06 -0800 (PST)
+        Tue, 22 Jan 2019 16:01:08 -0800 (PST)
 From:   Oded Gabbay <oded.gabbay@gmail.com>
 To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
 Cc:     ogabbay@habana.ai
-Subject: [PATCH 03/15] habanalabs: add basic Goya support
-Date:   Wed, 23 Jan 2019 02:00:45 +0200
-Message-Id: <20190123000057.31477-4-oded.gabbay@gmail.com>
+Subject: [PATCH 05/15] habanalabs: add command buffer module
+Date:   Wed, 23 Jan 2019 02:00:47 +0200
+Message-Id: <20190123000057.31477-6-oded.gabbay@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190123000057.31477-1-oded.gabbay@gmail.com>
 References: <20190123000057.31477-1-oded.gabbay@gmail.com>
@@ -69,193 +69,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds a basic support for the Goya device. The code initializes
-the device's PCI controller and PCI bars. It also initializes various S/W
-structures and adds some basic helper functions.
+This patch adds the CB module, which allows the user to create and
+destroy CBs and to map them to the user's process address-space.
+
+A command buffer is a memory blocks that reside in DMA-able address-space
+and is physically contiguous so it can be accessed by the device without
+MMU translation. The command buffer memory is allocated using the
+coherent DMA API.
+
+When creating a new CB, the IOCTL returns a handle of it, and the
+user-space process needs to use that handle to mmap the buffer to get a VA
+in the user's address-space.
+
+Before destroying (freeing) a CB, the user must unmap the CB's VA using the
+CB handle.
+
+Each CB has a reference counter, which tracks its usage in command
+submissions and also its mmaps (only a single mmap is allowed).
+
+The driver maintains a pool of pre-allocated CBs in order to reduce
+latency during command submissions. In case the pool is empty, the driver
+will go to the slow-path of allocating a new CB, i.e. calling
+dma_alloc_coherent.
 
 Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
 ---
- drivers/misc/habanalabs/Makefile            |   5 +-
- drivers/misc/habanalabs/device.c            |  71 +++
- drivers/misc/habanalabs/goya/Makefile       |   3 +
- drivers/misc/habanalabs/goya/goya.c         | 633 ++++++++++++++++++++
- drivers/misc/habanalabs/goya/goyaP.h        | 125 ++++
- drivers/misc/habanalabs/habanalabs.h        | 131 ++++
- drivers/misc/habanalabs/habanalabs_drv.c    |   3 +
- drivers/misc/habanalabs/include/goya/goya.h | 115 ++++
- 8 files changed, 1085 insertions(+), 1 deletion(-)
- create mode 100644 drivers/misc/habanalabs/goya/Makefile
- create mode 100644 drivers/misc/habanalabs/goya/goya.c
- create mode 100644 drivers/misc/habanalabs/goya/goyaP.h
- create mode 100644 drivers/misc/habanalabs/include/goya/goya.h
+ drivers/misc/habanalabs/Makefile           |   3 +-
+ drivers/misc/habanalabs/command_buffer.c   | 414 +++++++++++++++++++++
+ drivers/misc/habanalabs/device.c           |  43 ++-
+ drivers/misc/habanalabs/goya/goya.c        |  28 ++
+ drivers/misc/habanalabs/habanalabs.h       |  95 ++++-
+ drivers/misc/habanalabs/habanalabs_drv.c   |   2 +
+ drivers/misc/habanalabs/habanalabs_ioctl.c | 102 +++++
+ include/uapi/misc/habanalabs.h             |  62 +++
+ 8 files changed, 746 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/misc/habanalabs/command_buffer.c
+ create mode 100644 drivers/misc/habanalabs/habanalabs_ioctl.c
+ create mode 100644 include/uapi/misc/habanalabs.h
 
 diff --git a/drivers/misc/habanalabs/Makefile b/drivers/misc/habanalabs/Makefile
-index b41433a09e02..6f1ead69bd77 100644
+index 3ffbadc2ca01..2530c9b78ca4 100644
 --- a/drivers/misc/habanalabs/Makefile
 +++ b/drivers/misc/habanalabs/Makefile
-@@ -4,4 +4,7 @@
+@@ -4,7 +4,8 @@
  
  obj-m	:= habanalabs.o
  
--habanalabs-y := habanalabs_drv.o device.o
-\ No newline at end of file
-+habanalabs-y := habanalabs_drv.o device.o
-+
-+include $(src)/goya/Makefile
-+habanalabs-y += $(HL_GOYA_FILES)
-diff --git a/drivers/misc/habanalabs/device.c b/drivers/misc/habanalabs/device.c
-index 376b55eb73d4..a4276ef559b3 100644
---- a/drivers/misc/habanalabs/device.c
-+++ b/drivers/misc/habanalabs/device.c
-@@ -116,8 +116,11 @@ static int device_setup_cdev(struct hl_device *hdev, struct class *hclass,
-  */
- static int device_early_init(struct hl_device *hdev)
- {
-+	int rc;
-+
- 	switch (hdev->asic_type) {
- 	case ASIC_GOYA:
-+		goya_set_asic_funcs(hdev);
- 		sprintf(hdev->asic_name, "GOYA");
- 		break;
- 	default:
-@@ -126,6 +129,10 @@ static int device_early_init(struct hl_device *hdev)
- 		return -EINVAL;
- 	}
+-habanalabs-y := habanalabs_drv.o device.o context.o asid.o
++habanalabs-y := habanalabs_drv.o device.o context.o asid.o habanalabs_ioctl.o \
++		command_buffer.o
  
-+	rc = hdev->asic_funcs->early_init(hdev);
-+	if (rc)
-+		return rc;
-+
- 	return 0;
- }
- 
-@@ -137,6 +144,10 @@ static int device_early_init(struct hl_device *hdev)
-  */
- static void device_early_fini(struct hl_device *hdev)
- {
-+
-+	if (hdev->asic_funcs->early_fini)
-+		hdev->asic_funcs->early_fini(hdev);
-+
- }
- 
- /**
-@@ -150,8 +161,15 @@ static void device_early_fini(struct hl_device *hdev)
-  */
- int hl_device_suspend(struct hl_device *hdev)
- {
-+	int rc;
-+
- 	pci_save_state(hdev->pdev);
- 
-+	rc = hdev->asic_funcs->suspend(hdev);
-+	if (rc)
-+		dev_err(hdev->dev,
-+			"Failed to disable PCI access of device CPU\n");
-+
- 	/* Shut down the device */
- 	pci_disable_device(hdev->pdev);
- 	pci_set_power_state(hdev->pdev, PCI_D3hot);
-@@ -181,6 +199,13 @@ int hl_device_resume(struct hl_device *hdev)
- 		return rc;
- 	}
- 
-+	rc = hdev->asic_funcs->resume(hdev);
-+	if (rc) {
-+		dev_err(hdev->dev,
-+			"Failed to enable PCI access from device CPU\n");
-+		return rc;
-+	}
-+
- 	return 0;
- }
- 
-@@ -208,11 +233,21 @@ int hl_device_init(struct hl_device *hdev, struct class *hclass)
- 	if (rc)
- 		goto release_device;
- 
-+	/*
-+	 * Start calling ASIC initialization. First S/W then H/W and finally
-+	 * late init
-+	 */
-+	rc = hdev->asic_funcs->sw_init(hdev);
-+	if (rc)
-+		goto early_fini;
-+
- 	dev_notice(hdev->dev,
- 		"Successfully added device to habanalabs driver\n");
- 
- 	return 0;
- 
-+early_fini:
-+	device_early_fini(hdev);
- release_device:
- 	device_destroy(hclass, hdev->dev->devt);
- 	cdev_del(&hdev->cdev);
-@@ -243,6 +278,9 @@ void hl_device_fini(struct hl_device *hdev)
- 	/* Mark device as disabled */
- 	hdev->disabled = true;
- 
-+	/* Call ASIC S/W finalize function */
-+	hdev->asic_funcs->sw_fini(hdev);
-+
- 	device_early_fini(hdev);
- 
- 	/* Hide device from user */
-@@ -329,3 +367,36 @@ int hl_poll_timeout_device_memory(struct hl_device *hdev, void __iomem *addr,
- 
- 	return (*val ? 0 : -ETIMEDOUT);
- }
-+
-+/*
-+ * MMIO register access helper functions.
-+ */
-+
-+/**
-+ * hl_rreg - Read an MMIO register
-+ *
-+ * @hdev: pointer to habanalabs device structure
-+ * @reg: MMIO register offset (in bytes)
-+ *
-+ * Returns the value of the MMIO register we are asked to read
-+ *
-+ */
-+inline u32 hl_rreg(struct hl_device *hdev, u32 reg)
-+{
-+	return readl(hdev->rmmio + reg);
-+}
-+
-+/**
-+ * hl_wreg - Write to an MMIO register
-+ *
-+ * @hdev: pointer to habanalabs device structure
-+ * @reg: MMIO register offset (in bytes)
-+ * @val: 32-bit value
-+ *
-+ * Writes the 32-bit value into the MMIO register
-+ *
-+ */
-+inline void hl_wreg(struct hl_device *hdev, u32 reg, u32 val)
-+{
-+	writel(val, hdev->rmmio + reg);
-+}
-diff --git a/drivers/misc/habanalabs/goya/Makefile b/drivers/misc/habanalabs/goya/Makefile
+ include $(src)/goya/Makefile
+ habanalabs-y += $(HL_GOYA_FILES)
+diff --git a/drivers/misc/habanalabs/command_buffer.c b/drivers/misc/habanalabs/command_buffer.c
 new file mode 100644
-index 000000000000..5ebf3d0d5794
+index 000000000000..535ed6cc5bda
 --- /dev/null
-+++ b/drivers/misc/habanalabs/goya/Makefile
-@@ -0,0 +1,3 @@
-+subdir-ccflags-y += -I$(src)
-+
-+HL_GOYA_FILES :=  goya/goya.o
-\ No newline at end of file
-diff --git a/drivers/misc/habanalabs/goya/goya.c b/drivers/misc/habanalabs/goya/goya.c
-new file mode 100644
-index 000000000000..b2952296b890
---- /dev/null
-+++ b/drivers/misc/habanalabs/goya/goya.c
-@@ -0,0 +1,633 @@
++++ b/drivers/misc/habanalabs/command_buffer.c
+@@ -0,0 +1,414 @@
 +// SPDX-License-Identifier: GPL-2.0
 +
 +/*
@@ -263,970 +134,896 @@ index 000000000000..b2952296b890
 + * All Rights Reserved.
 + */
 +
-+#include "goyaP.h"
-+#include "include/goya/asic_reg/goya_masks.h"
-+
-+#include <linux/fs.h>
-+#include <linux/delay.h>
-+#include <linux/vmalloc.h>
-+#include <linux/sched.h>
-+#include <linux/genalloc.h>
-+#include <linux/sysfs.h>
-+#include <linux/kfifo.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/firmware.h>
-+#include <linux/log2.h>
-+#include <linux/hwmon.h>
-+#include <linux/string.h>
-+#include <linux/io.h>
-+
-+/*
-+ * GOYA security scheme:
-+ *
-+ * 1. Host is protected by:
-+ *        - Range registers (When MMU is enabled, DMA RR does NOT protect host)
-+ *        - MMU
-+ *
-+ * 2. DRAM is protected by:
-+ *        - Range registers (protect the first 512MB)
-+ *        - MMU (isolation between users)
-+ *
-+ * 3. Configuration is protected by:
-+ *        - Range registers
-+ *        - Protection bits
-+ *
-+ * When MMU is disabled:
-+ *
-+ * QMAN DMA: PQ, CQ, CP, DMA are secured.
-+ * PQ, CB and the data are on the host.
-+ *
-+ * QMAN TPC/MME:
-+ * PQ, CQ and CP are not secured.
-+ * PQ, CB and the data are on the SRAM/DRAM.
-+ *
-+ * Since QMAN DMA is secured, KMD is parsing the DMA CB:
-+ *     - KMD checks DMA pointer
-+ *     - WREG, MSG_PROT are not allowed.
-+ *     - MSG_LONG/SHORT are allowed.
-+ *
-+ * A read/write transaction by the QMAN to a protected area will succeed if
-+ * and only if the QMAN's CP is secured and MSG_PROT is used
-+ *
-+ *
-+ * When MMU is enabled:
-+ *
-+ * QMAN DMA: PQ, CQ and CP are secured.
-+ * MMU is set to bypass on the Secure props register of the QMAN.
-+ * The reasons we don't enable MMU for PQ, CQ and CP are:
-+ *     - PQ entry is in kernel address space and KMD doesn't map it.
-+ *     - CP writes to MSIX register and to kernel address space (completion
-+ *       queue).
-+ *
-+ * DMA is not secured but because CP is secured, KMD still needs to parse the
-+ * CB, but doesn't need to check the DMA addresses.
-+ *
-+ * For QMAN DMA 0, DMA is also secured because only KMD uses this DMA and KMD
-+ * doesn't map memory in MMU.
-+ *
-+ * QMAN TPC/MME: PQ, CQ and CP aren't secured (no change from MMU disabled mode)
-+ *
-+ * DMA RR does NOT protect host because DMA is not secured
-+ *
-+ */
-+
-+#define GOYA_MMU_REGS_NUM		61
-+
-+#define GOYA_DMA_POOL_BLK_SIZE		0x100		/* 256 bytes */
-+
-+#define GOYA_RESET_TIMEOUT_MSEC		500		/* 500ms */
-+#define GOYA_PLDM_RESET_TIMEOUT_MSEC	20000		/* 20s */
-+#define GOYA_RESET_WAIT_MSEC		1		/* 1ms */
-+#define GOYA_CPU_RESET_WAIT_MSEC	100		/* 100ms */
-+#define GOYA_PLDM_RESET_WAIT_MSEC	1000		/* 1s */
-+#define GOYA_CPU_TIMEOUT_USEC		10000000	/* 10s */
-+#define GOYA_TEST_QUEUE_WAIT_USEC	100000		/* 100ms */
-+
-+#define GOYA_QMAN0_FENCE_VAL		0xD169B243
-+
-+#define GOYA_MAX_INITIATORS		20
-+
-+static void goya_get_fixed_properties(struct hl_device *hdev)
-+{
-+	struct asic_fixed_properties *prop = &hdev->asic_prop;
-+
-+	prop->completion_queues_count = NUMBER_OF_CMPLT_QUEUES;
-+
-+	prop->dram_base_address = DRAM_PHYS_BASE;
-+	prop->dram_size = DRAM_PHYS_DEFAULT_SIZE;
-+	prop->dram_end_address = prop->dram_base_address + prop->dram_size;
-+	prop->dram_user_base_address = DRAM_BASE_ADDR_USER;
-+
-+	prop->sram_base_address = SRAM_BASE_ADDR;
-+	prop->sram_size = SRAM_SIZE;
-+	prop->sram_end_address = prop->sram_base_address + prop->sram_size;
-+	prop->sram_user_base_address = prop->sram_base_address +
-+						SRAM_USER_BASE_OFFSET;
-+
-+	prop->host_phys_base_address = HOST_PHYS_BASE;
-+	prop->va_space_host_start_address = VA_HOST_SPACE_START;
-+	prop->va_space_host_end_address = VA_HOST_SPACE_END;
-+	prop->va_space_dram_start_address = VA_DDR_SPACE_START;
-+	prop->va_space_dram_end_address = VA_DDR_SPACE_END;
-+	prop->cfg_size = CFG_SIZE;
-+	prop->max_asid = MAX_ASID;
-+	prop->tpc_enabled_mask = TPC_ENABLED_MASK;
-+
-+	prop->high_pll = PLL_HIGH_DEFAULT;
-+}
-+
-+/**
-+ * goya_pci_bars_map - Map PCI BARS of Goya device
-+ *
-+ * @hdev: pointer to hl_device structure
-+ *
-+ * Request PCI regions and map them to kernel virtual addresses.
-+ * Returns 0 on success
-+ *
-+ */
-+int goya_pci_bars_map(struct hl_device *hdev)
-+{
-+	struct pci_dev *pdev = hdev->pdev;
-+	int rc;
-+
-+	rc = pci_request_regions(pdev, HL_NAME);
-+	if (rc) {
-+		dev_err(hdev->dev, "Cannot obtain PCI resources\n");
-+		return rc;
-+	}
-+
-+	hdev->pcie_bar[SRAM_CFG_BAR_ID] =
-+			pci_ioremap_bar(pdev, SRAM_CFG_BAR_ID);
-+	if (!hdev->pcie_bar[SRAM_CFG_BAR_ID]) {
-+		dev_err(hdev->dev, "pci_ioremap_bar failed for CFG\n");
-+		rc = -ENODEV;
-+		goto err_release_regions;
-+	}
-+
-+	hdev->pcie_bar[MSIX_BAR_ID] = pci_ioremap_bar(pdev, MSIX_BAR_ID);
-+	if (!hdev->pcie_bar[MSIX_BAR_ID]) {
-+		dev_err(hdev->dev, "pci_ioremap_bar failed for MSIX\n");
-+		rc = -ENODEV;
-+		goto err_unmap_sram_cfg;
-+	}
-+
-+	hdev->pcie_bar[DDR_BAR_ID] = pci_ioremap_wc_bar(pdev, DDR_BAR_ID);
-+	if (!hdev->pcie_bar[DDR_BAR_ID]) {
-+		dev_err(hdev->dev, "pci_ioremap_bar failed for DDR\n");
-+		rc = -ENODEV;
-+		goto err_unmap_msix;
-+	}
-+
-+	hdev->rmmio = hdev->pcie_bar[SRAM_CFG_BAR_ID] +
-+				(CFG_BASE - SRAM_BASE_ADDR);
-+
-+	return 0;
-+
-+err_unmap_msix:
-+	iounmap(hdev->pcie_bar[MSIX_BAR_ID]);
-+err_unmap_sram_cfg:
-+	iounmap(hdev->pcie_bar[SRAM_CFG_BAR_ID]);
-+err_release_regions:
-+	pci_release_regions(pdev);
-+
-+	return rc;
-+}
-+
-+/**
-+ * goya_pci_bars_unmap - Unmap PCI BARS of Goya device
-+ *
-+ * @hdev: pointer to hl_device structure
-+ *
-+ * Release all PCI BARS and unmap their virtual addresses
-+ *
-+ */
-+static void goya_pci_bars_unmap(struct hl_device *hdev)
-+{
-+	struct pci_dev *pdev = hdev->pdev;
-+
-+	iounmap(hdev->pcie_bar[DDR_BAR_ID]);
-+	iounmap(hdev->pcie_bar[MSIX_BAR_ID]);
-+	iounmap(hdev->pcie_bar[SRAM_CFG_BAR_ID]);
-+	pci_release_regions(pdev);
-+}
-+
-+/**
-+ * goya_elbi_write - Write through the ELBI interface
-+ *
-+ * @hdev: pointer to hl_device structure
-+ *
-+ * return 0 on success, -1 on failure
-+ *
-+ */
-+static int goya_elbi_write(struct hl_device *hdev, u64 addr, u32 data)
-+{
-+	struct pci_dev *pdev = hdev->pdev;
-+	ktime_t timeout;
-+	u32 val;
-+
-+	/* Clear previous status */
-+	pci_write_config_dword(pdev, mmPCI_CONFIG_ELBI_STS, 0);
-+
-+	pci_write_config_dword(pdev, mmPCI_CONFIG_ELBI_ADDR, (u32) addr);
-+	pci_write_config_dword(pdev, mmPCI_CONFIG_ELBI_DATA, data);
-+	pci_write_config_dword(pdev, mmPCI_CONFIG_ELBI_CTRL,
-+				PCI_CONFIG_ELBI_CTRL_WRITE);
-+
-+	timeout = ktime_add_ms(ktime_get(), 10);
-+	for (;;) {
-+		pci_read_config_dword(pdev, mmPCI_CONFIG_ELBI_STS, &val);
-+		if (val & PCI_CONFIG_ELBI_STS_MASK)
-+			break;
-+		if (ktime_compare(ktime_get(), timeout) > 0) {
-+			pci_read_config_dword(pdev, mmPCI_CONFIG_ELBI_STS,
-+						&val);
-+			break;
-+		}
-+		usleep_range(300, 500);
-+	}
-+
-+	if ((val & PCI_CONFIG_ELBI_STS_MASK) == PCI_CONFIG_ELBI_STS_DONE)
-+		return 0;
-+
-+	if (val & PCI_CONFIG_ELBI_STS_ERR) {
-+		dev_err(hdev->dev, "Error writing to ELBI\n");
-+		return -1;
-+	}
-+
-+	if (!(val & PCI_CONFIG_ELBI_STS_MASK)) {
-+		dev_err(hdev->dev, "ELBI write didn't finish in time\n");
-+		return -1;
-+	}
-+
-+	dev_err(hdev->dev, "ELBI write has undefined bits in status\n");
-+	return -1;
-+}
-+
-+/**
-+ * goya_iatu_write - iatu write routine
-+ *
-+ * @hdev: pointer to hl_device structure
-+ *
-+ */
-+static int goya_iatu_write(struct hl_device *hdev, u32 addr, u32 data)
-+{
-+	u32 dbi_offset;
-+	int rc;
-+
-+	dbi_offset = addr & 0xFFF;
-+
-+	rc = goya_elbi_write(hdev, CFG_BASE + mmPCIE_AUX_DBI, 0x00300000);
-+	rc |= goya_elbi_write(hdev, mmPCIE_DBI_BASE + dbi_offset, data);
-+
-+	return rc;
-+}
-+
-+void goya_reset_link_through_bridge(struct hl_device *hdev)
-+{
-+	struct pci_dev *pdev = hdev->pdev;
-+	struct pci_dev *parent_port;
-+	u16 val;
-+
-+	parent_port = pdev->bus->self;
-+	pci_read_config_word(parent_port, PCI_BRIDGE_CONTROL, &val);
-+	val |= PCI_BRIDGE_CTL_BUS_RESET;
-+	pci_write_config_word(parent_port, PCI_BRIDGE_CONTROL, val);
-+	ssleep(1);
-+
-+	val &= ~(PCI_BRIDGE_CTL_BUS_RESET);
-+	pci_write_config_word(parent_port, PCI_BRIDGE_CONTROL, val);
-+	ssleep(3);
-+}
-+
-+/**
-+ * goya_set_ddr_bar_base - set DDR bar to map specific device address
-+ *
-+ * @hdev: pointer to hl_device structure
-+ * @addr: address in DDR. Must be aligned to DDR bar size
-+ *
-+ * This function configures the iATU so that the DDR bar will start at the
-+ * specified addr.
-+ *
-+ */
-+static int goya_set_ddr_bar_base(struct hl_device *hdev, u64 addr)
-+{
-+	struct goya_device *goya = hdev->asic_specific;
-+	int rc;
-+
-+	if ((goya) && (goya->ddr_bar_cur_addr == addr))
-+		return 0;
-+
-+	/* Inbound Region 1 - Bar 4 - Point to DDR */
-+	rc = goya_iatu_write(hdev, 0x314, lower_32_bits(addr));
-+	rc |= goya_iatu_write(hdev, 0x318, upper_32_bits(addr));
-+	rc |= goya_iatu_write(hdev, 0x300, 0);
-+	/* Enable + Bar match + match enable + Bar 4 */
-+	rc |= goya_iatu_write(hdev, 0x304, 0xC0080400);
-+
-+	/* Return the DBI window to the default location */
-+	rc |= goya_elbi_write(hdev, CFG_BASE + mmPCIE_AUX_DBI, 0);
-+	rc |= goya_elbi_write(hdev, CFG_BASE + mmPCIE_AUX_DBI_32, 0);
-+
-+	if (rc) {
-+		dev_err(hdev->dev, "failed to map DDR bar to 0x%08llx\n", addr);
-+		return rc;
-+	}
-+
-+	if (goya)
-+		goya->ddr_bar_cur_addr = addr;
-+
-+	return 0;
-+}
-+
-+/**
-+ * goya_init_iatu - Initialize the iATU unit inside the PCI controller
-+ *
-+ * @hdev: pointer to hl_device structure
-+ *
-+ * This is needed in case the firmware doesn't initialize the iATU
-+ *
-+ */
-+static int goya_init_iatu(struct hl_device *hdev)
-+{
-+	int rc;
-+
-+	/* Inbound Region 0 - Bar 0 - Point to SRAM_BASE_ADDR */
-+	rc  = goya_iatu_write(hdev, 0x114, lower_32_bits(SRAM_BASE_ADDR));
-+	rc |= goya_iatu_write(hdev, 0x118, upper_32_bits(SRAM_BASE_ADDR));
-+	rc |= goya_iatu_write(hdev, 0x100, 0);
-+	/* Enable + Bar match + match enable */
-+	rc |= goya_iatu_write(hdev, 0x104, 0xC0080000);
-+
-+	/* Inbound Region 1 - Bar 4 - Point to DDR */
-+	rc |= goya_set_ddr_bar_base(hdev, DRAM_PHYS_BASE);
-+
-+	/* Outbound Region 0 - Point to Host */
-+	rc |= goya_iatu_write(hdev, 0x008, lower_32_bits(HOST_PHYS_BASE));
-+	rc |= goya_iatu_write(hdev, 0x00C, upper_32_bits(HOST_PHYS_BASE));
-+	rc |= goya_iatu_write(hdev, 0x010,
-+		lower_32_bits(HOST_PHYS_BASE + HOST_PHYS_SIZE - 1));
-+	rc |= goya_iatu_write(hdev, 0x014, 0);
-+	rc |= goya_iatu_write(hdev, 0x018, 0);
-+	rc |= goya_iatu_write(hdev, 0x020,
-+		upper_32_bits(HOST_PHYS_BASE + HOST_PHYS_SIZE - 1));
-+	/* Increase region size */
-+	rc |= goya_iatu_write(hdev, 0x000, 0x00002000);
-+	/* Enable */
-+	rc |= goya_iatu_write(hdev, 0x004, 0x80000000);
-+
-+	/* Return the DBI window to the default location */
-+	rc |= goya_elbi_write(hdev, CFG_BASE + mmPCIE_AUX_DBI, 0);
-+	rc |= goya_elbi_write(hdev, CFG_BASE + mmPCIE_AUX_DBI_32, 0);
-+
-+	return rc;
-+}
-+
-+/**
-+ * goya_early_init - GOYA early initialization code
-+ *
-+ * @hdev: pointer to hl_device structure
-+ *
-+ * Verify PCI bars
-+ * Set DMA masks
-+ * PCI controller initialization
-+ * Map PCI bars
-+ *
-+ */
-+static int goya_early_init(struct hl_device *hdev)
-+{
-+	struct asic_fixed_properties *prop = &hdev->asic_prop;
-+	struct pci_dev *pdev = hdev->pdev;
-+	u32 val;
-+	int rc;
-+
-+	goya_get_fixed_properties(hdev);
-+
-+	/* Check BAR sizes */
-+	if (pci_resource_len(pdev, SRAM_CFG_BAR_ID) != CFG_BAR_SIZE) {
-+		dev_err(hdev->dev,
-+			"Not " HL_NAME "? BAR %d size %llu, expecting %llu\n",
-+			SRAM_CFG_BAR_ID,
-+			pci_resource_len(pdev, SRAM_CFG_BAR_ID),
-+			CFG_BAR_SIZE);
-+		return -ENODEV;
-+	}
-+
-+	if (pci_resource_len(pdev, MSIX_BAR_ID) != MSIX_BAR_SIZE) {
-+		dev_err(hdev->dev,
-+			"Not " HL_NAME "? BAR %d size %llu, expecting %llu\n",
-+			MSIX_BAR_ID, pci_resource_len(pdev, MSIX_BAR_ID),
-+			MSIX_BAR_SIZE);
-+		return -ENODEV;
-+	}
-+
-+	prop->dram_pci_bar_size = pci_resource_len(pdev, DDR_BAR_ID);
-+
-+	/* set DMA mask for GOYA */
-+	rc = pci_set_dma_mask(pdev, DMA_BIT_MASK(39));
-+	if (rc) {
-+		dev_warn(hdev->dev, "Unable to set pci dma mask to 39 bits\n");
-+		rc = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
-+		if (rc) {
-+			dev_err(hdev->dev,
-+				"Unable to set pci dma mask to 32 bits\n");
-+			return rc;
-+		}
-+	}
-+
-+	rc = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(39));
-+	if (rc) {
-+		dev_warn(hdev->dev,
-+			"Unable to set pci consistent dma mask to 39 bits\n");
-+		rc = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(32));
-+		if (rc) {
-+			dev_err(hdev->dev,
-+				"Unable to set pci consistent dma mask to 32 bits\n");
-+			return rc;
-+		}
-+	}
-+
-+	if (hdev->reset_pcilink)
-+		goya_reset_link_through_bridge(hdev);
-+
-+	rc = pci_enable_device_mem(pdev);
-+	if (rc) {
-+		dev_err(hdev->dev, "can't enable PCI device\n");
-+		return rc;
-+	}
-+
-+	pci_set_master(pdev);
-+
-+	rc = goya_init_iatu(hdev);
-+	if (rc) {
-+		dev_err(hdev->dev, "Failed to initialize iATU\n");
-+		goto disable_device;
-+	}
-+
-+	rc = goya_pci_bars_map(hdev);
-+	if (rc) {
-+		dev_err(hdev->dev, "Failed to initialize PCI BARS\n");
-+		goto disable_device;
-+	}
-+
-+	val = RREG32(mmPSOC_GLOBAL_CONF_BOOT_STRAP_PINS);
-+	if (val & PSOC_GLOBAL_CONF_BOOT_STRAP_PINS_SRIOV_EN_MASK)
-+		dev_warn(hdev->dev,
-+			"PCI strap is not configured correctly, PCI bus errors may occur\n");
-+
-+	return 0;
-+
-+disable_device:
-+	pci_clear_master(pdev);
-+	pci_disable_device(pdev);
-+
-+	return rc;
-+}
-+
-+/**
-+ * goya_early_fini - GOYA early finalization code
-+ *
-+ * @hdev: pointer to hl_device structure
-+ *
-+ * Unmap PCI bars
-+ *
-+ */
-+int goya_early_fini(struct hl_device *hdev)
-+{
-+	goya_pci_bars_unmap(hdev);
-+
-+	pci_clear_master(hdev->pdev);
-+	pci_disable_device(hdev->pdev);
-+
-+	return 0;
-+}
-+
-+/**
-+ * goya_sw_init - Goya software initialization code
-+ *
-+ * @hdev: pointer to hl_device structure
-+ *
-+ */
-+static int goya_sw_init(struct hl_device *hdev)
-+{
-+	struct goya_device *goya;
-+	int rc;
-+
-+	/* Allocate device structure */
-+	goya = kzalloc(sizeof(*goya), GFP_KERNEL);
-+	if (!goya)
-+		return -ENOMEM;
-+
-+	/* according to goya_init_iatu */
-+	goya->ddr_bar_cur_addr = DRAM_PHYS_BASE;
-+	hdev->asic_specific = goya;
-+
-+	/* Create DMA pool for small allocations */
-+	hdev->dma_pool = dma_pool_create(dev_name(hdev->dev),
-+			&hdev->pdev->dev, GOYA_DMA_POOL_BLK_SIZE, 8, 0);
-+	if (!hdev->dma_pool) {
-+		dev_err(hdev->dev, "failed to create DMA pool\n");
-+		rc = -ENOMEM;
-+		goto free_goya_device;
-+	}
-+
-+	hdev->cpu_accessible_dma_mem =
-+			hdev->asic_funcs->dma_alloc_coherent(hdev,
-+					CPU_ACCESSIBLE_MEM_SIZE,
-+					&hdev->cpu_accessible_dma_address,
-+					GFP_KERNEL | __GFP_ZERO);
-+
-+	if (!hdev->cpu_accessible_dma_mem) {
-+		dev_err(hdev->dev,
-+			"failed to allocate %d of dma memory for CPU accessible memory space\n",
-+			CPU_ACCESSIBLE_MEM_SIZE);
-+		rc = -ENOMEM;
-+		goto free_dma_pool;
-+	}
-+
-+	hdev->cpu_accessible_dma_pool = gen_pool_create(CPU_PKT_SHIFT, -1);
-+	if (!hdev->cpu_accessible_dma_pool) {
-+		dev_err(hdev->dev,
-+			"Failed to create CPU accessible DMA pool\n");
-+		rc = -ENOMEM;
-+		goto free_cpu_pq_dma_mem;
-+	}
-+
-+	rc = gen_pool_add(hdev->cpu_accessible_dma_pool,
-+				(u64) hdev->cpu_accessible_dma_mem,
-+				CPU_ACCESSIBLE_MEM_SIZE, -1);
-+	if (rc) {
-+		dev_err(hdev->dev,
-+			"Failed to add memory to CPU accessible DMA pool\n");
-+		rc = -EFAULT;
-+		goto free_cpu_pq_pool;
-+	}
-+
-+	spin_lock_init(&goya->hw_queues_lock);
-+
-+	return 0;
-+
-+free_cpu_pq_pool:
-+	gen_pool_destroy(hdev->cpu_accessible_dma_pool);
-+free_cpu_pq_dma_mem:
-+	hdev->asic_funcs->dma_free_coherent(hdev, CPU_ACCESSIBLE_MEM_SIZE,
-+			hdev->cpu_accessible_dma_mem,
-+			hdev->cpu_accessible_dma_address);
-+free_dma_pool:
-+	dma_pool_destroy(hdev->dma_pool);
-+free_goya_device:
-+	kfree(goya);
-+
-+	return rc;
-+}
-+
-+/**
-+ * goya_sw_fini - Goya software tear-down code
-+ *
-+ * @hdev: pointer to hl_device structure
-+ *
-+ */
-+int goya_sw_fini(struct hl_device *hdev)
-+{
-+	struct goya_device *goya = hdev->asic_specific;
-+
-+	gen_pool_destroy(hdev->cpu_accessible_dma_pool);
-+
-+	hdev->asic_funcs->dma_free_coherent(hdev, CPU_ACCESSIBLE_MEM_SIZE,
-+			hdev->cpu_accessible_dma_mem,
-+			hdev->cpu_accessible_dma_address);
-+
-+	dma_pool_destroy(hdev->dma_pool);
-+
-+	kfree(goya);
-+
-+	return 0;
-+}
-+
-+int goya_suspend(struct hl_device *hdev)
-+{
-+	return 0;
-+}
-+
-+int goya_resume(struct hl_device *hdev)
-+{
-+	return 0;
-+}
-+
-+void *goya_dma_alloc_coherent(struct hl_device *hdev, size_t size,
-+					dma_addr_t *dma_handle, gfp_t flags)
-+{
-+	return dma_alloc_coherent(&hdev->pdev->dev, size, dma_handle, flags);
-+}
-+
-+void goya_dma_free_coherent(struct hl_device *hdev, size_t size, void *cpu_addr,
-+				dma_addr_t dma_handle)
-+{
-+	dma_free_coherent(&hdev->pdev->dev, size, cpu_addr, dma_handle);
-+}
-+
-+static const struct hl_asic_funcs goya_funcs = {
-+	.early_init = goya_early_init,
-+	.early_fini = goya_early_fini,
-+	.sw_init = goya_sw_init,
-+	.sw_fini = goya_sw_fini,
-+	.suspend = goya_suspend,
-+	.resume = goya_resume,
-+	.dma_alloc_coherent = goya_dma_alloc_coherent,
-+	.dma_free_coherent = goya_dma_free_coherent,
-+};
-+
-+/**
-+ * goya_set_asic_funcs - set Goya function pointers
-+ *
-+ * @*hdev: pointer to hl_device structure
-+ *
-+ */
-+void goya_set_asic_funcs(struct hl_device *hdev)
-+{
-+	hdev->asic_funcs = &goya_funcs;
-+}
-diff --git a/drivers/misc/habanalabs/goya/goyaP.h b/drivers/misc/habanalabs/goya/goyaP.h
-new file mode 100644
-index 000000000000..0e12c56472bd
---- /dev/null
-+++ b/drivers/misc/habanalabs/goya/goyaP.h
-@@ -0,0 +1,125 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ *
-+ * Copyright 2016-2018 HabanaLabs, Ltd.
-+ * All Rights Reserved.
-+ *
-+ */
-+
-+#ifndef GOYAP_H_
-+#define GOYAP_H_
-+
++#include <uapi/misc/habanalabs.h>
 +#include "habanalabs.h"
-+#include "include/goya/goya.h"
 +
-+#define NUMBER_OF_CMPLT_QUEUES		5
-+#define NUMBER_OF_EXT_HW_QUEUES		5
-+#define NUMBER_OF_CPU_HW_QUEUES		1
-+#define NUMBER_OF_INT_HW_QUEUES		9
-+#define NUMBER_OF_HW_QUEUES		(NUMBER_OF_EXT_HW_QUEUES + \
-+					NUMBER_OF_CPU_HW_QUEUES + \
-+					NUMBER_OF_INT_HW_QUEUES)
++#include <linux/dma-mapping.h>
 +
-+/*
-+ * Number of MSIX interrupts IDS:
-+ * Each completion queue has 1 ID
-+ * The event queue has 1 ID
-+ * ArmCP reset has 1 ID
-+ */
-+#define NUMBER_OF_INTERRUPTS		(NUMBER_OF_CMPLT_QUEUES + 2)
++static void cb_fini(struct hl_device *hdev, struct hl_cb *cb)
++{
++	hdev->asic_funcs->dma_free_coherent(hdev, cb->size,
++			(void *) cb->kernel_address, cb->bus_address);
++	kfree(cb);
++}
 +
-+#if (NUMBER_OF_HW_QUEUES >= HL_MAX_QUEUES)
-+#error "Number of H/W queues must be smaller than HL_MAX_QUEUES"
-+#endif
++static void cb_do_release(struct hl_device *hdev, struct hl_cb *cb)
++{
++	if (cb->is_pool) {
++		spin_lock(&hdev->cb_pool_lock);
++		list_add(&cb->pool_list, &hdev->cb_pool);
++		spin_unlock(&hdev->cb_pool_lock);
++	} else {
++		cb_fini(hdev, cb);
++	}
++}
 +
-+#if (NUMBER_OF_INTERRUPTS > GOYA_MSIX_ENTRIES)
-+#error "Number of MSIX interrupts must be smaller or equal to GOYA_MSIX_ENTRIES"
-+#endif
++static void cb_release(struct kref *ref)
++{
++	struct hl_device *hdev;
++	struct hl_cb *cb;
 +
-+#define QMAN_FENCE_TIMEOUT_USEC		10000	/* 10 ms */
++	cb = container_of(ref, struct hl_cb, refcount);
++	hdev = cb->hdev;
 +
-+#define QMAN_STOP_TIMEOUT_USEC		100000	/* 100 ms */
++	cb_do_release(hdev, cb);
++}
 +
-+#define TPC_MAX_NUM			8
-+#define TPC_ENABLED_MASK		0xFF
++static struct hl_cb *hl_cb_alloc(struct hl_device *hdev, u32 cb_size,
++					int ctx_id)
++{
++	struct hl_cb *cb;
++	void *p;
 +
-+#define DMA_MAX_NUM			5
++	if (ctx_id == HL_KERNEL_ASID_ID)
++		cb = kzalloc(sizeof(*cb), GFP_ATOMIC);
++	else
++		cb = kzalloc(sizeof(*cb), GFP_KERNEL);
 +
-+#define PLL_HIGH_DEFAULT		1575000000	/* 1.575 GHz */
++	if (!cb)
++		return NULL;
 +
-+#define GOYA_ARMCP_INFO_TIMEOUT		10000000	/* 10s */
++	if (ctx_id == HL_KERNEL_ASID_ID)
++		p = hdev->asic_funcs->dma_alloc_coherent(hdev, cb_size,
++						&cb->bus_address, GFP_ATOMIC);
++	else
++		p = hdev->asic_funcs->dma_alloc_coherent(hdev, cb_size,
++						&cb->bus_address,
++						GFP_USER | __GFP_ZERO);
++	if (!p) {
++		dev_err(hdev->dev,
++			"failed to allocate %d of dma memory for CB\n",
++			cb_size);
++		kfree(cb);
++		return NULL;
++	}
 +
-+#define DRAM_PHYS_DEFAULT_SIZE		0x100000000ull	/* 4GB */
++	cb->kernel_address = (u64) p;
++	cb->size = cb_size;
 +
-+/*
-+ * SRAM Memory Map for KMD
-+ *
-+ * KMD occupies KMD_SRAM_SIZE bytes from the start of SRAM. It is used for
-+ * MME/TPC QMANs
-+ *
-+ */
++	return cb;
++}
 +
-+#define MME_QMAN_BASE_OFFSET	0x000000	/* Must be 0 */
-+#define MME_QMAN_LENGTH		64
-+#define TPC_QMAN_LENGTH		64
++int hl_cb_create(struct hl_device *hdev, struct hl_cb_mgr *mgr,
++			u32 cb_size, u64 *handle, int ctx_id)
++{
++	struct hl_cb *cb;
++	bool alloc_new_cb = true;
++	int rc;
 +
-+#define TPC0_QMAN_BASE_OFFSET	(MME_QMAN_BASE_OFFSET + \
-+				(MME_QMAN_LENGTH * QMAN_PQ_ENTRY_SIZE))
-+#define TPC1_QMAN_BASE_OFFSET	(TPC0_QMAN_BASE_OFFSET + \
-+				(TPC_QMAN_LENGTH * QMAN_PQ_ENTRY_SIZE))
-+#define TPC2_QMAN_BASE_OFFSET	(TPC1_QMAN_BASE_OFFSET + \
-+				(TPC_QMAN_LENGTH * QMAN_PQ_ENTRY_SIZE))
-+#define TPC3_QMAN_BASE_OFFSET	(TPC2_QMAN_BASE_OFFSET + \
-+				(TPC_QMAN_LENGTH * QMAN_PQ_ENTRY_SIZE))
-+#define TPC4_QMAN_BASE_OFFSET	(TPC3_QMAN_BASE_OFFSET + \
-+				(TPC_QMAN_LENGTH * QMAN_PQ_ENTRY_SIZE))
-+#define TPC5_QMAN_BASE_OFFSET	(TPC4_QMAN_BASE_OFFSET + \
-+				(TPC_QMAN_LENGTH * QMAN_PQ_ENTRY_SIZE))
-+#define TPC6_QMAN_BASE_OFFSET	(TPC5_QMAN_BASE_OFFSET + \
-+				(TPC_QMAN_LENGTH * QMAN_PQ_ENTRY_SIZE))
-+#define TPC7_QMAN_BASE_OFFSET	(TPC6_QMAN_BASE_OFFSET + \
-+				(TPC_QMAN_LENGTH * QMAN_PQ_ENTRY_SIZE))
++	if (hdev->disabled) {
++		dev_warn_ratelimited(hdev->dev,
++			"Device is disabled !!! Can't create new CBs\n");
++		rc = -EBUSY;
++		goto out_err;
++	}
 +
-+#define SRAM_KMD_RES_OFFSET	(TPC7_QMAN_BASE_OFFSET + \
-+				(TPC_QMAN_LENGTH * QMAN_PQ_ENTRY_SIZE))
++	/* Minimum allocation must be PAGE SIZE */
++	if (cb_size < PAGE_SIZE)
++		cb_size = PAGE_SIZE;
 +
-+#if (SRAM_KMD_RES_OFFSET >= KMD_SRAM_RESERVED_SIZE)
-+#error "MME/TPC QMANs SRAM space exceeds limit"
-+#endif
++	if (ctx_id == HL_KERNEL_ASID_ID &&
++			cb_size <= hdev->asic_prop.cb_pool_cb_size) {
 +
-+#define SRAM_USER_BASE_OFFSET	KMD_SRAM_RESERVED_SIZE
++		spin_lock(&hdev->cb_pool_lock);
++		if (!list_empty(&hdev->cb_pool)) {
++			cb = list_first_entry(&hdev->cb_pool, typeof(*cb),
++					pool_list);
++			list_del(&cb->pool_list);
++			spin_unlock(&hdev->cb_pool_lock);
++			alloc_new_cb = false;
++		} else {
++			spin_unlock(&hdev->cb_pool_lock);
++			dev_warn_once(hdev->dev, "CB pool is empty\n");
++		}
++	}
 +
-+#define DMA_MAX_TRANSFER_SIZE	0xFFFFFFFF
++	if (alloc_new_cb) {
++		cb = hl_cb_alloc(hdev, cb_size, ctx_id);
++		if (!cb) {
++			rc = -ENOMEM;
++			goto out_err;
++		}
++	}
 +
-+#define HW_CAP_PLL		0x00000001
-+#define HW_CAP_DDR_0		0x00000002
-+#define HW_CAP_DDR_1		0x00000004
-+#define HW_CAP_MME		0x00000008
-+#define HW_CAP_CPU		0x00000010
-+#define HW_CAP_DMA		0x00000020
-+#define HW_CAP_MSIX		0x00000040
-+#define HW_CAP_CPU_Q		0x00000080
-+#define HW_CAP_MMU		0x00000100
-+#define HW_CAP_TPC_MBIST	0x00000200
-+#define HW_CAP_GOLDEN		0x00000400
-+#define HW_CAP_TPC		0x00000800
++	cb->hdev = hdev;
++	cb->ctx_id = ctx_id;
 +
-+#define CPU_PKT_SHIFT		5
-+#define CPU_PKT_SIZE		(1 << CPU_PKT_SHIFT)
-+#define CPU_PKT_MASK		(~((1 << CPU_PKT_SHIFT) - 1))
-+#define CPU_MAX_PKTS_IN_CB	32
-+#define CPU_CB_SIZE		(CPU_PKT_SIZE * CPU_MAX_PKTS_IN_CB)
-+#define CPU_ACCESSIBLE_MEM_SIZE	(HL_QUEUE_LENGTH * CPU_CB_SIZE)
++	spin_lock(&mgr->cb_lock);
++	rc = idr_alloc(&mgr->cb_handles, cb, 1, 0, GFP_ATOMIC);
++	spin_unlock(&mgr->cb_lock);
 +
-+enum goya_fw_component {
-+	FW_COMP_UBOOT,
-+	FW_COMP_PREBOOT
++	if (rc < 0) {
++		dev_err(hdev->dev, "Failed to allocate IDR for a new CB\n");
++		goto release_cb;
++	}
++
++	cb->id = rc;
++
++	kref_init(&cb->refcount);
++	spin_lock_init(&cb->lock);
++
++	/*
++	 * idr is 32-bit so we can safely OR it with a mask that is above
++	 * 32 bit
++	 */
++	*handle = cb->id | HL_MMAP_CB_MASK;
++	*handle <<= PAGE_SHIFT;
++
++	return 0;
++
++release_cb:
++	cb_do_release(hdev, cb);
++out_err:
++	*handle = 0;
++
++	return rc;
++}
++
++int hl_cb_destroy(struct hl_device *hdev, struct hl_cb_mgr *mgr, u64 cb_handle)
++{
++	struct hl_cb *cb;
++	u32 handle;
++	int rc = 0;
++
++	/*
++	 * handle was given to user to do mmap, I need to shift it back to
++	 * how the idr module gave it to me
++	 */
++	cb_handle >>= PAGE_SHIFT;
++	handle = (u32) cb_handle;
++
++	spin_lock(&mgr->cb_lock);
++
++	cb = idr_find(&mgr->cb_handles, handle);
++	if (cb) {
++		idr_remove(&mgr->cb_handles, handle);
++		spin_unlock(&mgr->cb_lock);
++		kref_put(&cb->refcount, cb_release);
++	} else {
++		spin_unlock(&mgr->cb_lock);
++		dev_err(hdev->dev,
++			"CB destroy failed, no match to handle 0x%x\n", handle);
++		rc = -EINVAL;
++	}
++
++	return rc;
++}
++
++int hl_cb_ioctl(struct hl_fpriv *hpriv, void *data)
++{
++	union hl_cb_args *args = data;
++	struct hl_device *hdev = hpriv->hdev;
++	u64 handle;
++	int rc;
++
++	switch (args->in.op) {
++	case HL_CB_OP_CREATE:
++		rc = hl_cb_create(hdev, &hpriv->cb_mgr, args->in.cb_size,
++					&handle, hpriv->ctx->asid);
++		memset(args, 0, sizeof(*args));
++		args->out.cb_handle = handle;
++		break;
++	case HL_CB_OP_DESTROY:
++		rc = hl_cb_destroy(hdev, &hpriv->cb_mgr,
++					args->in.cb_handle);
++		memset(args, 0, sizeof(*args));
++		break;
++	default:
++		rc = -EINVAL;
++		break;
++	}
++
++	return rc;
++}
++
++static void cb_vm_close(struct vm_area_struct *vma)
++{
++	struct hl_cb *cb = (struct hl_cb *) vma->vm_private_data;
++
++	hl_cb_put(cb);
++
++	spin_lock(&cb->lock);
++	cb->mmap = false;
++	cb->vm_start = 0;
++	cb->vm_end = 0;
++	spin_unlock(&cb->lock);
++
++	vma->vm_private_data = NULL;
++}
++
++static const struct vm_operations_struct cb_vm_ops = {
++	.close = cb_vm_close
 +};
 +
-+struct goya_device {
-+	/* TODO: remove hw_queues_lock after moving to scheduler code */
-+	spinlock_t	hw_queues_lock;
-+	u64		ddr_bar_cur_addr;
-+	u32		hw_cap_initialized;
-+};
++int hl_cb_mmap(struct hl_fpriv *hpriv, struct vm_area_struct *vma)
++{
++	struct hl_device *hdev = hpriv->hdev;
++	struct hl_cb *cb;
++	phys_addr_t address;
++	u32 handle;
++	int rc;
 +
-+#endif /* GOYAP_H_ */
++	handle = vma->vm_pgoff;
++
++	/* reference was taken here */
++	cb = hl_cb_get(hdev, &hpriv->cb_mgr, handle);
++	if (!cb) {
++		dev_err(hdev->dev,
++			"CB mmap failed, no match to handle %d\n", handle);
++		goto err_out;
++	}
++
++	/* Validation check */
++	if (vma->vm_end - vma->vm_start != cb->size) {
++		dev_err(hdev->dev,
++			"CB mmap failed, mmap size 0x%lx != 0x%x cb size\n",
++			vma->vm_end - vma->vm_start, cb->size);
++		goto put_cb;
++	}
++
++	spin_lock(&cb->lock);
++
++	if (cb->mmap) {
++		dev_err(hdev->dev,
++			"CB mmap failed, CB already mmaped to user\n");
++		goto release_lock;
++	}
++
++	cb->mmap = true;
++
++	spin_unlock(&cb->lock);
++
++	vma->vm_ops = &cb_vm_ops;
++
++	/*
++	 * Note: We're transferring the cb reference to
++	 * vma->vm_private_data here.
++	 */
++
++	vma->vm_private_data = cb;
++
++	/* Calculate address for CB */
++	address = virt_to_phys((void *) cb->kernel_address);
++
++	rc = hdev->asic_funcs->cb_mmap(hdev, vma, cb->kernel_address,
++					address, cb->size);
++
++	if (rc) {
++		spin_lock(&cb->lock);
++		cb->mmap = false;
++		goto release_lock;
++	}
++
++	cb->vm_start = vma->vm_start;
++	cb->vm_end = vma->vm_end;
++
++	return 0;
++
++release_lock:
++	spin_unlock(&cb->lock);
++put_cb:
++	hl_cb_put(cb);
++err_out:
++	return -EINVAL;
++}
++
++struct hl_cb *hl_cb_get(struct hl_device *hdev, struct hl_cb_mgr *mgr,
++			u32 handle)
++{
++	struct hl_cb *cb;
++
++	spin_lock(&mgr->cb_lock);
++	cb = idr_find(&mgr->cb_handles, handle);
++
++	if (!cb) {
++		spin_unlock(&mgr->cb_lock);
++		dev_warn(hdev->dev,
++			"CB get failed, no match to handle %d\n", handle);
++		return NULL;
++	}
++
++	kref_get(&cb->refcount);
++
++	spin_unlock(&mgr->cb_lock);
++
++	return cb;
++
++}
++
++void hl_cb_put(struct hl_cb *cb)
++{
++	kref_put(&cb->refcount, cb_release);
++}
++
++void hl_cb_mgr_init(struct hl_cb_mgr *mgr)
++{
++	spin_lock_init(&mgr->cb_lock);
++	idr_init(&mgr->cb_handles);
++}
++
++void hl_cb_mgr_fini(struct hl_device *hdev, struct hl_cb_mgr *mgr)
++{
++	struct hl_cb *cb;
++	struct idr *idp;
++	u32 id;
++
++	idp = &mgr->cb_handles;
++
++	idr_for_each_entry(idp, cb, id) {
++		if (kref_put(&cb->refcount, cb_release) != 1)
++			dev_err(hdev->dev,
++				"CB %d for CTX ID %d is still alive\n",
++				id, cb->ctx_id);
++	}
++
++	idr_destroy(&mgr->cb_handles);
++}
++
++struct hl_cb *hl_cb_kernel_create(struct hl_device *hdev, u32 cb_size)
++{
++	u64 cb_handle;
++	struct hl_cb *cb;
++	int rc;
++
++	rc = hl_cb_create(hdev, &hdev->kernel_cb_mgr, cb_size, &cb_handle,
++			HL_KERNEL_ASID_ID);
++	if (rc) {
++		dev_err(hdev->dev, "Failed to allocate CB for KMD %d\n", rc);
++		return NULL;
++	}
++
++	cb_handle >>= PAGE_SHIFT;
++	cb = hl_cb_get(hdev, &hdev->kernel_cb_mgr, (u32) cb_handle);
++	/* hl_cb_get should never fail here so use kernel WARN */
++	WARN(!cb, "Kernel CB handle invalid 0x%x\n", (u32) cb_handle);
++	if (!cb)
++		goto destroy_cb;
++
++	return cb;
++
++destroy_cb:
++	hl_cb_destroy(hdev, &hdev->kernel_cb_mgr, cb_handle << PAGE_SHIFT);
++
++	return NULL;
++}
++
++int hl_cb_pool_init(struct hl_device *hdev)
++{
++	struct hl_cb *cb;
++	int i;
++
++	INIT_LIST_HEAD(&hdev->cb_pool);
++	spin_lock_init(&hdev->cb_pool_lock);
++
++	for (i = 0 ; i < hdev->asic_prop.cb_pool_cb_cnt ; i++) {
++		cb = hl_cb_alloc(hdev, hdev->asic_prop.cb_pool_cb_size,
++				HL_KERNEL_ASID_ID);
++		if (cb) {
++			cb->is_pool = true;
++			list_add(&cb->pool_list, &hdev->cb_pool);
++		} else {
++			hl_cb_pool_fini(hdev);
++			return -ENOMEM;
++		}
++	}
++
++	return 0;
++}
++
++int hl_cb_pool_fini(struct hl_device *hdev)
++{
++	struct hl_cb *cb, *tmp;
++
++	list_for_each_entry_safe(cb, tmp, &hdev->cb_pool, pool_list) {
++		list_del(&cb->pool_list);
++		cb_fini(hdev, cb);
++	}
++
++	return 0;
++}
+diff --git a/drivers/misc/habanalabs/device.c b/drivers/misc/habanalabs/device.c
+index 84ce9fcb52da..0bd86a7d34db 100644
+--- a/drivers/misc/habanalabs/device.c
++++ b/drivers/misc/habanalabs/device.c
+@@ -53,6 +53,7 @@ static int hl_device_release(struct inode *inode, struct file *filp)
+ {
+ 	struct hl_fpriv *hpriv = filp->private_data;
+ 
++	hl_cb_mgr_fini(hpriv->hdev, &hpriv->cb_mgr);
+ 	hl_ctx_mgr_fini(hpriv->hdev, &hpriv->ctx_mgr);
+ 
+ 	filp->private_data = NULL;
+@@ -62,10 +63,34 @@ static int hl_device_release(struct inode *inode, struct file *filp)
+ 	return 0;
+ }
+ 
++/**
++ * hl_mmap - mmap function for habanalabs device
++ *
++ * @*filp: pointer to file structure
++ * @*vma: pointer to vm_area_struct of the process
++ *
++ * Called when process does an mmap on habanalabs device. Call the device's mmap
++ * function at the end of the common code.
++ */
++static int hl_mmap(struct file *filp, struct vm_area_struct *vma)
++{
++	struct hl_fpriv *hpriv = filp->private_data;
++
++	if ((vma->vm_pgoff & HL_MMAP_CB_MASK) == HL_MMAP_CB_MASK) {
++		vma->vm_pgoff ^= HL_MMAP_CB_MASK;
++		return hl_cb_mmap(hpriv, vma);
++	}
++
++	return hpriv->hdev->asic_funcs->mmap(hpriv, vma);
++}
++
+ static const struct file_operations hl_ops = {
+ 	.owner = THIS_MODULE,
+ 	.open = hl_device_open,
+-	.release = hl_device_release
++	.release = hl_device_release,
++	.mmap = hl_mmap,
++	.unlocked_ioctl = hl_ioctl,
++	.compat_ioctl = hl_ioctl
+ };
+ 
+ /**
+@@ -145,6 +170,8 @@ static int device_early_init(struct hl_device *hdev)
+ 	if (rc)
+ 		goto early_fini;
+ 
++	hl_cb_mgr_init(&hdev->kernel_cb_mgr);
++
+ 	mutex_init(&hdev->device_open);
+ 	atomic_set(&hdev->fd_open_cnt, 0);
+ 
+@@ -166,6 +193,8 @@ static int device_early_init(struct hl_device *hdev)
+ static void device_early_fini(struct hl_device *hdev)
+ {
+ 
++	hl_cb_mgr_fini(hdev, &hdev->kernel_cb_mgr);
++
+ 	hl_asid_fini(hdev);
+ 
+ 	if (hdev->asic_funcs->early_fini)
+@@ -280,11 +309,21 @@ int hl_device_init(struct hl_device *hdev, struct class *hclass)
+ 		goto free_ctx;
+ 	}
+ 
++	rc = hl_cb_pool_init(hdev);
++	if (rc) {
++		dev_err(hdev->dev, "failed to initialize CB pool\n");
++		goto release_ctx;
++	}
++
+ 	dev_notice(hdev->dev,
+ 		"Successfully added device to habanalabs driver\n");
+ 
+ 	return 0;
+ 
++release_ctx:
++	if (hl_ctx_put(hdev->kernel_ctx) != 1)
++		dev_err(hdev->dev,
++			"kernel ctx is still alive on initialization failure\n");
+ free_ctx:
+ 	kfree(hdev->kernel_ctx);
+ sw_fini:
+@@ -321,6 +360,8 @@ void hl_device_fini(struct hl_device *hdev)
+ 	/* Mark device as disabled */
+ 	hdev->disabled = true;
+ 
++	hl_cb_pool_fini(hdev);
++
+ 	/* Release kernel context */
+ 	if ((hdev->kernel_ctx) && (hl_ctx_put(hdev->kernel_ctx) != 1))
+ 		dev_err(hdev->dev, "kernel ctx is still alive\n");
+diff --git a/drivers/misc/habanalabs/goya/goya.c b/drivers/misc/habanalabs/goya/goya.c
+index b2952296b890..341ac085af82 100644
+--- a/drivers/misc/habanalabs/goya/goya.c
++++ b/drivers/misc/habanalabs/goya/goya.c
+@@ -92,6 +92,9 @@
+ 
+ #define GOYA_MAX_INITIATORS		20
+ 
++#define GOYA_CB_POOL_CB_CNT		512
++#define GOYA_CB_POOL_CB_SIZE		0x20000		/* 128KB */
++
+ static void goya_get_fixed_properties(struct hl_device *hdev)
+ {
+ 	struct asic_fixed_properties *prop = &hdev->asic_prop;
+@@ -119,6 +122,8 @@ static void goya_get_fixed_properties(struct hl_device *hdev)
+ 	prop->tpc_enabled_mask = TPC_ENABLED_MASK;
+ 
+ 	prop->high_pll = PLL_HIGH_DEFAULT;
++	prop->cb_pool_cb_cnt = GOYA_CB_POOL_CB_CNT;
++	prop->cb_pool_cb_size = GOYA_CB_POOL_CB_SIZE;
+ }
+ 
+ /**
+@@ -598,6 +603,27 @@ int goya_resume(struct hl_device *hdev)
+ 	return 0;
+ }
+ 
++int goya_mmap(struct hl_fpriv *hpriv, struct vm_area_struct *vma)
++{
++	return -EINVAL;
++}
++
++int goya_cb_mmap(struct hl_device *hdev, struct vm_area_struct *vma,
++		u64 kaddress, phys_addr_t paddress, u32 size)
++{
++	int rc;
++
++	vma->vm_flags |= VM_IO | VM_PFNMAP | VM_DONTEXPAND | VM_DONTDUMP |
++			VM_DONTCOPY | VM_NORESERVE;
++
++	rc = remap_pfn_range(vma, vma->vm_start, paddress >> PAGE_SHIFT,
++				size, vma->vm_page_prot);
++	if (rc)
++		dev_err(hdev->dev, "remap_pfn_range error %d", rc);
++
++	return rc;
++}
++
+ void *goya_dma_alloc_coherent(struct hl_device *hdev, size_t size,
+ 					dma_addr_t *dma_handle, gfp_t flags)
+ {
+@@ -617,6 +643,8 @@ static const struct hl_asic_funcs goya_funcs = {
+ 	.sw_fini = goya_sw_fini,
+ 	.suspend = goya_suspend,
+ 	.resume = goya_resume,
++	.mmap = goya_mmap,
++	.cb_mmap = goya_cb_mmap,
+ 	.dma_alloc_coherent = goya_dma_alloc_coherent,
+ 	.dma_free_coherent = goya_dma_free_coherent,
+ };
 diff --git a/drivers/misc/habanalabs/habanalabs.h b/drivers/misc/habanalabs/habanalabs.h
-index 7e1b088b677c..97844825f7a8 100644
+index d003a6af2131..6ad476df65b0 100644
 --- a/drivers/misc/habanalabs/habanalabs.h
 +++ b/drivers/misc/habanalabs/habanalabs.h
-@@ -21,11 +21,64 @@
+@@ -21,10 +21,12 @@
  
  #define HL_NAME				"habanalabs"
  
-+#define HL_MAX_QUEUES			128
++#define HL_MMAP_CB_MASK			(0x8000000000000000ull >> PAGE_SHIFT)
 +
+ #define HL_MAX_QUEUES			128
+ 
  struct hl_device;
+-
++struct hl_fpriv;
  
  
  
- 
-+/**
-+ * struct asic_fixed_properties - ASIC specific immutable properties.
-+ * @sram_base_address: SRAM physical start address.
-+ * @sram_end_address: SRAM physical end address.
-+ * @sram_user_base_address - SRAM physical start address for user access.
-+ * @dram_base_address: DRAM physical start address.
-+ * @dram_end_address: DRAM physical end address.
-+ * @dram_user_base_address: DRAM physical start address for user access.
-+ * @dram_size: DRAM total size.
-+ * @dram_pci_bar_size: size of PCI bar towards DRAM.
-+ * @host_phys_base_address: base physical address of host memory for
-+ *				transactions that the device generates.
-+ * @va_space_host_start_address: base address of virtual memory range for
-+ *                               mapping host memory.
-+ * @va_space_host_end_address: end address of virtual memory range for
-+ *                             mapping host memory.
-+ * @va_space_dram_start_address: base address of virtual memory range for
-+ *                               mapping DRAM memory.
-+ * @va_space_dram_end_address: end address of virtual memory range for
-+ *                             mapping DRAM memory.
-+ * @cfg_size: configuration space size on SRAM.
-+ * @sram_size: total size of SRAM.
-+ * @max_asid: maximum number of open contexts (ASIDs).
-+ * @completion_queues_count: number of completion queues.
-+ * @high_pll: high PLL frequency used by the device.
-+ * @tpc_enabled_mask: which TPCs are enabled.
-+ */
-+struct asic_fixed_properties {
-+	u64			sram_base_address;
-+	u64			sram_end_address;
-+	u64			sram_user_base_address;
-+	u64			dram_base_address;
-+	u64			dram_end_address;
-+	u64			dram_user_base_address;
-+	u64			dram_size;
-+	u64			dram_pci_bar_size;
-+	u64			host_phys_base_address;
-+	u64			va_space_host_start_address;
-+	u64			va_space_host_end_address;
-+	u64			va_space_dram_start_address;
-+	u64			va_space_dram_end_address;
-+	u32			cfg_size;
-+	u32			sram_size;
-+	u32			max_asid;
-+	u32			high_pll;
-+	u8			completion_queues_count;
-+	u8			tpc_enabled_mask;
-+};
-+
-+
-+#define HL_QUEUE_LENGTH			256
- 
- 
- /*
-@@ -47,6 +100,30 @@ enum hl_asic_type {
- 
- 
- 
-+/**
-+ * struct hl_asic_funcs - ASIC specific functions that are can be called from
-+ *                        common code.
-+ * @early_init: sets up early driver state (pre sw_init), doesn't configure H/W.
-+ * @early_fini: tears down what was done in early_init.
-+ * @sw_init: sets up driver state, does not configure H/W.
-+ * @sw_fini: tears down driver state, does not configure H/W.
-+ * @suspend: handles IP specific H/W or SW changes for suspend.
-+ * @resume: handles IP specific H/W or SW changes for resume.
-+ * @dma_alloc_coherent: DMA allocate coherent memory.
-+ * @dma_free_coherent: free DMA allocation.
-+ */
-+struct hl_asic_funcs {
-+	int (*early_init)(struct hl_device *hdev);
-+	int (*early_fini)(struct hl_device *hdev);
-+	int (*sw_init)(struct hl_device *hdev);
-+	int (*sw_fini)(struct hl_device *hdev);
-+	int (*suspend)(struct hl_device *hdev);
-+	int (*resume)(struct hl_device *hdev);
-+	void* (*dma_alloc_coherent)(struct hl_device *hdev, size_t size,
-+					dma_addr_t *dma_handle, gfp_t flag);
-+	void (*dma_free_coherent)(struct hl_device *hdev, size_t size,
-+					void *cpu_addr, dma_addr_t dma_handle);
-+};
- 
- /*
-  * FILE PRIVATE STRUCTURE
-@@ -78,26 +155,78 @@ struct hl_fpriv {
+@@ -53,6 +55,8 @@ struct hl_device;
+  * @max_asid: maximum number of open contexts (ASIDs).
+  * @completion_queues_count: number of completion queues.
+  * @high_pll: high PLL frequency used by the device.
++ * @cb_pool_cb_cnt: number of CBs in the CB pool.
++ * @cb_pool_cb_size: size of each CB in the CB pool.
+  * @tpc_enabled_mask: which TPCs are enabled.
   */
- #define HL_MAX_MINORS	256
- 
-+/*
-+ * Registers read & write functions.
-+ */
-+
-+u32 hl_rreg(struct hl_device *hdev, u32 reg);
-+void hl_wreg(struct hl_device *hdev, u32 reg, u32 val);
-+
-+#define hl_poll_timeout(hdev, addr, val, cond, sleep_us, timeout_us) \
-+	readl_poll_timeout(hdev->rmmio + addr, val, cond, sleep_us, timeout_us)
-+
-+#define RREG32(reg) hl_rreg(hdev, (reg))
-+#define WREG32(reg, v) hl_wreg(hdev, (reg), (v))
-+#define DREG32(reg) pr_info("REGISTER: " #reg " : 0x%08X\n",	\
-+				hl_rreg(hdev, (reg)))
-+
-+#define WREG32_P(reg, val, mask)				\
-+	do {							\
-+		u32 tmp_ = RREG32(reg);				\
-+		tmp_ &= (mask);					\
-+		tmp_ |= ((val) & ~(mask));			\
-+		WREG32(reg, tmp_);				\
-+	} while (0)
-+#define WREG32_AND(reg, and) WREG32_P(reg, 0, and)
-+#define WREG32_OR(reg, or) WREG32_P(reg, or, ~(or))
-+
-+#define REG_FIELD_SHIFT(reg, field) reg##_##field##_SHIFT
-+#define REG_FIELD_MASK(reg, field) reg##_##field##_MASK
-+#define WREG32_FIELD(reg, field, val)	\
-+	WREG32(mm##reg, (RREG32(mm##reg) & ~REG_FIELD_MASK(reg, field)) | \
-+			(val) << REG_FIELD_SHIFT(reg, field))
-+
- /**
-  * struct hl_device - habanalabs device structure.
-  * @pdev: pointer to PCI device, can be NULL in case of simulator device.
-+ * @pcie_bar: array of available PCIe bars.
-+ * @rmmio: configuration area address on SRAM.
-  * @cdev: related char device.
-  * @dev: realted kernel basic device structure.
-  * @asic_name: ASIC specific nmae.
-  * @asic_type: ASIC specific type.
-+ * @dma_pool: DMA pool for small allocations.
-+ * @cpu_accessible_dma_mem: KMD <-> ArmCP shared memory CPU address.
-+ * @cpu_accessible_dma_address: KMD <-> ArmCP shared memory DMA address.
-+ * @cpu_accessible_dma_pool: KMD <-> ArmCP shared memory pool.
-+ * @asic_prop: ASIC specific immutable properties.
-+ * @asic_funcs: ASIC specific functions.
-+ * @asic_specific: ASIC specific information to use only from ASIC files.
-  * @major: habanalabs KMD major.
-  * @id: device minor.
-  * @disabled: is device disabled.
-  */
- struct hl_device {
- 	struct pci_dev			*pdev;
-+	void __iomem			*pcie_bar[6];
-+	void __iomem			*rmmio;
- 	struct cdev			cdev;
- 	struct device			*dev;
- 	char				asic_name[16];
- 	enum hl_asic_type		asic_type;
-+	struct dma_pool			*dma_pool;
-+	void				*cpu_accessible_dma_mem;
-+	dma_addr_t			cpu_accessible_dma_address;
-+	struct gen_pool			*cpu_accessible_dma_pool;
-+	struct asic_fixed_properties	asic_prop;
-+	const struct hl_asic_funcs	*asic_funcs;
-+	void				*asic_specific;
- 	u32				major;
- 	u16				id;
- 	u8				disabled;
-+
-+	/* Parameters for bring-up */
-+	u8				reset_pcilink;
+ struct asic_fixed_properties {
+@@ -73,11 +77,68 @@ struct asic_fixed_properties {
+ 	u32			sram_size;
+ 	u32			max_asid;
+ 	u32			high_pll;
++	u32			cb_pool_cb_cnt;
++	u32			cb_pool_cb_size;
+ 	u8			completion_queues_count;
+ 	u8			tpc_enabled_mask;
  };
  
- /*
-@@ -146,4 +275,6 @@ void hl_device_fini(struct hl_device *hdev);
- int hl_device_suspend(struct hl_device *hdev);
- int hl_device_resume(struct hl_device *hdev);
  
-+void goya_set_asic_funcs(struct hl_device *hdev);
++
++
++
++
++/*
++ * Command Buffers
++ */
++
++/**
++ * struct hl_cb_mgr - describes a Command Buffer Manager.
++ * @cb_lock: protects cb_handles.
++ * @cb_handles: an idr to hold all command buffer handles.
++ */
++struct hl_cb_mgr {
++	spinlock_t		cb_lock;
++	struct idr		cb_handles; /* protected by cb_lock */
++};
++
++/**
++ * struct hl_cb - describes a Command Buffer.
++ * @refcount: reference counter for usage of the CB.
++ * @hdev: pointer to device this CB belongs to.
++ * @lock: spinlock to protect mmap/cs flows.
++ * @pool_list: node in pool list of command buffers.
++ * @kernel_address: Holds the CB's kernel virtual address.
++ * @bus_address: Holds the CB's DMA address.
++ * @vm_start: Holds the CB's user start virtual address (when mmaped).
++ * @vm_end: Holds the CB's user end virtual address (when mmaped).
++ * @size: holds the CB's size.
++ * @id: the CB's ID.
++ * @ctx_id: holds the ID of the owner's context.
++ * @mmap: true if the CB is currently mmaped to user.
++ * @is_pool: true if CB was acquired from the pool, false otherwise.
++ */
++struct hl_cb {
++	struct kref		refcount;
++	struct hl_device	*hdev;
++	spinlock_t		lock;
++	struct list_head	pool_list;
++	u64			kernel_address;
++	dma_addr_t		bus_address;
++	u64			vm_start;
++	u64			vm_end;
++	u32			size;
++	u32			id;
++	u32			ctx_id;
++	u8			mmap;
++	u8			is_pool;
++};
++
++
++
++
++
++
+ #define HL_QUEUE_LENGTH			256
+ 
+ 
+@@ -109,6 +170,8 @@ enum hl_asic_type {
+  * @sw_fini: tears down driver state, does not configure H/W.
+  * @suspend: handles IP specific H/W or SW changes for suspend.
+  * @resume: handles IP specific H/W or SW changes for resume.
++ * @mmap: mmap function, does nothing.
++ * @cb_mmap: maps a CB.
+  * @dma_alloc_coherent: DMA allocate coherent memory.
+  * @dma_free_coherent: free DMA allocation.
+  */
+@@ -119,6 +182,9 @@ struct hl_asic_funcs {
+ 	int (*sw_fini)(struct hl_device *hdev);
+ 	int (*suspend)(struct hl_device *hdev);
+ 	int (*resume)(struct hl_device *hdev);
++	int (*mmap)(struct hl_fpriv *hpriv, struct vm_area_struct *vma);
++	int (*cb_mmap)(struct hl_device *hdev, struct vm_area_struct *vma,
++			u64 kaddress, phys_addr_t paddress, u32 size);
+ 	void* (*dma_alloc_coherent)(struct hl_device *hdev, size_t size,
+ 					dma_addr_t *dma_handle, gfp_t flag);
+ 	void (*dma_free_coherent)(struct hl_device *hdev, size_t size,
+@@ -175,6 +241,7 @@ struct hl_ctx_mgr {
+  * @taskpid: current process ID.
+  * @ctx: current executing context.
+  * @ctx_mgr: context manager to handle multiple context for this FD.
++ * @cb_mgr: command buffer manager to handle multiple buffers for this FD.
+  * @refcount: number of related contexts.
+  */
+ struct hl_fpriv {
+@@ -183,6 +250,7 @@ struct hl_fpriv {
+ 	struct pid		*taskpid;
+ 	struct hl_ctx		*ctx; /* TODO: remove for multiple ctx */
+ 	struct hl_ctx_mgr	ctx_mgr;
++	struct hl_cb_mgr	cb_mgr;
+ 	struct kref		refcount;
+ };
+ 
+@@ -239,6 +307,7 @@ void hl_wreg(struct hl_device *hdev, u32 reg, u32 val);
+  * @asic_name: ASIC specific nmae.
+  * @asic_type: ASIC specific type.
+  * @kernel_ctx: KMD context structure.
++ * @kernel_cb_mgr: command buffer manager for creating/destroying/handling CGs.
+  * @dma_pool: DMA pool for small allocations.
+  * @cpu_accessible_dma_mem: KMD <-> ArmCP shared memory CPU address.
+  * @cpu_accessible_dma_address: KMD <-> ArmCP shared memory DMA address.
+@@ -249,6 +318,8 @@ void hl_wreg(struct hl_device *hdev, u32 reg, u32 val);
+  * @asic_prop: ASIC specific immutable properties.
+  * @asic_funcs: ASIC specific functions.
+  * @asic_specific: ASIC specific information to use only from ASIC files.
++ * @cb_pool: list of preallocated CBs.
++ * @cb_pool_lock: protects the CB pool.
+  * @user_ctx: current user context executing.
+  * @fd_open_cnt: number of open context executing.
+  * @major: habanalabs KMD major.
+@@ -264,6 +335,7 @@ struct hl_device {
+ 	char				asic_name[16];
+ 	enum hl_asic_type		asic_type;
+ 	struct hl_ctx			*kernel_ctx;
++	struct hl_cb_mgr		kernel_cb_mgr;
+ 	struct dma_pool			*dma_pool;
+ 	void				*cpu_accessible_dma_mem;
+ 	dma_addr_t			cpu_accessible_dma_address;
+@@ -275,6 +347,10 @@ struct hl_device {
+ 	struct asic_fixed_properties	asic_prop;
+ 	const struct hl_asic_funcs	*asic_funcs;
+ 	void				*asic_specific;
++
++	struct list_head		cb_pool;
++	spinlock_t			cb_pool_lock;
++
+ 	/* TODO: The following fields should be moved for multi-context */
+ 	struct hl_ctx			*user_ctx;
+ 	atomic_t			fd_open_cnt;
+@@ -345,6 +421,23 @@ int hl_device_resume(struct hl_device *hdev);
+ void hl_hpriv_get(struct hl_fpriv *hpriv);
+ void hl_hpriv_put(struct hl_fpriv *hpriv);
+ 
++int hl_cb_create(struct hl_device *hdev, struct hl_cb_mgr *mgr, u32 cb_size,
++		u64 *handle, int ctx_id);
++int hl_cb_destroy(struct hl_device *hdev, struct hl_cb_mgr *mgr, u64 cb_handle);
++int hl_cb_mmap(struct hl_fpriv *hpriv, struct vm_area_struct *vma);
++struct hl_cb *hl_cb_get(struct hl_device *hdev,	struct hl_cb_mgr *mgr,
++			u32 handle);
++void hl_cb_put(struct hl_cb *cb);
++void hl_cb_mgr_init(struct hl_cb_mgr *mgr);
++void hl_cb_mgr_fini(struct hl_device *hdev, struct hl_cb_mgr *mgr);
++struct hl_cb *hl_cb_kernel_create(struct hl_device *hdev, u32 cb_size);
++int hl_cb_pool_init(struct hl_device *hdev);
++int hl_cb_pool_fini(struct hl_device *hdev);
++
+ void goya_set_asic_funcs(struct hl_device *hdev);
+ 
++/* IOCTLs */
++long hl_ioctl(struct file *filep, unsigned int cmd, unsigned long arg);
++int hl_cb_ioctl(struct hl_fpriv *hpriv, void *data);
 +
  #endif /* HABANALABSP_H_ */
 diff --git a/drivers/misc/habanalabs/habanalabs_drv.c b/drivers/misc/habanalabs/habanalabs_drv.c
-index 15217975327b..79545003b7c2 100644
+index 0646da83eb53..5c312dd3aa50 100644
 --- a/drivers/misc/habanalabs/habanalabs_drv.c
 +++ b/drivers/misc/habanalabs/habanalabs_drv.c
-@@ -136,6 +136,9 @@ int create_hdev(struct hl_device **dev, struct pci_dev *pdev,
+@@ -123,6 +123,7 @@ int hl_device_open(struct inode *inode, struct file *filp)
+ 	kref_init(&hpriv->refcount);
+ 	nonseekable_open(inode, filp);
  
- 	hdev->major = hl_major;
++	hl_cb_mgr_init(&hpriv->cb_mgr);
+ 	hl_ctx_mgr_init(&hpriv->ctx_mgr);
  
-+	/* Parameters for bring-up - set them to defaults */
-+	hdev->reset_pcilink = 0;
-+
- 	hdev->disabled = true;
- 	hdev->pdev = pdev; /* can be NULL in case of simulator device */
+ 	rc = hl_ctx_create(hdev, hpriv);
+@@ -138,6 +139,7 @@ int hl_device_open(struct inode *inode, struct file *filp)
+ out_err:
+ 	filp->private_data = NULL;
+ 	hl_ctx_mgr_fini(hpriv->hdev, &hpriv->ctx_mgr);
++	hl_cb_mgr_fini(hpriv->hdev, &hpriv->cb_mgr);
+ 	kfree(hpriv);
  
-diff --git a/drivers/misc/habanalabs/include/goya/goya.h b/drivers/misc/habanalabs/include/goya/goya.h
+ close_device:
+diff --git a/drivers/misc/habanalabs/habanalabs_ioctl.c b/drivers/misc/habanalabs/habanalabs_ioctl.c
 new file mode 100644
-index 000000000000..192a1450cbb1
+index 000000000000..fa2287569e0e
 --- /dev/null
-+++ b/drivers/misc/habanalabs/include/goya/goya.h
-@@ -0,0 +1,115 @@
-+/* SPDX-License-Identifier: GPL-2.0
++++ b/drivers/misc/habanalabs/habanalabs_ioctl.c
+@@ -0,0 +1,102 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/*
++ * Copyright 2016-2018 HabanaLabs, Ltd.
++ * All Rights Reserved.
++ */
++
++#include <uapi/misc/habanalabs.h>
++#include "habanalabs.h"
++
++#include <linux/fs.h>
++#include <linux/uaccess.h>
++#include <linux/cred.h>
++
++#define HL_IOCTL_DEF(ioctl, _func) \
++	[_IOC_NR(ioctl)] = {.cmd = ioctl, .func = _func}
++
++static const struct hl_ioctl_desc hl_ioctls[] = {
++	HL_IOCTL_DEF(HL_IOCTL_CB, hl_cb_ioctl)
++};
++
++#define HL_CORE_IOCTL_COUNT	ARRAY_SIZE(hl_ioctls)
++
++long hl_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
++{
++	struct hl_fpriv *hpriv = filep->private_data;
++	struct hl_device *hdev = hpriv->hdev;
++	hl_ioctl_t *func;
++	const struct hl_ioctl_desc *ioctl = NULL;
++	unsigned int nr = _IOC_NR(cmd);
++	char stack_kdata[128];
++	char *kdata = NULL;
++	unsigned int usize, asize;
++	int retcode = -EINVAL;
++
++	if (nr >= HL_CORE_IOCTL_COUNT)
++		goto err_i1;
++
++	if ((nr >= HL_COMMAND_START) && (nr < HL_COMMAND_END)) {
++		u32 hl_size;
++
++		ioctl = &hl_ioctls[nr];
++
++		hl_size = _IOC_SIZE(ioctl->cmd);
++		usize = asize = _IOC_SIZE(cmd);
++		if (hl_size > asize)
++			asize = hl_size;
++
++		cmd = ioctl->cmd;
++	} else {
++		goto err_i1;
++	}
++
++	/* Do not trust userspace, use our own definition */
++	func = ioctl->func;
++
++	if (unlikely(!func)) {
++		dev_dbg(hdev->dev, "no function\n");
++		retcode = -EINVAL;
++		goto err_i1;
++	}
++
++	if (cmd & (IOC_IN | IOC_OUT)) {
++		if (asize <= sizeof(stack_kdata)) {
++			kdata = stack_kdata;
++		} else {
++			kdata = kmalloc(asize, GFP_KERNEL);
++			if (!kdata) {
++				retcode = -ENOMEM;
++				goto err_i1;
++			}
++		}
++		if (asize > usize)
++			memset(kdata + usize, 0, asize - usize);
++	}
++
++	if (cmd & IOC_IN) {
++		if (copy_from_user(kdata, (void __user *)arg, usize)) {
++			retcode = -EFAULT;
++			goto err_i1;
++		}
++	} else if (cmd & IOC_OUT) {
++		memset(kdata, 0, usize);
++	}
++
++	retcode = func(hpriv, kdata);
++
++	if (cmd & IOC_OUT)
++		if (copy_to_user((void __user *)arg, kdata, usize))
++			retcode = -EFAULT;
++
++err_i1:
++	if (!ioctl)
++		dev_dbg(hdev->dev,
++			"invalid ioctl: pid=%d, cmd=0x%02x, nr=0x%02x\n",
++			  task_pid_nr(current), cmd, nr);
++
++	if (kdata != stack_kdata)
++		kfree(kdata);
++
++	return retcode;
++}
+diff --git a/include/uapi/misc/habanalabs.h b/include/uapi/misc/habanalabs.h
+new file mode 100644
+index 000000000000..b3f9213d4709
+--- /dev/null
++++ b/include/uapi/misc/habanalabs.h
+@@ -0,0 +1,62 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note
 + *
 + * Copyright 2016-2018 HabanaLabs, Ltd.
 + * All Rights Reserved.
@@ -1235,112 +1032,59 @@ index 000000000000..192a1450cbb1
 + *
 + */
 +
-+#ifndef GOYA_H
-+#define GOYA_H
-+
-+#include "asic_reg/goya_regs.h"
++#ifndef HABANALABS_H_
++#define HABANALABS_H_
 +
 +#include <linux/types.h>
++#include <linux/ioctl.h>
 +
-+#define SRAM_CFG_BAR_ID		0
-+#define MSIX_BAR_ID		2
-+#define DDR_BAR_ID		4
++/* Opcode to create a new command buffer */
++#define HL_CB_OP_CREATE		0
++/* Opcode to destroy previously created command buffer */
++#define HL_CB_OP_DESTROY	1
 +
-+#define CFG_BAR_SIZE		0x10000000ull		/* 256MB */
-+#define MSIX_BAR_SIZE		0x1000ull		/* 4KB */
++struct hl_cb_in {
++	/* Handle of CB or 0 if we want to create one */
++	__u64 cb_handle;
++	/* HL_CB_OP_* */
++	__u32 op;
++	/* Size of CB. Minimum requested size must be PAGE_SIZE */
++	__u32 cb_size;
++	/* Context ID - Currently not in use */
++	__u32 ctx_id;
++	__u32 pad;
++};
 +
-+#define CFG_BASE		0x7FFC000000ull
-+#define CFG_SIZE		0x4000000		/* 32MB CFG + 32MB DBG*/
++struct hl_cb_out {
++	/* Handle of CB */
++	__u64 cb_handle;
++};
 +
-+#define SRAM_BASE_ADDR		0x7FF0000000ull
-+#define SRAM_SIZE		0x32A0000		/* 50.625MB */
-+#define KMD_SRAM_RESERVED_SIZE	0x8000			/* 32KB */
-+
-+#define SRAM_BASE_ADDR_USER	(0x7FF0000000ull + KMD_SRAM_RESERVED_SIZE)
-+#define SRAM_SIZE_USER		(SRAM_SIZE - KMD_SRAM_RESERVED_SIZE)
-+
-+#define DRAM_PHYS_BASE		0x0ull
-+
-+#define CPU_FW_IMAGE_SIZE	0x10000000	/* 256MB */
-+#define MMU_PAGE_TABLES_SIZE	0x0E000000	/* 224MB */
-+#define CPU_PQ_PKT_SIZE		0x00001000	/* 4KB */
-+#define CPU_PQ_DATA_SIZE	0x01FFF000	/* 32MB - 4KB  */
-+
-+#define CPU_FW_IMAGE_ADDR	DRAM_PHYS_BASE
-+#define MMU_PAGE_TABLES_ADDR	(CPU_FW_IMAGE_ADDR + CPU_FW_IMAGE_SIZE)
-+#define CPU_PQ_PKT_ADDR		(MMU_PAGE_TABLES_ADDR + MMU_PAGE_TABLES_SIZE)
-+#define CPU_PQ_DATA_ADDR	(CPU_PQ_PKT_ADDR + CPU_PQ_PKT_SIZE)
-+#define DRAM_BASE_ADDR_USER	(CPU_PQ_DATA_ADDR + CPU_PQ_DATA_SIZE)
-+
-+#define HOST_PHYS_BASE		0x8000000000ull		/* 0.5TB */
-+#define HOST_PHYS_SIZE		0x1000000000000ull	/* 0.25PB (48 bits) */
-+
-+#define VA_HOST_SPACE_START	0x1000000000000ull	/* 256TB */
-+#define VA_HOST_SPACE_END	0x3FF8000000000ull	/* 1PB - 1TB */
-+#define VA_HOST_SPACE_SIZE	(VA_HOST_SPACE_END - \
-+					VA_HOST_SPACE_START) /* 767TB */
-+
-+#define VA_DDR_SPACE_START	0x800000000ull		/* 32GB */
-+#define VA_DDR_SPACE_END	0x2000000000ull		/* 128GB */
-+#define VA_DDR_SPACE_SIZE	(VA_DDR_SPACE_END - \
-+					VA_DDR_SPACE_START)	/* 128GB */
-+
-+#define CPU_BOOT_ADDR		0x7FF8040000ull
-+
-+#define UBOOT_FW_OFFSET		0x100000		/* 1MB in SRAM */
-+#define LINUX_FW_OFFSET		0x800000		/* 8BM in DDR */
-+
-+#define GOYA_MSIX_ENTRIES	8
-+#define EVENT_QUEUE_MSIX_IDX	5
-+#define ARMCP_RESET_MSIX_IDX	6
-+
-+#define QMAN_PQ_ENTRY_SIZE	16			/* Bytes */
-+
-+#define MAX_ASID		1024
-+
-+#define PROT_BITS_OFFS		0xF80
++union hl_cb_args {
++	struct hl_cb_in in;
++	struct hl_cb_out out;
++};
 +
 +/*
-+ * Queue Numbering
++ * Command Buffer
++ * - Request a Command Buffer
++ * - Destroy a Command Buffer
 + *
-+ * The external queues (DMA channels + CPU) MUST be before the internal queues
-+ * and each group (DMA channels + CPU and internal) must be contiguous inside
-+ * itself but there can be a gap between the two groups (although not
-+ * recommended)
++ * The command buffers are memory blocks that reside in DMA-able address
++ * space and are physically contiguous so they can be accessed by the device
++ * directly. They are allocated using the coherent DMA API.
++ *
++ * When creating a new CB, the IOCTL returns a handle of it, and the user-space
++ * process needs to use that handle to mmap the buffer so it can access them.
++ *
 + */
++#define HL_IOCTL_CB		\
++		_IOWR('H', 0x02, union hl_cb_args)
 +
-+enum goya_queue_id {
-+	GOYA_QUEUE_ID_DMA_0 = 0,
-+	GOYA_QUEUE_ID_DMA_1,
-+	GOYA_QUEUE_ID_DMA_2,
-+	GOYA_QUEUE_ID_DMA_3,
-+	GOYA_QUEUE_ID_DMA_4,
-+	GOYA_QUEUE_ID_CPU_PQ,
-+	GOYA_QUEUE_ID_MME,
-+	GOYA_QUEUE_ID_TPC0,
-+	GOYA_QUEUE_ID_TPC1,
-+	GOYA_QUEUE_ID_TPC2,
-+	GOYA_QUEUE_ID_TPC3,
-+	GOYA_QUEUE_ID_TPC4,
-+	GOYA_QUEUE_ID_TPC5,
-+	GOYA_QUEUE_ID_TPC6,
-+	GOYA_QUEUE_ID_TPC7,
-+	GOYA_QUEUE_ID_SIZE
-+};
++#define HL_COMMAND_START	0x02
++#define HL_COMMAND_END		0x03
 +
-+enum goya_pll_index {
-+	CPU_PLL = 0,
-+	IC_PLL,
-+	MC_PLL,
-+	MME_PLL,
-+	PCI_PLL,
-+	EMMC_PLL,
-+	TPC_PLL
-+};
-+
-+#define GOYA_PLL_FREQ_LOW		50000000 /* 50 MHz */
-+
-+#endif /* GOYA_H */
++#endif /* HABANALABS_H_ */
 -- 
 2.17.1
 
