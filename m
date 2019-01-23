@@ -2,168 +2,182 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E92E0C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:18:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EF02C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:19:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B769320870
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:18:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 320D620870
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:19:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="YLIz/SI9"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lu+BVVEY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727175AbfAWOSR (ORCPT
+        id S1726872AbfAWOT0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 09:18:17 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:55628 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726203AbfAWOSQ (ORCPT
+        Wed, 23 Jan 2019 09:19:26 -0500
+Received: from mail-yw1-f74.google.com ([209.85.161.74]:45237 "EHLO
+        mail-yw1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726200AbfAWOTZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 09:18:16 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0NE46fI092844;
-        Wed, 23 Jan 2019 14:17:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=z3pwMa4h9zXXCY53sAok6NuaOmQ7mwy4i3yvZxDP0p0=;
- b=YLIz/SI9wsMcaUT3lOLWm/bCeTyc0P0pyi0JMeJ+ZL67BgMtSDvU2itZbwGwc2hYsxu8
- mHO4+jqVWTxUS1dPOSxf4R5veFBZKbhCIUqPbjJF1lir4xLZM6kpxIcjPI1cKV9XU08p
- mIU/TVrcNBW3YSiHzjT6mWR9iBMk70WMs47YXN4UjC69Egn0S3aj2QGth3s2l9os65Sh
- JjbyCvJ6bGa8Z69vdWNGoShZOqDgG/RJatOstS12OdsoAhxxPmjCfsXA16T8BhWcNyIj
- xyM7Ki4czQZT5TYAKZlPgGrORMIcrH8wdtXD48RVPdoZqNWMXgUPQUvxgIlfPKAPtGdh VA== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2q3uaut3df-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 23 Jan 2019 14:17:41 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0NEHY2N029498
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 23 Jan 2019 14:17:35 GMT
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x0NEHXu6009959;
-        Wed, 23 Jan 2019 14:17:33 GMT
-Received: from Konrads-MacBook-Pro.local (/75.104.64.133)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 23 Jan 2019 06:17:33 -0800
-Date:   Wed, 23 Jan 2019 09:16:35 -0500
-From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To:     Khalid Aziz <khalid.aziz@oracle.com>
-Cc:     juergh@gmail.com, tycho@tycho.ws, jsteckli@amazon.de,
-        ak@linux.intel.com, torvalds@linux-foundation.org,
-        liran.alon@oracle.com, keescook@google.com,
-        Juerg Haefliger <juerg.haefliger@canonical.com>,
-        deepa.srinivasan@oracle.com, chris.hyser@oracle.com,
-        tyhicks@canonical.com, dwmw@amazon.co.uk,
-        andrew.cooper3@citrix.com, jcm@redhat.com,
-        boris.ostrovsky@oracle.com, kanth.ghatraju@oracle.com,
-        joao.m.martins@oracle.com, jmattson@google.com,
-        pradeep.vincent@oracle.com, john.haxby@oracle.com,
-        tglx@linutronix.de, kirill.shutemov@linux.intel.com, hch@lst.de,
-        steven.sistare@oracle.com, kernel-hardening@lists.openwall.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Tycho Andersen <tycho@docker.com>
-Subject: Re: [RFC PATCH v7 04/16] swiotlb: Map the buffer if it was unmapped
- by XPFO
-Message-ID: <20190123141614.GA19289@Konrads-MacBook-Pro.local>
-References: <cover.1547153058.git.khalid.aziz@oracle.com>
- <98f9b9be522d694d5a52640dd1dfbdd14ca6f8e5.1547153058.git.khalid.aziz@oracle.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <98f9b9be522d694d5a52640dd1dfbdd14ca6f8e5.1547153058.git.khalid.aziz@oracle.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9144 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901230106
+        Wed, 23 Jan 2019 09:19:25 -0500
+Received: by mail-yw1-f74.google.com with SMTP id k69so1173407ywa.12
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 06:19:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=YdTZcj4awLkuiDDlEY8FD2E/jDvXKOg3LBytxcu7mVU=;
+        b=lu+BVVEYMxAL/KrTfwYAlxgvot43Q/Mns6Yeh7/yIyOJV29nPKkT9lUxroKxb1UTol
+         x9WSGCNTyweuQ4Hv7kKPhavqo3M7SpYnWEQ0s8ku/f0CqSEnBbHwYRgaVRV0bqutWRSZ
+         EXrhfRZFq4j8oePmj/cTz1Ji8I+p+TjhJcb2hdlEB5PrA9mM2+Rbev3Q+Y3LUkDrwkz7
+         bIWaMraK7RIayMEV4HxHAU0EJlK3mh+/KfeeF9jBtoqcGBZQr/Goc6Nd7KYVB+wUk8HI
+         iFFmaDZS2ne8zreF9mb5yh00ekU7dqZwcXid8gI60csUYzoo3zuXVpq6hiXtI6BRLclb
+         H6+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=YdTZcj4awLkuiDDlEY8FD2E/jDvXKOg3LBytxcu7mVU=;
+        b=ZXZRpEY3lqFMpnVcwqHrhT3TRC/G1fpk0uD1E7PrxDiQd11hck4adDnLh1ySmSZReS
+         xDlrbakXb3VAu4+iUd15DY4vpR4qOS8BP7jX6roMhYS2HlX6dpK0WIabmtT0Rj5o48mS
+         oZYx29oxls5slBsaamM4phpy7CV3tImUPoakmlg3wB9kj0QFAEhqqzA0+qiShYUeJbKw
+         fS1bG0APH9dCp86BRW5zY76r+tzyRzXTYlHxBTKvUdLBOajR4xcuGCd9dpNWptB+hlGK
+         n8RjtVH6mG3V1jTCsqDqG/Fo1KQcHeNyZdg1RaOFOv2tdAej+ksznyyE1OY2HQ1LF1No
+         V+rg==
+X-Gm-Message-State: AJcUukenKYTEQgZy5uDsokbIE6pIv4P3wdHgro11u4VJxV/t4c+MvLWR
+        vuDZhjtfZzk4k1dH5v0nWDBSItrRzw==
+X-Google-Smtp-Source: ALg8bN7juJ6hMcbdu4GR7lWA1uM1JYyMs7fQif2GCpFQfVJXuVsShRI+e6riORdnPK9ZF0h4hlvldL61lA==
+X-Received: by 2002:a25:3b03:: with SMTP id i3mr686453yba.57.1548253163833;
+ Wed, 23 Jan 2019 06:19:23 -0800 (PST)
+Date:   Wed, 23 Jan 2019 15:19:17 +0100
+Message-Id: <20190123141918.238286-1-jannh@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.20.1.321.g9e740568ce-goog
+Subject: [PATCH v2 1/2] splice: don't merge into linked buffers
+From:   Jann Horn <jannh@google.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Jens Axboe <axboe@kernel.dk>, Jens Axboe <axboe@fb.com>,
+        jannh@google.com
+Cc:     Eric Biggers <ebiggers@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 02:09:36PM -0700, Khalid Aziz wrote:
-> From: Juerg Haefliger <juerg.haefliger@canonical.com>
-> 
-> v6: * guard against lookup_xpfo() returning NULL
-> 
-> CC: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-> Signed-off-by: Juerg Haefliger <juerg.haefliger@canonical.com>
-> Signed-off-by: Tycho Andersen <tycho@docker.com>
-> Signed-off-by: Khalid Aziz <khalid.aziz@oracle.com>
+Before this patch, it was possible for two pipes to affect each other after
+data had been transferred between them with tee():
 
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+============
+$ cat tee_test.c
 
-> ---
->  include/linux/xpfo.h |  4 ++++
->  kernel/dma/swiotlb.c |  3 ++-
->  mm/xpfo.c            | 15 +++++++++++++++
->  3 files changed, 21 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/xpfo.h b/include/linux/xpfo.h
-> index a39259ce0174..e38b823f44e3 100644
-> --- a/include/linux/xpfo.h
-> +++ b/include/linux/xpfo.h
-> @@ -35,6 +35,8 @@ void xpfo_kunmap(void *kaddr, struct page *page);
->  void xpfo_alloc_pages(struct page *page, int order, gfp_t gfp);
->  void xpfo_free_pages(struct page *page, int order);
->  
-> +bool xpfo_page_is_unmapped(struct page *page);
-> +
->  #else /* !CONFIG_XPFO */
->  
->  static inline void xpfo_kmap(void *kaddr, struct page *page) { }
-> @@ -42,6 +44,8 @@ static inline void xpfo_kunmap(void *kaddr, struct page *page) { }
->  static inline void xpfo_alloc_pages(struct page *page, int order, gfp_t gfp) { }
->  static inline void xpfo_free_pages(struct page *page, int order) { }
->  
-> +static inline bool xpfo_page_is_unmapped(struct page *page) { return false; }
-> +
->  #endif /* CONFIG_XPFO */
->  
->  #endif /* _LINUX_XPFO_H */
-> diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
-> index 045930e32c0e..820a54b57491 100644
-> --- a/kernel/dma/swiotlb.c
-> +++ b/kernel/dma/swiotlb.c
-> @@ -396,8 +396,9 @@ static void swiotlb_bounce(phys_addr_t orig_addr, phys_addr_t tlb_addr,
->  {
->  	unsigned long pfn = PFN_DOWN(orig_addr);
->  	unsigned char *vaddr = phys_to_virt(tlb_addr);
-> +	struct page *page = pfn_to_page(pfn);
->  
-> -	if (PageHighMem(pfn_to_page(pfn))) {
-> +	if (PageHighMem(page) || xpfo_page_is_unmapped(page)) {
->  		/* The buffer does not have a mapping.  Map it in and copy */
->  		unsigned int offset = orig_addr & ~PAGE_MASK;
->  		char *buffer;
-> diff --git a/mm/xpfo.c b/mm/xpfo.c
-> index bff24afcaa2e..cdbcbac582d5 100644
-> --- a/mm/xpfo.c
-> +++ b/mm/xpfo.c
-> @@ -220,3 +220,18 @@ void xpfo_kunmap(void *kaddr, struct page *page)
->  	spin_unlock(&xpfo->maplock);
->  }
->  EXPORT_SYMBOL(xpfo_kunmap);
-> +
-> +bool xpfo_page_is_unmapped(struct page *page)
-> +{
-> +	struct xpfo *xpfo;
-> +
-> +	if (!static_branch_unlikely(&xpfo_inited))
-> +		return false;
-> +
-> +	xpfo = lookup_xpfo(page);
-> +	if (unlikely(!xpfo) && !xpfo->inited)
-> +		return false;
-> +
-> +	return test_bit(XPFO_PAGE_UNMAPPED, &xpfo->flags);
-> +}
-> +EXPORT_SYMBOL(xpfo_page_is_unmapped);
-> -- 
-> 2.17.1
-> 
+int main(void) {
+  int pipe_a[2];
+  if (pipe(pipe_a)) err(1, "pipe");
+  int pipe_b[2];
+  if (pipe(pipe_b)) err(1, "pipe");
+  if (write(pipe_a[1], "abcd", 4) != 4) err(1, "write");
+  if (tee(pipe_a[0], pipe_b[1], 2, 0) != 2) err(1, "tee");
+  if (write(pipe_b[1], "xx", 2) != 2) err(1, "write");
+
+  char buf[5];
+  if (read(pipe_a[0], buf, 4) != 4) err(1, "read");
+  buf[4] = 0;
+  printf("got back: '%s'\n", buf);
+}
+$ gcc -o tee_test tee_test.c
+$ ./tee_test
+got back: 'abxx'
+$
+============
+
+As suggested by Al Viro, fix it by creating a separate type for
+non-mergeable pipe buffers, then changing the types of buffers in
+splice_pipe_to_pipe() and link_pipe().
+
+Cc: <stable@vger.kernel.org>
+Fixes: 7c77f0b3f920 ("splice: implement pipe to pipe splicing")
+Fixes: 70524490ee2e ("[PATCH] splice: add support for sys_tee()")
+Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Jann Horn <jannh@google.com>
+---
+Al wasn't entirely happy with the approach I took for v1, so sending a
+different fix here.
+
+ fs/pipe.c                 | 14 ++++++++++++++
+ fs/splice.c               |  4 ++++
+ include/linux/pipe_fs_i.h |  1 +
+ 3 files changed, 19 insertions(+)
+
+diff --git a/fs/pipe.c b/fs/pipe.c
+index bdc5d3c0977d..c51750ed4011 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -234,6 +234,14 @@ static const struct pipe_buf_operations anon_pipe_buf_ops = {
+ 	.get = generic_pipe_buf_get,
+ };
+ 
++static const struct pipe_buf_operations anon_pipe_buf_nomerge_ops = {
++	.can_merge = 0,
++	.confirm = generic_pipe_buf_confirm,
++	.release = anon_pipe_buf_release,
++	.steal = anon_pipe_buf_steal,
++	.get = generic_pipe_buf_get,
++};
++
+ static const struct pipe_buf_operations packet_pipe_buf_ops = {
+ 	.can_merge = 0,
+ 	.confirm = generic_pipe_buf_confirm,
+@@ -242,6 +250,12 @@ static const struct pipe_buf_operations packet_pipe_buf_ops = {
+ 	.get = generic_pipe_buf_get,
+ };
+ 
++void pipe_buf_mark_unmergeable(struct pipe_buffer *buf)
++{
++	if (buf->ops == &anon_pipe_buf_ops)
++		buf->ops = &anon_pipe_buf_nomerge_ops;
++}
++
+ static ssize_t
+ pipe_read(struct kiocb *iocb, struct iov_iter *to)
+ {
+diff --git a/fs/splice.c b/fs/splice.c
+index de2ede048473..90c29675d573 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -1597,6 +1597,8 @@ static int splice_pipe_to_pipe(struct pipe_inode_info *ipipe,
+ 			 */
+ 			obuf->flags &= ~PIPE_BUF_FLAG_GIFT;
+ 
++			pipe_buf_mark_unmergeable(obuf);
++
+ 			obuf->len = len;
+ 			opipe->nrbufs++;
+ 			ibuf->offset += obuf->len;
+@@ -1671,6 +1673,8 @@ static int link_pipe(struct pipe_inode_info *ipipe,
+ 		 */
+ 		obuf->flags &= ~PIPE_BUF_FLAG_GIFT;
+ 
++		pipe_buf_mark_unmergeable(obuf);
++
+ 		if (obuf->len > len)
+ 			obuf->len = len;
+ 
+diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
+index 5a3bb3b7c9ad..3ecd7ea212ae 100644
+--- a/include/linux/pipe_fs_i.h
++++ b/include/linux/pipe_fs_i.h
+@@ -182,6 +182,7 @@ void generic_pipe_buf_get(struct pipe_inode_info *, struct pipe_buffer *);
+ int generic_pipe_buf_confirm(struct pipe_inode_info *, struct pipe_buffer *);
+ int generic_pipe_buf_steal(struct pipe_inode_info *, struct pipe_buffer *);
+ void generic_pipe_buf_release(struct pipe_inode_info *, struct pipe_buffer *);
++void pipe_buf_mark_unmergeable(struct pipe_buffer *buf);
+ 
+ extern const struct pipe_buf_operations nosteal_pipe_buf_ops;
+ 
+-- 
+2.20.1.321.g9e740568ce-goog
+
