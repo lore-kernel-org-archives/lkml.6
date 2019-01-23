@@ -2,104 +2,112 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2339C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:30:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C36A6C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:33:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8BB121872
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:30:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548268233;
-	bh=Z0E1QpdwJ46nm6DwTwerluIAiRPairjZbx8gQLnUpLA=;
-	h=From:Date:To:Cc:Cc:Cc:Cc:Cc:Cc:Subject:List-ID:From;
-	b=X6x48QMzyE8vXy/kanLzWJ5mIjFcxCTlNKO5ODCaqCwwDs0Txcup2nXet1rUkNtxh
-	 zwj0hiTLgIO9mBAuuTw9PU6lX9P/ibnvXLuVYOMWO7VOFyDWS1FN5pYZPLpfGwmxRa
-	 PKGT6Im9x4wk9hlyOzzRGuTxOsI6Fm4LsNiHfRfU=
+	by mail.kernel.org (Postfix) with ESMTP id 945F2218A1
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 18:33:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eqPyg/aJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726337AbfAWSac (ORCPT
+        id S1726262AbfAWSd2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 13:30:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60058 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726202AbfAWSab (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 13:30:31 -0500
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9CFEE21872;
-        Wed, 23 Jan 2019 18:30:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548268230;
-        bh=Z0E1QpdwJ46nm6DwTwerluIAiRPairjZbx8gQLnUpLA=;
-        h=From:Date:To:Cc:Cc:Cc:Cc:Cc:Cc:Subject:From;
-        b=Dsv4kB48wR3QPRcSzkCx7KVV+4rD6KTxPr8PqAc3G8VJgYEHoPXExItZ4oUi1BgU+
-         +VCXSG8Y3Hj/VcLTn2YTF7+1LyJDQSlA2W+fAj9FC+peaQyeh/LGoYpel+VRmR/7zu
-         rBQ5ObOZZ+yfAKsQjlXKlgDR328bnmEWBBAOQjEs=
-From:   Sasha Levin <sashal@kernel.org>
-Date:   Wed, 23 Jan 2019 13:30:29 -0500
-To:     David Miller <davem@davemloft.net>
-Cc:     linux-kernel@microsoft.com
-Cc:     kys@microsoft.com
-Cc:     haiyangz@microsoft.com
-Cc:     sthemmin@microsoft.com
-Cc:     linux-kernel@vger.kernel.org
-Cc:     netdev@vger.kernel.org
-Subject: [GIT PULL] Hyper-V hv_netvsc commits for 5.0
-Message-Id: <20190123183030.9CFEE21872@mail.kernel.org>
+        Wed, 23 Jan 2019 13:33:28 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:32864 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725996AbfAWSd2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 13:33:28 -0500
+Received: by mail-pg1-f195.google.com with SMTP id z11so1459420pgu.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 10:33:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=B6Lj3ajVjxrCjb5DygUw9O+jOMaas1fB+IERWCPr34o=;
+        b=eqPyg/aJXX26q3yK5HC1/gAXBl+jPuEzn6Cm0RXAkaVRNOuQEph8i6pchSaoQJjtWq
+         EFKBd/0+gjD68Mh6KYFW0CCIOWuPxyYJEfHoJu1e5ueyKWHvX4AqRnTy0CbWU41UG4eR
+         11ZHK3fPpxvPGLvzHGDZAvSjMEbkYiIUnfMPcHgS//GzgOrgCun1Dl1Ewt/ZvCpktchq
+         tL50DUiAhWv/CjGQqBbIYEP3c/n+SauJiAJCcpuxaGOATx74hK7ZWC8xh5VerhmElG4R
+         iya420F5VmUm5OBIhW7fUBpsHQ2Vv9Fe+DCy0atRrmdO+pd/cEM34MpZAsFw+10xWkwy
+         rqWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=B6Lj3ajVjxrCjb5DygUw9O+jOMaas1fB+IERWCPr34o=;
+        b=PWw9DBV722+n8KI7ks4mo+E+YkdXbsy0Nolg287h8HHQMpzV7q2ltjKI0VufOIBUeJ
+         W4RjMZl4D77FTw1h0TloY7LHmStsIvaMogaMx+EzTHTT0KZ3ThZ9zrDBLDW58jqyeTms
+         h6hYbhpH4bc3th31vkEe2tn4iigD2FTciswu96wXd53ak0lLBH0iZkY+DnjLB4DbIyFn
+         XlMSTepgX9V3Y8HYFaxCmjM9pSlxGAl9bEQDS74RSfcPNEroeBh3GfKJj4GrK2RU73XU
+         NDZYIqg/RuWTOc3luiJk1xcaJCSh+hzX6kqD3Ee63hediOhXdlJ/NqkeTvWpIALyuuLA
+         hq2g==
+X-Gm-Message-State: AJcUukdf/GCptt8dFnxnSqYEXTG1IPetiY6fpq/Ej7IXgeyQi+wNPdI6
+        2KUsNgsOCwWm2MurfUx81ysGXA==
+X-Google-Smtp-Source: ALg8bN6iaNwA6DATgkPnBGQzv98gimGqUmSzIn+N6MpVXeN62sKvy6CEtGGGRm2b2NMF71IAm1NxWQ==
+X-Received: by 2002:a63:790e:: with SMTP id u14mr2985755pgc.452.1548268407254;
+        Wed, 23 Jan 2019 10:33:27 -0800 (PST)
+Received: from google.com ([2620:15c:17:4:f0b1:8ff5:16a0:5f15])
+        by smtp.gmail.com with ESMTPSA id d18sm27560280pfj.47.2019.01.23.10.33.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 23 Jan 2019 10:33:26 -0800 (PST)
+Date:   Wed, 23 Jan 2019 10:33:22 -0800
+From:   Tom Roeder <tmroeder@google.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzbot+ded1696f6b50b615b630@syzkaller.appspotmail.com
+Subject: Re: [RFC PATCH] kvm: x86/vmx: Use kzalloc for cached_vmcs12
+Message-ID: <20190123183322.GB160275@google.com>
+References: <6f79d9be-fa76-3a06-2612-f44f3a18ece7@redhat.com>
+ <20190114234728.49239-1-tmroeder@google.com>
+ <20190115024304.GD5141@linux.intel.com>
+ <20190115175111.GB68985@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190115175111.GB68985@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA512
+On Tue, Jan 15, 2019 at 09:51:11AM -0800, Tom Roeder wrote:
+> On Mon, Jan 14, 2019 at 06:43:04PM -0800, Sean Christopherson wrote:
+> > On Mon, Jan 14, 2019 at 03:47:28PM -0800, Tom Roeder wrote:
+> > > This changes the allocation of cached_vmcs12 to use kzalloc instead of
+> > > kmalloc. This removes the information leak found by Syzkaller (see
+> > > Reported-by) in this case and prevents similar leaks from happening
+> > > based on cached_vmcs12.
+> > 
+> > Is the leak specific to vmx_set_nested_state(), e.g. can we zero out
+> > the memory if copy_from_user() fails instead of taking the hit on every
+> > allocation?
+> 
+> I don't know if the leak is specific to vmx_set_nested_state.
 
-The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
+I've looked at the code more now, and it looks to me like there might be
+other cases where the memory could leak. But I don't know enough of the
+flows to be sure. The enter_vmx_operation function is called in
+handle_vmon, and no data is copied from the guest immediately after
+that. So, it depends on what happens after VMXON.
 
-  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
+Even in vmx_set_nested_state, there are about 30 lines of code in
+between enter_vmx_operation and copy_from_user, and there are a couple
+of cases that cause vmx_set_nested_state to return with an error. So if
+we want to fix this by handling all the error paths, I think it might be
+cleanest to convert vmx_set_nested_state to use goto error handling,
+since that would allow us to clear the allocated memory in one place.
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/hyperv/linux.git tags/hyperv-fixes-signed
-
-for you to fetch changes up to 52d3b4949192e93b948daaa40678fcd4b94bcbd0:
-
-  hv_netvsc: fix typos in code comments (2019-01-23 13:21:34 -0500)
-
-- ----------------------------------------------------------------
-Three patches from Haiyang Zhang to fix settings hash key using ethtool,
-and Adrian Vladu's first patch fixing a few spelling mistakes.
-
-- ----------------------------------------------------------------
-Adrian Vladu (1):
-      hv_netvsc: fix typos in code comments
-
-Haiyang Zhang (3):
-      hv_netvsc: Fix ethtool change hash key error
-      hv_netvsc: Refactor assignments of struct netvsc_device_info
-      hv_netvsc: Fix hash key value reset after other ops
-
- drivers/net/hyperv/hyperv_net.h   |  12 ++--
- drivers/net/hyperv/netvsc.c       |   4 +-
- drivers/net/hyperv/netvsc_drv.c   | 145 ++++++++++++++++++++++++--------------
- drivers/net/hyperv/rndis_filter.c |  36 +++++++---
- 4 files changed, 129 insertions(+), 68 deletions(-)
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE4n5dijQDou9mhzu83qZv95d3LNwFAlxIssUACgkQ3qZv95d3
-LNyezg/5ARp4trV4xYrKn9KY3ctgk2MQMBWfJyTnJP/MMwH9U7c0c7xlWke+2+vp
-B+9tbRdPU1amHMSeounLiQNrkqBQlqYUtJdTXx5Yq9r76IEh7qTkDsMdBOq1Uxpn
-DpmcbfelylTEcmMj8XbYokAKgNWdLIJZbcbYQjuHv+2pEO6DfH/SnB1zh25dHWNt
-TO1zXRiTISJN2yLD1rayUzvx9KwMiQAfhMCtvfo8X/8us5X96WH/Isvzjfuon1Aa
-iq7PuwV8gm2OFFzR+mlLoE33TmtytvUyWOdBDj3I7QNmhvCa4uMlJrFh0smML3yU
-SAtBLDGkCOsREDVCwe7R/P2NFvAf8gCn1NZ3Vnaywwb3nvgUTdqUZqEiv3T7cePv
-Eossh4hhKDWTkBxk6iSqP2L+SiSYbg845TZTP+iPhgBGEnlEn04YIUdftT/i5sYE
-K1awGnE8DOmaOFhgG+rpHvBnOhb5azepTpbs0ajxAVec6+vVXtdKf3STa+xqKOOd
-JS2uHj/aF+PeS1FuZbaZxfBEOzy7PVP6wAfu6ZkzIlpy6XKXnyiPvW8zRvs2YqfG
-0XsKn7e/hZelZ2bQXLNllYyXZTNh54E/vvfC/4uGrHSgSMxBuW2N5s3oC75VJtLw
-II+2oIsRuUU8v5EwvyNxsXxjvIU/BxNAYz9Vb5CQE3gaxjOAQgg=
-=OV99
------END PGP SIGNATURE-----
+What do you think?
