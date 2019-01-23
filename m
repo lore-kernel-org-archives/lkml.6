@@ -2,93 +2,172 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DE9AC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 12:11:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64AFBC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 12:12:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 340FB217F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 12:11:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548245463;
-	bh=63FdjGxriYSBkfHDCBwcWoGSDK85biVMPwupFi8Mi+s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=H/tYIwRvRHhUP25Jm99YzBw5l3r5IJ8u+VtmnSblsp0bqp3jIkt0HGnEKpvztgU0D
-	 yN8ei/9eWeYTNlz8V19MymRkZ7x2z2IT2kAYcaIi5lel+g9cNDv2gS2v8xdKDT4QXD
-	 FXth2kuQlU4jB4W0bCH1HvDR8ldHKxQ37eHExSqs=
+	by mail.kernel.org (Postfix) with ESMTP id 279C720861
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 12:12:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mPJ/Kv2s";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oAGLcM2S"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727416AbfAWMLB (ORCPT
+        id S1727264AbfAWMMI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 07:11:01 -0500
-Received: from mx2.suse.de ([195.135.220.15]:36548 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725991AbfAWMLB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 07:11:01 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 41466B0E7;
-        Wed, 23 Jan 2019 12:11:00 +0000 (UTC)
-Date:   Wed, 23 Jan 2019 13:10:58 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     Yang Shi <yang.shi@linux.alibaba.com>, hannes@cmpxchg.org,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] mm: vmscan: do not iterate all mem cgroups for
- global direct reclaim
-Message-ID: <20190123121058.GW4087@dhcp22.suse.cz>
-References: <1548187782-108454-1-git-send-email-yang.shi@linux.alibaba.com>
- <fa1d9a1f-99c8-a4ae-da7f-ed90336497e9@virtuozzo.com>
- <20190123110254.GU4087@dhcp22.suse.cz>
- <9bd4044b-63d0-b24f-a108-3061c00ed131@virtuozzo.com>
+        Wed, 23 Jan 2019 07:12:08 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:36590 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726108AbfAWMMH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 07:12:07 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 0A452607C6; Wed, 23 Jan 2019 12:12:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548245526;
+        bh=TOwqByPOK0JcqDzIL0TmrrT3a7x2WZU8v1t4RkS0TnM=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=mPJ/Kv2sqgYTWbDdJNJaMU/v/Jv1cfLZLJz4JGoaAfXEproekFb/BywpIgmeVnhbO
+         TEVuqitntoVaflvRqMbIkzBYmRS6sAvzZ7XCuIqIJQFe4RVJCgxBDhBMIDkpMJQoLd
+         m8Sa6Xfer+SQJBkpFchLlz1/rR/U8eZzLR/nHBFA=
+Received: from [10.79.129.250] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D1798602BA;
+        Wed, 23 Jan 2019 12:11:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548245525;
+        bh=TOwqByPOK0JcqDzIL0TmrrT3a7x2WZU8v1t4RkS0TnM=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=oAGLcM2SANEZaUiyEp/kv9ys321vLR2E8Or16hna5DCgNXLQwOaRzFMfuKfRtrRdi
+         Vtddcb3Lj7/vZGOjuhantWkhbpeyWAicbN6KbJuOvYwJ7ZSqjkQ4sGSCA/NlJ2JKzh
+         2vnT9y3tGds/QO2u8Zs9XwQElyvACqeRyg7V67zM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D1798602BA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
+Subject: Re: [PATCHv4 1/4] arm64: dts: qcom: sdm845: Add Coresight support
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>, robh+dt@kernel.org,
+        mathieu.poirier@linaro.org, leo.yan@linaro.org,
+        alexander.shishkin@linux.intel.com, andy.gross@linaro.org,
+        david.brown@linaro.org, vivek.gautam@codeaurora.org,
+        dianders@chromium.org, sboyd@kernel.org,
+        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
+        mark.rutland@arm.com
+Cc:     rnayak@codeaurora.org, sibis@codeaurora.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, john.horley@arm.com
+References: <cover.1548133311.git.saiprakash.ranjan@codeaurora.org>
+ <ad16cfb9b6f5efb85149458d5f5a1abf43fa027c.1548133311.git.saiprakash.ranjan@codeaurora.org>
+ <1bd39862-0725-70ce-6535-fdb59569f683@arm.com>
+ <75ed74af-6946-b86d-092e-42dc16e55308@codeaurora.org>
+ <91a90daa-9e14-2d2e-e633-2ddfdc0955bf@arm.com>
+ <3906faf1-abbd-9c28-ad55-ed3800f06352@codeaurora.org>
+ <c03b63bf-aca8-ea46-70ad-ee4558f0319e@arm.com>
+From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Message-ID: <5b54c6e0-7d22-ecee-486f-31333f49f84a@codeaurora.org>
+Date:   Wed, 23 Jan 2019 17:41:57 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9bd4044b-63d0-b24f-a108-3061c00ed131@virtuozzo.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <c03b63bf-aca8-ea46-70ad-ee4558f0319e@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 23-01-19 14:05:28, Kirill Tkhai wrote:
-> On 23.01.2019 14:02, Michal Hocko wrote:
-> > On Wed 23-01-19 13:28:03, Kirill Tkhai wrote:
-> >> On 22.01.2019 23:09, Yang Shi wrote:
-> >>> In current implementation, both kswapd and direct reclaim has to iterate
-> >>> all mem cgroups.  It is not a problem before offline mem cgroups could
-> >>> be iterated.  But, currently with iterating offline mem cgroups, it
-> >>> could be very time consuming.  In our workloads, we saw over 400K mem
-> >>> cgroups accumulated in some cases, only a few hundred are online memcgs.
-> >>> Although kswapd could help out to reduce the number of memcgs, direct
-> >>> reclaim still get hit with iterating a number of offline memcgs in some
-> >>> cases.  We experienced the responsiveness problems due to this
-> >>> occassionally.
-> >>>
-> >>> Here just break the iteration once it reclaims enough pages as what
-> >>> memcg direct reclaim does.  This may hurt the fairness among memcgs
-> >>> since direct reclaim may awlays do reclaim from same memcgs.  But, it
-> >>> sounds ok since direct reclaim just tries to reclaim SWAP_CLUSTER_MAX
-> >>> pages and memcgs can be protected by min/low.
-> >>
-> >> In case of we stop after SWAP_CLUSTER_MAX pages are reclaimed; it's possible
-> >> the following situation. Memcgs, which are closest to root_mem_cgroup, will
-> >> become empty, and you will have to iterate over empty memcg hierarchy long time,
-> >> just to find a not empty memcg.
-> >>
-> >> I'd suggest, we should not lose fairness. We may introduce
-> >> mem_cgroup::last_reclaim_child parameter to save a child
-> >> (or its id), where the last reclaim was interrupted. Then
-> >> next reclaim should start from this child:
-> > 
-> > Why is not our reclaim_cookie based caching sufficient?
-> 
-> Hm, maybe I missed them. Do cookies already implement this functionality?
+Hi Suzuki,
 
-Have a look at mem_cgroup_iter
+On 1/23/2019 1:42 AM, Suzuki K Poulose wrote:
+> Hi Sai,
+> 
+> On 01/22/2019 04:48 PM, Sai Prakash Ranjan wrote:
+>> Hi Suzuki,
+>>
+[..]
+>>
+>> SDM845 has 4 Kryo 385 Gold (ARM A75) + 4 Kryo 385 Silver (ARM A55),
+>> so the PID values should be same for 4 ETMs atleast. But here one
+>> pid value(001bb803) is same for 6 ETMs and other one for 2
+>> ETMs(001bb802) which seems odd and hence the doubt if these pids
+>> are even valid ones.
+> 
+> Have you checked other SoCs with A55 for the ETM PID ? The drivers
+> usually only care about PID0[7-0], PID1[7-0], PID2[3-0] and ignores
+> the other fields that may change over revisions of the core. So, in your
+> case the ETM ID could be treated as 0xbb802 and 0xbb803.
+> 
+
+Very sorry to have mislead you here. I checked again today on SDM845 and 
+as you said 4 ETMs based on A75 has 0xbb803 and other 4 ETMs based on
+A55 has 0Xbb803. I wrongly mentioned it as 6 and 2.
+
+[    6.688809] resname=etm@7040000 pid = 0x1bb803
+[    6.694957]
+[    6.694957] resname=etm@7140000 pid = 0x1bb803
+[    6.701135]
+[    6.701135] resname=etm@7240000 pid = 0x1bb803
+[    6.707256]
+[    6.707256] resname=etm@7340000 pid = 0x1bb803
+[    6.713454]
+[    6.713454] resname=etm@7440000 pid = 0x1bb802
+[    6.719621]
+[    6.719621] resname=etm@7540000 pid = 0x1bb802
+[    6.725814]
+[    6.725814] resname=etm@7640000 pid = 0x1bb802
+[    6.731971]
+[    6.731971] resname=etm@7740000 pid = 0x1bb802
+
+So is it ok to add these to table as below in etm4x driver with the
+following comment since these do not exactly match A75 and A55 PIDs
+which you provided? Or any other way you prefer?
+
+@@ -1079,6 +1079,10 @@ static const struct amba_id etm4_ids[] = {
+         ETM4x_AMBA_ID(0x000bb95a),              /* Cortex-A72 */
+         ETM4x_AMBA_ID(0x000bb959),              /* Cortex-A73 */
+         ETM4x_AMBA_ID(0x000bb9da),              /* Cortex-A35 */
++       ETM4x_AMBA_ID(0x000f0211),              /* Qualcomm Kryo */
++       ETM4x_AMBA_ID(0x000f0205),              /* Qualcomm Kryo */
++       ETM4x_AMBA_ID(0x000bb803),              /* Qualcomm Kryo 385 
+Cortex-A75 */
++       ETM4x_AMBA_ID(0x000bb802),              /* Qualcomm Kryo 385 
+Cortex-A55 */
+         {},
+  };
+
+For msm8996, cpu debug module pid returned is same as ETM
+which is causing the probe failure for cpu debug coresight module
+as shown in below logs.
+For this case, I tried adding these ids to cpu debug driver, but it
+splits some errors (coresight-cpu-debug: probe of 3840000.etm failed 
+with error -16) since the ids are same. Can we override for this case
+or there is something else we can do here?
+
+[    5.480629] resname=debug@3810000 pid = 0x102f0211
+[    5.480920] OF: graph: no port node found in /soc/debug@3810000
+[    5.513214] coresight-etm4x: probe of 3810000.debug failed with error -22
+[    5.524362]
+[    5.524362] resname=debug@3910000 pid = 0x102f0211
+[    5.524888] OF: graph: no port node found in /soc/debug@3910000
+[    5.537586] coresight-etm4x: probe of 3910000.debug failed with error -22
+[    5.541481]
+[    5.549643] resname=debug@3a10000 pid = 0x102f0205
+[    5.580990] OF: graph: no port node found in /soc/debug@3a10000
+[    5.586817] coresight-etm4x: probe of 3a10000.debug failed with error -22
+[    5.592082]
+[    5.592629] resname=debug@3b10000 pid = 0x102f0205
+[    5.604922] OF: graph: no port node found in /soc/debug@3b10000
+[    5.611234] coresight-etm4x: probe of 3b10000.debug failed with error -22
+
+
+Thanks,
+Sai
 
 -- 
-Michal Hocko
-SUSE Labs
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
