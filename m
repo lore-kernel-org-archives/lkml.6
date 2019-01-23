@@ -2,180 +2,186 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CF84C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 06:56:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CB2BC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 06:56:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0046F21726
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 06:56:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 405E121850
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 06:56:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="qBFQoxR5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726818AbfAWG4I (ORCPT
+        id S1726851AbfAWG4i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 01:56:08 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:36160 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726057AbfAWG4I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 01:56:08 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 03CAB107AB;
-        Wed, 23 Jan 2019 06:56:08 +0000 (UTC)
-Received: from [10.72.12.105] (ovpn-12-105.pek2.redhat.com [10.72.12.105])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7861F4519;
-        Wed, 23 Jan 2019 06:56:03 +0000 (UTC)
-Subject: Re: [virtio-dev] [PATCH] virtio: support VIRTIO_F_ORDER_PLATFORM
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     Tiwei Bie <tiwei.bie@intel.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, virtio-dev@lists.oasis-open.org
-References: <20190122170346.6279-1-tiwei.bie@intel.com>
- <ecf89b02-57ba-478f-1e28-4286888a4b26@redhat.com>
- <20190122224203-mutt-send-email-mst@kernel.org>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <7f07c837-d3d0-b5c0-9ecb-29b545b377c3@redhat.com>
-Date:   Wed, 23 Jan 2019 14:56:00 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 23 Jan 2019 01:56:38 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:1716 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726026AbfAWG4i (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 01:56:38 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c48100c0000>; Tue, 22 Jan 2019 22:56:12 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 22 Jan 2019 22:56:36 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 22 Jan 2019 22:56:36 -0800
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL103.nvidia.com
+ (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 23 Jan
+ 2019 06:56:36 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Wed, 23 Jan 2019 06:56:36 +0000
+Received: from localhost.localdomain (Not Verified[10.19.225.143]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5c4810220000>; Tue, 22 Jan 2019 22:56:35 -0800
+From:   Mark Zhang <markz@nvidia.com>
+To:     <lee.jones@linaro.org>, <linux-kernel@vger.kernel.org>
+CC:     <linux-tegra@vger.kernel.org>, Mark Zhang <markz@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Venkat Reddy Talla <vreddytalla@nvidia.com>
+Subject: [PATCH 1/2] mfd: max77620: Add backup battery charger support
+Date:   Wed, 23 Jan 2019 14:56:19 +0800
+Message-ID: <20190123065620.22250-1-markz@nvidia.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-In-Reply-To: <20190122224203-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Wed, 23 Jan 2019 06:56:08 +0000 (UTC)
+X-NVConfidentiality: public
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1548226572; bh=OUDyElPhiPwMVEx8CTwkTQaz+hQEf3MSZtYJeqdam4Y=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         MIME-Version:X-NVConfidentiality:Content-Transfer-Encoding:
+         Content-Type;
+        b=qBFQoxR51Ya/f9CpnaojvqgGkffohWJO3vHFzQqkjnCuTzdwYpSdWIWEQHxKD+kI3
+         zSHsbjXvQo0tkAB+OP5jFOYUCoKszhuBNCzWs8MHoJULDQ7mYX8zFGR54vDWh5624h
+         SkoGd6OXVzZupXOLXS0YDz9Kd1zVzUXFm1nEXK6TkX8ZfGXEz5a7HlQVuQ12NcESmL
+         FnE55NN3AgXkEAzOhAiP77wtenjJhhWAXrzwMlLBU1QnlGLfFpfZkrrN2VNPdpSvG2
+         INW+lq1Cl/+UdAK0PI42XVCYSxQSnel0T/5oG91ZsETJHbWtlbvWudjQKMhTw9X468
+         BZ4U2ymLhOHsQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Add PMIC configurations for backup battery charger, which
+is a constant voltage and constant current style charger
+with a series output resistance.
 
-On 2019/1/23 上午11:49, Michael S. Tsirkin wrote:
-> On Wed, Jan 23, 2019 at 11:08:04AM +0800, Jason Wang wrote:
->> On 2019/1/23 上午1:03, Tiwei Bie wrote:
->>> This patch introduces the support for VIRTIO_F_ORDER_PLATFORM.
->>> When this feature is negotiated, driver will use the barriers
->>> suitable for hardware devices.
->>>
->>> Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
->>> ---
->>>    drivers/virtio/virtio_ring.c       | 8 ++++++++
->>>    include/uapi/linux/virtio_config.h | 6 ++++++
->>>    2 files changed, 14 insertions(+)
->>>
->>> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
->>> index cd7e755484e3..27d3f057493e 100644
->>> --- a/drivers/virtio/virtio_ring.c
->>> +++ b/drivers/virtio/virtio_ring.c
->>> @@ -1609,6 +1609,9 @@ static struct virtqueue *vring_create_virtqueue_packed(
->>>    		!context;
->>>    	vq->event = virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
->>> +	if (virtio_has_feature(vdev, VIRTIO_F_ORDER_PLATFORM))
->>> +		vq->weak_barriers = false;
->>> +
->>>    	vq->packed.ring_dma_addr = ring_dma_addr;
->>>    	vq->packed.driver_event_dma_addr = driver_event_dma_addr;
->>>    	vq->packed.device_event_dma_addr = device_event_dma_addr;
->>> @@ -2079,6 +2082,9 @@ struct virtqueue *__vring_new_virtqueue(unsigned int index,
->>>    		!context;
->>>    	vq->event = virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
->>> +	if (virtio_has_feature(vdev, VIRTIO_F_ORDER_PLATFORM))
->>> +		vq->weak_barriers = false;
->>> +
->>>    	vq->split.queue_dma_addr = 0;
->>>    	vq->split.queue_size_in_bytes = 0;
->>> @@ -2213,6 +2219,8 @@ void vring_transport_features(struct virtio_device *vdev)
->>>    			break;
->>>    		case VIRTIO_F_RING_PACKED:
->>>    			break;
->>> +		case VIRTIO_F_ORDER_PLATFORM:
->>> +			break;
->>>    		default:
->>>    			/* We don't understand this bit. */
->>>    			__virtio_clear_bit(vdev, i);
->>> diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
->>> index 1196e1c1d4f6..ff8e7dc9d4dd 100644
->>> --- a/include/uapi/linux/virtio_config.h
->>> +++ b/include/uapi/linux/virtio_config.h
->>> @@ -78,6 +78,12 @@
->>>    /* This feature indicates support for the packed virtqueue layout. */
->>>    #define VIRTIO_F_RING_PACKED		34
->>> +/*
->>> + * This feature indicates that memory accesses by the driver and the
->>> + * device are ordered in a way described by the platform.
->>> + */
->>> +#define VIRTIO_F_ORDER_PLATFORM		36
->>> +
->>>    /*
->>>     * Does the device support Single Root I/O Virtualization?
->>>     */
->>
->> I wonder whether or not this is sufficient. Is dma barrier implies a mmio
->> barrier? Looks not.
-> IIUC we don't need an mmio barrier because we are using a
-> serializing API: Documentation/memory-barriers.txt says:
->
-> 	Note that, when using writel(), a prior
->       wmb() is not needed to guarantee that the cache coherent memory writes
->       have completed before writing to the MMIO region.
+The max77620 register CNFGBBC(addr: 0x04) defines the
+parameters of backup battery charger. This patch adds
+support for it.
 
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+Signed-off-by: Venkat Reddy Talla <vreddytalla@nvidia.com>
+Signed-off-by: Mark Zhang <markz@nvidia.com>
+---
+ drivers/mfd/max77620.c | 80 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 80 insertions(+)
 
-Ah, I get this.
-
-
->
->
->> See ia64/include/asm/barrier.h:
->>
->>   * Note: "mb()" and its variants cannot be used as a fence to order
->>   * accesses to memory mapped I/O registers.  For that, mf.a needs to
->>   * be used.  However, we don't want to always use mf.a because (a)
->>   * it's (presumably) much slower than mf and (b) mf.a is supported for
->>   * sequential memory pages only.
->>   */
->> #define mb()            ia64_mf()
->> #define rmb()           mb()
->> #define wmb()           mb()
->>
->> #define dma_rmb()       mb()
->> =>efine dma_wmb()       mb()
->>
->> Thanks
-> Frankly no idea about ia64.
-
-
-Neither did me.
-
-
->   Sorry. Are any less esoteric platforms
-> affected?
->
-
-E.g ppc64?
-
-define dma_wmb()       __asm__ __volatile__ (stringify_in_c(SMPWMB) : : 
-:"memo\
-ry")
-
-/*
-  * Enforce synchronisation of stores vs. spin_unlock
-  * (this does it explicitly, though our implementation of spin_unlock
-  * does it implicitely too)
-  */
-static inline void mmiowb(void)
-{
-         unsigned long tmp;
-
-         __asm__ __volatile__("sync; li %0,0; stb %0,%1(13)"
-         : "=&r" (tmp) : "i" (offsetof(struct paca_struct, io_sync))
-         : "memory");
-}
-
-dma_wmb() is lwsync which is more lightweight than sync I guess?
-
-Thanks
-
+diff --git a/drivers/mfd/max77620.c b/drivers/mfd/max77620.c
+index d8ddd1a6f304..f58143103185 100644
+--- a/drivers/mfd/max77620.c
++++ b/drivers/mfd/max77620.c
+@@ -398,6 +398,82 @@ static int max77620_initialise_fps(struct max77620_chi=
+p *chip)
+ 	return 0;
+ }
+=20
++static int max77620_init_backup_battery_charging(struct max77620_chip *chi=
+p)
++{
++	struct device *dev =3D chip->dev;
++	struct device_node *np;
++	u32 pval;
++	u8 config;
++	int charging_current;
++	int charging_voltage;
++	int resistor;
++	int ret;
++
++	np =3D of_get_child_by_name(dev->of_node, "backup-battery");
++	if (!np) {
++		dev_info(dev, "Backup battery charging support disabled\n");
++		ret =3D regmap_update_bits(chip->rmap, MAX77620_REG_CNFGBBC,
++					 MAX77620_CNFGBBC_ENABLE, 0);
++		if (ret < 0)
++			dev_err(dev, "Failed to update CNFGBBC: %d\n", ret);
++		return ret;
++	}
++
++	ret =3D of_property_read_u32(np,
++			"maxim,backup-battery-charging-current", &pval);
++	charging_current =3D (!ret) ? pval : 50;
++
++	ret =3D of_property_read_u32(np,
++			"maxim,backup-battery-charging-voltage", &pval);
++	charging_voltage =3D (!ret) ? pval : 2500000;
++	charging_voltage /=3D 1000;
++
++	ret =3D of_property_read_u32(np,
++			"maxim,backup-battery-output-resister", &pval);
++	resistor =3D (!ret) ? pval : 1000;
++
++	config =3D MAX77620_CNFGBBC_ENABLE;
++	if (charging_current <=3D 50)
++		config |=3D 0 << MAX77620_CNFGBBC_CURRENT_SHIFT;
++	else if (charging_current <=3D 100)
++		config |=3D 3 << MAX77620_CNFGBBC_CURRENT_SHIFT;
++	else if (charging_current <=3D 200)
++		config |=3D 0 << MAX77620_CNFGBBC_CURRENT_SHIFT;
++	else if (charging_current <=3D 400)
++		config |=3D 3 << MAX77620_CNFGBBC_CURRENT_SHIFT;
++	else if (charging_current <=3D 600)
++		config |=3D 1 << MAX77620_CNFGBBC_CURRENT_SHIFT;
++	else
++		config |=3D 2 << MAX77620_CNFGBBC_CURRENT_SHIFT;
++
++	if (charging_current > 100)
++		config |=3D MAX77620_CNFGBBC_LOW_CURRENT_DISABLE;
++
++	if (charging_voltage <=3D 2500)
++		config |=3D 0 << MAX77620_CNFGBBC_VOLTAGE_SHIFT;
++	else if (charging_voltage <=3D 3000)
++		config |=3D 1 << MAX77620_CNFGBBC_VOLTAGE_SHIFT;
++	else if (charging_voltage <=3D 3300)
++		config |=3D 2 << MAX77620_CNFGBBC_VOLTAGE_SHIFT;
++	else
++		config |=3D 3 << MAX77620_CNFGBBC_VOLTAGE_SHIFT;
++
++	if (resistor <=3D 100)
++		config |=3D 0 << MAX77620_CNFGBBC_RESISTOR_SHIFT;
++	else if (resistor <=3D 1000)
++		config |=3D 1 << MAX77620_CNFGBBC_RESISTOR_SHIFT;
++	else if (resistor <=3D 3000)
++		config |=3D 2 << MAX77620_CNFGBBC_RESISTOR_SHIFT;
++	else if (resistor <=3D 6000)
++		config |=3D 3 << MAX77620_CNFGBBC_RESISTOR_SHIFT;
++
++	ret =3D regmap_write(chip->rmap, MAX77620_REG_CNFGBBC, config);
++	if (ret < 0)
++		dev_err(dev, "Reg 0x%02x write failed, %d\n",
++				MAX77620_REG_CNFGBBC, ret);
++	return ret;
++}
++
+ static int max77620_read_es_version(struct max77620_chip *chip)
+ {
+ 	unsigned int val;
+@@ -483,6 +559,10 @@ static int max77620_probe(struct i2c_client *client,
+ 	if (ret < 0)
+ 		return ret;
+=20
++	ret =3D max77620_init_backup_battery_charging(chip);
++	if (ret < 0)
++		return ret;
++
+ 	ret =3D  devm_mfd_add_devices(chip->dev, PLATFORM_DEVID_NONE,
+ 				    mfd_cells, n_mfd_cells, NULL, 0,
+ 				    regmap_irq_get_domain(chip->top_irq_data));
+--=20
+2.19.2
 
