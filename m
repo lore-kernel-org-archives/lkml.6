@@ -2,119 +2,177 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C917C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:27:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 399D6C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:27:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF19D21726
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:27:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F14A821726
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 14:27:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="gXkVoL3h"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TYqz7e9z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727078AbfAWO1I (ORCPT
+        id S1727189AbfAWO1T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 09:27:08 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:39738 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725995AbfAWO1H (ORCPT
+        Wed, 23 Jan 2019 09:27:19 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:50166 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725995AbfAWO1T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 09:27:07 -0500
-Received: by mail-ed1-f65.google.com with SMTP id b14so1840843edt.6
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 06:27:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=feJszqOm+t6LmNOdJ9EmU9eVZCJWJPHtlk1c7IJtgqc=;
-        b=gXkVoL3htvwW4oJrfQO/PV8k0OtWeWUAgTxO7ekaqIVzMATK8OX1I/Yt5rywmVtLG0
-         7UiIpz5i0qwAhzEWhJLUYHBjFXSNAT64UkwfVwwOt5q9CaOD9ZsU9Mh+4KH2z+6iIKYc
-         bcSYJcV8WquCe25UHPewSRDvEUJY3tv+caJ6up5yX2zdow8wEcqsB6IqZOdnasDAYboB
-         BG4wWU3rNXrPggBvJ8x8NiNvALat/6xH7vyl4sBq9+rtLMcykJiDQBh6fMhf+eNUALZj
-         yb5KH8zZfQbblubxsYUwLWitypIN8TrIOEeLWdpxupRdXuWrP6kqcCvVMI+cTIJ5Euuw
-         DUBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=feJszqOm+t6LmNOdJ9EmU9eVZCJWJPHtlk1c7IJtgqc=;
-        b=a8mgKK5pjskaHycRZaFOWLIZYkSD1XRhmF3HDmmtPSC/ihEbh60WHyEAYwl4w4m1Gp
-         cTaWR/bilR62aKvcHTaBONpXr067NGhkF0JvrOZ3XybBP1caIP5VsUcIPMkRfgDODu6k
-         bEIXED3lPxGaMQo5pNk8B14qjFKaoqrGxULcD4wxcVg8CHUpj4mPz6ZCu8KpayQQ+PW1
-         pr+8VoJ5VA5MnSYWFn458k8mfmfcRsTATWdDD3fk5kwOIyQcN0P+dvA00RaNcIIzF3yI
-         mr0vz9eU70BsNvx2GMM/R7VVjpKT5qE/ZK4lyHGCOeKkEx5WjMwmXGAuFg6KIwOP0T0K
-         Cxrw==
-X-Gm-Message-State: AJcUukd5JWmgt2UVuyaCkqAn6lFMEje9SBoyAOWKhxMAB2ycIQDzomEP
-        dGL8nJDNq1fNyp8UYj9BwHmGYg==
-X-Google-Smtp-Source: ALg8bN7KMpyunBJIzEBpI3dcuIRVK1PDHxJf5JYVTxXZ4AlFT4uVyh7uSdnNITDFjJFjS2egLioWtw==
-X-Received: by 2002:a50:d84d:: with SMTP id v13mr2907363edj.103.1548253625955;
-        Wed, 23 Jan 2019 06:27:05 -0800 (PST)
-Received: from brauner.io ([2a02:8109:b6bf:f9e4:9473:6b39:afaf:14d4])
-        by smtp.gmail.com with ESMTPSA id e51sm10403383edd.35.2019.01.23.06.27.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 23 Jan 2019 06:27:05 -0800 (PST)
-Date:   Wed, 23 Jan 2019 15:27:04 +0100
-From:   Christian Brauner <christian@brauner.io>
-To:     shuah <shuah@kernel.org>
-Cc:     Greg KH <gregkh@linuxfoundation.org>, tkjos@android.com,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, arve@android.com,
-        maco@android.com, joel@joelfernandes.org, tkjos@google.com
-Subject: Re: [PATCH v3] selftests: add binderfs selftests
-Message-ID: <20190123142703.ta7j3jnyaqc7ahgn@brauner.io>
-References: <20190117114854.15132-1-christian@brauner.io>
- <20190123105457.k7oobylgq6rwka55@brauner.io>
- <20190123110052.GB22520@kroah.com>
- <d1893da7-1222-d303-04c7-fb0500b55088@kernel.org>
+        Wed, 23 Jan 2019 09:27:19 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190123142717euoutp02dbf5f582ccaf13749a163bc804aae745~8gHsKPctJ0344603446euoutp02V
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 14:27:17 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190123142717euoutp02dbf5f582ccaf13749a163bc804aae745~8gHsKPctJ0344603446euoutp02V
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1548253637;
+        bh=AugPDrmgrMRjM0cHD/ojRLVacU55v3gLC/WAbxNm5/A=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=TYqz7e9zc99f0zgjuvrUj4f9eqfDcdJv1h973IzO+8glvcKSZG17VtKaU6s0z35bD
+         ymJ/l83pdUH0udLtgJfD8AjkjDA4g4i5FxctOxz7wdGrmKJQdeRoNzlnl9bvV5PBG0
+         L7Op4JgYUyIuKYOLtLVzgKCaYs7NJmRuVfHGZ6YQ=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190123142717eucas1p20f42ad1213b1473099ef1bb306bd0bad~8gHrbpQ9t1770217702eucas1p2k;
+        Wed, 23 Jan 2019 14:27:17 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 11.A9.04294.4C9784C5; Wed, 23
+        Jan 2019 14:27:16 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20190123142716eucas1p1119528e3db67c463436bb1fd87dda6bf~8gHql4nEI1853418534eucas1p1c;
+        Wed, 23 Jan 2019 14:27:16 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190123142715eusmtrp260d3878a17b594a6bc674670a8bd8755~8gHqXLhfF2535025350eusmtrp2f;
+        Wed, 23 Jan 2019 14:27:15 +0000 (GMT)
+X-AuditID: cbfec7f4-c77a99c0000010c6-5b-5c4879c48669
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id BE.87.04128.3C9784C5; Wed, 23
+        Jan 2019 14:27:15 +0000 (GMT)
+Received: from [106.120.51.18] (unknown [106.120.51.18]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190123142715eusmtip170295fd8f3ec55011b6fef21569e42ba~8gHp3mOGw3092430924eusmtip1y;
+        Wed, 23 Jan 2019 14:27:15 +0000 (GMT)
+Subject: Re: [PATCH v1 3/3] crypto: s5p: add AES support for Exynos5433
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Vladimir Zapolskiy <vz@mleia.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+From:   Kamil Konieczny <k.konieczny@partner.samsung.com>
+Message-ID: <9654ab25-2f9f-9bd1-e60c-df1ba5e90e98@partner.samsung.com>
+Date:   Wed, 23 Jan 2019 15:27:14 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <d1893da7-1222-d303-04c7-fb0500b55088@kernel.org>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CAJKOXPdkDrwy2rSs-Fj1rq8rTOHvtQTrZTY5ER=pPWRPwx5qfA@mail.gmail.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKKsWRmVeSWpSXmKPExsWy7djP87pHKj1iDLoO61psnLGe1WLO+RYW
+        i+5XMhbnz29gt7h/7yeTxeVdc9gsZpzfx2Sx9shddov/v5qZHTg9tqy8yeSx7YCqx6ZVnWwe
+        /xZOYfHo27KK0ePzJrkAtigum5TUnMyy1CJ9uwSujMmbe1gK3vNW3P21iaWBcSJnFyMHh4SA
+        icTh5/FdjFwcQgIrGCX2XfvIDuF8AXImNkM5nxkl/jT2scB0HJ0oBRFfzijxd8sjVgjnLaPE
+        5fMzmLsYOTmEBdwl/l7fwAhiiwhoSlz/+x2siFngFZPEpu63YAk2AXOJR9vPMIFM5RVwk1h9
+        xwckzCKgKrHqSy/YHFGBCImO+6vZQGxeAUGJkzOfgB3BKRAosfqAFUiYWUBc4taT+UwQtrzE
+        9rdzmEFWSQicY5fombEcrFdCwEXiz4lmJghbWOLV8S3sELaMxP+d86Hi5RK7tz5jh2huYZSY
+        O3kRVMJa4vDxi6wgi5mBnlm/Sx8i7CjxaOIzaKDwSdx4KwhxA5/EpG3TmSHCvBIdbUIQ1boS
+        8/6fYYWwpSW6/q9jncCoNAvJY7OQfDMLyTezEPYuYGRZxSieWlqcm55abJSXWq5XnJhbXJqX
+        rpecn7uJEZiYTv87/mUH464/SYcYBTgYlXh4OQo9YoRYE8uKK3MPMUpwMCuJ8LpedIsR4k1J
+        rKxKLcqPLyrNSS0+xCjNwaIkzlvN8CBaSCA9sSQ1OzW1ILUIJsvEwSnVwGj2dr/4r6tF2hdV
+        U/8n3A6+fcOhWrum/6naD7tp03wjfzXc85gevvLui71C59135+Wej5P6Odn69jR1l/UTzDR3
+        Myi+XnL25Ua1O9kmDwKnO3C4710UxJV00sZ516WyRd5Ki0qvXK9QUl0fGrxe+vbmCeZiFzpy
+        9cpLzdvOt525uLM1YvtnzZlKLMUZiYZazEXFiQBK/76pSAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrJIsWRmVeSWpSXmKPExsVy+t/xu7qHKz1iDFp3G1lsnLGe1WLO+RYW
+        i+5XMhbnz29gt7h/7yeTxeVdc9gsZpzfx2Sx9shddov/v5qZHTg9tqy8yeSx7YCqx6ZVnWwe
+        /xZOYfHo27KK0ePzJrkAtig9m6L80pJUhYz84hJbpWhDCyM9Q0sLPSMTSz1DY/NYKyNTJX07
+        m5TUnMyy1CJ9uwS9jMmbe1gK3vNW3P21iaWBcSJnFyMHh4SAicTRiVJdjFwcQgJLGSXap65m
+        7mLkBIpLSzSeXs0EYQtL/LnWxQZR9JpR4sOp9WwgCWEBd4m/1zcwgtgiApoS1/9+ZwUpYhZ4
+        wyTROHchO0THDCaJaX+bWUCq2ATMJR5tP8MEsppXwE1i9R0fkDCLgKrEqi+9YJtFBSIkzr5c
+        BzaUV0BQ4uTMJywg5ZwCgRKrD1iBhJkF1CX+zLvEDGGLS9x6Mp8JwpaX2P52DvMERqFZSLpn
+        IWmZhaRlFpKWBYwsqxhFUkuLc9Nzi430ihNzi0vz0vWS83M3MQKjcduxn1t2MHa9Cz7EKMDB
+        qMTDy1HoESPEmlhWXJl7iFGCg1lJhNf1oluMEG9KYmVValF+fFFpTmrxIUZToN8mMkuJJucD
+        E0VeSbyhqaG5haWhubG5sZmFkjjveYPKKCGB9MSS1OzU1ILUIpg+Jg5OqQZGlwUpxdOKPl0P
+        5dOO3rKHe5VMv/W0tVM2MV367LLY4m/vU65r6498dA+c5nr0ysw6lWjJxTa7d28r9Nv3wj1E
+        paz+7LQ9NtM8Nl669WQrb43vf+cNtxKa0uf8kn1doFi9j3Od+VzfNYsS89JfVSyV/lnRsVdw
+        rWvOfN7bEUHya748cF5pd1qwXomlOCPRUIu5qDgRAOqZb17cAgAA
+X-CMS-MailID: 20190123142716eucas1p1119528e3db67c463436bb1fd87dda6bf
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190122152609eucas1p287b83592af600dc080374a197e6dd917
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190122152609eucas1p287b83592af600dc080374a197e6dd917
+References: <CGME20190122152609eucas1p287b83592af600dc080374a197e6dd917@eucas1p2.samsung.com>
+        <20190122152553.1537-1-k.konieczny@partner.samsung.com>
+        <20190122152553.1537-4-k.konieczny@partner.samsung.com>
+        <CAJKOXPdkDrwy2rSs-Fj1rq8rTOHvtQTrZTY5ER=pPWRPwx5qfA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 07:15:01AM -0700, shuah wrote:
-> On 1/23/19 4:00 AM, Greg KH wrote:
-> > On Wed, Jan 23, 2019 at 11:54:58AM +0100, Christian Brauner wrote:
-> > > On Thu, Jan 17, 2019 at 12:48:54PM +0100, Christian Brauner wrote:
-> > > > This adds the promised selftest for binderfs. It will verify the following
-> > > > things:
-> > > > - binderfs mounting works
-> > > > - binder device allocation works
-> > > > - performing a binder ioctl() request through a binderfs device works
-> > > > - binder device removal works
-> > > > - binder-control removal fails
-> > > > - binderfs unmounting works
-> > > > 
-> > > > The tests are performed both privileged and unprivileged. The latter
-> > > > verifies that binderfs behaves correctly in user namespaces.
-> > > > 
-> > > > Cc: Todd Kjos <tkjos@google.com>
-> > > > Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-> > > 
-> > > Hey Shuah,
-> > > 
-> > > If you're ok with the patch in its current form, can you please make
-> > > sure that this still lands in 5.0? If at all possible I'd like to have
-> > > all ducks in a row and release binderfs with selftests and everything.
-> > > :)
-> > 
-> 
-> The patch is good and I was planning to get this into 5.1.
-> 
-> > I can take it in my tree with the other binderfs patches if I can get an
-> > ack from Shuah.
-> > 
-> 
-> Great. It is good for the test patch to go with the other binderfs
-> patches.
-> 
-> Acked-by: Shuah Khan <shuah@kernel.org>
+Hi Krzysztof,
 
-Thanks for the quick response!
-Christian
+On 23.01.2019 09:13, Krzysztof Kozlowski wrote:
+> On Tue, 22 Jan 2019 at 16:26, Kamil Konieczny
+> <k.konieczny@partner.samsung.com> wrote:
+>>
+>> Add AES crypto HW acceleration for Exynos5433, with the help of SlimSSS IP.
+>>
+>> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+>> [...]
+>> @@ -384,11 +387,19 @@ struct s5p_hash_ctx {
+>>  static const struct samsung_aes_variant s5p_aes_data = {
+>>         .aes_offset     = 0x4000,
+>>         .hash_offset    = 0x6000,
+>> +       .clk_names      = { "secss", }
+> 
+> Put trailing comma so it can be extended without touching previous
+> line (just like old code).
+> 
+
+ok, I will do this and two following commas.
+
+>>  [...]
+>> +       if (variant->clk_names[1]) {
+>> +               pdata->pclk = devm_clk_get(dev, variant->clk_names[1]);
+>> +               if (IS_ERR(pdata->pclk)) {
+>> +                       dev_err(dev, "failed to find clock %s\n",
+>> +                               variant->clk_names[1]);
+>> +                       clk_disable_unprepare(pdata->clk);
+>> +                       return -ENOENT;
+> 
+> goto err_irq (eventually rename the label)?
+
+I will add 'goto err_clk' with proper cleanup.
+
+>> +                       }
+> 
+> Indentation looks wrong here.
+
+ok
+
+>> +
+>> +               err = clk_prepare_enable(pdata->pclk);
+>> +               if (err < 0) {
+>> +                       dev_err(dev, "Enabling clock %s failed, err %d\n",
+>> +                               variant->clk_names[0], err);
+>> +                       clk_disable_unprepare(pdata->clk);
+>> +                       return err;
+> 
+> goto...
+
+Yes, I will put the same goto here.
+
+-- 
+Best regards,
+Kamil Konieczny
+Samsung R&D Institute Poland
+
