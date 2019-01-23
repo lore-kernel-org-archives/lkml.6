@@ -2,91 +2,125 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4860C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:39:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17DD2C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:39:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D73520861
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:39:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="JX3zqu1V"
+	by mail.kernel.org (Postfix) with ESMTP id D171020861
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:39:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548239983;
+	bh=ATIy2YFQTZcBDMpG/L+ntduvRMKe2+98U7hes4tybXU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=ta/oZpPeH82FXkidk6cp78OW7sFNsu9cNuLzBmlTHyJ6i77fS1tPo7vsO9s8Gf64r
+	 S6cdYCC+RB+Hfqkr5AZbxGuGLP0zcCcJrcA6mjEwAuF/vKWlvMNUtp2Erpkhf2EUlw
+	 7iKK5XlJQWtmcn3YIXJBo3rxQyNH8mvlRhbZFcI0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727215AbfAWKjX (ORCPT
+        id S1727320AbfAWKjn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 05:39:23 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:51366 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726938AbfAWKjV (ORCPT
+        Wed, 23 Jan 2019 05:39:43 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:44543 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726938AbfAWKjm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 05:39:21 -0500
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id A9BF225BE34;
-        Wed, 23 Jan 2019 21:39:18 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1548239958; bh=7jrAaIQiY8DIIXJjIYDERg1SohpHVc1BLgKhR6yw+Nw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JX3zqu1VXtTU6+0u03clHUGlX5BCrOcW31VcL6gWNU3nwxJjfwoizmCMK4PzB+5b3
-         T1R7ISHbg/C01Xo8IElvMNmsWelIBJsDQH5OBNKYzkqIcmSUi6kIvnYw1rKBmeOLYd
-         tpJ9gr7b6UY9gOFAZaDmPEzPc6mkB0WmdQ1y70bQ=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 8CCCB940471; Wed, 23 Jan 2019 11:39:16 +0100 (CET)
-Date:   Wed, 23 Jan 2019 11:39:16 +0100
-From:   Simon Horman <horms@verge.net.au>
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: linux-next: Fixes tag needs some work in the renesas tree
-Message-ID: <20190123103914.u7nlz624j5dmy7yr@verge.net.au>
-References: <20190123075605.116ddbd0@canb.auug.org.au>
- <TY1PR01MB1770C404E14E88CB912D12D4C0990@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+        Wed, 23 Jan 2019 05:39:42 -0500
+Received: by mail-oi1-f193.google.com with SMTP id m6so1366880oig.11;
+        Wed, 23 Jan 2019 02:39:41 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pg0hX+CA34u3qPWrPjOGvXZCtdevBW0CLcPKrzIur2U=;
+        b=oNubL5r2v1NHaX2swzYLQ5FQdQSAI6HgTe52ve3xMBejST0Vr3IrFEX8ch25H7IluO
+         Bbb14DsRHErXkeI8jtnkoZbD/xnXaOL9mjxl5XbnpJkzShBBUi9r9gLnjYB+XNkaM7oT
+         +HMGT3WtIOeXEGtY/pL59F/lK2/3Vg04Xuwn1Dby0O5AzlLVslPTZWm3JAz3kXAW9Zzd
+         jqKe6Lw8bZHEU+bW2CB1k1k544M9A60404GC9RezmYYfJSRDv9gvPxrfd4G3wUM0aZeS
+         JDOopqfDO6IqJHSERvwlxlVPoVaUwoJmt8CAqWTnknwwWeW4JwhbV/IBzUJZcSI/S7G5
+         cQ7A==
+X-Gm-Message-State: AJcUukf8iqQiYJThiVzt32pPiyGYE9rXCm+HvNUnEUJP+OUOIwA4khMn
+        DNs9d3iZXfn1/w02QF0CXHuHtB0Jbx8eo3Yxa58=
+X-Google-Smtp-Source: ALg8bN4OMvh9rmk40mLqZHHutmasWDl34DfUd4toWmTkysXdp7mQu25I4WtKjUDtDz1IPeogPNg9P9M+FN3eOAmUsZA=
+X-Received: by 2002:a54:4d01:: with SMTP id v1mr1006849oix.246.1548239981295;
+ Wed, 23 Jan 2019 02:39:41 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <TY1PR01MB1770C404E14E88CB912D12D4C0990@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <cover.1548084260.git.amit.kucheria@linaro.org>
+ <0036de796308b8919eac74a9a910f0d7b9c0cbf8.1548084260.git.amit.kucheria@linaro.org>
+ <20190123103624.t4b2ij3bfvpezgjf@vireshk-i7>
+In-Reply-To: <20190123103624.t4b2ij3bfvpezgjf@vireshk-i7>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 23 Jan 2019 11:39:29 +0100
+Message-ID: <CAJZ5v0g12U0M3aJOvRgRg3=-6f+2jeG1rT5RjLoSciM0FwFofg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/9] cpufreq: Auto-register the driver as a thermal
+ cooling device if asked
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Amit Kucheria <amit.kucheria@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Doug Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Ingo Molnar <mingo@kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Tao Wang <kevin.wangtao@hisilicon.com>,
+        Linux PM <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[CC linux-renesas-soc]
-
-On Wed, Jan 23, 2019 at 08:55:21AM +0000, Fabrizio Castro wrote:
-> > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Sent: 22 January 2019 20:56
-> > To: Simon Horman <horms@verge.net.au>
-> > Subject: linux-next: Fixes tag needs some work in the renesas tree
-> >
-> > Hi all,
-> >
-> > In commit
-> >
-> >   8d6e2bbaeceb ("arm64: dts: renesas: r8a774a1: Fix hsusb reg size")
-> >
-> > Fixes tag
-> >
-> >   Fixes: ed898d4fc19d ("arm64: dts: renesas: r8a774a1: Add USB-DMAC and
-> >
-> > has these problem(s):
-> >
-> >   - Subject has leading but no trailing parentheses
-> >   - Subject has leading but no trailing quotes
-> >
-> > Please don't split Fixes tags across 2 lines.
+On Wed, Jan 23, 2019 at 11:36 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
 >
-> Hello Stephen,
-> 
-> I am sorry for the trouble. My editor is configured to automatically wrap lines when they are too long, I'll be more careful next time.
-> Do you need me to do anything about this patch?
+> On 21-01-19, 21:10, Amit Kucheria wrote:
+> > @@ -151,6 +152,11 @@ struct cpufreq_policy {
+> >
+> >       /* For cpufreq driver's internal use */
+> >       void                    *driver_data;
+> > +
+> > +#ifdef CONFIG_CPU_THERMAL
+> > +     /* Pointer to the cooling device if used for thermal mitigation */
+> > +     struct thermal_cooling_device *cdev;
+> > +#endif
+> >  };
+> >
+> >  /* Only for ACPI */
+> > @@ -386,6 +392,12 @@ struct cpufreq_driver {
+> >   */
+> >  #define CPUFREQ_NO_AUTO_DYNAMIC_SWITCHING    BIT(6)
+> >
+> > +/*
+> > + * Set by drivers that want the core to automatically register the cpufreq
+> > + * driver as a thermal cooling device.
+> > + */
+> > +#define CPUFREQ_AUTO_REGISTER_COOLING_DEV    BIT(7)
+> > +
+> >  int cpufreq_register_driver(struct cpufreq_driver *driver_data);
+> >  int cpufreq_unregister_driver(struct cpufreq_driver *driver_data);
+> >
+> > @@ -415,6 +427,19 @@ cpufreq_verify_within_cpu_limits(struct cpufreq_policy *policy)
+> >                       policy->cpuinfo.max_freq);
+> >  }
+> >
+> > +#ifdef CONFIG_CPU_THERMAL
+> > +static inline void register_cooling_device(struct cpufreq_policy *policy) {
+> > +     policy->cdev = of_cpufreq_cooling_register(policy);
+> > +}
+> > +
+> > +static inline void unregister_cooling_device(struct cpufreq_policy *policy) {
+> > +     cpufreq_cooling_unregister(policy->cdev);
+> > +     policy->cdev = NULL;
+> > +}
+> > +#else
+> > +static inline void register_cooling_device(struct cpufreq_policy *policy) {}
+> > +static inline void unregister_cooling_device(struct cpufreq_policy *policy) {}
+> > +#endif
+>
+> The whole ifdef hackery here saves space for a pointer per policy.
+> Just get rid of it, it isn't worth it.
 
-Hi Fabrizio,
-
-I should have noticed this myself. I'll fix up the fixes tag
-in my next push. I don't think any action is needed by you
-at this time.
+Is struct thermal_cooling_device defined if CONFIG_THERMAL is unset?
