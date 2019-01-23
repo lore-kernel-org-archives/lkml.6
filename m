@@ -2,117 +2,101 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF7D0C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:53:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83038C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:53:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7C9721726
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:53:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 531DE20861
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:53:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548237187;
+	bh=HF9eJMFJxhcLLoRHjywiWFMXig3DHPntZ6ReryupSo4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=LICRQLgKc3M3U7MyuG5PXy+IOJIrtH46cjJI9YvvJ9L/lzOXI4O1T885yDHwJpfP/
+	 AUu4GaqCFtdIRMa6jI9dZB9UsWV2c5/MTxgg3WeTFHXxuGl+4VILVFl8QtlCWUebQP
+	 i/CbhkIhOoqJjagYL5m2bCBOuhBx1rXiadgnSL3U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727345AbfAWJxB (ORCPT
+        id S1727371AbfAWJxF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 04:53:01 -0500
-Received: from mga07.intel.com ([134.134.136.100]:43150 "EHLO mga07.intel.com"
+        Wed, 23 Jan 2019 04:53:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51594 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727075AbfAWJxB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 04:53:01 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jan 2019 01:53:00 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,510,1539673200"; 
-   d="scan'208";a="128190241"
-Received: from unknown (HELO dpdk-tbie.sh.intel.com) ([10.67.104.173])
-  by orsmga002.jf.intel.com with ESMTP; 23 Jan 2019 01:52:59 -0800
-From:   Tiwei Bie <tiwei.bie@intel.com>
-To:     mst@redhat.com, jasowang@redhat.com,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, virtio-dev@lists.oasis-open.org
-Subject: [PATCH v2] virtio: support VIRTIO_F_ORDER_PLATFORM
-Date:   Wed, 23 Jan 2019 17:50:26 +0800
-Message-Id: <20190123095026.8387-1-tiwei.bie@intel.com>
-X-Mailer: git-send-email 2.17.1
+        id S1727075AbfAWJxD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 04:53:03 -0500
+Received: from bbrezillon (unknown [91.160.177.164])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D22220861;
+        Wed, 23 Jan 2019 09:52:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548237182;
+        bh=HF9eJMFJxhcLLoRHjywiWFMXig3DHPntZ6ReryupSo4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=AAOQb4aL46H8730kX9v8dQYrlcrWKckmvMVuCxONgxV1uj7voN9aChjhPj3+lsUKS
+         c+wSCwluwefmmiIER48K8je53BT9nk+1LXOmQ+YoV6k3eyWxDPyeIuniZ1KKpNS/ts
+         B/7H/E0voNVMlPBfZe44gXjjtd+wgPXFklpfEP+g=
+Date:   Wed, 23 Jan 2019 10:52:53 +0100
+From:   Boris Brezillon <bbrezillon@kernel.org>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     <robert.jarzmik@free.fr>, <dwmw2@infradead.org>,
+        <computersforpeace@gmail.com>, <marek.vasut@gmail.com>,
+        <richard@nod.at>, <linux-kernel@vger.kernel.org>,
+        <linux-mtd@lists.infradead.org>
+Subject: Re: [PATCH -next] mtd: docg3: Fix passing zero to 'PTR_ERR' warning
+ in doc_probe_device
+Message-ID: <20190123105253.1f4487f2@bbrezillon>
+In-Reply-To: <86533285-e800-5cc0-f495-88fff8326b5a@huawei.com>
+References: <20190123065827.16748-1-yuehaibing@huawei.com>
+        <20190123101253.243add9d@bbrezillon>
+        <86533285-e800-5cc0-f495-88fff8326b5a@huawei.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch introduces the support for VIRTIO_F_ORDER_PLATFORM.
-If this feature is negotiated, the driver must use the barriers
-suitable for hardware devices. Otherwise, the device and driver
-are assumed to be implemented in software, that is they can be
-assumed to run on identical CPUs in an SMP configuration. Thus
-a weaker form of memory barriers is sufficient to yield better
-performance.
+On Wed, 23 Jan 2019 17:43:58 +0800
+YueHaibing <yuehaibing@huawei.com> wrote:
 
-It is recommended that an add-in card based PCI device offers
-this feature for portability. The device will fail to operate
-further or will operate in a slower emulation mode if this
-feature is offered but not accepted.
+> On 2019/1/23 17:12, Boris Brezillon wrote:
+> > On Wed, 23 Jan 2019 14:58:27 +0800
+> > YueHaibing <yuehaibing@huawei.com> wrote:
+> >   
+> >> Fix a static code checker warning:
+> >> drivers/mtd/devices/docg3.c:1875
+> >>  doc_probe_device() warn: passing zero to 'ERR_PTR'
+> >>
+> >> Fixes: ae9d4934b2d7 ("mtd: docg3: add multiple floor support")
+> >> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> >> ---
+> >>  drivers/mtd/devices/docg3.c | 2 +-
+> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/mtd/devices/docg3.c b/drivers/mtd/devices/docg3.c
+> >> index 4c94fc0..60ddc38 100644
+> >> --- a/drivers/mtd/devices/docg3.c
+> >> +++ b/drivers/mtd/devices/docg3.c
+> >> @@ -1872,7 +1872,7 @@ doc_probe_device(struct docg3_cascade *cascade, int floor, struct device *dev)
+> >>  nomem2:
+> >>  	kfree(docg3);
+> >>  nomem1:
+> >> -	return ERR_PTR(ret);
+> >> +	return ret ? ERR_PTR(ret) : NULL;
+> >>  }
+> >>    
+> > 
+> > This is not the right fix, you should instead set ret to -EINVAL:  
+> 
+> Thanks , will fix it in v2.
+> 
+> And seems doc_probe_device cannot return NULL. The NULL check of doc_probe_device
+> in docg3_probe also can been removed, right?
 
-Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
----
-v2:
-- Add more explanations in commit log (MST);
-
- drivers/virtio/virtio_ring.c       | 8 ++++++++
- include/uapi/linux/virtio_config.h | 6 ++++++
- 2 files changed, 14 insertions(+)
-
-diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-index cd7e755484e3..27d3f057493e 100644
---- a/drivers/virtio/virtio_ring.c
-+++ b/drivers/virtio/virtio_ring.c
-@@ -1609,6 +1609,9 @@ static struct virtqueue *vring_create_virtqueue_packed(
- 		!context;
- 	vq->event = virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
- 
-+	if (virtio_has_feature(vdev, VIRTIO_F_ORDER_PLATFORM))
-+		vq->weak_barriers = false;
-+
- 	vq->packed.ring_dma_addr = ring_dma_addr;
- 	vq->packed.driver_event_dma_addr = driver_event_dma_addr;
- 	vq->packed.device_event_dma_addr = device_event_dma_addr;
-@@ -2079,6 +2082,9 @@ struct virtqueue *__vring_new_virtqueue(unsigned int index,
- 		!context;
- 	vq->event = virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
- 
-+	if (virtio_has_feature(vdev, VIRTIO_F_ORDER_PLATFORM))
-+		vq->weak_barriers = false;
-+
- 	vq->split.queue_dma_addr = 0;
- 	vq->split.queue_size_in_bytes = 0;
- 
-@@ -2213,6 +2219,8 @@ void vring_transport_features(struct virtio_device *vdev)
- 			break;
- 		case VIRTIO_F_RING_PACKED:
- 			break;
-+		case VIRTIO_F_ORDER_PLATFORM:
-+			break;
- 		default:
- 			/* We don't understand this bit. */
- 			__virtio_clear_bit(vdev, i);
-diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
-index 1196e1c1d4f6..ff8e7dc9d4dd 100644
---- a/include/uapi/linux/virtio_config.h
-+++ b/include/uapi/linux/virtio_config.h
-@@ -78,6 +78,12 @@
- /* This feature indicates support for the packed virtqueue layout. */
- #define VIRTIO_F_RING_PACKED		34
- 
-+/*
-+ * This feature indicates that memory accesses by the driver and the
-+ * device are ordered in a way described by the platform.
-+ */
-+#define VIRTIO_F_ORDER_PLATFORM		36
-+
- /*
-  * Does the device support Single Root I/O Virtualization?
-  */
--- 
-2.17.1
-
+Hm, looks like the ret = 0 was intentional (to identify when ID is
+invalid). Let's just keep your initial patch.
