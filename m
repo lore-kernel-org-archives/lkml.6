@@ -2,82 +2,114 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC298C41518
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:18:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21898C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:21:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B73CC21019
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:18:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECEB021019
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:21:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727252AbfAWKSo (ORCPT
+        id S1727162AbfAWKVN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 05:18:44 -0500
-Received: from nat.nue.novell.com ([195.135.221.2]:36178 "EHLO suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727010AbfAWKSn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 05:18:43 -0500
-Received: by suse.de (Postfix, from userid 1000)
-        id 8A4634013; Wed, 23 Jan 2019 11:18:42 +0100 (CET)
-Date:   Wed, 23 Jan 2019 11:18:42 +0100
-From:   Oscar Salvador <osalvador@suse.de>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, david@redhat.com
-Subject: Re: [PATCH] mm,memory_hotplug: Fix scan_movable_pages for gigantic
- hugepages
-Message-ID: <20190123101838.qxsapn4dhcergs6t@d104.suse.de>
-References: <20190122154407.18417-1-osalvador@suse.de>
- <20190123094717.GQ4087@dhcp22.suse.cz>
+        Wed, 23 Jan 2019 05:21:13 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38878 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726207AbfAWKVM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 05:21:12 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 20C8BA78;
+        Wed, 23 Jan 2019 02:21:12 -0800 (PST)
+Received: from brain-police (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 372783F5C1;
+        Wed, 23 Jan 2019 02:21:10 -0800 (PST)
+Date:   Wed, 23 Jan 2019 10:21:06 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        chenwandun <chenwandun@huawei.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "Wangkefeng (Kevin)" <wangkefeng.wang@huawei.com>,
+        anshuman.khandual@arm.com
+Subject: Re: [Qestion] Softlockup when send IPI to other CPUs
+Message-ID: <20190123102104.GF15019@brain-police>
+References: <95C141B25E7AB14BA042DCCC556C0E6501620A47@dggeml529-mbx.china.huawei.com>
+ <20190119235825.GG26876@brain-police>
+ <20190121142127.GD29504@arrakis.emea.arm.com>
+ <20190122054400.GB6445@brain-police>
+ <20190122145522.GC52887@lakrids.cambridge.arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190123094717.GQ4087@dhcp22.suse.cz>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20190122145522.GC52887@lakrids.cambridge.arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 10:47:17AM +0100, Michal Hocko wrote:
-> So this should be probably folded into the above patch as it is
-> incomplete unless I am missing something.
-
-Well, they are triggered from different paths.
-The former error was triggered in:
-
-removable_show
- is_mem_section_removable
-  is_pageblock_removable_nolock
-   has_unmovable_pages
-
-while this one is triggered when actually doing the offline operation
-
-__offline_pages
- scan_movable_pages
- 
-But I do agree that one without the other is not really useful, an incomplete.
-The truth is that I did not spot this one when fixing [1] because I did not
-really try to offline the memblock back then, so my fault.
-
-While I agree that the best approach would be to fold this one into [1],
-I am not sure if it is too late for that as it seems that [1] was already
-released into mainline, and moreover to stable.
-
-I guess I will have Andrew decide what is the best way to carry on here.
-
-[1] https://patchwork.kernel.org/patch/10739963/
-
+On Tue, Jan 22, 2019 at 02:55:22PM +0000, Mark Rutland wrote:
+> On Tue, Jan 22, 2019 at 05:44:02AM +0000, Will Deacon wrote:
+> > On Mon, Jan 21, 2019 at 02:21:28PM +0000, Catalin Marinas wrote:
+> > > On Sat, Jan 19, 2019 at 11:58:27PM +0000, Will Deacon wrote:
+> > > > On Thu, Jan 17, 2019 at 07:42:44AM +0000, chenwandun wrote:
+> > > > > Recently, I do some tests on linux-4.19 and hit a softlockup issue.
+> > > > > 
+> > > > > I find some CPUs get the spinlock in the __split_huge_pmd function and
+> > > > > then send IPI to other CPUs, waiting the response, while several CPUs
+> > > > > enter the __split_huge_pmd function, want to get the spinlock, but always
+> > > > > in queued_spin_lock_slowpath,
+> > > > > 
+> > > > > Because long time no response to the IPI, that results in a softlockup.
+> > > > > 
+> > > > > As to sending IPI, it was in the patch
+> > > > > 3b8c9f1cdfc506e94e992ae66b68bbe416f89610.  The patch is mean to send IPI
+> > > > > to each CPU after invalidating the I-cache for kernel mappings.  In this
+> > > > > case, after modify pmd, it sends IPI to other CPUS to sync memory
+> > > > > mappings.
+> > > > > 
+> > > > > No stable test case to repeat the result, it is hard to repeat the test procedure.
+> > > > > 
+> > > > > The environment is arm64, 64 CPUs. Except for idle CPU, there are 6 kind
+> > > > > of callstacks in total.
+> > > > 
+> > > > This looks like another lockup that would be solved if we deferred our
+> > > > I-cache invalidation when mapping user-executable pages, and instead
+> > > > performed the invalidation off the back of a UXN permission fault, where we
+> > > > could avoid holding any locks.
+> > > 
+> > > Looking back at commit 3b8c9f1cdfc5 ("arm64: IPI each CPU after
+> > > invalidating the I-cache for kernel mappings"), the text implies that it
+> > > should only do this for kernel mappings. I don't think we need this for
+> > > user mappings. We have a few scenarios where we invoke set_pte_at() with
+> > > exec permission:
+> > 
+> > Yes, I think you're right. I got confused because in this case we are
+> > invalidating lines written by the kernel, but actually it's not about who
+> > writes the data, but about whether or not the page table is being changed.
 > 
-> > Signed-off-by: Oscar Salvador <osalvador@suse.de>
+> IIUC we may have a userspace problem analagous to the kernel modules
+> problem, if userspace uses dlopen/dlclose to dynamically load/unload
+> shared objects.
 > 
-> Other than that the change looks good to me.
+> If userspace unloads an object, then loads another, the new object might
+> get placed at the same VA. A PE could have started speculating
+> instructions from the old object, and IIUC the TLB invalidation and
+> I-cache maintenance don't cause those instructions be re-fetched from
+> the I-cache unless there's a context synchronization event.
 > 
-> Acked-by: Michal Hocko <mhocko@suse.com>
+> Do we require the use of membarrier when loading or unloading objects?
+> If so, when does that happen relative to the unmap or map?
 
-Thanks!
--- 
-Oscar Salvador
-SUSE L3
+membarrier seems a bit OTT for this. Assumedly userspace is already having
+to synchronise threads in this case so that (a) nobody is executing the old
+object when it is unloaded and (b) nobody tries to execute the new
+object until it has been successfully loaded. Squeezing in an ISB shouldn't
+be too tricky, although I don't know whether it's actually done (especially
+since the chance of this going wrong is so tiny).
+
+Will
