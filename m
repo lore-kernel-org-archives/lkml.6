@@ -2,162 +2,181 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ADAFC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 21:00:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19AA3C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 21:02:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1D8E21855
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 21:00:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD16F21855
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 21:02:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nERpfa9e"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oFfj5hJb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727033AbfAWVAu (ORCPT
+        id S1727062AbfAWVCQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 16:00:50 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:43313 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726366AbfAWVAt (ORCPT
+        Wed, 23 Jan 2019 16:02:16 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:36621 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726340AbfAWVCP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 16:00:49 -0500
-Received: by mail-pl1-f193.google.com with SMTP id gn14so1759161plb.10
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 13:00:49 -0800 (PST)
+        Wed, 23 Jan 2019 16:02:15 -0500
+Received: by mail-it1-f194.google.com with SMTP id c9so1271167itj.1;
+        Wed, 23 Jan 2019 13:02:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:subject:references
-         :user-agent:cc:from:in-reply-to:message-id:to:date;
-        bh=gqEucwrdi6Chws+59xYXQjnc2B6XgHyUHFcCbJE+l9Q=;
-        b=nERpfa9eR4yguPuijdCxYM262CJLkb4tvWDUIqRdTsOmXJ8bx7rP61e9h+Ui1Sx1eV
-         fpLJSgv7HIyLK42rPjc0+yZZ8lfd4q885/OB2UbjfvF4d+Vx3zcrpSTTl1aAsA8KekgE
-         U6nHfERh+hFdUhhmrAJ3lXjuEqVRXTuHT0QiE=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=0p1yTpV5Tht/6aKQSHmDd5AdsxL/XMoMMRLNnSBXjfI=;
+        b=oFfj5hJbr5a4IsaR2weKrt1pWmXii31pW2Ov4R1+lYWIsX+3194iI9N3nYLHC2T8SE
+         fqWJ6mGb8X57S7FCj01m2Z5h8LeZacJP7ztQ9PIwj3r598s9w8adTg3+nY/ymcNpyPJx
+         FiM+ZoUNXlrqAFT+ymIDmUWysle6Y6ww74xmcMVcKJDnVhhmTgtjKIQa6FufSdmxziss
+         fmDXTFPoYkP0drEjfEBVHENlCSrigB/Gi5IATwPVduSsbz85YuAllChg+tWCyj+r5nK8
+         QAjFYd7uxVN0ymRX3VyumW9W5qA0ahsFNfXMmb/9Ky20wPfO43uvISYjP81RK4jmzLqi
+         KabQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:subject
-         :references:user-agent:cc:from:in-reply-to:message-id:to:date;
-        bh=gqEucwrdi6Chws+59xYXQjnc2B6XgHyUHFcCbJE+l9Q=;
-        b=AcJK+7af5Olr6B+ZEufvwd7zIuDh8Zh8BFrtywAUBjYXV5hDYbW69STQxXvgKAQ4Wm
-         OnG5AUF8o8Q3gOLY3W2X+qb7DrAAwgbMJQh0O7mYW2q9AivpdBFWfWI1Ln2tbMo4LsEq
-         g8NAF1HhNFe2lN37zTDR39f1n4QV3iClqACGPLHJ1WYf5I11N9xrwx7+gRmXMVEJd/kz
-         WP3b8pa62plciKVhvXl+O1O4PnidTnhTHSpgnc1wS1OAY4mQnxoLOvgBj/xFfaAor6/O
-         Vqy6VCuD/stbmqtFs+0kAeThGer7Od6mLEvvdBw84Bt/72Qj7xx6aWDIhutUosVa03rb
-         sAqw==
-X-Gm-Message-State: AJcUukdI0ocRPOXN+bsQVwk7HaKdcgXPFFV+IK8PPscxw8FIUv9wJhfj
-        cA/DJPJ2RurHZG8uybic04rWFg==
-X-Google-Smtp-Source: ALg8bN5rH7wfvWWDcHlfXhPdqz/ln3h21Qsrr5j1VG4Kku0u0z+r2E2j5WG5NOymWaz4Blb5KjduWQ==
-X-Received: by 2002:a17:902:7791:: with SMTP id o17mr3805571pll.60.1548277248885;
-        Wed, 23 Jan 2019 13:00:48 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id o66sm34290574pgo.75.2019.01.23.13.00.47
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=0p1yTpV5Tht/6aKQSHmDd5AdsxL/XMoMMRLNnSBXjfI=;
+        b=OwUJqpebi0IJbaU3EdbHOvnf3yl1sNa0HL7XKANHoch/La/tlkzou1HBqnjFuJoXjY
+         YM2+5nYP8L9hxjra/q7d78AfmBUagkeKWeOCBG+x077tYvQwYtq/3U2W++m61wVJvRX2
+         iRvkuefh6sD2N5+qiPytIX1BvQLJjTSG4JysJKD0Lm7YNF3Ur3gis4yZmp2QCixQD5lm
+         aBCjcwa6uRbiciDM1sgk0EcISDG0Ksg2gN1LA2DcSspTMWZdfzEmMe7wy23tfAWkf1n1
+         vPUD43W5AKCvPMbKoEFRI8sAFKuZhqlIiT3vhIA71zTKWYlMKOSdpa0YthK8BPM98PU4
+         NZmw==
+X-Gm-Message-State: AJcUukfZipAv3Iojgk8GWsy4Rd9GphrY/6r3Ns1r7CJdsoc++EBVP6Lj
+        txqbF7nd7JPxcTM1aUrCoiE=
+X-Google-Smtp-Source: AHgI3IYdJTrQTMAaeg1D3iwVy5qtLnKuCZa6JU4YDHZ41ksLTPrljIlGLQEncmR8d5MlikMD+FWCrQ==
+X-Received: by 2002:a24:eec7:: with SMTP id b190mr2409712iti.18.1548277334537;
+        Wed, 23 Jan 2019 13:02:14 -0800 (PST)
+Received: from m-hyperV (50-47-89-76.evrt.wa.frontiernet.net. [50.47.89.76])
+        by smtp.gmail.com with ESMTPSA id r139sm8643976ior.53.2019.01.23.13.02.13
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 23 Jan 2019 13:00:47 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        Wed, 23 Jan 2019 13:02:13 -0800 (PST)
+Date:   Wed, 23 Jan 2019 13:02:12 -0800
+From:   Maya Nakamura <m.maya.nakamura@gmail.com>
+To:     lorenzo.pieralisi@arm.com, bhelgaas@google.com,
+        linux-pci@vger.kernel.org, kys@microsoft.com,
+        sthemmin@microsoft.com, olaf@aepfle.de, apw@canonical.com,
+        jasowang@redhat.com, mikelley@microsoft.com,
+        Alexander.Levin@microsoft.com
+Cc:     linux-kernel@vger.kernel.org,
+        driverdev-devel@linuxdriverproject.org, haiyangz@microsoft.com,
+        vkuznets@redhat.com, marcelo.cerri@canonical.com
+Subject: [PATCH 2/2] PCI: hv: Refactor hv_irq_unmask() to use
+ cpumask_to_vpset()
+Message-ID: <885d207cd90a558364d611e4ebd64a87aa8962d7.1548232616.git.m.maya.nakamura@gmail.com>
+References: <cover.1548232616.git.m.maya.nakamura@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 5/7] drivers: pinctrl: msm: setup GPIO irqchip hierarchy
-References: <20181219221105.3004-1-ilina@codeaurora.org> <20181219221105.3004-6-ilina@codeaurora.org> <154533621302.79149.15228907259643696166@swboyd.mtv.corp.google.com> <20190116231328.GA20369@codeaurora.org>
-User-Agent: alot/0.8
-Cc:     evgreen@chromium.org, marc.zyngier@arm.com,
-        linux-kernel@vger.kernel.org, rplsssn@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, thierry.reding@gmail.com,
-        bjorn.andersson@linaro.org
-From:   Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <20190116231328.GA20369@codeaurora.org>
-Message-ID: <154827724678.136743.1337362671388538883@swboyd.mtv.corp.google.com>
-To:     Lina Iyer <ilina@codeaurora.org>
-Date:   Wed, 23 Jan 2019 13:00:46 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1548232616.git.m.maya.nakamura@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Lina Iyer (2019-01-16 15:13:28)
-> On Thu, Dec 20 2018 at 13:03 -0700, Stephen Boyd wrote:
-> >Quoting Lina Iyer (2018-12-19 14:11:03)
-> >> +
-> >> +static int msm_gpio_domain_alloc(struct irq_domain *domain, unsigned =
-int virq,
-> >> +                                unsigned int nr_irqs, void *arg)
-> >> +{
-> >> +       int ret;
-> >> +       irq_hw_number_t hwirq;
-> >> +       struct gpio_chip *gc =3D domain->host_data;
-> >> +       struct msm_pinctrl *pctrl =3D gpiochip_get_data(gc);
-> >> +       struct irq_fwspec *fwspec =3D arg;
-> >> +       struct qcom_irq_fwspec parent =3D { };
-> >> +       unsigned int type;
-> >> +
-> >> +       ret =3D msm_gpio_domain_translate(domain, fwspec, &hwirq, &typ=
-e);
-> >> +       if (ret)
-> >> +               return ret;
-> >> +
-> >> +       ret =3D irq_domain_set_hwirq_and_chip(domain, virq, hwirq,
-> >> +                                           &pctrl->irq_chip, gc);
-> >> +       if (ret < 0)
-> >> +               return ret;
-> >> +
-> >> +       if (!domain->parent)
-> >> +               return 0;
-> >> +
-> >> +       parent.fwspec.fwnode      =3D domain->parent->fwnode;
-> >> +       parent.fwspec.param_count =3D 2;
-> >> +       parent.fwspec.param[0]    =3D hwirq;
-> >> +       parent.fwspec.param[1]    =3D type;
-> >> +
-> >> +       ret =3D irq_domain_alloc_irqs_parent(domain, virq, nr_irqs, &p=
-arent);
-> >> +       if (ret)
-> >> +               return ret;
-> >> +
-> >> +       if (parent.mask)
-> >> +               set_bit(hwirq, pctrl->wakeup_masked_irqs);
-> >> +
-> >> +       return 0;
-> >> +}
-> >> +
-> >> +/*
-> >> + * TODO: Get rid of this and push it into gpiochip_to_irq()
-> >
-> >Hmm.. yeah we need to do this still. I think we can have a generic two
-> >cell function similar to irq_domain_xlate_twocell() that does the fwspec
-> >creation and uses some of the things that we pass to
-> >gpiochip_irqchip_add(), like the default level type. This existing
-> >function is not good to have, so there's work to do to get rid of this.
-> >
->=20
-> >I was also thinking that maybe we can make the alloc function above take
-> >a struct gpio_irq_fwspec structure that tells the alloc function what
-> >gpiochip the irq is for. That would mean that we need to change the
-> >gpio_to_irq() function below to be generic and stuff the chip inside the
-> >fwspec wrapper structure:
-> >
-> >       struct gpio_irq_fwspec {
-> >               struct irq_fwspec fwspec;
-> >               struct gpio_chip *chip;
-> >               unsigned int offset;
-> >       };
-> >
-> >but I seem to recall that was not working for some reason.
-> >
-> I was thinking about this. If I understand you correctly, we want to
-> generalize the .translate and .alloc functions. We could move the
-> .translate to generic however, the alloc would still need to be specific
-> for the parent.mask. But we can do this without the gpio_irq_fwspec. I
-> presume you suggest this structure so we could pass the hwirq and type
-> to the .alloc function. but we have that in the fwspec. What am I
-> missing?
+Remove the duplicate implementation of cpumask_to_vpset() and use the
+shared implementation. Export hv_max_vp_index, which is required by
+cpumask_to_vpset().
 
-I'm trying to flatten the irq number space into a single integer while
-letting it cross multiple gpio chips. Similar to how gpiolib flattens
-the gpio number space across multiple gpio chips. The goal being to make
-gpiochip_to_irq() do this all for us without having to implement it in
-each gpio driver, but maybe that isn't needed or wise if the goal is to
-move drivers away from taking a gpio number and converting it into an
-irq with gpio_to_irq() to begin with.
+Signed-off-by: Maya Nakamura <m.maya.nakamura@gmail.com>
+---
+ arch/x86/hyperv/hv_init.c           |  1 +
+ drivers/pci/controller/pci-hyperv.c | 39 +++++++++++++----------------
+ 2 files changed, 19 insertions(+), 21 deletions(-)
 
-FWIW, the SPMI PMIC gpio chip conversion patches didn't fix this problem
-and Brian just called irq_create_fwspec_mapping() from the to_irq()
-hook. So maybe this can be cleaned up later.
+diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
+index 7abb09e2eeb8..7f2eed1fc81b 100644
+--- a/arch/x86/hyperv/hv_init.c
++++ b/arch/x86/hyperv/hv_init.c
+@@ -96,6 +96,7 @@ void  __percpu **hyperv_pcpu_input_arg;
+ EXPORT_SYMBOL_GPL(hyperv_pcpu_input_arg);
+ 
+ u32 hv_max_vp_index;
++EXPORT_SYMBOL_GPL(hv_max_vp_index);
+ 
+ static int hv_cpu_init(unsigned int cpu)
+ {
+diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
+index da8b58d8630d..d879458d441f 100644
+--- a/drivers/pci/controller/pci-hyperv.c
++++ b/drivers/pci/controller/pci-hyperv.c
+@@ -391,8 +391,6 @@ struct hv_interrupt_entry {
+ 	u32	data;
+ };
+ 
+-#define HV_VP_SET_BANK_COUNT_MAX	5 /* current implementation limit */
+-
+ /*
+  * flags for hv_device_interrupt_target.flags
+  */
+@@ -908,12 +906,12 @@ static void hv_irq_unmask(struct irq_data *data)
+ 	struct retarget_msi_interrupt *params;
+ 	struct hv_pcibus_device *hbus;
+ 	struct cpumask *dest;
++	cpumask_var_t tmp;
+ 	struct pci_bus *pbus;
+ 	struct pci_dev *pdev;
+ 	unsigned long flags;
+ 	u32 var_size = 0;
+-	int cpu_vmbus;
+-	int cpu;
++	int cpu, nr_bank = 0;
+ 	u64 res;
+ 
+ 	dest = irq_data_get_effective_affinity_mask(data);
+@@ -953,29 +951,28 @@ static void hv_irq_unmask(struct irq_data *data)
+ 		 */
+ 		params->int_target.flags |=
+ 			HV_DEVICE_INTERRUPT_TARGET_PROCESSOR_SET;
+-		params->int_target.vp_set.valid_bank_mask =
+-			(1ull << HV_VP_SET_BANK_COUNT_MAX) - 1;
++
++		if (!alloc_cpumask_var(&tmp, GFP_KERNEL)) {
++			dev_err(&hbus->hdev->device, "out of memory");
++			return;
++		}
++
++		cpumask_and(tmp, dest, cpu_online_mask);
++		nr_bank = cpumask_to_vpset(&params->int_target.vp_set, tmp);
++		free_cpumask_var(tmp);
++
++		if (!nr_bank) {
++			dev_err(&hbus->hdev->device, "too high CPU");
++			res = 1;
++			goto exit_unlock;
++		}
+ 
+ 		/*
+ 		 * var-sized hypercall, var-size starts after vp_mask (thus
+ 		 * vp_set.format does not count, but vp_set.valid_bank_mask
+ 		 * does).
+ 		 */
+-		var_size = 1 + HV_VP_SET_BANK_COUNT_MAX;
+-
+-		for_each_cpu_and(cpu, dest, cpu_online_mask) {
+-			cpu_vmbus = hv_cpu_number_to_vp_number(cpu);
+-
+-			if (cpu_vmbus >= HV_VP_SET_BANK_COUNT_MAX * 64) {
+-				dev_err(&hbus->hdev->device,
+-					"too high CPU %d", cpu_vmbus);
+-				res = 1;
+-				goto exit_unlock;
+-			}
+-
+-			params->int_target.vp_set.bank_contents[cpu_vmbus / 64]	|=
+-				(1ULL << (cpu_vmbus & 63));
+-		}
++		var_size = 1 + nr_bank;
+ 	} else {
+ 		for_each_cpu_and(cpu, dest, cpu_online_mask) {
+ 			params->int_target.vp_mask |=
+-- 
+2.17.1
 
