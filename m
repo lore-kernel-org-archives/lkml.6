@@ -2,72 +2,72 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38D7CC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:11:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F84FC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:11:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E55B420870
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:11:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DC5820870
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 10:11:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bv6Q7Ro3"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gWfkcSRI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727323AbfAWKLf (ORCPT
+        id S1727390AbfAWKLp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 05:11:35 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:34742 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727095AbfAWKLe (ORCPT
+        Wed, 23 Jan 2019 05:11:45 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:33099 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727312AbfAWKLp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 05:11:34 -0500
-Received: by mail-wm1-f67.google.com with SMTP id y185so10573959wmd.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 02:11:34 -0800 (PST)
+        Wed, 23 Jan 2019 05:11:45 -0500
+Received: by mail-wm1-f65.google.com with SMTP id r24so10579062wmh.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 02:11:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=dBPGyksu/p6C69hqJ+z25/t9MgYsNomdetYysvi9FiE=;
-        b=bv6Q7Ro3eGnBUc8z4uR3ddO34jLVAz0HlxwbWZqwZe8m2+dlDi2NuHmHbNW8AMtsYj
-         GvOnVKyUuVmK78ssSddjjTOFzxWBSmg/LGsRaCEaKNx0QqORX3+BjEZ/PvBY0OVNK0On
-         ExGsAoF3CkC0OAMtx+Vr1hNbueEp6zYhOyPBc=
+        bh=nLxiScRLz8cH+iZJUgz9qXGBFW+9ruCNo8cZDSC9voE=;
+        b=gWfkcSRIrQTV+vso+6ZVS9/q15+zO7PuEXlFIxqzhlCi91q4m36rmLz1gEJFeKTORk
+         RvVp0JRO/1ujWt8is1KlVq0nzUVltUcfpEb4EQFxE1mM9+EvYHfJVUjrj9E66TffeqGF
+         wIM3hmMNapCr2l1S986LrvurLImwzHQSnEcuw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=dBPGyksu/p6C69hqJ+z25/t9MgYsNomdetYysvi9FiE=;
-        b=g2yFpzxWwR+I0mKySw5Y21uJnErXQO54fqNsHvsRpDIjvZG21jPJSC9+BMvq5OzUEZ
-         ThwQDljGeMdCBm9cuI4U0QqbSXEfraAWy4T5m4VttB7qMCkIoUeXjTd76yCtjgJiG9bN
-         Tvwg7tErppKskr0xMd+npXXNxoYfpc6uxCJVFoclm9QSsTEoxzzPcaRu758Z8uhLxTMX
-         Bod49DbQl8OVPO42+eUqNsTgdJyPgBtYDlC05XjDfPTRO1bA6Zni/10arLbrRSSjk+b4
-         DcYUgsGmTk83qv97PvhiGQj+NvwNShNo62lV3s/KrWz73+b2DPUXc/kC7Ka3TkM9GTfP
-         LkUQ==
-X-Gm-Message-State: AJcUukdgzsv9aKzcZWOCg5lz3IWBWoSSZtBG87rI+m7RfWh6ns1rYhIk
-        sTkjqLnXS0HGE7RwcjKp20FOxHj9zGU=
-X-Google-Smtp-Source: ALg8bN6nGTo4qjyh9WK1NoR+HavC8GCw9cZ9jQbiAOSQVSTA7cb+nIkI6qvHm6FDrSXvy2ObGrRXBQ==
-X-Received: by 2002:a1c:b455:: with SMTP id d82mr2163949wmf.78.1548238293108;
-        Wed, 23 Jan 2019 02:11:33 -0800 (PST)
+        bh=nLxiScRLz8cH+iZJUgz9qXGBFW+9ruCNo8cZDSC9voE=;
+        b=GsJFizis7nsUsNXqjvQtkl67UFhr0QpQDuw3rn3qrjwLfXBCFiOoGIZ4VPZLi6dfw8
+         Q9Pb9uLZhptoBpcKiL3CaVZTQS9bob8cBeMl0bhrTZf4GBDZdkf7YVEIU24J6nXRsLeG
+         HMpSbncmJD4Wilj/0rrfuB07XuvvR6eK4V1y/LOsPpeKuhqZsN9Mm88Sy1Dn1DuCJrJU
+         QbM5iGmERi+qqmsF94Qiejxf3cU/PtNKpuLXCaLmzTKzZJBF8eFGkJy2sPlbtja50xu+
+         TiLtHiFLR/b66qYf1UUc+lmeoc7SWeZ6Q0NiPUzKmyKjASNbuGsv9UzHkEbNzJ9TiiBM
+         Sahg==
+X-Gm-Message-State: AJcUukfDYVxWHtsDIJDiGBeEgcgih8liOcfnSY7vMNwGSKMlWSte07oz
+        awqokESYdTVW/V1BRfjnoBbLFw==
+X-Google-Smtp-Source: ALg8bN71KprpqdHRbc9vj3B7gdecOnBVk2X+/A6rLlaRLURXjT4qx6Wrout2pV3wedJy9jQnj40G0g==
+X-Received: by 2002:a1c:e3d7:: with SMTP id a206mr1981212wmh.12.1548238303425;
+        Wed, 23 Jan 2019 02:11:43 -0800 (PST)
 Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id 126sm45233616wmd.1.2019.01.23.02.11.32
+        by smtp.googlemail.com with ESMTPSA id i192sm60603836wmg.7.2019.01.23.02.11.42
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 23 Jan 2019 02:11:32 -0800 (PST)
-Subject: Re: [PATCH v5 4/8] ASoC: wcd9335: add basic controls
+        Wed, 23 Jan 2019 02:11:42 -0800 (PST)
+Subject: Re: [PATCH v5 2/8] ASoC: wcd9335: add support to wcd9335 codec
 To:     Mark Brown <broonie@kernel.org>
 Cc:     robh+dt@kernel.org, lgirdwood@gmail.com, bgoswami@codeaurora.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         vkoul@kernel.org, alsa-devel@alsa-project.org
 References: <20190110150616.2332-1-srinivas.kandagatla@linaro.org>
- <20190110150616.2332-5-srinivas.kandagatla@linaro.org>
- <20190122185253.GG7579@sirena.org.uk>
+ <20190110150616.2332-3-srinivas.kandagatla@linaro.org>
+ <20190122184146.GF7579@sirena.org.uk>
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <6a3664d2-9b10-d6e6-9df5-ed50364812f4@linaro.org>
-Date:   Wed, 23 Jan 2019 10:11:31 +0000
+Message-ID: <4e09bbcb-2258-9a41-eca6-19c6a9dea97b@linaro.org>
+Date:   Wed, 23 Jan 2019 10:11:42 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20190122185253.GG7579@sirena.org.uk>
+In-Reply-To: <20190122184146.GF7579@sirena.org.uk>
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -78,28 +78,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Thanks for the review,
 
-On 22/01/2019 18:52, Mark Brown wrote:
-> On Thu, Jan 10, 2019 at 03:06:12PM +0000, Srinivas Kandagatla wrote:
+On 22/01/2019 18:41, Mark Brown wrote:
+> On Thu, Jan 10, 2019 at 03:06:10PM +0000, Srinivas Kandagatla wrote:
 > 
->> +static const char * const wcd9335_ear_pa_gain_text[] = {
->> +	"G_6_DB", "G_4P5_DB", "G_3_DB", "G_1P5_DB",
->> +	"G_0_DB", "G_M2P5_DB", "UNDEFINED", "G_M12_DB"
->> +};
+> This all looks good apart from a couple of small things that should be
+> easy to fix:
 > 
-> Gains should be controlled with Volume controls, not enums.  Provide
-> information on the levels via TLV.
-I agree, I will fix this as well in next version!
+>> diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
+>> index 62bdb7e333b8..1c4904940621 100644
+>> --- a/sound/soc/codecs/Kconfig
+>> +++ b/sound/soc/codecs/Kconfig
+>> @@ -1100,6 +1100,12 @@ config SND_SOC_UDA1380
+>>           tristate
+>>   	depends on I2C
+>>   
+>> +config SND_SOC_WCD9335
+>> +	tristate "WCD9335 Codec"
+>> +	depends on SLIMBUS
+>> +	select REGMAP_SLIMBUS
+>> +        tristate
+>> +
+>>   config SND_SOC_WL1273
+>>   	tristate
+>>   
 > 
->> +static const char * const rx_hph_mode_mux_text[] = {
->> +	"CLS_H_INVALID", "CLS_H_HIFI", "CLS_H_LP", "CLS_AB", "CLS_H_LOHIFI"
->> +};
+> You should add this to SND_SOC_ALL_CODECS.
+Sure, I will add this in next version.
 > 
-> Is there a strong reason not to use more human readable strings here?
+>> +static irqreturn_t wcd9335_slimbus_irq(int irq, void *data)
+>> +{
+>> +	struct wcd9335_codec *wcd = data;
+>> +	unsigned long status = 0;
+>> +	int i, j, port_id;
+>> +	unsigned int val, int_val = 0;
+>> +	bool tx;
+>> +	unsigned short reg = 0;
+>> +
+>> +	for (i = WCD9335_SLIM_PGD_PORT_INT_STATUS_RX_0, j = 0;
+>> +	     i <= WCD9335_SLIM_PGD_PORT_INT_STATUS_TX_1; i++, j++) {
+>> +		regmap_read(wcd->if_regmap, i, &val);
+>> +		status |= ((u32)val << (8 * j));
+>> +	}
+>> +
+>> +	for_each_set_bit(j, &status, 32) {
+>> +		tx = (j >= 16 ? true : false);
+>> +		port_id = (tx ? j - 16 : j);
 > 
-No, I can rename them to below if it helps reader.
+> ...
+> 
+>> +	return IRQ_HANDLED;
+>> +}
+> 
+> This will report that it handled the interrupt unconditionally, this
+> means that if the interrupt fires in error or there's some bug the
+> interrupt will never be acknowledged (it looks like the chip requires
+> acks?) but the interrupt core won't be able to notice and handle the
+> problem as effectively as it could've done.  It's better to report
+> IRQ_NONE if nothing as handled so that the core can do error handling.
+I agree, Will fix this in next version!
 
-"Class-H Hi-Fi", "Class-H Low Power",   "Class-AB", "Class-H Hi-Fi Low 
-Power".
-
-Thanks,
+thanks,
 srini
+> 
