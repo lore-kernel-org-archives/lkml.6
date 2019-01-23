@@ -2,52 +2,44 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D2C3C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 13:49:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1884C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 13:54:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AB0A2184B
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 13:49:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD63C2184B
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 13:54:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548251398;
-	bh=wX2igswHfPUUXQe9/KuCEAGIp3PIEdilIjqZB9clAdc=;
+	s=default; t=1548251650;
+	bh=NxuxHNoVaS6ozCtTt546XsSK6uwDiEdBsu2S0q3ulF4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=GRYaePx3hI78IY3lEY0QJ8PylY1AvsEm/Y64Ho7XhEJVuAxTZSXjS07aok0AxUlr3
-	 QRDNU3okXSDSOlmK45DfaIt5PDQEUYoB08GmvyAibH903ZqSmSvl+FJLoBFt5RGHNW
-	 p9UHXmehlXLoIpCWJYU3dvX6cPcdYg8r58jPLEyw=
+	b=x02fNrW0wxb3ThA8HYyXF8qTMk+lIbN3sncyFxk0UYz3+6zKHnlhNZ2Zk/KS3p+WV
+	 sJ/YxEKn9axSJvcW0vYzChiLxSt5xO6ZnzYZ9nA3nmE2wAszvi5fsB8mb576xz4V8n
+	 L53bJO3inhmb/dCvfPLeSlhDo643pqcVpeA1jCwc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726357AbfAWNt4 (ORCPT
+        id S1726307AbfAWNyI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 08:49:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59734 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725995AbfAWNt4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 08:49:56 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 130CD2184B;
-        Wed, 23 Jan 2019 13:49:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548251394;
-        bh=wX2igswHfPUUXQe9/KuCEAGIp3PIEdilIjqZB9clAdc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rPRNUTYNr3fPOQGGsbTD4UJTBT9fHuAjq5Z/FpoFWq7/YQI11Y09XfPXQxtMfIOby
-         9VO/0L0kVl7jn4K0sfdnkEEM4KTRC9Ys62gmj94MQIqOJ6iTbljEyfAJk9O8mryYmy
-         wZVd4AhCCLcHKW4aADy+GqQpSuCeW+4B6tSHHXQs=
-Date:   Wed, 23 Jan 2019 14:49:52 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Michal Hocko <mhocko@kernel.org>
+        Wed, 23 Jan 2019 08:54:08 -0500
+Received: from mx2.suse.de ([195.135.220.15]:53410 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726167AbfAWNyI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 08:54:08 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 87BFAAF6A;
+        Wed, 23 Jan 2019 13:54:06 +0000 (UTC)
+Date:   Wed, 23 Jan 2019 14:54:05 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-kernel@vger.kernel.org,
         Masami Hiramatsu <mhiramat@kernel.org>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         Gary R Hook <ghook@amd.com>,
         Heiko Carstens <heiko.carstens@de.ibm.com>
 Subject: Re: [PATCH 2/2] debugfs: return error values, not NULL
-Message-ID: <20190123134952.GA26006@kroah.com>
+Message-ID: <20190123135405.GA4087@dhcp22.suse.cz>
 References: <20190123102702.GA17123@kroah.com>
  <20190123102814.GB17123@kroah.com>
  <20190123110628.GV4087@dhcp22.suse.cz>
@@ -62,13 +54,13 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20190123134021.GB24700@kroah.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 02:40:21PM +0100, Greg Kroah-Hartman wrote:
+On Wed 23-01-19 14:40:21, Greg KH wrote:
 > On Wed, Jan 23, 2019 at 02:09:17PM +0100, Michal Hocko wrote:
 > > On Wed 23-01-19 14:00:57, Greg KH wrote:
 > > > On Wed, Jan 23, 2019 at 01:40:24PM +0100, Michal Hocko wrote:
@@ -131,7 +123,9 @@ On Wed, Jan 23, 2019 at 02:40:21PM +0100, Greg Kroah-Hartman wrote:
 > > fixed by removing it.
 > 
 > I think you all are the "lucky" one here :)
-> 
+
+That was actually the first random place I've checked.
+
 > I did audit the whole kernel tree already, with the exception of the gpu
 > drivers, as they are even more insane than block drivers...
 > 
@@ -143,9 +137,21 @@ On Wed, Jan 23, 2019 at 02:40:21PM +0100, Greg Kroah-Hartman wrote:
 > Given that we usually don't even fail small kmallocs, I doubt this can
 > even ever happen.
 
-In thinking about it some more, I'll not cc: stable on this, to give
-people a chance to get synced up for 5.1 for all of this.
+This doesn't matter at all. Failures are real even when rare. Do not
+forget fault injection testing which is real on older kernels as well.
 
-thanks,
+Besides that I haven't heard _any_ argument why this should be
+backported to stable trees in the first place.
+ 
+> > Moreover all these changes should be posted in a single patch thread so
+> > that everybody can see the final outcome.
+> 
+> No one wants to see a 200+ patch thread and be cc:ed on them all.
 
-greg k-h
+I have seen some of them and they are really dubious, some even outright
+wrong so this particular one is far far away from being ready to get
+mereged even to the linus tree. Not to mention older trees which would
+require the same kind of tree wide recheck again.
+-- 
+Michal Hocko
+SUSE Labs
