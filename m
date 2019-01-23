@@ -2,84 +2,220 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF549C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 13:48:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67792C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 13:49:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7071820855
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 13:48:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548251339;
-	bh=ELiE3gPS8RiO5npZuv3ICzNh1ao0Y+7e0bYWVYrD7Go=;
-	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=e/aq0tXgy+0l/EZOJOCEZ1PJzsf0x4wwatCgC4kERsi34mf6TmtribXs+fS/db5ii
-	 a15t1Yir5bpCGXRWODTaU25Jy47DQwW9TTkPTm33ZR2gXqDEPSWMet9pnj0QHP66Z9
-	 ztI5JAUG7Y+mFc5RH2kPJdS/fzl2wKEfQ6d8JSdg=
+	by mail.kernel.org (Postfix) with ESMTP id 3DD1020855
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 13:49:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726262AbfAWNs5 (ORCPT
+        id S1726343AbfAWNtH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 08:48:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59100 "EHLO mail.kernel.org"
+        Wed, 23 Jan 2019 08:49:07 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:50076 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725995AbfAWNs5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 08:48:57 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726122AbfAWNtH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 08:49:07 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 355D920855;
-        Wed, 23 Jan 2019 13:48:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548251336;
-        bh=ELiE3gPS8RiO5npZuv3ICzNh1ao0Y+7e0bYWVYrD7Go=;
-        h=Date:From:To:Cc:Subject:From;
-        b=CHHibquj3l5ttf9TszKmovObl1oXhD9NvirJwlK0vB+tMNGTFzaubZZxc+nl6efm8
-         15+rItX7gNTZTm1TLP4D5kTp8RxX0x5uHG9+LOI/vE/Nv3XX3d3im5QxzCG88+OsMR
-         /Pwf8sfMmzvewuiOn3dkc+nY5ZagwdkBWBGOQjqQ=
-Date:   Wed, 23 Jan 2019 14:48:54 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        Michal Hocko <mhocko@kernel.org>
-Subject: [PATCH] blk-mq: protect debugfs_create_files() from failures
-Message-ID: <20190123134854.GA25906@kroah.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id DC759D2EEA;
+        Wed, 23 Jan 2019 13:49:06 +0000 (UTC)
+Received: from redhat.com (ovpn-123-123.rdu2.redhat.com [10.10.123.123])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 108E75D6A9;
+        Wed, 23 Jan 2019 13:49:05 +0000 (UTC)
+Date:   Wed, 23 Jan 2019 08:49:00 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     Tiwei Bie <tiwei.bie@intel.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, virtio-dev@lists.oasis-open.org
+Subject: Re: [virtio-dev] [PATCH] virtio: support VIRTIO_F_ORDER_PLATFORM
+Message-ID: <20190123084308-mutt-send-email-mst@kernel.org>
+References: <20190122170346.6279-1-tiwei.bie@intel.com>
+ <ecf89b02-57ba-478f-1e28-4286888a4b26@redhat.com>
+ <20190122224203-mutt-send-email-mst@kernel.org>
+ <7f07c837-d3d0-b5c0-9ecb-29b545b377c3@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-User-Agent: Mutt/1.11.2 (2019-01-07)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7f07c837-d3d0-b5c0-9ecb-29b545b377c3@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 23 Jan 2019 13:49:07 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If debugfs were to return a non-NULL error for a debugfs call, using
-that pointer later in debugfs_create_files() would crash.
+On Wed, Jan 23, 2019 at 02:56:00PM +0800, Jason Wang wrote:
+> 
+> On 2019/1/23 上午11:49, Michael S. Tsirkin wrote:
+> > On Wed, Jan 23, 2019 at 11:08:04AM +0800, Jason Wang wrote:
+> > > On 2019/1/23 上午1:03, Tiwei Bie wrote:
+> > > > This patch introduces the support for VIRTIO_F_ORDER_PLATFORM.
+> > > > When this feature is negotiated, driver will use the barriers
+> > > > suitable for hardware devices.
+> > > > 
+> > > > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+> > > > ---
+> > > >    drivers/virtio/virtio_ring.c       | 8 ++++++++
+> > > >    include/uapi/linux/virtio_config.h | 6 ++++++
+> > > >    2 files changed, 14 insertions(+)
+> > > > 
+> > > > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> > > > index cd7e755484e3..27d3f057493e 100644
+> > > > --- a/drivers/virtio/virtio_ring.c
+> > > > +++ b/drivers/virtio/virtio_ring.c
+> > > > @@ -1609,6 +1609,9 @@ static struct virtqueue *vring_create_virtqueue_packed(
+> > > >    		!context;
+> > > >    	vq->event = virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
+> > > > +	if (virtio_has_feature(vdev, VIRTIO_F_ORDER_PLATFORM))
+> > > > +		vq->weak_barriers = false;
+> > > > +
+> > > >    	vq->packed.ring_dma_addr = ring_dma_addr;
+> > > >    	vq->packed.driver_event_dma_addr = driver_event_dma_addr;
+> > > >    	vq->packed.device_event_dma_addr = device_event_dma_addr;
+> > > > @@ -2079,6 +2082,9 @@ struct virtqueue *__vring_new_virtqueue(unsigned int index,
+> > > >    		!context;
+> > > >    	vq->event = virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
+> > > > +	if (virtio_has_feature(vdev, VIRTIO_F_ORDER_PLATFORM))
+> > > > +		vq->weak_barriers = false;
+> > > > +
+> > > >    	vq->split.queue_dma_addr = 0;
+> > > >    	vq->split.queue_size_in_bytes = 0;
+> > > > @@ -2213,6 +2219,8 @@ void vring_transport_features(struct virtio_device *vdev)
+> > > >    			break;
+> > > >    		case VIRTIO_F_RING_PACKED:
+> > > >    			break;
+> > > > +		case VIRTIO_F_ORDER_PLATFORM:
+> > > > +			break;
+> > > >    		default:
+> > > >    			/* We don't understand this bit. */
+> > > >    			__virtio_clear_bit(vdev, i);
+> > > > diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
+> > > > index 1196e1c1d4f6..ff8e7dc9d4dd 100644
+> > > > --- a/include/uapi/linux/virtio_config.h
+> > > > +++ b/include/uapi/linux/virtio_config.h
+> > > > @@ -78,6 +78,12 @@
+> > > >    /* This feature indicates support for the packed virtqueue layout. */
+> > > >    #define VIRTIO_F_RING_PACKED		34
+> > > > +/*
+> > > > + * This feature indicates that memory accesses by the driver and the
+> > > > + * device are ordered in a way described by the platform.
+> > > > + */
+> > > > +#define VIRTIO_F_ORDER_PLATFORM		36
+> > > > +
+> > > >    /*
+> > > >     * Does the device support Single Root I/O Virtualization?
+> > > >     */
+> > > 
+> > > I wonder whether or not this is sufficient. Is dma barrier implies a mmio
+> > > barrier? Looks not.
+> > IIUC we don't need an mmio barrier because we are using a
+> > serializing API: Documentation/memory-barriers.txt says:
+> > 
+> > 	Note that, when using writel(), a prior
+> >       wmb() is not needed to guarantee that the cache coherent memory writes
+> >       have completed before writing to the MMIO region.
+> 
+> 
+> Ah, I get this.
+> 
+> 
+> > 
+> > 
+> > > See ia64/include/asm/barrier.h:
+> > > 
+> > >   * Note: "mb()" and its variants cannot be used as a fence to order
+> > >   * accesses to memory mapped I/O registers.  For that, mf.a needs to
+> > >   * be used.  However, we don't want to always use mf.a because (a)
+> > >   * it's (presumably) much slower than mf and (b) mf.a is supported for
+> > >   * sequential memory pages only.
+> > >   */
+> > > #define mb()            ia64_mf()
+> > > #define rmb()           mb()
+> > > #define wmb()           mb()
+> > > 
+> > > #define dma_rmb()       mb()
+> > > =>efine dma_wmb()       mb()
+> > > 
+> > > Thanks
+> > Frankly no idea about ia64.
+> 
+> 
+> Neither did me.
+> 
+> 
+> >   Sorry. Are any less esoteric platforms
+> > affected?
+> > 
+> 
+> E.g ppc64?
 
-Fix that by properly checking the pointer before referencing it.
+So
 
-Reported-by: Michal Hocko <mhocko@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- block/blk-mq-debugfs.c | 3 +++
- 1 file changed, 3 insertions(+)
+void iowrite32(u32 val, void __iomem *addr)
+{
+        writel(val, addr);
+}
 
-diff --git a/block/blk-mq-debugfs.c b/block/blk-mq-debugfs.c
-index 90d68760af08..777638f597aa 100644
---- a/block/blk-mq-debugfs.c
-+++ b/block/blk-mq-debugfs.c
-@@ -838,6 +838,9 @@ static const struct blk_mq_debugfs_attr blk_mq_debugfs_ctx_attrs[] = {
- static bool debugfs_create_files(struct dentry *parent, void *data,
- 				 const struct blk_mq_debugfs_attr *attr)
- {
-+	if (IS_ERR_OR_NULL(parent))
-+		return false;
-+
- 	d_inode(parent)->i_private = data;
- 
- 	for (; attr->name; attr++) {
+and that eventually gets to this one:
+
+
+#define DEF_MMIO_OUT_D(name, size, insn)                                \
+static inline void name(volatile u##size __iomem *addr, u##size val)    \
+{                                                                       \
+        __asm__ __volatile__("sync;"#insn"%U0%X0 %1,%0"                 \
+                : "=m" (*addr) : "r" (val) : "memory");                 \
+        IO_SET_SYNC_FLAG();                                             \
+}
+
+and
+
+#ifdef CONFIG_PPC64
+#define IO_SET_SYNC_FLAG()      do { local_paca->io_sync = 1; } while(0)
+#else
+#define IO_SET_SYNC_FLAG()
+#endif
+
+
+
+
+
+> define dma_wmb()       __asm__ __volatile__ (stringify_in_c(SMPWMB) : :
+> :"memo\
+> ry")
+> 
+> /*
+>  * Enforce synchronisation of stores vs. spin_unlock
+>  * (this does it explicitly, though our implementation of spin_unlock
+
+I don't know which spin_unlock does it refer to here.
+
+>  * does it implicitely too)
+>  */
+> static inline void mmiowb(void)
+> {
+>         unsigned long tmp;
+> 
+>         __asm__ __volatile__("sync; li %0,0; stb %0,%1(13)"
+>         : "=&r" (tmp) : "i" (offsetof(struct paca_struct, io_sync))
+>         : "memory");
+> }
+
+So sync+set io_sync here and sync+io_sync above.
+
+> dma_wmb() is lwsync which is more lightweight than sync I guess?
+> 
+> Thanks
+> 
+
+Sounds about right.
+
+
 -- 
-2.20.1
-
+MST
