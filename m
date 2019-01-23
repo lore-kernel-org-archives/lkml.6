@@ -2,230 +2,238 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EA6CC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 11:06:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBE3DC282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 11:10:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2DE421019
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 11:06:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548241594;
-	bh=1feXq55a+tjAd8GPP3+j0e4i97UqMAOmFaFkijc0wTM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=UdD9ODaZWsP6Mz9mZGNCj5PxbcoalN07tPJDqHe5YjOK2d4nNYavynikUqgAihmtQ
-	 9TbllYftAIKO3oKlYR74rwTpEnunuqz1085ig0XeBmcpUFwC+wd3IM837eHpSEBRUz
-	 D3hMLvwupZkRv1C/pXGNi3cpHhagOEpZ6KroThNc=
+	by mail.kernel.org (Postfix) with ESMTP id 892E621019
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 11:10:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727430AbfAWLGc (ORCPT
+        id S1727200AbfAWLKF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 06:06:32 -0500
-Received: from mx2.suse.de ([195.135.220.15]:55480 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726207AbfAWLGc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 06:06:32 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2257FAF4F;
-        Wed, 23 Jan 2019 11:06:30 +0000 (UTC)
-Date:   Wed, 23 Jan 2019 12:06:28 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Gary R Hook <ghook@amd.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: Re: [PATCH 2/2] debugfs: return error values, not NULL
-Message-ID: <20190123110628.GV4087@dhcp22.suse.cz>
-References: <20190123102702.GA17123@kroah.com>
- <20190123102814.GB17123@kroah.com>
+        Wed, 23 Jan 2019 06:10:05 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:7521 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726322AbfAWLKF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 06:10:05 -0500
+X-IronPort-AV: E=Sophos;i="5.56,510,1539619200"; 
+   d="scan'208";a="52651108"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 23 Jan 2019 19:10:03 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id 4853C4BAD9DB;
+        Wed, 23 Jan 2019 19:10:01 +0800 (CST)
+Received: from localhost.local (10.167.225.56) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 23 Jan 2019 19:10:07 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <bp@alien8.de>,
+        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
+        <keescook@chromium.org>, <bhe@redhat.com>, <msys.mizuma@gmail.com>
+CC:     <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>,
+        <fanc.fnst@cn.fujitsu.com>, <kasong@redhat.com>
+Subject: [PATCH v16 0/7] Parse ACPI table and limit KASLR to choosing immovable memory
+Date:   Wed, 23 Jan 2019 19:08:43 +0800
+Message-ID: <20190123110850.12433-1-fanc.fnst@cn.fujitsu.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190123102814.GB17123@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: 4853C4BAD9DB.AAB77
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 23-01-19 11:28:14, Greg KH wrote:
-> When an error happens, debugfs should return an error pointer value, not
-> NULL.  This will prevent the totally theoretical error where a debugfs
-> call fails due to lack of memory, returning NULL, and that dentry value
-> is then passed to another debugfs call, which would end up succeeding,
-> creating a file at the root of the debugfs tree, but would then be
-> impossible to remove (because you can not remove the directory NULL).
-> 
-> So, to make everyone happy, always return errors, this makes the users
-> of debugfs much simpler (they do not have to ever check the return
-> value), and everyone can rest easy.
+***Background:
+People reported that KASLR may randomly choose some positions
+which are located in movable memory regions. This will make the
+movable memory chosen by KASLR can't be removed.
 
-How come this is safe at all? Say you are creating a directory by
-debugfs_create_dir and then feed the return value to debugfs_create_files
-as a parent. In case of error you are giving it an invalid pointer and
-likely blow up unless I miss something.
+***Solutions:
+Get the information of memory hot-remove, then KASLR knows the
+right regions. Information about memory-hotremove is in ACPI
+SRAT, which will be parsed after start_kernel(), so KASLR
+can't get the information.
 
-I do agree that reporting errors is better than a simple catch all NULL
-but this should have been done when introduced rather than now when most
-callers simply check for NULL as a failure.
+Someone suggested to add a kernel parameter to specify the
+immovable memory then limit KASLR in these regions. Then I make
+a PATCHSET. After several versions, Ingo gave a suggestion:
+https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1634024.html
+Follow Ingo's suggestion, imitate the ACPI code to parse the ACPI
+tables, so that the KASLR can get necessary memory information in
+ACPI tables.
+ACPI code is an independent part, so imitate the codes and functions
+to 'compressed/' directory, so that KASLR won't influence the
+initialization of ACPI.
 
-> Reported-by: Masami Hiramatsu <mhiramat@kernel.org>
-> Reported-by: Ulf Hansson <ulf.hansson@linaro.org>
-> Reported-by: Gary R Hook <ghook@amd.com>
-> Reported-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-> Cc: stable <stable@vger.kernel.org>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
->  fs/debugfs/inode.c | 39 ++++++++++++++++++++++-----------------
->  1 file changed, 22 insertions(+), 17 deletions(-)
-> 
-> diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
-> index 41ef452c1fcf..b16f8035b1af 100644
-> --- a/fs/debugfs/inode.c
-> +++ b/fs/debugfs/inode.c
-> @@ -254,8 +254,8 @@ MODULE_ALIAS_FS("debugfs");
->   * @parent: a pointer to the parent dentry of the file.
->   *
->   * This function will return a pointer to a dentry if it succeeds.  If the file
-> - * doesn't exist or an error occurs, %NULL will be returned.  The returned
-> - * dentry must be passed to dput() when it is no longer needed.
-> + * doesn't exist or an error occurs, %ERR_PTR(-ERROR) will be returned.  The
-> + * returned dentry must be passed to dput() when it is no longer needed.
->   *
->   * If debugfs is not enabled in the kernel, the value -%ENODEV will be
->   * returned.
-> @@ -265,17 +265,17 @@ struct dentry *debugfs_lookup(const char *name, struct dentry *parent)
->  	struct dentry *dentry;
->  
->  	if (IS_ERR(parent))
-> -		return NULL;
-> +		return parent;
->  
->  	if (!parent)
->  		parent = debugfs_mount->mnt_root;
->  
->  	dentry = lookup_one_len_unlocked(name, parent, strlen(name));
->  	if (IS_ERR(dentry))
-> -		return NULL;
-> +		return dentry;
->  	if (!d_really_is_positive(dentry)) {
->  		dput(dentry);
-> -		return NULL;
-> +		return ERR_PTR(-EINVAL);
->  	}
->  	return dentry;
->  }
-> @@ -324,7 +324,7 @@ static struct dentry *failed_creating(struct dentry *dentry)
->  	inode_unlock(d_inode(dentry->d_parent));
->  	dput(dentry);
->  	simple_release_fs(&debugfs_mount, &debugfs_mount_count);
-> -	return NULL;
-> +	return ERR_PTR(-ENOMEM);
->  }
->  
->  static struct dentry *end_creating(struct dentry *dentry)
-> @@ -347,7 +347,7 @@ static struct dentry *__debugfs_create_file(const char *name, umode_t mode,
->  	dentry = start_creating(name, parent);
->  
->  	if (IS_ERR(dentry))
-> -		return NULL;
-> +		return dentry;
->  
->  	inode = debugfs_get_inode(dentry->d_sb);
->  	if (unlikely(!inode))
-> @@ -386,7 +386,8 @@ static struct dentry *__debugfs_create_file(const char *name, umode_t mode,
->   * This function will return a pointer to a dentry if it succeeds.  This
->   * pointer must be passed to the debugfs_remove() function when the file is
->   * to be removed (no automatic cleanup happens if your module is unloaded,
-> - * you are responsible here.)  If an error occurs, %NULL will be returned.
-> + * you are responsible here.)  If an error occurs, %ERR_PTR(-ERROR) will be
-> + * returned.
->   *
->   * If debugfs is not enabled in the kernel, the value -%ENODEV will be
->   * returned.
-> @@ -464,7 +465,8 @@ EXPORT_SYMBOL_GPL(debugfs_create_file_unsafe);
->   * This function will return a pointer to a dentry if it succeeds.  This
->   * pointer must be passed to the debugfs_remove() function when the file is
->   * to be removed (no automatic cleanup happens if your module is unloaded,
-> - * you are responsible here.)  If an error occurs, %NULL will be returned.
-> + * you are responsible here.)  If an error occurs, %ERR_PTR(-ERROR) will be
-> + * returned.
->   *
->   * If debugfs is not enabled in the kernel, the value -%ENODEV will be
->   * returned.
-> @@ -495,7 +497,8 @@ EXPORT_SYMBOL_GPL(debugfs_create_file_size);
->   * This function will return a pointer to a dentry if it succeeds.  This
->   * pointer must be passed to the debugfs_remove() function when the file is
->   * to be removed (no automatic cleanup happens if your module is unloaded,
-> - * you are responsible here.)  If an error occurs, %NULL will be returned.
-> + * you are responsible here.)  If an error occurs, %ERR_PTR(-ERROR) will be
-> + * returned.
->   *
->   * If debugfs is not enabled in the kernel, the value -%ENODEV will be
->   * returned.
-> @@ -506,7 +509,7 @@ struct dentry *debugfs_create_dir(const char *name, struct dentry *parent)
->  	struct inode *inode;
->  
->  	if (IS_ERR(dentry))
-> -		return NULL;
-> +		return dentry;
->  
->  	inode = debugfs_get_inode(dentry->d_sb);
->  	if (unlikely(!inode))
-> @@ -545,7 +548,7 @@ struct dentry *debugfs_create_automount(const char *name,
->  	struct inode *inode;
->  
->  	if (IS_ERR(dentry))
-> -		return NULL;
-> +		return dentry;
->  
->  	inode = debugfs_get_inode(dentry->d_sb);
->  	if (unlikely(!inode))
-> @@ -581,8 +584,8 @@ EXPORT_SYMBOL(debugfs_create_automount);
->   * This function will return a pointer to a dentry if it succeeds.  This
->   * pointer must be passed to the debugfs_remove() function when the symbolic
->   * link is to be removed (no automatic cleanup happens if your module is
-> - * unloaded, you are responsible here.)  If an error occurs, %NULL will be
-> - * returned.
-> + * unloaded, you are responsible here.)  If an error occurs, %ERR_PTR(-ERROR)
-> + * will be returned.
->   *
->   * If debugfs is not enabled in the kernel, the value -%ENODEV will be
->   * returned.
-> @@ -594,12 +597,12 @@ struct dentry *debugfs_create_symlink(const char *name, struct dentry *parent,
->  	struct inode *inode;
->  	char *link = kstrdup(target, GFP_KERNEL);
->  	if (!link)
-> -		return NULL;
-> +		return ERR_PTR(-ENOMEM);
->  
->  	dentry = start_creating(name, parent);
->  	if (IS_ERR(dentry)) {
->  		kfree(link);
-> -		return NULL;
-> +		return dentry;
->  	}
->  
->  	inode = debugfs_get_inode(dentry->d_sb);
-> @@ -827,7 +830,9 @@ struct dentry *debugfs_rename(struct dentry *old_dir, struct dentry *old_dentry,
->  	if (dentry && !IS_ERR(dentry))
->  		dput(dentry);
->  	unlock_rename(new_dir, old_dir);
-> -	return NULL;
-> +	if (IS_ERR(dentry))
-> +		return dentry;
-> +	return ERR_PTR(-EINVAL);
->  }
->  EXPORT_SYMBOL_GPL(debugfs_rename);
->  
-> -- 
-> 2.20.1
+PATCH 1/7 Copy kstrtoull() to boot/string.c to instead of using
+          old simple_strtoull()
+PATCH 2/7 Introduce get_acpi_rsdp() to parse RSDP in cmdline from KEXEC
+PATCH 3/6 Introduce efi_get_rsdp_addr() to find RSDP from EFI table when
+          booting from EFI.
+PATCH 4/7 Introduce bios_get_rsdp_addr() to search RSDP in memory when
+          booting from BIOS
+PATCH 5/7 Parse RSDP and fill in boot_params->acpi_rsdp_addr before
+          KASLR.
+PATCH 6/7 Compute SRAT from RSDP and walk SRAT to store the immovable
+          memory regions and store the immovable memory regions.
+PATCH 7/7 Calculate the intersection between memory regions from e820/efi
+          memory table and immovable memory regions. Limit KASLR to
+          choosing these regions for randomization.
+
+***Tests:
+Test it in QEMU guest with 10 NUMA nodes, every node has 512M memory.
+Use earlyprintk with debug_putaddr() to display the immovable
+memory regions when KASLR walks all memory. Compare the result with
+dmesg. If they are same, the parsing job works well.
+Here are test cases:
+ - x86_64 machine booting from EFI
+ - x86_64 machine booting from BIOS
+ - i386 machine booting from BIOS
+ - According to '/sys/firmware/efi/systab', add 'acpi_rsdp=' to cmdline to
+   imitate case for get_acpi_rsdp()
+ - Add 'acpi=off' to cmdline to test the detecting for cmdline.
+ - Add debug_putaddr to test the value of boot_params->acpi_rsdp_addr
+
+v15->v16:
+ - Splite the parsing of RSDP.
+ - Clean ACPI_* functions as local type cast
+Follow Kairui Song's suggestion:
+ - Add code to parse boot_params->acpi_rsdp_addr
+Follow Boris' suggetsion:
+ - Drop CONFIG_EARLY_SRAT_PARSE and build acpi.o
+ - Change get_acpi_srat_table() type and clean type cast.
+ - Change num_immovable_mem as static variable
+ - Change count_immovable_mem_regions() type to int.
+
+v14->v15:
+Follow Boris' suggestion:
+ - Fix the usage of kstrtoull()
+ - Add more test case
+Follow Ingo's suggestion:
+ - Clear the typecast
+ - Change some variable name
+ - If no efi systab found, use error() to halt
+Follow Baoquan's suggestion:
+ - Rebase from tip/master to tip/x86/boot
+
+v13->v14:
+Follow Baoquan's suggestion:
+ - Use simple_strtoull() for now.
+Follow Boris' suggestion:
+ - Put 'return 0' out of 'ifdef' to make sure function return.
+Follow Masa's suggestion:
+ - Change the end of string as '\0'
+
+v12->v13:
+Follow Boris' suggestion:
+ - Copy kstrtoull() to boot/string.c
+Follow Masa's suggestion:
+ - Change some code logical
+Follow Baoquan's suggestion:
+ - Add tag to disable export symbol
+
+v11->v12:
+Follow Boris' suggestion:
+ - Change patch log and code comments.
+ - Add 'CONFIG_EARLY_PARSE_RSDP' to make code easy to read
+ - Put strtoull() to misc.c
+Follow Masa's suggestion:
+ - Remove the detection for 'movable_node'
+ - Change the code logical about cmdline_find_option()
+
+v10->v11:
+Follow Boris' suggestion:
+ - Link kstrtoull() instead of copying it.
+ - Drop the useless wrapped function.
+
+v9->v10:
+Follow Baoquan's suggestion:
+ - Change some log
+ - Merge last two patch together.
+
+v8-v9:
+Follow Boris' suggestion:
+ - Change code style.
+ - Splite PATCH 1/3 to more path.
+ - Introduce some new function
+ - Use existing function to rework some code
+Follow Masayoshi's suggetion:
+ - Make code more readable
+
+v7-v8:
+Follow Kees Cook's suggestion:
+ - Use mem_overlaps() to check memory region.
+ - Use #ifdef in the definition of function.
+
+v6->v7:
+Follow Rafael's suggestion:
+ - Add more comments and patch log.
+Follow test robot's suggestion:
+ - Add "static" tag for function
+
+v5->v6:
+Follow Baoquan He's suggestion:
+ - Change some log.
+ - Add the check for acpi_rsdp
+ - Change some code logical to make code clear
+
+v4->v5:
+Follow Dou Liyang's suggestion:
+ - Add more comments about some functions based on kernel code.
+ - Change some typo in comments.
+ - Clean useless variable.
+ - Add check for the boundary of array.
+ - Add check for 'movable_node' parameter
+
+v3->v4:
+Follow Thomas Gleixner's suggestion:
+ - Put the whole efi related function into #define CONFIG_EFI and return
+   false in the other stub.
+
+v2->v3:
+ - Test in more conditions, so remove the 'RFC' tag.
+ - Change some comments.
+
+v1->v2:
+ - Simplify some code.
+Follow Baoquan He's suggestion:
+ - Reuse the head file of acpi code.
+
+Any comments will be welcome.
+
+
+Chao Fan (7):
+  x86/boot: Copy kstrtoull() to boot/string.c instead of
+    simple_strtoull()
+  x86/boot: Introduce get_acpi_rsdp() to parse RSDP in cmdline from
+    KEXEC
+  x86/boot: Introduce efi_get_rsdp_addr() to find RSDP from EFI table
+  x86/boot: Introduce bios_get_rsdp_addr() to search RSDP in memory
+  x86/boot: Early parse RSDP and fill in boot_params
+  x86/boot: Parse SRAT address from RSDP and store immovable memory
+  x86/boot/KASLR: Limit KASLR to extracting kernel in immovable memory
+
+ arch/x86/boot/compressed/Makefile |   2 +
+ arch/x86/boot/compressed/acpi.c   | 341 ++++++++++++++++++++++++++++++
+ arch/x86/boot/compressed/kaslr.c  |  76 +++++--
+ arch/x86/boot/compressed/misc.c   |   7 +
+ arch/x86/boot/compressed/misc.h   |  22 ++
+ arch/x86/boot/string.c            | 141 ++++++++++++
+ arch/x86/boot/string.h            |   1 +
+ 7 files changed, 575 insertions(+), 15 deletions(-)
+ create mode 100644 arch/x86/boot/compressed/acpi.c
 
 -- 
-Michal Hocko
-SUSE Labs
+2.20.1
+
+
+
