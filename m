@@ -2,103 +2,93 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED1C3C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:35:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A7F0C282C5
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:37:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB78421019
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:35:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4297821019
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 09:37:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="kGIVrMb1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727254AbfAWJfw (ORCPT
+        id S1727151AbfAWJhb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 04:35:52 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43722 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726207AbfAWJfw (ORCPT
+        Wed, 23 Jan 2019 04:37:31 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:52257 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726322AbfAWJha (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 04:35:52 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0N9VNHd137280
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 04:35:50 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2q6mfj32ga-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 04:35:50 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <sebott@linux.ibm.com>;
-        Wed, 23 Jan 2019 09:35:49 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 23 Jan 2019 09:35:47 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0N9Zkw76291950
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 23 Jan 2019 09:35:46 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 65F67AE051;
-        Wed, 23 Jan 2019 09:35:46 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A4CAEAE045;
-        Wed, 23 Jan 2019 09:35:45 +0000 (GMT)
-Received: from sig-9-145-48-224.uk.ibm.com (unknown [9.145.48.224])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed, 23 Jan 2019 09:35:45 +0000 (GMT)
-Date:   Wed, 23 Jan 2019 10:35:44 +0100 (CET)
-From:   Sebastian Ott <sebott@linux.ibm.com>
-X-X-Sender: sebott@schleppi
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-cc:     linux-kernel@vger.kernel.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        linux-s390@vger.kernel.org
-Subject: Re: [PATCH] s390: pci: no need to check return value of debugfs_create
- functions
-In-Reply-To: <20190122152151.16139-2-gregkh@linuxfoundation.org>
-References: <20190122152151.16139-2-gregkh@linuxfoundation.org>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
-Organization: =?ISO-8859-15?Q?=22IBM_Deutschland_Research_&_Development_GmbH?=
- =?ISO-8859-15?Q?_=2F_Vorsitzende_des_Aufsichtsrats=3A_Matthias?=
- =?ISO-8859-15?Q?_Hartmann_Gesch=E4ftsf=FChrung=3A_Dirk_Wittkopp?=
- =?ISO-8859-15?Q?_Sitz_der_Gesellschaft=3A_B=F6blingen_=2F_Reg?=
- =?ISO-8859-15?Q?istergericht=3A_Amtsgericht_Stuttgart=2C_HRB_2432?=
- =?ISO-8859-15?Q?94=22?=
+        Wed, 23 Jan 2019 04:37:30 -0500
+Received: by mail-it1-f195.google.com with SMTP id d11so959944itf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 01:37:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fJ57WwJycFJH6Ahi8elr/glYZQZNbjb1BJu+zgLwiL8=;
+        b=kGIVrMb1rjKlzXU4GEGYEjRUiOronkf8bCdgp1BidOqoNkOz6clY0AG+TT2iWUPsu8
+         oUoJ7kju0gO+qs8ZFi7ci5cRm80uHS++7swrWpU2p+2UthTf21GuVUwGLaDwhkfWOtCY
+         BKpErWfTvRCXpv2Jy/ZK5tugWdLYqt44v4qM8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fJ57WwJycFJH6Ahi8elr/glYZQZNbjb1BJu+zgLwiL8=;
+        b=HB9CJdAT1/By1YNjT3xa3ws+yyx3q4c05UqRGNb5UuXaOS5/jPWAo1eVq8rZNf1Xs6
+         dZWM/awDXUVIa8GaezqY/dQLY35Wttz7M8gA8OpxXB0VSLoB+TJ6zWI17rINa8+pyV5K
+         8a6Lp/dBrOPEH3ledzJ778zy0ufMwTv7RuEwNACLvYZvNFUjHENuKrreTba+2x+GgUSZ
+         l/GOsiz5ercBzpg9klKYRkbKJz96iY0lyrWfTRFMY+JRZLZHPKvxlkuoiHukX90kbTdh
+         emdyyw5a/RMXPqF9nZo5eiVQgx4qMSLNhE5s6gJc+Tg+AYkqacEoyzfVCopQRIsutsJt
+         0TaA==
+X-Gm-Message-State: AJcUukdWxmmVp99S2bUDW8uqgSgm6Z42/y6uWNqb3RRVqxNH0g8jgm80
+        VV7BrQhR3TIdX/4+Gt7Bj/lsXrVrzBNM+r5HvrYm+K7i
+X-Google-Smtp-Source: ALg8bN6U/pi0W9tjlH2RAXLCAHsG/+63M5On5uj33pv0ETilNul3R91XYstahk2rYmqCItVF5ZW5TtmnkecUOBL45aE=
+X-Received: by 2002:a02:8904:: with SMTP id o4mr827157jaj.35.1548236249864;
+ Wed, 23 Jan 2019 01:37:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-TM-AS-GCONF: 00
-x-cbid: 19012309-0008-0000-0000-000002B4CDD5
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012309-0009-0000-0000-00002220FD1F
-Message-Id: <alpine.LFD.2.21.1901231032510.5998@schleppi>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-23_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=832 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901230072
+References: <154151286725.17550.12307253489084032792.stgit@localhost.localdomain>
+In-Reply-To: <154151286725.17550.12307253489084032792.stgit@localhost.localdomain>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 23 Jan 2019 10:37:18 +0100
+Message-ID: <CAJfpegvaRGD3qT0qjAW76_MFNOUDTMgBJR+H+WeVWBivAppzrQ@mail.gmail.com>
+Subject: Re: [PATCH RFC] fuse: Prevent background write requests increase
+ inode size
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 22 Jan 2019, Greg Kroah-Hartman wrote:
-> When calling debugfs functions, there is no need to ever check the
-> return value.  The function can work or not, but the code logic should
-> never do something different based on this.
-> 
-> Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-> Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-> Cc: Sebastian Ott <sebott@linux.ibm.com>
-> Cc: Gerald Schaefer <gerald.schaefer@de.ibm.com>
-> Cc: linux-s390@vger.kernel.org
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+On Tue, Nov 6, 2018 at 3:03 PM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
+>
+> Hi, Miklos,
+>
+> this is not a well-tested patch, this is a concept,
+> showing the places, where it looks we have a problem.
+>
+> Commit 7879c4e58b7c made io->async careless about inode size,
+> and this is wrong. Asyncronuos background requests may be sent
+> to userspace after inode becomes unlocked, when background
+> queue is throttled. In this case we execute a write request
+> extending inode size without any protection, and this ruines
+> everything. Fix that.
+>
+> Also, some write background requests do not increment fi->writectr,
+> e.g.:
+>         fuse_direct_IO()
+>           fuse_direct_io()
+>             fuse_send_write()
+>               fuse_async_req_send()
+>                 fuse_request_send_background()
 
-Applied for inclusion via s390/linux.git
-Thanks!
+inode_lock should prevent mischief for sync DIO.  For AIO DIO the
+order of operations is not deterministic, so it's fine if truncate and
+an extending AIO write race, as far as I understand.
 
+Thanks,
+Miklos
