@@ -2,144 +2,93 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84F4CC282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 11:54:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2AB2C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 11:55:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 533BD21019
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 11:54:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="ozriKLMD"
+	by mail.kernel.org (Postfix) with ESMTP id 6E56121019
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 11:55:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548244540;
+	bh=QcJD0ly2gRkoCFnAmdg9PIx3OJLhjFd3dG+J6dN/ReY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=xxpxT/vLz2qGCXDXyufk2cduAWBw4gyPVBBPW5/lcyxqsJTyMqJY7pSSIC4A7a8bg
+	 MWIhvYqRtuzky5isZ0WNc9cRrNg0jKS29VVtyT5rc9GQ4Lri+u1t/Ufpazxvx7B9Bq
+	 hRZ3YVs/GlyUhQ8DawXLU41Fh7F/FozYucrGaTpk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726289AbfAWLyL (ORCPT
+        id S1726364AbfAWLzi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 06:54:11 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:34446 "EHLO mail.skyhub.de"
+        Wed, 23 Jan 2019 06:55:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39144 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726134AbfAWLyL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 06:54:11 -0500
-Received: from zn.tnic (p200300EC2BCA6A00E10FD21FCC1A9F7B.dip0.t-ipconnect.de [IPv6:2003:ec:2bca:6a00:e10f:d21f:cc1a:9f7b])
+        id S1726026AbfAWLzi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 06:55:38 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5CD641EC05A1;
-        Wed, 23 Jan 2019 12:54:09 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1548244449;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=Sj/DTan/IH2RaxNYamagDLmM/z5EzjVodRYC6RBzHtM=;
-        b=ozriKLMDSEjfuUTq43FHNMn1LhcoMU7bSFsyhMPoRSnVxcfbYkibJRAq/NobVyCvTzkxCU
-        evdLmhdXubifCF5zCncEo3CQRn3sjVRiWi3qquohZ+CDid26+lxSlA3pusD/Qka+NOCski
-        CMBEKF0cRX3gAFhA6FnACg/njapm2pY=
-Date:   Wed, 23 Jan 2019 12:54:02 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Ross Lagerwall <ross.lagerwall@citrix.com>
-Cc:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-efi@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, Tony Luck <tony.luck@intel.com>,
-        Huang Ying <ying.huang@intel.com>
-Subject: Re: [PATCH 2/2] efi/cper: Avoid possible OOB when checking generic
- data block
-Message-ID: <20190123115402.GB3227@zn.tnic>
-References: <20190122160912.27312-1-ross.lagerwall@citrix.com>
- <20190122160912.27312-3-ross.lagerwall@citrix.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 0590321019;
+        Wed, 23 Jan 2019 11:55:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548244537;
+        bh=QcJD0ly2gRkoCFnAmdg9PIx3OJLhjFd3dG+J6dN/ReY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ArIfGxsIZgHPRtG1HJGWyheU4q5nym/bX84vO/q6cBRx1gg+bGOgoTBN8TVOBxs5p
+         C+u8M0e+ZNX6m74fyOwe5XHss1ALMDtPDBctGlhfHnJSiuP/TDHL0C4knwMGgC7hyv
+         s5z0O+O34s/iGQQPp96HeUvQTUc8UR1I6gf0KboA=
+Date:   Wed, 23 Jan 2019 12:55:35 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Gary R Hook <ghook@amd.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: Re: [PATCH 2/2] debugfs: return error values, not NULL
+Message-ID: <20190123115535.GA31237@kroah.com>
+References: <20190123102702.GA17123@kroah.com>
+ <20190123102814.GB17123@kroah.com>
+ <20190123110628.GV4087@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190122160912.27312-3-ross.lagerwall@citrix.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190123110628.GV4087@dhcp22.suse.cz>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 04:09:12PM +0000, Ross Lagerwall wrote:
-> When checking a generic status block, we iterate over all the generic
-> data blocks. The loop condition only checks that the start of the
-> generic data block is valid (within estatus->data_length) but not the
-> whole block. Because the size of data blocks (excluding error data) may
-> vary depending on the revision and the revision is contained within the
-> data block, ensure that enough of the current data block is valid before
-> dereferencing any members otherwise an OOB access may occur if
-
-Please write out the OOB abbreviation in your commit messages.
-
-> estatus->data_length is invalid. This relies on the fact that
-> struct acpi_hest_generic_data_v300 is a superset of the earlier version.
-> Also rework the other checks to avoid potential underflow.
+On Wed, Jan 23, 2019 at 12:06:28PM +0100, Michal Hocko wrote:
+> On Wed 23-01-19 11:28:14, Greg KH wrote:
+> > When an error happens, debugfs should return an error pointer value, not
+> > NULL.  This will prevent the totally theoretical error where a debugfs
+> > call fails due to lack of memory, returning NULL, and that dentry value
+> > is then passed to another debugfs call, which would end up succeeding,
+> > creating a file at the root of the debugfs tree, but would then be
+> > impossible to remove (because you can not remove the directory NULL).
+> > 
+> > So, to make everyone happy, always return errors, this makes the users
+> > of debugfs much simpler (they do not have to ever check the return
+> > value), and everyone can rest easy.
 > 
-> Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
-> ---
->  drivers/firmware/efi/cper.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/firmware/efi/cper.c b/drivers/firmware/efi/cper.c
-> index a7902fccdcfa..7cc18874b9d0 100644
-> --- a/drivers/firmware/efi/cper.c
-> +++ b/drivers/firmware/efi/cper.c
-> @@ -546,7 +546,7 @@ EXPORT_SYMBOL_GPL(cper_estatus_check_header);
->  int cper_estatus_check(const struct acpi_hest_generic_status *estatus)
->  {
->  	struct acpi_hest_generic_data *gdata;
-> -	unsigned int data_len, gedata_len;
-> +	unsigned int data_len, record_len;
->  	int rc;
->  
->  	rc = cper_estatus_check_header(estatus);
-> @@ -555,10 +555,12 @@ int cper_estatus_check(const struct acpi_hest_generic_status *estatus)
->  	data_len = estatus->data_length;
->  
->  	apei_estatus_for_each_section(estatus, gdata) {
-> -		gedata_len = acpi_hest_get_error_length(gdata);
-> -		if (gedata_len > data_len - acpi_hest_get_size(gdata))
-> +		if (sizeof(struct acpi_hest_generic_data) > data_len)
->  			return -EINVAL;
+> How come this is safe at all? Say you are creating a directory by
+> debugfs_create_dir and then feed the return value to debugfs_create_files
+> as a parent. In case of error you are giving it an invalid pointer and
+> likely blow up unless I miss something.
 
-<---- newline here.
+debugfs_create_files checks for invalid parents and will just refuse to
+create the file.  It's always done that.
 
-Also, add a new line before the data_len assignment above, in the function.
+> I do agree that reporting errors is better than a simple catch all NULL
+> but this should have been done when introduced rather than now when most
+> callers simply check for NULL as a failure.
 
-> -		data_len -= acpi_hest_get_record_size(gdata);
-> +		record_len = acpi_hest_get_record_size(gdata);
+I'm fixing up all the "NULL is a failure" callsites in the kernel, see
+lkml for the first round of those patches.
 
-record_size so that it matches the function name it is used to compute
-this.
+thanks,
 
-Btw, trying to grok this code is making my head spin.
-
-> +		if (record_len > data_len)
-> +			return -EINVAL;
-
-<---- newline here.
-
-Btw, those checks in the loop you can abstract away into a separate
-function so that you end up with something more readable like:
-
-        apei_estatus_for_each_section(estatus, gdata) {
-                record_size = check_hest_record_size(gdata, data_len);
-                if (!record_size)
-                        return -EINVAL;
-
-                data_len -= record_size;
-        }
-
-for example.
-
-> +		data_len -= record_len;
->  	}
->  	if (data_len)
->  		return -EINVAL;
-> -- 
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+greg k-h
