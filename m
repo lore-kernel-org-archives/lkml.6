@@ -2,106 +2,283 @@ Return-Path: <SRS0=drEb=P7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DATE_IN_FUTURE_06_12,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CA03C282C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:52:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CD34C282C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:53:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41D2520870
-	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:52:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0379021726
+	for <linux-kernel@archiver.kernel.org>; Wed, 23 Jan 2019 07:53:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726926AbfAWHwa (ORCPT
+        id S1727001AbfAWHxL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 02:52:30 -0500
-Received: from gateway36.websitewelcome.com ([192.185.200.11]:11265 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726191AbfAWHwa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 02:52:30 -0500
-X-Greylist: delayed 1353 seconds by postgrey-1.27 at vger.kernel.org; Wed, 23 Jan 2019 02:52:29 EST
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway36.websitewelcome.com (Postfix) with ESMTP id 1F23C40375770
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 00:42:51 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id mCyygKkf3dnCemCyygNvjy; Wed, 23 Jan 2019 01:29:56 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=46920 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gmCyx-003ERC-LZ; Wed, 23 Jan 2019 01:29:55 -0600
-Date:   Wed, 23 Jan 2019 01:29:55 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     "David S. Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH net-next] net: 3c509: mark expected switch fall-throughs
-Message-ID: <20190123072955.GA10978@embeddedor>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1gmCyx-003ERC-LZ
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.130.205]:46920
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 34
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Wed, 23 Jan 2019 02:53:11 -0500
+Received: from out1.zte.com.cn ([202.103.147.172]:44018 "EHLO mxct.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726191AbfAWHxK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 02:53:10 -0500
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id 7D0FC6565A3FB67F4494;
+        Wed, 23 Jan 2019 15:24:33 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id x0N7OPuX027467;
+        Wed, 23 Jan 2019 15:24:25 +0800 (GMT-8)
+        (envelope-from peng.hao2@zte.com.cn)
+Received: from localhost.localdomain.localdomain ([10.74.120.59])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2019012315244671-23701697 ;
+          Wed, 23 Jan 2019 15:24:46 +0800 
+From:   Peng Hao <peng.hao2@zte.com.cn>
+To:     gregkh@linuxfoundation.org, arnd@arndb.de,
+        andy.shevchenko@gmail.com
+Cc:     linux-kernel@vger.kernel.org, Peng Hao <peng.hao2@zte.com.cn>
+Subject: [PATCH V3 2/6]  misc/pvpanic: Add pvpanic driver framework
+Date:   Wed, 23 Jan 2019 23:47:24 +0800
+Message-Id: <1548258448-62013-3-git-send-email-peng.hao2@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1548258448-62013-1-git-send-email-peng.hao2@zte.com.cn>
+References: <1548258448-62013-1-git-send-email-peng.hao2@zte.com.cn>
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2019-01-23 15:24:46,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2019-01-23 15:24:17,
+        Serialize complete at 2019-01-23 15:24:17
+X-MAIL: mse01.zte.com.cn x0N7OPuX027467
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+Add pvpanic driver framework. Follow-up patches will split the original 
+pvpanic acpi/of driver as the two seperate files and modify code to
+adapt the framework.
 
-This patch fixes the following warnings:
-
-drivers/net/ethernet/3com/3c509.c:1265:8: warning: this statement may fall through [-Wimplicit-fallthrough=]
-drivers/net/ethernet/3com/3c509.c:1271:8: warning: this statement may fall through [-Wimplicit-fallthrough=]
-
-Warning level 3 was used: -Wimplicit-fallthrough=3
-
-This patch is part of the ongoing efforts to enabling
--Wimplicit-fallthrough.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
 ---
- drivers/net/ethernet/3com/3c509.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/misc/pvpanic/pvpanic.c | 171 ++++++++++-------------------------------
+ 1 file changed, 39 insertions(+), 132 deletions(-)
 
-diff --git a/drivers/net/ethernet/3com/3c509.c b/drivers/net/ethernet/3com/3c509.c
-index b223769d6a5e..3da97996bdf3 100644
---- a/drivers/net/ethernet/3com/3c509.c
-+++ b/drivers/net/ethernet/3com/3c509.c
-@@ -1266,12 +1266,14 @@ el3_up(struct net_device *dev)
- 					pr_cont("Forcing 3c5x9b full-duplex mode");
- 					break;
- 				}
-+				/* fall through */
- 			case 8:
- 				/* set full-duplex mode based on eeprom config setting */
- 				if ((sw_info & 0x000f) && (sw_info & 0x8000)) {
- 					pr_cont("Setting 3c5x9b full-duplex mode (from EEPROM configuration bit)");
- 					break;
- 				}
-+				/* fall through */
- 			default:
- 				/* xcvr=(0 || 4) OR user has an old 3c5x9 non "B" model */
- 				pr_cont("Setting 3c5x9/3c5x9B half-duplex mode");
+diff --git a/drivers/misc/pvpanic/pvpanic.c b/drivers/misc/pvpanic/pvpanic.c
+index 595ac06..6380540 100644
+--- a/drivers/misc/pvpanic/pvpanic.c
++++ b/drivers/misc/pvpanic/pvpanic.c
+@@ -8,15 +8,20 @@
+ 
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
+-#include <linux/acpi.h>
++#include <linux/io.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+-#include <linux/of.h>
+-#include <linux/of_address.h>
+ #include <linux/platform_device.h>
+ #include <linux/types.h>
+ 
+-static void __iomem *base;
++static struct {
++	struct platform_device *pdev;
++	void __iomem *base;
++	bool is_ioport;
++} pvpanic_data = {
++	.pdev = NULL,
++	.is_ioport = false,
++};
+ 
+ #define PVPANIC_PANICKED        (1 << 0)
+ 
+@@ -27,7 +32,7 @@
+ static void
+ pvpanic_send_event(unsigned int event)
+ {
+-	iowrite8(event, base);
++	iowrite8(event, pvpanic_data.base);
+ }
+ 
+ static int
+@@ -43,150 +48,52 @@
+ 	.priority = 1, /* let this called before broken drm_fb_helper */
+ };
+ 
+-#ifdef CONFIG_ACPI
+-static int pvpanic_add(struct acpi_device *device);
+-static int pvpanic_remove(struct acpi_device *device);
+-
+-static const struct acpi_device_id pvpanic_device_ids[] = {
+-	{ "QEMU0001", 0 },
+-	{ "", 0 }
+-};
+-MODULE_DEVICE_TABLE(acpi, pvpanic_device_ids);
+-
+-static struct acpi_driver pvpanic_driver = {
+-	.name =		"pvpanic",
+-	.class =	"QEMU",
+-	.ids =		pvpanic_device_ids,
+-	.ops =		{
+-				.add =		pvpanic_add,
+-				.remove =	pvpanic_remove,
+-			},
+-	.owner =	THIS_MODULE,
+-};
+-
+-static acpi_status
+-pvpanic_walk_resources(struct acpi_resource *res, void *context)
++static int pvpanic_platform_probe(struct platform_device *pdev)
+ {
+-	struct resource r;
+-
+-	if (acpi_dev_resource_io(res, &r)) {
+-		base = ioport_map(r.start, resource_size(&r));
+-		return AE_OK;
+-	} else if (acpi_dev_resource_memory(res, &r)) {
+-		base = ioremap(r.start, resource_size(&r));
+-		return AE_OK;
++	struct device *dev = &pdev->dev;
++	struct resource *res;
++	void __iomem *base;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (res) {
++		base = devm_ioremap_resource(dev, res);
++		if (IS_ERR(base))
++			return -ENODEV;
++	} else {
++		res = platform_get_resource(pdev, IORESOURCE_IO, 0);
++		if (!res)
++			return -ENODEV;
++
++		base = ioport_map(res->start, resource_size(res));
++		if (!base)
++			return -ENODEV;
++		pvpanic_data.is_ioport = true;
+ 	}
+ 
+-	return AE_ERROR;
+-}
+-
+-static int pvpanic_add(struct acpi_device *device)
+-{
+-	int ret;
+-
+-	ret = acpi_bus_get_status(device);
+-	if (ret < 0)
+-		return ret;
+-
+-	if (!device->status.enabled || !device->status.functional)
+-		return -ENODEV;
+-
+-	acpi_walk_resources(device->handle, METHOD_NAME__CRS,
+-			    pvpanic_walk_resources, NULL);
+-
+-	if (!base)
+-		return -ENODEV;
+-
++	pvpanic_data.base = base;
+ 	atomic_notifier_chain_register(&panic_notifier_list,
+ 				       &pvpanic_panic_nb);
+ 
+ 	return 0;
+ }
+ 
+-static int pvpanic_remove(struct acpi_device *device)
++static int pvpanic_platform_remove(struct platform_device *pdev)
+ {
+-
+ 	atomic_notifier_chain_unregister(&panic_notifier_list,
+ 					 &pvpanic_panic_nb);
+-	iounmap(base);
+-
+-	return 0;
+-}
+-
+-static int pvpanic_register_acpi_driver(void)
+-{
+-	return acpi_bus_register_driver(&pvpanic_driver);
+-}
+-
+-static void pvpanic_unregister_acpi_driver(void)
+-{
+-	acpi_bus_unregister_driver(&pvpanic_driver);
+-}
+-#else
+-static int pvpanic_register_acpi_driver(void)
+-{
+-	return -ENODEV;
+-}
+ 
+-static void pvpanic_unregister_acpi_driver(void) {}
+-#endif
+-
+-static int pvpanic_mmio_probe(struct platform_device *pdev)
+-{
+-	struct resource *mem;
+-
+-	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!mem)
+-		return -EINVAL;
+-
+-	base = devm_ioremap_resource(&pdev->dev, mem);
+-	if (IS_ERR(base))
+-		return PTR_ERR(base);
+-
+-	atomic_notifier_chain_register(&panic_notifier_list,
+-				       &pvpanic_panic_nb);
+-
+-	return 0;
+-}
+-
+-static int pvpanic_mmio_remove(struct platform_device *pdev)
+-{
+-
+-	atomic_notifier_chain_unregister(&panic_notifier_list,
+-					 &pvpanic_panic_nb);
++	if (pvpanic_data.is_ioport)
++		iounmap(pvpanic_data.base);
+ 
+ 	return 0;
+ }
+ 
+-static const struct of_device_id pvpanic_mmio_match[] = {
+-	{ .compatible = "qemu,pvpanic-mmio", },
+-	{}
+-};
+-
+-static struct platform_driver pvpanic_mmio_driver = {
++static struct platform_driver pvpanic_driver = {
++	.probe = pvpanic_platform_probe,
++	.remove = pvpanic_platform_remove,
+ 	.driver = {
+-		.name = "pvpanic-mmio",
+-		.of_match_table = pvpanic_mmio_match,
+-	},
+-	.probe = pvpanic_mmio_probe,
+-	.remove = pvpanic_mmio_remove,
++		.name = "pvpanic",
++	}
+ };
+ 
+-static int __init pvpanic_mmio_init(void)
+-{
+-	if (acpi_disabled)
+-		return platform_driver_register(&pvpanic_mmio_driver);
+-	else
+-		return pvpanic_register_acpi_driver();
+-}
+-
+-static void __exit pvpanic_mmio_exit(void)
+-{
+-	if (acpi_disabled)
+-		platform_driver_unregister(&pvpanic_mmio_driver);
+-	else
+-		pvpanic_unregister_acpi_driver();
+-}
+-
+-module_init(pvpanic_mmio_init);
+-module_exit(pvpanic_mmio_exit);
++module_platform_driver(pvpanic_driver);
 -- 
-2.20.1
+1.8.3.1
 
