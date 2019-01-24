@@ -3,106 +3,150 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 864ECC282C0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 01:08:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AED3C282C0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 01:17:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E3D021872
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 01:08:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A377217D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 01:17:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727113AbfAXBIZ convert rfc822-to-8bit (ORCPT
+        id S1727072AbfAXBRg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 20:08:25 -0500
-Received: from ozlabs.org ([203.11.71.1]:36475 "EHLO ozlabs.org"
+        Wed, 23 Jan 2019 20:17:36 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:54042 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726313AbfAXBIZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 20:08:25 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        id S1726309AbfAXBRf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 20:17:35 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43lP2L2dh3z9s3l;
-        Thu, 24 Jan 2019 11:59:54 +1100 (AEDT)
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Mike Rapoport <rppt@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v13 00/10] powerpc: Switch to CONFIG_THREAD_INFO_IN_TASK
-In-Reply-To: <07e60b5a-611c-9863-f300-68a4f9ad2efd@c-s.fr>
-References: <cover.1547195976.git.christophe.leroy@c-s.fr> <87zhrx2bf1.fsf@concordia.ellerman.id.au> <07e60b5a-611c-9863-f300-68a4f9ad2efd@c-s.fr>
-Date:   Thu, 24 Jan 2019 11:59:51 +1100
-Message-ID: <871s52yins.fsf@concordia.ellerman.id.au>
+        by mx1.redhat.com (Postfix) with ESMTPS id B0DADC05D3E7;
+        Thu, 24 Jan 2019 01:17:34 +0000 (UTC)
+Received: from [10.36.112.12] (unknown [10.36.112.12])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5A9A167E71;
+        Thu, 24 Jan 2019 01:17:30 +0000 (UTC)
+Subject: Re: [RFC PATCH] kvm: x86/vmx: Use kzalloc for cached_vmcs12
+To:     Tom Roeder <tmroeder@google.com>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzbot+ded1696f6b50b615b630@syzkaller.appspotmail.com
+References: <6f79d9be-fa76-3a06-2612-f44f3a18ece7@redhat.com>
+ <20190114234728.49239-1-tmroeder@google.com>
+ <20190115024304.GD5141@linux.intel.com>
+ <2177074d-f610-0d86-7399-e63ba851346c@redhat.com>
+ <20190123182540.GA160275@google.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
+Message-ID: <f71e9472-0670-fb25-ab9d-3725ce9cde10@redhat.com>
+Date:   Thu, 24 Jan 2019 02:17:27 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
+In-Reply-To: <20190123182540.GA160275@google.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Thu, 24 Jan 2019 01:17:34 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christophe Leroy <christophe.leroy@c-s.fr> writes:
-> Le 19/01/2019 à 11:23, Michael Ellerman a écrit :
->> Christophe Leroy <christophe.leroy@c-s.fr> writes:
->> 
->>> The purpose of this serie is to activate CONFIG_THREAD_INFO_IN_TASK which
->>> moves the thread_info into task_struct.
->>>
->>> Moving thread_info into task_struct has the following advantages:
->>> - It protects thread_info from corruption in the case of stack
->>> overflows.
->>> - Its address is harder to determine if stack addresses are
->>> leaked, making a number of attacks more difficult.
->>>
->>> Changes since v12:
->>>   - Patch 1: Taken comment from Mike (re-introduced the 'panic' in case memblock allocation fails in setup_64.c
->>>   - Patch 1: Added alloc_stack() function in setup_32.c to also panic in case of allocation failure.
->> 
->> Hi Christophe,
->> 
->> I can't get this series to boot on qemu mac99. I'm getting eg:
->> 
->> [    0.981514] NFS: Registering the id_resolver key type
->> [    0.981752] Key type id_resolver registered
->> [    0.981868] Key type id_legacy registered
->> [    0.995711] Unrecoverable exception 0 at 0 (msr=0)
->> [    0.996091] Oops: Unrecoverable exception, sig: 6 [#1]
->> [    0.996314] BE PAGE_SIZE=4K MMU=Hash PowerMac
->> [    0.996617] Modules linked in:
->> [    0.996869] CPU: 0 PID: 416 Comm: modprobe Not tainted 5.0.0-rc2-gcc-7.3.0-00043-g53f2de798792 #342
->> [    0.997138] NIP:  00000000 LR: 00000000 CTR: 00000000
->> [    0.997309] REGS: ef237f50 TRAP: 0000   Not tainted  (5.0.0-rc2-gcc-7.3.0-00043-g53f2de798792)
->> [    0.997508] MSR:  00000000 <>  CR: 00000000  XER: 00000000
->> [    0.997712]
->> [    0.997712] GPR00: 00000000 ef238000 00000000 00000000 00000000 00000000 00000000 00000000
->> [    0.997712] GPR08: 00000000 00000000 00000000 00000000 00000000 00000000 c006477c ef13d8c0
->> [    0.997712] GPR16: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
->> [    0.997712] GPR24: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
->> [    0.998671] NIP [00000000]   (null)
->> [    0.998774] LR [00000000]   (null)
->> [    0.998895] Call Trace:
->> [    0.999030] Instruction dump:
->> [    0.999320] XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX
->> [    0.999546] XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX 60000000 XXXXXXXX XXXXXXXX XXXXXXXX
->> [    1.000023] ---[ end trace 925ea3419844fe68 ]---
->
-> No such issue on my side. Do you have a ramdisk with anythink special or 
-> a special config ? I see your kernel is modprobing something, know what 
-> it is ?
+On 23/01/19 19:25, Tom Roeder wrote:
+> On Tue, Jan 15, 2019 at 11:15:51AM +0100, Paolo Bonzini wrote:
+>> On 15/01/19 03:43, Sean Christopherson wrote:
+>>>> -	vmx->nested.cached_vmcs12 = kmalloc(VMCS12_SIZE, GFP_KERNEL);
+>>>> +	vmx->nested.cached_vmcs12 = kzalloc(VMCS12_SIZE, GFP_KERNEL);
+>>>>  	if (!vmx->nested.cached_vmcs12)
+>>>>  		goto out_cached_vmcs12;
+>>> Obviously not your code, but why do we allocate VMCS12_SIZE instead of
+>>> sizeof(struct vmcs12)?  I get why we require userspace to reserve the
+>>> full 4k, but I don't understand why KVM needs to allocate the reserved
+>>> bytes internally.
+>>
+>> It's just cleaner and shorter code to copy everything in and out,
+>> instead of having to explicitly zero the slack.
+> 
+> Could you please clarify? I don't see code that copies everything in and
+> out, but it depends on what you mean by "everything". In the context of
+> this email exchange, I assumed that "everything" was "all 4k
+> (VMCS12_SIZE)".
 
-It's just a debian installer image, nothing special AFAIK.
+I was thinking of vmx_get_nested_state, but actually it only copies
+sizeof(*vmcs12).  However, that is the place where we should copy 4k out
+of it, including the zeroes.  Otherwise, our userspace clients (which
+doesn't know sizeof(*vmcs12) could leak uninitialized data of their own.
 
-> Especially, what is the amount of memory in your config ? On my side 
-> there is 128M:
+Paolo
 
-I have 1G.
+> But it looks to me like the code doesn't copy 4k in and out, but rather
+> only ever copies sizeof(struct vmcs12) in and out. The copy_from_user
+> and copy_to_user cases in nested.c use sizeof(*vmcs12), which is
+> sizeof(struct vmcs12).
+> 
+> So maybe can switch to allocating sizeof(struct vmcs12). Is this
+> correct, or is there some other reason to allocate the larger size?
+> 
 
-But today I can't reproduce the crash :/
-
-So I guess it must have been something else in my config.
-
-cheers
