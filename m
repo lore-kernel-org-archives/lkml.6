@@ -7,49 +7,55 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E002BC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:30:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72AF7C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:30:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC6A221902
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:30:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4042721902
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:30:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358227;
-	bh=WNsXXopDXfMqKRGsGv7dTct0okCyg9NubWjQ0TacW5g=;
+	s=default; t=1548358232;
+	bh=qg3Vt9zUjTD4OPUHAIwIc/9su3/FeYJ23EnuluyE9tA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ekhkyrtuEOnPH+Da/5V3b9lzKpQsL0YfyLyyYo6NWuv1F4Zdox9wJMC86xgGc8Lgq
-	 LcdAnejIvzmu22ylkdMvsiDCiTEJZ6tZpzBco6KrvcINlhtmBQaKc0vglcwneq8wTx
-	 SdMRRkKVNXQiCB0cUdAWMWfswy+Mk7WQPPoZSAaY=
+	b=g6ZT2pyZrGU6uBTPj+nLLqVz+g2hJTBqCclaeZXQnDxzx6EbQBB9aI3Kd+0WbrhB9
+	 3VRKB/LjC7zhTJQfqLcpeWucQApvsNMJE/iW4Q276Zj1pfBgfog2E76jDabDdla9UK
+	 QS8K2uz/2CtYSEKxMh4scf1FoP8NWcW8xiKDlmXE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731408AbfAXTaZ (ORCPT
+        id S1730256AbfAXTa3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:30:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57830 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:30:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57894 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731395AbfAXTaW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:30:22 -0500
+        id S1731404AbfAXTaZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:30:25 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4214D218D4;
-        Thu, 24 Jan 2019 19:30:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BEFC621902;
+        Thu, 24 Jan 2019 19:30:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358221;
-        bh=WNsXXopDXfMqKRGsGv7dTct0okCyg9NubWjQ0TacW5g=;
+        s=default; t=1548358224;
+        bh=qg3Vt9zUjTD4OPUHAIwIc/9su3/FeYJ23EnuluyE9tA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l3Kg4H20LeLQTidFRx5BnsZB2OWooULMo0cA5G16hqwiCVi0GV9/R6WztUnojpqQ1
-         ZDW8XUri/EX+LiBYIkB+UcsSKz4FUjrDWLRMJg2fmfg247jAKnrTxC25XLtA0dvUhv
-         eeX3naGMv0mvsSwFtuxRbqr5swRa2ymfvfOj84bI=
+        b=RN25osfSZ7XeobC0ndtqgAKJ8l3m8B/RFlBkTynOtmZ82AiBuIcnZWUGqsY5+7mvx
+         42WlVhwcMYzU8vJGRtjhgq8HQEwDrVZ5i/NndtsM/1AVRTs9NjgUXGM7cypKqswp7N
+         zWEk4Gh2dFQyX+TGZmD//c3F3I6kG6ihPEyWpVVU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brian Foster <bfoster@redhat.com>,
+        stable@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
         Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Paul Oppenheimer <bepvte@gmail.com>,
+        William Kucharski <william.kucharski@oracle.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 36/39] mm/page-writeback.c: dont break integrity writeback on ->writepage() error
-Date:   Thu, 24 Jan 2019 20:20:39 +0100
-Message-Id: <20190124190449.613526935@linuxfoundation.org>
+Subject: [PATCH 4.9 37/39] mm, proc: be more verbose about unstable VMA flags in /proc/<pid>/smaps
+Date:   Thu, 24 Jan 2019 20:20:40 +0100
+Message-Id: <20190124190449.667104133@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190448.232316246@linuxfoundation.org>
 References: <20190124190448.232316246@linuxfoundation.org>
@@ -68,106 +74,104 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 3fa750dcf29e8606e3969d13d8e188cc1c0f511d ]
+[ Upstream commit 7550c6079846a24f30d15ac75a941c8515dbedfb ]
 
-write_cache_pages() is used in both background and integrity writeback
-scenarios by various filesystems.  Background writeback is mostly
-concerned with cleaning a certain number of dirty pages based on various
-mm heuristics.  It may not write the full set of dirty pages or wait for
-I/O to complete.  Integrity writeback is responsible for persisting a set
-of dirty pages before the writeback job completes.  For example, an
-fsync() call must perform integrity writeback to ensure data is on disk
-before the call returns.
+Patch series "THP eligibility reporting via proc".
 
-write_cache_pages() unconditionally breaks out of its processing loop in
-the event of a ->writepage() error.  This is fine for background
-writeback, which had no strict requirements and will eventually come
-around again.  This can cause problems for integrity writeback on
-filesystems that might need to clean up state associated with failed page
-writeouts.  For example, XFS performs internal delayed allocation
-accounting before returning a ->writepage() error, where applicable.  If
-the current writeback happens to be associated with an unmount and
-write_cache_pages() completes the writeback prematurely due to error, the
-filesystem is unmounted in an inconsistent state if dirty+delalloc pages
-still exist.
+This series of three patches aims at making THP eligibility reporting much
+more robust and long term sustainable.  The trigger for the change is a
+regression report [2] and the long follow up discussion.  In short the
+specific application didn't have good API to query whether a particular
+mapping can be backed by THP so it has used VMA flags to workaround that.
+These flags represent a deep internal state of VMAs and as such they
+should be used by userspace with a great deal of caution.
 
-To handle this problem, update write_cache_pages() to always process the
-full set of pages for integrity writeback regardless of ->writepage()
-errors.  Save the first encountered error and return it to the caller once
-complete.  This facilitates XFS (or any other fs that expects integrity
-writeback to process the entire set of dirty pages) to clean up its
-internal state completely in the event of persistent mapping errors.
-Background writeback continues to exit on the first error encountered.
+A similar has happened for [3] when users complained that VM_MIXEDMAP is
+no longer set on DAX mappings.  Again a lack of a proper API led to an
+abuse.
 
-[akpm@linux-foundation.org: fix typo in comment]
-Link: http://lkml.kernel.org/r/20181116134304.32440-1-bfoster@redhat.com
-Signed-off-by: Brian Foster <bfoster@redhat.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
+The first patch in the series tries to emphasise that that the semantic of
+flags might change and any application consuming those should be really
+careful.
+
+The remaining two patches provide a more suitable interface to address [2]
+and provide a consistent API to query the THP status both for each VMA and
+process wide as well.  [1]
+
+http://lkml.kernel.org/r/20181120103515.25280-1-mhocko@kernel.org [2]
+http://lkml.kernel.org/r/http://lkml.kernel.org/r/alpine.DEB.2.21.1809241054050.224429@chino.kir.corp.google.com
+[3] http://lkml.kernel.org/r/20181002100531.GC4135@quack2.suse.cz
+
+This patch (of 3):
+
+Even though vma flags exported via /proc/<pid>/smaps are explicitly
+documented to be not guaranteed for future compatibility the warning
+doesn't go far enough because it doesn't mention semantic changes to those
+flags.  And they are important as well because these flags are a deep
+implementation internal to the MM code and the semantic might change at
+any time.
+
+Let's consider two recent examples:
+http://lkml.kernel.org/r/20181002100531.GC4135@quack2.suse.cz
+: commit e1fb4a086495 "dax: remove VM_MIXEDMAP for fsdax and device dax" has
+: removed VM_MIXEDMAP flag from DAX VMAs. Now our testing shows that in the
+: mean time certain customer of ours started poking into /proc/<pid>/smaps
+: and looks at VMA flags there and if VM_MIXEDMAP is missing among the VMA
+: flags, the application just fails to start complaining that DAX support is
+: missing in the kernel.
+
+http://lkml.kernel.org/r/alpine.DEB.2.21.1809241054050.224429@chino.kir.corp.google.com
+: Commit 1860033237d4 ("mm: make PR_SET_THP_DISABLE immediately active")
+: introduced a regression in that userspace cannot always determine the set
+: of vmas where thp is ineligible.
+: Userspace relies on the "nh" flag being emitted as part of /proc/pid/smaps
+: to determine if a vma is eligible to be backed by hugepages.
+: Previous to this commit, prctl(PR_SET_THP_DISABLE, 1) would cause thp to
+: be disabled and emit "nh" as a flag for the corresponding vmas as part of
+: /proc/pid/smaps.  After the commit, thp is disabled by means of an mm
+: flag and "nh" is not emitted.
+: This causes smaps parsing libraries to assume a vma is eligible for thp
+: and ends up puzzling the user on why its memory is not backed by thp.
+
+In both cases userspace was relying on a semantic of a specific VMA flag.
+The primary reason why that happened is a lack of a proper interface.
+While this has been worked on and it will be fixed properly, it seems that
+our wording could see some refinement and be more vocal about semantic
+aspect of these flags as well.
+
+Link: http://lkml.kernel.org/r/20181211143641.3503-2-mhocko@kernel.org
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+Acked-by: Jan Kara <jack@suse.cz>
+Acked-by: Dan Williams <dan.j.williams@intel.com>
+Acked-by: David Rientjes <rientjes@google.com>
+Acked-by: Mike Rapoport <rppt@linux.ibm.com>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Paul Oppenheimer <bepvte@gmail.com>
+Cc: William Kucharski <william.kucharski@oracle.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/page-writeback.c | 35 +++++++++++++++++++++--------------
- 1 file changed, 21 insertions(+), 14 deletions(-)
+ Documentation/filesystems/proc.txt | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index 807236aed275..281a46aeae61 100644
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@ -2148,6 +2148,7 @@ int write_cache_pages(struct address_space *mapping,
- {
- 	int ret = 0;
- 	int done = 0;
-+	int error;
- 	struct pagevec pvec;
- 	int nr_pages;
- 	pgoff_t uninitialized_var(writeback_index);
-@@ -2244,25 +2245,31 @@ continue_unlock:
- 				goto continue_unlock;
+diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
+index 74329fd0add2..077c37ed976f 100644
+--- a/Documentation/filesystems/proc.txt
++++ b/Documentation/filesystems/proc.txt
+@@ -484,7 +484,9 @@ manner. The codes are the following:
  
- 			trace_wbc_writepage(wbc, inode_to_bdi(mapping->host));
--			ret = (*writepage)(page, wbc, data);
--			if (unlikely(ret)) {
--				if (ret == AOP_WRITEPAGE_ACTIVATE) {
-+			error = (*writepage)(page, wbc, data);
-+			if (unlikely(error)) {
-+				/*
-+				 * Handle errors according to the type of
-+				 * writeback. There's no need to continue for
-+				 * background writeback. Just push done_index
-+				 * past this page so media errors won't choke
-+				 * writeout for the entire file. For integrity
-+				 * writeback, we must process the entire dirty
-+				 * set regardless of errors because the fs may
-+				 * still have state to clear for each page. In
-+				 * that case we continue processing and return
-+				 * the first error.
-+				 */
-+				if (error == AOP_WRITEPAGE_ACTIVATE) {
- 					unlock_page(page);
--					ret = 0;
--				} else {
--					/*
--					 * done_index is set past this page,
--					 * so media errors will not choke
--					 * background writeout for the entire
--					 * file. This has consequences for
--					 * range_cyclic semantics (ie. it may
--					 * not be suitable for data integrity
--					 * writeout).
--					 */
-+					error = 0;
-+				} else if (wbc->sync_mode != WB_SYNC_ALL) {
-+					ret = error;
- 					done_index = page->index + 1;
- 					done = 1;
- 					break;
- 				}
-+				if (!ret)
-+					ret = error;
- 			}
+ Note that there is no guarantee that every flag and associated mnemonic will
+ be present in all further kernel releases. Things get changed, the flags may
+-be vanished or the reverse -- new added.
++be vanished or the reverse -- new added. Interpretation of their meaning
++might change in future as well. So each consumer of these flags has to
++follow each specific kernel version for the exact semantic.
  
- 			/*
+ This file is only present if the CONFIG_MMU kernel configuration option is
+ enabled.
 -- 
 2.19.1
 
