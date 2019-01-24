@@ -7,64 +7,66 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6858EC282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:24:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75729C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:24:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 360CA218B0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:24:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4440A218B0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:24:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GxEUF/mC"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GBVgzAGe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728674AbfAXUYf (ORCPT
+        id S1729255AbfAXUYm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 15:24:35 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:32782 "EHLO
+        Thu, 24 Jan 2019 15:24:42 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:41018 "EHLO
         mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728220AbfAXUYe (ORCPT
+        with ESMTP id S1728678AbfAXUYk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 15:24:34 -0500
-Received: by mail-pf1-f196.google.com with SMTP id c123so3582352pfb.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 12:24:33 -0800 (PST)
+        Thu, 24 Jan 2019 15:24:40 -0500
+Received: by mail-pf1-f196.google.com with SMTP id b7so3555015pfi.8
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 12:24:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=o7egLywBx6XayJjOoobZHgYLmJpcGqlES3T4nO9IJnw=;
-        b=GxEUF/mCUMVCKT5nzmeUCxVm0VYUy9eNpqskIkS+Ymqzu6rlYMnNnx6ysfuz8yhG6g
-         /qTNwLKnIGjTKKckr3GAHNMQmOPuWddFvEB6uNTbUKkckKoVDl97luVlxizEpcBc+VNK
-         uvQP8h7F+J13oqa9Hn0FWHDLmqf06SIcl1ujo=
+        bh=BJPwKdPemEfYMv75wEmswxneBbTlFKZrByoYlXp3bSs=;
+        b=GBVgzAGeXK+Rhr1uP35wQOeRalFHWCi6YOovZ9EHhbjKLg4yxkKXqnqtApf0Y5S3H9
+         b4H4CAPIayf6QvJmzrs55RsV5o8EGOhnulQipxJQbllKeAijXxj1I8a68SNWkSFK/gRT
+         R8QtLPrvRqGYp6FmqxxigMenl9z2kGBksziag=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=o7egLywBx6XayJjOoobZHgYLmJpcGqlES3T4nO9IJnw=;
-        b=kbwuq593eLWMaySJyOYKv5pBGEnXlteFB7MrjVDf1j8/THS2dt1aqszvz6MEsErN7K
-         rrxhAbtbCLLckY8+R7wvcQ6wihyG5xcHKDOabNtsFt39DZWVo+DhXY5Gi4oRZmCZeFJx
-         lvm9WMJCsL7iHEW4076i1fTFljBlHeqp+Qt4iDvOIRiMyKCuZ/dcPHYPaP0aF0oRDXM9
-         dXMLhDw/mmyaqBm/Q/jIX4QZHzt/kZYyT7OGqgx09wq6llGwVFDDywFJEZWFUxODP8Uw
-         7kHH45/HoFlL8o3RzmeQiO6cO6QPhl/q+wx1a7yHXMQLTENlNoKJZ3n5bQcjoV8kYTtK
-         0bmQ==
-X-Gm-Message-State: AJcUukcWQ58UOgTjGJEzDTeDqXd+scQo+oe2ugpSYqNkCgfBSskMPANM
-        XHNyarA/n8oFiny0BX8769mcnkvWkrLycQ==
-X-Google-Smtp-Source: ALg8bN7PsIT7vScnvB02yRzQ1C4AY/iarOWVLV7Hm8+12JLqAvfUTagRnFwiEFOt0Qn7FXOgI+Odkg==
-X-Received: by 2002:a62:2f06:: with SMTP id v6mr8067333pfv.216.1548361472700;
-        Thu, 24 Jan 2019 12:24:32 -0800 (PST)
+        bh=BJPwKdPemEfYMv75wEmswxneBbTlFKZrByoYlXp3bSs=;
+        b=mlwKZFa/bZ07mOEl2MCTv9DnqOH5BDE848XsPk6oUG4GNqdtQ8r5AVPEIxjdSyzzYW
+         sgeoJo6xBSIc70tWfLh9K3K5ap8YVpheO2h61Wst3g73ml9g/evqCdol1A1OOFVzg2/d
+         d+KGqR10OXCp67YuCjUC8j/l7SspmcIxsGxPqJLS35lQGIObKR+z+a3tifNfuy4o/rOL
+         daEwxCcZVjo0heKiu4nh/KX622OSbvSwdGYSAta/1p0XyISsUKtMgYT+eCl2ZCtQKwSl
+         LaqrltM5zglXWTskR1GCI6GMlhkzR3rM4fevH6/ls65iUpb72g4yaPeVoahXC0ja957t
+         a1cg==
+X-Gm-Message-State: AJcUukf7TxHtBmCaq/U8j2zC25db3xqEajt6QiaD/ZNqFUMtLMSUP7uJ
+        h/YI2Z+vosnuwZFyCEGm+8wpbtPc6sjcpg==
+X-Google-Smtp-Source: ALg8bN6A6yCdAMBKYtld1GZx43O5sg0gUviTrnslHfiYH9eOjxyBo3E/puHb2tby2efvI4cQdIGP+w==
+X-Received: by 2002:a63:6ac5:: with SMTP id f188mr7369721pgc.165.1548361478990;
+        Thu, 24 Jan 2019 12:24:38 -0800 (PST)
 Received: from localhost.localdomain ([2601:1c2:680:1319:4e72:b9ff:fe99:466a])
-        by smtp.gmail.com with ESMTPSA id c72sm45263309pfb.107.2019.01.24.12.24.31
+        by smtp.gmail.com with ESMTPSA id c72sm45263309pfb.107.2019.01.24.12.24.37
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 24 Jan 2019 12:24:31 -0800 (PST)
+        Thu, 24 Jan 2019 12:24:38 -0800 (PST)
 From:   John Stultz <john.stultz@linaro.org>
 To:     lkml <linux-kernel@vger.kernel.org>
 Cc:     Youlin Wang <wwx575822@notesmail.huawei.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vinod Koul <vkoul@kernel.org>,
+        Tanglei Han <hantanglei@huawei.com>,
         Zhuangluan Su <suzhuangluan@hisilicon.com>,
         Ryan Grachek <ryan@edited.us>,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        dmaengine@vger.kernel.org, Tanglei Han <hantanglei@huawei.com>,
+        Wei Xu <xuwei5@hisilicon.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         John Stultz <john.stultz@linaro.org>
-Subject: [PATCH 3/8 v5] dma: k3dma: Upgrade k3dma driver to support hisi_asp_dma hardware
-Date:   Thu, 24 Jan 2019 12:24:18 -0800
-Message-Id: <1548361463-28372-4-git-send-email-john.stultz@linaro.org>
+Subject: [PATCH 7/8 v5] arm64: dts: hi3660: Add hisi asp dma device
+Date:   Thu, 24 Jan 2019 12:24:22 -0800
+Message-Id: <1548361463-28372-8-git-send-email-john.stultz@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1548361463-28372-1-git-send-email-john.stultz@linaro.org>
 References: <1548361463-28372-1-git-send-email-john.stultz@linaro.org>
@@ -75,123 +77,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Youlin Wang <wwx575822@notesmail.huawei.com>
 
-On the hi3660 hardware there are two (at least) DMA controllers,
-the DMA-P (Peripheral DMA) and the DMA-A (Audio DMA). The
-two blocks are similar, but have some slight differences. This
-resulted in the vendor implementing two separate drivers, which
-after review, they have been able to condense and re-use the
-existing k3dma driver.
+Add asp-dma device to hi3660 dts
 
-Thus, this patch adds support for the new "hisi-pcm-asp-dma-1.0"
-compatible string in the binding.
-
-One difference with the DMA-A controller, is that it does not
-need to initialize a clock. So we skip this by adding and using
-soc data flags.
-
-After above this driver will support both k3 and hisi_asp dma
-hardware.
-
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Vinod Koul <vkoul@kernel.org>
+Cc: Tanglei Han <hantanglei@huawei.com>
 Cc: Zhuangluan Su <suzhuangluan@hisilicon.com>
 Cc: Ryan Grachek <ryan@edited.us>
 Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: dmaengine@vger.kernel.org
+Cc: Wei Xu <xuwei5@hisilicon.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: devicetree@vger.kernel.org
 Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 Signed-off-by: Youlin Wang <wwx575822@notesmail.huawei.com>
 Signed-off-by: Tanglei Han <hantanglei@huawei.com>
-[jstultz: Reworked to use of_match_data, commit msg improvements]
 Signed-off-by: John Stultz <john.stultz@linaro.org>
 ---
-v2:
-* Reworked to use of_match_data
-v3:
-* Further rework of the commit message
-v5:
-* Typo, whitespace fixes. Use BIT() macro.
+v2: Removed undocumented bindings
 ---
- drivers/dma/k3dma.c | 38 +++++++++++++++++++++++++++++++++-----
- 1 file changed, 33 insertions(+), 5 deletions(-)
+ arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/dma/k3dma.c b/drivers/dma/k3dma.c
-index fdec2b6..4dce532 100644
---- a/drivers/dma/k3dma.c
-+++ b/drivers/dma/k3dma.c
-@@ -116,6 +116,14 @@ struct k3_dma_dev {
- 	unsigned int		irq;
- };
+diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+index 4c8d682..77a7135 100644
+--- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
++++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+@@ -567,6 +567,16 @@
+ 			dma-type = "hi3660_dma";
+ 		};
  
++		asp_dmac: dma-controller@e804b000 {
++			compatible = "hisilicon,hisi-pcm-asp-dma-1.0";
++			reg = <0x0 0xe804b000 0x0 0x1000>;
++			#dma-cells = <1>;
++			dma-channels = <16>;
++			dma-requests = <32>;
++			interrupts = <GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "asp_dma_irq";
++		};
 +
-+#define K3_FLAG_NOCLK	BIT(1)
-+
-+struct k3dma_soc_data {
-+	unsigned long flags;
-+};
-+
-+
- #define to_k3_dma(dmadev) container_of(dmadev, struct k3_dma_dev, slave)
- 
- static int k3_dma_config_write(struct dma_chan *chan,
-@@ -790,8 +798,21 @@ static int k3_dma_transfer_resume(struct dma_chan *chan)
- 	return 0;
- }
- 
-+static const struct k3dma_soc_data k3_v1_dma_data = {
-+	.flags = 0,
-+};
-+
-+static const struct k3dma_soc_data asp_v1_dma_data = {
-+	.flags = K3_FLAG_NOCLK,
-+};
-+
- static const struct of_device_id k3_pdma_dt_ids[] = {
--	{ .compatible = "hisilicon,k3-dma-1.0", },
-+	{ .compatible = "hisilicon,k3-dma-1.0",
-+	  .data = &k3_v1_dma_data
-+	},
-+	{ .compatible = "hisilicon,hisi-pcm-asp-dma-1.0",
-+	  .data = &asp_v1_dma_data
-+	},
- 	{}
- };
- MODULE_DEVICE_TABLE(of, k3_pdma_dt_ids);
-@@ -810,6 +831,7 @@ static struct dma_chan *k3_of_dma_simple_xlate(struct of_phandle_args *dma_spec,
- 
- static int k3_dma_probe(struct platform_device *op)
- {
-+	const struct k3dma_soc_data *soc_data;
- 	struct k3_dma_dev *d;
- 	const struct of_device_id *of_id;
- 	struct resource *iores;
-@@ -823,6 +845,10 @@ static int k3_dma_probe(struct platform_device *op)
- 	if (!d)
- 		return -ENOMEM;
- 
-+	soc_data = device_get_match_data(&op->dev);
-+	if (!soc_data)
-+		return -EINVAL;
-+
- 	d->base = devm_ioremap_resource(&op->dev, iores);
- 	if (IS_ERR(d->base))
- 		return PTR_ERR(d->base);
-@@ -835,10 +861,12 @@ static int k3_dma_probe(struct platform_device *op)
- 				"dma-requests", &d->dma_requests);
- 	}
- 
--	d->clk = devm_clk_get(&op->dev, NULL);
--	if (IS_ERR(d->clk)) {
--		dev_err(&op->dev, "no dma clk\n");
--		return PTR_ERR(d->clk);
-+	if (!(soc_data->flags & K3_FLAG_NOCLK)) {
-+		d->clk = devm_clk_get(&op->dev, NULL);
-+		if (IS_ERR(d->clk)) {
-+			dev_err(&op->dev, "no dma clk\n");
-+			return PTR_ERR(d->clk);
-+		}
- 	}
- 
- 	irq = platform_get_irq(op, 0);
+ 		rtc0: rtc@fff04000 {
+ 			compatible = "arm,pl031", "arm,primecell";
+ 			reg = <0x0 0Xfff04000 0x0 0x1000>;
 -- 
 2.7.4
 
