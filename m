@@ -4,55 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E9A1C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:53:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C250C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:53:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E000021726
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:53:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB85A21726
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:53:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359587;
-	bh=zJFS4Y9JE8ZDcyQa60IxNrgjCEH2s3D9bIDlWhyzNXk=;
+	s=default; t=1548359590;
+	bh=yKC0w4sLyyLOO/ObXToOBhAYOnOlwP/WChDE9yTT5sk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=eqo9EHA7r99rmXmPaaaT1UiJWKQKBIUJN8sG6kuJjhW9nLgGWpA2OdfbhNF5neZhU
-	 ySe5ScY4m2myTjJPQbMzGyGGZd3G2nGdOTs7fyZLj9lNBCrmj9x7SUW1FLUzWAS7qA
-	 gZpAT9SteMir7QQtqS4081c66XW9AbbYOZ1HOTko=
+	b=vh27aBGjk224VU1jS1QEmZo4ja5nYW9XbX8aUM4bfOrTaL2VFcwDPajROGPvHkBIP
+	 NykcfmHcBM212NO7jzFIXAi31gCTtaWuzrbuBO7x42XcbYupXZKuI/1Qlwb/GTpnm2
+	 XjlHRfDCJ1s+jzGs/u6gmHk/W1wg9FszdZpVuTs4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732858AbfAXTid (ORCPT
+        id S1732844AbfAXTib (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:38:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38658 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:38:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38610 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729856AbfAXTi3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:38:29 -0500
+        id S1732833AbfAXTi0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:38:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 940CF218FC;
-        Thu, 24 Jan 2019 19:38:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E566B21904;
+        Thu, 24 Jan 2019 19:38:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358708;
-        bh=zJFS4Y9JE8ZDcyQa60IxNrgjCEH2s3D9bIDlWhyzNXk=;
+        s=default; t=1548358705;
+        bh=yKC0w4sLyyLOO/ObXToOBhAYOnOlwP/WChDE9yTT5sk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hCMW7O6zJ2GbVSMTKskr/GaxTdyKeZmAgPndsp5eOgkFPvcbr4tV8+UsFhasJZ9ws
-         4uiYPfgeLUe6b3nZ1im2jyhUiZjGtdtioqny6hRCJ2dwz/YWGSVyQUb8H1e4SzcTbr
-         apdmSjwBYqz2Xxs0Hd2gsPEH4/G0UVrBlQpZVUO8=
+        b=JMGmYxPgQ/Hl0QRpbfaPg57lEH36MEQeQpLbPsmHFOa7U+FD7+0Ok6ZyrBdLth1yg
+         4TeasVLdqgVf0OfQ9kkuJshHnkIx2EeVnvk7xjOKWyLNEhfgXaRqzsZhTzp298AWzS
+         HLyyQOC7Lu0V/QQ1pjNvJdg4tA2u5eGx1maRv2QU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 066/106] perf tests ARM: Disable breakpoint tests 32-bit
-Date:   Thu, 24 Jan 2019 20:20:23 +0100
-Message-Id: <20190124190210.602323336@linuxfoundation.org>
+        Jiri Olsa <jolsa@redhat.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 065/106] perf intel-pt: Fix error with config term "pt=0"
+Date:   Thu, 24 Jan 2019 20:20:22 +0100
+Message-Id: <20190124190210.557511975@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
 References: <20190124190206.342411005@linuxfoundation.org>
@@ -71,68 +66,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 24f967337f6d6bce931425769c0f5ff5cf2d212e ]
+[ Upstream commit 1c6f709b9f96366cc47af23c05ecec9b8c0c392d ]
 
-The breakpoint tests on the ARM 32-bit kernel are broken in several
-ways.
+Users should never use 'pt=0', but if they do it may give a meaningless
+error:
 
-The breakpoint length requested does not necessarily match whether the
-function address has the Thumb bit (bit 0) set or not, and this does
-matter to the ARM kernel hw_breakpoint infrastructure. See [1] for
-background.
+	$ perf record -e intel_pt/pt=0/u uname
+	Error:
+	The sys_perf_event_open() syscall returned with 22 (Invalid argument) for
+	event (intel_pt/pt=0/u).
 
-[1]: https://lkml.org/lkml/2018/11/15/205
+Fix that by forcing 'pt=1'.
 
-As Will indicated, the overflow handling would require single-stepping
-which is not supported at the moment. Just disable those tests for the
-ARM 32-bit platforms and update the comment above to explain these
-limitations.
+Committer testing:
 
-Co-developed-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Acked-by: Jiri Olsa <jolsa@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20181203191138.2419-1-f.fainelli@gmail.com
+  # perf record -e intel_pt/pt=0/u uname
+  Error:
+  The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (intel_pt/pt=0/u).
+  /bin/dmesg | grep -i perf may provide additional information.
+
+  # perf record -e intel_pt/pt=0/u uname
+  pt=0 doesn't make sense, forcing pt=1
+  Linux
+  [ perf record: Woken up 1 times to write data ]
+  [ perf record: Captured and wrote 0.020 MB perf.data ]
+  #
+
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Link: http://lkml.kernel.org/r/b7c5b4e5-9497-10e5-fd43-5f3e4a0fe51d@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/tests/bp_signal.c | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
+ tools/perf/arch/x86/util/intel-pt.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/tools/perf/tests/bp_signal.c b/tools/perf/tests/bp_signal.c
-index a467615c5a0e..910e25e64188 100644
---- a/tools/perf/tests/bp_signal.c
-+++ b/tools/perf/tests/bp_signal.c
-@@ -291,12 +291,20 @@ int test__bp_signal(struct test *test __maybe_unused, int subtest __maybe_unused
- 
- bool test__bp_signal_is_supported(void)
+diff --git a/tools/perf/arch/x86/util/intel-pt.c b/tools/perf/arch/x86/util/intel-pt.c
+index db0ba8caf5a2..ba8ecaf52200 100644
+--- a/tools/perf/arch/x86/util/intel-pt.c
++++ b/tools/perf/arch/x86/util/intel-pt.c
+@@ -524,10 +524,21 @@ static int intel_pt_validate_config(struct perf_pmu *intel_pt_pmu,
+ 				    struct perf_evsel *evsel)
  {
--/*
-- * The powerpc so far does not have support to even create
-- * instruction breakpoint using the perf event interface.
-- * Once it's there we can release this.
-- */
--#if defined(__powerpc__) || defined(__s390x__)
+ 	int err;
++	char c;
+ 
+ 	if (!evsel)
+ 		return 0;
+ 
 +	/*
-+	 * PowerPC and S390 do not support creation of instruction
-+	 * breakpoints using the perf_event interface.
-+	 *
-+	 * ARM requires explicit rounding down of the instruction
-+	 * pointer in Thumb mode, and then requires the single-step
-+	 * to be handled explicitly in the overflow handler to avoid
-+	 * stepping into the SIGIO handler and getting stuck on the
-+	 * breakpointed instruction.
-+	 *
-+	 * Just disable the test for these architectures until these
-+	 * issues are resolved.
++	 * If supported, force pass-through config term (pt=1) even if user
++	 * sets pt=0, which avoids senseless kernel errors.
 +	 */
-+#if defined(__powerpc__) || defined(__s390x__) || defined(__arm__)
- 	return false;
- #else
- 	return true;
++	if (perf_pmu__scan_file(intel_pt_pmu, "format/pt", "%c", &c) == 1 &&
++	    !(evsel->attr.config & 1)) {
++		pr_warning("pt=0 doesn't make sense, forcing pt=1\n");
++		evsel->attr.config |= 1;
++	}
++
+ 	err = intel_pt_val_config_term(intel_pt_pmu, "caps/cycle_thresholds",
+ 				       "cyc_thresh", "caps/psb_cyc",
+ 				       evsel->attr.config);
 -- 
 2.19.1
 
