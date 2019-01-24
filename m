@@ -4,51 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7EA8C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:07:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9C79C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:07:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A82621855
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:07:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A46C21855
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:07:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548360423;
-	bh=HUXfQU/BaCLUnHC394m1xGt1+AlzgzkutzAP8aNqa0I=;
+	s=default; t=1548360430;
+	bh=vtddzfgW8ctZLht5p1O2iklXqDDKM67hoN1QO6PJBiI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=skbvf2LcsTwxawILfIpzN2FyRB0IRGN5SiHrVQto773pR6IC7wiMni2y7eqKdwQyH
-	 yWPk3hSjeaLfkoMa2RaGdXJ5yru+i2xD/TUm0pyOnwq7HH48XOxhXpBVsqQEYioOOD
-	 /qMtnWKAgfkoFBeWGLEddni4qzb1jX/XuNUWYhyk=
+	b=veQ3YRCL5hR+qn/dQzaaPc1iHPEFqbLC/ZldPR2scPAoQu36/n0TVl1YPJjKPU9b+
+	 Qi8TOP9ARUzP2ZdQLvVgjDSPzyNznbbNDJAP5NExxofbksRpKYSIKR/uBNABuNdmlP
+	 Ip2Qt2bm4VFC3KaJzZouznrQnO2bFW00tm3Bf/OM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731386AbfAXTaV (ORCPT
+        id S1731348AbfAXTaL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:30:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57724 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:30:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57556 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731371AbfAXTaQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:30:16 -0500
+        id S1730762AbfAXTaI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:30:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8BB15218D4;
-        Thu, 24 Jan 2019 19:30:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 81F7D218D4;
+        Thu, 24 Jan 2019 19:30:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358216;
-        bh=HUXfQU/BaCLUnHC394m1xGt1+AlzgzkutzAP8aNqa0I=;
+        s=default; t=1548358207;
+        bh=vtddzfgW8ctZLht5p1O2iklXqDDKM67hoN1QO6PJBiI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=maRceTIIlVzSQGinkgGMxKE+FnobHEdUlud2mt6IC5tn3lZVcJlm2cPbLA3Cy3U/G
-         Nv4h+J0R6DG8wSqzZQPKhm0F9AQgZxHR+H2/y1AWnHd+LiPwBCVJlOhnX+G3qj1TbT
-         oSnx2zWEiO/zNTlxgaIBwgYlgkCWmMGBJhf+0ZoA=
+        b=nvusmJjEyhortxIjbf5CSYgJ8e+VnQylJWfclBfh0OQNUFV9Qecp1Md1Yy5P+++ot
+         9zNJ4+9qWe8KfttT1EJZWWRVHNypq7UamjwivS0p/+dmtGDZMsjy8/e3gW6WOeg29p
+         c2vol9fGE43I3suZr/exTn+cz2Hmb0XfK/tbWaks=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
-        Sumit Saxena <sumit.saxena@broadcom.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, "Maciej W. Rozycki" <macro@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 34/39] scsi: megaraid: fix out-of-bound array accesses
-Date:   Thu, 24 Jan 2019 20:20:37 +0100
-Message-Id: <20190124190449.507804684@linuxfoundation.org>
+Subject: [PATCH 4.9 09/39] MIPS: SiByte: Enable swiotlb for SWARM, LittleSur and BigSur
+Date:   Thu, 24 Jan 2019 20:20:12 +0100
+Message-Id: <20190124190448.561326403@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190448.232316246@linuxfoundation.org>
 References: <20190124190448.232316246@linuxfoundation.org>
@@ -67,118 +68,153 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c7a082e4242fd8cd21a441071e622f87c16bdacc ]
+[ Upstream commit e4849aff1e169b86c561738daf8ff020e9de1011 ]
 
-UBSAN reported those with MegaRAID SAS-3 3108,
+The Broadcom SiByte BCM1250, BCM1125, and BCM1125H SOCs have an onchip
+DRAM controller that supports memory amounts of up to 16GiB, and due to
+how the address decoder has been wired in the SOC any memory beyond 1GiB
+is actually mapped starting from 4GiB physical up, that is beyond the
+32-bit addressable limit[1].  Consequently if the maximum amount of
+memory has been installed, then it will span up to 19GiB.
 
-[   77.467308] UBSAN: Undefined behaviour in drivers/scsi/megaraid/megaraid_sas_fp.c:117:32
-[   77.475402] index 255 is out of range for type 'MR_LD_SPAN_MAP [1]'
-[   77.481677] CPU: 16 PID: 333 Comm: kworker/16:1 Not tainted 4.20.0-rc5+ #1
-[   77.488556] Hardware name: Huawei TaiShan 2280 /BC11SPCD, BIOS 1.50 06/01/2018
-[   77.495791] Workqueue: events work_for_cpu_fn
-[   77.500154] Call trace:
-[   77.502610]  dump_backtrace+0x0/0x2c8
-[   77.506279]  show_stack+0x24/0x30
-[   77.509604]  dump_stack+0x118/0x19c
-[   77.513098]  ubsan_epilogue+0x14/0x60
-[   77.516765]  __ubsan_handle_out_of_bounds+0xfc/0x13c
-[   77.521767]  mr_update_load_balance_params+0x150/0x158 [megaraid_sas]
-[   77.528230]  MR_ValidateMapInfo+0x2cc/0x10d0 [megaraid_sas]
-[   77.533825]  megasas_get_map_info+0x244/0x2f0 [megaraid_sas]
-[   77.539505]  megasas_init_adapter_fusion+0x9b0/0xf48 [megaraid_sas]
-[   77.545794]  megasas_init_fw+0x1ab4/0x3518 [megaraid_sas]
-[   77.551212]  megasas_probe_one+0x2c4/0xbe0 [megaraid_sas]
-[   77.556614]  local_pci_probe+0x7c/0xf0
-[   77.560365]  work_for_cpu_fn+0x34/0x50
-[   77.564118]  process_one_work+0x61c/0xf08
-[   77.568129]  worker_thread+0x534/0xa70
-[   77.571882]  kthread+0x1c8/0x1d0
-[   77.575114]  ret_from_fork+0x10/0x1c
+Many of the evaluation boards we support that are based on one of these
+SOCs have their memory soldered and the amount present fits in the
+32-bit address range.  The BCM91250A SWARM board however has actual DIMM
+slots and accepts, depending on the peripherals revision of the SOC, up
+to 4GiB or 8GiB of memory in commercially available JEDEC modules[2].
+I believe this is also the case with the BCM91250C2 LittleSur board.
+This means that up to either 3GiB or 7GiB of memory requires 64-bit
+addressing to access.
 
-[   89.240332] UBSAN: Undefined behaviour in drivers/scsi/megaraid/megaraid_sas_fp.c:117:32
-[   89.248426] index 255 is out of range for type 'MR_LD_SPAN_MAP [1]'
-[   89.254700] CPU: 16 PID: 95 Comm: kworker/u130:0 Not tainted 4.20.0-rc5+ #1
-[   89.261665] Hardware name: Huawei TaiShan 2280 /BC11SPCD, BIOS 1.50 06/01/2018
-[   89.268903] Workqueue: events_unbound async_run_entry_fn
-[   89.274222] Call trace:
-[   89.276680]  dump_backtrace+0x0/0x2c8
-[   89.280348]  show_stack+0x24/0x30
-[   89.283671]  dump_stack+0x118/0x19c
-[   89.287167]  ubsan_epilogue+0x14/0x60
-[   89.290835]  __ubsan_handle_out_of_bounds+0xfc/0x13c
-[   89.295828]  MR_LdRaidGet+0x50/0x58 [megaraid_sas]
-[   89.300638]  megasas_build_io_fusion+0xbb8/0xd90 [megaraid_sas]
-[   89.306576]  megasas_build_and_issue_cmd_fusion+0x138/0x460 [megaraid_sas]
-[   89.313468]  megasas_queue_command+0x398/0x3d0 [megaraid_sas]
-[   89.319222]  scsi_dispatch_cmd+0x1dc/0x8a8
-[   89.323321]  scsi_request_fn+0x8e8/0xdd0
-[   89.327249]  __blk_run_queue+0xc4/0x158
-[   89.331090]  blk_execute_rq_nowait+0xf4/0x158
-[   89.335449]  blk_execute_rq+0xdc/0x158
-[   89.339202]  __scsi_execute+0x130/0x258
-[   89.343041]  scsi_probe_and_add_lun+0x2fc/0x1488
-[   89.347661]  __scsi_scan_target+0x1cc/0x8c8
-[   89.351848]  scsi_scan_channel.part.3+0x8c/0xc0
-[   89.356382]  scsi_scan_host_selected+0x130/0x1f0
-[   89.361002]  do_scsi_scan_host+0xd8/0xf0
-[   89.364927]  do_scan_async+0x9c/0x320
-[   89.368594]  async_run_entry_fn+0x138/0x420
-[   89.372780]  process_one_work+0x61c/0xf08
-[   89.376793]  worker_thread+0x13c/0xa70
-[   89.380546]  kthread+0x1c8/0x1d0
-[   89.383778]  ret_from_fork+0x10/0x1c
+I believe the BCM91480B BigSur board, which has the BCM1480 SOC instead,
+accepts at least as much memory, although I have no documentation or
+actual hardware available to verify that.
 
-This is because when populating Driver Map using firmware raid map, all
-non-existing VDs set their ldTgtIdToLd to 0xff, so it can be skipped later.
+Both systems have PCI slots installed for use by any PCI option boards,
+including ones that only support 32-bit addressing (additionally the
+32-bit PCI host bridge of the BCM1250, BCM1125, and BCM1125H SOCs limits
+addressing to 32-bits), and there is no IOMMU available.  Therefore for
+PCI DMA to work in the presence of memory beyond enable swiotlb for the
+affected systems.
 
->From drivers/scsi/megaraid/megaraid_sas_base.c ,
-memset(instance->ld_ids, 0xff, MEGASAS_MAX_LD_IDS);
+All the other SOC onchip DMA devices use 40-bit addressing and therefore
+can address the whole memory, so only enable swiotlb if PCI support and
+support for DMA beyond 4GiB have been both enabled in the configuration
+of the kernel.
 
->From drivers/scsi/megaraid/megaraid_sas_fp.c ,
-/* For non existing VDs, iterate to next VD*/
-if (ld >= (MAX_LOGICAL_DRIVES_EXT - 1))
-	continue;
+This shows up as follows:
 
-However, there are a few places that failed to skip those non-existing VDs
-due to off-by-one errors. Then, those 0xff leaked into MR_LdRaidGet(0xff,
-map) and triggered the out-of-bound accesses.
+Broadcom SiByte BCM1250 B2 @ 800 MHz (SB1 rev 2)
+Board type: SiByte BCM91250A (SWARM)
+Determined physical RAM map:
+ memory: 000000000fe7fe00 @ 0000000000000000 (usable)
+ memory: 000000001ffffe00 @ 0000000080000000 (usable)
+ memory: 000000000ffffe00 @ 00000000c0000000 (usable)
+ memory: 0000000087fffe00 @ 0000000100000000 (usable)
+software IO TLB: mapped [mem 0xcbffc000-0xcfffc000] (64MB)
 
-Fixes: 51087a8617fe ("megaraid_sas : Extended VD support")
-Signed-off-by: Qian Cai <cai@lca.pw>
-Acked-by: Sumit Saxena <sumit.saxena@broadcom.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+in the bootstrap log and removes failures like these:
+
+defxx 0000:02:00.0: dma_direct_map_page: overflow 0x0000000185bc6080+4608 of device mask ffffffff bus mask 0
+fddi0: Receive buffer allocation failed
+fddi0: Adapter open failed!
+IP-Config: Failed to open fddi0
+defxx 0000:09:08.0: dma_direct_map_page: overflow 0x0000000185bc6080+4608 of device mask ffffffff bus mask 0
+fddi1: Receive buffer allocation failed
+fddi1: Adapter open failed!
+IP-Config: Failed to open fddi1
+
+when memory beyond 4GiB is handed out to devices that can only do 32-bit
+addressing.
+
+This updates commit cce335ae47e2 ("[MIPS] 64-bit Sibyte kernels need
+DMA32.").
+
+References:
+
+[1] "BCM1250/BCM1125/BCM1125H User Manual", Revision 1250_1125-UM100-R,
+    Broadcom Corporation, 21 Oct 2002, Section 3: "System Overview",
+    "Memory Map", pp. 34-38
+
+[2] "BCM91250A User Manual", Revision 91250A-UM100-R, Broadcom
+    Corporation, 18 May 2004, Section 3: "Physical Description",
+    "Supported DRAM", p. 23
+
+Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
+[paul.burton@mips.com: Remove GPL text from dma.c; SPDX tag covers it]
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Patchwork: https://patchwork.linux-mips.org/patch/21108/
+References: cce335ae47e2 ("[MIPS] 64-bit Sibyte kernels need DMA32.")
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/megaraid/megaraid_sas_fp.c     | 2 +-
- drivers/scsi/megaraid/megaraid_sas_fusion.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ arch/mips/Kconfig                |  3 +++
+ arch/mips/sibyte/common/Makefile |  1 +
+ arch/mips/sibyte/common/dma.c    | 14 ++++++++++++++
+ 3 files changed, 18 insertions(+)
+ create mode 100644 arch/mips/sibyte/common/dma.c
 
-diff --git a/drivers/scsi/megaraid/megaraid_sas_fp.c b/drivers/scsi/megaraid/megaraid_sas_fp.c
-index e413113c86ac..663d8f503c86 100644
---- a/drivers/scsi/megaraid/megaraid_sas_fp.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_fp.c
-@@ -1275,7 +1275,7 @@ void mr_update_load_balance_params(struct MR_DRV_RAID_MAP_ALL *drv_map,
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index 1d987061d1a1..bb9940c6927e 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -791,6 +791,7 @@ config SIBYTE_SWARM
+ 	select SYS_SUPPORTS_HIGHMEM
+ 	select SYS_SUPPORTS_LITTLE_ENDIAN
+ 	select ZONE_DMA32 if 64BIT
++	select SWIOTLB if ARCH_DMA_ADDR_T_64BIT && PCI
  
- 	for (ldCount = 0; ldCount < MAX_LOGICAL_DRIVES_EXT; ldCount++) {
- 		ld = MR_TargetIdToLdGet(ldCount, drv_map);
--		if (ld >= MAX_LOGICAL_DRIVES_EXT) {
-+		if (ld >= MAX_LOGICAL_DRIVES_EXT - 1) {
- 			lbInfo[ldCount].loadBalanceFlag = 0;
- 			continue;
- 		}
-diff --git a/drivers/scsi/megaraid/megaraid_sas_fusion.c b/drivers/scsi/megaraid/megaraid_sas_fusion.c
-index f722a0e6caa4..fe1a20973e47 100644
---- a/drivers/scsi/megaraid/megaraid_sas_fusion.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_fusion.c
-@@ -1902,7 +1902,7 @@ static void megasas_build_ld_nonrw_fusion(struct megasas_instance *instance,
- 		device_id < instance->fw_supported_vd_count)) {
+ config SIBYTE_LITTLESUR
+ 	bool "Sibyte BCM91250C2-LittleSur"
+@@ -813,6 +814,7 @@ config SIBYTE_SENTOSA
+ 	select SYS_HAS_CPU_SB1
+ 	select SYS_SUPPORTS_BIG_ENDIAN
+ 	select SYS_SUPPORTS_LITTLE_ENDIAN
++	select SWIOTLB if ARCH_DMA_ADDR_T_64BIT && PCI
  
- 		ld = MR_TargetIdToLdGet(device_id, local_map_ptr);
--		if (ld >= instance->fw_supported_vd_count)
-+		if (ld >= instance->fw_supported_vd_count - 1)
- 			fp_possible = 0;
+ config SIBYTE_BIGSUR
+ 	bool "Sibyte BCM91480B-BigSur"
+@@ -826,6 +828,7 @@ config SIBYTE_BIGSUR
+ 	select SYS_SUPPORTS_HIGHMEM
+ 	select SYS_SUPPORTS_LITTLE_ENDIAN
+ 	select ZONE_DMA32 if 64BIT
++	select SWIOTLB if ARCH_DMA_ADDR_T_64BIT && PCI
  
- 		raid = MR_LdRaidGet(ld, local_map_ptr);
+ config SNI_RM
+ 	bool "SNI RM200/300/400"
+diff --git a/arch/mips/sibyte/common/Makefile b/arch/mips/sibyte/common/Makefile
+index b3d6bf23a662..3ef3fb658136 100644
+--- a/arch/mips/sibyte/common/Makefile
++++ b/arch/mips/sibyte/common/Makefile
+@@ -1,4 +1,5 @@
+ obj-y := cfe.o
++obj-$(CONFIG_SWIOTLB)			+= dma.o
+ obj-$(CONFIG_SIBYTE_BUS_WATCHER)	+= bus_watcher.o
+ obj-$(CONFIG_SIBYTE_CFE_CONSOLE)	+= cfe_console.o
+ obj-$(CONFIG_SIBYTE_TBPROF)		+= sb_tbprof.o
+diff --git a/arch/mips/sibyte/common/dma.c b/arch/mips/sibyte/common/dma.c
+new file mode 100644
+index 000000000000..eb47a94f3583
+--- /dev/null
++++ b/arch/mips/sibyte/common/dma.c
+@@ -0,0 +1,14 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ *	DMA support for Broadcom SiByte platforms.
++ *
++ *	Copyright (c) 2018  Maciej W. Rozycki
++ */
++
++#include <linux/swiotlb.h>
++#include <asm/bootinfo.h>
++
++void __init plat_swiotlb_setup(void)
++{
++	swiotlb_init(1);
++}
 -- 
 2.19.1
 
