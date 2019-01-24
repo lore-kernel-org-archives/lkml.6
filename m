@@ -2,56 +2,58 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16EC6C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:59:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 989D7C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:59:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAABD21726
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:59:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 653D1218D2
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:59:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359945;
-	bh=xL5QQG38wnqRaqZx2x7W3WwnQY0f25HWU6jyZIz+Hvo=;
+	s=default; t=1548359958;
+	bh=6fyWAH2xN/yIgoSoruM/oW5vwlPrt7WTaYeKotwbXaA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vJvuHcDSpI9Vpu5gcyGJD9Os5bpSe+x+ot+3E9HDytUYcOBHH6mpXQeKKAviayrFE
-	 qvExumVP+KfAoYNRQ5CQleraB2JvTvQhPei20AV2E7Z1yuoGXSHK1wMITWSF74+A8O
-	 R9bzyaXr03l+DU33oBW5VVk6mnaFTpvE0fXU1mfA=
+	b=0FE1Jk2fWpw/hz9Nh+Sea0cngMEH2BUzU//D71XHqnwyc3GHucKcsyRCHvnZ3jtst
+	 +5y6OKiI/ydXIGrjZw4lQoRA5GM3aqYTcB8LTxEDkWiQ6GBQBpcfAYZr0P2HWQ5W+t
+	 01Gj+HXO5dk0ejEQ91s5GI67YoPzSV9bxYWQ0Dlk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732108AbfAXTeF (ORCPT
+        id S1729407AbfAXT7Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:34:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33820 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:59:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33608 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730799AbfAXTeC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:34:02 -0500
+        id S1732079AbfAXTdu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:33:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D2B3218FC;
-        Thu, 24 Jan 2019 19:34:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 47C18218FC;
+        Thu, 24 Jan 2019 19:33:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358441;
-        bh=xL5QQG38wnqRaqZx2x7W3WwnQY0f25HWU6jyZIz+Hvo=;
+        s=default; t=1548358429;
+        bh=6fyWAH2xN/yIgoSoruM/oW5vwlPrt7WTaYeKotwbXaA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ix0ZH2HKVxmVJbtXS9Fz+zU3r1yR7iJwSkwqCJPfJ3fs4hR8rQGPUPeKudm6YxINl
-         DoUqkDdfvNvaJhpYvNmWo/IGACtaK9QIbcOZz0OB3GXL5JMPFuktiOf6827TLjE7Dn
-         zvxR7qmfOnz1f70i6C28z0QCJXqpX9YGlQo+KQIQ=
+        b=EuqLP3/a8LX6E30AopAE6IfmL+NJPgU/3k+qm16OtjX3AwqUKqQTbJzLUQzsqrvbH
+         Q8aTx3C3saOI8UbRQIu6yG99mx6IeYdgZWTxBvXL9FrXac+rUy36QsG5MWgb6V5IIY
+         4Vb99slSrnB0tGjeKbyaV+Xrgn5nJZ5UbiFsnok0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yi Chen <yiche@redhat.com>,
-        Stefano Brivio <sbrivio@redhat.com>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        stable@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 010/106] netfilter: ipset: Allow matching on destination MAC address for mac and ipmac sets
-Date:   Thu, 24 Jan 2019 20:19:27 +0100
-Message-Id: <20190124190207.030164150@linuxfoundation.org>
+Subject: [PATCH 4.14 44/63] tools lib subcmd: Dont add the kernel sources to the include path
+Date:   Thu, 24 Jan 2019 20:20:33 +0100
+Message-Id: <20190124190200.527244751@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
-References: <20190124190206.342411005@linuxfoundation.org>
+In-Reply-To: <20190124190155.176570028@linuxfoundation.org>
+References: <20190124190155.176570028@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -63,136 +65,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-[ Upstream commit 8cc4ccf58379935f3ad456cc34e61c4e4c921d0e ]
+[ Upstream commit ece9804985b57e1ccd83b1fb6288520955a29d51 ]
 
-There doesn't seem to be any reason to restrict MAC address
-matching to source MAC addresses in set types bitmap:ipmac,
-hash:ipmac and hash:mac. With this patch, and this setup:
+At some point we decided not to directly include kernel sources files
+when building tools/perf/, but when tools/lib/subcmd/ was forked from
+tools/perf it somehow ended up adding it via these two lines in its
+Makefile:
 
-  ip netns add A
-  ip link add veth1 type veth peer name veth2 netns A
-  ip addr add 192.0.2.1/24 dev veth1
-  ip -net A addr add 192.0.2.2/24 dev veth2
-  ip link set veth1 up
-  ip -net A link set veth2 up
+  CFLAGS += -I$(srctree)/include/uapi
+  CFLAGS += -I$(srctree)/include
 
-  ip netns exec A ipset create test hash:mac
-  dst=$(ip netns exec A cat /sys/class/net/veth2/address)
-  ip netns exec A ipset add test ${dst}
-  ip netns exec A iptables -P INPUT DROP
-  ip netns exec A iptables -I INPUT -m set --match-set test dst -j ACCEPT
+As $(srctree) points to the kernel sources.
 
-ipset will match packets based on destination MAC address:
+Removing those lines and keeping just:
 
-  # ping -c1 192.0.2.2 >/dev/null
-  # echo $?
-  0
+  CFLAGS += -I$(srctree)/tools/include/
 
-Reported-by: Yi Chen <yiche@redhat.com>
-Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
-Signed-off-by: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
+Is enough to build tools/perf and tools/objtool.
+
+This fixes the build when building from the sources in environments such
+as the Android NDK crossbuilding from a fedora:26 system:
+
+  subcmd-util.h:11:15: error: expected ',' or ';' before 'void'
+   static inline void report(const char *prefix, const char *err, va_list params)
+                 ^
+  In file included from /git/perf/include/uapi/linux/stddef.h:2:0,
+                   from /git/perf/include/uapi/linux/posix_types.h:5,
+                   from /opt/android-ndk-r12b/platforms/android-24/arch-arm/usr/include/sys/types.h:36,
+                   from /opt/android-ndk-r12b/platforms/android-24/arch-arm/usr/include/unistd.h:33,
+                   from run-command.c:2:
+  subcmd-util.h:18:17: error: '__no_instrument_function__' attribute applies only to functions
+
+The /opt/android-ndk-r12b/platforms/android-24/arch-arm/usr/include/sys/types.h
+file that includes linux/posix_types.h ends up getting the one in the kernel
+sources causing the breakage. Fix it.
+
+Test built tools/objtool/ too.
+
+Reported-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Fixes: 4b6ab94eabe4 ("perf subcmd: Create subcmd library")
+Link: https://lkml.kernel.org/n/tip-5lhaoecrj12t0bqwvpiu14sm@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/ipset/ip_set_bitmap_ipmac.c | 10 +++++-----
- net/netfilter/ipset/ip_set_hash_ipmac.c   | 16 ++++++++++------
- net/netfilter/ipset/ip_set_hash_mac.c     | 10 +++++-----
- 3 files changed, 20 insertions(+), 16 deletions(-)
+ tools/lib/subcmd/Makefile | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/net/netfilter/ipset/ip_set_bitmap_ipmac.c b/net/netfilter/ipset/ip_set_bitmap_ipmac.c
-index c00b6a2e8e3c..13ade5782847 100644
---- a/net/netfilter/ipset/ip_set_bitmap_ipmac.c
-+++ b/net/netfilter/ipset/ip_set_bitmap_ipmac.c
-@@ -219,10 +219,6 @@ bitmap_ipmac_kadt(struct ip_set *set, const struct sk_buff *skb,
- 	struct ip_set_ext ext = IP_SET_INIT_KEXT(skb, opt, set);
- 	u32 ip;
+diff --git a/tools/lib/subcmd/Makefile b/tools/lib/subcmd/Makefile
+index 95563b8e1ad7..ed61fb3a46c0 100644
+--- a/tools/lib/subcmd/Makefile
++++ b/tools/lib/subcmd/Makefile
+@@ -36,8 +36,6 @@ endif
+ CFLAGS += -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE
  
--	/* MAC can be src only */
--	if (!(opt->flags & IPSET_DIM_TWO_SRC))
--		return 0;
--
- 	ip = ntohl(ip4addr(skb, opt->flags & IPSET_DIM_ONE_SRC));
- 	if (ip < map->first_ip || ip > map->last_ip)
- 		return -IPSET_ERR_BITMAP_RANGE;
-@@ -233,7 +229,11 @@ bitmap_ipmac_kadt(struct ip_set *set, const struct sk_buff *skb,
- 		return -EINVAL;
+ CFLAGS += -I$(srctree)/tools/include/
+-CFLAGS += -I$(srctree)/include/uapi
+-CFLAGS += -I$(srctree)/include
  
- 	e.id = ip_to_id(map, ip);
--	memcpy(e.ether, eth_hdr(skb)->h_source, ETH_ALEN);
-+
-+	if (opt->flags & IPSET_DIM_ONE_SRC)
-+		ether_addr_copy(e.ether, eth_hdr(skb)->h_source);
-+	else
-+		ether_addr_copy(e.ether, eth_hdr(skb)->h_dest);
+ SUBCMD_IN := $(OUTPUT)libsubcmd-in.o
  
- 	return adtfn(set, &e, &ext, &opt->ext, opt->cmdflags);
- }
-diff --git a/net/netfilter/ipset/ip_set_hash_ipmac.c b/net/netfilter/ipset/ip_set_hash_ipmac.c
-index 1ab5ed2f6839..fd87de3ed55b 100644
---- a/net/netfilter/ipset/ip_set_hash_ipmac.c
-+++ b/net/netfilter/ipset/ip_set_hash_ipmac.c
-@@ -103,7 +103,11 @@ hash_ipmac4_kadt(struct ip_set *set, const struct sk_buff *skb,
- 	    (skb_mac_header(skb) + ETH_HLEN) > skb->data)
- 		return -EINVAL;
- 
--	memcpy(e.ether, eth_hdr(skb)->h_source, ETH_ALEN);
-+	if (opt->flags & IPSET_DIM_ONE_SRC)
-+		ether_addr_copy(e.ether, eth_hdr(skb)->h_source);
-+	else
-+		ether_addr_copy(e.ether, eth_hdr(skb)->h_dest);
-+
- 	if (ether_addr_equal(e.ether, invalid_ether))
- 		return -EINVAL;
- 
-@@ -211,15 +215,15 @@ hash_ipmac6_kadt(struct ip_set *set, const struct sk_buff *skb,
- 	};
- 	struct ip_set_ext ext = IP_SET_INIT_KEXT(skb, opt, set);
- 
--	 /* MAC can be src only */
--	if (!(opt->flags & IPSET_DIM_TWO_SRC))
--		return 0;
--
- 	if (skb_mac_header(skb) < skb->head ||
- 	    (skb_mac_header(skb) + ETH_HLEN) > skb->data)
- 		return -EINVAL;
- 
--	memcpy(e.ether, eth_hdr(skb)->h_source, ETH_ALEN);
-+	if (opt->flags & IPSET_DIM_ONE_SRC)
-+		ether_addr_copy(e.ether, eth_hdr(skb)->h_source);
-+	else
-+		ether_addr_copy(e.ether, eth_hdr(skb)->h_dest);
-+
- 	if (ether_addr_equal(e.ether, invalid_ether))
- 		return -EINVAL;
- 
-diff --git a/net/netfilter/ipset/ip_set_hash_mac.c b/net/netfilter/ipset/ip_set_hash_mac.c
-index f9d5a2a1e3d0..4fe5f243d0a3 100644
---- a/net/netfilter/ipset/ip_set_hash_mac.c
-+++ b/net/netfilter/ipset/ip_set_hash_mac.c
-@@ -81,15 +81,15 @@ hash_mac4_kadt(struct ip_set *set, const struct sk_buff *skb,
- 	struct hash_mac4_elem e = { { .foo[0] = 0, .foo[1] = 0 } };
- 	struct ip_set_ext ext = IP_SET_INIT_KEXT(skb, opt, set);
- 
--	 /* MAC can be src only */
--	if (!(opt->flags & IPSET_DIM_ONE_SRC))
--		return 0;
--
- 	if (skb_mac_header(skb) < skb->head ||
- 	    (skb_mac_header(skb) + ETH_HLEN) > skb->data)
- 		return -EINVAL;
- 
--	ether_addr_copy(e.ether, eth_hdr(skb)->h_source);
-+	if (opt->flags & IPSET_DIM_ONE_SRC)
-+		ether_addr_copy(e.ether, eth_hdr(skb)->h_source);
-+	else
-+		ether_addr_copy(e.ether, eth_hdr(skb)->h_dest);
-+
- 	if (is_zero_ether_addr(e.ether))
- 		return -EINVAL;
- 	return adtfn(set, &e, &ext, &opt->ext, opt->cmdflags);
 -- 
 2.19.1
 
