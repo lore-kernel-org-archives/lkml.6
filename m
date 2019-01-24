@@ -2,106 +2,111 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDE35C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:38:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 036BCC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:39:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 848A021872
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:38:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC079218AF
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:39:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729066AbfAXRir (ORCPT
+        id S1729101AbfAXRj0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 12:38:47 -0500
-Received: from gateway34.websitewelcome.com ([192.185.148.119]:25051 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727664AbfAXRir (ORCPT
+        Thu, 24 Jan 2019 12:39:26 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:43637 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728134AbfAXRjZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 12:38:47 -0500
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway34.websitewelcome.com (Postfix) with ESMTP id 71439439382
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 11:38:46 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id mixigmfU2iQermixig5oPV; Thu, 24 Jan 2019 11:38:46 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=42898 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gmixi-0007RP-2y; Thu, 24 Jan 2019 11:38:46 -0600
-Subject: Re: powerpc/ps3: Use struct_size() in kzalloc()
-To:     Michael Ellerman <patch-notifications@ellerman.id.au>,
-        Geoff Levand <geoff@infradead.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <43lSbT1lyfz9sN8@ozlabs.org>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Message-ID: <36d34731-e072-452b-48b8-9e68773c5425@embeddedor.com>
-Date:   Thu, 24 Jan 2019 11:38:45 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 24 Jan 2019 12:39:25 -0500
+Received: by mail-wr1-f65.google.com with SMTP id r10so7403492wrs.10
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 09:39:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=KJYC6aQdTAezeJ8Z5hmL7iHtHcoWplSiWC+qJCJ6By0=;
+        b=eH9BewTkXWKh4F9oR6kwIaszD5rt3nSNZPNvqkmj2kvWcamtmI4MGyaBUICkhsj5J2
+         9oRAH/Aw9toPnwt/GVggsC0hbUvLw/motMx7Ayk6eCJFK8tcDvQPwpreVL9wW0xyxFfk
+         O+83JDou7Xk3VBnjRapvsZAJ4NFqQi8Xoyz5HTwIpGHutkNRqPsP5uRqPULZC9axrOay
+         2NfIi6KAE4N37Y2PMQIc7WRcTy/5l1dGE+oAPuP4T9B+uwLoOXAv524L6V8zD8YTqHy9
+         DjqXbQzFY1Dl/plreRpARD2fiEhgsJmUVs8zTJKGDm0rZSQn59+xXATXiiTozITvbpPT
+         b/sQ==
+X-Gm-Message-State: AJcUukdkZfA8RTcZqoUCL3+qAhHRzQF1DomDkQZq+nJcfxKhPWoGYgn0
+        lU1uDMvgB2U/Jls0TMBl4SRYkfVK7ReNAA==
+X-Google-Smtp-Source: ALg8bN6kMcp0hO2Z6xN8LGcHpfSQjVePcZpfZfZHA8Zm9IfqNLwioP2Fx1uMv5Aah470mnvzm36sPw==
+X-Received: by 2002:adf:8122:: with SMTP id 31mr8263422wrm.48.1548351563795;
+        Thu, 24 Jan 2019 09:39:23 -0800 (PST)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id 143sm129809788wml.14.2019.01.24.09.39.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 24 Jan 2019 09:39:22 -0800 (PST)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Liran Alon <liran.alon@oracle.com>
+Cc:     kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/kvm/hyper-v: tweak HYPERV_CPUID_ENLIGHTMENT_INFO
+In-Reply-To: <805B7B08-734E-4A96-AF98-D33065C59105@oracle.com>
+References: <20190124171516.23626-1-vkuznets@redhat.com> <805B7B08-734E-4A96-AF98-D33065C59105@oracle.com>
+Date:   Thu, 24 Jan 2019 18:39:21 +0100
+Message-ID: <8736pigdkm.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <43lSbT1lyfz9sN8@ozlabs.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1gmixi-0007RP-2y
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.130.205]:42898
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 13
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Liran Alon <liran.alon@oracle.com> writes:
 
+>> On 24 Jan 2019, at 19:15, Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
+>> 
+>> We shouldn't probably be suggesting using Enlightened VMCS when it's not
+>> enabled (not supported from guest's point of view). System reset through
+>> synthetic MSR is not recommended neither by genuine Hyper-V nor my QEMU.
+>> 
+>> Windows seems to be fine either way but let's be consistent.
+>> 
+>> Fixes: 2bc39970e932 ("x86/kvm/hyper-v: Introduce KVM_GET_SUPPORTED_HV_CPUID")
+>> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+>> ---
+>> arch/x86/kvm/hyperv.c | 4 ++--
+>> 1 file changed, 2 insertions(+), 2 deletions(-)
+>> 
+>> diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
+>> index ac44a681f065..4730fcaa70cf 100644
+>> --- a/arch/x86/kvm/hyperv.c
+>> +++ b/arch/x86/kvm/hyperv.c
+>> @@ -1847,11 +1847,11 @@ int kvm_vcpu_ioctl_get_hv_cpuid(struct kvm_vcpu *vcpu, struct kvm_cpuid2 *cpuid,
+>> 		case HYPERV_CPUID_ENLIGHTMENT_INFO:
+>> 			ent->eax |= HV_X64_REMOTE_TLB_FLUSH_RECOMMENDED;
+>> 			ent->eax |= HV_X64_APIC_ACCESS_RECOMMENDED;
+>> -			ent->eax |= HV_X64_SYSTEM_RESET_RECOMMENDED;
+>> 			ent->eax |= HV_X64_RELAXED_TIMING_RECOMMENDED;
+>> 			ent->eax |= HV_X64_CLUSTER_IPI_RECOMMENDED;
+>> 			ent->eax |= HV_X64_EX_PROCESSOR_MASKS_RECOMMENDED;
+>> -			ent->eax |= HV_X64_ENLIGHTENED_VMCS_RECOMMENDED;
+>> +			if (evmcs_ver)
+>> +				ent->eax |= HV_X64_ENLIGHTENED_VMCS_RECOMMENDED;
+>> 
+>> 			/*
+>> 			 * Default number of spinlock retry attempts, matches
+>> -- 
+>> 2.20.1
+>> 
+>
+> Seems to me that there are 2 unrelated separated patches here. Why not
+> split them?
 
-On 1/23/19 9:40 PM, Michael Ellerman wrote:
-> On Tue, 2019-01-08 at 21:00:10 UTC, "Gustavo A. R. Silva" wrote:
->> One of the more common cases of allocation size calculations is finding the
->> size of a structure that has a zero-sized array at the end, along with memory
->> for some number of elements for that array. For example:
->>
->> struct foo {
->>     int stuff;
->>     void *entry[];
->> };
->>
->> instance = kzalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
->>
->> Instead of leaving these open-coded and prone to type mistakes, we can now
->> use the new struct_size() helper:
->>
->> instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
->>
->> This code was detected with the help of Coccinelle.
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> 
-> Applied to powerpc next, thanks.
-> 
-> https://git.kernel.org/powerpc/c/31367b9a01d6a3f4f77694bd44f547d6
-> 
+They seem to be too small :-) No problem, I'll split them up in v2.
 
-Thanks, Michael.
+> For content itself: Reviewed-by: Liran Alon <liran.alon@oracle.com>
+>
 
---
-Gustavo
+Thanks!
+
+-- 
+Vitaly
