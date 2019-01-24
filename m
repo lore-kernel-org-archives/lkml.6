@@ -7,71 +7,70 @@ X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3B31C282C0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 01:19:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9765C282C0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 01:21:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F126217D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 01:19:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72A48217D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 01:21:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PoVJYaGN"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="e7epFr8B"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727170AbfAXBTu (ORCPT
+        id S1726997AbfAXBVe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 20:19:50 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:47098 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726786AbfAXBTt (ORCPT
+        Wed, 23 Jan 2019 20:21:34 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:39464 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726322AbfAXBVd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 20:19:49 -0500
-Received: by mail-lf1-f68.google.com with SMTP id f5so3030730lfc.13
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 17:19:48 -0800 (PST)
+        Wed, 23 Jan 2019 20:21:33 -0500
+Received: by mail-lj1-f194.google.com with SMTP id t9-v6so3720887ljh.6
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 17:21:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=sYOSbofglNAJWY1LRY85s+aLYj+xUOL7/6KVkUK+Pzw=;
-        b=PoVJYaGNEN/zJ/WXkOQ9cB6ZJJWR45k0RsxtgpejetNq9FcuMaAcmZ7ZUViEZkm12u
-         OhxyhkZtntz5lBG5RNKP6LuWQb9yXjYNODug+3WMF/1bg/4e+3DxjQnDDoQoSFVkJdY0
-         BCQQNuH6U1vdU1GOUjaQE5bRE3RETyWDRTIjw=
+        bh=iTHhqoL0KpN75j2es1CQvn5vBD0ICFGfp92qRcNHM9U=;
+        b=e7epFr8B3O/8owaemu6RyOVfVtS1rdFOJliBIJgaj2jWzJYqEEQUSro2bgA/hxqSS2
+         BZ4jwFoT6Com5CuAUG8etmSoBWTg3AjhVmtjwkYysh+3l/3C8XMZsMrzxdH41cJMrT/s
+         OHrEpr7ixplaEiIwcUOaWpaONtHTSbUrXWhrM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=sYOSbofglNAJWY1LRY85s+aLYj+xUOL7/6KVkUK+Pzw=;
-        b=UhvpRBlreRCdyhqeRM2Ol5Ly3buLUtfwtc2Ruy8wHMQo2+syh6lLiZFYst6La4uR83
-         CFivVaCbvVP1GrI8ArZagEg/DvHQwfHcS+l+O+x6+RdH7EgrONUnN2mQ0jUZmAZF5cZ/
-         os5j5AkgzI9WYBUdZOzkrzV3UX0MpZJ/nBQg4HY/3Ntr+MA4cRK3rdMc9a/QzYtVch4Q
-         nNwtrJwEYYTqiqeKn7kX7KNsX8yLDNgDQnycyhFcP8x2Enw2uvKqcqeMYhRWW6W827La
-         zoabLxK74l7xSfzILYLk7qLVejTA6+ToFrIonb+yKk757TRnKDzD/nVek37rzzgEDRHN
-         YvNA==
-X-Gm-Message-State: AJcUukdsqRSkUjy54Im0uQb+tJrAL9EnmxiWJJnMWu/s0iPXYW5XQcyb
-        JUDydeX/97RRIpLFE6BkV0EJ4vYe8/Q=
-X-Google-Smtp-Source: ALg8bN5ZHexTQhADLOsUda0ADSXH7QHk04ICvbF3qOfvp3YvE5XevWn5081dVFDkUoCOxneet2kgyw==
-X-Received: by 2002:a19:ee08:: with SMTP id g8mr3583943lfb.72.1548292787667;
-        Wed, 23 Jan 2019 17:19:47 -0800 (PST)
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
-        by smtp.gmail.com with ESMTPSA id 85-v6sm778581lja.16.2019.01.23.17.19.46
+        bh=iTHhqoL0KpN75j2es1CQvn5vBD0ICFGfp92qRcNHM9U=;
+        b=jvgql8CcuzuuihvAzPRqhEmSCyPcrRpcF43ADZHuvRMZxPct1zB3SrN7ZME8hh6qPD
+         HjqL97zpjh5Q/JH2yDr/Ed2s325Xo53S6pFPOmxnyuiaHnRzJ28+Vfma5KsJpKZqIeCy
+         bp+kR+54YarS41YFt6+TE6zn0oUoRSB/3eQhFakVWUC9w5ovHKw93ram+SYH6jM5Dyub
+         IvGlK0hqGappwjN3g83WErdQ1A4ITi/4f1OC5/fxXI1AAsja1Fwqzhc0g4yk/BWdhToD
+         R3PRBqNgVPlvydSLNALNJk/qbLUI1sFZvdVeEjHOxtEks+XisPBeBclp6JdoqwNkjfm3
+         mPSQ==
+X-Gm-Message-State: AJcUukfeMbdxOYRqFaxN4VjUkNac8jisI4dG9e5k5F31Xw3CRZ5I5Aa+
+        jXkPEIeOSpcrJZoTrUFQS9+VEZRUW/Y=
+X-Google-Smtp-Source: ALg8bN5DJVHuPCtj4on40f6o6/PIyjdtIa80BripZMHsmGP4/PzpBJQadakct6ATrZBT/BE8YCG3aQ==
+X-Received: by 2002:a2e:908b:: with SMTP id l11-v6mr3731585ljg.150.1548292890048;
+        Wed, 23 Jan 2019 17:21:30 -0800 (PST)
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
+        by smtp.gmail.com with ESMTPSA id h203sm733796lfe.44.2019.01.23.17.21.29
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 23 Jan 2019 17:19:46 -0800 (PST)
-Received: by mail-lf1-f46.google.com with SMTP id f5so3030691lfc.13
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 17:19:46 -0800 (PST)
-X-Received: by 2002:a19:a9d2:: with SMTP id s201mr3639684lfe.154.1548292785963;
- Wed, 23 Jan 2019 17:19:45 -0800 (PST)
+        Wed, 23 Jan 2019 17:21:29 -0800 (PST)
+Received: by mail-lj1-f170.google.com with SMTP id k15-v6so3717436ljc.8
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 17:21:29 -0800 (PST)
+X-Received: by 2002:a2e:990e:: with SMTP id v14-v6mr3810694lji.60.1548292888859;
+ Wed, 23 Jan 2019 17:21:28 -0800 (PST)
 MIME-Version: 1.0
-References: <1548138816-1149-1-git-send-email-alokc@codeaurora.org> <1548138816-1149-4-git-send-email-alokc@codeaurora.org>
-In-Reply-To: <1548138816-1149-4-git-send-email-alokc@codeaurora.org>
+References: <1548138816-1149-1-git-send-email-alokc@codeaurora.org> <1548138816-1149-5-git-send-email-alokc@codeaurora.org>
+In-Reply-To: <1548138816-1149-5-git-send-email-alokc@codeaurora.org>
 From:   Evan Green <evgreen@chromium.org>
-Date:   Wed, 23 Jan 2019 17:19:09 -0800
-X-Gmail-Original-Message-ID: <CAE=gft6dT0HXzrmberdGg2nS-hp1M68mzbxJyEBOmdrh5x1p1w@mail.gmail.com>
-Message-ID: <CAE=gft6dT0HXzrmberdGg2nS-hp1M68mzbxJyEBOmdrh5x1p1w@mail.gmail.com>
-Subject: Re: [PATCH 3/6] i2c: i2c-qcom-geni: Add interconnect support
+Date:   Wed, 23 Jan 2019 17:20:52 -0800
+X-Gmail-Original-Message-ID: <CAE=gft7+=k-KcN9pk1fRR8RuGkdskkJPzn70FFZjOhAyr_-9aQ@mail.gmail.com>
+Message-ID: <CAE=gft7+=k-KcN9pk1fRR8RuGkdskkJPzn70FFZjOhAyr_-9aQ@mail.gmail.com>
+Subject: Re: [PATCH 4/6] spi: spi-geni-qcom: Add interconnect support
 To:     Alok Chauhan <alokc@codeaurora.org>
 Cc:     linux-arm-msm <linux-arm-msm@vger.kernel.org>,
         devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
         linux-i2c@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-serial@vger.kernel.org,
-        Karthikeyan Ramasubramanian <kramasub@codeaurora.org>,
+        linux-serial@vger.kernel.org, Mark Brown <broonie@kernel.org>,
         Andy Gross <andy.gross@linaro.org>,
         David Brown <david.brown@linaro.org>,
         Georgi Djakov <georgi.djakov@linaro.org>,
@@ -86,33 +85,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Mon, Jan 21, 2019 at 10:34 PM Alok Chauhan <alokc@codeaurora.org> wrote:
 >
-> Get the interconnect paths for I2C based Serial Engine device
-> and vote accordingly based on maximum supported I2C frequency.
+> Get the interconnect paths for SPI based Serial Engine device
+> and vote accordingly based on maximum supported SPI frequency.
 >
 > Signed-off-by: Alok Chauhan <alokc@codeaurora.org>
 > ---
->  drivers/i2c/busses/i2c-qcom-geni.c | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
+>  drivers/spi/spi-geni-qcom.c | 20 +++++++++++++++++++-
+>  1 file changed, 19 insertions(+), 1 deletion(-)
 >
-> diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
-> index db075bc..e8fe63a 100644
-> --- a/drivers/i2c/busses/i2c-qcom-geni.c
-> +++ b/drivers/i2c/busses/i2c-qcom-geni.c
-> @@ -14,6 +14,7 @@
->  #include <linux/pm_runtime.h>
+> diff --git a/drivers/spi/spi-geni-qcom.c b/drivers/spi/spi-geni-qcom.c
+> index fdb7cb88..7bbbe9d 100644
+> --- a/drivers/spi/spi-geni-qcom.c
+> +++ b/drivers/spi/spi-geni-qcom.c
+> @@ -12,6 +12,7 @@
 >  #include <linux/qcom-geni-se.h>
+>  #include <linux/spi/spi.h>
 >  #include <linux/spinlock.h>
 > +#include <linux/interconnect.h>
+
+Sorted includes please, as mentioned by others.
+
 >
->  #define SE_I2C_TX_TRANS_LEN            0x26c
->  #define SE_I2C_RX_TRANS_LEN            0x270
-> @@ -508,6 +509,15 @@ static int geni_i2c_probe(struct platform_device *pdev)
->                 return ret;
->         }
+>  /* SPI SE specific registers and respective register fields */
+>  #define SE_SPI_CPHA            0x224
+> @@ -589,6 +590,15 @@ static int spi_geni_probe(struct platform_device *pdev)
+>         spin_lock_init(&mas->lock);
+>         pm_runtime_enable(&pdev->dev);
 >
 > +       /* Set the bus quota to a reasonable value */
-> +       gi2c->se.avg_bw = Bps_to_icc(1000);
-> +       gi2c->se.peak_bw = Bps_to_icc(76800000);
+> +       mas->se.avg_bw = Bps_to_icc(2500);
+> +       mas->se.peak_bw = Bps_to_icc(200000000);
 
-Can you compute a real bandwidth based on the i2c bus speed, rather
-than some max vote?
+Like the i2c case, can we compute real value based on clock speed?
