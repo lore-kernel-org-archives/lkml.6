@@ -2,93 +2,288 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00150C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:38:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A0E7C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:39:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1632218A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:38:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rwdQRNeh"
+	by mail.kernel.org (Postfix) with ESMTP id 0F1B22184C
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:39:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548347985;
+	bh=02NGMLa+UGqe2OdntmK10GUpEJzTaOSC6ubhzAgrGHQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=2hdSkae2sjNFaW6lGPeGJ3/iX8QEHAotG8j9us/YvF7TbNUJDHqaZoicClDqyFoa8
+	 HC47HuNxuIdgqRPbLPmITx6+rOq5cx9sI89+ne7g7hiOhe5fETiXwkxn+Rx/jefajI
+	 dM56gLzQekJTtXU70pabmxSBCSPYr0D95CkLsSHs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728784AbfAXQik (ORCPT
+        id S1728798AbfAXQjn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 11:38:40 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:43560 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726252AbfAXQik (ORCPT
+        Thu, 24 Jan 2019 11:39:43 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:46215 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727740AbfAXQjm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 11:38:40 -0500
-Received: by mail-pf1-f196.google.com with SMTP id w73so3236021pfk.10;
-        Thu, 24 Jan 2019 08:38:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=TWnz2BebD+itGPPRJAiL79afMiIId7AbrdNVBzKwVKU=;
-        b=rwdQRNehLJrUB6NzEvStL38UMdLW4QUfr3LPC/4texP7c6g/ufGtRr7Eq5L4xGavYk
-         XkuZ87ACPed+dxOhWqrrGiPQDwvNEysv40Cb7fISnhnmG6QUrtf9zr1vOySC7KcrISVq
-         43iJfekVkhCj2gRrdaHi1FfU14EGcLi0eRmJa1wr1uAtQOVioOaKKxM+1ag2pG1KE6Lu
-         DxXYLh0SutkprLqxSL4PWkJQh0wBp0onBDwJacvIuMXXrwZ+uKDV4v2Lpp1M87HxH22D
-         yIanzDpBPtLy6p8kEvbZau/alvjdTwcEEksbdxyx1dE9ANVP52YUyuG1zpFMT7QNTYyi
-         KYRQ==
+        Thu, 24 Jan 2019 11:39:42 -0500
+Received: by mail-lf1-f67.google.com with SMTP id f5so4752353lfc.13;
+        Thu, 24 Jan 2019 08:39:40 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=TWnz2BebD+itGPPRJAiL79afMiIId7AbrdNVBzKwVKU=;
-        b=o6u1z7z+Qus+8B1lXALzxBYcKiJRGBgyXvLLKoUHwCrdVXtZdrAB7kzeMV0vMI0P4c
-         0sIDu2Eyed/atfCVM7zR2+8cf5a7yySEi4rDM1jSOe7PkOMxE27Zno721zUIgTAX5PTa
-         uWFO5wZZ/hyOyG57uW73EDXiJw/r2IAJ/M31vpnaVJApUJNbUim83RR2fIGaXXrg7QG/
-         jcfpfpV8p1oTdOuU1X/yTbpkpDf4piYFu0M/5dXq7ilZDvP/VjosALdrdM+szuoc7EEB
-         LYPlZkhBW5k3dimKF5Da/s0esGWHt9AKBguc0OlKF1Q7GSjb4I0Iyg0q6PGNKw+PQNg5
-         4Vcw==
-X-Gm-Message-State: AJcUukekBj5Lt8aDfPlQ0Q0ksRZPkq/xu7fct+Q1WiUNwBF8lxtw+2wy
-        AsSsCz9wERxv0Qi9aA0q6MoPU/zoTdz4ll0JVBU=
-X-Google-Smtp-Source: ALg8bN5YgUtMMS5NwPaSd6ZiN/0oQTTo/U/o3XC7Og4DkFDSZq3nnRpidfDMZT+tsy3C/VCJzhM4Be0p8MUO33PenYw=
-X-Received: by 2002:a63:3287:: with SMTP id y129mr6555650pgy.337.1548347919934;
- Thu, 24 Jan 2019 08:38:39 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+Y34IIc+mJEvrbjqaY4E4xC6IKDtVzPiZETtzS4WMvQ=;
+        b=C9dz38pA3rQM3kUafpYMD8dBnKV0BBdlrlcDNVOAvTGpUAn+2MlOOf/Djt0gqENwdz
+         f5QcTKIhayAUU27caiouupcbnSeC8KcO8pFqIuhqfDXoIzW7ck6dxactxgB0Q1DefIq7
+         WnCd7cjjkxbAovqv3/5S4VepgsxICwR3/b59BKqApc6neEZ+BVyGgeni6FCyMcaIC0VO
+         ZMKQxzeJfxdwTeSp+nXQrww8ODzi92k+m7lRBtziL6jqbHwqV3N8MJOCtXlDXiZ483Pm
+         y7H7TUUaTK5EXxFui/q/sTahZ0kUGyioWlv6Ce+7lH8l/VwVeITx+ZHYORBvwGFHGYIG
+         G/Rw==
+X-Gm-Message-State: AJcUukeIUF8XcCllICwRVB7vOLfoW0EwYVse09D5Uvy7yuvFToKwaUF3
+        hVEbkIaRzMrQx/ZC3Pu1hPw=
+X-Google-Smtp-Source: ALg8bN5+k4egLfGBnXtqOpcUoeBPLL2bWHtQ3FHCU+XBFEwQ90ssYLn+1lXp1N01galYIpbg8H0k6A==
+X-Received: by 2002:a19:c4cc:: with SMTP id u195mr6170961lff.141.1548347979243;
+        Thu, 24 Jan 2019 08:39:39 -0800 (PST)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id e13-v6sm1067486ljk.53.2019.01.24.08.39.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 24 Jan 2019 08:39:38 -0800 (PST)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1gmi2O-0006iy-DW; Thu, 24 Jan 2019 17:39:33 +0100
+Date:   Thu, 24 Jan 2019 17:39:32 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, Alan Cox <alan@llwyncelyn.cymru>,
+        Jiri Slaby <jslaby@suse.cz>, Pavel Machek <pavel@ucw.cz>,
+        Peter Hurley <peter@hurleysoftware.com>,
+        Rob Herring <robh@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        linux-serial@vger.kernel.org,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 0/3] serdev support for n_gsm
+Message-ID: <20190124163932.GZ3691@localhost>
+References: <20190114012528.2367-1-tony@atomide.com>
+ <20190118115958.GA5532@kroah.com>
+ <20190121105735.GI3691@localhost>
+ <20190121170116.GA5544@atomide.com>
 MIME-Version: 1.0
-References: <20190110143051.52305-1-andriy.shevchenko@linux.intel.com>
- <20190121084732.GE18680@lst.de> <20190124121659.GH9224@smile.fi.intel.com>
- <6D748F08-F9F9-4DFB-84DF-63E97C691013@javigon.com> <CAHp75Vf4ndBaS6BjAM==7csYB9EYDvjV9jT9C6kioDryzb_HnQ@mail.gmail.com>
- <9E0FD459-75F2-4EF1-9310-8FCDF6F87604@javigon.com> <CAHp75Vfd=B-AP=7KNFiDU-qER9BjB0Qw9Lyp+hb8x94NfQiZyA@mail.gmail.com>
- <5FF168CC-9372-4DE5-BF62-DD3A2EE08384@javigon.com>
-In-Reply-To: <5FF168CC-9372-4DE5-BF62-DD3A2EE08384@javigon.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 24 Jan 2019 18:38:00 +0200
-Message-ID: <CAHp75Ve1BUr1hHWhhHfr0nLCzj0ERbocrn27K_r=mpePYppjtw@mail.gmail.com>
-Subject: Re: [PATCH v1] : Switch to use new generic UUID API
-To:     =?UTF-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        =?UTF-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>,
-        linux-block@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190121170116.GA5544@atomide.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 4:36 PM Javier Gonz=C3=A1lez <javier@javigon.com> w=
-rote:
+Hi Tony,
 
-> It is not pushed anywhere yet, but I have been working on a tool to make
-> a pblk recovery tool to enable FTL repairs if something fails in the
-> kernel recovery path. Here, I use this uuid to identify the
-> instance - is there a way to reconcile guid_t with user space, which
-> currently uses the __u8?
+and sorry about the reply latency. This is quite a lot to think about.
 
-For Linux there is util-linux which contains libuuid. There is uuid_t type.
-Unfortunately there is no so called LE (little endian) variant.
-Perhaps someone would need to extend the support for that.
+I'm also adding Kishon and Mark on CC (e.g. for the phy and ASoC bits).
 
---=20
-With Best Regards,
-Andy Shevchenko
+On Mon, Jan 21, 2019 at 09:01:16AM -0800, Tony Lindgren wrote:
+> Hi,
+> 
+> * Johan Hovold <johan@kernel.org> [190121 10:57]:
+> > Adding Marcel on CC.
+> > 
+> > On Fri, Jan 18, 2019 at 12:59:58PM +0100, Greg Kroah-Hartman wrote:
+> > > On Sun, Jan 13, 2019 at 05:25:25PM -0800, Tony Lindgren wrote:
+> > > > Hi all,
+> > > > 
+> > > > Here's a series of patches to add initial serdev support to n_gsm
+> > > > TS 27.010 line discipline.
+> > > > 
+> > > > This allows handling vendor specific protocols on top of TS 27.010 and
+> > > > allows creating simple serdev drivers where it makes sense. So far I've
+> > > > tested it with droid 4 for it's modem to provide char devices for AT
+> > > > ports, modem PM support, and serdev drivers for GNSS and Alsa ASoC.
+> > > > 
+> > > > I'll be posting the related MFD, GNSS and Alsa ASoC drivers separately.
+> > > > For reference, the MFD driver is at [0], the GNSS driver at [1], and
+> > > > the Alsa ASoC driver at [2] below.
+> > > 
+> > > I have applied the first two patches to my tree, as those are nice
+> > > cleanups.
+> > > 
+> > > The last one I want some feedback from the serdev developers to verify
+> > > all is set up properly, and Johan, to see if this ends up conflicting
+> > > with the gnss code, as that would not be good.
+> > 
+> > I think we need to have a discussion about how to model modems generally
+> > before getting into implementation details.
+> > 
+> > Modems are currently managed by user space (e.g. through ofono) and
+> > I'm not sure that moving only parts of its responsibilities into the
+> > kernel is necessarily the right thing to do. You still need coordination
+> > between the various components for things like power management.
+> 
+> At least now we do have the option of doing kernel drivers or user
+> space apps whichever way we want to :)
+> 
+> And we can now do the user space apps without having to implement
+> any of the Motorola custom packet numbering layer on top of TS 27.010
+> for each app.
+> 
+> For some user space examples, I have posted scripts to send and receive
+> SMS at [3], and Pavel has ofono patches [4] below. Seems like we can
+> also add support to ModemManager along the similar lines. And for the
+> serdev drivers, those implement standard Linux interfaces for apps
+> to use.
+> 
+> For PM, about a year ago I tried making things work with a user space
+> solution and it sucked big time[5]. The power management makes sense
+> to do in the kernel driver at least in this case as there are shared
+> GPIO pins between the USB PHY and TS 27.010 UART. The shared GPIOs
+> are handled by the phy-mapphone-mdm6600 driver.
+> 
+> With the serdev n_gsm MFD driver, the only thing that needs to be done
+> to idle the modem is to enable autosuspend for the OHCI interface. So
+> no spefific coordination between various components is needed for PM
+> beyond that. Things idle just fine using PM runtime.
+
+Yeah, I don't envy you trying to get this to work (and now I'm getting
+dragged into it ;) ).
+
+It would really help with a high-level outline of the modem and its
+components. I've done my best to derive it from these patches and the
+code you link to, but that info needs to go in the patch descriptions
+(or cover letter).
+
+This series adds a new interface (gsm_serdev) but no users, which is not
+something we normally accept. I think you need to post the lot, at least
+as an RFC in order for the full picture to be visible.
+
+Similarly, including an example device tree would also help with the
+overall picture. I've been able to derive the following (from your code
+and already merged phy driver binding doc):
+
+   	mdm6600_phy: usb-phy {
+		compatible = "motorola,mapphone-mdm6600";
+		enable-gpios = <&gpio3 31 GPIO_ACTIVE_LOW>;
+		power-gpios = <&gpio2 22 GPIO_ACTIVE_HIGH>;
+		reset-gpios = <&gpio2 17 GPIO_ACTIVE_HIGH>;
+		motorola,mode-gpios = <&gpio5 20 GPIO_ACTIVE_HIGH>,
+				      <&gpio5 21 GPIO_ACTIVE_HIGH>;
+		motorola,cmd-gpios = <&gpio4 7 GPIO_ACTIVE_HIGH>,
+				     <&gpio4 8 GPIO_ACTIVE_HIGH>,
+				     <&gpio5 14 GPIO_ACTIVE_HIGH>;
+		motorola,status-gpios = <&gpio2 20 GPIO_ACTIVE_HIGH>,
+					<&gpio2 21 GPIO_ACTIVE_HIGH>,
+					<&gpio2 23 GPIO_ACTIVE_HIGH>;
+		#phy-cells = <0>;
+	};
+
+	&uart {
+		gsm-mux? {
+			compatible = "motorola,mapphone-mdm6600-serdev";
+			phy = <&mdm6600_phy>;
+
+			gnss {
+				compatible = "motorola,mapphone-mdm6600-gnss";
+			};
+
+			audio-codec {
+
+			};
+		};
+	};
+
+	&ohci {
+		phys = <&mdm6600_phy>;
+	};
+
+Which brings us back to the question of how to model modems. You've
+already added a phy-driver for something which really is some sort of
+modem representation.
+
+I'm not saying I have a solution for this, but again, I think this needs
+to be discussed before merging more code.
+
+> > TS 27.010 may make it seem like we can move everything into the kernel,
+> > but Tony's to-be-posted Motorola MFD driver is still exposing character
+> > devices for most of the muxed ports. If I understand things correctly,
+> > there also still needs to be some coordination with USB over which some
+> > channels are handled (e.g. IP over USB, gnss over muxed UART).
+> 
+> Hmm yes now we can do either user space daemons or kernel serdev
+> drivers.
+> 
+> For USB, the modem data connection already works with USB OHCI over
+> QMI. So it's is already handled and separated out of this. The USB
+> PHY and TS 27.010 UART have shared GPIO pins handled by the USB PHY
+> driver. The USB PHY is integrated into the modem with the shared
+> GPIO pins controlling the PHY and the TS 27.010 UART PM..
+> But it's working for PM and like I mentioned modem PM works as long
+> as OHCI is set to autosuspend. Well the modem also wants to see
+> TS 27.010 connected before idling.
+> 
+> > Instead of adding these extra layers, only to export most ports to user
+> > space again, it may be better to hook into the various kernel subsystems
+> > through dedicated user-space-implementation interfaces such as the
+> > suggested ugnss interface, which means that user space feeds gnss data
+> > into the kernel which in turn makes it available through a standard
+> > interface.
+> 
+> Sure that's doable. But notice that we actually need to kick the
+> serdev GNSS interface to get more data. It's not a passive GNSS
+> data feed in this case. So it's not going to be just a case of
+> cat /dev/motmdm4 > /dev/ugnss. Without the serdev GNSS driver,
+> it would be some-custom-app -i /dev/motmdm4 -o /dev/ugnss.
+
+Yeah, I remember us discussing that briefly off list.
+ 
+> And without the n_gsm serdev support, it's a mess of some app
+> similar to [5] initializing n_gsm, trying to deal with the USB
+> PHY PM, dealing with Motorola custom packet numbering, kicking
+> GNSS device, feeding data to /dev/ugnss. Hmm I think I've already
+> been there just to be able to type AT commands to the modem and
+> it did not work :)
+
+It's a mess indeed, but I'd rather see user-space dealing with until we
+figure out how best to do it in the kernel. ;)
+
+> Anyways, for the serdev kernel drivers, the criteria I've tried
+> to follow is: "Can this serdev device driver make user space
+> apps use standard Linux interfaces for the hardware?"
+> 
+> So for the serdev Alsa ASoC driver, user space can use the standard
+> Alsa interface for setting voice call volume. And for the serdev
+> GNSS driver, user space can use /dev/gnss0.
+
+I understand. Both drivers appears to be using AT commands for control.
+It would be interesting to hear what Mark has to say about the codec
+driver too. Moving AT handling into the kernel scares me a bit. If we
+already have a telephony stack to deal with it in user-space, my
+inclination is to let it continue to handle it.
+
+Modem-managed GNSS is also different from receivers connected directly
+to the host. It's really the modem that drives the GNSS receiver, and
+offers a higher-level interface to the host, for example, by buffering
+output which the host can later request. It may or may not be the
+kernel's job to periodically poll the modem to recreate an NMEA feed so
+to speak.
+
+But the end-result of having it accessible through a standard interface
+is of course appealing.
+
+
+I have some more comments on the gsm_serdev interface and motorola mfd,
+but let's start with the above.
+
+Johan
+
+
+> [0] https://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap.git/tree/drivers/mfd/motorola-mdm.c?h=droid4-pending-mdm-v4.20
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap.git/tree/drivers/gnss/motmdm.c?h=droid4-pending-mdm-v4.20
+> [2] https://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap.git/tree/sound/soc/codecs/motmdm.c?h=droid4-pending-mdm-v4.20
+> [3] https://github.com/tmlind/droid4-sms-tools
+> [4] https://github.com/pavelmachek/ofono
+> [5] https://github.com/tmlind/droid4-ngsm
