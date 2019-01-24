@@ -2,103 +2,143 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6816BC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 07:16:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44189C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 07:19:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 442BE21872
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 07:16:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14D7A21872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 07:19:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726784AbfAXHQm (ORCPT
+        id S1726107AbfAXHTE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 02:16:42 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:33564 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725939AbfAXHQl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 02:16:41 -0500
-Received: by mail-lj1-f194.google.com with SMTP id v1-v6so4312453ljd.0;
-        Wed, 23 Jan 2019 23:16:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LP/avWTvepn7HWKvKZScd337ZUBQpptaYWJEMiVqdw8=;
-        b=gXJSjKawLFyKSxMu9knPi8OeEYEt0k2X6LsvZ1rZVf6IoOiIrFdHmGxLWl+nalbF9E
-         8P9yoaPTSq4rbiMLoQ5aeq/MEhHGj6cjv3xA6gVufILow/qmvTrPiyYksrwgkChKw+u9
-         N4qp/riF2+VYpO4/7j+VrGHYjf9WwFC2YoAHf/4kmBfbMoIOJJij0x3emBSgerFtaMZc
-         EEr0B16UFi7zHnqwo5JZ9tdS4DHTg2X515AcAIvJL72hUw4aGnsec9k6JAbYgBqs2ig+
-         lnQ+QwLUOi7Y4Rgmg42JHcSpJtauJjf/e6lPeQ3nArf8cFfT2T1/4WmEtDh66fr9CTbp
-         TOYA==
-X-Gm-Message-State: AJcUukfad0myvBk+qrCjFIg6GEb7J0metZRHnyU3qFTAQsOB4MSMSiUj
-        c1Z2ZH551pUGfsgDWtSGWak=
-X-Google-Smtp-Source: ALg8bN6YVI1nDjTAHHQcPyrvgygWgP0Klv2vOk1tt7ZLHPFyNSvEzs1wFzosiQXasyg74B91Vn9/IQ==
-X-Received: by 2002:a2e:5b1d:: with SMTP id p29-v6mr4369103ljb.176.1548314198679;
-        Wed, 23 Jan 2019 23:16:38 -0800 (PST)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id p10-v6sm849502ljh.59.2019.01.23.23.16.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 23 Jan 2019 23:16:37 -0800 (PST)
-Date:   Thu, 24 Jan 2019 09:16:35 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     mazziesaccount@gmail.com, lee.jones@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, lgirdwood@gmail.com,
-        gregkh@linuxfoundation.org, rafael@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        sre@kernel.org, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
-        linux@roeck-us.net, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: Re: [RFC PATCH v1 03/13] regulator: bd718x7 use chip specific and
- generic data structs
-Message-ID: <20190124071635.GE2559@localhost.localdomain>
-References: <cover.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
- <3fb3eab3a8a2767404588d0a0a531273fddfc659.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
- <20190123155121.GB7503@sirena.org.uk>
+        Thu, 24 Jan 2019 02:19:04 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:60602 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725931AbfAXHTE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 02:19:04 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id BD867D928E56315E96BE;
+        Thu, 24 Jan 2019 15:19:01 +0800 (CST)
+Received: from szvp000201624.huawei.com (10.120.216.130) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.408.0; Thu, 24 Jan 2019 15:18:53 +0800
+From:   Chao Yu <yuchao0@huawei.com>
+To:     <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: fix to check inline_xattr_size boundary correctly
+Date:   Thu, 24 Jan 2019 15:18:47 +0800
+Message-ID: <20190124071847.114407-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190123155121.GB7503@sirena.org.uk>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Mark,
+We use below condition to check inline_xattr_size boundary:
 
-Thanks again for looking through my changes =)
+	if (!F2FS_OPTION(sbi).inline_xattr_size ||
+		F2FS_OPTION(sbi).inline_xattr_size >=
+				DEF_ADDRS_PER_INODE -
+				F2FS_TOTAL_EXTRA_ATTR_SIZE -
+				DEF_INLINE_RESERVED_SIZE -
+				DEF_MIN_INLINE_SIZE)
 
-On Wed, Jan 23, 2019 at 03:51:21PM +0000, Mark Brown wrote:
-> On Tue, Jan 22, 2019 at 11:43:28AM +0200, Matti Vaittinen wrote:
-> > Header rohm-bd718x7.h was split to generic and component specific
-> > parts. This changed the struct bd718x7. Adapt the regulator driver to
-> > these changes.
-> 
-> Acked-by: Mark Brown <broonie@kernel.org>
-> 
-> Does this need to be squashed into the earlier commit for bisection?
+There is there problems in that check:
+- we should allow inline_xattr_size equaling to min size of inline
+{data,dentry} area.
+- F2FS_TOTAL_EXTRA_ATTR_SIZE and inline_xattr_size are based on
+different size unit, previous one is 4 bytes, latter one is 1 bytes.
+- DEF_MIN_INLINE_SIZE only indicate min size of inline data area,
+however, we need to consider min size of inline dentry area as well,
+minimal inline dentry should at least contain two entries: '.' and
+'..', so that min inline_dentry size is 40 bytes.
 
-Yes. If we don't want to break the compilation between commits then
-the patches 2, 3 and 4 should be squashed into one. I sent them as
-separare changes for easier review. I can squash them and send them
-squashed if they are Ok to Lee and Stephen. Please just let me know
-whose tree I should use as the basis so I can do rebasing if needed.
-(Or is there some better way to do changes like this?)
+.bitmap		1 * 1 = 1
+.reserved	1 * 1 = 1
+.dentry		11 * 2 = 22
+.filename	8 * 2 = 16
+total		40
 
-Br,
-	Matti Vaittinen 
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/f2fs.h          |  1 -
+ fs/f2fs/super.c         | 10 +++++-----
+ include/linux/f2fs_fs.h | 13 +++++++------
+ 3 files changed, 12 insertions(+), 12 deletions(-)
 
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index dc8498e3d03c..88faf36badaf 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -458,7 +458,6 @@ struct f2fs_flush_device {
+ 
+ /* for inline stuff */
+ #define DEF_INLINE_RESERVED_SIZE	1
+-#define DEF_MIN_INLINE_SIZE		1
+ static inline int get_extra_isize(struct inode *inode);
+ static inline int get_inline_xattr_addrs(struct inode *inode);
+ #define MAX_INLINE_DATA(inode)	(sizeof(__le32) *			\
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index a212ae2aac7c..7e5312e4bc85 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -863,11 +863,11 @@ static int parse_options(struct super_block *sb, char *options)
+ 			return -EINVAL;
+ 		}
+ 		if (!F2FS_OPTION(sbi).inline_xattr_size ||
+-			F2FS_OPTION(sbi).inline_xattr_size >=
+-					DEF_ADDRS_PER_INODE -
+-					F2FS_TOTAL_EXTRA_ATTR_SIZE -
+-					DEF_INLINE_RESERVED_SIZE -
+-					DEF_MIN_INLINE_SIZE) {
++			F2FS_OPTION(sbi).inline_xattr_size >
++				DEF_ADDRS_PER_INODE -
++				F2FS_TOTAL_EXTRA_ATTR_SIZE / sizeof(__le32) -
++				DEF_INLINE_RESERVED_SIZE -
++				MIN_INLINE_DENTRY_SIZE / sizeof(__le32)) {
+ 			f2fs_msg(sb, KERN_ERR,
+ 					"inline xattr size is out of range");
+ 			return -EINVAL;
+diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+index d7711048ef93..c524ad7d31da 100644
+--- a/include/linux/f2fs_fs.h
++++ b/include/linux/f2fs_fs.h
+@@ -489,12 +489,12 @@ typedef __le32	f2fs_hash_t;
+ 
+ /*
+  * space utilization of regular dentry and inline dentry (w/o extra reservation)
+- *		regular dentry			inline dentry
+- * bitmap	1 * 27 = 27			1 * 23 = 23
+- * reserved	1 * 3 = 3			1 * 7 = 7
+- * dentry	11 * 214 = 2354			11 * 182 = 2002
+- * filename	8 * 214 = 1712			8 * 182 = 1456
+- * total	4096				3488
++ *		regular dentry		inline dentry (def)	inline dentry (min)
++ * bitmap	1 * 27 = 27		1 * 23 = 23		1 * 1 = 1
++ * reserved	1 * 3 = 3		1 * 7 = 7		1 * 1 = 1
++ * dentry	11 * 214 = 2354		11 * 182 = 2002		11 * 2 = 22
++ * filename	8 * 214 = 1712		8 * 182 = 1456		8 * 2 = 16
++ * total	4096			3488			40
+  *
+  * Note: there are more reserved space in inline dentry than in regular
+  * dentry, when converting inline dentry we should handle this carefully.
+@@ -506,6 +506,7 @@ typedef __le32	f2fs_hash_t;
+ #define SIZE_OF_RESERVED	(PAGE_SIZE - ((SIZE_OF_DIR_ENTRY + \
+ 				F2FS_SLOT_LEN) * \
+ 				NR_DENTRY_IN_BLOCK + SIZE_OF_DENTRY_BITMAP))
++#define MIN_INLINE_DENTRY_SIZE		40	/* just include '.' and '..' entries */
+ 
+ /* One directory entry slot representing F2FS_SLOT_LEN-sized file name */
+ struct f2fs_dir_entry {
 -- 
-Matti Vaittinen
-ROHM Semiconductors
+2.18.0.rc1
 
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
