@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C20FC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:41:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE673C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:42:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B09520663
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:41:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F361218A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:42:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358917;
-	bh=6wwZ6IAFztVfAaStlTFIdP/crCV0eZcneVprfyC1S4w=;
+	s=default; t=1548358920;
+	bh=mFo8k6uNPilubPRW7Tv4K1psNiY7oGR+H9EaGvdHh08=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zWTFUNEpIVe4LBWEgMeo6lT3E4o2apTeXdmbxAjnIsc9LerhRQRetGqUlI9Lq9Mrf
-	 zATUzgawBDymzCNhI2hVr2OIVNMp3mAt9B70YL7AVgMmQmHy82RJLaMgk0gpV5ZvCm
-	 xjjC2WLg/B0AORk6tVKJ7gQH4SDKvCl7L+uwJYKY=
+	b=R0JQb47k9JWCepAMIAcW4br143OaZxu02eTarxo63yDKLLtgVJ9vpjaLpCDDsoPYx
+	 yjUbcv1Lp5YD976n03I9l6CHTmWBz8A7f1H+t9efg3cR48dh/ZvwsxqrsZ+vCqQD9W
+	 K0PfdzmnwEigFKs56AZBsb8z1AdeJyrH6Li036Gk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387687AbfAXTlz (ORCPT
+        id S2387695AbfAXTl6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:41:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42236 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:41:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42302 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387677AbfAXTlx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:41:53 -0500
+        id S2387689AbfAXTl4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:41:56 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 36153218D0;
-        Thu, 24 Jan 2019 19:41:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 017B8218D9;
+        Thu, 24 Jan 2019 19:41:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358912;
-        bh=6wwZ6IAFztVfAaStlTFIdP/crCV0eZcneVprfyC1S4w=;
+        s=default; t=1548358915;
+        bh=mFo8k6uNPilubPRW7Tv4K1psNiY7oGR+H9EaGvdHh08=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2Pz1Te4W7PxWjTfbdWPxrWTpsEv0GkdauVKUqEWNdJWqwv7UYGSx4R3yQX7gRFyJP
-         lNJq3PRs7+tNkW6OWZUn/ZQNfUaFjJfY56/szTvdsrlthWHYSAYW9lWrk45M+ucCuv
-         9YFFRFQPHE9QkeJMfb5/oxK1gepP860La6MOPcj4=
+        b=O1fiympOhjOAK73b382GbG+UZWKGE9ZqyfPJBVxAp2jvbu3+el0ztezomZNqdeHLF
+         v6F+4BH2fiCSqkKz6dzVhYTbN0wkvktjSUmhjnbSsTB36+KCtRDreLqnjqn+VyOtFf
+         IfQP98oPmWbrwhk2yC9Bmc6dcqQdSTLN0xTb/kBk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
-        Dong Aisheng <Aisheng.dong@nxp.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 069/127] clk: imx6q: reset exclusive gates on init
-Date:   Thu, 24 Jan 2019 20:20:15 +0100
-Message-Id: <20190124190215.125375116@linuxfoundation.org>
+Subject: [PATCH 4.20 070/127] arm64: Fix minor issues with the dcache_by_line_op macro
+Date:   Thu, 24 Jan 2019 20:20:16 +0100
+Message-Id: <20190124190215.160444577@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
 References: <20190124190211.984305387@linuxfoundation.org>
@@ -67,42 +67,112 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit f7542d817733f461258fd3a47d77da35b2d9fc81 ]
+[ Upstream commit 33309ecda0070506c49182530abe7728850ebe78 ]
 
-The exclusive gates may be set up in the wrong way by software running
-before the clock driver comes up. In that case the exclusive setup is
-locked in its initial state, as the complementary function can't be
-activated without disabling the initial setup first.
+The dcache_by_line_op macro suffers from a couple of small problems:
 
-To avoid this lock situation, reset the exclusive gates to the off
-state and allow the kernel to provide the proper setup.
+First, the GAS directives that are currently being used rely on
+assembler behavior that is not documented, and probably not guaranteed
+to produce the correct behavior going forward. As a result, we end up
+with some undefined symbols in cache.o:
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-Reviewed-by: Dong Aisheng <Aisheng.dong@nxp.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+$ nm arch/arm64/mm/cache.o
+         ...
+         U civac
+         ...
+         U cvac
+         U cvap
+         U cvau
+
+This is due to the fact that the comparisons used to select the
+operation type in the dcache_by_line_op macro are comparing symbols
+not strings, and even though it seems that GAS is doing the right
+thing here (undefined symbols by the same name are equal to each
+other), it seems unwise to rely on this.
+
+Second, when patching in a DC CVAP instruction on CPUs that support it,
+the fallback path consists of a DC CVAU instruction which may be
+affected by CPU errata that require ARM64_WORKAROUND_CLEAN_CACHE.
+
+Solve these issues by unrolling the various maintenance routines and
+using the conditional directives that are documented as operating on
+strings. To avoid the complexity of nested alternatives, we move the
+DC CVAP patching to __clean_dcache_area_pop, falling back to a branch
+to __clean_dcache_area_poc if DCPOP is not supported by the CPU.
+
+Reported-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Suggested-by: Robin Murphy <robin.murphy@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/imx/clk-imx6q.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ arch/arm64/include/asm/assembler.h | 30 ++++++++++++++++++------------
+ arch/arm64/mm/cache.S              |  3 +++
+ 2 files changed, 21 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
-index bbe0c60f4d09..59f6a3e087db 100644
---- a/drivers/clk/imx/clk-imx6q.c
-+++ b/drivers/clk/imx/clk-imx6q.c
-@@ -508,8 +508,12 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
- 	 * lvds1_gate and lvds2_gate are pseudo-gates.  Both can be
- 	 * independently configured as clock inputs or outputs.  We treat
- 	 * the "output_enable" bit as a gate, even though it's really just
--	 * enabling clock output.
-+	 * enabling clock output. Initially the gate bits are cleared, as
-+	 * otherwise the exclusive configuration gets locked in the setup done
-+	 * by software running before the clock driver, with no way to change
-+	 * it.
- 	 */
-+	writel(readl(base + 0x160) & ~0x3c00, base + 0x160);
- 	clk[IMX6QDL_CLK_LVDS1_GATE] = imx_clk_gate_exclusive("lvds1_gate", "lvds1_sel", base + 0x160, 10, BIT(12));
- 	clk[IMX6QDL_CLK_LVDS2_GATE] = imx_clk_gate_exclusive("lvds2_gate", "lvds2_sel", base + 0x160, 11, BIT(13));
- 
+diff --git a/arch/arm64/include/asm/assembler.h b/arch/arm64/include/asm/assembler.h
+index 6142402c2eb4..08b216c200c9 100644
+--- a/arch/arm64/include/asm/assembler.h
++++ b/arch/arm64/include/asm/assembler.h
+@@ -377,27 +377,33 @@ alternative_endif
+  * 	size:		size of the region
+  * 	Corrupts:	kaddr, size, tmp1, tmp2
+  */
++	.macro __dcache_op_workaround_clean_cache, op, kaddr
++alternative_if_not ARM64_WORKAROUND_CLEAN_CACHE
++	dc	\op, \kaddr
++alternative_else
++	dc	civac, \kaddr
++alternative_endif
++	.endm
++
+ 	.macro dcache_by_line_op op, domain, kaddr, size, tmp1, tmp2
+ 	dcache_line_size \tmp1, \tmp2
+ 	add	\size, \kaddr, \size
+ 	sub	\tmp2, \tmp1, #1
+ 	bic	\kaddr, \kaddr, \tmp2
+ 9998:
+-	.if	(\op == cvau || \op == cvac)
+-alternative_if_not ARM64_WORKAROUND_CLEAN_CACHE
+-	dc	\op, \kaddr
+-alternative_else
+-	dc	civac, \kaddr
+-alternative_endif
+-	.elseif	(\op == cvap)
+-alternative_if ARM64_HAS_DCPOP
+-	sys 3, c7, c12, 1, \kaddr	// dc cvap
+-alternative_else
+-	dc	cvac, \kaddr
+-alternative_endif
++	.ifc	\op, cvau
++	__dcache_op_workaround_clean_cache \op, \kaddr
++	.else
++	.ifc	\op, cvac
++	__dcache_op_workaround_clean_cache \op, \kaddr
++	.else
++	.ifc	\op, cvap
++	sys	3, c7, c12, 1, \kaddr	// dc cvap
+ 	.else
+ 	dc	\op, \kaddr
+ 	.endif
++	.endif
++	.endif
+ 	add	\kaddr, \kaddr, \tmp1
+ 	cmp	\kaddr, \size
+ 	b.lo	9998b
+diff --git a/arch/arm64/mm/cache.S b/arch/arm64/mm/cache.S
+index 0c22ede52f90..a194fd0e837f 100644
+--- a/arch/arm64/mm/cache.S
++++ b/arch/arm64/mm/cache.S
+@@ -212,6 +212,9 @@ ENDPROC(__dma_clean_area)
+  *	- size    - size in question
+  */
+ ENTRY(__clean_dcache_area_pop)
++	alternative_if_not ARM64_HAS_DCPOP
++	b	__clean_dcache_area_poc
++	alternative_else_nop_endif
+ 	dcache_by_line_op cvap, sy, x0, x1, x2, x3
+ 	ret
+ ENDPIPROC(__clean_dcache_area_pop)
 -- 
 2.19.1
 
