@@ -2,136 +2,74 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD5FAC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:48:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CAD6C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:48:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E384217D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:48:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C75A217D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:48:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359294;
-	bh=EnJKoThZKVq2F7uNjGda6Mlw82sJKlDx7JqCRa5V9lM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LTZ9caIRIuTb885o7JBvhmbFVt3h5kPS/S4oRtpEHZLcjIqhSyJid9SBIHYkcvVh+
-	 G/sk2klYb5djGw6HLtn5CSSGqbdAP/B+AQXIndPMqupfojoib7DywISdh9p5gQrZva
-	 nnZ0KJlKqPdVI39ZLif/GLft6vdUiGnAh6Y0G4Js=
+	s=default; t=1548359297;
+	bh=hUqTa21bLX778Lsa3+rWu7OXNXuJoqhQ2OILhGQE42A=;
+	h=Subject:References:Cc:From:In-Reply-To:To:Date:List-ID:From;
+	b=mFlPLjy9IF3Gng+OYJJoH7Jsmp7nSINm/5OQxo/QnXy2wpCKHag9h89/0tn4p3Is1
+	 Z4LtcSWP7uhqCVahhJfxMG0630y+vsaqltA4L5HoJl2r9yleDhuEyXVULfeafBci7Y
+	 xaqRzQlu3Bkfv4LD9S9tFDU4fHkGoffhEzl3Np/w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733284AbfAXTsN (ORCPT
+        id S2387542AbfAXTsP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:48:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42754 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:48:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42738 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387749AbfAXTmS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:42:18 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        id S1733246AbfAXTmR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:42:17 -0500
+Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B92E7218D9;
+        by mail.kernel.org (Postfix) with ESMTPSA id A4E46218A2;
         Thu, 24 Jan 2019 19:42:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358937;
-        bh=EnJKoThZKVq2F7uNjGda6Mlw82sJKlDx7JqCRa5V9lM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wHL7XykTQBzEYYoN7yPsEWYrVcxhHB09e088gHVQJnFx9SCT6TtYaRtP5usIEVd/0
-         JZfiknw2nygOl1m0i+2fO7fBnAKa/1IEdGrre2l1DdSR9Sqqse6Z/Tu1bXvzqEFrn7
-         YoXuNC0Q3fPfjZDyKtiLCfx+eb8XZtrZJRXOA0k4=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 034/127] arm64: perf: set suppress_bind_attrs flag to true
-Date:   Thu, 24 Jan 2019 20:19:40 +0100
-Message-Id: <20190124190213.750195235@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
-References: <20190124190211.984305387@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        s=default; t=1548358936;
+        bh=hUqTa21bLX778Lsa3+rWu7OXNXuJoqhQ2OILhGQE42A=;
+        h=Subject:References:Cc:From:In-Reply-To:To:Date:From;
+        b=BDugm4KXJbH4/M3rFgYt69DXGA2+iNiJ6q1EOIbpm63LSSCtSEeM2+AFlET2WgtkP
+         jsV5AFEEm8aQuTuP1zIwcikt2cmT8ReW9NPFu4LGngGpA+3+lG+rrbDLM+1v3jTnZm
+         tFtPNd0/ZxDrDlYBDxdkQgJEKw2yiruu5p28qmLc=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v1] clk: qcom: gcc: Use active only source for CPUSS clocks
+References: <1545157181-27095-1-git-send-email-tdas@codeaurora.org>
+User-Agent: alot/0.8
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1545157181-27095-1-git-send-email-tdas@codeaurora.org>
+Message-ID: <154835893585.136743.15387541783447066348@swboyd.mtv.corp.google.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>
+Date:   Thu, 24 Jan 2019 11:42:15 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.20-stable review patch.  If anyone has any objections, please let me know.
+Quoting Taniya Das (2018-12-18 10:19:41)
+> The clocks of the CPUSS such as "gcc_cpuss_ahb_clk_src" is a CRITICAL
+> clock and needs to vote on the active only source of XO, so as to keep the
+> vote as long as CPUSS is active. Similar rbcpr_clk_src is also has the sa=
+me
+> requirement.
+>=20
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> ---
 
-------------------
-
-[ Upstream commit 81e9fa8bab381f8b6eb04df7cdf0f71994099bd4 ]
-
-The armv8_pmuv3 driver doesn't have a remove function, and when the test
-'CONFIG_DEBUG_TEST_DRIVER_REMOVE=y' is enabled, the following Call trace
-can be seen.
-
-[    1.424287] Failed to register pmu: armv8_pmuv3, reason -17
-[    1.424870] WARNING: CPU: 0 PID: 1 at ../kernel/events/core.c:11771 perf_event_sysfs_init+0x98/0xdc
-[    1.425220] Modules linked in:
-[    1.425531] CPU: 0 PID: 1 Comm: swapper/0 Tainted: G        W         4.19.0-rc7-next-20181012-00003-ge7a97b1ad77b-dirty #35
-[    1.425951] Hardware name: linux,dummy-virt (DT)
-[    1.426212] pstate: 80000005 (Nzcv daif -PAN -UAO)
-[    1.426458] pc : perf_event_sysfs_init+0x98/0xdc
-[    1.426720] lr : perf_event_sysfs_init+0x98/0xdc
-[    1.426908] sp : ffff00000804bd50
-[    1.427077] x29: ffff00000804bd50 x28: ffff00000934e078
-[    1.427429] x27: ffff000009546000 x26: 0000000000000007
-[    1.427757] x25: ffff000009280710 x24: 00000000ffffffef
-[    1.428086] x23: ffff000009408000 x22: 0000000000000000
-[    1.428415] x21: ffff000009136008 x20: ffff000009408730
-[    1.428744] x19: ffff80007b20b400 x18: 000000000000000a
-[    1.429075] x17: 0000000000000000 x16: 0000000000000000
-[    1.429418] x15: 0000000000000400 x14: 2e79726f74636572
-[    1.429748] x13: 696420656d617320 x12: 656874206e692065
-[    1.430060] x11: 6d616e20656d6173 x10: 2065687420687469
-[    1.430335] x9 : ffff00000804bd50 x8 : 206e6f7361657220
-[    1.430610] x7 : 2c3376756d705f38 x6 : ffff00000954d7ce
-[    1.430880] x5 : 0000000000000000 x4 : 0000000000000000
-[    1.431226] x3 : 0000000000000000 x2 : ffffffffffffffff
-[    1.431554] x1 : 4d151327adc50b00 x0 : 0000000000000000
-[    1.431868] Call trace:
-[    1.432102]  perf_event_sysfs_init+0x98/0xdc
-[    1.432382]  do_one_initcall+0x6c/0x1a8
-[    1.432637]  kernel_init_freeable+0x1bc/0x280
-[    1.432905]  kernel_init+0x18/0x160
-[    1.433115]  ret_from_fork+0x10/0x18
-[    1.433297] ---[ end trace 27fd415390eb9883 ]---
-
-Rework to set suppress_bind_attrs flag to avoid removing the device when
-CONFIG_DEBUG_TEST_DRIVER_REMOVE=y, since there's no real reason to
-remove the armv8_pmuv3 driver.
-
-Cc: Arnd Bergmann <arnd@arndb.de>
-Co-developed-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/arm64/kernel/perf_event.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/kernel/perf_event.c b/arch/arm64/kernel/perf_event.c
-index e213f8e867f6..8a91ac067d44 100644
---- a/arch/arm64/kernel/perf_event.c
-+++ b/arch/arm64/kernel/perf_event.c
-@@ -1274,6 +1274,7 @@ static struct platform_driver armv8_pmu_driver = {
- 	.driver		= {
- 		.name	= ARMV8_PMU_PDEV_NAME,
- 		.of_match_table = armv8_pmu_of_device_ids,
-+		.suppress_bind_attrs = true,
- 	},
- 	.probe		= armv8_pmu_device_probe,
- };
--- 
-2.19.1
-
-
+Applied to clk-fixes + added a Fixes tag.
 
