@@ -2,111 +2,131 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 036BCC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:39:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7312C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:39:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC079218AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:39:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4D7121872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:39:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=rydal-org.20150623.gappssmtp.com header.i=@rydal-org.20150623.gappssmtp.com header.b="RJ+akumZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729101AbfAXRj0 (ORCPT
+        id S1729116AbfAXRjx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 12:39:26 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:43637 "EHLO
+        Thu, 24 Jan 2019 12:39:53 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36471 "EHLO
         mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728134AbfAXRjZ (ORCPT
+        with ESMTP id S1728134AbfAXRjw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 12:39:25 -0500
-Received: by mail-wr1-f65.google.com with SMTP id r10so7403492wrs.10
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 09:39:24 -0800 (PST)
+        Thu, 24 Jan 2019 12:39:52 -0500
+Received: by mail-wr1-f65.google.com with SMTP id u4so7443613wrp.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 09:39:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rydal-org.20150623.gappssmtp.com; s=20150623;
+        h=subject:references:to:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-transfer-encoding:content-language;
+        bh=L7e8uvGltUrkZabQxuZGKsrr86dgVMdBKYMIiDAJleY=;
+        b=RJ+akumZSoy7kSyUgEp6kMLvGXjs2idSj6pm5Z9YuJuVCAfAnYHQBhLmgyiu+0l2Jg
+         i02ZXUAxMT/QigebjmCLzSThUWOm56z8dmFXWVSyIU2VnColzuziu56xtskWzL23rZTL
+         OJguUhhlA2TsJF7mf/ANEH5ledWLMwOBH3K5co/BH0w8LxnY67BN+8R43YPJaDrGir9Z
+         XLbc2G58x9rDEVjB4A4+RimXK+HQOmDE8VG8fvHjGxl+4QDDm2oEGMlvq7Gz6oCfr0en
+         X6AAwdxNp3sekhBznsvICVGH2JbR+CfLWnbwiu1aoS3p8nNcXWoiYtwMaawbw2s5Lb6V
+         iHNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=KJYC6aQdTAezeJ8Z5hmL7iHtHcoWplSiWC+qJCJ6By0=;
-        b=eH9BewTkXWKh4F9oR6kwIaszD5rt3nSNZPNvqkmj2kvWcamtmI4MGyaBUICkhsj5J2
-         9oRAH/Aw9toPnwt/GVggsC0hbUvLw/motMx7Ayk6eCJFK8tcDvQPwpreVL9wW0xyxFfk
-         O+83JDou7Xk3VBnjRapvsZAJ4NFqQi8Xoyz5HTwIpGHutkNRqPsP5uRqPULZC9axrOay
-         2NfIi6KAE4N37Y2PMQIc7WRcTy/5l1dGE+oAPuP4T9B+uwLoOXAv524L6V8zD8YTqHy9
-         DjqXbQzFY1Dl/plreRpARD2fiEhgsJmUVs8zTJKGDm0rZSQn59+xXATXiiTozITvbpPT
-         b/sQ==
-X-Gm-Message-State: AJcUukdkZfA8RTcZqoUCL3+qAhHRzQF1DomDkQZq+nJcfxKhPWoGYgn0
-        lU1uDMvgB2U/Jls0TMBl4SRYkfVK7ReNAA==
-X-Google-Smtp-Source: ALg8bN6kMcp0hO2Z6xN8LGcHpfSQjVePcZpfZfZHA8Zm9IfqNLwioP2Fx1uMv5Aah470mnvzm36sPw==
-X-Received: by 2002:adf:8122:: with SMTP id 31mr8263422wrm.48.1548351563795;
-        Thu, 24 Jan 2019 09:39:23 -0800 (PST)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id 143sm129809788wml.14.2019.01.24.09.39.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 24 Jan 2019 09:39:22 -0800 (PST)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Liran Alon <liran.alon@oracle.com>
-Cc:     kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/kvm/hyper-v: tweak HYPERV_CPUID_ENLIGHTMENT_INFO
-In-Reply-To: <805B7B08-734E-4A96-AF98-D33065C59105@oracle.com>
-References: <20190124171516.23626-1-vkuznets@redhat.com> <805B7B08-734E-4A96-AF98-D33065C59105@oracle.com>
-Date:   Thu, 24 Jan 2019 18:39:21 +0100
-Message-ID: <8736pigdkm.fsf@vitty.brq.redhat.com>
+        h=x-gm-message-state:subject:references:to:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=L7e8uvGltUrkZabQxuZGKsrr86dgVMdBKYMIiDAJleY=;
+        b=qvO6HaSgRJPjd9N899H8azxCWAuS/6E7CYD7FNGL0m6xJR5Z3G+BAZSJKtYWlmTCpO
+         REOyiaIVGeJmXELDSqxOuIo49s1wd0sw/MTiA9xKaNbY6aKqUHA+D/tvohEll/OvcE8o
+         byDF33qQVUgkNprUo/hKxI+t3mcX5h+2CJGR83ECtv/DwEBeRvseLmAOacwH0jGgOEp9
+         L1cdq5Bjji4IJkskcsXDlZgsXOoA9YAmVYEy7CiSJtU6Girr4M73omcIf9qmCz/26C9T
+         FAVWgqc2kz/vkdcIlEb2ewtLIvaOqy6NsNeJUA3MgF7Q6+L/HRHE/dTcIzCC4sIyEGXw
+         7yNA==
+X-Gm-Message-State: AJcUukd4EzokVm12v9fVg/lvw2rPRlQ76iHi801zNEcu0MT7b7bf8Wsn
+        Bnuvl6fYJ+pDUij0OiuYhvZJA2+JbxY=
+X-Google-Smtp-Source: ALg8bN4OpFGwVjvBTLSXBSqW7u7sUJOY9flJZkpP0kVYL7z65JAbvGQzY4gjvk7Ox9EHC7e4xceYuQ==
+X-Received: by 2002:adf:dec4:: with SMTP id i4mr7865312wrn.307.1548351590192;
+        Thu, 24 Jan 2019 09:39:50 -0800 (PST)
+Received: from [129.12.129.161] (stu81A1.kent.ac.uk. [129.12.129.161])
+        by smtp.gmail.com with ESMTPSA id s1sm150588127wro.9.2019.01.24.09.39.49
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 24 Jan 2019 09:39:49 -0800 (PST)
+Subject: Fwd: Fwd: Tuxconfig - automated linux kernel module installer.
+References: <ed407815-5b61-e1e6-373a-c677a590627f@rydal.org>
+To:     linux-kernel@vger.kernel.org
+From:   Rob Brew <rob@rydal.org>
+X-Forwarded-Message-Id: <ed407815-5b61-e1e6-373a-c677a590627f@rydal.org>
+Message-ID: <c430c45d-16c0-4867-efa1-908b8085fbbc@rydal.org>
+Date:   Thu, 24 Jan 2019 17:39:49 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <ed407815-5b61-e1e6-373a-c677a590627f@rydal.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Liran Alon <liran.alon@oracle.com> writes:
 
->> On 24 Jan 2019, at 19:15, Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
->> 
->> We shouldn't probably be suggesting using Enlightened VMCS when it's not
->> enabled (not supported from guest's point of view). System reset through
->> synthetic MSR is not recommended neither by genuine Hyper-V nor my QEMU.
->> 
->> Windows seems to be fine either way but let's be consistent.
->> 
->> Fixes: 2bc39970e932 ("x86/kvm/hyper-v: Introduce KVM_GET_SUPPORTED_HV_CPUID")
->> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
->> ---
->> arch/x86/kvm/hyperv.c | 4 ++--
->> 1 file changed, 2 insertions(+), 2 deletions(-)
->> 
->> diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
->> index ac44a681f065..4730fcaa70cf 100644
->> --- a/arch/x86/kvm/hyperv.c
->> +++ b/arch/x86/kvm/hyperv.c
->> @@ -1847,11 +1847,11 @@ int kvm_vcpu_ioctl_get_hv_cpuid(struct kvm_vcpu *vcpu, struct kvm_cpuid2 *cpuid,
->> 		case HYPERV_CPUID_ENLIGHTMENT_INFO:
->> 			ent->eax |= HV_X64_REMOTE_TLB_FLUSH_RECOMMENDED;
->> 			ent->eax |= HV_X64_APIC_ACCESS_RECOMMENDED;
->> -			ent->eax |= HV_X64_SYSTEM_RESET_RECOMMENDED;
->> 			ent->eax |= HV_X64_RELAXED_TIMING_RECOMMENDED;
->> 			ent->eax |= HV_X64_CLUSTER_IPI_RECOMMENDED;
->> 			ent->eax |= HV_X64_EX_PROCESSOR_MASKS_RECOMMENDED;
->> -			ent->eax |= HV_X64_ENLIGHTENED_VMCS_RECOMMENDED;
->> +			if (evmcs_ver)
->> +				ent->eax |= HV_X64_ENLIGHTENED_VMCS_RECOMMENDED;
->> 
->> 			/*
->> 			 * Default number of spinlock retry attempts, matches
->> -- 
->> 2.20.1
->> 
->
-> Seems to me that there are 2 unrelated separated patches here. Why not
-> split them?
 
-They seem to be too small :-) No problem, I'll split them up in v2.
+Hi everyone / Linus
 
-> For content itself: Reviewed-by: Liran Alon <liran.alon@oracle.com>
->
+For my Master's dissertation at Kent University I've built a platform
+and GUI to automate the process of submitting kernel module
+configurations and installing kernel modules from those configurations.
 
-Thanks!
+Developers submit kernel module source code including a special file as
+to how these kernel modules are built.
+End users have a graphical way of installing said kernel modules, as
+well as upgrading them and uninstalling them, and recovering failed builds.
 
--- 
-Vitaly
+Think of it as a Ubuntu restricted drivers app enhanced by allowing
+anyone to contribute a git repository for others to install, or the
+windows "install new device" process..
+
+It's a proof of concept, and does need some work in order to be a final
+version.
+
+https://github.com/rydal/dissertation-doc
+<https://github.com/rydal/dissertation-doc>is the dissertation document,
+with readme.md defining what it does.
+https://github.com/rydal/tuxconfig-backend
+<https://github.com/rydal/tuxconfig-backend>is the back end written in
+Java and JSP.
+https://github.com/rydal/tuxconfig-frontend
+<https://github.com/rydal/tuxconfig-frontend>is the front end written in
+C++.
+
+
+What i need:
+In order to prevent malicious code and Trojan horses the platform will
+need a team to vet each contribution to ensure binaries come from
+trusted sources and Makefiles aren't damaging to the system.
+
+The package and website for those contributing is at
+https://www.linuxconf.feedthepenguin.org/hehe/
+
+
+Features which could be added:
+Change the udev rules to make the application run every time a new
+device is inserted
+Harsher recovery when adding Linux packages.
+Cryptographicaly signing the get and post requests to ensure they are
+from the application.
+
+I'm happy to work on this concept, as well as moderate the git pull
+requests.
+
+Thanks,
+   Rob Brew.
+
+
