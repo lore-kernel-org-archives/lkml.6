@@ -6,47 +6,47 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B009C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:58:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31BD8C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:58:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC3E1218D0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:58:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E569521726
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:58:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359887;
-	bh=QURDLdAtOolF/gZDNhcguk0aSVJ3yWPsRGsI7BW87kQ=;
+	s=default; t=1548359895;
+	bh=2Kw5Ddi1DMMqZHNBbKlSGstsm3wh+I4cOLOwTri0zzM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Yll0ct+kJBKdGn3HYVvFUCpgva9VyJXfTmGYV2MNcjjwc6T1SRgdlX1w/KU9/hppD
-	 4BDb9XRwWNVFzvvBoOu7hHIGUCj2c2AOnTa6j8Reps7hhtff01XjxhAAGy6xmjesxw
-	 XPhqxTfXxVa9YQyllifPodbSBc9/rLR3+L+3gzIw=
+	b=gvdMGTsvhz5u38JCZ76QoKRZ9EHKG6oFGII2GaHBSQ4gDl/jo6+ff9REodjd/W+lR
+	 GbbugoIoPl0CQrDG9+Dn7XGFJYHHZ0odTds3TpVQ3CtmoSNR9yuFf4K1WRAl537fmX
+	 j4fucLWEJjviT74ZOdepPMTC8MkUf8cIBycBSkW4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732242AbfAXTem (ORCPT
+        id S1731617AbfAXT6N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:34:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34454 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:58:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34484 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732232AbfAXTeh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:34:37 -0500
+        id S1728220AbfAXTej (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:34:39 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C0F4218FC;
-        Thu, 24 Jan 2019 19:34:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 47E9F21903;
+        Thu, 24 Jan 2019 19:34:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358476;
-        bh=QURDLdAtOolF/gZDNhcguk0aSVJ3yWPsRGsI7BW87kQ=;
+        s=default; t=1548358478;
+        bh=2Kw5Ddi1DMMqZHNBbKlSGstsm3wh+I4cOLOwTri0zzM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zmoKjyDKBXEEhStwA4GGW0VlWz9aq0zk8xUxEfccTH+kCLdEhKs2x19q2HigjZDLk
-         BdItaWw8S16LsY1gpqtlCFmhXGkvWrJyZeWWqoMPgyZkmzGhJ4k/+ajM10xGdZpva7
-         /KJNZ5XgPfuNghR+UQrzigtSoIAuAyqVqzXrg5IE=
+        b=RA82/Eq4YoFI682NKuzOBn28OwpnSZh5sFj4QDDDL4jSR5F4V4RfKQqT7QuOWbxAs
+         wuhZ1UhjAVbTtDoWgzbUbMERA6cM0mEvo10Iln5T1moPdJsx0pYt6Qs/VIdFRFZg2b
+         hDgnXKIMPOjg98A1/aFIHhM7W0HNZgrmB2a5kO5g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Rientjes <rientjes@google.com>,
-        Eric Dumazet <edumazet@google.com>,
+        stable@vger.kernel.org, Daniele Palmas <dnlplm@gmail.com>,
+        =?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 005/106] net, skbuff: do not prefer skb allocation fails early
-Date:   Thu, 24 Jan 2019 20:19:22 +0100
-Message-Id: <20190124190206.707400148@linuxfoundation.org>
+Subject: [PATCH 4.19 006/106] qmi_wwan: add MTU default to qmap network interface
+Date:   Thu, 24 Jan 2019 20:19:23 +0100
+Message-Id: <20190124190206.783297789@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
 References: <20190124190206.342411005@linuxfoundation.org>
@@ -65,69 +65,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Rientjes <rientjes@google.com>
+From: Daniele Palmas <dnlplm@gmail.com>
 
-[ Upstream commit f8c468e8537925e0c4607263f498a1b7c0c8982e ]
+[ Upstream commit f87118d5760f00af7228033fbe783c7f380d2866 ]
 
-Commit dcda9b04713c ("mm, tree wide: replace __GFP_REPEAT by
-__GFP_RETRY_MAYFAIL with more useful semantic") replaced __GFP_REPEAT in
-alloc_skb_with_frags() with __GFP_RETRY_MAYFAIL when the allocation may
-directly reclaim.
+This patch adds MTU default value to qmap network interface in
+order to avoid "RTNETLINK answers: No buffer space available"
+error when setting an ipv6 address.
 
-The previous behavior would require reclaim up to 1 << order pages for
-skb aligned header_len of order > PAGE_ALLOC_COSTLY_ORDER before failing,
-otherwise the allocations in alloc_skb() would loop in the page allocator
-looking for memory.  __GFP_RETRY_MAYFAIL makes both allocations failable
-under memory pressure, including for the HEAD allocation.
-
-This can cause, among many other things, write() to fail with ENOTCONN
-during RPC when under memory pressure.
-
-These allocations should succeed as they did previous to dcda9b04713c
-even if it requires calling the oom killer and additional looping in the
-page allocator to find memory.  There is no way to specify the previous
-behavior of __GFP_REPEAT, but it's unlikely to be necessary since the
-previous behavior only guaranteed that 1 << order pages would be reclaimed
-before failing for order > PAGE_ALLOC_COSTLY_ORDER.  That reclaim is not
-guaranteed to be contiguous memory, so repeating for such large orders is
-usually not beneficial.
-
-Removing the setting of __GFP_RETRY_MAYFAIL to restore the previous
-behavior, specifically not allowing alloc_skb() to fail for small orders
-and oom kill if necessary rather than allowing RPCs to fail.
-
-Fixes: dcda9b04713c ("mm, tree wide: replace __GFP_REPEAT by __GFP_RETRY_MAYFAIL with more useful semantic")
-Signed-off-by: David Rientjes <rientjes@google.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Daniele Palmas <dnlplm@gmail.com>
+Acked-by: Bjørn Mork <bjorn@mork.no>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/skbuff.c |    7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ drivers/net/usb/qmi_wwan.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -5258,7 +5258,6 @@ struct sk_buff *alloc_skb_with_frags(uns
- 	unsigned long chunk;
- 	struct sk_buff *skb;
- 	struct page *page;
--	gfp_t gfp_head;
- 	int i;
- 
- 	*errcode = -EMSGSIZE;
-@@ -5268,12 +5267,8 @@ struct sk_buff *alloc_skb_with_frags(uns
- 	if (npages > MAX_SKB_FRAGS)
- 		return NULL;
- 
--	gfp_head = gfp_mask;
--	if (gfp_head & __GFP_DIRECT_RECLAIM)
--		gfp_head |= __GFP_RETRY_MAYFAIL;
--
- 	*errcode = -ENOBUFS;
--	skb = alloc_skb(header_len, gfp_head);
-+	skb = alloc_skb(header_len, gfp_mask);
- 	if (!skb)
- 		return NULL;
+--- a/drivers/net/usb/qmi_wwan.c
++++ b/drivers/net/usb/qmi_wwan.c
+@@ -123,6 +123,7 @@ static void qmimux_setup(struct net_devi
+ 	dev->addr_len        = 0;
+ 	dev->flags           = IFF_POINTOPOINT | IFF_NOARP | IFF_MULTICAST;
+ 	dev->netdev_ops      = &qmimux_netdev_ops;
++	dev->mtu             = 1500;
+ 	dev->needs_free_netdev = true;
+ }
  
 
 
