@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8995C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:42:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABA50C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:42:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 917F2218F0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:42:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73C6D218A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:42:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358967;
-	bh=FWekYiIgNsLJKZXaOehW43N6F+sQBAoN4fc9shSUtHU=;
+	s=default; t=1548358970;
+	bh=nBKq1qkphdbay/iulQHG0O2NsUhL2FBmBIQnNvak9FI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xduitYlxVGYZ39aIvMION/5EJxE0ZgAPi4kU5dNvZUFwFZ09r2g/2BoNC/yXw7gMe
-	 BGiTt01D183zO/1uB8reYkdRYji+SuoU8uMCVbpmqziCDzRap93TS+hyGebKzdxbk7
-	 2XG7t/OxfNEaSI5gV6AVgL3LR4hOp1oKTYodb6+8=
+	b=V5FERJguD3maVAjXJPCqZT4JYjGqc90/pLXvEluqmt/ExBe1L4qNJrGF9/viADuKc
+	 HhEMEIlMtzqVygcR3RmN2GgFj5Z6yyclC+g7X8WbUjVJt62jBsVDHsfpPboJ9npMre
+	 z7mN4H7y6ox9ETu7hvuGiYH6BplFc2wuEj3CSjK4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387394AbfAXTmq (ORCPT
+        id S2387415AbfAXTmt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:42:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43204 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:42:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43282 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387821AbfAXTmm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:42:42 -0500
+        id S2387838AbfAXTmp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:42:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 37786218A2;
-        Thu, 24 Jan 2019 19:42:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 17D0A218A2;
+        Thu, 24 Jan 2019 19:42:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358961;
-        bh=FWekYiIgNsLJKZXaOehW43N6F+sQBAoN4fc9shSUtHU=;
+        s=default; t=1548358964;
+        bh=nBKq1qkphdbay/iulQHG0O2NsUhL2FBmBIQnNvak9FI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Yn5Isw4d2yfZP0Di5mzmUeyH5tpjFmPNYxXmLMXcKAABF1eVpCBibqKsMnywpJZAd
-         unFR9SNZwMV2ZwItpqH7P9b3gRgKlI8n8/FxLw4ObV7fVhzDZhGvzV0r96fNK+PAvj
-         EqEmRPor7ZDfQglwb7hFN8Nyyv1riB/EOLpKm3Ic=
+        b=O4Pd/e+FPmvKpygCAmqvsX/ebQwytgOgyfckkfE1lXyzuzG1nyPW6NlvufFiuwQtF
+         mEEHqoyogPU+s+oMMSmk2727r8wA7l3Yfx8QSu4Gz82w8kSjhRX98A2rQrtXO0Z9Xl
+         arbzR949UKZR2bqpX2XXH2yumQ3686H29S2CeSIo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
         Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 088/127] netfilter: ipt_CLUSTERIP: check MAC address when duplicate config is set
-Date:   Thu, 24 Jan 2019 20:20:34 +0100
-Message-Id: <20190124190215.829787722@linuxfoundation.org>
+Subject: [PATCH 4.20 089/127] netfilter: ipt_CLUSTERIP: remove wrong WARN_ON_ONCE in netns exit routine
+Date:   Thu, 24 Jan 2019 20:20:35 +0100
+Message-Id: <20190124190215.863184975@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
 References: <20190124190211.984305387@linuxfoundation.org>
@@ -66,44 +66,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 06aa151ad1fc74a49b45336672515774a678d78d ]
+[ Upstream commit b12f7bad5ad3724d19754390a3e80928525c0769 ]
 
-If same destination IP address config is already existing, that config is
-just used. MAC address also should be same.
-However, there is no MAC address checking routine.
-So that MAC address checking routine is added.
+When network namespace is destroyed, both clusterip_tg_destroy() and
+clusterip_net_exit() are called. and clusterip_net_exit() is called
+before clusterip_tg_destroy().
+Hence cleanup check code in clusterip_net_exit() doesn't make sense.
 
 test commands:
+   %ip netns add vm1
+   %ip netns exec vm1 bash
+   %ip link set lo up
    %iptables -A INPUT -p tcp -i lo -d 192.168.0.5 --dport 80 \
-	   -j CLUSTERIP --new --hashmode sourceip \
-	   --clustermac 01:00:5e:00:00:20 --total-nodes 2 --local-node 1
-   %iptables -A INPUT -p tcp -i lo -d 192.168.0.5 --dport 80 \
-	   -j CLUSTERIP --new --hashmode sourceip \
-	   --clustermac 01:00:5e:00:00:21 --total-nodes 2 --local-node 1
+	-j CLUSTERIP --new --hashmode sourceip \
+	--clustermac 01:00:5e:00:00:20 --total-nodes 2 --local-node 1
+   %exit
+   %ip netns del vm1
 
-After this patch, above commands are disallowed.
+splat looks like:
+[  341.184508] WARNING: CPU: 1 PID: 87 at net/ipv4/netfilter/ipt_CLUSTERIP.c:840 clusterip_net_exit+0x319/0x380 [ipt_CLUSTERIP]
+[  341.184850] Modules linked in: ipt_CLUSTERIP nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 xt_tcpudp iptable_filter bpfilter ip_tables x_tables
+[  341.184850] CPU: 1 PID: 87 Comm: kworker/u4:2 Not tainted 4.19.0-rc5+ #16
+[  341.227509] Workqueue: netns cleanup_net
+[  341.227509] RIP: 0010:clusterip_net_exit+0x319/0x380 [ipt_CLUSTERIP]
+[  341.227509] Code: 0f 85 7f fe ff ff 48 c7 c2 80 64 2c c0 be a8 02 00 00 48 c7 c7 a0 63 2c c0 c6 05 18 6e 00 00 01 e8 bc 38 ff f5 e9 5b fe ff ff <0f> 0b e9 33 ff ff ff e8 4b 90 50 f6 e9 2d fe ff ff 48 89 df e8 de
+[  341.227509] RSP: 0018:ffff88011086f408 EFLAGS: 00010202
+[  341.227509] RAX: dffffc0000000000 RBX: 1ffff1002210de85 RCX: 0000000000000000
+[  341.227509] RDX: 1ffff1002210de85 RSI: ffff880110813be8 RDI: ffffed002210de58
+[  341.227509] RBP: ffff88011086f4d0 R08: 0000000000000000 R09: 0000000000000000
+[  341.227509] R10: 0000000000000000 R11: 0000000000000000 R12: 1ffff1002210de81
+[  341.227509] R13: ffff880110625a48 R14: ffff880114cec8c8 R15: 0000000000000014
+[  341.227509] FS:  0000000000000000(0000) GS:ffff880116600000(0000) knlGS:0000000000000000
+[  341.227509] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  341.227509] CR2: 00007f11fd38e000 CR3: 000000013ca16000 CR4: 00000000001006e0
+[  341.227509] Call Trace:
+[  341.227509]  ? __clusterip_config_find+0x460/0x460 [ipt_CLUSTERIP]
+[  341.227509]  ? default_device_exit+0x1ca/0x270
+[  341.227509]  ? remove_proc_entry+0x1cd/0x390
+[  341.227509]  ? dev_change_net_namespace+0xd00/0xd00
+[  341.227509]  ? __init_waitqueue_head+0x130/0x130
+[  341.227509]  ops_exit_list.isra.10+0x94/0x140
+[  341.227509]  cleanup_net+0x45b/0x900
+[ ... ]
 
+Fixes: 613d0776d3fe ("netfilter: exit_net cleanup check added")
 Signed-off-by: Taehee Yoo <ap420073@gmail.com>
 Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv4/netfilter/ipt_CLUSTERIP.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/ipv4/netfilter/ipt_CLUSTERIP.c | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/net/ipv4/netfilter/ipt_CLUSTERIP.c b/net/ipv4/netfilter/ipt_CLUSTERIP.c
-index 2c8d313ae216..e40e6795bd20 100644
+index e40e6795bd20..33491cb6b9d1 100644
 --- a/net/ipv4/netfilter/ipt_CLUSTERIP.c
 +++ b/net/ipv4/netfilter/ipt_CLUSTERIP.c
-@@ -496,7 +496,8 @@ static int clusterip_tg_check(const struct xt_tgchk_param *par)
- 			if (IS_ERR(config))
- 				return PTR_ERR(config);
- 		}
--	}
-+	} else if (memcmp(&config->clustermac, &cipinfo->clustermac, ETH_ALEN))
-+		return -EINVAL;
+@@ -838,7 +838,6 @@ static void clusterip_net_exit(struct net *net)
+ 	cn->procdir = NULL;
+ #endif
+ 	nf_unregister_net_hook(net, &cip_arp_ops);
+-	WARN_ON_ONCE(!list_empty(&cn->configs));
+ }
  
- 	ret = nf_ct_netns_get(par->net, par->family);
- 	if (ret < 0) {
+ static struct pernet_operations clusterip_net_ops = {
 -- 
 2.19.1
 
