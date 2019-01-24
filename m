@@ -4,48 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 771EEC282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:18:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB164C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:18:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 459CB217D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:18:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB8D5217D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:18:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548361106;
-	bh=HNOfTUfTqSPfF588wEbPic9CG6z5K6RaceyWK7mdsgg=;
+	s=default; t=1548361123;
+	bh=AF/dZeMXUHVVxKg2covJXgrpD9F3sOlqzyhPlVbQzKo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=uVpuSNeSiofn72S932Nh5srGCb73b0GepEpW98DXsOzKNcaKKHWPrBRZRMWN4/5m/
-	 g9RhDEnJ7mfuR0Z13vB9fHysDYd6pa8uqFJbDfX/5kcIVS9Tb5sHL+BftGxGFlfJxd
-	 mAVu8CXn1TS4hcPJbp53jv+xN5mAdap24lMUKd/c=
+	b=VOcHMOYorVfpnSKa9ulKOcPicHWoFuxZpQdERQJlrtCSt0q1svtoyXQ40lgZ70eE2
+	 aoW0bjkJSe+WWg3c0GSD+Z+MOqejypeq2v3moxz19+nlY/unlW5uGrEFWiFhH2jnOY
+	 WdeUtJydW4xZ89W9nil9VTvP3I68wt2fydwWmxdQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728412AbfAXUSY (ORCPT
+        id S1729448AbfAXTWK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 15:18:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47094 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:22:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46622 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729538AbfAXTW3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:22:29 -0500
+        id S1729411AbfAXTWI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:22:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0141E218D2;
-        Thu, 24 Jan 2019 19:22:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5DCED218D0;
+        Thu, 24 Jan 2019 19:22:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548357748;
-        bh=HNOfTUfTqSPfF588wEbPic9CG6z5K6RaceyWK7mdsgg=;
+        s=default; t=1548357726;
+        bh=AF/dZeMXUHVVxKg2covJXgrpD9F3sOlqzyhPlVbQzKo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n8RIyWouPG0TWOwPixOkeGM092Z1IyUxwI12yFdG+cJJZ6IqxHv1MBgGHuzL0rwxy
-         7pp/VQMNRVEil04fS7gD3KYjY3kGTR0p9xaFzTGTb3vaw38pj0EyVgo3ati+Pj3P2m
-         vcX1ABna4kNOiJllHcCKWWP0dSJuyN1S6Exppkk0=
+        b=GKEv1p8cK01wxHpePCsNoywvBgSfBbcnkurwCMhNo6laAbw5mNZ5ibK0LKOGIbLuX
+         2eKFIS7PPZtFU17jI4XOzPO4sTRIOS0BMEvB7+ExWzwK7bj48RE/bpeSIuxS6/6IPv
+         eO/9YO1KUbTjIwgK/qf9o8wJ9bOym647MDCcAW3w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Icenowy Zheng <icenowy@aosc.io>,
-        Alan Stern <stern@rowland.harvard.edu>
-Subject: [PATCH 3.18 05/52] USB: storage: dont insert sane sense for SPC3+ when bad sense specified
-Date:   Thu, 24 Jan 2019 20:19:29 +0100
-Message-Id: <20190124190141.791154485@linuxfoundation.org>
+        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 3.18 19/52] btrfs: wait on ordered extents on abort cleanup
+Date:   Thu, 24 Jan 2019 20:19:43 +0100
+Message-Id: <20190124190144.251291787@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190140.879495253@linuxfoundation.org>
 References: <20190124190140.879495253@linuxfoundation.org>
@@ -64,44 +66,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Icenowy Zheng <icenowy@aosc.io>
+From: Josef Bacik <josef@toxicpanda.com>
 
-commit c5603d2fdb424849360fe7e3f8c1befc97571b8c upstream.
+commit 74d5d229b1bf60f93bff244b2dfc0eb21ec32a07 upstream.
 
-Currently the code will set US_FL_SANE_SENSE flag unconditionally if
-device claims SPC3+, however we should allow US_FL_BAD_SENSE flag to
-prevent this behavior, because SMI SM3350 UFS-USB bridge controller,
-which claims SPC4, will show strange behavior with 96-byte sense
-(put the chip into a wrong state that cannot read/write anything).
+If we flip read-only before we initiate writeback on all dirty pages for
+ordered extents we've created then we'll have ordered extents left over
+on umount, which results in all sorts of bad things happening.  Fix this
+by making sure we wait on ordered extents if we have to do the aborted
+transaction cleanup stuff.
 
-Check the presence of US_FL_BAD_SENSE when assuming US_FL_SANE_SENSE on
-SPC4+ devices.
+generic/475 can produce this warning:
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Cc: stable <stable@vger.kernel.org>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+ [ 8531.177332] WARNING: CPU: 2 PID: 11997 at fs/btrfs/disk-io.c:3856 btrfs_free_fs_root+0x95/0xa0 [btrfs]
+ [ 8531.183282] CPU: 2 PID: 11997 Comm: umount Tainted: G        W 5.0.0-rc1-default+ #394
+ [ 8531.185164] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),BIOS rel-1.11.2-0-gf9626cc-prebuilt.qemu-project.org 04/01/2014
+ [ 8531.187851] RIP: 0010:btrfs_free_fs_root+0x95/0xa0 [btrfs]
+ [ 8531.193082] RSP: 0018:ffffb1ab86163d98 EFLAGS: 00010286
+ [ 8531.194198] RAX: ffff9f3449494d18 RBX: ffff9f34a2695000 RCX:0000000000000000
+ [ 8531.195629] RDX: 0000000000000002 RSI: 0000000000000001 RDI:0000000000000000
+ [ 8531.197315] RBP: ffff9f344e930000 R08: 0000000000000001 R09:0000000000000000
+ [ 8531.199095] R10: 0000000000000000 R11: ffff9f34494d4ff8 R12:ffffb1ab86163dc0
+ [ 8531.200870] R13: ffff9f344e9300b0 R14: ffffb1ab86163db8 R15:0000000000000000
+ [ 8531.202707] FS:  00007fc68e949fc0(0000) GS:ffff9f34bd800000(0000)knlGS:0000000000000000
+ [ 8531.204851] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ [ 8531.205942] CR2: 00007ffde8114dd8 CR3: 000000002dfbd000 CR4:00000000000006e0
+ [ 8531.207516] Call Trace:
+ [ 8531.208175]  btrfs_free_fs_roots+0xdb/0x170 [btrfs]
+ [ 8531.210209]  ? wait_for_completion+0x5b/0x190
+ [ 8531.211303]  close_ctree+0x157/0x350 [btrfs]
+ [ 8531.212412]  generic_shutdown_super+0x64/0x100
+ [ 8531.213485]  kill_anon_super+0x14/0x30
+ [ 8531.214430]  btrfs_kill_super+0x12/0xa0 [btrfs]
+ [ 8531.215539]  deactivate_locked_super+0x29/0x60
+ [ 8531.216633]  cleanup_mnt+0x3b/0x70
+ [ 8531.217497]  task_work_run+0x98/0xc0
+ [ 8531.218397]  exit_to_usermode_loop+0x83/0x90
+ [ 8531.219324]  do_syscall_64+0x15b/0x180
+ [ 8531.220192]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+ [ 8531.221286] RIP: 0033:0x7fc68e5e4d07
+ [ 8531.225621] RSP: 002b:00007ffde8116608 EFLAGS: 00000246 ORIG_RAX:00000000000000a6
+ [ 8531.227512] RAX: 0000000000000000 RBX: 00005580c2175970 RCX:00007fc68e5e4d07
+ [ 8531.229098] RDX: 0000000000000001 RSI: 0000000000000000 RDI:00005580c2175b80
+ [ 8531.230730] RBP: 0000000000000000 R08: 00005580c2175ba0 R09:00007ffde8114e80
+ [ 8531.232269] R10: 0000000000000000 R11: 0000000000000246 R12:00005580c2175b80
+ [ 8531.233839] R13: 00007fc68eac61c4 R14: 00005580c2175a68 R15:0000000000000000
+
+Leaving a tree in the rb-tree:
+
+3853 void btrfs_free_fs_root(struct btrfs_root *root)
+3854 {
+3855         iput(root->ino_cache_inode);
+3856         WARN_ON(!RB_EMPTY_ROOT(&root->inode_tree));
+
+CC: stable@vger.kernel.org
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+[ add stacktrace ]
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/storage/scsiglue.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ fs/btrfs/disk-io.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/drivers/usb/storage/scsiglue.c
-+++ b/drivers/usb/storage/scsiglue.c
-@@ -223,8 +223,12 @@ static int slave_configure(struct scsi_d
- 		if (!(us->fflags & US_FL_NEEDS_CAP16))
- 			sdev->try_rc_10_first = 1;
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -3942,6 +3942,14 @@ static void btrfs_destroy_all_ordered_ex
+ 		spin_lock(&fs_info->ordered_root_lock);
+ 	}
+ 	spin_unlock(&fs_info->ordered_root_lock);
++
++	/*
++	 * We need this here because if we've been flipped read-only we won't
++	 * get sync() from the umount, so we need to make sure any ordered
++	 * extents that haven't had their dirty pages IO start writeout yet
++	 * actually get run and error out properly.
++	 */
++	btrfs_wait_ordered_roots(fs_info, -1);
+ }
  
--		/* assume SPC3 or latter devices support sense size > 18 */
--		if (sdev->scsi_level > SCSI_SPC_2)
-+		/*
-+		 * assume SPC3 or latter devices support sense size > 18
-+		 * unless US_FL_BAD_SENSE quirk is specified.
-+		 */
-+		if (sdev->scsi_level > SCSI_SPC_2 &&
-+		    !(us->fflags & US_FL_BAD_SENSE))
- 			us->fflags |= US_FL_SANE_SENSE;
- 
- 		/* USB-IDE bridges tend to report SK = 0x04 (Non-recoverable
+ static int btrfs_destroy_delayed_refs(struct btrfs_transaction *trans,
 
 
