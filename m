@@ -4,50 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAFCFC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:02:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E5F9C282C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:02:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB00721726
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:02:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DA4C218D0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:02:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548360141;
-	bh=0t0ffOpyAphNGDLYfjZyewBKYkZUPQUXoFDIwhMRh38=;
+	s=default; t=1548360150;
+	bh=RWZ0sZv5yccdk0dbzzxcdZgP+1msRZTx8UEF0X9r+NQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=g6BDrInDSKuB6za717WwTwL8PBYZwLnIBS5ye7DrISP40jlk4m09JBwvVf3Wfazqs
-	 M5repBviFv/Zo1XQAwxIQiTTOAyqWQDxvW0cQBSkUucXrHJYakLutbr+dF5IJmODEa
-	 B5O+hkZdxMDLtiKMEsGkq57P4EE9gg8dyrUQWOBQ=
+	b=IAuD1WrxSqF41ZSEtHhKbrsf2sFzv2g3vAps9GOOaAvveuMhjHM2nmQvptjOcqxc2
+	 pSdeg8Fan3ZicHisoq9GFNVW5V3XxgGeHvQoKgLcUez76VHbAZMuIA9ai3bOUozJ8j
+	 ZFymQdhFgP3S66sVGNJguNa2SO+2NcuQnj2rIfbA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731962AbfAXTdM (ORCPT
+        id S1729441AbfAXUC2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:33:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32948 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 15:02:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32886 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731952AbfAXTdJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:33:09 -0500
+        id S1731504AbfAXTdH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:33:07 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45459218D4;
-        Thu, 24 Jan 2019 19:33:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 973AD218FC;
+        Thu, 24 Jan 2019 19:33:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358388;
-        bh=0t0ffOpyAphNGDLYfjZyewBKYkZUPQUXoFDIwhMRh38=;
+        s=default; t=1548358386;
+        bh=RWZ0sZv5yccdk0dbzzxcdZgP+1msRZTx8UEF0X9r+NQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0Zllu6hLpNJ9wB3ZIM7KX2UloxNlB2v/MLmpkx23EmdP32DmSQ5K8hNp/giWOHEBD
-         hgVVTaVFfWkzj62ULJVoOPgV0TLNu+MpMhGSx1HOnPudj4LxxP8eHYPOCw/a171cPK
-         cWy2jpHQPf+n1Ow1cFrhMBBkXBO0j6jUKSNZQ+7c=
+        b=PuQjUU/+1pGIjSd0z5eRE0uCenfy1Do0l81ZAQztdAX89XC9E6taA3bJVwl/tx/4Q
+         kO409WQgrMnQjF0/jZ9iqyi7KePNmUhrbHwmFv6UtjtvbQ1MrXleunKPQmhwUkDbqj
+         MsSrn1EHJC3/+7q1fAXvabtZOlVlC07ATnQeLTZw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 38/63] perf intel-pt: Fix error with config term "pt=0"
-Date:   Thu, 24 Jan 2019 20:20:27 +0100
-Message-Id: <20190124190159.600299416@linuxfoundation.org>
+        stable@vger.kernel.org, Brian Foster <bfoster@redhat.com>,
+        Jan Kara <jack@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 55/63] mm/page-writeback.c: dont break integrity writeback on ->writepage() error
+Date:   Thu, 24 Jan 2019 20:20:44 +0100
+Message-Id: <20190124190201.816132683@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190155.176570028@linuxfoundation.org>
 References: <20190124190155.176570028@linuxfoundation.org>
@@ -66,68 +68,106 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 1c6f709b9f96366cc47af23c05ecec9b8c0c392d ]
+[ Upstream commit 3fa750dcf29e8606e3969d13d8e188cc1c0f511d ]
 
-Users should never use 'pt=0', but if they do it may give a meaningless
-error:
+write_cache_pages() is used in both background and integrity writeback
+scenarios by various filesystems.  Background writeback is mostly
+concerned with cleaning a certain number of dirty pages based on various
+mm heuristics.  It may not write the full set of dirty pages or wait for
+I/O to complete.  Integrity writeback is responsible for persisting a set
+of dirty pages before the writeback job completes.  For example, an
+fsync() call must perform integrity writeback to ensure data is on disk
+before the call returns.
 
-	$ perf record -e intel_pt/pt=0/u uname
-	Error:
-	The sys_perf_event_open() syscall returned with 22 (Invalid argument) for
-	event (intel_pt/pt=0/u).
+write_cache_pages() unconditionally breaks out of its processing loop in
+the event of a ->writepage() error.  This is fine for background
+writeback, which had no strict requirements and will eventually come
+around again.  This can cause problems for integrity writeback on
+filesystems that might need to clean up state associated with failed page
+writeouts.  For example, XFS performs internal delayed allocation
+accounting before returning a ->writepage() error, where applicable.  If
+the current writeback happens to be associated with an unmount and
+write_cache_pages() completes the writeback prematurely due to error, the
+filesystem is unmounted in an inconsistent state if dirty+delalloc pages
+still exist.
 
-Fix that by forcing 'pt=1'.
+To handle this problem, update write_cache_pages() to always process the
+full set of pages for integrity writeback regardless of ->writepage()
+errors.  Save the first encountered error and return it to the caller once
+complete.  This facilitates XFS (or any other fs that expects integrity
+writeback to process the entire set of dirty pages) to clean up its
+internal state completely in the event of persistent mapping errors.
+Background writeback continues to exit on the first error encountered.
 
-Committer testing:
-
-  # perf record -e intel_pt/pt=0/u uname
-  Error:
-  The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (intel_pt/pt=0/u).
-  /bin/dmesg | grep -i perf may provide additional information.
-
-  # perf record -e intel_pt/pt=0/u uname
-  pt=0 doesn't make sense, forcing pt=1
-  Linux
-  [ perf record: Woken up 1 times to write data ]
-  [ perf record: Captured and wrote 0.020 MB perf.data ]
-  #
-
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Link: http://lkml.kernel.org/r/b7c5b4e5-9497-10e5-fd43-5f3e4a0fe51d@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+[akpm@linux-foundation.org: fix typo in comment]
+Link: http://lkml.kernel.org/r/20181116134304.32440-1-bfoster@redhat.com
+Signed-off-by: Brian Foster <bfoster@redhat.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/arch/x86/util/intel-pt.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ mm/page-writeback.c | 35 +++++++++++++++++++++--------------
+ 1 file changed, 21 insertions(+), 14 deletions(-)
 
-diff --git a/tools/perf/arch/x86/util/intel-pt.c b/tools/perf/arch/x86/util/intel-pt.c
-index db0ba8caf5a2..ba8ecaf52200 100644
---- a/tools/perf/arch/x86/util/intel-pt.c
-+++ b/tools/perf/arch/x86/util/intel-pt.c
-@@ -524,10 +524,21 @@ static int intel_pt_validate_config(struct perf_pmu *intel_pt_pmu,
- 				    struct perf_evsel *evsel)
+diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+index 3175ac850a53..e001de5ac50c 100644
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -2157,6 +2157,7 @@ int write_cache_pages(struct address_space *mapping,
  {
- 	int err;
-+	char c;
+ 	int ret = 0;
+ 	int done = 0;
++	int error;
+ 	struct pagevec pvec;
+ 	int nr_pages;
+ 	pgoff_t uninitialized_var(writeback_index);
+@@ -2253,25 +2254,31 @@ continue_unlock:
+ 				goto continue_unlock;
  
- 	if (!evsel)
- 		return 0;
+ 			trace_wbc_writepage(wbc, inode_to_bdi(mapping->host));
+-			ret = (*writepage)(page, wbc, data);
+-			if (unlikely(ret)) {
+-				if (ret == AOP_WRITEPAGE_ACTIVATE) {
++			error = (*writepage)(page, wbc, data);
++			if (unlikely(error)) {
++				/*
++				 * Handle errors according to the type of
++				 * writeback. There's no need to continue for
++				 * background writeback. Just push done_index
++				 * past this page so media errors won't choke
++				 * writeout for the entire file. For integrity
++				 * writeback, we must process the entire dirty
++				 * set regardless of errors because the fs may
++				 * still have state to clear for each page. In
++				 * that case we continue processing and return
++				 * the first error.
++				 */
++				if (error == AOP_WRITEPAGE_ACTIVATE) {
+ 					unlock_page(page);
+-					ret = 0;
+-				} else {
+-					/*
+-					 * done_index is set past this page,
+-					 * so media errors will not choke
+-					 * background writeout for the entire
+-					 * file. This has consequences for
+-					 * range_cyclic semantics (ie. it may
+-					 * not be suitable for data integrity
+-					 * writeout).
+-					 */
++					error = 0;
++				} else if (wbc->sync_mode != WB_SYNC_ALL) {
++					ret = error;
+ 					done_index = page->index + 1;
+ 					done = 1;
+ 					break;
+ 				}
++				if (!ret)
++					ret = error;
+ 			}
  
-+	/*
-+	 * If supported, force pass-through config term (pt=1) even if user
-+	 * sets pt=0, which avoids senseless kernel errors.
-+	 */
-+	if (perf_pmu__scan_file(intel_pt_pmu, "format/pt", "%c", &c) == 1 &&
-+	    !(evsel->attr.config & 1)) {
-+		pr_warning("pt=0 doesn't make sense, forcing pt=1\n");
-+		evsel->attr.config |= 1;
-+	}
-+
- 	err = intel_pt_val_config_term(intel_pt_pmu, "caps/cycle_thresholds",
- 				       "cyc_thresh", "caps/psb_cyc",
- 				       evsel->attr.config);
+ 			/*
 -- 
 2.19.1
 
