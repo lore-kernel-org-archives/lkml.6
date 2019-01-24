@@ -2,225 +2,177 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 397E3C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:46:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B2D7C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:48:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3349218A4
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:46:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 496C620855
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:48:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="S6uns5Nv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727515AbfAXJqe convert rfc822-to-8bit (ORCPT
+        id S1727479AbfAXJsO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 04:46:34 -0500
-Received: from coyote.holtmann.net ([212.227.132.17]:53020 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725986AbfAXJqd (ORCPT
+        Thu, 24 Jan 2019 04:48:14 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:35250 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726050AbfAXJsN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 04:46:33 -0500
-Received: from marcel-macpro.fritz.box (p4FF9FD60.dip0.t-ipconnect.de [79.249.253.96])
-        by mail.holtmann.org (Postfix) with ESMTPSA id 7D6A3CF166;
-        Thu, 24 Jan 2019 10:54:18 +0100 (CET)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH v5 4/4] Bluetooth: btusb: Use the cmd_timeout method to
- reset the Intel BT chip
-From:   Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20190123205725.239661-4-rajatja@google.com>
-Date:   Thu, 24 Jan 2019 10:46:30 +0100
-Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dmitry Torokhov <dtor@chromium.org>,
-        Alex Hung <alex.hung@canonical.com>,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, netdev@vger.kernel.org,
-        rajatxjain@gmail.com, dtor@google.com, raghuram.hegde@intel.com,
-        chethan.tumkur.narayan@intel.com, sukumar.ghorai@intel.com
-Content-Transfer-Encoding: 8BIT
-Message-Id: <7A112914-5B41-4D26-807B-021B7AC907C6@holtmann.org>
-References: <20181117010748.24347-1-rajatja@google.com>
- <20190123205725.239661-1-rajatja@google.com>
- <20190123205725.239661-4-rajatja@google.com>
-To:     Rajat Jain <rajatja@google.com>
-X-Mailer: Apple Mail (2.3445.102.3)
+        Thu, 24 Jan 2019 04:48:13 -0500
+Received: by mail-wm1-f68.google.com with SMTP id t200so2307462wmt.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 01:48:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=lmFP/pb4I5zeZfqkGNoFLNvT1VnfwQ5xiH+1Aqxo9WU=;
+        b=S6uns5NvROKjcHrjjPdRTiVOP6Jr3+gYGBi5Nj1xbr8p8a9O83CNFnyO3Y2++RfCN3
+         x77XVvgLInsrMuj0hsIhYUxIgTcwzDeZ1dlBVd89sWpLxFEteg9jr8kxmNSFvFPS7fel
+         n6Xw5jOwFpOaDD7G8BPcTIbZiWUrpVR0jKjFY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lmFP/pb4I5zeZfqkGNoFLNvT1VnfwQ5xiH+1Aqxo9WU=;
+        b=Nza2+We35DCn7QoR1aMg1MDlRDCsPDT57x2MB9jldMHuPlJRkQzDwgl1DfQlsPj6A2
+         1zpt0jxVcZUQZMCXfcIspjWnr7WlJ3xSmmqhLEabCGoT8JltLMujuGy+i/39fMIXfi0C
+         oTt4bqgmDmWymMrW8FS5V7anQ1i3d8woz/WsIff6m1BInsUbKkKp2gmrsah99+Xx/e+5
+         21u5Oxt+eoaEsTybnZmrn7PIi+LHft2tWLPJ+pHlwGyZVFB94qxJU5KAoVGb9oe2zi41
+         152Cop84mOWC3QBRxGwsXw32QC+ZEuMdc+5X2oF2TSE9dQ+oWNyEA+8JK7nPXYzzslAB
+         kvfw==
+X-Gm-Message-State: AJcUukeBIoaZiRdjw1X3a3W5nESwTMONXpPxzhGku4MQQb/YrWGbvnZa
+        axkZAG1ETXXpQvpCWyp+HKQZ7g==
+X-Google-Smtp-Source: ALg8bN7k5F3d3HmMNZ3l53xd7jox3iJWVd5MnEEHVVb13cUSe52nYcGYBIgsSkTeBh3xzvTChTVIfQ==
+X-Received: by 2002:a1c:7eca:: with SMTP id z193mr1808014wmc.5.1548323290424;
+        Thu, 24 Jan 2019 01:48:10 -0800 (PST)
+Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
+        by smtp.gmail.com with ESMTPSA id e17sm161551887wri.36.2019.01.24.01.48.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 24 Jan 2019 01:48:09 -0800 (PST)
+Date:   Thu, 24 Jan 2019 09:48:07 +0000
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Sumit Garg <sumit.garg@linaro.org>
+Cc:     jens.wiklander@linaro.org, herbert@gondor.apana.org.au,
+        ard.biesheuvel@linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        yamada.masahiro@socionext.com, michal.lkml@markovi.net,
+        mpm@selenic.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        arnd@arndb.de, gregkh@linuxfoundation.org, bhsharma@redhat.com,
+        tee-dev@lists.linaro.org
+Subject: Re: [PATCH v5 2/4] tee: add supp_nowait flag in tee_context struct
+Message-ID: <20190124094807.yg5onsmbx46bi7bm@holly.lan>
+References: <1548309279-5281-1-git-send-email-sumit.garg@linaro.org>
+ <1548309279-5281-3-git-send-email-sumit.garg@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1548309279-5281-3-git-send-email-sumit.garg@linaro.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rajat,
-
-> If the platform provides it, use the reset gpio to reset the Intel BT
-> chip, as part of cmd_timeout handling. This has been found helpful on
-> Intel bluetooth controllers where the firmware gets stuck and the only
-> way out is a hard reset pin provided by the platform.
+On Thu, Jan 24, 2019 at 11:24:37AM +0530, Sumit Garg wrote:
+> This flag indicates that requests in this context should not wait for
+> tee-supplicant daemon to be started if not present and just return
+> with an error code. It is needed for requests which should be
+> non-blocking in nature like ones arising from TEE based kernel drivers
+> or any in kernel api that uses TEE internal client interface.
 > 
-> Signed-off-by: Rajat Jain <rajatja@google.com>
+> Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+
+Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+
 > ---
-> v5: Rename the hook to cmd_timeout, and wait for 5 timeouts before
->    resetting the device.
-> v4: Use data->flags instead of clearing the quirk in btusb_hw_reset()
-> v3: Better error handling for gpiod_get_optional()
-> v2: Handle the EPROBE_DEFER case.
+>  drivers/tee/optee/supp.c | 10 +++++++++-
+>  drivers/tee/tee_core.c   | 13 +++++++++++++
+>  include/linux/tee_drv.h  |  6 ++++++
+>  3 files changed, 28 insertions(+), 1 deletion(-)
 > 
-> drivers/bluetooth/btusb.c | 54 +++++++++++++++++++++++++++++++++++++++
-> 1 file changed, 54 insertions(+)
-> 
-> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-> index 4761499db9ee..8949ea30a1bc 100644
-> --- a/drivers/bluetooth/btusb.c
-> +++ b/drivers/bluetooth/btusb.c
-> @@ -29,6 +29,7 @@
-> #include <linux/of_device.h>
-> #include <linux/of_irq.h>
-> #include <linux/suspend.h>
-> +#include <linux/gpio/consumer.h>
-> #include <asm/unaligned.h>
-> 
-> #include <net/bluetooth/bluetooth.h>
-> @@ -439,6 +440,7 @@ static const struct dmi_system_id btusb_needs_reset_resume_table[] = {
-> #define BTUSB_BOOTING		9
-> #define BTUSB_DIAG_RUNNING	10
-> #define BTUSB_OOB_WAKE_ENABLED	11
-> +#define BTUSB_HW_RESET_ACTIVE	12
-> 
-> struct btusb_data {
-> 	struct hci_dev       *hdev;
-> @@ -476,6 +478,8 @@ struct btusb_data {
-> 	struct usb_endpoint_descriptor *diag_tx_ep;
-> 	struct usb_endpoint_descriptor *diag_rx_ep;
-> 
-> +	struct gpio_desc *reset_gpio;
-> +
-> 	__u8 cmdreq_type;
-> 	__u8 cmdreq;
-> 
-> @@ -489,8 +493,39 @@ struct btusb_data {
-> 	int (*setup_on_usb)(struct hci_dev *hdev);
-> 
-> 	int oob_wake_irq;   /* irq for out-of-band wake-on-bt */
-> +	unsigned num_cmd_timeout;
-
-Make this cmd_timeout_count or cmd_timeout_cnt.
-
-> };
-> 
-> +
-> +static void btusb_intel_cmd_timeout(struct hci_dev *hdev,
-> +				    struct hci_command_hdr *cmd)
-> +{
-> +	struct btusb_data *data = hci_get_drvdata(hdev);
-> +	struct gpio_desc *reset_gpio = data->reset_gpio;
-> +
-> +	bt_dev_err(hdev, "btusb num_cmd_timeout = %u", ++data->num_cmd_timeout);
-
-I would prefer if you don’t do the increase in the bt_dev_err(). And you can also scrap the “btusb “ prefix here since that is all present via bt_dev_err if really needed at some point. Actually I question the whole bt_dev_err here in the first place since the core will put our the error. You are just repeating it here.
-
-> +
-> +	if (data->num_cmd_timeout < 5)
-> +		return;
-
-So I would propose to do just this:
-
-	if (++data->cmd_timeout_count < 5)
-		return;
-
-> +
+> diff --git a/drivers/tee/optee/supp.c b/drivers/tee/optee/supp.c
+> index 43626e1..92f56b8 100644
+> --- a/drivers/tee/optee/supp.c
+> +++ b/drivers/tee/optee/supp.c
+> @@ -88,10 +88,18 @@ u32 optee_supp_thrd_req(struct tee_context *ctx, u32 func, size_t num_params,
+>  {
+>  	struct optee *optee = tee_get_drvdata(ctx->teedev);
+>  	struct optee_supp *supp = &optee->supp;
+> -	struct optee_supp_req *req = kzalloc(sizeof(*req), GFP_KERNEL);
+> +	struct optee_supp_req *req;
+>  	bool interruptable;
+>  	u32 ret;
+>  
 > +	/*
-> +	 * Toggle the hard reset line if the platform provides one. The reset
-> +	 * is going to yank the device off the USB and then replug. So doing
-> +	 * once is enough. The cleanup is handled correctly on the way out
-> +	 * (standard USB disconnect), and the new device is detected cleanly
-> +	 * and bound to the driver again like it should be.
+> +	 * Return in case there is no supplicant available and
+> +	 * non-blocking request.
 > +	 */
-> +	if (test_and_set_bit(BTUSB_HW_RESET_ACTIVE, &data->flags)) {
-> +		bt_dev_err(hdev, "last reset failed? Not resetting again");
-> +		return;
-> +	}
+> +	if (!supp->ctx && ctx->supp_nowait)
+> +		return TEEC_ERROR_COMMUNICATION;
 > +
-> +	bt_dev_err(hdev, "Initiating HW reset via gpio");
-> +	gpiod_set_value(reset_gpio, 1);
-> +	mdelay(100);
-> +	gpiod_set_value(reset_gpio, 0);
-> +}
-> +
-> static inline void btusb_free_frags(struct btusb_data *data)
-> {
-> 	unsigned long flags;
-> @@ -2915,6 +2950,7 @@ static int btusb_probe(struct usb_interface *intf,
-> 		       const struct usb_device_id *id)
-> {
-> 	struct usb_endpoint_descriptor *ep_desc;
-> +	struct gpio_desc *reset_gpio;
-> 	struct btusb_data *data;
-> 	struct hci_dev *hdev;
-> 	unsigned ifnum_base;
-> @@ -3028,6 +3064,15 @@ static int btusb_probe(struct usb_interface *intf,
+> +	req = kzalloc(sizeof(*req), GFP_KERNEL);
+>  	if (!req)
+>  		return TEEC_ERROR_OUT_OF_MEMORY;
+>  
+> diff --git a/drivers/tee/tee_core.c b/drivers/tee/tee_core.c
+> index 9f4c8bc..2612dfa 100644
+> --- a/drivers/tee/tee_core.c
+> +++ b/drivers/tee/tee_core.c
+> @@ -105,6 +105,11 @@ static int tee_open(struct inode *inode, struct file *filp)
+>  	if (IS_ERR(ctx))
+>  		return PTR_ERR(ctx);
+>  
+> +	/*
+> +	 * Default user-space behaviour is to wait for tee-supplicant
+> +	 * if not present for any requests in this context.
+> +	 */
+> +	ctx->supp_nowait = false;
+>  	filp->private_data = ctx;
+>  	return 0;
+>  }
+> @@ -981,6 +986,14 @@ tee_client_open_context(struct tee_context *start,
+>  	} while (IS_ERR(ctx) && PTR_ERR(ctx) != -ENOMEM);
+>  
+>  	put_device(put_dev);
+> +	/*
+> +	 * Default behaviour for in kernel client is to not wait for
+> +	 * tee-supplicant if not present for any requests in this context.
+> +	 * Also this flag could be configured again before call to
+> +	 * tee_client_open_session() if any in kernel client requires
+> +	 * different behaviour.
+> +	 */
+> +	ctx->supp_nowait = true;
+>  	return ctx;
+>  }
+>  EXPORT_SYMBOL_GPL(tee_client_open_context);
+> diff --git a/include/linux/tee_drv.h b/include/linux/tee_drv.h
+> index ce957ce..56d7f1b 100644
+> --- a/include/linux/tee_drv.h
+> +++ b/include/linux/tee_drv.h
+> @@ -50,6 +50,11 @@ struct tee_shm_pool;
+>   * @releasing:  flag that indicates if context is being released right now.
+>   *		It is needed to break circular dependency on context during
+>   *              shared memory release.
+> + * @supp_nowait: flag that indicates that requests in this context should not
+> + *              wait for tee-supplicant daemon to be started if not present
+> + *              and just return with an error code. It is needed for requests
+> + *              that arises from TEE based kernel drivers that should be
+> + *              non-blocking in nature.
+>   */
+>  struct tee_context {
+>  	struct tee_device *teedev;
+> @@ -57,6 +62,7 @@ struct tee_context {
+>  	void *data;
+>  	struct kref refcount;
+>  	bool releasing;
+> +	bool supp_nowait;
+>  };
+>  
+>  struct tee_param_memref {
+> -- 
+> 2.7.4
 > 
-> 	SET_HCIDEV_DEV(hdev, &intf->dev);
-> 
-> +	reset_gpio = gpiod_get_optional(&data->udev->dev, "reset",
-> +					GPIOD_OUT_LOW);
-
-Any reason to not use the devm_gpiod_get_optional() version here?
-
-> +	if (IS_ERR(reset_gpio)) {
-> +		err = PTR_ERR(reset_gpio);
-> +		goto out_free_dev;
-> +	} else if (reset_gpio) {
-> +		data->reset_gpio = reset_gpio;
-> +	}
-> +
-> 	hdev->open   = btusb_open;
-> 	hdev->close  = btusb_close;
-> 	hdev->flush  = btusb_flush;
-> @@ -3085,6 +3130,8 @@ static int btusb_probe(struct usb_interface *intf,
-> 		set_bit(HCI_QUIRK_STRICT_DUPLICATE_FILTER, &hdev->quirks);
-> 		set_bit(HCI_QUIRK_SIMULTANEOUS_DISCOVERY, &hdev->quirks);
-> 		set_bit(HCI_QUIRK_NON_PERSISTENT_DIAG, &hdev->quirks);
-> +		if (data->reset_gpio)
-> +			hdev->cmd_timeout = btusb_intel_cmd_timeout;
-> 	}
-
-Always assign hdev->cmd_timeout = btusb_intel_cmd_timeout and put it after btintel_set_bdaddr and before the quirks.
-
-Move the if (data->reset_gpio) check into btusb_intel_cmd_timeout() function and print a warning that no reset GPIO is present.
-
-> 
-> 	if (id->driver_info & BTUSB_INTEL_NEW) {
-> @@ -3097,6 +3144,8 @@ static int btusb_probe(struct usb_interface *intf,
-> 		set_bit(HCI_QUIRK_STRICT_DUPLICATE_FILTER, &hdev->quirks);
-> 		set_bit(HCI_QUIRK_SIMULTANEOUS_DISCOVERY, &hdev->quirks);
-> 		set_bit(HCI_QUIRK_NON_PERSISTENT_DIAG, &hdev->quirks);
-> +		if (data->reset_gpio)
-> +			hdev->cmd_timeout = btusb_intel_cmd_timeout;
-> 	}
-> 
-> 	if (id->driver_info & BTUSB_MARVELL)
-> @@ -3226,6 +3275,8 @@ static int btusb_probe(struct usb_interface *intf,
-> 	return 0;
-> 
-> out_free_dev:
-> +	if (data->reset_gpio)
-> +		gpiod_put(data->reset_gpio);
-> 	hci_free_dev(hdev);
-> 	return err;
-> }
-> @@ -3269,6 +3320,9 @@ static void btusb_disconnect(struct usb_interface *intf)
-> 	if (data->oob_wake_irq)
-> 		device_init_wakeup(&data->udev->dev, false);
-> 
-> +	if (data->reset_gpio)
-> +		gpiod_put(data->reset_gpio);
-> +
-> 	hci_free_dev(hdev);
-> }
-
-Regards
-
-Marcel
-
