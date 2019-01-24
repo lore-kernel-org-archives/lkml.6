@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1E1EC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:11:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5C7AC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:11:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BA15218D0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:11:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 753B6218D0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:11:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548360661;
-	bh=xrdeE7+G5NxFGihwCcrHlwJn3lIcpHzEY5dv+OgmZoE=;
+	s=default; t=1548360666;
+	bh=aWkewOkDqlm5URrkXnxKnyYkIZhKZhIaaD02jo/SPVo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Vgxo0NaDe0g+g7XtuhLzHDdH1xC4UQ9LCV18vtjIBXRil5VNl3CC+8e2xEHjIw984
-	 t9tnPX7d/Yg3LgFqNHp+c4XTiGDJDGL0nZAULXeH3TuoLPyiZC6ddLLbhzE9LfTC2k
-	 tYFAmfKNYm91Eq8aVuWsjKvYKHeqRBWtA6hSDjdA=
+	b=O5FU9O0wWSgI5QySRE8j4fkyL3kcLi0NGwj3LfAxCHam7K/3qZZJ89SD+ZXHOZynq
+	 aLeR+JxeWySTzzOiqgKko+NmddrYe487DFUN+WzujWJEDbdSf0kFVuEIB4P9GHhZaw
+	 Z6oh8Dq5Wv4v6KAbS4V0eVeP5vlfQfVYsBwa61P8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730154AbfAXULA (ORCPT
+        id S1730732AbfAXT1R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 15:11:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53528 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730733AbfAXT1R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 24 Jan 2019 14:27:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53436 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730717AbfAXT1M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:27:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A0ABF218A6;
-        Thu, 24 Jan 2019 19:27:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C8140218FE;
+        Thu, 24 Jan 2019 19:27:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358037;
-        bh=xrdeE7+G5NxFGihwCcrHlwJn3lIcpHzEY5dv+OgmZoE=;
+        s=default; t=1548358031;
+        bh=aWkewOkDqlm5URrkXnxKnyYkIZhKZhIaaD02jo/SPVo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KTodpGok7MpFIGdWvDZ7K8KEB8Nvy8+gqfjJfnYMQ5dZG7yxnVrGm31vqaLClqxlA
-         Z9rn99raARWrcPpt4GvOHY8cqiaCyyV7f23hW3Vufzm4n/En+SHm7AgsPkxXAwiM/g
-         Q7uiHonYcIVrBii7d0srjzS5I/3XmJtD02Bj1ggU=
+        b=KMsNbrzUsL5snHRUCwmaDo64WbhSx686nzx9eDZU8em4RyPaJH+d8CTrdM9Alsa8U
+         eYmJBjsA6c/cPhVQqkaqfkXWWLNefTbj6/oSt4fUdRrJ7y7vm6WrC7tigNfRgSpBLC
+         UvOnJkwJX1n3TC/nzqh8JlKt1CVSpJhL8unfiHsc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Ahern <dsahern@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 074/104] ipv6: Consider sk_bound_dev_if when binding a socket to a v4 mapped address
-Date:   Thu, 24 Jan 2019 20:20:03 +0100
-Message-Id: <20190124190203.672814583@linuxfoundation.org>
+        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.4 072/104] media: vb2: be sure to unlock mutex on errors
+Date:   Thu, 24 Jan 2019 20:20:01 +0100
+Message-Id: <20190124190203.483890742@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190154.968308875@linuxfoundation.org>
 References: <20190124190154.968308875@linuxfoundation.org>
@@ -65,51 +65,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Ahern <dsahern@gmail.com>
+From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-[ Upstream commit ec90ad334986fa5856d11dd272f7f22fa86c55c4 ]
+commit c06ef2e9acef4cda1feee2ce055b8086e33d251a upstream.
 
-Similar to c5ee066333eb ("ipv6: Consider sk_bound_dev_if when binding a
-socket to an address"), binding a socket to v4 mapped addresses needs to
-consider if the socket is bound to a device.
+As reported by smatch:
+drivers/media/common/videobuf2/videobuf2-core.c: drivers/media/common/videobuf2/videobuf2-core.c:2159 vb2_mmap() warn: inconsistent returns 'mutex:&q->mmap_lock'.
+  Locked on:   line 2148
+  Unlocked on: line 2100
+               line 2108
+               line 2113
+               line 2118
+               line 2156
+               line 2159
 
-This problem also exists from the beginning of git history.
+There is one error condition that doesn't unlock a mutex.
 
-Signed-off-by: David Ahern <dsahern@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: cd26d1c4d1bc ("media: vb2: vb2_mmap: move lock up")
+Reviewed-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv6/af_inet6.c |   11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
 
---- a/net/ipv6/af_inet6.c
-+++ b/net/ipv6/af_inet6.c
-@@ -292,6 +292,7 @@ int inet6_bind(struct socket *sock, stru
+---
+ drivers/media/v4l2-core/videobuf2-core.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/drivers/media/v4l2-core/videobuf2-core.c
++++ b/drivers/media/v4l2-core/videobuf2-core.c
+@@ -2003,7 +2003,8 @@ int vb2_mmap(struct vb2_queue *q, struct
+ 	if (length < (vma->vm_end - vma->vm_start)) {
+ 		dprintk(1,
+ 			"MMAP invalid, as it would overflow buffer length\n");
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto unlock;
+ 	}
  
- 	/* Check if the address belongs to the host. */
- 	if (addr_type == IPV6_ADDR_MAPPED) {
-+		struct net_device *dev = NULL;
- 		int chk_addr_ret;
- 
- 		/* Binding to v4-mapped address on a v6-only socket
-@@ -302,9 +303,17 @@ int inet6_bind(struct socket *sock, stru
- 			goto out;
- 		}
- 
-+		if (sk->sk_bound_dev_if) {
-+			dev = dev_get_by_index_rcu(net, sk->sk_bound_dev_if);
-+			if (!dev) {
-+				err = -ENODEV;
-+				goto out;
-+			}
-+		}
-+
- 		/* Reproduce AF_INET checks to make the bindings consistent */
- 		v4addr = addr->sin6_addr.s6_addr32[3];
--		chk_addr_ret = inet_addr_type(net, v4addr);
-+		chk_addr_ret = inet_addr_type_dev_table(net, dev, v4addr);
- 		if (!net->ipv4.sysctl_ip_nonlocal_bind &&
- 		    !(inet->freebind || inet->transparent) &&
- 		    v4addr != htonl(INADDR_ANY) &&
+ 	ret = call_memop(vb, mmap, vb->planes[plane].mem_priv, vma);
 
 
