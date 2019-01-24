@@ -2,169 +2,122 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DEABC282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:01:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B50ECC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:01:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BBA521726
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:01:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="J/w9SOD6"
+	by mail.kernel.org (Postfix) with ESMTP id 8506D21726
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:01:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548360108;
+	bh=B7IGmMgEMnEj1evlOzQmsySMwo6LDCg2gxCebKLMdp0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=j4Z6Phe1rmBO6rQYDOiN7IVZR4Jq1cOZjp4MoE84316BZzQgUmGpsPx4aAiqS8VcB
+	 CN8wpLUL79uurbAU7mLz4vPmrhAc8eEI3Tcx5qNrBEht2S8YvrPDHWZPas1cevALtj
+	 B/1ULiFuocjgOr/hSyjCUtS0BEnXIURwUJaSCODI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732394AbfAXUBY (ORCPT
+        id S1732057AbfAXTdm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 15:01:24 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:37701 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730021AbfAXUBX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 15:01:23 -0500
-Received: by mail-pf1-f193.google.com with SMTP id y126so3532404pfb.4
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 12:01:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=viWBxNLdmx5hdu4igYEdtrD9NNJ9I5QzFtzjPLFp1Zg=;
-        b=J/w9SOD6T4AdblpX5nwobBrlOLEkBmczgfC3EY9vW9U5isU0HSHZCQg04H+zLA8Amt
-         ByrPzdOucoh0P1rugWULznnraWoSn7rsrzqZud/+tHUIuLElI4DOx6twc5+bMHFdvdIq
-         Okztp/hQTyVgLiSWJe+rS0nY8Sw6pUepTXGKE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=viWBxNLdmx5hdu4igYEdtrD9NNJ9I5QzFtzjPLFp1Zg=;
-        b=ZkPSWtw2IIIVCqSO87DMJy939V16vUsi/UeUDL7NNmpl16nMJK6ERGIVlNlFntlKvi
-         ye/8g2ZLZOVgll4ltOeK9npIipXvYVpfJKy8Rp3fpcJQrgDUNCTTXgcDj56Jir5CftBu
-         Vf0kZMcaN9UZfPA2b1cCNc2/fDbKpQf+VG4xkGlp1VM3lHoBCUP7IyNzbuTNfjzfvfPC
-         yF5avxgA4l6ks4UVa3viXPlN09Yh9hYsyA8GhwiKezs43tzB/y+lSZU4D/aHIiOKxy2s
-         GIMvWizRmnHosChzeQ4XaOD1EcLQ25elT7mpnIOeIKVGrgPodvajhaqHMnrOKhYvMQu8
-         M3+A==
-X-Gm-Message-State: AJcUuke6lFiYfm2vxx0DKDg35ZBxIivD7cBwvbwgUzWGlxMKs0ITklMX
-        PAXzJefe2WB1i+RihKblFSB3VA==
-X-Google-Smtp-Source: ALg8bN5A1xFJznW/r2sFKdv7KvB++13U9DACtd4l4I48QlIcvSwutN75lpAJXn4lrCOTyle7kzJtzA==
-X-Received: by 2002:a63:e950:: with SMTP id q16mr7215772pgj.138.1548360082660;
-        Thu, 24 Jan 2019 12:01:22 -0800 (PST)
-Received: from localhost.localdomain ([115.97.179.75])
-        by smtp.gmail.com with ESMTPSA id x11sm61637003pfe.72.2019.01.24.12.01.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 12:01:22 -0800 (PST)
-From:   Jagan Teki <jagan@amarulasolutions.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-amarula@amarulasolutions.com, linux-sunxi@googlegroups.com,
-        Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v6 22/22] arm64: dts: allwinner: a64-amarula-relic: Add Techstar TS8550B MIPI-DSI panel
-Date:   Fri, 25 Jan 2019 01:29:00 +0530
-Message-Id: <20190124195900.22620-23-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
-In-Reply-To: <20190124195900.22620-1-jagan@amarulasolutions.com>
-References: <20190124195900.22620-1-jagan@amarulasolutions.com>
+        Thu, 24 Jan 2019 14:33:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33408 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732034AbfAXTdi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:33:38 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4BECC218FC;
+        Thu, 24 Jan 2019 19:33:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548358417;
+        bh=B7IGmMgEMnEj1evlOzQmsySMwo6LDCg2gxCebKLMdp0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=xkV0U1RWpbExW+NOwzCNvK6EYp827aLNjP8REU+ywXAkALghBeseh3U5N5AeWHXW/
+         WWI5adIKuEgPoDl3X8MEYJ/akX9W2Tu3vXG0/HQ+ahZiCswtY4Bz3R5m/l4K8ymQ0l
+         tKKhEjAF8HS0P2/ss3qjjJbJul4G/heYkwqLDWTk=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 40/63] perf parse-events: Fix unchecked usage of strncpy()
+Date:   Thu, 24 Jan 2019 20:20:29 +0100
+Message-Id: <20190124190159.894549029@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190124190155.176570028@linuxfoundation.org>
+References: <20190124190155.176570028@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Amarula A64-Relic board by default bound with Techstar TS8550B
-MIPI-DSI panel, add support for it.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-DSI panel connected via board DSI port with,
-- DLDO2 as VCC supply
-- DLDO2 as IOVCC supply
-- DLDO1 as VCC-DSI supply
-- PD24 gpio for reset pin
-- PD23 gpio for backlight enable pin
+------------------
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+[ Upstream commit bd8d57fb7e25e9fcf67a9eef5fa13aabe2016e07 ]
+
+The strncpy() function may leave the destination string buffer
+unterminated, better use strlcpy() that we have a __weak fallback
+implementation for systems without it.
+
+This fixes this warning on an Alpine Linux Edge system with gcc 8.2:
+
+  util/parse-events.c: In function 'print_symbol_events':
+  util/parse-events.c:2465:4: error: 'strncpy' specified bound 100 equals destination size [-Werror=stringop-truncation]
+      strncpy(name, syms->symbol, MAX_NAME_LEN);
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  In function 'print_symbol_events.constprop',
+      inlined from 'print_events' at util/parse-events.c:2508:2:
+  util/parse-events.c:2465:4: error: 'strncpy' specified bound 100 equals destination size [-Werror=stringop-truncation]
+      strncpy(name, syms->symbol, MAX_NAME_LEN);
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  In function 'print_symbol_events.constprop',
+      inlined from 'print_events' at util/parse-events.c:2511:2:
+  util/parse-events.c:2465:4: error: 'strncpy' specified bound 100 equals destination size [-Werror=stringop-truncation]
+      strncpy(name, syms->symbol, MAX_NAME_LEN);
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  cc1: all warnings being treated as errors
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Fixes: 947b4ad1d198 ("perf list: Fix max event string size")
+Link: https://lkml.kernel.org/n/tip-b663e33bm6x8hrkie4uxh7u2@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../allwinner/sun50i-a64-amarula-relic.dts    | 39 +++++++++++++++++++
- 1 file changed, 39 insertions(+)
+ tools/perf/util/parse-events.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-index f180c841ac3c..703055f2a4fb 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-@@ -9,6 +9,7 @@
- #include "sun50i-a64.dtsi"
+diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+index 53f620472151..d0b92d374ba9 100644
+--- a/tools/perf/util/parse-events.c
++++ b/tools/perf/util/parse-events.c
+@@ -2300,7 +2300,7 @@ restart:
+ 		if (!name_only && strlen(syms->alias))
+ 			snprintf(name, MAX_NAME_LEN, "%s OR %s", syms->symbol, syms->alias);
+ 		else
+-			strncpy(name, syms->symbol, MAX_NAME_LEN);
++			strlcpy(name, syms->symbol, MAX_NAME_LEN);
  
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/pwm/pwm.h>
- 
- / {
- 	model = "Amarula A64-Relic";
-@@ -18,6 +19,14 @@
- 		serial0 = &uart0;
- 	};
- 
-+	backlight: backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&pwm 0 50000 PWM_POLARITY_INVERTED>;
-+		brightness-levels = <1 2 4 8 16 32 64 128 512>;
-+		default-brightness-level = <2>;
-+		enable-gpios = <&pio 3 23 GPIO_ACTIVE_HIGH>; /* LCD-BL-EN: PD23 */
-+	};
-+
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-@@ -83,6 +92,30 @@
- 	};
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
-+&dphy {
-+	status = "okay";
-+};
-+
-+&dsi {
-+	vcc-dsi-supply = <&reg_dldo1>;
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	status = "okay";
-+
-+	panel@0 {
-+		compatible = "techstar,ts8550b", "sitronix,st7701";
-+		reg = <0>;
-+		VCC-supply = <&reg_dldo2>;
-+		IOVCC-supply = <&reg_dldo2>;
-+		reset-gpios = <&pio 3 24 GPIO_ACTIVE_HIGH>; /* LCD-RST: PD24 */
-+		backlight = <&backlight>;
-+	};
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -160,6 +193,12 @@
- 	status = "okay";
- };
- 
-+&pwm {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pwm_pin>;
-+	status = "okay";
-+};
-+
- &r_rsb {
- 	status = "okay";
- 
+ 		evt_list[evt_i] = strdup(name);
+ 		if (evt_list[evt_i] == NULL)
 -- 
-2.18.0.321.gffc6fa0e3
+2.19.1
+
+
 
