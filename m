@@ -7,49 +7,50 @@ X-Spam-Status: No, score=-15.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B50ECC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:01:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FD96C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:01:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8506D21726
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:01:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1739218D0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:01:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548360108;
-	bh=B7IGmMgEMnEj1evlOzQmsySMwo6LDCg2gxCebKLMdp0=;
+	s=default; t=1548360115;
+	bh=bDQAAMtgn6q/lvyf6ImfhdqPmTeYeyGR1w+oJENken8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=j4Z6Phe1rmBO6rQYDOiN7IVZR4Jq1cOZjp4MoE84316BZzQgUmGpsPx4aAiqS8VcB
-	 CN8wpLUL79uurbAU7mLz4vPmrhAc8eEI3Tcx5qNrBEht2S8YvrPDHWZPas1cevALtj
-	 B/1ULiFuocjgOr/hSyjCUtS0BEnXIURwUJaSCODI=
+	b=ge2voTh4QS0wV8MMWbVIh7GwmA7k6sOnLetLYNsabsy5eGgNziSWcic89bMhP622c
+	 L05vBha/eMi5rYCcdfEYVLn02Oa4ECHRR0KRcjeCwDtogSdZSVUf1iClE+bouczI5S
+	 IJaLwqUG+lCMvIXYLt3KBabEUqoNdpc8a5YA73S8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732057AbfAXTdm (ORCPT
+        id S1729656AbfAXUBx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:33:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33408 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 15:01:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33354 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732034AbfAXTdi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:33:38 -0500
+        id S1729931AbfAXTdf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:33:35 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4BECC218FC;
-        Thu, 24 Jan 2019 19:33:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 32C21218D4;
+        Thu, 24 Jan 2019 19:33:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358417;
-        bh=B7IGmMgEMnEj1evlOzQmsySMwo6LDCg2gxCebKLMdp0=;
+        s=default; t=1548358414;
+        bh=bDQAAMtgn6q/lvyf6ImfhdqPmTeYeyGR1w+oJENken8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xkV0U1RWpbExW+NOwzCNvK6EYp827aLNjP8REU+ywXAkALghBeseh3U5N5AeWHXW/
-         WWI5adIKuEgPoDl3X8MEYJ/akX9W2Tu3vXG0/HQ+ahZiCswtY4Bz3R5m/l4K8ymQ0l
-         tKKhEjAF8HS0P2/ss3qjjJbJul4G/heYkwqLDWTk=
+        b=aZvA5/xngqa85Adf6VebI/STVVYhTBjEeECjSy/b9NgEgm4KynrQlARcdYRMzon1j
+         iZUEXK/Tbbz9ns9x++i0yKy4DQ0k0EeKIvRVIZEncNL+PR4nZG2ARENtBQLtoaoqrK
+         PrAJqdNUiPUjF9tsLeHFahzSmBKG7W79r7/m+vMw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
         Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
+        Arjan van de Ven <arjan@linux.intel.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 40/63] perf parse-events: Fix unchecked usage of strncpy()
-Date:   Thu, 24 Jan 2019 20:20:29 +0100
-Message-Id: <20190124190159.894549029@linuxfoundation.org>
+Subject: [PATCH 4.14 39/63] perf svghelper: Fix unchecked usage of strncpy()
+Date:   Thu, 24 Jan 2019 20:20:28 +0100
+Message-Id: <20190124190159.759104703@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190155.176570028@linuxfoundation.org>
 References: <20190124190155.176570028@linuxfoundation.org>
@@ -68,54 +69,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit bd8d57fb7e25e9fcf67a9eef5fa13aabe2016e07 ]
+[ Upstream commit 2f5302533f306d5ee87bd375aef9ca35b91762cb ]
 
 The strncpy() function may leave the destination string buffer
 unterminated, better use strlcpy() that we have a __weak fallback
 implementation for systems without it.
 
+In this specific case this would only happen if fgets() was buggy, as
+its man page states that it should read one less byte than the size of
+the destination buffer, so that it can put the nul byte at the end of
+it, so it would never copy 255 non-nul chars, as fgets reads into the
+orig buffer at most 254 non-nul chars and terminates it. But lets just
+switch to strlcpy to keep the original intent and silence the gcc 8.2
+warning.
+
 This fixes this warning on an Alpine Linux Edge system with gcc 8.2:
 
-  util/parse-events.c: In function 'print_symbol_events':
-  util/parse-events.c:2465:4: error: 'strncpy' specified bound 100 equals destination size [-Werror=stringop-truncation]
-      strncpy(name, syms->symbol, MAX_NAME_LEN);
-      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  In function 'print_symbol_events.constprop',
-      inlined from 'print_events' at util/parse-events.c:2508:2:
-  util/parse-events.c:2465:4: error: 'strncpy' specified bound 100 equals destination size [-Werror=stringop-truncation]
-      strncpy(name, syms->symbol, MAX_NAME_LEN);
-      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  In function 'print_symbol_events.constprop',
-      inlined from 'print_events' at util/parse-events.c:2511:2:
-  util/parse-events.c:2465:4: error: 'strncpy' specified bound 100 equals destination size [-Werror=stringop-truncation]
-      strncpy(name, syms->symbol, MAX_NAME_LEN);
-      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  cc1: all warnings being treated as errors
+  In function 'cpu_model',
+      inlined from 'svg_cpu_box' at util/svghelper.c:378:2:
+  util/svghelper.c:337:5: error: 'strncpy' output may be truncated copying 255 bytes from a string of length 255 [-Werror=stringop-truncation]
+       strncpy(cpu_m, &buf[13], 255);
+       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Fixes: 947b4ad1d198 ("perf list: Fix max event string size")
-Link: https://lkml.kernel.org/n/tip-b663e33bm6x8hrkie4uxh7u2@git.kernel.org
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Fixes: f48d55ce7871 ("perf: Add a SVG helper library file")
+Link: https://lkml.kernel.org/n/tip-xzkoo0gyr56gej39ltivuh9g@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/parse-events.c | 2 +-
+ tools/perf/util/svghelper.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index 53f620472151..d0b92d374ba9 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -2300,7 +2300,7 @@ restart:
- 		if (!name_only && strlen(syms->alias))
- 			snprintf(name, MAX_NAME_LEN, "%s OR %s", syms->symbol, syms->alias);
- 		else
--			strncpy(name, syms->symbol, MAX_NAME_LEN);
-+			strlcpy(name, syms->symbol, MAX_NAME_LEN);
- 
- 		evt_list[evt_i] = strdup(name);
- 		if (evt_list[evt_i] == NULL)
+diff --git a/tools/perf/util/svghelper.c b/tools/perf/util/svghelper.c
+index 1cbada2dc6be..f735ee038713 100644
+--- a/tools/perf/util/svghelper.c
++++ b/tools/perf/util/svghelper.c
+@@ -334,7 +334,7 @@ static char *cpu_model(void)
+ 	if (file) {
+ 		while (fgets(buf, 255, file)) {
+ 			if (strstr(buf, "model name")) {
+-				strncpy(cpu_m, &buf[13], 255);
++				strlcpy(cpu_m, &buf[13], 255);
+ 				break;
+ 			}
+ 		}
 -- 
 2.19.1
 
