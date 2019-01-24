@@ -2,53 +2,53 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55481C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:29:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B89DAC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:29:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20563218F0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:29:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81D82218FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:29:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358164;
-	bh=3yP/NIRtqpTPe+mSYKIuMPU0dfQlsJ7PoeEr5crCJA4=;
+	s=default; t=1548358172;
+	bh=ga0U2dGp8l+oto4ds7IzMZo0zUc3AVQLTn27qyKtC9k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=N7kgpFeZI2ErKEzmJTZY+yumUEHbprEB48a5ysLi0d4b7H5p8QG0JjFKN7hkOVejm
-	 lNeqIk3sleHmkNCUrZWLOmHTIPZr8hkJprITnm2Aim7ZSxcjqzW1Tx68v3qxxTEBOk
-	 c0ZSrqPX6boJZpRfH7UF/32MGdi5EslE1tfMcV0E=
+	b=ECsI1BCpdbFiVERHUVJ8KUz+VL4ZOqNsp5+Sve0jBZyp01QnTt9PrEMJXWnfL6Cei
+	 jdIvOVt4JvzoeXVqljCAFaCs6hozURNWK8rPYEo9s16ym5XoCQ6VDLiMh6m5fnsIG/
+	 6D21sHTwFVP7axu0g+qi7W3HydZt/Tyh/BiWYLEc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731163AbfAXT3X (ORCPT
+        id S1731210AbfAXT3a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:29:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56495 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:29:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56636 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731137AbfAXT3U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:29:20 -0500
+        id S1730739AbfAXT31 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:29:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B870C218E2;
-        Thu, 24 Jan 2019 19:29:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 57DC4218F0;
+        Thu, 24 Jan 2019 19:29:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358160;
-        bh=3yP/NIRtqpTPe+mSYKIuMPU0dfQlsJ7PoeEr5crCJA4=;
+        s=default; t=1548358165;
+        bh=ga0U2dGp8l+oto4ds7IzMZo0zUc3AVQLTn27qyKtC9k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c1sga37tjv5CEAXpy3L26P7iT0OhwSPQlL66IeXVue1WklMifc6w4uHMqJ3tYML25
-         144kRWIcqdU6fEyhEMNa3Fy8lxnTLt0TpKHmja4VhCv6AFp2ONuXIOof/vKl3hIqup
-         nJEMKLPtJsEVWMNkjk8ZZpUauPLA1Ny8oDxXuu+U=
+        b=u53V4UJMnHUI1+hiIPQ6TO0BQoGID8fmdSYsU0p//MWILwvqZXW0BW8ScQpo9/vbW
+         EnBuDFzENOuFsG+3VUYapewYJzUriyMzunrTYl7aKUYQmFiXVL0gXcjPDuSRTrx2eV
+         oQurVGPV4w+KFWObYEKudiIb70970vF6IomwFFZI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Breno Leitao <leitao@debian.org>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 15/39] powerpc/xmon: Fix invocation inside lock region
-Date:   Thu, 24 Jan 2019 20:20:18 +0100
-Message-Id: <20190124190448.777309021@linuxfoundation.org>
+Subject: [PATCH 4.9 17/39] media: firewire: Fix app_info parameter type in avc_ca{,_app}_info
+Date:   Thu, 24 Jan 2019 20:20:20 +0100
+Message-Id: <20190124190448.851409818@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190448.232316246@linuxfoundation.org>
 References: <20190124190448.232316246@linuxfoundation.org>
@@ -67,84 +67,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 8d4a862276a9c30a269d368d324fb56529e6d5fd ]
+[ Upstream commit b2e9a4eda11fd2cb1e6714e9ad3f455c402568ff ]
 
-Currently xmon needs to get devtree_lock (through rtas_token()) during its
-invocation (at crash time). If there is a crash while devtree_lock is being
-held, then xmon tries to get the lock but spins forever and never get into
-the interactive debugger, as in the following case:
+Clang warns:
 
-	int *ptr = NULL;
-	raw_spin_lock_irqsave(&devtree_lock, flags);
-	*ptr = 0xdeadbeef;
+drivers/media/firewire/firedtv-avc.c:999:45: warning: implicit
+conversion from 'int' to 'char' changes value from 159 to -97
+[-Wconstant-conversion]
+        app_info[0] = (EN50221_TAG_APP_INFO >> 16) & 0xff;
+                    ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+drivers/media/firewire/firedtv-avc.c:1000:45: warning: implicit
+conversion from 'int' to 'char' changes value from 128 to -128
+[-Wconstant-conversion]
+        app_info[1] = (EN50221_TAG_APP_INFO >>  8) & 0xff;
+                    ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+drivers/media/firewire/firedtv-avc.c:1040:44: warning: implicit
+conversion from 'int' to 'char' changes value from 159 to -97
+[-Wconstant-conversion]
+        app_info[0] = (EN50221_TAG_CA_INFO >> 16) & 0xff;
+                    ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+drivers/media/firewire/firedtv-avc.c:1041:44: warning: implicit
+conversion from 'int' to 'char' changes value from 128 to -128
+[-Wconstant-conversion]
+        app_info[1] = (EN50221_TAG_CA_INFO >>  8) & 0xff;
+                    ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+4 warnings generated.
 
-This patch avoids calling rtas_token(), thus trying to get the same lock,
-at crash time. This new mechanism proposes getting the token at
-initialization time (xmon_init()) and just consuming it at crash time.
+Change app_info's type to unsigned char to match the type of the
+member msg in struct ca_msg, which is the only thing passed into the
+app_info parameter in this function.
 
-This would allow xmon to be possible invoked independent of devtree_lock
-being held or not.
+Link: https://github.com/ClangBuiltLinux/linux/issues/105
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Reviewed-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/xmon/xmon.c | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+ drivers/media/firewire/firedtv-avc.c | 6 ++++--
+ drivers/media/firewire/firedtv.h     | 6 ++++--
+ 2 files changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/arch/powerpc/xmon/xmon.c b/arch/powerpc/xmon/xmon.c
-index 760545519a0b..687e8b8bf5c6 100644
---- a/arch/powerpc/xmon/xmon.c
-+++ b/arch/powerpc/xmon/xmon.c
-@@ -73,6 +73,9 @@ static int xmon_gate;
- #define xmon_owner 0
- #endif /* CONFIG_SMP */
- 
-+#ifdef CONFIG_PPC_PSERIES
-+static int set_indicator_token = RTAS_UNKNOWN_SERVICE;
-+#endif
- static unsigned long in_xmon __read_mostly = 0;
- 
- static unsigned long adrs;
-@@ -340,7 +343,6 @@ static inline void disable_surveillance(void)
- #ifdef CONFIG_PPC_PSERIES
- 	/* Since this can't be a module, args should end up below 4GB. */
- 	static struct rtas_args args;
--	int token;
- 
- 	/*
- 	 * At this point we have got all the cpus we can into
-@@ -349,11 +351,11 @@ static inline void disable_surveillance(void)
- 	 * If we did try to take rtas.lock there would be a
- 	 * real possibility of deadlock.
- 	 */
--	token = rtas_token("set-indicator");
--	if (token == RTAS_UNKNOWN_SERVICE)
-+	if (set_indicator_token == RTAS_UNKNOWN_SERVICE)
- 		return;
- 
--	rtas_call_unlocked(&args, token, 3, 1, NULL, SURVEILLANCE_TOKEN, 0, 0);
-+	rtas_call_unlocked(&args, set_indicator_token, 3, 1, NULL,
-+			   SURVEILLANCE_TOKEN, 0, 0);
- 
- #endif /* CONFIG_PPC_PSERIES */
+diff --git a/drivers/media/firewire/firedtv-avc.c b/drivers/media/firewire/firedtv-avc.c
+index 251a556112a9..280b5ffea592 100644
+--- a/drivers/media/firewire/firedtv-avc.c
++++ b/drivers/media/firewire/firedtv-avc.c
+@@ -968,7 +968,8 @@ static int get_ca_object_length(struct avc_response_frame *r)
+ 	return r->operand[7];
  }
-@@ -3227,6 +3229,14 @@ static void xmon_init(int enable)
- 		__debugger_iabr_match = xmon_iabr_match;
- 		__debugger_break_match = xmon_break_match;
- 		__debugger_fault_handler = xmon_fault_handler;
-+
-+#ifdef CONFIG_PPC_PSERIES
-+		/*
-+		 * Get the token here to avoid trying to get a lock
-+		 * during the crash, causing a deadlock.
-+		 */
-+		set_indicator_token = rtas_token("set-indicator");
-+#endif
- 	} else {
- 		__debugger = NULL;
- 		__debugger_ipi = NULL;
+ 
+-int avc_ca_app_info(struct firedtv *fdtv, char *app_info, unsigned int *len)
++int avc_ca_app_info(struct firedtv *fdtv, unsigned char *app_info,
++		    unsigned int *len)
+ {
+ 	struct avc_command_frame *c = (void *)fdtv->avc_data;
+ 	struct avc_response_frame *r = (void *)fdtv->avc_data;
+@@ -1009,7 +1010,8 @@ out:
+ 	return ret;
+ }
+ 
+-int avc_ca_info(struct firedtv *fdtv, char *app_info, unsigned int *len)
++int avc_ca_info(struct firedtv *fdtv, unsigned char *app_info,
++		unsigned int *len)
+ {
+ 	struct avc_command_frame *c = (void *)fdtv->avc_data;
+ 	struct avc_response_frame *r = (void *)fdtv->avc_data;
+diff --git a/drivers/media/firewire/firedtv.h b/drivers/media/firewire/firedtv.h
+index 345d1eda8c05..5b18a08c6285 100644
+--- a/drivers/media/firewire/firedtv.h
++++ b/drivers/media/firewire/firedtv.h
+@@ -124,8 +124,10 @@ int avc_lnb_control(struct firedtv *fdtv, char voltage, char burst,
+ 		    struct dvb_diseqc_master_cmd *diseqcmd);
+ void avc_remote_ctrl_work(struct work_struct *work);
+ int avc_register_remote_control(struct firedtv *fdtv);
+-int avc_ca_app_info(struct firedtv *fdtv, char *app_info, unsigned int *len);
+-int avc_ca_info(struct firedtv *fdtv, char *app_info, unsigned int *len);
++int avc_ca_app_info(struct firedtv *fdtv, unsigned char *app_info,
++		    unsigned int *len);
++int avc_ca_info(struct firedtv *fdtv, unsigned char *app_info,
++		unsigned int *len);
+ int avc_ca_reset(struct firedtv *fdtv);
+ int avc_ca_pmt(struct firedtv *fdtv, char *app_info, int length);
+ int avc_ca_get_time_date(struct firedtv *fdtv, int *interval);
 -- 
 2.19.1
 
