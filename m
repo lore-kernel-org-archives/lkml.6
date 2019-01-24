@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDA87C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:23:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78EDDC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:23:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDA06218DE
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:23:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4663F218DE
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:23:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548357797;
-	bh=c7ABTPHnUvdIWI6hbTHHcPlRHsYStvibjWY7l3osUNA=;
+	s=default; t=1548357801;
+	bh=MU9TXbk53SbIdBpgldqiA6J7adhesSW5uM13UQFEWRQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Y80zsD2DfvncSIw3hrBm6VesxYMZhX3QBIpBWTIcSkQ6i18GAXyUmBsXJjAAVufc3
-	 ecSuabB4AUHk8knvEO54iIIUxgb/aktd2UZuDzYyOV2g+axK6KJBdc7y3uQ1jwKhqe
-	 dAgTbI2+87TRPfTRycfHj7/62ZtDi0YzavObYhtI=
+	b=bE/gnZ9H69dcftqw1liv1ByWbXQ0QKViiHpRMs4BcKsKi/R3UkQD6eopUN/GkCbgN
+	 RPjvuGLTHnaMIG51eKr0zILD6XvzyfeWdhCgnhQyFvM8cv/tGdJ237pc0R+FjSLZxT
+	 AGXFRHJG/QQ5zKD0nXeFbmofnqjfEja+TPlEM8dA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729804AbfAXTXQ (ORCPT
+        id S1729819AbfAXTXU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:23:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48040 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:23:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47970 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728388AbfAXTXN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:23:13 -0500
+        id S1729782AbfAXTXL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:23:11 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E7B5F218EA;
-        Thu, 24 Jan 2019 19:23:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D34F218D2;
+        Thu, 24 Jan 2019 19:23:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548357793;
-        bh=c7ABTPHnUvdIWI6hbTHHcPlRHsYStvibjWY7l3osUNA=;
+        s=default; t=1548357790;
+        bh=MU9TXbk53SbIdBpgldqiA6J7adhesSW5uM13UQFEWRQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HapcAzpMnnicYZfAqDgDawuU3QjhleWcfu2PN2wDvCMj2JfAEF/xKpCV+e/HdIC9z
-         WuGerxkxr5zyv2gEvFN+gMxnm1VplWzegxFlMK61qHziqWh73zkE5R8RhRDrV2rsfF
-         a/cMVrhQ9iXEyT1XmWJD/HK6xaPXWIni513sRho4=
+        b=MIDhh9YovMhj7i2OfuDyP+wpABPT42olJKYfII+C3UXVWODz0HuBVFAWC9KBBmw1s
+         6oEdCYM51zOS9iOiOnTWhyrPZwNwTZtDsgDW8mQyfXvkmkytM8uIN2ONY5hJKfLOu6
+         YDffnx5Zoj0jizxRZx1Rb9fvbgeybYOnxVhkaSM0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        stable@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
+        Dong Aisheng <Aisheng.dong@nxp.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 43/52] kconfig: fix memory leak when EOF is encountered in quotation
-Date:   Thu, 24 Jan 2019 20:20:07 +0100
-Message-Id: <20190124190149.792918931@linuxfoundation.org>
+Subject: [PATCH 3.18 42/52] clk: imx6q: reset exclusive gates on init
+Date:   Thu, 24 Jan 2019 20:20:06 +0100
+Message-Id: <20190124190149.632897993@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190140.879495253@linuxfoundation.org>
 References: <20190124190140.879495253@linuxfoundation.org>
@@ -66,64 +67,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit fbac5977d81cb2b2b7e37b11c459055d9585273c ]
+[ Upstream commit f7542d817733f461258fd3a47d77da35b2d9fc81 ]
 
-An unterminated string literal followed by new line is passed to the
-parser (with "multi-line strings not supported" warning shown), then
-handled properly there.
+The exclusive gates may be set up in the wrong way by software running
+before the clock driver comes up. In that case the exclusive setup is
+locked in its initial state, as the complementary function can't be
+activated without disabling the initial setup first.
 
-On the other hand, an unterminated string literal at end of file is
-never passed to the parser, then results in memory leak.
+To avoid this lock situation, reset the exclusive gates to the off
+state and allow the kernel to provide the proper setup.
 
-[Test Code]
-
-  ----------(Kconfig begin)----------
-  source "Kconfig.inc"
-
-  config A
-          bool "a"
-  -----------(Kconfig end)-----------
-
-  --------(Kconfig.inc begin)--------
-  config B
-          bool "b\No new line at end of file
-  ---------(Kconfig.inc end)---------
-
-[Summary from Valgrind]
-
-  Before the fix:
-
-    LEAK SUMMARY:
-       definitely lost: 16 bytes in 1 blocks
-       ...
-
-  After the fix:
-
-    LEAK SUMMARY:
-       definitely lost: 0 bytes in 0 blocks
-       ...
-
-Eliminate the memory leak path by handling this case. Of course, such
-a Kconfig file is wrong already, so I will add an error message later.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+Reviewed-by: Dong Aisheng <Aisheng.dong@nxp.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- scripts/kconfig/zconf.l | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/mach-imx/clk-imx6q.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/scripts/kconfig/zconf.l b/scripts/kconfig/zconf.l
-index 6c62d93b4ffb..485b19a461f8 100644
---- a/scripts/kconfig/zconf.l
-+++ b/scripts/kconfig/zconf.l
-@@ -180,6 +180,8 @@ n	[A-Za-z0-9_]
- 	}
- 	<<EOF>>	{
- 		BEGIN(INITIAL);
-+		yylval.string = text;
-+		return T_WORD_QUOTE;
- 	}
- }
+diff --git a/arch/arm/mach-imx/clk-imx6q.c b/arch/arm/mach-imx/clk-imx6q.c
+index 5474a76803f0..936ed9bae595 100644
+--- a/arch/arm/mach-imx/clk-imx6q.c
++++ b/arch/arm/mach-imx/clk-imx6q.c
+@@ -222,8 +222,12 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+ 	 * lvds1_gate and lvds2_gate are pseudo-gates.  Both can be
+ 	 * independently configured as clock inputs or outputs.  We treat
+ 	 * the "output_enable" bit as a gate, even though it's really just
+-	 * enabling clock output.
++	 * enabling clock output. Initially the gate bits are cleared, as
++	 * otherwise the exclusive configuration gets locked in the setup done
++	 * by software running before the clock driver, with no way to change
++	 * it.
+ 	 */
++	writel(readl(base + 0x160) & ~0x3c00, base + 0x160);
+ 	clk[IMX6QDL_CLK_LVDS1_GATE] = imx_clk_gate_exclusive("lvds1_gate", "lvds1_sel", base + 0x160, 10, BIT(12));
+ 	clk[IMX6QDL_CLK_LVDS2_GATE] = imx_clk_gate_exclusive("lvds2_gate", "lvds2_sel", base + 0x160, 11, BIT(13));
  
 -- 
 2.19.1
