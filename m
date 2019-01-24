@@ -2,104 +2,142 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 829CDC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:50:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29C63C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:51:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 537F7218A6
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:50:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548352249;
-	bh=2D7cQI0ta04B5vyVxvsPoWdCnHufIZ+39wyBLDSTaz4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=eUoUMg77TjA85TYNrrhn/yqOVTPLCvLodyh6EuVaY9ORmkayhvdtkcRjAtGNHQvJC
-	 1AtMuiFq98NawqLY32EQbpMTZ8KHxQdeeApIGskvXLnGdpYaNAqdDFDfQ+MgowTZ/v
-	 Xwbe+IoxoPM5l7Jm6lC7iR5q2eNX+yfvykkEJftM=
+	by mail.kernel.org (Postfix) with ESMTP id DF1E7218A6
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:51:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=poorly.run header.i=@poorly.run header.b="Bwfpm3Zv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728990AbfAXRur (ORCPT
+        id S1729098AbfAXRvj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 12:50:47 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51542 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728130AbfAXRur (ORCPT
+        Thu, 24 Jan 2019 12:51:39 -0500
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:33169 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728130AbfAXRvi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 12:50:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Z+lnL8gRAM+Tg8a9b4A7BCpI9nDknC8CsAFk1quCqYM=; b=uJ+FqnO56pWZbsE76CGu2r+3q
-        R0RKzCMV20mnih45eVMsM7TWYPAgss4FjejSoHFXc+JM0Lb+3UiFYLe0CxNPRgZMS7sTJOCpL+Zwl
-        QlZlCYcX6q5vzc/sac4rfQ+uODzaQzRhQPTP3TJpxvrPKuidrpjCYWTJ60ZHdH6xHvOp4=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gmj9A-0006Xd-Jo; Thu, 24 Jan 2019 17:50:36 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 13B121121B6F; Thu, 24 Jan 2019 17:50:36 +0000 (GMT)
-Date:   Thu, 24 Jan 2019 17:50:36 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Petr Cvek <petr.cvek@tul.cz>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Paul Parsons <lost.distance@yahoo.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Subject: Re: [PATCH 1/5 v9] regulator: gpio: Convert to use descriptors
-Message-ID: <20190124175036.GF5641@sirena.org.uk>
-References: <20190121091206.18239-1-linus.walleij@linaro.org>
+        Thu, 24 Jan 2019 12:51:38 -0500
+Received: by mail-yb1-f193.google.com with SMTP id m132so995478ybf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 09:51:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=poorly.run; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=bhk8H9tazTUscD/pxPfOSKpqlrE97YOeNeJgS+fpIpw=;
+        b=Bwfpm3ZvwJBNuoiQOO512dya0Ca50Djnh5X9DJiWj83E9HxSlv1LCeDvKljt1uhBct
+         7vajrVVNi8zB60BrG1eGiyAhOi440TbPQ/gpPg+bD7fUoi13OP4NhutH2s2dVGP8PUM5
+         K6baWaBtBSpPLwuSZW2wAxu8NdqD761dlA6MNfiSoj7ZYxNVWaouuAiVkersDvC9hb/9
+         OKOsqfIz9gDAY/lmgaxaZVN+3EUKCnxIcLolGxeHq2/tx/OCmzWq8tzlYyukFscdkMdC
+         1O6AeS1MyjwhS78BnO6L6bRpCMaczqAoDuaPHOIpBUu6X/y5cOxaixw7+SxUC6Dc2Oxu
+         2JMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=bhk8H9tazTUscD/pxPfOSKpqlrE97YOeNeJgS+fpIpw=;
+        b=Zl4mIT4QwnMS5EdlpVT9V/Yg5CAYxALKONSzYCDV8w/harvQeD5FsX4aYzdbUlxfOa
+         s3m+DUrVPiT3F1VNbkbSqG/Ks5KCz5aLLCbuD2gIdUeIL4LqI4MLBLLHwCvAEZ9qOGgm
+         gWVQa8HKsfig35y76oUm8IX2uDtuzqdFVRIzaSrIMlYFV1gykVhkPOEzrosRBREclzay
+         gqMwOYHfm3xkxwhZeNqWvFBede4IFXinfLxkYQBj3wfbund9ZzcCnVd6pzTyFPqd6KtR
+         W4pUyEWa33Bb6SMsVHDyeUdNIh57xMqwWMc0pSKqp4S/z4uobsQHE0Mbl2yy7g/O3/x9
+         Y8HQ==
+X-Gm-Message-State: AJcUuke0noHWGdAM+CoGIPDcupzsk21szGVcbq23WSfvINOGGKqcmRaS
+        4RfJgHeV4z7BSQ73Cj2m05syKw==
+X-Google-Smtp-Source: ALg8bN7CWju7aKZ7fzyERIxUfdeueYjXNLIun0IiJMw/M1NCSMhfQSVZ9dbu1BMnnxaLRoFOR/Hukg==
+X-Received: by 2002:a5b:b8e:: with SMTP id l14mr7239501ybq.208.1548352297839;
+        Thu, 24 Jan 2019 09:51:37 -0800 (PST)
+Received: from localhost ([2620:0:1013:11:89c6:2139:5435:371d])
+        by smtp.gmail.com with ESMTPSA id x132sm18418801ywx.27.2019.01.24.09.51.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 24 Jan 2019 09:51:37 -0800 (PST)
+Date:   Thu, 24 Jan 2019 12:51:36 -0500
+From:   Sean Paul <sean@poorly.run>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Ezequiel Garcia <ezequiel@collabora.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        padovan Gustavo <gustavo.padovan@collabora.com>,
+        maxime.ripard@bootlin.com, seanpaul@chromium.org,
+        hl@rock-chips.com, briannorris@chromium.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        nickey.yang@rock-chips.com
+Subject: Re: [PATCH v4 RESEND] drm/panel: add Kingdisplay kd097d04 panel
+ driver
+Message-ID: <20190124175136.GP114153@art_vandelay>
+References: <20181030091528.28211-1-heiko@sntech.de>
+ <fa732d7c529c28135b2c9a1ccf902d4658a53682.camel@collabora.com>
+ <20190124161812.GA10550@ulmo>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="n/aVsWSeQ4JHkrmm"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190121091206.18239-1-linus.walleij@linaro.org>
-X-Cookie: Love America -- or give it back.
+In-Reply-To: <20190124161812.GA10550@ulmo>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jan 24, 2019 at 05:18:12PM +0100, Thierry Reding wrote:
+> On Thu, Jan 24, 2019 at 12:01:55PM -0300, Ezequiel Garcia wrote:
+> > On Tue, 2018-10-30 at 10:15 +0100, Heiko Stuebner wrote:
+> > > From: Nickey Yang <nickey.yang@rock-chips.com>
+> > > 
+> > > Support Kingdisplay kd097d04 9.7" 1536x2048 TFT LCD panel,
+> > > it is a MIPI dual-DSI panel.
+> > > 
+> > > v4-resend:
+> > > - Thierry noted missing dt-bindings for v4 but forgot that he
+> > >   already had applied them one kernel release back in
+> > >   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=ebc950fdff6d5f9250cd5a5a348af97f7d8508df
+> > > v4:
+> > > - address Philipp's comments
+> > >   - real range for usleep_range and
+> > >   - poweroff ordering in kingdisplay_panel_prepare
+> > >   - return value beautification in panel_probe
+> > > - update author naming for full name
+> > > v3:
+> > > - address Thierry's comments
+> > >   - error handling for init dsi writes in init
+> > >   - unconditionally remove the panel
+> > >   - don't use drm_panel_detach
+> > >   - a bit of variable signednes wiggling
+> > > - I did talk to ChromeOS people and the delays really should be as short
+> > >   as possible, so dropped the 100ms from the delay comments
+> > > v2:
+> > > - update timing + cmds from chromeos kernel
+> > > - new backlight API including switch to devm_of_find_backlight
+> > > - fix most of Sean Paul's comments
+> > >   enable/prepare tracking seems something all panels do
+> > > - document origins of the init sequence
+> > > - lanes per dsi interface to 4 (two interfaces). Matches how tegra
+> > >   and pending rockchip dual-dsi handle (dual-)dsi lanes
+> > > - spdx header instead of license boilerplate
+> > > 
+> > > Signed-off-by: Nickey Yang <nickey.yang@rock-chips.com>
+> > > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> > 
+> > Hm, this v4 patch has been stalling here for *four full months*.
+> > 
+> > Which deity do we need to pray to get this one moving? ;-)
+> > 
+> > Seriously, can someone please apply this?
+> 
+> If you care about this driver, perhaps you'd like to review and provide
+> a Reviewed-by?
 
---n/aVsWSeQ4JHkrmm
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Looks good to me,
 
-On Mon, Jan 21, 2019 at 10:12:02AM +0100, Linus Walleij wrote:
-> This converts the GPIO regulator driver to use decriptors only.
+Reviewed-by: Sean Paul <sean@poorly.run>
 
-This patch breaks the build for me:
+> 
+> Thierry
 
-drivers/regulator/gpio-regulator.c: In function =E2=80=98gpio_regulator_pro=
-be=E2=80=99:
-drivers/regulator/gpio-regulator.c:256:33: error: =E2=80=98dev=E2=80=99 und=
-eclared (first use in this function); did you mean =E2=80=98pdev=E2=80=99?
-  drvdata->gpiods =3D devm_kzalloc(dev, sizeof(struct gpio_desc *),
 
---n/aVsWSeQ4JHkrmm
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxJ+usACgkQJNaLcl1U
-h9C/5wf+LBGJqaa+HC4uOutbjn1VzCOBhC3LQif3WP2tap4z81xU16vOif4DMXbs
-ZwdMqCDMVe5atQMHBuCJZjYIStilrHkNaJZVJZZ/+XghtZdQ8y9L7maQ+4HzsF9/
-eDiaUMgXglb/XXIFZ7zHMJRoPudv98EmBHQjeEJFE4i16NYOfRA9MhehabYwITBr
-PkuEaN1nzGTtHLpZv3+YyksOWbprQNegeYtvZjf2Dt96w2o4EqQB4bZBCIOWaUaP
-j09JRQZILfYf1yc2wa05S4Ayc92p8XtvEgeVyuQPNRU3rcRowgqkUJj/Th9Hh/yl
-4hMYovNUJBvcarjpvdIrLoFUSY7Nsw==
-=e2+r
------END PGP SIGNATURE-----
-
---n/aVsWSeQ4JHkrmm--
+-- 
+Sean Paul, Software Engineer, Google / Chromium OS
