@@ -7,49 +7,47 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D7B1C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:29:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F54DC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:29:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0730218D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:29:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59AC9218F0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:29:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358157;
-	bh=pohT3oIV2LkH3aC6Tz+EfJARSP2u+QsDAtN97YpzyWY=;
+	s=default; t=1548358161;
+	bh=duGUUSRAk2aDiZgkaCLu9fA0RM7SnJZUVIWAXxJEkV4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=D6l9A6VvAKbE0mi9bz7A2Cy+kcu/Fq2O+tFdEJndaDLsC+SjnNE9WZfqej+9YtJPV
-	 ZL9O3HopHSprcOAnx4dQzN/VsHhPBTXPjOwFnW1nA26hcJuswRT1p+ETP0+kD5VVuI
-	 4h8hO198x8DzIzotAh57ZF/BXkhVeScX3+13mm34=
+	b=sGIFhX4I6f7xjb5idhZJEP0r1A1bHTi4bv4yo0Duug5tcvVXXozjAWCfqlLwM1eTv
+	 gevxF45gzjKWQxZZE3B7XY3UDhJ/0ifddHRzEUVj6TGs/6+ZT9X0//bNwCsBt5i+IH
+	 N+yzgweGIifUMVXcv4nxBjhgkOtaVuc5GN0XJMRk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731127AbfAXT3Q (ORCPT
+        id S1730736AbfAXT3U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:29:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56262 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:29:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56206 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731115AbfAXT3M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:29:12 -0500
+        id S1731113AbfAXT3K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:29:10 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9DADE218D4;
-        Thu, 24 Jan 2019 19:29:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0FC90218E2;
+        Thu, 24 Jan 2019 19:29:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358152;
-        bh=pohT3oIV2LkH3aC6Tz+EfJARSP2u+QsDAtN97YpzyWY=;
+        s=default; t=1548358149;
+        bh=duGUUSRAk2aDiZgkaCLu9fA0RM7SnJZUVIWAXxJEkV4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iFsVdepwjI0XSlqQSHmeRPVopBysbU7fORGkk8FuxeYV9wN0o/D0jsw4ffJlAJP81
-         ksiH1hTVL1ZD93pvXy1IBsqBk6vju+KueZVTHQwVy57DaXy/yFWGo//Do8so40uY9S
-         rjB39ro27UqnXf09SmeHSRbTv+mzmQyv54YiOxPU=
+        b=j3h3oxDBFILgDyPVvGDXmZfokTXL4u8U5v76YHyLLl+Va65vJX6vv6Ftj3yVbdZ5B
+         ZKSESlTQGkbw8CJy55dMBXou9q1DC0vF9bcssZlSSYuSm94NJAmf83LPDyUUry3BXU
+         YAtw0kHF6XYeB9VhjJgO+1V/HM1ddgQeAvA6E74c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anna Schumaker <schumaker.anna@gmail.com>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Ondrej Mosnacek <omosnace@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 12/39] rxe: IB_WR_REG_MR does not capture MRs iova field
-Date:   Thu, 24 Jan 2019 20:20:15 +0100
-Message-Id: <20190124190448.664312135@linuxfoundation.org>
+Subject: [PATCH 4.9 11/39] selinux: always allow mounting submounts
+Date:   Thu, 24 Jan 2019 20:20:14 +0100
+Message-Id: <20190124190448.630960639@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190448.232316246@linuxfoundation.org>
 References: <20190124190448.232316246@linuxfoundation.org>
@@ -68,45 +66,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit b024dd0eba6e6d568f69d63c5e3153aba94c23e3 ]
+[ Upstream commit 2cbdcb882f97a45f7475c67ac6257bbc16277dfe ]
 
-FRWR memory registration is done with a series of calls and WRs.
-1. ULP invokes ib_dma_map_sg()
-2. ULP invokes ib_map_mr_sg()
-3. ULP posts an IB_WR_REG_MR on the Send queue
+If a superblock has the MS_SUBMOUNT flag set, we should always allow
+mounting it. These mounts are done automatically by the kernel either as
+part of mounting some parent mount (e.g. debugfs always mounts tracefs
+under "tracing" for compatibility) or they are mounted automatically as
+needed on subdirectory accesses (e.g. NFS crossmnt mounts). Since such
+automounts are either an implicit consequence of the parent mount (which
+is already checked) or they can happen during regular accesses (where it
+doesn't make sense to check against the current task's context), the
+mount permission check should be skipped for them.
 
-Step 2 generates an iova. It is permissible for ULPs to change this
-iova (with certain restrictions) between steps 2 and 3.
+Without this patch, attempts to access contents of an automounted
+directory can cause unexpected SELinux denials.
 
-rxe_map_mr_sg captures the MR's iova but later when rxe processes the
-REG_MR WR, it ignores the MR's iova field. If a ULP alters the MR's iova
-after step 2 but before step 3, rxe never captures that change.
+In the current kernel tree, the MS_SUBMOUNT flag is set only via
+vfs_submount(), which is called only from the following places:
+ - AFS, when automounting special "symlinks" referencing other cells
+ - CIFS, when automounting "referrals"
+ - NFS, when automounting subtrees
+ - debugfs, when automounting tracefs
 
-When the remote sends an RDMA Read targeting that MR, rxe looks up the
-R_key, but the altered iova does not match the iova stored in the MR,
-causing the RDMA Read request to fail.
+In all cases the submounts are meant to be transparent to the user and
+it makes sense that if mounting the master is allowed, then so should be
+the automounts. Note that CAP_SYS_ADMIN capability checking is already
+skipped for (SB_KERNMOUNT|SB_SUBMOUNT) in:
+ - sget_userns() in fs/super.c:
+	if (!(flags & (SB_KERNMOUNT|SB_SUBMOUNT)) &&
+	    !(type->fs_flags & FS_USERNS_MOUNT) &&
+	    !capable(CAP_SYS_ADMIN))
+		return ERR_PTR(-EPERM);
+ - sget() in fs/super.c:
+        /* Ensure the requestor has permissions over the target filesystem */
+        if (!(flags & (SB_KERNMOUNT|SB_SUBMOUNT)) && !ns_capable(user_ns, CAP_SYS_ADMIN))
+                return ERR_PTR(-EPERM);
 
-Reported-by: Anna Schumaker <schumaker.anna@gmail.com>
-Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Verified internally on patched RHEL 7.6 with a reproducer using
+NFS+httpd and selinux-tesuite.
+
+Fixes: 93faccbbfa95 ("fs: Better permission checking for submounts")
+Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+Signed-off-by: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/sw/rxe/rxe_req.c | 1 +
- 1 file changed, 1 insertion(+)
+ security/selinux/hooks.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/sw/rxe/rxe_req.c b/drivers/infiniband/sw/rxe/rxe_req.c
-index 47219ebd8ff2..0f9fe2ca2a91 100644
---- a/drivers/infiniband/sw/rxe/rxe_req.c
-+++ b/drivers/infiniband/sw/rxe/rxe_req.c
-@@ -643,6 +643,7 @@ next_wqe:
- 			rmr->access = wqe->wr.wr.reg.access;
- 			rmr->lkey = wqe->wr.wr.reg.key;
- 			rmr->rkey = wqe->wr.wr.reg.key;
-+			rmr->iova = wqe->wr.wr.reg.mr->iova;
- 			wqe->state = wqe_state_done;
- 			wqe->status = IB_WC_SUCCESS;
- 		} else {
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 8ded80867b92..d293b546a2aa 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -2758,7 +2758,7 @@ static int selinux_sb_kern_mount(struct super_block *sb, int flags, void *data)
+ 		return rc;
+ 
+ 	/* Allow all mounts performed by the kernel */
+-	if (flags & MS_KERNMOUNT)
++	if (flags & (MS_KERNMOUNT | MS_SUBMOUNT))
+ 		return 0;
+ 
+ 	ad.type = LSM_AUDIT_DATA_DENTRY;
 -- 
 2.19.1
 
