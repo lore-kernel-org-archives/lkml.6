@@ -4,55 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E92FBC282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:56:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42C57C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:56:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACC1021726
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:56:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12AF421726
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:56:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359786;
-	bh=8qLU4x2Yqm/nOj4+iER9VdzPXw1qxqhcmDeAVkWPuPs=;
+	s=default; t=1548359791;
+	bh=75g0BUS1nc8EjgWasU0ZZnBca7psQMZ/W7dD8JtLPWM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=JAGsl42NSGjzzTiLxzi/Em+iNKMtmq4pcJrLBUswaQZlotumrnX/aJa8EdUag6p74
-	 2p9PPnX7vaJHu2QGZMuVldCDml7bjAZ9wBgj8u0BOQqgxk5ZWEyUSkA8sCJ9XEZEpO
-	 cYSF+S7K602gpwPFiowZBtkRk5Vu5ufWlGGSWdMk=
+	b=k7iTqghl1Q6W+1zgVj6joIO1DV2O7+4Ctz7GAzjjfchBw4FADKPGS1kPz+ewzr3UM
+	 YFjeuGynLO/6+XLxhd4FkCpYRbrH0sngDjvRE9N4P1ih2wfB/Dac9XDzzc9YYAiJmG
+	 vJSZHcNIKmsidTU9ZcIiHboKxgEc7nRez0hVZLdA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731700AbfAXT4Z (ORCPT
+        id S1730865AbfAXTgo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:56:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36096 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:36:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36662 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730709AbfAXTgE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:36:04 -0500
+        id S1732062AbfAXTgj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:36:39 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E29821905;
-        Thu, 24 Jan 2019 19:36:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9484921903;
+        Thu, 24 Jan 2019 19:36:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358562;
-        bh=8qLU4x2Yqm/nOj4+iER9VdzPXw1qxqhcmDeAVkWPuPs=;
+        s=default; t=1548358599;
+        bh=75g0BUS1nc8EjgWasU0ZZnBca7psQMZ/W7dD8JtLPWM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2aM0yQ0/gg9wPPe7KiqoZK1sJX5ES6dDEvXmnie53QFMaglBiMvm6tS/mAt3dDImL
-         AUGm1ZoQ7wN9ECIEtOXAS+BpIjelB5kBDrc8vc7pJ5HLrG/N3speVa6rFGK+60qGII
-         TIUe4wUJis9A+lOvB58hdLSYwaYUaX1yg9PA9OiY=
+        b=PH6r/5cy/YTZADqgqX7W9E+4Ol4g7Dxl/xCr4YrDCEp/Jzht3HSn98MOZlbtXDyTN
+         WGjqZi/3EIkmBdVlagUIOnShb9MzKm1m8S/Fy1vRz5l75+k7tFJY6Ihep0tASwpatZ
+         c0Ot7KTMe8rNJe7dBjcxBoZxcJgY0HEAhADa/x78=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Bellinger <nab@linux-iscsi.org>,
-        Mike Christie <mchristi@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        David Disseldorp <ddiss@suse.de>,
-        Hannes Reinecke <hare@suse.de>,
-        Bart Van Assche <bvanassche@acm.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 051/106] scsi: target/core: Make sure that target_wait_for_sess_cmds() waits long enough
-Date:   Thu, 24 Jan 2019 20:20:08 +0100
-Message-Id: <20190124190209.673969961@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 028/106] drm/atomic-helper: Complete fake_commit->flip_done potentially earlier
+Date:   Thu, 24 Jan 2019 20:19:45 +0100
+Message-Id: <20190124190208.142718604@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
 References: <20190124190206.342411005@linuxfoundation.org>
@@ -71,220 +67,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit ad669505c4e9db9af9faeb5c51aa399326a80d91 ]
+[ Upstream commit 2de42f79bb21a412f40ade8831eb6fc445cb78a4 ]
 
-A session must only be released after all code that accesses the session
-structure has finished. Make sure that this is the case by introducing a
-new command counter per session that is only decremented after the
-.release_cmd() callback has finished. This patch fixes the following crash:
+Consider the following scenario:
+1. nonblocking enable crtc
+2. wait for the event
+3. nonblocking disable crtc
 
-BUG: KASAN: use-after-free in do_raw_spin_lock+0x1c/0x130
-Read of size 4 at addr ffff8801534b16e4 by task rmdir/14805
-CPU: 16 PID: 14805 Comm: rmdir Not tainted 4.18.0-rc2-dbg+ #5
-Call Trace:
-dump_stack+0xa4/0xf5
-print_address_description+0x6f/0x270
-kasan_report+0x241/0x360
-__asan_load4+0x78/0x80
-do_raw_spin_lock+0x1c/0x130
-_raw_spin_lock_irqsave+0x52/0x60
-srpt_set_ch_state+0x27/0x70 [ib_srpt]
-srpt_disconnect_ch+0x1b/0xc0 [ib_srpt]
-srpt_close_session+0xa8/0x260 [ib_srpt]
-target_shutdown_sessions+0x170/0x180 [target_core_mod]
-core_tpg_del_initiator_node_acl+0xf3/0x200 [target_core_mod]
-target_fabric_nacl_base_release+0x25/0x30 [target_core_mod]
-config_item_release+0x9c/0x110 [configfs]
-config_item_put+0x26/0x30 [configfs]
-configfs_rmdir+0x3b8/0x510 [configfs]
-vfs_rmdir+0xb3/0x1e0
-do_rmdir+0x262/0x2c0
-do_syscall_64+0x77/0x230
-entry_SYSCALL_64_after_hwframe+0x49/0xbe
+On i915 this can lead to a spurious -EBUSY from step 3 on
+account of non-enabled planes getting the fake_commit in step 1
+and we don't complete the fake_commit-> flip_done until
+drm_atomic_helper_commit_hw_done() which can happen a long
+time after the flip event was sent out.
 
-Cc: Nicholas Bellinger <nab@linux-iscsi.org>
-Cc: Mike Christie <mchristi@redhat.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: David Disseldorp <ddiss@suse.de>
-Cc: Hannes Reinecke <hare@suse.de>
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+This will become somewhat easy to hit on SKL+ once we start
+to add all the planes for the crtc to every modeset commit
+for the purposes of forcing a watermark register programming
+[1].
+
+To make the race a little less pronounced let's complete
+fake_commit->flip_done after drm_atomic_helper_wait_for_flip_done().
+For the single crtc case this should make the race quite
+theoretical, assuming drm_atomic_helper_wait_for_flip_done()
+actually has to wait for the real commit flip_done. In case
+the real commit flip_done gets completed singificantly before
+drm_atomic_helper_wait_for_flip_done(), or we are dealing with
+multiple crtcs whose vblanks don't line up nicely the race still
+exists.
+
+[1] https://patchwork.freedesktop.org/patch/262670/
+
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Fixes: 080de2e5be2d ("drm/atomic: Check for busy planes/connectors before setting the commit")
+Testcase: igt/kms_cursor_legacy/*nonblocking-modeset-vs-cursor-atomic
+Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20181122143412.11655-1-ville.syrjala@linux.intel.com
+Reviewed-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/target/target_core_transport.c | 35 ++++++++++++++++++--------
- drivers/target/target_core_xcopy.c     |  6 ++++-
- include/target/target_core_base.h      |  1 +
- include/target/target_core_fabric.h    |  2 +-
- 4 files changed, 32 insertions(+), 12 deletions(-)
+ drivers/gpu/drm/drm_atomic_helper.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/target/target_core_transport.c b/drivers/target/target_core_transport.c
-index fc3093d21b96..3f7aad45d215 100644
---- a/drivers/target/target_core_transport.c
-+++ b/drivers/target/target_core_transport.c
-@@ -224,19 +224,28 @@ void transport_subsystem_check_init(void)
- 	sub_api_initialized = 1;
- }
- 
-+static void target_release_sess_cmd_refcnt(struct percpu_ref *ref)
-+{
-+	struct se_session *sess = container_of(ref, typeof(*sess), cmd_count);
-+
-+	wake_up(&sess->cmd_list_wq);
-+}
-+
- /**
-  * transport_init_session - initialize a session object
-  * @se_sess: Session object pointer.
-  *
-  * The caller must have zero-initialized @se_sess before calling this function.
-  */
--void transport_init_session(struct se_session *se_sess)
-+int transport_init_session(struct se_session *se_sess)
- {
- 	INIT_LIST_HEAD(&se_sess->sess_list);
- 	INIT_LIST_HEAD(&se_sess->sess_acl_list);
- 	INIT_LIST_HEAD(&se_sess->sess_cmd_list);
- 	spin_lock_init(&se_sess->sess_cmd_lock);
- 	init_waitqueue_head(&se_sess->cmd_list_wq);
-+	return percpu_ref_init(&se_sess->cmd_count,
-+			       target_release_sess_cmd_refcnt, 0, GFP_KERNEL);
- }
- EXPORT_SYMBOL(transport_init_session);
- 
-@@ -247,6 +256,7 @@ EXPORT_SYMBOL(transport_init_session);
- struct se_session *transport_alloc_session(enum target_prot_op sup_prot_ops)
- {
- 	struct se_session *se_sess;
-+	int ret;
- 
- 	se_sess = kmem_cache_zalloc(se_sess_cache, GFP_KERNEL);
- 	if (!se_sess) {
-@@ -254,7 +264,11 @@ struct se_session *transport_alloc_session(enum target_prot_op sup_prot_ops)
- 				" se_sess_cache\n");
- 		return ERR_PTR(-ENOMEM);
+diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+index 1bb4c318bdd4..f77bff5aa307 100644
+--- a/drivers/gpu/drm/drm_atomic_helper.c
++++ b/drivers/gpu/drm/drm_atomic_helper.c
+@@ -1425,6 +1425,9 @@ void drm_atomic_helper_wait_for_flip_done(struct drm_device *dev,
+ 			DRM_ERROR("[CRTC:%d:%s] flip_done timed out\n",
+ 				  crtc->base.id, crtc->name);
  	}
--	transport_init_session(se_sess);
-+	ret = transport_init_session(se_sess);
-+	if (ret < 0) {
-+		kfree(se_sess);
-+		return ERR_PTR(ret);
-+	}
- 	se_sess->sup_prot_ops = sup_prot_ops;
- 
- 	return se_sess;
-@@ -581,6 +595,7 @@ void transport_free_session(struct se_session *se_sess)
- 		sbitmap_queue_free(&se_sess->sess_tag_pool);
- 		kvfree(se_sess->sess_cmd_map);
- 	}
-+	percpu_ref_exit(&se_sess->cmd_count);
- 	kmem_cache_free(se_sess_cache, se_sess);
- }
- EXPORT_SYMBOL(transport_free_session);
-@@ -2724,6 +2739,7 @@ int target_get_sess_cmd(struct se_cmd *se_cmd, bool ack_kref)
- 	}
- 	se_cmd->transport_state |= CMD_T_PRE_EXECUTE;
- 	list_add_tail(&se_cmd->se_cmd_list, &se_sess->sess_cmd_list);
-+	percpu_ref_get(&se_sess->cmd_count);
- out:
- 	spin_unlock_irqrestore(&se_sess->sess_cmd_lock, flags);
- 
-@@ -2754,8 +2770,6 @@ static void target_release_cmd_kref(struct kref *kref)
- 	if (se_sess) {
- 		spin_lock_irqsave(&se_sess->sess_cmd_lock, flags);
- 		list_del_init(&se_cmd->se_cmd_list);
--		if (se_sess->sess_tearing_down && list_empty(&se_sess->sess_cmd_list))
--			wake_up(&se_sess->cmd_list_wq);
- 		spin_unlock_irqrestore(&se_sess->sess_cmd_lock, flags);
- 	}
- 
-@@ -2763,6 +2777,8 @@ static void target_release_cmd_kref(struct kref *kref)
- 	se_cmd->se_tfo->release_cmd(se_cmd);
- 	if (compl)
- 		complete(compl);
 +
-+	percpu_ref_put(&se_sess->cmd_count);
++	if (old_state->fake_commit)
++		complete_all(&old_state->fake_commit->flip_done);
  }
+ EXPORT_SYMBOL(drm_atomic_helper_wait_for_flip_done);
  
- /**
-@@ -2891,6 +2907,8 @@ void target_sess_cmd_list_set_waiting(struct se_session *se_sess)
- 	spin_lock_irqsave(&se_sess->sess_cmd_lock, flags);
- 	se_sess->sess_tearing_down = 1;
- 	spin_unlock_irqrestore(&se_sess->sess_cmd_lock, flags);
-+
-+	percpu_ref_kill(&se_sess->cmd_count);
- }
- EXPORT_SYMBOL(target_sess_cmd_list_set_waiting);
- 
-@@ -2905,17 +2923,14 @@ void target_wait_for_sess_cmds(struct se_session *se_sess)
- 
- 	WARN_ON_ONCE(!se_sess->sess_tearing_down);
- 
--	spin_lock_irq(&se_sess->sess_cmd_lock);
- 	do {
--		ret = wait_event_lock_irq_timeout(
--				se_sess->cmd_list_wq,
--				list_empty(&se_sess->sess_cmd_list),
--				se_sess->sess_cmd_lock, 180 * HZ);
-+		ret = wait_event_timeout(se_sess->cmd_list_wq,
-+				percpu_ref_is_zero(&se_sess->cmd_count),
-+				180 * HZ);
- 		list_for_each_entry(cmd, &se_sess->sess_cmd_list, se_cmd_list)
- 			target_show_cmd("session shutdown: still waiting for ",
- 					cmd);
- 	} while (ret <= 0);
--	spin_unlock_irq(&se_sess->sess_cmd_lock);
- }
- EXPORT_SYMBOL(target_wait_for_sess_cmds);
- 
-diff --git a/drivers/target/target_core_xcopy.c b/drivers/target/target_core_xcopy.c
-index 2718a933c0c6..7cdb5d7f6538 100644
---- a/drivers/target/target_core_xcopy.c
-+++ b/drivers/target/target_core_xcopy.c
-@@ -480,6 +480,8 @@ static const struct target_core_fabric_ops xcopy_pt_tfo = {
- 
- int target_xcopy_setup_pt(void)
- {
-+	int ret;
-+
- 	xcopy_wq = alloc_workqueue("xcopy_wq", WQ_MEM_RECLAIM, 0);
- 	if (!xcopy_wq) {
- 		pr_err("Unable to allocate xcopy_wq\n");
-@@ -497,7 +499,9 @@ int target_xcopy_setup_pt(void)
- 	INIT_LIST_HEAD(&xcopy_pt_nacl.acl_list);
- 	INIT_LIST_HEAD(&xcopy_pt_nacl.acl_sess_list);
- 	memset(&xcopy_pt_sess, 0, sizeof(struct se_session));
--	transport_init_session(&xcopy_pt_sess);
-+	ret = transport_init_session(&xcopy_pt_sess);
-+	if (ret < 0)
-+		return ret;
- 
- 	xcopy_pt_nacl.se_tpg = &xcopy_pt_tpg;
- 	xcopy_pt_nacl.nacl_sess = &xcopy_pt_sess;
-diff --git a/include/target/target_core_base.h b/include/target/target_core_base.h
-index 7a4ee7852ca4..2cfd3b4573b0 100644
---- a/include/target/target_core_base.h
-+++ b/include/target/target_core_base.h
-@@ -602,6 +602,7 @@ struct se_session {
- 	struct se_node_acl	*se_node_acl;
- 	struct se_portal_group *se_tpg;
- 	void			*fabric_sess_ptr;
-+	struct percpu_ref	cmd_count;
- 	struct list_head	sess_list;
- 	struct list_head	sess_acl_list;
- 	struct list_head	sess_cmd_list;
-diff --git a/include/target/target_core_fabric.h b/include/target/target_core_fabric.h
-index f4147b398431..eb9d0923c55c 100644
---- a/include/target/target_core_fabric.h
-+++ b/include/target/target_core_fabric.h
-@@ -116,7 +116,7 @@ struct se_session *target_setup_session(struct se_portal_group *,
- 				struct se_session *, void *));
- void target_remove_session(struct se_session *);
- 
--void transport_init_session(struct se_session *);
-+int transport_init_session(struct se_session *se_sess);
- struct se_session *transport_alloc_session(enum target_prot_op);
- int transport_alloc_session_tags(struct se_session *, unsigned int,
- 		unsigned int);
 -- 
 2.19.1
 
