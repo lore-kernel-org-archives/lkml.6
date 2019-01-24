@@ -2,79 +2,76 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86519C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:16:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0081C282C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:16:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53EC2217D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:16:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90D41217D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:16:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a7NB915u"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OpwsPUpW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730499AbfAXUQF (ORCPT
+        id S1730788AbfAXUPn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 15:16:05 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:41989 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730809AbfAXUPq (ORCPT
+        Thu, 24 Jan 2019 15:15:43 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:42169 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729616AbfAXUPm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 15:15:46 -0500
-Received: by mail-pl1-f194.google.com with SMTP id y1so3390691plp.9;
-        Thu, 24 Jan 2019 12:15:46 -0800 (PST)
+        Thu, 24 Jan 2019 15:15:42 -0500
+Received: by mail-pf1-f196.google.com with SMTP id 64so3538493pfr.9;
+        Thu, 24 Jan 2019 12:15:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=AHjS+evz3QVh0MBkELR/jdoUFNfkoRz6aszyBU+n3Ec=;
-        b=a7NB915uX5EMB2WZFfUNQlqGBBzd52MUuqoxtUdJ4psueraTW/VTAOXeNDTSzjTTS7
-         i4vQM/tYEnWhpoQAQFzpP+vsETX9CiS8ofTFeIjJqhHqP/j9LQ+6Tse1M1IDozc4Ki2O
-         IUwZysbxauLPMQgaqZHiVtu4o68O0oH9A2JaaC5fzF6/7Sy1iFGq8NIMsijsZxqrN8cp
-         f3nLHdQME3v/oYYo7Z4Se1j0QdDwmoP7h8UOO7KGDU8KzXt6ckxRid0jO4dbtiKP1K74
-         6CXpO3tlsWjH2xKiTIgS8E6N8v7qmc3U8//fHjANP4hfSpwC20btW47/eiWsBB+vqimH
-         3dkg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XOW0LX2PweR/cHPMdWN96QKcxoiR7cIq0Nnzo7uwIxQ=;
+        b=OpwsPUpW8/I2DQ5qaiHRZ2tsIrURfyiUuNgI+6so7LJsu9yCoseuYvkzW9G5LpiF2o
+         lSHIV8RTnSMjJ8YNXsIXiMKzYVe1rcm5+fypfvZ+h4PegBGyIuELJ7cPhM5Etq/wux0v
+         uvjjDLlDO74EGwtAAViqAUodrWOisCLkmjle6tedXEaMXwKcuhOpDKGEKz75NOdfmt1w
+         Ve1BJSMRmm0zNnu8ztpTFCaVmtJoNtH7YqJhYcUPaB7pMg25VLmu6kuaubU0+xWjRaBd
+         9+ZHIFe+hGXuNl3Id0oZusMSHcqhOL6lHSvGO+SJReKxg/4GASInXvKsQg8YH15o3U6Q
+         GVPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=AHjS+evz3QVh0MBkELR/jdoUFNfkoRz6aszyBU+n3Ec=;
-        b=Fe293I6y36SKbLeqgGWR1+WnuK/kLC8WiTjlomTfZIHapkM6hsC2qIxIZTCJq19G4b
-         mVmccY8WiO167N0oSmT2gkrbPk4zR5QyL8qFR9Yq8D4l7854taGw+da9HEXitoPbi/Wm
-         H//EQVG2I9+mi5jcY+o8n4EHDxDRkZhS6oRFBvY6TnufPwWf4alhJ3eUnC2QbQaVXUYD
-         X7jzZKeKV/NHRN0h6BlKwDI2BMxJAJLa5UFh4zFzO2lXJtG63EhBc71wwiNgns2pLE8A
-         QlJbbPYuf5sNmRxkA65qEZItWilfNQuUajgGAPHlwel+yXCdrrn2NhxB2ybuGzin/Y0Y
-         pQzg==
-X-Gm-Message-State: AJcUukeV896Yva13/FVyIAhTHqm/1FuNjpPMv5aEVBgq6Kz9tz1SjIAt
-        TEf+SEwMS97oWLjucBvnBhE=
-X-Google-Smtp-Source: ALg8bN4z8wkfPm1/MV8LPDhriPtnOPHgVUtD2pkb5FEbosg2yEnFk+nMqeCUK8uwLUB9owhgfqQO/A==
-X-Received: by 2002:a17:902:830a:: with SMTP id bd10mr7971769plb.321.1548360945884;
-        Thu, 24 Jan 2019 12:15:45 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XOW0LX2PweR/cHPMdWN96QKcxoiR7cIq0Nnzo7uwIxQ=;
+        b=L9a5MxuLx33noDQ+f7/P04eK4l5+cSbFB8ExQ32TSV17rEyVUW9IsRWlurm2mkeJI9
+         OR8E+rESxN3jVE280TGfT57JZqLkTxSHUbYZ5L2b8iM5pktvJ4hk1/Lb1GaxYDgzt99R
+         0cjFZnxtwM18u0mHGcyzCP5Djq+/gnYQ1vrNSoK598tkmkFyQ4AWsG/KoI6C0pkRs+7D
+         bJidWWTVlgAy77J0xm2XcnnBgOYu26kSg3X0J/fWlRwCx1IA641d9qNop71sEQQXzIii
+         jdr3WlGCyQa4Br0MSuynuHhgBkxLOcF1vUQoCDieIdGrUxPLe9OuR6M3E9zWvZEUxRJL
+         MJeA==
+X-Gm-Message-State: AJcUukdSbn5yRRLgUWr/iM2z59aqzztVAUZnQjqbgSDopK2fNJeTaEzg
+        2WJHvzADRilQFY8xXvG3Us4=
+X-Google-Smtp-Source: ALg8bN59RNULZU+WG6d1l7jJkppHQOKsMddfjKVuOCk2i9NONH2dLJtZnjD5Yp8qHwxIrI263ZVswg==
+X-Received: by 2002:a63:5f89:: with SMTP id t131mr7400377pgb.26.1548360940688;
+        Thu, 24 Jan 2019 12:15:40 -0800 (PST)
 Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id m65sm53062646pfg.180.2019.01.24.12.15.44
+        by smtp.gmail.com with ESMTPSA id m65sm53062646pfg.180.2019.01.24.12.15.39
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 24 Jan 2019 12:15:45 -0800 (PST)
+        Thu, 24 Jan 2019 12:15:39 -0800 (PST)
 From:   Andrey Smirnov <andrew.smirnov@gmail.com>
 To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
         Bjorn Helgaas <bhelgaas@google.com>,
         Fabio Estevam <fabio.estevam@nxp.com>,
         Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
         Leonard Crestez <leonard.crestez@nxp.com>,
         "A.s. Dong" <aisheng.dong@nxp.com>,
         Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-pci@vger.kernel.org
-Subject: [PATCH v6 3/4] PCI: imx6: Convert DIRECT_SPEED_CHANGE quirk code to use a flag
-Date:   Thu, 24 Jan 2019 12:15:21 -0800
-Message-Id: <20190124201522.8973-4-andrew.smirnov@gmail.com>
+Subject: [PATCH v6 0/4] PCIE support for i.MX8MQ
+Date:   Thu, 24 Jan 2019 12:15:18 -0800
+Message-Id: <20190124201522.8973-1-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190124201522.8973-1-andrew.smirnov@gmail.com>
-References: <20190124201522.8973-1-andrew.smirnov@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -82,72 +79,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Both i.MX7D and i.MX8MQ have the same behaviour when it comes to
-clearing DIRECT_SPEED_CHANGE bit when no speed change occur. To
-account for that change the code handling that to use a generic flag
-instead of checking IP block variant.
+Everyone:
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Leonard Crestez <leonard.crestez@nxp.com>
-Cc: "A.s. Dong" <aisheng.dong@nxp.com>
-Cc: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: linux-imx@nxp.com
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-pci@vger.kernel.org
----
- drivers/pci/controller/dwc/pci-imx6.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+This series contains changes I made in order to enable support of PCIE
+IP block on i.MX8MQ SoCs.
 
-diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-index c55d93c1187d..75ee0cd7af3b 100644
---- a/drivers/pci/controller/dwc/pci-imx6.c
-+++ b/drivers/pci/controller/dwc/pci-imx6.c
-@@ -42,6 +42,7 @@ enum imx6_pcie_variants {
- };
- 
- #define IMX6_PCIE_FLAG_IMX6_PHY			BIT(0)
-+#define IMX6_PCIE_FLAG_IMX6_SPEED_CHANGE	BIT(1)
- 
- struct imx6_pcie_drvdata {
- 	enum imx6_pcie_variants variant;
-@@ -711,7 +712,8 @@ static int imx6_pcie_establish_link(struct imx6_pcie *imx6_pcie)
- 		tmp |= PORT_LOGIC_SPEED_CHANGE;
- 		dw_pcie_writel_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL, tmp);
- 
--		if (imx6_pcie->drvdata->variant != IMX7D) {
-+		if (imx6_pcie->drvdata->flags &
-+		    IMX6_PCIE_FLAG_IMX6_SPEED_CHANGE) {
- 			/*
- 			 * On i.MX7, DIRECT_SPEED_CHANGE behaves differently
- 			 * from i.MX6 family when no link speed transition
-@@ -1097,15 +1099,18 @@ static void imx6_pcie_shutdown(struct platform_device *pdev)
- static const struct imx6_pcie_drvdata drvdata[] = {
- 	[IMX6Q] = {
- 		.variant = IMX6Q,
--		.flags = IMX6_PCIE_FLAG_IMX6_PHY,
-+		.flags = IMX6_PCIE_FLAG_IMX6_PHY |
-+			 IMX6_PCIE_FLAG_IMX6_SPEED_CHANGE,
- 	},
- 	[IMX6SX] = {
- 		.variant = IMX6SX,
--		.flags = IMX6_PCIE_FLAG_IMX6_PHY,
-+		.flags = IMX6_PCIE_FLAG_IMX6_PHY |
-+			 IMX6_PCIE_FLAG_IMX6_SPEED_CHANGE,
- 	},
- 	[IMX6QP] = {
- 		.variant = IMX6QP,
--		.flags = IMX6_PCIE_FLAG_IMX6_PHY,
-+		.flags = IMX6_PCIE_FLAG_IMX6_PHY |
-+			 IMX6_PCIE_FLAG_IMX6_SPEED_CHANGE,
- 	},
- 	[IMX7D] = {
- 		.variant = IMX7D,
+Changes since [v5]:
+
+ - Reformatted commit messages to adhere to
+   https://lore.kernel.org/linux-pci/20171026223701.GA25649@bhelgaas-glaptop.roam.corp.google.com/
+
+Changes since [v4]:
+
+ - Collected Reviewed-by from Lucas
+
+ - Replaced ((ARM || ARM64) && COMPILE_TEST) with COMPILE_TEST as per
+   suggestion from Rob
+
+Changes since [v3]:
+
+ - Based on feedback from NXP, DIRECT_SPEED_CHANGE quirk was expanded
+   to cover both i.MX7 and i.MX8MQ
+
+ - Code setting device type in GPR12 moved to a standalone function
+
+ - Explicit "fsl,controller-id" binding was dropped, replaced by using
+   controller physical address to determine logical ID
+
+ - Dropped Reviewed-by from Lucas for patch 4/4 due to the change
+   above (haven't heard explicit "yea" for it from him)
+
+Changes since [v2], [fixes]:
+
+ - Incorporated [patch] introducing drvdata
+
+ - i.MX6 PHY operation gating converted to a single patch and to use a
+   dedicated flag instead of doing explicit variant check
+
+ - Kconfig entry changed to use ARM64 && ARCH_MXC
+
+ - Dropped FALLTHROUGH annotations
+
+Changes since [v1]:
+
+ - Driver changed to use single "fsl,controller-id" property to
+   distinguish between two intances of PCIE IP block
+
+ - All code pertaining to L1SS was dropped to simplify the patch
+
+ - Documented additions to DT bindings
+
+Feedback is welcome!
+
+Thanks,
+Andrey Smirnov
+
+[v4] https://lore.kernel.org/linux-arm-kernel/20190104165335.13205-1-andrew.smirnov@gmail.com
+[v3] https://lore.kernel.org/linux-arm-kernel/20181218040702.29231-1-andrew.smirnov@gmail.com
+[patch] https://patchwork.kernel.org/patch/10712261/
+[fixes] https://lore.kernel.org/linux-arm-kernel/20181216230916.22982-1-andrew.smirnov@gmail.com
+[v2] https://lore.kernel.org/linux-arm-kernel/20181206073545.10967-1-andrew.smirnov@gmail.com
+[v1] https://lore.kernel.org/linux-arm-kernel/20181117181225.10737-1-andrew.smirnov@gmail.com/
+
+Andrey Smirnov (4):
+  PCI: imx6: Introduce drvdata
+  PCI: imx6: Mark PHY functions as i.MX6 specific
+  PCI: imx6: Convert DIRECT_SPEED_CHANGE quirk code to use a flag
+  PCI: imx6: Add support for i.MX8MQ
+
+ .../bindings/pci/fsl,imx6q-pcie.txt           |   3 +-
+ drivers/pci/controller/dwc/Kconfig            |   4 +-
+ drivers/pci/controller/dwc/pci-imx6.c         | 150 +++++++++++++++---
+ 3 files changed, 133 insertions(+), 24 deletions(-)
+
 -- 
 2.20.1
 
