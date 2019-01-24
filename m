@@ -2,114 +2,136 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54BECC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:52:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABC04C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:52:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 270E1218AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:52:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70129218B0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:52:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SjUmPh5l"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728401AbfAXQv6 (ORCPT
+        id S1728855AbfAXQwr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 11:51:58 -0500
-Received: from foss.arm.com ([217.140.101.70]:60740 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726252AbfAXQv6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 11:51:58 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 98533A78;
-        Thu, 24 Jan 2019 08:51:57 -0800 (PST)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1A94E3F237;
-        Thu, 24 Jan 2019 08:51:55 -0800 (PST)
-Date:   Thu, 24 Jan 2019 16:51:53 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v14 02/12] powerpc/irq: use memblock functions returning
- virtual address
-Message-ID: <20190124165153.GB5531@lakrids.cambridge.arm.com>
-References: <cover.1548346225.git.christophe.leroy@c-s.fr>
- <1c8e658c094022a15e4b9f5ef5c191caab3c0dff.1548346225.git.christophe.leroy@c-s.fr>
+        Thu, 24 Jan 2019 11:52:47 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:43274 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728320AbfAXQwq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 11:52:46 -0500
+Received: by mail-lj1-f195.google.com with SMTP id q2-v6so5842752lji.10
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 08:52:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OhnX21LR5IFTaJhnCOdLXb9BeznZ1d+nd23qWL+puCA=;
+        b=SjUmPh5lu6dFy0OBzDdqMCoI2UNH6D+UHTohtiK7v8G1kR3Ie+WtPS6nuGXaacsGUc
+         btz8IjI66s0y/PYVLjs13ZKhVr/nvB44ud/lxwuvPGu5491aWX+Dc3TjaOZ+4uLBOfGB
+         Z+/74I4ZaTYAzjbG1LRafIQ7ZSg4awkDb09ho=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OhnX21LR5IFTaJhnCOdLXb9BeznZ1d+nd23qWL+puCA=;
+        b=ZTeD0G6eGreGPU6yTXjDPQl4JFQ0Io0RF1WPHpSBMVBda414/7K+P+PYzjzkAOO+2m
+         bEckXA4G7DPkt/wOciRv9//ghWZl+GiUCW+qRgNeGIvJTib1dAET9/uhSNvhiQi71Nzm
+         VTDIXGKXoN+gcyREvZNcDUp3Dopro+wjgULP69riKKtdhiYItfafDtsa14JYS3PELSMl
+         ONRv2dwTkfiH/I+B5fHuVju/RO8Lu1+BezDD557dAvciR26DKll5u4iAaiiM7eDakexn
+         1HtaZMDIVAnxbnqIJHrj3B64cbD2ONQvQMUDhQ9f8As7Bm5uG7BzrRPN4SNXmw0SQGhc
+         UTAQ==
+X-Gm-Message-State: AJcUukfELQOiCx5h8PYW5gftVOxy+ieFsLPbDsqhSkW9D/z7ZozeYonN
+        7X98qjgvx4SlId4VoQSAQeSbnwO8LgY=
+X-Google-Smtp-Source: ALg8bN5P0thPG+9YH7kr3ZAcCS8528fuyLvSmmk7i5MyJxxKE42FuhgDb1KNOVTpcg6lMJsAeds/4A==
+X-Received: by 2002:a2e:21a9:: with SMTP id h41-v6mr6234990lji.103.1548348764377;
+        Thu, 24 Jan 2019 08:52:44 -0800 (PST)
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
+        by smtp.gmail.com with ESMTPSA id y24-v6sm1054611ljd.20.2019.01.24.08.52.41
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 24 Jan 2019 08:52:42 -0800 (PST)
+Received: by mail-lf1-f42.google.com with SMTP id b20so4808714lfa.12
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 08:52:41 -0800 (PST)
+X-Received: by 2002:a19:7dc2:: with SMTP id y185mr6098975lfc.27.1548348760722;
+ Thu, 24 Jan 2019 08:52:40 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1c8e658c094022a15e4b9f5ef5c191caab3c0dff.1548346225.git.christophe.leroy@c-s.fr>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+References: <cover.1548312692.git.asutoshd@codeaurora.org> <d6aa4d9bd29bbb2c3ee78e6635d4704e4113a26e.1548312692.git.asutoshd@codeaurora.org>
+In-Reply-To: <d6aa4d9bd29bbb2c3ee78e6635d4704e4113a26e.1548312692.git.asutoshd@codeaurora.org>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Thu, 24 Jan 2019 08:52:03 -0800
+X-Gmail-Original-Message-ID: <CAE=gft6P9ssNp_GRUFJT7BvJUHduorg=-bvi0KytDMWTd0pGew@mail.gmail.com>
+Message-ID: <CAE=gft6P9ssNp_GRUFJT7BvJUHduorg=-bvi0KytDMWTd0pGew@mail.gmail.com>
+Subject: Re: [<PATCH v1> 1/1] scsi: qcom-ufs: Add support for bus voting using
+ ICB framework
+To:     Asutosh Das <asutoshd@codeaurora.org>
+Cc:     subhashj@codeaurora.org, cang@codeaurora.org,
+        vivek.gautam@codeaurora.org,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Vinayak Holikatti <vinholikatti@gmail.com>,
+        jejb@linux.vnet.ibm.com,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 04:19:33PM +0000, Christophe Leroy wrote:
-> Since only the virtual address of allocated blocks is used,
-> lets use functions returning directly virtual address.
-> 
-> Those functions have the advantage of also zeroing the block.
-> 
-> Suggested-by: Mike Rapoport <rppt@linux.ibm.com>
-> Acked-by: Mike Rapoport <rppt@linux.ibm.com>
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+On Wed, Jan 23, 2019 at 11:02 PM Asutosh Das <asutoshd@codeaurora.org> wrote:
+>
+> Adapt to the new ICB framework for bus bandwidth voting.
+>
+> This requires the source/destination port ids.
+> Also this requires a tuple of values.
+>
+> The tuple is for two different paths - from UFS master
+> to BIMC slave. The other is from CPU master to UFS slave.
+> This tuple consists of the average and peak bandwidth.
+>
+> Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
+> ---
+>  .../devicetree/bindings/ufs/ufshcd-pltfrm.txt      |  12 ++
+>  drivers/scsi/ufs/ufs-qcom.c                        | 234 ++++++++++++++++-----
+>  drivers/scsi/ufs/ufs-qcom.h                        |  20 ++
+>  3 files changed, 218 insertions(+), 48 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
+> index a99ed55..94249ef 100644
+> --- a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
+> +++ b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
+> @@ -45,6 +45,18 @@ Optional properties:
+>  Note: If above properties are not defined it can be assumed that the supply
+>  regulators or clocks are always on.
+>
+> +* Following bus parameters are required:
+> +interconnects
+> +interconnect-names
+> +- Please refer to Documentation/devicetree/bindings/interconnect/
+> +  for more details on the above.
+> +qcom,msm-bus,name - string describing the bus path
+> +qcom,msm-bus,num-cases - number of configurations in which ufs can operate in
+> +qcom,msm-bus,num-paths - number of paths to vote for
+> +qcom,msm-bus,vectors-KBps - Takes a tuple <ib ab>, <ib ab> (2 tuples for 2 num-paths)
+> +                           The number of these entries *must* be same as
+> +                           num-cases.
 
-[...]
+I think we can do away with all of the qcom* ones, right? This should
+be achievable with just interconnects and interconnect-names.
 
-> +static void *__init alloc_stack(void)
-> +{
-> +	void *ptr = memblock_alloc(THREAD_SIZE, THREAD_SIZE);
-> +
-> +	if (!ptr)
-> +		panic("cannot allocate stacks");
-> +
-> +	return ptr;
-> +}
+Also, is this patch based on a downstream tree? I don't recognize a
+lot of the context. We'll need a patch that's based on an upstream
+tree.
 
-I believe memblock_alloc() will panic() if it cannot allocate memory,
-since that goes:
-
- memblock_alloc()
- -> memblock_alloc_try_nid()
-    -> panic()
-
-So you can get rid of the panic() here, or if you want a custom panic
-message, you can use memblock_alloc_nopanic().
-
-[...]
-
->  static void *__init alloc_stack(unsigned long limit, int cpu)
->  {
-> -	unsigned long pa;
-> +	void *ptr;
->  
->  	BUILD_BUG_ON(STACK_INT_FRAME_SIZE % 16);
->  
-> -	pa = memblock_alloc_base_nid(THREAD_SIZE, THREAD_SIZE, limit,
-> -					early_cpu_to_node(cpu), MEMBLOCK_NONE);
-> -	if (!pa) {
-> -		pa = memblock_alloc_base(THREAD_SIZE, THREAD_SIZE, limit);
-> -		if (!pa)
-> -			panic("cannot allocate stacks");
-> -	}
-> +	ptr = memblock_alloc_try_nid(THREAD_SIZE, THREAD_SIZE,
-> +				     MEMBLOCK_LOW_LIMIT, limit,
-> +				     early_cpu_to_node(cpu));
-> +	if (!ptr)
-> +		panic("cannot allocate stacks");
-
-The same applies here -- memblock_alloc_try_nid() will panic itself
-rather than returning NULL.
-
-Otherwise, this looks like a nice cleanup. With the panics removed (or
-using the _nopanic() allocators), feel free to add:
-
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-
-Thanks,
-Mark.
+I'll wait to review the rest of the patch until rev 2, since it's hard
+to reason about the patch with all the downstream stuff in there.
+-Evan
