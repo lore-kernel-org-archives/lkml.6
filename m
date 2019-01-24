@@ -7,51 +7,48 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC317C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:32:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 445D8C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:32:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81EE7218FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:32:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03DC1218FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:32:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358328;
-	bh=75jnzXolcdvNQvnAd+WMnuoNGwMTmOigzhQNEuGAKrM=;
+	s=default; t=1548358332;
+	bh=rRR9HElcIISiXY9wDIPnaMAocp0qYCbSuCn0GLuf4uU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=HzfiABuLc2JoEeHBcR0Felfc9r/sesAFqRed1ZKK3FGvV3dCoDQnHp6idw2hCF2eh
-	 05OivCB3hsDX6cAn6wQ8XdrWlFkEyXkrBkG9V7W2Z5sLP/5rBGemp0mwix4j6fXLGx
-	 pS8uQL6biQ0kjXvwUa7YZK/rlkjkb7mSelVl3NYA=
+	b=Hk09ViW7UqBHPLoprDf6lersxgWsJbbvMJjnKsGPeTppYIO8MOfYWSKbukozPc3J4
+	 hwNPlVyBEhc2T6mVK6ccskjojYAc+uwBSeXkqbiFBnTOPOst9o4NwojcX3Ww/ru6Bp
+	 F2RHze1oT3tiIEy2VPRcYq+JwAgyGBsZ4pZFm3jI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731770AbfAXTcH (ORCPT
+        id S1731783AbfAXTcK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:32:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59918 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:32:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60016 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730712AbfAXTcD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:32:03 -0500
+        id S1730712AbfAXTcI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:32:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC0EB21909;
-        Thu, 24 Jan 2019 19:32:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D040218E2;
+        Thu, 24 Jan 2019 19:32:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358322;
-        bh=75jnzXolcdvNQvnAd+WMnuoNGwMTmOigzhQNEuGAKrM=;
+        s=default; t=1548358327;
+        bh=rRR9HElcIISiXY9wDIPnaMAocp0qYCbSuCn0GLuf4uU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c2MlNB8t9+1VahnC3DX8czP2IFta3Pzy9b359JWpUsJxxBsnbmKkwIHh/X3po9yOW
-         BQGTHZRB7joA5+wCpdXKI8v3KROkoHlBNVeTu4PJMaMFtWXL3pHDrKRhZDUPDOTUAi
-         p4gLBy6U4Wak5eUp9b9zNbKmgTtM5gWKIqEQGX2k=
+        b=OJBGryl6YPUAFHuJ9bFx6p5IdhK2Nxo2mcaXIwZFTC0K722rb3QPP+7HrarPozC8x
+         RrBMel+P4dQtZ6XlQ5ovE2xqhZ60a0twrehreZIXLBMU/6FfKZmbBpfodGcaURX+1i
+         ItGd9IRNYNu6YZofd5CfQC5GqPLz7I9IJfQqjrgw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Will Drewry <wad@chromium.org>,
-        linux-kselftest@vger.kernel.org,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
+        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 30/63] selftests: do not macro-expand failed assertion expressions
-Date:   Thu, 24 Jan 2019 20:20:19 +0100
-Message-Id: <20190124190158.517260683@linuxfoundation.org>
+Subject: [PATCH 4.14 32/63] arm64: Fix minor issues with the dcache_by_line_op macro
+Date:   Thu, 24 Jan 2019 20:20:21 +0100
+Message-Id: <20190124190158.793932520@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190155.176570028@linuxfoundation.org>
 References: <20190124190155.176570028@linuxfoundation.org>
@@ -70,241 +67,112 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit b708a3cc9600390ccaa2b68a88087dd265154b2b ]
+[ Upstream commit 33309ecda0070506c49182530abe7728850ebe78 ]
 
-I've stumbled over the current macro-expand behaviour of the test
-harness:
+The dcache_by_line_op macro suffers from a couple of small problems:
 
-$ gcc -Wall -xc - <<'__EOF__'
-TEST(macro) {
-	int status = 0;
-	ASSERT_TRUE(WIFSIGNALED(status));
-}
-TEST_HARNESS_MAIN
-__EOF__
-$ ./a.out
-[==========] Running 1 tests from 1 test cases.
-[ RUN      ] global.macro
-<stdin>:4:global.macro:Expected 0 (0) != (((signed char) (((status) & 0x7f) + 1) >> 1) > 0) (0)
-global.macro: Test terminated by assertion
-[     FAIL ] global.macro
-[==========] 0 / 1 tests passed.
-[  FAILED  ]
+First, the GAS directives that are currently being used rely on
+assembler behavior that is not documented, and probably not guaranteed
+to produce the correct behavior going forward. As a result, we end up
+with some undefined symbols in cache.o:
 
-With this change the output of the same test looks much more
-comprehensible:
+$ nm arch/arm64/mm/cache.o
+         ...
+         U civac
+         ...
+         U cvac
+         U cvap
+         U cvau
 
-[==========] Running 1 tests from 1 test cases.
-[ RUN      ] global.macro
-<stdin>:4:global.macro:Expected 0 (0) != WIFSIGNALED(status) (0)
-global.macro: Test terminated by assertion
-[     FAIL ] global.macro
-[==========] 0 / 1 tests passed.
-[  FAILED  ]
+This is due to the fact that the comparisons used to select the
+operation type in the dcache_by_line_op macro are comparing symbols
+not strings, and even though it seems that GAS is doing the right
+thing here (undefined symbols by the same name are equal to each
+other), it seems unwise to rely on this.
 
-The issue is very similar to the bug fixed in glibc assert(3)
-three years ago:
-https://sourceware.org/bugzilla/show_bug.cgi?id=18604
+Second, when patching in a DC CVAP instruction on CPUs that support it,
+the fallback path consists of a DC CVAU instruction which may be
+affected by CPU errata that require ARM64_WORKAROUND_CLEAN_CACHE.
 
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Will Drewry <wad@chromium.org>
-Cc: linux-kselftest@vger.kernel.org
-Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
-Acked-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Shuah Khan <shuah@kernel.org>
+Solve these issues by unrolling the various maintenance routines and
+using the conditional directives that are documented as operating on
+strings. To avoid the complexity of nested alternatives, we move the
+DC CVAP patching to __clean_dcache_area_pop, falling back to a branch
+to __clean_dcache_area_poc if DCPOP is not supported by the CPU.
+
+Reported-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Suggested-by: Robin Murphy <robin.murphy@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/kselftest_harness.h | 42 ++++++++++-----------
- 1 file changed, 21 insertions(+), 21 deletions(-)
+ arch/arm64/include/asm/assembler.h | 30 ++++++++++++++++++------------
+ arch/arm64/mm/cache.S              |  3 +++
+ 2 files changed, 21 insertions(+), 12 deletions(-)
 
-diff --git a/tools/testing/selftests/kselftest_harness.h b/tools/testing/selftests/kselftest_harness.h
-index e81bd28bdd89..8f32d699d6c5 100644
---- a/tools/testing/selftests/kselftest_harness.h
-+++ b/tools/testing/selftests/kselftest_harness.h
-@@ -330,7 +330,7 @@
-  * ASSERT_EQ(expected, measured): expected == measured
+diff --git a/arch/arm64/include/asm/assembler.h b/arch/arm64/include/asm/assembler.h
+index 66aea4aa455d..02d73d83f0de 100644
+--- a/arch/arm64/include/asm/assembler.h
++++ b/arch/arm64/include/asm/assembler.h
+@@ -373,27 +373,33 @@ alternative_endif
+  * 	size:		size of the region
+  * 	Corrupts:	kaddr, size, tmp1, tmp2
   */
- #define ASSERT_EQ(expected, seen) \
--	__EXPECT(expected, seen, ==, 1)
-+	__EXPECT(expected, #expected, seen, #seen, ==, 1)
- 
- /**
-  * ASSERT_NE(expected, seen)
-@@ -341,7 +341,7 @@
-  * ASSERT_NE(expected, measured): expected != measured
++	.macro __dcache_op_workaround_clean_cache, op, kaddr
++alternative_if_not ARM64_WORKAROUND_CLEAN_CACHE
++	dc	\op, \kaddr
++alternative_else
++	dc	civac, \kaddr
++alternative_endif
++	.endm
++
+ 	.macro dcache_by_line_op op, domain, kaddr, size, tmp1, tmp2
+ 	dcache_line_size \tmp1, \tmp2
+ 	add	\size, \kaddr, \size
+ 	sub	\tmp2, \tmp1, #1
+ 	bic	\kaddr, \kaddr, \tmp2
+ 9998:
+-	.if	(\op == cvau || \op == cvac)
+-alternative_if_not ARM64_WORKAROUND_CLEAN_CACHE
+-	dc	\op, \kaddr
+-alternative_else
+-	dc	civac, \kaddr
+-alternative_endif
+-	.elseif	(\op == cvap)
+-alternative_if ARM64_HAS_DCPOP
+-	sys 3, c7, c12, 1, \kaddr	// dc cvap
+-alternative_else
+-	dc	cvac, \kaddr
+-alternative_endif
++	.ifc	\op, cvau
++	__dcache_op_workaround_clean_cache \op, \kaddr
++	.else
++	.ifc	\op, cvac
++	__dcache_op_workaround_clean_cache \op, \kaddr
++	.else
++	.ifc	\op, cvap
++	sys	3, c7, c12, 1, \kaddr	// dc cvap
+ 	.else
+ 	dc	\op, \kaddr
+ 	.endif
++	.endif
++	.endif
+ 	add	\kaddr, \kaddr, \tmp1
+ 	cmp	\kaddr, \size
+ 	b.lo	9998b
+diff --git a/arch/arm64/mm/cache.S b/arch/arm64/mm/cache.S
+index 91464e7f77cc..c1e8f3c6ffd5 100644
+--- a/arch/arm64/mm/cache.S
++++ b/arch/arm64/mm/cache.S
+@@ -181,6 +181,9 @@ ENDPROC(__dma_clean_area)
+  *	- size    - size in question
   */
- #define ASSERT_NE(expected, seen) \
--	__EXPECT(expected, seen, !=, 1)
-+	__EXPECT(expected, #expected, seen, #seen, !=, 1)
- 
- /**
-  * ASSERT_LT(expected, seen)
-@@ -352,7 +352,7 @@
-  * ASSERT_LT(expected, measured): expected < measured
-  */
- #define ASSERT_LT(expected, seen) \
--	__EXPECT(expected, seen, <, 1)
-+	__EXPECT(expected, #expected, seen, #seen, <, 1)
- 
- /**
-  * ASSERT_LE(expected, seen)
-@@ -363,7 +363,7 @@
-  * ASSERT_LE(expected, measured): expected <= measured
-  */
- #define ASSERT_LE(expected, seen) \
--	__EXPECT(expected, seen, <=, 1)
-+	__EXPECT(expected, #expected, seen, #seen, <=, 1)
- 
- /**
-  * ASSERT_GT(expected, seen)
-@@ -374,7 +374,7 @@
-  * ASSERT_GT(expected, measured): expected > measured
-  */
- #define ASSERT_GT(expected, seen) \
--	__EXPECT(expected, seen, >, 1)
-+	__EXPECT(expected, #expected, seen, #seen, >, 1)
- 
- /**
-  * ASSERT_GE(expected, seen)
-@@ -385,7 +385,7 @@
-  * ASSERT_GE(expected, measured): expected >= measured
-  */
- #define ASSERT_GE(expected, seen) \
--	__EXPECT(expected, seen, >=, 1)
-+	__EXPECT(expected, #expected, seen, #seen, >=, 1)
- 
- /**
-  * ASSERT_NULL(seen)
-@@ -395,7 +395,7 @@
-  * ASSERT_NULL(measured): NULL == measured
-  */
- #define ASSERT_NULL(seen) \
--	__EXPECT(NULL, seen, ==, 1)
-+	__EXPECT(NULL, "NULL", seen, #seen, ==, 1)
- 
- /**
-  * ASSERT_TRUE(seen)
-@@ -405,7 +405,7 @@
-  * ASSERT_TRUE(measured): measured != 0
-  */
- #define ASSERT_TRUE(seen) \
--	ASSERT_NE(0, seen)
-+	__EXPECT(0, "0", seen, #seen, !=, 1)
- 
- /**
-  * ASSERT_FALSE(seen)
-@@ -415,7 +415,7 @@
-  * ASSERT_FALSE(measured): measured == 0
-  */
- #define ASSERT_FALSE(seen) \
--	ASSERT_EQ(0, seen)
-+	__EXPECT(0, "0", seen, #seen, ==, 1)
- 
- /**
-  * ASSERT_STREQ(expected, seen)
-@@ -448,7 +448,7 @@
-  * EXPECT_EQ(expected, measured): expected == measured
-  */
- #define EXPECT_EQ(expected, seen) \
--	__EXPECT(expected, seen, ==, 0)
-+	__EXPECT(expected, #expected, seen, #seen, ==, 0)
- 
- /**
-  * EXPECT_NE(expected, seen)
-@@ -459,7 +459,7 @@
-  * EXPECT_NE(expected, measured): expected != measured
-  */
- #define EXPECT_NE(expected, seen) \
--	__EXPECT(expected, seen, !=, 0)
-+	__EXPECT(expected, #expected, seen, #seen, !=, 0)
- 
- /**
-  * EXPECT_LT(expected, seen)
-@@ -470,7 +470,7 @@
-  * EXPECT_LT(expected, measured): expected < measured
-  */
- #define EXPECT_LT(expected, seen) \
--	__EXPECT(expected, seen, <, 0)
-+	__EXPECT(expected, #expected, seen, #seen, <, 0)
- 
- /**
-  * EXPECT_LE(expected, seen)
-@@ -481,7 +481,7 @@
-  * EXPECT_LE(expected, measured): expected <= measured
-  */
- #define EXPECT_LE(expected, seen) \
--	__EXPECT(expected, seen, <=, 0)
-+	__EXPECT(expected, #expected, seen, #seen, <=, 0)
- 
- /**
-  * EXPECT_GT(expected, seen)
-@@ -492,7 +492,7 @@
-  * EXPECT_GT(expected, measured): expected > measured
-  */
- #define EXPECT_GT(expected, seen) \
--	__EXPECT(expected, seen, >, 0)
-+	__EXPECT(expected, #expected, seen, #seen, >, 0)
- 
- /**
-  * EXPECT_GE(expected, seen)
-@@ -503,7 +503,7 @@
-  * EXPECT_GE(expected, measured): expected >= measured
-  */
- #define EXPECT_GE(expected, seen) \
--	__EXPECT(expected, seen, >=, 0)
-+	__EXPECT(expected, #expected, seen, #seen, >=, 0)
- 
- /**
-  * EXPECT_NULL(seen)
-@@ -513,7 +513,7 @@
-  * EXPECT_NULL(measured): NULL == measured
-  */
- #define EXPECT_NULL(seen) \
--	__EXPECT(NULL, seen, ==, 0)
-+	__EXPECT(NULL, "NULL", seen, #seen, ==, 0)
- 
- /**
-  * EXPECT_TRUE(seen)
-@@ -523,7 +523,7 @@
-  * EXPECT_TRUE(measured): 0 != measured
-  */
- #define EXPECT_TRUE(seen) \
--	EXPECT_NE(0, seen)
-+	__EXPECT(0, "0", seen, #seen, !=, 0)
- 
- /**
-  * EXPECT_FALSE(seen)
-@@ -533,7 +533,7 @@
-  * EXPECT_FALSE(measured): 0 == measured
-  */
- #define EXPECT_FALSE(seen) \
--	EXPECT_EQ(0, seen)
-+	__EXPECT(0, "0", seen, #seen, ==, 0)
- 
- /**
-  * EXPECT_STREQ(expected, seen)
-@@ -573,7 +573,7 @@
- 	if (_metadata->passed && _metadata->step < 255) \
- 		_metadata->step++;
- 
--#define __EXPECT(_expected, _seen, _t, _assert) do { \
-+#define __EXPECT(_expected, _expected_str, _seen, _seen_str, _t, _assert) do { \
- 	/* Avoid multiple evaluation of the cases */ \
- 	__typeof__(_expected) __exp = (_expected); \
- 	__typeof__(_seen) __seen = (_seen); \
-@@ -582,8 +582,8 @@
- 		unsigned long long __exp_print = (uintptr_t)__exp; \
- 		unsigned long long __seen_print = (uintptr_t)__seen; \
- 		__TH_LOG("Expected %s (%llu) %s %s (%llu)", \
--			 #_expected, __exp_print, #_t, \
--			 #_seen, __seen_print); \
-+			 _expected_str, __exp_print, #_t, \
-+			 _seen_str, __seen_print); \
- 		_metadata->passed = 0; \
- 		/* Ensure the optional handler is triggered */ \
- 		_metadata->trigger = 1; \
+ ENTRY(__clean_dcache_area_pop)
++	alternative_if_not ARM64_HAS_DCPOP
++	b	__clean_dcache_area_poc
++	alternative_else_nop_endif
+ 	dcache_by_line_op cvap, sy, x0, x1, x2, x3
+ 	ret
+ ENDPIPROC(__clean_dcache_area_pop)
 -- 
 2.19.1
 
