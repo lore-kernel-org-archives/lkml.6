@@ -2,261 +2,98 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4A68C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:57:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5082AC282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:57:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78CF7218D0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:57:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359840;
-	bh=WM/l2Lc0JCNzLsmttJyy7q32qf5Js9CuHFHypHqfZTc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=mICxfb/r74/eHoOqtWipL+jsjTUnpZF6BICj1Dryxh5RZGAQuli+lB7Cyi1pVqufP
-	 bueJqoGnOMMpokgdcoju8/kUtMBLeRxa5XHFl3IkI/ziq4T4E/8P/yd8ut16RcOlfT
-	 sRMp+Z0WdE/t744M1isU+fYvk69seKS6lvHYyywA=
+	by mail.kernel.org (Postfix) with ESMTP id 13C6021726
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:57:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vDButwXS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732328AbfAXTfV (ORCPT
+        id S1731806AbfAXT5V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:35:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35150 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731280AbfAXTfR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:35:17 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0F9A8218D4;
-        Thu, 24 Jan 2019 19:35:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358515;
-        bh=WM/l2Lc0JCNzLsmttJyy7q32qf5Js9CuHFHypHqfZTc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U/mIBayExJPFse5V/AA4d2Z0sE03Jr5QU/s2BCvxmukR05tIJtCa73n0w6TxdKMoA
-         w68lDt+RPi/x73ZLflBEPQIcKfdk0b+EtBX34DSkfRyP5CzsDMJYXKfuOJxe/0s222
-         zVTQTHed6yWnhF7U/Jj//KZbkrgYGugCXlt4TTJ8=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+        Thu, 24 Jan 2019 14:57:21 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:37722 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728923AbfAXT5S (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:57:18 -0500
+Received: by mail-lj1-f196.google.com with SMTP id t18-v6so6370736ljd.4
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 11:57:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=JD5WRLDcyAIMKxtCkk72zkUgX48bEbI0nw5VReqxjFY=;
+        b=vDButwXSbNg6LN2JfKODmPTvWqBUH/hROLPmZT2BObig5V1lfFe1c/EJPhKxcFxz6J
+         j7BXF2Ut4zwo4DPt6Vgd89UrUioHHyUMZOfiouBUDVBbXAjjL6Jofy3oAdCaINE8ekm2
+         jnJS/Z328QfjfuZ9nZaBfKqNKF28ogtnhnf9NXRYhVxR/VAhtGvKX+WkgUEhCU1MtJBH
+         prm5etQ83i5zgeO/rnP8W46R1h4BOxsr7x7RDWnt8Vh78L2Zxx4UtpYu/gOtfozi8L+O
+         AdFMXfT8qUeNkECD0FjGANlb4pQ/q1a7AJiTccoc1kAsqBIlKW6LLVHS7y1uu7KPUkbf
+         0UFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=JD5WRLDcyAIMKxtCkk72zkUgX48bEbI0nw5VReqxjFY=;
+        b=WFR7n8/GjzzvE9YsDTbySEutgMOrj7rnqTqwUV9dfsjaj2Ti+uOt6ZVcZ4MGUdR3i2
+         y0JGrWefl8rG7ncXif5bxQZjRglPIp67HbOvvuBDYS29cKUviE41OZejWSOMpTDENLUL
+         cCzlrOCVfAMnSuLpUQF8UeU9wh3f3QhoShX5aDl0uhZDTHh7iinzGMcUfp6AooI+MCCD
+         RicibEeVr8PVeJNU9nJWycFTOQO1bdJg9zhuExVynq5z56ZILbG3OjPgb5PL3Znnmfj/
+         pkFxxTY5/BHdtjS9sv2pe4RXZZ/vHwVMj14pKDU726edlJ3BNY0nkar3CIczUanWxAs0
+         tvOg==
+X-Gm-Message-State: AJcUukcvWGSerCXwproB1A8C+P32Rkxj0Zxn/gHlRDrd/Zsgvj+j3/9a
+        9s8XQ0IapE1aMCYVnH+6kG8kUPY8bIg=
+X-Google-Smtp-Source: ALg8bN7REACZr8pisrCGjZjVbabj6lu2tvwdUhe7qc0XAOtddAAjC04IRlhfCnerUd3fP4HxzHT9zQ==
+X-Received: by 2002:a2e:910d:: with SMTP id m13-v6mr6566399ljg.187.1548359835993;
+        Thu, 24 Jan 2019 11:57:15 -0800 (PST)
+Received: from localhost ([2a02:a311:825b:e300:2c63:f9e2:fcfa:cc46])
+        by smtp.gmail.com with ESMTPSA id q3sm1079583lff.42.2019.01.24.11.57.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 24 Jan 2019 11:57:15 -0800 (PST)
+Date:   Thu, 24 Jan 2019 20:57:19 +0000
+From:   Cezary Kierzyk <virdipravum.n008d3v@gmail.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Alex Deucher <alexdeucher@gmail.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 036/106] drm/amdgpu: Reorder uvd ring init before uvd resume
-Date:   Thu, 24 Jan 2019 20:19:53 +0100
-Message-Id: <20190124190208.704205694@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
-References: <20190124190206.342411005@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+Cc:     gregkh@linuxfoundation.org
+Subject: [PATCH] staging: rtlwifi: replace ---help--- with help in Kconfig
+Message-ID: <20190124205719.GA10685@pravumPC>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+This patch fixes the checkpatch.pl warning:
 
-------------------
+WARNING: prefer 'help' over '---help---' for new help texts
 
-[ Upstream commit 3b34c14fd50c302db091f020f26dd00ede902c80 ]
-
-As amd_uvd_resume() accesses the uvd ring, it must be initialised first
-or else we trigger errors like:
-
-[    5.595963] [drm] Found UVD firmware Version: 1.87 Family ID: 17
-[    5.595969] [drm] PSP loading UVD firmware
-[    5.596266] ------------[ cut here ]------------
-[    5.596268] ODEBUG: assert_init not available (active state 0) object type: timer_list hint:           (null)
-[    5.596285] WARNING: CPU: 0 PID: 507 at lib/debugobjects.c:329 debug_print_object+0x6a/0x80
-[    5.596286] Modules linked in: amdgpu(+) hid_logitech_hidpp(+) chash gpu_sched amd_iommu_v2 ttm drm_kms_helper crc32c_intel drm hid_sony ff_memless igb hid_logitech_dj nvme dca i2c_algo_bit nvme_core wmi pinctrl_amd uas usb_storage
-[    5.596299] CPU: 0 PID: 507 Comm: systemd-udevd Tainted: G        W         4.20.0-0.rc1.git4.1.fc30.x86_64 #1
-[    5.596301] Hardware name: System manufacturer System Product Name/ROG STRIX X470-I GAMING, BIOS 0901 07/23/2018
-[    5.596303] RIP: 0010:debug_print_object+0x6a/0x80
-[    5.596305] Code: 8b 43 10 83 c2 01 8b 4b 14 4c 89 e6 89 15 e6 82 b0 02 4c 8b 45 00 48 c7 c7 60 fd 34 a6 48 8b 14 c5 a0 da 08 a6 e8 6a 6a b8 ff <0f> 0b 5b 83 05 d0 45 3e 01 01 5d 41 5c c3 83 05 c5 45 3e 01 01 c3
-[    5.596306] RSP: 0018:ffffa02ac863f8c0 EFLAGS: 00010282
-[    5.596307] RAX: 0000000000000000 RBX: ffffa02ac863f8e0 RCX: 0000000000000006
-[    5.596308] RDX: 0000000000000007 RSI: ffff9160e9a7bfe8 RDI: ffff9160f91d6c60
-[    5.596310] RBP: ffffffffa6742740 R08: 0000000000000002 R09: 0000000000000000
-[    5.596311] R10: 0000000000000000 R11: 0000000000000000 R12: ffffffffa634ff69
-[    5.596312] R13: 00000000000b79d0 R14: ffffffffa80f76d8 R15: 0000000000266000
-[    5.596313] FS:  00007f762abf7940(0000) GS:ffff9160f9000000(0000) knlGS:0000000000000000
-[    5.596314] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[    5.596315] CR2: 000055fdc593f000 CR3: 00000007e999c000 CR4: 00000000003406f0
-[    5.596317] Call Trace:
-[    5.596321]  debug_object_assert_init+0x14a/0x180
-[    5.596327]  del_timer+0x2e/0x90
-[    5.596383]  amdgpu_fence_process+0x47/0x100 [amdgpu]
-[    5.596430]  amdgpu_uvd_resume+0xf6/0x120 [amdgpu]
-[    5.596475]  uvd_v7_0_sw_init+0xe0/0x280 [amdgpu]
-[    5.596523]  amdgpu_device_init.cold.30+0xf97/0x14b6 [amdgpu]
-[    5.596563]  ? amdgpu_driver_load_kms+0x53/0x330 [amdgpu]
-[    5.596604]  amdgpu_driver_load_kms+0x86/0x330 [amdgpu]
-[    5.596614]  drm_dev_register+0x115/0x150 [drm]
-[    5.596654]  amdgpu_pci_probe+0xbd/0x120 [amdgpu]
-[    5.596658]  local_pci_probe+0x41/0x90
-[    5.596661]  pci_device_probe+0x188/0x1a0
-[    5.596666]  really_probe+0xf8/0x3b0
-[    5.596669]  driver_probe_device+0xb3/0xf0
-[    5.596672]  __driver_attach+0xe1/0x110
-[    5.596674]  ? driver_probe_device+0xf0/0xf0
-[    5.596676]  bus_for_each_dev+0x79/0xc0
-[    5.596679]  bus_add_driver+0x155/0x230
-[    5.596681]  ? 0xffffffffc07d9000
-[    5.596683]  driver_register+0x6b/0xb0
-[    5.596685]  ? 0xffffffffc07d9000
-[    5.596688]  do_one_initcall+0x5d/0x2be
-[    5.596691]  ? rcu_read_lock_sched_held+0x79/0x80
-[    5.596693]  ? kmem_cache_alloc_trace+0x264/0x290
-[    5.596695]  ? do_init_module+0x22/0x210
-[    5.596698]  do_init_module+0x5a/0x210
-[    5.596701]  load_module+0x2137/0x2430
-[    5.596703]  ? lockdep_hardirqs_on+0xed/0x180
-[    5.596714]  ? __do_sys_init_module+0x150/0x1a0
-[    5.596715]  __do_sys_init_module+0x150/0x1a0
-[    5.596722]  do_syscall_64+0x60/0x1f0
-[    5.596725]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[    5.596726] RIP: 0033:0x7f762b877dee
-[    5.596728] Code: 48 8b 0d 9d 20 0c 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 49 89 ca b8 af 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 6a 20 0c 00 f7 d8 64 89 01 48
-[    5.596729] RSP: 002b:00007ffc777b8558 EFLAGS: 00000246 ORIG_RAX: 00000000000000af
-[    5.596730] RAX: ffffffffffffffda RBX: 000055fdc48da320 RCX: 00007f762b877dee
-[    5.596731] RDX: 00007f762b9f284d RSI: 00000000006c5fc6 RDI: 000055fdc527a060
-[    5.596732] RBP: 00007f762b9f284d R08: 0000000000000003 R09: 0000000000000002
-[    5.596733] R10: 000055fdc48ad010 R11: 0000000000000246 R12: 000055fdc527a060
-[    5.596734] R13: 000055fdc48dca20 R14: 0000000000020000 R15: 0000000000000000
-[    5.596740] irq event stamp: 134618
-[    5.596743] hardirqs last  enabled at (134617): [<ffffffffa513d52e>] console_unlock+0x45e/0x610
-[    5.596744] hardirqs last disabled at (134618): [<ffffffffa50037e8>] trace_hardirqs_off_thunk+0x1a/0x1c
-[    5.596746] softirqs last  enabled at (133146): [<ffffffffa5e00365>] __do_softirq+0x365/0x47c
-[    5.596748] softirqs last disabled at (133139): [<ffffffffa50c64f9>] irq_exit+0x119/0x120
-[    5.596749] ---[ end trace eaee508abfebccdc ]---
-
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=108709
-Reviewed-by: Christian König <christian.koenig@amd.com>
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Alex Deucher <alexdeucher@gmail.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Cezary Kierzyk <virdipravum.n008d3v@gmail.com>
 ---
- drivers/gpu/drm/amd/amdgpu/uvd_v4_2.c | 8 ++++----
- drivers/gpu/drm/amd/amdgpu/uvd_v5_0.c | 8 ++++----
- drivers/gpu/drm/amd/amdgpu/uvd_v6_0.c | 8 ++++----
- drivers/gpu/drm/amd/amdgpu/uvd_v7_0.c | 8 ++++----
- 4 files changed, 16 insertions(+), 16 deletions(-)
+ drivers/staging/rtlwifi/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/uvd_v4_2.c b/drivers/gpu/drm/amd/amdgpu/uvd_v4_2.c
-index 8a926d1df939..2b4199adcd94 100644
---- a/drivers/gpu/drm/amd/amdgpu/uvd_v4_2.c
-+++ b/drivers/gpu/drm/amd/amdgpu/uvd_v4_2.c
-@@ -116,16 +116,16 @@ static int uvd_v4_2_sw_init(void *handle)
- 	if (r)
- 		return r;
+diff --git a/drivers/staging/rtlwifi/Kconfig b/drivers/staging/rtlwifi/Kconfig
+index 7b4276f5c41f..28286a87a601 100644
+--- a/drivers/staging/rtlwifi/Kconfig
++++ b/drivers/staging/rtlwifi/Kconfig
+@@ -2,7 +2,7 @@ config R8822BE
+ 	tristate "Realtek RTL8822BE Wireless Network Adapter"
+ 	depends on PCI && MAC80211 && m
+ 	select FW_LOADER
+-	---help---
++	help
+ 	This is the staging driver for Realtek RTL8822BE 802.11ac PCIe
+ 	wireless network adapters.
  
--	r = amdgpu_uvd_resume(adev);
--	if (r)
--		return r;
--
- 	ring = &adev->uvd.inst->ring;
- 	sprintf(ring->name, "uvd");
- 	r = amdgpu_ring_init(adev, ring, 512, &adev->uvd.inst->irq, 0);
- 	if (r)
- 		return r;
- 
-+	r = amdgpu_uvd_resume(adev);
-+	if (r)
-+		return r;
-+
- 	r = amdgpu_uvd_entity_init(adev);
- 
- 	return r;
-diff --git a/drivers/gpu/drm/amd/amdgpu/uvd_v5_0.c b/drivers/gpu/drm/amd/amdgpu/uvd_v5_0.c
-index 50248059412e..88c006c5ee2c 100644
---- a/drivers/gpu/drm/amd/amdgpu/uvd_v5_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/uvd_v5_0.c
-@@ -113,16 +113,16 @@ static int uvd_v5_0_sw_init(void *handle)
- 	if (r)
- 		return r;
- 
--	r = amdgpu_uvd_resume(adev);
--	if (r)
--		return r;
--
- 	ring = &adev->uvd.inst->ring;
- 	sprintf(ring->name, "uvd");
- 	r = amdgpu_ring_init(adev, ring, 512, &adev->uvd.inst->irq, 0);
- 	if (r)
- 		return r;
- 
-+	r = amdgpu_uvd_resume(adev);
-+	if (r)
-+		return r;
-+
- 	r = amdgpu_uvd_entity_init(adev);
- 
- 	return r;
-diff --git a/drivers/gpu/drm/amd/amdgpu/uvd_v6_0.c b/drivers/gpu/drm/amd/amdgpu/uvd_v6_0.c
-index 6ae82cc2e55e..d4070839ac80 100644
---- a/drivers/gpu/drm/amd/amdgpu/uvd_v6_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/uvd_v6_0.c
-@@ -420,16 +420,16 @@ static int uvd_v6_0_sw_init(void *handle)
- 		DRM_INFO("UVD ENC is disabled\n");
- 	}
- 
--	r = amdgpu_uvd_resume(adev);
--	if (r)
--		return r;
--
- 	ring = &adev->uvd.inst->ring;
- 	sprintf(ring->name, "uvd");
- 	r = amdgpu_ring_init(adev, ring, 512, &adev->uvd.inst->irq, 0);
- 	if (r)
- 		return r;
- 
-+	r = amdgpu_uvd_resume(adev);
-+	if (r)
-+		return r;
-+
- 	if (uvd_v6_0_enc_support(adev)) {
- 		for (i = 0; i < adev->uvd.num_enc_rings; ++i) {
- 			ring = &adev->uvd.inst->ring_enc[i];
-diff --git a/drivers/gpu/drm/amd/amdgpu/uvd_v7_0.c b/drivers/gpu/drm/amd/amdgpu/uvd_v7_0.c
-index 9b7f8469bc5c..057151b17b45 100644
---- a/drivers/gpu/drm/amd/amdgpu/uvd_v7_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/uvd_v7_0.c
-@@ -444,10 +444,6 @@ static int uvd_v7_0_sw_init(void *handle)
- 		DRM_INFO("PSP loading UVD firmware\n");
- 	}
- 
--	r = amdgpu_uvd_resume(adev);
--	if (r)
--		return r;
--
- 	for (j = 0; j < adev->uvd.num_uvd_inst; j++) {
- 		if (adev->uvd.harvest_config & (1 << j))
- 			continue;
-@@ -479,6 +475,10 @@ static int uvd_v7_0_sw_init(void *handle)
- 		}
- 	}
- 
-+	r = amdgpu_uvd_resume(adev);
-+	if (r)
-+		return r;
-+
- 	r = amdgpu_uvd_entity_init(adev);
- 	if (r)
- 		return r;
 -- 
-2.19.1
-
-
+2.20.1
 
