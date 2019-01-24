@@ -2,134 +2,207 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFD8EC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:41:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C99BC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:41:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE13F218D0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:41:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358862;
-	bh=sFhsmsbN2ApyQtYzGngc6dsRKYaGeUq1b+hfqvVG+9Y=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=GXu4wjLCxufnPLadlPRd5EmjETX5IlWVzaAkOz6iRiNtubaSOT+tYKlHHt6P/b71d
-	 dClgXtyfFvSipEGDk7iczTDvhmVV0AtCrWo5lwUtXqF47aBj3jqbFBgXl4GUvzzGxY
-	 yXesQOURhdCU9pJS4UrtXZMwUWDaaBTGgxUl0BDw=
+	by mail.kernel.org (Postfix) with ESMTP id 1CAF220663
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:41:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chrisdown.name header.i=@chrisdown.name header.b="vyMN0TH+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387507AbfAXTlB (ORCPT
+        id S2387516AbfAXTlE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:41:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41212 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732934AbfAXTk5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:40:57 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23F7F218D0;
-        Thu, 24 Jan 2019 19:40:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358856;
-        bh=sFhsmsbN2ApyQtYzGngc6dsRKYaGeUq1b+hfqvVG+9Y=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UQGq4E7wCfdbicSleYNtEHwE17oZhTokVPGAvOhAMpjmDEpnlnRxT5AA5BpZdOeZQ
-         VOFd6W/Afv+abfJchRi9D/3Tf7aSWAby8wJDGTcslz2ZWw988GekduoSwQnd8TKNBs
-         jCkgNBb72X0f0XAbCwMGiBZ9JKrgrHmeE7rQPHg8=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Santos <daniel.santos@pobox.com>,
-        Hou Tao <houtao1@huawei.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 051/127] jffs2: Fix use of uninitialized delayed_work, lockdep breakage
-Date:   Thu, 24 Jan 2019 20:19:57 +0100
-Message-Id: <20190124190214.390537869@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
-References: <20190124190211.984305387@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Thu, 24 Jan 2019 14:41:04 -0500
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:36360 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387504AbfAXTlC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:41:02 -0500
+Received: by mail-yw1-f65.google.com with SMTP id i73so2924254ywg.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 11:41:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chrisdown.name; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=XQxFCnqX2P8KUUqb8YwfiiSFK3gunL+QvptxXbOpYcA=;
+        b=vyMN0TH+/6oVgdBcFhjoqtghfPopjw353xrPZsi7Qc1KTSVCzBT5zMiX7RbFZOpde/
+         nREk2GI0YQzUrh96Hme9mWtIBEAOYXdniwX6cvzHYjbXXO1HfMEewUSSvp+tnlJAKEWj
+         AZE2Cm6U+P5try7YJoMuZJPWD0XX3QdCmH4a4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=XQxFCnqX2P8KUUqb8YwfiiSFK3gunL+QvptxXbOpYcA=;
+        b=gTgV/Q5Gs5AuIJ7K+pELE8c7bIm54afKiFt0s0KAEb77A3M8pvsXCSz1uBWYzX3jdE
+         hKiBvB/7M+BKIGA4vdBjona0p4wcrAWf3dU4/+CDj+JkzVIoDW1V0aNJvYgsYacI3M8K
+         ykEAUYHaNOP6/EiHdZ5vcg5KhpLsEbWNbWS/b4iCDRtYOrXPwZ1kjpfS8qrwjZsob8l8
+         piAbew3RPZ1z5sHvAzn4hPj1kihp9jWN4nzRMTLeOx5HHXxG7it2dVuPdGfBWMS5Nh2v
+         QMd9aV5BdmqiIxgvUYVG4cx9/1Quw42vHRpY9i54Nu0FlwpFI0YOR3PNBZan3Tu4V5+v
+         5Zeg==
+X-Gm-Message-State: AJcUukfWY45aLC2J8YXy5oWQQFcH+VY8ABpLhOG5T/Wknj1+N3hswdxf
+        whdvHkwT0Tk7jnXswK6Yovntyw==
+X-Google-Smtp-Source: ALg8bN6tMfRjqPLp4khiK1lST5UzPb4bn19TKPP8fw+DLb2OYUviZnXkQqpNprsT259FS/KXfAESpQ==
+X-Received: by 2002:a81:6087:: with SMTP id u129mr7905481ywb.115.1548358860924;
+        Thu, 24 Jan 2019 11:41:00 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::7:d7cc])
+        by smtp.gmail.com with ESMTPSA id k127sm9340681ywa.81.2019.01.24.11.41.00
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 24 Jan 2019 11:41:00 -0800 (PST)
+Date:   Thu, 24 Jan 2019 14:41:00 -0500
+From:   Chris Down <chris@chrisdown.name>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>, Tejun Heo <tj@kernel.org>,
+        Roman Gushchin <guro@fb.com>, linux-kernel@vger.kernel.org,
+        cgroups@vger.kernel.org, linux-mm@kvack.org, kernel-team@fb.com
+Subject: [PATCH 2/2] mm: Extract memcg maxable seq_file logic to
+ seq_show_memcg_tunable
+Message-ID: <20190124194100.GA31425@chrisdown.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.20-stable review patch.  If anyone has any objections, please let me know.
+memcg has a significant number of files exposed to kernfs where their
+value is either exposed directly or is "max" in the case of
+PAGE_COUNTER_MAX.
 
-------------------
+This patch makes this generic by providing a single function to do this
+work. In combination with the previous patch adding mem_cgroup_from_seq,
+this makes all of the seq_show feeder functions significantly more
+simple.
 
-[ Upstream commit a788c5272769ddbcdbab297cf386413eeac04463 ]
-
-jffs2_sync_fs makes the assumption that if CONFIG_JFFS2_FS_WRITEBUFFER
-is defined then a write buffer is available and has been initialized.
-However, this does is not the case when the mtd device has no
-out-of-band buffer:
-
-int jffs2_nand_flash_setup(struct jffs2_sb_info *c)
-{
-        if (!c->mtd->oobsize)
-                return 0;
-...
-
-The resulting call to cancel_delayed_work_sync passing a uninitialized
-(but zeroed) delayed_work struct forces lockdep to become disabled.
-
-[   90.050639] overlayfs: upper fs does not support tmpfile.
-[   90.652264] INFO: trying to register non-static key.
-[   90.662171] the code is fine but needs lockdep annotation.
-[   90.673090] turning off the locking correctness validator.
-[   90.684021] CPU: 0 PID: 1762 Comm: mount_root Not tainted 4.14.63 #0
-[   90.696672] Stack : 00000000 00000000 80d8f6a2 00000038 805f0000 80444600 8fe364f4 805dfbe7
-[   90.713349]         80563a30 000006e2 8068370c 00000001 00000000 00000001 8e2fdc48 ffffffff
-[   90.730020]         00000000 00000000 80d90000 00000000 00000106 00000000 6465746e 312e3420
-[   90.746690]         6b636f6c 03bf0000 f8000000 20676e69 00000000 80000000 00000000 8e2c2a90
-[   90.763362]         80d90000 00000001 00000000 8e2c2a90 00000003 80260dc0 08052098 80680000
-[   90.780033]         ...
-[   90.784902] Call Trace:
-[   90.789793] [<8000f0d8>] show_stack+0xb8/0x148
-[   90.798659] [<8005a000>] register_lock_class+0x270/0x55c
-[   90.809247] [<8005cb64>] __lock_acquire+0x13c/0xf7c
-[   90.818964] [<8005e314>] lock_acquire+0x194/0x1dc
-[   90.828345] [<8003f27c>] flush_work+0x200/0x24c
-[   90.837374] [<80041dfc>] __cancel_work_timer+0x158/0x210
-[   90.847958] [<801a8770>] jffs2_sync_fs+0x20/0x54
-[   90.857173] [<80125cf4>] iterate_supers+0xf4/0x120
-[   90.866729] [<80158fc4>] sys_sync+0x44/0x9c
-[   90.875067] [<80014424>] syscall_common+0x34/0x58
-
-Signed-off-by: Daniel Santos <daniel.santos@pobox.com>
-Reviewed-by: Hou Tao <houtao1@huawei.com>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Chris Down <chris@chrisdown.name>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Roman Gushchin <guro@fb.com>
+Cc: linux-kernel@vger.kernel.org
+Cc: cgroups@vger.kernel.org
+Cc: linux-mm@kvack.org
+Cc: kernel-team@fb.com
 ---
- fs/jffs2/super.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ mm/memcontrol.c | 64 +++++++++++++++----------------------------------
+ 1 file changed, 19 insertions(+), 45 deletions(-)
 
-diff --git a/fs/jffs2/super.c b/fs/jffs2/super.c
-index 902a7dd10e5c..bb6ae387469f 100644
---- a/fs/jffs2/super.c
-+++ b/fs/jffs2/super.c
-@@ -101,7 +101,8 @@ static int jffs2_sync_fs(struct super_block *sb, int wait)
- 	struct jffs2_sb_info *c = JFFS2_SB_INFO(sb);
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 98aad31f5226..81b6f752471a 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -5375,6 +5375,16 @@ static void mem_cgroup_bind(struct cgroup_subsys_state *root_css)
+ 		root_mem_cgroup->use_hierarchy = false;
+ }
  
- #ifdef CONFIG_JFFS2_FS_WRITEBUFFER
--	cancel_delayed_work_sync(&c->wbuf_dwork);
-+	if (jffs2_is_writebuffered(c))
-+		cancel_delayed_work_sync(&c->wbuf_dwork);
- #endif
++static int seq_puts_memcg_tunable(struct seq_file *m, unsigned long value)
++{
++	if (value == PAGE_COUNTER_MAX)
++		seq_puts(m, "max\n");
++	else
++		seq_printf(m, "%llu\n", (u64)value * PAGE_SIZE);
++
++	return 0;
++}
++
+ static u64 memory_current_read(struct cgroup_subsys_state *css,
+ 			       struct cftype *cft)
+ {
+@@ -5385,15 +5395,8 @@ static u64 memory_current_read(struct cgroup_subsys_state *css,
  
- 	mutex_lock(&c->alloc_sem);
+ static int memory_min_show(struct seq_file *m, void *v)
+ {
+-	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
+-	unsigned long min = READ_ONCE(memcg->memory.min);
+-
+-	if (min == PAGE_COUNTER_MAX)
+-		seq_puts(m, "max\n");
+-	else
+-		seq_printf(m, "%llu\n", (u64)min * PAGE_SIZE);
+-
+-	return 0;
++	return seq_puts_memcg_tunable(m,
++		READ_ONCE(mem_cgroup_from_seq(m)->memory.min));
+ }
+ 
+ static ssize_t memory_min_write(struct kernfs_open_file *of,
+@@ -5415,15 +5418,8 @@ static ssize_t memory_min_write(struct kernfs_open_file *of,
+ 
+ static int memory_low_show(struct seq_file *m, void *v)
+ {
+-	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
+-	unsigned long low = READ_ONCE(memcg->memory.low);
+-
+-	if (low == PAGE_COUNTER_MAX)
+-		seq_puts(m, "max\n");
+-	else
+-		seq_printf(m, "%llu\n", (u64)low * PAGE_SIZE);
+-
+-	return 0;
++	return seq_puts_memcg_tunable(m,
++		READ_ONCE(mem_cgroup_from_seq(m)->memory.low));
+ }
+ 
+ static ssize_t memory_low_write(struct kernfs_open_file *of,
+@@ -5445,15 +5441,7 @@ static ssize_t memory_low_write(struct kernfs_open_file *of,
+ 
+ static int memory_high_show(struct seq_file *m, void *v)
+ {
+-	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
+-	unsigned long high = READ_ONCE(memcg->high);
+-
+-	if (high == PAGE_COUNTER_MAX)
+-		seq_puts(m, "max\n");
+-	else
+-		seq_printf(m, "%llu\n", (u64)high * PAGE_SIZE);
+-
+-	return 0;
++	return seq_puts_memcg_tunable(m, READ_ONCE(mem_cgroup_from_seq(m)->high));
+ }
+ 
+ static ssize_t memory_high_write(struct kernfs_open_file *of,
+@@ -5482,15 +5470,8 @@ static ssize_t memory_high_write(struct kernfs_open_file *of,
+ 
+ static int memory_max_show(struct seq_file *m, void *v)
+ {
+-	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
+-	unsigned long max = READ_ONCE(memcg->memory.max);
+-
+-	if (max == PAGE_COUNTER_MAX)
+-		seq_puts(m, "max\n");
+-	else
+-		seq_printf(m, "%llu\n", (u64)max * PAGE_SIZE);
+-
+-	return 0;
++	return seq_puts_memcg_tunable(m,
++		READ_ONCE(mem_cgroup_from_seq(m)->memory.max));
+ }
+ 
+ static ssize_t memory_max_write(struct kernfs_open_file *of,
+@@ -6622,15 +6603,8 @@ static u64 swap_current_read(struct cgroup_subsys_state *css,
+ 
+ static int swap_max_show(struct seq_file *m, void *v)
+ {
+-	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
+-	unsigned long max = READ_ONCE(memcg->swap.max);
+-
+-	if (max == PAGE_COUNTER_MAX)
+-		seq_puts(m, "max\n");
+-	else
+-		seq_printf(m, "%llu\n", (u64)max * PAGE_SIZE);
+-
+-	return 0;
++	return seq_puts_memcg_tunable(m,
++		READ_ONCE(mem_cgroup_from_seq(m)->swap.max));
+ }
+ 
+ static ssize_t swap_max_write(struct kernfs_open_file *of,
 -- 
-2.19.1
-
-
+2.20.1
 
