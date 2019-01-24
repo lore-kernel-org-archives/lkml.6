@@ -2,182 +2,105 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C1FCC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 22:53:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C66DFC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 23:08:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4823F218D3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 22:53:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="EszSNie7"
+	by mail.kernel.org (Postfix) with ESMTP id 9278E218D3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 23:08:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548371304;
+	bh=bmN1g2T6Tinw0e04LBn5sJjOZKvK7K5n9NXrCI00tfQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=a4HLu3BKp8i6kuTPSWZf7ZWlENkevHXOUhY6mHnHS1V+Ve0UFnhY4zTOpJRTLZD2r
+	 Klo6KMME0kmjG7Gt6D8uVqmzHRFaUX4IWcrs5gl8FVgiSyRkTUwRpZL2GUcUyNjY3m
+	 rrO+T+1lfzfFvwVdZD8q/XoTbaBZyE75Pjpw/zNo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728109AbfAXWxg (ORCPT
+        id S1727765AbfAXXIR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 17:53:36 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:39188 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726252AbfAXWxf (ORCPT
+        Thu, 24 Jan 2019 18:08:17 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:38071 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725996AbfAXXIR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 17:53:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1548370412; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=HzkXkAyH1kqLw9/6RBJizZepKB6BSCSHMgzg+v6bZGA=;
-        b=EszSNie7zFWRaAODQk8Z4T0Bv1jDmdZvFVPv5aerTqtJtAM+hCP2w165IbtMjS+Zc2Xr69
-        IwSKCP4DUwLFefm/PPH+ZcsDikpoUeL+shTDNmn0gntoeCHK60DW8lYEVPZWR40rcMudF0
-        6UYnQPkZQsvdysK1nGGhJcrY7gn8qOw=
-Date:   Thu, 24 Jan 2019 19:53:08 -0300
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v8 05/26] clocksource: Add driver for the Ingenic JZ47xx
- OST
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        Mathieu Malaterre <malat@debian.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Ezequiel Garcia <ezequiel@collabora.co.uk>,
-        PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
-        linux-pwm@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        linux-watchdog@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org, od@zcrc.me,
-        Maarten ter Huurne <maarten@treewalker.org>
-Message-Id: <1548370388.3881.2@crapouillou.net>
-In-Reply-To: <154836998080.136743.17683029101430122926@swboyd.mtv.corp.google.com>
-References: <20181212220922.18759-1-paul@crapouillou.net>
-        <20181212220922.18759-6-paul@crapouillou.net>
-        <CA+7wUsxNN2SL9_7tDh0DiBAgdUwxd_osgmi=09HP7110Tm0DYQ@mail.gmail.com>
-        <128675a5-7ede-4114-a649-89a536346dc8@roeck-us.net>
-        <1548264353.3173.1@crapouillou.net> <20190123180155.GB9781@roeck-us.net>
-        <154835808767.136743.14531363127962557756@swboyd.mtv.corp.google.com>
-        <1548362788.3881.0@crapouillou.net>
-        <154836998080.136743.17683029101430122926@swboyd.mtv.corp.google.com>
+        Thu, 24 Jan 2019 18:08:17 -0500
+Received: by mail-oi1-f196.google.com with SMTP id a77so6327393oii.5;
+        Thu, 24 Jan 2019 15:08:16 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0i3y+ZRKsVXXhbyWwMHCDtrJdmccb2+jfS37cek1J4g=;
+        b=U6awMOMd84xfXh7Zwqha9gnK4P25a4W4ARj5NnPrrlX8eyh20d3tmqzKooQBJrB0za
+         4dKSHztqUGwPji6sMkt4Tprz+JPix7JmdM+m3/jGqwCe5hHmILuhWkwdMKrG8rjaSkq6
+         L6GL36d00Urq61gwspz1xvpJNPdoQ344QW85wozilJTC0ibL8L5TmRRhrb8r2B5WdEeO
+         YAgJAct30Fj3mYHMaND5XvRcue6VJC7NkRP8WEjJdKRmIAHuHbHZV6/fCTVuplMBDK0o
+         rZn/bw1WAGVBREdSKUCKnzpgpu0L200vgd/Cr8peMWjX8lhSECDaoZbyPUTVHx4cX/eE
+         TWMA==
+X-Gm-Message-State: AJcUukd/rIlTEApru9HqQfmMJeLkIX2o2yVrsJ6SLzlLOZz3gY/aC2ts
+        JM2CNo0yoz3whNGp6H/PedYwUk4x5HXI2HHKcP8DSQ==
+X-Google-Smtp-Source: ALg8bN49BOkCwDFuLA/onaBddXL5SMha6531YdISwKWN/n8aFuZKfd0FNED8bzUAyH5dygRJYZgR72Ex0EzgsbudJLM=
+X-Received: by 2002:aca:368a:: with SMTP id d132mr2660422oia.193.1548371293189;
+ Thu, 24 Jan 2019 15:08:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
+References: <2493187.oiOpCWJBV7@aspire.rjw.lan> <20190124145835.2oy2tniepzpeekl2@e5254000004ec.dyn.armlinux.org.uk>
+In-Reply-To: <20190124145835.2oy2tniepzpeekl2@e5254000004ec.dyn.armlinux.org.uk>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 25 Jan 2019 00:08:01 +0100
+Message-ID: <CAJZ5v0ihp8pFib6YCoSq47H0srRh57Kj_00VPby6zVuxLswRuQ@mail.gmail.com>
+Subject: Re: [PATCH 0/6] driver core: Fix some issues related to device links
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Lukas Wunner <lukas@wunner.de>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jan 24, 2019 at 3:58 PM Russell King - ARM Linux admin
+<linux@armlinux.org.uk> wrote:
+>
+> On Thu, Jan 24, 2019 at 12:13:06PM +0100, Rafael J. Wysocki wrote:
+> > Hi Greg at al,
+> >
+> > Recently I have been looking at the device links code because of the
+> > recent discussion on possibly using them in the DRM subsystem (see for
+> > example https://marc.info/?l=linux-pm&m=154832771905309&w=2) and I have
+> > found a few issues in that code which should be addressed by this patch
+> > series.  Please refer to the patch changelogs for details.
+> >
+> > None of the problems addressed here should be manifesting themselves in
+> > mainline kernel today, but if there are more device links users in the
+> > future, they most likely will be encountered sooner or later.  Also they
+> > need to be fixed for the DRM use case to be supported IMO.
+> >
+> > This series does not fix all issues in device links that have become
+> > apparent (generally speaking, the idea of returning an existing link
+> > in case there is one already for the given consumer-supplier pair
+> > doesn't play well with stateful links and their flags), so there will
+> > be a follow-up series of patches to clean that up.  Still, I don't see
+> > a reason to sit on these fixes while working on the other patches, so
+> > here they go.
+>
+> Hi Rafael,
+>
+> I've just given these a quick boot, unbind and rebind test with my
+> DRM case, and nothing seems to have regressed on the face of it.
+>
+> Tested-by: Russell King <rmk+kernel@armlinux.org.uk>
 
-
-Le jeu. 24 janv. 2019 =E0 19:46, Stephen Boyd <sboyd@kernel.org> a=20
-=E9crit :
-> Quoting Paul Cercueil (2019-01-24 12:46:28)
->>=20
->>=20
->>  Le jeu. 24 janv. 2019 =E0 16:28, Stephen Boyd <sboyd@kernel.org> a
->>  =E9crit :
->>  > Quoting Guenter Roeck (2019-01-23 10:01:55)
->>  >>  On Wed, Jan 23, 2019 at 02:25:53PM -0300, Paul Cercueil wrote:
->>  >>  > Hi,
->>  >>  >
->>  >>  > Le mer. 23 janv. 2019 =C3  11:31, Guenter Roeck
->>  >> <linux@roeck-us.net> a =C3=A9crit :
->>  >>  > >On 1/23/19 4:58 AM, Mathieu Malaterre wrote:
->>  >>  > >>On Wed, Dec 12, 2018 at 11:09 PM Paul Cercueil
->>  >> <paul@crapouillou.net>
->>  >>  > >>wrote:
->>  >>  > >>>
->>  >>  > >>>From: Maarten ter Huurne <maarten@treewalker.org>
->>  >>  > >>>
->>  >>  > >>>OST is the OS Timer, a 64-bit timer/counter with buffered
->>  >> reading.
->>  >>  > >>>
->>  >>  > >>>SoCs before the JZ4770 had (if any) a 32-bit OST; the=20
->> JZ4770
->>  >> and
->>  >>  > >>>JZ4780 have a 64-bit OST.
->>  >>  > >>>
->>  >>  > >>>This driver will register both a clocksource and a=20
->> sched_clock
->>  >> to the
->>  >>  > >>>system.
->>  >>  > >>>
->>  >>  > >>>Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
->>  >>  > >>>Signed-off-by: Paul Cercueil <paul@crapouillou.net>
->>  >>  > >>>---
->>  >>  > >>>
->>  >>  > >>>Notes:
->>  >>  > >>>      v5: New patch
->>  >>  > >>>
->>  >>  > >>>      v6: - Get rid of SoC IDs; pass pointer to
->>  >> ingenic_ost_soc_info
->>  >>  > >>>as
->>  >>  > >>>            devicetree match data instead.
->>  >>  > >>>          - Use device_get_match_data() instead of the of_*
->>  >> variant
->>  >>  > >>>          - Handle error of dev_get_regmap() properly
->>  >>  > >>>
->>  >>  > >>>      v7: Fix section mismatch by using
->>  >>  > >>>builtin_platform_driver_probe()
->>  >>  > >>>
->>  >>  > >>>      v8: builtin_platform_driver_probe() does not work
->>  >> anymore in
->>  >>  > >>>          4.20-rc6? The probe function won't be called.=20
->> Work
->>  >> around
->>  >>  > >>>this
->>  >>  > >>>          for now by using late_initcall.
->>  >>  > >>>
->>  >>  > >
->>  >>  > >Did anyone notice this ? Either something is wrong with the
->>  >> driver, or
->>  >>  > >with the kernel core. Hacking around it seems like the worst
->>  >> possible
->>  >>  > >"solution".
->>  >>  >
->>  >>  > I can confirm it still happens on 5.0-rc3.
->>  >>  >
->>  >>  > Just to explain what I'm doing:
->>  >>  >
->>  >>  > My ingenic-timer driver probes with=20
->> builtin_platform_driver_probe
->>  >> (this
->>  >>  > works),
->>  >>  > and then calls of_platform_populate to probe its children.=20
->> This
->>  >> driver,
->>  >>  > ingenic-ost, is one of them, and will fail to probe with
->>  >>  > builtin_platform_driver_probe.
->>  >>  >
->>  >>
->>  >>  The big question is _why_ it fails to probe.
->>  >>
->>  >
->>  > Are you sharing the device tree node between a 'normal' platform
->>  > device
->>  > driver and something more low level DT that marks the device's=20
->> backing
->>  > DT node as OF_POPULATED early on? That's my only guess why it's=20
->> not
->>  > working.
->>=20
->>  I do, but I clear the OF_POPULATED flag so that it is then probed=20
->> as a
->>  normal platform device, and it's not on this driver's node but its
->>  parent.
->>=20
->=20
-> Where do you clear the OF_POPULATED flag?
->=20
-
-In the ingenic-timer driver introduced in patch [04/26], inside the=20
-probe function.
-=
-
+Thank you!
