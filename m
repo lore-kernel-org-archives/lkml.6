@@ -4,139 +4,354 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E4FBC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:20:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 155F8C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:20:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 347A5218A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:20:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6161218A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:20:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qj+6EivJ"
+	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="lR8wiXaG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728841AbfAXQTr (ORCPT
+        id S1728955AbfAXQUP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 24 Jan 2019 11:20:15 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:32273 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728818AbfAXQTr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 24 Jan 2019 11:19:47 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:51007 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728756AbfAXQTo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 11:19:44 -0500
-Received: by mail-it1-f193.google.com with SMTP id z7so5867386iti.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 08:19:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4MfDhyDuR/Zb7WxDMUlVeIwcU+XD2G4F2gkmp10wb3k=;
-        b=Qj+6EivJrL6iw+ZzBfb8QggWcOaCD0osehsHN8Rq7brAgt0gjIGZ8AoNEHXLicyVje
-         TTazv5SE5uV5VJGM9kk0RPsaF5fGxv38rbbnbpX3WQEocNfuTIQ0TJfMcfzkKi8v3RN6
-         Z3AXxIboNZjNZ9DfPC/4RiV89D0SuklPQDj78=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4MfDhyDuR/Zb7WxDMUlVeIwcU+XD2G4F2gkmp10wb3k=;
-        b=HIAtujsRakCskaFXUFrudpKU9lxEe5X/1Q3Pclt33iwsjWKncqDWzzxjRnSLkb9G75
-         71xm9Xc1+jz6Yd+1w2GQ5gkj3ij9uNGuiauLk2aYAJSmbMN6cxj8aMb4PIRtSd/NBEW5
-         37+txQC7HtpppP9gEtGh+WAOxDe9OkZuZm5afVBBw3jVT52DzkT4Ud9XLLTcoYUBUAp+
-         2TSR61JTqTfbNStq/b0cJDjQR29IFbX+Q0HmYNAG3sw/olLF3z9abFFKzRJiCpJJfK8P
-         A8oza2yGWVrISgnGIQIF3MfwocghbwwHFwRKJ/VWBr8sbLlxh43Y8uGLs3ktr6blfyr+
-         6WTw==
-X-Gm-Message-State: AJcUukfQ57ZHxDbS5LrM/CLJEzI9+PtJHI+gpuTPiD8EFe+I8LHsD6XK
-        8wFPhLKwEcn2sCMx0+B/y9oBOMoukKn50QWZg8k3ow==
-X-Google-Smtp-Source: ALg8bN5Smg0K66IXfd7AMvp9R4ibd2MArN2BLsjUzitvvoKWhCXx1aILvqI3UNWfkGWUnPhLigVSdYBvfRsaGQfBPvo=
-X-Received: by 2002:a24:874a:: with SMTP id f71mr1752492ite.120.1548346782796;
- Thu, 24 Jan 2019 08:19:42 -0800 (PST)
-MIME-Version: 1.0
-References: <1548335501-7868-1-git-send-email-igor.opaniuk@linaro.org>
-In-Reply-To: <1548335501-7868-1-git-send-email-igor.opaniuk@linaro.org>
-From:   Jens Wiklander <jens.wiklander@linaro.org>
-Date:   Thu, 24 Jan 2019 17:19:31 +0100
-Message-ID: <CAHUa44Gar3JTzSNroJe2Ws_ZAHUC0bewubd8X2uKyssmghKd4A@mail.gmail.com>
-Subject: Re: [PATCH 1/1] tee: add cancellation support to client interface
-To:     Igor Opaniuk <igor.opaniuk@linaro.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        tee-dev@lists.linaro.org,
-        Jerome Forissier <jerome.forissier@linaro.org>,
-        "Zengtao (B)" <prime.zeng@hisilicon.com>,
-        Sumit Garg <sumit.garg@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43lnRh2shVz9v01c;
+        Thu, 24 Jan 2019 17:19:44 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=lR8wiXaG; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id xcnW1csyJuxc; Thu, 24 Jan 2019 17:19:44 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43lnRh1pQlz9v01Z;
+        Thu, 24 Jan 2019 17:19:44 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1548346784; bh=ZfaaSyoMrkcWfTkJhWuik/iGt5MS0EMnWbWTXHVLWFI=;
+        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
+        b=lR8wiXaGw10WuhZiwopS0zlz0a/I63ncCVInTc9UqLYKhtoZl+veex49MNBBi7ZPt
+         TwRRL9clLZx9m9vtM9XTdH00rqWuBqops4dKIlJbNr9CfEPR+ZaMDThpZDhpHgHIpn
+         0kEWMqM+y+aBe9dg1jGRiFMeQP21PxPgAhqu5iXc=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id C9F6A8B863;
+        Thu, 24 Jan 2019 17:19:45 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id Kx_tIYn8OFiW; Thu, 24 Jan 2019 17:19:45 +0100 (CET)
+Received: from po16846vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 6F2CF8B850;
+        Thu, 24 Jan 2019 17:19:45 +0100 (CET)
+Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 3646472D88; Thu, 24 Jan 2019 16:19:45 +0000 (UTC)
+Message-Id: <0b34355b4ebc2dd921c607d62bc7baae42740d31.1548346225.git.christophe.leroy@c-s.fr>
+In-Reply-To: <cover.1548346225.git.christophe.leroy@c-s.fr>
+References: <cover.1548346225.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v14 08/12] powerpc: regain entire stack space
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Mike Rapoport <rppt@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Mark Rutland <mark.rutland@arm.com>
+Date:   Thu, 24 Jan 2019 16:19:45 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 2:11 PM Igor Opaniuk <igor.opaniuk@linaro.org> wrote:
->
-> Add support of cancellation request to the TEE kernel internal
-> client interface. Can be used by software TPM drivers, that leverage
-> TEE under the hood (for instance in TPM2.0 mobile profile), for requesting
-> cancellation of time-consuming operations (RSA key-pair generation etc.).
->
-> Signed-off-by: Igor Opaniuk <igor.opaniuk@linaro.org>
-> ---
->  drivers/tee/tee_core.c  | 12 ++++++++++++
->  include/linux/tee_drv.h | 14 ++++++++++++++
->  2 files changed, 26 insertions(+)
->
-> diff --git a/drivers/tee/tee_core.c b/drivers/tee/tee_core.c
-> index 7b2bb4c..aba71a8 100644
-> --- a/drivers/tee/tee_core.c
-> +++ b/drivers/tee/tee_core.c
-> @@ -1027,6 +1027,18 @@ int tee_client_invoke_func(struct tee_context *ctx,
->  }
->  EXPORT_SYMBOL_GPL(tee_client_invoke_func);
->
-> +int tee_client_cancel_req(struct tee_context *ctx,
-> +                         u32 cancel_id,
-> +                         u32 session)
-> +{
-> +
-> +       if (!ctx->teedev->desc->ops->cancel_req)
-> +               return -EINVAL;
-> +       return ctx->teedev->desc->ops->cancel_req(ctx, cancel_id,
-> +                                                 session);
-> +}
-> +EXPORT_SYMBOL_GPL(tee_client_cancel_req);
-> +
->  static int __init tee_init(void)
->  {
->         int rc;
-> diff --git a/include/linux/tee_drv.h b/include/linux/tee_drv.h
-> index 6cfe058..62a0b56 100644
-> --- a/include/linux/tee_drv.h
-> +++ b/include/linux/tee_drv.h
-> @@ -526,6 +526,20 @@ int tee_client_invoke_func(struct tee_context *ctx,
->                            struct tee_ioctl_invoke_arg *arg,
->                            struct tee_param *param);
->
-> +/**
-> + * tee_client_cancel_req() - Request cancellation of the previous open-session
-> + * or invoke-command operations in a Trusted Application
-> + * @ctx:       TEE Context
-> + * @arg:       Unique cancel request id
-> + * @param:     Session id
+thread_info is not anymore in the stack, so the entire stack
+can now be used.
 
-These need to be updated, see struct tee_ioctl_cancel_arg in
-include/uapi/linux/tee.h
+There is also no risk anymore of corrupting task_cpu(p) with a
+stack overflow so the patch removes the test.
 
-Thanks,
-Jens
+When doing this, an explicit test for NULL stack pointer is
+needed in validate_sp() as it is not anymore implicitely covered
+by the sizeof(thread_info) gap.
 
-> + *
-> + * Returns < 0 on error else see @arg->ret for result.
-> + */
-> +int tee_client_cancel_req(struct tee_context *ctx,
-> +                         u32 cancel_id,
-> +                         u32 session);
-> +
-> +
->  static inline bool tee_param_is_memref(struct tee_param *param)
->  {
->         switch (param->attr & TEE_IOCTL_PARAM_ATTR_TYPE_MASK) {
-> --
-> 2.7.4
->
+In the meantime, with the previous patch all pointers to the stacks
+are not anymore pointers to thread_info so this patch changes them
+to void*
+
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/include/asm/irq.h       | 10 +++++-----
+ arch/powerpc/include/asm/processor.h |  3 +--
+ arch/powerpc/kernel/asm-offsets.c    |  1 -
+ arch/powerpc/kernel/entry_32.S       | 14 ++++----------
+ arch/powerpc/kernel/irq.c            | 19 +++++++++----------
+ arch/powerpc/kernel/misc_32.S        |  6 ++----
+ arch/powerpc/kernel/process.c        | 32 +++++++++++++-------------------
+ arch/powerpc/kernel/setup_64.c       |  8 ++++----
+ 8 files changed, 38 insertions(+), 55 deletions(-)
+
+diff --git a/arch/powerpc/include/asm/irq.h b/arch/powerpc/include/asm/irq.h
+index 28a7ace0a1b9..c91a60cda4fa 100644
+--- a/arch/powerpc/include/asm/irq.h
++++ b/arch/powerpc/include/asm/irq.h
+@@ -48,16 +48,16 @@ struct pt_regs;
+  * Per-cpu stacks for handling critical, debug and machine check
+  * level interrupts.
+  */
+-extern struct thread_info *critirq_ctx[NR_CPUS];
+-extern struct thread_info *dbgirq_ctx[NR_CPUS];
+-extern struct thread_info *mcheckirq_ctx[NR_CPUS];
++extern void *critirq_ctx[NR_CPUS];
++extern void *dbgirq_ctx[NR_CPUS];
++extern void *mcheckirq_ctx[NR_CPUS];
+ #endif
+ 
+ /*
+  * Per-cpu stacks for handling hard and soft interrupts.
+  */
+-extern struct thread_info *hardirq_ctx[NR_CPUS];
+-extern struct thread_info *softirq_ctx[NR_CPUS];
++extern void *hardirq_ctx[NR_CPUS];
++extern void *softirq_ctx[NR_CPUS];
+ 
+ void call_do_softirq(void *sp);
+ void call_do_irq(struct pt_regs *regs, void *sp);
+diff --git a/arch/powerpc/include/asm/processor.h b/arch/powerpc/include/asm/processor.h
+index 15acb282a876..8179b64871ed 100644
+--- a/arch/powerpc/include/asm/processor.h
++++ b/arch/powerpc/include/asm/processor.h
+@@ -325,8 +325,7 @@ struct thread_struct {
+ #define ARCH_MIN_TASKALIGN 16
+ 
+ #define INIT_SP		(sizeof(init_stack) + (unsigned long) &init_stack)
+-#define INIT_SP_LIMIT \
+-	(_ALIGN_UP(sizeof(struct thread_info), 16) + (unsigned long)&init_stack)
++#define INIT_SP_LIMIT	((unsigned long)&init_stack)
+ 
+ #ifdef CONFIG_SPE
+ #define SPEFSCR_INIT \
+diff --git a/arch/powerpc/kernel/asm-offsets.c b/arch/powerpc/kernel/asm-offsets.c
+index 1fb52206c106..94ac190a0b16 100644
+--- a/arch/powerpc/kernel/asm-offsets.c
++++ b/arch/powerpc/kernel/asm-offsets.c
+@@ -92,7 +92,6 @@ int main(void)
+ 	DEFINE(SIGSEGV, SIGSEGV);
+ 	DEFINE(NMI_MASK, NMI_MASK);
+ #else
+-	DEFINE(THREAD_INFO_GAP, _ALIGN_UP(sizeof(struct thread_info), 16));
+ 	OFFSET(KSP_LIMIT, thread_struct, ksp_limit);
+ #endif /* CONFIG_PPC64 */
+ 	OFFSET(TASK_STACK, task_struct, stack);
+diff --git a/arch/powerpc/kernel/entry_32.S b/arch/powerpc/kernel/entry_32.S
+index 29b9258dfff7..367dbf34c8a7 100644
+--- a/arch/powerpc/kernel/entry_32.S
++++ b/arch/powerpc/kernel/entry_32.S
+@@ -97,14 +97,11 @@ crit_transfer_to_handler:
+ 	mfspr	r0,SPRN_SRR1
+ 	stw	r0,_SRR1(r11)
+ 
+-	/* set the stack limit to the current stack
+-	 * and set the limit to protect the thread_info
+-	 * struct
+-	 */
++	/* set the stack limit to the current stack */
+ 	mfspr	r8,SPRN_SPRG_THREAD
+ 	lwz	r0,KSP_LIMIT(r8)
+ 	stw	r0,SAVED_KSP_LIMIT(r11)
+-	rlwimi	r0,r1,0,0,(31-THREAD_SHIFT)
++	rlwinm	r0,r1,0,0,(31 - THREAD_SHIFT)
+ 	stw	r0,KSP_LIMIT(r8)
+ 	/* fall through */
+ #endif
+@@ -121,14 +118,11 @@ crit_transfer_to_handler:
+ 	mfspr	r0,SPRN_SRR1
+ 	stw	r0,crit_srr1@l(0)
+ 
+-	/* set the stack limit to the current stack
+-	 * and set the limit to protect the thread_info
+-	 * struct
+-	 */
++	/* set the stack limit to the current stack */
+ 	mfspr	r8,SPRN_SPRG_THREAD
+ 	lwz	r0,KSP_LIMIT(r8)
+ 	stw	r0,saved_ksp_limit@l(0)
+-	rlwimi	r0,r1,0,0,(31-THREAD_SHIFT)
++	rlwinm	r0,r1,0,0,(31 - THREAD_SHIFT)
+ 	stw	r0,KSP_LIMIT(r8)
+ 	/* fall through */
+ #endif
+diff --git a/arch/powerpc/kernel/irq.c b/arch/powerpc/kernel/irq.c
+index 85c48911938a..938944c6e2ee 100644
+--- a/arch/powerpc/kernel/irq.c
++++ b/arch/powerpc/kernel/irq.c
+@@ -618,9 +618,8 @@ static inline void check_stack_overflow(void)
+ 	sp = current_stack_pointer() & (THREAD_SIZE-1);
+ 
+ 	/* check for stack overflow: is there less than 2KB free? */
+-	if (unlikely(sp < (sizeof(struct thread_info) + 2048))) {
+-		pr_err("do_IRQ: stack overflow: %ld\n",
+-			sp - sizeof(struct thread_info));
++	if (unlikely(sp < 2048)) {
++		pr_err("do_IRQ: stack overflow: %ld\n", sp);
+ 		dump_stack();
+ 	}
+ #endif
+@@ -660,7 +659,7 @@ void __do_irq(struct pt_regs *regs)
+ void do_IRQ(struct pt_regs *regs)
+ {
+ 	struct pt_regs *old_regs = set_irq_regs(regs);
+-	struct thread_info *curtp, *irqtp, *sirqtp;
++	void *curtp, *irqtp, *sirqtp;
+ 
+ 	/* Switch to the irq stack to handle this */
+ 	curtp = (void *)(current_stack_pointer() & ~(THREAD_SIZE - 1));
+@@ -686,17 +685,17 @@ void __init init_IRQ(void)
+ }
+ 
+ #if defined(CONFIG_BOOKE) || defined(CONFIG_40x)
+-struct thread_info   *critirq_ctx[NR_CPUS] __read_mostly;
+-struct thread_info    *dbgirq_ctx[NR_CPUS] __read_mostly;
+-struct thread_info *mcheckirq_ctx[NR_CPUS] __read_mostly;
++void   *critirq_ctx[NR_CPUS] __read_mostly;
++void    *dbgirq_ctx[NR_CPUS] __read_mostly;
++void *mcheckirq_ctx[NR_CPUS] __read_mostly;
+ #endif
+ 
+-struct thread_info *softirq_ctx[NR_CPUS] __read_mostly;
+-struct thread_info *hardirq_ctx[NR_CPUS] __read_mostly;
++void *softirq_ctx[NR_CPUS] __read_mostly;
++void *hardirq_ctx[NR_CPUS] __read_mostly;
+ 
+ void do_softirq_own_stack(void)
+ {
+-	struct thread_info *irqtp;
++	void *irqtp;
+ 
+ 	irqtp = softirq_ctx[smp_processor_id()];
+ 	call_do_softirq(irqtp);
+diff --git a/arch/powerpc/kernel/misc_32.S b/arch/powerpc/kernel/misc_32.S
+index b37b50fde828..6f6127c3760c 100644
+--- a/arch/powerpc/kernel/misc_32.S
++++ b/arch/powerpc/kernel/misc_32.S
+@@ -46,11 +46,10 @@ _GLOBAL(call_do_softirq)
+ 	mflr	r0
+ 	stw	r0,4(r1)
+ 	lwz	r10,THREAD+KSP_LIMIT(r2)
+-	addi	r11,r3,THREAD_INFO_GAP
++	stw	r3, THREAD+KSP_LIMIT(r2)
+ 	stwu	r1,THREAD_SIZE-STACK_FRAME_OVERHEAD(r3)
+ 	mr	r1,r3
+ 	stw	r10,8(r1)
+-	stw	r11,THREAD+KSP_LIMIT(r2)
+ 	bl	__do_softirq
+ 	lwz	r10,8(r1)
+ 	lwz	r1,0(r1)
+@@ -66,11 +65,10 @@ _GLOBAL(call_do_irq)
+ 	mflr	r0
+ 	stw	r0,4(r1)
+ 	lwz	r10,THREAD+KSP_LIMIT(r2)
+-	addi	r11,r4,THREAD_INFO_GAP
++	stw	r4, THREAD+KSP_LIMIT(r2)
+ 	stwu	r1,THREAD_SIZE-STACK_FRAME_OVERHEAD(r4)
+ 	mr	r1,r4
+ 	stw	r10,8(r1)
+-	stw	r11,THREAD+KSP_LIMIT(r2)
+ 	bl	__do_irq
+ 	lwz	r10,8(r1)
+ 	lwz	r1,0(r1)
+diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
+index d3c8af4c3a61..da82ab5dd743 100644
+--- a/arch/powerpc/kernel/process.c
++++ b/arch/powerpc/kernel/process.c
+@@ -1691,8 +1691,7 @@ int copy_thread(unsigned long clone_flags, unsigned long usp,
+ 	sp -= STACK_FRAME_OVERHEAD;
+ 	p->thread.ksp = sp;
+ #ifdef CONFIG_PPC32
+-	p->thread.ksp_limit = (unsigned long)task_stack_page(p) +
+-				_ALIGN_UP(sizeof(struct thread_info), 16);
++	p->thread.ksp_limit = (unsigned long)end_of_stack(p);
+ #endif
+ #ifdef CONFIG_HAVE_HW_BREAKPOINT
+ 	p->thread.ptrace_bps[0] = NULL;
+@@ -1995,21 +1994,14 @@ static inline int valid_irq_stack(unsigned long sp, struct task_struct *p,
+ 	unsigned long stack_page;
+ 	unsigned long cpu = task_cpu(p);
+ 
+-	/*
+-	 * Avoid crashing if the stack has overflowed and corrupted
+-	 * task_cpu(p), which is in the thread_info struct.
+-	 */
+-	if (cpu < NR_CPUS && cpu_possible(cpu)) {
+-		stack_page = (unsigned long) hardirq_ctx[cpu];
+-		if (sp >= stack_page + sizeof(struct thread_struct)
+-		    && sp <= stack_page + THREAD_SIZE - nbytes)
+-			return 1;
+-
+-		stack_page = (unsigned long) softirq_ctx[cpu];
+-		if (sp >= stack_page + sizeof(struct thread_struct)
+-		    && sp <= stack_page + THREAD_SIZE - nbytes)
+-			return 1;
+-	}
++	stack_page = (unsigned long)hardirq_ctx[cpu];
++	if (sp >= stack_page && sp <= stack_page + THREAD_SIZE - nbytes)
++		return 1;
++
++	stack_page = (unsigned long)softirq_ctx[cpu];
++	if (sp >= stack_page && sp <= stack_page + THREAD_SIZE - nbytes)
++		return 1;
++
+ 	return 0;
+ }
+ 
+@@ -2018,8 +2010,10 @@ int validate_sp(unsigned long sp, struct task_struct *p,
+ {
+ 	unsigned long stack_page = (unsigned long)task_stack_page(p);
+ 
+-	if (sp >= stack_page + sizeof(struct thread_struct)
+-	    && sp <= stack_page + THREAD_SIZE - nbytes)
++	if (sp < THREAD_SIZE)
++		return 0;
++
++	if (sp >= stack_page && sp <= stack_page + THREAD_SIZE - nbytes)
+ 		return 1;
+ 
+ 	return valid_irq_stack(sp, p, nbytes);
+diff --git a/arch/powerpc/kernel/setup_64.c b/arch/powerpc/kernel/setup_64.c
+index 0912948a8ea6..2db1c5f7d141 100644
+--- a/arch/powerpc/kernel/setup_64.c
++++ b/arch/powerpc/kernel/setup_64.c
+@@ -716,19 +716,19 @@ void __init emergency_stack_init(void)
+ 	limit = min(ppc64_bolted_size(), ppc64_rma_size);
+ 
+ 	for_each_possible_cpu(i) {
+-		struct thread_info *ti;
++		void *ti;
+ 
+ 		ti = alloc_stack(limit, i);
+-		paca_ptrs[i]->emergency_sp = (void *)ti + THREAD_SIZE;
++		paca_ptrs[i]->emergency_sp = ti + THREAD_SIZE;
+ 
+ #ifdef CONFIG_PPC_BOOK3S_64
+ 		/* emergency stack for NMI exception handling. */
+ 		ti = alloc_stack(limit, i);
+-		paca_ptrs[i]->nmi_emergency_sp = (void *)ti + THREAD_SIZE;
++		paca_ptrs[i]->nmi_emergency_sp = ti + THREAD_SIZE;
+ 
+ 		/* emergency stack for machine check exception handling. */
+ 		ti = alloc_stack(limit, i);
+-		paca_ptrs[i]->mc_emergency_sp = (void *)ti + THREAD_SIZE;
++		paca_ptrs[i]->mc_emergency_sp = ti + THREAD_SIZE;
+ #endif
+ 	}
+ }
+-- 
+2.13.3
+
