@@ -2,194 +2,130 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81A08C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:30:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DFFBC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:31:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51AC5218A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:30:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FD6F218A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:31:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ehsh4xTg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728611AbfAXPau (ORCPT
+        id S1728648AbfAXPbM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 10:30:50 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:48452 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728079AbfAXPau (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 10:30:50 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E547DC070E05;
-        Thu, 24 Jan 2019 15:30:48 +0000 (UTC)
-Received: from redhat.com (unknown [10.20.6.236])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 11F6F10D8233;
-        Thu, 24 Jan 2019 15:30:33 +0000 (UTC)
-Date:   Thu, 24 Jan 2019 10:30:32 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc:     linux-mm@kvack.org, Ralph Campbell <rcampbell@nvidia.com>,
-        Jan Kara <jack@suse.cz>, Arnd Bergmann <arnd@arndb.de>,
-        kvm@vger.kernel.org, Matthew Wilcox <mawilcox@microsoft.com>,
-        linux-rdma@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Michal Hocko <mhocko@kernel.org>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Ross Zwisler <zwisler@kernel.org>,
-        linux-fsdevel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
-Subject: Re: [PATCH v4 8/9] gpu/drm/i915: optimize out the case when a range
- is updated to read only
-Message-ID: <20190124153032.GA5030@redhat.com>
-References: <20190123222315.1122-1-jglisse@redhat.com>
- <20190123222315.1122-9-jglisse@redhat.com>
- <154833175216.4120.925061299171157938@jlahtine-desk.ger.corp.intel.com>
+        Thu, 24 Jan 2019 10:31:12 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:44428 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727943AbfAXPbM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 10:31:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=h8Wow38e1xWfn2ravzm+XKlFiamZ5hDUdxW/qYXbZzA=; b=ehsh4xTg9s2QQ6E3xW4Gq5f1t
+        Mw2n/Y1on1l+kqzKNLErDRsWUwHrKxOOcN4LWwbYmrEKBmitlelKF6+jT6O2BB/qYefK6sR2m+ymu
+        nwKcvX8K4xidlT0Y6iBtB05Hwvjwac4BI0pdtFuBsuTkqsxBlk85yTAx+lcqYWDxUtws4Pdt2vWaT
+        HXI4Na0TjIhYEoh5LFkwv24vmtUSJqM2k9U98EANJo0LKVK47M/2uQEM3JsJIuobUIrU5ZdeQPLkv
+        i3r+tTN1cPmV8ymc3ILp9tOd9Cb+DGkn3aP41EPLSmRdTrt8CGkzjrt1wCk2PEb0iDgj12YEy55lu
+        wnEXER9zQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gmgyC-0003pw-Aw; Thu, 24 Jan 2019 15:31:08 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 8EA7420D1512D; Thu, 24 Jan 2019 16:31:06 +0100 (CET)
+Date:   Thu, 24 Jan 2019 16:31:06 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v6 09/16] sched/cpufreq: uclamp: Add utilization clamping
+ for RT tasks
+Message-ID: <20190124153106.GQ13777@hirez.programming.kicks-ass.net>
+References: <20190115101513.2822-1-patrick.bellasi@arm.com>
+ <20190115101513.2822-10-patrick.bellasi@arm.com>
+ <20190123104944.GX27931@hirez.programming.kicks-ass.net>
+ <20190123144011.iid3avb63r5v4r2c@e110439-lin>
+ <20190123201146.GH17749@hirez.programming.kicks-ass.net>
+ <20190124123009.2yulcf25ld66popd@e110439-lin>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <154833175216.4120.925061299171157938@jlahtine-desk.ger.corp.intel.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 24 Jan 2019 15:30:49 +0000 (UTC)
+In-Reply-To: <20190124123009.2yulcf25ld66popd@e110439-lin>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 02:09:12PM +0200, Joonas Lahtinen wrote:
-> Hi Jerome,
+On Thu, Jan 24, 2019 at 12:30:09PM +0000, Patrick Bellasi wrote:
+> > So I'll have to go over the code again, but I'm wondering why you're
+> > changing uclamp_se::bucket_id on a runnable task.
 > 
-> This patch seems to have plenty of Cc:s, but none of the right ones :)
-
-So sorry, i am bad with git commands.
-
-> For further iterations, I guess you could use git option --cc to make
-> sure everyone gets the whole series, and still keep the Cc:s in the
-> patches themselves relevant to subsystems.
-
-Will do.
-
-> This doesn't seem to be on top of drm-tip, but on top of your previous
-> patches(?) that I had some comments about. Could you take a moment to
-> first address the couple of question I had, before proceeding to discuss
-> what is built on top of that base.
-
-It is on top of Linus tree so roughly ~ rc3 it does not depend on any
-of the previous patch i posted. I still intended to propose to remove
-GUP from i915 once i get around to implement the equivalent of GUP_fast
-for HMM and other bonus cookies with it.
-
-The plan is once i have all mm bits properly upstream then i can propose
-patches to individual driver against the proper driver tree ie following
-rules of each individual device driver sub-system and Cc only people
-there to avoid spamming the mm folks :)
-
-
+> We change only the "requested" value, not the "effective" one.
 > 
-> My reply's Message-ID is:
-> 154289518994.19402.3481838548028068213@jlahtine-desk.ger.corp.intel.com
+> > Ideally you keep bucket_id invariant between enqueue and dequeue; then
+> > dequeue knows where we put it.
 > 
-> Regards, Joonas
+> Right, that's what we do for the "effective" value.
+
+So the problem I have is that you first introduce uclamp_se::value and
+use that all over the code, and then introduce effective and change all
+the usage sites.
+
+That seems daft. Why not keep all the code as-is and add orig_value.
+
+> > Now I suppose actually determining bucket_id is 'expensive' (it
+> > certainly is with the whole mapping scheme, but even that integer
+> > division is not nice), so we'd like to precompute the bucket_id.
 > 
-> PS. Please keep me Cc:d in the following patches, I'm keen on
-> understanding the motive and benefits.
+> Yes, although the complexity is mostly in the composition logic
+> described above not on mapping at all. We have "mapping" overheads
+> only when we change a "request" value and that's from slow-paths.
+
+It's weird though. Esp. when combined with that mapping logic, because
+then you get to use additional maps that are not in fact ever used.
+
+> > We can update uclamp_se::value and set uclamp_se::changed, and then the
+> > next enqueue will (unlikely) test-and-clear changed and recompute the
+> > bucket_id.
 > 
-> Quoting jglisse@redhat.com (2019-01-24 00:23:14)
-> > From: Jérôme Glisse <jglisse@redhat.com>
-> > 
-> > When range of virtual address is updated read only and corresponding
-> > user ptr object are already read only it is pointless to do anything.
-> > Optimize this case out.
-> > 
-> > Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
-> > Cc: Christian König <christian.koenig@amd.com>
-> > Cc: Jan Kara <jack@suse.cz>
-> > Cc: Felix Kuehling <Felix.Kuehling@amd.com>
-> > Cc: Jason Gunthorpe <jgg@mellanox.com>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > Cc: Matthew Wilcox <mawilcox@microsoft.com>
-> > Cc: Ross Zwisler <zwisler@kernel.org>
-> > Cc: Dan Williams <dan.j.williams@intel.com>
-> > Cc: Paolo Bonzini <pbonzini@redhat.com>
-> > Cc: Radim Krčmář <rkrcmar@redhat.com>
-> > Cc: Michal Hocko <mhocko@kernel.org>
-> > Cc: Ralph Campbell <rcampbell@nvidia.com>
-> > Cc: John Hubbard <jhubbard@nvidia.com>
-> > Cc: kvm@vger.kernel.org
-> > Cc: dri-devel@lists.freedesktop.org
-> > Cc: linux-rdma@vger.kernel.org
-> > Cc: linux-fsdevel@vger.kernel.org
-> > Cc: Arnd Bergmann <arnd@arndb.de>
-> > ---
-> >  drivers/gpu/drm/i915/i915_gem_userptr.c | 16 ++++++++++++++++
-> >  1 file changed, 16 insertions(+)
-> > 
-> > diff --git a/drivers/gpu/drm/i915/i915_gem_userptr.c b/drivers/gpu/drm/i915/i915_gem_userptr.c
-> > index 9558582c105e..23330ac3d7ea 100644
-> > --- a/drivers/gpu/drm/i915/i915_gem_userptr.c
-> > +++ b/drivers/gpu/drm/i915/i915_gem_userptr.c
-> > @@ -59,6 +59,7 @@ struct i915_mmu_object {
-> >         struct interval_tree_node it;
-> >         struct list_head link;
-> >         struct work_struct work;
-> > +       bool read_only;
-> >         bool attached;
-> >  };
-> >  
-> > @@ -119,6 +120,7 @@ static int i915_gem_userptr_mn_invalidate_range_start(struct mmu_notifier *_mn,
-> >                 container_of(_mn, struct i915_mmu_notifier, mn);
-> >         struct i915_mmu_object *mo;
-> >         struct interval_tree_node *it;
-> > +       bool update_to_read_only;
-> >         LIST_HEAD(cancelled);
-> >         unsigned long end;
-> >  
-> > @@ -128,6 +130,8 @@ static int i915_gem_userptr_mn_invalidate_range_start(struct mmu_notifier *_mn,
-> >         /* interval ranges are inclusive, but invalidate range is exclusive */
-> >         end = range->end - 1;
-> >  
-> > +       update_to_read_only = mmu_notifier_range_update_to_read_only(range);
-> > +
-> >         spin_lock(&mn->lock);
-> >         it = interval_tree_iter_first(&mn->objects, range->start, end);
-> >         while (it) {
-> > @@ -145,6 +149,17 @@ static int i915_gem_userptr_mn_invalidate_range_start(struct mmu_notifier *_mn,
-> >                  * object if it is not in the process of being destroyed.
-> >                  */
-> >                 mo = container_of(it, struct i915_mmu_object, it);
-> > +
-> > +               /*
-> > +                * If it is already read only and we are updating to
-> > +                * read only then we do not need to change anything.
-> > +                * So save time and skip this one.
-> > +                */
-> > +               if (update_to_read_only && mo->read_only) {
-> > +                       it = interval_tree_iter_next(it, range->start, end);
-> > +                       continue;
-> > +               }
-> > +
-> >                 if (kref_get_unless_zero(&mo->obj->base.refcount))
-> >                         queue_work(mn->wq, &mo->work);
-> >  
-> > @@ -270,6 +285,7 @@ i915_gem_userptr_init__mmu_notifier(struct drm_i915_gem_object *obj,
-> >         mo->mn = mn;
-> >         mo->obj = obj;
-> >         mo->it.start = obj->userptr.ptr;
-> > +       mo->read_only = i915_gem_object_is_readonly(obj);
-> >         mo->it.last = obj->userptr.ptr + obj->base.size - 1;
-> >         INIT_WORK(&mo->work, cancel_userptr);
-> >  
-> > -- 
-> > 2.17.2
-> > 
-> > _______________________________________________
-> > dri-devel mailing list
-> > dri-devel@lists.freedesktop.org
-> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> This mean will lazy update the "requested" bucket_id by deferring its
+> computation at enqueue time. Which saves us a copy of the bucket_id,
+> i.e. we will have only the "effective" value updated at enqueue time.
+> 
+> But...
+> 
+> > Would that not be simpler?
+> 
+> ... although being simpler it does not fully exploit the slow-path,
+> a syscall which is usually running from a different process context
+> (system management software).
+> 
+> It also fits better for lazy updates but, in the cgroup case, where we
+> wanna enforce an update ASAP for RUNNABLE tasks, we will still have to
+> do the updates from the slow-path.
+> 
+> Will look better into this simplification while working on v7, perhaps
+> the linear mapping can really help in that too.
+
+OK. So mostly my complaint is that it seems to do things odd for ill
+explained reasons.
