@@ -2,206 +2,233 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC7B4C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:13:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B987AC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:15:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3E1C2184C
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:13:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gzisN7eD"
+	by mail.kernel.org (Postfix) with ESMTP id 7BD792184C
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:15:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548342929;
+	bh=W1sfOq/m2FKrPyWAjzeHkTKNoJ62ZWEC66UvHa//XaA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=1VQD28N/DS1cLO0VCRNuIVvOeCa1MgbwExEUgicy4WHfX3e/kB/yp86l8lU5Zc54x
+	 r+ezQOYQKTUfz/UB4JjHQufbhyLhTIMsPHwIlfLOwNJeYMFcs/L9zZgknGjUY7h/ZF
+	 Y2Fei5ICZ1XMohTCzpUSD0BxhQFT+2M5NY+MOZGE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728548AbfAXPNO (ORCPT
+        id S1728366AbfAXPP2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 10:13:14 -0500
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:36618 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728438AbfAXPNN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 10:13:13 -0500
-Received: by mail-ua1-f65.google.com with SMTP id j3so2098823uap.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 07:13:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ym6qO6uZueXvmCkE0mXt38C5WxL5x03DtgjZSQlDbNM=;
-        b=gzisN7eDv22Wq9nnrKyXXGfZaGpsO3I2QW0N6xdiVHloOVXY0Gs3tIQGDEOXlQIt7Z
-         /8Mic4w/XxZMvqfC6OA3pnJ0T6dYZXeK3WQJvvHb/k/AtGkRH7bH7rJ+v7iB+wulOy0t
-         0qSMfWHri8G4RvfVC2YKfLY30xenTvGOF5pRk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ym6qO6uZueXvmCkE0mXt38C5WxL5x03DtgjZSQlDbNM=;
-        b=m4akbu/XLGBzbx8scFui8y6gcMMBJ96ZECNfzLW33b1pGADd95LCrB7tz/B7f8QPc4
-         9Cgd17PLwnlVoHOh040apPgEcKS7uMW1HhQpd6DYizvSCNZnMW8ZE3+3MTnbI8vmFzSg
-         EBQZL96iG9nuvYRiOHnicpH2ty3zneYjz3ibUkwLN3kKiCbePRM/CgVR+o9aD2IKEact
-         M8gyC5CmxMrYYb9oByMdjeVsgV/y8q7Fb6IifUaX1QhiTF2TlHQ+XmZiGvE6pa6H2ocs
-         TsivpUxryMpfU+troXOWyj7oqbD85nc1vfLsaDlrCyR7mlQJqDTLA7fkQB+tZU0wqPKz
-         8zQA==
-X-Gm-Message-State: AJcUukfvXI+lo3ea4drR9FL/FewONBdkAAU43zYn6gqU5a5qidhLyg++
-        XKXDGhfjsCMmWID5g6drwFjhVZ9O05qCdojWQt3NDA==
-X-Google-Smtp-Source: ALg8bN4Gg3UlAH9n6sfnwatXtrbbhEZjC25+kqGv35OcJFdTO1J9O5dPWTouEUu5p8TJe+Sd7B7jtvHCWvYTLsCSl0k=
-X-Received: by 2002:ab0:b83:: with SMTP id c3mr2691467uak.77.1548342792275;
- Thu, 24 Jan 2019 07:13:12 -0800 (PST)
+        Thu, 24 Jan 2019 10:15:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41334 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727566AbfAXPP1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 10:15:27 -0500
+Received: from localhost (173-25-171-118.client.mchsi.com [173.25.171.118])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CFE4E2184C;
+        Thu, 24 Jan 2019 15:15:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548342926;
+        bh=W1sfOq/m2FKrPyWAjzeHkTKNoJ62ZWEC66UvHa//XaA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mskKQ7WUWSL6H6Z7rcRa9QWYHd+G6WZblzBxXLIze5dEY/LhPOxA8pQnOsXldxevr
+         yCizxgoqAi+qaYZpY47zmnwrJsfbK1q8AaNX3nDo98baFE9s3838VWJqxrqkClleaj
+         uBObu9hhqHiER7QLBJX5sefgASrrKcdf+E8izfOs=
+Date:   Thu, 24 Jan 2019 09:15:24 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Kai Heng Feng <kai.heng.feng@canonical.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, jeffrey.t.kirsher@intel.com,
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI / ACPI: Don't clear pme_poll on device that has
+ unreliable ACPI wake
+Message-ID: <20190124151524.GF14636@google.com>
+References: <20190122064544.27426-1-kai.heng.feng@canonical.com>
+ <20190122235134.GE14636@google.com>
+ <91E74111-5BB6-4604-A1D7-B537AB42C317@canonical.com>
 MIME-Version: 1.0
-References: <1544109212-12621-1-git-send-email-ludovic.Barre@st.com>
- <1544109212-12621-2-git-send-email-ludovic.Barre@st.com> <CAPDyKFq7TZMKWMqmoDR0yfr2N2cf2nr4-BuEs5DPgJSGy-nvAA@mail.gmail.com>
- <35f22c1a-888d-5abd-7ffe-ecf47a74b69a@st.com> <9e22fd3d-f029-2a2a-18d1-af1987c94e4e@st.com>
- <ab4cae87-0a5a-fe22-08ab-7c7661be7c8c@st.com>
-In-Reply-To: <ab4cae87-0a5a-fe22-08ab-7c7661be7c8c@st.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 24 Jan 2019 16:12:35 +0100
-Message-ID: <CAPDyKFp+3E35KXVCACO3-6JcRyqdsNGJ-5mAEKmUK0nggGs9nQ@mail.gmail.com>
-Subject: Re: [Linux-stm32] [PATCH V3 1/2] mmc: mmci: add variant property to
- set command stop bit
-To:     Ludovic BARRE <ludovic.barre@st.com>
-Cc:     DTML <devicetree@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <91E74111-5BB6-4604-A1D7-B537AB42C317@canonical.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 24 Jan 2019 at 16:03, Ludovic BARRE <ludovic.barre@st.com> wrote:
->
-> hi Ulf
->
-> I don't think you've seen my previous mail :-(
-> what is your feeling about "mmc: mmci: send stop command to clear the dpsm"
+On Wed, Jan 23, 2019 at 03:17:37PM +0800, Kai Heng Feng wrote:
+> > On Jan 23, 2019, at 7:51 AM, Bjorn Helgaas <helgaas@kernel.org> wrote:
+> > On Tue, Jan 22, 2019 at 02:45:44PM +0800, Kai-Heng Feng wrote:
+> >> There are some e1000e devices can only be woken up from D3 one time, by
+> >> plugging ethernet cable. Subsequent cable plugging does set PME bit
+> >> correctly, but it still doesn't get woken up.
+> >> 
+> >> Since e1000e connects to the root complex directly, we rely on ACPI to
+> >> wake it up. In this case, the GPE from _PRW only works once and stops
+> >> working after that.
+> >> 
+> >> So introduce a new PCI quirk, to avoid clearing pme_poll flag for buggy
+> >> platform firmwares that have unreliable GPE wake.
+> > 
+> > This quirk applies to all 0x15bb (E1000_DEV_ID_PCH_CNP_I219_LM7) and
+> > 0x15bd (E1000_DEV_ID_PCH_CNP_I219_LM6) devices.  The e1000e driver
+> > claims about a zillion different device IDs.
+> > 
+> > I would be surprised if these two devices are defective but all the
+> > others work correctly.  Could it be that there is a problem with the
+> > wiring on this particular motherboard or with the ACPI _PRW methods
+> > (or the way Linux interprets them) in this firmware?
+> 
+> If this is a motherboard issue or platform specific, do you prefer to use
+> DMI matches here?
 
-Apologize for the delay. I wanted to check this in detail so I applied
-your patch locally and started to play/test it.
+I'm not sure what the problem is yet, so let's hold off on the exact
+structure of the fix.
 
-However, a couple of other regressions was reported for v5.0 rcs, so I
-got sidetracked.
+If I understand correctly, e1000e wakeup works once, but doesn't work
+after that.  Your lspci (from after that first wakeup, from
+https://bugzilla.kernel.org/attachment.cgi?id=280691) shows this:
 
-Back on track by now, so I will have look asap. Thanks for pinging me!
+  00:14.0 XHC  XHCI USB
+    Flags: PMEClk- DSI- D1- D2- ... PME(D0-,D1-,D2-,D3hot+,D3cold+)
+    Status: D3 NoSoftRst+ PME-Enable+ DSel=0 DScale=0 PME-
+  00:1f.3 HDAS audio
+    Flags: PMEClk- DSI- D1- D2- ... PME(D0-,D1-,D2-,D3hot+,D3cold+)
+    Status: D3 NoSoftRst+ PME-Enable+ DSel=0 DScale=0 PME-
+  00:1f.6 GLAN e1000e
+    Flags: PMEClk- DSI+ D1- D2- ... PME(D0+,D1-,D2-,D3hot+,D3cold+)
+    Status: D3 NoSoftRst+ PME-Enable+ DSel=0 DScale=1 PME+
 
-Kind regards
-Uffe
+So the e1000e PME_Status bit is still set, which means it probably
+won't generate another PME interrupt, which would explain why wakeup
+doesn't work.  To test this theory, can you try this:
 
->
-> Regards
-> Ludo
->
-> On 1/3/19 11:35 AM, Ludovic BARRE wrote:
-> > hi Ulf
-> >
-> > happy new years.
-> >
-> > Just a gentleman ping about patch2 of this series
-> > "mmc: mmci: send stop command to clear the dpsm."
-> >
-> > Regards
-> > Ludo
-> >
-> > On 12/11/18 10:53 AM, Ludovic BARRE wrote:
-> >>
-> >>
-> >> On 12/11/18 10:47 AM, Ulf Hansson wrote:
-> >>> On Thu, 6 Dec 2018 at 16:13, Ludovic Barre <ludovic.Barre@st.com> wrote:
-> >>>>
-> >>>> From: Ludovic Barre <ludovic.barre@st.com>
-> >>>>
-> >>>> On cmd12 (STOP_TRANSMISSION), STM32 sdmmc variant needs to set
-> >>>> cmdstop bit in command register. The CPSM ("Command Path State
-> >>>> Machine")
-> >>>> treats the command as a Stop Transmission command and signals
-> >>>> abort to the DPSM ("Data Path State Machine").
-> >>>>
-> >>>> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
-> >>>
-> >>> Applied for next, thanks!
-> >>
-> >> thanks
-> >>
-> >>>
-> >>> Withholding patch2 for a while, as I need some more time to review it.
-> >>
-> >> No problem,
-> >>
-> >> Regards
-> >> Ludo
-> >>
-> >>>
-> >>> Kind regards
-> >>> Uffe
-> >>>
-> >>>> ---
-> >>>>   drivers/mmc/host/mmci.c | 6 ++++++
-> >>>>   drivers/mmc/host/mmci.h | 2 ++
-> >>>>   2 files changed, 8 insertions(+)
-> >>>>
-> >>>> diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-> >>>> index 13fa640..e352f5a 100644
-> >>>> --- a/drivers/mmc/host/mmci.c
-> >>>> +++ b/drivers/mmc/host/mmci.c
-> >>>> @@ -21,6 +21,7 @@
-> >>>>   #include <linux/err.h>
-> >>>>   #include <linux/highmem.h>
-> >>>>   #include <linux/log2.h>
-> >>>> +#include <linux/mmc/mmc.h>
-> >>>>   #include <linux/mmc/pm.h>
-> >>>>   #include <linux/mmc/host.h>
-> >>>>   #include <linux/mmc/card.h>
-> >>>> @@ -274,6 +275,7 @@ static struct variant_data variant_stm32_sdmmc = {
-> >>>>          .cmdreg_lrsp_crc        = MCI_CPSM_STM32_LRSP_CRC,
-> >>>>          .cmdreg_srsp_crc        = MCI_CPSM_STM32_SRSP_CRC,
-> >>>>          .cmdreg_srsp            = MCI_CPSM_STM32_SRSP,
-> >>>> +       .cmdreg_stop            = MCI_CPSM_STM32_CMDSTOP,
-> >>>>          .data_cmd_enable        = MCI_CPSM_STM32_CMDTRANS,
-> >>>>          .irq_pio_mask           = MCI_IRQ_PIO_STM32_MASK,
-> >>>>          .datactrl_first         = true,
-> >>>> @@ -1100,6 +1102,10 @@ mmci_start_command(struct mmci_host *host,
-> >>>> struct mmc_command *cmd, u32 c)
-> >>>>                  mmci_reg_delay(host);
-> >>>>          }
-> >>>>
-> >>>> +       if (host->variant->cmdreg_stop &&
-> >>>> +           cmd->opcode == MMC_STOP_TRANSMISSION)
-> >>>> +               c |= host->variant->cmdreg_stop;
-> >>>> +
-> >>>>          c |= cmd->opcode | host->variant->cmdreg_cpsm_enable;
-> >>>>          if (cmd->flags & MMC_RSP_PRESENT) {
-> >>>>                  if (cmd->flags & MMC_RSP_136)
-> >>>> diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
-> >>>> index 550dd39..2422909 100644
-> >>>> --- a/drivers/mmc/host/mmci.h
-> >>>> +++ b/drivers/mmc/host/mmci.h
-> >>>> @@ -264,6 +264,7 @@ struct mmci_host;
-> >>>>    * @cmdreg_lrsp_crc: enable value for long response with crc
-> >>>>    * @cmdreg_srsp_crc: enable value for short response with crc
-> >>>>    * @cmdreg_srsp: enable value for short response without crc
-> >>>> + * @cmdreg_stop: enable value for stop and abort transmission
-> >>>>    * @datalength_bits: number of bits in the MMCIDATALENGTH register
-> >>>>    * @fifosize: number of bytes that can be written when
-> >>>> MMCI_TXFIFOEMPTY
-> >>>>    *           is asserted (likewise for RX)
-> >>>> @@ -316,6 +317,7 @@ struct variant_data {
-> >>>>          unsigned int            cmdreg_lrsp_crc;
-> >>>>          unsigned int            cmdreg_srsp_crc;
-> >>>>          unsigned int            cmdreg_srsp;
-> >>>> +       unsigned int            cmdreg_stop;
-> >>>>          unsigned int            datalength_bits;
-> >>>>          unsigned int            fifosize;
-> >>>>          unsigned int            fifohalfsize;
-> >>>> --
-> >>>> 2.7.4
-> >>>>
-> > _______________________________________________
-> > Linux-stm32 mailing list
-> > Linux-stm32@st-md-mailman.stormreply.com
-> > https://st-md-mailman.stormreply.com/mailman/listinfo/linux-stm32
+  - sleep
+  - wakeup via e1000e
+  # DEV=00:1f.6
+  # lspci -vvs $DEV
+  # setpci -s $DEV CAP_PM+4.W
+  # setpci -s $DEV CAP_PM+4.W=0x8100
+  - sleep
+  - attempt another wakeup via e1000e
+
+If this second wakeup works, it would suggest that PME_Status isn't
+being cleared correctly.  I see code, e.g., in
+acpi_setup_gpe_for_wake(), that *looks* like it would arrange to clear
+it, but I'm not very familiar with it.  Maybe there's some issue with
+multiple devices sharing an "implicit notification" situation like
+this.
+
+> As for _PRW, it’s shared by USB controller, Audio controller and ethernet.
+> Only the ethernet (e1000e) has this issue.
+> 
+> When this issue happens, the e1000e doesn’t get woken up by ethernet cable
+> plugging, but inserting a USB device or plugging audio jack can wake up all
+> three devices. So I think Linux interprets ACPI correctly here.
+> 
+> Their _PRW here:
+> USB controller:
+>     Scope (_SB.PCI0)                       
+>     {                                      
+>         Device (XDCI)                            
+>         {                    
+>             Method (_PRW, 0, NotSerialized)  // _PRW: Power Resources for Wake
+>             {            
+>                 Return (GPRW (0x6D, 0x04))
+>             } 
+> 
+> Audio controller:
+> Scope (_SB.PCI0)                                                                                           
+>     {                                                                                                          
+>         Device (HDAS)                                  
+>         {                                                                             
+>             …         
+>             Method (_PRW, 0, NotSerialized)  // _PRW: Power Resources for Wake                 
+>             {                                        
+>                 Return (GPRW (0x6D, 0x04))           
+>             }                                  
+> 
+> Ethernet controller:
+>     Scope (_SB.PCI0)                                                                     
+>     {                                                                     
+>         Device (GLAN)                                                  
+>         {                                                                            
+>            …
+>             Method (_PRW, 0, NotSerialized)  // _PRW: Power Resources for Wake                 
+>             {                                        
+>                 Return (GPRW (0x6D, 0x04))                       
+>             }                                                              
+>         }                                                             
+>     }  
+> 
+> 
+> > 
+> > Would you mind attaching a complete dmesg log and "sudo lspci -vvv"
+> > output to the bugzilla, please?
+> 
+> Sure.
+> 
+> Kai-Heng
+> 
+> > 
+> >> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> >> ---
+> >> drivers/pci/pci-acpi.c | 2 +-
+> >> drivers/pci/quirks.c   | 8 ++++++++
+> >> include/linux/pci.h    | 1 +
+> >> 3 files changed, 10 insertions(+), 1 deletion(-)
+> >> 
+> >> diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
+> >> index e1949f7efd9c..184e2fc8a294 100644
+> >> --- a/drivers/pci/pci-acpi.c
+> >> +++ b/drivers/pci/pci-acpi.c
+> >> @@ -430,7 +430,7 @@ static void pci_acpi_wake_dev(struct acpi_device_wakeup_context *context)
+> >> 
+> >> 	pci_dev = to_pci_dev(context->dev);
+> >> 
+> >> -	if (pci_dev->pme_poll)
+> >> +	if (pci_dev->pme_poll && !pci_dev->unreliable_acpi_wake)
+> >> 		pci_dev->pme_poll = false;
+> >> 
+> >> 	if (pci_dev->current_state == PCI_D3cold) {
+> >> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+> >> index b0a413f3f7ca..ed4863496fa8 100644
+> >> --- a/drivers/pci/quirks.c
+> >> +++ b/drivers/pci/quirks.c
+> >> @@ -4948,6 +4948,14 @@ DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_AMD, PCI_ANY_ID,
+> >> DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_NVIDIA, PCI_ANY_ID,
+> >> 			      PCI_CLASS_MULTIMEDIA_HD_AUDIO, 8, quirk_gpu_hda);
+> >> 
+> >> +static void quirk_unreliable_acpi_wake(struct pci_dev *pdev)
+> >> +{
+> >> +	pci_info(pdev, "ACPI Wake unreliable, always poll PME\n");
+> >> +	pdev->unreliable_acpi_wake = 1;
+> >> +}
+> >> +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x15bb, quirk_unreliable_acpi_wake);
+> >> +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x15bd, quirk_unreliable_acpi_wake);
+> >> +
+> >> /*
+> >>  * Some IDT switches incorrectly flag an ACS Source Validation error on
+> >>  * completions for config read requests even though PCIe r4.0, sec
+> >> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> >> index 65f1d8c2f082..d22065c1576f 100644
+> >> --- a/include/linux/pci.h
+> >> +++ b/include/linux/pci.h
+> >> @@ -331,6 +331,7 @@ struct pci_dev {
+> >> 	unsigned int	pme_support:5;	/* Bitmask of states from which PME#
+> >> 					   can be generated */
+> >> 	unsigned int	pme_poll:1;	/* Poll device's PME status bit */
+> >> +	unsigned int	unreliable_acpi_wake:1;	/* ACPI Wake doesn't always work */
+> >> 	unsigned int	d1_support:1;	/* Low power state D1 is supported */
+> >> 	unsigned int	d2_support:1;	/* Low power state D2 is supported */
+> >> 	unsigned int	no_d1d2:1;	/* D1 and D2 are forbidden */
+> >> -- 
+> >> 2.17.1
