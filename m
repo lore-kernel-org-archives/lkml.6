@@ -2,56 +2,52 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 094DCC282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:32:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D23D8C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:32:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB2BF218E2
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:32:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98F0C218FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:32:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358321;
-	bh=gHLLc5iknikFyy7FyIxtHU/AdUumiI3KxlMpiFbAf7o=;
+	s=default; t=1548358324;
+	bh=hgc4FITbBXxNtnKb+M16q4wP2/XYQ4YORtQ/mKewXb8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tLFaZFOq1D5ROGa8IBehh1dcWhY7AUQW9a3Wf7FwvRKOJ9pcDqcDfAoMMA8Vzcbfd
-	 9e7FTxjEM1DHggcBHK8vH3rRu4YZltV1Kf1TsTo78GGI99bE4AB8+gTHQOMFcuEN+p
-	 4jueE1D2UqES6Jek3GZ5CGXuJDn1R4NCRIUH/zPk=
+	b=fkebWNI/+HpiWxdqGUIr5Gt3yDZ/Ewitvn+3IB6awSUTHxByU5OZfs3mRu8L26JJa
+	 M3BMv4jqTBrkhMHd9Mk9KvE6LL9u8Sz5OW0Vbz66Pep4kPPLugBy9XiEyYMvq2rRJz
+	 /dlkO41OJRBOcc2v75TwcF/7b2xuSrK7/u+LkhR8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731754AbfAXTcA (ORCPT
+        id S1731313AbfAXTcC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:32:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59786 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:32:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59862 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731744AbfAXTb5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:31:57 -0500
+        id S1731732AbfAXTb7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:31:59 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A7A4218D4;
-        Thu, 24 Jan 2019 19:31:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BFCD4218E2;
+        Thu, 24 Jan 2019 19:31:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358316;
-        bh=gHLLc5iknikFyy7FyIxtHU/AdUumiI3KxlMpiFbAf7o=;
+        s=default; t=1548358319;
+        bh=hgc4FITbBXxNtnKb+M16q4wP2/XYQ4YORtQ/mKewXb8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BIalsGl8oo3oxDbs1zrGuUoPOMAD3p2FuzSUvSUPkwYqanjHwnxNVYio/ujxuz07c
-         au6bb+NNDBdYuMGCmhdUlDJtiNXd9H5jcmCxtRhF5civ2bgz7cA8bL7mcXpgrBhQfZ
-         +QPbFhPwG4FAFpyw00KfyEJ4D7EpwFWE6WWhCaTU=
+        b=eHuOWSlWnJUWN0xF3RCp0JTf+Cr7+g/uRvNSDjmZwjI/YyH3Yxsw2HTPtBP5qhw+s
+         Qq3hvDtVzpgeBOp74og2u+YjHoHbuFLHsItlAfQPIEALlVaSiZX+xO1RCBpOtCFQ9l
+         qSIBG96whWSl/GwYXVDMn17tFhzEtCRubRdG90C8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Disseldorp <ddiss@suse.de>,
-        Christoph Hellwig <hch@lst.de>,
-        "Bryant G. Ly" <bly@catalogicsoftware.com>,
-        Lee Duncan <lduncan@suse.com>, Hannes Reinecke <hare@suse.com>,
-        Roman Bolshakov <r.bolshakov@yadro.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 29/63] scsi: target: use consistent left-aligned ASCII INQUIRY data
-Date:   Thu, 24 Jan 2019 20:20:18 +0100
-Message-Id: <20190124190158.403623745@linuxfoundation.org>
+        stable@vger.kernel.org, Ido Schimmel <idosch@mellanox.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 03/63] mlxsw: spectrum_switchdev: Set PVID correctly during VLAN deletion
+Date:   Thu, 24 Jan 2019 20:19:52 +0100
+Message-Id: <20190124190155.525395635@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190155.176570028@linuxfoundation.org>
 References: <20190124190155.176570028@linuxfoundation.org>
@@ -70,77 +66,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 0de263577de5d5e052be5f4f93334e63cc8a7f0b ]
+From: Ido Schimmel <idosch@mellanox.com>
 
-spc5r17.pdf specifies:
+[ Upstream commit 674bed5df4cab8f96d04f7b99608883a48f9226b ]
 
-  4.3.1 ASCII data field requirements
-  ASCII data fields shall contain only ASCII printable characters (i.e.,
-  code values 20h to 7Eh) and may be terminated with one or more ASCII null
-  (00h) characters.  ASCII data fields described as being left-aligned
-  shall have any unused bytes at the end of the field (i.e., highest
-  offset) and the unused bytes shall be filled with ASCII space characters
-  (20h).
+When a VLAN is deleted from a bridge port we should not change the PVID
+unless the deleted VLAN is the PVID.
 
-LIO currently space-pads the T10 VENDOR IDENTIFICATION and PRODUCT
-IDENTIFICATION fields in the standard INQUIRY data. However, the PRODUCT
-REVISION LEVEL field in the standard INQUIRY data as well as the T10 VENDOR
-IDENTIFICATION field in the INQUIRY Device Identification VPD Page are
-zero-terminated/zero-padded.
-
-Fix this inconsistency by using space-padding for all of the above fields.
-
-Signed-off-by: David Disseldorp <ddiss@suse.de>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Bryant G. Ly <bly@catalogicsoftware.com>
-Reviewed-by: Lee Duncan <lduncan@suse.com>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Reviewed-by: Roman Bolshakov <r.bolshakov@yadro.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: fe9ccc785de5 ("mlxsw: spectrum_switchdev: Don't batch VLAN operations")
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Acked-by: Jiri Pirko <jiri@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/target/target_core_spc.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/target/target_core_spc.c b/drivers/target/target_core_spc.c
-index cb0461a10808..93424db5f002 100644
---- a/drivers/target/target_core_spc.c
-+++ b/drivers/target/target_core_spc.c
-@@ -108,12 +108,17 @@ spc_emulate_inquiry_std(struct se_cmd *cmd, unsigned char *buf)
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
+@@ -1424,7 +1424,7 @@ static void
+ mlxsw_sp_bridge_port_vlan_del(struct mlxsw_sp_port *mlxsw_sp_port,
+ 			      struct mlxsw_sp_bridge_port *bridge_port, u16 vid)
+ {
+-	u16 pvid = mlxsw_sp_port->pvid == vid ? 0 : vid;
++	u16 pvid = mlxsw_sp_port->pvid == vid ? 0 : mlxsw_sp_port->pvid;
+ 	struct mlxsw_sp_port_vlan *mlxsw_sp_port_vlan;
  
- 	buf[7] = 0x2; /* CmdQue=1 */
- 
--	memcpy(&buf[8], "LIO-ORG ", 8);
--	memset(&buf[16], 0x20, 16);
-+	/*
-+	 * ASCII data fields described as being left-aligned shall have any
-+	 * unused bytes at the end of the field (i.e., highest offset) and the
-+	 * unused bytes shall be filled with ASCII space characters (20h).
-+	 */
-+	memset(&buf[8], 0x20, 8 + 16 + 4);
-+	memcpy(&buf[8], "LIO-ORG", sizeof("LIO-ORG") - 1);
- 	memcpy(&buf[16], dev->t10_wwn.model,
--	       min_t(size_t, strlen(dev->t10_wwn.model), 16));
-+	       strnlen(dev->t10_wwn.model, 16));
- 	memcpy(&buf[32], dev->t10_wwn.revision,
--	       min_t(size_t, strlen(dev->t10_wwn.revision), 4));
-+	       strnlen(dev->t10_wwn.revision, 4));
- 	buf[4] = 31; /* Set additional length to 31 */
- 
- 	return 0;
-@@ -251,7 +256,9 @@ check_t10_vend_desc:
- 	buf[off] = 0x2; /* ASCII */
- 	buf[off+1] = 0x1; /* T10 Vendor ID */
- 	buf[off+2] = 0x0;
--	memcpy(&buf[off+4], "LIO-ORG", 8);
-+	/* left align Vendor ID and pad with spaces */
-+	memset(&buf[off+4], 0x20, 8);
-+	memcpy(&buf[off+4], "LIO-ORG", sizeof("LIO-ORG") - 1);
- 	/* Extra Byte for NULL Terminator */
- 	id_len++;
- 	/* Identifier Length */
--- 
-2.19.1
-
+ 	mlxsw_sp_port_vlan = mlxsw_sp_port_vlan_find_by_vid(mlxsw_sp_port, vid);
 
 
