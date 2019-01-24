@@ -2,139 +2,66 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D89DC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:26:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56381C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:27:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC5DD20811
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:26:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YIifzmPE"
+	by mail.kernel.org (Postfix) with ESMTP id 2D9E021855
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:27:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727867AbfAXL01 (ORCPT
+        id S1727827AbfAXL1P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 06:26:27 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:38978 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727617AbfAXL00 (ORCPT
+        Thu, 24 Jan 2019 06:27:15 -0500
+Received: from www62.your-server.de ([213.133.104.62]:46876 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727409AbfAXL1P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 06:26:26 -0500
-Received: by mail-it1-f196.google.com with SMTP id a6so3863270itl.4
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 03:26:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wYYDIZC0ZN9AMXQL3vOyxwdVx9TvTCIi6QQpdmvhI+4=;
-        b=YIifzmPEIpkCk/CFNx0FQasSOzULmpRwmmbHtG9bdFFTqd7hPxDKOAhkYWOshfMG9U
-         5iLJVXV/qbSb6l2jK7MhsghJsMJVvHTcGUktnsFJQIF/+/10c8vRnsRzCAKZHHDqsF1N
-         6GjY2eEtXbAew9VwFbewbQms/uGqSHoDtQQmE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wYYDIZC0ZN9AMXQL3vOyxwdVx9TvTCIi6QQpdmvhI+4=;
-        b=H2/twtE50SlEomehV6VR0spKEr4AEreuIcdHpR6x8YkuS8bmUWd44qNEVswbbzdFae
-         WoXES8OZ4Z4n309iRxTN0n/fEVOIPqxvIrZtlE1wy98zdG4gza4eWNj31Uejgq4Kwjvx
-         u7V8N9XGelrGu7HVcYjcAho8vH/WL1Hb5Mh7mEq8AEg7pS6tCXZLZa+Vec+GwZvBn7sN
-         VDXBvTDM0ASXrB+LfYEjqum0R5SkVJNItTecfoAbezwJnoV4gBfveRf8EkinYojjy/9r
-         eaYvU+lD2rKGc5rhM8P++8REZSrLWy/7hinvhIOeomku+qd8Tw9HPHmfjaTZ7RBepUi/
-         37hQ==
-X-Gm-Message-State: AJcUukfLB15W1BgxajDezQqXANYhOxXUqOxwTE/bxzATuB6DzUw+OslS
-        Hs2H4S85c4iZI6WCVVDJvn9VlUKLpjqCEJThsvFLvA==
-X-Google-Smtp-Source: ALg8bN5Qirvee4cj0+G+OHBW4ZJWfWnzhIaOdLarAZ+wKU1LOI4NQw6yzf2KnVatfnJc5KOYvnIO+D4XRuts4eo59E8=
-X-Received: by 2002:a02:183:: with SMTP id 3mr4017791jak.130.1548329185953;
- Thu, 24 Jan 2019 03:26:25 -0800 (PST)
+        Thu, 24 Jan 2019 06:27:15 -0500
+Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1gmdA6-0002GQ-Q8; Thu, 24 Jan 2019 12:27:10 +0100
+Received: from [178.197.249.22] (helo=linux.home)
+        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1gmdA6-000CWu-KB; Thu, 24 Jan 2019 12:27:10 +0100
+Subject: Re: [PATCH] net: dev_is_mac_header_xmit() true for ARPHRD_RAWIP
+To:     =?UTF-8?Q?Maciej_=c5=bbenczykowski?= <zenczykowski@gmail.com>,
+        =?UTF-8?Q?Maciej_=c5=bbenczykowski?= <maze@google.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Alexei Starovoitov <ast@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+References: <20190124110702.140834-1-zenczykowski@gmail.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <faa2e0bb-285d-4918-318f-49d17aefbcde@iogearbox.net>
+Date:   Thu, 24 Jan 2019 12:27:09 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-References: <850b6aee-0040-c333-b125-45211c18ada5@daenzer.net>
- <CAKv+Gu99zHqcQtj6TiOXAr3Qa6WWhKem+DHVA_mAQ0-Bc0Vbqw@mail.gmail.com>
- <047667fd-17be-1c37-5d2a-26768cfd6ab8@daenzer.net> <CAKv+Gu_VBd8agHASc5RS0eCgyXP64Lt_i4yPuBjKwGQ+5Lpd5Q@mail.gmail.com>
- <CADnq5_O1uxCrSksfF127AZTfbmdukxmqGdh2Ee0zM6CqgG_Mhg@mail.gmail.com>
- <CAKv+Gu-4uYh_HD_5Ry_L80Nf5zpRhT4oJYhhG5_8g3gSzBs2tg@mail.gmail.com>
- <20190123071521.GB20526@infradead.org> <CAKv+Gu8+77uZHJ6ZYjGNcKQL8C3cT5Ree+TcTVmkQXAHV-ADyg@mail.gmail.com>
- <20190123164428.GA9367@infradead.org> <CAKv+Gu-9vEKu8mG-o+-4M1ZcgZmTTJVfEdNS9R27AFX8P5sqyQ@mail.gmail.com>
- <20190124091316.GA22796@infradead.org> <bb559f74-4b1e-d5ee-74fb-b5dcd4a128cb@amd.com>
- <CAKv+Gu_3LurSN-6w1WijPfpJpc+Pgu0YTnwTfMrXMF3-AKAnJA@mail.gmail.com>
- <953e5e5f-5d47-d6df-40df-c8c94db5447f@amd.com> <CAKv+Gu9umPEmB+wh54NOTYcQ14oxf7rwVAXgCqo7V2A+VwkqPA@mail.gmail.com>
- <57590a48-4629-e2a1-8673-ce9eb2ec210b@amd.com>
-In-Reply-To: <57590a48-4629-e2a1-8673-ce9eb2ec210b@amd.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Thu, 24 Jan 2019 12:26:14 +0100
-Message-ID: <CAKv+Gu_2f0FaJ+Th7H48u4GrPX=MM9xw0fFjdwhfRrr1nhgEkA@mail.gmail.com>
-Subject: Re: [RFC PATCH] drm: disable WC optimization for cache coherent
- devices on non-x86
-To:     "Koenig, Christian" <Christian.Koenig@amd.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Alex Deucher <alexdeucher@gmail.com>,
-        =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel@daenzer.net>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        David Airlie <airlied@linux.ie>,
-        "Huang, Ray" <Ray.Huang@amd.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "Zhang, Jerry" <Jerry.Zhang@amd.com>,
-        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
-        Sean Paul <sean@poorly.run>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190124110702.140834-1-zenczykowski@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.2/25326/Thu Jan 24 03:30:43 2019)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 24 Jan 2019 at 12:23, Koenig, Christian
-<Christian.Koenig@amd.com> wrote:
->
-> Am 24.01.19 um 10:59 schrieb Ard Biesheuvel:
-> > [SNIP]
-> > This is *exactly* my point the whole time.
-> >
-> > The current code has
-> >
-> > static inline bool drm_arch_can_wc_memory(void)
-> > {
-> > #if defined(CONFIG_PPC) && !defined(CONFIG_NOT_COHERENT_CACHE)
-> >     return false;
-> >
-> > which means the optimization is disabled *unless the system is
-> > non-cache coherent*
-> >
-> > So if you have reports that the optimization works on some PowerPC, it
-> > must be non-cache coherent PowerPC, because that is the only place
-> > where it is enabled in the first place.
-> >
-> >> The only problematic here actually seems to be ARM, so you should
-> >> probably just add an "#ifdef .._ARM return false;".
-> >>
-> > ARM/arm64 does not have a Kconfig symbol like
-> > CONFIG_NOT_COHERENT_CACHE, so we can only disable it everywhere. If
-> > there are non-coherent ARM systems that are currently working in the
-> > same way as those non-coherent PowerPC systems, we will break them by
-> > doing this.
->
-> Summing the things I've read so far for ARM up I actually think it
-> depends on a runtime configuration and not on compile time one.
->
-> So the whole idea of providing the device to the drm_*_can_wc_memory()
-> function isn't so far fetched.
->
+On 01/24/2019 12:07 PM, Maciej Żenczykowski wrote:
+> From: Maciej Żenczykowski <maze@google.com>
+> 
+> __bpf_redirect() and act_mirred checks this boolean
+> to determine whether to prefix an ethernet header.
+> 
+> Signed-off-by: Maciej Żenczykowski <maze@google.com>
 
-Thank you.
+I presume David would pick this up for net tree, so:
 
-> But for now I do prefer working and slightly slower system over broken
-> one, so I think we should just disable this on ARM for now.
->
-
-Again, this is not about non-cache coherent being slower without the
-optimization, it is about non-cache coherent likely not working *at
-all* unless the optimization is enabled.
-
-Otherwise, the driver will vmap() DMA pages with cacheable attributes,
-while the non-cache coherent device uses uncached attributes, breaking
-coherency.
+Acked-by: Daniel Borkmann <daniel@iogearbox.net>
