@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 503F4C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:22:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFB3FC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:22:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06245218D0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:22:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75FCA217D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:22:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NxkbGPNL";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="G7S3ow5e"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="k8oZ4IhZ";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="YeEydgoE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728855AbfAXUWT (ORCPT
+        id S1727908AbfAXUWX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 15:22:19 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:52890 "EHLO
+        Thu, 24 Jan 2019 15:22:23 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:53022 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726040AbfAXUWS (ORCPT
+        with ESMTP id S1726040AbfAXUWV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 15:22:18 -0500
+        Thu, 24 Jan 2019 15:22:21 -0500
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 0DA8B60CA5; Thu, 24 Jan 2019 20:22:14 +0000 (UTC)
+        id BC4DD608CD; Thu, 24 Jan 2019 20:22:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548361337;
-        bh=zaruU3IgIUz/nxpIq1WfW9wyVxVMCUZsHVSm1uZdDRo=;
+        s=default; t=1548361340;
+        bh=vZlxdQaHolHuqHIibv1w2IYPyGyce7b5TDgg6udD258=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NxkbGPNL7gH2WH95z3ObmeRflOuy0OikdIIXB1lF6RyMLr93jey51NXzNV97uiFtm
-         hs31pyrEzHcwb9GpZzyjFfjL00bdT4MxgF3ly/8WJMjbKCASbkd2nK3q9jChi8DR+Z
-         YUc2s3yOEEbEaB73IzMcU2A5mm0pz+GxF8vy2bzg=
+        b=k8oZ4IhZGa8ldtiRUoctG3DtA/9s0oItFC/asqdjakQLVtED5aGiaICEDS1hHE5kl
+         NewkK+PDOjIhvnbfplOIS+MoItWXoFQ4uTDMpwcKj91G1AS0Hj5Ep+4s3HiUWqgn3O
+         zk5XaMN+4g68rSLqVwqpJvZsRpMK8EjmsKGhvVtQ=
 Received: from codeaurora.org (i-global254.qualcomm.com [199.106.103.254])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: ilina@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D68976034E;
-        Thu, 24 Jan 2019 20:22:11 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 77A1160C55;
+        Thu, 24 Jan 2019 20:22:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548361333;
-        bh=zaruU3IgIUz/nxpIq1WfW9wyVxVMCUZsHVSm1uZdDRo=;
+        s=default; t=1548361334;
+        bh=vZlxdQaHolHuqHIibv1w2IYPyGyce7b5TDgg6udD258=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G7S3ow5eudFIWqbkmy95xqUY35CjVFQ9YvBXQXG5WpFyPfdxm28/CU1edFh2MiIpr
-         mdw2Ns9WlC7TrVJqlYB/6mxT+0I96OTZKQlSCTe9cHYI1xplXQb4+/8UlmOOam3dlA
-         p1CQPZdi1EBh9PUQEijtySSaH/MpmB/ICQFJ/XCA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D68976034E
+        b=YeEydgoEVi9/siueEOK438l+5+IfdpuufB2beuE9IDMhlEPlcocpC8owPAwCcaj4d
+         1ss6sOcEXBHLotAcwbwamTWFwtHQCfLNPYAew7HKABdQs50rYbS9E+QJKUQ7jQuaPl
+         dXuMSfR+HANRYr9OJs2umfsQ1xKUoJRfKlxE1Zig=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 77A1160C55
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
 From:   Lina Iyer <ilina@codeaurora.org>
@@ -54,11 +54,10 @@ To:     swboyd@chromium.org, evgreen@chromium.org, marc.zyngier@arm.com
 Cc:     linux-kernel@vger.kernel.org, rplsssn@codeaurora.org,
         linux-arm-msm@vger.kernel.org, thierry.reding@gmail.com,
         bjorn.andersson@linaro.org, dianders@chromium.org,
-        linus.walleij@linaro.org, Thierry Reding <treding@nvidia.com>,
-        Lina Iyer <ilina@codeaurora.org>
-Subject: [PATCH v2 1/8] gpio: Add support for hierarchical IRQ domains
-Date:   Thu, 24 Jan 2019 13:21:58 -0700
-Message-Id: <20190124202205.7940-2-ilina@codeaurora.org>
+        linus.walleij@linaro.org, Lina Iyer <ilina@codeaurora.org>
+Subject: [PATCH v2 2/8] irqdomain: add bus token DOMAIN_BUS_WAKEUP
+Date:   Thu, 24 Jan 2019 13:21:59 -0700
+Message-Id: <20190124202205.7940-3-ilina@codeaurora.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124202205.7940-1-ilina@codeaurora.org>
 References: <20190124202205.7940-1-ilina@codeaurora.org>
@@ -69,72 +68,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+Add new bus token to describe domains that are wakeup capable.
 
-Hierarchical IRQ domains can be used to stack different IRQ controllers
-on top of each other. One specific use-case where this can be useful is
-if a power management controller has top-level controls for wakeup
-interrupts. In such cases, the power management controller can be a
-parent to other interrupt controllers and program additional registers
-when an IRQ has its wake capability enabled or disabled.
-
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+Suggested-by: Stephen Boyd <swboyd@chromium.org>
 Signed-off-by: Lina Iyer <ilina@codeaurora.org>
 ---
- drivers/gpio/gpiolib.c      | 15 +++++++++++----
- include/linux/gpio/driver.h |  6 ++++++
- 2 files changed, 17 insertions(+), 4 deletions(-)
+ include/linux/irqdomain.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 1651d7f0a303..1c3ae1d3c368 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1888,7 +1888,9 @@ static int gpiochip_add_irqchip(struct gpio_chip *gpiochip,
- 		type = IRQ_TYPE_NONE;
- 	}
+diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
+index 35965f41d7be..05055bc992ab 100644
+--- a/include/linux/irqdomain.h
++++ b/include/linux/irqdomain.h
+@@ -82,6 +82,7 @@ enum irq_domain_bus_token {
+ 	DOMAIN_BUS_NEXUS,
+ 	DOMAIN_BUS_IPI,
+ 	DOMAIN_BUS_FSL_MC_MSI,
++	DOMAIN_BUS_WAKEUP,
+ };
  
--	gpiochip->to_irq = gpiochip_to_irq;
-+	if (!gpiochip->to_irq)
-+		gpiochip->to_irq = gpiochip_to_irq;
-+
- 	gpiochip->irq.default_type = type;
- 	gpiochip->irq.lock_key = lock_key;
- 	gpiochip->irq.request_key = request_key;
-@@ -1898,9 +1900,14 @@ static int gpiochip_add_irqchip(struct gpio_chip *gpiochip,
- 	else
- 		ops = &gpiochip_domain_ops;
- 
--	gpiochip->irq.domain = irq_domain_add_simple(np, gpiochip->ngpio,
--						     gpiochip->irq.first,
--						     ops, gpiochip);
-+	if (gpiochip->irq.parent_domain)
-+		gpiochip->irq.domain = irq_domain_add_hierarchy(gpiochip->irq.parent_domain,
-+								0, gpiochip->ngpio,
-+								np, ops, gpiochip);
-+	else
-+		gpiochip->irq.domain = irq_domain_add_simple(np, gpiochip->ngpio,
-+							     gpiochip->irq.first,
-+							     ops, gpiochip);
- 	if (!gpiochip->irq.domain)
- 		return -EINVAL;
- 
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index 07cddbf45186..88ef196f96ec 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -48,6 +48,12 @@ struct gpio_irq_chip {
- 	 */
- 	const struct irq_domain_ops *domain_ops;
- 
-+	/**
-+	 * @parent_domain:
-+	 *
-+	 */
-+	struct irq_domain *parent_domain;
-+
- 	/**
- 	 * @handler:
- 	 *
+ /**
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
