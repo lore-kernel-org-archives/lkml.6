@@ -2,132 +2,108 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93582C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:08:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE9DBC282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:08:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 630EE21855
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:08:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548360530;
-	bh=s7JqzKQj1vzEpUxD5JeQzJK1KNyKvhEaR5mEJLXvmZA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=v17MKqf8gwGFZulooEX6v8dmBsBt8SGULODG2NmCiNeutz4U0tbkIuzW4M38MDjp5
-	 JNv89P1C8/0QmX470MNzRFGLDJ3M7awQ4W5oYRm7ITfiXr0NDgl40ZL2Oft7qSPTfQ
-	 uV/1vNLR0KRAFlPtRzKzQqQNeeLoU17o6yDypkGU=
+	by mail.kernel.org (Postfix) with ESMTP id BC87121872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:08:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EV/jzKWs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731061AbfAXT2y (ORCPT
+        id S1730465AbfAXUIv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:28:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55680 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731031AbfAXT2s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:28:48 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 70285218FE;
-        Thu, 24 Jan 2019 19:28:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358126;
-        bh=s7JqzKQj1vzEpUxD5JeQzJK1KNyKvhEaR5mEJLXvmZA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ezLxUTbr6KpmzfVyRMEo9jS5VOe16Ltgi9cLkSv/nKZn86Zun0tNHHu9ags3fdcmL
-         3sxsJ+jIhYqCNkuIFm7iSbUZCE8xic2G4TecMHVHbRYPKL76LCk6azfBamY7c8iR0N
-         kV6tt0zQt3icDhsLYReTI6UHfVE5CBYwSnS846U8=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+        Thu, 24 Jan 2019 15:08:51 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:33205 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726038AbfAXUIs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 15:08:48 -0500
+Received: by mail-pg1-f195.google.com with SMTP id z11so3159186pgu.0;
+        Thu, 24 Jan 2019 12:08:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=k2UNI+y5cpAGw1jlqd4+C7gsDdBuWa6hZAk4Nv/vaK4=;
+        b=EV/jzKWsdRDcQLxTLksGoetxIEDdJxS+66UugLyOIKNmACMoigZP4fEstWeK5gE6dc
+         VV9q2bWAQLDo8E0sxQRwa//k2Y4oc3GMpyZEFu5h/WzCD1+AXqdnQXJHwySUskZ+HvfZ
+         8bcYylcLB34isrlwDDYtecOJ2zm8lL47KSPNH+Xe51b1U7BZUx/mGVAF4/3cOP6Ap1un
+         g7Dh7PF9hXVhMcG0ekDT2hVpWeSEXci957Tls51Mik+7queWXSuTRmGAEZntIUjnUoQ7
+         T3AL9SaLJZj3hYIIFtVrqkYjRGWzurxHX0xpv7hOcAYB2QlNNr8CLCKXBWp3Vw62DMpc
+         slXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=k2UNI+y5cpAGw1jlqd4+C7gsDdBuWa6hZAk4Nv/vaK4=;
+        b=rUBn4VJZBA1Ae8Hhzr1G4jXA9Y02NLDYQ8RazcINUuB6GIjcm0Q1lpr2JgFv3t6kLo
+         3imdl2LzIngJFoIez6sRzpRTBv951DtfdzLVbOKso96OesLSQxp7z4wBs7o6uIQFPM2N
+         XSssjaoGdIGjjKEdpzl9tEUz/yzxvc2YZGbbXVOXuwRBTdqeSQCVGLmEtyId3URvr7Hv
+         lgqFF5L4Mcuxrwy6H27BQeRNSoQctaKd+XQU2bLbojY0wRqbMVqWEwE0KAbcuWFD8Q69
+         c8QuClZVZjebr4y/AmXFASy1SKHLdCJlMZwSWept0/t+CabGxl3ubdxugBtF/nyMRRPq
+         aUHA==
+X-Gm-Message-State: AJcUukcD8c2ZEdjdNHPgqVdbeTNEmBtfpwJb8sqmKnKzUOq5e/HAhXn3
+        FqcdC3DnLtkVsqT7INUFxnFNTsFD
+X-Google-Smtp-Source: ALg8bN7JCr/4Wy/68XUom9P7Zs/71bnIhPg3yuQBeZYzf8zDgFAdRawGDlWHXLDq/ewYrMFJ5ROr9w==
+X-Received: by 2002:a63:c141:: with SMTP id p1mr7262280pgi.424.1548360527564;
+        Thu, 24 Jan 2019 12:08:47 -0800 (PST)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
+        by smtp.gmail.com with ESMTPSA id y71sm41434831pfi.123.2019.01.24.12.08.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 24 Jan 2019 12:08:46 -0800 (PST)
+From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Breno Leitao <leitao@debian.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 084/104] powerpc/pseries/cpuidle: Fix preempt warning
-Date:   Thu, 24 Jan 2019 20:20:13 +0100
-Message-Id: <20190124190204.327469191@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190124190154.968308875@linuxfoundation.org>
-References: <20190124190154.968308875@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Cc:     vivien.didelot@gmail.com, Florian Fainelli <f.fainelli@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE)
+Subject: [PATCH] of: Make of_node_name_eq() case insensitive
+Date:   Thu, 24 Jan 2019 12:08:25 -0800
+Message-Id: <20190124200825.2611-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+Since c32569e358ad ("regulator: Use of_node_name_eq for node name
+comparisons") Vivien reported the mc13892-regulator complaining about
+not being able to find regulators.
 
-------------------
+This is because prior to that commit we used of_node_cmp() to compare
+the regulator array passed from mc13892_regulators down to
+mc13xxx_parse_regulators_dt() and they are all defined in uppercase
+letters by the MC13892_*_DEFINE* macros, whereas they are defined as
+lowercase in the DTS.
 
-[ Upstream commit 2b038cbc5fcf12a7ee1cc9bfd5da1e46dacdee87 ]
+Fix this by use strncasecmp() since that makes sure the comparison is
+case insensitive like what of_node_cmp() did.
 
-When booting a pseries kernel with PREEMPT enabled, it dumps the
-following warning:
-
-   BUG: using smp_processor_id() in preemptible [00000000] code: swapper/0/1
-   caller is pseries_processor_idle_init+0x5c/0x22c
-   CPU: 13 PID: 1 Comm: swapper/0 Not tainted 4.20.0-rc3-00090-g12201a0128bc-dirty #828
-   Call Trace:
-   [c000000429437ab0] [c0000000009c8878] dump_stack+0xec/0x164 (unreliable)
-   [c000000429437b00] [c0000000005f2f24] check_preemption_disabled+0x154/0x160
-   [c000000429437b90] [c000000000cab8e8] pseries_processor_idle_init+0x5c/0x22c
-   [c000000429437c10] [c000000000010ed4] do_one_initcall+0x64/0x300
-   [c000000429437ce0] [c000000000c54500] kernel_init_freeable+0x3f0/0x500
-   [c000000429437db0] [c0000000000112dc] kernel_init+0x2c/0x160
-   [c000000429437e20] [c00000000000c1d0] ret_from_kernel_thread+0x5c/0x6c
-
-This happens because the code calls get_lppaca() which calls
-get_paca() and it checks if preemption is disabled through
-check_preemption_disabled().
-
-Preemption should be disabled because the per CPU variable may make no
-sense if there is a preemption (and a CPU switch) after it reads the
-per CPU data and when it is used.
-
-In this device driver specifically, it is not a problem, because this
-code just needs to have access to one lppaca struct, and it does not
-matter if it is the current per CPU lppaca struct or not (i.e. when
-there is a preemption and a CPU migration).
-
-That said, the most appropriate fix seems to be related to avoiding
-the debug_smp_processor_id() call at get_paca(), instead of calling
-preempt_disable() before get_paca().
-
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Reported-by: Vivien Didelot <vivien.didelot@gmail.com>
+Fixes: c32569e358ad ("regulator: Use of_node_name_eq for node name comparisons")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- drivers/cpuidle/cpuidle-pseries.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/of/base.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/cpuidle/cpuidle-pseries.c b/drivers/cpuidle/cpuidle-pseries.c
-index 07135e009d8b..601a6c3acc7f 100644
---- a/drivers/cpuidle/cpuidle-pseries.c
-+++ b/drivers/cpuidle/cpuidle-pseries.c
-@@ -240,7 +240,13 @@ static int pseries_idle_probe(void)
- 		return -ENODEV;
+diff --git a/drivers/of/base.c b/drivers/of/base.c
+index 5226e898476e..ff47c86277cb 100644
+--- a/drivers/of/base.c
++++ b/drivers/of/base.c
+@@ -66,7 +66,8 @@ bool of_node_name_eq(const struct device_node *np, const char *name)
+ 	node_name = kbasename(np->full_name);
+ 	len = strchrnul(node_name, '@') - node_name;
  
- 	if (firmware_has_feature(FW_FEATURE_SPLPAR)) {
--		if (lppaca_shared_proc(get_lppaca())) {
-+		/*
-+		 * Use local_paca instead of get_lppaca() since
-+		 * preemption is not disabled, and it is not required in
-+		 * fact, since lppaca_ptr does not need to be the value
-+		 * associated to the current CPU, it can be from any CPU.
-+		 */
-+		if (lppaca_shared_proc(local_paca->lppaca_ptr)) {
- 			cpuidle_state_table = shared_states;
- 			max_idle_state = ARRAY_SIZE(shared_states);
- 		} else {
+-	return (strlen(name) == len) && (strncmp(node_name, name, len) == 0);
++	return (strlen(name) == len) &&
++		(strncasecmp(node_name, name, len) == 0);
+ }
+ EXPORT_SYMBOL(of_node_name_eq);
+ 
 -- 
-2.19.1
-
-
+2.17.1
 
