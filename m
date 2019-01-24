@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F54DC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:29:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55481C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:29:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59AC9218F0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:29:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20563218F0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:29:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358161;
-	bh=duGUUSRAk2aDiZgkaCLu9fA0RM7SnJZUVIWAXxJEkV4=;
+	s=default; t=1548358164;
+	bh=3yP/NIRtqpTPe+mSYKIuMPU0dfQlsJ7PoeEr5crCJA4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=sGIFhX4I6f7xjb5idhZJEP0r1A1bHTi4bv4yo0Duug5tcvVXXozjAWCfqlLwM1eTv
-	 gevxF45gzjKWQxZZE3B7XY3UDhJ/0ifddHRzEUVj6TGs/6+ZT9X0//bNwCsBt5i+IH
-	 N+yzgweGIifUMVXcv4nxBjhgkOtaVuc5GN0XJMRk=
+	b=N7kgpFeZI2ErKEzmJTZY+yumUEHbprEB48a5ysLi0d4b7H5p8QG0JjFKN7hkOVejm
+	 lNeqIk3sleHmkNCUrZWLOmHTIPZr8hkJprITnm2Aim7ZSxcjqzW1Tx68v3qxxTEBOk
+	 c0ZSrqPX6boJZpRfH7UF/32MGdi5EslE1tfMcV0E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730736AbfAXT3U (ORCPT
+        id S1731163AbfAXT3X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:29:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56206 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:29:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56495 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731113AbfAXT3K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:29:10 -0500
+        id S1731137AbfAXT3U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:29:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0FC90218E2;
-        Thu, 24 Jan 2019 19:29:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B870C218E2;
+        Thu, 24 Jan 2019 19:29:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358149;
-        bh=duGUUSRAk2aDiZgkaCLu9fA0RM7SnJZUVIWAXxJEkV4=;
+        s=default; t=1548358160;
+        bh=3yP/NIRtqpTPe+mSYKIuMPU0dfQlsJ7PoeEr5crCJA4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j3h3oxDBFILgDyPVvGDXmZfokTXL4u8U5v76YHyLLl+Va65vJX6vv6Ftj3yVbdZ5B
-         ZKSESlTQGkbw8CJy55dMBXou9q1DC0vF9bcssZlSSYuSm94NJAmf83LPDyUUry3BXU
-         YAtw0kHF6XYeB9VhjJgO+1V/HM1ddgQeAvA6E74c=
+        b=c1sga37tjv5CEAXpy3L26P7iT0OhwSPQlL66IeXVue1WklMifc6w4uHMqJ3tYML25
+         144kRWIcqdU6fEyhEMNa3Fy8lxnTLt0TpKHmja4VhCv6AFp2ONuXIOof/vKl3hIqup
+         nJEMKLPtJsEVWMNkjk8ZZpUauPLA1Ny8oDxXuu+U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ondrej Mosnacek <omosnace@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
+        stable@vger.kernel.org, Breno Leitao <leitao@debian.org>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 11/39] selinux: always allow mounting submounts
-Date:   Thu, 24 Jan 2019 20:20:14 +0100
-Message-Id: <20190124190448.630960639@linuxfoundation.org>
+Subject: [PATCH 4.9 15/39] powerpc/xmon: Fix invocation inside lock region
+Date:   Thu, 24 Jan 2019 20:20:18 +0100
+Message-Id: <20190124190448.777309021@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190448.232316246@linuxfoundation.org>
 References: <20190124190448.232316246@linuxfoundation.org>
@@ -66,66 +67,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 2cbdcb882f97a45f7475c67ac6257bbc16277dfe ]
+[ Upstream commit 8d4a862276a9c30a269d368d324fb56529e6d5fd ]
 
-If a superblock has the MS_SUBMOUNT flag set, we should always allow
-mounting it. These mounts are done automatically by the kernel either as
-part of mounting some parent mount (e.g. debugfs always mounts tracefs
-under "tracing" for compatibility) or they are mounted automatically as
-needed on subdirectory accesses (e.g. NFS crossmnt mounts). Since such
-automounts are either an implicit consequence of the parent mount (which
-is already checked) or they can happen during regular accesses (where it
-doesn't make sense to check against the current task's context), the
-mount permission check should be skipped for them.
+Currently xmon needs to get devtree_lock (through rtas_token()) during its
+invocation (at crash time). If there is a crash while devtree_lock is being
+held, then xmon tries to get the lock but spins forever and never get into
+the interactive debugger, as in the following case:
 
-Without this patch, attempts to access contents of an automounted
-directory can cause unexpected SELinux denials.
+	int *ptr = NULL;
+	raw_spin_lock_irqsave(&devtree_lock, flags);
+	*ptr = 0xdeadbeef;
 
-In the current kernel tree, the MS_SUBMOUNT flag is set only via
-vfs_submount(), which is called only from the following places:
- - AFS, when automounting special "symlinks" referencing other cells
- - CIFS, when automounting "referrals"
- - NFS, when automounting subtrees
- - debugfs, when automounting tracefs
+This patch avoids calling rtas_token(), thus trying to get the same lock,
+at crash time. This new mechanism proposes getting the token at
+initialization time (xmon_init()) and just consuming it at crash time.
 
-In all cases the submounts are meant to be transparent to the user and
-it makes sense that if mounting the master is allowed, then so should be
-the automounts. Note that CAP_SYS_ADMIN capability checking is already
-skipped for (SB_KERNMOUNT|SB_SUBMOUNT) in:
- - sget_userns() in fs/super.c:
-	if (!(flags & (SB_KERNMOUNT|SB_SUBMOUNT)) &&
-	    !(type->fs_flags & FS_USERNS_MOUNT) &&
-	    !capable(CAP_SYS_ADMIN))
-		return ERR_PTR(-EPERM);
- - sget() in fs/super.c:
-        /* Ensure the requestor has permissions over the target filesystem */
-        if (!(flags & (SB_KERNMOUNT|SB_SUBMOUNT)) && !ns_capable(user_ns, CAP_SYS_ADMIN))
-                return ERR_PTR(-EPERM);
+This would allow xmon to be possible invoked independent of devtree_lock
+being held or not.
 
-Verified internally on patched RHEL 7.6 with a reproducer using
-NFS+httpd and selinux-tesuite.
-
-Fixes: 93faccbbfa95 ("fs: Better permission checking for submounts")
-Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-Signed-off-by: Paul Moore <paul@paul-moore.com>
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Reviewed-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- security/selinux/hooks.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/xmon/xmon.c | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 8ded80867b92..d293b546a2aa 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -2758,7 +2758,7 @@ static int selinux_sb_kern_mount(struct super_block *sb, int flags, void *data)
- 		return rc;
+diff --git a/arch/powerpc/xmon/xmon.c b/arch/powerpc/xmon/xmon.c
+index 760545519a0b..687e8b8bf5c6 100644
+--- a/arch/powerpc/xmon/xmon.c
++++ b/arch/powerpc/xmon/xmon.c
+@@ -73,6 +73,9 @@ static int xmon_gate;
+ #define xmon_owner 0
+ #endif /* CONFIG_SMP */
  
- 	/* Allow all mounts performed by the kernel */
--	if (flags & MS_KERNMOUNT)
-+	if (flags & (MS_KERNMOUNT | MS_SUBMOUNT))
- 		return 0;
++#ifdef CONFIG_PPC_PSERIES
++static int set_indicator_token = RTAS_UNKNOWN_SERVICE;
++#endif
+ static unsigned long in_xmon __read_mostly = 0;
  
- 	ad.type = LSM_AUDIT_DATA_DENTRY;
+ static unsigned long adrs;
+@@ -340,7 +343,6 @@ static inline void disable_surveillance(void)
+ #ifdef CONFIG_PPC_PSERIES
+ 	/* Since this can't be a module, args should end up below 4GB. */
+ 	static struct rtas_args args;
+-	int token;
+ 
+ 	/*
+ 	 * At this point we have got all the cpus we can into
+@@ -349,11 +351,11 @@ static inline void disable_surveillance(void)
+ 	 * If we did try to take rtas.lock there would be a
+ 	 * real possibility of deadlock.
+ 	 */
+-	token = rtas_token("set-indicator");
+-	if (token == RTAS_UNKNOWN_SERVICE)
++	if (set_indicator_token == RTAS_UNKNOWN_SERVICE)
+ 		return;
+ 
+-	rtas_call_unlocked(&args, token, 3, 1, NULL, SURVEILLANCE_TOKEN, 0, 0);
++	rtas_call_unlocked(&args, set_indicator_token, 3, 1, NULL,
++			   SURVEILLANCE_TOKEN, 0, 0);
+ 
+ #endif /* CONFIG_PPC_PSERIES */
+ }
+@@ -3227,6 +3229,14 @@ static void xmon_init(int enable)
+ 		__debugger_iabr_match = xmon_iabr_match;
+ 		__debugger_break_match = xmon_break_match;
+ 		__debugger_fault_handler = xmon_fault_handler;
++
++#ifdef CONFIG_PPC_PSERIES
++		/*
++		 * Get the token here to avoid trying to get a lock
++		 * during the crash, causing a deadlock.
++		 */
++		set_indicator_token = rtas_token("set-indicator");
++#endif
+ 	} else {
+ 		__debugger = NULL;
+ 		__debugger_ipi = NULL;
 -- 
 2.19.1
 
