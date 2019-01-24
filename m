@@ -2,89 +2,137 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FB3BC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:28:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D120C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:30:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55A9E218AD
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:28:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 046AC2184B
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:30:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="0T6eS9v/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727881AbfAXM2k (ORCPT
+        id S1727841AbfAXMaL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 07:28:40 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:2746 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727386AbfAXM2k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 07:28:40 -0500
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 0FE7D8DDB7796471BA59;
-        Thu, 24 Jan 2019 20:28:36 +0800 (CST)
-Received: from [127.0.0.1] (10.74.191.121) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.408.0; Thu, 24 Jan 2019
- 20:28:26 +0800
-Subject: Re: Question: pause mode disabled for marvell 88e151x phy
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
-CC:     Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Weiwei Deng <dengweiwei@huawei.com>,
-        "Yisen.Zhuang@huawei.com" <Yisen.Zhuang@huawei.com>,
-        "huangdaode@hisilicon.com" <huangdaode@hisilicon.com>,
-        "lipeng321@huawei.com" <lipeng321@huawei.com>,
-        "salil.mehta@huawei.com" <salil.mehta@huawei.com>,
-        lijianhua 00216010 <lijianhua@huawei.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <04b323d7-2a30-eaa5-8268-a7d3f30d989c@huawei.com>
- <20181215103736.GG26090@n2100.armlinux.org.uk>
- <1b4d7886-06c4-9d15-ef72-83318419b30e@huawei.com>
- <20181217143633.GH26090@n2100.armlinux.org.uk>
- <6e8034d9-cd60-2846-ef33-f8a04069e1ee@huawei.com>
- <20190123224144.imzntelxqtf3xcuj@e5254000004ec.dyn.armlinux.org.uk>
-From:   Yunsheng Lin <linyunsheng@huawei.com>
-Message-ID: <3f67e7ab-3a68-2a24-1648-36cac34ad6c0@huawei.com>
-Date:   Thu, 24 Jan 2019 20:28:25 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Thu, 24 Jan 2019 07:30:11 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:42184 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726014AbfAXMaK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 07:30:10 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0OCT5a9115839;
+        Thu, 24 Jan 2019 12:29:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=hTQDulfmjd7+MSutxcuI8Pgtaoy2isZdHjbeCOBZ7q4=;
+ b=0T6eS9v/vAnon1MWSFMdM55u/NTbOtps/WtpQEgsP6q83QQ4+c56dkucJpiKbotjZOID
+ Mv7G1XBTOhJpIawf8aGyK/t4LRflXApnQeL1lkxXES7O/Y34jfiNY0aTQg8romjZpbgt
+ x7EFH8vWeAffDWHh6w+NV6LRwN+H8XpvLTd/l/HRGHWmNEiOK0nGAZCXQdv0pjUd9k9i
+ tKYhzwGdxmznRpG9Lnx1+Y2F/AYi2TMVyaj//AyhCTR4DrblnujmUUDHSZRzqusyfrVF
+ gqvTWa5TPiFWV9q8uBb4+PWB/A34jXw2N1xmNyISBQO78JbTt6oygBEzbWXR/Amji9+8 vA== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2120.oracle.com with ESMTP id 2q3vhrydj7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 24 Jan 2019 12:29:52 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0OCTp14023485
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 24 Jan 2019 12:29:52 GMT
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0OCTodn029526;
+        Thu, 24 Jan 2019 12:29:50 GMT
+Received: from kadam (/197.157.34.164)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 24 Jan 2019 04:29:50 -0800
+Date:   Thu, 24 Jan 2019 15:29:18 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Maya Nakamura <m.maya.nakamura@gmail.com>
+Cc:     lorenzo.pieralisi@arm.com, bhelgaas@google.com,
+        linux-pci@vger.kernel.org, kys@microsoft.com,
+        sthemmin@microsoft.com, olaf@aepfle.de, apw@canonical.com,
+        jasowang@redhat.com, mikelley@microsoft.com,
+        Alexander.Levin@microsoft.com, marcelo.cerri@canonical.com,
+        vkuznets@redhat.com, haiyangz@microsoft.com,
+        driverdev-devel@linuxdriverproject.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] PCI: hv: Refactor hv_irq_unmask() to use
+ cpumask_to_vpset()
+Message-ID: <20190124122918.GL4482@kadam>
+References: <cover.1548232616.git.m.maya.nakamura@gmail.com>
+ <885d207cd90a558364d611e4ebd64a87aa8962d7.1548232616.git.m.maya.nakamura@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190123224144.imzntelxqtf3xcuj@e5254000004ec.dyn.armlinux.org.uk>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.74.191.121]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <885d207cd90a558364d611e4ebd64a87aa8962d7.1548232616.git.m.maya.nakamura@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9145 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=965
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901240091
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/1/24 6:41, Russell King - ARM Linux admin wrote:
-> On Sat, Jan 05, 2019 at 11:28:19AM +0800, Yunsheng Lin wrote:
->> On 2018/12/17 22:36, Russell King - ARM Linux wrote:
->>> I'll try to do further diagnosis over Christmas in case I've missed
->>> something, but I suspect it may be one of those "weird behaviour" issues
->>> where the safest action is to disable pause mode as per my commit -
->>> which is far saner than having mismatched pause status on either end
->>> of a link.  However, given that Marvell specs are all NDA-only, it's
->>> very difficult to investigate beyond "this is the observed behaviour".
->>
->> Hi,
->>
->> Is there any update on the further diagnosis?
-> 
-> Hi,
-> 
-> I've finally been able to do some further diagnosis (with a 'scope).
-> It would appear that the network adapter had PHY polling enabled,
-> which meant that it overwrote the PHYs advertisement register
-> during negotiation.  I thought I'd checked that scenario, but alas
-> clearing the PHY poll enable bit on its own doesn't stop it polling!
-> 
-> I'll send a revert for the commit shortly.
+On Wed, Jan 23, 2019 at 01:02:12PM -0800, Maya Nakamura wrote:
+> @@ -908,12 +906,12 @@ static void hv_irq_unmask(struct irq_data *data)
+>  	struct retarget_msi_interrupt *params;
+>  	struct hv_pcibus_device *hbus;
+>  	struct cpumask *dest;
+> +	cpumask_var_t tmp;
+>  	struct pci_bus *pbus;
+>  	struct pci_dev *pdev;
+>  	unsigned long flags;
+>  	u32 var_size = 0;
+> -	int cpu_vmbus;
+> -	int cpu;
+> +	int cpu, nr_bank = 0;
+                        ^^^^^
+No need to initialize this to a bogus value.  It's misleading and it
+turns off GCC's uninitialized variable warning so it can lead to bugs.
 
-Great. Thanks for the further diagnosis.
+>  	u64 res;
+>  
+>  	dest = irq_data_get_effective_affinity_mask(data);
+> @@ -953,29 +951,28 @@ static void hv_irq_unmask(struct irq_data *data)
+>  		 */
+>  		params->int_target.flags |=
+>  			HV_DEVICE_INTERRUPT_TARGET_PROCESSOR_SET;
+> -		params->int_target.vp_set.valid_bank_mask =
+> -			(1ull << HV_VP_SET_BANK_COUNT_MAX) - 1;
+> +
+> +		if (!alloc_cpumask_var(&tmp, GFP_KERNEL)) {
+> +			dev_err(&hbus->hdev->device, "out of memory");
 
-> 
+
+No need for this error message.  alloc_cpumask_var() already has better
+debug messages built in.
+
+> +			return;
+
+We can't return directly.  We need to unlock first.
+
+> +		}
+> +
+> +		cpumask_and(tmp, dest, cpu_online_mask);
+> +		nr_bank = cpumask_to_vpset(&params->int_target.vp_set, tmp);
+> +		free_cpumask_var(tmp);
+> +
+> +		if (!nr_bank) {
+> +			dev_err(&hbus->hdev->device, "too high CPU");
+
+This error message is not useful.
+
+> +			res = 1;
+> +			goto exit_unlock;
+> +		}
+
+regards,
+dan carpenter
 
