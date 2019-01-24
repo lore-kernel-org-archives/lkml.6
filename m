@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DE61C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:51:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 476E2C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:51:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 625D6217D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:51:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14FE621726
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:51:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359478;
-	bh=x/DFrryR5pNYU/RfoX30B8DcMmjCdvPD7IH3V2irbhU=;
+	s=default; t=1548359484;
+	bh=N+gZrzsjyPMXtS56vSTjam4JHbsiEQf6n7/aDRG0F5M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=eyU8sTHF5s0raSB5OhBOOAYJ7Kr+H+CIIxPBc/y9RkFc70h11fWbCn7fQRu1CUMCZ
-	 4bOSRmmDeqwRGqgQIkZz88IgI72T1av5ldYey9AMNZ1zWk0XrqNIgjqPTGSbXyqtGP
-	 I4oORhByUcFfkJBkYO8BU3XNetZinUfft4eVhpmA=
+	b=KUXHnHMNbEoMX7NlF1nDadptCXdpKkj0RmAgYvDRN+Zjux9VIyz/ZUvWiDyEtisW1
+	 09aflaIyiZ9tzoqRPTjzfYtVTYECTD0DsZumX6/uooCRiSyCwUZSHTZQqX/CMVN2U2
+	 V4EBbopPnspBRu2GF2/478fkj/TH9kmqiiuHDvjY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733018AbfAXTvQ (ORCPT
+        id S1733146AbfAXTjv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:51:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40030 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:39:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730554AbfAXTjz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:39:55 -0500
+        id S1730688AbfAXTjt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:39:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9FB17218D3;
-        Thu, 24 Jan 2019 19:39:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 692C4218D3;
+        Thu, 24 Jan 2019 19:39:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358794;
-        bh=x/DFrryR5pNYU/RfoX30B8DcMmjCdvPD7IH3V2irbhU=;
+        s=default; t=1548358788;
+        bh=N+gZrzsjyPMXtS56vSTjam4JHbsiEQf6n7/aDRG0F5M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eUwOgZtx2uzPltK8ixRsSZddYWf3K+bhVOeLTlfq4fpWqXUmT360FUOiaxcC/DTrV
-         uwHqa6zaFy9VaRJ8Q44ZceICfkFegTl4ycxepw9dMHKZyyngAZ9CYktTmQhVE4yMXO
-         5RdoKTULP5ah0MIVdiJmqFcShwCQO4KtmABxZuO8=
+        b=X8pzJAoJxDjzX31ZeItRv/bviNFkuT8B4FsNAei48+y/ew9vKDZl64AFLNi3AbeBU
+         xRXLj3tc80WyxYz8SlmWLa1Uomc34Sy3VM6F7MYqji9t7YIvejvN04aqK8/ELV8OP2
+         gBOFA+oGzmO29vbJQY7eXI3ismMCfoQTHPZ3d2hU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yonghong Song <yhs@fb.com>,
-        Andrey Ignatov <rdna@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Anders Roxell <anders.roxell@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 028/127] bpf: Allow narrow loads with offset > 0
-Date:   Thu, 24 Jan 2019 20:19:34 +0100
-Message-Id: <20190124190213.486235176@linuxfoundation.org>
+Subject: [PATCH 4.20 026/127] writeback: dont decrement wb->refcnt if !wb->bdi
+Date:   Thu, 24 Jan 2019 20:19:32 +0100
+Message-Id: <20190124190213.384298987@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
 References: <20190124190211.984305387@linuxfoundation.org>
@@ -67,147 +66,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 46f53a65d2de3e1591636c22b626b09d8684fd71 ]
+[ Upstream commit 347a28b586802d09604a149c1a1f6de5dccbe6fa ]
 
-Currently BPF verifier allows narrow loads for a context field only with
-offset zero. E.g. if there is a __u32 field then only the following
-loads are permitted:
-  * off=0, size=1 (narrow);
-  * off=0, size=2 (narrow);
-  * off=0, size=4 (full).
+This happened while running in qemu-system-aarch64, the AMBA PL011 UART
+driver when enabling CONFIG_DEBUG_TEST_DRIVER_REMOVE.
+arch_initcall(pl011_init) came before subsys_initcall(default_bdi_init),
+devtmpfs' handle_remove() crashes because the reference count is a NULL
+pointer only because wb->bdi hasn't been initialized yet.
 
-On the other hand LLVM can generate a load with offset different than
-zero that make sense from program logic point of view, but verifier
-doesn't accept it.
+Rework so that wb_put have an extra check if wb->bdi before decrement
+wb->refcnt and also add a WARN_ON_ONCE to get a warning if it happens again
+in other drivers.
 
-E.g. tools/testing/selftests/bpf/sendmsg4_prog.c has code:
-
-  #define DST_IP4			0xC0A801FEU /* 192.168.1.254 */
-  ...
-  	if ((ctx->user_ip4 >> 24) == (bpf_htonl(DST_IP4) >> 24) &&
-
-where ctx is struct bpf_sock_addr.
-
-Some versions of LLVM can produce the following byte code for it:
-
-       8:       71 12 07 00 00 00 00 00         r2 = *(u8 *)(r1 + 7)
-       9:       67 02 00 00 18 00 00 00         r2 <<= 24
-      10:       18 03 00 00 00 00 00 fe 00 00 00 00 00 00 00 00         r3 = 4261412864 ll
-      12:       5d 32 07 00 00 00 00 00         if r2 != r3 goto +7 <LBB0_6>
-
-where `*(u8 *)(r1 + 7)` means narrow load for ctx->user_ip4 with size=1
-and offset=3 (7 - sizeof(ctx->user_family) = 3). This load is currently
-rejected by verifier.
-
-Verifier code that rejects such loads is in bpf_ctx_narrow_access_ok()
-what means any is_valid_access implementation, that uses the function,
-works this way, e.g. bpf_skb_is_valid_access() for __sk_buff or
-sock_addr_is_valid_access() for bpf_sock_addr.
-
-The patch makes such loads supported. Offset can be in [0; size_default)
-but has to be multiple of load size. E.g. for __u32 field the following
-loads are supported now:
-  * off=0, size=1 (narrow);
-  * off=1, size=1 (narrow);
-  * off=2, size=1 (narrow);
-  * off=3, size=1 (narrow);
-  * off=0, size=2 (narrow);
-  * off=2, size=2 (narrow);
-  * off=0, size=4 (full).
-
-Reported-by: Yonghong Song <yhs@fb.com>
-Signed-off-by: Andrey Ignatov <rdna@fb.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Fixes: 52ebea749aae ("writeback: make backing_dev_info host cgroup-specific bdi_writebacks")
+Co-developed-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/filter.h | 16 +---------------
- kernel/bpf/verifier.c  | 21 ++++++++++++++++-----
- 2 files changed, 17 insertions(+), 20 deletions(-)
+ include/linux/backing-dev-defs.h | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/include/linux/filter.h b/include/linux/filter.h
-index a8b9d90a8042..25a556589ae8 100644
---- a/include/linux/filter.h
-+++ b/include/linux/filter.h
-@@ -675,24 +675,10 @@ static inline u32 bpf_ctx_off_adjust_machine(u32 size)
- 	return size;
- }
- 
--static inline bool bpf_ctx_narrow_align_ok(u32 off, u32 size_access,
--					   u32 size_default)
--{
--	size_default = bpf_ctx_off_adjust_machine(size_default);
--	size_access  = bpf_ctx_off_adjust_machine(size_access);
--
--#ifdef __LITTLE_ENDIAN
--	return (off & (size_default - 1)) == 0;
--#else
--	return (off & (size_default - 1)) + size_access == size_default;
--#endif
--}
--
- static inline bool
- bpf_ctx_narrow_access_ok(u32 off, u32 size, u32 size_default)
+diff --git a/include/linux/backing-dev-defs.h b/include/linux/backing-dev-defs.h
+index 9a6bc0951cfa..c31157135598 100644
+--- a/include/linux/backing-dev-defs.h
++++ b/include/linux/backing-dev-defs.h
+@@ -258,6 +258,14 @@ static inline void wb_get(struct bdi_writeback *wb)
+  */
+ static inline void wb_put(struct bdi_writeback *wb)
  {
--	return bpf_ctx_narrow_align_ok(off, size, size_default) &&
--	       size <= size_default && (size & (size - 1)) == 0;
-+	return size <= size_default && (size & (size - 1)) == 0;
- }
- 
- #define bpf_classic_proglen(fprog) (fprog->len * sizeof(fprog->filter[0]))
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 51ba84d4d34a..a81f52b2c92e 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -5789,10 +5789,10 @@ static int convert_ctx_accesses(struct bpf_verifier_env *env)
- 	int i, cnt, size, ctx_field_size, delta = 0;
- 	const int insn_cnt = env->prog->len;
- 	struct bpf_insn insn_buf[16], *insn;
-+	u32 target_size, size_default, off;
- 	struct bpf_prog *new_prog;
- 	enum bpf_access_type type;
- 	bool is_narrower_load;
--	u32 target_size;
- 
- 	if (ops->gen_prologue || env->seen_direct_write) {
- 		if (!ops->gen_prologue) {
-@@ -5885,9 +5885,9 @@ static int convert_ctx_accesses(struct bpf_verifier_env *env)
- 		 * we will apply proper mask to the result.
- 		 */
- 		is_narrower_load = size < ctx_field_size;
-+		size_default = bpf_ctx_off_adjust_machine(ctx_field_size);
-+		off = insn->off;
- 		if (is_narrower_load) {
--			u32 size_default = bpf_ctx_off_adjust_machine(ctx_field_size);
--			u32 off = insn->off;
- 			u8 size_code;
- 
- 			if (type == BPF_WRITE) {
-@@ -5915,12 +5915,23 @@ static int convert_ctx_accesses(struct bpf_verifier_env *env)
- 		}
- 
- 		if (is_narrower_load && size < target_size) {
--			if (ctx_field_size <= 4)
-+			u8 shift = (off & (size_default - 1)) * 8;
++	if (WARN_ON_ONCE(!wb->bdi)) {
++		/*
++		 * A driver bug might cause a file to be removed before bdi was
++		 * initialized.
++		 */
++		return;
++	}
 +
-+			if (ctx_field_size <= 4) {
-+				if (shift)
-+					insn_buf[cnt++] = BPF_ALU32_IMM(BPF_RSH,
-+									insn->dst_reg,
-+									shift);
- 				insn_buf[cnt++] = BPF_ALU32_IMM(BPF_AND, insn->dst_reg,
- 								(1 << size * 8) - 1);
--			else
-+			} else {
-+				if (shift)
-+					insn_buf[cnt++] = BPF_ALU64_IMM(BPF_RSH,
-+									insn->dst_reg,
-+									shift);
- 				insn_buf[cnt++] = BPF_ALU64_IMM(BPF_AND, insn->dst_reg,
- 								(1 << size * 8) - 1);
-+			}
- 		}
- 
- 		new_prog = bpf_patch_insn_data(env, i + delta, insn_buf, cnt);
+ 	if (wb != &wb->bdi->wb)
+ 		percpu_ref_put(&wb->refcnt);
+ }
 -- 
 2.19.1
 
