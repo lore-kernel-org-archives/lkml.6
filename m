@@ -4,139 +4,188 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50F17C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 14:00:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B45A7C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 14:00:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 185C821855
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 14:00:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 784B421855
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 14:00:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="duiBY6T0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="odtwtirQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728196AbfAXOAP (ORCPT
+        id S1728272AbfAXOAv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 09:00:15 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:40830 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727562AbfAXOAP (ORCPT
+        Thu, 24 Jan 2019 09:00:51 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33657 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728225AbfAXOAt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 09:00:15 -0500
-Received: by mail-pl1-f195.google.com with SMTP id u18so2930303plq.7
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 06:00:14 -0800 (PST)
+        Thu, 24 Jan 2019 09:00:49 -0500
+Received: by mail-wr1-f66.google.com with SMTP id p7so6628522wru.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 06:00:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ndgmZO7nN9JTvhIHfuwRjqa/EtsLFt6gAomPwOuH1nA=;
-        b=duiBY6T0EQBkSQTZQ6G4rGsIO/qamdDZTy8eXAcPpg0Rd90GRpCaKqsPk4tWbXM4aJ
-         bCSk+Pz+eZ3BNVkqxHOkMo7iUKLqraFJUIrI3qmrTQx0JiNNabdUblrj2CSOft1DDUY4
-         8fHHHX8Kt52t1YtuSS7DgkgdxOoccZhrtqdUw2EBdgAqedCv2gBOy4uyhp4QDX89TXjj
-         r6TG5YIPoy6J1qynvVQfLqS2SwpCK7w/hlaa96oeC6mr5uAJGCZSqjE9uhoziB9ob9TW
-         49XwQgsvDRjqBZ8vmy3J6l3+S0masJoe+rc3yMBoehYdVoxURUVYl3kGbp8Fb3KyCc4P
-         7dfw==
+        bh=iI4CRWe2LKTfCV7bVfyN+5k3FytPSzrn9R+fO7Dhq9g=;
+        b=odtwtirQcCV+PtR+Iu7d8wJH5w2mp3qy1VMrMw9NrybybUHnybw2fRzweMy3HGhBjh
+         fqJFKRooGCuZ6ukniGdrLdVh0T8H59l8TTga+aFW2EkS1GM4nRUBYLbgA3Zc3PMmNV2R
+         aVV2KaT2KrJhwSAw+pkEiaHGyWAP5SmUGIfIoSJED5G6/TXdfuLP42jGk3bowdfag4dW
+         bGkShaYczEQHlQtE15tUtexd6xhcwf/VEYi56vYQXTr/MNBf7rvJ5btShTOiuay0475c
+         4H+Rb280Mb4pvelDuZRWuZkWKWGg1WhTToOo9Tf6yjFRYoZN+V/mM4ivSiPKx8JkeS3N
+         qzAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ndgmZO7nN9JTvhIHfuwRjqa/EtsLFt6gAomPwOuH1nA=;
-        b=OXvCRbbIF253+NgDFN0skwIQYsjFBfvLEh4PIa72TRKtLc6dUazO8YVG0OlDzVMWOn
-         u9OVI9vnQYe4UQ4xIEEucULmmqquPK9lVRxQHT7t5/PMTM4uMHftPs3tanv84M3cEgJh
-         2CWD6PYjGF1cM/wZF1b6ls250dz5Q3OGrHJnM0yK8dNI08byOPj+YmIb8v+L90Prxkro
-         8nADuicmX+ya0DhbPISXGG1qdCS29z+8rAQLB3oCGeLbLTlATSisHZCTcAMHAOZLcxT2
-         u2CDo3BtOA7M3zbNpRaR3TlA9F1WsEcRjczeuJpQbO7aGO0Vet3IRoPiiCwOF3XZGP1Z
-         +0Bg==
-X-Gm-Message-State: AJcUukeo0m6qHpSQamUSriyxYcZIaJTg2OFf8TxFC5cG1QWCgNU8ZNMk
-        dokFcz7XWitGt9xwzWZucC8BRG4xUjFngePsgzM=
-X-Google-Smtp-Source: ALg8bN5LzpCuR6NNfglyT43H53hZADe8WD+qb4yt5URDkPkIHdOJ8h9Vx6sVBpF1EJO8D0UYIqmuzS+OBqbYB0TkQrE=
-X-Received: by 2002:a17:902:4081:: with SMTP id c1mr6758259pld.87.1548338414454;
- Thu, 24 Jan 2019 06:00:14 -0800 (PST)
+        bh=iI4CRWe2LKTfCV7bVfyN+5k3FytPSzrn9R+fO7Dhq9g=;
+        b=sJaedCQ8yMkIhCevpyQXP31fzOIc89eU/7rzHRs1RnPrY2mMBUEcCFmuhX+WfaBdqR
+         MRmur8e6M+KaS9wAiLve+Ra8rw2fPH8M4vqqoNUt+WanKbBJvS/a9Rcif2vuFTTEVWgd
+         RP6b2w80IAXNalWbCiy4OBgiAfyE68WxHwJYWuM8QjK1CXoKdCbOwrQsL/1Sxs8hMt2q
+         PexVJgZeMFv8zra3ztc0mO7TZu/dRvfJmVPNZOgnrh3/2I8NE197kfaqeazzeDRbQjFn
+         ONOpusm0cujPgR3MkzYvbL+Cv8pvhxoLrbyKBJI6V4J8rPQ0aamOYFxYG5Ixpd2NkZ4g
+         KduA==
+X-Gm-Message-State: AJcUukeow6KnqgfQsV5BSVn0z5vgVLeaJyb3SHGm9AW/Tizlhn6veEGT
+        I8bIbF1v7Sdxm24vgHst5/PI7i2U/A4ZEWK76ao=
+X-Google-Smtp-Source: ALg8bN7WuDb1pFVDTPRgRARPfvKiBIP3SSVdNtfMPwjBUDBOPHmSSOcSzc4gA94Th3uuaH/P3/yVtqJA/8ycAa4mHGs=
+X-Received: by 2002:adf:8506:: with SMTP id 6mr7608882wrh.128.1548338446976;
+ Thu, 24 Jan 2019 06:00:46 -0800 (PST)
 MIME-Version: 1.0
-References: <1548348038-69560-1-git-send-email-peng.hao2@zte.com.cn>
-In-Reply-To: <1548348038-69560-1-git-send-email-peng.hao2@zte.com.cn>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 24 Jan 2019 16:00:03 +0200
-Message-ID: <CAHp75Vfh26ija7trPts0U8OfmPAMQzcbj4Y7wdcxb18yYQiCZA@mail.gmail.com>
-Subject: Re: [PATCH V4 0/6] add pvpanic driver framework
-To:     Peng Hao <peng.hao2@zte.com.cn>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <850b6aee-0040-c333-b125-45211c18ada5@daenzer.net>
+ <CAKv+Gu99zHqcQtj6TiOXAr3Qa6WWhKem+DHVA_mAQ0-Bc0Vbqw@mail.gmail.com>
+ <047667fd-17be-1c37-5d2a-26768cfd6ab8@daenzer.net> <CAKv+Gu_VBd8agHASc5RS0eCgyXP64Lt_i4yPuBjKwGQ+5Lpd5Q@mail.gmail.com>
+ <CADnq5_O1uxCrSksfF127AZTfbmdukxmqGdh2Ee0zM6CqgG_Mhg@mail.gmail.com>
+ <CAKv+Gu-4uYh_HD_5Ry_L80Nf5zpRhT4oJYhhG5_8g3gSzBs2tg@mail.gmail.com>
+ <20190123071521.GB20526@infradead.org> <CAKv+Gu8+77uZHJ6ZYjGNcKQL8C3cT5Ree+TcTVmkQXAHV-ADyg@mail.gmail.com>
+ <20190123164428.GA9367@infradead.org> <CAKv+Gu-9vEKu8mG-o+-4M1ZcgZmTTJVfEdNS9R27AFX8P5sqyQ@mail.gmail.com>
+ <20190124091316.GA22796@infradead.org> <bb559f74-4b1e-d5ee-74fb-b5dcd4a128cb@amd.com>
+ <CAKv+Gu_3LurSN-6w1WijPfpJpc+Pgu0YTnwTfMrXMF3-AKAnJA@mail.gmail.com>
+ <953e5e5f-5d47-d6df-40df-c8c94db5447f@amd.com> <CAKv+Gu9umPEmB+wh54NOTYcQ14oxf7rwVAXgCqo7V2A+VwkqPA@mail.gmail.com>
+ <57590a48-4629-e2a1-8673-ce9eb2ec210b@amd.com> <CAKv+Gu_2f0FaJ+Th7H48u4GrPX=MM9xw0fFjdwhfRrr1nhgEkA@mail.gmail.com>
+ <40ad3ae7-9970-0cb9-d35c-05e128f83820@amd.com> <CAKv+Gu_D4FC05Rz3Oxm_dTWLaGt+a3EDecbsrge1eHY7gFXEYg@mail.gmail.com>
+ <CADnq5_PCCj1dgYTnJoWdFp45X8GMwdT34sMtWH7p6Ms1_SncOQ@mail.gmail.com> <CAKv+Gu9Ch_+2wUirmPb1-dXGzWbF2XoH-b6DrtkBNEXpx5obPA@mail.gmail.com>
+In-Reply-To: <CAKv+Gu9Ch_+2wUirmPb1-dXGzWbF2XoH-b6DrtkBNEXpx5obPA@mail.gmail.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Thu, 24 Jan 2019 09:00:34 -0500
+Message-ID: <CADnq5_OL-Zga6-E0f-m6w+PGTJKb16PMwOPgF-yzugbvWS3fvQ@mail.gmail.com>
+Subject: Re: [RFC PATCH] drm: disable WC optimization for cache coherent
+ devices on non-x86
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     "Koenig, Christian" <Christian.Koenig@amd.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel@daenzer.net>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        David Airlie <airlied@linux.ie>,
+        "Huang, Ray" <Ray.Huang@amd.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "Zhang, Jerry" <Jerry.Zhang@amd.com>,
+        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
+        Sean Paul <sean@poorly.run>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 10:17 AM Peng Hao <peng.hao2@zte.com.cn> wrote:
+On Thu, Jan 24, 2019 at 8:57 AM Ard Biesheuvel
+<ard.biesheuvel@linaro.org> wrote:
 >
-> QEMU community requires additional PCI devices to simulate PVPANIC
-> devices so that some architectures can not occupy precious less than 4G
-> of memory space.
-> Previously, I added PCI driver directly to the original version of the driver,
-> which made the whole driver file look a bit cluttered. So Andy Shevchenko suggests:
-> "I would recommend to split it in a way how it's done for ChipIdea USB driver,
-> for example. (drivers/usb/chipidea if I'm not mistaken)".
+> On Thu, 24 Jan 2019 at 14:54, Alex Deucher <alexdeucher@gmail.com> wrote:
+> >
+> > On Thu, Jan 24, 2019 at 6:45 AM Ard Biesheuvel
+> > <ard.biesheuvel@linaro.org> wrote:
+> > >
+> > > On Thu, 24 Jan 2019 at 12:37, Koenig, Christian
+> > > <Christian.Koenig@amd.com> wrote:
+> > > >
+> > > > Am 24.01.19 um 12:26 schrieb Ard Biesheuvel:
+> > > > > On Thu, 24 Jan 2019 at 12:23, Koenig, Christian
+> > > > > <Christian.Koenig@amd.com> wrote:
+> > > > >> Am 24.01.19 um 10:59 schrieb Ard Biesheuvel:
+> > > > >>> [SNIP]
+> > > > >>> This is *exactly* my point the whole time.
+> > > > >>>
+> > > > >>> The current code has
+> > > > >>>
+> > > > >>> static inline bool drm_arch_can_wc_memory(void)
+> > > > >>> {
+> > > > >>> #if defined(CONFIG_PPC) && !defined(CONFIG_NOT_COHERENT_CACHE)
+> > > > >>>      return false;
+> > > > >>>
+> > > > >>> which means the optimization is disabled *unless the system is
+> > > > >>> non-cache coherent*
+> > > > >>>
+> > > > >>> So if you have reports that the optimization works on some PowerPC, it
+> > > > >>> must be non-cache coherent PowerPC, because that is the only place
+> > > > >>> where it is enabled in the first place.
+> > > > >>>
+> > > > >>>> The only problematic here actually seems to be ARM, so you should
+> > > > >>>> probably just add an "#ifdef .._ARM return false;".
+> > > > >>>>
+> > > > >>> ARM/arm64 does not have a Kconfig symbol like
+> > > > >>> CONFIG_NOT_COHERENT_CACHE, so we can only disable it everywhere. If
+> > > > >>> there are non-coherent ARM systems that are currently working in the
+> > > > >>> same way as those non-coherent PowerPC systems, we will break them by
+> > > > >>> doing this.
+> > > > >> Summing the things I've read so far for ARM up I actually think it
+> > > > >> depends on a runtime configuration and not on compile time one.
+> > > > >>
+> > > > >> So the whole idea of providing the device to the drm_*_can_wc_memory()
+> > > > >> function isn't so far fetched.
+> > > > >>
+> > > > > Thank you.
+> > > > >
+> > > > >> But for now I do prefer working and slightly slower system over broken
+> > > > >> one, so I think we should just disable this on ARM for now.
+> > > > >>
+> > > > > Again, this is not about non-cache coherent being slower without the
+> > > > > optimization, it is about non-cache coherent likely not working *at
+> > > > > all* unless the optimization is enabled.
+> > > >
+> > > > As Michel tried to explain this CAN'T happen. The optimization is a
+> > > > purely optional request from userspace.
+> > > >
+> > >
+> > > Right.
+> > >
+> > > So in that case, we can assume that the following test
+> > >
+> > > static inline bool drm_arch_can_wc_memory(void)
+> > > {
+> > > #if defined(CONFIG_PPC) && !defined(CONFIG_NOT_COHERENT_CACHE)
+> > >     return false;
+> > >
+> > > is bogus, and it was just unnecessary caution on the part of the
+> > > author to disregard non-cache coherent devices.
+> > > Unfortunately, those commits have no log messages whatsoever, so it is
+> > > difficult to infer the intent retroactively.
+> > >
+> > > > > Otherwise, the driver will vmap() DMA pages with cacheable attributes,
+> > > > > while the non-cache coherent device uses uncached attributes, breaking
+> > > > > coherency.
+> > > >
+> > > > Again this is mandated by the userspace APIs anyway. E.g. we can't
+> > > > vmap() pages in any other way or our userspace APIs would break.
+> > > >
+> > >
+> > > OK,
+> > >
+> > > So let's just disable this for all ARM and arm64 then, given that
+> > > non-cache coherent is not supported in any case
+> >
+> > So I think we are back to this patch:
+> > https://patchwork.kernel.org/patch/10739023/
+> >
 >
+> Apart from the fact that the issue has nothing to do with write-combining, yes.
 
-Thank you for an update.
+Your patch has a better description.  Let's go with that.
 
-The series has the bisectability issues.
-
-Try to use the following approach (if I got your idea right):
-1. Convert to use common probe() etc functions inplace
-2. Split ACPI part
-3. Split OF part
-4. Add PCI part
-
-In Kconfig and Makefile follow the example like present under
-drivers/usb/chipidea/.
-
-> v3 ---> v4 : add help text info in Konfig from patch_0004 to
->               patch_0006
->              adjust structure definition position in patch_0002
->               and patch_0003
-> v2 ---> v3 : add change infomation.
->
-> v1 ---> v2 : add patch 0000 to descript the whole patch series.
->              modify text infomation from patch_0002 to patch_0006.
->              modify "SPDX-License-Identifier: GPL-2.0-or-later"
->                  to "SPDX-License-Identifier: GPL-2.0+"
->
-> Peng Hao (6):
->   misc/pvpanic: preparing for pvpanic driver framework
->   misc/pvpanic: Add pvpanic driver framework
->   misc/pvpanic: add API for pvpanic driver framework
->   misc/pvpanic: add pvpanic acpi driver
->   misc/pvpanic: add pvpanic mmio driver
->   misc/pvpanic: add new pvpanic pci driver
->
->  drivers/misc/Kconfig                |   9 +-
->  drivers/misc/Makefile               |   2 +-
->  drivers/misc/pvpanic.c              | 192 ------------------------------------
->  drivers/misc/pvpanic/Kconfig        |  34 ++++++
->  drivers/misc/pvpanic/Makefile       |   8 ++
->  drivers/misc/pvpanic/pvpanic-acpi.c |  77 +++++++++++++++
->  drivers/misc/pvpanic/pvpanic-of.c   |  53 ++++++++++
->  drivers/misc/pvpanic/pvpanic-pci.c  |  56 +++++++++++
->  drivers/misc/pvpanic/pvpanic.c      | 131 ++++++++++++++++++++++++
->  drivers/misc/pvpanic/pvpanic.h      |  14 +++
->  10 files changed, 366 insertions(+), 201 deletions(-)
->  delete mode 100644 drivers/misc/pvpanic.c
->  create mode 100644 drivers/misc/pvpanic/Kconfig
->  create mode 100644 drivers/misc/pvpanic/Makefile
->  create mode 100644 drivers/misc/pvpanic/pvpanic-acpi.c
->  create mode 100644 drivers/misc/pvpanic/pvpanic-of.c
->  create mode 100644 drivers/misc/pvpanic/pvpanic-pci.c
->  create mode 100644 drivers/misc/pvpanic/pvpanic.c
->  create mode 100644 drivers/misc/pvpanic/pvpanic.h
->
-> --
-> 1.8.3.1
->
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+Alex
