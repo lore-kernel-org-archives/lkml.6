@@ -2,51 +2,52 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07FD2C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:26:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95054C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:26:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C98C0218FE
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:26:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6103C217D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:26:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548357972;
-	bh=wjYHQyz6q4OgKnYf7PPA7p4LbWHOk97e0b/7R1TF2C8=;
+	s=default; t=1548357977;
+	bh=jD4nHtY7dvTJV1HcZB1LDj6Utq1/RiF3scaGSCrbaCc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=w+Ujxnu1I/nT/ypAz1x3X/gb+HOx8sAC6Vyv4xGkCRIbYKcfqNdpUDbTdBWAE9OKk
-	 j20W9ngJmcowenUS9Oj8Eis57+vHJuHD+KCHas/PpZ35GHN60qFHgwEUcsqBK3vFpl
-	 2ZyfeS8WY+RueqUoyAV7qqzS9vu4m2x+Hb0k1TsI=
+	b=OIO3bUYo8Jzc9WLWZ9xm9r8C/CJTbo8HAp7iNV/c2oeWt0OBRCTVES6+reFbbnChx
+	 s7UAYxoPkmYj6E0vHTihx0ZmJkvy5Z8rbBePO+59Ueq2WglnJdpImwbmTdRs2wlwBx
+	 hmjxbOORdBylVAhD/305fJkQtMGlmPsUgEde+kV4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730519AbfAXT0L (ORCPT
+        id S1730531AbfAXT0P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:26:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52042 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:26:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52120 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728496AbfAXT0I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:26:08 -0500
+        id S1728496AbfAXT0M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:26:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A764B217D7;
-        Thu, 24 Jan 2019 19:26:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EEACF218FC;
+        Thu, 24 Jan 2019 19:26:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548357968;
-        bh=wjYHQyz6q4OgKnYf7PPA7p4LbWHOk97e0b/7R1TF2C8=;
+        s=default; t=1548357971;
+        bh=jD4nHtY7dvTJV1HcZB1LDj6Utq1/RiF3scaGSCrbaCc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aLXtnZBSibMZFnW5TqcDxXAel67/ejAULZJZ+4F8SXGnMeOye1uvvm4TpJVVSMpf1
-         TzQHLRSeW3eR379LoRT4A7iLPG75CIyffemBGIgiH2H97da3cUOV/UPwctbt369puX
-         Np3zHCGpMyMCUROhcZbONStUedzYTOi/fpM2HP/Q=
+        b=C0xCm13EHxsV50HMb3x0KaOOqCaCcHeeOYYTOJQpXun4A/lUqsriaYB6gereXKQXA
+         oqqQR8RiiL+c9yvoHlfaqGsQQ7C1Oq2TJR5eElSBYRSDeKWNRNcYLPpjtavNxfVT/B
+         2hlZkcvR16vwGBS9v28nEG6NzuQiqCAV8wjj+ChY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YunQiang Su <ysu@wavecomp.com>,
-        Paul Burton <paul.burton@mips.com>, pburton@wavecomp.com,
-        linux-mips@vger.kernel.org, aaro.koskinen@iki.fi
-Subject: [PATCH 4.4 053/104] Disable MSI also when pcie-octeon.pcie_disable on
-Date:   Thu, 24 Jan 2019 20:19:42 +0100
-Message-Id: <20190124190201.606687228@linuxfoundation.org>
+        stable@vger.kernel.org, Vlad Tsyrklevich <vlad@tsyrklevich.net>,
+        Kees Cook <keescook@chromium.org>, security@kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 4.4 054/104] omap2fb: Fix stack memory disclosure
+Date:   Thu, 24 Jan 2019 20:19:43 +0100
+Message-Id: <20190124190201.696889792@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190154.968308875@linuxfoundation.org>
 References: <20190124190154.968308875@linuxfoundation.org>
@@ -65,40 +66,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: YunQiang Su <ysu@wavecomp.com>
+From: Vlad Tsyrklevich <vlad@tsyrklevich.net>
 
-commit a214720cbf50cd8c3f76bbb9c3f5c283910e9d33 upstream.
+commit a01421e4484327fe44f8e126793ed5a48a221e24 upstream.
 
-Octeon has an boot-time option to disable pcie.
+Using [1] for static analysis I found that the OMAPFB_QUERY_PLANE,
+OMAPFB_GET_COLOR_KEY, OMAPFB_GET_DISPLAY_INFO, and OMAPFB_GET_VRAM_INFO
+cases could all leak uninitialized stack memory--either due to
+uninitialized padding or 'reserved' fields.
 
-Since MSI depends on PCI-E, we should also disable MSI also with
-this option is on in order to avoid inadvertently accessing PCIe
-registers.
+Fix them by clearing the shared union used to store copied out data.
 
-Signed-off-by: YunQiang Su <ysu@wavecomp.com>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: pburton@wavecomp.com
-Cc: linux-mips@vger.kernel.org
-Cc: aaro.koskinen@iki.fi
-Cc: stable@vger.kernel.org # v3.3+
+[1] https://github.com/vlad902/kernel-uninitialized-memory-checker
+
+Signed-off-by: Vlad Tsyrklevich <vlad@tsyrklevich.net>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Fixes: b39a982ddecf ("OMAP: DSS2: omapfb driver")
+Cc: security@kernel.org
+[b.zolnierkie: prefix patch subject with "omap2fb: "]
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/pci/msi-octeon.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/video/fbdev/omap2/omapfb/omapfb-ioctl.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/mips/pci/msi-octeon.c
-+++ b/arch/mips/pci/msi-octeon.c
-@@ -369,7 +369,9 @@ int __init octeon_msi_initialize(void)
- 	int irq;
- 	struct irq_chip *msi;
+--- a/drivers/video/fbdev/omap2/omapfb/omapfb-ioctl.c
++++ b/drivers/video/fbdev/omap2/omapfb/omapfb-ioctl.c
+@@ -609,6 +609,8 @@ int omapfb_ioctl(struct fb_info *fbi, un
  
--	if (octeon_dma_bar_type == OCTEON_DMA_BAR_TYPE_PCIE) {
-+	if (octeon_dma_bar_type == OCTEON_DMA_BAR_TYPE_INVALID) {
-+		return 0;
-+	} else if (octeon_dma_bar_type == OCTEON_DMA_BAR_TYPE_PCIE) {
- 		msi_rcv_reg[0] = CVMX_PEXP_NPEI_MSI_RCV0;
- 		msi_rcv_reg[1] = CVMX_PEXP_NPEI_MSI_RCV1;
- 		msi_rcv_reg[2] = CVMX_PEXP_NPEI_MSI_RCV2;
+ 	int r = 0;
+ 
++	memset(&p, 0, sizeof(p));
++
+ 	switch (cmd) {
+ 	case OMAPFB_SYNC_GFX:
+ 		DBG("ioctl SYNC_GFX\n");
 
 
