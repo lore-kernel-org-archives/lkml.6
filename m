@@ -2,36 +2,36 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0367EC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 10:45:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DADFC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 10:45:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9DD4218A6
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 10:45:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 277E321855
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 10:45:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727725AbfAXKpw (ORCPT
+        id S1727749AbfAXKp5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 05:45:52 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:54354 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727126AbfAXKps (ORCPT
+        Thu, 24 Jan 2019 05:45:57 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:46632 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727117AbfAXKpv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 05:45:48 -0500
-X-UUID: 39a4808f1eec4181bfed2e9624fa4bd8-20190124
-X-UUID: 39a4808f1eec4181bfed2e9624fa4bd8-20190124
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        Thu, 24 Jan 2019 05:45:51 -0500
+X-UUID: b69120d616d5475093d0207359a38cb2-20190124
+X-UUID: b69120d616d5475093d0207359a38cb2-20190124
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
         (envelope-from <shun-chih.yu@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1321334590; Thu, 24 Jan 2019 18:45:35 +0800
+        with ESMTP id 1440440165; Thu, 24 Jan 2019 18:45:36 +0800
 Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 24 Jan 2019 18:45:34 +0800
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 24 Jan 2019 18:45:35 +0800
 Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas07.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 24 Jan 2019 18:45:34 +0800
+ Transport; Thu, 24 Jan 2019 18:45:35 +0800
 From:   <shun-chih.yu@mediatek.com>
 To:     Sean Wang <sean.wang@mediatek.com>, Vinod Koul <vkoul@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -40,46 +40,71 @@ To:     Sean Wang <sean.wang@mediatek.com>, Vinod Koul <vkoul@kernel.org>,
 CC:     <dmaengine@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <srv_wsdupstream@mediatek.com>
-Subject: [PATCH] remove redundant queue structure for Mediatek Command-Queue DMA controller
-Date:   Thu, 24 Jan 2019 18:44:38 +0800
-Message-ID: <1548326680-16454-1-git-send-email-shun-chih.yu@mediatek.com>
+        <linux-kernel@vger.kernel.org>, <srv_wsdupstream@mediatek.com>,
+        Shun-Chih Yu <shun-chih.yu@mediatek.com>
+Subject: [PATCH 1/2] dt-bindings: dmaengine: Add MediaTek Command-Queue DMA controller bindings
+Date:   Thu, 24 Jan 2019 18:44:39 +0800
+Message-ID: <1548326680-16454-2-git-send-email-shun-chih.yu@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <1548326680-16454-1-git-send-email-shun-chih.yu@mediatek.com>
+References: <1548326680-16454-1-git-send-email-shun-chih.yu@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: 29A1CBC80D30C4C1786840970F8100F513FF59606270EDED170F51BB7A09873C2000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset introduces support for MediaTek Command-Queue DMA controller in dt-bindings, and simplifies the controller by removing redundant structures.
+From: Shun-Chih Yu <shun-chih.yu@mediatek.com>
 
-Main changes to the initial version:
-- remove redundant queue structure in mtk_cqdma_pchan
-- remove redundant completion management
-- remove redundant tasklet management
-- fix wrong residue assignment in mtk_cqdma_tx_status
-- fix typos
+Document the devicetree bindings for MediaTek Command-Queue DMA controller
+which could be found on MT6765 SoC or other similar Mediatek SoCs.
 
-The result of dmatest shown below:
-dmatest: dma0chan0-copy2: summary 5000 tests, 0 failures 3500 iops 28037 KB/s
-dmatest: dma0chan0-copy4: summary 5000 tests, 0 failures 3494 iops 27612 KB/s
-dmatest: dma0chan0-copy1: summary 5000 tests, 0 failures 3491 iops 27749 KB/s
-dmatest: dma0chan0-copy7: summary 5000 tests, 0 failures 3673 iops 29092 KB/s 
-dmatest: dma0chan0-copy6: summary 5000 tests, 0 failures 3763 iops 30237 KB/s 
-dmatest: dma0chan0-copy0: summary 5000 tests, 0 failures 3730 iops 30131 KB/s
-dmatest: dma0chan0-copy3: summary 5000 tests, 0 failures 3717 iops 29569 KB/s
-dmatest: dma0chan0-copy5: summary 5000 tests, 0 failures 3699 iops 29302 KB/s
-
-Shun-Chih Yu (2):
-  dt-bindings: dmaengine: Add MediaTek Command-Queue DMA controller
-    bindings
-  dmaengine: mediatek-cqdma: remove redundant queue structure
-
- .../devicetree/bindings/dma/mtk-cqdma.txt          |   31 ++
- drivers/dma/mediatek/mtk-cqdma.c                   |  399 +++++---------------
- 2 files changed, 129 insertions(+), 301 deletions(-)
+Signed-off-by: Shun-Chih Yu <shun-chih.yu@mediatek.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/dma/mtk-cqdma.txt          |   31 ++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/dma/mtk-cqdma.txt
+
+diff --git a/Documentation/devicetree/bindings/dma/mtk-cqdma.txt b/Documentation/devicetree/bindings/dma/mtk-cqdma.txt
+new file mode 100644
+index 0000000..fb12927
+--- /dev/null
++++ b/Documentation/devicetree/bindings/dma/mtk-cqdma.txt
+@@ -0,0 +1,31 @@
++MediaTek Command-Queue DMA Controller
++==================================
++
++Required properties:
++
++- compatible:	Must be "mediatek,mt6765-cqdma" for MT6765.
++- reg:		Should contain the base address and length for each channel.
++- interrupts:	Should contain references to the interrupts for each channel.
++- clocks:	Should be the clock specifiers corresponding to the entry in
++		clock-names property.
++- clock-names:	Should contain "cqdma" entries.
++- dma-channels: The number of DMA channels supported by the controller.
++- dma-requests: The number of DMA request supported by the controller.
++- #dma-cells: 	The length of the DMA specifier, must be <1>. This one cell
++		in dmas property of a client device represents the channel
++		number.
++Example:
++
++        cqdma: dma-controller@10212000 {
++		compatible = "mediatek,mt6765-cqdma";
++		reg = <0 0x10212000 0 0x1000>;
++		interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_LOW>,
++			<GIC_SPI 114 IRQ_TYPE_LEVEL_LOW>;
++		clocks = <&infracfg CLK_IFR_CQ_DMA>;
++		clock-names = "cqdma";
++		dma-channels = <2>;
++		dma-requests = <32>;
++		#dma-cells = <1>;
++	};
++
++DMA clients must use the format described in dma/dma.txt file.
+-- 
+1.7.9.5
 
