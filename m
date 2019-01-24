@@ -2,67 +2,84 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DB5CC282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 10:21:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07C24C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 10:21:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6322F218A6
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 10:21:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9EB7218AD
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 10:21:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="meBCGkOz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727578AbfAXKVG (ORCPT
+        id S1727558AbfAXKVl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 05:21:06 -0500
-Received: from orcrist.hmeau.com ([104.223.48.154]:40466 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726140AbfAXKVF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 05:21:05 -0500
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1gmc85-0004Xp-7z; Thu, 24 Jan 2019 18:21:01 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1gmc82-0003jK-IS; Thu, 24 Jan 2019 18:20:58 +0800
-Date:   Thu, 24 Jan 2019 18:20:58 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Eric Biggers <ebiggers@kernel.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Jason A . Donenfeld" <Jason@zx2c4.com>
-Subject: Re: [RFC/RFT PATCH 00/15] crypto: improved skcipher, aead, and hash
- tests
-Message-ID: <20190124102058.sj5rvthiigovvhzp@gondor.apana.org.au>
-References: <20190123224926.250525-1-ebiggers@kernel.org>
- <20190124084818.GA650@sol.localdomain>
- <CAKv+Gu9zridWAYO3cR_KAAbupWfLd+FAMmcgAMuYE5Lgxoek-w@mail.gmail.com>
- <20190124092359.hvizqdi2ptjdsot7@gondor.apana.org.au>
- <CAKv+Gu_C5p1pf_+8Ci+y8GGRr4OHEN8FwLJHnvu=wq3bTzGrYA@mail.gmail.com>
+        Thu, 24 Jan 2019 05:21:41 -0500
+Received: from mout01.posteo.de ([185.67.36.65]:45722 "EHLO mout01.posteo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726025AbfAXKVk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 05:21:40 -0500
+Received: from submission (posteo.de [89.146.220.130]) 
+        by mout01.posteo.de (Postfix) with ESMTPS id 957D0160067
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 11:21:37 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
+        t=1548325297; bh=+URa6sUp2On8kiz+BpTPKGcS45VMYhhpu+e7ZawrkpU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=meBCGkOzm5BasDxeziOTQcksTvSJIU6tbtOd+CsbFTcS6O6l/qkQeM8i5PR3V/3Rq
+         McD1rBYuNW5hR+5QIeJG1mMTJtpD/rxsdFLGEKjezZsy2Vb9BrBRlsUQp2dKAgP+Kp
+         UuC9l43k4iBervySSNlE8b5mL/LgkUdXymDtwHVJmyu4ifnkh3o3O2tHpKa/Ab+ojH
+         lCm+8MpCSGI7sOpADzjFjsDSRe/A2Y5sfsSCAJg93s/kne947UwpjSdlA9Z0CV82yf
+         2KyEMDQ/zGhX6FUAE1eKjfPcZAy3zDKJawc8q5OlXqOvSPHwH8CS5tlOCn8S7KRMGi
+         iuVWT1nf8xJOQ==
+Received: from customer (localhost [127.0.0.1])
+        by submission (posteo.de) with ESMTPSA id 43ldVR60sZz6tmL;
+        Thu, 24 Jan 2019 11:21:35 +0100 (CET)
+From:   Martin Kepplinger <martink@posteo.de>
+To:     devicetree@vger.kernel.org, linux-input@vger.kernel.org
+Cc:     dmitry.torokhov@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, chinyeow.sim.xt@renesas.com,
+        linux-kernel@vger.kernel.org,
+        Martin Kepplinger <martin.kepplinger@ginzinger.com>
+Subject: [PATCH v2 1/2] dt-bindings: input: sitronix-st1232: add compatible string for ST1633
+Date:   Thu, 24 Jan 2019 11:21:24 +0100
+Message-Id: <20190124102125.25458-1-martink@posteo.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKv+Gu_C5p1pf_+8Ci+y8GGRr4OHEN8FwLJHnvu=wq3bTzGrYA@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 11:16:23AM +0100, Ard Biesheuvel wrote:
->
-> OK, so how many adjacent physical pages is a scatterlist entry
-> permitted to cover? Unbounded?
+From: Martin Kepplinger <martin.kepplinger@ginzinger.com>
 
-Well the network stack is limited by packet size so it's less than
-64K for practical purposes.  However, the API itself doesn't specify
-a limit as such.
+The st1232 driver gains support for the ST1633 controller too; update
+the bindings doc accordingly.
 
-Cheers,
+Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+---
+ .../bindings/input/touchscreen/sitronix-st1232.txt          | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/input/touchscreen/sitronix-st1232.txt b/Documentation/devicetree/bindings/input/touchscreen/sitronix-st1232.txt
+index 64ad48b824a2..e73e826e0f2a 100644
+--- a/Documentation/devicetree/bindings/input/touchscreen/sitronix-st1232.txt
++++ b/Documentation/devicetree/bindings/input/touchscreen/sitronix-st1232.txt
+@@ -1,7 +1,9 @@
+-* Sitronix st1232 touchscreen controller
++* Sitronix st1232 or st1633 touchscreen controller
+ 
+ Required properties:
+-- compatible: must be "sitronix,st1232"
++- compatible: must contain one of
++  * "sitronix,st1232"
++  * "sitronix,st1633"
+ - reg: I2C address of the chip
+ - interrupts: interrupt to which the chip is connected
+ 
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.20.1
+
