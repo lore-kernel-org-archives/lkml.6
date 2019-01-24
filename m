@@ -2,190 +2,134 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68165C282C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 14:03:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9C69C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 14:03:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D9AF21855
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 14:03:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9220321855
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 14:03:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="iQKwpcyU"
+	dkim=pass (1024-bit key) header.d=toradex.com header.i=@toradex.com header.b="LLIkxxTb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728231AbfAXOD1 (ORCPT
+        id S1728350AbfAXODo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 09:03:27 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:40411 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727665AbfAXOD0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 09:03:26 -0500
-Received: by mail-ed1-f65.google.com with SMTP id g22so4651585edr.7
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 06:03:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=aEFmD1sR6+HHmWznfSzslUAIygTBKMH1VY2djKP/2S0=;
-        b=iQKwpcyUT0Ts3bb+rPGGpWv8Do5TKiTS/Fo0v0+jusNF6ahtQLPjagTy7/1WBn8rJp
-         isMcFocKGBZ3/k1DlIVKY/y1kjBa6/OSnW9NjKm8OlnPq7GQRH2rjaQzTiK2eCajM/gn
-         4x0EX2HeT5eElMgrqDTkIW3uVm3H1z9fbJnQw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=aEFmD1sR6+HHmWznfSzslUAIygTBKMH1VY2djKP/2S0=;
-        b=IkaJzm4PqtSQXJICCykODmsC/LV8gfOwp/T1Lll63N+QFQaqKW4vtizGMl3MfWKQA9
-         qPvvDSgginJ+tjPAHDEgtjWvHTr63x35LI0Bc7yddGuBMdy63XbmoYWTJxidafwvRoE7
-         jcZIZqQVIDEG8rYHMoPbaYFmItXawLVWT0XcFK0QQnQ8C3OAuIReL2lPuX/Y7IgVfxdD
-         JvvjCyibHWI07nUY+vy4OJdZs/2qGyoHMHkqCk9dDby2I3at6XZ2BQZXzEmOGGD0ANPQ
-         2tt9pTyorKW+s7VGXkTNELIRwe/4cP6r9DdPHVGyc93rEOOLYpZ+bUiENuiHZ3gQn/hV
-         9zig==
-X-Gm-Message-State: AJcUukeT0MzcjiPZlNEa/Hn14ub1aEACA98o9+br9+L78gnB2gmpj2z+
-        /rp7BTo77GqL3o7PZac7wlerIA==
-X-Google-Smtp-Source: ALg8bN5WEJbCHWp048kJXiE8hK3ez6m5ipoupMjzZGUctBqbYkw3jLmuo6IBVcK1KoVabyD5ZGn2QQ==
-X-Received: by 2002:a05:6402:3d1:: with SMTP id t17mr6968985edw.21.1548338604424;
-        Thu, 24 Jan 2019 06:03:24 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id t18-v6sm5945342ejz.9.2019.01.24.06.03.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 24 Jan 2019 06:03:23 -0800 (PST)
-Date:   Thu, 24 Jan 2019 15:03:20 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     dri-devel@lists.freedesktop.org,
-        Alexey Brodkin <abrodkin@synopsys.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Chen Feng <puck.chen@hisilicon.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Philippe Cornu <philippe.cornu@st.com>,
-        Rongrong Zou <zourongrong@gmail.com>,
-        Sean Paul <sean@poorly.run>,
-        Vincent Abriou <vincent.abriou@st.com>,
-        Xinliang Liu <z.liuxinliang@hisilicon.com>,
-        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-        Yannick Fertre <yannick.fertre@st.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 6/6] drm: remove drmP.h from drm_modeset_helper.h
-Message-ID: <20190124140320.GY3271@phenom.ffwll.local>
-Mail-Followup-To: Sam Ravnborg <sam@ravnborg.org>,
-        dri-devel@lists.freedesktop.org,
-        Alexey Brodkin <abrodkin@synopsys.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Chen Feng <puck.chen@hisilicon.com>,
-        David Airlie <airlied@linux.ie>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Philippe Cornu <philippe.cornu@st.com>,
-        Rongrong Zou <zourongrong@gmail.com>, Sean Paul <sean@poorly.run>,
-        Vincent Abriou <vincent.abriou@st.com>,
-        Xinliang Liu <z.liuxinliang@hisilicon.com>,
-        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-        Yannick Fertre <yannick.fertre@st.com>,
-        linux-kernel@vger.kernel.org
-References: <20190119084014.5355-1-sam@ravnborg.org>
- <20190119084014.5355-7-sam@ravnborg.org>
+        Thu, 24 Jan 2019 09:03:44 -0500
+Received: from mail-eopbgr60111.outbound.protection.outlook.com ([40.107.6.111]:25366
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728307AbfAXODn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 09:03:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=toradex.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+ozLnO2R9sfXiwWsXlIZAQOLG0Oy/7E+3ka+32cu6+A=;
+ b=LLIkxxTb+/I3x4GYy2ShxUKplncM/vBQ/lky5K/aNloiNACYAi7HuEB7ew4yMIsdCSKY3M0o8j0DWj55VtzB0WYrW+d8QJje6PO2Cw6S1Xl2HA0xIyXhiKhug8ZFTi3AgUfdaa9hYPOL8SNVvBpsd4lJRMw3i+FAlk8fFowBIOQ=
+Received: from VI1PR0501MB2590.eurprd05.prod.outlook.com (10.168.137.14) by
+ VI1PR0501MB2480.eurprd05.prod.outlook.com (10.168.136.19) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1558.19; Thu, 24 Jan 2019 14:03:38 +0000
+Received: from VI1PR0501MB2590.eurprd05.prod.outlook.com
+ ([fe80::edef:e9d3:e4e3:e7c3]) by VI1PR0501MB2590.eurprd05.prod.outlook.com
+ ([fe80::edef:e9d3:e4e3:e7c3%2]) with mapi id 15.20.1558.016; Thu, 24 Jan 2019
+ 14:03:38 +0000
+From:   Marcel Ziswiler <marcel.ziswiler@toradex.com>
+To:     "davem@davemloft.net" <davem@davemloft.net>,
+        "zhang.run@zte.com.cn" <zhang.run@zte.com.cn>
+CC:     "wang.yi59@zte.com.cn" <wang.yi59@zte.com.cn>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "xue.zhihong@zte.com.cn" <xue.zhihong@zte.com.cn>,
+        "lynxis@fe80.eu" <lynxis@fe80.eu>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
+Subject: Re: [PATCH] net: usb: asix: ax88772_bind return error when hw_reset
+ fail
+Thread-Topic: [PATCH] net: usb: asix: ax88772_bind return error when hw_reset
+ fail
+Thread-Index: AQHUs6iNVEi1ybrApE++/wmfQx3PMKW+c+KA
+Date:   Thu, 24 Jan 2019 14:03:38 +0000
+Message-ID: <2233b8499110f3b2afcaf44f7f6ee820f7e0b36e.camel@toradex.com>
+References: <1548308929-7727-1-git-send-email-zhang.run@zte.com.cn>
+In-Reply-To: <1548308929-7727-1-git-send-email-zhang.run@zte.com.cn>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=marcel.ziswiler@toradex.com; 
+x-originating-ip: [46.140.72.82]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR0501MB2480;6:ZM4yeoZ+0AeS9jNXGHzqwVXMyC3whpmuN1b1KGmM41XLhv3PvJFPVZ+Vj5kRh0qz5D39Uumw21+X7vEmb5hpUuGoRDafRY5m3gzN+iRCk3LINJgpG2Dt/LdpaxhiLO//YiFVrJ01f/riBc7nLuYCDme8juiKQELdgbcmG1Cim+M6lYclrhTT7Y3esNvSsTzY5RBluS2j7XmRplJ25TaMheeDSeOA8U8ELCd8AxeIURc9OJ2QmxhM+vsAYup/RaojS1j9GTKioC7kNCjw9VW2IhgMRSWXswrSMd1pPuULcn53tcAMfh8SDD0lbJzt6Q9aMwYfLONJhlpwTTzauyebuNuw29Ebv/ZBZ10ncwA7ONtcUf+ty8+NiVUXsY3n8upm/hkZ3PyOA3w2CtjxMRF+k3zhv1Mx3intdFrKQWkBfoV1Lc+0phXXIWLs/uTCL7SUCETxEQLvXpL8e6lsiq+5SQ==;5:BdNVyRp3I0rq5K+Leu3aGI9h6A2/nv51W2QS5tNPaO4wnh3tTN8ub3ot13K+cHdbmQL9GRKX2t7PGg5oOAWQROo4X75uud6HfTRKknAclNdBXS8aExhw0R6olg5xehCCceg/jhn+S5mkNNNw9bMMhfHX8lUNdK+XUtOq8aDdVnmiphQctr8/XEe71mEAcTdKlCWbFbTq108nVooeUjcxkA==;7:E4m7lUFdL7NQcHwq1TVEMoxlSBiOXBS0s1i+VjFyoRkuKYgNWhSjFaEEZhg8gCijPycJeT88E8G8T4Tlp6MCahflsx60K6VUMwSmrdr7aAcCfOWgsE7zp+Wz1CQJCmftLgEn6jFv3QLvT9PcItErEA==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: d219ebbf-b09f-4dcc-e913-08d68204bcfe
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605077)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR0501MB2480;
+x-ms-traffictypediagnostic: VI1PR0501MB2480:
+x-microsoft-antispam-prvs: <VI1PR0501MB2480B419BDBDF1A8231E4DFCFB9A0@VI1PR0501MB2480.eurprd05.prod.outlook.com>
+x-forefront-prvs: 0927AA37C7
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(346002)(39850400004)(366004)(396003)(376002)(189003)(199004)(229853002)(6512007)(2616005)(71190400001)(476003)(76176011)(2501003)(86362001)(316002)(110136005)(81166006)(53936002)(446003)(81156014)(106356001)(11346002)(8676002)(44832011)(6116002)(3846002)(66066001)(8936002)(486006)(25786009)(36756003)(68736007)(105586002)(71200400001)(6506007)(99286004)(6486002)(2906002)(4326008)(102836004)(97736004)(14444005)(186003)(14454004)(256004)(478600001)(118296001)(54906003)(6246003)(6436002)(305945005)(26005)(7736002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0501MB2480;H:VI1PR0501MB2590.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: toradex.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 7VJZlOL33t1seEbGbVitF2k6+WCw5BIIfdPUxBiw0Fz772XaQFCdvSi07udMzcSvd7mCKxGJ8AcqFmhYsyFuwIB5mN0Pa/Vp7j7tE2KKUSzFCKDnRoc6PxeliwznrEr9HC0OwGziLfSagCNEBfhgLL1iCIfnUA7spsB/3owu4on+mEtOCROK2Dkfwj6NIu45Src8E2JPlhCoSFbKxRE+pUOw1oGIzyi/MJlwY1xOeh4efUf8PqL2uzJCEEF+ZIYUey6LKcb5CmXpDvfHNniFXrXVMzltyrt/G0QpzE2t+ZurbLWdNcu/PcHWJej3VefQ7hV4fqyxKiud1ejaoL09uu7wk/XNXxAI0Q3vPAWo0basAxTzu0/uaNJp5G+JDzSv11T55XWv52I9n0JqJrgGPvqx2hNdBjYB1fLIksXyWRo=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <B49EDCCA2BAF3F4DAB245A057CB24AD8@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190119084014.5355-7-sam@ravnborg.org>
-X-Operating-System: Linux phenom 4.19.0-1-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: toradex.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d219ebbf-b09f-4dcc-e913-08d68204bcfe
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jan 2019 14:03:38.1105
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d9995866-0d9b-4251-8315-093f062abab4
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0501MB2480
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 19, 2019 at 09:40:14AM +0100, Sam Ravnborg wrote:
-> With the removal of drmP.h from drm_modeset_helper.h
-> the drmP.h are no longer included by any include files
-> in include/drm.
-> The drmP.h file is thus only included explicit
-> either in .c files or in local .h files.
-> This makes the process of deleting the drmP.h includes easier
-> as we have a more local dependency chain.
-> 
-> Include build failure fixes in drm files after the drmP.h removal.
-> 
-> Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-> Cc: Sean Paul <sean@poorly.run>
-> Cc: David Airlie <airlied@linux.ie>
-> Cc: Daniel Vetter <daniel@ffwll.ch>
-
-Merge the previous 5 patches from this series, but this now goes boom on
-vbox in staging. Needs another prep patch I think.
--Daniel
-
-> ---
->  drivers/gpu/drm/drm_damage_helper.c  | 1 +
->  drivers/gpu/drm/drm_modeset_helper.c | 2 ++
->  include/drm/drm_modeset_helper.h     | 6 +++++-
->  3 files changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_damage_helper.c b/drivers/gpu/drm/drm_damage_helper.c
-> index e16aa5ae00b4..ee67c96841fa 100644
-> --- a/drivers/gpu/drm/drm_damage_helper.c
-> +++ b/drivers/gpu/drm/drm_damage_helper.c
-> @@ -32,6 +32,7 @@
->  
->  #include <drm/drm_atomic.h>
->  #include <drm/drm_damage_helper.h>
-> +#include <drm/drm_device.h>
->  
->  /**
->   * DOC: overview
-> diff --git a/drivers/gpu/drm/drm_modeset_helper.c b/drivers/gpu/drm/drm_modeset_helper.c
-> index 9150fa385bba..9bc1ef788c77 100644
-> --- a/drivers/gpu/drm/drm_modeset_helper.c
-> +++ b/drivers/gpu/drm/drm_modeset_helper.c
-> @@ -23,8 +23,10 @@
->  #include <drm/drm_atomic_helper.h>
->  #include <drm/drm_crtc_helper.h>
->  #include <drm/drm_fb_helper.h>
-> +#include <drm/drm_fourcc.h>
->  #include <drm/drm_modeset_helper.h>
->  #include <drm/drm_plane_helper.h>
-> +#include <drm/drm_print.h>
->  
->  /**
->   * DOC: aux kms helpers
-> diff --git a/include/drm/drm_modeset_helper.h b/include/drm/drm_modeset_helper.h
-> index efa337f03129..995fd981cab0 100644
-> --- a/include/drm/drm_modeset_helper.h
-> +++ b/include/drm/drm_modeset_helper.h
-> @@ -23,7 +23,11 @@
->  #ifndef __DRM_KMS_HELPER_H__
->  #define __DRM_KMS_HELPER_H__
->  
-> -#include <drm/drmP.h>
-> +struct drm_crtc;
-> +struct drm_crtc_funcs;
-> +struct drm_device;
-> +struct drm_framebuffer;
-> +struct drm_mode_fb_cmd2;
->  
->  void drm_helper_move_panel_connectors_to_head(struct drm_device *);
->  
-> -- 
-> 2.12.0
-> 
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+T24gVGh1LCAyMDE5LTAxLTI0IGF0IDEzOjQ4ICswODAwLCBaaGFuZyBSdW4gd3JvdGU6DQo+IFRo
+ZSBheDg4NzcyX2JpbmQoKSBzaG91bGQgcmV0dXJuIGVycm9yIGNvZGUgaW1tZWRpYXRlbHkgd2hl
+biB0aGUgUEhZDQo+IHdhcyBub3QgcmVzZXQgcHJvcGVybHkgdGhyb3VnaCBheDg4NzcyYV9od19y
+ZXNldCgpLg0KPiBPdGhlcndpc2UsIFRoZSBhc2l4X2dldF9waHlpZCgpIHdpbGwgYmxvY2sgd2hl
+biBnZXQgdGhlIFBIWSANCj4gSWRlbnRpZmllciBmcm9tIHRoZSBQSFlTSUQxIE1JSSByZWdpc3Rl
+cnMgdGhyb3VnaCBhc2l4X21kaW9fcmVhZCgpIA0KPiBkdWUgdG8gdGhlIFBIWSBpc24ndCByZWFk
+eS4gRnVydGhlcm1vcmUsIGl0IHdpbGwgcHJvZHVjZSBhIGxvdCBvZiANCj4gZXJyb3IgbWVzc2Fn
+ZSBjYXVzZSBzeXN0ZW0gY3Jhc2guQXMgZm9sbG93czoNCj4gYXNpeCAxLTE6MS4wICh1bm5hbWVk
+IG5ldF9kZXZpY2UpICh1bmluaXRpYWxpemVkKTogRmFpbGVkIHRvIHdyaXRlDQo+ICByZWcgaW5k
+ZXggMHgwMDAwOiAtNzENCj4gYXNpeCAxLTE6MS4wICh1bm5hbWVkIG5ldF9kZXZpY2UpICh1bmlu
+aXRpYWxpemVkKTogRmFpbGVkIHRvIHNlbmQNCj4gIHNvZnR3YXJlIHJlc2V0OiBmZmZmZmZiOQ0K
+PiBhc2l4IDEtMToxLjAgKHVubmFtZWQgbmV0X2RldmljZSkgKHVuaW5pdGlhbGl6ZWQpOiBGYWls
+ZWQgdG8gd3JpdGUNCj4gIHJlZyBpbmRleCAweDAwMDA6IC03MQ0KPiBhc2l4IDEtMToxLjAgKHVu
+bmFtZWQgbmV0X2RldmljZSkgKHVuaW5pdGlhbGl6ZWQpOiBGYWlsZWQgdG8gZW5hYmxlDQo+ICBz
+b2Z0d2FyZSBNSUkgYWNjZXNzDQo+IGFzaXggMS0xOjEuMCAodW5uYW1lZCBuZXRfZGV2aWNlKSAo
+dW5pbml0aWFsaXplZCk6IEZhaWxlZCB0byByZWFkDQo+ICByZWcgaW5kZXggMHgwMDAwOiAtNzEN
+Cj4gYXNpeCAxLTE6MS4wICh1bm5hbWVkIG5ldF9kZXZpY2UpICh1bmluaXRpYWxpemVkKTogRmFp
+bGVkIHRvIHdyaXRlDQo+ICByZWcgaW5kZXggMHgwMDAwOiAtNzENCj4gYXNpeCAxLTE6MS4wICh1
+bm5hbWVkIG5ldF9kZXZpY2UpICh1bmluaXRpYWxpemVkKTogRmFpbGVkIHRvIGVuYWJsZQ0KPiAg
+c29mdHdhcmUgTUlJIGFjY2Vzcw0KPiBhc2l4IDEtMToxLjAgKHVubmFtZWQgbmV0X2RldmljZSkg
+KHVuaW5pdGlhbGl6ZWQpOiBGYWlsZWQgdG8gcmVhZA0KPiAgcmVnIGluZGV4IDB4MDAwMDogLTcx
+DQo+IC4uLiANCj4gDQo+IFNpZ25lZC1vZmYtYnk6IFpoYW5nIFJ1biA8emhhbmcucnVuQHp0ZS5j
+b20uY24+DQo+IFJldmlld2VkLWJ5OiBZYW5nIFdlaSA8eWFuZy53ZWk5QHp0ZS5jb20uY24+DQoN
+ClRlc3RlZC1ieTogTWFyY2VsIFppc3dpbGVyIDxtYXJjZWwuemlzd2lsZXJAdG9yYWRleC5jb20+
+DQoNCj4gLS0tDQo+ICBkcml2ZXJzL25ldC91c2IvYXNpeF9kZXZpY2VzLmMgfCA5ICsrKysrKyst
+LQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDcgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkNCj4g
+DQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC91c2IvYXNpeF9kZXZpY2VzLmMNCj4gYi9kcml2
+ZXJzL25ldC91c2IvYXNpeF9kZXZpY2VzLmMNCj4gaW5kZXggYjY1NGYwNS4uM2Q5Mzk5MyAxMDA2
+NDQNCj4gLS0tIGEvZHJpdmVycy9uZXQvdXNiL2FzaXhfZGV2aWNlcy5jDQo+ICsrKyBiL2RyaXZl
+cnMvbmV0L3VzYi9hc2l4X2RldmljZXMuYw0KPiBAQCAtNzM5LDggKzczOSwxMyBAQCBzdGF0aWMg
+aW50IGF4ODg3NzJfYmluZChzdHJ1Y3QgdXNibmV0ICpkZXYsDQo+IHN0cnVjdCB1c2JfaW50ZXJm
+YWNlICppbnRmKQ0KPiAgCWFzaXhfcmVhZF9jbWQoZGV2LCBBWF9DTURfU1RBVE1OR1NUU19SRUcs
+IDAsIDAsIDEsICZjaGlwY29kZSwNCj4gMCk7DQo+ICAJY2hpcGNvZGUgJj0gQVhfQ0hJUENPREVf
+TUFTSzsNCj4gIA0KPiAtCShjaGlwY29kZSA9PSBBWF9BWDg4NzcyX0NISVBDT0RFKSA/IGF4ODg3
+NzJfaHdfcmVzZXQoZGV2LCAwKSA6DQo+IC0JCQkJCSAgICBheDg4NzcyYV9od19yZXNldChkZXYs
+IDApOw0KPiArCXJldCA9IChjaGlwY29kZSA9PSBBWF9BWDg4NzcyX0NISVBDT0RFKSA/IGF4ODg3
+NzJfaHdfcmVzZXQoZGV2LA0KPiAwKSA6DQo+ICsJCQkJCQkgIGF4ODg3NzJhX2h3X3Jlc2V0KGRl
+dg0KPiAsIDApOw0KPiArDQo+ICsJaWYgKHJldCA8IDApIHsNCj4gKwkJbmV0ZGV2X2RiZyhkZXYt
+Pm5ldCwgIkZhaWxlZCB0byByZXNldCBBWDg4NzcyOiAlZFxuIiwNCj4gcmV0KTsNCj4gKwkJcmV0
+dXJuIHJldDsNCj4gKwl9DQo+ICANCj4gIAkvKiBSZWFkIFBIWUlEIHJlZ2lzdGVyICpBRlRFUiog
+dGhlIFBIWSB3YXMgcmVzZXQgcHJvcGVybHkgKi8NCj4gIAlwaHlpZCA9IGFzaXhfZ2V0X3BoeWlk
+KGRldik7DQo=
