@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94E84C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:14:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B4A8C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:14:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58F8B217D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:14:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16F06217D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:14:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548360886;
-	bh=wR02zX014k59zQ5mI4agYCMq2boP3nGsAuvK607TSBQ=;
+	s=default; t=1548360893;
+	bh=uos25sKReOK7ZKviXFjjwu786milcxPRVA0ATrrM6yE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=M8rsDB+kOgMWzVyrltgD/QPzBRv7skF5czGEC2c5L7UKZJBicYinuIS9MEzJYnfgk
-	 MYFcGCNbG0ePEJoPeyHbG4YMciqDxF5dTBf0DbnKRdmVUbcqcxBC1Shhg8yPoJ4bp3
-	 Lre9h4DwRuYQAkiOh2JYUhCVUQT49ElhwhxoPQF0=
+	b=Lx1yykL9kbXYZWKjg2T1sv8tTEp21fwDhczrAXHIpe5ZTI4+l4KjeOBzX3e4+Kyez
+	 VOjRFaIyiPXlSo4ZI5bUCz7v5I2JI1BwSRL1F8LRSSGbtP+apgpTpsjmExSGgZ918O
+	 UlHb0cxzPJ4IsuiyFh0XQC/MKc8q/m5hQajogndE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730427AbfAXUOo (ORCPT
+        id S1729720AbfAXTYy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 15:14:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50460 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:24:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729122AbfAXTZC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:25:02 -0500
+        id S1730233AbfAXTYv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:24:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AF014217D7;
-        Thu, 24 Jan 2019 19:25:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ADF9F217D7;
+        Thu, 24 Jan 2019 19:24:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548357902;
-        bh=wR02zX014k59zQ5mI4agYCMq2boP3nGsAuvK607TSBQ=;
+        s=default; t=1548357890;
+        bh=uos25sKReOK7ZKviXFjjwu786milcxPRVA0ATrrM6yE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UXod6AhbzrvcOLytW3uRa8fXSycmI6HTCi0yptlgvRy65fe0pLI6ju8M1XFost0w7
-         jNBfKJsue+rNNCTehdy71BdOcueBllswiOQ5pHVyMAm3Xym0cKlgNBbVmRSfjVZP5x
-         aw8za2M2e4/IQx7qTNATvu79/vYKG+qPJ0s1mE3s=
+        b=2oausEnud7vOvUyfCgDgrTpQ8JmZpvQ2O8XrvmmjghXgBBawcz6BgFoBQ83LAouOQ
+         Tewdlu5YQk48LTIHKIrXv2byny8MaJ2Y+bbglz4ymWrBvqL8UYETYRnqc1sSadBOM1
+         /fm2qcFe/9I+yNLRoXmTCtB010hnNmxuLvOoJGUc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Xu <wen.xu@gatech.edu>,
+        stable@vger.kernel.org, Greg KH <greg@kroah.com>,
+        Silvio Cesare <silvio.cesare@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 028/104] f2fs: fix to do sanity check with user_block_count
-Date:   Thu, 24 Jan 2019 20:19:17 +0100
-Message-Id: <20190124190158.153268488@linuxfoundation.org>
+Subject: [PATCH 4.4 024/104] f2fs: enhance sanity_check_raw_super() to avoid potential overflow
+Date:   Thu, 24 Jan 2019 20:19:13 +0100
+Message-Id: <20190124190157.693844935@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190154.968308875@linuxfoundation.org>
 References: <20190124190154.968308875@linuxfoundation.org>
@@ -66,148 +67,181 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
 
-commit 9dc956b2c8523aed39d1e6508438be9fea28c8fc upstream.
+commit 0cfe75c5b011994651a4ca6d74f20aa997bfc69a upstream.
 
-This patch fixs to do sanity check with user_block_count.
+In order to avoid the below overflow issue, we should have checked the
+boundaries in superblock before reaching out to allocation. As Linus suggested,
+the right place should be sanity_check_raw_super().
 
-- Overview
-Divide zero in utilization when mount() a corrupted f2fs image
+Dr Silvio Cesare of InfoSect reported:
 
-- Reproduce (4.18 upstream kernel)
+There are integer overflows with using the cp_payload superblock field in the
+f2fs filesystem potentially leading to memory corruption.
 
-- Kernel message
-[  564.099503] F2FS-fs (loop0): invalid crc value
-[  564.101991] divide error: 0000 [#1] SMP KASAN PTI
-[  564.103103] CPU: 1 PID: 1298 Comm: f2fs_discard-7: Not tainted 4.18.0-rc1+ #4
-[  564.104584] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-[  564.106624] RIP: 0010:issue_discard_thread+0x248/0x5c0
-[  564.107692] Code: ff ff 48 8b bd e8 fe ff ff 41 8b 9d 4c 04 00 00 e8 cd b8 ad ff 41 8b 85 50 04 00 00 31 d2 48 8d 04 80 48 8d 04 80 48 c1 e0 02 <48> f7 f3 83 f8 50 7e 16 41 c7 86 7c ff ff ff 01 00 00 00 41 c7 86
-[  564.111686] RSP: 0018:ffff8801f3117dc0 EFLAGS: 00010206
-[  564.112775] RAX: 0000000000000384 RBX: 0000000000000000 RCX: ffffffffb88c1e03
-[  564.114250] RDX: 0000000000000000 RSI: dffffc0000000000 RDI: ffff8801e3aa4850
-[  564.115706] RBP: ffff8801f3117f00 R08: 1ffffffff751a1d0 R09: fffffbfff751a1d0
-[  564.117177] R10: 0000000000000001 R11: fffffbfff751a1d0 R12: 00000000fffffffc
-[  564.118634] R13: ffff8801e3aa4400 R14: ffff8801f3117ed8 R15: ffff8801e2050000
-[  564.120094] FS:  0000000000000000(0000) GS:ffff8801f6f00000(0000) knlGS:0000000000000000
-[  564.121748] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  564.122923] CR2: 000000000202b078 CR3: 00000001f11ac000 CR4: 00000000000006e0
-[  564.124383] Call Trace:
-[  564.124924]  ? __issue_discard_cmd+0x480/0x480
-[  564.125882]  ? __sched_text_start+0x8/0x8
-[  564.126756]  ? __kthread_parkme+0xcb/0x100
-[  564.127620]  ? kthread_blkcg+0x70/0x70
-[  564.128412]  kthread+0x180/0x1d0
-[  564.129105]  ? __issue_discard_cmd+0x480/0x480
-[  564.130029]  ? kthread_associate_blkcg+0x150/0x150
-[  564.131033]  ret_from_fork+0x35/0x40
-[  564.131794] Modules linked in: snd_hda_codec_generic snd_hda_intel snd_hda_codec snd_hwdep snd_hda_core snd_pcm snd_timer snd mac_hid i2c_piix4 soundcore ib_iser rdma_cm iw_cm ib_cm ib_core iscsi_tcp libiscsi_tcp libiscsi scsi_transport_iscsi raid10 raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx raid1 raid0 multipath linear 8139too crct10dif_pclmul crc32_pclmul qxl drm_kms_helper syscopyarea aesni_intel sysfillrect sysimgblt fb_sys_fops ttm drm aes_x86_64 crypto_simd cryptd 8139cp glue_helper mii pata_acpi floppy
-[  564.141798] ---[ end trace 4ce02f25ff7d3df5 ]---
-[  564.142773] RIP: 0010:issue_discard_thread+0x248/0x5c0
-[  564.143885] Code: ff ff 48 8b bd e8 fe ff ff 41 8b 9d 4c 04 00 00 e8 cd b8 ad ff 41 8b 85 50 04 00 00 31 d2 48 8d 04 80 48 8d 04 80 48 c1 e0 02 <48> f7 f3 83 f8 50 7e 16 41 c7 86 7c ff ff ff 01 00 00 00 41 c7 86
-[  564.147776] RSP: 0018:ffff8801f3117dc0 EFLAGS: 00010206
-[  564.148856] RAX: 0000000000000384 RBX: 0000000000000000 RCX: ffffffffb88c1e03
-[  564.150424] RDX: 0000000000000000 RSI: dffffc0000000000 RDI: ffff8801e3aa4850
-[  564.151906] RBP: ffff8801f3117f00 R08: 1ffffffff751a1d0 R09: fffffbfff751a1d0
-[  564.153463] R10: 0000000000000001 R11: fffffbfff751a1d0 R12: 00000000fffffffc
-[  564.154915] R13: ffff8801e3aa4400 R14: ffff8801f3117ed8 R15: ffff8801e2050000
-[  564.156405] FS:  0000000000000000(0000) GS:ffff8801f6f00000(0000) knlGS:0000000000000000
-[  564.158070] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  564.159279] CR2: 000000000202b078 CR3: 00000001f11ac000 CR4: 00000000000006e0
-[  564.161043] ==================================================================
-[  564.162587] BUG: KASAN: stack-out-of-bounds in from_kuid_munged+0x1d/0x50
-[  564.163994] Read of size 4 at addr ffff8801f3117c84 by task f2fs_discard-7:/1298
+include/linux/f2fs_fs.h
 
-[  564.165852] CPU: 1 PID: 1298 Comm: f2fs_discard-7: Tainted: G      D           4.18.0-rc1+ #4
-[  564.167593] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-[  564.169522] Call Trace:
-[  564.170057]  dump_stack+0x7b/0xb5
-[  564.170778]  print_address_description+0x70/0x290
-[  564.171765]  kasan_report+0x291/0x390
-[  564.172540]  ? from_kuid_munged+0x1d/0x50
-[  564.173408]  __asan_load4+0x78/0x80
-[  564.174148]  from_kuid_munged+0x1d/0x50
-[  564.174962]  do_notify_parent+0x1f5/0x4f0
-[  564.175808]  ? send_sigqueue+0x390/0x390
-[  564.176639]  ? css_set_move_task+0x152/0x340
-[  564.184197]  do_exit+0x1290/0x1390
-[  564.184950]  ? __issue_discard_cmd+0x480/0x480
-[  564.185884]  ? mm_update_next_owner+0x380/0x380
-[  564.186829]  ? __sched_text_start+0x8/0x8
-[  564.187672]  ? __kthread_parkme+0xcb/0x100
-[  564.188528]  ? kthread_blkcg+0x70/0x70
-[  564.189333]  ? kthread+0x180/0x1d0
-[  564.190052]  ? __issue_discard_cmd+0x480/0x480
-[  564.190983]  rewind_stack_do_exit+0x17/0x20
+struct f2fs_super_block {
+...
+        __le32 cp_payload;
 
-[  564.192190] The buggy address belongs to the page:
-[  564.193213] page:ffffea0007cc45c0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
-[  564.194856] flags: 0x2ffff0000000000()
-[  564.195644] raw: 02ffff0000000000 0000000000000000 dead000000000200 0000000000000000
-[  564.197247] raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
-[  564.198826] page dumped because: kasan: bad access detected
+fs/f2fs/f2fs.h
 
-[  564.200299] Memory state around the buggy address:
-[  564.201306]  ffff8801f3117b80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[  564.202779]  ffff8801f3117c00: 00 00 00 00 00 00 00 00 00 00 00 f3 f3 f3 f3 f3
-[  564.204252] >ffff8801f3117c80: f3 f3 f3 00 00 00 00 00 00 00 00 00 f1 f1 f1 f1
-[  564.205742]                    ^
-[  564.206424]  ffff8801f3117d00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[  564.207908]  ffff8801f3117d80: f3 f3 f3 f3 f3 f3 f3 f3 00 00 00 00 00 00 00 00
-[  564.209389] ==================================================================
-[  564.231795] F2FS-fs (loop0): Mounted with checkpoint version = 2
+typedef u32 block_t;    /*
+                         * should not change u32, since it is the on-disk block
+                         * address format, __le32.
+                         */
+...
 
-- Location
-https://elixir.bootlin.com/linux/v4.18-rc1/source/fs/f2fs/segment.h#L586
-	return div_u64((u64)valid_user_blocks(sbi) * 100,
-					sbi->user_block_count);
-Missing checks on sbi->user_block_count.
+static inline block_t __cp_payload(struct f2fs_sb_info *sbi)
+{
+        return le32_to_cpu(F2FS_RAW_SUPER(sbi)->cp_payload);
+}
 
-Reported-by: Wen Xu <wen.xu@gatech.edu>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+fs/f2fs/checkpoint.c
+
+        block_t start_blk, orphan_blocks, i, j;
+...
+        start_blk = __start_cp_addr(sbi) + 1 + __cp_payload(sbi);
+        orphan_blocks = __start_sum_addr(sbi) - 1 - __cp_payload(sbi);
+
++++ integer overflows
+
+...
+        unsigned int cp_blks = 1 + __cp_payload(sbi);
+...
+        sbi->ckpt = kzalloc(cp_blks * blk_size, GFP_KERNEL);
+
++++ integer overflow leading to incorrect heap allocation.
+
+        int cp_payload_blks = __cp_payload(sbi);
+...
+        ckpt->cp_pack_start_sum = cpu_to_le32(1 + cp_payload_blks +
+                        orphan_blocks);
+
++++ sign bug and integer overflow
+
+...
+        for (i = 1; i < 1 + cp_payload_blks; i++)
+
++++ integer overflow
+
+...
+
+      sbi->max_orphans = (sbi->blocks_per_seg - F2FS_CP_PACKS -
+                        NR_CURSEG_TYPE - __cp_payload(sbi)) *
+                                F2FS_ORPHANS_PER_BLOCK;
+
++++ integer overflow
+
+Reported-by: Greg KH <greg@kroah.com>
+Reported-by: Silvio Cesare <silvio.cesare@gmail.com>
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+[bwh: Backported to 4.4:
+ - No hot file extension support
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/super.c |   13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ fs/f2fs/super.c |   71 ++++++++++++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 64 insertions(+), 7 deletions(-)
 
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -1140,6 +1140,8 @@ int sanity_check_ckpt(struct f2fs_sb_inf
- 	unsigned int sit_segs, nat_segs;
- 	unsigned int sit_bitmap_size, nat_bitmap_size;
- 	unsigned int log_blocks_per_seg;
-+	unsigned int segment_count_main;
-+	block_t user_block_count;
- 	int i;
+@@ -994,6 +994,8 @@ static inline bool sanity_check_area_bou
+ static int sanity_check_raw_super(struct super_block *sb,
+ 			struct f2fs_super_block *raw_super)
+ {
++	block_t segment_count, segs_per_sec, secs_per_zone;
++	block_t total_sections, blocks_per_seg;
+ 	unsigned int blocksize;
  
- 	total = le32_to_cpu(raw_super->segment_count);
-@@ -1164,6 +1166,16 @@ int sanity_check_ckpt(struct f2fs_sb_inf
+ 	if (F2FS_SUPER_MAGIC != le32_to_cpu(raw_super->magic)) {
+@@ -1047,6 +1049,68 @@ static int sanity_check_raw_super(struct
  		return 1;
  	}
  
-+	user_block_count = le64_to_cpu(ckpt->user_block_count);
-+	segment_count_main = le32_to_cpu(raw_super->segment_count_main);
-+	log_blocks_per_seg = le32_to_cpu(raw_super->log_blocks_per_seg);
-+	if (!user_block_count || user_block_count >=
-+			segment_count_main << log_blocks_per_seg) {
-+		f2fs_msg(sbi->sb, KERN_ERR,
-+			"Wrong user_block_count: %u", user_block_count);
++	segment_count = le32_to_cpu(raw_super->segment_count);
++	segs_per_sec = le32_to_cpu(raw_super->segs_per_sec);
++	secs_per_zone = le32_to_cpu(raw_super->secs_per_zone);
++	total_sections = le32_to_cpu(raw_super->section_count);
++
++	/* blocks_per_seg should be 512, given the above check */
++	blocks_per_seg = 1 << le32_to_cpu(raw_super->log_blocks_per_seg);
++
++	if (segment_count > F2FS_MAX_SEGMENT ||
++				segment_count < F2FS_MIN_SEGMENTS) {
++		f2fs_msg(sb, KERN_INFO,
++			"Invalid segment count (%u)",
++			segment_count);
 +		return 1;
 +	}
 +
- 	main_segs = le32_to_cpu(raw_super->segment_count_main);
- 	blocks_per_seg = sbi->blocks_per_seg;
++	if (total_sections > segment_count ||
++			total_sections < F2FS_MIN_SEGMENTS ||
++			segs_per_sec > segment_count || !segs_per_sec) {
++		f2fs_msg(sb, KERN_INFO,
++			"Invalid segment/section count (%u, %u x %u)",
++			segment_count, total_sections, segs_per_sec);
++		return 1;
++	}
++
++	if ((segment_count / segs_per_sec) < total_sections) {
++		f2fs_msg(sb, KERN_INFO,
++			"Small segment_count (%u < %u * %u)",
++			segment_count, segs_per_sec, total_sections);
++		return 1;
++	}
++
++	if (segment_count > (le32_to_cpu(raw_super->block_count) >> 9)) {
++		f2fs_msg(sb, KERN_INFO,
++			"Wrong segment_count / block_count (%u > %u)",
++			segment_count, le32_to_cpu(raw_super->block_count));
++		return 1;
++	}
++
++	if (secs_per_zone > total_sections) {
++		f2fs_msg(sb, KERN_INFO,
++			"Wrong secs_per_zone (%u > %u)",
++			secs_per_zone, total_sections);
++		return 1;
++	}
++	if (le32_to_cpu(raw_super->extension_count) > F2FS_MAX_EXTENSION) {
++		f2fs_msg(sb, KERN_INFO,
++			"Corrupted extension count (%u > %u)",
++			le32_to_cpu(raw_super->extension_count),
++			F2FS_MAX_EXTENSION);
++		return 1;
++	}
++
++	if (le32_to_cpu(raw_super->cp_payload) >
++				(blocks_per_seg - F2FS_CP_PACKS)) {
++		f2fs_msg(sb, KERN_INFO,
++			"Insane cp_payload (%u > %u)",
++			le32_to_cpu(raw_super->cp_payload),
++			blocks_per_seg - F2FS_CP_PACKS);
++		return 1;
++	}
++
+ 	/* check reserved ino info */
+ 	if (le32_to_cpu(raw_super->node_ino) != 1 ||
+ 		le32_to_cpu(raw_super->meta_ino) != 2 ||
+@@ -1059,13 +1123,6 @@ static int sanity_check_raw_super(struct
+ 		return 1;
+ 	}
  
-@@ -1180,7 +1192,6 @@ int sanity_check_ckpt(struct f2fs_sb_inf
- 
- 	sit_bitmap_size = le32_to_cpu(ckpt->sit_ver_bitmap_bytesize);
- 	nat_bitmap_size = le32_to_cpu(ckpt->nat_ver_bitmap_bytesize);
--	log_blocks_per_seg = le32_to_cpu(raw_super->log_blocks_per_seg);
- 
- 	if (sit_bitmap_size != ((sit_segs / 2) << log_blocks_per_seg) / 8 ||
- 		nat_bitmap_size != ((nat_segs / 2) << log_blocks_per_seg) / 8) {
+-	if (le32_to_cpu(raw_super->segment_count) > F2FS_MAX_SEGMENT) {
+-		f2fs_msg(sb, KERN_INFO,
+-			"Invalid segment count (%u)",
+-			le32_to_cpu(raw_super->segment_count));
+-		return 1;
+-	}
+-
+ 	/* check CP/SIT/NAT/SSA/MAIN_AREA area boundary */
+ 	if (sanity_check_area_boundary(sb, raw_super))
+ 		return 1;
 
 
