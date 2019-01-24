@@ -2,107 +2,99 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FBF1C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 03:13:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AA7CC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 03:13:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E451E2184C
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 03:13:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 234482184C
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 03:13:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727093AbfAXDNZ (ORCPT
+        id S1727200AbfAXDNl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 22:13:25 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:2738 "EHLO huawei.com"
+        Wed, 23 Jan 2019 22:13:41 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2739 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726249AbfAXDNZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 22:13:25 -0500
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 96D199E39B34B9A1959B;
-        Thu, 24 Jan 2019 11:13:21 +0800 (CST)
-Received: from [127.0.0.1] (10.177.31.96) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.408.0; Thu, 24 Jan 2019
- 11:13:19 +0800
-Subject: Re: [PATCH -next] usb: host: drop pointless static qualifier
-To:     Alan Stern <stern@rowland.harvard.edu>
-References: <Pine.LNX.4.44L0.1901231107030.1564-100000@iolanthe.rowland.org>
-CC:     <geoff@infradead.org>, <gregkh@linuxfoundation.org>,
-        <benh@kernel.crashing.org>, <paulus@samba.org>,
-        <mpe@ellerman.id.au>, <linux-kernel@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <linux-usb@vger.kernel.org>
-From:   YueHaibing <yuehaibing@huawei.com>
-Message-ID: <d7fca6e4-2bfb-3c0c-97cc-2c1abcf117cf@huawei.com>
-Date:   Thu, 24 Jan 2019 11:13:17 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.2.0
+        id S1726249AbfAXDNl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 22:13:41 -0500
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 70C3378EA179BAB1077C;
+        Thu, 24 Jan 2019 11:13:39 +0800 (CST)
+Received: from [127.0.0.1] (10.57.115.182) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.408.0; Thu, 24 Jan 2019
+ 11:13:30 +0800
+Subject: Re: [PATCH V2 rdma-next 2/3] RDMA/hns: Fix the chip hanging caused by
+ sending mailbox&CMQ during reset
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+References: <1547868967-115951-1-git-send-email-xavier.huwei@huawei.com>
+ <1547868967-115951-3-git-send-email-xavier.huwei@huawei.com>
+ <20190123224041.GA11605@ziepe.ca>
+CC:     <dledford@redhat.com>, <linux-rdma@vger.kernel.org>,
+        <lijun_nudt@163.com>, <oulijun@huawei.com>,
+        <liudongdong3@huawei.com>, <linuxarm@huawei.com>,
+        <linux-kernel@vger.kernel.org>, <xavier_huwei@163.com>
+From:   "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
+Message-ID: <5C492D59.8030707@huawei.com>
+Date:   Thu, 24 Jan 2019 11:13:29 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-In-Reply-To: <Pine.LNX.4.44L0.1901231107030.1564-100000@iolanthe.rowland.org>
+In-Reply-To: <20190123224041.GA11605@ziepe.ca>
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.31.96]
+X-Originating-IP: [10.57.115.182]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/1/24 0:09, Alan Stern wrote:
-> On Wed, 23 Jan 2019, YueHaibing wrote:
-> 
->> There is no need to have the 'dummy_mask' variable static since new
->> value always be assigned before use it.
->>
->> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->> ---
->>  drivers/usb/host/ehci-ps3.c | 2 +-
->>  drivers/usb/host/ohci-ps3.c | 2 +-
->>  2 files changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/usb/host/ehci-ps3.c b/drivers/usb/host/ehci-ps3.c
->> index 454d8c6..91cee02 100644
->> --- a/drivers/usb/host/ehci-ps3.c
->> +++ b/drivers/usb/host/ehci-ps3.c
->> @@ -86,7 +86,7 @@ static int ps3_ehci_probe(struct ps3_system_bus_device *dev)
->>  	int result;
->>  	struct usb_hcd *hcd;
->>  	unsigned int virq;
->> -	static u64 dummy_mask;
->> +	u64 dummy_mask;
->>  
->>  	if (usb_disabled()) {
->>  		result = -ENODEV;
->> diff --git a/drivers/usb/host/ohci-ps3.c b/drivers/usb/host/ohci-ps3.c
->> index 395f9d3..a1c1bdf 100644
->> --- a/drivers/usb/host/ohci-ps3.c
->> +++ b/drivers/usb/host/ohci-ps3.c
->> @@ -69,7 +69,7 @@ static int ps3_ohci_probe(struct ps3_system_bus_device *dev)
->>  	int result;
->>  	struct usb_hcd *hcd;
->>  	unsigned int virq;
->> -	static u64 dummy_mask;
->> +	u64 dummy_mask;
->>  
->>  	if (usb_disabled()) {
->>  		result = -ENODEV;
-> 
-> No.  You need to read the code and understand how a variable is used
-> before you decide to modify it.
 
-Sorry, I misread the code, so just leave it as is.
 
-> 
-> In this case, a suitable approach would be to change the declaration 
-> so that it says:
-> 
-> 	status u64 dummy_mask = DMA_BIT_MASK(32);
-> 
-> and remove the line that does the assignment dynamically.
-> 
-> Alan Stern
-> 
-> 
+On 2019/1/24 6:40, Jason Gunthorpe wrote:
+> On Sat, Jan 19, 2019 at 11:36:06AM +0800, Wei Hu (Xavier) wrote:
+>
+>> +static int hns_roce_v2_cmd_hw_resetting(struct hns_roce_dev *hr_dev,
+>> +					unsigned long instance_stage,
+>> +					unsigned long reset_stage)
+>> +{
+>> +	struct hns_roce_v2_priv *priv = (struct hns_roce_v2_priv *)hr_dev->priv;
+>> +	struct hnae3_handle *handle = priv->handle;
+>> +	const struct hnae3_ae_ops *ops = handle->ae_algo->ops;
+>> +	unsigned long end;
+>> +
+>> +	/* When hardware reset is detected, we should stop sending mailbox&cmq
+>> +	 * to hardware, and wait until hardware reset finished. If now
+>> +	 * in .init_instance() function, we should exit with error. If now at
+>> +	 * HNAE3_INIT_CLIENT stage of soft reset process, we should exit with
+>> +	 * error, and then HNAE3_INIT_CLIENT related process can rollback the
+>> +	 * operation like notifing hardware to free resources, HNAE3_INIT_CLIENT
+>> +	 * related process will exit with error to notify NIC driver to
+>> +	 * reschedule soft reset process once again.
+>> +	 */
+>> +	end = msecs_to_jiffies(HNS_ROCE_V2_HW_RST_TIMEOUT) + jiffies;
+>> +	while (ops->get_hw_reset_stat(handle) && time_before(jiffies, end))
+>> +		udelay(1);
+> I thought you were getting rid of these loops?
+Hi, Jason
+
+    Upper applications maybe notify driver to issue mailbox or CMD
+    commands to hardware, some commands used to cancel resources,
+    destory bt/destory cq/unreg mr/destory qp etc. when such
+    commands are executed successfully, the hardware engine will
+    no longer access some memory registered by the driver.
+
+    When reset occurs, it is possible for upper applications notify driver
+    to issue mailbox or CMD commands, we need to wait until hardware
+    reset finished to ensure that hardware no longer accesses related
+memory.
+   
+    Regards
+Xavier
+> Jason
+>
 > .
-> 
+>
+
 
