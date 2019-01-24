@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEDF3C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:36:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9793EC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:36:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DF4821908
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:36:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 636C921905
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:36:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358608;
-	bh=4QWGYzoGHoTLkPpJhSKjQpxBz7y2nukEJeP5gB3zjU0=;
+	s=default; t=1548358611;
+	bh=7r1s2XzvJT2JDzLR0gLLk6SUTrm/78obBe2iw9QD2P8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BOIVuPnowUK4H28B6db+yxJsSVB3ffhVtTzLHfVdAafA9bE93FUteuDKvFMohfStR
-	 Xsq/TcxXhbG4TqnMoI823Ukz98XZOOK3/ZDmqHkSEnnFQtTdQTZDdtpBWkGgxk3mJY
-	 uX5lScfWLztKprhrKfTbBnM9DaJL0ICinjL82YIo=
+	b=VhNeyE7PGb1Tt4D+AJFfE/064q5rhInV8OCwuEZdiqFUKFfINFFk1oeDNTn5Yb1+k
+	 p98q3+nO/EkG/RU7w8t4n3B5DQMgO6JBiKewlS09QWxVwmwjmcCmS9DtGvd2llveXo
+	 hK5RMzmS3DcRDHbUcKPx/+5CbEDVskLw7kWUF+AE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732041AbfAXTgr (ORCPT
+        id S1732422AbfAXTgu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:36:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36638 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:36:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36752 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732532AbfAXTgh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:36:37 -0500
+        id S1732062AbfAXTgq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:36:46 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B34921905;
-        Thu, 24 Jan 2019 19:36:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C7DD21906;
+        Thu, 24 Jan 2019 19:36:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358596;
-        bh=4QWGYzoGHoTLkPpJhSKjQpxBz7y2nukEJeP5gB3zjU0=;
+        s=default; t=1548358605;
+        bh=7r1s2XzvJT2JDzLR0gLLk6SUTrm/78obBe2iw9QD2P8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CBQe5Zw2qHuCiEu0JyohVgAhDhW7Mt5hwae+wK6lttEsLirXkDSxIFtSpRPWgWDIU
-         FHbHgbor4fS/6uRSDZgFOzCtFPjqRXWM8p+EkK1l5MBVVgjG98DdMmyGW4HE8DfcBr
-         LACzxFHr/C/s/Z8qbrFGHyjZsPfgbKRQq7wiWQzE=
+        b=IRPAE7q8qP0V/iqi/h+mi8H2EuQbLZClbI65WJd9dbtuJ5ZyexvUVCdgPu8gY5BEM
+         mPGrIeh5ZnWieF/Mowvj9Q3eUqyth8WyKNE1kmirfOODBl9dfydZhsCNeIYRsiwgxF
+         o0y9y2G/Yn25y61BhF4Enu3wGn2+fL24zeGjfTcA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
+        stable@vger.kernel.org,
+        Hans van Kranenburg <hans.van.kranenburg@mendix.com>,
+        Qu Wenruo <wqu@suse.com>, David Sterba <dsterba@suse.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 027/106] arm64: perf: set suppress_bind_attrs flag to true
-Date:   Thu, 24 Jan 2019 20:19:44 +0100
-Message-Id: <20190124190208.086984231@linuxfoundation.org>
+Subject: [PATCH 4.19 060/106] btrfs: volumes: Make sure there is no overlap of dev extents at mount time
+Date:   Thu, 24 Jan 2019 20:20:17 +0100
+Message-Id: <20190124190210.230964303@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
 References: <20190124190206.342411005@linuxfoundation.org>
@@ -67,69 +67,146 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 81e9fa8bab381f8b6eb04df7cdf0f71994099bd4 ]
+[ Upstream commit 5eb193812a42dc49331f25137a38dfef9612d3e4 ]
 
-The armv8_pmuv3 driver doesn't have a remove function, and when the test
-'CONFIG_DEBUG_TEST_DRIVER_REMOVE=y' is enabled, the following Call trace
-can be seen.
+Enhance btrfs_verify_dev_extents() to remember previous checked dev
+extents, so it can verify no dev extents can overlap.
 
-[    1.424287] Failed to register pmu: armv8_pmuv3, reason -17
-[    1.424870] WARNING: CPU: 0 PID: 1 at ../kernel/events/core.c:11771 perf_event_sysfs_init+0x98/0xdc
-[    1.425220] Modules linked in:
-[    1.425531] CPU: 0 PID: 1 Comm: swapper/0 Tainted: G        W         4.19.0-rc7-next-20181012-00003-ge7a97b1ad77b-dirty #35
-[    1.425951] Hardware name: linux,dummy-virt (DT)
-[    1.426212] pstate: 80000005 (Nzcv daif -PAN -UAO)
-[    1.426458] pc : perf_event_sysfs_init+0x98/0xdc
-[    1.426720] lr : perf_event_sysfs_init+0x98/0xdc
-[    1.426908] sp : ffff00000804bd50
-[    1.427077] x29: ffff00000804bd50 x28: ffff00000934e078
-[    1.427429] x27: ffff000009546000 x26: 0000000000000007
-[    1.427757] x25: ffff000009280710 x24: 00000000ffffffef
-[    1.428086] x23: ffff000009408000 x22: 0000000000000000
-[    1.428415] x21: ffff000009136008 x20: ffff000009408730
-[    1.428744] x19: ffff80007b20b400 x18: 000000000000000a
-[    1.429075] x17: 0000000000000000 x16: 0000000000000000
-[    1.429418] x15: 0000000000000400 x14: 2e79726f74636572
-[    1.429748] x13: 696420656d617320 x12: 656874206e692065
-[    1.430060] x11: 6d616e20656d6173 x10: 2065687420687469
-[    1.430335] x9 : ffff00000804bd50 x8 : 206e6f7361657220
-[    1.430610] x7 : 2c3376756d705f38 x6 : ffff00000954d7ce
-[    1.430880] x5 : 0000000000000000 x4 : 0000000000000000
-[    1.431226] x3 : 0000000000000000 x2 : ffffffffffffffff
-[    1.431554] x1 : 4d151327adc50b00 x0 : 0000000000000000
-[    1.431868] Call trace:
-[    1.432102]  perf_event_sysfs_init+0x98/0xdc
-[    1.432382]  do_one_initcall+0x6c/0x1a8
-[    1.432637]  kernel_init_freeable+0x1bc/0x280
-[    1.432905]  kernel_init+0x18/0x160
-[    1.433115]  ret_from_fork+0x10/0x18
-[    1.433297] ---[ end trace 27fd415390eb9883 ]---
+Analysis from Hans:
 
-Rework to set suppress_bind_attrs flag to avoid removing the device when
-CONFIG_DEBUG_TEST_DRIVER_REMOVE=y, since there's no real reason to
-remove the armv8_pmuv3 driver.
+"Imagine allocating a DATA|DUP chunk.
 
-Cc: Arnd Bergmann <arnd@arndb.de>
-Co-developed-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+ In the chunk allocator, we first set...
+   max_stripe_size = SZ_1G;
+   max_chunk_size = BTRFS_MAX_DATA_CHUNK_SIZE
+ ... which is 10GiB.
+
+ Then...
+   /* we don't want a chunk larger than 10% of writeable space */
+   max_chunk_size = min(div_factor(fs_devices->total_rw_bytes, 1),
+       		 max_chunk_size);
+
+ Imagine we only have one 7880MiB block device in this filesystem. Now
+ max_chunk_size is down to 788MiB.
+
+ The next step in the code is to search for max_stripe_size * dev_stripes
+ amount of free space on the device, which is in our example 1GiB * 2 =
+ 2GiB. Imagine the device has exactly 1578MiB free in one contiguous
+ piece. This amount of bytes will be put in devices_info[ndevs - 1].max_avail
+
+ Next we recalculate the stripe_size (which is actually the device extent
+ length), based on the actual maximum amount of available raw disk space:
+   stripe_size = div_u64(devices_info[ndevs - 1].max_avail, dev_stripes);
+
+ stripe_size is now 789MiB
+
+ Next we do...
+   data_stripes = num_stripes / ncopies
+ ...where data_stripes ends up as 1, because num_stripes is 2 (the amount
+ of device extents we're going to have), and DUP has ncopies 2.
+
+ Next there's a check...
+   if (stripe_size * data_stripes > max_chunk_size)
+ ...which matches because 789MiB * 1 > 788MiB.
+
+ We go into the if code, and next is...
+   stripe_size = div_u64(max_chunk_size, data_stripes);
+ ...which resets stripe_size to max_chunk_size: 788MiB
+
+ Next is a fun one...
+   /* bump the answer up to a 16MB boundary */
+   stripe_size = round_up(stripe_size, SZ_16M);
+ ...which changes stripe_size from 788MiB to 800MiB.
+
+ We're not done changing stripe_size yet...
+   /* But don't go higher than the limits we found while searching
+    * for free extents
+    */
+   stripe_size = min(devices_info[ndevs - 1].max_avail,
+       	      stripe_size);
+
+ This is bad. max_avail is twice the stripe_size (we need to fit 2 device
+ extents on the same device for DUP).
+
+ The result here is that 800MiB < 1578MiB, so it's unchanged. However,
+ the resulting DUP chunk will need 1600MiB disk space, which isn't there,
+ and the second dev_extent might extend into the next thing (next
+ dev_extent? end of device?) for 22MiB.
+
+ The last shown line of code relies on a situation where there's twice
+ the value of stripe_size present as value for the variable stripe_size
+ when it's DUP. This was actually the case before commit 92e222df7b
+ "btrfs: alloc_chunk: fix DUP stripe size handling", from which I quote:
+   "[...] in the meantime there's a check to see if the stripe_size does
+ not exceed max_chunk_size. Since during this check stripe_size is twice
+ the amount as intended, the check will reduce the stripe_size to
+ max_chunk_size if the actual correct to be used stripe_size is more than
+ half the amount of max_chunk_size."
+
+ In the previous version of the code, the 16MiB alignment (why is this
+ done, by the way?) would result in a 50% chance that it would actually
+ do an 8MiB alignment for the individual dev_extents, since it was
+ operating on double the size. Does this matter?
+
+ Does it matter that stripe_size can be set to anything which is not
+ 16MiB aligned because of the amount of remaining available disk space
+ which is just taken?
+
+ What is the main purpose of this round_up?
+
+ The most straightforward thing to do seems something like...
+   stripe_size = min(
+       div_u64(devices_info[ndevs - 1].max_avail, dev_stripes),
+       stripe_size
+   )
+ ..just putting half of the max_avail into stripe_size."
+
+Link: https://lore.kernel.org/linux-btrfs/b3461a38-e5f8-f41d-c67c-2efac8129054@mendix.com/
+Reported-by: Hans van Kranenburg <hans.van.kranenburg@mendix.com>
+Signed-off-by: Qu Wenruo <wqu@suse.com>
+[ add analysis from report ]
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/kernel/perf_event.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/btrfs/volumes.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/arch/arm64/kernel/perf_event.c b/arch/arm64/kernel/perf_event.c
-index e213f8e867f6..8a91ac067d44 100644
---- a/arch/arm64/kernel/perf_event.c
-+++ b/arch/arm64/kernel/perf_event.c
-@@ -1274,6 +1274,7 @@ static struct platform_driver armv8_pmu_driver = {
- 	.driver		= {
- 		.name	= ARMV8_PMU_PDEV_NAME,
- 		.of_match_table = armv8_pmu_of_device_ids,
-+		.suppress_bind_attrs = true,
- 	},
- 	.probe		= armv8_pmu_device_probe,
- };
+diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+index 223334f08530..dbb893d0ae81 100644
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -7474,6 +7474,8 @@ int btrfs_verify_dev_extents(struct btrfs_fs_info *fs_info)
+ 	struct btrfs_path *path;
+ 	struct btrfs_root *root = fs_info->dev_root;
+ 	struct btrfs_key key;
++	u64 prev_devid = 0;
++	u64 prev_dev_ext_end = 0;
+ 	int ret = 0;
+ 
+ 	key.objectid = 1;
+@@ -7518,10 +7520,22 @@ int btrfs_verify_dev_extents(struct btrfs_fs_info *fs_info)
+ 		chunk_offset = btrfs_dev_extent_chunk_offset(leaf, dext);
+ 		physical_len = btrfs_dev_extent_length(leaf, dext);
+ 
++		/* Check if this dev extent overlaps with the previous one */
++		if (devid == prev_devid && physical_offset < prev_dev_ext_end) {
++			btrfs_err(fs_info,
++"dev extent devid %llu physical offset %llu overlap with previous dev extent end %llu",
++				  devid, physical_offset, prev_dev_ext_end);
++			ret = -EUCLEAN;
++			goto out;
++		}
++
+ 		ret = verify_one_dev_extent(fs_info, chunk_offset, devid,
+ 					    physical_offset, physical_len);
+ 		if (ret < 0)
+ 			goto out;
++		prev_devid = devid;
++		prev_dev_ext_end = physical_offset + physical_len;
++
+ 		ret = btrfs_next_item(root, path);
+ 		if (ret < 0)
+ 			goto out;
 -- 
 2.19.1
 
