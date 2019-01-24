@@ -2,70 +2,90 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9F91C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 22:13:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C8DEC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 22:18:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9B0F218D0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 22:13:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDE5A218D0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 22:18:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548368306;
+	bh=7IXz9FAozwMcOb/SIcWiY1WhQcGGjm39TNnPdM05DP8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=I1gtxuU35U+4sietKunQEQ6RNsKE1QvHnekUjqdZXOa0LNiwsNdFEbPGXUniyIw3K
+	 +VaNgooy7iDuu/h0e6Mf0c6L+HyjL0DKnch1gDQjNF31iSzT6iF3NFkZhHWUlnIdyH
+	 4t208crPWcuCgm954uP4ZQhqt+QYMYKPEX+C8XrQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726317AbfAXWN0 (ORCPT
+        id S1727488AbfAXWSW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 17:13:26 -0500
-Received: from mga07.intel.com ([134.134.136.100]:18681 "EHLO mga07.intel.com"
+        Thu, 24 Jan 2019 17:18:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36194 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725936AbfAXWNZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 17:13:25 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jan 2019 14:13:24 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,518,1539673200"; 
-   d="scan'208";a="110844747"
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
-  by orsmga006.jf.intel.com with ESMTP; 24 Jan 2019 14:13:24 -0800
-Date:   Thu, 24 Jan 2019 15:12:27 -0700
-From:   Keith Busch <keith.busch@intel.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Ross Zwisler <zwisler@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>, linux-nvdimm@lists.01.org
-Subject: Re: [PATCH] MAINTAINERS: Update filesystem-dax and NVDIMM entries
-Message-ID: <20190124221226.GB9882@localhost.localdomain>
-References: <154835747897.2884847.389054528444820204.stgit@dwillia2-desk3.amr.corp.intel.com>
+        id S1725913AbfAXWSV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 17:18:21 -0500
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 004A1218D0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 22:18:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548368301;
+        bh=7IXz9FAozwMcOb/SIcWiY1WhQcGGjm39TNnPdM05DP8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=v4T98Lj5gF30aqCNKbBqzgknA3Fd1w6c2bwdRFy32gCnFAPLDn2o1dI4WHHg1RsZT
+         QahX3EvwpAWE7tpLK+r5YESCD2n8TdLfn7LFTTQx80ZJapGRX1vWG12L7/T1hGQ25s
+         e7dXeUMySDIJDT0hxP5oyjIrxYV0C1g37CG/lpKc=
+Received: by mail-vs1-f43.google.com with SMTP id b74so4514265vsd.9
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 14:18:20 -0800 (PST)
+X-Gm-Message-State: AJcUukdmUd4vQo2MZG5A6UFx3RwHCLmb1LNZY4eyoPfqFdWofWIZ3o3G
+        CXplz1FooDFFqFGSzAKnlB5T+yyR0pAEcbcleBQ=
+X-Google-Smtp-Source: ALg8bN6EIfDNAbDdNMMFNxt0jJg/SN8lqwPqYq/SSDAjNNqkkPkJNZOGFWkhSV69TAzrEuO3X6GE1m/Khk8wg9hF6U4=
+X-Received: by 2002:a67:3a1c:: with SMTP id h28mr3467555vsa.218.1548368300175;
+ Thu, 24 Jan 2019 14:18:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <154835747897.2884847.389054528444820204.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+References: <154835747897.2884847.389054528444820204.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20190124221226.GB9882@localhost.localdomain>
+In-Reply-To: <20190124221226.GB9882@localhost.localdomain>
+From:   Ross Zwisler <zwisler@kernel.org>
+Date:   Thu, 24 Jan 2019 15:18:08 -0700
+X-Gmail-Original-Message-ID: <CAOxpaSVfJo4ED2rr16STj6Rht3yonKYsw-j4aLHirZ3=JdW03w@mail.gmail.com>
+Message-ID: <CAOxpaSVfJo4ED2rr16STj6Rht3yonKYsw-j4aLHirZ3=JdW03w@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: Update filesystem-dax and NVDIMM entries
+To:     Keith Busch <keith.busch@intel.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>, Jan Kara <jack@suse.cz>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Matthew Wilcox <willy@infradead.org>, linux-nvdimm@lists.01.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 11:17:59AM -0800, Dan Williams wrote:
-> Ross has moved on to other areas.
-> 
-> Matthew and Jan are trusted reviewers for DAX.
-> 
-> Dan is now coordinating filesystem-dax pull requests.
-> 
-> Ira and Keith are now involved with the NVDIMM and Device-DAX
-> sub-systems.
-> 
-> The linux-nvdimm mailing hosts a patchwork instance for both DAX and
-> NVDIMM patches.
-> 
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Ira Weiny <ira.weiny@intel.com>
-> Cc: Ross Zwisler <zwisler@kernel.org>
-> Cc: Keith Busch <keith.busch@intel.com>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+On Thu, Jan 24, 2019 at 3:13 PM Keith Busch <keith.busch@intel.com> wrote:
+> On Thu, Jan 24, 2019 at 11:17:59AM -0800, Dan Williams wrote:
+> > Ross has moved on to other areas.
+> >
+> > Matthew and Jan are trusted reviewers for DAX.
+> >
+> > Dan is now coordinating filesystem-dax pull requests.
+> >
+> > Ira and Keith are now involved with the NVDIMM and Device-DAX
+> > sub-systems.
+> >
+> > The linux-nvdimm mailing hosts a patchwork instance for both DAX and
+> > NVDIMM patches.
+> >
+> > Cc: Jan Kara <jack@suse.cz>
+> > Cc: Ira Weiny <ira.weiny@intel.com>
+> > Cc: Ross Zwisler <zwisler@kernel.org>
+> > Cc: Keith Busch <keith.busch@intel.com>
+> > Cc: Matthew Wilcox <willy@infradead.org>
+> > Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+>
+> Acked-by: Keith Busch <keith.busch@intel.com>
 
-Acked-by: Keith Busch <keith.busch@intel.com>
+Acked-by: Ross Zwisler <zwisler@kernel.org>
