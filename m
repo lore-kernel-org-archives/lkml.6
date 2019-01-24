@@ -2,94 +2,92 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95510C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:57:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA23CC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:58:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C75221872
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:57:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FBB221855
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:58:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727558AbfAXI5I (ORCPT
+        id S1727528AbfAXI6g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 03:57:08 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:36628 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726025AbfAXI5I (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 03:57:08 -0500
-Received: by mail-ed1-f65.google.com with SMTP id f23so3935621edb.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 00:57:07 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=y+Ga4HcAj4PEPantT0zK17Jzcxuvsr4InP65q9Oyi8o=;
-        b=K0H5TvhQeAR+UO2Xo/B/D8BWgf2frQOCopu0YRjZVnOrf9umwMzTVWUpM1QOvSLjnE
-         r/qU+65H0uaHTD3jug9kyeXEZm0v/F5ELIhNYd8ZXqMukW8OheSjFdYQ/2kr26LJvAjy
-         3xTF6sFzZgPQbRIzawVShVwX4MezMDxoV88oLtnZ7TX+GYOogEpm6IuSlOg9VRggkO23
-         TiRnOuzLcPW1phdr4iE3puN9/WbLDnmqMV3BcC+YxgI5NCIWhg1IjzzCak7azOM+rwWx
-         khOrrgTJg/D+rKvrpWH8OtZQFC9EjjQ5c0EIrFhVGaXpgTAd74qEEQCsFpKrs3kob07s
-         KAwA==
-X-Gm-Message-State: AJcUukfBf0xL38q34/ks9AP8zJP6KzY+r08ZpWbtKh6NsKDJmZX/cvGc
-        WQl9fK0vbEStuEU+Rq0l52RKWlVP6+c=
-X-Google-Smtp-Source: ALg8bN7PvcLH8tzcGbMS1suO+kw0Yu1lvVP+v8vfUR9cJHVnal49JKHwmVanfx0rEDutEzcfSMEArQ==
-X-Received: by 2002:a50:a5b8:: with SMTP id a53mr6004119edc.199.1548320226515;
-        Thu, 24 Jan 2019 00:57:06 -0800 (PST)
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com. [209.85.128.51])
-        by smtp.gmail.com with ESMTPSA id r8sm10372051edo.11.2019.01.24.00.57.05
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 00:57:06 -0800 (PST)
-Received: by mail-wm1-f51.google.com with SMTP id y185so1805025wmd.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 00:57:05 -0800 (PST)
-X-Received: by 2002:a1c:578e:: with SMTP id l136mr1631590wmb.124.1548320225556;
- Thu, 24 Jan 2019 00:57:05 -0800 (PST)
+        Thu, 24 Jan 2019 03:58:36 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:57230 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725986AbfAXI6g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 03:58:36 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 51573209BC; Thu, 24 Jan 2019 09:58:33 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-87-206.w90-88.abo.wanadoo.fr [90.88.29.206])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 21E44209B6;
+        Thu, 24 Jan 2019 09:58:23 +0100 (CET)
+Date:   Thu, 24 Jan 2019 09:58:23 +0100
+From:   Antoine Tenart <antoine.tenart@bootlin.com>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     Antoine Tenart <antoine.tenart@bootlin.com>, davem@davemloft.net,
+        sd@queasysnail.net, andrew@lunn.ch, hkallweit1@gmail.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        thomas.petazzoni@bootlin.com, alexandre.belloni@bootlin.com,
+        quentin.schulz@bootlin.com, allan.nielsen@microchip.com
+Subject: Re: [PATCH net-next 03/10] net: macsec: move some definitions in a
+ dedicated header
+Message-ID: <20190124085823.GD3662@kwain>
+References: <20190123155638.13852-1-antoine.tenart@bootlin.com>
+ <20190123155638.13852-4-antoine.tenart@bootlin.com>
+ <955d1bdf-037e-ae26-a9da-8da2a51a7cbd@gmail.com>
 MIME-Version: 1.0
-References: <20190110062207.18787-1-wens@csie.org> <0f9b4bc0-6969-97d3-8ac6-63931ea6db92@linaro.org>
-In-Reply-To: <0f9b4bc0-6969-97d3-8ac6-63931ea6db92@linaro.org>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Thu, 24 Jan 2019 16:56:53 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65RJ2iwTr1bxXxXAROLtg2a1KP2x36uXpjGs=r38NrM6g@mail.gmail.com>
-Message-ID: <CAGb2v65RJ2iwTr1bxXxXAROLtg2a1KP2x36uXpjGs=r38NrM6g@mail.gmail.com>
-Subject: Re: [PATCH] clocksource: sun5i: fail gracefully when clock rate is unavailable
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <955d1bdf-037e-ae26-a9da-8da2a51a7cbd@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 5:19 PM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
->
-> On 10/01/2019 07:22, Chen-Yu Tsai wrote:
-> > If the clock tree is not fully populated when the timer-sun5i init code
-> > is called, attempts to get the clock rate for the timer would fail and
-> > return 0.
-> >
-> > Make the init code for both clock events and clocksource check the
-> > returned clock rate and fail gracefully if the result is 0, instead of
-> > causing a divide by 0 exception later on.
-> >
-> > Fixes: 4a59058f0b09 ("clocksource/drivers/sun5i: Refactor the current code")
-> > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Hi Florian,
+
+On Wed, Jan 23, 2019 at 12:11:37PM -0800, Florian Fainelli wrote:
+> On 1/23/19 7:56 AM, Antoine Tenart wrote:
+> > This patch moves some structure, type and identifier definitions into a
+> > MACsec specific header. This patch does not modify how the MACsec code
+> > is running and only move things around. This is a preparation for the
+> > future MACsec hardware offloading support, which will re-use those
+> > definitions outside macsec.c.
+> > 
+> > Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
 > > ---
->
-> Applied thanks.
+> >  drivers/net/macsec.c | 164 +--------------------------------------
+> >  include/net/macsec.h | 178 +++++++++++++++++++++++++++++++++++++++++++
+> >  2 files changed, 179 insertions(+), 163 deletions(-)
+> >  create mode 100644 include/net/macsec.h
+> > 
+> > diff --git a/drivers/net/macsec.c b/drivers/net/macsec.c
+> > index 56e354305f76..c3a138dd4386 100644
+> > --- a/drivers/net/macsec.c
+> > +++ b/drivers/net/macsec.c
+> > @@ -17,10 +17,9 @@
+> >  #include <net/sock.h>
+> >  #include <net/gro_cells.h>
+> >  
+> > +#include <net/macsec.h>
+> >  #include <uapi/linux/if_macsec.h>
+> 
+> I would probably go with include/linux/if_macsec.h and have
+> uapi/linux/if_macsec.h include that file directly. This would be
+> consistent with other types of network interfaces: bridge, vlan etc.
 
-I'm not seeing this in linux-next, nor the patch
+It's always a good idea to stay consistent with what's already done.
+I'll update in v2.
 
-    arm64: arch_timer: Workaround for Allwinner A64 timer instability
+Thanks!
+Antoine
 
-Any idea where these ended up?
-
-
-Thanks
-ChenYu
+-- 
+Antoine Ténart, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
