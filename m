@@ -2,75 +2,181 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C08CC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:43:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FE6CC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:43:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14ADA20855
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:43:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14F0320855
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:43:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="a9cRoELF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727330AbfAXJnn (ORCPT
+        id S1727420AbfAXJnw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 04:43:43 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:42289 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725939AbfAXJnn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 04:43:43 -0500
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1gmbXx-0003HL-Ix; Thu, 24 Jan 2019 10:43:41 +0100
-Message-ID: <1548323020.6014.5.camel@pengutronix.de>
-Subject: Re: [PATCH reset/next] reset: Add Broadcom STB SW_INIT reset
- controller driver
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Florian Fainelli <f.fainelli@gmail.com>,
+        Thu, 24 Jan 2019 04:43:52 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:10118 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726012AbfAXJnw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 04:43:52 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43lcfs24ctz9v0GN;
+        Thu, 24 Jan 2019 10:43:49 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=a9cRoELF; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id qerfoCtk40gn; Thu, 24 Jan 2019 10:43:49 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43lcfs0jGJz9v0GM;
+        Thu, 24 Jan 2019 10:43:49 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1548323029; bh=pdpzN4Cls9VIi57rwmgYgmW1ymLGgOvDPZus6sPQUOw=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=a9cRoELFwxDif1NC2YT2l165rRga4QNBnkYLLw3lLr06pUcnaKGhX5ZgZuGt1m98b
+         NS1ZYi6k3427XVB/4aIqzh6C85pBbZCmP2zcUloJuk8vxpgtbj5ppWRIftd20dfeie
+         Dswq3SPH6SpkCh0W3SzrlZcENjGXogSHvb9q7ZxU=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 3629D8B838;
+        Thu, 24 Jan 2019 10:43:50 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id P6qvuZTZhQ0g; Thu, 24 Jan 2019 10:43:50 +0100 (CET)
+Received: from po16846vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id A582A8B755;
+        Thu, 24 Jan 2019 10:43:49 +0100 (CET)
+Subject: Re: [PATCH v13 00/10] powerpc: Switch to CONFIG_THREAD_INFO_IN_TASK
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Nicholas Piggin <npiggin@gmail.com>
+Cc:     Mike Rapoport <rppt@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
         linux-kernel@vger.kernel.org
-Cc:     rdunlap@infradead.org, paul.gortmaker@windriver.com,
-        Brian Norris <computersforpeace@gmail.com>,
-        Gregory Fong <gregory.0xf0@gmail.com>,
-        "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        "moderated list:BROADCOM BCM7XXX ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Date:   Thu, 24 Jan 2019 10:43:40 +0100
-In-Reply-To: <20190123225439.32622-1-f.fainelli@gmail.com>
-References: <20190123225439.32622-1-f.fainelli@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <cover.1547195976.git.christophe.leroy@c-s.fr>
+ <2e700e1c-5bd9-652e-b535-68a89dd703a1@c-s.fr>
+ <87y37ax3ru.fsf@concordia.ellerman.id.au>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <9b4dab64-6a6b-a599-4676-bf891473ada7@c-s.fr>
+Date:   Thu, 24 Jan 2019 09:43:47 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <87y37ax3ru.fsf@concordia.ellerman.id.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Florian,
 
-On Wed, 2019-01-23 at 14:54 -0800, Florian Fainelli wrote:
-> Add support for resetting blocks through the Linux reset controller
-> subsystem when reset lines are provided through a SW_INIT-style reset
-> controller on Broadcom STB SoCs.
-> 
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
-> ---
-> Philipp,
-> 
-> This is a replacement patch for what is currently in your reset/next
-> branch.
-> 
-> Thank you!
 
-Applied to reset/next, thank you.
+On 01/24/2019 01:06 AM, Michael Ellerman wrote:
+> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+>> Le 12/01/2019 à 10:55, Christophe Leroy a écrit :
+>>> The purpose of this serie is to activate CONFIG_THREAD_INFO_IN_TASK which
+>>> moves the thread_info into task_struct.
+>>>
+>>> Moving thread_info into task_struct has the following advantages:
+>>> - It protects thread_info from corruption in the case of stack
+>>> overflows.
+>>> - Its address is harder to determine if stack addresses are
+>>> leaked, making a number of attacks more difficult.
+>>
+>> I ran null_syscall and context_switch benchmark selftests and the result
+>> is surprising. There is slight degradation in context_switch and a
+>> significant one on null_syscall:
+>>
+>> Without the serie:
+>>
+>> ~# chrt -f 98 ./context_switch --no-altivec --no-vector --no-fp
+>> 55542
+>> 55562
+>> 55564
+>> 55562
+>> 55568
+>> ...
+>>
+>> ~# ./null_syscall
+>>      2546.71 ns     336.17 cycles
+>>
+>>
+>> With the serie:
+>>
+>> ~# chrt -f 98 ./context_switch --no-altivec --no-vector --no-fp
+>> 55138
+>> 55142
+>> 55152
+>> 55144
+>> 55142
+>>
+>> ~# ./null_syscall
+>>      3479.54 ns     459.30 cycles
+>>
+>> So 0,8% less context switches per second and 37% more time for one syscall ?
+>>
+>> Any idea ?
+> 
+> What platform is that on?
 
-regards
-Philipp
+It is on the 8xx
+
+> 
+> On 64-bit we have to turn one mtmsrd into two and that's obviously a
+> slow down. But I don't see that you've done anything similar in 32-bit
+> code.
+> 
+> I assume it's patch 8 that causes the slow down?
+
+I have not digged into it yet, but why patch 8 ?
+
+
+I run null_syscall with perf, and I get the following. Can we conclude 
+on something with that ?
+
+Without the serie:
+
+# Overhead       Samples  Command       Shared Object      Symbol 
+
+# ........  ............  ............  ................. 
+........................................
+#
+     32.95%         46375  null_syscall  [kernel.kallsyms]  [k] DoSyscall
+     23.64%         33275  null_syscall  [kernel.kallsyms]  [k] 
+__task_pid_nr_ns
+     15.47%         21778  null_syscall  libc-2.23.so       [.] 
+__GI___getppid
+      8.92%         12556  null_syscall  [kernel.kallsyms]  [k] 
+__rcu_read_unlock
+      5.69%          8014  null_syscall  [kernel.kallsyms]  [k] sys_getppid
+      4.01%          5643  null_syscall  [kernel.kallsyms]  [k] 
+__rcu_read_lock
+      3.67%          5166  null_syscall  [kernel.kallsyms]  [k] 
+syscall_dotrace_cont
+      2.52%          3542  null_syscall  null_syscall       [.] main
+
+With the serie:
+
+     30.04%         56337  null_syscall  [kernel.kallsyms]  [k] DoSyscall
+     13.89%         26060  null_syscall  [kernel.kallsyms]  [k] 
+__rcu_read_unlock
+     13.36%         25062  null_syscall  libc-2.23.so       [.] 
+__GI___getppid
+     12.73%         23872  null_syscall  [kernel.kallsyms]  [k] 
+__task_pid_nr_ns
+     11.21%         21033  null_syscall  [kernel.kallsyms]  [k] sys_getppid
+      8.24%         15457  null_syscall  [kernel.kallsyms]  [k] 
+syscall_dotrace_cont
+      4.38%          8217  null_syscall  [kernel.kallsyms]  [k] 
+ret_from_syscall
+      2.54%          4773  null_syscall  null_syscall       [.] main
+
+
+Christophe
