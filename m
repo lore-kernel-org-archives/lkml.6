@@ -4,52 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08AF1C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:35:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBEB4C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:36:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8E2B21903
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:35:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88C8F21903
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:36:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358554;
-	bh=rrsuPbh4ZNifj4CYkkia/Yg7Y83Ic8Kp2A6SurbkuEA=;
+	s=default; t=1548358561;
+	bh=VWv3QChRe58vO9NewDlx+3v0AKJC9Nn1/N2Twqujrd4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Nsf1vwKL0tTcjYpXEjMxcke8J3svEh4CiILq+bXVjhyrRwvwVZu9CE3ygUN3JTMMc
-	 E4LPlDbMpmxpr2OTX+qu06K9+NJAy0zYjv+kcM/aNtFuBUCjzHNN0zDMvYsg7h7Ccw
-	 mktAuD95g8oXAuotT4nmBAvQsQw7+A0KEOTMlrLc=
+	b=SUexOzzdJOCVYSPG5SOlfkjBNkx7tXJ+QW+v22ojbHFYpR3bvu2L95U81EdpFz8oO
+	 OMIDxMsL+8DYLizU5Kq6XUm04VUyG3CzERmigmAEBLZhbx1l0QUdrQJ1TwBNFZ4zeZ
+	 91yFsPtgie0hDMX8PbWJtoGqEnjm2I7M6jzd4+Fg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732406AbfAXTfx (ORCPT
+        id S1732437AbfAXTgA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:35:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35868 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:36:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35948 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731352AbfAXTft (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:35:49 -0500
+        id S1731352AbfAXTfz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:35:55 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8DF1218FC;
-        Thu, 24 Jan 2019 19:35:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B58A4218FC;
+        Thu, 24 Jan 2019 19:35:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358548;
-        bh=rrsuPbh4ZNifj4CYkkia/Yg7Y83Ic8Kp2A6SurbkuEA=;
+        s=default; t=1548358554;
+        bh=VWv3QChRe58vO9NewDlx+3v0AKJC9Nn1/N2Twqujrd4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=myWeX3rxAGeCSMILIaZ28uiJ2/TEgwjwEY4rFk72CfY9xPvil9k7xiCwtra/dWv9H
-         pC/5vmlixSrl5+/b2JyUC/Oic1tP6hcxssNzCrRaSG8nAWy+Ues4suopgU0iPP7XzA
-         9Ab5dO3IjGOOkC9L3PjWu1agbaw/xY8qLP6fG58o=
+        b=GT2OSBlol6WGlLjdb68kURBK1EZv/StMTAvoXITE6T/yFW0Fol06mju480hmZKkGM
+         hbhj+MGDbvxswW/HcPVPpv5i0xp6JmOhKBkQrhsHwpnca9v0f3IZFyG/tre2dpvUKH
+         E10HL0leljpiYVL6MGYKQ3JeoKsh7+ILpewcuinA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Yonghong Song <yhs@fb.com>,
+        Andrey Ignatov <rdna@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 047/106] media: venus: core: Set dma maximum segment size
-Date:   Thu, 24 Jan 2019 20:20:04 +0100
-Message-Id: <20190124190209.419262410@linuxfoundation.org>
+Subject: [PATCH 4.19 022/106] bpf: Allow narrow loads with offset > 0
+Date:   Thu, 24 Jan 2019 20:19:39 +0100
+Message-Id: <20190124190207.763499669@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
 References: <20190124190206.342411005@linuxfoundation.org>
@@ -68,92 +67,147 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit de2563bce7a157f5296bab94f3843d7d64fb14b4 ]
+[ Upstream commit 46f53a65d2de3e1591636c22b626b09d8684fd71 ]
 
-Turning on CONFIG_DMA_API_DEBUG_SG results in the following error:
+Currently BPF verifier allows narrow loads for a context field only with
+offset zero. E.g. if there is a __u32 field then only the following
+loads are permitted:
+  * off=0, size=1 (narrow);
+  * off=0, size=2 (narrow);
+  * off=0, size=4 (full).
 
-[  460.308650] ------------[ cut here ]------------
-[  460.313490] qcom-venus aa00000.video-codec: DMA-API: mapping sg segment longer than device claims to support [len=4194304] [max=65536]
-[  460.326017] WARNING: CPU: 3 PID: 3555 at src/kernel/dma/debug.c:1301 debug_dma_map_sg+0x174/0x254
-[  460.338888] Modules linked in: venus_dec venus_enc videobuf2_dma_sg videobuf2_memops hci_uart btqca bluetooth venus_core v4l2_mem2mem videobuf2_v4l2 videobuf2_common ath10k_snoc ath10k_core ath lzo lzo_compress zramjoydev
-[  460.375811] CPU: 3 PID: 3555 Comm: V4L2DecoderThre Tainted: G        W         4.19.1 #82
-[  460.384223] Hardware name: Google Cheza (rev1) (DT)
-[  460.389251] pstate: 60400009 (nZCv daif +PAN -UAO)
-[  460.394191] pc : debug_dma_map_sg+0x174/0x254
-[  460.398680] lr : debug_dma_map_sg+0x174/0x254
-[  460.403162] sp : ffffff80200c37d0
-[  460.406583] x29: ffffff80200c3830 x28: 0000000000010000
-[  460.412056] x27: 00000000ffffffff x26: ffffffc0f785ea80
-[  460.417532] x25: 0000000000000000 x24: ffffffc0f4ea1290
-[  460.423001] x23: ffffffc09e700300 x22: ffffffc0f4ea1290
-[  460.428470] x21: ffffff8009037000 x20: 0000000000000001
-[  460.433936] x19: ffffff80091b0000 x18: 0000000000000000
-[  460.439411] x17: 0000000000000000 x16: 000000000000f251
-[  460.444885] x15: 0000000000000006 x14: 0720072007200720
-[  460.450354] x13: ffffff800af536e0 x12: 0000000000000000
-[  460.455822] x11: 0000000000000000 x10: 0000000000000000
-[  460.461288] x9 : 537944d9c6c48d00 x8 : 537944d9c6c48d00
-[  460.466758] x7 : 0000000000000000 x6 : ffffffc0f8d98f80
-[  460.472230] x5 : 0000000000000000 x4 : 0000000000000000
-[  460.477703] x3 : 000000000000008a x2 : ffffffc0fdb13948
-[  460.483170] x1 : ffffffc0fdb0b0b0 x0 : 000000000000007a
-[  460.488640] Call trace:
-[  460.491165]  debug_dma_map_sg+0x174/0x254
-[  460.495307]  vb2_dma_sg_alloc+0x260/0x2dc [videobuf2_dma_sg]
-[  460.501150]  __vb2_queue_alloc+0x164/0x374 [videobuf2_common]
-[  460.507076]  vb2_core_reqbufs+0xfc/0x23c [videobuf2_common]
-[  460.512815]  vb2_reqbufs+0x44/0x5c [videobuf2_v4l2]
-[  460.517853]  v4l2_m2m_reqbufs+0x44/0x78 [v4l2_mem2mem]
-[  460.523144]  v4l2_m2m_ioctl_reqbufs+0x1c/0x28 [v4l2_mem2mem]
-[  460.528976]  v4l_reqbufs+0x30/0x40
-[  460.532480]  __video_do_ioctl+0x36c/0x454
-[  460.536610]  video_usercopy+0x25c/0x51c
-[  460.540572]  video_ioctl2+0x38/0x48
-[  460.544176]  v4l2_ioctl+0x60/0x74
-[  460.547602]  do_video_ioctl+0x948/0x3520
-[  460.551648]  v4l2_compat_ioctl32+0x60/0x98
-[  460.555872]  __arm64_compat_sys_ioctl+0x134/0x20c
-[  460.560718]  el0_svc_common+0x9c/0xe4
-[  460.564498]  el0_svc_compat_handler+0x2c/0x38
-[  460.568982]  el0_svc_compat+0x8/0x18
-[  460.572672] ---[ end trace ce209b87b2f3af88 ]---
+On the other hand LLVM can generate a load with offset different than
+zero that make sense from program logic point of view, but verifier
+doesn't accept it.
 
->From above warning one would deduce that the sg segment will overflow
-the device's capacity. In reality, the hardware can accommodate larger
-sg segments.
-So, initialize the max segment size properly to weed out this warning.
+E.g. tools/testing/selftests/bpf/sendmsg4_prog.c has code:
 
-Based on a similar patch sent by Sean Paul for mdss:
-https://patchwork.kernel.org/patch/10671457/
+  #define DST_IP4			0xC0A801FEU /* 192.168.1.254 */
+  ...
+  	if ((ctx->user_ip4 >> 24) == (bpf_htonl(DST_IP4) >> 24) &&
 
-Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-Acked-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+where ctx is struct bpf_sock_addr.
+
+Some versions of LLVM can produce the following byte code for it:
+
+       8:       71 12 07 00 00 00 00 00         r2 = *(u8 *)(r1 + 7)
+       9:       67 02 00 00 18 00 00 00         r2 <<= 24
+      10:       18 03 00 00 00 00 00 fe 00 00 00 00 00 00 00 00         r3 = 4261412864 ll
+      12:       5d 32 07 00 00 00 00 00         if r2 != r3 goto +7 <LBB0_6>
+
+where `*(u8 *)(r1 + 7)` means narrow load for ctx->user_ip4 with size=1
+and offset=3 (7 - sizeof(ctx->user_family) = 3). This load is currently
+rejected by verifier.
+
+Verifier code that rejects such loads is in bpf_ctx_narrow_access_ok()
+what means any is_valid_access implementation, that uses the function,
+works this way, e.g. bpf_skb_is_valid_access() for __sk_buff or
+sock_addr_is_valid_access() for bpf_sock_addr.
+
+The patch makes such loads supported. Offset can be in [0; size_default)
+but has to be multiple of load size. E.g. for __u32 field the following
+loads are supported now:
+  * off=0, size=1 (narrow);
+  * off=1, size=1 (narrow);
+  * off=2, size=1 (narrow);
+  * off=3, size=1 (narrow);
+  * off=0, size=2 (narrow);
+  * off=2, size=2 (narrow);
+  * off=0, size=4 (full).
+
+Reported-by: Yonghong Song <yhs@fb.com>
+Signed-off-by: Andrey Ignatov <rdna@fb.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/qcom/venus/core.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ include/linux/filter.h | 16 +---------------
+ kernel/bpf/verifier.c  | 21 ++++++++++++++++-----
+ 2 files changed, 17 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
-index bb6add9d340e..5b8350e87e75 100644
---- a/drivers/media/platform/qcom/venus/core.c
-+++ b/drivers/media/platform/qcom/venus/core.c
-@@ -264,6 +264,14 @@ static int venus_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
+diff --git a/include/linux/filter.h b/include/linux/filter.h
+index 6791a0ac0139..ec90d5255cf7 100644
+--- a/include/linux/filter.h
++++ b/include/linux/filter.h
+@@ -665,24 +665,10 @@ static inline u32 bpf_ctx_off_adjust_machine(u32 size)
+ 	return size;
+ }
  
-+	if (!dev->dma_parms) {
-+		dev->dma_parms = devm_kzalloc(dev, sizeof(*dev->dma_parms),
-+					      GFP_KERNEL);
-+		if (!dev->dma_parms)
-+			return -ENOMEM;
-+	}
-+	dma_set_max_seg_size(dev, DMA_BIT_MASK(32));
+-static inline bool bpf_ctx_narrow_align_ok(u32 off, u32 size_access,
+-					   u32 size_default)
+-{
+-	size_default = bpf_ctx_off_adjust_machine(size_default);
+-	size_access  = bpf_ctx_off_adjust_machine(size_access);
+-
+-#ifdef __LITTLE_ENDIAN
+-	return (off & (size_default - 1)) == 0;
+-#else
+-	return (off & (size_default - 1)) + size_access == size_default;
+-#endif
+-}
+-
+ static inline bool
+ bpf_ctx_narrow_access_ok(u32 off, u32 size, u32 size_default)
+ {
+-	return bpf_ctx_narrow_align_ok(off, size, size_default) &&
+-	       size <= size_default && (size & (size - 1)) == 0;
++	return size <= size_default && (size & (size - 1)) == 0;
+ }
+ 
+ #define bpf_classic_proglen(fprog) (fprog->len * sizeof(fprog->filter[0]))
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 2954e4b3abd5..89cea3ed535d 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -5341,10 +5341,10 @@ static int convert_ctx_accesses(struct bpf_verifier_env *env)
+ 	int i, cnt, size, ctx_field_size, delta = 0;
+ 	const int insn_cnt = env->prog->len;
+ 	struct bpf_insn insn_buf[16], *insn;
++	u32 target_size, size_default, off;
+ 	struct bpf_prog *new_prog;
+ 	enum bpf_access_type type;
+ 	bool is_narrower_load;
+-	u32 target_size;
+ 
+ 	if (ops->gen_prologue) {
+ 		cnt = ops->gen_prologue(insn_buf, env->seen_direct_write,
+@@ -5421,9 +5421,9 @@ static int convert_ctx_accesses(struct bpf_verifier_env *env)
+ 		 * we will apply proper mask to the result.
+ 		 */
+ 		is_narrower_load = size < ctx_field_size;
++		size_default = bpf_ctx_off_adjust_machine(ctx_field_size);
++		off = insn->off;
+ 		if (is_narrower_load) {
+-			u32 size_default = bpf_ctx_off_adjust_machine(ctx_field_size);
+-			u32 off = insn->off;
+ 			u8 size_code;
+ 
+ 			if (type == BPF_WRITE) {
+@@ -5451,12 +5451,23 @@ static int convert_ctx_accesses(struct bpf_verifier_env *env)
+ 		}
+ 
+ 		if (is_narrower_load && size < target_size) {
+-			if (ctx_field_size <= 4)
++			u8 shift = (off & (size_default - 1)) * 8;
 +
- 	INIT_LIST_HEAD(&core->instances);
- 	mutex_init(&core->lock);
- 	INIT_DELAYED_WORK(&core->work, venus_sys_error_handler);
++			if (ctx_field_size <= 4) {
++				if (shift)
++					insn_buf[cnt++] = BPF_ALU32_IMM(BPF_RSH,
++									insn->dst_reg,
++									shift);
+ 				insn_buf[cnt++] = BPF_ALU32_IMM(BPF_AND, insn->dst_reg,
+ 								(1 << size * 8) - 1);
+-			else
++			} else {
++				if (shift)
++					insn_buf[cnt++] = BPF_ALU64_IMM(BPF_RSH,
++									insn->dst_reg,
++									shift);
+ 				insn_buf[cnt++] = BPF_ALU64_IMM(BPF_AND, insn->dst_reg,
+ 								(1 << size * 8) - 1);
++			}
+ 		}
+ 
+ 		new_prog = bpf_patch_insn_data(env, i + delta, insn_buf, cnt);
 -- 
 2.19.1
 
