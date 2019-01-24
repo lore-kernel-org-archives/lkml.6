@@ -2,332 +2,103 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ED01C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 10:21:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46E8CC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 10:23:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C87B4218A6
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 10:21:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1143B218A6
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 10:23:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="jXMMB0+d"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i8gyH1xu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727602AbfAXKVp (ORCPT
+        id S1727183AbfAXKXD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 05:21:45 -0500
-Received: from mout01.posteo.de ([185.67.36.65]:39142 "EHLO mout01.posteo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726050AbfAXKVm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 05:21:42 -0500
-Received: from submission (posteo.de [89.146.220.130]) 
-        by mout01.posteo.de (Postfix) with ESMTPS id D40D5160062
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 11:21:38 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
-        t=1548325298; bh=bRuNA1xtmm0w1ktr7r3ocW7cF0bLPJvFTnW91FuHSao=;
-        h=From:To:Cc:Subject:Date:From;
-        b=jXMMB0+dLhMkdBIJKj6FqDNUFoa/KKeZH6yR7vjKmxIZ0qU+vWtA4dFYlWnEmMfhO
-         lypUA6xCDTgBFxYaNiJH8bXeIKWww3eTzj0OSztovwtCrubUJErfaLHBHbjXkLQREr
-         3K3X2IptE/m/2nGFB3cPc881ovzBFGiEu9ebnv2YwY3MZV4jdzDy1gQcYWf5j/cnGc
-         ftlU6/k6ntgvZhrkaGE//SWjGk7uLXHYZHS0cOonG8EYdgjPcSovb7dbcMNPQKJARK
-         d2GhpX3i4I+6h6NXFtWxoC4cS7RfHaLuPHN4TOCGvfx2X8fzzgqHG46ySGuf3QjGDF
-         WiSZdlHh8ZFoA==
-Received: from customer (localhost [127.0.0.1])
-        by submission (posteo.de) with ESMTPSA id 43ldVS6xjLz6tmH;
-        Thu, 24 Jan 2019 11:21:36 +0100 (CET)
-From:   Martin Kepplinger <martink@posteo.de>
-To:     devicetree@vger.kernel.org, linux-input@vger.kernel.org
-Cc:     dmitry.torokhov@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, chinyeow.sim.xt@renesas.com,
-        linux-kernel@vger.kernel.org,
-        Martin Kepplinger <martin.kepplinger@ginzinger.com>
-Subject: [PATCH v2 2/2] Input: st1232 - add support for st1633
-Date:   Thu, 24 Jan 2019 11:21:25 +0100
-Message-Id: <20190124102125.25458-2-martink@posteo.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190124102125.25458-1-martink@posteo.de>
-References: <20190124102125.25458-1-martink@posteo.de>
+        Thu, 24 Jan 2019 05:23:03 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:36084 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726025AbfAXKXD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 05:23:03 -0500
+Received: by mail-qt1-f193.google.com with SMTP id t13so5846222qtn.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 02:23:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gaZicjGfxE1gJlVsb8dqwXJo+bqMYyNKX+NtRrxLIv8=;
+        b=i8gyH1xubYU6KYQ5A3iA11eBOy4h4NsM+AKHtgGLl3E31G60I9Jp5Zu1ooNc9MspHR
+         cEnlqMf+PqG64hFjZJ4pbXr+ratWSThWH1mPUnnMNZKX/DqafgNl6JoaM7z3+kbH33g7
+         HYzXFlJMk+0YVL7EQgS8touAipMvzVhRTOhRWygIDhIBrMJenm1D5gXExKjDoVhpEfqR
+         m+kaVI55I1pxq8GiDb3zJmQqBEDYTo+AKaiJg+sk53FnY7dJZHTu1ddCQ0MasyeZ+nue
+         06U4Ut/i2joVuuivW0Fy+6xt/1964IQZpUbg5RtoZtRp1VjsofCUXMiPe4sybcnCuASu
+         nZMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gaZicjGfxE1gJlVsb8dqwXJo+bqMYyNKX+NtRrxLIv8=;
+        b=eqQnolnM1tEfaiJxcuuf51hQT+PDmCozZsFssMDQrKdMJbNoLtrTOzrdZ6XEurn6dd
+         8/PEhJ363SJf3YlQ8Ne8Kd1+QfHgbQ6HzMQHgpnOqOzJ6e8FWsutEnKETj0tBPHECdu/
+         aTN4dNH0HrKjypuHgbL+PsTueMXFxQ0FehNwORLArzthy5zdFC3SQU3PSEhEdyUzy8HI
+         oz59CCDdNONmK0SsLluYXGJVx7YJoZyJjt7eELeGZFtXpjWIdeqh+A9Ptdyd0kMxfsfN
+         ftERy1ugOs2oEIz4dTYuCoObjhStG0jQu/iR2XLUT0c6169t8pk8KH/wYJX+02kGIsv+
+         C0/g==
+X-Gm-Message-State: AJcUukczfTfwWPN2R1KoEKTPYOPKZCRErE+AUVWyJC9exG+7Kv11qfHv
+        ydGWqgIMP9R4LmZKAEsg1iJZQrdCla4P3B9YN2Ig8bl3
+X-Google-Smtp-Source: ALg8bN7KQNk9cU7jFGRPzPy7DxFUdaANwx1aARR25xMUcSyusVFkzlbi8QSyJAV+Hnu3OeqM59z8UfHEHv2OF29AFRU=
+X-Received: by 2002:ac8:296a:: with SMTP id z39mr6201399qtz.264.1548325381655;
+ Thu, 24 Jan 2019 02:23:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190123000057.31477-1-oded.gabbay@gmail.com> <CAPM=9tznaiw+a7rWqfdMMO6Aj3GtsO9vetd=3n9d+bGLW0U8Cg@mail.gmail.com>
+ <CAPM=9tybcYSR_xu773W-cV1JfFg1Rcb9NajXhZd+zfZE8+XMRg@mail.gmail.com>
+ <CAFCwf12FGkc3hDtgeFCn4Z4cgjL8wAf+SRkWqA+04WtuaEdpBA@mail.gmail.com>
+ <CAPM=9tx3M6i44AL4hkt740Q35T4djz=-bjWDP4FVngOR0kcwag@mail.gmail.com>
+ <CAOesGMg-_K_KJFtxyZJFbM+p1N5UfeUwvXmxkj+DRtNSj7Bosw@mail.gmail.com>
+ <20190123232052.GD1257@redhat.com> <CAOesGMhU6wzX=sBC0iqDrzBYinP8POp=9-d4oEQoaNee-dU1zQ@mail.gmail.com>
+ <20190123234817.GE1257@redhat.com> <CAKMK7uHPNPJGxyHt46wwNGwdoZkLez9Cf7hAZ1sXh8=w56OUOQ@mail.gmail.com>
+ <CAFCwf10fvFAXQCGXpJHdf2bBOEJ9ZXZvoUgH9JWbNOtnmELBmg@mail.gmail.com>
+In-Reply-To: <CAFCwf10fvFAXQCGXpJHdf2bBOEJ9ZXZvoUgH9JWbNOtnmELBmg@mail.gmail.com>
+From:   Dave Airlie <airlied@gmail.com>
+Date:   Thu, 24 Jan 2019 20:22:49 +1000
+Message-ID: <CAPM=9twdfFSevH-qq7Vf1F7-nAgYvAw9XYmEKT-8LYBc403Thw@mail.gmail.com>
+Subject: Re: [PATCH 00/15] Habana Labs kernel driver
+To:     Oded Gabbay <oded.gabbay@gmail.com>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Olof Johansson <olof@lixom.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, ogabbay@habana.ai,
+        Arnd Bergmann <arnd@arndb.de>, fbarrat@linux.ibm.com,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+> I know I won't be able to convince you but I want to say that I think
+> your arguments for full userspace open source are not really
+> technical.
 
-Add support for the Sitronix ST1633 touchscreen controller to the st1232
-driver. A protocol spec can be found here:
-www.ampdisplay.com/documents/pdf/AM-320480B6TZQW-TC0H.pdf
+There is more to keeping a kernel going than technical argument unfortunately.
 
-Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
----
+I guess the question for Greg, Olof etc, is do we care about Linux the
+kernel, or Linux the open source ecosystem, if the former, these sort
+of accelerator shim drivers are fine, useless to anyone who doesn't
+have all the magic hidden userspace, and impossible to support for
+anyone else, if the latter, we should leave the cost of maintenance to
+the company benefiting from it and leave maintaining it out of tree.
 
-while this works, I'm not totally convinced by how the i2c path of probe
-looks. what do you say?
+Simple question like If I plug your accelerator into Power or ARM64,
+where do I get the port of your userspace to use it?
 
-thanks!
+I'm not the final arbiter on this sort of thing, but I'm definitely
+going to make sure that anyone who lands this code is explicit in
+ignoring any experience we've had in this area and in the future will
+gladly accept "I told you so" :-)
 
-
-revision history
-----------------
-v2: use device_get_match_data(), invent an internal "have_z" bool property
-v1: initial idea for the change
-
-
- drivers/input/touchscreen/Kconfig  |   6 +-
- drivers/input/touchscreen/st1232.c | 126 ++++++++++++++++++++++-------
- 2 files changed, 98 insertions(+), 34 deletions(-)
-
-diff --git a/drivers/input/touchscreen/Kconfig b/drivers/input/touchscreen/Kconfig
-index 068dbbc610fc..7c597a49c265 100644
---- a/drivers/input/touchscreen/Kconfig
-+++ b/drivers/input/touchscreen/Kconfig
-@@ -1168,11 +1168,11 @@ config TOUCHSCREEN_SIS_I2C
- 	  module will be called sis_i2c.
- 
- config TOUCHSCREEN_ST1232
--	tristate "Sitronix ST1232 touchscreen controllers"
-+	tristate "Sitronix ST1232 or ST1633 touchscreen controllers"
- 	depends on I2C
- 	help
--	  Say Y here if you want to support Sitronix ST1232
--	  touchscreen controller.
-+	  Say Y here if you want to support the Sitronix ST1232
-+	  or ST1633 touchscreen controller.
- 
- 	  If unsure, say N.
- 
-diff --git a/drivers/input/touchscreen/st1232.c b/drivers/input/touchscreen/st1232.c
-index 11ff32c68025..f12ef666e2c8 100644
---- a/drivers/input/touchscreen/st1232.c
-+++ b/drivers/input/touchscreen/st1232.c
-@@ -18,18 +18,21 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_gpio.h>
-+#include <linux/of_device.h>
- #include <linux/pm_qos.h>
- #include <linux/slab.h>
- #include <linux/types.h>
- 
- #define ST1232_TS_NAME	"st1232-ts"
-+#define ST1633_TS_NAME	"st1633-ts"
-+
-+enum {
-+	st1232,
-+	st1633,
-+};
- 
- #define MIN_X		0x00
- #define MIN_Y		0x00
--#define MAX_X		0x31f	/* (800 - 1) */
--#define MAX_Y		0x1df	/* (480 - 1) */
--#define MAX_AREA	0xff
--#define MAX_FINGERS	2
- 
- struct st1232_ts_finger {
- 	u16 x;
-@@ -38,12 +41,24 @@ struct st1232_ts_finger {
- 	bool is_valid;
- };
- 
-+struct st_chip_info {
-+	bool	have_z;
-+	u16	max_x;
-+	u16	max_y;
-+	u16	max_area;
-+	u16	max_fingers;
-+	u8	start_reg;
-+};
-+
- struct st1232_ts_data {
- 	struct i2c_client *client;
- 	struct input_dev *input_dev;
--	struct st1232_ts_finger finger[MAX_FINGERS];
- 	struct dev_pm_qos_request low_latency_req;
- 	int reset_gpio;
-+	const struct st_chip_info *chip_info;
-+	int read_buf_len;
-+	u8 *read_buf;
-+	struct st1232_ts_finger *finger;
- };
- 
- static int st1232_ts_read_data(struct st1232_ts_data *ts)
-@@ -52,40 +67,35 @@ static int st1232_ts_read_data(struct st1232_ts_data *ts)
- 	struct i2c_client *client = ts->client;
- 	struct i2c_msg msg[2];
- 	int error;
--	u8 start_reg;
--	u8 buf[10];
-+	int i, y;
-+	u8 start_reg = ts->chip_info->start_reg;
-+	u8 *buf = ts->read_buf;
- 
--	/* read touchscreen data from ST1232 */
-+	/* read touchscreen data */
- 	msg[0].addr = client->addr;
- 	msg[0].flags = 0;
- 	msg[0].len = 1;
- 	msg[0].buf = &start_reg;
--	start_reg = 0x10;
- 
- 	msg[1].addr = ts->client->addr;
- 	msg[1].flags = I2C_M_RD;
--	msg[1].len = sizeof(buf);
-+	msg[1].len = ts->read_buf_len;
- 	msg[1].buf = buf;
- 
- 	error = i2c_transfer(client->adapter, msg, 2);
- 	if (error < 0)
- 		return error;
- 
--	/* get "valid" bits */
--	finger[0].is_valid = buf[2] >> 7;
--	finger[1].is_valid = buf[5] >> 7;
-+	for (i = 0, y = 0; i < ts->chip_info->max_fingers; i++, y += 3) {
-+		finger[i].is_valid = buf[i + y] >> 7;
-+		if (finger[i].is_valid) {
-+			finger[i].x = ((buf[i + y] & 0x0070) << 4) | buf[i + 1];
-+			finger[i].y = ((buf[i + y] & 0x0007) << 8) | buf[i + 2];
- 
--	/* get xy coordinate */
--	if (finger[0].is_valid) {
--		finger[0].x = ((buf[2] & 0x0070) << 4) | buf[3];
--		finger[0].y = ((buf[2] & 0x0007) << 8) | buf[4];
--		finger[0].t = buf[8];
--	}
--
--	if (finger[1].is_valid) {
--		finger[1].x = ((buf[5] & 0x0070) << 4) | buf[6];
--		finger[1].y = ((buf[5] & 0x0007) << 8) | buf[7];
--		finger[1].t = buf[9];
-+			/* st1232 includes a z-axis / touch strength */
-+			if (ts->chip_info->have_z)
-+				finger[i].t = buf[i + 6];
-+		}
- 	}
- 
- 	return 0;
-@@ -104,11 +114,14 @@ static irqreturn_t st1232_ts_irq_handler(int irq, void *dev_id)
- 		goto end;
- 
- 	/* multi touch protocol */
--	for (i = 0; i < MAX_FINGERS; i++) {
-+	for (i = 0; i < ts->chip_info->max_fingers; i++) {
- 		if (!finger[i].is_valid)
- 			continue;
- 
--		input_report_abs(input_dev, ABS_MT_TOUCH_MAJOR, finger[i].t);
-+		if (ts->chip_info->have_z)
-+			input_report_abs(input_dev, ABS_MT_TOUCH_MAJOR,
-+					 finger[i].t);
-+
- 		input_report_abs(input_dev, ABS_MT_POSITION_X, finger[i].x);
- 		input_report_abs(input_dev, ABS_MT_POSITION_Y, finger[i].y);
- 		input_mt_sync(input_dev);
-@@ -142,12 +155,43 @@ static void st1232_ts_power(struct st1232_ts_data *ts, bool poweron)
- 		gpio_direction_output(ts->reset_gpio, poweron);
- }
- 
-+static const struct st_chip_info st1232_chip_info = {
-+		.have_z = true,
-+		.max_x = 0x31f, /* 800 - 1 */
-+		.max_y = 0x1df, /* 480 -1 */
-+		.max_area = 0xff,
-+		.max_fingers = 2,
-+		.start_reg = 0x12,
-+};
-+
-+static const struct st_chip_info st1633_chip_info = {
-+		.have_z = false,
-+		.max_x = 0x13f, /* 320 - 1 */
-+		.max_y = 0x1df, /* 480 -1 */
-+		.max_area = 0x00,
-+		.max_fingers = 5,
-+		.start_reg = 0x12,
-+};
-+
- static int st1232_ts_probe(struct i2c_client *client,
- 			   const struct i2c_device_id *id)
- {
- 	struct st1232_ts_data *ts;
-+	struct st1232_ts_finger *finger;
- 	struct input_dev *input_dev;
- 	int error;
-+	const struct st_chip_info *match = NULL;
-+
-+	if (dev_fwnode(&client->dev))
-+		match = device_get_match_data(&client->dev);
-+	else if (id && id->driver_data == st1232)
-+		match = &st1232_chip_info;
-+	else if (id && id->driver_data == st1633)
-+		match = &st1633_chip_info;
-+	if (!match) {
-+		dev_err(&client->dev, "unknown device model\n");
-+		return -ENODEV;
-+	}
- 
- 	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C)) {
- 		dev_err(&client->dev, "need I2C_FUNC_I2C\n");
-@@ -163,6 +207,19 @@ static int st1232_ts_probe(struct i2c_client *client,
- 	if (!ts)
- 		return -ENOMEM;
- 
-+	ts->chip_info = match;
-+	ts->finger = devm_kzalloc(&client->dev,
-+				  sizeof(*finger) * ts->chip_info->max_fingers,
-+				  GFP_KERNEL);
-+	if (!ts->finger)
-+		return -ENOMEM;
-+
-+	/* allocate a buffer according to the number of registers to read */
-+	ts->read_buf_len = ts->chip_info->max_fingers * 4;
-+	ts->read_buf = devm_kzalloc(&client->dev, ts->read_buf_len, GFP_KERNEL);
-+	if (!ts->read_buf)
-+		return -ENOMEM;
-+
- 	input_dev = devm_input_allocate_device(&client->dev);
- 	if (!input_dev)
- 		return -ENOMEM;
-@@ -192,9 +249,14 @@ static int st1232_ts_probe(struct i2c_client *client,
- 	__set_bit(EV_KEY, input_dev->evbit);
- 	__set_bit(EV_ABS, input_dev->evbit);
- 
--	input_set_abs_params(input_dev, ABS_MT_TOUCH_MAJOR, 0, MAX_AREA, 0, 0);
--	input_set_abs_params(input_dev, ABS_MT_POSITION_X, MIN_X, MAX_X, 0, 0);
--	input_set_abs_params(input_dev, ABS_MT_POSITION_Y, MIN_Y, MAX_Y, 0, 0);
-+	if (ts->chip_info->have_z)
-+		input_set_abs_params(input_dev, ABS_MT_TOUCH_MAJOR, 0,
-+				     ts->chip_info->max_area, 0, 0);
-+
-+	input_set_abs_params(input_dev, ABS_MT_POSITION_X,
-+			     MIN_X, ts->chip_info->max_x, 0, 0);
-+	input_set_abs_params(input_dev, ABS_MT_POSITION_Y,
-+			     MIN_Y, ts->chip_info->max_y, 0, 0);
- 
- 	error = devm_request_threaded_irq(&client->dev, client->irq,
- 					  NULL, st1232_ts_irq_handler,
-@@ -261,13 +323,15 @@ static SIMPLE_DEV_PM_OPS(st1232_ts_pm_ops,
- 			 st1232_ts_suspend, st1232_ts_resume);
- 
- static const struct i2c_device_id st1232_ts_id[] = {
--	{ ST1232_TS_NAME, 0 },
-+	{ ST1232_TS_NAME, st1232 },
-+	{ ST1633_TS_NAME, st1633 },
- 	{ }
- };
- MODULE_DEVICE_TABLE(i2c, st1232_ts_id);
- 
- static const struct of_device_id st1232_ts_dt_ids[] = {
--	{ .compatible = "sitronix,st1232", },
-+	{ .compatible = "sitronix,st1232", .data = &st1232_chip_info },
-+	{ .compatible = "sitronix,st1633", .data = &st1633_chip_info },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, st1232_ts_dt_ids);
--- 
-2.20.1
-
+Dave.
