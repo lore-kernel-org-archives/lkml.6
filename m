@@ -4,54 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14CDCC282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:23:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDA87C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:23:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D42C7218D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:23:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDA06218DE
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:23:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548357792;
-	bh=4y5Kc1CUFSkEA3XC0AKOF42pJnzC4x0yffTAnuMFG0Y=;
+	s=default; t=1548357797;
+	bh=c7ABTPHnUvdIWI6hbTHHcPlRHsYStvibjWY7l3osUNA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Suea/jcfNwdEHyUKXpYeKmijFprWsKYX9j4DK/MZP3w2GApmUNcMWNQMRonzPKxwG
-	 RK3xVLrT1DvX9zmx9SbctffceZBV+vajNj059gL3w8/XIxfU2BOXDt1LhAxjc5y0lb
-	 9DjTEUO8ifgDhPqQKv0J1i+W5Qyu20tcuhzSqMb0=
+	b=Y80zsD2DfvncSIw3hrBm6VesxYMZhX3QBIpBWTIcSkQ6i18GAXyUmBsXJjAAVufc3
+	 ecSuabB4AUHk8knvEO54iIIUxgb/aktd2UZuDzYyOV2g+axK6KJBdc7y3uQ1jwKhqe
+	 dAgTbI2+87TRPfTRycfHj7/62ZtDi0YzavObYhtI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729792AbfAXTXL (ORCPT
+        id S1729804AbfAXTXQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:23:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47880 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:23:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48040 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729771AbfAXTXJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:23:09 -0500
+        id S1728388AbfAXTXN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:23:13 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 792CE218CD;
-        Thu, 24 Jan 2019 19:23:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E7B5F218EA;
+        Thu, 24 Jan 2019 19:23:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548357788;
-        bh=4y5Kc1CUFSkEA3XC0AKOF42pJnzC4x0yffTAnuMFG0Y=;
+        s=default; t=1548357793;
+        bh=c7ABTPHnUvdIWI6hbTHHcPlRHsYStvibjWY7l3osUNA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ar3sOSxeWyXjtftuEr90fgcQ3MuKUeLSLG3hywYAiu+k7bhfNOi7nUctn1nHXUl/i
-         YXQDcnD/7TE9bs7ItF7uKEGNrwNRhhoz5lnF8wjYtoOwt0TrcpJ4cqlqaACxnqoMks
-         WhACVvqQlCzhtRlBn0jl2g4OE9vXT4fTFcJvMmNs=
+        b=HapcAzpMnnicYZfAqDgDawuU3QjhleWcfu2PN2wDvCMj2JfAEF/xKpCV+e/HdIC9z
+         WuGerxkxr5zyv2gEvFN+gMxnm1VplWzegxFlMK61qHziqWh73zkE5R8RhRDrV2rsfF
+         a/cMVrhQ9iXEyT1XmWJD/HK6xaPXWIni513sRho4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Disseldorp <ddiss@suse.de>,
-        Christoph Hellwig <hch@lst.de>,
-        "Bryant G. Ly" <bly@catalogicsoftware.com>,
-        Lee Duncan <lduncan@suse.com>, Hannes Reinecke <hare@suse.com>,
-        Roman Bolshakov <r.bolshakov@yadro.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 41/52] scsi: target: use consistent left-aligned ASCII INQUIRY data
-Date:   Thu, 24 Jan 2019 20:20:05 +0100
-Message-Id: <20190124190149.430550736@linuxfoundation.org>
+Subject: [PATCH 3.18 43/52] kconfig: fix memory leak when EOF is encountered in quotation
+Date:   Thu, 24 Jan 2019 20:20:07 +0100
+Message-Id: <20190124190149.792918931@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190140.879495253@linuxfoundation.org>
 References: <20190124190140.879495253@linuxfoundation.org>
@@ -70,75 +66,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 0de263577de5d5e052be5f4f93334e63cc8a7f0b ]
+[ Upstream commit fbac5977d81cb2b2b7e37b11c459055d9585273c ]
 
-spc5r17.pdf specifies:
+An unterminated string literal followed by new line is passed to the
+parser (with "multi-line strings not supported" warning shown), then
+handled properly there.
 
-  4.3.1 ASCII data field requirements
-  ASCII data fields shall contain only ASCII printable characters (i.e.,
-  code values 20h to 7Eh) and may be terminated with one or more ASCII null
-  (00h) characters.  ASCII data fields described as being left-aligned
-  shall have any unused bytes at the end of the field (i.e., highest
-  offset) and the unused bytes shall be filled with ASCII space characters
-  (20h).
+On the other hand, an unterminated string literal at end of file is
+never passed to the parser, then results in memory leak.
 
-LIO currently space-pads the T10 VENDOR IDENTIFICATION and PRODUCT
-IDENTIFICATION fields in the standard INQUIRY data. However, the PRODUCT
-REVISION LEVEL field in the standard INQUIRY data as well as the T10 VENDOR
-IDENTIFICATION field in the INQUIRY Device Identification VPD Page are
-zero-terminated/zero-padded.
+[Test Code]
 
-Fix this inconsistency by using space-padding for all of the above fields.
+  ----------(Kconfig begin)----------
+  source "Kconfig.inc"
 
-Signed-off-by: David Disseldorp <ddiss@suse.de>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Bryant G. Ly <bly@catalogicsoftware.com>
-Reviewed-by: Lee Duncan <lduncan@suse.com>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Reviewed-by: Roman Bolshakov <r.bolshakov@yadro.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+  config A
+          bool "a"
+  -----------(Kconfig end)-----------
+
+  --------(Kconfig.inc begin)--------
+  config B
+          bool "b\No new line at end of file
+  ---------(Kconfig.inc end)---------
+
+[Summary from Valgrind]
+
+  Before the fix:
+
+    LEAK SUMMARY:
+       definitely lost: 16 bytes in 1 blocks
+       ...
+
+  After the fix:
+
+    LEAK SUMMARY:
+       definitely lost: 0 bytes in 0 blocks
+       ...
+
+Eliminate the memory leak path by handling this case. Of course, such
+a Kconfig file is wrong already, so I will add an error message later.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/target/target_core_spc.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+ scripts/kconfig/zconf.l | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/target/target_core_spc.c b/drivers/target/target_core_spc.c
-index 614005b6b08b..3ab264d4fb1f 100644
---- a/drivers/target/target_core_spc.c
-+++ b/drivers/target/target_core_spc.c
-@@ -112,12 +112,17 @@ spc_emulate_inquiry_std(struct se_cmd *cmd, unsigned char *buf)
+diff --git a/scripts/kconfig/zconf.l b/scripts/kconfig/zconf.l
+index 6c62d93b4ffb..485b19a461f8 100644
+--- a/scripts/kconfig/zconf.l
++++ b/scripts/kconfig/zconf.l
+@@ -180,6 +180,8 @@ n	[A-Za-z0-9_]
+ 	}
+ 	<<EOF>>	{
+ 		BEGIN(INITIAL);
++		yylval.string = text;
++		return T_WORD_QUOTE;
+ 	}
+ }
  
- 	buf[7] = 0x2; /* CmdQue=1 */
- 
--	memcpy(&buf[8], "LIO-ORG ", 8);
--	memset(&buf[16], 0x20, 16);
-+	/*
-+	 * ASCII data fields described as being left-aligned shall have any
-+	 * unused bytes at the end of the field (i.e., highest offset) and the
-+	 * unused bytes shall be filled with ASCII space characters (20h).
-+	 */
-+	memset(&buf[8], 0x20, 8 + 16 + 4);
-+	memcpy(&buf[8], "LIO-ORG", sizeof("LIO-ORG") - 1);
- 	memcpy(&buf[16], dev->t10_wwn.model,
--	       min_t(size_t, strlen(dev->t10_wwn.model), 16));
-+	       strnlen(dev->t10_wwn.model, 16));
- 	memcpy(&buf[32], dev->t10_wwn.revision,
--	       min_t(size_t, strlen(dev->t10_wwn.revision), 4));
-+	       strnlen(dev->t10_wwn.revision, 4));
- 	buf[4] = 31; /* Set additional length to 31 */
- 
- 	return 0;
-@@ -257,7 +262,9 @@ check_t10_vend_desc:
- 	buf[off] = 0x2; /* ASCII */
- 	buf[off+1] = 0x1; /* T10 Vendor ID */
- 	buf[off+2] = 0x0;
--	memcpy(&buf[off+4], "LIO-ORG", 8);
-+	/* left align Vendor ID and pad with spaces */
-+	memset(&buf[off+4], 0x20, 8);
-+	memcpy(&buf[off+4], "LIO-ORG", sizeof("LIO-ORG") - 1);
- 	/* Extra Byte for NULL Terminator */
- 	id_len++;
- 	/* Identifier Length */
 -- 
 2.19.1
 
