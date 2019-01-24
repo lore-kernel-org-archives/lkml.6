@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
 	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AF4AC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 21:15:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D529C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 21:15:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B25D218D2
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 21:15:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AB8E218D3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 21:15:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gygzfM8D"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="j20YsKHG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727918AbfAXVPp (ORCPT
+        id S1728017AbfAXVPt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 16:15:45 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:42075 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727743AbfAXVPo (ORCPT
+        Thu, 24 Jan 2019 16:15:49 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:39942 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727959AbfAXVPq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 16:15:44 -0500
-Received: by mail-pf1-f196.google.com with SMTP id 64so3619509pfr.9
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 13:15:44 -0800 (PST)
+        Thu, 24 Jan 2019 16:15:46 -0500
+Received: by mail-pl1-f196.google.com with SMTP id u18so3470155plq.7
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 13:15:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ucF1EwcLVxCtpPOBrQuqUFcO6ME+3ZXcCq84fU7zCQU=;
-        b=gygzfM8DMwdV2iIuQLyTUNZoqz3zBV3YtlUapmjclo6FC0Cojxkyvg4NivMng9lbsQ
-         UWdyeeLEfhPEp8uDGJi7V+xJ1r8fLv7cSF3AgCBMzvurwt/n6qyU4ar7Cg9qTtZeIxbU
-         J6YSkeKSSK0UPNMIulk/GIHII8GRmfVYhpB65NdU5mVAAkC5EC5Z9ITK8S75A88PP/rM
-         YCmvpjQontE64hJ0camuKp/QHj5ID+XU4FRhNKvHB2zo3jpM7bZb6q/XuMvwwy6vaDwK
-         BPTQ0nG+MGuEYAZ0eOa1zCAzJnqN3qOecuomYBNuInO5ONQIFkVFx7A78idtIZ3d2iHh
-         EAXA==
+        bh=hQMXtShjYz4LIok46DuN+DSpcNGcRKZs3McroLRrGJw=;
+        b=j20YsKHGwaT+e7qtfX+pJMn7EqgnnAg98DHCtEKAcNNAthLRLG8JE/6hRv7KyQ5Iiz
+         g0cQdc6pIJoSNiXlKr5WinqrLgPEyyyT3ueTy2KBOv5V7YP+cZAFTlF+rB9CIxSpQJxG
+         r43vq8LUoKlLqhCQAloIuMQU+cSFgagDdDNtqJu/3gx84lgakSYZqN2brhiwObjRTIf1
+         X++KVwfttX10Q5Dwj4X55d7C4wtHOvzDch/8RmJjhBu2y0rDPFeIHjbFfjE540Fv/dvd
+         jBcaZipg2xsJp2QnwLiTyYtSLmwgKypskSEK4EcIDc/gjPZnGZm3zMY3OayW//GIfrhe
+         DCuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ucF1EwcLVxCtpPOBrQuqUFcO6ME+3ZXcCq84fU7zCQU=;
-        b=MH4uIc0aUUe/Wh7lqyrLEmwwXQ7QGZBuaWOk+X9O5SiuIFL+AzO+cxnFa5Uu/QDwGP
-         sUvu8pk+NdOoPgbCEVsgrSQaXamfzUexC4W7GvVcNUFWXcCPXMTOa2WqEa7UstxpFYAT
-         kUbD1m0+qoI3NpOYdhhdQztFI4imYLKaD0+x/TfRhn0ubMlgX2TjtEk2Shq1zrGWS1E6
-         YAYVfxuvVysVpheFA7+n9hgo8xQ797oUztg/oodDIZ/p/mVuGwAM+6m3eFiOXgU+xqAw
-         vQEbWhMU8pC4MOJKBvUNj4/mG1CUXEeLaT68kmdspqrQlIvunTgYy9GWS9MdTqQJUfaM
-         fXUQ==
-X-Gm-Message-State: AJcUukfRotNESMas4IUIvtvWqdLyHH0N1AWUOQyJZdJr8eIQEW9akyJa
-        e3rCk+9NTAnYTPmeP72L8IR/TA==
-X-Google-Smtp-Source: ALg8bN7SzOSe/SY78Pfzr1GOzAhXFURTr4LVGcJJzkPSCrKgxlqMkTFLV98NujEgXfWObOrL6iJgLg==
-X-Received: by 2002:a63:31cc:: with SMTP id x195mr7538081pgx.52.1548364543402;
-        Thu, 24 Jan 2019 13:15:43 -0800 (PST)
+        bh=hQMXtShjYz4LIok46DuN+DSpcNGcRKZs3McroLRrGJw=;
+        b=CSKk5rdCXhFoU3n0Amu6PIvMs/N3ApesBnKE/ak8OKhZs1HuSQ1RwIyw5evqCA2qoo
+         x0bietaAqht6VZ/7fA2U3Kxml8Cb0u+HCCKDs/AMhadKn51paOp+EUCnfyZ7f7umbLZp
+         Z89M0I9BG2JRXjQz38NmoIhbo+iHUK7zscIZZZ4vmS3CvaQCTCCE0j2LZFbsAdACJcjD
+         KYB2fnpbic5UJOvjJpieqp6SGZcyF1fyRiHwZXcMbgdhXKLQT+Wd+D4Xn7cs6mCQUsvc
+         GRXxgVc1IPzRZG4NjJOaDBbJH/nK/GuaB4quxu6jrjezfN+H9dilr0JvBakwy+kK7hK/
+         3lDA==
+X-Gm-Message-State: AJcUukfSY6hhORSAqlDpsPp20y0JEjFOd+yjxhzIYO2An2gKME4n76EH
+        +TBfkBAXP4xh4mAw7VCaiUdWjg==
+X-Google-Smtp-Source: ALg8bN7nCufI9BYh2GZ0ogHwAUMbkmGJZbvBktdzlwXxc4JpxluUrMJcb20Y/QlbwgK+in4KOP50ww==
+X-Received: by 2002:a17:902:d697:: with SMTP id v23mr8003217ply.261.1548364545767;
+        Thu, 24 Jan 2019 13:15:45 -0800 (PST)
 Received: from surenb0.mtv.corp.google.com ([2620:0:1000:1612:3320:4357:47df:276b])
-        by smtp.googlemail.com with ESMTPSA id j197sm29626418pgc.76.2019.01.24.13.15.42
+        by smtp.googlemail.com with ESMTPSA id j197sm29626418pgc.76.2019.01.24.13.15.44
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 13:15:42 -0800 (PST)
+        Thu, 24 Jan 2019 13:15:45 -0800 (PST)
 From:   Suren Baghdasaryan <surenb@google.com>
 To:     gregkh@linuxfoundation.org
 Cc:     tj@kernel.org, lizefan@huawei.com, hannes@cmpxchg.org,
@@ -64,9 +64,9 @@ Cc:     tj@kernel.org, lizefan@huawei.com, hannes@cmpxchg.org,
         corbet@lwn.net, cgroups@vger.kernel.org, linux-mm@kvack.org,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-team@android.com, Suren Baghdasaryan <surenb@google.com>
-Subject: [PATCH v3 1/5] fs: kernfs: add poll file operation
-Date:   Thu, 24 Jan 2019 13:15:14 -0800
-Message-Id: <20190124211518.244221-2-surenb@google.com>
+Subject: [PATCH v3 2/5] kernel: cgroup: add poll file operation
+Date:   Thu, 24 Jan 2019 13:15:15 -0800
+Message-Id: <20190124211518.244221-3-surenb@google.com>
 X-Mailer: git-send-email 2.20.1.321.g9e740568ce-goog
 In-Reply-To: <20190124211518.244221-1-surenb@google.com>
 References: <20190124211518.244221-1-surenb@google.com>
@@ -79,7 +79,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Johannes Weiner <hannes@cmpxchg.org>
 
-Kernfs has a standardized poll/notification mechanism for waking all
+Cgroup has a standardized poll/notification mechanism for waking all
 pollers on all fds when a filesystem node changes. To allow polling
 for custom events, add a .poll callback that can override the default.
 
@@ -89,92 +89,69 @@ per-fd trigger configurations.
 Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
 Signed-off-by: Suren Baghdasaryan <surenb@google.com>
 ---
- fs/kernfs/file.c       | 31 ++++++++++++++++++++-----------
- include/linux/kernfs.h |  6 ++++++
- 2 files changed, 26 insertions(+), 11 deletions(-)
+ include/linux/cgroup-defs.h |  4 ++++
+ kernel/cgroup/cgroup.c      | 12 ++++++++++++
+ 2 files changed, 16 insertions(+)
 
-diff --git a/fs/kernfs/file.c b/fs/kernfs/file.c
-index f8d5021a652e..ae948aaa4c53 100644
---- a/fs/kernfs/file.c
-+++ b/fs/kernfs/file.c
-@@ -832,26 +832,35 @@ void kernfs_drain_open_files(struct kernfs_node *kn)
-  * to see if it supports poll (Neither 'poll' nor 'select' return
-  * an appropriate error code).  When in doubt, set a suitable timeout value.
-  */
-+__poll_t kernfs_generic_poll(struct kernfs_open_file *of, poll_table *wait)
-+{
-+	struct kernfs_node *kn = kernfs_dentry_node(of->file->f_path.dentry);
-+	struct kernfs_open_node *on = kn->attr.open;
-+
-+	poll_wait(of->file, &on->poll, wait);
-+
-+	if (of->event != atomic_read(&on->event))
-+		return DEFAULT_POLLMASK|EPOLLERR|EPOLLPRI;
-+
-+	return DEFAULT_POLLMASK;
-+}
-+
- static __poll_t kernfs_fop_poll(struct file *filp, poll_table *wait)
- {
- 	struct kernfs_open_file *of = kernfs_of(filp);
- 	struct kernfs_node *kn = kernfs_dentry_node(filp->f_path.dentry);
--	struct kernfs_open_node *on = kn->attr.open;
-+	__poll_t ret;
- 
- 	if (!kernfs_get_active(kn))
--		goto trigger;
-+		return DEFAULT_POLLMASK|EPOLLERR|EPOLLPRI;
- 
--	poll_wait(filp, &on->poll, wait);
-+	if (kn->attr.ops->poll)
-+		ret = kn->attr.ops->poll(of, wait);
-+	else
-+		ret = kernfs_generic_poll(of, wait);
- 
- 	kernfs_put_active(kn);
--
--	if (of->event != atomic_read(&on->event))
--		goto trigger;
--
--	return DEFAULT_POLLMASK;
--
-- trigger:
--	return DEFAULT_POLLMASK|EPOLLERR|EPOLLPRI;
-+	return ret;
- }
- 
- static void kernfs_notify_workfn(struct work_struct *work)
-diff --git a/include/linux/kernfs.h b/include/linux/kernfs.h
-index 5b36b1287a5a..0cac1207bb00 100644
---- a/include/linux/kernfs.h
-+++ b/include/linux/kernfs.h
-@@ -25,6 +25,7 @@ struct seq_file;
- struct vm_area_struct;
- struct super_block;
- struct file_system_type;
+diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
+index 8fcbae1b8db0..aad3babef007 100644
+--- a/include/linux/cgroup-defs.h
++++ b/include/linux/cgroup-defs.h
+@@ -32,6 +32,7 @@ struct kernfs_node;
+ struct kernfs_ops;
+ struct kernfs_open_file;
+ struct seq_file;
 +struct poll_table_struct;
  
- struct kernfs_open_node;
- struct kernfs_iattrs;
-@@ -261,6 +262,9 @@ struct kernfs_ops {
- 	ssize_t (*write)(struct kernfs_open_file *of, char *buf, size_t bytes,
- 			 loff_t off);
+ #define MAX_CGROUP_TYPE_NAMELEN 32
+ #define MAX_CGROUP_ROOT_NAMELEN 64
+@@ -574,6 +575,9 @@ struct cftype {
+ 	ssize_t (*write)(struct kernfs_open_file *of,
+ 			 char *buf, size_t nbytes, loff_t off);
  
 +	__poll_t (*poll)(struct kernfs_open_file *of,
 +			 struct poll_table_struct *pt);
 +
- 	int (*mmap)(struct kernfs_open_file *of, struct vm_area_struct *vma);
- 
  #ifdef CONFIG_DEBUG_LOCK_ALLOC
-@@ -350,6 +354,8 @@ int kernfs_remove_by_name_ns(struct kernfs_node *parent, const char *name,
- int kernfs_rename_ns(struct kernfs_node *kn, struct kernfs_node *new_parent,
- 		     const char *new_name, const void *new_ns);
- int kernfs_setattr(struct kernfs_node *kn, const struct iattr *iattr);
-+__poll_t kernfs_generic_poll(struct kernfs_open_file *of,
-+			     struct poll_table_struct *pt);
- void kernfs_notify(struct kernfs_node *kn);
+ 	struct lock_class_key	lockdep_key;
+ #endif
+diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+index f31bd61c9466..e8cd12c6a553 100644
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -3533,6 +3533,16 @@ static ssize_t cgroup_file_write(struct kernfs_open_file *of, char *buf,
+ 	return ret ?: nbytes;
+ }
  
- const void *kernfs_super_ns(struct super_block *sb);
++static __poll_t cgroup_file_poll(struct kernfs_open_file *of, poll_table *pt)
++{
++	struct cftype *cft = of->kn->priv;
++
++	if (cft->poll)
++		return cft->poll(of, pt);
++
++	return kernfs_generic_poll(of, pt);
++}
++
+ static void *cgroup_seqfile_start(struct seq_file *seq, loff_t *ppos)
+ {
+ 	return seq_cft(seq)->seq_start(seq, ppos);
+@@ -3571,6 +3581,7 @@ static struct kernfs_ops cgroup_kf_single_ops = {
+ 	.open			= cgroup_file_open,
+ 	.release		= cgroup_file_release,
+ 	.write			= cgroup_file_write,
++	.poll			= cgroup_file_poll,
+ 	.seq_show		= cgroup_seqfile_show,
+ };
+ 
+@@ -3579,6 +3590,7 @@ static struct kernfs_ops cgroup_kf_ops = {
+ 	.open			= cgroup_file_open,
+ 	.release		= cgroup_file_release,
+ 	.write			= cgroup_file_write,
++	.poll			= cgroup_file_poll,
+ 	.seq_start		= cgroup_seqfile_start,
+ 	.seq_next		= cgroup_seqfile_next,
+ 	.seq_stop		= cgroup_seqfile_stop,
 -- 
 2.20.1.321.g9e740568ce-goog
 
