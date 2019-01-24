@@ -7,49 +7,47 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C94B2C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:02:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81D72C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:03:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AB5921726
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:02:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 521C121726
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:03:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548360171;
-	bh=NdM6OF8cyyCtbOGXzKpA9IDd+Rx/1l06tI+O52h5NoA=;
+	s=default; t=1548360183;
+	bh=FVMPD7B57ulDT0UjnmCNW5Xfh6BN2BISeB+aj3O0Zmc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=plnNzLDJJLxoJORQDxN+8MO4ZEC1++r4FU0OhVRAQPNIh+qut6GukHf+MaUx0EViZ
-	 WKZOad9N7Pky6pQFHCtj8au29+0NuD7iTqZQBrwQmhfFFVrywyutxud8qqm6SGFg83
-	 qVkA4yf5ub4XOj4TkLkxzshVhSYJjPJ5875KzV1w=
+	b=fVfqDgx3LxdND5JqS0Hhe2xUzBb/clvtjIbZHb09iBGjrfoIRlJaB+F/UOtMKhcO/
+	 bFD5RIo2KHtFsvU8UeeXFcwZdQm7fc5VdEN8zY7eqiT20f/KuKnCTv6+HjeIK9T8Wz
+	 5Lcsb4ohNd7K5aEJs7M2bZg9NU0vMdXRE/QQOOtQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730891AbfAXUCt (ORCPT
+        id S1731876AbfAXTcq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 15:02:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60914 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:32:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60618 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731913AbfAXTc7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:32:59 -0500
+        id S1731864AbfAXTcl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:32:41 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D2A91218E2;
-        Thu, 24 Jan 2019 19:32:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B87B218FC;
+        Thu, 24 Jan 2019 19:32:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358378;
-        bh=NdM6OF8cyyCtbOGXzKpA9IDd+Rx/1l06tI+O52h5NoA=;
+        s=default; t=1548358361;
+        bh=FVMPD7B57ulDT0UjnmCNW5Xfh6BN2BISeB+aj3O0Zmc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DDMxeo5dCyRBp40W9VBbImHAJjd7RX3Lp3W9eyOtkY8g827Mft+/OnEuLSZKl8TRI
-         a7vtI7epIjff2mhazuwBKcqqtLdBrFDJdk0tjA7ewbYM2ciQYf5valIurXRGmkz5L3
-         lSQ8LyMyWCAOK0BrKH9qhQ9f5go0OnJPUyJgzkgk=
+        b=F00/37l+tbYk/PpEny4RpOZhHVlMJ0LdoWQOUiMtjGFCY/24EpnqrjIZ/JktNWcss
+         wUtfhp9ERVVf2soNySiSuC903BkR9aYilc1VqzaYSC9QG8C1JE/G1FpVakga6G92Tx
+         RuqxBUmTiILpNIzC5JJKeyy+UWrgUc1NBkl3H5UU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Yanjiang Jin <yanjiang.jin@hxt-semitech.com>,
-        Don Brace <don.brace@microsemi.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 52/63] scsi: smartpqi: call pqi_free_interrupts() in pqi_shutdown()
-Date:   Thu, 24 Jan 2019 20:20:41 +0100
-Message-Id: <20190124190201.577008917@linuxfoundation.org>
+        Javier Barrio <javier.barrio.mart@gmail.com>,
+        Jan Kara <jack@suse.cz>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 46/63] quota: Lock s_umount in exclusive mode for Q_XQUOTA{ON,OFF} quotactls.
+Date:   Thu, 24 Jan 2019 20:20:35 +0100
+Message-Id: <20190124190200.750579841@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190155.176570028@linuxfoundation.org>
 References: <20190124190155.176570028@linuxfoundation.org>
@@ -68,63 +66,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit e57b2945aa654e48f85a41e8917793c64ecb9de8 ]
+[ Upstream commit 41c4f85cdac280d356df1f483000ecec4a8868be ]
 
-We must free all irqs during shutdown, else kexec's 2nd kernel would hang
-in pqi_wait_for_completion_io() as below:
+Commit 1fa5efe3622db58cb8c7b9a50665e9eb9a6c7e97 (ext4: Use generic helpers for quotaon
+and quotaoff) made possible to call quotactl(Q_XQUOTAON/OFF) on ext4 filesystems
+with sysfile quota support. This leads to calling dquot_enable/disable without s_umount
+held in excl. mode, because quotactl_cmd_onoff checks only for Q_QUOTAON/OFF.
 
-Call trace:
+The following WARN_ON_ONCE triggers (in this case for dquot_enable, ext4, latest Linus' tree):
 
- pqi_wait_for_completion_io
- pqi_submit_raid_request_synchronous.constprop.78+0x23c/0x310 [smartpqi]
- pqi_configure_events+0xec/0x1f8 [smartpqi]
- pqi_ctrl_init+0x814/0xca0 [smartpqi]
- pqi_pci_probe+0x400/0x46c [smartpqi]
- local_pci_probe+0x48/0xb0
- pci_device_probe+0x14c/0x1b0
- really_probe+0x218/0x3fc
- driver_probe_device+0x70/0x140
- __driver_attach+0x11c/0x134
- bus_for_each_dev+0x70/0xc8
- driver_attach+0x30/0x38
- bus_add_driver+0x1f0/0x294
- driver_register+0x74/0x12c
- __pci_register_driver+0x64/0x70
- pqi_init+0xd0/0x10000 [smartpqi]
- do_one_initcall+0x60/0x1d8
- do_init_module+0x64/0x1f8
- load_module+0x10ec/0x1350
- __se_sys_finit_module+0xd4/0x100
- __arm64_sys_finit_module+0x28/0x34
- el0_svc_handler+0x104/0x160
- el0_svc+0x8/0xc
+[  117.807056] EXT4-fs (dm-0): mounted filesystem with ordered data mode. Opts: quota,prjquota
 
-This happens only in the following combinations:
+[...]
 
-1. smartpqi is built as module, not built-in;
-2. We have a disk connected to smartpqi card;
-3. Both kexec's 1st and 2nd kernels use this disk as Rootfs' mount point.
+[  155.036847] WARNING: CPU: 0 PID: 2343 at fs/quota/dquot.c:2469 dquot_enable+0x34/0xb9
+[  155.036851] Modules linked in: quota_v2 quota_tree ipv6 af_packet joydev mousedev psmouse serio_raw pcspkr i2c_piix4 intel_agp intel_gtt e1000 ttm drm_kms_helper drm agpgart fb_sys_fops syscopyarea sysfillrect sysimgblt i2c_core input_leds kvm_intel kvm irqbypass qemu_fw_cfg floppy evdev parport_pc parport button crc32c_generic dm_mod ata_generic pata_acpi ata_piix libata loop ext4 crc16 mbcache jbd2 usb_storage usbcore sd_mod scsi_mod
+[  155.036901] CPU: 0 PID: 2343 Comm: qctl Not tainted 4.20.0-rc6-00025-gf5d582777bcb #9
+[  155.036903] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
+[  155.036911] RIP: 0010:dquot_enable+0x34/0xb9
+[  155.036915] Code: 41 56 41 55 41 54 55 53 4c 8b 6f 28 74 02 0f 0b 4d 8d 7d 70 49 89 fc 89 cb 41 89 d6 89 f5 4c 89 ff e8 23 09 ea ff 85 c0 74 0a <0f> 0b 4c 89 ff e8 8b 09 ea ff 85 db 74 6a 41 8b b5 f8 00 00 00 0f
+[  155.036918] RSP: 0018:ffffb09b00493e08 EFLAGS: 00010202
+[  155.036922] RAX: 0000000000000001 RBX: 0000000000000008 RCX: 0000000000000008
+[  155.036924] RDX: 0000000000000001 RSI: 0000000000000002 RDI: ffff9781b67cd870
+[  155.036926] RBP: 0000000000000002 R08: 0000000000000000 R09: 61c8864680b583eb
+[  155.036929] R10: ffffb09b00493e48 R11: ffffffffff7ce7d4 R12: ffff9781b7ee8d78
+[  155.036932] R13: ffff9781b67cd800 R14: 0000000000000004 R15: ffff9781b67cd870
+[  155.036936] FS:  00007fd813250b88(0000) GS:ffff9781ba000000(0000) knlGS:0000000000000000
+[  155.036939] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  155.036942] CR2: 00007fd812ff61d6 CR3: 000000007c882000 CR4: 00000000000006b0
+[  155.036951] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[  155.036953] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[  155.036955] Call Trace:
+[  155.037004]  dquot_quota_enable+0x8b/0xd0
+[  155.037011]  kernel_quotactl+0x628/0x74e
+[  155.037027]  ? do_mprotect_pkey+0x2a6/0x2cd
+[  155.037034]  __x64_sys_quotactl+0x1a/0x1d
+[  155.037041]  do_syscall_64+0x55/0xe4
+[  155.037078]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[  155.037105] RIP: 0033:0x7fd812fe1198
+[  155.037109] Code: 02 77 0d 48 89 c1 48 c1 e9 3f 75 04 48 8b 04 24 48 83 c4 50 5b c3 48 83 ec 08 49 89 ca 48 63 d2 48 63 ff b8 b3 00 00 00 0f 05 <48> 89 c7 e8 c1 eb ff ff 5a c3 48 63 ff b8 bb 00 00 00 0f 05 48 89
+[  155.037112] RSP: 002b:00007ffe8cd7b050 EFLAGS: 00000206 ORIG_RAX: 00000000000000b3
+[  155.037116] RAX: ffffffffffffffda RBX: 00007ffe8cd7b148 RCX: 00007fd812fe1198
+[  155.037119] RDX: 0000000000000000 RSI: 00007ffe8cd7cea9 RDI: 0000000000580102
+[  155.037121] RBP: 00007ffe8cd7b0f0 R08: 000055fc8eba8a9d R09: 0000000000000000
+[  155.037124] R10: 00007ffe8cd7b074 R11: 0000000000000206 R12: 00007ffe8cd7b168
+[  155.037126] R13: 000055fc8eba8897 R14: 0000000000000000 R15: 0000000000000000
+[  155.037131] ---[ end trace 210f864257175c51 ]---
 
-Signed-off-by: Yanjiang Jin <yanjiang.jin@hxt-semitech.com>
-Acked-by: Don Brace <don.brace@microsemi.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+and then the syscall proceeds without s_umount locking.
+
+This patch locks the superblock ->s_umount sem. in exclusive mode for all Q_XQUOTAON/OFF
+quotactls too in addition to Q_QUOTAON/OFF.
+
+AFAICT, other than ext4, only xfs and ocfs2 are affected by this change.
+The VFS will now call in xfs_quota_* functions with s_umount held, which wasn't the case
+before. This looks good to me but I can not say for sure. Ext4 and ocfs2 where already
+beeing called with s_umount exclusive via quota_quotaon/off which is basically the same.
+
+Signed-off-by: Javier Barrio <javier.barrio.mart@gmail.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/smartpqi/smartpqi_init.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/quota/quota.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/smartpqi/smartpqi_init.c b/drivers/scsi/smartpqi/smartpqi_init.c
-index b662f58203ac..bc15999f1c7c 100644
---- a/drivers/scsi/smartpqi/smartpqi_init.c
-+++ b/drivers/scsi/smartpqi/smartpqi_init.c
-@@ -6703,6 +6703,7 @@ static void pqi_shutdown(struct pci_dev *pci_dev)
- 	 * storage.
- 	 */
- 	rc = pqi_flush_cache(ctrl_info, SHUTDOWN);
-+	pqi_free_interrupts(ctrl_info);
- 	pqi_reset(ctrl_info);
- 	if (rc == 0)
- 		return;
+diff --git a/fs/quota/quota.c b/fs/quota/quota.c
+index 3f02bab0db4e..a89c1f05b22e 100644
+--- a/fs/quota/quota.c
++++ b/fs/quota/quota.c
+@@ -793,7 +793,8 @@ static int quotactl_cmd_write(int cmd)
+ /* Return true if quotactl command is manipulating quota on/off state */
+ static bool quotactl_cmd_onoff(int cmd)
+ {
+-	return (cmd == Q_QUOTAON) || (cmd == Q_QUOTAOFF);
++	return (cmd == Q_QUOTAON) || (cmd == Q_QUOTAOFF) ||
++		 (cmd == Q_XQUOTAON) || (cmd == Q_XQUOTAOFF);
+ }
+ 
+ /*
 -- 
 2.19.1
 
