@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC357C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:12:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39E53C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:12:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C0C8217D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:12:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B156217D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:12:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548360733;
-	bh=A3IDLsOhow6yTC/X8jTxluciZmfu+GBR/lTmDKBejvA=;
+	s=default; t=1548360745;
+	bh=5CR/BHIJDsb5V195UOdgvnrZMmAWROelrEdun2ZWWWw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MDor9mwhlu26gvntAiFtanHAalFBbBacLTF5XpBmiYiCAetkq1uza+xdepdlqtBma
-	 NBs67HnKxntBRSsVVXYN4tAGYKuRyPT7M/1CCe7bupmSWU/M5SwXx2bC0vtwmhTlM4
-	 iJkfjBFvDyinFSXZrgHGgzbolpOL6+Z05TfOFpUk=
+	b=zhxRg9FJrqBrDtxVFkXJ8G8pmw6aSJhP4Z+NahHHmyuIsof1wNsyqkX1hKjVO2RTz
+	 zT1rUaK8MPJ2QRdwbR/3O/TTy/QsdEllknCKwVaXjPO0cqPNQcm24LOU7YX4nlxSCX
+	 xc9BUXOegSgz9jrrDV7auXf4aSeLNxutlgRad9z0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729886AbfAXUML (ORCPT
+        id S1730268AbfAXUMX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 15:12:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52290 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 15:12:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51892 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728496AbfAXT0S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:26:18 -0500
+        id S1729680AbfAXT0C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:26:02 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D16ED21901;
-        Thu, 24 Jan 2019 19:26:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6753F218FD;
+        Thu, 24 Jan 2019 19:26:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548357977;
-        bh=A3IDLsOhow6yTC/X8jTxluciZmfu+GBR/lTmDKBejvA=;
+        s=default; t=1548357961;
+        bh=5CR/BHIJDsb5V195UOdgvnrZMmAWROelrEdun2ZWWWw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=piwc1TJsv7G1jrhS8JGFKbBikD2ZIoF1x+6g7VvLGlnuepkwVORZFxKZz+kqPobJI
-         1WOuFQ7uE1+Ijh9B4gx/hPyQo9O9tOcNfiIm80E1P+xPKR0YjyUgwH4HrAnrVn7UU1
-         onbA79PVpIxyfG8KMKIFLWLyJW1mg1bzqGEhDzrE=
+        b=t/5Sw3jE4vBKi+pVdhDdmmzfMce2EjUFDrG5HqLXRM/O/DUoA/R+cUsxnNvaH6x2s
+         fp4Zu9xfE6gcvTr16a9LtafYFG2k3DaJph+oysGwYSZbBx+GbeQW6X/n7yl0GMy7Ur
+         T0PyYiiV73Mn/a8xk0AjUd38d3amuRbXXCzaKatg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        syzbot+57c3d83d71187054d56f@syzkaller.appspotmail.com,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.4 056/104] media: vivid: set min width/height to a value > 0
-Date:   Thu, 24 Jan 2019 20:19:45 +0100
-Message-Id: <20190124190201.895905579@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org
+Subject: [PATCH 4.4 051/104] mips: fix n32 compat_ipc_parse_version
+Date:   Thu, 24 Jan 2019 20:19:40 +0100
+Message-Id: <20190124190201.415332191@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190154.968308875@linuxfoundation.org>
 References: <20190124190154.968308875@linuxfoundation.org>
@@ -66,35 +65,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 9729d6d282a6d7ce88e64c9119cecdf79edf4e88 upstream.
+commit 5a9372f751b5350e0ce3d2ee91832f1feae2c2e5 upstream.
 
-The capture DV timings capabilities allowed for a minimum width and
-height of 0. So passing a timings struct with 0 values is allowed
-and will later cause a division by zero.
+While reading through the sysvipc implementation, I noticed that the n32
+semctl/shmctl/msgctl system calls behave differently based on whether
+o32 support is enabled or not: Without o32, the IPC_64 flag passed by
+user space is rejected but calls without that flag get IPC_64 behavior.
 
-Ensure that the width and height must be >= 16 to avoid this.
+As far as I can tell, this was inadvertently changed by a cleanup patch
+but never noticed by anyone, possibly nobody has tried using sysvipc
+on n32 after linux-3.19.
 
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Reported-by: syzbot+57c3d83d71187054d56f@syzkaller.appspotmail.com
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Change it back to the old behavior now.
+
+Fixes: 78aaf956ba3a ("MIPS: Compat: Fix build error if CONFIG_MIPS32_COMPAT but no compat ABI.")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: linux-mips@vger.kernel.org
+Cc: stable@vger.kernel.org # 3.19+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/platform/vivid/vivid-vid-common.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/mips/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/media/platform/vivid/vivid-vid-common.c
-+++ b/drivers/media/platform/vivid/vivid-vid-common.c
-@@ -33,7 +33,7 @@ const struct v4l2_dv_timings_cap vivid_d
- 	.type = V4L2_DV_BT_656_1120,
- 	/* keep this initialization for compatibility with GCC < 4.4.6 */
- 	.reserved = { 0 },
--	V4L2_INIT_BT_TIMINGS(0, MAX_WIDTH, 0, MAX_HEIGHT, 14000000, 775000000,
-+	V4L2_INIT_BT_TIMINGS(16, MAX_WIDTH, 16, MAX_HEIGHT, 14000000, 775000000,
- 		V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
- 		V4L2_DV_BT_STD_CVT | V4L2_DV_BT_STD_GTF,
- 		V4L2_DV_BT_CAP_PROGRESSIVE | V4L2_DV_BT_CAP_INTERLACED)
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -2972,6 +2972,7 @@ config MIPS32_O32
+ config MIPS32_N32
+ 	bool "Kernel support for n32 binaries"
+ 	depends on 64BIT
++	select ARCH_WANT_COMPAT_IPC_PARSE_VERSION
+ 	select COMPAT
+ 	select MIPS32_COMPAT
+ 	select SYSVIPC_COMPAT if SYSVIPC
 
 
