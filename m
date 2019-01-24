@@ -2,66 +2,262 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42701C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:29:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C1C7C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:29:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D1CC218A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:29:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22595218A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:29:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728438AbfAXP3b (ORCPT
+        id S1728530AbfAXP3q convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 10:29:31 -0500
-Received: from muru.com ([72.249.23.125]:35080 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727755AbfAXP3a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 10:29:30 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 71D4D80C3;
-        Thu, 24 Jan 2019 15:29:37 +0000 (UTC)
-Date:   Thu, 24 Jan 2019 07:29:26 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Jan Kiszka <jan.kiszka@web.de>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Wei Xu <xuwei5@hisilicon.com>, Ryan Grachek <ryan@edited.us>,
-        John Stultz <john.stultz@linaro.org>,
-        linux-wireless@vger.kernel.org, "Reizer, Eyal" <eyalr@ti.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Michal Simek <michal.simek@xilinx.com>
-Subject: Re: [PATCH v2] arm64: dts: zcu100-revC: Give wifi some time after
- power-on
-Message-ID: <20190124152926.GM5720@atomide.com>
-References: <efc793c8-da17-e267-851e-f08f097843ee@web.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <efc793c8-da17-e267-851e-f08f097843ee@web.de>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+        Thu, 24 Jan 2019 10:29:46 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:57212 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727755AbfAXP3p (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 10:29:45 -0500
+Received: from mail-pg1-f200.google.com ([209.85.215.200])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1gmgwp-0001nU-8R
+        for linux-kernel@vger.kernel.org; Thu, 24 Jan 2019 15:29:43 +0000
+Received: by mail-pg1-f200.google.com with SMTP id f125so4133872pgc.20
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 07:29:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=WFa4kIbVYiPOqZcfzasMHxpPdhKLumUqFyMF55zRdiA=;
+        b=qH6+AYlFDK57+RS2sWgcWLOTTbIUnqCP6gftExX1CaULNO87lM+NIHxQJ/f/HetUR8
+         JQZd0MiYISBjLvzQ3xiSpXAV4w7s5iiMwprntnCx23+h3uPs2Ct0zYRqTSJ0OILCtBr6
+         g2WXjn2Q51cirg6JVYaFYQRJG24ZOeJsIAULdt673wVL1bsTRlU1eNw5IX6CseBVAojt
+         uF3HFzF66l/GFaABGvazc6huds/O4VZhRVdZDQUV+dAVDAL8l9qK9B79dOyHxkQYoA7n
+         J09vpqG25++uevDB9JG3mnIqyxHkzvaUSVjmnoGYarB2L15BeoVONcbY2n2ciZRNmuIM
+         0zrQ==
+X-Gm-Message-State: AJcUukdu+Ce3EUKdP67wXemhrWFYlN+0WMuFcGfDLkkY5IHXgjJv7YzI
+        rm09wLsNrVV2U4dfod5wIMtEL+Qgp//BQJTgcPqYT6of/NLJwOwzIB0zRF6n5uvtFWZ/BIc980o
+        d8ALXkkCg8ClRALBriupKRsa41OGyT1nv9Mvp5VIwhQ==
+X-Received: by 2002:a62:9719:: with SMTP id n25mr7158651pfe.240.1548343781876;
+        Thu, 24 Jan 2019 07:29:41 -0800 (PST)
+X-Google-Smtp-Source: ALg8bN53acravPO7ZkfjWLyguRfeG2d939Ztia9IiljET0MsMrXQQJdArx8czcP104wtnG4lIZF8Hw==
+X-Received: by 2002:a62:9719:: with SMTP id n25mr7158629pfe.240.1548343781469;
+        Thu, 24 Jan 2019 07:29:41 -0800 (PST)
+Received: from [192.168.1.215] (220-133-187-190.HINET-IP.hinet.net. [220.133.187.190])
+        by smtp.gmail.com with ESMTPSA id l22sm39687370pfj.179.2019.01.24.07.29.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 24 Jan 2019 07:29:40 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH] PCI / ACPI: Don't clear pme_poll on device that has
+ unreliable ACPI wake
+From:   Kai Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <20190124151524.GF14636@google.com>
+Date:   Thu, 24 Jan 2019 23:29:37 +0800
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, jeffrey.t.kirsher@intel.com,
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <FFC6EC3F-3608-41FC-8B14-815D1747C4B6@canonical.com>
+References: <20190122064544.27426-1-kai.heng.feng@canonical.com>
+ <20190122235134.GE14636@google.com>
+ <91E74111-5BB6-4604-A1D7-B537AB42C317@canonical.com>
+ <20190124151524.GF14636@google.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Jan Kiszka <jan.kiszka@web.de> [190124 08:29]:
-> From: Jan Kiszka <jan.kiszka@siemens.com>
-> 
-> Somewhere along recent changes to power control of the wl1831, power-on
-> became very unreliable on the Ultra96, failing like this:
-> 
-> wl1271_sdio: probe of mmc2:0001:1 failed with error -16
-> wl1271_sdio: probe of mmc2:0001:2 failed with error -16
-> 
-> After playing with some dt parameters and comparing to other users of
-> this chip, it turned out we need some power-on delay to make things
-> stable again. In contrast to those other users which define 200 ms,
-> Ultra96 is already happy with 10 ms.
 
-Good to hear this got sorted out, thanks everybody.
 
-Acked-by: Tony Lindgren <tony@atomide.com>
+> On Jan 24, 2019, at 11:15 PM, Bjorn Helgaas <helgaas@kernel.org> wrote:
+> 
+> On Wed, Jan 23, 2019 at 03:17:37PM +0800, Kai Heng Feng wrote:
+>>> On Jan 23, 2019, at 7:51 AM, Bjorn Helgaas <helgaas@kernel.org> wrote:
+>>> On Tue, Jan 22, 2019 at 02:45:44PM +0800, Kai-Heng Feng wrote:
+>>>> There are some e1000e devices can only be woken up from D3 one time, by
+>>>> plugging ethernet cable. Subsequent cable plugging does set PME bit
+>>>> correctly, but it still doesn't get woken up.
+>>>> 
+>>>> Since e1000e connects to the root complex directly, we rely on ACPI to
+>>>> wake it up. In this case, the GPE from _PRW only works once and stops
+>>>> working after that.
+>>>> 
+>>>> So introduce a new PCI quirk, to avoid clearing pme_poll flag for buggy
+>>>> platform firmwares that have unreliable GPE wake.
+>>> 
+>>> This quirk applies to all 0x15bb (E1000_DEV_ID_PCH_CNP_I219_LM7) and
+>>> 0x15bd (E1000_DEV_ID_PCH_CNP_I219_LM6) devices.  The e1000e driver
+>>> claims about a zillion different device IDs.
+>>> 
+>>> I would be surprised if these two devices are defective but all the
+>>> others work correctly.  Could it be that there is a problem with the
+>>> wiring on this particular motherboard or with the ACPI _PRW methods
+>>> (or the way Linux interprets them) in this firmware?
+>> 
+>> If this is a motherboard issue or platform specific, do you prefer to use
+>> DMI matches here?
+> 
+> I'm not sure what the problem is yet, so let's hold off on the exact
+> structure of the fix.
+
+I think DMI table can put in e1000e driver instead of PCI quirk.
+
+> 
+> If I understand correctly, e1000e wakeup works once, but doesn't work
+> after that.  Your lspci (from after that first wakeup, from
+> https://bugzilla.kernel.org/attachment.cgi?id=280691) shows this:
+> 
+>  00:14.0 XHC  XHCI USB
+>    Flags: PMEClk- DSI- D1- D2- ... PME(D0-,D1-,D2-,D3hot+,D3cold+)
+>    Status: D3 NoSoftRst+ PME-Enable+ DSel=0 DScale=0 PME-
+>  00:1f.3 HDAS audio
+>    Flags: PMEClk- DSI- D1- D2- ... PME(D0-,D1-,D2-,D3hot+,D3cold+)
+>    Status: D3 NoSoftRst+ PME-Enable+ DSel=0 DScale=0 PME-
+>  00:1f.6 GLAN e1000e
+>    Flags: PMEClk- DSI+ D1- D2- ... PME(D0+,D1-,D2-,D3hot+,D3cold+)
+>    Status: D3 NoSoftRst+ PME-Enable+ DSel=0 DScale=1 PME+
+> 
+> So the e1000e PME_Status bit is still set, which means it probably
+> won't generate another PME interrupt, which would explain why wakeup
+> doesn't work.  To test this theory, can you try this:
+> 
+>  - sleep
+>  - wakeup via e1000e
+>  # DEV=00:1f.6
+>  # lspci -vvs $DEV
+>  # setpci -s $DEV CAP_PM+4.W
+>  # setpci -s $DEV CAP_PM+4.W=0x8100
+>  - sleep
+>  - attempt another wakeup via e1000e
+> 
+> If this second wakeup works, it would suggest that PME_Status isn't
+> being cleared correctly.  I see code, e.g., in
+> acpi_setup_gpe_for_wake(), that *looks* like it would arrange to clear
+> it, but I'm not very familiar with it.  Maybe there's some issue with
+> multiple devices sharing an "implicit notification" situation like
+> this.
+
+The PME status is being cleared correctly.
+
+The lspci is captured after I plugged the ethernet cable second time,
+i.e. PME is set but not being woken up.
+
+Kai-Heng
+
+> 
+>> As for _PRW, it’s shared by USB controller, Audio controller and ethernet.
+>> Only the ethernet (e1000e) has this issue.
+>> 
+>> When this issue happens, the e1000e doesn’t get woken up by ethernet cable
+>> plugging, but inserting a USB device or plugging audio jack can wake up all
+>> three devices. So I think Linux interprets ACPI correctly here.
+>> 
+>> Their _PRW here:
+>> USB controller:
+>>    Scope (_SB.PCI0)                       
+>>    {                                      
+>>        Device (XDCI)                            
+>>        {                    
+>>            Method (_PRW, 0, NotSerialized)  // _PRW: Power Resources for Wake
+>>            {            
+>>                Return (GPRW (0x6D, 0x04))
+>>            } 
+>> 
+>> Audio controller:
+>> Scope (_SB.PCI0)                                                                                           
+>>    {                                                                                                          
+>>        Device (HDAS)                                  
+>>        {                                                                             
+>>            …         
+>>            Method (_PRW, 0, NotSerialized)  // _PRW: Power Resources for Wake                 
+>>            {                                        
+>>                Return (GPRW (0x6D, 0x04))           
+>>            }                                  
+>> 
+>> Ethernet controller:
+>>    Scope (_SB.PCI0)                                                                     
+>>    {                                                                     
+>>        Device (GLAN)                                                  
+>>        {                                                                            
+>>           …
+>>            Method (_PRW, 0, NotSerialized)  // _PRW: Power Resources for Wake                 
+>>            {                                        
+>>                Return (GPRW (0x6D, 0x04))                       
+>>            }                                                              
+>>        }                                                             
+>>    }  
+>> 
+>> 
+>>> 
+>>> Would you mind attaching a complete dmesg log and "sudo lspci -vvv"
+>>> output to the bugzilla, please?
+>> 
+>> Sure.
+>> 
+>> Kai-Heng
+>> 
+>>> 
+>>>> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+>>>> ---
+>>>> drivers/pci/pci-acpi.c | 2 +-
+>>>> drivers/pci/quirks.c   | 8 ++++++++
+>>>> include/linux/pci.h    | 1 +
+>>>> 3 files changed, 10 insertions(+), 1 deletion(-)
+>>>> 
+>>>> diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
+>>>> index e1949f7efd9c..184e2fc8a294 100644
+>>>> --- a/drivers/pci/pci-acpi.c
+>>>> +++ b/drivers/pci/pci-acpi.c
+>>>> @@ -430,7 +430,7 @@ static void pci_acpi_wake_dev(struct acpi_device_wakeup_context *context)
+>>>> 
+>>>> 	pci_dev = to_pci_dev(context->dev);
+>>>> 
+>>>> -	if (pci_dev->pme_poll)
+>>>> +	if (pci_dev->pme_poll && !pci_dev->unreliable_acpi_wake)
+>>>> 		pci_dev->pme_poll = false;
+>>>> 
+>>>> 	if (pci_dev->current_state == PCI_D3cold) {
+>>>> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+>>>> index b0a413f3f7ca..ed4863496fa8 100644
+>>>> --- a/drivers/pci/quirks.c
+>>>> +++ b/drivers/pci/quirks.c
+>>>> @@ -4948,6 +4948,14 @@ DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_AMD, PCI_ANY_ID,
+>>>> DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_NVIDIA, PCI_ANY_ID,
+>>>> 			      PCI_CLASS_MULTIMEDIA_HD_AUDIO, 8, quirk_gpu_hda);
+>>>> 
+>>>> +static void quirk_unreliable_acpi_wake(struct pci_dev *pdev)
+>>>> +{
+>>>> +	pci_info(pdev, "ACPI Wake unreliable, always poll PME\n");
+>>>> +	pdev->unreliable_acpi_wake = 1;
+>>>> +}
+>>>> +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x15bb, quirk_unreliable_acpi_wake);
+>>>> +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x15bd, quirk_unreliable_acpi_wake);
+>>>> +
+>>>> /*
+>>>> * Some IDT switches incorrectly flag an ACS Source Validation error on
+>>>> * completions for config read requests even though PCIe r4.0, sec
+>>>> diff --git a/include/linux/pci.h b/include/linux/pci.h
+>>>> index 65f1d8c2f082..d22065c1576f 100644
+>>>> --- a/include/linux/pci.h
+>>>> +++ b/include/linux/pci.h
+>>>> @@ -331,6 +331,7 @@ struct pci_dev {
+>>>> 	unsigned int	pme_support:5;	/* Bitmask of states from which PME#
+>>>> 					   can be generated */
+>>>> 	unsigned int	pme_poll:1;	/* Poll device's PME status bit */
+>>>> +	unsigned int	unreliable_acpi_wake:1;	/* ACPI Wake doesn't always work */
+>>>> 	unsigned int	d1_support:1;	/* Low power state D1 is supported */
+>>>> 	unsigned int	d2_support:1;	/* Low power state D2 is supported */
+>>>> 	unsigned int	no_d1d2:1;	/* D1 and D2 are forbidden */
+>>>> -- 
+>>>> 2.17.1
+
