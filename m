@@ -7,49 +7,48 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3D13C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:50:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13DD1C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:51:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87F01217D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:50:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC31F21726
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:51:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359458;
-	bh=/3NiZ4fxb2FxRwNjE2L21mZ9yfLlI0n2epMBtcizMdA=;
+	s=default; t=1548359462;
+	bh=Vnfhj1qdTjgM7wt/fai975ty2tbopsWk13qS97a//zQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rzwGi+QB7yCVpgMOFCVZTskrL+X2yVgCMV7DdIrat8459LHe8AS9xGKcs1nXTM0hY
-	 vwBFH4ONvl6Hf+gd1Dxkv/+TULJ/o25xr4RTTr6a13YNysgynCgcZyBlA/CRqkxcuQ
-	 U0s/fkMM4VxVeirLCORBa6ZjWfDVNAy5RsOtj6nE=
+	b=vAFnlxTkAxSpIUhvGjJMECIsszj64sBzPW82K9mSX3n2NXZY6CZF71KM3g4kCkVoy
+	 oooypgECbbB+kCNd/+N62oY6mhb/N5wrIVkqrQCDajDWzNnvxwCtKDNJcOqMVm52E4
+	 K6T87BjNu/6f9LYbI179yVUg7xxnNu8tgwYoNv68=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732763AbfAXTkM (ORCPT
+        id S1728243AbfAXTvB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:40:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40246 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:51:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40348 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733195AbfAXTkG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:40:06 -0500
+        id S1732549AbfAXTkM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:40:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5363120663;
-        Thu, 24 Jan 2019 19:40:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0071F218D3;
+        Thu, 24 Jan 2019 19:40:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358804;
-        bh=/3NiZ4fxb2FxRwNjE2L21mZ9yfLlI0n2epMBtcizMdA=;
+        s=default; t=1548358810;
+        bh=Vnfhj1qdTjgM7wt/fai975ty2tbopsWk13qS97a//zQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G7SyRVHxhAFeRLtFX4UeAM6pVX4PvpfVdO6Y+fZuCTvJ2j0a9n9s/IqOLY7MrUYQp
-         Rbv5qABf0hzGS/cRT3TcJao7T6vwnj5j2lc6S0z+RthtKlJZnIBz8aarb9sfg10Ev2
-         qdyUQ52HCgnZRo+EdwbnlM4G0UUbE/ifqrgMxw0k=
+        b=UTov5Ykc3xAdj+P/CylGISbMvRa8vS0tUApTRmg569PsqN5elJUGk/qoETs0aMqbA
+         abUwA40L/hLteOKzNFtzuvPQ8dHL1ZLh5HEJeWk2s4KVmliGFWGQC9KRoUmjqcA7bh
+         EWfvJRt9tknGGE9ho5GGFoSNlEH0nZNw6cVA42fY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Maciej W. Rozycki" <macro@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        stable@vger.kernel.org, Trigger Huang <Trigger.Huang@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <chrstian.koenig@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 031/127] MIPS: SiByte: Enable swiotlb for SWARM, LittleSur and BigSur
-Date:   Thu, 24 Jan 2019 20:19:37 +0100
-Message-Id: <20190124190213.627244603@linuxfoundation.org>
+Subject: [PATCH 4.20 033/127] drm/scheduler: Fix bad job be re-processed in TDR
+Date:   Thu, 24 Jan 2019 20:19:39 +0100
+Message-Id: <20190124190213.713600619@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
 References: <20190124190211.984305387@linuxfoundation.org>
@@ -68,153 +67,125 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit e4849aff1e169b86c561738daf8ff020e9de1011 ]
+[ Upstream commit 85744e9c100696d3f210e80b85fd56dd19767c81 ]
 
-The Broadcom SiByte BCM1250, BCM1125, and BCM1125H SOCs have an onchip
-DRAM controller that supports memory amounts of up to 16GiB, and due to
-how the address decoder has been wired in the SOC any memory beyond 1GiB
-is actually mapped starting from 4GiB physical up, that is beyond the
-32-bit addressable limit[1].  Consequently if the maximum amount of
-memory has been installed, then it will span up to 19GiB.
+A bad job is the one triggered TDR(In the current amdgpu's
+implementation, actually all the jobs in the current joq-queue will
+be treated as bad jobs). In the recovery process, its fence
+will be fake signaled and as a result, the work behind will be scheduled
+to delete it from the mirror list, but if the TDR process is invoked
+before the work's execution, then this bad job might be processed again
+and the call dma_fence_set_error to its fence in TDR process will lead to
+kernel warning trace:
 
-Many of the evaluation boards we support that are based on one of these
-SOCs have their memory soldered and the amount present fits in the
-32-bit address range.  The BCM91250A SWARM board however has actual DIMM
-slots and accepts, depending on the peripherals revision of the SOC, up
-to 4GiB or 8GiB of memory in commercially available JEDEC modules[2].
-I believe this is also the case with the BCM91250C2 LittleSur board.
-This means that up to either 3GiB or 7GiB of memory requires 64-bit
-addressing to access.
+[  143.033605] WARNING: CPU: 2 PID: 53 at ./include/linux/dma-fence.h:437 amddrm_sched_job_recovery+0x1af/0x1c0 [amd_sched]
+kernel: [  143.033606] Modules linked in: amdgpu(OE) amdchash(OE) amdttm(OE) amd_sched(OE) amdkcl(OE) amd_iommu_v2 drm_kms_helper drm i2c_algo_bit fb_sys_fops syscopyarea sysfillrect sysimgblt kvm_intel kvm irqbypass crct10dif_pclmul crc32_pclmul ghash_clmulni_intel pcbc aesni_intel aes_x86_64 snd_hda_codec_generic crypto_simd glue_helper cryptd snd_hda_intel snd_hda_codec snd_hda_core snd_hwdep snd_pcm snd_seq_midi snd_seq_midi_event snd_rawmidi snd_seq joydev snd_seq_device snd_timer snd soundcore binfmt_misc input_leds mac_hid serio_raw nfsd auth_rpcgss nfs_acl lockd grace sunrpc sch_fq_codel parport_pc ppdev lp parport ip_tables x_tables autofs4 8139too floppy psmouse 8139cp mii i2c_piix4 pata_acpi
+[  143.033649] CPU: 2 PID: 53 Comm: kworker/2:1 Tainted: G           OE    4.15.0-20-generic #21-Ubuntu
+[  143.033650] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+[  143.033653] Workqueue: events drm_sched_job_timedout [amd_sched]
+[  143.033656] RIP: 0010:amddrm_sched_job_recovery+0x1af/0x1c0 [amd_sched]
+[  143.033657] RSP: 0018:ffffa9f880fe7d48 EFLAGS: 00010202
+[  143.033659] RAX: 0000000000000007 RBX: ffff9b98f2b24c00 RCX: ffff9b98efef4f08
+[  143.033660] RDX: ffff9b98f2b27400 RSI: ffff9b98f2b24c50 RDI: ffff9b98efef4f18
+[  143.033660] RBP: ffffa9f880fe7d98 R08: 0000000000000001 R09: 00000000000002b6
+[  143.033661] R10: 0000000000000000 R11: 0000000000000000 R12: ffff9b98efef3430
+[  143.033662] R13: ffff9b98efef4d80 R14: ffff9b98efef4e98 R15: ffff9b98eaf91c00
+[  143.033663] FS:  0000000000000000(0000) GS:ffff9b98ffd00000(0000) knlGS:0000000000000000
+[  143.033664] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  143.033665] CR2: 00007fc49c96d470 CR3: 000000001400a005 CR4: 00000000003606e0
+[  143.033669] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[  143.033669] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[  143.033670] Call Trace:
+[  143.033744]  amdgpu_device_gpu_recover+0x144/0x820 [amdgpu]
+[  143.033788]  amdgpu_job_timedout+0x9b/0xa0 [amdgpu]
+[  143.033791]  drm_sched_job_timedout+0xcc/0x150 [amd_sched]
+[  143.033795]  process_one_work+0x1de/0x410
+[  143.033797]  worker_thread+0x32/0x410
+[  143.033799]  kthread+0x121/0x140
+[  143.033801]  ? process_one_work+0x410/0x410
+[  143.033803]  ? kthread_create_worker_on_cpu+0x70/0x70
+[  143.033806]  ret_from_fork+0x35/0x40
 
-I believe the BCM91480B BigSur board, which has the BCM1480 SOC instead,
-accepts at least as much memory, although I have no documentation or
-actual hardware available to verify that.
+So just delete the bad job from mirror list directly
 
-Both systems have PCI slots installed for use by any PCI option boards,
-including ones that only support 32-bit addressing (additionally the
-32-bit PCI host bridge of the BCM1250, BCM1125, and BCM1125H SOCs limits
-addressing to 32-bits), and there is no IOMMU available.  Therefore for
-PCI DMA to work in the presence of memory beyond enable swiotlb for the
-affected systems.
+Changes in v3:
+	- Add a helper function to delete the bad jobs from mirror list and call
+		it directly *before* the job's fence is signaled
 
-All the other SOC onchip DMA devices use 40-bit addressing and therefore
-can address the whole memory, so only enable swiotlb if PCI support and
-support for DMA beyond 4GiB have been both enabled in the configuration
-of the kernel.
+Changes in v2:
+	- delete the useless list node check
+	- also delete bad jobs in drm_sched_main because:
+		kthread_unpark(ring->sched.thread) will be invoked very early before
+		amdgpu_device_gpu_recover's return, then drm_sched_main will have
+		chance to pick up a new job from the job queue. This new job will be
+		added into the mirror list and processed by amdgpu_job_run, but may
+		not be deleted from the mirror list on time due to the same reason.
+		And finally re-processed by drm_sched_job_recovery
 
-This shows up as follows:
-
-Broadcom SiByte BCM1250 B2 @ 800 MHz (SB1 rev 2)
-Board type: SiByte BCM91250A (SWARM)
-Determined physical RAM map:
- memory: 000000000fe7fe00 @ 0000000000000000 (usable)
- memory: 000000001ffffe00 @ 0000000080000000 (usable)
- memory: 000000000ffffe00 @ 00000000c0000000 (usable)
- memory: 0000000087fffe00 @ 0000000100000000 (usable)
-software IO TLB: mapped [mem 0xcbffc000-0xcfffc000] (64MB)
-
-in the bootstrap log and removes failures like these:
-
-defxx 0000:02:00.0: dma_direct_map_page: overflow 0x0000000185bc6080+4608 of device mask ffffffff bus mask 0
-fddi0: Receive buffer allocation failed
-fddi0: Adapter open failed!
-IP-Config: Failed to open fddi0
-defxx 0000:09:08.0: dma_direct_map_page: overflow 0x0000000185bc6080+4608 of device mask ffffffff bus mask 0
-fddi1: Receive buffer allocation failed
-fddi1: Adapter open failed!
-IP-Config: Failed to open fddi1
-
-when memory beyond 4GiB is handed out to devices that can only do 32-bit
-addressing.
-
-This updates commit cce335ae47e2 ("[MIPS] 64-bit Sibyte kernels need
-DMA32.").
-
-References:
-
-[1] "BCM1250/BCM1125/BCM1125H User Manual", Revision 1250_1125-UM100-R,
-    Broadcom Corporation, 21 Oct 2002, Section 3: "System Overview",
-    "Memory Map", pp. 34-38
-
-[2] "BCM91250A User Manual", Revision 91250A-UM100-R, Broadcom
-    Corporation, 18 May 2004, Section 3: "Physical Description",
-    "Supported DRAM", p. 23
-
-Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
-[paul.burton@mips.com: Remove GPL text from dma.c; SPDX tag covers it]
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Patchwork: https://patchwork.linux-mips.org/patch/21108/
-References: cce335ae47e2 ("[MIPS] 64-bit Sibyte kernels need DMA32.")
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Trigger Huang <Trigger.Huang@amd.com>
+Reviewed-by: Christian König <chrstian.koenig@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/Kconfig                |  3 +++
- arch/mips/sibyte/common/Makefile |  1 +
- arch/mips/sibyte/common/dma.c    | 14 ++++++++++++++
- 3 files changed, 18 insertions(+)
- create mode 100644 arch/mips/sibyte/common/dma.c
+ drivers/gpu/drm/scheduler/sched_main.c | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index 6207b41473a0..bfb3d8451c0a 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -794,6 +794,7 @@ config SIBYTE_SWARM
- 	select SYS_SUPPORTS_HIGHMEM
- 	select SYS_SUPPORTS_LITTLE_ENDIAN
- 	select ZONE_DMA32 if 64BIT
-+	select SWIOTLB if ARCH_DMA_ADDR_T_64BIT && PCI
+diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
+index 44fe587aaef9..c5bbbd7cb2de 100644
+--- a/drivers/gpu/drm/scheduler/sched_main.c
++++ b/drivers/gpu/drm/scheduler/sched_main.c
+@@ -60,6 +60,8 @@
  
- config SIBYTE_LITTLESUR
- 	bool "Sibyte BCM91250C2-LittleSur"
-@@ -814,6 +815,7 @@ config SIBYTE_SENTOSA
- 	select SYS_HAS_CPU_SB1
- 	select SYS_SUPPORTS_BIG_ENDIAN
- 	select SYS_SUPPORTS_LITTLE_ENDIAN
-+	select SWIOTLB if ARCH_DMA_ADDR_T_64BIT && PCI
+ static void drm_sched_process_job(struct dma_fence *f, struct dma_fence_cb *cb);
  
- config SIBYTE_BIGSUR
- 	bool "Sibyte BCM91480B-BigSur"
-@@ -826,6 +828,7 @@ config SIBYTE_BIGSUR
- 	select SYS_SUPPORTS_HIGHMEM
- 	select SYS_SUPPORTS_LITTLE_ENDIAN
- 	select ZONE_DMA32 if 64BIT
-+	select SWIOTLB if ARCH_DMA_ADDR_T_64BIT && PCI
- 
- config SNI_RM
- 	bool "SNI RM200/300/400"
-diff --git a/arch/mips/sibyte/common/Makefile b/arch/mips/sibyte/common/Makefile
-index b3d6bf23a662..3ef3fb658136 100644
---- a/arch/mips/sibyte/common/Makefile
-+++ b/arch/mips/sibyte/common/Makefile
-@@ -1,4 +1,5 @@
- obj-y := cfe.o
-+obj-$(CONFIG_SWIOTLB)			+= dma.o
- obj-$(CONFIG_SIBYTE_BUS_WATCHER)	+= bus_watcher.o
- obj-$(CONFIG_SIBYTE_CFE_CONSOLE)	+= cfe_console.o
- obj-$(CONFIG_SIBYTE_TBPROF)		+= sb_tbprof.o
-diff --git a/arch/mips/sibyte/common/dma.c b/arch/mips/sibyte/common/dma.c
-new file mode 100644
-index 000000000000..eb47a94f3583
---- /dev/null
-+++ b/arch/mips/sibyte/common/dma.c
-@@ -0,0 +1,14 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ *	DMA support for Broadcom SiByte platforms.
-+ *
-+ *	Copyright (c) 2018  Maciej W. Rozycki
-+ */
++static void drm_sched_expel_job_unlocked(struct drm_sched_job *s_job);
 +
-+#include <linux/swiotlb.h>
-+#include <asm/bootinfo.h>
-+
-+void __init plat_swiotlb_setup(void)
+ /**
+  * drm_sched_rq_init - initialize a given run queue struct
+  *
+@@ -215,7 +217,7 @@ static void drm_sched_job_finish(struct work_struct *work)
+ 
+ 	spin_lock(&sched->job_list_lock);
+ 	/* remove job from ring_mirror_list */
+-	list_del(&s_job->node);
++	list_del_init(&s_job->node);
+ 	/* queue TDR for next job */
+ 	drm_sched_start_timeout(sched);
+ 	spin_unlock(&sched->job_list_lock);
+@@ -378,6 +380,8 @@ void drm_sched_job_recovery(struct drm_gpu_scheduler *sched)
+ 					  r);
+ 			dma_fence_put(fence);
+ 		} else {
++			if (s_fence->finished.error < 0)
++				drm_sched_expel_job_unlocked(s_job);
+ 			drm_sched_process_job(NULL, &s_fence->cb);
+ 		}
+ 		spin_lock(&sched->job_list_lock);
+@@ -567,6 +571,8 @@ static int drm_sched_main(void *param)
+ 					  r);
+ 			dma_fence_put(fence);
+ 		} else {
++			if (s_fence->finished.error < 0)
++				drm_sched_expel_job_unlocked(sched_job);
+ 			drm_sched_process_job(NULL, &s_fence->cb);
+ 		}
+ 
+@@ -575,6 +581,15 @@ static int drm_sched_main(void *param)
+ 	return 0;
+ }
+ 
++static void drm_sched_expel_job_unlocked(struct drm_sched_job *s_job)
 +{
-+	swiotlb_init(1);
++	struct drm_gpu_scheduler *sched = s_job->sched;
++
++	spin_lock(&sched->job_list_lock);
++	list_del_init(&s_job->node);
++	spin_unlock(&sched->job_list_lock);
 +}
++
+ /**
+  * drm_sched_init - Init a gpu scheduler instance
+  *
 -- 
 2.19.1
 
