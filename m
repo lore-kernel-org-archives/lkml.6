@@ -7,59 +7,58 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A64DFC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:19:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D84AC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:19:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D59C218AE
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:19:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 003AC218A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:19:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="AIgjNUPr"
+	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="LoPiIa/o"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728635AbfAXQTj (ORCPT
+        id S1728792AbfAXQTo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 11:19:39 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:30972 "EHLO pegase1.c-s.fr"
+        Thu, 24 Jan 2019 11:19:44 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:51286 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727943AbfAXQTf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 11:19:35 -0500
+        id S1727943AbfAXQTl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 11:19:41 -0500
 Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43lnRS0swmz9v01d;
-        Thu, 24 Jan 2019 17:19:32 +0100 (CET)
+        by localhost (Postfix) with ESMTP id 43lnRZ1PqSz9v01d;
+        Thu, 24 Jan 2019 17:19:38 +0100 (CET)
 Authentication-Results: localhost; dkim=pass
         reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=AIgjNUPr; dkim-adsp=pass;
+        header.d=c-s.fr header.i=@c-s.fr header.b=LoPiIa/o; dkim-adsp=pass;
         dkim-atps=neutral
 X-Virus-Scanned: Debian amavisd-new at c-s.fr
 Received: from pegase1.c-s.fr ([192.168.12.234])
         by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id s1VMGGJ4Clwk; Thu, 24 Jan 2019 17:19:32 +0100 (CET)
+        with ESMTP id Rzg9PkkWlqYZ; Thu, 24 Jan 2019 17:19:38 +0100 (CET)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43lnRR6jLXz9v01Z;
-        Thu, 24 Jan 2019 17:19:31 +0100 (CET)
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43lnRZ0Myhz9v01Z;
+        Thu, 24 Jan 2019 17:19:38 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1548346771; bh=muUnjtodzkXDEvyFhMe2FrngPGWY/Cl7K+jYdg8HHmA=;
+        t=1548346778; bh=OJ5h6Vnl8SC0pBTakE1vl4wqfvX1VVC/D+o9hFpCrdg=;
         h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=AIgjNUPrfnLIAEIOx50djvO8fVDSPTTFFhPULoRA7M021xUlt2LkYJj6LUTA3eIXy
-         5kWH1sbzcnOhiRl26TpcY1EaVYZB1P4Slvp6nr+udAwmKT3g0haR0cDkIOIK5LsHbL
-         LukYvlJpRrvjSlkPArRxjj7+0w1C5f2WDAw4Xu/U=
+        b=LoPiIa/oxXAnbhnjLAo8Jah/uOdxVxNXn8RPj9yypcHFgtMX9tNqVMmWQeAmNMeTK
+         2IUb/dcMTbeo0u8g5elWnOItnso1tA0sHYeQ7OxFGLmEBQp4a4qvYbtLJd2xbXyhdp
+         lTFFHnBLUKxpODl1ds7udSDjTRn51mkB5AFH/C4g=
 Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 7E9658B863;
-        Thu, 24 Jan 2019 17:19:33 +0100 (CET)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 998AE8B863;
+        Thu, 24 Jan 2019 17:19:39 +0100 (CET)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
         by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id i5FanRBBzaxb; Thu, 24 Jan 2019 17:19:33 +0100 (CET)
+        with ESMTP id QVxCKTMqU75V; Thu, 24 Jan 2019 17:19:39 +0100 (CET)
 Received: from po16846vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 2F9258B850;
-        Thu, 24 Jan 2019 17:19:33 +0100 (CET)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4FE6C8B850;
+        Thu, 24 Jan 2019 17:19:39 +0100 (CET)
 Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 040A872D88; Thu, 24 Jan 2019 16:19:33 +0000 (UTC)
-Message-Id: <1c8e658c094022a15e4b9f5ef5c191caab3c0dff.1548346225.git.christophe.leroy@c-s.fr>
+        id 215BF72D88; Thu, 24 Jan 2019 16:19:39 +0000 (UTC)
+Message-Id: <685ac94ceb1dfac43fbd2ee11a987cbaca63ab0b.1548346225.git.christophe.leroy@c-s.fr>
 In-Reply-To: <cover.1548346225.git.christophe.leroy@c-s.fr>
 References: <cover.1548346225.git.christophe.leroy@c-s.fr>
 From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v14 02/12] powerpc/irq: use memblock functions returning
- virtual address
+Subject: [PATCH v14 05/12] powerpc: prep stack walkers for THREAD_INFO_IN_TASK
 To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>,
@@ -67,165 +66,154 @@ To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Mike Rapoport <rppt@linux.ibm.com>
 Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         Mark Rutland <mark.rutland@arm.com>
-Date:   Thu, 24 Jan 2019 16:19:33 +0000 (UTC)
+Date:   Thu, 24 Jan 2019 16:19:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since only the virtual address of allocated blocks is used,
-lets use functions returning directly virtual address.
+[text copied from commit 9bbd4c56b0b6
+("arm64: prep stack walkers for THREAD_INFO_IN_TASK")]
 
-Those functions have the advantage of also zeroing the block.
+When CONFIG_THREAD_INFO_IN_TASK is selected, task stacks may be freed
+before a task is destroyed. To account for this, the stacks are
+refcounted, and when manipulating the stack of another task, it is
+necessary to get/put the stack to ensure it isn't freed and/or re-used
+while we do so.
 
-Suggested-by: Mike Rapoport <rppt@linux.ibm.com>
-Acked-by: Mike Rapoport <rppt@linux.ibm.com>
+This patch reworks the powerpc stack walking code to account for this.
+When CONFIG_THREAD_INFO_IN_TASK is not selected these perform no
+refcounting, and this should only be a structural change that does not
+affect behaviour.
+
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/powerpc/kernel/irq.c      |  5 -----
- arch/powerpc/kernel/setup_32.c | 25 +++++++++++++++----------
- arch/powerpc/kernel/setup_64.c | 19 +++++++------------
- 3 files changed, 22 insertions(+), 27 deletions(-)
+ arch/powerpc/kernel/process.c    | 23 +++++++++++++++++++++--
+ arch/powerpc/kernel/stacktrace.c | 29 ++++++++++++++++++++++++++---
+ 2 files changed, 47 insertions(+), 5 deletions(-)
 
-diff --git a/arch/powerpc/kernel/irq.c b/arch/powerpc/kernel/irq.c
-index bb299613a462..4a5dd8800946 100644
---- a/arch/powerpc/kernel/irq.c
-+++ b/arch/powerpc/kernel/irq.c
-@@ -725,18 +725,15 @@ void exc_lvl_ctx_init(void)
- #endif
- #endif
+diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
+index ce393df243aa..4ffbb677c9f5 100644
+--- a/arch/powerpc/kernel/process.c
++++ b/arch/powerpc/kernel/process.c
+@@ -2027,7 +2027,7 @@ int validate_sp(unsigned long sp, struct task_struct *p,
  
--		memset((void *)critirq_ctx[cpu_nr], 0, THREAD_SIZE);
- 		tp = critirq_ctx[cpu_nr];
- 		tp->cpu = cpu_nr;
- 		tp->preempt_count = 0;
+ EXPORT_SYMBOL(validate_sp);
  
- #ifdef CONFIG_BOOKE
--		memset((void *)dbgirq_ctx[cpu_nr], 0, THREAD_SIZE);
- 		tp = dbgirq_ctx[cpu_nr];
- 		tp->cpu = cpu_nr;
- 		tp->preempt_count = 0;
- 
--		memset((void *)mcheckirq_ctx[cpu_nr], 0, THREAD_SIZE);
- 		tp = mcheckirq_ctx[cpu_nr];
- 		tp->cpu = cpu_nr;
- 		tp->preempt_count = HARDIRQ_OFFSET;
-@@ -754,12 +751,10 @@ void irq_ctx_init(void)
- 	int i;
- 
- 	for_each_possible_cpu(i) {
--		memset((void *)softirq_ctx[i], 0, THREAD_SIZE);
- 		tp = softirq_ctx[i];
- 		tp->cpu = i;
- 		klp_init_thread_info(tp);
- 
--		memset((void *)hardirq_ctx[i], 0, THREAD_SIZE);
- 		tp = hardirq_ctx[i];
- 		tp->cpu = i;
- 		klp_init_thread_info(tp);
-diff --git a/arch/powerpc/kernel/setup_32.c b/arch/powerpc/kernel/setup_32.c
-index 947f904688b0..f0e25d845f8c 100644
---- a/arch/powerpc/kernel/setup_32.c
-+++ b/arch/powerpc/kernel/setup_32.c
-@@ -196,6 +196,16 @@ static int __init ppc_init(void)
+-unsigned long get_wchan(struct task_struct *p)
++static unsigned long __get_wchan(struct task_struct *p)
+ {
+ 	unsigned long ip, sp;
+ 	int count = 0;
+@@ -2053,6 +2053,20 @@ unsigned long get_wchan(struct task_struct *p)
+ 	return 0;
  }
- arch_initcall(ppc_init);
  
-+static void *__init alloc_stack(void)
++unsigned long get_wchan(struct task_struct *p)
 +{
-+	void *ptr = memblock_alloc(THREAD_SIZE, THREAD_SIZE);
++	unsigned long ret;
 +
-+	if (!ptr)
-+		panic("cannot allocate stacks");
++	if (!try_get_task_stack(p))
++		return 0;
 +
-+	return ptr;
++	ret = __get_wchan(p);
++
++	put_task_stack(p);
++
++	return ret;
 +}
 +
- void __init irqstack_early_init(void)
+ static int kstack_depth_to_print = CONFIG_PRINT_STACK_DEPTH;
+ 
+ void show_stack(struct task_struct *tsk, unsigned long *stack)
+@@ -2067,6 +2081,9 @@ void show_stack(struct task_struct *tsk, unsigned long *stack)
+ 	int curr_frame = 0;
+ #endif
+ 
++	if (!try_get_task_stack(tsk))
++		return;
++
+ 	sp = (unsigned long) stack;
+ 	if (tsk == NULL)
+ 		tsk = current;
+@@ -2081,7 +2098,7 @@ void show_stack(struct task_struct *tsk, unsigned long *stack)
+ 	printk("Call Trace:\n");
+ 	do {
+ 		if (!validate_sp(sp, tsk, STACK_FRAME_OVERHEAD))
+-			return;
++			break;
+ 
+ 		stack = (unsigned long *) sp;
+ 		newsp = stack[0];
+@@ -2121,6 +2138,8 @@ void show_stack(struct task_struct *tsk, unsigned long *stack)
+ 
+ 		sp = newsp;
+ 	} while (count++ < kstack_depth_to_print);
++
++	put_task_stack(tsk);
+ }
+ 
+ #ifdef CONFIG_PPC64
+diff --git a/arch/powerpc/kernel/stacktrace.c b/arch/powerpc/kernel/stacktrace.c
+index e2c50b55138f..a5745571e06e 100644
+--- a/arch/powerpc/kernel/stacktrace.c
++++ b/arch/powerpc/kernel/stacktrace.c
+@@ -67,12 +67,17 @@ void save_stack_trace_tsk(struct task_struct *tsk, struct stack_trace *trace)
  {
- 	unsigned int i;
-@@ -203,10 +213,8 @@ void __init irqstack_early_init(void)
- 	/* interrupt stacks must be in lowmem, we get that for free on ppc32
- 	 * as the memblock is limited to lowmem by default */
- 	for_each_possible_cpu(i) {
--		softirq_ctx[i] = (struct thread_info *)
--			__va(memblock_phys_alloc(THREAD_SIZE, THREAD_SIZE));
--		hardirq_ctx[i] = (struct thread_info *)
--			__va(memblock_phys_alloc(THREAD_SIZE, THREAD_SIZE));
-+		softirq_ctx[i] = alloc_stack();
-+		hardirq_ctx[i] = alloc_stack();
- 	}
+ 	unsigned long sp;
+ 
++	if (!try_get_task_stack(tsk))
++		return;
++
+ 	if (tsk == current)
+ 		sp = current_stack_pointer();
+ 	else
+ 		sp = tsk->thread.ksp;
+ 
+ 	save_context_stack(trace, sp, tsk, 0);
++
++	put_task_stack(tsk);
  }
+ EXPORT_SYMBOL_GPL(save_stack_trace_tsk);
  
-@@ -224,13 +232,10 @@ void __init exc_lvl_early_init(void)
- 		hw_cpu = 0;
- #endif
+@@ -84,9 +89,8 @@ save_stack_trace_regs(struct pt_regs *regs, struct stack_trace *trace)
+ EXPORT_SYMBOL_GPL(save_stack_trace_regs);
  
--		critirq_ctx[hw_cpu] = (struct thread_info *)
--			__va(memblock_phys_alloc(THREAD_SIZE, THREAD_SIZE));
-+		critirq_ctx[hw_cpu] = alloc_stack();
- #ifdef CONFIG_BOOKE
--		dbgirq_ctx[hw_cpu] = (struct thread_info *)
--			__va(memblock_phys_alloc(THREAD_SIZE, THREAD_SIZE));
--		mcheckirq_ctx[hw_cpu] = (struct thread_info *)
--			__va(memblock_phys_alloc(THREAD_SIZE, THREAD_SIZE));
-+		dbgirq_ctx[hw_cpu] = alloc_stack();
-+		mcheckirq_ctx[hw_cpu] = alloc_stack();
- #endif
- 	}
- }
-diff --git a/arch/powerpc/kernel/setup_64.c b/arch/powerpc/kernel/setup_64.c
-index 236c1151a3a7..080dd515d587 100644
---- a/arch/powerpc/kernel/setup_64.c
-+++ b/arch/powerpc/kernel/setup_64.c
-@@ -634,19 +634,17 @@ __init u64 ppc64_bolted_size(void)
- 
- static void *__init alloc_stack(unsigned long limit, int cpu)
+ #ifdef CONFIG_HAVE_RELIABLE_STACKTRACE
+-int
+-save_stack_trace_tsk_reliable(struct task_struct *tsk,
+-				struct stack_trace *trace)
++static int __save_stack_trace_tsk_reliable(struct task_struct *tsk,
++					   struct stack_trace *trace)
  {
--	unsigned long pa;
-+	void *ptr;
- 
- 	BUILD_BUG_ON(STACK_INT_FRAME_SIZE % 16);
- 
--	pa = memblock_alloc_base_nid(THREAD_SIZE, THREAD_SIZE, limit,
--					early_cpu_to_node(cpu), MEMBLOCK_NONE);
--	if (!pa) {
--		pa = memblock_alloc_base(THREAD_SIZE, THREAD_SIZE, limit);
--		if (!pa)
--			panic("cannot allocate stacks");
--	}
-+	ptr = memblock_alloc_try_nid(THREAD_SIZE, THREAD_SIZE,
-+				     MEMBLOCK_LOW_LIMIT, limit,
-+				     early_cpu_to_node(cpu));
-+	if (!ptr)
-+		panic("cannot allocate stacks");
- 
--	return __va(pa);
-+	return ptr;
+ 	unsigned long sp;
+ 	unsigned long stack_page = (unsigned long)task_stack_page(tsk);
+@@ -193,6 +197,25 @@ save_stack_trace_tsk_reliable(struct task_struct *tsk,
+ 	}
+ 	return 0;
  }
++
++int save_stack_trace_tsk_reliable(struct task_struct *tsk,
++				  struct stack_trace *trace)
++{
++	int ret;
++
++	/*
++	 * If the task doesn't have a stack (e.g., a zombie), the stack is
++	 * "reliably" empty.
++	 */
++	if (!try_get_task_stack(tsk))
++		return 0;
++
++	ret = __save_stack_trace_tsk_reliable(trace, tsk);
++
++	put_task_stack(tsk);
++
++	return ret;
++}
+ EXPORT_SYMBOL_GPL(save_stack_trace_tsk_reliable);
+ #endif /* CONFIG_HAVE_RELIABLE_STACKTRACE */
  
- void __init irqstack_early_init(void)
-@@ -739,20 +737,17 @@ void __init emergency_stack_init(void)
- 		struct thread_info *ti;
- 
- 		ti = alloc_stack(limit, i);
--		memset(ti, 0, THREAD_SIZE);
- 		emerg_stack_init_thread_info(ti, i);
- 		paca_ptrs[i]->emergency_sp = (void *)ti + THREAD_SIZE;
- 
- #ifdef CONFIG_PPC_BOOK3S_64
- 		/* emergency stack for NMI exception handling. */
- 		ti = alloc_stack(limit, i);
--		memset(ti, 0, THREAD_SIZE);
- 		emerg_stack_init_thread_info(ti, i);
- 		paca_ptrs[i]->nmi_emergency_sp = (void *)ti + THREAD_SIZE;
- 
- 		/* emergency stack for machine check exception handling. */
- 		ti = alloc_stack(limit, i);
--		memset(ti, 0, THREAD_SIZE);
- 		emerg_stack_init_thread_info(ti, i);
- 		paca_ptrs[i]->mc_emergency_sp = (void *)ti + THREAD_SIZE;
- #endif
 -- 
 2.13.3
 
