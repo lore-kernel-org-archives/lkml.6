@@ -2,137 +2,133 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D11FC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 21:48:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87B39C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 21:51:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFE7D20856
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 21:48:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCF0E20856
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 21:51:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wCrbD/Q9"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="l+d6r+Pu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728232AbfAXVsu (ORCPT
+        id S1728007AbfAXVvp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 16:48:50 -0500
-Received: from mail-vk1-f201.google.com ([209.85.221.201]:54109 "EHLO
-        mail-vk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726304AbfAXVsu (ORCPT
+        Thu, 24 Jan 2019 16:51:45 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:39083 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726173AbfAXVvo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 16:48:50 -0500
-Received: by mail-vk1-f201.google.com with SMTP id e10so2113536vke.20
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 13:48:49 -0800 (PST)
+        Thu, 24 Jan 2019 16:51:44 -0500
+Received: by mail-pf1-f194.google.com with SMTP id r136so3681157pfc.6
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 13:51:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=CBf9ANq0HVSY89uYI9yBKKXPTmqHyAr/xQJ28QhdWOw=;
-        b=wCrbD/Q9SM+PU9QD/lfuzAvsKHk0arQeIRyu6S0w8BsaA1aQI9DwUScalkSDCgtL/F
-         lJ3YboP4r+PbiSySndGdomzYi2J3qtqgt1hD8r4q0RMuHDCohhBdDv1OegcZR2OORMJ4
-         Mh3ZF4O3AiiiHADCaxv37eKOgg8szCYW2+eehVTFoX/jB1OH3xHYeqHw4w9jDBBYgc7+
-         TGy5dK++K1IvnbSGT1W8MsF2LMtt/m0HRqK81tQWhlDGiRrOKriw9f+3qQXemAG2+69Q
-         fnNKU35md0VBL5KRpkqKRXO5zkDHevKGz6ibF6WLJR3p8p7j9gUiaccZBrLIoU9QgLi6
-         SF9A==
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0BsuHOYMTpNiCNnaJqQexc0U4WUKTEPzRuKVmD6VzD8=;
+        b=l+d6r+PuUwA8KwnqS3c36Vkf/aqBAXeKUqZNv2E3Kt9JHT8NedTL+78y60w+zkZEj8
+         SsYUdbfnp1/FdWVAZGSFhnFKRiYLSfBPg7ChZnq0J//iRgw2mgLJKk6wb5b3H1wR3UdY
+         wjWFQWKda9TNOftc9+traC+T/BSPBjrRC8U1Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=CBf9ANq0HVSY89uYI9yBKKXPTmqHyAr/xQJ28QhdWOw=;
-        b=onXDPaHmRipWrC6Axfm54r+95dEQ19KQI4F/GBxnGKft8tNYpV8BYgN2r7kdt28uXT
-         trZE7h76L+GdkVB/o2Ff2VZOGxXnozr3NmT4p/FoOS2G2RXcVHian2wKAEqm3+c2eX29
-         RzJwvbie2zpeF4UrIS9V7pB1D3FiROxDrLviECZjQjjcEz4IYGlWpKdog7T/rKoQHYsY
-         MHkNLxkwds2lE29UTePX09vxp8p1EUgBfVpwY8BLqb8WEY0V+GeqfuuTOmx4sHvA6Qjp
-         j4k1ouQBe1xzzUW/zIq6An8Y3ec/nVKRfvHqSB39Ebu/ZQwtdLdLzTYOZfJoq6wgBtLH
-         7UXQ==
-X-Gm-Message-State: AJcUukeS0KfJCTG9mSESoLqe7FYs6G2oggUizMcWavll+5T3CXXvzY2A
-        XeaZVhXX02Hm5FS2mWwfCuiD3EztePxPGw==
-X-Google-Smtp-Source: ALg8bN7ZKDGlE+pO5krSzh+5JCL9nxdHr4Znx8d3RINtEvOHhCP1TPgj3T65RMo++32YQAdp9Ac2rYbOOIEqyQ==
-X-Received: by 2002:a67:4b50:: with SMTP id y77mr6815156vsa.13.1548366528777;
- Thu, 24 Jan 2019 13:48:48 -0800 (PST)
-Date:   Thu, 24 Jan 2019 13:48:20 -0800
-Message-Id: <20190124214820.187794-1-tmroeder@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.20.1.321.g9e740568ce-goog
-Subject: [PATCH v2] kvm: x86/vmx: Use kzalloc for cached_vmcs12
-From:   Tom Roeder <tmroeder@google.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Jim Mattson <jmattson@google.com>,
-        "=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?=" <rkrcmar@redhat.com>,
-        Liran Alon <liran.alon@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Tom Roeder <tmroeder@google.com>,
-        syzbot+ded1696f6b50b615b630@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0BsuHOYMTpNiCNnaJqQexc0U4WUKTEPzRuKVmD6VzD8=;
+        b=hECQpo0l3CdjtTZJSuc3ei71ft6zIiEErEMd0+tpZwlQq2mja0pIcX2h/cwBKNmGBI
+         NOcc0u/l72LucA65qUCRHoVL+IRWIQLgYG0RJVsFX6SGMtPs4tkCpAeNXolew3w/hw9B
+         F6ts7PSJljC8CXAPXJaLqUodho8WPBG819IuvYYbOFOlY8zmxUFju7A5V/xHNFF/hY79
+         gloRYv75+Q9RTl8CmMjFgAg4Q8uhHZ5IRhw2eL4YRY5SThNZ+ilzPJCqvdfoKj1dYyFv
+         VfBtCM0eiFIVXsgU4HKlsBFu2VH0GLErLh5CAnn689r6BD36le/kfy5IRGppdZnyXlIx
+         b9AA==
+X-Gm-Message-State: AJcUukcfHpOxKRbf4ibGcXZqb7g52jYcWegPg2fL8vpvZ6Ux3UZjt9gn
+        rtcsOITXRhUmumAz2EPeZtpabg==
+X-Google-Smtp-Source: ALg8bN5HeJQqvRCc1TLJPLJdKiIXd6450HzwCPYMN63iqSzy+O8HiRwB3w6k+Z3xHz4IMEMKEgZ+CA==
+X-Received: by 2002:a63:ac46:: with SMTP id z6mr7470338pgn.162.1548366703796;
+        Thu, 24 Jan 2019 13:51:43 -0800 (PST)
+Received: from localhost.localdomain ([115.97.179.75])
+        by smtp.gmail.com with ESMTPSA id e16sm28536067pfn.46.2019.01.24.13.51.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 24 Jan 2019 13:51:43 -0800 (PST)
+From:   Jagan Teki <jagan@amarulasolutions.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Sam Ravnborg <sam@ravnborg.org>
+Cc:     Michael Trimarchi <michael@amarulasolutions.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-amarula@amarulasolutions.com,
+        Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v9 1/2] dt-bindings: panel: Add Sitronix ST7701 panel documentation
+Date:   Fri, 25 Jan 2019 03:21:30 +0530
+Message-Id: <20190124215131.17452-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This changes the allocation of cached_vmcs12 to use kzalloc instead of
-kmalloc. This removes the information leak found by Syzkaller (see
-Reported-by) in this case and prevents similar leaks from happening
-based on cached_vmcs12.
+Techstar TS8550B MIPI DSI panel is 480x854, 2-lane MIPI DSI LCD panel
+with inbuilt ST7701 chip.
 
-It also changes vmx_get_nested_state to copy out the full 4k VMCS12_SIZE
-in copy_to_user rather than only the size of the struct.
+The default regulator names in ST7701 chip is renamed in Techstar TS8550B
+so, add specific binding names for them.
 
-Tested: rebuilt against head, booted, and ran the syszkaller repro
-  https://syzkaller.appspot.com/text?tag=ReproC&x=174efca3400000 without
-  observing any problems.
-
-Reported-by: syzbot+ded1696f6b50b615b630@syzkaller.appspotmail.com
-Signed-off-by: Tom Roeder <tmroeder@google.com>
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
-Changelog since v1:
-- Changed the copy_to_user calls in vmx_get_nested_state to copy the
-  full 4k buffer.
+Changes for v8, v9:
+- none
+Changes for v7:
+- collect Rob Ack
+Changes for v6:
+- none
 
- arch/x86/kvm/vmx/nested.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ .../display/panel/sitronix,st7701.txt         | 30 +++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/sitronix,st7701.txt
 
-diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-index 2616bd2c7f2c7..ce81539238547 100644
---- a/arch/x86/kvm/vmx/nested.c
-+++ b/arch/x86/kvm/vmx/nested.c
-@@ -4140,11 +4140,11 @@ static int enter_vmx_operation(struct kvm_vcpu *vcpu)
- 	if (r < 0)
- 		goto out_vmcs02;
- 
--	vmx->nested.cached_vmcs12 = kmalloc(VMCS12_SIZE, GFP_KERNEL);
-+	vmx->nested.cached_vmcs12 = kzalloc(VMCS12_SIZE, GFP_KERNEL);
- 	if (!vmx->nested.cached_vmcs12)
- 		goto out_cached_vmcs12;
- 
--	vmx->nested.cached_shadow_vmcs12 = kmalloc(VMCS12_SIZE, GFP_KERNEL);
-+	vmx->nested.cached_shadow_vmcs12 = kzalloc(VMCS12_SIZE, GFP_KERNEL);
- 	if (!vmx->nested.cached_shadow_vmcs12)
- 		goto out_cached_shadow_vmcs12;
- 
-@@ -5263,13 +5263,17 @@ static int vmx_get_nested_state(struct kvm_vcpu *vcpu,
- 			copy_shadow_to_vmcs12(vmx);
- 	}
- 
--	if (copy_to_user(user_kvm_nested_state->data, vmcs12, sizeof(*vmcs12)))
-+	/*
-+	 * Copy over the full allocated size of vmcs12 rather than just the size
-+	 * of the struct.
-+	 */
-+	if (copy_to_user(user_kvm_nested_state->data, vmcs12, VMCS12_SIZE))
- 		return -EFAULT;
- 
- 	if (nested_cpu_has_shadow_vmcs(vmcs12) &&
- 	    vmcs12->vmcs_link_pointer != -1ull) {
- 		if (copy_to_user(user_kvm_nested_state->data + VMCS12_SIZE,
--				 get_shadow_vmcs12(vcpu), sizeof(*vmcs12)))
-+				 get_shadow_vmcs12(vcpu), VMCS12_SIZE))
- 			return -EFAULT;
- 	}
- 
+diff --git a/Documentation/devicetree/bindings/display/panel/sitronix,st7701.txt b/Documentation/devicetree/bindings/display/panel/sitronix,st7701.txt
+new file mode 100644
+index 000000000000..ccd17597f1f6
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/panel/sitronix,st7701.txt
+@@ -0,0 +1,30 @@
++Sitronix ST7701 based LCD panels
++
++ST7701 designed for small and medium sizes of TFT LCD display, is
++capable of supporting up to 480RGBX864 in resolution. It provides
++several system interfaces like MIPI/RGB/SPI.
++
++Techstar TS8550B is 480x854, 2-lane MIPI DSI LCD panel which has
++inbuilt ST7701 chip.
++
++Required properties:
++- compatible: must be "sitronix,st7701" and one of
++  * "techstar,ts8550b"
++- reset-gpios: a GPIO phandle for the reset pin
++
++Required properties for techstar,ts8550b:
++- reg: DSI virtual channel used by that screen
++- VCC-supply: analog regulator for MIPI circuit
++- IOVCC-supply: I/O system regulator
++
++Optional properties:
++- backlight: phandle for the backlight control.
++
++panel@0 {
++	compatible = "techstar,ts8550b", "sitronix,st7701";
++	reg = <0>;
++	VCC-supply = <&reg_dldo2>;
++	IOVCC-supply = <&reg_dldo2>;
++	reset-gpios = <&pio 3 24 GPIO_ACTIVE_HIGH>; /* LCD-RST: PD24 */
++	backlight = <&backlight>;
++};
 -- 
-2.20.1.321.g9e740568ce-goog
+2.18.0.321.gffc6fa0e3
 
