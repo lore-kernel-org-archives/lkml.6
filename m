@@ -2,80 +2,66 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA3ECC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:53:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFED6C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:53:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76FEE21872
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:53:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CAA0A21872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:53:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727296AbfAXIxV (ORCPT
+        id S1727434AbfAXIx3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 03:53:21 -0500
-Received: from smtp1.goneo.de ([85.220.129.30]:60154 "EHLO smtp1.goneo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726347AbfAXIxV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 03:53:21 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by smtp1.goneo.de (Postfix) with ESMTP id 0219B240EF3;
-        Thu, 24 Jan 2019 09:53:18 +0100 (CET)
-X-Virus-Scanned: by goneo
-Received: from smtp1.goneo.de ([127.0.0.1])
-        by localhost (smtp1.goneo.de [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id PFlyn4wyBU5e; Thu, 24 Jan 2019 09:53:17 +0100 (CET)
-Received: from lem-wkst-02.lemonage (hq.lemonage.de [87.138.178.34])
-        by smtp1.goneo.de (Postfix) with ESMTPSA id ECB3123F048;
-        Thu, 24 Jan 2019 09:53:16 +0100 (CET)
-Date:   Thu, 24 Jan 2019 11:02:10 +0100
-From:   Lars Poeschel <poeschel@lemonage.de>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH v5 2/7] nfc: pn532_uart: Add NXP PN532 to devicetree docs
-Message-ID: <20190124100209.GA8674@lem-wkst-02.lemonage>
-References: <20190111161812.26325-1-poeschel@lemonage.de>
- <20190111161812.26325-2-poeschel@lemonage.de>
- <20190115195902.GA3106@bogus>
+        Thu, 24 Jan 2019 03:53:29 -0500
+Received: from outbound-smtp25.blacknight.com ([81.17.249.193]:54680 "EHLO
+        outbound-smtp25.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725986AbfAXIx2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 03:53:28 -0500
+Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
+        by outbound-smtp25.blacknight.com (Postfix) with ESMTPS id 0E666B8B29
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 08:53:27 +0000 (GMT)
+Received: (qmail 24754 invoked from network); 24 Jan 2019 08:53:26 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.225.79])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 24 Jan 2019 08:53:26 -0000
+Date:   Thu, 24 Jan 2019 08:53:25 +0000
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     David Rientjes <rientjes@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>
+Subject: Re: [PATCH 00/22] Increase success rates and reduce latency of
+ compaction v3
+Message-ID: <20190124085325.GT27437@techsingularity.net>
+References: <20190118175136.31341-1-mgorman@techsingularity.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-15
 Content-Disposition: inline
-In-Reply-To: <20190115195902.GA3106@bogus>
+In-Reply-To: <20190118175136.31341-1-mgorman@techsingularity.net>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 01:59:02PM -0600, Rob Herring wrote:
-> On Fri, 11 Jan 2019 17:18:05 +0100, Lars Poeschel wrote:
-> > Add a simple binding doc for the pn532.
-> > 
-> > Cc: Johan Hovold <johan@kernel.org>
-> > Signed-off-by: Lars Poeschel <poeschel@lemonage.de>
-> > ---
-> > Changes in v4:
-> > - Add documentation about reg property in case of i2c
-> > 
-> > Changes in v3:
-> > - seperate binding doc instead of entry in trivial-devices.txt
-> > 
-> >  .../devicetree/bindings/nfc/pn532.txt         | 33 +++++++++++++++++++
-> >  1 file changed, 33 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/nfc/pn532.txt
-> > 
+On Fri, Jan 18, 2019 at 05:51:14PM +0000, Mel Gorman wrote:
+> This is a drop-in replacement for the series currently in Andrews tree that
+> incorporates static checking and compile warning fixes (Dan, YueHaibing)
+> and extensive review feedback from Vlastimil. Big thanks to Vlastimil as
+> the review was extremely detailed and a number of issues were caught. Not
+> all the patches have been acked but I think an update is still worthwhile.
 > 
-> Please add Acked-by/Reviewed-by tags when posting new versions. However,
-> there's no need to repost patches *only* to add the tags. The upstream
-> maintainer will do that for acks received on the version they apply.
+> Andrew, please drop the series you have and replace it with the following
+> on the off-chance we get bug reports that are fixed already. Doing this
+> with -fix patches would be relatively painful for little gain.
 > 
-> If a tag was not added on purpose, please state why and what changed.
 
-Thanks for the clarification! To be clear: It was not intentional to not
-add your tag. It was unknowingness.
+Andrew?
 
-Thanks again,
-Lars
+-- 
+Mel Gorman
+SUSE Labs
