@@ -2,118 +2,69 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89650C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:26:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 827DBC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:29:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5197521855
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:26:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="G75tBIm8"
+	by mail.kernel.org (Postfix) with ESMTP id 5A4A3218A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:29:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727381AbfAXI0L (ORCPT
+        id S1727222AbfAXI30 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 03:26:11 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:34428 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725939AbfAXI0L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 03:26:11 -0500
-Received: by mail-vs1-f65.google.com with SMTP id y27so3052793vsi.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 00:26:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gUndCR9EZLRKT47oazL+YNDsX9+nAEw4+cyaNSj4UoA=;
-        b=G75tBIm8PaM8u+qgJDv9dbSdC1qeLPIgVZDEsHb3RhAGxdbsOjtQ8ESDvCWdu3TQiM
-         y9ablAVcz5Gw1rhD97Mz7Tn+YxKtSkQO6caYJDv94AiWwTA1ML3HYz0D8ub2BBxZFHtI
-         bpm4RA0WZZdJtepznrsd9Ev3pA53gFRmROiuQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gUndCR9EZLRKT47oazL+YNDsX9+nAEw4+cyaNSj4UoA=;
-        b=SF7ksmBlD++3YwJMqM5s3581vBQWQlbLemXzYioGm5SMzIlfaOV/nTek41BhBmJTYv
-         Y75DH5Rwa556W7SWw1bNIq1+9qUluwG9vETGU4rA4XIo7V5MEtDh1wICV6aMXKUA6TAQ
-         79oLc4zf9mWGyd8LlCc3tlvvoZTA/Kii3JI3e3rsEuV1HDPQ+4y9V+Wx7fPtZWGGdxqD
-         WOQ/L70pYmICoDcK88cUNs8bCr8uxsjTifS2ZpIN1sXO8CA9EC7kHmx/udfZdj+qGh8D
-         VQGjp9SoYXWZK4DCvl3a2KE/WcDqd+m1QAPXJNiA4QXaC1yOWTtXsasSMonOAOUWiPWI
-         96SQ==
-X-Gm-Message-State: AJcUukccOBvIRtRRjmhNc/js6pluQhPkluRicosqu01rKzmRUg0KNCg9
-        j7Secx8KmSdkiBVgg6c5Mh0pScjQiyRsf3wh2PvqSA==
-X-Google-Smtp-Source: ALg8bN7dIdPbFKBu3e0LeDv6hFYFe1Om2LsFra3RmCINI6E3/BHKo0irgUjBsZxP/pW+oYCrkt0t43MaHGNGlgCcrqU=
-X-Received: by 2002:a67:d00f:: with SMTP id r15mr2323525vsi.191.1548318369865;
- Thu, 24 Jan 2019 00:26:09 -0800 (PST)
+        Thu, 24 Jan 2019 03:29:26 -0500
+Received: from 8bytes.org ([81.169.241.247]:59454 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725939AbfAXI3Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 03:29:25 -0500
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id E945A3C8; Thu, 24 Jan 2019 09:29:23 +0100 (CET)
+Date:   Thu, 24 Jan 2019 09:29:23 +0100
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     "Michael S . Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        virtualization@lists.linux-foundation.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, jfehlig@suse.com,
+        jon.grimm@amd.com, brijesh.singh@amd.com, jroedel@suse.de
+Subject: Re: [PATCH 2/5] swiotlb: Add is_swiotlb_active() function
+Message-ID: <20190124082923.GI32526@8bytes.org>
+References: <20190123163049.24863-1-joro@8bytes.org>
+ <20190123163049.24863-3-joro@8bytes.org>
+ <20190123212755.GA9032@lst.de>
 MIME-Version: 1.0
-References: <5eace97d-1b6f-60eb-98da-588a485fce18@web.de>
-In-Reply-To: <5eace97d-1b6f-60eb-98da-588a485fce18@web.de>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 24 Jan 2019 09:25:32 +0100
-Message-ID: <CAPDyKFrp=LQmT-AsScnbf+ULkw80U1U3QzWCa1UuWPTYCDuw3w@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: zcu100-revC: Give wifi some time after power-on
-To:     Jan Kiszka <jan.kiszka@web.de>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Wei Xu <xuwei5@hisilicon.com>, Ryan Grachek <ryan@edited.us>,
-        John Stultz <john.stultz@linaro.org>,
-        linux-wireless@vger.kernel.org, "Reizer, Eyal" <eyalr@ti.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Michal Simek <michal.simek@xilinx.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190123212755.GA9032@lst.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 24 Jan 2019 at 08:54, Jan Kiszka <jan.kiszka@web.de> wrote:
->
-> From: Jan Kiszka <jan.kiszka@siemens.com>
->
-> Somewhere along recent changes to power control of the wl1835, power-on
-> became very unreliable on the hikey, failing like this:
->
-> wl1271_sdio: probe of mmc2:0001:1 failed with error -16
-> wl1271_sdio: probe of mmc2:0001:2 failed with error -16
->
-> After playing with some dt parameters and comparing to other users of
-> this chip, it turned out we need some power-on delay to make things
-> stable again. In contrast to those other users which define 200 ms,
-> Ultra96 is already happy with 10 ms.
+On Wed, Jan 23, 2019 at 10:27:55PM +0100, Christoph Hellwig wrote:
+> On Wed, Jan 23, 2019 at 05:30:46PM +0100, Joerg Roedel wrote:
+> > +bool is_swiotlb_active(void)
+> > +{
+> > +	return !no_iotlb_memory;
+> > +}
+> 
+> As I've just introduced and fixed a bug in this area in the current
+> cycle - I don't think no_iotlb_memory is what your want (and maybe
+> not useful at all): if the arch valls swiotlb_exit after previously
+> initializing a buffer it won't be set.  You probably want to check
+> for non-zero io_tlb_start and/or io_tlb_end.
 
-This changelog is talking about Hikey, while you do a fix a for the
-zynqmp platform. Please rewords this accordingly.
+Okay, but that requires that I also set io_tlb_start and friends back to
+zero in the failure path of swiotlb_init(). Otherwise it could be left
+non-zero in case swiotlb_init_with_tbl() returns an error.
 
->
-> Fixes: ea452678734e ("arm64: dts: hikey: Fix WiFi support")
 
-This is not the correct commit. Please change to:
+Regards,
 
-Fixes: 5869ba0653b9 ("arm64: zynqmp: Add support for Xilinx zcu100-revC")
-
-> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-> Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
-> ---
->  arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts b/arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts
-> index 13a0a028df98..e5699d0d91e4 100644
-> --- a/arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts
-> +++ b/arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts
-> @@ -101,6 +101,7 @@
->         sdio_pwrseq: sdio-pwrseq {
->                 compatible = "mmc-pwrseq-simple";
->                 reset-gpios = <&gpio 7 GPIO_ACTIVE_LOW>; /* WIFI_EN */
-> +               post-power-on-delay-ms = <10>;
->         };
->  };
-
-Kind regards
-Uffe
+	Joerg
