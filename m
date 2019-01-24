@@ -7,49 +7,47 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1252BC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:47:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BA73C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:47:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D61FA20663
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:47:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46E2120663
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:47:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359254;
-	bh=fpTJx+0J8japiglQvO9NIoKOY0YqFfTftrA4xTuhw78=;
+	s=default; t=1548359276;
+	bh=1l8eea9UvZQERguMDhh3iXpcBLnQHkpV3e9na4Rq9yk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yOiZs6Z/9qp7j6ibcNgcAY43ayRoM8809v0dlufqFHRAEh8VqhBuQm8iJLEp68BWT
-	 9Y1pOPBUl1dp0UR0lMoGc+CuF8pAjcluwjGqczbLvf3FnknsCl7yTsDfGvSniOCtgD
-	 GRJCmulaEO6sVXEXpc0oaIoxo6Rww5zDKAOSRZVg=
+	b=un6ksJL5PUyBxGEBK4H9gBp1U7+Y2wZluYCUPQvdlD5tkBZP0me/0E9VfdvTFWge+
+	 6jnkx98h21gFHFNBZSCFQEo2uFvSPLgZIn0bmUyPnmM4Qfdqe6lqDXM0uIQ/CttZkL
+	 7RRPdxKs1w8awuFcUrpOu6H6gpzqt+WhdspprjUg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387435AbfAXTrc (ORCPT
+        id S2387800AbfAXTmc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:47:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43544 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:42:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42942 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733160AbfAXTm5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:42:57 -0500
+        id S2387785AbfAXTm1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:42:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D3593218A2;
-        Thu, 24 Jan 2019 19:42:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E8D73218D9;
+        Thu, 24 Jan 2019 19:42:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358976;
-        bh=fpTJx+0J8japiglQvO9NIoKOY0YqFfTftrA4xTuhw78=;
+        s=default; t=1548358946;
+        bh=1l8eea9UvZQERguMDhh3iXpcBLnQHkpV3e9na4Rq9yk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tZ5Va1LAvIVk+Jti4vV+fB2rljMolLiFV0Lh4NexjeEp6Min7X2gWJ0nXxOt11iad
-         5B0leJL9l3bg2Ia1ddlsqwetMLhknd58Omn8MedRWku8eqPvpcExqBveHd/RCFtU/8
-         mFTouhw8n61hYbWStINzSWgGyWw2LyWDy8sGgnbA=
+        b=1sP1JWlu1iEPbURnpuuvs3GnNdPi6jSn4HXhbSI02HA/UluxGFkhumtweOT2I7vn3
+         4+9ih8hzrxBiaySPdGyPXHpfDt+IDc3rmu33OgYyHG491CwLZe6JjOsG3ubWIV7Tx3
+         nk7q8NPS1EfX5OLMXarEt70TSQZCkFigMoGBIW1I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        AliOS system security <alios_sys_security@linux.alibaba.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Milan Broz <gmazyland@gmail.com>
-Subject: [PATCH 4.20 092/127] dm crypt: use u64 instead of sector_t to store iv_offset
-Date:   Thu, 24 Jan 2019 20:20:38 +0100
-Message-Id: <20190124190215.970642474@linuxfoundation.org>
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 083/127] perf intel-pt: Fix error with config term "pt=0"
+Date:   Thu, 24 Jan 2019 20:20:29 +0100
+Message-Id: <20190124190215.637392583@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
 References: <20190124190211.984305387@linuxfoundation.org>
@@ -68,79 +66,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 8d683dcd65c037efc9fb38c696ec9b65b306e573 ]
+[ Upstream commit 1c6f709b9f96366cc47af23c05ecec9b8c0c392d ]
 
-The iv_offset in the mapping table of crypt target is a 64bit number when
-IV algorithm is plain64, plain64be, essiv or benbi. It will be assigned to
-iv_offset of struct crypt_config, cc_sector of struct convert_context and
-iv_sector of struct dm_crypt_request. These structures members are defined
-as a sector_t. But sector_t is 32bit when CONFIG_LBDAF is not set in 32bit
-kernel. In this situation sector_t is not big enough to store the 64bit
-iv_offset.
+Users should never use 'pt=0', but if they do it may give a meaningless
+error:
 
-Here is a reproducer.
-Prepare test image and device (loop is automatically allocated by cryptsetup):
+	$ perf record -e intel_pt/pt=0/u uname
+	Error:
+	The sys_perf_event_open() syscall returned with 22 (Invalid argument) for
+	event (intel_pt/pt=0/u).
 
-  # dd if=/dev/zero of=tst.img bs=1M count=1
-  # echo "tst"|cryptsetup open --type plain -c aes-xts-plain64 \
-  --skip 500000000000000000 tst.img test
+Fix that by forcing 'pt=1'.
 
-On 32bit system (use IV offset value that overflows to 64bit; CONFIG_LBDAF if off)
-and device checksum is wrong:
+Committer testing:
 
-  # dmsetup table test --showkeys
-  0 2048 crypt aes-xts-plain64 dfa7cfe3c481f2239155739c42e539ae8f2d38f304dcc89d20b26f69daaf0933 3551657984 7:0 0
+  # perf record -e intel_pt/pt=0/u uname
+  Error:
+  The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (intel_pt/pt=0/u).
+  /bin/dmesg | grep -i perf may provide additional information.
 
-  # sha256sum /dev/mapper/test
-  533e25c09176632b3794f35303488c4a8f3f965dffffa6ec2df347c168cb6c19 /dev/mapper/test
+  # perf record -e intel_pt/pt=0/u uname
+  pt=0 doesn't make sense, forcing pt=1
+  Linux
+  [ perf record: Woken up 1 times to write data ]
+  [ perf record: Captured and wrote 0.020 MB perf.data ]
+  #
 
-On 64bit system (and on 32bit system with the patch), table and checksum is now correct:
-
-  # dmsetup table test --showkeys
-  0 2048 crypt aes-xts-plain64 dfa7cfe3c481f2239155739c42e539ae8f2d38f304dcc89d20b26f69daaf0933 500000000000000000 7:0 0
-
-  # sha256sum /dev/mapper/test
-  5d16160f9d5f8c33d8051e65fdb4f003cc31cd652b5abb08f03aa6fce0df75fc /dev/mapper/test
-
-Signed-off-by: AliOS system security <alios_sys_security@linux.alibaba.com>
-Tested-and-Reviewed-by: Milan Broz <gmazyland@gmail.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Link: http://lkml.kernel.org/r/b7c5b4e5-9497-10e5-fd43-5f3e4a0fe51d@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/dm-crypt.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ tools/perf/arch/x86/util/intel-pt.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
-index b8eec515a003..9a4dec0a0f71 100644
---- a/drivers/md/dm-crypt.c
-+++ b/drivers/md/dm-crypt.c
-@@ -49,7 +49,7 @@ struct convert_context {
- 	struct bio *bio_out;
- 	struct bvec_iter iter_in;
- 	struct bvec_iter iter_out;
--	sector_t cc_sector;
-+	u64 cc_sector;
- 	atomic_t cc_pending;
- 	union {
- 		struct skcipher_request *req;
-@@ -81,7 +81,7 @@ struct dm_crypt_request {
- 	struct convert_context *ctx;
- 	struct scatterlist sg_in[4];
- 	struct scatterlist sg_out[4];
--	sector_t iv_sector;
-+	u64 iv_sector;
- };
+diff --git a/tools/perf/arch/x86/util/intel-pt.c b/tools/perf/arch/x86/util/intel-pt.c
+index db0ba8caf5a2..ba8ecaf52200 100644
+--- a/tools/perf/arch/x86/util/intel-pt.c
++++ b/tools/perf/arch/x86/util/intel-pt.c
+@@ -524,10 +524,21 @@ static int intel_pt_validate_config(struct perf_pmu *intel_pt_pmu,
+ 				    struct perf_evsel *evsel)
+ {
+ 	int err;
++	char c;
  
- struct crypt_config;
-@@ -160,7 +160,7 @@ struct crypt_config {
- 		struct iv_lmk_private lmk;
- 		struct iv_tcw_private tcw;
- 	} iv_gen_private;
--	sector_t iv_offset;
-+	u64 iv_offset;
- 	unsigned int iv_size;
- 	unsigned short int sector_size;
- 	unsigned char sector_shift;
+ 	if (!evsel)
+ 		return 0;
+ 
++	/*
++	 * If supported, force pass-through config term (pt=1) even if user
++	 * sets pt=0, which avoids senseless kernel errors.
++	 */
++	if (perf_pmu__scan_file(intel_pt_pmu, "format/pt", "%c", &c) == 1 &&
++	    !(evsel->attr.config & 1)) {
++		pr_warning("pt=0 doesn't make sense, forcing pt=1\n");
++		evsel->attr.config |= 1;
++	}
++
+ 	err = intel_pt_val_config_term(intel_pt_pmu, "caps/cycle_thresholds",
+ 				       "cyc_thresh", "caps/psb_cyc",
+ 				       evsel->attr.config);
 -- 
 2.19.1
 
