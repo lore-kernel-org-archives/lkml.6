@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0DB1C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:37:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05324C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:37:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAC1D21905
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:37:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C914121908
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:37:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358621;
-	bh=5piGpMKPFlFcZyLajUJMGNpPHyY6KbegMK9Npl0L7QI=;
+	s=default; t=1548358625;
+	bh=84ibl89TfWUICXy5tXkKaovz/FRoNl/EdU433hzWurA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=F9r4p78CkJrisJWYnl65DxgvJ/dxKQ1ZFLv41jB1WHbgXKidt9sQVoIYvJNOIo5EQ
-	 g8Ij1PkqcB3QBE/hgeh/t5B385g7PzAzBYp7UGTXS8XAcnOXkBaNR56c8S7pcQUNp/
-	 7VNAxE1/V9XHzK3nIetv18OLPJ2LHBMyQkg0gixk=
+	b=jaYKzfGNadGJMUItdTn0xwzv71+x58VFhE/dOLox+sDUF0+rI4usMPtLJoJaqe6ek
+	 NTStq++wHp+3aK0ZN6xRYtWNTyEd3jFMemK8Vt8yvTvc1N16uJOx4OymBv3JaPPc/9
+	 PjEeD43aNyZ8hPrTI/g2OCGJRk4WHVKJll6Fy8FY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732578AbfAXThA (ORCPT
+        id S1730103AbfAXThE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:37:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36928 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:37:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36974 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732561AbfAXTg6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:36:58 -0500
+        id S1732575AbfAXThA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:37:00 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 442AA21905;
-        Thu, 24 Jan 2019 19:36:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 869F7218FC;
+        Thu, 24 Jan 2019 19:36:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358616;
-        bh=5piGpMKPFlFcZyLajUJMGNpPHyY6KbegMK9Npl0L7QI=;
+        s=default; t=1548358620;
+        bh=84ibl89TfWUICXy5tXkKaovz/FRoNl/EdU433hzWurA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a9yFHrU6pS5lozeu1TYU1H+KlJzkXqG+cvLT9KQ3Q6sH1BE1A/Z01At3MlSR7juUW
-         NAfNvg39GGzgiyjBBime7zfyFjxuqS3avt9ty5B6CYcIFbC1Qh/NUvvJDcr2oTd79C
-         CvZ0XaqyfzvPk9qNh84GEy1+AvpYThdh2+mVFU7A=
+        b=GE38K9GRwvvc/eFqQ29g+3BYYmzvLpEMdxs0hnZlkSz7Rzxb87rP7o1cuYIizFKlZ
+         lDLlcAU6Rl8EYWZ1xnm+yvaVX4Sfsomqz+DW08dTtbRUL8+pP17lsyXr6JpdFvN1bz
+         P/Y3P/+qOrehM1/kBaHn6BQVifZfRH8/uzUHQvT8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 072/106] netfilter: ipt_CLUSTERIP: fix deadlock in netns exit routine
-Date:   Thu, 24 Jan 2019 20:20:29 +0100
-Message-Id: <20190124190210.893515072@linuxfoundation.org>
+        stable@vger.kernel.org, Hui Wang <john.wanghui@huawei.com>,
+        Thomas Gleixner <tglx@linutronix.de>, guijianfeng@huawei.com,
+        wencongyang2@huawei.com, douliyang1@huawei.com,
+        qiaonuohan@huawei.com, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 073/106] x86/topology: Use total_cpus for max logical packages calculation
+Date:   Thu, 24 Jan 2019 20:20:30 +0100
+Message-Id: <20190124190210.942797169@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
 References: <20190124190206.342411005@linuxfoundation.org>
@@ -66,415 +67,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 5a86d68bcf02f2d1e9a5897dd482079fd5f75e7f ]
+[ Upstream commit aa02ef099cff042c2a9109782ec2bf1bffc955d4 ]
 
-When network namespace is destroyed, cleanup_net() is called.
-cleanup_net() holds pernet_ops_rwsem then calls each ->exit callback.
-So that clusterip_tg_destroy() is called by cleanup_net().
-And clusterip_tg_destroy() calls unregister_netdevice_notifier().
+nr_cpu_ids can be limited on the command line via nr_cpus=. This can break the
+logical package management because it results in a smaller number of packages
+while in kdump kernel.
 
-But both cleanup_net() and clusterip_tg_destroy() hold same
-lock(pernet_ops_rwsem). hence deadlock occurrs.
+Check below case:
+There is a two sockets system, each socket has 8 cores, which has 16 logical
+cpus while HT was turn on.
 
-After this patch, only 1 notifier is registered when module is inserted.
-And all of configs are added to per-net list.
+ 0  1  2  3  4  5  6  7     |    16 17 18 19 20 21 22 23
+ cores on socket 0               threads on socket 0
+ 8  9 10 11 12 13 14 15     |    24 25 26 27 28 29 30 31
+ cores on socket 1               threads on socket 1
 
-test commands:
-   %ip netns add vm1
-   %ip netns exec vm1 bash
-   %ip link set lo up
-   %iptables -A INPUT -p tcp -i lo -d 192.168.0.5 --dport 80 \
-	-j CLUSTERIP --new --hashmode sourceip \
-	--clustermac 01:00:5e:00:00:20 --total-nodes 2 --local-node 1
-   %exit
-   %ip netns del vm1
+While starting the kdump kernel with command line option nr_cpus=16 panic
+was triggered on one of the cpus 24-31 eg. 26, then online cpu will be
+1-15, 26(cpu 0 was disabled in kdump), ncpus will be 16 and
+__max_logical_packages will be 1, but actually two packages were booted on.
 
-splat looks like:
-[  341.809674] ============================================
-[  341.809674] WARNING: possible recursive locking detected
-[  341.809674] 4.19.0-rc5+ #16 Tainted: G        W
-[  341.809674] --------------------------------------------
-[  341.809674] kworker/u4:2/87 is trying to acquire lock:
-[  341.809674] 000000005da2d519 (pernet_ops_rwsem){++++}, at: unregister_netdevice_notifier+0x8c/0x460
-[  341.809674]
-[  341.809674] but task is already holding lock:
-[  341.809674] 000000005da2d519 (pernet_ops_rwsem){++++}, at: cleanup_net+0x119/0x900
-[  341.809674]
-[  341.809674] other info that might help us debug this:
-[  341.809674]  Possible unsafe locking scenario:
-[  341.809674]
-[  341.809674]        CPU0
-[  341.809674]        ----
-[  341.809674]   lock(pernet_ops_rwsem);
-[  341.809674]   lock(pernet_ops_rwsem);
-[  341.809674]
-[  341.809674]  *** DEADLOCK ***
-[  341.809674]
-[  341.809674]  May be due to missing lock nesting notation
-[  341.809674]
-[  341.809674] 3 locks held by kworker/u4:2/87:
-[  341.809674]  #0: 00000000d9df6c92 ((wq_completion)"%s""netns"){+.+.}, at: process_one_work+0xafe/0x1de0
-[  341.809674]  #1: 00000000c2cbcee2 (net_cleanup_work){+.+.}, at: process_one_work+0xb60/0x1de0
-[  341.809674]  #2: 000000005da2d519 (pernet_ops_rwsem){++++}, at: cleanup_net+0x119/0x900
-[  341.809674]
-[  341.809674] stack backtrace:
-[  341.809674] CPU: 1 PID: 87 Comm: kworker/u4:2 Tainted: G        W         4.19.0-rc5+ #16
-[  341.809674] Workqueue: netns cleanup_net
-[  341.809674] Call Trace:
-[ ... ]
-[  342.070196]  down_write+0x93/0x160
-[  342.070196]  ? unregister_netdevice_notifier+0x8c/0x460
-[  342.070196]  ? down_read+0x1e0/0x1e0
-[  342.070196]  ? sched_clock_cpu+0x126/0x170
-[  342.070196]  ? find_held_lock+0x39/0x1c0
-[  342.070196]  unregister_netdevice_notifier+0x8c/0x460
-[  342.070196]  ? register_netdevice_notifier+0x790/0x790
-[  342.070196]  ? __local_bh_enable_ip+0xe9/0x1b0
-[  342.070196]  ? __local_bh_enable_ip+0xe9/0x1b0
-[  342.070196]  ? clusterip_tg_destroy+0x372/0x650 [ipt_CLUSTERIP]
-[  342.070196]  ? trace_hardirqs_on+0x93/0x210
-[  342.070196]  ? __bpf_trace_preemptirq_template+0x10/0x10
-[  342.070196]  ? clusterip_tg_destroy+0x372/0x650 [ipt_CLUSTERIP]
-[  342.123094]  clusterip_tg_destroy+0x3ad/0x650 [ipt_CLUSTERIP]
-[  342.123094]  ? clusterip_net_init+0x3d0/0x3d0 [ipt_CLUSTERIP]
-[  342.123094]  ? cleanup_match+0x17d/0x200 [ip_tables]
-[  342.123094]  ? xt_unregister_table+0x215/0x300 [x_tables]
-[  342.123094]  ? kfree+0xe2/0x2a0
-[  342.123094]  cleanup_entry+0x1d5/0x2f0 [ip_tables]
-[  342.123094]  ? cleanup_match+0x200/0x200 [ip_tables]
-[  342.123094]  __ipt_unregister_table+0x9b/0x1a0 [ip_tables]
-[  342.123094]  iptable_filter_net_exit+0x43/0x80 [iptable_filter]
-[  342.123094]  ops_exit_list.isra.10+0x94/0x140
-[  342.123094]  cleanup_net+0x45b/0x900
-[ ... ]
+This issue can reproduced by set kdump option nr_cpus=<real physical core
+numbers>, and then trigger panic on last socket's thread, for example:
 
-Fixes: 202f59afd441 ("netfilter: ipt_CLUSTERIP: do not hold dev")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+taskset -c 26 echo c > /proc/sysrq-trigger
+
+Use total_cpus which will not be limited by nr_cpus command line to calculate
+the value of __max_logical_packages.
+
+Signed-off-by: Hui Wang <john.wanghui@huawei.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: <guijianfeng@huawei.com>
+Cc: <wencongyang2@huawei.com>
+Cc: <douliyang1@huawei.com>
+Cc: <qiaonuohan@huawei.com>
+Link: https://lkml.kernel.org/r/20181107023643.22174-1-john.wanghui@huawei.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv4/netfilter/ipt_CLUSTERIP.c | 155 ++++++++++++++++-------------
- 1 file changed, 87 insertions(+), 68 deletions(-)
+ arch/x86/kernel/smpboot.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/ipv4/netfilter/ipt_CLUSTERIP.c b/net/ipv4/netfilter/ipt_CLUSTERIP.c
-index 33491cb6b9d1..fb1e7f237f53 100644
---- a/net/ipv4/netfilter/ipt_CLUSTERIP.c
-+++ b/net/ipv4/netfilter/ipt_CLUSTERIP.c
-@@ -57,17 +57,14 @@ struct clusterip_config {
- 	enum clusterip_hashmode hash_mode;	/* which hashing mode */
- 	u_int32_t hash_initval;			/* hash initialization */
- 	struct rcu_head rcu;
--
-+	struct net *net;			/* netns for pernet list */
- 	char ifname[IFNAMSIZ];			/* device ifname */
--	struct notifier_block notifier;		/* refresh c->ifindex in it */
- };
- 
- #ifdef CONFIG_PROC_FS
- static const struct file_operations clusterip_proc_fops;
- #endif
- 
--static unsigned int clusterip_net_id __read_mostly;
--
- struct clusterip_net {
- 	struct list_head configs;
- 	/* lock protects the configs list */
-@@ -78,16 +75,30 @@ struct clusterip_net {
- #endif
- };
- 
-+static unsigned int clusterip_net_id __read_mostly;
-+static inline struct clusterip_net *clusterip_pernet(struct net *net)
-+{
-+	return net_generic(net, clusterip_net_id);
-+}
-+
- static inline void
- clusterip_config_get(struct clusterip_config *c)
- {
- 	refcount_inc(&c->refcount);
+diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+index f02ecaf97904..6489067b78a4 100644
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -1346,7 +1346,7 @@ void __init calculate_max_logical_packages(void)
+ 	 * extrapolate the boot cpu's data to all packages.
+ 	 */
+ 	ncpus = cpu_data(0).booted_cores * topology_max_smt_threads();
+-	__max_logical_packages = DIV_ROUND_UP(nr_cpu_ids, ncpus);
++	__max_logical_packages = DIV_ROUND_UP(total_cpus, ncpus);
+ 	pr_info("Max logical packages: %u\n", __max_logical_packages);
  }
- 
--
- static void clusterip_config_rcu_free(struct rcu_head *head)
- {
--	kfree(container_of(head, struct clusterip_config, rcu));
-+	struct clusterip_config *config;
-+	struct net_device *dev;
-+
-+	config = container_of(head, struct clusterip_config, rcu);
-+	dev = dev_get_by_name(config->net, config->ifname);
-+	if (dev) {
-+		dev_mc_del(dev, config->clustermac);
-+		dev_put(dev);
-+	}
-+	kfree(config);
- }
- 
- static inline void
-@@ -101,9 +112,9 @@ clusterip_config_put(struct clusterip_config *c)
-  * entry(rule) is removed, remove the config from lists, but don't free it
-  * yet, since proc-files could still be holding references */
- static inline void
--clusterip_config_entry_put(struct net *net, struct clusterip_config *c)
-+clusterip_config_entry_put(struct clusterip_config *c)
- {
--	struct clusterip_net *cn = net_generic(net, clusterip_net_id);
-+	struct clusterip_net *cn = clusterip_pernet(c->net);
- 
- 	local_bh_disable();
- 	if (refcount_dec_and_lock(&c->entries, &cn->lock)) {
-@@ -118,8 +129,6 @@ clusterip_config_entry_put(struct net *net, struct clusterip_config *c)
- 		spin_unlock(&cn->lock);
- 		local_bh_enable();
- 
--		unregister_netdevice_notifier(&c->notifier);
--
- 		return;
- 	}
- 	local_bh_enable();
-@@ -129,7 +138,7 @@ static struct clusterip_config *
- __clusterip_config_find(struct net *net, __be32 clusterip)
- {
- 	struct clusterip_config *c;
--	struct clusterip_net *cn = net_generic(net, clusterip_net_id);
-+	struct clusterip_net *cn = clusterip_pernet(net);
- 
- 	list_for_each_entry_rcu(c, &cn->configs, list) {
- 		if (c->clusterip == clusterip)
-@@ -181,32 +190,37 @@ clusterip_netdev_event(struct notifier_block *this, unsigned long event,
- 		       void *ptr)
- {
- 	struct net_device *dev = netdev_notifier_info_to_dev(ptr);
-+	struct net *net = dev_net(dev);
-+	struct clusterip_net *cn = clusterip_pernet(net);
- 	struct clusterip_config *c;
- 
--	c = container_of(this, struct clusterip_config, notifier);
--	switch (event) {
--	case NETDEV_REGISTER:
--		if (!strcmp(dev->name, c->ifname)) {
--			c->ifindex = dev->ifindex;
--			dev_mc_add(dev, c->clustermac);
--		}
--		break;
--	case NETDEV_UNREGISTER:
--		if (dev->ifindex == c->ifindex) {
--			dev_mc_del(dev, c->clustermac);
--			c->ifindex = -1;
--		}
--		break;
--	case NETDEV_CHANGENAME:
--		if (!strcmp(dev->name, c->ifname)) {
--			c->ifindex = dev->ifindex;
--			dev_mc_add(dev, c->clustermac);
--		} else if (dev->ifindex == c->ifindex) {
--			dev_mc_del(dev, c->clustermac);
--			c->ifindex = -1;
-+	spin_lock_bh(&cn->lock);
-+	list_for_each_entry_rcu(c, &cn->configs, list) {
-+		switch (event) {
-+		case NETDEV_REGISTER:
-+			if (!strcmp(dev->name, c->ifname)) {
-+				c->ifindex = dev->ifindex;
-+				dev_mc_add(dev, c->clustermac);
-+			}
-+			break;
-+		case NETDEV_UNREGISTER:
-+			if (dev->ifindex == c->ifindex) {
-+				dev_mc_del(dev, c->clustermac);
-+				c->ifindex = -1;
-+			}
-+			break;
-+		case NETDEV_CHANGENAME:
-+			if (!strcmp(dev->name, c->ifname)) {
-+				c->ifindex = dev->ifindex;
-+				dev_mc_add(dev, c->clustermac);
-+			} else if (dev->ifindex == c->ifindex) {
-+				dev_mc_del(dev, c->clustermac);
-+				c->ifindex = -1;
-+			}
-+			break;
- 		}
--		break;
- 	}
-+	spin_unlock_bh(&cn->lock);
- 
- 	return NOTIFY_DONE;
- }
-@@ -215,30 +229,44 @@ static struct clusterip_config *
- clusterip_config_init(struct net *net, const struct ipt_clusterip_tgt_info *i,
- 		      __be32 ip, const char *iniface)
- {
--	struct clusterip_net *cn = net_generic(net, clusterip_net_id);
-+	struct clusterip_net *cn = clusterip_pernet(net);
- 	struct clusterip_config *c;
-+	struct net_device *dev;
- 	int err;
- 
-+	if (iniface[0] == '\0') {
-+		pr_info("Please specify an interface name\n");
-+		return ERR_PTR(-EINVAL);
-+	}
-+
- 	c = kzalloc(sizeof(*c), GFP_ATOMIC);
- 	if (!c)
- 		return ERR_PTR(-ENOMEM);
- 
--	strcpy(c->ifname, iniface);
--	c->ifindex = -1;
--	c->clusterip = ip;
-+	dev = dev_get_by_name(net, iniface);
-+	if (!dev) {
-+		pr_info("no such interface %s\n", iniface);
-+		kfree(c);
-+		return ERR_PTR(-ENOENT);
-+	}
-+	c->ifindex = dev->ifindex;
-+	strcpy(c->ifname, dev->name);
- 	memcpy(&c->clustermac, &i->clustermac, ETH_ALEN);
-+	dev_mc_add(dev, c->clustermac);
-+	dev_put(dev);
-+
-+	c->clusterip = ip;
- 	c->num_total_nodes = i->num_total_nodes;
- 	clusterip_config_init_nodelist(c, i);
- 	c->hash_mode = i->hash_mode;
- 	c->hash_initval = i->hash_initval;
-+	c->net = net;
- 	refcount_set(&c->refcount, 1);
- 
- 	spin_lock_bh(&cn->lock);
- 	if (__clusterip_config_find(net, ip)) {
--		spin_unlock_bh(&cn->lock);
--		kfree(c);
--
--		return ERR_PTR(-EBUSY);
-+		err = -EBUSY;
-+		goto out_config_put;
- 	}
- 
- 	list_add_rcu(&c->list, &cn->configs);
-@@ -260,22 +288,17 @@ clusterip_config_init(struct net *net, const struct ipt_clusterip_tgt_info *i,
- 	}
- #endif
- 
--	c->notifier.notifier_call = clusterip_netdev_event;
--	err = register_netdevice_notifier(&c->notifier);
--	if (!err) {
--		refcount_set(&c->entries, 1);
--		return c;
--	}
-+	refcount_set(&c->entries, 1);
-+	return c;
- 
- #ifdef CONFIG_PROC_FS
--	proc_remove(c->pde);
- err:
- #endif
- 	spin_lock_bh(&cn->lock);
- 	list_del_rcu(&c->list);
-+out_config_put:
- 	spin_unlock_bh(&cn->lock);
- 	clusterip_config_put(c);
--
- 	return ERR_PTR(err);
- }
- 
-@@ -475,21 +498,6 @@ static int clusterip_tg_check(const struct xt_tgchk_param *par)
- 				&e->ip.dst.s_addr);
- 			return -EINVAL;
- 		} else {
--			struct net_device *dev;
--
--			if (e->ip.iniface[0] == '\0') {
--				pr_info("Please specify an interface name\n");
--				return -EINVAL;
--			}
--
--			dev = dev_get_by_name(par->net, e->ip.iniface);
--			if (!dev) {
--				pr_info("no such interface %s\n",
--					e->ip.iniface);
--				return -ENOENT;
--			}
--			dev_put(dev);
--
- 			config = clusterip_config_init(par->net, cipinfo,
- 						       e->ip.dst.s_addr,
- 						       e->ip.iniface);
-@@ -503,7 +511,7 @@ static int clusterip_tg_check(const struct xt_tgchk_param *par)
- 	if (ret < 0) {
- 		pr_info("cannot load conntrack support for proto=%u\n",
- 			par->family);
--		clusterip_config_entry_put(par->net, config);
-+		clusterip_config_entry_put(config);
- 		clusterip_config_put(config);
- 		return ret;
- 	}
-@@ -525,7 +533,7 @@ static void clusterip_tg_destroy(const struct xt_tgdtor_param *par)
- 
- 	/* if no more entries are referencing the config, remove it
- 	 * from the list and destroy the proc entry */
--	clusterip_config_entry_put(par->net, cipinfo->config);
-+	clusterip_config_entry_put(cipinfo->config);
- 
- 	clusterip_config_put(cipinfo->config);
- 
-@@ -807,7 +815,7 @@ static const struct file_operations clusterip_proc_fops = {
- 
- static int clusterip_net_init(struct net *net)
- {
--	struct clusterip_net *cn = net_generic(net, clusterip_net_id);
-+	struct clusterip_net *cn = clusterip_pernet(net);
- 	int ret;
- 
- 	INIT_LIST_HEAD(&cn->configs);
-@@ -832,7 +840,7 @@ static int clusterip_net_init(struct net *net)
- 
- static void clusterip_net_exit(struct net *net)
- {
--	struct clusterip_net *cn = net_generic(net, clusterip_net_id);
-+	struct clusterip_net *cn = clusterip_pernet(net);
- #ifdef CONFIG_PROC_FS
- 	proc_remove(cn->procdir);
- 	cn->procdir = NULL;
-@@ -847,6 +855,10 @@ static struct pernet_operations clusterip_net_ops = {
- 	.size = sizeof(struct clusterip_net),
- };
- 
-+struct notifier_block cip_netdev_notifier = {
-+	.notifier_call = clusterip_netdev_event
-+};
-+
- static int __init clusterip_tg_init(void)
- {
- 	int ret;
-@@ -859,11 +871,17 @@ static int __init clusterip_tg_init(void)
- 	if (ret < 0)
- 		goto cleanup_subsys;
- 
-+	ret = register_netdevice_notifier(&cip_netdev_notifier);
-+	if (ret < 0)
-+		goto unregister_target;
-+
- 	pr_info("ClusterIP Version %s loaded successfully\n",
- 		CLUSTERIP_VERSION);
- 
- 	return 0;
- 
-+unregister_target:
-+	xt_unregister_target(&clusterip_tg_reg);
- cleanup_subsys:
- 	unregister_pernet_subsys(&clusterip_net_ops);
- 	return ret;
-@@ -873,6 +891,7 @@ static void __exit clusterip_tg_exit(void)
- {
- 	pr_info("ClusterIP Version %s unloading\n", CLUSTERIP_VERSION);
- 
-+	unregister_netdevice_notifier(&cip_netdev_notifier);
- 	xt_unregister_target(&clusterip_tg_reg);
- 	unregister_pernet_subsys(&clusterip_net_ops);
  
 -- 
 2.19.1
