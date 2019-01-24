@@ -2,88 +2,99 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E643AC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:16:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2B50C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:16:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAD86218AD
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:16:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FFEA218AD
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:16:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="AsouC6bX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727689AbfAXMQk (ORCPT
+        id S1726105AbfAXMQn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 07:16:40 -0500
-Received: from smtp2207-205.mail.aliyun.com ([121.197.207.205]:52975 "EHLO
-        smtp2207-205.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726105AbfAXMQj (ORCPT
+        Thu, 24 Jan 2019 07:16:43 -0500
+Received: from conuserg-10.nifty.com ([210.131.2.77]:52693 "EHLO
+        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727443AbfAXMQk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 07:16:39 -0500
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.08874351|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03311;MF=liaoweixiong@allwinnertech.com;NM=1;PH=DS;RN=17;RT=17;SR=0;TI=SMTPD_---.Dq5zod3_1548332185;
-Received: from 172.16.10.102(mailfrom:liaoweixiong@allwinnertech.com fp:SMTPD_---.Dq5zod3_1548332185)
-          by smtp.aliyun-inc.com(10.147.43.230);
-          Thu, 24 Jan 2019 20:16:26 +0800
-Subject: Re: [RFC v7 0/5] pstore/block: new support logger for block devices
-To:     Aaro Koskinen <aaro.koskinen@iki.fi>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <1548245116-6360-1-git-send-email-liaoweixiong@allwinnertech.com>
- <20190123182638.GD2792@darkstar.musicnaut.iki.fi>
-From:   liaoweixiong <liaoweixiong@allwinnertech.com>
-Message-ID: <5f243418-c6bd-061e-1161-1c0139ad84bf@allwinnertech.com>
-Date:   Thu, 24 Jan 2019 20:16:30 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20190123182638.GD2792@darkstar.musicnaut.iki.fi>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 24 Jan 2019 07:16:40 -0500
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-10.nifty.com with ESMTP id x0OCGKiQ017405;
+        Thu, 24 Jan 2019 21:16:20 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com x0OCGKiQ017405
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1548332181;
+        bh=fcs9Tf30L7diisTe9kSWtVGAq5PPlPjnIbgxyaZumog=;
+        h=From:To:Cc:Subject:Date:From;
+        b=AsouC6bX8PZhWYLH2/zFKqf/wOxFQC5Yin/AUDaw046ZUkZzoGO9xErnj+KwSjWYM
+         3Rfu7Z6tA8NS2CWR2KeoQbFd/TgGPovv0JiLqH9K3+C6RNGSm/W/IgZY8QSBd6aLUy
+         OHv2D3yBjjNkSmzmxvpBlUrGh9+V1usIPFji016mdwGeWkkmYA3EwJRcLMzNpBE/3M
+         FWITbVt+SRH58X32xxKbEb6JsDmjR9yJXPPmn5GkdRgwe90q8iOLGhT9JLFR/s7L38
+         u0AfpJ1/RPEFLnXXoApe8DqBLu+TC8ZJ0TymJFrSxzINYqaYd4D/SEH5s648cQCVLu
+         2JMb+sRlpz07w==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        linux-acpi@vger.kernel.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH] ACPI / DPTF: remove header search path to the parent directory
+Date:   Thu, 24 Jan 2019 21:16:03 +0900
+Message-Id: <1548332163-17869-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-01-24 02:26, Aaro Koskinen wrote:
-> Hi,
-> 
-> On Wed, Jan 23, 2019 at 08:05:11PM +0800, liaoweixiong wrote:
->> Why should we need pstore_block?
->> 1. Most embedded intelligent equipment have no persistent ram, which
->> increases costs. We perfer to cheaper solutions, like block devices.
->> In fast, there is already a sample for block device logger in driver
->> MTD (drivers/mtd/mtdoops.c).
-> 
-> I think you should add a patch for some actual block device using this
-> new framework to show that it can work. What HW you think would be
-> using things?
-> 
+It is too much to add extra header search path for all files in
+drivers/acpi/dptf/.
 
-I will try to add a patch. Actually, I have implemented it on allwinner
-platform, but unfortunately these codes are unsuitable to submit to
-upper stream.
+Fix up one C file, and remove the header search path.
 
-In addition, there is already a sample for pstore/blk on patch 3 of
-version 7. It names
-blkoops. Blkoops is suitable for most block device as what it need is
-just a path of a partition. We can use it to test most of features but
-panic.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-> A.
-> 
+My main motivation is to get rid of crappy header search path manipulation
+from Kbuild core.
 
+Before that, I want to clean up as many useless paths as possible.
+
+The full work of this is available at:
+git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git build-test
+
+
+ drivers/acpi/dptf/Makefile          | 2 --
+ drivers/acpi/dptf/int340x_thermal.c | 2 +-
+ 2 files changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/acpi/dptf/Makefile b/drivers/acpi/dptf/Makefile
+index 06ea880..e6032e4 100644
+--- a/drivers/acpi/dptf/Makefile
++++ b/drivers/acpi/dptf/Makefile
+@@ -1,4 +1,2 @@
+ obj-$(CONFIG_ACPI)             += int340x_thermal.o
+ obj-$(CONFIG_DPTF_POWER)	+= dptf_power.o
+-
+-ccflags-y += -Idrivers/acpi
+diff --git a/drivers/acpi/dptf/int340x_thermal.c b/drivers/acpi/dptf/int340x_thermal.c
+index 8636409..0aa7c2e 100644
+--- a/drivers/acpi/dptf/int340x_thermal.c
++++ b/drivers/acpi/dptf/int340x_thermal.c
+@@ -12,7 +12,7 @@
+ #include <linux/acpi.h>
+ #include <linux/module.h>
+ 
+-#include "internal.h"
++#include "../internal.h"
+ 
+ #define INT3401_DEVICE 0X01
+ static const struct acpi_device_id int340x_thermal_device_ids[] = {
 -- 
-liaoweixiong
+2.7.4
+
