@@ -2,57 +2,194 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92EF0C282C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:49:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D81ECC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:49:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69C01217D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:49:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E45E21726
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:49:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548359384;
+	bh=Le/fTo3c74rL8IiWcDJn2o0PclwV489BeqBydacJFjI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=a3URRpOPO8ETPYRo59cIWXKczaURYCKTs4nSt9t+nBCdHFCvD07rnyeyPiUM+zJWQ
+	 8G1Gu16GM6pwzQY/cmU4m5/T28+n0gOoCsLA+WSK4WXKkFLYCm/ilC3cgw6NG70sy0
+	 rbBJviP/5fM8AMvsN/lDpZxmAW3lV3CkhO9BgphY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732752AbfAXTt2 (ORCPT
+        id S1732729AbfAXTtm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:49:28 -0500
-Received: from muru.com ([72.249.23.125]:35258 "EHLO muru.com"
+        Thu, 24 Jan 2019 14:49:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41286 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732086AbfAXTtY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:49:24 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id CF2048181;
-        Thu, 24 Jan 2019 19:49:31 +0000 (UTC)
-Date:   Thu, 24 Jan 2019 11:49:20 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Tero Kristo <t-kristo@ti.com>
-Cc:     Nishanth Menon <nm@ti.com>, Faiz Abbas <faiz_abbas@ti.com>,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 0/2] Support for eMMC in AM65x-evm
-Message-ID: <20190124194920.GU5720@atomide.com>
-References: <20190117094424.7683-1-faiz_abbas@ti.com>
- <d75a123b-9e97-a3d1-1e3c-41ef6942dffb@ti.com>
- <20190124124032.aqp4ctqkpozbttwl@kahuna>
- <6b10e04d-47b7-09ed-9d03-d37732569b92@ti.com>
+        id S1732973AbfAXTlD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:41:03 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C94220663;
+        Thu, 24 Jan 2019 19:41:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548358862;
+        bh=Le/fTo3c74rL8IiWcDJn2o0PclwV489BeqBydacJFjI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=VGLILiaexEXSYItO1kpPxSj3rm/jhg0F6+XF/Lk8GX9Tt4zHNu9AVr4/hnB9mbAyd
+         T9yomfqxF3bMIYfIKqLLGuFNcwIp9Ubm4Hxd8oVPt+B1OqNkyFCpC6F2aBxB76o7wd
+         JaIk35v1reY5zEH9ZFsDLyY3qEL++0FeVJWwgtko=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 053/127] clk: imx: make mux parent strings const
+Date:   Thu, 24 Jan 2019 20:19:59 +0100
+Message-Id: <20190124190214.460086886@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
+References: <20190124190211.984305387@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6b10e04d-47b7-09ed-9d03-d37732569b92@ti.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Tero Kristo <t-kristo@ti.com> [190124 19:46]:
-> I am not currently publishing -next branch, but I can start tracking one.
+4.20-stable review patch.  If anyone has any objections, please let me know.
 
-Yes please do as the patches should be sitting in
-Linux next for at least two weeks before merging.
-And there can be often delays of multiple days with
-getting patches merged to armsoc next branch.
+------------------
 
-Regards,
+[ Upstream commit 9e5ef7a57ca75a1b9411c46caeeb6881124284a3 ]
 
-Tony
+As the commit 2893c379461a ("clk: make strings in parent name arrays
+const"), let's make the parent strings const, otherwise we may meet
+the following warning when compiling:
+
+drivers/clk/imx/clk-imx7ulp.c: In function 'imx7ulp_clocks_init':
+drivers/clk/imx/clk-imx7ulp.c:73:35: warning: passing argument 5 of
+	'imx_clk_mux_flags' discards 'const' qualifier from pointer target type
+
+  clks[IMX7ULP_CLK_APLL_PRE_SEL] = imx_clk_mux_flags("apll_pre_sel", base + 0x508, 0,
+	1, pll_pre_sels, ARRAY_SIZE(pll_pre_sels), CLK_SET_PARENT_GATE);
+                                   ^
+In file included from drivers/clk/imx/clk-imx7ulp.c:23:0:
+drivers/clk/imx/clk.h:200:27: note: expected 'const char **' but argument is
+ of type 'const char * const*'
+...
+
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/clk/imx/clk-busy.c      |  2 +-
+ drivers/clk/imx/clk-fixup-mux.c |  2 +-
+ drivers/clk/imx/clk.h           | 18 +++++++++++-------
+ 3 files changed, 13 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/clk/imx/clk-busy.c b/drivers/clk/imx/clk-busy.c
+index 99036527eb0d..e695622c5aa5 100644
+--- a/drivers/clk/imx/clk-busy.c
++++ b/drivers/clk/imx/clk-busy.c
+@@ -154,7 +154,7 @@ static const struct clk_ops clk_busy_mux_ops = {
+ 
+ struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
+ 			     u8 width, void __iomem *busy_reg, u8 busy_shift,
+-			     const char **parent_names, int num_parents)
++			     const char * const *parent_names, int num_parents)
+ {
+ 	struct clk_busy_mux *busy;
+ 	struct clk *clk;
+diff --git a/drivers/clk/imx/clk-fixup-mux.c b/drivers/clk/imx/clk-fixup-mux.c
+index c9b327e0a8dd..44817c1b0b88 100644
+--- a/drivers/clk/imx/clk-fixup-mux.c
++++ b/drivers/clk/imx/clk-fixup-mux.c
+@@ -70,7 +70,7 @@ static const struct clk_ops clk_fixup_mux_ops = {
+ };
+ 
+ struct clk *imx_clk_fixup_mux(const char *name, void __iomem *reg,
+-			      u8 shift, u8 width, const char **parents,
++			      u8 shift, u8 width, const char * const *parents,
+ 			      int num_parents, void (*fixup)(u32 *val))
+ {
+ 	struct clk_fixup_mux *fixup_mux;
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 5895e2237b6c..2c377e188281 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -63,14 +63,14 @@ struct clk *imx_clk_busy_divider(const char *name, const char *parent_name,
+ 
+ struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
+ 			     u8 width, void __iomem *busy_reg, u8 busy_shift,
+-			     const char **parent_names, int num_parents);
++			     const char * const *parent_names, int num_parents);
+ 
+ struct clk *imx_clk_fixup_divider(const char *name, const char *parent,
+ 				  void __iomem *reg, u8 shift, u8 width,
+ 				  void (*fixup)(u32 *val));
+ 
+ struct clk *imx_clk_fixup_mux(const char *name, void __iomem *reg,
+-			      u8 shift, u8 width, const char **parents,
++			      u8 shift, u8 width, const char * const *parents,
+ 			      int num_parents, void (*fixup)(u32 *val));
+ 
+ static inline struct clk *imx_clk_fixed(const char *name, int rate)
+@@ -79,7 +79,8 @@ static inline struct clk *imx_clk_fixed(const char *name, int rate)
+ }
+ 
+ static inline struct clk *imx_clk_mux_ldb(const char *name, void __iomem *reg,
+-		u8 shift, u8 width, const char **parents, int num_parents)
++			u8 shift, u8 width, const char * const *parents,
++			int num_parents)
+ {
+ 	return clk_register_mux(NULL, name, parents, num_parents,
+ 			CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT, reg,
+@@ -199,7 +200,8 @@ static inline struct clk *imx_clk_gate4(const char *name, const char *parent,
+ }
+ 
+ static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
+-		u8 shift, u8 width, const char **parents, int num_parents)
++			u8 shift, u8 width, const char * const *parents,
++			int num_parents)
+ {
+ 	return clk_register_mux(NULL, name, parents, num_parents,
+ 			CLK_SET_RATE_NO_REPARENT, reg, shift,
+@@ -207,7 +209,8 @@ static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
+ }
+ 
+ static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,
+-		u8 shift, u8 width, const char **parents, int num_parents)
++			u8 shift, u8 width, const char * const *parents,
++			int num_parents)
+ {
+ 	return clk_register_mux(NULL, name, parents, num_parents,
+ 			CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE,
+@@ -215,8 +218,9 @@ static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,
+ }
+ 
+ static inline struct clk *imx_clk_mux_flags(const char *name,
+-		void __iomem *reg, u8 shift, u8 width, const char **parents,
+-		int num_parents, unsigned long flags)
++			void __iomem *reg, u8 shift, u8 width,
++			const char * const *parents, int num_parents,
++			unsigned long flags)
+ {
+ 	return clk_register_mux(NULL, name, parents, num_parents,
+ 			flags | CLK_SET_RATE_NO_REPARENT, reg, shift, width, 0,
+-- 
+2.19.1
+
+
+
