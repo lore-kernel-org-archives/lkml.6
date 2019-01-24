@@ -2,99 +2,128 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AA7CC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 03:13:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15B1FC282C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 03:14:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 234482184C
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 03:13:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8D7D2184C
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 03:14:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KmioJtdZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727200AbfAXDNl (ORCPT
+        id S1727259AbfAXDOC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 22:13:41 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:2739 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726249AbfAXDNl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 22:13:41 -0500
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 70C3378EA179BAB1077C;
-        Thu, 24 Jan 2019 11:13:39 +0800 (CST)
-Received: from [127.0.0.1] (10.57.115.182) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.408.0; Thu, 24 Jan 2019
- 11:13:30 +0800
-Subject: Re: [PATCH V2 rdma-next 2/3] RDMA/hns: Fix the chip hanging caused by
- sending mailbox&CMQ during reset
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-References: <1547868967-115951-1-git-send-email-xavier.huwei@huawei.com>
- <1547868967-115951-3-git-send-email-xavier.huwei@huawei.com>
- <20190123224041.GA11605@ziepe.ca>
-CC:     <dledford@redhat.com>, <linux-rdma@vger.kernel.org>,
-        <lijun_nudt@163.com>, <oulijun@huawei.com>,
-        <liudongdong3@huawei.com>, <linuxarm@huawei.com>,
-        <linux-kernel@vger.kernel.org>, <xavier_huwei@163.com>
-From:   "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
-Message-ID: <5C492D59.8030707@huawei.com>
-Date:   Thu, 24 Jan 2019 11:13:29 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        Wed, 23 Jan 2019 22:14:02 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:43245 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726309AbfAXDOB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 22:14:01 -0500
+Received: by mail-pf1-f193.google.com with SMTP id w73so2240435pfk.10;
+        Wed, 23 Jan 2019 19:14:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=gwI3E7q4DyXyUZqSE47EMgNwFn6pB/gRH3/afCHNjQw=;
+        b=KmioJtdZB51euERwWmQQ2wSzvA4/neC1DSfIlSoknejoj6dzMPZaFJDuEgCOTZ4goC
+         7hSpJQPcQRuBfqlRuMGLqDwx0z7mmeMHuu0Hb5nEqJUFsoKQJjesRPvl5RPZ1O6TSQCN
+         LsrJecDP9PKw3vYpjbRKFHhJSeRtzD5KAxfvON57SjcjGPfiuUXDM3a/3xFMkM9k9eyQ
+         xNlAUwElaBuqq+XGCH/65OQc9hVTXyPEOYNOcqFW6QEwWUqVn1gRFwDIFAx56LbSlGXr
+         iaOoGTFodpAgNmFMO6gQj10a6EhnhyVgT1x0I291ULsoGBHNbNKXr/1ezmN6j1bRzs88
+         h2Bw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=gwI3E7q4DyXyUZqSE47EMgNwFn6pB/gRH3/afCHNjQw=;
+        b=PE8Q/getOh6PyCqDr7oX6+FWoTCKAIX78krylfmaVAzc4wv5ur9bOO6IaaJoarzBv8
+         gcgHD2ngRtVCzBr5iHLq8Ry9w0wIr1Bww5ny1J/afDeDfPVlJlncbvcyUUlHjigN6L19
+         xhG2YkUeHqG3B/TPeFMeVDubPfpQmPOKmq/nrt55tVck9karkVz94OYqlrUOKySM/j+Q
+         d0ppN6PfZsOXoUhGvDU7JfsCtFv04gPF1qxy2FUXtO6+onEEx0k5URyPVAGWuIges2Bq
+         Elcqs9nP/nYfn9SJiCzyQdd37JF8JxgGEnRXIpQTE1ocLVXj0t3Y4HiT2AhDiSDSagkF
+         vMvg==
+X-Gm-Message-State: AJcUukeCMFf7fH+KrST5/gKrkq8uyw6Kl84731vahcZ5ZH1B4rEtQxYq
+        y8RMkfYXPLo1kqoedKbkYeXtG72M
+X-Google-Smtp-Source: ALg8bN6HBPEc/pX8+TzzOECa+0LvSndR3LbjARU2yZ+PduN21eHsIaom6H+oMcwF7w9sd0Bsd2BqAw==
+X-Received: by 2002:a63:160d:: with SMTP id w13mr4475603pgl.43.1548299640617;
+        Wed, 23 Jan 2019 19:14:00 -0800 (PST)
+Received: from [192.168.43.97] ([121.90.236.7])
+        by smtp.gmail.com with ESMTPSA id p24sm31217894pfk.155.2019.01.23.19.13.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 23 Jan 2019 19:13:59 -0800 (PST)
+Subject: Re: [PATCH v7 1/2] spi: Add Renesas R-Car Gen3 RPC-IF SPI controller
+ driver
+To:     masonccyang@mxic.com.tw
+Cc:     bbrezillon@kernel.org, broonie@kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-spi@vger.kernel.org, sergei.shtylyov@cogentembedded.com,
+        zhengxunli@mxic.com.tw
+References: <1548227352-14910-1-git-send-email-masonccyang@mxic.com.tw>
+ <1548227352-14910-2-git-send-email-masonccyang@mxic.com.tw>
+ <bb63b646-b549-dc3b-a604-17ba156e735c@gmail.com>
+ <OF767ACC95.EECC73BE-ON4825838C.000BD6A3-4825838C.000D23A6@mxic.com.tw>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Openpgp: preference=signencrypt
+Message-ID: <67fa5f94-886b-f09c-c93d-832e427ffec8@gmail.com>
+Date:   Thu, 24 Jan 2019 04:13:11 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190123224041.GA11605@ziepe.ca>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.57.115.182]
-X-CFilter-Loop: Reflected
+In-Reply-To: <OF767ACC95.EECC73BE-ON4825838C.000BD6A3-4825838C.000D23A6@mxic.com.tw>
+Content-Type: text/plain; charset=UTF-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 1/24/19 3:23 AM, masonccyang@mxic.com.tw wrote:
+> Hi Marek,
 
+Hi,
 
-On 2019/1/24 6:40, Jason Gunthorpe wrote:
-> On Sat, Jan 19, 2019 at 11:36:06AM +0800, Wei Hu (Xavier) wrote:
->
->> +static int hns_roce_v2_cmd_hw_resetting(struct hns_roce_dev *hr_dev,
->> +					unsigned long instance_stage,
->> +					unsigned long reset_stage)
->> +{
->> +	struct hns_roce_v2_priv *priv = (struct hns_roce_v2_priv *)hr_dev->priv;
->> +	struct hnae3_handle *handle = priv->handle;
->> +	const struct hnae3_ae_ops *ops = handle->ae_algo->ops;
->> +	unsigned long end;
->> +
->> +	/* When hardware reset is detected, we should stop sending mailbox&cmq
->> +	 * to hardware, and wait until hardware reset finished. If now
->> +	 * in .init_instance() function, we should exit with error. If now at
->> +	 * HNAE3_INIT_CLIENT stage of soft reset process, we should exit with
->> +	 * error, and then HNAE3_INIT_CLIENT related process can rollback the
->> +	 * operation like notifing hardware to free resources, HNAE3_INIT_CLIENT
->> +	 * related process will exit with error to notify NIC driver to
->> +	 * reschedule soft reset process once again.
->> +	 */
->> +	end = msecs_to_jiffies(HNS_ROCE_V2_HW_RST_TIMEOUT) + jiffies;
->> +	while (ops->get_hw_reset_stat(handle) && time_before(jiffies, end))
->> +		udelay(1);
-> I thought you were getting rid of these loops?
-Hi, Jason
+>> "Marek Vasut" <marek.vasut@gmail.com>
+>> 2019/01/24 上午 09:54
+>>
+>>
+>> > +#define RPC_CMNCR      0x0000   // R/W
+>>
+>> Is there any reason for using those horrible C++ comments ?
+> 
+> By Mark's comments for the SPDX header needs to be C++ style and
+> I patch the whole RPC driver comments using C++ style otherwise it looks
+> messy.
 
-    Upper applications maybe notify driver to issue mailbox or CMD
-    commands to hardware, some commands used to cancel resources,
-    destory bt/destory cq/unreg mr/destory qp etc. when such
-    commands are executed successfully, the hardware engine will
-    no longer access some memory registered by the driver.
+I think the C++ comments should only be applied to the SPDX identifier,
+maybe the header, but not the entire file.
 
-    When reset occurs, it is possible for upper applications notify driver
-    to issue mailbox or CMD commands, we need to wait until hardware
-    reset finished to ensure that hardware no longer accesses related
-memory.
-   
-    Regards
-Xavier
-> Jason
->
-> .
->
+>> [...]
+>>
+>> > +module_platform_driver(rpc_spi_driver);
+>>
+>> RPC is not a SPI controller, it's a SPI and HF controller.
+>>
+>> Also, how difficult will it be to add the HF support ?
+> 
+> One of my customers needs RPC SPI driver for our company's
+> Octal-Flash,MX25UW51245G.
+> We don't have HF product and hope you could understanding.
 
+I am worried that when we need to add RPC HF support (which is what all
+boards but the D3 Draak use), we will have to rewrite the entire driver
+and/or convert it to MFD and that would be a tremendous undertaking. I'd
+prefer to have the driver ready for the HF addition before it's accepted
+upstream.
 
+-- 
+Best regards,
+Marek Vasut
