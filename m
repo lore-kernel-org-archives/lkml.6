@@ -2,118 +2,158 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCB18C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:59:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31413C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:01:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C261218A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:59:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1FE8218A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:01:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="iMd2yUcr"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="UGS3e7wl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728780AbfAXS66 (ORCPT
+        id S1729027AbfAXTBV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 13:58:58 -0500
-Received: from mail-wm1-f44.google.com ([209.85.128.44]:53391 "EHLO
-        mail-wm1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725913AbfAXS66 (ORCPT
+        Thu, 24 Jan 2019 14:01:21 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:6650 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725909AbfAXTBU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 13:58:58 -0500
-Received: by mail-wm1-f44.google.com with SMTP id d15so4336067wmb.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 10:58:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=WnojILYOyO4LFBFFRVLcEieCGdHG1xvOy0tZNL/+Y5k=;
-        b=iMd2yUcrIW+jQ4ZFdqgd8FKxZ/Fqj/oTZFZAH1dEDE0l2zRCmRgR9W3xNSlq7Zi+uA
-         uva2j00uOqfX6g+fvEVDFq5FDXlId9q4RdYfrFm7i0VreOM5jWp7t2yCRL4ZSMbLVDQm
-         c1e3y9n81ip6MrXbS/jHpg+BctevjwyZXZ2z8fmaYWFz8gLGPQMJyO4EK2X5cSZGwbK2
-         yt1PjY0sCzk9o1+wV9UiNscE+cjjV6OyqiXMLVwYicU50whgutHzaOZyBdea5XWdJaGY
-         UT+WmfuFQa0WFGJOf9MNIxH0lZBWWyP+Tbbmqzg8qH0T1gk8bS1SVOKHj3kWHlRpx6I6
-         ZhFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=WnojILYOyO4LFBFFRVLcEieCGdHG1xvOy0tZNL/+Y5k=;
-        b=pw03g8ZNHn4P/HKG//B3uaEi6+EjoEOyQRLaKu7knskftMv0/uWitYye2YNiRMz4ep
-         k0/Ncx654rxNawcGkioi19625QCHjLCIOucd99QQHMORx5dzrZoGF1h/GdY3qZchMhVb
-         HoprLeLrFpS+vMt8fZIA3uwhPy2Ic3gfSzr3bsMqedS2qOPOY5PkFLB8nMjXA5WcFeTg
-         OTGT2VfJdQB1xFj15qvug9VkG8P656ett2t3vbgXppNLubnAg2tJkhNaQyWuyvlxrrJP
-         SlYJkdgnRZZD9cKjoJ803Q9Y/V7s/nG5obcB3RI9aO4bzmgQzdXPvqqJZ8/Bbi1Z/eVx
-         06Pw==
-X-Gm-Message-State: AJcUukfTQJVtAuEw5eqtdPgas6MxJNGhjDc5TvVPQIsY5WNKUKjiqfSU
-        6mDFdcx1S0OHa7clVuoSiEQnQvFOKISWrbOm
-X-Google-Smtp-Source: ALg8bN7XXFfAtRkBYJ8kQ3Buee3pkOsJxqSeXwDsCSnf71eqGEESzTbHd5lVV1m+2wQSqn2fEv9s+g==
-X-Received: by 2002:a1c:90d5:: with SMTP id s204mr3860041wmd.148.1548356335998;
-        Thu, 24 Jan 2019 10:58:55 -0800 (PST)
-Received: from winie.fritz.box (i59F4F430.versanet.de. [89.244.244.48])
-        by smtp.gmail.com with ESMTPSA id x3sm99578209wrd.19.2019.01.24.10.58.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 10:58:54 -0800 (PST)
-From:   Florian La Roche <florian.laroche@googlemail.com>
-X-Google-Original-From: Florian La Roche <Florian.LaRoche@googlemail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Crt Mori <cmo@melexis.com>, Joe Perches <joe@perches.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Florian La Roche <Florian.LaRoche@googlemail.com>
-Subject: int_sqrt() adjustments
-Date:   Thu, 24 Jan 2019 19:58:52 +0100
-Message-Id: <20190124185852.19423-1-Florian.LaRoche@googlemail.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 24 Jan 2019 14:01:20 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c4a0b660000>; Thu, 24 Jan 2019 11:00:54 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 24 Jan 2019 11:01:18 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 24 Jan 2019 11:01:18 -0800
+Received: from [10.25.74.189] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 24 Jan
+ 2019 19:01:16 +0000
+Subject: Re: [PATCH] ALSA: hda: runtime PM is always active
+To:     Takashi Iwai <tiwai@suse.de>
+CC:     <abhijeet.kumar@intel.com>, <perex@perex.cz>,
+        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
+References: <1548345432-11449-1-git-send-email-spujar@nvidia.com>
+ <s5hef9211pm.wl-tiwai@suse.de>
+ <770a8e0e-3e20-6997-3342-98a3656e14c1@nvidia.com>
+ <s5h7eetc2x1.wl-tiwai@suse.de>
+From:   Sameer Pujar <spujar@nvidia.com>
+Message-ID: <3475c359-34ce-c04b-24dc-79458b2b3e2a@nvidia.com>
+Date:   Fri, 25 Jan 2019 00:31:13 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <s5h7eetc2x1.wl-tiwai@suse.de>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1548356454; bh=nfO1VvslDADbHoZ8FXE4w40e9LF94QxllibYcNdPjJM=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=UGS3e7wlvbIAOL82j2e1HJdZaFJeKenrpflg7VI8maTvUYU/PEpN0vtajRkmtBell
+         BivblAc7f1qNC0vAejUcILTfBanXEsD7op//icAh4f0v7ZtTX9LoYacQiPMX3bHbi0
+         QJtUunRRctlXu5ch1/JnJrjhkXWUkg1SI1Q+8Xf5UwajyctQUaRW/Pd4ccYBNxZc2G
+         RG82JulU2WziaGVH06Zo5GBbb6n4v+fJ8/EkTwg5I3UNrqLsG4Nl/Eh4P+o88m8M/a
+         Z4DCtI9isbXAf5S5XzlAvRYHKkB3vxFsNN09W0s+tSVZ9Vmo36ez9YCJg53NDVWijH
+         TKy+DL0xLPdqg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-__fls() is returning an unsigned long, but fls() and fls64() are
-both returning a (signed) int.
-As we need a signed int as right operand of "<<" (as Linus pointed out),
-change __fls() to fls() for 32bit and also adjust masking the lowest bit
-to be a signed int.
-Now the 32bit and the 64bit version are again similar.
-
-best regards,
-
-Florian La Roche
-
-
-
-Signed-off-by: Florian La Roche <Florian.LaRoche@googlemail.com>
----
- lib/int_sqrt.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/lib/int_sqrt.c b/lib/int_sqrt.c
-index 30e0f9770f88..66eb93105812 100644
---- a/lib/int_sqrt.c
-+++ b/lib/int_sqrt.c
-@@ -23,7 +23,7 @@ unsigned long int_sqrt(unsigned long x)
- 	if (x <= 1)
- 		return x;
- 
--	m = 1UL << (__fls(x) & ~1UL);
-+	m = 1UL << ((fls(x) - 1) & ~1);
- 	while (m != 0) {
- 		b = y + m;
- 		y >>= 1;
-@@ -52,7 +52,7 @@ u32 int_sqrt64(u64 x)
- 	if (x <= ULONG_MAX)
- 		return int_sqrt((unsigned long) x);
- 
--	m = 1ULL << ((fls64(x) - 1) & ~1ULL);
-+	m = 1ULL << ((fls64(x) - 1) & ~1);
- 	while (m != 0) {
- 		b = y + m;
- 		y >>= 1;
--- 
-2.17.1
-
+On 1/25/2019 12:13 AM, Takashi Iwai wrote:
+> On Thu, 24 Jan 2019 19:15:12 +0100,
+> Sameer Pujar wrote:
+>>
+>> On 1/24/2019 9:34 PM, Takashi Iwai wrote:
+>>> On Thu, 24 Jan 2019 16:57:11 +0100,
+>>> Sameer Pujar wrote:
+>>>> The runtime PM count is incremented and set to active during hda codec
+>>>> device init, but it is decremented and set to suspend during exit only.
+>>>> Hence the runtime PM status is always active and hda device cannot be
+>>>> put to runtime suspend. Keeping device usage active for entire period,
+>>>> though nothing really happening on the device, seems unnecessary.
+>>>>
+>>>> This patch avoides incrementing runtime PM usage count of the device.
+>>>>
+>>>> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+>>>> Reviewed-by: Ravindra Lokhande <rlokhande@nvidia.com>
+>>>> Reviewed-by: Mohan Kumar D <mkumard@nvidia.com>
+>>> This breaks the existing things, I'm afraid.
+>>> Did you really test and verify the behavior...?
+>>>
+>>> The runtime PM refcount is decremented at snd_hda_codec_register(),
+>>> and that's the place to let runtime suspend of the codec really
+>>> effective.  (It's not about the controller, though.)
+>>>
+>> It worked fine at my end. I could put the device to runtime suspend
+>> and resume it back multiple times.
+>> Since you are suggesting it could break things, let me rework on the
+>> patch and dig up a little more to
+>> see if there is better way to fix this.
+> Well, I don't see what you want to "fix".  Do you see any bug?
+I was expecting the device to be runtime suspended, once probe is 
+finished, until I playback something on it.
+But it appears that rutntime PM is always active and runtime PM suspend 
+callback never happens.
+> thanks,
+>
+> Takashi
+>
+>> Thanks,
+>> Sameer.
+>>
+>>> thanks,
+>>>
+>>> Takashi
+>>>
+>>>
+>>>> ---
+>>>>    sound/hda/hdac_device.c | 6 ------
+>>>>    1 file changed, 6 deletions(-)
+>>>>
+>>>> diff --git a/sound/hda/hdac_device.c b/sound/hda/hdac_device.c
+>>>> index 95b073e..72aa342 100644
+>>>> --- a/sound/hda/hdac_device.c
+>>>> +++ b/sound/hda/hdac_device.c
+>>>> @@ -31,9 +31,6 @@ static void default_release(struct device *dev)
+>>>>     *
+>>>>     * Returns zero for success or a negative error code.
+>>>>     *
+>>>> - * This function increments the runtime PM counter and marks it active.
+>>>> - * The caller needs to turn it off appropriately later.
+>>>> - *
+>>>>     * The caller needs to set the device's release op properly by itself.
+>>>>     */
+>>>>    int snd_hdac_device_init(struct hdac_device *codec, struct hdac_bus *bus,
+>>>> @@ -55,8 +52,6 @@ int snd_hdac_device_init(struct hdac_device *codec, struct hdac_bus *bus,
+>>>>    	codec->bus = bus;
+>>>>    	codec->addr = addr;
+>>>>    	codec->type = HDA_DEV_CORE;
+>>>> -	pm_runtime_set_active(&codec->dev);
+>>>> -	pm_runtime_get_noresume(&codec->dev);
+>>>>    	atomic_set(&codec->in_pm, 0);
+>>>>      	err = snd_hdac_bus_add_device(bus, codec);
+>>>> @@ -123,7 +118,6 @@ EXPORT_SYMBOL_GPL(snd_hdac_device_init);
+>>>>     */
+>>>>    void snd_hdac_device_exit(struct hdac_device *codec)
+>>>>    {
+>>>> -	pm_runtime_put_noidle(&codec->dev);
+>>>>    	snd_hdac_bus_remove_device(codec->bus, codec);
+>>>>    	kfree(codec->vendor_name);
+>>>>    	kfree(codec->chip_name);
+>>>> -- 
+>>>> 2.7.4
+>>>>
+>>>>
