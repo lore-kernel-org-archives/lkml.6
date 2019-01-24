@@ -2,126 +2,135 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9594BC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:07:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1F74C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:07:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C1FF20854
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:07:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70DEE20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:07:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eLwzymyw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727531AbfAXJHK convert rfc822-to-8bit (ORCPT
+        id S1727574AbfAXJHN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 04:07:10 -0500
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:46276 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726025AbfAXJHJ (ORCPT
+        Thu, 24 Jan 2019 04:07:13 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:33241 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727513AbfAXJHK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 04:07:09 -0500
-Received: by mail-ua1-f67.google.com with SMTP id v24so1713456uap.13;
-        Thu, 24 Jan 2019 01:07:08 -0800 (PST)
+        Thu, 24 Jan 2019 04:07:10 -0500
+Received: by mail-oi1-f196.google.com with SMTP id c206so4288133oib.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 01:07:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kcuJ7o6GNo8x17v/dH/5G6NdXueyDstuYD8Zc4S9Y7s=;
+        b=eLwzymywGD+CIk/31TbpTyWXUjDdnn811AZrBe5if7mUFts3Hx2POFLLXiqOvzu0XS
+         iqI1nzMkWWSVMGrpr3r6HUmz4woqu0H14TEtWeU3SaT53N9gvYLeTEyPrOjj4FLCF3kx
+         EwmvkfGOt2tORe2Lt/T3s5TKFolFWT1TqfDJ8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=SiOBLixYntQVxi4BmtnVqXhqkmatSilfo/c722lN5Jg=;
-        b=jbXsg4j6ddF92MgUH8hK9Ij3T/x992fbfiiAd0fU33P2T+CMTQdRO1zQZVx8bnbiKy
-         J9Pi6QolQ2YRE9Xc9WA5QsuxBHAEK8oIYZPyisZvwgQ/f3n002xBrvD4l+cm3eJTHZjC
-         +iHOkOIpkG9uS+BhH6SYB4kJNnnTpr6Cbiv9iWyKmI0V6GVshqggtFiEv0k9PnIJs9XV
-         M/3/+PBtFPJkuZ2KEEHpHwXsxm1doSVoCBkJZIDrCEjJlFxXtq5KgvRvWRWnnibUX+/Y
-         DcmCd0yjIcIt+i/mhf1GGYYWEhz+Soc/aBT/4WvUqwHUYIDEJxvv20XLmOg0eeTPKO8N
-         V7vg==
-X-Gm-Message-State: AJcUukcWjO//fV6cx4TROHq7S1grBsII5W0dmsMQXAXHS/x1aQaMZWvO
-        30T9h6BlLtOsJqG/EKKNBGGDqy8husNx4cNnDTs=
-X-Google-Smtp-Source: ALg8bN6zTt8NdDaMU/zkhxCaT3x/anX6iMtmzaBq3+qRrNdJ3qsXt5EXEtGXIvDbBa6pAwlkPAG6UanEQ4ISHlXz+oU=
-X-Received: by 2002:a9f:364a:: with SMTP id s10mr2259728uad.78.1548320828032;
- Thu, 24 Jan 2019 01:07:08 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=kcuJ7o6GNo8x17v/dH/5G6NdXueyDstuYD8Zc4S9Y7s=;
+        b=IosdS+FjKF95NnSascvMD+aYJGRqtXA7IcgOzorexn+6GB/H0K04rzDQNYSNumMFCI
+         bmWRIppbexFldMCdeceplo164N9p3D8Usn/DJkciUpoLpaP6qcjxn0Evd9/x8LpPFamD
+         uy4GdedIz8w1YNK+fHX0gVnfdSt0Nuw/O09orrmYuzRKftR4nhftPlZOwAUdgKHqQpaq
+         FzYdsuXOB2J6Flx4FuFrbLzklSZ9D+YNf6sdA3DJ0vYqBhRcv+6JaQ5wYwWtH86xiQVN
+         1OxNE1KQn7Gcn8NvUJLnAfFyXwrVxY0J19UdNt+sqJVHCE5TIM6A+8/v9/OMylKaclFE
+         /TaA==
+X-Gm-Message-State: AHQUAuZ531yS+b3D0vX7Cm4kTjLxIaaw6lRsD935Bb0JbtZBfAXYq6Ty
+        i3ZUdzSbEZYNObK4tQ3c8c1vg8eI2qA=
+X-Google-Smtp-Source: ALg8bN69KkV1dQU2s1yTKF53KfBgFj6WHTSFlYJzh94j0EaGxJjWcGKzcmjOQv4kZzDMzRsSIc7F9w==
+X-Received: by 2002:a54:458c:: with SMTP id z12mr605186oib.293.1548320828944;
+        Thu, 24 Jan 2019 01:07:08 -0800 (PST)
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com. [209.85.167.177])
+        by smtp.gmail.com with ESMTPSA id k11sm11604915oib.35.2019.01.24.01.07.06
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 24 Jan 2019 01:07:07 -0800 (PST)
+Received: by mail-oi1-f177.google.com with SMTP id a77so4250880oii.5
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 01:07:06 -0800 (PST)
+X-Received: by 2002:aca:c2c3:: with SMTP id s186mr604655oif.173.1548320826474;
+ Thu, 24 Jan 2019 01:07:06 -0800 (PST)
 MIME-Version: 1.0
-References: <1548227352-14910-1-git-send-email-masonccyang@mxic.com.tw>
- <1548227352-14910-3-git-send-email-masonccyang@mxic.com.tw>
- <ba02ea43-83ce-7e3c-6910-73f2e78f51cf@gmail.com> <OFB904EE00.27B08F2C-ON4825838C.000D6846-4825838C.000E90F7@mxic.com.tw>
-In-Reply-To: <OFB904EE00.27B08F2C-ON4825838C.000D6846-4825838C.000E90F7@mxic.com.tw>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 24 Jan 2019 10:06:56 +0100
-Message-ID: <CAMuHMdUqprbwvO=VaoyY__nOoNhowEZ8A-i+Tb+2iBe8-p=_Hg@mail.gmail.com>
-Subject: Re: [PATCH v7 2/2] dt-bindings: spi: Document Renesas R-Car Gen3
- RPC-IF controller bindings
-To:     Mason Yang <masonccyang@mxic.com.tw>
-Cc:     Marek Vasut <marek.vasut@gmail.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
+References: <20181022144901.113852-1-tfiga@chromium.org> <20181022144901.113852-2-tfiga@chromium.org>
+ <cf0fc2fc-72c6-dbca-68f7-a349879a3a14@xs4all.nl> <CAAFQd5AORjMjHdavdr3zM13BnyFnKnEb-0aKNjvwbB_xJEnxgQ@mail.gmail.com>
+ <9b7c1385-d482-6e92-2222-2daa835dbc91@xs4all.nl> <CAAFQd5DwjLt8UeDohzrMausaLGnOStvrmp5p7frYbG1hbGjx3Q@mail.gmail.com>
+In-Reply-To: <CAAFQd5DwjLt8UeDohzrMausaLGnOStvrmp5p7frYbG1hbGjx3Q@mail.gmail.com>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Thu, 24 Jan 2019 18:06:54 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5BPJv3cbJOWrziEjz_yE32DhfZv9vb-pG1Ltx-KS2=PQg@mail.gmail.com>
+Message-ID: <CAAFQd5BPJv3cbJOWrziEjz_yE32DhfZv9vb-pG1Ltx-KS2=PQg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] media: docs-rst: Document memory-to-memory video
+ decoder interface
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        zhengxunli@mxic.com.tw
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Pawel Osciak <posciak@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Kamil Debski <kamil@wypas.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Jeongtae Park <jtp.park@samsung.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= 
+        <tiffany.lin@mediatek.com>,
+        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?= 
+        <andrew-ct.chen@mediatek.com>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Nicolas Dufresne <nicolas@ndufresne.ca>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        dave.stevenson@raspberrypi.org,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Maxime Jourdan <maxi.jourdan@wanadoo.fr>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mason,
-
-On Thu, Jan 24, 2019 at 3:39 AM <masonccyang@mxic.com.tw> wrote:
-> > "Marek Vasut" <marek.vasut@gmail.com>
-> > 2019/01/24 上午 09:54
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/spi/spi-renesas-
-> > rpc.txt b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
-> > > new file mode 100644
-> > > index 0000000..305bd10
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
-> > > @@ -0,0 +1,46 @@
-> > > +Renesas R-Car Gen3 RPC-IF controller Device Tree Bindings
-> > > +--------------------------------------------------------------------
-> > > +
-> > > +Required properties:
-> > > +- compatible: should be an SoC-specific compatible value, followed by
-> > > +      "renesas,rcar-gen3-rpc" as a fallback, i.e.,
-> > > +      "renesas,r8a77995-rpc", "renesas,rcar-gen3-rpc".
-> > > +      "renesas,r8a7795-rpc"   (R-Car H3)
-> > > +      "renesas,r8a7796-rpc"   (R-Car M3-W)
-> > > +      "renesas,r8a77965-rpc"   (R-Car M3-N)
-> > > +      "renesas,r8a77970-rpc"   (R-Car V3M)
-> > > +      "renesas,r8a77980-rpc"   (R-Car V3H)
-> > > +      "renesas,r8a77990-rpc"   (R-Car E3)
-> > > +      "renesas,r8a77995-rpc"   (R-Car D3)
-> >
-> > Was it tested on all of those SoCs and do we already handle all the
-> > quirks of those ?
+On Wed, Jan 23, 2019 at 2:27 PM Tomasz Figa <tfiga@chromium.org> wrote:
 >
-> These are R-Car Gen3 series and I list these by Geert's comments,
-> or I misunderstand Geert's comments ?
+> On Tue, Jan 22, 2019 at 11:47 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
+> >
+> > On 01/22/19 11:02, Tomasz Figa wrote:
+[snip]
+> > >>> +   one ``CAPTURE`` buffer, the following cases are defined:
+> > >>> +
+> > >>> +   * one ``OUTPUT`` buffer generates multiple ``CAPTURE`` buffers: the same
+> > >>> +     ``OUTPUT`` timestamp will be copied to multiple ``CAPTURE`` buffers,
+> > >>> +
+> > >>> +   * multiple ``OUTPUT`` buffers generate one ``CAPTURE`` buffer: timestamp of
+> > >>> +     the ``OUTPUT`` buffer queued last will be copied,
+> > >>> +
+> > >>> +   * the decoding order differs from the display order (i.e. the
+> > >>> +     ``CAPTURE`` buffers are out-of-order compared to the ``OUTPUT`` buffers):
+> > >>> +     ``CAPTURE`` timestamps will not retain the order of ``OUTPUT`` timestamps
+> > >>> +     and thus monotonicity of the timestamps cannot be guaranteed.
+> >
+> > I think this last point should be rewritten. The timestamp is just a value that
+> > is copied, there are no monotonicity requirements for m2m devices in general.
+> >
+>
+> Actually I just realized the last point might not even be achievable
+> for some of the decoders (s5p-mfc, mtk-vcodec), as they don't report
+> which frame originates from which bitstream buffer and the driver just
+> picks the most recently consumed OUTPUT buffer to copy the timestamp
+> from. (s5p-mfc actually "forgets" to set the timestamp in some cases
+> too...)
+>
+> I need to think a bit more about this.
 
-I think you misunderstood. Typically we only list the SoC-specific
-compatible values for SoCs that have been tested with the driver.
-So for now I'd go with:
+Actually I misread the code. Both s5p-mfc and mtk-vcodec seem to
+correctly match the buffers.
 
-    - compatible: should be an SoC-specific compatible value, followed by
-                  "renesas,rcar-gen3-rpc" as a fallback.
-                  Supported SoC-specific values are:
-                    - "renesas,r8a77995-rpc"   (R-Car D3)
-
-The list can be extended when the driver has been tested/enhanced to
-support more SoC types.
-
-Does that sound OK?
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best regards,
+Tomasz
