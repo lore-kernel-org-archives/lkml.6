@@ -8,60 +8,60 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD5A7C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 23:22:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1747BC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 23:23:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98B53218A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 23:22:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA3D1218A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 23:23:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T60o4cA1"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OyEYtwD1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728440AbfAXXW6 (ORCPT
+        id S1728395AbfAXXW5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 18:22:58 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:36353 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728343AbfAXXWx (ORCPT
+        Thu, 24 Jan 2019 18:22:57 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:36669 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727845AbfAXXWy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 18:22:53 -0500
-Received: by mail-pf1-f195.google.com with SMTP id b85so3784320pfc.3;
-        Thu, 24 Jan 2019 15:22:53 -0800 (PST)
+        Thu, 24 Jan 2019 18:22:54 -0500
+Received: by mail-pg1-f193.google.com with SMTP id n2so3361096pgm.3;
+        Thu, 24 Jan 2019 15:22:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=fT4h6oqWEOPvndp8+AEJcxPnPDZPV1abg43E3tyKnHE=;
-        b=T60o4cA1K/rSoooGjZxnp3kFjENsibGPTXssolDYgxfdRW2KwtnmHSEvfd//dstva7
-         AKWYpJR6/+iHKNX+qf2AYWhE12MQCnp5iaieg5sOS7UMAqk0Ia1E8wdx69JrYT0t9BJm
-         xut5bJLlLOpZou1DEKnosVAKoqMR5cGMR49c7soOLZFttGOE2sjBbR+3ownIz71jkDFH
-         i5Fu6qaKQPW0f2YP6a6HepIEtAWQ/NrYTRLbjamZ6bKk1EFeGWXtk3xS1mIqn7vFUOvK
-         mxUhGKRLobCVOfStqzg7x0ps/0lR6PV5YbovId9Y6mt8P2/hbfaW8holx4FeBdft1T66
-         c6cQ==
+        bh=TLgfw4fM0l9uLmrBE6pG8oaLgGh5MrQeTKy2hkTuZOg=;
+        b=OyEYtwD1zmDOYTnAdZBox1bzlHrxnJi0nRzcZ6EelT8HU8UXip2GBts9n0CBh2I6gS
+         9hgr+YOwsrFmfoUljCgcPCjBhrGNP/9w4cSNAuE2Uc4y9yAORzwfN+8DhiYGOGWvO061
+         h2CcUUYJypzz3kY0XrAlbT+1wKUS4t3t2L7DDlQfZ4ioqdOPP1rtVwl4qhoHpueRT3ps
+         4J1K/7o7ZQo0hVyBF/uHJcUDNRyOSrCRWzEwf+D0dOA2HAIabe77myIHS7Oph+q65teY
+         iuU+sfNM9qIRcnUw7iQ9ho5WF9hIwQLStedqBqA1gU1qY4Y+oTt94XDT92FalbQJNLHR
+         qyWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=fT4h6oqWEOPvndp8+AEJcxPnPDZPV1abg43E3tyKnHE=;
-        b=F4zAliaonWyuT4G9DaN0hRsx5j36Pg7BVymYCE2I6D7VNYh/IKstnb2jKoc0yFwvl9
-         cmI3tpHbKDM7gJ/bgGwtbPfsa05kaB2PHVkvUxxIIuaEWCILiVFzgJnRawpL5pk5MPm6
-         3lZV0py/icvt2Tx/MbQFeJhPCsnBgy88qy3yYNoeysbNo7sKhD3BN35dc4HkZ58TJg2Z
-         mTB1A9rz2nTcJt3t8XW6p7Cct95U4BjawedqkIMFgSCllpNpxi57ZECtH8iPAek0d/SD
-         fukPl9UHajhNlVF8GoQxr4vC6wJjslCyUjGppsgNAQVF/up7KZqeh8YZGUceWfsE4JUx
-         WNJw==
-X-Gm-Message-State: AJcUukfW7wUcRev0wuEyM//VzfNp0l2sZX+6vhucEj74FZlnyROnwOUM
-        CEiw+PpiibPegBx11Tft+gg=
-X-Google-Smtp-Source: ALg8bN7iN/salSAHrrxSyv6U7h4S/5uu4aVJX3J7ZvcuGpnm3PsQXAnH7DYfu+dZonPf1qMuKCm1xQ==
-X-Received: by 2002:a63:5153:: with SMTP id r19mr7736931pgl.281.1548372172704;
-        Thu, 24 Jan 2019 15:22:52 -0800 (PST)
+        bh=TLgfw4fM0l9uLmrBE6pG8oaLgGh5MrQeTKy2hkTuZOg=;
+        b=XhJvTZTlCR+VgiscEG58tNi0x4Vdmj+I0YgLp/eXYCahnTucZGd+RRBgEHGJ4ez030
+         jTT3CEnHDok/1Ql/2qjIhwHkjw1bzg5VBwd1eokMVWTlR+I71PM0YNCKw9qUDECVudp/
+         wZ7SJnyWmfL+zx8IWWwJShELmK1ZWsjFHyXpQU9TzuVov/AFbTgMshVLhMY7FFel9mJR
+         +yu9sMZA/PnNC4bzrh9/vrcwnLLZmzOwWJT7sWUbKDZLYQAWgR6oy/zPh/+c9oshgxFO
+         ttWj09RS0y5eo4F0eRw81BzxJtEx0YkNijrxEkKpQ6zi1fMvc2PxGyE26bpU/dJJC0IM
+         qwyg==
+X-Gm-Message-State: AJcUukfBcEjGpR665NGc2xJx9CgJAWK5JpewObK1GgQ98SLVKRBOqN5V
+        J5JN81G+q1UyTdvZmS1awNY=
+X-Google-Smtp-Source: ALg8bN5cmtjMLTdp+Zg9sK99DRmttQJcXKAQ4qkaBbHBC9X0LOkL61c5hqaYWoDZA9//jTgt7xZS0g==
+X-Received: by 2002:a63:d604:: with SMTP id q4mr7715203pgg.175.1548372173787;
+        Thu, 24 Jan 2019 15:22:53 -0800 (PST)
 Received: from localhost.localdomain (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id g15sm95216217pfj.131.2019.01.24.15.22.51
+        by smtp.gmail.com with ESMTPSA id g15sm95216217pfj.131.2019.01.24.15.22.52
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 24 Jan 2019 15:22:52 -0800 (PST)
+        Thu, 24 Jan 2019 15:22:53 -0800 (PST)
 From:   frowand.list@gmail.com
 To:     Rob Herring <robh+dt@kernel.org>
 Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] of: unittest: remove report of expected error
-Date:   Thu, 24 Jan 2019 15:22:13 -0800
-Message-Id: <1548372134-15729-2-git-send-email-frowand.list@gmail.com>
+Subject: [PATCH 2/2] of: unittest: add caution to function header comment
+Date:   Thu, 24 Jan 2019 15:22:14 -0800
+Message-Id: <1548372134-15729-3-git-send-email-frowand.list@gmail.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1548372134-15729-1-git-send-email-frowand.list@gmail.com>
 References: <1548372134-15729-1-git-send-email-frowand.list@gmail.com>
@@ -72,36 +72,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Frank Rowand <frank.rowand@sony.com>
 
-update_node_properties() reports an error when the test data contains
-a node (such as "/aliases") that already exists in the base devicetree.
-The error is caused by of_fdt_unflatten_tree() autogenerating the
-"name" property, thus both the existing node and the new node will
-have a property with the same name.  Suppress reporting the known
-error.
+Name of function attach_node_and_children() is misleading because
+if the node already exists in the livetree then only the node's
+properties are attached.  This works for the existing test data,
+but add comment warning of this misleading name.
 
 Signed-off-by: Frank Rowand <frank.rowand@sony.com>
 ---
- drivers/of/unittest.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/of/unittest.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
-index 84427384654d..3249fe259d30 100644
+index 3249fe259d30..872956500c27 100644
 --- a/drivers/of/unittest.c
 +++ b/drivers/of/unittest.c
-@@ -1116,9 +1116,12 @@ static void update_node_properties(struct device_node *np,
- 	for (prop = np->properties; prop != NULL; prop = save_next) {
- 		save_next = prop->next;
- 		ret = of_add_property(dup, prop);
--		if (ret)
-+		if (ret) {
-+			if (ret == -EEXIST && !strcmp(prop->name, "name"))
-+				continue;
- 			pr_err("unittest internal error: unable to add testdata property %pOF/%s",
- 			       np, prop->name);
-+		}
- 	}
- }
+@@ -1127,7 +1127,11 @@ static void update_node_properties(struct device_node *np,
  
+ /**
+  *	attach_node_and_children - attaches nodes
+- *	and its children to live tree
++ *	and its children to live tree.
++ *	CAUTION: misleading function name - if node @np already exists in
++ *	the live tree then children of @np are *not* attached to the live
++ *	tree.  This works for the current test devicetree nodes because such
++ *	nodes do not have child nodes.
+  *
+  *	@np:	Node to attach to live tree
+  */
 -- 
 Frank Rowand <frank.rowand@sony.com>
 
