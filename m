@@ -7,49 +7,47 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC908C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:42:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ADF0C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:42:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BABCD218A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:42:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0255218A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:42:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358925;
-	bh=+QAHGtCWYkxhnN7952jYV44mmnipji9ViTgvRQNkvhM=;
+	s=default; t=1548358931;
+	bh=SNzeJO1vrePzsjb3oovY/wYjl+fZ7wV5vcFhuSuyu70=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=flfRIuWQOigrUMa/fAw+uQaVeyLy+TfZRwNjMX99+GJV6zVi8jMiJBpY69ru4IWwx
-	 kipLAnhlCJpqEmEJFNLKwDrB7PzM0e7XPNPG2hZdiO5zcdmfFoqC+50d77n86erE+r
-	 M6tPZN1WkYIa1jaOgOKvaO7ZaztYFYkkR1WfgtGM=
+	b=F8tv1sdD4QBLcaGCxS2Utk+qI3bf3O60qlNpytMkI20QOpLDpascyZOWvFhfb5L+P
+	 bK7KUQKhMdkK4QW/V/5XFNuwJb0HeTS02YNdVmKAgiNtJpGxsUzpZW5iRHp4LxSpm3
+	 TTJLMuSF6yzL0BEo9nyUu8ajkg0KeQHpSCPi+XlY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387718AbfAXTmD (ORCPT
+        id S1730723AbfAXTmJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:42:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42420 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:42:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42528 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732980AbfAXTmB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:42:01 -0500
+        id S1732804AbfAXTmH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:42:07 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 33D8E20663;
-        Thu, 24 Jan 2019 19:42:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 78A3920663;
+        Thu, 24 Jan 2019 19:42:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358920;
-        bh=+QAHGtCWYkxhnN7952jYV44mmnipji9ViTgvRQNkvhM=;
+        s=default; t=1548358926;
+        bh=SNzeJO1vrePzsjb3oovY/wYjl+fZ7wV5vcFhuSuyu70=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qquQlDO6fUTORO+4yP7Q7Hli/UvK2kAJfFq95XMJeZVUYSdvAoqvPpz75CVEz0oP2
-         klmu0Q7iDQiuJn6FLSIEEEv+ztCzigVAtE+5rCk3aUfs3HiI8j0pIH01+RQxT2urhd
-         HhH2QQ98JsFvmMD+uPFRwovaPgHx1L2J7r3JIUVA=
+        b=r2ivDUvUVyKs/mYDGi9370qv2SrldFGoyWgVJ5YRIkbvWf4oMHrf3c3cDn1eLhwzJ
+         Tw4KGU9TQ1O1uJM7FA5rSy0kgOSWW2bxRvLaKSL+seBKoxACBcAOtgracoyJNGhuFV
+         Q2QnbwoaQtfFbOwFbct5w9CNxWBg8MX1+k4wdOm4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
+        stable@vger.kernel.org, "Daniel T. Lee" <danieltimlee@gmail.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 038/127] clk: meson: meson8b: add support for more M/N values in sys_pll
-Date:   Thu, 24 Jan 2019 20:19:44 +0100
-Message-Id: <20190124190213.908055572@linuxfoundation.org>
+Subject: [PATCH 4.20 040/127] samples: bpf: fix: error handling regarding kprobe_events
+Date:   Thu, 24 Jan 2019 20:19:46 +0100
+Message-Id: <20190124190213.987976998@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
 References: <20190124190211.984305387@linuxfoundation.org>
@@ -68,68 +66,116 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit e36c7e9898f2ba34becf37bda37b70e984b0bf4e ]
+[ Upstream commit 5a863813216ce79e16a8c1503b2543c528b778b6 ]
 
-The sys_pll on the EC-100 board is configured to 1584MHz at boot
-(either by u-boot, firmware or chip defaults). This is achieved by using
-M = 66, N = 1 (24MHz * 66 / 1).
-At boot the CPU clock is running off sys_pll divided by 2 which results
-in 792MHz. Thus M = 66 is considered to be a "safe" value for Meson8b.
+Currently, kprobe_events failure won't be handled properly.
+Due to calling system() indirectly to write to kprobe_events,
+it can't be identified whether an error is derived from kprobe or system.
 
-To achieve 1608MHz (one of the CPU OPPs on Meson8 and Meson8m2) we need
-M = 67, N = 1. I ran "stress --cpu 4" while infinitely cycling through
-all available frequencies on my Meson8m2 board and could not spot any
-issues with this setting (after ~12 hours of running this).
+    // buf = "echo '%c:%s %s' >> /s/k/d/t/kprobe_events"
+    err = system(buf);
+    if (err < 0) {
+        printf("failed to create kprobe ..");
+        return -1;
+    }
 
-On Meson8, Meson8b and Meson8m2 we also want to be able to use 408MHz
-and 816MHz CPU frequencies. These can be achieved by dividing sys_pll by
-4 (for 408MHz) or 2 (for 816MHz). That means that sys_pll has to run at
-1632MHz which can be generated using M = 68, N = 1.
-Similarily we also want to be able to use 1008MHz as CPU frequency. This
-means that sys_pll has to run either at 1008MHz or 2016MHz. The former
-would result in an M value of 42, which is lower than the smallest value
-used by the 3.10 GPL kernel sources from Amlogic (50 is the lower limit
-there). Thus we need to run sys_pll at 2016MHz which can ge generated
-using M = 84, N = 1.
-I tested M = 68 and M = 84 on my Meson8b Odroid-C1 and my Meson8m2 board
-by running "stress --cpu 4" while infinitely cycling thorugh all
-available frequencies. I could not spot any issues after ~12 hours of
-running this.
+For example, running ./tracex7 sample in ext4 partition,
+"echo p:open_ctree open_ctree >> /s/k/d/t/kprobe_events"
+gets 256 error code system() failure.
+=> The error comes from kprobe, but it's not handled correctly.
 
-Amlogic's 3.10 GPL kernel sources have more M/N combinations. I did not
-add them yet because M = 74 (to achieve close to 1800MHz on Meson8) and
-M = 82 (to achieve close to 1992MHz on Meson8 as well) caused my
-Meson8m2 board to hang randomly. It's not clear why this is (for example
-because the board's voltage regulator design is bad, some missing bits
-for these values in our clk-pll driver, etc.). Thus the following M
-values from the Amlogic 3.10 GPL kernel sources are skipped as of now:
-69, 70, 71, 72, 73, 74, 76, 78, 80, 82, 84, 86, 88, 90, 92, 94, 96, 98
+According to man of system(3), it's return value
+just passes the termination status of the child shell
+rather than treating the error as -1. (don't care success)
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Acked-by: Jerome Brunet <jbrunet@baylibre.com>
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Link: https://lkml.kernel.org/r/20181115224048.13511-5-martin.blumenstingl@googlemail.com
+Which means, currently it's not working as desired.
+(According to the upper code snippet)
+
+    ex) running ./tracex7 with ext4 env.
+    # Current Output
+    sh: echo: I/O error
+    failed to open event open_ctree
+
+    # Desired Output
+    failed to create kprobe 'open_ctree' error 'No such file or directory'
+
+The problem is, error can't be verified whether from child ps
+or system. But using write() directly can verify the command
+failure, and it will treat all error as -1. So I suggest using
+write() directly to 'kprobe_events' rather than calling system().
+
+Signed-off-by: Daniel T. Lee <danieltimlee@gmail.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/meson/meson8b.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ samples/bpf/bpf_load.c | 33 ++++++++++++++++++++++++---------
+ 1 file changed, 24 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index 346b9e165b7a..a059db63907c 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -42,6 +42,11 @@ static const struct pll_params_table sys_pll_params_table[] = {
- 	PLL_PARAMS(62, 1),
- 	PLL_PARAMS(63, 1),
- 	PLL_PARAMS(64, 1),
-+	PLL_PARAMS(65, 1),
-+	PLL_PARAMS(66, 1),
-+	PLL_PARAMS(67, 1),
-+	PLL_PARAMS(68, 1),
-+	PLL_PARAMS(84, 1),
- 	{ /* sentinel */ },
- };
+diff --git a/samples/bpf/bpf_load.c b/samples/bpf/bpf_load.c
+index e6d7e0fe155b..96783207de4a 100644
+--- a/samples/bpf/bpf_load.c
++++ b/samples/bpf/bpf_load.c
+@@ -54,6 +54,23 @@ static int populate_prog_array(const char *event, int prog_fd)
+ 	return 0;
+ }
  
++static int write_kprobe_events(const char *val)
++{
++	int fd, ret, flags;
++
++	if ((val != NULL) && (val[0] == '\0'))
++		flags = O_WRONLY | O_TRUNC;
++	else
++		flags = O_WRONLY | O_APPEND;
++
++	fd = open("/sys/kernel/debug/tracing/kprobe_events", flags);
++
++	ret = write(fd, val, strlen(val));
++	close(fd);
++
++	return ret;
++}
++
+ static int load_and_attach(const char *event, struct bpf_insn *prog, int size)
+ {
+ 	bool is_socket = strncmp(event, "socket", 6) == 0;
+@@ -165,10 +182,9 @@ static int load_and_attach(const char *event, struct bpf_insn *prog, int size)
+ 
+ #ifdef __x86_64__
+ 		if (strncmp(event, "sys_", 4) == 0) {
+-			snprintf(buf, sizeof(buf),
+-				 "echo '%c:__x64_%s __x64_%s' >> /sys/kernel/debug/tracing/kprobe_events",
+-				 is_kprobe ? 'p' : 'r', event, event);
+-			err = system(buf);
++			snprintf(buf, sizeof(buf), "%c:__x64_%s __x64_%s",
++				is_kprobe ? 'p' : 'r', event, event);
++			err = write_kprobe_events(buf);
+ 			if (err >= 0) {
+ 				need_normal_check = false;
+ 				event_prefix = "__x64_";
+@@ -176,10 +192,9 @@ static int load_and_attach(const char *event, struct bpf_insn *prog, int size)
+ 		}
+ #endif
+ 		if (need_normal_check) {
+-			snprintf(buf, sizeof(buf),
+-				 "echo '%c:%s %s' >> /sys/kernel/debug/tracing/kprobe_events",
+-				 is_kprobe ? 'p' : 'r', event, event);
+-			err = system(buf);
++			snprintf(buf, sizeof(buf), "%c:%s %s",
++				is_kprobe ? 'p' : 'r', event, event);
++			err = write_kprobe_events(buf);
+ 			if (err < 0) {
+ 				printf("failed to create kprobe '%s' error '%s'\n",
+ 				       event, strerror(errno));
+@@ -519,7 +534,7 @@ static int do_load_bpf_file(const char *path, fixup_map_cb fixup_map)
+ 		return 1;
+ 
+ 	/* clear all kprobes */
+-	i = system("echo \"\" > /sys/kernel/debug/tracing/kprobe_events");
++	i = write_kprobe_events("");
+ 
+ 	/* scan over all elf sections to get license and map info */
+ 	for (i = 1; i < ehdr.e_shnum; i++) {
 -- 
 2.19.1
 
