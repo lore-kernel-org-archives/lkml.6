@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40204C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:24:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C92B8C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:24:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D0A9218D2
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:24:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B274218FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:24:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548357874;
-	bh=rt3Yfs4yYJxpHF6bXA5QWXgoY+2WXs7vRwzRIGzSlZg=;
+	s=default; t=1548357876;
+	bh=oMBLl3s2k46FW+gc3hldMeLACKoQRU/pyJGSckLMkV4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=spvA7umeLudYIUUKzjInS7dVsiPz4yanPb3Kr3pGiswFTkRZNagXj2+C/zOno02S5
-	 KQBCFQGhoM+I+b+ucw4aqmoMl3KaZB56htDf20VilbIdd69kS27nwV10Uht9/bx7j4
-	 5zGZGjn+xreZAM4PmlY/sQV3q/6dbHKfEeDUwY0Y=
+	b=sS9PRKGBaVwHGpIfyTEmLn8wEryoHLZosE6w132q0r/Ag8fcTjrxTwUBBrVmvRYOd
+	 +zpgaqirbeMDqa6fktyvSGP8aBo0TWkBSvNz59DORJr1BBSfruOV8bKrn82t7L2M3F
+	 de0e6PBGypHPp+arENW3uKV0WXwJYESHn33T1kZs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730141AbfAXTYc (ORCPT
+        id S1730160AbfAXTYf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:24:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49792 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:24:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49830 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729596AbfAXTYb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:24:31 -0500
+        id S1729596AbfAXTYd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:24:33 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC47721902;
-        Thu, 24 Jan 2019 19:24:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 84D08217D7;
+        Thu, 24 Jan 2019 19:24:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548357870;
-        bh=rt3Yfs4yYJxpHF6bXA5QWXgoY+2WXs7vRwzRIGzSlZg=;
+        s=default; t=1548357873;
+        bh=oMBLl3s2k46FW+gc3hldMeLACKoQRU/pyJGSckLMkV4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C5drIixWC5tcB/NAzYIkfv69HFWwoKcbZhv8BEMQP97c3zwncPMUwQzzTHnd68GmR
-         kBPe1XFQu5wayHsTjvtPLztsajAoEtqp+nz5Ovj/mP9s678+BZ5rdPpexUIOc7Kzm9
-         4VZxr1YlIIZPqm8pRvx71O4mWA+/Kf5u2YNFvLeA=
+        b=fhX4PR3OlaDvbilPatCMlu/V92OfS4ir4EMqH1nkzQpNR/XjsdYfxhaDIdayznZ7r
+         GL8doL1jKFYNm+zqtDemG5PbAbkPQ8S99cVtPAEG7UiNLnDvGoeFLOCqxJdsGhB423
+         ekp6DrIfrwMMTGy/KNhQjeo9tFUA0i5rZ4xLF9Bk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        Eric Biggers <ebiggers@google.com>
-Subject: [PATCH 4.4 018/104] f2fs: detect wrong layout
-Date:   Thu, 24 Jan 2019 20:19:07 +0100
-Message-Id: <20190124190156.882115643@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.4 019/104] f2fs: free meta pages if sanity check for ckpt is failed
+Date:   Thu, 24 Jan 2019 20:19:08 +0100
+Message-Id: <20190124190157.028819474@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190154.968308875@linuxfoundation.org>
 References: <20190124190154.968308875@linuxfoundation.org>
@@ -68,62 +68,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jaegeuk Kim <jaegeuk@kernel.org>
 
-commit 2040fce83fe17763b07c97c1f691da2bb85e4135 upstream.
+commit a2125ff7dd1ed3a2a53cdc1f8f9c9cec9cfaa7ab upstream.
 
-Previous mkfs.f2fs allows small partition inappropriately, so f2fs should detect
-that as well.
+This fixes missing freeing meta pages in the error case.
 
-Refer this in f2fs-tools.
-
-mkfs.f2fs: detect small partition by overprovision ratio and # of segments
-
-Reported-and-Tested-by: Eric Biggers <ebiggers@google.com>
+Tested-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-[bwh: Backported to 4.4: adjust context]
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/segment.h |    2 ++
- fs/f2fs/super.c   |   11 +++++++++++
- 2 files changed, 13 insertions(+)
+ fs/f2fs/checkpoint.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -17,6 +17,8 @@
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -708,7 +708,7 @@ int get_valid_checkpoint(struct f2fs_sb_
  
- #define DEF_RECLAIM_PREFREE_SEGMENTS	5	/* 5% over total segments */
+ 	/* Sanity checking of checkpoint */
+ 	if (sanity_check_ckpt(sbi))
+-		goto fail_no_cp;
++		goto free_fail_no_cp;
  
-+#define F2FS_MIN_SEGMENTS	9 /* SB + 2 (CP + SIT + NAT) + SSA + MAIN */
-+
- /* L: Logical segment # in volume, R: Relative segment # in main area */
- #define GET_L2R_SEGNO(free_i, segno)	(segno - free_i->start_segno)
- #define GET_R2L_SEGNO(free_i, segno)	(segno + free_i->start_segno)
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1078,6 +1078,7 @@ int sanity_check_ckpt(struct f2fs_sb_inf
- 	unsigned int total, fsmeta;
- 	struct f2fs_super_block *raw_super = F2FS_RAW_SUPER(sbi);
- 	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
-+	unsigned int ovp_segments, reserved_segments;
- 	unsigned int main_segs, blocks_per_seg;
- 	unsigned int sit_segs, nat_segs;
- 	unsigned int sit_bitmap_size, nat_bitmap_size;
-@@ -1096,6 +1097,16 @@ int sanity_check_ckpt(struct f2fs_sb_inf
- 	if (unlikely(fsmeta >= total))
- 		return 1;
+ 	if (cur_page == cp1)
+ 		sbi->cur_cp_pack = 1;
+@@ -736,6 +736,9 @@ done:
+ 	f2fs_put_page(cp2, 1);
+ 	return 0;
  
-+	ovp_segments = le32_to_cpu(ckpt->overprov_segment_count);
-+	reserved_segments = le32_to_cpu(ckpt->rsvd_segment_count);
-+
-+	if (unlikely(fsmeta < F2FS_MIN_SEGMENTS ||
-+			ovp_segments == 0 || reserved_segments == 0)) {
-+		f2fs_msg(sbi->sb, KERN_ERR,
-+			"Wrong layout: check mkfs.f2fs version");
-+		return 1;
-+	}
-+
- 	main_segs = le32_to_cpu(raw_super->segment_count_main);
- 	blocks_per_seg = sbi->blocks_per_seg;
- 
++free_fail_no_cp:
++	f2fs_put_page(cp1, 1);
++	f2fs_put_page(cp2, 1);
+ fail_no_cp:
+ 	kfree(sbi->ckpt);
+ 	return -EINVAL;
 
 
