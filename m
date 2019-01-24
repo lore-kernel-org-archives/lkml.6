@@ -2,176 +2,162 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38F73C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:09:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54397C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:09:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0ED22218AE
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:09:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 24A8520855
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:09:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="AmbqN2sd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727878AbfAXMJU convert rfc822-to-8bit (ORCPT
+        id S1727889AbfAXMJy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 07:09:20 -0500
-Received: from mga09.intel.com ([134.134.136.24]:52730 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726080AbfAXMJU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 07:09:20 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jan 2019 04:09:19 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,516,1539673200"; 
-   d="scan'208";a="138383085"
-Received: from jlahtine-desk.ger.corp.intel.com (HELO localhost) ([10.252.7.47])
-  by fmsmga004.fm.intel.com with ESMTP; 24 Jan 2019 04:09:13 -0800
-Content-Type: text/plain; charset="utf-8"
+        Thu, 24 Jan 2019 07:09:54 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:40680 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726080AbfAXMJx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 07:09:53 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0OC9NPW064915;
+        Thu, 24 Jan 2019 06:09:23 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1548331763;
+        bh=f5PVU+IUWZvcFkA+hQt3TkhQObXkhBmktE8Yz1JgR7g=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=AmbqN2sdyRBrS5POmU2Bp67Xv6appsIujc+6806lEU398TjZnVQFJ4lWn6dK28Jkt
+         iSAaDid1J4nmM4tBBbP8m4Tz0rNczgn9RQ2qBTIgHcnyE3rOxNJfSQ5QNLzmvWFomS
+         uDq7bAuAqwFpEcv5E1QGBHY3qBONRz8AAdWp2Jg0=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0OC9NcE089009
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 24 Jan 2019 06:09:23 -0600
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 24
+ Jan 2019 06:09:23 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Thu, 24 Jan 2019 06:09:23 -0600
+Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0OC9Jm9022276;
+        Thu, 24 Jan 2019 06:09:20 -0600
+Subject: Re: [PATCH 02/17] clocksource: davinci-timer: new driver
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+CC:     Kevin Hilman <khilman@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20190111172134.30147-1-brgl@bgdev.pl>
+ <20190111172134.30147-3-brgl@bgdev.pl>
+ <08200de1-fde5-c525-c874-c7872259067b@ti.com>
+ <CAMRc=McrT4KTW45=3CTBxspVb+z8k=DDjOvKi9NH0aA9eJ8=cQ@mail.gmail.com>
+ <a7d4994d-7740-c845-da67-9d06e6d874cc@ti.com>
+ <d9bc1153-3b65-19a8-67ef-e131296cd8b1@ti.com>
+ <CAMRc=McPCJxd7i7Ei+xOKOXYhYZgC=MYYFwyn2zAjStQov91fw@mail.gmail.com>
+From:   Sekhar Nori <nsekhar@ti.com>
+Message-ID: <06da1719-26d6-19b0-97f5-ef4bb976e444@ti.com>
+Date:   Thu, 24 Jan 2019 17:39:19 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To:     jglisse@redhat.com, linux-mm@kvack.org
-From:   Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-In-Reply-To: <20190123222315.1122-9-jglisse@redhat.com>
-Cc:     Ralph Campbell <rcampbell@nvidia.com>, Jan Kara <jack@suse.cz>,
-        Arnd Bergmann <arnd@arndb.de>, kvm@vger.kernel.org,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        linux-rdma@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        =?utf-8?b?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Michal Hocko <mhocko@kernel.org>,
-        =?utf-8?b?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Ross Zwisler <zwisler@kernel.org>,
-        linux-fsdevel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-References: <20190123222315.1122-1-jglisse@redhat.com>
- <20190123222315.1122-9-jglisse@redhat.com>
-Message-ID: <154833175216.4120.925061299171157938@jlahtine-desk.ger.corp.intel.com>
-User-Agent: alot/0.6
-Subject: Re: [PATCH v4 8/9] gpu/drm/i915: optimize out the case when a range is
- updated to read only
-Date:   Thu, 24 Jan 2019 14:09:12 +0200
+In-Reply-To: <CAMRc=McPCJxd7i7Ei+xOKOXYhYZgC=MYYFwyn2zAjStQov91fw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jerome,
-
-This patch seems to have plenty of Cc:s, but none of the right ones :)
-
-For further iterations, I guess you could use git option --cc to make
-sure everyone gets the whole series, and still keep the Cc:s in the
-patches themselves relevant to subsystems.
-
-This doesn't seem to be on top of drm-tip, but on top of your previous
-patches(?) that I had some comments about. Could you take a moment to
-first address the couple of question I had, before proceeding to discuss
-what is built on top of that base.
-
-My reply's Message-ID is:
-154289518994.19402.3481838548028068213@jlahtine-desk.ger.corp.intel.com
-
-Regards, Joonas
-
-PS. Please keep me Cc:d in the following patches, I'm keen on
-understanding the motive and benefits.
-
-Quoting jglisse@redhat.com (2019-01-24 00:23:14)
-> From: Jérôme Glisse <jglisse@redhat.com>
+On 17/01/19 7:31 PM, Bartosz Golaszewski wrote:
+> czw., 17 sty 2019 o 13:42 Sekhar Nori <nsekhar@ti.com> napisał(a):
+>>
+>> On 16/01/19 2:48 PM, Sekhar Nori wrote:
+>>> On 14/01/19 10:09 PM, Bartosz Golaszewski wrote:
+>>>> pon., 14 sty 2019 o 13:20 Sekhar Nori <nsekhar@ti.com> napisał(a):
+>>>>>
+>>>>> Hi Bartosz,
+>>>>>
+>>>>> On 11/01/19 10:51 PM, Bartosz Golaszewski wrote:
+>>>>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>>>>
+>>>>>> Currently the clocksource and clockevent support for davinci platforms
+>>>>>> lives in mach-davinci. It hard-codes many things, used global variables,
+>>>>>> implements functionalities unused by any platform and has code fragments
+>>>>>> scattered across many (often unrelated) files.
+>>>>>>
+>>>>>> Implement a new, modern and simplified timer driver and put it into
+>>>>>> drivers/clocksource. We still need to support legacy board files so
+>>>>>> export a config structure and a function that allows machine code to
+>>>>>> register the timer.
+>>>>>>
+>>>>>> We don't check the return values of regmap reads and writes since with
+>>>>>> mmio it's only likely to fail due to programmer's errors.
+>>>>>>
+>>>>>> We also don't bother freeing resources on errors in
+>>>>>> davinci_timer_register() as the system won't boot without a timer anyway.
+>>>>>>
+>>>>>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>>>
+>>>>> With this series, DA830 fails to boot. Rest of the devices are okay from
+>>>>> boot perspective.
+>>>>>
+>>>>> DA830 is pretty unique because it uses the same timer-half for both
+>>>>> clocksource and clockevent. May be you can set the same configuration on
+>>>>> your DA850 to see the same issue? Else, I will enable low-level debug
+>>>>> and try to provide more debug data.
+>>>>>
+>>>>
+>>>> I can't boot da850 with the same config as da830 (0x60 compare
+>>>> register, compare irq 74) even with the old timer code. Just to make
+>>>> sure: does da830 boot fine with mainline v5.0-rc2?
+>>>
+>>> Yeah, I did check that without the patch DA830 does boot.
+>>
+>> You are right that DA850 lacks compare interrupts for timers 0 and 1.
+>> So, yes, it seems like we will have to shift to timer2 to test
+>> compare interrupts on DA850.
+>>
 > 
-> When range of virtual address is updated read only and corresponding
-> user ptr object are already read only it is pointless to do anything.
-> Optimize this case out.
+> Timers 2 and 3 are a bit different on da850 - for instance they don't
+> have separate interrupts for bottom and top halfs.
+
+We should only be using the compare feature which has a a separate
+interrupt (distinct from top and bottom half interrupts). Only timer 2
+and 3 of DA850 have the compare interrupts though. So you will have to
+use those timers to be able to test compare feature on DA850.
+
 > 
-> Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
-> Cc: Christian König <christian.koenig@amd.com>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Felix Kuehling <Felix.Kuehling@amd.com>
-> Cc: Jason Gunthorpe <jgg@mellanox.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Matthew Wilcox <mawilcox@microsoft.com>
-> Cc: Ross Zwisler <zwisler@kernel.org>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: Ralph Campbell <rcampbell@nvidia.com>
-> Cc: John Hubbard <jhubbard@nvidia.com>
-> Cc: kvm@vger.kernel.org
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: linux-rdma@vger.kernel.org
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/gpu/drm/i915/i915_gem_userptr.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
+> I configured the old code to use timer 2 - bottom half only with
+> compare register 0x60 and compare intterupt 74. It boots although very
+> slowly and something's broken with timekeeping as the clock goes
+> backwards and forward (seemingly) randomly.
+
+Ah, okay. Timer 2/3 use ASYNC3 as clock input instead of PLL0_AUXCLK.
+Did you make adjustment for this too?
+
 > 
-> diff --git a/drivers/gpu/drm/i915/i915_gem_userptr.c b/drivers/gpu/drm/i915/i915_gem_userptr.c
-> index 9558582c105e..23330ac3d7ea 100644
-> --- a/drivers/gpu/drm/i915/i915_gem_userptr.c
-> +++ b/drivers/gpu/drm/i915/i915_gem_userptr.c
-> @@ -59,6 +59,7 @@ struct i915_mmu_object {
->         struct interval_tree_node it;
->         struct list_head link;
->         struct work_struct work;
-> +       bool read_only;
->         bool attached;
->  };
->  
-> @@ -119,6 +120,7 @@ static int i915_gem_userptr_mn_invalidate_range_start(struct mmu_notifier *_mn,
->                 container_of(_mn, struct i915_mmu_notifier, mn);
->         struct i915_mmu_object *mo;
->         struct interval_tree_node *it;
-> +       bool update_to_read_only;
->         LIST_HEAD(cancelled);
->         unsigned long end;
->  
-> @@ -128,6 +130,8 @@ static int i915_gem_userptr_mn_invalidate_range_start(struct mmu_notifier *_mn,
->         /* interval ranges are inclusive, but invalidate range is exclusive */
->         end = range->end - 1;
->  
-> +       update_to_read_only = mmu_notifier_range_update_to_read_only(range);
-> +
->         spin_lock(&mn->lock);
->         it = interval_tree_iter_first(&mn->objects, range->start, end);
->         while (it) {
-> @@ -145,6 +149,17 @@ static int i915_gem_userptr_mn_invalidate_range_start(struct mmu_notifier *_mn,
->                  * object if it is not in the process of being destroyed.
->                  */
->                 mo = container_of(it, struct i915_mmu_object, it);
-> +
-> +               /*
-> +                * If it is already read only and we are updating to
-> +                * read only then we do not need to change anything.
-> +                * So save time and skip this one.
-> +                */
-> +               if (update_to_read_only && mo->read_only) {
-> +                       it = interval_tree_iter_next(it, range->start, end);
-> +                       continue;
-> +               }
-> +
->                 if (kref_get_unless_zero(&mo->obj->base.refcount))
->                         queue_work(mn->wq, &mo->work);
->  
-> @@ -270,6 +285,7 @@ i915_gem_userptr_init__mmu_notifier(struct drm_i915_gem_object *obj,
->         mo->mn = mn;
->         mo->obj = obj;
->         mo->it.start = obj->userptr.ptr;
-> +       mo->read_only = i915_gem_object_is_readonly(obj);
->         mo->it.last = obj->userptr.ptr + obj->base.size - 1;
->         INIT_WORK(&mo->work, cancel_userptr);
->  
-> -- 
-> 2.17.2
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> Kevin has an OMAP-L137 starter kit - is this the same as da830-evm? If
+
+Yes.
+
+> so, then I can get remote access to it and work on this problem.
+> Otherwise, I can prepare something that works on da850 with broken
+> timekeeping and let you see if it works correctly on da830.
+
+Alright, happy to test.
+
+Thanks,
+Sekhar
