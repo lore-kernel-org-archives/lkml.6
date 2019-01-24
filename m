@@ -2,55 +2,53 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AAF6C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:39:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 027C9C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:39:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25047218D3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:39:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C77FB218D3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:39:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358754;
-	bh=g5ZJ+iA0Ugp6aR55S5wiz0me3iXqKgdpF+ySKq8CeGM=;
+	s=default; t=1548358756;
+	bh=ZmW6LaPcbhqsowCPZgoz8tatIrUdr9DgR1eJ7zWUaBE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tEB93dZkozPOP4OaqrIhnUk2Qz1QGq+/L5EFyYah9zovjEWHFn8j+I4WJnL32MDQC
-	 AVMdpqD3ESIu8XagNiZYfPuj7IRqMmvEZzw4TtO32StRSfWGB6p1TfSUFMVIxSoRk7
-	 f0DpCrMd9lgGN8Dqk5UfuLRoRaU+4d6576qovGag=
+	b=TAYZDsJjHvVKxVx/y91wG1jCqjpxLFt9vsnTZQrQzvcw1m760YQ49tXFT3Qeqlb3i
+	 /0pg+QfDAwx40DjvPYT7PFbJpQUm6aUke/bWhiR0jpHtR/6wHlcPvwo6yPFaYPM0b/
+	 WuvEMgW6QECo1MkFnPKBQ7S4dIKrtFXH8xaMW6Gk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733008AbfAXTjM (ORCPT
+        id S1732639AbfAXTjP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:39:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39280 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:39:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732013AbfAXTjJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:39:09 -0500
+        id S1733001AbfAXTjM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:39:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC2CD218D3;
-        Thu, 24 Jan 2019 19:39:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A1AA5218D0;
+        Thu, 24 Jan 2019 19:39:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358748;
-        bh=g5ZJ+iA0Ugp6aR55S5wiz0me3iXqKgdpF+ySKq8CeGM=;
+        s=default; t=1548358751;
+        bh=ZmW6LaPcbhqsowCPZgoz8tatIrUdr9DgR1eJ7zWUaBE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qM4BhVpEjHwCy69b6Exef/8pEqLJLzavFOZZYf28T5T4kDtOhmo02oX8sR/uU+OMt
-         p25zyWMbvZGRLzsfF/ClO/d3PIfTatRzs5Y84SHjIIqsouYeo3QE9SIwUkuokgPQsa
-         +1MYw5xfLyQV0/aiLi0yB6Bjz5YEww+d8uvsZfuY=
+        b=dfu80UMe59/6kzA0Fw4RyUMkTVbKjKg5tsJKg9fZILRlj47pu6sNw+xSlBsDPgqPq
+         2iEpIPOsD9JNUxoS4FDn5tlTylr7bEZOcPvV4uHBwwxwKfLLLjNv9WQwg2Dr7o65m7
+         V+cimfWdz/WHEa8V2EXhNhJ7S/ibfaiy3gf/2R5E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
-        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
-        Roopa Prabhu <roopa@cumulusnetworks.com>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Matteo Croce <mcroce@redhat.com>
-Subject: [PATCH 4.20 013/127] net: clear skb->tstamp in bridge forwarding path
-Date:   Thu, 24 Jan 2019 20:19:19 +0100
-Message-Id: <20190124190212.721183049@linuxfoundation.org>
+        stable@vger.kernel.org, Yi Chen <yiche@redhat.com>,
+        Stefano Brivio <sbrivio@redhat.com>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 014/127] netfilter: ipset: Allow matching on destination MAC address for mac and ipmac sets
+Date:   Thu, 24 Jan 2019 20:19:20 +0100
+Message-Id: <20190124190212.772985889@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
 References: <20190124190211.984305387@linuxfoundation.org>
@@ -69,39 +67,134 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paolo Abeni <pabeni@redhat.com>
+[ Upstream commit 8cc4ccf58379935f3ad456cc34e61c4e4c921d0e ]
 
-[ Upstream commit 41d1c8839e5f8cb781cc635f12791decee8271b7 ]
+There doesn't seem to be any reason to restrict MAC address
+matching to source MAC addresses in set types bitmap:ipmac,
+hash:ipmac and hash:mac. With this patch, and this setup:
 
-Matteo reported forwarding issues inside the linux bridge,
-if the enslaved interfaces use the fq qdisc.
+  ip netns add A
+  ip link add veth1 type veth peer name veth2 netns A
+  ip addr add 192.0.2.1/24 dev veth1
+  ip -net A addr add 192.0.2.2/24 dev veth2
+  ip link set veth1 up
+  ip -net A link set veth2 up
 
-Similar to commit 8203e2d844d3 ("net: clear skb->tstamp in
-forwarding paths"), we need to clear the tstamp field in
-the bridge forwarding path.
+  ip netns exec A ipset create test hash:mac
+  dst=$(ip netns exec A cat /sys/class/net/veth2/address)
+  ip netns exec A ipset add test ${dst}
+  ip netns exec A iptables -P INPUT DROP
+  ip netns exec A iptables -I INPUT -m set --match-set test dst -j ACCEPT
 
-Fixes: 80b14dee2bea ("net: Add a new socket option for a future transmit time.")
-Fixes: fb420d5d91c1 ("tcp/fq: move back to CLOCK_MONOTONIC")
-Reported-and-tested-by: Matteo Croce <mcroce@redhat.com>
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-Acked-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-Acked-by: Roopa Prabhu <roopa@cumulusnetworks.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+ipset will match packets based on destination MAC address:
+
+  # ping -c1 192.0.2.2 >/dev/null
+  # echo $?
+  0
+
+Reported-by: Yi Chen <yiche@redhat.com>
+Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
+Signed-off-by: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/bridge/br_forward.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/netfilter/ipset/ip_set_bitmap_ipmac.c | 10 +++++-----
+ net/netfilter/ipset/ip_set_hash_ipmac.c   | 16 ++++++++++------
+ net/netfilter/ipset/ip_set_hash_mac.c     | 10 +++++-----
+ 3 files changed, 20 insertions(+), 16 deletions(-)
 
---- a/net/bridge/br_forward.c
-+++ b/net/bridge/br_forward.c
-@@ -65,6 +65,7 @@ EXPORT_SYMBOL_GPL(br_dev_queue_push_xmit
+diff --git a/net/netfilter/ipset/ip_set_bitmap_ipmac.c b/net/netfilter/ipset/ip_set_bitmap_ipmac.c
+index c00b6a2e8e3c..13ade5782847 100644
+--- a/net/netfilter/ipset/ip_set_bitmap_ipmac.c
++++ b/net/netfilter/ipset/ip_set_bitmap_ipmac.c
+@@ -219,10 +219,6 @@ bitmap_ipmac_kadt(struct ip_set *set, const struct sk_buff *skb,
+ 	struct ip_set_ext ext = IP_SET_INIT_KEXT(skb, opt, set);
+ 	u32 ip;
  
- int br_forward_finish(struct net *net, struct sock *sk, struct sk_buff *skb)
- {
-+	skb->tstamp = 0;
- 	return NF_HOOK(NFPROTO_BRIDGE, NF_BR_POST_ROUTING,
- 		       net, sk, skb, NULL, skb->dev,
- 		       br_dev_queue_push_xmit);
+-	/* MAC can be src only */
+-	if (!(opt->flags & IPSET_DIM_TWO_SRC))
+-		return 0;
+-
+ 	ip = ntohl(ip4addr(skb, opt->flags & IPSET_DIM_ONE_SRC));
+ 	if (ip < map->first_ip || ip > map->last_ip)
+ 		return -IPSET_ERR_BITMAP_RANGE;
+@@ -233,7 +229,11 @@ bitmap_ipmac_kadt(struct ip_set *set, const struct sk_buff *skb,
+ 		return -EINVAL;
+ 
+ 	e.id = ip_to_id(map, ip);
+-	memcpy(e.ether, eth_hdr(skb)->h_source, ETH_ALEN);
++
++	if (opt->flags & IPSET_DIM_ONE_SRC)
++		ether_addr_copy(e.ether, eth_hdr(skb)->h_source);
++	else
++		ether_addr_copy(e.ether, eth_hdr(skb)->h_dest);
+ 
+ 	return adtfn(set, &e, &ext, &opt->ext, opt->cmdflags);
+ }
+diff --git a/net/netfilter/ipset/ip_set_hash_ipmac.c b/net/netfilter/ipset/ip_set_hash_ipmac.c
+index 1ab5ed2f6839..fd87de3ed55b 100644
+--- a/net/netfilter/ipset/ip_set_hash_ipmac.c
++++ b/net/netfilter/ipset/ip_set_hash_ipmac.c
+@@ -103,7 +103,11 @@ hash_ipmac4_kadt(struct ip_set *set, const struct sk_buff *skb,
+ 	    (skb_mac_header(skb) + ETH_HLEN) > skb->data)
+ 		return -EINVAL;
+ 
+-	memcpy(e.ether, eth_hdr(skb)->h_source, ETH_ALEN);
++	if (opt->flags & IPSET_DIM_ONE_SRC)
++		ether_addr_copy(e.ether, eth_hdr(skb)->h_source);
++	else
++		ether_addr_copy(e.ether, eth_hdr(skb)->h_dest);
++
+ 	if (ether_addr_equal(e.ether, invalid_ether))
+ 		return -EINVAL;
+ 
+@@ -211,15 +215,15 @@ hash_ipmac6_kadt(struct ip_set *set, const struct sk_buff *skb,
+ 	};
+ 	struct ip_set_ext ext = IP_SET_INIT_KEXT(skb, opt, set);
+ 
+-	 /* MAC can be src only */
+-	if (!(opt->flags & IPSET_DIM_TWO_SRC))
+-		return 0;
+-
+ 	if (skb_mac_header(skb) < skb->head ||
+ 	    (skb_mac_header(skb) + ETH_HLEN) > skb->data)
+ 		return -EINVAL;
+ 
+-	memcpy(e.ether, eth_hdr(skb)->h_source, ETH_ALEN);
++	if (opt->flags & IPSET_DIM_ONE_SRC)
++		ether_addr_copy(e.ether, eth_hdr(skb)->h_source);
++	else
++		ether_addr_copy(e.ether, eth_hdr(skb)->h_dest);
++
+ 	if (ether_addr_equal(e.ether, invalid_ether))
+ 		return -EINVAL;
+ 
+diff --git a/net/netfilter/ipset/ip_set_hash_mac.c b/net/netfilter/ipset/ip_set_hash_mac.c
+index f9d5a2a1e3d0..4fe5f243d0a3 100644
+--- a/net/netfilter/ipset/ip_set_hash_mac.c
++++ b/net/netfilter/ipset/ip_set_hash_mac.c
+@@ -81,15 +81,15 @@ hash_mac4_kadt(struct ip_set *set, const struct sk_buff *skb,
+ 	struct hash_mac4_elem e = { { .foo[0] = 0, .foo[1] = 0 } };
+ 	struct ip_set_ext ext = IP_SET_INIT_KEXT(skb, opt, set);
+ 
+-	 /* MAC can be src only */
+-	if (!(opt->flags & IPSET_DIM_ONE_SRC))
+-		return 0;
+-
+ 	if (skb_mac_header(skb) < skb->head ||
+ 	    (skb_mac_header(skb) + ETH_HLEN) > skb->data)
+ 		return -EINVAL;
+ 
+-	ether_addr_copy(e.ether, eth_hdr(skb)->h_source);
++	if (opt->flags & IPSET_DIM_ONE_SRC)
++		ether_addr_copy(e.ether, eth_hdr(skb)->h_source);
++	else
++		ether_addr_copy(e.ether, eth_hdr(skb)->h_dest);
++
+ 	if (is_zero_ether_addr(e.ether))
+ 		return -EINVAL;
+ 	return adtfn(set, &e, &ext, &opt->ext, opt->cmdflags);
+-- 
+2.19.1
+
 
 
