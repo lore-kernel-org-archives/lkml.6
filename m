@@ -2,85 +2,72 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 217D6C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 05:42:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93DD3C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 05:42:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6B7C21872
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 05:42:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68CDC21872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 05:42:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726050AbfAXFmY (ORCPT
+        id S1726151AbfAXFm5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 00:42:24 -0500
-Received: from sauhun.de ([88.99.104.3]:40002 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725290AbfAXFmY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 00:42:24 -0500
-Received: from localhost (p54B333E7.dip0.t-ipconnect.de [84.179.51.231])
-        by pokefinder.org (Postfix) with ESMTPSA id D2CCA2C3720;
-        Thu, 24 Jan 2019 06:42:21 +0100 (CET)
-Date:   Thu, 24 Jan 2019 06:42:21 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc:     "Shah, Nehal-bakulchandra" <Nehal-bakulchandra.Shah@amd.com>,
-        Elie Morisse <syniurge@gmail.com>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>,
-        "Singh, Sandeep" <Sandeep.Singh@amd.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "helgaas@kernel.org" <helgaas@kernel.org>
-Subject: Re: [PATCH v15] i2c: Add drivers for the AMD PCIe MP2 I2C controller
-Message-ID: <20190124054221.GA909@kunai>
-References: <20181226232258.GA23526@syn-yoga530>
- <ecb5ecad-7141-b8db-74dc-a53f2a17301c@amd.com>
- <86BE166C-0821-4E16-AE72-728752654C20@canonical.com>
+        Thu, 24 Jan 2019 00:42:57 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2740 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725290AbfAXFm5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 00:42:57 -0500
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 970ABBD16C759AD83E4E;
+        Thu, 24 Jan 2019 13:42:54 +0800 (CST)
+Received: from [127.0.0.1] (10.177.31.96) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.408.0; Thu, 24 Jan 2019
+ 13:42:52 +0800
+Subject: Re: linux-next: build warning after merge of the gpio-brgl tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+References: <20190124151837.1ca96816@canb.auug.org.au>
+CC:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>
+From:   YueHaibing <yuehaibing@huawei.com>
+Message-ID: <df1743f8-71c8-3b18-1e8a-94198d99477d@huawei.com>
+Date:   Thu, 24 Jan 2019 13:42:51 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="nFreZHaLTZJo0R7j"
-Content-Disposition: inline
-In-Reply-To: <86BE166C-0821-4E16-AE72-728752654C20@canonical.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190124151837.1ca96816@canb.auug.org.au>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2019/1/24 12:18, Stephen Rothwell wrote:
+> Hi Bartosz,
+> 
+> After merging the gpio-brgl tree, today's linux-next build (arm
+> multi_v7_defconfig) produced this warning:
+> 
+> drivers/gpio/gpio-davinci.c: In function 'davinci_gpio_get_irq_chip':
+> drivers/gpio/gpio-davinci.c:472:9: warning: function returns address of local variable [-Wreturn-local-addr]
+>   return &gpio_unbanked.chip;
+>          ^~~~~~~~~~~~~~~~~~~
+> drivers/gpio/gpio-davinci.c: In function 'keystone_gpio_get_irq_chip':
+> drivers/gpio/gpio-davinci.c:480:9: warning: function returns address of local variable [-Wreturn-local-addr]
+>   return &gpio_unbanked;
+>          ^~~~~~~~~~~~~~
+> 
+> Introduced by commit
+> 
+>   ee5e87158e63 ("gpio: davinci: drop pointless static qualifier")
 
---nFreZHaLTZJo0R7j
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I'm very sorry for this.
 
+I misread the code, Pls revert this.
 
-> > Looks ok for me
->=20
-> With Shah=E2=80=99s blessing, is it possible to merge this patch to your =
--next tree?
+> 
 
-I am currently reviewing it, but the driver is large so it takes time.
-
-
---nFreZHaLTZJo0R7j
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxJUDgACgkQFA3kzBSg
-KbbcihAApL+J0SRy5db/uA5q3OC/9WcRCbgXpfWHayOln7yah97iu2tA4kKYnUWa
-UwoltkFoV5/4T/YMT8QxMrqP5aux2xeIWt1zmfLwk7AdmRsqOJxRB5vPpQF7yxax
-urEXkOxPjLcie7fHOjE6S1EdKcW92m3rOpv3boeOkMUFRlUsm4bY4+WV5Ame5n4L
-RRnug06IWCSvKo7ts8bx1Ef/sdcwrnPtg+fmSW/EdyFo/jq4WlqUztuY8O453Ocf
-PnFPTt2ej7/MeYnWuif6GxSpuQb1l42qCA3vldjjb4BBdUsHUFTaZSyKJke1D88I
-TKnFhjD3dokSyU52Uq/ywI8wn8eEZwvQ99vFBV5+OVge2m1FgLijZzMioIZNJWuk
-uPP6Pd/3eSvVuTuC3HVzuzSJsYIZ4wCjc6brypxuzPRMK6926hvElTPx+Jlm8O4a
-aXcsgbXSCKOhw8YAhtqzSduqmW+oHS83jsxIEsmEf5tnFLW+fnkwOTsK20ad86ay
-Ar3J4hMTSRvxQGuOYJhmOB7RTGtBXi1/EeFZKrScGSPA4RVYcZngc89c4Ly2MAy0
-ECl821ld4GISlo8L2Sa4yETlFbPYoYUAhsiJYzDfbtkHVIWASARQEpnKq/rluxsv
-c476j1qhD6IbH8rx1xYlTcMqGMoDq5DzY5Ko89DM+oEY/k+I8mg=
-=7MVd
------END PGP SIGNATURE-----
-
---nFreZHaLTZJo0R7j--
