@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3323CC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:39:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83C37C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:39:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02D6020663
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:39:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53F4E20663
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:39:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358776;
-	bh=HClIW6MAWfcqv6atvCfVU6578NuHhDuSYGB3JZ2LEeg=;
+	s=default; t=1548358779;
+	bh=2AohmcapwSy+Ra0GrwKgeNvC57eG9SuX6CVpvfPEuK8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ksEqyn9GNTqeevIVPKoG9xtcnmvtnooDkrqnAraw2ks/8oXT5JHVxrv018WV27/gm
-	 db0oWow691QI8FWKOTgmqst99WM8fA9k/fnn/aEjWTZwxlykgth1JSusCcIst36iTU
-	 cILlXcf9vEOFmsde3s7/CIALXOFEBSk8qnb+ONOo=
+	b=qmR1amt3RP9uDVqwEgsMJX4fgaiCPu++lHSeVhMYZvN9FztxkF0JTSXYOw2clS76d
+	 Rrv1Q5cdXNxN4WcB0gpvRwTzjAwS9sZhxzlDf/fy3H8ZWQQ8uWqyobQH9/xHZREiHe
+	 fwjwudjUf1PFSCr2zzGnsKgA2gqIAtOV4K5kjQhs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733090AbfAXTje (ORCPT
+        id S1733103AbfAXTjh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:39:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39662 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:39:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39732 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732647AbfAXTjc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:39:32 -0500
+        id S1733091AbfAXTjf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:39:35 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D841820663;
-        Thu, 24 Jan 2019 19:39:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E6EA520663;
+        Thu, 24 Jan 2019 19:39:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358771;
-        bh=HClIW6MAWfcqv6atvCfVU6578NuHhDuSYGB3JZ2LEeg=;
+        s=default; t=1548358774;
+        bh=2AohmcapwSy+Ra0GrwKgeNvC57eG9SuX6CVpvfPEuK8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hEpt51yXk1sOXoiBYfO3z0Kg2PvptSoHIqyoxAcUCSLV0DzCHSkW7QwGB0EEbew2C
-         TLNHaU2HeKP6GJYLQ7V8E/WYklMUOqarO/9MBfy8u4QlW/5XSJg6rUu/mlrNybh0ku
-         cVTXmd0pv6mCPIJXIlDNfhuRMkd8h0MbdXr/yAM4=
+        b=NiWcu6aR4PgWpeXzP+O6ctPV4A5wn2Fhax0E525UMmndh2wxXkVvehENvoWfta3tA
+         rJeZzor8hE2VcRWLpQb86GPcJ4vv5CR3Z9rFBVBDWCKgTLpTQscdsEs9vhVWCHaWKy
+         WWUZgrVAPE6qjrnaM3a6gUjzBM3tcPADUjIrL9aM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shannon Nelson <shannon.nelson@oracle.com>,
-        Andrew Bowers <andrewx.bowers@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 020/127] ixgbe: allow IPsec Tx offload in VEPA mode
-Date:   Thu, 24 Jan 2019 20:19:26 +0100
-Message-Id: <20190124190213.081281188@linuxfoundation.org>
+Subject: [PATCH 4.20 021/127] platform/x86: asus-wmi: Tell the EC the OS will handle the display off hotkey
+Date:   Thu, 24 Jan 2019 20:19:27 +0100
+Message-Id: <20190124190213.130063641@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
 References: <20190124190211.984305387@linuxfoundation.org>
@@ -67,53 +67,129 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 7fa57ca443cffe81ce8416b57966bfb0370678a1 ]
+[ Upstream commit 78f3ac76d9e5219589718b9e4733bee21627b3f5 ]
 
-When it's possible that the PF might end up trying to send a
-packet to one of its own VFs, we have to forbid IPsec offload
-because the device drops the packets into a black hole.
-See commit 47b6f50077e6 ("ixgbe: disallow IPsec Tx offload
-when in SR-IOV mode") for more info.
+In the past, Asus firmwares would change the panel backlight directly
+through the EC when the display off hotkey (Fn+F7) was pressed, and
+only notify the OS of such change, with 0x33 when the LCD was ON and
+0x34 when the LCD was OFF. These are currently mapped to
+KEY_DISPLAYTOGGLE and KEY_DISPLAY_OFF, respectively.
 
-This really is only necessary when the device is in the default
-VEB mode.  If instead the device is running in VEPA mode,
-the packets will go through the encryption engine and out the
-MAC/PHY as normal, and get "hairpinned" as needed by the switch.
+Most recently the EC on Asus most machines lost ability to toggle the
+LCD backlight directly, but unless the OS informs the firmware it is
+going to handle the display toggle hotkey events, the firmware still
+tries change the brightness through the EC, to no effect. The end result
+is a long list (at Endless we counted 11) of Asus laptop models where
+the display toggle hotkey does not perform any action. Our firmware
+engineers contacts at Asus were surprised that there were still machines
+out there with the old behavior.
 
-So let's not block IPsec offload when in VEPA mode.  To get
-there with the ixgbe device, use the handy 'bridge' command:
-	bridge link set dev eth1 hwmode vepa
+Calling WMNB(ASUS_WMI_DEVID_BACKLIGHT==0x00050011, 2) on the _WDG device
+tells the firmware that it should let the OS handle the display toggle
+event, in which case it will simply notify the OS of a key press with
+0x35, as shown by the DSDT excerpts bellow.
 
-Signed-off-by: Shannon Nelson <shannon.nelson@oracle.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+ Scope (_SB)
+ {
+     (...)
+
+     Device (ATKD)
+     {
+         (...)
+
+         Name (_WDG, Buffer (0x28)
+         {
+             /* 0000 */  0xD0, 0x5E, 0x84, 0x97, 0x6D, 0x4E, 0xDE, 0x11,
+             /* 0008 */  0x8A, 0x39, 0x08, 0x00, 0x20, 0x0C, 0x9A, 0x66,
+             /* 0010 */  0x4E, 0x42, 0x01, 0x02, 0x35, 0xBB, 0x3C, 0x0B,
+             /* 0018 */  0xC2, 0xE3, 0xED, 0x45, 0x91, 0xC2, 0x4C, 0x5A,
+             /* 0020 */  0x6D, 0x19, 0x5D, 0x1C, 0xFF, 0x00, 0x01, 0x08
+         })
+         Method (WMNB, 3, Serialized)
+         {
+             CreateDWordField (Arg2, Zero, IIA0)
+             CreateDWordField (Arg2, 0x04, IIA1)
+             Local0 = (Arg1 & 0xFFFFFFFF)
+
+             (...)
+
+             If ((Local0 == 0x53564544))
+             {
+                 (...)
+
+                 If ((IIA0 == 0x00050011))
+                 {
+                     If ((IIA1 == 0x02))
+                     {
+                         ^^PCI0.SBRG.EC0.SPIN (0x72, One)
+                         ^^PCI0.SBRG.EC0.BLCT = One
+                     }
+
+                     Return (One)
+                 }
+             }
+             (...)
+         }
+         (...)
+     }
+     (...)
+ }
+ (...)
+
+ Scope (_SB.PCI0.SBRG.EC0)
+ {
+     (...)
+
+     Name (BLCT, Zero)
+
+     (...)
+
+     Method (_Q10, 0, NotSerialized)  // _Qxx: EC Query
+     {
+         If ((BLCT == Zero))
+         {
+             Local0 = One
+             Local0 = RPIN (0x72)
+             Local0 ^= One
+             SPIN (0x72, Local0)
+             If (ATKP)
+             {
+                 Local0 = (0x34 - Local0)
+                 ^^^^ATKD.IANE (Local0)
+             }
+         }
+         ElseIf ((BLCT == One))
+         {
+             If (ATKP)
+             {
+                 ^^^^ATKD.IANE (0x35)
+             }
+         }
+     }
+     (...)
+ }
+
+Signed-off-by: João Paulo Rechi Vita <jprvita@endlessm.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/platform/x86/asus-wmi.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c
-index fd1b0546fd67..4d77f42e035c 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c
-@@ -4,6 +4,7 @@
- #include "ixgbe.h"
- #include <net/xfrm.h>
- #include <crypto/aead.h>
-+#include <linux/if_bridge.h>
+diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+index c285a16675ee..37b5de541270 100644
+--- a/drivers/platform/x86/asus-wmi.c
++++ b/drivers/platform/x86/asus-wmi.c
+@@ -2131,7 +2131,8 @@ static int asus_wmi_add(struct platform_device *pdev)
+ 		err = asus_wmi_backlight_init(asus);
+ 		if (err && err != -ENODEV)
+ 			goto fail_backlight;
+-	}
++	} else
++		err = asus_wmi_set_devstate(ASUS_WMI_DEVID_BACKLIGHT, 2, NULL);
  
- #define IXGBE_IPSEC_KEY_BITS  160
- static const char aes_gcm_name[] = "rfc4106(gcm(aes))";
-@@ -693,7 +694,8 @@ static int ixgbe_ipsec_add_sa(struct xfrm_state *xs)
- 	} else {
- 		struct tx_sa tsa;
- 
--		if (adapter->num_vfs)
-+		if (adapter->num_vfs &&
-+		    adapter->bridge_mode != BRIDGE_MODE_VEPA)
- 			return -EOPNOTSUPP;
- 
- 		/* find the first unused index */
+ 	status = wmi_install_notify_handler(asus->driver->event_guid,
+ 					    asus_wmi_notify, asus);
 -- 
 2.19.1
 
