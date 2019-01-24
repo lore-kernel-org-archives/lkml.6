@@ -2,127 +2,130 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4F48C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:45:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14A5AC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:45:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE770218AD
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:45:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8D40218AD
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:45:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bjAWQyMy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727912AbfAXMpc (ORCPT
+        id S1727960AbfAXMpg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 07:45:32 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56222 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726014AbfAXMpb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 07:45:31 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 765A4EBD;
+        Thu, 24 Jan 2019 07:45:36 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:38659 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726014AbfAXMpd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 07:45:33 -0500
+Received: by mail-lf1-f67.google.com with SMTP id a8so4196829lfk.5
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 04:45:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UVf1u1bMHpoQIEvtOx2yyfgG4CbBfs3I9VI/LP9BasM=;
+        b=bjAWQyMyAn4VcBFh3wcFsgaOuywUkYHSu+LoBoWC6LnnptyHWwOTjy85Wylo58m41f
+         mI7kQiZrLwkDfi/aCeBK6+xdHEuVV3/EAql3T6gQnfwQCEhzuh/IrpivSYgJ6WuuWneO
+         yKvBs2ZRoHjkh9mq5WqYePo/Z9UEZWXA910yE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UVf1u1bMHpoQIEvtOx2yyfgG4CbBfs3I9VI/LP9BasM=;
+        b=dulLC4QTtOL8i8PzD7V6JE61Al+rFWbLbJtrGCJLgTtobs3Vxo9YpqFRMcGMkJ9JXL
+         1S7Vyt2MCS6GKoD/oPRm1pEQo8Wcmqk5hsN1/hoThXO+NIevBtURaIlqRF7mGkcBLHuf
+         afSC80L0ogfQgdQaACtiGvcD9AxnP+rMjRZxNqp7CA2wnDDzvetobUbHrCdiJXiTdsPF
+         lWnDytCQTds9YhVV2Hdyun8syGMexY43BlLgbC/oaIrBbRPZu7BDkUEjgqE/9SlzLv3p
+         dNWY2oN+cVBCLscUGoDn7rYtnZdl2+iqibON94CgDDVSPKmP313XDC5zKGY8EisJOSgf
+         plGA==
+X-Gm-Message-State: AJcUukduPqsuGEjVkipV2AHVL6+ZfIksWFE5G4vj04FAiOWegoWjYxDH
+        qb2Wv/gPR1s5IhDTGyof4rDr5g==
+X-Google-Smtp-Source: ALg8bN72gdOYskRBxuFW74QpFP+BwcW9A9OOAU82OK/2aOF8wvkVFH+ZsrPwU1esck/zIcj/v2AW1w==
+X-Received: by 2002:a19:3b45:: with SMTP id i66mr5415300lfa.28.1548333931532;
         Thu, 24 Jan 2019 04:45:31 -0800 (PST)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CC0143F237;
-        Thu, 24 Jan 2019 04:45:29 -0800 (PST)
-Date:   Thu, 24 Jan 2019 12:45:27 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>, marc.zyngier@arm.com
-Cc:     Murali Karicheri <m-karicheri2@ti.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jingoo Han <jingoohan1@gmail.com>, linux-pci@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 02/10] PCI: keystone: Use "dummy_irq_chip" instead of new
- irqchip for legacy interrupt handling
-Message-ID: <20190124124526.GC23362@e107981-ln.cambridge.arm.com>
-References: <20181219124207.13479-1-kishon@ti.com>
- <20181219124207.13479-3-kishon@ti.com>
+Received: from centauri.ideon.se ([85.235.10.227])
+        by smtp.gmail.com with ESMTPSA id o14-v6sm982829lji.70.2019.01.24.04.45.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 24 Jan 2019 04:45:30 -0800 (PST)
+From:   Niklas Cassel <niklas.cassel@linaro.org>
+To:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Niklas Cassel <niklas.cassel@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND] arm64: dts: msm8916: remove bogus argument to the cpu clock
+Date:   Thu, 24 Jan 2019 13:45:08 +0100
+Message-Id: <20190124124508.6541-1-niklas.cassel@linaro.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181219124207.13479-3-kishon@ti.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 19, 2018 at 06:11:59PM +0530, Kishon Vijay Abraham I wrote:
-> Instead of creating a new irqchip with empty callback functions, use
-> dummy_irq_chip. Since there is nothing to do in the irqchip callback
-> functions, use handle_simple_irq instead of handle_level_irq.
-> 
-> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-> ---
->  drivers/pci/controller/dwc/pci-keystone.c | 24 ++---------------------
->  1 file changed, 2 insertions(+), 22 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
-> index 5286a480f76b..1ef443009da5 100644
-> --- a/drivers/pci/controller/dwc/pci-keystone.c
-> +++ b/drivers/pci/controller/dwc/pci-keystone.c
-> @@ -266,31 +266,12 @@ static irqreturn_t ks_pcie_handle_error_irq(struct keystone_pcie *ks_pcie)
->  	return IRQ_HANDLED;
->  }
->  
-> -static void ks_pcie_ack_legacy_irq(struct irq_data *d)
-> -{
-> -}
-> -
-> -static void ks_pcie_mask_legacy_irq(struct irq_data *d)
-> -{
-> -}
-> -
-> -static void ks_pcie_unmask_legacy_irq(struct irq_data *d)
-> -{
-> -}
-> -
-> -static struct irq_chip ks_pcie_legacy_irq_chip = {
-> -	.name = "Keystone-PCI-Legacy-IRQ",
-> -	.irq_ack = ks_pcie_ack_legacy_irq,
-> -	.irq_mask = ks_pcie_mask_legacy_irq,
-> -	.irq_unmask = ks_pcie_unmask_legacy_irq,
-> -};
-> -
->  static int ks_pcie_init_legacy_irq_map(struct irq_domain *d,
->  				       unsigned int irq,
->  				       irq_hw_number_t hw_irq)
->  {
-> -	irq_set_chip_and_handler(irq, &ks_pcie_legacy_irq_chip,
-> -				 handle_level_irq);
-> +	irq_set_chip_and_handler(irq, &dummy_irq_chip,
-> +				 handle_simple_irq);
+The apcs node has #clock-cells = <0>, which means that those who
+references it should specify 0 arguments.
 
-Hi Kishon,
+The apcs reference in the cpu node incorrectly specifies an argument,
+remove this bogus argument.
 
-thanks for putting it together. I think I'd rather move some of
-the logic for acking the interrupt in ks_pcie_handle_legacy_irq()
-into proper irq_chip methods than using a dummy_irq_chip (that
-Marc wants to deprecate).
+Fixes: 65afdf458360 ("arm64: dts: qcom: msm8916: Add CPU frequency scaling support")
+Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ arch/arm64/boot/dts/qcom/msm8916.dtsi | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Also, the flow handler should be handle_level_irq() since that's
-what legacy IRQs are.
+diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+index d302d8d639a1..e4bfd47178b1 100644
+--- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+@@ -111,7 +111,7 @@
+ 			next-level-cache = <&L2_0>;
+ 			enable-method = "psci";
+ 			cpu-idle-states = <&CPU_SPC>;
+-			clocks = <&apcs 0>;
++			clocks = <&apcs>;
+ 			operating-points-v2 = <&cpu_opp_table>;
+ 			#cooling-cells = <2>;
+ 		};
+@@ -123,7 +123,7 @@
+ 			next-level-cache = <&L2_0>;
+ 			enable-method = "psci";
+ 			cpu-idle-states = <&CPU_SPC>;
+-			clocks = <&apcs 0>;
++			clocks = <&apcs>;
+ 			operating-points-v2 = <&cpu_opp_table>;
+ 			#cooling-cells = <2>;
+ 		};
+@@ -135,7 +135,7 @@
+ 			next-level-cache = <&L2_0>;
+ 			enable-method = "psci";
+ 			cpu-idle-states = <&CPU_SPC>;
+-			clocks = <&apcs 0>;
++			clocks = <&apcs>;
+ 			operating-points-v2 = <&cpu_opp_table>;
+ 			#cooling-cells = <2>;
+ 		};
+@@ -147,7 +147,7 @@
+ 			next-level-cache = <&L2_0>;
+ 			enable-method = "psci";
+ 			cpu-idle-states = <&CPU_SPC>;
+-			clocks = <&apcs 0>;
++			clocks = <&apcs>;
+ 			operating-points-v2 = <&cpu_opp_table>;
+ 			#cooling-cells = <2>;
+ 		};
+-- 
+2.19.1
 
-I hope Marc can chime in when he has a minute to help you finalize this.
-
-Overall you are doing the right thing and I would like to get this
-series merged for v5.1.
-
-Thanks,
-Lorenzo
-
->  	irq_set_chip_data(irq, d->host_data);
->  
->  	return 0;
-> @@ -298,7 +279,6 @@ static int ks_pcie_init_legacy_irq_map(struct irq_domain *d,
->  
->  static const struct irq_domain_ops ks_pcie_legacy_irq_domain_ops = {
->  	.map = ks_pcie_init_legacy_irq_map,
-> -	.xlate = irq_domain_xlate_onetwocell,
->  };
->  
->  /**
-> -- 
-> 2.17.1
-> 
