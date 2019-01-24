@@ -2,214 +2,250 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC13C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:53:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25590C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:55:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28FAB218D0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:53:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA79B218D0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:55:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727850AbfAXUxm (ORCPT
+        id S1727906AbfAXUzB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 15:53:42 -0500
-Received: from muru.com ([72.249.23.125]:35280 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726259AbfAXUxl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 15:53:41 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 188CC8181;
-        Thu, 24 Jan 2019 20:53:46 +0000 (UTC)
-Date:   Thu, 24 Jan 2019 12:53:36 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, Alan Cox <alan@llwyncelyn.cymru>,
-        Jiri Slaby <jslaby@suse.cz>, Pavel Machek <pavel@ucw.cz>,
-        Peter Hurley <peter@hurleysoftware.com>,
-        Rob Herring <robh@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        linux-serial@vger.kernel.org,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 0/3] serdev support for n_gsm
-Message-ID: <20190124205335.GV5720@atomide.com>
-References: <20190114012528.2367-1-tony@atomide.com>
- <20190118115958.GA5532@kroah.com>
- <20190121105735.GI3691@localhost>
- <20190121170116.GA5544@atomide.com>
- <20190124163932.GZ3691@localhost>
+        Thu, 24 Jan 2019 15:55:01 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33654 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726259AbfAXUzA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 15:55:00 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0OKslPO152086
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 15:54:58 -0500
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2q7kv02s82-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 15:54:58 -0500
+Received: from localhost
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Thu, 24 Jan 2019 20:54:58 -0000
+Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 24 Jan 2019 20:54:54 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0OKsskl24772852
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 24 Jan 2019 20:54:54 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EB7CDB2068;
+        Thu, 24 Jan 2019 20:54:53 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 55678B2064;
+        Thu, 24 Jan 2019 20:54:53 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.137.249])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 24 Jan 2019 20:54:53 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 444B416C2DBB; Thu, 24 Jan 2019 12:54:52 -0800 (PST)
+Date:   Thu, 24 Jan 2019 12:54:52 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Su Yue <suy.fnst@cn.fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, josh@joshtriplett.org,
+        rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
+        jiangshanlai@gmail.com, "Li, Philip" <philip.li@intel.com>,
+        lkp-developer@eclists.intel.com
+Subject: Re: rcutorture: meaning of "End of test: RCU_HOTPLUG"
+Reply-To: paulmck@linux.ibm.com
+References: <996df745-8434-b92c-bad9-334cc6bf4b7f@cn.fujitsu.com>
+ <20190122040144.GB4240@linux.ibm.com>
+ <c2cf5125-2545-c325-0393-0dba4aab379d@cn.fujitsu.com>
+ <20190123032251.GG4240@linux.ibm.com>
+ <8f6fc868-b420-bcf1-6b4d-1ca616aa6e4c@cn.fujitsu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190124163932.GZ3691@localhost>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <8f6fc868-b420-bcf1-6b4d-1ca616aa6e4c@cn.fujitsu.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 19012420-0072-0000-0000-000003EF3176
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010470; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000277; SDB=6.01151244; UDB=6.00600016; IPR=6.00931584;
+ MB=3.00025277; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-24 20:54:56
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19012420-0073-0000-0000-00004AEE66A2
+Message-Id: <20190124205452.GU4240@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-24_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901240142
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-* Johan Hovold <johan@kernel.org> [190124 16:39]:
-> This series adds a new interface (gsm_serdev) but no users, which is not
-> something we normally accept. I think you need to post the lot, at least
-> as an RFC in order for the full picture to be visible.
-
-Sure I can post them all as RFC series maybe this coming
-weekend when I get a chance.
-
-> Similarly, including an example device tree would also help with the
-> overall picture. I've been able to derive the following (from your code
-> and already merged phy driver binding doc):
+On Thu, Jan 24, 2019 at 03:00:37PM +0800, Su Yue wrote:
+> On 1/23/19 11:22 AM, Paul E. McKenney wrote:
+> >On Tue, Jan 22, 2019 at 04:42:19PM +0800, Su Yue wrote:
+> >>Thanks for your quick reply! Paul
+> >>
+> >>On 1/22/19 12:01 PM, Paul E. McKenney wrote:
+> >>>On Tue, Jan 22, 2019 at 11:40:53AM +0800, Su Yue wrote:
+> >>>>Hi, guys
+> >>>>   While running rcutorture tests with "onoff_interval", some tests
+> >>>>failed and results show like:
+> >>>>
+> >>>>=====================================================================
+> >>>>[  316.354501] srcud-torture:--- End of test: RCU_HOTPLUG:
+> >>>>nreaders=1 nfakewriters=4 stat_interval=60 verbose=2
+> >>>>test_no_idle_hz=1 shuffle_interval=3 stutter=5 irqreader=1 fq\
+> >>>>s_duration=0 fqs_holdoff=0 fqs_stutter=3 test_boost=1/0
+> >>>>test_boost_interval=7 test_boost_duration=4 shutdown_secs=0
+> >>>>stall_cpu=0 stall_cpu_holdoff=10 stall_cpu_irqsoff=0 n_ba\
+> >>>>rrier_cbs=0 onoff_interval=3 onoff_holdoff=0
+> >>>>====================================================================
+> >>>>
+> >>>>I am wondering that meaning of "RCU_HOTPLUG". Is it expected because
+> >>>>cpu hotplug is enabled in the test? Or just represents another type of
+> >>>>failure?
+> >>>
+> >>>This says that at least one CPU hotplug operation failed, that is,
+> >>>the CPU didn't actually come online or go offline as requested.  If you
+> >>>are introducing CPU hotplug to an architecture, this usually indicates
+> >>>that you have bugs in your CPU-hotplug code.  Or it nmight be that
+> >>
+> >>It should hit the case since there is no RCU CPU stall warnings.
+> >>
+> >>>RCU grace periods failed to progress -- though this would normally
+> >>>also result in RCU CPU stall warnings.
+> >>>
+> >>>There should be lines containing "ver:" in your console output.  What
+> >>>does one of the later one of these say?
+> >>>
+> >>
+> >>The line says:
+> >>======================================================================
+> >>[  318.850175] busted_srcud-torture: rtc:           (null) ver:
+> >>27040 tfle: 0 rta: 27040 rtaf: 0 rtf: 27027 rtmbe: 0 rtbe: 0 rtbke:
+> >>0 rtbre: 0 rtbf: 0 rtb: 0 \
+> >>nt: 9497 onoff: 2639/2639:2640/5310 40,373:10,355 162868:67542
+> >>(HZ=1000) barrier: 0/0:0
+> >
+> >Yes, you have many more offline attempts than successes, which is
+> >why RCU_HOTPLUG was printed.
+> >
+> >>=====================================================================
+> >>
+> >>And here are useful errors:
+> >>=====================================================================
+> >>kern  :info  : [  135.379693] KVM setup async PF for cpu 1
+> >>kern  :info  : [  135.381412] kvm-stealtime: cpu 1, msr 23fd16180
+> >>kern  :alert : [  135.386897] busted_srcud-torture:torture_onoff
+> >
+> >Just so your know, busted_srcud can sometimes fail by design.  Hence
+> >the "busted" in the name.  But failure didn't happen this time.
+> >
 > 
->    	mdm6600_phy: usb-phy {
-> 		compatible = "motorola,mapphone-mdm6600";
-> 		enable-gpios = <&gpio3 31 GPIO_ACTIVE_LOW>;
-> 		power-gpios = <&gpio2 22 GPIO_ACTIVE_HIGH>;
-> 		reset-gpios = <&gpio2 17 GPIO_ACTIVE_HIGH>;
-> 		motorola,mode-gpios = <&gpio5 20 GPIO_ACTIVE_HIGH>,
-> 				      <&gpio5 21 GPIO_ACTIVE_HIGH>;
-> 		motorola,cmd-gpios = <&gpio4 7 GPIO_ACTIVE_HIGH>,
-> 				     <&gpio4 8 GPIO_ACTIVE_HIGH>,
-> 				     <&gpio5 14 GPIO_ACTIVE_HIGH>;
-> 		motorola,status-gpios = <&gpio2 20 GPIO_ACTIVE_HIGH>,
-> 					<&gpio2 21 GPIO_ACTIVE_HIGH>,
-> 					<&gpio2 23 GPIO_ACTIVE_HIGH>;
-> 		#phy-cells = <0>;
-> 	};
+> Yes..The corner case I mentioned actually happened in every "onoff"
+> tests whatever the torture_type is.
 > 
-> 	&uart {
-> 		gsm-mux? {
-> 			compatible = "motorola,mapphone-mdm6600-serdev";
-> 			phy = <&mdm6600_phy>;
+> >>task: onlined 1
+> >>kern  :alert : [  135.408241] busted_srcud-torture:torture_onoff
+> >>task: offlining 1
+> >>kern  :info  : [  135.423310] Unregister pv shared memory for cpu 1
+> >>kern  :info  : [  135.427940] smpboot: CPU 1 is now offline
+> >>kern  :alert : [  135.430106] busted_srcud-torture:torture_onoff
+> >>task: offlined 1
+> >>kern  :alert : [  135.436404] busted_srcud-torture:torture_onoff
+> >>task: offlining 0
+> >>kern  :alert : [  135.446173] busted_srcud-torture:torture_onoff
+> >>task: offline 0 failed: errno -16
+> >>kern  :alert : [  135.453076] busted_srcud-torture:torture_onoff
+> >>task: offlining 0
+> >>kern  :alert : [  135.457461] busted_srcud-torture:torture_onoff
+> >>task: offline 0 failed: errno -16
+> >>
+> >>
+> >>=====================================================================
+> >>There are only two CPUs on the VM. Torture try to offline the last one
+> >>but -EBUSY occured.
+> >>
+> >>I spent time to understand kernel/torture.c.
+> >>There is torture_onoff():
+> >>
+> >>225        while (!torture_must_stop()) {
+> >>226                cpu = (torture_random(&rand) >> 4) % (maxcpu + 1);
+> >>227                if (!torture_offline(cpu,
+> >>228                                     &n_offline_attempts,
+> >>&n_offline_successes,
+> >>229                                     &sum_offline, &min_offline,
+> >>&max_offline))
+> >>230                        torture_online(cpu,
+> >>231                                       &n_online_attempts,
+> >>&n_online_successes,
+> >>232                                       &sum_online, &min_online,
+> >>&max_online);
+> >>233                schedule_timeout_interruptible(onoff_interval);
+> >>234        }
+> >>235
+> >>
+> >>torture_offline() and torture_offline() don't pre judge if the current
+> >>cpu is only one usable.
+> >
+> >That does appear to be the case, and that would be a problem with
+> >the CONFIG_BOOTPARAM_HOTPLUG_CPU0 listed below.
+> >
+> >Good catch!
+> >
+> >>Our test machines are configured with CONFIG_BOOTPARAM_HOTPLUG_CPU0. If
+> >>there are only one oneline and hotplugable cpux, then
+> >>n_offline_successes != n_offline_attempts which caused "End of test:
+> >>RCU_HOTPLUG".
+> >>
+> >>Does I misunderstand something above? Feel free to correct me.
+> >
+> >Does the following patch help?
+> >
 > 
-> 			gnss {
-> 				compatible = "motorola,mapphone-mdm6600-gnss";
-> 			};
+> Yes, no more "errnor: -16" in dmesg and "End of test: SUCCESS" is in
+> the end.
 > 
-> 			audio-codec {
+> Thanks for your patch.
+> If the patch is to be sent in format, you can add:
 > 
-> 			};
-> 		};
-> 	};
+> Tested-By: Su Yue <suy.fnst@cn.fujitsu.com>
+
+Very good, applied!  And especially thank you for finding this and
+bringing it to my attention!!!
+
+							Thanx, Paul
+
+> ---
+> Su
+> >							Thanx, Paul
+> >
+> >------------------------------------------------------------------------
+> >
+> >diff --git a/kernel/torture.c b/kernel/torture.c
+> >index a03ff722352b..2b6700ca2a43 100644
+> >--- a/kernel/torture.c
+> >+++ b/kernel/torture.c
+> >@@ -101,6 +101,8 @@ bool torture_offline(int cpu, long *n_offl_attempts, long *n_offl_successes,
+> >  	if (!cpu_online(cpu) || !cpu_is_hotpluggable(cpu))
+> >  		return false;
+> >+	if (num_online_cpus() <= 1)
+> >+		return false;  /* Can't offline the last CPU. */
+> >  	if (verbose > 1)
+> >  		pr_alert("%s" TORTURE_FLAG
+> >
+> >
+> >
 > 
-> 	&ohci {
-> 		phys = <&mdm6600_phy>;
-> 	};
 > 
-> Which brings us back to the question of how to model modems. You've
-> already added a phy-driver for something which really is some sort of
-> modem representation.
 
-That is not a "modem representation".
-
-It's just doing what's typically done for drivers with firmware
-like let's say WLAN pwrseq driver on SDIO bus. So start device,
-enable clocks for the PHY so Linux won't oops when loading
-ohci-platform device driver. It does not have much anything to
-do beyond enabling communication over Linux standard buses like
-TS 27.010 and USB. For more info, please see commit 5d1ebbda0318
-("phy: mapphone-mdm6600: Add USB PHY driver for MDM6600 on
-Droid 4").
-
-It's too bad the USB PHY for the Linux SoC OHCI is on the modem
-and clocked from the modem instead of what is usually done
-where it would be clocked by the Linux running SoC. And too bad
-some of the GPIO pins are shared with the TS 27.010 port. But hey,
-it's just bad hardware design and not much we can do about it.
-And it can be all isolated in the USB PHY driver.
-
-> > And without the n_gsm serdev support, it's a mess of some app
-> > similar to [5] initializing n_gsm, trying to deal with the USB
-> > PHY PM, dealing with Motorola custom packet numbering, kicking
-> > GNSS device, feeding data to /dev/ugnss. Hmm I think I've already
-> > been there just to be able to type AT commands to the modem and
-> > it did not work :)
-> 
-> It's a mess indeed, but I'd rather see user-space dealing with until we
-> figure out how best to do it in the kernel. ;)
-
-Well we really do not have user space dealing with it. And I'm
-not planning on working on the user space approach any longer
-for n_gsm, Motorola custom packet layer, and shared GPIO pins
-for PM. That was proven to be a dead end alread and not worth
-continuing.
-
-For kicking the GNSS, that can be certainly done with a kernel
-serdev driver or some custom user space app. With the $subject
-patch we now have both options available unlike earlier.
-
-> > Anyways, for the serdev kernel drivers, the criteria I've tried
-> > to follow is: "Can this serdev device driver make user space
-> > apps use standard Linux interfaces for the hardware?"
-> > 
-> > So for the serdev Alsa ASoC driver, user space can use the standard
-> > Alsa interface for setting voice call volume. And for the serdev
-> > GNSS driver, user space can use /dev/gnss0.
-> 
-> I understand. Both drivers appears to be using AT commands for control.
-> It would be interesting to hear what Mark has to say about the codec
-> driver too. Moving AT handling into the kernel scares me a bit. If we
-> already have a telephony stack to deal with it in user-space, my
-> inclination is to let it continue to handle it.
-
-Right, too bad it's AT commands instead of let's say just
-register offsets to a mem region on the modem. Or even some
-enumerated commands. And yes it's the firmware doing all
-kinds of things, just like with a let's say a WLAN driver.
-
-And no, we don't really have a telephony stack to deal with it
-in the user-space. But with the $subject patch it becomes doable
-for the parts it makes sense to do, for ofono, ModemManager and
-my phone scripts too.
-
-For the Alsa driver, we need to configure the i2s channel
-on the PMIC for time division multiplexing with set_tdm_slot()
-for voice calls as the PMIC is the clock master.
-
-> Modem-managed GNSS is also different from receivers connected directly
-> to the host. It's really the modem that drives the GNSS receiver, and
-> offers a higher-level interface to the host, for example, by buffering
-> output which the host can later request. It may or may not be the
-> kernel's job to periodically poll the modem to recreate an NMEA feed so
-> to speak.
-
-This is very similar to what we're doing with any driver that needs
-firmware loaded, let's say again WLAN on SDIO. Or Bluetooth on SDIO.
-Or a USB device with firmware :)
-
-> But the end-result of having it accessible through a standard interface
-> is of course appealing.
-
-Yes I agree. That's the best way to make things work in a
-standard way for Linux distros.
-
-Based on my experience with trying to make embedded devices usable
-with standard Linux distros, the irattach/ldattach/hciattach
-route never worked well from user point of view.
-
-If we can make things usable out of the box with simple channel
-specific device drivers or user space apps it's a big improvment
-for users. If we can also get rid of some duplicate copies of the
-same code implementing the same thing in favor of using Linux
-generic interfaces then even better :)
-
-Then maybe later on if it turns out we have three or more
-modems from various vendors needing similar feature it might
-make sense to attempt to move some of the handling to a generic
-framework like you did for GNSS. But currently I do not see
-a need for that and for QMI based modems things are handled
-in a different way anyways.
-
-> I have some more comments on the gsm_serdev interface and motorola mfd,
-> but let's start with the above.
-
-Sure thanks, I'll post the RFC series of the pending patches.
-
-Regards,
-
-Tony
