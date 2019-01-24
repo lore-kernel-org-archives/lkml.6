@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81394C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:50:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 291EFC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:50:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47ACA21726
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:50:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1FBF21726
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:50:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359434;
-	bh=KB0Qry3zHKk5woJK3YeBC20iwJrdfAzSoZyRK66jqSY=;
+	s=default; t=1548359440;
+	bh=gg3lyrrCpCuScEL5travU2z4fEzbnHaE77PTkjD2zN8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wxepqbBcGn0AiBE6ZzJCpIrJ6V0nwkxRu4pVmnZ0vF+kS+LeAcivWPgYyrGEXTwnO
-	 ix19ea3/8j0yz+0RyPAXW2W+x82Qy/lgEiUwoaq8+4UHI+rLPFwRfmeOYhX0THhmTZ
-	 KqPZwFhEvDO3rqzKUkszAwjwk2m88mof9kxQqv84=
+	b=WVWQx+fIWQqvFciwcKT3+3ZCMp3t3nE8xgQf3nYszGwAbhtk7p1DrO0YQ87W6tvQ+
+	 ka0uWGWxxSLfls3n8ExJkzxRSuPJydE0lZhYLVXWuAN+w+z+sxHBjT/8dmB/xZ0pGx
+	 kK97TQiGv0DydPiYM1PsNr58L1PjxHk2PUCit7tI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733280AbfAXTka (ORCPT
+        id S1733253AbfAXTkW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:40:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40570 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:40:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40478 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733259AbfAXTkZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:40:25 -0500
+        id S1733237AbfAXTkT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:40:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A05E20663;
-        Thu, 24 Jan 2019 19:40:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4BC08218D9;
+        Thu, 24 Jan 2019 19:40:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358824;
-        bh=KB0Qry3zHKk5woJK3YeBC20iwJrdfAzSoZyRK66jqSY=;
+        s=default; t=1548358818;
+        bh=gg3lyrrCpCuScEL5travU2z4fEzbnHaE77PTkjD2zN8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=t6ZKKIA84jlf4kUV9MWtGsPTIZFHWZFPg05TKxLQCzhuXKNzX0G5mQTv9GNVtXYtQ
-         LZbp4X1f+scp5zjZ0W8NNW/iYZLjJIxYdGwg0h1qC18wWp+meVKGt8PnQcgfOzvo/t
-         i63O3cyO6dTwiUiwwl70D0YIIO1GQ3ql5jk4OMcI=
+        b=mY6Nbpkkn8pZ802wO6EFg8ppOOwGAWWEGoNy+tZE6Itjk33WyjNKGJfi5D8c913Gi
+         ckLjPE96zu3rTlVhKtIAZIR8DBENKVVGMcI/bnXvaL8PRlAhstF94ydoSVhSlP1bY8
+         kIRaXUObTJQL/0gmdIXnGJWpZdDLfj8rPrkdmj4A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Ahern <dsahern@gmail.com>,
+        stable@vger.kernel.org, Daniele Palmas <dnlplm@gmail.com>,
+        =?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.20 008/127] ipv6: Take rcu_read_lock in __inet6_bind for mapped addresses
-Date:   Thu, 24 Jan 2019 20:19:14 +0100
-Message-Id: <20190124190212.447208032@linuxfoundation.org>
+Subject: [PATCH 4.20 006/127] qmi_wwan: add MTU default to qmap network interface
+Date:   Thu, 24 Jan 2019 20:19:12 +0100
+Message-Id: <20190124190212.337141736@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
 References: <20190124190211.984305387@linuxfoundation.org>
@@ -65,44 +66,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Ahern <dsahern@gmail.com>
+From: Daniele Palmas <dnlplm@gmail.com>
 
-[ Upstream commit d4a7e9bb74b5aaf07b89f6531c080b1130bdf019 ]
+[ Upstream commit f87118d5760f00af7228033fbe783c7f380d2866 ]
 
-I realized the last patch calls dev_get_by_index_rcu in a branch not
-holding the rcu lock. Add the calls to rcu_read_lock and rcu_read_unlock.
+This patch adds MTU default value to qmap network interface in
+order to avoid "RTNETLINK answers: No buffer space available"
+error when setting an ipv6 address.
 
-Fixes: ec90ad334986 ("ipv6: Consider sk_bound_dev_if when binding a socket to a v4 mapped address")
-Signed-off-by: David Ahern <dsahern@gmail.com>
+Signed-off-by: Daniele Palmas <dnlplm@gmail.com>
+Acked-by: Bjørn Mork <bjorn@mork.no>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/af_inet6.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/net/usb/qmi_wwan.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/ipv6/af_inet6.c
-+++ b/net/ipv6/af_inet6.c
-@@ -321,17 +321,20 @@ static int __inet6_bind(struct sock *sk,
- 			goto out;
- 		}
+--- a/drivers/net/usb/qmi_wwan.c
++++ b/drivers/net/usb/qmi_wwan.c
+@@ -123,6 +123,7 @@ static void qmimux_setup(struct net_devi
+ 	dev->addr_len        = 0;
+ 	dev->flags           = IFF_POINTOPOINT | IFF_NOARP | IFF_MULTICAST;
+ 	dev->netdev_ops      = &qmimux_netdev_ops;
++	dev->mtu             = 1500;
+ 	dev->needs_free_netdev = true;
+ }
  
-+		rcu_read_lock();
- 		if (sk->sk_bound_dev_if) {
- 			dev = dev_get_by_index_rcu(net, sk->sk_bound_dev_if);
- 			if (!dev) {
- 				err = -ENODEV;
--				goto out;
-+				goto out_unlock;
- 			}
- 		}
- 
- 		/* Reproduce AF_INET checks to make the bindings consistent */
- 		v4addr = addr->sin6_addr.s6_addr32[3];
- 		chk_addr_ret = inet_addr_type_dev_table(net, dev, v4addr);
-+		rcu_read_unlock();
-+
- 		if (!inet_can_nonlocal_bind(net, inet) &&
- 		    v4addr != htonl(INADDR_ANY) &&
- 		    chk_addr_ret != RTN_LOCAL &&
 
 
