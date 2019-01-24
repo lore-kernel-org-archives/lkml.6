@@ -2,119 +2,108 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE285C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:29:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31E21C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:30:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78AEB2184C
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:29:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0BB72184C
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:30:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=web.de header.i=@web.de header.b="VQmW85wD"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LRF0c+eB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727428AbfAXI3b (ORCPT
+        id S1727529AbfAXI37 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 03:29:31 -0500
-Received: from mout.web.de ([212.227.17.11]:60669 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725939AbfAXI32 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 03:29:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1548318542;
-        bh=1r21Sy62YGvEHyGOIqlYMcXiaQ/0qzp1Z8NCgkKtHJk=;
-        h=X-UI-Sender-Class:From:Subject:To:Cc:Date;
-        b=VQmW85wDyf6plBmW5Z6aUJaNShfyQGtbzrDJ5Fx6vX0CTAeGkC1u2idROMi5ypm43
-         ScLkeyFkUIFFt/PFK8VbFO/HmfdS63QGQSxzgqM7VXHwfM1Pna+UwZCSZ9q+1IxkqU
-         DT3MDcIftaErLAyj9CppxomF5LwMO0gFb+Pd56Jw=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.10] ([95.157.57.47]) by smtp.web.de (mrweb103
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0M2Mcy-1h5Lic2jCu-00s9gq; Thu, 24
- Jan 2019 09:29:02 +0100
-From:   Jan Kiszka <jan.kiszka@web.de>
-Subject: [PATCH v2] arm64: dts: zcu100-revC: Give wifi some time after
- power-on
-To:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Wei Xu <xuwei5@hisilicon.com>
-Cc:     Ryan Grachek <ryan@edited.us>,
-        John Stultz <john.stultz@linaro.org>,
-        linux-wireless@vger.kernel.org, "Reizer, Eyal" <eyalr@ti.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Michal Simek <michal.simek@xilinx.com>
-Message-ID: <efc793c8-da17-e267-851e-f08f097843ee@web.de>
-Date:   Thu, 24 Jan 2019 09:28:59 +0100
-User-Agent: Mozilla/5.0 (X11; U; Linux i686 (x86_64); de; rv:1.8.1.12)
- Gecko/20080226 SUSE/2.0.0.12-1.1 Thunderbird/2.0.0.12 Mnenhy/0.7.5.666
+        Thu, 24 Jan 2019 03:29:59 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:44092 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727491AbfAXI36 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 03:29:58 -0500
+Received: by mail-pg1-f194.google.com with SMTP id t13so2336327pgr.11;
+        Thu, 24 Jan 2019 00:29:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=LEFs+VdK+tLN8hb7yXI9KJRvJ1tvQsYGwKQ02Hq326w=;
+        b=LRF0c+eBWxwDwbO6Z5VQliiHkjH+pXCICP7FmJhd5TW+WD6at3ltaqVRPwN+VyxDey
+         ksIUd3kttpdsVB0Iwu9DXpq6T0QLBZkSx+TdRt2BR/Kvei1LmaHhGwlnbbpfyovxfaSN
+         d0XEQovfqvZVy13M3JgnWcymNXMVuzwdbzHNMy5Y82yZ4cYrfoyxmXisSiQsKOz4V1i5
+         /U1zOcT5SDUdPXXX8hQ3kGCNj6QRRXic3ovYMmq9gHlK1n57WM7vSL18m+v/U2xZ+gYB
+         NyZztah8ZlwX7HRw59Jkvk1WtontNxNOgE3Mf6N8e9SV+1/oL5LcdFFHXLXNnq7t8go2
+         kquA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=LEFs+VdK+tLN8hb7yXI9KJRvJ1tvQsYGwKQ02Hq326w=;
+        b=SwTVUtFXZHjoL7r8YQOeftc4fOWVHh6iYZ/y3lVIkUJ+xiJaqpTwUOpnTR4pum246t
+         le3NT+uuwCY8+Uyhx5zxk3cmsNz7X7+3nfaoIF4e1wnhQP3EB5LsuAx8Mgsl9jXrMCHL
+         MTKUa5qRCdnAofXcXMLFW2eEnT3Skd5vsAVhkfWa4l/GsALE4Q9OWg8HwjB9nnexABji
+         ogqJuiCOWH+cxEVs4GwTvrsy6J3shuxUGGOkC63BOubGJKVkEvogpNQg5kdUSVgiqH4+
+         K3ZdddKd7U0XdUPDP/jHy5FGXGL9ecXXZW9iuCoa1ggjyVw/7wZKGKGRqEuH/50dm2UD
+         1zNA==
+X-Gm-Message-State: AJcUukdLrqIteNRDC/S34N5BnZ9nJh9riE/ECkyWpEIIZOdK+xxsfrlG
+        atsc16sL7Kzh2vlXslJu/3/J5MQo
+X-Google-Smtp-Source: ALg8bN5TyP6UqtLRLiaNzhkJpvVhnkNJBEab0QF/isHYeLTsM+7/A9AGggRVpVd1ZjyRe0sVvIl5mQ==
+X-Received: by 2002:a63:ea15:: with SMTP id c21mr4818520pgi.361.1548318597921;
+        Thu, 24 Jan 2019 00:29:57 -0800 (PST)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id m3sm39446272pfi.102.2019.01.24.00.29.57
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 24 Jan 2019 00:29:57 -0800 (PST)
+Date:   Thu, 24 Jan 2019 00:29:55 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Deepa Dinamani <deepa.kernel@gmail.com>
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        arnd@arndb.de, davem@davemloft.net, y2038@lists.linaro.org
+Subject: Re: [PATCH] input: Fix the CONFIG_SPARC64 mixup
+Message-ID: <20190124082955.GA139904@dtor-ws>
+References: <20190121014914.2328-1-deepa.kernel@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:LfoHBbu6n/J0IfRda96ujoN9PIMATj0xyLxopAnv3qbFor8rakt
- 9vjfI8vaktmfwTdZh8EcYNp6mShlEniEss/Kp382n4R+WsTQm8JxCcFpwz/F5LWZ4XKaq2J
- DLV965TikFw8bte5/exjf8qdtM7z2HQeLcouyQGAkKtreplyP4rtBShAx3+TppAyGE47sXZ
- WHNuYgBac6Lciql9GHyaA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:n30gWnQQXn8=:P+Ivq1q1goQsWI9fBrcuia
- 8HU5nDHJNcaBWJqPrMQSG/4deGdzgNbdWgk8elpO+4xyIJS0QEqvRSDF2807Y0Bg3Q4yq7Gbc
- Bv6I6SSLvrdbHTP9nRsdvfBtYVFOk7K/uB/TpogdrDaatH5proHG3vnrPaPb9tGncJy6UMDNd
- 82KHo5mtP+HhbgyyFFi4GvJs48kaq3EkzQXMQdf6w6UvuluSjEpn54hC9MRuancWmq12YPaRq
- he3hxn9YdLYyarOMaJspbIApTAFfy5X1X+/KczHTj54VUdT/cfKv11+PCaenMDebVgOiV8uXD
- zJkcmTDuj4GpzwelrYO9FrZqRgflpOk1mHQCE5poEklGx1hUqcAcIx6km8x3YXgo4sdXsaaXq
- u9RMtrzvl1yk/cP/W4DFlBhPNTKnjvain1DmazCW1l4jTh+mwhWqBLs6prhOBhm9Rr1ZMF9Hm
- pQppNklLSJ/f/S9S/ny5txE2IBMf0zQDYguAQWnQ1mco/bFO9RwQyCZSF6azevoFsAGUXgL7R
- rpFyQKDbjirnD8SYBAIg+lPfYoseV/UzzrjlA/zLQS+QHrpsOzo/mMG6WAJ8kURyquSKM+Kry
- Dt8GR7cCLjAMlI0xP3jQnzg5PnvaLSXizjXL265yQZ6iY3LndijahpHXnTmQxULJaJjKOIq2D
- Q+qnBmiP1/YaE6yRBVKU+SlNIA6++VuT7/WNfObfa4ATK0LlfEDAjgnusCgZhXrA866YxqQRt
- 9pvZARcby/ldJZQtgGSpZ2F4wgqwczgv5NzQOtwEtq5qjlRLl23QAZcwSMHKbzy9VmXB6ga1W
- +/whvrTLiONxyzTs/3xCevhDKQuJN/ARB9DUNdkP41sO3JIyajG6eaGUfnto1drKOdUjP2AYG
- Dr4gwjNlGVY4Xlp3D+ucx8drp8S5kW2gsbtEqh2bu9u7GNropEbl/9fVqjF9NT531rXIb0nYM
- V/0R/+t71wg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190121014914.2328-1-deepa.kernel@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+On Sun, Jan 20, 2019 at 05:49:14PM -0800, Deepa Dinamani wrote:
+> Arnd Bergmann pointed out that CONFIG_* cannot be used
+> in a uapi header. Override with an equivalent conditional.
+> 
+> Fixes: 2e746942ebac ("Input: input_event - provide override for sparc64")
+> Fixes: 152194fe9c3f ("Input: extend usable life of event timestamps to 2106 on 32 bit systems")
+> Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
 
-Somewhere along recent changes to power control of the wl1831, power-on
-became very unreliable on the Ultra96, failing like this:
+Applied, thank you.
 
-wl1271_sdio: probe of mmc2:0001:1 failed with error -16
-wl1271_sdio: probe of mmc2:0001:2 failed with error -16
+> ---
+>  include/uapi/linux/input.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/uapi/linux/input.h b/include/uapi/linux/input.h
+> index ffab958bc512..f056b2a00d5c 100644
+> --- a/include/uapi/linux/input.h
+> +++ b/include/uapi/linux/input.h
+> @@ -32,7 +32,7 @@ struct input_event {
+>  #define input_event_usec time.tv_usec
+>  #else
+>  	__kernel_ulong_t __sec;
+> -#ifdef CONFIG_SPARC64
+> +#if defined(__sparc__) && defined(__arch64__)
+>  	unsigned int __usec;
+>  #else
+>  	__kernel_ulong_t __usec;
+> -- 
+> 2.17.1
+> 
 
-After playing with some dt parameters and comparing to other users of
-this chip, it turned out we need some power-on delay to make things
-stable again. In contrast to those other users which define 200 ms,
-Ultra96 is already happy with 10 ms.
-
-Fixes: 5869ba0653b9 ("arm64: zynqmp: Add support for Xilinx zcu100-revC")
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
-=2D--
-
-Changes in v2:
- - fix changelog
-
- arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts b/arch/arm6=
-4/boot/dts/xilinx/zynqmp-zcu100-revC.dts
-index 13a0a028df98..e5699d0d91e4 100644
-=2D-- a/arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts
-+++ b/arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts
-@@ -101,6 +101,7 @@
- 	sdio_pwrseq: sdio-pwrseq {
- 		compatible =3D "mmc-pwrseq-simple";
- 		reset-gpios =3D <&gpio 7 GPIO_ACTIVE_LOW>; /* WIFI_EN */
-+		post-power-on-delay-ms =3D <10>;
- 	};
- };
-
-=2D-
-2.16.4
+-- 
+Dmitry
