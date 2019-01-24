@@ -2,139 +2,122 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+X-Spam-Status: No, score=-15.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1AA6C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:09:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29608C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:10:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABD8B218A6
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:09:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC140218A6
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:10:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548360595;
-	bh=hTZEIgZM3Vbm7ipL4EHsz4IoNpixU2ZlAwInwzs2xdo=;
-	h=Subject:References:Cc:From:In-Reply-To:To:Date:List-ID:From;
-	b=OJbidxp+Ar1PhjA5EiRyTt9SFpVdLcjuV8e6kTkPcwcanbRgMqpbL4eXOyH9t9GOU
-	 TepJKAWwI66/4pLA3Rc+pIojvtKLKOoONVBLHFUF0C6HXklYxejzM147S5OA1DoP46
-	 fCMTmNbLF5zzmxIiY243lp8mAc+zcyMyqQyOMhxE=
+	s=default; t=1548360603;
+	bh=XWzUfeK1Nxtd2B/qln4OJuaQ92Qx+hiWAD7721rh1GY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=khHX7oqhFK36ZkhwndKbOk08aqC98vfmncItuyePp32eYue8TCysqeFKaJsUatmNY
+	 kt7moI0Wd5kL/PIPwB8NcK4h7TfnPDV/8nK/W2aOMNKpjhcZ/r/VrblofwSz8q4BGm
+	 +O9npyFdAtnxark/iQewXepVpEhjVY+Hg8ZHXVo8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730699AbfAXUJy (ORCPT
+        id S1730881AbfAXT2G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 15:09:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54606 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:28:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54482 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730894AbfAXT2J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:28:09 -0500
-Received: from localhost (unknown [104.132.0.74])
+        id S1730857AbfAXT2E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:28:04 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 84FC5218A6;
-        Thu, 24 Jan 2019 19:28:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6BE1A218A6;
+        Thu, 24 Jan 2019 19:28:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358088;
-        bh=hTZEIgZM3Vbm7ipL4EHsz4IoNpixU2ZlAwInwzs2xdo=;
-        h=Subject:References:Cc:From:In-Reply-To:To:Date:From;
-        b=nDFlj2pA2bJRLQdwghcy5zR+GJdEhClSuBj9z41SVgM86e9gIAAYfcdnQanT6hJBf
-         kn7CYyAQLFI5EkUqzSOtFZg9bMcqVewuGcdNd+JwnY/a7suPN+VDoQx3gBQnNdeVIP
-         1N2PahVo4KpH2yZWkALmPN2BAcBlCoYnA/mhkAA4=
-Content-Type: text/plain; charset="utf-8"
+        s=default; t=1548358083;
+        bh=XWzUfeK1Nxtd2B/qln4OJuaQ92Qx+hiWAD7721rh1GY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=DAvQop+AFOz39RE+ShwQpXKqOB3ffzGQUR9JvJsJFna2ny3cfxLQZUm3/EdQwWqIa
+         waoDOUcqz9dA+pLRjC8HTALHNVpXSz+fh9XQdNiYGvSxuP2vMbhXkQffvlx3ahdLcb
+         0pG2shRsxPx3ReI3l6Rasl6i5SET9oPBiV7ufTEk=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 093/104] perf svghelper: Fix unchecked usage of strncpy()
+Date:   Thu, 24 Jan 2019 20:20:22 +0100
+Message-Id: <20190124190205.098528798@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190124190154.968308875@linuxfoundation.org>
+References: <20190124190154.968308875@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v8 05/26] clocksource: Add driver for the Ingenic JZ47xx OST
-References: <20181212220922.18759-1-paul@crapouillou.net> <20181212220922.18759-6-paul@crapouillou.net> <CA+7wUsxNN2SL9_7tDh0DiBAgdUwxd_osgmi=09HP7110Tm0DYQ@mail.gmail.com> <128675a5-7ede-4114-a649-89a536346dc8@roeck-us.net> <1548264353.3173.1@crapouillou.net> <20190123180155.GB9781@roeck-us.net>
-User-Agent: alot/0.8
-Cc:     Mathieu Malaterre <malat@debian.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Ezequiel Garcia <ezequiel@collabora.co.uk>,
-        PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
-        linux-pwm@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        linux-watchdog@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org, od@zcrc.me,
-        Maarten ter Huurne <maarten@treewalker.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20190123180155.GB9781@roeck-us.net>
-Message-ID: <154835808767.136743.14531363127962557756@swboyd.mtv.corp.google.com>
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Paul Cercueil <paul@crapouillou.net>
-Date:   Thu, 24 Jan 2019 11:28:07 -0800
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Guenter Roeck (2019-01-23 10:01:55)
-> On Wed, Jan 23, 2019 at 02:25:53PM -0300, Paul Cercueil wrote:
-> > Hi,
-> >=20
-> > Le mer. 23 janv. 2019 =C3=83=C2=A0 11:31, Guenter Roeck <linux@roeck-us=
-.net> a =C3=83=C2=A9crit :
-> > >On 1/23/19 4:58 AM, Mathieu Malaterre wrote:
-> > >>On Wed, Dec 12, 2018 at 11:09 PM Paul Cercueil <paul@crapouillou.net>
-> > >>wrote:
-> > >>>
-> > >>>From: Maarten ter Huurne <maarten@treewalker.org>
-> > >>>
-> > >>>OST is the OS Timer, a 64-bit timer/counter with buffered reading.
-> > >>>
-> > >>>SoCs before the JZ4770 had (if any) a 32-bit OST; the JZ4770 and
-> > >>>JZ4780 have a 64-bit OST.
-> > >>>
-> > >>>This driver will register both a clocksource and a sched_clock to the
-> > >>>system.
-> > >>>
-> > >>>Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
-> > >>>Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> > >>>---
-> > >>>
-> > >>>Notes:
-> > >>>      v5: New patch
-> > >>>
-> > >>>      v6: - Get rid of SoC IDs; pass pointer to ingenic_ost_soc_info
-> > >>>as
-> > >>>            devicetree match data instead.
-> > >>>          - Use device_get_match_data() instead of the of_* variant
-> > >>>          - Handle error of dev_get_regmap() properly
-> > >>>
-> > >>>      v7: Fix section mismatch by using
-> > >>>builtin_platform_driver_probe()
-> > >>>
-> > >>>      v8: builtin_platform_driver_probe() does not work anymore in
-> > >>>          4.20-rc6? The probe function won't be called. Work around
-> > >>>this
-> > >>>          for now by using late_initcall.
-> > >>>
-> > >
-> > >Did anyone notice this ? Either something is wrong with the driver, or
-> > >with the kernel core. Hacking around it seems like the worst possible
-> > >"solution".
-> >=20
-> > I can confirm it still happens on 5.0-rc3.
-> >=20
-> > Just to explain what I'm doing:
-> >=20
-> > My ingenic-timer driver probes with builtin_platform_driver_probe (this
-> > works),
-> > and then calls of_platform_populate to probe its children. This driver,
-> > ingenic-ost, is one of them, and will fail to probe with
-> > builtin_platform_driver_probe.
-> >=20
->=20
-> The big question is _why_ it fails to probe.
->=20
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-Are you sharing the device tree node between a 'normal' platform device
-driver and something more low level DT that marks the device's backing
-DT node as OF_POPULATED early on? That's my only guess why it's not
-working.
+------------------
+
+[ Upstream commit 2f5302533f306d5ee87bd375aef9ca35b91762cb ]
+
+The strncpy() function may leave the destination string buffer
+unterminated, better use strlcpy() that we have a __weak fallback
+implementation for systems without it.
+
+In this specific case this would only happen if fgets() was buggy, as
+its man page states that it should read one less byte than the size of
+the destination buffer, so that it can put the nul byte at the end of
+it, so it would never copy 255 non-nul chars, as fgets reads into the
+orig buffer at most 254 non-nul chars and terminates it. But lets just
+switch to strlcpy to keep the original intent and silence the gcc 8.2
+warning.
+
+This fixes this warning on an Alpine Linux Edge system with gcc 8.2:
+
+  In function 'cpu_model',
+      inlined from 'svg_cpu_box' at util/svghelper.c:378:2:
+  util/svghelper.c:337:5: error: 'strncpy' output may be truncated copying 255 bytes from a string of length 255 [-Werror=stringop-truncation]
+       strncpy(cpu_m, &buf[13], 255);
+       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Fixes: f48d55ce7871 ("perf: Add a SVG helper library file")
+Link: https://lkml.kernel.org/n/tip-xzkoo0gyr56gej39ltivuh9g@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ tools/perf/util/svghelper.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/perf/util/svghelper.c b/tools/perf/util/svghelper.c
+index eec6c1149f44..132878d4847a 100644
+--- a/tools/perf/util/svghelper.c
++++ b/tools/perf/util/svghelper.c
+@@ -333,7 +333,7 @@ static char *cpu_model(void)
+ 	if (file) {
+ 		while (fgets(buf, 255, file)) {
+ 			if (strstr(buf, "model name")) {
+-				strncpy(cpu_m, &buf[13], 255);
++				strlcpy(cpu_m, &buf[13], 255);
+ 				break;
+ 			}
+ 		}
+-- 
+2.19.1
+
+
 
