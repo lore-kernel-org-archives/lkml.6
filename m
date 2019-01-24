@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3DDBC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:35:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FF95C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:35:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B19E321906
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:35:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A09721909
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:35:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358532;
-	bh=LD4QGwAqSeHMgUObZtkD7p8iQsmpAgTRwZJBKp+0LRQ=;
+	s=default; t=1548358536;
+	bh=ap/1FXivhVVlvG/MLOwLRGWojSf2YCs2zp7NONk5n5I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jQgm3RpXQbZIiC+jdH8Qx/0xlYQdH+wCSjsXO3jPyA1I5geooOnS5hAFAjivY0aWo
-	 tX6eoFHRpSJgNggKoowk1oZNuOT56uByspjQiFoEpdwToRSxrnH62wy/dxDv48DP2k
-	 RjqysXxB6ZYu8ZjpBRiGMp0Xx2kQwtbqSdFWRLJY=
+	b=iyVgeN7lOScTqkkPWlyC/KFKDElMP0WWYzg+T7NKYdI5880GZiF8nDSFUBOlGEaK0
+	 43rXEK/3uPRBV4IY8FAFSBiZiY3PG8ONY6dGj/4k6BNd/tB7AjlomPRyR9M9RRkX49
+	 SA5dulBukBaRim2NLOZ9bHefRNCD5/RkjEfZh3qE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730829AbfAXTfb (ORCPT
+        id S1730528AbfAXTfe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:35:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35326 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:35:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35500 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731955AbfAXTfZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:35:25 -0500
+        id S1732366AbfAXTfc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:35:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 68B8221903;
-        Thu, 24 Jan 2019 19:35:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6860A21906;
+        Thu, 24 Jan 2019 19:35:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358523;
-        bh=LD4QGwAqSeHMgUObZtkD7p8iQsmpAgTRwZJBKp+0LRQ=;
+        s=default; t=1548358531;
+        bh=ap/1FXivhVVlvG/MLOwLRGWojSf2YCs2zp7NONk5n5I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sYjy/K+H14EGJP8ekRnLFzHBoJDcLiY7D401z/Q+gv10EReXk1X8O/FjGW5hQStqj
-         Yax2KIFJfQnllMHU7C4Mp/20qvvE4KlKCFpR9AeAfFQ5WXF0JGjeVOaKTdexayUAAe
-         KkLZG1XkyRpt4h8QXUHev69CODa1ogyS2UqEsExs=
+        b=mQV/k7VYktj8JxoDC7ER8l3093YkBJ3YHW2o3Jcik5qixZWzRx46CNQyARZwMPy5g
+         95+H7JJeAKjU0CP2ddBVH2JU9ibO0oYljjEFMzKhi2AzOT9L/O41BToREak8BHgUSr
+         AojdR5FNkqnFAlpAs3sUB3CS4iKSFzs6YYPynGDk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Anders Roxell <anders.roxell@linaro.org>,
+        stable@vger.kernel.org,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Kees Cook <keescook@chromium.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 021/106] serial: set suppress_bind_attrs flag only if builtin
-Date:   Thu, 24 Jan 2019 20:19:38 +0100
-Message-Id: <20190124190207.696256465@linuxfoundation.org>
+Subject: [PATCH 4.19 041/106] pstore/ram: Do not treat empty buffers as valid
+Date:   Thu, 24 Jan 2019 20:19:58 +0100
+Message-Id: <20190124190209.049178443@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
 References: <20190124190206.342411005@linuxfoundation.org>
@@ -66,124 +67,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 646097940ad35aa2c1f2012af932d55976a9f255 ]
+[ Upstream commit 30696378f68a9e3dad6bfe55938b112e72af00c2 ]
 
-When the test 'CONFIG_DEBUG_TEST_DRIVER_REMOVE=y' is enabled,
-arch_initcall(pl011_init) came before subsys_initcall(default_bdi_init).
-devtmpfs gets killed because we try to remove a file and decrement the
-wb reference count before the noop_backing_device_info gets initialized.
+The ramoops backend currently calls persistent_ram_save_old() even
+if a buffer is empty. While this appears to work, it is does not seem
+like the right thing to do and could lead to future bugs so lets avoid
+that. It also prevents misleading prints in the logs which claim the
+buffer is valid.
 
-[    0.332075] Serial: AMBA PL011 UART driver
-[    0.485276] 9000000.pl011: ttyAMA0 at MMIO 0x9000000 (irq = 39, base_baud = 0) is a PL011 rev1
-[    0.502382] console [ttyAMA0] enabled
-[    0.515710] Unable to handle kernel paging request at virtual address 0000800074c12000
-[    0.516053] Mem abort info:
-[    0.516222]   ESR = 0x96000004
-[    0.516417]   Exception class = DABT (current EL), IL = 32 bits
-[    0.516641]   SET = 0, FnV = 0
-[    0.516826]   EA = 0, S1PTW = 0
-[    0.516984] Data abort info:
-[    0.517149]   ISV = 0, ISS = 0x00000004
-[    0.517339]   CM = 0, WnR = 0
-[    0.517553] [0000800074c12000] user address but active_mm is swapper
-[    0.517928] Internal error: Oops: 96000004 [#1] PREEMPT SMP
-[    0.518305] Modules linked in:
-[    0.518839] CPU: 0 PID: 13 Comm: kdevtmpfs Not tainted 4.19.0-rc5-next-20180928-00002-g2ba39ab0cd01-dirty #82
-[    0.519307] Hardware name: linux,dummy-virt (DT)
-[    0.519681] pstate: 80000005 (Nzcv daif -PAN -UAO)
-[    0.519959] pc : __destroy_inode+0x94/0x2a8
-[    0.520212] lr : __destroy_inode+0x78/0x2a8
-[    0.520401] sp : ffff0000098c3b20
-[    0.520590] x29: ffff0000098c3b20 x28: 00000000087a3714
-[    0.520904] x27: 0000000000002000 x26: 0000000000002000
-[    0.521179] x25: ffff000009583000 x24: 0000000000000000
-[    0.521467] x23: ffff80007bb52000 x22: ffff80007bbaa7c0
-[    0.521737] x21: ffff0000093f9338 x20: 0000000000000000
-[    0.522033] x19: ffff80007bbb05d8 x18: 0000000000000400
-[    0.522376] x17: 0000000000000000 x16: 0000000000000000
-[    0.522727] x15: 0000000000000400 x14: 0000000000000400
-[    0.523068] x13: 0000000000000001 x12: 0000000000000001
-[    0.523421] x11: 0000000000000000 x10: 0000000000000970
-[    0.523749] x9 : ffff0000098c3a60 x8 : ffff80007bbab190
-[    0.524017] x7 : ffff80007bbaa880 x6 : 0000000000000c88
-[    0.524305] x5 : ffff0000093d96c8 x4 : 61c8864680b583eb
-[    0.524567] x3 : ffff0000093d6180 x2 : ffffffffffffffff
-[    0.524872] x1 : 0000800074c12000 x0 : 0000800074c12000
-[    0.525207] Process kdevtmpfs (pid: 13, stack limit = 0x(____ptrval____))
-[    0.525529] Call trace:
-[    0.525806]  __destroy_inode+0x94/0x2a8
-[    0.526108]  destroy_inode+0x34/0x88
-[    0.526370]  evict+0x144/0x1c8
-[    0.526636]  iput+0x184/0x230
-[    0.526871]  dentry_unlink_inode+0x118/0x130
-[    0.527152]  d_delete+0xd8/0xe0
-[    0.527420]  vfs_unlink+0x240/0x270
-[    0.527665]  handle_remove+0x1d8/0x330
-[    0.527875]  devtmpfsd+0x138/0x1c8
-[    0.528085]  kthread+0x14c/0x158
-[    0.528291]  ret_from_fork+0x10/0x18
-[    0.528720] Code: 92800002 aa1403e0 d538d081 8b010000 (c85f7c04)
-[    0.529367] ---[ end trace 5a3dee47727f877c ]---
+I got something like:
 
-Rework to set suppress_bind_attrs flag to avoid removing the device when
-CONFIG_DEBUG_TEST_DRIVER_REMOVE=y. This applies for pic32_uart and
-xilinx_uartps as well.
+	found existing buffer, size 0, start 0
 
-Co-developed-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+When I was expecting:
+
+	no valid data in buffer (sig = ...)
+
+This bails out early (and reports with pr_debug()), since it's an
+acceptable state.
+
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Co-developed-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/amba-pl011.c    | 2 ++
- drivers/tty/serial/pic32_uart.c    | 1 +
- drivers/tty/serial/xilinx_uartps.c | 1 +
- 3 files changed, 4 insertions(+)
+ fs/pstore/ram_core.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl011.c
-index ebd33c0232e6..89ade213a1a9 100644
---- a/drivers/tty/serial/amba-pl011.c
-+++ b/drivers/tty/serial/amba-pl011.c
-@@ -2780,6 +2780,7 @@ static struct platform_driver arm_sbsa_uart_platform_driver = {
- 		.name	= "sbsa-uart",
- 		.of_match_table = of_match_ptr(sbsa_uart_of_match),
- 		.acpi_match_table = ACPI_PTR(sbsa_uart_acpi_match),
-+		.suppress_bind_attrs = IS_BUILTIN(CONFIG_SERIAL_AMBA_PL011),
- 	},
- };
+diff --git a/fs/pstore/ram_core.c b/fs/pstore/ram_core.c
+index 0792595ebcfb..3c777ec80d47 100644
+--- a/fs/pstore/ram_core.c
++++ b/fs/pstore/ram_core.c
+@@ -496,6 +496,11 @@ static int persistent_ram_post_init(struct persistent_ram_zone *prz, u32 sig,
+ 	sig ^= PERSISTENT_RAM_SIG;
  
-@@ -2808,6 +2809,7 @@ static struct amba_driver pl011_driver = {
- 	.drv = {
- 		.name	= "uart-pl011",
- 		.pm	= &pl011_dev_pm_ops,
-+		.suppress_bind_attrs = IS_BUILTIN(CONFIG_SERIAL_AMBA_PL011),
- 	},
- 	.id_table	= pl011_ids,
- 	.probe		= pl011_probe,
-diff --git a/drivers/tty/serial/pic32_uart.c b/drivers/tty/serial/pic32_uart.c
-index fd80d999308d..0bdf1687983f 100644
---- a/drivers/tty/serial/pic32_uart.c
-+++ b/drivers/tty/serial/pic32_uart.c
-@@ -919,6 +919,7 @@ static struct platform_driver pic32_uart_platform_driver = {
- 	.driver		= {
- 		.name	= PIC32_DEV_NAME,
- 		.of_match_table	= of_match_ptr(pic32_serial_dt_ids),
-+		.suppress_bind_attrs = IS_BUILTIN(CONFIG_SERIAL_PIC32),
- 	},
- };
- 
-diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
-index 6ed74735b58c..87d8dd90d605 100644
---- a/drivers/tty/serial/xilinx_uartps.c
-+++ b/drivers/tty/serial/xilinx_uartps.c
-@@ -1608,6 +1608,7 @@ static struct platform_driver cdns_uart_platform_driver = {
- 		.name = CDNS_UART_NAME,
- 		.of_match_table = cdns_uart_of_match,
- 		.pm = &cdns_uart_dev_pm_ops,
-+		.suppress_bind_attrs = IS_BUILTIN(CONFIG_SERIAL_XILINX_PS_UART),
- 		},
- };
- 
+ 	if (prz->buffer->sig == sig) {
++		if (buffer_size(prz) == 0) {
++			pr_debug("found existing empty buffer\n");
++			return 0;
++		}
++
+ 		if (buffer_size(prz) > prz->buffer_size ||
+ 		    buffer_start(prz) > buffer_size(prz))
+ 			pr_info("found existing invalid buffer, size %zu, start %zu\n",
 -- 
 2.19.1
 
