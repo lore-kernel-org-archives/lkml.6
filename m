@@ -2,145 +2,186 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B345AC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:02:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80F3DC282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:02:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78B4E218D0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:02:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20150623.gappssmtp.com header.i=@ndufresne-ca.20150623.gappssmtp.com header.b="TXClimY/"
+	by mail.kernel.org (Postfix) with ESMTP id 4EB5621726
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:02:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548360134;
+	bh=aMb6kBX7NGR3zvOoH3QSyrWHV1kuvUMxREKAVrQ3J3k=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=GRAANj8W5K6Bhq8WR28EJvZz2nhtmRVJV8bQMhuVGMtGBKbJRFPwGUAV/JfjGQ10k
+	 CXISg0azHq+zNOI4hM+zCSLQlfx9niMYIslAaRW8lp+brz62cRG9WXQW7Kcv6a8MFg
+	 qz1Bwxuwu7XdIkAioSh6kBup2NyKrMg7+3Ojq7WE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730140AbfAXUCJ (ORCPT
+        id S1731994AbfAXTdX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 15:02:09 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:35395 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727940AbfAXUCG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 15:02:06 -0500
-Received: by mail-qt1-f196.google.com with SMTP id v11so8183108qtc.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 12:02:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=1Qc1gApNtNYgosohgQj5nrLUiVb3/k8Wu8CPPbCMbKQ=;
-        b=TXClimY/73VMKnv/m6INBwNilNlPO9nRGWx/gSYL8QjI/B6Kn2CLRBkyrj/VaUliOk
-         Ys26YKl7BC29duAOeWCO+v/lLrI+YgOsZevVV85NDjY5IWQki0g0uKFTUH0oTvJL4WAz
-         yASFrfESFkLfvUt+acg5glTExCFBi3BWWVJt/QOoPu7kedsrwdugtTEMYjI+Zn+qFLjZ
-         WVDWfdvakdDiBvGCh0zt7RC19opKSI1e+ZD/0DxjKAk4498OyUi6PghPGDidzi3ukZOu
-         4GsbO2zW3uYl01Px30JfNRvkfLW88PWtJ8IupCdSyi6WutBESYAY6Gn5EWkJW15MVnls
-         LEQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=1Qc1gApNtNYgosohgQj5nrLUiVb3/k8Wu8CPPbCMbKQ=;
-        b=U7MQoluxpLGDuIfviVEG2DX/uIZ7hm3NEXabf5XrFYxAHnwC5zSqu0EX63ULsdnRO5
-         hWivEf3DqChx4nbcPuDmAvUZvCrFT4tJ+1EZp3FaIryM1V/myWCX+NqYWvow4IzdDDKI
-         w5cO5GMtbG1DicRRc1Enf+7alg65OWZA7Wxhp+5tmoCbiK+jA+ldRUuEtoOvyrnq1lXX
-         Qqb0pyEz6Z5QD0kojtFwWTpdVN9PyCH7mlfMgA+VroKWV2A2OzZ9AFevNlfoorAJ2+wH
-         pvBY7mHTK3OUf2/jQd2VJB/4mwTOp1i6kalF8dNSx+Sp08xj9WqJyPfBc+ZjsUntFM7G
-         oDTA==
-X-Gm-Message-State: AJcUukeWFajdp8eKk/yP1l6lqU1MVxAaw8VS/7mRta/iPVn7bTMHxXvb
-        LZhQ/WCUu+pC+CT7N9FUY+tMiJp081ELPbrL
-X-Google-Smtp-Source: ALg8bN7/HXdr8ABMFs4pkYkigjZUPBztyHwZLdV5b79TfUzNMiNaw+Y6+F4nUgqvc2wiODQBX2tLYQ==
-X-Received: by 2002:a0c:b6c3:: with SMTP id h3mr7728962qve.128.1548360125408;
-        Thu, 24 Jan 2019 12:02:05 -0800 (PST)
-Received: from skullcanyon ([192.222.193.21])
-        by smtp.gmail.com with ESMTPSA id y32sm80764578qth.3.2019.01.24.12.02.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 24 Jan 2019 12:02:04 -0800 (PST)
-Message-ID: <74aef8bfac022ba8ea875b1c69538ad91bf00a0b.camel@ndufresne.ca>
-Subject: Re: [PATCH v2 2/2] media: docs-rst: Document memory-to-memory video
- encoder interface
-From:   Nicolas Dufresne <nicolas@ndufresne.ca>
-To:     Tomasz Figa <tfiga@chromium.org>
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        =?UTF-8?Q?Pawe=C5=82_O=C5=9Bciak?= <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Kamil Debski <kamil@wypas.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Jeongtae Park <jtp.park@samsung.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Tiffany Lin <tiffany.lin@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dave.stevenson@raspberrypi.org,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Maxime Jourdan <maxi.jourdan@wanadoo.fr>
-Date:   Thu, 24 Jan 2019 15:02:02 -0500
-In-Reply-To: <CAAFQd5B5EhdK78uzDE=t-ZHYDVYrrUo9t2_HQH+bKjRp6HfSOw@mail.gmail.com>
-References: <20181022144901.113852-1-tfiga@chromium.org>
-         <20181022144901.113852-3-tfiga@chromium.org>
-         <4cd223f0-b09c-da07-f26c-3b3f7a8868d7@xs4all.nl>
-         <5fb0f2db44ba7aa3788b61f2aa9a30d4f4984de5.camel@ndufresne.ca>
-         <d853eb91-c05d-fb10-f154-bc24e4ebb89d@xs4all.nl>
-         <dae0211b3bc01423f1e9de63e9b4ef0aee44c086.camel@ndufresne.ca>
-         <CAAFQd5B5EhdK78uzDE=t-ZHYDVYrrUo9t2_HQH+bKjRp6HfSOw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
-Mime-Version: 1.0
+        Thu, 24 Jan 2019 14:33:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33074 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731979AbfAXTdR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:33:17 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3B6E8218D4;
+        Thu, 24 Jan 2019 19:33:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548358396;
+        bh=aMb6kBX7NGR3zvOoH3QSyrWHV1kuvUMxREKAVrQ3J3k=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=T8jLg08U7Zh/ioyAXhNkSuscRS0YnIZ/ae8O1VqooGD5iTupgYuAPp+tRXRLbf/dW
+         RahhYKDmtO8ZRO1+A6bQXXqNB05GLz9pkRb3Zxq6dkBoSQd7LvG1sprggkyvOikZiV
+         xnWXTIlUq6D4CCT9H9zOHdoG9Sg5DQPg7T1doxQg=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Scott Mayhew <smayhew@redhat.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        Qian Lu <luqia@amazon.com>
+Subject: [PATCH 4.14 58/63] nfs: fix a deadlock in nfs client initialization
+Date:   Thu, 24 Jan 2019 20:20:47 +0100
+Message-Id: <20190124190202.138301116@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190124190155.176570028@linuxfoundation.org>
+References: <20190124190155.176570028@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le mercredi 23 janvier 2019 à 19:02 +0900, Tomasz Figa a écrit :
-> On Sun, Nov 18, 2018 at 10:34 AM Nicolas Dufresne <nicolas@ndufresne.ca> wrote:
-> > Le samedi 17 novembre 2018 à 12:37 +0100, Hans Verkuil a écrit :
-> > > > > Does V4L2_CID_MIN_BUFFERS_FOR_CAPTURE make any sense for encoders?
-> > > > 
-> > > > We do account for it in GStreamer (the capture/output handling is
-> > > > generic), but I don't know if it's being used anywhere.
-> > > 
-> > > Do you use this value directly for REQBUFS, or do you use it as the minimum
-> > > value but in practice use more buffers?
-> > 
-> > We add more buffers to that value. We assume this value is what will be
-> > held by the driver, hence without adding some buffers, the driver would
-> > go idle as soon as one is dequeued. We also need to allocate for the
-> > importing driver.
-> > 
-> > In general, if we have a pipeline with Driver A sending to Driver B,
-> > both driver will require a certain amount of buffers to operate. E.g.
-> > with DRM display, the driver will hold on 1 buffer (the scannout
-> > buffer).
-> > 
-> > In GStreamer, it's implemented generically, so we do:
-> > 
-> >   MIN_BUFFERS_FOR + remote_min + 1
-> > 
-> > If only MIN_BUFFERS_FOR was allocated, ignoring remote driver
-> > requirement, the streaming will likely get stuck.
-> 
-> What happens if the driver doesn't report it?
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-If the driver does not report it because it does not use it (I think
-CODA decoder is like that), there is no issue. If the driver do not
-report but needs extra, the driver will end up growing count in
-REQBUFS, so the end result will be under-allocation since the remote
-requirement won't be accounted. Streaming will hang.
+------------------
 
-A good example is transcoding, you encoder will never have enough
-frames to reproduce an output, because the decoder is waiting for his
-frame to come back. Only solution to that would be a memcpy(), or
-double allocation (redoing REQBUFS later on). The MIN_BUFFERS_FOR
-announcement is the optimal way, avoiding copies and allocating twice.
+From: Scott Mayhew <smayhew@redhat.com>
 
-> 
-> Best regards,
-> Tomasz
+commit c156618e15101a9cc8c815108fec0300a0ec6637 upstream.
+
+The following deadlock can occur between a process waiting for a client
+to initialize in while walking the client list during nfsv4 server trunking
+detection and another process waiting for the nfs_clid_init_mutex so it
+can initialize that client:
+
+Process 1                               Process 2
+---------                               ---------
+spin_lock(&nn->nfs_client_lock);
+list_add_tail(&CLIENTA->cl_share_link,
+        &nn->nfs_client_list);
+spin_unlock(&nn->nfs_client_lock);
+                                        spin_lock(&nn->nfs_client_lock);
+                                        list_add_tail(&CLIENTB->cl_share_link,
+                                                &nn->nfs_client_list);
+                                        spin_unlock(&nn->nfs_client_lock);
+                                        mutex_lock(&nfs_clid_init_mutex);
+                                        nfs41_walk_client_list(clp, result, cred);
+                                        nfs_wait_client_init_complete(CLIENTA);
+(waiting for nfs_clid_init_mutex)
+
+Make sure nfs_match_client() only evaluates clients that have completed
+initialization in order to prevent that deadlock.
+
+This patch also fixes v4.0 trunking behavior by not marking the client
+NFS_CS_READY until the clientid has been confirmed.
+
+Signed-off-by: Scott Mayhew <smayhew@redhat.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Signed-off-by: Qian Lu <luqia@amazon.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ fs/nfs/client.c     |   11 +++++++++++
+ fs/nfs/nfs4client.c |   17 +++++++++++++----
+ 2 files changed, 24 insertions(+), 4 deletions(-)
+
+--- a/fs/nfs/client.c
++++ b/fs/nfs/client.c
+@@ -291,12 +291,23 @@ static struct nfs_client *nfs_match_clie
+ 	const struct sockaddr *sap = data->addr;
+ 	struct nfs_net *nn = net_generic(data->net, nfs_net_id);
+ 
++again:
+ 	list_for_each_entry(clp, &nn->nfs_client_list, cl_share_link) {
+ 	        const struct sockaddr *clap = (struct sockaddr *)&clp->cl_addr;
+ 		/* Don't match clients that failed to initialise properly */
+ 		if (clp->cl_cons_state < 0)
+ 			continue;
+ 
++		/* If a client is still initializing then we need to wait */
++		if (clp->cl_cons_state > NFS_CS_READY) {
++			atomic_inc(&clp->cl_count);
++			spin_unlock(&nn->nfs_client_lock);
++			nfs_wait_client_init_complete(clp);
++			nfs_put_client(clp);
++			spin_lock(&nn->nfs_client_lock);
++			goto again;
++		}
++
+ 		/* Different NFS versions cannot share the same nfs_client */
+ 		if (clp->rpc_ops != data->nfs_mod->rpc_ops)
+ 			continue;
+--- a/fs/nfs/nfs4client.c
++++ b/fs/nfs/nfs4client.c
+@@ -404,15 +404,19 @@ struct nfs_client *nfs4_init_client(stru
+ 	if (error < 0)
+ 		goto error;
+ 
+-	if (!nfs4_has_session(clp))
+-		nfs_mark_client_ready(clp, NFS_CS_READY);
+-
+ 	error = nfs4_discover_server_trunking(clp, &old);
+ 	if (error < 0)
+ 		goto error;
+ 
+-	if (clp != old)
++	if (clp != old) {
+ 		clp->cl_preserve_clid = true;
++		/*
++		 * Mark the client as having failed initialization so other
++		 * processes walking the nfs_client_list in nfs_match_client()
++		 * won't try to use it.
++		 */
++		nfs_mark_client_ready(clp, -EPERM);
++	}
+ 	nfs_put_client(clp);
+ 	clear_bit(NFS_CS_TSM_POSSIBLE, &clp->cl_flags);
+ 	return old;
+@@ -539,6 +543,9 @@ int nfs40_walk_client_list(struct nfs_cl
+ 	spin_lock(&nn->nfs_client_lock);
+ 	list_for_each_entry(pos, &nn->nfs_client_list, cl_share_link) {
+ 
++		if (pos == new)
++			goto found;
++
+ 		status = nfs4_match_client(pos, new, &prev, nn);
+ 		if (status < 0)
+ 			goto out_unlock;
+@@ -559,6 +566,7 @@ int nfs40_walk_client_list(struct nfs_cl
+ 		 * way that a SETCLIENTID_CONFIRM to pos can succeed is
+ 		 * if new and pos point to the same server:
+ 		 */
++found:
+ 		atomic_inc(&pos->cl_count);
+ 		spin_unlock(&nn->nfs_client_lock);
+ 
+@@ -572,6 +580,7 @@ int nfs40_walk_client_list(struct nfs_cl
+ 		case 0:
+ 			nfs4_swap_callback_idents(pos, new);
+ 			pos->cl_confirm = new->cl_confirm;
++			nfs_mark_client_ready(pos, NFS_CS_READY);
+ 
+ 			prev = NULL;
+ 			*result = pos;
+
 
