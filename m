@@ -2,160 +2,122 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7440EC282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:46:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E47AC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:52:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43A8E218D0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:46:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8DD1218D3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:52:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="Hg5FfwzG"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="a1NHp8Es"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727931AbfAXUq5 (ORCPT
+        id S1727513AbfAXUwA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 15:46:57 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:52230 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727664AbfAXUq5 (ORCPT
+        Thu, 24 Jan 2019 15:52:00 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:9857 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726030AbfAXUwA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 15:46:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1548362813; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=6S8WqaR8jL4inlJRV8cYTRGRLMje5ISJrfQpJ6yoSXM=;
-        b=Hg5FfwzGKF9kVKeamT12Dmllt4zC044UtiXjaNcdDL4QL0QwbK9xI3cUIZvQ8jf6ubG/GB
-        6sCS8goRmMVntSdDE8JKhrP1C/2vex0wJdYYhWimiEJEH0ZRFi4Drd6t2w1j+bn7WT8mTt
-        T6gL+ejH9KPq3VEnNDhJd+fA2lXu6F8=
-Date:   Thu, 24 Jan 2019 17:46:28 -0300
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v8 05/26] clocksource: Add driver for the Ingenic JZ47xx
- OST
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        Mathieu Malaterre <malat@debian.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Ezequiel Garcia <ezequiel@collabora.co.uk>,
-        PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
-        linux-pwm@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        linux-watchdog@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org, od@zcrc.me,
-        Maarten ter Huurne <maarten@treewalker.org>
-Message-Id: <1548362788.3881.0@crapouillou.net>
-In-Reply-To: <154835808767.136743.14531363127962557756@swboyd.mtv.corp.google.com>
-References: <20181212220922.18759-1-paul@crapouillou.net>
-        <20181212220922.18759-6-paul@crapouillou.net>
-        <CA+7wUsxNN2SL9_7tDh0DiBAgdUwxd_osgmi=09HP7110Tm0DYQ@mail.gmail.com>
-        <128675a5-7ede-4114-a649-89a536346dc8@roeck-us.net>
-        <1548264353.3173.1@crapouillou.net> <20190123180155.GB9781@roeck-us.net>
-        <154835808767.136743.14531363127962557756@swboyd.mtv.corp.google.com>
+        Thu, 24 Jan 2019 15:52:00 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c4a254b0000>; Thu, 24 Jan 2019 12:51:23 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Thu, 24 Jan 2019 12:51:59 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Thu, 24 Jan 2019 12:51:59 -0800
+Received: from HQMAIL110.nvidia.com (172.18.146.15) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 24 Jan
+ 2019 20:51:59 +0000
+Received: from HQMAIL108.nvidia.com (172.18.146.13) by hqmail110.nvidia.com
+ (172.18.146.15) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 24 Jan
+ 2019 20:51:58 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL108.nvidia.com
+ (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Thu, 24 Jan 2019 20:51:58 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.52]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5c4a256e0004>; Thu, 24 Jan 2019 12:51:58 -0800
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <mkarthik@nvidia.com>, <smohammed@nvidia.com>, <talho@nvidia.com>
+CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-i2c@vger.kernel.org>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH V2 1/4] i2c: tegra: Sort all the include headers alphabetically
+Date:   Thu, 24 Jan 2019 12:51:50 -0800
+Message-ID: <1548363113-25969-1-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1548363083; bh=hozzAYYlMv37qOCmczNlWBh4Y4PsNs/QDqEzeY+tZ3w=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=a1NHp8EsL1T4A82ZN41ugx93QQ0MX49GxGn1upJNk13iKMQjF/PH3fTaTn5+hnWhf
+         fucTrPMkQijXq/ifNMNeLXMqS0CtXkdbk24u66i0zWiHrYAes/+uopPtL1ovZ3DlVq
+         +Ut7vLXEvtlsub9F3B8nlAsgdLftAnBDXS3HxSum9z1lRKE2fMn9xrcRu8fL13RAxY
+         Xvbxuy2T1923oOcrQ9fMk12+PEfm2Sl2FuzmGtoEvo5ch6oValHjvTH6m5Ld8DMk18
+         2uIwSnmXQKe5tNtcf3QaBbwNSs85khEevlnjICvvqm9nFoJ2M76z8mU2JIakpS4LvQ
+         WO1S7ICXkBmdw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patch sorts all the include headers alphabetically for the
+I2C tegra driver
 
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ [V2] : Added this in V2 to sort the headers in tegra I2C
 
-Le jeu. 24 janv. 2019 =E0 16:28, Stephen Boyd <sboyd@kernel.org> a=20
-=E9crit :
-> Quoting Guenter Roeck (2019-01-23 10:01:55)
->>  On Wed, Jan 23, 2019 at 02:25:53PM -0300, Paul Cercueil wrote:
->>  > Hi,
->>  >
->>  > Le mer. 23 janv. 2019 =C3  11:31, Guenter Roeck=20
->> <linux@roeck-us.net> a =C3=A9crit :
->>  > >On 1/23/19 4:58 AM, Mathieu Malaterre wrote:
->>  > >>On Wed, Dec 12, 2018 at 11:09 PM Paul Cercueil=20
->> <paul@crapouillou.net>
->>  > >>wrote:
->>  > >>>
->>  > >>>From: Maarten ter Huurne <maarten@treewalker.org>
->>  > >>>
->>  > >>>OST is the OS Timer, a 64-bit timer/counter with buffered=20
->> reading.
->>  > >>>
->>  > >>>SoCs before the JZ4770 had (if any) a 32-bit OST; the JZ4770=20
->> and
->>  > >>>JZ4780 have a 64-bit OST.
->>  > >>>
->>  > >>>This driver will register both a clocksource and a sched_clock=20
->> to the
->>  > >>>system.
->>  > >>>
->>  > >>>Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
->>  > >>>Signed-off-by: Paul Cercueil <paul@crapouillou.net>
->>  > >>>---
->>  > >>>
->>  > >>>Notes:
->>  > >>>      v5: New patch
->>  > >>>
->>  > >>>      v6: - Get rid of SoC IDs; pass pointer to=20
->> ingenic_ost_soc_info
->>  > >>>as
->>  > >>>            devicetree match data instead.
->>  > >>>          - Use device_get_match_data() instead of the of_*=20
->> variant
->>  > >>>          - Handle error of dev_get_regmap() properly
->>  > >>>
->>  > >>>      v7: Fix section mismatch by using
->>  > >>>builtin_platform_driver_probe()
->>  > >>>
->>  > >>>      v8: builtin_platform_driver_probe() does not work=20
->> anymore in
->>  > >>>          4.20-rc6? The probe function won't be called. Work=20
->> around
->>  > >>>this
->>  > >>>          for now by using late_initcall.
->>  > >>>
->>  > >
->>  > >Did anyone notice this ? Either something is wrong with the=20
->> driver, or
->>  > >with the kernel core. Hacking around it seems like the worst=20
->> possible
->>  > >"solution".
->>  >
->>  > I can confirm it still happens on 5.0-rc3.
->>  >
->>  > Just to explain what I'm doing:
->>  >
->>  > My ingenic-timer driver probes with builtin_platform_driver_probe=20
->> (this
->>  > works),
->>  > and then calls of_platform_populate to probe its children. This=20
->> driver,
->>  > ingenic-ost, is one of them, and will fail to probe with
->>  > builtin_platform_driver_probe.
->>  >
->>=20
->>  The big question is _why_ it fails to probe.
->>=20
->=20
-> Are you sharing the device tree node between a 'normal' platform=20
-> device
-> driver and something more low level DT that marks the device's backing
-> DT node as OF_POPULATED early on? That's my only guess why it's not
-> working.
+ drivers/i2c/busses/i2c-tegra.c | 21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
 
-I do, but I clear the OF_POPULATED flag so that it is then probed as a
-normal platform device, and it's not on this driver's node but its=20
-parent.
-=
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index e417ebf7628c..ef854be4c837 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -6,24 +6,23 @@
+  * Author: Colin Cross <ccross@android.com>
+  */
+ 
+-#include <linux/kernel.h>
+-#include <linux/init.h>
+-#include <linux/platform_device.h>
++#include <asm/unaligned.h>
+ #include <linux/clk.h>
++#include <linux/delay.h>
+ #include <linux/err.h>
+ #include <linux/i2c.h>
+-#include <linux/io.h>
++#include <linux/init.h>
+ #include <linux/interrupt.h>
+-#include <linux/delay.h>
+-#include <linux/slab.h>
+-#include <linux/of_device.h>
++#include <linux/io.h>
++#include <linux/iopoll.h>
++#include <linux/kernel.h>
+ #include <linux/module.h>
+-#include <linux/reset.h>
++#include <linux/of_device.h>
+ #include <linux/pinctrl/consumer.h>
++#include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+-#include <linux/iopoll.h>
+-
+-#include <asm/unaligned.h>
++#include <linux/reset.h>
++#include <linux/slab.h>
+ 
+ #define TEGRA_I2C_TIMEOUT (msecs_to_jiffies(1000))
+ #define BYTES_PER_FIFO_WORD 4
+-- 
+2.7.4
 
