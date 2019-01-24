@@ -2,262 +2,194 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C1C7C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:29:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81A08C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:30:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22595218A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:29:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51AC5218A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:30:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728530AbfAXP3q convert rfc822-to-8bit (ORCPT
+        id S1728611AbfAXPau (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 10:29:46 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:57212 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727755AbfAXP3p (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 10:29:45 -0500
-Received: from mail-pg1-f200.google.com ([209.85.215.200])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1gmgwp-0001nU-8R
-        for linux-kernel@vger.kernel.org; Thu, 24 Jan 2019 15:29:43 +0000
-Received: by mail-pg1-f200.google.com with SMTP id f125so4133872pgc.20
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 07:29:43 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=WFa4kIbVYiPOqZcfzasMHxpPdhKLumUqFyMF55zRdiA=;
-        b=qH6+AYlFDK57+RS2sWgcWLOTTbIUnqCP6gftExX1CaULNO87lM+NIHxQJ/f/HetUR8
-         JQZd0MiYISBjLvzQ3xiSpXAV4w7s5iiMwprntnCx23+h3uPs2Ct0zYRqTSJ0OILCtBr6
-         g2WXjn2Q51cirg6JVYaFYQRJG24ZOeJsIAULdt673wVL1bsTRlU1eNw5IX6CseBVAojt
-         uF3HFzF66l/GFaABGvazc6huds/O4VZhRVdZDQUV+dAVDAL8l9qK9B79dOyHxkQYoA7n
-         J09vpqG25++uevDB9JG3mnIqyxHkzvaUSVjmnoGYarB2L15BeoVONcbY2n2ciZRNmuIM
-         0zrQ==
-X-Gm-Message-State: AJcUukdu+Ce3EUKdP67wXemhrWFYlN+0WMuFcGfDLkkY5IHXgjJv7YzI
-        rm09wLsNrVV2U4dfod5wIMtEL+Qgp//BQJTgcPqYT6of/NLJwOwzIB0zRF6n5uvtFWZ/BIc980o
-        d8ALXkkCg8ClRALBriupKRsa41OGyT1nv9Mvp5VIwhQ==
-X-Received: by 2002:a62:9719:: with SMTP id n25mr7158651pfe.240.1548343781876;
-        Thu, 24 Jan 2019 07:29:41 -0800 (PST)
-X-Google-Smtp-Source: ALg8bN53acravPO7ZkfjWLyguRfeG2d939Ztia9IiljET0MsMrXQQJdArx8czcP104wtnG4lIZF8Hw==
-X-Received: by 2002:a62:9719:: with SMTP id n25mr7158629pfe.240.1548343781469;
-        Thu, 24 Jan 2019 07:29:41 -0800 (PST)
-Received: from [192.168.1.215] (220-133-187-190.HINET-IP.hinet.net. [220.133.187.190])
-        by smtp.gmail.com with ESMTPSA id l22sm39687370pfj.179.2019.01.24.07.29.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 07:29:40 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH] PCI / ACPI: Don't clear pme_poll on device that has
- unreliable ACPI wake
-From:   Kai Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <20190124151524.GF14636@google.com>
-Date:   Thu, 24 Jan 2019 23:29:37 +0800
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, jeffrey.t.kirsher@intel.com,
-        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <FFC6EC3F-3608-41FC-8B14-815D1747C4B6@canonical.com>
-References: <20190122064544.27426-1-kai.heng.feng@canonical.com>
- <20190122235134.GE14636@google.com>
- <91E74111-5BB6-4604-A1D7-B537AB42C317@canonical.com>
- <20190124151524.GF14636@google.com>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-X-Mailer: Apple Mail (2.3445.102.3)
+        Thu, 24 Jan 2019 10:30:50 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:48452 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728079AbfAXPau (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 10:30:50 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E547DC070E05;
+        Thu, 24 Jan 2019 15:30:48 +0000 (UTC)
+Received: from redhat.com (unknown [10.20.6.236])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 11F6F10D8233;
+        Thu, 24 Jan 2019 15:30:33 +0000 (UTC)
+Date:   Thu, 24 Jan 2019 10:30:32 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Cc:     linux-mm@kvack.org, Ralph Campbell <rcampbell@nvidia.com>,
+        Jan Kara <jack@suse.cz>, Arnd Bergmann <arnd@arndb.de>,
+        kvm@vger.kernel.org, Matthew Wilcox <mawilcox@microsoft.com>,
+        linux-rdma@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Michal Hocko <mhocko@kernel.org>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Ross Zwisler <zwisler@kernel.org>,
+        linux-fsdevel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Subject: Re: [PATCH v4 8/9] gpu/drm/i915: optimize out the case when a range
+ is updated to read only
+Message-ID: <20190124153032.GA5030@redhat.com>
+References: <20190123222315.1122-1-jglisse@redhat.com>
+ <20190123222315.1122-9-jglisse@redhat.com>
+ <154833175216.4120.925061299171157938@jlahtine-desk.ger.corp.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <154833175216.4120.925061299171157938@jlahtine-desk.ger.corp.intel.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 24 Jan 2019 15:30:49 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-> On Jan 24, 2019, at 11:15 PM, Bjorn Helgaas <helgaas@kernel.org> wrote:
+On Thu, Jan 24, 2019 at 02:09:12PM +0200, Joonas Lahtinen wrote:
+> Hi Jerome,
 > 
-> On Wed, Jan 23, 2019 at 03:17:37PM +0800, Kai Heng Feng wrote:
->>> On Jan 23, 2019, at 7:51 AM, Bjorn Helgaas <helgaas@kernel.org> wrote:
->>> On Tue, Jan 22, 2019 at 02:45:44PM +0800, Kai-Heng Feng wrote:
->>>> There are some e1000e devices can only be woken up from D3 one time, by
->>>> plugging ethernet cable. Subsequent cable plugging does set PME bit
->>>> correctly, but it still doesn't get woken up.
->>>> 
->>>> Since e1000e connects to the root complex directly, we rely on ACPI to
->>>> wake it up. In this case, the GPE from _PRW only works once and stops
->>>> working after that.
->>>> 
->>>> So introduce a new PCI quirk, to avoid clearing pme_poll flag for buggy
->>>> platform firmwares that have unreliable GPE wake.
->>> 
->>> This quirk applies to all 0x15bb (E1000_DEV_ID_PCH_CNP_I219_LM7) and
->>> 0x15bd (E1000_DEV_ID_PCH_CNP_I219_LM6) devices.  The e1000e driver
->>> claims about a zillion different device IDs.
->>> 
->>> I would be surprised if these two devices are defective but all the
->>> others work correctly.  Could it be that there is a problem with the
->>> wiring on this particular motherboard or with the ACPI _PRW methods
->>> (or the way Linux interprets them) in this firmware?
->> 
->> If this is a motherboard issue or platform specific, do you prefer to use
->> DMI matches here?
-> 
-> I'm not sure what the problem is yet, so let's hold off on the exact
-> structure of the fix.
+> This patch seems to have plenty of Cc:s, but none of the right ones :)
 
-I think DMI table can put in e1000e driver instead of PCI quirk.
+So sorry, i am bad with git commands.
+
+> For further iterations, I guess you could use git option --cc to make
+> sure everyone gets the whole series, and still keep the Cc:s in the
+> patches themselves relevant to subsystems.
+
+Will do.
+
+> This doesn't seem to be on top of drm-tip, but on top of your previous
+> patches(?) that I had some comments about. Could you take a moment to
+> first address the couple of question I had, before proceeding to discuss
+> what is built on top of that base.
+
+It is on top of Linus tree so roughly ~ rc3 it does not depend on any
+of the previous patch i posted. I still intended to propose to remove
+GUP from i915 once i get around to implement the equivalent of GUP_fast
+for HMM and other bonus cookies with it.
+
+The plan is once i have all mm bits properly upstream then i can propose
+patches to individual driver against the proper driver tree ie following
+rules of each individual device driver sub-system and Cc only people
+there to avoid spamming the mm folks :)
+
 
 > 
-> If I understand correctly, e1000e wakeup works once, but doesn't work
-> after that.  Your lspci (from after that first wakeup, from
-> https://bugzilla.kernel.org/attachment.cgi?id=280691) shows this:
+> My reply's Message-ID is:
+> 154289518994.19402.3481838548028068213@jlahtine-desk.ger.corp.intel.com
 > 
->  00:14.0 XHC  XHCI USB
->    Flags: PMEClk- DSI- D1- D2- ... PME(D0-,D1-,D2-,D3hot+,D3cold+)
->    Status: D3 NoSoftRst+ PME-Enable+ DSel=0 DScale=0 PME-
->  00:1f.3 HDAS audio
->    Flags: PMEClk- DSI- D1- D2- ... PME(D0-,D1-,D2-,D3hot+,D3cold+)
->    Status: D3 NoSoftRst+ PME-Enable+ DSel=0 DScale=0 PME-
->  00:1f.6 GLAN e1000e
->    Flags: PMEClk- DSI+ D1- D2- ... PME(D0+,D1-,D2-,D3hot+,D3cold+)
->    Status: D3 NoSoftRst+ PME-Enable+ DSel=0 DScale=1 PME+
+> Regards, Joonas
 > 
-> So the e1000e PME_Status bit is still set, which means it probably
-> won't generate another PME interrupt, which would explain why wakeup
-> doesn't work.  To test this theory, can you try this:
+> PS. Please keep me Cc:d in the following patches, I'm keen on
+> understanding the motive and benefits.
 > 
->  - sleep
->  - wakeup via e1000e
->  # DEV=00:1f.6
->  # lspci -vvs $DEV
->  # setpci -s $DEV CAP_PM+4.W
->  # setpci -s $DEV CAP_PM+4.W=0x8100
->  - sleep
->  - attempt another wakeup via e1000e
-> 
-> If this second wakeup works, it would suggest that PME_Status isn't
-> being cleared correctly.  I see code, e.g., in
-> acpi_setup_gpe_for_wake(), that *looks* like it would arrange to clear
-> it, but I'm not very familiar with it.  Maybe there's some issue with
-> multiple devices sharing an "implicit notification" situation like
-> this.
-
-The PME status is being cleared correctly.
-
-The lspci is captured after I plugged the ethernet cable second time,
-i.e. PME is set but not being woken up.
-
-Kai-Heng
-
-> 
->> As for _PRW, it’s shared by USB controller, Audio controller and ethernet.
->> Only the ethernet (e1000e) has this issue.
->> 
->> When this issue happens, the e1000e doesn’t get woken up by ethernet cable
->> plugging, but inserting a USB device or plugging audio jack can wake up all
->> three devices. So I think Linux interprets ACPI correctly here.
->> 
->> Their _PRW here:
->> USB controller:
->>    Scope (_SB.PCI0)                       
->>    {                                      
->>        Device (XDCI)                            
->>        {                    
->>            Method (_PRW, 0, NotSerialized)  // _PRW: Power Resources for Wake
->>            {            
->>                Return (GPRW (0x6D, 0x04))
->>            } 
->> 
->> Audio controller:
->> Scope (_SB.PCI0)                                                                                           
->>    {                                                                                                          
->>        Device (HDAS)                                  
->>        {                                                                             
->>            …         
->>            Method (_PRW, 0, NotSerialized)  // _PRW: Power Resources for Wake                 
->>            {                                        
->>                Return (GPRW (0x6D, 0x04))           
->>            }                                  
->> 
->> Ethernet controller:
->>    Scope (_SB.PCI0)                                                                     
->>    {                                                                     
->>        Device (GLAN)                                                  
->>        {                                                                            
->>           …
->>            Method (_PRW, 0, NotSerialized)  // _PRW: Power Resources for Wake                 
->>            {                                        
->>                Return (GPRW (0x6D, 0x04))                       
->>            }                                                              
->>        }                                                             
->>    }  
->> 
->> 
->>> 
->>> Would you mind attaching a complete dmesg log and "sudo lspci -vvv"
->>> output to the bugzilla, please?
->> 
->> Sure.
->> 
->> Kai-Heng
->> 
->>> 
->>>> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
->>>> ---
->>>> drivers/pci/pci-acpi.c | 2 +-
->>>> drivers/pci/quirks.c   | 8 ++++++++
->>>> include/linux/pci.h    | 1 +
->>>> 3 files changed, 10 insertions(+), 1 deletion(-)
->>>> 
->>>> diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
->>>> index e1949f7efd9c..184e2fc8a294 100644
->>>> --- a/drivers/pci/pci-acpi.c
->>>> +++ b/drivers/pci/pci-acpi.c
->>>> @@ -430,7 +430,7 @@ static void pci_acpi_wake_dev(struct acpi_device_wakeup_context *context)
->>>> 
->>>> 	pci_dev = to_pci_dev(context->dev);
->>>> 
->>>> -	if (pci_dev->pme_poll)
->>>> +	if (pci_dev->pme_poll && !pci_dev->unreliable_acpi_wake)
->>>> 		pci_dev->pme_poll = false;
->>>> 
->>>> 	if (pci_dev->current_state == PCI_D3cold) {
->>>> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
->>>> index b0a413f3f7ca..ed4863496fa8 100644
->>>> --- a/drivers/pci/quirks.c
->>>> +++ b/drivers/pci/quirks.c
->>>> @@ -4948,6 +4948,14 @@ DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_AMD, PCI_ANY_ID,
->>>> DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_NVIDIA, PCI_ANY_ID,
->>>> 			      PCI_CLASS_MULTIMEDIA_HD_AUDIO, 8, quirk_gpu_hda);
->>>> 
->>>> +static void quirk_unreliable_acpi_wake(struct pci_dev *pdev)
->>>> +{
->>>> +	pci_info(pdev, "ACPI Wake unreliable, always poll PME\n");
->>>> +	pdev->unreliable_acpi_wake = 1;
->>>> +}
->>>> +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x15bb, quirk_unreliable_acpi_wake);
->>>> +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x15bd, quirk_unreliable_acpi_wake);
->>>> +
->>>> /*
->>>> * Some IDT switches incorrectly flag an ACS Source Validation error on
->>>> * completions for config read requests even though PCIe r4.0, sec
->>>> diff --git a/include/linux/pci.h b/include/linux/pci.h
->>>> index 65f1d8c2f082..d22065c1576f 100644
->>>> --- a/include/linux/pci.h
->>>> +++ b/include/linux/pci.h
->>>> @@ -331,6 +331,7 @@ struct pci_dev {
->>>> 	unsigned int	pme_support:5;	/* Bitmask of states from which PME#
->>>> 					   can be generated */
->>>> 	unsigned int	pme_poll:1;	/* Poll device's PME status bit */
->>>> +	unsigned int	unreliable_acpi_wake:1;	/* ACPI Wake doesn't always work */
->>>> 	unsigned int	d1_support:1;	/* Low power state D1 is supported */
->>>> 	unsigned int	d2_support:1;	/* Low power state D2 is supported */
->>>> 	unsigned int	no_d1d2:1;	/* D1 and D2 are forbidden */
->>>> -- 
->>>> 2.17.1
-
+> Quoting jglisse@redhat.com (2019-01-24 00:23:14)
+> > From: Jérôme Glisse <jglisse@redhat.com>
+> > 
+> > When range of virtual address is updated read only and corresponding
+> > user ptr object are already read only it is pointless to do anything.
+> > Optimize this case out.
+> > 
+> > Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
+> > Cc: Christian König <christian.koenig@amd.com>
+> > Cc: Jan Kara <jack@suse.cz>
+> > Cc: Felix Kuehling <Felix.Kuehling@amd.com>
+> > Cc: Jason Gunthorpe <jgg@mellanox.com>
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > Cc: Matthew Wilcox <mawilcox@microsoft.com>
+> > Cc: Ross Zwisler <zwisler@kernel.org>
+> > Cc: Dan Williams <dan.j.williams@intel.com>
+> > Cc: Paolo Bonzini <pbonzini@redhat.com>
+> > Cc: Radim Krčmář <rkrcmar@redhat.com>
+> > Cc: Michal Hocko <mhocko@kernel.org>
+> > Cc: Ralph Campbell <rcampbell@nvidia.com>
+> > Cc: John Hubbard <jhubbard@nvidia.com>
+> > Cc: kvm@vger.kernel.org
+> > Cc: dri-devel@lists.freedesktop.org
+> > Cc: linux-rdma@vger.kernel.org
+> > Cc: linux-fsdevel@vger.kernel.org
+> > Cc: Arnd Bergmann <arnd@arndb.de>
+> > ---
+> >  drivers/gpu/drm/i915/i915_gem_userptr.c | 16 ++++++++++++++++
+> >  1 file changed, 16 insertions(+)
+> > 
+> > diff --git a/drivers/gpu/drm/i915/i915_gem_userptr.c b/drivers/gpu/drm/i915/i915_gem_userptr.c
+> > index 9558582c105e..23330ac3d7ea 100644
+> > --- a/drivers/gpu/drm/i915/i915_gem_userptr.c
+> > +++ b/drivers/gpu/drm/i915/i915_gem_userptr.c
+> > @@ -59,6 +59,7 @@ struct i915_mmu_object {
+> >         struct interval_tree_node it;
+> >         struct list_head link;
+> >         struct work_struct work;
+> > +       bool read_only;
+> >         bool attached;
+> >  };
+> >  
+> > @@ -119,6 +120,7 @@ static int i915_gem_userptr_mn_invalidate_range_start(struct mmu_notifier *_mn,
+> >                 container_of(_mn, struct i915_mmu_notifier, mn);
+> >         struct i915_mmu_object *mo;
+> >         struct interval_tree_node *it;
+> > +       bool update_to_read_only;
+> >         LIST_HEAD(cancelled);
+> >         unsigned long end;
+> >  
+> > @@ -128,6 +130,8 @@ static int i915_gem_userptr_mn_invalidate_range_start(struct mmu_notifier *_mn,
+> >         /* interval ranges are inclusive, but invalidate range is exclusive */
+> >         end = range->end - 1;
+> >  
+> > +       update_to_read_only = mmu_notifier_range_update_to_read_only(range);
+> > +
+> >         spin_lock(&mn->lock);
+> >         it = interval_tree_iter_first(&mn->objects, range->start, end);
+> >         while (it) {
+> > @@ -145,6 +149,17 @@ static int i915_gem_userptr_mn_invalidate_range_start(struct mmu_notifier *_mn,
+> >                  * object if it is not in the process of being destroyed.
+> >                  */
+> >                 mo = container_of(it, struct i915_mmu_object, it);
+> > +
+> > +               /*
+> > +                * If it is already read only and we are updating to
+> > +                * read only then we do not need to change anything.
+> > +                * So save time and skip this one.
+> > +                */
+> > +               if (update_to_read_only && mo->read_only) {
+> > +                       it = interval_tree_iter_next(it, range->start, end);
+> > +                       continue;
+> > +               }
+> > +
+> >                 if (kref_get_unless_zero(&mo->obj->base.refcount))
+> >                         queue_work(mn->wq, &mo->work);
+> >  
+> > @@ -270,6 +285,7 @@ i915_gem_userptr_init__mmu_notifier(struct drm_i915_gem_object *obj,
+> >         mo->mn = mn;
+> >         mo->obj = obj;
+> >         mo->it.start = obj->userptr.ptr;
+> > +       mo->read_only = i915_gem_object_is_readonly(obj);
+> >         mo->it.last = obj->userptr.ptr + obj->base.size - 1;
+> >         INIT_WORK(&mo->work, cancel_userptr);
+> >  
+> > -- 
+> > 2.17.2
+> > 
+> > _______________________________________________
+> > dri-devel mailing list
+> > dri-devel@lists.freedesktop.org
+> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
