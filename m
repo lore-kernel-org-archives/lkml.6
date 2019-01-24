@@ -2,99 +2,114 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFDFDC282C0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 01:54:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51014C282C0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 01:54:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96DC42184C
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 01:54:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EFFD2184C
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 01:54:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Adm+OmBc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727128AbfAXByN (ORCPT
+        id S1727170AbfAXByV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 20:54:13 -0500
-Received: from 178.115.242.59.static.drei.at ([178.115.242.59]:36604 "EHLO
-        mail.osadl.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726310AbfAXByN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 20:54:13 -0500
-Received: by mail.osadl.at (Postfix, from userid 1001)
-        id 4CB4A5C0FB6; Thu, 24 Jan 2019 02:53:52 +0100 (CET)
-Date:   Thu, 24 Jan 2019 02:53:52 +0100
-From:   Nicholas Mc Guire <der.herr@hofr.at>
-To:     Steve Wise <swise@opengridcomputing.com>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
-        Nicholas Mc Guire <hofrat@osadl.org>,
-        Doug Ledford <dledford@redhat.com>,
-        Raju Rangoju <rajur@chelsio.com>, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC] iw_cxgb4: drop check - dead code
-Message-ID: <20190124015352.GA30939@osadl.at>
-References: <1547947633-10515-1-git-send-email-hofrat@osadl.org>
- <20190123183008.GA15698@ziepe.ca>
- <91af1982-e309-476e-cfa4-2f6ef1ee598b@opengridcomputing.com>
+        Wed, 23 Jan 2019 20:54:21 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:37896 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726310AbfAXByV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 20:54:21 -0500
+Received: by mail-pg1-f196.google.com with SMTP id g189so1938108pgc.5;
+        Wed, 23 Jan 2019 17:54:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=fGw38w0NLEFxt7pmwWcdHBPcNhpfKxwTVMKVh1KjCPg=;
+        b=Adm+OmBcaNQ/kJz54w7aWtxShQwK7WlAGIb9n17md+t5AX7HhyTXcZCb6iCUviS/xa
+         pxVDy/E5GEW8+VoV9M3eeJVdmLhVjM0bN/Q8rgKZRIaW5fs3CVy9zf9y2gOjgBbbb6re
+         5ATqWFo5K2UG85mLN5hH2oyFTHs8KhykOJg2Vx6KYargqCKaWefK0uGYN+30HldsBLpj
+         xsdAoeW+lu1C95GWhEdhYVBGWS4e4JbMOlxPgO9Dl9988RsXRXQtcnPo/XUtPl9LPNhn
+         TeU9oQyxfWo+xd/d8pL+M3VakMx7lS2WMJgMdOjqhzHbqYc/OB5MDE28ZacmWhaAiESu
+         9yqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=fGw38w0NLEFxt7pmwWcdHBPcNhpfKxwTVMKVh1KjCPg=;
+        b=E41O8gL0SuAy+zGKbrW4kdLJEgQgeYO4tvt5Ld0rEqye9S3Fsn4dPVete2zuD7uXQU
+         H5rxIQfEabH9CE40nSQ4lgXNUdVkIiQcVh9EF1vJadGLsGNpp3xmS2xcTmqiz6R7iCm5
+         G55rZ01jEsMp3g2r4k6vTK5Wao7WPFIYuMXaDXrCnXTINXA2NZJOc+0eZa4oSuEgc5Fr
+         cnMA+WK0RDhylTQC/HWNpct17sMjhUs8NcREprrInm67QrASuX1HTRYtALJyFEUIJPwr
+         3c8KUOvm6vdiMuVItoXC8WEezwGbZaxhqh6RAEC6/tJAAAfc07epVVwM4P7Y7YALQRwm
+         9ZzA==
+X-Gm-Message-State: AJcUukf9TwcgtX7QzaES+dch4vODu/jOtT7pE6itrpkzdgM8WaqwJB2t
+        cJkBAqEpmsf0X7+TPZhmR9Q=
+X-Google-Smtp-Source: ALg8bN6LjYY7FfAEr1faUL6hiDAAL9kvLBR7z1NtZwl9ng1J/nNzqZQHSmgIwNVnznZokSj+ql1S+w==
+X-Received: by 2002:a62:28c9:: with SMTP id o192mr4545656pfo.57.1548294860302;
+        Wed, 23 Jan 2019 17:54:20 -0800 (PST)
+Received: from [192.168.43.97] ([121.90.236.7])
+        by smtp.gmail.com with ESMTPSA id g136sm26823820pfb.154.2019.01.23.17.54.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 23 Jan 2019 17:54:19 -0800 (PST)
+Subject: Re: [PATCH v7 1/2] spi: Add Renesas R-Car Gen3 RPC-IF SPI controller
+ driver
+To:     Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        bbrezillon@kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        sergei.shtylyov@cogentembedded.com
+Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+        zhengxunli@mxic.com.tw
+References: <1548227352-14910-1-git-send-email-masonccyang@mxic.com.tw>
+ <1548227352-14910-2-git-send-email-masonccyang@mxic.com.tw>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Openpgp: preference=signencrypt
+Message-ID: <bb63b646-b549-dc3b-a604-17ba156e735c@gmail.com>
+Date:   Thu, 24 Jan 2019 02:51:59 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <91af1982-e309-476e-cfa4-2f6ef1ee598b@opengridcomputing.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <1548227352-14910-2-git-send-email-masonccyang@mxic.com.tw>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 12:45:11PM -0600, Steve Wise wrote:
+On 1/23/19 8:09 AM, Mason Yang wrote:
+> Add a driver for Renesas R-Car Gen3 RPC-IF SPI controller.
 > 
-> 
-> On 1/23/2019 12:30 PM, Jason Gunthorpe wrote:
-> > On Sun, Jan 20, 2019 at 02:27:13AM +0100, Nicholas Mc Guire wrote:
-> >> The kmalloc is called with  | __GFP_NOFAIL  so there is no point in
-> >> checking the return value - it either returns valid storage or it would
-> >> hang/terminate there. But it is not possible to say if the use of
-> >> __GFP_NOFAIL is really needed and the check should be removed or
-> >> vice-versa (use of __GFP_NOFAIL should be only in exceptional
-> >> cases as I understand it and alloc_srq_queue() is called in quite
-> >> a few places)
-> >> In either way it would need fixing.
-> >>
-> >> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-> >> Fixes: 6a0b6174d35a ("rdma/cxgb4: Add support for kernel mode SRQ's")
-> >> ---
-> > 
-> > Steve? It seems weird to have NOFAIL and then have an error unwind
-> > path, what is the deal here?
-> > 
-> >> diff --git a/drivers/infiniband/hw/cxgb4/qp.c b/drivers/infiniband/hw/cxgb4/qp.c
-> >> index 917ce5c..c2a12ba 100644
-> >> --- a/drivers/infiniband/hw/cxgb4/qp.c
-> >> +++ b/drivers/infiniband/hw/cxgb4/qp.c
-> >> @@ -2597,8 +2597,6 @@ static int alloc_srq_queue(struct c4iw_srq *srq, struct c4iw_dev_ucontext *uctx,
-> >>  	wr_len = sizeof(*res_wr) + sizeof(*res);
-> >>  
-> >>  	skb = alloc_skb(wr_len, GFP_KERNEL | __GFP_NOFAIL);
-> >> -	if (!skb)
-> >> -		goto err_free_queue;
-> >>  	set_wr_txq(skb, CPL_PRIORITY_CONTROL, 0);
-> >>  
-> >>  	res_wr = (struct fw_ri_res_wr *)__skb_put(skb, wr_len);
-> >> -- 
-> >> 2.1.4
-> >>
-> 
-> The other queue allocations in qp.c don't use __GFP_NOFAIL.  So either
-> leave it and remove the error check as per this patch, or remove the
-> NOFAIL and leave the check.
-> 
-> I suggest you remove the __GFP_NOFAIL, since I have a recollection that
-> using it was frowned upon.  In this case, if there is no memory
-> available it is reasonable to return that error to the user creating the
-> srq...
->
-thanks for taking care of this - I simply did not have enough
-context to decide if there would be some special reason
-for this allocation to need __GFP_NOFAIL - keeping its use
-to a minimum though is the best solution.
+> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-thx!
-hofrat
+[...]
+
+> +#define RPC_CMNCR		0x0000	// R/W
+
+Is there any reason for using those horrible C++ comments ?
+
+[...]
+
+> +module_platform_driver(rpc_spi_driver);
+
+RPC is not a SPI controller, it's a SPI and HF controller.
+
+Also, how difficult will it be to add the HF support ?
+
+> +MODULE_AUTHOR("Mason Yang <masonccyang@mxic.com.tw>");
+> +MODULE_DESCRIPTION("Renesas R-Car Gen3 RPC-IF SPI controller driver");
+> +MODULE_LICENSE("GPL v2");
+> 
+
+
+-- 
+Best regards,
+Marek Vasut
