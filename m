@@ -7,47 +7,50 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C92B8C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:24:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3570DC282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:24:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B274218FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:24:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBF84218EA
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:24:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548357876;
-	bh=oMBLl3s2k46FW+gc3hldMeLACKoQRU/pyJGSckLMkV4=;
+	s=default; t=1548357881;
+	bh=WOSuobdXF7+8VoLH6xFvH5VC+16Jj+FKf+fSJRmIMyY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=sS9PRKGBaVwHGpIfyTEmLn8wEryoHLZosE6w132q0r/Ag8fcTjrxTwUBBrVmvRYOd
-	 +zpgaqirbeMDqa6fktyvSGP8aBo0TWkBSvNz59DORJr1BBSfruOV8bKrn82t7L2M3F
-	 de0e6PBGypHPp+arENW3uKV0WXwJYESHn33T1kZs=
+	b=Hpqgvt8BhCC7T5oEh0wFaDz2Bt4+3VtD3IryZK8GizUwQKUT4zbZQ9S8aOHUwxLGP
+	 26V2swiYXl9BXDmRstW7a45AmOB7YNSRo+g5/PVSw9Iy1yjNh7lDkJwPuzEJMYaPC0
+	 cCxUDbtaVPHxg/2PwjsEUN40/UW4bG9j5unSBD9Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730160AbfAXTYf (ORCPT
+        id S1730177AbfAXTYj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:24:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49830 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:24:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729596AbfAXTYd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:24:33 -0500
+        id S1730162AbfAXTYg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:24:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 84D08217D7;
-        Thu, 24 Jan 2019 19:24:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45FEC218EA;
+        Thu, 24 Jan 2019 19:24:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548357873;
-        bh=oMBLl3s2k46FW+gc3hldMeLACKoQRU/pyJGSckLMkV4=;
+        s=default; t=1548357875;
+        bh=WOSuobdXF7+8VoLH6xFvH5VC+16Jj+FKf+fSJRmIMyY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fhX4PR3OlaDvbilPatCMlu/V92OfS4ir4EMqH1nkzQpNR/XjsdYfxhaDIdayznZ7r
-         GL8doL1jKFYNm+zqtDemG5PbAbkPQ8S99cVtPAEG7UiNLnDvGoeFLOCqxJdsGhB423
-         ekp6DrIfrwMMTGy/KNhQjeo9tFUA0i5rZ4xLF9Bk=
+        b=UTIzZ6wq1wD1zByu4enD17zmjANy3u6i8FroQmlLU1VWveUhS93hC5bQxw7w+wn7X
+         lr7tUuIDK9tCdNbPrTxGAdNDOKgK6rzlNDS46twCUl4kau01eJFOinXvtCyMdfIBQG
+         /vWGuke4hbZSaQYmxAmd2JAVff1zufesd4Un2hIo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 019/104] f2fs: free meta pages if sanity check for ckpt is failed
-Date:   Thu, 24 Jan 2019 20:19:08 +0100
-Message-Id: <20190124190157.028819474@linuxfoundation.org>
+        stable@vger.kernel.org, Muyu Yu <ieatmuttonchuan@gmail.com>,
+        Marcus Meissner <meissner@suse.de>,
+        Michal Kubecek <mkubecek@suse.cz>,
+        Oliver Hartkopp <socketcan@hartkopp.net>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 002/104] can: gw: ensure DLC boundaries after CAN frame modification
+Date:   Thu, 24 Jan 2019 20:18:51 +0100
+Message-Id: <20190124190155.166309765@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190154.968308875@linuxfoundation.org>
 References: <20190124190154.968308875@linuxfoundation.org>
@@ -66,40 +69,91 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Oliver Hartkopp <socketcan@hartkopp.net>
 
-commit a2125ff7dd1ed3a2a53cdc1f8f9c9cec9cfaa7ab upstream.
+commit 0aaa81377c5a01f686bcdb8c7a6929a7bf330c68 upstream.
 
-This fixes missing freeing meta pages in the error case.
+Muyu Yu provided a POC where user root with CAP_NET_ADMIN can create a CAN
+frame modification rule that makes the data length code a higher value than
+the available CAN frame data size. In combination with a configured checksum
+calculation where the result is stored relatively to the end of the data
+(e.g. cgw_csum_xor_rel) the tail of the skb (e.g. frag_list pointer in
+skb_shared_info) can be rewritten which finally can cause a system crash.
 
-Tested-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Michael Kubecek suggested to drop frames that have a DLC exceeding the
+available space after the modification process and provided a patch that can
+handle CAN FD frames too. Within this patch we also limit the length for the
+checksum calculations to the maximum of Classic CAN data length (8).
+
+CAN frames that are dropped by these additional checks are counted with the
+CGW_DELETED counter which indicates misconfigurations in can-gw rules.
+
+This fixes CVE-2019-3701.
+
+Reported-by: Muyu Yu <ieatmuttonchuan@gmail.com>
+Reported-by: Marcus Meissner <meissner@suse.de>
+Suggested-by: Michal Kubecek <mkubecek@suse.cz>
+Tested-by: Muyu Yu <ieatmuttonchuan@gmail.com>
+Tested-by: Oliver Hartkopp <socketcan@hartkopp.net>
+Signed-off-by: Oliver Hartkopp <socketcan@hartkopp.net>
+Cc: linux-stable <stable@vger.kernel.org> # >= v3.2
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/f2fs/checkpoint.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -708,7 +708,7 @@ int get_valid_checkpoint(struct f2fs_sb_
+---
+ net/can/gw.c |   30 +++++++++++++++++++++++++++---
+ 1 file changed, 27 insertions(+), 3 deletions(-)
+
+--- a/net/can/gw.c
++++ b/net/can/gw.c
+@@ -418,13 +418,29 @@ static void can_can_gw_rcv(struct sk_buf
+ 	while (modidx < MAX_MODFUNCTIONS && gwj->mod.modfunc[modidx])
+ 		(*gwj->mod.modfunc[modidx++])(cf, &gwj->mod);
  
- 	/* Sanity checking of checkpoint */
- 	if (sanity_check_ckpt(sbi))
--		goto fail_no_cp;
-+		goto free_fail_no_cp;
+-	/* check for checksum updates when the CAN frame has been modified */
++	/* Has the CAN frame been modified? */
+ 	if (modidx) {
+-		if (gwj->mod.csumfunc.crc8)
++		/* get available space for the processed CAN frame type */
++		int max_len = nskb->len - offsetof(struct can_frame, data);
++
++		/* dlc may have changed, make sure it fits to the CAN frame */
++		if (cf->can_dlc > max_len)
++			goto out_delete;
++
++		/* check for checksum updates in classic CAN length only */
++		if (gwj->mod.csumfunc.crc8) {
++			if (cf->can_dlc > 8)
++				goto out_delete;
++
+ 			(*gwj->mod.csumfunc.crc8)(cf, &gwj->mod.csum.crc8);
++		}
++
++		if (gwj->mod.csumfunc.xor) {
++			if (cf->can_dlc > 8)
++				goto out_delete;
  
- 	if (cur_page == cp1)
- 		sbi->cur_cp_pack = 1;
-@@ -736,6 +736,9 @@ done:
- 	f2fs_put_page(cp2, 1);
- 	return 0;
+-		if (gwj->mod.csumfunc.xor)
+ 			(*gwj->mod.csumfunc.xor)(cf, &gwj->mod.csum.xor);
++		}
+ 	}
  
-+free_fail_no_cp:
-+	f2fs_put_page(cp1, 1);
-+	f2fs_put_page(cp2, 1);
- fail_no_cp:
- 	kfree(sbi->ckpt);
- 	return -EINVAL;
+ 	/* clear the skb timestamp if not configured the other way */
+@@ -436,6 +452,14 @@ static void can_can_gw_rcv(struct sk_buf
+ 		gwj->dropped_frames++;
+ 	else
+ 		gwj->handled_frames++;
++
++	return;
++
++ out_delete:
++	/* delete frame due to misconfiguration */
++	gwj->deleted_frames++;
++	kfree_skb(nskb);
++	return;
+ }
+ 
+ static inline int cgw_register_filter(struct cgw_job *gwj)
 
 
