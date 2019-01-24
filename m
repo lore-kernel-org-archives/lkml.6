@@ -4,55 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E1DBC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:42:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E8B4C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:42:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09011218D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:42:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C74121900
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:42:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358945;
-	bh=Wr0ObRFMN8GoPCOusdRfBiAuYb4gscCOjOrWju00V7E=;
+	s=default; t=1548358949;
+	bh=EAQtuUOBC0vzOKhrKJJ5+TilfV1xu1i593QWkTHAubg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tqrkuUxsRDeddYJ+F61xB9cLDIfGxxsnZ/zZ1mJiZOE+FhzfDiUg9QPwsjz2dhM2L
-	 TfcrHCK94pmrZ0Fy4Bw/GKoBv8iTRXJKuRPzYnUwoZzhG7Hd/cVustscIbCJibVUPH
-	 iKDS8eixwiyPjT55J/pzdlU2C/nwXDRdKimR6cnQ=
+	b=rp2ALzGnEIXGC3ucWMeLVM1RfMi6kpnWYJsDfZoOULjDHoLx4s1FuR3cE5fMtp0jd
+	 rNF/bhc4B52L/BI3157keSe21DzrIwvejHEOEsH2+qAB5O244952LWUIFC7fd3vjjf
+	 PrOQYtF5a8KmO/27UWaP5fvBD26LATTpQjlKoYQE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387779AbfAXTmY (ORCPT
+        id S2387793AbfAXTm1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:42:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42814 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:42:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42862 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387760AbfAXTmV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:42:21 -0500
+        id S2387775AbfAXTmY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:42:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DE0E5218A2;
-        Thu, 24 Jan 2019 19:42:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ACFF820663;
+        Thu, 24 Jan 2019 19:42:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358940;
-        bh=Wr0ObRFMN8GoPCOusdRfBiAuYb4gscCOjOrWju00V7E=;
+        s=default; t=1548358943;
+        bh=EAQtuUOBC0vzOKhrKJJ5+TilfV1xu1i593QWkTHAubg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZpXNRT/Oq2rJUxnxb8UurY0e3DJtHrzso5e8WIyuZHX+4Nb1BwrhO/RzoIHJlyckD
-         ART1eiUACO0tNiy5X44mBRbXok9zMQHqMUM0lRlCPrFy88TIl3G2qPjNaYU/QrzA4D
-         N38P8p1vKSw7QmUKUh8U/PU/vO4+vzMPX7iqGz60=
+        b=yLkGfNZM0D8uL2Yod17LifzzUz0kRiF2B6tZXxXSHmkYJKDdT3QocbT3ixtjYXm9B
+         bw/vGuZleMtUkLULFHib8YUjfkmHcmIme2WLNSaccmp53/4QuYfn/XpWy5+4Jboe+P
+         5BUTUCiIKkd58l8WU7JnwBPQn7t0z2sb8X10bnFk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tony Luck <tony.luck@intel.com>, fenghua.yu@intel.com,
-        gavin.hindman@intel.com, jithu.joseph@intel.com,
-        x86-ml <x86@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 073/127] x86/resctrl: Fix rdt_find_domain() return value and checks
-Date:   Thu, 24 Jan 2019 20:20:19 +0100
-Message-Id: <20190124190215.266836276@linuxfoundation.org>
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        "Tzvetomir Stoyanov (VMware)" <tz.stoyanov@gmail.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 082/127] tools lib traceevent: Fix compile warnings in tools/lib/traceevent/event-parse.c
+Date:   Thu, 24 Jan 2019 20:20:28 +0100
+Message-Id: <20190124190215.600304401@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
 References: <20190124190211.984305387@linuxfoundation.org>
@@ -71,85 +69,97 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 52eb74339a6233c69f4e3794b69ea7c98eeeae1b ]
+[ Upstream commit 0631ca3a6e6edd23a2ca7cab707d1abf291a097d ]
 
-rdt_find_domain() returns an ERR_PTR() that is generated from a provided
-domain id when the value is negative.
+Fix following warnings:
 
-Care needs to be taken when creating an ERR_PTR() from this value
-because a subsequent check using IS_ERR() expects the error to
-be within the MAX_ERRNO range. Using an invalid domain id as an
-ERR_PTR() does work at this time since this is currently always -1.
-Using this undocumented assumption is fragile since future users of
-rdt_find_domain() may not be aware of thus assumption.
+  event-parse.c: In function ‘tep_find_event_by_name’:
+  event-parse.c:3521:21: warning: ‘event’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+    pevent->last_event = event;
+    ~~~~~~~~~~~~~~~~~~~^~~~~~~
+    CC       ui/gtk/hists.o
+    LINK     plugin_mac80211.so
+    CC       nlattr.o
+  event-parse.c: In function ‘tep_data_lat_fmt’:
+  event-parse.c:5200:4: warning: ‘migrate_disable’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+      trace_seq_printf(s, "%d", migrate_disable);
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  event-parse.c:5207:4: warning: ‘lock_depth’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+      trace_seq_printf(s, "%d", lock_depth);
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    LINK     plugin_sched_switch.so
+    LINK     plugin_function.so
+    LINK     plugin_xen.so
+  event-parse.c: In function ‘tep_event_info’:
+  event-parse.c:5047:7: warning: ‘len_arg’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+         trace_seq_printf(s, format, len_arg, (char)val);
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  event-parse.c:4884:6: note: ‘len_arg’ was declared here
+    int len_arg;
+        ^~~~~~~
+  event-parse.c:4338:11: warning: ‘vsize’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+       val = tep_read_number(pevent, bptr, vsize);
+             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  event-parse.c:4224:6: note: ‘vsize’ was declared here
+    int vsize;
+        ^~~~~
 
-Two related issues are addressed:
+$ gcc --version
+  gcc (Clear Linux OS for Intel Architecture) 8.2.1 20180502
 
-- Ensure that rdt_find_domain() always returns a valid error value by
-forcing the error to be -ENODEV when a negative domain id is provided.
-
-- In a few instances the return value of rdt_find_domain() is just
-checked for NULL - fix these to include a check of ERR_PTR.
-
-Fixes: d89b7379015f ("x86/intel_rdt/cqm: Add mon_data")
-Fixes: 521348b011d6 ("x86/intel_rdt: Introduce utility to obtain CDP peer")
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: fenghua.yu@intel.com
-Cc: gavin.hindman@intel.com
-Cc: jithu.joseph@intel.com
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/b88cd4ff6a75995bf8db9b0ea546908fe50f69f3.1544479852.git.reinette.chatre@intel.com
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: Tzvetomir Stoyanov (VMware) <tz.stoyanov@gmail.com>
+Link: http://lkml.kernel.org/r/20181122112937.10582-1-adrian.hunter@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/cpu/intel_rdt.c             | 2 +-
- arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c | 2 +-
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c    | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ tools/lib/traceevent/event-parse.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt.c b/arch/x86/kernel/cpu/intel_rdt.c
-index 44272b7107ad..2d0a565fd0bb 100644
---- a/arch/x86/kernel/cpu/intel_rdt.c
-+++ b/arch/x86/kernel/cpu/intel_rdt.c
-@@ -421,7 +421,7 @@ struct rdt_domain *rdt_find_domain(struct rdt_resource *r, int id,
- 	struct list_head *l;
+diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
+index 70144b98141c..8ea1a02812b0 100644
+--- a/tools/lib/traceevent/event-parse.c
++++ b/tools/lib/traceevent/event-parse.c
+@@ -3498,7 +3498,7 @@ struct tep_event_format *
+ tep_find_event_by_name(struct tep_handle *pevent,
+ 		       const char *sys, const char *name)
+ {
+-	struct tep_event_format *event;
++	struct tep_event_format *event = NULL;
+ 	int i;
  
- 	if (id < 0)
--		return ERR_PTR(id);
-+		return ERR_PTR(-ENODEV);
+ 	if (pevent->last_event &&
+@@ -4221,7 +4221,7 @@ static struct tep_print_arg *make_bprint_args(char *fmt, void *data, int size, s
+ 	unsigned long long ip, val;
+ 	char *ptr;
+ 	void *bptr;
+-	int vsize;
++	int vsize = 0;
  
- 	list_for_each(l, &r->domains) {
- 		d = list_entry(l, struct rdt_domain, list);
-diff --git a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
-index efa4a519f5e5..c8b72aff55e0 100644
---- a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
-@@ -467,7 +467,7 @@ int rdtgroup_mondata_show(struct seq_file *m, void *arg)
+ 	field = pevent->bprint_buf_field;
+ 	ip_field = pevent->bprint_ip_field;
+@@ -4881,7 +4881,7 @@ static void pretty_print(struct trace_seq *s, void *data, int size, struct tep_e
+ 	char format[32];
+ 	int show_func;
+ 	int len_as_arg;
+-	int len_arg;
++	int len_arg = 0;
+ 	int len;
+ 	int ls;
  
- 	r = &rdt_resources_all[resid];
- 	d = rdt_find_domain(r, domid, NULL);
--	if (!d) {
-+	if (IS_ERR_OR_NULL(d)) {
- 		ret = -ENOENT;
- 		goto out;
- 	}
-diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index f27b8115ffa2..951c61367688 100644
---- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -1029,7 +1029,7 @@ static int rdt_cdp_peer_get(struct rdt_resource *r, struct rdt_domain *d,
- 	 * peer RDT CDP resource. Hence the WARN.
- 	 */
- 	_d_cdp = rdt_find_domain(_r_cdp, d->id, NULL);
--	if (WARN_ON(!_d_cdp)) {
-+	if (WARN_ON(IS_ERR_OR_NULL(_d_cdp))) {
- 		_r_cdp = NULL;
- 		ret = -EINVAL;
- 	}
+@@ -5147,8 +5147,8 @@ void tep_data_lat_fmt(struct tep_handle *pevent,
+ 	static int migrate_disable_exists;
+ 	unsigned int lat_flags;
+ 	unsigned int pc;
+-	int lock_depth;
+-	int migrate_disable;
++	int lock_depth = 0;
++	int migrate_disable = 0;
+ 	int hardirq;
+ 	int softirq;
+ 	void *data = record->data;
 -- 
 2.19.1
 
