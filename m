@@ -2,52 +2,59 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AB71C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:26:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED26FC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:27:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D073521900
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:26:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BAFE0218FE
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:27:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358017;
-	bh=ziQRS75mjYTrS7W881bUv2+h2J1YM/+1RAceC0+w/XA=;
+	s=default; t=1548358020;
+	bh=AR5Zme5b2RcK0E1wPLcf0RbXXMCHn0KlH8RJpvLoIow=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LibFPI5PVj/5a+mZciX+bSoB2SP+J7qFe6TKFsPNYqttGAZyXdvAFpe0GC4WAj3Ns
-	 G5FVGIU9qDN3L6TD7dRENRvO22ZwVEWPRRIHg07ed7YwjydLLi7ts61avz7tQ7Qe88
-	 yRHHkEkU9n1j0jmfSvkumjpfeiTd63yy5apOAEac=
+	b=ff+BO0GsWZgFt77tC1GFimcaepcW966zThZr6RgSplbF24jOh6AMOJmol3UUqmax3
+	 XMU7mBVkIQrCyKnXt75vDii/RkmdL03L6rjh3OZfn2WCxNGfKDz5XGDRNU6zQmHgNj
+	 tIYC1q8P1jfbexOzqbNlZe0rMmqTcdssXxIHOBp8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730659AbfAXT04 (ORCPT
+        id S1730673AbfAXT07 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:26:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53022 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:26:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53084 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729218AbfAXT0y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:26:54 -0500
+        id S1729218AbfAXT04 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:26:56 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F9F5218FE;
-        Thu, 24 Jan 2019 19:26:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BAED9218FC;
+        Thu, 24 Jan 2019 19:26:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358013;
-        bh=ziQRS75mjYTrS7W881bUv2+h2J1YM/+1RAceC0+w/XA=;
+        s=default; t=1548358016;
+        bh=AR5Zme5b2RcK0E1wPLcf0RbXXMCHn0KlH8RJpvLoIow=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mpH1jeJHAnAegocuPyKvw8fkbuJRxtDZEw3y3/SfI7dK0pA3J+fyUKwggd5EfGqiu
-         wZLJ5u76uVUvA+ir4NfHnxugm4QIOI9K2V+IIIq9jMfXZWBu3wh9M1KdlKS+XXoTyl
-         PNsgI1udVbiiyfYaSmikK3dFwYNnBS7cqHRwOBqg=
+        b=srmygYUKBfVHcWBFCxt2huX+CBo4WB5UBRTBikUE57hdSzvHlBU7ZmSzKTnbNldHP
+         3QGK8WxjXALC5m/xRzx0COtCmup7NgNa3xMp0tXOqWW0W818BOPTqc5FovPqtVgKP8
+         Zb5LaM6egODCKk50uzzyWOtQ7jA+6c+32MYnRPGw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        syzbot <syzbot+bf89c128e05dd6c62523@syzkaller.appspotmail.com>,
-        Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.4 067/104] block/loop: Use global lock for ioctl() operation.
-Date:   Thu, 24 Jan 2019 20:19:56 +0100
-Message-Id: <20190124190202.957235281@linuxfoundation.org>
+        Richard Henderson <richard.henderson@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        kvmarm@lists.cs.columbia.edu,
+        Kristina Martsenko <kristina.martsenko@arm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 041/104] arm64: Dont trap host pointer auth use to EL2
+Date:   Thu, 24 Jan 2019 20:19:30 +0100
+Message-Id: <20190124190159.891049721@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190154.968308875@linuxfoundation.org>
 References: <20190124190154.968308875@linuxfoundation.org>
@@ -66,195 +73,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+[ Backport of upstream commit b3669b1e1c09890d61109a1a8ece2c5b66804714 ]
 
-commit 310ca162d779efee8a2dc3731439680f3e9c1e86 upstream.
+To allow EL0 (and/or EL1) to use pointer authentication functionality,
+we must ensure that pointer authentication instructions and accesses to
+pointer authentication keys are not trapped to EL2.
 
-syzbot is reporting NULL pointer dereference [1] which is caused by
-race condition between ioctl(loop_fd, LOOP_CLR_FD, 0) versus
-ioctl(other_loop_fd, LOOP_SET_FD, loop_fd) due to traversing other
-loop devices at loop_validate_file() without holding corresponding
-lo->lo_ctl_mutex locks.
+This patch ensures that HCR_EL2 is configured appropriately when the
+kernel is booted at EL2. For non-VHE kernels we set HCR_EL2.{API,APK},
+ensuring that EL1 can access keys and permit EL0 use of instructions.
+For VHE kernels host EL0 (TGE && E2H) is unaffected by these settings,
+and it doesn't matter how we configure HCR_EL2.{API,APK}, so we don't
+bother setting them.
 
-Since ioctl() request on loop devices is not frequent operation, we don't
-need fine grained locking. Let's use global lock in order to allow safe
-traversal at loop_validate_file().
+This does not enable support for KVM guests, since KVM manages HCR_EL2
+itself when running VMs.
 
-Note that syzbot is also reporting circular locking dependency between
-bdev->bd_mutex and lo->lo_ctl_mutex [2] which is caused by calling
-blkdev_reread_part() with lock held. This patch does not address it.
-
-[1] https://syzkaller.appspot.com/bug?id=f3cfe26e785d85f9ee259f385515291d21bd80a3
-[2] https://syzkaller.appspot.com/bug?id=bf154052f0eea4bc7712499e4569505907d15889
-
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <syzbot+bf89c128e05dd6c62523@syzkaller.appspotmail.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Reviewed-by: Richard Henderson <richard.henderson@linaro.org>
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Acked-by: Christoffer Dall <christoffer.dall@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: kvmarm@lists.cs.columbia.edu
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+[kristina: backport to 4.4.y: adjust context]
+Signed-off-by: Kristina Martsenko <kristina.martsenko@arm.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/loop.c |   42 +++++++++++++++++++++---------------------
- drivers/block/loop.h |    1 -
- 2 files changed, 21 insertions(+), 22 deletions(-)
+ arch/arm64/include/asm/kvm_arm.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -82,6 +82,7 @@
+diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
+index 013b7de45ee7..d7e7cf56e8d6 100644
+--- a/arch/arm64/include/asm/kvm_arm.h
++++ b/arch/arm64/include/asm/kvm_arm.h
+@@ -23,6 +23,8 @@
+ #include <asm/types.h>
  
- static DEFINE_IDR(loop_index_idr);
- static DEFINE_MUTEX(loop_index_mutex);
-+static DEFINE_MUTEX(loop_ctl_mutex);
+ /* Hyp Configuration Register (HCR) bits */
++#define HCR_API		(UL(1) << 41)
++#define HCR_APK		(UL(1) << 40)
+ #define HCR_ID		(UL(1) << 33)
+ #define HCR_CD		(UL(1) << 32)
+ #define HCR_RW_SHIFT	31
+@@ -81,7 +83,7 @@
+ 			 HCR_AMO | HCR_SWIO | HCR_TIDCP | HCR_RW)
+ #define HCR_VIRT_EXCP_MASK (HCR_VA | HCR_VI | HCR_VF)
+ #define HCR_INT_OVERRIDE   (HCR_FMO | HCR_IMO)
+-#define HCR_HOST_NVHE_FLAGS (HCR_RW)
++#define HCR_HOST_NVHE_FLAGS (HCR_RW | HCR_API | HCR_APK)
  
- static int max_part;
- static int part_shift;
-@@ -1044,7 +1045,7 @@ static int loop_clr_fd(struct loop_devic
- 	 */
- 	if (atomic_read(&lo->lo_refcnt) > 1) {
- 		lo->lo_flags |= LO_FLAGS_AUTOCLEAR;
--		mutex_unlock(&lo->lo_ctl_mutex);
-+		mutex_unlock(&loop_ctl_mutex);
- 		return 0;
- 	}
  
-@@ -1093,12 +1094,12 @@ static int loop_clr_fd(struct loop_devic
- 	if (!part_shift)
- 		lo->lo_disk->flags |= GENHD_FL_NO_PART_SCAN;
- 	loop_unprepare_queue(lo);
--	mutex_unlock(&lo->lo_ctl_mutex);
-+	mutex_unlock(&loop_ctl_mutex);
- 	/*
--	 * Need not hold lo_ctl_mutex to fput backing file.
--	 * Calling fput holding lo_ctl_mutex triggers a circular
-+	 * Need not hold loop_ctl_mutex to fput backing file.
-+	 * Calling fput holding loop_ctl_mutex triggers a circular
- 	 * lock dependency possibility warning as fput can take
--	 * bd_mutex which is usually taken before lo_ctl_mutex.
-+	 * bd_mutex which is usually taken before loop_ctl_mutex.
- 	 */
- 	fput(filp);
- 	return 0;
-@@ -1361,7 +1362,7 @@ static int lo_ioctl(struct block_device
- 	struct loop_device *lo = bdev->bd_disk->private_data;
- 	int err;
- 
--	mutex_lock_nested(&lo->lo_ctl_mutex, 1);
-+	mutex_lock_nested(&loop_ctl_mutex, 1);
- 	switch (cmd) {
- 	case LOOP_SET_FD:
- 		err = loop_set_fd(lo, mode, bdev, arg);
-@@ -1370,7 +1371,7 @@ static int lo_ioctl(struct block_device
- 		err = loop_change_fd(lo, bdev, arg);
- 		break;
- 	case LOOP_CLR_FD:
--		/* loop_clr_fd would have unlocked lo_ctl_mutex on success */
-+		/* loop_clr_fd would have unlocked loop_ctl_mutex on success */
- 		err = loop_clr_fd(lo);
- 		if (!err)
- 			goto out_unlocked;
-@@ -1406,7 +1407,7 @@ static int lo_ioctl(struct block_device
- 	default:
- 		err = lo->ioctl ? lo->ioctl(lo, cmd, arg) : -EINVAL;
- 	}
--	mutex_unlock(&lo->lo_ctl_mutex);
-+	mutex_unlock(&loop_ctl_mutex);
- 
- out_unlocked:
- 	return err;
-@@ -1539,16 +1540,16 @@ static int lo_compat_ioctl(struct block_
- 
- 	switch(cmd) {
- 	case LOOP_SET_STATUS:
--		mutex_lock(&lo->lo_ctl_mutex);
-+		mutex_lock(&loop_ctl_mutex);
- 		err = loop_set_status_compat(
- 			lo, (const struct compat_loop_info __user *) arg);
--		mutex_unlock(&lo->lo_ctl_mutex);
-+		mutex_unlock(&loop_ctl_mutex);
- 		break;
- 	case LOOP_GET_STATUS:
--		mutex_lock(&lo->lo_ctl_mutex);
-+		mutex_lock(&loop_ctl_mutex);
- 		err = loop_get_status_compat(
- 			lo, (struct compat_loop_info __user *) arg);
--		mutex_unlock(&lo->lo_ctl_mutex);
-+		mutex_unlock(&loop_ctl_mutex);
- 		break;
- 	case LOOP_SET_CAPACITY:
- 	case LOOP_CLR_FD:
-@@ -1592,7 +1593,7 @@ static void __lo_release(struct loop_dev
- 	if (atomic_dec_return(&lo->lo_refcnt))
- 		return;
- 
--	mutex_lock(&lo->lo_ctl_mutex);
-+	mutex_lock(&loop_ctl_mutex);
- 	if (lo->lo_flags & LO_FLAGS_AUTOCLEAR) {
- 		/*
- 		 * In autoclear mode, stop the loop thread
-@@ -1609,7 +1610,7 @@ static void __lo_release(struct loop_dev
- 		loop_flush(lo);
- 	}
- 
--	mutex_unlock(&lo->lo_ctl_mutex);
-+	mutex_unlock(&loop_ctl_mutex);
- }
- 
- static void lo_release(struct gendisk *disk, fmode_t mode)
-@@ -1655,10 +1656,10 @@ static int unregister_transfer_cb(int id
- 	struct loop_device *lo = ptr;
- 	struct loop_func_table *xfer = data;
- 
--	mutex_lock(&lo->lo_ctl_mutex);
-+	mutex_lock(&loop_ctl_mutex);
- 	if (lo->lo_encryption == xfer)
- 		loop_release_xfer(lo);
--	mutex_unlock(&lo->lo_ctl_mutex);
-+	mutex_unlock(&loop_ctl_mutex);
- 	return 0;
- }
- 
-@@ -1820,7 +1821,6 @@ static int loop_add(struct loop_device *
- 	if (!part_shift)
- 		disk->flags |= GENHD_FL_NO_PART_SCAN;
- 	disk->flags |= GENHD_FL_EXT_DEVT;
--	mutex_init(&lo->lo_ctl_mutex);
- 	atomic_set(&lo->lo_refcnt, 0);
- 	lo->lo_number		= i;
- 	spin_lock_init(&lo->lo_lock);
-@@ -1933,19 +1933,19 @@ static long loop_control_ioctl(struct fi
- 		ret = loop_lookup(&lo, parm);
- 		if (ret < 0)
- 			break;
--		mutex_lock(&lo->lo_ctl_mutex);
-+		mutex_lock(&loop_ctl_mutex);
- 		if (lo->lo_state != Lo_unbound) {
- 			ret = -EBUSY;
--			mutex_unlock(&lo->lo_ctl_mutex);
-+			mutex_unlock(&loop_ctl_mutex);
- 			break;
- 		}
- 		if (atomic_read(&lo->lo_refcnt) > 0) {
- 			ret = -EBUSY;
--			mutex_unlock(&lo->lo_ctl_mutex);
-+			mutex_unlock(&loop_ctl_mutex);
- 			break;
- 		}
- 		lo->lo_disk->private_data = NULL;
--		mutex_unlock(&lo->lo_ctl_mutex);
-+		mutex_unlock(&loop_ctl_mutex);
- 		idr_remove(&loop_index_idr, lo->lo_number);
- 		loop_remove(lo);
- 		break;
---- a/drivers/block/loop.h
-+++ b/drivers/block/loop.h
-@@ -55,7 +55,6 @@ struct loop_device {
- 
- 	spinlock_t		lo_lock;
- 	int			lo_state;
--	struct mutex		lo_ctl_mutex;
- 	struct kthread_worker	worker;
- 	struct task_struct	*worker_task;
- 	bool			use_dio;
+ /* Hyp System Control Register (SCTLR_EL2) bits */
+-- 
+2.19.1
+
 
 
