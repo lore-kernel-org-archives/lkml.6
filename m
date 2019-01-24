@@ -3,26 +3,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE85CC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:25:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EA67C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:25:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA8B3218A6
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:25:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC51320811
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:25:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727919AbfAXLZZ (ORCPT
+        id S1727904AbfAXLZX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 06:25:25 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:49820 "EHLO
+        Thu, 24 Jan 2019 06:25:23 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:54394 "EHLO
         cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727728AbfAXLZK (ORCPT
+        with ESMTP id S1727725AbfAXLZL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 06:25:10 -0500
+        Thu, 24 Jan 2019 06:25:11 -0500
 Received: from 79.184.255.239.ipv4.supernova.orange.pl (79.184.255.239) (HELO aspire.rjw.lan)
  by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
- id aebf53184c14bb0f; Thu, 24 Jan 2019 12:25:08 +0100
+ id ff6a9fe905b7b406; Thu, 24 Jan 2019 12:25:08 +0100
 From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     LKML <linux-kernel@vger.kernel.org>,
@@ -36,9 +36,9 @@ Cc:     LKML <linux-kernel@vger.kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: [PATCH 4/6] driver core: Do not resume suppliers under device_links_write_lock()
-Date:   Thu, 24 Jan 2019 12:19:35 +0100
-Message-ID: <6978367.mo1Yi9LooT@aspire.rjw.lan>
+Subject: [PATCH 3/6] driver core: Avoid careless re-use of existing device links
+Date:   Thu, 24 Jan 2019 12:18:13 +0100
+Message-ID: <6509496.77sr7CZjzZ@aspire.rjw.lan>
 In-Reply-To: <2493187.oiOpCWJBV7@aspire.rjw.lan>
 References: <2493187.oiOpCWJBV7@aspire.rjw.lan>
 MIME-Version: 1.0
@@ -51,70 +51,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-It is incorrect to call pm_runtime_get_sync() under
-device_links_write_lock(), because it may end up trying to take
-device_links_read_lock() while resuming the target device and that
-will deadlock in the non-SRCU case, so avoid that by resuming the
-supplier device in device_link_add() before calling
-device_links_write_lock().
+After commit ead18c23c263 ("driver core: Introduce device links
+reference counting"), if there is a link between the given supplier
+and the given consumer already, device_link_add() will refcount it
+and return it unconditionally.  However, if the flags passed to
+it on the second (or any subsequent) attempt to create a device
+link between the same consumer-supplier pair are not compatible with
+the existing link's flags, that is incorrect.
 
-Fixes: 21d5c57b3726 ("PM / runtime: Use device links")
-Fixes: baa8809f6097 ("PM / runtime: Optimize the use of device links")
+First off, if the existing link is stateless and the next caller of
+device_link_add() for the same consumer-supplier pair wants a
+stateful one, or the other way around, the existing link cannot be
+returned, because it will not match the expected behavior, so make
+device_link_add() dump the stack and return NULL in that case.
+
+Moreover, if the DL_FLAG_AUTOREMOVE_CONSUMER flag is passed to
+device_link_add(), its caller will expect its reference to the link
+to be dropped automatically on consumer driver removal, which will
+not happen if that flag is not set in the link's flags (and
+analogously for DL_FLAG_AUTOREMOVE_SUPPLIER).  For this reason, make
+device_link_add() update the existing link's flags accordingly
+before returning it to the caller.
+
+Fixes: ead18c23c263 ("driver core: Introduce device links reference counting")
 Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- drivers/base/core.c |   20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
+ drivers/base/core.c |   23 ++++++++++++++++++++---
+ 1 file changed, 20 insertions(+), 3 deletions(-)
 
 Index: linux-pm/drivers/base/core.c
 ===================================================================
 --- linux-pm.orig/drivers/base/core.c
 +++ linux-pm/drivers/base/core.c
-@@ -202,12 +202,21 @@ struct device_link *device_link_add(stru
- 				    struct device *supplier, u32 flags)
- {
- 	struct device_link *link;
-+	bool rpm_put_supplier = false;
+@@ -222,12 +222,29 @@ struct device_link *device_link_add(stru
+ 		goto out;
+ 	}
  
- 	if (!consumer || !supplier ||
- 	    (flags & DL_FLAG_STATELESS &&
- 	     flags & (DL_FLAG_AUTOREMOVE_CONSUMER | DL_FLAG_AUTOREMOVE_SUPPLIER)))
- 		return NULL;
+-	list_for_each_entry(link, &supplier->links.consumers, s_node)
+-		if (link->consumer == consumer) {
+-			kref_get(&link->kref);
++	list_for_each_entry(link, &supplier->links.consumers, s_node) {
++		if (link->consumer != consumer)
++			continue;
++
++		/*
++		 * Don't return a stateless link if the caller wants a stateful
++		 * one and vice versa.
++		 */
++		if (WARN_ON((flags & DL_FLAG_STATELESS) != (link->flags & DL_FLAG_STATELESS))) {
++			link = NULL;
+ 			goto out;
+ 		}
  
-+	if (flags & DL_FLAG_PM_RUNTIME && flags & DL_FLAG_RPM_ACTIVE) {
-+		if (pm_runtime_get_sync(supplier) < 0) {
-+			pm_runtime_put_noidle(supplier);
-+			return NULL;
-+		}
-+		rpm_put_supplier = true;
++		if (flags & DL_FLAG_AUTOREMOVE_CONSUMER)
++			link->flags |= DL_FLAG_AUTOREMOVE_CONSUMER;
++
++		if (flags & DL_FLAG_AUTOREMOVE_SUPPLIER)
++			link->flags |= DL_FLAG_AUTOREMOVE_SUPPLIER;
++
++		kref_get(&link->kref);
++		goto out;
 +	}
 +
- 	device_links_write_lock();
- 	device_pm_lock();
- 
-@@ -251,13 +260,8 @@ struct device_link *device_link_add(stru
- 
- 	if (flags & DL_FLAG_PM_RUNTIME) {
- 		if (flags & DL_FLAG_RPM_ACTIVE) {
--			if (pm_runtime_get_sync(supplier) < 0) {
--				pm_runtime_put_noidle(supplier);
--				kfree(link);
--				link = NULL;
--				goto out;
--			}
- 			link->rpm_active = true;
-+			rpm_put_supplier = false;
- 		}
- 		pm_runtime_new_link(consumer);
- 		/*
-@@ -329,6 +333,10 @@ struct device_link *device_link_add(stru
-  out:
- 	device_pm_unlock();
- 	device_links_write_unlock();
-+
-+	if (rpm_put_supplier)
-+		pm_runtime_put(supplier);
-+
- 	return link;
- }
- EXPORT_SYMBOL_GPL(device_link_add);
+ 	link = kzalloc(sizeof(*link), GFP_KERNEL);
+ 	if (!link)
+ 		goto out;
 
