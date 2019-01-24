@@ -2,84 +2,62 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9015C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:07:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B6F9C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:08:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEE1D2084A
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:07:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2887E2084A
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:08:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MVHv9eio"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CuOXInIl";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CuOXInIl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727690AbfAXMHJ (ORCPT
+        id S1727730AbfAXMIW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 07:07:09 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:54857 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727455AbfAXMHJ (ORCPT
+        Thu, 24 Jan 2019 07:08:22 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:42426 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726080AbfAXMIW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 07:07:09 -0500
-Received: by mail-wm1-f65.google.com with SMTP id a62so2851453wmh.4
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 04:07:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=GsPSU83pbk1uWSobF359Hmb25tSiPCSXYSiAdhiX2K0=;
-        b=MVHv9eioSsA83BVb2J9fi21oGdNAhe8L5mYX67nd+XBNW59IxbYWyPCjLtaUXXFxQx
-         C8eDCimc2jtV5LiHYUHkJKhoQYN40/4u2K6EOoUunE10yy3C+J6aGY9JX5gh7mgstcNp
-         Dvdm9CHYXs35/N3s4bzP1fUHVnLbpVKVammw0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=GsPSU83pbk1uWSobF359Hmb25tSiPCSXYSiAdhiX2K0=;
-        b=JhSOfm2087Yah04xighE+lUF1akID+OL/3dzE0tmEY8rP86dMwQN65r9R7miB/9GqI
-         pO7wAqqkkQKk2mbjvEb3c7EqMzZr57+Xu+AVO4HfSGsZdw87cmA5EXQbGczbz0OIFo71
-         3ZZHW/aQ2quocrd0bq9LyZSK0zG6s4JXym0vNe0zO0u0b2CexF9WQkv2J/qMmEUDJfyy
-         GdMPEJEw987JWQrxnBcssCAjf2p4hqPsilJYLl/FzeDjRuDAbMfi/JJDosCjKPwd7ePy
-         Yaoz5Beq6CHqFLQD0zbLJ4TwvfXMBRROiydP2dY6dT5Wc8whAwxno6xmMtVNZF9bIYpg
-         ZXQQ==
-X-Gm-Message-State: AJcUukftf5v1qFSfyjrjgymjK57U54fSvf6rJ8F41KVB01J/AygJaCIx
-        gnMTXlPmuFTty3Auk4SY/psJmIw6oRrPkw==
-X-Google-Smtp-Source: ALg8bN55gm82WRKfoWS5g8dy3rATbR8W4MaKwupN1EALKBkI9t9KdMSE60V2HSnI4wy7yU44++cGoA==
-X-Received: by 2002:a1c:bdc5:: with SMTP id n188mr2530824wmf.69.1548331626262;
-        Thu, 24 Jan 2019 04:07:06 -0800 (PST)
-Received: from localhost.localdomain (laubervilliers-657-1-83-120.w92-154.abo.wanadoo.fr. [92.154.90.120])
-        by smtp.gmail.com with ESMTPSA id t12sm98842348wrr.65.2019.01.24.04.07.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 04:07:05 -0800 (PST)
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        David Zhou <David1.Zhou@amd.com>,
-        Huang Rui <ray.huang@amd.com>,
-        Junwei Zhang <Jerry.Zhang@amd.com>,
-        Michel Daenzer <michel.daenzer@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Carsten Haitzler <Carsten.Haitzler@arm.com>
-Subject: [PATCH] drm: enable uncached DMA optimization for ARM and arm64
-Date:   Thu, 24 Jan 2019 13:06:58 +0100
-Message-Id: <20190124120658.30288-1-ard.biesheuvel@linaro.org>
-X-Mailer: git-send-email 2.20.1
+        Thu, 24 Jan 2019 07:08:22 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id C473860736; Thu, 24 Jan 2019 12:08:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548331700;
+        bh=WzdurW2hSwWxePgPju7POco4uUWol+xXSCKKN8cg408=;
+        h=From:To:Cc:Subject:Date:From;
+        b=CuOXInIlIgoTzP6WBiOWXgrVs2cM6JnU5HPAMgFrPG8QHrLT0dNHkv0IGGTFxEC85
+         xxsc465mhQVEhUj87Qnxrw75Iy2F2Brlu7RZN28kkpW7kSthg2lEK63hwOEhS4d/lU
+         ORcJD2VGxcz3bue/9DYQ49yegmgEMUiVIWtojcGs=
+Received: from bgodavar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: bgodavar@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2B1EA6034E;
+        Thu, 24 Jan 2019 12:08:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548331700;
+        bh=WzdurW2hSwWxePgPju7POco4uUWol+xXSCKKN8cg408=;
+        h=From:To:Cc:Subject:Date:From;
+        b=CuOXInIlIgoTzP6WBiOWXgrVs2cM6JnU5HPAMgFrPG8QHrLT0dNHkv0IGGTFxEC85
+         xxsc465mhQVEhUj87Qnxrw75Iy2F2Brlu7RZN28kkpW7kSthg2lEK63hwOEhS4d/lU
+         ORcJD2VGxcz3bue/9DYQ49yegmgEMUiVIWtojcGs=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2B1EA6034E
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=bgodavar@codeaurora.org
+From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
+To:     marcel@holtmann.org, johan.hedberg@gmail.com
+Cc:     mka@chromium.org, johan@kernel.org, linux-kernel@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
+        linux-arm-msm@vger.kernel.org,
+        Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Subject: [PATCH v9 0/3] Bug fixes for Qualcomm BT chip wcn3990.
+Date:   Thu, 24 Jan 2019 17:38:05 +0530
+Message-Id: <20190124120808.8275-1-bgodavar@codeaurora.org>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -87,74 +65,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The DRM driver stack is designed to work with cache coherent devices
-only, but permits an optimization to be enabled in some cases, where
-for some buffers, both the CPU and the GPU use uncached mappings,
-removing the need for DMA snooping and allocation in the CPU caches.
+The below issues are found in our recent testing.
 
-The use of uncached GPU mappings relies on the correct implementation
-of the PCIe NoSnoop TLP attribute by the platform, otherwise the GPU
-will use cached mappings nonetheless. On x86 platforms, this does not
-seem to matter, as uncached CPU mappings will snoop the caches in any
-case. However, on ARM and arm64, enabling this optimization on a
-platform where NoSnoop is ignored results in loss of coherency, which
-breaks correct operation of the device. Since we have no way of
-detecting whether NoSnoop works or not, just disable this
-optimization entirely for ARM and arm64.
+1. Observed device is not going into off state or not responding.
+    As wcn3990 require a power pulses to turn on the irrespctive of
+    igniting regulators, it was observed that power on or power off
+    pulses are not in sync with respective to chip.
+    The below patch will help us to wait until byte is pushed on to wires.          
 
-Cc: Christian Koenig <christian.koenig@amd.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>
-Cc: David Zhou <David1.Zhou@amd.com>
-Cc: Huang Rui <ray.huang@amd.com>
-Cc: Junwei Zhang <Jerry.Zhang@amd.com>
-Cc: Michel Daenzer <michel.daenzer@amd.com>
-Cc: David Airlie <airlied@linux.ie>
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Sean Paul <sean@poorly.run>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Christoph Hellwig <hch@infradead.org>
-Cc: Robin Murphy <robin.murphy@arm.com>
-Cc: amd-gfx list <amd-gfx@lists.freedesktop.org>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>
-Reported-by: Carsten Haitzler <Carsten.Haitzler@arm.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
----
- include/drm/drm_cache.h | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+    * Bluetooth: hci_qca: use wait_until_sent() for power pulses
 
-diff --git a/include/drm/drm_cache.h b/include/drm/drm_cache.h
-index bfe1639df02d..97fc498dc767 100644
---- a/include/drm/drm_cache.h
-+++ b/include/drm/drm_cache.h
-@@ -47,6 +47,24 @@ static inline bool drm_arch_can_wc_memory(void)
- 	return false;
- #elif defined(CONFIG_MIPS) && defined(CONFIG_CPU_LOONGSON3)
- 	return false;
-+#elif defined(CONFIG_ARM) || defined(CONFIG_ARM64)
-+	/*
-+	 * The DRM driver stack is designed to work with cache coherent devices
-+	 * only, but permits an optimization to be enabled in some cases, where
-+	 * for some buffers, both the CPU and the GPU use uncached mappings,
-+	 * removing the need for DMA snooping and allocation in the CPU caches.
-+	 *
-+	 * The use of uncached GPU mappings relies on the correct implementation
-+	 * of the PCIe NoSnoop TLP attribute by the platform, otherwise the GPU
-+	 * will use cached mappings nonetheless. On x86 platforms, this does not
-+	 * seem to matter, as uncached CPU mappings will snoop the caches in any
-+	 * case. However, on ARM and arm64, enabling this optimization on a
-+	 * platform where NoSnoop is ignored results in loss of coherency, which
-+	 * breaks correct operation of the device. Since we have no way of
-+	 * detecting whether NoSnoop works or not, just disable this
-+	 * optimization entirely for ARM and arm64.
-+	 */
-+	return false;
- #else
- 	return true;
- #endif
+2. Observed Chip responding when we are in sleep.
+   This is due to turn on flow control during change baudrate request.
+   The below patch will only pull the RTS line high instead of turning off
+   the flow.
+
+   * Bluetooth: hci_qca: Pull RTS line high for baudrate change command.
+
+3. Disable IBS state machine and flush Tx buffer
+   We are disabling IBS and flushing the Tx buffer before turning off the chip.
+  
+   This is due to IBS state machine is active when we turn off the chip.
+   This will stop queuing IBS protocol bytes.
+
+   * Bluetooth: hci_qca: Disable IBS state machine and flush Tx buffer
+
+Changes in v9:
+ * Reverted the 100us delay and used msecs to jiffies inline call.
+ * Disabling the flow control and enabling it back while setting the firmware.
+ * Added spinlock while clearing the IBS state machine.
+  
+Changes in v8:
+ * dropped inject the command complete event.
+ * added one second time for the power pules instead of the indefinite time.
+
+Changes in v7:
+ * dropped frame reassmebly error patch.
+ * dropped baudrate change wait time patch.
+ * increased a wait to 5 ms for power pulses.
+
+Changes in v6:
+ * added serdev_device_write_flush in qca_send_power_pulse().
+ * added new patch to update the baudrate change wait time.
+
+Changes in V5:
+ * added serdev_device_write_flush before sending the power off pulse
+   during shutdown.
+
+Changes in v4:
+ * used serdev_device_write_buf() instead of serdev_device_write().
+ * added new patch to stop logging of 0xfc00 timeout on console.
+
+Changes in v3:
+ * moved IBS & qca_flush to different patch
+ * updated comments in code fo Deassert RTS patch
+Balakrishna Godavarthi (3):
+  Bluetooth: hci_qca: use wait_until_sent() for power pulses
+  Bluetooth: hci_qca: Deassert RTS while baudrate change command
+  Bluetooth: hci_qca: Disable IBS state machine and flush Tx buffer
+
+ drivers/bluetooth/hci_qca.c | 79 ++++++++++++++++++++-----------------
+ 1 file changed, 43 insertions(+), 36 deletions(-)
+
 -- 
-2.20.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
