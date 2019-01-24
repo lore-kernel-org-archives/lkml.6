@@ -2,55 +2,52 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7938C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:34:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34D22C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:35:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F14821906
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:34:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED1C121906
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:34:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358492;
-	bh=EW6em8OWyjk1H6XPADN+rpW4ZTTXrL1tUG0Bko97ZGo=;
+	s=default; t=1548358500;
+	bh=jQMbwjLjo3XtOB2OSs8mOO5xaZ+VQhfyRSWlBvvbJsI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XKT/L69FFZv48lUMuBYrWr2sATdjrETBvL1wP0Mscd/wa/UUHzyzo4FPLpcco4IPr
-	 NHf0ZSGxT93WpwYr8Yvq0mGFTEleCkkJ7PkXFIYjxOww/+BLgtD8OTmn9lS3kifjBp
-	 QLw/pLgw0qxDPJ26dTQmbRG7A+xXxKoa4pFShz+w=
+	b=aknWBAgIsVDKY9Z3O1ka5WH9lqG3AOMp8a75JluA89PRBfq90Kk0k7OkVz7HnzO36
+	 ziMHl0uSylaTSXgpGwxqV5yMFrjh3qG88oRmIbHXf/Qyhh0lROxgwConZPztO7Hxz+
+	 tOmmbj0yRouQHzs3GKMR/ErUvgMUb9iizYm2Utzg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730337AbfAXTev (ORCPT
+        id S1731471AbfAXTe5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:34:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34634 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:34:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34720 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730296AbfAXTer (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:34:47 -0500
+        id S1729789AbfAXTex (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:34:53 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6728D218FC;
-        Thu, 24 Jan 2019 19:34:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D776B218FC;
+        Thu, 24 Jan 2019 19:34:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358486;
-        bh=EW6em8OWyjk1H6XPADN+rpW4ZTTXrL1tUG0Bko97ZGo=;
+        s=default; t=1548358492;
+        bh=jQMbwjLjo3XtOB2OSs8mOO5xaZ+VQhfyRSWlBvvbJsI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JVP9kFhYLnvQiOA1ITaIS+FkJAu+8CMipSPrlYKWl4A0oR8g1vNQhv0a4wc/QeCWj
-         GS34dR4Sj6/cG3CdrulA5fsAe4t373IJFL02+GFdM7qszWevQmN/FlDwnCtuXvyA/w
-         zruc6qm5AHUYUpsZJiwEDReRNCiEBkUcWMBoprEM=
+        b=Ppij2Gv0agmcJi+3+7XluiZrgDUQlCKfjAH3tnwwdikGqxLem5rsVLf0qqRKkmHr1
+         bq/T4cm4hGvHLcPpcSyTJNdyLcj6yj15PqA5N7Qda8Yof0PwoZeCRk9uV2bMCV6hvo
+         4RwOdlswCJzxCqYD4PPHdYkO5GMte8N5Hfl4uPbM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
-        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
-        Roopa Prabhu <roopa@cumulusnetworks.com>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Matteo Croce <mcroce@redhat.com>
-Subject: [PATCH 4.19 009/106] net: clear skb->tstamp in bridge forwarding path
-Date:   Thu, 24 Jan 2019 20:19:26 +0100
-Message-Id: <20190124190206.974635854@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 020/106] writeback: dont decrement wb->refcnt if !wb->bdi
+Date:   Thu, 24 Jan 2019 20:19:37 +0100
+Message-Id: <20190124190207.657867946@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
 References: <20190124190206.342411005@linuxfoundation.org>
@@ -69,39 +66,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paolo Abeni <pabeni@redhat.com>
+[ Upstream commit 347a28b586802d09604a149c1a1f6de5dccbe6fa ]
 
-[ Upstream commit 41d1c8839e5f8cb781cc635f12791decee8271b7 ]
+This happened while running in qemu-system-aarch64, the AMBA PL011 UART
+driver when enabling CONFIG_DEBUG_TEST_DRIVER_REMOVE.
+arch_initcall(pl011_init) came before subsys_initcall(default_bdi_init),
+devtmpfs' handle_remove() crashes because the reference count is a NULL
+pointer only because wb->bdi hasn't been initialized yet.
 
-Matteo reported forwarding issues inside the linux bridge,
-if the enslaved interfaces use the fq qdisc.
+Rework so that wb_put have an extra check if wb->bdi before decrement
+wb->refcnt and also add a WARN_ON_ONCE to get a warning if it happens again
+in other drivers.
 
-Similar to commit 8203e2d844d3 ("net: clear skb->tstamp in
-forwarding paths"), we need to clear the tstamp field in
-the bridge forwarding path.
-
-Fixes: 80b14dee2bea ("net: Add a new socket option for a future transmit time.")
-Fixes: fb420d5d91c1 ("tcp/fq: move back to CLOCK_MONOTONIC")
-Reported-and-tested-by: Matteo Croce <mcroce@redhat.com>
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-Acked-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-Acked-by: Roopa Prabhu <roopa@cumulusnetworks.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 52ebea749aae ("writeback: make backing_dev_info host cgroup-specific bdi_writebacks")
+Co-developed-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/bridge/br_forward.c |    1 +
- 1 file changed, 1 insertion(+)
+ include/linux/backing-dev-defs.h | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/net/bridge/br_forward.c
-+++ b/net/bridge/br_forward.c
-@@ -65,6 +65,7 @@ EXPORT_SYMBOL_GPL(br_dev_queue_push_xmit
- 
- int br_forward_finish(struct net *net, struct sock *sk, struct sk_buff *skb)
+diff --git a/include/linux/backing-dev-defs.h b/include/linux/backing-dev-defs.h
+index 9a6bc0951cfa..c31157135598 100644
+--- a/include/linux/backing-dev-defs.h
++++ b/include/linux/backing-dev-defs.h
+@@ -258,6 +258,14 @@ static inline void wb_get(struct bdi_writeback *wb)
+  */
+ static inline void wb_put(struct bdi_writeback *wb)
  {
-+	skb->tstamp = 0;
- 	return NF_HOOK(NFPROTO_BRIDGE, NF_BR_POST_ROUTING,
- 		       net, sk, skb, NULL, skb->dev,
- 		       br_dev_queue_push_xmit);
++	if (WARN_ON_ONCE(!wb->bdi)) {
++		/*
++		 * A driver bug might cause a file to be removed before bdi was
++		 * initialized.
++		 */
++		return;
++	}
++
+ 	if (wb != &wb->bdi->wb)
+ 		percpu_ref_put(&wb->refcnt);
+ }
+-- 
+2.19.1
+
 
 
