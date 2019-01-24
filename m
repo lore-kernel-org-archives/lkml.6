@@ -2,126 +2,129 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81995C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:27:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19C05C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:28:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5892521872
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:27:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D49F621872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:28:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="JA8UKytw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729047AbfAXR1q (ORCPT
+        id S1729054AbfAXR2X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 12:27:46 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:59403 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727765AbfAXR1q (ORCPT
+        Thu, 24 Jan 2019 12:28:23 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:41104 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727765AbfAXR2W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 12:27:46 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1gmin2-0005xA-Pv; Thu, 24 Jan 2019 17:27:44 +0000
-Subject: Re: [PATCH] drm/nouveau/bios/ramcfg: fix missing parentheses when
- calculating RON
-From:   Colin Ian King <colin.king@canonical.com>
-To:     Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181125170918.8088-1-colin.king@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <c39bd8e8-478f-698c-0746-b41c323fd1d1@canonical.com>
-Date:   Thu, 24 Jan 2019 17:27:44 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181125170918.8088-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 24 Jan 2019 12:28:22 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0OHDoY5152643;
+        Thu, 24 Jan 2019 17:28:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2018-07-02; bh=qH3uhmI0NDU2EW/vOSPyOwJs9rKjXarcGd9TdF6mwx0=;
+ b=JA8UKytwPTIZUkOMQ1/f/Xe8l7j0AFjBoYD2iiqFC9q9aFw4ZfIGhiTsozI/9Rlviom+
+ tcyWXNQqUxa1Cz6fTfYJIXIlp8Al94xMWaomPAjwJp1u8mNAwEJAyY1AY1dRE5QJsXvf
+ +AHKPo6yXi2TGFOgQrdu9JqGV20ezqhENu3fOvMjh4hgepKkpe1pdNa7NQoWkU2e3GwX
+ 8GMVASp5X7nFwPzPKHTbsXWmu/j8npbnWmXh+z9fthZmNL5uYygIKF+k8deOVI0+ei29
+ oLpmgHz36W3d2fahxJSYxD//otNl45JNviOWXqD8yFqE8ls5u/aDzohTOSGU5UbkUG74 wg== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2130.oracle.com with ESMTP id 2q3sdesdr0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 24 Jan 2019 17:28:18 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0OHSHPU013902
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 24 Jan 2019 17:28:17 GMT
+Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x0OHSG9i030614;
+        Thu, 24 Jan 2019 17:28:17 GMT
+Received: from [192.168.14.112] (/109.67.235.233)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 24 Jan 2019 09:28:16 -0800
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.1 \(3445.4.7\))
+Subject: Re: [PATCH] x86/kvm/hyper-v: tweak HYPERV_CPUID_ENLIGHTMENT_INFO
+From:   Liran Alon <liran.alon@oracle.com>
+In-Reply-To: <20190124171516.23626-1-vkuznets@redhat.com>
+Date:   Thu, 24 Jan 2019 19:28:12 +0200
+Cc:     kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        =?utf-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <805B7B08-734E-4A96-AF98-D33065C59105@oracle.com>
+References: <20190124171516.23626-1-vkuznets@redhat.com>
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+X-Mailer: Apple Mail (2.3445.4.7)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9146 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901240121
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ping?
 
-On 25/11/2018 17:09, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently, the expression for calculating RON is always going to result
-> in zero no matter the value of ram->mr[1] because the ! operator has
-> higher precedence than the shift >> operator.  I believe the missing
-> parentheses around the expression before appying the ! operator will
-> result in the desired result.
-> 
-> [ Note, not tested ]
-> 
-> Detected by CoveritScan, CID#1324005 ("Operands don't affect result")
-> 
-> Fixes: c25bf7b6155c ("drm/nouveau/bios/ramcfg: Separate out RON pull value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+> On 24 Jan 2019, at 19:15, Vitaly Kuznetsov <vkuznets@redhat.com> =
+wrote:
+>=20
+> We shouldn't probably be suggesting using Enlightened VMCS when it's =
+not
+> enabled (not supported from guest's point of view). System reset =
+through
+> synthetic MSR is not recommended neither by genuine Hyper-V nor my =
+QEMU.
+>=20
+> Windows seems to be fine either way but let's be consistent.
+>=20
+> Fixes: 2bc39970e932 ("x86/kvm/hyper-v: Introduce =
+KVM_GET_SUPPORTED_HV_CPUID")
+> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 > ---
->  drivers/gpu/drm/nouveau/nvkm/subdev/fb/gddr3.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/fb/gddr3.c b/drivers/gpu/drm/nouveau/nvkm/subdev/fb/gddr3.c
-> index 60ece0a8a2e1..1d2d6bae73cd 100644
-> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/fb/gddr3.c
-> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/fb/gddr3.c
-> @@ -87,7 +87,7 @@ nvkm_gddr3_calc(struct nvkm_ram *ram)
->  		WR  = (ram->next->bios.timing[2] & 0x007f0000) >> 16;
->  		/* XXX: Get these values from the VBIOS instead */
->  		DLL = !(ram->mr[1] & 0x1);
-> -		RON = !(ram->mr[1] & 0x300) >> 8;
-> +		RON = !((ram->mr[1] & 0x300) >> 8);
->  		break;
->  	default:
->  		return -ENOSYS;
-> 
+> arch/x86/kvm/hyperv.c | 4 ++--
+> 1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
+> index ac44a681f065..4730fcaa70cf 100644
+> --- a/arch/x86/kvm/hyperv.c
+> +++ b/arch/x86/kvm/hyperv.c
+> @@ -1847,11 +1847,11 @@ int kvm_vcpu_ioctl_get_hv_cpuid(struct =
+kvm_vcpu *vcpu, struct kvm_cpuid2 *cpuid,
+> 		case HYPERV_CPUID_ENLIGHTMENT_INFO:
+> 			ent->eax |=3D =
+HV_X64_REMOTE_TLB_FLUSH_RECOMMENDED;
+> 			ent->eax |=3D HV_X64_APIC_ACCESS_RECOMMENDED;
+> -			ent->eax |=3D HV_X64_SYSTEM_RESET_RECOMMENDED;
+> 			ent->eax |=3D HV_X64_RELAXED_TIMING_RECOMMENDED;
+> 			ent->eax |=3D HV_X64_CLUSTER_IPI_RECOMMENDED;
+> 			ent->eax |=3D =
+HV_X64_EX_PROCESSOR_MASKS_RECOMMENDED;
+> -			ent->eax |=3D =
+HV_X64_ENLIGHTENED_VMCS_RECOMMENDED;
+> +			if (evmcs_ver)
+> +				ent->eax |=3D =
+HV_X64_ENLIGHTENED_VMCS_RECOMMENDED;
+>=20
+> 			/*
+> 			 * Default number of spinlock retry attempts, =
+matches
+> --=20
+> 2.20.1
+>=20
+
+Seems to me that there are 2 unrelated separated patches here. Why not =
+split them?
+For content itself: Reviewed-by: Liran Alon <liran.alon@oracle.com>
 
