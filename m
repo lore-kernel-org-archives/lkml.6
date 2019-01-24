@@ -7,51 +7,47 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE998C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:48:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E126C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:48:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD71820663
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:48:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B35D20663
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:48:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359326;
-	bh=S35PfGvI95e8n6RzOVEI0eeVOnj8yOKDYcR3xsTWPYg=;
+	s=default; t=1548359339;
+	bh=cNA9MIok+1+SJ2E6SyTBOpTbCTUfhb26B78Ds5PV8xY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=hOCWCz9vEtIoTk+JS+bdFjIMc3VXw+ZsSjWh+lPHag6QrYaZ95h701O29IoL3oybS
-	 JYMSYhDVZzzFJ/CKRfUVQ46HQjDQhXjX3bkO/q9qXFNdDN36eFEug/hbpkDihSOwfB
-	 sV/C8Irg20zdhH1wt5v93YaYh/t/G1DPosfgnVoQ=
+	b=S/juX8QBsnpzNxfSH/AiTFnsIF+PhZ3KCBrsg7X6+W8bZ3e/LxT91lxd/SHFHg4l/
+	 xyN3m66waXOCPQk97ZUvSWFJKQYDKDSV8xYDE2zUdKUVDSJ5OWPr5cSihXUUh4Q/Kr
+	 pDcaKoOUkEwSDSA3JTH1IFCib25hGrczZSomU994=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732488AbfAXTsp (ORCPT
+        id S2387611AbfAXTlg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:48:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42134 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:41:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41888 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387636AbfAXTlt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:41:49 -0500
+        id S1732504AbfAXTle (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:41:34 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 05CF8218D3;
-        Thu, 24 Jan 2019 19:41:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 998B8218D3;
+        Thu, 24 Jan 2019 19:41:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358907;
-        bh=S35PfGvI95e8n6RzOVEI0eeVOnj8yOKDYcR3xsTWPYg=;
+        s=default; t=1548358893;
+        bh=cNA9MIok+1+SJ2E6SyTBOpTbCTUfhb26B78Ds5PV8xY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hmfOvdaOT1hj5vjyMH8+utk/M31WtuVPR2D+eEIFDpc5N2HpwHmk6dtSB0STAIVuV
-         y59smrljMSL8dgs9km5X14C1niEUofgmIVVyIq+8b+NSgRspmxQTMIwNIi6ryB5zF6
-         5kZIlqOx3noDBSNLV3YDP3Xog99BOSN3GBz8AwDc=
+        b=nOGXGb0ha8A0e5u79RLJ6G8NoCjVWmMygORr3rxUS63e078CLTW7RpgnEEiH3v3bb
+         ExyUvbLCGT3sJLfhwaZUTOHt9csU9nBMKrxuYEb4rZLv53hCGIg8vEMQYl0xL+KGAz
+         R1syJleHozBlYjIN43tHD/FUh1hSK54Pt4vM4ZL8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Will Drewry <wad@chromium.org>,
-        linux-kselftest@vger.kernel.org,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Gao Xiang <gaoxiang25@huawei.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 067/127] selftests: do not macro-expand failed assertion expressions
-Date:   Thu, 24 Jan 2019 20:20:13 +0100
-Message-Id: <20190124190214.990956512@linuxfoundation.org>
+Subject: [PATCH 4.20 063/127] staging: erofs: fix use-after-free of on-stack `z_erofs_vle_unzip_io
+Date:   Thu, 24 Jan 2019 20:20:09 +0100
+Message-Id: <20190124190214.841865552@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
 References: <20190124190211.984305387@linuxfoundation.org>
@@ -70,241 +66,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit b708a3cc9600390ccaa2b68a88087dd265154b2b ]
+[ Upstream commit 848bd9acdcd00c164b42b14aacec242949ecd471 ]
 
-I've stumbled over the current macro-expand behaviour of the test
-harness:
+The root cause is the race as follows:
+ Thread #0                         Thread #1
 
-$ gcc -Wall -xc - <<'__EOF__'
-TEST(macro) {
-	int status = 0;
-	ASSERT_TRUE(WIFSIGNALED(status));
-}
-TEST_HARNESS_MAIN
-__EOF__
-$ ./a.out
-[==========] Running 1 tests from 1 test cases.
-[ RUN      ] global.macro
-<stdin>:4:global.macro:Expected 0 (0) != (((signed char) (((status) & 0x7f) + 1) >> 1) > 0) (0)
-global.macro: Test terminated by assertion
-[     FAIL ] global.macro
-[==========] 0 / 1 tests passed.
-[  FAILED  ]
+ z_erofs_vle_unzip_kickoff         z_erofs_submit_and_unzip
 
-With this change the output of the same test looks much more
-comprehensible:
+                                    struct z_erofs_vle_unzip_io io[]
+   atomic_add_return()
+                                    wait_event()
+                                    [end of function]
+   wake_up()
 
-[==========] Running 1 tests from 1 test cases.
-[ RUN      ] global.macro
-<stdin>:4:global.macro:Expected 0 (0) != WIFSIGNALED(status) (0)
-global.macro: Test terminated by assertion
-[     FAIL ] global.macro
-[==========] 0 / 1 tests passed.
-[  FAILED  ]
+Fix it by taking the waitqueue lock between atomic_add_return and
+wake_up to close such the race.
 
-The issue is very similar to the bug fixed in glibc assert(3)
-three years ago:
-https://sourceware.org/bugzilla/show_bug.cgi?id=18604
+kernel message:
 
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Will Drewry <wad@chromium.org>
-Cc: linux-kselftest@vger.kernel.org
-Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
-Acked-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Shuah Khan <shuah@kernel.org>
+Unable to handle kernel paging request at virtual address 97f7052caa1303dc
+...
+Workqueue: kverityd verity_work
+task: ffffffe32bcb8000 task.stack: ffffffe3298a0000
+PC is at __wake_up_common+0x48/0xa8
+LR is at __wake_up+0x3c/0x58
+...
+Call trace:
+...
+[<ffffff94a08ff648>] __wake_up_common+0x48/0xa8
+[<ffffff94a08ff8b8>] __wake_up+0x3c/0x58
+[<ffffff94a0c11b60>] z_erofs_vle_unzip_kickoff+0x40/0x64
+[<ffffff94a0c118e4>] z_erofs_vle_read_endio+0x94/0x134
+[<ffffff94a0c83c9c>] bio_endio+0xe4/0xf8
+[<ffffff94a1076540>] dec_pending+0x134/0x32c
+[<ffffff94a1076f28>] clone_endio+0x90/0xf4
+[<ffffff94a0c83c9c>] bio_endio+0xe4/0xf8
+[<ffffff94a1095024>] verity_work+0x210/0x368
+[<ffffff94a08c4150>] process_one_work+0x188/0x4b4
+[<ffffff94a08c45bc>] worker_thread+0x140/0x458
+[<ffffff94a08cad48>] kthread+0xec/0x108
+[<ffffff94a0883ab4>] ret_from_fork+0x10/0x1c
+Code: d1006273 54000260 f9400804 b9400019 (b85fc081)
+---[ end trace be9dde154f677cd1 ]---
+
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/kselftest_harness.h | 42 ++++++++++-----------
- 1 file changed, 21 insertions(+), 21 deletions(-)
+ drivers/staging/erofs/unzip_vle.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/tools/testing/selftests/kselftest_harness.h b/tools/testing/selftests/kselftest_harness.h
-index 6ae3730c4ee3..76d654ef3234 100644
---- a/tools/testing/selftests/kselftest_harness.h
-+++ b/tools/testing/selftests/kselftest_harness.h
-@@ -354,7 +354,7 @@
-  * ASSERT_EQ(expected, measured): expected == measured
-  */
- #define ASSERT_EQ(expected, seen) \
--	__EXPECT(expected, seen, ==, 1)
-+	__EXPECT(expected, #expected, seen, #seen, ==, 1)
+diff --git a/drivers/staging/erofs/unzip_vle.c b/drivers/staging/erofs/unzip_vle.c
+index 79d3ba62b298..45e88bada907 100644
+--- a/drivers/staging/erofs/unzip_vle.c
++++ b/drivers/staging/erofs/unzip_vle.c
+@@ -717,13 +717,18 @@ static void z_erofs_vle_unzip_kickoff(void *ptr, int bios)
+ 	struct z_erofs_vle_unzip_io *io = tagptr_unfold_ptr(t);
+ 	bool background = tagptr_unfold_tags(t);
  
- /**
-  * ASSERT_NE(expected, seen)
-@@ -365,7 +365,7 @@
-  * ASSERT_NE(expected, measured): expected != measured
-  */
- #define ASSERT_NE(expected, seen) \
--	__EXPECT(expected, seen, !=, 1)
-+	__EXPECT(expected, #expected, seen, #seen, !=, 1)
+-	if (atomic_add_return(bios, &io->pending_bios))
++	if (!background) {
++		unsigned long flags;
++
++		spin_lock_irqsave(&io->u.wait.lock, flags);
++		if (!atomic_add_return(bios, &io->pending_bios))
++			wake_up_locked(&io->u.wait);
++		spin_unlock_irqrestore(&io->u.wait.lock, flags);
+ 		return;
++	}
  
- /**
-  * ASSERT_LT(expected, seen)
-@@ -376,7 +376,7 @@
-  * ASSERT_LT(expected, measured): expected < measured
-  */
- #define ASSERT_LT(expected, seen) \
--	__EXPECT(expected, seen, <, 1)
-+	__EXPECT(expected, #expected, seen, #seen, <, 1)
+-	if (background)
++	if (!atomic_add_return(bios, &io->pending_bios))
+ 		queue_work(z_erofs_workqueue, &io->u.work);
+-	else
+-		wake_up(&io->u.wait);
+ }
  
- /**
-  * ASSERT_LE(expected, seen)
-@@ -387,7 +387,7 @@
-  * ASSERT_LE(expected, measured): expected <= measured
-  */
- #define ASSERT_LE(expected, seen) \
--	__EXPECT(expected, seen, <=, 1)
-+	__EXPECT(expected, #expected, seen, #seen, <=, 1)
- 
- /**
-  * ASSERT_GT(expected, seen)
-@@ -398,7 +398,7 @@
-  * ASSERT_GT(expected, measured): expected > measured
-  */
- #define ASSERT_GT(expected, seen) \
--	__EXPECT(expected, seen, >, 1)
-+	__EXPECT(expected, #expected, seen, #seen, >, 1)
- 
- /**
-  * ASSERT_GE(expected, seen)
-@@ -409,7 +409,7 @@
-  * ASSERT_GE(expected, measured): expected >= measured
-  */
- #define ASSERT_GE(expected, seen) \
--	__EXPECT(expected, seen, >=, 1)
-+	__EXPECT(expected, #expected, seen, #seen, >=, 1)
- 
- /**
-  * ASSERT_NULL(seen)
-@@ -419,7 +419,7 @@
-  * ASSERT_NULL(measured): NULL == measured
-  */
- #define ASSERT_NULL(seen) \
--	__EXPECT(NULL, seen, ==, 1)
-+	__EXPECT(NULL, "NULL", seen, #seen, ==, 1)
- 
- /**
-  * ASSERT_TRUE(seen)
-@@ -429,7 +429,7 @@
-  * ASSERT_TRUE(measured): measured != 0
-  */
- #define ASSERT_TRUE(seen) \
--	ASSERT_NE(0, seen)
-+	__EXPECT(0, "0", seen, #seen, !=, 1)
- 
- /**
-  * ASSERT_FALSE(seen)
-@@ -439,7 +439,7 @@
-  * ASSERT_FALSE(measured): measured == 0
-  */
- #define ASSERT_FALSE(seen) \
--	ASSERT_EQ(0, seen)
-+	__EXPECT(0, "0", seen, #seen, ==, 1)
- 
- /**
-  * ASSERT_STREQ(expected, seen)
-@@ -472,7 +472,7 @@
-  * EXPECT_EQ(expected, measured): expected == measured
-  */
- #define EXPECT_EQ(expected, seen) \
--	__EXPECT(expected, seen, ==, 0)
-+	__EXPECT(expected, #expected, seen, #seen, ==, 0)
- 
- /**
-  * EXPECT_NE(expected, seen)
-@@ -483,7 +483,7 @@
-  * EXPECT_NE(expected, measured): expected != measured
-  */
- #define EXPECT_NE(expected, seen) \
--	__EXPECT(expected, seen, !=, 0)
-+	__EXPECT(expected, #expected, seen, #seen, !=, 0)
- 
- /**
-  * EXPECT_LT(expected, seen)
-@@ -494,7 +494,7 @@
-  * EXPECT_LT(expected, measured): expected < measured
-  */
- #define EXPECT_LT(expected, seen) \
--	__EXPECT(expected, seen, <, 0)
-+	__EXPECT(expected, #expected, seen, #seen, <, 0)
- 
- /**
-  * EXPECT_LE(expected, seen)
-@@ -505,7 +505,7 @@
-  * EXPECT_LE(expected, measured): expected <= measured
-  */
- #define EXPECT_LE(expected, seen) \
--	__EXPECT(expected, seen, <=, 0)
-+	__EXPECT(expected, #expected, seen, #seen, <=, 0)
- 
- /**
-  * EXPECT_GT(expected, seen)
-@@ -516,7 +516,7 @@
-  * EXPECT_GT(expected, measured): expected > measured
-  */
- #define EXPECT_GT(expected, seen) \
--	__EXPECT(expected, seen, >, 0)
-+	__EXPECT(expected, #expected, seen, #seen, >, 0)
- 
- /**
-  * EXPECT_GE(expected, seen)
-@@ -527,7 +527,7 @@
-  * EXPECT_GE(expected, measured): expected >= measured
-  */
- #define EXPECT_GE(expected, seen) \
--	__EXPECT(expected, seen, >=, 0)
-+	__EXPECT(expected, #expected, seen, #seen, >=, 0)
- 
- /**
-  * EXPECT_NULL(seen)
-@@ -537,7 +537,7 @@
-  * EXPECT_NULL(measured): NULL == measured
-  */
- #define EXPECT_NULL(seen) \
--	__EXPECT(NULL, seen, ==, 0)
-+	__EXPECT(NULL, "NULL", seen, #seen, ==, 0)
- 
- /**
-  * EXPECT_TRUE(seen)
-@@ -547,7 +547,7 @@
-  * EXPECT_TRUE(measured): 0 != measured
-  */
- #define EXPECT_TRUE(seen) \
--	EXPECT_NE(0, seen)
-+	__EXPECT(0, "0", seen, #seen, !=, 0)
- 
- /**
-  * EXPECT_FALSE(seen)
-@@ -557,7 +557,7 @@
-  * EXPECT_FALSE(measured): 0 == measured
-  */
- #define EXPECT_FALSE(seen) \
--	EXPECT_EQ(0, seen)
-+	__EXPECT(0, "0", seen, #seen, ==, 0)
- 
- /**
-  * EXPECT_STREQ(expected, seen)
-@@ -597,7 +597,7 @@
- 	if (_metadata->passed && _metadata->step < 255) \
- 		_metadata->step++;
- 
--#define __EXPECT(_expected, _seen, _t, _assert) do { \
-+#define __EXPECT(_expected, _expected_str, _seen, _seen_str, _t, _assert) do { \
- 	/* Avoid multiple evaluation of the cases */ \
- 	__typeof__(_expected) __exp = (_expected); \
- 	__typeof__(_seen) __seen = (_seen); \
-@@ -606,8 +606,8 @@
- 		unsigned long long __exp_print = (uintptr_t)__exp; \
- 		unsigned long long __seen_print = (uintptr_t)__seen; \
- 		__TH_LOG("Expected %s (%llu) %s %s (%llu)", \
--			 #_expected, __exp_print, #_t, \
--			 #_seen, __seen_print); \
-+			 _expected_str, __exp_print, #_t, \
-+			 _seen_str, __seen_print); \
- 		_metadata->passed = 0; \
- 		/* Ensure the optional handler is triggered */ \
- 		_metadata->trigger = 1; \
+ static inline void z_erofs_vle_read_endio(struct bio *bio)
 -- 
 2.19.1
 
