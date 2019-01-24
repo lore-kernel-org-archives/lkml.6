@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98064C282C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:40:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01BF3C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:40:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65F9E218FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:40:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C458D20663
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:40:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358818;
-	bh=bvTiMCx58wxr1JwPuatWckEEhCMpbO3YhSfeE6wrA70=;
+	s=default; t=1548358821;
+	bh=TnCEkuBPHKpBs20IyB5NNIpTQgWYqD2hqpSZG/03z28=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZU2Ce9j5B5aWU1LvOXrx7qHTeJCbFqRwviUen/mkhgxKjpWvTDIIpAYO8QVRa6Hfb
-	 OA+61ovlC8hddakTH+jLa1MLY0R08Neji2cg5LAtbG8qbg31shieQRmAJ0+u6mYKku
-	 ZfZ2Phdajdb24KX4qVZ+2Hfo45kY/5gy/jor08C0=
+	b=gbctHjQvrttvBqUD43ysi9CRRU6DLoahhXw6QxEwESZFj4TB00tC8AXe8g+veyDzK
+	 JVciM8rfqyADo0egxlXaa5E1+K6DrN5//W7sMRoKMIJXWN4z6pEOHhgrqVjHetK090
+	 KZkaDBeRZgyUu/WS9xSqWVelLCIX9tq13o7cCVDE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733226AbfAXTkQ (ORCPT
+        id S1733241AbfAXTkU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:40:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40370 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:40:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40418 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733212AbfAXTkO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:40:14 -0500
+        id S1733218AbfAXTkR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:40:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A180020663;
-        Thu, 24 Jan 2019 19:40:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A1A6E218D3;
+        Thu, 24 Jan 2019 19:40:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358813;
-        bh=bvTiMCx58wxr1JwPuatWckEEhCMpbO3YhSfeE6wrA70=;
+        s=default; t=1548358816;
+        bh=TnCEkuBPHKpBs20IyB5NNIpTQgWYqD2hqpSZG/03z28=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oEPukqOyvlteVBqaQa+wH2EP2xKBsy/2Z3XNolo07JGlfZcWOBy/44TcM/u++SJlJ
-         AGG8Xon3SDUup4yNC1TX+GmzEkPHfmG/vOzeXM4Y3bhgr9Y7IG9PfruiMRrP72OWkY
-         JGDkg5rRCGWZPzZf6uupFA1OVhSb6KRNiLuIvlO4=
+        b=wRJz3bATUD9c0zm2JHr3TK7pqEFyMX87TZGWOwTyrIGwU+M/679w+Yv+qbv1q2dAZ
+         IrkJZogcpntoyPPKk22bsJ55yF9G6S8u8rooI+zVLEGND56PiKBT3OVNy3uG5mb/A/
+         aSr0GMWKvoiSHSTSdZoxkHGEwZ3tIgbn2+u1qc2I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+        stable@vger.kernel.org, David Rientjes <rientjes@google.com>,
+        Eric Dumazet <edumazet@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.20 004/127] net: dsa: mv88x6xxx: mv88e6390 errata
-Date:   Thu, 24 Jan 2019 20:19:10 +0100
-Message-Id: <20190124190212.223438946@linuxfoundation.org>
+Subject: [PATCH 4.20 005/127] net, skbuff: do not prefer skb allocation fails early
+Date:   Thu, 24 Jan 2019 20:19:11 +0100
+Message-Id: <20190124190212.286918659@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
 References: <20190124190211.984305387@linuxfoundation.org>
@@ -64,226 +65,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andrew Lunn <andrew@lunn.ch>
+From: David Rientjes <rientjes@google.com>
 
-[ Upstream commit ea89098ef9a574bceca00d3b5df14aaf0b3f9ccf ]
+[ Upstream commit f8c468e8537925e0c4607263f498a1b7c0c8982e ]
 
-The 6390 copper ports have an errata which require poking magic values
-into undocumented magic registers and then performing a software
-reset.
+Commit dcda9b04713c ("mm, tree wide: replace __GFP_REPEAT by
+__GFP_RETRY_MAYFAIL with more useful semantic") replaced __GFP_REPEAT in
+alloc_skb_with_frags() with __GFP_RETRY_MAYFAIL when the allocation may
+directly reclaim.
 
-Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+The previous behavior would require reclaim up to 1 << order pages for
+skb aligned header_len of order > PAGE_ALLOC_COSTLY_ORDER before failing,
+otherwise the allocations in alloc_skb() would loop in the page allocator
+looking for memory.  __GFP_RETRY_MAYFAIL makes both allocations failable
+under memory pressure, including for the HEAD allocation.
+
+This can cause, among many other things, write() to fail with ENOTCONN
+during RPC when under memory pressure.
+
+These allocations should succeed as they did previous to dcda9b04713c
+even if it requires calling the oom killer and additional looping in the
+page allocator to find memory.  There is no way to specify the previous
+behavior of __GFP_REPEAT, but it's unlikely to be necessary since the
+previous behavior only guaranteed that 1 << order pages would be reclaimed
+before failing for order > PAGE_ALLOC_COSTLY_ORDER.  That reclaim is not
+guaranteed to be contiguous memory, so repeating for such large orders is
+usually not beneficial.
+
+Removing the setting of __GFP_RETRY_MAYFAIL to restore the previous
+behavior, specifically not allowing alloc_skb() to fail for small orders
+and oom kill if necessary rather than allowing RPCs to fail.
+
+Fixes: dcda9b04713c ("mm, tree wide: replace __GFP_REPEAT by __GFP_RETRY_MAYFAIL with more useful semantic")
+Signed-off-by: David Rientjes <rientjes@google.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/dsa/mv88e6xxx/chip.c |  113 +++++++++++++++++++++++++++++++++++++++
- drivers/net/dsa/mv88e6xxx/chip.h |    5 +
- drivers/net/dsa/mv88e6xxx/port.h |   10 +++
- 3 files changed, 128 insertions(+)
+ net/core/skbuff.c |    7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
---- a/drivers/net/dsa/mv88e6xxx/chip.c
-+++ b/drivers/net/dsa/mv88e6xxx/chip.c
-@@ -2403,6 +2403,107 @@ static int mv88e6xxx_stats_setup(struct
- 	return mv88e6xxx_g1_stats_clear(chip);
- }
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -5202,7 +5202,6 @@ struct sk_buff *alloc_skb_with_frags(uns
+ 	unsigned long chunk;
+ 	struct sk_buff *skb;
+ 	struct page *page;
+-	gfp_t gfp_head;
+ 	int i;
  
-+/* The mv88e6390 has some hidden registers used for debug and
-+ * development. The errata also makes use of them.
-+ */
-+static int mv88e6390_hidden_write(struct mv88e6xxx_chip *chip, int port,
-+				  int reg, u16 val)
-+{
-+	u16 ctrl;
-+	int err;
-+
-+	err = mv88e6xxx_port_write(chip, PORT_RESERVED_1A_DATA_PORT,
-+				   PORT_RESERVED_1A, val);
-+	if (err)
-+		return err;
-+
-+	ctrl = PORT_RESERVED_1A_BUSY | PORT_RESERVED_1A_WRITE |
-+	       PORT_RESERVED_1A_BLOCK | port << PORT_RESERVED_1A_PORT_SHIFT |
-+	       reg;
-+
-+	return mv88e6xxx_port_write(chip, PORT_RESERVED_1A_CTRL_PORT,
-+				    PORT_RESERVED_1A, ctrl);
-+}
-+
-+static int mv88e6390_hidden_wait(struct mv88e6xxx_chip *chip)
-+{
-+	return mv88e6xxx_wait(chip, PORT_RESERVED_1A_CTRL_PORT,
-+			      PORT_RESERVED_1A, PORT_RESERVED_1A_BUSY);
-+}
-+
-+
-+static int mv88e6390_hidden_read(struct mv88e6xxx_chip *chip, int port,
-+				  int reg, u16 *val)
-+{
-+	u16 ctrl;
-+	int err;
-+
-+	ctrl = PORT_RESERVED_1A_BUSY | PORT_RESERVED_1A_READ |
-+	       PORT_RESERVED_1A_BLOCK | port << PORT_RESERVED_1A_PORT_SHIFT |
-+	       reg;
-+
-+	err = mv88e6xxx_port_write(chip, PORT_RESERVED_1A_CTRL_PORT,
-+				   PORT_RESERVED_1A, ctrl);
-+	if (err)
-+		return err;
-+
-+	err = mv88e6390_hidden_wait(chip);
-+	if (err)
-+		return err;
-+
-+	return 	mv88e6xxx_port_read(chip, PORT_RESERVED_1A_DATA_PORT,
-+				    PORT_RESERVED_1A, val);
-+}
-+
-+/* Check if the errata has already been applied. */
-+static bool mv88e6390_setup_errata_applied(struct mv88e6xxx_chip *chip)
-+{
-+	int port;
-+	int err;
-+	u16 val;
-+
-+	for (port = 0; port < mv88e6xxx_num_ports(chip); port++) {
-+		err = mv88e6390_hidden_read(chip, port, 0, &val);
-+		if (err) {
-+			dev_err(chip->dev,
-+				"Error reading hidden register: %d\n", err);
-+			return false;
-+		}
-+		if (val != 0x01c0)
-+			return false;
-+	}
-+
-+	return true;
-+}
-+
-+/* The 6390 copper ports have an errata which require poking magic
-+ * values into undocumented hidden registers and then performing a
-+ * software reset.
-+ */
-+static int mv88e6390_setup_errata(struct mv88e6xxx_chip *chip)
-+{
-+	int port;
-+	int err;
-+
-+	if (mv88e6390_setup_errata_applied(chip))
-+		return 0;
-+
-+	/* Set the ports into blocking mode */
-+	for (port = 0; port < mv88e6xxx_num_ports(chip); port++) {
-+		err = mv88e6xxx_port_set_state(chip, port, BR_STATE_DISABLED);
-+		if (err)
-+			return err;
-+	}
-+
-+	for (port = 0; port < mv88e6xxx_num_ports(chip); port++) {
-+		err = mv88e6390_hidden_write(chip, port, 0, 0x01c0);
-+		if (err)
-+			return err;
-+	}
-+
-+	return mv88e6xxx_software_reset(chip);
-+}
-+
- static int mv88e6xxx_setup(struct dsa_switch *ds)
- {
- 	struct mv88e6xxx_chip *chip = ds->priv;
-@@ -2415,6 +2516,12 @@ static int mv88e6xxx_setup(struct dsa_sw
+ 	*errcode = -EMSGSIZE;
+@@ -5212,12 +5211,8 @@ struct sk_buff *alloc_skb_with_frags(uns
+ 	if (npages > MAX_SKB_FRAGS)
+ 		return NULL;
  
- 	mutex_lock(&chip->reg_lock);
+-	gfp_head = gfp_mask;
+-	if (gfp_head & __GFP_DIRECT_RECLAIM)
+-		gfp_head |= __GFP_RETRY_MAYFAIL;
+-
+ 	*errcode = -ENOBUFS;
+-	skb = alloc_skb(header_len, gfp_head);
++	skb = alloc_skb(header_len, gfp_mask);
+ 	if (!skb)
+ 		return NULL;
  
-+	if (chip->info->ops->setup_errata) {
-+		err = chip->info->ops->setup_errata(chip);
-+		if (err)
-+			goto unlock;
-+	}
-+
- 	/* Cache the cmode of each port. */
- 	for (i = 0; i < mv88e6xxx_num_ports(chip); i++) {
- 		if (chip->info->ops->port_get_cmode) {
-@@ -3215,6 +3322,7 @@ static const struct mv88e6xxx_ops mv88e6
- 
- static const struct mv88e6xxx_ops mv88e6190_ops = {
- 	/* MV88E6XXX_FAMILY_6390 */
-+	.setup_errata = mv88e6390_setup_errata,
- 	.irl_init_all = mv88e6390_g2_irl_init_all,
- 	.get_eeprom = mv88e6xxx_g2_get_eeprom8,
- 	.set_eeprom = mv88e6xxx_g2_set_eeprom8,
-@@ -3257,6 +3365,7 @@ static const struct mv88e6xxx_ops mv88e6
- 
- static const struct mv88e6xxx_ops mv88e6190x_ops = {
- 	/* MV88E6XXX_FAMILY_6390 */
-+	.setup_errata = mv88e6390_setup_errata,
- 	.irl_init_all = mv88e6390_g2_irl_init_all,
- 	.get_eeprom = mv88e6xxx_g2_get_eeprom8,
- 	.set_eeprom = mv88e6xxx_g2_set_eeprom8,
-@@ -3299,6 +3408,7 @@ static const struct mv88e6xxx_ops mv88e6
- 
- static const struct mv88e6xxx_ops mv88e6191_ops = {
- 	/* MV88E6XXX_FAMILY_6390 */
-+	.setup_errata = mv88e6390_setup_errata,
- 	.irl_init_all = mv88e6390_g2_irl_init_all,
- 	.get_eeprom = mv88e6xxx_g2_get_eeprom8,
- 	.set_eeprom = mv88e6xxx_g2_set_eeprom8,
-@@ -3390,6 +3500,7 @@ static const struct mv88e6xxx_ops mv88e6
- 
- static const struct mv88e6xxx_ops mv88e6290_ops = {
- 	/* MV88E6XXX_FAMILY_6390 */
-+	.setup_errata = mv88e6390_setup_errata,
- 	.irl_init_all = mv88e6390_g2_irl_init_all,
- 	.get_eeprom = mv88e6xxx_g2_get_eeprom8,
- 	.set_eeprom = mv88e6xxx_g2_set_eeprom8,
-@@ -3693,6 +3804,7 @@ static const struct mv88e6xxx_ops mv88e6
- 
- static const struct mv88e6xxx_ops mv88e6390_ops = {
- 	/* MV88E6XXX_FAMILY_6390 */
-+	.setup_errata = mv88e6390_setup_errata,
- 	.irl_init_all = mv88e6390_g2_irl_init_all,
- 	.get_eeprom = mv88e6xxx_g2_get_eeprom8,
- 	.set_eeprom = mv88e6xxx_g2_set_eeprom8,
-@@ -3740,6 +3852,7 @@ static const struct mv88e6xxx_ops mv88e6
- 
- static const struct mv88e6xxx_ops mv88e6390x_ops = {
- 	/* MV88E6XXX_FAMILY_6390 */
-+	.setup_errata = mv88e6390_setup_errata,
- 	.irl_init_all = mv88e6390_g2_irl_init_all,
- 	.get_eeprom = mv88e6xxx_g2_get_eeprom8,
- 	.set_eeprom = mv88e6xxx_g2_set_eeprom8,
---- a/drivers/net/dsa/mv88e6xxx/chip.h
-+++ b/drivers/net/dsa/mv88e6xxx/chip.h
-@@ -300,6 +300,11 @@ struct mv88e6xxx_mdio_bus {
- };
- 
- struct mv88e6xxx_ops {
-+	/* Switch Setup Errata, called early in the switch setup to
-+	 * allow any errata actions to be performed
-+	 */
-+	int (*setup_errata)(struct mv88e6xxx_chip *chip);
-+
- 	int (*ieee_pri_map)(struct mv88e6xxx_chip *chip);
- 	int (*ip_pri_map)(struct mv88e6xxx_chip *chip);
- 
---- a/drivers/net/dsa/mv88e6xxx/port.h
-+++ b/drivers/net/dsa/mv88e6xxx/port.h
-@@ -251,6 +251,16 @@
- /* Offset 0x19: Port IEEE Priority Remapping Registers (4-7) */
- #define MV88E6095_PORT_IEEE_PRIO_REMAP_4567	0x19
- 
-+/* Offset 0x1a: Magic undocumented errata register */
-+#define PORT_RESERVED_1A			0x1a
-+#define PORT_RESERVED_1A_BUSY			BIT(15)
-+#define PORT_RESERVED_1A_WRITE			BIT(14)
-+#define PORT_RESERVED_1A_READ			0
-+#define PORT_RESERVED_1A_PORT_SHIFT		5
-+#define PORT_RESERVED_1A_BLOCK			(0xf << 10)
-+#define PORT_RESERVED_1A_CTRL_PORT		4
-+#define PORT_RESERVED_1A_DATA_PORT		5
-+
- int mv88e6xxx_port_read(struct mv88e6xxx_chip *chip, int port, int reg,
- 			u16 *val);
- int mv88e6xxx_port_write(struct mv88e6xxx_chip *chip, int port, int reg,
 
 
