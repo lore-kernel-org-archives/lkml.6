@@ -2,104 +2,103 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6044BC282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 07:15:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6816BC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 07:16:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 385DD21872
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 07:15:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 442BE21872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 07:16:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727128AbfAXHP3 (ORCPT
+        id S1726784AbfAXHQm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 02:15:29 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:30698 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726315AbfAXHP0 (ORCPT
+        Thu, 24 Jan 2019 02:16:42 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:33564 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725939AbfAXHQl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 02:15:26 -0500
-X-UUID: c1b493784ed94f7688ac39a10bdd1555-20190124
-X-UUID: c1b493784ed94f7688ac39a10bdd1555-20190124
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
-        (envelope-from <shun-chih.yu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1218046010; Thu, 24 Jan 2019 15:14:52 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 24 Jan 2019 15:14:50 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 24 Jan 2019 15:14:50 +0800
-From:   <shun-chih.yu@mediatek.com>
-To:     Sean Wang <sean.wang@mediatek.com>, Vinod Koul <vkoul@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Dan Williams <dan.j.williams@intel.com>
-CC:     <dmaengine@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <srv_wsdupstream@mediatek.com>
-Subject: [PATCH v5] add support for Mediatek Command-Queue DMA controller on MT6765 SoC
-Date:   Thu, 24 Jan 2019 15:14:18 +0800
-Message-ID: <1548314060-4833-1-git-send-email-shun-chih.yu@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
+        Thu, 24 Jan 2019 02:16:41 -0500
+Received: by mail-lj1-f194.google.com with SMTP id v1-v6so4312453ljd.0;
+        Wed, 23 Jan 2019 23:16:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=LP/avWTvepn7HWKvKZScd337ZUBQpptaYWJEMiVqdw8=;
+        b=gXJSjKawLFyKSxMu9knPi8OeEYEt0k2X6LsvZ1rZVf6IoOiIrFdHmGxLWl+nalbF9E
+         8P9yoaPTSq4rbiMLoQ5aeq/MEhHGj6cjv3xA6gVufILow/qmvTrPiyYksrwgkChKw+u9
+         N4qp/riF2+VYpO4/7j+VrGHYjf9WwFC2YoAHf/4kmBfbMoIOJJij0x3emBSgerFtaMZc
+         EEr0B16UFi7zHnqwo5JZ9tdS4DHTg2X515AcAIvJL72hUw4aGnsec9k6JAbYgBqs2ig+
+         lnQ+QwLUOi7Y4Rgmg42JHcSpJtauJjf/e6lPeQ3nArf8cFfT2T1/4WmEtDh66fr9CTbp
+         TOYA==
+X-Gm-Message-State: AJcUukfad0myvBk+qrCjFIg6GEb7J0metZRHnyU3qFTAQsOB4MSMSiUj
+        c1Z2ZH551pUGfsgDWtSGWak=
+X-Google-Smtp-Source: ALg8bN6YVI1nDjTAHHQcPyrvgygWgP0Klv2vOk1tt7ZLHPFyNSvEzs1wFzosiQXasyg74B91Vn9/IQ==
+X-Received: by 2002:a2e:5b1d:: with SMTP id p29-v6mr4369103ljb.176.1548314198679;
+        Wed, 23 Jan 2019 23:16:38 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id p10-v6sm849502ljh.59.2019.01.23.23.16.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 23 Jan 2019 23:16:37 -0800 (PST)
+Date:   Thu, 24 Jan 2019 09:16:35 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     mazziesaccount@gmail.com, lee.jones@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, lgirdwood@gmail.com,
+        gregkh@linuxfoundation.org, rafael@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        sre@kernel.org, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
+        linux@roeck-us.net, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: Re: [RFC PATCH v1 03/13] regulator: bd718x7 use chip specific and
+ generic data structs
+Message-ID: <20190124071635.GE2559@localhost.localdomain>
+References: <cover.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
+ <3fb3eab3a8a2767404588d0a0a531273fddfc659.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
+ <20190123155121.GB7503@sirena.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 5FFABE415C4988CF4BE118A90F62A42353F781F3C014EF2C7E41DB5436AEA0332000:8
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190123155121.GB7503@sirena.org.uk>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset introduces support for MediaTek Command-Queue DMA controller.
+Hello Mark,
 
-MediaTek Command-Queue DMA controller (CQDMA) on MT6765 SoC is dedicated to memory-to-memory transfer through queue-based descriptor management.
+Thanks again for looking through my changes =)
 
-There are only 3 physical channels inside CQDMA, while the driver is extended to support 32 virtual channels for multiple dma users to issue dma requests onto the CQDMA simultaneously.
+On Wed, Jan 23, 2019 at 03:51:21PM +0000, Mark Brown wrote:
+> On Tue, Jan 22, 2019 at 11:43:28AM +0200, Matti Vaittinen wrote:
+> > Header rohm-bd718x7.h was split to generic and component specific
+> > parts. This changed the struct bd718x7. Adapt the regulator driver to
+> > these changes.
+> 
+> Acked-by: Mark Brown <broonie@kernel.org>
+> 
+> Does this need to be squashed into the earlier commit for bisection?
 
-dmatest result:
-dmatest: dma0chan0-copy2: summary 5000 tests, 0 failures 3500 iops 28037 KB/s (0)
-dmatest: dma0chan0-copy4: summary 5000 tests, 0 failures 3494 iops 27612 KB/s (0)
-dmatest: dma0chan0-copy1: summary 5000 tests, 0 failures 3491 iops 27749 KB/s (0)
-dmatest: dma0chan0-copy7: summary 5000 tests, 0 failures 3673 iops 29092 KB/s (0)
-dmatest: dma0chan0-copy6: summary 5000 tests, 0 failures 3763 iops 30237 KB/s (0)
-dmatest: dma0chan0-copy0: summary 5000 tests, 0 failures 3730 iops 30131 KB/s (0)
-dmatest: dma0chan0-copy3: summary 5000 tests, 0 failures 3717 iops 29569 KB/s (0)
-dmatest: dma0chan0-copy5: summary 5000 tests, 0 failures 3699 iops 29302 KB/s (0)
+Yes. If we don't want to break the compilation between commits then
+the patches 2, 3 and 4 should be squashed into one. I sent them as
+separare changes for easier review. I can squash them and send them
+squashed if they are Ok to Lee and Stephen. Please just let me know
+whose tree I should use as the basis so I can do rebasing if needed.
+(Or is there some better way to do changes like this?)
 
-Changes since v4:
-- remove redundant queue structure in mtk_cqdma_pchan
-- remove redundant completion management
-- fix wrong residue assignment in mtk_cqdma_tx_status
-- fix typos
+Br,
+	Matti Vaittinen 
 
-Changes since v3:
-- simplify the ISR and management on descriptors by removing tasklet and ASYNC_TX_ENABLE_CHANNEL_SWITCH
-- remove useless field in mtk_cqdma_vdesc structure
-- change dev_info to dev_dbg
-- fix typos
+-- 
+Matti Vaittinen
+ROHM Semiconductors
 
-Changes since v2:
-- fix build warning for kernel with DMA address in 32-bit
-
-Changes since v1:
-- remove unused macros, typos
-- leverage ASYNC_TX_ENABLE_CHANNEL_SWITCH to maintain DMA descriptor list
-
-Shun-Chih Yu (2):
-  dt-bindings: dmaengine: Add MediaTek Command-Queue DMA controller
-    bindings
-  dmaengine: mediatek: Add MediaTek Command-Queue DMA controller for
-    MT6765 SoC
- 
- .../devicetree/bindings/dma/mtk-cqdma.txt          |   31 +
- drivers/dma/mediatek/Kconfig                       |   12 +
- drivers/dma/mediatek/Makefile                      |    1 +
- drivers/dma/mediatek/mtk-cqdma.c                   |  748 ++++++++++++++++++++
- 4 files changed, 792 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/dma/mtk-cqdma.txt
- create mode 100644 drivers/dma/mediatek/mtk-cqdma.c
-
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
