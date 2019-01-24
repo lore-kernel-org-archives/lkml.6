@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87788C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:25:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B69B1C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:25:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49AD4218FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:25:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75CFB218FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:25:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548357950;
-	bh=8mFqKPOe7Y+JALyEeWKD1ueQdXzS/jtK9MnOn4Xq6+I=;
+	s=default; t=1548357953;
+	bh=1I9A8nj+YMQigtI79tfIpDY8N9crWfZv0JBJFghz2/w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=uWpHmAEwQyYRQSGMuSussmSZCY8svduH20yELni5WDmHChzjsCKPmog2wcXQHmmli
-	 TEM47Cj+mzC9/dH8ucHpaxqOm8e//p+EAW/8JgX+gFVtFh11z0eNDRYt3qgck5ehva
-	 vcLciwgUu5nbd5efRBJN8XP4RHJDtixXOpIQs95s=
+	b=v1Rgy4ZEv1AF4HO4o7Tz/3biSbw6XJoiHchAFRY74sW3yqBbcnWkuomRuEDp2rc7X
+	 CkdHyLelK34BH95nUV4Qu187p8h+QpSfuLRBrQf516Kthwp7YKrTGBdnVgFfjrLPod
+	 OhdSaTEDlIWwC3mzi+fy31Rnec+J16b04iTJ4ne0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730459AbfAXTZs (ORCPT
+        id S1730468AbfAXTZw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:25:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51472 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:25:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51432 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729373AbfAXTZq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:25:46 -0500
+        id S1730427AbfAXTZm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:25:42 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 96282217D7;
-        Thu, 24 Jan 2019 19:25:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DF3E5218D2;
+        Thu, 24 Jan 2019 19:25:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548357945;
-        bh=8mFqKPOe7Y+JALyEeWKD1ueQdXzS/jtK9MnOn4Xq6+I=;
+        s=default; t=1548357942;
+        bh=1I9A8nj+YMQigtI79tfIpDY8N9crWfZv0JBJFghz2/w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jf/LeGaQS9QnKExIwuojJzBl3FBSv7UNxOB0S568y0p03zqcPmBL29j102o6JG0uM
-         8oOSXRPo47PvEPrbEizPNcJb5Y/beXydpkantljDOvLW8vxm6LmtUq3Bylcgrd7ofQ
-         gaYnGWmsZUwFU+/zATsCz07a4Qbe0++f0jao0Go0=
+        b=aKeFKU7ner3x9FgtDo8bBy3Z7zGOZ/UYVmT1Y3OCiClDpWzBb4kgj2Ar7dcpFjt4C
+         WjLIUwnkYZ/WWSOa9qy+HngX48LtQ7GKQqSHpHMvcolX0xLdSif9NMAp5Ys8d1MQUf
+         njNjmJmegUTdiPsvcIUH5OEcHXTFLHmd/4tofXYs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 009/104] f2fs: factor out fsync inode entry operations
-Date:   Thu, 24 Jan 2019 20:18:58 +0100
-Message-Id: <20190124190155.892910889@linuxfoundation.org>
+Subject: [PATCH 4.4 008/104] f2fs: remove an obsolete variable
+Date:   Thu, 24 Jan 2019 20:18:57 +0100
+Message-Id: <20190124190155.795525225@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190154.968308875@linuxfoundation.org>
 References: <20190124190154.968308875@linuxfoundation.org>
@@ -66,125 +65,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
 
-commit 3f8ab270855b0b461995da5dc48dce9461c85d94 upstream.
+commit fb58ae22067e0595d974e3d856522c1ed6d2d7bf upstream.
 
-Factor out fsync inode entry operations into {add,del}_fsync_inode.
+This patch removes an obsolete variable used in add_free_nid.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+[bwh: Picked as dependency of commit 30a61ddf8117 "f2fs: fix race condition
+ in between free nid allocator/initializer"]
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/recovery.c |   59 ++++++++++++++++++++++++++++++++++-------------------
- 1 file changed, 38 insertions(+), 21 deletions(-)
+ fs/f2fs/node.c |    3 ---
+ 1 file changed, 3 deletions(-)
 
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -67,6 +67,28 @@ static struct fsync_inode_entry *get_fsy
- 	return NULL;
- }
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1430,7 +1430,6 @@ static int add_free_nid(struct f2fs_sb_i
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+ 	struct free_nid *i;
+ 	struct nat_entry *ne;
+-	bool allocated = false;
  
-+static struct fsync_inode_entry *add_fsync_inode(struct list_head *head,
-+							struct inode *inode)
-+{
-+	struct fsync_inode_entry *entry;
-+
-+	entry = kmem_cache_alloc(fsync_entry_slab, GFP_F2FS_ZERO);
-+	if (!entry)
-+		return NULL;
-+
-+	entry->inode = inode;
-+	list_add_tail(&entry->list, head);
-+
-+	return entry;
-+}
-+
-+static void del_fsync_inode(struct fsync_inode_entry *entry)
-+{
-+	iput(entry->inode);
-+	list_del(&entry->list);
-+	kmem_cache_free(fsync_entry_slab, entry);
-+}
-+
- static int recover_dentry(struct inode *inode, struct page *ipage)
- {
- 	struct f2fs_inode *raw_inode = F2FS_INODE(ipage);
-@@ -172,6 +194,7 @@ static int find_fsync_dnodes(struct f2fs
- {
- 	unsigned long long cp_ver = cur_cp_version(F2FS_CKPT(sbi));
- 	struct curseg_info *curseg;
-+	struct inode *inode;
- 	struct page *page = NULL;
- 	block_t blkaddr;
- 	int err = 0;
-@@ -204,27 +227,27 @@ static int find_fsync_dnodes(struct f2fs
- 					break;
- 			}
+ 	if (!available_free_memory(sbi, FREE_NIDS))
+ 		return -1;
+@@ -1444,8 +1443,6 @@ static int add_free_nid(struct f2fs_sb_i
+ 		ne = __lookup_nat_cache(nm_i, nid);
+ 		if (ne && (!get_nat_flag(ne, IS_CHECKPOINTED) ||
+ 				nat_get_blkaddr(ne) != NULL_ADDR))
+-			allocated = true;
+-		if (allocated)
+ 			return 0;
+ 	}
  
--			/* add this fsync inode to the list */
--			entry = kmem_cache_alloc(fsync_entry_slab, GFP_F2FS_ZERO);
--			if (!entry) {
--				err = -ENOMEM;
--				break;
--			}
- 			/*
- 			 * CP | dnode(F) | inode(DF)
- 			 * For this case, we should not give up now.
- 			 */
--			entry->inode = f2fs_iget(sbi->sb, ino_of_node(page));
--			if (IS_ERR(entry->inode)) {
--				err = PTR_ERR(entry->inode);
--				kmem_cache_free(fsync_entry_slab, entry);
-+			inode = f2fs_iget(sbi->sb, ino_of_node(page));
-+			if (IS_ERR(inode)) {
-+				err = PTR_ERR(inode);
- 				if (err == -ENOENT) {
- 					err = 0;
- 					goto next;
- 				}
- 				break;
- 			}
--			list_add_tail(&entry->list, head);
-+
-+			/* add this fsync inode to the list */
-+			entry = add_fsync_inode(head, inode);
-+			if (!entry) {
-+				err = -ENOMEM;
-+				iput(inode);
-+				break;
-+			}
- 		}
- 		entry->blkaddr = blkaddr;
- 
-@@ -248,11 +271,8 @@ static void destroy_fsync_dnodes(struct
- {
- 	struct fsync_inode_entry *entry, *tmp;
- 
--	list_for_each_entry_safe(entry, tmp, head, list) {
--		iput(entry->inode);
--		list_del(&entry->list);
--		kmem_cache_free(fsync_entry_slab, entry);
--	}
-+	list_for_each_entry_safe(entry, tmp, head, list)
-+		del_fsync_inode(entry);
- }
- 
- static int check_index_in_prev_nodes(struct f2fs_sb_info *sbi,
-@@ -509,11 +529,8 @@ static int recover_data(struct f2fs_sb_i
- 			break;
- 		}
- 
--		if (entry->blkaddr == blkaddr) {
--			iput(entry->inode);
--			list_del(&entry->list);
--			kmem_cache_free(fsync_entry_slab, entry);
--		}
-+		if (entry->blkaddr == blkaddr)
-+			del_fsync_inode(entry);
- next:
- 		/* check next segment */
- 		blkaddr = next_blkaddr_of_node(page);
 
 
