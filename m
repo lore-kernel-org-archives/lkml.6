@@ -2,232 +2,109 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54CCCC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 10:24:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66D25C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 10:25:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18C62218A6
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 10:24:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KCdML0Z9"
+	by mail.kernel.org (Postfix) with ESMTP id 35500218A6
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 10:25:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548325520;
+	bh=5rnJF7lJB6IUTZDaBdhg15C9A/kYKyWxbcx9BKPRzeE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=N1hpnq4V7d+JYBMPYReo5T9y+saf1MehF7mW5dXJqA3N1I09S29wFBqKSCkxp5C/y
+	 57+EP6srrMTIJwmPPyilPII/lNRZ/uTfnFC1cLxm27jyNmOMVaIKz6ZQj4quQWQ2lY
+	 /5TxvuvxqAhGz5F3qo41J0ZVzIsttqDhHIoorb3w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727420AbfAXKYF (ORCPT
+        id S1727522AbfAXKZR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 05:24:05 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:52819 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726046AbfAXKYF (ORCPT
+        Thu, 24 Jan 2019 05:25:17 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37514 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726012AbfAXKZQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 05:24:05 -0500
-Received: by mail-wm1-f65.google.com with SMTP id m1so2516055wml.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 02:24:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=/6eAB8ques1NwxcFxFQ1zKWCiUEhKsBvxTsGl74yzaM=;
-        b=KCdML0Z9qz8MaYNcigWo5kc5G7sHqfyV/hiDqXCkIUo+w9bcXisPgdRRzdgTUDFye5
-         5xiOMZfdIPR7v8bwpcG8AbmAEKqc7HOQPjJxpx9Wwun4pelOhI7xQngJL9TrXYMppBiX
-         aFloOOnLvIF+kHNThym+RCsrMNQ2sm2a6QUJY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=/6eAB8ques1NwxcFxFQ1zKWCiUEhKsBvxTsGl74yzaM=;
-        b=PN2cJb4pNkwMp6TQEdoB3n4BR1gFmgzREpVQxD74wHEhwPwa7+GUKkEJ4WDCXfG9bK
-         AG3MtXJ+a1DWY5AYQM+zvAATBW8GPItYf41NvcdeA4Zj1bAmJJr17GDtU6XBGjUoTdbQ
-         32Yhi5UJ8LcorNlpcr+yGvDHKB4DtXSkzmlefOIQupzUjirOWJneKSvpYRPOmKAj5kS3
-         /rbE5aNfsYf0nE3nf0+3WiktOXGelNHshHhOZ7yh9ydVzzV5AAjFM68Nxanl5NrJKFLT
-         sVuJxEY5iiBYnn0ZYOr/06N/K40diyq0VBFlzVE0/zSX8HJjW/esnMyt0l/Escgg6RoZ
-         N7xQ==
-X-Gm-Message-State: AJcUukcP0Uo2UJ0xhZ5tDu+3SWBHAP66Wfkc7VQdOn1UyoFegDeNcTVH
-        2D68/eYLS1XjxbQLOyt8r39K2w==
-X-Google-Smtp-Source: ALg8bN5+JkKxaZwg9xYqO0wUTW6a9IFRZIbeARjG4AKXeG8fOCIM5wU+fXERJUn0vuS7cuBUJXMJ1Q==
-X-Received: by 2002:a1c:9855:: with SMTP id a82mr1931950wme.20.1548325442556;
-        Thu, 24 Jan 2019 02:24:02 -0800 (PST)
-Received: from [192.168.27.209] ([37.157.136.206])
-        by smtp.googlemail.com with ESMTPSA id u204sm97956479wmu.30.2019.01.24.02.24.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 02:24:01 -0800 (PST)
-Subject: Re: [PATCH 10/10] venus: dec: make decoder compliant with stateful
- codec API
-To:     mgottam@codeaurora.org,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc:     linux-media@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Vikash Garodia <vgarodia@codeaurora.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>
-References: <20190117162008.25217-1-stanimir.varbanov@linaro.org>
- <20190117162008.25217-11-stanimir.varbanov@linaro.org>
- <d6aeca13e4f3da78fd00c69258e115d1@codeaurora.org>
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <1663ea51-1fa0-6e29-715d-9d67aabb5ca9@linaro.org>
-Date:   Thu, 24 Jan 2019 12:24:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 24 Jan 2019 05:25:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=5rnJF7lJB6IUTZDaBdhg15C9A/kYKyWxbcx9BKPRzeE=; b=rz0Hj8E30Q+LDzScl3H2q3FTz
+        I1qbD+yO7kuoHc8dc1c6Lf5pkoaZgVGJjRY9iXo0hx6lkSrIU3QGDf0vOOAzds6ptOecPj7djg6Cw
+        IIqCjNDFe3pOMXkipOih7bIfg/GACreP0eJTNUDlXneYq5r9TBT2bsRUIVI6Q8DQXZ+Ow=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gmcBr-0005Zp-FJ; Thu, 24 Jan 2019 10:24:55 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id B2B9C1127480; Thu, 24 Jan 2019 10:24:54 +0000 (GMT)
+Date:   Thu, 24 Jan 2019 10:24:54 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     mazziesaccount@gmail.com, lee.jones@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, lgirdwood@gmail.com,
+        gregkh@linuxfoundation.org, rafael@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        sre@kernel.org, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
+        linux@roeck-us.net, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: Re: [RFC PATCH v1 03/13] regulator: bd718x7 use chip specific and
+ generic data structs
+Message-ID: <20190124102454.GA5641@sirena.org.uk>
+References: <cover.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
+ <3fb3eab3a8a2767404588d0a0a531273fddfc659.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
+ <20190123155121.GB7503@sirena.org.uk>
+ <20190124071635.GE2559@localhost.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <d6aeca13e4f3da78fd00c69258e115d1@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="6c2NcOVqGQ03X4Wi"
+Content-Disposition: inline
+In-Reply-To: <20190124071635.GE2559@localhost.localdomain>
+X-Cookie: Love America -- or give it back.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Malathi,
 
-On 1/21/19 1:20 PM, mgottam@codeaurora.org wrote:
-> On 2019-01-17 21:50, Stanimir Varbanov wrote:
->> This refactored code for start/stop streaming vb2 operations and
->> adds a state machine handling similar to the one in stateful codec
->> API documentation. One major change is that now the HFI session is
->> started on STREAMON(OUTPUT) and stopped on REQBUF(OUTPUT,count=0),
->> during that time streamoff(cap,out) just flush buffers but doesn't
->> stop the session. The other major change is that now the capture
->> and output queues are completely separated.
->>
->> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
->> ---
->>  drivers/media/platform/qcom/venus/core.h    |  20 +-
->>  drivers/media/platform/qcom/venus/helpers.c |  23 +-
->>  drivers/media/platform/qcom/venus/helpers.h |   5 +
->>  drivers/media/platform/qcom/venus/vdec.c    | 449 ++++++++++++++++----
->>  4 files changed, 389 insertions(+), 108 deletions(-)
->>
->> diff --git a/drivers/media/platform/qcom/venus/core.h
->> b/drivers/media/platform/qcom/venus/core.h
->> index 79c7e816c706..5a133c203455 100644
->> --- a/drivers/media/platform/qcom/venus/core.h
->> +++ b/drivers/media/platform/qcom/venus/core.h
->> @@ -218,6 +218,15 @@ struct venus_buffer {
->>
->>  #define to_venus_buffer(ptr)    container_of(ptr, struct
->> venus_buffer, vb)
->>
->> +#define DEC_STATE_UNINIT        0
->> +#define DEC_STATE_INIT            1
->> +#define DEC_STATE_CAPTURE_SETUP        2
->> +#define DEC_STATE_STOPPED        3
->> +#define DEC_STATE_SEEK            4
->> +#define DEC_STATE_DRAIN            5
->> +#define DEC_STATE_DECODING        6
->> +#define DEC_STATE_DRC            7
->> +
->>  /**
->>   * struct venus_inst - holds per instance paramerters
->>   *
->> @@ -241,6 +250,10 @@ struct venus_buffer {
->>   * @colorspace:    current color space
->>   * @quantization:    current quantization
->>   * @xfer_func:    current xfer function
->> + * @codec_state:    current codec API state (see DEC/ENC_STATE_)
->> + * @reconf_wait:    wait queue for resolution change event
->> + * @ten_bits:        does new stream is 10bits depth
->> + * @buf_count:        used to count number number of buffers (reqbuf(0))
->>   * @fps:        holds current FPS
->>   * @timeperframe:    holds current time per frame structure
->>   * @fmt_out:    a reference to output format structure
->> @@ -255,8 +268,6 @@ struct venus_buffer {
->>   * @opb_buftype:    output picture buffer type
->>   * @opb_fmt:        output picture buffer raw format
->>   * @reconfig:    a flag raised by decoder when the stream resolution
->> changed
->> - * @reconfig_width:    holds the new width
->> - * @reconfig_height:    holds the new height
->>   * @hfi_codec:        current codec for this instance in HFI space
->>   * @sequence_cap:    a sequence counter for capture queue
->>   * @sequence_out:    a sequence counter for output queue
->> @@ -296,6 +307,9 @@ struct venus_inst {
->>      u8 ycbcr_enc;
->>      u8 quantization;
->>      u8 xfer_func;
->> +    unsigned int codec_state;
->> +    wait_queue_head_t reconf_wait;
->> +    int buf_count;
->>      u64 fps;
->>      struct v4l2_fract timeperframe;
->>      const struct venus_format *fmt_out;
->> @@ -310,8 +324,6 @@ struct venus_inst {
->>      u32 opb_buftype;
->>      u32 opb_fmt;
->>      bool reconfig;
->> -    u32 reconfig_width;
->> -    u32 reconfig_height;
->>      u32 hfi_codec;
->>      u32 sequence_cap;
->>      u32 sequence_out;
->> diff --git a/drivers/media/platform/qcom/venus/helpers.c
->> b/drivers/media/platform/qcom/venus/helpers.c
->> index 637ce7b82d94..25d8cceccae4 100644
->> --- a/drivers/media/platform/qcom/venus/helpers.c
->> +++ b/drivers/media/platform/qcom/venus/helpers.c
->> @@ -1030,16 +1030,15 @@ void venus_helper_vb2_buf_queue(struct
->> vb2_buffer *vb)
->>
->>      v4l2_m2m_buf_queue(m2m_ctx, vbuf);
->>
->> -    if (!(inst->streamon_out & inst->streamon_cap))
->> -        goto unlock;
->> -
->> -    ret = is_buf_refed(inst, vbuf);
->> -    if (ret)
->> -        goto unlock;
->> +    if (IS_OUT(vb->vb2_queue, inst) || IS_CAP(vb->vb2_queue, inst)) {
->> +        ret = is_buf_refed(inst, vbuf);
->> +        if (ret)
->> +            goto unlock;
->>
->> -    ret = session_process_buf(inst, vbuf);
->> -    if (ret)
->> -        return_buf_error(inst, vbuf);
->> +        ret = session_process_buf(inst, vbuf);
->> +        if (ret)
->> +            return_buf_error(inst, vbuf);
->> +    }
->>
->>  unlock:
->>      mutex_unlock(&inst->lock);
-> 
-> Hi Stan,
-> 
-> In case of encoder, we are queuing buffers only after both planes are
-> streamed on.
-> As we don’t have any reconfig event in case of encoder,
-> it’s better if we stick to the earlier implementation of queuing buffers.
-> 
-> So I would recommend to add a check for the same in the below way :
-> 
-> diff --git a/drivers/media/platform/qcom/venus/helpers.c
-> b/drivers/media/platform/qcom/venus/helpers.c
-> index 25d8cce..cc490fe2 100644
-> --- a/drivers/media/platform/qcom/venus/helpers.c
-> +++ b/drivers/media/platform/qcom/venus/helpers.c
-> @@ -1029,6 +1029,8 @@ void venus_helper_vb2_buf_queue(struct vb2_buffer
-> *vb)
->         mutex_lock(&inst->lock);
-> 
->         v4l2_m2m_buf_queue(m2m_ctx, vbuf);
-> +       if (inst->session_type == VIDC_SESSION_TYPE_ENC &&
-> !(inst->streamon_out & inst->streamon_cap))
-> +               goto unlock;
-> 
->         if (IS_OUT(vb->vb2_queue, inst) || IS_CAP(vb->vb2_queue, inst)) {
->                 ret = is_buf_refed(inst, vbuf);
-> 
-> Please provide your view.
+--6c2NcOVqGQ03X4Wi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I agree that this change is needed for encoder and will incorporate such
-a change in next version.
+On Thu, Jan 24, 2019 at 09:16:35AM +0200, Matti Vaittinen wrote:
 
--- 
-regards,
-Stan
+> Yes. If we don't want to break the compilation between commits then
+> the patches 2, 3 and 4 should be squashed into one. I sent them as
+> separare changes for easier review. I can squash them and send them
+> squashed if they are Ok to Lee and Stephen. Please just let me know
+> whose tree I should use as the basis so I can do rebasing if needed.
+> (Or is there some better way to do changes like this?)
+
+I'd guess Lee's but check with him and Stephen.
+
+--6c2NcOVqGQ03X4Wi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxJknMACgkQJNaLcl1U
+h9Dtlgf/SsJMyLuFfn78Xh+NzwTORnNG0kgbZhy+ZOar3p3fo+pGb9I3n38ZSfnm
+Yjr++oIq5gaGs8+0r+FsSQ0EuTOZfFkiq0zC7syPSP4JfRl67gAocUi0/drX6mxU
+O9HzjoF+57LKb0a40VTVwBxy4cHxJ2fBVBabVgXpaSyR8F93P2E3USs6CbzKo0AP
+KxFOXFeVwmRA4y/Jl7doUHKpEOFW6ey99iG11j3pXojvMamjEN8JMMYkaW2BBUqM
+KTXbSb4GLqTQBjF9KESSZrz+nccDutK2XqUnHrg+7si69AWpkbxlfvyOv995BLXY
+2XtqxvG+S+MrH1Kghsn7giXoZl6KlA==
+=o2ie
+-----END PGP SIGNATURE-----
+
+--6c2NcOVqGQ03X4Wi--
