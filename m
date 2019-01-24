@@ -2,143 +2,142 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC150C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:41:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E219C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:44:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD558218A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:41:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6EE7218AF
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:44:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=javigon-com.20150623.gappssmtp.com header.i=@javigon-com.20150623.gappssmtp.com header.b="XS5RmcSu"
+	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="pcOyrRnZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728879AbfAXQlW (ORCPT
+        id S1727943AbfAXQox (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 11:41:22 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:46831 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727943AbfAXQlW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 11:41:22 -0500
-Received: by mail-ed1-f68.google.com with SMTP id o10so5071341edt.13
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 08:41:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=javigon-com.20150623.gappssmtp.com; s=20150623;
-        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
-         :references;
-        bh=hc4m+TNcqWzXIk2nJkRLXdWHwLnRYDibXEQCtvqysvo=;
-        b=XS5RmcSutWvyhFCov9EkqhSUM7fSBkla4XiwFmOtUgP5F3ArQ/ouolQ5uxtPADONXk
-         w24poKo8JND4WGVAxdQaHbpA5Q6k8DN04uRa3yW2Jm4AhVJl04LXR1AsX9WBQSLCWUBM
-         Fv4ZR0DXf2k34XrzFCjp56A/2Nzas2s5eUCWh8KNmaDu2LR76gEcEqRgiJNOmn6Ed2TV
-         9nqXqcHG38XgV8KSXbSHu7/s4pdG/+QQCVgAcnXCic/F90lLtxpNaUYd4pcdYXdfpvOX
-         yUSaufmQfx0QH/VTwA9/vdio7b9oaCPETtNDqaF9iOBkJxZiY2b1wdMFRFl3P+Oy9g+F
-         faRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:message-id:mime-version:subject:date
-         :in-reply-to:cc:to:references;
-        bh=hc4m+TNcqWzXIk2nJkRLXdWHwLnRYDibXEQCtvqysvo=;
-        b=o81TtRM64Jn3FB3DjpR4yR65zx60xBTaJAK+Ilct0RJa0St4sP+8un48GmHAsctSNs
-         OaIOV8ZY1UglShEZl6LAW6JvtWTKtpQOf2QDS2Z+KRrgV9s46q8LtwwHpU7PSbLHqD0G
-         0lgXX5joVqCaXd8QN5IA/D9LqpK112TF0vOsKmsXlRNKxeV/eDL057e2LUQOInq6ibrs
-         Qz5K/CYq3A55f1BlxDMET9+WHV5zfmCib5nYla7mnnFW1kD4zS+/TVjdjhCJK1OssG+9
-         5zdZyOneT6VWSv7diV0zMhv5aJBnVK/SuQ52AbDemynocFXmzjCj3Sb2wSeYHdZVB4eR
-         gbGw==
-X-Gm-Message-State: AJcUukczKE56JOeewfwIQJ+AAtYXwhCvVwO7k4g3Gh2AlehgyRhKHI7S
-        w+Lp+k6a6F7G86NP//jWdWypkw==
-X-Google-Smtp-Source: ALg8bN5E6S4XpUMT611bXoUG4ovobJn4VZaABRqRcwF2ueoopHrBjTvuxOggiHX6SPcN6CaoGZFP6A==
-X-Received: by 2002:a50:cd5c:: with SMTP id d28mr7003744edj.176.1548348079760;
-        Thu, 24 Jan 2019 08:41:19 -0800 (PST)
-Received: from [192.168.1.85] (ip-5-186-122-168.cgn.fibianet.dk. [5.186.122.168])
-        by smtp.gmail.com with ESMTPSA id v14sm10571105edq.74.2019.01.24.08.41.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 08:41:19 -0800 (PST)
-From:   =?utf-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>
-Message-Id: <C8AA0F1E-6299-49CA-B470-6E95CD1FA081@javigon.com>
-Content-Type: multipart/signed;
-        boundary="Apple-Mail=_CB5E0AD3-CC1C-4386-9277-4D0657284990";
-        protocol="application/pgp-signature";
-        micalg=pgp-sha512
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH v1] : Switch to use new generic UUID API
-Date:   Thu, 24 Jan 2019 17:41:18 +0100
-In-Reply-To: <CAHp75Ve1BUr1hHWhhHfr0nLCzj0ERbocrn27K_r=mpePYppjtw@mail.gmail.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        =?utf-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>,
-        linux-block@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-References: <20190110143051.52305-1-andriy.shevchenko@linux.intel.com>
- <20190121084732.GE18680@lst.de> <20190124121659.GH9224@smile.fi.intel.com>
- <6D748F08-F9F9-4DFB-84DF-63E97C691013@javigon.com>
- <CAHp75Vf4ndBaS6BjAM==7csYB9EYDvjV9jT9C6kioDryzb_HnQ@mail.gmail.com>
- <9E0FD459-75F2-4EF1-9310-8FCDF6F87604@javigon.com>
- <CAHp75Vfd=B-AP=7KNFiDU-qER9BjB0Qw9Lyp+hb8x94NfQiZyA@mail.gmail.com>
- <5FF168CC-9372-4DE5-BF62-DD3A2EE08384@javigon.com>
- <CAHp75Ve1BUr1hHWhhHfr0nLCzj0ERbocrn27K_r=mpePYppjtw@mail.gmail.com>
-X-Mailer: Apple Mail (2.3445.102.3)
+        Thu, 24 Jan 2019 11:44:53 -0500
+Received: from mail-eopbgr30086.outbound.protection.outlook.com ([40.107.3.86]:16197
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726252AbfAXQow (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 11:44:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector1-arm-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ATU242sXFMzXLd35PPDkjLLOoXouunIWXxLVaTaOBec=;
+ b=pcOyrRnZ06jtTC683cyZ7H/6rIsghp/G0ei9YjXbZYrv2mFFPaOrg2o/2s8d7Wu0ooUNh/8J3CiqNolQieGxbg+0nKWLgY+cEeG8/EFuovM1v2rryq4TavTeh9ip3QVnq4laLzx4J5LjNGxaFHGi3AK55fmUH/2fBHIG6rX+hmk=
+Received: from AM0PR08MB3025.eurprd08.prod.outlook.com (52.134.93.10) by
+ AM0PR08MB3156.eurprd08.prod.outlook.com (52.134.93.149) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1558.16; Thu, 24 Jan 2019 16:44:48 +0000
+Received: from AM0PR08MB3025.eurprd08.prod.outlook.com
+ ([fe80::6cf2:41c2:1a33:9b18]) by AM0PR08MB3025.eurprd08.prod.outlook.com
+ ([fe80::6cf2:41c2:1a33:9b18%3]) with mapi id 15.20.1558.016; Thu, 24 Jan 2019
+ 16:44:48 +0000
+From:   Brian Starkey <Brian.Starkey@arm.com>
+To:     "Andrew F. Davis" <afd@ti.com>
+CC:     Sumit Semwal <sumit.semwal@linaro.org>,
+        Liam Mark <lmark@codeaurora.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?iso-8859-1?Q?Arve_Hj=F8nnev=E5g?= <arve@android.com>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>, nd <nd@arm.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH 13/14] staging: android: ion: Do not sync CPU cache on
+ map/unmap
+Thread-Topic: [PATCH 13/14] staging: android: ion: Do not sync CPU cache on
+ map/unmap
+Thread-Index: AQHUrQGAzRpl+6N4dEWaN50+01WrkqWwqYAAgAFaUACAAB1/AIAAYa0AgAElgYCAAJLkAIABDbeAgARUHICAAKdjgIABUooAgAGGmwCAAAW5gIABf5QAgAALL4A=
+Date:   Thu, 24 Jan 2019 16:44:48 +0000
+Message-ID: <20190124164447.3dwwampprzofwbyr@DESKTOP-E1NTVVP.localdomain>
+References: <alpine.DEB.2.10.1901161450470.10666@lmark-linux.qualcomm.com>
+ <3bf4bfce-aee6-9c52-c2f7-783dc63bfc3a@ti.com>
+ <alpine.DEB.2.10.1901171704270.12287@lmark-linux.qualcomm.com>
+ <b8b16d71-e09b-6bf9-259e-79c1de7fd15b@ti.com>
+ <20190121112235.g36qqptpv6wjuj7w@DESKTOP-E1NTVVP.localdomain>
+ <b89df12e-00bc-5484-6458-f7c85a362b42@ti.com>
+ <CAO_48GEYPW0u6uWkkFgqjmmabLcBm69OD34QihSNGewqz_AqSQ@mail.gmail.com>
+ <d24949d2-3736-0e6f-99ae-b8550d53a828@ti.com>
+ <20190123171153.ql25gyg6sma4fpqb@DESKTOP-E1NTVVP.localdomain>
+ <af5c22b2-0d9e-4bd1-6fdd-1a3880890916@ti.com>
+In-Reply-To: <af5c22b2-0d9e-4bd1-6fdd-1a3880890916@ti.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: NeoMutt/20180716-849-147d51-dirty
+x-originating-ip: [217.140.106.55]
+x-clientproxiedby: LO2P265CA0059.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:60::23) To AM0PR08MB3025.eurprd08.prod.outlook.com
+ (2603:10a6:208:5c::10)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Brian.Starkey@arm.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR08MB3156;6:t3Y2zCYCZupu7eEFcp01El7HSHVaP1x0070VYDQCybioXU11WphwZdMIYNLnsVK0QpJh6pCjBC3tROVEPDWeUa7rLI6D0Lv8Y6SsSeHIKcLINjpqWJ7sjIFHbaYHf0bDPb7dZBoLwqO+IYFVvIkqOxE2nx6cqC0l9+FySfEIzp5mIRHcB3whsxVdnVf1f35OtDx+ICkf0T2qg02zW787zomwV6Zewg14QJJPWoLgPcbiSek99TShBNBMKIlzIOFIbfMBlKra21+TntI5sCAzic/lODEOcXcZHgo50ofWEPOhFrLHDJE5kB2HAL5f2lG+hpuavAS2s0vghlW7oP7ExwFNvGuaJWbHUMEzho6to1xKcvgq3N1O9x6duqp0K+TxgRcEpKwqSOh5fQLUAO+bkbHx4WuzlgcWZBLhqyiFFmITY0ojhRj8MceeiY9yrhHhPzmUlVkU4IMpNyQO2f66ww==;5:ELUf2ve3SvDsJYQgZdk9dcy2XO0vOSnkRALU5LFi2QFHbhQFqRDZDKVtabrvbI5BK6AfhP+JouLEm1gpORXUhELloAz1QDzEdVtVW16dp5X4oV3pSrVzOrvkMuxkVApG1VrVjnkMidwDC4p05WcIAJmhd8z3g9MgQAs+rcCHmBA9CeEPSv4RHTEgNQwya7lrnRz+OHTx888AGW44qWN2EA==;7:XY8g+RUdoGvCDMaWTs+jJDASS6dEpt1DMePFJdBUPKfrjOXAqhuCyXAYt6AlxDydwTS7vDY+v1CqQQICxR3EeeBZN+HRVzZHJT5WQtoVoTYOsn0HqYQZDs2IRVub5/wFNrS84+pAAAUSObV2ucbYLg==
+x-ms-office365-filtering-correlation-id: df3fa195-b821-472f-87d4-08d6821b40ca
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR08MB3156;
+x-ms-traffictypediagnostic: AM0PR08MB3156:
+nodisclaimer: True
+x-microsoft-antispam-prvs: <AM0PR08MB3156E746D07F46E95939E247F09A0@AM0PR08MB3156.eurprd08.prod.outlook.com>
+x-forefront-prvs: 0927AA37C7
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(376002)(346002)(136003)(366004)(396003)(189003)(199004)(11346002)(486006)(25786009)(476003)(58126008)(316002)(6916009)(44832011)(54906003)(86362001)(6306002)(102836004)(6512007)(186003)(9686003)(6116002)(3846002)(2906002)(53936002)(81156014)(81166006)(6486002)(8676002)(6506007)(8936002)(53546011)(26005)(386003)(52116002)(71200400001)(99286004)(68736007)(446003)(71190400001)(6246003)(33896004)(7736002)(305945005)(6436002)(106356001)(4744005)(66066001)(7416002)(478600001)(256004)(1076003)(72206003)(14454004)(4326008)(105586002)(97736004)(229853002)(966005)(93886005)(76176011);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR08MB3156;H:AM0PR08MB3025.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: pfQ6cB2ymdPDqckcz3PShnKHjMk+eRrqzJkIp1xaVAOoHLYArotjwH2JHWJEPcNmza3wr3OElpEe/nUeb30HXl5ugi9sTe0BOXSmFKXgvk2jiedue46FLoCDzTTaXvrEdBPAu2qlBl8veae1uxEdwwsIE+JMqXlfOlfDioLWALAVTGiqlHivdfAJUZMPBT7TwkjOxsD2FZz/efFQEHccoCZ8GpInrb2ZbxaCs0Ogrofm9f2bQAETcv4DipEVx/amfMyf5edVUSGDDRMVq+x+YjYHviRO+UV3CU3EiqE6PpThYaD8Mkc5EEZgGn8cZ8Richo4oKKkZE1jPylpdjec3HCCVGzqrTCRbC25NEk6WroD/hNltPqZbknlhBqys4HN2C0uV9ctb3LbyaLg2U2QBF+CHXyGsDUDHxbpaFzDH7A=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-ID: <F8AA73A0E4E6BD49B4AF2C2AA83CDC74@eurprd08.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: df3fa195-b821-472f-87d4-08d6821b40ca
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jan 2019 16:44:48.0105
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR08MB3156
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jan 24, 2019 at 10:04:46AM -0600, Andrew F. Davis wrote:
+> On 1/23/19 11:11 AM, Brian Starkey wrote:
 
---Apple-Mail=_CB5E0AD3-CC1C-4386-9277-4D0657284990
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=utf-8
+[snip]
 
-
-> On 24 Jan 2019, at 17.38, Andy Shevchenko <andy.shevchenko@gmail.com> =
-wrote:
 >=20
-> On Thu, Jan 24, 2019 at 4:36 PM Javier Gonz=C3=A1lez =
-<javier@javigon.com> wrote:
+> I'm very new to all this, so any pointers to history in this area are
+> appreciated.
 >=20
->> It is not pushed anywhere yet, but I have been working on a tool to =
-make
->> a pblk recovery tool to enable FTL repairs if something fails in the
->> kernel recovery path. Here, I use this uuid to identify the
->> instance - is there a way to reconcile guid_t with user space, which
->> currently uses the __u8?
+
+[snip]
+
 >=20
-> For Linux there is util-linux which contains libuuid. There is uuid_t =
-type.
-> Unfortunately there is no so called LE (little endian) variant.
-> Perhaps someone would need to extend the support for that.
+> > In case you didn't come across it already, the effort which seems to
+> > have gained the most "air-time" recently is
+> > https://github.com/cubanismo/allocator, which is still a userspace
+> > module (perhaps some concepts from there could go into the kernel?),
+> > but makes some attempts at generic constraint solving. It's also not
+> > really moving anywhere at the moment.
+> >=20
+>=20
+> Very interesting, I'm going to have to stare at this for a bit.
 
-Ok. I can look into that when releasing pblk-tools. But for now, I am OK
-with applying with the changes Christoph suggested and aligning with
-guid_t if you also think helps maintaining common helpers.
+In which case, some reading material that might be of interest :-)
 
-Javier
+https://www.x.org/wiki/Events/XDC2016/Program/Unix_Device_Memory_Allocation=
+.pdf
+https://www.x.org/wiki/Events/XDC2017/jones_allocator.pdf
+https://lists.freedesktop.org/archives/mesa-dev/2017-November/177632.html
 
---Apple-Mail=_CB5E0AD3-CC1C-4386-9277-4D0657284990
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
+-Brian
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEU1dMZpvMIkj0jATvPEYBfS0leOAFAlxJ6q4ACgkQPEYBfS0l
-eOCnHxAAmFxnn+kQuwX12OUqikvK1eSgARh74d8Sy2cZZQElrU3s+6m4V7YzLN81
-gXYl3KYVbG31qFubOGtCcb2YHYfBiqya2M3Qz/qgIq449iR2LNwo3g40Ucgh+Aub
-Ij0fjj1j6n4qIQOehlxeIRkpAx+FgZ/rUTkwMrsabibYHWOPRR6qWLlT2UXUn16E
-EOvfP9iSv/doRWkSV6xLkWBhMBFr3IvwMjkzDQOnGl1KAuUIJfi5+oYBhPNMnhH/
-fsqH8IZv8EN88lzXaxTWJSFoBJTmqrPkhgjHmVqpOrAoAvdigJ2W8+8tA8++sexS
-sl8nebLyHMmhjCGTsyHz17Bc1YiiABus4NWpaq2QdnxUKvq3/ueWfmSKMpMDU57u
-BSZdKkjOKoeiBagrE27HB8FmnGZYufJvofCoqq1t7bsBSxz0YXM7ZkctpOoXhNL6
-D8gNXGvYciImx8Osx92rCmneaQI2XXaqJ5ybQbamni0Ee0nIh+J+h29XJTlH4sFy
-J3F9u0DE2FWy3JzCB3oKDAliCWZwksaFVLDtfbpTSAVsmH+YKmj883Hjocy04/A2
-LRoE9ICPHkaB9WTXxpSSDi2gOtYcdla6MBPjjX7upgB87PVZC32QC+HLKFM6WzCm
-Vw/rCtjaAl5rsMj6cfSGh3Pn+XfuplquwWBIPRzhUz1xSD5aJCQ=
-=UxAG
------END PGP SIGNATURE-----
-
---Apple-Mail=_CB5E0AD3-CC1C-4386-9277-4D0657284990--
