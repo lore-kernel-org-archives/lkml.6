@@ -6,45 +6,47 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B968C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:38:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8995C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:38:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD1E1218D0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:38:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB98020663
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:38:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358737;
-	bh=nRicZzOIbwwmW/KBxAu2WihhNcseKElCokEEr6YPQ5s=;
+	s=default; t=1548358739;
+	bh=T0JkHzOT9kFITCr1eVCKAMkKPDhmYpi3PPW5vj7QViw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=FKc+jsVkTULXPXZATX+zq3xfKza6x4H44xr+7c+CCtX/oIqj24NcUuTw8f6awz3Ud
-	 qR6hO9GsBYOlWxfovirtygkzKuh0NaNNOE+nI34LWhii/9eBChmGjtxIjBE9bHQpuy
-	 QUISEZKHrhwDCHiK0Ne52LCxiRFoazOUDFytYpvU=
+	b=xNihraxQriGfc0WyEnG1OThznVnrbkxWbIMeEyNTQ87ZKnaX6uZXh/X7Yh+UoaOqP
+	 bSgBIOC/Ly84KZ0TCxhlpyaKGxeS4KapsXJtS2KeeKpcw4zO29AcBysyUnuXNC/SqL
+	 A6utyufA30yyXPfvWqnvZ/9O8tL5tZ1+bfOLBl+Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732940AbfAXTi4 (ORCPT
+        id S1730114AbfAXTi6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:38:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38986 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:38:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39044 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732037AbfAXTiu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:38:50 -0500
+        id S1730960AbfAXTiy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:38:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD3CC21906;
-        Thu, 24 Jan 2019 19:38:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 289C520663;
+        Thu, 24 Jan 2019 19:38:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358729;
-        bh=nRicZzOIbwwmW/KBxAu2WihhNcseKElCokEEr6YPQ5s=;
+        s=default; t=1548358732;
+        bh=T0JkHzOT9kFITCr1eVCKAMkKPDhmYpi3PPW5vj7QViw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fEPDB6MW0kCEaiBMx/c5YEkJmvI1MFGno0nJofvTGzkGbOiA54GTmA8jnTn9W8MH1
-         vAgWrQLa7eFLILzoGwQFGHWl9rHISc2qP7gi7xwDMvW8z+2wv63Gm56rJ4SJe59bg9
-         yf/hPI3vxPU7Js3NBivPvmqSrAT5fU/KkksdTjnQ=
+        b=Pekfdsut7Xwsd9Fwa4AuZ6xlQZAy2EFGKyy8mL6Dvs+7yuLqtLPhrAVP9pqR9SbTV
+         x/aKKjtjT6DrOfrS1ySFFn0ISJfM9WNPNXfu3GFNGpRDmuszLg0gqPpabqVLmODICK
+         y8zXZA7092eSKYTx6fMcmZujMlfjc2aFpWC6EUZI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Corey Minyard <cminyard@mvista.com>
-Subject: [PATCH 4.19 105/106] ipmi:ssif: Fix handling of multi-part return messages
-Date:   Thu, 24 Jan 2019 20:21:02 +0100
-Message-Id: <20190124190212.544830252@linuxfoundation.org>
+        stable@vger.kernel.org, Corey Minyard <cminyard@mvista.com>,
+        Tejun Heo <tj@kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: [PATCH 4.19 106/106] ipmi: Dont initialize anything in the core until something uses it
+Date:   Thu, 24 Jan 2019 20:21:03 +0100
+Message-Id: <20190124190212.605588251@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
 References: <20190124190206.342411005@linuxfoundation.org>
@@ -65,93 +67,250 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Corey Minyard <cminyard@mvista.com>
 
-commit 7d6380cd40f7993f75c4bde5b36f6019237e8719 upstream.
+commit 913a89f009d98c85a902d718cd54bb32ab11d167 upstream.
 
-The block number was not being compared right, it was off by one
-when checking the response.
+The IPMI driver was recently modified to use SRCU, but it turns out
+this uses a chunk of percpu memory, even if IPMI is never used.
 
-Some statistics wouldn't be incremented properly in some cases.
-
-Check to see if that middle-part messages always have 31 bytes of
-data.
+So modify thing to on initialize on the first use.  There was already
+code to sort of handle this for handling init races, so piggy back
+on top of that, and simplify it in the process.
 
 Signed-off-by: Corey Minyard <cminyard@mvista.com>
-Cc: stable@vger.kernel.org # 4.4
+Reported-by: Tejun Heo <tj@kernel.org>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Reviewed-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: stable@vger.kernel.org # 4.18
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/ipmi/ipmi_ssif.c |   25 +++++++++++++++++--------
- 1 file changed, 17 insertions(+), 8 deletions(-)
+ drivers/char/ipmi/ipmi_msghandler.c |  144 ++++++++++++++++++++----------------
+ 1 file changed, 80 insertions(+), 64 deletions(-)
 
---- a/drivers/char/ipmi/ipmi_ssif.c
-+++ b/drivers/char/ipmi/ipmi_ssif.c
-@@ -630,8 +630,9 @@ static void msg_done_handler(struct ssif
+--- a/drivers/char/ipmi/ipmi_msghandler.c
++++ b/drivers/char/ipmi/ipmi_msghandler.c
+@@ -62,7 +62,8 @@ static void ipmi_debug_msg(const char *t
+ { }
+ #endif
  
- 		/* Remove the multi-part read marker. */
- 		len -= 2;
-+		data += 2;
- 		for (i = 0; i < len; i++)
--			ssif_info->data[i] = data[i+2];
-+			ssif_info->data[i] = data[i];
- 		ssif_info->multi_len = len;
- 		ssif_info->multi_pos = 1;
+-static int initialized;
++static bool initialized;
++static bool drvregistered;
  
-@@ -659,8 +660,19 @@ static void msg_done_handler(struct ssif
- 		}
+ enum ipmi_panic_event_op {
+ 	IPMI_SEND_PANIC_EVENT_NONE,
+@@ -612,7 +613,7 @@ static DEFINE_MUTEX(ipmidriver_mutex);
  
- 		blocknum = data[0];
-+		len--;
-+		data++;
+ static LIST_HEAD(ipmi_interfaces);
+ static DEFINE_MUTEX(ipmi_interfaces_mutex);
+-DEFINE_STATIC_SRCU(ipmi_interfaces_srcu);
++struct srcu_struct ipmi_interfaces_srcu;
+ 
+ /*
+  * List of watchers that want to know when smi's are added and deleted.
+@@ -720,7 +721,15 @@ struct watcher_entry {
+ int ipmi_smi_watcher_register(struct ipmi_smi_watcher *watcher)
+ {
+ 	struct ipmi_smi *intf;
+-	int index;
++	int index, rv;
 +
-+		if (blocknum != 0xff && len != 31) {
-+		    /* All blocks but the last must have 31 data bytes. */
-+			result = -EIO;
-+			if (ssif_info->ssif_debug & SSIF_DEBUG_MSG)
-+				pr_info("Received middle message <31\n");
++	/*
++	 * Make sure the driver is actually initialized, this handles
++	 * problems with initialization order.
++	 */
++	rv = ipmi_init_msghandler();
++	if (rv)
++		return rv;
  
--		if (ssif_info->multi_len + len - 1 > IPMI_MAX_MSG_LENGTH) {
-+			goto continue_op;
-+		}
-+
-+		if (ssif_info->multi_len + len > IPMI_MAX_MSG_LENGTH) {
- 			/* Received message too big, abort the operation. */
- 			result = -E2BIG;
- 			if (ssif_info->ssif_debug & SSIF_DEBUG_MSG)
-@@ -669,16 +681,14 @@ static void msg_done_handler(struct ssif
- 			goto continue_op;
- 		}
+ 	mutex_lock(&smi_watchers_mutex);
  
--		/* Remove the blocknum from the data. */
--		len--;
- 		for (i = 0; i < len; i++)
--			ssif_info->data[i + ssif_info->multi_len] = data[i + 1];
-+			ssif_info->data[i + ssif_info->multi_len] = data[i];
- 		ssif_info->multi_len += len;
- 		if (blocknum == 0xff) {
- 			/* End of read */
- 			len = ssif_info->multi_len;
- 			data = ssif_info->data;
--		} else if (blocknum + 1 != ssif_info->multi_pos) {
-+		} else if (blocknum != ssif_info->multi_pos) {
- 			/*
- 			 * Out of sequence block, just abort.  Block
- 			 * numbers start at zero for the second block,
-@@ -706,6 +716,7 @@ static void msg_done_handler(struct ssif
- 		}
- 	}
+@@ -1076,7 +1085,7 @@ int ipmi_create_user(unsigned int
+ {
+ 	unsigned long flags;
+ 	struct ipmi_user *new_user;
+-	int           rv = 0, index;
++	int           rv, index;
+ 	struct ipmi_smi *intf;
  
-+ continue_op:
- 	if (result < 0) {
- 		ssif_inc_stat(ssif_info, receive_errors);
- 	} else {
-@@ -713,8 +724,6 @@ static void msg_done_handler(struct ssif
- 		ssif_inc_stat(ssif_info, received_message_parts);
- 	}
- 
+ 	/*
+@@ -1094,18 +1103,9 @@ int ipmi_create_user(unsigned int
+ 	 * Make sure the driver is actually initialized, this handles
+ 	 * problems with initialization order.
+ 	 */
+-	if (!initialized) {
+-		rv = ipmi_init_msghandler();
+-		if (rv)
+-			return rv;
 -
-- continue_op:
- 	if (ssif_info->ssif_debug & SSIF_DEBUG_STATE)
- 		pr_info(PFX "DONE 1: state = %d, result=%d.\n",
- 			ssif_info->ssif_state, result);
+-		/*
+-		 * The init code doesn't return an error if it was turned
+-		 * off, but it won't initialize.  Check that.
+-		 */
+-		if (!initialized)
+-			return -ENODEV;
+-	}
++	rv = ipmi_init_msghandler();
++	if (rv)
++		return rv;
+ 
+ 	new_user = kmalloc(sizeof(*new_user), GFP_KERNEL);
+ 	if (!new_user)
+@@ -3304,17 +3304,9 @@ int ipmi_register_smi(const struct ipmi_
+ 	 * Make sure the driver is actually initialized, this handles
+ 	 * problems with initialization order.
+ 	 */
+-	if (!initialized) {
+-		rv = ipmi_init_msghandler();
+-		if (rv)
+-			return rv;
+-		/*
+-		 * The init code doesn't return an error if it was turned
+-		 * off, but it won't initialize.  Check that.
+-		 */
+-		if (!initialized)
+-			return -ENODEV;
+-	}
++	rv = ipmi_init_msghandler();
++	if (rv)
++		return rv;
+ 
+ 	intf = kzalloc(sizeof(*intf), GFP_KERNEL);
+ 	if (!intf)
+@@ -5030,6 +5022,22 @@ static int panic_event(struct notifier_b
+ 	return NOTIFY_DONE;
+ }
+ 
++/* Must be called with ipmi_interfaces_mutex held. */
++static int ipmi_register_driver(void)
++{
++	int rv;
++
++	if (drvregistered)
++		return 0;
++
++	rv = driver_register(&ipmidriver.driver);
++	if (rv)
++		pr_err("Could not register IPMI driver\n");
++	else
++		drvregistered = true;
++	return rv;
++}
++
+ static struct notifier_block panic_block = {
+ 	.notifier_call	= panic_event,
+ 	.next		= NULL,
+@@ -5040,66 +5048,74 @@ static int ipmi_init_msghandler(void)
+ {
+ 	int rv;
+ 
++	mutex_lock(&ipmi_interfaces_mutex);
++	rv = ipmi_register_driver();
++	if (rv)
++		goto out;
+ 	if (initialized)
+-		return 0;
+-
+-	rv = driver_register(&ipmidriver.driver);
+-	if (rv) {
+-		pr_err(PFX "Could not register IPMI driver\n");
+-		return rv;
+-	}
++		goto out;
+ 
+-	pr_info("ipmi message handler version " IPMI_DRIVER_VERSION "\n");
++	init_srcu_struct(&ipmi_interfaces_srcu);
+ 
+ 	timer_setup(&ipmi_timer, ipmi_timeout, 0);
+ 	mod_timer(&ipmi_timer, jiffies + IPMI_TIMEOUT_JIFFIES);
+ 
+ 	atomic_notifier_chain_register(&panic_notifier_list, &panic_block);
+ 
+-	initialized = 1;
++	initialized = true;
+ 
+-	return 0;
++out:
++	mutex_unlock(&ipmi_interfaces_mutex);
++	return rv;
+ }
+ 
+ static int __init ipmi_init_msghandler_mod(void)
+ {
+-	ipmi_init_msghandler();
+-	return 0;
++	int rv;
++
++	pr_info("version " IPMI_DRIVER_VERSION "\n");
++
++	mutex_lock(&ipmi_interfaces_mutex);
++	rv = ipmi_register_driver();
++	mutex_unlock(&ipmi_interfaces_mutex);
++
++	return rv;
+ }
+ 
+ static void __exit cleanup_ipmi(void)
+ {
+ 	int count;
+ 
+-	if (!initialized)
+-		return;
+-
+-	atomic_notifier_chain_unregister(&panic_notifier_list, &panic_block);
+-
+-	/*
+-	 * This can't be called if any interfaces exist, so no worry
+-	 * about shutting down the interfaces.
+-	 */
++	if (initialized) {
++		atomic_notifier_chain_unregister(&panic_notifier_list,
++						 &panic_block);
+ 
+-	/*
+-	 * Tell the timer to stop, then wait for it to stop.  This
+-	 * avoids problems with race conditions removing the timer
+-	 * here.
+-	 */
+-	atomic_inc(&stop_operation);
+-	del_timer_sync(&ipmi_timer);
++		/*
++		 * This can't be called if any interfaces exist, so no worry
++		 * about shutting down the interfaces.
++		 */
+ 
+-	driver_unregister(&ipmidriver.driver);
++		/*
++		 * Tell the timer to stop, then wait for it to stop.  This
++		 * avoids problems with race conditions removing the timer
++		 * here.
++		 */
++		atomic_inc(&stop_operation);
++		del_timer_sync(&ipmi_timer);
+ 
+-	initialized = 0;
++		initialized = false;
+ 
+-	/* Check for buffer leaks. */
+-	count = atomic_read(&smi_msg_inuse_count);
+-	if (count != 0)
+-		pr_warn(PFX "SMI message count %d at exit\n", count);
+-	count = atomic_read(&recv_msg_inuse_count);
+-	if (count != 0)
+-		pr_warn(PFX "recv message count %d at exit\n", count);
++		/* Check for buffer leaks. */
++		count = atomic_read(&smi_msg_inuse_count);
++		if (count != 0)
++			pr_warn(PFX "SMI message count %d at exit\n", count);
++		count = atomic_read(&recv_msg_inuse_count);
++		if (count != 0)
++			pr_warn(PFX "recv message count %d at exit\n", count);
++		cleanup_srcu_struct(&ipmi_interfaces_srcu);
++	}
++	if (drvregistered)
++		driver_unregister(&ipmidriver.driver);
+ }
+ module_exit(cleanup_ipmi);
+ 
 
 
