@@ -2,425 +2,537 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F117C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 05:55:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44643C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 06:08:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37850218A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 05:55:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC3BD21855
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 06:08:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="i1+BPS00"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="M7MXuYkT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727195AbfAXFze (ORCPT
+        id S1726212AbfAXGEh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 00:55:34 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:44515 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727126AbfAXFzd (ORCPT
+        Thu, 24 Jan 2019 01:04:37 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:56710 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725287AbfAXGEg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 00:55:33 -0500
-Received: by mail-pg1-f194.google.com with SMTP id t13so2178906pgr.11
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 21:55:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=UB+824kJL77h2lS4dKLq0h0OL+opJbP1lzg8RMCla+0=;
-        b=i1+BPS00e2UoU+VZ9Qtxtg1aKiqhEgePjKlQSmkJ6yWx/iiYkHj491z+d4Fe/pJ9VZ
-         cBiPPf7+LaeVsGeozs8p4ufYIRBgkDdQrMHPjOE8/OQopVxQigEyhql/MFZ70bSm1GS0
-         bRLI31AX1rtUQC4CubMFUuFC55VmduauARyqQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=UB+824kJL77h2lS4dKLq0h0OL+opJbP1lzg8RMCla+0=;
-        b=E6x8NR5yitmELSM4iMS0x3xlXgVg1MVLWnOFXON09rO+V0u9rh77L5yKwnfQSZp9ao
-         T2MlqarZpmhJIYmft9C+FxmJlqsMvruf5caOlr5xFQlQhWWIj+LtRP2oPyt4tVDYZrGM
-         mRGRMDEoOnvglwHSIJkC2CeHhddgLoM8O9jvztyGhOEgy7tX36yxyk7ryHOoNFoqajxt
-         GwM+7zuygJsL5+DDOtGfi3mEmtnTnT5600fBQW8CP8HMYuZTi5li/4pPucY2xEJ9DStk
-         XJTPlkphUsFAkyPe2zZGW4Qd/uV3CtBJIA2UWnEV5xARBRHe/Q/GxiRLe4hJuGFqegpR
-         PMfQ==
-X-Gm-Message-State: AJcUuke0ahjk15InUwpcL0yw6uFNQ99qKXOAHTUmZhQzCEZXXIVzJnR0
-        hTkGndZyNJ0NytFP/atR0JxNOQ==
-X-Google-Smtp-Source: ALg8bN49KofxUN8oWGu5Zdk1BhB3g92zsTTwo9na3hdcxVe0jmQggzmZ7185cxb7jgwHDWVZ6mEp7Q==
-X-Received: by 2002:a62:cf84:: with SMTP id b126mr5108489pfg.98.1548309332450;
-        Wed, 23 Jan 2019 21:55:32 -0800 (PST)
-Received: from localhost.localdomain ([117.196.233.31])
-        by smtp.gmail.com with ESMTPSA id i2sm32297287pfi.66.2019.01.23.21.55.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 23 Jan 2019 21:55:31 -0800 (PST)
-From:   Sumit Garg <sumit.garg@linaro.org>
-To:     jens.wiklander@linaro.org, herbert@gondor.apana.org.au,
-        ard.biesheuvel@linaro.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, yamada.masahiro@socionext.com,
-        michal.lkml@markovi.net, mpm@selenic.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, arnd@arndb.de, gregkh@linuxfoundation.org,
-        daniel.thompson@linaro.org, bhsharma@redhat.com,
-        tee-dev@lists.linaro.org, Sumit Garg <sumit.garg@linaro.org>
-Subject: [PATCH v5 4/4] hwrng: add OP-TEE based rng driver
-Date:   Thu, 24 Jan 2019 11:24:39 +0530
-Message-Id: <1548309279-5281-5-git-send-email-sumit.garg@linaro.org>
+        Thu, 24 Jan 2019 01:04:36 -0500
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20190124060430epoutp04087cd3b2451184d90fd3f33c185a1274~8s5_8t_uz3049330493epoutp043
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 06:04:30 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20190124060430epoutp04087cd3b2451184d90fd3f33c185a1274~8s5_8t_uz3049330493epoutp043
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1548309870;
+        bh=mD79Z+qYfuZTu4r5Crad9OSvhRk1a986S55m2/JOvxA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=M7MXuYkT8ztfOwBEiHgLc5ExJi8rUo38+6/jSSixhZ6IfLuRfNtXFEuS40khypFzf
+         y6/lIwcW33aesm1mOcA8HqF49tbSwT4dv/h99amCAkt0GulZ9vnOax+GnfkNfHfaQb
+         JQkSna3vJDicIlddMhhNylCFrIWFWHZE570Nw7vc=
+Received: from epsmges1p3.samsung.com (unknown [182.195.40.154]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20190124060427epcas1p37aeba34f944a354c9f4beaa50dcd00df~8s58SKDfi2522725227epcas1p3p;
+        Thu, 24 Jan 2019 06:04:27 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        69.FE.04069.365594C5; Thu, 24 Jan 2019 15:04:19 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+        20190124060419epcas1p4aed00219fc0e0281c2d5435ce6ec2e48~8s50Zjh_a2523825238epcas1p4I;
+        Thu, 24 Jan 2019 06:04:19 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190124060419epsmtrp2b74b985a68b3f02cf6f5db59f85bc35a~8s50YuIZE2894028940epsmtrp2j;
+        Thu, 24 Jan 2019 06:04:19 +0000 (GMT)
+X-AuditID: b6c32a37-971ff70000000fe5-11-5c49556316bf
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        15.E2.03971.365594C5; Thu, 24 Jan 2019 15:04:19 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.113.221.102]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190124060419epsmtip120c471488469bd50a160290ae2d7d4a8~8s50NlFnO1788617886epsmtip1F;
+        Thu, 24 Jan 2019 06:04:19 +0000 (GMT)
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     cw00.choi@samsung.com, chanwoo@kernel.org,
+        vijaikumar.kanagarajan@gmail.com, myungjoo.ham@samsung.com
+Subject: [PATCH v3] extcon: Add support for ptn5150 extcon driver
+Date:   Thu, 24 Jan 2019 15:04:14 +0900
+Message-Id: <1548309854-5324-1-git-send-email-cw00.choi@samsung.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1548309279-5281-1-git-send-email-sumit.garg@linaro.org>
-References: <1548309279-5281-1-git-send-email-sumit.garg@linaro.org>
+In-Reply-To: <1548247616-6709-1-git-send-email-vijaikumar.kanagarajan@gmail.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHKsWRmVeSWpSXmKPExsWy7bCmvm5yqGeMwcouWYuJN66wWFz/8pzV
+        4vKuOWwWtxtXsFm83D+d1YHVY+esu+wem1Z1snn0bVnF6PF5k1wAS1S2TUZqYkpqkUJqXnJ+
+        SmZeuq2Sd3C8c7ypmYGhrqGlhbmSQl5ibqqtkotPgK5bZg7QXiWFssScUqBQQGJxsZK+nU1R
+        fmlJqkJGfnGJrVJqQUpOgWWBXnFibnFpXrpecn6ulaGBgZEpUGFCdkbP7gtsBadTKh5PfMjc
+        wHgzqIuRg0NCwESi8ZJaFyMXh5DADkaJP7MbmSGcT4wSLd9usUM43xgl+p/dB3I4wTq+72+H
+        qtrLKDHt+QlWkISQwBdGif9340FsNgEtif0vbrCB2CICChKbe5+B1TALZEscPnUEbJCwgKPE
+        lSkrWUBsFgFViU8bXzCD2LwCLhKf1m9ihFgmJ3HzXCdYnFMgQGLdx/1MIIslBDrYJC5tussK
+        UeQicfDIXSYIW1ji1fEtUJdKSXx+t5cNwq6WWHnyCBtUM6PElv0XoJqNJfYvncwECgxmAU2J
+        9bv0IQ7lk3j3tYcVEka8Eh1tQhDVyhKXH8CskpRY3N4JNd5DYubmP9DQWswocXTjH7YJjLKz
+        EKYuYGRcxSiWWlCcm55abFhgjBxLmxjBaUnLfAfjhnM+hxgFOBiVeHg5Cj1ihFgTy4orcw8x
+        SnAwK4nwul50ixHiTUmsrEotyo8vKs1JLT7EaAoMvonMUqLJ+cCUmVcSb2hqZGxsbGFiaGZq
+        aKgkzrvewTlGSCA9sSQ1OzW1ILUIpo+Jg1OqgbHraePertLtb+NSy19Wa1lJ5RR6BpyOOJr3
+        zCikXz9YjHmv+1I9DR+55tCzt3eu4i6bxegRW/tbNqFdTnd9wQ27jMt85Q5GFqF/AmSaljhH
+        Ngv/kRIXTbzvKbs0/N72jY16MofP32pZtkjaLZ7rDoPPoRZX3RmetuoSk961LGn8eGHB6aZz
+        SizFGYmGWsxFxYkAMF3doGEDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMLMWRmVeSWpSXmKPExsWy7bCSnG5yqGeMwetFHBYTb1xhsbj+5Tmr
+        xeVdc9gsbjeuYLN4uX86qwOrx85Zd9k9Nq3qZPPo27KK0ePzJrkAligum5TUnMyy1CJ9uwSu
+        jJ7dF9gKTqdUPJ74kLmB8WZQFyMnh4SAicT3/e3MXYxcHEICuxklNncdYYNISEpMu3gUKMEB
+        ZAtLHD5cDFHziVFi+RSIGjYBLYn9L26A2SICChKbe5+xgtjMAvkS5w40gMWFBRwlrkxZyQJi
+        swioSnza+IIZxOYVcJH4tH4TI8QuOYmb5zrB4pwCARLrPu5nAtkrJOAvsf6p4gRGvgWMDKsY
+        JVMLinPTc4sNCwzzUsv1ihNzi0vz0vWS83M3MYKDSktzB+PlJfGHGAU4GJV4eDkKPWKEWBPL
+        iitzDzFKcDArifC6XnSLEeJNSaysSi3Kjy8qzUktPsQozcGiJM77NO9YpJBAemJJanZqakFq
+        EUyWiYNTqoFRtXxL9XtFHpk53JcX1+ucnlceGmXTpNB00l9P7Fd0+PHQMHYdI9ZDWXt37ebe
+        drE2YanLlxvSnsGSN+8VbmDT2/pF4GbHQwGLtEfePyrzJ3wTiDJZJ3g+ofrmE/OiWdlrrWSq
+        xNg75U//3iPxIPj61ORtr/e119Y3757M6xfDEmX98rOrP7sSS3FGoqEWc1FxIgChBcdBJgIA
+        AA==
+X-CMS-MailID: 20190124060419epcas1p4aed00219fc0e0281c2d5435ce6ec2e48
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190124060419epcas1p4aed00219fc0e0281c2d5435ce6ec2e48
+References: <1548247616-6709-1-git-send-email-vijaikumar.kanagarajan@gmail.com>
+        <CGME20190124060419epcas1p4aed00219fc0e0281c2d5435ce6ec2e48@epcas1p4.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On ARM SoC's with TrustZone enabled, peripherals like entropy sources
-might not be accessible to normal world (linux in this case) and rather
-accessible to secure world (OP-TEE in this case) only. So this driver
-aims to provides a generic interface to OP-TEE based random number
-generator service.
+From: Vijai Kumar K <vijaikumar.kanagarajan@gmail.com>
 
-This driver registers on TEE bus to interact with OP-TEE based rng
-device/service.
+PTN5150 is a small thin low power CC (Configurationn Channel)
+Logic chip supporting the USB Type-C connector application with
+CC control logic detection and indication functions.
 
-Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+Signed-off-by: Vijai Kumar K <vijaikumar.kanagarajan@gmail.com>
+[cw00.choi: fix indentation of binding document and change patch subject]
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 ---
- MAINTAINERS                        |   5 +
- drivers/char/hw_random/Kconfig     |  15 ++
- drivers/char/hw_random/Makefile    |   1 +
- drivers/char/hw_random/optee-rng.c | 274 +++++++++++++++++++++++++++++++++++++
- 4 files changed, 295 insertions(+)
- create mode 100644 drivers/char/hw_random/optee-rng.c
+ .../devicetree/bindings/extcon/extcon-ptn5150.txt  |  27 ++
+ drivers/extcon/Kconfig                             |   8 +
+ drivers/extcon/Makefile                            |   1 +
+ drivers/extcon/extcon-ptn5150.c                    | 339 +++++++++++++++++++++
+ 4 files changed, 375 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/extcon/extcon-ptn5150.txt
+ create mode 100644 drivers/extcon/extcon-ptn5150.c
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 51029a4..dcef7e9 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11262,6 +11262,11 @@ M:	Jens Wiklander <jens.wiklander@linaro.org>
- S:	Maintained
- F:	drivers/tee/optee/
- 
-+OP-TEE RANDOM NUMBER GENERATOR (RNG) DRIVER
-+M:	Sumit Garg <sumit.garg@linaro.org>
-+S:	Maintained
-+F:	drivers/char/hw_random/optee-rng.c
-+
- OPA-VNIC DRIVER
- M:	Dennis Dalessandro <dennis.dalessandro@intel.com>
- M:	Niranjana Vishwanathapura <niranjana.vishwanathapura@intel.com>
-diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
-index dac895d..25a7d8f 100644
---- a/drivers/char/hw_random/Kconfig
-+++ b/drivers/char/hw_random/Kconfig
-@@ -424,6 +424,21 @@ config HW_RANDOM_EXYNOS
- 	  will be called exynos-trng.
- 
- 	  If unsure, say Y.
-+
-+config HW_RANDOM_OPTEE
-+	tristate "OP-TEE based Random Number Generator support"
-+	depends on OPTEE
-+	default HW_RANDOM
-+	help
-+	  This  driver provides support for OP-TEE based Random Number
-+	  Generator on ARM SoCs where hardware entropy sources are not
-+	  accessible to normal world (Linux).
-+
-+	  To compile this driver as a module, choose M here: the module
-+	  will be called optee-rng.
-+
-+	  If unsure, say Y.
-+
- endif # HW_RANDOM
- 
- config UML_RANDOM
-diff --git a/drivers/char/hw_random/Makefile b/drivers/char/hw_random/Makefile
-index e35ec3c..7c9ef4a 100644
---- a/drivers/char/hw_random/Makefile
-+++ b/drivers/char/hw_random/Makefile
-@@ -38,3 +38,4 @@ obj-$(CONFIG_HW_RANDOM_CAVIUM) += cavium-rng.o cavium-rng-vf.o
- obj-$(CONFIG_HW_RANDOM_MTK)	+= mtk-rng.o
- obj-$(CONFIG_HW_RANDOM_S390) += s390-trng.o
- obj-$(CONFIG_HW_RANDOM_KEYSTONE) += ks-sa-rng.o
-+obj-$(CONFIG_HW_RANDOM_OPTEE) += optee-rng.o
-diff --git a/drivers/char/hw_random/optee-rng.c b/drivers/char/hw_random/optee-rng.c
+diff --git a/Documentation/devicetree/bindings/extcon/extcon-ptn5150.txt b/Documentation/devicetree/bindings/extcon/extcon-ptn5150.txt
 new file mode 100644
-index 0000000..4ad0eca
+index 000000000000..936fbdf12815
 --- /dev/null
-+++ b/drivers/char/hw_random/optee-rng.c
-@@ -0,0 +1,274 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2018-2019 Linaro Ltd.
-+ */
++++ b/Documentation/devicetree/bindings/extcon/extcon-ptn5150.txt
+@@ -0,0 +1,27 @@
++* PTN5150 CC (Configuration Channel) Logic device
 +
-+#include <linux/delay.h>
-+#include <linux/of.h>
-+#include <linux/hw_random.h>
++PTN5150 is a small thin low power CC logic chip supporting the USB Type-C
++connector application with CC control logic detection and indication functions.
++It is interfaced to the host controller using an I2C interface.
++
++Required properties:
++- compatible: should be "nxp,ptn5150"
++- reg: specifies the I2C slave address of the device
++- int-gpio: should contain a phandle and GPIO specifier for the GPIO pin
++	connected to the PTN5150's INTB pin.
++- vbus-gpio: should contain a phandle and GPIO specifier for the GPIO pin which
++	is used to control VBUS.
++- pinctrl-names : a pinctrl state named "default" must be defined.
++- pinctrl-0 : phandle referencing pin configuration of interrupt and vbus
++	control.
++
++Example:
++	ptn5150@1d {
++		compatible = "nxp,ptn5150";
++		reg = <0x1d>;
++		int-gpio = <&msmgpio 78 GPIO_ACTIVE_HIGH>;
++		vbus-gpio = <&msmgpio 148 GPIO_ACTIVE_HIGH>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&ptn5150_default>;
++		status = "okay";
++	};
+diff --git a/drivers/extcon/Kconfig b/drivers/extcon/Kconfig
+index de15bf55895b..b9cc027e89ab 100644
+--- a/drivers/extcon/Kconfig
++++ b/drivers/extcon/Kconfig
+@@ -114,6 +114,14 @@ config EXTCON_PALMAS
+ 	  Say Y here to enable support for USB peripheral and USB host
+ 	  detection by palmas usb.
+
++config EXTCON_PTN5150
++	tristate "NXP PTN5150 CC LOGIC USB EXTCON support"
++	depends on I2C
++	select REGMAP_I2C
++	help
++	  Say Y here to enable support for USB peripheral and USB host
++	  detection by NXP PTN5150 CC (Configuration Channel) logic chip.
++
+ config EXTCON_QCOM_SPMI_MISC
+ 	tristate "Qualcomm USB extcon support"
+ 	depends on ARCH_QCOM || COMPILE_TEST
+diff --git a/drivers/extcon/Makefile b/drivers/extcon/Makefile
+index 0888fdeded72..261ce4cfe209 100644
+--- a/drivers/extcon/Makefile
++++ b/drivers/extcon/Makefile
+@@ -17,6 +17,7 @@ obj-$(CONFIG_EXTCON_MAX77693)	+= extcon-max77693.o
+ obj-$(CONFIG_EXTCON_MAX77843)	+= extcon-max77843.o
+ obj-$(CONFIG_EXTCON_MAX8997)	+= extcon-max8997.o
+ obj-$(CONFIG_EXTCON_PALMAS)	+= extcon-palmas.o
++obj-$(CONFIG_EXTCON_PTN5150)	+= extcon-ptn5150.o
+ obj-$(CONFIG_EXTCON_QCOM_SPMI_MISC) += extcon-qcom-spmi-misc.o
+ obj-$(CONFIG_EXTCON_RT8973A)	+= extcon-rt8973a.o
+ obj-$(CONFIG_EXTCON_SM5502)	+= extcon-sm5502.o
+diff --git a/drivers/extcon/extcon-ptn5150.c b/drivers/extcon/extcon-ptn5150.c
+new file mode 100644
+index 000000000000..b6d0557030d3
+--- /dev/null
++++ b/drivers/extcon/extcon-ptn5150.c
+@@ -0,0 +1,339 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// extcon-ptn5150.c - PTN5150 CC logic extcon driver to support USB detection
++//
++// Based on extcon-sm5502.c driver
++// Copyright (c) 2018-2019 by Vijai Kumar K
++// Author: Vijai Kumar K <vijaikumar.kanagarajan@gmail.com>
++
++#include <linux/err.h>
++#include <linux/i2c.h>
++#include <linux/interrupt.h>
 +#include <linux/kernel.h>
 +#include <linux/module.h>
++#include <linux/regmap.h>
 +#include <linux/slab.h>
-+#include <linux/tee_drv.h>
-+#include <linux/uuid.h>
++#include <linux/extcon-provider.h>
++#include <linux/gpio.h>
 +
-+#define DRIVER_NAME "optee-rng"
++/* PTN5150 registers */
++enum ptn5150_reg {
++	PTN5150_REG_DEVICE_ID = 0x01,
++	PTN5150_REG_CONTROL,
++	PTN5150_REG_INT_STATUS,
++	PTN5150_REG_CC_STATUS,
++	PTN5150_REG_CON_DET = 0x09,
++	PTN5150_REG_VCONN_STATUS,
++	PTN5150_REG_RESET,
++	PTN5150_REG_INT_MASK = 0x18,
++	PTN5150_REG_INT_REG_STATUS,
++	PTN5150_REG_END,
++};
 +
-+#define TEE_ERROR_HEALTH_TEST_FAIL	0x00000001
++#define PTN5150_DFP_ATTACHED			0x1
++#define PTN5150_UFP_ATTACHED			0x2
 +
-+/*
-+ * TA_CMD_GET_ENTROPY - Get Entropy from RNG
-+ *
-+ * param[0] (inout memref) - Entropy buffer memory reference
-+ * param[1] unused
-+ * param[2] unused
-+ * param[3] unused
-+ *
-+ * Result:
-+ * TEE_SUCCESS - Invoke command success
-+ * TEE_ERROR_BAD_PARAMETERS - Incorrect input param
-+ * TEE_ERROR_NOT_SUPPORTED - Requested entropy size greater than size of pool
-+ * TEE_ERROR_HEALTH_TEST_FAIL - Continuous health testing failed
-+ */
-+#define TA_CMD_GET_ENTROPY		0x0
++/* Define PTN5150 MASK/SHIFT constant */
++#define PTN5150_REG_DEVICE_ID_VENDOR_SHIFT	0
++#define PTN5150_REG_DEVICE_ID_VENDOR_MASK	\
++	(0x3 << PTN5150_REG_DEVICE_ID_VENDOR_SHIFT)
 +
-+/*
-+ * TA_CMD_GET_RNG_INFO - Get RNG information
-+ *
-+ * param[0] (out value) - value.a: RNG data-rate in bytes per second
-+ *                        value.b: Quality/Entropy per 1024 bit of data
-+ * param[1] unused
-+ * param[2] unused
-+ * param[3] unused
-+ *
-+ * Result:
-+ * TEE_SUCCESS - Invoke command success
-+ * TEE_ERROR_BAD_PARAMETERS - Incorrect input param
-+ */
-+#define TA_CMD_GET_RNG_INFO		0x1
++#define PTN5150_REG_DEVICE_ID_VERSION_SHIFT	3
++#define PTN5150_REG_DEVICE_ID_VERSION_MASK	\
++	(0x1f << PTN5150_REG_DEVICE_ID_VERSION_SHIFT)
 +
-+#define MAX_ENTROPY_REQ_SZ		(4 * 1024)
++#define PTN5150_REG_CC_PORT_ATTACHMENT_SHIFT	2
++#define PTN5150_REG_CC_PORT_ATTACHMENT_MASK	\
++	(0x7 << PTN5150_REG_CC_PORT_ATTACHMENT_SHIFT)
 +
-+static struct tee_context *ctx;
-+static struct tee_shm *entropy_shm_pool;
-+static u32 ta_rng_data_rate;
-+static u32 ta_rng_session_id;
++#define PTN5150_REG_CC_VBUS_DETECTION_SHIFT	7
++#define PTN5150_REG_CC_VBUS_DETECTION_MASK	\
++	(0x1 << PTN5150_REG_CC_VBUS_DETECTION_SHIFT)
 +
-+static size_t get_optee_rng_data(void *buf, size_t req_size)
++#define PTN5150_REG_INT_CABLE_ATTACH_SHIFT	0
++#define PTN5150_REG_INT_CABLE_ATTACH_MASK	\
++	(0x1 << PTN5150_REG_INT_CABLE_ATTACH_SHIFT)
++
++#define PTN5150_REG_INT_CABLE_DETACH_SHIFT	1
++#define PTN5150_REG_INT_CABLE_DETACH_MASK	\
++	(0x1 << PTN5150_REG_CC_CABLE_DETACH_SHIFT)
++
++struct ptn5150_info {
++	struct device *dev;
++	struct extcon_dev *edev;
++	struct i2c_client *i2c;
++	struct regmap *regmap;
++	struct gpio_desc *int_gpiod;
++	struct gpio_desc *vbus_gpiod;
++	int irq;
++	struct work_struct irq_work;
++	struct mutex mutex;
++};
++
++/* List of detectable cables */
++static const unsigned int ptn5150_extcon_cable[] = {
++	EXTCON_USB,
++	EXTCON_USB_HOST,
++	EXTCON_NONE,
++};
++
++static const struct regmap_config ptn5150_regmap_config = {
++	.reg_bits	= 8,
++	.val_bits	= 8,
++	.max_register	= PTN5150_REG_END,
++};
++
++static void ptn5150_irq_work(struct work_struct *work)
 +{
-+	u32 ret = 0;
-+	u8 *rng_data = NULL;
-+	size_t rng_size = 0;
-+	struct tee_ioctl_invoke_arg inv_arg = {0};
-+	struct tee_param param[4] = {0};
++	struct ptn5150_info *info = container_of(work,
++			struct ptn5150_info, irq_work);
++	int ret = 0;
++	unsigned int reg_data;
++	unsigned int int_status;
 +
-+	/* Invoke TA_CMD_GET_ENTROPY function of Trusted App */
-+	inv_arg.func = TA_CMD_GET_ENTROPY;
-+	inv_arg.session = ta_rng_session_id;
-+	inv_arg.num_params = 4;
++	if (!info->edev)
++		return;
 +
-+	/* Fill invoke cmd params */
-+	param[0].attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INOUT;
-+	param[0].u.memref.shm = entropy_shm_pool;
-+	param[0].u.memref.size = req_size;
-+	param[0].u.memref.shm_offs = 0;
++	mutex_lock(&info->mutex);
 +
-+	ret = tee_client_invoke_func(ctx, &inv_arg, param);
-+	if ((ret < 0) || (inv_arg.ret != 0)) {
-+		pr_err("TA_CMD_GET_ENTROPY invoke function error: %x\n",
-+		       inv_arg.ret);
-+		return 0;
++	ret = regmap_read(info->regmap, PTN5150_REG_CC_STATUS, &reg_data);
++	if (ret) {
++		dev_err(info->dev, "failed to read CC STATUS %d\n", ret);
++		mutex_unlock(&info->mutex);
++		return;
 +	}
 +
-+	rng_data = tee_shm_get_va(entropy_shm_pool, 0);
-+	if (IS_ERR(rng_data)) {
-+		pr_err("tee_shm_get_va failed\n");
-+		return 0;
++	/* Clear interrupt. Read would clear the register */
++	ret = regmap_read(info->regmap, PTN5150_REG_INT_STATUS, &int_status);
++	if (ret) {
++		dev_err(info->dev, "failed to read INT STATUS %d\n", ret);
++		mutex_unlock(&info->mutex);
++		return;
 +	}
 +
-+	rng_size = param[0].u.memref.size;
-+	memcpy(buf, rng_data, rng_size);
++	if (int_status) {
++		unsigned int cable_attach;
 +
-+	return rng_size;
-+}
++		cable_attach = int_status & PTN5150_REG_INT_CABLE_ATTACH_MASK;
++		if (cable_attach) {
++			unsigned int port_status;
++			unsigned int vbus;
 +
-+static int optee_rng_read(struct hwrng *rng, void *buf, size_t max, bool wait)
-+{
-+	u8 *data = buf;
-+	size_t read = 0, rng_size = 0;
-+	int timeout = 1;
++			port_status = ((reg_data &
++					PTN5150_REG_CC_PORT_ATTACHMENT_MASK) >>
++					PTN5150_REG_CC_PORT_ATTACHMENT_SHIFT);
 +
-+	if (max > MAX_ENTROPY_REQ_SZ)
-+		max = MAX_ENTROPY_REQ_SZ;
++			switch (port_status) {
++			case PTN5150_DFP_ATTACHED:
++				extcon_set_state_sync(info->edev,
++						EXTCON_USB_HOST, false);
++				gpiod_set_value(info->vbus_gpiod, 0);
++				extcon_set_state_sync(info->edev, EXTCON_USB,
++						true);
++				break;
++			case PTN5150_UFP_ATTACHED:
++				extcon_set_state_sync(info->edev, EXTCON_USB,
++						false);
++				vbus = ((reg_data &
++					PTN5150_REG_CC_VBUS_DETECTION_MASK) >>
++					PTN5150_REG_CC_VBUS_DETECTION_SHIFT);
++				if (vbus)
++					gpiod_set_value(info->vbus_gpiod, 0);
++				else
++					gpiod_set_value(info->vbus_gpiod, 1);
 +
-+	while (read == 0) {
-+		rng_size = get_optee_rng_data(data, (max - read));
-+
-+		data += rng_size;
-+		read += rng_size;
-+
-+		if (wait) {
-+			if (timeout-- == 0)
-+				return read;
-+			msleep((1000 * (max - read)) / ta_rng_data_rate);
++				extcon_set_state_sync(info->edev,
++						EXTCON_USB_HOST, true);
++				break;
++			default:
++				dev_err(info->dev,
++					"Unknown Port status : %x\n",
++					port_status);
++				break;
++			}
 +		} else {
-+			return read;
++			extcon_set_state_sync(info->edev,
++					EXTCON_USB_HOST, false);
++			extcon_set_state_sync(info->edev,
++					EXTCON_USB, false);
++			gpiod_set_value(info->vbus_gpiod, 0);
 +		}
 +	}
 +
-+	return read;
-+}
-+
-+static int optee_rng_init(struct hwrng *rng)
-+{
-+	entropy_shm_pool = tee_shm_alloc(ctx, MAX_ENTROPY_REQ_SZ,
-+					 TEE_SHM_MAPPED | TEE_SHM_DMA_BUF);
-+	if (IS_ERR(entropy_shm_pool)) {
-+		pr_err("tee_shm_alloc failed\n");
-+		return PTR_ERR(entropy_shm_pool);
++	/* Clear interrupt. Read would clear the register */
++	ret = regmap_read(info->regmap, PTN5150_REG_INT_REG_STATUS,
++			&int_status);
++	if (ret) {
++		dev_err(info->dev,
++			"failed to read INT REG STATUS %d\n", ret);
++		mutex_unlock(&info->mutex);
++		return;
 +	}
 +
-+	return 0;
++	mutex_unlock(&info->mutex);
 +}
 +
-+static void optee_rng_cleanup(struct hwrng *rng)
++
++static irqreturn_t ptn5150_irq_handler(int irq, void *data)
 +{
-+	tee_shm_free(entropy_shm_pool);
++	struct ptn5150_info *info = data;
++
++	schedule_work(&info->irq_work);
++
++	return IRQ_HANDLED;
 +}
 +
-+static struct hwrng optee_rng = {
-+	.name		= DRIVER_NAME,
-+	.init		= optee_rng_init,
-+	.cleanup	= optee_rng_cleanup,
-+	.read		= optee_rng_read,
-+};
-+
-+static int get_optee_rng_info(struct device *dev)
++static int ptn5150_init_dev_type(struct ptn5150_info *info)
 +{
-+	u32 ret = 0;
-+	struct tee_ioctl_invoke_arg inv_arg = {0};
-+	struct tee_param param[4] = {0};
++	unsigned int reg_data, vendor_id, version_id;
++	int ret;
 +
-+	/* Invoke TA_CMD_GET_RNG_INFO function of Trusted App */
-+	inv_arg.func = TA_CMD_GET_RNG_INFO;
-+	inv_arg.session = ta_rng_session_id;
-+	inv_arg.num_params = 4;
-+
-+	/* Fill invoke cmd params */
-+	param[0].attr = TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_OUTPUT;
-+
-+	ret = tee_client_invoke_func(ctx, &inv_arg, param);
-+	if ((ret < 0) || (inv_arg.ret != 0)) {
-+		dev_err(dev, "TA_CMD_GET_RNG_INFO invoke func error: %x\n",
-+			inv_arg.ret);
++	ret = regmap_read(info->regmap, PTN5150_REG_DEVICE_ID, &reg_data);
++	if (ret) {
++		dev_err(info->dev, "failed to read DEVICE_ID %d\n", ret);
 +		return -EINVAL;
 +	}
 +
-+	ta_rng_data_rate = param[0].u.value.a;
-+	optee_rng.quality = param[0].u.value.b;
++	vendor_id = ((reg_data & PTN5150_REG_DEVICE_ID_VENDOR_MASK) >>
++				PTN5150_REG_DEVICE_ID_VENDOR_SHIFT);
++	version_id = ((reg_data & PTN5150_REG_DEVICE_ID_VERSION_MASK) >>
++				PTN5150_REG_DEVICE_ID_VERSION_SHIFT);
 +
-+	return 0;
-+}
++	dev_info(info->dev, "Device type: version: 0x%x, vendor: 0x%x\n",
++			    version_id, vendor_id);
 +
-+static int optee_ctx_match(struct tee_ioctl_version_data *ver, const void *data)
-+{
-+	if (ver->impl_id == TEE_IMPL_ID_OPTEE)
-+		return 1;
-+	else
-+		return 0;
-+}
-+
-+static int optee_rng_probe(struct device *dev)
-+{
-+	struct tee_client_device *rng_device = to_tee_client_device(dev);
-+	int ret = 0, err = -ENODEV;
-+	struct tee_ioctl_open_session_arg sess_arg = {0};
-+
-+	/* Open context with TEE driver */
-+	ctx = tee_client_open_context(NULL, optee_ctx_match, NULL, NULL);
-+	if (IS_ERR(ctx))
-+		return -ENODEV;
-+
-+	/* Open session with hwrng Trusted App */
-+	memcpy(sess_arg.uuid, rng_device->id.uuid.b, TEE_IOCTL_UUID_LEN);
-+	sess_arg.clnt_login = TEE_IOCTL_LOGIN_PUBLIC;
-+	sess_arg.num_params = 0;
-+
-+	ret = tee_client_open_session(ctx, &sess_arg, NULL);
-+	if ((ret < 0) || (sess_arg.ret != 0)) {
-+		dev_err(dev, "tee_client_open_session failed, error: %x\n",
-+			sess_arg.ret);
-+		err = -EINVAL;
-+		goto out_ctx;
++	/* Clear any existing interrupts */
++	ret = regmap_read(info->regmap, PTN5150_REG_INT_STATUS, &reg_data);
++	if (ret) {
++		dev_err(info->dev,
++			"failed to read PTN5150_REG_INT_STATUS %d\n",
++			ret);
++		return -EINVAL;
 +	}
-+	ta_rng_session_id = sess_arg.session;
 +
-+	err = get_optee_rng_info(dev);
-+	if (err)
-+		goto out_sess;
-+
-+	err = hwrng_register(&optee_rng);
-+	if (err) {
-+		dev_err(dev, "hwrng registration failed (%d)\n", err);
-+		goto out_sess;
++	ret = regmap_read(info->regmap, PTN5150_REG_INT_REG_STATUS, &reg_data);
++	if (ret) {
++		dev_err(info->dev,
++			"failed to read PTN5150_REG_INT_REG_STATUS %d\n", ret);
++		return -EINVAL;
 +	}
 +
 +	return 0;
-+
-+out_sess:
-+	tee_client_close_session(ctx, ta_rng_session_id);
-+out_ctx:
-+	tee_client_close_context(ctx);
-+
-+	return err;
 +}
 +
-+static int optee_rng_remove(struct device *dev)
++static int ptn5150_i2c_probe(struct i2c_client *i2c,
++				 const struct i2c_device_id *id)
 +{
-+	hwrng_unregister(&optee_rng);
-+	tee_client_close_session(ctx, ta_rng_session_id);
-+	tee_client_close_context(ctx);
++	struct device *dev = &i2c->dev;
++	struct device_node *np = i2c->dev.of_node;
++	struct ptn5150_info *info;
++	int ret;
++
++	if (!np)
++		return -EINVAL;
++
++	info = devm_kzalloc(&i2c->dev, sizeof(*info), GFP_KERNEL);
++	if (!info)
++		return -ENOMEM;
++	i2c_set_clientdata(i2c, info);
++
++	info->dev = &i2c->dev;
++	info->i2c = i2c;
++	info->int_gpiod = devm_gpiod_get(&i2c->dev, "int", GPIOD_IN);
++	if (!info->int_gpiod) {
++		dev_err(dev, "failed to get INT GPIO\n");
++		return -EINVAL;
++	}
++	info->vbus_gpiod = devm_gpiod_get(&i2c->dev, "vbus", GPIOD_IN);
++	if (!info->vbus_gpiod) {
++		dev_err(dev, "failed to get VBUS GPIO\n");
++		return -EINVAL;
++	}
++	ret = gpiod_direction_output(info->vbus_gpiod, 0);
++	if (ret) {
++		dev_err(dev, "failed to set VBUS GPIO direction\n");
++		return -EINVAL;
++	}
++
++	mutex_init(&info->mutex);
++
++	INIT_WORK(&info->irq_work, ptn5150_irq_work);
++
++	info->regmap = devm_regmap_init_i2c(i2c, &ptn5150_regmap_config);
++	if (IS_ERR(info->regmap)) {
++		ret = PTR_ERR(info->regmap);
++		dev_err(info->dev, "failed to allocate register map: %d\n",
++				   ret);
++		return ret;
++	}
++
++	if (info->int_gpiod) {
++		info->irq = gpiod_to_irq(info->int_gpiod);
++		if (info->irq < 0) {
++			dev_err(dev, "failed to get INTB IRQ\n");
++			return info->irq;
++		}
++
++		ret = devm_request_threaded_irq(dev, info->irq, NULL,
++						ptn5150_irq_handler,
++						IRQF_TRIGGER_FALLING |
++						IRQF_ONESHOT,
++						i2c->name, info);
++		if (ret < 0) {
++			dev_err(dev, "failed to request handler for INTB IRQ\n");
++			return ret;
++		}
++	}
++
++	/* Allocate extcon device */
++	info->edev = devm_extcon_dev_allocate(info->dev, ptn5150_extcon_cable);
++	if (IS_ERR(info->edev)) {
++		dev_err(info->dev, "failed to allocate memory for extcon\n");
++		return -ENOMEM;
++	}
++
++	/* Register extcon device */
++	ret = devm_extcon_dev_register(info->dev, info->edev);
++	if (ret) {
++		dev_err(info->dev, "failed to register extcon device\n");
++		return ret;
++	}
++
++	/* Initialize PTN5150 device and print vendor id and version id */
++	ret = ptn5150_init_dev_type(info);
++	if (ret)
++		return -EINVAL;
 +
 +	return 0;
 +}
 +
-+const struct tee_client_device_id optee_rng_id_table[] = {
-+	{UUID_INIT(0xab7a617c, 0xb8e7, 0x4d8f,
-+		   0x83, 0x01, 0xd0, 0x9b, 0x61, 0x03, 0x6b, 0x64)},
-+	{}
++static const struct of_device_id ptn5150_dt_match[] = {
++	{ .compatible = "nxp,ptn5150" },
++	{ },
 +};
++MODULE_DEVICE_TABLE(of, ptn5150_dt_match);
 +
-+MODULE_DEVICE_TABLE(tee, optee_rng_id_table);
++static const struct i2c_device_id ptn5150_i2c_id[] = {
++	{ "ptn5150", 0 },
++	{ }
++};
++MODULE_DEVICE_TABLE(i2c, ptn5150_i2c_id);
 +
-+static struct tee_client_driver optee_rng_driver = {
-+	.id_table	= optee_rng_id_table,
++static struct i2c_driver ptn5150_i2c_driver = {
 +	.driver		= {
-+		.name		= DRIVER_NAME,
-+		.bus		= &tee_bus_type,
-+		.probe		= optee_rng_probe,
-+		.remove		= optee_rng_remove,
++		.name	= "ptn5150",
++		.of_match_table = ptn5150_dt_match,
 +	},
++	.probe	= ptn5150_i2c_probe,
++	.id_table = ptn5150_i2c_id,
 +};
 +
-+static int __init optee_rng_mod_init(void)
++static int __init ptn5150_i2c_init(void)
 +{
-+	int rc;
-+
-+	rc = driver_register(&optee_rng_driver.driver);
-+	if (rc)
-+		pr_warn("driver registration failed, err: %d", rc);
-+
-+	return rc;
++	return i2c_add_driver(&ptn5150_i2c_driver);
 +}
++subsys_initcall(ptn5150_i2c_init);
 +
-+static void __exit optee_rng_mod_exit(void)
-+{
-+	driver_unregister(&optee_rng_driver.driver);
-+}
-+
-+module_init(optee_rng_mod_init);
-+module_exit(optee_rng_mod_exit);
-+
++MODULE_DESCRIPTION("NXP PTN5150 CC logic Extcon driver");
++MODULE_AUTHOR("Vijai Kumar K <vijaikumar.kanagarajan@gmail.com>");
 +MODULE_LICENSE("GPL v2");
-+MODULE_AUTHOR("Sumit Garg <sumit.garg@linaro.org>");
-+MODULE_DESCRIPTION("OP-TEE based random number generator driver");
--- 
+--
 2.7.4
 
