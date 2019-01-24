@@ -4,68 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95907C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:43:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DD34C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:43:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BACB21872
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:43:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D38EA21872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:43:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FfTdq+XQ"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aZexlr0g"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727644AbfAXInr (ORCPT
+        id S1727686AbfAXIn4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 03:43:47 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:36982 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727628AbfAXInp (ORCPT
+        Thu, 24 Jan 2019 03:43:56 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:41675 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727596AbfAXInm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 03:43:45 -0500
-Received: by mail-oi1-f196.google.com with SMTP id y23so4211153oia.4
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 00:43:44 -0800 (PST)
+        Thu, 24 Jan 2019 03:43:42 -0500
+Received: by mail-oi1-f193.google.com with SMTP id j21so4194562oii.8
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 00:43:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=0IHbjA+eWfsPVp3mqIPGqB0gvsgYr2/M02Hhjj1xngA=;
-        b=FfTdq+XQZ4NWG8TH7qepr9aYPo7mEkzskhdaaPadSV4OuaP6Sy6C+jpk2Xb2g5ZfPv
-         rqklvjpgb4jyY5+dyTb7m24XRZPuEXdYWReal2+c9kd3utZCVsOmiMIma9T9IiwDtHR4
-         Ie9he1TDbYp9RI3dS+vVsQy5vvvOSujgpf7sU=
+        bh=ubufKBDUBrGmg37+ox2VVswr1sZmB/KKaxi8VgKVCLg=;
+        b=aZexlr0gKprhmeni93G0ze+OooktnLIlR8ePBrlhkEOlsqRgcQbqm8ZES2bxOWCfs9
+         FUAa1rFOVwEhJ4vuqOi44nGU4TP4SEbVbuR4BhvGMTFhLqLZA/JdY3QsImyCFXIO823N
+         l/xMO2140vBA83/npx384f5ztcK9a/gziuswU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=0IHbjA+eWfsPVp3mqIPGqB0gvsgYr2/M02Hhjj1xngA=;
-        b=UX8nv0t/DJ4tdzKshOln0J6sF9sK3cLkgQrx3QoZErx+gq6A4O37qADWHdlgRdsqWw
-         vPA1zYj3dxp706BAbdrj3CkSvCuUr487yZjzugH6AP83mMffaqw8Bqu4ta3kw3qi8FXF
-         j4rWSoceuPsIVD8Pw2d8dLY56NB3V6AO5JadjA0PQFwM1KHUwxcG83Wp/O7t4WL3Swgv
-         a/SR+0MDX/4FjzY6KoieFQPA7BZpGmc/LTnIZh453vrq0CPixmxJ6TAl/Jc1I4hM5XSP
-         ZwuFsPOc2yqPoatC2BLmzUm1uln6QroSLQfvCZd4gTeEefzmBb2FjOZyIze0tKO/fkTc
-         lR5w==
-X-Gm-Message-State: AJcUuke+OBav3lajEG1VCF+FL0NXhuMIazpMlmj/IxCuJBrj4P7ZirV/
-        i9BH4QgPGLBEY/plzJuQfl3OV5iy4lA=
-X-Google-Smtp-Source: ALg8bN7sdapplUGwennUI0zvCldkGmAT+CvYvyj6+ERQ1+V3fFnXGEk5fsI6ki/IZovP9P8O8ReddQ==
-X-Received: by 2002:aca:53cd:: with SMTP id h196mr562870oib.355.1548319424528;
-        Thu, 24 Jan 2019 00:43:44 -0800 (PST)
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com. [209.85.210.53])
-        by smtp.gmail.com with ESMTPSA id 30sm8969477ots.52.2019.01.24.00.43.43
+        bh=ubufKBDUBrGmg37+ox2VVswr1sZmB/KKaxi8VgKVCLg=;
+        b=erWAIgfSrC2xF9bme9mTnvSydpUhMXnYjSTVYcLv/alo86kb5KmCHoOL2BF5GDHHgg
+         8/8GRsEZymDlZWwVM/Zr6nuij84BRupHSTvNhxWVw1EKd1RX9K9diBeVeCHmxkXtgFi5
+         /5o+B0jU394+DRBuLvi4AU0drXK5BWuvv1pvuAwp0xcNvjK3AZIhzkZe3cZ5rrGfUN0e
+         IVGvWL8sbC26b7OA2G7ck6bwvPUvbvlF0aAr/VVunI1y9xzESFwGiFTdGuRjpLtwsamV
+         t4PvoHV0AwF8H0KXoZcAh0WhzEIaM5qynUF6VYN7DQy3W+BhTrxq8hqM1RU6z/PkPITS
+         lPQQ==
+X-Gm-Message-State: AJcUukcgoHx4KhG5MmkKMsgUv1Ov1H+H3yvxZgqgvKwEgO7OhMQHEk+v
+        qy5LJMOxwHyVNRdNNXfHknKznw0ljtc=
+X-Google-Smtp-Source: AHgI3Ia7T1qpHhbpBBeak1tq2Aulm+OuPHAasE+Dn2euuGOHOr3oWfcykLxrg0Gam6GiDSo3ShpqWA==
+X-Received: by 2002:aca:4c02:: with SMTP id z2mr519613oia.318.1548319420716;
+        Thu, 24 Jan 2019 00:43:40 -0800 (PST)
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com. [209.85.167.176])
+        by smtp.gmail.com with ESMTPSA id y80sm9743881oie.40.2019.01.24.00.43.39
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 00:43:43 -0800 (PST)
-Received: by mail-ot1-f53.google.com with SMTP id u16so4540142otk.8
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 00:43:43 -0800 (PST)
-X-Received: by 2002:a05:6830:165a:: with SMTP id h26mr3906261otr.299.1548319423408;
- Thu, 24 Jan 2019 00:43:43 -0800 (PST)
+        Thu, 24 Jan 2019 00:43:39 -0800 (PST)
+Received: by mail-oi1-f176.google.com with SMTP id v6so4224064oif.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 00:43:39 -0800 (PST)
+X-Received: by 2002:aca:ad14:: with SMTP id w20mr532308oie.3.1548319419319;
+ Thu, 24 Jan 2019 00:43:39 -0800 (PST)
 MIME-Version: 1.0
-References: <20190117162008.25217-1-stanimir.varbanov@linaro.org> <20190117162008.25217-10-stanimir.varbanov@linaro.org>
-In-Reply-To: <20190117162008.25217-10-stanimir.varbanov@linaro.org>
+References: <20190117162008.25217-1-stanimir.varbanov@linaro.org> <20190117162008.25217-9-stanimir.varbanov@linaro.org>
+In-Reply-To: <20190117162008.25217-9-stanimir.varbanov@linaro.org>
 From:   Alexandre Courbot <acourbot@chromium.org>
-Date:   Thu, 24 Jan 2019 17:43:31 +0900
-X-Gmail-Original-Message-ID: <CAPBb6MUumC2BmWar3yUmVT8vz8x-Nr_tuMc=1VSJvmQYGdPudw@mail.gmail.com>
-Message-ID: <CAPBb6MUumC2BmWar3yUmVT8vz8x-Nr_tuMc=1VSJvmQYGdPudw@mail.gmail.com>
-Subject: Re: [PATCH 09/10] venus: vdec: allow bigger sizeimage set by clients
+Date:   Thu, 24 Jan 2019 17:43:28 +0900
+X-Gmail-Original-Message-ID: <CAPBb6MWJXWLcGh3dbejiYzyqT6OB1_FN6zrcZFO5DbxqXSAWjQ@mail.gmail.com>
+Message-ID: <CAPBb6MWJXWLcGh3dbejiYzyqT6OB1_FN6zrcZFO5DbxqXSAWjQ@mail.gmail.com>
+Subject: Re: [PATCH 08/10] venus: vdec_ctrls: get real minimum buffers for capture
 To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
 Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -84,81 +84,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On Fri, Jan 18, 2019 at 1:21 AM Stanimir Varbanov
 <stanimir.varbanov@linaro.org> wrote:
 >
-> In most of the cases the client will know better what could be
-> the maximum size for compressed data buffers. Change the driver
-> to permit the user to set bigger size for the compressed buffer
-> but make reasonable sanitation.
+> Until now we returned num_output_bufs set during reqbuf but
+> that could be wrong when we implement stateful Codec API. So
+> get the minimum buffers for capture from HFI. This is supposed
+> to be called after stream header parsing, i.e. after dequeue
+> v4l2 event for change resolution.
 >
 > Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 > ---
->  drivers/media/platform/qcom/venus/vdec.c | 18 +++++++++++++-----
->  1 file changed, 13 insertions(+), 5 deletions(-)
+>  drivers/media/platform/qcom/venus/vdec_ctrls.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
 >
-> diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
-> index 282de21cf2e1..7a9370df7515 100644
-> --- a/drivers/media/platform/qcom/venus/vdec.c
-> +++ b/drivers/media/platform/qcom/venus/vdec.c
-> @@ -142,6 +142,7 @@ vdec_try_fmt_common(struct venus_inst *inst, struct v4l2_format *f)
->         struct v4l2_pix_format_mplane *pixmp = &f->fmt.pix_mp;
->         struct v4l2_plane_pix_format *pfmt = pixmp->plane_fmt;
->         const struct venus_format *fmt;
-> +       u32 szimage;
+> diff --git a/drivers/media/platform/qcom/venus/vdec_ctrls.c b/drivers/media/platform/qcom/venus/vdec_ctrls.c
+> index f4604b0cd57e..e1da87bf52bc 100644
+> --- a/drivers/media/platform/qcom/venus/vdec_ctrls.c
+> +++ b/drivers/media/platform/qcom/venus/vdec_ctrls.c
+> @@ -16,6 +16,7 @@
+>  #include <media/v4l2-ctrls.h>
 >
->         memset(pfmt[0].reserved, 0, sizeof(pfmt[0].reserved));
->         memset(pixmp->reserved, 0, sizeof(pixmp->reserved));
-> @@ -170,14 +171,18 @@ vdec_try_fmt_common(struct venus_inst *inst, struct v4l2_format *f)
->         pixmp->num_planes = fmt->num_planes;
->         pixmp->flags = 0;
+>  #include "core.h"
+> +#include "helpers.h"
+>  #include "vdec.h"
 >
-> -       pfmt[0].sizeimage = venus_helper_get_framesz(pixmp->pixelformat,
-> -                                                    pixmp->width,
-> -                                                    pixmp->height);
-> +       szimage = venus_helper_get_framesz(pixmp->pixelformat, pixmp->width,
-> +                                          pixmp->height);
+>  static int vdec_op_s_ctrl(struct v4l2_ctrl *ctrl)
+> @@ -47,7 +48,9 @@ static int vdec_op_g_volatile_ctrl(struct v4l2_ctrl *ctrl)
+>  {
+>         struct venus_inst *inst = ctrl_to_inst(ctrl);
+>         struct vdec_controls *ctr = &inst->controls.dec;
+> +       struct hfi_buffer_requirements bufreq;
+>         union hfi_get_property hprop;
+> +       enum hfi_version ver = inst->core->res->hfi_version;
+>         u32 ptype = HFI_PROPERTY_PARAM_PROFILE_LEVEL_CURRENT;
+>         int ret;
 >
-> -       if (f->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
-> +       if (f->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
-> +               pfmt[0].sizeimage = szimage;
->                 pfmt[0].bytesperline = ALIGN(pixmp->width, 128);
-> -       else
-> +       } else {
-> +               pfmt[0].sizeimage = clamp_t(u32, pfmt[0].sizeimage, 0, SZ_4M);
-> +               if (szimage > pfmt[0].sizeimage)
-> +                       pfmt[0].sizeimage = szimage;
+> @@ -71,7 +74,9 @@ static int vdec_op_g_volatile_ctrl(struct v4l2_ctrl *ctrl)
+>                 ctrl->val = ctr->post_loop_deb_mode;
+>                 break;
+>         case V4L2_CID_MIN_BUFFERS_FOR_CAPTURE:
+> -               ctrl->val = inst->num_output_bufs;
+> +               ret = venus_helper_get_bufreq(inst, HFI_BUFFER_OUTPUT, &bufreq);
+> +               if (!ret)
+> +                       ctrl->val = HFI_BUFREQ_COUNT_MIN(&bufreq, ver);
 
-pfmt[0].sizeimage = max(clamp_t(u32, pfmt[0].sizeimage, 0, SZ_4M),
-                                        szimage)?
+What happens if venus_helper_get_bufreq() returns an error? It seems
+that we just happily continue with whatever the previous value of
+ctrl->val was. It seems like we do the same with other controls as
+well.
 
->                 pfmt[0].bytesperline = 0;
-> +       }
->
->         return fmt;
->  }
-> @@ -275,6 +280,7 @@ static int vdec_s_fmt(struct file *file, void *fh, struct v4l2_format *f)
->                 inst->ycbcr_enc = pixmp->ycbcr_enc;
->                 inst->quantization = pixmp->quantization;
->                 inst->xfer_func = pixmp->xfer_func;
-> +               inst->input_buf_size = pixmp->plane_fmt[0].sizeimage;
->         }
->
->         memset(&format, 0, sizeof(format));
-> @@ -737,6 +743,8 @@ static int vdec_queue_setup(struct vb2_queue *q,
->                 sizes[0] = venus_helper_get_framesz(inst->fmt_out->pixfmt,
->                                                     inst->out_width,
->                                                     inst->out_height);
-> +               if (inst->input_buf_size > sizes[0])
-> +                       sizes[0] = inst->input_buf_size;
-
-               sizes[0] = max(venus_helper_get_framesz(inst->fmt_out->pixfmt,
-                                                   inst->out_width,
-                                                 inst->out_height),
-                                      inst->input_buf_size)?
-
-
-
->                 inst->input_buf_size = sizes[0];
->                 *num_buffers = max(*num_buffers, in_num);
->                 inst->num_input_bufs = *num_buffers;
-> --
-> 2.17.1
->
+I think you can fix this globally by initializing ret to 0 at the
+beginning of the function, and then returning ret instead of 0 at the
+end. That way all errors would be propagated. Of course please check
+that this is relevant for other controls following this scheme before
+doing so. :)
