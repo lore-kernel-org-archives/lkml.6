@@ -6,23 +6,23 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4627AC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:25:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE85CC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:25:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2045520811
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:25:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA8B3218A6
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:25:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727883AbfAXLZX (ORCPT
+        id S1727919AbfAXLZZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 06:25:23 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:44426 "EHLO
+        Thu, 24 Jan 2019 06:25:25 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:49820 "EHLO
         cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727806AbfAXLZL (ORCPT
+        with ESMTP id S1727728AbfAXLZK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 06:25:11 -0500
+        Thu, 24 Jan 2019 06:25:10 -0500
 Received: from 79.184.255.239.ipv4.supernova.orange.pl (79.184.255.239) (HELO aspire.rjw.lan)
  by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
- id 5d60eca83d9b84c3; Thu, 24 Jan 2019 12:25:09 +0100
+ id aebf53184c14bb0f; Thu, 24 Jan 2019 12:25:08 +0100
 From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     LKML <linux-kernel@vger.kernel.org>,
@@ -36,9 +36,9 @@ Cc:     LKML <linux-kernel@vger.kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: [PATCH 1/6] driver core: Fix DL_FLAG_AUTOREMOVE_SUPPLIER device link flag handling
-Date:   Thu, 24 Jan 2019 12:15:48 +0100
-Message-ID: <1741656.2uuZd5Vlsj@aspire.rjw.lan>
+Subject: [PATCH 4/6] driver core: Do not resume suppliers under device_links_write_lock()
+Date:   Thu, 24 Jan 2019 12:19:35 +0100
+Message-ID: <6978367.mo1Yi9LooT@aspire.rjw.lan>
 In-Reply-To: <2493187.oiOpCWJBV7@aspire.rjw.lan>
 References: <2493187.oiOpCWJBV7@aspire.rjw.lan>
 MIME-Version: 1.0
@@ -51,98 +51,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-First, if the kref_put() in device_links_driver_cleanup() added by
-commit 1689cac5b32a ("driver core: Add flag to autoremove device
-link on supplier unbind") actually causes the link object to be
-freed, the subsequent attempt to change the state of the link
-can crash the kernel, so avoid it by changing the state of the link
-before attempting to drop it.  Use the observation that the original
-state of the link can be changed to "dormant" whatever it is, because
-the link becomes, in fact, dormant at that point.
+It is incorrect to call pm_runtime_get_sync() under
+device_links_write_lock(), because it may end up trying to take
+device_links_read_lock() while resuming the target device and that
+will deadlock in the non-SRCU case, so avoid that by resuming the
+supplier device in device_link_add() before calling
+device_links_write_lock().
 
-Second, change the list walk in device_links_driver_cleanup() to
-a safe one to avoid use-after-free when dropping a link from the list
-during the walk.
-
-Finally, while at it, fix device_link_add() to refuse to create
-stateless device links with DL_FLAG_AUTOREMOVE_SUPPLIER set, which is
-an invalid combination (setting that flag means that the driver core
-should manage the link, so it cannot be stateless), and extend the
-kerneldoc comment of device_link_add() to cover the
-DL_FLAG_AUTOREMOVE_SUPPLIER flag properly too.
-
-Fixes: 1689cac5b32a ("driver core: Add flag to autoremove device link on supplier unbind")
+Fixes: 21d5c57b3726 ("PM / runtime: Use device links")
+Fixes: baa8809f6097 ("PM / runtime: Optimize the use of device links")
 Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- drivers/base/core.c |   33 ++++++++++++++++-----------------
- 1 file changed, 16 insertions(+), 17 deletions(-)
+ drivers/base/core.c |   20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
 
 Index: linux-pm/drivers/base/core.c
 ===================================================================
 --- linux-pm.orig/drivers/base/core.c
 +++ linux-pm/drivers/base/core.c
-@@ -179,10 +179,15 @@ void device_pm_move_to_tail(struct devic
-  * of the link.  If DL_FLAG_PM_RUNTIME is not set, DL_FLAG_RPM_ACTIVE will be
-  * ignored.
-  *
-- * If the DL_FLAG_AUTOREMOVE_CONSUMER is set, the link will be removed
-- * automatically when the consumer device driver unbinds from it.
-- * The combination of both DL_FLAG_AUTOREMOVE_CONSUMER and DL_FLAG_STATELESS
-- * set is invalid and will cause NULL to be returned.
-+ * If the DL_FLAG_AUTOREMOVE_CONSUMER flag is set, the reference to the link
-+ * acquired by this function will be dropped automatically when the consumer
-+ * device driver unbinds from it.  Analogously, if DL_FLAG_AUTOREMOVE_SUPPLIER
-+ * is set in @flags, the reference to the link acquired by this function will
-+ * be dropped automatically when the supplier device driver unbinds from it.
-+ *
-+ * The combination of DL_FLAG_STATELESS and either DL_FLAG_AUTOREMOVE_CONSUMER
-+ * or DL_FLAG_AUTOREMOVE_SUPPLIER set in @flags at the same time is invalid and
-+ * will cause NULL to be returned upfront.
-  *
-  * A side effect of the link creation is re-ordering of dpm_list and the
-  * devices_kset list by moving the consumer device and all devices depending
-@@ -199,8 +204,8 @@ struct device_link *device_link_add(stru
+@@ -202,12 +202,21 @@ struct device_link *device_link_add(stru
+ 				    struct device *supplier, u32 flags)
+ {
  	struct device_link *link;
++	bool rpm_put_supplier = false;
  
  	if (!consumer || !supplier ||
--	    ((flags & DL_FLAG_STATELESS) &&
--	     (flags & DL_FLAG_AUTOREMOVE_CONSUMER)))
-+	    (flags & DL_FLAG_STATELESS &&
-+	     flags & (DL_FLAG_AUTOREMOVE_CONSUMER | DL_FLAG_AUTOREMOVE_SUPPLIER)))
+ 	    (flags & DL_FLAG_STATELESS &&
+ 	     flags & (DL_FLAG_AUTOREMOVE_CONSUMER | DL_FLAG_AUTOREMOVE_SUPPLIER)))
  		return NULL;
  
- 	device_links_write_lock();
-@@ -539,27 +544,21 @@ void device_links_no_driver(struct devic
-  */
- void device_links_driver_cleanup(struct device *dev)
- {
--	struct device_link *link;
-+	struct device_link *link, *ln;
- 
- 	device_links_write_lock();
- 
--	list_for_each_entry(link, &dev->links.consumers, s_node) {
-+	list_for_each_entry_safe(link, ln, &dev->links.consumers, s_node) {
- 		if (link->flags & DL_FLAG_STATELESS)
- 			continue;
- 
- 		WARN_ON(link->flags & DL_FLAG_AUTOREMOVE_CONSUMER);
- 		WARN_ON(link->status != DL_STATE_SUPPLIER_UNBIND);
- 
--		/*
--		 * autoremove the links between this @dev and its consumer
--		 * devices that are not active, i.e. where the link state
--		 * has moved to DL_STATE_SUPPLIER_UNBIND.
--		 */
--		if (link->status == DL_STATE_SUPPLIER_UNBIND &&
--		    link->flags & DL_FLAG_AUTOREMOVE_SUPPLIER)
--			kref_put(&link->kref, __device_link_del);
--
- 		WRITE_ONCE(link->status, DL_STATE_DORMANT);
++	if (flags & DL_FLAG_PM_RUNTIME && flags & DL_FLAG_RPM_ACTIVE) {
++		if (pm_runtime_get_sync(supplier) < 0) {
++			pm_runtime_put_noidle(supplier);
++			return NULL;
++		}
++		rpm_put_supplier = true;
++	}
 +
-+		if (link->flags & DL_FLAG_AUTOREMOVE_SUPPLIER)
-+			kref_put(&link->kref, __device_link_del);
- 	}
+ 	device_links_write_lock();
+ 	device_pm_lock();
  
- 	__device_links_no_driver(dev);
+@@ -251,13 +260,8 @@ struct device_link *device_link_add(stru
+ 
+ 	if (flags & DL_FLAG_PM_RUNTIME) {
+ 		if (flags & DL_FLAG_RPM_ACTIVE) {
+-			if (pm_runtime_get_sync(supplier) < 0) {
+-				pm_runtime_put_noidle(supplier);
+-				kfree(link);
+-				link = NULL;
+-				goto out;
+-			}
+ 			link->rpm_active = true;
++			rpm_put_supplier = false;
+ 		}
+ 		pm_runtime_new_link(consumer);
+ 		/*
+@@ -329,6 +333,10 @@ struct device_link *device_link_add(stru
+  out:
+ 	device_pm_unlock();
+ 	device_links_write_unlock();
++
++	if (rpm_put_supplier)
++		pm_runtime_put(supplier);
++
+ 	return link;
+ }
+ EXPORT_SYMBOL_GPL(device_link_add);
 
