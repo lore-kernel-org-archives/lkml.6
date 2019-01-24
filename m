@@ -2,57 +2,76 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC244C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:12:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B6B2C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:13:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C3EE217D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:12:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548360777;
-	bh=wCYAG8nbo3hExxu3TKc8A5srMnqnOmowXCyMTBo2Oo4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=SDwTgnBp3Rd1khDXxb9lJb68c4CVBGuYwp4ULL+/Ee8IZR3Qxg9zB1pSeApG4Zxig
-	 DkdW8tTo89fey1cOgp30xDvfdV2d665h/p+sJEjltOfaPA7OM67qs0x5uj2v410tg1
-	 vk9lfpgLDc663HyADWZFcusFOUZ9ue1BdIYNSn6M=
+	by mail.kernel.org (Postfix) with ESMTP id 5DDAD217D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:13:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rw57tICu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730568AbfAXUM4 (ORCPT
+        id S1730650AbfAXUM7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 15:12:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51356 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729597AbfAXTZk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:25:40 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 35A20218FD;
-        Thu, 24 Jan 2019 19:25:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548357939;
-        bh=wCYAG8nbo3hExxu3TKc8A5srMnqnOmowXCyMTBo2Oo4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pH1XIZBBHzMvp9H3+A8zJKxm7ahJuV44bnVZCOQLjQpKKxaNDeZRLwcXqNHE1VSbD
-         eYEhMpSNZ1egIwK+YRpWHlA5gknTgVWcLvs3lJgUEyXB7UxsFatUzuTBMGVy5vGwbX
-         gakROpEzEnG6kHR9Lf7+ZZ6D/7IQd+MBEzkKZK90=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 007/104] f2fs: give -EINVAL for norecovery and rw mount
-Date:   Thu, 24 Jan 2019 20:18:56 +0100
-Message-Id: <20190124190155.686881629@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190124190154.968308875@linuxfoundation.org>
-References: <20190124190154.968308875@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Thu, 24 Jan 2019 15:12:59 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:54954 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728794AbfAXUM5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 15:12:57 -0500
+Received: by mail-it1-f194.google.com with SMTP id i145so7047933ita.4
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 12:12:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=DSkm3u+ZlEEuq9YYJUcFGzL5np6qZXQ1NoLTaiP7ikU=;
+        b=Rw57tICuseUU/Y0P8+UY/w3WfseeJLiRmlpoammlllNmTkVqIxl1oFxbA0E3fDxHXq
+         Z5eKcZ21qtuk6+tkpnTRU2GnnSdIKzZld0tD7Ss+mZ/Z4yf0fiNA8NGAuJdhOtD8h/xu
+         +oajgyWN5Kn4oiQHhDEpl808EFjMWbjjWXkx+jN+wgPd0KWCz/1vl370iM324bEv6Ywy
+         nMArv13JGCLTbvZnTx3QYFDdUCz9eM9baFV6DOKhaI32LjNABdvRwCBPwGkwSlQlj032
+         +ZJzopE0FcuvqZlCeitXxQR5aQWcT9Ir4PXOu1qTNpDZXLj559nqhWN2+piBOYOsz0EX
+         ZcAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=DSkm3u+ZlEEuq9YYJUcFGzL5np6qZXQ1NoLTaiP7ikU=;
+        b=AlPmfXze3IAVAwPXy8wk61L2sSoccLK2my41l8u5VrareQGD1qQl6KMQCtuO0q0O3i
+         siNJHfKvItzqQ0cH3tF2AfqRU9gecJVJDjqhLlxjaGICFpCT88HPvEFhC6gg4S8g5cjz
+         333a3kEE/sXGhu69/Vl1eqzLbnmVgbCetM8LFdYlQeLv6n+O+Qct+SdLB2V6PNVyk/t9
+         S4hBGQuWKMXuJqKFx+pSSOfk9AQW1VS1s8bVeyWIO8fZa/qzIUcDsG1/V9iOK7GXCJkX
+         30Fu5u9wVm0MFsAu2v2RxyEaXn3IlxPv51UAZhh7PTRx8xVKaDsocOeg1/2uOskKXsMa
+         TGSQ==
+X-Gm-Message-State: AJcUukftc0vrHYudS8zUzQMPOC/VKusatDRyJPQ3lPAxa1BtMmEP6Ubh
+        lBCbW8A6x9BFwaZgTwsfOWE=
+X-Google-Smtp-Source: ALg8bN56qU0kSQbzx55/an0ZJTTK721/ZZYqCLoX2YGOPBmMe57u1CCE/K07vo/8FWcymTG0FLkoWQ==
+X-Received: by 2002:a02:c498:: with SMTP id t24mr5520610jam.126.1548360776382;
+        Thu, 24 Jan 2019 12:12:56 -0800 (PST)
+Received: from svens-asus.arcx.com ([184.94.50.30])
+        by smtp.gmail.com with ESMTPSA id 79sm12417456itx.11.2019.01.24.12.12.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 24 Jan 2019 12:12:55 -0800 (PST)
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+X-Google-Original-From: Sven Van Asbroeck <TheSven73@googlemail.com>
+To:     svendev@arcx.com, robh+dt@kernel.org, linus.walleij@linaro.org
+Cc:     lee.jones@linaro.org, mark.rutland@arm.com, afaerber@suse.de,
+        treding@nvidia.com, david@lechnology.com, noralf@tronnes.org,
+        johan@kernel.org, monstr@monstr.eu, michal.vokac@ysoft.com,
+        arnd@arndb.de, gregkh@linuxfoundation.org, john.garry@huawei.com,
+        geert+renesas@glider.be, robin.murphy@arm.com,
+        paul.gortmaker@windriver.com,
+        sebastien.bourdelin@savoirfairelinux.com, icenowy@aosc.io,
+        stuyoder@gmail.com, maxime.ripard@bootlin.com,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v8 0/6] Add Fieldbus subsystem + support HMS Profinet card
+Date:   Thu, 24 Jan 2019 15:12:45 -0500
+Message-Id: <20190124201251.15159-1-TheSven73@googlemail.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -61,105 +80,191 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+This patch:
+  1. adds a Fieldbus subsystem
+  2. adds support for the HMS Industrial Networks AB Profinet card.
 
-------------------
+1. Fieldbus subsystem
+---------------------
 
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+Fieldbus device (client) adapters allow data exchange with a PLC aka.
+"Fieldbus Controller" over a fieldbus (Profinet, FLNet, etc.)
+They are typically used when a Linux device wants to expose itself
+as an actuator, motor, console light, switch, etc. over the fieldbus.
+The framework is designed to provide a generic interface to Fieldbus
+Devices from both the Linux Kernel and the userspace.
 
-commit 6781eabba1bdb133eb9125c4acf6704ccbe4df02 upstream.
+2. Add support for HMS Profinet Card
+------------------------------------
 
-Once detecting something to recover, f2fs should stop mounting, given norecovery
-and rw mount options.
+Profinet is an industry technical standard for data communication over
+Industrial Ethernet, designed for collecting data from, and controlling,
+equipment in industrial systems, with a particular strength in delivering data
+under tight time constraints (on the order of 1ms or less).
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/f2fs/f2fs.h     |    2 +-
- fs/f2fs/recovery.c |   11 +++++++----
- fs/f2fs/super.c    |   14 ++++++++++++--
- 3 files changed, 20 insertions(+), 7 deletions(-)
+The profinet card itself is connected to the system via an industrial bus
+called 'anybus'.
 
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1867,7 +1867,7 @@ void build_gc_manager(struct f2fs_sb_inf
- /*
-  * recovery.c
-  */
--int recover_fsync_data(struct f2fs_sb_info *);
-+int recover_fsync_data(struct f2fs_sb_info *, bool);
- bool space_for_roll_forward(struct f2fs_sb_info *);
- 
- /*
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -524,12 +524,13 @@ next:
- 	return err;
- }
- 
--int recover_fsync_data(struct f2fs_sb_info *sbi)
-+int recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
- {
- 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_WARM_NODE);
- 	struct list_head inode_list;
- 	block_t blkaddr;
- 	int err;
-+	int ret = 0;
- 	bool need_writecp = false;
- 
- 	fsync_entry_slab = f2fs_kmem_cache_create("f2fs_fsync_inode_entry",
-@@ -546,11 +547,13 @@ int recover_fsync_data(struct f2fs_sb_in
- 
- 	/* step #1: find fsynced inode numbers */
- 	err = find_fsync_dnodes(sbi, &inode_list);
--	if (err)
-+	if (err || list_empty(&inode_list))
- 		goto out;
- 
--	if (list_empty(&inode_list))
-+	if (check_only) {
-+		ret = 1;
- 		goto out;
-+	}
- 
- 	need_writecp = true;
- 
-@@ -598,5 +601,5 @@ out:
- 	} else {
- 		mutex_unlock(&sbi->cp_mutex);
- 	}
--	return err;
-+	return ret ? ret: err;
- }
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1457,14 +1457,24 @@ try_onemore:
- 		if (need_fsck)
- 			set_sbi_flag(sbi, SBI_NEED_FSCK);
- 
--		err = recover_fsync_data(sbi);
--		if (err) {
-+		err = recover_fsync_data(sbi, false);
-+		if (err < 0) {
- 			need_fsck = true;
- 			f2fs_msg(sb, KERN_ERR,
- 				"Cannot recover all fsync data errno=%ld", err);
- 			goto free_kobj;
- 		}
-+	} else {
-+		err = recover_fsync_data(sbi, true);
-+
-+		if (!f2fs_readonly(sb) && err > 0) {
-+			err = -EINVAL;
-+			f2fs_msg(sb, KERN_ERR,
-+				"Need to recover fsync data");
-+			goto free_kobj;
-+		}
- 	}
-+
- 	/* recover_fsync_data() cleared this already */
- 	clear_sbi_flag(sbi, SBI_POR_DOING);
- 
+I have followed the bus driver/client driver pattern, and created an anybus
+bus driver, plus a client driver for the profinet card.
 
+In case this patch set gets (eventually) accepted, drivers for other anybus
+client cards may follow: flnet, cc-link, ...
+
+The anybus slot on the host is located on an 'anybus controller', which is
+custom h/w designed by arcx. It exposes a dual anybus host implementation,
+plus a power readout unrelated to the anybus.
+
+v8:
+	allow fieldbus core to be built as a module (define as tristate).
+	use IS_ENABLED() in fieldbus_dev.h to conditionally compile dummy functions.
+	anybuss_core.ko uses symbols from fieldbus_dev.ko. Use "top level kbuild
+		file" method to make this work.
+		See Documentation/kbuild/modules.txt, section 6.3
+	Confirm licence choice: GPL-v2 only. no changes.
+
+v7:
+	use %zu printf formatter to display size_t
+
+v6:
+	Randy Dunlap:
+	correctly/consistently indent Kconfig
+	spelling/punctuation improvements
+
+	Greg KH:
+	suggestion: simplify /sys/class/fieldbus_dev/fieldbus_devX/ -> /sys/class/fieldbus_dev/X/
+		can't simplify: create_device() also determines the name of the
+		associated char device. simplification would result in a char device
+		named /dev/X ?
+	applied above suggestion to arcx-controller driver, this works ok as it does not
+		have associated char device
+	class name left as-is (fieldbus_dev) to differentiate between
+		"fieldbus controller" and "fieldbus device" in the future
+	makefile clean-up
+	sysfs attributes: snprintf -> sprintf
+		except card_name, as it's externally provided and could potentially
+		be > PAGE_SIZE
+	enabled/online sysfs attributes converted to "0/1" values
+		using kstrtobool()
+
+v5:
+	Greg KH:
+		fix licence nit
+		consistent use of e-mail address
+		replaced raw sysfs attribute with kobject_uevent() call
+		keep __ATTRIBUTE_GROUPS because we need is_visible field
+	Rob Herring:
+		controller devicetree entry now requires multiple address
+			regions and interrupts
+		controller child node(s) now mapped to child devices by
+			slot/host position (using devicetree reg = <>)
+		architectural overhaul to align closely to existing pci arch:
+
+				pci			anybus			
+--------------------------------------------------------------------------------
+Common bus code (spec),		pci/pci_driver.c	anybus/dev_core.c
+  calls bus_register()		no of compatible	no of compatible
+--------------------------------------------------------------------------------
+Device on bus, calls
+  XXX_client_driver_register()	hwmon/k8temp.c		fieldbus/hms-profinet.c
+--------------------------------------------------------------------------------
+Controller, silicon driver	pci/pcie-tango.c	anybus/arcx-anybus.c
+				platform_driver calls	platform_driver calls
+				pci_host_probe()	anybus_host_common_probe()
+
+v4:
+	general
+		create fieldbus_dev subsystem, with standardized 'simple'
+			userspace interface (sysfs + cdev)
+		remove redundant __packed keywords
+		use __be16/32 types wherever values are explicitly big-endian
+	hms-profinet:
+		remove configuration code, and uapi headers: not supported (yet)
+			when registering as a fieldbus_dev.
+	anybuss-host:
+		use struct kref to reference-count tasks
+		replace busy loops with usleep_range() loop after 10 tries
+		use threaded irq so time_before_eq(jiffies, timeout) will
+			continue to work
+		allow client devices to be assigned a devicetree node,
+			in the same way as pci/mmc/...
+
+v3:
+	devicetree-bindings
+		adding the vendor prefix is now a separate commit
+	anybus-bridge:
+		moved misc driver to drivers/bus/
+		converted of_gpio_* to gpiod_* abstractions
+		can power readout is now a fixed-voltage regulator
+	anybuss-host:
+		converted refcounts from atomic_t to refcount_t
+		fixed potential use-after-free
+	hms-profinet:
+		applied minor kernel build robot suggestion
+
+v2:
+	added architecture overview comments to host driver
+	completely reworked anybus-bridge driver, it becomes a reset controller
+	anybuss-host driver now needs devicetree entry, link to reset controller
+	I will hold off on kernel-doc until the overall architecture gets
+		more validation / approval
+	fixed Kconfig, comment-style, document ioctl magic numbers
+	removed redundant pwm dependency
+	renamed enable-gpios to reset-gpios
+	stop driving reset-gpio after unloading driver
+	use interrupt-parent / interrupts method to describe interrupts
+		in the devicetree
+	convert references 'i.MX WEIM parallel bus' to 'parallel bus'
+	replace devicetree functions with more generic platform_get_resource()
+							platform_get_irq()
+	added device unique data to add_device_randomness()
+
+v1:
+	first shot
+
+Sven Van Asbroeck (6):
+  fieldbus_dev: add Fieldbus Device subsystem.
+  anybus-s: support HMS Anybus-S bus
+  anybus-s: support the Arcx anybus controller
+  dt-bindings: anybus-controller: document devicetree binding
+  dt-bindings: Add vendor prefix for arcx / Archronix
+  fieldbus_dev: support HMS Profinet IRT industrial controller
+
+ Documentation/ABI/testing/fieldbus-dev-cdev   |   31 +
+ .../ABI/testing/sysfs-class-fieldbus-dev      |   62 +
+ .../fieldbus/arcx,anybus-controller.txt       |   71 +
+ .../devicetree/bindings/vendor-prefixes.txt   |    1 +
+ Documentation/fieldbus_dev/fieldbus_dev.txt   |   66 +
+ drivers/Kconfig                               |    2 +
+ drivers/Makefile                              |    1 +
+ drivers/fieldbus/Kconfig                      |   18 +
+ drivers/fieldbus/Makefile                     |    7 +
+ drivers/fieldbus/anybuss/Kconfig              |   39 +
+ drivers/fieldbus/anybuss/Makefile             |   10 +
+ drivers/fieldbus/anybuss/arcx-anybus.c        |  399 +++++
+ drivers/fieldbus/anybuss/hms-profinet.c       |  223 +++
+ drivers/fieldbus/anybuss/host.c               | 1459 +++++++++++++++++
+ drivers/fieldbus/dev_core.c                   |  348 ++++
+ include/linux/anybuss-client.h                |  104 ++
+ include/linux/anybuss-controller.h            |   47 +
+ include/linux/fieldbus_dev.h                  |  105 ++
+ 18 files changed, 2993 insertions(+)
+ create mode 100644 Documentation/ABI/testing/fieldbus-dev-cdev
+ create mode 100644 Documentation/ABI/testing/sysfs-class-fieldbus-dev
+ create mode 100644 Documentation/devicetree/bindings/fieldbus/arcx,anybus-controller.txt
+ create mode 100644 Documentation/fieldbus_dev/fieldbus_dev.txt
+ create mode 100644 drivers/fieldbus/Kconfig
+ create mode 100644 drivers/fieldbus/Makefile
+ create mode 100644 drivers/fieldbus/anybuss/Kconfig
+ create mode 100644 drivers/fieldbus/anybuss/Makefile
+ create mode 100644 drivers/fieldbus/anybuss/arcx-anybus.c
+ create mode 100644 drivers/fieldbus/anybuss/hms-profinet.c
+ create mode 100644 drivers/fieldbus/anybuss/host.c
+ create mode 100644 drivers/fieldbus/dev_core.c
+ create mode 100644 include/linux/anybuss-client.h
+ create mode 100644 include/linux/anybuss-controller.h
+ create mode 100644 include/linux/fieldbus_dev.h
+
+-- 
+2.17.1
 
