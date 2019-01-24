@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A11CC282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:29:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E80EC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:29:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE338218FE
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:29:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B00E218F0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:29:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358182;
-	bh=mQpaxVh4iFNGOanmyzmsBunNzn3HoC5n1gq4K21yXNo=;
+	s=default; t=1548358187;
+	bh=70j49iqFRcDaDcBtI+gOwuhJDthZss4k3p1I9hVuJQc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LqT02kSrYhtkzSenJWnBXPqlyTUcXfm8WTVknt5BnuZwdax7vQGN2VAQrc8I1GMjj
-	 Tyu/l9y1LPNqF4OKFg4AqFNKXsBxiEZu0MxXycjYLz/5ZfRJriQdzQ0EUJx99ciBHy
-	 AbUovaKI35PCiZFHyEtyj8XfUVyS3Q8ieNbpXUhQ=
+	b=INvZ9DvW6NThbidIVjVlX5BRXv3VVYYG5yucdi21H6n+E8GPHw73HdL2Lzc+BW+NJ
+	 QEwKlXCLBIYSuLlkYBJO1qsiStSSyPKXhoiXuZ/Vx//ZBZnomVmu8ft9rQc3yIIoXa
+	 l9zgU927GsZGpJpKrBSntjBCI1Y+5NPBbTsaCyRE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731243AbfAXT3l (ORCPT
+        id S1731269AbfAXT3p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:29:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56898 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:29:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56988 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731225AbfAXT3i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:29:38 -0500
+        id S1731225AbfAXT3l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:29:41 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 29CB1218E2;
-        Thu, 24 Jan 2019 19:29:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 643A4218FC;
+        Thu, 24 Jan 2019 19:29:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358177;
-        bh=mQpaxVh4iFNGOanmyzmsBunNzn3HoC5n1gq4K21yXNo=;
+        s=default; t=1548358180;
+        bh=70j49iqFRcDaDcBtI+gOwuhJDthZss4k3p1I9hVuJQc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FWPTFycre44Vixzc1mwo3UVwKzXtXl9naowjjF8B90i2qdMF3FGTDkQ+HBNeU5Sn6
-         16uVIjnY+DgWAq0L0YU/h6nzR1VRXai7iP5AGUVlF93dfmFYJ5hRk7VjuL/BbMgU+x
-         Hs9xc7Y/y/vBdHzn/uF7k2BIvZfqtJGaccfWkvDM=
+        b=KlbQuvuQbfjHhVHD0TXIjmgLqu9usv+2C0qiLTksmquXR7w51cXE2Db/d3axV8lXM
+         4IlrR8s/gf54y6ozLq/2e9g5CnOCo0Q/zGgwsuoE0rj8vqB+k3yiVZIEG7cgyeEz4/
+         ArahGtM6ESh0jxs1MNFBkwQIalI2rYiQdNz6hlnQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
-        Dong Aisheng <Aisheng.dong@nxp.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        stable@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 20/39] clk: imx6q: reset exclusive gates on init
-Date:   Thu, 24 Jan 2019 20:20:23 +0100
-Message-Id: <20190124190448.956879232@linuxfoundation.org>
+Subject: [PATCH 4.9 21/39] kconfig: fix file name and line number of warn_ignored_character()
+Date:   Thu, 24 Jan 2019 20:20:24 +0100
+Message-Id: <20190124190448.992143256@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190448.232316246@linuxfoundation.org>
 References: <20190124190448.232316246@linuxfoundation.org>
@@ -67,41 +66,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit f7542d817733f461258fd3a47d77da35b2d9fc81 ]
+[ Upstream commit 77c1c0fa8b1477c5799bdad65026ea5ff676da44 ]
 
-The exclusive gates may be set up in the wrong way by software running
-before the clock driver comes up. In that case the exclusive setup is
-locked in its initial state, as the complementary function can't be
-activated without disabling the initial setup first.
+Currently, warn_ignore_character() displays invalid file name and
+line number.
 
-To avoid this lock situation, reset the exclusive gates to the off
-state and allow the kernel to provide the proper setup.
+The lexer should use current_file->name and yylineno, while the parser
+should use zconf_curname() and zconf_lineno().
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-Reviewed-by: Dong Aisheng <Aisheng.dong@nxp.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+This difference comes from that the lexer is always going ahead
+of the parser. The parser needs to look ahead one token to make a
+shift/reduce decision, so the lexer is requested to scan more text
+from the input file.
+
+This commit fixes the warning message from warn_ignored_character().
+
+[Test Code]
+
+  ----(Kconfig begin)----
+  /
+  -----(Kconfig end)-----
+
+[Output]
+
+  Before the fix:
+
+  <none>:0:warning: ignoring unsupported character '/'
+
+  After the fix:
+
+  Kconfig:1:warning: ignoring unsupported character '/'
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/imx/clk-imx6q.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ scripts/kconfig/zconf.l | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
-index 93a19667003d..14682df5d312 100644
---- a/drivers/clk/imx/clk-imx6q.c
-+++ b/drivers/clk/imx/clk-imx6q.c
-@@ -258,8 +258,12 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
- 	 * lvds1_gate and lvds2_gate are pseudo-gates.  Both can be
- 	 * independently configured as clock inputs or outputs.  We treat
- 	 * the "output_enable" bit as a gate, even though it's really just
--	 * enabling clock output.
-+	 * enabling clock output. Initially the gate bits are cleared, as
-+	 * otherwise the exclusive configuration gets locked in the setup done
-+	 * by software running before the clock driver, with no way to change
-+	 * it.
- 	 */
-+	writel(readl(base + 0x160) & ~0x3c00, base + 0x160);
- 	clk[IMX6QDL_CLK_LVDS1_GATE] = imx_clk_gate_exclusive("lvds1_gate", "lvds1_sel", base + 0x160, 10, BIT(12));
- 	clk[IMX6QDL_CLK_LVDS2_GATE] = imx_clk_gate_exclusive("lvds2_gate", "lvds2_sel", base + 0x160, 11, BIT(13));
+diff --git a/scripts/kconfig/zconf.l b/scripts/kconfig/zconf.l
+index c410d257da06..6534dc5ac803 100644
+--- a/scripts/kconfig/zconf.l
++++ b/scripts/kconfig/zconf.l
+@@ -71,7 +71,7 @@ static void warn_ignored_character(char chr)
+ {
+ 	fprintf(stderr,
+ 	        "%s:%d:warning: ignoring unsupported character '%c'\n",
+-	        zconf_curname(), zconf_lineno(), chr);
++	        current_file->name, yylineno, chr);
+ }
+ %}
  
 -- 
 2.19.1
