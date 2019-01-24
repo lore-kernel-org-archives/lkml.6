@@ -2,128 +2,89 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E322C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:27:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FB3BC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:28:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6814C218AD
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:27:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55A9E218AD
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:28:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727850AbfAXM06 (ORCPT
+        id S1727881AbfAXM2k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 07:26:58 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55852 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726105AbfAXM05 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 07:26:57 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 24FACEBD;
-        Thu, 24 Jan 2019 04:26:57 -0800 (PST)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 10B133F237;
-        Thu, 24 Jan 2019 04:26:54 -0800 (PST)
-Date:   Thu, 24 Jan 2019 12:26:52 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Subject: Re: [PATCH v5 0/4] PCIE support for i.MX8MQ
-Message-ID: <20190124122652.GB23362@e107981-ln.cambridge.arm.com>
-References: <20190112215601.9535-1-andrew.smirnov@gmail.com>
+        Thu, 24 Jan 2019 07:28:40 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2746 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727386AbfAXM2k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 07:28:40 -0500
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 0FE7D8DDB7796471BA59;
+        Thu, 24 Jan 2019 20:28:36 +0800 (CST)
+Received: from [127.0.0.1] (10.74.191.121) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.408.0; Thu, 24 Jan 2019
+ 20:28:26 +0800
+Subject: Re: Question: pause mode disabled for marvell 88e151x phy
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+CC:     Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Weiwei Deng <dengweiwei@huawei.com>,
+        "Yisen.Zhuang@huawei.com" <Yisen.Zhuang@huawei.com>,
+        "huangdaode@hisilicon.com" <huangdaode@hisilicon.com>,
+        "lipeng321@huawei.com" <lipeng321@huawei.com>,
+        "salil.mehta@huawei.com" <salil.mehta@huawei.com>,
+        lijianhua 00216010 <lijianhua@huawei.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <04b323d7-2a30-eaa5-8268-a7d3f30d989c@huawei.com>
+ <20181215103736.GG26090@n2100.armlinux.org.uk>
+ <1b4d7886-06c4-9d15-ef72-83318419b30e@huawei.com>
+ <20181217143633.GH26090@n2100.armlinux.org.uk>
+ <6e8034d9-cd60-2846-ef33-f8a04069e1ee@huawei.com>
+ <20190123224144.imzntelxqtf3xcuj@e5254000004ec.dyn.armlinux.org.uk>
+From:   Yunsheng Lin <linyunsheng@huawei.com>
+Message-ID: <3f67e7ab-3a68-2a24-1648-36cac34ad6c0@huawei.com>
+Date:   Thu, 24 Jan 2019 20:28:25 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190112215601.9535-1-andrew.smirnov@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190123224144.imzntelxqtf3xcuj@e5254000004ec.dyn.armlinux.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.74.191.121]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 12, 2019 at 01:55:57PM -0800, Andrey Smirnov wrote:
-> Everyone:
+On 2019/1/24 6:41, Russell King - ARM Linux admin wrote:
+> On Sat, Jan 05, 2019 at 11:28:19AM +0800, Yunsheng Lin wrote:
+>> On 2018/12/17 22:36, Russell King - ARM Linux wrote:
+>>> I'll try to do further diagnosis over Christmas in case I've missed
+>>> something, but I suspect it may be one of those "weird behaviour" issues
+>>> where the safest action is to disable pause mode as per my commit -
+>>> which is far saner than having mismatched pause status on either end
+>>> of a link.  However, given that Marvell specs are all NDA-only, it's
+>>> very difficult to investigate beyond "this is the observed behaviour".
+>>
+>> Hi,
+>>
+>> Is there any update on the further diagnosis?
 > 
-> This series contains changes I made in order to enable support of PCIE
-> IP block on i.MX8MQ SoCs.
+> Hi,
 > 
-> Changes since [v4]:
+> I've finally been able to do some further diagnosis (with a 'scope).
+> It would appear that the network adapter had PHY polling enabled,
+> which meant that it overwrote the PHYs advertisement register
+> during negotiation.  I thought I'd checked that scenario, but alas
+> clearing the PHY poll enable bit on its own doesn't stop it polling!
 > 
->  - Collected Reviewed-by from Lucas
-> 
->  - Replaced ((ARM || ARM64) && COMPILE_TEST) with COMPILE_TEST as per
->    suggestion from Rob
-> 
-> Changes since [v3]:
-> 
->  - Based on feedback from NXP, DIRECT_SPEED_CHANGE quirk was expanded
->    to cover both i.MX7 and i.MX8MQ
-> 
->  - Code setting device type in GPR12 moved to a standalone function
-> 
->  - Explicit "fsl,controller-id" binding was dropped, replaced by using
->    controller physical address to determine logical ID
-> 
->  - Dropped Reviewed-by from Lucas for patch 4/4 due to the change
->    above (haven't heard explicit "yea" for it from him)
-> 
-> Changes since [v2], [fixes]:
-> 
->  - Incorporated [patch] introducing drvdata
-> 
->  - i.MX6 PHY operation gating converted to a single patch and to use a
->    dedicated flag instead of doing explicit variant check
-> 
->  - Kconfig entry changed to use ARM64 && ARCH_MXC
-> 
->  - Dropped FALLTHROUGH annotations
-> 
-> Changes since [v1]:
-> 
->  - Driver changed to use single "fsl,controller-id" property to
->    distinguish between two intances of PCIE IP block
-> 
->  - All code pertaining to L1SS was dropped to simplify the patch
-> 
->  - Documented additions to DT bindings
-> 
-> Feedback is welcome!
-> 
-> Thanks,
-> Andrey Smirnov
-> 
-> [v4] https://lore.kernel.org/linux-arm-kernel/20190104165335.13205-1-andrew.smirnov@gmail.com
-> [v3] https://lore.kernel.org/linux-arm-kernel/20181218040702.29231-1-andrew.smirnov@gmail.com
-> [patch] https://patchwork.kernel.org/patch/10712261/
-> [fixes] https://lore.kernel.org/linux-arm-kernel/20181216230916.22982-1-andrew.smirnov@gmail.com
-> [v2] https://lore.kernel.org/linux-arm-kernel/20181206073545.10967-1-andrew.smirnov@gmail.com
-> [v1] https://lore.kernel.org/linux-arm-kernel/20181117181225.10737-1-andrew.smirnov@gmail.com/
-> 
-> Andrey Smirnov (4):
->   PCI: imx6: introduce drvdata
->   PCI: imx6: Mark PHY functions as i.MX6 specific
->   PCI: imx6: Convert DIRECT_SPEED_CHANGE quirk code to use a flag
->   PCI: imx6: Add support for i.MX8MQ
-> 
->  .../bindings/pci/fsl,imx6q-pcie.txt           |   3 +-
->  drivers/pci/controller/dwc/Kconfig            |   4 +-
->  drivers/pci/controller/dwc/pci-imx6.c         | 150 +++++++++++++++---
->  3 files changed, 133 insertions(+), 24 deletions(-)
+> I'll send a revert for the commit shortly.
 
-Please read this:
+Great. Thanks for the further diagnosis.
 
-https://lore.kernel.org/linux-pci/20171026223701.GA25649@bhelgaas-glaptop.roam.corp.google.com/
+> 
 
-reformat the patches, repost and I will merge them.
-
-Thanks,
-Lorenzo
