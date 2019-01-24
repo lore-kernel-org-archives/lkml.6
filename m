@@ -3,54 +3,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1BC2C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 03:40:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 962B9C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 03:41:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96DED2184B
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 03:40:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FF8E2184B
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 03:41:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727525AbfAXDkt (ORCPT
+        id S1727545AbfAXDlA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 22:40:49 -0500
-Received: from ozlabs.org ([203.11.71.1]:45305 "EHLO ozlabs.org"
+        Wed, 23 Jan 2019 22:41:00 -0500
+Received: from ozlabs.org ([203.11.71.1]:49243 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727420AbfAXDkc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 22:40:32 -0500
+        id S1727358AbfAXDk0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 22:40:26 -0500
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 43lSbc47L8z9sBn; Thu, 24 Jan 2019 14:40:27 +1100 (AEDT)
+        id 43lSbX4lX3z9sBn; Thu, 24 Jan 2019 14:40:24 +1100 (AEDT)
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: f4ddc19a711736eb54fb8259499faf5af0f72545
+X-powerpc-patch-commit: c142e9741e61577c45f2441214c999f25857bdd1
 X-Patchwork-Hint: ignore
-In-Reply-To: <20190112162124.3341-2-j.neuschaefer@gmx.net>
-To:     =?utf-8?q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        linuxppc-dev@lists.ozlabs.org
+In-Reply-To: <1547176954-17739-2-git-send-email-yamada.masahiro@socionext.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kbuild@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
 From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        =?utf-8?q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Paul Mackerras <paulus@samba.org>
-Subject: Re: [1/2] powerpc: wii.dts: Add interrupt-related properties to GPIO node
-Message-Id: <43lSbc47L8z9sBn@ozlabs.org>
-Date:   Thu, 24 Jan 2019 14:40:27 +1100 (AEDT)
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org, kvm-ppc@vger.kernel.org
+Subject: Re: [1/3] KVM: powerpc: remove -I. header search paths
+Message-Id: <43lSbX4lX3z9sBn@ozlabs.org>
+Date:   Thu, 24 Jan 2019 14:40:24 +1100 (AEDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2019-01-12 at 16:21:23 UTC, =?utf-8?q?Jonathan_Neusch=C3=A4fer?= wrote:
-> The Hollywood GPIO controller is connected to the Hollywood PIC (&PIC1)
-> at IRQs 10 and 11; IRQ 10 for GPIO lines that are configured for access
-> by the PPC, 11 for GPIO lines that are configured for access by the
-> ARM926.
+On Fri, 2019-01-11 at 03:22:31 UTC, Masahiro Yamada wrote:
+> The header search path -I. in kernel Makefiles is very suspicious;
+> it allows the compiler to search for headers in the top of $(srctree),
+> where obviously no header file exists.
 > 
-> Signed-off-by: Jonathan NeuschÃ¤fer <j.neuschaefer@gmx.net>
+> Commit 46f43c6ee022 ("KVM: powerpc: convert marker probes to event
+> trace") first added these options, but they are completely useless.
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Applied to powerpc next, thanks.
+Series applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/f4ddc19a711736eb54fb8259499faf5a
+https://git.kernel.org/powerpc/c/c142e9741e61577c45f2441214c999f2
 
 cheers
