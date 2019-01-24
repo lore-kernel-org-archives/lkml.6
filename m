@@ -2,96 +2,127 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E02BC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:10:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1261AC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:17:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0BEF20811
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:10:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3E7521872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:17:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="bDM7VZft"
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="RvF1AaqA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727712AbfAXLJ7 (ORCPT
+        id S1727740AbfAXLRV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 06:09:59 -0500
-Received: from ozlabs.org ([203.11.71.1]:49987 "EHLO ozlabs.org"
+        Thu, 24 Jan 2019 06:17:21 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:41324 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726053AbfAXLJ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 06:09:58 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        id S1726053AbfAXLRV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 06:17:21 -0500
+Received: from zn.tnic (p200300EC2BCBCF00857058CDE16DF962.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:cf00:8570:58cd:e16d:f962])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43lfZC28LKz9s9G;
-        Thu, 24 Jan 2019 22:09:55 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1548328196;
-        bh=jb3/YhWkIRxp9+nQz5MMm0puhIeGEhSvt+q5UejuPgM=;
-        h=Date:From:To:Cc:Subject:From;
-        b=bDM7VZftfFBpqvkV+xRzNhxku8iLqNgXYvr1kmrgaa+n0VDUu6M0hXdOVAdjvj+iD
-         xrB1brh1Zoe62U1y3w34KSL9SZd2bcS9aZvKsQTN40UgDp643WOq8wbNSdrDvZXYO0
-         g72vxH21YpPzqvPaPsmfgeqcoQDpeOUzji3zg2mYveZHS9bFErgM0SMhP/lNIY2Sb/
-         ea0jLenZQI0qN0SFj0vdtXiC5qNh3kwkgyw3U8og+drwz66sex4kkDzNWDLWDRkWID
-         W+RpDK8795QuaiJDPHU0vvJUvs4IfoZ6zfFFtiopkfFe7BazJ84tsNI3ID7dC7iX7M
-         xAM8hfr3NKRFA==
-Date:   Thu, 24 Jan 2019 22:09:54 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lubomir Rintel <lkundrak@v3.sk>
-Subject: linux-next: Fixes tag needs some work in the input-current tree
-Message-ID: <20190124220954.2147f1da@canb.auug.org.au>
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D76021EC0242;
+        Thu, 24 Jan 2019 12:17:19 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1548328640;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=R/KSM/VoEYI/MPnLijAH75DGL4jqkkOcKozx0d7kIps=;
+        b=RvF1AaqAvVlYTEzHp2XA4OzKE3LititkJnlIBIDtLYU30kdobfCv1/kCjidMnh4MYQ9+4g
+        DlD8UGp8PT+MrwU2dmnHJwqriLaJMBKgZ3T2GvGkS5F7lia2OFV+fwM5GVbPDlmOTVRtjb
+        fKYUEESgQ2Lu47Ff1w5Mds/j3xrDmbg=
+Date:   Thu, 24 Jan 2019 12:17:14 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH 06/22] x86/fpu: Don't save fxregs for ia32 frames in
+ copy_fpstate_to_sigframe()
+Message-ID: <20190124111714.GA11554@zn.tnic>
+References: <20190109114744.10936-1-bigeasy@linutronix.de>
+ <20190109114744.10936-7-bigeasy@linutronix.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/0inBpMCXdbZb.4K1MiJ=/7M"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190109114744.10936-7-bigeasy@linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/0inBpMCXdbZb.4K1MiJ=/7M
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Jan 09, 2019 at 12:47:28PM +0100, Sebastian Andrzej Siewior wrote:
+> Why does copy_fpstate_to_sigframe() do copy_fxregs_to_kernel() in the
+> ia32_fxstate case? I don't know. It just does.
+> Maybe it was required at some point, maybe it was added by accident and
+> nobody noticed it because it makes no difference.
 
-Hi Dmitry,
+So
 
-In commit
+  72a671ced66d ("x86, fpu: Unify signal handling code paths for x86 and x86_64 kernels")
 
-  ec87da107d11 ("Input: olpc_apsp - assign priv->dev earlier")
+talks about some exclusion of legacy fsave state.
 
-Fixes tag
+> In copy_fpstate_to_sigframe() we stash the FPU state into the task's
+> stackframe. Then the CPU's FPU registers (and its fpu->state) are
+> cleared (handle_signal() does fpu__clear()).
 
-  Fixes: commit af518342effd ("Input: olpc_apsp - check FIFO status on open=
-(), not probe()")
+So that fpu__clear() name is not optimal. It should be
+fpu__reinitialize() or so. The comment above it says so too:
 
-has these problem(s):
+/*
+ * Clear the FPU state back to init state.
 
-  - No SHA1 recognised
+> So it makes *no* difference
+> what happens to fpu->state after copy_fpregs_to_sigframe().
+> 
+> Remove copy_fxregs_to_kernel() since it does not matter what it does and
+> save a few cycles.
+> 
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> ---
+>  arch/x86/kernel/fpu/signal.c | 3 ---
+>  1 file changed, 3 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
+> index c136a4327659d..047390a45e016 100644
+> --- a/arch/x86/kernel/fpu/signal.c
+> +++ b/arch/x86/kernel/fpu/signal.c
+> @@ -174,9 +174,6 @@ int copy_fpstate_to_sigframe(void __user *buf, void __user *buf_fx, int size)
+>  	/* Save the live register state to the user directly. */
+>  	if (copy_fpregs_to_sigframe(buf_fx))
+>  		return -1;
+> -	/* Update the thread's fxstate to save the fsave header. */
+> -	if (ia32_fxstate)
+> -		copy_fxregs_to_kernel(fpu);
 
-The "commit" at the start of the tag value was unexpected.
+Need to get rid of that local "fpu" var too:
 
---=20
-Cheers,
-Stephen Rothwell
+arch/x86/kernel/fpu/signal.c: In function ‘copy_fpstate_to_sigframe’:
+arch/x86/kernel/fpu/signal.c:159:14: warning: unused variable ‘fpu’ [-Wunused-variable]
+  struct fpu *fpu = &current->thread.fpu;
+              ^~~
 
---Sig_/0inBpMCXdbZb.4K1MiJ=/7M
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+>  	/* Save the fsave header for the 32-bit frames. */
+>  	if ((ia32_fxstate || !use_fxsr()) && save_fsave_header(tsk, buf))
+> -- 
+> 2.20.1
+> 
 
------BEGIN PGP SIGNATURE-----
+-- 
+Regards/Gruss,
+    Boris.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxJnQIACgkQAVBC80lX
-0Gy3wAf/VXbFqCqycCQnS/MsDgCGYSxbx1Pwb3FXwv6SOCwqQdroCiayj01EzpmR
-h0PiRHjHXAN4BfEyuxCgbnQ9G6fRIgZWIquHEflqvhdnpy4Gy8l6DlOC2x5GPoCI
-NsF5DrmcYPstEpkgozZVNVuxdckc45m5IZRlRDYjGvMHLCsJ5CPuEjlLLQj3DWxt
-LKoMYMQyik6wlkWOo1/DAyfzF12IlvBqzNvyN7NJ6mGI7mTYf5p78XxBOLc+DGUN
-BrIrl3Dc77TNxSfuJRYaCca/JSyEtrixVbM8agbIAoQ4/n5M+GQIlM5tZXql38bP
-3PAyGgdq6lmkpKW7CPVdFiM+ocgiYQ==
-=aN4J
------END PGP SIGNATURE-----
-
---Sig_/0inBpMCXdbZb.4K1MiJ=/7M--
+Good mailing practices for 400: avoid top-posting and trim the reply.
