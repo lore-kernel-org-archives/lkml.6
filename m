@@ -2,545 +2,227 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD857C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:13:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78243C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:13:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69441217D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:13:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AK2dKcAn"
+	by mail.kernel.org (Postfix) with ESMTP id 4343E218D0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:13:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548360827;
+	bh=uXTVSabqB5CNGd3aU6XDojcX9xx9Ea6sGy/Nwl2Rb04=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=VQceXutvcdzln9+IuHgqNHCZYEujFpm92FQG8wYaEYjv20c2JiUhdCtGCj3wfPSEl
+	 6GCE8z8w9DFXIE48QCXKfSv/2dEWQhJIKGmb/wCS4UnHlG/ShJlS5joXyD4MOBDMga
+	 TM+aCmO/qZLlZWhl7jyyNNX4BLu4898Gz8uVr/W4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729790AbfAXUNc (ORCPT
+        id S1730430AbfAXTZh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 15:13:32 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:37783 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728794AbfAXUNC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 15:13:02 -0500
-Received: by mail-io1-f66.google.com with SMTP id g8so5849540iok.4
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 12:13:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=IbqYh1sAnCdSoSil5huFYXe+CXokJynuzW9vYAq+VR4=;
-        b=AK2dKcAnf7ljL98w+gBzM4Hdel9JTzTpr1A5eCWeMJiU9stQdYjpaQLlKxjBwArj8A
-         Zlr7ocdwPQoV3Lh8g+2uTwzw/DfDnRdHkex0aidys4kBV/raC9iWa2xCWAKraX/0SjVb
-         YENyoQ0nUz2Uf9u4Vx6twAyv/awx+485mYhIersWHUSu/pK01mBg8T5ZP/i4ObnFgC6M
-         xtN3Oq13CjbK3FtEuypDGRq42P69zDD22vdUyZg2tf2jlJvuU/mDSAtvYQ17F/+aZi8B
-         EealbDaCUlE2mxBOpPYZmeUAarsMGHPolRxkRT/cKH3mnF7ur5bt+NoJ7NWUYlLvzII/
-         F+6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=IbqYh1sAnCdSoSil5huFYXe+CXokJynuzW9vYAq+VR4=;
-        b=UzGHvdPNmsBr33jCdBUlt3j54FQvSdqcTrNjTTDVwnJQSVWyl0n1sDo7iOVeV77INF
-         AIwnr/Sj4INPtgmC9rJwkTe9AoMcbrpEtm0hqRpSAFRINbeLyZoqfs5iPrtfI3g64q0M
-         36RP1Xoo3JqusPMEyjnaO7IAqXfGLzM4EqnZIuEsdPkV7Pm9g2XDGDa6GXVWokJgxXKK
-         lfCvq/uZaJAnWtHoSXYU4rXn3q3yWz8SAIcUjWLVKucNtnjmgPtvJNLaImsySPBZ2J9O
-         njWz6EWzU3xIXgCLpigayhaVylnNr4r6fhREcl1OcOMEaQU5WAIa85xYDI5QQC5K99vq
-         4BGg==
-X-Gm-Message-State: AJcUukf1nW/uHg2BbXv9aSRgmFK1gR17uwW2MezdFe7avNHTZoLQXuvW
-        FAhDw9ep/bRB8TZmNXhbecU=
-X-Google-Smtp-Source: AHgI3IYifIRRmjngC2xu8imXSvSTILKJqK1VgJVOdwvq1CSbgGVRMONkrSI79PSZjsc0BO0qQZu+qg==
-X-Received: by 2002:a6b:7d42:: with SMTP id d2mr4871699ioq.150.1548360780640;
-        Thu, 24 Jan 2019 12:13:00 -0800 (PST)
-Received: from svens-asus.arcx.com ([184.94.50.30])
-        by smtp.gmail.com with ESMTPSA id 79sm12417456itx.11.2019.01.24.12.12.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 12:13:00 -0800 (PST)
-From:   Sven Van Asbroeck <thesven73@gmail.com>
-X-Google-Original-From: Sven Van Asbroeck <TheSven73@googlemail.com>
-To:     svendev@arcx.com, robh+dt@kernel.org, linus.walleij@linaro.org
-Cc:     lee.jones@linaro.org, mark.rutland@arm.com, afaerber@suse.de,
-        treding@nvidia.com, david@lechnology.com, noralf@tronnes.org,
-        johan@kernel.org, monstr@monstr.eu, michal.vokac@ysoft.com,
-        arnd@arndb.de, gregkh@linuxfoundation.org, john.garry@huawei.com,
-        geert+renesas@glider.be, robin.murphy@arm.com,
-        paul.gortmaker@windriver.com,
-        sebastien.bourdelin@savoirfairelinux.com, icenowy@aosc.io,
-        stuyoder@gmail.com, maxime.ripard@bootlin.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v8 3/6] anybus-s: support the Arcx anybus controller
-Date:   Thu, 24 Jan 2019 15:12:48 -0500
-Message-Id: <20190124201251.15159-4-TheSven73@googlemail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190124201251.15159-1-TheSven73@googlemail.com>
-References: <20190124201251.15159-1-TheSven73@googlemail.com>
+        Thu, 24 Jan 2019 14:25:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51212 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730396AbfAXTZc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:25:32 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 407EC218D2;
+        Thu, 24 Jan 2019 19:25:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548357931;
+        bh=uXTVSabqB5CNGd3aU6XDojcX9xx9Ea6sGy/Nwl2Rb04=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=kMkCi2XoDgEzjUlu3D5y3IASyhcjFIoR9XGfCNWEXq6vVItOVUxd+217e3aLUBb45
+         FKqGel2JQYsIYO+wRsjc6sJwaNSdp3OEm/ISs92v+usgIePpx5+sVs6BvSQzxMkhIi
+         ymNWFDjP1V1r2r+xQfzwLMs5CZENApYlkpFqAylY=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.4 004/104] f2fs: cover more area with nat_tree_lock
+Date:   Thu, 24 Jan 2019 20:18:53 +0100
+Message-Id: <20190124190155.361874013@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190124190154.968308875@linuxfoundation.org>
+References: <20190124190154.968308875@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a driver for the Arcx anybus controller.
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-This device implements two Anybus-S hosts (buses),
-and connects to the SoC via a parallel memory bus.
-There is also a CAN power readout, unrelated to the Anybus,
-modelled as a regulator.
+------------------
 
-Signed-off-by: Sven Van Asbroeck <TheSven73@googlemail.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+
+commit a51311938e14c17f5a94d30baac9d7bec71f5858 upstream.
+
+There was a subtle bug on nat cache management which incurs wrong nid allocation
+or wrong block addresses when try_to_free_nats is triggered heavily.
+This patch enlarges the previous coverage of nat_tree_lock to avoid data race.
+
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/fieldbus/Makefile              |   1 -
- drivers/fieldbus/anybuss/Kconfig       |  14 +
- drivers/fieldbus/anybuss/Makefile      |   2 +
- drivers/fieldbus/anybuss/arcx-anybus.c | 399 +++++++++++++++++++++++++
- 4 files changed, 415 insertions(+), 1 deletion(-)
- create mode 100644 drivers/fieldbus/anybuss/arcx-anybus.c
+ fs/f2fs/node.c |   29 ++++++++++++-----------------
+ 1 file changed, 12 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/fieldbus/Makefile b/drivers/fieldbus/Makefile
-index c21056bdb3d2..bdf645d41344 100644
---- a/drivers/fieldbus/Makefile
-+++ b/drivers/fieldbus/Makefile
-@@ -5,4 +5,3 @@
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -261,13 +261,11 @@ static void cache_nat_entry(struct f2fs_
+ {
+ 	struct nat_entry *e;
  
- obj-$(CONFIG_FIELDBUS_DEV)	+= fieldbus_dev.o anybuss/
- fieldbus_dev-y			:= dev_core.o
+-	down_write(&nm_i->nat_tree_lock);
+ 	e = __lookup_nat_cache(nm_i, nid);
+ 	if (!e) {
+ 		e = grab_nat_entry(nm_i, nid);
+ 		node_info_from_raw_nat(&e->ni, ne);
+ 	}
+-	up_write(&nm_i->nat_tree_lock);
+ }
+ 
+ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
+@@ -379,6 +377,8 @@ void get_node_info(struct f2fs_sb_info *
+ 
+ 	memset(&ne, 0, sizeof(struct f2fs_nat_entry));
+ 
++	down_write(&nm_i->nat_tree_lock);
++
+ 	/* Check current segment summary */
+ 	mutex_lock(&curseg->curseg_mutex);
+ 	i = lookup_journal_in_cursum(sum, NAT_JOURNAL, nid, 0);
+@@ -399,6 +399,7 @@ void get_node_info(struct f2fs_sb_info *
+ cache:
+ 	/* cache nat entry */
+ 	cache_nat_entry(NM_I(sbi), nid, &ne);
++	up_write(&nm_i->nat_tree_lock);
+ }
+ 
+ /*
+@@ -1440,13 +1441,10 @@ static int add_free_nid(struct f2fs_sb_i
+ 
+ 	if (build) {
+ 		/* do not add allocated nids */
+-		down_read(&nm_i->nat_tree_lock);
+ 		ne = __lookup_nat_cache(nm_i, nid);
+-		if (ne &&
+-			(!get_nat_flag(ne, IS_CHECKPOINTED) ||
++		if (ne && (!get_nat_flag(ne, IS_CHECKPOINTED) ||
+ 				nat_get_blkaddr(ne) != NULL_ADDR))
+ 			allocated = true;
+-		up_read(&nm_i->nat_tree_lock);
+ 		if (allocated)
+ 			return 0;
+ 	}
+@@ -1532,6 +1530,8 @@ static void build_free_nids(struct f2fs_
+ 	ra_meta_pages(sbi, NAT_BLOCK_OFFSET(nid), FREE_NID_PAGES,
+ 							META_NAT, true);
+ 
++	down_read(&nm_i->nat_tree_lock);
++
+ 	while (1) {
+ 		struct page *page = get_current_nat_page(sbi, nid);
+ 
+@@ -1560,6 +1560,7 @@ static void build_free_nids(struct f2fs_
+ 			remove_free_nid(nm_i, nid);
+ 	}
+ 	mutex_unlock(&curseg->curseg_mutex);
++	up_read(&nm_i->nat_tree_lock);
+ 
+ 	ra_meta_pages(sbi, NAT_BLOCK_OFFSET(nm_i->next_scan_nid),
+ 					nm_i->ra_nid_pages, META_NAT, false);
+@@ -1842,14 +1843,12 @@ static void remove_nats_in_journal(struc
+ 
+ 		raw_ne = nat_in_journal(sum, i);
+ 
+-		down_write(&nm_i->nat_tree_lock);
+ 		ne = __lookup_nat_cache(nm_i, nid);
+ 		if (!ne) {
+ 			ne = grab_nat_entry(nm_i, nid);
+ 			node_info_from_raw_nat(&ne->ni, &raw_ne);
+ 		}
+ 		__set_nat_cache_dirty(nm_i, ne);
+-		up_write(&nm_i->nat_tree_lock);
+ 	}
+ 	update_nats_in_cursum(sum, -i);
+ 	mutex_unlock(&curseg->curseg_mutex);
+@@ -1883,7 +1882,6 @@ static void __flush_nat_entry_set(struct
+ 	struct f2fs_nat_block *nat_blk;
+ 	struct nat_entry *ne, *cur;
+ 	struct page *page = NULL;
+-	struct f2fs_nm_info *nm_i = NM_I(sbi);
+ 
+ 	/*
+ 	 * there are two steps to flush nat entries:
+@@ -1920,12 +1918,8 @@ static void __flush_nat_entry_set(struct
+ 			raw_ne = &nat_blk->entries[nid - start_nid];
+ 		}
+ 		raw_nat_from_node_info(raw_ne, &ne->ni);
 -
-diff --git a/drivers/fieldbus/anybuss/Kconfig b/drivers/fieldbus/anybuss/Kconfig
-index 5b495f25c11e..7e563a78be13 100644
---- a/drivers/fieldbus/anybuss/Kconfig
-+++ b/drivers/fieldbus/anybuss/Kconfig
-@@ -7,3 +7,17 @@ config HMS_ANYBUSS_BUS
- 	  You can attach a single Anybus-S compatible card to it, which
- 	  typically provides fieldbus and industrial ethernet
- 	  functionality.
-+
-+if HMS_ANYBUSS_BUS
-+
-+config ARCX_ANYBUS_CONTROLLER
-+	tristate "Arcx Anybus-S Controller"
-+	depends on OF && GPIOLIB
-+	help
-+	  Select this to get support for the Arcx Anybus controller.
-+	  It connects to the SoC via a parallel memory bus, and
-+	  embeds up to two Anybus-S buses (slots).
-+	  There is also a CAN power readout, unrelated to the Anybus,
-+	  modelled as a regulator.
-+
-+endif
-diff --git a/drivers/fieldbus/anybuss/Makefile b/drivers/fieldbus/anybuss/Makefile
-index 236579aa7270..7198b080926b 100644
---- a/drivers/fieldbus/anybuss/Makefile
-+++ b/drivers/fieldbus/anybuss/Makefile
-@@ -5,3 +5,5 @@
+-		down_write(&NM_I(sbi)->nat_tree_lock);
+ 		nat_reset_flag(ne);
+ 		__clear_nat_cache_dirty(NM_I(sbi), ne);
+-		up_write(&NM_I(sbi)->nat_tree_lock);
+-
+ 		if (nat_get_blkaddr(ne) == NULL_ADDR)
+ 			add_free_nid(sbi, nid, false);
+ 	}
+@@ -1937,9 +1931,7 @@ static void __flush_nat_entry_set(struct
  
- obj-$(CONFIG_HMS_ANYBUSS_BUS)	+= anybuss_core.o
- anybuss_core-y			+= host.o
+ 	f2fs_bug_on(sbi, set->entry_cnt);
+ 
+-	down_write(&nm_i->nat_tree_lock);
+ 	radix_tree_delete(&NM_I(sbi)->nat_set_root, set->set);
+-	up_write(&nm_i->nat_tree_lock);
+ 	kmem_cache_free(nat_entry_set_slab, set);
+ }
+ 
+@@ -1959,6 +1951,9 @@ void flush_nat_entries(struct f2fs_sb_in
+ 
+ 	if (!nm_i->dirty_nat_cnt)
+ 		return;
 +
-+obj-$(CONFIG_ARCX_ANYBUS_CONTROLLER) += arcx-anybus.o
-diff --git a/drivers/fieldbus/anybuss/arcx-anybus.c b/drivers/fieldbus/anybuss/arcx-anybus.c
-new file mode 100644
-index 000000000000..63dad15bc0c0
---- /dev/null
-+++ b/drivers/fieldbus/anybuss/arcx-anybus.c
-@@ -0,0 +1,399 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Arcx Anybus-S Controller driver
-+ *
-+ * Copyright (C) 2018 Arcx Inc
-+ */
++	down_write(&nm_i->nat_tree_lock);
 +
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/init.h>
-+#include <linux/slab.h>
-+#include <linux/platform_device.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/delay.h>
-+#include <linux/idr.h>
-+#include <linux/spinlock.h>
-+#include <linux/regulator/driver.h>
-+#include <linux/regulator/machine.h>
-+#include <linux/regmap.h>
+ 	/*
+ 	 * if there are no enough space in journal to store dirty nat
+ 	 * entries, remove all entries from journal and merge them
+@@ -1967,7 +1962,6 @@ void flush_nat_entries(struct f2fs_sb_in
+ 	if (!__has_cursum_space(sum, nm_i->dirty_nat_cnt, NAT_JOURNAL))
+ 		remove_nats_in_journal(sbi);
+ 
+-	down_write(&nm_i->nat_tree_lock);
+ 	while ((found = __gang_lookup_nat_set(nm_i,
+ 					set_idx, SETVEC_SIZE, setvec))) {
+ 		unsigned idx;
+@@ -1976,12 +1970,13 @@ void flush_nat_entries(struct f2fs_sb_in
+ 			__adjust_nat_entry_set(setvec[idx], &sets,
+ 							MAX_NAT_JENTRIES(sum));
+ 	}
+-	up_write(&nm_i->nat_tree_lock);
+ 
+ 	/* flush dirty nats in nat entry set */
+ 	list_for_each_entry_safe(set, tmp, &sets, set_list)
+ 		__flush_nat_entry_set(sbi, set);
+ 
++	up_write(&nm_i->nat_tree_lock);
 +
-+#include <linux/anybuss-controller.h>
-+
-+#define CPLD_STATUS1		0x80
-+#define CPLD_CONTROL		0x80
-+#define CPLD_CONTROL_CRST	0x40
-+#define CPLD_CONTROL_RST1	0x04
-+#define CPLD_CONTROL_RST2	0x80
-+#define CPLD_STATUS1_AB		0x02
-+#define CPLD_STATUS1_CAN_POWER	0x01
-+#define CPLD_DESIGN_LO		0x81
-+#define CPLD_DESIGN_HI		0x82
-+#define CPLD_CAP		0x83
-+#define CPLD_CAP_COMPAT		0x01
-+#define CPLD_CAP_SEP_RESETS	0x02
-+
-+struct controller_priv {
-+	struct device *class_dev;
-+	bool common_reset;
-+	struct gpio_desc *reset_gpiod;
-+	void __iomem *cpld_base;
-+	spinlock_t regs_lock;
-+	u8 control_reg;
-+	char version[3];
-+	u16 design_no;
-+};
-+
-+static void do_reset(struct controller_priv *cd, u8 rst_bit, bool reset)
-+{
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&cd->regs_lock, flags);
-+	/*
-+	 * CPLD_CONTROL is write-only, so cache its value in
-+	 * cd->control_reg
-+	 */
-+	if (reset)
-+		cd->control_reg &= ~rst_bit;
-+	else
-+		cd->control_reg |= rst_bit;
-+	writeb(cd->control_reg, cd->cpld_base + CPLD_CONTROL);
-+	/*
-+	 * h/w work-around:
-+	 * the hardware is 'too fast', so a reset followed by an immediate
-+	 * not-reset will _not_ change the anybus reset line in any way,
-+	 * losing the reset. to prevent this from happening, introduce
-+	 * a minimum reset duration.
-+	 * Verified minimum safe duration required using a scope
-+	 * on 14-June-2018: 100 us.
-+	 */
-+	if (reset)
-+		udelay(100);
-+	spin_unlock_irqrestore(&cd->regs_lock, flags);
-+}
-+
-+static int anybuss_reset(struct controller_priv *cd,
-+			     unsigned long id, bool reset)
-+{
-+	if (id >= 2)
-+		return -EINVAL;
-+	if (cd->common_reset)
-+		do_reset(cd, CPLD_CONTROL_CRST, reset);
-+	else
-+		do_reset(cd, id ? CPLD_CONTROL_RST2 : CPLD_CONTROL_RST1, reset);
-+	return 0;
-+}
-+
-+static void export_reset_0(struct device *dev, bool assert)
-+{
-+	struct controller_priv *cd = dev_get_drvdata(dev);
-+
-+	anybuss_reset(cd, 0, assert);
-+}
-+
-+static void export_reset_1(struct device *dev, bool assert)
-+{
-+	struct controller_priv *cd = dev_get_drvdata(dev);
-+
-+	anybuss_reset(cd, 1, assert);
-+}
-+
-+/*
-+ * parallel bus limitation:
-+ *
-+ * the anybus is 8-bit wide. we can't assume that the hardware will translate
-+ * word accesses on the parallel bus to multiple byte-accesses on the anybus.
-+ *
-+ * the imx WEIM bus does not provide this type of translation.
-+ *
-+ * to be safe, we will limit parallel bus accesses to a single byte
-+ * at a time for now.
-+ */
-+
-+static int read_reg_bus(void *context, unsigned int reg,
-+				unsigned int *val)
-+{
-+	void __iomem *base = context;
-+
-+	*val = readb(base + reg);
-+	return 0;
-+}
-+
-+static int write_reg_bus(void *context, unsigned int reg,
-+				unsigned int val)
-+{
-+	void __iomem *base = context;
-+
-+	writeb(val, base + reg);
-+	return 0;
-+}
-+
-+static struct regmap *create_parallel_regmap(struct platform_device *pdev,
-+					     int idx)
-+{
-+	struct regmap_config regmap_cfg = {
-+		.reg_bits = 11,
-+		.val_bits = 8,
-+		/*
-+		 * single-byte parallel bus accesses are atomic, so don't
-+		 * require any synchronization.
-+		 */
-+		.disable_locking = true,
-+		.reg_read = read_reg_bus,
-+		.reg_write = write_reg_bus,
-+	};
-+	struct resource *res;
-+	void __iomem *base;
-+	struct device *dev = &pdev->dev;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, idx+1);
-+	if (resource_size(res) < (1<<regmap_cfg.reg_bits))
-+		return ERR_PTR(-EINVAL);
-+	base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(base))
-+		return ERR_CAST(base);
-+	return devm_regmap_init(dev, NULL, base, &regmap_cfg);
-+}
-+
-+static struct anybuss_host *
-+create_anybus_host(struct platform_device *pdev, int idx)
-+{
-+	struct anybuss_ops ops = {};
-+
-+	switch (idx) {
-+	case 0:
-+		ops.reset = export_reset_0;
-+		break;
-+	case 1:
-+		ops.reset = export_reset_1;
-+		break;
-+	default:
-+		return ERR_PTR(-EINVAL);
-+	}
-+	ops.host_idx = idx;
-+	ops.regmap = create_parallel_regmap(pdev, idx);
-+	if (IS_ERR(ops.regmap))
-+		return ERR_CAST(ops.regmap);
-+	ops.irq = platform_get_irq(pdev, idx);
-+	if (ops.irq <= 0)
-+		return ERR_PTR(-EINVAL);
-+	return devm_anybuss_host_common_probe(&pdev->dev, &ops);
-+}
-+
-+static ssize_t version_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+	struct controller_priv *cd = dev_get_drvdata(dev);
-+
-+	return sprintf(buf, "%s\n", cd->version);
-+}
-+static DEVICE_ATTR_RO(version);
-+
-+static ssize_t design_number_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+	struct controller_priv *cd = dev_get_drvdata(dev);
-+
-+	return sprintf(buf, "%d\n", cd->design_no);
-+}
-+static DEVICE_ATTR_RO(design_number);
-+
-+static struct attribute *controller_attributes[] = {
-+	&dev_attr_version.attr,
-+	&dev_attr_design_number.attr,
-+	NULL,
-+};
-+
-+static struct attribute_group controller_attribute_group = {
-+	.attrs = controller_attributes,
-+};
-+
-+static const struct attribute_group *controller_attribute_groups[] = {
-+	&controller_attribute_group,
-+	NULL,
-+};
-+
-+static void controller_device_release(struct device *dev)
-+{
-+	kfree(dev);
-+}
-+
-+static int can_power_is_enabled(struct regulator_dev *rdev)
-+{
-+	struct controller_priv *cd = rdev_get_drvdata(rdev);
-+
-+	return !(readb(cd->cpld_base + CPLD_STATUS1) & CPLD_STATUS1_CAN_POWER);
-+}
-+
-+static struct regulator_ops can_power_ops = {
-+	.is_enabled = can_power_is_enabled,
-+};
-+
-+static const struct regulator_desc can_power_desc = {
-+	.name = "regulator-can-power",
-+	.id = -1,
-+	.type = REGULATOR_VOLTAGE,
-+	.owner = THIS_MODULE,
-+	.ops = &can_power_ops,
-+};
-+
-+static struct class *controller_class;
-+static DEFINE_IDA(controller_index_ida);
-+
-+static int controller_probe(struct platform_device *pdev)
-+{
-+	struct controller_priv *cd;
-+	struct device *dev = &pdev->dev;
-+	struct regulator_config config = { };
-+	struct regulator_dev *regulator;
-+	int err, id;
-+	struct resource *res;
-+	struct anybuss_host *host;
-+	u8 status1, cap;
-+
-+	cd = devm_kzalloc(dev, sizeof(*cd), GFP_KERNEL);
-+	if (!cd)
-+		return -ENOMEM;
-+	dev_set_drvdata(dev, cd);
-+	spin_lock_init(&cd->regs_lock);
-+	cd->reset_gpiod = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
-+	if (IS_ERR(cd->reset_gpiod))
-+		return PTR_ERR(cd->reset_gpiod);
-+
-+	/* CPLD control memory, sits at index 0 */
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	cd->cpld_base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(cd->cpld_base)) {
-+		dev_err(dev,
-+			"failed to map cpld base address\n");
-+		err = PTR_ERR(cd->cpld_base);
-+		goto out_reset;
-+	}
-+
-+	/* identify cpld */
-+	status1 = readb(cd->cpld_base + CPLD_STATUS1);
-+	cd->design_no = (readb(cd->cpld_base + CPLD_DESIGN_HI) << 8) |
-+				readb(cd->cpld_base + CPLD_DESIGN_LO);
-+	snprintf(cd->version, sizeof(cd->version), "%c%d",
-+			'A' + ((status1>>5) & 0x7),
-+			(status1>>2) & 0x7);
-+	dev_info(dev, "design number %d, revision %s\n",
-+		cd->design_no,
-+		cd->version);
-+	cap = readb(cd->cpld_base + CPLD_CAP);
-+	if (!(cap & CPLD_CAP_COMPAT)) {
-+		dev_err(dev, "unsupported controller [cap=0x%02X]", cap);
-+		err = -ENODEV;
-+		goto out_reset;
-+	}
-+
-+	if (status1 & CPLD_STATUS1_AB) {
-+		dev_info(dev, "has anybus-S slot(s)");
-+		cd->common_reset = !(cap & CPLD_CAP_SEP_RESETS);
-+		dev_info(dev, "supports %s", cd->common_reset ?
-+			"a common reset" : "separate resets");
-+		for (id = 0; id < 2; id++) {
-+			host = create_anybus_host(pdev, id);
-+			if (!IS_ERR(host))
-+				continue;
-+			err = PTR_ERR(host);
-+			/* -ENODEV is fine, it just means no card detected */
-+			if (err != -ENODEV)
-+				goto out_reset;
-+		}
-+	}
-+
-+	id = ida_simple_get(&controller_index_ida, 0, 0, GFP_KERNEL);
-+	if (id < 0) {
-+		err = id;
-+		goto out_reset;
-+	}
-+	/* export can power readout as a regulator */
-+	config.dev = dev;
-+	config.driver_data = cd;
-+	regulator = devm_regulator_register(dev, &can_power_desc, &config);
-+	if (IS_ERR(regulator)) {
-+		err = PTR_ERR(regulator);
-+		goto out_reset;
-+	}
-+	/* make controller info visible to userspace */
-+	cd->class_dev = kzalloc(sizeof(*cd->class_dev), GFP_KERNEL);
-+	if (!cd->class_dev) {
-+		err = -ENOMEM;
-+		goto out_ida;
-+	}
-+	cd->class_dev->class = controller_class;
-+	cd->class_dev->groups = controller_attribute_groups;
-+	cd->class_dev->parent = dev;
-+	cd->class_dev->id = id;
-+	cd->class_dev->release = controller_device_release;
-+	dev_set_name(cd->class_dev, "%d", cd->class_dev->id);
-+	dev_set_drvdata(cd->class_dev, cd);
-+	err = device_register(cd->class_dev);
-+	if (err)
-+		goto out_dev;
-+	return 0;
-+out_dev:
-+	put_device(cd->class_dev);
-+out_ida:
-+	ida_simple_remove(&controller_index_ida, id);
-+out_reset:
-+	gpiod_set_value_cansleep(cd->reset_gpiod, 1);
-+	return err;
-+}
-+
-+static int controller_remove(struct platform_device *pdev)
-+{
-+	struct controller_priv *cd = platform_get_drvdata(pdev);
-+	int id = cd->class_dev->id;
-+
-+	device_unregister(cd->class_dev);
-+	ida_simple_remove(&controller_index_ida, id);
-+	gpiod_set_value_cansleep(cd->reset_gpiod, 1);
-+	return 0;
-+}
-+
-+static const struct of_device_id controller_of_match[] = {
-+	{ .compatible = "arcx,anybus-controller" },
-+	{ }
-+};
-+
-+MODULE_DEVICE_TABLE(of, controller_of_match);
-+
-+static struct platform_driver controller_driver = {
-+	.probe = controller_probe,
-+	.remove = controller_remove,
-+	.driver		= {
-+		.name   = "arcx-anybus-controller",
-+		.of_match_table	= of_match_ptr(controller_of_match),
-+	},
-+};
-+
-+static int __init controller_init(void)
-+{
-+	int err;
-+
-+	controller_class = class_create(THIS_MODULE, "arcx_anybus_controller");
-+	if (!IS_ERR(controller_class)) {
-+		err = platform_driver_register(&controller_driver);
-+		if (err)
-+			class_destroy(controller_class);
-+	} else
-+		err = PTR_ERR(controller_class);
-+	return err;
-+}
-+
-+static void __exit controller_exit(void)
-+{
-+	platform_driver_unregister(&controller_driver);
-+	class_destroy(controller_class);
-+}
-+
-+module_init(controller_init);
-+module_exit(controller_exit);
-+
-+MODULE_DESCRIPTION("Arcx Anybus-S Controller driver");
-+MODULE_AUTHOR("Sven Van Asbroeck <TheSven73@googlemail.com>");
-+MODULE_LICENSE("GPL v2");
--- 
-2.17.1
+ 	f2fs_bug_on(sbi, nm_i->dirty_nat_cnt);
+ }
+ 
+
 
