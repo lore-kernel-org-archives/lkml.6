@@ -2,172 +2,122 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F754C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:02:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DB0CC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:03:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2ACFD21872
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:02:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2C8521872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:03:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NwMEniSb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728523AbfAXPCS (ORCPT
+        id S1728534AbfAXPDE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 10:02:18 -0500
-Received: from foss.arm.com ([217.140.101.70]:58174 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727755AbfAXPCS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 10:02:18 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 98320A78;
-        Thu, 24 Jan 2019 07:02:17 -0800 (PST)
-Received: from [10.1.196.50] (e108454-lin.cambridge.arm.com [10.1.196.50])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 80B093F5AF;
-        Thu, 24 Jan 2019 07:02:15 -0800 (PST)
-Subject: Re: [Xen-devel] [PATCH v2] drm/xen-front: Make shmem backed display
- buffer coherent
-To:     Oleksandr Andrushchenko <Oleksandr_Andrushchenko@epam.com>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     "jgross@suse.com" <jgross@suse.com>,
-        Oleksandr Andrushchenko <andr2000@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "noralf@tronnes.org" <noralf@tronnes.org>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        "daniel.vetter@intel.com" <daniel.vetter@intel.com>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        "boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>
-References: <20190115140420.4652-1-andr2000@gmail.com>
- <20190116063002.jq3aas6ofhaogmyk@sirius.home.kraxel.org>
- <20190116063631.GA10881@infradead.org>
- <042fe794-dec6-6d9d-5b68-6f142790f5c7@epam.com>
- <20190117091815.GA7090@infradead.org>
- <1cfc5cb4-e481-5d71-29df-958db76fb681@epam.com>
- <2ed681b9-c8d4-ea27-6b8b-e399ed034bda@arm.com>
- <b5ee0d1c-7888-28c4-c5ae-7984c5e54c8e@epam.com>
- <9e0130ee-0418-f68c-94cf-31a5566d929a@arm.com>
- <79ac0743-68bc-c2b7-d843-cf152c40d583@epam.com>
- <34a31bc8-96c6-2801-689c-3c4498b68ee8@arm.com>
- <b0cfe533-5b0b-e20f-eeab-2ce743914c98@epam.com>
-From:   Julien Grall <julien.grall@arm.com>
-Message-ID: <e5193e96-a80e-23fd-c833-447d6a2a1574@arm.com>
-Date:   Thu, 24 Jan 2019 15:02:13 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Thu, 24 Jan 2019 10:03:04 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:44619 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727755AbfAXPDD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 10:03:03 -0500
+Received: by mail-lj1-f196.google.com with SMTP id k19-v6so5486122lji.11;
+        Thu, 24 Jan 2019 07:03:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NOTnQzirldv/j6RS7y9J1g28O7uVYBzQuzIiUJdNbzI=;
+        b=NwMEniSbvX7kRyW62QIKxUFn+1nZRmS0Wu6S/uUlw7ZE/oagCT2PF+QEB/4zWb3/DH
+         TTZ+egnoZpv38hUqwgxqYVVUeKcaLm+7RnFIWitBhFuELKn1AUfoCydGiTQus5Hd7kKN
+         shFIMJXzJZQGsRLoz0H/r6OYoyb1izm6Zp3tz10fNgs2Qap/TTbhqLsIYaFQtG97uAYP
+         wDFrx07+nb1+2DtmXHT5ApQpd7e4L0MwRZQ2U0VSO3xEr/XEkWXWtG63r5n4M6efOAxE
+         RyBxXilG4IBLY0SF3dQNoFz7K0xy5fiFNe0i4cpA0YsrLNsPi9VhU+CB3XBbkCKyXTJt
+         DAzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NOTnQzirldv/j6RS7y9J1g28O7uVYBzQuzIiUJdNbzI=;
+        b=Tl1cCrebKFPil5uW31Z4ydAoHaIquCCdB45hzpIfDRm3iLacTNvJkm3fQ3auccO/nx
+         Fz0xIL60LjuilwNStCbP6mScQfAtUKeUD7x+f/YFE+iqBRHDXDLU6EXssjCN18zTobZ5
+         ROGu2BSVua6cFdAHBHmjUdkJ+d0BXlLLb6Ynv3M2ucS43H+ODuROmjqeRoqTv2SXyEXG
+         KV/ZZPxd0ozEix5kJu67yK1zhO0Zs48U/h6oac3Q8CIVgBxtY8meR+g9F87Z5gFE5To8
+         Sl0xiIrf9ENtLdJorviLmH6PbwcNSwxzVpK/z+w8l12T4JAN6kb1Wb4LvhKI+VEUvTAY
+         ThXQ==
+X-Gm-Message-State: AJcUukfATGaA9bndBBQfbc1PqJBQE568+SiqTLoC6IA/8EtgpLPYsEHS
+        8t48rOQdP5KT/XDX7cxg1R6yutXBa7k7WRUsMFQ=
+X-Google-Smtp-Source: ALg8bN78d3dSbJHQMQAVl2DXmHjYUPWHZKwj6eucmn1rrZlMsXm91eGzSN2mUb+BAm7ZbnYZJwat1wpY5SRakw8pkBs=
+X-Received: by 2002:a2e:5747:: with SMTP id r7-v6mr5745010ljd.141.1548342181161;
+ Thu, 24 Jan 2019 07:03:01 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <b0cfe533-5b0b-e20f-eeab-2ce743914c98@epam.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190124145309.21698-1-ben.whitten@lairdtech.com>
+In-Reply-To: <20190124145309.21698-1-ben.whitten@lairdtech.com>
+From:   Ben Whitten <benwhitten@gmail.com>
+Date:   Thu, 24 Jan 2019 15:02:49 +0000
+Message-ID: <CAF3==itJFVUfPiS5prm0RdQMVb4vXoGPfQj8BHCVPT9DgmW2Aw@mail.gmail.com>
+Subject: Re: [PATCH v3 lora-next 0/4] net: lora: Add documentation for SX130x
+ and SX125x parts
+To:     =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        netdev <netdev@vger.kernel.org>, devicetree@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ben Whitten <ben.whitten@lairdtech.com>,
+        linux-lpwan@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Missed linux-lpwan
 
-
-On 24/01/2019 14:34, Oleksandr Andrushchenko wrote:
-> Hello, Julien!
-
-Hi,
-
-> On 1/22/19 1:44 PM, Julien Grall wrote:
->>
->>
->> On 1/22/19 10:28 AM, Oleksandr Andrushchenko wrote:
->>> Hello, Julien!
->>
->> Hi,
->>
->>> On 1/21/19 7:09 PM, Julien Grall wrote:
->>> Well, I didn't get the attributes of pages at the backend side, but IMO
->>> those
->>> do not matter in my use-case (for simplicity I am not using
->>> zero-copying at
->>> backend side):
->>
->> They are actually important no matter what is your use case. If you
->> access the same physical page with different attributes, then you are
->> asking for trouble.
-> So, we have:
-> 
-> DomU: frontend side
-> ====================
-> !PTE_RDONLY + PTE_PXN + PTE_SHARED + PTE_AF + PTE_UXN +
-> PTE_ATTRINDX(MT_NORMAL)
-
-I still don't understand how you came up with MT_NORMAL when you seem to confirm...
-
-> 
-> DomD: backend side
-> ====================
-> PTE_USER + !PTE_RDONLY + PTE_PXN + PTE_NG + PTE_CONT + PTE_TABLE_BIT +
-> PTE_UXN + PTE_ATTRINDX(MT_NORMAL)
-> 
->   From the above it seems that I don't violate cached/non-cached
-> agreement here
->>
->> This is why Xen imposes all the pages shared to have their memory
->> attributes following some rules. Actually, speaking with Mark R., we
->> may want to tight a bit more the attributes.
->>
->>>
->>> 1. Frontend device allocates display buffer pages which come from shmem
->>> and have these attributes:
->>> !PTE_RDONLY + PTE_PXN + PTE_SHARED + PTE_AF + PTE_UXN +
->>> PTE_ATTRINDX(MT_NORMAL)
->>
->> My knowledge of Xen DRM is inexistent. However, looking at the code in
->> 5.0-rc2, I don't seem to find the same attributes. For instance
->> xen_drm_front_gem_prime_vmap and gem_mmap_obj are using
->> pgprot_writecombine. So it looks like, the mapping will be
->> non-cacheable on Arm64.
->>
->> Can you explain how you came up to these attributes?
-> pgprot_writecombine is PTE_ATTRINDX(MT_NORMAL_NC), so it seems to be
-> applicable here? [1]
-
-... that MT_NORMAL_NC is used for the frontend pages.
-
-MT_NORMAL_NC is different from MT_NORMAL. The use of the former will result to 
-non-cacheable memory while the latter will result to cacheable memory.
-
-To me, this looks like the exact reason why you see artifact on the display 
-buffer. As the author of this code, can you explain why you decided to use 
-pgprot_writecombine here instead of relying on the default VMA prot?
-
-[...]
-
->> We actually never required to use cache flush in other PV protocol, so
->> I still don't understand why the PV DRM should be different here.
-> Well, you are right. But at the same time not flushing the buffer makes
-> troubles,
-> so this is why I am trying to figure out what is wrong here.
-
-The cache flush is likely hiding the real problem rather than solving it.
-
->>
->> To me, it looks like that you are either missing some barriers
-> Barriers for the buffer? Not sure what you mean here.
-
-If you share information between two entities, you may need some ordering so the 
-information are seen consistently by the consumer side. This can be achieved by 
-using barriers.
-
-> Even more, we have
-> a use case
-> when the buffer is not touched by CPU in DomD and is solely owned by the HW.
-
-Memory ordering issues are subtle. The fact that one of your use-case works does 
-not imply that barriers are not necessary. I am not saying there are a missing 
-barriers, I am only pointed out potential reasons.
-
-Anyway, I don't think your problem is a missing barriers here. It is more likely 
-because of mismatch memory attributes (see above).
-
-Cheers,
-
--- 
-Julien Grall
+On Thu, 24 Jan 2019 at 14:53, Ben Whitten <ben.whitten@gmail.com> wrote:
+>
+> Hello,
+>
+> This series adds documentation for the SX130x and SX125x chips.
+> We are using the yaml binding format and this series builds with
+> 'make dt_binding_check'.
+>
+> This series is split such that the basic documentation can be taken
+> without clock components, as there is an ongoing problem running clk
+> over spi backed regmaps on certain spi controller drivers [1]
+>
+> Thanks,
+> Ben Whitten
+>
+> v2 -> v3
+> * Added the clock input and output names
+> * Limited the radio-spi node children names to radio@
+> * Fixed fallback compatible for SX1308 -> SX1301
+> v1 -> v2
+> * Dropped reset-gpios, radio-spi from required.
+> * Dropped spi-max-frequency from binding.
+> * Changed compatible to allow fallback from SX1308 to SX1301.
+> * Wording changes in commit and descriptions.
+> * Dual licence
+> * Incorperate Robs comments on child node and spi wrapper
+>
+> [1] http://lists.infradead.org/pipermail/linux-lpwan/2018-December/000063.html
+>
+>
+> Ben Whitten (4):
+>   dt-bindings: lora: sx130x: add basic documentation
+>   dt-bindings: lora: sx125x: add basic documentation
+>   dt-bindings: lora: sx125x: add clock bindings
+>   dt-bindings: lora: sx130x: add clock bindings
+>
+>  .../bindings/net/lora/semtech,sx125x.yaml     |  77 +++++++++
+>  .../bindings/net/lora/semtech,sx130x.yaml     | 151 ++++++++++++++++++
+>  2 files changed, 228 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/net/lora/semtech,sx125x.yaml
+>  create mode 100644 Documentation/devicetree/bindings/net/lora/semtech,sx130x.yaml
+>
+> --
+> 2.17.1
+>
