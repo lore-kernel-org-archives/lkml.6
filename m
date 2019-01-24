@@ -2,181 +2,81 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FE6CC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:43:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50A85C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:44:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14F0320855
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:43:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="a9cRoELF"
+	by mail.kernel.org (Postfix) with ESMTP id 21D1A218A4
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:44:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548323049;
+	bh=KT5/D09lump03qxt3Q6u+waWb0v6Kge9kbPjqcIlsGI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=iQ35LM8vzrinJS0/ZP6wWN1DsFxxohJ91HCfBH9UeLvWPgjPtcFlx+b1dug3N7IB/
+	 GFkMrFQ2gfCj614I3RYzaNQF6VpYTH+4PeM2T6rNqkcPbvcEzAu1IwbnktI26RZbxC
+	 v8LUt3/uHhWdBS/Tp0tZFFVw8w92FguvtWBaZ3Ig=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727420AbfAXJnw (ORCPT
+        id S1727462AbfAXJoH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 04:43:52 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:10118 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726012AbfAXJnw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 04:43:52 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43lcfs24ctz9v0GN;
-        Thu, 24 Jan 2019 10:43:49 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=a9cRoELF; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id qerfoCtk40gn; Thu, 24 Jan 2019 10:43:49 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43lcfs0jGJz9v0GM;
-        Thu, 24 Jan 2019 10:43:49 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1548323029; bh=pdpzN4Cls9VIi57rwmgYgmW1ymLGgOvDPZus6sPQUOw=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=a9cRoELFwxDif1NC2YT2l165rRga4QNBnkYLLw3lLr06pUcnaKGhX5ZgZuGt1m98b
-         NS1ZYi6k3427XVB/4aIqzh6C85pBbZCmP2zcUloJuk8vxpgtbj5ppWRIftd20dfeie
-         Dswq3SPH6SpkCh0W3SzrlZcENjGXogSHvb9q7ZxU=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 3629D8B838;
-        Thu, 24 Jan 2019 10:43:50 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id P6qvuZTZhQ0g; Thu, 24 Jan 2019 10:43:50 +0100 (CET)
-Received: from po16846vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id A582A8B755;
-        Thu, 24 Jan 2019 10:43:49 +0100 (CET)
-Subject: Re: [PATCH v13 00/10] powerpc: Switch to CONFIG_THREAD_INFO_IN_TASK
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Nicholas Piggin <npiggin@gmail.com>
-Cc:     Mike Rapoport <rppt@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1547195976.git.christophe.leroy@c-s.fr>
- <2e700e1c-5bd9-652e-b535-68a89dd703a1@c-s.fr>
- <87y37ax3ru.fsf@concordia.ellerman.id.au>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <9b4dab64-6a6b-a599-4676-bf891473ada7@c-s.fr>
-Date:   Thu, 24 Jan 2019 09:43:47 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 24 Jan 2019 04:44:07 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:41730 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725287AbfAXJoH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 04:44:07 -0500
+Received: by mail-oi1-f194.google.com with SMTP id j21so4313895oii.8;
+        Thu, 24 Jan 2019 01:44:06 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KT5/D09lump03qxt3Q6u+waWb0v6Kge9kbPjqcIlsGI=;
+        b=P1UB/igZqe8TJ/PKP95MAgCTLFZb4qlzf8FMc9u7I5MB5yeKHBl5FN57D22KDPRCHx
+         YggtpcCoiTe/57IJ26waSHCBb6gnM82TFMXwNnzRJj0eonPah2drPVMdatXPvpJh3+z+
+         4zd9HLBcS5kMr9yHp43XICcvsk04wEict5270oj0m0Mkpt5iY0CJlpZVegQCjUIF+pZK
+         ywHPcxDWjPM0DyDE2mIAUBI1SrxyY/Yj+niaD3/cYLJBcR1pbPc0hpRV7h18QsFsO0xw
+         S7ch/jPg/yBceODNBrEYHKJ0pQDuO2gCDZnkYozZvGfVyRY9hsY9OMEFLOvcWHhgJDvz
+         zDDQ==
+X-Gm-Message-State: AJcUukeT2ay7tKA9M+/4A7x/+DAe4sw3remGm03vjTnXFPDwI1fCwr3t
+        inSgOa0ae9uavrZPXakFOlU7J+i676JRVDNdIdU=
+X-Google-Smtp-Source: ALg8bN67XjYS/b3/QkQlxdY6n4KskIphddSSaT3lhopvDJwGHnyriTKVBo402xdty79b270BM9PjRq79hDONpNZEINo=
+X-Received: by 2002:aca:e715:: with SMTP id e21mr695356oih.76.1548323046168;
+ Thu, 24 Jan 2019 01:44:06 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <87y37ax3ru.fsf@concordia.ellerman.id.au>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <1547722811-18052-1-git-send-email-wangxiongfeng2@huawei.com> <20190124065614.gnnwd6lhbyjiph2e@vireshk-i7>
+In-Reply-To: <20190124065614.gnnwd6lhbyjiph2e@vireshk-i7>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 24 Jan 2019 10:43:56 +0100
+Message-ID: <CAJZ5v0i-DP=ZYBBhqAGZB2btnQnqfXhGyQ4D=CqY6GFXMwK2Pw@mail.gmail.com>
+Subject: Re: [RFC PATCH] cpufreq / cppc: Work around for Hisilicon CPPC cpufreq
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Xiongfeng Wang <wangxiongfeng2@huawei.com>,
+        George Cherian <george.cherian@cavium.com>,
+        Prashanth Prakash <pprakash@codeaurora.org>,
+        Robert Moore <robert.moore@intel.com>,
+        Len Brown <lenb@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Hanjun Guo <guohanjun@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jan 24, 2019 at 7:56 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>
+> +George/Prashanth.
+>
+> Guys please see if you have any objections to this patch. I am not
+> very familiar with this stuff and it would be good to get some
+> feedback from you guys.
+>
+> @Rafael: Do you have any comments on this ?
 
-
-On 01/24/2019 01:06 AM, Michael Ellerman wrote:
-> Christophe Leroy <christophe.leroy@c-s.fr> writes:
->> Le 12/01/2019 à 10:55, Christophe Leroy a écrit :
->>> The purpose of this serie is to activate CONFIG_THREAD_INFO_IN_TASK which
->>> moves the thread_info into task_struct.
->>>
->>> Moving thread_info into task_struct has the following advantages:
->>> - It protects thread_info from corruption in the case of stack
->>> overflows.
->>> - Its address is harder to determine if stack addresses are
->>> leaked, making a number of attacks more difficult.
->>
->> I ran null_syscall and context_switch benchmark selftests and the result
->> is surprising. There is slight degradation in context_switch and a
->> significant one on null_syscall:
->>
->> Without the serie:
->>
->> ~# chrt -f 98 ./context_switch --no-altivec --no-vector --no-fp
->> 55542
->> 55562
->> 55564
->> 55562
->> 55568
->> ...
->>
->> ~# ./null_syscall
->>      2546.71 ns     336.17 cycles
->>
->>
->> With the serie:
->>
->> ~# chrt -f 98 ./context_switch --no-altivec --no-vector --no-fp
->> 55138
->> 55142
->> 55152
->> 55144
->> 55142
->>
->> ~# ./null_syscall
->>      3479.54 ns     459.30 cycles
->>
->> So 0,8% less context switches per second and 37% more time for one syscall ?
->>
->> Any idea ?
-> 
-> What platform is that on?
-
-It is on the 8xx
-
-> 
-> On 64-bit we have to turn one mtmsrd into two and that's obviously a
-> slow down. But I don't see that you've done anything similar in 32-bit
-> code.
-> 
-> I assume it's patch 8 that causes the slow down?
-
-I have not digged into it yet, but why patch 8 ?
-
-
-I run null_syscall with perf, and I get the following. Can we conclude 
-on something with that ?
-
-Without the serie:
-
-# Overhead       Samples  Command       Shared Object      Symbol 
-
-# ........  ............  ............  ................. 
-........................................
-#
-     32.95%         46375  null_syscall  [kernel.kallsyms]  [k] DoSyscall
-     23.64%         33275  null_syscall  [kernel.kallsyms]  [k] 
-__task_pid_nr_ns
-     15.47%         21778  null_syscall  libc-2.23.so       [.] 
-__GI___getppid
-      8.92%         12556  null_syscall  [kernel.kallsyms]  [k] 
-__rcu_read_unlock
-      5.69%          8014  null_syscall  [kernel.kallsyms]  [k] sys_getppid
-      4.01%          5643  null_syscall  [kernel.kallsyms]  [k] 
-__rcu_read_lock
-      3.67%          5166  null_syscall  [kernel.kallsyms]  [k] 
-syscall_dotrace_cont
-      2.52%          3542  null_syscall  null_syscall       [.] main
-
-With the serie:
-
-     30.04%         56337  null_syscall  [kernel.kallsyms]  [k] DoSyscall
-     13.89%         26060  null_syscall  [kernel.kallsyms]  [k] 
-__rcu_read_unlock
-     13.36%         25062  null_syscall  libc-2.23.so       [.] 
-__GI___getppid
-     12.73%         23872  null_syscall  [kernel.kallsyms]  [k] 
-__task_pid_nr_ns
-     11.21%         21033  null_syscall  [kernel.kallsyms]  [k] sys_getppid
-      8.24%         15457  null_syscall  [kernel.kallsyms]  [k] 
-syscall_dotrace_cont
-      4.38%          8217  null_syscall  [kernel.kallsyms]  [k] 
-ret_from_syscall
-      2.54%          4773  null_syscall  null_syscall       [.] main
-
-
-Christophe
+Not yet, give me some time to noodle on it, please.
