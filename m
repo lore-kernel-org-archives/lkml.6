@@ -2,102 +2,85 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C780C41518
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 05:37:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 217D6C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 05:42:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0D81218A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 05:37:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="g11UTlqG"
+	by mail.kernel.org (Postfix) with ESMTP id E6B7C21872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 05:42:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726233AbfAXFg7 (ORCPT
+        id S1726050AbfAXFmY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 00:36:59 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45574 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725287AbfAXFg5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 00:36:57 -0500
-Received: by mail-wr1-f65.google.com with SMTP id t6so5008203wrr.12
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 21:36:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qcZH7cC6exfKxobfl1ESzgn6ZuhKgr3b9rR3EXyUKz0=;
-        b=g11UTlqGHb4re09Bz6qphfUusi21Oo9FJmq7u1jrmiBI+r74qLgd6V00Bk5Z1Rlsij
-         Bre3tMOtIwglov+QtWRZQZS0gTOhE7mBWFTKjjOZ7++FObDeke6r4ZKEDMoja9tthEPr
-         yQ3gVLKkk3PYG5XthY6KDnINSsFEa3qH6I8l8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qcZH7cC6exfKxobfl1ESzgn6ZuhKgr3b9rR3EXyUKz0=;
-        b=ulSr26m6g62USOtnMaEuq46L3UrDeuWnsTOFoGwbEhL51Ky08IbfYbneH+e5QfexBO
-         hQQwJ9efZu4MLL2kJFTIiyeMV1HlOATANCYtX1zfU0AunyRpLswD8UBT4dj5arCQqgQP
-         fOR39HYDTA+6VzibqtH/OlSpqjyRv1uYQ2Y9CwjGSnQtF+gAd5DJ/Pim9LYpFdd1QjYP
-         Fi9S6Rf2Q5wePuOa5D34Ni19qEOYvBsQXVME48JJcS4rxlWUFO3tsD11yrctb6uY4KoQ
-         1D0yPUxCHJQB8N9o5AcFOWt9AGmB1PoX+dcrGK1VJPWbBPqgPoJ+CeRDQwADZAf/242N
-         pdog==
-X-Gm-Message-State: AJcUukeJ0jAlGT0kGlYTCtZW1Ss58fKsu5/kxvrQCy2kK75hDdZiVUc1
-        +glpLyXsjOB079s04vizuMipDmSjNegUvzjB7uw3bQ==
-X-Google-Smtp-Source: ALg8bN5XwwfwWAn8am9FawfFKsVmG1HXntlLk3XWIua/NbW5xyrom/V7kEXWUHTdHbceMlspy5/TcB8rw/0bzfcUaeo=
-X-Received: by 2002:adf:e3c8:: with SMTP id k8mr5543499wrm.83.1548308216235;
- Wed, 23 Jan 2019 21:36:56 -0800 (PST)
+        Thu, 24 Jan 2019 00:42:24 -0500
+Received: from sauhun.de ([88.99.104.3]:40002 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725290AbfAXFmY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 00:42:24 -0500
+Received: from localhost (p54B333E7.dip0.t-ipconnect.de [84.179.51.231])
+        by pokefinder.org (Postfix) with ESMTPSA id D2CCA2C3720;
+        Thu, 24 Jan 2019 06:42:21 +0100 (CET)
+Date:   Thu, 24 Jan 2019 06:42:21 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc:     "Shah, Nehal-bakulchandra" <Nehal-bakulchandra.Shah@amd.com>,
+        Elie Morisse <syniurge@gmail.com>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>,
+        "Singh, Sandeep" <Sandeep.Singh@amd.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "helgaas@kernel.org" <helgaas@kernel.org>
+Subject: Re: [PATCH v15] i2c: Add drivers for the AMD PCIe MP2 I2C controller
+Message-ID: <20190124054221.GA909@kunai>
+References: <20181226232258.GA23526@syn-yoga530>
+ <ecb5ecad-7141-b8db-74dc-a53f2a17301c@amd.com>
+ <86BE166C-0821-4E16-AE72-728752654C20@canonical.com>
 MIME-Version: 1.0
-References: <1547785403-32268-1-git-send-email-srinath.mannam@broadcom.com> <20190118144149.GA25249@google.com>
-In-Reply-To: <20190118144149.GA25249@google.com>
-From:   Srinath Mannam <srinath.mannam@broadcom.com>
-Date:   Thu, 24 Jan 2019 11:06:44 +0530
-Message-ID: <CABe79T6=2uf1SrpDEm9s3smDkcR0JB-Gq8VwDF4yL8zBL6w0zw@mail.gmail.com>
-Subject: Re: [PATCH 0/3] Add IPROC PCIe new features
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        linux-pci@vger.kernel.org, iommu@lists.linux-foundation.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="nFreZHaLTZJo0R7j"
+Content-Disposition: inline
+In-Reply-To: <86BE166C-0821-4E16-AE72-728752654C20@canonical.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
 
-Thank you for the review. I will address your comments in the next patchset.
+--nFreZHaLTZJo0R7j
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Regards,
-Srinath.
 
-On Fri, Jan 18, 2019 at 8:11 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
->
-> On Fri, Jan 18, 2019 at 09:53:20AM +0530, Srinath Mannam wrote:
-> > Add changes related to IPROC PCIe RC IP new features.
-> >
-> > This patch set is based on Linux-5.0-rc2.
-> >
-> > Srinath Mannam (3):
-> >   PCI: iproc: Add feature to set order mode
->
-> Since this apparently refers to a PCIe feature, the subject should use the
-> exact terminology used in the PCIe spec.
->
-> >   PCI: iproc: CRS state check in config request
->
-> This subject should start with a verb, not "CRS".
->
-> >   PCI: iproc: Add PCIe 32bit outbound memory configuration
-> >
-> >  drivers/pci/controller/pcie-iproc.c | 172 +++++++++++++++++++++++++++++++++++-
-> >  drivers/pci/controller/pcie-iproc.h |  16 ++++
-> >  2 files changed, 184 insertions(+), 4 deletions(-)
-> >
-> > --
-> > 2.7.4
-> >
+> > Looks ok for me
+>=20
+> With Shah=E2=80=99s blessing, is it possible to merge this patch to your =
+-next tree?
+
+I am currently reviewing it, but the driver is large so it takes time.
+
+
+--nFreZHaLTZJo0R7j
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxJUDgACgkQFA3kzBSg
+KbbcihAApL+J0SRy5db/uA5q3OC/9WcRCbgXpfWHayOln7yah97iu2tA4kKYnUWa
+UwoltkFoV5/4T/YMT8QxMrqP5aux2xeIWt1zmfLwk7AdmRsqOJxRB5vPpQF7yxax
+urEXkOxPjLcie7fHOjE6S1EdKcW92m3rOpv3boeOkMUFRlUsm4bY4+WV5Ame5n4L
+RRnug06IWCSvKo7ts8bx1Ef/sdcwrnPtg+fmSW/EdyFo/jq4WlqUztuY8O453Ocf
+PnFPTt2ej7/MeYnWuif6GxSpuQb1l42qCA3vldjjb4BBdUsHUFTaZSyKJke1D88I
+TKnFhjD3dokSyU52Uq/ywI8wn8eEZwvQ99vFBV5+OVge2m1FgLijZzMioIZNJWuk
+uPP6Pd/3eSvVuTuC3HVzuzSJsYIZ4wCjc6brypxuzPRMK6926hvElTPx+Jlm8O4a
+aXcsgbXSCKOhw8YAhtqzSduqmW+oHS83jsxIEsmEf5tnFLW+fnkwOTsK20ad86ay
+Ar3J4hMTSRvxQGuOYJhmOB7RTGtBXi1/EeFZKrScGSPA4RVYcZngc89c4Ly2MAy0
+ECl821ld4GISlo8L2Sa4yETlFbPYoYUAhsiJYzDfbtkHVIWASARQEpnKq/rluxsv
+c476j1qhD6IbH8rx1xYlTcMqGMoDq5DzY5Ko89DM+oEY/k+I8mg=
+=7MVd
+-----END PGP SIGNATURE-----
+
+--nFreZHaLTZJo0R7j--
