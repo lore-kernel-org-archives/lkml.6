@@ -2,52 +2,53 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65CD7C282C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:55:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1732C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:55:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33A4721726
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:55:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82AAE21726
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:55:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359710;
-	bh=oK19j8EEmDksPpDEkB/knGXordcxvCfMMnwB5PYWRpc=;
+	s=default; t=1548359718;
+	bh=WMUm9FH9KD+2Pp9AFTqEx5YHSH7PBxqcKb6oSSWw6A0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=y9L5/6cguMTr8QQ4rk8f9Cnylr6aDubr/kcNoXqO9FFqYE5uTAZLK+1ZYnf+Nfetu
-	 kCGiGa3LF3bgLHtMabfylkVlpx7uhZAshnZaEoiU4owr/Nipl04q9uiUbPITZQnJjN
-	 6EkPZJs0t9LRnGGm1TnuAbgLlAPQwlc7t26o/mEI=
+	b=sdEETenFV8QRmY+tyaNaD34Os4P/qYaKySyF0HM23agG31BgtjDDQFRW9dMoleKWd
+	 ZYqfAQ95ueceIT6ZOW7lvvsYUauJ3uB2D2H+TG/bivs3sVK/TcmVAQZ6BUddQxMbHj
+	 zrwdeEOnCwabyqYRwwBNCTJs+lr7W+gtop2vwBoc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730253AbfAXTg7 (ORCPT
+        id S1729218AbfAXTzQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:36:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36872 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:55:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36780 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730938AbfAXTgz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:36:55 -0500
+        id S1731374AbfAXTgt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:36:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 96FEB218FC;
-        Thu, 24 Jan 2019 19:36:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C2848218FC;
+        Thu, 24 Jan 2019 19:36:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358614;
-        bh=oK19j8EEmDksPpDEkB/knGXordcxvCfMMnwB5PYWRpc=;
+        s=default; t=1548358608;
+        bh=WMUm9FH9KD+2Pp9AFTqEx5YHSH7PBxqcKb6oSSWw6A0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C8gV5YVNAiKqFIW7X+l/luGizv1ZrUJSX/6Eh4K+V47q7y5EFSpTgPLwWktioCEL8
-         k+gY1AwBjRw4eGYJW5oAStTlDkQJROAxeEcherzN3rKIutG77Wcg258ztgkkDp3JiR
-         rZnTIJ0GfdS4k9PjeFFar9NNc95g5un9u7r0HFRQ=
+        b=pn74FmgiNCcQqsLgKtQM4LsAyu/Dzq7kd9oI/CUwv0KLzUBHPgnYORAYaKWHG/ABO
+         8cEv/XQrnxliPUfpqa4D4C2Br9RW3s3lUtDf7+ZV70ehA9Bu3LGhLhy+F++5TdJYca
+         jAkdJmEn5eaq+J9+BYUzNkfGBmaUyngrpyh3eYl0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 071/106] netfilter: ipt_CLUSTERIP: remove wrong WARN_ON_ONCE in netns exit routine
-Date:   Thu, 24 Jan 2019 20:20:28 +0100
-Message-Id: <20190124190210.844807296@linuxfoundation.org>
+Subject: [PATCH 4.19 069/106] perf vendor events intel: Fix Load_Miss_Real_Latency on SKL/SKX
+Date:   Thu, 24 Jan 2019 20:20:26 +0100
+Message-Id: <20190124190210.744386732@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
 References: <20190124190206.342411005@linuxfoundation.org>
@@ -66,69 +67,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit b12f7bad5ad3724d19754390a3e80928525c0769 ]
+[ Upstream commit 91b2b97025097ce7ca7536bc87eba2bf14760fb4 ]
 
-When network namespace is destroyed, both clusterip_tg_destroy() and
-clusterip_net_exit() are called. and clusterip_net_exit() is called
-before clusterip_tg_destroy().
-Hence cleanup check code in clusterip_net_exit() doesn't make sense.
+Fix incorrect event names for the Load_Miss_Real_Latency metric for
+Skylake and Skylake Server.
 
-test commands:
-   %ip netns add vm1
-   %ip netns exec vm1 bash
-   %ip link set lo up
-   %iptables -A INPUT -p tcp -i lo -d 192.168.0.5 --dport 80 \
-	-j CLUSTERIP --new --hashmode sourceip \
-	--clustermac 01:00:5e:00:00:20 --total-nodes 2 --local-node 1
-   %exit
-   %ip netns del vm1
+Fixes https://github.com/andikleen/pmu-tools/issues/158
 
-splat looks like:
-[  341.184508] WARNING: CPU: 1 PID: 87 at net/ipv4/netfilter/ipt_CLUSTERIP.c:840 clusterip_net_exit+0x319/0x380 [ipt_CLUSTERIP]
-[  341.184850] Modules linked in: ipt_CLUSTERIP nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 xt_tcpudp iptable_filter bpfilter ip_tables x_tables
-[  341.184850] CPU: 1 PID: 87 Comm: kworker/u4:2 Not tainted 4.19.0-rc5+ #16
-[  341.227509] Workqueue: netns cleanup_net
-[  341.227509] RIP: 0010:clusterip_net_exit+0x319/0x380 [ipt_CLUSTERIP]
-[  341.227509] Code: 0f 85 7f fe ff ff 48 c7 c2 80 64 2c c0 be a8 02 00 00 48 c7 c7 a0 63 2c c0 c6 05 18 6e 00 00 01 e8 bc 38 ff f5 e9 5b fe ff ff <0f> 0b e9 33 ff ff ff e8 4b 90 50 f6 e9 2d fe ff ff 48 89 df e8 de
-[  341.227509] RSP: 0018:ffff88011086f408 EFLAGS: 00010202
-[  341.227509] RAX: dffffc0000000000 RBX: 1ffff1002210de85 RCX: 0000000000000000
-[  341.227509] RDX: 1ffff1002210de85 RSI: ffff880110813be8 RDI: ffffed002210de58
-[  341.227509] RBP: ffff88011086f4d0 R08: 0000000000000000 R09: 0000000000000000
-[  341.227509] R10: 0000000000000000 R11: 0000000000000000 R12: 1ffff1002210de81
-[  341.227509] R13: ffff880110625a48 R14: ffff880114cec8c8 R15: 0000000000000014
-[  341.227509] FS:  0000000000000000(0000) GS:ffff880116600000(0000) knlGS:0000000000000000
-[  341.227509] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  341.227509] CR2: 00007f11fd38e000 CR3: 000000013ca16000 CR4: 00000000001006e0
-[  341.227509] Call Trace:
-[  341.227509]  ? __clusterip_config_find+0x460/0x460 [ipt_CLUSTERIP]
-[  341.227509]  ? default_device_exit+0x1ca/0x270
-[  341.227509]  ? remove_proc_entry+0x1cd/0x390
-[  341.227509]  ? dev_change_net_namespace+0xd00/0xd00
-[  341.227509]  ? __init_waitqueue_head+0x130/0x130
-[  341.227509]  ops_exit_list.isra.10+0x94/0x140
-[  341.227509]  cleanup_net+0x45b/0x900
-[ ... ]
+Before:
 
-Fixes: 613d0776d3fe ("netfilter: exit_net cleanup check added")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+  % perf stat -M Load_Miss_Real_Latency true
+  event syntax error: '..ss.pending,mem_load_retired.l1_miss_ps,mem_load_retired.fb_hit_ps}:W'
+                                    \___ parser error
+
+   Usage: perf stat [<options>] [<command>]
+
+      -M, --metrics <metric/metric group list>
+                            monitor specified metrics or metric groups (separated by ,)
+
+After:
+
+  % perf stat -M Load_Miss_Real_Latency true
+
+   Performance counter stats for 'true':
+
+             279,204      l1d_pend_miss.pending     #     14.0 Load_Miss_Real_Latency
+               4,784      mem_load_uops_retired.l1_miss
+              15,188      mem_load_uops_retired.hit_lfb
+
+         0.000899640 seconds time elapsed
+
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Link: http://lkml.kernel.org/r/20181120050635.4215-1-andi@firstfloor.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv4/netfilter/ipt_CLUSTERIP.c | 1 -
- 1 file changed, 1 deletion(-)
+ tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json  | 2 +-
+ tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/net/ipv4/netfilter/ipt_CLUSTERIP.c b/net/ipv4/netfilter/ipt_CLUSTERIP.c
-index e40e6795bd20..33491cb6b9d1 100644
---- a/net/ipv4/netfilter/ipt_CLUSTERIP.c
-+++ b/net/ipv4/netfilter/ipt_CLUSTERIP.c
-@@ -838,7 +838,6 @@ static void clusterip_net_exit(struct net *net)
- 	cn->procdir = NULL;
- #endif
- 	nf_unregister_net_hook(net, &cip_arp_ops);
--	WARN_ON_ONCE(!list_empty(&cn->configs));
- }
- 
- static struct pernet_operations clusterip_net_ops = {
+diff --git a/tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json b/tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json
+index 36c903faed0b..71e9737f4614 100644
+--- a/tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json
++++ b/tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json
+@@ -73,7 +73,7 @@
+     },
+     {
+         "BriefDescription": "Actual Average Latency for L1 data-cache miss demand loads",
+-        "MetricExpr": "L1D_PEND_MISS.PENDING / ( MEM_LOAD_RETIRED.L1_MISS_PS + MEM_LOAD_RETIRED.FB_HIT_PS )",
++        "MetricExpr": "L1D_PEND_MISS.PENDING / ( MEM_LOAD_RETIRED.L1_MISS + MEM_LOAD_RETIRED.FB_HIT )",
+         "MetricGroup": "Memory_Bound;Memory_Lat",
+         "MetricName": "Load_Miss_Real_Latency"
+     },
+diff --git a/tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json b/tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json
+index 36c903faed0b..71e9737f4614 100644
+--- a/tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json
++++ b/tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json
+@@ -73,7 +73,7 @@
+     },
+     {
+         "BriefDescription": "Actual Average Latency for L1 data-cache miss demand loads",
+-        "MetricExpr": "L1D_PEND_MISS.PENDING / ( MEM_LOAD_RETIRED.L1_MISS_PS + MEM_LOAD_RETIRED.FB_HIT_PS )",
++        "MetricExpr": "L1D_PEND_MISS.PENDING / ( MEM_LOAD_RETIRED.L1_MISS + MEM_LOAD_RETIRED.FB_HIT )",
+         "MetricGroup": "Memory_Bound;Memory_Lat",
+         "MetricName": "Load_Miss_Real_Latency"
+     },
 -- 
 2.19.1
 
