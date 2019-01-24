@@ -2,103 +2,104 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4359EC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:48:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 829CDC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:50:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1ADAE218A6
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:48:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 537F7218A6
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:50:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548352249;
+	bh=2D7cQI0ta04B5vyVxvsPoWdCnHufIZ+39wyBLDSTaz4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=eUoUMg77TjA85TYNrrhn/yqOVTPLCvLodyh6EuVaY9ORmkayhvdtkcRjAtGNHQvJC
+	 1AtMuiFq98NawqLY32EQbpMTZ8KHxQdeeApIGskvXLnGdpYaNAqdDFDfQ+MgowTZ/v
+	 Xwbe+IoxoPM5l7Jm6lC7iR5q2eNX+yfvykkEJftM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729242AbfAXRs2 (ORCPT
+        id S1728990AbfAXRur (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 12:48:28 -0500
-Received: from mx2.suse.de ([195.135.220.15]:51304 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728130AbfAXRrq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 12:47:46 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 34B63B0DA;
-        Thu, 24 Jan 2019 17:47:45 +0000 (UTC)
-From:   Thomas Bogendoerfer <tbogendoerfer@suse.de>
-To:     Bjorn Helgaas <bhelgaas@google.com>,
-        James Hogan <jhogan@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-pci@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>
-Subject: [PATCH 4/7] MIPS: SGI-IP27: do xtalk scanning later
-Date:   Thu, 24 Jan 2019 18:47:25 +0100
-Message-Id: <20190124174728.28812-5-tbogendoerfer@suse.de>
-X-Mailer: git-send-email 2.13.7
-In-Reply-To: <20190124174728.28812-1-tbogendoerfer@suse.de>
-References: <20190124174728.28812-1-tbogendoerfer@suse.de>
+        Thu, 24 Jan 2019 12:50:47 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51542 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728130AbfAXRur (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 12:50:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Z+lnL8gRAM+Tg8a9b4A7BCpI9nDknC8CsAFk1quCqYM=; b=uJ+FqnO56pWZbsE76CGu2r+3q
+        R0RKzCMV20mnih45eVMsM7TWYPAgss4FjejSoHFXc+JM0Lb+3UiFYLe0CxNPRgZMS7sTJOCpL+Zwl
+        QlZlCYcX6q5vzc/sac4rfQ+uODzaQzRhQPTP3TJpxvrPKuidrpjCYWTJ60ZHdH6xHvOp4=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gmj9A-0006Xd-Jo; Thu, 24 Jan 2019 17:50:36 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 13B121121B6F; Thu, 24 Jan 2019 17:50:36 +0000 (GMT)
+Date:   Thu, 24 Jan 2019 17:50:36 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Petr Cvek <petr.cvek@tul.cz>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Paul Parsons <lost.distance@yahoo.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Subject: Re: [PATCH 1/5 v9] regulator: gpio: Convert to use descriptors
+Message-ID: <20190124175036.GF5641@sirena.org.uk>
+References: <20190121091206.18239-1-linus.walleij@linaro.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="n/aVsWSeQ4JHkrmm"
+Content-Disposition: inline
+In-Reply-To: <20190121091206.18239-1-linus.walleij@linaro.org>
+X-Cookie: Love America -- or give it back.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move xtalk scanning to a later boot stage to be able using things like
-kmalloc and friends.
 
-Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
----
- arch/mips/sgi-ip27/ip27-init.c  |  3 ---
- arch/mips/sgi-ip27/ip27-xtalk.c | 13 ++++++++++++-
- 2 files changed, 12 insertions(+), 4 deletions(-)
+--n/aVsWSeQ4JHkrmm
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/mips/sgi-ip27/ip27-init.c b/arch/mips/sgi-ip27/ip27-init.c
-index 83399e578b61..aba985cf07c0 100644
---- a/arch/mips/sgi-ip27/ip27-init.c
-+++ b/arch/mips/sgi-ip27/ip27-init.c
-@@ -52,8 +52,6 @@ EXPORT_SYMBOL_GPL(sn_cpu_info);
- 
- extern void pcibr_setup(cnodeid_t);
- 
--extern void xtalk_probe_node(cnodeid_t nid);
--
- static void per_hub_init(cnodeid_t cnode)
- {
- 	struct hub_data *hub = hub_data(cnode);
-@@ -71,7 +69,6 @@ static void per_hub_init(cnodeid_t cnode)
- 	REMOTE_HUB_S(nasid, IIO_ICTO, 0xff);
- 
- 	hub_rtc_init(cnode);
--	xtalk_probe_node(cnode);
- 
- #ifdef CONFIG_REPLICATE_EXHANDLERS
- 	/*
-diff --git a/arch/mips/sgi-ip27/ip27-xtalk.c b/arch/mips/sgi-ip27/ip27-xtalk.c
-index 4fe5678ba74d..ce06aaa115ae 100644
---- a/arch/mips/sgi-ip27/ip27-xtalk.c
-+++ b/arch/mips/sgi-ip27/ip27-xtalk.c
-@@ -99,7 +99,7 @@ static int xbow_probe(nasid_t nasid)
- 	return 0;
- }
- 
--void xtalk_probe_node(cnodeid_t nid)
-+static void xtalk_probe_node(cnodeid_t nid)
- {
- 	volatile u64		hubreg;
- 	nasid_t			nasid;
-@@ -133,3 +133,14 @@ void xtalk_probe_node(cnodeid_t nid)
- 		break;
- 	}
- }
-+
-+static int __init xtalk_init(void)
-+{
-+	cnodeid_t cnode;
-+
-+	for_each_online_node(cnode)
-+		xtalk_probe_node(cnode);
-+
-+	return 0;
-+}
-+arch_initcall(xtalk_init);
--- 
-2.13.7
+On Mon, Jan 21, 2019 at 10:12:02AM +0100, Linus Walleij wrote:
+> This converts the GPIO regulator driver to use decriptors only.
 
+This patch breaks the build for me:
+
+drivers/regulator/gpio-regulator.c: In function =E2=80=98gpio_regulator_pro=
+be=E2=80=99:
+drivers/regulator/gpio-regulator.c:256:33: error: =E2=80=98dev=E2=80=99 und=
+eclared (first use in this function); did you mean =E2=80=98pdev=E2=80=99?
+  drvdata->gpiods =3D devm_kzalloc(dev, sizeof(struct gpio_desc *),
+
+--n/aVsWSeQ4JHkrmm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxJ+usACgkQJNaLcl1U
+h9C/5wf+LBGJqaa+HC4uOutbjn1VzCOBhC3LQif3WP2tap4z81xU16vOif4DMXbs
+ZwdMqCDMVe5atQMHBuCJZjYIStilrHkNaJZVJZZ/+XghtZdQ8y9L7maQ+4HzsF9/
+eDiaUMgXglb/XXIFZ7zHMJRoPudv98EmBHQjeEJFE4i16NYOfRA9MhehabYwITBr
+PkuEaN1nzGTtHLpZv3+YyksOWbprQNegeYtvZjf2Dt96w2o4EqQB4bZBCIOWaUaP
+j09JRQZILfYf1yc2wa05S4Ayc92p8XtvEgeVyuQPNRU3rcRowgqkUJj/Th9Hh/yl
+4hMYovNUJBvcarjpvdIrLoFUSY7Nsw==
+=e2+r
+-----END PGP SIGNATURE-----
+
+--n/aVsWSeQ4JHkrmm--
