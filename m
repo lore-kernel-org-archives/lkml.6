@@ -2,136 +2,154 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 866BBC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 21:31:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27A1CC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 21:32:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54F6E218D0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 21:31:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB2C9218D0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 21:32:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OxmPsvKr"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B7iBPOuJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727755AbfAXVbr (ORCPT
+        id S1727914AbfAXVcd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 16:31:47 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:35860 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725974AbfAXVbr (ORCPT
+        Thu, 24 Jan 2019 16:32:33 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:37265 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725974AbfAXVcc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 16:31:47 -0500
-Received: by mail-pg1-f194.google.com with SMTP id n2so3248948pgm.3;
-        Thu, 24 Jan 2019 13:31:46 -0800 (PST)
+        Thu, 24 Jan 2019 16:32:32 -0500
+Received: by mail-ed1-f66.google.com with SMTP id h15so5793734edb.4;
+        Thu, 24 Jan 2019 13:32:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Zg1hiDWSkdoKlKrGhoKh9p3u2gfeR+FlyP1bDnEdRyo=;
-        b=OxmPsvKrcATLdb75kGcN89Pt9J1rYxKvSAOzOcp6itjXYpXUOb0QkuXe1L9+s+ljop
-         ORQWxtLBo4D3NDNVHhNGfrXiqm3gNQAIdPZucM2e5oiLKR5rqiZo9wvZbe0Yz1DZlh0d
-         JDVnSGc4HhbPm30CwwF8YpZ++XBncC+8XKjfiIHiKqjL2S4UM3B1GGeLBw4A+mU0yc83
-         2WnjWwdyKxSqOHBG7aNhVZz8gG1llpgNNfFrpcOgmt5PjM4UCtcbfn/kuRTW4/ktZWgP
-         6rWRysngy2A+QcIaK8IUYwwFrRawNiUmfIo1em+28gnw9TWOL4DgIX485etC8s5sGT+1
-         Xovw==
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nHhy75h0M+XnKhlhRGvdc3h5y52wRsXerFO8ELPp8XI=;
+        b=B7iBPOuJCOK5a1dQZyHSN73uCzw2OrG3kJ4KcdRkWQYP2Q4iux5lE7tugF1xLXv6Bs
+         EyzC6QJ0UgcvUC1XsboWh5HjHAqVcO9sYBd6MCgKpDi+l4izfHcN7w2YlI1H+v1kJNLj
+         uv10qDRZ4W1pgOn/1IirQtu/1AsZ2L0mlq5kHx2LDeJukttyEDoaXVOucV7r98cnVrbC
+         sepldAJ1SM28zfpjhxXmh9oEECu3fx/QBSgBQiED807/wrd6uYOBPQn4s9UF89gJF0+b
+         FZa0ccUb90/kGkBFkofm0DAGsPceOIOUqmPr4GZzaJvtyXVxKSJa4QquMsF3iYMc8nYe
+         3z9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Zg1hiDWSkdoKlKrGhoKh9p3u2gfeR+FlyP1bDnEdRyo=;
-        b=p5YYh/3TxJS1Oxnu3Bp79RK6Jo1aHLw1uSjtKYLx5LaJsVAkimmD2QpCr2NnnDFjLM
-         70YPzkta9bfZdCaLygfOz29bg12tzu2WCMQnDzvHNJbH8Zd5AIxDWchhftyxHvq/Mc96
-         FihTjovTW0ko4Qs5M0DFIk6lUa7vEZ+JPSPALLYR122ejFPBELhLJc2SU5taFgK+jYiL
-         Zi6TAQ9gwQ6JPC+mE7XYap0DDDWXZPFj/FCsgmKeX2MuLLtccuTTz6t0OqX851+GR7wX
-         eNXPNg1ATV6SDkY0FKlPGStSE2ziEgHQoXozavbuDkbn0ZFPMP7WukX+GzVdqTswitDE
-         5jwg==
-X-Gm-Message-State: AJcUukelqbK9kj5GRZPpkTikYtjom2UaatVm52MEOdEwZTfCF9oTj4ve
-        O/rfW6HTsNER/aRaO6N4dtTnWHue
-X-Google-Smtp-Source: ALg8bN4XMel72nu9y7LmKOyyccDL+hLvH54p/9NkgsoBTukVY6nfsoGQa/OZ5/hT6JhrJ6W71curTA==
-X-Received: by 2002:a63:1e56:: with SMTP id p22mr7465945pgm.126.1548365506207;
-        Thu, 24 Jan 2019 13:31:46 -0800 (PST)
-Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
-        by smtp.googlemail.com with ESMTPSA id z9sm56728900pfd.99.2019.01.24.13.31.39
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=nHhy75h0M+XnKhlhRGvdc3h5y52wRsXerFO8ELPp8XI=;
+        b=iKwVqDk6YGEw978ET/dpAYalNV4gchOG2TS/JRtPXvQ4L8ZtWOn+Dhi4Qo4+gdPTRL
+         aIXG8uTMs31kapNi/U/h2+sjp0HMiCx9zsLznLhyxE/ovxHhw0jooKnk/bseBlytNVRC
+         blNeer9hAqwZ7M7vuWVolwC737ZEx1qFO3eWBVOxBd7RWmN5CeFg7N25tVuP0OrV4ZJ/
+         IX1rkmI+DoR2Atq2Bz/bcsMzpVyEFf0ZF0wAfIs0sJpWxWKjuaTXpmFEFC7XZzyNg9P6
+         kLk/j0M0Wq1gjt7jhdIpUQO6oAljzfqly2goqygM6oUwMW7nJofr34speW0Ne/mvXb6x
+         AqnA==
+X-Gm-Message-State: AJcUukdV1zeNr7cL46hQKAMQLXwFqL9NuJzfy0788ZAsP+qUgGbEK9LK
+        7PVi8I2eRR8CcuxUbZy0dwaIFHae
+X-Google-Smtp-Source: ALg8bN7CfzTmVbuVGtW+fFk0aDU1x1nBtpizV7C01XqZAcnxGHr3M2RBa+hsS86RwSV3mxEnjQGZyA==
+X-Received: by 2002:a17:906:914a:: with SMTP id y10mr7509154ejw.124.1548365550659;
+        Thu, 24 Jan 2019 13:32:30 -0800 (PST)
+Received: from piling.lan (80-71-134-83.u.parknet.dk. [80.71.134.83])
+        by smtp.gmail.com with ESMTPSA id p7-v6sm6462959ejx.27.2019.01.24.13.32.28
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 13:31:45 -0800 (PST)
-Subject: Re: [PATCH V2 1/4] i2c: tegra: Sort all the include headers
- alphabetically
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
-Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-i2c@vger.kernel.org
-References: <1548363113-25969-1-git-send-email-skomatineni@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <e896f4af-1c20-3188-f1f8-253ce4893a50@gmail.com>
-Date:   Fri, 25 Jan 2019 00:31:34 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 24 Jan 2019 13:32:29 -0800 (PST)
+From:   Ricardo Ribalda Delgado <ricardo@ribalda.com>
+To:     Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Ricardo Ribalda Delgado <ricardo@ribalda.com>
+Subject: [PATCH] iio: adc: ad7476: Add support for ADS786X ADCs
+Date:   Thu, 24 Jan 2019 22:32:25 +0100
+Message-Id: <20190124213225.11803-1-ricardo@ribalda.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <1548363113-25969-1-git-send-email-skomatineni@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-24.01.2019 23:51, Sowjanya Komatineni пишет:
-> This patch sorts all the include headers alphabetically for the
-> I2C tegra driver
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  [V2] : Added this in V2 to sort the headers in tegra I2C
-> 
->  drivers/i2c/busses/i2c-tegra.c | 21 ++++++++++-----------
->  1 file changed, 10 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-> index e417ebf7628c..ef854be4c837 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -6,24 +6,23 @@
->   * Author: Colin Cross <ccross@android.com>
->   */
->  
-> -#include <linux/kernel.h>
-> -#include <linux/init.h>
-> -#include <linux/platform_device.h>
-> +#include <asm/unaligned.h>
+Add support for ADS7866, ADS7867 and ADS7868 8/10/12 bit Single channel
+ADC.
 
-What about to clean up the includes as well? Seems <asm/unaligned.h> is not needed by the code.
+Datasheet: http://www.ti.com/product/ADS7866
+Datasheet: http://www.ti.com/product/ADS7867
+Datasheet: http://www.ti.com/product/ADS7868
 
->  #include <linux/clk.h>
-> +#include <linux/delay.h>
->  #include <linux/err.h>
->  #include <linux/i2c.h>
-> -#include <linux/io.h>
-> +#include <linux/init.h>
->  #include <linux/interrupt.h>
-> -#include <linux/delay.h>
-> -#include <linux/slab.h>
-> -#include <linux/of_device.h>
-> +#include <linux/io.h>
-> +#include <linux/iopoll.h>
-> +#include <linux/kernel.h>
->  #include <linux/module.h>
-> -#include <linux/reset.h>
-> +#include <linux/of_device.h>
->  #include <linux/pinctrl/consumer.h>
-> +#include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
-> -#include <linux/iopoll.h>
-> -
-> -#include <asm/unaligned.h>
-> +#include <linux/reset.h>
-> +#include <linux/slab.h>
->  
->  #define TEGRA_I2C_TIMEOUT (msecs_to_jiffies(1000))
->  #define BYTES_PER_FIFO_WORD 4
-> 
+Signed-off-by: Ricardo Ribalda Delgado <ricardo@ribalda.com>
+---
+ drivers/iio/adc/Kconfig  |  3 ++-
+ drivers/iio/adc/ad7476.c | 20 ++++++++++++++++++++
+ 2 files changed, 22 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+index f9354e5ee65c..d86900fc2634 100644
+--- a/drivers/iio/adc/Kconfig
++++ b/drivers/iio/adc/Kconfig
+@@ -64,7 +64,8 @@ config AD7476
+ 	help
+ 	  Say yes here to build support for Analog Devices AD7273, AD7274, AD7276,
+ 	  AD7277, AD7278, AD7475, AD7476, AD7477, AD7478, AD7466, AD7467, AD7468,
+-	  AD7495, AD7910, AD7920, AD7920 SPI analog to digital converters (ADC).
++	  AD7495, AD7910, AD7920, AD7920, ADS7866, ADS7867, ADS7868 SPI analog
++	  to digital converters (ADC).
+ 
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called ad7476.
+diff --git a/drivers/iio/adc/ad7476.c b/drivers/iio/adc/ad7476.c
+index 0549686b9ef8..108c18d64f7d 100644
+--- a/drivers/iio/adc/ad7476.c
++++ b/drivers/iio/adc/ad7476.c
+@@ -59,6 +59,9 @@ enum ad7476_supported_device_ids {
+ 	ID_ADC081S,
+ 	ID_ADC101S,
+ 	ID_ADC121S,
++	ID_ADS7866,
++	ID_ADS7867,
++	ID_ADS7868,
+ };
+ 
+ static irqreturn_t ad7476_trigger_handler(int irq, void  *p)
+@@ -157,6 +160,8 @@ static int ad7476_read_raw(struct iio_dev *indio_dev,
+ #define AD7940_CHAN(bits) _AD7476_CHAN((bits), 15 - (bits), \
+ 		BIT(IIO_CHAN_INFO_RAW))
+ #define AD7091R_CHAN(bits) _AD7476_CHAN((bits), 16 - (bits), 0)
++#define ADS786X_CHAN(bits) _AD7476_CHAN((bits) + 4, 0, \
++		BIT(IIO_CHAN_INFO_RAW))
+ 
+ static const struct ad7476_chip_info ad7476_chip_info_tbl[] = {
+ 	[ID_AD7091R] = {
+@@ -209,6 +214,18 @@ static const struct ad7476_chip_info ad7476_chip_info_tbl[] = {
+ 		.channel[0] = ADC081S_CHAN(12),
+ 		.channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
+ 	},
++	[ID_ADS7866] = {
++		.channel[0] = ADS786X_CHAN(8),
++		.channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
++	},
++	[ID_ADS7867] = {
++		.channel[0] = ADS786X_CHAN(10),
++		.channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
++	},
++	[ID_ADS7868] = {
++		.channel[0] = ADS786X_CHAN(12),
++		.channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
++	},
+ };
+ 
+ static const struct iio_info ad7476_info = {
+@@ -314,6 +331,9 @@ static const struct spi_device_id ad7476_id[] = {
+ 	{"adc081s", ID_ADC081S},
+ 	{"adc101s", ID_ADC101S},
+ 	{"adc121s", ID_ADC121S},
++	{"ads7866", ID_ADS7866},
++	{"ads7867", ID_ADS7867},
++	{"ads7868", ID_ADS7868},
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(spi, ad7476_id);
+-- 
+2.20.1
 
