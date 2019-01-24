@@ -4,59 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17CB8C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:37:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83144C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:37:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF07621906
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:37:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53459218FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:37:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358666;
-	bh=uQqQK8CNA5O63VXdpwAVaZvBwhJiQ7M7uqjYHDRFwdA=;
+	s=default; t=1548358669;
+	bh=6s5tlf5TaEsmuRY7VucU/dyJnjMKDGbnxUxDO2QUhXE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=JaBj2ESNwCUcVn8VMJJ+49AESIj7uU2LBT1wCuHQpV9NNsfcGm4sV5kPRnQgMBazy
-	 irA8+Geym8FOCM8F5Sz/WXfGZuqyEvVjVpEOuklnbokOW41/OUoQWP5AY++vqakhke
-	 +XZTn5VcI53GBovy+BkuUmabNrcbaXj44bgtiB9I=
+	b=HowIrvpEccra+lE46awu5T88FDqw6VQrqwZdRLdTuiXUsRFLL0Dnzuo2gmGs26I5s
+	 4Uus1MahcY3Vs89o0oLTsb87TwlCV9mgMqX/yEN2RAD7WZQaVZXbZeLZW49GH10TCd
+	 IUKS4rbVTGmT7l3iSa7q0mIRvfEtFO/fnopL2kjI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732175AbfAXThp (ORCPT
+        id S1731996AbfAXThr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:37:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37718 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:37:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37792 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732372AbfAXThm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:37:42 -0500
+        id S1732179AbfAXThp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:37:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D020218FC;
-        Thu, 24 Jan 2019 19:37:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E0EEA21905;
+        Thu, 24 Jan 2019 19:37:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358661;
-        bh=uQqQK8CNA5O63VXdpwAVaZvBwhJiQ7M7uqjYHDRFwdA=;
+        s=default; t=1548358664;
+        bh=6s5tlf5TaEsmuRY7VucU/dyJnjMKDGbnxUxDO2QUhXE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hvgM+ljdEtY9nngJmEf6Heup48u+T8GVWO8xXLzIxdnnW2j/puF/Tjpj50PLG2WhN
-         2V9xO0X9hyGF1jem92PJENfm8MPtraDaB3GJJEUnSORqpWTU5jt/hm83yYl4zV/0sW
-         A/KFoJit5fBiqvYmzYJLxr+u8wmaO9Yuyyl1t83c=
+        b=LfLu08sDwwEdKFSgMQLB0wrm2VRBWjWM+Cpjdhi4+WEBbUmj6qeBYOmoqD/v5/WsV
+         VE9w33tY56KkO7u9kcdLJuRZcjZe29McPBKx1uSAmTllGimA5EJxUbiLB2lZezmi4r
+         uzz8P0dA+yy6XKZ1pSAGN2TdmJKD1l09lasec/Bc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Ramalingam C <ramalingam.c@intel.com>,
-        Arend van Spriel <aspriel@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Joe Perches <joe@perches.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
+        stable@vger.kernel.org, Parvi Kaustubhi <pkaustub@cisco.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 087/106] sysfs: Disable lockdep for driver bind/unbind files
-Date:   Thu, 24 Jan 2019 20:20:44 +0100
-Message-Id: <20190124190211.637955937@linuxfoundation.org>
+Subject: [PATCH 4.19 088/106] IB/usnic: Fix potential deadlock
+Date:   Thu, 24 Jan 2019 20:20:45 +0100
+Message-Id: <20190124190211.683334239@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
 References: <20190124190206.342411005@linuxfoundation.org>
@@ -75,172 +66,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 4f4b374332ec0ae9c738ff8ec9bed5cd97ff9adc ]
+[ Upstream commit 8036e90f92aae2784b855a0007ae2d8154d28b3c ]
 
-This is the much more correct fix for my earlier attempt at:
+Acquiring the rtnl lock while holding usdev_lock could result in a
+deadlock.
 
-https://lkml.org/lkml/2018/12/10/118
+For example:
 
-Short recap:
+usnic_ib_query_port()
+| mutex_lock(&us_ibdev->usdev_lock)
+ | ib_get_eth_speed()
+  | rtnl_lock()
 
-- There's not actually a locking issue, it's just lockdep being a bit
-  too eager to complain about a possible deadlock.
+rtnl_lock()
+| usnic_ib_netdevice_event()
+ | mutex_lock(&us_ibdev->usdev_lock)
 
-- Contrary to what I claimed the real problem is recursion on
-  kn->count. Greg pointed me at sysfs_break_active_protection(), used
-  by the scsi subsystem to allow a sysfs file to unbind itself. That
-  would be a real deadlock, which isn't what's happening here. Also,
-  breaking the active protection means we'd need to manually handle
-  all the lifetime fun.
+This commit moves the usdev_lock acquisition after the rtnl lock has been
+released.
 
-- With Rafael we discussed the task_work approach, which kinda works,
-  but has two downsides: It's a functional change for a lockdep
-  annotation issue, and it won't work for the bind file (which needs
-  to get the errno from the driver load function back to userspace).
+This is safe to do because usdev_lock is not protecting anything being
+accessed in ib_get_eth_speed(). Hence, the correct order of holding locks
+(rtnl -> usdev_lock) is not violated.
 
-- Greg also asked why this never showed up: To hit this you need to
-  unregister a 2nd driver from the unload code of your first driver. I
-  guess only gpus do that. The bug has always been there, but only
-  with a recent patch series did we add more locks so that lockdep
-  built a chain from unbinding the snd-hda driver to the
-  acpi_video_unregister call.
-
-Full lockdep splat:
-
-[12301.898799] ============================================
-[12301.898805] WARNING: possible recursive locking detected
-[12301.898811] 4.20.0-rc7+ #84 Not tainted
-[12301.898815] --------------------------------------------
-[12301.898821] bash/5297 is trying to acquire lock:
-[12301.898826] 00000000f61c6093 (kn->count#39){++++}, at: kernfs_remove_by_name_ns+0x3b/0x80
-[12301.898841] but task is already holding lock:
-[12301.898847] 000000005f634021 (kn->count#39){++++}, at: kernfs_fop_write+0xdc/0x190
-[12301.898856] other info that might help us debug this:
-[12301.898862]  Possible unsafe locking scenario:
-[12301.898867]        CPU0
-[12301.898870]        ----
-[12301.898874]   lock(kn->count#39);
-[12301.898879]   lock(kn->count#39);
-[12301.898883] *** DEADLOCK ***
-[12301.898891]  May be due to missing lock nesting notation
-[12301.898899] 5 locks held by bash/5297:
-[12301.898903]  #0: 00000000cd800e54 (sb_writers#4){.+.+}, at: vfs_write+0x17f/0x1b0
-[12301.898915]  #1: 000000000465e7c2 (&of->mutex){+.+.}, at: kernfs_fop_write+0xd3/0x190
-[12301.898925]  #2: 000000005f634021 (kn->count#39){++++}, at: kernfs_fop_write+0xdc/0x190
-[12301.898936]  #3: 00000000414ef7ac (&dev->mutex){....}, at: device_release_driver_internal+0x34/0x240
-[12301.898950]  #4: 000000003218fbdf (register_count_mutex){+.+.}, at: acpi_video_unregister+0xe/0x40
-[12301.898960] stack backtrace:
-[12301.898968] CPU: 1 PID: 5297 Comm: bash Not tainted 4.20.0-rc7+ #84
-[12301.898974] Hardware name: Hewlett-Packard HP EliteBook 8460p/161C, BIOS 68SCF Ver. F.01 03/11/2011
-[12301.898982] Call Trace:
-[12301.898989]  dump_stack+0x67/0x9b
-[12301.898997]  __lock_acquire+0x6ad/0x1410
-[12301.899003]  ? kernfs_remove_by_name_ns+0x3b/0x80
-[12301.899010]  ? find_held_lock+0x2d/0x90
-[12301.899017]  ? mutex_spin_on_owner+0xe4/0x150
-[12301.899023]  ? find_held_lock+0x2d/0x90
-[12301.899030]  ? lock_acquire+0x90/0x180
-[12301.899036]  lock_acquire+0x90/0x180
-[12301.899042]  ? kernfs_remove_by_name_ns+0x3b/0x80
-[12301.899049]  __kernfs_remove+0x296/0x310
-[12301.899055]  ? kernfs_remove_by_name_ns+0x3b/0x80
-[12301.899060]  ? kernfs_name_hash+0xd/0x80
-[12301.899066]  ? kernfs_find_ns+0x6c/0x100
-[12301.899073]  kernfs_remove_by_name_ns+0x3b/0x80
-[12301.899080]  bus_remove_driver+0x92/0xa0
-[12301.899085]  acpi_video_unregister+0x24/0x40
-[12301.899127]  i915_driver_unload+0x42/0x130 [i915]
-[12301.899160]  i915_pci_remove+0x19/0x30 [i915]
-[12301.899169]  pci_device_remove+0x36/0xb0
-[12301.899176]  device_release_driver_internal+0x185/0x240
-[12301.899183]  unbind_store+0xaf/0x180
-[12301.899189]  kernfs_fop_write+0x104/0x190
-[12301.899195]  __vfs_write+0x31/0x180
-[12301.899203]  ? rcu_read_lock_sched_held+0x6f/0x80
-[12301.899209]  ? rcu_sync_lockdep_assert+0x29/0x50
-[12301.899216]  ? __sb_start_write+0x13c/0x1a0
-[12301.899221]  ? vfs_write+0x17f/0x1b0
-[12301.899227]  vfs_write+0xb9/0x1b0
-[12301.899233]  ksys_write+0x50/0xc0
-[12301.899239]  do_syscall_64+0x4b/0x180
-[12301.899247]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[12301.899253] RIP: 0033:0x7f452ac7f7a4
-[12301.899259] Code: 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 80 00 00 00 00 8b 05 aa f0 2c 00 48 63 ff 85 c0 75 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 f3 c3 66 90 55 53 48 89 d5 48 89 f3 48 83
-[12301.899273] RSP: 002b:00007ffceafa6918 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-[12301.899282] RAX: ffffffffffffffda RBX: 000000000000000d RCX: 00007f452ac7f7a4
-[12301.899288] RDX: 000000000000000d RSI: 00005612a1abf7c0 RDI: 0000000000000001
-[12301.899295] RBP: 00005612a1abf7c0 R08: 000000000000000a R09: 00005612a1c46730
-[12301.899301] R10: 000000000000000a R11: 0000000000000246 R12: 000000000000000d
-[12301.899308] R13: 0000000000000001 R14: 00007f452af4a740 R15: 000000000000000d
-
-Looking around I've noticed that usb and i2c already handle similar
-recursion problems, where a sysfs file can unbind the same type of
-sysfs somewhere else in the hierarchy. Relevant commits are:
-
-commit 356c05d58af05d582e634b54b40050c73609617b
-Author: Alan Stern <stern@rowland.harvard.edu>
-Date:   Mon May 14 13:30:03 2012 -0400
-
-    sysfs: get rid of some lockdep false positives
-
-commit e9b526fe704812364bca07edd15eadeba163ebfb
-Author: Alexander Sverdlin <alexander.sverdlin@nsn.com>
-Date:   Fri May 17 14:56:35 2013 +0200
-
-    i2c: suppress lockdep warning on delete_device
-
-Implement the same trick for driver bind/unbind.
-
-v2: Put the macro into bus.c (Greg).
-
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Cc: Ramalingam C <ramalingam.c@intel.com>
-Cc: Arend van Spriel <aspriel@gmail.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc: Joe Perches <joe@perches.com>
-Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Parvi Kaustubhi <pkaustub@cisco.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/base/bus.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/infiniband/hw/usnic/usnic_ib_verbs.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/base/bus.c b/drivers/base/bus.c
-index 8bfd27ec73d6..585e2e1c9c8f 100644
---- a/drivers/base/bus.c
-+++ b/drivers/base/bus.c
-@@ -31,6 +31,9 @@ static struct kset *system_kset;
+diff --git a/drivers/infiniband/hw/usnic/usnic_ib_verbs.c b/drivers/infiniband/hw/usnic/usnic_ib_verbs.c
+index 9973ac893635..3db232429630 100644
+--- a/drivers/infiniband/hw/usnic/usnic_ib_verbs.c
++++ b/drivers/infiniband/hw/usnic/usnic_ib_verbs.c
+@@ -334,13 +334,16 @@ int usnic_ib_query_port(struct ib_device *ibdev, u8 port,
  
- #define to_drv_attr(_attr) container_of(_attr, struct driver_attribute, attr)
+ 	usnic_dbg("\n");
  
-+#define DRIVER_ATTR_IGNORE_LOCKDEP(_name, _mode, _show, _store) \
-+	struct driver_attribute driver_attr_##_name =		\
-+		__ATTR_IGNORE_LOCKDEP(_name, _mode, _show, _store)
+-	mutex_lock(&us_ibdev->usdev_lock);
+ 	if (ib_get_eth_speed(ibdev, port, &props->active_speed,
+-			     &props->active_width)) {
+-		mutex_unlock(&us_ibdev->usdev_lock);
++			     &props->active_width))
+ 		return -EINVAL;
+-	}
  
- static int __must_check bus_rescan_devices_helper(struct device *dev,
- 						void *data);
-@@ -195,7 +198,7 @@ static ssize_t unbind_store(struct device_driver *drv, const char *buf,
- 	bus_put(bus);
- 	return err;
- }
--static DRIVER_ATTR_WO(unbind);
-+static DRIVER_ATTR_IGNORE_LOCKDEP(unbind, S_IWUSR, NULL, unbind_store);
++	/*
++	 * usdev_lock is acquired after (and not before) ib_get_eth_speed call
++	 * because acquiring rtnl_lock in ib_get_eth_speed, while holding
++	 * usdev_lock could lead to a deadlock.
++	 */
++	mutex_lock(&us_ibdev->usdev_lock);
+ 	/* props being zeroed by the caller, avoid zeroing it here */
  
- /*
-  * Manually attach a device to a driver.
-@@ -231,7 +234,7 @@ static ssize_t bind_store(struct device_driver *drv, const char *buf,
- 	bus_put(bus);
- 	return err;
- }
--static DRIVER_ATTR_WO(bind);
-+static DRIVER_ATTR_IGNORE_LOCKDEP(bind, S_IWUSR, NULL, bind_store);
- 
- static ssize_t show_drivers_autoprobe(struct bus_type *bus, char *buf)
- {
+ 	props->lid = 0;
 -- 
 2.19.1
 
