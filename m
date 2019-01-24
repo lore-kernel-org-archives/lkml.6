@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0BA3C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 13:01:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C68AC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 13:01:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEB4A21872
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 13:01:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3679321872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 13:01:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728010AbfAXNBA (ORCPT
+        id S1728249AbfAXNBH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 08:01:00 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37718 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728040AbfAXNAO (ORCPT
+        Thu, 24 Jan 2019 08:01:07 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56924 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728023AbfAXNAN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 08:00:14 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0OCsSlH025555
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 08:00:13 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2q7cpqkwf1-1
+        Thu, 24 Jan 2019 08:00:13 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0OCsUin082688
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 08:00:12 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2q7dgss4f7-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 08:00:13 -0500
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 08:00:12 -0500
 Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <mimu@linux.ibm.com>;
         Thu, 24 Jan 2019 13:00:10 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 24 Jan 2019 13:00:07 -0000
+        Thu, 24 Jan 2019 13:00:08 -0000
 Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0OD05HD30474396
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0OD06lU52428866
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 24 Jan 2019 13:00:05 GMT
+        Thu, 24 Jan 2019 13:00:06 GMT
 Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 42A865205A;
-        Thu, 24 Jan 2019 13:00:05 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 9681A52054;
+        Thu, 24 Jan 2019 13:00:06 +0000 (GMT)
 Received: from s38lp84.lnxne.boe (unknown [9.152.108.100])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id EE48552051;
-        Thu, 24 Jan 2019 13:00:04 +0000 (GMT)
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 4CC775206D;
+        Thu, 24 Jan 2019 13:00:06 +0000 (GMT)
 From:   Michael Mueller <mimu@linux.ibm.com>
 To:     KVM Mailing List <kvm@vger.kernel.org>
 Cc:     Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
@@ -58,115 +58,167 @@ Cc:     Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
         Halil Pasic <pasic@linux.ibm.com>,
         Pierre Morel <pmorel@linux.ibm.com>,
         Michael Mueller <mimu@linux.ibm.com>
-Subject: [PATCH v6 08/13] s390/cio: add function chsc_sgib()
-Date:   Thu, 24 Jan 2019 13:59:34 +0100
+Subject: [PATCH v6 09/13] KVM: s390: add the GIB and its related life-cyle functions
+Date:   Thu, 24 Jan 2019 13:59:35 +0100
 X-Mailer: git-send-email 2.13.4
 In-Reply-To: <20190124125939.130763-1-mimu@linux.ibm.com>
 References: <20190124125939.130763-1-mimu@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 19012413-0028-0000-0000-0000033D851A
+x-cbid: 19012413-0008-0000-0000-000002B565B2
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012413-0029-0000-0000-000023FAC6C5
-Message-Id: <20190124125939.130763-9-mimu@linux.ibm.com>
+x-cbparentid: 19012413-0009-0000-0000-0000222199FD
+Message-Id: <20190124125939.130763-10-mimu@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-24_07:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=697 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1901240095
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch implements the Set Guest Information Block operation
-to request association or disassociation of a Guest Information
-Block (GIB) with the Adapter Interruption Facility. The operation
-is required to receive GIB alert interrupts for guest adapters
-in conjunction with AIV and GISA.
+The Guest Information Block (GIB) links the GISA of all guests
+that have adapter interrupts pending. These interrupts cannot be
+delivered because all vcpus of these guests are currently in WAIT
+state or have masked the respective Innterruption Sub Class (ISC).
+If enabled, a GIB alert is issued on the host to schedule these
+guests to run suitable vcpus to consume the pending interruptions.
+
+This mechanism allows to process adapter interrupts for currently
+not running guests.
+
+The GIB is created during host initialization and associated with
+the Adapter Interruption Facility in case an Adapter Interruption
+Virtualization Facility is available.
+
+The GIB initialization and thus the activation of the related code
+will be done in an upcoming patch of this series.
 
 Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
-Reviewed-by: Sebastian Ott <sebott@linux.ibm.com>
-Reviewed-by: Pierre Morel <pmorel@linux.ibm.com>
+Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
 Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Acked-by: Halil Pasic <pasic@linux.ibm.com>
-Acked-by: Janosch Frank <frankja@linux.ibm.com>
-Acked-by: Cornelia Huck <cohuck@redhat.com>
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+Reviewed-by: Pierre Morel <pmorel@linux.ibm.com>
 ---
- arch/s390/include/asm/cio.h |  1 +
- drivers/s390/cio/chsc.c     | 37 +++++++++++++++++++++++++++++++++++++
- drivers/s390/cio/chsc.h     |  1 +
- 3 files changed, 39 insertions(+)
+ arch/s390/include/asm/kvm_host.h |  9 +++++++++
+ arch/s390/kvm/interrupt.c        | 43 ++++++++++++++++++++++++++++++++++++++++
+ arch/s390/kvm/kvm-s390.c         |  1 +
+ arch/s390/kvm/kvm-s390.h         |  2 ++
+ 4 files changed, 55 insertions(+)
 
-diff --git a/arch/s390/include/asm/cio.h b/arch/s390/include/asm/cio.h
-index 225667652069..1727180e8ca1 100644
---- a/arch/s390/include/asm/cio.h
-+++ b/arch/s390/include/asm/cio.h
-@@ -331,5 +331,6 @@ extern void css_schedule_reprobe(void);
- /* Function from drivers/s390/cio/chsc.c */
- int chsc_sstpc(void *page, unsigned int op, u16 ctrl, u64 *clock_delta);
- int chsc_sstpi(void *page, void *result, size_t size);
-+int chsc_sgib(u32 origin);
+diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
+index 0941571d34eb..397af0d33539 100644
+--- a/arch/s390/include/asm/kvm_host.h
++++ b/arch/s390/include/asm/kvm_host.h
+@@ -784,6 +784,15 @@ struct kvm_s390_gisa {
+ 	};
+ };
  
- #endif
-diff --git a/drivers/s390/cio/chsc.c b/drivers/s390/cio/chsc.c
-index a0baee25134c..4159c63a5fd2 100644
---- a/drivers/s390/cio/chsc.c
-+++ b/drivers/s390/cio/chsc.c
-@@ -1382,3 +1382,40 @@ int chsc_pnso_brinfo(struct subchannel_id schid,
- 	return chsc_error_from_response(brinfo_area->response.code);
++struct kvm_s390_gib {
++	u32 alert_list_origin;
++	u32 reserved01;
++	u8:5;
++	u8  nisc:3;
++	u8  reserved03[3];
++	u32 reserved04[5];
++};
++
+ /*
+  * sie_page2 has to be allocated as DMA because fac_list, crycb and
+  * gisa need 31bit addresses in the sie control block.
+diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
+index ee91d1de0036..5efcd9e2cf8f 100644
+--- a/arch/s390/kvm/interrupt.c
++++ b/arch/s390/kvm/interrupt.c
+@@ -7,6 +7,9 @@
+  *    Author(s): Carsten Otte <cotte@de.ibm.com>
+  */
+ 
++#define KMSG_COMPONENT "kvm-s390"
++#define pr_fmt(fmt) KMSG_COMPONENT ": " fmt
++
+ #include <linux/interrupt.h>
+ #include <linux/kvm_host.h>
+ #include <linux/hrtimer.h>
+@@ -31,6 +34,8 @@
+ #define PFAULT_DONE 0x0680
+ #define VIRTIO_PARAM 0x0d00
+ 
++static struct kvm_s390_gib *gib;
++
+ /* handle external calls via sigp interpretation facility */
+ static int sca_ext_call_pending(struct kvm_vcpu *vcpu, int *src_id)
+ {
+@@ -2914,3 +2919,41 @@ void kvm_s390_gisa_destroy(struct kvm *kvm)
+ {
+ 	kvm->arch.gisa_int.origin = NULL;
  }
- EXPORT_SYMBOL_GPL(chsc_pnso_brinfo);
 +
-+int chsc_sgib(u32 origin)
++void kvm_s390_gib_destroy(void)
 +{
-+	struct {
-+		struct chsc_header request;
-+		u16 op;
-+		u8  reserved01[2];
-+		u8  reserved02:4;
-+		u8  fmt:4;
-+		u8  reserved03[7];
-+		/* operation data area begin */
-+		u8  reserved04[4];
-+		u32 gib_origin;
-+		u8  reserved05[10];
-+		u8  aix;
-+		u8  reserved06[4029];
-+		struct chsc_header response;
-+		u8  reserved07[4];
-+	} *sgib_area;
-+	int ret;
-+
-+	spin_lock_irq(&chsc_page_lock);
-+	memset(chsc_page, 0, PAGE_SIZE);
-+	sgib_area = chsc_page;
-+	sgib_area->request.length = 0x0fe0;
-+	sgib_area->request.code = 0x0021;
-+	sgib_area->op = 0x1;
-+	sgib_area->gib_origin = origin;
-+
-+	ret = chsc(sgib_area);
-+	if (ret == 0)
-+		ret = chsc_error_from_response(sgib_area->response.code);
-+	spin_unlock_irq(&chsc_page_lock);
-+
-+	return ret;
++	if (!gib)
++		return;
++	chsc_sgib(0);
++	free_page((unsigned long)gib);
++	gib = NULL;
 +}
-+EXPORT_SYMBOL_GPL(chsc_sgib);
-diff --git a/drivers/s390/cio/chsc.h b/drivers/s390/cio/chsc.h
-index 78aba8d94eec..e57d68e325a3 100644
---- a/drivers/s390/cio/chsc.h
-+++ b/drivers/s390/cio/chsc.h
-@@ -164,6 +164,7 @@ int chsc_get_channel_measurement_chars(struct channel_path *chp);
- int chsc_ssqd(struct subchannel_id schid, struct chsc_ssqd_area *ssqd);
- int chsc_sadc(struct subchannel_id schid, struct chsc_scssc_area *scssc,
- 	      u64 summary_indicator_addr, u64 subchannel_indicator_addr);
-+int chsc_sgib(u32 origin);
- int chsc_error_from_response(int response);
++
++int kvm_s390_gib_init(u8 nisc)
++{
++	int rc = 0;
++
++	if (!css_general_characteristics.aiv) {
++		KVM_EVENT(3, "%s", "gib not initialized, no AIV facility");
++		goto out;
++	}
++
++	gib = (struct kvm_s390_gib *)get_zeroed_page(GFP_KERNEL | GFP_DMA);
++	if (!gib) {
++		rc = -ENOMEM;
++		goto out;
++	}
++
++	gib->nisc = nisc;
++	if (chsc_sgib((u32)(u64)gib)) {
++		pr_err("Associating the GIB with the AIV facility failed\n");
++		free_page((unsigned long)gib);
++		gib = NULL;
++		rc = -EIO;
++		goto out;
++	}
++
++	KVM_EVENT(3, "gib 0x%pK (nisc=%d) initialized", gib, gib->nisc);
++out:
++	return rc;
++}
+diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+index 4c855cb67699..118d4c0bbb8e 100644
+--- a/arch/s390/kvm/kvm-s390.c
++++ b/arch/s390/kvm/kvm-s390.c
+@@ -444,6 +444,7 @@ int kvm_arch_init(void *opaque)
  
- int chsc_siosl(struct subchannel_id schid);
+ void kvm_arch_exit(void)
+ {
++	kvm_s390_gib_destroy();
+ 	debug_unregister(kvm_s390_dbf);
+ }
+ 
+diff --git a/arch/s390/kvm/kvm-s390.h b/arch/s390/kvm/kvm-s390.h
+index 72ef87799593..6d9448dbd052 100644
+--- a/arch/s390/kvm/kvm-s390.h
++++ b/arch/s390/kvm/kvm-s390.h
+@@ -381,6 +381,8 @@ int kvm_s390_get_irq_state(struct kvm_vcpu *vcpu,
+ void kvm_s390_gisa_init(struct kvm *kvm);
+ void kvm_s390_gisa_clear(struct kvm *kvm);
+ void kvm_s390_gisa_destroy(struct kvm *kvm);
++int kvm_s390_gib_init(u8 nisc);
++void kvm_s390_gib_destroy(void);
+ 
+ /* implemented in guestdbg.c */
+ void kvm_s390_backup_guest_per_regs(struct kvm_vcpu *vcpu);
 -- 
 2.13.4
 
