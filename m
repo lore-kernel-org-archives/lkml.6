@@ -4,55 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B950C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:01:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DEABC282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:01:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1920521726
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:01:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BBA521726
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:01:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="o7lyrIkT"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="J/w9SOD6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732361AbfAXUBT (ORCPT
+        id S1732394AbfAXUBY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 15:01:19 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:34082 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729277AbfAXUBR (ORCPT
+        Thu, 24 Jan 2019 15:01:24 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:37701 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730021AbfAXUBX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 15:01:17 -0500
-Received: by mail-pf1-f196.google.com with SMTP id h3so3549788pfg.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 12:01:16 -0800 (PST)
+        Thu, 24 Jan 2019 15:01:23 -0500
+Received: by mail-pf1-f193.google.com with SMTP id y126so3532404pfb.4
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 12:01:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=8SYjzJk1Ajw/4LSvmuyBM6xgYSP98STN7cje2swaDiQ=;
-        b=o7lyrIkTLas5a3xgc3B+h3z+ZF1kayWCYA+DRkIO5xFRgGUGwXFhXy4u65Kg8OdoW7
-         PHTG65m5HHlswX7p3b0zjZCTvqG+lf/LxEQHuRQI0F1nHBdA+ywmODr3C9+hePv4d5GZ
-         fPcIILMmRq3oflwNoVMKkNL2hnpIRqihybDbA=
+        bh=viWBxNLdmx5hdu4igYEdtrD9NNJ9I5QzFtzjPLFp1Zg=;
+        b=J/w9SOD6T4AdblpX5nwobBrlOLEkBmczgfC3EY9vW9U5isU0HSHZCQg04H+zLA8Amt
+         ByrPzdOucoh0P1rugWULznnraWoSn7rsrzqZud/+tHUIuLElI4DOx6twc5+bMHFdvdIq
+         Okztp/hQTyVgLiSWJe+rS0nY8Sw6pUepTXGKE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=8SYjzJk1Ajw/4LSvmuyBM6xgYSP98STN7cje2swaDiQ=;
-        b=RcOJRzuQaa1vtiW5m76Us6txjFiY4MPWDr8XV25VahdOarmw/pP29jsH2EQdYMAfXB
-         k8GnQdm4OEravnw4EbrvIj+AzvCJULoz4iMjE/GAFgJRL6Bm+qIH8Gasc5GyUCsr+ASt
-         RnR+3Q6wQrMJiWJCvBESvHXs3NNOlQuwrY1+Bkm1Vw0gJGup9NjtXFR1gX5kY64BeKQe
-         77Kh+W/qUmPKJORIqCg1CkztKv8Ydv1kgIGhlRkMHogEAYln46k7lKhuUt5jIS1loE+j
-         WVBF5E2r2t8fTwmXtvisiHqu1Cx+yRu5sztQ5Cmtkdb+A+jdSc5VwotUHTLjcUFSiAeU
-         3SbA==
-X-Gm-Message-State: AJcUukcN4YQPjAGyQTdERDy8xE5yOi30eu97EQnlNCpnjVLFz+MNsG55
-        HxiLZGfqFb7rE7CdeToW3i8rKQ==
-X-Google-Smtp-Source: ALg8bN5cmk131g1Yx+/XYabfpyhyd48ETdfvdb+yZtMMsEbaOYRmvgmU9pzpfNN5bjLaF9GhQ5eJtw==
-X-Received: by 2002:a65:590b:: with SMTP id f11mr7269183pgu.60.1548360076442;
-        Thu, 24 Jan 2019 12:01:16 -0800 (PST)
+        bh=viWBxNLdmx5hdu4igYEdtrD9NNJ9I5QzFtzjPLFp1Zg=;
+        b=ZkPSWtw2IIIVCqSO87DMJy939V16vUsi/UeUDL7NNmpl16nMJK6ERGIVlNlFntlKvi
+         ye/8g2ZLZOVgll4ltOeK9npIipXvYVpfJKy8Rp3fpcJQrgDUNCTTXgcDj56Jir5CftBu
+         Vf0kZMcaN9UZfPA2b1cCNc2/fDbKpQf+VG4xkGlp1VM3lHoBCUP7IyNzbuTNfjzfvfPC
+         yF5avxgA4l6ks4UVa3viXPlN09Yh9hYsyA8GhwiKezs43tzB/y+lSZU4D/aHIiOKxy2s
+         GIMvWizRmnHosChzeQ4XaOD1EcLQ25elT7mpnIOeIKVGrgPodvajhaqHMnrOKhYvMQu8
+         M3+A==
+X-Gm-Message-State: AJcUuke6lFiYfm2vxx0DKDg35ZBxIivD7cBwvbwgUzWGlxMKs0ITklMX
+        PAXzJefe2WB1i+RihKblFSB3VA==
+X-Google-Smtp-Source: ALg8bN5A1xFJznW/r2sFKdv7KvB++13U9DACtd4l4I48QlIcvSwutN75lpAJXn4lrCOTyle7kzJtzA==
+X-Received: by 2002:a63:e950:: with SMTP id q16mr7215772pgj.138.1548360082660;
+        Thu, 24 Jan 2019 12:01:22 -0800 (PST)
 Received: from localhost.localdomain ([115.97.179.75])
-        by smtp.gmail.com with ESMTPSA id x11sm61637003pfe.72.2019.01.24.12.01.10
+        by smtp.gmail.com with ESMTPSA id x11sm61637003pfe.72.2019.01.24.12.01.16
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 12:01:15 -0800 (PST)
+        Thu, 24 Jan 2019 12:01:22 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         David Airlie <airlied@linux.ie>,
@@ -66,9 +66,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Michael Trimarchi <michael@amarulasolutions.com>,
         linux-amarula@amarulasolutions.com, linux-sunxi@googlegroups.com,
         Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v6 21/22] drm/sun4i: sun6i_mipi_dsi: Fix DSI hfp timing value
-Date:   Fri, 25 Jan 2019 01:28:59 +0530
-Message-Id: <20190124195900.22620-22-jagan@amarulasolutions.com>
+Subject: [PATCH v6 22/22] arm64: dts: allwinner: a64-amarula-relic: Add Techstar TS8550B MIPI-DSI panel
+Date:   Fri, 25 Jan 2019 01:29:00 +0530
+Message-Id: <20190124195900.22620-23-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20190124195900.22620-1-jagan@amarulasolutions.com>
 References: <20190124195900.22620-1-jagan@amarulasolutions.com>
@@ -79,56 +79,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Current driver is calculating hfp maximum value by subtracting
-htotal with hsync_end which is front back value, but the
-hpp refers to front porch.
+Amarula A64-Relic board by default bound with Techstar TS8550B
+MIPI-DSI panel, add support for it.
 
-Front porch value is calculating by subtracting hsync_start with
-hdisplay as per drm_mode timings, and BSP code from BPI-M64-bsp
-is eventually following the same.
-
-BPI-M64-bsp is computing hfp as (from linux-sunxi/
-drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
-
-dsi_hbp = (hbp-hspw)*dsi_pixel_bits[format]/8 - (4+2);
-dsi_hact = x * dsi_pixel_bits[format]/8;
-dsi_hblk = (ht-hspw)*dsi_pixel_bits[format]/8-(4+4+2);
-dsi_hfp = dsi_hblk - (4+dsi_hact+2) - (4+dsi_hbp+2);
-
-Example,
-u32 fmt = dsi_pixel_bits[format]/8;
-=> ((ht-hspw)*fmt - 10) - (6 + x * fmt) - (6 + (hbp-hspw)*fmt - 6)
-=> (ht - hspw - x - (hbp - hspw)) * fmt - 16
-=> (ht - x - hbp) * fmt - 16
-=> (ht - x - (timmings->hor_total_time - timmings->hor_front_porch - x)
-* fmt - 16
-=> (timmings->hor_total_time - x - timmings->hor_total_time +
-timmings->hor_front_porch + x) * fmt - 16
-=> timmings->hor_front_porch * fmt - 16
-
-So, update the DSI hfp timing accordingly.
-
-Tested on 2-lane, 4-lane MIPI-DSI LCD panels.
+DSI panel connected via board DSI port with,
+- DLDO2 as VCC supply
+- DLDO2 as IOVCC supply
+- DLDO1 as VCC-DSI supply
+- PD24 gpio for reset pin
+- PD23 gpio for backlight enable pin
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ .../allwinner/sun50i-a64-amarula-relic.dts    | 39 +++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-index e24719cabba2..9f72eb5f54a6 100644
---- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-+++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-@@ -586,7 +586,8 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi *dsi,
- 	 */
- #define HFP_PACKET_OVERHEAD	6
- 	hfp = max((unsigned int)HFP_PACKET_OVERHEAD,
--		  (mode->htotal - mode->hsync_end) * Bpp - HFP_PACKET_OVERHEAD);
-+		  (mode->hsync_start - mode->hdisplay) * Bpp -
-+		  HFP_PACKET_OVERHEAD);
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
+index f180c841ac3c..703055f2a4fb 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
+@@ -9,6 +9,7 @@
+ #include "sun50i-a64.dtsi"
  
- 	/*
- 	 * hblk seems to be the line + porches length.
+ #include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/pwm/pwm.h>
+ 
+ / {
+ 	model = "Amarula A64-Relic";
+@@ -18,6 +19,14 @@
+ 		serial0 = &uart0;
+ 	};
+ 
++	backlight: backlight {
++		compatible = "pwm-backlight";
++		pwms = <&pwm 0 50000 PWM_POLARITY_INVERTED>;
++		brightness-levels = <1 2 4 8 16 32 64 128 512>;
++		default-brightness-level = <2>;
++		enable-gpios = <&pio 3 23 GPIO_ACTIVE_HIGH>; /* LCD-BL-EN: PD23 */
++	};
++
+ 	chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
+@@ -83,6 +92,30 @@
+ 	};
+ };
+ 
++&de {
++	status = "okay";
++};
++
++&dphy {
++	status = "okay";
++};
++
++&dsi {
++	vcc-dsi-supply = <&reg_dldo1>;
++	#address-cells = <1>;
++	#size-cells = <0>;
++	status = "okay";
++
++	panel@0 {
++		compatible = "techstar,ts8550b", "sitronix,st7701";
++		reg = <0>;
++		VCC-supply = <&reg_dldo2>;
++		IOVCC-supply = <&reg_dldo2>;
++		reset-gpios = <&pio 3 24 GPIO_ACTIVE_HIGH>; /* LCD-RST: PD24 */
++		backlight = <&backlight>;
++	};
++};
++
+ &ehci0 {
+ 	status = "okay";
+ };
+@@ -160,6 +193,12 @@
+ 	status = "okay";
+ };
+ 
++&pwm {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pwm_pin>;
++	status = "okay";
++};
++
+ &r_rsb {
+ 	status = "okay";
+ 
 -- 
 2.18.0.321.gffc6fa0e3
 
