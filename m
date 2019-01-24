@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E2C6C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:25:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E15D5C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:25:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBCB621901
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:25:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95877218EA
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:25:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548357939;
-	bh=zJpahbNB8P9ywSTP9A2wxOfsWvMJ2dowjwM4bu9WftY=;
+	s=default; t=1548357946;
+	bh=LKTwQ8m4XvvutyNx2xRviwxEt5AIyu2P3GywypQISQQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qSkds4w1bgIqh5PtCPrU3UsHRG4I06duBEDQUPk96FphLD9t9G7xzDxIq3kC0xOmV
-	 awKLwAvrvi1tnqh/sdACM+IqgED51Qw3Ehv+ypeVRvdCYcBPnUhgUNe9mG0q8xTvsH
-	 pbG/Nc+9+XMCsAzH5OWNhKHkWssx+ctwCN+VB3FE=
+	b=w9NAqpuqc7RX0LApXir9Ll2tEfsncPMg/OCZPW93Yj6QPUisl6MPpoHa1S24k7BZx
+	 WzW6iUBBWVKWGcankA/nnLbLgNacE9nCFTnvfnwr202NKuQrNyKEViqxWy9hR4jv99
+	 7nsvRkBdKHcIoyuzQ+f2kQ071pzuQomeF7LYhNPM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730452AbfAXTZi (ORCPT
+        id S1730454AbfAXTZo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:25:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51264 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:25:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730405AbfAXTZf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:25:35 -0500
+        id S1730429AbfAXTZi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:25:38 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA470217D7;
-        Thu, 24 Jan 2019 19:25:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 83E7A218EA;
+        Thu, 24 Jan 2019 19:25:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548357934;
-        bh=zJpahbNB8P9ywSTP9A2wxOfsWvMJ2dowjwM4bu9WftY=;
+        s=default; t=1548357937;
+        bh=LKTwQ8m4XvvutyNx2xRviwxEt5AIyu2P3GywypQISQQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DV/xN7WK6N+Z3ETlTad5G5jP6jg7XwbUc/ks6kPqpRY6gTJBwkA9+JijN9CcKqaxV
-         IZVEOcff64dtn/WOq9rxoPsWA38FRU8a6wNfWx3POpGuG785yrI9/X/WWVMMkP1p4r
-         eLy8pYvjkbex4/fkAbNV4EJ7n97WNSjIVhrtQbgg=
+        b=vQJn/ERaWZWFMMxXaT5i+Kqg1VqdgFqSPGmNPQvtdu1WKpldiIjHx5uNcEXIQp8UW
+         3M86H8BxB08FzhqIdPTyU1oXRd6gQ/c4X3wllKBC4whN/OgHrpWwoJPFVt0IIF5rwH
+         GaNgOq1SGN5LXsGyMvcT+sFxFuSOZJTv8FBSxwZs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shawn Lin <shawn.lin@rock-chips.com>,
+        stable@vger.kernel.org, Chao Yu <chao2.yu@samsung.com>,
         Jaegeuk Kim <jaegeuk@kernel.org>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 005/104] f2fs: move sanity checking of cp into get_valid_checkpoint
-Date:   Thu, 24 Jan 2019 20:18:54 +0100
-Message-Id: <20190124190155.481180967@linuxfoundation.org>
+Subject: [PATCH 4.4 006/104] f2fs: fix to convert inline directory correctly
+Date:   Thu, 24 Jan 2019 20:18:55 +0100
+Message-Id: <20190124190155.588898961@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190154.968308875@linuxfoundation.org>
 References: <20190124190154.968308875@linuxfoundation.org>
@@ -66,85 +65,370 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Shawn Lin <shawn.lin@rock-chips.com>
+From: Chao Yu <chao2.yu@samsung.com>
 
-commit 984ec63c5a82a07ad4490ecc69bebacd23f6fa64 upstream.
+With below serials, we will lose parts of dirents:
 
->From the function name of get_valid_checkpoint, it seems to return
-the valid cp or NULL for caller to check. If no valid one is found,
-f2fs_fill_super will print the err log. But if get_valid_checkpoint
-get one valid(the return value indicate that it's valid, however actually
-it is invalid after sanity checking), then print another similar err
-log. That seems strange. Let's keep sanity checking inside the procedure
-of geting valid cp. Another improvement we gained from this move is
-that even the large volume is supported, we check the cp in advanced
-to skip the following procedure if failing the sanity checking.
+1) mount f2fs with inline_dentry option
+2) echo 1 > /sys/fs/f2fs/sdX/dir_level
+3) mkdir dir
+4) touch 180 files named [1-180] in dir
+5) touch 181 in dir
+6) echo 3 > /proc/sys/vm/drop_caches
+7) ll dir
 
-Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+ls: cannot access 2: No such file or directory
+ls: cannot access 4: No such file or directory
+ls: cannot access 5: No such file or directory
+ls: cannot access 6: No such file or directory
+ls: cannot access 8: No such file or directory
+ls: cannot access 9: No such file or directory
+...
+total 360
+drwxr-xr-x 2 root root 4096 Feb 19 15:12 ./
+drwxr-xr-x 3 root root 4096 Feb 19 15:11 ../
+-rw-r--r-- 1 root root    0 Feb 19 15:12 1
+-rw-r--r-- 1 root root    0 Feb 19 15:12 10
+-rw-r--r-- 1 root root    0 Feb 19 15:12 100
+-????????? ? ?    ?       ?            ? 101
+-????????? ? ?    ?       ?            ? 102
+-????????? ? ?    ?       ?            ? 103
+...
+
+The reason is: when doing the inline dir conversion, we didn't consider
+that directory has hierarchical hash structure which can be configured
+through sysfs interface 'dir_level'.
+
+By default, dir_level of directory inode is 0, it means we have one bucket
+in hash table located in first level, all dirents will be hashed in this
+bucket, so it has no problem for us to do the duplication simply between
+inline dentry page and converted normal dentry page.
+
+However, if we configured dir_level with the value N (greater than 0), it
+will expand the bucket number of first level hash table by 2^N - 1, it
+hashs dirents into different buckets according their hash value, if we
+still move all dirents to first bucket, it makes incorrent locating for
+inline dirents, the result is, although we can iterate all dirents through
+->readdir, we can't stat some of them in ->lookup which based on hash
+table searching.
+
+This patch fixes this issue by rehashing dirents into correct position
+when converting inline directory.
+
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+[bwh: Backported to 4.4:
+ - Keep using f2fs_crypto functions instead of generic fscrypt API
+ - Use remove_dirty_dir_inode() instead of remove_dirty_inode()
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/checkpoint.c |    4 ++++
- fs/f2fs/f2fs.h       |    1 +
- fs/f2fs/super.c      |   10 +---------
- 3 files changed, 6 insertions(+), 9 deletions(-)
+ fs/f2fs/dir.c           |   87 +++++++++++++++++++++++---------------------
+ fs/f2fs/f2fs.h          |    4 +-
+ fs/f2fs/inline.c        |   94 +++++++++++++++++++++++++++++++++++++++++++++++-
+ include/linux/f2fs_fs.h |    2 +
+ 4 files changed, 144 insertions(+), 43 deletions(-)
 
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -696,6 +696,10 @@ int get_valid_checkpoint(struct f2fs_sb_
- 	cp_block = (struct f2fs_checkpoint *)page_address(cur_page);
- 	memcpy(sbi->ckpt, cp_block, blk_size);
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -48,7 +48,6 @@ unsigned char f2fs_filetype_table[F2FS_F
+ 	[F2FS_FT_SYMLINK]	= DT_LNK,
+ };
  
-+	/* Sanity checking of checkpoint */
-+	if (sanity_check_ckpt(sbi))
-+		goto fail_no_cp;
-+
- 	if (cp_blks <= 1)
- 		goto done;
- 
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1718,6 +1718,7 @@ int f2fs_commit_super(struct f2fs_sb_inf
- int f2fs_sync_fs(struct super_block *, int);
- extern __printf(3, 4)
- void f2fs_msg(struct super_block *, const char *, const char *, ...);
-+int sanity_check_ckpt(struct f2fs_sb_info *sbi);
- 
- /*
-  * hash.c
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1073,7 +1073,7 @@ static int sanity_check_raw_super(struct
- 	return 0;
+-#define S_SHIFT 12
+ static unsigned char f2fs_type_by_mode[S_IFMT >> S_SHIFT] = {
+ 	[S_IFREG >> S_SHIFT]	= F2FS_FT_REG_FILE,
+ 	[S_IFDIR >> S_SHIFT]	= F2FS_FT_DIR,
+@@ -64,6 +63,13 @@ void set_de_type(struct f2fs_dir_entry *
+ 	de->file_type = f2fs_type_by_mode[(mode & S_IFMT) >> S_SHIFT];
  }
  
--static int sanity_check_ckpt(struct f2fs_sb_info *sbi)
-+int sanity_check_ckpt(struct f2fs_sb_info *sbi)
++unsigned char get_de_type(struct f2fs_dir_entry *de)
++{
++	if (de->file_type < F2FS_FT_MAX)
++		return f2fs_filetype_table[de->file_type];
++	return DT_UNKNOWN;
++}
++
+ static unsigned long dir_block_index(unsigned int level,
+ 				int dir_level, unsigned int idx)
  {
- 	unsigned int total, fsmeta;
- 	struct f2fs_super_block *raw_super = F2FS_RAW_SUPER(sbi);
-@@ -1358,13 +1358,6 @@ try_onemore:
- 		goto free_meta_inode;
+@@ -519,11 +525,7 @@ void f2fs_update_dentry(nid_t ino, umode
+ 		test_and_set_bit_le(bit_pos + i, (void *)d->bitmap);
+ }
+ 
+-/*
+- * Caller should grab and release a rwsem by calling f2fs_lock_op() and
+- * f2fs_unlock_op().
+- */
+-int __f2fs_add_link(struct inode *dir, const struct qstr *name,
++int f2fs_add_regular_entry(struct inode *dir, const struct qstr *new_name,
+ 				struct inode *inode, nid_t ino, umode_t mode)
+ {
+ 	unsigned int bit_pos;
+@@ -536,28 +538,11 @@ int __f2fs_add_link(struct inode *dir, c
+ 	struct f2fs_dentry_block *dentry_blk = NULL;
+ 	struct f2fs_dentry_ptr d;
+ 	struct page *page = NULL;
+-	struct f2fs_filename fname;
+-	struct qstr new_name;
+-	int slots, err;
+-
+-	err = f2fs_fname_setup_filename(dir, name, 0, &fname);
+-	if (err)
+-		return err;
+-
+-	new_name.name = fname_name(&fname);
+-	new_name.len = fname_len(&fname);
+-
+-	if (f2fs_has_inline_dentry(dir)) {
+-		err = f2fs_add_inline_entry(dir, &new_name, inode, ino, mode);
+-		if (!err || err != -EAGAIN)
+-			goto out;
+-		else
+-			err = 0;
+-	}
++	int slots, err = 0;
+ 
+ 	level = 0;
+-	slots = GET_DENTRY_SLOTS(new_name.len);
+-	dentry_hash = f2fs_dentry_hash(&new_name, NULL);
++	slots = GET_DENTRY_SLOTS(new_name->len);
++	dentry_hash = f2fs_dentry_hash(new_name, NULL);
+ 
+ 	current_depth = F2FS_I(dir)->i_current_depth;
+ 	if (F2FS_I(dir)->chash == dentry_hash) {
+@@ -566,10 +551,8 @@ int __f2fs_add_link(struct inode *dir, c
  	}
  
--	/* sanity checking of checkpoint */
--	err = -EINVAL;
--	if (sanity_check_ckpt(sbi)) {
--		f2fs_msg(sb, KERN_ERR, "Invalid F2FS checkpoint");
--		goto free_cp;
+ start:
+-	if (unlikely(current_depth == MAX_DIR_HASH_DEPTH)) {
+-		err = -ENOSPC;
+-		goto out;
 -	}
++	if (unlikely(current_depth == MAX_DIR_HASH_DEPTH))
++		return -ENOSPC;
+ 
+ 	/* Increase the depth, if required */
+ 	if (level == current_depth)
+@@ -583,10 +566,8 @@ start:
+ 
+ 	for (block = bidx; block <= (bidx + nblock - 1); block++) {
+ 		dentry_page = get_new_data_page(dir, NULL, block, true);
+-		if (IS_ERR(dentry_page)) {
+-			err = PTR_ERR(dentry_page);
+-			goto out;
+-		}
++		if (IS_ERR(dentry_page))
++			return PTR_ERR(dentry_page);
+ 
+ 		dentry_blk = kmap(dentry_page);
+ 		bit_pos = room_for_filename(&dentry_blk->dentry_bitmap,
+@@ -606,7 +587,7 @@ add_dentry:
+ 
+ 	if (inode) {
+ 		down_write(&F2FS_I(inode)->i_sem);
+-		page = init_inode_metadata(inode, dir, &new_name, NULL);
++		page = init_inode_metadata(inode, dir, new_name, NULL);
+ 		if (IS_ERR(page)) {
+ 			err = PTR_ERR(page);
+ 			goto fail;
+@@ -616,7 +597,7 @@ add_dentry:
+ 	}
+ 
+ 	make_dentry_ptr(NULL, &d, (void *)dentry_blk, 1);
+-	f2fs_update_dentry(ino, mode, &d, &new_name, dentry_hash, bit_pos);
++	f2fs_update_dentry(ino, mode, &d, new_name, dentry_hash, bit_pos);
+ 
+ 	set_page_dirty(dentry_page);
+ 
+@@ -638,7 +619,34 @@ fail:
+ 	}
+ 	kunmap(dentry_page);
+ 	f2fs_put_page(dentry_page, 1);
+-out:
++
++	return err;
++}
++
++/*
++ * Caller should grab and release a rwsem by calling f2fs_lock_op() and
++ * f2fs_unlock_op().
++ */
++int __f2fs_add_link(struct inode *dir, const struct qstr *name,
++				struct inode *inode, nid_t ino, umode_t mode)
++{
++	struct f2fs_filename fname;
++	struct qstr new_name;
++	int err;
++
++	err = f2fs_fname_setup_filename(dir, name, 0, &fname);
++	if (err)
++		return err;
++
++	new_name.name = fname_name(&fname);
++	new_name.len = fname_len(&fname);
++
++	err = -EAGAIN;
++	if (f2fs_has_inline_dentry(dir))
++		err = f2fs_add_inline_entry(dir, &new_name, inode, ino, mode);
++	if (err == -EAGAIN)
++		err = f2fs_add_regular_entry(dir, &new_name, inode, ino, mode);
++
+ 	f2fs_fname_free_filename(&fname);
+ 	return err;
+ }
+@@ -792,10 +800,7 @@ bool f2fs_fill_dentries(struct dir_conte
+ 			break;
+ 
+ 		de = &d->dentry[bit_pos];
+-		if (de->file_type < F2FS_FT_MAX)
+-			d_type = f2fs_filetype_table[de->file_type];
+-		else
+-			d_type = DT_UNKNOWN;
++		d_type = get_de_type(de);
+ 
+ 		de_name.name = d->filename[bit_pos];
+ 		de_name.len = le16_to_cpu(de->name_len);
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1677,7 +1677,7 @@ struct dentry *f2fs_get_parent(struct de
+  */
+ extern unsigned char f2fs_filetype_table[F2FS_FT_MAX];
+ void set_de_type(struct f2fs_dir_entry *, umode_t);
 -
- 	sbi->total_valid_node_count =
- 				le32_to_cpu(sbi->ckpt->valid_node_count);
- 	sbi->total_valid_inode_count =
-@@ -1517,7 +1510,6 @@ free_nm:
- 	destroy_node_manager(sbi);
- free_sm:
- 	destroy_segment_manager(sbi);
--free_cp:
- 	kfree(sbi->ckpt);
- free_meta_inode:
- 	make_bad_inode(sbi->meta_inode);
++unsigned char get_de_type(struct f2fs_dir_entry *);
+ struct f2fs_dir_entry *find_target_dentry(struct f2fs_filename *,
+ 			f2fs_hash_t, int *, struct f2fs_dentry_ptr *);
+ bool f2fs_fill_dentries(struct dir_context *, struct f2fs_dentry_ptr *,
+@@ -1698,6 +1698,8 @@ void f2fs_set_link(struct inode *, struc
+ int update_dent_inode(struct inode *, struct inode *, const struct qstr *);
+ void f2fs_update_dentry(nid_t ino, umode_t mode, struct f2fs_dentry_ptr *,
+ 			const struct qstr *, f2fs_hash_t , unsigned int);
++int f2fs_add_regular_entry(struct inode *, const struct qstr *,
++						struct inode *, nid_t, umode_t);
+ int __f2fs_add_link(struct inode *, const struct qstr *, struct inode *, nid_t,
+ 			umode_t);
+ void f2fs_delete_entry(struct f2fs_dir_entry *, struct page *, struct inode *,
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -367,7 +367,7 @@ int make_empty_inline_dir(struct inode *
+  * NOTE: ipage is grabbed by caller, but if any error occurs, we should
+  * release ipage in this function.
+  */
+-static int f2fs_convert_inline_dir(struct inode *dir, struct page *ipage,
++static int f2fs_move_inline_dirents(struct inode *dir, struct page *ipage,
+ 				struct f2fs_inline_dentry *inline_dentry)
+ {
+ 	struct page *page;
+@@ -428,6 +428,98 @@ out:
+ 	return err;
+ }
+ 
++static int f2fs_add_inline_entries(struct inode *dir,
++			struct f2fs_inline_dentry *inline_dentry)
++{
++	struct f2fs_dentry_ptr d;
++	unsigned long bit_pos = 0;
++	int err = 0;
++
++	make_dentry_ptr(NULL, &d, (void *)inline_dentry, 2);
++
++	while (bit_pos < d.max) {
++		struct f2fs_dir_entry *de;
++		struct qstr new_name;
++		nid_t ino;
++		umode_t fake_mode;
++
++		if (!test_bit_le(bit_pos, d.bitmap)) {
++			bit_pos++;
++			continue;
++		}
++
++		de = &d.dentry[bit_pos];
++		new_name.name = d.filename[bit_pos];
++		new_name.len = de->name_len;
++
++		ino = le32_to_cpu(de->ino);
++		fake_mode = get_de_type(de) << S_SHIFT;
++
++		err = f2fs_add_regular_entry(dir, &new_name, NULL,
++							ino, fake_mode);
++		if (err)
++			goto punch_dentry_pages;
++
++		if (unlikely(!de->name_len))
++			d.max = -1;
++
++		bit_pos += GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
++	}
++	return 0;
++punch_dentry_pages:
++	truncate_inode_pages(&dir->i_data, 0);
++	truncate_blocks(dir, 0, false);
++	remove_dirty_dir_inode(dir);
++	return err;
++}
++
++static int f2fs_move_rehashed_dirents(struct inode *dir, struct page *ipage,
++				struct f2fs_inline_dentry *inline_dentry)
++{
++	struct f2fs_inline_dentry *backup_dentry;
++	int err;
++
++	backup_dentry = kmalloc(sizeof(struct f2fs_inline_dentry),
++							GFP_F2FS_ZERO);
++	if (!backup_dentry)
++		return -ENOMEM;
++
++	memcpy(backup_dentry, inline_dentry, MAX_INLINE_DATA);
++	truncate_inline_inode(ipage, 0);
++
++	unlock_page(ipage);
++
++	err = f2fs_add_inline_entries(dir, backup_dentry);
++	if (err)
++		goto recover;
++
++	lock_page(ipage);
++
++	stat_dec_inline_dir(dir);
++	clear_inode_flag(F2FS_I(dir), FI_INLINE_DENTRY);
++	update_inode(dir, ipage);
++	kfree(backup_dentry);
++	return 0;
++recover:
++	lock_page(ipage);
++	memcpy(inline_dentry, backup_dentry, MAX_INLINE_DATA);
++	i_size_write(dir, MAX_INLINE_DATA);
++	update_inode(dir, ipage);
++	f2fs_put_page(ipage, 1);
++
++	kfree(backup_dentry);
++	return err;
++}
++
++static int f2fs_convert_inline_dir(struct inode *dir, struct page *ipage,
++				struct f2fs_inline_dentry *inline_dentry)
++{
++	if (!F2FS_I(dir)->i_dir_level)
++		return f2fs_move_inline_dirents(dir, ipage, inline_dentry);
++	else
++		return f2fs_move_rehashed_dirents(dir, ipage, inline_dentry);
++}
++
+ int f2fs_add_inline_entry(struct inode *dir, const struct qstr *name,
+ 			struct inode *inode, nid_t ino, umode_t mode)
+ {
+--- a/include/linux/f2fs_fs.h
++++ b/include/linux/f2fs_fs.h
+@@ -497,4 +497,6 @@ enum {
+ 	F2FS_FT_MAX
+ };
+ 
++#define S_SHIFT 12
++
+ #endif  /* _LINUX_F2FS_FS_H */
 
 
