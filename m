@@ -2,52 +2,53 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45A08C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:31:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B58AC282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:31:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 136CF21903
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:31:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDEDB218FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:31:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358295;
-	bh=OcQazP88EBgyzboeJouFRNkf3f8SjNtrQlM7A+1JO3Y=;
+	s=default; t=1548358298;
+	bh=i9BbJ6SpoNaOekfjtnnrov39xO9RDUAt81J1NNoOnAc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KEUaN/ovkiIFwEe56gi6Oty+V1kvmJl3fXnKKNSD9hNXZwq7kioZq0+DsAqqvNTMk
-	 zJAdmN+gQYFfQhbKXbGnoPR5KU5sdJYEdBhg8Df6CyWoT3dkTAi+j8HgXkFXlGs2rJ
-	 cWNZK9BL8XK4l2WIJ9roIdWw0RD015+0bdpRqCz4=
+	b=lH7dfWYXMwTEUJ5C4CZK+5dvVOQVwwf/u4uNgFNFgZA0rSjQRzfFZExu7u+IdXkV4
+	 OvQysYeiwS257c4T3v6K43ULgimD12EVyDM6PCRTOCqA3AOkIchi6ADH+W4tw7VIx9
+	 rkKVtegcVZfsfIXWX3VTXRoPkYPnn78gVbO1UjGI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731644AbfAXTbc (ORCPT
+        id S1731663AbfAXTbh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:31:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59248 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:31:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59330 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730163AbfAXTb2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:31:28 -0500
+        id S1730163AbfAXTbd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:31:33 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EABC3218E2;
-        Thu, 24 Jan 2019 19:31:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B7C33218E2;
+        Thu, 24 Jan 2019 19:31:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358287;
-        bh=OcQazP88EBgyzboeJouFRNkf3f8SjNtrQlM7A+1JO3Y=;
+        s=default; t=1548358293;
+        bh=i9BbJ6SpoNaOekfjtnnrov39xO9RDUAt81J1NNoOnAc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xvXxPH8s4TEoeJjxgJZXAAlF2aNWEuGfJP8SHbM2/3en7FpbcX7rThExuWfpdTLPd
-         Kqi1qqd1706RJkWMalW3sGdTCiumjJCPlZS2mzqNQFuli6TMBpndIIoITGB0ChLNX6
-         nE+Z+iQLESkHgXf1r8foeV6CHuQBjYpL+Md2jFUY=
+        b=mE4nncI6FhlzjSDB6bmgaRGWiCS1qYikds85ne/hLo5v9GZlrZB1K6ndm3O4cCYPu
+         jjVTvVen9qH4JpF6RELjC/S/5cYllXiQjU9j/IDJcVsOASomz1xqSER4gblHj7RuRw
+         sQWTYGvAlcZy42RKtOq2Q/l7CdBp53IatoN15aWg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Pirko <jiri@mellanox.com>,
-        Ido Schimmel <idosch@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 02/63] mlxsw: spectrum: Disable lag port TX before removing it
-Date:   Thu, 24 Jan 2019 20:19:51 +0100
-Message-Id: <20190124190155.430643301@linuxfoundation.org>
+        stable@vger.kernel.org, Daniel Santos <daniel.santos@pobox.com>,
+        Hou Tao <houtao1@huawei.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 21/63] jffs2: Fix use of uninitialized delayed_work, lockdep breakage
+Date:   Thu, 24 Jan 2019 20:20:10 +0100
+Message-Id: <20190124190157.551051368@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190155.176570028@linuxfoundation.org>
 References: <20190124190155.176570028@linuxfoundation.org>
@@ -66,41 +67,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jiri Pirko <jiri@mellanox.com>
+[ Upstream commit a788c5272769ddbcdbab297cf386413eeac04463 ]
 
-[ Upstream commit 8adbe212a159d9c78a90fca1d854f6e63452426b ]
+jffs2_sync_fs makes the assumption that if CONFIG_JFFS2_FS_WRITEBUFFER
+is defined then a write buffer is available and has been initialized.
+However, this does is not the case when the mtd device has no
+out-of-band buffer:
 
-Make sure that lag port TX is disabled before mlxsw_sp_port_lag_leave()
-is called and prevent from possible EMAD error.
+int jffs2_nand_flash_setup(struct jffs2_sb_info *c)
+{
+        if (!c->mtd->oobsize)
+                return 0;
+...
 
-Fixes: 0d65fc13042f ("mlxsw: spectrum: Implement LAG port join/leave")
-Signed-off-by: Jiri Pirko <jiri@mellanox.com>
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+The resulting call to cancel_delayed_work_sync passing a uninitialized
+(but zeroed) delayed_work struct forces lockdep to become disabled.
+
+[   90.050639] overlayfs: upper fs does not support tmpfile.
+[   90.652264] INFO: trying to register non-static key.
+[   90.662171] the code is fine but needs lockdep annotation.
+[   90.673090] turning off the locking correctness validator.
+[   90.684021] CPU: 0 PID: 1762 Comm: mount_root Not tainted 4.14.63 #0
+[   90.696672] Stack : 00000000 00000000 80d8f6a2 00000038 805f0000 80444600 8fe364f4 805dfbe7
+[   90.713349]         80563a30 000006e2 8068370c 00000001 00000000 00000001 8e2fdc48 ffffffff
+[   90.730020]         00000000 00000000 80d90000 00000000 00000106 00000000 6465746e 312e3420
+[   90.746690]         6b636f6c 03bf0000 f8000000 20676e69 00000000 80000000 00000000 8e2c2a90
+[   90.763362]         80d90000 00000001 00000000 8e2c2a90 00000003 80260dc0 08052098 80680000
+[   90.780033]         ...
+[   90.784902] Call Trace:
+[   90.789793] [<8000f0d8>] show_stack+0xb8/0x148
+[   90.798659] [<8005a000>] register_lock_class+0x270/0x55c
+[   90.809247] [<8005cb64>] __lock_acquire+0x13c/0xf7c
+[   90.818964] [<8005e314>] lock_acquire+0x194/0x1dc
+[   90.828345] [<8003f27c>] flush_work+0x200/0x24c
+[   90.837374] [<80041dfc>] __cancel_work_timer+0x158/0x210
+[   90.847958] [<801a8770>] jffs2_sync_fs+0x20/0x54
+[   90.857173] [<80125cf4>] iterate_supers+0xf4/0x120
+[   90.866729] [<80158fc4>] sys_sync+0x44/0x9c
+[   90.875067] [<80014424>] syscall_common+0x34/0x58
+
+Signed-off-by: Daniel Santos <daniel.santos@pobox.com>
+Reviewed-by: Hou Tao <houtao1@huawei.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlxsw/spectrum.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ fs/jffs2/super.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
-@@ -4276,12 +4276,15 @@ static int mlxsw_sp_netdevice_port_upper
- 							   lower_dev,
- 							   upper_dev);
- 		} else if (netif_is_lag_master(upper_dev)) {
--			if (info->linking)
-+			if (info->linking) {
- 				err = mlxsw_sp_port_lag_join(mlxsw_sp_port,
- 							     upper_dev);
--			else
-+			} else {
-+				mlxsw_sp_port_lag_tx_en_set(mlxsw_sp_port,
-+							    false);
- 				mlxsw_sp_port_lag_leave(mlxsw_sp_port,
- 							upper_dev);
-+			}
- 		} else if (netif_is_ovs_master(upper_dev)) {
- 			if (info->linking)
- 				err = mlxsw_sp_port_ovs_join(mlxsw_sp_port);
+diff --git a/fs/jffs2/super.c b/fs/jffs2/super.c
+index bc00cc385b77..83340496645b 100644
+--- a/fs/jffs2/super.c
++++ b/fs/jffs2/super.c
+@@ -101,7 +101,8 @@ static int jffs2_sync_fs(struct super_block *sb, int wait)
+ 	struct jffs2_sb_info *c = JFFS2_SB_INFO(sb);
+ 
+ #ifdef CONFIG_JFFS2_FS_WRITEBUFFER
+-	cancel_delayed_work_sync(&c->wbuf_dwork);
++	if (jffs2_is_writebuffered(c))
++		cancel_delayed_work_sync(&c->wbuf_dwork);
+ #endif
+ 
+ 	mutex_lock(&c->alloc_sem);
+-- 
+2.19.1
+
 
 
