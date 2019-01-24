@@ -2,95 +2,89 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88916C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 10:16:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDE15C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 10:16:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62CE5218A6
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 10:16:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D19E218A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 10:16:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TO+6z/ki"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727409AbfAXKP7 (ORCPT
+        id S1727474AbfAXKQf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 05:15:59 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:40908 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725287AbfAXKP7 (ORCPT
+        Thu, 24 Jan 2019 05:16:35 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:40592 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726025AbfAXKQf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 05:15:59 -0500
-Received: by mail-ed1-f66.google.com with SMTP id g22so4106996edr.7;
-        Thu, 24 Jan 2019 02:15:58 -0800 (PST)
+        Thu, 24 Jan 2019 05:16:35 -0500
+Received: by mail-it1-f195.google.com with SMTP id h193so3569448ita.5
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 02:16:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3SwDObEh9OokimBV+T4T/grxG1yyhQk0b56zMiko/6I=;
+        b=TO+6z/ki0ONeEuoS5OI2Q7jdQeuywhdXLvkekokMzMWiR5GQERwbrfV2mexOAoZ1GO
+         b8I8iEvum5lYcQHoIy/2NIRn1k6gyBS6ejXQuiNFbKjsIVZ0ZP97oryjKm582yTvP3Zy
+         /+UFbrj7Aj7S9k4WeZqssOQcus07F/KRphEkQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=IMeU3UY2XAM0kzq1Z8Gn2QEdtJTiaE/AbGjYG0aznDQ=;
-        b=g3GuyGgFxTH3OHAZ5YyZ3KECk4ziJDUC8xipy8ioDN2xseodDJv1ubwFLWdsZwX1DJ
-         3SqvApAp94JMdO0dGJavxBGo4B164JAGq4VBAblvurMbkexdqLxCaM2kXowhVn8wgiwb
-         QP/JW/3WhAT+M0Z1pS9+u4nQ6xAtaZtgMy+hnzc9V6GQCyQU49AoXQeiGZG5D8Ddcy/4
-         9c0qrlZO24w/wBesK+Cubw6v08zPTNYd1q9rLJxyZLOoSnaDJQuZJnSpqa6s976D80zO
-         xojXPFFCsfB+4iJPNIT/oK+ASYNcgpL9YokyJ41Cq6vN8mpujMSXr4853lChOcZy2bAD
-         y28Q==
-X-Gm-Message-State: AJcUukfhWccgz8gUqHQDBL8sQgdh4BeuqKfbv7U5YiGc+W99MIyH9TYz
-        3LntHQtQdeuKi61MgHYRCpIalhryTZw=
-X-Google-Smtp-Source: ALg8bN7D6yOxv6XEnFkyAhvFbUojFSTYhpcKes38+HcSbHbrbukVpAbJzK5A/Ay1AHIX5Gtzjw2C7Q==
-X-Received: by 2002:a17:906:4b19:: with SMTP id y25-v6mr5480984eju.89.1548324957127;
-        Thu, 24 Jan 2019 02:15:57 -0800 (PST)
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com. [209.85.128.51])
-        by smtp.gmail.com with ESMTPSA id m14sm12091905edc.27.2019.01.24.02.15.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 02:15:56 -0800 (PST)
-Received: by mail-wm1-f51.google.com with SMTP id d15so2479713wmb.3;
-        Thu, 24 Jan 2019 02:15:56 -0800 (PST)
-X-Received: by 2002:a1c:578e:: with SMTP id l136mr1933083wmb.124.1548324956114;
- Thu, 24 Jan 2019 02:15:56 -0800 (PST)
+        bh=3SwDObEh9OokimBV+T4T/grxG1yyhQk0b56zMiko/6I=;
+        b=ncPREvA7ZwezlyYBGYz8X3tky30lr0jDYFiahVCF2SiptjgesEv1KcmB4bqG6gFo1k
+         9XxiiMliOTxa2cu6V4c3mA+UbeHGkHul+Fbg9lIj2JyF9CKbWSY4iiH6xX9WdasuRMNl
+         w4kQg/GdhHvCiTlZKx1K+krqQ+Cwzc4MAQUxHv1rVAlbdpT1ohjrStxkwVZVmM2F0bTG
+         NORoNE9JTWgXrUZ81GtLPajIr6KiTt21pwtZNFNnwylCPVcgrGHC+J20Tq3I4SfyIM6u
+         20UkXjdlCcgiEfbHk3bHkRlIZcxbkrMIB1+colW4NxVuABf+/q+MLhG4z/5F+r/lrOtH
+         jAvg==
+X-Gm-Message-State: AJcUukf9P7Ut3W1IkWhmhftxknYffUHYNGFZkADtln4orWaM3l8tLnI+
+        mwojFQBeAVTVhbV0vdf4TaKAyQVYNt5ovFcGIGKp+0XRzvA=
+X-Google-Smtp-Source: ALg8bN68VTe9/KZuOypBEz8B822lYhOWK53rZDTATXA5TXHv+5gbAIzE2nQfBq8SRTj3ZlmcUr8yfW/om8B0HSYyp24=
+X-Received: by 2002:a24:edc4:: with SMTP id r187mr1140494ith.158.1548324994563;
+ Thu, 24 Jan 2019 02:16:34 -0800 (PST)
 MIME-Version: 1.0
-References: <20181130075849.16941-1-wens@csie.org> <20181130075849.16941-4-wens@csie.org>
- <CAMty3ZBFVStHNbYaBxT+Rmy6+g4jtm0cFKk8BL5BDid3c5VW-Q@mail.gmail.com>
-In-Reply-To: <CAMty3ZBFVStHNbYaBxT+Rmy6+g4jtm0cFKk8BL5BDid3c5VW-Q@mail.gmail.com>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Thu, 24 Jan 2019 18:15:43 +0800
-X-Gmail-Original-Message-ID: <CAGb2v67oLffVXYAHHcHEo6_rNddqpFwCGq2DzgFW_zkfbpf12g@mail.gmail.com>
-Message-ID: <CAGb2v67oLffVXYAHHcHEo6_rNddqpFwCGq2DzgFW_zkfbpf12g@mail.gmail.com>
-Subject: Re: [PATCH 3/6] ARM: dts: sunxi: h3/h5: Drop A31 fallback compatible
- for CSI controller
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Jagan Teki <jagan@amarulasolutions.com>,
-        Yong Deng <yong.deng@magewell.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-media <linux-media@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>
+References: <20190123224926.250525-1-ebiggers@kernel.org> <20190124084818.GA650@sol.localdomain>
+ <CAKv+Gu9zridWAYO3cR_KAAbupWfLd+FAMmcgAMuYE5Lgxoek-w@mail.gmail.com> <20190124092359.hvizqdi2ptjdsot7@gondor.apana.org.au>
+In-Reply-To: <20190124092359.hvizqdi2ptjdsot7@gondor.apana.org.au>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Thu, 24 Jan 2019 11:16:23 +0100
+Message-ID: <CAKv+Gu_C5p1pf_+8Ci+y8GGRr4OHEN8FwLJHnvu=wq3bTzGrYA@mail.gmail.com>
+Subject: Re: [RFC/RFT PATCH 00/15] crypto: improved skcipher, aead, and hash tests
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Eric Biggers <ebiggers@kernel.org>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 3, 2018 at 5:44 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
+On Thu, 24 Jan 2019 at 10:24, Herbert Xu <herbert@gondor.apana.org.au> wrote:
 >
-> On Fri, Nov 30, 2018 at 1:29 PM Chen-Yu Tsai <wens@csie.org> wrote:
+> On Thu, Jan 24, 2019 at 09:50:35AM +0100, Ard Biesheuvel wrote:
 > >
-> > The CSI controller found on the H3 (and H5) is a reduced version of the
-> > one found on the A31. It only has 1 channel, instead of 4 channels for
-> > time-multiplexed BT.656. Since the H3 is a reduced version, it cannot
-> > "fallback" to a compatible that implements more features than it
-> > supports.
+> > Thanks for yet another round of cleanup
 > >
-> > Drop the A31 fallback compatible.
+> > I'll look into these, but I'd like to clarify one thing first.
 > >
-> > Fixes: f89120b6f554 ("ARM: dts: sun8i: Add the H3/H5 CSI controller")
-> > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> > ---
+> > IIUC, you are trying to deal with the case where a single scatterlist
+> > element describes a range that strides two pages, and I wonder if that
+> > is a valid use of scatterlists in the first place.
+> >
+> > Herbert?
 >
-> Reviewed-by: Jagan Teki <jagan@amarulasolutions.com>
+> Yes it is valid.  IIRC the network stack may generate such a
+> scatterlist.
+>
 
-Merged for 5.1, as the accompanying driver changes were also merged for 5.1
-
-ChenYu
+OK, so how many adjacent physical pages is a scatterlist entry
+permitted to cover? Unbounded?
