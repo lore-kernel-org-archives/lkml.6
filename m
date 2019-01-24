@@ -2,190 +2,239 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99B0BC282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:05:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD767C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:05:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6ACA421855
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:05:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 709D421855
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:05:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548360309;
-	bh=VqWn6VLG7H63BNZcA/Yb3rNrwBGv77XkJhZRPSwMVEY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=cqStVUhqLMpyPbhmMxUj+qsVa1hDpZa7ysIeUVms4YoGkaRL9srEIRIG2d+lmKx93
-	 KUZd9QeQQXd/WKEdz/1P3JP9zALzfyuLXlbEfWwdI9OPqxrodH7cg5sulua7cJphlm
-	 2envy6iljOwt3ALL2D+QoAtTQP40dsZUX4ndaJVo=
+	s=default; t=1548360315;
+	bh=KBil2V4mn9rIrGvctvF+AA+Sf2jqYkG8jZ6Dtp6wUQE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=vthTljqwESn27xSQUw0yXGJh0Z1ZQrrLdKzTzEwxaRP4u0NkGkBrCZhk0Lo/xOmCp
+	 RkzG/k2Vt5Ne8dot+gyqyQVqyLOWA2gpQ1Jot4AuDhcYo/WCbLvmW/m/3m2eh+sj3g
+	 9rL+yppZIGbQoopWtrfLwgSiJNwuC/F+nzFykcRQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731575AbfAXTbN (ORCPT
+        id S1729937AbfAXUFN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:31:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58844 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 15:05:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60082 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731458AbfAXTbK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:31:10 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        id S1728565AbfAXUFL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 15:05:11 -0500
+Received: from localhost (unknown [69.71.4.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3AF3B218D4;
-        Thu, 24 Jan 2019 19:31:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4396821855;
+        Thu, 24 Jan 2019 20:05:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358268;
-        bh=VqWn6VLG7H63BNZcA/Yb3rNrwBGv77XkJhZRPSwMVEY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1HeAP08MK3ItcTWvvgYpz2Q0O0BEcXsIXFUC+RaJghe6x39pV0fNAWN1GDc0eDCpO
-         ubRt/U6rRIugIP3USZ7GX/yZyvoKlsGbo8F0JuJ43fJqtbY/sJdmVHq6kiVjirlrYI
-         oAxBfbaj7wXbRenY3EBWIkRGtIjehgSNcTUUnWIM=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 13/63] serial: set suppress_bind_attrs flag only if builtin
-Date:   Thu, 24 Jan 2019 20:20:02 +0100
-Message-Id: <20190124190156.503526862@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190124190155.176570028@linuxfoundation.org>
-References: <20190124190155.176570028@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        s=default; t=1548360310;
+        bh=KBil2V4mn9rIrGvctvF+AA+Sf2jqYkG8jZ6Dtp6wUQE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=L2m9VQTFmfl58CLgs3uEPTzPbdl/KXMSPhBahzDNX94BNnmhvO3e3xxqAl0HmBVtD
+         pN1Nf7tFO1YtegT72Sp9la3jjEw/5ORCX00SbGk+sNsHzxhvoKNDngAktT/q429o1/
+         WN+YfJJteDisAbkdoFOAjLydSJUGIjSu+ruTVRBI=
+Date:   Thu, 24 Jan 2019 14:05:09 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Kai Heng Feng <kai.heng.feng@canonical.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, jeffrey.t.kirsher@intel.com,
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI / ACPI: Don't clear pme_poll on device that has
+ unreliable ACPI wake
+Message-ID: <20190124200508.GH14636@google.com>
+References: <20190122064544.27426-1-kai.heng.feng@canonical.com>
+ <20190122235134.GE14636@google.com>
+ <91E74111-5BB6-4604-A1D7-B537AB42C317@canonical.com>
+ <20190124151524.GF14636@google.com>
+ <FFC6EC3F-3608-41FC-8B14-815D1747C4B6@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <FFC6EC3F-3608-41FC-8B14-815D1747C4B6@canonical.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On Thu, Jan 24, 2019 at 11:29:37PM +0800, Kai Heng Feng wrote:
+> > On Jan 24, 2019, at 11:15 PM, Bjorn Helgaas <helgaas@kernel.org> wrote:
+> > On Wed, Jan 23, 2019 at 03:17:37PM +0800, Kai Heng Feng wrote:
+> >>> On Jan 23, 2019, at 7:51 AM, Bjorn Helgaas <helgaas@kernel.org> wrote:
+> >>> On Tue, Jan 22, 2019 at 02:45:44PM +0800, Kai-Heng Feng wrote:
+> >>>> There are some e1000e devices can only be woken up from D3 one time, by
+> >>>> plugging ethernet cable. Subsequent cable plugging does set PME bit
+> >>>> correctly, but it still doesn't get woken up.
+> >>>> 
+> >>>> Since e1000e connects to the root complex directly, we rely on ACPI to
+> >>>> wake it up. In this case, the GPE from _PRW only works once and stops
+> >>>> working after that.
+> >>>> 
+> >>>> So introduce a new PCI quirk, to avoid clearing pme_poll flag for buggy
+> >>>> platform firmwares that have unreliable GPE wake.
+> >>> 
+> >>> This quirk applies to all 0x15bb (E1000_DEV_ID_PCH_CNP_I219_LM7) and
+> >>> 0x15bd (E1000_DEV_ID_PCH_CNP_I219_LM6) devices.  The e1000e driver
+> >>> claims about a zillion different device IDs.
+> >>> 
+> >>> I would be surprised if these two devices are defective but all the
+> >>> others work correctly.  Could it be that there is a problem with the
+> >>> wiring on this particular motherboard or with the ACPI _PRW methods
+> >>> (or the way Linux interprets them) in this firmware?
+> >> 
+> >> If this is a motherboard issue or platform specific, do you prefer to use
+> >> DMI matches here?
+> > 
+> > I'm not sure what the problem is yet, so let's hold off on the exact
+> > structure of the fix.
+> 
+> I think DMI table can put in e1000e driver instead of PCI quirk.
 
-------------------
+I don't think we should add a quirk or DMI table yet because we
+haven't gotten to the root cause of this problem.  If the root cause
+is a problem in the Linux code, adding a quirk will mask the problem
+for this specific system, but will leave other systems with similar
+problems.
 
-[ Upstream commit 646097940ad35aa2c1f2012af932d55976a9f255 ]
+> > If I understand correctly, e1000e wakeup works once, but doesn't work
+> > after that.  Your lspci (from after that first wakeup, from
+> > https://bugzilla.kernel.org/attachment.cgi?id=280691) shows this:
+> > 
+> >  00:14.0 XHC  XHCI USB
+> >    Flags: PMEClk- DSI- D1- D2- ... PME(D0-,D1-,D2-,D3hot+,D3cold+)
+> >    Status: D3 NoSoftRst+ PME-Enable+ DSel=0 DScale=0 PME-
+> >  00:1f.3 HDAS audio
+> >    Flags: PMEClk- DSI- D1- D2- ... PME(D0-,D1-,D2-,D3hot+,D3cold+)
+> >    Status: D3 NoSoftRst+ PME-Enable+ DSel=0 DScale=0 PME-
+> >  00:1f.6 GLAN e1000e
+> >    Flags: PMEClk- DSI+ D1- D2- ... PME(D0+,D1-,D2-,D3hot+,D3cold+)
+> >    Status: D3 NoSoftRst+ PME-Enable+ DSel=0 DScale=1 PME+
+> > 
+> > So the e1000e PME_Status bit is still set, which means it probably
+> > won't generate another PME interrupt, which would explain why wakeup
+> > doesn't work.  To test this theory, can you try this:
+> > 
+> >  - sleep
+> >  - wakeup via e1000e
+> >  # DEV=00:1f.6
+> >  # lspci -vvs $DEV
+> >  # setpci -s $DEV CAP_PM+4.W
+> >  # setpci -s $DEV CAP_PM+4.W=0x8100
+> >  - sleep
+> >  - attempt another wakeup via e1000e
+> > 
+> > If this second wakeup works, it would suggest that PME_Status isn't
+> > being cleared correctly.  I see code, e.g., in
+> > acpi_setup_gpe_for_wake(), that *looks* like it would arrange to clear
+> > it, but I'm not very familiar with it.  Maybe there's some issue with
+> > multiple devices sharing an "implicit notification" situation like
+> > this.
+> 
+> The PME status is being cleared correctly.
 
-When the test 'CONFIG_DEBUG_TEST_DRIVER_REMOVE=y' is enabled,
-arch_initcall(pl011_init) came before subsys_initcall(default_bdi_init).
-devtmpfs gets killed because we try to remove a file and decrement the
-wb reference count before the noop_backing_device_info gets initialized.
+I was hoping to understand this better via the experiment above, but
+I'm still confused.  Here's the scenario as I understand it:
 
-[    0.332075] Serial: AMBA PL011 UART driver
-[    0.485276] 9000000.pl011: ttyAMA0 at MMIO 0x9000000 (irq = 39, base_baud = 0) is a PL011 rev1
-[    0.502382] console [ttyAMA0] enabled
-[    0.515710] Unable to handle kernel paging request at virtual address 0000800074c12000
-[    0.516053] Mem abort info:
-[    0.516222]   ESR = 0x96000004
-[    0.516417]   Exception class = DABT (current EL), IL = 32 bits
-[    0.516641]   SET = 0, FnV = 0
-[    0.516826]   EA = 0, S1PTW = 0
-[    0.516984] Data abort info:
-[    0.517149]   ISV = 0, ISS = 0x00000004
-[    0.517339]   CM = 0, WnR = 0
-[    0.517553] [0000800074c12000] user address but active_mm is swapper
-[    0.517928] Internal error: Oops: 96000004 [#1] PREEMPT SMP
-[    0.518305] Modules linked in:
-[    0.518839] CPU: 0 PID: 13 Comm: kdevtmpfs Not tainted 4.19.0-rc5-next-20180928-00002-g2ba39ab0cd01-dirty #82
-[    0.519307] Hardware name: linux,dummy-virt (DT)
-[    0.519681] pstate: 80000005 (Nzcv daif -PAN -UAO)
-[    0.519959] pc : __destroy_inode+0x94/0x2a8
-[    0.520212] lr : __destroy_inode+0x78/0x2a8
-[    0.520401] sp : ffff0000098c3b20
-[    0.520590] x29: ffff0000098c3b20 x28: 00000000087a3714
-[    0.520904] x27: 0000000000002000 x26: 0000000000002000
-[    0.521179] x25: ffff000009583000 x24: 0000000000000000
-[    0.521467] x23: ffff80007bb52000 x22: ffff80007bbaa7c0
-[    0.521737] x21: ffff0000093f9338 x20: 0000000000000000
-[    0.522033] x19: ffff80007bbb05d8 x18: 0000000000000400
-[    0.522376] x17: 0000000000000000 x16: 0000000000000000
-[    0.522727] x15: 0000000000000400 x14: 0000000000000400
-[    0.523068] x13: 0000000000000001 x12: 0000000000000001
-[    0.523421] x11: 0000000000000000 x10: 0000000000000970
-[    0.523749] x9 : ffff0000098c3a60 x8 : ffff80007bbab190
-[    0.524017] x7 : ffff80007bbaa880 x6 : 0000000000000c88
-[    0.524305] x5 : ffff0000093d96c8 x4 : 61c8864680b583eb
-[    0.524567] x3 : ffff0000093d6180 x2 : ffffffffffffffff
-[    0.524872] x1 : 0000800074c12000 x0 : 0000800074c12000
-[    0.525207] Process kdevtmpfs (pid: 13, stack limit = 0x(____ptrval____))
-[    0.525529] Call trace:
-[    0.525806]  __destroy_inode+0x94/0x2a8
-[    0.526108]  destroy_inode+0x34/0x88
-[    0.526370]  evict+0x144/0x1c8
-[    0.526636]  iput+0x184/0x230
-[    0.526871]  dentry_unlink_inode+0x118/0x130
-[    0.527152]  d_delete+0xd8/0xe0
-[    0.527420]  vfs_unlink+0x240/0x270
-[    0.527665]  handle_remove+0x1d8/0x330
-[    0.527875]  devtmpfsd+0x138/0x1c8
-[    0.528085]  kthread+0x14c/0x158
-[    0.528291]  ret_from_fork+0x10/0x18
-[    0.528720] Code: 92800002 aa1403e0 d538d081 8b010000 (c85f7c04)
-[    0.529367] ---[ end trace 5a3dee47727f877c ]---
+  0) fresh boot
+  1) e1000e PME_Status should be 0
+  2) sleep
+  3) wakeup via e1000e succeeds
+  4) e1000e PME_Status should be 0
+  5) sleep
+  6) wakeup via e1000e fails
+  7) wakeup via USB succeeds
+  8) e1000e PME_Status should be 0, but is actually 1
 
-Rework to set suppress_bind_attrs flag to avoid removing the device when
-CONFIG_DEBUG_TEST_DRIVER_REMOVE=y. This applies for pic32_uart and
-xilinx_uartps as well.
+If I understand correctly, the bugzilla lspci
+(https://bugzilla.kernel.org/attachment.cgi?id=280691) was collected
+at point 8, and it shows PME_Status=1 when it should be 0.
 
-Co-developed-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/tty/serial/amba-pl011.c    | 2 ++
- drivers/tty/serial/pic32_uart.c    | 1 +
- drivers/tty/serial/xilinx_uartps.c | 1 +
- 3 files changed, 4 insertions(+)
+If we write a 1 to PME_Status to clear it, and it remains set, that's
+obviously a hardware defect, and Intel should document that in an
+erratum, and a quirk would be the appropriate way to work around it.
+But I doubt that's what's happening.
 
-diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl011.c
-index c9f701aca677..4a4a9f33715c 100644
---- a/drivers/tty/serial/amba-pl011.c
-+++ b/drivers/tty/serial/amba-pl011.c
-@@ -2800,6 +2800,7 @@ static struct platform_driver arm_sbsa_uart_platform_driver = {
- 		.name	= "sbsa-uart",
- 		.of_match_table = of_match_ptr(sbsa_uart_of_match),
- 		.acpi_match_table = ACPI_PTR(sbsa_uart_acpi_match),
-+		.suppress_bind_attrs = IS_BUILTIN(CONFIG_SERIAL_AMBA_PL011),
- 	},
- };
+If e1000e changes PME_Status from 0 to 1 and we don't get an interrupt
+(in this case, an SCI triggering GPE 0x6d), the problem is something
+in the path outside e1000e.  Since the wakeup works the first time, we
+know e1000e is *capable* of generating an interrupt, and the problem
+is probably something in the way we acknowledge it.
+
+I want to make sure we're executing the code that clears
+PCI_PM_CTRL_PME_STATUS.  Would you mind applying the patch below,
+turning on CONFIG_ACPI_DEBUG, booting with
+
+  acpi.debug_layer=0x00000004 acpi.debug_level=0x00000004
+
+and collecting the dmesg log?  I think you can also set these debug
+flags via /sys/module/acpi/parameters/debug_* if that's easier.
+
+> The lspci is captured after I plugged the ethernet cable second time,
+> i.e. PME is set but not being woken up.
+> 
+> Kai-Heng
+
+Bjorn
+
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index c9d8e3c837de..91a70ffdd3a1 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -1927,7 +1927,7 @@ void pcie_clear_root_pme_status(struct pci_dev *dev)
+ bool pci_check_pme_status(struct pci_dev *dev)
+ {
+ 	int pmcsr_pos;
+-	u16 pmcsr;
++	u16 pmcsr, pmcsr_orig;
+ 	bool ret = false;
  
-@@ -2828,6 +2829,7 @@ static struct amba_driver pl011_driver = {
- 	.drv = {
- 		.name	= "uart-pl011",
- 		.pm	= &pl011_dev_pm_ops,
-+		.suppress_bind_attrs = IS_BUILTIN(CONFIG_SERIAL_AMBA_PL011),
- 	},
- 	.id_table	= pl011_ids,
- 	.probe		= pl011_probe,
-diff --git a/drivers/tty/serial/pic32_uart.c b/drivers/tty/serial/pic32_uart.c
-index 00a33eb859d3..e3d7d9d6c599 100644
---- a/drivers/tty/serial/pic32_uart.c
-+++ b/drivers/tty/serial/pic32_uart.c
-@@ -920,6 +920,7 @@ static struct platform_driver pic32_uart_platform_driver = {
- 	.driver		= {
- 		.name	= PIC32_DEV_NAME,
- 		.of_match_table	= of_match_ptr(pic32_serial_dt_ids),
-+		.suppress_bind_attrs = IS_BUILTIN(CONFIG_SERIAL_PIC32),
- 	},
- };
+ 	if (!dev->pm_cap)
+@@ -1939,6 +1939,7 @@ bool pci_check_pme_status(struct pci_dev *dev)
+ 		return false;
  
-diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
-index 897b1c515d00..217686cb4cd3 100644
---- a/drivers/tty/serial/xilinx_uartps.c
-+++ b/drivers/tty/serial/xilinx_uartps.c
-@@ -1644,6 +1644,7 @@ static struct platform_driver cdns_uart_platform_driver = {
- 		.name = CDNS_UART_NAME,
- 		.of_match_table = cdns_uart_of_match,
- 		.pm = &cdns_uart_dev_pm_ops,
-+		.suppress_bind_attrs = IS_BUILTIN(CONFIG_SERIAL_XILINX_PS_UART),
- 		},
- };
+ 	/* Clear PME status. */
++	pmcsr_orig = pmcsr;
+ 	pmcsr |= PCI_PM_CTRL_PME_STATUS;
+ 	if (pmcsr & PCI_PM_CTRL_PME_ENABLE) {
+ 		/* Disable PME to avoid interrupt flood. */
+@@ -1948,6 +1949,9 @@ bool pci_check_pme_status(struct pci_dev *dev)
  
--- 
-2.19.1
-
-
-
+ 	pci_write_config_word(dev, pmcsr_pos, pmcsr);
+ 
++	pci_read_config_word(dev, pmcsr_pos, &pmcsr);
++	pci_info(dev, "%s PM_CTRL %#06x -> %#06x\n", __func__, pmcsr_orig, pmcsr);
++
+ 	return ret;
+ }
+ 
+@@ -2027,18 +2031,22 @@ static void pci_pme_list_scan(struct work_struct *work)
+ 
+ static void __pci_pme_active(struct pci_dev *dev, bool enable)
+ {
+-	u16 pmcsr;
++	u16 pmcsr, pmcsr_orig;
+ 
+ 	if (!dev->pme_support)
+ 		return;
+ 
+ 	pci_read_config_word(dev, dev->pm_cap + PCI_PM_CTRL, &pmcsr);
++	pmcsr_orig = pmcsr;
+ 	/* Clear PME_Status by writing 1 to it and enable PME# */
+ 	pmcsr |= PCI_PM_CTRL_PME_STATUS | PCI_PM_CTRL_PME_ENABLE;
+ 	if (!enable)
+ 		pmcsr &= ~PCI_PM_CTRL_PME_ENABLE;
+ 
+ 	pci_write_config_word(dev, dev->pm_cap + PCI_PM_CTRL, pmcsr);
++
++	pci_read_config_word(dev, dev->pm_cap + PCI_PM_CTRL, &pmcsr);
++	pci_info(dev, "%s PM_CTRL %#06x -> %#06x\n", __func__, pmcsr_orig, pmcsr);
+ }
+ 
+ /**
