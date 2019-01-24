@@ -2,137 +2,224 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D120C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:30:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58E46C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:30:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 046AC2184B
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:30:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="0T6eS9v/"
+	by mail.kernel.org (Postfix) with ESMTP id 28096218AD
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:30:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727841AbfAXMaL (ORCPT
+        id S1727929AbfAXMaR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 07:30:11 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:42184 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726014AbfAXMaK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 07:30:10 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0OCT5a9115839;
-        Thu, 24 Jan 2019 12:29:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=hTQDulfmjd7+MSutxcuI8Pgtaoy2isZdHjbeCOBZ7q4=;
- b=0T6eS9v/vAnon1MWSFMdM55u/NTbOtps/WtpQEgsP6q83QQ4+c56dkucJpiKbotjZOID
- Mv7G1XBTOhJpIawf8aGyK/t4LRflXApnQeL1lkxXES7O/Y34jfiNY0aTQg8romjZpbgt
- x7EFH8vWeAffDWHh6w+NV6LRwN+H8XpvLTd/l/HRGHWmNEiOK0nGAZCXQdv0pjUd9k9i
- tKYhzwGdxmznRpG9Lnx1+Y2F/AYi2TMVyaj//AyhCTR4DrblnujmUUDHSZRzqusyfrVF
- gqvTWa5TPiFWV9q8uBb4+PWB/A34jXw2N1xmNyISBQO78JbTt6oygBEzbWXR/Amji9+8 vA== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2120.oracle.com with ESMTP id 2q3vhrydj7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 24 Jan 2019 12:29:52 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0OCTp14023485
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 24 Jan 2019 12:29:52 GMT
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0OCTodn029526;
-        Thu, 24 Jan 2019 12:29:50 GMT
-Received: from kadam (/197.157.34.164)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 24 Jan 2019 04:29:50 -0800
-Date:   Thu, 24 Jan 2019 15:29:18 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Maya Nakamura <m.maya.nakamura@gmail.com>
-Cc:     lorenzo.pieralisi@arm.com, bhelgaas@google.com,
-        linux-pci@vger.kernel.org, kys@microsoft.com,
-        sthemmin@microsoft.com, olaf@aepfle.de, apw@canonical.com,
-        jasowang@redhat.com, mikelley@microsoft.com,
-        Alexander.Levin@microsoft.com, marcelo.cerri@canonical.com,
-        vkuznets@redhat.com, haiyangz@microsoft.com,
-        driverdev-devel@linuxdriverproject.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] PCI: hv: Refactor hv_irq_unmask() to use
- cpumask_to_vpset()
-Message-ID: <20190124122918.GL4482@kadam>
-References: <cover.1548232616.git.m.maya.nakamura@gmail.com>
- <885d207cd90a558364d611e4ebd64a87aa8962d7.1548232616.git.m.maya.nakamura@gmail.com>
+        Thu, 24 Jan 2019 07:30:17 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55918 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727902AbfAXMaP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 07:30:15 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 904DFEBD;
+        Thu, 24 Jan 2019 04:30:14 -0800 (PST)
+Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9C70E3F237;
+        Thu, 24 Jan 2019 04:30:11 -0800 (PST)
+Date:   Thu, 24 Jan 2019 12:30:09 +0000
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v6 09/16] sched/cpufreq: uclamp: Add utilization clamping
+ for RT tasks
+Message-ID: <20190124123009.2yulcf25ld66popd@e110439-lin>
+References: <20190115101513.2822-1-patrick.bellasi@arm.com>
+ <20190115101513.2822-10-patrick.bellasi@arm.com>
+ <20190123104944.GX27931@hirez.programming.kicks-ass.net>
+ <20190123144011.iid3avb63r5v4r2c@e110439-lin>
+ <20190123201146.GH17749@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <885d207cd90a558364d611e4ebd64a87aa8962d7.1548232616.git.m.maya.nakamura@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9145 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=965
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901240091
+In-Reply-To: <20190123201146.GH17749@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 01:02:12PM -0800, Maya Nakamura wrote:
-> @@ -908,12 +906,12 @@ static void hv_irq_unmask(struct irq_data *data)
->  	struct retarget_msi_interrupt *params;
->  	struct hv_pcibus_device *hbus;
->  	struct cpumask *dest;
-> +	cpumask_var_t tmp;
->  	struct pci_bus *pbus;
->  	struct pci_dev *pdev;
->  	unsigned long flags;
->  	u32 var_size = 0;
-> -	int cpu_vmbus;
-> -	int cpu;
-> +	int cpu, nr_bank = 0;
-                        ^^^^^
-No need to initialize this to a bogus value.  It's misleading and it
-turns off GCC's uninitialized variable warning so it can lead to bugs.
+On 23-Jan 21:11, Peter Zijlstra wrote:
+> On Wed, Jan 23, 2019 at 02:40:11PM +0000, Patrick Bellasi wrote:
+> > On 23-Jan 11:49, Peter Zijlstra wrote:
+> > > On Tue, Jan 15, 2019 at 10:15:06AM +0000, Patrick Bellasi wrote:
+> > > > @@ -858,16 +859,23 @@ static inline void
+> > > >  uclamp_effective_get(struct task_struct *p, unsigned int clamp_id,
+> > > >  		     unsigned int *clamp_value, unsigned int *bucket_id)
+> > > >  {
+> > > > +	struct uclamp_se *default_clamp;
+> > > > +
+> > > >  	/* Task specific clamp value */
+> > > >  	*clamp_value = p->uclamp[clamp_id].value;
+> > > >  	*bucket_id = p->uclamp[clamp_id].bucket_id;
+> > > >  
+> > > > +	/* RT tasks have different default values */
+> > > > +	default_clamp = task_has_rt_policy(p)
+> > > > +		? uclamp_default_perf
+> > > > +		: uclamp_default;
+> > > > +
+> > > >  	/* System default restriction */
+> > > > -	if (unlikely(*clamp_value < uclamp_default[UCLAMP_MIN].value ||
+> > > > -		     *clamp_value > uclamp_default[UCLAMP_MAX].value)) {
+> > > > +	if (unlikely(*clamp_value < default_clamp[UCLAMP_MIN].value ||
+> > > > +		     *clamp_value > default_clamp[UCLAMP_MAX].value)) {
+> > > >  		/* Keep it simple: unconditionally enforce system defaults */
+> > > > -		*clamp_value = uclamp_default[clamp_id].value;
+> > > > -		*bucket_id = uclamp_default[clamp_id].bucket_id;
+> > > > +		*clamp_value = default_clamp[clamp_id].value;
+> > > > +		*bucket_id = default_clamp[clamp_id].bucket_id;
+> > > >  	}
+> > > >  }
+> > > 
+> > > So I still don't much like the whole effective thing;
+> > 
+> > :/
+> > 
+> > I find back-annotation useful in many cases since we have different
+> > sources for possible clamp values:
+> > 
+> >  1. task specific
+> >  2. cgroup defined
+> >  3. system defaults
+> >  4. system power default
+> 
+> (I'm not sure I've seen 4 happen yet, what's that?)
 
->  	u64 res;
->  
->  	dest = irq_data_get_effective_affinity_mask(data);
-> @@ -953,29 +951,28 @@ static void hv_irq_unmask(struct irq_data *data)
->  		 */
->  		params->int_target.flags |=
->  			HV_DEVICE_INTERRUPT_TARGET_PROCESSOR_SET;
-> -		params->int_target.vp_set.valid_bank_mask =
-> -			(1ull << HV_VP_SET_BANK_COUNT_MAX) - 1;
-> +
-> +		if (!alloc_cpumask_var(&tmp, GFP_KERNEL)) {
-> +			dev_err(&hbus->hdev->device, "out of memory");
+Typo: that's "system s/power/perf/ default", i.e. uclamp_default_perf
+introduced by this patch.
 
+> Anyway, once you get range composition defined; that should be something
+> like:
+> 
+> 	R_p \Compose_g R_g
+> 
+> Where R_p is the range of task-p, and R_g is the range of the g'th
+> cgroup of p (where you can make an identity between the root cgroup and
+> the system default).
+> 
+> Now; as per the other email; I think the straight forward composition:
+> 
+> struct range compose(struct range a, struct range b)
+> {
+> 	return (range){.min = clamp(a.min, b.min, b.max),
+> 	               .max = clamp(a.max, b.min, b.max), };
+> }
 
-No need for this error message.  alloc_cpumask_var() already has better
-debug messages built in.
+This composition is done in uclamp_effective_get() but it's
+slightly different, since we want to support a "nice policy" where
+tasks can always ask less then what they have got assigned.
 
-> +			return;
+Thus, from an abstract standpoint, if a task is in a cgroup:
 
-We can't return directly.  We need to unlock first.
+     task.min <= R_g.min
+     task.max <= R_g.max
 
-> +		}
-> +
-> +		cpumask_and(tmp, dest, cpu_online_mask);
-> +		nr_bank = cpumask_to_vpset(&params->int_target.vp_set, tmp);
-> +		free_cpumask_var(tmp);
-> +
-> +		if (!nr_bank) {
-> +			dev_err(&hbus->hdev->device, "too high CPU");
+While, for tasks in the root cgroup system default applies and we
+enforece:
 
-This error message is not useful.
+     task.min >= R_0.min
+     task.max <= R_0.max
 
-> +			res = 1;
-> +			goto exit_unlock;
-> +		}
+... where the "nice policy" is currently not more supported, but
+perhaps we can/should use the same for system defaults too.
 
-regards,
-dan carpenter
+> (note that this is non-commutative, so we have to pay attention to
+> get the order 'right')
+> 
+> Works in this case; unlike the cpu/rq conposition where we resort to a
+> pure max function for non-interference.
 
+Right.
+
+> > I don't think we can avoid to somehow back annotate on which bucket a
+> > task has been refcounted... it makes dequeue so much easier, it helps
+> > in ensuring that the refcouning is consistent and enable lazy updates.
+> 
+> So I'll have to go over the code again, but I'm wondering why you're
+> changing uclamp_se::bucket_id on a runnable task.
+
+We change only the "requested" value, not the "effective" one.
+
+> Ideally you keep bucket_id invariant between enqueue and dequeue; then
+> dequeue knows where we put it.
+
+Right, that's what we do for the "effective" value.
+
+> Now I suppose actually determining bucket_id is 'expensive' (it
+> certainly is with the whole mapping scheme, but even that integer
+> division is not nice), so we'd like to precompute the bucket_id.
+
+Yes, although the complexity is mostly in the composition logic
+described above not on mapping at all. We have "mapping" overheads
+only when we change a "request" value and that's from slow-paths.
+
+The "effective" value is computed at each enqueue time by composing
+precomputed bucket_id representing the current "requested" task's,
+cgroup's and system default's values.
+
+> This then leads to the problem of how to change uclamp_se::value while
+> runnable (since per the other thread you don't want to always update all
+> runnable tasks).
+> 
+> So far so right?
+
+Yes.
+
+> I'm thikning that if we haz a single bit, say:
+> 
+>   struct uclamp_se {
+> 	...
+> 	unsigned int	changed : 1;
+>   };
+> 
+> We can update uclamp_se::value and set uclamp_se::changed, and then the
+> next enqueue will (unlikely) test-and-clear changed and recompute the
+> bucket_id.
+
+This mean will lazy update the "requested" bucket_id by deferring its
+computation at enqueue time. Which saves us a copy of the bucket_id,
+i.e. we will have only the "effective" value updated at enqueue time.
+
+But...
+
+> Would that not be simpler?
+
+... although being simpler it does not fully exploit the slow-path,
+a syscall which is usually running from a different process context
+(system management software).
+
+It also fits better for lazy updates but, in the cgroup case, where we
+wanna enforce an update ASAP for RUNNABLE tasks, we will still have to
+do the updates from the slow-path.
+
+Will look better into this simplification while working on v7, perhaps
+the linear mapping can really help in that too.
+
+Cheers Patrick
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
