@@ -2,105 +2,98 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E9C3C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:07:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD0A1C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:07:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6849B2082C
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:07:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97720218AF
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:07:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GMsPnP0N"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UHwd77B6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729282AbfAXSHl (ORCPT
+        id S1729155AbfAXSHr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 13:07:41 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34674 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727919AbfAXSHl (ORCPT
+        Thu, 24 Jan 2019 13:07:47 -0500
+Received: from mail-lj1-f179.google.com ([209.85.208.179]:44459 "EHLO
+        mail-lj1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729286AbfAXSHn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 13:07:41 -0500
-Received: by mail-wr1-f67.google.com with SMTP id f7so7557947wrp.1;
-        Thu, 24 Jan 2019 10:07:40 -0800 (PST)
+        Thu, 24 Jan 2019 13:07:43 -0500
+Received: by mail-lj1-f179.google.com with SMTP id k19-v6so6050506lji.11
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 10:07:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=9+mli0xSXk2ghiIeou+iQu6b7dIljMmGB5zDKNfOwTc=;
-        b=GMsPnP0NzZ+lEOLSnpeCpJbZ2wXAdhj4dZnr76MkTGwbYTStG9jdYcWYe+UhJT7x07
-         HbesboogtJS4h3K3qUOMVlNJyNwPye8XRhIrCxsMqBu6dMP3ZqKtGSBj+rvfnSrxGg20
-         IZxwHAGtmgrdDIlGBlCe/tD80o/cRX4+UPJ/2MyQvTycDau38crvHpbmqZ1U3kxd9Kn3
-         voHhOebTN89DvC+2Czb/fMmLZ275uuU2X9PShXBaHaTyVez5Q/ghwB/3MftaL2gcEdVy
-         za+LKnSgtVLjF8rS3frBmIrgS33c7QsF1cJTYI048F1CvGX1F35V4F56Kcj9UuwdAJsi
-         LxXQ==
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=tjMXrhI4SQ+brncYCMGz3khd2K34m9mAQPJLSGNTKiU=;
+        b=UHwd77B6TWamXj+SgO085iAtcURGIJKeTyjep2yXVn3I6Q52iqv1RftB6+vejz8I62
+         DvRhdXHAIFiaWO8Xh6TsgbGRGpy5lxzCzHTTY9mN6C0Dwf0WdlmApTSx7dVEm1c4cuQU
+         xCf7hC0rlYWJjqbe8qbxXducPg2bE6NbklzjejoWkGRJxV5h2ByuS3p0cPeB8X+82JzP
+         MUffBChH0cX/LOTEl3uFRZmgO3HF5i6AODxMoPqZIwmOaKWJDZVAvbSWJA+MJFpeSuo1
+         xkDmGQZaVBhUPFC/3fuP/aEcYOkWY/+hqkYXK4M2Pu6id4WyjkNMb9T28Rgp76W2FsTr
+         mXrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=9+mli0xSXk2ghiIeou+iQu6b7dIljMmGB5zDKNfOwTc=;
-        b=HvpqIJxfIWvRQ4ZBqLwK+oE+mVUXG7h+P7qzUiWQ32GfVvo6Jao0v9obyvnhmET3DB
-         MiD6HemvwVBRe9CDGloXT5zYr6KbqXhS6atvo9bH9P/s0mWxK6VdLCHP74PRzvG/TQIu
-         TzFyUZO5EYsowQc/6YKOycRCROuf9PnEXQloaenYyUh0VbUEGyUeAmdd68fuGgcvfG2a
-         C3OL4/MV+Q6m6EfCBebpQP+n2ssS/t/JKuQ4SVutssywcmjuap5Dm2b0Z64Q5h6FrpNR
-         35Cz/rNusBKUAFKfjSt6yGtI12TkHx2No/4kS/7+6s3YXD6zBdPSvN9hOa/VEgGm81F3
-         U8rA==
-X-Gm-Message-State: AJcUukcggs2yNXdgq8x2QaFdKmJ8CK/1JBPbFV+kL861Q0AJIiFEtcAb
-        tWTptf2SaVfap8pVCYfR2fY=
-X-Google-Smtp-Source: ALg8bN63lOvR0OgHzifOReN3O18SzENY1+lEzguq01mwJvGoXnOo99qLdc70oT7hGNUL/9RouglpCg==
-X-Received: by 2002:adf:ce86:: with SMTP id r6mr8531754wrn.257.1548353259561;
-        Thu, 24 Jan 2019 10:07:39 -0800 (PST)
-Received: from macbookpro.malat.net ([2a01:e34:ee1e:860:6f23:82e6:aa2d:bbd1])
-        by smtp.gmail.com with ESMTPSA id x3sm99402358wrd.19.2019.01.24.10.07.38
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=tjMXrhI4SQ+brncYCMGz3khd2K34m9mAQPJLSGNTKiU=;
+        b=Od9JGJ61BmZFZbNad/ApRYTwN2yG3I/8LLif/L7lpCljbXCeg8i3KW1vKsMFKdpPwX
+         TGVSEBDSf6uad1UlvEMCFMvesm/KARt69aVaN0PO0bJOhU5k1/8krnWYfZEQZv2RZrL0
+         1snGEh9Nv/ttEYPZyU147YNWiaDC/aHAY+Sx2V9yLU8JgIp0oU3Y3biafhRbN0BTFnLA
+         8K6urGzXB0QKzbOiOIfcb1u1GOT2eRH8PRxcCMLlBtG2r6MV0IT1Qq/cweXqbHNI8038
+         5x7YmfKWCuOesKs/esM5RhnTmGir5QVjnu9/FddH+sDEkD41fuDz9tdT12oklpHGGB8X
+         0cGQ==
+X-Gm-Message-State: AJcUukcVt0cM/Do+ioJSHcd3Dz5rWuvDx46xDJ/dSjEp4k1WbTPgS5M4
+        Fy1H0uT+E+OecO3PF2Pjge4=
+X-Google-Smtp-Source: ALg8bN6TDkLJ+RpIU8JfbH1QTlGKXPhSFO/+dIsRqHpRZ/d5DiORco9nkp/F5g/9BKMqxBIzhYhAdg==
+X-Received: by 2002:a2e:880a:: with SMTP id x10-v6mr6806883ljh.174.1548353261281;
+        Thu, 24 Jan 2019 10:07:41 -0800 (PST)
+Received: from uranus.localdomain ([5.18.103.226])
+        by smtp.gmail.com with ESMTPSA id q67sm1082157lfe.19.2019.01.24.10.07.40
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 24 Jan 2019 10:07:38 -0800 (PST)
-Received: by macbookpro.malat.net (Postfix, from userid 1000)
-        id DEEB01143573; Thu, 24 Jan 2019 19:07:37 +0100 (CET)
-From:   Mathieu Malaterre <malat@debian.org>
-To:     Marcel Holtmann <marcel@holtmann.org>
-Cc:     Mathieu Malaterre <malat@debian.org>,
-        Gustavo Padovan <gustavo.padovan@collabora.co.uk>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] Bluetooth: Annotate implicit fall through in l2cap_config_rsp
-Date:   Thu, 24 Jan 2019 19:07:23 +0100
-Message-Id: <20190124180724.20910-1-malat@debian.org>
-X-Mailer: git-send-email 2.19.2
+        Thu, 24 Jan 2019 10:07:40 -0800 (PST)
+Received: by uranus.localdomain (Postfix, from userid 1000)
+        id 185C1460419; Thu, 24 Jan 2019 21:07:40 +0300 (MSK)
+Date:   Thu, 24 Jan 2019 21:07:40 +0300
+From:   Cyrill Gorcunov <gorcunov@gmail.com>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: [PATCH -next] rcu: rcu_qs -- Use raise_softirq_irqoff to not save
+ irqs twice
+Message-ID: <20190124180740.GD2332@uranus.lan>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a plan to build the kernel with -Wimplicit-fallthrough and
-this place in the code produced a warning (W=1).
+The rcu_qs is disabling IRQs by self so no need to do the same in raise_softirq,
+instead we can save some cycles using raise_softirq_irqoff directly.
 
-This commit removes the following warning:
-
-  net/bluetooth/l2cap_core.c:4223:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
-
-Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
+CC: Paul E. McKenney <paulmck@linux.ibm.com>
+Signed-off-by: Cyrill Gorcunov <gorcunov@gmail.com>
 ---
- net/bluetooth/l2cap_core.c | 1 +
- 1 file changed, 1 insertion(+)
+ kernel/rcu/tiny.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/bluetooth/l2cap_core.c b/net/bluetooth/l2cap_core.c
-index 2a7fb517d460..a5b76e24940a 100644
---- a/net/bluetooth/l2cap_core.c
-+++ b/net/bluetooth/l2cap_core.c
-@@ -4244,6 +4244,7 @@ static inline int l2cap_config_rsp(struct l2cap_conn *conn,
- 				goto done;
- 			break;
- 		}
-+		/* fall through */
- 
- 	default:
- 		l2cap_chan_set_err(chan, ECONNRESET);
--- 
-2.19.2
-
+Index: linux-next.git/kernel/rcu/tiny.c
+===================================================================
+--- linux-next.git.orig/kernel/rcu/tiny.c
++++ linux-next.git/kernel/rcu/tiny.c
+@@ -65,7 +65,7 @@ void rcu_qs(void)
+ 	local_irq_save(flags);
+ 	if (rcu_ctrlblk.donetail != rcu_ctrlblk.curtail) {
+ 		rcu_ctrlblk.donetail = rcu_ctrlblk.curtail;
+-		raise_softirq(RCU_SOFTIRQ);
++		raise_softirq_irqoff(RCU_SOFTIRQ);
+ 	}
+ 	local_irq_restore(flags);
+ }
+Subject: [PATCH]
