@@ -2,95 +2,74 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F088FC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:17:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9915FC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:17:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF873218CD
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:17:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ofglrUkd"
+	by mail.kernel.org (Postfix) with ESMTP id 6946B218D0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:17:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548357433;
+	bh=ZLFhZYGAWQxoijbUQverY9nPQj8pPfraJAtyQg9ynUQ=;
+	h=Subject:References:Cc:From:In-Reply-To:To:Date:List-ID:From;
+	b=Qak65FhoqyqLJk8KoMM25BZUmgctw2/vzOXgkUYVwSTDYDOr7Zx893a/f5vXuZdAs
+	 Ib4i5utcbogWn67y0JUvyw/4sq4d5A1GPVTzjXCfi0JtX1dvRTBau22VcqwgQI0FBZ
+	 q/RZeHHvE98lb8xj/4S9BzQBBhFzu8dCRjZyVOrc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729271AbfAXTQ7 (ORCPT
+        id S1729295AbfAXTRL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:16:59 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:44421 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728071AbfAXTQ7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:16:59 -0500
-Received: by mail-pg1-f196.google.com with SMTP id t13so3059034pgr.11;
-        Thu, 24 Jan 2019 11:16:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4bZg36YsPw/a31jcKnrhFpNEcXz5ZaXQgJXFzFAb6dM=;
-        b=ofglrUkdPrjp7LsriPDVZi/QHUrr5FwePcvTrhWmpMtRPGsfZ7NZXrh9Ioq1mQsVLL
-         90PSgu2KxoDcwpfWEK8hkBKxECQO9dhNFUPH+9cbaLqjpaPa+zIy7jtZuo7OQz7tunBW
-         BSecuF7M5+GseSnJs+duwryiOOaKEM16zsnAt+mWjqhBEXU0BeRDti5OGTqzDbLQ0fSC
-         RQa2Fiwka01eyWV5yG6OwOi1ptE3bE++emCy4upxWuRy0A5loEfMlRFVqM+vtwlKZivz
-         bEyeqNpCZHhGlLQGIWo2Dn7z5EBP7Fn4X+NCg/oE3wMu/RnHgIDTEsaDdMYd9gO5kq8J
-         eG4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4bZg36YsPw/a31jcKnrhFpNEcXz5ZaXQgJXFzFAb6dM=;
-        b=eube7fGNs9+fcwUphP0cm0RI6zhueJrX18iQg64+lvOxFUsbhgFiXxgblz6VXbPpKg
-         pLM6IYREsVA3rCGqBBRykxRxYZYqLKc1G/ZQGqxfsxCA7B1Vn3oG8HY/5XYsmgTPGbYI
-         sCF4Rh+dk6Yw2fmzWj2SZo2GnQ/acTZvx8e+iUIqUcSVkBrhUwF5qYCk6TJx3TiNzCQ1
-         UjpiApU0kCcoGcjeDcRVJ5TUCM402EU7WeugQ/woY92HXrIXuM9z+NGkfXr3Foq5JsEM
-         nQPEKPT3Q62kUenv5HsOtrT3JIakypP68CsWPW0oUWtdImVprmlJcq1lDhSNNGg7g7tp
-         YIlg==
-X-Gm-Message-State: AJcUukc9nsOuMMdRtRjbO0rbHTho7ZA9ch7nKr99PNUtbgm6TCY60vJl
-        u7ijaxvbBCjvxjTH1oHjnaeX5LOnBl1FBygT2/E=
-X-Google-Smtp-Source: ALg8bN5rAZo2r6++z7vjJn03JRxJNdK5ajjgK5aR8Px8LM1wMragJwO0SZpBCRcHQDOMguxaIQslXudT9alB7VguLRs=
-X-Received: by 2002:a63:d450:: with SMTP id i16mr7013581pgj.246.1548357418458;
- Thu, 24 Jan 2019 11:16:58 -0800 (PST)
+        Thu, 24 Jan 2019 14:17:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43360 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726049AbfAXTRL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:17:11 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 602A0218CD;
+        Thu, 24 Jan 2019 19:17:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548357430;
+        bh=ZLFhZYGAWQxoijbUQverY9nPQj8pPfraJAtyQg9ynUQ=;
+        h=Subject:References:Cc:From:In-Reply-To:To:Date:From;
+        b=VdenfzovZ3Pi8+sDp8MxgZBhU0L+7icUmYilA0F3sKtdrGwK/dvrr9kjbFe93fjHz
+         HJytTznee4ePPcYQUlUaJqGcpUBBLj0qukdY90KX/l2WU1D2wEPoKLe60QJyPRKZ5Z
+         oDH9BB3pK5fhW2PLt3bzOJVcFHDfayQxDwrpd4bo=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20190121224644.26903-1-okaya@kernel.org> <3681650.SPxszaOeRQ@aspire.rjw.lan>
-In-Reply-To: <3681650.SPxszaOeRQ@aspire.rjw.lan>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 24 Jan 2019 21:16:47 +0200
-Message-ID: <CAHp75VdJLQ-J_VruUmou9-PafScqNHGzu8+52ZTy-HtG98gbmg@mail.gmail.com>
-Subject: Re: [for next][PATCH 1/2] platform/x86: Fix unmet dependency warning
- for ACPI_CMPC
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Sinan Kaya <okaya@kernel.org>, Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        linux-next <linux-next@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        "open list:X86 PLATFORM DRIVERS" 
-        <platform-driver-x86@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] clk: Remove global clk traversal on fetch parent index
+References: <20181221003100.157581-1-dbasehore@chromium.org>
+User-Agent: alot/0.8
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Derek Basehore <dbasehore@chromium.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20181221003100.157581-1-dbasehore@chromium.org>
+Message-ID: <154835742949.136743.9149540159914235850@swboyd.mtv.corp.google.com>
+To:     Derek Basehore <dbasehore@chromium.org>, mturquette@baylibre.com
+Date:   Thu, 24 Jan 2019 11:17:09 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 12:54 PM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->
-> On Monday, January 21, 2019 11:46:43 PM CET Sinan Kaya wrote:
-> > Add BACKLIGHT_LCD_SUPPORT for ACPI_CMPC to fix the
-> > warning: unmet direct dependencies detected for BACKLIGHT_CLASS_DEVICE.
-> >
-> > ACPI_CMPC selects BACKLIGHT_LCD_SUPPORT but BACKLIGHT_LCD_SUPPORT
-> > depends on BACKLIGHT_LCD_SUPPORT.
-> >
-> > Copy this dependency into ACPI_CMPC.
+Quoting Derek Basehore (2018-12-20 16:31:00)
+> It's not required to traverse the entire clk tree when the parents
+> array contains a NULL value. You already have the parent clk_core
+> pointer, so you can just compare the parent->name and parent_names[i]
+> pointers.
+>=20
+> In cases where clk names are never registered, this can be
+> a substantial power improvement since a mux having an unregistered
+> parent name will traverse the clk tree on every set_rate. This can
+> happen hundreds of times a second on CPU clks.
+>=20
+> Change-Id: I85499d2e576249568ff508e424ca8d5009e6e2b1
+> Signed-off-by: Derek Basehore <dbasehore@chromium.org>
+> ---
 
-> Andy/Darren, these two seem to be for you, but I can take them too as
-> related to ACPI tagentially, so please let me know.
+Applied to clk-fixes + some commit text and comment updates.
 
-Answered to v2. One comment still to be addressed, otherwise feel free
-to take them.
-
--- 
-With Best Regards,
-Andy Shevchenko
