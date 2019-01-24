@@ -2,108 +2,105 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31E21C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:30:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7F3EC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:30:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0BB72184C
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:30:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7028A2184C
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:30:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LRF0c+eB"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="sdJRgCmd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727529AbfAXI37 (ORCPT
+        id S1727563AbfAXIai (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 03:29:59 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:44092 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727491AbfAXI36 (ORCPT
+        Thu, 24 Jan 2019 03:30:38 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:39790 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726212AbfAXIai (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 03:29:58 -0500
-Received: by mail-pg1-f194.google.com with SMTP id t13so2336327pgr.11;
-        Thu, 24 Jan 2019 00:29:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=LEFs+VdK+tLN8hb7yXI9KJRvJ1tvQsYGwKQ02Hq326w=;
-        b=LRF0c+eBWxwDwbO6Z5VQliiHkjH+pXCICP7FmJhd5TW+WD6at3ltaqVRPwN+VyxDey
-         ksIUd3kttpdsVB0Iwu9DXpq6T0QLBZkSx+TdRt2BR/Kvei1LmaHhGwlnbbpfyovxfaSN
-         d0XEQovfqvZVy13M3JgnWcymNXMVuzwdbzHNMy5Y82yZ4cYrfoyxmXisSiQsKOz4V1i5
-         /U1zOcT5SDUdPXXX8hQ3kGCNj6QRRXic3ovYMmq9gHlK1n57WM7vSL18m+v/U2xZ+gYB
-         NyZztah8ZlwX7HRw59Jkvk1WtontNxNOgE3Mf6N8e9SV+1/oL5LcdFFHXLXNnq7t8go2
-         kquA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LEFs+VdK+tLN8hb7yXI9KJRvJ1tvQsYGwKQ02Hq326w=;
-        b=SwTVUtFXZHjoL7r8YQOeftc4fOWVHh6iYZ/y3lVIkUJ+xiJaqpTwUOpnTR4pum246t
-         le3NT+uuwCY8+Uyhx5zxk3cmsNz7X7+3nfaoIF4e1wnhQP3EB5LsuAx8Mgsl9jXrMCHL
-         MTKUa5qRCdnAofXcXMLFW2eEnT3Skd5vsAVhkfWa4l/GsALE4Q9OWg8HwjB9nnexABji
-         ogqJuiCOWH+cxEVs4GwTvrsy6J3shuxUGGOkC63BOubGJKVkEvogpNQg5kdUSVgiqH4+
-         K3ZdddKd7U0XdUPDP/jHy5FGXGL9ecXXZW9iuCoa1ggjyVw/7wZKGKGRqEuH/50dm2UD
-         1zNA==
-X-Gm-Message-State: AJcUukdLrqIteNRDC/S34N5BnZ9nJh9riE/ECkyWpEIIZOdK+xxsfrlG
-        atsc16sL7Kzh2vlXslJu/3/J5MQo
-X-Google-Smtp-Source: ALg8bN5TyP6UqtLRLiaNzhkJpvVhnkNJBEab0QF/isHYeLTsM+7/A9AGggRVpVd1ZjyRe0sVvIl5mQ==
-X-Received: by 2002:a63:ea15:: with SMTP id c21mr4818520pgi.361.1548318597921;
-        Thu, 24 Jan 2019 00:29:57 -0800 (PST)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id m3sm39446272pfi.102.2019.01.24.00.29.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 24 Jan 2019 00:29:57 -0800 (PST)
-Date:   Thu, 24 Jan 2019 00:29:55 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Deepa Dinamani <deepa.kernel@gmail.com>
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        arnd@arndb.de, davem@davemloft.net, y2038@lists.linaro.org
-Subject: Re: [PATCH] input: Fix the CONFIG_SPARC64 mixup
-Message-ID: <20190124082955.GA139904@dtor-ws>
-References: <20190121014914.2328-1-deepa.kernel@gmail.com>
+        Thu, 24 Jan 2019 03:30:38 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0O8UWWT098735;
+        Thu, 24 Jan 2019 02:30:32 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1548318632;
+        bh=4MdR0ga7d28v/h7qjL+PcjxkpY64yBu0ItQ7YJ4O6ZE=;
+        h=From:To:CC:Subject:Date;
+        b=sdJRgCmdHHCo/Jr2IqbAtR5ccQQWFdR7XsIffPWof8x0S4UKT9+C6WjV9LcMkX1Q5
+         qjUiJsrul692vY0WGOyBRDT/Y1ZFpWw9KR5Gt548QMaE4Y0S0gdZ+WXfWQgLrkB5zJ
+         EX6WjzsPLbamFXjT8oAOpMBTBDv+LTkChm0Ia4P8=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0O8UWbW111606
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 24 Jan 2019 02:30:32 -0600
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 24
+ Jan 2019 02:30:32 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Thu, 24 Jan 2019 02:30:32 -0600
+Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0O8UTbY012320;
+        Thu, 24 Jan 2019 02:30:29 -0600
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     Bjorn Helgaas <bhelgaas@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <linux-omap@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v3 0/3] PCI: dra7xx: Support PCIe x2 lane mode
+Date:   Thu, 24 Jan 2019 13:59:54 +0530
+Message-ID: <20190124082957.29077-1-kishon@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190121014914.2328-1-deepa.kernel@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jan 20, 2019 at 05:49:14PM -0800, Deepa Dinamani wrote:
-> Arnd Bergmann pointed out that CONFIG_* cannot be used
-> in a uapi header. Override with an equivalent conditional.
-> 
-> Fixes: 2e746942ebac ("Input: input_event - provide override for sparc64")
-> Fixes: 152194fe9c3f ("Input: extend usable life of event timestamps to 2106 on 32 bit systems")
-> Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
+Previous version of the patch series can be found here [1]
 
-Applied, thank you.
+Patch series adds support to enable x2 lane mode in dra74/dra76 and
+dra72 based boards in pci-dra7xx driver. It introduces new compatible
+strings in order to enable x2 lane mode support.
 
-> ---
->  include/uapi/linux/input.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/uapi/linux/input.h b/include/uapi/linux/input.h
-> index ffab958bc512..f056b2a00d5c 100644
-> --- a/include/uapi/linux/input.h
-> +++ b/include/uapi/linux/input.h
-> @@ -32,7 +32,7 @@ struct input_event {
->  #define input_event_usec time.tv_usec
->  #else
->  	__kernel_ulong_t __sec;
-> -#ifdef CONFIG_SPARC64
-> +#if defined(__sparc__) && defined(__arch64__)
->  	unsigned int __usec;
->  #else
->  	__kernel_ulong_t __usec;
-> -- 
-> 2.17.1
-> 
+Changes from v2:
+*) Have a single syscon dt property for configuring x2 lanes
+*) Fix minor comments given by Lorenzo (falling back to 1 lane mode,
+   remove unused structure member).
+
+Changes from v1:
+*) Added ti prefix to syscon-lane-conf and syscon-lane-sel as
+   suggested to Rob
+*) Merged "PCI: dwc: dra7xx: Add support for SoC specific compatible
+   strings" and "PCI: dwc: pci-dra7xx: Enable x2 mode support" into
+   a single patch.
+*) Fixed $subject as suggested by Bjorn
+*) Added x2 lane mode support for DRA72x
+
+The dts changes and phy changes will be sent as a separate series.
+
+[1] ->  https://lkml.org/lkml/2017/12/19/175
+
+Kishon Vijay Abraham I (3):
+  dt-bindings: PCI: dra7xx: Add SoC specific compatible strings
+  dt-bindings: PCI: dra7xx: Add properties to enable x2 lane in dra7
+  PCI: dra7xx: Enable x2 mode support for dra74x, dra76x and dra72x
+
+ .../devicetree/bindings/pci/ti-pci.txt        | 11 ++-
+ drivers/pci/controller/dwc/pci-dra7xx.c       | 77 +++++++++++++++++++
+ 2 files changed, 86 insertions(+), 2 deletions(-)
 
 -- 
-Dmitry
+2.17.1
+
