@@ -7,41 +7,41 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25812C282C0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 03:03:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24F70C282C0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 03:03:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E80CD21872
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 03:03:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCC9121872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 03:03:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="DLTiKGka"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="DL48IS1z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727399AbfAXDCy (ORCPT
+        id S1727363AbfAXDCv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 22:02:54 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:52924 "EHLO
+        Wed, 23 Jan 2019 22:02:51 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:52918 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727252AbfAXDCu (ORCPT
+        with ESMTP id S1727315AbfAXDCs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 22:02:50 -0500
+        Wed, 23 Jan 2019 22:02:48 -0500
 Received: from localhost.localdomain (unknown [96.44.9.117])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1B5122F5;
-        Thu, 24 Jan 2019 04:02:47 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 882942F4;
+        Thu, 24 Jan 2019 04:02:45 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1548298968;
-        bh=jK9l6KTbRd/p2CLZjYqss5k9r6Xs5TVksT3qoRQaUbA=;
+        s=mail; t=1548298966;
+        bh=W248YTYRKAUTDyD3PHOYUspxlWEogAay3y6YyoFQkN0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DLTiKGkaqBzTpO2S/LFs1cSuEOE3E109/tAp1vEeMr1fSpQ04DEj9YjAJJG5mBE4v
-         qLIZxAANU3tceHJl9SvkwLHgwAPmmMCfwgWo9RKVWgrXFOrl5jGrtEY9Al98M+t2vR
-         w6nGlz3JmavKU5JQr/dRUDEji+U+6HV51hxLrS+c=
+        b=DL48IS1zYQ0LWbI9IVDMkJpwlO/potkb9rl6OtPSk87LVqtBfiwi/u7srb9sjaES2
+         NmfR5FUD46AjzZ3NZz/N1PqZTBhz4otivStpv6vahTp4nEGfek1uGk312CQ7mAEcJE
+         61fclzFlbaZxouTxx2ldWqZtlylcT1AvKl4NIlyw=
 From:   Paul Elder <paul.elder@ideasonboard.com>
 To:     laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com
 Cc:     Paul Elder <paul.elder@ideasonboard.com>, b-liu@ti.com,
         stern@rowland.harvard.edu, rogerq@ti.com, balbi@kernel.org,
         gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v7 5/6] usb: musb: gadget: implement optional explicit status stage
-Date:   Wed, 23 Jan 2019 22:02:27 -0500
-Message-Id: <20190124030228.19840-6-paul.elder@ideasonboard.com>
+Subject: [PATCH v7 4/6] usb: gadget: add mechanism to specify an explicit status stage
+Date:   Wed, 23 Jan 2019 22:02:26 -0500
+Message-Id: <20190124030228.19840-5-paul.elder@ideasonboard.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124030228.19840-1-paul.elder@ideasonboard.com>
 References: <20190124030228.19840-1-paul.elder@ideasonboard.com>
@@ -52,139 +52,143 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implement the mechanism for optional explicit status stage for the MUSB
-driver. This allows a function driver to specify what to reply for the
-status stage. The functionality for an implicit status stage is
-retained.
+A usb gadget function driver may or may not want to delay the status
+stage of a control OUT request. An instance where it might want to is to
+asynchronously validate the data of a class-specific request.
+
+A function driver that wants an explicit status stage should set the
+newly added explicit_status flag of the usb_request corresponding to the
+data stage. Later on, the function driver can explicitly complete the
+status stage by enqueueing a usb_request for ACK, or calling
+usb_ep_set_halt() for STALL.
+
+To support both explicit and implicit status stages, a UDC driver must
+call the newly added usb_gadget_control_complete function right before
+calling usb_gadget_giveback_request. To support the explicit status
+stage, it might then check what stage the usb_request was queued in, and
+for control IN ACK the host's zero-length data packet, or for control
+OUT send a zero-length DATA1 ACK packet.
 
 Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
+v4 Acked-by: Alan Stern <stern@rowland.harvard.edu>
 v1 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-v1 Acked-by: Bin Liu <b-liu@ti.com>
 ---
-Changes from v6:
-
-- check that the request queued for the status stage of a control
-  OUT request has zero length
-
-Changes from v5:
-
-- giveback usb request to gadget driver after enqueueing for the status
-  stage
+No change from v6
+No change from v5
 
 Changes from v4:
 
-- call usb_gadget_control_complete before usb_gadget_giveback_request
-- set musb ep0 state to statusin in ep0_send_ack
-- make sure to not double-write musb register in ep0_rxstate, since
-  musb_g_ep0_giveback will take care of writing them
+- Change parameter of usb_gadget_control_complete to simply take a
+  usb_request
+- Make usb_gadget_control_complete do nothing if the request has no
+  length (ie. no data stage)
 
-No change from v3
+Changes from v3:
+
+- More specific in commit message about what to do for udc driver acking
+- Set explicit_status in usb_gadget_control_complete
+- Make explicit_status type bool
 
 Changes from v2:
-- update call to usb_gadget_control_complete to include status
-- since sending STALL from the function driver is now done with
-  usb_ep_set_halt, there is no need for the internal ep0_send_response to
-  take a stall/ack parameter; remove the parameter and make the function
-  only send ack, and remove checking for the status reply in the
-  usb_request for the status stage
+
+Add status parameter to usb_gadget_control_complete, so that a
+usb_request is not queued if the status of the just given back request
+is nonzero.
 
 Changes from v1:
-- obvious change to implement v2 mechanism laid out by 4/6 of this
-  series (send_response, and musb_g_ep0_send_response function has
-  been removed, call to usb_gadget_control_complete has been added)
-- ep0_send_response's ack argument has been changed from stall
-- last_packet flag in ep0_rxstate has been removed, since it is equal to
-  req != NULL
 
- drivers/usb/musb/musb_gadget.c     |  2 ++
- drivers/usb/musb/musb_gadget_ep0.c | 36 ++++++++++++++++++++++++++++--
- 2 files changed, 36 insertions(+), 2 deletions(-)
+Complete change of API. Now we use a flag that should be set in the
+usb_request that is queued for the data stage to signal to the UDC that
+we want to delay the status stage (as opposed to setting a flag in the
+UDC itself, that persists across all requests). We now also provide a
+function for UDC drivers to very easily allow implicit status stages, to
+mitigate the need to convert all function drivers to this new API at
+once, and to make it easier for UDC drivers to convert.
 
-diff --git a/drivers/usb/musb/musb_gadget.c b/drivers/usb/musb/musb_gadget.c
-index ffe462a657b1..2a36bebf955d 100644
---- a/drivers/usb/musb/musb_gadget.c
-+++ b/drivers/usb/musb/musb_gadget.c
-@@ -144,6 +144,8 @@ __acquires(ep->musb->lock)
- 		unmap_dma_buffer(req, musb);
+ drivers/usb/gadget/udc/core.c | 34 ++++++++++++++++++++++++++++++++++
+ include/linux/usb/gadget.h    | 10 ++++++++++
+ 2 files changed, 44 insertions(+)
+
+diff --git a/drivers/usb/gadget/udc/core.c b/drivers/usb/gadget/udc/core.c
+index af88b48c1cea..57b2c2550537 100644
+--- a/drivers/usb/gadget/udc/core.c
++++ b/drivers/usb/gadget/udc/core.c
+@@ -894,6 +894,40 @@ EXPORT_SYMBOL_GPL(usb_gadget_giveback_request);
  
- 	trace_musb_req_gb(req);
-+	if (req->ep->end_point.address == 0)
-+		usb_gadget_control_complete(&musb->g, &req->request);
- 	usb_gadget_giveback_request(&req->ep->end_point, &req->request);
- 	spin_lock(&musb->lock);
- 	ep->busy = busy;
-diff --git a/drivers/usb/musb/musb_gadget_ep0.c b/drivers/usb/musb/musb_gadget_ep0.c
-index 91a5027b5c1f..e6531ebe789e 100644
---- a/drivers/usb/musb/musb_gadget_ep0.c
-+++ b/drivers/usb/musb/musb_gadget_ep0.c
-@@ -458,6 +458,25 @@ __acquires(musb->lock)
- 	return handled;
- }
+ /* ------------------------------------------------------------------------- */
  
-+static int ep0_send_ack(struct musb *musb)
++/**
++ * usb_gadget_control_complete - complete the status stage of a control
++ *	request, or delay it
++ * Context: in_interrupt()
++ *
++ * @gadget: gadget whose control request's status stage should be completed
++ * @request: usb request whose status stage should be completed
++ *
++ * This is called by device controller drivers before returning the completed
++ * request back to the gadget layer, to either complete or delay the status
++ * stage. It exits without doing anything if the request has a non-zero status,
++ * if it has zero length, or if its explicit_status flag is set.
++ */
++void usb_gadget_control_complete(struct usb_gadget *gadget,
++		struct usb_request *request)
 +{
-+	void __iomem *regs = musb->control_ep->regs;
-+	u16 csr;
++	struct usb_request *req;
 +
-+	if (musb->ep0_state != MUSB_EP0_STAGE_RX &&
-+	    musb->ep0_state != MUSB_EP0_STAGE_STATUSIN)
-+		return -EINVAL;
++	if (request->explicit_status || request->status || !request->length)
++		return;
 +
-+	csr = MUSB_CSR0_P_DATAEND | MUSB_CSR0_P_SVDRXPKTRDY;
-+
-+	musb_ep_select(musb->mregs, 0);
-+	musb_writew(regs, MUSB_CSR0, csr);
-+
-+	musb->ep0_state = MUSB_EP0_STAGE_STATUSIN;
-+
-+	return 0;
++	/* Send an implicit status-stage request for ep0 */
++	req = usb_ep_alloc_request(gadget->ep0, GFP_ATOMIC);
++	if (req) {
++		req->length = 0;
++		req->explicit_status = 1;
++		req->complete = usb_ep_free_request;
++		usb_ep_queue(gadget->ep0, req, GFP_ATOMIC);
++	}
 +}
++EXPORT_SYMBOL_GPL(usb_gadget_control_complete);
 +
- /* we have an ep0out data packet
-  * Context:  caller holds controller lock
-  */
-@@ -504,12 +523,15 @@ static void ep0_rxstate(struct musb *musb)
- 	if (req) {
- 		musb->ackpend = csr;
- 		musb_g_ep0_giveback(musb, req);
-+		if (req->explicit_status)
-+			return;
- 		if (!musb->ackpend)
- 			return;
- 		musb->ackpend = 0;
-+	} else {
-+		musb_ep_select(musb->mregs, 0);
-+		musb_writew(regs, MUSB_CSR0, csr);
- 	}
--	musb_ep_select(musb->mregs, 0);
--	musb_writew(regs, MUSB_CSR0, csr);
- }
- 
- /*
-@@ -937,6 +959,7 @@ musb_g_ep0_queue(struct usb_ep *e, struct usb_request *r, gfp_t gfp_flags)
- 	case MUSB_EP0_STAGE_RX:		/* control-OUT data */
- 	case MUSB_EP0_STAGE_TX:		/* control-IN data */
- 	case MUSB_EP0_STAGE_ACKWAIT:	/* zero-length data */
-+	case MUSB_EP0_STAGE_STATUSIN:
- 		status = 0;
- 		break;
- 	default:
-@@ -978,6 +1001,15 @@ musb_g_ep0_queue(struct usb_ep *e, struct usb_request *r, gfp_t gfp_flags)
- 	} else if (musb->ackpend) {
- 		musb_writew(regs, MUSB_CSR0, musb->ackpend);
- 		musb->ackpend = 0;
++/* ------------------------------------------------------------------------- */
 +
-+	/* status stage of OUT with data, issue IN status, then giveback */
-+	} else if (musb->ep0_state == MUSB_EP0_STAGE_STATUSIN) {
-+		if (req->request.length)
-+			status = -EINVAL;
-+		else {
-+			status = ep0_send_ack(musb);
-+			musb_g_ep0_giveback(ep->musb, r);
-+		}
- 	}
+ /**
+  * gadget_find_ep_by_name - returns ep whose name is the same as sting passed
+  *	in second parameter or NULL if searched endpoint not found
+diff --git a/include/linux/usb/gadget.h b/include/linux/usb/gadget.h
+index e5cd84a0f84a..bf4f021ce139 100644
+--- a/include/linux/usb/gadget.h
++++ b/include/linux/usb/gadget.h
+@@ -73,6 +73,7 @@ struct usb_ep;
+  *	Note that for writes (IN transfers) some data bytes may still
+  *	reside in a device-side FIFO when the request is reported as
+  *	complete.
++ * @explicit_status: If true, delays the status stage
+  *
+  * These are allocated/freed through the endpoint they're used with.  The
+  * hardware's driver can add extra per-request data to the memory it returns,
+@@ -114,6 +115,8 @@ struct usb_request {
  
- cleanup:
+ 	int			status;
+ 	unsigned		actual;
++
++	bool			explicit_status;
+ };
+ 
+ /*-------------------------------------------------------------------------*/
+@@ -850,6 +853,13 @@ extern void usb_gadget_giveback_request(struct usb_ep *ep,
+ 
+ /*-------------------------------------------------------------------------*/
+ 
++/* utility to complete or delay status stage */
++
++void usb_gadget_control_complete(struct usb_gadget *gadget,
++		struct usb_request *request);
++
++/*-------------------------------------------------------------------------*/
++
+ /* utility to find endpoint by name */
+ 
+ extern struct usb_ep *gadget_find_ep_by_name(struct usb_gadget *g,
 -- 
 2.20.1
 
