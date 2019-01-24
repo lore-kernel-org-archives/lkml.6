@@ -4,52 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07F37C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:33:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC9BAC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:33:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB63621906
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:33:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A1F521903
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:33:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358414;
-	bh=HIwgbqwBqHR2gpk+dildLN936vAp54HtB1s7qDNdgLI=;
+	s=default; t=1548358418;
+	bh=APJiXyr/57/GXeg4pbgBlSQzLJVn0FYUGe2zg4h9ph0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jA6wVHskglIWm/MKOI9GcEGvl6UiNDjUeRHy3ewWgipxdOOMUW6lL1VuSH9mc42Uj
-	 BkBLtFquOHrHIsj6OtXJKDc1FIe+N2AL6ZqNkuSElZJkg/RDUla47z5b3UXmo+feza
-	 C7EedXvU9j+DTmMMNKvHdEWw/qwq58GpAHSMztOY=
+	b=gSzqNZwh4MzIgAhSTdLRBgIRbCRAMHu49x2YgtC8p1AypuBVZtXwyd2Jto024gDvp
+	 /aJrl4NlXFqmTi/KvW+L7IGPB9t5rcdD/G43kA6AB7wh55hfbR66Am15G9I9WheNqY
+	 Ce+qgkZtxsntuzXXWLSQ1SrZ6JGH5ERITEAANSx0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732039AbfAXTdd (ORCPT
+        id S1731356AbfAXTdh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:33:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33254 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:33:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33324 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730494AbfAXTd3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:33:29 -0500
+        id S1732034AbfAXTdc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:33:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 05FAD21903;
-        Thu, 24 Jan 2019 19:33:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6FFE0218D4;
+        Thu, 24 Jan 2019 19:33:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358408;
-        bh=HIwgbqwBqHR2gpk+dildLN936vAp54HtB1s7qDNdgLI=;
+        s=default; t=1548358411;
+        bh=APJiXyr/57/GXeg4pbgBlSQzLJVn0FYUGe2zg4h9ph0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tJ4lWDlukZNpedP7MXpy3rIP7ld1R2g89PkXP0a7K05jzopXosscnN5FPWm62QOE1
-         9v6UpS36dKIx3GokOvMJtaCK0cvOHzUVSeXlMY6ysVyGX6diQsp2eaO4Ya1oosG0Wg
-         i5J8UkDvs9OrOHAVthV7ECyYDtkP4Io/2FRQNUq4=
+        b=03q6z/EcGZ0egXDMRAAXFin2xjH0pfd/GU4OYBNT4MPKlFs/tdvMmxQutFwgWgp5T
+         z5jGDe6DQ9N2sqAi2T2zyNw3j3v90TvrfySYn6YXlT2RFCcXQI21joKZtu7iMjlQ+t
+         ripFaP8CtDxHc/bz1GakRwMcrhnbFdihrK+MSvVU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Trent Piepho <tpiepho@impinj.com>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: [PATCH 4.14 62/63] PCI: dwc: Move interrupt acking into the proper callback
-Date:   Thu, 24 Jan 2019 20:20:51 +0100
-Message-Id: <20190124190202.497835281@linuxfoundation.org>
+        stable@vger.kernel.org, Corey Minyard <cminyard@mvista.com>
+Subject: [PATCH 4.14 63/63] ipmi:ssif: Fix handling of multi-part return messages
+Date:   Thu, 24 Jan 2019 20:20:52 +0100
+Message-Id: <20190124190202.594178211@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190155.176570028@linuxfoundation.org>
 References: <20190124190155.176570028@linuxfoundation.org>
@@ -68,73 +63,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Corey Minyard <cminyard@mvista.com>
 
-commit 3f7bb2ec20ce07c02b2002349d256c91a463fcc5 upstream.
+commit 7d6380cd40f7993f75c4bde5b36f6019237e8719 upstream.
 
-The write to the status register is really an ACK for the HW,
-and should be treated as such by the driver. Let's move it to the
-irq_ack() callback, which will prevent people from moving it around
-in order to paper over other bugs.
+The block number was not being compared right, it was off by one
+when checking the response.
 
-Fixes: 8c934095fa2f ("PCI: dwc: Clear MSI interrupt status after it is handled,
-not before")
-Fixes: 7c5925afbc58 ("PCI: dwc: Move MSI IRQs allocation to IRQ domains
-hierarchical API")
-Link: https://lore.kernel.org/linux-pci/20181113225734.8026-1-marc.zyngier@arm.com/
-Reported-by: Trent Piepho <tpiepho@impinj.com>
-Tested-by: Niklas Cassel <niklas.cassel@linaro.org>
-Tested-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Tested-by: Stanimir Varbanov <svarbanov@mm-sol.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-[lorenzo.pieralisi@arm.com: updated commit log]
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: stable@vger.kernel.org
+Some statistics wouldn't be incremented properly in some cases.
+
+Check to see if that middle-part messages always have 31 bytes of
+data.
+
+Signed-off-by: Corey Minyard <cminyard@mvista.com>
+Cc: stable@vger.kernel.org # 4.4
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/dwc/pcie-designware-host.c |   15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+ drivers/char/ipmi/ipmi_ssif.c |   25 +++++++++++++++++--------
+ 1 file changed, 17 insertions(+), 8 deletions(-)
 
---- a/drivers/pci/dwc/pcie-designware-host.c
-+++ b/drivers/pci/dwc/pcie-designware-host.c
-@@ -45,8 +45,19 @@ static int dw_pcie_wr_own_conf(struct pc
- 	return dw_pcie_write(pci->dbi_base + where, size, val);
- }
+--- a/drivers/char/ipmi/ipmi_ssif.c
++++ b/drivers/char/ipmi/ipmi_ssif.c
+@@ -645,8 +645,9 @@ static void msg_done_handler(struct ssif
  
-+static void dwc_irq_ack(struct irq_data *d)
-+{
-+	struct msi_desc *msi = irq_data_get_msi_desc(d);
-+	struct pcie_port *pp = msi_desc_to_pci_sysdata(msi);
-+	int pos = d->hwirq % 32;
-+	int i = d->hwirq / 32;
+ 		/* Remove the multi-part read marker. */
+ 		len -= 2;
++		data += 2;
+ 		for (i = 0; i < len; i++)
+-			ssif_info->data[i] = data[i+2];
++			ssif_info->data[i] = data[i];
+ 		ssif_info->multi_len = len;
+ 		ssif_info->multi_pos = 1;
+ 
+@@ -674,8 +675,19 @@ static void msg_done_handler(struct ssif
+ 		}
+ 
+ 		blocknum = data[0];
++		len--;
++		data++;
 +
-+	dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_STATUS + i * 12, 4, BIT(pos));
-+}
++		if (blocknum != 0xff && len != 31) {
++		    /* All blocks but the last must have 31 data bytes. */
++			result = -EIO;
++			if (ssif_info->ssif_debug & SSIF_DEBUG_MSG)
++				pr_info("Received middle message <31\n");
+ 
+-		if (ssif_info->multi_len + len - 1 > IPMI_MAX_MSG_LENGTH) {
++			goto continue_op;
++		}
 +
- static struct irq_chip dw_msi_irq_chip = {
- 	.name = "PCI-MSI",
-+	.irq_ack = dwc_irq_ack,
- 	.irq_enable = pci_msi_unmask_irq,
- 	.irq_disable = pci_msi_mask_irq,
- 	.irq_mask = pci_msi_mask_irq,
-@@ -72,8 +83,6 @@ irqreturn_t dw_handle_msi_irq(struct pci
- 					    pos)) != 32) {
- 			irq = irq_find_mapping(pp->irq_domain, i * 32 + pos);
- 			generic_handle_irq(irq);
--			dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_STATUS + i * 12,
--					    4, 1 << pos);
- 			pos++;
++		if (ssif_info->multi_len + len > IPMI_MAX_MSG_LENGTH) {
+ 			/* Received message too big, abort the operation. */
+ 			result = -E2BIG;
+ 			if (ssif_info->ssif_debug & SSIF_DEBUG_MSG)
+@@ -684,16 +696,14 @@ static void msg_done_handler(struct ssif
+ 			goto continue_op;
+ 		}
+ 
+-		/* Remove the blocknum from the data. */
+-		len--;
+ 		for (i = 0; i < len; i++)
+-			ssif_info->data[i + ssif_info->multi_len] = data[i + 1];
++			ssif_info->data[i + ssif_info->multi_len] = data[i];
+ 		ssif_info->multi_len += len;
+ 		if (blocknum == 0xff) {
+ 			/* End of read */
+ 			len = ssif_info->multi_len;
+ 			data = ssif_info->data;
+-		} else if (blocknum + 1 != ssif_info->multi_pos) {
++		} else if (blocknum != ssif_info->multi_pos) {
+ 			/*
+ 			 * Out of sequence block, just abort.  Block
+ 			 * numbers start at zero for the second block,
+@@ -721,6 +731,7 @@ static void msg_done_handler(struct ssif
  		}
  	}
-@@ -263,7 +272,7 @@ static struct msi_controller dw_pcie_msi
- static int dw_pcie_msi_map(struct irq_domain *domain, unsigned int irq,
- 			   irq_hw_number_t hwirq)
- {
--	irq_set_chip_and_handler(irq, &dw_msi_irq_chip, handle_simple_irq);
-+	irq_set_chip_and_handler(irq, &dw_msi_irq_chip, handle_edge_irq);
- 	irq_set_chip_data(irq, domain->host_data);
  
- 	return 0;
++ continue_op:
+ 	if (result < 0) {
+ 		ssif_inc_stat(ssif_info, receive_errors);
+ 	} else {
+@@ -728,8 +739,6 @@ static void msg_done_handler(struct ssif
+ 		ssif_inc_stat(ssif_info, received_message_parts);
+ 	}
+ 
+-
+- continue_op:
+ 	if (ssif_info->ssif_debug & SSIF_DEBUG_STATE)
+ 		pr_info(PFX "DONE 1: state = %d, result=%d.\n",
+ 			ssif_info->ssif_state, result);
 
 
