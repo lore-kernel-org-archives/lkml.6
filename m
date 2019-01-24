@@ -2,86 +2,143 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 817B2C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 07:05:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD8C8C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 07:08:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B6A7218A4
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 07:05:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C2092184C
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 07:08:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726178AbfAXHFN (ORCPT
+        id S1726248AbfAXHIt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 02:05:13 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:34162 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725287AbfAXHFM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 02:05:12 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E5FB7A7880;
-        Thu, 24 Jan 2019 07:05:11 +0000 (UTC)
-Received: from xz-x1 (dhcp-14-116.nay.redhat.com [10.66.14.116])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 16C476BF6F;
-        Thu, 24 Jan 2019 07:05:05 +0000 (UTC)
-Date:   Thu, 24 Jan 2019 15:05:03 +0800
-From:   Peter Xu <peterx@redhat.com>
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Hugh Dickins <hughd@google.com>,
-        Maya Gokhale <gokhale2@llnl.gov>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Martin Cracauer <cracauer@cons.org>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Shaohua Li <shli@fb.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Marty McFadden <mcfadden8@llnl.gov>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH RFC 04/24] mm: gup: allow VM_FAULT_RETRY for multiple
- times
-Message-ID: <20190124070503.GJ18231@xz-x1>
-References: <20190121075722.7945-1-peterx@redhat.com>
- <20190121075722.7945-5-peterx@redhat.com>
- <20190121162455.GC3711@redhat.com>
+        Thu, 24 Jan 2019 02:08:49 -0500
+Received: from mx0a-00010702.pphosted.com ([148.163.156.75]:57386 "EHLO
+        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725987AbfAXHIt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 02:08:49 -0500
+Received: from pps.filterd (m0098781.ppops.net [127.0.0.1])
+        by mx0a-00010702.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0O76rG1001438;
+        Thu, 24 Jan 2019 01:08:47 -0600
+Received: from ni.com (skprod2.natinst.com [130.164.80.23])
+        by mx0a-00010702.pphosted.com with ESMTP id 2q6qjub1ph-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 24 Jan 2019 01:08:47 -0600
+Received: from us-aus-exhub2.ni.corp.natinst.com (us-aus-exhub2.ni.corp.natinst.com [130.164.68.32])
+        by us-aus-skprod2.natinst.com (8.16.0.27/8.16.0.27) with ESMTPS id x0O78kuZ024716
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Thu, 24 Jan 2019 01:08:46 -0600
+Received: from us-aus-exch5.ni.corp.natinst.com (130.164.68.15) by
+ us-aus-exhub2.ni.corp.natinst.com (130.164.68.32) with Microsoft SMTP Server
+ (TLS) id 15.0.1395.4; Thu, 24 Jan 2019 01:08:46 -0600
+Received: from us-aus-exhub1.ni.corp.natinst.com (130.164.68.41) by
+ us-aus-exch5.ni.corp.natinst.com (130.164.68.15) with Microsoft SMTP Server
+ (TLS) id 15.0.1395.4; Thu, 24 Jan 2019 01:08:46 -0600
+Received: from my-pen-rd24.apac.corp.natinst.com (130.164.49.7) by
+ us-aus-exhub1.ni.corp.natinst.com (130.164.68.41) with Microsoft SMTP Server
+ id 15.0.1395.4 via Frontend Transport; Thu, 24 Jan 2019 01:08:44 -0600
+From:   Guan Yung Tseng <guan.yung.tseng@ni.com>
+To:     <andy.shevchenko@gmail.com>
+CC:     <gregkh@linuxfoundation.org>, <linux-serial@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Guan Yung Tseng <guan.yung.tseng@ni.com>
+Subject: [PATCH] 8250_pci.c: Update NI specific devices class to multi serial
+Date:   Thu, 24 Jan 2019 15:07:47 +0800
+Message-ID: <1548313667-125014-1-git-send-email-guan.yung.tseng@ni.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190121162455.GC3711@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 24 Jan 2019 07:05:12 +0000 (UTC)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-24_04:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 11:24:55AM -0500, Jerome Glisse wrote:
-> On Mon, Jan 21, 2019 at 03:57:02PM +0800, Peter Xu wrote:
-> > This is the gup counterpart of the change that allows the VM_FAULT_RETRY
-> > to happen for more than once.
-> > 
-> > Signed-off-by: Peter Xu <peterx@redhat.com>
-> 
-> So it would be nice to add a comment in the code and in the commit message
-> about possible fault starvation (mostly due to previous patch changes) as
-> if some one experience that and try to bisect it might overlook the commit.
-> 
-> Otherwise:
-> 
-> Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
+> On Wed, Jan 23, 2019 at 5:18 PM Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+> >
+> > On Mon, Jan 14, 2019 at 4:13 PM Guan Yung Tseng <guan.yung.tseng@ni.com> wrote:
+> > >
+> > > Modified NI devices class to PCI_CLASS_COMMUNICATION_MULTISERIAL.
+> > > The reason of doing this is because all NI multi port serial cards 
+> > > use PCI_CLASS_COMMUNICATION_OTHER class and thus fail the 
+> > > serial_pci_is_class_communication test added in the commit 
+> > > 7d8905d06405
+> > > ("serial: 8250_pci: Enable device after we check black list").
+> >
+> > Guan, can you provide an output of the
+> >
+> > lspci -nk -xx -vv -s <BDF>
+> >
+> > of your device, where <BDF> is a PCI address in a form of bus:device.function?
+>
 
-Jerome, can I still keep this r-b if I'm going to fix the starvation
-issue you mentioned in previous patch about lock page?
+Output of lspci before applied the patch
 
-Regards,
+admin@NI-PXIe-8840Quad-Core-0308D657:~# lspci -nk -xx -vv -s 0d:0e.0
+0d:0e.0 0780: 1093:70e8
+        Subsystem: 1093:70e8
+        Control: I/O- Mem- BusMaster- SpecCycle- MemWINV- VGASnoop- ParErr+ Stepping
+- SERR+ FastB2B- DisINTx-
+        Status: Cap- 66MHz- UDF- FastB2B+ ParErr- DEVSEL=medium >TAbort- <TAbort- <M
+Abort- >SERR- <PERR- INTx-
+        Interrupt: pin A routed to IRQ 10
+        Region 0: Memory at fe201000 (32-bit, non-prefetchable) [disabled] [size=4K]
+00: 93 10 e8 70 40 01 80 02 00 00 80 07 10 20 00 00
+10: 00 10 20 fe 00 00 00 00 00 00 00 00 00 00 00 00
+20: 00 00 00 00 00 00 00 00 00 00 00 00 93 10 e8 70
+30: 00 00 00 00 f0 00 00 00 00 00 00 00 0a 01 00 00
 
--- 
-Peter Xu
+admin@NI-PXIe-8840Quad-Core-0308D657:~# lspci -nk -xx -vv -s 0d:0f.0
+0d:0f.0 0780: 1093:70ec
+        Subsystem: 1093:70ec
+        Control: I/O- Mem- BusMaster- SpecCycle- MemWINV- VGASnoop- ParErr+ Stepping
+- SERR+ FastB2B- DisINTx-
+        Status: Cap- 66MHz- UDF- FastB2B+ ParErr- DEVSEL=medium >TAbort- <TAbort- <M
+Abort- >SERR- <PERR- INTx-
+        Interrupt: pin A routed to IRQ 11
+        Region 0: Memory at fe200000 (32-bit, non-prefetchable) [disabled] [size=4K]
+00: 93 10 ec 70 40 01 80 02 00 00 80 07 10 20 00 00
+10: 00 00 20 fe 00 00 00 00 00 00 00 00 00 00 00 00
+20: 00 00 00 00 00 00 00 00 00 00 00 00 93 10 ec 70
+30: 00 00 00 00 f0 00 00 00 00 00 00 00 0b 01 00 00
+
+> While I'm still wondering of the above, can you also test the bellow patch if it fixes your issue?
+
+The patch fixes the issue. The devices bind to the serial kernel driver successfully.
+Below is the output of lspci -nk -xx -vv -s <BDF> for the same devices after I applied the patch.
+
+admin@NI-PXIe-8840Quad-Core-0308D657:~# lspci -nk -xx -vv -s 0d:0e.0
+0d:0e.0 0780: 1093:70e8
+        Subsystem: 1093:70e8
+        Control: I/O- Mem+ BusMaster- SpecCycle- MemWINV- VGASnoop- ParErr+ Stepping
+- SERR+ FastB2B- DisINTx-
+        Status: Cap- 66MHz- UDF- FastB2B+ ParErr- DEVSEL=medium >TAbort- <TAbort- <M
+Abort- >SERR- <PERR- INTx-
+        Interrupt: pin A routed to IRQ 17
+        Region 0: Memory at fe201000 (32-bit, non-prefetchable) [size=4K]
+        Kernel driver in use: serial
+00: 93 10 e8 70 42 01 80 02 00 00 80 07 10 20 00 00
+10: 00 10 20 fe 00 00 00 00 00 00 00 00 00 00 00 00
+20: 00 00 00 00 00 00 00 00 00 00 00 00 93 10 e8 70
+30: 00 00 00 00 f0 00 00 00 00 00 00 00 0a 01 00 00
+
+admin@NI-PXIe-8840Quad-Core-0308D657:~# lspci -nk -xx -vv -s 0d:0f.0
+0d:0f.0 0780: 1093:70ec
+        Subsystem: 1093:70ec
+        Control: I/O- Mem+ BusMaster- SpecCycle- MemWINV- VGASnoop- ParErr+ Stepping
+- SERR+ FastB2B- DisINTx-
+        Status: Cap- 66MHz- UDF- FastB2B+ ParErr- DEVSEL=medium >TAbort- <TAbort- <M
+Abort- >SERR- <PERR- INTx-
+        Interrupt: pin A routed to IRQ 18
+        Region 0: Memory at fe200000 (32-bit, non-prefetchable) [size=4K]
+        Kernel driver in use: serial
+00: 93 10 ec 70 42 01 80 02 00 00 80 07 10 20 00 00
+10: 00 00 20 fe 00 00 00 00 00 00 00 00 00 00 00 00
+20: 00 00 00 00 00 00 00 00 00 00 00 00 93 10 ec 70
+30: 00 00 00 00 f0 00 00 00 00 00 00 00 0b 01 00 00
+
