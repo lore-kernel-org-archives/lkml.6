@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBEB4C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:36:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26AC0C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:36:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88C8F21903
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:36:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9259218FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:36:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358561;
-	bh=VWv3QChRe58vO9NewDlx+3v0AKJC9Nn1/N2Twqujrd4=;
+	s=default; t=1548358564;
+	bh=2Oc12gVDwlZ5g168m7heo7ULTLuRpThdObSOp8hxLns=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=SUexOzzdJOCVYSPG5SOlfkjBNkx7tXJ+QW+v22ojbHFYpR3bvu2L95U81EdpFz8oO
-	 OMIDxMsL+8DYLizU5Kq6XUm04VUyG3CzERmigmAEBLZhbx1l0QUdrQJ1TwBNFZ4zeZ
-	 91yFsPtgie0hDMX8PbWJtoGqEnjm2I7M6jzd4+Fg=
+	b=J5mITBli6JtTvKue87RBUVADMRiMhcMsI6KzuIMmAlEhUhKaesbDW09ZYdCDJ0QtS
+	 qpP1DRDKhVwI+m/LTRVVKj5A58ZqWq01UvJBbPgxG0aF57QjFZpOfeAAHkN9E1BfwN
+	 VoRts28K6fRMrcBP49TU5MNVx6QdrpgwL/UDIEAo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732437AbfAXTgA (ORCPT
+        id S1732450AbfAXTgC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:36:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35948 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:36:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35924 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731352AbfAXTfz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:35:55 -0500
+        id S1730709AbfAXTfw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:35:52 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B58A4218FC;
-        Thu, 24 Jan 2019 19:35:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A21B821903;
+        Thu, 24 Jan 2019 19:35:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358554;
-        bh=VWv3QChRe58vO9NewDlx+3v0AKJC9Nn1/N2Twqujrd4=;
+        s=default; t=1548358551;
+        bh=2Oc12gVDwlZ5g168m7heo7ULTLuRpThdObSOp8hxLns=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GT2OSBlol6WGlLjdb68kURBK1EZv/StMTAvoXITE6T/yFW0Fol06mju480hmZKkGM
-         hbhj+MGDbvxswW/HcPVPpv5i0xp6JmOhKBkQrhsHwpnca9v0f3IZFyG/tre2dpvUKH
-         E10HL0leljpiYVL6MGYKQ3JeoKsh7+ILpewcuinA=
+        b=ECbwM7ZN53zh6PovQHfdVVqMFy7sW+iLCB+eDlW4J46ZYEOamD2CuoSi3++36djC8
+         W/7nTyTQUdI4Q69AxlpZZhWtktnuC1SpMqLksfRVZ5P+yILLd3+OejGfAKEhbX+6aA
+         qpVfFrl67x1ZOxn91BKJ/b7AFcIR2qGArOHb5L/Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yonghong Song <yhs@fb.com>,
-        Andrey Ignatov <rdna@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Gao Xiang <gaoxiang25@huawei.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 022/106] bpf: Allow narrow loads with offset > 0
-Date:   Thu, 24 Jan 2019 20:19:39 +0100
-Message-Id: <20190124190207.763499669@linuxfoundation.org>
+Subject: [PATCH 4.19 048/106] staging: erofs: fix use-after-free of on-stack `z_erofs_vle_unzip_io
+Date:   Thu, 24 Jan 2019 20:20:05 +0100
+Message-Id: <20190124190209.483545121@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
 References: <20190124190206.342411005@linuxfoundation.org>
@@ -67,147 +66,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 46f53a65d2de3e1591636c22b626b09d8684fd71 ]
+[ Upstream commit 848bd9acdcd00c164b42b14aacec242949ecd471 ]
 
-Currently BPF verifier allows narrow loads for a context field only with
-offset zero. E.g. if there is a __u32 field then only the following
-loads are permitted:
-  * off=0, size=1 (narrow);
-  * off=0, size=2 (narrow);
-  * off=0, size=4 (full).
+The root cause is the race as follows:
+ Thread #0                         Thread #1
 
-On the other hand LLVM can generate a load with offset different than
-zero that make sense from program logic point of view, but verifier
-doesn't accept it.
+ z_erofs_vle_unzip_kickoff         z_erofs_submit_and_unzip
 
-E.g. tools/testing/selftests/bpf/sendmsg4_prog.c has code:
+                                    struct z_erofs_vle_unzip_io io[]
+   atomic_add_return()
+                                    wait_event()
+                                    [end of function]
+   wake_up()
 
-  #define DST_IP4			0xC0A801FEU /* 192.168.1.254 */
-  ...
-  	if ((ctx->user_ip4 >> 24) == (bpf_htonl(DST_IP4) >> 24) &&
+Fix it by taking the waitqueue lock between atomic_add_return and
+wake_up to close such the race.
 
-where ctx is struct bpf_sock_addr.
+kernel message:
 
-Some versions of LLVM can produce the following byte code for it:
+Unable to handle kernel paging request at virtual address 97f7052caa1303dc
+...
+Workqueue: kverityd verity_work
+task: ffffffe32bcb8000 task.stack: ffffffe3298a0000
+PC is at __wake_up_common+0x48/0xa8
+LR is at __wake_up+0x3c/0x58
+...
+Call trace:
+...
+[<ffffff94a08ff648>] __wake_up_common+0x48/0xa8
+[<ffffff94a08ff8b8>] __wake_up+0x3c/0x58
+[<ffffff94a0c11b60>] z_erofs_vle_unzip_kickoff+0x40/0x64
+[<ffffff94a0c118e4>] z_erofs_vle_read_endio+0x94/0x134
+[<ffffff94a0c83c9c>] bio_endio+0xe4/0xf8
+[<ffffff94a1076540>] dec_pending+0x134/0x32c
+[<ffffff94a1076f28>] clone_endio+0x90/0xf4
+[<ffffff94a0c83c9c>] bio_endio+0xe4/0xf8
+[<ffffff94a1095024>] verity_work+0x210/0x368
+[<ffffff94a08c4150>] process_one_work+0x188/0x4b4
+[<ffffff94a08c45bc>] worker_thread+0x140/0x458
+[<ffffff94a08cad48>] kthread+0xec/0x108
+[<ffffff94a0883ab4>] ret_from_fork+0x10/0x1c
+Code: d1006273 54000260 f9400804 b9400019 (b85fc081)
+---[ end trace be9dde154f677cd1 ]---
 
-       8:       71 12 07 00 00 00 00 00         r2 = *(u8 *)(r1 + 7)
-       9:       67 02 00 00 18 00 00 00         r2 <<= 24
-      10:       18 03 00 00 00 00 00 fe 00 00 00 00 00 00 00 00         r3 = 4261412864 ll
-      12:       5d 32 07 00 00 00 00 00         if r2 != r3 goto +7 <LBB0_6>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-where `*(u8 *)(r1 + 7)` means narrow load for ctx->user_ip4 with size=1
-and offset=3 (7 - sizeof(ctx->user_family) = 3). This load is currently
-rejected by verifier.
-
-Verifier code that rejects such loads is in bpf_ctx_narrow_access_ok()
-what means any is_valid_access implementation, that uses the function,
-works this way, e.g. bpf_skb_is_valid_access() for __sk_buff or
-sock_addr_is_valid_access() for bpf_sock_addr.
-
-The patch makes such loads supported. Offset can be in [0; size_default)
-but has to be multiple of load size. E.g. for __u32 field the following
-loads are supported now:
-  * off=0, size=1 (narrow);
-  * off=1, size=1 (narrow);
-  * off=2, size=1 (narrow);
-  * off=3, size=1 (narrow);
-  * off=0, size=2 (narrow);
-  * off=2, size=2 (narrow);
-  * off=0, size=4 (full).
-
-Reported-by: Yonghong Song <yhs@fb.com>
-Signed-off-by: Andrey Ignatov <rdna@fb.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/filter.h | 16 +---------------
- kernel/bpf/verifier.c  | 21 ++++++++++++++++-----
- 2 files changed, 17 insertions(+), 20 deletions(-)
+ drivers/staging/erofs/unzip_vle.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/filter.h b/include/linux/filter.h
-index 6791a0ac0139..ec90d5255cf7 100644
---- a/include/linux/filter.h
-+++ b/include/linux/filter.h
-@@ -665,24 +665,10 @@ static inline u32 bpf_ctx_off_adjust_machine(u32 size)
- 	return size;
- }
+diff --git a/drivers/staging/erofs/unzip_vle.c b/drivers/staging/erofs/unzip_vle.c
+index 14da8cc2246a..0346630b67c8 100644
+--- a/drivers/staging/erofs/unzip_vle.c
++++ b/drivers/staging/erofs/unzip_vle.c
+@@ -724,13 +724,18 @@ static void z_erofs_vle_unzip_kickoff(void *ptr, int bios)
+ 	struct z_erofs_vle_unzip_io *io = tagptr_unfold_ptr(t);
+ 	bool background = tagptr_unfold_tags(t);
  
--static inline bool bpf_ctx_narrow_align_ok(u32 off, u32 size_access,
--					   u32 size_default)
--{
--	size_default = bpf_ctx_off_adjust_machine(size_default);
--	size_access  = bpf_ctx_off_adjust_machine(size_access);
--
--#ifdef __LITTLE_ENDIAN
--	return (off & (size_default - 1)) == 0;
--#else
--	return (off & (size_default - 1)) + size_access == size_default;
--#endif
--}
--
- static inline bool
- bpf_ctx_narrow_access_ok(u32 off, u32 size, u32 size_default)
- {
--	return bpf_ctx_narrow_align_ok(off, size, size_default) &&
--	       size <= size_default && (size & (size - 1)) == 0;
-+	return size <= size_default && (size & (size - 1)) == 0;
- }
- 
- #define bpf_classic_proglen(fprog) (fprog->len * sizeof(fprog->filter[0]))
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 2954e4b3abd5..89cea3ed535d 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -5341,10 +5341,10 @@ static int convert_ctx_accesses(struct bpf_verifier_env *env)
- 	int i, cnt, size, ctx_field_size, delta = 0;
- 	const int insn_cnt = env->prog->len;
- 	struct bpf_insn insn_buf[16], *insn;
-+	u32 target_size, size_default, off;
- 	struct bpf_prog *new_prog;
- 	enum bpf_access_type type;
- 	bool is_narrower_load;
--	u32 target_size;
- 
- 	if (ops->gen_prologue) {
- 		cnt = ops->gen_prologue(insn_buf, env->seen_direct_write,
-@@ -5421,9 +5421,9 @@ static int convert_ctx_accesses(struct bpf_verifier_env *env)
- 		 * we will apply proper mask to the result.
- 		 */
- 		is_narrower_load = size < ctx_field_size;
-+		size_default = bpf_ctx_off_adjust_machine(ctx_field_size);
-+		off = insn->off;
- 		if (is_narrower_load) {
--			u32 size_default = bpf_ctx_off_adjust_machine(ctx_field_size);
--			u32 off = insn->off;
- 			u8 size_code;
- 
- 			if (type == BPF_WRITE) {
-@@ -5451,12 +5451,23 @@ static int convert_ctx_accesses(struct bpf_verifier_env *env)
- 		}
- 
- 		if (is_narrower_load && size < target_size) {
--			if (ctx_field_size <= 4)
-+			u8 shift = (off & (size_default - 1)) * 8;
+-	if (atomic_add_return(bios, &io->pending_bios))
++	if (!background) {
++		unsigned long flags;
 +
-+			if (ctx_field_size <= 4) {
-+				if (shift)
-+					insn_buf[cnt++] = BPF_ALU32_IMM(BPF_RSH,
-+									insn->dst_reg,
-+									shift);
- 				insn_buf[cnt++] = BPF_ALU32_IMM(BPF_AND, insn->dst_reg,
- 								(1 << size * 8) - 1);
--			else
-+			} else {
-+				if (shift)
-+					insn_buf[cnt++] = BPF_ALU64_IMM(BPF_RSH,
-+									insn->dst_reg,
-+									shift);
- 				insn_buf[cnt++] = BPF_ALU64_IMM(BPF_AND, insn->dst_reg,
- 								(1 << size * 8) - 1);
-+			}
- 		}
++		spin_lock_irqsave(&io->u.wait.lock, flags);
++		if (!atomic_add_return(bios, &io->pending_bios))
++			wake_up_locked(&io->u.wait);
++		spin_unlock_irqrestore(&io->u.wait.lock, flags);
+ 		return;
++	}
  
- 		new_prog = bpf_patch_insn_data(env, i + delta, insn_buf, cnt);
+-	if (background)
++	if (!atomic_add_return(bios, &io->pending_bios))
+ 		queue_work(z_erofs_workqueue, &io->u.work);
+-	else
+-		wake_up(&io->u.wait);
+ }
+ 
+ static inline void z_erofs_vle_read_endio(struct bio *bio)
 -- 
 2.19.1
 
