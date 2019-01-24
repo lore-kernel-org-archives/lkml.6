@@ -2,94 +2,127 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5983EC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:29:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 355CCC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:31:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29FC3218AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:29:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548354595;
-	bh=hJlBvN3i2uQe8YhwH5/V6jmn5DZW9rPhNLZF03OBSzo=;
-	h=Date:From:To:Subject:References:In-Reply-To:List-ID:From;
-	b=G35LCXM75yuiL7631JnR+QP7Bt4x7KziZYgxhABVnwRTFsLOwYhV4tUf76IBvHTKV
-	 xFK/PoYs+mRrKOmqZXQNduBx/O1/dS3DY+CfuZsykEctpjvWyd+kOqbeXwzJ/a+ovw
-	 ms4sqFYWioc/2SY+MGr4fwgwET4A2kwyEKzFaX3g=
+	by mail.kernel.org (Postfix) with ESMTP id 04892218A6
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:31:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="YHMjCOkz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727966AbfAXS3x (ORCPT
+        id S1728030AbfAXSbX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 13:29:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51218 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725924AbfAXS3x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 13:29:53 -0500
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 348EF218A6;
-        Thu, 24 Jan 2019 18:29:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548354592;
-        bh=hJlBvN3i2uQe8YhwH5/V6jmn5DZW9rPhNLZF03OBSzo=;
-        h=Date:From:To:Subject:References:In-Reply-To:From;
-        b=s5awLXnd3dix7ezk5i/5Owm35BiojZopLwG9ahm8wtq1gbBSDaFAck+B1IwPVJ3F2
-         bicsbaIyUj/Dk74OM+cDQANpYvVSVsunL3fzZ7J3/kJDLLbn0/mCPN9jqhH0qYPFT3
-         38CjH4M9/xQIKK788laA8UiSf3B2dk+VLIZddKeo=
-Date:   Thu, 24 Jan 2019 10:29:50 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Chandan Rajendra <chandan@linux.vnet.ibm.com>,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-Subject: Re: [f2fs-dev] [PATCH] fscrypt: remove filesystem specific build
- config option
-Message-ID: <20190124182949.GB10448@gmail.com>
-References: <20190110233230.GA23953@roeck-us.net>
- <20190111010116.GG149637@gmail.com>
- <20190124050337.GD8785@mit.edu>
+        Thu, 24 Jan 2019 13:31:23 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:43429 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725916AbfAXSbW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 13:31:22 -0500
+Received: by mail-pg1-f194.google.com with SMTP id v28so3012305pgk.10
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 10:31:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=A6QBegBSPrD1wbNcx6Imf1vbJfpaI+cP3PrvCbpYma4=;
+        b=YHMjCOkzJ+kHUYohq/Msrb8CiQ2QBEzaw3D5pCTN1IljKv/Oq231pfzmRUWr3aYybY
+         zaTa/rxerL/Vmm/fBaVSXiLzJ8PDIiOaJ+g4nMeyXoafAeFQQQOoFg1wkQSrm0rydY7U
+         kOlaVIp8pqa/5M4Te3my1u4a45MrKZMO4ADTFHWzEoskwCIY9YmE8qZDJrt7V7NNBrJn
+         WoQGGQD//b+c0DYwL1mT612JspSmHr/dgSOaDnXsp0Q/gXSesmYMna2x4kZSOjDKvvMn
+         x5oRE+lcuMnxgIjmhGi65vMF1q6rWNHZwOZsDGppfXx06NWeKIeZY6pg+TqzqTj3fMaQ
+         JAZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=A6QBegBSPrD1wbNcx6Imf1vbJfpaI+cP3PrvCbpYma4=;
+        b=dQwwmgErK2XwtZsm2LAtntkQwurfqFheTn8uWN4NFFOMej9A9DPffuqlhAj56TpSrc
+         mm1QTEpfbHT78sAtWWeG0iq0KazPSf0RENup1CVUFY2D8l5NkNL1H9BLj03qNfZs8560
+         LHZc974KKRaEkCj9O7TEM1eCV4qjT9nA04QSqLH/n9ExUGopCY+mEWgKet8062t9hZzp
+         TFvGUAw3i4fZXBH5lkUMIOOMOfBe7rfBuPRpNMdLIvE6utleGrgUHesMjiZ0WO+Gu/KI
+         yQR4ieo3ij3Tz1cYf24rTyTrdFMgpnXE2O+BhNbqJpTS//TC8jyFPIRsmZxhEwsfbJuq
+         HZhA==
+X-Gm-Message-State: AJcUukeU2dnDKjNdzPlP4/pJTx2J8QfWuWAczjN6shN2d28sZaF54KKV
+        NypbIwPuk0BuJJpe4cmLhlRXjQ==
+X-Google-Smtp-Source: ALg8bN7MwzTeSVlhhq139gRi1XP0vsh0XDyiJDzhXOwhYlr9fwvmr4nnB4nJZFfdmCgPlN5DIJqN3g==
+X-Received: by 2002:a63:f658:: with SMTP id u24mr6976117pgj.267.1548354681822;
+        Thu, 24 Jan 2019 10:31:21 -0800 (PST)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id i5sm32156005pfg.34.2019.01.24.10.31.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 24 Jan 2019 10:31:21 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1gmjma-0005sS-9U; Thu, 24 Jan 2019 11:31:20 -0700
+Date:   Thu, 24 Jan 2019 11:31:20 -0700
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
+Cc:     dledford@redhat.com, linux-rdma@vger.kernel.org,
+        lijun_nudt@163.com, oulijun@huawei.com, liudongdong3@huawei.com,
+        linuxarm@huawei.com, linux-kernel@vger.kernel.org,
+        xavier_huwei@163.com
+Subject: Re: [PATCH V2 rdma-next 2/3] RDMA/hns: Fix the chip hanging caused
+ by sending mailbox&CMQ during reset
+Message-ID: <20190124183120.GD17167@ziepe.ca>
+References: <1547868967-115951-1-git-send-email-xavier.huwei@huawei.com>
+ <1547868967-115951-3-git-send-email-xavier.huwei@huawei.com>
+ <20190123224041.GA11605@ziepe.ca>
+ <5C492D59.8030707@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190124050337.GD8785@mit.edu>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <5C492D59.8030707@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 12:03:37AM -0500, Theodore Y. Ts'o wrote:
-> On Thu, Jan 10, 2019 at 05:01:17PM -0800, Eric Biggers wrote:
-> > 
-> > Indeed, Chandan Rajendra sent out a new version of the patch which fixes the
-> > problem (by removing the 'select BLOCK' from fs/ubifs/Kconfig), but it never
-> > made it into the fscrypt tree and hence never made it into linux-next.
-> > 
-> > Ted, what you are planning to do with the fscrypt tree following the fsverity
-> > discussion?  IMO, we should keep the fsverity stuff in its own branch, separate
-> > from any fscrypt changes.  As a suggestion, in the branch "fscrypt" of my
-> > linux.git repo [1], I applied just these four patches on top of v5.0-rc1 and
-> > resolved the conflicts with them no longer being on top of fsverity...
+On Thu, Jan 24, 2019 at 11:13:29AM +0800, Wei Hu (Xavier) wrote:
 > 
-> Sorry, I was on vacation last week and I've been catching up on things
-> this week.  I've reset the master branch on my fscrypt.git tree so
-> that it has what you have on your fscrypt branch, rebased to 5.0-rc3.
 > 
-> Also, as we had talked about earlier, it probably makes sense to set
-> up jointly maintained git tree for fscrypt and fsverity.  My proposal
-> is that we set up a new fscrypt.git tree, at
-> /pub/scm/fs/fscrypt/fscrypt.git, that would be owned by the "FSCRYPT
-> group", with group membership being ebiggers, jaeguk, and tytso.
-> We'll have to figure out ways that we can jointly update the git tree
-> without stepping on each other, probably using a group chat.  Does
-> that sound good to you?
+> On 2019/1/24 6:40, Jason Gunthorpe wrote:
+> > On Sat, Jan 19, 2019 at 11:36:06AM +0800, Wei Hu (Xavier) wrote:
+> >
+> >> +static int hns_roce_v2_cmd_hw_resetting(struct hns_roce_dev *hr_dev,
+> >> +					unsigned long instance_stage,
+> >> +					unsigned long reset_stage)
+> >> +{
+> >> +	struct hns_roce_v2_priv *priv = (struct hns_roce_v2_priv *)hr_dev->priv;
+> >> +	struct hnae3_handle *handle = priv->handle;
+> >> +	const struct hnae3_ae_ops *ops = handle->ae_algo->ops;
+> >> +	unsigned long end;
+> >> +
+> >> +	/* When hardware reset is detected, we should stop sending mailbox&cmq
+> >> +	 * to hardware, and wait until hardware reset finished. If now
+> >> +	 * in .init_instance() function, we should exit with error. If now at
+> >> +	 * HNAE3_INIT_CLIENT stage of soft reset process, we should exit with
+> >> +	 * error, and then HNAE3_INIT_CLIENT related process can rollback the
+> >> +	 * operation like notifing hardware to free resources, HNAE3_INIT_CLIENT
+> >> +	 * related process will exit with error to notify NIC driver to
+> >> +	 * reschedule soft reset process once again.
+> >> +	 */
+> >> +	end = msecs_to_jiffies(HNS_ROCE_V2_HW_RST_TIMEOUT) + jiffies;
+> >> +	while (ops->get_hw_reset_stat(handle) && time_before(jiffies, end))
+> >> +		udelay(1);
+> > I thought you were getting rid of these loops?
+> Hi, Jason
 > 
+>     Upper applications maybe notify driver to issue mailbox or CMD
+>     commands to hardware, some commands used to cancel resources,
+>     destory bt/destory cq/unreg mr/destory qp etc. when such
+>     commands are executed successfully, the hardware engine will
+>     no longer access some memory registered by the driver.
+> 
+>     When reset occurs, it is possible for upper applications notify driver
+>     to issue mailbox or CMD commands, we need to wait until hardware
+>     reset finished to ensure that hardware no longer accesses related
+> memory.
 
-Hi Ted, that sounds good to me.  I assume you know how to get that set up?
-Also, should I go ahead and send a patch that adds myself to the MAINTAINERS
-file?
+You should not wait for things using loops like the above.
 
-- Eric
+Jason
