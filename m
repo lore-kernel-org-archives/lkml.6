@@ -2,586 +2,165 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2A5EC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:25:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C1F6C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:26:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B7CF2184C
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:25:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548350731;
-	bh=2M9SOlxjsZzlyYRyUN56e37YzGm6iQdeYDuWC0RRszA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=B2mJSijMpVHRRLTcMCxvtc1vEgxbomaYaO7J3xio7/1cpG2DzJlLm9Gz+P40U34nD
-	 MKIKhsslzi6R1BpzVjPc44nwLozoelzVN7GHnvOpDBeC2bLp32tKqldfzwKghNr85n
-	 lRiRTJ9kwsARNcXPg5cx3XPWn/n+07IFfk0HRuiA=
+	by mail.kernel.org (Postfix) with ESMTP id 657F02184C
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:26:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728971AbfAXRZ3 (ORCPT
+        id S1729014AbfAXR0G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 12:25:29 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:36078 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727892AbfAXRZ3 (ORCPT
+        Thu, 24 Jan 2019 12:26:06 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37924 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728610AbfAXR0G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 12:25:29 -0500
-Received: by mail-pl1-f194.google.com with SMTP id g9so3196739plo.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 09:25:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=JtSL/eUbyJaBpVR+V3S6VIigs0xXsUWhueF3Lq1uWds=;
-        b=qWZU1SK2dPR8MTRSe9NdRIOo9r1Qzg6roC0EW3yMe9O1WNuVg08PhItNQXY9yQLLRr
-         2hXayO1Op3pekBqtnbxo2EB7rWhwv18wyW26hy31MEwz3yVnYpyVekpKcXxjtkcYcQ+I
-         +9NeyodtU0Av/7HWP5NQZzhvgpklzzFX0xHz/57gXQmsAXnnQI//SE8Py/lioP51eD6W
-         ur8JxaadsOma6RdRm8+uyoh4Q6Q2wLOJxK6Cx/OwchXctThrW6LyWug/6yUJIpJc7Ojt
-         Az1wiBNHG4U6lKaRazEudUalNKiFqqsoLrlFfgKMKurIVdJXepGf+ec5fvj4s4BsNGJY
-         EecA==
-X-Gm-Message-State: AJcUuke083dB0MIlkF3B4Cy7mdxoBcOH66yEllOYgVHpErawl3wvvU3p
-        wv+iHCYz4G2oTBbCes96y510qw==
-X-Google-Smtp-Source: ALg8bN7Qi0OcglIXsAPu9IYflbvMqsCuUGbTrvJ0wLcQ27fIOKZVUBrmneJrZm6nJFqqtaR91OYn/Q==
-X-Received: by 2002:a17:902:b093:: with SMTP id p19mr7357426plr.135.1548350727781;
-        Thu, 24 Jan 2019 09:25:27 -0800 (PST)
-Received: from localhost ([207.114.172.147])
-        by smtp.gmail.com with ESMTPSA id a10sm27946835pfi.138.2019.01.24.09.25.26
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 24 Jan 2019 09:25:27 -0800 (PST)
-Date:   Thu, 24 Jan 2019 09:25:25 -0800
-From:   Moritz Fischer <mdf@kernel.org>
-To:     Dick Hollenbeck <dick@softplc.com>
-Cc:     Alan Tull <atull@kernel.org>, linux-fpga@vger.kernel.org,
-        Moritz Fischer <mdf@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Add Cyclone-10 support to altera-ps-spi.c.
-Message-ID: <20190124172525.GA1500@archbook>
-References: <55c8234e-7ea1-589b-11dc-dac931f586bb@softplc.com>
+        Thu, 24 Jan 2019 12:26:06 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0OHGutS029174
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 12:26:05 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2q7f3at1v3-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 12:26:04 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Thu, 24 Jan 2019 17:25:59 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 24 Jan 2019 17:25:56 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0OHPtLW65732742
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 24 Jan 2019 17:25:55 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BFB5DA4054;
+        Thu, 24 Jan 2019 17:25:55 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1F10FA405C;
+        Thu, 24 Jan 2019 17:25:55 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.8.102])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Thu, 24 Jan 2019 17:25:55 +0000 (GMT)
+Date:   Thu, 24 Jan 2019 19:25:53 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v14 02/12] powerpc/irq: use memblock functions returning
+ virtual address
+References: <cover.1548346225.git.christophe.leroy@c-s.fr>
+ <1c8e658c094022a15e4b9f5ef5c191caab3c0dff.1548346225.git.christophe.leroy@c-s.fr>
+ <20190124165153.GB5531@lakrids.cambridge.arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <55c8234e-7ea1-589b-11dc-dac931f586bb@softplc.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <20190124165153.GB5531@lakrids.cambridge.arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19012417-0008-0000-0000-000002B58564
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19012417-0009-0000-0000-00002221BAE8
+Message-Id: <20190124172553.GE13790@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-24_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901240121
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dick,
+On Thu, Jan 24, 2019 at 04:51:53PM +0000, Mark Rutland wrote:
+> On Thu, Jan 24, 2019 at 04:19:33PM +0000, Christophe Leroy wrote:
+> > Since only the virtual address of allocated blocks is used,
+> > lets use functions returning directly virtual address.
+> > 
+> > Those functions have the advantage of also zeroing the block.
+> > 
+> > Suggested-by: Mike Rapoport <rppt@linux.ibm.com>
+> > Acked-by: Mike Rapoport <rppt@linux.ibm.com>
+> > Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> 
+> [...]
+> 
+> > +static void *__init alloc_stack(void)
+> > +{
+> > +	void *ptr = memblock_alloc(THREAD_SIZE, THREAD_SIZE);
+> > +
+> > +	if (!ptr)
+> > +		panic("cannot allocate stacks");
+> > +
+> > +	return ptr;
+> > +}
+> 
+> I believe memblock_alloc() will panic() if it cannot allocate memory,
+> since that goes:
+> 
+>  memblock_alloc()
+>  -> memblock_alloc_try_nid()
+>     -> panic()
+> 
+> So you can get rid of the panic() here, or if you want a custom panic
+> message, you can use memblock_alloc_nopanic().
 
-On Fri, Jan 18, 2019 at 03:41:04PM -0600, Dick Hollenbeck wrote:
->  Add Cyclone-10 support to altera-ps-spi.c.
->  Invert logic involving nCONFIG, nSTATUS, and CONFIG_DONE so it matches datasheets
->  by going with GPIO_ACTIVE_HIGH instead of GPIO_ACTIVE_LOW in the device tree.  Add
->  optional devicetree properties spi-lsb-first and write-block-size.
-> 
-> Signed-off-by: Dick Hollenbeck <dick@softplc.com>
-> ---
->  .../bindings/fpga/altera-passive-serial.txt   |  71 +++++--
->  drivers/fpga/altera-ps-spi.c                  | 200 ++++++++++++------
->  include/linux/fpga/fpga-mgr.h                 |   5 +-
->  3 files changed, 189 insertions(+), 87 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/fpga/altera-passive-serial.txt
-> b/Documentation/devicetree/bindings/fpga/altera-passive-serial.txt
-> index 48478bc07..2cffc8c0a 100644
-> --- a/Documentation/devicetree/bindings/fpga/altera-passive-serial.txt
-> +++ b/Documentation/devicetree/bindings/fpga/altera-passive-serial.txt
-> @@ -8,22 +8,67 @@ circuits in order to play nicely with other SPI slaves on the same bus.
->  See https://www.altera.com/literature/hb/cyc/cyc_c51013.pdf
-> 
->  Required properties:
-> -- compatible: Must be one of the following:
-> -	"altr,fpga-passive-serial",
-> -	"altr,fpga-arria10-passive-serial"
-> -- reg: SPI chip select of the FPGA
-> -- nconfig-gpios: config pin (referred to as nCONFIG in the manual)
-> -- nstat-gpios: status pin (referred to as nSTATUS in the manual)
-> +- compatible:		Must be one of the following:
-> +				"altr,fpga-passive-serial",
-> +				"altr,fpga-arria10-passive-serial"
-> +				"altr,fpga-cyclone10-passive-serial"
-> +- reg:			SPI chip select of the FPGA
-> +- nconfig-gpios:		nCONFIG pin
-> +- nstat-gpios:		nSTATUS pin
-> 
->  Optional properties:
-> -- confd-gpios: confd pin (referred to as CONF_DONE in the manual)
-> +- confd-gpios:		CONF_DONE pin
-> +- write-block-size:	Number of bytes to write each time through a loop.
-> +			Can set to 0xffffffff to perform in a single write.
-> 
->  Example:
-> -	fpga: fpga@0 {
-> -		compatible = "altr,fpga-passive-serial";
-> +
-> +&pio {
-> +	fpgamgr0_outs: fpgamgr0_outs {
-> +		pins = "PG8";
-> +		function = "gpio_out";
-> +		output-high;
-> +		drive-strength = <10>;			/* milliamps, down from 20 default */
-> +	};
-> +	fpgamgr0_ins: fpgamgr0_ins {
-> +		pins = "PG6", "PG7";
-> +		function = "gpio_in";
-> +	};
-> +
-> +	fpgabridge0_outs: fpgabridge0_outs {
-> +		pins =	"PA0", "PA1", "PA2", "PA3", "PA6", "PA11", "PA12", "PA17", /* data[0:7] */
-> +			"PA21",				/* ACK */
-> +			"PA18",				/* WR_DATA */
-> +			"PA19",				/* RD_DATA */
-> +			"PA20";				/* WR_ADDR */
-> +
-> +		function = "gpio_out";
-> +		drive-strength = <10>;			/* milliamps, down from 20 default */
-> +	};
-> +
-> +	fpgabridge0_ins: fpgabridge0_ins {
-> +		pins =	"PA21";				/* ACK */
-> +		function = "gpio_ins";
-> +	};
-> +};
-> +
-> +&spi0 {
-> +	status = "okay";
-> +
-> +	fpga_mgr0: fpga-mgr@3 {
-> +		compatible = "altr,fpga-cyclone10-passive-serial";
->  		spi-max-frequency = <20000000>;
-> -		reg = <0>;
-> -		nconfig-gpios = <&gpio4 9 GPIO_ACTIVE_LOW>;
-> -		nstat-gpios = <&gpio4 11 GPIO_ACTIVE_LOW>;
-> -		confd-gpios = <&gpio4 12 GPIO_ACTIVE_LOW>;
-> +		reg = <3>;	/* leave room for spi node addresses 0-2 */
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <	&fpgamgr0_outs
-> +				&fpgamgr0_ins
-> +				&fpgabridge0_outs
-> +				&fpgabridge0_ins
-> +				>;
-> +		nconfig-gpios = <&pio 6 8 GPIO_ACTIVE_HIGH>;	/* PG8 */
-> +		nstat-gpios	  = <&pio 6 7 GPIO_ACTIVE_HIGH>;	/* PG7 */
-> +		confd-gpios	  = <&pio 6 6 GPIO_ACTIVE_HIGH>;	/* PG6 */
-> +		spi-lsb-first;	/* SPI controller should send LSbit first to this slave */
-> +		write-block-size = <0xffffffff>;
->  	};
-> +};
-> diff --git a/drivers/fpga/altera-ps-spi.c b/drivers/fpga/altera-ps-spi.c
-> index 33aafda50..0c6c90d0c 100644
-> --- a/drivers/fpga/altera-ps-spi.c
-> +++ b/drivers/fpga/altera-ps-spi.c
-> @@ -12,8 +12,9 @@
->   * Manage Altera FPGA firmware that is loaded over SPI using the passive
->   * serial configuration method.
->   * Firmware must be in binary "rbf" format.
-> - * Works on Arria 10, Cyclone V and Stratix V. Should work on Cyclone series.
-> - * May work on other Altera FPGAs.
-> + * Works on Arria 10, Cyclone V, Cyclone 10, and Stratix V.
-> + * May work on other Altera FPGAs.  For Cyclone 10, additional file formats
-> + * of *.hex and *.ttf are allegedly accepted by the FPGA.
->   */
-> 
->  #include <linux/bitrev.h>
-> @@ -26,8 +27,14 @@
->  #include <linux/spi/spi.h>
->  #include <linux/sizes.h>
-> 
-> +
-> +#define FLAGS_SPI_LSB_FIRST	BIT(0)	/* saw "spi-lsb-first" in DTB's SPI FPGA manager slave */
-> +
-> +#define WR_BLOCKZ_BYTES		SZ_4K	/* chosen when "write-block-size" not supplied in
-> devicetree */
-> +
->  enum altera_ps_devtype {
->  	CYCLONE5,
-> +	CYCLONE10,
->  	ARRIA10,
->  };
-> 
-> @@ -40,24 +47,29 @@ struct altera_ps_data {
->  };
-> 
->  struct altera_ps_conf {
-> -	struct gpio_desc *config;
-> +	struct gpio_desc *nconfig;
->  	struct gpio_desc *confd;
->  	struct gpio_desc *status;
->  	struct spi_device *spi;
-> +	u32 write_block_size;			/* in bytes */
->  	const struct altera_ps_data *data;
-> -	u32 info_flags;
->  	char mgr_name[64];
-> +	u8 image_flags;
-> +	u8 mgr_flags;
->  };
-> 
-> -/*          |   Arria 10  |   Cyclone5  |   Stratix5  |
-> - * t_CF2ST0 |     [; 600] |     [; 600] |     [; 600] |ns
-> - * t_CFG    |        [2;] |        [2;] |        [2;] |탎
-> - * t_STATUS | [268; 3000] | [268; 1506] | [268; 1506] |탎
-> - * t_CF2ST1 |    [; 3000] |    [; 1506] |    [; 1506] |탎
-> - * t_CF2CK  |     [3010;] |     [1506;] |     [1506;] |탎
-> - * t_ST2CK  |       [10;] |        [2;] |        [2;] |탎
-> - * t_CD2UM  |  [175; 830] |  [175; 437] |  [175; 437] |탎
-> +/*
-> + * See
-> https://www.intel.com/content/www/us/en/programmable/documentation/sss1412661044400.html
-> + *          |   Arria 10  |   Cyclone5  |   Stratix5  |  Cyclone 10 LP  |
-> + * t_CF2ST0 |     [; 600] |     [; 600] |     [; 600] |         [; 500] |ns
-> + * t_CFG    |        [2;] |        [2;] |        [2;] |          [0.5;] |탎
-> + * t_STATUS | [268; 3000] | [268; 1506] | [268; 1506] |       [45; 230] |탎
-> + * t_CF2ST1 |    [; 3000] |    [; 1506] |    [; 1506] |         [; 230] |탎
-> + * t_CF2CK  |     [3010;] |     [1506;] |     [1506;] |          [230;] |탎
-> + * t_ST2CK  |       [10;] |        [2;] |        [2;] |            [2;] |탎
-> + * t_CD2UM  |  [175; 830] |  [175; 437] |  [175; 437] |      [300; 650] |탎
->   */
-> +
->  static struct altera_ps_data c5_data = {
->  	/* these values for Cyclone5 are compatible with Stratix5 */
->  	.devtype = CYCLONE5,
-> @@ -69,15 +81,24 @@ static struct altera_ps_data c5_data = {
-> 
->  static struct altera_ps_data a10_data = {
->  	.devtype = ARRIA10,
-> -	.status_wait_min_us = 268,  /* min(t_STATUS) */
-> -	.status_wait_max_us = 3000, /* max(t_CF2ST1) */
-> -	.t_cfg_us = 2,    /* max { min(t_CFG), max(tCF2ST0) } */
-> -	.t_st2ck_us = 10, /* min(t_ST2CK) */
-> +	.status_wait_min_us = 268,	/* min(t_STATUS) */
-> +	.status_wait_max_us = 3000,	/* max(t_CF2ST1) */
-> +	.t_cfg_us = 2,			/* max { min(t_CFG), max(tCF2ST0) } */
-> +	.t_st2ck_us = 10,		/* min(t_ST2CK) */
-> +};
-> +
-> +static struct altera_ps_data c10_data = {
-> +	.devtype = CYCLONE10,
-> +	.status_wait_min_us = 45,
-> +	.status_wait_max_us = 230,
-> +	.t_cfg_us = 1,
-> +	.t_st2ck_us = 2,
->  };
-> 
->  static const struct of_device_id of_ef_match[] = {
->  	{ .compatible = "altr,fpga-passive-serial", .data = &c5_data },
->  	{ .compatible = "altr,fpga-arria10-passive-serial", .data = &a10_data },
-> +	{ .compatible = "altr,fpga-cyclone10-passive-serial", .data = &c10_data },
->  	{}
->  };
->  MODULE_DEVICE_TABLE(of, of_ef_match);
-> @@ -86,13 +107,13 @@ static enum fpga_mgr_states altera_ps_state(struct fpga_manager *mgr)
->  {
->  	struct altera_ps_conf *conf = mgr->priv;
-> 
-> -	if (gpiod_get_value_cansleep(conf->status))
-> +	if (!gpiod_get_value_cansleep(conf->status))
->  		return FPGA_MGR_STATE_RESET;
-> 
->  	return FPGA_MGR_STATE_UNKNOWN;
->  }
-> 
-> -static inline void altera_ps_delay(int delay_us)
-> +static void altera_ps_delay(unsigned delay_us)
->  {
->  	if (delay_us > 10)
->  		usleep_range(delay_us, delay_us + 5);
-> @@ -100,51 +121,56 @@ static inline void altera_ps_delay(int delay_us)
->  		udelay(delay_us);
->  }
-> 
-> +/* wait up to delay_us for a gpio pin to enter a goal state */
-> +static bool gpio_wait(bool goal, struct gpio_desc *pin, unsigned delay_us)
-> +{
-> +	ktime_t deadline = ktime_add_us(ktime_get(), delay_us);
-> +
-> +	do {	/* delay at least once, ktime_get() may not have changed */
-> +		altera_ps_delay(10);
-> +		if (gpiod_get_value_cansleep(pin) == goal)
-> +			return true;
-> +
-> +		/* as of today, ktime_before() and ktime_after() are badly implemented, not using them
-> here */
-> +	} while (ktime_sub(deadline,ktime_get()) > 0);
-> +
-> +	return false;
-> +}
-> +
->  static int altera_ps_write_init(struct fpga_manager *mgr,
-> -				struct fpga_image_info *info,
-> +				struct fpga_image_info *image_info,
->  				const char *buf, size_t count)
->  {
->  	struct altera_ps_conf *conf = mgr->priv;
-> -	int min, max, waits;
-> -	int i;
-> -
-> -	conf->info_flags = info->flags;
-> +	conf->image_flags = image_info->flags;
-> 
-> -	if (info->flags & FPGA_MGR_PARTIAL_RECONFIG) {
-> +	if (image_info->flags & FPGA_MGR_PARTIAL_RECONFIG) {
->  		dev_err(&mgr->dev, "Partial reconfiguration not supported.\n");
->  		return -EINVAL;
->  	}
-> 
-> -	gpiod_set_value_cansleep(conf->config, 1);
-> +	if (!gpiod_get_value_cansleep(conf->status)) {
-> +		dev_err(&mgr->dev, "nSTATUS initial state is not hi.\n");
-> +		return -EIO;
-> +	}
-> 
-> -	/* wait min reset pulse time */
-> -	altera_ps_delay(conf->data->t_cfg_us);
-> +	gpiod_set_value_cansleep(conf->nconfig, 0);
-> 
-> -	if (!gpiod_get_value_cansleep(conf->status)) {
-> -		dev_err(&mgr->dev, "Status pin failed to show a reset\n");
-> +	/* wait min reset pulse time */
-> +	if (!gpio_wait(false, conf->status, conf->data->t_cfg_us)) {
-> +		dev_err(&mgr->dev, "nSTATUS failed to show a reset\n");
->  		return -EIO;
->  	}
-> 
-> -	gpiod_set_value_cansleep(conf->config, 0);
-> -
-> -	min = conf->data->status_wait_min_us;
-> -	max = conf->data->status_wait_max_us;
-> -	waits = max / min;
-> -	if (max % min)
-> -		waits++;
-> -
-> -	/* wait for max { max(t_STATUS), max(t_CF2ST1) } */
-> -	for (i = 0; i < waits; i++) {
-> -		usleep_range(min, min + 10);
-> -		if (!gpiod_get_value_cansleep(conf->status)) {
-> -			/* wait for min(t_ST2CK)*/
-> -			altera_ps_delay(conf->data->t_st2ck_us);
-> -			return 0;
-> -		}
-> +	gpiod_set_value_cansleep(conf->nconfig, 1);
-> +
-> +	if (!gpio_wait(true, conf->status, conf->data->status_wait_max_us)) {
-> +		dev_err(&mgr->dev, "nSTATUS not ready.\n");
-> +		return -EIO;
->  	}
-> 
-> -	dev_err(&mgr->dev, "Status pin not ready.\n");
-> -	return -EIO;
-> +	dev_dbg(&mgr->dev, "%s: nSTATUS OK\n", __func__);
-> +	return 0;
->  }
-> 
->  static void rev_buf(char *buf, size_t len)
-> @@ -176,12 +202,28 @@ static int altera_ps_write(struct fpga_manager *mgr, const char *buf,
->  	const char *fw_data = buf;
->  	const char *fw_data_end = fw_data + count;
-> 
-> +	/* u-boot does not loop when doing something similar.  Sometimes there
-> +	 * can be clock glitches at the edges of these multiple frames depending
-> +	 * on the quality of the CPU's spi driver.  For that
-> +	 * reason it is possible to do the writing in one frame by setting the
-> +	 * write_block_size large enough in the device tree such that this
-> +	 * "loop" finishes up in one pass through.
-> +	 */
->  	while (fw_data < fw_data_end) {
-> -		int ret;
-> -		size_t stride = min_t(size_t, fw_data_end - fw_data, SZ_4K);
-> 
-> -		if (!(conf->info_flags & FPGA_MGR_BITSTREAM_LSB_FIRST))
-> +		int ret;
-> +		size_t stride = min_t(size_t, fw_data_end - fw_data, conf->write_block_size);
-> +
-> +		/* Does the SPI controller send LSbit first, typically not.
-> +		 * In any case the FPGA wants LSbit first.  Endian reverse bits in
-> +		 * byte if needed so that the LSbit of each image byte is sent first,
-> +		 * in the case where the SPI controller sends the MSbit first
-> +		 * (of what will now be bit reversed bytes).
-> +		 */
-> +		if (!(conf->mgr_flags & FLAGS_SPI_LSB_FIRST)) {
-> +			dev_dbg(&mgr->dev, "rev_buf() bit swapping\n");
->  			rev_buf((char *)fw_data, stride);
-> +		}
-> 
->  		ret = spi_write(conf->spi, fw_data, stride);
->  		if (ret) {
-> @@ -192,31 +234,30 @@ static int altera_ps_write(struct fpga_manager *mgr, const char *buf,
->  		fw_data += stride;
->  	}
-> 
-> +	dev_dbg(&mgr->dev, "%s: OK\n", __func__);
->  	return 0;
->  }
-> 
->  static int altera_ps_write_complete(struct fpga_manager *mgr,
-> -				    struct fpga_image_info *info)
-> +				    struct fpga_image_info *image_info)
->  {
->  	struct altera_ps_conf *conf = mgr->priv;
->  	const char dummy[] = {0};
->  	int ret;
-> 
-> -	if (gpiod_get_value_cansleep(conf->status)) {
-> -		dev_err(&mgr->dev, "Error during configuration.\n");
-> +	if (!gpiod_get_value_cansleep(conf->status)) {
-> +		dev_err(&mgr->dev, "nSTATUS error at end of configuration!\n");
->  		return -EIO;
->  	}
-> 
-> -	if (!IS_ERR(conf->confd)) {
-> -		if (!gpiod_get_raw_value_cansleep(conf->confd)) {
-> -			dev_err(&mgr->dev, "CONF_DONE is inactive!\n");
-> -			return -EIO;
-> -		}
-> +	if (!IS_ERR(conf->confd) && !gpio_wait(true, conf->confd, 500)) {
-> +		dev_err(&mgr->dev, "CONF_DONE error at end of configuration!\n");
-> +		return -EIO;
->  	}
-> 
->  	/*
-> -	 * After CONF_DONE goes high, send two additional falling edges on DCLK
-> -	 * to begin initialization and enter user mode
-> +	 * After CONF_DONE goes high, send at least two additional falling
-> +	 * edges on DCLK to begin initialization and enter user mode.
->  	 */
->  	ret = spi_write(conf->spi, dummy, 1);
->  	if (ret) {
-> @@ -224,6 +265,7 @@ static int altera_ps_write_complete(struct fpga_manager *mgr,
->  		return ret;
->  	}
-> 
-> +	dev_dbg(&mgr->dev, "%s: OK\n", __func__);
->  	return 0;
->  }
-> 
-> @@ -240,44 +282,62 @@ static int altera_ps_probe(struct spi_device *spi)
->  	const struct of_device_id *of_id;
->  	struct fpga_manager *mgr;
-> 
-> +	dev_dbg(&spi->dev, "altera_ps_probe\n");
-> +
->  	conf = devm_kzalloc(&spi->dev, sizeof(*conf), GFP_KERNEL);
-> -	if (!conf)
-> +	if (!conf) {
->  		return -ENOMEM;
-> +	}
-> 
->  	of_id = of_match_device(of_ef_match, &spi->dev);
-> -	if (!of_id)
-> +	if (!of_id) {
-> +		dev_dbg(&spi->dev, "no of_id\n");
->  		return -ENODEV;
-> +	}
-> 
->  	conf->data = of_id->data;
->  	conf->spi = spi;
-> -	conf->config = devm_gpiod_get(&spi->dev, "nconfig", GPIOD_OUT_LOW);
-> -	if (IS_ERR(conf->config)) {
-> -		dev_err(&spi->dev, "Failed to get config gpio: %ld\n",
-> -			PTR_ERR(conf->config));
-> -		return PTR_ERR(conf->config);
-> +	conf->nconfig = devm_gpiod_get(&spi->dev, "nconfig", GPIOD_OUT_HIGH);
-> +	if (IS_ERR(conf->nconfig)) {
-> +		dev_err(&spi->dev, "Failed to get nCONFIG gpio: %ld\n",
-> +			PTR_ERR(conf->nconfig));
-> +		return PTR_ERR(conf->nconfig);
->  	}
-> 
->  	conf->status = devm_gpiod_get(&spi->dev, "nstat", GPIOD_IN);
->  	if (IS_ERR(conf->status)) {
-> -		dev_err(&spi->dev, "Failed to get status gpio: %ld\n",
-> +		dev_err(&spi->dev, "Failed to get nSTATUS gpio: %ld\n",
->  			PTR_ERR(conf->status));
->  		return PTR_ERR(conf->status);
->  	}
-> 
->  	conf->confd = devm_gpiod_get(&spi->dev, "confd", GPIOD_IN);
->  	if (IS_ERR(conf->confd)) {
-> -		dev_warn(&spi->dev, "Not using confd gpio: %ld\n",
-> +		dev_warn(&spi->dev, "Not using CONFIG_DONE gpio: %ld\n",
->  			 PTR_ERR(conf->confd));
->  	}
-> 
-> +	if (of_find_property(spi->dev.of_node, "spi-lsb-first", NULL)) {
-> +		dev_dbg(&spi->dev, "SPI is LSbit first");
-> +		conf->mgr_flags |= FLAGS_SPI_LSB_FIRST;
-> +	}
-> +
-> +	if (of_property_read_u32(spi->dev.of_node, "write-block-size",
-> +				 &conf->write_block_size))
-> +		conf->write_block_size = WR_BLOCKZ_BYTES;
-> +
-> +	dev_dbg(&spi->dev, "write_block_size:%u\n", conf->write_block_size);
-> +
->  	/* Register manager with unique name */
->  	snprintf(conf->mgr_name, sizeof(conf->mgr_name), "%s %s",
->  		 dev_driver_string(&spi->dev), dev_name(&spi->dev));
-> 
->  	mgr = devm_fpga_mgr_create(&spi->dev, conf->mgr_name,
->  				   &altera_ps_ops, conf);
-> -	if (!mgr)
-> +	if (!mgr) {
-> +		dev_dbg(&spi->dev, "no mgr\n");
->  		return -ENOMEM;
-> +	}
-> 
->  	spi_set_drvdata(spi, mgr);
-> 
-> diff --git a/include/linux/fpga/fpga-mgr.h b/include/linux/fpga/fpga-mgr.h
-> index e8ca62b2c..7ac77c3ae 100644
-> --- a/include/linux/fpga/fpga-mgr.h
-> +++ b/include/linux/fpga/fpga-mgr.h
-> @@ -64,15 +64,12 @@ enum fpga_mgr_states {
->   *
->   * %FPGA_MGR_ENCRYPTED_BITSTREAM: indicates bitstream is encrypted
->   *
-> - * %FPGA_MGR_BITSTREAM_LSB_FIRST: SPI bitstream bit order is LSB first
-> - *
->   * %FPGA_MGR_COMPRESSED_BITSTREAM: FPGA bitstream is compressed
->   */
->  #define FPGA_MGR_PARTIAL_RECONFIG	BIT(0)
->  #define FPGA_MGR_EXTERNAL_CONFIG	BIT(1)
->  #define FPGA_MGR_ENCRYPTED_BITSTREAM	BIT(2)
-> -#define FPGA_MGR_BITSTREAM_LSB_FIRST	BIT(3)
-> -#define FPGA_MGR_COMPRESSED_BITSTREAM	BIT(4)
-> +#define FPGA_MGR_COMPRESSED_BITSTREAM	BIT(3)
-> 
->  /**
->   * struct fpga_image_info - information specific to a FPGA image
-> -- 
-> 2.17.1
+As we've already discussed it in [1], I'm working on removing the
+_nopanic() versions and dropping the panic() calls from memblock_alloc()
+and friends.
 
-I'm gonna skip over the patch and get straight to my reply to your
-off-list emails to Alan:
+I've posted v2 of the patches earlier this week [2].
+ 
+> [...]
 
-As you know the Linux Kernel is an Open Source project, we value your
-contribution; however it does need to follow our coding standards and
-pass review.
-No free lunch - not for the elderly, not for fellow maintainers - our
-own patches go through the same *public* review on the list, just like
-everybody else's. This ensures continued high quality and longterm
-maintainability of the Linux Kernel codebase.
-Please stop asking for preferential treatment based on your perceived
-status as former Kicad contributor? off-list.
+[1] https://lore.kernel.org/lkml/20190108143428.GB14063@rapoport-lnx/ 
+[2] https://lore.kernel.org/lkml/1548057848-15136-1-git-send-email-rppt@linux.ibm.com/
 
-Your threats of 'walking away' are empty and will not get us anywhere:
-If somebody beyond yourself / your employer values you contribution
-enough so that he / she is willing to put in the work to fix up the
-contribution up to Linux Kernel coding standards and follow the
-submission process, we will happily apply your patches.
-In the meantime it will stay - archived, for the public to find should
-the need ever arise - outside of the Linux Kernel codebase.
+> >  static void *__init alloc_stack(unsigned long limit, int cpu)
+> >  {
+> > -	unsigned long pa;
+> > +	void *ptr;
+> >  
+> >  	BUILD_BUG_ON(STACK_INT_FRAME_SIZE % 16);
+> >  
+> > -	pa = memblock_alloc_base_nid(THREAD_SIZE, THREAD_SIZE, limit,
+> > -					early_cpu_to_node(cpu), MEMBLOCK_NONE);
+> > -	if (!pa) {
+> > -		pa = memblock_alloc_base(THREAD_SIZE, THREAD_SIZE, limit);
+> > -		if (!pa)
+> > -			panic("cannot allocate stacks");
+> > -	}
+> > +	ptr = memblock_alloc_try_nid(THREAD_SIZE, THREAD_SIZE,
+> > +				     MEMBLOCK_LOW_LIMIT, limit,
+> > +				     early_cpu_to_node(cpu));
+> > +	if (!ptr)
+> > +		panic("cannot allocate stacks");
+> 
+> The same applies here -- memblock_alloc_try_nid() will panic itself
+> rather than returning NULL.
+> 
+> Otherwise, this looks like a nice cleanup. With the panics removed (or
+> using the _nopanic() allocators), feel free to add:
+> 
+> Acked-by: Mark Rutland <mark.rutland@arm.com>
+> 
+> Thanks,
+> Mark.
+> 
 
-In any case thank you for sharing the code with the community even in
-it's current form.
+-- 
+Sincerely yours,
+Mike.
 
-Furthermore I personally would encourage you to refrain from further
-insulting the community, our process, and the people working on the
-project in your off-list emails.
-
-I wish you all the best in your entrepreneurial endeavours,
-
-Moritz
