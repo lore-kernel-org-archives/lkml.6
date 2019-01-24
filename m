@@ -2,50 +2,53 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85A8CC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:28:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7BF4C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:28:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5389E218FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:28:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A375D21902
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:28:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358122;
-	bh=TJqqGn5C1BbUCFdFhRvH3EOSUhTtU0/QoU05477jDEE=;
+	s=default; t=1548358129;
+	bh=20WHAkkDhRErhLkfxciKgfJblsfLXa1VyL73B5yxHQY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ugfVB3kt5oZlRiRaOTghpazoQ0hDBETxNSRemeBP9qYtkHCerCML4jNYkPiAOKA0/
-	 YeVxm8oFXLwy5IR6LgdkdrLwpOoLr6DAn/Q0ETtt9KwgMU5ic+qTiS3ZEwbJR21jbP
-	 erDFofXiFFGvDl5vb+Xk9QU7mgw24ffowJmO2GUw=
+	b=f29kt5J2aSJV8neGBj2ogEtmPCXdtcX8iy9pb+0OFxDsyws6tH6GUrIjT/LMCQ7jK
+	 hVq0pqs/Jf+zTk49X4Bur9+Hv1kHdrUrt28VWwwsGXY8n5gze9zjWZdmN7qCMUsez7
+	 hTTh5Zo8G9wi9CS3zCUL3aSSYfCwnRIH5VnMPXUs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731029AbfAXT2l (ORCPT
+        id S1731038AbfAXT2r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:28:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55448 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:28:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55528 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731018AbfAXT2i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:28:38 -0500
+        id S1731024AbfAXT2m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:28:42 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1BDFA218FC;
-        Thu, 24 Jan 2019 19:28:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6015D218A6;
+        Thu, 24 Jan 2019 19:28:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358117;
-        bh=TJqqGn5C1BbUCFdFhRvH3EOSUhTtU0/QoU05477jDEE=;
+        s=default; t=1548358120;
+        bh=20WHAkkDhRErhLkfxciKgfJblsfLXa1VyL73B5yxHQY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hSlFUZQ2ljOaVa9yR3O/5hvLIOvK6p+CyPXhiIh+3S1obm84Bd1rAEjhb9fN/RuzE
-         fTVfy90fZ74jZP8WjRX6L59jgT3Ig3az8ag8RgEA5Jp1WeRkkLn7p6Oqpp5WxmCWLQ
-         EKsjWRMOLtbVO+xs4eGCfsAiPymMoIwWI+ryuZ4A=
+        b=n1Gng/45lw1ZO12zFNymWEVIuPy8oVWN/FutbMIx0z9DMVJjEl/NX2blKmMoqSUGI
+         i7Tus5p3VhLvMmuicixQf4J8njMDM8WvqaJeUDKcRCTnMVTNt/ifzKktzccwB19lMP
+         CJiJb8ma8M71ApcW7JTaJwZSKjvZWpfkmPIJ1HP0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Corey Minyard <cminyard@mvista.com>
-Subject: [PATCH 4.4 104/104] ipmi:ssif: Fix handling of multi-part return messages
-Date:   Thu, 24 Jan 2019 20:20:33 +0100
-Message-Id: <20190124190205.859658191@linuxfoundation.org>
+        stable@vger.kernel.org, Daniel Santos <daniel.santos@pobox.com>,
+        Hou Tao <houtao1@huawei.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 082/104] jffs2: Fix use of uninitialized delayed_work, lockdep breakage
+Date:   Thu, 24 Jan 2019 20:20:11 +0100
+Message-Id: <20190124190204.200618294@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190154.968308875@linuxfoundation.org>
 References: <20190124190154.968308875@linuxfoundation.org>
@@ -64,95 +67,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Corey Minyard <cminyard@mvista.com>
+[ Upstream commit a788c5272769ddbcdbab297cf386413eeac04463 ]
 
-commit 7d6380cd40f7993f75c4bde5b36f6019237e8719 upstream.
+jffs2_sync_fs makes the assumption that if CONFIG_JFFS2_FS_WRITEBUFFER
+is defined then a write buffer is available and has been initialized.
+However, this does is not the case when the mtd device has no
+out-of-band buffer:
 
-The block number was not being compared right, it was off by one
-when checking the response.
+int jffs2_nand_flash_setup(struct jffs2_sb_info *c)
+{
+        if (!c->mtd->oobsize)
+                return 0;
+...
 
-Some statistics wouldn't be incremented properly in some cases.
+The resulting call to cancel_delayed_work_sync passing a uninitialized
+(but zeroed) delayed_work struct forces lockdep to become disabled.
 
-Check to see if that middle-part messages always have 31 bytes of
-data.
+[   90.050639] overlayfs: upper fs does not support tmpfile.
+[   90.652264] INFO: trying to register non-static key.
+[   90.662171] the code is fine but needs lockdep annotation.
+[   90.673090] turning off the locking correctness validator.
+[   90.684021] CPU: 0 PID: 1762 Comm: mount_root Not tainted 4.14.63 #0
+[   90.696672] Stack : 00000000 00000000 80d8f6a2 00000038 805f0000 80444600 8fe364f4 805dfbe7
+[   90.713349]         80563a30 000006e2 8068370c 00000001 00000000 00000001 8e2fdc48 ffffffff
+[   90.730020]         00000000 00000000 80d90000 00000000 00000106 00000000 6465746e 312e3420
+[   90.746690]         6b636f6c 03bf0000 f8000000 20676e69 00000000 80000000 00000000 8e2c2a90
+[   90.763362]         80d90000 00000001 00000000 8e2c2a90 00000003 80260dc0 08052098 80680000
+[   90.780033]         ...
+[   90.784902] Call Trace:
+[   90.789793] [<8000f0d8>] show_stack+0xb8/0x148
+[   90.798659] [<8005a000>] register_lock_class+0x270/0x55c
+[   90.809247] [<8005cb64>] __lock_acquire+0x13c/0xf7c
+[   90.818964] [<8005e314>] lock_acquire+0x194/0x1dc
+[   90.828345] [<8003f27c>] flush_work+0x200/0x24c
+[   90.837374] [<80041dfc>] __cancel_work_timer+0x158/0x210
+[   90.847958] [<801a8770>] jffs2_sync_fs+0x20/0x54
+[   90.857173] [<80125cf4>] iterate_supers+0xf4/0x120
+[   90.866729] [<80158fc4>] sys_sync+0x44/0x9c
+[   90.875067] [<80014424>] syscall_common+0x34/0x58
 
-Signed-off-by: Corey Minyard <cminyard@mvista.com>
-Cc: stable@vger.kernel.org # 4.4
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Daniel Santos <daniel.santos@pobox.com>
+Reviewed-by: Hou Tao <houtao1@huawei.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/char/ipmi/ipmi_ssif.c |   25 +++++++++++++++++--------
- 1 file changed, 17 insertions(+), 8 deletions(-)
+ fs/jffs2/super.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/char/ipmi/ipmi_ssif.c
-+++ b/drivers/char/ipmi/ipmi_ssif.c
-@@ -637,8 +637,9 @@ static void msg_done_handler(struct ssif
+diff --git a/fs/jffs2/super.c b/fs/jffs2/super.c
+index 1544f530ccd0..023e7f32ee1b 100644
+--- a/fs/jffs2/super.c
++++ b/fs/jffs2/super.c
+@@ -101,7 +101,8 @@ static int jffs2_sync_fs(struct super_block *sb, int wait)
+ 	struct jffs2_sb_info *c = JFFS2_SB_INFO(sb);
  
- 		/* Remove the multi-part read marker. */
- 		len -= 2;
-+		data += 2;
- 		for (i = 0; i < len; i++)
--			ssif_info->data[i] = data[i+2];
-+			ssif_info->data[i] = data[i];
- 		ssif_info->multi_len = len;
- 		ssif_info->multi_pos = 1;
+ #ifdef CONFIG_JFFS2_FS_WRITEBUFFER
+-	cancel_delayed_work_sync(&c->wbuf_dwork);
++	if (jffs2_is_writebuffered(c))
++		cancel_delayed_work_sync(&c->wbuf_dwork);
+ #endif
  
-@@ -666,8 +667,19 @@ static void msg_done_handler(struct ssif
- 		}
- 
- 		blocknum = data[0];
-+		len--;
-+		data++;
-+
-+		if (blocknum != 0xff && len != 31) {
-+		    /* All blocks but the last must have 31 data bytes. */
-+			result = -EIO;
-+			if (ssif_info->ssif_debug & SSIF_DEBUG_MSG)
-+				pr_info("Received middle message <31\n");
- 
--		if (ssif_info->multi_len + len - 1 > IPMI_MAX_MSG_LENGTH) {
-+			goto continue_op;
-+		}
-+
-+		if (ssif_info->multi_len + len > IPMI_MAX_MSG_LENGTH) {
- 			/* Received message too big, abort the operation. */
- 			result = -E2BIG;
- 			if (ssif_info->ssif_debug & SSIF_DEBUG_MSG)
-@@ -676,16 +688,14 @@ static void msg_done_handler(struct ssif
- 			goto continue_op;
- 		}
- 
--		/* Remove the blocknum from the data. */
--		len--;
- 		for (i = 0; i < len; i++)
--			ssif_info->data[i + ssif_info->multi_len] = data[i + 1];
-+			ssif_info->data[i + ssif_info->multi_len] = data[i];
- 		ssif_info->multi_len += len;
- 		if (blocknum == 0xff) {
- 			/* End of read */
- 			len = ssif_info->multi_len;
- 			data = ssif_info->data;
--		} else if (blocknum + 1 != ssif_info->multi_pos) {
-+		} else if (blocknum != ssif_info->multi_pos) {
- 			/*
- 			 * Out of sequence block, just abort.  Block
- 			 * numbers start at zero for the second block,
-@@ -713,6 +723,7 @@ static void msg_done_handler(struct ssif
- 		}
- 	}
- 
-+ continue_op:
- 	if (result < 0) {
- 		ssif_inc_stat(ssif_info, receive_errors);
- 	} else {
-@@ -720,8 +731,6 @@ static void msg_done_handler(struct ssif
- 		ssif_inc_stat(ssif_info, received_message_parts);
- 	}
- 
--
-- continue_op:
- 	if (ssif_info->ssif_debug & SSIF_DEBUG_STATE)
- 		pr_info(PFX "DONE 1: state = %d, result=%d.\n",
- 			ssif_info->ssif_state, result);
+ 	mutex_lock(&c->alloc_sem);
+-- 
+2.19.1
+
 
 
