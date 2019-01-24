@@ -2,128 +2,182 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1B55C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:33:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DEA7C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:37:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B48121872
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:33:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C09C721872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:37:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="A4CvDhkY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729108AbfAXRd5 (ORCPT
+        id S1729034AbfAXRhI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 12:33:57 -0500
-Received: from gateway30.websitewelcome.com ([192.185.145.3]:44319 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727573AbfAXRd4 (ORCPT
+        Thu, 24 Jan 2019 12:37:08 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:8374 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727765AbfAXRhH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 12:33:56 -0500
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id 4544C46784
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 11:33:53 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id miszg14bx2PzOmiszgbH2j; Thu, 24 Jan 2019 11:33:53 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=42518 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gmisy-0004nO-V3; Thu, 24 Jan 2019 11:33:53 -0600
-Subject: Re: [PATCH] cpufreq: e_powersaver: Use struct_size() in kzalloc()
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190107173343.GA4258@embeddedor>
- <20190108050056.quckhd2d5ah4ywax@vireshk-i7>
- <1645829.9I2fkU6ktd@aspire.rjw.lan>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Message-ID: <cc4d5cb2-8e37-2b97-240b-96d712373ed2@embeddedor.com>
-Date:   Thu, 24 Jan 2019 11:33:52 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 24 Jan 2019 12:37:07 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c49f7af0000>; Thu, 24 Jan 2019 09:36:47 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Thu, 24 Jan 2019 09:37:05 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Thu, 24 Jan 2019 09:37:05 -0800
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 24 Jan
+ 2019 17:37:05 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Thu, 24 Jan 2019 17:37:05 +0000
+Received: from linux.nvidia.com (Not Verified[10.24.34.185]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5c49f7be0003>; Thu, 24 Jan 2019 09:37:05 -0800
+From:   Sameer Pujar <spujar@nvidia.com>
+To:     <perex@perex.cz>, <tiwai@suse.com>,
+        <pierre-louis.bossart@linux.intel.com>
+CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <rlokhande@nvidia.com>, <alsa-devel@alsa-project.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Sameer Pujar <spujar@nvidia.com>
+Subject: [PATCH] ALSA: hda/tegra: enable clock during probe
+Date:   Thu, 24 Jan 2019 23:06:43 +0530
+Message-ID: <1548351403-1875-1-git-send-email-spujar@nvidia.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <1645829.9I2fkU6ktd@aspire.rjw.lan>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1gmisy-0004nO-V3
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.130.205]:42518
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 7
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1548351407; bh=eCn3sPZKweKcCsTMnaIc0CN9y7SXVR86k2I72w26XAM=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         MIME-Version:Content-Type;
+        b=A4CvDhkYwAN/qmf84nTe8GQmLDn6lCl7tjm8g8Tzq8f6BzYg7yxbBMDx+SjcOvQas
+         B7fnZ+p7Rn0QRGfWQQML1k3aZAjSetSCNS1X6AcdN8/Q7idrCOGjYrexFGqqCNhOon
+         a1N9wxu2djaYFIqymXraJshpzPokle5NT4HTpyjhx6LjDsALjLoKxsDleNl72sbQHE
+         SkUhL9yGu57hrozCWN0IH5855X+DmT26zLUwCuskduEIJOFdOMPWmjHzt0cdTed5I/
+         oLOdDj9xxGh3DLBegqZvUs5YTweFrPPfN8ufUEP9oru7kDInoHZY/0Px+6fLXJSFqd
+         qg6NVyYchBw0A==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+If CONFIG_PM is disabled or runtime PM calls are forbidden, the clocks
+will not be ON. This could cause issue during probe, where hda init
+setup is done. This patch checks whether runtime PM is enabled or not.
+If disabled, clocks are enabled in probe() and disabled in remove()
 
+This patch does following minor changes as cleanup,
+  * return code check for pm_runtime_get_sync() to take care of failure
+    and exit gracefully.
+  * In remove path runtime PM is disabled before calling snd_card_free().
+  * hda_tegra_disable_clocks() is moved out of CONFIG_PM_SLEEP check.
+  * runtime PM callbacks moved out of CONFIG_PM check
 
-On 1/24/19 4:34 AM, Rafael J. Wysocki wrote:
-> On Tuesday, January 8, 2019 6:00:56 AM CET Viresh Kumar wrote:
->> On 07-01-19, 11:33, Gustavo A. R. Silva wrote:
->>> One of the more common cases of allocation size calculations is finding the
->>> size of a structure that has a zero-sized array at the end, along with memory
->>> for some number of elements for that array. For example:
->>>
->>> struct foo {
->>>     int stuff;
->>>     void *entry[];
->>> };
->>>
->>> instance = kzalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
->>>
->>> Instead of leaving these open-coded and prone to type mistakes, we can now
->>> use the new struct_size() helper:
->>>
->>> instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
->>>
->>> This code was detected with the help of Coccinelle.
->>>
->>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->>> ---
->>>  drivers/cpufreq/e_powersaver.c | 5 ++---
->>>  1 file changed, 2 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/cpufreq/e_powersaver.c b/drivers/cpufreq/e_powersaver.c
->>> index 60bea302abbe..2d3ef208dd70 100644
->>> --- a/drivers/cpufreq/e_powersaver.c
->>> +++ b/drivers/cpufreq/e_powersaver.c
->>> @@ -323,9 +323,8 @@ static int eps_cpu_init(struct cpufreq_policy *policy)
->>>  		states = 2;
->>>  
->>>  	/* Allocate private data and frequency table for current cpu */
->>> -	centaur = kzalloc(sizeof(*centaur)
->>> -		    + (states + 1) * sizeof(struct cpufreq_frequency_table),
->>> -		    GFP_KERNEL);
->>> +	centaur = kzalloc(struct_size(centaur, freq_table, states + 1),
->>> +			  GFP_KERNEL);
->>>  	if (!centaur)
->>>  		return -ENOMEM;
->>>  	eps_cpu[0] = centaur;
->>
->> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> 
-> Patch applied, thanks!
-> 
+Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+Reviewed-by: Ravindra Lokhande <rlokhande@nvidia.com>
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+---
+ sound/pci/hda/hda_tegra.c | 31 ++++++++++++++++++++++---------
+ 1 file changed, 22 insertions(+), 9 deletions(-)
 
-Thank you both, Viresh and Rafael.
-
---
-Gustavo
+diff --git a/sound/pci/hda/hda_tegra.c b/sound/pci/hda/hda_tegra.c
+index c8d18dc..155c2f5 100644
+--- a/sound/pci/hda/hda_tegra.c
++++ b/sound/pci/hda/hda_tegra.c
+@@ -219,7 +219,6 @@ static int hda_tegra_enable_clocks(struct hda_tegra *data)
+ 	return rc;
+ }
+ 
+-#ifdef CONFIG_PM_SLEEP
+ static void hda_tegra_disable_clocks(struct hda_tegra *data)
+ {
+ 	clk_disable_unprepare(data->hda2hdmi_clk);
+@@ -227,6 +226,7 @@ static void hda_tegra_disable_clocks(struct hda_tegra *data)
+ 	clk_disable_unprepare(data->hda_clk);
+ }
+ 
++#ifdef CONFIG_PM_SLEEP
+ /*
+  * power management
+  */
+@@ -257,7 +257,6 @@ static int hda_tegra_resume(struct device *dev)
+ }
+ #endif /* CONFIG_PM_SLEEP */
+ 
+-#ifdef CONFIG_PM
+ static int hda_tegra_runtime_suspend(struct device *dev)
+ {
+ 	struct snd_card *card = dev_get_drvdata(dev);
+@@ -283,7 +282,7 @@ static int hda_tegra_runtime_resume(struct device *dev)
+ 	int rc;
+ 
+ 	rc = hda_tegra_enable_clocks(hda);
+-	if (rc != 0)
++	if (rc)
+ 		return rc;
+ 	if (chip && chip->running) {
+ 		hda_tegra_init(hda);
+@@ -292,7 +291,6 @@ static int hda_tegra_runtime_resume(struct device *dev)
+ 
+ 	return 0;
+ }
+-#endif /* CONFIG_PM */
+ 
+ static const struct dev_pm_ops hda_tegra_pm = {
+ 	SET_SYSTEM_SLEEP_PM_OPS(hda_tegra_suspend, hda_tegra_resume)
+@@ -555,6 +553,13 @@ static int hda_tegra_probe(struct platform_device *pdev)
+ 	if (!azx_has_pm_runtime(chip))
+ 		pm_runtime_forbid(hda->dev);
+ 
++	/* explicit resume if runtime PM is disabled */
++	if (!pm_runtime_enabled(hda->dev)) {
++		err = hda_tegra_runtime_resume(hda->dev);
++		if (err)
++			goto out_free;
++	}
++
+ 	schedule_work(&hda->probe_work);
+ 
+ 	return 0;
+@@ -571,7 +576,14 @@ static void hda_tegra_probe_work(struct work_struct *work)
+ 	struct platform_device *pdev = to_platform_device(hda->dev);
+ 	int err;
+ 
+-	pm_runtime_get_sync(hda->dev);
++	err = pm_runtime_get_sync(hda->dev);
++	if (err < 0) {
++		dev_err(hda->dev,
++			"failed in pm_runtime_get_syc with err = %d\n",
++			err);
++		return;
++	}
++
+ 	err = hda_tegra_first_init(chip, pdev);
+ 	if (err < 0)
+ 		goto out_free;
+@@ -599,12 +611,13 @@ static void hda_tegra_probe_work(struct work_struct *work)
+ 
+ static int hda_tegra_remove(struct platform_device *pdev)
+ {
+-	int ret;
+-
+-	ret = snd_card_free(dev_get_drvdata(&pdev->dev));
+ 	pm_runtime_disable(&pdev->dev);
++	if (!pm_runtime_status_suspended(&pdev->dev)) {
++		hda_tegra_runtime_suspend(&pdev->dev);
++		pm_runtime_set_suspended(&pdev->dev);
++	}
+ 
+-	return ret;
++	return snd_card_free(dev_get_drvdata(&pdev->dev));
+ }
+ 
+ static void hda_tegra_shutdown(struct platform_device *pdev)
+-- 
+2.7.4
 
