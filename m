@@ -3,32 +3,32 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 325B7C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 23:22:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7909DC282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 23:22:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 068F5218A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 23:22:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47C8D218A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 23:22:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728166AbfAXXV6 (ORCPT
+        id S1728236AbfAXXWC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 18:21:58 -0500
-Received: from mga11.intel.com ([192.55.52.93]:37749 "EHLO mga11.intel.com"
+        Thu, 24 Jan 2019 18:22:02 -0500
+Received: from mga14.intel.com ([192.55.52.115]:56114 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728004AbfAXXV5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 18:21:57 -0500
+        id S1728004AbfAXXV7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 18:21:59 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jan 2019 15:21:57 -0800
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jan 2019 15:21:58 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,518,1539673200"; 
-   d="scan'208";a="109574602"
+   d="scan'208";a="269699706"
 Received: from viggo.jf.intel.com (HELO localhost.localdomain) ([10.54.77.144])
-  by orsmga007.jf.intel.com with ESMTP; 24 Jan 2019 15:21:56 -0800
-Subject: [PATCH 4/5] dax/kmem: let walk_system_ram_range() search child resources
+  by orsmga004.jf.intel.com with ESMTP; 24 Jan 2019 15:21:58 -0800
+Subject: [PATCH 5/5] dax: "Hotplug" persistent memory for use like normal RAM
 To:     linux-kernel@vger.kernel.org
 Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
         dan.j.williams@intel.com, dave.jiang@intel.com, zwisler@kernel.org,
@@ -39,10 +39,10 @@ Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
         bhelgaas@google.com, baiyaowei@cmss.chinamobile.com, tiwai@suse.de,
         jglisse@redhat.com
 From:   Dave Hansen <dave.hansen@linux.intel.com>
-Date:   Thu, 24 Jan 2019 15:14:47 -0800
+Date:   Thu, 24 Jan 2019 15:14:48 -0800
 References: <20190124231441.37A4A305@viggo.jf.intel.com>
 In-Reply-To: <20190124231441.37A4A305@viggo.jf.intel.com>
-Message-Id: <20190124231447.74358AA5@viggo.jf.intel.com>
+Message-Id: <20190124231448.E102D18E@viggo.jf.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -51,21 +51,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dave Hansen <dave.hansen@linux.intel.com>
 
-In the process of onlining memory, we use walk_system_ram_range()
-to find the actual RAM areas inside of the area being onlined.
+This is intended for use with NVDIMMs that are physically persistent
+(physically like flash) so that they can be used as a cost-effective
+RAM replacement.  Intel Optane DC persistent memory is one
+implementation of this kind of NVDIMM.
 
-However, it currently only finds memory resources which are
-"top-level" iomem_resources.  Children are not currently
-searched which causes it to skip System RAM in areas like this
-(in the format of /proc/iomem):
+Currently, a persistent memory region is "owned" by a device driver,
+either the "Direct DAX" or "Filesystem DAX" drivers.  These drivers
+allow applications to explicitly use persistent memory, generally
+by being modified to use special, new libraries. (DIMM-based
+persistent memory hardware/software is described in great detail
+here: Documentation/nvdimm/nvdimm.txt).
 
-a0000000-bfffffff : Persistent Memory (legacy)
-  a0000000-afffffff : System RAM
+However, this limits persistent memory use to applications which
+*have* been modified.  To make it more broadly usable, this driver
+"hotplugs" memory into the kernel, to be managed and used just like
+normal RAM would be.
 
-Changing the true->false here allows children to be searched
-as well.  We need this because we add a new "System RAM"
-resource underneath the "persistent memory" resource when
-we use persistent memory in a volatile mode.
+To make this work, management software must remove the device from
+being controlled by the "Device DAX" infrastructure:
+
+	echo -n dax0.0 > /sys/bus/dax/drivers/device_dax/remove_id
+	echo -n dax0.0 > /sys/bus/dax/drivers/device_dax/unbind
+
+and then bind it to this new driver:
+
+	echo -n dax0.0 > /sys/bus/dax/drivers/kmem/new_id
+	echo -n dax0.0 > /sys/bus/dax/drivers/kmem/bind
+
+After this, there will be a number of new memory sections visible
+in sysfs that can be onlined, or that may get onlined by existing
+udev-initiated memory hotplug rules.
+
+This rebinding procedure is currently a one-way trip.  Once memory
+is bound to "kmem", it's there permanently and can not be
+unbound and assigned back to device_dax.
+
+The kmem driver will never bind to a dax device unless the device
+is *explicitly* bound to the driver.  There are two reasons for
+this: One, since it is a one-way trip, it can not be undone if
+bound incorrectly.  Two, the kmem driver destroys data on the
+device.  Think of if you had good data on a pmem device.  It
+would be catastrophic if you compile-in "kmem", but leave out
+the "device_dax" driver.  kmem would take over the device and
+write volatile data all over your good data.
+
+This inherits any existing NUMA information for the newly-added
+memory from the persistent memory device that came from the
+firmware.  On Intel platforms, the firmware has guarantees that
+require each socket's persistent memory to be in a separate
+memory-only NUMA node.  That means that this patch is not expected
+to create NUMA nodes, but will simply hotplug memory into existing
+nodes.
+
+Because NUMA nodes are created, the existing NUMA APIs and tools
+are sufficient to create policies for applications or memory areas
+to have affinity for or an aversion to using this memory.
+
+There is currently some metadata at the beginning of pmem regions.
+The section-size memory hotplug restrictions, plus this small
+reserved area can cause the "loss" of a section or two of capacity.
+This should be fixable in follow-on patches.  But, as a first step,
+losing 256MB of memory (worst case) out of hundreds of gigabytes
+is a good tradeoff vs. the required code to fix this up precisely.
+This calculation is also the reason we export
+memory_block_size_bytes().
 
 Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Dan Williams <dan.j.williams@intel.com>
@@ -87,29 +137,170 @@ Cc: Takashi Iwai <tiwai@suse.de>
 Cc: Jerome Glisse <jglisse@redhat.com>
 ---
 
- b/kernel/resource.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ b/drivers/base/memory.c |    1 
+ b/drivers/dax/Kconfig   |   16 +++++++
+ b/drivers/dax/Makefile  |    1 
+ b/drivers/dax/kmem.c    |  108 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 126 insertions(+)
 
-diff -puN kernel/resource.c~mm-walk_system_ram_range-search-child-resources kernel/resource.c
---- a/kernel/resource.c~mm-walk_system_ram_range-search-child-resources	2019-01-24 15:13:15.482199536 -0800
-+++ b/kernel/resource.c	2019-01-24 15:13:15.486199536 -0800
-@@ -445,6 +445,9 @@ int walk_mem_res(u64 start, u64 end, voi
-  * This function calls the @func callback against all memory ranges of type
-  * System RAM which are marked as IORESOURCE_SYSTEM_RAM and IORESOUCE_BUSY.
-  * It is to be used only for System RAM.
-+ *
-+ * This will find System RAM ranges that are children of top-level resources
-+ * in addition to top-level System RAM resources.
-  */
- int walk_system_ram_range(unsigned long start_pfn, unsigned long nr_pages,
- 			  void *arg, int (*func)(unsigned long, unsigned long, void *))
-@@ -460,7 +463,7 @@ int walk_system_ram_range(unsigned long
- 	flags = IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
- 	while (start < end &&
- 	       !find_next_iomem_res(start, end, flags, IORES_DESC_NONE,
--				    true, &res)) {
-+				    false, &res)) {
- 		pfn = (res.start + PAGE_SIZE - 1) >> PAGE_SHIFT;
- 		end_pfn = (res.end + 1) >> PAGE_SHIFT;
- 		if (end_pfn > pfn)
+diff -puN drivers/base/memory.c~dax-kmem-try-4 drivers/base/memory.c
+--- a/drivers/base/memory.c~dax-kmem-try-4	2019-01-24 15:13:15.987199535 -0800
++++ b/drivers/base/memory.c	2019-01-24 15:13:15.994199535 -0800
+@@ -88,6 +88,7 @@ unsigned long __weak memory_block_size_b
+ {
+ 	return MIN_MEMORY_BLOCK_SIZE;
+ }
++EXPORT_SYMBOL_GPL(memory_block_size_bytes);
+ 
+ static unsigned long get_memory_block_size(void)
+ {
+diff -puN drivers/dax/Kconfig~dax-kmem-try-4 drivers/dax/Kconfig
+--- a/drivers/dax/Kconfig~dax-kmem-try-4	2019-01-24 15:13:15.988199535 -0800
++++ b/drivers/dax/Kconfig	2019-01-24 15:13:15.994199535 -0800
+@@ -32,6 +32,22 @@ config DEV_DAX_PMEM
+ 
+ 	  Say M if unsure
+ 
++config DEV_DAX_KMEM
++	tristate "KMEM DAX: volatile-use of persistent memory"
++	default DEV_DAX
++	depends on DEV_DAX
++	depends on MEMORY_HOTPLUG # for add_memory() and friends
++	help
++	  Support access to persistent memory as if it were RAM.  This
++	  allows easier use of persistent memory by unmodified
++	  applications.
++
++	  To use this feature, a DAX device must be unbound from the
++	  device_dax driver (PMEM DAX) and bound to this kmem driver
++	  on each boot.
++
++	  Say N if unsure.
++
+ config DEV_DAX_PMEM_COMPAT
+ 	tristate "PMEM DAX: support the deprecated /sys/class/dax interface"
+ 	depends on DEV_DAX_PMEM
+diff -puN /dev/null drivers/dax/kmem.c
+--- /dev/null	2018-12-03 08:41:47.355756491 -0800
++++ b/drivers/dax/kmem.c	2019-01-24 15:13:15.994199535 -0800
+@@ -0,0 +1,108 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright(c) 2016-2018 Intel Corporation. All rights reserved. */
++#include <linux/memremap.h>
++#include <linux/pagemap.h>
++#include <linux/memory.h>
++#include <linux/module.h>
++#include <linux/device.h>
++#include <linux/pfn_t.h>
++#include <linux/slab.h>
++#include <linux/dax.h>
++#include <linux/fs.h>
++#include <linux/mm.h>
++#include <linux/mman.h>
++#include "dax-private.h"
++#include "bus.h"
++
++int dev_dax_kmem_probe(struct device *dev)
++{
++	struct dev_dax *dev_dax = to_dev_dax(dev);
++	struct resource *res = &dev_dax->region->res;
++	resource_size_t kmem_start;
++	resource_size_t kmem_size;
++	resource_size_t kmem_end;
++	struct resource *new_res;
++	int numa_node;
++	int rc;
++
++	/*
++	 * Ensure good NUMA information for the persistent memory.
++	 * Without this check, there is a risk that slow memory
++	 * could be mixed in a node with faster memory, causing
++	 * unavoidable performance issues.
++	 */
++	numa_node = dev_dax->target_node;
++	if (numa_node < 0) {
++		dev_warn(dev, "rejecting DAX region %pR with invalid node: %d\n",
++			 res, numa_node);
++		return -EINVAL;
++	}
++
++	/* Hotplug starting at the beginning of the next block: */
++	kmem_start = ALIGN(res->start, memory_block_size_bytes());
++
++	kmem_size = resource_size(res);
++	/* Adjust the size down to compensate for moving up kmem_start: */
++        kmem_size -= kmem_start - res->start;
++	/* Align the size down to cover only complete blocks: */
++	kmem_size &= ~(memory_block_size_bytes() - 1);
++	kmem_end = kmem_start+kmem_size;
++
++	/* Region is permanently reserved.  Hot-remove not yet implemented. */
++	new_res = request_mem_region(kmem_start, kmem_size, dev_name(dev));
++	if (!new_res) {
++		dev_warn(dev, "could not reserve region [%pa-%pa]\n",
++			 &kmem_start, &kmem_end);
++		return -EBUSY;
++	}
++
++	/*
++	 * Set flags appropriate for System RAM.  Leave ..._BUSY clear
++	 * so that add_memory() can add a child resource.  Do not
++	 * inherit flags from the parent since it may set new flags
++	 * unknown to us that will break add_memory() below.
++	 */
++	new_res->flags = IORESOURCE_SYSTEM_RAM;
++	new_res->name = dev_name(dev);
++
++	rc = add_memory(numa_node, new_res->start, resource_size(new_res));
++	if (rc)
++		return rc;
++
++	return 0;
++}
++
++static int dev_dax_kmem_remove(struct device *dev)
++{
++	/*
++	 * Purposely leak the request_mem_region() for the device-dax
++	 * range and return '0' to ->remove() attempts. The removal of
++	 * the device from the driver always succeeds, but the region
++	 * is permanently pinned as reserved by the unreleased
++	 * request_mem_region().
++	 */
++	return -EBUSY;
++}
++
++static struct dax_device_driver device_dax_kmem_driver = {
++	.drv = {
++		.probe = dev_dax_kmem_probe,
++		.remove = dev_dax_kmem_remove,
++	},
++};
++
++static int __init dax_kmem_init(void)
++{
++	return dax_driver_register(&device_dax_kmem_driver);
++}
++
++static void __exit dax_kmem_exit(void)
++{
++	dax_driver_unregister(&device_dax_kmem_driver);
++}
++
++MODULE_AUTHOR("Intel Corporation");
++MODULE_LICENSE("GPL v2");
++module_init(dax_kmem_init);
++module_exit(dax_kmem_exit);
++MODULE_ALIAS_DAX_DEVICE(0);
+diff -puN drivers/dax/Makefile~dax-kmem-try-4 drivers/dax/Makefile
+--- a/drivers/dax/Makefile~dax-kmem-try-4	2019-01-24 15:13:15.990199535 -0800
++++ b/drivers/dax/Makefile	2019-01-24 15:13:15.994199535 -0800
+@@ -1,6 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ obj-$(CONFIG_DAX) += dax.o
+ obj-$(CONFIG_DEV_DAX) += device_dax.o
++obj-$(CONFIG_DEV_DAX_KMEM) += kmem.o
+ 
+ dax-y := super.o
+ dax-y += bus.o
 _
