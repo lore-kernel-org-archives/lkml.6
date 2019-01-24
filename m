@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47542C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:08:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 850DCC282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:08:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 164D821855
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:08:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53F96218D0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:08:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548360488;
-	bh=rDs9l5ssH2pGydvufS4Ma9cbq04rWlbkyROqpQyHJ5g=;
+	s=default; t=1548360496;
+	bh=K6tWsAJo28J3/ctHQZ236k4tScu3KiRH7aXd6OK9J0E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=HXik/BT3r99GHZ8bT6RINspb/RNeo3ugRpFLtx3vfnz09SGoJeUxKPf7grxGOLaXd
-	 0Ger4EyFmBhyazatbRVIuMVjxuK7z55vT5TWZ072+Er5jqUg4RrGpIs9lCHRQO0ZCy
-	 lzFSk1cqJH/pvwvz4O4oDUBYEWfEeoROtdM8kabc=
+	b=DP5Y8YErAPi8EfUGYOg0LXfwPueoMiPouBjofu4TtIQj0UYQNDTzNebxAb5xRo9GY
+	 xY3G6nJ44mkRuSqSep23JudcPB7A8nZa4aiEZ98RDfwIJyHQDEV0WHgiH8wPxc0+Zh
+	 8CH+ynO6yQv0ivMUhgQIqB/JO0W7GHYRmn0CTjIA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731182AbfAXT31 (ORCPT
+        id S1731151AbfAXT3W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:29:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56570 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:29:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56340 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731164AbfAXT3Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:29:24 -0500
+        id S1731121AbfAXT3Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:29:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD4A221902;
-        Thu, 24 Jan 2019 19:29:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E02F218F0;
+        Thu, 24 Jan 2019 19:29:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358163;
-        bh=rDs9l5ssH2pGydvufS4Ma9cbq04rWlbkyROqpQyHJ5g=;
+        s=default; t=1548358154;
+        bh=K6tWsAJo28J3/ctHQZ236k4tScu3KiRH7aXd6OK9J0E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SdaUSCjfnocuKGvmi7+0WJVg3DcQSWb2R32h7TG86VZNO5F7sewAf4/xK5qLLBpMO
-         HMEntmVPlWNkmdTGWtOzhlkaJSO1jpmeckkV9c5+No5TmITUXpDt58Gk23QvPFPByS
-         nKFApb3TUmE95ikINAa2u+S1rGmPpXWvI5vQxf8M=
+        b=bWwCfmMmOpegu0eyh3IhSAmux/nNwsmzjVQaczXAMeL6r5+QopWDDtL0e3Q5bzbld
+         0QnJYkqJ/JsJZyiP16vGMdVx3fzwyELyBNa3aQuH5vquuneP78BVHWA7N6vBD8+QXR
+         weM8A6xPIPmU/WrDLXvLKgEnBVboPD2Jg+9X4EYo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Breno Leitao <leitao@debian.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Daniel Santos <daniel.santos@pobox.com>,
+        Hou Tao <houtao1@huawei.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 16/39] powerpc/pseries/cpuidle: Fix preempt warning
-Date:   Thu, 24 Jan 2019 20:20:19 +0100
-Message-Id: <20190124190448.812351589@linuxfoundation.org>
+Subject: [PATCH 4.9 13/39] jffs2: Fix use of uninitialized delayed_work, lockdep breakage
+Date:   Thu, 24 Jan 2019 20:20:16 +0100
+Message-Id: <20190124190448.704190038@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190448.232316246@linuxfoundation.org>
 References: <20190124190448.232316246@linuxfoundation.org>
@@ -66,66 +67,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 2b038cbc5fcf12a7ee1cc9bfd5da1e46dacdee87 ]
+[ Upstream commit a788c5272769ddbcdbab297cf386413eeac04463 ]
 
-When booting a pseries kernel with PREEMPT enabled, it dumps the
-following warning:
+jffs2_sync_fs makes the assumption that if CONFIG_JFFS2_FS_WRITEBUFFER
+is defined then a write buffer is available and has been initialized.
+However, this does is not the case when the mtd device has no
+out-of-band buffer:
 
-   BUG: using smp_processor_id() in preemptible [00000000] code: swapper/0/1
-   caller is pseries_processor_idle_init+0x5c/0x22c
-   CPU: 13 PID: 1 Comm: swapper/0 Not tainted 4.20.0-rc3-00090-g12201a0128bc-dirty #828
-   Call Trace:
-   [c000000429437ab0] [c0000000009c8878] dump_stack+0xec/0x164 (unreliable)
-   [c000000429437b00] [c0000000005f2f24] check_preemption_disabled+0x154/0x160
-   [c000000429437b90] [c000000000cab8e8] pseries_processor_idle_init+0x5c/0x22c
-   [c000000429437c10] [c000000000010ed4] do_one_initcall+0x64/0x300
-   [c000000429437ce0] [c000000000c54500] kernel_init_freeable+0x3f0/0x500
-   [c000000429437db0] [c0000000000112dc] kernel_init+0x2c/0x160
-   [c000000429437e20] [c00000000000c1d0] ret_from_kernel_thread+0x5c/0x6c
+int jffs2_nand_flash_setup(struct jffs2_sb_info *c)
+{
+        if (!c->mtd->oobsize)
+                return 0;
+...
 
-This happens because the code calls get_lppaca() which calls
-get_paca() and it checks if preemption is disabled through
-check_preemption_disabled().
+The resulting call to cancel_delayed_work_sync passing a uninitialized
+(but zeroed) delayed_work struct forces lockdep to become disabled.
 
-Preemption should be disabled because the per CPU variable may make no
-sense if there is a preemption (and a CPU switch) after it reads the
-per CPU data and when it is used.
+[   90.050639] overlayfs: upper fs does not support tmpfile.
+[   90.652264] INFO: trying to register non-static key.
+[   90.662171] the code is fine but needs lockdep annotation.
+[   90.673090] turning off the locking correctness validator.
+[   90.684021] CPU: 0 PID: 1762 Comm: mount_root Not tainted 4.14.63 #0
+[   90.696672] Stack : 00000000 00000000 80d8f6a2 00000038 805f0000 80444600 8fe364f4 805dfbe7
+[   90.713349]         80563a30 000006e2 8068370c 00000001 00000000 00000001 8e2fdc48 ffffffff
+[   90.730020]         00000000 00000000 80d90000 00000000 00000106 00000000 6465746e 312e3420
+[   90.746690]         6b636f6c 03bf0000 f8000000 20676e69 00000000 80000000 00000000 8e2c2a90
+[   90.763362]         80d90000 00000001 00000000 8e2c2a90 00000003 80260dc0 08052098 80680000
+[   90.780033]         ...
+[   90.784902] Call Trace:
+[   90.789793] [<8000f0d8>] show_stack+0xb8/0x148
+[   90.798659] [<8005a000>] register_lock_class+0x270/0x55c
+[   90.809247] [<8005cb64>] __lock_acquire+0x13c/0xf7c
+[   90.818964] [<8005e314>] lock_acquire+0x194/0x1dc
+[   90.828345] [<8003f27c>] flush_work+0x200/0x24c
+[   90.837374] [<80041dfc>] __cancel_work_timer+0x158/0x210
+[   90.847958] [<801a8770>] jffs2_sync_fs+0x20/0x54
+[   90.857173] [<80125cf4>] iterate_supers+0xf4/0x120
+[   90.866729] [<80158fc4>] sys_sync+0x44/0x9c
+[   90.875067] [<80014424>] syscall_common+0x34/0x58
 
-In this device driver specifically, it is not a problem, because this
-code just needs to have access to one lppaca struct, and it does not
-matter if it is the current per CPU lppaca struct or not (i.e. when
-there is a preemption and a CPU migration).
-
-That said, the most appropriate fix seems to be related to avoiding
-the debug_smp_processor_id() call at get_paca(), instead of calling
-preempt_disable() before get_paca().
-
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Daniel Santos <daniel.santos@pobox.com>
+Reviewed-by: Hou Tao <houtao1@huawei.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/cpuidle/cpuidle-pseries.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ fs/jffs2/super.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/cpuidle/cpuidle-pseries.c b/drivers/cpuidle/cpuidle-pseries.c
-index 166ccd711ec9..83203c59bf59 100644
---- a/drivers/cpuidle/cpuidle-pseries.c
-+++ b/drivers/cpuidle/cpuidle-pseries.c
-@@ -230,7 +230,13 @@ static int pseries_idle_probe(void)
- 		return -ENODEV;
+diff --git a/fs/jffs2/super.c b/fs/jffs2/super.c
+index 79b0de846f21..226640563df3 100644
+--- a/fs/jffs2/super.c
++++ b/fs/jffs2/super.c
+@@ -101,7 +101,8 @@ static int jffs2_sync_fs(struct super_block *sb, int wait)
+ 	struct jffs2_sb_info *c = JFFS2_SB_INFO(sb);
  
- 	if (firmware_has_feature(FW_FEATURE_SPLPAR)) {
--		if (lppaca_shared_proc(get_lppaca())) {
-+		/*
-+		 * Use local_paca instead of get_lppaca() since
-+		 * preemption is not disabled, and it is not required in
-+		 * fact, since lppaca_ptr does not need to be the value
-+		 * associated to the current CPU, it can be from any CPU.
-+		 */
-+		if (lppaca_shared_proc(local_paca->lppaca_ptr)) {
- 			cpuidle_state_table = shared_states;
- 			max_idle_state = ARRAY_SIZE(shared_states);
- 		} else {
+ #ifdef CONFIG_JFFS2_FS_WRITEBUFFER
+-	cancel_delayed_work_sync(&c->wbuf_dwork);
++	if (jffs2_is_writebuffered(c))
++		cancel_delayed_work_sync(&c->wbuf_dwork);
+ #endif
+ 
+ 	mutex_lock(&c->alloc_sem);
 -- 
 2.19.1
 
