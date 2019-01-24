@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6CEEC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:42:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3B28C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:43:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8732A218D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:42:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 822D8218A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:43:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358979;
-	bh=Wv530xqr03+n3a7x+O6AkwfJQNYNvbeuPtpQHz27SIk=;
+	s=default; t=1548358988;
+	bh=Ibl5gS9eYVO9indVI07gWgKj6xnh+J0KhxN3ruKAxXM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=U35TfLmesbG/o8PC0rDs8vMLNw1TDe6+EZD6FsDQvJbEnqp9HaQqmWp1uaLPFlMlL
-	 GVEisP4RuFXimomLAwB9DJdeo9aFcurf/4FAss7DIuVnepk+MSweBylUWVt2MzoP6B
-	 XUGZzXv4kzNeW+FKBGPvC5MUztblIH1EKqvUt4J4=
+	b=KGAcFpuocsLVQ+0lJDUsiKn7HY0iD0pLFJ/+0kntVlErm9ZS7kTUz6tN/AhlK1A03
+	 QNEP9l4tmGMP8dwoNBBo/zDNnpohpjyAWtm4e/trprpxjRDRrmK7MoSacUK4sBEWh6
+	 ETwirtzrATT1pYBa6nviZBBl//vdUF3s34nnvzg8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387855AbfAXTm6 (ORCPT
+        id S2387890AbfAXTnG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:42:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43408 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:43:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43618 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387438AbfAXTmv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:42:51 -0500
+        id S2387872AbfAXTnD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:43:03 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 21ECB20663;
-        Thu, 24 Jan 2019 19:42:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E88BC20663;
+        Thu, 24 Jan 2019 19:43:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358970;
-        bh=Wv530xqr03+n3a7x+O6AkwfJQNYNvbeuPtpQHz27SIk=;
+        s=default; t=1548358982;
+        bh=Ibl5gS9eYVO9indVI07gWgKj6xnh+J0KhxN3ruKAxXM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JB/W6Pfo0TbTwv4r8lvtl+mjlsH958STHHdLDqYWUskWcl9Ee3S72I65te1hFSMYq
-         OaaCNtiQmwPxYMy9OqjXHZw+npN/jOKmNUW62CEa9C5gUscG1I+MsPZ9zjXDO6iWH+
-         cPzNQZk4/hpMJXcuq0r1zYpFSUn1nRf7qs5TDd2A=
+        b=xEBUvMQe/6VFgujUdoOUrUTXq+OtiFyA/ko9rMtoYNogYF6LEz5fPuREL85NCBMv1
+         9AMDxz+tfzOvMQb/FxnTkm5yNNYlPC7eHjgb3/epLGiMLML7/cHpL75+2YDm0Vlgvg
+         gqGC0AfAtYyQUOO6c74FKQYpmQv0IIJy6VnL+CqA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hui Wang <john.wanghui@huawei.com>,
-        Thomas Gleixner <tglx@linutronix.de>, guijianfeng@huawei.com,
-        wencongyang2@huawei.com, douliyang1@huawei.com,
-        qiaonuohan@huawei.com, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 091/127] x86/topology: Use total_cpus for max logical packages calculation
-Date:   Thu, 24 Jan 2019 20:20:37 +0100
-Message-Id: <20190124190215.931962973@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Petlan <mpetlan@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 094/127] perf stat: Avoid segfaults caused by negated options
+Date:   Thu, 24 Jan 2019 20:20:40 +0100
+Message-Id: <20190124190216.044829243@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
 References: <20190124190211.984305387@linuxfoundation.org>
@@ -67,59 +66,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit aa02ef099cff042c2a9109782ec2bf1bffc955d4 ]
+[ Upstream commit 51433ead1460fb3f46e1c34f68bb22fd2dd0f5d0 ]
 
-nr_cpu_ids can be limited on the command line via nr_cpus=. This can break the
-logical package management because it results in a smaller number of packages
-while in kdump kernel.
+Some 'perf stat' options do not make sense to be negated (event,
+cgroup), some do not have negated path implemented (metrics). Due to
+that, it is better to disable the "no-" prefix for them, since
+otherwise, the later opt-parsing segfaults.
 
-Check below case:
-There is a two sockets system, each socket has 8 cores, which has 16 logical
-cpus while HT was turn on.
+Before:
 
- 0  1  2  3  4  5  6  7     |    16 17 18 19 20 21 22 23
- cores on socket 0               threads on socket 0
- 8  9 10 11 12 13 14 15     |    24 25 26 27 28 29 30 31
- cores on socket 1               threads on socket 1
+  $ perf stat --no-metrics -- ls
+  Segmentation fault (core dumped)
 
-While starting the kdump kernel with command line option nr_cpus=16 panic
-was triggered on one of the cpus 24-31 eg. 26, then online cpu will be
-1-15, 26(cpu 0 was disabled in kdump), ncpus will be 16 and
-__max_logical_packages will be 1, but actually two packages were booted on.
+After:
 
-This issue can reproduced by set kdump option nr_cpus=<real physical core
-numbers>, and then trigger panic on last socket's thread, for example:
+  $ perf stat --no-metrics -- ls
+   Error: option `no-metrics' isn't available
+   Usage: perf stat [<options>] [<command>]
 
-taskset -c 26 echo c > /proc/sysrq-trigger
-
-Use total_cpus which will not be limited by nr_cpus command line to calculate
-the value of __max_logical_packages.
-
-Signed-off-by: Hui Wang <john.wanghui@huawei.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: <guijianfeng@huawei.com>
-Cc: <wencongyang2@huawei.com>
-Cc: <douliyang1@huawei.com>
-Cc: <qiaonuohan@huawei.com>
-Link: https://lkml.kernel.org/r/20181107023643.22174-1-john.wanghui@huawei.com
+Signed-off-by: Michael Petlan <mpetlan@redhat.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+LPU-Reference: 1485912065.62416880.1544457604340.JavaMail.zimbra@redhat.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/smpboot.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/builtin-stat.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-index a9134d1910b9..ccd1f2a8e557 100644
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -1347,7 +1347,7 @@ void __init calculate_max_logical_packages(void)
- 	 * extrapolate the boot cpu's data to all packages.
- 	 */
- 	ncpus = cpu_data(0).booted_cores * topology_max_smt_threads();
--	__max_logical_packages = DIV_ROUND_UP(nr_cpu_ids, ncpus);
-+	__max_logical_packages = DIV_ROUND_UP(total_cpus, ncpus);
- 	pr_info("Max logical packages: %u\n", __max_logical_packages);
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index a635abfa77b6..1410d66192f7 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -709,7 +709,7 @@ static int parse_metric_groups(const struct option *opt,
+ 	return metricgroup__parse_groups(opt, str, &stat_config.metric_events);
  }
  
+-static const struct option stat_options[] = {
++static struct option stat_options[] = {
+ 	OPT_BOOLEAN('T', "transaction", &transaction_run,
+ 		    "hardware transaction statistics"),
+ 	OPT_CALLBACK('e', "event", &evsel_list, "event",
+@@ -1599,6 +1599,12 @@ int cmd_stat(int argc, const char **argv)
+ 		return -ENOMEM;
+ 
+ 	parse_events__shrink_config_terms();
++
++	/* String-parsing callback-based options would segfault when negated */
++	set_option_flag(stat_options, 'e', "event", PARSE_OPT_NONEG);
++	set_option_flag(stat_options, 'M', "metrics", PARSE_OPT_NONEG);
++	set_option_flag(stat_options, 'G', "cgroup", PARSE_OPT_NONEG);
++
+ 	argc = parse_options_subcommand(argc, argv, stat_options, stat_subcommands,
+ 					(const char **) stat_usage,
+ 					PARSE_OPT_STOP_AT_NON_OPTION);
 -- 
 2.19.1
 
