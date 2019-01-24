@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D62FAC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:56:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14280C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:57:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A70CD21726
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:56:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7F8F21726
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:57:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359811;
-	bh=0whkOm+oWVmrS8vOxYoOAnTzAlV3TMFQ9kkwHNm1gpY=;
+	s=default; t=1548359823;
+	bh=bZSC9h0L6KLAwtV6UcjTMgQVHJ4a80+v6Dot0EoX/WQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=FF4cuu/fBtEx4OMtZDuS+hGeohkP42LxGvmuf/tdXuqCKaakFJeZiR3o2J4q1c6GI
-	 ysedpuqcOecVdcJEQaMK8nXCLxcucooIDXIF0bI/Fu8AwaZohfQA+L5oHTNT0kioJo
-	 3yJMlWfR68fDUroncn/Oh/0fn7cNC/SqrJrO+/nE=
+	b=ubWBRdnWb3NowbSal7srJ1asdpJBaVZnQ+z/HTL5QzcRSN+Xbv54AfX787k6o3RsO
+	 dcRF2yQb3X7BT9MEqX7L1+m6Kb1obrwv+1/wLz6ZkcK/ZteyT7ot2QrB+p9fWR8qv4
+	 hp9dCA1seW06VL7hRz8WhVCpJt/kH0BHqgLZX+BE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732430AbfAXTfm (ORCPT
+        id S1732356AbfAXTfa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:35:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35630 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:35:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35370 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731400AbfAXTfi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:35:38 -0500
+        id S1731311AbfAXTf1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:35:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B23F321908;
-        Thu, 24 Jan 2019 19:35:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 22AFE218FC;
+        Thu, 24 Jan 2019 19:35:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358537;
-        bh=0whkOm+oWVmrS8vOxYoOAnTzAlV3TMFQ9kkwHNm1gpY=;
+        s=default; t=1548358526;
+        bh=bZSC9h0L6KLAwtV6UcjTMgQVHJ4a80+v6Dot0EoX/WQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0doRFy6XRsroloz3cdiwO6G6YdcQ35SDkJ5F1vbn7ZKfgVxze0qob4LDcgSbYQNx4
-         sxRnjVmh2dOGoNKuAfL7IbRluh5lyy53P13UcD4/hkw2NQTMcr/pdXuL3II45lLznI
-         oy4RbBzmwjzA0Gs6tYWSD3qRKmWEEAuUXM3ktjGw=
+        b=JBvpcoMlsSJFIyRMD0QNm0o6Z2SdiE6/hJzi727SAgJ2aa2cSECpfUzWIp9M8xzEy
+         omHhazTzu5xUB/ayYLFE9AC4SulT4Yi039AyMFLVeRGG5XNjEbqnZ9x04ekSXcYfdE
+         7MhUJkFA46y+VhG1SeXlHFRvHisO1vfOdq1zgsUQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Breno Leitao <leitao@debian.org>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Daniel Santos <daniel.santos@pobox.com>,
+        Hou Tao <houtao1@huawei.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 043/106] powerpc/xmon: Fix invocation inside lock region
-Date:   Thu, 24 Jan 2019 20:20:00 +0100
-Message-Id: <20190124190209.176402716@linuxfoundation.org>
+Subject: [PATCH 4.19 039/106] jffs2: Fix use of uninitialized delayed_work, lockdep breakage
+Date:   Thu, 24 Jan 2019 20:19:56 +0100
+Message-Id: <20190124190208.907158059@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
 References: <20190124190206.342411005@linuxfoundation.org>
@@ -67,84 +67,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 8d4a862276a9c30a269d368d324fb56529e6d5fd ]
+[ Upstream commit a788c5272769ddbcdbab297cf386413eeac04463 ]
 
-Currently xmon needs to get devtree_lock (through rtas_token()) during its
-invocation (at crash time). If there is a crash while devtree_lock is being
-held, then xmon tries to get the lock but spins forever and never get into
-the interactive debugger, as in the following case:
+jffs2_sync_fs makes the assumption that if CONFIG_JFFS2_FS_WRITEBUFFER
+is defined then a write buffer is available and has been initialized.
+However, this does is not the case when the mtd device has no
+out-of-band buffer:
 
-	int *ptr = NULL;
-	raw_spin_lock_irqsave(&devtree_lock, flags);
-	*ptr = 0xdeadbeef;
+int jffs2_nand_flash_setup(struct jffs2_sb_info *c)
+{
+        if (!c->mtd->oobsize)
+                return 0;
+...
 
-This patch avoids calling rtas_token(), thus trying to get the same lock,
-at crash time. This new mechanism proposes getting the token at
-initialization time (xmon_init()) and just consuming it at crash time.
+The resulting call to cancel_delayed_work_sync passing a uninitialized
+(but zeroed) delayed_work struct forces lockdep to become disabled.
 
-This would allow xmon to be possible invoked independent of devtree_lock
-being held or not.
+[   90.050639] overlayfs: upper fs does not support tmpfile.
+[   90.652264] INFO: trying to register non-static key.
+[   90.662171] the code is fine but needs lockdep annotation.
+[   90.673090] turning off the locking correctness validator.
+[   90.684021] CPU: 0 PID: 1762 Comm: mount_root Not tainted 4.14.63 #0
+[   90.696672] Stack : 00000000 00000000 80d8f6a2 00000038 805f0000 80444600 8fe364f4 805dfbe7
+[   90.713349]         80563a30 000006e2 8068370c 00000001 00000000 00000001 8e2fdc48 ffffffff
+[   90.730020]         00000000 00000000 80d90000 00000000 00000106 00000000 6465746e 312e3420
+[   90.746690]         6b636f6c 03bf0000 f8000000 20676e69 00000000 80000000 00000000 8e2c2a90
+[   90.763362]         80d90000 00000001 00000000 8e2c2a90 00000003 80260dc0 08052098 80680000
+[   90.780033]         ...
+[   90.784902] Call Trace:
+[   90.789793] [<8000f0d8>] show_stack+0xb8/0x148
+[   90.798659] [<8005a000>] register_lock_class+0x270/0x55c
+[   90.809247] [<8005cb64>] __lock_acquire+0x13c/0xf7c
+[   90.818964] [<8005e314>] lock_acquire+0x194/0x1dc
+[   90.828345] [<8003f27c>] flush_work+0x200/0x24c
+[   90.837374] [<80041dfc>] __cancel_work_timer+0x158/0x210
+[   90.847958] [<801a8770>] jffs2_sync_fs+0x20/0x54
+[   90.857173] [<80125cf4>] iterate_supers+0xf4/0x120
+[   90.866729] [<80158fc4>] sys_sync+0x44/0x9c
+[   90.875067] [<80014424>] syscall_common+0x34/0x58
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Reviewed-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Daniel Santos <daniel.santos@pobox.com>
+Reviewed-by: Hou Tao <houtao1@huawei.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/xmon/xmon.c | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+ fs/jffs2/super.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/xmon/xmon.c b/arch/powerpc/xmon/xmon.c
-index 4264aedc7775..dd6badc31f45 100644
---- a/arch/powerpc/xmon/xmon.c
-+++ b/arch/powerpc/xmon/xmon.c
-@@ -75,6 +75,9 @@ static int xmon_gate;
- #define xmon_owner 0
- #endif /* CONFIG_SMP */
+diff --git a/fs/jffs2/super.c b/fs/jffs2/super.c
+index 902a7dd10e5c..bb6ae387469f 100644
+--- a/fs/jffs2/super.c
++++ b/fs/jffs2/super.c
+@@ -101,7 +101,8 @@ static int jffs2_sync_fs(struct super_block *sb, int wait)
+ 	struct jffs2_sb_info *c = JFFS2_SB_INFO(sb);
  
-+#ifdef CONFIG_PPC_PSERIES
-+static int set_indicator_token = RTAS_UNKNOWN_SERVICE;
-+#endif
- static unsigned long in_xmon __read_mostly = 0;
- static int xmon_on = IS_ENABLED(CONFIG_XMON_DEFAULT);
+ #ifdef CONFIG_JFFS2_FS_WRITEBUFFER
+-	cancel_delayed_work_sync(&c->wbuf_dwork);
++	if (jffs2_is_writebuffered(c))
++		cancel_delayed_work_sync(&c->wbuf_dwork);
+ #endif
  
-@@ -358,7 +361,6 @@ static inline void disable_surveillance(void)
- #ifdef CONFIG_PPC_PSERIES
- 	/* Since this can't be a module, args should end up below 4GB. */
- 	static struct rtas_args args;
--	int token;
- 
- 	/*
- 	 * At this point we have got all the cpus we can into
-@@ -367,11 +369,11 @@ static inline void disable_surveillance(void)
- 	 * If we did try to take rtas.lock there would be a
- 	 * real possibility of deadlock.
- 	 */
--	token = rtas_token("set-indicator");
--	if (token == RTAS_UNKNOWN_SERVICE)
-+	if (set_indicator_token == RTAS_UNKNOWN_SERVICE)
- 		return;
- 
--	rtas_call_unlocked(&args, token, 3, 1, NULL, SURVEILLANCE_TOKEN, 0, 0);
-+	rtas_call_unlocked(&args, set_indicator_token, 3, 1, NULL,
-+			   SURVEILLANCE_TOKEN, 0, 0);
- 
- #endif /* CONFIG_PPC_PSERIES */
- }
-@@ -3672,6 +3674,14 @@ static void xmon_init(int enable)
- 		__debugger_iabr_match = xmon_iabr_match;
- 		__debugger_break_match = xmon_break_match;
- 		__debugger_fault_handler = xmon_fault_handler;
-+
-+#ifdef CONFIG_PPC_PSERIES
-+		/*
-+		 * Get the token here to avoid trying to get a lock
-+		 * during the crash, causing a deadlock.
-+		 */
-+		set_indicator_token = rtas_token("set-indicator");
-+#endif
- 	} else {
- 		__debugger = NULL;
- 		__debugger_ipi = NULL;
+ 	mutex_lock(&c->alloc_sem);
 -- 
 2.19.1
 
