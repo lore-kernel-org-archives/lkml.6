@@ -4,50 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA22CC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:46:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED025C282C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:46:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A781A218D0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:46:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD960218D0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:46:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548362764;
-	bh=b3ML7LL6HxXDmi/kR6Z3xAVmvrRzGt49J1PdUY9aejc=;
+	s=default; t=1548362766;
+	bh=k0n/p5dJVlcUJ25hQ0Ry3uyFlaibpF4bv6ihmWJWKgo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=mVtAK1E9dUJf7ArvTB5jbPEoivH0a/KB16DUhJ9n08/MnZFy+3MTDD5vJh4mE20rW
-	 moBUrjPdxIcuDzHw2FeGEbND5t7iUjboE2KpipQdZXljtLQEP4BifdBjPFFIuE86Ji
-	 Iqp76O9Uh0khcycAMuYvpRev7mQuaNVBC4j77D2c=
+	b=H2789Bm+dZVicsIa/ZLgDHpfDBnbrVEnGTbzg8Bus9Stujp5k3cVhw3KherAQ5WmW
+	 XLlvhRhYkilLFWt6VpPdxVcTWiWgjDxqySTcVF06IQwCXyiLtPhth3x06X+5g++k3h
+	 osYK/KkAkXHD4s2J8etkKAYUIj2059N8hKsowNfs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727618AbfAXUqD (ORCPT
+        id S1727769AbfAXUqE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 15:46:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52470 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 15:46:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52488 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725913AbfAXUqC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 15:46:02 -0500
+        id S1727605AbfAXUqD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 15:46:03 -0500
 Received: from atull-730U3E-740U3E.fm.intel.com (unknown [192.55.54.60])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6FABD218D0;
-        Thu, 24 Jan 2019 20:46:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 53201218D3;
+        Thu, 24 Jan 2019 20:46:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1548362762;
-        bh=b3ML7LL6HxXDmi/kR6Z3xAVmvrRzGt49J1PdUY9aejc=;
+        bh=k0n/p5dJVlcUJ25hQ0Ry3uyFlaibpF4bv6ihmWJWKgo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=StBy9htgniNmj9hax1VD3FZj/nH+DiH1vB9S/IsaNOq74fiRPhWUg+3uW5+AI3Tfz
-         4evOhKXFJLopj6CcNANNSyCJfneI8ETZyf91YIpb3XHdyoQ0UoMY9Gzq6GH0MZd79T
-         rNvEQV1XI7GjBcPI/1AyQcOXw9CZdFpYkkk0zCGA=
+        b=FxjPl9xQAMMDkFV8+LLs4IG7ZVPGt/t2wYl5Ubo5dTDcXm9bzwI6kgLvR0o0xz6E8
+         oETF3yG9QnXEA+kBc+r0doP1iYBzwv/DmQkEo/3zQoSOC/XJv6lqM5VQk9QvzNkc52
+         s/m7gyXxRMttcaXEEJiXVdS36+bG/wFbfRZf8MDA=
 From:   Alan Tull <atull@kernel.org>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Moritz Fischer <mdf@kernel.org>, Dinh Nguyen <dinguyen@kernel.org>,
         Alan Tull <atull@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-fpga@vger.kernel.org,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Subject: [PATCH 1/3] fpga: stratix10-soc: fix wrong of_node_put() in init function
-Date:   Thu, 24 Jan 2019 14:45:52 -0600
-Message-Id: <20190124204554.5438-2-atull@kernel.org>
+        linux-fpga@vger.kernel.org
+Subject: [PATCH 2/3] fpga: altera_freeze_bridge: remove restriction to socfpga
+Date:   Thu, 24 Jan 2019 14:45:53 -0600
+Message-Id: <20190124204554.5438-3-atull@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124204554.5438-1-atull@kernel.org>
 References: <20190124204554.5438-1-atull@kernel.org>
@@ -58,42 +56,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+The Altera Freeze Bridge should not be restricted to ARCH_SOCFPGA
+since it can be used on other platforms such as Stratix10.
 
-After finding a "firmware" dt node stratix10 tries to match it's
-compatible string with it. To do so it's calling of_find_matching_node()
-which already takes care of decreasing the refcount on the "firmware"
-node. We are then incorrectly decreasing the refcount on that node
-again.
-
-This patch removes the unwarranted call to of_node_put().
-
-Fixes: e7eef1d7633a ("fpga: add intel stratix10 soc fpga manager driver")
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Acked-by: Alan Tull <atull@kernel.org>
-Acked-by: Moritz Fischer <mdf@kernel.org>
+Signed-off-by: Alan Tull <atull@kernel.org>
+Reviewed-by: Moritz Fischer <mdf@kernel.org>
 ---
- drivers/fpga/stratix10-soc.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/fpga/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/fpga/stratix10-soc.c b/drivers/fpga/stratix10-soc.c
-index a1a09e0..e75dbe5 100644
---- a/drivers/fpga/stratix10-soc.c
-+++ b/drivers/fpga/stratix10-soc.c
-@@ -509,13 +509,11 @@ static int __init s10_init(void)
+diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
+index 0bb7b5c..c20445b 100644
+--- a/drivers/fpga/Kconfig
++++ b/drivers/fpga/Kconfig
+@@ -104,7 +104,7 @@ config SOCFPGA_FPGA_BRIDGE
  
- 	np = of_find_matching_node(fw_np, s10_of_match);
- 	if (!np) {
--		of_node_put(fw_np);
- 		return -ENODEV;
- 	}
- 
- 	of_node_put(np);
- 	ret = of_platform_populate(fw_np, s10_of_match, NULL, NULL);
--	of_node_put(fw_np);
- 	if (ret)
- 		return ret;
- 
+ config ALTERA_FREEZE_BRIDGE
+ 	tristate "Altera FPGA Freeze Bridge"
+-	depends on ARCH_SOCFPGA && FPGA_BRIDGE
++	depends on FPGA_BRIDGE && HAS_IOMEM
+ 	help
+ 	  Say Y to enable drivers for Altera FPGA Freeze bridges.  A
+ 	  freeze bridge is a bridge that exists in the FPGA fabric to
 -- 
 2.7.4
 
