@@ -2,120 +2,126 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FC07C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 21:33:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9767C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 21:42:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D619218D0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 21:33:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 894B2218D0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 21:42:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iD2fA6ZE"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="oChVkpbe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728067AbfAXVdJ (ORCPT
+        id S1727991AbfAXVmB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 16:33:09 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:35003 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725974AbfAXVdI (ORCPT
+        Thu, 24 Jan 2019 16:42:01 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:55058 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726347AbfAXVmB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 16:33:08 -0500
-Received: by mail-pl1-f193.google.com with SMTP id p8so3501920plo.2;
-        Thu, 24 Jan 2019 13:33:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0EM0TQLXzPNTmtvpn4fAchwz+4uGmD+ivBeMLTEQyFI=;
-        b=iD2fA6ZEdqpN11e7zjsPXWTYN1ZOEDJYBgLTqggnYF4LTXjspz2QB0OFPE4/Zp+jHa
-         3NFZss96Ls6NpjOLD7gT99l3Xr6xSGwfDmKxt+TxvODi/Cr9zj0lkuouNu2EF55VzU1s
-         dba1Jvpkx4SRu1ClYhpg5RsUCsWHuR/xCObYAYi+gpukobIt6UWTYi7ZB17EOvzq9WIT
-         S7OycizgyjLOm/IAW9XSdjc74GjUZnkC0vpEPTmLHGfr1OXVKSk2E3Gtvu0OSRSz+tbJ
-         Q+a1ki34wOGATcAiaahVA+yM7nDXOWg2Eow9AC67lJx058/xYlOkWvbNMGMKCAB502Ld
-         UAHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0EM0TQLXzPNTmtvpn4fAchwz+4uGmD+ivBeMLTEQyFI=;
-        b=epYd5G0+c4mJNQMKDtne71QYrxgF4UM4/jvGApd3G8uWWC5yodWOvyiDZ0mhRBXFT9
-         /0sRlD5dyP37GUKexyvHxYt+I7Imm0mKBgVTXuy9Ii4cpdL0Ra3ockgpdioaofi9NLZp
-         d+ZyWjMPSu7WORngp8uDiRs0Q5g+MFIA8eRzFGdDvWMl+V3S8nB5aF941TpdfeJj9XvS
-         MCBTP+4XP4dpEKwJVCjLm9ZPv7fPQ3exLjWcHGfu8rbjP8+UWQR3g7y9euzQk3698jlj
-         gCE29e/F4cOyIshQjFnYjgYo3TIoAbN8Z5yYi90EKukZcUNjv2F89s9wPk0G6iDaVo7r
-         WU+w==
-X-Gm-Message-State: AJcUukfxsSfad+4jWiMxGRDNsrTfQ7hUY8HMZabpBLUwpjhGL1Dv0wni
-        7w57Q49R/Uc0LhxbPOxHoQOMdo0dlVaJ9qXWcwU=
-X-Google-Smtp-Source: ALg8bN72mxKNYD6X/61hCdfUbJC5uegKRAsW/kPoimstpXxZcNuj8q6WNBC1nweznewKso2uIzDu61gq7h/DTRJ+AaQ=
-X-Received: by 2002:a17:902:b943:: with SMTP id h3mr8289274pls.12.1548365587890;
- Thu, 24 Jan 2019 13:33:07 -0800 (PST)
+        Thu, 24 Jan 2019 16:42:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1548366117; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=CvRzEbTgAQ9trPEVGxl/lVEhzA9RVr/wI5nkhToSdgg=;
+        b=oChVkpbeL3xIHMcvcFvke5Gn2a3wSxpeTab0ZXH0owYo46vXNHQYHSpDX9YndxIpSQSt6i
+        /eU15Wt7jHeKzldO+xpCQfHnm9FN/2P16qqpq9nPweT/ILXKfKMFdsuJFfG9xrPFPaxXaB
+        rIwv/bG+wLDX7Q1U3j0xecUFwp3P6OM=
+Date:   Thu, 24 Jan 2019 18:41:35 -0300
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v8 00/26] Ingenic TCU patchset v8
+To:     Mathieu Malaterre <malat@debian.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Ezequiel Garcia <ezequiel@collabora.co.uk>,
+        PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
+        linux-pwm@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        linux-watchdog@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org, od@zcrc.me
+Message-Id: <1548366095.3881.1@crapouillou.net>
+In-Reply-To: <CA+7wUszMOvGoPSVOKP7F_KHxgJvjBGT7oJmn5EO62hGGTQK4KA@mail.gmail.com>
+References: <20181212220922.18759-1-paul@crapouillou.net>
+        <CA+7wUszMOvGoPSVOKP7F_KHxgJvjBGT7oJmn5EO62hGGTQK4KA@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190124193101.24519-1-okaya@kernel.org>
-In-Reply-To: <20190124193101.24519-1-okaya@kernel.org>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 24 Jan 2019 23:32:56 +0200
-Message-ID: <CAHp75VerwCxYqozQmaJZL8tcbfDFLBp+nTheP0Ran4qWPqTcLw@mail.gmail.com>
-Subject: Re: [for next][PATCH v3 1/2] platform/x86: Fix unmet dependency
- warning for ACPI_CMPC
-To:     Sinan Kaya <okaya@kernel.org>
-Cc:     linux-next <linux-next@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        "open list:X86 PLATFORM DRIVERS" 
-        <platform-driver-x86@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 9:31 PM Sinan Kaya <okaya@kernel.org> wrote:
->
-> Add BACKLIGHT_LCD_SUPPORT for ACPI_CMPC to fix the
-> warning: unmet direct dependencies detected for BACKLIGHT_CLASS_DEVICE.
->
-> ACPI_CMPC selects BACKLIGHT_CLASS_DEVICE but BACKLIGHT_CLASS_DEVICE
-> depends on BACKLIGHT_LCD_SUPPORT.
->
-> Copy BACKLIGHT_LCD_SUPPORT dependency into ACPI_CMPC to fix
->
-> WARNING: unmet direct dependencies detected for BACKLIGHT_CLASS_DEVICE
->   Depends on [n]: HAS_IOMEM [=y] && BACKLIGHT_LCD_SUPPORT [=n]
->   Selected by [y]:
->   - ACPI_CMPC [=y] && X86 [=y] && X86_PLATFORM_DEVICES [=y] && ACPI [=y] && INPUT [=y] && (RFKILL [=n] || RFKILL [=n]=n)
->
+Hi Mathieu,
 
-Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Le jeu. 24 janv. 2019 =E0 18:26, Mathieu Malaterre <malat@debian.org> a=20
+=E9crit :
+> Paul,
+>=20
+> On Wed, Dec 12, 2018 at 11:09 PM Paul Cercueil <paul@crapouillou.net>=20
+> wrote:
+>>=20
+>>  Hi,
+>>=20
+>>  Here's the version 8 and hopefully final version of my patchset,=20
+>> which
+>>  adds support for the Timer/Counter Unit found in JZ47xx SoCs from
+>>  Ingenic.
+>=20
+> I can no longer boot my MIPS Creator CI20 with this series (merged
+> opendingux/for-upstream-timer-v8).
+>=20
+> Using screen+ttyUSB, I can see messages stopping at:
+>=20
+> ...
+> [  OK  ] Started Cgroup management daemon.
+>          Starting Regular background program processing daemon...
+> [  OK  ] Started Regular background program processing daemon.
+>          Starting System Logging Service...
+>          Starting Provide limited super user privileges to specific=20
+> users...
+>          Starting Restore /etc/resolv.conf if the system cras...s=20
+> shut down....
+>          Starting WPA supplicant...
+>          Starting D-Bus System Message Bus...
+> [  OK  ] Started D-Bus System Message Bus.
+>=20
+> Nothing really stands out in the error messages. Could you suggest
+> things to try out to get into a bootable state ?
 
-for both patches in case Rafael takes care of them.
+I'm debugging it right now on jz4740, it seems to happen when the=20
+clocksource
+from the ingenic-timer driver is used. Is it your case? It should not=20
+happen
+if you have CONFIG_INGENIC_OST set.
 
-> Signed-off-by: Sinan Kaya <okaya@kernel.org>
-> ---
->  drivers/platform/x86/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-> index 5e2109c54c7c..11810591840d 100644
-> --- a/drivers/platform/x86/Kconfig
-> +++ b/drivers/platform/x86/Kconfig
-> @@ -905,6 +905,7 @@ config TOSHIBA_WMI
->  config ACPI_CMPC
->         tristate "CMPC Laptop Extras"
->         depends on ACPI && INPUT
-> +       depends on BACKLIGHT_LCD_SUPPORT
->         depends on RFKILL || RFKILL=n
->         select BACKLIGHT_CLASS_DEVICE
->         help
-> --
-> 2.19.0
->
+>>  The big change is that the timer driver has been simplified. The=20
+>> code to
+>>  dynamically update the system timer or clocksource to a new channel=20
+>> has
+>>  been removed. Now, the system timer and clocksource are provided as
+>>  children nodes in the devicetree, and the TCU channel to use for=20
+>> these
+>>  is deduced from their respective memory resource. The PWM driver=20
+>> will
+>>  also deduce from its memory resources whether a given PWM channel=20
+>> can be
+>>  used, or is reserved for the system timers.
+>>=20
+>>  Kind regards,
+>>  - Paul Cercueil
+>>=20
+=
 
-
--- 
-With Best Regards,
-Andy Shevchenko
