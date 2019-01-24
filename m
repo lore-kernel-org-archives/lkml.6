@@ -2,139 +2,133 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A48CC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:31:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC016C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:32:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E06921872
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:31:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7ECB21872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:32:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548322363;
+	bh=fhy1RiMMv7O0B8kgR+D7cbta1wJy/Rqf55vbyr6oGlk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=MlkuoDoU+C+5Vny68sco7XdvbDt4FJr5FgE/zM2A2Q+H4VicyLxkyJvWqnPECf57o
+	 oeraBLnBOewEl9vN78vlMqh4Rf/x3UiPA4Hb6lOO1DZP+lyO0iee2h9R/ZyaBFHYKa
+	 p8IpBYgRKMXfhvmIAXnNVf6qsmO8pTNQhg7W3zbA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727069AbfAXJbN (ORCPT
+        id S1727287AbfAXJcl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 04:31:13 -0500
-Received: from mail.netline.ch ([148.251.143.178]:38469 "EHLO
-        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725931AbfAXJbM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 04:31:12 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by netline-mail3.netline.ch (Postfix) with ESMTP id 26AA72A6056;
-        Thu, 24 Jan 2019 10:31:09 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
-Received: from netline-mail3.netline.ch ([127.0.0.1])
-        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id 7iihVwdqjhc9; Thu, 24 Jan 2019 10:31:08 +0100 (CET)
-Received: from thor (39.1.199.178.dynamic.wline.res.cust.swisscom.ch [178.199.1.39])
-        by netline-mail3.netline.ch (Postfix) with ESMTPSA id 5D1C22A6054;
-        Thu, 24 Jan 2019 10:31:07 +0100 (CET)
-Received: from [::1]
-        by thor with esmtp (Exim 4.92-RC4)
-        (envelope-from <michel@daenzer.net>)
-        id 1gmbLm-0000IY-Sy; Thu, 24 Jan 2019 10:31:06 +0100
-Subject: Re: [RFC PATCH] drm: disable WC optimization for cache coherent
- devices on non-x86
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Junwei Zhang <Jerry.Zhang@amd.com>,
-        David Airlie <airlied@linux.ie>, Huang Rui <ray.huang@amd.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sean Paul <sean@poorly.run>,
-        Christian Koenig <christian.koenig@amd.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-References: <ccc775d3-3053-ab79-dac8-4feb28e8e690@daenzer.net>
- <CAKv+Gu-9VKL5RjScbKss4YfH1Cb8WbXmzU_0UsStnoXJcML7Rg@mail.gmail.com>
- <850b6aee-0040-c333-b125-45211c18ada5@daenzer.net>
- <CAKv+Gu99zHqcQtj6TiOXAr3Qa6WWhKem+DHVA_mAQ0-Bc0Vbqw@mail.gmail.com>
- <047667fd-17be-1c37-5d2a-26768cfd6ab8@daenzer.net>
- <CAKv+Gu_VBd8agHASc5RS0eCgyXP64Lt_i4yPuBjKwGQ+5Lpd5Q@mail.gmail.com>
- <CADnq5_O1uxCrSksfF127AZTfbmdukxmqGdh2Ee0zM6CqgG_Mhg@mail.gmail.com>
- <CAKv+Gu-4uYh_HD_5Ry_L80Nf5zpRhT4oJYhhG5_8g3gSzBs2tg@mail.gmail.com>
- <20190123071521.GB20526@infradead.org>
- <CAKv+Gu8+77uZHJ6ZYjGNcKQL8C3cT5Ree+TcTVmkQXAHV-ADyg@mail.gmail.com>
- <20190123164428.GA9367@infradead.org>
- <CAKv+Gu-9vEKu8mG-o+-4M1ZcgZmTTJVfEdNS9R27AFX8P5sqyQ@mail.gmail.com>
-From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
-Openpgp: preference=signencrypt
-Autocrypt: addr=michel@daenzer.net; prefer-encrypt=mutual; keydata=
- mQGiBDsehS8RBACbsIQEX31aYSIuEKxEnEX82ezMR8z3LG8ktv1KjyNErUX9Pt7AUC7W3W0b
- LUhu8Le8S2va6hi7GfSAifl0ih3k6Bv1Itzgnd+7ZmSrvCN8yGJaHNQfAevAuEboIb+MaVHo
- 9EMJj4ikOcRZCmQWw7evu/D9uQdtkCnRY9iJiAGxbwCguBHtpoGMxDOINCr5UU6qt+m4O+UD
- /355ohBBzzyh49lTj0kTFKr0Ozd20G2FbcqHgfFL1dc1MPyigej2gLga2osu2QY0ObvAGkOu
- WBi3LTY8Zs8uqFGDC4ZAwMPoFy3yzu3ne6T7d/68rJil0QcdQjzzHi6ekqHuhst4a+/+D23h
- Za8MJBEcdOhRhsaDVGAJSFEQB1qLBACOs0xN+XblejO35gsDSVVk8s+FUUw3TSWJBfZa3Imp
- V2U2tBO4qck+wqbHNfdnU/crrsHahjzBjvk8Up7VoY8oT+z03sal2vXEonS279xN2B92Tttr
- AgwosujguFO/7tvzymWC76rDEwue8TsADE11ErjwaBTs8ZXfnN/uAANgPLQjTWljaGVsIERh
- ZW56ZXIgPG1pY2hlbEBkYWVuemVyLm5ldD6IXgQTEQIAHgUCQFXxJgIbAwYLCQgHAwIDFQID
- AxYCAQIeAQIXgAAKCRBaga+OatuyAIrPAJ9ykonXI3oQcX83N2qzCEStLNW47gCeLWm/QiPY
- jqtGUnnSbyuTQfIySkK5AQ0EOx6FRRAEAJZkcvklPwJCgNiw37p0GShKmFGGqf/a3xZZEpjI
- qNxzshFRFneZze4f5LhzbX1/vIm5+ZXsEWympJfZzyCmYPw86QcFxyZflkAxHx9LeD+89Elx
- bw6wT0CcLvSv8ROfU1m8YhGbV6g2zWyLD0/naQGVb8e4FhVKGNY2EEbHgFBrAAMGA/0VktFO
- CxFBdzLQ17RCTwCJ3xpyP4qsLJH0yCoA26rH2zE2RzByhrTFTYZzbFEid3ddGiHOBEL+bO+2
- GNtfiYKmbTkj1tMZJ8L6huKONaVrASFzLvZa2dlc2zja9ZSksKmge5BOTKWgbyepEc5qxSju
- YsYrX5xfLgTZC5abhhztpYhGBBgRAgAGBQI7HoVFAAoJEFqBr45q27IAlscAn2Ufk2d6/3p4
- Cuyz/NX7KpL2dQ8WAJ9UD5JEakhfofed8PSqOM7jOO3LCA==
-Message-ID: <ee261b46-1a83-6af2-31fe-fb9f30894c1e@daenzer.net>
-Date:   Thu, 24 Jan 2019 10:31:06 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 24 Jan 2019 04:32:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50536 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725931AbfAXJcl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 04:32:41 -0500
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 35E1821872;
+        Thu, 24 Jan 2019 09:32:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548322359;
+        bh=fhy1RiMMv7O0B8kgR+D7cbta1wJy/Rqf55vbyr6oGlk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=BcBMPq0uMSMX4b3ncEzSSKlAHQd5iz+vpgrvVe6fWU8KFgE1Q2kMS0CiW7nPX1oX5
+         1Gnyj9VnksqPQlzcm658hmAPPAqKHM3lP0BMDAJvGJj3/qR9W8ir3DYH3pHTDmT+jU
+         eA61/fuUfOj9yNDvUJD3T59qceyyyybsDeneOUrk=
+Received: by mail-wr1-f53.google.com with SMTP id p7so5704617wru.0;
+        Thu, 24 Jan 2019 01:32:39 -0800 (PST)
+X-Gm-Message-State: AJcUukcTeXh+GFntmMKVHgwCL1lupdYjyy7GvwjDO+hk7ITuyxmnoLkg
+        qPdU8Yt19Db3ksN+ZBPNXR2Ql+IXa/Ni9+4A8lY=
+X-Google-Smtp-Source: ALg8bN4aUHzg3ISzP/wUfub2hpAjEJh3tf4xOVOq9ajY467CUvzkM4YRQCi1jgBZjh55ND3KCNbk/Ke8L8FP+9sACZ8=
+X-Received: by 2002:adf:f28d:: with SMTP id k13mr6634956wro.78.1548322357680;
+ Thu, 24 Jan 2019 01:32:37 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAKv+Gu-9vEKu8mG-o+-4M1ZcgZmTTJVfEdNS9R27AFX8P5sqyQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 8bit
+References: <1548314060-4833-1-git-send-email-shun-chih.yu@mediatek.com>
+In-Reply-To: <1548314060-4833-1-git-send-email-shun-chih.yu@mediatek.com>
+From:   Sean Wang <sean.wang@kernel.org>
+Date:   Thu, 24 Jan 2019 01:35:01 -0800
+X-Gmail-Original-Message-ID: <CAGp9LzqMbYOXCEmHOEcCboQLfpXwxH7zcJ3snj4a8NBLiHhQdg@mail.gmail.com>
+Message-ID: <CAGp9LzqMbYOXCEmHOEcCboQLfpXwxH7zcJ3snj4a8NBLiHhQdg@mail.gmail.com>
+Subject: Re: [PATCH v5] add support for Mediatek Command-Queue DMA controller
+ on MT6765 SoC
+To:     shun-chih.yu@mediatek.com
+Cc:     Sean Wang <sean.wang@mediatek.com>, Vinod Koul <vkoul@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        srv_wsdupstream@mediatek.com, linux-mediatek@lists.infradead.org,
+        dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-01-23 5:52 p.m., Ard Biesheuvel wrote:
-> On Wed, 23 Jan 2019 at 17:44, Christoph Hellwig <hch@infradead.org> wrote:
->>
->> I think we just want a driver-local check for those combinations
->> where we know this hack actually works, which really just seems
->> to be x86-64 with PAT. Something like the patch below, but maybe with
->> even more strong warnings to not do something like this elsewhere:
-> 
-> I agree that your patch seems like the right way to ensure that the WC
-> optimization hack is only used where we know it works.
-> 
-> But my concern is that it seems likely that non-cache coherent
-> implementations are relying on this hack as well.
+Hi Shun-Chih,
 
-I've been trying to tell you they can't rely on that, because the amdgpu
-driver doesn't use this functionality for fundamentals such as ring
-buffers used for feeding the hardware with commands. Instead, for those
-it relies on snooped PCIe transfers being coherent with the CPU caches.
+the driver seems already be applied since v5.0-rc1
 
+I suggest these improvements you made in the recent version can be
+split into several patches and then be applied on the top of the base
+driver.
 
->> -#elif defined(CONFIG_X86) && !defined(CONFIG_X86_PAT)
->> -       /* Don't try to enable write-combining when it can't work, or things
->> -        * may be slow
->> -        * See https://bugs.freedesktop.org/show_bug.cgi?id=88758
->> -        */
->> -
->> -#ifndef CONFIG_COMPILE_TEST
->> -#warning Please enable CONFIG_MTRR and CONFIG_X86_PAT for better performance \
->> -        thanks to write-combining
->> -#endif
->> -
->> -       if (bo->flags & AMDGPU_GEM_CREATE_CPU_GTT_USWC)
->> -               DRM_INFO_ONCE("Please enable CONFIG_MTRR and CONFIG_X86_PAT for "
->> -                             "better performance thanks to write-combining\n");
-
-FWIW, please don't drop these compile and build time warnings where we
-continue to take advantage of PAT.
-
-
--- 
-Earthling Michel Dänzer               |               http://www.amd.com
-Libre software enthusiast             |             Mesa and X developer
+On Wed, Jan 23, 2019 at 11:15 PM <shun-chih.yu@mediatek.com> wrote:
+>
+> This patchset introduces support for MediaTek Command-Queue DMA controller.
+>
+> MediaTek Command-Queue DMA controller (CQDMA) on MT6765 SoC is dedicated to memory-to-memory transfer through queue-based descriptor management.
+>
+> There are only 3 physical channels inside CQDMA, while the driver is extended to support 32 virtual channels for multiple dma users to issue dma requests onto the CQDMA simultaneously.
+>
+> dmatest result:
+> dmatest: dma0chan0-copy2: summary 5000 tests, 0 failures 3500 iops 28037 KB/s (0)
+> dmatest: dma0chan0-copy4: summary 5000 tests, 0 failures 3494 iops 27612 KB/s (0)
+> dmatest: dma0chan0-copy1: summary 5000 tests, 0 failures 3491 iops 27749 KB/s (0)
+> dmatest: dma0chan0-copy7: summary 5000 tests, 0 failures 3673 iops 29092 KB/s (0)
+> dmatest: dma0chan0-copy6: summary 5000 tests, 0 failures 3763 iops 30237 KB/s (0)
+> dmatest: dma0chan0-copy0: summary 5000 tests, 0 failures 3730 iops 30131 KB/s (0)
+> dmatest: dma0chan0-copy3: summary 5000 tests, 0 failures 3717 iops 29569 KB/s (0)
+> dmatest: dma0chan0-copy5: summary 5000 tests, 0 failures 3699 iops 29302 KB/s (0)
+>
+> Changes since v4:
+> - remove redundant queue structure in mtk_cqdma_pchan
+> - remove redundant completion management
+> - fix wrong residue assignment in mtk_cqdma_tx_status
+> - fix typos
+>
+> Changes since v3:
+> - simplify the ISR and management on descriptors by removing tasklet and ASYNC_TX_ENABLE_CHANNEL_SWITCH
+> - remove useless field in mtk_cqdma_vdesc structure
+> - change dev_info to dev_dbg
+> - fix typos
+>
+> Changes since v2:
+> - fix build warning for kernel with DMA address in 32-bit
+>
+> Changes since v1:
+> - remove unused macros, typos
+> - leverage ASYNC_TX_ENABLE_CHANNEL_SWITCH to maintain DMA descriptor list
+>
+> Shun-Chih Yu (2):
+>   dt-bindings: dmaengine: Add MediaTek Command-Queue DMA controller
+>     bindings
+>   dmaengine: mediatek: Add MediaTek Command-Queue DMA controller for
+>     MT6765 SoC
+>
+>  .../devicetree/bindings/dma/mtk-cqdma.txt          |   31 +
+>  drivers/dma/mediatek/Kconfig                       |   12 +
+>  drivers/dma/mediatek/Makefile                      |    1 +
+>  drivers/dma/mediatek/mtk-cqdma.c                   |  748 ++++++++++++++++++++
+>  4 files changed, 792 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/dma/mtk-cqdma.txt
+>  create mode 100644 drivers/dma/mediatek/mtk-cqdma.c
+>
+>
+> _______________________________________________
+> Linux-mediatek mailing list
+> Linux-mediatek@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-mediatek
