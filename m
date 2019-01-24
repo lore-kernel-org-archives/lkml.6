@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00C8CC282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:04:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76A34C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:05:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5E1F21855
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:04:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3AE4E21855
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:05:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548360291;
-	bh=9dDhT9r6HEB0KxcHsPIzfRpuVjw4Y9jsCO5JCoxXsRk=;
+	s=default; t=1548360303;
+	bh=igiy7uiwGcZyg4mbSuj5vCgSrkuE9HQ983uxEo1RDy8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vZhV8DfzubdDw1EvfReAT1YRgueKr+Gj4CUmAt5ot+gvhU8dFk3x6P5SONuEUpAwf
-	 3linCnDHNx8uTKThydYraQ2kMTAbuHa732frDICWr978FS4XJ/jyxzzQa5bMSTfFpC
-	 c/5fg9fSpDph6V1EoGxNXDMV2p6LkoRFKMoMoqdo=
+	b=bi6pF5MFs/ErDUfcuxSr4JxXkLdypXhjNXuOyPadQE6NAu2aWGVvaNGdLDfsV2ib/
+	 rGv40TkGs5O9RU3PJXz7o5q6TSvOA5D8FEJwlUJ7KeO4r/dUPYTKmv/j5Qy3S87DN/
+	 kENXYfGcp14HKM8F8T2KAKo4yGYZGJMxpY9FIZX0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731622AbfAXTb2 (ORCPT
+        id S1729114AbfAXUFC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:31:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59140 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 15:05:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58988 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731599AbfAXTbW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:31:22 -0500
+        id S1731112AbfAXTbR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:31:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 80C6B218E2;
-        Thu, 24 Jan 2019 19:31:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1DFDE218FC;
+        Thu, 24 Jan 2019 19:31:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358282;
-        bh=9dDhT9r6HEB0KxcHsPIzfRpuVjw4Y9jsCO5JCoxXsRk=;
+        s=default; t=1548358276;
+        bh=igiy7uiwGcZyg4mbSuj5vCgSrkuE9HQ983uxEo1RDy8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ble6kXStVKUxeZj/8xvwS9Kyx8ViC3pTNMEH5H4sn1/1dEGyOL5DnB67p2zqPl8Xc
-         cSCOUDKy6aBQw2uOVZJolF7w0S4yxLnOSl60M+/5DTFzSf7jAeQc7juuSVJbQFSgTx
-         yOeA/fREbzivzAIgQuzqEK/LD6E3OFG8jG2B9jmI=
+        b=dA5bNd2fbVZue8tpvpyZXHlSOrJWqQSQaARdYOpCM7SPtGnWpEvNSvK4ScXtJswau
+         BV+SACJsik1roUpTAD2gRxnzi3Gw5/UivDu/ANFxaPXFTVeg7n/f8Py3X8MUwwgcJ3
+         oFFdyXW9V+ToNSrRRcx2eKVUc0FPmV7T7ZBdN1nw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org, "Maciej W. Rozycki" <macro@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 18/63] usb: gadget: udc: renesas_usb3: add a safety connection way for forced_b_device
-Date:   Thu, 24 Jan 2019 20:20:07 +0100
-Message-Id: <20190124190157.199035379@linuxfoundation.org>
+Subject: [PATCH 4.14 16/63] MIPS: SiByte: Enable swiotlb for SWARM, LittleSur and BigSur
+Date:   Thu, 24 Jan 2019 20:20:05 +0100
+Message-Id: <20190124190156.914313943@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190155.176570028@linuxfoundation.org>
 References: <20190124190155.176570028@linuxfoundation.org>
@@ -68,88 +68,153 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit ceb94bc52c437463f0903e61060a94a2226fb672 ]
+[ Upstream commit e4849aff1e169b86c561738daf8ff020e9de1011 ]
 
-This patch adds a safety connection way for "forced_b_device" with
-"workaround_for_vbus" like below:
+The Broadcom SiByte BCM1250, BCM1125, and BCM1125H SOCs have an onchip
+DRAM controller that supports memory amounts of up to 16GiB, and due to
+how the address decoder has been wired in the SOC any memory beyond 1GiB
+is actually mapped starting from 4GiB physical up, that is beyond the
+32-bit addressable limit[1].  Consequently if the maximum amount of
+memory has been installed, then it will span up to 19GiB.
 
-< Example for R-Car E3 Ebisu >
- # modprobe <any usb gadget driver>
- # echo 1 > /sys/kernel/debug/ee020000.usb/b_device
- (connect a usb cable to host side.)
- # echo 2 > /sys/kernel/debug/ee020000.usb/b_device
+Many of the evaluation boards we support that are based on one of these
+SOCs have their memory soldered and the amount present fits in the
+32-bit address range.  The BCM91250A SWARM board however has actual DIMM
+slots and accepts, depending on the peripherals revision of the SOC, up
+to 4GiB or 8GiB of memory in commercially available JEDEC modules[2].
+I believe this is also the case with the BCM91250C2 LittleSur board.
+This means that up to either 3GiB or 7GiB of memory requires 64-bit
+addressing to access.
 
-Previous code should have connected a usb cable before the "b_device"
-is set to 1 on the Ebisu board. However, if xHCI driver on the board
-is probed, it causes some troubles:
- - Conflicts USB VBUS/signals between the board and another host.
- - "Cannot enable. Maybe the USB cable is bad?" might happen on
-   both the board and another host with a usb hub.
- - Cannot enumerate a usb gadget correctly because an interruption
-   of VBUS change happens unexpectedly.
+I believe the BCM91480B BigSur board, which has the BCM1480 SOC instead,
+accepts at least as much memory, although I have no documentation or
+actual hardware available to verify that.
 
-Reported-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Both systems have PCI slots installed for use by any PCI option boards,
+including ones that only support 32-bit addressing (additionally the
+32-bit PCI host bridge of the BCM1250, BCM1125, and BCM1125H SOCs limits
+addressing to 32-bits), and there is no IOMMU available.  Therefore for
+PCI DMA to work in the presence of memory beyond enable swiotlb for the
+affected systems.
+
+All the other SOC onchip DMA devices use 40-bit addressing and therefore
+can address the whole memory, so only enable swiotlb if PCI support and
+support for DMA beyond 4GiB have been both enabled in the configuration
+of the kernel.
+
+This shows up as follows:
+
+Broadcom SiByte BCM1250 B2 @ 800 MHz (SB1 rev 2)
+Board type: SiByte BCM91250A (SWARM)
+Determined physical RAM map:
+ memory: 000000000fe7fe00 @ 0000000000000000 (usable)
+ memory: 000000001ffffe00 @ 0000000080000000 (usable)
+ memory: 000000000ffffe00 @ 00000000c0000000 (usable)
+ memory: 0000000087fffe00 @ 0000000100000000 (usable)
+software IO TLB: mapped [mem 0xcbffc000-0xcfffc000] (64MB)
+
+in the bootstrap log and removes failures like these:
+
+defxx 0000:02:00.0: dma_direct_map_page: overflow 0x0000000185bc6080+4608 of device mask ffffffff bus mask 0
+fddi0: Receive buffer allocation failed
+fddi0: Adapter open failed!
+IP-Config: Failed to open fddi0
+defxx 0000:09:08.0: dma_direct_map_page: overflow 0x0000000185bc6080+4608 of device mask ffffffff bus mask 0
+fddi1: Receive buffer allocation failed
+fddi1: Adapter open failed!
+IP-Config: Failed to open fddi1
+
+when memory beyond 4GiB is handed out to devices that can only do 32-bit
+addressing.
+
+This updates commit cce335ae47e2 ("[MIPS] 64-bit Sibyte kernels need
+DMA32.").
+
+References:
+
+[1] "BCM1250/BCM1125/BCM1125H User Manual", Revision 1250_1125-UM100-R,
+    Broadcom Corporation, 21 Oct 2002, Section 3: "System Overview",
+    "Memory Map", pp. 34-38
+
+[2] "BCM91250A User Manual", Revision 91250A-UM100-R, Broadcom
+    Corporation, 18 May 2004, Section 3: "Physical Description",
+    "Supported DRAM", p. 23
+
+Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
+[paul.burton@mips.com: Remove GPL text from dma.c; SPDX tag covers it]
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Patchwork: https://patchwork.linux-mips.org/patch/21108/
+References: cce335ae47e2 ("[MIPS] 64-bit Sibyte kernels need DMA32.")
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/gadget/udc/renesas_usb3.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ arch/mips/Kconfig                |  3 +++
+ arch/mips/sibyte/common/Makefile |  1 +
+ arch/mips/sibyte/common/dma.c    | 14 ++++++++++++++
+ 3 files changed, 18 insertions(+)
+ create mode 100644 arch/mips/sibyte/common/dma.c
 
-diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
-index ade0723787e5..e5355ede2c46 100644
---- a/drivers/usb/gadget/udc/renesas_usb3.c
-+++ b/drivers/usb/gadget/udc/renesas_usb3.c
-@@ -352,6 +352,7 @@ struct renesas_usb3 {
- 	bool extcon_host;		/* check id and set EXTCON_USB_HOST */
- 	bool extcon_usb;		/* check vbus and set EXTCON_USB */
- 	bool forced_b_device;
-+	bool start_to_connect;
- };
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index ae4450e891ab..8d4470f44b74 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -800,6 +800,7 @@ config SIBYTE_SWARM
+ 	select SYS_SUPPORTS_HIGHMEM
+ 	select SYS_SUPPORTS_LITTLE_ENDIAN
+ 	select ZONE_DMA32 if 64BIT
++	select SWIOTLB if ARCH_DMA_ADDR_T_64BIT && PCI
  
- #define gadget_to_renesas_usb3(_gadget)	\
-@@ -470,7 +471,8 @@ static void usb3_init_axi_bridge(struct renesas_usb3 *usb3)
- static void usb3_init_epc_registers(struct renesas_usb3 *usb3)
- {
- 	usb3_write(usb3, ~0, USB3_USB_INT_STA_1);
--	usb3_enable_irq_1(usb3, USB_INT_1_VBUS_CNG);
-+	if (!usb3->workaround_for_vbus)
-+		usb3_enable_irq_1(usb3, USB_INT_1_VBUS_CNG);
- }
+ config SIBYTE_LITTLESUR
+ 	bool "Sibyte BCM91250C2-LittleSur"
+@@ -822,6 +823,7 @@ config SIBYTE_SENTOSA
+ 	select SYS_HAS_CPU_SB1
+ 	select SYS_SUPPORTS_BIG_ENDIAN
+ 	select SYS_SUPPORTS_LITTLE_ENDIAN
++	select SWIOTLB if ARCH_DMA_ADDR_T_64BIT && PCI
  
- static bool usb3_wakeup_usb2_phy(struct renesas_usb3 *usb3)
-@@ -676,8 +678,7 @@ static void usb3_mode_config(struct renesas_usb3 *usb3, bool host, bool a_dev)
- 	usb3_set_mode(usb3, host);
- 	usb3_vbus_out(usb3, a_dev);
- 	/* for A-Peripheral or forced B-device mode */
--	if ((!host && a_dev) ||
--	    (usb3->workaround_for_vbus && usb3->forced_b_device))
-+	if ((!host && a_dev) || usb3->start_to_connect)
- 		usb3_connect(usb3);
- 	spin_unlock_irqrestore(&usb3->lock, flags);
- }
-@@ -2369,7 +2370,11 @@ static ssize_t renesas_usb3_b_device_write(struct file *file,
- 	if (copy_from_user(&buf, ubuf, min_t(size_t, sizeof(buf) - 1, count)))
- 		return -EFAULT;
+ config SIBYTE_BIGSUR
+ 	bool "Sibyte BCM91480B-BigSur"
+@@ -835,6 +837,7 @@ config SIBYTE_BIGSUR
+ 	select SYS_SUPPORTS_HIGHMEM
+ 	select SYS_SUPPORTS_LITTLE_ENDIAN
+ 	select ZONE_DMA32 if 64BIT
++	select SWIOTLB if ARCH_DMA_ADDR_T_64BIT && PCI
  
--	if (!strncmp(buf, "1", 1))
-+	usb3->start_to_connect = false;
-+	if (usb3->workaround_for_vbus && usb3->forced_b_device &&
-+	    !strncmp(buf, "2", 1))
-+		usb3->start_to_connect = true;
-+	else if (!strncmp(buf, "1", 1))
- 		usb3->forced_b_device = true;
- 	else
- 		usb3->forced_b_device = false;
-@@ -2377,7 +2382,7 @@ static ssize_t renesas_usb3_b_device_write(struct file *file,
- 	if (usb3->workaround_for_vbus)
- 		usb3_disconnect(usb3);
- 
--	/* Let this driver call usb3_connect() anyway */
-+	/* Let this driver call usb3_connect() if needed */
- 	usb3_check_id(usb3);
- 
- 	return count;
+ config SNI_RM
+ 	bool "SNI RM200/300/400"
+diff --git a/arch/mips/sibyte/common/Makefile b/arch/mips/sibyte/common/Makefile
+index b3d6bf23a662..3ef3fb658136 100644
+--- a/arch/mips/sibyte/common/Makefile
++++ b/arch/mips/sibyte/common/Makefile
+@@ -1,4 +1,5 @@
+ obj-y := cfe.o
++obj-$(CONFIG_SWIOTLB)			+= dma.o
+ obj-$(CONFIG_SIBYTE_BUS_WATCHER)	+= bus_watcher.o
+ obj-$(CONFIG_SIBYTE_CFE_CONSOLE)	+= cfe_console.o
+ obj-$(CONFIG_SIBYTE_TBPROF)		+= sb_tbprof.o
+diff --git a/arch/mips/sibyte/common/dma.c b/arch/mips/sibyte/common/dma.c
+new file mode 100644
+index 000000000000..eb47a94f3583
+--- /dev/null
++++ b/arch/mips/sibyte/common/dma.c
+@@ -0,0 +1,14 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ *	DMA support for Broadcom SiByte platforms.
++ *
++ *	Copyright (c) 2018  Maciej W. Rozycki
++ */
++
++#include <linux/swiotlb.h>
++#include <asm/bootinfo.h>
++
++void __init plat_swiotlb_setup(void)
++{
++	swiotlb_init(1);
++}
 -- 
 2.19.1
 
