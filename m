@@ -4,49 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3E22C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:39:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AAF6C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:39:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81FBB20663
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:39:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25047218D3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:39:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358748;
-	bh=/EWCgWSjTn/Ss7NZaIIKPldGBBjbsncShtDYnEpS+yo=;
+	s=default; t=1548358754;
+	bh=g5ZJ+iA0Ugp6aR55S5wiz0me3iXqKgdpF+ySKq8CeGM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=cqX56cG95Z09MsnzIp0q32Td2UVz3GxvCjN5m0a/LP1JzdsmyRq+qr65X0If5REnd
-	 e7L+0BILXWNBg0rRDNsY28/eR5QiyvX6s9DpWS0k57j+4KAIEB5sykkdpEn47FHSzJ
-	 i/MbYtSIci2Y+eqSKDaEvYHmGFbEr8Yv/9Dlbugg=
+	b=tEB93dZkozPOP4OaqrIhnUk2Qz1QGq+/L5EFyYah9zovjEWHFn8j+I4WJnL32MDQC
+	 AVMdpqD3ESIu8XagNiZYfPuj7IRqMmvEZzw4TtO32StRSfWGB6p1TfSUFMVIxSoRk7
+	 f0DpCrMd9lgGN8Dqk5UfuLRoRaU+4d6576qovGag=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732982AbfAXTjG (ORCPT
+        id S1733008AbfAXTjM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:39:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39218 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:39:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732958AbfAXTjD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:39:03 -0500
+        id S1732013AbfAXTjJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:39:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1BBD218D0;
-        Thu, 24 Jan 2019 19:39:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC2CD218D3;
+        Thu, 24 Jan 2019 19:39:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358743;
-        bh=/EWCgWSjTn/Ss7NZaIIKPldGBBjbsncShtDYnEpS+yo=;
+        s=default; t=1548358748;
+        bh=g5ZJ+iA0Ugp6aR55S5wiz0me3iXqKgdpF+ySKq8CeGM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XG3FRLRI5r1oma9eDkNs7DX72kCoRmr4VXWBX5R+lkNy0Hb2ltCeBV5sjLko5/eXI
-         ll2BJ3GfyjiwB1nPBlFDEqjY+V229eJJBAkjzAWkmYM10ggMyyY9isI1vtmLSCmRP/
-         yjqP1P1Oo/jATYcuQOnHfXMMihIvT7GYOLeoofFk=
+        b=qM4BhVpEjHwCy69b6Exef/8pEqLJLzavFOZZYf28T5T4kDtOhmo02oX8sR/uU+OMt
+         p25zyWMbvZGRLzsfF/ClO/d3PIfTatRzs5Y84SHjIIqsouYeo3QE9SIwUkuokgPQsa
+         +1MYw5xfLyQV0/aiLi0yB6Bjz5YEww+d8uvsZfuY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.20 011/127] octeontx2-af: Fix a resource leak in an error handling path in cgx_probe()
-Date:   Thu, 24 Jan 2019 20:19:17 +0100
-Message-Id: <20190124190212.611485311@linuxfoundation.org>
+        stable@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
+        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
+        Roopa Prabhu <roopa@cumulusnetworks.com>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Matteo Croce <mcroce@redhat.com>
+Subject: [PATCH 4.20 013/127] net: clear skb->tstamp in bridge forwarding path
+Date:   Thu, 24 Jan 2019 20:19:19 +0100
+Message-Id: <20190124190212.721183049@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
 References: <20190124190211.984305387@linuxfoundation.org>
@@ -65,43 +69,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Paolo Abeni <pabeni@redhat.com>
 
-[ Upstream commit 1492623e837fe7ca6296f7f5411328307e242771 ]
+[ Upstream commit 41d1c8839e5f8cb781cc635f12791decee8271b7 ]
 
-If an error occurs after the call to 'pci_alloc_irq_vectors()', we must
-call 'pci_free_irq_vectors()' in order to avoid a	resource leak.
+Matteo reported forwarding issues inside the linux bridge,
+if the enslaved interfaces use the fq qdisc.
 
-The same sequence is already in place in the corresponding 'cgx_remove()'
-function.
+Similar to commit 8203e2d844d3 ("net: clear skb->tstamp in
+forwarding paths"), we need to clear the tstamp field in
+the bridge forwarding path.
 
-Fixes: 1463f382f58d ("octeontx2-af: Add support for CGX link management")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Fixes: 80b14dee2bea ("net: Add a new socket option for a future transmit time.")
+Fixes: fb420d5d91c1 ("tcp/fq: move back to CLOCK_MONOTONIC")
+Reported-and-tested-by: Matteo Croce <mcroce@redhat.com>
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Acked-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Acked-by: Roopa Prabhu <roopa@cumulusnetworks.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/marvell/octeontx2/af/cgx.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ net/bridge/br_forward.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/ethernet/marvell/octeontx2/af/cgx.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/cgx.c
-@@ -668,7 +668,7 @@ static int cgx_probe(struct pci_dev *pde
- 	if (!cgx->reg_base) {
- 		dev_err(dev, "CGX: Cannot map CSR memory space, aborting\n");
- 		err = -ENOMEM;
--		goto err_release_regions;
-+		goto err_free_irq_vectors;
- 	}
+--- a/net/bridge/br_forward.c
++++ b/net/bridge/br_forward.c
+@@ -65,6 +65,7 @@ EXPORT_SYMBOL_GPL(br_dev_queue_push_xmit
  
- 	nvec = CGX_NVEC;
-@@ -693,6 +693,8 @@ static int cgx_probe(struct pci_dev *pde
- err_release_lmac:
- 	cgx_lmac_exit(cgx);
- 	list_del(&cgx->cgx_list);
-+err_free_irq_vectors:
-+	pci_free_irq_vectors(pdev);
- err_release_regions:
- 	pci_release_regions(pdev);
- err_disable_device:
+ int br_forward_finish(struct net *net, struct sock *sk, struct sk_buff *skb)
+ {
++	skb->tstamp = 0;
+ 	return NF_HOOK(NFPROTO_BRIDGE, NF_BR_POST_ROUTING,
+ 		       net, sk, skb, NULL, skb->dev,
+ 		       br_dev_queue_push_xmit);
 
 
