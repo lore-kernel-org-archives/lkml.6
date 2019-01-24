@@ -4,49 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80B40C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:18:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF92AC282C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:18:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F28E217D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:18:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B648C218D0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:18:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548361091;
-	bh=wVNreC0m5Eu76wZ4GvRr8R4dxG6ujkfNygAHtgTpaU8=;
+	s=default; t=1548361095;
+	bh=fsM7cD4sk4jh0oxtKcsCuaiuLUk/nHKW3yxRZZbNaTQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lIeopxW1ssrWOPdj38QduZCQvdc8inK5QidX/wdSnVvcyCHxZNnp0ntL9fUD+6DeW
-	 pDiV9pGWGPZomPHcGB4EGRqUvnJvWvntUVZRzaqJC11FEwZV+0Z/DyMSsFnG2JGPki
-	 mw2qXSirVZvcBjvgDwwRH6l2ou+1C3spDc//grJY=
+	b=DwA5dbKbn+r9nEgvJiT0CwzIDkKxNpkQgY13jXo7lOW0YiNadOFAiL3YXVrlSRQBG
+	 ZrUsQA1WrIrOcgxGsNBxkJP6Nsa6cSy1f0i4nWQ6/huUWx7jAf30hh90n0oqnc0wwn
+	 YDIp4sjw3ew1UKSvwhQssPJCoTVd1h1Cx1Ec3zCQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729940AbfAXUSJ (ORCPT
+        id S1729606AbfAXTWj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 15:18:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47292 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:22:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47188 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729579AbfAXTWk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:22:40 -0500
+        id S1729579AbfAXTWe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:22:34 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E9139218CD;
-        Thu, 24 Jan 2019 19:22:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 46689218CD;
+        Thu, 24 Jan 2019 19:22:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548357759;
-        bh=wVNreC0m5Eu76wZ4GvRr8R4dxG6ujkfNygAHtgTpaU8=;
+        s=default; t=1548357753;
+        bh=fsM7cD4sk4jh0oxtKcsCuaiuLUk/nHKW3yxRZZbNaTQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IEogONnvKXuAVuhzloVolSzD+J3XqJe0DJ796VIU816dKMKpzUhAVm6Fj3nEmiwJQ
-         DdFlYkL4iktLlbxs8ZiYUSo2q3Qu0PAE+RS/L5wCOlDKmRP2QiHsqu+WMTo58y0SUP
-         Q1QyXh0Ymy4rz81/2FszHdyIOShyrDWks180teXc=
+        b=glb5ZTIP1y4eQYdczvYAH9+yyqxZX2kHkHKlbhcVT0jbZ4LmcjGYc1YZ2nMk3rqG0
+         7DyjHthoSD387nFnh2yXxEwsxSoDjPCojFX35P/jwYZPl2gxuycPHhpYrjbHdrC7eh
+         f/xXwqu9xz9ZdRtxYJ+fmD1byTHUyyupEcUuRruE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yi Zeng <yizeng@asrmicro.com>,
-        Wolfram Sang <wsa@the-dreams.de>, stable@kernel.org
-Subject: [PATCH 3.18 09/52] i2c: dev: prevent adapter retries and timeout being set as minus value
-Date:   Thu, 24 Jan 2019 20:19:33 +0100
-Message-Id: <20190124190142.515214234@linuxfoundation.org>
+        stable@vger.kernel.org, Christoph Lameter <cl@linux.com>,
+        syzbot+d6ed4ec679652b4fd4e4@syzkaller.appspotmail.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 3.18 07/52] slab: alien caches must not be initialized if the allocation of the alien cache failed
+Date:   Thu, 24 Jan 2019 20:19:31 +0100
+Message-Id: <20190124190142.124996479@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190140.879495253@linuxfoundation.org>
 References: <20190124190140.879495253@linuxfoundation.org>
@@ -65,50 +70,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yi Zeng <yizeng@asrmicro.com>
+From: Christoph Lameter <cl@linux.com>
 
-commit 6ebec961d59bccf65d08b13fc1ad4e6272a89338 upstream.
+commit 09c2e76ed734a1d36470d257a778aaba28e86531 upstream.
 
-If adapter->retries is set to a minus value from user space via ioctl,
-it will make __i2c_transfer and __i2c_smbus_xfer skip the calling to
-adapter->algo->master_xfer and adapter->algo->smbus_xfer that is
-registered by the underlying bus drivers, and return value 0 to all the
-callers. The bus driver will never be accessed anymore by all users,
-besides, the users may still get successful return value without any
-error or information log print out.
+Callers of __alloc_alien() check for NULL.  We must do the same check in
+__alloc_alien_cache to avoid NULL pointer dereferences on allocation
+failures.
 
-If adapter->timeout is set to minus value from user space via ioctl,
-it will make the retrying loop in __i2c_transfer and __i2c_smbus_xfer
-always break after the the first try, due to the time_after always
-returns true.
-
-Signed-off-by: Yi Zeng <yizeng@asrmicro.com>
-[wsa: minor grammar updates to commit message]
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-Cc: stable@kernel.org
+Link: http://lkml.kernel.org/r/010001680f42f192-82b4e12e-1565-4ee0-ae1f-1e98974906aa-000000@email.amazonses.com
+Fixes: 49dfc304ba241 ("slab: use the lock on alien_cache, instead of the lock on array_cache")
+Fixes: c8522a3a5832b ("Slab: introduce alloc_alien")
+Signed-off-by: Christoph Lameter <cl@linux.com>
+Reported-by: syzbot+d6ed4ec679652b4fd4e4@syzkaller.appspotmail.com
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Pekka Enberg <penberg@kernel.org>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/i2c/i2c-dev.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ mm/slab.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/i2c/i2c-dev.c
-+++ b/drivers/i2c/i2c-dev.c
-@@ -462,9 +462,15 @@ static long i2cdev_ioctl(struct file *fi
- 		return i2cdev_ioctl_smbus(client, arg);
+--- a/mm/slab.c
++++ b/mm/slab.c
+@@ -869,8 +869,10 @@ static struct alien_cache *__alloc_alien
+ 	struct alien_cache *alc = NULL;
  
- 	case I2C_RETRIES:
-+		if (arg > INT_MAX)
-+			return -EINVAL;
-+
- 		client->adapter->retries = arg;
- 		break;
- 	case I2C_TIMEOUT:
-+		if (arg > INT_MAX)
-+			return -EINVAL;
-+
- 		/* For historical reasons, user-space sets the timeout
- 		 * value in units of 10 ms.
- 		 */
+ 	alc = kmalloc_node(memsize, gfp, node);
+-	init_arraycache(&alc->ac, entries, batch);
+-	spin_lock_init(&alc->lock);
++	if (alc) {
++		init_arraycache(&alc->ac, entries, batch);
++		spin_lock_init(&alc->lock);
++	}
+ 	return alc;
+ }
+ 
 
 
