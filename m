@@ -7,48 +7,55 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86F3EC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:45:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2322DC282C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:45:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B88A20663
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:45:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E54FD20663
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:45:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359117;
-	bh=TkR5yjku+sFkj3oGNLpHalcAr0xbJg+hJF4dEJfHjEU=;
+	s=default; t=1548359122;
+	bh=bfM/PB3X4q404qFnorvsPKbbDL8U4Mct+1S00ZTOK74=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yisIhVNB+jNPT1eMW+OP7G3P8cCRcIT1+cyvYJwRT5IaEqrpBCGGgGllEMVfzvcy0
-	 aL7awXevoBguT20QPQ1bItYMVprX+nsjKXcyue17ZQEH4EES7HSUnzXdhAkHpECDfy
-	 AluXKqFJjOttPfyP52wN754vHK8d4RKLTsWkH2iw=
+	b=Khjkz9uvUyn2RC76S2AOM3S8xDgE1SrkMi5ah1HEVyUxnu5nPgZQU/yje4Fwa85mA
+	 2LZa/DUmEn1/lbGg9/Sa2jc6o6HTxGUjFbS1y6t4ShbdBvNwY/ljOZx7POXb8/M232
+	 t9omAebtCbtMHgW3wZGJ5xI7/kgyCETe2V+I5VFc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387949AbfAXTpQ (ORCPT
+        id S2388156AbfAXTo6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:45:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45894 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:44:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45744 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388158AbfAXTo7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:44:59 -0500
+        id S1731336AbfAXTov (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:44:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE74320663;
-        Thu, 24 Jan 2019 19:44:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DAA3620663;
+        Thu, 24 Jan 2019 19:44:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548359098;
-        bh=TkR5yjku+sFkj3oGNLpHalcAr0xbJg+hJF4dEJfHjEU=;
+        s=default; t=1548359090;
+        bh=bfM/PB3X4q404qFnorvsPKbbDL8U4Mct+1S00ZTOK74=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nzFUvFj6Tvp6YC4mhGsGIPJfHXiDbn3VgVHK+jmSoKEw8Kexi2kKrqIXaOd3KFqaJ
-         HmA2bZ+i5Idadi0KhMvFixzXGLI3Mqi/Zpbz+ZVkIWXCrlmTIJWGU8lDXvpqniz4u8
-         1ZMZXlbzwyoFKpdLUI+G4am2ixVUIGTk0Jx0XBBo=
+        b=GzWJfa89iek1x2eK1c67ngq00hzTtVrsWEl1FwCJNTYvxJIqBc/fuVNnK0e0V/kat
+         yQau7ZYf1qumRk2NuxqWlMTEmF9SyZwMvjw0tTxpUnqA4MMTmuD/S6AHU4/Bhkjbpw
+         zqUNG0Y3/QKkuWvC0MbuR59YjkbKacJBrZhJu9cQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Suraj Jitindar Singh <sjitindarsingh@gmail.com>,
-        Paul Mackerras <paulus@ozlabs.org>,
+        stable@vger.kernel.org, Peter Xu <peterx@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        William Kucharski <william.kucharski@oracle.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Hugh Dickins <hughd@google.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Pravin Shedge <pravin.shedge4linux@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 111/127] KVM: PPC: Book3S HV: Align gfn to L1 page size when inserting nest-rmap entry
-Date:   Thu, 24 Jan 2019 20:20:57 +0100
-Message-Id: <20190124190216.702944174@linuxfoundation.org>
+Subject: [PATCH 4.20 118/127] userfaultfd: clear flag if remap event not enabled
+Date:   Thu, 24 Jan 2019 20:21:04 +0100
+Message-Id: <20190124190216.970004275@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
 References: <20190124190211.984305387@linuxfoundation.org>
@@ -67,39 +74,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 8400f8740651c1a3081c30b46004451c448f4d5f ]
+[ Upstream commit 3cfd22be0ad663248fadfc8f6ffa3e255c394552 ]
 
-Nested rmap entries are used to store the translation from L1 gpa to L2
-gpa when entries are inserted into the shadow (nested) page tables. This
-rmap list is located by indexing the rmap array in the memslot by L1
-gfn. When we come to search for these entries we only know the L1 page size
-(which could be PAGE_SIZE, 2M or a 1G page) and so can only select a gfn
-aligned to that size. This means that when we insert the entry, so we can
-find it later, we need to align the gfn we use to select the rmap list
-in which to insert the entry to L1 page size as well.
+When the process being tracked does mremap() without
+UFFD_FEATURE_EVENT_REMAP on the corresponding tracking uffd file handle,
+we should not generate the remap event, and at the same time we should
+clear all the uffd flags on the new VMA.  Without this patch, we can still
+have the VM_UFFD_MISSING|VM_UFFD_WP flags on the new VMA even the fault
+handling process does not even know the existance of the VMA.
 
-By not doing this we were missing nested rmap entries when modifying L1
-ptes which were for a page also passed through to an L2 guest.
-
-Signed-off-by: Suraj Jitindar Singh <sjitindarsingh@gmail.com>
-Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
+Link: http://lkml.kernel.org/r/20181211053409.20317-1-peterx@redhat.com
+Signed-off-by: Peter Xu <peterx@redhat.com>
+Reviewed-by: Andrea Arcangeli <aarcange@redhat.com>
+Acked-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Reviewed-by: William Kucharski <william.kucharski@oracle.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc: Kirill A. Shutemov <kirill@shutemov.name>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Pavel Emelyanov <xemul@virtuozzo.com>
+Cc: Pravin Shedge <pravin.shedge4linux@gmail.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kvm/book3s_hv_nested.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/userfaultfd.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/kvm/book3s_hv_nested.c b/arch/powerpc/kvm/book3s_hv_nested.c
-index 401d2ecbebc5..fc64535e4c00 100644
---- a/arch/powerpc/kvm/book3s_hv_nested.c
-+++ b/arch/powerpc/kvm/book3s_hv_nested.c
-@@ -1220,6 +1220,8 @@ static long int __kvmhv_nested_page_fault(struct kvm_vcpu *vcpu,
- 			return ret;
- 		shift = kvmppc_radix_level_to_shift(level);
- 	}
-+	/* Align gfn to the start of the page */
-+	gfn = (gpa & ~((1UL << shift) - 1)) >> PAGE_SHIFT;
+diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+index 7a85e609fc27..d8b8323e80f4 100644
+--- a/fs/userfaultfd.c
++++ b/fs/userfaultfd.c
+@@ -736,10 +736,18 @@ void mremap_userfaultfd_prep(struct vm_area_struct *vma,
+ 	struct userfaultfd_ctx *ctx;
  
- 	/* 3. Compute the pte we need to insert for nest_gpa -> host r_addr */
+ 	ctx = vma->vm_userfaultfd_ctx.ctx;
+-	if (ctx && (ctx->features & UFFD_FEATURE_EVENT_REMAP)) {
++
++	if (!ctx)
++		return;
++
++	if (ctx->features & UFFD_FEATURE_EVENT_REMAP) {
+ 		vm_ctx->ctx = ctx;
+ 		userfaultfd_ctx_get(ctx);
+ 		WRITE_ONCE(ctx->mmap_changing, true);
++	} else {
++		/* Drop uffd context if remap feature not enabled */
++		vma->vm_userfaultfd_ctx = NULL_VM_UFFD_CTX;
++		vma->vm_flags &= ~(VM_UFFD_WP | VM_UFFD_MISSING);
+ 	}
+ }
  
 -- 
 2.19.1
