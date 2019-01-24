@@ -2,117 +2,282 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 105A3C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:15:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D511C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:15:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D413D217D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:15:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548360946;
-	bh=36NiZoxiQVL/d181ujMqa3FgplCu5TKdganrEwkC1dw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wlddeL3CxmzLvPi3tTvFmNcQ80GIqtwcRAKtDK3b8tHtRIscxxHyflHlW+bnbhXPW
-	 5Bx97Kea0P1/z2DFGWpCHmB3yOExT+lVqwBZo57zLKJCuVeCOtttnGReAtXKY+I2ZO
-	 zmkVTh+3jIkk+D0pIZtpcOz0jUW+v7MobnZ0vjgw=
+	by mail.kernel.org (Postfix) with ESMTP id 2256A218D0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:15:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FLqovBll"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730806AbfAXUPp (ORCPT
+        id S1730325AbfAXUPr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 15:15:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49414 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729619AbfAXTYO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:24:14 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 818D2218EA;
-        Thu, 24 Jan 2019 19:24:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548357854;
-        bh=36NiZoxiQVL/d181ujMqa3FgplCu5TKdganrEwkC1dw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bQcgcueum4UK0Nb+SKMDBB2y7KOUO40XZv4NzuoCwEDrdVktCnuzKLwi5cM9U8Mbp
-         c4MI86Wesmae6xCliZ5uMIfhTHTPIrC/WKn2HCv6L+v1uMjoW8JcNrh2wSL3i6y97P
-         NnAmMbxylmRUZbCG9DMDB+b4FvvmUs0ET/sqgAG4=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yunlei He <heyunlei@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 012/104] f2fs: not allow to write illegal blkaddr
-Date:   Thu, 24 Jan 2019 20:19:01 +0100
-Message-Id: <20190124190156.240200220@linuxfoundation.org>
+        Thu, 24 Jan 2019 15:15:47 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:33141 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730733AbfAXUPn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 15:15:43 -0500
+Received: by mail-pf1-f193.google.com with SMTP id c123so3572093pfb.0;
+        Thu, 24 Jan 2019 12:15:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=zMEex1XrEzXcAk9Y/oXX8CYX7grNi1oyF5fmYnFBWZ8=;
+        b=FLqovBllXXO3TYc7BPWljbDy4INgDEvtly3DbNNKgvLKtGwCglBlySDH5b3PV813es
+         Vz0+EfzLy1kj0Ths3FQbnzv4yA7g2pbVkk4e9IVwyHFHbxkIH/bOQyli3pokImJ0OVvF
+         wZniSmgJtMXI0JyaGs2QeljGV2FX1S9Ea8anSEXAHczd1sTrY1Y61YffWAsew7fGjDGf
+         ASfE6IvCRPLDe+v1PGGy2wzwsh0NDyez7mL5O2L2fhLZoG64wmQzbb5dW1wkwxA8f6Cm
+         EIWi267lStgKGyxsgFeXoVl7XCqLzNw9DGJaefRDK4V6Q8TGjCtu956q2UMzX/a4yxU3
+         lEow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=zMEex1XrEzXcAk9Y/oXX8CYX7grNi1oyF5fmYnFBWZ8=;
+        b=qhXXsyRXgvjxsQoY9psM+szG23tfK5rvY07r+e04cyNuJ15zf/OeAgj74WVgIDrbFe
+         RGnaee4YJUXLUpWgJW7m96GSL2yBESKyWH/W5HiiglM5atH9azQfIJy3mdNzJ6QGrNGj
+         7QyzGxrgx9BRlJkC+mz4jmpP1EOsMAL6hAFlY3kH8ogoJ1Phv1uiPvlv7AX9gwC3hT+g
+         QyTpEtu77dU+/dWpvlKP9t3qp/ygaKD3m6uEc3YdJnMyQtXauws53shIYg/kiyatPqaQ
+         uwxBER5Q3/2hZZwYq5aWvB3oBI66b1D4QPomwBWh02Id217l0PslGTW3B8cHVVOiJR2t
+         DtZg==
+X-Gm-Message-State: AJcUukcISSw6oL11Ly2VIUuc0Jfy9dkboae5Oc6TfHBcQfB24bdZNMEl
+        PHicNwOtLm2CG2gpxnD8QWI=
+X-Google-Smtp-Source: ALg8bN7gCEYq5CnUGKQKvktbaT1DHjd0P3Jk+4nvp4ozX16W2R1hDioHRWN/SL9HXRzV52omOqW/kg==
+X-Received: by 2002:a65:448a:: with SMTP id l10mr7285359pgq.387.1548360942563;
+        Thu, 24 Jan 2019 12:15:42 -0800 (PST)
+Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
+        by smtp.gmail.com with ESMTPSA id m65sm53062646pfg.180.2019.01.24.12.15.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 24 Jan 2019 12:15:41 -0800 (PST)
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Subject: [PATCH v6 1/4] PCI: imx6: Introduce drvdata
+Date:   Thu, 24 Jan 2019 12:15:19 -0800
+Message-Id: <20190124201522.8973-2-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190124190154.968308875@linuxfoundation.org>
-References: <20190124190154.968308875@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+In-Reply-To: <20190124201522.8973-1-andrew.smirnov@gmail.com>
+References: <20190124201522.8973-1-andrew.smirnov@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+Introduce driver data struct. This will simplify handling of device
+specific differences.
 
-------------------
-
-From: Yunlei He <heyunlei@huawei.com>
-
-commit bb413d6acd4e1c361daebf8486efc3923f429792 upstream.
-
-we came across an error as below:
-
-[build_nat_area_bitmap:1710] nid[0x    1718] addr[0x         1c18ddc] ino[0x    1718]
-[build_nat_area_bitmap:1710] nid[0x    1719] addr[0x         1c193d5] ino[0x    1719]
-[build_nat_area_bitmap:1710] nid[0x    171a] addr[0x         1c1736e] ino[0x    171a]
-[build_nat_area_bitmap:1710] nid[0x    171b] addr[0x        58b3ee8f] ino[0x815f92ed]
-[build_nat_area_bitmap:1710] nid[0x    171c] addr[0x         fcdc94b] ino[0x49366377]
-[build_nat_area_bitmap:1710] nid[0x    171d] addr[0x        7cd2facf] ino[0xb3c55300]
-[build_nat_area_bitmap:1710] nid[0x    171e] addr[0x        bd4e25d0] ino[0x77c34c09]
-
-... ...
-
-[build_nat_area_bitmap:1710] nid[0x    1718] addr[0x         1c18ddc] ino[0x    1718]
-[build_nat_area_bitmap:1710] nid[0x    1719] addr[0x         1c193d5] ino[0x    1719]
-[build_nat_area_bitmap:1710] nid[0x    171a] addr[0x         1c1736e] ino[0x    171a]
-[build_nat_area_bitmap:1710] nid[0x    171b] addr[0x        58b3ee8f] ino[0x815f92ed]
-[build_nat_area_bitmap:1710] nid[0x    171c] addr[0x         fcdc94b] ino[0x49366377]
-[build_nat_area_bitmap:1710] nid[0x    171d] addr[0x        7cd2facf] ino[0xb3c55300]
-[build_nat_area_bitmap:1710] nid[0x    171e] addr[0x        bd4e25d0] ino[0x77c34c09]
-
-One nat block may be stepped by a data block, so this patch forbid to
-write if the blkaddr is illegal
-
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+[andrew.smirnov@gmail.com reformatted drvdata, to simplify future diffs]
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Chris Healy <cphealy@gmail.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>
+Cc: Leonard Crestez <leonard.crestez@nxp.com>
+Cc: "A.s. Dong" <aisheng.dong@nxp.com>
+Cc: Richard Zhu <hongxing.zhu@nxp.com>
+Cc: linux-imx@nxp.com
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-pci@vger.kernel.org
 ---
- fs/f2fs/segment.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pci/controller/dwc/pci-imx6.c | 56 ++++++++++++++++++---------
+ 1 file changed, 37 insertions(+), 19 deletions(-)
 
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -576,8 +576,8 @@ static inline void check_seg_range(struc
+diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+index 25a2b7683e55..efff3d5e9162 100644
+--- a/drivers/pci/controller/dwc/pci-imx6.c
++++ b/drivers/pci/controller/dwc/pci-imx6.c
+@@ -41,6 +41,10 @@ enum imx6_pcie_variants {
+ 	IMX7D,
+ };
  
- static inline void verify_block_addr(struct f2fs_sb_info *sbi, block_t blk_addr)
++struct imx6_pcie_drvdata {
++	enum imx6_pcie_variants variant;
++};
++
+ struct imx6_pcie {
+ 	struct dw_pcie		*pci;
+ 	int			reset_gpio;
+@@ -53,7 +57,6 @@ struct imx6_pcie {
+ 	struct reset_control	*pciephy_reset;
+ 	struct reset_control	*apps_reset;
+ 	struct reset_control	*turnoff_reset;
+-	enum imx6_pcie_variants variant;
+ 	u32			tx_deemph_gen1;
+ 	u32			tx_deemph_gen2_3p5db;
+ 	u32			tx_deemph_gen2_6db;
+@@ -66,6 +69,7 @@ struct imx6_pcie {
+ 	struct device		*pd_pcie;
+ 	/* power domain for pcie phy */
+ 	struct device		*pd_pcie_phy;
++	const struct imx6_pcie_drvdata *drvdata;
+ };
+ 
+ /* Parameters for the waiting for PCIe PHY PLL to lock on i.MX7 */
+@@ -340,7 +344,7 @@ static void imx6_pcie_assert_core_reset(struct imx6_pcie *imx6_pcie)
  {
--	f2fs_bug_on(sbi, blk_addr < SEG0_BLKADDR(sbi)
--					|| blk_addr >= MAX_BLKADDR(sbi));
-+	BUG_ON(blk_addr < SEG0_BLKADDR(sbi)
-+			|| blk_addr >= MAX_BLKADDR(sbi));
+ 	struct device *dev = imx6_pcie->pci->dev;
+ 
+-	switch (imx6_pcie->variant) {
++	switch (imx6_pcie->drvdata->variant) {
+ 	case IMX7D:
+ 		reset_control_assert(imx6_pcie->pciephy_reset);
+ 		reset_control_assert(imx6_pcie->apps_reset);
+@@ -382,7 +386,7 @@ static int imx6_pcie_enable_ref_clk(struct imx6_pcie *imx6_pcie)
+ 	struct device *dev = pci->dev;
+ 	int ret = 0;
+ 
+-	switch (imx6_pcie->variant) {
++	switch (imx6_pcie->drvdata->variant) {
+ 	case IMX6SX:
+ 		ret = clk_prepare_enable(imx6_pcie->pcie_inbound_axi);
+ 		if (ret) {
+@@ -485,7 +489,7 @@ static void imx6_pcie_deassert_core_reset(struct imx6_pcie *imx6_pcie)
+ 					!imx6_pcie->gpio_active_high);
+ 	}
+ 
+-	switch (imx6_pcie->variant) {
++	switch (imx6_pcie->drvdata->variant) {
+ 	case IMX7D:
+ 		reset_control_deassert(imx6_pcie->pciephy_reset);
+ 		imx7d_pcie_wait_for_phy_pll_lock(imx6_pcie);
+@@ -523,7 +527,7 @@ static void imx6_pcie_deassert_core_reset(struct imx6_pcie *imx6_pcie)
+ 
+ static void imx6_pcie_init_phy(struct imx6_pcie *imx6_pcie)
+ {
+-	switch (imx6_pcie->variant) {
++	switch (imx6_pcie->drvdata->variant) {
+ 	case IMX7D:
+ 		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
+ 				   IMX7D_GPR12_PCIE_PHY_REFCLK_SEL, 0);
+@@ -645,7 +649,7 @@ static void imx6_pcie_ltssm_enable(struct device *dev)
+ {
+ 	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
+ 
+-	switch (imx6_pcie->variant) {
++	switch (imx6_pcie->drvdata->variant) {
+ 	case IMX6Q:
+ 	case IMX6SX:
+ 	case IMX6QP:
+@@ -698,7 +702,7 @@ static int imx6_pcie_establish_link(struct imx6_pcie *imx6_pcie)
+ 		tmp |= PORT_LOGIC_SPEED_CHANGE;
+ 		dw_pcie_writel_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL, tmp);
+ 
+-		if (imx6_pcie->variant != IMX7D) {
++		if (imx6_pcie->drvdata->variant != IMX7D) {
+ 			/*
+ 			 * On i.MX7, DIRECT_SPEED_CHANGE behaves differently
+ 			 * from i.MX6 family when no link speed transition
+@@ -801,7 +805,7 @@ static void imx6_pcie_ltssm_disable(struct device *dev)
+ {
+ 	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
+ 
+-	switch (imx6_pcie->variant) {
++	switch (imx6_pcie->drvdata->variant) {
+ 	case IMX6SX:
+ 	case IMX6QP:
+ 		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
+@@ -827,7 +831,7 @@ static void imx6_pcie_pm_turnoff(struct imx6_pcie *imx6_pcie)
+ 	}
+ 
+ 	/* Others poke directly at IOMUXC registers */
+-	switch (imx6_pcie->variant) {
++	switch (imx6_pcie->drvdata->variant) {
+ 	case IMX6SX:
+ 		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
+ 				IMX6SX_GPR12_PCIE_PM_TURN_OFF,
+@@ -857,7 +861,7 @@ static void imx6_pcie_clk_disable(struct imx6_pcie *imx6_pcie)
+ 	clk_disable_unprepare(imx6_pcie->pcie_phy);
+ 	clk_disable_unprepare(imx6_pcie->pcie_bus);
+ 
+-	switch (imx6_pcie->variant) {
++	switch (imx6_pcie->drvdata->variant) {
+ 	case IMX6SX:
+ 		clk_disable_unprepare(imx6_pcie->pcie_inbound_axi);
+ 		break;
+@@ -873,8 +877,8 @@ static void imx6_pcie_clk_disable(struct imx6_pcie *imx6_pcie)
+ 
+ static inline bool imx6_pcie_supports_suspend(struct imx6_pcie *imx6_pcie)
+ {
+-	return (imx6_pcie->variant == IMX7D ||
+-		imx6_pcie->variant == IMX6SX);
++	return (imx6_pcie->drvdata->variant == IMX7D ||
++		imx6_pcie->drvdata->variant == IMX6SX);
  }
  
- /*
-
+ static int imx6_pcie_suspend_noirq(struct device *dev)
+@@ -939,8 +943,7 @@ static int imx6_pcie_probe(struct platform_device *pdev)
+ 	pci->ops = &dw_pcie_ops;
+ 
+ 	imx6_pcie->pci = pci;
+-	imx6_pcie->variant =
+-		(enum imx6_pcie_variants)of_device_get_match_data(dev);
++	imx6_pcie->drvdata = of_device_get_match_data(dev);
+ 
+ 	dbi_base = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	pci->dbi_base = devm_ioremap_resource(dev, dbi_base);
+@@ -984,7 +987,7 @@ static int imx6_pcie_probe(struct platform_device *pdev)
+ 		return PTR_ERR(imx6_pcie->pcie);
+ 	}
+ 
+-	switch (imx6_pcie->variant) {
++	switch (imx6_pcie->drvdata->variant) {
+ 	case IMX6SX:
+ 		imx6_pcie->pcie_inbound_axi = devm_clk_get(dev,
+ 							   "pcie_inbound_axi");
+@@ -1082,11 +1085,26 @@ static void imx6_pcie_shutdown(struct platform_device *pdev)
+ 	imx6_pcie_assert_core_reset(imx6_pcie);
+ }
+ 
++static const struct imx6_pcie_drvdata drvdata[] = {
++	[IMX6Q] = {
++		.variant = IMX6Q,
++	},
++	[IMX6SX] = {
++		.variant = IMX6SX,
++	},
++	[IMX6QP] = {
++		.variant = IMX6QP,
++	},
++	[IMX7D] = {
++		.variant = IMX7D,
++	},
++};
++
+ static const struct of_device_id imx6_pcie_of_match[] = {
+-	{ .compatible = "fsl,imx6q-pcie",  .data = (void *)IMX6Q,  },
+-	{ .compatible = "fsl,imx6sx-pcie", .data = (void *)IMX6SX, },
+-	{ .compatible = "fsl,imx6qp-pcie", .data = (void *)IMX6QP, },
+-	{ .compatible = "fsl,imx7d-pcie",  .data = (void *)IMX7D,  },
++	{ .compatible = "fsl,imx6q-pcie",  .data = &drvdata[IMX6Q],  },
++	{ .compatible = "fsl,imx6sx-pcie", .data = &drvdata[IMX6SX], },
++	{ .compatible = "fsl,imx6qp-pcie", .data = &drvdata[IMX6QP], },
++	{ .compatible = "fsl,imx7d-pcie",  .data = &drvdata[IMX7D],  },
+ 	{},
+ };
+ 
+-- 
+2.20.1
 
