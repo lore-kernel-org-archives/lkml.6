@@ -2,50 +2,53 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9A10C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:29:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A11CC282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:29:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACD33218F0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:29:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE338218FE
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:29:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358179;
-	bh=yOErm59sZM1jEDsbiiyc8NZYFhPU6gbmJWwnIKNDoTo=;
+	s=default; t=1548358182;
+	bh=mQpaxVh4iFNGOanmyzmsBunNzn3HoC5n1gq4K21yXNo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=eCTVnLLSBLJtmDw4DDOmHbOFcBxxuOFoIe31rBiU8tTsDLT2G8D0x+vxi6DFmBB1y
-	 i+yZqyBZngeHiAX2O1jAfcvF6yg0T2GnPLpbbXg5MEsAC9E/sWkq1m4qMfKCzT67xT
-	 f1m5MpApROnLniL3eiozqWzSwBKDkWn9Qv6Rr8QE=
+	b=LqT02kSrYhtkzSenJWnBXPqlyTUcXfm8WTVknt5BnuZwdax7vQGN2VAQrc8I1GMjj
+	 Tyu/l9y1LPNqF4OKFg4AqFNKXsBxiEZu0MxXycjYLz/5ZfRJriQdzQ0EUJx99ciBHy
+	 AbUovaKI35PCiZFHyEtyj8XfUVyS3Q8ieNbpXUhQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731232AbfAXT3i (ORCPT
+        id S1731243AbfAXT3l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:29:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56826 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:29:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56898 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730514AbfAXT3f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:29:35 -0500
+        id S1731225AbfAXT3i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:29:38 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 801AD218E2;
-        Thu, 24 Jan 2019 19:29:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 29CB1218E2;
+        Thu, 24 Jan 2019 19:29:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358175;
-        bh=yOErm59sZM1jEDsbiiyc8NZYFhPU6gbmJWwnIKNDoTo=;
+        s=default; t=1548358177;
+        bh=mQpaxVh4iFNGOanmyzmsBunNzn3HoC5n1gq4K21yXNo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U0HtN4X5spwOjL8Vqk+f7h+vwWz89SBJ/2fKSVnv3HJ1ahaBwEonzSlCNHkPH1vow
-         rabF9QbIMNYuCcB0lJlElkF+mEyHhM+enYMTiUqTP9GkYNVwYGoBtoq+12d8dFoPHP
-         2JW/LGOFEVFfJoWq2i0dSk8QGbIVj6A4HNkLF2YI=
+        b=FWPTFycre44Vixzc1mwo3UVwKzXtXl9naowjjF8B90i2qdMF3FGTDkQ+HBNeU5Sn6
+         16uVIjnY+DgWAq0L0YU/h6nzR1VRXai7iP5AGUVlF93dfmFYJ5hRk7VjuL/BbMgU+x
+         Hs9xc7Y/y/vBdHzn/uF7k2BIvZfqtJGaccfWkvDM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Ahern <dsahern@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 02/39] ipv6: Consider sk_bound_dev_if when binding a socket to a v4 mapped address
-Date:   Thu, 24 Jan 2019 20:20:05 +0100
-Message-Id: <20190124190448.317122717@linuxfoundation.org>
+        stable@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
+        Dong Aisheng <Aisheng.dong@nxp.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 20/39] clk: imx6q: reset exclusive gates on init
+Date:   Thu, 24 Jan 2019 20:20:23 +0100
+Message-Id: <20190124190448.956879232@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190448.232316246@linuxfoundation.org>
 References: <20190124190448.232316246@linuxfoundation.org>
@@ -64,51 +67,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Ahern <dsahern@gmail.com>
+[ Upstream commit f7542d817733f461258fd3a47d77da35b2d9fc81 ]
 
-[ Upstream commit ec90ad334986fa5856d11dd272f7f22fa86c55c4 ]
+The exclusive gates may be set up in the wrong way by software running
+before the clock driver comes up. In that case the exclusive setup is
+locked in its initial state, as the complementary function can't be
+activated without disabling the initial setup first.
 
-Similar to c5ee066333eb ("ipv6: Consider sk_bound_dev_if when binding a
-socket to an address"), binding a socket to v4 mapped addresses needs to
-consider if the socket is bound to a device.
+To avoid this lock situation, reset the exclusive gates to the off
+state and allow the kernel to provide the proper setup.
 
-This problem also exists from the beginning of git history.
-
-Signed-off-by: David Ahern <dsahern@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+Reviewed-by: Dong Aisheng <Aisheng.dong@nxp.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv6/af_inet6.c |   11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ drivers/clk/imx/clk-imx6q.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/net/ipv6/af_inet6.c
-+++ b/net/ipv6/af_inet6.c
-@@ -306,6 +306,7 @@ int inet6_bind(struct socket *sock, stru
+diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+index 93a19667003d..14682df5d312 100644
+--- a/drivers/clk/imx/clk-imx6q.c
++++ b/drivers/clk/imx/clk-imx6q.c
+@@ -258,8 +258,12 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+ 	 * lvds1_gate and lvds2_gate are pseudo-gates.  Both can be
+ 	 * independently configured as clock inputs or outputs.  We treat
+ 	 * the "output_enable" bit as a gate, even though it's really just
+-	 * enabling clock output.
++	 * enabling clock output. Initially the gate bits are cleared, as
++	 * otherwise the exclusive configuration gets locked in the setup done
++	 * by software running before the clock driver, with no way to change
++	 * it.
+ 	 */
++	writel(readl(base + 0x160) & ~0x3c00, base + 0x160);
+ 	clk[IMX6QDL_CLK_LVDS1_GATE] = imx_clk_gate_exclusive("lvds1_gate", "lvds1_sel", base + 0x160, 10, BIT(12));
+ 	clk[IMX6QDL_CLK_LVDS2_GATE] = imx_clk_gate_exclusive("lvds2_gate", "lvds2_sel", base + 0x160, 11, BIT(13));
  
- 	/* Check if the address belongs to the host. */
- 	if (addr_type == IPV6_ADDR_MAPPED) {
-+		struct net_device *dev = NULL;
- 		int chk_addr_ret;
- 
- 		/* Binding to v4-mapped address on a v6-only socket
-@@ -316,9 +317,17 @@ int inet6_bind(struct socket *sock, stru
- 			goto out;
- 		}
- 
-+		if (sk->sk_bound_dev_if) {
-+			dev = dev_get_by_index_rcu(net, sk->sk_bound_dev_if);
-+			if (!dev) {
-+				err = -ENODEV;
-+				goto out;
-+			}
-+		}
-+
- 		/* Reproduce AF_INET checks to make the bindings consistent */
- 		v4addr = addr->sin6_addr.s6_addr32[3];
--		chk_addr_ret = inet_addr_type(net, v4addr);
-+		chk_addr_ret = inet_addr_type_dev_table(net, dev, v4addr);
- 		if (!net->ipv4.sysctl_ip_nonlocal_bind &&
- 		    !(inet->freebind || inet->transparent) &&
- 		    v4addr != htonl(INADDR_ANY) &&
+-- 
+2.19.1
+
 
 
