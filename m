@@ -2,83 +2,119 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C08D0C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:08:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F470C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:09:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90988218AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:08:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2389218AF
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:09:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="YdDWcSws"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729388AbfAXSIX (ORCPT
+        id S1729483AbfAXSJG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 13:08:23 -0500
-Received: from s3.sipsolutions.net ([144.76.43.62]:35600 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729354AbfAXSIU (ORCPT
+        Thu, 24 Jan 2019 13:09:06 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:45016 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729336AbfAXSIR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 13:08:20 -0500
-Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92-RC4)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1gmjQG-0005KC-2S; Thu, 24 Jan 2019 19:08:16 +0100
-Message-ID: <2b8b377a84883db1a45afb42204d8fb5a7d5ccf9.camel@sipsolutions.net>
-Subject: Re: [PATCH] mac80211: Remove attribute packed from struct 'action'
-From:   Johannes Berg <johannes@sipsolutions.net>
-To:     Mathieu Malaterre <malat@debian.org>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Thu, 24 Jan 2019 19:08:14 +0100
-In-Reply-To: <20190124180535.20216-1-malat@debian.org> (sfid-20190124_190610_293460_EB105BCB)
-References: <20190124180535.20216-1-malat@debian.org>
-         (sfid-20190124_190610_293460_EB105BCB)
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 24 Jan 2019 13:08:17 -0500
+Received: by mail-pf1-f195.google.com with SMTP id u6so3357622pfh.11
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 10:08:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=aLdT+u4Gxzzx90j2NuIsLStcS5jPDAhiHJriLgQ53lI=;
+        b=YdDWcSwst38VE/NhrrMoRhY7ccNdzKffPGiIoiwy2ZkaVL05lQGL4t/n/xBe4XURAL
+         GLxYPbhv3Jmo6IeoeDRasUdiQlB5ygpzp3fqTeQZUcO6WqjHOsaejwGnzpeZf8bnCOzV
+         AEhcp2y7uSicfcsG8fDuI6spNYWzNCqRfsycw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=aLdT+u4Gxzzx90j2NuIsLStcS5jPDAhiHJriLgQ53lI=;
+        b=W6uLLgsl4B1rJzRf9hh3T4RhO5YljusOgiWX/dg7RNkxmj8sAXm1uuMF30suzROqzY
+         wzkgeKrbXYAzWGpyoBwaeFAqW+y2vo3y1a/rQEZWfALqttWfLaqSOAzkXacvCeGJL9QI
+         ywarPap2s9Odg5PFdHUwRqWmgUUawY5mqd6qzKE5viQoEzfz95x9rJHrYbuTxkPdnERd
+         +omlEmMQDoIQnrzvz6sk81p3/NRokJ8F1j8sYKDffXvEsVcxCK6v/j0KhFZGfK9A8OX1
+         q3MGg4V3Fbz27r8KmEJs+nEsL9/hvk/EzF69jWUvvqzmkVeWxgC2R97HOV+pi4ZlCbp+
+         IngA==
+X-Gm-Message-State: AJcUukc92vnwX3IGIMFVjQHTL42s++rnjEWP+jt0m2T2Hs0cLVwPV4Xo
+        kFdC3MNJ4bVNDQpYXcOteGjs4Q==
+X-Google-Smtp-Source: ALg8bN7BikrYw4LzC4CV4SwXTjP19kXInmHQpg4bu9ttD9uHyCnZPQF3ok+cTLCp/iPcmFW6LLWAwg==
+X-Received: by 2002:a62:a209:: with SMTP id m9mr7636807pff.218.1548353296431;
+        Thu, 24 Jan 2019 10:08:16 -0800 (PST)
+Received: from localhost.localdomain ([115.97.179.75])
+        by smtp.gmail.com with ESMTPSA id k15sm36141551pfb.147.2019.01.24.10.08.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 24 Jan 2019 10:08:15 -0800 (PST)
+From:   Jagan Teki <jagan@amarulasolutions.com>
+To:     Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-amarula@amarulasolutions.com, devicetree@vger.kernel.org,
+        linux-sunxi@googlegroups.com,
+        Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v7 0/5] media/sun6i: Allwinner A64 CSI support 
+Date:   Thu, 24 Jan 2019 23:37:31 +0530
+Message-Id: <20190124180736.28408-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-01-24 at 19:05 +0100, Mathieu Malaterre wrote:
-> During refactor in commit 9e478066eae4 ("mac80211: fix MU-MIMO
-> follow-MAC mode") a new struct 'action' was declared with packed
-> attribute as:
-> 
->   struct {
->           struct ieee80211_hdr_3addr hdr;
->           u8 category;
->           u8 action_code;
->   } __packed action;
-> 
-> But since struct 'ieee80211_hdr_3addr' is declared with an aligned
-> keyword as:
-> 
->   struct ieee80211_hdr {
->   	__le16 frame_control;
->   	__le16 duration_id;
->   	u8 addr1[ETH_ALEN];
->   	u8 addr2[ETH_ALEN];
->   	u8 addr3[ETH_ALEN];
->   	__le16 seq_ctrl;
->   	u8 addr4[ETH_ALEN];
->   } __packed __aligned(2);
-> 
-> Solve the ambiguity of placing aligned structure in a packed one by
-> removing the packed attribute from struct. This seems to be the behavior
-> of gcc anyway, since the following is still compiling:
-> 
->   BUILD_BUG_ON(sizeof(action) != IEEE80211_MIN_ACTION_SIZE + 1);
+Add CSI support for Allwinner A64. Here is previous series[1]
 
-I'm not sure this will work on all platforms, didn't something like
-alpha pad out u8's to u32 when not requiring packing?
+Changes for v7:
+- Drop quirk change, and add as suggusted by Maxime
+- Use csi instead csi0 in pinctrl function
+Changes for v6:
+- set the mod rate in seett_power instead of probe
+Changes for v5:
+- Add mod_rate quirk for better handling clk_set code
+Changes for v4:
+- update the compatible string order
+- add proper commit message
+- included BPI-M64 patch
+- skipped amarula-a64 patch
+Changes for v3:
+- update dt-bindings for A64
+- set mod clock via csi driver
+- remove assign clocks from dtsi
+- remove i2c-gpio opendrian
+- fix avdd and dovdd supplies
+- remove vcc-csi pin group supply
 
-I guess I'd feel better about using __packed __aligned(2) here as well,
-which should solve the warning too?
+[1] https://patchwork.kernel.org/cover/10771163/
 
-johannes
+Any inputs?
+Jagan.
 
+Jagan Teki (5):
+  dt-bindings: media: sun6i: Add A64 CSI compatible
+  media: sun6i: Add A64 CSI block support
+  arm64: dts: allwinner: a64: Add A64 CSI controller
+  arm64: dts: allwinner: a64: Add pinmux setting for CSI MCLK on PE1
+  [DO NOT MERGET] arm64: dts: allwinner: bananapi-m64: Add HDF5640 camera module
+
+ .../devicetree/bindings/media/sun6i-csi.txt   |  1 +
+ .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 65 +++++++++++++++++++
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 25 +++++++
+ .../platform/sunxi/sun6i-csi/sun6i_csi.c      | 13 +++-
+ 4 files changed, 103 insertions(+), 1 deletion(-)
+
+-- 
+2.18.0.321.gffc6fa0e3
 
