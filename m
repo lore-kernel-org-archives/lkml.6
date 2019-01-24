@@ -7,48 +7,51 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CC75C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:48:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE998C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:48:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3568020663
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:48:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD71820663
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:48:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359308;
-	bh=cL2rF71q5MD59UqL8CWgxlygOJdHQ7mR1ax6d/I0O8I=;
+	s=default; t=1548359326;
+	bh=S35PfGvI95e8n6RzOVEI0eeVOnj8yOKDYcR3xsTWPYg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=bRS8JDlASkMenL3nwfA18UFoa1MEep4ILoHG3isfUAQ2vIJEVYDWzcBqBDoVmdP2S
-	 q/uJN0EfvU2aSWkPNTWFz8wKbm870bTStfJsKHHo6IC8XmTADWRrRWVF+tDjf2ukBc
-	 +YxyD4JPLOZJ6ZNN8ML+1q0iX2QwxT6uRvLN4180=
+	b=hOCWCz9vEtIoTk+JS+bdFjIMc3VXw+ZsSjWh+lPHag6QrYaZ95h701O29IoL3oybS
+	 JYMSYhDVZzzFJ/CKRfUVQ46HQjDQhXjX3bkO/q9qXFNdDN36eFEug/hbpkDihSOwfB
+	 sV/C8Irg20zdhH1wt5v93YaYh/t/G1DPosfgnVoQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387727AbfAXTmG (ORCPT
+        id S1732488AbfAXTsp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:42:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42478 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:48:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42134 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387716AbfAXTmE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:42:04 -0500
+        id S2387636AbfAXTlt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:41:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C24D220663;
-        Thu, 24 Jan 2019 19:42:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05CF8218D3;
+        Thu, 24 Jan 2019 19:41:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358923;
-        bh=cL2rF71q5MD59UqL8CWgxlygOJdHQ7mR1ax6d/I0O8I=;
+        s=default; t=1548358907;
+        bh=S35PfGvI95e8n6RzOVEI0eeVOnj8yOKDYcR3xsTWPYg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WcyTrHyCOJR3Jhe9zPU+lXM8L3uLxmXS2R5dRBUCftPBF1HmjQiuPLNynK+jqZtft
-         MBPaB4+xl3VZ4BhBqKmR5l/11Xsa9vxsFBsGlOZ5oQ6jeo42Nj4kk3wVGPpANN4Dbh
-         T9JmQ6L16jlY8dOS1eE9AyvP/FByTzHUY8urobI0=
+        b=hmfOvdaOT1hj5vjyMH8+utk/M31WtuVPR2D+eEIFDpc5N2HpwHmk6dtSB0STAIVuV
+         y59smrljMSL8dgs9km5X14C1niEUofgmIVVyIq+8b+NSgRspmxQTMIwNIi6ryB5zF6
+         5kZIlqOx3noDBSNLV3YDP3Xog99BOSN3GBz8AwDc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
+        stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>,
+        linux-kselftest@vger.kernel.org,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 039/127] clk: meson: meson8b: fix incorrect divider mapping in cpu_scale_table
-Date:   Thu, 24 Jan 2019 20:19:45 +0100
-Message-Id: <20190124190213.947325669@linuxfoundation.org>
+Subject: [PATCH 4.20 067/127] selftests: do not macro-expand failed assertion expressions
+Date:   Thu, 24 Jan 2019 20:20:13 +0100
+Message-Id: <20190124190214.990956512@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
 References: <20190124190211.984305387@linuxfoundation.org>
@@ -67,105 +70,241 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit ad9b2b8e53af61375322e3c7d624acf3a3ef53b0 ]
+[ Upstream commit b708a3cc9600390ccaa2b68a88087dd265154b2b ]
 
-The public S805 datasheet only mentions that
-HHI_SYS_CPU_CLK_CNTL1[20:29] contains a divider called "cpu_scale_div".
-Unfortunately it does not mention how to use the register contents.
+I've stumbled over the current macro-expand behaviour of the test
+harness:
 
-The Amlogic 3.10 GPL kernel sources are using the following code to
-calculate the CPU clock based on that register (taken from
-arch/arm/mach-meson8/clock.c in the 3.10 Amlogic kernel, shortened to
-make it easier to read):
-N = (aml_read_reg32(P_HHI_SYS_CPU_CLK_CNTL1) >> 20) & 0x3FF;
-if (sel == 3) /* use cpu_scale_div */
-  div = 2 * N;
-else
-  div = ... /* not relevant for this example */
-cpu_clk = parent_clk / div;
+$ gcc -Wall -xc - <<'__EOF__'
+TEST(macro) {
+	int status = 0;
+	ASSERT_TRUE(WIFSIGNALED(status));
+}
+TEST_HARNESS_MAIN
+__EOF__
+$ ./a.out
+[==========] Running 1 tests from 1 test cases.
+[ RUN      ] global.macro
+<stdin>:4:global.macro:Expected 0 (0) != (((signed char) (((status) & 0x7f) + 1) >> 1) > 0) (0)
+global.macro: Test terminated by assertion
+[     FAIL ] global.macro
+[==========] 0 / 1 tests passed.
+[  FAILED  ]
 
-This suggests that the formula is: parent_rate / 2 * register_value
-However, running perf (which can measure the CPU clock rate thanks to
-the ARM PMU) shows that this formula is not correct.
-This can be reproduced with the following steps:
-1. boot into u-boot
-2. let the CPU clock run off the XTAL clock:
-   mw.l 0xC110419C 0x30 1
-3. set the cpu_scale_div register:
-   to value 0x1: mw.l 0xC110415C 0x801016A2 1
-   to value 0x2: mw.l 0xC110415C 0x802016A2 1
-   to value 0x5: mw.l 0xC110415C 0x805016A2 1
-4. let the CPU clock run off cpu_scale_div:
-   mw.l 0xC110419C 0xbd 1
-5. boot Linux
-6. run: perf stat -aB stress --cpu 4 --timeout 10
-7. check the "cycles" value
+With this change the output of the same test looks much more
+comprehensible:
 
-I get the following results depending on the cpu_scale_div value:
-- (cpu_in_sel - this is the input clock for cpu_scale_div - runs at
-   1.2GHz)
-- 0x1 = 300MHz
-- 0x2 = 200MHz
-- 0x5 = 100MHz
+[==========] Running 1 tests from 1 test cases.
+[ RUN      ] global.macro
+<stdin>:4:global.macro:Expected 0 (0) != WIFSIGNALED(status) (0)
+global.macro: Test terminated by assertion
+[     FAIL ] global.macro
+[==========] 0 / 1 tests passed.
+[  FAILED  ]
 
-This means that the actual formula to calculate the output of the
-cpu_scale_div clock is: parent_rate / 2 * (register value + 1).
+The issue is very similar to the bug fixed in glibc assert(3)
+three years ago:
+https://sourceware.org/bugzilla/show_bug.cgi?id=18604
 
-The register value 0x0 is reserved. When letting the CPU clock run off
-the cpu_scale_div while the value is 0x0 the whole board hangs (even in
-u-boot).
-
-I also verified this with the TWD timer: when adding this to the .dts
-without specifying it's clock it will auto-detect the PERIPH (which is
-the input clock of the TWD) clock rate (and the result is shown in the
-kernel log). On Meson8, Meson8b and Meson8m2 the PERIPH clock is CPUCLK
-divided by 4. This also matched for all three test-cases from above (in
-all cases the TWD timer clock rate was approx. one fourth of the CPU
-clock rate).
-
-A small note regarding the "fixes" tag: the original issue seems to
-exist virtually since forever. Even commit 28b9fcd016126e ("clk:
-meson8b: Add support for Meson8b clocks") seems to handle this wrong. I
-still decided to use commit 251b6fd38bcb9c ("clk: meson: rework meson8b
-cpu clock") because this is the first commit which gets the CPU hiearchy
-correct and thus it's the first commit where the cpu_scale_div register
-is used correctly (apart from the bug in the cpu_scale_table).
-
-Fixes: 251b6fd38bcb9c ("clk: meson: rework meson8b cpu clock")
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Link: https://lkml.kernel.org/r/20180927085921.24627-2-martin.blumenstingl@googlemail.com
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Will Drewry <wad@chromium.org>
+Cc: linux-kselftest@vger.kernel.org
+Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
+Acked-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Shuah Khan <shuah@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/meson/meson8b.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ tools/testing/selftests/kselftest_harness.h | 42 ++++++++++-----------
+ 1 file changed, 21 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index a059db63907c..1d39273d7a04 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -584,13 +584,14 @@ static struct clk_fixed_factor meson8b_cpu_div3 = {
- };
+diff --git a/tools/testing/selftests/kselftest_harness.h b/tools/testing/selftests/kselftest_harness.h
+index 6ae3730c4ee3..76d654ef3234 100644
+--- a/tools/testing/selftests/kselftest_harness.h
++++ b/tools/testing/selftests/kselftest_harness.h
+@@ -354,7 +354,7 @@
+  * ASSERT_EQ(expected, measured): expected == measured
+  */
+ #define ASSERT_EQ(expected, seen) \
+-	__EXPECT(expected, seen, ==, 1)
++	__EXPECT(expected, #expected, seen, #seen, ==, 1)
  
- static const struct clk_div_table cpu_scale_table[] = {
--	{ .val = 2, .div = 4 },
--	{ .val = 3, .div = 6 },
--	{ .val = 4, .div = 8 },
--	{ .val = 5, .div = 10 },
--	{ .val = 6, .div = 12 },
--	{ .val = 7, .div = 14 },
--	{ .val = 8, .div = 16 },
-+	{ .val = 1, .div = 4 },
-+	{ .val = 2, .div = 6 },
-+	{ .val = 3, .div = 8 },
-+	{ .val = 4, .div = 10 },
-+	{ .val = 5, .div = 12 },
-+	{ .val = 6, .div = 14 },
-+	{ .val = 7, .div = 16 },
-+	{ .val = 8, .div = 18 },
- 	{ /* sentinel */ },
- };
+ /**
+  * ASSERT_NE(expected, seen)
+@@ -365,7 +365,7 @@
+  * ASSERT_NE(expected, measured): expected != measured
+  */
+ #define ASSERT_NE(expected, seen) \
+-	__EXPECT(expected, seen, !=, 1)
++	__EXPECT(expected, #expected, seen, #seen, !=, 1)
  
+ /**
+  * ASSERT_LT(expected, seen)
+@@ -376,7 +376,7 @@
+  * ASSERT_LT(expected, measured): expected < measured
+  */
+ #define ASSERT_LT(expected, seen) \
+-	__EXPECT(expected, seen, <, 1)
++	__EXPECT(expected, #expected, seen, #seen, <, 1)
+ 
+ /**
+  * ASSERT_LE(expected, seen)
+@@ -387,7 +387,7 @@
+  * ASSERT_LE(expected, measured): expected <= measured
+  */
+ #define ASSERT_LE(expected, seen) \
+-	__EXPECT(expected, seen, <=, 1)
++	__EXPECT(expected, #expected, seen, #seen, <=, 1)
+ 
+ /**
+  * ASSERT_GT(expected, seen)
+@@ -398,7 +398,7 @@
+  * ASSERT_GT(expected, measured): expected > measured
+  */
+ #define ASSERT_GT(expected, seen) \
+-	__EXPECT(expected, seen, >, 1)
++	__EXPECT(expected, #expected, seen, #seen, >, 1)
+ 
+ /**
+  * ASSERT_GE(expected, seen)
+@@ -409,7 +409,7 @@
+  * ASSERT_GE(expected, measured): expected >= measured
+  */
+ #define ASSERT_GE(expected, seen) \
+-	__EXPECT(expected, seen, >=, 1)
++	__EXPECT(expected, #expected, seen, #seen, >=, 1)
+ 
+ /**
+  * ASSERT_NULL(seen)
+@@ -419,7 +419,7 @@
+  * ASSERT_NULL(measured): NULL == measured
+  */
+ #define ASSERT_NULL(seen) \
+-	__EXPECT(NULL, seen, ==, 1)
++	__EXPECT(NULL, "NULL", seen, #seen, ==, 1)
+ 
+ /**
+  * ASSERT_TRUE(seen)
+@@ -429,7 +429,7 @@
+  * ASSERT_TRUE(measured): measured != 0
+  */
+ #define ASSERT_TRUE(seen) \
+-	ASSERT_NE(0, seen)
++	__EXPECT(0, "0", seen, #seen, !=, 1)
+ 
+ /**
+  * ASSERT_FALSE(seen)
+@@ -439,7 +439,7 @@
+  * ASSERT_FALSE(measured): measured == 0
+  */
+ #define ASSERT_FALSE(seen) \
+-	ASSERT_EQ(0, seen)
++	__EXPECT(0, "0", seen, #seen, ==, 1)
+ 
+ /**
+  * ASSERT_STREQ(expected, seen)
+@@ -472,7 +472,7 @@
+  * EXPECT_EQ(expected, measured): expected == measured
+  */
+ #define EXPECT_EQ(expected, seen) \
+-	__EXPECT(expected, seen, ==, 0)
++	__EXPECT(expected, #expected, seen, #seen, ==, 0)
+ 
+ /**
+  * EXPECT_NE(expected, seen)
+@@ -483,7 +483,7 @@
+  * EXPECT_NE(expected, measured): expected != measured
+  */
+ #define EXPECT_NE(expected, seen) \
+-	__EXPECT(expected, seen, !=, 0)
++	__EXPECT(expected, #expected, seen, #seen, !=, 0)
+ 
+ /**
+  * EXPECT_LT(expected, seen)
+@@ -494,7 +494,7 @@
+  * EXPECT_LT(expected, measured): expected < measured
+  */
+ #define EXPECT_LT(expected, seen) \
+-	__EXPECT(expected, seen, <, 0)
++	__EXPECT(expected, #expected, seen, #seen, <, 0)
+ 
+ /**
+  * EXPECT_LE(expected, seen)
+@@ -505,7 +505,7 @@
+  * EXPECT_LE(expected, measured): expected <= measured
+  */
+ #define EXPECT_LE(expected, seen) \
+-	__EXPECT(expected, seen, <=, 0)
++	__EXPECT(expected, #expected, seen, #seen, <=, 0)
+ 
+ /**
+  * EXPECT_GT(expected, seen)
+@@ -516,7 +516,7 @@
+  * EXPECT_GT(expected, measured): expected > measured
+  */
+ #define EXPECT_GT(expected, seen) \
+-	__EXPECT(expected, seen, >, 0)
++	__EXPECT(expected, #expected, seen, #seen, >, 0)
+ 
+ /**
+  * EXPECT_GE(expected, seen)
+@@ -527,7 +527,7 @@
+  * EXPECT_GE(expected, measured): expected >= measured
+  */
+ #define EXPECT_GE(expected, seen) \
+-	__EXPECT(expected, seen, >=, 0)
++	__EXPECT(expected, #expected, seen, #seen, >=, 0)
+ 
+ /**
+  * EXPECT_NULL(seen)
+@@ -537,7 +537,7 @@
+  * EXPECT_NULL(measured): NULL == measured
+  */
+ #define EXPECT_NULL(seen) \
+-	__EXPECT(NULL, seen, ==, 0)
++	__EXPECT(NULL, "NULL", seen, #seen, ==, 0)
+ 
+ /**
+  * EXPECT_TRUE(seen)
+@@ -547,7 +547,7 @@
+  * EXPECT_TRUE(measured): 0 != measured
+  */
+ #define EXPECT_TRUE(seen) \
+-	EXPECT_NE(0, seen)
++	__EXPECT(0, "0", seen, #seen, !=, 0)
+ 
+ /**
+  * EXPECT_FALSE(seen)
+@@ -557,7 +557,7 @@
+  * EXPECT_FALSE(measured): 0 == measured
+  */
+ #define EXPECT_FALSE(seen) \
+-	EXPECT_EQ(0, seen)
++	__EXPECT(0, "0", seen, #seen, ==, 0)
+ 
+ /**
+  * EXPECT_STREQ(expected, seen)
+@@ -597,7 +597,7 @@
+ 	if (_metadata->passed && _metadata->step < 255) \
+ 		_metadata->step++;
+ 
+-#define __EXPECT(_expected, _seen, _t, _assert) do { \
++#define __EXPECT(_expected, _expected_str, _seen, _seen_str, _t, _assert) do { \
+ 	/* Avoid multiple evaluation of the cases */ \
+ 	__typeof__(_expected) __exp = (_expected); \
+ 	__typeof__(_seen) __seen = (_seen); \
+@@ -606,8 +606,8 @@
+ 		unsigned long long __exp_print = (uintptr_t)__exp; \
+ 		unsigned long long __seen_print = (uintptr_t)__seen; \
+ 		__TH_LOG("Expected %s (%llu) %s %s (%llu)", \
+-			 #_expected, __exp_print, #_t, \
+-			 #_seen, __seen_print); \
++			 _expected_str, __exp_print, #_t, \
++			 _seen_str, __seen_print); \
+ 		_metadata->passed = 0; \
+ 		/* Ensure the optional handler is triggered */ \
+ 		_metadata->trigger = 1; \
 -- 
 2.19.1
 
