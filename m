@@ -2,211 +2,117 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EBCBC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:22:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ED3FC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:22:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9730218A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:22:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 062D82184C
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:22:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726170AbfAXJWZ (ORCPT
+        id S1726516AbfAXJWv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 04:22:25 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:40231 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725939AbfAXJWY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 04:22:24 -0500
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gmbDG-0000mV-QO; Thu, 24 Jan 2019 10:22:18 +0100
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gmbDD-0006XB-Is; Thu, 24 Jan 2019 10:22:15 +0100
-Date:   Thu, 24 Jan 2019 10:22:15 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Michal =?utf-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Lukasz Majewski <l.majewski@majess.pl>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@karo-electronics.de>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC PATCH v3 2/2] pwm: imx: Configure output to GPIO in
- disabled state
-Message-ID: <20190124092215.zbu62lhxf667rzvs@pengutronix.de>
-References: <1544103655-104466-1-git-send-email-michal.vokac@ysoft.com>
- <1544103655-104466-3-git-send-email-michal.vokac@ysoft.com>
- <20181212080154.kcfh57mulypwuscu@pengutronix.de>
- <52ed0614-d1f5-81cb-3b17-8eb137967872@ysoft.com>
- <20181212121255.yg6b4pw7qord7ebi@pengutronix.de>
- <4b0356b7-bc7d-a026-ac90-3f0c5754ed29@ysoft.com>
+        Thu, 24 Jan 2019 04:22:51 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40150 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725939AbfAXJWu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 04:22:50 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 77ED9AC6C;
+        Thu, 24 Jan 2019 09:22:48 +0000 (UTC)
+Subject: Re: [PATCH 2/7] scsi: csiostor: no need to check return value of
+ debugfs_create functions
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Martin Petersen <martin.petersen@oracle.com>
+Cc:     linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+        Varun Prakash <varun@chelsio.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Oza Pawandeep <poza@codeaurora.org>
+References: <20190122150906.12470-1-gregkh@linuxfoundation.org>
+ <20190122150906.12470-3-gregkh@linuxfoundation.org>
+From:   Johannes Thumshirn <jthumshirn@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jthumshirn@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <694d91ce-097d-980e-b324-25be519e7f77@suse.de>
+Date:   Thu, 24 Jan 2019 10:22:47 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
+In-Reply-To: <20190122150906.12470-3-gregkh@linuxfoundation.org>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <4b0356b7-bc7d-a026-ac90-3f0c5754ed29@ysoft.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 09:59:47AM +0100, Michal Vokáč wrote:
-> On 12.12.2018 13:12, Uwe Kleine-König wrote:
-> > On Wed, Dec 12, 2018 at 11:42:17AM +0000, Vokáč Michal wrote:
-> > > On 12.12.2018 09:01, Uwe Kleine-König wrote:
-> > > > On Thu, Dec 06, 2018 at 01:41:31PM +0000, Vokáč Michal wrote:
-> > > > > Normally the PWM output is held LOW when PWM is disabled. This can cause
-> > > > > problems when inverted PWM signal polarity is needed. With this behavior
-> > > > > the connected circuit is fed by 100% duty cycle instead of being shut-off.
-> > > > > 
-> > > > > Allow users to define a "pwm" and a "gpio" pinctrl states. The pwm pinctrl
-> > > > > state is selected when PWM is enabled and the gpio pinctrl state is
-> > > > > selected when PWM is disabled. In the gpio state the new pwm-gpios GPIO is
-> > > > > configured as input and the internal pull-up resistor is used to pull the
-> > > > > output level high.
-> > > > > 
-> > > > > If all the pinctrl states and the pwm-gpios GPIO are not correctly
-> > > > > specified in DT the PWM work as usual.
-> > > > > 
-> > > > > As an example, with this patch a PWM controlled backlight with inversed
-> > > > > signal polarity can be used in full brightness range. Without this patch
-> > > > > the backlight can not be turned off as brightness = 0 disables the PWM
-> > > > > and that in turn set PWM output LOW, that is full brightness.
-> > > > > 
-> > > > > Inverted output of the PWM with "default" and with "pwm"+"gpio" pinctrl:
-> > > > > 
-> > > > > +--------------+------------+---------------+----------- +-------------+
-> > > > > | After reset  | Bootloader |   PWM probe   |     PWM    |     PWM     |
-> > > > > | 100k pull-up |            |               | enable 30% |   disable   |
-> > > > > +--------------+------------+---------------+------------+-------------+
-> > > > > | pinctrl      |    none    |    default    |   default  |   default   |
-> > > > > | out H   __________________                   __   __                 |
-> > > > > | out L                     \_________________/  \_/  \_/\____________ |
-> > > > > |                                           ^    ^    ^                |
-> > > > > +--------------+------------+---------------+------------+-------------+
-> > > > > | pinctrl      |    none    |      gpio     |     pwm    |     gpio    |
-> > > > > | out H   __________________________________   __   __   _____________ |
-> > > > > | out L                                     \_/  \_/  \_/              |
-> > > > > |                                           ^    ^    ^                |
-> > > > > +----------------------------------------------------------------------+
-> > > > > 
-> > > > > Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
-> > > > > ---
-> > > > > Changes in v3:
-> > > > >    - Commit message update.
-> > > > >    - Minor fix in code comment (Uwe)
-> > > > >    - Align function arguments to the opening parentheses. (Uwe)
-> > > > >    - Do not test devm_pinctrl_get for NULL. (Thierry)
-> > > > >    - Convert all messages to dev_dbg() (Thierry)
-> > > > >    - Do not actively drive the pin in gpio state. Configure it as input
-> > > > >      and rely solely on the internal pull-up. (Thierry)
-> > > > > 
-> > > > > Changes in v2:
-> > > > >    - Utilize the "pwm" and "gpio" pinctrl states.
-> > > > >    - Use the pwm-gpios signal to drive the output in "gpio" pinctrl state.
-> > > > >    - Select the right pinctrl state in probe.
-> > > > > 
-> > > > >    drivers/pwm/pwm-imx.c | 77 +++++++++++++++++++++++++++++++++++++++++++++++++++
-> > > > >    1 file changed, 77 insertions(+)
-> > > > > 
-> > > 
-> > > [ snip ]
-> > > 
-> > > > On thing I noticed while looking at the rcar driver is: This doesn't
-> > > > wait for the current period to end. Is this supposed to happen? Also for
-> > > > the enable case the hardware is configured for the desired duty cycle
-> > > > and only then the pinctrl is switched to pwm. Both might result in a
-> > > > spike that is not desired.
-> > > 
-> > > The behavior should not change from how imx-pwm was working before.
-> > > When PWM is disabled the output is immediately gated off (put into
-> > > the idle state) independently on the period. I measured this.
-> > 
-> > Oh really, I wasn't aware of that. This is another bug in the imx pwm
-> > then (I think).
-> 
-> I kind of expect that when hit a disable button the output is immediately
-> put into the idle state. To me it does not seem appropriate to wait the
-> whole period, or even just the active part of the period. If duty=100%
-> and period=4s (current maximum), in the worst case you would have to wait
-> 4s until you stop the PWM. Quite a long time of driving something you
-> actually wanted to be shut off.
+Looks good,
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
 
-I think it might be beneficial to allow (or require) that disable acts
-immediately. But this is not how it used to be and in my discussion with
-Thierry (IIRC) he required to complete the currently running period.
-
-Then if a user requires a "smooth disable" (i.e. with completing the
-currently running period) they can do:
-
-	pwm_apply_state(pwm, { .duty_cycle = 0, ... });
-	pwm_apply_state(pwm, { .enabled = 0 });
-
-to get the delayed disable.
-
-But having said this, this should be a concious decision with the
-requirements properly documented and the drivers users reviewed and adapted.
-
-> > > For the enable case you would certainly not get any additional spikes.
-> > 
-> > Yes, there is a possibility for a spike: If you configure for say 40%:
-> >                    _    _
-> > pwm output   : ___/ \__/ \__
-> > muxing       : GPIO| PWM_
-> > actual output: ____/\__/ \__
-> 
-> OK, you are right.
-> 
-> > > The worst thing that may happen is that the first period will be
-> > > slightly shorter depending on how long it takes to test the pinctrl
-> > > and switch the muxing. And this is unavoidable, it would happen even
-> > > if you wait for the start of a period. The test + muxing still takes
-> > > some time.
-> > 
-> > You could first configure for duty_cycle 0 and a short period, then mux
-> > to PWM and then configure the correct duty cycle. Ditto for disable.
-> 
-> I agree it can be solved for the enable case but I do not see the
-> point in doing so for the disable case. Can you elaborate on how it
-> could be useful?
-
-Assuming we stick to "disable should complete the currently running
-period" it is all about preventing spikes. So if you switch the mux from
-PWM to GPIO when the output just raised, that might (depending on the
-use case) be bad and so it should be possible for the user to prevent
-this.
-
-> This is what I came up with:
-> 
-> [...]
-> 
-> What do you think?
-
-I'm missing context. Your patch is on top of your last patch I assume.
-Would you mind to send the squashed result?
-
-(I'm unsure when I find time (and nerve) for a proper review, but I will
-try to at least look over your suggestions.)
-
-Best regards
-Uwe
 
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Johannes Thumshirn                            SUSE Labs Filesystems
+jthumshirn@suse.de                                +49 911 74053 689
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
+Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
