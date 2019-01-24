@@ -2,80 +2,113 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAA6BC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:17:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80B40C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:18:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85197217D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:17:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F28E217D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:18:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548361091;
+	bh=wVNreC0m5Eu76wZ4GvRr8R4dxG6ujkfNygAHtgTpaU8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=lIeopxW1ssrWOPdj38QduZCQvdc8inK5QidX/wdSnVvcyCHxZNnp0ntL9fUD+6DeW
+	 pDiV9pGWGPZomPHcGB4EGRqUvnJvWvntUVZRzaqJC11FEwZV+0Z/DyMSsFnG2JGPki
+	 mw2qXSirVZvcBjvgDwwRH6l2ou+1C3spDc//grJY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729960AbfAXUR5 (ORCPT
+        id S1729940AbfAXUSJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 15:17:57 -0500
-Received: from asavdk3.altibox.net ([109.247.116.14]:57156 "EHLO
-        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728872AbfAXURz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 15:17:55 -0500
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Thu, 24 Jan 2019 15:18:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47292 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729579AbfAXTWk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:22:40 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by asavdk3.altibox.net (Postfix) with ESMTPS id A88C72004C;
-        Thu, 24 Jan 2019 21:17:50 +0100 (CET)
-Date:   Thu, 24 Jan 2019 21:17:49 +0100
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Sean Paul <sean@poorly.run>, Hans de Goede <hdegoede@redhat.com>
-Cc:     dri-devel@lists.freedesktop.org,
-        Alexey Brodkin <abrodkin@synopsys.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Chen Feng <puck.chen@hisilicon.com>,
-        David Airlie <airlied@linux.ie>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Philippe Cornu <philippe.cornu@st.com>,
-        Rongrong Zou <zourongrong@gmail.com>,
-        Vincent Abriou <vincent.abriou@st.com>,
-        Xinliang Liu <z.liuxinliang@hisilicon.com>,
-        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-        Yannick Fertre <yannick.fertre@st.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 6/6] drm: remove drmP.h from drm_modeset_helper.h
-Message-ID: <20190124201749.GA9246@ravnborg.org>
-References: <20190119084014.5355-1-sam@ravnborg.org>
- <20190119084014.5355-7-sam@ravnborg.org>
- <20190124140320.GY3271@phenom.ffwll.local>
- <20190124200747.GQ114153@art_vandelay>
+        by mail.kernel.org (Postfix) with ESMTPSA id E9139218CD;
+        Thu, 24 Jan 2019 19:22:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548357759;
+        bh=wVNreC0m5Eu76wZ4GvRr8R4dxG6ujkfNygAHtgTpaU8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=IEogONnvKXuAVuhzloVolSzD+J3XqJe0DJ796VIU816dKMKpzUhAVm6Fj3nEmiwJQ
+         DdFlYkL4iktLlbxs8ZiYUSo2q3Qu0PAE+RS/L5wCOlDKmRP2QiHsqu+WMTo58y0SUP
+         Q1QyXh0Ymy4rz81/2FszHdyIOShyrDWks180teXc=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Yi Zeng <yizeng@asrmicro.com>,
+        Wolfram Sang <wsa@the-dreams.de>, stable@kernel.org
+Subject: [PATCH 3.18 09/52] i2c: dev: prevent adapter retries and timeout being set as minus value
+Date:   Thu, 24 Jan 2019 20:19:33 +0100
+Message-Id: <20190124190142.515214234@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190124190140.879495253@linuxfoundation.org>
+References: <20190124190140.879495253@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190124200747.GQ114153@art_vandelay>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=dqr19Wo4 c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=kj9zAlcOel0A:10 a=RSz1i6J4wgyY2psFQvcA:9 a=CjuIK1q_8ugA:10
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sean.
+3.18-stable review patch.  If anyone has any objections, please let me know.
 
-> > 
-> > Merge the previous 5 patches from this series, but this now goes boom on
-> > vbox in staging. Needs another prep patch I think.
-> 
-> Soo, can we drop vboxvideo yet?
+------------------
 
-Hans de Goede sent out patches in September to convert it to a proper
-atomic driver.
-I recall that the feedback was mostly positive and that there was only
-minor things to left to do. Hans?
+From: Yi Zeng <yizeng@asrmicro.com>
 
-	Sam
+commit 6ebec961d59bccf65d08b13fc1ad4e6272a89338 upstream.
+
+If adapter->retries is set to a minus value from user space via ioctl,
+it will make __i2c_transfer and __i2c_smbus_xfer skip the calling to
+adapter->algo->master_xfer and adapter->algo->smbus_xfer that is
+registered by the underlying bus drivers, and return value 0 to all the
+callers. The bus driver will never be accessed anymore by all users,
+besides, the users may still get successful return value without any
+error or information log print out.
+
+If adapter->timeout is set to minus value from user space via ioctl,
+it will make the retrying loop in __i2c_transfer and __i2c_smbus_xfer
+always break after the the first try, due to the time_after always
+returns true.
+
+Signed-off-by: Yi Zeng <yizeng@asrmicro.com>
+[wsa: minor grammar updates to commit message]
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Cc: stable@kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/i2c/i2c-dev.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
+
+--- a/drivers/i2c/i2c-dev.c
++++ b/drivers/i2c/i2c-dev.c
+@@ -462,9 +462,15 @@ static long i2cdev_ioctl(struct file *fi
+ 		return i2cdev_ioctl_smbus(client, arg);
+ 
+ 	case I2C_RETRIES:
++		if (arg > INT_MAX)
++			return -EINVAL;
++
+ 		client->adapter->retries = arg;
+ 		break;
+ 	case I2C_TIMEOUT:
++		if (arg > INT_MAX)
++			return -EINVAL;
++
+ 		/* For historical reasons, user-space sets the timeout
+ 		 * value in units of 10 ms.
+ 		 */
+
+
