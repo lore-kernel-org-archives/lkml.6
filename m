@@ -7,49 +7,48 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1655C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:49:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA5EDC282C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:49:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9111B20663
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:49:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F341217D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:49:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359357;
-	bh=2ZsPHUaXym3MPjXKtlaQnhUw8BdmQ76Kiis1P+OCEnM=;
+	s=default; t=1548359364;
+	bh=nJR+UMynlFAKJ6zQZ+tkAoRAzzG4qAm7eNMS0IMDwLM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0VDlOJ2LpkWLoGSDMN7Jt8N4t/MZ48gPgfC0gmlU0E/Tpq+2GdCN1P5a0eNb7pg2R
-	 fJq5qZkWHsvujQEM+sHuHgWPZA8SXp5h9KFYScOlQnSuVhfoT9NylZ8cu6ECfNuWED
-	 TFVNUutipJ9CA3T5NDs7eOU7Xgz332bpfzyWDkH0=
+	b=c52vp/GoaxW8E76qrDTXdrsHuwVZYYUceaW5LQ55Tre1ffeH6AXNc65S+9eeHGXKA
+	 U40J60GzIje9jaEOi/eOuGkLjDIIVZv/Feao63c/gNmmG7IpESftKE6S2rCgT/8is3
+	 BbzZTSE01T1qy49v0YYOsfDEWyXZYv9pBP5IyzfA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732554AbfAXTtQ (ORCPT
+        id S2387549AbfAXTlO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:49:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41598 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:41:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41470 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732866AbfAXTlT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:41:19 -0500
+        id S2387536AbfAXTlL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:41:11 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6EE8120663;
-        Thu, 24 Jan 2019 19:41:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6C86B20663;
+        Thu, 24 Jan 2019 19:41:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358877;
-        bh=2ZsPHUaXym3MPjXKtlaQnhUw8BdmQ76Kiis1P+OCEnM=;
+        s=default; t=1548358869;
+        bh=nJR+UMynlFAKJ6zQZ+tkAoRAzzG4qAm7eNMS0IMDwLM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2SyJgUDcwhgBQkTE+5YvbUzdGgci6/v226v+hBz98OMmZ2kWNEZCjWeHAZ8iSoStH
-         2W1kazzkC/cADVX2WyuSGaR2CNt4+kEk5QZigpyv7NyT5IyYqu42xsOvIyTczy0MR4
-         ifXA9yaY96uQUCMRnPck7kqmWCEMBdPJcHvw+bO8=
+        b=nGG9Tsj7nN2bUU81TCFVX+U/QNvZicY7dAU4mOIL8kpcIhMnntDUXHh3MHMC1n6q8
+         aDDmkId2ZjjZd6l1wrUsEBEwkpKs+d0m8O+88HQg4D1QAFzp7JgWq8gtsUTI99ICCE
+         Hn/B7VxtP6xsoMsUUE/oiYpXMEMI16dQ3iZU6X00=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>,
-        Peter Smith <peter.smith@linaro.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
+        stable@vger.kernel.org, Daniel Axtens <dja@axtens.net>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 058/127] arm64: relocatable: fix inconsistencies in linker script and options
-Date:   Thu, 24 Jan 2019 20:20:04 +0100
-Message-Id: <20190124190214.648699474@linuxfoundation.org>
+Subject: [PATCH 4.20 055/127] media: uvcvideo: Refactor teardown of uvc on USB disconnect
+Date:   Thu, 24 Jan 2019 20:20:01 +0100
+Message-Id: <20190124190214.539167670@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
 References: <20190124190211.984305387@linuxfoundation.org>
@@ -68,98 +67,183 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 3bbd3db86470c701091fb1d67f1fab6621debf50 ]
+[ Upstream commit 10e1fdb95809ed21406f53b5b4f064673a1b9ceb ]
 
-readelf complains about the section layout of vmlinux when building
-with CONFIG_RELOCATABLE=y (for KASLR):
+Currently, disconnecting a USB webcam while it is in use prints out a
+number of warnings, such as:
 
-  readelf: Warning: [21]: Link field (0) should index a symtab section.
-  readelf: Warning: [21]: Info field (0) should index a relocatable section.
+WARNING: CPU: 2 PID: 3118 at /build/linux-ezBi1T/linux-4.8.0/fs/sysfs/group.c:237 sysfs_remove_group+0x8b/0x90
+sysfs group ffffffffa7cd0780 not found for kobject 'event13'
 
-Also, it seems that our use of '-pie -shared' is contradictory, and
-thus ambiguous. In general, the way KASLR is wired up at the moment
-is highly tailored to how ld.bfd happens to implement (and conflate)
-PIE executables and shared libraries, so given the current effort to
-support other toolchains, let's fix some of these issues as well.
+This has been noticed before. [0]
 
-- Drop the -pie linker argument and just leave -shared. In ld.bfd,
-  the differences between them are unclear (except for the ELF type
-  of the produced image [0]) but lld chokes on seeing both at the
-  same time.
+This is because of the order in which things are torn down.
 
-- Rename the .rela output section to .rela.dyn, as is customary for
-  shared libraries and PIE executables, so that it is not misidentified
-  by readelf as a static relocation section (producing the warnings
-  above).
+If there are no streams active during a USB disconnect:
 
-- Pass the -z notext and -z norelro options to explicitly instruct the
-  linker to permit text relocations, and to omit the RELRO program
-  header (which requires a certain section layout that we don't adhere
-  to in the kernel). These are the defaults for current versions of
-  ld.bfd.
+ - uvc_disconnect() is invoked via device_del() through the bus
+   notifier mechanism.
 
-- Discard .eh_frame and .gnu.hash sections to avoid them from being
-  emitted between .head.text and .text, screwing up the section layout.
+ - this calls uvc_unregister_video().
 
-These changes only affect the ELF image, and produce the same binary
-image.
+ - uvc_unregister_video() unregisters the video device for each
+   stream,
 
-[0] b9dce7f1ba01 ("arm64: kernel: force ET_DYN ELF type for ...")
+ - because there are no streams open, it calls uvc_delete()
 
-Cc: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Peter Smith <peter.smith@linaro.org>
-Tested-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+ - uvc_delete() calls uvc_status_cleanup(), which cleans up the status
+   input device.
+
+ - uvc_delete() calls media_device_unregister(), which cleans up the
+   media device
+
+ - uvc_delete(), uvc_unregister_video() and uvc_disconnect() all
+   return, and we end up back in device_del().
+
+ - device_del() then cleans up the sysfs folder for the camera with
+   dpm_sysfs_remove(). Because uvc_status_cleanup() and
+   media_device_unregister() have already been called, this all works
+   nicely.
+
+If, on the other hand, there *are* streams active during a USB disconnect:
+
+ - uvc_disconnect() is invoked
+
+ - this calls uvc_unregister_video()
+
+ - uvc_unregister_video() unregisters the video device for each
+   stream,
+
+ - uvc_unregister_video() and uvc_disconnect() return, and we end up
+   back in device_del().
+
+ - device_del() then cleans up the sysfs folder for the camera with
+   dpm_sysfs_remove(). Because the status input device and the media
+   device are children of the USB device, this also deletes their
+   sysfs folders.
+
+ - Sometime later, the final stream is closed, invoking uvc_release().
+
+ - uvc_release() calls uvc_delete()
+
+ - uvc_delete() calls uvc_status_cleanup(), which cleans up the status
+   input device. Because the sysfs directory has already been removed,
+   this causes a WARNing.
+
+ - uvc_delete() calls media_device_unregister(), which cleans up the
+   media device. Because the sysfs directory has already been removed,
+   this causes another WARNing.
+
+To fix this, we need to make sure the devices are always unregistered
+before the end of uvc_disconnect(). To this, move the unregistration
+into the disconnect path:
+
+ - split uvc_status_cleanup() into two parts, one on disconnect that
+   unregisters and one on delete that frees.
+
+ - move v4l2_device_unregister() and media_device_unregister() into
+   the disconnect path.
+
+[0]: https://lkml.org/lkml/2016/12/8/657
+
+[Renamed uvc_input_cleanup() to uvc_input_unregister()]
+
+Signed-off-by: Daniel Axtens <dja@axtens.net>
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/Makefile             | 2 +-
- arch/arm64/kernel/vmlinux.lds.S | 9 +++++----
- 2 files changed, 6 insertions(+), 5 deletions(-)
+ drivers/media/usb/uvc/uvc_driver.c | 13 +++++++++----
+ drivers/media/usb/uvc/uvc_status.c | 12 ++++++++----
+ drivers/media/usb/uvc/uvcvideo.h   |  1 +
+ 3 files changed, 18 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
-index 6cb9fc7e9382..8978f60779c4 100644
---- a/arch/arm64/Makefile
-+++ b/arch/arm64/Makefile
-@@ -18,7 +18,7 @@ ifeq ($(CONFIG_RELOCATABLE), y)
- # Pass --no-apply-dynamic-relocs to restore pre-binutils-2.27 behaviour
- # for relative relocs, since this leads to better Image compression
- # with the relocation offsets always being zero.
--LDFLAGS_vmlinux		+= -pie -shared -Bsymbolic \
-+LDFLAGS_vmlinux		+= -shared -Bsymbolic -z notext -z norelro \
- 			$(call ld-option, --no-apply-dynamic-relocs)
- endif
+diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+index bc369a0934a3..76dc3ee8ca21 100644
+--- a/drivers/media/usb/uvc/uvc_driver.c
++++ b/drivers/media/usb/uvc/uvc_driver.c
+@@ -1824,11 +1824,7 @@ static void uvc_delete(struct kref *kref)
+ 	usb_put_intf(dev->intf);
+ 	usb_put_dev(dev->udev);
  
-diff --git a/arch/arm64/kernel/vmlinux.lds.S b/arch/arm64/kernel/vmlinux.lds.S
-index 03b00007553d..7fa008374907 100644
---- a/arch/arm64/kernel/vmlinux.lds.S
-+++ b/arch/arm64/kernel/vmlinux.lds.S
-@@ -99,7 +99,8 @@ SECTIONS
- 		*(.discard)
- 		*(.discard.*)
- 		*(.interp .dynamic)
--		*(.dynsym .dynstr .hash)
-+		*(.dynsym .dynstr .hash .gnu.hash)
-+		*(.eh_frame)
+-	if (dev->vdev.dev)
+-		v4l2_device_unregister(&dev->vdev);
+ #ifdef CONFIG_MEDIA_CONTROLLER
+-	if (media_devnode_is_registered(dev->mdev.devnode))
+-		media_device_unregister(&dev->mdev);
+ 	media_device_cleanup(&dev->mdev);
+ #endif
+ 
+@@ -1885,6 +1881,15 @@ static void uvc_unregister_video(struct uvc_device *dev)
+ 
+ 		uvc_debugfs_cleanup_stream(stream);
  	}
++
++	uvc_status_unregister(dev);
++
++	if (dev->vdev.dev)
++		v4l2_device_unregister(&dev->vdev);
++#ifdef CONFIG_MEDIA_CONTROLLER
++	if (media_devnode_is_registered(dev->mdev.devnode))
++		media_device_unregister(&dev->mdev);
++#endif
+ }
  
- 	. = KIMAGE_VADDR + TEXT_OFFSET;
-@@ -192,12 +193,12 @@ SECTIONS
+ int uvc_register_video_device(struct uvc_device *dev,
+diff --git a/drivers/media/usb/uvc/uvc_status.c b/drivers/media/usb/uvc/uvc_status.c
+index 0722dc684378..883e4cab45e7 100644
+--- a/drivers/media/usb/uvc/uvc_status.c
++++ b/drivers/media/usb/uvc/uvc_status.c
+@@ -54,7 +54,7 @@ error:
+ 	return ret;
+ }
  
- 	PERCPU_SECTION(L1_CACHE_BYTES)
+-static void uvc_input_cleanup(struct uvc_device *dev)
++static void uvc_input_unregister(struct uvc_device *dev)
+ {
+ 	if (dev->input)
+ 		input_unregister_device(dev->input);
+@@ -71,7 +71,7 @@ static void uvc_input_report_key(struct uvc_device *dev, unsigned int code,
  
--	.rela : ALIGN(8) {
-+	.rela.dyn : ALIGN(8) {
- 		*(.rela .rela*)
- 	}
+ #else
+ #define uvc_input_init(dev)
+-#define uvc_input_cleanup(dev)
++#define uvc_input_unregister(dev)
+ #define uvc_input_report_key(dev, code, value)
+ #endif /* CONFIG_USB_VIDEO_CLASS_INPUT_EVDEV */
  
--	__rela_offset	= ABSOLUTE(ADDR(.rela) - KIMAGE_VADDR);
--	__rela_size	= SIZEOF(.rela);
-+	__rela_offset	= ABSOLUTE(ADDR(.rela.dyn) - KIMAGE_VADDR);
-+	__rela_size	= SIZEOF(.rela.dyn);
+@@ -292,12 +292,16 @@ int uvc_status_init(struct uvc_device *dev)
+ 	return 0;
+ }
  
- 	. = ALIGN(SEGMENT_ALIGN);
- 	__initdata_end = .;
+-void uvc_status_cleanup(struct uvc_device *dev)
++void uvc_status_unregister(struct uvc_device *dev)
+ {
+ 	usb_kill_urb(dev->int_urb);
++	uvc_input_unregister(dev);
++}
++
++void uvc_status_cleanup(struct uvc_device *dev)
++{
+ 	usb_free_urb(dev->int_urb);
+ 	kfree(dev->status);
+-	uvc_input_cleanup(dev);
+ }
+ 
+ int uvc_status_start(struct uvc_device *dev, gfp_t flags)
+diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+index c0cbd833d0a4..1db6634b2455 100644
+--- a/drivers/media/usb/uvc/uvcvideo.h
++++ b/drivers/media/usb/uvc/uvcvideo.h
+@@ -757,6 +757,7 @@ int uvc_register_video_device(struct uvc_device *dev,
+ 
+ /* Status */
+ int uvc_status_init(struct uvc_device *dev);
++void uvc_status_unregister(struct uvc_device *dev);
+ void uvc_status_cleanup(struct uvc_device *dev);
+ int uvc_status_start(struct uvc_device *dev, gfp_t flags);
+ void uvc_status_stop(struct uvc_device *dev);
 -- 
 2.19.1
 
