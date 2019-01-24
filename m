@@ -2,268 +2,113 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85805C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:50:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ABE2C282C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:50:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36AC8217D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:50:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chrisdown.name header.i=@chrisdown.name header.b="vb2eTATy"
+	by mail.kernel.org (Postfix) with ESMTP id E56C321726
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:50:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548359408;
+	bh=v3H7i8oot0R0Ai2nUcXlmvlyYJ9YMnpcF+FDLyavEpY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=j5JMG33gnSsTOdVGXhVOvnQpF/3EQWNm4KHayvTx3vdgi7GzHC5TrJ/oKwLw3yXEr
+	 aSFtEUTs14XOIfPVhWlcMP8IFScrqhz6cMAytRZBt1hZgdtl0Iixq5p8yxCbkHEDEu
+	 fdCph8hIUPR2l5X8VJWUGCO+w5voRrDNn95k5pP0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387470AbfAXTk6 (ORCPT
+        id S2387421AbfAXTkz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:40:58 -0500
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:36347 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387413AbfAXTkv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:40:51 -0500
-Received: by mail-yw1-f67.google.com with SMTP id i73so2924013ywg.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 11:40:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chrisdown.name; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=dpvqp9MNmFmS/RokYeC1+Syq0vB/ErPh5IW9/Hg98ws=;
-        b=vb2eTATyVt24Bk+ZWRXfi4rIglhZS1F/FFsYUzEvvEUdMuWpYS90WtOtUJG8+VNtuA
-         Z0lVyB2UlQb2PLbotMdBBTIGRbigoHAhqUtvDz6z4scYgTOtA76Ei3rJeerlw/ajwjKB
-         hWD7C+XPi9OcAY8lBO9hMcm1nc5t/FiPZZc1s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=dpvqp9MNmFmS/RokYeC1+Syq0vB/ErPh5IW9/Hg98ws=;
-        b=U00M+ezZWoWVRoMwjNQGztdvnJ3/iVm/tUJsH8DJZrgBeiOX1/JrvokPrgngJSfkFP
-         G0YUTdzy/wHSwW9H2Y2iyEiLiAYx+6SkmN1QfYL0RkW67ubT7WJ+QNDnTzUEClPRg3kb
-         iqIve4H2HubMXr8Ksiktu3JpHBJq8N7uio76Jj/cfuwUEkdD8ijmXwGarXIg9QqSV5di
-         maeNrRprjAxRQ65grA0k+Sfz3YeW4J+CSpgJ9rmXXgFG0edpyRt9O6vO3mqVTzaAFfKy
-         T4v/dSIGOWVPHgYbG1IVKFuobPyA8vQrkWVTUyRjDdlyb6zUXvS/Le9mc/lhlzSJriLL
-         rpCw==
-X-Gm-Message-State: AJcUukegN1wox6KUAD3pcAcD4F2OowBYUcyqE9l534yIppekOCXvyPKR
-        wUPbE+iEaG3s1ZR/zYlndi0Y3A==
-X-Google-Smtp-Source: ALg8bN7VHpIEshoyXbx+h2M9Mxmkot+BS4lR8OfMtFAPqZR2lio/1zZ6dmBSYLT8VFeNSyn4YPbZmQ==
-X-Received: by 2002:a81:6189:: with SMTP id v131mr7864201ywb.37.1548358850894;
-        Thu, 24 Jan 2019 11:40:50 -0800 (PST)
-Received: from localhost ([2620:10d:c091:200::7:d7cc])
-        by smtp.gmail.com with ESMTPSA id r188sm8321263ywb.30.2019.01.24.11.40.50
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 24 Jan 2019 11:40:50 -0800 (PST)
-Date:   Thu, 24 Jan 2019 14:40:50 -0500
-From:   Chris Down <chris@chrisdown.name>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>, Tejun Heo <tj@kernel.org>,
-        Roman Gushchin <guro@fb.com>, linux-kernel@vger.kernel.org,
-        cgroups@vger.kernel.org, linux-mm@kvack.org, kernel-team@fb.com
-Subject: [PATCH 1/2] mm: Create mem_cgroup_from_seq
-Message-ID: <20190124194050.GA31341@chrisdown.name>
+        Thu, 24 Jan 2019 14:40:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41056 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387429AbfAXTkw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:40:52 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2AE1F20663;
+        Thu, 24 Jan 2019 19:40:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548358851;
+        bh=v3H7i8oot0R0Ai2nUcXlmvlyYJ9YMnpcF+FDLyavEpY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=DWmo5bN9wETkWn0pZ+TJXk71dQmAZEtwDoScHj0y/H2rAQDotFieREHm15UlFF+nI
+         9okf1rTIIIEkN1n65+mLY4eLQVXay7D8YLXzZUp+rbFDdQKIa7au7XENnK/PgDiOiL
+         s/AVaPAbIllZPpfowFzAyrOTTMKfnTSSoR957Z4o=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Anna Schumaker <schumaker.anna@gmail.com>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 049/127] rxe: IB_WR_REG_MR does not capture MRs iova field
+Date:   Thu, 24 Jan 2019 20:19:55 +0100
+Message-Id: <20190124190214.314603989@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
+References: <20190124190211.984305387@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.11.2 (2019-01-07)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of a series of patches similar to my earlier
-DEFINE_MEMCG_MAX_OR_VAL work, but with less Macro Magic(tm).
+4.20-stable review patch.  If anyone has any objections, please let me know.
 
-There are a bunch of places we go from seq_file to mem_cgroup, which
-currently requires manually getting the css, then getting the mem_cgroup
-from the css. It's in enough places now that having mem_cgroup_from_seq
-makes sense (and also makes the next patch a bit nicer).
+------------------
 
-Signed-off-by: Chris Down <chris@chrisdown.name>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Roman Gushchin <guro@fb.com>
-Cc: linux-kernel@vger.kernel.org
-Cc: cgroups@vger.kernel.org
-Cc: linux-mm@kvack.org
-Cc: kernel-team@fb.com
+[ Upstream commit b024dd0eba6e6d568f69d63c5e3153aba94c23e3 ]
+
+FRWR memory registration is done with a series of calls and WRs.
+1. ULP invokes ib_dma_map_sg()
+2. ULP invokes ib_map_mr_sg()
+3. ULP posts an IB_WR_REG_MR on the Send queue
+
+Step 2 generates an iova. It is permissible for ULPs to change this
+iova (with certain restrictions) between steps 2 and 3.
+
+rxe_map_mr_sg captures the MR's iova but later when rxe processes the
+REG_MR WR, it ignores the MR's iova field. If a ULP alters the MR's iova
+after step 2 but before step 3, rxe never captures that change.
+
+When the remote sends an RDMA Read targeting that MR, rxe looks up the
+R_key, but the altered iova does not match the iova stored in the MR,
+causing the RDMA Read request to fail.
+
+Reported-by: Anna Schumaker <schumaker.anna@gmail.com>
+Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/memcontrol.h | 10 ++++++++++
- mm/memcontrol.c            | 24 ++++++++++++------------
- mm/slab_common.c           |  6 +++---
- 3 files changed, 25 insertions(+), 15 deletions(-)
+ drivers/infiniband/sw/rxe/rxe_req.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index b0eb29ea0d9c..1f3d880b7ca1 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -429,6 +429,11 @@ static inline unsigned short mem_cgroup_id(struct mem_cgroup *memcg)
- }
- struct mem_cgroup *mem_cgroup_from_id(unsigned short id);
- 
-+static inline struct mem_cgroup *mem_cgroup_from_seq(struct seq_file *m)
-+{
-+	return mem_cgroup_from_css(seq_css(m));
-+}
-+
- static inline struct mem_cgroup *lruvec_memcg(struct lruvec *lruvec)
- {
- 	struct mem_cgroup_per_node *mz;
-@@ -937,6 +942,11 @@ static inline struct mem_cgroup *mem_cgroup_from_id(unsigned short id)
- 	return NULL;
- }
- 
-+static inline struct mem_cgroup *mem_cgroup_from_seq(struct seq_file *m)
-+{
-+	return NULL;
-+}
-+
- static inline struct mem_cgroup *lruvec_memcg(struct lruvec *lruvec)
- {
- 	return NULL;
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 18f4aefbe0bf..98aad31f5226 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -3359,7 +3359,7 @@ static int memcg_numa_stat_show(struct seq_file *m, void *v)
- 	const struct numa_stat *stat;
- 	int nid;
- 	unsigned long nr;
--	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
-+	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
- 
- 	for (stat = stats; stat < stats + ARRAY_SIZE(stats); stat++) {
- 		nr = mem_cgroup_nr_lru_pages(memcg, stat->lru_mask);
-@@ -3410,7 +3410,7 @@ static const char *const memcg1_event_names[] = {
- 
- static int memcg_stat_show(struct seq_file *m, void *v)
- {
--	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
-+	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
- 	unsigned long memory, memsw;
- 	struct mem_cgroup *mi;
- 	unsigned int i;
-@@ -3842,7 +3842,7 @@ static void mem_cgroup_oom_unregister_event(struct mem_cgroup *memcg,
- 
- static int mem_cgroup_oom_control_read(struct seq_file *sf, void *v)
- {
--	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(sf));
-+	struct mem_cgroup *memcg = mem_cgroup_from_seq(sf);
- 
- 	seq_printf(sf, "oom_kill_disable %d\n", memcg->oom_kill_disable);
- 	seq_printf(sf, "under_oom %d\n", (bool)memcg->under_oom);
-@@ -5385,7 +5385,7 @@ static u64 memory_current_read(struct cgroup_subsys_state *css,
- 
- static int memory_min_show(struct seq_file *m, void *v)
- {
--	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
-+	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
- 	unsigned long min = READ_ONCE(memcg->memory.min);
- 
- 	if (min == PAGE_COUNTER_MAX)
-@@ -5415,7 +5415,7 @@ static ssize_t memory_min_write(struct kernfs_open_file *of,
- 
- static int memory_low_show(struct seq_file *m, void *v)
- {
--	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
-+	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
- 	unsigned long low = READ_ONCE(memcg->memory.low);
- 
- 	if (low == PAGE_COUNTER_MAX)
-@@ -5445,7 +5445,7 @@ static ssize_t memory_low_write(struct kernfs_open_file *of,
- 
- static int memory_high_show(struct seq_file *m, void *v)
- {
--	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
-+	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
- 	unsigned long high = READ_ONCE(memcg->high);
- 
- 	if (high == PAGE_COUNTER_MAX)
-@@ -5482,7 +5482,7 @@ static ssize_t memory_high_write(struct kernfs_open_file *of,
- 
- static int memory_max_show(struct seq_file *m, void *v)
- {
--	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
-+	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
- 	unsigned long max = READ_ONCE(memcg->memory.max);
- 
- 	if (max == PAGE_COUNTER_MAX)
-@@ -5544,7 +5544,7 @@ static ssize_t memory_max_write(struct kernfs_open_file *of,
- 
- static int memory_events_show(struct seq_file *m, void *v)
- {
--	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
-+	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
- 
- 	seq_printf(m, "low %lu\n",
- 		   atomic_long_read(&memcg->memory_events[MEMCG_LOW]));
-@@ -5562,7 +5562,7 @@ static int memory_events_show(struct seq_file *m, void *v)
- 
- static int memory_stat_show(struct seq_file *m, void *v)
- {
--	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
-+	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
- 	struct accumulated_stats acc;
- 	int i;
- 
-@@ -5639,7 +5639,7 @@ static int memory_stat_show(struct seq_file *m, void *v)
- 
- static int memory_oom_group_show(struct seq_file *m, void *v)
- {
--	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
-+	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
- 
- 	seq_printf(m, "%d\n", memcg->oom_group);
- 
-@@ -6622,7 +6622,7 @@ static u64 swap_current_read(struct cgroup_subsys_state *css,
- 
- static int swap_max_show(struct seq_file *m, void *v)
- {
--	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
-+	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
- 	unsigned long max = READ_ONCE(memcg->swap.max);
- 
- 	if (max == PAGE_COUNTER_MAX)
-@@ -6652,7 +6652,7 @@ static ssize_t swap_max_write(struct kernfs_open_file *of,
- 
- static int swap_events_show(struct seq_file *m, void *v)
- {
--	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
-+	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
- 
- 	seq_printf(m, "max %lu\n",
- 		   atomic_long_read(&memcg->memory_events[MEMCG_SWAP_MAX]));
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index 81732d05e74a..3dfdbe49ce34 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -1424,7 +1424,7 @@ void dump_unreclaimable_slab(void)
- #if defined(CONFIG_MEMCG)
- void *memcg_slab_start(struct seq_file *m, loff_t *pos)
- {
--	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
-+	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
- 
- 	mutex_lock(&slab_mutex);
- 	return seq_list_start(&memcg->kmem_caches, *pos);
-@@ -1432,7 +1432,7 @@ void *memcg_slab_start(struct seq_file *m, loff_t *pos)
- 
- void *memcg_slab_next(struct seq_file *m, void *p, loff_t *pos)
- {
--	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
-+	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
- 
- 	return seq_list_next(p, &memcg->kmem_caches, pos);
- }
-@@ -1446,7 +1446,7 @@ int memcg_slab_show(struct seq_file *m, void *p)
- {
- 	struct kmem_cache *s = list_entry(p, struct kmem_cache,
- 					  memcg_params.kmem_caches_node);
--	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
-+	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
- 
- 	if (p == memcg->kmem_caches.next)
- 		print_slabinfo_header(m);
+diff --git a/drivers/infiniband/sw/rxe/rxe_req.c b/drivers/infiniband/sw/rxe/rxe_req.c
+index 6c361d70d7cd..46f62f71cd28 100644
+--- a/drivers/infiniband/sw/rxe/rxe_req.c
++++ b/drivers/infiniband/sw/rxe/rxe_req.c
+@@ -643,6 +643,7 @@ next_wqe:
+ 			rmr->access = wqe->wr.wr.reg.access;
+ 			rmr->lkey = wqe->wr.wr.reg.key;
+ 			rmr->rkey = wqe->wr.wr.reg.key;
++			rmr->iova = wqe->wr.wr.reg.mr->iova;
+ 			wqe->state = wqe_state_done;
+ 			wqe->status = IB_WC_SUCCESS;
+ 		} else {
 -- 
-2.20.1
+2.19.1
+
+
 
