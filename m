@@ -2,155 +2,158 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F138C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:59:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A94AFC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:59:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FE4D2084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:59:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A8EF2084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:59:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PboRJuOZ"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="eCCiazMj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727801AbfAXJ7K (ORCPT
+        id S1727818AbfAXJ70 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 04:59:10 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37300 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727513AbfAXJ7G (ORCPT
+        Thu, 24 Jan 2019 04:59:26 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:44254 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726212AbfAXJ70 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 04:59:06 -0500
-Received: by mail-wr1-f67.google.com with SMTP id s12so5747773wrt.4
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 01:59:04 -0800 (PST)
+        Thu, 24 Jan 2019 04:59:26 -0500
+Received: by mail-io1-f65.google.com with SMTP id r200so4182831iod.11
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 01:59:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=iRSEopFd+AHR1Xrk3tr3l3cIpLaGxkm3eJb/szQtbWI=;
-        b=PboRJuOZ7vQb7QTOTDCTpv+pdmQBiIvhFX69bWZQASbvtwPj+0Cgp5+Bkzr+QIigOz
-         GeDM62Ic9Yq0OHjy38jFXIyFVOIfqLxzSOQ1RpIoswzCtoH0zaDdxCarGgCXbZj6D9jo
-         +Nvj0uwqZcz3og7JbEYsnbPmMlcdpIcm2XSAQ=
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fgHKcL4xdEEMdad/2NT2cQ+H43LUktLRBTulol45+Sk=;
+        b=eCCiazMjq7/07kICz8IwPTyJTMqXPwJMtqE8vpKF7LI/lwkPiv9cjb1J21vQBX+IpU
+         CRF9j1wgxveHdq8CxxvhByrD3ugUOA5Wu5KosryVUd6ZVU6NrwadNXgAQmLlLbVHhtwu
+         oRiHjxN66xO8L58vlNB3+RyEWC4gSus9qnde8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=iRSEopFd+AHR1Xrk3tr3l3cIpLaGxkm3eJb/szQtbWI=;
-        b=VVBlmuKQx/Z6uwIJihtRWoSXjvxMgUE3dVdeaAkoWdgHVQfXnpAK1TEBzmQnhEjvDg
-         c9VFht9l7SxTUv132FubE3c1usXUD6vYTK270qoKZXabagBjsaFsdqqOnUF8IA3rESjH
-         gaSf4mpPBDcMf1dXSs30MfMQFoVwVnpysagjaWv5oNs3IyjDalet/KUccPYqGTpmrvn+
-         kfJBvWx3ui/lZ3zfoKsu1kFB4wxvDQX3AkOIjH2QXW4gUJtJiAPbR+kXtW76FSKY+G1f
-         VQrl6jUQix+k857ZZ+BZJZKkzkkQzIqpgAHeCDKgVD5MZfKW8CKSibh5sKfg3TfuF4Er
-         W7Lg==
-X-Gm-Message-State: AJcUukc+FkKJ7quUFz8YcH2DJjnC6TbslCzyk1gDJbyQefr6Mtu72XC6
-        KQJSCQ01GCHgHaKy7+T3LafAEA==
-X-Google-Smtp-Source: ALg8bN54V/MwJB+4mFIs+zTyjSrnLqnnGoJWaz1N+qDWbPm4NSW6wbRXfU4xLAEX960Tc7kJSr8XrQ==
-X-Received: by 2002:adf:b6a1:: with SMTP id j33mr6456628wre.55.1548323944084;
-        Thu, 24 Jan 2019 01:59:04 -0800 (PST)
-Received: from [192.168.27.209] ([37.157.136.206])
-        by smtp.googlemail.com with ESMTPSA id x3sm97679856wrd.19.2019.01.24.01.59.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 01:59:03 -0800 (PST)
-Subject: Re: [PATCH 08/10] venus: vdec_ctrls: get real minimum buffers for
- capture
-To:     Alexandre Courbot <acourbot@chromium.org>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org,
-        Vikash Garodia <vgarodia@codeaurora.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Malathi Gottam <mgottam@codeaurora.org>
-References: <20190117162008.25217-1-stanimir.varbanov@linaro.org>
- <20190117162008.25217-9-stanimir.varbanov@linaro.org>
- <CAPBb6MWJXWLcGh3dbejiYzyqT6OB1_FN6zrcZFO5DbxqXSAWjQ@mail.gmail.com>
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <c9ce287b-e064-9fbe-6ee0-176253e0de84@linaro.org>
-Date:   Thu, 24 Jan 2019 11:59:01 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fgHKcL4xdEEMdad/2NT2cQ+H43LUktLRBTulol45+Sk=;
+        b=mstPNlYFBj7vamm1xpizLUiDFFk6OI7WKIkUetXgIpBT2eNGHjsHKbmdMS9VzY3ZgN
+         xjP5X4b4TaOJIIn162vPwm35GH6BE5iOdY1araqs3994uzBMsB7iO1Pz/5axQk5GFdQd
+         cqCQ6GqpE0s3M75/eEC+IYL90SxNXwhrLZKJEUmroRE6BRNIPs0OZt5xhLUqcXiTIAjO
+         +Ncexh+LMiXE96M6YKqcSqvkjhAxMJVOFNQQWULRN+5qGBRaJAmhkVHHVGYVlQ2hgNsH
+         qs+KP9Vx6tRKft9pbZgCsdcCj+cU08Smx4TBobrzOF8R57TbR6bbI0+QhTcQLUjBsId5
+         50uA==
+X-Gm-Message-State: AHQUAuZD4xKxuH3Ylm/QHXys62CjExOed3CX1xdVvSqNtjc3M0Lo04I3
+        MFuxIskbvnd3BO6OcdSZJQELZdNTyhsvkm3U7z7TjQ==
+X-Google-Smtp-Source: AHgI3IboMLH50JXLBxqx/0QHm2NseMFH4XozkT2ZHKt7OTu6e99I1fTYb95pyT9TrmPvPhv8CEGlbnPwMuHD/6cCLDc=
+X-Received: by 2002:a5e:c206:: with SMTP id v6mr3565776iop.60.1548323964752;
+ Thu, 24 Jan 2019 01:59:24 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAPBb6MWJXWLcGh3dbejiYzyqT6OB1_FN6zrcZFO5DbxqXSAWjQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <850b6aee-0040-c333-b125-45211c18ada5@daenzer.net>
+ <CAKv+Gu99zHqcQtj6TiOXAr3Qa6WWhKem+DHVA_mAQ0-Bc0Vbqw@mail.gmail.com>
+ <047667fd-17be-1c37-5d2a-26768cfd6ab8@daenzer.net> <CAKv+Gu_VBd8agHASc5RS0eCgyXP64Lt_i4yPuBjKwGQ+5Lpd5Q@mail.gmail.com>
+ <CADnq5_O1uxCrSksfF127AZTfbmdukxmqGdh2Ee0zM6CqgG_Mhg@mail.gmail.com>
+ <CAKv+Gu-4uYh_HD_5Ry_L80Nf5zpRhT4oJYhhG5_8g3gSzBs2tg@mail.gmail.com>
+ <20190123071521.GB20526@infradead.org> <CAKv+Gu8+77uZHJ6ZYjGNcKQL8C3cT5Ree+TcTVmkQXAHV-ADyg@mail.gmail.com>
+ <20190123164428.GA9367@infradead.org> <CAKv+Gu-9vEKu8mG-o+-4M1ZcgZmTTJVfEdNS9R27AFX8P5sqyQ@mail.gmail.com>
+ <20190124091316.GA22796@infradead.org> <bb559f74-4b1e-d5ee-74fb-b5dcd4a128cb@amd.com>
+ <CAKv+Gu_3LurSN-6w1WijPfpJpc+Pgu0YTnwTfMrXMF3-AKAnJA@mail.gmail.com> <953e5e5f-5d47-d6df-40df-c8c94db5447f@amd.com>
+In-Reply-To: <953e5e5f-5d47-d6df-40df-c8c94db5447f@amd.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Thu, 24 Jan 2019 10:59:13 +0100
+Message-ID: <CAKv+Gu9umPEmB+wh54NOTYcQ14oxf7rwVAXgCqo7V2A+VwkqPA@mail.gmail.com>
+Subject: Re: [RFC PATCH] drm: disable WC optimization for cache coherent
+ devices on non-x86
+To:     "Koenig, Christian" <Christian.Koenig@amd.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Alex Deucher <alexdeucher@gmail.com>,
+        =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel@daenzer.net>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        David Airlie <airlied@linux.ie>,
+        "Huang, Ray" <Ray.Huang@amd.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "Zhang, Jerry" <Jerry.Zhang@amd.com>,
+        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
+        Sean Paul <sean@poorly.run>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alex,
+On Thu, 24 Jan 2019 at 10:45, Koenig, Christian
+<Christian.Koenig@amd.com> wrote:
+>
+> Am 24.01.19 um 10:28 schrieb Ard Biesheuvel:
+> > On Thu, 24 Jan 2019 at 10:25, Koenig, Christian
+> > <Christian.Koenig@amd.com> wrote:
+> >> Am 24.01.19 um 10:13 schrieb Christoph Hellwig:
+> >>> On Wed, Jan 23, 2019 at 05:52:50PM +0100, Ard Biesheuvel wrote:
+> >>>> But my concern is that it seems likely that non-cache coherent
+> >>>> implementations are relying on this hack as well. There must be a
+> >>>> reason that this hack is only disabled for PowerPC platforms if they
+> >>>> are cache coherent, for instance, and I suspect that that reason is
+> >>>> that the hack is the only thing ensuring that the CPU mapping
+> >>>> attributes match the device ones used for these buffers (the vmap()ed
+> >>>> ones), whereas the rings and other consistent data structures are
+> >>>> using the DMA API as intended, and thus getting uncached attributes in
+> >>>> the correct way.
+> >>> Dave, who added that commit is on Cc together with just about everyone
+> >>> involved in the review chain.  Based on the previous explanation
+> >>> that idea what we might want an uncached mapping for some non-coherent
+> >>> architectures for this to work at all makes sense, but then again
+> >>> the way to create those mappings is entirely architecture specific,
+> >>> and also need a cache flushing before creating the mapping to work
+> >>> properly.  So my working theory is that this code never properly
+> >>> worked on architectures without DMA coherent for PCIe at all, but
+> >>> I'd love to be corrected by concrete examples including an explanation
+> >>> of how it actually ends up working.
+> >> Cache coherency is mandatory for modern GPU operation.
+> >>
+> >> Otherwise you can't implement a bunch of the requirements of the
+> >> userspace APIs.
+> >>
+> >> In other words the applications doesn't inform the driver that the GPU
+> >> or the CPU is accessing data, it just does it and assumes that it works.
+> >>
+> > Wonderful!
+> >
+> > In that case, do you have any objections to the patch proposed by
+> > Christoph above?
+>
+> Yeah, the patch of Christoph actually goes way to far cause we have
+> reports that this works on a bunch of other architectures.
+>
+> E.g. X86 64bit, PowerPC (under some conditions) and some MIPS.
+>
 
-Thanks for the comments!
+This is *exactly* my point the whole time.
 
-On 1/24/19 10:43 AM, Alexandre Courbot wrote:
-> On Fri, Jan 18, 2019 at 1:21 AM Stanimir Varbanov
-> <stanimir.varbanov@linaro.org> wrote:
->>
->> Until now we returned num_output_bufs set during reqbuf but
->> that could be wrong when we implement stateful Codec API. So
->> get the minimum buffers for capture from HFI. This is supposed
->> to be called after stream header parsing, i.e. after dequeue
->> v4l2 event for change resolution.
->>
->> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
->> ---
->>  drivers/media/platform/qcom/venus/vdec_ctrls.c | 7 ++++++-
->>  1 file changed, 6 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/media/platform/qcom/venus/vdec_ctrls.c b/drivers/media/platform/qcom/venus/vdec_ctrls.c
->> index f4604b0cd57e..e1da87bf52bc 100644
->> --- a/drivers/media/platform/qcom/venus/vdec_ctrls.c
->> +++ b/drivers/media/platform/qcom/venus/vdec_ctrls.c
->> @@ -16,6 +16,7 @@
->>  #include <media/v4l2-ctrls.h>
->>
->>  #include "core.h"
->> +#include "helpers.h"
->>  #include "vdec.h"
->>
->>  static int vdec_op_s_ctrl(struct v4l2_ctrl *ctrl)
->> @@ -47,7 +48,9 @@ static int vdec_op_g_volatile_ctrl(struct v4l2_ctrl *ctrl)
->>  {
->>         struct venus_inst *inst = ctrl_to_inst(ctrl);
->>         struct vdec_controls *ctr = &inst->controls.dec;
->> +       struct hfi_buffer_requirements bufreq;
->>         union hfi_get_property hprop;
->> +       enum hfi_version ver = inst->core->res->hfi_version;
->>         u32 ptype = HFI_PROPERTY_PARAM_PROFILE_LEVEL_CURRENT;
->>         int ret;
->>
->> @@ -71,7 +74,9 @@ static int vdec_op_g_volatile_ctrl(struct v4l2_ctrl *ctrl)
->>                 ctrl->val = ctr->post_loop_deb_mode;
->>                 break;
->>         case V4L2_CID_MIN_BUFFERS_FOR_CAPTURE:
->> -               ctrl->val = inst->num_output_bufs;
->> +               ret = venus_helper_get_bufreq(inst, HFI_BUFFER_OUTPUT, &bufreq);
->> +               if (!ret)
->> +                       ctrl->val = HFI_BUFREQ_COUNT_MIN(&bufreq, ver);
-> 
-> What happens if venus_helper_get_bufreq() returns an error? It seems
-> that we just happily continue with whatever the previous value of
-> ctrl->val was. It seems like we do the same with other controls as
-> well.
+The current code has
 
-I agree that this is wrong, I think no-one userspace client used that
-g_ctrls controls :)
+static inline bool drm_arch_can_wc_memory(void)
+{
+#if defined(CONFIG_PPC) && !defined(CONFIG_NOT_COHERENT_CACHE)
+   return false;
 
-> 
-> I think you can fix this globally by initializing ret to 0 at the
-> beginning of the function, and then returning ret instead of 0 at the
-> end. That way all errors would be propagated. Of course please check
-> that this is relevant for other controls following this scheme before
-> doing so. :)
-> 
+which means the optimization is disabled *unless the system is
+non-cache coherent*
 
-yes, I will do!
+So if you have reports that the optimization works on some PowerPC, it
+must be non-cache coherent PowerPC, because that is the only place
+where it is enabled in the first place.
 
--- 
-regards,
-Stan
+> The only problematic here actually seems to be ARM, so you should
+> probably just add an "#ifdef .._ARM return false;".
+>
+
+ARM/arm64 does not have a Kconfig symbol like
+CONFIG_NOT_COHERENT_CACHE, so we can only disable it everywhere. If
+there are non-coherent ARM systems that are currently working in the
+same way as those non-coherent PowerPC systems, we will break them by
+doing this.
