@@ -2,247 +2,267 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FROM_EXCESS_BASE64,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA3F6C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:59:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 895F3C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:59:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7999C218A3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:59:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b="pCtV7Woj"
+	by mail.kernel.org (Postfix) with ESMTP id 57A3D21872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:59:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727643AbfAXI7u (ORCPT
+        id S1727677AbfAXI7x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 03:59:50 -0500
-Received: from uho.ysoft.cz ([81.19.3.130]:57864 "EHLO uho.ysoft.cz"
+        Thu, 24 Jan 2019 03:59:53 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:57280 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726880AbfAXI7t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 03:59:49 -0500
-Received: from [10.1.8.111] (unknown [10.1.8.111])
-        by uho.ysoft.cz (Postfix) with ESMTP id B89A6A07CC;
-        Thu, 24 Jan 2019 09:59:47 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
-        s=20160406-ysoft-com; t=1548320387;
-        bh=DqbpA9/WwPkNPKhrzx3w5CsdYGcF8mgxG3UgQf6TZBc=;
-        h=From:Subject:To:Cc:References:Date:In-Reply-To:From;
-        b=pCtV7Wojqe9vKHHYickzsHMk/Rwsq7qa6CvEJTHlZvi4DXetALBvWFPTsstjWCikw
-         zoQrKGwoDpWHudTCdImZQ/SfAmH1n2LQcbpjHv7MSi5mAZCNGoLJWnNQM70W54X5H7
-         gif06jaTUq4iPdSbqmbWj/KyhbuMe/IXnE9Mg0gU=
-From:   =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>
-Subject: Re: [RFC PATCH v3 2/2] pwm: imx: Configure output to GPIO in disabled
- state
-To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Lukasz Majewski <l.majewski@majess.pl>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        =?UTF-8?Q?Lothar_Wa=c3=9fmann?= <LW@karo-electronics.de>,
-        Linus Walleij <linus.walleij@linaro.org>
-References: <1544103655-104466-1-git-send-email-michal.vokac@ysoft.com>
- <1544103655-104466-3-git-send-email-michal.vokac@ysoft.com>
- <20181212080154.kcfh57mulypwuscu@pengutronix.de>
- <52ed0614-d1f5-81cb-3b17-8eb137967872@ysoft.com>
- <20181212121255.yg6b4pw7qord7ebi@pengutronix.de>
-Message-ID: <4b0356b7-bc7d-a026-ac90-3f0c5754ed29@ysoft.com>
-Date:   Thu, 24 Jan 2019 09:59:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20181212121255.yg6b4pw7qord7ebi@pengutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1727208AbfAXI7u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 03:59:50 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 00E2B207B0; Thu, 24 Jan 2019 09:59:47 +0100 (CET)
+Received: from aptenodytes (aaubervilliers-681-1-87-206.w90-88.abo.wanadoo.fr [90.88.29.206])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 9F2042084E;
+        Thu, 24 Jan 2019 09:59:37 +0100 (CET)
+Message-ID: <c93952fb3ddac34c03f4fdc2dedd0bc8b88a00a9.camel@bootlin.com>
+Subject: Re: [PATCH] media: docs-rst: Document m2m stateless video decoder
+ interface
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     Tomasz Figa <tfiga@chromium.org>
+Cc:     Alexandre Courbot <acourbot@chromium.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Pawel Osciak <posciak@chromium.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+Date:   Thu, 24 Jan 2019 09:59:38 +0100
+In-Reply-To: <CAAFQd5CFHJaEELbihq6aNxSOzWghunG-qiqxM9xL1n4q1yBp9g@mail.gmail.com>
+References: <20181205100121.181765-1-acourbot@chromium.org>
+         <e2b464c83892b79c77fd7388733758b2e02813d2.camel@bootlin.com>
+         <CAAFQd5Aw=A2+pdtJijQ78-nV5qU5ypYjjEFV8rpPk=Je1LajqA@mail.gmail.com>
+         <dd07f7ddf2c3790871861855143d3f49359e4f74.camel@bootlin.com>
+         <CAPBb6MVnfCRjVBDyKEw=CQnxjq1xFR03Uka+Jxw=kAia5BfFVQ@mail.gmail.com>
+         <42a24867b3b4506cdb7e738eec5b2b8316f8ca19.camel@bootlin.com>
+         <CAAFQd5CFHJaEELbihq6aNxSOzWghunG-qiqxM9xL1n4q1yBp9g@mail.gmail.com>
+Organization: Bootlin
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.4 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12.12.2018 13:12, Uwe Kleine-König wrote:
-> On Wed, Dec 12, 2018 at 11:42:17AM +0000, Vokáč Michal wrote:
->> On 12.12.2018 09:01, Uwe Kleine-König wrote:
->>> On Thu, Dec 06, 2018 at 01:41:31PM +0000, Vokáč Michal wrote:
->>>> Normally the PWM output is held LOW when PWM is disabled. This can cause
->>>> problems when inverted PWM signal polarity is needed. With this behavior
->>>> the connected circuit is fed by 100% duty cycle instead of being shut-off.
->>>>
->>>> Allow users to define a "pwm" and a "gpio" pinctrl states. The pwm pinctrl
->>>> state is selected when PWM is enabled and the gpio pinctrl state is
->>>> selected when PWM is disabled. In the gpio state the new pwm-gpios GPIO is
->>>> configured as input and the internal pull-up resistor is used to pull the
->>>> output level high.
->>>>
->>>> If all the pinctrl states and the pwm-gpios GPIO are not correctly
->>>> specified in DT the PWM work as usual.
->>>>
->>>> As an example, with this patch a PWM controlled backlight with inversed
->>>> signal polarity can be used in full brightness range. Without this patch
->>>> the backlight can not be turned off as brightness = 0 disables the PWM
->>>> and that in turn set PWM output LOW, that is full brightness.
->>>>
->>>> Inverted output of the PWM with "default" and with "pwm"+"gpio" pinctrl:
->>>>
->>>> +--------------+------------+---------------+----------- +-------------+
->>>> | After reset  | Bootloader |   PWM probe   |     PWM    |     PWM     |
->>>> | 100k pull-up |            |               | enable 30% |   disable   |
->>>> +--------------+------------+---------------+------------+-------------+
->>>> | pinctrl      |    none    |    default    |   default  |   default   |
->>>> | out H   __________________                   __   __                 |
->>>> | out L                     \_________________/  \_/  \_/\____________ |
->>>> |                                           ^    ^    ^                |
->>>> +--------------+------------+---------------+------------+-------------+
->>>> | pinctrl      |    none    |      gpio     |     pwm    |     gpio    |
->>>> | out H   __________________________________   __   __   _____________ |
->>>> | out L                                     \_/  \_/  \_/              |
->>>> |                                           ^    ^    ^                |
->>>> +----------------------------------------------------------------------+
->>>>
->>>> Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
->>>> ---
->>>> Changes in v3:
->>>>    - Commit message update.
->>>>    - Minor fix in code comment (Uwe)
->>>>    - Align function arguments to the opening parentheses. (Uwe)
->>>>    - Do not test devm_pinctrl_get for NULL. (Thierry)
->>>>    - Convert all messages to dev_dbg() (Thierry)
->>>>    - Do not actively drive the pin in gpio state. Configure it as input
->>>>      and rely solely on the internal pull-up. (Thierry)
->>>>
->>>> Changes in v2:
->>>>    - Utilize the "pwm" and "gpio" pinctrl states.
->>>>    - Use the pwm-gpios signal to drive the output in "gpio" pinctrl state.
->>>>    - Select the right pinctrl state in probe.
->>>>
->>>>    drivers/pwm/pwm-imx.c | 77 +++++++++++++++++++++++++++++++++++++++++++++++++++
->>>>    1 file changed, 77 insertions(+)
->>>>
->>
->> [ snip ]
->>
->>> On thing I noticed while looking at the rcar driver is: This doesn't
->>> wait for the current period to end. Is this supposed to happen? Also for
->>> the enable case the hardware is configured for the desired duty cycle
->>> and only then the pinctrl is switched to pwm. Both might result in a
->>> spike that is not desired.
->>
->> The behavior should not change from how imx-pwm was working before.
->> When PWM is disabled the output is immediately gated off (put into
->> the idle state) independently on the period. I measured this.
+Hi,
+
+On Thu, 2019-01-24 at 17:07 +0900, Tomasz Figa wrote:
+> On Wed, Jan 23, 2019 at 7:42 PM Paul Kocialkowski
+> <paul.kocialkowski@bootlin.com> wrote:
+> > Hi Alex,
+> > 
+> > On Wed, 2019-01-23 at 18:43 +0900, Alexandre Courbot wrote:
+> > > On Tue, Jan 22, 2019 at 7:10 PM Paul Kocialkowski
+> > > <paul.kocialkowski@bootlin.com> wrote:
+> > > > Hi,
+> > > > 
+> > > > On Tue, 2019-01-22 at 17:19 +0900, Tomasz Figa wrote:
+> > > > > Hi Paul,
+> > > > > 
+> > > > > On Fri, Dec 7, 2018 at 5:30 PM Paul Kocialkowski
+> > > > > <paul.kocialkowski@bootlin.com> wrote:
+> > > > > > Hi,
+> > > > > > 
+> > > > > > Thanks for this new version! I only have one comment left, see below.
+> > > > > > 
+> > > > > > On Wed, 2018-12-05 at 19:01 +0900, Alexandre Courbot wrote:
+> > > > > > > Documents the protocol that user-space should follow when
+> > > > > > > communicating with stateless video decoders.
+> > > > > > > 
+> > > > > > > The stateless video decoding API makes use of the new request and tags
+> > > > > > > APIs. While it has been implemented with the Cedrus driver so far, it
+> > > > > > > should probably still be considered staging for a short while.
+> > > > > > > 
+> > > > > > > Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
+> > > > > > > ---
+> > > > > > > Removing the RFC flag this time. Changes since RFCv3:
+> > > > > > > 
+> > > > > > > * Included Tomasz and Hans feedback,
+> > > > > > > * Expanded the decoding section to better describe the use of requests,
+> > > > > > > * Use the tags API.
+> > > > > > > 
+> > > > > > >  Documentation/media/uapi/v4l/dev-codec.rst    |   5 +
+> > > > > > >  .../media/uapi/v4l/dev-stateless-decoder.rst  | 399 ++++++++++++++++++
+> > > > > > >  2 files changed, 404 insertions(+)
+> > > > > > >  create mode 100644 Documentation/media/uapi/v4l/dev-stateless-decoder.rst
+> > > > > > > 
+> > > > > > > diff --git a/Documentation/media/uapi/v4l/dev-codec.rst b/Documentation/media/uapi/v4l/dev-codec.rst
+> > > > > > > index c61e938bd8dc..3e6a3e883f11 100644
+> > > > > > > --- a/Documentation/media/uapi/v4l/dev-codec.rst
+> > > > > > > +++ b/Documentation/media/uapi/v4l/dev-codec.rst
+> > > > > > > @@ -6,6 +6,11 @@
+> > > > > > >  Codec Interface
+> > > > > > >  ***************
+> > > > > > > 
+> > > > > > > +.. toctree::
+> > > > > > > +    :maxdepth: 1
+> > > > > > > +
+> > > > > > > +    dev-stateless-decoder
+> > > > > > > +
+> > > > > > >  A V4L2 codec can compress, decompress, transform, or otherwise convert
+> > > > > > >  video data from one format into another format, in memory. Typically
+> > > > > > >  such devices are memory-to-memory devices (i.e. devices with the
+> > > > > > > diff --git a/Documentation/media/uapi/v4l/dev-stateless-decoder.rst b/Documentation/media/uapi/v4l/dev-stateless-decoder.rst
+> > > > > > > new file mode 100644
+> > > > > > > index 000000000000..7a781c89bd59
+> > > > > > > --- /dev/null
+> > > > > > > +++ b/Documentation/media/uapi/v4l/dev-stateless-decoder.rst
+> > > > > > > @@ -0,0 +1,399 @@
+> > > > > > > +.. -*- coding: utf-8; mode: rst -*-
+> > > > > > > +
+> > > > > > > +.. _stateless_decoder:
+> > > > > > > +
+> > > > > > > +**************************************************
+> > > > > > > +Memory-to-memory Stateless Video Decoder Interface
+> > > > > > > +**************************************************
+> > > > > > > +
+> > > > > > > +A stateless decoder is a decoder that works without retaining any kind of state
+> > > > > > > +between processing frames. This means that each frame is decoded independently
+> > > > > > > +of any previous and future frames, and that the client is responsible for
+> > > > > > > +maintaining the decoding state and providing it to the decoder with each
+> > > > > > > +decoding request. This is in contrast to the stateful video decoder interface,
+> > > > > > > +where the hardware and driver maintain the decoding state and all the client
+> > > > > > > +has to do is to provide the raw encoded stream.
+> > > > > > > +
+> > > > > > > +This section describes how user-space ("the client") is expected to communicate
+> > > > > > > +with such decoders in order to successfully decode an encoded stream. Compared
+> > > > > > > +to stateful codecs, the decoder/client sequence is simpler, but the cost of
+> > > > > > > +this simplicity is extra complexity in the client which must maintain a
+> > > > > > > +consistent decoding state.
+> > > > > > > +
+> > > > > > > +Stateless decoders make use of the request API and buffer tags. A stateless
+> > > > > > > +decoder must thus expose the following capabilities on its queues when
+> > > > > > > +:c:func:`VIDIOC_REQBUFS` or :c:func:`VIDIOC_CREATE_BUFS` are invoked:
+> > > > > > > +
+> > > > > > > +* The ``V4L2_BUF_CAP_SUPPORTS_REQUESTS`` capability must be set on the
+> > > > > > > +  ``OUTPUT`` queue,
+> > > > > > > +
+> > > > > > > +* The ``V4L2_BUF_CAP_SUPPORTS_TAGS`` capability must be set on the ``OUTPUT``
+> > > > > > > +  and ``CAPTURE`` queues,
+> > > > > > > +
+> > > > > > 
+> > > > > > [...]
+> > > > > > 
+> > > > > > > +Decoding
+> > > > > > > +========
+> > > > > > > +
+> > > > > > > +For each frame, the client is responsible for submitting a request to which the
+> > > > > > > +following is attached:
+> > > > > > > +
+> > > > > > > +* Exactly one frame worth of encoded data in a buffer submitted to the
+> > > > > > > +  ``OUTPUT`` queue,
+> > > > > > 
+> > > > > > Although this is still the case in the cedrus driver (but will be fixed
+> > > > > > eventually), this requirement should be dropped because metadata is
+> > > > > > per-slice and not per-picture in the formats we're currently aiming to
+> > > > > > support.
+> > > > > > 
+> > > > > > I think it would be safer to mention something like filling the output
+> > > > > > buffer with the minimum unit size for the selected output format, to
+> > > > > > which the associated metadata applies.
+> > > > > 
+> > > > > I'm not sure it's a good idea. Some of the reasons why I think so:
+> > > > >  1) There are streams that can have even 32 slices. With that, you
+> > > > > instantly run out of V4L2 buffers even just for 1 frame.
+> > > > >  2) The Rockchip hardware which seems to just pick all the slices one
+> > > > > after another and which was the reason to actually put the slice data
+> > > > > in the buffer like that.
+> > > > >  3) Not all the metadata is per-slice. Actually most of the metadata
+> > > > > is per frame and only what is located inside v4l2_h264_slice_param is
+> > > > > per-slice. The corresponding control is an array, which has an entry
+> > > > > for each slice in the buffer. Each entry includes an offset field,
+> > > > > which points to the place in the buffer where the slice is located.
+> > > > 
+> > > > Sorry, I realize that my email wasn't very clear. What I meant to say
+> > > > is that the spec should specify that "at least the minimum unit size
+> > > > for decoding should be passed in a buffer" (that's maybe not the
+> > > > clearest wording), instead of "one frame worth of".
+> > > > 
+> > > > I certainly don't mean to say that each slice should be held in a
+> > > > separate buffer and totally agree with all the points you're making :)
+> > > 
+> > > Thanks for clarifying. I will update the document and post v3 accordingly.
+> > > 
+> > > > I just think we should still allow userspace to pass slices with a
+> > > > finer granularity than "all the slices required for one frame".
+> > > 
+> > > I'm afraid that doing so could open the door to some ambiguities. If
+> > > you allow that, then are you also allowed to send more than one frame
+> > > if the decode parameters do not change? How do drivers that only
+> > > support full frames react when handled only parts of a frame?
+> > 
+> > IIRC the ability to pass individual slices was brought up regarding a
+> > potential latency benefit, but I doubt it would really be that
+> > significant.
+> > 
+> > Thinking about it with the points you mentionned in mind, I guess the
+> > downsides are much more significant than the potential gain.
+> > 
+> > So let's stick with requiring all the slices for a frame then!
 > 
-> Oh really, I wasn't aware of that. This is another bug in the imx pwm
-> then (I think).
-
-I kind of expect that when hit a disable button the output is immediately
-put into the idle state. To me it does not seem appropriate to wait the
-whole period, or even just the active part of the period. If duty=100%
-and period=4s (current maximum), in the worst case you would have to wait
-4s until you stop the PWM. Quite a long time of driving something you
-actually wanted to be shut off.
-
->> For the enable case you would certainly not get any additional spikes.
+> Ack.
 > 
-> Yes, there is a possibility for a spike: If you configure for say 40%:
->                    _    _
-> pwm output   : ___/ \__/ \__
-> muxing       : GPIO| PWM_
-> actual output: ____/\__/ \__
+> My view is that we can still loosen this requirement in the future,
+> possibly behind some driver capability flag, but starting with a
+> simpler API, with less freedom to the applications and less
+> constraints on hardware support sounds like a better practice in
+> general.
 
-OK, you are right.
+Sounds good, a capability flag would definitely make sense for that.
 
->> The worst thing that may happen is that the first period will be
->> slightly shorter depending on how long it takes to test the pinctrl
->> and switch the muxing. And this is unavoidable, it would happen even
->> if you wait for the start of a period. The test + muxing still takes
->> some time.
+> > > > Side point: After some discussions with Thierry Reading, who's looking
+> > > > into the the Tegra VPU (also stateless), it seems that using the annex-
+> > > > b format for h.264 would be best for everyone. So that means including
+> > > > the start code, NAL header and "raw" slice data. I guess the same
+> > > > should apply to other codecs too. But that should be in the associated
+> > > > pixfmt spec, not in this general document.
+> > > > 
+> > > > What do yout think?
 > 
-> You could first configure for duty_cycle 0 and a short period, then mux
-> to PWM and then configure the correct duty cycle. Ditto for disable.
+> Hmm, wouldn't that effectively make it the same as V4L2_PIX_FMT_H264?
 
-I agree it can be solved for the enable case but I do not see the
-point in doing so for the disable case. Can you elaborate on how it
-could be useful?
+Well, this would only concern the slice NAL unit. As far as I
+understood, V4L2_PIX_FMT_H264 takes all sorts of NAL units.
 
-This is what I came up with:
+> By the way, I proposed it once, some time ago, but it was rejected
+> because VAAPI didn't get the full annex B stream and a V4L2 stateless
+> VAAPI backend would have to reconstruct the stream.
 
-diff --git a/drivers/pwm/pwm-imx27.c b/drivers/pwm/pwm-imx27.c
-index 55666cc..f76a326 100644
---- a/drivers/pwm/pwm-imx27.c
-+++ b/drivers/pwm/pwm-imx27.c
-@@ -242,6 +284,15 @@ static int pwm_imx27_apply(struct pwm_chip *chip, struct pwm_device *pwm,
-                 else
-                         period_cycles = 0;
-  
-+               cr = MX3_PWMCR_PRESCALER_SET(prescale) |
-+                    MX3_PWMCR_STOPEN | MX3_PWMCR_DOZEN | MX3_PWMCR_WAITEN |
-+                    FIELD_PREP(MX3_PWMCR_CLKSRC, MX3_PWMCR_CLKSRC_IPG_HIGH) |
-+                    MX3_PWMCR_DBGEN | MX3_PWMCR_EN;
-+
-+               if (cstate.polarity == PWM_POLARITY_INVERSED)
-+                       cr |= FIELD_PREP(MX3_PWMCR_POUTC,
-+                                        MX3_PWMCR_POUTC_INVERTED);
-+
-                 /*
-                  * Wait for a free FIFO slot if the PWM is already enabled, and
-                  * flush the FIFO if the PWM was disabled and is about to be
-@@ -255,22 +306,36 @@ static int pwm_imx27_apply(struct pwm_chip *chip, struct pwm_device *pwm,
-                                 return ret;
-  
-                         pwm_imx27_sw_reset(chip);
-+                       if (imx->pinctrl) {
-+                               /*
-+                                * Smooth transition from disabled to enabled
-+                                * state. Configure duty=0 and requested period
-+                                * to assure that, later when the requested
-+                                * duty is configured, the duty cycle of the
-+                                * first period has correct length.
-+                                */
-+                               writel(0, imx->mmio_base + MX3_PWMSAR);
-+                               writel(period_cycles, imx->mmio_base + MX3_PWMPR);
-+                               writel(cr, imx->mmio_base + MX3_PWMCR);
-+                               pinctrl_select_state(imx->pinctrl,
-+                                                    imx->pinctrl_pins_pwm);
-+                       }
-                 }
-  
-                 writel(duty_cycles, imx->mmio_base + MX3_PWMSAR);
-                 writel(period_cycles, imx->mmio_base + MX3_PWMPR);
--
--               cr = MX3_PWMCR_PRESCALER_SET(prescale) |
--                    MX3_PWMCR_STOPEN | MX3_PWMCR_DOZEN | MX3_PWMCR_WAITEN |
--                    FIELD_PREP(MX3_PWMCR_CLKSRC, MX3_PWMCR_CLKSRC_IPG_HIGH) |
--                    MX3_PWMCR_DBGEN | MX3_PWMCR_EN;
--
--               if (state->polarity == PWM_POLARITY_INVERSED)
--                       cr |= FIELD_PREP(MX3_PWMCR_POUTC,
--                                       MX3_PWMCR_POUTC_INVERTED);
--
-                 writel(cr, imx->mmio_base + MX3_PWMCR);
-         } else if (cstate.enabled) {
-+               /*
-+                * PWM block will be disabled. Normally its output will be set
-+                * low no matter what output polarity is configured. Let's use
-+                * pinctrl to switch the output pin to GPIO functon and keep
-+                * the output at the same level as for duty-cycle = 0.
-+                */
-+               if (imx->pinctrl)
-+                       pinctrl_select_state(imx->pinctrl,
-+                                            imx->pinctrl_pins_gpio);
-+
-                 writel(0, imx->mmio_base + MX3_PWMCR);
-  
-                 pwm_imx27_clk_disable_unprepare(chip);
+Oh, right I remember. After a close look, this is apparently not the
+case, according to the VAAPI docs at: 
+http://intel.github.io/libva/structVASliceParameterBufferH264.html
+
+Also looking at ffmpeg, VAAPI and VDPAU seem to pass the same data,
+except that VDPAU adds a start code prefix (which IIRC is required by
+the rockchip decoder):
+
+- VAAPI: https://github.com/FFmpeg/FFmpeg/blob/master/libavcodec/vaapi_h264.c#L331
+- VDPAU: https://github.com/FFmpeg/FFmpeg/blob/master/libavcodec/vdpau_h264.c#L182
+
+So I was initially a bit reluctant to make it part of the spec that the
+full slice NAL should be passed since that would imply geting the NAL
+header info both in parsed form through the control and in raw form
+along with the slice data. But it looks like it might be rather common
+for decoders to require this if the tegra decoder also needs it.
+
+Cheers,
+
+Paul
+
 -- 
-2.1.4
-
-What do you think?
-
-Best regards,
-Michal
+Paul Kocialkowski, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
