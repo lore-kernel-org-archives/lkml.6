@@ -2,112 +2,107 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20A7DC282C0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 02:53:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A82FCC282C0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 03:02:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E211D2184B
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 02:53:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ohmlinxelectronics-com.20150623.gappssmtp.com header.i=@ohmlinxelectronics-com.20150623.gappssmtp.com header.b="sc/QcFSf"
+	by mail.kernel.org (Postfix) with ESMTP id 7977F21872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 03:02:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727244AbfAXCxo (ORCPT
+        id S1727185AbfAXDCe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 21:53:44 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:46752 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727151AbfAXCxn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 21:53:43 -0500
-Received: by mail-lj1-f195.google.com with SMTP id v15-v6so3836506ljh.13
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 18:53:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ohmlinxelectronics-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:from:date:message-id:subject:cc;
-        bh=n6RtpWHA8V03ECowmNKLCRPul4C13va65Kvspu1U98s=;
-        b=sc/QcFSfgqJcCJepc6ZnfMzlKPlay3k7gx+JiAT+muAy+eSBAzjTpKL183EWVbdHID
-         eM6/itBQDj5qTl/aE0HkIFKfCQUQEov6uByXHtcmsGLFoUYlfcDH4uCd32Orhzy8LTrm
-         oQzDT7Y+QntQTGRqkzZOAdlT885HJ2Lt97SoqSk38W1NYcljUMhM7EB2d3Pk+n5VtYf7
-         C0v7Pk4RI2HbdRK09UHdLU+UoWtVCuc7VtASbFNddrl5Dl99DK4dTxaZrXTjpuIV3NMd
-         582wwmtT9U3uK2upzCf9Zx1ffNh9znHkZsi0OnXKHeRVHuOOzeVyY45FDyV7Jrqr+MMw
-         FZ6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:cc;
-        bh=n6RtpWHA8V03ECowmNKLCRPul4C13va65Kvspu1U98s=;
-        b=gfGkPuLMG49QGyhPNR70krfAeH2O79ZelC6WvmgpwAiCyY5RRG5q+4HA1uljXM88g4
-         R615KhRMT3/gKjcs9ANeNRXYyoa7SNXckZJnp2Wtv0V1r6rZMC20aFtnOmA6vz6zKlTY
-         kbi8OQbod3q6Q7nLWEx777ngyWBb/PLAQMROzW9ZPPIZgLCEwnNgVr3nsQen6FPuQOg3
-         XTr5sxrxqSVwYNmjGSeF6CEqdARxhwOngpDiuBjO6SJcDwLVJyeQYPds/ks/fH814ww8
-         GtuslxxmgnQk7GE2GQG808OMjH4QgJaSqMfleLVdKIQY5F94uOB6TZy+uVwwKLhh9Cbt
-         lvMQ==
-X-Gm-Message-State: AJcUukcFTt4RvDoDUHwTy66jb60ubD70G1uyCCrzcwz5huhNpxRu/2GN
-        BIRxQ8Da9JesPmze5JQr43U5EsKA5AQIHLAOB3bLBA==
-X-Received: by 2002:a2e:6595:: with SMTP id e21-v6mt2825531ljf.123.1548298421079;
- Wed, 23 Jan 2019 18:53:41 -0800 (PST)
+        Wed, 23 Jan 2019 22:02:34 -0500
+Received: from mout.gmx.net ([212.227.17.22]:33697 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726864AbfAXDCd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 22:02:33 -0500
+Received: from localhost.localdomain ([218.18.229.179]) by mail.gmx.com
+ (mrgmx103 [212.227.17.174]) with ESMTPSA (Nemesis) id
+ 0LzKQf-1hHDSp2b5t-014Xmf; Thu, 24 Jan 2019 04:02:31 +0100
+From:   Chengguang Xu <cgxu519@gmx.com>
+To:     adobriyan@gmail.com, akpm@linux-foundation.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chengguang Xu <cgxu519@gmx.com>
+Subject: [PATCH 1/2] proc: code cleanup for proc_setup_self()
+Date:   Thu, 24 Jan 2019 11:01:49 +0800
+Message-Id: <20190124030150.8472-1-cgxu519@gmx.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-From:   Ken Sloat <ken.sloat@ohmlinxelectronics.com>
-Date:   Wed, 23 Jan 2019 21:53:30 -0500
-Message-ID: <CAPo_4QDW0r22ZTqtS_NDFWB3NFLBx9YEGgWKb-P9A3t_TBAFMQ@mail.gmail.com>
-Subject: devicetree: media: Documentation of Bt.656 Bus DT bindings
-Cc:     Ken Sloat <Ken.sloat@ohmlinxelectronics.com>,
-        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, yong.deng@magewell.com,
-        mchehab@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        maxime.ripard@bootlin.com, wens@csie.org,
-        kieran.bingham@ideasonboard.com, laurent.pinchart@ideasonboard.com,
-        jean-michel.hautbois@vodalys.com,
-        Nate Drude <nate.drude@ohmlinxelectronics.com>
-Content-Type: text/plain; charset="UTF-8"
-To:     unlisted-recipients:; (no To-header on input)
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:LBTHK8iHp6RE2vHh2FoQL5PIh7DnwN/XuhF9Hm/SF2hb7K/CXuE
+ guyJg7dV/gVNe0KEcr7UVo3/lY/jL0p5W4Eg9dqSSqeBli4xIy+SjdDGEqJeEl+XEDB1Llt
+ h847QasgNN5hnSSfw2ZK4am45gsFg8N7ckZRmYu3k5Xg6Sqylw2im7BCN6srZeB6LZQ+oQV
+ wiuesOpYd8k02h4lowytg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:T7M4PX790bg=:VSnhAO2R54jXaL9lP61ZzQ
+ 6DyMEIO00nGxP/MJwgfVPMsgFeE/YTKteawUzxJHYpt0fINI+4XXEh1gXfrdaudoJKWGDqlfh
+ Xt+ZlP1baKKYeIFqoZNPmqRAEV9aJXEd7EIHiZr8LvUiZ4ZeI7dOaCagcFF512kAaCytCpFnJ
+ mYjXb9n9dmZVmwNc02/JpRE6JVNYJXzVQvK6jzc97IVgQbvUEYgtTF+QiAfV767p4CVN9SDCc
+ 69hnOCmI21wZI07vAZ2E01cPLvaw86KyLkvg20B/ZQ4bEYmO76ndTQORbWvPVkM4+gNKPXqa7
+ wuq+TVXKvhl9rJuPEpNlfU5LJL7s4ah0wVGdgh4y9ACGniXKJifyY1Zzba0/S/swQ2zsmOcl7
+ RD9Ueu7lBdijlobN13/vqFNTZVtcJPYx0hWFOhtsfwgQznX31LFZTGueICFg+LUE90R3o6mY+
+ lklLIe0UX8cWdCfQz5wbaR5ijJcVE+LfixgyujuA+0u9NgH4mMe4j2uxBS27T3TGdPlIE478V
+ DT/HRNbTflyk7cfj1G9pxQ/L6acdpgwzZLN5g/doXWgVGDO208JBGS7dr3MYL+YeeZ3BpMp4K
+ elFdy6IN3oReoueZ9NH5gtqrz9qbEB62RGnNyMsnBNz0x9UyzvqS9kkzDu/lNu8IRQ393/uJK
+ ibfV1D1ZEX5bEOt8aUSb87wt20Im54MAgI3uPeEx4RGzyUUYaZqrjP33lgVmhv4+Ti6xOly3A
+ 3PVBkGdmGQglKi0sBLdsDdQePEC30zyEw/wOe3NLo3ZPLjWe7znBYgCWLB8ASbXeb5mIZ6fSC
+ VtASuqz1uybB9juWSbvP5mWzGukCmkxK/G93c5Hn/MKUwirMZmZ28taqFwqOqM4cafugXThkv
+ +22vxRh+6RGUgC/j9pfSZ9Fjkroeroul5l8RDpdXMwqGBzhvMWxhp/fEgx01na
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are a number of v4l2 subdevices in the kernel that support a
-Bt.656 bus also known as "embedded sync." Previously in older versions
-of the kernel (and in the current 4.14 LTS kernel), the standard way
-to enable this in device tree on a parallel bus was to simply omit all
-hysync and vsync flags.
+Remove unnecessary ERR_PTR()/PTR_ERR() cast in proc_setup_self().
 
-During some other kernel development I was doing, it was brought to my
-attention that there is now a standard defined binding in
-"video-interfaces.txt" called "bus-type" that should be used in order
-to enable Bt.656 mode. While omitting the flags still appears to work
-because of other assumptions made in v4l2-fwnode driver, this method
-is now outdated and improper.
+Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
+---
+ fs/proc/self.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-However, I have noticed that several dt binding docs have not been
-updated to reflect this change and still reference the old method:
+diff --git a/fs/proc/self.c b/fs/proc/self.c
+index 127265e5c55f..57c0a1047250 100644
+--- a/fs/proc/self.c
++++ b/fs/proc/self.c
+@@ -38,6 +38,7 @@ int proc_setup_self(struct super_block *s)
+ 	struct inode *root_inode = d_inode(s->s_root);
+ 	struct pid_namespace *ns = proc_pid_ns(root_inode);
+ 	struct dentry *self;
++	int ret = -ENOMEM;
+ 	
+ 	inode_lock(root_inode);
+ 	self = d_alloc_name(s->s_root, "self");
+@@ -51,20 +52,19 @@ int proc_setup_self(struct super_block *s)
+ 			inode->i_gid = GLOBAL_ROOT_GID;
+ 			inode->i_op = &proc_self_inode_operations;
+ 			d_add(self, inode);
++			ret = 0;
+ 		} else {
+ 			dput(self);
+-			self = ERR_PTR(-ENOMEM);
+ 		}
+-	} else {
+-		self = ERR_PTR(-ENOMEM);
+ 	}
+ 	inode_unlock(root_inode);
+-	if (IS_ERR(self)) {
++
++	if (ret)
+ 		pr_err("proc_fill_super: can't allocate /proc/self\n");
+-		return PTR_ERR(self);
+-	}
+-	ns->proc_self = self;
+-	return 0;
++	else
++		ns->proc_self = self;
++
++	return ret;
+ }
+ 
+ void __init proc_self_init(void)
+-- 
+2.20.1
 
-Documentation/devicetree/bindings/media/sun6i-csi.txt
-/* If hsync-active/vsync-active are missing,
-   embedded BT.656 sync is used */
-
-Documentation/devicetree/bindings/media/i2c/tvp5150.txt
-"If none of hsync-active, vsync-active and field-even-active is specified,
-the endpoint is assumed to use embedded BT.656 synchronization."
-
-Documentation/devicetree/bindings/media/i2c/adv7604.txt
-"If none of hsync-active, vsync-active and pclk-sample is specified the
-  endpoint will use embedded BT.656 synchronization."
-
-and amazingly even
-Documentation/devicetree/bindings/media/video-interfaces.txt in one of
-the code snippets
-/* If hsync-active/vsync-active are missing,
-   embedded BT.656 sync is used */
-
-In order to avoid future confusion in the matter and ensure that the
-proper bindings are used, I am proposing submitting patches to update
-these docs to at minimum remove these statements and maybe even adding
-additional comments specifying the optional property and value for
-Bt.656 where missing. I wanted to open a discussion here first before
-doing this though. Thoughts?
-
-Thanks,
-Ken Sloat
