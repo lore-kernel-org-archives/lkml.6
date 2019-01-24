@@ -2,100 +2,99 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD182C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 04:26:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCF94C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 04:26:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66BE421872
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 04:26:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="28eZrKwR"
+	by mail.kernel.org (Postfix) with ESMTP id B1699218A3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 04:26:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727162AbfAXE0W (ORCPT
+        id S1727274AbfAXE0c convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 23:26:22 -0500
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:48722 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726249AbfAXE0W (ORCPT
+        Wed, 23 Jan 2019 23:26:32 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:40494 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726249AbfAXE0c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 23:26:22 -0500
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id x0O4QDuK001821;
-        Thu, 24 Jan 2019 13:26:13 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com x0O4QDuK001821
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1548303973;
-        bh=vtcVE8Z0DcFhtYIv2q70OrhjLnzL3cU63BiAdv2vtus=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=28eZrKwRGQnEMb0FrX27dx7ORhsPn8hREkWoA4+0AlE5N2dOt5HwU0JUdaW7RkX+A
-         h8POLZyl32OGwP84dXPBbPT+c0zIXDzNy/E/V3DzyMyMC7U+V8Z/9Zu0/i/wL7nBML
-         JTMBIyM3w0WLjDehuXXZpdiQ0OWnhHhEfdIBkalNpxqU4Sft5UvVkIcBc8Tlq6AoZ8
-         d3kg4ZPYVkiA7e3nNmNtqQiLqYg3ieZzrp9N6oprFD7Tm9HsMjgCsfPaby0o/GevkT
-         DbDa0vJYRmnIfrQ3cXpqiVaMNTFkfc2RV8R/o67KRsKKDlIGoKvDjF887pkWT3cTGB
-         7MX/KdHd32hig==
-X-Nifty-SrcIP: [209.85.222.42]
-Received: by mail-ua1-f42.google.com with SMTP id p9so1543968uaa.5;
-        Wed, 23 Jan 2019 20:26:13 -0800 (PST)
-X-Gm-Message-State: AJcUukdBsZCOWYEoliU2F/d0uYh7X4FZyxGBS57SA3lv7bBbtV5Y+Wt5
-        X0RqXHIluIShcWJCVhBY8Y3Ig3Hfw5wXSROrw6Y=
-X-Google-Smtp-Source: ALg8bN7bqry7k6yRSQuZQB/WM/6VSUVNsLZejfAKmSzPimzXI1NIaYcKWv3Q5SWv3DOQbmjQknPB9raulDm9WSu7Or4=
-X-Received: by 2002:ab0:3402:: with SMTP id z2mr2045370uap.6.1548303972479;
- Wed, 23 Jan 2019 20:26:12 -0800 (PST)
-MIME-Version: 1.0
-References: <1547799412-20120-1-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1547799412-20120-1-git-send-email-yamada.masahiro@socionext.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Thu, 24 Jan 2019 13:25:36 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATiQFTwyZsy-Hw1e8S=HBzT_tzjEkBwivQD+o=Cga1Yhw@mail.gmail.com>
-Message-ID: <CAK7LNATiQFTwyZsy-Hw1e8S=HBzT_tzjEkBwivQD+o=Cga1Yhw@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: descend to scripts/kconfig/ directly when
- syncconfig is needed
-To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Cc:     Michal Marek <michal.lkml@markovi.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 23 Jan 2019 23:26:32 -0500
+Received: from mail-pl1-f197.google.com ([209.85.214.197])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1gmWb0-0001h8-BR
+        for linux-kernel@vger.kernel.org; Thu, 24 Jan 2019 04:26:30 +0000
+Received: by mail-pl1-f197.google.com with SMTP id g13so3071982plo.10
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 20:26:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=3tL670mpbyCArJnbJPmRxRiUDhed8rW5GibFNIUDKig=;
+        b=TfKsC1jdbweUWZHy0XB991rGP85iZTM2L8EWftVq+4FEjgXFIJK/rjmTpWWwo/UtMp
+         HyN5pYdMKpgjj0BaWViOtAMN/H+m9oc2NKG+dD29Xv3WqFDyjw13hFJHLEMqLYMnc6n7
+         WtT5Y2QmTYFPw8EgXIYJvhADZr38kN8fzx5RrCaBuNLNZkTFPl6azy4MSP6ys56SAX2p
+         nFas4cLTr9HSvmKgoqeE92ZPZQY5HEdcFMpyg4VxCt61STPIMyjxq/2uZvpBX728nnf5
+         Nofx0gm3jFHHg7r2A8hbXJ13tCc5EIr5n2js6owt+vfB1broGvmUOcktQ+DEGfsuAznu
+         +wZA==
+X-Gm-Message-State: AJcUukfpU+L/xTAcB3PSjeQLiKezNHkPM+RKguMGtYfDGMpYVN0he0+Q
+        4YE5RNoKbtN4D2FrSTGJ2OuNzaCGEhpDs900KzlnBQE/20pQIdN5s49VDdwTp5tcHGgPzTvPgsb
+        7EaGjYKTa2IdFINSrMRb7vtTw57aYcH257gNcwl+5NQ==
+X-Received: by 2002:a63:4745:: with SMTP id w5mr4641177pgk.377.1548303988949;
+        Wed, 23 Jan 2019 20:26:28 -0800 (PST)
+X-Google-Smtp-Source: ALg8bN5o4FXmmrBlI0sCAnS43RdZgZeVY3R7sg449HuJhAAgjuytVtlmxtExLzqB2ITmWgqhdFBk6A==
+X-Received: by 2002:a63:4745:: with SMTP id w5mr4641157pgk.377.1548303988530;
+        Wed, 23 Jan 2019 20:26:28 -0800 (PST)
+Received: from 2001-b011-380f-13aa-18a3-1f83-e8c3-1f13.dynamic-ip6.hinet.net (2001-b011-380f-13aa-18a3-1f83-e8c3-1f13.dynamic-ip6.hinet.net. [2001:b011:380f:13aa:18a3:1f83:e8c3:1f13])
+        by smtp.gmail.com with ESMTPSA id n70sm32676397pfi.185.2019.01.23.20.26.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 23 Jan 2019 20:26:27 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH v15] i2c: Add drivers for the AMD PCIe MP2 I2C controller
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <ecb5ecad-7141-b8db-74dc-a53f2a17301c@amd.com>
+Date:   Thu, 24 Jan 2019 12:26:24 +0800
+Cc:     "Shah, Nehal-bakulchandra" <Nehal-bakulchandra.Shah@amd.com>,
+        Elie Morisse <syniurge@gmail.com>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>,
+        "Singh, Sandeep" <Sandeep.Singh@amd.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "helgaas@kernel.org" <helgaas@kernel.org>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <86BE166C-0821-4E16-AE72-728752654C20@canonical.com>
+References: <20181226232258.GA23526@syn-yoga530>
+ <ecb5ecad-7141-b8db-74dc-a53f2a17301c@amd.com>
+To:     Wolfram Sang <wsa@the-dreams.de>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 5:17 PM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> The recursion of the top Makefile is inefficient.
-> Just descend to scripts/kconfig/.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
+Hi Wolfram,
 
-Applied to linux-kbuild.
+> On Dec 31, 2018, at 22:36, Shah, Nehal-bakulchandra <Nehal-bakulchandra.Shah@amd.com> wrote:
+> 
+> Hi Elie,
+> 
+> 
+> On 12/27/2018 4:52 AM, Elie Morisse wrote:
 
+[snipped]
 
->
->  Makefile | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Makefile b/Makefile
-> index 9851a44..d5f0ac4 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -631,7 +631,7 @@ $(KCONFIG_CONFIG) include/config/auto.conf.cmd: ;
->  # include/generated/ and include/config/. Update them if .config is newer than
->  # include/config/auto.conf (which mirrors .config).
->  include/config/%.conf: $(KCONFIG_CONFIG) include/config/auto.conf.cmd
-> -       $(Q)$(MAKE) -f $(srctree)/Makefile syncconfig
-> +       $(Q)$(MAKE) $(build)=scripts/kconfig syncconfig
->  else
->  # External modules and some install targets need include/generated/autoconf.h
->  # and include/config/auto.conf but do not care if they are up-to-date.
-> --
-> 2.7.4
->
+> 
+> Looks ok for me
 
+With Shah’s blessing, is it possible to merge this patch to your -next tree?
 
--- 
-Best Regards
-Masahiro Yamada
+Kai-Heng
+
+> 
+> Thanks
+> Nehal Shah
+
