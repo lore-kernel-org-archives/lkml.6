@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20E93C282C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:25:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90061C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:25:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E572421900
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:25:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 543A6218FE
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:25:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548357907;
-	bh=xqYJHXAA1nSyIeqSIvQ5/eXHwf0ycfmQt8mA6pR2V/4=;
+	s=default; t=1548357911;
+	bh=hwH7LT3VlbcFyMQQAS2qJK6osh39n6Lx6rXHse8xLKY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lox+8vii4It01BK+Kko9evkQ530Ah/M0KeZVtseAJNjCqg+Av14aLjd2ILm8v7LCw
-	 AhHPxlpPzsefXRTve9Ms9ksu4ThY0UsI80ZfK31zVYOySy3peYTS4+gxdqGmW5GdpA
-	 WIwq2Dcn3XMSQhvhpqTcI4MRLmN8Ai5oL9Gbc3Ow=
+	b=oid8fKxHupCr+0pgFgMBPfJn92eJjzwu853AtvC097qpGu+mBdGthp+EMpXvdrarC
+	 aeWOdMQYJkuMUSrI7m8AuaK0g3zZLRFmv/sg/5cDfMBrbKvFE64UpPY+4iS7QkLC3s
+	 iD3nvgsKNbuw5U20Fy83c9kcSUeurV6jg7mOGPz4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730299AbfAXTZE (ORCPT
+        id S1730325AbfAXTZJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:25:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50404 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:25:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50514 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730272AbfAXTY7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:24:59 -0500
+        id S1730272AbfAXTZF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:25:05 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 05BBC218D2;
-        Thu, 24 Jan 2019 19:24:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3E4A1218FC;
+        Thu, 24 Jan 2019 19:25:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548357898;
-        bh=xqYJHXAA1nSyIeqSIvQ5/eXHwf0ycfmQt8mA6pR2V/4=;
+        s=default; t=1548357904;
+        bh=hwH7LT3VlbcFyMQQAS2qJK6osh39n6Lx6rXHse8xLKY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U7TqYT6Ert3pymWN7YqxHhvtn1Ao4LcrsnBPDCxYpjQ2n8KzP/nN2drwLJbzgwi3F
-         pvKSN+m2bekSo+8bE07XLPNOxjNuvQ3W9aspvuCyeNHxhP6/kbz6RBPsrXo6YJQ8MM
-         kZZr9Sn6ZMVk1F8X5fwWRf9CIENHFS0n6p6UlFOU=
+        b=HPVDtL1dJzIRn57zcbeDMJW4I3QfoulgWKnD7Dq/X282Ei9YoTEDyTMJ3QzUkwGf1
+         TfhoMNs27FErBI/N5F2hAOge3w7R9IKPFZeFk1tQzaH3MPpPWQd3tkyddDW2qXxgFp
+         E+boDBoZsuKF8+CG1xXPxBtKrVv7P2BWdiLZG05Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 027/104] f2fs: fix to do sanity check with secs_per_zone
-Date:   Thu, 24 Jan 2019 20:19:16 +0100
-Message-Id: <20190124190158.056981810@linuxfoundation.org>
+Subject: [PATCH 4.4 029/104] f2fs: Add sanity_check_inode() function
+Date:   Thu, 24 Jan 2019 20:19:18 +0100
+Message-Id: <20190124190158.280017406@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190154.968308875@linuxfoundation.org>
 References: <20190124190154.968308875@linuxfoundation.org>
@@ -66,98 +66,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Ben Hutchings <ben.hutchings@codethink.co.uk>
 
-commit 42bf546c1fe3f3654bdf914e977acbc2b80a5be5 upstream.
+This was done as part of commits 5d64600d4f33 "f2fs: avoid bug_on on
+corrupted inode" and 76d56d4ab4f2 "f2fs: fix to do sanity check with
+extra_attr feature" upstream, but the specific checks they added are
+not applicable to 4.4.
 
-As Wen Xu reported in below link:
-
-https://bugzilla.kernel.org/show_bug.cgi?id=200183
-
-- Overview
-Divide zero in reset_curseg() when mounting a crafted f2fs image
-
-- Reproduce
-
-- Kernel message
-[  588.281510] divide error: 0000 [#1] SMP KASAN PTI
-[  588.282701] CPU: 0 PID: 1293 Comm: mount Not tainted 4.18.0-rc1+ #4
-[  588.284000] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-[  588.286178] RIP: 0010:reset_curseg+0x94/0x1a0
-[  588.298166] RSP: 0018:ffff8801e88d7940 EFLAGS: 00010246
-[  588.299360] RAX: 0000000000000014 RBX: ffff8801e1d46d00 RCX: ffffffffb88bf60b
-[  588.300809] RDX: 0000000000000000 RSI: dffffc0000000000 RDI: ffff8801e1d46d64
-[  588.305272] R13: 0000000000000000 R14: 0000000000000014 R15: 0000000000000000
-[  588.306822] FS:  00007fad85008840(0000) GS:ffff8801f6e00000(0000) knlGS:0000000000000000
-[  588.308456] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  588.309623] CR2: 0000000001705078 CR3: 00000001f30f8000 CR4: 00000000000006f0
-[  588.311085] Call Trace:
-[  588.311637]  f2fs_build_segment_manager+0x103f/0x3410
-[  588.316136]  ? f2fs_commit_super+0x1b0/0x1b0
-[  588.317031]  ? set_blocksize+0x90/0x140
-[  588.319473]  f2fs_mount+0x15/0x20
-[  588.320166]  mount_fs+0x60/0x1a0
-[  588.320847]  ? alloc_vfsmnt+0x309/0x360
-[  588.321647]  vfs_kern_mount+0x6b/0x1a0
-[  588.322432]  do_mount+0x34a/0x18c0
-[  588.323175]  ? strndup_user+0x46/0x70
-[  588.323937]  ? copy_mount_string+0x20/0x20
-[  588.324793]  ? memcg_kmem_put_cache+0x1b/0xa0
-[  588.325702]  ? kasan_check_write+0x14/0x20
-[  588.326562]  ? _copy_from_user+0x6a/0x90
-[  588.327375]  ? memdup_user+0x42/0x60
-[  588.328118]  ksys_mount+0x83/0xd0
-[  588.328808]  __x64_sys_mount+0x67/0x80
-[  588.329607]  do_syscall_64+0x78/0x170
-[  588.330400]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[  588.331461] RIP: 0033:0x7fad848e8b9a
-[  588.336022] RSP: 002b:00007ffd7c5b6be8 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
-[  588.337547] RAX: ffffffffffffffda RBX: 00000000016f8030 RCX: 00007fad848e8b9a
-[  588.338999] RDX: 00000000016f8210 RSI: 00000000016f9f30 RDI: 0000000001700ec0
-[  588.340442] RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000013
-[  588.341887] R10: 00000000c0ed0000 R11: 0000000000000206 R12: 0000000001700ec0
-[  588.343341] R13: 00000000016f8210 R14: 0000000000000000 R15: 0000000000000003
-[  588.354891] ---[ end trace 4ce02f25ff7d3df5 ]---
-[  588.355862] RIP: 0010:reset_curseg+0x94/0x1a0
-[  588.360742] RSP: 0018:ffff8801e88d7940 EFLAGS: 00010246
-[  588.361812] RAX: 0000000000000014 RBX: ffff8801e1d46d00 RCX: ffffffffb88bf60b
-[  588.363485] RDX: 0000000000000000 RSI: dffffc0000000000 RDI: ffff8801e1d46d64
-[  588.365213] RBP: ffff8801e88d7968 R08: ffffed003c32266f R09: ffffed003c32266f
-[  588.366661] R10: 0000000000000001 R11: ffffed003c32266e R12: ffff8801f0337700
-[  588.368110] R13: 0000000000000000 R14: 0000000000000014 R15: 0000000000000000
-[  588.370057] FS:  00007fad85008840(0000) GS:ffff8801f6e00000(0000) knlGS:0000000000000000
-[  588.372099] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  588.373291] CR2: 0000000001705078 CR3: 00000001f30f8000 CR4: 00000000000006f0
-
-- Location
-https://elixir.bootlin.com/linux/latest/source/fs/f2fs/segment.c#L2147
-        curseg->zone = GET_ZONE_FROM_SEG(sbi, curseg->segno);
-
-If secs_per_zone is corrupted due to fuzzing test, it will cause divide
-zero operation when using GET_ZONE_FROM_SEG macro, so we should do more
-sanity check with secs_per_zone during mount to avoid this issue.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/super.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/f2fs/inode.c |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1088,9 +1088,9 @@ static int sanity_check_raw_super(struct
- 		return 1;
- 	}
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -95,6 +95,13 @@ static void __recover_inline_status(stru
+ 	return;
+ }
  
--	if (secs_per_zone > total_sections) {
-+	if (secs_per_zone > total_sections || !secs_per_zone) {
- 		f2fs_msg(sb, KERN_INFO,
--			"Wrong secs_per_zone (%u > %u)",
-+			"Wrong secs_per_zone / total_sections (%u, %u)",
- 			secs_per_zone, total_sections);
- 		return 1;
- 	}
++static bool sanity_check_inode(struct inode *inode)
++{
++	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++
++	return true;
++}
++
+ static int do_read_inode(struct inode *inode)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+@@ -143,6 +150,11 @@ static int do_read_inode(struct inode *i
+ 
+ 	get_inline_info(fi, ri);
+ 
++	if (!sanity_check_inode(inode)) {
++		f2fs_put_page(node_page, 1);
++		return -EINVAL;
++	}
++
+ 	/* check data exist */
+ 	if (f2fs_has_inline_data(inode) && !f2fs_exist_data(inode))
+ 		__recover_inline_status(inode, node_page);
 
 
