@@ -2,127 +2,137 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 355CCC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:31:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4DF4C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:31:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04892218A6
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:31:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DD54218A6
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:31:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="YHMjCOkz"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GoZ1FlVH";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bczxgM06"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728030AbfAXSbX (ORCPT
+        id S1728416AbfAXSb2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 13:31:23 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:43429 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725916AbfAXSbW (ORCPT
+        Thu, 24 Jan 2019 13:31:28 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:45492 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725916AbfAXSb0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 13:31:22 -0500
-Received: by mail-pg1-f194.google.com with SMTP id v28so3012305pgk.10
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 10:31:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=A6QBegBSPrD1wbNcx6Imf1vbJfpaI+cP3PrvCbpYma4=;
-        b=YHMjCOkzJ+kHUYohq/Msrb8CiQ2QBEzaw3D5pCTN1IljKv/Oq231pfzmRUWr3aYybY
-         zaTa/rxerL/Vmm/fBaVSXiLzJ8PDIiOaJ+g4nMeyXoafAeFQQQOoFg1wkQSrm0rydY7U
-         kOlaVIp8pqa/5M4Te3my1u4a45MrKZMO4ADTFHWzEoskwCIY9YmE8qZDJrt7V7NNBrJn
-         WoQGGQD//b+c0DYwL1mT612JspSmHr/dgSOaDnXsp0Q/gXSesmYMna2x4kZSOjDKvvMn
-         x5oRE+lcuMnxgIjmhGi65vMF1q6rWNHZwOZsDGppfXx06NWeKIeZY6pg+TqzqTj3fMaQ
-         JAZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=A6QBegBSPrD1wbNcx6Imf1vbJfpaI+cP3PrvCbpYma4=;
-        b=dQwwmgErK2XwtZsm2LAtntkQwurfqFheTn8uWN4NFFOMej9A9DPffuqlhAj56TpSrc
-         mm1QTEpfbHT78sAtWWeG0iq0KazPSf0RENup1CVUFY2D8l5NkNL1H9BLj03qNfZs8560
-         LHZc974KKRaEkCj9O7TEM1eCV4qjT9nA04QSqLH/n9ExUGopCY+mEWgKet8062t9hZzp
-         TFvGUAw3i4fZXBH5lkUMIOOMOfBe7rfBuPRpNMdLIvE6utleGrgUHesMjiZ0WO+Gu/KI
-         yQR4ieo3ij3Tz1cYf24rTyTrdFMgpnXE2O+BhNbqJpTS//TC8jyFPIRsmZxhEwsfbJuq
-         HZhA==
-X-Gm-Message-State: AJcUukeU2dnDKjNdzPlP4/pJTx2J8QfWuWAczjN6shN2d28sZaF54KKV
-        NypbIwPuk0BuJJpe4cmLhlRXjQ==
-X-Google-Smtp-Source: ALg8bN7MwzTeSVlhhq139gRi1XP0vsh0XDyiJDzhXOwhYlr9fwvmr4nnB4nJZFfdmCgPlN5DIJqN3g==
-X-Received: by 2002:a63:f658:: with SMTP id u24mr6976117pgj.267.1548354681822;
-        Thu, 24 Jan 2019 10:31:21 -0800 (PST)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id i5sm32156005pfg.34.2019.01.24.10.31.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 24 Jan 2019 10:31:21 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1gmjma-0005sS-9U; Thu, 24 Jan 2019 11:31:20 -0700
-Date:   Thu, 24 Jan 2019 11:31:20 -0700
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
-Cc:     dledford@redhat.com, linux-rdma@vger.kernel.org,
-        lijun_nudt@163.com, oulijun@huawei.com, liudongdong3@huawei.com,
-        linuxarm@huawei.com, linux-kernel@vger.kernel.org,
-        xavier_huwei@163.com
-Subject: Re: [PATCH V2 rdma-next 2/3] RDMA/hns: Fix the chip hanging caused
- by sending mailbox&CMQ during reset
-Message-ID: <20190124183120.GD17167@ziepe.ca>
-References: <1547868967-115951-1-git-send-email-xavier.huwei@huawei.com>
- <1547868967-115951-3-git-send-email-xavier.huwei@huawei.com>
- <20190123224041.GA11605@ziepe.ca>
- <5C492D59.8030707@huawei.com>
+        Thu, 24 Jan 2019 13:31:26 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id E0FAA607DD; Thu, 24 Jan 2019 18:31:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548354685;
+        bh=xuCijXfAk1T6OPLysp/p8ggboqusyrHlNrRZbB6m2YU=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=GoZ1FlVHyqXkxe6hXTUgQEZMLvq098GyHyWVVbszi7V2AnI9D8M5imhWL6t8stIK0
+         TeVp2KPtS9qAtxyolJA/E/nzUEwpnnbZKPcBuP3sUHj0GWV6V8dCsp90ufV/L91+pu
+         W1SK0wg8WSXcJJwsVvzKFtifz97mYtQimkjgEkO4=
+Received: from [192.168.1.101] (unknown [157.45.230.70])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 47D62607DD;
+        Thu, 24 Jan 2019 18:31:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548354681;
+        bh=xuCijXfAk1T6OPLysp/p8ggboqusyrHlNrRZbB6m2YU=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=bczxgM06CzAj3VAkb4WKdTCBYr1skicRoHtFMgClfqu3IvwvFFE/Eix1/wbakfkLQ
+         IWdSCkCczdR3JL7tb3joiy8gm4uE6QdJwczr2StwLlZpg+I/bCkSVWi7RmnEtcSPvw
+         vvegSmzjQ1fKwbr1o+HD5qI/s1zRFRYdAvPhppY8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 47D62607DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
+Subject: Re: [PATCHv4 1/4] arm64: dts: qcom: sdm845: Add Coresight support
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Rob Herring <robh+dt@kernel.org>, Leo Yan <leo.yan@linaro.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Doug Anderson <dianders@chromium.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        John Horley <john.horley@arm.com>
+References: <cover.1548133311.git.saiprakash.ranjan@codeaurora.org>
+ <ad16cfb9b6f5efb85149458d5f5a1abf43fa027c.1548133311.git.saiprakash.ranjan@codeaurora.org>
+ <1bd39862-0725-70ce-6535-fdb59569f683@arm.com>
+ <75ed74af-6946-b86d-092e-42dc16e55308@codeaurora.org>
+ <91a90daa-9e14-2d2e-e633-2ddfdc0955bf@arm.com>
+ <3906faf1-abbd-9c28-ad55-ed3800f06352@codeaurora.org>
+ <c03b63bf-aca8-ea46-70ad-ee4558f0319e@arm.com>
+ <5b54c6e0-7d22-ecee-486f-31333f49f84a@codeaurora.org>
+ <CANLsYkxLJS-N0V4eOHM5rfe8MXMZHQApZFsDQns+DAS7xhGCoQ@mail.gmail.com>
+ <71ae9f41-50ff-742b-3e12-ca2ce84e0d3c@codeaurora.org>
+ <CANLsYkyeG4mZTJbFPnAsTNpt_2OBy5JYP6g80rbmZv-F8KTrUA@mail.gmail.com>
+From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Message-ID: <1384cbbb-6e3e-f2e3-5ea4-8d0b237d64c7@codeaurora.org>
+Date:   Fri, 25 Jan 2019 00:01:04 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5C492D59.8030707@huawei.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CANLsYkyeG4mZTJbFPnAsTNpt_2OBy5JYP6g80rbmZv-F8KTrUA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 11:13:29AM +0800, Wei Hu (Xavier) wrote:
-> 
-> 
-> On 2019/1/24 6:40, Jason Gunthorpe wrote:
-> > On Sat, Jan 19, 2019 at 11:36:06AM +0800, Wei Hu (Xavier) wrote:
-> >
-> >> +static int hns_roce_v2_cmd_hw_resetting(struct hns_roce_dev *hr_dev,
-> >> +					unsigned long instance_stage,
-> >> +					unsigned long reset_stage)
-> >> +{
-> >> +	struct hns_roce_v2_priv *priv = (struct hns_roce_v2_priv *)hr_dev->priv;
-> >> +	struct hnae3_handle *handle = priv->handle;
-> >> +	const struct hnae3_ae_ops *ops = handle->ae_algo->ops;
-> >> +	unsigned long end;
-> >> +
-> >> +	/* When hardware reset is detected, we should stop sending mailbox&cmq
-> >> +	 * to hardware, and wait until hardware reset finished. If now
-> >> +	 * in .init_instance() function, we should exit with error. If now at
-> >> +	 * HNAE3_INIT_CLIENT stage of soft reset process, we should exit with
-> >> +	 * error, and then HNAE3_INIT_CLIENT related process can rollback the
-> >> +	 * operation like notifing hardware to free resources, HNAE3_INIT_CLIENT
-> >> +	 * related process will exit with error to notify NIC driver to
-> >> +	 * reschedule soft reset process once again.
-> >> +	 */
-> >> +	end = msecs_to_jiffies(HNS_ROCE_V2_HW_RST_TIMEOUT) + jiffies;
-> >> +	while (ops->get_hw_reset_stat(handle) && time_before(jiffies, end))
-> >> +		udelay(1);
-> > I thought you were getting rid of these loops?
-> Hi, Jason
-> 
->     Upper applications maybe notify driver to issue mailbox or CMD
->     commands to hardware, some commands used to cancel resources,
->     destory bt/destory cq/unreg mr/destory qp etc. when such
->     commands are executed successfully, the hardware engine will
->     no longer access some memory registered by the driver.
-> 
->     When reset occurs, it is possible for upper applications notify driver
->     to issue mailbox or CMD commands, we need to wait until hardware
->     reset finished to ensure that hardware no longer accesses related
-> memory.
+Good day Mathieu,
 
-You should not wait for things using loops like the above.
+On 1/24/2019 9:37 PM, Mathieu Poirier wrote:
+> Good day Sai,
+> 
+> On Wed, 23 Jan 2019 at 13:18, Sai Prakash Ranjan
+> <saiprakash.ranjan@codeaurora.org> wrote:
+>>
+>> Hi Mathieu,
+>>
+>> On 1/24/2019 12:44 AM, Mathieu Poirier wrote:
+>>> On Wed, 23 Jan 2019 at 05:12, Sai Prakash Ranjan
+>>> <saiprakash.ranjan@codeaurora.org> wrote:
+>>>
+>>> That depends on whether the ETMs have been modified at all, something
+>>> Suzuki has asked to be clarified.  If ETMs have been modified then we
+>>> need to understand how they differ from the driver's implementation.
+>>
+>> We had asked hardware team for clarification regarding this. Let me
+>> poke them again. As for the driver, downstream implementation also
+>> uses the same driver, so I am not sure what do you mean by differing
+>> from the driver's implementation.
+> 
+> The driver has been implemented in accordance to ARM's coresight
+> technical reference manual and expects the HW to behave in accordance
+> to that specification.  Here we want to make sure the IP on your board
+> is conformant to the same specification.  If not then the driver needs
+> to be made flexible to handle both kind IPs.
+> 
 
-Jason
+The HW does behave as per the specification. As discussed in reply to
+Suzuki, Coresight peripherals do use JEP106 ID of ARM for SDM845 and for 
+MSM8996, the ID is of QCOM(0x70) since it was not based on any ARM 
+derivative.
+And the etm4x driver handles it all well. Other values of PID registers
+are implementation defined and can be different from standard ARM cpu
+core types.
+
+Thanks,
+Sai
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
