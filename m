@@ -2,100 +2,163 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFB5AC282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:33:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A30FC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:33:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE0AB218FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:33:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HqDgNskN"
+	by mail.kernel.org (Postfix) with ESMTP id 2A639218FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:33:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548358397;
+	bh=IZd+rWVFhfmTDWUPhHtjUtuWgakP+kYh2HLd0bScYuA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=tBJA9FFk5whAUv3R14KtiCgl+iKcm89G/N+EOpcHGSpijkUG/vY0DKG+UxYVsUvK6
+	 vT/NagKif4SmcMWk5k5kHuiCcrC004LoR3xvHEx5ElVpXVaJnYJnsNE3XIG2V424yb
+	 p6yMVbANiwM51ytcPSEUERtraqEbSulkU1pHJ/BE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731950AbfAXTdI (ORCPT
+        id S1731315AbfAXTdP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:33:08 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:36134 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731501AbfAXTdE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:33:04 -0500
-Received: by mail-qt1-f193.google.com with SMTP id t13so8054516qtn.3;
-        Thu, 24 Jan 2019 11:33:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=dABOoRdMc3ONkW9VtJfZtO0pYsaEfgtakPv9Q33V1xw=;
-        b=HqDgNskN3KNCjeq7bYYjInz0eTtzLRFdJntR0+tGj7QEum40oadzieHkbtjwBreVh5
-         botrSZPeNoMbGwqMDbzyJ52cv5tSnbdx7b4KWJZRTy+beQDtCi0xQXXqQy6Yimwvz42l
-         4kZ0C0J9gCvghZBoDeNR2V+qb7sVOGWepUyjd4WPjNOJDPINkgk3BvNPDLgmdtaaGhR0
-         z2gwn0UhthzBfoCFXdzTVp0G2YpsOtpA+UTDt1lZJdmi5zvyiZgONLYSGKGqaTcPbb2R
-         8dOXN+X/DjaehXJrgd9tzUhMKJuGHO72rjDIt+LODd697gcB7D0NQAAPBn3TM1q2WJC7
-         i2FQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=dABOoRdMc3ONkW9VtJfZtO0pYsaEfgtakPv9Q33V1xw=;
-        b=R9l7aH75MXEeezwYquRfoTgw1IIowMg4YmEqAlHCEwpgN91PwUSkpwZmrUGPbSVA84
-         3zX056bb31ySb6pX5ms4XVqrBaushVZSocMCWe7d8Yh1NW4WrD2PYaaJdksOgzJUaBeD
-         bPnVEh8JCzzzi9SDAqqXvLYWVr2tNm4IhzNxmoADVoh5jqgnL3umrd7cjUg8wYLf8w9U
-         6I2cemSKCTxAuOuHdpEduKGEn/8e6Lvo70112WVvvWeO9HrsNZeQekvFZ/RBlHMfs+Yd
-         +QzIQBZUqRnS2CYMe9/g8MX6QiTySwgSlsUFolPpnCsy6M3j3UxX8PHTJ7L7jnWW7HBo
-         C++A==
-X-Gm-Message-State: AJcUukf0GPFEP/JQwNhF5LI1onxusXq1D4g4PNW9LJzNjejkJfRyUhlN
-        I5XUaLWYvwd8MpyUrRmGqRdQjFxgQLf+rg==
-X-Google-Smtp-Source: ALg8bN5X3awJxgpBPV2BIyRUDKstA5j4mU44edb0fBso5pQQjKhhcmfBpyVpcaM5goZQ3+NJs7fFFQ==
-X-Received: by 2002:ac8:2bd4:: with SMTP id n20mr8019780qtn.172.1548358383782;
-        Thu, 24 Jan 2019 11:33:03 -0800 (PST)
-Received: from rodrigo-note.semfio.usp.br ([143.107.45.1])
-        by smtp.gmail.com with ESMTPSA id t5sm48752762qkl.14.2019.01.24.11.32.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 24 Jan 2019 11:33:03 -0800 (PST)
-From:   Rodrigo Ribeiro <rodrigorsdc@gmail.com>
-To:     lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
-        knaack.h@gmx.de, pmeerw@pmeerw.net, gregkh@linuxfoundation.org
-Cc:     linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com,
-        Rafael Tsuha <rafael.tsuha@usp.br>
-Subject: [PATCH] staging:iio:ad7152: Rename misspelled RESEVERD -> RESERVED
-Date:   Thu, 24 Jan 2019 17:31:56 -0200
-Message-Id: <1548358316-8062-1-git-send-email-rodrigorsdc@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 24 Jan 2019 14:33:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32996 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730946AbfAXTdM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:33:12 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EACEA218D4;
+        Thu, 24 Jan 2019 19:33:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548358391;
+        bh=IZd+rWVFhfmTDWUPhHtjUtuWgakP+kYh2HLd0bScYuA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=cOzkKrAiVhpYqALtFOfOPScOlKfaWpJVe7+CFGFx6KnqxFuSG/kbSPlb4sFFRSMpz
+         AJVGasb8vPVg0I8n+OkYGgfVkkC6UZKb+u8/76esjtXfVZjmAQCt9RFdXA+l91TfGy
+         1QlRgNWft02fgLOXtX6YGbV6lKbe3NsptxK14iyI=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Aaron Lu <aaron.lu@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Vasily Averin <vvs@virtuozzo.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 56/63] mm/swap: use nr_node_ids for avail_lists in swap_info_struct
+Date:   Thu, 24 Jan 2019 20:20:45 +0100
+Message-Id: <20190124190201.924268856@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190124190155.176570028@linuxfoundation.org>
+References: <20190124190155.176570028@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the checkpatch.pl check:
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-CHECK: 'RESEVERD' may be misspelled - perhaps 'RESERVED'?
+------------------
 
-Signed-off-by: Rodrigo Ribeiro <rodrigorsdc@gmail.com>
-Signed-off-by: Rafael Tsuha <rafael.tsuha@usp.br>
+[ Upstream commit 66f71da9dd38af17dc17209cdde7987d4679a699 ]
+
+Since a2468cc9bfdf ("swap: choose swap device according to numa node"),
+avail_lists field of swap_info_struct is changed to an array with
+MAX_NUMNODES elements.  This made swap_info_struct size increased to 40KiB
+and needs an order-4 page to hold it.
+
+This is not optimal in that:
+1 Most systems have way less than MAX_NUMNODES(1024) nodes so it
+  is a waste of memory;
+2 It could cause swapon failure if the swap device is swapped on
+  after system has been running for a while, due to no order-4
+  page is available as pointed out by Vasily Averin.
+
+Solve the above two issues by using nr_node_ids(which is the actual
+possible node number the running system has) for avail_lists instead of
+MAX_NUMNODES.
+
+nr_node_ids is unknown at compile time so can't be directly used when
+declaring this array.  What I did here is to declare avail_lists as zero
+element array and allocate space for it when allocating space for
+swap_info_struct.  The reason why keep using array but not pointer is
+plist_for_each_entry needs the field to be part of the struct, so pointer
+will not work.
+
+This patch is on top of Vasily Averin's fix commit.  I think the use of
+kvzalloc for swap_info_struct is still needed in case nr_node_ids is
+really big on some systems.
+
+Link: http://lkml.kernel.org/r/20181115083847.GA11129@intel.com
+Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: Vasily Averin <vvs@virtuozzo.com>
+Cc: Huang Ying <ying.huang@intel.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
-This macro is not used anywhere. Should we just correct the
-spelling or remove the macro?
+ include/linux/swap.h | 11 ++++++++++-
+ mm/swapfile.c        |  3 ++-
+ 2 files changed, 12 insertions(+), 2 deletions(-)
 
- drivers/staging/iio/cdc/ad7152.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/staging/iio/cdc/ad7152.c b/drivers/staging/iio/cdc/ad7152.c
-index 25f51db..c9da6d4 100644
---- a/drivers/staging/iio/cdc/ad7152.c
-+++ b/drivers/staging/iio/cdc/ad7152.c
-@@ -35,7 +35,7 @@
- #define AD7152_REG_CH2_GAIN_HIGH	12
- #define AD7152_REG_CH2_SETUP		14
- #define AD7152_REG_CFG			15
--#define AD7152_REG_RESEVERD		16
-+#define AD7152_REG_RESERVED		16
- #define AD7152_REG_CAPDAC_POS		17
- #define AD7152_REG_CAPDAC_NEG		18
- #define AD7152_REG_CFG2			26
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index f02fb5db8914..4fd1ab9565ba 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -231,7 +231,6 @@ struct swap_info_struct {
+ 	unsigned long	flags;		/* SWP_USED etc: see above */
+ 	signed short	prio;		/* swap priority of this type */
+ 	struct plist_node list;		/* entry in swap_active_head */
+-	struct plist_node avail_lists[MAX_NUMNODES];/* entry in swap_avail_heads */
+ 	signed char	type;		/* strange name for an index */
+ 	unsigned int	max;		/* extent of the swap_map */
+ 	unsigned char *swap_map;	/* vmalloc'ed array of usage counts */
+@@ -272,6 +271,16 @@ struct swap_info_struct {
+ 					 */
+ 	struct work_struct discard_work; /* discard worker */
+ 	struct swap_cluster_list discard_clusters; /* discard clusters list */
++	struct plist_node avail_lists[0]; /*
++					   * entries in swap_avail_heads, one
++					   * entry per node.
++					   * Must be last as the number of the
++					   * array is nr_node_ids, which is not
++					   * a fixed value so have to allocate
++					   * dynamically.
++					   * And it has to be an array so that
++					   * plist_for_each_* can work.
++					   */
+ };
+ 
+ #ifdef CONFIG_64BIT
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index af3c4c5a0b4e..4f9e522643a2 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -2830,8 +2830,9 @@ static struct swap_info_struct *alloc_swap_info(void)
+ 	struct swap_info_struct *p;
+ 	unsigned int type;
+ 	int i;
++	int size = sizeof(*p) + nr_node_ids * sizeof(struct plist_node);
+ 
+-	p = kvzalloc(sizeof(*p), GFP_KERNEL);
++	p = kvzalloc(size, GFP_KERNEL);
+ 	if (!p)
+ 		return ERR_PTR(-ENOMEM);
+ 
 -- 
-2.7.4
+2.19.1
+
+
 
