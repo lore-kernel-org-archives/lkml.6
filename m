@@ -2,99 +2,70 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D7BFC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 04:18:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16F5CC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 04:20:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DA9821872
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 04:18:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA50421872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 04:20:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HmUfWe28"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="XtKMY2l1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727264AbfAXESn (ORCPT
+        id S1727225AbfAXEU5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 23:18:43 -0500
-Received: from ozlabs.org ([203.11.71.1]:43373 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727166AbfAXESn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 23:18:43 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43lTRh5MX6z9s3l;
-        Thu, 24 Jan 2019 15:18:38 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1548303521;
-        bh=CW7rRce9yAofJLg6P8nY4zp44cpnbbaCGQqUxo9Jgio=;
-        h=Date:From:To:Cc:Subject:From;
-        b=HmUfWe28UggIioPgvg+Fw19wbYGDF4mcvVGLMGb9qoDnTdOo3bJnisaPDqowya9yu
-         IR1gjqrnM87QAvHUnBsadPhhoSTIWekggmGLZT/bf2tt68XFcyHtcGoVNWfpb+saEF
-         Eeunt0MBRDp6TlKymQdAknm+o58OPcrDCnWyugM8aR4i+5bmZB2hQ/gXOzt/ELKpLx
-         l+fbF6ta+3UDXFJbjb7zXc0qDMfM8acCvlSrCdlfyl1oM73mQgSGyUYD6yx7x54007
-         vRAm4JufLffhrf+aaif5VOzP7I/07vogW9/DZfqD9VUI1ew+0z4mIQmHEGiGiEJS1r
-         yfn2TBzXDGo/g==
-Date:   Thu, 24 Jan 2019 15:18:37 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: linux-next: build warning after merge of the gpio-brgl tree
-Message-ID: <20190124151837.1ca96816@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/LlXZFtKaEVR7rnrGM1hZWEG"; protocol="application/pgp-signature"
+        Wed, 23 Jan 2019 23:20:57 -0500
+Received: from conuserg-12.nifty.com ([210.131.2.79]:63022 "EHLO
+        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726313AbfAXEU4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 23:20:56 -0500
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-12.nifty.com with ESMTP id x0O4JI04030691;
+        Thu, 24 Jan 2019 13:19:18 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com x0O4JI04030691
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1548303559;
+        bh=TKNrR5jzjw6WrXHxtJ82ro++BWFAOJtU+JQPQgQeqyU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=XtKMY2l1dEMLzsTwZOLssUz+jvBW+3PoAbXzMrK+477EUnJFw++mfZGNLW3cxkKDT
+         C5m9NYp7EQZLq5YmOOzww7hVsbVZSIO+X2hyg9PjJh8z2XqvDUY3sanUiPpsTO26HJ
+         7/wCPzTEYZyxT2kmumGw03PdO2Gcx+N8qx3iLjteUxFVYI3vEWGTgH4+FVKBO/fqap
+         BhuJMWmQQ2enNoL8dQniomxKMJUKJrAITo18RsgnURD3+5aKG5bL/CI0zP1L1jSiLe
+         90UbSSGTm8tyWnULR9S+zhOUn5BxAmkF48OO5pXeKtYSXonL1x6vvG6/Xg+FxKkKPT
+         faw4CUCFv6jXQ==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-mtd@lists.infradead.org,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Boris Brezillon <bbrezillon@kernel.org>
+Subject: [PATCH 0/2] mtd: rawnand: denali: just trivial cleanups
+Date:   Thu, 24 Jan 2019 13:19:05 +0900
+Message-Id: <1548303547-21156-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/LlXZFtKaEVR7rnrGM1hZWEG
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi Bartosz,
 
-After merging the gpio-brgl tree, today's linux-next build (arm
-multi_v7_defconfig) produced this warning:
 
-drivers/gpio/gpio-davinci.c: In function 'davinci_gpio_get_irq_chip':
-drivers/gpio/gpio-davinci.c:472:9: warning: function returns address of loc=
-al variable [-Wreturn-local-addr]
-  return &gpio_unbanked.chip;
-         ^~~~~~~~~~~~~~~~~~~
-drivers/gpio/gpio-davinci.c: In function 'keystone_gpio_get_irq_chip':
-drivers/gpio/gpio-davinci.c:480:9: warning: function returns address of loc=
-al variable [-Wreturn-local-addr]
-  return &gpio_unbanked;
-         ^~~~~~~~~~~~~~
+Masahiro Yamada (2):
+  mtd: rawnand: denali: remove unneeded denali_reset_irq() call
+  mtd: rawnand: denali: remove unused function argument 'raw'
 
-Introduced by commit
+ drivers/mtd/nand/raw/denali.c | 21 +++++++++------------
+ 1 file changed, 9 insertions(+), 12 deletions(-)
 
-  ee5e87158e63 ("gpio: davinci: drop pointless static qualifier")
+-- 
+2.7.4
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/LlXZFtKaEVR7rnrGM1hZWEG
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxJPJ0ACgkQAVBC80lX
-0Gyx9gf9EKJ9DCt1Nu7gnajJQwYGbD7ESYO7qE4omL8blmk1d8l5HhZPRCUNwjEA
-HnpxqQqbaTgnU0e/fW7RvtHI6awvPW5N+FMkejs55NPeOzQTTUyEeq7j4FzCNgO7
-twVCJS0+ntB5FuwARb3uivUq2z6iMKTFBJaetxlGJ+JcTEIm/tT586aMkhlkdx8N
-8wUMWSNXF/YlIx7RPaYtKYYwZYrQmnXTALuw8o1ApBZMyThMPj5XeoQo7EJH86Y2
-UqgwNioJvYi6OY3xbnrD9dqrMOEV8sJuSkS4v3Befaxs9FqvsXTy0TvVZ7nOv7om
-ZDWBZz+3qvSiy3Asu4XpCq1kdhG54A==
-=Z22C
------END PGP SIGNATURE-----
-
---Sig_/LlXZFtKaEVR7rnrGM1hZWEG--
