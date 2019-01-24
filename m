@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 789A9C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:57:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFA25C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:57:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44A21218A6
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:57:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C086320811
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:57:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="otCEUxy9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gm/udZKd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727786AbfAXL5I (ORCPT
+        id S1727709AbfAXL5G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 06:57:08 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:41301 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727616AbfAXL5H (ORCPT
+        Thu, 24 Jan 2019 06:57:06 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:36979 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726105AbfAXL5F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 06:57:07 -0500
-Received: by mail-lf1-f68.google.com with SMTP id c16so4086189lfj.8
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 03:57:05 -0800 (PST)
+        Thu, 24 Jan 2019 06:57:05 -0500
+Received: by mail-lj1-f196.google.com with SMTP id t18-v6so4977994ljd.4
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 03:57:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=LH2WfGm9JecgWZzx+vTKmh903j2Nkd/dyKUicbvBqL4=;
-        b=otCEUxy9/8LsDspYMLhrFYV4Mt3MDXaRGgPVnH3raQohrhx3IENSURFXhFQYXzsedz
-         F4TmLxi9rxVeDu/K5mpRe8tNOBqwW8/6DW+raTEvmAFy7JbwWK3yRgLNxgAoAOd0FHUm
-         bcVS1WGX45Lcog/DowgR6A3GWH+Gwcaqv7DRM1arVX9Qx7UV6yAaHTWg8BwBLAqLTa4L
-         v9WHSo3jdFFj5HAV+vhUWLeL1L0oKOYodltmV+WWkjeOYwX90wwLc5AxpiP/IzMuWLt/
-         okbN9C5tHA7QCOtBkHtA0+7N6IBrwXy+ImLXQDRTHirzyTzuG9ZtF/8/bfru/NNQ/O37
-         f7bw==
+        bh=Bmx4BpgKe71+rZZ26lOw3fLZEJYFgz55uetEcgrI96E=;
+        b=Gm/udZKdWmDsapkf31oi+rV/xrSnCemE9Em+1d3nPz1T325PqUA8UYAq4tZbBsrndL
+         QauifVztJj6FXXJ+kqfoCiP+BOIGeFgkA2ClQgXEYVjM+51aCj26rt6kI+qjmgEMj8mH
+         7kNRJu+XgTdpEjgsi8TquvDhssPTtjqI+6mkp0ryHr33B+38Ph7eiiuB0VoO7ilDBW6A
+         dPxXAOlSwtMniFo02J4cswekKCffWYNCkEaE0j3gmJhRvfqBtZRVCZykn9U+oQXTT0d2
+         qwMJxoMY+UUyCDxldf+FQkFYc+nEGeUnLjSvGgfLbrl1nF9whzNr64O+Vo18f2Xz9MwS
+         fH0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=LH2WfGm9JecgWZzx+vTKmh903j2Nkd/dyKUicbvBqL4=;
-        b=RuJe+ej4O7K+exmEGcAptJFHOi+kLOMp4uvMAwCHZEm3TfMG0szkgmrwCNq/xCGk6/
-         Xc1yGnowZaVZcjJnU9M1RfmiVpWpV5o7bs2VwyDWEKl+E79RrKLMrhuy/HotLER5Uwp+
-         NbBPB003xcX3/lLfbgy3hHlH6pgoTTz2ynINHvwJsUWqi/nmVwfu7BwSTqSZQsdmFsFm
-         QqnJxWZcs8nvwuooKEzJu5ZWMXtg+ZTsFquTW0Uv/g/8pEYfOdoDZSvIZhO7+ONZ8iIY
-         ayvz4fHDk8sqWbrawnuvV+R0JoKahDJZMLha20QgLBasxNyVI1xhD2mOa138o1SUOUV3
-         aAPQ==
-X-Gm-Message-State: AJcUukcgTzp04IIRydomz23qL6ymfy1FCa7EEa9NSZpm3FL3iBgvghg9
-        DIWCxdjg3bGz687zwr+b1xw=
-X-Google-Smtp-Source: ALg8bN5XmuZZCNstoL7umSLMjPTwUb4qtjoHCuVnAOMRQy7Zp/qTmcBmfwsBuyULKrL8NZgyTKdbdg==
-X-Received: by 2002:a19:2106:: with SMTP id h6mr4947446lfh.29.1548331024917;
-        Thu, 24 Jan 2019 03:57:04 -0800 (PST)
+        bh=Bmx4BpgKe71+rZZ26lOw3fLZEJYFgz55uetEcgrI96E=;
+        b=iEXJRz4DyzaP4ShWVI/MCaufCc3jQ/K8gyr9iAxXaYX/x4zFMyV4Cz7lfWFKZHsJCm
+         LptuhM9BYKhTiBUPxXauaCSaicH9PZ/HjuIPKxR/jbRXgbDwtbP4cNoZ0Dnj1lKho5BY
+         sYcy8EOTsAVUNCmfWS1VWBMBj/H9twxfiDb8jJJrKDNuNAv8zPQDOnMWkLaExteeoVtg
+         6IsYdbvyIcUsF5dEG86a2B7PvKaoIvgfUa2CBvUGWStF4y6ZPTIjSQ8eKUzeLjXe2jmq
+         70KYvM3C4kfKUIaHRledcyTHzZ30njrgB8lG6KHEj5V3iljc4BuGauH94Dtc/skRmN0Z
+         GRig==
+X-Gm-Message-State: AJcUukeGtj6ZZ4lp2cjPgQ5GGXovOOzfcQphxfCOqiyS8eJ+Yh16TH1b
+        XygJk3Yd0d2gyKh7B/aMbxo=
+X-Google-Smtp-Source: ALg8bN6UtOSdiZ6kpnXzV6MiFQ4RAnSAEkzBdbiMYt5qilFhIXuba1TyBeLy6M1MsF0orf+FsOvosA==
+X-Received: by 2002:a2e:b04f:: with SMTP id d15-v6mr5355706ljl.3.1548331023688;
+        Thu, 24 Jan 2019 03:57:03 -0800 (PST)
 Received: from pc636.semobile.internal ([37.139.158.167])
-        by smtp.gmail.com with ESMTPSA id w202sm920226lff.31.2019.01.24.03.57.03
+        by smtp.gmail.com with ESMTPSA id w202sm920226lff.31.2019.01.24.03.57.02
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 03:57:04 -0800 (PST)
+        Thu, 24 Jan 2019 03:57:03 -0800 (PST)
 From:   "Uladzislau Rezki (Sony)" <urezki@gmail.com>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Michal Hocko <mhocko@suse.com>,
@@ -67,9 +67,9 @@ Cc:     LKML <linux-kernel@vger.kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@elte.hu>, Tejun Heo <tj@kernel.org>,
         "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-Subject: [PATCH v1 2/2] mm: add priority threshold to __purge_vmap_area_lazy()
-Date:   Thu, 24 Jan 2019 12:56:48 +0100
-Message-Id: <20190124115648.9433-3-urezki@gmail.com>
+Subject: [PATCH v1 1/2] mm/vmalloc: fix kernel BUG at mm/vmalloc.c:512!
+Date:   Thu, 24 Jan 2019 12:56:47 +0100
+Message-Id: <20190124115648.9433-2-urezki@gmail.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20190124115648.9433-1-urezki@gmail.com>
 References: <20190124115648.9433-1-urezki@gmail.com>
@@ -78,79 +78,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit 763b218ddfaf ("mm: add preempt points into
-__purge_vmap_area_lazy()")
+One of the vmalloc stress test case triggers the kernel BUG():
 
-introduced some preempt points, one of those is making an
-allocation more prioritized over lazy free of vmap areas.
+<snip>
+[60.562151] ------------[ cut here ]------------
+[60.562154] kernel BUG at mm/vmalloc.c:512!
+[60.562206] invalid opcode: 0000 [#1] PREEMPT SMP PTI
+[60.562247] CPU: 0 PID: 430 Comm: vmalloc_test/0 Not tainted 4.20.0+ #161
+[60.562293] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+[60.562351] RIP: 0010:alloc_vmap_area+0x36f/0x390
+<snip>
 
-Prioritizing an allocation over freeing does not work well
-all the time, i.e. it should be rather a compromise.
+it can happen due to big align request resulting in overflowing
+of calculated address, i.e. it becomes 0 after ALIGN()'s fixup.
 
-1) Number of lazy pages directly influence on busy list length
-thus on operations like: allocation, lookup, unmap, remove, etc.
-
-2) Under heavy stress of vmalloc subsystem i run into a situation
-when memory usage gets increased hitting out_of_memory -> panic
-state due to completely blocking of logic that frees vmap areas
-in the __purge_vmap_area_lazy() function.
-
-Establish a threshold passing which the freeing is prioritized
-back over allocation creating a balance between each other.
+Fix it by checking if calculated address is within vstart/vend
+range.
 
 Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
 ---
- mm/vmalloc.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+ mm/vmalloc.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index fb4fb5fcee74..abe83f885069 100644
+index 1c512fff8a56..fb4fb5fcee74 100644
 --- a/mm/vmalloc.c
 +++ b/mm/vmalloc.c
-@@ -661,23 +661,27 @@ static bool __purge_vmap_area_lazy(unsigned long start, unsigned long end)
- 	struct llist_node *valist;
- 	struct vmap_area *va;
- 	struct vmap_area *n_va;
--	bool do_free = false;
-+	int resched_threshold;
+@@ -498,7 +498,11 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
+ 	}
  
- 	lockdep_assert_held(&vmap_purge_lock);
- 
- 	valist = llist_del_all(&vmap_purge_list);
-+	if (unlikely(valist == NULL))
-+		return false;
-+
+ found:
+-	if (addr + size > vend)
 +	/*
-+	 * TODO: to calculate a flush range without looping.
-+	 * The list can be up to lazy_max_pages() elements.
++	 * Check also calculated address against the vstart,
++	 * because it can be 0 because of big align request.
 +	 */
- 	llist_for_each_entry(va, valist, purge_list) {
- 		if (va->va_start < start)
- 			start = va->va_start;
- 		if (va->va_end > end)
- 			end = va->va_end;
--		do_free = true;
- 	}
++	if (addr + size > vend || addr < vstart)
+ 		goto overflow;
  
--	if (!do_free)
--		return false;
--
- 	flush_tlb_kernel_range(start, end);
-+	resched_threshold = (int) lazy_max_pages() << 1;
- 
- 	spin_lock(&vmap_area_lock);
- 	llist_for_each_entry_safe(va, n_va, valist, purge_list) {
-@@ -685,7 +689,9 @@ static bool __purge_vmap_area_lazy(unsigned long start, unsigned long end)
- 
- 		__free_vmap_area(va);
- 		atomic_sub(nr, &vmap_lazy_nr);
--		cond_resched_lock(&vmap_area_lock);
-+
-+		if (atomic_read(&vmap_lazy_nr) < resched_threshold)
-+			cond_resched_lock(&vmap_area_lock);
- 	}
- 	spin_unlock(&vmap_area_lock);
- 	return true;
+ 	va->va_start = addr;
 -- 
 2.11.0
 
