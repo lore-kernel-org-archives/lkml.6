@@ -2,100 +2,110 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95AC1C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:50:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE62CC41518
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:51:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 585DF218AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:50:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gqdvP77Q"
+	by mail.kernel.org (Postfix) with ESMTP id 8BC8C218C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:51:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548345085;
+	bh=RLB9RNlhOM/NiplUKHKYmnmvZACGRQI0IrxwPzUW1yg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=uG8auLib8huGgVhpqMXu2miGqmhVEgIOaG+Gbz/bXU5x9FZQJpi+shhoMSn4XzAZN
+	 kW2GHNqK74NxgJEdnuY0GnFY61ipMBQ5UHLvOfOdpCM7znCKnCeJIAasUCRj3CmTwu
+	 e7pTkXOWcwT9Kvm68L05MX65tXzi8YUAEQUCmcfc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728536AbfAXPuL (ORCPT
+        id S1728623AbfAXPvY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 10:50:11 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38841 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727566AbfAXPuL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 10:50:11 -0500
-Received: by mail-wr1-f68.google.com with SMTP id v13so7001292wrw.5;
-        Thu, 24 Jan 2019 07:50:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=4X40eqBy8zRByT/AnMwBLP8L5L8LaP3v1vVVNpWhtQU=;
-        b=gqdvP77QsenVirYhf3WMNRImTAIt/fWTPa4MnUHWzm6nmNXbw76G36Any92rNYhd6g
-         mPcI26WsHfHVLTFIcj2MxjANxVfKIW2OZMVGFcUHdkypyMWQ0ud2DHHZdfISZ31kWU4t
-         rTzlsYxSE7frrXcW92hksReoHpN2yYnzETAzrFgVRTASGAOXWEGp07bYtk3KgkogsmDL
-         X1FomYoPOkkveEsFFT02/7+B6CdT+3/XLndelGGXhpQLyUsh1MEQT4+s8STHDCHnK/4K
-         xelVVVGBNt/UZjc11IU/UQ29oSTN0VUxvRNdlvyoKJ3+YC6BBp/5x7Y8Qp3XYywt3GLv
-         ESYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=4X40eqBy8zRByT/AnMwBLP8L5L8LaP3v1vVVNpWhtQU=;
-        b=iCfMr5k3MckWxI6j6hfROckEim9kJc5pKWAfqzfXvgNT/Y2zhESxnFmIIPbJgkx+zs
-         QeVOR6hoE7IthaiYfhUCZj4R62ykbvS2v0qVFHeLyFaSQAdrC49pMQOcpWSkc9tiXrkp
-         Zln8qfPUSXI8jBLV3H5umxcTX9YN07nwFxQM5mz12ciWnKSmdw9nf8+1svs3n6Zoy/TG
-         u5TGtWPPGpjWBqqRhLyP+SBRGm8MCK2kd17dsoJZFs4pRNrY7oI9IY4MG6besEfD3q5B
-         uj+/0sY1cQnIPSXh8HHzi6CYlbBh9/k6pUmtT3GOPJn0s0HuyDZCqDLCXOqydHfuOead
-         aM+A==
-X-Gm-Message-State: AJcUukeF6pHfC1C2o0w2VSWdwxby+VvVRhMm+4HlVxyU9AMonJIJ7Qbm
-        r7OSEpgdPk2mMomMTZv6ChQ=
-X-Google-Smtp-Source: AHgI3IaYpG2qCgYU2S4kuO7xXEyxptWcFXleGZnRzNoNmb85C3fVN6SfFPHAx242Dz0/Z70+Wut5kQ==
-X-Received: by 2002:adf:f3c6:: with SMTP id g6mr3526321wrp.111.1548345009384;
-        Thu, 24 Jan 2019 07:50:09 -0800 (PST)
-Received: from orange.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id f15sm94701721wrt.10.2019.01.24.07.50.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 24 Jan 2019 07:50:08 -0800 (PST)
-From:   Ilya Dryomov <idryomov@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Ceph fixes for 5.0-rc4
-Date:   Thu, 24 Jan 2019 16:49:58 +0100
-Message-Id: <20190124154958.8067-1-idryomov@gmail.com>
-X-Mailer: git-send-email 2.14.4
+        Thu, 24 Jan 2019 10:51:24 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58834 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727566AbfAXPvX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 10:51:23 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 6AF6AB009;
+        Thu, 24 Jan 2019 15:51:22 +0000 (UTC)
+Date:   Thu, 24 Jan 2019 16:51:21 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Chris Down <chris@chrisdown.name>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Roman Gushchin <guro@fb.com>, Dennis Zhou <dennis@kernel.org>,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-mm@kvack.org, kernel-team@fb.com
+Subject: Re: [PATCH 2/2] mm: Consider subtrees in memory.events
+Message-ID: <20190124155121.GQ4087@dhcp22.suse.cz>
+References: <20190123223144.GA10798@chrisdown.name>
+ <20190124082252.GD4087@dhcp22.suse.cz>
+ <20190124152122.GG50184@devbig004.ftw2.facebook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190124152122.GG50184@devbig004.ftw2.facebook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Thu 24-01-19 07:21:22, Tejun Heo wrote:
+> Hello, Michal.
+> 
+> On Thu, Jan 24, 2019 at 09:22:52AM +0100, Michal Hocko wrote:
+> > I do not think we can do that for two reasons. It breaks the existing
+> > semantic userspace might depend on and more importantly this is not a
+> > correct behavior IMO.
+> 
+> This is a valid concern but I'll come back to this later.
+> 
+> > You have to realize that stats are hierarchical because that is how we
+> > account. Events represent a way to inform that something has happened at
+> > the specific level of the tree though. If you do not setup low/high/max
+> 
+> This isn't true.  e.g. cgroup.events's populated event is
+> hierarchical.  Everything in cgroup should be hierarchical by default.
+> 
+> > limit then you simply cannot expect to be informed those get hit because
+> > they cannot by definition. Or put it other way, if you are waiting for
+> > those events you really want to know the (sub)tree they happened and if
+> > you propagate the event up the hierarchy you have hard time to tell that
+> > (you would basically have to exclude all but the lowest one and that is
+> > an awkward semantic at best.
+> 
+> I don't think it's a good idea to argue this for each piece of
+> information.  Again, everything should be hierarchical unless there
+> are clear and strong reasons against;
 
-The following changes since commit 49a57857aeea06ca831043acbb0fa5e0f50602fd:
+And I would argue that cgroups.events with its populated event is a
+different thing because that is inherently a hierarchical property.  If
+you compare that to low, min, max and oom those are events very specific
+to the particular level of the hierarchy because it is an action at that
+level that the event informs about. E.g. max event down the hierarchy is
+a completely different thing from the upper level.  That sounds like a
+pretty solid reason to differentiate here.
 
-  Linux 5.0-rc3 (2019-01-21 13:14:44 +1300)
+> otherwise, we end up with random
+> mix of hierarchical and flat behaviors, something that we want to
+> avoid the most - remember .use_hierarchy?.
+> 
+> > Maybe we want to document this better but I do not see we are going to
+> > change the behavior.
+> 
+> I beg you to reconsider.  This was a clear oversight and the cgroup2
+> usage is still relatively limited.  We sure can add local-specific
+> counters if needed but must not mix local and hierarchical counters
+> without a clear way to tell what's what.
 
-are available in the Git repository at:
-
-  https://github.com/ceph/ceph-client.git tags/ceph-for-5.0-rc4
-
-for you to fetch changes up to 74827ee29565f86e2a64495a5e3e58d3371d74ee:
-
-  ceph: quota: cleanup license mess (2019-01-21 14:53:23 +0100)
-
-----------------------------------------------------------------
-A fix for a potential use-after-free, a patch to close a (mostly benign)
-race in the messenger and a licence clarification for quota.c.
-
-----------------------------------------------------------------
-Ilya Dryomov (1):
-      libceph: avoid KEEPALIVE_PENDING races in ceph_con_keepalive()
-
-Thomas Gleixner (1):
-      ceph: quota: cleanup license mess
-
-Yan, Zheng (1):
-      ceph: clear inode pointer when snap realm gets dropped by its inode
-
- fs/ceph/caps.c       |  2 ++
- fs/ceph/quota.c      | 13 -------------
- net/ceph/messenger.c |  5 +++--
- 3 files changed, 5 insertions(+), 15 deletions(-)
+If you really have a usecase for hierarchical events then I think the
+only way without breaking existing userspace is to add a new set of
+events. But I still believe that the current behavior makes a lot of
+sense.
+-- 
+Michal Hocko
+SUSE Labs
