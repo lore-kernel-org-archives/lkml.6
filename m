@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ED2FC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 05:10:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 691CAC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 05:10:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 014BB21872
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 05:10:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3639E21872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 05:10:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="pDECScCA";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PB4WgXJa"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bXOsuH+U";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TnQajf1U"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726249AbfAXFK0 (ORCPT
+        id S1726384AbfAXFKe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 00:10:26 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:36906 "EHLO
+        Thu, 24 Jan 2019 00:10:34 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:37168 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725290AbfAXFKZ (ORCPT
+        with ESMTP id S1725290AbfAXFKd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 00:10:25 -0500
+        Thu, 24 Jan 2019 00:10:33 -0500
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 0DBCA608CD; Thu, 24 Jan 2019 05:10:24 +0000 (UTC)
+        id 003C360960; Thu, 24 Jan 2019 05:10:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548306624;
-        bh=66IBQoiC6i1TRAAZoykiUpyRRqHMjilhL397fe6XWNo=;
+        s=default; t=1548306632;
+        bh=D+HGIyF19xJ6G4NtOVm0NH5HD+coXjIZYo6FwwJorhs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pDECScCAleSdza19OPi1nzeFzV68UYRcEaioPWCYpHMxq11+TW9SQHsQKWzjiH0D6
-         1FvNiY6nSB12UAOxADcwr5OLDedeJHwbY6+UmVP5M/q4nUuWcv4cayyvEvSMHBvCW8
-         0RJX5UnBbjrjEAWnojUaBgybHQB3MOf1HGFuLq9k=
+        b=bXOsuH+U3uEHpI9JJ0c6OMSg/OwQFp0F62DPudXiFh+Vq4umFuk7UYLbmCq0UR8ks
+         nr5RBVNa8tAJYsIZkU6pzkbpmeXa46F94mBx5fK935SiQlsECXR1zvkz/62z2rB8GX
+         qnx5A+XMov4li6K7d1L8BiPqwB6OtJusktxJXzEU=
 Received: from jshekhar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: jshekhar@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 10E966085C;
-        Thu, 24 Jan 2019 05:10:18 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D57D360909;
+        Thu, 24 Jan 2019 05:10:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548306623;
-        bh=66IBQoiC6i1TRAAZoykiUpyRRqHMjilhL397fe6XWNo=;
+        s=default; t=1548306629;
+        bh=D+HGIyF19xJ6G4NtOVm0NH5HD+coXjIZYo6FwwJorhs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PB4WgXJaMSarqUbqJg2WtoWQQwpnbEl93lVkb2P3U/jkEQjZ0SW65VffuWPosPDQT
-         gc6BS3LRXm7kduQb3E2g5hw2Bt1IuXzoFrGfDfmEYDydBYBhHPGDZ0Z5ZWRKFr7EtX
-         A8zv3IOZspv4Zx3AlrPZ9u73+3kZGWkt782MghPk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 10E966085C
+        b=TnQajf1UO94yKuWVyteq+VCOINFbjT90smp3Ltz4Mu4wNblKZcm7O5tvhlP+KpfeY
+         ALmokGsom8+eXRBL43NDoq3O271Y404VSsP0X5LxJNEoqJ2p+9qsn1LlYN7ebnpjq2
+         07cOXMP740y6BkrgKESGwLtsh5nTn32mCcq3adcM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D57D360909
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jshekhar@codeaurora.org
 From:   Jayant Shekhar <jshekhar@codeaurora.org>
@@ -57,9 +57,9 @@ Cc:     Jayant Shekhar <jshekhar@codeaurora.org>,
         abhinavk@codeaurora.org, jsanka@codeaurora.org,
         chandanu@codeaurora.org, nganji@codeaurora.org,
         Sravanthi Kollukuduru <skolluku@codeaurora.org>
-Subject: [v7 2/3] drm/msm/dpu: Integrate interconnect API in MDSS
-Date:   Thu, 24 Jan 2019 10:39:51 +0530
-Message-Id: <1548306592-4708-3-git-send-email-jshekhar@codeaurora.org>
+Subject: [v7 3/3] dt-bindings: msm/disp: Introduce interconnect bindings for MDSS on SDM845
+Date:   Thu, 24 Jan 2019 10:39:52 +0530
+Message-Id: <1548306592-4708-4-git-send-email-jshekhar@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1548306592-4708-1-git-send-email-jshekhar@codeaurora.org>
 References: <1548306592-4708-1-git-send-email-jshekhar@codeaurora.org>
@@ -68,172 +68,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The interconnect framework is designed to provide a
-standard kernel interface to control the settings of
-the interconnects on a SoC.
-
-The interconnect API uses a consumer/provider-based model,
-where the providers are the interconnect buses and the
-consumers could be various drivers.
-
-MDSS is one of the interconnect consumers which uses the
-interconnect APIs to get the path between endpoints and
-set its bandwidth requirement for the given interconnected
-path.
+Add interconnect properties such as interconnect provider specifier
+, the edge source and destination ports which are required by the
+interconnect API to configure interconnect path for MDSS.
 
 Changes in v2:
-	- Remove error log and unnecessary check (Jordan Crouse)
+	- None
 
 Changes in v3:
-	- Code clean involving variable name change, removal
-	  of extra paranthesis and variables (Matthias Kaehlcke)
+	- Remove common property definitions (Rob Herring)
 
 Changes in v4:
-	- Add comments, spacings, tabs, proper port name
-	  and icc macro (Georgi Djakov)
+	- Use port macros and change port string names (Georgi Djakov)
 
-Changes in v5:
-	- Commit text and parenthesis alignment (Georgi Djakov)
-
-Changes in v6:
-	- Change to new icc_set API's (Doug Anderson)
-
-Changes in v7:
-	- Fixed a typo
+Changes in v5-v7:
+	- None
 
 Signed-off-by: Sravanthi Kollukuduru <skolluku@codeaurora.org>
 Signed-off-by: Jayant Shekhar <jshekhar@codeaurora.org>
 ---
- drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c | 49 +++++++++++++++++++++++++++++---
- 1 file changed, 45 insertions(+), 4 deletions(-)
+ Documentation/devicetree/bindings/display/msm/dpu.txt | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c
-index 38576f8..38daf8a 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c
-@@ -4,11 +4,15 @@
-  */
+diff --git a/Documentation/devicetree/bindings/display/msm/dpu.txt b/Documentation/devicetree/bindings/display/msm/dpu.txt
+index ad2e883..a61dd40 100644
+--- a/Documentation/devicetree/bindings/display/msm/dpu.txt
++++ b/Documentation/devicetree/bindings/display/msm/dpu.txt
+@@ -28,6 +28,11 @@ Required properties:
+ - #address-cells: number of address cells for the MDSS children. Should be 1.
+ - #size-cells: Should be 1.
+ - ranges: parent bus address space is the same as the child bus address space.
++- interconnects : interconnect path specifier for MDSS according to
++  Documentation/devicetree/bindings/interconnect/interconnect.txt. Should be
++  2 paths corresponding to 2 AXI ports.
++- interconnect-names : MDSS will have 2 port names to differentiate between the
++  2 interconnect paths defined with interconnect specifier.
  
- #include "dpu_kms.h"
-+#include <linux/interconnect.h>
+ Optional properties:
+ - assigned-clocks: list of clock specifiers for clocks needing rate assignment
+@@ -86,6 +91,11 @@ Example:
+ 		interrupt-controller;
+ 		#interrupt-cells = <1>;
  
- #define to_dpu_mdss(x) container_of(x, struct dpu_mdss, base)
- 
- #define HW_INTR_STATUS			0x0010
- 
-+/* Max BW defined in KBps */
-+#define MAX_BW				6800000
++		interconnects = <&rsc_hlos MASTER_MDP0 &rsc_hlos SLAVE_EBI1>,
++				<&rsc_hlos MASTER_MDP1 &rsc_hlos SLAVE_EBI1>;
 +
- struct dpu_mdss {
- 	struct msm_mdss base;
- 	void __iomem *mmio;
-@@ -16,8 +20,30 @@ struct dpu_mdss {
- 	u32 hwversion;
- 	struct dss_module_power mp;
- 	struct dpu_irq_controller irq_controller;
-+	struct icc_path *path[2];
-+	u32 num_paths;
- };
- 
-+static int dpu_mdss_parse_data_bus_icc_path(struct drm_device *dev,
-+						struct dpu_mdss *dpu_mdss)
-+{
-+	struct icc_path *path0 = of_icc_get(dev->dev, "mdp0-mem");
-+	struct icc_path *path1 = of_icc_get(dev->dev, "mdp1-mem");
++		interconnect-names = "mdp0-mem", "mdp1-mem";
 +
-+	if (IS_ERR(path0))
-+		return PTR_ERR(path0);
-+
-+	dpu_mdss->path[0] = path0;
-+	dpu_mdss->num_paths = 1;
-+
-+	if (!IS_ERR(path1)) {
-+		dpu_mdss->path[1] = path1;
-+		dpu_mdss->num_paths++;
-+	}
-+
-+	return 0;
-+}
-+
- static irqreturn_t dpu_mdss_irq(int irq, void *arg)
- {
- 	struct dpu_mdss *dpu_mdss = arg;
-@@ -127,7 +153,11 @@ static int dpu_mdss_enable(struct msm_mdss *mdss)
- {
- 	struct dpu_mdss *dpu_mdss = to_dpu_mdss(mdss);
- 	struct dss_module_power *mp = &dpu_mdss->mp;
--	int ret;
-+	int ret, i;
-+	u64 avg_bw = dpu_mdss->num_paths ? MAX_BW / dpu_mdss->num_paths : 0;
-+
-+	for (i = 0; i < dpu_mdss->num_paths; i++)
-+		icc_set_bw(dpu_mdss->path[i], avg_bw, kBps_to_icc(MAX_BW));
+ 		iommus = <&apps_iommu 0>;
  
- 	ret = msm_dss_enable_clk(mp->clk_config, mp->num_clk, true);
- 	if (ret)
-@@ -140,12 +170,15 @@ static int dpu_mdss_disable(struct msm_mdss *mdss)
- {
- 	struct dpu_mdss *dpu_mdss = to_dpu_mdss(mdss);
- 	struct dss_module_power *mp = &dpu_mdss->mp;
--	int ret;
-+	int ret, i;
- 
- 	ret = msm_dss_enable_clk(mp->clk_config, mp->num_clk, false);
- 	if (ret)
- 		DPU_ERROR("clock disable failed, ret:%d\n", ret);
- 
-+	for (i = 0; i < dpu_mdss->num_paths; i++)
-+		icc_set_bw(dpu_mdss->path[i], 0, 0);
-+
- 	return ret;
- }
- 
-@@ -155,6 +188,7 @@ static void dpu_mdss_destroy(struct drm_device *dev)
- 	struct msm_drm_private *priv = dev->dev_private;
- 	struct dpu_mdss *dpu_mdss = to_dpu_mdss(priv->mdss);
- 	struct dss_module_power *mp = &dpu_mdss->mp;
-+	int i;
- 
- 	pm_runtime_disable(dev->dev);
- 	_dpu_mdss_irq_domain_fini(dpu_mdss);
-@@ -162,6 +196,9 @@ static void dpu_mdss_destroy(struct drm_device *dev)
- 	msm_dss_put_clk(mp->clk_config, mp->num_clk);
- 	devm_kfree(&pdev->dev, mp->clk_config);
- 
-+	for (i = 0; i < dpu_mdss->num_paths; i++)
-+		icc_put(dpu_mdss->path[i]);
-+
- 	if (dpu_mdss->mmio)
- 		devm_iounmap(&pdev->dev, dpu_mdss->mmio);
- 	dpu_mdss->mmio = NULL;
-@@ -200,6 +237,10 @@ int dpu_mdss_init(struct drm_device *dev)
- 	}
- 	dpu_mdss->mmio_len = resource_size(res);
- 
-+	ret = dpu_mdss_parse_data_bus_icc_path(dev, dpu_mdss);
-+	if (ret)
-+		return ret;
-+
- 	mp = &dpu_mdss->mp;
- 	ret = msm_dss_parse_clock(pdev, mp);
- 	if (ret) {
-@@ -221,14 +262,14 @@ int dpu_mdss_init(struct drm_device *dev)
- 		goto irq_error;
- 	}
- 
-+	priv->mdss = &dpu_mdss->base;
-+
- 	pm_runtime_enable(dev->dev);
- 
- 	pm_runtime_get_sync(dev->dev);
- 	dpu_mdss->hwversion = readl_relaxed(dpu_mdss->mmio);
- 	pm_runtime_put_sync(dev->dev);
- 
--	priv->mdss = &dpu_mdss->base;
--
- 	return ret;
- 
- irq_error:
+ 		#address-cells = <2>;
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
