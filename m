@@ -2,103 +2,127 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4879C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:10:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F46FC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:11:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F66D20855
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:10:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21AC320855
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:11:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KeJi9ktC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727851AbfAXMKX (ORCPT
+        id S1727840AbfAXMLh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 07:10:23 -0500
-Received: from mga18.intel.com ([134.134.136.126]:45407 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727616AbfAXMKX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 07:10:23 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jan 2019 04:10:22 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,516,1539673200"; 
-   d="scan'208";a="140932427"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.56]) ([10.237.72.56])
-  by fmsmga001.fm.intel.com with ESMTP; 24 Jan 2019 04:10:19 -0800
-Subject: Re: [PATCH 4/7] mmc: sdhci: Add quirk for disabling DTO during erase
- command
-To:     Faiz Abbas <faiz_abbas@ti.com>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-mmc@vger.kernel.org
-Cc:     zhang.chunyan@linaro.org, kishon@ti.com, mark.rutland@arm.com,
-        robh+dt@kernel.org, ulf.hansson@linaro.org
-References: <20190111110851.6805-1-faiz_abbas@ti.com>
- <20190111110851.6805-5-faiz_abbas@ti.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <8c5875db-016c-c416-7356-d7a26d8d2a0e@intel.com>
-Date:   Thu, 24 Jan 2019 14:08:48 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 24 Jan 2019 07:11:37 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:46188 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727548AbfAXMLg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 07:11:36 -0500
+Received: by mail-io1-f67.google.com with SMTP id s8so4482468iob.13
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 04:11:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=e7C6zUR07TLT9ym38kesf+PfYGHS00+KJqk/gsJOPwA=;
+        b=KeJi9ktC73hG0Edi7qu7Tmvvn/boBH9yI43KQGl/d7UDP2uzWDvDimjGv+cul9CoKW
+         UPAzcpbWYE1HxIr9dz4iTvWqrkB5MoQGvBlFuAozh3t3JVWLw7lD8MG5kATzd9cYcVHk
+         YN8LJ5i1uETsG7w5QQpYEMgpOtg5JO/8CsGlA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=e7C6zUR07TLT9ym38kesf+PfYGHS00+KJqk/gsJOPwA=;
+        b=gY712KnvN9Mgob3rCB4F0DzbNzZJl8yFs1gLpcPQNClNZxZPAgyuzOn5iKL4dUf9uL
+         wYkdEUzopu7MRyqP3TwN6Cw/8xoauLAlBVRrfL3u88ubWwzBtV7jb8KJOBqa6Fqxrc3y
+         iT+tiBz8D8MLRETzZwlxI3Ru23hqVLzrXLRMF1fc9XdKq1WdPnOF5a5dYrOOpvYSZF2N
+         MbPg0KUGKUbLPaFToLIkk812WrdJ6MvYD/j7r+M7PYpQaMUMiOq76YXx9+xxmsYqiLdZ
+         r/KNB1G9wgH0R1N34wh5xr97qok9yXHlLDEm5hIeR8PDZCmSeoFJDqxdBJszFfcyyo9D
+         GfPg==
+X-Gm-Message-State: AHQUAuY7AU0iwyXIt9hdoqqJQFrVIETSf6Z8qiakNoiuHBwlisjSQ1l2
+        4aIgdhggw1Vtv+kDDbO9fBcKggwWwjlCyaH/WgFPvA==
+X-Google-Smtp-Source: AHgI3IZLSkcCGV0++rXRWvh7AAga1FfnNCIMra2nStLvcMeOpy4IUuJLOsNPI6DKmWiJme14rp4bRKhVtfTItlpTXhg=
+X-Received: by 2002:a5e:c206:: with SMTP id v6mr3814134iop.60.1548331895362;
+ Thu, 24 Jan 2019 04:11:35 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190111110851.6805-5-faiz_abbas@ti.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190123224926.250525-1-ebiggers@kernel.org> <20190123224926.250525-8-ebiggers@kernel.org>
+In-Reply-To: <20190123224926.250525-8-ebiggers@kernel.org>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Thu, 24 Jan 2019 13:11:23 +0100
+Message-ID: <CAKv+Gu_6ZhXVKZwgkiSh0ZvvgjXGS+ygz9b6E0QmCP8ViJrbmw@mail.gmail.com>
+Subject: Re: [RFC/RFT PATCH 07/15] crypto: arm64/aes-neonbs - fix returning
+ final keystream block
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/01/19 1:08 PM, Faiz Abbas wrote:
-> Some controllers might prematurely issue a data timeout during an erase
-> command. Add a quirk to disable the interrupt when an erase command is
-> issued.
+On Wed, 23 Jan 2019 at 23:52, Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> From: Eric Biggers <ebiggers@google.com>
+>
+> The arm64 NEON bit-sliced implementation of AES-CTR fails the improved
+> skcipher tests because it sometimes produces the wrong ciphertext.  The
+> bug is that the final keystream block isn't returned from the assembly
+> code when the number of non-final blocks is zero.  This can happen if
+> the input data ends a few bytes after a page boundary.  In this case the
+> last bytes get "encrypted" by XOR'ing them with uninitialized memory.
+>
+> Fix the assembly code to return the final keystream block when needed.
+>
+> Fixes: 88a3f582bea9 ("crypto: arm64/aes - don't use IV buffer to return final keystream block")
+> Cc: <stable@vger.kernel.org> # v4.11+
+> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-I might have already asked this, but would it be possible to use the
-existing SDHCI_QUIRK2_DISABLE_HW_TIMEOUT quirk?
+Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-> 
-> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
 > ---
->  drivers/mmc/host/sdhci.c | 8 ++++++++
->  drivers/mmc/host/sdhci.h | 2 ++
->  2 files changed, 10 insertions(+)
-> 
-> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> index 4a9044c06e21..cfd716aee552 100644
-> --- a/drivers/mmc/host/sdhci.c
-> +++ b/drivers/mmc/host/sdhci.c
-> @@ -1560,6 +1560,14 @@ void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
->  	/* Initially, a command has no error */
->  	cmd->error = 0;
->  
-> +	if (cmd->opcode == MMC_ERASE &&
-> +	    (host->quirks2 & SDHCI_QUIRK2_DISABLE_DTO_FOR_ERASE)) {
-> +		mask = sdhci_readl(host, SDHCI_INT_ENABLE);
-> +		mask &= ~SDHCI_INT_DATA_TIMEOUT;
-> +		sdhci_writel(host, mask, SDHCI_INT_ENABLE);
-> +		sdhci_writel(host, mask, SDHCI_SIGNAL_ENABLE);
-> +	}
-> +
->  	if ((host->quirks2 & SDHCI_QUIRK2_STOP_WITH_TC) &&
->  	    cmd->opcode == MMC_STOP_TRANSMISSION)
->  		cmd->flags |= MMC_RSP_BUSY;
-> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-> index 7a52823ebef4..d0c6d4fe5371 100644
-> --- a/drivers/mmc/host/sdhci.h
-> +++ b/drivers/mmc/host/sdhci.h
-> @@ -479,6 +479,8 @@ struct sdhci_host {
->   * block count.
->   */
->  #define SDHCI_QUIRK2_USE_32BIT_BLK_CNT			(1<<18)
-> +/* Controller needs to disable DTO for erase command */
-> +#define SDHCI_QUIRK2_DISABLE_DTO_FOR_ERASE		(1<<19)
->  
->  	int irq;		/* Device IRQ */
->  	void __iomem *ioaddr;	/* Mapped address */
-> 
-
+>  arch/arm64/crypto/aes-neonbs-core.S | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/arm64/crypto/aes-neonbs-core.S b/arch/arm64/crypto/aes-neonbs-core.S
+> index e613a87f8b53..8432c8d0dea6 100644
+> --- a/arch/arm64/crypto/aes-neonbs-core.S
+> +++ b/arch/arm64/crypto/aes-neonbs-core.S
+> @@ -971,18 +971,22 @@ CPU_LE(   rev             x8, x8          )
+>
+>  8:     next_ctr        v0
+>         st1             {v0.16b}, [x24]
+> -       cbz             x23, 0f
+> +       cbz             x23, .Lctr_done
+>
+>         cond_yield_neon 98b
+>         b               99b
+>
+> -0:     frame_pop
+> +.Lctr_done:
+> +       frame_pop
+>         ret
+>
+>         /*
+>          * If we are handling the tail of the input (x6 != NULL), return the
+>          * final keystream block back to the caller.
+>          */
+> +0:     cbz             x25, 8b
+> +       st1             {v0.16b}, [x25]
+> +       b               8b
+>  1:     cbz             x25, 8b
+>         st1             {v1.16b}, [x25]
+>         b               8b
+> --
+> 2.20.1.321.g9e740568ce-goog
+>
