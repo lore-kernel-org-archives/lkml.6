@@ -2,127 +2,88 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F46FC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:11:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E643AC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:16:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21AC320855
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:11:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KeJi9ktC"
+	by mail.kernel.org (Postfix) with ESMTP id BAD86218AD
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:16:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727840AbfAXMLh (ORCPT
+        id S1727689AbfAXMQk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 07:11:37 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:46188 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727548AbfAXMLg (ORCPT
+        Thu, 24 Jan 2019 07:16:40 -0500
+Received: from smtp2207-205.mail.aliyun.com ([121.197.207.205]:52975 "EHLO
+        smtp2207-205.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726105AbfAXMQj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 07:11:36 -0500
-Received: by mail-io1-f67.google.com with SMTP id s8so4482468iob.13
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 04:11:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=e7C6zUR07TLT9ym38kesf+PfYGHS00+KJqk/gsJOPwA=;
-        b=KeJi9ktC73hG0Edi7qu7Tmvvn/boBH9yI43KQGl/d7UDP2uzWDvDimjGv+cul9CoKW
-         UPAzcpbWYE1HxIr9dz4iTvWqrkB5MoQGvBlFuAozh3t3JVWLw7lD8MG5kATzd9cYcVHk
-         YN8LJ5i1uETsG7w5QQpYEMgpOtg5JO/8CsGlA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=e7C6zUR07TLT9ym38kesf+PfYGHS00+KJqk/gsJOPwA=;
-        b=gY712KnvN9Mgob3rCB4F0DzbNzZJl8yFs1gLpcPQNClNZxZPAgyuzOn5iKL4dUf9uL
-         wYkdEUzopu7MRyqP3TwN6Cw/8xoauLAlBVRrfL3u88ubWwzBtV7jb8KJOBqa6Fqxrc3y
-         iT+tiBz8D8MLRETzZwlxI3Ru23hqVLzrXLRMF1fc9XdKq1WdPnOF5a5dYrOOpvYSZF2N
-         MbPg0KUGKUbLPaFToLIkk812WrdJ6MvYD/j7r+M7PYpQaMUMiOq76YXx9+xxmsYqiLdZ
-         r/KNB1G9wgH0R1N34wh5xr97qok9yXHlLDEm5hIeR8PDZCmSeoFJDqxdBJszFfcyyo9D
-         GfPg==
-X-Gm-Message-State: AHQUAuY7AU0iwyXIt9hdoqqJQFrVIETSf6Z8qiakNoiuHBwlisjSQ1l2
-        4aIgdhggw1Vtv+kDDbO9fBcKggwWwjlCyaH/WgFPvA==
-X-Google-Smtp-Source: AHgI3IZLSkcCGV0++rXRWvh7AAga1FfnNCIMra2nStLvcMeOpy4IUuJLOsNPI6DKmWiJme14rp4bRKhVtfTItlpTXhg=
-X-Received: by 2002:a5e:c206:: with SMTP id v6mr3814134iop.60.1548331895362;
- Thu, 24 Jan 2019 04:11:35 -0800 (PST)
+        Thu, 24 Jan 2019 07:16:39 -0500
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.08874351|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03311;MF=liaoweixiong@allwinnertech.com;NM=1;PH=DS;RN=17;RT=17;SR=0;TI=SMTPD_---.Dq5zod3_1548332185;
+Received: from 172.16.10.102(mailfrom:liaoweixiong@allwinnertech.com fp:SMTPD_---.Dq5zod3_1548332185)
+          by smtp.aliyun-inc.com(10.147.43.230);
+          Thu, 24 Jan 2019 20:16:26 +0800
+Subject: Re: [RFC v7 0/5] pstore/block: new support logger for block devices
+To:     Aaro Koskinen <aaro.koskinen@iki.fi>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <1548245116-6360-1-git-send-email-liaoweixiong@allwinnertech.com>
+ <20190123182638.GD2792@darkstar.musicnaut.iki.fi>
+From:   liaoweixiong <liaoweixiong@allwinnertech.com>
+Message-ID: <5f243418-c6bd-061e-1161-1c0139ad84bf@allwinnertech.com>
+Date:   Thu, 24 Jan 2019 20:16:30 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20190123224926.250525-1-ebiggers@kernel.org> <20190123224926.250525-8-ebiggers@kernel.org>
-In-Reply-To: <20190123224926.250525-8-ebiggers@kernel.org>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Thu, 24 Jan 2019 13:11:23 +0100
-Message-ID: <CAKv+Gu_6ZhXVKZwgkiSh0ZvvgjXGS+ygz9b6E0QmCP8ViJrbmw@mail.gmail.com>
-Subject: Re: [RFC/RFT PATCH 07/15] crypto: arm64/aes-neonbs - fix returning
- final keystream block
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Jason A . Donenfeld" <Jason@zx2c4.com>,
-        stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190123182638.GD2792@darkstar.musicnaut.iki.fi>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 23 Jan 2019 at 23:52, Eric Biggers <ebiggers@kernel.org> wrote:
->
-> From: Eric Biggers <ebiggers@google.com>
->
-> The arm64 NEON bit-sliced implementation of AES-CTR fails the improved
-> skcipher tests because it sometimes produces the wrong ciphertext.  The
-> bug is that the final keystream block isn't returned from the assembly
-> code when the number of non-final blocks is zero.  This can happen if
-> the input data ends a few bytes after a page boundary.  In this case the
-> last bytes get "encrypted" by XOR'ing them with uninitialized memory.
->
-> Fix the assembly code to return the final keystream block when needed.
->
-> Fixes: 88a3f582bea9 ("crypto: arm64/aes - don't use IV buffer to return final keystream block")
-> Cc: <stable@vger.kernel.org> # v4.11+
-> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+On 2019-01-24 02:26, Aaro Koskinen wrote:
+> Hi,
+> 
+> On Wed, Jan 23, 2019 at 08:05:11PM +0800, liaoweixiong wrote:
+>> Why should we need pstore_block?
+>> 1. Most embedded intelligent equipment have no persistent ram, which
+>> increases costs. We perfer to cheaper solutions, like block devices.
+>> In fast, there is already a sample for block device logger in driver
+>> MTD (drivers/mtd/mtdoops.c).
+> 
+> I think you should add a patch for some actual block device using this
+> new framework to show that it can work. What HW you think would be
+> using things?
+> 
 
-Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+I will try to add a patch. Actually, I have implemented it on allwinner
+platform, but unfortunately these codes are unsuitable to submit to
+upper stream.
 
-> ---
->  arch/arm64/crypto/aes-neonbs-core.S | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/arm64/crypto/aes-neonbs-core.S b/arch/arm64/crypto/aes-neonbs-core.S
-> index e613a87f8b53..8432c8d0dea6 100644
-> --- a/arch/arm64/crypto/aes-neonbs-core.S
-> +++ b/arch/arm64/crypto/aes-neonbs-core.S
-> @@ -971,18 +971,22 @@ CPU_LE(   rev             x8, x8          )
->
->  8:     next_ctr        v0
->         st1             {v0.16b}, [x24]
-> -       cbz             x23, 0f
-> +       cbz             x23, .Lctr_done
->
->         cond_yield_neon 98b
->         b               99b
->
-> -0:     frame_pop
-> +.Lctr_done:
-> +       frame_pop
->         ret
->
->         /*
->          * If we are handling the tail of the input (x6 != NULL), return the
->          * final keystream block back to the caller.
->          */
-> +0:     cbz             x25, 8b
-> +       st1             {v0.16b}, [x25]
-> +       b               8b
->  1:     cbz             x25, 8b
->         st1             {v1.16b}, [x25]
->         b               8b
-> --
-> 2.20.1.321.g9e740568ce-goog
->
+In addition, there is already a sample for pstore/blk on patch 3 of
+version 7. It names
+blkoops. Blkoops is suitable for most block device as what it need is
+just a path of a partition. We can use it to test most of features but
+panic.
+
+> A.
+> 
+
+-- 
+liaoweixiong
