@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19217C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:44:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A592C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:44:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA68F218D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:44:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38C3C20663
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:44:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359076;
-	bh=BRYcvoOSSWRrOgkaZsxZSCVp+ELA43wAiBehBFZybQU=;
+	s=default; t=1548359081;
+	bh=FCfmeWfhaef0x9zhqbT72OKy0Vdoou6+m/96PsFY6EU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zf1SSmLXWCkH+nPq78+gWO/c6kZxwNKTd5c6vXCfVE6/JW5YQGHu1FPKtDlGOjeZI
-	 d+kQBC6x5PFpTi9UX3v+UurPZj8QArA9UkOGcNnfUYGgWEnOcwvOcSb9j6JvF8gDPx
-	 ZrHSUa1LIDNVLSysbc+4OqbhiVHQ88YjmfRO8fdM=
+	b=lZHhzf2qrmNx0XgaQtrtXYUZebU3V8rIPNDjkrlhPPn7HSDxRBMYIlmwe/DmbOfFz
+	 Ha09UkWH/ilY4E0v5zlxwKt75nLcO4svYc6i/D5LyNqxiL1FMWQ8nKU/lzlgpKe0SD
+	 IKwKfhrteDq5H2xKqsPWGU1opwKdgpI6fqwFqAiA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388101AbfAXTof (ORCPT
+        id S2388090AbfAXToi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:44:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45352 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:44:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45402 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387739AbfAXTob (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:44:31 -0500
+        id S1733296AbfAXToe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:44:34 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB03620663;
-        Thu, 24 Jan 2019 19:44:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 60414218D4;
+        Thu, 24 Jan 2019 19:44:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548359071;
-        bh=BRYcvoOSSWRrOgkaZsxZSCVp+ELA43wAiBehBFZybQU=;
+        s=default; t=1548359073;
+        bh=FCfmeWfhaef0x9zhqbT72OKy0Vdoou6+m/96PsFY6EU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lS+EOLxQ0lwikxXJpUnfBP1xlbA9oetCJ4vDR4yBvOozd+y2BzLwnutho6HkuSkiR
-         loGEQI5Nz2aUUtWL9RLFgTwzG9CUv6Dx8hYmpTO3dvG1IkhkcgnkGt0jx9XGEKviv2
-         vEFKQThB9yGmqqNxmd8IgND+c7FXNwHUWKPb3HvY=
+        b=De7qaSlewy8dXuYKFTMDZL453Fkc1ND6C5Ygf22WDiGSdrnOJnx9F81v5QccAvrT+
+         gOPvPH4L4yRLMThzXnnOq+TKNXcOT7+okbjZgQcDJstPpKdbsGbb1XJMFp4Scb+uCt
+         zr6lV2gYFk9teOD7NCq+I6XnTwbriEsKGVmbo2tA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Fred Klassen <fklassen@appneta.com>,
-        Corey Minyard <cminyard@mvista.com>
-Subject: [PATCH 4.20 126/127] ipmi: Prevent use-after-free in deliver_response
-Date:   Thu, 24 Jan 2019 20:21:12 +0100
-Message-Id: <20190124190217.277761137@linuxfoundation.org>
+        stable@vger.kernel.org, Corey Minyard <cminyard@mvista.com>
+Subject: [PATCH 4.20 127/127] ipmi:ssif: Fix handling of multi-part return messages
+Date:   Thu, 24 Jan 2019 20:21:13 +0100
+Message-Id: <20190124190217.316773561@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
 References: <20190124190211.984305387@linuxfoundation.org>
@@ -65,70 +64,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Fred Klassen <fklassen@appneta.com>
+From: Corey Minyard <cminyard@mvista.com>
 
-commit 479d6b39b9e0d2de648ebf146f23a1e40962068f upstream.
+commit 7d6380cd40f7993f75c4bde5b36f6019237e8719 upstream.
 
-Some IPMI modules (e.g. ibmpex_msg_handler()) will have ipmi_usr_hdlr
-handlers that call ipmi_free_recv_msg() directly. This will essentially
-kfree(msg), leading to use-after-free.
+The block number was not being compared right, it was off by one
+when checking the response.
 
-This does not happen in the ipmi_devintf module, which will queue the
-message and run ipmi_free_recv_msg() later.
+Some statistics wouldn't be incremented properly in some cases.
 
-BUG: KASAN: use-after-free in deliver_response+0x12f/0x1b0
-Read of size 8 at addr ffff888a7bf20018 by task ksoftirqd/3/27
-CPU: 3 PID: 27 Comm: ksoftirqd/3 Tainted: G           O      4.19.11-amd64-ani99-debug #12.0.1.601133+pv
-Hardware name: AppNeta r1000/X11SPW-TF, BIOS 2.1a-AP 09/17/2018
-Call Trace:
-dump_stack+0x92/0xeb
-print_address_description+0x73/0x290
-kasan_report+0x258/0x380
-deliver_response+0x12f/0x1b0
-? ipmi_free_recv_msg+0x50/0x50
-deliver_local_response+0xe/0x50
-handle_one_recv_msg+0x37a/0x21d0
-handle_new_recv_msgs+0x1ce/0x440
-...
+Check to see if that middle-part messages always have 31 bytes of
+data.
 
-Allocated by task 9885:
-kasan_kmalloc+0xa0/0xd0
-kmem_cache_alloc_trace+0x116/0x290
-ipmi_alloc_recv_msg+0x28/0x70
-i_ipmi_request+0xb4a/0x1640
-ipmi_request_settime+0x1b8/0x1e0
-...
-
-Freed by task 27:
-__kasan_slab_free+0x12e/0x180
-kfree+0xe9/0x280
-deliver_response+0x122/0x1b0
-deliver_local_response+0xe/0x50
-handle_one_recv_msg+0x37a/0x21d0
-handle_new_recv_msgs+0x1ce/0x440
-tasklet_action_common.isra.19+0xc4/0x250
-__do_softirq+0x11f/0x51f
-
-Fixes: e86ee2d44b44 ("ipmi: Rework locking and shutdown for hot remove")
-Cc: stable@vger.kernel.org # 4.18
-Signed-off-by: Fred Klassen <fklassen@appneta.com>
 Signed-off-by: Corey Minyard <cminyard@mvista.com>
+Cc: stable@vger.kernel.org # 4.4
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/ipmi/ipmi_msghandler.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/char/ipmi/ipmi_ssif.c |   25 +++++++++++++++++--------
+ 1 file changed, 17 insertions(+), 8 deletions(-)
 
---- a/drivers/char/ipmi/ipmi_msghandler.c
-+++ b/drivers/char/ipmi/ipmi_msghandler.c
-@@ -894,7 +894,7 @@ static int deliver_response(struct ipmi_
+--- a/drivers/char/ipmi/ipmi_ssif.c
++++ b/drivers/char/ipmi/ipmi_ssif.c
+@@ -632,8 +632,9 @@ static void msg_done_handler(struct ssif
  
- 		if (user) {
- 			user->handler->ipmi_recv_hndl(msg, user->handler_data);
--			release_ipmi_user(msg->user, index);
-+			release_ipmi_user(user, index);
- 		} else {
- 			/* User went away, give up. */
- 			ipmi_free_recv_msg(msg);
+ 		/* Remove the multi-part read marker. */
+ 		len -= 2;
++		data += 2;
+ 		for (i = 0; i < len; i++)
+-			ssif_info->data[i] = data[i+2];
++			ssif_info->data[i] = data[i];
+ 		ssif_info->multi_len = len;
+ 		ssif_info->multi_pos = 1;
+ 
+@@ -661,8 +662,19 @@ static void msg_done_handler(struct ssif
+ 		}
+ 
+ 		blocknum = data[0];
++		len--;
++		data++;
++
++		if (blocknum != 0xff && len != 31) {
++		    /* All blocks but the last must have 31 data bytes. */
++			result = -EIO;
++			if (ssif_info->ssif_debug & SSIF_DEBUG_MSG)
++				pr_info("Received middle message <31\n");
+ 
+-		if (ssif_info->multi_len + len - 1 > IPMI_MAX_MSG_LENGTH) {
++			goto continue_op;
++		}
++
++		if (ssif_info->multi_len + len > IPMI_MAX_MSG_LENGTH) {
+ 			/* Received message too big, abort the operation. */
+ 			result = -E2BIG;
+ 			if (ssif_info->ssif_debug & SSIF_DEBUG_MSG)
+@@ -671,16 +683,14 @@ static void msg_done_handler(struct ssif
+ 			goto continue_op;
+ 		}
+ 
+-		/* Remove the blocknum from the data. */
+-		len--;
+ 		for (i = 0; i < len; i++)
+-			ssif_info->data[i + ssif_info->multi_len] = data[i + 1];
++			ssif_info->data[i + ssif_info->multi_len] = data[i];
+ 		ssif_info->multi_len += len;
+ 		if (blocknum == 0xff) {
+ 			/* End of read */
+ 			len = ssif_info->multi_len;
+ 			data = ssif_info->data;
+-		} else if (blocknum + 1 != ssif_info->multi_pos) {
++		} else if (blocknum != ssif_info->multi_pos) {
+ 			/*
+ 			 * Out of sequence block, just abort.  Block
+ 			 * numbers start at zero for the second block,
+@@ -707,6 +717,7 @@ static void msg_done_handler(struct ssif
+ 		}
+ 	}
+ 
++ continue_op:
+ 	if (result < 0) {
+ 		ssif_inc_stat(ssif_info, receive_errors);
+ 	} else {
+@@ -714,8 +725,6 @@ static void msg_done_handler(struct ssif
+ 		ssif_inc_stat(ssif_info, received_message_parts);
+ 	}
+ 
+-
+- continue_op:
+ 	if (ssif_info->ssif_debug & SSIF_DEBUG_STATE)
+ 		pr_info("DONE 1: state = %d, result=%d\n",
+ 			ssif_info->ssif_state, result);
 
 
