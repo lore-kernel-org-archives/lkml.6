@@ -4,52 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE314C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:51:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73B9CC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:52:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4079217D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:51:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33FA221726
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:52:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359513;
-	bh=LliLi09UIDyZo/dLrvFoH28Qx+1kJHv1nLRYfrUJvKQ=;
+	s=default; t=1548359529;
+	bh=D/ECP5fuLvkTSyQwhAnqTuiSRH4/N/EkRb3RLyFfBb8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=AT8RvjhmKEpTCXZIsVlIV6nNswT22HuBaZ3hBLcuY+/eDc0LTfuZgrMSbLjca5mrP
-	 AxFt/exBdghfOm3X7hQhSYlqbtZ6uoUyMd5K4lQ56PTpDRmDL4ZKQd+xFb39vO5tZK
-	 1LOVf372jGXlN8eS5y/X+Tu8AI3N4xlGyJPvt6b8=
+	b=VCmvs1AVd8BHuGOF4nJU2qHuD4kx/d7jdzWggsgbX7kh9lRFmxZsikfhfjR0sFMwz
+	 82X6h8Ap3b9sbrnYzQejVf8MIoB+kl7rvCtrZrEORhSSe9Gbsm/9g5v+NAZA0pqtNg
+	 txcrgaM3robQg340kXxhGMeJKia3KOU1pW1DHaCA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732414AbfAXTvv (ORCPT
+        id S1732487AbfAXTwH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:51:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39582 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:52:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39408 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732458AbfAXTj0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:39:26 -0500
+        id S1733001AbfAXTjR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:39:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B78B320663;
-        Thu, 24 Jan 2019 19:39:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 52F7420663;
+        Thu, 24 Jan 2019 19:39:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358765;
-        bh=LliLi09UIDyZo/dLrvFoH28Qx+1kJHv1nLRYfrUJvKQ=;
+        s=default; t=1548358756;
+        bh=D/ECP5fuLvkTSyQwhAnqTuiSRH4/N/EkRb3RLyFfBb8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eXbRhxDl+S1m5FYX7Gc+9NYujeYcaFmzsWALiYojMoJ9/aALprRlDsWo0bBFG4EDa
-         lr3ylw3bAZRhhpcuJOZJk+9zwWBr0FNc2d/yM3b/Wc1sucspE3HwETwh2CSJMoJIs1
-         6rSVl2frfjYIFpLRNTsAEouu+J/5njAXtK7XgXDo=
+        b=iO8P3CKuvMF/Rl0uJR7UfESEKPHwTvAgD0urL2hqtPIfXfCEuKaxQmRKwjitrJAlV
+         exQHXOcyxJW1nK4kPZd2j80nob2Wft3dGHyhNnBcNbxfr5sCBb0v4zg4/PrSwH4cX3
+         ebT/HE94yXutGYnJln1V5MNkVI+ah4ENs9Va7erU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 019/127] qtnfmac: fix error handling in control path
-Date:   Thu, 24 Jan 2019 20:19:25 +0100
-Message-Id: <20190124190213.033726158@linuxfoundation.org>
+Subject: [PATCH 4.20 016/127] ASoC: wm97xx: fix uninitialized regmap pointer problem
+Date:   Thu, 24 Jan 2019 20:19:22 +0100
+Message-Id: <20190124190212.869969220@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
 References: <20190124190211.984305387@linuxfoundation.org>
@@ -68,117 +66,173 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 1066bd193d681bda0fbacda9df351241a5ee04d9 ]
+[ Upstream commit 576ce4075bfa0f03e0e91a89eecc539b3b828b08 ]
 
-This patch fixes the following warnings:
+gcc notices that without either the ac97 bus or the pdata, we never
+initialize the regmap pointer, which leads to an uninitialized variable
+access:
 
-- smatch
-drivers/net/wireless/quantenna/qtnfmac/commands.c:132 qtnf_cmd_send_with_reply() warn: variable dereferenced before check 'resp' (see line 117)
-drivers/net/wireless/quantenna/qtnfmac/commands.c:716  qtnf_cmd_get_sta_info() error: uninitialized symbol 'var_resp_len'.
-drivers/net/wireless/quantenna/qtnfmac/commands.c:1668 qtnf_cmd_get_mac_info() error: uninitialized symbol 'var_data_len'.
-drivers/net/wireless/quantenna/qtnfmac/commands.c:1697 qtnf_cmd_get_hw_info() error: uninitialized symbol 'info_len'.
-drivers/net/wireless/quantenna/qtnfmac/commands.c:1753 qtnf_cmd_band_info_get() error: uninitialized symbol 'info_len'.
-drivers/net/wireless/quantenna/qtnfmac/commands.c:1782 qtnf_cmd_send_get_phy_params() error: uninitialized symbol 'response_size'.
-drivers/net/wireless/quantenna/qtnfmac/commands.c:2438 qtnf_cmd_get_chan_stats() error: uninitialized symbol 'var_data_len'.
+sound/soc/codecs/wm9712.c: In function 'wm9712_soc_probe':
+sound/soc/codecs/wm9712.c:666:2: error: 'regmap' may be used uninitialized in this function [-Werror=maybe-uninitialized]
 
-- gcc-8.2.1
-drivers/net/wireless/quantenna/qtnfmac/commands.c: In function 'qtnf_cmd_send_with_reply':
-drivers/net/wireless/quantenna/qtnfmac/commands.c:133:54: error: 'resp' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+Since that configuration is invalid, it's better to return an error
+here. I tried to avoid adding complexity to the conditions, and turned
+the #ifdef into a regular if(IS_ENABLED()) check for readability.
+This in turn requires moving some header file declarations out of
+an #ifdef.
 
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reported-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+The same code is used in three drivers, all of which I'm changing
+the same way.
+
+Fixes: 2ed1a8e0ce8d ("ASoC: wm9712: add ac97 new bus support")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../net/wireless/quantenna/qtnfmac/commands.c | 21 ++++++++++++-------
- 1 file changed, 13 insertions(+), 8 deletions(-)
+ include/sound/soc.h       |  2 +-
+ sound/soc/codecs/wm9705.c | 10 ++++------
+ sound/soc/codecs/wm9712.c | 10 ++++------
+ sound/soc/codecs/wm9713.c | 10 ++++------
+ 4 files changed, 13 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/net/wireless/quantenna/qtnfmac/commands.c b/drivers/net/wireless/quantenna/qtnfmac/commands.c
-index bfdc1ad30c13..659e7649fe22 100644
---- a/drivers/net/wireless/quantenna/qtnfmac/commands.c
-+++ b/drivers/net/wireless/quantenna/qtnfmac/commands.c
-@@ -84,7 +84,7 @@ static int qtnf_cmd_send_with_reply(struct qtnf_bus *bus,
- 				    size_t *var_resp_size)
+diff --git a/include/sound/soc.h b/include/sound/soc.h
+index 70c10a8f3e90..3e0ac310a3df 100644
+--- a/include/sound/soc.h
++++ b/include/sound/soc.h
+@@ -553,12 +553,12 @@ static inline void snd_soc_jack_free_gpios(struct snd_soc_jack *jack, int count,
+ }
+ #endif
+ 
+-#ifdef CONFIG_SND_SOC_AC97_BUS
+ struct snd_ac97 *snd_soc_alloc_ac97_component(struct snd_soc_component *component);
+ struct snd_ac97 *snd_soc_new_ac97_component(struct snd_soc_component *component,
+ 	unsigned int id, unsigned int id_mask);
+ void snd_soc_free_ac97_component(struct snd_ac97 *ac97);
+ 
++#ifdef CONFIG_SND_SOC_AC97_BUS
+ int snd_soc_set_ac97_ops(struct snd_ac97_bus_ops *ops);
+ int snd_soc_set_ac97_ops_of_reset(struct snd_ac97_bus_ops *ops,
+ 		struct platform_device *pdev);
+diff --git a/sound/soc/codecs/wm9705.c b/sound/soc/codecs/wm9705.c
+index ccdf088461b7..54c306707c02 100644
+--- a/sound/soc/codecs/wm9705.c
++++ b/sound/soc/codecs/wm9705.c
+@@ -325,8 +325,7 @@ static int wm9705_soc_probe(struct snd_soc_component *component)
+ 	if (wm9705->mfd_pdata) {
+ 		wm9705->ac97 = wm9705->mfd_pdata->ac97;
+ 		regmap = wm9705->mfd_pdata->regmap;
+-	} else {
+-#ifdef CONFIG_SND_SOC_AC97_BUS
++	} else if (IS_ENABLED(CONFIG_SND_SOC_AC97_BUS)) {
+ 		wm9705->ac97 = snd_soc_new_ac97_component(component, WM9705_VENDOR_ID,
+ 						      WM9705_VENDOR_ID_MASK);
+ 		if (IS_ERR(wm9705->ac97)) {
+@@ -339,7 +338,8 @@ static int wm9705_soc_probe(struct snd_soc_component *component)
+ 			snd_soc_free_ac97_component(wm9705->ac97);
+ 			return PTR_ERR(regmap);
+ 		}
+-#endif
++	} else {
++		return -ENXIO;
+ 	}
+ 
+ 	snd_soc_component_set_drvdata(component, wm9705->ac97);
+@@ -350,14 +350,12 @@ static int wm9705_soc_probe(struct snd_soc_component *component)
+ 
+ static void wm9705_soc_remove(struct snd_soc_component *component)
  {
- 	struct qlink_cmd *cmd;
--	const struct qlink_resp *resp;
-+	struct qlink_resp *resp = NULL;
- 	struct sk_buff *resp_skb = NULL;
- 	u16 cmd_id;
- 	u8 mac_id;
-@@ -113,7 +113,12 @@ static int qtnf_cmd_send_with_reply(struct qtnf_bus *bus,
- 	if (ret)
- 		goto out;
+-#ifdef CONFIG_SND_SOC_AC97_BUS
+ 	struct wm9705_priv *wm9705 = snd_soc_component_get_drvdata(component);
  
--	resp = (const struct qlink_resp *)resp_skb->data;
-+	if (WARN_ON(!resp_skb || !resp_skb->data)) {
-+		ret = -EFAULT;
-+		goto out;
-+	}
-+
-+	resp = (struct qlink_resp *)resp_skb->data;
- 	ret = qtnf_cmd_check_reply_header(resp, cmd_id, mac_id, vif_id,
- 					  const_resp_size);
- 	if (ret)
-@@ -686,7 +691,7 @@ int qtnf_cmd_get_sta_info(struct qtnf_vif *vif, const u8 *sta_mac,
- 	struct sk_buff *cmd_skb, *resp_skb = NULL;
- 	struct qlink_cmd_get_sta_info *cmd;
- 	const struct qlink_resp_get_sta_info *resp;
--	size_t var_resp_len;
-+	size_t var_resp_len = 0;
- 	int ret = 0;
+-	if (!wm9705->mfd_pdata) {
++	if (IS_ENABLED(CONFIG_SND_SOC_AC97_BUS) && !wm9705->mfd_pdata) {
+ 		snd_soc_component_exit_regmap(component);
+ 		snd_soc_free_ac97_component(wm9705->ac97);
+ 	}
+-#endif
+ }
  
- 	cmd_skb = qtnf_cmd_alloc_new_cmdskb(vif->mac->macid, vif->vifid,
-@@ -1650,7 +1655,7 @@ int qtnf_cmd_get_mac_info(struct qtnf_wmac *mac)
+ static const struct snd_soc_component_driver soc_component_dev_wm9705 = {
+diff --git a/sound/soc/codecs/wm9712.c b/sound/soc/codecs/wm9712.c
+index e873baa9e778..01949eaba4fd 100644
+--- a/sound/soc/codecs/wm9712.c
++++ b/sound/soc/codecs/wm9712.c
+@@ -642,8 +642,7 @@ static int wm9712_soc_probe(struct snd_soc_component *component)
+ 	if (wm9712->mfd_pdata) {
+ 		wm9712->ac97 = wm9712->mfd_pdata->ac97;
+ 		regmap = wm9712->mfd_pdata->regmap;
+-	} else {
+-#ifdef CONFIG_SND_SOC_AC97_BUS
++	} else if (IS_ENABLED(CONFIG_SND_SOC_AC97_BUS)) {
+ 		int ret;
+ 
+ 		wm9712->ac97 = snd_soc_new_ac97_component(component, WM9712_VENDOR_ID,
+@@ -660,7 +659,8 @@ static int wm9712_soc_probe(struct snd_soc_component *component)
+ 			snd_soc_free_ac97_component(wm9712->ac97);
+ 			return PTR_ERR(regmap);
+ 		}
+-#endif
++	} else {
++		return -ENXIO;
+ 	}
+ 
+ 	snd_soc_component_init_regmap(component, regmap);
+@@ -673,14 +673,12 @@ static int wm9712_soc_probe(struct snd_soc_component *component)
+ 
+ static void wm9712_soc_remove(struct snd_soc_component *component)
  {
- 	struct sk_buff *cmd_skb, *resp_skb = NULL;
- 	const struct qlink_resp_get_mac_info *resp;
--	size_t var_data_len;
-+	size_t var_data_len = 0;
- 	int ret = 0;
+-#ifdef CONFIG_SND_SOC_AC97_BUS
+ 	struct wm9712_priv *wm9712 = snd_soc_component_get_drvdata(component);
  
- 	cmd_skb = qtnf_cmd_alloc_new_cmdskb(mac->macid, QLINK_VIFID_RSVD,
-@@ -1680,8 +1685,8 @@ int qtnf_cmd_get_hw_info(struct qtnf_bus *bus)
+-	if (!wm9712->mfd_pdata) {
++	if (IS_ENABLED(CONFIG_SND_SOC_AC97_BUS) && !wm9712->mfd_pdata) {
+ 		snd_soc_component_exit_regmap(component);
+ 		snd_soc_free_ac97_component(wm9712->ac97);
+ 	}
+-#endif
+ }
+ 
+ static const struct snd_soc_component_driver soc_component_dev_wm9712 = {
+diff --git a/sound/soc/codecs/wm9713.c b/sound/soc/codecs/wm9713.c
+index 643863bb32e0..5a2fdf4f69bf 100644
+--- a/sound/soc/codecs/wm9713.c
++++ b/sound/soc/codecs/wm9713.c
+@@ -1214,8 +1214,7 @@ static int wm9713_soc_probe(struct snd_soc_component *component)
+ 	if (wm9713->mfd_pdata) {
+ 		wm9713->ac97 = wm9713->mfd_pdata->ac97;
+ 		regmap = wm9713->mfd_pdata->regmap;
+-	} else {
+-#ifdef CONFIG_SND_SOC_AC97_BUS
++	} else if (IS_ENABLED(CONFIG_SND_SOC_AC97_BUS)) {
+ 		wm9713->ac97 = snd_soc_new_ac97_component(component, WM9713_VENDOR_ID,
+ 						      WM9713_VENDOR_ID_MASK);
+ 		if (IS_ERR(wm9713->ac97))
+@@ -1225,7 +1224,8 @@ static int wm9713_soc_probe(struct snd_soc_component *component)
+ 			snd_soc_free_ac97_component(wm9713->ac97);
+ 			return PTR_ERR(regmap);
+ 		}
+-#endif
++	} else {
++		return -ENXIO;
+ 	}
+ 
+ 	snd_soc_component_init_regmap(component, regmap);
+@@ -1238,14 +1238,12 @@ static int wm9713_soc_probe(struct snd_soc_component *component)
+ 
+ static void wm9713_soc_remove(struct snd_soc_component *component)
  {
- 	struct sk_buff *cmd_skb, *resp_skb = NULL;
- 	const struct qlink_resp_get_hw_info *resp;
-+	size_t info_len = 0;
- 	int ret = 0;
--	size_t info_len;
+-#ifdef CONFIG_SND_SOC_AC97_BUS
+ 	struct wm9713_priv *wm9713 = snd_soc_component_get_drvdata(component);
  
- 	cmd_skb = qtnf_cmd_alloc_new_cmdskb(QLINK_MACID_RSVD, QLINK_VIFID_RSVD,
- 					    QLINK_CMD_GET_HW_INFO,
-@@ -1709,9 +1714,9 @@ int qtnf_cmd_band_info_get(struct qtnf_wmac *mac,
- 			   struct ieee80211_supported_band *band)
- {
- 	struct sk_buff *cmd_skb, *resp_skb = NULL;
--	size_t info_len;
- 	struct qlink_cmd_band_info_get *cmd;
- 	struct qlink_resp_band_info_get *resp;
-+	size_t info_len = 0;
- 	int ret = 0;
- 	u8 qband;
+-	if (!wm9713->mfd_pdata) {
++	if (IS_ENABLED(CONFIG_SND_SOC_AC97_BUS) && !wm9713->mfd_pdata) {
+ 		snd_soc_component_exit_regmap(component);
+ 		snd_soc_free_ac97_component(wm9713->ac97);
+ 	}
+-#endif
+ }
  
-@@ -1764,8 +1769,8 @@ out:
- int qtnf_cmd_send_get_phy_params(struct qtnf_wmac *mac)
- {
- 	struct sk_buff *cmd_skb, *resp_skb = NULL;
--	size_t response_size;
- 	struct qlink_resp_phy_params *resp;
-+	size_t response_size = 0;
- 	int ret = 0;
- 
- 	cmd_skb = qtnf_cmd_alloc_new_cmdskb(mac->macid, 0,
-@@ -2431,7 +2436,7 @@ int qtnf_cmd_get_chan_stats(struct qtnf_wmac *mac, u16 channel,
- 	struct sk_buff *cmd_skb, *resp_skb = NULL;
- 	struct qlink_cmd_get_chan_stats *cmd;
- 	struct qlink_resp_get_chan_stats *resp;
--	size_t var_data_len;
-+	size_t var_data_len = 0;
- 	int ret = 0;
- 
- 	cmd_skb = qtnf_cmd_alloc_new_cmdskb(mac->macid, QLINK_VIFID_RSVD,
+ static const struct snd_soc_component_driver soc_component_dev_wm9713 = {
 -- 
 2.19.1
 
