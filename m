@@ -2,132 +2,85 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B788FC282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:17:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C70F4C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:17:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84E3D218D0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:17:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 943C0217D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:17:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548361056;
-	bh=Ne2FtaV4KbKkxAyiDwNkXiY5FV93YdCFhC4nVeScJHQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MLZBbIOwwGwJbXVMFserJ6yu5DgfmXiZPBYojL5vMM3846OuanYAQKLe+2PNO9yq2
-	 sMxwEVcrZn3EFl0exJz59+48H5vuAzXZbFADcCbJIAWSOGAdQWQNMitYXDw70FVS5/
-	 lTxjAlxNki2XrVKOnCpAmClYJsaMGB1JG8I9n12U=
+	s=default; t=1548361066;
+	bh=RsC7Ui+KnjKPbrJt+Jaq4H6HMWLNYRFBgEGx1KifS10=;
+	h=Subject:References:Cc:From:In-Reply-To:To:Date:List-ID:From;
+	b=PPcGbtUeN54jP2Ybo4RjgCMOBFFtoEqcPFomPXN0jV1BuULCPmp4WB7UuXR4Kwb9z
+	 /X+WRYSYGHMPRCBieNcounIWNEEuh0ZiqDdR7ERtgj5OyVPaLRCLQiog6Bphs4BqVU
+	 rAejK16XUYU0ti+QUug/BQuaSsWzQNyS8Vy7kKT0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729746AbfAXTXE (ORCPT
+        id S1729651AbfAXURo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:23:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47724 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 15:17:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47630 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729724AbfAXTXB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:23:01 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        id S1729694AbfAXTW4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:22:56 -0500
+Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7093121902;
-        Thu, 24 Jan 2019 19:22:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2CEAE218E2;
+        Thu, 24 Jan 2019 19:22:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548357779;
-        bh=Ne2FtaV4KbKkxAyiDwNkXiY5FV93YdCFhC4nVeScJHQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aGvpiY3rXoxdh43cd50deULfcz0NBKUk2IMBue5RUQNhnKLQkbxidTs44TLcDhjoW
-         xzosPJBrZSshzh5/Rmcun4fo8wC9TJFb+6s8Jlgw23YY9YWhPiuCb88hRT8EKOwUpS
-         7DjKHcn8IaXtYPBQ+tW2Zj54Bh7z6ZrGO999/kMw=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Breno Leitao <leitao@debian.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 38/52] powerpc/pseries/cpuidle: Fix preempt warning
-Date:   Thu, 24 Jan 2019 20:20:02 +0100
-Message-Id: <20190124190148.970533273@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190124190140.879495253@linuxfoundation.org>
-References: <20190124190140.879495253@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        s=default; t=1548357776;
+        bh=RsC7Ui+KnjKPbrJt+Jaq4H6HMWLNYRFBgEGx1KifS10=;
+        h=Subject:References:Cc:From:In-Reply-To:To:Date:From;
+        b=DfZ0oglUMnIQE++2DkcmHGEgzXg7AhWStH1Dcg5nYRhaVhq0duEJZ6Gah7Gj9dFa8
+         4UUtnAp499H5KBtdfF2XDotJEZeqHwWSN6196KEae7Wk5NDfP4SPC8B+s6PGKWLdJ8
+         afKLoTrQ9SgDrW/5BlUe+yauFRjpHX0Ko/+8ZnAs=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] clk: qcom: Add MSM8976/56 Global Clock Controller (GCC) driver
+References: <65fb363366f651e42d3e97792d5990185823cbc3.camel@gmail.com>
+User-Agent: alot/0.8
+Cc:     AngeloGioacchino Del Regno <kholk11@gmail.com>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <65fb363366f651e42d3e97792d5990185823cbc3.camel@gmail.com>
+Message-ID: <154835777525.136743.6424256006615217720@swboyd.mtv.corp.google.com>
+To:     Andy Gross <andy.gross@linaro.org>,
+        AngeloGioacchino Del Regno <kholk11@gmail.com>,
+        David Brown <david.brown@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Date:   Thu, 24 Jan 2019 11:22:55 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.18-stable review patch.  If anyone has any objections, please let me know.
+Quoting AngeloGioacchino Del Regno (2019-01-12 07:03:18)
+> From 50465f2a4454625aac622bb84dbecdeaf5a50904 Mon Sep 17 00:00:00 2001
+> From: "Angelo G. Del Regno" <kholk11@gmail.com>
+> Date: Sat, 12 Jan 2019 10:52:18 +0100
+> Subject: [PATCH] clk: qcom: Add MSM8976/56 Global Clock Controller (GCC)
+>  driver
+>=20
+> Add support for the global clock controller found on MSM8976
+> and MSM8976 SoCs.
+> Since the multimedia clocks are actually in the GCC on these
+> SoCs, this will allow drivers to probe and control basically
+> all the required clocks.
+>=20
+> Signed-off-by: Angelo G. Del Regno <kholk11@gmail.com>
 
-------------------
+Are you going to send out DTS bits and provide platform support? I'm not
+interested in merging the clk bits and then having to support a driver
+that never gets used.
 
-[ Upstream commit 2b038cbc5fcf12a7ee1cc9bfd5da1e46dacdee87 ]
-
-When booting a pseries kernel with PREEMPT enabled, it dumps the
-following warning:
-
-   BUG: using smp_processor_id() in preemptible [00000000] code: swapper/0/1
-   caller is pseries_processor_idle_init+0x5c/0x22c
-   CPU: 13 PID: 1 Comm: swapper/0 Not tainted 4.20.0-rc3-00090-g12201a0128bc-dirty #828
-   Call Trace:
-   [c000000429437ab0] [c0000000009c8878] dump_stack+0xec/0x164 (unreliable)
-   [c000000429437b00] [c0000000005f2f24] check_preemption_disabled+0x154/0x160
-   [c000000429437b90] [c000000000cab8e8] pseries_processor_idle_init+0x5c/0x22c
-   [c000000429437c10] [c000000000010ed4] do_one_initcall+0x64/0x300
-   [c000000429437ce0] [c000000000c54500] kernel_init_freeable+0x3f0/0x500
-   [c000000429437db0] [c0000000000112dc] kernel_init+0x2c/0x160
-   [c000000429437e20] [c00000000000c1d0] ret_from_kernel_thread+0x5c/0x6c
-
-This happens because the code calls get_lppaca() which calls
-get_paca() and it checks if preemption is disabled through
-check_preemption_disabled().
-
-Preemption should be disabled because the per CPU variable may make no
-sense if there is a preemption (and a CPU switch) after it reads the
-per CPU data and when it is used.
-
-In this device driver specifically, it is not a problem, because this
-code just needs to have access to one lppaca struct, and it does not
-matter if it is the current per CPU lppaca struct or not (i.e. when
-there is a preemption and a CPU migration).
-
-That said, the most appropriate fix seems to be related to avoiding
-the debug_smp_processor_id() call at get_paca(), instead of calling
-preempt_disable() before get_paca().
-
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/cpuidle/cpuidle-pseries.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/cpuidle/cpuidle-pseries.c b/drivers/cpuidle/cpuidle-pseries.c
-index 6f7b01956885..b755d3a54e3c 100644
---- a/drivers/cpuidle/cpuidle-pseries.c
-+++ b/drivers/cpuidle/cpuidle-pseries.c
-@@ -237,7 +237,13 @@ static int pseries_idle_probe(void)
- 		return -ENODEV;
- 
- 	if (firmware_has_feature(FW_FEATURE_SPLPAR)) {
--		if (lppaca_shared_proc(get_lppaca())) {
-+		/*
-+		 * Use local_paca instead of get_lppaca() since
-+		 * preemption is not disabled, and it is not required in
-+		 * fact, since lppaca_ptr does not need to be the value
-+		 * associated to the current CPU, it can be from any CPU.
-+		 */
-+		if (lppaca_shared_proc(local_paca->lppaca_ptr)) {
- 			cpuidle_state_table = shared_states;
- 			max_idle_state = ARRAY_SIZE(shared_states);
- 		} else {
--- 
-2.19.1
-
-
+Also, is this copy/pasted from some downstream kernel sources? Would be
+good to have a pointer to that so we can compare and see if you've
+changed anything.
 
