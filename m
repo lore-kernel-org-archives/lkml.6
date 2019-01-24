@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78243C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:13:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF3AAC282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:13:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4343E218D0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:13:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9EEB1217D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:13:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548360827;
-	bh=uXTVSabqB5CNGd3aU6XDojcX9xx9Ea6sGy/Nwl2Rb04=;
+	s=default; t=1548360830;
+	bh=49bzgydITqAYmohR8ACu7eyOvq1Cr/l2Kg02XwmaiHI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VQceXutvcdzln9+IuHgqNHCZYEujFpm92FQG8wYaEYjv20c2JiUhdCtGCj3wfPSEl
-	 6GCE8z8w9DFXIE48QCXKfSv/2dEWQhJIKGmb/wCS4UnHlG/ShJlS5joXyD4MOBDMga
-	 TM+aCmO/qZLlZWhl7jyyNNX4BLu4898Gz8uVr/W4=
+	b=NE3XDWMyyMKPbt00Dr1+SCXf35IcWLUfPof8qaFSB6BwJRV688UKYPbtJMX2e6N6W
+	 crPgL875Ae3/dQSrh2+BjaEkxt8tGpWXGfP+gIZNSjff1HNRrR4J0w+xbiyAC0EaiA
+	 B56WukYu397r/DIcqDDzeCLYP686d7pQdVEyhsss=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730430AbfAXTZh (ORCPT
+        id S1730412AbfAXTZf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:25:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51212 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:25:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51072 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730396AbfAXTZc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:25:32 -0500
+        id S1730375AbfAXTZ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:25:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 407EC218D2;
-        Thu, 24 Jan 2019 19:25:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BD051218EA;
+        Thu, 24 Jan 2019 19:25:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548357931;
-        bh=uXTVSabqB5CNGd3aU6XDojcX9xx9Ea6sGy/Nwl2Rb04=;
+        s=default; t=1548357926;
+        bh=49bzgydITqAYmohR8ACu7eyOvq1Cr/l2Kg02XwmaiHI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kMkCi2XoDgEzjUlu3D5y3IASyhcjFIoR9XGfCNWEXq6vVItOVUxd+217e3aLUBb45
-         FKqGel2JQYsIYO+wRsjc6sJwaNSdp3OEm/ISs92v+usgIePpx5+sVs6BvSQzxMkhIi
-         ymNWFDjP1V1r2r+xQfzwLMs5CZENApYlkpFqAylY=
+        b=fPNbPujBJhcVGroAEqp+/W6Mim3HlbUqOQpfTAhmGee8KZdc6d1TZ/kHUC2x3ZuwP
+         ovhhwWNcjKJuv58Ehm2KC/HXl5rz+EQQ7zh+jyyIQh0LD89JApN+HNYBTvWDACvR5P
+         sCPKdL5EMhfHPThG27fFA3urBjIPGeBZT9gbx58s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 004/104] f2fs: cover more area with nat_tree_lock
-Date:   Thu, 24 Jan 2019 20:18:53 +0100
-Message-Id: <20190124190155.361874013@linuxfoundation.org>
+Subject: [PATCH 4.4 036/104] f2fs: fix missing up_read
+Date:   Thu, 24 Jan 2019 20:19:25 +0100
+Message-Id: <20190124190159.129465657@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190154.968308875@linuxfoundation.org>
 References: <20190124190154.968308875@linuxfoundation.org>
@@ -67,162 +67,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jaegeuk Kim <jaegeuk@kernel.org>
 
-commit a51311938e14c17f5a94d30baac9d7bec71f5858 upstream.
+commit 89d13c38501df730cbb2e02c4499da1b5187119d upstream.
 
-There was a subtle bug on nat cache management which incurs wrong nid allocation
-or wrong block addresses when try_to_free_nats is triggered heavily.
-This patch enlarges the previous coverage of nat_tree_lock to avoid data race.
+This patch fixes missing up_read call.
 
+Fixes: c9b60788fc76 ("f2fs: fix to do sanity check with block address in main area")
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/node.c |   29 ++++++++++++-----------------
- 1 file changed, 12 insertions(+), 17 deletions(-)
+ fs/f2fs/node.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 --- a/fs/f2fs/node.c
 +++ b/fs/f2fs/node.c
-@@ -261,13 +261,11 @@ static void cache_nat_entry(struct f2fs_
- {
- 	struct nat_entry *e;
- 
--	down_write(&nm_i->nat_tree_lock);
- 	e = __lookup_nat_cache(nm_i, nid);
- 	if (!e) {
- 		e = grab_nat_entry(nm_i, nid);
- 		node_info_from_raw_nat(&e->ni, ne);
+@@ -1342,8 +1342,10 @@ static int f2fs_write_node_page(struct p
  	}
--	up_write(&nm_i->nat_tree_lock);
- }
  
- static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
-@@ -379,6 +377,8 @@ void get_node_info(struct f2fs_sb_info *
+ 	if (__is_valid_data_blkaddr(ni.blk_addr) &&
+-		!f2fs_is_valid_blkaddr(sbi, ni.blk_addr, DATA_GENERIC))
++		!f2fs_is_valid_blkaddr(sbi, ni.blk_addr, DATA_GENERIC)) {
++		up_read(&sbi->node_write);
+ 		goto redirty_out;
++	}
  
- 	memset(&ne, 0, sizeof(struct f2fs_nat_entry));
- 
-+	down_write(&nm_i->nat_tree_lock);
-+
- 	/* Check current segment summary */
- 	mutex_lock(&curseg->curseg_mutex);
- 	i = lookup_journal_in_cursum(sum, NAT_JOURNAL, nid, 0);
-@@ -399,6 +399,7 @@ void get_node_info(struct f2fs_sb_info *
- cache:
- 	/* cache nat entry */
- 	cache_nat_entry(NM_I(sbi), nid, &ne);
-+	up_write(&nm_i->nat_tree_lock);
- }
- 
- /*
-@@ -1440,13 +1441,10 @@ static int add_free_nid(struct f2fs_sb_i
- 
- 	if (build) {
- 		/* do not add allocated nids */
--		down_read(&nm_i->nat_tree_lock);
- 		ne = __lookup_nat_cache(nm_i, nid);
--		if (ne &&
--			(!get_nat_flag(ne, IS_CHECKPOINTED) ||
-+		if (ne && (!get_nat_flag(ne, IS_CHECKPOINTED) ||
- 				nat_get_blkaddr(ne) != NULL_ADDR))
- 			allocated = true;
--		up_read(&nm_i->nat_tree_lock);
- 		if (allocated)
- 			return 0;
- 	}
-@@ -1532,6 +1530,8 @@ static void build_free_nids(struct f2fs_
- 	ra_meta_pages(sbi, NAT_BLOCK_OFFSET(nid), FREE_NID_PAGES,
- 							META_NAT, true);
- 
-+	down_read(&nm_i->nat_tree_lock);
-+
- 	while (1) {
- 		struct page *page = get_current_nat_page(sbi, nid);
- 
-@@ -1560,6 +1560,7 @@ static void build_free_nids(struct f2fs_
- 			remove_free_nid(nm_i, nid);
- 	}
- 	mutex_unlock(&curseg->curseg_mutex);
-+	up_read(&nm_i->nat_tree_lock);
- 
- 	ra_meta_pages(sbi, NAT_BLOCK_OFFSET(nm_i->next_scan_nid),
- 					nm_i->ra_nid_pages, META_NAT, false);
-@@ -1842,14 +1843,12 @@ static void remove_nats_in_journal(struc
- 
- 		raw_ne = nat_in_journal(sum, i);
- 
--		down_write(&nm_i->nat_tree_lock);
- 		ne = __lookup_nat_cache(nm_i, nid);
- 		if (!ne) {
- 			ne = grab_nat_entry(nm_i, nid);
- 			node_info_from_raw_nat(&ne->ni, &raw_ne);
- 		}
- 		__set_nat_cache_dirty(nm_i, ne);
--		up_write(&nm_i->nat_tree_lock);
- 	}
- 	update_nats_in_cursum(sum, -i);
- 	mutex_unlock(&curseg->curseg_mutex);
-@@ -1883,7 +1882,6 @@ static void __flush_nat_entry_set(struct
- 	struct f2fs_nat_block *nat_blk;
- 	struct nat_entry *ne, *cur;
- 	struct page *page = NULL;
--	struct f2fs_nm_info *nm_i = NM_I(sbi);
- 
- 	/*
- 	 * there are two steps to flush nat entries:
-@@ -1920,12 +1918,8 @@ static void __flush_nat_entry_set(struct
- 			raw_ne = &nat_blk->entries[nid - start_nid];
- 		}
- 		raw_nat_from_node_info(raw_ne, &ne->ni);
--
--		down_write(&NM_I(sbi)->nat_tree_lock);
- 		nat_reset_flag(ne);
- 		__clear_nat_cache_dirty(NM_I(sbi), ne);
--		up_write(&NM_I(sbi)->nat_tree_lock);
--
- 		if (nat_get_blkaddr(ne) == NULL_ADDR)
- 			add_free_nid(sbi, nid, false);
- 	}
-@@ -1937,9 +1931,7 @@ static void __flush_nat_entry_set(struct
- 
- 	f2fs_bug_on(sbi, set->entry_cnt);
- 
--	down_write(&nm_i->nat_tree_lock);
- 	radix_tree_delete(&NM_I(sbi)->nat_set_root, set->set);
--	up_write(&nm_i->nat_tree_lock);
- 	kmem_cache_free(nat_entry_set_slab, set);
- }
- 
-@@ -1959,6 +1951,9 @@ void flush_nat_entries(struct f2fs_sb_in
- 
- 	if (!nm_i->dirty_nat_cnt)
- 		return;
-+
-+	down_write(&nm_i->nat_tree_lock);
-+
- 	/*
- 	 * if there are no enough space in journal to store dirty nat
- 	 * entries, remove all entries from journal and merge them
-@@ -1967,7 +1962,6 @@ void flush_nat_entries(struct f2fs_sb_in
- 	if (!__has_cursum_space(sum, nm_i->dirty_nat_cnt, NAT_JOURNAL))
- 		remove_nats_in_journal(sbi);
- 
--	down_write(&nm_i->nat_tree_lock);
- 	while ((found = __gang_lookup_nat_set(nm_i,
- 					set_idx, SETVEC_SIZE, setvec))) {
- 		unsigned idx;
-@@ -1976,12 +1970,13 @@ void flush_nat_entries(struct f2fs_sb_in
- 			__adjust_nat_entry_set(setvec[idx], &sets,
- 							MAX_NAT_JENTRIES(sum));
- 	}
--	up_write(&nm_i->nat_tree_lock);
- 
- 	/* flush dirty nats in nat entry set */
- 	list_for_each_entry_safe(set, tmp, &sets, set_list)
- 		__flush_nat_entry_set(sbi, set);
- 
-+	up_write(&nm_i->nat_tree_lock);
-+
- 	f2fs_bug_on(sbi, nm_i->dirty_nat_cnt);
- }
- 
+ 	set_page_writeback(page);
+ 	fio.blk_addr = ni.blk_addr;
 
 
