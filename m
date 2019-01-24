@@ -2,55 +2,53 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7051C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:54:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27E5AC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:54:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85A0C217D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:54:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D07A721726
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:54:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359640;
-	bh=AvkemHZ2OvxNJD9XzI+f+Q/rpjcm4pCNAYGRe3d4r6I=;
+	s=default; t=1548359653;
+	bh=vnKj4BytNiJpYOTm1yErZZg1cjNgSl7HK7ro4/TjheU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Z3FVsX/CBRiauBSPRtB2z3KJpcUCbr8vr7eZJepAudugGQjbB5l5ecg1yjUYL2ixy
-	 2Sl1BPVlchaD9kaAMU58J2lZqCrKQGUiAfDKPaBXp/vD2ID9s6rsl5zGOd1v7ATvdd
-	 d/MYvEJnbLKhB24KzzBF+5v01qqa/m8CHiXqlmy0=
+	b=awE+00cgA55g7rUtEFT9qsn9+Cl3KqYMTAkTysLrnSRUE+N4ugYjFRBwGBd6K0wVF
+	 QjmIOrANQQTulENsEtgseKhecz+wFKDRAPORUvtbBumd9RZnZ+ryypf7TKpf+CHHAX
+	 w+TM4XgqzdTchoJxERQnv/IsiQEv8ZeAF3rVV2ac=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732462AbfAXTx6 (ORCPT
+        id S1732680AbfAXThj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:53:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37948 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:37:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37642 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730194AbfAXThy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:37:54 -0500
+        id S1732675AbfAXThg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:37:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9A1B1218FC;
-        Thu, 24 Jan 2019 19:37:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 40201218FC;
+        Thu, 24 Jan 2019 19:37:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358673;
-        bh=AvkemHZ2OvxNJD9XzI+f+Q/rpjcm4pCNAYGRe3d4r6I=;
+        s=default; t=1548358655;
+        bh=vnKj4BytNiJpYOTm1yErZZg1cjNgSl7HK7ro4/TjheU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JJcP/wb3sfFNnqNL83QmlW3TVyU0aI4YdOuKFGRs77D/9F4HBPqQZUOgzl7xfT1lc
-         4Zxi+zF8m4ToHdX05MxV81XWLUnUW4wJmf1hPLYgsssjrdb46yp/6mkcfr3T33ZxMl
-         df4P/0RkjYgXH7bV2MEGkQlzzrsABrdfM02xN8jY=
+        b=jSbPpuhHOrKtasMNAk2Y+I+pHkWFlAMAYguSQEpBgogBdtcXQWVPlI21O6YNSlrPw
+         xanrKuJzRpZ3X5IYB0fYfrpzIFd49YigeHIW3Q+Mm9Qt3w+Uc6npT4IvaDWRAg5HDb
+         sAA0Wg6+Er7RBbnPzP5h4i6LszXcSLBNpw94uJTE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Carroll <david.carroll@microsemi.com>,
-        Scott Teel <scott.teel@microsemi.com>,
-        Kevin Barnett <kevin.barnett@microsemi.com>,
-        Don Brace <don.brace@microsemi.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Raghuram Hegde <raghuram.hegde@intel.com>,
+        Chethan T N <chethan.tumkur.narayan@intel.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 090/106] scsi: smartpqi: correct lun reset issues
-Date:   Thu, 24 Jan 2019 20:20:47 +0100
-Message-Id: <20190124190211.777257257@linuxfoundation.org>
+Subject: [PATCH 4.19 085/106] Bluetooth: btusb: Add support for Intel bluetooth device 8087:0029
+Date:   Thu, 24 Jan 2019 20:20:42 +0100
+Message-Id: <20190124190211.540089701@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
 References: <20190124190206.342411005@linuxfoundation.org>
@@ -69,74 +67,162 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 2ba55c9851d74eb015a554ef69ddf2ef061d5780 ]
+[ Upstream commit 2da711bcebe81209a9f2f90e145600eb1bae2b71 ]
 
-Problem:
-The Linux kernel takes a logical volume offline after a LUN reset.  This is
-generally accompanied by this message in the dmesg output:
+Include the new USB product ID for Intel Bluetooth device 22260
+family(CcPeak)
 
-Device offlined - not ready after error recovery
+The /sys/kernel/debug/usb/devices portion for this device is:
 
-Root Cause:
-The root cause is a "quirk" in the timeout handling in the Linux SCSI
-layer. The Linux kernel places a 30-second timeout on most media access
-commands (reads and writes) that it send to device drivers.  When a media
-access command times out, the Linux kernel goes into error recovery mode
-for the LUN that was the target of the command that timed out. Every
-command that timed out is kept on a list inside of the Linux kernel to be
-retried later. The kernel attempts to recover the command(s) that timed out
-by issuing a LUN reset followed by a TEST UNIT READY. If the LUN reset and
-TEST UNIT READY commands are successful, the kernel retries the command(s)
-that timed out.
+T:  Bus=01 Lev=01 Prnt=01 Port=02 Cnt=02 Dev#=  2 Spd=12   MxCh= 0
+D:  Ver= 2.00 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=8087 ProdID=0029 Rev= 0.01
+C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=100mA
+I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=81(I) Atr=03(Int.) MxPS=  64 Ivl=1ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
 
-Each SCSI command issued by the kernel has a result field associated with
-it. This field indicates the final result of the command (success or
-error). When a command times out, the kernel places a value in this result
-field indicating that the command timed out.
-
-The "quirk" is that after the LUN reset and TEST UNIT READY commands are
-completed, the kernel checks each command on the timed-out command list
-before retrying it. If the result field is still "timed out", the kernel
-treats that command as not having been successfully recovered for a
-retry. If the number of commands that are in this state are greater than
-two, the kernel takes the LUN offline.
-
-Fix:
-When our RAIDStack receives a LUN reset, it simply waits until all
-outstanding commands complete. Generally, all of these outstanding commands
-complete successfully. Therefore, the fix in the smartpqi driver is to
-always set the command result field to indicate success when a request
-completes successfully. This normally isn’t necessary because the result
-field is always initialized to success when the command is submitted to the
-driver. So when the command completes successfully, the result field is
-left untouched. But in this case, the kernel changes the result field
-behind the driver’s back and then expects the field to be changed by the
-driver as the commands that timed-out complete.
-
-Reviewed-by: Dave Carroll <david.carroll@microsemi.com>
-Reviewed-by: Scott Teel <scott.teel@microsemi.com>
-Signed-off-by: Kevin Barnett <kevin.barnett@microsemi.com>
-Signed-off-by: Don Brace <don.brace@microsemi.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Raghuram Hegde <raghuram.hegde@intel.com>
+Signed-off-by: Chethan T N <chethan.tumkur.narayan@intel.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/smartpqi/smartpqi_init.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/bluetooth/btusb.c | 72 ++++++++++++++++++++-------------------
+ 1 file changed, 37 insertions(+), 35 deletions(-)
 
-diff --git a/drivers/scsi/smartpqi/smartpqi_init.c b/drivers/scsi/smartpqi/smartpqi_init.c
-index 2112ea6723c6..c62df3eefd5a 100644
---- a/drivers/scsi/smartpqi/smartpqi_init.c
-+++ b/drivers/scsi/smartpqi/smartpqi_init.c
-@@ -2720,6 +2720,9 @@ static unsigned int pqi_process_io_intr(struct pqi_ctrl_info *ctrl_info,
- 		switch (response->header.iu_type) {
- 		case PQI_RESPONSE_IU_RAID_PATH_IO_SUCCESS:
- 		case PQI_RESPONSE_IU_AIO_PATH_IO_SUCCESS:
-+			if (io_request->scmd)
-+				io_request->scmd->result = 0;
-+			/* fall through */
- 		case PQI_RESPONSE_IU_GENERAL_MANAGEMENT:
- 			break;
- 		case PQI_RESPONSE_IU_TASK_MANAGEMENT:
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index cd2e5cf14ea5..77b67a5f21ee 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -343,6 +343,7 @@ static const struct usb_device_id blacklist_table[] = {
+ 	/* Intel Bluetooth devices */
+ 	{ USB_DEVICE(0x8087, 0x0025), .driver_info = BTUSB_INTEL_NEW },
+ 	{ USB_DEVICE(0x8087, 0x0026), .driver_info = BTUSB_INTEL_NEW },
++	{ USB_DEVICE(0x8087, 0x0029), .driver_info = BTUSB_INTEL_NEW },
+ 	{ USB_DEVICE(0x8087, 0x07da), .driver_info = BTUSB_CSR },
+ 	{ USB_DEVICE(0x8087, 0x07dc), .driver_info = BTUSB_INTEL },
+ 	{ USB_DEVICE(0x8087, 0x0a2a), .driver_info = BTUSB_INTEL },
+@@ -2054,6 +2055,35 @@ static int btusb_send_frame_intel(struct hci_dev *hdev, struct sk_buff *skb)
+ 	return -EILSEQ;
+ }
+ 
++static bool btusb_setup_intel_new_get_fw_name(struct intel_version *ver,
++					     struct intel_boot_params *params,
++					     char *fw_name, size_t len,
++					     const char *suffix)
++{
++	switch (ver->hw_variant) {
++	case 0x0b:	/* SfP */
++	case 0x0c:	/* WsP */
++		snprintf(fw_name, len, "intel/ibt-%u-%u.%s",
++			le16_to_cpu(ver->hw_variant),
++			le16_to_cpu(params->dev_revid),
++			suffix);
++		break;
++	case 0x11:	/* JfP */
++	case 0x12:	/* ThP */
++	case 0x13:	/* HrP */
++	case 0x14:	/* CcP */
++		snprintf(fw_name, len, "intel/ibt-%u-%u-%u.%s",
++			le16_to_cpu(ver->hw_variant),
++			le16_to_cpu(ver->hw_revision),
++			le16_to_cpu(ver->fw_revision),
++			suffix);
++		break;
++	default:
++		return false;
++	}
++	return true;
++}
++
+ static int btusb_setup_intel_new(struct hci_dev *hdev)
+ {
+ 	struct btusb_data *data = hci_get_drvdata(hdev);
+@@ -2105,7 +2135,7 @@ static int btusb_setup_intel_new(struct hci_dev *hdev)
+ 	case 0x11:	/* JfP */
+ 	case 0x12:	/* ThP */
+ 	case 0x13:	/* HrP */
+-	case 0x14:	/* QnJ, IcP */
++	case 0x14:	/* CcP */
+ 		break;
+ 	default:
+ 		bt_dev_err(hdev, "Unsupported Intel hardware variant (%u)",
+@@ -2189,23 +2219,9 @@ static int btusb_setup_intel_new(struct hci_dev *hdev)
+ 	 * ibt-<hw_variant>-<hw_revision>-<fw_revision>.sfi.
+ 	 *
+ 	 */
+-	switch (ver.hw_variant) {
+-	case 0x0b:	/* SfP */
+-	case 0x0c:	/* WsP */
+-		snprintf(fwname, sizeof(fwname), "intel/ibt-%u-%u.sfi",
+-			 le16_to_cpu(ver.hw_variant),
+-			 le16_to_cpu(params.dev_revid));
+-		break;
+-	case 0x11:	/* JfP */
+-	case 0x12:	/* ThP */
+-	case 0x13:	/* HrP */
+-	case 0x14:	/* QnJ, IcP */
+-		snprintf(fwname, sizeof(fwname), "intel/ibt-%u-%u-%u.sfi",
+-			 le16_to_cpu(ver.hw_variant),
+-			 le16_to_cpu(ver.hw_revision),
+-			 le16_to_cpu(ver.fw_revision));
+-		break;
+-	default:
++	err = btusb_setup_intel_new_get_fw_name(&ver, &params, fwname,
++						sizeof(fwname), "sfi");
++	if (!err) {
+ 		bt_dev_err(hdev, "Unsupported Intel firmware naming");
+ 		return -EINVAL;
+ 	}
+@@ -2221,23 +2237,9 @@ static int btusb_setup_intel_new(struct hci_dev *hdev)
+ 	/* Save the DDC file name for later use to apply once the firmware
+ 	 * downloading is done.
+ 	 */
+-	switch (ver.hw_variant) {
+-	case 0x0b:	/* SfP */
+-	case 0x0c:	/* WsP */
+-		snprintf(fwname, sizeof(fwname), "intel/ibt-%u-%u.ddc",
+-			 le16_to_cpu(ver.hw_variant),
+-			 le16_to_cpu(params.dev_revid));
+-		break;
+-	case 0x11:	/* JfP */
+-	case 0x12:	/* ThP */
+-	case 0x13:	/* HrP */
+-	case 0x14:	/* QnJ, IcP */
+-		snprintf(fwname, sizeof(fwname), "intel/ibt-%u-%u-%u.ddc",
+-			 le16_to_cpu(ver.hw_variant),
+-			 le16_to_cpu(ver.hw_revision),
+-			 le16_to_cpu(ver.fw_revision));
+-		break;
+-	default:
++	err = btusb_setup_intel_new_get_fw_name(&ver, &params, fwname,
++						sizeof(fwname), "ddc");
++	if (!err) {
+ 		bt_dev_err(hdev, "Unsupported Intel firmware naming");
+ 		return -EINVAL;
+ 	}
 -- 
 2.19.1
 
