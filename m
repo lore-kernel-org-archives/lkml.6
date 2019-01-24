@@ -2,149 +2,78 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1B2FC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:08:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65574C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:09:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FACF21872
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:08:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="nFBsDqJG"
+	by mail.kernel.org (Postfix) with ESMTP id 40D2621872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:09:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728562AbfAXPI5 (ORCPT
+        id S1728583AbfAXPJ2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 10:08:57 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:47821 "EHLO pegase1.c-s.fr"
+        Thu, 24 Jan 2019 10:09:28 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:48604 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728010AbfAXPI4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 10:08:56 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43llsx4Khnz9txl4;
-        Thu, 24 Jan 2019 16:08:53 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=nFBsDqJG; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id IDxXMoYdTEJl; Thu, 24 Jan 2019 16:08:53 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43llsx39Flz9txl3;
-        Thu, 24 Jan 2019 16:08:53 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1548342533; bh=j1yriyyEcyhV3H8Bqa9QLPy2gDxrWpbiN4C8VH523lo=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=nFBsDqJG67jyxO6p4m9vWb4aTTLOlRt+zOrp/F2leBb8E8fJNXoEpXaXxZ2wkpWpT
-         b6ULBmRTnTs8x+M7BKAn3axxkeAvpwDm2RqXPOzWJqF2aCdhj1dyeqbvoDs48V1uhI
-         ViLgyXmZFane/qGCXtas0gbocdJwr25CTns6rbYY=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id DBC948B85D;
-        Thu, 24 Jan 2019 16:08:54 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id GW0J63uLUxTz; Thu, 24 Jan 2019 16:08:54 +0100 (CET)
-Received: from PO15451 (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 57BC58B85C;
-        Thu, 24 Jan 2019 16:08:54 +0100 (CET)
-Subject: Re: [PATCH v13 00/10] powerpc: Switch to CONFIG_THREAD_INFO_IN_TASK
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Mike Rapoport <rppt@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <cover.1547195976.git.christophe.leroy@c-s.fr>
- <87zhrx2bf1.fsf@concordia.ellerman.id.au>
- <07e60b5a-611c-9863-f300-68a4f9ad2efd@c-s.fr>
- <871s52yins.fsf@concordia.ellerman.id.au>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <0c4cb50d-696b-bd9c-9745-aa19b08aa723@c-s.fr>
-Date:   Thu, 24 Jan 2019 16:08:54 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1728010AbfAXPJ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 10:09:28 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1C28AC0495AE;
+        Thu, 24 Jan 2019 15:09:28 +0000 (UTC)
+Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 849B568D48;
+        Thu, 24 Jan 2019 15:09:27 +0000 (UTC)
+From:   Jeff Moyer <jmoyer@redhat.com>
+To:     Jianchao Wang <jianchao.w.wang@oracle.com>
+Cc:     axboe@kernel.dk, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] blk-mq: fix the cmd_flag_name array
+References: <1548325735-1760-1-git-send-email-jianchao.w.wang@oracle.com>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date:   Thu, 24 Jan 2019 10:09:26 -0500
+In-Reply-To: <1548325735-1760-1-git-send-email-jianchao.w.wang@oracle.com>
+        (Jianchao Wang's message of "Thu, 24 Jan 2019 18:28:55 +0800")
+Message-ID: <x49h8dygkih.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <871s52yins.fsf@concordia.ellerman.id.au>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 24 Jan 2019 15:09:28 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Jianchao Wang <jianchao.w.wang@oracle.com> writes:
 
+> Swap REQ_NOWAIT and REQ_NOUNMAP and add REQ_HIPRI.
+>
+> Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+> ---
+>  block/blk-mq-debugfs.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/block/blk-mq-debugfs.c b/block/blk-mq-debugfs.c
+> index 90d6876..f812083 100644
+> --- a/block/blk-mq-debugfs.c
+> +++ b/block/blk-mq-debugfs.c
+> @@ -308,8 +308,9 @@ static const char *const cmd_flag_name[] = {
+>  	CMD_FLAG_NAME(PREFLUSH),
+>  	CMD_FLAG_NAME(RAHEAD),
+>  	CMD_FLAG_NAME(BACKGROUND),
+> -	CMD_FLAG_NAME(NOUNMAP),
+>  	CMD_FLAG_NAME(NOWAIT),
+> +	CMD_FLAG_NAME(NOUNMAP),
+> +	CMD_FLAG_NAME(HIPRI),
+>  };
+>  #undef CMD_FLAG_NAME
 
-Le 24/01/2019 à 01:59, Michael Ellerman a écrit :
-> Christophe Leroy <christophe.leroy@c-s.fr> writes:
->> Le 19/01/2019 à 11:23, Michael Ellerman a écrit :
->>> Christophe Leroy <christophe.leroy@c-s.fr> writes:
->>>
->>>> The purpose of this serie is to activate CONFIG_THREAD_INFO_IN_TASK which
->>>> moves the thread_info into task_struct.
->>>>
->>>> Moving thread_info into task_struct has the following advantages:
->>>> - It protects thread_info from corruption in the case of stack
->>>> overflows.
->>>> - Its address is harder to determine if stack addresses are
->>>> leaked, making a number of attacks more difficult.
->>>>
->>>> Changes since v12:
->>>>    - Patch 1: Taken comment from Mike (re-introduced the 'panic' in case memblock allocation fails in setup_64.c
->>>>    - Patch 1: Added alloc_stack() function in setup_32.c to also panic in case of allocation failure.
->>>
->>> Hi Christophe,
->>>
->>> I can't get this series to boot on qemu mac99. I'm getting eg:
->>>
->>> [    0.981514] NFS: Registering the id_resolver key type
->>> [    0.981752] Key type id_resolver registered
->>> [    0.981868] Key type id_legacy registered
->>> [    0.995711] Unrecoverable exception 0 at 0 (msr=0)
->>> [    0.996091] Oops: Unrecoverable exception, sig: 6 [#1]
->>> [    0.996314] BE PAGE_SIZE=4K MMU=Hash PowerMac
->>> [    0.996617] Modules linked in:
->>> [    0.996869] CPU: 0 PID: 416 Comm: modprobe Not tainted 5.0.0-rc2-gcc-7.3.0-00043-g53f2de798792 #342
->>> [    0.997138] NIP:  00000000 LR: 00000000 CTR: 00000000
->>> [    0.997309] REGS: ef237f50 TRAP: 0000   Not tainted  (5.0.0-rc2-gcc-7.3.0-00043-g53f2de798792)
->>> [    0.997508] MSR:  00000000 <>  CR: 00000000  XER: 00000000
->>> [    0.997712]
->>> [    0.997712] GPR00: 00000000 ef238000 00000000 00000000 00000000 00000000 00000000 00000000
->>> [    0.997712] GPR08: 00000000 00000000 00000000 00000000 00000000 00000000 c006477c ef13d8c0
->>> [    0.997712] GPR16: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
->>> [    0.997712] GPR24: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
->>> [    0.998671] NIP [00000000]   (null)
->>> [    0.998774] LR [00000000]   (null)
->>> [    0.998895] Call Trace:
->>> [    0.999030] Instruction dump:
->>> [    0.999320] XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX
->>> [    0.999546] XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX 60000000 XXXXXXXX XXXXXXXX XXXXXXXX
->>> [    1.000023] ---[ end trace 925ea3419844fe68 ]---
->>
->> No such issue on my side. Do you have a ramdisk with anythink special or
->> a special config ? I see your kernel is modprobing something, know what
->> it is ?
-> 
-> It's just a debian installer image, nothing special AFAIK.
-> 
->> Especially, what is the amount of memory in your config ? On my side
->> there is 128M:
-> 
-> I have 1G.
-> 
-> But today I can't reproduce the crash :/
-> 
-> So I guess it must have been something else in my config.
+Acked-by: Jeff Moyer <jmoyer@redhat.com>
 
-Or it could be because I didn't protect stack walks ? See
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=9bbd4c56b0b642f04396da378296e68096d5afca
-
-Anyway, I'll soon send out v14 including a patch for that.
-
-Christophe
+You might consider also adding a comment above the req_flag_bits enum
+noting that modifications also need to be propagated to cmd_flag_name.
