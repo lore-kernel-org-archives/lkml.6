@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9793EC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:36:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3698FC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:36:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 636C921905
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:36:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 061D821907
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:36:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358611;
-	bh=7r1s2XzvJT2JDzLR0gLLk6SUTrm/78obBe2iw9QD2P8=;
+	s=default; t=1548358616;
+	bh=LZQHD6q9L8d0Jj9dgzgrnUhe9c86w1o11IB6QqAVXk8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VhNeyE7PGb1Tt4D+AJFfE/064q5rhInV8OCwuEZdiqFUKFfINFFk1oeDNTn5Yb1+k
-	 p98q3+nO/EkG/RU7w8t4n3B5DQMgO6JBiKewlS09QWxVwmwjmcCmS9DtGvd2llveXo
-	 hK5RMzmS3DcRDHbUcKPx/+5CbEDVskLw7kWUF+AE=
+	b=zlUgtYJgrxWHzN1+9Y5/ekRaP9vym16It9vfKZds4WCQxBMhyKM+4zHNverFqSb/x
+	 Fvc0dDCPLFO3CElhAtiWxmjqT73M2yZ9+P2cSs0a7CIUANNc7iS7ofDEZdSlNWN0Ee
+	 tI2gpP2jTvWkKp4rvfXEIwdbvT224IkiW3XC+cRg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732422AbfAXTgu (ORCPT
+        id S1732559AbfAXTgy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:36:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36752 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:36:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36832 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732062AbfAXTgq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:36:46 -0500
+        id S1730938AbfAXTgv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:36:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C7DD21906;
-        Thu, 24 Jan 2019 19:36:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6FCD9218FC;
+        Thu, 24 Jan 2019 19:36:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358605;
-        bh=7r1s2XzvJT2JDzLR0gLLk6SUTrm/78obBe2iw9QD2P8=;
+        s=default; t=1548358610;
+        bh=LZQHD6q9L8d0Jj9dgzgrnUhe9c86w1o11IB6QqAVXk8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IRPAE7q8qP0V/iqi/h+mi8H2EuQbLZClbI65WJd9dbtuJ5ZyexvUVCdgPu8gY5BEM
-         mPGrIeh5ZnWieF/Mowvj9Q3eUqyth8WyKNE1kmirfOODBl9dfydZhsCNeIYRsiwgxF
-         o0y9y2G/Yn25y61BhF4Enu3wGn2+fL24zeGjfTcA=
+        b=y/n0E9tb79aBL4Bym/mrAzBnY3jBfRnH0mS6eeQzLjjEGVz5kNHd9SMhkobEAX/yn
+         ul7ZZgtkTaEVTMklCKBEEsTFdqxguRlyqcCRBnWNUIJ8hjiKm0cG0Eo6DIyNfZg2Ob
+         Y1eWbsFiOgk6tH6UFr5smUhEtXmCcNpeGQP7mj2Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Hans van Kranenburg <hans.van.kranenburg@mendix.com>,
-        Qu Wenruo <wqu@suse.com>, David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 060/106] btrfs: volumes: Make sure there is no overlap of dev extents at mount time
-Date:   Thu, 24 Jan 2019 20:20:17 +0100
-Message-Id: <20190124190210.230964303@linuxfoundation.org>
+Subject: [PATCH 4.19 070/106] netfilter: ipt_CLUSTERIP: check MAC address when duplicate config is set
+Date:   Thu, 24 Jan 2019 20:20:27 +0100
+Message-Id: <20190124190210.793810490@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
 References: <20190124190206.342411005@linuxfoundation.org>
@@ -67,146 +66,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 5eb193812a42dc49331f25137a38dfef9612d3e4 ]
+[ Upstream commit 06aa151ad1fc74a49b45336672515774a678d78d ]
 
-Enhance btrfs_verify_dev_extents() to remember previous checked dev
-extents, so it can verify no dev extents can overlap.
+If same destination IP address config is already existing, that config is
+just used. MAC address also should be same.
+However, there is no MAC address checking routine.
+So that MAC address checking routine is added.
 
-Analysis from Hans:
+test commands:
+   %iptables -A INPUT -p tcp -i lo -d 192.168.0.5 --dport 80 \
+	   -j CLUSTERIP --new --hashmode sourceip \
+	   --clustermac 01:00:5e:00:00:20 --total-nodes 2 --local-node 1
+   %iptables -A INPUT -p tcp -i lo -d 192.168.0.5 --dport 80 \
+	   -j CLUSTERIP --new --hashmode sourceip \
+	   --clustermac 01:00:5e:00:00:21 --total-nodes 2 --local-node 1
 
-"Imagine allocating a DATA|DUP chunk.
+After this patch, above commands are disallowed.
 
- In the chunk allocator, we first set...
-   max_stripe_size = SZ_1G;
-   max_chunk_size = BTRFS_MAX_DATA_CHUNK_SIZE
- ... which is 10GiB.
-
- Then...
-   /* we don't want a chunk larger than 10% of writeable space */
-   max_chunk_size = min(div_factor(fs_devices->total_rw_bytes, 1),
-       		 max_chunk_size);
-
- Imagine we only have one 7880MiB block device in this filesystem. Now
- max_chunk_size is down to 788MiB.
-
- The next step in the code is to search for max_stripe_size * dev_stripes
- amount of free space on the device, which is in our example 1GiB * 2 =
- 2GiB. Imagine the device has exactly 1578MiB free in one contiguous
- piece. This amount of bytes will be put in devices_info[ndevs - 1].max_avail
-
- Next we recalculate the stripe_size (which is actually the device extent
- length), based on the actual maximum amount of available raw disk space:
-   stripe_size = div_u64(devices_info[ndevs - 1].max_avail, dev_stripes);
-
- stripe_size is now 789MiB
-
- Next we do...
-   data_stripes = num_stripes / ncopies
- ...where data_stripes ends up as 1, because num_stripes is 2 (the amount
- of device extents we're going to have), and DUP has ncopies 2.
-
- Next there's a check...
-   if (stripe_size * data_stripes > max_chunk_size)
- ...which matches because 789MiB * 1 > 788MiB.
-
- We go into the if code, and next is...
-   stripe_size = div_u64(max_chunk_size, data_stripes);
- ...which resets stripe_size to max_chunk_size: 788MiB
-
- Next is a fun one...
-   /* bump the answer up to a 16MB boundary */
-   stripe_size = round_up(stripe_size, SZ_16M);
- ...which changes stripe_size from 788MiB to 800MiB.
-
- We're not done changing stripe_size yet...
-   /* But don't go higher than the limits we found while searching
-    * for free extents
-    */
-   stripe_size = min(devices_info[ndevs - 1].max_avail,
-       	      stripe_size);
-
- This is bad. max_avail is twice the stripe_size (we need to fit 2 device
- extents on the same device for DUP).
-
- The result here is that 800MiB < 1578MiB, so it's unchanged. However,
- the resulting DUP chunk will need 1600MiB disk space, which isn't there,
- and the second dev_extent might extend into the next thing (next
- dev_extent? end of device?) for 22MiB.
-
- The last shown line of code relies on a situation where there's twice
- the value of stripe_size present as value for the variable stripe_size
- when it's DUP. This was actually the case before commit 92e222df7b
- "btrfs: alloc_chunk: fix DUP stripe size handling", from which I quote:
-   "[...] in the meantime there's a check to see if the stripe_size does
- not exceed max_chunk_size. Since during this check stripe_size is twice
- the amount as intended, the check will reduce the stripe_size to
- max_chunk_size if the actual correct to be used stripe_size is more than
- half the amount of max_chunk_size."
-
- In the previous version of the code, the 16MiB alignment (why is this
- done, by the way?) would result in a 50% chance that it would actually
- do an 8MiB alignment for the individual dev_extents, since it was
- operating on double the size. Does this matter?
-
- Does it matter that stripe_size can be set to anything which is not
- 16MiB aligned because of the amount of remaining available disk space
- which is just taken?
-
- What is the main purpose of this round_up?
-
- The most straightforward thing to do seems something like...
-   stripe_size = min(
-       div_u64(devices_info[ndevs - 1].max_avail, dev_stripes),
-       stripe_size
-   )
- ..just putting half of the max_avail into stripe_size."
-
-Link: https://lore.kernel.org/linux-btrfs/b3461a38-e5f8-f41d-c67c-2efac8129054@mendix.com/
-Reported-by: Hans van Kranenburg <hans.van.kranenburg@mendix.com>
-Signed-off-by: Qu Wenruo <wqu@suse.com>
-[ add analysis from report ]
-Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/volumes.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ net/ipv4/netfilter/ipt_CLUSTERIP.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-index 223334f08530..dbb893d0ae81 100644
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -7474,6 +7474,8 @@ int btrfs_verify_dev_extents(struct btrfs_fs_info *fs_info)
- 	struct btrfs_path *path;
- 	struct btrfs_root *root = fs_info->dev_root;
- 	struct btrfs_key key;
-+	u64 prev_devid = 0;
-+	u64 prev_dev_ext_end = 0;
- 	int ret = 0;
+diff --git a/net/ipv4/netfilter/ipt_CLUSTERIP.c b/net/ipv4/netfilter/ipt_CLUSTERIP.c
+index 2c8d313ae216..e40e6795bd20 100644
+--- a/net/ipv4/netfilter/ipt_CLUSTERIP.c
++++ b/net/ipv4/netfilter/ipt_CLUSTERIP.c
+@@ -496,7 +496,8 @@ static int clusterip_tg_check(const struct xt_tgchk_param *par)
+ 			if (IS_ERR(config))
+ 				return PTR_ERR(config);
+ 		}
+-	}
++	} else if (memcmp(&config->clustermac, &cipinfo->clustermac, ETH_ALEN))
++		return -EINVAL;
  
- 	key.objectid = 1;
-@@ -7518,10 +7520,22 @@ int btrfs_verify_dev_extents(struct btrfs_fs_info *fs_info)
- 		chunk_offset = btrfs_dev_extent_chunk_offset(leaf, dext);
- 		physical_len = btrfs_dev_extent_length(leaf, dext);
- 
-+		/* Check if this dev extent overlaps with the previous one */
-+		if (devid == prev_devid && physical_offset < prev_dev_ext_end) {
-+			btrfs_err(fs_info,
-+"dev extent devid %llu physical offset %llu overlap with previous dev extent end %llu",
-+				  devid, physical_offset, prev_dev_ext_end);
-+			ret = -EUCLEAN;
-+			goto out;
-+		}
-+
- 		ret = verify_one_dev_extent(fs_info, chunk_offset, devid,
- 					    physical_offset, physical_len);
- 		if (ret < 0)
- 			goto out;
-+		prev_devid = devid;
-+		prev_dev_ext_end = physical_offset + physical_len;
-+
- 		ret = btrfs_next_item(root, path);
- 		if (ret < 0)
- 			goto out;
+ 	ret = nf_ct_netns_get(par->net, par->family);
+ 	if (ret < 0) {
 -- 
 2.19.1
 
