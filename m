@@ -2,112 +2,48 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C9E2C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 14:09:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BC28C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 14:11:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF2DC21855
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 14:09:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RSD6g2Qd"
+	by mail.kernel.org (Postfix) with ESMTP id 0C95621855
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 14:11:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728130AbfAXOJw (ORCPT
+        id S1728145AbfAXOLr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 09:09:52 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:36024 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727596AbfAXOJw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 09:09:52 -0500
-Received: by mail-it1-f194.google.com with SMTP id c9so4565613itj.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 06:09:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Uxj8XOwvdIoz9PkIKRxaosXpnX6yAk4tAYyXLmR8emI=;
-        b=RSD6g2QdAoHfCvVpVxwPXlX9+gJ2M4Olo0F9KRxCphcRv5ErccuwJDB/Bf/vCEM6ng
-         a9W/sZOKUEZF/QxjSLuooT6BV40PSmbA+5Vwh80qe6SrtMH7WQSmRJpAbYUSjse18ukn
-         A4VXJhN+6PUN1+p1Bp0TVmslVd/uxIdW/+vGY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Uxj8XOwvdIoz9PkIKRxaosXpnX6yAk4tAYyXLmR8emI=;
-        b=ZjjAxJVSsg0Ruuiv83zoQjCwMntLWNAGGEWCEmI7klReaYzjInJI++hLaykJryjJfZ
-         eD4JSnF/km5DRR8jeYpPrZ2FeFvj9exrXZdHDpzRJAtF7rx58RIl7Dtz+nwmnnhTSIn7
-         EdUbS3ABTzR2ZIYp2MmnFLXrc03jLSH9vOxsHJtd8BnMrCUu4hTzzhLzPQoCY3bOirvC
-         4QKxIGyzbu3WxxJfFAqVTScCi0JpE9yweJHFHmFQH7nKr1FW6wD9umBGOq3HpOZnbfxD
-         rGpbmyLhFtKHDjUNBFLW6YksVNEx9fwsOiw+ukI6sw8vmWcGotCPlf44qhWY4owdmkSB
-         jnfw==
-X-Gm-Message-State: AJcUukfGOXxVM1Y3kWx5Xt8iIqcq7dXRvDLqEkI1EGUBJmDV69WJ5Y7h
-        fV9TBoAJDfSGqxmfyNsCyCCnBrzxiatjwq5YlflGExWPxIc=
-X-Google-Smtp-Source: ALg8bN7haPyTYh9vngq2B67q5eh0VVcObl5UIt6aSdqiCCbaXG9+BnS0aOO+qMKaT0vxDquJaJP7E1p5aWa7v594ydg=
-X-Received: by 2002:a02:734b:: with SMTP id a11mr3693952jae.62.1548338990973;
- Thu, 24 Jan 2019 06:09:50 -0800 (PST)
+        Thu, 24 Jan 2019 09:11:47 -0500
+Received: from 8bytes.org ([81.169.241.247]:59600 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727596AbfAXOLr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 09:11:47 -0500
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 0C0B3389; Thu, 24 Jan 2019 15:11:45 +0100 (CET)
+Date:   Thu, 24 Jan 2019 15:11:45 +0100
+From:   "joro@8bytes.org" <joro@8bytes.org>
+To:     "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        "Singh, Brijesh" <brijesh.singh@amd.com>
+Subject: Re: [PATCH v3] iommu: amd: Fix IOMMU page flush when detach device
+ from a domain
+Message-ID: <20190124141145.GM32526@8bytes.org>
+References: <20190124041619.1974-1-Suravee.Suthikulpanit@amd.com>
 MIME-Version: 1.0
-References: <20190123224926.250525-1-ebiggers@kernel.org> <20190123224926.250525-12-ebiggers@kernel.org>
- <CAKv+Gu-uELtKc_fNKFLPZ9KqrSMhX+cXuiP79JMR1zm0yo0r8w@mail.gmail.com> <20190124131414.GA13624@Red>
-In-Reply-To: <20190124131414.GA13624@Red>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Thu, 24 Jan 2019 15:09:40 +0100
-Message-ID: <CAKv+Gu_HNsjYkkDPUYY9bJ_u0MMf1mcYfTMydE6-TW7iR6QDNQ@mail.gmail.com>
-Subject: Re: [RFC/RFT PATCH 11/15] crypto: testmgr - convert skcipher testing
- to use testvec_configs
-To:     Corentin Labbe <clabbe.montjoie@gmail.com>
-Cc:     Eric Biggers <ebiggers@kernel.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Jason A . Donenfeld" <Jason@zx2c4.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190124041619.1974-1-Suravee.Suthikulpanit@amd.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 24 Jan 2019 at 14:14, Corentin Labbe <clabbe.montjoie@gmail.com> wrote:
->
-> On Thu, Jan 24, 2019 at 01:36:23PM +0100, Ard Biesheuvel wrote:
-> > On Wed, 23 Jan 2019 at 23:53, Eric Biggers <ebiggers@kernel.org> wrote:
-> > >
-> > > From: Eric Biggers <ebiggers@google.com>
-> > >
-> > > Convert alg_test_skcipher() to use the new test framework, adding a list
-> > > of testvec_configs to test by default.  When the extra self-tests are
-> > > enabled, randomly generated testvec_configs are tested as well.
-> > >
-> > > This improves skcipher test coverage mainly because now all algorithms
-> > > have a variety of data layouts tested, whereas before each algorithm was
-> > > responsible for declaring its own chunked test cases which were often
-> > > missing or provided poor test coverage.  The new code also tests both
-> > > the MAY_SLEEP and !MAY_SLEEP cases, different IV alignments, and buffers
-> > > that cross pages.
-> > >
-> > > This has already found a bug in the arm64 ctr-aes-neonbs algorithm.
-> > > It would have easily found many past bugs.
-> > >
-> > > I removed the skcipher chunked test vectors that were the same as
-> > > non-chunked ones, but left the ones that were unique.
-> > >
-> > > Signed-off-by: Eric Biggers <ebiggers@google.com>
-> >
-> > This patch does not apply after applying 1..10 onto cryptodev/master
-> >
-> > Do you have a tree somewhere?
->
-> Hello
->
-> I got the same with next.
-> You need to apply "crypto: clarify name of WEAK_KEY request flag" from his repo:
-> https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git branch testmgr-improvements
->
+On Thu, Jan 24, 2019 at 04:16:45AM +0000, Suthikulpanit, Suravee wrote:
+>  drivers/iommu/amd_iommu.c | 15 +++++++++++----
+>  1 file changed, 11 insertions(+), 4 deletions(-)
 
-Thanks
-
-I just pulled that branch entirely instead.
+Applied, thanks Suravee.
