@@ -2,103 +2,232 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46E8CC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 10:23:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54CCCC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 10:24:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1143B218A6
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 10:23:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18C62218A6
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 10:24:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i8gyH1xu"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KCdML0Z9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727183AbfAXKXD (ORCPT
+        id S1727420AbfAXKYF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 05:23:03 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:36084 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726025AbfAXKXD (ORCPT
+        Thu, 24 Jan 2019 05:24:05 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:52819 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726046AbfAXKYF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 05:23:03 -0500
-Received: by mail-qt1-f193.google.com with SMTP id t13so5846222qtn.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 02:23:02 -0800 (PST)
+        Thu, 24 Jan 2019 05:24:05 -0500
+Received: by mail-wm1-f65.google.com with SMTP id m1so2516055wml.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 02:24:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gaZicjGfxE1gJlVsb8dqwXJo+bqMYyNKX+NtRrxLIv8=;
-        b=i8gyH1xubYU6KYQ5A3iA11eBOy4h4NsM+AKHtgGLl3E31G60I9Jp5Zu1ooNc9MspHR
-         cEnlqMf+PqG64hFjZJ4pbXr+ratWSThWH1mPUnnMNZKX/DqafgNl6JoaM7z3+kbH33g7
-         HYzXFlJMk+0YVL7EQgS8touAipMvzVhRTOhRWygIDhIBrMJenm1D5gXExKjDoVhpEfqR
-         m+kaVI55I1pxq8GiDb3zJmQqBEDYTo+AKaiJg+sk53FnY7dJZHTu1ddCQ0MasyeZ+nue
-         06U4Ut/i2joVuuivW0Fy+6xt/1964IQZpUbg5RtoZtRp1VjsofCUXMiPe4sybcnCuASu
-         nZMQ==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=/6eAB8ques1NwxcFxFQ1zKWCiUEhKsBvxTsGl74yzaM=;
+        b=KCdML0Z9qz8MaYNcigWo5kc5G7sHqfyV/hiDqXCkIUo+w9bcXisPgdRRzdgTUDFye5
+         5xiOMZfdIPR7v8bwpcG8AbmAEKqc7HOQPjJxpx9Wwun4pelOhI7xQngJL9TrXYMppBiX
+         aFloOOnLvIF+kHNThym+RCsrMNQ2sm2a6QUJY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gaZicjGfxE1gJlVsb8dqwXJo+bqMYyNKX+NtRrxLIv8=;
-        b=eqQnolnM1tEfaiJxcuuf51hQT+PDmCozZsFssMDQrKdMJbNoLtrTOzrdZ6XEurn6dd
-         8/PEhJ363SJf3YlQ8Ne8Kd1+QfHgbQ6HzMQHgpnOqOzJ6e8FWsutEnKETj0tBPHECdu/
-         aTN4dNH0HrKjypuHgbL+PsTueMXFxQ0FehNwORLArzthy5zdFC3SQU3PSEhEdyUzy8HI
-         oz59CCDdNONmK0SsLluYXGJVx7YJoZyJjt7eELeGZFtXpjWIdeqh+A9Ptdyd0kMxfsfN
-         ftERy1ugOs2oEIz4dTYuCoObjhStG0jQu/iR2XLUT0c6169t8pk8KH/wYJX+02kGIsv+
-         C0/g==
-X-Gm-Message-State: AJcUukczfTfwWPN2R1KoEKTPYOPKZCRErE+AUVWyJC9exG+7Kv11qfHv
-        ydGWqgIMP9R4LmZKAEsg1iJZQrdCla4P3B9YN2Ig8bl3
-X-Google-Smtp-Source: ALg8bN7KQNk9cU7jFGRPzPy7DxFUdaANwx1aARR25xMUcSyusVFkzlbi8QSyJAV+Hnu3OeqM59z8UfHEHv2OF29AFRU=
-X-Received: by 2002:ac8:296a:: with SMTP id z39mr6201399qtz.264.1548325381655;
- Thu, 24 Jan 2019 02:23:01 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=/6eAB8ques1NwxcFxFQ1zKWCiUEhKsBvxTsGl74yzaM=;
+        b=PN2cJb4pNkwMp6TQEdoB3n4BR1gFmgzREpVQxD74wHEhwPwa7+GUKkEJ4WDCXfG9bK
+         AG3MtXJ+a1DWY5AYQM+zvAATBW8GPItYf41NvcdeA4Zj1bAmJJr17GDtU6XBGjUoTdbQ
+         32Yhi5UJ8LcorNlpcr+yGvDHKB4DtXSkzmlefOIQupzUjirOWJneKSvpYRPOmKAj5kS3
+         /rbE5aNfsYf0nE3nf0+3WiktOXGelNHshHhOZ7yh9ydVzzV5AAjFM68Nxanl5NrJKFLT
+         sVuJxEY5iiBYnn0ZYOr/06N/K40diyq0VBFlzVE0/zSX8HJjW/esnMyt0l/Escgg6RoZ
+         N7xQ==
+X-Gm-Message-State: AJcUukcP0Uo2UJ0xhZ5tDu+3SWBHAP66Wfkc7VQdOn1UyoFegDeNcTVH
+        2D68/eYLS1XjxbQLOyt8r39K2w==
+X-Google-Smtp-Source: ALg8bN5+JkKxaZwg9xYqO0wUTW6a9IFRZIbeARjG4AKXeG8fOCIM5wU+fXERJUn0vuS7cuBUJXMJ1Q==
+X-Received: by 2002:a1c:9855:: with SMTP id a82mr1931950wme.20.1548325442556;
+        Thu, 24 Jan 2019 02:24:02 -0800 (PST)
+Received: from [192.168.27.209] ([37.157.136.206])
+        by smtp.googlemail.com with ESMTPSA id u204sm97956479wmu.30.2019.01.24.02.24.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 24 Jan 2019 02:24:01 -0800 (PST)
+Subject: Re: [PATCH 10/10] venus: dec: make decoder compliant with stateful
+ codec API
+To:     mgottam@codeaurora.org,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc:     linux-media@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Vikash Garodia <vgarodia@codeaurora.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>
+References: <20190117162008.25217-1-stanimir.varbanov@linaro.org>
+ <20190117162008.25217-11-stanimir.varbanov@linaro.org>
+ <d6aeca13e4f3da78fd00c69258e115d1@codeaurora.org>
+From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <1663ea51-1fa0-6e29-715d-9d67aabb5ca9@linaro.org>
+Date:   Thu, 24 Jan 2019 12:24:00 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20190123000057.31477-1-oded.gabbay@gmail.com> <CAPM=9tznaiw+a7rWqfdMMO6Aj3GtsO9vetd=3n9d+bGLW0U8Cg@mail.gmail.com>
- <CAPM=9tybcYSR_xu773W-cV1JfFg1Rcb9NajXhZd+zfZE8+XMRg@mail.gmail.com>
- <CAFCwf12FGkc3hDtgeFCn4Z4cgjL8wAf+SRkWqA+04WtuaEdpBA@mail.gmail.com>
- <CAPM=9tx3M6i44AL4hkt740Q35T4djz=-bjWDP4FVngOR0kcwag@mail.gmail.com>
- <CAOesGMg-_K_KJFtxyZJFbM+p1N5UfeUwvXmxkj+DRtNSj7Bosw@mail.gmail.com>
- <20190123232052.GD1257@redhat.com> <CAOesGMhU6wzX=sBC0iqDrzBYinP8POp=9-d4oEQoaNee-dU1zQ@mail.gmail.com>
- <20190123234817.GE1257@redhat.com> <CAKMK7uHPNPJGxyHt46wwNGwdoZkLez9Cf7hAZ1sXh8=w56OUOQ@mail.gmail.com>
- <CAFCwf10fvFAXQCGXpJHdf2bBOEJ9ZXZvoUgH9JWbNOtnmELBmg@mail.gmail.com>
-In-Reply-To: <CAFCwf10fvFAXQCGXpJHdf2bBOEJ9ZXZvoUgH9JWbNOtnmELBmg@mail.gmail.com>
-From:   Dave Airlie <airlied@gmail.com>
-Date:   Thu, 24 Jan 2019 20:22:49 +1000
-Message-ID: <CAPM=9twdfFSevH-qq7Vf1F7-nAgYvAw9XYmEKT-8LYBc403Thw@mail.gmail.com>
-Subject: Re: [PATCH 00/15] Habana Labs kernel driver
-To:     Oded Gabbay <oded.gabbay@gmail.com>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Olof Johansson <olof@lixom.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, ogabbay@habana.ai,
-        Arnd Bergmann <arnd@arndb.de>, fbarrat@linux.ibm.com,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <d6aeca13e4f3da78fd00c69258e115d1@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> I know I won't be able to convince you but I want to say that I think
-> your arguments for full userspace open source are not really
-> technical.
+Hi Malathi,
 
-There is more to keeping a kernel going than technical argument unfortunately.
+On 1/21/19 1:20 PM, mgottam@codeaurora.org wrote:
+> On 2019-01-17 21:50, Stanimir Varbanov wrote:
+>> This refactored code for start/stop streaming vb2 operations and
+>> adds a state machine handling similar to the one in stateful codec
+>> API documentation. One major change is that now the HFI session is
+>> started on STREAMON(OUTPUT) and stopped on REQBUF(OUTPUT,count=0),
+>> during that time streamoff(cap,out) just flush buffers but doesn't
+>> stop the session. The other major change is that now the capture
+>> and output queues are completely separated.
+>>
+>> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+>> ---
+>>  drivers/media/platform/qcom/venus/core.h    |  20 +-
+>>  drivers/media/platform/qcom/venus/helpers.c |  23 +-
+>>  drivers/media/platform/qcom/venus/helpers.h |   5 +
+>>  drivers/media/platform/qcom/venus/vdec.c    | 449 ++++++++++++++++----
+>>  4 files changed, 389 insertions(+), 108 deletions(-)
+>>
+>> diff --git a/drivers/media/platform/qcom/venus/core.h
+>> b/drivers/media/platform/qcom/venus/core.h
+>> index 79c7e816c706..5a133c203455 100644
+>> --- a/drivers/media/platform/qcom/venus/core.h
+>> +++ b/drivers/media/platform/qcom/venus/core.h
+>> @@ -218,6 +218,15 @@ struct venus_buffer {
+>>
+>>  #define to_venus_buffer(ptr)    container_of(ptr, struct
+>> venus_buffer, vb)
+>>
+>> +#define DEC_STATE_UNINIT        0
+>> +#define DEC_STATE_INIT            1
+>> +#define DEC_STATE_CAPTURE_SETUP        2
+>> +#define DEC_STATE_STOPPED        3
+>> +#define DEC_STATE_SEEK            4
+>> +#define DEC_STATE_DRAIN            5
+>> +#define DEC_STATE_DECODING        6
+>> +#define DEC_STATE_DRC            7
+>> +
+>>  /**
+>>   * struct venus_inst - holds per instance paramerters
+>>   *
+>> @@ -241,6 +250,10 @@ struct venus_buffer {
+>>   * @colorspace:    current color space
+>>   * @quantization:    current quantization
+>>   * @xfer_func:    current xfer function
+>> + * @codec_state:    current codec API state (see DEC/ENC_STATE_)
+>> + * @reconf_wait:    wait queue for resolution change event
+>> + * @ten_bits:        does new stream is 10bits depth
+>> + * @buf_count:        used to count number number of buffers (reqbuf(0))
+>>   * @fps:        holds current FPS
+>>   * @timeperframe:    holds current time per frame structure
+>>   * @fmt_out:    a reference to output format structure
+>> @@ -255,8 +268,6 @@ struct venus_buffer {
+>>   * @opb_buftype:    output picture buffer type
+>>   * @opb_fmt:        output picture buffer raw format
+>>   * @reconfig:    a flag raised by decoder when the stream resolution
+>> changed
+>> - * @reconfig_width:    holds the new width
+>> - * @reconfig_height:    holds the new height
+>>   * @hfi_codec:        current codec for this instance in HFI space
+>>   * @sequence_cap:    a sequence counter for capture queue
+>>   * @sequence_out:    a sequence counter for output queue
+>> @@ -296,6 +307,9 @@ struct venus_inst {
+>>      u8 ycbcr_enc;
+>>      u8 quantization;
+>>      u8 xfer_func;
+>> +    unsigned int codec_state;
+>> +    wait_queue_head_t reconf_wait;
+>> +    int buf_count;
+>>      u64 fps;
+>>      struct v4l2_fract timeperframe;
+>>      const struct venus_format *fmt_out;
+>> @@ -310,8 +324,6 @@ struct venus_inst {
+>>      u32 opb_buftype;
+>>      u32 opb_fmt;
+>>      bool reconfig;
+>> -    u32 reconfig_width;
+>> -    u32 reconfig_height;
+>>      u32 hfi_codec;
+>>      u32 sequence_cap;
+>>      u32 sequence_out;
+>> diff --git a/drivers/media/platform/qcom/venus/helpers.c
+>> b/drivers/media/platform/qcom/venus/helpers.c
+>> index 637ce7b82d94..25d8cceccae4 100644
+>> --- a/drivers/media/platform/qcom/venus/helpers.c
+>> +++ b/drivers/media/platform/qcom/venus/helpers.c
+>> @@ -1030,16 +1030,15 @@ void venus_helper_vb2_buf_queue(struct
+>> vb2_buffer *vb)
+>>
+>>      v4l2_m2m_buf_queue(m2m_ctx, vbuf);
+>>
+>> -    if (!(inst->streamon_out & inst->streamon_cap))
+>> -        goto unlock;
+>> -
+>> -    ret = is_buf_refed(inst, vbuf);
+>> -    if (ret)
+>> -        goto unlock;
+>> +    if (IS_OUT(vb->vb2_queue, inst) || IS_CAP(vb->vb2_queue, inst)) {
+>> +        ret = is_buf_refed(inst, vbuf);
+>> +        if (ret)
+>> +            goto unlock;
+>>
+>> -    ret = session_process_buf(inst, vbuf);
+>> -    if (ret)
+>> -        return_buf_error(inst, vbuf);
+>> +        ret = session_process_buf(inst, vbuf);
+>> +        if (ret)
+>> +            return_buf_error(inst, vbuf);
+>> +    }
+>>
+>>  unlock:
+>>      mutex_unlock(&inst->lock);
+> 
+> Hi Stan,
+> 
+> In case of encoder, we are queuing buffers only after both planes are
+> streamed on.
+> As we don’t have any reconfig event in case of encoder,
+> it’s better if we stick to the earlier implementation of queuing buffers.
+> 
+> So I would recommend to add a check for the same in the below way :
+> 
+> diff --git a/drivers/media/platform/qcom/venus/helpers.c
+> b/drivers/media/platform/qcom/venus/helpers.c
+> index 25d8cce..cc490fe2 100644
+> --- a/drivers/media/platform/qcom/venus/helpers.c
+> +++ b/drivers/media/platform/qcom/venus/helpers.c
+> @@ -1029,6 +1029,8 @@ void venus_helper_vb2_buf_queue(struct vb2_buffer
+> *vb)
+>         mutex_lock(&inst->lock);
+> 
+>         v4l2_m2m_buf_queue(m2m_ctx, vbuf);
+> +       if (inst->session_type == VIDC_SESSION_TYPE_ENC &&
+> !(inst->streamon_out & inst->streamon_cap))
+> +               goto unlock;
+> 
+>         if (IS_OUT(vb->vb2_queue, inst) || IS_CAP(vb->vb2_queue, inst)) {
+>                 ret = is_buf_refed(inst, vbuf);
+> 
+> Please provide your view.
 
-I guess the question for Greg, Olof etc, is do we care about Linux the
-kernel, or Linux the open source ecosystem, if the former, these sort
-of accelerator shim drivers are fine, useless to anyone who doesn't
-have all the magic hidden userspace, and impossible to support for
-anyone else, if the latter, we should leave the cost of maintenance to
-the company benefiting from it and leave maintaining it out of tree.
+I agree that this change is needed for encoder and will incorporate such
+a change in next version.
 
-Simple question like If I plug your accelerator into Power or ARM64,
-where do I get the port of your userspace to use it?
-
-I'm not the final arbiter on this sort of thing, but I'm definitely
-going to make sure that anyone who lands this code is explicit in
-ignoring any experience we've had in this area and in the future will
-gladly accept "I told you so" :-)
-
-Dave.
+-- 
+regards,
+Stan
