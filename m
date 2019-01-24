@@ -2,187 +2,122 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 477E4C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:45:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55BD2C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:45:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D7EB20663
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:45:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2337520663
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:45:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359106;
-	bh=UExXoIloiHdnlZhTCAe+BNZGJxmrWHvkotvr9T3mFAw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tTQm8MMCORprsEmi7QBuBL7q+B4nxHWqWTSHX83yQwlgAYB+mr54sSYcVizSddLZJ
-	 AGUlVbMCrhxnyGN/QDYOwDp4tt8WkgjwMhpOfDCdTQSEEqAxbDMnf9I1t/Lx6KNkEF
-	 jVCRmwIqbq7+yVJ+gpZ6IsfQNPmkfL9BNaAUnQck=
+	s=default; t=1548359109;
+	bh=cNspcHC6ZcAmA8AA1+aF4uSP33/ftN6Tcz9z2UT04jk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Uvivwb2K9z/0oJCg86owk6aCTwN67DeAgFVjaDV4ob7o5ZbKnAw+CD6FNIWw2creF
+	 gG/bWU84PFBSnzrLnLl93VbSVMmaEW2rG87fVxS9MtgtI4NpSh071x/pmu7aQLOamm
+	 rGjRcfMCLY1IeljYrlYM12alvPKGhOJPUnmYjveg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388139AbfAXTpE (ORCPT
+        id S2388179AbfAXTpH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:45:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45852 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:45:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46024 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388143AbfAXTo5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:44:57 -0500
+        id S2388173AbfAXTpE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:45:04 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1AACF218D4;
-        Thu, 24 Jan 2019 19:44:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 568CA218D2;
+        Thu, 24 Jan 2019 19:45:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548359095;
-        bh=UExXoIloiHdnlZhTCAe+BNZGJxmrWHvkotvr9T3mFAw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MWII/irbECPJmpiYA0sB1mZv8/qI6++t6XgI4njW+83eI6UvdXKOG4kQY9ZFu1PhL
-         lwfRrdOP5N2JqLZ0Byyjokkxwf//XoL/g0Xx8ShjAsS/Y6c51QHDIgvnRPI1LbVLJn
-         Hgm+OLp9xieisYwSSq/KupzL009RdTxBxciBK3rQ=
+        s=default; t=1548359103;
+        bh=cNspcHC6ZcAmA8AA1+aF4uSP33/ftN6Tcz9z2UT04jk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GDymnMA5ZWysP3UhwBxnHvIQpwqGnFs1L8a49sQrL0wQgFE7Pk85Po2cIZASDmoeC
+         +QIjljwE1uJrPzlPv7e980y/ktK0flPH7H16QsPGzXQa1pvau2EmYuus1i+kkg9g3d
+         eWWF/fYuF+411Q7EZR1zSgGfhcfncoksnDug8Ako=
+Date:   Thu, 24 Jan 2019 20:35:47 +0100
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qian Cai <cai@gmx.us>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 120/127] mm/memblock.c: skip kmemleak for kasan_init()
-Date:   Thu, 24 Jan 2019 20:21:06 +0100
-Message-Id: <20190124190217.044959535@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
-References: <20190124190211.984305387@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Linux ACPI <linux-acpi@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH] ACPI: debug: Clean up acpi_aml_init()
+Message-ID: <20190124193547.GA13425@kroah.com>
+References: <2715517.7WDaClUie6@aspire.rjw.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2715517.7WDaClUie6@aspire.rjw.lan>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.20-stable review patch.  If anyone has any objections, please let me know.
+On Thu, Jan 24, 2019 at 11:25:59AM +0100, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> The err_exit label in acpi_aml_init() is not used any more after
+> commit 9ec6dbfbdc0a ("ACPI: no need to check return value of
+> debugfs_create functions"), but the other label in there is not
+> necessary too, so rearrange the code to get rid of them both.
+> 
+> No intentional functional impact.
+> 
+> Fixes: 9ec6dbfbdc0a ("ACPI: no need to check return value of debugfs_create functions")
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+>  drivers/acpi/acpi_dbg.c |   15 +++++++--------
+>  1 file changed, 7 insertions(+), 8 deletions(-)
+> 
+> Index: linux-pm/drivers/acpi/acpi_dbg.c
+> ===================================================================
+> --- linux-pm.orig/drivers/acpi/acpi_dbg.c
+> +++ linux-pm/drivers/acpi/acpi_dbg.c
+> @@ -750,29 +750,28 @@ static const struct acpi_debugger_ops ac
+>  
+>  int __init acpi_aml_init(void)
+>  {
+> -	int ret = 0;
+> +	int ret;
+>  
+>  	/* Initialize AML IO interface */
+>  	mutex_init(&acpi_aml_io.lock);
+>  	init_waitqueue_head(&acpi_aml_io.wait);
+>  	acpi_aml_io.out_crc.buf = acpi_aml_io.out_buf;
+>  	acpi_aml_io.in_crc.buf = acpi_aml_io.in_buf;
+> +
+>  	acpi_aml_dentry = debugfs_create_file("acpidbg",
+>  					      S_IFREG | S_IRUGO | S_IWUSR,
+>  					      acpi_debugfs_dir, NULL,
+>  					      &acpi_aml_operations);
+> -	ret = acpi_register_debugger(THIS_MODULE, &acpi_aml_debugger);
+> -	if (ret)
+> -		goto err_fs;
+> -	acpi_aml_initialized = true;
+>  
+> -err_fs:
+> +	ret = acpi_register_debugger(THIS_MODULE, &acpi_aml_debugger);
+>  	if (ret) {
+>  		debugfs_remove(acpi_aml_dentry);
+>  		acpi_aml_dentry = NULL;
+> +		return ret;
+>  	}
+> -err_exit:
+> -	return ret;
+> +
+> +	acpi_aml_initialized = true;
+> +	return 0;
+>  }
+>  
 
-------------------
+Odd that 0-day never reported this :(
 
-[ Upstream commit fed84c78527009d4f799a3ed9a566502fa026d82 ]
+Sorry about it, and thanks for the patch:
 
-Kmemleak does not play well with KASAN (tested on both HPE Apollo 70 and
-Huawei TaiShan 2280 aarch64 servers).
-
-After calling start_kernel()->setup_arch()->kasan_init(), kmemleak early
-log buffer went from something like 280 to 260000 which caused kmemleak
-disabled and crash dump memory reservation failed.  The multitude of
-kmemleak_alloc() calls is from nested loops while KASAN is setting up full
-memory mappings, so let early kmemleak allocations skip those
-memblock_alloc_internal() calls came from kasan_init() given that those
-early KASAN memory mappings should not reference to other memory.  Hence,
-no kmemleak false positives.
-
-kasan_init
-  kasan_map_populate [1]
-    kasan_pgd_populate [2]
-      kasan_pud_populate [3]
-        kasan_pmd_populate [4]
-          kasan_pte_populate [5]
-            kasan_alloc_zeroed_page
-              memblock_alloc_try_nid
-                memblock_alloc_internal
-                  kmemleak_alloc
-
-[1] for_each_memblock(memory, reg)
-[2] while (pgdp++, addr = next, addr != end)
-[3] while (pudp++, addr = next, addr != end && pud_none(READ_ONCE(*pudp)))
-[4] while (pmdp++, addr = next, addr != end && pmd_none(READ_ONCE(*pmdp)))
-[5] while (ptep++, addr = next, addr != end && pte_none(READ_ONCE(*ptep)))
-
-Link: http://lkml.kernel.org/r/1543442925-17794-1-git-send-email-cai@gmx.us
-Signed-off-by: Qian Cai <cai@gmx.us>
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/arm64/mm/kasan_init.c |  2 +-
- include/linux/memblock.h   |  1 +
- mm/memblock.c              | 19 +++++++++++--------
- 3 files changed, 13 insertions(+), 9 deletions(-)
-
-diff --git a/arch/arm64/mm/kasan_init.c b/arch/arm64/mm/kasan_init.c
-index 63527e585aac..fcb2ca30b6f1 100644
---- a/arch/arm64/mm/kasan_init.c
-+++ b/arch/arm64/mm/kasan_init.c
-@@ -39,7 +39,7 @@ static phys_addr_t __init kasan_alloc_zeroed_page(int node)
- {
- 	void *p = memblock_alloc_try_nid(PAGE_SIZE, PAGE_SIZE,
- 					      __pa(MAX_DMA_ADDRESS),
--					      MEMBLOCK_ALLOC_ACCESSIBLE, node);
-+					      MEMBLOCK_ALLOC_KASAN, node);
- 	return __pa(p);
- }
- 
-diff --git a/include/linux/memblock.h b/include/linux/memblock.h
-index aee299a6aa76..3ef3086ed52f 100644
---- a/include/linux/memblock.h
-+++ b/include/linux/memblock.h
-@@ -320,6 +320,7 @@ static inline int memblock_get_region_node(const struct memblock_region *r)
- /* Flags for memblock allocation APIs */
- #define MEMBLOCK_ALLOC_ANYWHERE	(~(phys_addr_t)0)
- #define MEMBLOCK_ALLOC_ACCESSIBLE	0
-+#define MEMBLOCK_ALLOC_KASAN		1
- 
- /* We are using top down, so it is safe to use 0 here */
- #define MEMBLOCK_LOW_LIMIT 0
-diff --git a/mm/memblock.c b/mm/memblock.c
-index 81ae63ca78d0..f45a049532fe 100644
---- a/mm/memblock.c
-+++ b/mm/memblock.c
-@@ -262,7 +262,8 @@ phys_addr_t __init_memblock memblock_find_in_range_node(phys_addr_t size,
- 	phys_addr_t kernel_end, ret;
- 
- 	/* pump up @end */
--	if (end == MEMBLOCK_ALLOC_ACCESSIBLE)
-+	if (end == MEMBLOCK_ALLOC_ACCESSIBLE ||
-+	    end == MEMBLOCK_ALLOC_KASAN)
- 		end = memblock.current_limit;
- 
- 	/* avoid allocating the first page */
-@@ -1412,13 +1413,15 @@ again:
- done:
- 	ptr = phys_to_virt(alloc);
- 
--	/*
--	 * The min_count is set to 0 so that bootmem allocated blocks
--	 * are never reported as leaks. This is because many of these blocks
--	 * are only referred via the physical address which is not
--	 * looked up by kmemleak.
--	 */
--	kmemleak_alloc(ptr, size, 0, 0);
-+	/* Skip kmemleak for kasan_init() due to high volume. */
-+	if (max_addr != MEMBLOCK_ALLOC_KASAN)
-+		/*
-+		 * The min_count is set to 0 so that bootmem allocated
-+		 * blocks are never reported as leaks. This is because many
-+		 * of these blocks are only referred via the physical
-+		 * address which is not looked up by kmemleak.
-+		 */
-+		kmemleak_alloc(ptr, size, 0, 0);
- 
- 	return ptr;
- }
--- 
-2.19.1
-
-
-
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
