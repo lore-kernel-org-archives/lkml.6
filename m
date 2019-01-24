@@ -2,1202 +2,257 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FB0CC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:17:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 186A4C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:18:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CD3721872
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:17:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="ExkNFM1C"
+	by mail.kernel.org (Postfix) with ESMTP id DC68B21872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:18:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727859AbfAXMRW (ORCPT
+        id S1727740AbfAXMSq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 07:17:22 -0500
-Received: from smtprelay.synopsys.com ([198.182.60.111]:43162 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727443AbfAXMRV (ORCPT
+        Thu, 24 Jan 2019 07:18:46 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:38522 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727574AbfAXMSp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 07:17:21 -0500
-Received: from mailhost.synopsys.com (dc8-mailhost2.synopsys.com [10.13.135.210])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay.synopsys.com (Postfix) with ESMTPS id 46AD710C15A8;
-        Thu, 24 Jan 2019 04:17:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1548332241; bh=a8rCcqEBT1qLJensbYeDW5i35bb8hzOi0zFHgIUYcoI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=ExkNFM1CCCEg11g6zUWCf7gE9PotMdEBfcL0Lmjq0K7omA9S00PHsH955pPo5YJND
-         r7YWm524fhwHrh1fgwJt2tDuOX2yz4QaxYuEDAQyjh7dFIQvUHWHN4zAC4l2cIkI3W
-         zRF+gUMosJPb3dF2h5fYetPMkUnZnQfqidGU/+otddjLRMXGVTlcAh8VLK3ynOcjV2
-         1xzf2BSbdt5aTdHLmb8XarYzG2vXdCanehm+hC7OSnbV+qb2PGIkhyMlTxMXDvFY/g
-         VvKVqEiL2QoahZBhEjzCfMCJihboZer0pegcYAGaF+rovZ4MpBZVoMwSmHaeg5MJ1n
-         +HlT/c9KSRx7w==
-Received: from ru20arcgnu1.internal.synopsys.com (ru20arcgnu1.internal.synopsys.com [10.121.9.48])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 87757A0065;
-        Thu, 24 Jan 2019 12:17:19 +0000 (UTC)
-From:   Alexey Brodkin <alexey.brodkin@synopsys.com>
-To:     linux-snps-arc@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org,
-        Vineet Gupta <vineet.gupta1@synopsys.com>,
-        Alexey Brodkin <alexey.brodkin@synopsys.com>,
-        Alexey Brodkin <alexey.brodkin@synopsys.com>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: [PATCH v2] ARC: [scripted] fix node name and address spelling
-Date:   Thu, 24 Jan 2019 15:17:03 +0300
-Message-Id: <20190124121703.2337-1-abrodkin@synopsys.com>
-X-Mailer: git-send-email 2.16.2
+        Thu, 24 Jan 2019 07:18:45 -0500
+Received: by mail-wr1-f65.google.com with SMTP id v13so6223315wrw.5
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 04:18:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=XTrLya4VaKWEFFrPgK66GqNb5QbbrEZ3xRg1YRNR8co=;
+        b=F28NJYhvsZZVMmQaIiw5OVCk9V7jUnOc2cPYzBICBLCovejG1SJTKHr50DyeDb1YmW
+         JA8mH/wwIvGZ7ccqrhKDhpDwDEf7fpBSsC2FwmYR0biq0D1FUbRfpNZdpJk+Ws8j4cJs
+         /3GjZaxkQmCNvv6+4lFEkzIriysxshNZ20tUIIvt/Unyoa9mFbXsiI/7Y8HMPuCw/las
+         c8IMRqc4oF1x+e1uMO9bSK/h3moQCvCYQZypctcqKX9oXMmoUf1TijfDWPj5teJkf49G
+         7XjrMqpu7Jvq22HtaGVpnDshmdqeBicqo6e4DJ0++yYMCR+io6iAUmle4ytW9BCfjnoR
+         Bg0A==
+X-Gm-Message-State: AJcUukdkTRoheYgbSs0YBsO0khoTMB4Bcgt1ekon7QDshcfUFWKhwdRp
+        mNEPaMMu4rd9eG5+xed6YflvyM9VEMA=
+X-Google-Smtp-Source: ALg8bN50O7OokJpNQ9RkzVCnNg5+Kxn99LHauKIzqTPhBDSKOAtlxLXMpxXZQD+FdvUTz8y+7O4i2Q==
+X-Received: by 2002:adf:ee07:: with SMTP id y7mr7197303wrn.187.1548332322694;
+        Thu, 24 Jan 2019 04:18:42 -0800 (PST)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id 126sm48372166wmd.1.2019.01.24.04.18.41
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 24 Jan 2019 04:18:41 -0800 (PST)
+Subject: Re: [alsa-devel] [RFT][PATCH v2] gpiolib: acpi: Introduce
+ ACPI_GPIO_QUIRK_ONLY_GPIOIO
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-acpi@vger.kernel.org,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+References: <20190109105245.25954-1-andriy.shevchenko@linux.intel.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <e5e54be2-7be1-9496-b455-336e9edfb406@redhat.com>
+Date:   Thu, 24 Jan 2019 13:18:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
+MIME-Version: 1.0
+In-Reply-To: <20190109105245.25954-1-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexey Brodkin <alexey.brodkin@synopsys.com>
+Hi,
 
-1. Remove "0x" prefix from unit-address of node names
------------------------>8------------------------
-sed -i 's/@0x/@/g' arch/arc/boot/dts/*.dts*
------------------------>8------------------------
+On 09-01-19 11:52, Andy Shevchenko wrote:
+> New quirk enforces search for GPIO based on its type,
+> i.e. iterate over GpioIo resources only.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> ---
+> 
+> - it was sent few weeks ago to Hans for testing, but better to re-test
 
-2. Make all hex addresses lowercase:
------------------------>8------------------------
-sed -i 's/@\([0-9A-Za-z]*\)/@\L\1/g' arch/arc/boot/dts/*.dts*
-sed -i 's/0x\([0-9A-Za-z]*\)/0x\L\1/g' arch/arc/boot/dts/*.dts*
------------------------>8------------------------
+I've just re-tested this on a device which uses the speaker-enable
+GPIO with a rt5651 codec, still works as advertised:
 
-Inspired by [1] and the like.
+Tested-by: Hans de Goede <hdegoede@redhat.com>
 
-[1] http://kisskb.ellerman.id.au/kisskb/buildresult/13612017/
+Regards,
 
-Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
-Cc: Rob Herring <robh+dt@kernel.org>
----
+Hans
 
-Changes v1 -> v2:
 
- * Convert all hex addresses to lower-case [Rob]
 
- arch/arc/boot/dts/abilis_tb100.dtsi    | 58 ++++++++++++++++----------------
- arch/arc/boot/dts/abilis_tb100_dvk.dts | 14 ++++----
- arch/arc/boot/dts/abilis_tb101.dtsi    | 58 ++++++++++++++++----------------
- arch/arc/boot/dts/abilis_tb101_dvk.dts | 14 ++++----
- arch/arc/boot/dts/abilis_tb10x.dtsi    | 60 +++++++++++++++++-----------------
- arch/arc/boot/dts/axc001.dtsi          |  6 ++--
- arch/arc/boot/dts/axc003.dtsi          | 16 ++++-----
- arch/arc/boot/dts/axc003_idu.dtsi      | 16 ++++-----
- arch/arc/boot/dts/axs10x_mb.dtsi       | 22 ++++++-------
- arch/arc/boot/dts/hsdk.dts             |  4 +--
- arch/arc/boot/dts/vdk_axc003.dtsi      |  4 +--
- arch/arc/boot/dts/vdk_axc003_idu.dtsi  |  4 +--
- arch/arc/boot/dts/vdk_axs10x_mb.dtsi   | 18 +++++-----
- 13 files changed, 147 insertions(+), 147 deletions(-)
 
-diff --git a/arch/arc/boot/dts/abilis_tb100.dtsi b/arch/arc/boot/dts/abilis_tb100.dtsi
-index 02410b211433..c0bcd97522bb 100644
---- a/arch/arc/boot/dts/abilis_tb100.dtsi
-+++ b/arch/arc/boot/dts/abilis_tb100.dtsi
-@@ -38,7 +38,7 @@
- 			clock-div = <6>;
- 		};
- 
--		iomux: iomux@FF10601c {
-+		iomux: iomux@ff10601c {
- 			/* Port 1 */
- 			pctl_tsin_s0: pctl-tsin-s0 {   /* Serial TS-in 0 */
- 				abilis,function = "mis0";
-@@ -162,182 +162,182 @@
- 			};
- 		};
- 
--		gpioa: gpio@FF140000 {
-+		gpioa: gpio@ff140000 {
- 			compatible = "abilis,tb10x-gpio";
- 			interrupt-controller;
- 			#interrupt-cells = <1>;
- 			interrupt-parent = <&tb10x_ictl>;
- 			interrupts = <27 2>;
--			reg = <0xFF140000 0x1000>;
-+			reg = <0xff140000 0x1000>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			abilis,ngpio = <3>;
- 			gpio-ranges = <&iomux 0 0 0>;
- 			gpio-ranges-group-names = "gpioa";
- 		};
--		gpiob: gpio@FF141000 {
-+		gpiob: gpio@ff141000 {
- 			compatible = "abilis,tb10x-gpio";
- 			interrupt-controller;
- 			#interrupt-cells = <1>;
- 			interrupt-parent = <&tb10x_ictl>;
- 			interrupts = <27 2>;
--			reg = <0xFF141000 0x1000>;
-+			reg = <0xff141000 0x1000>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			abilis,ngpio = <2>;
- 			gpio-ranges = <&iomux 0 0 0>;
- 			gpio-ranges-group-names = "gpiob";
- 		};
--		gpioc: gpio@FF142000 {
-+		gpioc: gpio@ff142000 {
- 			compatible = "abilis,tb10x-gpio";
- 			interrupt-controller;
- 			#interrupt-cells = <1>;
- 			interrupt-parent = <&tb10x_ictl>;
- 			interrupts = <27 2>;
--			reg = <0xFF142000 0x1000>;
-+			reg = <0xff142000 0x1000>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			abilis,ngpio = <3>;
- 			gpio-ranges = <&iomux 0 0 0>;
- 			gpio-ranges-group-names = "gpioc";
- 		};
--		gpiod: gpio@FF143000 {
-+		gpiod: gpio@ff143000 {
- 			compatible = "abilis,tb10x-gpio";
- 			interrupt-controller;
- 			#interrupt-cells = <1>;
- 			interrupt-parent = <&tb10x_ictl>;
- 			interrupts = <27 2>;
--			reg = <0xFF143000 0x1000>;
-+			reg = <0xff143000 0x1000>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			abilis,ngpio = <2>;
- 			gpio-ranges = <&iomux 0 0 0>;
- 			gpio-ranges-group-names = "gpiod";
- 		};
--		gpioe: gpio@FF144000 {
-+		gpioe: gpio@ff144000 {
- 			compatible = "abilis,tb10x-gpio";
- 			interrupt-controller;
- 			#interrupt-cells = <1>;
- 			interrupt-parent = <&tb10x_ictl>;
- 			interrupts = <27 2>;
--			reg = <0xFF144000 0x1000>;
-+			reg = <0xff144000 0x1000>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			abilis,ngpio = <3>;
- 			gpio-ranges = <&iomux 0 0 0>;
- 			gpio-ranges-group-names = "gpioe";
- 		};
--		gpiof: gpio@FF145000 {
-+		gpiof: gpio@ff145000 {
- 			compatible = "abilis,tb10x-gpio";
- 			interrupt-controller;
- 			#interrupt-cells = <1>;
- 			interrupt-parent = <&tb10x_ictl>;
- 			interrupts = <27 2>;
--			reg = <0xFF145000 0x1000>;
-+			reg = <0xff145000 0x1000>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			abilis,ngpio = <2>;
- 			gpio-ranges = <&iomux 0 0 0>;
- 			gpio-ranges-group-names = "gpiof";
- 		};
--		gpiog: gpio@FF146000 {
-+		gpiog: gpio@ff146000 {
- 			compatible = "abilis,tb10x-gpio";
- 			interrupt-controller;
- 			#interrupt-cells = <1>;
- 			interrupt-parent = <&tb10x_ictl>;
- 			interrupts = <27 2>;
--			reg = <0xFF146000 0x1000>;
-+			reg = <0xff146000 0x1000>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			abilis,ngpio = <3>;
- 			gpio-ranges = <&iomux 0 0 0>;
- 			gpio-ranges-group-names = "gpiog";
- 		};
--		gpioh: gpio@FF147000 {
-+		gpioh: gpio@ff147000 {
- 			compatible = "abilis,tb10x-gpio";
- 			interrupt-controller;
- 			#interrupt-cells = <1>;
- 			interrupt-parent = <&tb10x_ictl>;
- 			interrupts = <27 2>;
--			reg = <0xFF147000 0x1000>;
-+			reg = <0xff147000 0x1000>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			abilis,ngpio = <2>;
- 			gpio-ranges = <&iomux 0 0 0>;
- 			gpio-ranges-group-names = "gpioh";
- 		};
--		gpioi: gpio@FF148000 {
-+		gpioi: gpio@ff148000 {
- 			compatible = "abilis,tb10x-gpio";
- 			interrupt-controller;
- 			#interrupt-cells = <1>;
- 			interrupt-parent = <&tb10x_ictl>;
- 			interrupts = <27 2>;
--			reg = <0xFF148000 0x1000>;
-+			reg = <0xff148000 0x1000>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			abilis,ngpio = <12>;
- 			gpio-ranges = <&iomux 0 0 0>;
- 			gpio-ranges-group-names = "gpioi";
- 		};
--		gpioj: gpio@FF149000 {
-+		gpioj: gpio@ff149000 {
- 			compatible = "abilis,tb10x-gpio";
- 			interrupt-controller;
- 			#interrupt-cells = <1>;
- 			interrupt-parent = <&tb10x_ictl>;
- 			interrupts = <27 2>;
--			reg = <0xFF149000 0x1000>;
-+			reg = <0xff149000 0x1000>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			abilis,ngpio = <32>;
- 			gpio-ranges = <&iomux 0 0 0>;
- 			gpio-ranges-group-names = "gpioj";
- 		};
--		gpiok: gpio@FF14a000 {
-+		gpiok: gpio@ff14a000 {
- 			compatible = "abilis,tb10x-gpio";
- 			interrupt-controller;
- 			#interrupt-cells = <1>;
- 			interrupt-parent = <&tb10x_ictl>;
- 			interrupts = <27 2>;
--			reg = <0xFF14A000 0x1000>;
-+			reg = <0xff14a000 0x1000>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			abilis,ngpio = <22>;
- 			gpio-ranges = <&iomux 0 0 0>;
- 			gpio-ranges-group-names = "gpiok";
- 		};
--		gpiol: gpio@FF14b000 {
-+		gpiol: gpio@ff14b000 {
- 			compatible = "abilis,tb10x-gpio";
- 			interrupt-controller;
- 			#interrupt-cells = <1>;
- 			interrupt-parent = <&tb10x_ictl>;
- 			interrupts = <27 2>;
--			reg = <0xFF14B000 0x1000>;
-+			reg = <0xff14b000 0x1000>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			abilis,ngpio = <4>;
- 			gpio-ranges = <&iomux 0 0 0>;
- 			gpio-ranges-group-names = "gpiol";
- 		};
--		gpiom: gpio@FF14c000 {
-+		gpiom: gpio@ff14c000 {
- 			compatible = "abilis,tb10x-gpio";
- 			interrupt-controller;
- 			#interrupt-cells = <1>;
- 			interrupt-parent = <&tb10x_ictl>;
- 			interrupts = <27 2>;
--			reg = <0xFF14C000 0x1000>;
-+			reg = <0xff14c000 0x1000>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			abilis,ngpio = <4>;
- 			gpio-ranges = <&iomux 0 0 0>;
- 			gpio-ranges-group-names = "gpiom";
- 		};
--		gpion: gpio@FF14d000 {
-+		gpion: gpio@ff14d000 {
- 			compatible = "abilis,tb10x-gpio";
- 			interrupt-controller;
- 			#interrupt-cells = <1>;
- 			interrupt-parent = <&tb10x_ictl>;
- 			interrupts = <27 2>;
--			reg = <0xFF14D000 0x1000>;
-+			reg = <0xff14d000 0x1000>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			abilis,ngpio = <5>;
-diff --git a/arch/arc/boot/dts/abilis_tb100_dvk.dts b/arch/arc/boot/dts/abilis_tb100_dvk.dts
-index 3acf04db8030..c968e677db46 100644
---- a/arch/arc/boot/dts/abilis_tb100_dvk.dts
-+++ b/arch/arc/boot/dts/abilis_tb100_dvk.dts
-@@ -37,27 +37,27 @@
- 	};
- 
- 	soc100 {
--		uart@FF100000 {
-+		uart@ff100000 {
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&pctl_uart0>;
- 		};
--		ethernet@FE100000 {
-+		ethernet@fe100000 {
- 			phy-mode = "rgmii";
- 		};
- 
--		i2c0: i2c@FF120000 {
-+		i2c0: i2c@ff120000 {
- 			i2c-sda-hold-time-ns = <432>;
- 		};
--		i2c1: i2c@FF121000 {
-+		i2c1: i2c@ff121000 {
- 			i2c-sda-hold-time-ns = <432>;
- 		};
--		i2c2: i2c@FF122000 {
-+		i2c2: i2c@ff122000 {
- 			i2c-sda-hold-time-ns = <432>;
- 		};
--		i2c3: i2c@FF123000 {
-+		i2c3: i2c@ff123000 {
- 			i2c-sda-hold-time-ns = <432>;
- 		};
--		i2c4: i2c@FF124000 {
-+		i2c4: i2c@ff124000 {
- 			i2c-sda-hold-time-ns = <432>;
- 		};
- 
-diff --git a/arch/arc/boot/dts/abilis_tb101.dtsi b/arch/arc/boot/dts/abilis_tb101.dtsi
-index f9e7686044eb..6a1615f58f05 100644
---- a/arch/arc/boot/dts/abilis_tb101.dtsi
-+++ b/arch/arc/boot/dts/abilis_tb101.dtsi
-@@ -38,7 +38,7 @@
- 			clock-div = <6>;
- 		};
- 
--		iomux: iomux@FF10601c {
-+		iomux: iomux@ff10601c {
- 			/* Port 1 */
- 			pctl_tsin_s0: pctl-tsin-s0 {   /* Serial TS-in 0 */
- 				abilis,function = "mis0";
-@@ -171,182 +171,182 @@
- 			};
- 		};
- 
--		gpioa: gpio@FF140000 {
-+		gpioa: gpio@ff140000 {
- 			compatible = "abilis,tb10x-gpio";
- 			interrupt-controller;
- 			#interrupt-cells = <1>;
- 			interrupt-parent = <&tb10x_ictl>;
- 			interrupts = <27 2>;
--			reg = <0xFF140000 0x1000>;
-+			reg = <0xff140000 0x1000>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			abilis,ngpio = <3>;
- 			gpio-ranges = <&iomux 0 0 0>;
- 			gpio-ranges-group-names = "gpioa";
- 		};
--		gpiob: gpio@FF141000 {
-+		gpiob: gpio@ff141000 {
- 			compatible = "abilis,tb10x-gpio";
- 			interrupt-controller;
- 			#interrupt-cells = <1>;
- 			interrupt-parent = <&tb10x_ictl>;
- 			interrupts = <27 2>;
--			reg = <0xFF141000 0x1000>;
-+			reg = <0xff141000 0x1000>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			abilis,ngpio = <2>;
- 			gpio-ranges = <&iomux 0 0 0>;
- 			gpio-ranges-group-names = "gpiob";
- 		};
--		gpioc: gpio@FF142000 {
-+		gpioc: gpio@ff142000 {
- 			compatible = "abilis,tb10x-gpio";
- 			interrupt-controller;
- 			#interrupt-cells = <1>;
- 			interrupt-parent = <&tb10x_ictl>;
- 			interrupts = <27 2>;
--			reg = <0xFF142000 0x1000>;
-+			reg = <0xff142000 0x1000>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			abilis,ngpio = <3>;
- 			gpio-ranges = <&iomux 0 0 0>;
- 			gpio-ranges-group-names = "gpioc";
- 		};
--		gpiod: gpio@FF143000 {
-+		gpiod: gpio@ff143000 {
- 			compatible = "abilis,tb10x-gpio";
- 			interrupt-controller;
- 			#interrupt-cells = <1>;
- 			interrupt-parent = <&tb10x_ictl>;
- 			interrupts = <27 2>;
--			reg = <0xFF143000 0x1000>;
-+			reg = <0xff143000 0x1000>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			abilis,ngpio = <2>;
- 			gpio-ranges = <&iomux 0 0 0>;
- 			gpio-ranges-group-names = "gpiod";
- 		};
--		gpioe: gpio@FF144000 {
-+		gpioe: gpio@ff144000 {
- 			compatible = "abilis,tb10x-gpio";
- 			interrupt-controller;
- 			#interrupt-cells = <1>;
- 			interrupt-parent = <&tb10x_ictl>;
- 			interrupts = <27 2>;
--			reg = <0xFF144000 0x1000>;
-+			reg = <0xff144000 0x1000>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			abilis,ngpio = <3>;
- 			gpio-ranges = <&iomux 0 0 0>;
- 			gpio-ranges-group-names = "gpioe";
- 		};
--		gpiof: gpio@FF145000 {
-+		gpiof: gpio@ff145000 {
- 			compatible = "abilis,tb10x-gpio";
- 			interrupt-controller;
- 			#interrupt-cells = <1>;
- 			interrupt-parent = <&tb10x_ictl>;
- 			interrupts = <27 2>;
--			reg = <0xFF145000 0x1000>;
-+			reg = <0xff145000 0x1000>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			abilis,ngpio = <2>;
- 			gpio-ranges = <&iomux 0 0 0>;
- 			gpio-ranges-group-names = "gpiof";
- 		};
--		gpiog: gpio@FF146000 {
-+		gpiog: gpio@ff146000 {
- 			compatible = "abilis,tb10x-gpio";
- 			interrupt-controller;
- 			#interrupt-cells = <1>;
- 			interrupt-parent = <&tb10x_ictl>;
- 			interrupts = <27 2>;
--			reg = <0xFF146000 0x1000>;
-+			reg = <0xff146000 0x1000>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			abilis,ngpio = <3>;
- 			gpio-ranges = <&iomux 0 0 0>;
- 			gpio-ranges-group-names = "gpiog";
- 		};
--		gpioh: gpio@FF147000 {
-+		gpioh: gpio@ff147000 {
- 			compatible = "abilis,tb10x-gpio";
- 			interrupt-controller;
- 			#interrupt-cells = <1>;
- 			interrupt-parent = <&tb10x_ictl>;
- 			interrupts = <27 2>;
--			reg = <0xFF147000 0x1000>;
-+			reg = <0xff147000 0x1000>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			abilis,ngpio = <2>;
- 			gpio-ranges = <&iomux 0 0 0>;
- 			gpio-ranges-group-names = "gpioh";
- 		};
--		gpioi: gpio@FF148000 {
-+		gpioi: gpio@ff148000 {
- 			compatible = "abilis,tb10x-gpio";
- 			interrupt-controller;
- 			#interrupt-cells = <1>;
- 			interrupt-parent = <&tb10x_ictl>;
- 			interrupts = <27 2>;
--			reg = <0xFF148000 0x1000>;
-+			reg = <0xff148000 0x1000>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			abilis,ngpio = <12>;
- 			gpio-ranges = <&iomux 0 0 0>;
- 			gpio-ranges-group-names = "gpioi";
- 		};
--		gpioj: gpio@FF149000 {
-+		gpioj: gpio@ff149000 {
- 			compatible = "abilis,tb10x-gpio";
- 			interrupt-controller;
- 			#interrupt-cells = <1>;
- 			interrupt-parent = <&tb10x_ictl>;
- 			interrupts = <27 2>;
--			reg = <0xFF149000 0x1000>;
-+			reg = <0xff149000 0x1000>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			abilis,ngpio = <32>;
- 			gpio-ranges = <&iomux 0 0 0>;
- 			gpio-ranges-group-names = "gpioj";
- 		};
--		gpiok: gpio@FF14a000 {
-+		gpiok: gpio@ff14a000 {
- 			compatible = "abilis,tb10x-gpio";
- 			interrupt-controller;
- 			#interrupt-cells = <1>;
- 			interrupt-parent = <&tb10x_ictl>;
- 			interrupts = <27 2>;
--			reg = <0xFF14A000 0x1000>;
-+			reg = <0xff14a000 0x1000>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			abilis,ngpio = <22>;
- 			gpio-ranges = <&iomux 0 0 0>;
- 			gpio-ranges-group-names = "gpiok";
- 		};
--		gpiol: gpio@FF14b000 {
-+		gpiol: gpio@ff14b000 {
- 			compatible = "abilis,tb10x-gpio";
- 			interrupt-controller;
- 			#interrupt-cells = <1>;
- 			interrupt-parent = <&tb10x_ictl>;
- 			interrupts = <27 2>;
--			reg = <0xFF14B000 0x1000>;
-+			reg = <0xff14b000 0x1000>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			abilis,ngpio = <4>;
- 			gpio-ranges = <&iomux 0 0 0>;
- 			gpio-ranges-group-names = "gpiol";
- 		};
--		gpiom: gpio@FF14c000 {
-+		gpiom: gpio@ff14c000 {
- 			compatible = "abilis,tb10x-gpio";
- 			interrupt-controller;
- 			#interrupt-cells = <1>;
- 			interrupt-parent = <&tb10x_ictl>;
- 			interrupts = <27 2>;
--			reg = <0xFF14C000 0x1000>;
-+			reg = <0xff14c000 0x1000>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			abilis,ngpio = <4>;
- 			gpio-ranges = <&iomux 0 0 0>;
- 			gpio-ranges-group-names = "gpiom";
- 		};
--		gpion: gpio@FF14d000 {
-+		gpion: gpio@ff14d000 {
- 			compatible = "abilis,tb10x-gpio";
- 			interrupt-controller;
- 			#interrupt-cells = <1>;
- 			interrupt-parent = <&tb10x_ictl>;
- 			interrupts = <27 2>;
--			reg = <0xFF14D000 0x1000>;
-+			reg = <0xff14d000 0x1000>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			abilis,ngpio = <5>;
-diff --git a/arch/arc/boot/dts/abilis_tb101_dvk.dts b/arch/arc/boot/dts/abilis_tb101_dvk.dts
-index 37d88c5dd181..05143ce9c120 100644
---- a/arch/arc/boot/dts/abilis_tb101_dvk.dts
-+++ b/arch/arc/boot/dts/abilis_tb101_dvk.dts
-@@ -37,27 +37,27 @@
- 	};
- 
- 	soc100 {
--		uart@FF100000 {
-+		uart@ff100000 {
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&pctl_uart0>;
- 		};
--		ethernet@FE100000 {
-+		ethernet@fe100000 {
- 			phy-mode = "rgmii";
- 		};
- 
--		i2c0: i2c@FF120000 {
-+		i2c0: i2c@ff120000 {
- 			i2c-sda-hold-time-ns = <432>;
- 		};
--		i2c1: i2c@FF121000 {
-+		i2c1: i2c@ff121000 {
- 			i2c-sda-hold-time-ns = <432>;
- 		};
--		i2c2: i2c@FF122000 {
-+		i2c2: i2c@ff122000 {
- 			i2c-sda-hold-time-ns = <432>;
- 		};
--		i2c3: i2c@FF123000 {
-+		i2c3: i2c@ff123000 {
- 			i2c-sda-hold-time-ns = <432>;
- 		};
--		i2c4: i2c@FF124000 {
-+		i2c4: i2c@ff124000 {
- 			i2c-sda-hold-time-ns = <432>;
- 		};
- 
-diff --git a/arch/arc/boot/dts/abilis_tb10x.dtsi b/arch/arc/boot/dts/abilis_tb10x.dtsi
-index 3121536b25a3..2fbf1bdfe6de 100644
---- a/arch/arc/boot/dts/abilis_tb10x.dtsi
-+++ b/arch/arc/boot/dts/abilis_tb10x.dtsi
-@@ -54,7 +54,7 @@
- 		#size-cells	= <1>;
- 		device_type	= "soc";
- 		ranges		= <0xfe000000 0xfe000000 0x02000000
--				0x000F0000 0x000F0000 0x00010000>;
-+				0x000f0000 0x000f0000 0x00010000>;
- 		compatible	= "abilis,tb10x", "simple-bus";
- 
- 		pll0: oscillator {
-@@ -75,10 +75,10 @@
- 			clock-output-names = "ahb_clk";
- 		};
- 
--		iomux: iomux@FF10601c {
-+		iomux: iomux@ff10601c {
- 			compatible = "abilis,tb10x-iomux";
- 			#gpio-range-cells = <3>;
--			reg = <0xFF10601c 0x4>;
-+			reg = <0xff10601c 0x4>;
- 		};
- 
- 		intc: interrupt-controller {
-@@ -88,7 +88,7 @@
- 		};
- 		tb10x_ictl: pic@fe002000 {
- 			compatible = "abilis,tb10x-ictl";
--			reg = <0xFE002000 0x20>;
-+			reg = <0xfe002000 0x20>;
- 			interrupt-controller;
- 			#interrupt-cells = <2>;
- 			interrupt-parent = <&intc>;
-@@ -96,27 +96,27 @@
- 					20 21 22 23 24 25 26 27 28 29 30 31>;
- 		};
- 
--		uart@FF100000 {
-+		uart@ff100000 {
- 			compatible = "snps,dw-apb-uart";
--			reg = <0xFF100000 0x100>;
-+			reg = <0xff100000 0x100>;
- 			clock-frequency = <166666666>;
- 			interrupts = <25 8>;
- 			reg-shift = <2>;
- 			reg-io-width = <4>;
- 			interrupt-parent = <&tb10x_ictl>;
- 		};
--		ethernet@FE100000 {
-+		ethernet@fe100000 {
- 			compatible = "snps,dwmac-3.70a","snps,dwmac";
--			reg = <0xFE100000 0x1058>;
-+			reg = <0xfe100000 0x1058>;
- 			interrupt-parent = <&tb10x_ictl>;
- 			interrupts = <6 8>;
- 			interrupt-names = "macirq";
- 			clocks = <&ahb_clk>;
- 			clock-names = "stmmaceth";
- 		};
--		dma@FE000000 {
-+		dma@fe000000 {
- 			compatible = "snps,dma-spear1340";
--			reg = <0xFE000000 0x400>;
-+			reg = <0xfe000000 0x400>;
- 			interrupt-parent = <&tb10x_ictl>;
- 			interrupts = <14 8>;
- 			dma-channels = <6>;
-@@ -132,70 +132,70 @@
- 			multi-block = <1 1 1 1 1 1>;
- 		};
- 
--		i2c0: i2c@FF120000 {
-+		i2c0: i2c@ff120000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			compatible = "snps,designware-i2c";
--			reg = <0xFF120000 0x1000>;
-+			reg = <0xff120000 0x1000>;
- 			interrupt-parent = <&tb10x_ictl>;
- 			interrupts = <12 8>;
- 			clocks = <&ahb_clk>;
- 		};
--		i2c1: i2c@FF121000 {
-+		i2c1: i2c@ff121000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			compatible = "snps,designware-i2c";
--			reg = <0xFF121000 0x1000>;
-+			reg = <0xff121000 0x1000>;
- 			interrupt-parent = <&tb10x_ictl>;
- 			interrupts = <12 8>;
- 			clocks = <&ahb_clk>;
- 		};
--		i2c2: i2c@FF122000 {
-+		i2c2: i2c@ff122000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			compatible = "snps,designware-i2c";
--			reg = <0xFF122000 0x1000>;
-+			reg = <0xff122000 0x1000>;
- 			interrupt-parent = <&tb10x_ictl>;
- 			interrupts = <12 8>;
- 			clocks = <&ahb_clk>;
- 		};
--		i2c3: i2c@FF123000 {
-+		i2c3: i2c@ff123000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			compatible = "snps,designware-i2c";
--			reg = <0xFF123000 0x1000>;
-+			reg = <0xff123000 0x1000>;
- 			interrupt-parent = <&tb10x_ictl>;
- 			interrupts = <12 8>;
- 			clocks = <&ahb_clk>;
- 		};
--		i2c4: i2c@FF124000 {
-+		i2c4: i2c@ff124000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			compatible = "snps,designware-i2c";
--			reg = <0xFF124000 0x1000>;
-+			reg = <0xff124000 0x1000>;
- 			interrupt-parent = <&tb10x_ictl>;
- 			interrupts = <12 8>;
- 			clocks = <&ahb_clk>;
- 		};
- 
--		spi0: spi@0xFE010000 {
-+		spi0: spi@fe010000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			cell-index = <0>;
- 			compatible = "abilis,tb100-spi";
- 			num-cs = <1>;
--			reg = <0xFE010000 0x20>;
-+			reg = <0xfe010000 0x20>;
- 			interrupt-parent = <&tb10x_ictl>;
- 			interrupts = <26 8>;
- 			clocks = <&ahb_clk>;
- 		};
--		spi1: spi@0xFE011000 {
-+		spi1: spi@fe011000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			cell-index = <1>;
- 			compatible = "abilis,tb100-spi";
- 			num-cs = <2>;
--			reg = <0xFE011000 0x20>;
-+			reg = <0xfe011000 0x20>;
- 			interrupt-parent = <&tb10x_ictl>;
- 			interrupts = <10 8>;
- 			clocks = <&ahb_clk>;
-@@ -226,23 +226,23 @@
- 			interrupts = <20 2>, <19 2>;
- 			interrupt-names = "cmd_irq", "event_irq";
- 		};
--		tb10x_mdsc0: tb10x-mdscr@FF300000 {
-+		tb10x_mdsc0: tb10x-mdscr@ff300000 {
- 			compatible = "abilis,tb100-mdscr";
--			reg = <0xFF300000 0x7000>;
-+			reg = <0xff300000 0x7000>;
- 			tb100-mdscr-manage-tsin;
- 		};
--		tb10x_mscr0: tb10x-mdscr@FF307000 {
-+		tb10x_mscr0: tb10x-mdscr@ff307000 {
- 			compatible = "abilis,tb100-mdscr";
--			reg = <0xFF307000 0x7000>;
-+			reg = <0xff307000 0x7000>;
- 		};
- 		tb10x_scr0: tb10x-mdscr@ff30e000 {
- 			compatible = "abilis,tb100-mdscr";
--			reg = <0xFF30e000 0x4000>;
-+			reg = <0xff30e000 0x4000>;
- 			tb100-mdscr-manage-tsin;
- 		};
- 		tb10x_scr1: tb10x-mdscr@ff312000 {
- 			compatible = "abilis,tb100-mdscr";
--			reg = <0xFF312000 0x4000>;
-+			reg = <0xff312000 0x4000>;
- 			tb100-mdscr-manage-tsin;
- 		};
- 		tb10x_wfb: tb10x-wfb@ff319000 {
-diff --git a/arch/arc/boot/dts/axc001.dtsi b/arch/arc/boot/dts/axc001.dtsi
-index fdc266504ada..37be3bf03ad6 100644
---- a/arch/arc/boot/dts/axc001.dtsi
-+++ b/arch/arc/boot/dts/axc001.dtsi
-@@ -41,7 +41,7 @@
- 		 * this GPIO block ORs all interrupts on CPU card (creg,..)
- 		 * to uplink only 1 IRQ to ARC core intc
- 		 */
--		dw-apb-gpio@0x2000 {
-+		dw-apb-gpio@2000 {
- 			compatible = "snps,dw-apb-gpio";
- 			reg = < 0x2000 0x80 >;
- 			#address-cells = <1>;
-@@ -60,7 +60,7 @@
- 			};
- 		};
- 
--		debug_uart: dw-apb-uart@0x5000 {
-+		debug_uart: dw-apb-uart@5000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x5000 0x100>;
- 			clock-frequency = <33333000>;
-@@ -88,7 +88,7 @@
- 	 * avoid duplicating the MB dtsi file given that IRQ from
- 	 * this intc to cpu intc are different for axs101 and axs103
- 	 */
--	mb_intc: dw-apb-ictl@0xe0012000 {
-+	mb_intc: dw-apb-ictl@e0012000 {
- 		#interrupt-cells = <1>;
- 		compatible = "snps,dw-apb-ictl";
- 		reg = < 0x0 0xe0012000 0x0 0x200 >;
-diff --git a/arch/arc/boot/dts/axc003.dtsi b/arch/arc/boot/dts/axc003.dtsi
-index d75d65ddf8e3..effa37536d7a 100644
---- a/arch/arc/boot/dts/axc003.dtsi
-+++ b/arch/arc/boot/dts/axc003.dtsi
-@@ -55,7 +55,7 @@
- 		 * this GPIO block ORs all interrupts on CPU card (creg,..)
- 		 * to uplink only 1 IRQ to ARC core intc
- 		 */
--		dw-apb-gpio@0x2000 {
-+		dw-apb-gpio@2000 {
- 			compatible = "snps,dw-apb-gpio";
- 			reg = < 0x2000 0x80 >;
- 			#address-cells = <1>;
-@@ -74,7 +74,7 @@
- 			};
- 		};
- 
--		debug_uart: dw-apb-uart@0x5000 {
-+		debug_uart: dw-apb-uart@5000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x5000 0x100>;
- 			clock-frequency = <33333000>;
-@@ -102,19 +102,19 @@
- 	 * external DMA buffer located outside of IOC aperture.
- 	 */
- 	axs10x_mb {
--		ethernet@0x18000 {
-+		ethernet@18000 {
- 			dma-coherent;
- 		};
- 
--		ehci@0x40000 {
-+		ehci@40000 {
- 			dma-coherent;
- 		};
- 
--		ohci@0x60000 {
-+		ohci@60000 {
- 			dma-coherent;
- 		};
- 
--		mmc@0x15000 {
-+		mmc@15000 {
- 			dma-coherent;
- 		};
- 	};
-@@ -132,7 +132,7 @@
- 	 * avoid duplicating the MB dtsi file given that IRQ from
- 	 * this intc to cpu intc are different for axs101 and axs103
- 	 */
--	mb_intc: dw-apb-ictl@0xe0012000 {
-+	mb_intc: dw-apb-ictl@e0012000 {
- 		#interrupt-cells = <1>;
- 		compatible = "snps,dw-apb-ictl";
- 		reg = < 0x0 0xe0012000 0x0 0x200 >;
-@@ -153,7 +153,7 @@
- 		#size-cells = <2>;
- 		ranges;
- 		/*
--		 * Move frame buffer out of IOC aperture (0x8z-0xAz).
-+		 * Move frame buffer out of IOC aperture (0x8z-0xaz).
- 		 */
- 		frame_buffer: frame_buffer@be000000 {
- 			compatible = "shared-dma-pool";
-diff --git a/arch/arc/boot/dts/axc003_idu.dtsi b/arch/arc/boot/dts/axc003_idu.dtsi
-index a05bb737ea63..e401e59f6180 100644
---- a/arch/arc/boot/dts/axc003_idu.dtsi
-+++ b/arch/arc/boot/dts/axc003_idu.dtsi
-@@ -62,7 +62,7 @@
- 		 * this GPIO block ORs all interrupts on CPU card (creg,..)
- 		 * to uplink only 1 IRQ to ARC core intc
- 		 */
--		dw-apb-gpio@0x2000 {
-+		dw-apb-gpio@2000 {
- 			compatible = "snps,dw-apb-gpio";
- 			reg = < 0x2000 0x80 >;
- 			#address-cells = <1>;
-@@ -81,7 +81,7 @@
- 			};
- 		};
- 
--		debug_uart: dw-apb-uart@0x5000 {
-+		debug_uart: dw-apb-uart@5000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x5000 0x100>;
- 			clock-frequency = <33333000>;
-@@ -109,19 +109,19 @@
- 	 * external DMA buffer located outside of IOC aperture.
- 	 */
- 	axs10x_mb {
--		ethernet@0x18000 {
-+		ethernet@18000 {
- 			dma-coherent;
- 		};
- 
--		ehci@0x40000 {
-+		ehci@40000 {
- 			dma-coherent;
- 		};
- 
--		ohci@0x60000 {
-+		ohci@60000 {
- 			dma-coherent;
- 		};
- 
--		mmc@0x15000 {
-+		mmc@15000 {
- 			dma-coherent;
- 		};
- 	};
-@@ -138,7 +138,7 @@
- 	 * avoid duplicating the MB dtsi file given that IRQ from
- 	 * this intc to cpu intc are different for axs101 and axs103
- 	 */
--	mb_intc: dw-apb-ictl@0xe0012000 {
-+	mb_intc: dw-apb-ictl@e0012000 {
- 		#interrupt-cells = <1>;
- 		compatible = "snps,dw-apb-ictl";
- 		reg = < 0x0 0xe0012000 0x0 0x200 >;
-@@ -159,7 +159,7 @@
- 		#size-cells = <2>;
- 		ranges;
- 		/*
--		 * Move frame buffer out of IOC aperture (0x8z-0xAz).
-+		 * Move frame buffer out of IOC aperture (0x8z-0xaz).
- 		 */
- 		frame_buffer: frame_buffer@be000000 {
- 			compatible = "shared-dma-pool";
-diff --git a/arch/arc/boot/dts/axs10x_mb.dtsi b/arch/arc/boot/dts/axs10x_mb.dtsi
-index 37bafd44e36d..4ead6dc9af2f 100644
---- a/arch/arc/boot/dts/axs10x_mb.dtsi
-+++ b/arch/arc/boot/dts/axs10x_mb.dtsi
-@@ -72,7 +72,7 @@
- 			};
- 		};
- 
--		gmac: ethernet@0x18000 {
-+		gmac: ethernet@18000 {
- 			#interrupt-cells = <1>;
- 			compatible = "snps,dwmac";
- 			reg = < 0x18000 0x2000 >;
-@@ -88,13 +88,13 @@
- 			mac-address = [00 00 00 00 00 00]; /* Filled in by U-Boot */
- 		};
- 
--		ehci@0x40000 {
-+		ehci@40000 {
- 			compatible = "generic-ehci";
- 			reg = < 0x40000 0x100 >;
- 			interrupts = < 8 >;
- 		};
- 
--		ohci@0x60000 {
-+		ohci@60000 {
- 			compatible = "generic-ohci";
- 			reg = < 0x60000 0x100 >;
- 			interrupts = < 8 >;
-@@ -118,7 +118,7 @@
- 		 * dw_mci_pltfm_prepare_command() is used in generic platform
- 		 * code.
- 		 */
--		mmc@0x15000 {
-+		mmc@15000 {
- 			compatible = "altr,socfpga-dw-mshc";
- 			reg = < 0x15000 0x400 >;
- 			fifo-depth = < 16 >;
-@@ -129,7 +129,7 @@
- 			bus-width = < 4 >;
- 		};
- 
--		uart@0x20000 {
-+		uart@20000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x20000 0x100>;
- 			clock-frequency = <33333333>;
-@@ -139,7 +139,7 @@
- 			reg-io-width = <4>;
- 		};
- 
--		uart@0x21000 {
-+		uart@21000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x21000 0x100>;
- 			clock-frequency = <33333333>;
-@@ -150,7 +150,7 @@
- 		};
- 
- 		/* UART muxed with USB data port (ttyS3) */
--		uart@0x22000 {
-+		uart@22000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x22000 0x100>;
- 			clock-frequency = <33333333>;
-@@ -160,7 +160,7 @@
- 			reg-io-width = <4>;
- 		};
- 
--		i2c@0x1d000 {
-+		i2c@1d000 {
- 			compatible = "snps,designware-i2c";
- 			reg = <0x1d000 0x100>;
- 			clock-frequency = <400000>;
-@@ -177,7 +177,7 @@
- 			#sound-dai-cells = <0>;
- 		};
- 
--		i2c@0x1f000 {
-+		i2c@1f000 {
- 			compatible = "snps,designware-i2c";
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-@@ -218,13 +218,13 @@
- 				};
- 			};
- 
--			eeprom@0x54{
-+			eeprom@54{
- 				compatible = "atmel,24c01";
- 				reg = <0x54>;
- 				pagesize = <0x8>;
- 			};
- 
--			eeprom@0x57{
-+			eeprom@57{
- 				compatible = "atmel,24c04";
- 				reg = <0x57>;
- 				pagesize = <0x8>;
-diff --git a/arch/arc/boot/dts/hsdk.dts b/arch/arc/boot/dts/hsdk.dts
-index 43f17b51ee89..6c23fa063ced 100644
---- a/arch/arc/boot/dts/hsdk.dts
-+++ b/arch/arc/boot/dts/hsdk.dts
-@@ -110,12 +110,12 @@
- 		cgu_rst: reset-controller@8a0 {
- 			compatible = "snps,hsdk-reset";
- 			#reset-cells = <1>;
--			reg = <0x8A0 0x4>, <0xFF0 0x4>;
-+			reg = <0x8a0 0x4>, <0xff0 0x4>;
- 		};
- 
- 		core_clk: core-clk@0 {
- 			compatible = "snps,hsdk-core-pll-clock";
--			reg = <0x00 0x10>, <0x14B8 0x4>;
-+			reg = <0x00 0x10>, <0x14b8 0x4>;
- 			#clock-cells = <0>;
- 			clocks = <&input_clk>;
- 
-diff --git a/arch/arc/boot/dts/vdk_axc003.dtsi b/arch/arc/boot/dts/vdk_axc003.dtsi
-index 0fd6ba985b16..84e8766c8ca2 100644
---- a/arch/arc/boot/dts/vdk_axc003.dtsi
-+++ b/arch/arc/boot/dts/vdk_axc003.dtsi
-@@ -36,7 +36,7 @@
- 			#interrupt-cells = <1>;
- 		};
- 
--		debug_uart: dw-apb-uart@0x5000 {
-+		debug_uart: dw-apb-uart@5000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x5000 0x100>;
- 			clock-frequency = <2403200>;
-@@ -49,7 +49,7 @@
- 
- 	};
- 
--	mb_intc: dw-apb-ictl@0xe0012000 {
-+	mb_intc: dw-apb-ictl@e0012000 {
- 		#interrupt-cells = <1>;
- 		compatible = "snps,dw-apb-ictl";
- 		reg = < 0xe0012000 0x200 >;
-diff --git a/arch/arc/boot/dts/vdk_axc003_idu.dtsi b/arch/arc/boot/dts/vdk_axc003_idu.dtsi
-index 28956f9a9f3d..eb7e705e8a27 100644
---- a/arch/arc/boot/dts/vdk_axc003_idu.dtsi
-+++ b/arch/arc/boot/dts/vdk_axc003_idu.dtsi
-@@ -44,7 +44,7 @@
- 			#interrupt-cells = <1>;
- 		};
- 
--		debug_uart: dw-apb-uart@0x5000 {
-+		debug_uart: dw-apb-uart@5000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x5000 0x100>;
- 			clock-frequency = <2403200>;
-@@ -57,7 +57,7 @@
- 
- 	};
- 
--	mb_intc: dw-apb-ictl@0xe0012000 {
-+	mb_intc: dw-apb-ictl@e0012000 {
- 		#interrupt-cells = <1>;
- 		compatible = "snps,dw-apb-ictl";
- 		reg = < 0xe0012000 0x200 >;
-diff --git a/arch/arc/boot/dts/vdk_axs10x_mb.dtsi b/arch/arc/boot/dts/vdk_axs10x_mb.dtsi
-index 48bb4b4cd234..925d5cc95dbb 100644
---- a/arch/arc/boot/dts/vdk_axs10x_mb.dtsi
-+++ b/arch/arc/boot/dts/vdk_axs10x_mb.dtsi
-@@ -36,7 +36,7 @@
- 			};
- 		};
- 
--		ethernet@0x18000 {
-+		ethernet@18000 {
- 			#interrupt-cells = <1>;
- 			compatible = "snps,dwmac";
- 			reg = < 0x18000 0x2000 >;
-@@ -49,13 +49,13 @@
- 			clock-names = "stmmaceth";
- 		};
- 
--		ehci@0x40000 {
-+		ehci@40000 {
- 			compatible = "generic-ehci";
- 			reg = < 0x40000 0x100 >;
- 			interrupts = < 8 >;
- 		};
- 
--		uart@0x20000 {
-+		uart@20000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x20000 0x100>;
- 			clock-frequency = <2403200>;
-@@ -65,7 +65,7 @@
- 			reg-io-width = <4>;
- 		};
- 
--		uart@0x21000 {
-+		uart@21000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x21000 0x100>;
- 			clock-frequency = <2403200>;
-@@ -75,7 +75,7 @@
- 			reg-io-width = <4>;
- 		};
- 
--		uart@0x22000 {
-+		uart@22000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x22000 0x100>;
- 			clock-frequency = <2403200>;
-@@ -101,7 +101,7 @@
- 			interrupt-names = "arc_ps2_irq";
- 		};
- 
--		mmc@0x15000 {
-+		mmc@15000 {
- 			compatible = "snps,dw-mshc";
- 			reg = <0x15000 0x400>;
- 			fifo-depth = <1024>;
-@@ -117,11 +117,11 @@
- 	 * Embedded Vision subsystem UIO mappings; only relevant for EV VDK
- 	 *
- 	 * This node is intentionally put outside of MB above becase
--	 * it maps areas outside of MB's 0xEz-0xFz.
-+	 * it maps areas outside of MB's 0xez-0xfz.
- 	 */
--	uio_ev: uio@0xD0000000 {
-+	uio_ev: uio@d0000000 {
- 		compatible = "generic-uio";
--		reg = <0xD0000000 0x2000 0xD1000000 0x2000 0x90000000 0x10000000 0xC0000000 0x10000000>;
-+		reg = <0xd0000000 0x2000 0xd1000000 0x2000 0x90000000 0x10000000 0xc0000000 0x10000000>;
- 		reg-names = "ev_gsa", "ev_ctrl", "ev_shared_mem", "ev_code_mem";
- 		interrupt-parent = <&mb_intc>;
- 		interrupts = <23>;
--- 
-2.16.2
-
+> - it's supposed to go via ASoC subsystem due to recent changes made for
+>    sound driver
+> 
+> v2:
+> - Expand explanation why this quirk might be needed (Mika)
+> 
+>   drivers/gpio/gpiolib-acpi.c           | 15 ++++--
+>   include/linux/acpi.h                  |  7 +++
+>   sound/soc/intel/boards/bytcr_rt5651.c | 74 ++++-----------------------
+>   3 files changed, 27 insertions(+), 69 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+> index 259cf6ab969b..4d291b75cb9f 100644
+> --- a/drivers/gpio/gpiolib-acpi.c
+> +++ b/drivers/gpio/gpiolib-acpi.c
+> @@ -530,17 +530,24 @@ static int acpi_populate_gpio_lookup(struct acpi_resource *ares, void *data)
+>   	if (ares->type != ACPI_RESOURCE_TYPE_GPIO)
+>   		return 1;
+>   
+> -	if (lookup->n++ == lookup->index && !lookup->desc) {
+> +	if (!lookup->desc) {
+>   		const struct acpi_resource_gpio *agpio = &ares->data.gpio;
+> -		int pin_index = lookup->pin_index;
+> +		bool gpioint = agpio->connection_type == ACPI_RESOURCE_GPIO_TYPE_INT;
+> +		int pin_index;
+>   
+> +		if (lookup->info.quirks & ACPI_GPIO_QUIRK_ONLY_GPIOIO && gpioint)
+> +			lookup->index++;
+> +
+> +		if (lookup->n++ != lookup->index)
+> +			return 1;
+> +
+> +		pin_index = lookup->pin_index;
+>   		if (pin_index >= agpio->pin_table_length)
+>   			return 1;
+>   
+>   		lookup->desc = acpi_get_gpiod(agpio->resource_source.string_ptr,
+>   					      agpio->pin_table[pin_index]);
+> -		lookup->info.gpioint =
+> -			agpio->connection_type == ACPI_RESOURCE_GPIO_TYPE_INT;
+> +		lookup->info.gpioint = gpioint;
+>   
+>   		/*
+>   		 * Polarity and triggering are only specified for GpioInt
+> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+> index 1e89c688139f..430fd0b6df7b 100644
+> --- a/include/linux/acpi.h
+> +++ b/include/linux/acpi.h
+> @@ -1020,6 +1020,13 @@ struct acpi_gpio_mapping {
+>   
+>   /* Ignore IoRestriction field */
+>   #define ACPI_GPIO_QUIRK_NO_IO_RESTRICTION	BIT(0)
+> +/*
+> + * When ACPI GPIO mapping table is in use the index parameter inside it
+> + * refers to the GPIO resource in _CRS method. That index has no
+> + * distinction of actual type of the resource. When consumer wants to
+> + * get GpioIo type explicitly, this quirk may be used.
+> + */
+> +#define ACPI_GPIO_QUIRK_ONLY_GPIOIO		BIT(1)
+>   
+>   	unsigned int quirks;
+>   };
+> diff --git a/sound/soc/intel/boards/bytcr_rt5651.c b/sound/soc/intel/boards/bytcr_rt5651.c
+> index b618d984e2d5..99d0c01a1bec 100644
+> --- a/sound/soc/intel/boards/bytcr_rt5651.c
+> +++ b/sound/soc/intel/boards/bytcr_rt5651.c
+> @@ -844,74 +844,18 @@ static const struct x86_cpu_id cherrytrail_cpu_ids[] = {
+>   	{}
+>   };
+>   
+> -static const struct acpi_gpio_params first_gpio = { 0, 0, false };
+> -static const struct acpi_gpio_params second_gpio = { 1, 0, false };
+> +static const struct acpi_gpio_params ext_amp_enable_gpios = { 0, 0, false };
+>   
+> -static const struct acpi_gpio_mapping byt_rt5651_amp_en_first[] = {
+> -	{ "ext-amp-enable-gpios", &first_gpio, 1 },
+> -	{ },
+> -};
+> -
+> -static const struct acpi_gpio_mapping byt_rt5651_amp_en_second[] = {
+> -	{ "ext-amp-enable-gpios", &second_gpio, 1 },
+> +static const struct acpi_gpio_mapping cht_rt5651_gpios[] = {
+> +	/*
+> +	 * Some boards have I2cSerialBusV2, GpioIo, GpioInt as ACPI resources,
+> +	 * other boards may  have I2cSerialBusV2, GpioInt, GpioIo instead.
+> +	 * We want the GpioIo one for the ext-amp-enable-gpio.
+> +	 */
+> +	{ "ext-amp-enable-gpios", &ext_amp_enable_gpios, 1, ACPI_GPIO_QUIRK_ONLY_GPIOIO },
+>   	{ },
+>   };
+>   
+> -/*
+> - * Some boards have I2cSerialBusV2, GpioIo, GpioInt as ACPI resources, other
+> - * boards may  have I2cSerialBusV2, GpioInt, GpioIo instead. We want the
+> - * GpioIo one for the ext-amp-enable-gpio and both count for the index in
+> - * acpi_gpio_params index.  So we have 2 different mappings and the code
+> - * below figures out which one to use.
+> - */
+> -struct byt_rt5651_acpi_resource_data {
+> -	int gpio_count;
+> -	int gpio_int_idx;
+> -};
+> -
+> -static int snd_byt_rt5651_acpi_resource(struct acpi_resource *ares, void *arg)
+> -{
+> -	struct byt_rt5651_acpi_resource_data *data = arg;
+> -
+> -	if (ares->type != ACPI_RESOURCE_TYPE_GPIO)
+> -		return 0;
+> -
+> -	if (ares->data.gpio.connection_type == ACPI_RESOURCE_GPIO_TYPE_INT)
+> -		data->gpio_int_idx = data->gpio_count;
+> -
+> -	data->gpio_count++;
+> -	return 0;
+> -}
+> -
+> -static void snd_byt_rt5651_mc_pick_amp_en_gpio_mapping(struct device *codec)
+> -{
+> -	struct byt_rt5651_acpi_resource_data data = { 0, -1 };
+> -	LIST_HEAD(resources);
+> -	int ret;
+> -
+> -	ret = acpi_dev_get_resources(ACPI_COMPANION(codec), &resources,
+> -				     snd_byt_rt5651_acpi_resource, &data);
+> -	if (ret < 0) {
+> -		dev_warn(codec, "Failed to get ACPI resources, not adding external amplifier GPIO mapping\n");
+> -		return;
+> -	}
+> -
+> -	/* All info we need is gathered during the walk */
+> -	acpi_dev_free_resource_list(&resources);
+> -
+> -	switch (data.gpio_int_idx) {
+> -	case 0:
+> -		byt_rt5651_gpios = byt_rt5651_amp_en_second;
+> -		break;
+> -	case 1:
+> -		byt_rt5651_gpios = byt_rt5651_amp_en_first;
+> -		break;
+> -	default:
+> -		dev_warn(codec, "Unknown GpioInt index %d, not adding external amplifier GPIO mapping\n",
+> -			 data.gpio_int_idx);
+> -	}
+> -}
+> -
+>   struct acpi_chan_package {   /* ACPICA seems to require 64 bit integers */
+>   	u64 aif_value;       /* 1: AIF1, 2: AIF2 */
+>   	u64 mclock_value;    /* usually 25MHz (0x17d7940), ignored */
+> @@ -1037,7 +981,7 @@ static int snd_byt_rt5651_mc_probe(struct platform_device *pdev)
+>   
+>   	/* Cherry Trail devices use an external amplifier enable gpio */
+>   	if (x86_match_cpu(cherrytrail_cpu_ids) && !byt_rt5651_gpios)
+> -		snd_byt_rt5651_mc_pick_amp_en_gpio_mapping(codec_dev);
+> +		byt_rt5651_gpios = cht_rt5651_gpios;
+>   
+>   	if (byt_rt5651_gpios) {
+>   		devm_acpi_dev_add_driver_gpios(codec_dev, byt_rt5651_gpios);
+> 
