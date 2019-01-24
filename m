@@ -2,54 +2,52 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A707EC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:43:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43639C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:43:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72AF7218D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:43:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 064B120663
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:43:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359001;
-	bh=ytUfLWPiG2ZwE4XxryGoEKKk0BBaRyNJszTNJOtnoz0=;
+	s=default; t=1548359005;
+	bh=FQfrHikUNBcBZfHk4rMlHFeyyQ26E3f1U+xcHagH/sk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=d3Id31Uc4Eu2KNzKDn2EeDH9RrwF28IW1UrwqNoDdiU8Mh+ft25cAvSHmRtWWlGtR
-	 LYXTb00zncosBbYwAmOBJFfa15zKz+q0bg2WCay59Gzcc9hawsHtg1c4vgpEoUFiYJ
-	 zC/EcVTU99pQdAwStbeFn8ieZJBz2oyQtwxwm9WU=
+	b=2Fn0h4h4yE6giOpxstIjN+aBNLcU57ntUwvWWUpwghobHStTfHxFRGMENHyRAZmSo
+	 7Fq2UotvIQJmuBscKPcWHfHNwb2ZtTfZFITLFqqojAI2Qa3Vd51x1mZmT80Nnb2Yau
+	 OQgZNHpessm8ly5K50dzxK17ZWCQ2RXVCtAQ/e7I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387603AbfAXTnU (ORCPT
+        id S2387932AbfAXTnX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:43:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43844 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:43:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387918AbfAXTnQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:43:16 -0500
+        id S2387923AbfAXTnU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:43:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB2CB20663;
-        Thu, 24 Jan 2019 19:43:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 43AAF20663;
+        Thu, 24 Jan 2019 19:43:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358996;
-        bh=ytUfLWPiG2ZwE4XxryGoEKKk0BBaRyNJszTNJOtnoz0=;
+        s=default; t=1548358998;
+        bh=FQfrHikUNBcBZfHk4rMlHFeyyQ26E3f1U+xcHagH/sk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NHZm2XbIZIQXE9f+zNXJ49qNm4achbQ3WtHU5VlwfEcZ6qqGhYBbh/zJQ0xsCPSHa
-         b6T2qSa90pTH2Y2lGXcEM2ztb1Vyzsmt2c1tGMMGZ+W1dUhlLI/22LcwBPr9bq9RJo
-         +oV93lm4Nr7vX3rS9DZhV5dcuj9GZhC9fuM2S7Ls=
+        b=bU1IzAVNUqtku9cPAlIG8xoMwrKG/nWJW8RHQpTSLJj1B72BxoCks9efQK5dIa8IP
+         zRGn5v2UNd1Pxq1xO4hxsEmlUabCVvvRFqN2mrEbg6giZp0EKRYpEIsIQSePzMZZbb
+         jmHv1aWvDyKhW9k+E+ShcaCpZNpjfoYtPmCrW4Yk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 099/127] perf tools: Add missing open_memstream() prototype for systems lacking it
-Date:   Thu, 24 Jan 2019 20:20:45 +0100
-Message-Id: <20190124190216.240227421@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Javier Barrio <javier.barrio.mart@gmail.com>,
+        Jan Kara <jack@suse.cz>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 100/127] quota: Lock s_umount in exclusive mode for Q_XQUOTA{ON,OFF} quotactls.
+Date:   Thu, 24 Jan 2019 20:20:46 +0100
+Message-Id: <20190124190216.274588048@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
 References: <20190124190211.984305387@linuxfoundation.org>
@@ -68,68 +66,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit d7a8c4a6a055097a67ccfa3ca7c9ff1b64603a70 ]
+[ Upstream commit 41c4f85cdac280d356df1f483000ecec4a8868be ]
 
-There are systems such as the Android NDK API level 24 has the
-open_memstream() function but doesn't provide a prototype, adding noise
-to the build:
+Commit 1fa5efe3622db58cb8c7b9a50665e9eb9a6c7e97 (ext4: Use generic helpers for quotaon
+and quotaoff) made possible to call quotactl(Q_XQUOTAON/OFF) on ext4 filesystems
+with sysfile quota support. This leads to calling dquot_enable/disable without s_umount
+held in excl. mode, because quotactl_cmd_onoff checks only for Q_QUOTAON/OFF.
 
-  builtin-timechart.c: In function 'cat_backtrace':
-  builtin-timechart.c:486:2: warning: implicit declaration of function 'open_memstream' [-Wimplicit-function-declaration]
-    FILE *f = open_memstream(&p, &p_len);
-    ^
-  builtin-timechart.c:486:2: warning: nested extern declaration of 'open_memstream' [-Wnested-externs]
-  builtin-timechart.c:486:12: warning: initialization makes pointer from integer without a cast
-    FILE *f = open_memstream(&p, &p_len);
-              ^
+The following WARN_ON_ONCE triggers (in this case for dquot_enable, ext4, latest Linus' tree):
 
-Define a LACKS_OPEN_MEMSTREAM_PROTOTYPE define so that code needing that
-can get a prototype.
+[  117.807056] EXT4-fs (dm-0): mounted filesystem with ordered data mode. Opts: quota,prjquota
 
-Checked in the bionic git repo to be available since level 23:
+[...]
 
-https://android.googlesource.com/platform/bionic/+/master/libc/include/stdio.h#241
+[  155.036847] WARNING: CPU: 0 PID: 2343 at fs/quota/dquot.c:2469 dquot_enable+0x34/0xb9
+[  155.036851] Modules linked in: quota_v2 quota_tree ipv6 af_packet joydev mousedev psmouse serio_raw pcspkr i2c_piix4 intel_agp intel_gtt e1000 ttm drm_kms_helper drm agpgart fb_sys_fops syscopyarea sysfillrect sysimgblt i2c_core input_leds kvm_intel kvm irqbypass qemu_fw_cfg floppy evdev parport_pc parport button crc32c_generic dm_mod ata_generic pata_acpi ata_piix libata loop ext4 crc16 mbcache jbd2 usb_storage usbcore sd_mod scsi_mod
+[  155.036901] CPU: 0 PID: 2343 Comm: qctl Not tainted 4.20.0-rc6-00025-gf5d582777bcb #9
+[  155.036903] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
+[  155.036911] RIP: 0010:dquot_enable+0x34/0xb9
+[  155.036915] Code: 41 56 41 55 41 54 55 53 4c 8b 6f 28 74 02 0f 0b 4d 8d 7d 70 49 89 fc 89 cb 41 89 d6 89 f5 4c 89 ff e8 23 09 ea ff 85 c0 74 0a <0f> 0b 4c 89 ff e8 8b 09 ea ff 85 db 74 6a 41 8b b5 f8 00 00 00 0f
+[  155.036918] RSP: 0018:ffffb09b00493e08 EFLAGS: 00010202
+[  155.036922] RAX: 0000000000000001 RBX: 0000000000000008 RCX: 0000000000000008
+[  155.036924] RDX: 0000000000000001 RSI: 0000000000000002 RDI: ffff9781b67cd870
+[  155.036926] RBP: 0000000000000002 R08: 0000000000000000 R09: 61c8864680b583eb
+[  155.036929] R10: ffffb09b00493e48 R11: ffffffffff7ce7d4 R12: ffff9781b7ee8d78
+[  155.036932] R13: ffff9781b67cd800 R14: 0000000000000004 R15: ffff9781b67cd870
+[  155.036936] FS:  00007fd813250b88(0000) GS:ffff9781ba000000(0000) knlGS:0000000000000000
+[  155.036939] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  155.036942] CR2: 00007fd812ff61d6 CR3: 000000007c882000 CR4: 00000000000006b0
+[  155.036951] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[  155.036953] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[  155.036955] Call Trace:
+[  155.037004]  dquot_quota_enable+0x8b/0xd0
+[  155.037011]  kernel_quotactl+0x628/0x74e
+[  155.037027]  ? do_mprotect_pkey+0x2a6/0x2cd
+[  155.037034]  __x64_sys_quotactl+0x1a/0x1d
+[  155.037041]  do_syscall_64+0x55/0xe4
+[  155.037078]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[  155.037105] RIP: 0033:0x7fd812fe1198
+[  155.037109] Code: 02 77 0d 48 89 c1 48 c1 e9 3f 75 04 48 8b 04 24 48 83 c4 50 5b c3 48 83 ec 08 49 89 ca 48 63 d2 48 63 ff b8 b3 00 00 00 0f 05 <48> 89 c7 e8 c1 eb ff ff 5a c3 48 63 ff b8 bb 00 00 00 0f 05 48 89
+[  155.037112] RSP: 002b:00007ffe8cd7b050 EFLAGS: 00000206 ORIG_RAX: 00000000000000b3
+[  155.037116] RAX: ffffffffffffffda RBX: 00007ffe8cd7b148 RCX: 00007fd812fe1198
+[  155.037119] RDX: 0000000000000000 RSI: 00007ffe8cd7cea9 RDI: 0000000000580102
+[  155.037121] RBP: 00007ffe8cd7b0f0 R08: 000055fc8eba8a9d R09: 0000000000000000
+[  155.037124] R10: 00007ffe8cd7b074 R11: 0000000000000206 R12: 00007ffe8cd7b168
+[  155.037126] R13: 000055fc8eba8897 R14: 0000000000000000 R15: 0000000000000000
+[  155.037131] ---[ end trace 210f864257175c51 ]---
 
-  FILE* open_memstream(char** __ptr, size_t* __size_ptr) __INTRODUCED_IN(23);
+and then the syscall proceeds without s_umount locking.
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-343ashae97e5bq6vizusyfno@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+This patch locks the superblock ->s_umount sem. in exclusive mode for all Q_XQUOTAON/OFF
+quotactls too in addition to Q_QUOTAON/OFF.
+
+AFAICT, other than ext4, only xfs and ocfs2 are affected by this change.
+The VFS will now call in xfs_quota_* functions with s_umount held, which wasn't the case
+before. This looks good to me but I can not say for sure. Ext4 and ocfs2 where already
+beeing called with s_umount exclusive via quota_quotaon/off which is basically the same.
+
+Signed-off-by: Javier Barrio <javier.barrio.mart@gmail.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/Makefile.config     | 1 +
- tools/perf/builtin-timechart.c | 4 ++++
- 2 files changed, 5 insertions(+)
+ fs/quota/quota.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index e106e7ce6933..acbb657f7ce2 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -295,6 +295,7 @@ ifndef NO_BIONIC
-   ifeq ($(feature-bionic), 1)
-     BIONIC := 1
-     CFLAGS += -DLACKS_SIGQUEUE_PROTOTYPE
-+    CFLAGS += -DLACKS_OPEN_MEMSTREAM_PROTOTYPE
-     EXTLIBS := $(filter-out -lrt,$(EXTLIBS))
-     EXTLIBS := $(filter-out -lpthread,$(EXTLIBS))
-   endif
-diff --git a/tools/perf/builtin-timechart.c b/tools/perf/builtin-timechart.c
-index a827919c6263..775b99833e51 100644
---- a/tools/perf/builtin-timechart.c
-+++ b/tools/perf/builtin-timechart.c
-@@ -43,6 +43,10 @@
- #include "util/data.h"
- #include "util/debug.h"
+diff --git a/fs/quota/quota.c b/fs/quota/quota.c
+index f0cbf58ad4da..fd5dd806f1b9 100644
+--- a/fs/quota/quota.c
++++ b/fs/quota/quota.c
+@@ -791,7 +791,8 @@ static int quotactl_cmd_write(int cmd)
+ /* Return true if quotactl command is manipulating quota on/off state */
+ static bool quotactl_cmd_onoff(int cmd)
+ {
+-	return (cmd == Q_QUOTAON) || (cmd == Q_QUOTAOFF);
++	return (cmd == Q_QUOTAON) || (cmd == Q_QUOTAOFF) ||
++		 (cmd == Q_XQUOTAON) || (cmd == Q_XQUOTAOFF);
+ }
  
-+#ifdef LACKS_OPEN_MEMSTREAM_PROTOTYPE
-+FILE *open_memstream(char **ptr, size_t *sizeloc);
-+#endif
-+
- #define SUPPORT_OLD_POWER_EVENTS 1
- #define PWR_EVENT_EXIT -1
- 
+ /*
 -- 
 2.19.1
 
