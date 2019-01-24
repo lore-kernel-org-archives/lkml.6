@@ -7,49 +7,46 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD008C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:26:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1503C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:26:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A020218FE
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:26:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 927B0218FE
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:26:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548357961;
-	bh=jVn0Q5RodvRQmDLJgakOPbwwNp4Rl4FFNWLh6z/3LQ0=;
+	s=default; t=1548357965;
+	bh=FQ3dqDVZ8ByQD2nQ88azxNbH05oeXQhBWzroN1XBrXs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=FEmCzyS5xi6CZm5a0AAujub3Ggw0JwhMvmQZR4BvC5+ugJpwB8/sibheO6m93Jsgq
-	 k0S7sewamG1V+UxeM1p3tk87fW6pidk5zfW8R5F3IM8dDTONQK1HytOhqfLzGMCpE7
-	 mg+8iSM6/a/J6XrKkP+D39Bgc1QCxaH0hlx2DPhA=
+	b=RG5P+2DM1n97UYO7cpYkoQ+NogPYzt89GfloEFISgS0xVAKZR5J91JuzLOkOSEC1l
+	 29xOZsx6Dn1Jys4D5fosk2zcmK1g3m4n3I30fFgXpIgTX3TS7FwLifp+a12fcb2Ndv
+	 szokMvCBGb5dVzTTfz3qzx5dx1pNs3iY4VKnl/nA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730488AbfAXT0A (ORCPT
+        id S1730498AbfAXT0E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:26:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51744 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:26:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51834 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729680AbfAXTZ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:25:56 -0500
+        id S1729959AbfAXTZ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:25:59 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 706FF217D7;
-        Thu, 24 Jan 2019 19:25:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B7008217D7;
+        Thu, 24 Jan 2019 19:25:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548357955;
-        bh=jVn0Q5RodvRQmDLJgakOPbwwNp4Rl4FFNWLh6z/3LQ0=;
+        s=default; t=1548357959;
+        bh=FQ3dqDVZ8ByQD2nQ88azxNbH05oeXQhBWzroN1XBrXs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I8li1EO8OO/QdEgXXkMmK7E2ksJN4BTbdy5eRM5zxNnkzNXU9ZEtBbu0MUKaovza8
-         rahpngH//J0IpuAWqwY8tFf5Shag7JXUQdl/etYg4Bb8QP6LwW0TuLDQ2Kilh1apzL
-         lT/4kH6IJMeohuc7AZVgb0DVypN+OjP1lt3LuNqQ=
+        b=W7E1vmOwSwh4qfYPGB54bhPkwQsaFE5uzkVssIpF4XJG9qcAVPylykC+IzRhx3Ira
+         9c1pfWhnL1BBTreGpa5v003vKw8UaVqS0+b0m/G01EphFuF9aB/QKBGi6H4jsRMGKs
+         ebtkAM9LPW/+qg3Ur3m9RfJF1KgIV8+WQFG3JmVA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+a9ac39bf55329e206219@syzkaller.appspotmail.com,
-        Oleg Nesterov <oleg@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        James Morris <james.morris@microsoft.com>
-Subject: [PATCH 4.4 049/104] Yama: Check for pid death before checking ancestry
-Date:   Thu, 24 Jan 2019 20:19:38 +0100
-Message-Id: <20190124190201.140687919@linuxfoundation.org>
+        stable@vger.kernel.org, Ivan Mironov <mironov.ivan@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.4 050/104] scsi: sd: Fix cache_type_store()
+Date:   Thu, 24 Jan 2019 20:19:39 +0100
+Message-Id: <20190124190201.286955322@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190154.968308875@linuxfoundation.org>
 References: <20190124190154.968308875@linuxfoundation.org>
@@ -68,38 +65,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kees Cook <keescook@chromium.org>
+From: Ivan Mironov <mironov.ivan@gmail.com>
 
-commit 9474f4e7cd71a633fa1ef93b7daefd44bbdfd482 upstream.
+commit 44759979a49bfd2d20d789add7fa81a21eb1a4ab upstream.
 
-It's possible that a pid has died before we take the rcu lock, in which
-case we can't walk the ancestry list as it may be detached. Instead, check
-for death first before doing the walk.
+Changing of caching mode via /sys/devices/.../scsi_disk/.../cache_type may
+fail if device responds to MODE SENSE command with DPOFUA flag set, and
+then checks this flag to be not set on MODE SELECT command.
 
-Reported-by: syzbot+a9ac39bf55329e206219@syzkaller.appspotmail.com
-Fixes: 2d514487faf1 ("security: Yama LSM")
+In this scenario, when trying to change cache_type, write always fails:
+
+	# echo "none" >cache_type
+	bash: echo: write error: Invalid argument
+
+And following appears in dmesg:
+
+	[13007.865745] sd 1:0:1:0: [sda] Sense Key : Illegal Request [current]
+	[13007.865753] sd 1:0:1:0: [sda] Add. Sense: Invalid field in parameter list
+
+>From SBC-4 r15, 6.5.1 "Mode pages overview", description of DEVICE-SPECIFIC
+PARAMETER field in the mode parameter header:
+	...
+	The write protect (WP) bit for mode data sent with a MODE SELECT
+	command shall be ignored by the device server.
+	...
+	The DPOFUA bit is reserved for mode data sent with a MODE SELECT
+	command.
+	...
+
+The remaining bits in the DEVICE-SPECIFIC PARAMETER byte are also reserved
+and shall be set to zero.
+
+[mkp: shuffled commentary to commit description]
+
 Cc: stable@vger.kernel.org
-Suggested-by: Oleg Nesterov <oleg@redhat.com>
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: James Morris <james.morris@microsoft.com>
+Signed-off-by: Ivan Mironov <mironov.ivan@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- security/yama/yama_lsm.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/scsi/sd.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/security/yama/yama_lsm.c
-+++ b/security/yama/yama_lsm.c
-@@ -288,7 +288,9 @@ static int yama_ptrace_access_check(stru
- 			break;
- 		case YAMA_SCOPE_RELATIONAL:
- 			rcu_read_lock();
--			if (!task_is_descendant(current, child) &&
-+			if (!pid_alive(child))
-+				rc = -EPERM;
-+			if (!rc && !task_is_descendant(current, child) &&
- 			    !ptracer_exception_found(current, child) &&
- 			    !ns_capable(__task_cred(child)->user_ns, CAP_SYS_PTRACE))
- 				rc = -EPERM;
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -207,6 +207,12 @@ cache_type_store(struct device *dev, str
+ 	sp = buffer_data[0] & 0x80 ? 1 : 0;
+ 	buffer_data[0] &= ~0x80;
+ 
++	/*
++	 * Ensure WP, DPOFUA, and RESERVED fields are cleared in
++	 * received mode parameter buffer before doing MODE SELECT.
++	 */
++	data.device_specific = 0;
++
+ 	if (scsi_mode_select(sdp, 1, sp, 8, buffer_data, len, SD_TIMEOUT,
+ 			     SD_MAX_RETRIES, &data, &sshdr)) {
+ 		if (scsi_sense_valid(&sshdr))
 
 
