@@ -2,60 +2,53 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3EF2C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:33:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E55DC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:33:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92BC3218FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:33:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0362218D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:33:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358400;
-	bh=HeNFY3w1NbxZym8f7Wxqq6z7CcLL4PXbW+YrOIchl4w=;
+	s=default; t=1548358411;
+	bh=JICGhMzBhrbIpY4k5M7UE/yMQwTbNaawYGgghYlbG58=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=FaUg4U7Mb/3RlV8cWZlOC5qXewCVlz5z367vKlRimvfdgK6tFq5PfiwOJCd9Uej8v
-	 k8D+S7oESVKe1EhHQmOHb99sl0DeSRToOFtjI3IYSqgNp8Oy3rOvgsCfRmyEHNp5Zt
-	 6ZzUjMlxV8Pm+4aGSiJyoRZPrJLXzjc/y7JR8k3M=
+	b=dmESM0pQ/qu15ZZwiojrGL8thfzCe0/Hm5bGMKOU11k45N5v66EZPt/vp0dMsHqVM
+	 Q5T2tzpzm522Py/OhdfQG0c4b1AQyLew10I+F6Ej1SbHDQV4zPEU7hgXxBDAL+9gJs
+	 fW+qQV1wDWGC+q3QIgM+JtcCFmGOVjKh2i84whcM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731983AbfAXTdS (ORCPT
+        id S1731333AbfAXTd3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:33:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33032 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:33:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33234 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731282AbfAXTdP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:33:15 -0500
+        id S1731374AbfAXTd0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:33:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D891218FC;
-        Thu, 24 Jan 2019 19:33:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 522E421902;
+        Thu, 24 Jan 2019 19:33:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358394;
-        bh=HeNFY3w1NbxZym8f7Wxqq6z7CcLL4PXbW+YrOIchl4w=;
+        s=default; t=1548358405;
+        bh=JICGhMzBhrbIpY4k5M7UE/yMQwTbNaawYGgghYlbG58=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wbWXSV/VxwZl9MIkkBSX2REwJNLPZm/mXsNim7uyb2lEMKBvaSf8pVawVWkbijdWt
-         Jj0/k8o5N8jx8HnWFxI4WeuVyMLsZXm0x5uf0nta0xuGphPr63sX5DYdDvh4B4xCPL
-         Ev0Yes6052GqjMbS/vcI0137m9mnxddBeGVFrgok=
+        b=cche4g/nPBP/bPQ/cMDW/xGE68IrNFaF0CH7BpXnYhCDun5mO15q8yFJ0st4Y56pN
+         JwnmA6i4Y8deMNRl1nnIP+ljrqalQlBo9DYBVzdI4GgtAqPXzYk5HsgTN1HFt6rYzM
+         Uvb1t0Fn2yzvJyp9i2PWiJGDEsPeV5l7E8ag7j7g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
-        Jan Kara <jack@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        David Rientjes <rientjes@google.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Paul Oppenheimer <bepvte@gmail.com>,
-        William Kucharski <william.kucharski@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 57/63] mm, proc: be more verbose about unstable VMA flags in /proc/<pid>/smaps
-Date:   Thu, 24 Jan 2019 20:20:46 +0100
-Message-Id: <20190124190202.007449938@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Monroy, Rodrigo Axel" <rodrigo.axel.monroy@intel.com>,
+        "Orrala Contreras, Alfredo" <alfredo.orrala.contreras@intel.com>,
+        Hang Yuan <hang.yuan@intel.com>,
+        Zhenyu Wang <zhenyuw@linux.intel.com>
+Subject: [PATCH 4.14 61/63] drm/i915/gvt: Fix mmap range check
+Date:   Thu, 24 Jan 2019 20:20:50 +0100
+Message-Id: <20190124190202.399993665@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190155.176570028@linuxfoundation.org>
 References: <20190124190155.176570028@linuxfoundation.org>
@@ -74,106 +67,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 7550c6079846a24f30d15ac75a941c8515dbedfb ]
+From: Zhenyu Wang <zhenyuw@linux.intel.com>
 
-Patch series "THP eligibility reporting via proc".
+commit 51b00d8509dc69c98740da2ad07308b630d3eb7d upstream.
 
-This series of three patches aims at making THP eligibility reporting much
-more robust and long term sustainable.  The trigger for the change is a
-regression report [2] and the long follow up discussion.  In short the
-specific application didn't have good API to query whether a particular
-mapping can be backed by THP so it has used VMA flags to workaround that.
-These flags represent a deep internal state of VMAs and as such they
-should be used by userspace with a great deal of caution.
+This is to fix missed mmap range check on vGPU bar2 region
+and only allow to map vGPU allocated GMADDR range, which means
+user space should support sparse mmap to get proper offset for
+mmap vGPU aperture. And this takes care of actual pgoff in mmap
+request as original code always does from beginning of vGPU
+aperture.
 
-A similar has happened for [3] when users complained that VM_MIXEDMAP is
-no longer set on DAX mappings.  Again a lack of a proper API led to an
-abuse.
+Fixes: 659643f7d814 ("drm/i915/gvt/kvmgt: add vfio/mdev support to KVMGT")
+Cc: "Monroy, Rodrigo Axel" <rodrigo.axel.monroy@intel.com>
+Cc: "Orrala Contreras, Alfredo" <alfredo.orrala.contreras@intel.com>
+Cc: stable@vger.kernel.org # v4.10+
+Reviewed-by: Hang Yuan <hang.yuan@intel.com>
+Signed-off-by: Zhenyu Wang <zhenyuw@linux.intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-The first patch in the series tries to emphasise that that the semantic of
-flags might change and any application consuming those should be really
-careful.
-
-The remaining two patches provide a more suitable interface to address [2]
-and provide a consistent API to query the THP status both for each VMA and
-process wide as well.  [1]
-
-http://lkml.kernel.org/r/20181120103515.25280-1-mhocko@kernel.org [2]
-http://lkml.kernel.org/r/http://lkml.kernel.org/r/alpine.DEB.2.21.1809241054050.224429@chino.kir.corp.google.com
-[3] http://lkml.kernel.org/r/20181002100531.GC4135@quack2.suse.cz
-
-This patch (of 3):
-
-Even though vma flags exported via /proc/<pid>/smaps are explicitly
-documented to be not guaranteed for future compatibility the warning
-doesn't go far enough because it doesn't mention semantic changes to those
-flags.  And they are important as well because these flags are a deep
-implementation internal to the MM code and the semantic might change at
-any time.
-
-Let's consider two recent examples:
-http://lkml.kernel.org/r/20181002100531.GC4135@quack2.suse.cz
-: commit e1fb4a086495 "dax: remove VM_MIXEDMAP for fsdax and device dax" has
-: removed VM_MIXEDMAP flag from DAX VMAs. Now our testing shows that in the
-: mean time certain customer of ours started poking into /proc/<pid>/smaps
-: and looks at VMA flags there and if VM_MIXEDMAP is missing among the VMA
-: flags, the application just fails to start complaining that DAX support is
-: missing in the kernel.
-
-http://lkml.kernel.org/r/alpine.DEB.2.21.1809241054050.224429@chino.kir.corp.google.com
-: Commit 1860033237d4 ("mm: make PR_SET_THP_DISABLE immediately active")
-: introduced a regression in that userspace cannot always determine the set
-: of vmas where thp is ineligible.
-: Userspace relies on the "nh" flag being emitted as part of /proc/pid/smaps
-: to determine if a vma is eligible to be backed by hugepages.
-: Previous to this commit, prctl(PR_SET_THP_DISABLE, 1) would cause thp to
-: be disabled and emit "nh" as a flag for the corresponding vmas as part of
-: /proc/pid/smaps.  After the commit, thp is disabled by means of an mm
-: flag and "nh" is not emitted.
-: This causes smaps parsing libraries to assume a vma is eligible for thp
-: and ends up puzzling the user on why its memory is not backed by thp.
-
-In both cases userspace was relying on a semantic of a specific VMA flag.
-The primary reason why that happened is a lack of a proper interface.
-While this has been worked on and it will be fixed properly, it seems that
-our wording could see some refinement and be more vocal about semantic
-aspect of these flags as well.
-
-Link: http://lkml.kernel.org/r/20181211143641.3503-2-mhocko@kernel.org
-Signed-off-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Jan Kara <jack@suse.cz>
-Acked-by: Dan Williams <dan.j.williams@intel.com>
-Acked-by: David Rientjes <rientjes@google.com>
-Acked-by: Mike Rapoport <rppt@linux.ibm.com>
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Paul Oppenheimer <bepvte@gmail.com>
-Cc: William Kucharski <william.kucharski@oracle.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Documentation/filesystems/proc.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/i915/gvt/kvmgt.c |   21 +++++++++++++++++++--
+ 1 file changed, 19 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
-index adba21b5ada7..4cee34ce496e 100644
---- a/Documentation/filesystems/proc.txt
-+++ b/Documentation/filesystems/proc.txt
-@@ -494,7 +494,9 @@ manner. The codes are the following:
+--- a/drivers/gpu/drm/i915/gvt/kvmgt.c
++++ b/drivers/gpu/drm/i915/gvt/kvmgt.c
+@@ -807,11 +807,18 @@ write_err:
+ 	return -EFAULT;
+ }
  
- Note that there is no guarantee that every flag and associated mnemonic will
- be present in all further kernel releases. Things get changed, the flags may
--be vanished or the reverse -- new added.
-+be vanished or the reverse -- new added. Interpretation of their meaning
-+might change in future as well. So each consumer of these flags has to
-+follow each specific kernel version for the exact semantic.
++static inline bool intel_vgpu_in_aperture(struct intel_vgpu *vgpu,
++					  unsigned long off)
++{
++	return off >= vgpu_aperture_offset(vgpu) &&
++		off < vgpu_aperture_offset(vgpu) + vgpu_aperture_sz(vgpu);
++}
++
+ static int intel_vgpu_mmap(struct mdev_device *mdev, struct vm_area_struct *vma)
+ {
+ 	unsigned int index;
+ 	u64 virtaddr;
+-	unsigned long req_size, pgoff = 0;
++	unsigned long req_size, pgoff, req_start;
+ 	pgprot_t pg_prot;
+ 	struct intel_vgpu *vgpu = mdev_get_drvdata(mdev);
  
- This file is only present if the CONFIG_MMU kernel configuration option is
- enabled.
--- 
-2.19.1
-
+@@ -829,7 +836,17 @@ static int intel_vgpu_mmap(struct mdev_d
+ 	pg_prot = vma->vm_page_prot;
+ 	virtaddr = vma->vm_start;
+ 	req_size = vma->vm_end - vma->vm_start;
+-	pgoff = vgpu_aperture_pa_base(vgpu) >> PAGE_SHIFT;
++	pgoff = vma->vm_pgoff &
++		((1U << (VFIO_PCI_OFFSET_SHIFT - PAGE_SHIFT)) - 1);
++	req_start = pgoff << PAGE_SHIFT;
++
++	if (!intel_vgpu_in_aperture(vgpu, req_start))
++		return -EINVAL;
++	if (req_start + req_size >
++	    vgpu_aperture_offset(vgpu) + vgpu_aperture_sz(vgpu))
++		return -EINVAL;
++
++	pgoff = (gvt_aperture_pa_base(vgpu->gvt) >> PAGE_SHIFT) + pgoff;
+ 
+ 	return remap_pfn_range(vma, virtaddr, pgoff, req_size, pg_prot);
+ }
 
 
