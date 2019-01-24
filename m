@@ -2,355 +2,192 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=CHARSET_FARAWAY_HEADER,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3CB7C282C0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 01:52:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D717CC282C0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 01:53:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADDCA21872
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 01:52:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A56FD21872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 01:53:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726784AbfAXBwe (ORCPT
+        id S1727093AbfAXBwo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 20:52:34 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:50788 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726236AbfAXBwe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 20:52:34 -0500
-Received: from fsav404.sakura.ne.jp (fsav404.sakura.ne.jp [133.242.250.103])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0O1qUNe069051;
-        Thu, 24 Jan 2019 10:52:31 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav404.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav404.sakura.ne.jp);
- Thu, 24 Jan 2019 10:52:30 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav404.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0O1qUPr069047;
-        Thu, 24 Jan 2019 10:52:30 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: (from i-love@localhost)
-        by www262.sakura.ne.jp (8.15.2/8.15.2/Submit) id x0O1qUUU069046;
-        Thu, 24 Jan 2019 10:52:30 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Message-Id: <201901240152.x0O1qUUU069046@www262.sakura.ne.jp>
-X-Authentication-Warning: www262.sakura.ne.jp: i-love set sender to penguin-kernel@i-love.sakura.ne.jp using -f
-Subject: Re: possible deadlock in =?ISO-2022-JP?B?X19kb19wYWdlX2ZhdWx0?=
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Todd Kjos <tkjos@google.com>,
-        syzbot+a76129f18c89f3e2ddd4@syzkaller.appspotmail.com,
-        ak@linux.intel.com, Johannes Weiner <hannes@cmpxchg.org>,
-        jack@suse.cz, jrdr.linux@gmail.com,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        mawilcox@microsoft.com, mgorman@techsingularity.net,
-        syzkaller-bugs@googlegroups.com,
-        Arve =?UTF-8?B?SGrDuG5uZXbDpWc=?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-MIME-Version: 1.0
-Date:   Thu, 24 Jan 2019 10:52:30 +0900
-References: <201901230201.x0N214eq043832@www262.sakura.ne.jp> <20190123155751.GA168927@google.com>
-In-Reply-To: <20190123155751.GA168927@google.com>
-Content-Type: text/plain; charset="ISO-2022-JP"
-Content-Transfer-Encoding: 7bit
+        Wed, 23 Jan 2019 20:52:44 -0500
+Received: from www.osadl.org ([62.245.132.105]:54084 "EHLO www.osadl.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726236AbfAXBwn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 20:52:43 -0500
+Received: from debian01.hofrr.at (178.115.242.59.static.drei.at [178.115.242.59])
+        by www.osadl.org (8.13.8/8.13.8/OSADL-2007092901) with ESMTP id x0O1qCWl030876;
+        Thu, 24 Jan 2019 02:52:13 +0100
+From:   Nicholas Mc Guire <hofrat@osadl.org>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Jessica Yu <jeyu@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Petr Mladek <pmladek@suse.com>, live-patching@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>
+Subject: [PATCH V4] livepatch: non static warnings fix
+Date:   Thu, 24 Jan 2019 02:48:16 +0100
+Message-Id: <1548294496-22719-1-git-send-email-hofrat@osadl.org>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Joel Fernandes wrote:
-> > Anyway, I need your checks regarding whether this approach is waiting for
-> > completion at all locations which need to wait for completion.
-> 
-> I think you are waiting in unwanted locations. The only location you need to
-> wait in is ashmem_pin_unpin.
-> 
-> So, to my eyes all that is needed to fix this bug is:
-> 
-> 1. Delete the range from the ashmem_lru_list
-> 2. Release the ashmem_mutex
-> 3. fallocate the range.
-> 4. Do the completion so that any waiting pin/unpin can proceed.
-> 
-> Could you clarify why you feel you need to wait for completion at those other
-> locations?
+Sparse reported warnings about non-static symbols. For the variables
+a simple static attribute is fine - for the functions referenced by
+livepatch via klp_func the symbol-names must be unmodified in the
+symbol table and the patchable code has to be emitted. The resolution
+is to attach __used attribute to the shared statically declared functions.
 
-Because I don't know how ashmem works.
-
-> 
-> Note that once a range is unpinned, it is open sesame and userspace cannot
-> really expect consistent data from such range till it is pinned again.
-
-Then, I'm tempted to eliminate shrinker and LRU list (like a draft patch shown
-below). I think this is not equivalent to current code because this shrinks
-upon only range_alloc() time and I don't know whether it is OK to temporarily
-release ashmem_mutex during range_alloc() at "Case #4" of ashmem_pin(), but
-can't we go this direction? 
-
-By the way, why not to check range_alloc() failure before calling range_shrink() ?
-
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Suggested-by: Joe Lawrence <joe.lawrence@redhat.com>
+Acked-by: Miroslav Benes <mbenes@suse.cz>
+Link: https://lore.kernel.org/lkml/1544965657-26804-1-git-send-email-hofrat@osadl.org/
 ---
- drivers/staging/android/ashmem.c | 154 +++++--------------------------
- 1 file changed, 21 insertions(+), 133 deletions(-)
 
-diff --git a/drivers/staging/android/ashmem.c b/drivers/staging/android/ashmem.c
-index 90a8a9f1ac7d..90668eebf35b 100644
---- a/drivers/staging/android/ashmem.c
-+++ b/drivers/staging/android/ashmem.c
-@@ -53,7 +53,6 @@ struct ashmem_area {
+V2: not all static functions shared need to carry the __noclone
+    attribute only those that need to be resolved at runtime by
+    livepatch - so drop the unnecessary __noclone attributes as
+    well as the Note on __noclone as suggested by Joe Lawrence
+    <joe.lawrence@redhat.com> - thanks !
+
+V3: fix the wording as proposed by Joe Lawrence
+    <joe.lawrence@redhat.com> to address that this is not only
+    about how to fix sparse warnings but also to ensure
+    traceable/patchable code still being emitted.
+
+V4: fix up the Link to point to the proper page as suggested
+    by Joe Lawrence <joe.lawrence@redhat.com>.
+
+Sparse reported the following findings in 5.0-rc3:
+
+  CHECK   samples/livepatch/livepatch-shadow-mod.c
+samples/livepatch/livepatch-shadow-mod.c:99:1: warning: symbol 'dummy_list' was not declared. Should it be static?
+samples/livepatch/livepatch-shadow-mod.c:100:1: warning: symbol 'dummy_list_mutex' was not declared. Should it be static?
+samples/livepatch/livepatch-shadow-mod.c:107:23: warning: symbol 'dummy_alloc' was not declared. Should it be static?
+samples/livepatch/livepatch-shadow-mod.c:132:15: warning: symbol 'dummy_free' was not declared. Should it be static?
+samples/livepatch/livepatch-shadow-mod.c:140:15: warning: symbol 'dummy_check' was not declared. Should it be static?
+
+  CHECK   samples/livepatch/livepatch-shadow-fix1.c
+samples/livepatch/livepatch-shadow-fix1.c:74:14: warning: symbol 'livepatch_fix1_dummy_alloc' was not declared. Should it be static?
+samples/livepatch/livepatch-shadow-fix1.c:116:6: warning: symbol 'livepatch_fix1_dummy_free' was not declared. Should it be static?
+
+  CHECK   samples/livepatch/livepatch-shadow-fix2.c
+samples/livepatch/livepatch-shadow-fix2.c:53:6: warning: symbol 'livepatch_fix2_dummy_check' was not declared. Should it be static?
+samples/livepatch/livepatch-shadow-fix2.c:81:6: warning: symbol 'livepatch_fix2_dummy_free' was not declared. Should it be static?
+
+Patch was compile tested with: x86_64_defconfig + FTRACE=y
+FUNCTION_TRACER=y, SAMPLES=y, LIVEPATCH=y SAMPLE_LIVEPATCH=m
+(looks sparse, smatch claan, one coccichek warning left - fix later today)
+
+Patch was runtested with:
+   insmod samples/livepatch/livepatch-shadow-mod.ko
+   insmod samples/livepatch/livepatch-shadow-fix1.ko
+   insmod samples/livepatch/livepatch-shadow-fix2.ko
+   echo 0 > /sys/kernel/livepatch/livepatch_shadow_fix2/enabled
+   echo 0 > /sys/kernel/livepatch/livepatch_shadow_fix1/enabled
+   rmmod livepatch-shadow-fix2
+   rmmod livepatch-shadow-fix1
+   rmmod livepatch-shadow-mod
+and dmesg output compared to previous run.
+
+Patch is against 5.0-rc3 (localversion-next is next-20190123)
+
+ samples/livepatch/livepatch-shadow-fix1.c |  4 ++--
+ samples/livepatch/livepatch-shadow-fix2.c |  4 ++--
+ samples/livepatch/livepatch-shadow-mod.c  | 11 ++++++-----
+ 3 files changed, 10 insertions(+), 9 deletions(-)
+
+diff --git a/samples/livepatch/livepatch-shadow-fix1.c b/samples/livepatch/livepatch-shadow-fix1.c
+index a5a5cac..67a73e5 100644
+--- a/samples/livepatch/livepatch-shadow-fix1.c
++++ b/samples/livepatch/livepatch-shadow-fix1.c
+@@ -71,7 +71,7 @@ static int shadow_leak_ctor(void *obj, void *shadow_data, void *ctor_data)
+ 	return 0;
+ }
  
- /**
-  * struct ashmem_range - A range of unpinned/evictable pages
-- * @lru:	         The entry in the LRU list
-  * @unpinned:	         The entry in its area's unpinned list
-  * @asma:	         The associated anonymous shared memory area.
-  * @pgstart:	         The starting page (inclusive)
-@@ -64,7 +63,6 @@ struct ashmem_area {
-  * It is protected by 'ashmem_mutex'
-  */
- struct ashmem_range {
--	struct list_head lru;
- 	struct list_head unpinned;
- 	struct ashmem_area *asma;
- 	size_t pgstart;
-@@ -72,15 +70,8 @@ struct ashmem_range {
- 	unsigned int purged;
+-struct dummy *livepatch_fix1_dummy_alloc(void)
++static struct dummy *livepatch_fix1_dummy_alloc(void)
+ {
+ 	struct dummy *d;
+ 	void *leak;
+@@ -113,7 +113,7 @@ static void livepatch_fix1_dummy_leak_dtor(void *obj, void *shadow_data)
+ 			 __func__, d, *shadow_leak);
+ }
+ 
+-void livepatch_fix1_dummy_free(struct dummy *d)
++static void livepatch_fix1_dummy_free(struct dummy *d)
+ {
+ 	void **shadow_leak;
+ 
+diff --git a/samples/livepatch/livepatch-shadow-fix2.c b/samples/livepatch/livepatch-shadow-fix2.c
+index 52de947..91c21d5 100644
+--- a/samples/livepatch/livepatch-shadow-fix2.c
++++ b/samples/livepatch/livepatch-shadow-fix2.c
+@@ -50,7 +50,7 @@ struct dummy {
+ 	unsigned long jiffies_expire;
  };
  
--/* LRU list of unpinned pages, protected by ashmem_mutex */
--static LIST_HEAD(ashmem_lru_list);
--
--/*
-- * long lru_count - The count of pages on our LRU list.
-- *
-- * This is protected by ashmem_mutex.
-- */
--static unsigned long lru_count;
-+static atomic_t ashmem_purge_inflight = ATOMIC_INIT(0);
-+static DECLARE_WAIT_QUEUE_HEAD(ashmem_purge_wait);
- 
- /*
-  * ashmem_mutex - protects the list of and each individual ashmem_area
-@@ -97,7 +88,7 @@ static inline unsigned long range_size(struct ashmem_range *range)
- 	return range->pgend - range->pgstart + 1;
- }
- 
--static inline bool range_on_lru(struct ashmem_range *range)
-+static inline bool range_not_purged(struct ashmem_range *range)
+-bool livepatch_fix2_dummy_check(struct dummy *d, unsigned long jiffies)
++static bool livepatch_fix2_dummy_check(struct dummy *d, unsigned long jiffies)
  {
- 	return range->purged == ASHMEM_NOT_PURGED;
- }
-@@ -133,32 +124,6 @@ static inline bool range_before_page(struct ashmem_range *range, size_t page)
+ 	int *shadow_count;
  
- #define PROT_MASK		(PROT_EXEC | PROT_READ | PROT_WRITE)
- 
--/**
-- * lru_add() - Adds a range of memory to the LRU list
-- * @range:     The memory range being added.
-- *
-- * The range is first added to the end (tail) of the LRU list.
-- * After this, the size of the range is added to @lru_count
-- */
--static inline void lru_add(struct ashmem_range *range)
--{
--	list_add_tail(&range->lru, &ashmem_lru_list);
--	lru_count += range_size(range);
--}
--
--/**
-- * lru_del() - Removes a range of memory from the LRU list
-- * @range:     The memory range being removed
-- *
-- * The range is first deleted from the LRU list.
-- * After this, the size of the range is removed from @lru_count
-- */
--static inline void lru_del(struct ashmem_range *range)
--{
--	list_del(&range->lru);
--	lru_count -= range_size(range);
--}
--
- /**
-  * range_alloc() - Allocates and initializes a new ashmem_range structure
-  * @asma:	   The associated ashmem_area
-@@ -188,9 +153,23 @@ static int range_alloc(struct ashmem_area *asma,
- 
- 	list_add_tail(&range->unpinned, &prev_range->unpinned);
- 
--	if (range_on_lru(range))
--		lru_add(range);
-+	if (range_not_purged(range)) {
-+		loff_t start = range->pgstart * PAGE_SIZE;
-+		loff_t end = (range->pgend + 1) * PAGE_SIZE;
-+		struct file *f = range->asma->file;
- 
-+		get_file(f);
-+		atomic_inc(&ashmem_purge_inflight);
-+		range->purged = ASHMEM_WAS_PURGED;
-+		mutex_unlock(&ashmem_mutex);
-+		f->f_op->fallocate(f,
-+				   FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
-+				   start, end - start);
-+		fput(f);
-+		if (atomic_dec_and_test(&ashmem_purge_inflight))
-+			wake_up(&ashmem_purge_wait);
-+		mutex_lock(&ashmem_mutex);
-+	}
- 	return 0;
+@@ -78,7 +78,7 @@ static void livepatch_fix2_dummy_leak_dtor(void *obj, void *shadow_data)
+ 			 __func__, d, *shadow_leak);
  }
  
-@@ -201,8 +180,6 @@ static int range_alloc(struct ashmem_area *asma,
- static void range_del(struct ashmem_range *range)
+-void livepatch_fix2_dummy_free(struct dummy *d)
++static void livepatch_fix2_dummy_free(struct dummy *d)
  {
- 	list_del(&range->unpinned);
--	if (range_on_lru(range))
--		lru_del(range);
- 	kmem_cache_free(ashmem_range_cachep, range);
- }
- 
-@@ -214,20 +191,12 @@ static void range_del(struct ashmem_range *range)
-  *
-  * This does not modify the data inside the existing range in any way - It
-  * simply shrinks the boundaries of the range.
-- *
-- * Theoretically, with a little tweaking, this could eventually be changed
-- * to range_resize, and expand the lru_count if the new range is larger.
+ 	void **shadow_leak;
+ 	int *shadow_count;
+diff --git a/samples/livepatch/livepatch-shadow-mod.c b/samples/livepatch/livepatch-shadow-mod.c
+index 4aa8a88..4d79c6dc 100644
+--- a/samples/livepatch/livepatch-shadow-mod.c
++++ b/samples/livepatch/livepatch-shadow-mod.c
+@@ -96,15 +96,15 @@ MODULE_DESCRIPTION("Buggy module for shadow variable demo");
+  * Keep a list of all the dummies so we can clean up any residual ones
+  * on module exit
   */
- static inline void range_shrink(struct ashmem_range *range,
- 				size_t start, size_t end)
+-LIST_HEAD(dummy_list);
+-DEFINE_MUTEX(dummy_list_mutex);
++static LIST_HEAD(dummy_list);
++static DEFINE_MUTEX(dummy_list_mutex);
+ 
+ struct dummy {
+ 	struct list_head list;
+ 	unsigned long jiffies_expire;
+ };
+ 
+-noinline struct dummy *dummy_alloc(void)
++static __used noinline struct dummy *dummy_alloc(void)
  {
--	size_t pre = range_size(range);
--
- 	range->pgstart = start;
- 	range->pgend = end;
--
--	if (range_on_lru(range))
--		lru_count -= pre - range_size(range);
+ 	struct dummy *d;
+ 	void *leak;
+@@ -129,7 +129,7 @@ noinline struct dummy *dummy_alloc(void)
+ 	return d;
  }
  
- /**
-@@ -421,72 +390,6 @@ static int ashmem_mmap(struct file *file, struct vm_area_struct *vma)
- 	return ret;
+-noinline void dummy_free(struct dummy *d)
++static __used noinline void dummy_free(struct dummy *d)
+ {
+ 	pr_info("%s: dummy @ %p, expired = %lx\n",
+ 		__func__, d, d->jiffies_expire);
+@@ -137,7 +137,8 @@ noinline void dummy_free(struct dummy *d)
+ 	kfree(d);
  }
  
--/*
-- * ashmem_shrink - our cache shrinker, called from mm/vmscan.c
-- *
-- * 'nr_to_scan' is the number of objects to scan for freeing.
-- *
-- * 'gfp_mask' is the mask of the allocation that got us into this mess.
-- *
-- * Return value is the number of objects freed or -1 if we cannot
-- * proceed without risk of deadlock (due to gfp_mask).
-- *
-- * We approximate LRU via least-recently-unpinned, jettisoning unpinned partial
-- * chunks of ashmem regions LRU-wise one-at-a-time until we hit 'nr_to_scan'
-- * pages freed.
-- */
--static unsigned long
--ashmem_shrink_scan(struct shrinker *shrink, struct shrink_control *sc)
--{
--	struct ashmem_range *range, *next;
--	unsigned long freed = 0;
--
--	/* We might recurse into filesystem code, so bail out if necessary */
--	if (!(sc->gfp_mask & __GFP_FS))
--		return SHRINK_STOP;
--
--	if (!mutex_trylock(&ashmem_mutex))
--		return -1;
--
--	list_for_each_entry_safe(range, next, &ashmem_lru_list, lru) {
--		loff_t start = range->pgstart * PAGE_SIZE;
--		loff_t end = (range->pgend + 1) * PAGE_SIZE;
--
--		range->asma->file->f_op->fallocate(range->asma->file,
--				FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
--				start, end - start);
--		range->purged = ASHMEM_WAS_PURGED;
--		lru_del(range);
--
--		freed += range_size(range);
--		if (--sc->nr_to_scan <= 0)
--			break;
--	}
--	mutex_unlock(&ashmem_mutex);
--	return freed;
--}
--
--static unsigned long
--ashmem_shrink_count(struct shrinker *shrink, struct shrink_control *sc)
--{
--	/*
--	 * note that lru_count is count of pages on the lru, not a count of
--	 * objects on the list. This means the scan function needs to return the
--	 * number of pages freed, not the number of objects scanned.
--	 */
--	return lru_count;
--}
--
--static struct shrinker ashmem_shrinker = {
--	.count_objects = ashmem_shrink_count,
--	.scan_objects = ashmem_shrink_scan,
--	/*
--	 * XXX (dchinner): I wish people would comment on why they need on
--	 * significant changes to the default value here
--	 */
--	.seeks = DEFAULT_SEEKS * 4,
--};
--
- static int set_prot_mask(struct ashmem_area *asma, unsigned long prot)
+-noinline bool dummy_check(struct dummy *d, unsigned long jiffies)
++static __used noinline bool dummy_check(struct dummy *d,
++					   unsigned long jiffies)
  {
- 	int ret = 0;
-@@ -713,6 +616,7 @@ static int ashmem_pin_unpin(struct ashmem_area *asma, unsigned long cmd,
- 		return -EFAULT;
- 
- 	mutex_lock(&ashmem_mutex);
-+	wait_event(ashmem_purge_wait, !atomic_read(&ashmem_purge_inflight));
- 
- 	if (!asma->file)
- 		goto out_unlock;
-@@ -787,15 +691,7 @@ static long ashmem_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 		ret = ashmem_pin_unpin(asma, cmd, (void __user *)arg);
- 		break;
- 	case ASHMEM_PURGE_ALL_CACHES:
--		ret = -EPERM;
--		if (capable(CAP_SYS_ADMIN)) {
--			struct shrink_control sc = {
--				.gfp_mask = GFP_KERNEL,
--				.nr_to_scan = LONG_MAX,
--			};
--			ret = ashmem_shrink_count(&ashmem_shrinker, &sc);
--			ashmem_shrink_scan(&ashmem_shrinker, &sc);
--		}
-+		ret = capable(CAP_SYS_ADMIN) ? 0 : -EPERM;
- 		break;
- 	}
- 
-@@ -883,18 +779,10 @@ static int __init ashmem_init(void)
- 		goto out_free2;
- 	}
- 
--	ret = register_shrinker(&ashmem_shrinker);
--	if (ret) {
--		pr_err("failed to register shrinker!\n");
--		goto out_demisc;
--	}
--
- 	pr_info("initialized\n");
- 
- 	return 0;
- 
--out_demisc:
--	misc_deregister(&ashmem_misc);
- out_free2:
- 	kmem_cache_destroy(ashmem_range_cachep);
- out_free1:
+ 	return time_after(jiffies, d->jiffies_expire);
+ }
 -- 
-2.17.1
+2.1.4
+
