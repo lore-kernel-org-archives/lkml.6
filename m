@@ -2,255 +2,184 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-13.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20543C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 14:24:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4C82C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 14:26:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E73DB21872
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 14:24:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B256218A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 14:26:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548339960;
+	bh=2VCZa4Xle8Iq2cWyslG4bfe76ShtD2xEibPqMUSWamI=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:List-ID:From;
+	b=EqpBhMcH0e+lzQGYX4EvUV4gqwHsJY85EIRpfxcm4wHDIpJ5caUprRNVuPrd5H1VA
+	 KSclbCjKSmPSSszNL5v9dTUn2nF1SaS0AA8tZYanjYlO0K+ZoOrS25E7SoXIOqIiNk
+	 NGsgx9eZVVFitPlk1fOvfFqgBah93QQwrB3tOp88=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728264AbfAXOYB (ORCPT
+        id S1728307AbfAXOZ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 09:24:01 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:39572 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727596AbfAXOYA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 09:24:00 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 0A11C2078C; Thu, 24 Jan 2019 15:23:58 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-87-206.w90-88.abo.wanadoo.fr [90.88.29.206])
-        by mail.bootlin.com (Postfix) with ESMTPSA id C0B4720714;
-        Thu, 24 Jan 2019 15:23:57 +0100 (CET)
-Date:   Thu, 24 Jan 2019 15:23:53 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     ayaka <ayaka@soulik.info>, tfiga@chromium.org,
-        acourbot@chromium.org
-Cc:     hans.verkuil@cisco.com, sakari.ailus@linux.intel.com,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        jenskuske@gmail.com, linux-sunxi@googlegroups.com,
-        linux-kernel@vger.kernel.org,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, posciak@chromium.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        nicolas.dufresne@collabora.com,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] media: uapi: Add H264 low-level decoder API
- compound controls.
-Message-ID: <20190124142353.hnhd5kez6wrwcyrn@flea>
-References: <20181115145650.9827-1-maxime.ripard@bootlin.com>
- <20181115145650.9827-2-maxime.ripard@bootlin.com>
- <20190108095228.GA5161@misaki.sumomo.pri>
- <20190117110130.lvmwqmn6wd5eeoxi@flea>
- <e589088d-560c-a4e2-c339-27b45a0caa6a@soulik.info>
+        Thu, 24 Jan 2019 09:25:58 -0500
+Received: from mx2.suse.de ([195.135.220.15]:41670 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727755AbfAXOZ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 09:25:58 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 8792BAE62;
+        Thu, 24 Jan 2019 14:25:55 +0000 (UTC)
+Date:   Thu, 24 Jan 2019 15:25:53 +0100 (CET)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Dominique Martinet <asmadeus@codewreck.org>
+cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Josh Snyder <joshs@netflix.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
+In-Reply-To: <20190124124501.GA18012@nautica>
+Message-ID: <nycvar.YFH.7.76.1901241523500.6626@cbobk.fhfr.pm>
+References: <nycvar.YFH.7.76.1901240009560.6626@cbobk.fhfr.pm> <CAHk-=wg+C65FJHB=Jx1OvuJP4kvpWdw+5G=XOXB6X_KB2XuofA@mail.gmail.com> <20190124002455.GA23181@nautica> <20190124124501.GA18012@nautica>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="6smhyf34girx7mvi"
-Content-Disposition: inline
-In-Reply-To: <e589088d-560c-a4e2-c339-27b45a0caa6a@soulik.info>
-User-Agent: NeoMutt/20180716
+Content-Type: multipart/mixed; boundary="1678380546-789356226-1548339955=:6626"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
---6smhyf34girx7mvi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+--1678380546-789356226-1548339955=:6626
+Content-Type: text/plain; charset=US-ASCII
 
-Hi!
+On Thu, 24 Jan 2019, Dominique Martinet wrote:
 
-On Sun, Jan 20, 2019 at 08:48:32PM +0800, ayaka wrote:
-> > > > +struct v4l2_ctrl_h264_scaling_matrix {
-> > > > +	__u8 scaling_list_4x4[6][16];
-> > > > +	__u8 scaling_list_8x8[6][64];
-> > > > +};
-> > > I wonder which decoder want this.
-> > I'm not sure I follow you, scaling lists are an important part of the
-> > decoding process, so all of them?
->
-> Not actually, when the scaling list is in the sequence(a flag for it), we
-> need to tell the decoder a scaling table.
+> Jiri, you've offered resubmitting the last two patches properly, can you 
+> incorporate this change or should I just send this directly? (I'd take 
+> most of your commit message and add your name somewhere)
 
-Right, that's why the scaling list has a control of its own.
+I've been running some basic smoke testing with the kernel from
 
-> But the initial state of that table is known, so for some decoder,
-> it would have a internal table.
+	https://git.kernel.org/pub/scm/linux/kernel/git/jikos/jikos.git/log/?h=pagecache-sidechannel-v2
 
-That control is optional, so you can just ignore that setting in that
-case
+(attaching the respective two patches to apply on top of latest Linus' 
+tree to this mail as well), and everything looks good so far.
 
-> And for some decoder, it wants in the Z order while the others
-> won't.
+Thanks,
 
-We're designing a generic API here, so it doesn't matter. Some will
-have to convert it internally in the drivers for the Z order, while
-others will be able to use it as is.
+-- 
+Jiri Kosina
+SUSE Labs
 
-> > > > +struct v4l2_ctrl_h264_slice_param {
-> > > > +	/* Size in bytes, including header */
-> > > > +	__u32 size;
-> > > > +	/* Offset in bits to slice_data() from the beginning of this slic=
-e. */
-> > > > +	__u32 header_bit_size;
-> > > > +
-> > > > +	__u16 first_mb_in_slice;
-> > > > +	__u8 slice_type;
-> > > > +	__u8 pic_parameter_set_id;
-> > > > +	__u8 colour_plane_id;
-> > > > +	__u16 frame_num;
-> > > > +	__u16 idr_pic_id;
-> > > > +	__u16 pic_order_cnt_lsb;
-> > > > +	__s32 delta_pic_order_cnt_bottom;
-> > > > +	__s32 delta_pic_order_cnt0;
-> > > > +	__s32 delta_pic_order_cnt1;
-> > > > +	__u8 redundant_pic_cnt;
-> > > > +
-> > > > +	struct v4l2_h264_pred_weight_table pred_weight_table;
-> > > > +	/* Size in bits of dec_ref_pic_marking() syntax element. */
-> > > > +	__u32 dec_ref_pic_marking_bit_size;
-> > > > +	/* Size in bits of pic order count syntax. */
-> > > > +	__u32 pic_order_cnt_bit_size;
-> > > > +
-> > > > +	__u8 cabac_init_idc;
-> > > > +	__s8 slice_qp_delta;
-> > > > +	__s8 slice_qs_delta;
-> > > > +	__u8 disable_deblocking_filter_idc;
-> > > > +	__s8 slice_alpha_c0_offset_div2;
-> > > > +	__s8 slice_beta_offset_div2;
-> > > > +	__u32 slice_group_change_cycle;
-> > > > +
-> > > > +	__u8 num_ref_idx_l0_active_minus1;
-> > > > +	__u8 num_ref_idx_l1_active_minus1;
-> > > > +	/*  Entries on each list are indices
-> > > > +	 *  into v4l2_ctrl_h264_decode_param.dpb[]. */
-> > > > +	__u8 ref_pic_list0[32];
-> > > > +	__u8 ref_pic_list1[32];
-> > > > +
-> > > > +	__u8 flags;
-> > > > +};
-> > > > +
-> > > We need some addtional properties or the Rockchip won't work.
-> > > 1. u16 idr_pic_id for identifies IDR (instantaneous decoding refresh)
-> > > picture
-> > idr_pic_id is already there
-> Sorry for miss that.
-> >=20
-> > > 2. u16 ref_pic_mk_len for length of decoded reference picture marking=
- bits
-> > > 3. u8 poc_length for length of picture order count field in stream
-> > >=20
-> > > The last two are used for the hardware to skip a part stream.
-> > I'm not sure what you mean here, those parameters are not in the
-> > bitstream, what do you want to use them for?
->=20
-> Or Rockchip's decoder won't work. Their decoder can't find the data part
-> without skip some segments in slice data.
->=20
-> I should say something more about the stateless decoder, it is hard to
-> define what a stateless decoder will do, some would like to parse more
-> information but some won't. You even have no idea on what it would
-> accelerate. OK, I should say for those ISO H serial codec, it would be mo=
-re
-> simple but for those VPx serial, the decoders design is a mess.
+--1678380546-789356226-1548339955=:6626
+Content-Type: text/x-patch; name=0001-mm-mincore-make-mincore-more-conservative.patch
+Content-Transfer-Encoding: BASE64
+Content-ID: <nycvar.YFH.7.76.1901241525530.6626@cbobk.fhfr.pm>
+Content-Description: 
+Content-Disposition: attachment; filename=0001-mm-mincore-make-mincore-more-conservative.patch
 
-Can't you use header_bit_size in that case to skip over the the parts
-of the slice you don't care about and go to the data?
+RnJvbSA5ODEwNTY1ZjFkNWY5NjZhODQ5MDBjZGNiODVlMzNhYTc1NzFhZmJl
+IE1vbiBTZXAgMTcgMDA6MDA6MDAgMjAwMQ0KRnJvbTogSmlyaSBLb3NpbmEg
+PGprb3NpbmFAc3VzZS5jej4NCkRhdGU6IFdlZCwgMTYgSmFuIDIwMTkgMjA6
+NTM6MTcgKzAxMDANClN1YmplY3Q6IFtQQVRDSCAxLzJdIG1tL21pbmNvcmU6
+IG1ha2UgbWluY29yZSgpIG1vcmUgY29uc2VydmF0aXZlDQoNClRoZSBzZW1h
+bnRpY3Mgb2Ygd2hhdCBtaW5jb3JlKCkgY29uc2lkZXJzIHRvIGJlIHJlc2lk
+ZW50IGlzIG5vdCBjb21wbGV0ZWx5DQpjbGVhciwgYnV0IExpbnV4IGhhcyBh
+bHdheXMgKHNpbmNlIDIuMy41Miwgd2hpY2ggaXMgd2hlbiBtaW5jb3JlKCkg
+d2FzDQppbml0aWFsbHkgZG9uZSkgdHJlYXRlZCBpdCBhcyAicGFnZSBpcyBh
+dmFpbGFibGUgaW4gcGFnZSBjYWNoZSIuDQoNClRoYXQncyBwb3RlbnRpYWxs
+eSBhIHByb2JsZW0sIGFzIHRoYXQgW2luXWRpcmVjdGx5IGV4cG9zZXMgbWV0
+YS1pbmZvcm1hdGlvbg0KYWJvdXQgcGFnZWNhY2hlIC8gbWVtb3J5IG1hcHBp
+bmcgc3RhdGUgZXZlbiBhYm91dCBtZW1vcnkgbm90IHN0cmljdGx5IGJlbG9u
+Z2luZw0KdG8gdGhlIHByb2Nlc3MgZXhlY3V0aW5nIHRoZSBzeXNjYWxsLCBv
+cGVuaW5nIHBvc3NpYmlsaXRpZXMgZm9yIHNpZGVjaGFubmVsDQphdHRhY2tz
+Lg0KDQpDaGFuZ2UgdGhlIHNlbWFudGljcyBvZiBtaW5jb3JlKCkgc28gdGhh
+dCBpdCBvbmx5IHJldmVhbHMgcGFnZWNhY2hlIGluZm9ybWF0aW9uDQpmb3Ig
+bm9uLWFub255bW91cyBtYXBwaW5ncyB0aGF0IGJlbG9nIHRvIGZpbGVzIHRo
+YXQgdGhlIGNhbGxpbmcgcHJvY2VzcyBjb3VsZA0KKGlmIGl0IHRyaWVkIHRv
+KSBzdWNjZXNzZnVsbHkgb3BlbiBmb3Igd3JpdGluZy4NCg0KT3JpZ2luYWxs
+eS1ieTogTGludXMgVG9ydmFsZHMgPHRvcnZhbGRzQGxpbnV4LWZvdW5kYXRp
+b24ub3JnPg0KT3JpZ2luYWxseS1ieTogRG9taW5pcXVlIE1hcnRpbmV0IDxh
+c21hZGV1c0Bjb2Rld3JlY2sub3JnPg0KU2lnbmVkLW9mZi1ieTogSmlyaSBL
+b3NpbmEgPGprb3NpbmFAc3VzZS5jej4NCi0tLQ0KIG1tL21pbmNvcmUuYyB8
+IDE1ICsrKysrKysrKysrKysrLQ0KIDEgZmlsZSBjaGFuZ2VkLCAxNCBpbnNl
+cnRpb25zKCspLCAxIGRlbGV0aW9uKC0pDQoNCmRpZmYgLS1naXQgYS9tbS9t
+aW5jb3JlLmMgYi9tbS9taW5jb3JlLmMNCmluZGV4IDIxODA5OWI1ZWQzMS4u
+NzQ3YTQ5MDdhM2FjIDEwMDY0NA0KLS0tIGEvbW0vbWluY29yZS5jDQorKysg
+Yi9tbS9taW5jb3JlLmMNCkBAIC0xNjksNiArMTY5LDE0IEBAIHN0YXRpYyBp
+bnQgbWluY29yZV9wdGVfcmFuZ2UocG1kX3QgKnBtZCwgdW5zaWduZWQgbG9u
+ZyBhZGRyLCB1bnNpZ25lZCBsb25nIGVuZCwNCiAJcmV0dXJuIDA7DQogfQ0K
+IA0KK3N0YXRpYyBpbmxpbmUgYm9vbCBjYW5fZG9fbWluY29yZShzdHJ1Y3Qg
+dm1fYXJlYV9zdHJ1Y3QgKnZtYSkNCit7DQorCXJldHVybiB2bWFfaXNfYW5v
+bnltb3VzKHZtYSkgfHwNCisJCSh2bWEtPnZtX2ZpbGUgJiYNCisJCQkoaW5v
+ZGVfb3duZXJfb3JfY2FwYWJsZShmaWxlX2lub2RlKHZtYS0+dm1fZmlsZSkp
+DQorCQkJIHx8IGlub2RlX3Blcm1pc3Npb24oZmlsZV9pbm9kZSh2bWEtPnZt
+X2ZpbGUpLCBNQVlfV1JJVEUpID09IDApKTsNCit9DQorDQogLyoNCiAgKiBE
+byBhIGNodW5rIG9mICJzeXNfbWluY29yZSgpIi4gV2UndmUgYWxyZWFkeSBj
+aGVja2VkDQogICogYWxsIHRoZSBhcmd1bWVudHMsIHdlIGhvbGQgdGhlIG1t
+YXAgc2VtYXBob3JlOiB3ZSBzaG91bGQNCkBAIC0xODksOCArMTk3LDEzIEBA
+IHN0YXRpYyBsb25nIGRvX21pbmNvcmUodW5zaWduZWQgbG9uZyBhZGRyLCB1
+bnNpZ25lZCBsb25nIHBhZ2VzLCB1bnNpZ25lZCBjaGFyICp2DQogCXZtYSA9
+IGZpbmRfdm1hKGN1cnJlbnQtPm1tLCBhZGRyKTsNCiAJaWYgKCF2bWEgfHwg
+YWRkciA8IHZtYS0+dm1fc3RhcnQpDQogCQlyZXR1cm4gLUVOT01FTTsNCi0J
+bWluY29yZV93YWxrLm1tID0gdm1hLT52bV9tbTsNCiAJZW5kID0gbWluKHZt
+YS0+dm1fZW5kLCBhZGRyICsgKHBhZ2VzIDw8IFBBR0VfU0hJRlQpKTsNCisJ
+aWYgKCFjYW5fZG9fbWluY29yZSh2bWEpKSB7DQorCQl1bnNpZ25lZCBsb25n
+IHBhZ2VzID0gKGVuZCAtIGFkZHIpID4+IFBBR0VfU0hJRlQ7DQorCQltZW1z
+ZXQodmVjLCAxLCBwYWdlcyk7DQorCQlyZXR1cm4gcGFnZXM7DQorCX0NCisJ
+bWluY29yZV93YWxrLm1tID0gdm1hLT52bV9tbTsNCiAJZXJyID0gd2Fsa19w
+YWdlX3JhbmdlKGFkZHIsIGVuZCwgJm1pbmNvcmVfd2Fsayk7DQogCWlmIChl
+cnIgPCAwKQ0KIAkJcmV0dXJuIGVycjsNCi0tIA0KMi4xMi4zDQoNCg==
 
-> > > > +#define V4L2_H264_DPB_ENTRY_FLAG_VALID		0x01
-> > > > +#define V4L2_H264_DPB_ENTRY_FLAG_ACTIVE		0x02
-> > > > +#define V4L2_H264_DPB_ENTRY_FLAG_LONG_TERM	0x04
-> > > > +
-> > > > +struct v4l2_h264_dpb_entry {
-> > > > +	__u32 tag;
-> > > > +	__u16 frame_num;
-> > > > +	__u16 pic_num;
-> > > Although the long term reference would use picture order count
-> > > and short term for frame num, but only one of them is used
-> > > for a entry of a dpb.
-> > >=20
-> > > Besides, for a frame picture frame_num =3D pic_num * 2,
-> > > and frame_num =3D pic_num * 2 + 1 for a filed.
-> >
-> > I'm not sure what is your point?
->=20
-> I found I was wrong at the last email.
->=20
-> But stateless hardware decoder usually don't care about whether it is long
-> term or short term, as the real dpb updating or management work are not d=
-one
-> by the the driver or device and decoding job would only use the two list(=
-or
-> one list for slice P) for reference pictures. So those flag for long term=
- or
-> status can be removed as well.
+--1678380546-789356226-1548339955=:6626
+Content-Type: text/x-patch; name=0002-mm-filemap-initiate-readahead-even-if-IOCB_NOWAIT-is.patch
+Content-Transfer-Encoding: BASE64
+Content-ID: <nycvar.YFH.7.76.1901241525531.6626@cbobk.fhfr.pm>
+Content-Description: 
+Content-Disposition: attachment; filename=0002-mm-filemap-initiate-readahead-even-if-IOCB_NOWAIT-is.patch
 
-I'll remove the LONG_TERM flag then. We do need the other two for the
-Allwinner driver though.
+RnJvbSBmMjg3MTg1ZmM1ZTBmZmJiYjM4MGYyZDY4ZGQxOTI5MDcxNTgyOWE4
+IE1vbiBTZXAgMTcgMDA6MDA6MDAgMjAwMQ0KRnJvbTogSmlyaSBLb3NpbmEg
+PGprb3NpbmFAc3VzZS5jej4NCkRhdGU6IFdlZCwgMTYgSmFuIDIwMTkgMjE6
+MDY6NTggKzAxMDANClN1YmplY3Q6IFtQQVRDSCAyLzJdIG1tL2ZpbGVtYXA6
+IGluaXRpYXRlIHJlYWRhaGVhZCBldmVuIGlmIElPQ0JfTk9XQUlUIGlzIHNl
+dA0KIGZvciB0aGUgSS9PDQoNCnByZWFkdjIoUldGX05PV0FJVCkgY2FuIGJl
+IHVzZWQgdG8gb3BlbiBhIHNpZGUtY2hhbm5lbCB0byBwYWdlY2FjaGUgY29u
+dGVudHMsIGFzDQppdCByZXZlYWxzIG1ldGFkYXRhIGFib3V0IHJlc2lkZW5j
+eSBvZiBwYWdlcyBpbiBwYWdlY2FjaGUuDQoNCklmIHByZWFkdjIoUldGX05P
+V0FJVCkgcmV0dXJucyBpbW1lZGlhdGVseSwgaXQgcHJvdmlkZXMgYSBjbGVh
+ciAicGFnZSBub3QNCnJlc2lkZW50IiBpbmZvcm1hdGlvbiwgYW5kIHZpY2Ug
+dmVyc2EuDQoNCkNsb3NlIHRoYXQgc2lkZWNoYW5uZWwgYnkgYWx3YXlzIGlu
+aXRpYXRpbmcgcmVhZGFoZWFkIG9uIHRoZSBjYWNoZSBpZiB3ZQ0KZW5jb3Vu
+dGVyIGEgY2FjaGUgbWlzcyBmb3IgcHJlYWR2MihSV0ZfTk9XQUlUKTsgd2l0
+aCB0aGF0IGluIHBsYWNlLCBwcm9iaW5nDQp0aGUgcGFnZWNhY2hlIHJlc2lk
+ZW5jeSBpdHNlbGYgd2lsbCBhY3R1YWxseSBwb3B1bGF0ZSB0aGUgY2FjaGUs
+IG1ha2luZyB0aGUNCnNpZGVjaGFubmVsIHVzZWxlc3MuDQoNCk9yaWdpbmFs
+bHktYnk6IExpbnVzIFRvcnZhbGRzIDx0b3J2YWxkc0BsaW51eC1mb3VuZGF0
+aW9uLm9yZz4NClNpZ25lZC1vZmYtYnk6IEppcmkgS29zaW5hIDxqa29zaW5h
+QHN1c2UuY3o+DQotLS0NCiBtbS9maWxlbWFwLmMgfCAyIC0tDQogMSBmaWxl
+IGNoYW5nZWQsIDIgZGVsZXRpb25zKC0pDQoNCmRpZmYgLS1naXQgYS9tbS9m
+aWxlbWFwLmMgYi9tbS9maWxlbWFwLmMNCmluZGV4IDlmNWUzMjNlODgzZS4u
+N2JjZGQzNmU2MjlkIDEwMDY0NA0KLS0tIGEvbW0vZmlsZW1hcC5jDQorKysg
+Yi9tbS9maWxlbWFwLmMNCkBAIC0yMDc1LDggKzIwNzUsNiBAQCBzdGF0aWMg
+c3NpemVfdCBnZW5lcmljX2ZpbGVfYnVmZmVyZWRfcmVhZChzdHJ1Y3Qga2lv
+Y2IgKmlvY2IsDQogDQogCQlwYWdlID0gZmluZF9nZXRfcGFnZShtYXBwaW5n
+LCBpbmRleCk7DQogCQlpZiAoIXBhZ2UpIHsNCi0JCQlpZiAoaW9jYi0+a2lf
+ZmxhZ3MgJiBJT0NCX05PV0FJVCkNCi0JCQkJZ290byB3b3VsZF9ibG9jazsN
+CiAJCQlwYWdlX2NhY2hlX3N5bmNfcmVhZGFoZWFkKG1hcHBpbmcsDQogCQkJ
+CQlyYSwgZmlscCwNCiAJCQkJCWluZGV4LCBsYXN0X2luZGV4IC0gaW5kZXgp
+Ow0KLS0gDQoyLjEyLjMNCg0K
 
-> And I agree above with my last mail, so I would suggest to keep a property
-> as index for both frame_num and pic_num, as only one of them would be used
-> for a picture decoding once time.
-
-I'd really prefer to keep everything that is in the bitstream defined
-here. We don't want to cover the usual cases, but all of them even the
-one that haven't been designed yet, so we should be really
-conservative.
-
-> > > > +	/* Note that field is indicated by v4l2_buffer.field */
-> > > > +	__s32 top_field_order_cnt;
-> > > > +	__s32 bottom_field_order_cnt;
-> > > > +	__u8 flags; /* V4L2_H264_DPB_ENTRY_FLAG_* */
-> > > > +};
-> > > > +
-> > > > +struct v4l2_ctrl_h264_decode_param {
-> > > > +	__u32 num_slices;
-> > > > +	__u8 idr_pic_flag;
-> > > > +	__u8 nal_ref_idc;
-> > > > +	__s32 top_field_order_cnt;
-> > > > +	__s32 bottom_field_order_cnt;
-> > > > +	__u8 ref_pic_list_p0[32];
-> > > > +	__u8 ref_pic_list_b0[32];
-> > > > +	__u8 ref_pic_list_b1[32];
-> > >
-> > > I would prefer to keep only two list, list0 and list 1.
-> >
-> > I'm not even sure why this is needed in the first place
-> > anymore. It's not part of the bitstream, and it seems to come from
-> > ChromeOS' Rockchip driver that uses it though. Do you know why?
->=20
-> You see the P frame would use only a list and B for two list. So for
-> the parameter of a picture, two lists are max. I would suggest only
-> keep two arrays here and rename them as list0 and list1, it would
-> reduce the conflict.
-
-Right, but those lists are already in v4l2_ctrl_h264_slice_param (with
-the construct you are suggesting). I'm not sure about why the
-redundancy is needed. Alex, Tomasz, do you have any idea why this was
-needed at some point?
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---6smhyf34girx7mvi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXEnKeQAKCRDj7w1vZxhR
-xRssAPoCnE1qU5Vvx8vHyBElCGs1F4c8oQTMpeESR9InsGbfbgD9Fxtzm/s83lo4
-aHzclCqYso6oNSWYlRGyJ4Og9dSlews=
-=Ml00
------END PGP SIGNATURE-----
-
---6smhyf34girx7mvi--
+--1678380546-789356226-1548339955=:6626--
