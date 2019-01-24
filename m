@@ -2,51 +2,54 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93763C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:27:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E456C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:27:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 622E5218A6
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:27:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D37D2218FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:27:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358071;
-	bh=zvBUoM0kgyS9v0Sdg4DO21N+swHjXgew4fOOiTsQNXI=;
+	s=default; t=1548358077;
+	bh=rP5SsR3gsHH6Id3hmyYAO/yQnT7DLHKfQMCL+kc5odI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=laogQhKjLrHvYYYhLb5l/F1KIEEx0tS+IquE4X4LjDIHDQ2RIj6wTQpeOU5b99aBQ
-	 okwXasV9hF3cXR9tEHTROSVVLaEavj2XDBkcaZQiOScTNFexY0q5H76SYKAotTpQgj
-	 jjV0Li5wnQKpzzr8vTH1oefZYs77eLbgO5eoD0A8=
+	b=If9hXD9jYEKgiq0MaF9ks96yy30k3/lzlpk2keqB3AAB/nTUaVsV2ANg8+n+rRiPS
+	 TNkoaK4IVHAast70tV03miOwr8uv4+QQQsL07YDJZe6+vzyt+aTr8+iaQma8LMqyQB
+	 KEZ0KQbjvP+gtA6O51aTm0uXOucqrUqyAM8zsvzI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730827AbfAXT1t (ORCPT
+        id S1730853AbfAXT1y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:27:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54040 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:27:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54152 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730809AbfAXT1p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:27:45 -0500
+        id S1730828AbfAXT1u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:27:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 67812218A6;
-        Thu, 24 Jan 2019 19:27:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 132B3218FC;
+        Thu, 24 Jan 2019 19:27:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358063;
-        bh=zvBUoM0kgyS9v0Sdg4DO21N+swHjXgew4fOOiTsQNXI=;
+        s=default; t=1548358069;
+        bh=rP5SsR3gsHH6Id3hmyYAO/yQnT7DLHKfQMCL+kc5odI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=paEF2HS0eEu5AFGoP0cneDSqwg2MaYT8d16gfnikb13mDkWkjBAVKlsEcdy6ZCFa/
-         t1xcra8hIP+5ZYLdlXpW1EzKnGNf2dqavxFgbwSUJSYQdMw/Iv2JSxfwtkm0+/dpOt
-         5R3fX/XcYBPzWavr74T060VlynePVvzZYT/VBegw=
+        b=b07P8O5GsRdBnlJhIGxhSWM5+6B0pmYqJXq/HvasGKnRIEBScjdWWnS9/P2ZzHzJu
+         dkZCPmL6AQsSu52Edfo3etoUq4TqsVo7d2k/GxIM6z0EM2SrPdoaW3eOGm7c40h6QL
+         K2r8y6+H6IgTk0M5GWOxlzgohXM4tuhIzmgz9x1E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.4 047/104] crypto: authenc - fix parsing key with misaligned rta_len
-Date:   Thu, 24 Jan 2019 20:19:36 +0100
-Message-Id: <20190124190200.831578267@linuxfoundation.org>
+        stable@vger.kernel.org, "Maciej W. Rozycki" <macro@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 080/104] MIPS: SiByte: Enable swiotlb for SWARM, LittleSur and BigSur
+Date:   Thu, 24 Jan 2019 20:20:09 +0100
+Message-Id: <20190124190204.078440607@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190154.968308875@linuxfoundation.org>
 References: <20190124190154.968308875@linuxfoundation.org>
@@ -65,116 +68,155 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+[ Upstream commit e4849aff1e169b86c561738daf8ff020e9de1011 ]
 
-commit 8f9c469348487844328e162db57112f7d347c49f upstream.
+The Broadcom SiByte BCM1250, BCM1125, and BCM1125H SOCs have an onchip
+DRAM controller that supports memory amounts of up to 16GiB, and due to
+how the address decoder has been wired in the SOC any memory beyond 1GiB
+is actually mapped starting from 4GiB physical up, that is beyond the
+32-bit addressable limit[1].  Consequently if the maximum amount of
+memory has been installed, then it will span up to 19GiB.
 
-Keys for "authenc" AEADs are formatted as an rtattr containing a 4-byte
-'enckeylen', followed by an authentication key and an encryption key.
-crypto_authenc_extractkeys() parses the key to find the inner keys.
+Many of the evaluation boards we support that are based on one of these
+SOCs have their memory soldered and the amount present fits in the
+32-bit address range.  The BCM91250A SWARM board however has actual DIMM
+slots and accepts, depending on the peripherals revision of the SOC, up
+to 4GiB or 8GiB of memory in commercially available JEDEC modules[2].
+I believe this is also the case with the BCM91250C2 LittleSur board.
+This means that up to either 3GiB or 7GiB of memory requires 64-bit
+addressing to access.
 
-However, it fails to consider the case where the rtattr's payload is
-longer than 4 bytes but not 4-byte aligned, and where the key ends
-before the next 4-byte aligned boundary.  In this case, 'keylen -=
-RTA_ALIGN(rta->rta_len);' underflows to a value near UINT_MAX.  This
-causes a buffer overread and crash during crypto_ahash_setkey().
+I believe the BCM91480B BigSur board, which has the BCM1480 SOC instead,
+accepts at least as much memory, although I have no documentation or
+actual hardware available to verify that.
 
-Fix it by restricting the rtattr payload to the expected size.
+Both systems have PCI slots installed for use by any PCI option boards,
+including ones that only support 32-bit addressing (additionally the
+32-bit PCI host bridge of the BCM1250, BCM1125, and BCM1125H SOCs limits
+addressing to 32-bits), and there is no IOMMU available.  Therefore for
+PCI DMA to work in the presence of memory beyond enable swiotlb for the
+affected systems.
 
-Reproducer using AF_ALG:
+All the other SOC onchip DMA devices use 40-bit addressing and therefore
+can address the whole memory, so only enable swiotlb if PCI support and
+support for DMA beyond 4GiB have been both enabled in the configuration
+of the kernel.
 
-	#include <linux/if_alg.h>
-	#include <linux/rtnetlink.h>
-	#include <sys/socket.h>
+This shows up as follows:
 
-	int main()
-	{
-		int fd;
-		struct sockaddr_alg addr = {
-			.salg_type = "aead",
-			.salg_name = "authenc(hmac(sha256),cbc(aes))",
-		};
-		struct {
-			struct rtattr attr;
-			__be32 enckeylen;
-			char keys[1];
-		} __attribute__((packed)) key = {
-			.attr.rta_len = sizeof(key),
-			.attr.rta_type = 1 /* CRYPTO_AUTHENC_KEYA_PARAM */,
-		};
+Broadcom SiByte BCM1250 B2 @ 800 MHz (SB1 rev 2)
+Board type: SiByte BCM91250A (SWARM)
+Determined physical RAM map:
+ memory: 000000000fe7fe00 @ 0000000000000000 (usable)
+ memory: 000000001ffffe00 @ 0000000080000000 (usable)
+ memory: 000000000ffffe00 @ 00000000c0000000 (usable)
+ memory: 0000000087fffe00 @ 0000000100000000 (usable)
+software IO TLB: mapped [mem 0xcbffc000-0xcfffc000] (64MB)
 
-		fd = socket(AF_ALG, SOCK_SEQPACKET, 0);
-		bind(fd, (void *)&addr, sizeof(addr));
-		setsockopt(fd, SOL_ALG, ALG_SET_KEY, &key, sizeof(key));
-	}
+in the bootstrap log and removes failures like these:
 
-It caused:
+defxx 0000:02:00.0: dma_direct_map_page: overflow 0x0000000185bc6080+4608 of device mask ffffffff bus mask 0
+fddi0: Receive buffer allocation failed
+fddi0: Adapter open failed!
+IP-Config: Failed to open fddi0
+defxx 0000:09:08.0: dma_direct_map_page: overflow 0x0000000185bc6080+4608 of device mask ffffffff bus mask 0
+fddi1: Receive buffer allocation failed
+fddi1: Adapter open failed!
+IP-Config: Failed to open fddi1
 
-	BUG: unable to handle kernel paging request at ffff88007ffdc000
-	PGD 2e01067 P4D 2e01067 PUD 2e04067 PMD 2e05067 PTE 0
-	Oops: 0000 [#1] SMP
-	CPU: 0 PID: 883 Comm: authenc Not tainted 4.20.0-rc1-00108-g00c9fe37a7f27 #13
-	Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-20181126_142135-anatol 04/01/2014
-	RIP: 0010:sha256_ni_transform+0xb3/0x330 arch/x86/crypto/sha256_ni_asm.S:155
-	[...]
-	Call Trace:
-	 sha256_ni_finup+0x10/0x20 arch/x86/crypto/sha256_ssse3_glue.c:321
-	 crypto_shash_finup+0x1a/0x30 crypto/shash.c:178
-	 shash_digest_unaligned+0x45/0x60 crypto/shash.c:186
-	 crypto_shash_digest+0x24/0x40 crypto/shash.c:202
-	 hmac_setkey+0x135/0x1e0 crypto/hmac.c:66
-	 crypto_shash_setkey+0x2b/0xb0 crypto/shash.c:66
-	 shash_async_setkey+0x10/0x20 crypto/shash.c:223
-	 crypto_ahash_setkey+0x2d/0xa0 crypto/ahash.c:202
-	 crypto_authenc_setkey+0x68/0x100 crypto/authenc.c:96
-	 crypto_aead_setkey+0x2a/0xc0 crypto/aead.c:62
-	 aead_setkey+0xc/0x10 crypto/algif_aead.c:526
-	 alg_setkey crypto/af_alg.c:223 [inline]
-	 alg_setsockopt+0xfe/0x130 crypto/af_alg.c:256
-	 __sys_setsockopt+0x6d/0xd0 net/socket.c:1902
-	 __do_sys_setsockopt net/socket.c:1913 [inline]
-	 __se_sys_setsockopt net/socket.c:1910 [inline]
-	 __x64_sys_setsockopt+0x1f/0x30 net/socket.c:1910
-	 do_syscall_64+0x4a/0x180 arch/x86/entry/common.c:290
-	 entry_SYSCALL_64_after_hwframe+0x49/0xbe
+when memory beyond 4GiB is handed out to devices that can only do 32-bit
+addressing.
 
-Fixes: e236d4a89a2f ("[CRYPTO] authenc: Move enckeylen into key itself")
-Cc: <stable@vger.kernel.org> # v2.6.25+
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+This updates commit cce335ae47e2 ("[MIPS] 64-bit Sibyte kernels need
+DMA32.").
 
+References:
+
+[1] "BCM1250/BCM1125/BCM1125H User Manual", Revision 1250_1125-UM100-R,
+    Broadcom Corporation, 21 Oct 2002, Section 3: "System Overview",
+    "Memory Map", pp. 34-38
+
+[2] "BCM91250A User Manual", Revision 91250A-UM100-R, Broadcom
+    Corporation, 18 May 2004, Section 3: "Physical Description",
+    "Supported DRAM", p. 23
+
+Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
+[paul.burton@mips.com: Remove GPL text from dma.c; SPDX tag covers it]
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Patchwork: https://patchwork.linux-mips.org/patch/21108/
+References: cce335ae47e2 ("[MIPS] 64-bit Sibyte kernels need DMA32.")
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- crypto/authenc.c |   14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ arch/mips/Kconfig                |  3 +++
+ arch/mips/sibyte/common/Makefile |  1 +
+ arch/mips/sibyte/common/dma.c    | 14 ++++++++++++++
+ 3 files changed, 18 insertions(+)
+ create mode 100644 arch/mips/sibyte/common/dma.c
 
---- a/crypto/authenc.c
-+++ b/crypto/authenc.c
-@@ -58,14 +58,22 @@ int crypto_authenc_extractkeys(struct cr
- 		return -EINVAL;
- 	if (rta->rta_type != CRYPTO_AUTHENC_KEYA_PARAM)
- 		return -EINVAL;
--	if (RTA_PAYLOAD(rta) < sizeof(*param))
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index 3a908cc81317..333ea0389adb 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -760,6 +760,7 @@ config SIBYTE_SWARM
+ 	select SYS_SUPPORTS_HIGHMEM
+ 	select SYS_SUPPORTS_LITTLE_ENDIAN
+ 	select ZONE_DMA32 if 64BIT
++	select SWIOTLB if ARCH_DMA_ADDR_T_64BIT && PCI
+ 
+ config SIBYTE_LITTLESUR
+ 	bool "Sibyte BCM91250C2-LittleSur"
+@@ -782,6 +783,7 @@ config SIBYTE_SENTOSA
+ 	select SYS_HAS_CPU_SB1
+ 	select SYS_SUPPORTS_BIG_ENDIAN
+ 	select SYS_SUPPORTS_LITTLE_ENDIAN
++	select SWIOTLB if ARCH_DMA_ADDR_T_64BIT && PCI
+ 
+ config SIBYTE_BIGSUR
+ 	bool "Sibyte BCM91480B-BigSur"
+@@ -795,6 +797,7 @@ config SIBYTE_BIGSUR
+ 	select SYS_SUPPORTS_HIGHMEM
+ 	select SYS_SUPPORTS_LITTLE_ENDIAN
+ 	select ZONE_DMA32 if 64BIT
++	select SWIOTLB if ARCH_DMA_ADDR_T_64BIT && PCI
+ 
+ config SNI_RM
+ 	bool "SNI RM200/300/400"
+diff --git a/arch/mips/sibyte/common/Makefile b/arch/mips/sibyte/common/Makefile
+index b3d6bf23a662..3ef3fb658136 100644
+--- a/arch/mips/sibyte/common/Makefile
++++ b/arch/mips/sibyte/common/Makefile
+@@ -1,4 +1,5 @@
+ obj-y := cfe.o
++obj-$(CONFIG_SWIOTLB)			+= dma.o
+ obj-$(CONFIG_SIBYTE_BUS_WATCHER)	+= bus_watcher.o
+ obj-$(CONFIG_SIBYTE_CFE_CONSOLE)	+= cfe_console.o
+ obj-$(CONFIG_SIBYTE_TBPROF)		+= sb_tbprof.o
+diff --git a/arch/mips/sibyte/common/dma.c b/arch/mips/sibyte/common/dma.c
+new file mode 100644
+index 000000000000..eb47a94f3583
+--- /dev/null
++++ b/arch/mips/sibyte/common/dma.c
+@@ -0,0 +1,14 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ *	DMA support for Broadcom SiByte platforms.
++ *
++ *	Copyright (c) 2018  Maciej W. Rozycki
++ */
 +
-+	/*
-+	 * RTA_OK() didn't align the rtattr's payload when validating that it
-+	 * fits in the buffer.  Yet, the keys should start on the next 4-byte
-+	 * aligned boundary.  To avoid confusion, require that the rtattr
-+	 * payload be exactly the param struct, which has a 4-byte aligned size.
-+	 */
-+	if (RTA_PAYLOAD(rta) != sizeof(*param))
- 		return -EINVAL;
-+	BUILD_BUG_ON(sizeof(*param) % RTA_ALIGNTO);
- 
- 	param = RTA_DATA(rta);
- 	keys->enckeylen = be32_to_cpu(param->enckeylen);
- 
--	key += RTA_ALIGN(rta->rta_len);
--	keylen -= RTA_ALIGN(rta->rta_len);
-+	key += rta->rta_len;
-+	keylen -= rta->rta_len;
- 
- 	if (keylen < keys->enckeylen)
- 		return -EINVAL;
++#include <linux/swiotlb.h>
++#include <asm/bootinfo.h>
++
++void __init plat_swiotlb_setup(void)
++{
++	swiotlb_init(1);
++}
+-- 
+2.19.1
+
 
 
