@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B69B1C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:25:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95428C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:25:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75CFB218FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:25:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6054021901
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:25:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548357953;
-	bh=1I9A8nj+YMQigtI79tfIpDY8N9crWfZv0JBJFghz2/w=;
+	s=default; t=1548357957;
+	bh=e7GOEKCkVsq6svN1rf6RZC7sVrd+cTV2gaQtcInlWCU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=v1Rgy4ZEv1AF4HO4o7Tz/3biSbw6XJoiHchAFRY74sW3yqBbcnWkuomRuEDp2rc7X
-	 CkdHyLelK34BH95nUV4Qu187p8h+QpSfuLRBrQf516Kthwp7YKrTGBdnVgFfjrLPod
-	 OhdSaTEDlIWwC3mzi+fy31Rnec+J16b04iTJ4ne0=
+	b=BCWFnKPxBHRfTNuUMbvlDj+wswTPlXUAiAmFa870KhJJ2Ihoxv/O0dsODGVfzzKJ4
+	 cZYICWhbqAzbiryyR76NZ4FAq5KSvfvNYNRNhHXslL+whvIa4cBie14EUNoNLWz08r
+	 sWFkgh1dckQYCStacN5aLvnecgJUzGs+qcfR1XFo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730468AbfAXTZw (ORCPT
+        id S1729431AbfAXTZz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:25:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51432 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:25:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51666 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730427AbfAXTZm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:25:42 -0500
+        id S1729680AbfAXTZy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:25:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF3E5218D2;
-        Thu, 24 Jan 2019 19:25:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CDC8B218D2;
+        Thu, 24 Jan 2019 19:25:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548357942;
-        bh=1I9A8nj+YMQigtI79tfIpDY8N9crWfZv0JBJFghz2/w=;
+        s=default; t=1548357953;
+        bh=e7GOEKCkVsq6svN1rf6RZC7sVrd+cTV2gaQtcInlWCU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aKeFKU7ner3x9FgtDo8bBy3Z7zGOZ/UYVmT1Y3OCiClDpWzBb4kgj2Ar7dcpFjt4C
-         WjLIUwnkYZ/WWSOa9qy+HngX48LtQ7GKQqSHpHMvcolX0xLdSif9NMAp5Ys8d1MQUf
-         njNjmJmegUTdiPsvcIUH5OEcHXTFLHmd/4tofXYs=
+        b=lpCcaox5gtGsF8bOAFzlyizh+diyOKSTgf5gtB3qqnbI3VRh4GS0YmWgg1bnAY+PS
+         sgzSGo3whf/5y4gclE29X1JeYDwasRO9Bzop/0GE4bcVGh+Xi/f7K+9idb6UHTdTTD
+         I/e3nLBOpb40wX6Jxly1V17bvNjesJyEdyYAR0vA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 008/104] f2fs: remove an obsolete variable
-Date:   Thu, 24 Jan 2019 20:18:57 +0100
-Message-Id: <20190124190155.795525225@linuxfoundation.org>
+        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.4 048/104] btrfs: wait on ordered extents on abort cleanup
+Date:   Thu, 24 Jan 2019 20:19:37 +0100
+Message-Id: <20190124190200.951609742@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190154.968308875@linuxfoundation.org>
 References: <20190124190154.968308875@linuxfoundation.org>
@@ -65,39 +66,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Josef Bacik <josef@toxicpanda.com>
 
-commit fb58ae22067e0595d974e3d856522c1ed6d2d7bf upstream.
+commit 74d5d229b1bf60f93bff244b2dfc0eb21ec32a07 upstream.
 
-This patch removes an obsolete variable used in add_free_nid.
+If we flip read-only before we initiate writeback on all dirty pages for
+ordered extents we've created then we'll have ordered extents left over
+on umount, which results in all sorts of bad things happening.  Fix this
+by making sure we wait on ordered extents if we have to do the aborted
+transaction cleanup stuff.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-[bwh: Picked as dependency of commit 30a61ddf8117 "f2fs: fix race condition
- in between free nid allocator/initializer"]
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+generic/475 can produce this warning:
+
+ [ 8531.177332] WARNING: CPU: 2 PID: 11997 at fs/btrfs/disk-io.c:3856 btrfs_free_fs_root+0x95/0xa0 [btrfs]
+ [ 8531.183282] CPU: 2 PID: 11997 Comm: umount Tainted: G        W 5.0.0-rc1-default+ #394
+ [ 8531.185164] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),BIOS rel-1.11.2-0-gf9626cc-prebuilt.qemu-project.org 04/01/2014
+ [ 8531.187851] RIP: 0010:btrfs_free_fs_root+0x95/0xa0 [btrfs]
+ [ 8531.193082] RSP: 0018:ffffb1ab86163d98 EFLAGS: 00010286
+ [ 8531.194198] RAX: ffff9f3449494d18 RBX: ffff9f34a2695000 RCX:0000000000000000
+ [ 8531.195629] RDX: 0000000000000002 RSI: 0000000000000001 RDI:0000000000000000
+ [ 8531.197315] RBP: ffff9f344e930000 R08: 0000000000000001 R09:0000000000000000
+ [ 8531.199095] R10: 0000000000000000 R11: ffff9f34494d4ff8 R12:ffffb1ab86163dc0
+ [ 8531.200870] R13: ffff9f344e9300b0 R14: ffffb1ab86163db8 R15:0000000000000000
+ [ 8531.202707] FS:  00007fc68e949fc0(0000) GS:ffff9f34bd800000(0000)knlGS:0000000000000000
+ [ 8531.204851] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ [ 8531.205942] CR2: 00007ffde8114dd8 CR3: 000000002dfbd000 CR4:00000000000006e0
+ [ 8531.207516] Call Trace:
+ [ 8531.208175]  btrfs_free_fs_roots+0xdb/0x170 [btrfs]
+ [ 8531.210209]  ? wait_for_completion+0x5b/0x190
+ [ 8531.211303]  close_ctree+0x157/0x350 [btrfs]
+ [ 8531.212412]  generic_shutdown_super+0x64/0x100
+ [ 8531.213485]  kill_anon_super+0x14/0x30
+ [ 8531.214430]  btrfs_kill_super+0x12/0xa0 [btrfs]
+ [ 8531.215539]  deactivate_locked_super+0x29/0x60
+ [ 8531.216633]  cleanup_mnt+0x3b/0x70
+ [ 8531.217497]  task_work_run+0x98/0xc0
+ [ 8531.218397]  exit_to_usermode_loop+0x83/0x90
+ [ 8531.219324]  do_syscall_64+0x15b/0x180
+ [ 8531.220192]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+ [ 8531.221286] RIP: 0033:0x7fc68e5e4d07
+ [ 8531.225621] RSP: 002b:00007ffde8116608 EFLAGS: 00000246 ORIG_RAX:00000000000000a6
+ [ 8531.227512] RAX: 0000000000000000 RBX: 00005580c2175970 RCX:00007fc68e5e4d07
+ [ 8531.229098] RDX: 0000000000000001 RSI: 0000000000000000 RDI:00005580c2175b80
+ [ 8531.230730] RBP: 0000000000000000 R08: 00005580c2175ba0 R09:00007ffde8114e80
+ [ 8531.232269] R10: 0000000000000000 R11: 0000000000000246 R12:00005580c2175b80
+ [ 8531.233839] R13: 00007fc68eac61c4 R14: 00005580c2175a68 R15:0000000000000000
+
+Leaving a tree in the rb-tree:
+
+3853 void btrfs_free_fs_root(struct btrfs_root *root)
+3854 {
+3855         iput(root->ino_cache_inode);
+3856         WARN_ON(!RB_EMPTY_ROOT(&root->inode_tree));
+
+CC: stable@vger.kernel.org
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+[ add stacktrace ]
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/f2fs/node.c |    3 ---
- 1 file changed, 3 deletions(-)
 
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1430,7 +1430,6 @@ static int add_free_nid(struct f2fs_sb_i
- 	struct f2fs_nm_info *nm_i = NM_I(sbi);
- 	struct free_nid *i;
- 	struct nat_entry *ne;
--	bool allocated = false;
- 
- 	if (!available_free_memory(sbi, FREE_NIDS))
- 		return -1;
-@@ -1444,8 +1443,6 @@ static int add_free_nid(struct f2fs_sb_i
- 		ne = __lookup_nat_cache(nm_i, nid);
- 		if (ne && (!get_nat_flag(ne, IS_CHECKPOINTED) ||
- 				nat_get_blkaddr(ne) != NULL_ADDR))
--			allocated = true;
--		if (allocated)
- 			return 0;
+---
+ fs/btrfs/disk-io.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -4111,6 +4111,14 @@ static void btrfs_destroy_all_ordered_ex
+ 		spin_lock(&fs_info->ordered_root_lock);
  	}
+ 	spin_unlock(&fs_info->ordered_root_lock);
++
++	/*
++	 * We need this here because if we've been flipped read-only we won't
++	 * get sync() from the umount, so we need to make sure any ordered
++	 * extents that haven't had their dirty pages IO start writeout yet
++	 * actually get run and error out properly.
++	 */
++	btrfs_wait_ordered_roots(fs_info, -1);
+ }
  
+ static int btrfs_destroy_delayed_refs(struct btrfs_transaction *trans,
 
 
