@@ -2,53 +2,53 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29945C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:28:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1964BC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:28:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E95B7218F0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:28:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC1B3218FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:28:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358133;
-	bh=w4SC/e+AlAiUScLgvlf2rv0l4T0yNeuxWoq0TY5s1L8=;
+	s=default; t=1548358138;
+	bh=LA6GNvjZ+XpHcDGeFd7FVATXhOVb2dh+OMQwLkVst1U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZAbqXAvrtPQTe/dqnALkQE/6ozzfaLvothLmnteCLormud3kvzQR6u3xjiAZN21Km
-	 Z0ue4pO2K14lnxKLAuxxv1KKdkRIO7wa+ZHBUNuP3+emxlLLInoCYxUWpf8gYPHVJJ
-	 h40oKcZhuPU2A2hro86Jw34vzfUvX1jwmqDOWocA=
+	b=QJHJKOl4bsmwuE8YajmNAtl12+XczR1Rz0F+bKQid+Pr3N/qvYH/0E7tnAVaxjLD4
+	 NqnlidAz5cG5a3YUo0y903kQPOp+C/rgOD4pUEDOs1PdxeQc5v3Iuevns7TPwaYWSw
+	 lRJaYbqqtUOoHO7bKpXqBdR0tQv9ZoP8Cextxi24=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730596AbfAXT2v (ORCPT
+        id S1731063AbfAXT24 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:28:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55604 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:28:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55720 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730440AbfAXT2o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:28:44 -0500
+        id S1731043AbfAXT2u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:28:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 11595218FC;
-        Thu, 24 Jan 2019 19:28:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0C704218A6;
+        Thu, 24 Jan 2019 19:28:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358123;
-        bh=w4SC/e+AlAiUScLgvlf2rv0l4T0yNeuxWoq0TY5s1L8=;
+        s=default; t=1548358129;
+        bh=LA6GNvjZ+XpHcDGeFd7FVATXhOVb2dh+OMQwLkVst1U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BRDzjLd8pELtOLVSaAN+lX4bRV6CujRSw0qZLcKa3XAXIBv4ubcasbtuct6eCMFiW
-         bp5LfZLqjj5meJdgTwCP7hcN7bEhWNV3RBMeJGWXDh0aOcMOnVch4eC50JQX0QZhGk
-         wOUfx6oGcKDRkMC4OhbyNsDbQsOBPh3pRD7Xrffc=
+        b=Vx3wpx8P8JbYMqpYfZtc6QsHHkPNKOHFZtxxLlbDudPQjqyAu1NS+Jv9eIrcuvd1L
+         4C+O72JQTKn1kk6DgXESV/MXfgQ/rSr3mVKs49Ft64nvIve8zCFWIvv2TtYthiPwG5
+         pkb1Ma4FMR6LPTFP9+xAwvVQjrNOqruwaMIx4wuo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Kees Cook <keescook@chromium.org>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 083/104] pstore/ram: Do not treat empty buffers as valid
-Date:   Thu, 24 Jan 2019 20:20:12 +0100
-Message-Id: <20190124190204.269355030@linuxfoundation.org>
+Subject: [PATCH 4.4 085/104] media: firewire: Fix app_info parameter type in avc_ca{,_app}_info
+Date:   Thu, 24 Jan 2019 20:20:14 +0100
+Message-Id: <20190124190204.390550413@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190154.968308875@linuxfoundation.org>
 References: <20190124190154.968308875@linuxfoundation.org>
@@ -67,49 +67,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 30696378f68a9e3dad6bfe55938b112e72af00c2 ]
+[ Upstream commit b2e9a4eda11fd2cb1e6714e9ad3f455c402568ff ]
 
-The ramoops backend currently calls persistent_ram_save_old() even
-if a buffer is empty. While this appears to work, it is does not seem
-like the right thing to do and could lead to future bugs so lets avoid
-that. It also prevents misleading prints in the logs which claim the
-buffer is valid.
+Clang warns:
 
-I got something like:
+drivers/media/firewire/firedtv-avc.c:999:45: warning: implicit
+conversion from 'int' to 'char' changes value from 159 to -97
+[-Wconstant-conversion]
+        app_info[0] = (EN50221_TAG_APP_INFO >> 16) & 0xff;
+                    ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+drivers/media/firewire/firedtv-avc.c:1000:45: warning: implicit
+conversion from 'int' to 'char' changes value from 128 to -128
+[-Wconstant-conversion]
+        app_info[1] = (EN50221_TAG_APP_INFO >>  8) & 0xff;
+                    ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+drivers/media/firewire/firedtv-avc.c:1040:44: warning: implicit
+conversion from 'int' to 'char' changes value from 159 to -97
+[-Wconstant-conversion]
+        app_info[0] = (EN50221_TAG_CA_INFO >> 16) & 0xff;
+                    ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+drivers/media/firewire/firedtv-avc.c:1041:44: warning: implicit
+conversion from 'int' to 'char' changes value from 128 to -128
+[-Wconstant-conversion]
+        app_info[1] = (EN50221_TAG_CA_INFO >>  8) & 0xff;
+                    ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+4 warnings generated.
 
-	found existing buffer, size 0, start 0
+Change app_info's type to unsigned char to match the type of the
+member msg in struct ca_msg, which is the only thing passed into the
+app_info parameter in this function.
 
-When I was expecting:
+Link: https://github.com/ClangBuiltLinux/linux/issues/105
 
-	no valid data in buffer (sig = ...)
-
-This bails out early (and reports with pr_debug()), since it's an
-acceptable state.
-
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-Co-developed-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/pstore/ram_core.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/media/firewire/firedtv-avc.c | 6 ++++--
+ drivers/media/firewire/firedtv.h     | 6 ++++--
+ 2 files changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/fs/pstore/ram_core.c b/fs/pstore/ram_core.c
-index bd21795ce657..679d75a864d0 100644
---- a/fs/pstore/ram_core.c
-+++ b/fs/pstore/ram_core.c
-@@ -445,6 +445,11 @@ static int persistent_ram_post_init(struct persistent_ram_zone *prz, u32 sig,
- 	sig ^= PERSISTENT_RAM_SIG;
+diff --git a/drivers/media/firewire/firedtv-avc.c b/drivers/media/firewire/firedtv-avc.c
+index 251a556112a9..280b5ffea592 100644
+--- a/drivers/media/firewire/firedtv-avc.c
++++ b/drivers/media/firewire/firedtv-avc.c
+@@ -968,7 +968,8 @@ static int get_ca_object_length(struct avc_response_frame *r)
+ 	return r->operand[7];
+ }
  
- 	if (prz->buffer->sig == sig) {
-+		if (buffer_size(prz) == 0) {
-+			pr_debug("found existing empty buffer\n");
-+			return 0;
-+		}
-+
- 		if (buffer_size(prz) > prz->buffer_size ||
- 		    buffer_start(prz) > buffer_size(prz))
- 			pr_info("found existing invalid buffer, size %zu, start %zu\n",
+-int avc_ca_app_info(struct firedtv *fdtv, char *app_info, unsigned int *len)
++int avc_ca_app_info(struct firedtv *fdtv, unsigned char *app_info,
++		    unsigned int *len)
+ {
+ 	struct avc_command_frame *c = (void *)fdtv->avc_data;
+ 	struct avc_response_frame *r = (void *)fdtv->avc_data;
+@@ -1009,7 +1010,8 @@ out:
+ 	return ret;
+ }
+ 
+-int avc_ca_info(struct firedtv *fdtv, char *app_info, unsigned int *len)
++int avc_ca_info(struct firedtv *fdtv, unsigned char *app_info,
++		unsigned int *len)
+ {
+ 	struct avc_command_frame *c = (void *)fdtv->avc_data;
+ 	struct avc_response_frame *r = (void *)fdtv->avc_data;
+diff --git a/drivers/media/firewire/firedtv.h b/drivers/media/firewire/firedtv.h
+index 345d1eda8c05..5b18a08c6285 100644
+--- a/drivers/media/firewire/firedtv.h
++++ b/drivers/media/firewire/firedtv.h
+@@ -124,8 +124,10 @@ int avc_lnb_control(struct firedtv *fdtv, char voltage, char burst,
+ 		    struct dvb_diseqc_master_cmd *diseqcmd);
+ void avc_remote_ctrl_work(struct work_struct *work);
+ int avc_register_remote_control(struct firedtv *fdtv);
+-int avc_ca_app_info(struct firedtv *fdtv, char *app_info, unsigned int *len);
+-int avc_ca_info(struct firedtv *fdtv, char *app_info, unsigned int *len);
++int avc_ca_app_info(struct firedtv *fdtv, unsigned char *app_info,
++		    unsigned int *len);
++int avc_ca_info(struct firedtv *fdtv, unsigned char *app_info,
++		unsigned int *len);
+ int avc_ca_reset(struct firedtv *fdtv);
+ int avc_ca_pmt(struct firedtv *fdtv, char *app_info, int length);
+ int avc_ca_get_time_date(struct firedtv *fdtv, int *interval);
 -- 
 2.19.1
 
