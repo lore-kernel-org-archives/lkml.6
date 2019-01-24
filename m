@@ -2,101 +2,141 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E77AC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:25:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEEACC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:25:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 511B3218AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:25:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548354307;
-	bh=nQB4ghqSNu1d8/f6NzXY7Y9vGm0WkLX78lMHzoJPEB8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=tajmbucmDgMTWrrm41KZLWn1X5DoYc7J863gbcRbIMLXZSL+pFw63OA2CmdXxFpa2
-	 YqITFLSebdI2pOHup+/bQ0Re5H9TnaF0CwhJ8qsZkcRTFee7YckA+UiLek5kxqgLhJ
-	 7zsItpHJ8j1BZbasQuYW2064HctiErlWLdFzSGBc=
+	by mail.kernel.org (Postfix) with ESMTP id 86BCC21872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:25:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728051AbfAXSZF (ORCPT
+        id S1728299AbfAXSZY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 13:25:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48864 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 13:25:24 -0500
+Received: from foss.arm.com ([217.140.101.70]:33946 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725909AbfAXSZF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 13:25:05 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B77EE2184C;
-        Thu, 24 Jan 2019 18:25:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548354304;
-        bh=nQB4ghqSNu1d8/f6NzXY7Y9vGm0WkLX78lMHzoJPEB8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OQgsF48mBcWaiSPIFpVBzmu8aze+CCn9hL3ZL+Y0S2v5WV3qnFBSmTq7TjP0IXgar
-         lPDJj1Pu9iwzrasbp5zqdPsGj//Jy2Zmulw3xrTdXfgFqghVT/nilVp6wC6UOiA4pU
-         2csuUYik4c7Kl5X+4Kyi4uAh02DdEZ3VtslcnlX8=
-Date:   Thu, 24 Jan 2019 19:25:02 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Sven Van Asbroeck <thesven73@gmail.com>
-Cc:     Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Sven Van Asbroeck <svendev@arcx.com>, robh+dt@kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>, mark.rutland@arm.com,
-        treding@nvidia.com, David Lechner <david@lechnology.com>,
-        noralf@tronnes.org, johan@kernel.org,
-        Michal Simek <monstr@monstr.eu>, michal.vokac@ysoft.com,
-        Arnd Bergmann <arnd@arndb.de>, john.garry@huawei.com,
-        geert+renesas@glider.be, robin.murphy@arm.com,
-        sebastien.bourdelin@savoirfairelinux.com, icenowy@aosc.io,
-        Stuart Yoder <stuyoder@gmail.com>, maxime.ripard@bootlin.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v7 1/6] fieldbus_dev: add Fieldbus Device subsystem.
-Message-ID: <20190124182502.GA18351@kroah.com>
-References: <20190122152109.30488-1-TheSven73@googlemail.com>
- <20190122152109.30488-2-TheSven73@googlemail.com>
- <20190122165658.GH26416@windriver.com>
- <2f4406b5-9970-211e-beef-a8b6ad60b99e@suse.de>
- <20190122185246.GA922@kroah.com>
- <CAGngYiU2kLqQq5qkcxda9m__VWx62bsC=+ni4HAGMsOAxAtUzw@mail.gmail.com>
+        id S1725909AbfAXSZY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 13:25:24 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DB75FA78;
+        Thu, 24 Jan 2019 10:25:23 -0800 (PST)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 54AC93F237;
+        Thu, 24 Jan 2019 10:25:21 -0800 (PST)
+Subject: Re: [PATCH v5 2/4] perf: add arm64 smmuv3 pmu driver
+To:     Andrew Murray <andrew.murray@arm.com>,
+        Shameerali Kolothum Thodi 
+        <shameerali.kolothum.thodi@huawei.com>
+Cc:     "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "vkilari@codeaurora.org" <vkilari@codeaurora.org>,
+        "neil.m.leeder@gmail.com" <neil.m.leeder@gmail.com>,
+        "jean-philippe.brucker@arm.com" <jean-philippe.brucker@arm.com>,
+        "pabba@codeaurora.org" <pabba@codeaurora.org>,
+        John Garry <john.garry@huawei.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "rruigrok@codeaurora.org" <rruigrok@codeaurora.org>,
+        Linuxarm <linuxarm@huawei.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "Guohanjun (Hanjun Guo)" <guohanjun@huawei.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+References: <20181130154751.28580-1-shameerali.kolothum.thodi@huawei.com>
+ <20181130154751.28580-3-shameerali.kolothum.thodi@huawei.com>
+ <20190122162351.GE8120@e119886-lin.cambridge.arm.com>
+ <5FC3163CFD30C246ABAA99954A238FA83929855B@lhreml524-mbs.china.huawei.com>
+ <20190123121406.GH8120@e119886-lin.cambridge.arm.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <f83054eb-3fe3-0041-7a9f-6f7e58cea5c8@arm.com>
+Date:   Thu, 24 Jan 2019 18:25:19 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGngYiU2kLqQq5qkcxda9m__VWx62bsC=+ni4HAGMsOAxAtUzw@mail.gmail.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <20190123121406.GH8120@e119886-lin.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 01:07:58PM -0500, Sven Van Asbroeck wrote:
-> On Tue, Jan 22, 2019 at 1:52 PM Greg KH <gregkh@linuxfoundation.org> wrote:
-> >
-> > SPDX "GPL-2.0+" please.
-> >
-> > > would be if this code was derived from v2-only code that can't be
-> > > relicensed anymore.
-> >
-> > Are you _sure_ you want v2+?  I ask as I am forced to :)
-> >
+On 23/01/2019 12:14, Andrew Murray wrote:
+[...]
+>>>> +static inline void smmu_pmu_counter_set_value(struct smmu_pmu
+>>> *smmu_pmu,
+>>>> +					      u32 idx, u64 value)
+>>>> +{
+>>>> +	if (smmu_pmu->counter_mask & BIT(32))
+>>>> +		writeq(value, smmu_pmu->reloc_base + SMMU_PMCG_EVCNTR(idx,
+>>> 8));
+>>>> +	else
+>>>> +		writel(value, smmu_pmu->reloc_base + SMMU_PMCG_EVCNTR(idx,
+>>> 4));
+>>>
+>>> The arm64 IO macros use __force u32 and so it's probably OK to provide a 64
+>>> bit
+>>> value to writel. But you could use something like lower_32_bits for clarity.
+>>
+>> Yes, macro uses __force u32. I will change it to make it more clear though.
+
+To be pedantic, the first cast which the value actually undergoes is to 
+(__u32) ;)
+
+Ultimately, __raw_writel() takes a u32, so in that sense it's never a 
+problem to pass a u64, since unsigned truncation is well-defined in the 
+C standard. The casting involved in the I/O accessors is mostly about 
+going to an endian-specific type and back again.
+
+[...]
+>>>> +static void smmu_pmu_event_start(struct perf_event *event, int flags)
+>>>> +{
+>>>> +	struct smmu_pmu *smmu_pmu = to_smmu_pmu(event->pmu);
+>>>> +	struct hw_perf_event *hwc = &event->hw;
+>>>> +	int idx = hwc->idx;
+>>>> +	u32 filter_span, filter_sid;
+>>>> +	u32 evtyper;
+>>>> +
+>>>> +	hwc->state = 0;
+>>>> +
+>>>> +	smmu_pmu_set_period(smmu_pmu, hwc);
+>>>> +
+>>>> +	smmu_pmu_get_event_filter(event, &filter_span, &filter_sid);
+>>>> +
+>>>> +	evtyper = get_event(event) |
+>>>> +		  filter_span << SMMU_PMCG_SID_SPAN_SHIFT;
+>>>> +
+>>>> +	smmu_pmu_set_evtyper(smmu_pmu, idx, evtyper);
+>>>> +	smmu_pmu_set_smr(smmu_pmu, idx, filter_sid);
+>>>> +	smmu_pmu_interrupt_enable(smmu_pmu, idx);
+>>>> +	smmu_pmu_counter_enable(smmu_pmu, idx);
+>>>> +}
+>>>> +
+>>>> +static void smmu_pmu_event_stop(struct perf_event *event, int flags)
+>>>> +{
+>>>> +	struct smmu_pmu *smmu_pmu = to_smmu_pmu(event->pmu);
+>>>> +	struct hw_perf_event *hwc = &event->hw;
+>>>> +	int idx = hwc->idx;
+>>>> +
+>>>> +	if (hwc->state & PERF_HES_STOPPED)
+>>>> +		return;
+>>>> +
+>>>> +	smmu_pmu_counter_disable(smmu_pmu, idx);
+>>>
+>>> Is it intentional not to call smmu_pmu_interrupt_disable here?
+>>
+>> Yes, it is. Earlier patch had the interrupt toggling and Robin pointed out that
+>> it is not really needed as counters are anyway stopped and explicitly disabling
+>> may not solve the spurious interrupt case as well.
+>>
 > 
-> The licencing choice confuses me. Why would I choose a different
-> licence to what the Linux kernel itself is provided under?
+> Ah apologies for not seeing that in earlier reviews.
 
-The Linux kernel is provided under "GPLv2" not "GPLv2+"
+Hmm, I didn't exactly mean "keep enabling it every time an event is 
+restarted and never disable it anywhere", though. I was thinking more 
+along the lines of enabling in event_add() and disabling in event_del() 
+(i.e. effectively tying it to allocation and deallocation of the counter).
 
-"GPLv2" means "GPLv2 only"
-
-"GPLv2+" means "Any version of the GPL that the FSF decides to create
-from now until the end of time."
-
-> If I did pick a different one, what are the tradeoffs between GPLv2 and GPLv2+ ?
-
-That is for you and your lawyers to discuss :)
-
-thanks,
-
-greg k-h
+Robin.
