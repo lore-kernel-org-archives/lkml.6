@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08F9EC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 23:08:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE15DC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 23:08:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C357D218CD
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 23:08:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA5E0218CD
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 23:08:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728288AbfAXXIn (ORCPT
+        id S1728223AbfAXXIi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 18:08:43 -0500
-Received: from mga03.intel.com ([134.134.136.65]:21178 "EHLO mga03.intel.com"
+        Thu, 24 Jan 2019 18:08:38 -0500
+Received: from mga03.intel.com ([134.134.136.65]:21172 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728031AbfAXXIb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728048AbfAXXIb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 24 Jan 2019 18:08:31 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jan 2019 15:08:25 -0800
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jan 2019 15:08:28 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,518,1539673200"; 
-   d="scan'208";a="313295763"
+   d="scan'208";a="313295786"
 Received: from unknown (HELO localhost.lm.intel.com) ([10.232.112.69])
-  by fmsmga006.fm.intel.com with ESMTP; 24 Jan 2019 15:08:25 -0800
+  by fmsmga006.fm.intel.com with ESMTP; 24 Jan 2019 15:08:28 -0800
 From:   Keith Busch <keith.busch@intel.com>
 To:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
         linux-mm@kvack.org
@@ -36,9 +36,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Dave Hansen <dave.hansen@intel.com>,
         Dan Williams <dan.j.williams@intel.com>,
         Keith Busch <keith.busch@intel.com>
-Subject: [PATCHv5 05/10] acpi/hmat: Register processor domain to its memory
-Date:   Thu, 24 Jan 2019 16:07:19 -0700
-Message-Id: <20190124230724.10022-6-keith.busch@intel.com>
+Subject: [PATCHv5 10/10] doc/mm: New documentation for memory performance
+Date:   Thu, 24 Jan 2019 16:07:24 -0700
+Message-Id: <20190124230724.10022-11-keith.busch@intel.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20190124230724.10022-1-keith.busch@intel.com>
 References: <20190124230724.10022-1-keith.busch@intel.com>
@@ -47,410 +47,193 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the HMAT Subsystem Address Range provides a valid processor proximity
-domain for a memory domain, or a processor domain matches the performance
-access of the valid processor proximity domain, register the memory
-target with that initiator so this relationship will be visible under
-the node's sysfs directory.
+Platforms may provide system memory where some physical address ranges
+perform differently than others, or is side cached by the system.
 
-Since HMAT requires valid address ranges have an equivalent SRAT entry,
-verify each memory target satisfies this requirement.
+Add documentation describing a high level overview of such systems and the
+perforamnce and caching attributes the kernel provides for applications
+wishing to query this information.
 
+Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
 Signed-off-by: Keith Busch <keith.busch@intel.com>
 ---
- drivers/acpi/hmat/hmat.c | 310 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 310 insertions(+)
+ Documentation/admin-guide/mm/numaperf.rst | 167 ++++++++++++++++++++++++++++++
+ 1 file changed, 167 insertions(+)
+ create mode 100644 Documentation/admin-guide/mm/numaperf.rst
 
-diff --git a/drivers/acpi/hmat/hmat.c b/drivers/acpi/hmat/hmat.c
-index 1741bf30d87f..85fd835c2e23 100644
---- a/drivers/acpi/hmat/hmat.c
-+++ b/drivers/acpi/hmat/hmat.c
-@@ -16,6 +16,91 @@
- #include <linux/node.h>
- #include <linux/sysfs.h>
- 
-+static __initdata LIST_HEAD(targets);
-+static __initdata LIST_HEAD(initiators);
-+static __initdata LIST_HEAD(localities);
+diff --git a/Documentation/admin-guide/mm/numaperf.rst b/Documentation/admin-guide/mm/numaperf.rst
+new file mode 100644
+index 000000000000..52999336a8ed
+--- /dev/null
++++ b/Documentation/admin-guide/mm/numaperf.rst
+@@ -0,0 +1,167 @@
++.. _numaperf:
 +
-+struct memory_target {
-+	struct list_head node;
-+	unsigned int memory_pxm;
-+	unsigned int processor_pxm;
-+	unsigned int read_bandwidth;
-+	unsigned int write_bandwidth;
-+	unsigned int read_latency;
-+	unsigned int write_latency;
-+};
++=============
++NUMA Locality
++=============
 +
-+struct memory_initiator {
-+	struct list_head node;
-+	unsigned int processor_pxm;
-+};
++Some platforms may have multiple types of memory attached to a single
++CPU. These disparate memory ranges share some characteristics, such as
++CPU cache coherence, but may have different performance. For example,
++different media types and buses affect bandwidth and latency.
 +
-+struct memory_locality {
-+	struct list_head node;
-+	struct acpi_hmat_locality *hmat_loc;
-+};
++A system supporting such heterogeneous memory by grouping each memory
++type under different "nodes" based on similar CPU locality and performance
++characteristics.  Some memory may share the same node as a CPU, and others
++are provided as memory only nodes. While memory only nodes do not provide
++CPUs, they may still be directly accessible, or local, to one or more
++compute nodes. The following diagram shows one such example of two compute
++nodes with local memory and a memory only node for each of compute node:
 +
-+static __init struct memory_initiator *find_mem_initiator(unsigned int cpu_pxm)
-+{
-+	struct memory_initiator *intitator;
++ +------------------+     +------------------+
++ | Compute Node 0   +-----+ Compute Node 1   |
++ | Local Node0 Mem  |     | Local Node1 Mem  |
++ +--------+---------+     +--------+---------+
++          |                        |
++ +--------+---------+     +--------+---------+
++ | Slower Node2 Mem |     | Slower Node3 Mem |
++ +------------------+     +--------+---------+
 +
-+	list_for_each_entry(intitator, &initiators, node)
-+		if (intitator->processor_pxm == cpu_pxm)
-+			return intitator;
-+	return NULL;
-+}
++A "memory initiator" is a node containing one or more devices such as
++CPUs or separate memory I/O devices that can initiate memory requests.
++A "memory target" is a node containing one or more physical address
++ranges accessible from one or more memory initiators.
 +
-+static __init struct memory_target *find_mem_target(unsigned int mem_pxm)
-+{
-+	struct memory_target *target;
++When multiple memory initiators exist, they may not all have the same
++performance when accessing a given memory target. Each initiator-target
++pair may be organized into different ranked access classes to represent
++this relationship. The highest performing initiator to a given target
++is considered to be one of that target's local initiators, and given
++the highest access class, 0. Any given target may have one or more
++local initiators, and any given initiator may have multiple local
++memory targets.
 +
-+	list_for_each_entry(target, &targets, node)
-+		if (target->memory_pxm == mem_pxm)
-+			return target;
-+	return NULL;
-+}
++To aid applications matching memory targets with their initiators, the
++kernel provides symlinks to each other. The following example lists the
++relationship for the access class "0" memory initiators and targets, which is
++the of nodes with the highest performing access relationship::
 +
-+static __init struct memory_initiator *alloc_memory_initiator(
-+							unsigned int cpu_pxm)
-+{
-+	struct memory_initiator *intitator;
++	# symlinks -v /sys/devices/system/node/nodeX/access0/targets/
++	relative: /sys/devices/system/node/nodeX/access0/targets/nodeY -> ../../nodeY
 +
-+	if (pxm_to_node(cpu_pxm) == NUMA_NO_NODE)
-+		return NULL;
++	# symlinks -v /sys/devices/system/node/nodeY/access0/initiators/
++	relative: /sys/devices/system/node/nodeY/access0/initiators/nodeX -> ../../nodeX
 +
-+	intitator = find_mem_initiator(cpu_pxm);
-+	if (intitator)
-+		return intitator;
++================
++NUMA Performance
++================
 +
-+	intitator = kzalloc(sizeof(*intitator), GFP_KERNEL);
-+	if (!intitator)
-+		return NULL;
++Applications may wish to consider which node they want their memory to
++be allocated from based on the node's performance characteristics. If
++the system provides these attributes, the kernel exports them under the
++node sysfs hierarchy by appending the attributes directory under the
++memory node's access class 0 initiators as follows::
 +
-+	intitator->processor_pxm = cpu_pxm;
-+	list_add_tail(&intitator->node, &initiators);
-+	return intitator;
-+}
++	/sys/devices/system/node/nodeY/access0/initiators/
 +
-+static __init void alloc_memory_target(unsigned int mem_pxm)
-+{
-+	struct memory_target *target;
++These attributes apply only when accessed from nodes that have the
++are linked under the this access's inititiators.
 +
-+	if (pxm_to_node(mem_pxm) == NUMA_NO_NODE)
-+		return;
++The performance characteristics the kernel provides for the local initiators
++are exported are as follows::
 +
-+	target = find_mem_target(mem_pxm);
-+	if (target)
-+		return;
++	# tree -P "read*|write*" /sys/devices/system/node/nodeY/access0/
++	/sys/devices/system/node/nodeY/access0/
++	|-- read_bandwidth
++	|-- read_latency
++	|-- write_bandwidth
++	`-- write_latency
 +
-+	target = kzalloc(sizeof(*target), GFP_KERNEL);
-+	if (!target)
-+		return;
++The bandwidth attributes are provided in MiB/second.
 +
-+	target->memory_pxm = mem_pxm;
-+	target->processor_pxm = PXM_INVAL;
-+	list_add_tail(&target->node, &targets);
-+}
++The latency attributes are provided in nanoseconds.
 +
- static __init const char *hmat_data_type(u8 type)
- {
- 	switch (type) {
-@@ -52,13 +137,45 @@ static __init const char *hmat_data_type_suffix(u8 type)
- 	};
- }
- 
-+static __init void hmat_update_target_access(struct memory_target *target,
-+                                             u8 type, u32 value)
-+{
-+	switch (type) {
-+	case ACPI_HMAT_ACCESS_LATENCY:
-+		target->read_latency = value;
-+		target->write_latency = value;
-+		break;
-+	case ACPI_HMAT_READ_LATENCY:
-+		target->read_latency = value;
-+		break;
-+	case ACPI_HMAT_WRITE_LATENCY:
-+		target->write_latency = value;
-+		break;
-+	case ACPI_HMAT_ACCESS_BANDWIDTH:
-+		target->read_bandwidth = value;
-+		target->write_bandwidth = value;
-+		break;
-+	case ACPI_HMAT_READ_BANDWIDTH:
-+		target->read_bandwidth = value;
-+		break;
-+	case ACPI_HMAT_WRITE_BANDWIDTH:
-+		target->write_bandwidth = value;
-+		break;
-+	default:
-+		break;
-+	};
-+}
++The values reported here correspond to the rated latency and bandwidth
++for the platform.
 +
- static __init int hmat_parse_locality(union acpi_subtable_headers *header,
- 				      const unsigned long end)
- {
- 	struct acpi_hmat_locality *hmat_loc = (void *)header;
-+	struct memory_target *target;
-+	struct memory_initiator *initiator;
- 	unsigned int init, targ, total_size, ipds, tpds;
- 	u32 *inits, *targs, value;
- 	u16 *entries;
-+	bool report = false;
- 	u8 type;
- 
- 	if (hmat_loc->header.length < sizeof(*hmat_loc)) {
-@@ -82,16 +199,42 @@ static __init int hmat_parse_locality(union acpi_subtable_headers *header,
- 		hmat_loc->flags, hmat_data_type(type), ipds, tpds,
- 		hmat_loc->entry_base_unit);
- 
-+	/* Don't report performance of memory side caches */
-+	switch (hmat_loc->flags & ACPI_HMAT_MEMORY_HIERARCHY) {
-+	case ACPI_HMAT_MEMORY:
-+	case ACPI_HMAT_LAST_LEVEL_CACHE:
-+		report = true;
-+		break;
-+	default:
-+		break;
-+	}
++==========
++NUMA Cache
++==========
 +
- 	inits = (u32 *)(hmat_loc + 1);
- 	targs = &inits[ipds];
- 	entries = (u16 *)(&targs[tpds]);
- 	for (init = 0; init < ipds; init++) {
-+		initiator = alloc_memory_initiator(inits[init]);
- 		for (targ = 0; targ < tpds; targ++) {
- 			value = entries[init * tpds + targ];
- 			value = (value * hmat_loc->entry_base_unit) / 10;
- 			pr_info("  Initiator-Target[%d-%d]:%d%s\n",
- 				inits[init], targs[targ], value,
- 				hmat_data_type_suffix(type));
++System memory may be constructed in a hierarchy of elements with various
++performance characteristics in order to provide large address space of
++slower performing memory side-cached by a smaller higher performing
++memory. The system physical addresses that initiators are aware of
++are provided by the last memory level in the hierarchy. The system
++meanwhile uses higher performing memory to transparently cache access
++to progressively slower levels.
 +
-+			target = find_mem_target(targs[targ]);
-+			if (target && report &&
-+			    target->processor_pxm == initiator->processor_pxm)
-+				hmat_update_target_access(target, type, value);
-+		}
-+	}
++The term "far memory" is used to denote the last level memory in the
++hierarchy. Each increasing cache level provides higher performing
++initiator access, and the term "near memory" represents the fastest
++cache provided by the system.
 +
-+	if (report) {
-+		struct memory_locality *loc;
++This numbering is different than CPU caches where the cache level (ex:
++L1, L2, L3) uses a CPU centric view with each increased level is lower
++performing. In contrast, the memory cache level is centric to the last
++level memory, so the higher numbered cache level denotes memory nearer
++to the CPU, and further from far memory.
 +
-+		loc = kzalloc(sizeof(*loc), GFP_KERNEL);
-+		if (loc) {
-+			loc->hmat_loc = hmat_loc;
-+			list_add_tail(&loc->node, &localities);
- 		}
- 	}
- 
-@@ -122,16 +265,35 @@ static int __init hmat_parse_address_range(union acpi_subtable_headers *header,
- 					   const unsigned long end)
- {
- 	struct acpi_hmat_address_range *spa = (void *)header;
-+	struct memory_target *target = NULL;
- 
- 	if (spa->header.length != sizeof(*spa)) {
- 		pr_debug("HMAT: Unexpected address range header length: %d\n",
- 			 spa->header.length);
- 		return -EINVAL;
- 	}
++The memory side caches are not directly addressable by software. When
++software accesses a system address, the system will return it from the
++near memory cache if it is present. If it is not present, the system
++accesses the next level of memory until there is either a hit in that
++cache level, or it reaches far memory.
 +
- 	pr_info("HMAT: Memory (%#llx length %#llx) Flags:%04x Processor Domain:%d Memory Domain:%d\n",
- 		spa->physical_address_base, spa->physical_address_length,
- 		spa->flags, spa->processor_PD, spa->memory_PD);
- 
-+	if (spa->flags & ACPI_HMAT_MEMORY_PD_VALID) {
-+		target = find_mem_target(spa->memory_PD);
-+		if (!target) {
-+			pr_debug("HMAT: Memory Domain missing from SRAT\n");
-+			return -EINVAL;
-+		}
-+	}
-+	if (target && spa->flags & ACPI_HMAT_PROCESSOR_PD_VALID) {
-+		int p_node = pxm_to_node(spa->processor_PD);
++An application does not need to know about caching attributes in order
++to use the system. Software may optionally query the memory cache
++attributes in order to maximize the performance out of such a setup.
++If the system provides a way for the kernel to discover this information,
++for example with ACPI HMAT (Heterogeneous Memory Attribute Table),
++the kernel will append these attributes to the NUMA node memory target.
 +
-+		if (p_node == NUMA_NO_NODE) {
-+			pr_debug("HMAT: Invalid Processor Domain\n");
-+			return -EINVAL;
-+		}
-+		target->processor_pxm = p_node;
-+	}
++When the kernel first registers a memory cache with a node, the kernel
++will create the following directory::
 +
- 	return 0;
- }
- 
-@@ -155,6 +317,142 @@ static int __init hmat_parse_subtable(union acpi_subtable_headers *header,
- 	}
- }
- 
-+static __init int srat_parse_mem_affinity(union acpi_subtable_headers *header,
-+					  const unsigned long end)
-+{
-+	struct acpi_srat_mem_affinity *ma = (void *)header;
++	/sys/devices/system/node/nodeX/side_cache/
 +
-+	if (!ma)
-+		return -EINVAL;
-+	if (!(ma->flags & ACPI_SRAT_MEM_ENABLED))
-+		return 0;
-+	alloc_memory_target(ma->proximity_domain);
-+	return 0;
-+}
++If that directory is not present, the system either does not not provide
++a memory side cache, or that information is not accessible to the kernel.
 +
-+static __init bool hmat_is_local(struct memory_target *target,
-+                                 u8 type, u32 value)
-+{
-+	switch (type) {
-+	case ACPI_HMAT_ACCESS_LATENCY:
-+		return value == target->read_latency &&
-+		       value == target->write_latency;
-+	case ACPI_HMAT_READ_LATENCY:
-+		return value == target->read_latency;
-+	case ACPI_HMAT_WRITE_LATENCY:
-+		return value == target->write_latency;
-+	case ACPI_HMAT_ACCESS_BANDWIDTH:
-+		return value == target->read_bandwidth &&
-+		       value == target->write_bandwidth;
-+	case ACPI_HMAT_READ_BANDWIDTH:
-+		return value == target->read_bandwidth;
-+	case ACPI_HMAT_WRITE_BANDWIDTH:
-+		return value == target->write_bandwidth;
-+	default:
-+		return true;
-+	};
-+}
++The attributes for each level of cache is provided under its cache
++level index::
 +
-+static bool hmat_is_local_initiator(struct memory_target *target,
-+				    struct memory_initiator *initiator,
-+				    struct acpi_hmat_locality *hmat_loc)
-+{
-+	unsigned int ipds, tpds, i, idx = 0, tdx = 0;
-+	u32 *inits, *targs, value;
-+	u16 *entries;
++	/sys/devices/system/node/nodeX/side_cache/indexA/
++	/sys/devices/system/node/nodeX/side_cache/indexB/
++	/sys/devices/system/node/nodeX/side_cache/indexC/
 +
-+	ipds = hmat_loc->number_of_initiator_Pds;
-+	tpds = hmat_loc->number_of_target_Pds;
-+	inits = (u32 *)(hmat_loc + 1);
-+	targs = &inits[ipds];
-+	entries = (u16 *)(&targs[tpds]);
++Each cache level's directory provides its attributes. For example, the
++following shows a single cache level and the attributes available for
++software to query::
 +
-+	for (i = 0; i < ipds; i++) {
-+		if (inits[i] == initiator->processor_pxm) {
-+			idx = i;
-+			break;
-+		}
-+	}
++	# tree sys/devices/system/node/node0/side_cache/
++	/sys/devices/system/node/node0/side_cache/
++	|-- index1
++	|   |-- associativity
++	|   |-- level
++	|   |-- line_size
++	|   |-- size
++	|   `-- write_policy
 +
-+	if (i == ipds)
-+		return false;
++The "associativity" will be 0 if it is a direct-mapped cache, and non-zero
++for any other indexed based, multi-way associativity.
 +
-+	for (i = 0; i < tpds; i++) {
-+		if (targs[i] == target->memory_pxm) {
-+			tdx = i;
-+			break;
-+		}
-+	}
-+	if (i == tpds)
-+		return false;
++The "level" is the distance from the far memory, and matches the number
++appended to its "index" directory.
 +
-+	value = entries[idx * tpds + tdx];
-+	value = (value * hmat_loc->entry_base_unit) / 10;
++The "line_size" is the number of bytes accessed on a cache miss.
 +
-+	return hmat_is_local(target, hmat_loc->data_type, value);
-+}
++The "size" is the number of bytes provided by this cache level.
 +
-+static __init void hmat_register_if_local(struct memory_target *target,
-+					  struct memory_initiator *initiator)
-+{
-+	unsigned int mem_nid, cpu_nid;
-+	struct memory_locality *loc;
++The "write_policy" will be 0 for write-back, and non-zero for
++write-through caching.
 +
-+	if (initiator->processor_pxm == target->processor_pxm)
-+		return;
-+
-+	list_for_each_entry(loc, &localities, node)
-+		if (!hmat_is_local_initiator(target, initiator, loc->hmat_loc))
-+			return;
-+
-+	mem_nid = pxm_to_node(target->memory_pxm);
-+	cpu_nid = pxm_to_node(initiator->processor_pxm);
-+	register_memory_node_under_compute_node(mem_nid, cpu_nid, 0);
-+}
-+
-+static __init void hmat_register_target_initiators(struct memory_target *target)
-+{
-+	struct memory_initiator *initiator;
-+	unsigned int mem_nid, cpu_nid;
-+
-+	if (target->processor_pxm == PXM_INVAL)
-+		return;
-+
-+	mem_nid = pxm_to_node(target->memory_pxm);
-+	cpu_nid = pxm_to_node(target->processor_pxm);
-+	if (register_memory_node_under_compute_node(mem_nid, cpu_nid, 0))
-+		return;
-+
-+	if (list_empty(&localities))
-+		return;
-+
-+	list_for_each_entry(initiator, &initiators, node)
-+		hmat_register_if_local(target, initiator);
-+}
-+
-+static __init void hmat_register_targets(void)
-+{
-+	struct memory_target *target, *tnext;
-+	struct memory_locality *loc, *lnext;
-+	struct memory_initiator *intitator, *inext;
-+
-+	list_for_each_entry_safe(target, tnext, &targets, node) {
-+		list_del(&target->node);
-+		hmat_register_target_initiators(target);
-+		kfree(target);
-+	}
-+
-+	list_for_each_entry_safe(intitator, inext, &initiators, node) {
-+		list_del(&intitator->node);
-+		kfree(intitator);
-+	}
-+
-+	list_for_each_entry_safe(loc, lnext, &localities, node) {
-+		list_del(&loc->node);
-+		kfree(loc);
-+	}
-+}
-+
- static __init int hmat_init(void)
- {
- 	struct acpi_table_header *tbl;
-@@ -164,6 +462,17 @@ static __init int hmat_init(void)
- 	if (srat_disabled())
- 		return 0;
- 
-+	status = acpi_get_table(ACPI_SIG_SRAT, 0, &tbl);
-+	if (ACPI_FAILURE(status))
-+		return 0;
-+
-+	if (acpi_table_parse_entries(ACPI_SIG_SRAT,
-+				sizeof(struct acpi_table_srat),
-+				ACPI_SRAT_TYPE_MEMORY_AFFINITY,
-+				srat_parse_mem_affinity, 0) < 0)
-+		goto out_put;
-+	acpi_put_table(tbl);
-+
- 	status = acpi_get_table(ACPI_SIG_HMAT, 0, &tbl);
- 	if (ACPI_FAILURE(status))
- 		return 0;
-@@ -174,6 +483,7 @@ static __init int hmat_init(void)
- 					     hmat_parse_subtable, 0) < 0)
- 			goto out_put;
- 	}
-+	hmat_register_targets();
- out_put:
- 	acpi_put_table(tbl);
- 	return 0;
++========
++See Also
++========
++.. [1] https://www.uefi.org/sites/default/files/resources/ACPI_6_2.pdf
++       Section 5.2.27
 -- 
 2.14.4
 
